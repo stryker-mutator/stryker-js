@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/infosupport/stryker.svg?branch=master)](https://travis-ci.org/infosupport/stryker)
+[![Gitter](https://badges.gitter.im/infosupport/stryker.svg)](https://gitter.im/infosupport/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 # Stryker
 
 *Professor X: For someone who hates mutants... you certainly keep some strange company.*  
