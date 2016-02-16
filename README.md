@@ -3,6 +3,8 @@
 
 # Stryker
 
+[![Join the chat at https://gitter.im/infosupport/stryker](https://badges.gitter.im/infosupport/stryker.svg)](https://gitter.im/infosupport/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 *Professor X: For someone who hates mutants... you certainly keep some strange company.*  
 *William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
 
