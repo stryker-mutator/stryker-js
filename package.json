@@ -1,0 +1,46 @@
+{
+  "name": "stryker",
+  "version": "1.0.0",
+  "description": "The extendable JavaScript mutation testing framwork",
+  "main": "src/Stryker.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/infosupport/stryker"
+  },
+  "keywords": [
+    "mutationtesting",
+    "JavaScript"
+  ],
+  "author": "Simon de Lang",
+  "contributors": ["Nico Jansen <nicoj@infosupport.com> https://nicojs.github.io"],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chalk": "^1.1.1",
+    "commander": "^2.9.0",
+    "escodegen": "^1.7.0",
+    "esprima": "^2.7.0",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.13.15",
+    "karma-coverage": "^0.5.3",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "lodash": "^3.10.1",
+    "phantomjs": "^1.9.18"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-maven": "^1.2.0",
+    "grunt-mocha-istanbul": "^3.0.1",
+    "grunt-mocha-test": "^0.12.7",
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.3",
+    "mocha-sinon": "^1.1.4",
+    "sinon": "^1.17.2"
+  }
+}
