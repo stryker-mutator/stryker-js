@@ -42,7 +42,7 @@ describe('FileUtils', function() {
   });
 
   it('should indicate that an existing file exists', function() {
-    var exists = fileUtils.fileOrFolderExists('src/Stryker.js');
+    var exists = fileUtils.fileOrFolderExists('src/Stryker.ts');
 
     expect(exists).to.equal(true);
   });

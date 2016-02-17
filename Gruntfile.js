@@ -1,10 +1,20 @@
 'use strict';
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   grunt.initConfig({
+
+    clean: {
+      dist: {
+        src: ['dist']
+      },
+      coverage: {
+        src: ['coverage']
+      }
+    },
+
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
+      files: ['Gruntfile.js', 'dist/src/**/*.js', 'dist/test/**/*.js'],
       options: {
         node: true,
         globals: {
@@ -32,19 +42,19 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec'
         },
-        src: ['test/unit/**/*.js']
+        src: ['dist/test/unit/**/*.js']
       },
       integration: {
         options: {
           reporter: 'spec'
         },
-        src: ['test/integration/**/*.js']
+        src: ['dist/test/integration/**/*.js']
       }
     },
     /* Start code coverage */
     mocha_istanbul: {
       coverage: {
-        src: ['test/integration/**/*.js', 'test/unit/**/*.js'],
+        src: ['dist/test/integration/**/*.js', 'dist/test/unit/**/*.js'],
       }
     },
     istanbul_check_coverage: {
@@ -59,16 +69,28 @@ module.exports = function(grunt) {
       }
     },
     /* End code coverage */
+
+    ts: {
+      options: {
+        failOnTypeErrors: false
+      },
+      build: {
+        tsconfig: true
+      },
+    }
   });
 
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-mocha-istanbul');
+  grunt.loadNpmTasks('grunt-ts');
 
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
-  grunt.registerTask('test', ['coverage', 'integration']);
+  grunt.registerTask('test', ['build', 'coverage', 'integration']);
+  grunt.registerTask('build', ['clean', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
 
