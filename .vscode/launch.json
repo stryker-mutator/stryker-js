@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run mocha",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
+            "preLaunchTask": "ts",
+            "stopOnEntry": false,
+            "args": [
+                "mochaTest:unit"
+            ],
+            "cwd": "${workspaceRoot}/.",
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "externalConsole": false,
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/dist"
+        }
+    ]
+}
