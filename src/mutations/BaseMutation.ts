@@ -3,7 +3,7 @@
 var TypeUtils = require('../utils/TypeUtils');
 
 
-export default class BaseMutation {
+abstract class BaseMutation {
 
   _typeUtils;
   _name;
@@ -71,3 +71,4 @@ export default class BaseMutation {
   }
 
 }
+export default BaseMutation;
