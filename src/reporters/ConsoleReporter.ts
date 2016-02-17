@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var chalk = require('chalk');
 var util = require('util');
-var BaseReporter = require('./BaseReporter');
+import BaseReporter from './BaseReporter';
 
 /**
  * Represents a reporter which logs output to the console.
