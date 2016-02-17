@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var ConsoleReporter = require('../../../src/reporters/ConsoleReporter');
+import ConsoleReporter from '../../../src/reporters/ConsoleReporter';
 var MathMutation = require('../../../src/mutations/MathMutation');
 var Mutant = require('../../../src/Mutant');
 var ParserUtils = require('../../../src/utils/ParserUtils');

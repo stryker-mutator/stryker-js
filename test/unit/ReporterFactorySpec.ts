@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 var ReporterFactory = require('../../src/ReporterFactory');
-var ConsoleReporter = require('../../src/reporters/ConsoleReporter');
+import ConsoleReporter from '../../src/reporters/ConsoleReporter';
 
 describe('ReporterFactory', function() {
   var reporterFactory;

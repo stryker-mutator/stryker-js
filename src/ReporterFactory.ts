@@ -1,6 +1,6 @@
 'use strict';
 
-var ConsoleReporter = require('./reporters/ConsoleReporter');
+import ConsoleReporter from './reporters/ConsoleReporter';
 var TypeUtils = require('./utils/TypeUtils');
 
 /**
