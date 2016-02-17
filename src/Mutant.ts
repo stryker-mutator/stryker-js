@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
-var BaseMutation = require('./mutations/BaseMutation');
+import BaseMutation from './mutations/BaseMutation';
 var FileUtils = require('./utils/FileUtils');
 var ParserUtils = require('./utils/ParserUtils');
 var TypeUtils = require('./utils/TypeUtils');
