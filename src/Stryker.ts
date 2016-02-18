@@ -5,7 +5,7 @@ var program = require('commander');
 var FileUtils = require('./utils/FileUtils');
 var Mutator = require('./Mutator');
 var ReporterFactory = require('./ReporterFactory');
-var TestRunnerFactory = require('./TestRunnerFactory');
+import TestRunnerFactory from './TestRunnerFactory';
 var TypeUtils = require('./utils/TypeUtils');
 
 /**

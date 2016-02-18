@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 import BaseTestRunner from '../../src/testrunners/BaseTestRunner';
 var FileUtils = require('../../src/utils/FileUtils');
 var Stryker = require('../../src/Stryker');
-var TestRunnerFactory = require('../../src/TestRunnerFactory');
+import TestRunnerFactory from '../../src/TestRunnerFactory';
 require('mocha-sinon');
 
 describe("Stryker", function() {
