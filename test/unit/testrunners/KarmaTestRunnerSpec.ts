@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 var expect = require('chai').expect;
-var KarmaTestRunner = require('../../../src/testrunners/KarmaTestRunner');
+import KarmaTestRunner from '../../../src/testrunners/KarmaTestRunner';
 var TestFile = require('../../../src/TestFile');
 var TestResult = require('../../../src/TestResult');
 require('mocha-sinon');

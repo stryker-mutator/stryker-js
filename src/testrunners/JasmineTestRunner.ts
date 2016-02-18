@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var util = require('util');
 var FileUtils = require('../utils/FileUtils');
-var KarmaTestRunner = require('./KarmaTestRunner');
+import KarmaTestRunner from './KarmaTestRunner';
 var ParserUtils = require('../utils/ParserUtils');
 var TestFile = require('../TestFile');
 

@@ -20,7 +20,7 @@ abstract class BaseTestRunner {
    * @param {Object} config - The configuration for the test runner.
    * @constructor
    */
-  constructor(private _config) {
+  constructor(protected _config) {
   }
   
 
@@ -146,7 +146,7 @@ abstract class BaseTestRunner {
    * @param {String[]} testFiles - The names of the tests which should be executed.
    * @param {BaseTestRunner~testCompletedCallback} testCompletedCallback - The callback which is called when the test has been completed.
    */
-  testAndCollectCoverage(sourceFiles, testFiles, testCompletedCallback) {
+  testAndCollectCoverage(sourceFiles: string[], testFiles: string[], testCompletedCallback) {
     this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
     this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
     this._typeUtils.expectParameterFunction(testCompletedCallback, 'BaseTestRunner', 'testCompletedCallback');
