@@ -1,8 +1,8 @@
 'use strict';
 
 var _ = require('lodash');
-var ConditionalBoundayMutation = require('./mutations/ConditionalBoundayMutation');
-var MathMutation = require('./mutations/MathMutation');
+import ConditionalBoundayMutation from './mutations/ConditionalBoundayMutation';
+import MathMutation from './mutations/MathMutation';
 var RemoveConditionalsMutation = require('./mutations/RemoveConditionalsMutation');
 var ReverseConditionalMutation = require('./mutations/ReverseConditionalMutation');
 var TypeUtils = require('./utils/TypeUtils');

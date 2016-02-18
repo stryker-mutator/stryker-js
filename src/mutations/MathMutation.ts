@@ -3,19 +3,15 @@
 var util = require('util');
 import BaseOperatorMutation from './BaseOperatorMutation';
 
-function MathMutation() {
-  BaseOperatorMutation.call(
-    this,
-    'Math', ['BinaryExpression'], {
+export default class MathMutation extends BaseOperatorMutation {
+  
+  constructor () {
+   super('Math', ['BinaryExpression'], {
       '+': '-',
       '-': '+',
       '*': '/',
       '/': '*',
-      '%': '*'
-    }
-  );
+      '%': '*'});
+  }
+
 }
-
-util.inherits(MathMutation, BaseOperatorMutation);
-
-module.exports = MathMutation;

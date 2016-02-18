@@ -3,18 +3,15 @@
 var util = require('util');
 import BaseOperatorMutation from './BaseOperatorMutation';
 
-function ConditionalBoundayMutation() {
-  BaseOperatorMutation.call(
-    this,
-    'ConditionalBoundary', ['BinaryExpression'], {
+export default class ConditionalBoundayMutation extends BaseOperatorMutation {
+
+  constructor() {
+    super('ConditionalBoundary', ['BinaryExpression'], {
       '<': '<=',
       '<=': '<',
       '>': '>=',
       '>=': '>'
-    }
-  );
+    });
+  }
+
 }
-
-util.inherits(ConditionalBoundayMutation, BaseOperatorMutation);
-
-module.exports = ConditionalBoundayMutation;

@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 var Mutant = require('../../src/Mutant');
-var ConditionalBoundaryMutation = require('../../src/mutations/ConditionalBoundayMutation');
+import ConditionalBoundaryMutation from '../../src/mutations/ConditionalBoundayMutation';
 var ParserUtils = require('../../src/utils/ParserUtils');
 var TestResult = require('../../src/TestResult');
 require('mocha-sinon');
