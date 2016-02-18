@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 var TestRunnerFactory = require('../../src/TestRunnerFactory');
-var JasmineTestRunner = require('../../src/testrunners/JasmineTestRunner');
+import JasmineTestRunner from  '../../src/testrunners/JasmineTestRunner';
 
 describe('TestRunnerFactory', function() {
   var testRunnerFactory;

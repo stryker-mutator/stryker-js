@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 var expect = require('chai').expect;
-var JasmineTestRunner = require('../../../src/testrunners/JasmineTestRunner');
+import JasmineTestRunner from '../../../src/testrunners/JasmineTestRunner';
 var TestFile = require('../../../src/TestFile');
 var TestResult = require('../../../src/TestResult');
 var FileUtils = require('../../../src/utils/FileUtils');

@@ -12,7 +12,7 @@ var TestResult = require('../TestResult');
 
 export default class KarmaTestRunner extends BaseTestRunner {
   
-  private _fileUtils = new FileUtils();
+  protected _fileUtils = new FileUtils();
  
 
   test(config, sourceFiles: string[], testFiles, testCompletedCallback) {

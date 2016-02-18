@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var JasmineTestRunner = require('../../../src/testrunners/JasmineTestRunner');
+import JasmineTestRunner from '../../../src/testrunners/JasmineTestRunner';
 var TestFile = require('../../../src/TestFile');
 require('mocha-sinon');
 

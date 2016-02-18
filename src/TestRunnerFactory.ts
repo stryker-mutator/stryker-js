@@ -1,6 +1,6 @@
 'use strict';
 
-var JasmineTestRunner = require('./testrunners/JasmineTestRunner');
+import JasmineTestRunner from './testrunners/JasmineTestRunner';
 var TypeUtils = require('./utils/TypeUtils');
 
 /**
