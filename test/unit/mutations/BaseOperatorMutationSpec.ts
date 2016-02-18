@@ -1,40 +1,19 @@
 'use strict';
 
 var expect = require('chai').expect;
-var BaseOperatorMutation = require('../../../src/mutations/BaseOperatorMutation');
+import BaseOperatorMutation from '../../../src/mutations/BaseOperatorMutation';
 var Mutant = require('../../../src/Mutant');
 var ParserUtils = require('../../../src/utils/ParserUtils');
 require('mocha-sinon');
 
 describe('BaseOperatorMutation', function() {
-  describe('should throw an error', function() {
-    it('if the parameter name is not provided', function() {
-      expect(function() {
-        new BaseOperatorMutation();
-      }).to.throw(Error);
-    });
-
-    it('if the parameter operators is not provided', function() {
-      expect(function() {
-        new BaseOperatorMutation('name');
-      }).to.throw(Error);
-    });
-
-    it('if the parameter types is not provided', function() {
-      expect(function() {
-        new BaseOperatorMutation('name', {
-          'op': 'po'
-        });
-      }).to.throw(Error);
-    });
-  });
-
   describe('should recognize', function() {
     it('one of its own mutation operators as a part of its mutation', function() {
       var node = {
         type: 'SomeType',
         operator: '+'
       };
+      //TODO: Change the creation of a new BaseOperatorMutation to the creation of a locally defined implementation of BaseOperatorMutation
       var baseOperatorMutation = new BaseOperatorMutation('name', ['SomeOtherType', node.type], {
         '+': '-'
       });
@@ -51,6 +30,7 @@ describe('BaseOperatorMutation', function() {
         type: 'SomeType',
         operator: 'some operator which should not be known to the BaseOperatorMutation'
       };
+      //TODO: Change the creation of a new BaseOperatorMutation to the creation of a locally defined implementation of BaseOperatorMutation
       var baseOperatorMutation = new BaseOperatorMutation('name', [node.type], {
         '+': '-'
       });
@@ -65,6 +45,7 @@ describe('BaseOperatorMutation', function() {
         type: 'SomeDifferentType',
         operator: '+'
       };
+      //TODO: Change the creation of a new BaseOperatorMutation to the creation of a locally defined implementation of BaseOperatorMutation
       var baseOperatorMutation = new BaseOperatorMutation('name', ['SomeType'], {
         '+': '-'
       });
@@ -79,6 +60,7 @@ describe('BaseOperatorMutation', function() {
     this.sinon.stub(Mutant.prototype, 'save');
     var code = 'var i = 5 * 3;';
     var column = 11;
+    //TODO: Change the creation of a new BaseOperatorMutation to the creation of a locally defined implementation of BaseOperatorMutation
     var baseOperatorMutation = new BaseOperatorMutation('name', ['SomeType'], {
       '*': '/'
     });

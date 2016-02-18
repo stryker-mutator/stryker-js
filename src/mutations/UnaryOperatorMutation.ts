@@ -1,7 +1,7 @@
 'use strict';
 
 var util = require('util');
-var BaseOperatorMutation = require('./BaseOperatorMutation.js');
+import BaseOperatorMutation from './BaseOperatorMutation';
 
 function UnaryOperatorMutation() {
   BaseOperatorMutation.call(
