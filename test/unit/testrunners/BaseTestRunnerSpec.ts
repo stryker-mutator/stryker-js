@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var BaseTestRunner = require('../../../src/testrunners/BaseTestRunner');
+import BaseTestRunner from '../../../src/testrunners/BaseTestRunner';
 
 describe('BaseTestRunner', function() {
   var testRunner;

@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var BaseTestRunner = require('../../src/testrunners/BaseTestRunner');
+import BaseTestRunner from '../../src/testrunners/BaseTestRunner';
 var FileUtils = require('../../src/utils/FileUtils');
 var Stryker = require('../../src/Stryker');
 var TestRunnerFactory = require('../../src/TestRunnerFactory');
