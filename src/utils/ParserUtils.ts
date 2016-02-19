@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var esprima = require('esprima');
 import * as escodegen from 'escodegen';
-var AbstractSyntaxTreeNode = require('../AbstractSyntaxTreeNode');
+import AbstractSyntaxTreeNode from '../AbstractSyntaxTreeNode';
 import TypeUtils from './TypeUtils';
 
 /**
@@ -50,27 +50,26 @@ export default class ParserUtils {
   /**
    * Finds all nodes which have one of several types in a syntax tree.
    * @function
-   * @param {Object} abstractSyntaxTree - The current part of the abstract syntax tree which will be investigated.
+   * @param abstractSyntaxTree - The current part of the abstract syntax tree which will be investigated.
    * @param  types - The list of types which are requested.
-   * @returns {Object[]} All nodes which have one of the requested types.
+   * @returns  All nodes which have one of the requested types.
    */
-  public getNodesWithType (abstractSyntaxTree, types: string[], nodes, parent, key) {
+  public getNodesWithType (abstractSyntaxTree, types: string[], nodes: AbstractSyntaxTreeNode[], parent, key): AbstractSyntaxTreeNode[] {
     this._typeUtils.expectParameterObject(abstractSyntaxTree, 'Mutator', 'abstractSyntaxTree');
     this._typeUtils.expectParameterArray(types, 'Mutator', 'types');
-    var that = this;
     nodes = nodes || [];
 
-    if (that._typeUtils.isObject(abstractSyntaxTree) && _.indexOf(types, abstractSyntaxTree.type) >= 0) {
+    if (this._typeUtils.isObject(abstractSyntaxTree) && _.indexOf(types, abstractSyntaxTree.type) >= 0) {
       nodes.push(new AbstractSyntaxTreeNode(abstractSyntaxTree, parent, key));
     }
 
-    _.forOwn(abstractSyntaxTree, function(childNode, key) {
-      if (that._typeUtils.isObject(childNode)) {
-        that.getNodesWithType(childNode, types, nodes, abstractSyntaxTree, key);
-      } else if (that._typeUtils.isArray(childNode)) {
-        _.forEach(childNode, function(arrayChild, index) {
-          if (that._typeUtils.isObject(arrayChild)) {
-            that.getNodesWithType(arrayChild, types, nodes, childNode, index);
+    _.forOwn(abstractSyntaxTree, (childNode, key) => {
+      if (this._typeUtils.isObject(childNode)) {
+        this.getNodesWithType(childNode, types, nodes, abstractSyntaxTree, key);
+      } else if (this._typeUtils.isArray(childNode)) {
+        _.forEach(childNode, (arrayChild, index) => {
+          if (this._typeUtils.isObject(arrayChild)) {
+            this.getNodesWithType(arrayChild, types, nodes, childNode, index);
           }
         });
       }
