@@ -25,20 +25,6 @@ describe('TestFile', function() {
     testFile = new TestFile(testName, content);
   });
 
-  describe('should throw an error', function() {
-    it('if the parameter name is not provided', function() {
-      expect(function() {
-        new TestFile();
-      }).to.throw(Error);
-    });
-
-    it('if the parameter content is not a String', function() {
-      expect(function() {
-        new TestFile('path.js', [1, 2]);
-      }).to.throw(Error);
-    });
-  });
-
   describe('should set', function() {
     it('the path', function() {
       expect(testFile.getPath()).to.equal(fileUtilsPath);
