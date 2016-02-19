@@ -8,7 +8,7 @@ var Server = require('karma').Server;
 import BaseTestRunner from './BaseTestRunner';
 import FileUtils from '../utils/FileUtils';
 import TestFile from '../TestFile';
-var TestResult = require('../TestResult');
+import TestResult from '../TestResult';
 
 export default class KarmaTestRunner extends BaseTestRunner {
   

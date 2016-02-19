@@ -4,7 +4,7 @@ var expect = require('chai').expect;
 var Mutant = require('../../src/Mutant');
 import ConditionalBoundaryMutation from '../../src/mutations/ConditionalBoundayMutation';
 import ParserUtils from '../../src/utils/ParserUtils';
-var TestResult = require('../../src/TestResult');
+import TestResult from '../../src/TestResult';
 require('mocha-sinon');
 
 describe("TestResult", function() {
@@ -12,7 +12,7 @@ describe("TestResult", function() {
   var mutant;
 
   var getTestResult = function(nrSucceeded, nrFailed, timedOut, error){
-    return new TestResult(['a.js'], ['b.js'], nrSucceeded, nrFailed, timedOut, error, 1000);
+    return new TestResult(['a.js'], [], nrSucceeded, nrFailed, timedOut, error, 1000);
   };
 
   beforeEach(function(){
@@ -27,7 +27,7 @@ describe("TestResult", function() {
     var mutation = new ConditionalBoundaryMutation();
     mutant = mutation.applyMutation(filename, originalCode, node, ast)[0];
 
-    testResult = new TestResult([filename], ['b.js'], 1, 0, false, false, 1000);
+    testResult = new TestResult([filename], [], 1, 0, false, false, 1000);
     testResult.setCoverage({
     "C:\\workspace\\stryker\\test\\sampleProject\\src\\Add.js":{"path":"C:\\workspace\\stryker\\test\\sampleProject\\src\\Add.js","s":{"1":1,"2":1,"3":1,"4":1,"5":1,"6":1,"7":1,"8":1,"9":2,"10":2,"11":1,"12":2},"b":{"1":[1,1]},"f":{"1":1,"2":1,"3":1,"4":2},"fnMap":{"1":{"name":"(anonymous_1)","line":1,"loc":{"start":{"line":1,"column":10},"end":{"line":1,"column":31}}},"2":{"name":"(anonymous_2)","line":5,"loc":{"start":{"line":5,"column":13},"end":{"line":5,"column":30}}},"3":{"name":"(anonymous_3)","line":10,"loc":{"start":{"line":10,"column":13},"end":{"line":10,"column":30}}},"4":{"name":"(anonymous_4)","line":14,"loc":{"start":{"line":14,"column":23},"end":{"line":14,"column":40}}}},"statementMap":{"1":{"start":{"line":1,"column":0},"end":{"line":3,"column":2}},"2":{"start":{"line":2,"column":2},"end":{"line":2,"column":21}},"3":{"start":{"line":5,"column":0},"end":{"line":8,"column":2}},"4":{"start":{"line":6,"column":2},"end":{"line":6,"column":11}},"5":{"start":{"line":7,"column":2},"end":{"line":7,"column":16}},"6":{"start":{"line":10,"column":0},"end":{"line":12,"column":2}},"7":{"start":{"line":11,"column":2},"end":{"line":11,"column":17}},"8":{"start":{"line":14,"column":0},"end":{"line":20,"column":2}},"9":{"start":{"line":15,"column":2},"end":{"line":15,"column":25}},"10":{"start":{"line":16,"column":2},"end":{"line":18,"column":3}},"11":{"start":{"line":17,"column":4},"end":{"line":17,"column":22}},"12":{"start":{"line":19,"column":2},"end":{"line":19,"column":20}}},"branchMap":{"1":{"line":16,"type":"if","locations":[{"start":{"line":16,"column":2},"end":{"line":16,"column":2}},{"start":{"line":16,"column":2},"end":{"line":16,"column":2}}]}},"l":{"1":1,"2":1,"5":1,"6":1,"7":1,"10":1,"11":1,"14":1,"15":2,"16":2,"17":1,"19":2}},
     "C:\\workspace\\stryker\\test\\sampleProject\\src\\Circle.js":{"path":"C:\\workspace\\stryker\\test\\sampleProject\\src\\Circle.js","s":{"1":1,"2":0},"b":{},"f":{"1":0},"fnMap":{"1":{"name":"(anonymous_1)","line":1,"loc":{"start":{"line":1,"column":23},"end":{"line":1,"column":40}}}},"statementMap":{"1":{"start":{"line":1,"column":0},"end":{"line":4,"column":2}},"2":{"start":{"line":3,"column":2},"end":{"line":3,"column":30}}},"branchMap":{},"l":{"1":1,"3":0}}}

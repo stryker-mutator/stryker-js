@@ -4,7 +4,7 @@ var _ = require('lodash');
 var expect = require('chai').expect;
 import KarmaTestRunner from '../../../src/testrunners/KarmaTestRunner';
 import TestFile from '../../../src/TestFile';
-var TestResult = require('../../../src/TestResult');
+import TestResult from '../../../src/TestResult';
 require('mocha-sinon');
 
 describe('KarmaTestRunner', function() {
