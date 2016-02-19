@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var util = require('util');
 import BaseMutation from './BaseMutation';
-var Mutant = require('../Mutant');
+import Mutant from '../Mutant';
 
 /**
  * Represents a mutation which can remove the conditional clause from statements.

@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var Mutant = require('../../src/Mutant');
+import Mutant from '../../src/Mutant';
 import ConditionalBoundaryMutation from '../../src/mutations/ConditionalBoundayMutation';
 import ParserUtils from '../../src/utils/ParserUtils';
 import TestResult from '../../src/TestResult';

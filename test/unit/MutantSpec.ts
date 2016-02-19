@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var Mutant = require('../../src/Mutant');
+import Mutant from '../../src/Mutant';
 import MathMutation from '../../src/mutations/MathMutation';
 import ParserUtils from '../../src/utils/ParserUtils';
 require('mocha-sinon');
