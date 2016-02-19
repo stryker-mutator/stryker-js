@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 import BaseMutation from './mutations/BaseMutation';
-var FileUtils = require('./utils/FileUtils');
+import FileUtils from './utils/FileUtils';
 var ParserUtils = require('./utils/ParserUtils');
 var TypeUtils = require('./utils/TypeUtils');
 

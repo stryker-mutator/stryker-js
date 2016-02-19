@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var FileUtils = require('../../src/utils/FileUtils');
+import FileUtils from '../../src/utils/FileUtils';
 var TestFile = require('../../src/TestFile');
 require('mocha-sinon');
 

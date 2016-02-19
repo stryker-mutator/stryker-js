@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 var fs = require('fs');
-var FileUtils = require('../../../src/utils/FileUtils');
+import FileUtils from '../../../src/utils/FileUtils';
 require('mocha-sinon');
 
 describe('FileUtils', function() {

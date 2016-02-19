@@ -6,7 +6,7 @@ var path = require('path');
 var util = require('util');
 var Server = require('karma').Server;
 import BaseTestRunner from './BaseTestRunner';
-var FileUtils = require('../utils/FileUtils');
+import FileUtils from '../utils/FileUtils';
 var TestFile = require('../TestFile');
 var TestResult = require('../TestResult');
 

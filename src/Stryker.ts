@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 var program = require('commander');
-var FileUtils = require('./utils/FileUtils');
+import FileUtils from './utils/FileUtils';
 var Mutator = require('./Mutator');
 var ReporterFactory = require('./ReporterFactory');
 import TestRunnerFactory from './TestRunnerFactory';

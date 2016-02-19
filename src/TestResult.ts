@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
-var FileUtils = require('./utils/FileUtils');
+import FileUtils from './utils/FileUtils';
 var TypeUtils = require('./utils/TypeUtils');
 
 /**

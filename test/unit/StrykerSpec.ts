@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 import BaseTestRunner from '../../src/testrunners/BaseTestRunner';
-var FileUtils = require('../../src/utils/FileUtils');
+import FileUtils from '../../src/utils/FileUtils';
 var Stryker = require('../../src/Stryker');
 import TestRunnerFactory from '../../src/TestRunnerFactory';
 require('mocha-sinon');
