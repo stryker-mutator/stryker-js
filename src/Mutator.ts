@@ -4,7 +4,7 @@ var _ = require('lodash');
 import FileUtils from './utils/FileUtils';
 var MutationRegistry = require('./MutationRegistry');
 import ParserUtils from './utils/ParserUtils';
-var TypeUtils = require('./utils/TypeUtils');
+import TypeUtils from './utils/TypeUtils';
 /**
  * Class capable of finding spots to mutate in files.
  * @constructor

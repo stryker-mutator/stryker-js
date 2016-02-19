@@ -6,7 +6,7 @@ import FileUtils from './utils/FileUtils';
 var Mutator = require('./Mutator');
 var ReporterFactory = require('./ReporterFactory');
 import TestRunnerFactory from './TestRunnerFactory';
-var TypeUtils = require('./utils/TypeUtils');
+import TypeUtils from './utils/TypeUtils';
 
 /**
  * The Stryker mutation tester.

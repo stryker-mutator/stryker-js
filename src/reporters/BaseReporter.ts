@@ -1,6 +1,6 @@
 'use strict';
 
-var TypeUtils = require('../utils/TypeUtils');
+import TypeUtils from '../utils/TypeUtils';
 
 /**
  * Represents the base reporter as a blueprint for all reporters.

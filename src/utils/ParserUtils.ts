@@ -4,7 +4,7 @@ var _ = require('lodash');
 var esprima = require('esprima');
 import * as escodegen from 'escodegen';
 var AbstractSyntaxTreeNode = require('../AbstractSyntaxTreeNode');
-var TypeUtils = require('./TypeUtils');
+import TypeUtils from './TypeUtils';
 
 /**
  * Utility class for parsing and generating code.

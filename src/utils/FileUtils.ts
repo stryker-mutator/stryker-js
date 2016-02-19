@@ -4,7 +4,7 @@ var _ = require('lodash');
 import fs = require('fs');
 import os = require('os');
 import path = require('path');
-var TypeUtils = require('./TypeUtils');
+import TypeUtils from './TypeUtils';
 
 /**
  * Utility class for handling temporary files.

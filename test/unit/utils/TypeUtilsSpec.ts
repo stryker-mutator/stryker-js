@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var TypeUtils = require('../../../src/utils/TypeUtils');
+import TypeUtils from '../../../src/utils/TypeUtils';
 
 describe('TypeUtils', function() {
   var typeUtils;

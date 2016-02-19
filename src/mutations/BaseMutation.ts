@@ -1,6 +1,6 @@
 'use strict';
 
-var TypeUtils = require('../utils/TypeUtils');
+import TypeUtils from '../utils/TypeUtils';
 
 
 abstract class BaseMutation {

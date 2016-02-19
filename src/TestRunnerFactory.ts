@@ -1,7 +1,7 @@
 'use strict';
 
 import JasmineTestRunner from './testrunners/JasmineTestRunner';
-var TypeUtils = require('./utils/TypeUtils');
+import TypeUtils from './utils/TypeUtils';
 
 /**
  * Represents a provider for all test runners.

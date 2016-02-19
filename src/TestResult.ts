@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 import FileUtils from './utils/FileUtils';
-var TypeUtils = require('./utils/TypeUtils');
+import TypeUtils from './utils/TypeUtils';
 
 /**
  * Represents the result of a test run.

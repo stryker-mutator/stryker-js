@@ -1,7 +1,7 @@
 'use strict';
 
 import FileUtils from './utils/FileUtils';
-var TypeUtils = require('./utils/TypeUtils');
+import TypeUtils from './utils/TypeUtils';
 
 /**
  * Represents a test file. Upon creation, the test file is saved to the temp folder.

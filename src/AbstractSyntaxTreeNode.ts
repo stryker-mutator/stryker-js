@@ -1,6 +1,6 @@
 'use strict';
 
-var TypeUtils = require('./utils/TypeUtils');
+import TypeUtils from './utils/TypeUtils';
 
 /**
  * Represents a node on the abstract syntax tree.

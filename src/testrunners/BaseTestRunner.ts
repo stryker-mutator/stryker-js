@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 var TestFile = require('../TestFile');
-var TypeUtils = require('../utils/TypeUtils');
+import TypeUtils from '../utils/TypeUtils';
 
 abstract class BaseTestRunner {
 

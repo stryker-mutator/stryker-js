@@ -4,7 +4,7 @@ var _ = require('lodash');
 import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
 import ParserUtils from './utils/ParserUtils';
-var TypeUtils = require('./utils/TypeUtils');
+import TypeUtils from './utils/TypeUtils';
 
 /**
  * Represents a mutation which has been applied to a file.
