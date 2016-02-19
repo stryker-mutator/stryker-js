@@ -3,7 +3,7 @@
 var expect = require('chai').expect;
 import FileUtils from '../../src/utils/FileUtils';
 var Mutant = require('../../src/Mutant');
-var Mutator = require('../../src/Mutator');
+import Mutator from '../../src/Mutator';
 require('mocha-sinon');
 
 describe('Mutator', function() {

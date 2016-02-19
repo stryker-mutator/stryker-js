@@ -54,7 +54,7 @@ export default class ParserUtils {
    * @param  types - The list of types which are requested.
    * @returns  All nodes which have one of the requested types.
    */
-  public getNodesWithType (abstractSyntaxTree, types: string[], nodes: AbstractSyntaxTreeNode[], parent, key): AbstractSyntaxTreeNode[] {
+  public getNodesWithType (abstractSyntaxTree, types: string[], nodes?: AbstractSyntaxTreeNode[], parent?, key?): AbstractSyntaxTreeNode[] {
     this._typeUtils.expectParameterObject(abstractSyntaxTree, 'Mutator', 'abstractSyntaxTree');
     this._typeUtils.expectParameterArray(types, 'Mutator', 'types');
     nodes = nodes || [];
