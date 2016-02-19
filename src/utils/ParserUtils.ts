@@ -30,10 +30,10 @@ export default class ParserUtils {
   /**
    * Parses code to generate an Abstract Syntax Tree.
    * @function
-   * @param {String} code - The code which has to be parsed.
+   * @param code - The code which has to be parsed.
    * @returns {Object} The generated Abstract Syntax Tree.
    */
-  public parse (code) {
+  public parse (code: string): any {
     this._typeUtils.expectParameterString(code, 'ParserUtils', 'code');
     if (code === '') {
       return {};
@@ -51,10 +51,10 @@ export default class ParserUtils {
    * Finds all nodes which have one of several types in a syntax tree.
    * @function
    * @param {Object} abstractSyntaxTree - The current part of the abstract syntax tree which will be investigated.
-   * @param {String[]} types - The list of types which are requested.
+   * @param  types - The list of types which are requested.
    * @returns {Object[]} All nodes which have one of the requested types.
    */
-  public getNodesWithType (abstractSyntaxTree, types, nodes, parent, key) {
+  public getNodesWithType (abstractSyntaxTree, types: string[], nodes, parent, key) {
     this._typeUtils.expectParameterObject(abstractSyntaxTree, 'Mutator', 'abstractSyntaxTree');
     this._typeUtils.expectParameterArray(types, 'Mutator', 'types');
     var that = this;
@@ -84,10 +84,10 @@ export default class ParserUtils {
    * Parses an Abstract Syntax Tree to generate code.
    * @function
    * @param {Object} ast - The Abstract Syntax Tree.
-   * @param {String} [orignalCode] - The original code of the ast.
-   * @returns {String} The generated code.
+   * @param orignalCode - The original code of the ast.
+   * @returns The generated code.
    */
-  public generate (ast, originalCode) {
+  public generate (ast, originalCode: string): string {
     this._typeUtils.expectParameterObject(ast, 'ParserUtils', 'ast');
 
     this._escodegenOptions.sourceCode = originalCode || this._escodegenOptions.sourceCode;
