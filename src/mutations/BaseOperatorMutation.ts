@@ -4,7 +4,7 @@ var _ = require('lodash');
 var util = require('util');
 import BaseMutation from './BaseMutation';
 var Mutant = require('../Mutant');
-var ParserUtils = require('../utils/ParserUtils');
+import ParserUtils from '../utils/ParserUtils';
 
 abstract class BaseOperatorMutation extends BaseMutation {
   _operators;
