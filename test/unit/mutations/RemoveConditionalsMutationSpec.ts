@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 import Mutant from '../../../src/Mutant';
-var RemoveConditionalsMutation = require('../../../src/mutations/RemoveConditionalsMutation');
+import RemoveConditionalsMutation from '../../../src/mutations/RemoveConditionalsMutation';
 import ParserUtils from '../../../src/utils/ParserUtils';
 require('mocha-sinon');
 
