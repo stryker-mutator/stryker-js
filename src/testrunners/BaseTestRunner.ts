@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
-var TestFile = require('../TestFile');
+import TestFile from '../TestFile';
 import TypeUtils from '../utils/TypeUtils';
 
 abstract class BaseTestRunner {
@@ -38,7 +38,7 @@ abstract class BaseTestRunner {
    * @param {TestFile[]} testFiles - The tests which should be executed.
    * @param {BaseTestRunner~testCompletedCallback} testCompletedCallback - The callback which is called when the test has been completed.
    */
-  test(config, sourceFiles: string[], testFiles, testCompletedCallback) {
+  test(config, sourceFiles: string[], testFiles: TestFile[], testCompletedCallback) {
     this._typeUtils.expectParameterObject(config, 'BaseTestRunner', 'config');
     this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
     this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');

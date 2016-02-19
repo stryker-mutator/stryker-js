@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var expect = require('chai').expect;
 import JasmineTestRunner from '../../../src/testrunners/JasmineTestRunner';
-var TestFile = require('../../../src/TestFile');
+import TestFile from '../../../src/TestFile';
 var TestResult = require('../../../src/TestResult');
 import FileUtils from '../../../src/utils/FileUtils';
 require('mocha-sinon');

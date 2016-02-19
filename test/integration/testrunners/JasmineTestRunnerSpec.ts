@@ -2,12 +2,12 @@
 
 var expect = require('chai').expect;
 import JasmineTestRunner from '../../../src/testrunners/JasmineTestRunner';
-var TestFile = require('../../../src/TestFile');
+import TestFile from '../../../src/TestFile';
 require('mocha-sinon');
 
 describe('JasmineTestRunner', function() {
   var config;
-  var jasmine;
+  var jasmine: JasmineTestRunner;
 
   beforeEach(function(){
     config = {
@@ -15,11 +15,12 @@ describe('JasmineTestRunner', function() {
       browsers: ['PhantomJS'],
       singleRun: true,
 	  libs: []
+    
     };
     jasmine = new JasmineTestRunner(config);
     jasmine.setBaseTimeout(10000);
     this.sinon.stub(TestFile.prototype, 'save', function() {
-      return this._name;
+      return this.name;
     });
   });
 

@@ -5,7 +5,7 @@ var util = require('util');
 import FileUtils from '../utils/FileUtils';
 import KarmaTestRunner from './KarmaTestRunner';
 import ParserUtils from '../utils/ParserUtils';
-var TestFile = require('../TestFile');
+import TestFile from '../TestFile';
 
 /**
  * Represents a test runner for Jasmine tests using Karma.

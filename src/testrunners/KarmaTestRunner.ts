@@ -7,7 +7,7 @@ var util = require('util');
 var Server = require('karma').Server;
 import BaseTestRunner from './BaseTestRunner';
 import FileUtils from '../utils/FileUtils';
-var TestFile = require('../TestFile');
+import TestFile from '../TestFile';
 var TestResult = require('../TestResult');
 
 export default class KarmaTestRunner extends BaseTestRunner {
@@ -15,13 +15,11 @@ export default class KarmaTestRunner extends BaseTestRunner {
   protected _fileUtils = new FileUtils();
  
 
-  test(config, sourceFiles: string[], testFiles, testCompletedCallback) {
-    BaseTestRunner.prototype.test.call(this, config, sourceFiles, testFiles, testCompletedCallback);
+  test(config, sourceFiles: string[], testFiles: TestFile[], testCompletedCallback) {
+    super.test(config, sourceFiles, testFiles, testCompletedCallback);
 
     if (testFiles.length > 0) {
-      config.files = sourceFiles.concat(config.libs, _.map(testFiles, function(testFile) {
-        return testFile.getPath();
-      }));
+      config.files = sourceFiles.concat(config.libs, testFiles.map( file => file.getPath()));
 
       config.browserNoActivityTimeout = this.getTotalTimeout();
 
