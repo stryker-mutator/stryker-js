@@ -7,35 +7,38 @@ import ParserUtils from '../../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('BaseOperatorMutation', function() {
+  class MockBaseOperatorMutation extends BaseOperatorMutation {
+    constructor(){super('Mock', ['SomeType', 'SomeOtherType'], {
+      '+': '-',
+      '*': '/'
+    });
+    }
+  }
   describe('should recognize', function() {
-    it('one of its own mutation operators as a part of its mutation', function() {
+    it('one of its own mockMutation operators as a part of its mockMutation', function() {
       var node = {
         type: 'SomeType',
         operator: '+'
       };
-      //TODO: Change the creation of a new BaseOperatorMutation to the creation of a locally defined implementation of BaseOperatorMutation
-      var baseOperatorMutation = new BaseOperatorMutation('name', ['SomeOtherType', node.type], {
-        '+': '-'
-      });
+      
+      var mockMutation = new MockBaseOperatorMutation();
 
-      var recognized = baseOperatorMutation.canMutate(node);
+      var recognized = mockMutation.canMutate(node);
 
       expect(recognized).to.equal(true);
     });
   });
 
   describe('should not recognize', function() {
-    it('an unknown mutation operator', function() {
+    it('an unknown mockMutation operator', function() {
       var node = {
         type: 'SomeType',
         operator: 'some operator which should not be known to the BaseOperatorMutation'
       };
-      //TODO: Change the creation of a new BaseOperatorMutation to the creation of a locally defined implementation of BaseOperatorMutation
-      var baseOperatorMutation = new BaseOperatorMutation('name', [node.type], {
-        '+': '-'
-      });
+      
+      var mockMutation = new MockBaseOperatorMutation();
 
-      var recognized = baseOperatorMutation.canMutate(node);
+      var recognized = mockMutation.canMutate(node);
 
       expect(recognized).to.equal(false);
     });
@@ -45,12 +48,10 @@ describe('BaseOperatorMutation', function() {
         type: 'SomeDifferentType',
         operator: '+'
       };
-      //TODO: Change the creation of a new BaseOperatorMutation to the creation of a locally defined implementation of BaseOperatorMutation
-      var baseOperatorMutation = new BaseOperatorMutation('name', ['SomeType'], {
-        '+': '-'
-      });
+      
+      var mockMutation = new MockBaseOperatorMutation();
 
-      var recognized = baseOperatorMutation.canMutate(node);
+      var recognized = mockMutation.canMutate(node);
 
       expect(recognized).to.equal(false);
     });
@@ -60,14 +61,12 @@ describe('BaseOperatorMutation', function() {
     this.sinon.stub(Mutant.prototype, 'save');
     var code = 'var i = 5 * 3;';
     var column = 11;
-    //TODO: Change the creation of a new BaseOperatorMutation to the creation of a locally defined implementation of BaseOperatorMutation
-    var baseOperatorMutation = new BaseOperatorMutation('name', ['SomeType'], {
-      '*': '/'
-    });
+    var mockMutation = new MockBaseOperatorMutation();
     var parserUtils = new ParserUtils();
     var ast = parserUtils.parse(code);
     var node = ast.body[0].declarations[0].init;
-    var mutants = baseOperatorMutation.applyMutation('hello.js', code, node, ast);
+    
+    var mutants = mockMutation.applyMutation('hello.js', code, node, ast);
     var actualColumn = mutants[0].getColumnNumber();
 
     expect(actualColumn).to.equal(column);
