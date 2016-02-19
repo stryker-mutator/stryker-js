@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var ReporterFactory = require('../../src/ReporterFactory');
+import ReporterFactory from '../../src/ReporterFactory';
 import ConsoleReporter from '../../src/reporters/ConsoleReporter';
 
 describe('ReporterFactory', function() {
