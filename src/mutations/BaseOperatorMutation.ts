@@ -30,7 +30,7 @@ abstract class BaseOperatorMutation extends BaseMutation {
     node.operator = this.getOperator(node.operator);
 
     var parserUtils = new ParserUtils();
-    var lineOfCode = parserUtils.generate(node);
+    var lineOfCode = parserUtils.generate(node, originalCode);
     // Use native indexOf because the operator may be multiple characters.
     var columnNumber = (lineOfCode.indexOf(node.operator) + 1) + node.loc.start.column;
     mutants.push(new Mutant(filename, originalCode, this, ast, node, columnNumber));
