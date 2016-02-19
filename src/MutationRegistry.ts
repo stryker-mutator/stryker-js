@@ -4,9 +4,9 @@ var _ = require('lodash');
 import ConditionalBoundayMutation from './mutations/ConditionalBoundayMutation';
 import MathMutation from './mutations/MathMutation';
 import RemoveConditionalsMutation from './mutations/RemoveConditionalsMutation';
-var ReverseConditionalMutation = require('./mutations/ReverseConditionalMutation');
+import ReverseConditionalMutation from './mutations/ReverseConditionalMutation';
 import TypeUtils from './utils/TypeUtils';
-var UnaryOperatorMutation = require('./mutations/UnaryOperatorMutation');
+import UnaryOperatorMutation from './mutations/UnaryOperatorMutation';
 
 /**
  * Represents a provider for all types of mutations.
