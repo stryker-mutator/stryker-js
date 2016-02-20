@@ -4,6 +4,8 @@ var _ = require('lodash');
 var chalk = require('chalk');
 var util = require('util');
 import BaseReporter from './BaseReporter';
+import Mutant from '../Mutant';
+import TestFile from '../TestFile';
 
 /**
  * Represents a reporter which logs output to the console.
@@ -16,7 +18,7 @@ export default class ConsoleReporter extends BaseReporter {
    * @function
    * @param {Mutant} mutant - The tested Mutant.
    */
-  mutantTested(mutant) {
+  mutantTested(mutant:Mutant) {
     BaseReporter.prototype.mutantTested.call(this, mutant);
     var mutantStatus = '';
     if (mutant.hasStatusKilled()) {
@@ -35,14 +37,14 @@ export default class ConsoleReporter extends BaseReporter {
    * @function
    * @param {Mutant[]} mutants - The tested Mutants.
    */
-  allMutantsTested(mutants) {
+  allMutantsTested(mutants: Mutant[]) {
     BaseReporter.prototype.allMutantsTested.call(this, mutants);
     process.stdout.write('\n'); // Write a newline character to end the string of mutant statusses.
 
     var mutantsKilled = 0;
     var mutantsTimedOut = 0;
     var mutantsUntested = 0;
-    _.forEach(mutants, function(mutant) {
+    _.forEach(mutants, function(mutant: Mutant) {
       if (mutant.hasStatusKilled()) {
         mutantsKilled++;
       } else if (mutant.hasStatusTimedOut()) {
@@ -56,7 +58,7 @@ export default class ConsoleReporter extends BaseReporter {
         console.log('\n');
         console.log('Tests ran: ');
         var testsRan = mutant.getTestsRan();
-        _.forEach(testsRan, function(test) {
+        _.forEach(testsRan, function(test: TestFile) {
           console.log('    ' + test.getName());
         });
         console.log('\n');
@@ -84,9 +86,7 @@ export default class ConsoleReporter extends BaseReporter {
    * @param {String} score - The mutation score.
    * @returns {Function} The function which can give the mutation score the right color.
    */
-  private getColorForMutationScore(score) {
-    this._typeUtils.expectParameterString(score, 'BaseReporter', 'score');
-
+  private getColorForMutationScore(score: string) {
     var color;
     if (score > 80) {
       color = chalk.green;

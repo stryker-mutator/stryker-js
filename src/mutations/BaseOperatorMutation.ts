@@ -18,15 +18,14 @@ abstract class BaseOperatorMutation extends BaseMutation {
    */
   constructor(name: string, types: string[], operators) {
     super(name, types);
-    this._typeUtils.expectParameterObject(operators, 'BaseOperatorMutation', 'operators');
+    //TODO Create type for operators
 
     this._operators = operators;
   }
 
   applyMutation(filename: string, originalCode: string, node, ast) {
-    super.applyMutation(filename, originalCode, node, ast);
     var originalOperator = node.operator;
-    var mutants = [];
+    var mutants: Mutant[] = [];
     node.operator = this.getOperator(node.operator);
 
     var parserUtils = new ParserUtils();
@@ -41,7 +40,6 @@ abstract class BaseOperatorMutation extends BaseMutation {
   }
 
   canMutate(node) {
-    super.canMutate(node);
     return !!(node && _.indexOf(this._types, node.type) >= 0 && this.getOperator(node.operator));
   }
 

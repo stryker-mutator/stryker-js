@@ -15,10 +15,9 @@ export default class RemoveConditionalsMutation extends BaseMutation {
   }
 
   applyMutation(filename: string, originalCode: string, node, ast) {
-    super.applyMutation(filename, originalCode, node, ast);
     var originalTest = node.test;
 
-    var mutants = [];
+    var mutants: Mutant[] = [];
     node.test = {
       type: 'Literal',
       value: false,
@@ -37,7 +36,6 @@ export default class RemoveConditionalsMutation extends BaseMutation {
   };
 
   canMutate(node) {
-    super.canMutate(node);
     return !!(node && _.indexOf(this._types, node.type) >= 0);
   };
 

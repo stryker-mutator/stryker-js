@@ -1,31 +1,26 @@
 'use strict';
 
-import TypeUtils from '../utils/TypeUtils';
+import Mutant from '../Mutant';
 
 /**
  * Represents the base reporter as a blueprint for all reporters.
  * @constructor
  */
 export default class BaseReporter {
-  
-  _typeUtils = new TypeUtils();  
+  //TODO Change this class to an interface or abstract class (All other 'base' classes are abstract classes)
   
   /**
    * Reports on a single Mutant which has been tested.
    * @function
    * @param {Mutant} mutant - The tested Mutant.
    */
-  mutantTested(mutant) {
-    this._typeUtils.expectParameterObject(mutant, 'BaseReporter', 'mutant');
-  };
+  mutantTested(mutant: Mutant) {}
 
   /**
    * Reports on all tested Mutants.
    * @function
    * @param {Mutant[]} mutants - The tested Mutants.
    */
-  allMutantsTested(mutants) {
-    this._typeUtils.expectParameterArray(mutants, 'BaseReporter', 'mutants');
-  };
+  allMutantsTested(mutants: Mutant[]) {}
 }
 

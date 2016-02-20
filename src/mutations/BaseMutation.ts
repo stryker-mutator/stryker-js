@@ -1,13 +1,11 @@
 'use strict';
 
-import TypeUtils from '../utils/TypeUtils';
+import Mutant from '../Mutant';
 
 
 abstract class BaseMutation {
-
-  _typeUtils;
-  _name;
-  _types;
+  _name: string;
+  _types: string[];
     
   /**
    * Represents a base class for all mutations.
@@ -16,10 +14,6 @@ abstract class BaseMutation {
    * @param {String[]} types - The types of mutation as expected by the parser.
    */
   constructor(name: string, types: string[]) {
-    this._typeUtils = new TypeUtils();
-    this._typeUtils.expectParameterString(name, 'BaseMutation', 'name');
-    this._typeUtils.expectParameterArray(types, 'BaseMutation', 'types');
-
     this._name = name;
     this._types = types;
   }
@@ -33,13 +27,7 @@ abstract class BaseMutation {
    * @param {Object} ast - The complete abstract syntax tree.
    * @returns {Mutant[]} The generated Mutants.
    */
-  applyMutation(filename: string, originalCode: string, node, ast) {
-    this._typeUtils.expectParameterString(filename, 'BaseMutation', 'filename');
-    this._typeUtils.expectParameterString(originalCode, 'BaseMutation', 'originalCode');
-    this._typeUtils.expectParameterObject(node, 'BaseMutation', 'node');
-    this._typeUtils.expectParameterObject(ast, 'BaseMutation', 'ast');
-    return;
-  }
+  abstract applyMutation(filename: string, originalCode: string, node, ast): Mutant[];
 
   /**
    * Checks if this mutation can be applied to the provided node.
@@ -47,10 +35,7 @@ abstract class BaseMutation {
    * @param {Object} node - A part of the abstract syntax tree.
    * @returns {Boolean} True if the mutation can be applied.
    */
-  canMutate(node): boolean {
-    this._typeUtils.expectParameterObject(node, 'BaseMutation', 'node');
-    return false;
-  }
+  abstract canMutate(node): boolean;
 
   /**
    * Gets the name of the mutation.
@@ -69,6 +54,6 @@ abstract class BaseMutation {
   getTypes(): string[] {
     return this._types;
   }
-
 }
+
 export default BaseMutation;
