@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+import BaseMutation from './mutations/BaseMutation';
 import ConditionalBoundayMutation from './mutations/ConditionalBoundayMutation';
 import MathMutation from './mutations/MathMutation';
 import RemoveConditionalsMutation from './mutations/RemoveConditionalsMutation';
@@ -8,44 +9,45 @@ import ReverseConditionalMutation from './mutations/ReverseConditionalMutation';
 import TypeUtils from './utils/TypeUtils';
 import UnaryOperatorMutation from './mutations/UnaryOperatorMutation';
 
-/**
- * Represents a provider for all types of mutations.
- * @constructor
- */
-function MutationRegistry() {
-  this._typeUtils = new TypeUtils();
-  this.mutations = [
-    new ConditionalBoundayMutation(),
-    new MathMutation(),
-    new RemoveConditionalsMutation(),
-    new ReverseConditionalMutation(),
-    new UnaryOperatorMutation()
-  ];
+
+export default class MutationRegistry {
+
+  mutations: BaseMutation[];
+  /**
+   * Represents a provider for all types of mutations.
+   * @constructor
+   */
+  constructor() {
+    this.mutations = [
+      new ConditionalBoundayMutation(),
+      new MathMutation(),
+      new RemoveConditionalsMutation(),
+      new ReverseConditionalMutation(),
+      new UnaryOperatorMutation()
+    ];
+  }
+
+  /**
+   * Gets all supported Mutations.
+   * @function
+   * @returns {BaseMutation[]} All supported Mutations.
+   */
+  getAllMutations(): BaseMutation[] {
+    return this.mutations;
+  };
+
+  /**
+   * Gets a specific Mutation.
+   * @function
+   * @param {String} name - The name of the Mutation
+   * @returns {BaseMutation} The requested Mutation. Undefined if no Mutation with the provided name was found.
+   */
+  getMutation(name: string): BaseMutation {
+    var index = _.findIndex(this.mutations, function(mutation) {
+      return mutation.getName() === name;
+    });
+
+    return this.mutations[index];
+  }
+
 }
-
-/**
- * Gets all supported Mutations.
- * @function
- * @returns {Mutation[]} All supported Mutations.
- */
-MutationRegistry.prototype.getAllMutations = function() {
-  return this.mutations;
-};
-
-/**
- * Gets a specific Mutation.
- * @function
- * @param {String} name - The name of the Mutation
- * @returns {Mutation} The requested Mutation. Undefined if no Mutation with the provided name was found.
- */
-MutationRegistry.prototype.getMutation = function(name) {
-  this._typeUtils.expectParameterString(name, 'MutationRegistry', 'name');
-
-  var index = _.findIndex(this.mutations, function(mutation) {
-    return mutation.getName() === name;
-  });
-
-  return this.mutations[index];
-};
-
-module.exports = MutationRegistry;

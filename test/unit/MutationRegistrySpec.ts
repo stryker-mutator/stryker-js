@@ -2,7 +2,7 @@
 
 var expect = require('chai').expect;
 import MathMutation from '../../src/mutations/MathMutation';
-var MutationRegistry = require('../../src/MutationRegistry');
+import MutationRegistry from '../../src/MutationRegistry';
 
 describe('MutationRegistry', function() {
   var mutationRegistry;

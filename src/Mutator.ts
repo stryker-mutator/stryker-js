@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 import FileUtils from './utils/FileUtils';
-var MutationRegistry = require('./MutationRegistry');
+import MutationRegistry from './MutationRegistry';
 import ParserUtils from './utils/ParserUtils';
 import TypeUtils from './utils/TypeUtils';
 import AbstractSyntaxTreeNode from './AbstractSyntaxTreeNode';
