@@ -66,10 +66,10 @@ export default class ConsoleReporter extends BaseReporter {
       }
     });
 
-    var mutationScoreCodebase: number = (((mutantsKilled + mutantsTimedOut) / mutants.length) * 100).toFixed(2);
-    var mutationScoreCodeCoverage = (((mutantsKilled + mutantsTimedOut) / (mutants.length - mutantsUntested)) * 100).toFixed(2);
-    var codebaseColor = this.getColorForMutationScore(mutationScoreCodebase);
-    var codecoverageColor = this.getColorForMutationScore(mutationScoreCodeCoverage);
+    var mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / mutants.length) * 100).toFixed(2);
+    var mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / (mutants.length - mutantsUntested)) * 100).toFixed(2);
+    var codebaseColor = this.getColorForMutationScore(+mutationScoreCodebase);
+    var codecoverageColor = this.getColorForMutationScore(+mutationScoreCodeCoverage);
 
     console.log((mutants.length - mutantsUntested) + ' mutants tested.');
     console.log(mutantsUntested + ' mutants untested.');
