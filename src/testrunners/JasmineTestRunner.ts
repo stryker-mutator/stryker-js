@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('lodash');
-var util = require('util');
 import FileUtils from '../utils/FileUtils';
 import KarmaTestRunner from './KarmaTestRunner';
 import ParserUtils from '../utils/ParserUtils';

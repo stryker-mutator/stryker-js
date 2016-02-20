@@ -2,7 +2,6 @@
 
 var _ = require('lodash');
 var chalk = require('chalk');
-var util = require('util');
 import BaseReporter from './BaseReporter';
 import Mutant from '../Mutant';
 import TestFile from '../TestFile';
@@ -67,7 +66,7 @@ export default class ConsoleReporter extends BaseReporter {
       }
     });
 
-    var mutationScoreCodebase = (((mutantsKilled + mutantsTimedOut) / mutants.length) * 100).toFixed(2);
+    var mutationScoreCodebase: number = (((mutantsKilled + mutantsTimedOut) / mutants.length) * 100).toFixed(2);
     var mutationScoreCodeCoverage = (((mutantsKilled + mutantsTimedOut) / (mutants.length - mutantsUntested)) * 100).toFixed(2);
     var codebaseColor = this.getColorForMutationScore(mutationScoreCodebase);
     var codecoverageColor = this.getColorForMutationScore(mutationScoreCodeCoverage);
@@ -83,10 +82,10 @@ export default class ConsoleReporter extends BaseReporter {
   /**
    * Gets the color associated with a mutation score.
    * @function
-   * @param {String} score - The mutation score.
+   * @param {number} score - The mutation score.
    * @returns {Function} The function which can give the mutation score the right color.
    */
-  private getColorForMutationScore(score: string) {
+  private getColorForMutationScore(score: number) {
     var color;
     if (score > 80) {
       color = chalk.green;

@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('lodash');
-var util = require('util');
 import BaseMutation from './BaseMutation';
 import Mutant from '../Mutant';
 

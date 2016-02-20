@@ -3,7 +3,6 @@
 var _ = require('lodash');
 var fork = require('child_process').fork;
 var path = require('path');
-var util = require('util');
 var Server = require('karma').Server;
 import BaseTestRunner from './BaseTestRunner';
 import FileUtils from '../utils/FileUtils';
