@@ -2,14 +2,14 @@
 
 var expect = require('chai').expect;
 import ConsoleReporter from '../../../src/reporters/ConsoleReporter';
-var MathMutation = require('../../../src/mutations/MathMutation');
+import MathMutation from '../../../src/mutations/MathMutation';
 import Mutant from '../../../src/Mutant';
 import ParserUtils from '../../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('ConsoleReporter', function() {
-  var consoleReporter;
-  var mutant;
+  var consoleReporter: ConsoleReporter;
+  var mutant: Mutant;
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save');
@@ -25,6 +25,8 @@ describe('ConsoleReporter', function() {
     consoleReporter = new ConsoleReporter();
     mutant = new Mutant('a.js', originalCode, new MathMutation(), ast, ast.body[0].declarations[0].init, 1);
   });
+  
+  
 /*
   it('should log the mutant if it has the correct status', function() {
     mutant.setStatusSurvived();
