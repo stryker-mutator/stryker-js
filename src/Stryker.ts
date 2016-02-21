@@ -4,17 +4,18 @@ var _ = require('lodash');
 var program = require('commander');
 import FileUtils from './utils/FileUtils';
 import Mutator from './Mutator';
+import Mutant from './Mutant';
 import ReporterFactory from './ReporterFactory';
 import TestRunnerFactory from './TestRunnerFactory';
 import BaseReporter from './reporters/BaseReporter';
 import BaseTestRunner from './testrunners/BaseTestRunner';
+import TestFile from './TestFile';
 import TestResult from './TestResult';
+import StrykerOptions from './StrykerOptions';
 
 export default class Stryker {
 
-  _fileUtils: FileUtils;
-  _sourceFiles: string[];
-  _testFiles: string[];
+  _fileUtils = new FileUtils();
   _reporter: BaseReporter;
   _testRunner: BaseTestRunner;
 
@@ -28,32 +29,33 @@ export default class Stryker {
    * @param {Number} [options].[timeoutFactor] - A factor which is applied to the timeout.
    * @param {Boolean} [options].[individualTests] - Indicates whether the tests in test files should be split up, possibly resulting in faster mutation testing.
    */
-  constructor(sourceFiles: string[], testFiles: string[], options = {}) {
-    //TODO: Create the `Options` type.
-
-    this._fileUtils = new FileUtils();
+  constructor(private sourceFiles: string[], private testFiles: string[], options?: StrykerOptions) {
     this._fileUtils.normalize(sourceFiles);
     this._fileUtils.normalize(testFiles);
     this._fileUtils.createBaseTempFolder();
 
-  
-    //TODO: Create the `TestRunnerConfig` type.
-    var testRunnerConfig = {
-      libs: options.libs || [],
-      timeoutMs: Number(options.timeoutMs) || 3000,
-      timeoutFactor: Number(options.timeoutFactor) || 1.25,
-      individualTests: options.individualTests || false
-    };
-
-    this._fileUtils.normalize(testRunnerConfig.libs);
+    if (options) {
+      options = {
+        libs: options.libs || [],
+        timeoutMs: options.timeoutMs || 3000,
+        timeoutFactor: options.timeoutFactor || 1.25,
+        individualTests: options.individualTests || false
+      };
+    } else {
+      options = {
+        libs: [],
+        timeoutMs: 3000,
+        timeoutFactor: 1.25,
+        individualTests: false
+      };
+    }
+    this._fileUtils.normalize(options.libs);
 
     var reporterFactory = new ReporterFactory();
     var testRunnerFactory = new TestRunnerFactory();
 
-    this._sourceFiles = sourceFiles;
-    this._testFiles = testFiles;
     this._reporter = reporterFactory.getReporter('console');
-    this._testRunner = testRunnerFactory.getTestRunner('jasmine', testRunnerConfig);
+    this._testRunner = testRunnerFactory.getTestRunner('jasmine', options);
   }
 
   /**
@@ -61,32 +63,31 @@ export default class Stryker {
    * @function
    */
   runMutationTest(cb: () => void) {
-    var that = this;
     console.log('INFO: Running initial test run');
-    this._testRunner.testAndCollectCoverage(this._sourceFiles, this._testFiles, function(testResults) {
-      if (that._allTestsSuccessful(testResults)) {
+    this._testRunner.testAndCollectCoverage(this.sourceFiles, this.testFiles, (testResults: TestResult[]) => {
+      if (this._allTestsSuccessful(testResults)) {
         console.log('INFO: Initial test run succeeded');
         var mutator = new Mutator();
-        var mutants = mutator.mutate(that._sourceFiles);
+        var mutants = mutator.mutate(this.sourceFiles);
         console.log('INFO: ' + mutants.length + ' Mutants generated');
 
-        var testFilesToRemove = [];
-        _.forEach(testResults, function(testResult) {
+        var testFilesToRemove: TestFile[] = [];
+        _.forEach(testResults, (testResult: TestResult) => {
           testFilesToRemove = testFilesToRemove.concat(testResult.getTestFiles());
         });
 
-        that._testRunner.testMutants(mutants, that._sourceFiles, testResults,
-          function(mutant) {
+        this._testRunner.testMutants(mutants, this.sourceFiles, testResults,
+          (mutant: Mutant) => {
             // Call the reporter like this instead of passing the function directly to ensure that `this` in the reporter is still the reporter.
-            that._reporter.mutantTested(mutant);
+            this._reporter.mutantTested(mutant);
           },
-          function(mutants) {
-            that._reporter.allMutantsTested(mutants);
+          (mutants: Mutant[]) => {
+            this._reporter.allMutantsTested(mutants);
 
-            _.forEach(testFilesToRemove, function(testFile) {
+            _.forEach(testFilesToRemove, (testFile: TestFile) => {
               testFile.remove();
             });
-            that._fileUtils.removeBaseTempFolder();
+            this._fileUtils.removeBaseTempFolder();
 
             if (cb) {
               cb();
@@ -105,14 +106,14 @@ export default class Stryker {
    * @returns {Boolean} True if all tests passed.
    */
   _allTestsSuccessful(testResults: TestResult[]): boolean {
-    var unsuccessfulTest = _.find(testResults, function(result) {
+    var unsuccessfulTest = _.find(testResults, (result: TestResult) => {
       return !result.getAllTestsSuccessful();
     });
     return _.isUndefined(unsuccessfulTest);
   };
 }
 (function run() {
-  function list(val) {
+  function list(val: string) {
     return val.split(',');
   }
   program
@@ -126,14 +127,14 @@ export default class Stryker {
     .parse(process.argv);
 
   if (program.src && program.tests) {
-    var options = {
+    var options: StrykerOptions = {
       libs: program.libs,
-      timeoutMs: program.timeoutMs,
-      timeoutFactor: program.timeoutFactor,
+      timeoutMs: Number(program.timeoutMs),
+      timeoutFactor: Number(program.timeoutFactor),
       individualTests: program.individualTests
     };
 
     var stryker = new Stryker(program.src, program.tests, options);
-    stryker.runMutationTest(function(){});
+    stryker.runMutationTest(function() { });
   }
 })();
