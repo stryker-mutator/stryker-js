@@ -2,10 +2,10 @@
 
 var _ = require('lodash');
 var expect = require('chai').expect;
-var JasmineTestRunner = require('../../../src/testrunners/JasmineTestRunner');
-var TestFile = require('../../../src/TestFile');
-var TestResult = require('../../../src/TestResult');
-var FileUtils = require('../../../src/utils/FileUtils');
+import JasmineTestRunner from '../../../src/testrunners/JasmineTestRunner';
+import TestFile from '../../../src/TestFile';
+import TestResult from '../../../src/TestResult';
+import FileUtils from '../../../src/utils/FileUtils';
 require('mocha-sinon');
 
 describe('JasmineTestRunner', function() {

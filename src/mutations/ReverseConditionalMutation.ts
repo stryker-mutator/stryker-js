@@ -1,26 +1,19 @@
 'use strict';
 
-var util = require('util');
-var BaseOperatorMutation = require('./BaseOperatorMutation.js');
+import BaseOperatorMutation from './BaseOperatorMutation';
 
-function ReverseConditionalMutation() {
-  BaseOperatorMutation.call(
-    this,
-    'ReverseConditional', ['BinaryExpression', 'LogicalExpression'], {
-      '==': '!=',
-      '!=': '==',
-      '===': '!==',
-      '!==': '===',
-      '<=': '>',
-      '>=': '<',
-      '<': '>=',
-      '>': '<=',
-      '&&': '||',
-      '||': '&&'
-    }
-  );
+export default class ReverseConditionalMutation extends BaseOperatorMutation {
+  constructor(){
+    super('ReverseConditional', ['BinaryExpression', 'LogicalExpression'], {
+        '==': '!=',
+        '!=': '==',
+        '===': '!==',
+        '!==': '===',
+        '<=': '>',
+        '>=': '<',
+        '<': '>=',
+        '>': '<=',
+        '&&': '||',
+        '||': '&&'}); 
+  }
 }
-
-util.inherits(ReverseConditionalMutation, BaseOperatorMutation);
-
-module.exports = ReverseConditionalMutation;

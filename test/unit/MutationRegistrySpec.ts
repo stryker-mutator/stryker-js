@@ -1,13 +1,13 @@
 'use strict';
 
 var expect = require('chai').expect;
-  var MathMutation = require('../../src/mutations/MathMutation.js');
-var MutationRegistry = require('../../src/MutationRegistry');
+import MathMutation from '../../src/mutations/MathMutation';
+import MutationRegistry from '../../src/MutationRegistry';
 
 describe('MutationRegistry', function() {
   var mutationRegistry;
 
-  beforeEach(function(){
+  beforeEach(function() {
     mutationRegistry = new MutationRegistry();
   });
 

@@ -1,9 +1,9 @@
 'use strict';
 
 var expect = require('chai').expect;
-var Mutant = require('../../src/Mutant');
-var MathMutation = require('../../src/mutations/MathMutation');
-var ParserUtils = require('../../src/utils/ParserUtils');
+import Mutant from '../../src/Mutant';
+import MathMutation from '../../src/mutations/MathMutation';
+import ParserUtils from '../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('Mutant', function() {
@@ -99,42 +99,6 @@ describe('Mutant', function() {
   });
 
   describe('should throw an error', function() {
-    it('if the parameter filename is not provided', function() {
-      expect(function() {
-        new Mutant();
-      }).to.throw(Error);
-    });
-
-    it('if the parameter originalCode is not provided', function() {
-      expect(function() {
-        new Mutant(filename);
-      }).to.throw(Error);
-    });
-
-    it('if the parameter mutation is not provided', function() {
-      expect(function() {
-        new Mutant(filename, originalCode);
-      }).to.throw(Error);
-    });
-
-    it('if the parameter ast is not provided', function() {
-      expect(function() {
-        new Mutant(filename, originalCode, mutation);
-      }).to.throw(Error);
-    });
-
-    it('if the parameter node is not provided', function() {
-      expect(function() {
-        new Mutant(filename, originalCode, mutation, ast);
-      }).to.throw(Error);
-    });
-
-    it('if the parameter columnNumber is not provided', function() {
-      expect(function() {
-        new Mutant(filename, originalCode, mutation, ast, node);
-      }).to.throw(Error);
-    });
-
     it('if no sourceFiles are provided to insertMutatedFile', function() {
       expect(mutant.insertMutatedFile).to.throw(Error);
     });

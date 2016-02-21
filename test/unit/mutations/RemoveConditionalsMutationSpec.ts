@@ -1,9 +1,9 @@
 'use strict';
 
 var expect = require('chai').expect;
-var Mutant = require('../../../src/Mutant');
-var RemoveConditionalsMutation = require('../../../src/mutations/RemoveConditionalsMutation');
-var ParserUtils = require('../../../src/utils/ParserUtils');
+import Mutant from '../../../src/Mutant';
+import RemoveConditionalsMutation from '../../../src/mutations/RemoveConditionalsMutation';
+import ParserUtils from '../../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('RemoveConditionalsMutation', function() {

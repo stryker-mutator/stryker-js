@@ -1,8 +1,8 @@
 'use strict';
 
 var expect = require('chai').expect;
-var FileUtils = require('../../src/utils/FileUtils');
-var TestFile = require('../../src/TestFile');
+import FileUtils from '../../src/utils/FileUtils';
+import TestFile from '../../src/TestFile';
 require('mocha-sinon');
 
 describe('TestFile', function() {
@@ -23,20 +23,6 @@ describe('TestFile', function() {
     testName = 'Test should pass if all parameters are provided';
     content = 'console.log("Hello world!");';
     testFile = new TestFile(testName, content);
-  });
-
-  describe('should throw an error', function() {
-    it('if the parameter name is not provided', function() {
-      expect(function() {
-        new TestFile();
-      }).to.throw(Error);
-    });
-
-    it('if the parameter content is not a String', function() {
-      expect(function() {
-        new TestFile('path.js', [1, 2]);
-      }).to.throw(Error);
-    });
   });
 
   describe('should set', function() {

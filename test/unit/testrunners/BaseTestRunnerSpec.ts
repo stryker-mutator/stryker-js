@@ -1,12 +1,14 @@
 'use strict';
 
 var expect = require('chai').expect;
-var BaseTestRunner = require('../../../src/testrunners/BaseTestRunner');
+import BaseTestRunner from '../../../src/testrunners/BaseTestRunner';
 
 describe('BaseTestRunner', function() {
+  class MockTestRunner extends BaseTestRunner {}
+  
   var testRunner;
   beforeEach(function() {
-    testRunner = new BaseTestRunner({});
+    testRunner = new MockTestRunner({});
     testRunner.setBaseTimeout(0);
     testRunner.setTimeoutMs(0);
     testRunner.setTimeoutFactor(1.0);
