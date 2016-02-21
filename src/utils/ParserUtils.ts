@@ -86,7 +86,7 @@ export default class ParserUtils {
    * @param orignalCode - The original code of the ast.
    * @returns The generated code.
    */
-  public generate (ast, originalCode: string): string {
+  public generate (ast, originalCode?: string): string {
     this._typeUtils.expectParameterObject(ast, 'ParserUtils', 'ast');
 
     this._escodegenOptions.sourceCode = originalCode || this._escodegenOptions.sourceCode;

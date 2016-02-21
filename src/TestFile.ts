@@ -18,7 +18,7 @@ export default class TestFile {
    * @param name - The name or path of the test file which may be shown by a reporter.
    * @param content - The content of the test file.
    */
-  constructor(private name: string, private content: string) {
+  constructor(private name: string, private content?: string) {
     this._typeUtils.expectParameterString(name, 'BaseTestRunner', 'name');
     if (content) {
       this._typeUtils.expectParameterString(content, 'BaseTestRunner', 'content');
