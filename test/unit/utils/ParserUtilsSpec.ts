@@ -5,7 +5,7 @@ import ParserUtils from '../../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('ParserUtils', function() {
-  var parserUtils;
+  var parserUtils: ParserUtils;
 
   beforeEach(function() {
     parserUtils = new ParserUtils();

@@ -7,7 +7,7 @@ import Mutator from '../../src/Mutator';
 require('mocha-sinon');
 
 describe('Mutator', function() {
-  var mutator;
+  var mutator: Mutator;
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save');

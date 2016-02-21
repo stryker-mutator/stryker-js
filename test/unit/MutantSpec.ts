@@ -7,14 +7,14 @@ import ParserUtils from '../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('Mutant', function() {
-  var mutant;
-  var filename;
-  var mutation;
-  var originalLine;
-  var originalCode;
-  var mutatedLine;
-  var mutatedCode;
-  var lineNumber;
+  var mutant: Mutant;
+  var filename: string;
+  var mutation: MathMutation;
+  var originalLine: string;
+  var originalCode: string;
+  var mutatedLine: string;
+  var mutatedCode: string;
+  var lineNumber: number;
   var ast;
   var node;
 
