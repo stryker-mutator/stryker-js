@@ -43,7 +43,7 @@ export default class MutationRegistry {
    * @returns {BaseMutation} The requested Mutation. Undefined if no Mutation with the provided name was found.
    */
   getMutation(name: string): BaseMutation {
-    var index = _.findIndex(this.mutations, function(mutation) {
+    var index = _.findIndex(this.mutations, function(mutation: BaseMutation) {
       return mutation.getName() === name;
     });
 
