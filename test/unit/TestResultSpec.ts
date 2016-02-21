@@ -8,10 +8,10 @@ import TestResult from '../../src/TestResult';
 require('mocha-sinon');
 
 describe("TestResult", function() {
-  var testResult;
-  var mutant;
+  var testResult: TestResult;
+  var mutant: Mutant;
 
-  var getTestResult = function(nrSucceeded, nrFailed, timedOut, error){
+  var getTestResult = function(nrSucceeded: number, nrFailed: number, timedOut: boolean, error: boolean){
     return new TestResult(['a.js'], [], nrSucceeded, nrFailed, timedOut, error, 1000);
   };
 
