@@ -65,12 +65,12 @@ export default class TypeUtils {
    * @param {String} className - The name of the class
    * @param {String} parameterName - The name of the parameter
    */
-  private _expectParameterType(obj, type: string, className: string, parameterName: string) {
+  private _expectParameterType(obj: any, type: string, className: string, parameterName: string) {
     if (!this._isType(obj, type)) {
       throw new Error(className + ': parameter `' + parameterName + '`: expected type ' + type + ' but got ' + this._getType(obj));
     }
   };
-  expectParameterArray<T>(array: Array<T>, className: string, parameterName) {
+  expectParameterArray<T>(array: Array<T>, className: string, parameterName: string) {
     return this._expectParameterType(array, this._arrayType, className, parameterName);
   };
 
