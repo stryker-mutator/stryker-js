@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 import fs = require('fs');
 import os = require('os');
 import path = require('path');
@@ -17,14 +17,14 @@ export default class FileUtils {
   /**
    * Creates the temp directory for Stryker.
    */
-  public createBaseTempFolder() {
+  public createBaseTempFolder() : void {
     this.createDirectory(this._baseTempFolder);
   };
 
   /**
    * Removes the temp directory for Stryker and all subsequent files and folders.
    */
-  public removeBaseTempFolder() {
+  public removeBaseTempFolder() : void {
     this.removeFolderRecursively(this._baseTempFolder);
   };
 
@@ -32,7 +32,7 @@ export default class FileUtils {
    * Removes a folder recursively.
    * @param dirname - The path to the directory.
    */
-  public removeFolderRecursively (dirname: string) {
+  public removeFolderRecursively (dirname: string): void {
     this._typeUtils.expectParameterString(dirname, 'FileUtils', 'dirname');
 
     // Source: https://gist.github.com/tkihira/2367067
@@ -41,7 +41,7 @@ export default class FileUtils {
       var filename = path.join(dirname, list[i]);
       var stat = fs.statSync(filename);
 
-      if (filename == "." || filename == "..") {
+      if (filename === "." || filename === "..") {
         // pass these files
       } else if (stat.isDirectory()) {
         // rmdir recursively
