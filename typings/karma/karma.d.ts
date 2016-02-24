@@ -55,6 +55,14 @@ declare module 'karma' {
         interface Runner {
             run(options?: ConfigOptions|ConfigFile, callback?: ServerCallback): void;
         }
+        
+        interface TestResults{
+          disconnect: boolean;
+          error: boolean;
+          exitCode: number;
+          failed: number;
+          success: number;
+        }
 
         interface Server extends NodeJS.EventEmitter {
             new(options?: ConfigOptions|ConfigFile, callback?: ServerCallback): Server;
@@ -71,6 +79,9 @@ declare module 'karma' {
              * Force a refresh of the file list
              */
             refreshFiles(): Promise<any>;
+            
+            on(event: string, listener: Function): Server;
+            on(event: 'run_complete', listener: (browsers: any, results: TestResults ) => void): Server;
 
             ///**
             // * Backward-compatibility with karma-intellij bundled with WebStorm.
