@@ -57,7 +57,7 @@ declare module 'karma' {
         }
         
         interface TestResults{
-          disconnect: boolean;
+          disconnected: boolean;
           error: boolean;
           exitCode: number;
           failed: number;
@@ -202,7 +202,7 @@ declare module 'karma' {
              * @default []
              * @description List of files/patterns to load in the browser.
              */
-            files?: (FilePattern|string)[];
+            files?: (/*FilePattern|*/string)[];
             /**
              * @default []
              * @description List of test frameworks you want to use. Typically, you will set this to ['jasmine'], ['mocha'] or ['qunit']...
