@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 import BaseMutation from './mutations/BaseMutation';
 import ConditionalBoundayMutation from './mutations/ConditionalBoundayMutation';
 import MathMutation from './mutations/MathMutation';
@@ -12,7 +12,8 @@ import UnaryOperatorMutation from './mutations/UnaryOperatorMutation';
 
 export default class MutationRegistry {
 
-  mutations: BaseMutation[];
+  private mutations: BaseMutation[];
+  
   /**
    * Represents a provider for all types of mutations.
    * @constructor
