@@ -1,6 +1,7 @@
 'use strict';
 
 import JasmineTestRunner from './testrunners/JasmineTestRunner';
+import TestRunnerConfig from './testrunners/TestRunnerConfig';
 import TypeUtils from './utils/TypeUtils';
 
 /**
@@ -14,10 +15,10 @@ export default class TestRunnerFactory {
    * Gets a test runner for the provided name.
    * @function
    * @param {String} name - The name of the requested test runner.
-   * @param {Object} testRunnerConfig - The config for the test runner.
+   * @param testRunnerConfig - The config for the test runner.
    * @returns {Object} The created test runner.
    */
-  getTestRunner(name, testRunnerConfig) {
+  getTestRunner(name: string, testRunnerConfig: TestRunnerConfig) {
     this._typeUtils.expectParameterString(name, 'TestRunnerFactory', 'name');
     this._typeUtils.expectParameterObject(testRunnerConfig, 'TestRunnerFactory', 'testRunnerConfig');
 

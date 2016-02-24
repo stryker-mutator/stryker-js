@@ -7,6 +7,14 @@ import ParserUtils from './utils/ParserUtils';
 import TypeUtils from './utils/TypeUtils';
 import TestFile from './TestFile';
 
+export interface MutantTestedCallback {
+  (mutant: Mutant): void
+}
+
+export interface MutantsTestedCallback {
+  (mutants: Mutant[]): void
+}
+
 export enum MutantStatus {
   
   /**

@@ -1,8 +1,27 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
+import TestRunnerConfig from './TestRunnerConfig';
 import TestFile from '../TestFile';
 import TypeUtils from '../utils/TypeUtils';
+import * as karma from 'karma';
+import Mutant, {MutantTestedCallback, MutantsTestedCallback} from '../Mutant';
+
+import TestResult from '../TestResult';
+
+export interface  TestsCompletedCallback{
+  (testResults: TestResult[]) : void;
+}
+export interface  TestCompletedCallback{
+  (testResults: TestResult) : void;
+}
+
+export interface TestRunMetadata {
+  config: TestRunnerConfig;
+  src: string[];
+  tests: TestFile[];
+  completedCb: TestCompletedCallback;
+}
 
 abstract class BaseTestRunner {
 
@@ -10,7 +29,7 @@ abstract class BaseTestRunner {
   protected _baseTimeout = 0;
   protected _timeoutMs = 0;
   protected _timeoutFactor = 1.0;
-  protected _testQueue = [];
+  protected _testQueue: TestRunMetadata[] = [];
   protected _queuedTestsRunning = 0;
   protected _maxQueuedTests = 5;
   
@@ -20,7 +39,7 @@ abstract class BaseTestRunner {
    * @param {Object} config - The configuration for the test runner.
    * @constructor
    */
-  constructor(protected _config) {
+  constructor(protected _config: TestRunnerConfig) {
   }
   
 
@@ -38,7 +57,7 @@ abstract class BaseTestRunner {
    * @param {TestFile[]} testFiles - The tests which should be executed.
    * @param {BaseTestRunner~testCompletedCallback} testCompletedCallback - The callback which is called when the test has been completed.
    */
-  test(config, sourceFiles: string[], testFiles: TestFile[], testCompletedCallback) {
+  test(config: TestRunnerConfig, sourceFiles: string[], testFiles: TestFile[], testCompletedCallback: TestCompletedCallback) {
     this._typeUtils.expectParameterObject(config, 'BaseTestRunner', 'config');
     this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
     this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
@@ -48,18 +67,18 @@ abstract class BaseTestRunner {
   /**
    * Queues a test for execution on the provided source files.
    * @function
-   * @param {Object} config - The configuration for the test run.
-   * @param {String[]} sourceFiles - The names of the files which should be tested.
+   * @param config - The configuration for the test run.
+   * @param  sourceFiles - The names of the files which should be tested.
    * @param {TestFile[]} testFiles - The tests which should be executed.
    * @param {BaseTestRunner~testCompletedCallback} testCompletedCallback - The callback which is called when the test has been completed.
    */
-  queueTest(config, sourceFiles: string[], testFiles, testCompletedCallback) {
+  queueTest(config: TestRunnerConfig, sourceFiles: string[], testFiles: TestFile[], testCompletedCallback: TestCompletedCallback) {
     this._typeUtils.expectParameterObject(config, 'BaseTestRunner', 'config');
     this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
     this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
     this._typeUtils.expectParameterFunction(testCompletedCallback, 'BaseTestRunner', 'testCompletedCallback');
 
-    var queuedTest = {
+    var queuedTest: TestRunMetadata = {
       config: config,
       src: sourceFiles,
       tests: testFiles,
@@ -74,15 +93,14 @@ abstract class BaseTestRunner {
    * @function
    */
   tryRunningNextQueuedTest() {
-     var that = this;
 
     if (this._queuedTestsRunning < this._maxQueuedTests && this._testQueue.length > 0) {
       this._queuedTestsRunning++;
       var queuedTest = _.pullAt(this._testQueue, 0)[0];
-      this.test(queuedTest.config, queuedTest.src, queuedTest.tests, function(testResult) {
+      this.test(queuedTest.config, queuedTest.src, queuedTest.tests, (testResult: TestResult) => {
         queuedTest.completedCb(testResult);
-        that._queuedTestsRunning--;
-        that.tryRunningNextQueuedTest();
+        this._queuedTestsRunning--;
+        this.tryRunningNextQueuedTest();
       });
     }
   }
@@ -90,13 +108,13 @@ abstract class BaseTestRunner {
   /**
    * Generates TestFile instances based on a list of paths to test files.
    * @function
-   * @param {String[]} testFiles - The list of test files which have to be turned into TestFile instances.
-   * @returns {TestFile[]} The generated TestFiles.
+   * @param testFiles - The list of test files which have to be turned into TestFile instances.
+   * @returns The generated TestFiles.
    */
-  _generateTestFiles(testFiles) {
+  _generateTestFiles(testFiles: string[]): TestFile[] {
     this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
 
-    var testsToRun = [];
+    var testsToRun: TestFile[] = [];
 
     if (this._config.individualTests) {
       testsToRun = this._splitTests(testFiles);
@@ -114,26 +132,26 @@ abstract class BaseTestRunner {
   /**
    * Splits a test file into a set of TestFiles which each contain only one test.
    * @function
-   * @param {String} testFile - The name of the test file which has to be split.
-   * @returns {TestFile[]} The tests in which the testFile was split.
+   * @param  testFile - The name of the test file which has to be split.
+   * @returns The tests in which the testFile was split.
    */
-  _splitTest(testFile) {
+  _splitTest(testFile: string) : TestFile[]{
     this._typeUtils.expectParameterString(testFile, 'BaseTestRunner', 'testFile');
+    return null;
   }
 
   /**
    * Splits an array of test files into a set of TestFiles which each contain only one test.
    * @function
-   * @param {String[]} testFiles - The list of test files which have to be split.
-   * @returns {TestFile[]} The tests in which the testFile was split.
+   * @param testFiles - The list of test files which have to be split.
+   * @returns The tests in which the testFile was split.
    */
-  _splitTests(testFiles) {
+  _splitTests(testFiles: string[]): TestFile[] {
     this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
-    var that = this;
-    var individualTests = [];
+    var individualTests: TestFile[] = [];
 
-    _.forEach(testFiles, function(testFile) {
-      individualTests = individualTests.concat(that._splitTest(testFile));
+    _.forEach(testFiles, testFile => {
+      individualTests = individualTests.concat(this._splitTest(testFile));
     });
 
     return individualTests;
@@ -142,11 +160,11 @@ abstract class BaseTestRunner {
   /**
    * Executes tests on the provided source files and collects the code coverage.
    * @function
-   * @param {String[]} sourceFiles - The names of the files which should be tested.
-   * @param {String[]} testFiles - The names of the tests which should be executed.
-   * @param {BaseTestRunner~testCompletedCallback} testCompletedCallback - The callback which is called when the test has been completed.
+   * @param sourceFiles - The names of the files which should be tested.
+   * @param testFiles - The names of the tests which should be executed.
+   * @param testCompletedCallback - The callback which is called when the test has been completed.
    */
-  testAndCollectCoverage(sourceFiles: string[], testFiles: string[], testCompletedCallback) {
+  testAndCollectCoverage(sourceFiles: string[], testFiles: string[], testCompletedCallback: TestsCompletedCallback) {
     this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
     this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
     this._typeUtils.expectParameterFunction(testCompletedCallback, 'BaseTestRunner', 'testCompletedCallback');
@@ -167,13 +185,13 @@ abstract class BaseTestRunner {
   /**
    * Tests a set of mutants to see if the test suite can detect them.
    * @function
-   * @param {Mutant[]} mutants - The array with Mutant objects which have to be tested.
-   * @param {String[]} sourceFiles - The list of source files without mutations.
-   * @param {TestResult[]} testResults - The list of test results from the original test run.
-   * @param {Stryker~singleMutantTestedCallback} singleMutantTestedCallback - The callback which is called when one Mutant have been tested.
-   * @param {Stryker~allMutantsTestedCallback} allMutantsTestedCallback - The callback which is called when all Mutants have been tested.
+   * @param mutants - The array with Mutant objects which have to be tested.
+   * @param sourceFiles - The list of source files without mutations.
+   * @param testResults - The list of test results from the original test run.
+   * @param singleMutantTestedCallback - The callback which is called when one Mutant have been tested.
+   * @param allMutantsTestedCallback - The callback which is called when all Mutants have been tested.
    */
-  testMutants(mutants, sourceFiles: string[], testResults, singleMutantTestedCallback, allMutantsTestedCallback) {
+  testMutants(mutants: Mutant[], sourceFiles: string[], testResults: TestResult[], singleMutantTestedCallback: MutantTestedCallback, allMutantsTestedCallback: MutantsTestedCallback) {
     this._typeUtils.expectParameterArray(mutants, 'BaseTestRunner', 'mutants');
     this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
     this._typeUtils.expectParameterArray(testResults, 'BaseTestRunner', 'testResults');
@@ -189,7 +207,7 @@ abstract class BaseTestRunner {
       var mutatedSrc = mutant.insertMutatedFile(sourceFiles);
 
       var baseTimeout = 0;
-      var testFiles = [];
+      var testFiles: TestFile[] = [];
       _.forEach(testResultsWithCoverage, function(testResult) {
         if (testResult.coversMutant(mutant)) {
           testFiles = testFiles.concat(testResult.getTestFiles());
@@ -199,7 +217,7 @@ abstract class BaseTestRunner {
       testFiles = _.uniq(testFiles);
       that.setBaseTimeout(baseTimeout);
 
-      var config = _.cloneDeep(that._config);
+      var config: TestRunnerConfig = _.cloneDeep(that._config);
       that.queueTest(config, mutatedSrc, testFiles, function(result) {
         mutant.setTestsRan(testFiles);
 
@@ -222,10 +240,10 @@ abstract class BaseTestRunner {
     });
   }
 
-  _waitForCodeCoverage(testResults) {
+  _waitForCodeCoverage(testResults: TestResult[]) {
     this._typeUtils.expectParameterArray(testResults, 'BaseTestRunner', 'testResults');
-    var testResultsWithCoverage = [];
-    var checkIfCoverageExists = function(testResult, index) {
+    var testResultsWithCoverage: TestResult[] = [];
+    var checkIfCoverageExists = (testResult: TestResult, index: number) => {
       if (!_.isEmpty(testResult.getCoverage())) {
         testResultsWithCoverage.push(testResult);
         testResults.splice(index, 1);
@@ -245,7 +263,7 @@ abstract class BaseTestRunner {
    * @function
    * @param {Number} timeout - The new base timeout in milliseconds.
    */
-  setBaseTimeout(baseTimeout) {
+  setBaseTimeout(baseTimeout: number) {
     this._typeUtils.expectParameterNumber(baseTimeout, 'BaseTestRunner', 'baseTimeout');
     this._baseTimeout = Number(baseTimeout);
   }
