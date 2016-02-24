@@ -1,5 +1,5 @@
 import {Server, ConfigOptions, TestResults as KarmaTestResults} from 'karma';
-import TestRunResults from './TestRunResults';
+import TestsRunResults from './TestsRunResults';
 
 
 process.on('message', function(config: ConfigOptions) {
@@ -12,7 +12,7 @@ process.on('message', function(config: ConfigOptions) {
   server.on('browsers_ready', function() {
     startTime = Date.now();
   });
-  server.on('run_complete', function(browsers: any, results: TestRunResults) {
+  server.on('run_complete', function(browsers: any, results: TestsRunResults) {
     endTime = Date.now();
     results.timeSpent = endTime - startTime;
     process.send(results);

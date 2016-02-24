@@ -1,7 +1,7 @@
 
 
 interface TestsRunResults {
-  disconnect: boolean;
+  disconnected: boolean;
   error: boolean;
   exitCode: number;
   failed: number;

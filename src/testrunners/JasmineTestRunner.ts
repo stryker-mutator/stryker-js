@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 import FileUtils from '../utils/FileUtils';
-import KarmaTestRunner from './KarmaTestRunner';
+import KarmaTestRunner, {ConfigOptionsIncludingCoverage} from './KarmaTestRunner';
 import ParserUtils from '../utils/ParserUtils';
 import TestFile from '../TestFile';
 
@@ -15,9 +15,9 @@ export default class JasmineTestRunner extends KarmaTestRunner {
   
   private _parserUtils = new ParserUtils();
 
-  constructor(config) {
+  constructor(config: ConfigOptionsIncludingCoverage) {
     super(config);
-    this._config.frameworks = ['jasmine'];
+    this.karmaConfig.frameworks = ['jasmine'];
   }
 
   _splitTest(testFile) {
