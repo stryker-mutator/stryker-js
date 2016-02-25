@@ -6,22 +6,17 @@ import BaseTestRunner from './testrunners/BaseTestRunner';
 /**
  * Represents a node on the abstract syntax tree.
  * @constructor
- * @param {Object} node - The actual node.
- * @param {Object|Array} parent - The parent of the node.
- * @param {Number|String} [key] - The key of the node in the parent.
  */
 export default class AbstractSyntaxTreeNode {
 
   private _typeUtils = new TypeUtils();
-  private _node;
-  private _parent;
-  private _key;
 
-  constructor(node, parent, key) {
-
-    this._node = node;
-    this._parent = parent;
-    this._key = key;
+  /**
+   * @param node - The actual node.
+   * @param parent - The parent of the node.
+   * @param key - The key of the node in the parent.
+   */
+  constructor(private node: ESTree.Node, private parent: ESTree.Node | ESTree.Node[], private key: string| number) {
   }
 
   /**
@@ -30,16 +25,16 @@ export default class AbstractSyntaxTreeNode {
    * @returns {Object} The node.
    */
   getNode() {
-    return this._node;
+    return this.node;
   };
 
   /**
    * Gets the parent of the node.
    * @function
-   * @returns {Object|Array} The parent of the node.
+   * @returns The parent of the node.
    */
   getParent() {
-    return this._parent;
+    return this.parent;
   };
 
   /**
@@ -48,6 +43,6 @@ export default class AbstractSyntaxTreeNode {
    * @returns {Number|String} The key, which is a Number if the parent is an Array or a String if the parent is an Object..
    */
   getKey() {
-    return this._key;
+    return this.key;
   };
 }
