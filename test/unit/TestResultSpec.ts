@@ -1,8 +1,8 @@
 'use strict';
 
-var expect = require('chai').expect;
+import {expect} from 'chai';
 import Mutant from '../../src/Mutant';
-import ConditionalBoundaryMutation from '../../src/mutations/ConditionalBoundayMutation';
+import ConditionalBoundaryMutation from '../../src/mutations/ConditionalBoundaryMutation';
 import ParserUtils from '../../src/utils/ParserUtils';
 import TestResult from '../../src/TestResult';
 require('mocha-sinon');

@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 import BaseMutation from './mutations/BaseMutation';
-import ConditionalBoundayMutation from './mutations/ConditionalBoundayMutation';
+import ConditionalBoundaryMutation from './mutations/ConditionalBoundaryMutation';
 import MathMutation from './mutations/MathMutation';
 import RemoveConditionalsMutation from './mutations/RemoveConditionalsMutation';
 import ReverseConditionalMutation from './mutations/ReverseConditionalMutation';
@@ -20,7 +20,7 @@ export default class MutationRegistry {
    */
   constructor() {
     this.mutations = [
-      new ConditionalBoundayMutation(),
+      new ConditionalBoundaryMutation(),
       new MathMutation(),
       new RemoveConditionalsMutation(),
       new ReverseConditionalMutation(),
