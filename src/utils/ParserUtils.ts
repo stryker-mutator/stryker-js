@@ -1,7 +1,7 @@
 'use strict';
 
-var _ = require('lodash');
-var esprima = require('esprima');
+import * as _ from 'lodash';
+import * as esprima from 'esprima';
 import * as escodegen from 'escodegen';
 import AbstractSyntaxTreeNode from '../AbstractSyntaxTreeNode';
 import TypeUtils from './TypeUtils';
@@ -54,7 +54,7 @@ export default class ParserUtils {
    * @param  types - The list of types which are requested.
    * @returns  All nodes which have one of the requested types.
    */
-  public getNodesWithType (abstractSyntaxTree, types: string[], nodes?: AbstractSyntaxTreeNode[], parent?, key?): AbstractSyntaxTreeNode[] {
+  public getNodesWithType (abstractSyntaxTree: any, types: string[], nodes?: AbstractSyntaxTreeNode[], parent?: AbstractSyntaxTreeNode, key?: string): AbstractSyntaxTreeNode[] {
     this._typeUtils.expectParameterObject(abstractSyntaxTree, 'Mutator', 'abstractSyntaxTree');
     this._typeUtils.expectParameterArray(types, 'Mutator', 'types');
     nodes = nodes || [];
@@ -86,7 +86,7 @@ export default class ParserUtils {
    * @param orignalCode - The original code of the ast.
    * @returns The generated code.
    */
-  public generate (ast, originalCode?: string): string {
+  public generate (ast: ESTree.Node, originalCode?: string): string {
     this._typeUtils.expectParameterObject(ast, 'ParserUtils', 'ast');
 
     this._escodegenOptions.sourceCode = originalCode || this._escodegenOptions.sourceCode;

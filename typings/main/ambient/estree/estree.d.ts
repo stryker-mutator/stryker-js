@@ -26,6 +26,8 @@ declare module ESTree {
   interface Program extends Node {
     body: Array<Statement | ModuleDeclaration>;
     sourceType: string;
+    comments: any;
+    tokens: any;
   }
 
   interface Function extends Node {

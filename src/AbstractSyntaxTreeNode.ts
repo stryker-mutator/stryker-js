@@ -16,7 +16,7 @@ export default class AbstractSyntaxTreeNode {
    * @param parent - The parent of the node.
    * @param key - The key of the node in the parent.
    */
-  constructor(private node: ESTree.Node, private parent: ESTree.Node | ESTree.Node[], private key: string| number) {
+  constructor(private node: ESTree.Node, private parent: AbstractSyntaxTreeNode, private key: string| number) {
   }
 
   /**
