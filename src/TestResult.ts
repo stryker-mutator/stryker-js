@@ -1,9 +1,11 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 import FileUtils from './utils/FileUtils';
 import TypeUtils from './utils/TypeUtils';
 import TestFile from './TestFile';
+import Mutant from './Mutant';
+import CoverageCollection from './CoverageCollection';
 
 /**
  * Represents the result of a test run.
@@ -14,7 +16,7 @@ export default class TestResult {
   private _typeUtils = new TypeUtils();
   private _fileUtils = new FileUtils();
   private _coverageLocation: string;
-  private _coverage;
+  private _coverage: CoverageCollection;
 
   /**
    * @param sourceFiles - The list of source files which should be mutated.
@@ -43,7 +45,7 @@ export default class TestResult {
    * @param {Mutant} mutant - The Mutant which may be covered by this TestResult.
    * @returns {Boolean} True if this TestResult covers the mutant.
    */
-  coversMutant(mutant) {
+  coversMutant(mutant: Mutant) {
     this._typeUtils.expectParameterObject(mutant, 'TestResult', 'mutant');
     var covered = true;
     var coveredFile = this._coverage[mutant.getFilename()];
@@ -92,7 +94,7 @@ export default class TestResult {
    * @function
    * @param {Object} coverage - The code coverage as an lcov object.
    */
-  setCoverage(coverage) {
+  setCoverage(coverage: CoverageCollection) {
     this._typeUtils.expectParameterObject(coverage, 'TestResult', 'coverage');
     this._coverage = coverage;
   };
