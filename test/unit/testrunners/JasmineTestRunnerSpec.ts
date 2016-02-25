@@ -1,17 +1,19 @@
 'use strict';
 
-var _ = require('lodash');
-var expect = require('chai').expect;
+import * as _ from 'lodash';
+import {expect} from 'chai';
+import {TestCompletedCallback} from '../../../src/testrunners/BaseTestRunner';
 import JasmineTestRunner from '../../../src/testrunners/JasmineTestRunner';
+import TestRunnerConfig from '../../../src/testrunners/TestRunnerConfig';
 import TestFile from '../../../src/TestFile';
 import TestResult from '../../../src/TestResult';
 import FileUtils from '../../../src/utils/FileUtils';
 require('mocha-sinon');
 
 describe('JasmineTestRunner', function() {
-  var testRunner;
-  var sourceFiles;
-  var testFiles;
+  var testRunner: JasmineTestRunner;
+  var sourceFiles: string[];
+  var testFiles: string[];
 
   beforeEach(function() {
     var config = {
@@ -20,7 +22,7 @@ describe('JasmineTestRunner', function() {
     testRunner = new JasmineTestRunner(config);
     sourceFiles = ['a.js'];
     testFiles = ['aSpec.js'];
-    this.sinon.stub(testRunner, 'test', function(config, sourceFiles, testFiles, testCompletedCallback) {
+    this.sinon.stub(testRunner, 'test', function(config: TestRunnerConfig, sourceFiles: string[], testFiles: TestFile[], testCompletedCallback: TestCompletedCallback) {
       testCompletedCallback(new TestResult(sourceFiles, testFiles, 0, 0, false, false, 0));
     });
 
@@ -30,7 +32,7 @@ describe('JasmineTestRunner', function() {
   });
 
   it('should generate a single TestFile if a TestFile only contains one test', function(done) {
-    this.sinon.stub(FileUtils.prototype, 'readFile', function(path) {
+    this.sinon.stub(FileUtils.prototype, 'readFile', function(path: string) {
       return "describe('describe-1', function() {\
           it('it-1', function() {});\
         });";
@@ -44,7 +46,7 @@ describe('JasmineTestRunner', function() {
 
   describe('should generate all TestFiles', function() {
     it('if a test file only contains one describe with multiple its', function(done) {
-      this.sinon.stub(FileUtils.prototype, 'readFile', function(path) {
+      this.sinon.stub(FileUtils.prototype, 'readFile', function(path: string) {
         return "describe('describe-1', function() {\
             it('it-1', function() {});\
             it('it-2', function() {});\
@@ -59,7 +61,7 @@ describe('JasmineTestRunner', function() {
     });
 
     it('if a test file only contains multiple describes with multiple its', function(done) {
-      this.sinon.stub(FileUtils.prototype, 'readFile', function(path) {
+      this.sinon.stub(FileUtils.prototype, 'readFile', function(path: string) {
         return "describe('describe-1', function() {\
             describe('describe-2', function() {\
               it('it-1', function() {});\
@@ -88,7 +90,7 @@ describe('JasmineTestRunner', function() {
     it('if the it is only enclosed in a single describe', function(done) {
       var className = 'MyTest';
       var testName = 'should pass';
-      this.sinon.stub(FileUtils.prototype, 'readFile', function(path) {
+      this.sinon.stub(FileUtils.prototype, 'readFile', function(path: string) {
         return "describe('" + className + "', function() {\
               it('" + testName + "', function() {});\
             });";
@@ -105,7 +107,7 @@ describe('JasmineTestRunner', function() {
       var className = 'MyTest';
       var describeName = 'should pass';
       var testName = 'if everything is correct';
-      this.sinon.stub(FileUtils.prototype, 'readFile', function(path) {
+      this.sinon.stub(FileUtils.prototype, 'readFile', function(path: string) {
         return "describe('" + className + "', function() {\
                   describe('" + describeName + "', function() {\
                     it('" + testName + "', function() {});\
@@ -124,7 +126,7 @@ describe('JasmineTestRunner', function() {
       var className = 'MyTest';
       var describeName = 'should pass';
       var testName = 'if everything is correct';
-      this.sinon.stub(FileUtils.prototype, 'readFile', function(path) {
+      this.sinon.stub(FileUtils.prototype, 'readFile', function(path: string) {
         return "describe('" + className + "', function() {\
                   describe('should be ignored', function() {\
                     it('because we want the other describe', function() {});\
