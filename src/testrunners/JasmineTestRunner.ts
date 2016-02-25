@@ -28,7 +28,7 @@ export default class JasmineTestRunner extends KarmaTestRunner {
     var nodes = this._parserUtils.getNodesWithType(ast, ['ExpressionStatement']);
     var testFiles: TestFile[] = [];
 
-    _.forEach(nodes, (astNode, index) => {
+    _.forEach(nodes, (astNode: any, index: any) => {
       if (astNode.getNode().expression.callee && astNode.getNode().expression.callee.name === 'it') {
         var astNodesLeft = _.dropRight(nodes, nodes.length - index);
         this._removeItsFromParent(astNodesLeft);
@@ -36,13 +36,13 @@ export default class JasmineTestRunner extends KarmaTestRunner {
         this._removeItsFromParent(astNodesRight);
 
         var testCode = this._parserUtils.generate(ast);
-        var describes = _.filter(astNodesLeft, (astNode) => {
+        var describes = _.filter(astNodesLeft, (astNode: any) => {
           return astNode.getNode().expression.callee && astNode.getNode().expression.callee.name === 'describe';
         });
         var testFilename = this._generateTestName(astNode, describes);
         testFiles.push(new TestFile(testFilename, testCode));
 
-        _.forEach(nodes, (expressionStatement, index) => {
+        _.forEach(nodes, (expressionStatement: any, index: any) => {
           if (expressionStatement !== astNode) {
             var parent = expressionStatement.getParent();
             if (this._typeUtils.isObject(parent)) {
@@ -65,12 +65,12 @@ export default class JasmineTestRunner extends KarmaTestRunner {
    * @param describeNodes - The describes which may contain the it.
    * @returns The names of all relevant describes and the name of the it.
    */
-  _generateTestName(itNode: AbstractSyntaxTreeNode, describeNodes: AbstractSyntaxTreeNode[]) {
+  _generateTestName(itNode: any, describeNodes: AbstractSyntaxTreeNode[]) {
     this._typeUtils.expectParameterObject(itNode, '_generateTestName', 'itNode');
     this._typeUtils.expectParameterArray(describeNodes, '_generateTestName', 'describeNodes');
 
     var name = '';
-    _.forEach(describeNodes, (describeNode, index) => {
+    _.forEach(describeNodes, (describeNode: any, index: any) => {
       var childNodes = this._parserUtils.getNodesWithType(describeNode.getNode(), ['ExpressionStatement']);
       if (_.find(childNodes, (childNode) => {
         return childNode.getNode() === itNode.getNode();
@@ -88,7 +88,7 @@ export default class JasmineTestRunner extends KarmaTestRunner {
    * @function
    * @param nodes - The nodes which may be `it` nodes which should be removed from their parents.
    */
-  _removeItsFromParent(nodes: AbstractSyntaxTreeNode[]) {
+  _removeItsFromParent(nodes: any[]) {
     this._typeUtils.expectParameterArray(nodes, '_generateTestName', 'nodes');
 
     _.forEach(nodes, astNode => {
