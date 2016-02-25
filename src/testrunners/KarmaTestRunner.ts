@@ -35,7 +35,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
 
       config.browserNoActivityTimeout = this.getTotalTimeout();
 
-      var serverProcess = fork(__dirname + '/KarmaServerWorker.js', undefined, {
+      var serverProcess = fork(__dirname + '/KarmaServerWorker.js', [], {
         silent: true
       });
 
