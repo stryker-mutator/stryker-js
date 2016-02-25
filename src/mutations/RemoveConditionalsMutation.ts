@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+import {Syntax} from 'esprima';
 import BaseMutation from './BaseMutation';
 import Mutant from '../Mutant';
 
@@ -10,7 +11,7 @@ import Mutant from '../Mutant';
  */
 export default class RemoveConditionalsMutation extends BaseMutation {
   constructor() {
-    super('RemoveConditionals', ['DoWhileStatement', 'IfStatement', 'ForStatement', 'WhileStatement']);
+    super('RemoveConditionals', [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement]);
   }
 
   applyMutation(filename: string, originalCode: string, node, ast) {
@@ -18,12 +19,12 @@ export default class RemoveConditionalsMutation extends BaseMutation {
 
     var mutants: Mutant[] = [];
     node.test = {
-      type: 'Literal',
+      type: Syntax.Literal,
       value: false,
       raw: 'false'
     };
     mutants.push(new Mutant(filename, originalCode, this, ast, node, node.loc.start.column));
-    if (node.type === 'IfStatement') {
+    if (node.type === Syntax.IfStatement) {
       node.test.value = true;
       node.test.raw = node.test.value.toString();
       mutants.push(new Mutant(filename, originalCode, this, ast, node, node.loc.start.column));
