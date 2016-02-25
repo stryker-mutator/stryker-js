@@ -11,19 +11,20 @@ import TestResult from '../TestResult';
 import TestRunnerConfig from './TestRunnerConfig';
 import TestsRunResults from './TestsRunResults';
 
-export interface ConfigOptionsIncludingCoverage extends karma.ConfigOptions{
-  coverageReporter? : {
-        type: string,
-        dir: string,
-        subdir: string
-      };
+export interface ConfigOptionsIncludingCoverage extends karma.ConfigOptions {
+  coverageReporter?: {
+    type: string,
+    dir: string,
+    subdir: string
+  };
+  libs: string[]
 }
 
 export default class KarmaTestRunner extends BaseTestRunner {
-  
+
   protected _fileUtils = new FileUtils();
- 
-  constructor(protected karmaConfig: ConfigOptionsIncludingCoverage){
+
+  constructor(protected karmaConfig: ConfigOptionsIncludingCoverage) {
     super(karmaConfig);
   }
 
@@ -31,7 +32,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
     super.test(config, sourceFiles, testFiles, testCompletedCallback);
 
     if (testFiles.length > 0) {
-      config.files = sourceFiles.concat(config.libs, testFiles.map( file => file.getPath()));
+      config.files = sourceFiles.concat(config.libs, testFiles.map(file => file.getPath()));
 
       config.browserNoActivityTimeout = this.getTotalTimeout();
 

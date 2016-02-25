@@ -1,10 +1,11 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 import FileUtils from '../utils/FileUtils';
 import KarmaTestRunner, {ConfigOptionsIncludingCoverage} from './KarmaTestRunner';
 import ParserUtils from '../utils/ParserUtils';
 import TestFile from '../TestFile';
+import AbstractSyntaxTreeNode from '../AbstractSyntaxTreeNode';
 
 /**
  * Represents a test runner for Jasmine tests using Karma.
@@ -20,12 +21,12 @@ export default class JasmineTestRunner extends KarmaTestRunner {
     this.karmaConfig.frameworks = ['jasmine'];
   }
 
-  _splitTest(testFile) {
-    KarmaTestRunner.prototype._splitTest.call(this, testFile);
+  _splitTest(testFile: string) {
+    super._splitTest(testFile);
     var testFileContent = this._fileUtils.readFile(testFile);
     var ast = this._parserUtils.parse(testFileContent);
     var nodes = this._parserUtils.getNodesWithType(ast, ['ExpressionStatement']);
-    var testFiles = [];
+    var testFiles: TestFile[] = [];
 
     _.forEach(nodes, (astNode, index) => {
       if (astNode.getNode().expression.callee && astNode.getNode().expression.callee.name === 'it') {
@@ -60,11 +61,11 @@ export default class JasmineTestRunner extends KarmaTestRunner {
   /**
    * Generates the name of a test based on an `it` and a set of describes.
    * @function
-   * @param {AbstractSyntaxTreeNode} itNode - The node containing the it statement.
-   * @param {AbstractSyntaxTreeNode[]} describeNodes - The describes which may contain the it.
-   * @returns {String} The names of all relevant describes and the name of the it.
+   * @param itNode - The node containing the it statement.
+   * @param describeNodes - The describes which may contain the it.
+   * @returns The names of all relevant describes and the name of the it.
    */
-  _generateTestName(itNode, describeNodes) {
+  _generateTestName(itNode: AbstractSyntaxTreeNode, describeNodes: AbstractSyntaxTreeNode[]) {
     this._typeUtils.expectParameterObject(itNode, '_generateTestName', 'itNode');
     this._typeUtils.expectParameterArray(describeNodes, '_generateTestName', 'describeNodes');
 
@@ -85,9 +86,9 @@ export default class JasmineTestRunner extends KarmaTestRunner {
   /**
    * Removes all `it` nodes which are a part of the given nodes from their parent node.
    * @function
-   * @param {AbstractSyntaxTreeNode[]} nodes - The nodes which may be `it` nodes which should be removed from their parents.
+   * @param nodes - The nodes which may be `it` nodes which should be removed from their parents.
    */
-  _removeItsFromParent(nodes) {
+  _removeItsFromParent(nodes: AbstractSyntaxTreeNode[]) {
     this._typeUtils.expectParameterArray(nodes, '_generateTestName', 'nodes');
 
     _.forEach(nodes, astNode => {
