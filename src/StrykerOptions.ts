@@ -1,6 +1,7 @@
 'use strict';
 
 interface StrykerOptions {
+
   /**
    * A list of library files.
    */

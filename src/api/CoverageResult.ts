@@ -10,7 +10,7 @@ export interface Location {
 }
 
 export interface StatementMap {
-  [statementNumber: number]: Location;
+  [ref: number]: Location;
 }
 
 export interface FunctionDescription {
@@ -43,17 +43,17 @@ export interface BrancheCoverageData {
 
 export interface CoverageResult {
   s: CoverageData;
-  b: BrancheCoverageData;
-  f: CoverageData;
-  l: CoverageData;
-  fnMap: FunctionMap;
-  branchMap: BranchMap;
+  b?: BrancheCoverageData;
+  f?: CoverageData;
+  l?: CoverageData;
+  fnMap?: FunctionMap;
+  branchMap?: BranchMap;
   statementMap: StatementMap;
-  path: string;
+  path?: string;
 }
 
-interface CoverageCollection {
+export interface CoverageCollection {
   [fileName: string]: CoverageResult;
 }
 
-export default CoverageCollection;
+export default CoverageResult;
