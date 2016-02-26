@@ -4,25 +4,25 @@ var _ = require('lodash');
 import BaseMutation from './BaseMutation';
 import Mutant from '../Mutant';
 import ParserUtils from '../utils/ParserUtils';
+import OperatorMutationMap from './OperatorMutationMap';
+
 
 abstract class BaseOperatorMutation extends BaseMutation {
-  _operators;
+  _operators: OperatorMutationMap;
   
   /**
    * Represents a base class for all operator based mutations.
    * @class
-   * @param {String} name - The name of the mutation.
-   * @param {String[]} types - The types of mutation as expected by the parser.
-   * @param {Object} operators - The object containing all operators and their counterparts.
+   * @param name - The name of the mutation.
+   * @param types - The types of mutation as expected by the parser.
+   * @param operators - The object containing a map for targeted operators and their mutated values.
    */
-  constructor(name: string, types: string[], operators) {
+  constructor(name: string, types: string[], operators: OperatorMutationMap) {
     super(name, types);
-    //TODO Create type for operators
-
     this._operators = operators;
   }
 
-  applyMutation(filename: string, originalCode: string, node, ast) {
+  applyMutation(filename: string, originalCode: string, node: ESTree.BinaryExpression, ast: ESTree.Program) {
     var originalOperator = node.operator;
     var mutants: Mutant[] = [];
     node.operator = this.getOperator(node.operator);
@@ -38,7 +38,7 @@ abstract class BaseOperatorMutation extends BaseMutation {
     return mutants;
   }
 
-  canMutate(node) {
+  canMutate(node: ESTree.BinaryExpression) {
     return !!(node && _.indexOf(this._types, node.type) >= 0 && this.getOperator(node.operator));
   }
 

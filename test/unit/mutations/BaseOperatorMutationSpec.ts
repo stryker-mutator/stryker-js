@@ -16,14 +16,16 @@ describe('BaseOperatorMutation', function() {
   }
   describe('should recognize', function() {
     it('one of its own mockMutation operators as a part of its mockMutation', function() {
-      var node = {
+      var expressionNode: ESTree.BinaryExpression  = {
         type: 'SomeType',
-        operator: '+'
+        operator: '+',
+        left: null,
+        right: null
       };
       
       var mockMutation = new MockBaseOperatorMutation();
 
-      var recognized = mockMutation.canMutate(node);
+      var recognized = mockMutation.canMutate(expressionNode);
 
       expect(recognized).to.equal(true);
     });
@@ -31,9 +33,11 @@ describe('BaseOperatorMutation', function() {
 
   describe('should not recognize', function() {
     it('an unknown mockMutation operator', function() {
-      var node = {
+      var node: ESTree.BinaryExpression = {
         type: 'SomeType',
-        operator: 'some operator which should not be known to the BaseOperatorMutation'
+        operator: 'some operator which should not be known to the BaseOperatorMutation',
+        left: null,
+        right: null
       };
       
       var mockMutation = new MockBaseOperatorMutation();
@@ -44,9 +48,11 @@ describe('BaseOperatorMutation', function() {
     });
 
     it('a node with a different type', function() {
-      var node = {
+      var node: ESTree.BinaryExpression= {
         type: 'SomeDifferentType',
-        operator: '+'
+        operator: '+',
+        left: null,
+        right: null
       };
       
       var mockMutation = new MockBaseOperatorMutation();
