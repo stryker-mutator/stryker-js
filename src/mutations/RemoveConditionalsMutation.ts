@@ -14,7 +14,7 @@ export default class RemoveConditionalsMutation extends BaseMutation {
     super('RemoveConditionals', [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement]);
   }
 
-  applyMutation(filename: string, originalCode: string, node: ESTree.IfStatement, ast: ESTree.Program) {
+  applyMutation(filename: string, originalCode: string, node: ESTree.IfStatement| ESTree.DoWhileStatement| ESTree.WhileStatement| ESTree.ForStatement, ast: ESTree.Program) {
     var originalTest = node.test;
 
     var mutants: Mutant[] = [];
