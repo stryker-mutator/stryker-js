@@ -17,7 +17,7 @@ export interface ConfigOptionsIncludingCoverage extends karma.ConfigOptions {
     dir: string,
     subdir: string
   };
-  libs: string[]
+  libs?: string[]
 }
 
 export default class KarmaTestRunner extends BaseTestRunner {
