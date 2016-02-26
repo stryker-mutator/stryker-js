@@ -3,10 +3,11 @@
 var expect = require('chai').expect;
 import TestRunnerFactory from '../../src/TestRunnerFactory';
 import JasmineTestRunner from  '../../src/testrunners/JasmineTestRunner';
+import TestRunnerConfig from '../../src/testrunners/TestRunnerConfig';
 
 describe('TestRunnerFactory', function() {
   var testRunnerFactory: TestRunnerFactory;
-  var config;
+  var config: TestRunnerConfig;
 
   beforeEach(function(){
     testRunnerFactory = new TestRunnerFactory();
