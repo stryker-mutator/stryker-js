@@ -66,7 +66,7 @@ export default class Mutant {
    * @param node - The part of the ast which has been mutated.
    * @param columnNumber - The column which has been mutated.
    */
-  constructor(private _filename: string, private _originalCode: string, private _mutation: BaseMutation, private _ast, private _node, private _columnNumber: number) {
+  constructor(private _filename: string, private _originalCode: string, private _mutation: BaseMutation, private _ast: ESTree.Program, private _node: ESTree.Node, private _columnNumber: number) {
     this._typeUtils.expectParameterObject(_ast, 'Mutant', 'ast');
     this._typeUtils.expectParameterObject(_node, 'Mutant', 'node');
 

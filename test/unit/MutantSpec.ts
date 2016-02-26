@@ -15,8 +15,8 @@ describe('Mutant', function() {
   var mutatedLine: string;
   var mutatedCode: string;
   var lineNumber: number;
-  var ast;
-  var node;
+  var ast: ESTree.Program;
+  var node: ESTree.Node;
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save', function(){
@@ -34,7 +34,7 @@ describe('Mutant', function() {
     filename = 'something.js';
     mutation = new MathMutation();
     ast = parserUtils.parse(mutatedCode);
-    node = ast.body[1].declarations[0].init;
+    node = (<ESTree.VariableDeclaration>ast.body[1]).declarations[0].init;
 
     mutant = new Mutant(filename, originalCode, mutation, ast, node, 11);
   });
