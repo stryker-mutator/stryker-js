@@ -1,5 +1,6 @@
 import TestRunner from '../../../src/api/TestRunner';
 import TestRunResult from '../../../src/api/TestRunResult';
+import TestResult from '../../../src/api/TestResult';
 import StrykerOptions from '../../../src/api/StrykerOptions';
 import {expect} from 'chai';
 
@@ -10,8 +11,7 @@ class MyTestRunner extends TestRunner {
       specNames: [''],
       succeeded: 5,
       failed: 6,
-      timedOut: 7,
-      errorOccurred: 8,
+      result: TestResult.Complete,
       timeSpent: 20,
       coverage: {
         statementMap: {
