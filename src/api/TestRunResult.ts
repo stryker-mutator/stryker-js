@@ -1,4 +1,4 @@
-import CoverageResult from './CoverageResult';
+import {CoverageCollection} from './CoverageResult';
 import TestResult from './TestResult';
 
 interface TestRunResult {
@@ -7,7 +7,7 @@ interface TestRunResult {
   succeeded?: number;
   failed?: number;
   timeSpent?: number;
-  coverage?: CoverageResult;
+  coverage?: CoverageCollection;
 }
 
 export default TestRunResult;
