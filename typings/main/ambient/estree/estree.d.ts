@@ -227,6 +227,7 @@ declare module ESTree {
 
   interface Literal extends Node, Expression {
     value?: string | boolean | number | RegExp;
+    raw?: string;
   }
 
   interface RegExpLiteral extends Literal {
