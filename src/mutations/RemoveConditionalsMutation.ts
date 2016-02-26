@@ -36,7 +36,7 @@ export default class RemoveConditionalsMutation extends BaseMutation {
   };
 
   canMutate(node: ESTree.Node) {
-    return !!(node && _.indexOf(this._types, node.type) >= 0);
+    return !!(node && _.indexOf(this.types, node.type) >= 0);
   };
 
 }

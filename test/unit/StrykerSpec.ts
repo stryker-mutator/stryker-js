@@ -26,7 +26,7 @@ describe("Stryker", function() {
     var sourceFiles = ['hello.js'];
     var testFiles = ['helloSpec.js'];
     var stryker = new Stryker(sourceFiles, testFiles);
-    stryker._testRunner = mockRunner;
+    stryker.testRunner = mockRunner;
 
     stryker.runMutationTest(function() { });
 

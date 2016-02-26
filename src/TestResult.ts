@@ -13,10 +13,10 @@ import CoverageCollection from './CoverageCollection';
  */
 export default class TestResult {
 
-  private _typeUtils = new TypeUtils();
-  private _fileUtils = new FileUtils();
-  private _coverageLocation: string;
-  private _coverage: CoverageCollection;
+  private typeUtils = new TypeUtils();
+  private fileUtils = new FileUtils();
+  private coverageLocation: string;
+  private coverage: CoverageCollection;
 
   /**
    * @param sourceFiles - The list of source files which should be mutated.
@@ -28,15 +28,15 @@ export default class TestResult {
    * @param timeSpent - The execution time of the test in milliseconds.
    */
   constructor(private sourceFiles: string[], private testFiles: TestFile[], private nrSucceeded: number, private nrFailed: number, private timedOut: boolean, private errorOccurred: boolean, private timeSpent: number) {
-    this._typeUtils.expectParameterArray(sourceFiles, 'TestResult', 'sourceFiles');
-    this._typeUtils.expectParameterArray(testFiles, 'TestResult', 'testFiles');
-    this._typeUtils.expectParameterNumber(nrSucceeded, 'TestResult', 'nrSucceeded');
-    this._typeUtils.expectParameterBoolean(timedOut, 'TestResult', 'timedOut');
-    this._typeUtils.expectParameterBoolean(errorOccurred, 'errorOccurred', 'errorOccurred');
-    this._typeUtils.expectParameterNumber(timeSpent, 'TestResult', 'timeSpent');
+    this.typeUtils.expectParameterArray(sourceFiles, 'TestResult', 'sourceFiles');
+    this.typeUtils.expectParameterArray(testFiles, 'TestResult', 'testFiles');
+    this.typeUtils.expectParameterNumber(nrSucceeded, 'TestResult', 'nrSucceeded');
+    this.typeUtils.expectParameterBoolean(timedOut, 'TestResult', 'timedOut');
+    this.typeUtils.expectParameterBoolean(errorOccurred, 'errorOccurred', 'errorOccurred');
+    this.typeUtils.expectParameterNumber(timeSpent, 'TestResult', 'timeSpent');
 
-    this._coverage = {};
-    this._coverageLocation = '';
+    this.coverage = {};
+    this.coverageLocation = '';
   }
 
   /**
@@ -46,9 +46,9 @@ export default class TestResult {
    * @returns {Boolean} True if this TestResult covers the mutant.
    */
   coversMutant(mutant: Mutant) {
-    this._typeUtils.expectParameterObject(mutant, 'TestResult', 'mutant');
+    this.typeUtils.expectParameterObject(mutant, 'TestResult', 'mutant');
     var covered = true;
-    var coveredFile = this._coverage[mutant.getFilename()];
+    var coveredFile = this.coverage[mutant.getFilename()];
     var mutantLineNumber = mutant.getLineNumber();
     var mutantColumnNumber = mutant.getColumnNumber();
 
@@ -76,8 +76,8 @@ export default class TestResult {
    * @param path - The path to the code coverage file.
    */
   setCoverageLocation(path: string) {
-    this._typeUtils.expectParameterString(path, 'TestResult', 'path');
-    this._coverageLocation = path;
+    this.typeUtils.expectParameterString(path, 'TestResult', 'path');
+    this.coverageLocation = path;
   };
 
   /**
@@ -86,7 +86,7 @@ export default class TestResult {
    * @returns {String} The path to the code coverage file.
    */
   getCoverageLocation() {
-    return this._coverageLocation;
+    return this.coverageLocation;
   };
 
   /**
@@ -95,8 +95,8 @@ export default class TestResult {
    * @param {Object} coverage - The code coverage as an lcov object.
    */
   setCoverage(coverage: CoverageCollection) {
-    this._typeUtils.expectParameterObject(coverage, 'TestResult', 'coverage');
-    this._coverage = coverage;
+    this.typeUtils.expectParameterObject(coverage, 'TestResult', 'coverage');
+    this.coverage = coverage;
   };
 
   /**
@@ -107,13 +107,13 @@ export default class TestResult {
    * @returns The code coverage as a lcov object.
    */
   getCoverage() {
-    if (_.isEmpty(this._coverage) && this._fileUtils.fileOrFolderExists(this._coverageLocation)) {
-      var coverageString = this._fileUtils.readFile(this._coverageLocation);
+    if (_.isEmpty(this.coverage) && this.fileUtils.fileOrFolderExists(this.coverageLocation)) {
+      var coverageString = this.fileUtils.readFile(this.coverageLocation);
       this.setCoverage(JSON.parse(coverageString));
-      this._fileUtils.removeTempFile(this._coverageLocation);
+      this.fileUtils.removeTempFile(this.coverageLocation);
     }
 
-    return this._coverage;
+    return this.coverage;
   };
 
   /**

@@ -11,20 +11,20 @@ import TypeUtils from './TypeUtils';
  * @constructor
  */
 export default class ParserUtils {
-  private _esprimaOptions = {
+  private esprimaOptions = {
     comment: true,
     loc: true,
     range: true,
     tokens: true,
   };
 
-  private _escodegenOptions: escodegen.GenerateOptions = {
+  private escodegenOptions: escodegen.GenerateOptions = {
     comment: true,
     format: {
       preserveBlankLines: true
     }
   };
-  private _typeUtils = new TypeUtils();
+  private typeUtils = new TypeUtils();
 
 
   /**
@@ -34,13 +34,13 @@ export default class ParserUtils {
    * @returns {Object} The generated Abstract Syntax Tree.
    */
   public parse (code: string): any {
-    this._typeUtils.expectParameterString(code, 'ParserUtils', 'code');
+    this.typeUtils.expectParameterString(code, 'ParserUtils', 'code');
     if (code === '') {
       return {};
     }
 
-    this._escodegenOptions.sourceCode = code;
-    var abstractSyntaxTree = esprima.parse(code, this._esprimaOptions);
+    this.escodegenOptions.sourceCode = code;
+    var abstractSyntaxTree = esprima.parse(code, this.esprimaOptions);
     //Attaching the comments is needed to keep the comments and to allow blank lines to be preserved.
     abstractSyntaxTree = escodegen.attachComments(abstractSyntaxTree, abstractSyntaxTree.comments, abstractSyntaxTree.tokens);
 
@@ -55,20 +55,20 @@ export default class ParserUtils {
    * @returns  All nodes which have one of the requested types.
    */
   public getNodesWithType (abstractSyntaxTree: any, types: string[], nodes?: AbstractSyntaxTreeNode[], parent?: AbstractSyntaxTreeNode, key?: string): AbstractSyntaxTreeNode[] {
-    this._typeUtils.expectParameterObject(abstractSyntaxTree, 'Mutator', 'abstractSyntaxTree');
-    this._typeUtils.expectParameterArray(types, 'Mutator', 'types');
+    this.typeUtils.expectParameterObject(abstractSyntaxTree, 'Mutator', 'abstractSyntaxTree');
+    this.typeUtils.expectParameterArray(types, 'Mutator', 'types');
     nodes = nodes || [];
 
-    if (this._typeUtils.isObject(abstractSyntaxTree) && _.indexOf(types, abstractSyntaxTree.type) >= 0) {
+    if (this.typeUtils.isObject(abstractSyntaxTree) && _.indexOf(types, abstractSyntaxTree.type) >= 0) {
       nodes.push(new AbstractSyntaxTreeNode(abstractSyntaxTree, parent, key));
     }
 
     _.forOwn(abstractSyntaxTree, (childNode, key) => {
-      if (this._typeUtils.isObject(childNode)) {
+      if (this.typeUtils.isObject(childNode)) {
         this.getNodesWithType(childNode, types, nodes, abstractSyntaxTree, key);
-      } else if (this._typeUtils.isArray(childNode)) {
+      } else if (this.typeUtils.isArray(childNode)) {
         _.forEach(childNode, (arrayChild, index) => {
-          if (this._typeUtils.isObject(arrayChild)) {
+          if (this.typeUtils.isObject(arrayChild)) {
             this.getNodesWithType(arrayChild, types, nodes, childNode, index);
           }
         });
@@ -87,11 +87,11 @@ export default class ParserUtils {
    * @returns The generated code.
    */
   public generate (ast: ESTree.Node, originalCode?: string): string {
-    this._typeUtils.expectParameterObject(ast, 'ParserUtils', 'ast');
+    this.typeUtils.expectParameterObject(ast, 'ParserUtils', 'ast');
 
-    this._escodegenOptions.sourceCode = originalCode || this._escodegenOptions.sourceCode;
+    this.escodegenOptions.sourceCode = originalCode || this.escodegenOptions.sourceCode;
 
-    return escodegen.generate(ast, this._escodegenOptions);
+    return escodegen.generate(ast, this.escodegenOptions);
   };
 
 }

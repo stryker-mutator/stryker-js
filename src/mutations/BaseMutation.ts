@@ -2,10 +2,7 @@
 
 import Mutant from '../Mutant';
 
-
 abstract class BaseMutation {
-  _name: string;
-  _types: string[];
     
   /**
    * Represents a base class for all mutations.
@@ -13,9 +10,7 @@ abstract class BaseMutation {
    * @param {String} name - The name of the mutation.
    * @param {String[]} types - The types of mutation as expected by the parser.
    */
-  constructor(name: string, types: string[]) {
-    this._name = name;
-    this._types = types;
+  constructor(protected name: string, protected types: string[]) {
   }
 
   /**
@@ -43,7 +38,7 @@ abstract class BaseMutation {
    * @returns {String} The name of the mutation.
    */
   getName(): string {
-    return this._name;
+    return this.name;
   }
 
   /**
@@ -52,7 +47,7 @@ abstract class BaseMutation {
    * @returns {String[]} The types of the mutation.
    */
   getTypes(): string[] {
-    return this._types;
+    return this.types;
   }
 }
 

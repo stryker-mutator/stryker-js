@@ -9,8 +9,8 @@ import TypeUtils from './utils/TypeUtils';
  */
 export default class TestFile {
 
-  private _typeUtils = new TypeUtils();
-  private _fileUtils = new FileUtils();
+  private typeUtils = new TypeUtils();
+  private fileUtils = new FileUtils();
   private path: string;
   
   /**
@@ -19,9 +19,9 @@ export default class TestFile {
    * @param content - The content of the test file.
    */
   constructor(private name: string, private content?: string) {
-    this._typeUtils.expectParameterString(name, 'BaseTestRunner', 'name');
+    this.typeUtils.expectParameterString(name, 'BaseTestRunner', 'name');
     if (content) {
-      this._typeUtils.expectParameterString(content, 'BaseTestRunner', 'content');
+      this.typeUtils.expectParameterString(content, 'BaseTestRunner', 'content');
     }
 
     if (content) {
@@ -55,7 +55,7 @@ export default class TestFile {
    * @returns {String} The path to the file.
    */
   save() {
-    return this._fileUtils.createFileInTempFolder(this.name.replace(/ /g, '_') + '.js', this.content);
+    return this.fileUtils.createFileInTempFolder(this.name.replace(/ /g, '_') + '.js', this.content);
   };
 
   /**
@@ -64,7 +64,7 @@ export default class TestFile {
    */
   remove() {
     if (this.content) {
-      this._fileUtils.removeTempFile(this.path);
+      this.fileUtils.removeTempFile(this.path);
     }
   };
 }

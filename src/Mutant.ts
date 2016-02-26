@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from'lodash';
 import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
 import ParserUtils from './utils/ParserUtils';
@@ -47,16 +47,16 @@ export enum MutantStatus {
  */
 export default class Mutant {
 
-  private _typeUtils = new TypeUtils();
+  private typeUtils = new TypeUtils();
   private parserUtils = new ParserUtils();
-  private _fileUtils = new FileUtils();
-  private _lineNumber: number;
-  private _testsRan: TestFile[] = [];
-  private _mutatedLine: string;
-  private _mutatedCode: string;
-  private _mutatedFilename: string;
-  private _originalLine: string;
-  private _status: MutantStatus;
+  private fileUtils = new FileUtils();
+  private lineNumber: number;
+  private testsRan: TestFile[] = [];
+  private mutatedLine: string;
+  private mutatedCode: string;
+  private mutatedFilename: string;
+  private originalLine: string;
+  private status: MutantStatus;
 
   /**
    * @param filename - The name of the file which was mutated, including the path.
@@ -66,15 +66,15 @@ export default class Mutant {
    * @param node - The part of the ast which has been mutated.
    * @param columnNumber - The column which has been mutated.
    */
-  constructor(private _filename: string, private _originalCode: string, private _mutation: BaseMutation, private _ast: ESTree.Program, private _node: ESTree.Node, private _columnNumber: number) {
-    this._typeUtils.expectParameterObject(_ast, 'Mutant', 'ast');
-    this._typeUtils.expectParameterObject(_node, 'Mutant', 'node');
+  constructor(private filename: string, private originalCode: string, private mutation: BaseMutation, private ast: ESTree.Program, private node: ESTree.Node, private columnNumber: number) {
+    this.typeUtils.expectParameterObject(ast, 'Mutant', 'ast');
+    this.typeUtils.expectParameterObject(node, 'Mutant', 'node');
 
-    this._lineNumber = _node.loc.start.line;
-    this._mutatedCode = this.parserUtils.generate(_ast, _originalCode);
+    this.lineNumber = node.loc.start.line;
+    this.mutatedCode = this.parserUtils.generate(ast, originalCode);
     this.setStatusUntested();
-    this._mutatedLine = _.trim(this._mutatedCode.split('\n')[this._lineNumber - 1]);
-    this._originalLine = _.trim(_originalCode.split('\n')[this._lineNumber - 1]);
+    this.mutatedLine = _.trim(this.mutatedCode.split('\n')[this.lineNumber - 1]);
+    this.originalLine = _.trim(originalCode.split('\n')[this.lineNumber - 1]);
     this.save();
   }
 
@@ -86,7 +86,7 @@ export default class Mutant {
    * @returns {String[]} The list of source files of which one source file has been replaced.
    */
   insertMutatedFile = function(sourceFiles: string[]) {
-    this._typeUtils.expectParameterArray(sourceFiles, 'Mutant', 'sourceFiles');
+    this.typeUtils.expectParameterArray(sourceFiles, 'Mutant', 'sourceFiles');
     var mutatedSrc = _.clone(sourceFiles);
     var mutantSourceFileIndex = _.indexOf(mutatedSrc, this.getFilename());
     mutatedSrc[mutantSourceFileIndex] = this.getMutatedFilename();
@@ -99,7 +99,7 @@ export default class Mutant {
    * @returns {String} The name of the mutated file.
    */
   getFilename() {
-    return this._filename;
+    return this.filename;
   };
 
   /**
@@ -176,7 +176,7 @@ export default class Mutant {
    * @returns The applied Mutation.
    */
   getMutation() {
-    return this._mutation;
+    return this.mutation;
   };
 
   /**
@@ -185,7 +185,7 @@ export default class Mutant {
    * @returns The code containing a mutation.
    */
   getMutatedCode() {
-    return this._mutatedCode;
+    return this.mutatedCode;
   };
 
   /**
@@ -194,7 +194,7 @@ export default class Mutant {
    * @returns The original line of code.
    */
   getOriginalLine() {
-    return this._originalLine;
+    return this.originalLine;
   };
 
   /**
@@ -203,7 +203,7 @@ export default class Mutant {
    * @returns The mutated line of code.
    */
   getMutatedLine() {
-    return this._mutatedLine;
+    return this.mutatedLine;
   };
 
   /**
@@ -212,7 +212,7 @@ export default class Mutant {
    * @returns The status.
    */
   getStatus() {
-    return this._status;
+    return this.status;
   };
 
   /**
@@ -221,7 +221,7 @@ export default class Mutant {
    * @param status - The new status.
    */
   setStatus = function(status: MutantStatus) {
-    this._status = status;
+    this.status = status;
   };
 
   /**
@@ -230,7 +230,7 @@ export default class Mutant {
    * @returns {Number} The line number.
    */
   getLineNumber() {
-    return this._lineNumber;
+    return this.lineNumber;
   };
 
   /**
@@ -239,7 +239,7 @@ export default class Mutant {
    * @returns {Number} The column number.
    */
   getColumnNumber() {
-    return this._columnNumber;
+    return this.columnNumber;
   };
 
   /**
@@ -248,7 +248,7 @@ export default class Mutant {
    * @param {TestFile[]} tests - The array of tests which were ran.
    */
   setTestsRan = function(tests: TestFile[]) {
-    this._testsRan = tests;
+    this.testsRan = tests;
   };
 
   /**
@@ -257,7 +257,7 @@ export default class Mutant {
    * @returns The array of tests which were ran.
    */
   getTestsRan() {
-    return this._testsRan;
+    return this.testsRan;
   };
 
   /**
@@ -266,7 +266,7 @@ export default class Mutant {
    * @returns The name and path of the mutated file.
    */
   getMutatedFilename() {
-    return this._mutatedFilename;
+    return this.mutatedFilename;
   };
 
   /**
@@ -274,7 +274,7 @@ export default class Mutant {
    * @function
    */
   save() {
-    this._mutatedFilename = this._fileUtils.createFileInTempFolder(this._filename, this._mutatedCode);
+    this.mutatedFilename = this.fileUtils.createFileInTempFolder(this.filename, this.mutatedCode);
   };
 
   /**
@@ -282,6 +282,6 @@ export default class Mutant {
    * @function
    */
   remove() {
-    this._fileUtils.removeTempFile(this._mutatedFilename);
+    this.fileUtils.removeTempFile(this.mutatedFilename);
   };
 }
