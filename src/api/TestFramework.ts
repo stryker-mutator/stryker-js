@@ -8,3 +8,5 @@ abstract class TestFramework{
   
   abstract chooseTest(id: number): void;
 }
+
+export default TestFramework;
