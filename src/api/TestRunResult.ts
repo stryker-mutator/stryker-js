@@ -1,4 +1,4 @@
-import {CoverageResult} from './CoverageResult';
+import CoverageResult from './CoverageResult';
 
 interface TestRunResult {
   specNames: string[];
