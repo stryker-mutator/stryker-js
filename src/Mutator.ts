@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 import AbstractSyntaxTreeNode from './AbstractSyntaxTreeNode';
 import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
@@ -67,12 +67,12 @@ export default class Mutator {
    * @param {AbstractSyntaxTreeNode[]} nodes - The nodes which could be used by mutations to generate mutants.
    * @returns {Mutant[]} All possible Mutants for the given set of nodes.
    */
-  private _findMutants(sourceFile: string, originalCode: string, ast, nodes) {
+  private _findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: AbstractSyntaxTreeNode[]) {
     this._typeUtils.expectParameterObject(ast, 'Mutator', 'ast');
     this._typeUtils.expectParameterArray(nodes, 'Mutator', 'nodes');
 
     var mutants: Mutant[] = [];
-    _.forEach(nodes, (node, index: number) => {
+    _.forEach(nodes, (node, index) => {
       if (node.getNode().type) {
         _.forEach(this.mutations, (mutation: BaseMutation) => {
           if (mutation.canMutate(node.getNode())) {
