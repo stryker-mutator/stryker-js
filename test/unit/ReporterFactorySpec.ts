@@ -5,7 +5,7 @@ import ReporterFactory from '../../src/ReporterFactory';
 import ConsoleReporter from '../../src/reporters/ConsoleReporter';
 
 describe('ReporterFactory', function() {
-  var reporterFactory;
+  var reporterFactory: ReporterFactory;
 
   beforeEach(function(){
     reporterFactory = new ReporterFactory();
@@ -15,12 +15,6 @@ describe('ReporterFactory', function() {
     it('when an unknown reporter is requested', function() {
       expect(function() {
         reporterFactory.getReporter('SOME UNKOWN REPORTER');
-      }).to.throw(Error);
-    });
-
-    it('when no reporter name is provided', function() {
-      expect(function() {
-        reporterFactory.getReporter();
       }).to.throw(Error);
     });
   });

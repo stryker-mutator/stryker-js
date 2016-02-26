@@ -1,17 +1,17 @@
 'use strict';
 
-var expect = require('chai').expect;
+import {expect} from 'chai';
 import Mutant from '../../src/Mutant';
-import ConditionalBoundaryMutation from '../../src/mutations/ConditionalBoundayMutation';
+import ConditionalBoundaryMutation from '../../src/mutations/ConditionalBoundaryMutation';
 import ParserUtils from '../../src/utils/ParserUtils';
 import TestResult from '../../src/TestResult';
 require('mocha-sinon');
 
 describe("TestResult", function() {
-  var testResult;
-  var mutant;
+  var testResult: TestResult;
+  var mutant: Mutant;
 
-  var getTestResult = function(nrSucceeded, nrFailed, timedOut, error){
+  var getTestResult = function(nrSucceeded: number, nrFailed: number, timedOut: boolean, error: boolean){
     return new TestResult(['a.js'], [], nrSucceeded, nrFailed, timedOut, error, 1000);
   };
 

@@ -3,10 +3,11 @@
 var expect = require('chai').expect;
 import TestRunnerFactory from '../../src/TestRunnerFactory';
 import JasmineTestRunner from  '../../src/testrunners/JasmineTestRunner';
+import TestRunnerConfig from '../../src/testrunners/TestRunnerConfig';
 
 describe('TestRunnerFactory', function() {
-  var testRunnerFactory;
-  var config;
+  var testRunnerFactory: TestRunnerFactory;
+  var config: TestRunnerConfig;
 
   beforeEach(function(){
     testRunnerFactory = new TestRunnerFactory();
@@ -18,19 +19,7 @@ describe('TestRunnerFactory', function() {
   describe('should throw an error', function(){
     it('when an unknown test runner is requested', function() {
       expect(function() {
-        testRunnerFactory.getTestRunner('SOME UNKOWN RUNNER');
-      }).to.throw(Error);
-    });
-
-    it('when no test runner name is provided', function() {
-      expect(function() {
-        testRunnerFactory.getTestRunner();
-      }).to.throw(Error);
-    });
-
-    it('when no config is provided', function() {
-      expect(function() {
-        testRunnerFactory.getTestRunner('jasmine');
+        testRunnerFactory.getTestRunner('SOME UNKOWN RUNNER', {});
       }).to.throw(Error);
     });
   });

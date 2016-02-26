@@ -3,19 +3,19 @@
 var expect = require('chai').expect;
 import JasmineTestRunner from '../../../src/testrunners/JasmineTestRunner';
 import TestFile from '../../../src/TestFile';
+import {ConfigOptionsIncludingCoverage} from '../../../src/testrunners/KarmaTestRunner'
 require('mocha-sinon');
 
 describe('JasmineTestRunner', function() {
-  var config;
+  var config: ConfigOptionsIncludingCoverage;
   var jasmine: JasmineTestRunner;
 
-  beforeEach(function(){
+  beforeEach(function() {
     config = {
       port: 9876,
       browsers: ['PhantomJS'],
       singleRun: true,
-	  libs: []
-    
+      libs: []
     };
     jasmine = new JasmineTestRunner(config);
     jasmine.setBaseTimeout(10000);
@@ -24,13 +24,13 @@ describe('JasmineTestRunner', function() {
     });
   });
 
-  describe('should throw an error', function(){
+  describe('should throw an error', function() {
     it('when no options are provided', function() {
       expect(JasmineTestRunner).to.throw(Error);
     });
   });
 
-  describe('should cause a time-out', function(){
+  describe('should cause a time-out', function() {
     it('when a test took too long', function(done) {
       this.timeout(10000);
 

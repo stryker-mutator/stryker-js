@@ -1,10 +1,11 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 import FileUtils from '../utils/FileUtils';
-import KarmaTestRunner from './KarmaTestRunner';
+import KarmaTestRunner, {ConfigOptionsIncludingCoverage} from './KarmaTestRunner';
 import ParserUtils from '../utils/ParserUtils';
 import TestFile from '../TestFile';
+import AbstractSyntaxTreeNode from '../AbstractSyntaxTreeNode';
 
 /**
  * Represents a test runner for Jasmine tests using Karma.
@@ -15,19 +16,19 @@ export default class JasmineTestRunner extends KarmaTestRunner {
   
   private _parserUtils = new ParserUtils();
 
-  constructor(config) {
+  constructor(config: ConfigOptionsIncludingCoverage) {
     super(config);
-    this._config.frameworks = ['jasmine'];
+    this.karmaConfig.frameworks = ['jasmine'];
   }
 
-  _splitTest(testFile) {
-    KarmaTestRunner.prototype._splitTest.call(this, testFile);
+  _splitTest(testFile: string) {
+    super._splitTest(testFile);
     var testFileContent = this._fileUtils.readFile(testFile);
     var ast = this._parserUtils.parse(testFileContent);
     var nodes = this._parserUtils.getNodesWithType(ast, ['ExpressionStatement']);
-    var testFiles = [];
+    var testFiles: TestFile[] = [];
 
-    _.forEach(nodes, (astNode, index) => {
+    _.forEach(nodes, (astNode: any, index: any) => {
       if (astNode.getNode().expression.callee && astNode.getNode().expression.callee.name === 'it') {
         var astNodesLeft = _.dropRight(nodes, nodes.length - index);
         this._removeItsFromParent(astNodesLeft);
@@ -35,13 +36,13 @@ export default class JasmineTestRunner extends KarmaTestRunner {
         this._removeItsFromParent(astNodesRight);
 
         var testCode = this._parserUtils.generate(ast);
-        var describes = _.filter(astNodesLeft, (astNode) => {
+        var describes = _.filter(astNodesLeft, (astNode: any) => {
           return astNode.getNode().expression.callee && astNode.getNode().expression.callee.name === 'describe';
         });
         var testFilename = this._generateTestName(astNode, describes);
         testFiles.push(new TestFile(testFilename, testCode));
 
-        _.forEach(nodes, (expressionStatement, index) => {
+        _.forEach(nodes, (expressionStatement: any, index: any) => {
           if (expressionStatement !== astNode) {
             var parent = expressionStatement.getParent();
             if (this._typeUtils.isObject(parent)) {
@@ -60,16 +61,16 @@ export default class JasmineTestRunner extends KarmaTestRunner {
   /**
    * Generates the name of a test based on an `it` and a set of describes.
    * @function
-   * @param {AbstractSyntaxTreeNode} itNode - The node containing the it statement.
-   * @param {AbstractSyntaxTreeNode[]} describeNodes - The describes which may contain the it.
-   * @returns {String} The names of all relevant describes and the name of the it.
+   * @param itNode - The node containing the it statement.
+   * @param describeNodes - The describes which may contain the it.
+   * @returns The names of all relevant describes and the name of the it.
    */
-  _generateTestName(itNode, describeNodes) {
+  _generateTestName(itNode: any, describeNodes: AbstractSyntaxTreeNode[]) {
     this._typeUtils.expectParameterObject(itNode, '_generateTestName', 'itNode');
     this._typeUtils.expectParameterArray(describeNodes, '_generateTestName', 'describeNodes');
 
     var name = '';
-    _.forEach(describeNodes, (describeNode, index) => {
+    _.forEach(describeNodes, (describeNode: any, index: any) => {
       var childNodes = this._parserUtils.getNodesWithType(describeNode.getNode(), ['ExpressionStatement']);
       if (_.find(childNodes, (childNode) => {
         return childNode.getNode() === itNode.getNode();
@@ -85,9 +86,9 @@ export default class JasmineTestRunner extends KarmaTestRunner {
   /**
    * Removes all `it` nodes which are a part of the given nodes from their parent node.
    * @function
-   * @param {AbstractSyntaxTreeNode[]} nodes - The nodes which may be `it` nodes which should be removed from their parents.
+   * @param nodes - The nodes which may be `it` nodes which should be removed from their parents.
    */
-  _removeItsFromParent(nodes) {
+  _removeItsFromParent(nodes: any[]) {
     this._typeUtils.expectParameterArray(nodes, '_generateTestName', 'nodes');
 
     _.forEach(nodes, astNode => {

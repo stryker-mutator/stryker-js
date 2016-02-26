@@ -7,16 +7,16 @@ import ParserUtils from '../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('Mutant', function() {
-  var mutant;
-  var filename;
-  var mutation;
-  var originalLine;
-  var originalCode;
-  var mutatedLine;
-  var mutatedCode;
-  var lineNumber;
-  var ast;
-  var node;
+  var mutant: Mutant;
+  var filename: string;
+  var mutation: MathMutation;
+  var originalLine: string;
+  var originalCode: string;
+  var mutatedLine: string;
+  var mutatedCode: string;
+  var lineNumber: number;
+  var ast: ESTree.Program;
+  var node: ESTree.Node;
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save', function(){
@@ -34,7 +34,7 @@ describe('Mutant', function() {
     filename = 'something.js';
     mutation = new MathMutation();
     ast = parserUtils.parse(mutatedCode);
-    node = ast.body[1].declarations[0].init;
+    node = (<ESTree.VariableDeclaration>ast.body[1]).declarations[0].init;
 
     mutant = new Mutant(filename, originalCode, mutation, ast, node, 11);
   });

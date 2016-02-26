@@ -1,8 +1,8 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 import BaseMutation from './mutations/BaseMutation';
-import ConditionalBoundayMutation from './mutations/ConditionalBoundayMutation';
+import ConditionalBoundaryMutation from './mutations/ConditionalBoundaryMutation';
 import MathMutation from './mutations/MathMutation';
 import RemoveConditionalsMutation from './mutations/RemoveConditionalsMutation';
 import ReverseConditionalMutation from './mutations/ReverseConditionalMutation';
@@ -12,14 +12,15 @@ import UnaryOperatorMutation from './mutations/UnaryOperatorMutation';
 
 export default class MutationRegistry {
 
-  mutations: BaseMutation[];
+  private mutations: BaseMutation[];
+  
   /**
    * Represents a provider for all types of mutations.
    * @constructor
    */
   constructor() {
     this.mutations = [
-      new ConditionalBoundayMutation(),
+      new ConditionalBoundaryMutation(),
       new MathMutation(),
       new RemoveConditionalsMutation(),
       new ReverseConditionalMutation(),
@@ -43,7 +44,7 @@ export default class MutationRegistry {
    * @returns {BaseMutation} The requested Mutation. Undefined if no Mutation with the provided name was found.
    */
   getMutation(name: string): BaseMutation {
-    var index = _.findIndex(this.mutations, function(mutation) {
+    var index = _.findIndex(this.mutations, function(mutation: BaseMutation) {
       return mutation.getName() === name;
     });
 

@@ -1,20 +1,20 @@
 'use strict';
 
-var expect = require('chai').expect;
+import {expect} from 'chai';
 import FileUtils from '../../src/utils/FileUtils';
 import TestFile from '../../src/TestFile';
 require('mocha-sinon');
 
 describe('TestFile', function() {
-  var testFile;
-  var pathToTest;
-  var testName;
-  var content;
-  var fileUtilsData;
-  var fileUtilsPath;
+  var testFile: TestFile;
+  var pathToTest: string;
+  var testName: string;
+  var content: string;
+  var fileUtilsData: string;
+  var fileUtilsPath: string;
 
   beforeEach(function() {
-    this.sinon.stub(FileUtils.prototype, 'createFileInTempFolder', function(filePath, data) {
+    this.sinon.stub(FileUtils.prototype, 'createFileInTempFolder', function(filePath: string, data: string) {
       fileUtilsData = data;
       fileUtilsPath = 'tmp/' + filePath;
       return fileUtilsPath;

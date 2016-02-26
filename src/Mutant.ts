@@ -5,6 +5,15 @@ import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
 import ParserUtils from './utils/ParserUtils';
 import TypeUtils from './utils/TypeUtils';
+import TestFile from './TestFile';
+
+export interface MutantTestedCallback {
+  (mutant: Mutant): void
+}
+
+export interface MutantsTestedCallback {
+  (mutants: Mutant[]): void
+}
 
 export enum MutantStatus {
   
@@ -42,7 +51,7 @@ export default class Mutant {
   private parserUtils = new ParserUtils();
   private _fileUtils = new FileUtils();
   private _lineNumber: number;
-  private _testsRan = [];
+  private _testsRan: TestFile[] = [];
   private _mutatedLine: string;
   private _mutatedCode: string;
   private _mutatedFilename: string;
@@ -57,13 +66,9 @@ export default class Mutant {
    * @param node - The part of the ast which has been mutated.
    * @param columnNumber - The column which has been mutated.
    */
-  constructor(private _filename: string, private _originalCode: string, private _mutation, private _ast, private _node, private _columnNumber: number) {
-    this._typeUtils.expectParameterString(_filename, 'Mutant', 'filename');
-    this._typeUtils.expectParameterString(_originalCode, 'Mutant', 'originalCode');
-    this._typeUtils.expectParameterObject(_mutation, 'Mutant', 'mutation');
+  constructor(private _filename: string, private _originalCode: string, private _mutation: BaseMutation, private _ast: ESTree.Program, private _node: ESTree.Node, private _columnNumber: number) {
     this._typeUtils.expectParameterObject(_ast, 'Mutant', 'ast');
     this._typeUtils.expectParameterObject(_node, 'Mutant', 'node');
-    this._typeUtils.expectParameterNumber(_columnNumber, 'Mutant', 'columnNumber');
 
     this._lineNumber = _node.loc.start.line;
     this._mutatedCode = this.parserUtils.generate(_ast, _originalCode);
@@ -80,7 +85,7 @@ export default class Mutant {
    * @param {String[]} sourceFiles - The list of source files of which one has to be replaced with the mutated file.
    * @returns {String[]} The list of source files of which one source file has been replaced.
    */
-  insertMutatedFile = function(sourceFiles) {
+  insertMutatedFile = function(sourceFiles: string[]) {
     this._typeUtils.expectParameterArray(sourceFiles, 'Mutant', 'sourceFiles');
     var mutatedSrc = _.clone(sourceFiles);
     var mutantSourceFileIndex = _.indexOf(mutatedSrc, this.getFilename());
@@ -165,7 +170,6 @@ export default class Mutant {
     this.setStatus(MutantStatus.TIMEDOUT);
   };
 
-
   /**
    * Gets the Mutation which has been applied.
    * @function
@@ -241,11 +245,9 @@ export default class Mutant {
   /**
    * Sets the tests which were ran on this Mutant.
    * @function
-   * @param {String[]} tests - The array of tests which were ran.
+   * @param {TestFile[]} tests - The array of tests which were ran.
    */
-  setTestsRan = function(tests) {
-    this._typeUtils.expectParameterArray(tests, 'Mutant', 'tests');
-
+  setTestsRan = function(tests: TestFile[]) {
     this._testsRan = tests;
   };
 

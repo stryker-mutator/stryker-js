@@ -7,13 +7,13 @@ import ParserUtils from '../../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('RemoveConditionalsMutation', function() {
-  var removeConditionalsMutation;
-  var code;
-  var ast;
-  var doWhileLoop;
-  var forLoop;
-  var whileLoop;
-  var ifStatement;
+  var removeConditionalsMutation: RemoveConditionalsMutation;
+  var code: string;
+  var ast: ESTree.Program;
+  var doWhileLoop: ESTree.DoWhileStatement;
+  var forLoop: ESTree.ForStatement;
+  var whileLoop: ESTree.WhileStatement;
+  var ifStatement: ESTree.IfStatement;
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save');
@@ -37,13 +37,13 @@ describe('RemoveConditionalsMutation', function() {
 
     var parserUtils = new ParserUtils();
     ast = parserUtils.parse(code);
-    ifStatement = ast.body[1];
-    whileLoop = ast.body[2];
-    doWhileLoop = ast.body[3];
-    forLoop = ast.body[4];
+    ifStatement = <ESTree.IfStatement>ast.body[1];
+    whileLoop = <ESTree.WhileStatement>ast.body[2];
+    doWhileLoop = <ESTree.DoWhileStatement>ast.body[3];
+    forLoop = <ESTree.ForStatement>ast.body[4];
   });
 
-  function applyMutation(node){
+  function applyMutation(node: ESTree.IfStatement| ESTree.DoWhileStatement | ESTree.WhileStatement | ESTree.ForStatement){
     return removeConditionalsMutation.applyMutation('Hello.js', code, node, ast);
   }
 

@@ -6,7 +6,7 @@ import FileUtils from '../../../src/utils/FileUtils';
 require('mocha-sinon');
 
 describe('FileUtils', function() {
-  var fileUtils;
+  var fileUtils: FileUtils;
 
   beforeEach(function() {
     fileUtils = new FileUtils();
@@ -22,8 +22,8 @@ describe('FileUtils', function() {
       return 1447849085;
     });
 
-    var file1 = fileUtils.createFileInTempFolder(baseFolderName, filePath, data);
-    var file2 = fileUtils.createFileInTempFolder(baseFolderName, filePath, data);
+    var file1 = fileUtils.createFileInTempFolder(baseFolderName + filePath, data);
+    var file2 = fileUtils.createFileInTempFolder(baseFolderName + filePath, data);
 
     expect(file1).to.not.equal(file2);
   });
@@ -31,7 +31,7 @@ describe('FileUtils', function() {
   describe('should be able to read a file', function() {
     it('synchronously', function() {
       var msg = 'hello 1 2';
-      this.sinon.stub(fs, 'readFileSync', function(filename, encoding) {
+      this.sinon.stub(fs, 'readFileSync', function(filename: string, encoding: string) {
         return msg;
       });
 

@@ -5,7 +5,7 @@ import MathMutation from '../../src/mutations/MathMutation';
 import MutationRegistry from '../../src/MutationRegistry';
 
 describe('MutationRegistry', function() {
-  var mutationRegistry;
+  var mutationRegistry: MutationRegistry;
 
   beforeEach(function() {
     mutationRegistry = new MutationRegistry();

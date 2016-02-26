@@ -1,9 +1,9 @@
 'use strict';
 
 var _ = require('lodash');
-var chalk = require('chalk');
+import * as chalk from 'chalk';
 import BaseReporter from './BaseReporter';
-import Mutant from '../Mutant';
+import Mutant, {MutantStatus} from '../Mutant';
 import TestFile from '../TestFile';
 
 /**
@@ -15,20 +15,27 @@ export default class ConsoleReporter extends BaseReporter {
   /**
    * Reports information about a Mutant that has been tested.
    * @function
-   * @param {Mutant} mutant - The tested Mutant.
+   * @param mutant - The tested Mutant.
    */
-  mutantTested(mutant:Mutant) {
-    BaseReporter.prototype.mutantTested.call(this, mutant);
-    var mutantStatus = '';
-    if (mutant.hasStatusKilled()) {
-      mutantStatus = '.';
-    } else if (mutant.hasStatusTimedOut()) {
-      mutantStatus = chalk.yellow('T');
-    } else if (mutant.hasStatusSurvived()) {
-      mutantStatus = chalk.bold.red('S');
+  mutantTested(mutant: Mutant) {
+    super.mutantTested(mutant);
+    let toLog: string;
+    switch (mutant.getStatus()) {
+      case MutantStatus.KILLED:
+        toLog = '.';
+        break;
+      case MutantStatus.TIMEDOUT:
+        toLog = chalk.yellow('T');
+        break;
+      case MutantStatus.SURVIVED:
+        toLog = chalk.bold.red('S');
+        break;
+      default:
+        toLog = '';
+        break;
     }
 
-    process.stdout.write(mutantStatus);
+    process.stdout.write(toLog);
   }
 
   /**
@@ -37,13 +44,13 @@ export default class ConsoleReporter extends BaseReporter {
    * @param {Mutant[]} mutants - The tested Mutants.
    */
   allMutantsTested(mutants: Mutant[]) {
-    BaseReporter.prototype.allMutantsTested.call(this, mutants);
+    super.allMutantsTested(mutants);
     process.stdout.write('\n'); // Write a newline character to end the string of mutant statusses.
 
     var mutantsKilled = 0;
     var mutantsTimedOut = 0;
     var mutantsUntested = 0;
-    _.forEach(mutants, function(mutant: Mutant) {
+    mutants.forEach(mutant => {
       if (mutant.hasStatusKilled()) {
         mutantsKilled++;
       } else if (mutant.hasStatusTimedOut()) {
@@ -82,11 +89,11 @@ export default class ConsoleReporter extends BaseReporter {
   /**
    * Gets the color associated with a mutation score.
    * @function
-   * @param {number} score - The mutation score.
+   * @param score - The mutation score.
    * @returns {Function} The function which can give the mutation score the right color.
    */
   private getColorForMutationScore(score: number) {
-    var color;
+    var color: chalk.ChalkChain;
     if (score > 80) {
       color = chalk.green;
     } else if (score > 50) {
@@ -94,7 +101,6 @@ export default class ConsoleReporter extends BaseReporter {
     } else {
       color = chalk.red;
     }
-
     return color;
   }
 }

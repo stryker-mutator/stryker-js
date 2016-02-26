@@ -72,7 +72,7 @@ module.exports = function (grunt) {
 
     ts: {
       options: {
-        failOnTypeErrors: false
+        failOnTypeErrors: true
       },
       build: {
         tsconfig: true
@@ -89,7 +89,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
-  grunt.registerTask('test', ['build', 'coverage', 'integration']);
+  grunt.registerTask('test', ['build', 'coverage']);
   grunt.registerTask('build', ['clean', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);

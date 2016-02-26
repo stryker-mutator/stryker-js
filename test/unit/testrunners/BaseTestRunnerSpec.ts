@@ -6,7 +6,7 @@ import BaseTestRunner from '../../../src/testrunners/BaseTestRunner';
 describe('BaseTestRunner', function() {
   class MockTestRunner extends BaseTestRunner {}
   
-  var testRunner;
+  var testRunner: BaseTestRunner;
   beforeEach(function() {
     testRunner = new MockTestRunner({});
     testRunner.setBaseTimeout(0);
