@@ -52,8 +52,8 @@ export interface CoverageResult {
   path: string;
 }
 
-interface CoverageCollection {
+export interface CoverageCollection {
   [fileName: string]: CoverageResult;
 }
 
-export default CoverageCollection;
+export default CoverageResult;
