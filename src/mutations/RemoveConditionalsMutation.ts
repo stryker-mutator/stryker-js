@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 import {Syntax} from 'esprima';
 import BaseMutation from './BaseMutation';
 import Mutant from '../Mutant';
@@ -14,19 +14,19 @@ export default class RemoveConditionalsMutation extends BaseMutation {
     super('RemoveConditionals', [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement]);
   }
 
-  applyMutation(filename: string, originalCode: string, node, ast) {
+  applyMutation(filename: string, originalCode: string, node: ESTree.IfStatement, ast: ESTree.Program) {
     var originalTest = node.test;
 
     var mutants: Mutant[] = [];
-    node.test = {
+    node.test = <ESTree.Literal>{
       type: Syntax.Literal,
       value: false,
       raw: 'false'
     };
     mutants.push(new Mutant(filename, originalCode, this, ast, node, node.loc.start.column));
     if (node.type === Syntax.IfStatement) {
-      node.test.value = true;
-      node.test.raw = node.test.value.toString();
+      (<ESTree.Literal>node.test).value = true;
+      (<ESTree.Literal>node.test).raw = (<ESTree.Literal>node.test).value.toString();
       mutants.push(new Mutant(filename, originalCode, this, ast, node, node.loc.start.column));
     }
 
@@ -35,7 +35,7 @@ export default class RemoveConditionalsMutation extends BaseMutation {
     return mutants;
   };
 
-  canMutate(node) {
+  canMutate(node: ESTree.Node) {
     return !!(node && _.indexOf(this._types, node.type) >= 0);
   };
 
