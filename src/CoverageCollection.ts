@@ -34,7 +34,7 @@ export interface FunctionMap {
 }
 
 export interface CoverageData {
-  [ref: number]: number;
+  [ref: string]: number;
 }
 
 export interface BrancheCoverageData {
