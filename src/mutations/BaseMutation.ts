@@ -27,7 +27,7 @@ abstract class BaseMutation {
    * @param {Object} ast - The complete abstract syntax tree.
    * @returns {Mutant[]} The generated Mutants.
    */
-  abstract applyMutation(filename: string, originalCode: string, node, ast): Mutant[];
+  abstract applyMutation(filename: string, originalCode: string, node: ESTree.Node, ast: ESTree.Program): Mutant[];
 
   /**
    * Checks if this mutation can be applied to the provided node.
@@ -35,7 +35,7 @@ abstract class BaseMutation {
    * @param {Object} node - A part of the abstract syntax tree.
    * @returns {Boolean} True if the mutation can be applied.
    */
-  abstract canMutate(node): boolean;
+  abstract canMutate(node: ESTree.Node): boolean;
 
   /**
    * Gets the name of the mutation.
