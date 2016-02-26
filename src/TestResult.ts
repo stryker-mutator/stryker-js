@@ -5,7 +5,7 @@ import FileUtils from './utils/FileUtils';
 import TypeUtils from './utils/TypeUtils';
 import TestFile from './TestFile';
 import Mutant from './Mutant';
-import {CoverageCollection} from './api/test-runner/CoverageResult';
+import {CoverageCollection} from './api/CoverageResult';
 
 /**
  * Represents the result of a test run.

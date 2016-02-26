@@ -1,10 +1,12 @@
-import TestResultMap from './test-runner/TestResultMap'
+import TestRunResult from './TestRunResult';
 import StrykerOptions from './StrykerOptions';
 
-interface TestRunner{
-  new(options: StrykerOptions): TestRunner; 
+
+abstract class TestRunner{
+  constructor(protected options: StrykerOptions){
+  }
   
-  run(): TestResultMap;
+  abstract run(): TestRunResult;
 }
 
 export default TestRunner;

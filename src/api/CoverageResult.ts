@@ -43,13 +43,13 @@ export interface BrancheCoverageData {
 
 export interface CoverageResult {
   s: CoverageData;
-  b: BrancheCoverageData;
-  f: CoverageData;
-  l: CoverageData;
-  fnMap: FunctionMap;
-  branchMap: BranchMap;
+  b?: BrancheCoverageData;
+  f?: CoverageData;
+  l?: CoverageData;
+  fnMap?: FunctionMap;
+  branchMap?: BranchMap;
   statementMap: StatementMap;
-  path: string;
+  path?: string;
 }
 
 export interface CoverageCollection {
