@@ -72,7 +72,7 @@ module.exports = function (grunt) {
 
     ts: {
       options: {
-        failOnTypeErrors: false
+        failOnTypeErrors: true
       },
       build: {
         tsconfig: true
