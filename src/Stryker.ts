@@ -11,7 +11,7 @@ import BaseReporter from './reporters/BaseReporter';
 import BaseTestRunner from './testrunners/BaseTestRunner';
 import TestFile from './TestFile';
 import TestResult from './TestResult';
-import StrykerOptions from './api/StrykerOptions';
+import StrykerOptions from './StrykerOptions';
 
 export default class Stryker {
 
