@@ -10,7 +10,7 @@ import TypeUtils from './utils/TypeUtils';
  */
 export default class ReporterFactory {
 
-  private _typeUtils = new TypeUtils();
+  private typeUtils = new TypeUtils();
 
 
   /**
@@ -20,7 +20,7 @@ export default class ReporterFactory {
    * @returns The created reporter.
    */
   getReporter(name: string): BaseReporter {
-    this._typeUtils.expectParameterString(name, 'ReporterFactory', 'name');
+    this.typeUtils.expectParameterString(name, 'ReporterFactory', 'name');
 
     switch (name) {
       case 'console':

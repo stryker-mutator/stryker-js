@@ -20,7 +20,7 @@ describe('Mutant', function() {
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save', function(){
-      this._mutatedFilename = 'mutatedSrc.js';
+      this.mutatedFilename = 'mutatedSrc.js';
     });
     var parserUtils = new ParserUtils();
 

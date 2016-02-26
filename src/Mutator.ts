@@ -13,9 +13,9 @@ import TypeUtils from './utils/TypeUtils';
  * Class capable of finding spots to mutate in files.
  */
 export default class Mutator {
-  private _typeUtils = new TypeUtils();
+  private typeUtils = new TypeUtils();
   private mutationRegistry = new MutationRegistry();
-  private _fileUtils = new FileUtils();
+  private fileUtils = new FileUtils();
   private mutations: BaseMutation[];
 
   public constructor() {
@@ -29,7 +29,7 @@ export default class Mutator {
    * @returns {Mutant[]} The generated Mutants.
    */
   mutate(sourceFiles: string[]) {
-    this._typeUtils.expectParameterArray(sourceFiles, 'Mutator', 'sourceFiles');
+    this.typeUtils.expectParameterArray(sourceFiles, 'Mutator', 'sourceFiles');
 
     var mutants: Mutant[] = [];
     var parserUtils = new ParserUtils();
@@ -39,10 +39,10 @@ export default class Mutator {
 
     _.forEach(sourceFiles, (sourceFile: string) => {
       try {
-        var fileContent = this._fileUtils.readFile(sourceFile);
+        var fileContent = this.fileUtils.readFile(sourceFile);
         var abstractSyntaxTree = parserUtils.parse(fileContent);
         var nodes = parserUtils.getNodesWithType(abstractSyntaxTree, types);
-        var newMutants = this._findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
+        var newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
         mutants = mutants.concat(newMutants);
       } catch (err) {
         switch (err.code) {
@@ -67,9 +67,9 @@ export default class Mutator {
    * @param {AbstractSyntaxTreeNode[]} nodes - The nodes which could be used by mutations to generate mutants.
    * @returns {Mutant[]} All possible Mutants for the given set of nodes.
    */
-  private _findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: AbstractSyntaxTreeNode[]) {
-    this._typeUtils.expectParameterObject(ast, 'Mutator', 'ast');
-    this._typeUtils.expectParameterArray(nodes, 'Mutator', 'nodes');
+  private findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: AbstractSyntaxTreeNode[]) {
+    this.typeUtils.expectParameterObject(ast, 'Mutator', 'ast');
+    this.typeUtils.expectParameterArray(nodes, 'Mutator', 'nodes');
 
     var mutants: Mutant[] = [];
     _.forEach(nodes, (node, index) => {

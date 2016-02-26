@@ -9,7 +9,7 @@ import TypeUtils from './utils/TypeUtils';
  * @constructor
  */
 export default class TestRunnerFactory {
-  _typeUtils = new TypeUtils();
+  private typeUtils = new TypeUtils();
 
   /**
    * Gets a test runner for the provided name.
@@ -19,8 +19,8 @@ export default class TestRunnerFactory {
    * @returns {Object} The created test runner.
    */
   getTestRunner(name: string, testRunnerConfig: TestRunnerConfig) {
-    this._typeUtils.expectParameterString(name, 'TestRunnerFactory', 'name');
-    this._typeUtils.expectParameterObject(testRunnerConfig, 'TestRunnerFactory', 'testRunnerConfig');
+    this.typeUtils.expectParameterString(name, 'TestRunnerFactory', 'name');
+    this.typeUtils.expectParameterObject(testRunnerConfig, 'TestRunnerFactory', 'testRunnerConfig');
 
     if (!testRunnerConfig.timeoutMs) {
       console.log('testRunnerConfig has no property timeoutMs, using default.');
@@ -28,7 +28,7 @@ export default class TestRunnerFactory {
     } else if (!testRunnerConfig.timeoutFactor) {
       console.log('testRunnerConfig has no property timeoutFactor, using default.');
       testRunnerConfig.timeoutFactor = 1.25;
-    } else if (!this._typeUtils.isBoolean(testRunnerConfig.individualTests)) {
+    } else if (!this.typeUtils.isBoolean(testRunnerConfig.individualTests)) {
       console.log('testRunnerConfig has no property individualTests, using default.');
       testRunnerConfig.individualTests = false;
     } else if (!testRunnerConfig.libs) {

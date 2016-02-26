@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+import * as _ from 'lodash';
 var program = require('commander');
 import FileUtils from './utils/FileUtils';
 import Mutator from './Mutator';
@@ -15,9 +15,9 @@ import StrykerOptions from './StrykerOptions';
 
 export default class Stryker {
 
-  _fileUtils = new FileUtils();
-  _reporter: BaseReporter;
-  _testRunner: BaseTestRunner;
+  fileUtils = new FileUtils();
+  reporter: BaseReporter;
+  testRunner: BaseTestRunner;
 
   /**
    * The Stryker mutation tester.
@@ -30,9 +30,9 @@ export default class Stryker {
    * @param {Boolean} [options].[individualTests] - Indicates whether the tests in test files should be split up, possibly resulting in faster mutation testing.
    */
   constructor(private sourceFiles: string[], private testFiles: string[], options?: StrykerOptions) {
-    this._fileUtils.normalize(sourceFiles);
-    this._fileUtils.normalize(testFiles);
-    this._fileUtils.createBaseTempFolder();
+    this.fileUtils.normalize(sourceFiles);
+    this.fileUtils.normalize(testFiles);
+    this.fileUtils.createBaseTempFolder();
 
     if (options) {
       options = {
@@ -49,13 +49,13 @@ export default class Stryker {
         individualTests: false
       };
     }
-    this._fileUtils.normalize(options.libs);
+    this.fileUtils.normalize(options.libs);
 
     var reporterFactory = new ReporterFactory();
     var testRunnerFactory = new TestRunnerFactory();
 
-    this._reporter = reporterFactory.getReporter('console');
-    this._testRunner = testRunnerFactory.getTestRunner('jasmine', options);
+    this.reporter = reporterFactory.getReporter('console');
+    this.testRunner = testRunnerFactory.getTestRunner('jasmine', options);
   }
 
   /**
@@ -64,8 +64,8 @@ export default class Stryker {
    */
   runMutationTest(cb: () => void) {
     console.log('INFO: Running initial test run');
-    this._testRunner.testAndCollectCoverage(this.sourceFiles, this.testFiles, (testResults: TestResult[]) => {
-      if (this._allTestsSuccessful(testResults)) {
+    this.testRunner.testAndCollectCoverage(this.sourceFiles, this.testFiles, (testResults: TestResult[]) => {
+      if (this.allTestsSuccessful(testResults)) {
         console.log('INFO: Initial test run succeeded');
         var mutator = new Mutator();
         var mutants = mutator.mutate(this.sourceFiles);
@@ -76,18 +76,18 @@ export default class Stryker {
           testFilesToRemove = testFilesToRemove.concat(testResult.getTestFiles());
         });
 
-        this._testRunner.testMutants(mutants, this.sourceFiles, testResults,
+        this.testRunner.testMutants(mutants, this.sourceFiles, testResults,
           (mutant: Mutant) => {
             // Call the reporter like this instead of passing the function directly to ensure that `this` in the reporter is still the reporter.
-            this._reporter.mutantTested(mutant);
+            this.reporter.mutantTested(mutant);
           },
           (mutants: Mutant[]) => {
-            this._reporter.allMutantsTested(mutants);
+            this.reporter.allMutantsTested(mutants);
 
             _.forEach(testFilesToRemove, (testFile: TestFile) => {
               testFile.remove();
             });
-            this._fileUtils.removeBaseTempFolder();
+            this.fileUtils.removeBaseTempFolder();
 
             if (cb) {
               cb();
@@ -105,7 +105,7 @@ export default class Stryker {
    * @param {TestResult[]} testResults - The list of TestResults.
    * @returns {Boolean} True if all tests passed.
    */
-  _allTestsSuccessful(testResults: TestResult[]): boolean {
+  private allTestsSuccessful(testResults: TestResult[]): boolean {
     var unsuccessfulTest = _.find(testResults, (result: TestResult) => {
       return !result.getAllTestsSuccessful();
     });

@@ -9,7 +9,7 @@ import BaseTestRunner from './testrunners/BaseTestRunner';
  */
 export default class AbstractSyntaxTreeNode {
 
-  private _typeUtils = new TypeUtils();
+  private typeUtils = new TypeUtils();
 
   /**
    * @param node - The actual node.

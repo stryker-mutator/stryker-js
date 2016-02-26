@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+import * as  _ from 'lodash';
 import * as chalk from 'chalk';
 import BaseReporter from './BaseReporter';
 import Mutant, {MutantStatus} from '../Mutant';
