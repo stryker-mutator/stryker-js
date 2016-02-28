@@ -1,6 +1,5 @@
 'use strict';
 
-import TypeUtils from './utils/TypeUtils';
 import BaseTestRunner from './testrunners/BaseTestRunner';
 
 /**
@@ -8,41 +7,30 @@ import BaseTestRunner from './testrunners/BaseTestRunner';
  * @constructor
  */
 export default class AbstractSyntaxTreeNode {
+  private _node: ESTree.Node;
+  private _parent: AbstractSyntaxTreeNode;
+  private _key: string| number;
 
-  private typeUtils = new TypeUtils();
+  get node(): ESTree.Node {
+    return this._node;
+  }
+  
+  get parent(): AbstractSyntaxTreeNode {
+    return this._parent;
+  }
+  
+  get key(): string| number {
+    return this._key;
+  }
 
   /**
    * @param node - The actual node.
    * @param parent - The parent of the node.
    * @param key - The key of the node in the parent.
    */
-  constructor(private node: ESTree.Node, private parent: AbstractSyntaxTreeNode, private key: string| number) {
+  constructor(node: ESTree.Node, parent: AbstractSyntaxTreeNode, key: string| number) {
+    this._node = node;
+    this._parent = parent;
+    this._key = key;
   }
-
-  /**
-   * Gets the node.
-   * @function
-   * @returns {Object} The node.
-   */
-  getNode() {
-    return this.node;
-  };
-
-  /**
-   * Gets the parent of the node.
-   * @function
-   * @returns The parent of the node.
-   */
-  getParent() {
-    return this.parent;
-  };
-
-  /**
-   * Gets the key of the node in the parent.
-   * @function
-   * @returns {Number|String} The key, which is a Number if the parent is an Array or a String if the parent is an Object..
-   */
-  getKey() {
-    return this.key;
-  };
 }

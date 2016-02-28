@@ -72,11 +72,11 @@ export default class Mutator {
     this.typeUtils.expectParameterArray(nodes, 'Mutator', 'nodes');
 
     var mutants: Mutant[] = [];
-    _.forEach(nodes, (node, index) => {
-      if (node.getNode().type) {
+    _.forEach(nodes, (astnode, index) => {
+      if (astnode.node.type) {
         _.forEach(this.mutations, (mutation: BaseMutation) => {
-          if (mutation.canMutate(node.getNode())) {
-            mutants = mutants.concat(mutation.applyMutation(sourceFile, originalCode, node.getNode(), ast));
+          if (mutation.canMutate(astnode.node)) {
+            mutants = mutants.concat(mutation.applyMutation(sourceFile, originalCode, astnode.node, ast));
           }
         });
       }

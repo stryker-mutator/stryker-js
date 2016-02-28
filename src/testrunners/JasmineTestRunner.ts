@@ -29,7 +29,7 @@ export default class JasmineTestRunner extends KarmaTestRunner {
     var testFiles: TestFile[] = [];
 
     _.forEach(nodes, (astNode: any, index: any) => {
-      if (astNode.getNode().expression.callee && astNode.getNode().expression.callee.name === 'it') {
+      if (astNode.node.expression.callee && astNode.node.expression.callee.name === 'it') {
         var astNodesLeft = _.dropRight(nodes, nodes.length - index);
         this._removeItsFromParent(astNodesLeft);
         var astNodesRight = _.drop(nodes, index + 1);
@@ -37,18 +37,18 @@ export default class JasmineTestRunner extends KarmaTestRunner {
 
         var testCode = this._parserUtils.generate(ast);
         var describes = _.filter(astNodesLeft, (astNode: any) => {
-          return astNode.getNode().expression.callee && astNode.getNode().expression.callee.name === 'describe';
+          return astNode.node.expression.callee && astNode.node.expression.callee.name === 'describe';
         });
         var testFilename = this._generateTestName(astNode, describes);
         testFiles.push(new TestFile(testFilename, testCode));
 
         _.forEach(nodes, (expressionStatement: any, index: any) => {
           if (expressionStatement !== astNode) {
-            var parent = expressionStatement.getParent();
+            var parent = expressionStatement.parent;
             if (this._typeUtils.isObject(parent)) {
-              parent[expressionStatement.getKey()] = expressionStatement.getNode();
-            } else if (_.indexOf(parent, expressionStatement.getNode()) < 0) {
-              parent.splice(expressionStatement.getKey(), 0, expressionStatement.getNode());
+              parent[expressionStatement.key] = expressionStatement.node;
+            } else if (_.indexOf(parent, expressionStatement.node) < 0) {
+              parent.splice(expressionStatement.key, 0, expressionStatement.node);
             }
           }
         });
@@ -71,14 +71,14 @@ export default class JasmineTestRunner extends KarmaTestRunner {
 
     var name = '';
     _.forEach(describeNodes, (describeNode: any, index: any) => {
-      var childNodes = this._parserUtils.getNodesWithType(describeNode.getNode(), ['ExpressionStatement']);
+      var childNodes = this._parserUtils.getNodesWithType(describeNode.node, ['ExpressionStatement']);
       if (_.find(childNodes, (childNode) => {
-        return childNode.getNode() === itNode.getNode();
+        return childNode.node === itNode.node;
       })) {
-        name += describeNode.getNode().expression.arguments[0].value + ' ';
+        name += describeNode.node.expression.arguments[0].value + ' ';
       }
     });
-    name += itNode.getNode().expression.arguments[0].value;
+    name += itNode.node.expression.arguments[0].value;
 
     return name;
   };
@@ -92,8 +92,8 @@ export default class JasmineTestRunner extends KarmaTestRunner {
     this._typeUtils.expectParameterArray(nodes, '_generateTestName', 'nodes');
 
     _.forEach(nodes, astNode => {
-      var node = astNode.getNode();
-      var parent = astNode.getParent();
+      var node = astNode.node;
+      var parent = astNode.parent;
 
       if (node.expression.callee && node.expression.callee.name === 'it') {
         parent.splice(_.indexOf(parent, node), 1);
