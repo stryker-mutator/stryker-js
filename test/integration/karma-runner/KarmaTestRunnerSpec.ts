@@ -8,9 +8,10 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 let expect = chai.expect;
 
-describe('KarmaTestRunner', () => {
+describe('KarmaTestRunner', function() {
 
-  let sut: KarmaTestRunner;
+  var sut: KarmaTestRunner;
+  this.timeout(10000);
 
   describe('with simple add function to test', () => {
 
@@ -18,7 +19,7 @@ describe('KarmaTestRunner', () => {
       sut = new KarmaTestRunner(['test/sampleProject/src/Add.js'], ['test/sampleProject/test/AddSpec.js'], { port: 9877, tempFolder: '.tmp' }, {});
     });
 
-    it('should report completed tests', () => {
+    it('should report completed tests', function() {
       return expect(sut.run()).to.eventually.satisfy((testResult: TestRunResult) => {
         expect(testResult.succeeded).to.be.eq(5);
         expect(testResult.failed).to.be.eq(0);
