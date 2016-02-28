@@ -79,7 +79,7 @@ export default class KarmaTestRunner extends TestRunner {
     if (!karmaConfig.preprocessors) {
       karmaConfig.preprocessors = {};
     }
-    this.sourceFiles.forEach(sourceFile => karmaConfig.preprocessors[sourceFile] = 'coverage');
+    this.sourceFiles.forEach(sourceFile => karmaConfig.preprocessors[sourceFile] = karmaConfig.preprocessors[`../${sourceFile}`] = 'coverage');
     karmaConfig.coverageReporter.dir = `${this.runnerOptions.tempFolder}/coverage`;
 
     karmaConfig.files = [];
