@@ -73,7 +73,7 @@ describe('BaseOperatorMutation', function() {
     var node = ast.body[0].declarations[0].init;
     
     var mutants = mockMutation.applyMutation('hello.js', code, node, ast);
-    var actualColumn = mutants[0].getColumnNumber();
+    var actualColumn = mutants[0].columnNumber;
 
     expect(actualColumn).to.equal(column);
   });

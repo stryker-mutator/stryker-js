@@ -50,21 +50,21 @@ describe('RemoveConditionalsMutation', function() {
   describe('should not generate an infinite loop', function() {
     it('when given a do-while loop', function() {
       var mutants = applyMutation(doWhileLoop);
-      var mutatedCode = mutants[0].getMutatedCode();
+      var mutatedCode = mutants[0].mutatedCode;
 
       expect(mutatedCode).to.not.contain('true');
     });
 
     it('when given a while loop', function() {
       var mutants = applyMutation(whileLoop);
-      var mutatedCode = mutants[0].getMutatedCode();
+      var mutatedCode = mutants[0].mutatedCode;
 
       expect(mutatedCode).to.not.contain('true');
     });
 
     it('when given a for loop', function() {
       var mutants = applyMutation(forLoop);
-      var mutatedCode = mutants[0].getMutatedCode();
+      var mutatedCode = mutants[0].mutatedCode;
 
       expect(mutatedCode).to.not.contain('true');
     });

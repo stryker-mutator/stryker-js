@@ -20,7 +20,7 @@ describe('Mutant', function() {
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save', function(){
-      this.mutatedFilename = 'mutatedSrc.js';
+      this._mutatedFilename = 'mutatedSrc.js';
     });
     var parserUtils = new ParserUtils();
 
@@ -41,31 +41,31 @@ describe('Mutant', function() {
 
   describe('should set', function() {
     it('the filename', function() {
-      expect(mutant.getFilename()).to.equal(filename);
+      expect(mutant.filename).to.equal(filename);
     });
 
     it('the mutation', function() {
-      expect(mutant.getMutation()).to.equal(mutation);
+      expect(mutant.mutation).to.equal(mutation);
     });
 
     it('the mutated code', function() {
-      expect(mutant.getMutatedCode()).to.equal(mutatedCode);
+      expect(mutant.mutatedCode).to.equal(mutatedCode);
     });
 
     it('the line number', function() {
-      expect(mutant.getLineNumber()).to.equal(lineNumber);
+      expect(mutant.lineNumber).to.equal(lineNumber);
     });
 
     it('the column number', function() {
-      expect(mutant.getColumnNumber()).to.equal(11);
+      expect(mutant.columnNumber).to.equal(11);
     });
 
     it('the original line of code', function() {
-      expect(mutant.getOriginalLine()).to.equal(originalLine);
+      expect(mutant.originalLine).to.equal(originalLine);
     });
 
     it('the mutated line of code', function() {
-      expect(mutant.getMutatedLine()).to.equal(mutatedLine);
+      expect(mutant.mutatedLine).to.equal(mutatedLine);
     });
   });
 
@@ -106,7 +106,7 @@ describe('Mutant', function() {
 
   describe('should be able to insert a mutated file', function(){
     it('without changing the original array of source files', function(){
-      var sourceFiles = ['sample.js', mutant.getMutatedFilename(), 'somethingElse.js'];
+      var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
       var sourceFilesBackup = sourceFiles.slice(0);
 
       var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
@@ -115,11 +115,11 @@ describe('Mutant', function() {
     });
 
     it('and replace the original filename with the mutated filename', function(){
-      var sourceFiles = ['sample.js', mutant.getMutatedFilename(), 'somethingElse.js'];
+      var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
 
       var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
 
-      expect(mutatedSourceFiles[1]).to.equal(mutant.getMutatedFilename());
+      expect(mutatedSourceFiles[1]).to.equal(mutant.mutatedFilename);
     });
   });
 });

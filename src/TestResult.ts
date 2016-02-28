@@ -48,9 +48,9 @@ export default class TestResult {
   coversMutant(mutant: Mutant) {
     this.typeUtils.expectParameterObject(mutant, 'TestResult', 'mutant');
     var covered = true;
-    var coveredFile = this.coverage[mutant.getFilename()];
-    var mutantLineNumber = mutant.getLineNumber();
-    var mutantColumnNumber = mutant.getColumnNumber();
+    var coveredFile = this.coverage[mutant.filename];
+    var mutantLineNumber = mutant.lineNumber;
+    var mutantColumnNumber = mutant.columnNumber;
 
     if (coveredFile) {
       _.forOwn(coveredFile.statementMap, (statement, statementId) => {

@@ -219,7 +219,7 @@ abstract class BaseTestRunner {
 
       var config: TestRunnerConfig = _.cloneDeep(that._config);
       that.queueTest(config, mutatedSrc, testFiles, function(result) {
-        mutant.setTestsRan(testFiles);
+        mutant.testsRan = testFiles;
 
         if (result.getTimedOut()) {
           mutant.setStatusTimedOut();
