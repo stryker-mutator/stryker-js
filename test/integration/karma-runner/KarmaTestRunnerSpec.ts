@@ -21,6 +21,7 @@ describe('KarmaTestRunner', function() {
 
     it('should report completed tests', function() {
       return expect(sut.run()).to.eventually.satisfy((testResult: TestRunResult) => {
+        console.log('asserting');
         expect(testResult.succeeded).to.be.eq(5);
         expect(testResult.failed).to.be.eq(0);
         expect(testResult.result).to.be.eq(TestResult.Complete);

@@ -58,12 +58,14 @@ export default class KarmaTestRunner extends TestRunner {
   private listenToSpecComplete() {
     this.server.on('spec_complete', (browser: any, spec: any) => {
       let specName = `${spec.suite.join(' ')} ${spec.description}`;
+      console.log('spec_completed', specName);
       this.currentSpecNames.push(specName);
     });
   }
 
   private listenToRunComplete() {
     this.server.on('run_complete', (browsers, results) => {
+      console.log('run_complete', results);
       this.currentTestResults = results;
     });
   }
@@ -92,6 +94,7 @@ export default class KarmaTestRunner extends TestRunner {
     return new Promise<void>((resolve) => {
       let p = this.runnerOptions.port;
       karma.runner.run({ port: p }, (exitCode) => {
+        console.log('run_complete', exitCode);
         resolve();
       });
     });
@@ -99,9 +102,11 @@ export default class KarmaTestRunner extends TestRunner {
 
   run(): Promise<TestRunResult> {
     return this.serverStartedPromise.then(() => new Promise<TestRunResult>((resolve) => {
+      console.log('Server up, starting run');
       this.currentTestResults = null;
       this.currentSpecNames = []
       this.runServer().then(testResults => {
+        console.log('run done, resolving original promise');
         var convertedTestResult = this.convertResult(this.currentTestResults);
         resolve(convertedTestResult);
       });
@@ -119,7 +124,10 @@ export default class KarmaTestRunner extends TestRunner {
   }
 
   private collectCoverage() {
-    return JSON.parse(fs.readFileSync(`${this.runnerOptions.tempFolder}/coverage/json/coverage-final.json`, 'utf8'));
+    console.log('collecting covege');
+    var coverage = JSON.parse(fs.readFileSync(`${this.runnerOptions.tempFolder}/coverage/json/coverage-final.json`, 'utf8'));
+    console.log('coverage report', coverage);
+    return coverage;
   }
 
   private static convertTestResult(testResults: karma.TestResults) {
