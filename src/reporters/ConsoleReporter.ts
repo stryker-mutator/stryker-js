@@ -65,7 +65,7 @@ export default class ConsoleReporter extends BaseReporter {
         console.log('Tests ran: ');
         var testsRan = mutant.testsRan;
         _.forEach(testsRan, function(test: TestFile) {
-          console.log('    ' + test.getName());
+          console.log('    ' + test.name);
         });
         console.log('\n');
       } else if (mutant.hasStatusUntested()) {

@@ -32,7 +32,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
     super.test(config, sourceFiles, testFiles, testCompletedCallback);
 
     if (testFiles.length > 0) {
-      config.files = sourceFiles.concat(config.libs, testFiles.map(file => file.getPath()));
+      config.files = sourceFiles.concat(config.libs, testFiles.map(file => file.path));
 
       config.browserNoActivityTimeout = this.getTotalTimeout();
 

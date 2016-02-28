@@ -27,11 +27,11 @@ describe('TestFile', function() {
 
   describe('should set', function() {
     it('the path', function() {
-      expect(testFile.getPath()).to.equal(fileUtilsPath);
+      expect(testFile.path).to.equal(fileUtilsPath);
     });
 
     it('the name of the test', function() {
-      expect(testFile.getName()).to.equal(testName);
+      expect(testFile.name).to.equal(testName);
     });
   });
 

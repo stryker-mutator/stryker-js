@@ -98,7 +98,7 @@ describe('JasmineTestRunner', function() {
 
       testRunner.testAndCollectCoverage(sourceFiles, testFiles, function(testResults) {
         var testFile = testResults[0].getTestFiles()[0];
-        expect(testFile.getName()).to.equal(className + ' ' + testName);
+        expect(testFile.name).to.equal(className + ' ' + testName);
         done();
       });
     });
@@ -117,7 +117,7 @@ describe('JasmineTestRunner', function() {
 
       testRunner.testAndCollectCoverage(sourceFiles, testFiles, function(testResults) {
         var testFile = testResults[0].getTestFiles()[0];
-        expect(testFile.getName()).to.equal(className + ' ' + describeName + ' ' + testName);
+        expect(testFile.name).to.equal(className + ' ' + describeName + ' ' + testName);
         done();
       });
     });
@@ -140,7 +140,7 @@ describe('JasmineTestRunner', function() {
 
       testRunner.testAndCollectCoverage(sourceFiles, testFiles, function(testResults) {
         var testFile = testResults[1].getTestFiles()[0];
-        expect(testFile.getName()).to.equal(className + ' ' + describeName + ' ' + testName);
+        expect(testFile.name).to.equal(className + ' ' + describeName + ' ' + testName);
         done();
       });
     });
