@@ -58,7 +58,7 @@ export default class ConsoleReporter extends BaseReporter {
       } else if (mutant.hasStatusSurvived()) {
         console.log(chalk.bold.red('Mutant survived!'));
         console.log(mutant.getFilename() + ': line ' + mutant.getLineNumber() + ':' + mutant.getColumnNumber());
-        console.log('Mutation: ' + mutant.getMutation().getName());
+        console.log('Mutation: ' + mutant.getMutation().name);
         console.log(chalk.red('-   ' + mutant.getOriginalLine()));
         console.log(chalk.green('+   ' + mutant.getMutatedLine()));
         console.log('\n');

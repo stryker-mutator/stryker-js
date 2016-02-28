@@ -55,7 +55,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
 
   testAndCollectCoverage(sourceFiles: string[], testFiles: string[], testCompletedCallback: TestsCompletedCallback) {
     super.testAndCollectCoverage(sourceFiles, testFiles, testCompletedCallback);
-    var dirname = this._fileUtils.getBaseTempFolder();
+    var dirname = this._fileUtils.baseTempFolder;
     var subdir = 'coverage';
 
     this.karmaConfig.reporters = ['coverage'];

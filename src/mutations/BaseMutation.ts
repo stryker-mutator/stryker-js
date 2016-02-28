@@ -3,6 +3,16 @@
 import Mutant from '../Mutant';
 
 abstract class BaseMutation {
+  protected _name: string;
+  protected _types: string[];
+  
+  get name(): string {
+    return this._name;
+  }
+  
+  get types(): string[] {
+    return this._types;
+  }
     
   /**
    * Represents a base class for all mutations.
@@ -10,7 +20,9 @@ abstract class BaseMutation {
    * @param {String} name - The name of the mutation.
    * @param {String[]} types - The types of mutation as expected by the parser.
    */
-  constructor(protected name: string, protected types: string[]) {
+  constructor(name: string, types: string[]) {
+    this._name = name;
+    this._types = types;
   }
 
   /**
@@ -31,24 +43,6 @@ abstract class BaseMutation {
    * @returns {Boolean} True if the mutation can be applied.
    */
   abstract canMutate(node: ESTree.Node): boolean;
-
-  /**
-   * Gets the name of the mutation.
-   * @function
-   * @returns {String} The name of the mutation.
-   */
-  getName(): string {
-    return this.name;
-  }
-
-  /**
-   * Gets the types of the mutation.
-   * @function
-   * @returns {String[]} The types of the mutation.
-   */
-  getTypes(): string[] {
-    return this.types;
-  }
 }
 
 export default BaseMutation;

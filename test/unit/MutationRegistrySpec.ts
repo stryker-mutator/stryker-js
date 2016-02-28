@@ -28,10 +28,10 @@ describe('MutationRegistry', function() {
   });
 
   it('should contain the MathMutation', function() {
-    var expectedMutationName = new MathMutation().getName();
+    var expectedMutationName = new MathMutation().name;
 
     var mathMutation = mutationRegistry.getMutation(expectedMutationName);
 
-    expect(mathMutation.getName()).to.equal(expectedMutationName);
+    expect(mathMutation.name).to.equal(expectedMutationName);
   });
 });

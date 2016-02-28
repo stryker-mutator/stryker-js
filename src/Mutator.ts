@@ -34,7 +34,7 @@ export default class Mutator {
     var mutants: Mutant[] = [];
     var parserUtils = new ParserUtils();
     var types = _.uniq(_.flatten(_.map(this.mutations, function(mutation: BaseMutation) {
-      return mutation.getTypes();
+      return mutation.types;
     })));
 
     _.forEach(sourceFiles, (sourceFile: string) => {
