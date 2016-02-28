@@ -123,10 +123,35 @@ export default class KarmaTestRunner extends TestRunner {
     }
   }
 
+  listFiles(dir: any, filelist?: any) {
+    var fs: any = fs || require('fs'),
+      files = fs.readdirSync(dir);
+    filelist = filelist || [];
+    files.forEach((file: any) => {
+      if (fs.statSync(dir + file).isDirectory()) {
+        filelist = this.listFiles(dir + file + '/', filelist);
+      }
+      else {
+        filelist.push(file);
+      }
+    });
+    return filelist;
+  };
+
+
   private collectCoverage() {
-    console.log('collecting covege');
-    var coverage = JSON.parse(fs.readFileSync(`${this.runnerOptions.tempFolder}/coverage/json/coverage-final.json`, 'utf8'));
-    console.log('coverage report', coverage);
+    console.log('collecting coverage, folder structure in temp folder:');
+    var coverage: any;
+    try {
+      this.listFiles(this.runnerOptions.tempFolder + '/').forEach((file: string) => {
+        console.log(file);
+      });
+
+      coverage = JSON.parse(fs.readFileSync(`${this.runnerOptions.tempFolder}/coverage/json/coverage-final.json`, 'utf8'));
+      console.log('coverage report', coverage);
+    } catch (error) {
+      console.log('ERROR while trying to read code coverage: ', error);
+    }
     return coverage;
   }
 
