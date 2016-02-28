@@ -16,7 +16,7 @@ describe('KarmaTestRunner', function() {
   describe('with simple add function to test', () => {
 
     beforeEach(() => {
-      sut = new KarmaTestRunner(['test/sampleProject/src/Add.js'], ['test/sampleProject/test/AddSpec.js'], { port: 9877, tempFolder: '.tmp' }, {});
+      sut = new KarmaTestRunner(['test/sampleProject/src/Add.js'], ['test/sampleProject/test/AddSpec.js'], { port: 9877, tempFolder: `${__dirname}/../../../../.tmp` }, {});
     });
 
     it('should report completed tests', function() {
