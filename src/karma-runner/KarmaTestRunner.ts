@@ -37,7 +37,8 @@ export default class KarmaTestRunner extends TestRunner {
 
     let karmaConfig = KarmaTestRunner.overrideOptions(strykerOptions['karmaRunner']);
     karmaConfig = this.configureTestRunner(karmaConfig);
-
+    
+    console.log(`starting server usign config ${JSON.stringify(karmaConfig)}`);
     this.server = new karma.Server(karmaConfig, function(exitCode) {
       process.exit(1);
     });
