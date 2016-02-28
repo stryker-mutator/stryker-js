@@ -18,7 +18,7 @@ describe('KarmaTestRunner', () => {
       sut = new KarmaTestRunner(['test/sampleProject/src/Add.js'], ['test/sampleProject/test/AddSpec.js'], { port: 9877, tempFolder: '.tmp' }, {});
     });
 
-    it.only('should report completed tests', () => {
+    it('should report completed tests', () => {
       return expect(sut.run()).to.eventually.satisfy((testResult: TestRunResult) => {
         expect(testResult.succeeded).to.be.eq(5);
         expect(testResult.failed).to.be.eq(0);
