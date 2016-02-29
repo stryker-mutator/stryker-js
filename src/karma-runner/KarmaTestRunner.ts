@@ -6,6 +6,7 @@ import * as karma from 'karma';
 import * as _ from 'lodash';
 import TestRunnerOptions from '../api/TestRunnerOptions';
 import * as fs from 'fs';
+import {CoverageCollection} from '../api/CoverageResult';
 
 interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter: { type: string, dir: string, subdir: string }
@@ -37,7 +38,7 @@ export default class KarmaTestRunner extends TestRunner {
 
     let karmaConfig = KarmaTestRunner.overrideOptions(strykerOptions['karmaRunner']);
     karmaConfig = this.configureTestRunner(karmaConfig);
-    
+
     this.server = new karma.Server(karmaConfig, function(exitCode) {
       process.exit(1);
     });
@@ -92,8 +93,7 @@ export default class KarmaTestRunner extends TestRunner {
     return new Promise<void>((resolve) => {
       let p = this.runnerOptions.port;
       karma.runner.run({ port: p }, (exitCode) => {
-        // Added this timeout to make sure the coverage report is written. Remove in the future if we have an other way to make sure it is written
-        setTimeout(resolve);
+        resolve();
       });
     });
   }
@@ -103,30 +103,46 @@ export default class KarmaTestRunner extends TestRunner {
       this.currentTestResults = null;
       this.currentSpecNames = []
       this.runServer().then(testResults => {
-        var convertedTestResult = this.convertResult(this.currentTestResults);
-        resolve(convertedTestResult);
+        this.collectCoverage().then(coverage => {
+          var convertedTestResult = this.convertResult(this.currentTestResults, coverage);
+          resolve(convertedTestResult);
+        });
       });
     }), err => { console.error('ERROR: ', err); });
   }
 
-  private convertResult(testResults: karma.TestResults): TestRunResult {
+  private convertResult(testResults: karma.TestResults, coverage: CoverageCollection): TestRunResult {
     return {
       specNames: this.currentSpecNames,
       result: KarmaTestRunner.convertTestResult(testResults),
       succeeded: testResults.success,
       failed: testResults.failed,
-      coverage: this.collectCoverage()
+      coverage: coverage
     }
   }
 
   private collectCoverage() {
-    var coverage: any;
-    try {
-      coverage = JSON.parse(fs.readFileSync(`${this.runnerOptions.tempFolder}/coverage/json/coverage-final.json`, 'utf8'));
-    } catch (error) {
-      console.error('ERROR while trying to read code coverage: ', error);
-    }
-    return coverage;
+    return new Promise<CoverageCollection>(resolve => {
+      let coverage: CoverageCollection;
+      let nrOfTries = 0;
+      let coveragePath = `${this.runnerOptions.tempFolder}/coverage/json/coverage-final.json`;
+      let tryReportCoverage = () => {
+        try {
+          coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
+          resolve(coverage);
+        } catch (error) {
+          // Added this timeout to make sure the coverage report is written. Remove in the future if we have an other way to make sure it is written
+          if (nrOfTries > 2) {
+            console.error('ERROR while trying to read code coverage: ', error);
+            resolve(null);
+          } else {
+            nrOfTries++;
+            setTimeout(tryReportCoverage, 10);
+          }
+        }
+      };
+      tryReportCoverage();
+    });
   }
 
   private static convertTestResult(testResults: karma.TestResults) {
