@@ -96,7 +96,7 @@ export default class KarmaTestRunner extends TestRunner {
       let p = this.runnerOptions.port;
       karma.runner.run({ port: p }, (exitCode) => {
         console.log('run_complete', exitCode);
-        resolve();
+        setTimeout(resolve);
       });
     });
   }
