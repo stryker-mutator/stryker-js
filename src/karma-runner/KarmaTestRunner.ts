@@ -38,7 +38,6 @@ export default class KarmaTestRunner extends TestRunner {
     let karmaConfig = KarmaTestRunner.overrideOptions(strykerOptions['karmaRunner']);
     karmaConfig = this.configureTestRunner(karmaConfig);
     
-    console.log(`starting server usign config ${JSON.stringify(karmaConfig)}`);
     this.server = new karma.Server(karmaConfig, function(exitCode) {
       process.exit(1);
     });
@@ -59,14 +58,12 @@ export default class KarmaTestRunner extends TestRunner {
   private listenToSpecComplete() {
     this.server.on('spec_complete', (browser: any, spec: any) => {
       let specName = `${spec.suite.join(' ')} ${spec.description}`;
-      console.log('spec_completed', specName);
       this.currentSpecNames.push(specName);
     });
   }
 
   private listenToRunComplete() {
     this.server.on('run_complete', (browsers, results) => {
-      console.log('run_complete', results);
       this.currentTestResults = results;
     });
   }
@@ -95,7 +92,7 @@ export default class KarmaTestRunner extends TestRunner {
     return new Promise<void>((resolve) => {
       let p = this.runnerOptions.port;
       karma.runner.run({ port: p }, (exitCode) => {
-        console.log('run_complete', exitCode);
+        // Added this timeout to make sure the coverage report is written. Remove in the future if we have an other way to make sure it is written
         setTimeout(resolve);
       });
     });
@@ -103,15 +100,13 @@ export default class KarmaTestRunner extends TestRunner {
 
   run(): Promise<TestRunResult> {
     return this.serverStartedPromise.then(() => new Promise<TestRunResult>((resolve) => {
-      console.log('Server up, starting run');
       this.currentTestResults = null;
       this.currentSpecNames = []
       this.runServer().then(testResults => {
-        console.log('run done, resolving original promise');
         var convertedTestResult = this.convertResult(this.currentTestResults);
         resolve(convertedTestResult);
       });
-    }), err => { console.log('ERROR: ', err); });
+    }), err => { console.error('ERROR: ', err); });
   }
 
   private convertResult(testResults: karma.TestResults): TestRunResult {
@@ -124,34 +119,12 @@ export default class KarmaTestRunner extends TestRunner {
     }
   }
 
-  listFiles(dir: any, filelist?: any) {
-    var fs: any = fs || require('fs'),
-      files = fs.readdirSync(dir);
-    filelist = filelist || [];
-    files.forEach((file: any) => {
-      if (fs.statSync(dir + file).isDirectory()) {
-        filelist = this.listFiles(dir + file + '/', filelist);
-      }
-      else {
-        filelist.push(file);
-      }
-    });
-    return filelist;
-  };
-
-
   private collectCoverage() {
-    console.log('collecting coverage, folder structure in temp folder:');
     var coverage: any;
     try {
-      this.listFiles(this.runnerOptions.tempFolder + '/').forEach((file: string) => {
-        console.log(file);
-      });
-
       coverage = JSON.parse(fs.readFileSync(`${this.runnerOptions.tempFolder}/coverage/json/coverage-final.json`, 'utf8'));
-      console.log('coverage report', coverage);
     } catch (error) {
-      console.log('ERROR while trying to read code coverage: ', error);
+      console.error('ERROR while trying to read code coverage: ', error);
     }
     return coverage;
   }
