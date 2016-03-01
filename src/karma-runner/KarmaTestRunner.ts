@@ -1,15 +1,11 @@
-import TestRunner from '../api/TestRunner';
-import TestRunResult from '../api/TestRunResult';
-import TestResult from '../api/TestResult';
-import StrykerOptions from '../api/StrykerOptions';
+import {TestRunner, TestResult, RunResult as TestRunResult, RunnerOptions as TestRunnerOptions, CoverageCollection} from '../api/test_runner';
+import {StrykerOptions} from '../api/core';
 import * as karma from 'karma';
 import * as _ from 'lodash';
-import TestRunnerOptions from '../api/TestRunnerOptions';
 import * as fs from 'fs';
-import {CoverageCollection} from '../api/CoverageResult';
 
 interface ConfigOptions extends karma.ConfigOptions {
-  coverageReporter: { type: string, dir: string, subdir: string }
+  coverageReporter?: { type: string, dir: string, subdir: string }
 }
 
 const DEFAULT_OPTIONS: ConfigOptions = {
@@ -36,7 +32,7 @@ export default class KarmaTestRunner extends TestRunner {
   constructor(sourceFiles: string[], files: string[], runnerOptions: TestRunnerOptions, strykerOptions: StrykerOptions) {
     super(sourceFiles, files, runnerOptions, strykerOptions);
 
-    let karmaConfig = KarmaTestRunner.overrideOptions(strykerOptions['karmaRunner']);
+    let karmaConfig = KarmaTestRunner.overrideOptions(strykerOptions['karma']);
     karmaConfig = this.configureTestRunner(karmaConfig);
 
     this.server = new karma.Server(karmaConfig, function(exitCode) {
@@ -69,6 +65,12 @@ export default class KarmaTestRunner extends TestRunner {
     });
   }
 
+  private listenToBrowserError() {
+    this.server.on('browser_error', (browser: any, error: any) => {
+      console.log('ERROR: ', error);
+    });
+  }
+
   private static overrideOptions(karmaRunnerOptions: any) {
     return _.assign<ConfigOptions, ConfigOptions>(_.clone(DEFAULT_OPTIONS), karmaRunnerOptions);
   }
@@ -93,6 +95,7 @@ export default class KarmaTestRunner extends TestRunner {
     return new Promise<void>((resolve) => {
       let p = this.runnerOptions.port;
       karma.runner.run({ port: p }, (exitCode) => {
+        console.log('karma exit with', exitCode);
         resolve();
       });
     });
@@ -107,7 +110,7 @@ export default class KarmaTestRunner extends TestRunner {
           var convertedTestResult = this.convertResult(this.currentTestResults, coverage);
           resolve(convertedTestResult);
         });
-      });
+      }, err => console.error('ERROR: ', err));
     }), err => { console.error('ERROR: ', err); });
   }
 

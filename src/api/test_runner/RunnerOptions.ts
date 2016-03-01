@@ -1,5 +1,5 @@
 
-interface TestRunnerOptions{
+interface RunnerOptions{
   /**
    * Represents a free port which the test runner can choose to use
    */
@@ -10,6 +10,10 @@ interface TestRunnerOptions{
    */
   tempFolder: string;
   
+  /**
+   * Enable code coverage. When enabled, the calling party is interested in code coverage.
+   */
+  coverageEnabled?: boolean
 }
 
-export default TestRunnerOptions; 
+export default RunnerOptions; 

@@ -1,4 +1,4 @@
-import StrykerOptions from '../../../src/api/StrykerOptions';
+import {StrykerOptions} from '../../../src/api/core';
 import TestFramework from '../../../src/api/TestFramework';
 import {expect} from 'chai';
 

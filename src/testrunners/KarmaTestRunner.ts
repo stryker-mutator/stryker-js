@@ -45,6 +45,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
         testCompletedCallback(testResult);
       });
 
+      console.log('using jasmine config', JSON.stringify(config));
       serverProcess.send(config);
 
     } else {

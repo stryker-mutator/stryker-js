@@ -1,0 +1,1 @@
+export {default as StrykerOptions} from './core/StrykerOptions';

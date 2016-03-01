@@ -1,4 +1,4 @@
-import StrykerOptions from './StrykerOptions';
+import {StrykerOptions} from './core';
 
 abstract class TestFramework{
   constructor(protected options: StrykerOptions){

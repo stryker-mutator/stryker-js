@@ -1,7 +1,5 @@
-import TestRunner from '../../../src/api/TestRunner';
-import TestRunResult from '../../../src/api/TestRunResult';
-import TestResult from '../../../src/api/TestResult';
-import StrykerOptions from '../../../src/api/StrykerOptions';
+import {TestRunner, RunResult as TestRunResult, TestResult} from '../../../src/api/test_runner';
+import {StrykerOptions} from '../../../src/api/core';
 import {expect} from 'chai';
 
 class MyTestRunner extends TestRunner {
@@ -46,7 +44,7 @@ describe('TestRunner', () => {
   });
 
   it('should run', () => {
-    expect(sut.run()).to.be.ok;
+    expect(sut.run({timeout: 5000})).to.be.ok;
   });
 
 });
