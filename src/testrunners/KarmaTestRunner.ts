@@ -79,7 +79,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
 
       var coverageFilename = dirname + path.sep + subdir + index + path.sep + 'coverage-final.json';
       this.queueTest(config, sourceFiles, [testFile], (result) => {
-        result.setCoverageLocation(coverageFilename);
+        result.coverageLocation = coverageFilename;
         testResults.push(result);
         testsCompleted++;
 

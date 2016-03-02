@@ -97,7 +97,7 @@ describe('JasmineTestRunner', function() {
       });
 
       testRunner.testAndCollectCoverage(sourceFiles, testFiles, function(testResults) {
-        var testFile = testResults[0].getTestFiles()[0];
+        var testFile = testResults[0].testFiles[0];
         expect(testFile.name).to.equal(className + ' ' + testName);
         done();
       });
@@ -116,7 +116,7 @@ describe('JasmineTestRunner', function() {
       });
 
       testRunner.testAndCollectCoverage(sourceFiles, testFiles, function(testResults) {
-        var testFile = testResults[0].getTestFiles()[0];
+        var testFile = testResults[0].testFiles[0];
         expect(testFile.name).to.equal(className + ' ' + describeName + ' ' + testName);
         done();
       });
@@ -139,7 +139,7 @@ describe('JasmineTestRunner', function() {
       });
 
       testRunner.testAndCollectCoverage(sourceFiles, testFiles, function(testResults) {
-        var testFile = testResults[1].getTestFiles()[0];
+        var testFile = testResults[1].testFiles[0];
         expect(testFile.name).to.equal(className + ' ' + describeName + ' ' + testName);
         done();
       });

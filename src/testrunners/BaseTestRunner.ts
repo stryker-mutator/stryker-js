@@ -210,8 +210,8 @@ abstract class BaseTestRunner {
       var testFiles: TestFile[] = [];
       _.forEach(testResultsWithCoverage, function(testResult) {
         if (testResult.coversMutant(mutant)) {
-          testFiles = testFiles.concat(testResult.getTestFiles());
-          baseTimeout += testResult.getTimeSpent();
+          testFiles = testFiles.concat(testResult.testFiles);
+          baseTimeout += testResult.timeSpent;
         }
       });
       testFiles = _.uniq(testFiles);
@@ -221,9 +221,9 @@ abstract class BaseTestRunner {
       that.queueTest(config, mutatedSrc, testFiles, function(result) {
         mutant.testsRan = testFiles;
 
-        if (result.getTimedOut()) {
+        if (result.timedOut) {
           mutant.setStatusTimedOut();
-        } else if (!result.getAllTestsSuccessful()) {
+        } else if (!result.allTestsSuccessful) {
           mutant.setStatusKilled();
         } else if (testFiles.length > 0) {
           mutant.setStatusSurvived();
@@ -244,7 +244,7 @@ abstract class BaseTestRunner {
     this._typeUtils.expectParameterArray(testResults, 'BaseTestRunner', 'testResults');
     var testResultsWithCoverage: TestResult[] = [];
     var checkIfCoverageExists = (testResult: TestResult, index: number) => {
-      if (!_.isEmpty(testResult.getCoverage())) {
+      if (!_.isEmpty(testResult.coverage)) {
         testResultsWithCoverage.push(testResult);
         testResults.splice(index, 1);
       }
