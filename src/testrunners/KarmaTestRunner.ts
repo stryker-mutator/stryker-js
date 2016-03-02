@@ -44,8 +44,6 @@ export default class KarmaTestRunner extends BaseTestRunner {
         var testResult = new TestResult(sourceFiles, testFiles, result.success, result.failed, result.disconnected, result.error, result.timeSpent);
         testCompletedCallback(testResult);
       });
-
-      console.log('using jasmine config', JSON.stringify(config));
       serverProcess.send(config);
 
     } else {
