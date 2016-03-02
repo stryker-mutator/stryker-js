@@ -29,7 +29,7 @@ const DEFAULT_COVERAGE_REPORTER = {
 
 export default class KarmaTestRunner extends TestRunner {
 
-  private coverageFolder = `${os.tmpdir()}${path.sep}stryker-temp${path.sep}${Math.ceil(Math.random() * 1000000)}`;
+  private coverageFolder = `${os.tmpdir()}${path.sep}coverage-result-${Math.ceil(Math.random() * 1000000)}`;
   private server: karma.Server;
   private serverStartedPromise: Promise<Object>;
   private currentTestResults: karma.TestResults;
