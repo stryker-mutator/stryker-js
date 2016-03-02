@@ -3,9 +3,13 @@ import {StrykerOptions} from '../api/core';
 import * as karma from 'karma';
 import * as _ from 'lodash';
 import * as fs from 'fs';
+import FileUtils from '../utils/FileUtils';
+import * as os from 'os';
+import * as path from 'path';
+
 
 interface ConfigOptions extends karma.ConfigOptions {
-  coverageReporter?: { type: string, dir: string, subdir: string }
+  coverageReporter?: { type: string, dir?: string, subdir?: string }
 }
 
 const DEFAULT_OPTIONS: ConfigOptions = {
@@ -13,17 +17,19 @@ const DEFAULT_OPTIONS: ConfigOptions = {
   frameworks: ['jasmine'],
   autoWatch: false,
   singleRun: false,
-  plugins: ['karma-jasmine', 'karma-phantomjs-launcher'],
-  reporters: ['coverage'],
+  plugins: ['karma-jasmine', 'karma-phantomjs-launcher']
+}
+
+const DEFAULT_COVERAGE_REPORTER = {
   coverageReporter: {
     type: 'json',
-    dir: 'coverage',
     subdir: 'json'
   }
 }
 
 export default class KarmaTestRunner extends TestRunner {
 
+  private coverageFolder = `${os.tmpdir()}${path.sep}stryker-temp${path.sep}${Math.ceil(Math.random() * 1000000)}`;
   private server: karma.Server;
   private serverStartedPromise: Promise<Object>;
   private currentTestResults: karma.TestResults;
@@ -32,9 +38,10 @@ export default class KarmaTestRunner extends TestRunner {
   constructor(sourceFiles: string[], files: string[], runnerOptions: TestRunnerOptions, strykerOptions: StrykerOptions) {
     super(sourceFiles, files, runnerOptions, strykerOptions);
 
-    let karmaConfig = KarmaTestRunner.overrideOptions(strykerOptions['karma']);
-    karmaConfig = this.configureTestRunner(karmaConfig);
+    let karmaConfig = this.configureTestRunner(strykerOptions['karma']);
+    karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
 
+    console.log(`using config ${JSON.stringify(karmaConfig)}`);
     this.server = new karma.Server(karmaConfig, function(exitCode) {
       process.exit(1);
     });
@@ -71,23 +78,67 @@ export default class KarmaTestRunner extends TestRunner {
     });
   }
 
-  private static overrideOptions(karmaRunnerOptions: any) {
-    return _.assign<ConfigOptions, ConfigOptions>(_.clone(DEFAULT_OPTIONS), karmaRunnerOptions);
+  private configureCoverageIfEnabled(karmaConfig: ConfigOptions) {
+    if (this.runnerOptions.coverageEnabled) {
+      karmaConfig = _.assign(karmaConfig, _.cloneDeep(DEFAULT_COVERAGE_REPORTER));
+      this.configureCoveragePreprocessors(karmaConfig);
+      this.configureCoverageReporters(karmaConfig);
+      this.configureCoverageDir(karmaConfig);
+      this.configureCoveragePlugin(karmaConfig);
+    }
+    return karmaConfig;
   }
 
-  private configureTestRunner(karmaConfig: ConfigOptions) {
+  private configureCoveragePlugin(karmaConfig: ConfigOptions){
+    karmaConfig.plugins.push('karma-coverage');
+  }
+
+  private configureCoverageDir(karmaConfig: ConfigOptions) {
+    try {
+      fs.lstatSync(this.coverageFolder);
+    } catch (errror) {
+      fs.mkdirSync(this.coverageFolder);
+    }
+    karmaConfig.coverageReporter.dir = this.coverageFolder;
+  }
+
+  private configureCoverageReporters(karmaConfig: ConfigOptions) {
+    if (!karmaConfig.reporters) {
+      karmaConfig.reporters = [];
+    }
+    karmaConfig.reporters.push('coverage');
+  }
+
+  private configureCoveragePreprocessors(karmaConfig: ConfigOptions) {
     if (!karmaConfig.preprocessors) {
       karmaConfig.preprocessors = {};
     }
-    this.sourceFiles.forEach(sourceFile => karmaConfig.preprocessors[sourceFile] = ['coverage']);
-    karmaConfig.coverageReporter.dir = `${this.runnerOptions.tempFolder}/coverage`;
+    this.sourceFiles.forEach(sourceFile => {
+      let preprocessor = karmaConfig.preprocessors[sourceFile];
+      if (!preprocessor) {
+        karmaConfig.preprocessors[sourceFile] = 'coverage';
+      } else {
+        if (Array.isArray(preprocessor)) {
+          preprocessor.push('coverage');
+        } else {
+          karmaConfig.preprocessors[sourceFile] = ['coverage', preprocessor];
+        }
+      }
+    });
+  }
 
+  private configureTestRunner(karmaConfig: ConfigOptions) {
+    // Merge defaults with given
+    karmaConfig = _.assign<ConfigOptions, ConfigOptions>(_.cloneDeep(DEFAULT_OPTIONS), karmaConfig);
+    
+    // Override files
     karmaConfig.files = [];
     this.sourceFiles.forEach(file => karmaConfig.files.push(file));
     this.files.forEach(file => karmaConfig.files.push(file));
-
-    karmaConfig.plugins.push('karma-coverage');
+    
+    // Override port
     karmaConfig.port = this.runnerOptions.port;
+
     return karmaConfig;
   }
 
@@ -106,15 +157,19 @@ export default class KarmaTestRunner extends TestRunner {
       this.currentTestResults = null;
       this.currentSpecNames = []
       this.runServer().then(testResults => {
-        this.collectCoverage().then(coverage => {
-          var convertedTestResult = this.convertResult(this.currentTestResults, coverage);
-          resolve(convertedTestResult);
-        });
+        if (this.runnerOptions.coverageEnabled) {
+          this.collectCoverage().then(coverage => {
+            var convertedTestResult = this.convertResult(this.currentTestResults, coverage);
+            resolve(convertedTestResult);
+          });
+        } else {
+          resolve(this.convertResult(this.currentTestResults));
+        }
       }, err => console.error('ERROR: ', err));
     }), err => { console.error('ERROR: ', err); });
   }
 
-  private convertResult(testResults: karma.TestResults, coverage: CoverageCollection): TestRunResult {
+  private convertResult(testResults: karma.TestResults, coverage: CoverageCollection = null): TestRunResult {
     return {
       specNames: this.currentSpecNames,
       result: KarmaTestRunner.convertTestResult(testResults),
@@ -128,7 +183,7 @@ export default class KarmaTestRunner extends TestRunner {
     return new Promise<CoverageCollection>(resolve => {
       let coverage: CoverageCollection;
       let nrOfTries = 0;
-      let coveragePath = `${this.runnerOptions.tempFolder}/coverage/json/coverage-final.json`;
+      let coveragePath = `${this.coverageFolder}/json/coverage-final.json`;
       let tryReportCoverage = () => {
         try {
           coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
