@@ -32,15 +32,15 @@ class MyTestRunner extends TestRunner {
 describe('TestRunner', () => {
 
   let sut: TestRunner,
-    options: StrykerOptions;
+    strykerOptions: StrykerOptions;
 
   before(() => {
-    options = { karma: { 'my-karma-options': {} } };
-    sut = new MyTestRunner({ sourceFiles: [], additionalFiles: [], strykerOptions: null, port: 58 });
+    strykerOptions = { karma: { 'my-karma-options': {} } };
+    sut = new MyTestRunner({ sourceFiles: [], additionalFiles: [], strykerOptions, port: 58 });
   });
 
   it('should supply options', () => {
-    expect((<MyTestRunner>sut).getOptions()).to.be.eq(options);
+    expect((<MyTestRunner>sut).getOptions().strykerOptions).to.be.eq(strykerOptions);
   });
 
   it('should run', () => {
