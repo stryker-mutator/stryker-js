@@ -1,13 +1,13 @@
-import CoverageResult from './CoverageResult';
+import {CoverageCollection} from './Coverage';
 import TestResult from './TestResult';
 
-interface TestRunResult {
+interface RunResult {
   specNames: string[];
   result: TestResult;
   succeeded?: number;
   failed?: number;
   timeSpent?: number;
-  coverage?: CoverageResult;
+  coverage?: CoverageCollection;
 }
 
-export default TestRunResult;
+export default RunResult;

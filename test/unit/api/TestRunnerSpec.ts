@@ -1,27 +1,27 @@
-import TestRunner from '../../../src/api/TestRunner';
-import TestRunResult from '../../../src/api/TestRunResult';
-import TestResult from '../../../src/api/TestResult';
-import StrykerOptions from '../../../src/api/StrykerOptions';
+import {TestRunner, RunResult as RunResult, TestResult} from '../../../src/api/test_runner';
+import {StrykerOptions} from '../../../src/api/core';
 import {expect} from 'chai';
 
 class MyTestRunner extends TestRunner {
 
-  public run(): TestRunResult {
-    return {
+  public run(): Promise<RunResult> {
+    return new Promise<RunResult>(res => res({
       specNames: [''],
       succeeded: 5,
       failed: 6,
       result: TestResult.Complete,
       timeSpent: 20,
       coverage: {
-        statementMap: {
-          '5': { start: { line: 23, column: 23 }, end: { line: 23, column: 23 } },
-        },
-        s: {
-          '5': 23
+        '': {
+          statementMap: {
+            '5': { start: { line: 23, column: 23 }, end: { line: 23, column: 23 } },
+          },
+          s: {
+            '5': 23
+          }
         }
       }
-    };
+    }));
   }
 
   public getOptions() {
@@ -32,19 +32,19 @@ class MyTestRunner extends TestRunner {
 describe('TestRunner', () => {
 
   let sut: TestRunner,
-    options: StrykerOptions;
+    strykerOptions: StrykerOptions;
 
   before(() => {
-    options = { karma: { 'my-karma-options': {} } };
-    sut = new MyTestRunner(options);
+    strykerOptions = { karma: { 'my-karma-options': {} } };
+    sut = new MyTestRunner({ sourceFiles: [], additionalFiles: [], strykerOptions, port: 58 });
   });
 
   it('should supply options', () => {
-    expect((<MyTestRunner>sut).getOptions()).to.be.eq(options);
+    expect((<MyTestRunner>sut).getOptions().strykerOptions).to.be.eq(strykerOptions);
   });
-  
+
   it('should run', () => {
-    expect(sut.run()).to.be.ok;
+    expect(sut.run({ timeout: 5000 })).to.be.ok;
   });
 
 });
