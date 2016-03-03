@@ -1,11 +1,11 @@
-import {TestRunner, RunResult as TestRunResult, TestResult} from '../../../src/api/test_runner';
+import {TestRunner, RunResult as RunResult, TestResult} from '../../../src/api/test_runner';
 import {StrykerOptions} from '../../../src/api/core';
 import {expect} from 'chai';
 
 class MyTestRunner extends TestRunner {
 
-  public run(): Promise<TestRunResult> {
-    return new Promise<TestRunResult>(res => res({
+  public run(): Promise<RunResult> {
+    return new Promise<RunResult>(res => res({
       specNames: [''],
       succeeded: 5,
       failed: 6,
@@ -25,7 +25,7 @@ class MyTestRunner extends TestRunner {
   }
 
   public getOptions() {
-    return this.strykerOptions;
+    return this.options;
   }
 }
 
@@ -36,7 +36,7 @@ describe('TestRunner', () => {
 
   before(() => {
     options = { karma: { 'my-karma-options': {} } };
-    sut = new MyTestRunner([], [], null, options);
+    sut = new MyTestRunner({ sourceFiles: [], additionalFiles: [], strykerOptions: null, port: 58 });
   });
 
   it('should supply options', () => {
@@ -44,7 +44,7 @@ describe('TestRunner', () => {
   });
 
   it('should run', () => {
-    expect(sut.run({timeout: 5000})).to.be.ok;
+    expect(sut.run({ timeout: 5000 })).to.be.ok;
   });
 
 });

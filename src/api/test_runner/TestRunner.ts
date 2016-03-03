@@ -5,7 +5,7 @@ import RunOptions from './RunOptions';
 
 
 abstract class TestRunner{
-  constructor(protected sourceFiles: string[], protected files: string[], protected runnerOptions: RunnerOptions, protected strykerOptions: StrykerOptions){
+  constructor(protected options: RunnerOptions){
   }
   
   abstract run(options: RunOptions): Promise<TestRunResult>;

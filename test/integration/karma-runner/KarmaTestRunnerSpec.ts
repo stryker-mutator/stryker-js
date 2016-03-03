@@ -16,13 +16,19 @@ describe('KarmaTestRunner', function() {
     let testRunnerOptions: RunnerOptions;
 
     before(() => {
-      testRunnerOptions = { port: 9877, coverageEnabled: true };
+      testRunnerOptions = {
+        sourceFiles: ['test/sampleProject/src/Add.js'],
+        additionalFiles: ['test/sampleProject/test/AddSpec.js'],
+        port: 9877,
+        coverageEnabled: true,
+        strykerOptions: {}
+      };
     });
 
     describe('with simple add function to test', () => {
 
       before(() => {
-        sut = new KarmaTestRunner(['test/sampleProject/src/Add.js'], ['test/sampleProject/test/AddSpec.js'], testRunnerOptions, {});
+        sut = new KarmaTestRunner(testRunnerOptions);
       });
 
       it('should report completed tests with code coverage', () => {
@@ -36,7 +42,7 @@ describe('KarmaTestRunner', function() {
           return true;
         });
       });
-      
+
       it('should be able to run twice in quick succession', () => {
         return expect(sut.run().then(() => sut.run())).to.eventually.have.property('succeeded', 5);
       });
@@ -47,13 +53,19 @@ describe('KarmaTestRunner', function() {
     let testRunnerOptions: RunnerOptions;
 
     before(() => {
-      testRunnerOptions = { port: 9878, coverageEnabled: false };
+      testRunnerOptions = {
+        sourceFiles: ['test/sampleProject/src/Add.js'],
+        additionalFiles: ['test/sampleProject/test/AddSpec.js'],
+        port: 9878,
+        coverageEnabled: false,
+        strykerOptions: {}
+      };
     });
 
     describe('with simple add function to test', () => {
 
       before(() => {
-        sut = new KarmaTestRunner(['test/sampleProject/src/Add.js'], ['test/sampleProject/test/AddSpec.js'], testRunnerOptions, {});
+        sut = new KarmaTestRunner(testRunnerOptions);
       });
 
       it('should report completed tests without coverage', () => {
@@ -67,5 +79,5 @@ describe('KarmaTestRunner', function() {
       });
     });
   });
-  
+
 });

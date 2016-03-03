@@ -1,12 +1,9 @@
-import {TestRunner, TestResult, RunResult as TestRunResult, RunnerOptions as TestRunnerOptions, CoverageCollection} from '../api/test_runner';
-import {StrykerOptions} from '../api/core';
+import {TestRunner, TestResult, RunResult, RunnerOptions, CoverageCollection, TestRunnerFactory} from '../api/test_runner';
 import * as karma from 'karma';
 import * as _ from 'lodash';
 import * as fs from 'fs';
-import FileUtils from '../utils/FileUtils';
 import * as os from 'os';
 import * as path from 'path';
-
 
 interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string }
@@ -35,10 +32,10 @@ export default class KarmaTestRunner extends TestRunner {
   private currentTestResults: karma.TestResults;
   private currentSpecNames: string[];
 
-  constructor(sourceFiles: string[], files: string[], runnerOptions: TestRunnerOptions, strykerOptions: StrykerOptions) {
-    super(sourceFiles, files, runnerOptions, strykerOptions);
+  constructor(runnerOptions: RunnerOptions) {
+    super(runnerOptions);
 
-    let karmaConfig = this.configureTestRunner(strykerOptions['karma']);
+    let karmaConfig = this.configureTestRunner(runnerOptions.strykerOptions['karma']);
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
 
     console.log(`using config ${JSON.stringify(karmaConfig)}`);
@@ -79,7 +76,7 @@ export default class KarmaTestRunner extends TestRunner {
   }
 
   private configureCoverageIfEnabled(karmaConfig: ConfigOptions) {
-    if (this.runnerOptions.coverageEnabled) {
+    if (this.options.coverageEnabled) {
       karmaConfig = _.assign(karmaConfig, _.cloneDeep(DEFAULT_COVERAGE_REPORTER));
       this.configureCoveragePreprocessors(karmaConfig);
       this.configureCoverageReporters(karmaConfig);
@@ -113,7 +110,7 @@ export default class KarmaTestRunner extends TestRunner {
     if (!karmaConfig.preprocessors) {
       karmaConfig.preprocessors = {};
     }
-    this.sourceFiles.forEach(sourceFile => {
+    this.options.sourceFiles.forEach(sourceFile => {
       let preprocessor = karmaConfig.preprocessors[sourceFile];
       if (!preprocessor) {
         karmaConfig.preprocessors[sourceFile] = 'coverage';
@@ -133,18 +130,18 @@ export default class KarmaTestRunner extends TestRunner {
     
     // Override files
     karmaConfig.files = [];
-    this.sourceFiles.forEach(file => karmaConfig.files.push(file));
-    this.files.forEach(file => karmaConfig.files.push(file));
+    this.options.sourceFiles.forEach(file => karmaConfig.files.push(file));
+    this.options.additionalFiles.forEach(file => karmaConfig.files.push(file));
     
     // Override port
-    karmaConfig.port = this.runnerOptions.port;
+    karmaConfig.port = this.options.port;
 
     return karmaConfig;
   }
 
   private runServer() {
     return new Promise<void>((resolve) => {
-      let p = this.runnerOptions.port;
+      let p = this.options.port;
       karma.runner.run({ port: p }, (exitCode) => {
         console.log('karma exit with', exitCode);
         resolve();
@@ -152,12 +149,12 @@ export default class KarmaTestRunner extends TestRunner {
     });
   }
 
-  run(): Promise<TestRunResult> {
-    return this.serverStartedPromise.then(() => new Promise<TestRunResult>((resolve) => {
+  run(): Promise<RunResult> {
+    return this.serverStartedPromise.then(() => new Promise<RunResult>((resolve) => {
       this.currentTestResults = null;
       this.currentSpecNames = []
       this.runServer().then(testResults => {
-        if (this.runnerOptions.coverageEnabled) {
+        if (this.options.coverageEnabled) {
           this.collectCoverage().then(coverage => {
             var convertedTestResult = this.convertResult(this.currentTestResults, coverage);
             resolve(convertedTestResult);
@@ -169,7 +166,7 @@ export default class KarmaTestRunner extends TestRunner {
     }), err => { console.error('ERROR: ', err); });
   }
 
-  private convertResult(testResults: karma.TestResults, coverage: CoverageCollection = null): TestRunResult {
+  private convertResult(testResults: karma.TestResults, coverage: CoverageCollection = null): RunResult {
     return {
       specNames: this.currentSpecNames,
       result: KarmaTestRunner.convertTestResult(testResults),
@@ -213,3 +210,5 @@ export default class KarmaTestRunner extends TestRunner {
     }
   }
 }
+
+TestRunnerFactory.instance().register('karma', KarmaTestRunner);
