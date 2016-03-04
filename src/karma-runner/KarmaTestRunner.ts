@@ -152,8 +152,8 @@ export default class KarmaTestRunner extends TestRunner {
   run(): Promise<RunResult> {
     return this.serverStartedPromise.then(() => new Promise<RunResult>((resolve) => {
       this.currentTestResults = null;
-      this.currentSpecNames = []
-      this.runServer().then(testResults => {
+      this.currentSpecNames = [];
+      this.runServer().then(() => {
         if (this.options.coverageEnabled) {
           this.collectCoverage().then(coverage => {
             var convertedTestResult = this.convertResult(this.currentTestResults, coverage);
@@ -162,8 +162,8 @@ export default class KarmaTestRunner extends TestRunner {
         } else {
           resolve(this.convertResult(this.currentTestResults));
         }
-      }, err => console.error('ERROR: ', err));
-    }), err => { console.error('ERROR: ', err); });
+      });
+    }));
   }
 
   private convertResult(testResults: karma.TestResults, coverage: CoverageCollection = null): RunResult {
