@@ -8,13 +8,14 @@ import ResultMessageBody from './ResultMessageBody';
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
- * Will also implement timeouts 
+ * Also implements timeout-mechanisme (on timeout, restart the child runner and report timeout) 
  */
 export default class TestRunnerChildProcessAdapter extends TestRunner {
 
   private workerProcess: ChildProcess;
-  private currentPromiseFulfill: (result: RunResult) => void;
-  private inRunningState: boolean;
+  private currentPromiseFulfillmentCallback: (result: RunResult) => void;
+  private currentPromise: Promise<RunResult>;
+  private currentRunIndex = 0;
 
   constructor(private realTestRunnerName: string, runnerOptions: RunnerOptions) {
     super(runnerOptions);
@@ -38,14 +39,15 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   }
 
   run(options: RunOptions): Promise<RunResult> {
-    this.inRunningState = true;
+    this.currentRunIndex++;
     if (options.timeout) {
-      this.markNoResultTimeout(options.timeout);
+      this.markNoResultTimeout(options.timeout, this.currentRunIndex);
     }
-    return new Promise<RunResult>(res => {
-      this.currentPromiseFulfill = res;
+    this.currentPromise = new Promise<RunResult>(resolve => {
+      this.currentPromiseFulfillmentCallback = resolve;
       this.sendRunCommand(options);
     });
+    return this.currentPromise;
   }
 
   private sendRunCommand(options: RunOptions) {
@@ -70,13 +72,13 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   }
 
   private handleResultMessage(message: Message<ResultMessageBody>) {
-    this.inRunningState = false;
-    this.currentPromiseFulfill(message.body.result);
+    this.currentPromiseFulfillmentCallback(message.body.result);
   }
 
-  private markNoResultTimeout(timeoutMs: number) {
+  private markNoResultTimeout(timeoutMs: number, forRunIndex: number) {
     setTimeout(() => {
-      if (this.inRunningState) {
+      // See if the current run was not already resolved
+      if (this.currentRunIndex === forRunIndex && !this.currentPromise.isFulfilled) {
         this.handleTimeout();
       }
     }, timeoutMs);
@@ -85,6 +87,6 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   private handleTimeout() {
     this.workerProcess.kill();
     this.startWorker();
-    this.currentPromiseFulfill({ result: TestResult.Timeout });
+    this.currentPromiseFulfillmentCallback({ result: TestResult.Timeout });
   }
 }
