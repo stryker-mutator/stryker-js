@@ -51,25 +51,30 @@ export default class ConsoleReporter extends BaseReporter {
     var mutantsTimedOut = 0;
     var mutantsUntested = 0;
     mutants.forEach(mutant => {
-      if (mutant.status == MutantStatus.KILLED) {
-        mutantsKilled++;
-      } else if (mutant.status == MutantStatus.TIMEDOUT) {
-        mutantsTimedOut++;
-      } else if (mutant.status == MutantStatus.SURVIVED) {
-        console.log(chalk.bold.red('Mutant survived!'));
-        console.log(mutant.filename + ': line ' + mutant.lineNumber + ':' + mutant.columnNumber);
-        console.log('Mutation: ' + mutant.mutation.name);
-        console.log(chalk.red('-   ' + mutant.originalLine));
-        console.log(chalk.green('+   ' + mutant.mutatedLine));
-        console.log('\n');
-        console.log('Tests ran: ');
-        var testsRan = mutant.testsRan;
-        _.forEach(testsRan, function(test: TestFile) {
-          console.log('    ' + test.name);
-        });
-        console.log('\n');
-      } else if (mutant.status == MutantStatus.UNTESTED) {
-        mutantsUntested++;
+      switch (mutant.status) {
+        case MutantStatus.KILLED:
+          mutantsKilled++;
+          break;
+        case MutantStatus.TIMEDOUT:
+          mutantsTimedOut++;
+          break;
+        case MutantStatus.SURVIVED:
+          console.log(chalk.bold.red('Mutant survived!'));
+          console.log(mutant.filename + ': line ' + mutant.lineNumber + ':' + mutant.columnNumber);
+          console.log('Mutation: ' + mutant.mutation.name);
+          console.log(chalk.red('-   ' + mutant.originalLine));
+          console.log(chalk.green('+   ' + mutant.mutatedLine));
+          console.log('\n');
+          console.log('Tests ran: ');
+          var testsRan = mutant.testsRan;
+          _.forEach(testsRan, function(test: TestFile) {
+            console.log('    ' + test.name);
+          });
+          console.log('\n');
+          break;
+        case MutantStatus.UNTESTED:
+          mutantsUntested++;
+          break;
       }
     });
 
