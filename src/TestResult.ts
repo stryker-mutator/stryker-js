@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import FileUtils from './utils/FileUtils';
 import Mutant from './Mutant';
 import TestFile from './TestFile';
-import {CoverageCollection} from './api/CoverageResult';
+import {CoverageCollection} from './api/test_runner';
 
 /**
  * Represents the result of a test run.

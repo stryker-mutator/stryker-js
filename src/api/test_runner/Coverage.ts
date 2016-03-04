@@ -55,5 +55,3 @@ export interface CoverageResult {
 export interface CoverageCollection {
   [fileName: string]: CoverageResult;
 }
-
-export default CoverageResult;
