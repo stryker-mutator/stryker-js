@@ -5,7 +5,7 @@ import TestRunnerConfig from './TestRunnerConfig';
 import TestFile from '../TestFile';
 import TypeUtils from '../utils/TypeUtils';
 import * as karma from 'karma';
-import Mutant, {MutantTestedCallback, MutantsTestedCallback} from '../Mutant';
+import Mutant, {MutantTestedCallback, MutantsTestedCallback, MutantStatus} from '../Mutant';
 
 import TestResult from '../TestResult';
 
@@ -210,8 +210,8 @@ abstract class BaseTestRunner {
       var testFiles: TestFile[] = [];
       _.forEach(testResultsWithCoverage, function(testResult) {
         if (testResult.coversMutant(mutant)) {
-          testFiles = testFiles.concat(testResult.getTestFiles());
-          baseTimeout += testResult.getTimeSpent();
+          testFiles = testFiles.concat(testResult.testFiles);
+          baseTimeout += testResult.timeSpent;
         }
       });
       testFiles = _.uniq(testFiles);
@@ -219,14 +219,14 @@ abstract class BaseTestRunner {
 
       var config: TestRunnerConfig = _.cloneDeep(that._config);
       that.queueTest(config, mutatedSrc, testFiles, function(result) {
-        mutant.setTestsRan(testFiles);
+        mutant.testsRan = testFiles;
 
-        if (result.getTimedOut()) {
-          mutant.setStatusTimedOut();
-        } else if (!result.getAllTestsSuccessful()) {
-          mutant.setStatusKilled();
+        if (result.timedOut) {
+          mutant.status = MutantStatus.TIMEDOUT;
+        } else if (!result.allTestsSuccessful) {
+          mutant.status = MutantStatus.KILLED;
         } else if (testFiles.length > 0) {
-          mutant.setStatusSurvived();
+          mutant.status = MutantStatus.SURVIVED;
         }
 
         mutant.remove();
@@ -244,7 +244,7 @@ abstract class BaseTestRunner {
     this._typeUtils.expectParameterArray(testResults, 'BaseTestRunner', 'testResults');
     var testResultsWithCoverage: TestResult[] = [];
     var checkIfCoverageExists = (testResult: TestResult, index: number) => {
-      if (!_.isEmpty(testResult.getCoverage())) {
+      if (!_.isEmpty(testResult.coverage)) {
         testResultsWithCoverage.push(testResult);
         testResults.splice(index, 1);
       }

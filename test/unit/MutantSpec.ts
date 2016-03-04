@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-import Mutant from '../../src/Mutant';
+import Mutant, {MutantStatus} from '../../src/Mutant';
 import MathMutation from '../../src/mutations/MathMutation';
 import ParserUtils from '../../src/utils/ParserUtils';
 require('mocha-sinon');
@@ -20,7 +20,7 @@ describe('Mutant', function() {
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save', function(){
-      this.mutatedFilename = 'mutatedSrc.js';
+      this._mutatedFilename = 'mutatedSrc.js';
     });
     var parserUtils = new ParserUtils();
 
@@ -41,61 +41,36 @@ describe('Mutant', function() {
 
   describe('should set', function() {
     it('the filename', function() {
-      expect(mutant.getFilename()).to.equal(filename);
+      expect(mutant.filename).to.equal(filename);
     });
 
     it('the mutation', function() {
-      expect(mutant.getMutation()).to.equal(mutation);
+      expect(mutant.mutation).to.equal(mutation);
     });
 
     it('the mutated code', function() {
-      expect(mutant.getMutatedCode()).to.equal(mutatedCode);
+      expect(mutant.mutatedCode).to.equal(mutatedCode);
     });
 
     it('the line number', function() {
-      expect(mutant.getLineNumber()).to.equal(lineNumber);
+      expect(mutant.lineNumber).to.equal(lineNumber);
     });
 
     it('the column number', function() {
-      expect(mutant.getColumnNumber()).to.equal(11);
+      expect(mutant.columnNumber).to.equal(11);
     });
 
     it('the original line of code', function() {
-      expect(mutant.getOriginalLine()).to.equal(originalLine);
+      expect(mutant.originalLine).to.equal(originalLine);
     });
 
     it('the mutated line of code', function() {
-      expect(mutant.getMutatedLine()).to.equal(mutatedLine);
+      expect(mutant.mutatedLine).to.equal(mutatedLine);
     });
   });
 
   it('should default to the status untested', function() {
-    expect(mutant.hasStatusUntested()).to.equal(true);
-  });
-
-  it('should be capable of setting the status to survived', function() {
-    mutant.setStatusSurvived();
-
-    expect(mutant.hasStatusSurvived()).to.equal(true);
-  });
-
-  it('should be capable of setting the status to killed', function() {
-    mutant.setStatusKilled();
-
-    expect(mutant.hasStatusKilled()).to.equal(true);
-  });
-
-  it('should be capable of setting the status to untested', function() {
-    mutant.setStatusKilled();
-    mutant.setStatusUntested();
-
-    expect(mutant.hasStatusUntested()).to.equal(true);
-  });
-
-  it('should be capable of setting the status to timed out', function() {
-    mutant.setStatusTimedOut();
-
-    expect(mutant.hasStatusTimedOut()).to.equal(true);
+    expect(mutant.status).to.equal(MutantStatus.UNTESTED);
   });
 
   describe('should throw an error', function() {
@@ -106,7 +81,7 @@ describe('Mutant', function() {
 
   describe('should be able to insert a mutated file', function(){
     it('without changing the original array of source files', function(){
-      var sourceFiles = ['sample.js', mutant.getMutatedFilename(), 'somethingElse.js'];
+      var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
       var sourceFilesBackup = sourceFiles.slice(0);
 
       var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
@@ -115,11 +90,11 @@ describe('Mutant', function() {
     });
 
     it('and replace the original filename with the mutated filename', function(){
-      var sourceFiles = ['sample.js', mutant.getMutatedFilename(), 'somethingElse.js'];
+      var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
 
       var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
 
-      expect(mutatedSourceFiles[1]).to.equal(mutant.getMutatedFilename());
+      expect(mutatedSourceFiles[1]).to.equal(mutant.mutatedFilename);
     });
   });
 });

@@ -11,21 +11,25 @@ import TypeUtils from './TypeUtils';
  */
 export default class FileUtils {
   private typeUtils = new TypeUtils();
-  private baseTempFolder = os.tmpdir() + path.sep + 'stryker-temp';
+  private _baseTempFolder = os.tmpdir() + path.sep + 'stryker-temp';
   private static foldersCreated = 0;
+  
+  get baseTempFolder(): string {
+    return this._baseTempFolder;
+  };
 
   /**
    * Creates the temp directory for Stryker.
    */
   public createBaseTempFolder() : void {
-    this.createDirectory(this.baseTempFolder);
+    this.createDirectory(this._baseTempFolder);
   };
 
   /**
    * Removes the temp directory for Stryker and all subsequent files and folders.
    */
   public removeBaseTempFolder() : void {
-    this.removeFolderRecursively(this.baseTempFolder);
+    this.removeFolderRecursively(this._baseTempFolder);
   };
 
   /**
@@ -55,14 +59,6 @@ export default class FileUtils {
   };
 
   /**
-   * Gets the temp directory for Stryker.
-   * @function
-   */
-  getBaseTempFolder() {
-    return this.baseTempFolder;
-  };
-
-  /**
    * Saves a file in an unique temp folder.
    * @param filePath - The path to the orignal file, including the name of the file.
    * @param data - The data which should be placed in the new file.
@@ -72,7 +68,7 @@ export default class FileUtils {
     this.typeUtils.expectParameterString(filePath, 'FileUtils', 'filePath');
     this.typeUtils.expectParameterString(data, 'FileUtils', 'data');
 
-    var baseFolderPath = this.baseTempFolder + path.sep + 'temp-' + Date.now() + '-' + FileUtils.foldersCreated;
+    var baseFolderPath = this._baseTempFolder + path.sep + 'temp-' + Date.now() + '-' + FileUtils.foldersCreated;
     this.createDirectory(baseFolderPath);
     var tempFilePath = baseFolderPath + path.sep + path.basename(filePath);
     this.createFile(tempFilePath, data);

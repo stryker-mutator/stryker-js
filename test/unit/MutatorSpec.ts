@@ -48,7 +48,7 @@ describe('Mutator', function() {
 
     var mutants = mutator.mutate(['test.js']);
 
-    expect(mutants[0].getMutatedCode()).to.equal(mutatedCode);
+    expect(mutants[0].mutatedCode).to.equal(mutatedCode);
   });
 
   it('should set the mutated line number', function() {
@@ -60,7 +60,7 @@ describe('Mutator', function() {
 
     var mutants = mutator.mutate(['test.js']);
 
-    expect(mutants[0].getLineNumber()).to.equal(3);
+    expect(mutants[0].lineNumber).to.equal(3);
   });
 
   it('should not stop executing when a file does not exist', function() {

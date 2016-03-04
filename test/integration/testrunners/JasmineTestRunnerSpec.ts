@@ -39,7 +39,7 @@ describe('JasmineTestRunner', function() {
       jasmine.setTimeoutFactor(1.0);
 
       jasmine.test(config, ['test/sampleProject/src/InfiniteAdd.js'], [new TestFile('test/sampleProject/test/AddSpec.js', '// Dummy code')], function(result) {
-        expect(result.getTimedOut()).to.equal(true);
+        expect(result.timedOut).to.equal(true);
         done();
       });
     });
@@ -49,7 +49,7 @@ describe('JasmineTestRunner', function() {
     this.timeout(10000);
 
     jasmine.test(config, ['test/sampleProject/src/Add.js'], [new TestFile('test/sampleProject/test/AddSpec.js', '// Dummy code')], function(result) {
-      expect(result.getAllTestsSuccessful()).to.equal(true);
+      expect(result.allTestsSuccessful).to.equal(true);
       done();
     });
   });
@@ -59,7 +59,7 @@ describe('JasmineTestRunner', function() {
     this.timeout(10000);
 
     jasmine.test(config, ['test/sampleProject/src/Add.js'], [new TestFile('test/sampleProject/test/AddSpec.js', '// Dummy code'), new TestFile('test/sampleProject/test/FailingAddSpec.js', '// Dummy code')], function(result) {
-      expect(result.getAllTestsSuccessful()).to.equal(false);
+      expect(result.allTestsSuccessful).to.equal(false);
       done();
     });
   });

@@ -73,7 +73,7 @@ export default class Stryker {
 
         var testFilesToRemove: TestFile[] = [];
         _.forEach(testResults, (testResult: TestResult) => {
-          testFilesToRemove = testFilesToRemove.concat(testResult.getTestFiles());
+          testFilesToRemove = testFilesToRemove.concat(testResult.testFiles);
         });
 
         this.testRunner.testMutants(mutants, this.sourceFiles, testResults,
@@ -107,7 +107,7 @@ export default class Stryker {
    */
   private allTestsSuccessful(testResults: TestResult[]): boolean {
     var unsuccessfulTest = _.find(testResults, (result: TestResult) => {
-      return !result.getAllTestsSuccessful();
+      return !result.allTestsSuccessful;
     });
     return _.isUndefined(unsuccessfulTest);
   };

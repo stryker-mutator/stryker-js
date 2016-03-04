@@ -41,7 +41,7 @@ describe('KarmaTestRunner', function() {
     testRunner.testAndCollectCoverage(sourceFiles, testFiles, function(testResults) {
       var uniqueResults = _.uniq(testResults);
       _.forEach(testResults, (testResult) => {
-        console.log(testResult.getCoverageLocation());
+        console.log(testResult.coverageLocation);
       });
 
       expect(uniqueResults.length).to.equal(testResults.length);

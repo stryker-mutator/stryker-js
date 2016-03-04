@@ -45,7 +45,7 @@ export default class MutationRegistry {
    */
   getMutation(name: string): BaseMutation {
     var index = _.findIndex(this.mutations, function(mutation: BaseMutation) {
-      return mutation.getName() === name;
+      return mutation.name === name;
     });
 
     return this.mutations[index];

@@ -46,17 +46,49 @@ export enum MutantStatus {
  * Represents a mutation which has been applied to a file.
  */
 export default class Mutant {
-
-  private typeUtils = new TypeUtils();
-  private parserUtils = new ParserUtils();
+  public status: MutantStatus;
+  public testsRan: TestFile[] = [];
+  
   private fileUtils = new FileUtils();
-  private lineNumber: number;
-  private testsRan: TestFile[] = [];
-  private mutatedLine: string;
-  private mutatedCode: string;
-  private mutatedFilename: string;
-  private originalLine: string;
-  private status: MutantStatus;
+  private parserUtils = new ParserUtils();
+  private typeUtils = new TypeUtils();
+  private _lineNumber: number;
+  private _mutatedCode: string;
+  private _mutatedFilename: string;
+  private _mutatedLine: string;
+  private _originalLine: string;
+  
+  get columnNumber(): number {
+    return this._columnNumber;
+  };
+
+  get filename(): string {
+    return this._filename;
+  };
+
+  get lineNumber(): number {
+    return this._lineNumber;
+  };
+
+  get mutatedCode(): string {
+    return this._mutatedCode;
+  };
+  
+  get mutatedFilename(): string {
+    return this._mutatedFilename;
+  };
+
+  get mutatedLine(): string {
+    return this._mutatedLine;
+  };
+  
+  get mutation(): BaseMutation {
+    return this._mutation;
+  };
+
+  get originalLine(): string {
+    return this._originalLine;
+  };
 
   /**
    * @param filename - The name of the file which was mutated, including the path.
@@ -66,18 +98,17 @@ export default class Mutant {
    * @param node - The part of the ast which has been mutated.
    * @param columnNumber - The column which has been mutated.
    */
-  constructor(private filename: string, private originalCode: string, private mutation: BaseMutation, private ast: ESTree.Program, private node: ESTree.Node, private columnNumber: number) {
+  constructor(private _filename: string, originalCode: string, private _mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, private _columnNumber: number) {
     this.typeUtils.expectParameterObject(ast, 'Mutant', 'ast');
     this.typeUtils.expectParameterObject(node, 'Mutant', 'node');
-
-    this.lineNumber = node.loc.start.line;
-    this.mutatedCode = this.parserUtils.generate(ast, originalCode);
-    this.setStatusUntested();
-    this.mutatedLine = _.trim(this.mutatedCode.split('\n')[this.lineNumber - 1]);
-    this.originalLine = _.trim(originalCode.split('\n')[this.lineNumber - 1]);
+    
+    this._lineNumber = node.loc.start.line;
+    this._mutatedCode = this.parserUtils.generate(ast, originalCode);
+    this.status = MutantStatus.UNTESTED;
+    this._mutatedLine = _.trim(this.mutatedCode.split('\n')[this._lineNumber - 1]);
+    this._originalLine = _.trim(originalCode.split('\n')[this._lineNumber - 1]);
     this.save();
   }
-
 
   /**
    * Inserts the mutated file into an array of source files. The original array is not altered in the process.
@@ -88,185 +119,9 @@ export default class Mutant {
   insertMutatedFile = function(sourceFiles: string[]) {
     this.typeUtils.expectParameterArray(sourceFiles, 'Mutant', 'sourceFiles');
     var mutatedSrc = _.clone(sourceFiles);
-    var mutantSourceFileIndex = _.indexOf(mutatedSrc, this.getFilename());
-    mutatedSrc[mutantSourceFileIndex] = this.getMutatedFilename();
+    var mutantSourceFileIndex = _.indexOf(mutatedSrc, this.filename);
+    mutatedSrc[mutantSourceFileIndex] = this.mutatedFilename;
     return mutatedSrc;
-  };
-
-  /**
-   * Gets the name of the file which has been mutated.
-   * @function
-   * @returns {String} The name of the mutated file.
-   */
-  getFilename() {
-    return this.filename;
-  };
-
-  /**
-   * Gets if the Mutant has the status KILLED.
-   * @function
-   * @returns {Boolean} True if the Mutant has the status KILLED.
-   */
-  hasStatusKilled() {
-    return this.getStatus() === MutantStatus.KILLED;
-  };
-
-  /**
-   * Sets the status of the Mutant to KILLED.
-   * @function
-   */
-  setStatusKilled() {
-    this.setStatus(MutantStatus.KILLED);
-  };
-
-  /**
-   * Gets if the Mutant has the status UNTESTED.
-   * @function
-   * @returns {Boolean} True if the Mutant has the status UNTESTED.
-   */
-  hasStatusUntested() {
-    return this.getStatus() === MutantStatus.UNTESTED;
-  };
-
-  /**
-   * Sets the status of the Mutant to UNTESTED.
-   * @function
-   */
-  setStatusUntested() {
-    this.setStatus(MutantStatus.UNTESTED);
-  };
-
-  /**
-   * Gets if the Mutant has the status SURVIVED.
-   * @function
-   * @returns {Boolean} True if the Mutant has the status SURVIVED.
-   */
-  hasStatusSurvived() {
-    return this.getStatus() === MutantStatus.SURVIVED;
-  };
-
-  /**
-   * Sets the status of the Mutant to SURVIVED.
-   * @function
-   */
-  setStatusSurvived() {
-    this.setStatus(MutantStatus.SURVIVED);
-  };
-
-  /**
-   * Gets if the Mutant has the status TIMEDOUT.
-   * @function
-   * @returns {Boolean} True if the Mutant has the status TIMEDOUT.
-   */
-  hasStatusTimedOut() {
-    return this.getStatus() === MutantStatus.TIMEDOUT;
-  };
-
-  /**
-   * Sets the status of the Mutant to TIMEDOUT.
-   * @function
-   */
-  setStatusTimedOut() {
-    this.setStatus(MutantStatus.TIMEDOUT);
-  };
-
-  /**
-   * Gets the Mutation which has been applied.
-   * @function
-   * @returns The applied Mutation.
-   */
-  getMutation() {
-    return this.mutation;
-  };
-
-  /**
-   * Gets the source code which contains a mutation.
-   * @function
-   * @returns The code containing a mutation.
-   */
-  getMutatedCode() {
-    return this.mutatedCode;
-  };
-
-  /**
-   * Gets the original line of code.
-   * @function
-   * @returns The original line of code.
-   */
-  getOriginalLine() {
-    return this.originalLine;
-  };
-
-  /**
-   * Gets the mutated line of code.
-   * @function
-   * @returns The mutated line of code.
-   */
-  getMutatedLine() {
-    return this.mutatedLine;
-  };
-
-  /**
-   * Gets the status of the Mutant.
-   * @function
-   * @returns The status.
-   */
-  getStatus() {
-    return this.status;
-  };
-
-  /**
-   * Sets the status of the Mutant.
-   * @function
-   * @param status - The new status.
-   */
-  setStatus = function(status: MutantStatus) {
-    this.status = status;
-  };
-
-  /**
-   * Gets the line number at which the mutation was applied in the original file.
-   * @function
-   * @returns {Number} The line number.
-   */
-  getLineNumber() {
-    return this.lineNumber;
-  };
-
-  /**
-   * Gets the column number at which the mutation was applied in the original file.
-   * @function
-   * @returns {Number} The column number.
-   */
-  getColumnNumber() {
-    return this.columnNumber;
-  };
-
-  /**
-   * Sets the tests which were ran on this Mutant.
-   * @function
-   * @param {TestFile[]} tests - The array of tests which were ran.
-   */
-  setTestsRan = function(tests: TestFile[]) {
-    this.testsRan = tests;
-  };
-
-  /**
-   * Gets the tests which were ran on this Mutant.
-   * @function
-   * @returns The array of tests which were ran.
-   */
-  getTestsRan() {
-    return this.testsRan;
-  };
-
-  /**
-   * Gets the name and path of the mutated file.
-   * @function
-   * @returns The name and path of the mutated file.
-   */
-  getMutatedFilename() {
-    return this.mutatedFilename;
   };
 
   /**
@@ -274,7 +129,7 @@ export default class Mutant {
    * @function
    */
   save() {
-    this.mutatedFilename = this.fileUtils.createFileInTempFolder(this.filename, this.mutatedCode);
+    this._mutatedFilename = this.fileUtils.createFileInTempFolder(this.filename, this.mutatedCode);
   };
 
   /**

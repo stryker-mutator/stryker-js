@@ -32,7 +32,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
     super.test(config, sourceFiles, testFiles, testCompletedCallback);
 
     if (testFiles.length > 0) {
-      config.files = sourceFiles.concat(config.libs, testFiles.map(file => file.getPath()));
+      config.files = sourceFiles.concat(config.libs, testFiles.map(file => file.path));
 
       config.browserNoActivityTimeout = this.getTotalTimeout();
 
@@ -54,7 +54,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
 
   testAndCollectCoverage(sourceFiles: string[], testFiles: string[], testCompletedCallback: TestsCompletedCallback) {
     super.testAndCollectCoverage(sourceFiles, testFiles, testCompletedCallback);
-    var dirname = this._fileUtils.getBaseTempFolder();
+    var dirname = this._fileUtils.baseTempFolder;
     var subdir = 'coverage';
 
     this.karmaConfig.reporters = ['coverage'];
@@ -78,7 +78,7 @@ export default class KarmaTestRunner extends BaseTestRunner {
 
       var coverageFilename = dirname + path.sep + subdir + index + path.sep + 'coverage-final.json';
       this.queueTest(config, sourceFiles, [testFile], (result) => {
-        result.setCoverageLocation(coverageFilename);
+        result.coverageLocation = coverageFilename;
         testResults.push(result);
         testsCompleted++;
 
