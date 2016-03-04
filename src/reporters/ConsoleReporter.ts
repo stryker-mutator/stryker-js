@@ -51,11 +51,11 @@ export default class ConsoleReporter extends BaseReporter {
     var mutantsTimedOut = 0;
     var mutantsUntested = 0;
     mutants.forEach(mutant => {
-      if (mutant.hasStatusKilled()) {
+      if (mutant.status == MutantStatus.KILLED) {
         mutantsKilled++;
-      } else if (mutant.hasStatusTimedOut()) {
+      } else if (mutant.status == MutantStatus.TIMEDOUT) {
         mutantsTimedOut++;
-      } else if (mutant.hasStatusSurvived()) {
+      } else if (mutant.status == MutantStatus.SURVIVED) {
         console.log(chalk.bold.red('Mutant survived!'));
         console.log(mutant.filename + ': line ' + mutant.lineNumber + ':' + mutant.columnNumber);
         console.log('Mutation: ' + mutant.mutation.name);
@@ -68,7 +68,7 @@ export default class ConsoleReporter extends BaseReporter {
           console.log('    ' + test.name);
         });
         console.log('\n');
-      } else if (mutant.hasStatusUntested()) {
+      } else if (mutant.status == MutantStatus.UNTESTED) {
         mutantsUntested++;
       }
     });

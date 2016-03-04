@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-import Mutant from '../../src/Mutant';
+import Mutant, {MutantStatus} from '../../src/Mutant';
 import MathMutation from '../../src/mutations/MathMutation';
 import ParserUtils from '../../src/utils/ParserUtils';
 require('mocha-sinon');
@@ -70,32 +70,7 @@ describe('Mutant', function() {
   });
 
   it('should default to the status untested', function() {
-    expect(mutant.hasStatusUntested()).to.equal(true);
-  });
-
-  it('should be capable of setting the status to survived', function() {
-    mutant.setStatusSurvived();
-
-    expect(mutant.hasStatusSurvived()).to.equal(true);
-  });
-
-  it('should be capable of setting the status to killed', function() {
-    mutant.setStatusKilled();
-
-    expect(mutant.hasStatusKilled()).to.equal(true);
-  });
-
-  it('should be capable of setting the status to untested', function() {
-    mutant.setStatusKilled();
-    mutant.setStatusUntested();
-
-    expect(mutant.hasStatusUntested()).to.equal(true);
-  });
-
-  it('should be capable of setting the status to timed out', function() {
-    mutant.setStatusTimedOut();
-
-    expect(mutant.hasStatusTimedOut()).to.equal(true);
+    expect(mutant.status).to.equal(MutantStatus.UNTESTED);
   });
 
   describe('should throw an error', function() {

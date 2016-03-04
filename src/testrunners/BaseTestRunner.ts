@@ -5,7 +5,7 @@ import TestRunnerConfig from './TestRunnerConfig';
 import TestFile from '../TestFile';
 import TypeUtils from '../utils/TypeUtils';
 import * as karma from 'karma';
-import Mutant, {MutantTestedCallback, MutantsTestedCallback} from '../Mutant';
+import Mutant, {MutantTestedCallback, MutantsTestedCallback, MutantStatus} from '../Mutant';
 
 import TestResult from '../TestResult';
 
@@ -222,11 +222,11 @@ abstract class BaseTestRunner {
         mutant.testsRan = testFiles;
 
         if (result.timedOut) {
-          mutant.setStatusTimedOut();
+          mutant.status = MutantStatus.TIMEDOUT;
         } else if (!result.allTestsSuccessful) {
-          mutant.setStatusKilled();
+          mutant.status = MutantStatus.KILLED;
         } else if (testFiles.length > 0) {
-          mutant.setStatusSurvived();
+          mutant.status = MutantStatus.SURVIVED;
         }
 
         mutant.remove();

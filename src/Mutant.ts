@@ -110,7 +110,7 @@ export default class Mutant {
     this._columnNumber = columnNumber;
     this._lineNumber = node.loc.start.line;
     this._mutatedCode = this.parserUtils.generate(ast, originalCode);
-    this.setStatusUntested();
+    this.status = MutantStatus.UNTESTED;
     this._mutatedLine = _.trim(this.mutatedCode.split('\n')[this._lineNumber - 1]);
     this._originalLine = _.trim(originalCode.split('\n')[this._lineNumber - 1]);
     this.save();
@@ -128,74 +128,6 @@ export default class Mutant {
     var mutantSourceFileIndex = _.indexOf(mutatedSrc, this.filename);
     mutatedSrc[mutantSourceFileIndex] = this.mutatedFilename;
     return mutatedSrc;
-  };
-
-  /**
-   * Gets if the Mutant has the status KILLED.
-   * @function
-   * @returns {Boolean} True if the Mutant has the status KILLED.
-   */
-  hasStatusKilled() {
-    return this.status === MutantStatus.KILLED;
-  };
-
-  /**
-   * Sets the status of the Mutant to KILLED.
-   * @function
-   */
-  setStatusKilled() {
-    this.status = MutantStatus.KILLED;
-  };
-
-  /**
-   * Gets if the Mutant has the status UNTESTED.
-   * @function
-   * @returns {Boolean} True if the Mutant has the status UNTESTED.
-   */
-  hasStatusUntested() {
-    return this.status === MutantStatus.UNTESTED;
-  };
-
-  /**
-   * Sets the status of the Mutant to UNTESTED.
-   * @function
-   */
-  setStatusUntested() {
-    this.status = MutantStatus.UNTESTED;
-  };
-
-  /**
-   * Gets if the Mutant has the status SURVIVED.
-   * @function
-   * @returns {Boolean} True if the Mutant has the status SURVIVED.
-   */
-  hasStatusSurvived() {
-    return this.status === MutantStatus.SURVIVED;
-  };
-
-  /**
-   * Sets the status of the Mutant to SURVIVED.
-   * @function
-   */
-  setStatusSurvived() {
-    this.status = MutantStatus.SURVIVED;
-  };
-
-  /**
-   * Gets if the Mutant has the status TIMEDOUT.
-   * @function
-   * @returns {Boolean} True if the Mutant has the status TIMEDOUT.
-   */
-  hasStatusTimedOut() {
-    return this.status === MutantStatus.TIMEDOUT;
-  };
-
-  /**
-   * Sets the status of the Mutant to TIMEDOUT.
-   * @function
-   */
-  setStatusTimedOut() {
-    this.status = MutantStatus.TIMEDOUT;
   };
 
   /**
