@@ -47,6 +47,7 @@
     "mocha": "^2.3.3",
     "mocha-sinon": "^1.1.4",
     "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0",
     "typescript": "^1.7.5"
   }
 }
