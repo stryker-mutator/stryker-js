@@ -7,10 +7,6 @@ import BaseTestRunner from './testrunners/BaseTestRunner';
  * @constructor
  */
 export default class AbstractSyntaxTreeNode {
-  private _node: ESTree.Node;
-  private _parent: AbstractSyntaxTreeNode;
-  private _key: string| number;
-
   get node(): ESTree.Node {
     return this._node;
   }
@@ -28,9 +24,6 @@ export default class AbstractSyntaxTreeNode {
    * @param parent - The parent of the node.
    * @param key - The key of the node in the parent.
    */
-  constructor(node: ESTree.Node, parent: AbstractSyntaxTreeNode, key: string| number) {
-    this._node = node;
-    this._parent = parent;
-    this._key = key;
+  constructor(private _node: ESTree.Node, private _parent: AbstractSyntaxTreeNode, private _key: string| number) {
   }
 }

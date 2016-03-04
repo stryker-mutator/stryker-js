@@ -13,10 +13,6 @@ import {CoverageCollection} from './api/test_runner';
 export default class TestResult {
   private _fileUtils = new FileUtils();
   private _coverage: CoverageCollection;
-  private _sourceFiles: string[];
-  private _testFiles: TestFile[];
-  private _timedOut: boolean;
-  private _timeSpent: number;
   public coverageLocation: string;
 
   set coverage(coverage: CoverageCollection) {
@@ -70,11 +66,7 @@ export default class TestResult {
    * @param errorOccurred - Indicates wheter an error occurred.
    * @param timeSpent - The execution time of the test in milliseconds.
    */
-  constructor(sourceFiles: string[], testFiles: TestFile[], private nrSucceeded: number, private nrFailed: number, timedOut: boolean, private errorOccurred: boolean, timeSpent: number) {
-    this._sourceFiles = sourceFiles;
-    this._testFiles = testFiles;
-    this._timedOut = timedOut;
-    this._timeSpent = timeSpent;
+  constructor(private _sourceFiles: string[], private _testFiles: TestFile[], private nrSucceeded: number, private nrFailed: number, private _timedOut: boolean, private errorOccurred: boolean, private _timeSpent: number) {
     this._coverage = {};
     this.coverageLocation = '';
   }

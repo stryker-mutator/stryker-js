@@ -52,13 +52,10 @@ export default class Mutant {
   private fileUtils = new FileUtils();
   private parserUtils = new ParserUtils();
   private typeUtils = new TypeUtils();
-  private _columnNumber: number;
-  private _filename: string;
   private _lineNumber: number;
   private _mutatedCode: string;
   private _mutatedFilename: string;
   private _mutatedLine: string;
-  private _mutation: BaseMutation;
   private _originalLine: string;
   
   get columnNumber(): number {
@@ -101,13 +98,10 @@ export default class Mutant {
    * @param node - The part of the ast which has been mutated.
    * @param columnNumber - The column which has been mutated.
    */
-  constructor(filename: string, originalCode: string, mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, columnNumber: number) {
+  constructor(private _filename: string, originalCode: string, private _mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, private _columnNumber: number) {
     this.typeUtils.expectParameterObject(ast, 'Mutant', 'ast');
     this.typeUtils.expectParameterObject(node, 'Mutant', 'node');
     
-    this._filename = filename;
-    this._mutation = mutation;
-    this._columnNumber = columnNumber;
     this._lineNumber = node.loc.start.line;
     this._mutatedCode = this.parserUtils.generate(ast, originalCode);
     this.status = MutantStatus.UNTESTED;
