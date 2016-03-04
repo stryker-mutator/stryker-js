@@ -34,8 +34,10 @@ module.exports = function (grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'test']
+      testFiles: {
+        files: ['test/**/*.ts'],
+        tasks: ['test']
+      }
     },
     mochaTest: {
       unit: {
@@ -94,5 +96,5 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['clean', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
-
+  grunt.registerTask('serve', ['watch']);
 };
