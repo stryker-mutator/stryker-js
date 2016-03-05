@@ -1,7 +1,6 @@
 'use strict';
 
 import FileUtils from './utils/FileUtils';
-import TypeUtils from './utils/TypeUtils';
 
 /**
  * Represents a test file. Upon creation, the test file is saved to the temp folder.
@@ -9,7 +8,6 @@ import TypeUtils from './utils/TypeUtils';
  */
 export default class TestFile {
 
-  private typeUtils = new TypeUtils();
   private fileUtils = new FileUtils();
   public path: string;
   
@@ -19,11 +17,6 @@ export default class TestFile {
    * @param content - The content of the test file.
    */
   constructor(public name: string, private content?: string) {
-    this.typeUtils.expectParameterString(name, 'BaseTestRunner', 'name');
-    if (content) {
-      this.typeUtils.expectParameterString(content, 'BaseTestRunner', 'content');
-    }
-
     if (content) {
       this.path = this.save();
     } else {
