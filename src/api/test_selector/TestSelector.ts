@@ -2,7 +2,7 @@ interface TestSelector{
   
   files(): string[];
   
-  select(id: number[]): void;
+  select(id: number[]): Promise<void>;
 }
 
 export default TestSelector;
