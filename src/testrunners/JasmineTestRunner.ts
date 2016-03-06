@@ -45,7 +45,7 @@ export default class JasmineTestRunner extends KarmaTestRunner {
         _.forEach(nodes, (expressionStatement: any, index: any) => {
           if (expressionStatement !== astNode) {
             var parent = expressionStatement.parent;
-            if (this._typeUtils.isObject(parent)) {
+            if (parent instanceof Object && !(parent instanceof Array)) {
               parent[expressionStatement.key] = expressionStatement.node;
             } else if (_.indexOf(parent, expressionStatement.node) < 0) {
               parent.splice(expressionStatement.key, 0, expressionStatement.node);
@@ -66,9 +66,6 @@ export default class JasmineTestRunner extends KarmaTestRunner {
    * @returns The names of all relevant describes and the name of the it.
    */
   _generateTestName(itNode: any, describeNodes: AbstractSyntaxTreeNode[]) {
-    this._typeUtils.expectParameterObject(itNode, '_generateTestName', 'itNode');
-    this._typeUtils.expectParameterArray(describeNodes, '_generateTestName', 'describeNodes');
-
     var name = '';
     _.forEach(describeNodes, (describeNode: any, index: any) => {
       var childNodes = this._parserUtils.getNodesWithType(describeNode.node, ['ExpressionStatement']);
@@ -89,8 +86,6 @@ export default class JasmineTestRunner extends KarmaTestRunner {
    * @param nodes - The nodes which may be `it` nodes which should be removed from their parents.
    */
   _removeItsFromParent(nodes: any[]) {
-    this._typeUtils.expectParameterArray(nodes, '_generateTestName', 'nodes');
-
     _.forEach(nodes, astNode => {
       var node = astNode.node;
       var parent = astNode.parent;

@@ -7,13 +7,11 @@ import FileUtils from './utils/FileUtils';
 import Mutant from './Mutant';
 import MutationRegistry from './MutationRegistry';
 import ParserUtils from './utils/ParserUtils';
-import TypeUtils from './utils/TypeUtils';
 
 /**
  * Class capable of finding spots to mutate in files.
  */
 export default class Mutator {
-  private typeUtils = new TypeUtils();
   private mutationRegistry = new MutationRegistry();
   private fileUtils = new FileUtils();
   private mutations: BaseMutation[];
@@ -29,8 +27,6 @@ export default class Mutator {
    * @returns {Mutant[]} The generated Mutants.
    */
   mutate(sourceFiles: string[]) {
-    this.typeUtils.expectParameterArray(sourceFiles, 'Mutator', 'sourceFiles');
-
     var mutants: Mutant[] = [];
     var parserUtils = new ParserUtils();
     var types = _.uniq(_.flatten(_.map(this.mutations, function(mutation: BaseMutation) {
@@ -68,9 +64,6 @@ export default class Mutator {
    * @returns {Mutant[]} All possible Mutants for the given set of nodes.
    */
   private findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: AbstractSyntaxTreeNode[]) {
-    this.typeUtils.expectParameterObject(ast, 'Mutator', 'ast');
-    this.typeUtils.expectParameterArray(nodes, 'Mutator', 'nodes');
-
     var mutants: Mutant[] = [];
     _.forEach(nodes, (astnode, index) => {
       if (astnode.node.type) {

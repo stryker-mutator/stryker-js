@@ -3,7 +3,6 @@
 import * as _ from 'lodash';
 import TestRunnerConfig from './TestRunnerConfig';
 import TestFile from '../TestFile';
-import TypeUtils from '../utils/TypeUtils';
 import * as karma from 'karma';
 import Mutant, {MutantTestedCallback, MutantsTestedCallback, MutantStatus} from '../Mutant';
 
@@ -25,7 +24,6 @@ export interface TestRunMetadata {
 
 abstract class BaseTestRunner {
 
-  protected _typeUtils = new TypeUtils();
   protected _baseTimeout = 0;
   protected _timeoutMs = 0;
   protected _timeoutFactor = 1.0;
@@ -58,10 +56,6 @@ abstract class BaseTestRunner {
    * @param {BaseTestRunner~testCompletedCallback} testCompletedCallback - The callback which is called when the test has been completed.
    */
   test(config: TestRunnerConfig, sourceFiles: string[], testFiles: TestFile[], testCompletedCallback: TestCompletedCallback) {
-    this._typeUtils.expectParameterObject(config, 'BaseTestRunner', 'config');
-    this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
-    this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
-    this._typeUtils.expectParameterFunction(testCompletedCallback, 'BaseTestRunner', 'testCompletedCallback');
   }
 
   /**
@@ -73,11 +67,6 @@ abstract class BaseTestRunner {
    * @param {BaseTestRunner~testCompletedCallback} testCompletedCallback - The callback which is called when the test has been completed.
    */
   queueTest(config: TestRunnerConfig, sourceFiles: string[], testFiles: TestFile[], testCompletedCallback: TestCompletedCallback) {
-    this._typeUtils.expectParameterObject(config, 'BaseTestRunner', 'config');
-    this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
-    this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
-    this._typeUtils.expectParameterFunction(testCompletedCallback, 'BaseTestRunner', 'testCompletedCallback');
-
     var queuedTest: TestRunMetadata = {
       config: config,
       src: sourceFiles,
@@ -112,8 +101,6 @@ abstract class BaseTestRunner {
    * @returns The generated TestFiles.
    */
   _generateTestFiles(testFiles: string[]): TestFile[] {
-    this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
-
     var testsToRun: TestFile[] = [];
 
     if (this._config.individualTests) {
@@ -136,7 +123,6 @@ abstract class BaseTestRunner {
    * @returns The tests in which the testFile was split.
    */
   _splitTest(testFile: string) : TestFile[]{
-    this._typeUtils.expectParameterString(testFile, 'BaseTestRunner', 'testFile');
     return null;
   }
 
@@ -147,7 +133,6 @@ abstract class BaseTestRunner {
    * @returns The tests in which the testFile was split.
    */
   _splitTests(testFiles: string[]): TestFile[] {
-    this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
     var individualTests: TestFile[] = [];
 
     _.forEach(testFiles, testFile => {
@@ -165,9 +150,6 @@ abstract class BaseTestRunner {
    * @param testCompletedCallback - The callback which is called when the test has been completed.
    */
   testAndCollectCoverage(sourceFiles: string[], testFiles: string[], testCompletedCallback: TestsCompletedCallback) {
-    this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
-    this._typeUtils.expectParameterArray(testFiles, 'BaseTestRunner', 'testFiles');
-    this._typeUtils.expectParameterFunction(testCompletedCallback, 'BaseTestRunner', 'testCompletedCallback');
   }
 
   /**
@@ -192,11 +174,6 @@ abstract class BaseTestRunner {
    * @param allMutantsTestedCallback - The callback which is called when all Mutants have been tested.
    */
   testMutants(mutants: Mutant[], sourceFiles: string[], testResults: TestResult[], singleMutantTestedCallback: MutantTestedCallback, allMutantsTestedCallback: MutantsTestedCallback) {
-    this._typeUtils.expectParameterArray(mutants, 'BaseTestRunner', 'mutants');
-    this._typeUtils.expectParameterArray(sourceFiles, 'BaseTestRunner', 'sourceFiles');
-    this._typeUtils.expectParameterArray(testResults, 'BaseTestRunner', 'testResults');
-    this._typeUtils.expectParameterFunction(singleMutantTestedCallback, 'BaseTestRunner', 'singleMutantTestedCallback');
-    this._typeUtils.expectParameterFunction(allMutantsTestedCallback, 'BaseTestRunner', 'allMutantsTestedCallback');
     var that = this;
     var mutantsTested = 0;
 
@@ -241,7 +218,6 @@ abstract class BaseTestRunner {
   }
 
   _waitForCodeCoverage(testResults: TestResult[]) {
-    this._typeUtils.expectParameterArray(testResults, 'BaseTestRunner', 'testResults');
     var testResultsWithCoverage: TestResult[] = [];
     var checkIfCoverageExists = (testResult: TestResult, index: number) => {
       if (!_.isEmpty(testResult.coverage)) {
@@ -264,7 +240,6 @@ abstract class BaseTestRunner {
    * @param {Number} timeout - The new base timeout in milliseconds.
    */
   setBaseTimeout(baseTimeout: number) {
-    this._typeUtils.expectParameterNumber(baseTimeout, 'BaseTestRunner', 'baseTimeout');
     this._baseTimeout = Number(baseTimeout);
   }
 
@@ -283,7 +258,6 @@ abstract class BaseTestRunner {
    * @param {Number} timeoutMs - The new timeout in milliseconds.
    */
   setTimeoutMs(timeoutMs: number) {
-    this._typeUtils.expectParameterNumber(timeoutMs, 'BaseTestRunner', 'timeoutMs');
     this._timeoutMs = Number(timeoutMs);
   }
 
@@ -302,7 +276,6 @@ abstract class BaseTestRunner {
    * @param {Number} timeoutFactor - The new timeout factor.
    */
   setTimeoutFactor(timeoutFactor: number) {
-    this._typeUtils.expectParameterNumber(timeoutFactor, 'BaseTestRunner', 'timeoutFactor');
     this._timeoutFactor = Number(timeoutFactor);
   }
 

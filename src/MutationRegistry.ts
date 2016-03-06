@@ -6,7 +6,6 @@ import ConditionalBoundaryMutation from './mutations/ConditionalBoundaryMutation
 import MathMutation from './mutations/MathMutation';
 import RemoveConditionalsMutation from './mutations/RemoveConditionalsMutation';
 import ReverseConditionalMutation from './mutations/ReverseConditionalMutation';
-import TypeUtils from './utils/TypeUtils';
 import UnaryOperatorMutation from './mutations/UnaryOperatorMutation';
 
 
