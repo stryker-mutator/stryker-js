@@ -33,7 +33,7 @@ abstract class Factory<TSettings, T> {
     }
   }
 
-  importSuggestion(name: string): string {
+  protected importSuggestion(name: string): string {
     return 'stryker-' + name;
   }
 }
