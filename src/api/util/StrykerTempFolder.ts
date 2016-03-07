@@ -44,7 +44,7 @@ function fileOrFolderExists(path: string): boolean {
   try {
     var stats = fs.lstatSync(path);
     return true;
-  } catch (errror) {
+  } catch (error) {
     return false;
   }
 };
