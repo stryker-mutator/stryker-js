@@ -3,6 +3,7 @@ import {RunResult, RunnerOptions, TestResult} from './api/test_runner';
 import {TestSelector, TestSelectorFactory} from './api/test_selector';
 import {StrykerTempFolder} from './api/util';
 import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
+import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as path from 'path';
 import * as os from 'os';
 import Mutant from './Mutant';
@@ -25,7 +26,7 @@ export default class TestRunnerOrchestrator {
 
   recordCoverage(): Promise<RunResult[]> {
     let testSelector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
-    let testRunner = new IsolatedTestRunnerAdapter(this.options.testRunner, this.createTestRunSettings(this.sourceFiles, testSelector, this.options.port, true));
+    let testRunner = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.sourceFiles, testSelector, this.options.port, true));
     return this.runSingleTestsRecursive(testSelector, testRunner, [], 0);
   }
 
@@ -77,7 +78,7 @@ export default class TestRunnerOrchestrator {
             }
             testRunnerMetadatas.push({
               sourceFileMap,
-              runnerAdapter: new IsolatedTestRunnerAdapter(this.options.testRunner, this.createTestRunSettings(tempSourceFiles, selector, this.options.port + n, false)),
+              runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(tempSourceFiles, selector, this.options.port + n, false)),
               selector
             });
           });
