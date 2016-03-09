@@ -5,6 +5,7 @@ import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
 import ParserUtils from './utils/ParserUtils';
 import TestFile from './TestFile';
+import {StrykerTempFolder} from './api/util';
 
 export interface MutantTestedCallback {
   (mutant: Mutant): void
@@ -52,7 +53,6 @@ export default class Mutant {
   private parserUtils = new ParserUtils();
   private _lineNumber: number;
   private _mutatedCode: string;
-  private _mutatedFilename: string;
   private _mutatedLine: string;
   private _originalLine: string;
   
@@ -72,10 +72,6 @@ export default class Mutant {
     return this._mutatedCode;
   };
   
-  get mutatedFilename(): string {
-    return this._mutatedFilename;
-  };
-
   get mutatedLine(): string {
     return this._mutatedLine;
   };
@@ -96,13 +92,12 @@ export default class Mutant {
    * @param node - The part of the ast which has been mutated.
    * @param columnNumber - The column which has been mutated.
    */
-  constructor(private _filename: string, originalCode: string, private _mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, private _columnNumber: number) {    
+  constructor(private _filename: string, private originalCode: string, private _mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, private _columnNumber: number) {    
     this._lineNumber = node.loc.start.line;
     this._mutatedCode = this.parserUtils.generate(ast, originalCode);
     this.status = MutantStatus.UNTESTED;
     this._mutatedLine = _.trim(this.mutatedCode.split('\n')[this._lineNumber - 1]);
     this._originalLine = _.trim(originalCode.split('\n')[this._lineNumber - 1]);
-    this.save();
   }
 
   /**
@@ -122,15 +117,15 @@ export default class Mutant {
    * Saves the mutated code in a mutated file.
    * @function
    */
-  save() {
-    this._mutatedFilename = this.fileUtils.createFileInTempFolder(this.filename, this.mutatedCode);
+  save(fileName: string) {
+    return StrykerTempFolder.writeFile(fileName, this.mutatedCode);
   };
 
   /**
    * Removes the mutated file.
    * @function
    */
-  remove() {
-    this.fileUtils.removeTempFile(this.mutatedFilename);
+  reset(fileName: string) {
+    return StrykerTempFolder.writeFile(fileName, this.originalCode);
   };
 }

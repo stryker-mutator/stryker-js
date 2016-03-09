@@ -13,7 +13,10 @@ describe('TestRunnerChildProcessAdapter', function() {
   let sut: TestRunnerChildProcessAdapter;
   let options: RunnerOptions = {
     strykerOptions: {
-      plugins: ['../../test/integration/isolated-runner/DirectResolvedTestRunner', '../../test/integration/isolated-runner/NeverResolvedTestRunner']
+      plugins: ['../../test/integration/isolated-runner/DirectResolvedTestRunner', '../../test/integration/isolated-runner/NeverResolvedTestRunner'],
+      testRunner: 'karma',
+      testFrameork: 'jasmine',
+      port: null  
     },
     additionalFiles: [],
     sourceFiles: [],

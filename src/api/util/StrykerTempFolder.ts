@@ -33,6 +33,17 @@ function writeFile(fileName: string, data: string): Promise<void> {
     });
   });
 }
+
+function copyFile(fromFileName: string, toFileName: string): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    let readStream = fs.createReadStream(fromFileName, { encoding: 'utf8' });
+    let writeStream = fs.createWriteStream(toFileName, { encoding: 'utf8' });
+    readStream.on('error', reject);
+    writeStream.on('error', reject);
+    readStream.pipe(writeStream);
+    readStream.on('end', () => resolve());
+  });
+}
   
 /**
    * Checks if a file or folder exists.
@@ -51,5 +62,6 @@ function fileOrFolderExists(path: string): boolean {
 
 export default {
   createRandomFolder,
-  writeFile
+  writeFile,
+  copyFile
 };

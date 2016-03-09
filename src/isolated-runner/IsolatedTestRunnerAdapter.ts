@@ -49,6 +49,10 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
     });
     return this.currentPromise;
   }
+  
+  dispose(){
+    this.workerProcess.kill();
+  }
 
   private sendRunCommand(options: RunOptions) {
     let message: Message<RunMessageBody> = {

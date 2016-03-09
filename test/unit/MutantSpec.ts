@@ -79,22 +79,4 @@ describe('Mutant', function() {
     });
   });
 
-  describe('should be able to insert a mutated file', function(){
-    it('without changing the original array of source files', function(){
-      var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
-      var sourceFilesBackup = sourceFiles.slice(0);
-
-      var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
-
-      expect(sourceFiles).to.deep.equal(sourceFilesBackup);
-    });
-
-    it('and replace the original filename with the mutated filename', function(){
-      var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
-
-      var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
-
-      expect(mutatedSourceFiles[1]).to.equal(mutant.mutatedFilename);
-    });
-  });
 });
