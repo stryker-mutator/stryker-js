@@ -105,7 +105,7 @@ export default class TestRunnerOrchestrator {
     return {
       coverageEnabled,
       sourceFiles: sourceFiles,
-      additionalFiles: [].concat(selector.files).concat(this.otherFiles),
+      additionalFiles: [].concat(selector.files()).concat(this.otherFiles),
       strykerOptions: this.options,
       port: port
     };
