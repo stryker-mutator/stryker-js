@@ -15,15 +15,6 @@ export interface MutantsTestedCallback {
   (mutants: Mutant[]): void
 }
 
-export interface MutatedLocation {
-  mutatedCol: number;
-  startCol: number;
-  endCol: number;
-  startLine: number;
-  endLine: number;
-}
-
-
 export enum MutantStatus {
   
   /**
@@ -67,7 +58,7 @@ export default class Mutant {
   private _originalLine: string;
   
   get columnNumber(): number {
-    return this.mutatedLocation.mutatedCol;
+    return this.mutatedLocation.start.column;
   };
 
   get filename(): string {
@@ -75,7 +66,7 @@ export default class Mutant {
   };
 
   get lineNumber(): number {
-    return this.mutatedLocation.startLine;
+    return this.mutatedLocation.start.line;
   };
 
   get mutatedCode(): string {
@@ -105,15 +96,15 @@ export default class Mutant {
    * @param substitude - The mutated code wich will replace a part of the originalCode.
    * @param mutatedLocation - The part of the originalCode which has been mutated.
    */
-  constructor(private _mutation: BaseMutation, private _filename: string, private _originalCode: string, substitude: string, private mutatedLocation: MutatedLocation) {   
+  constructor(private _mutation: BaseMutation, private _filename: string, private _originalCode: string, substitude: string, private mutatedLocation: ESTree.SourceLocation) {   
     this.status = MutantStatus.UNTESTED;
     
     var linesOfCode = this._originalCode.split('\n');
       
-    if(this.mutatedLocation.startLine === this.mutatedLocation.endLine){
-      this._originalLine = linesOfCode[this.mutatedLocation.startLine - 1];
-      this._mutatedLine = this._originalLine.substring(0, this.mutatedLocation.startCol) + substitude + this._originalLine.substring(this.mutatedLocation.endCol);
-      linesOfCode[this.mutatedLocation.startLine - 1] = this._mutatedLine;
+    if(this.mutatedLocation.start.line === this.mutatedLocation.end.line){
+      this._originalLine = linesOfCode[this.mutatedLocation.start.line - 1];
+      this._mutatedLine = this._originalLine.substring(0, this.mutatedLocation.start.column) + substitude + this._originalLine.substring(this.mutatedLocation.end.column);
+      linesOfCode[this.mutatedLocation.start.line - 1] = this._mutatedLine;
       this._mutatedCode = linesOfCode.join('\n');
     } else {
       throw Error();

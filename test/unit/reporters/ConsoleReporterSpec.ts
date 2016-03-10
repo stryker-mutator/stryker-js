@@ -20,14 +20,18 @@ describe('ConsoleReporter', function() {
     var originalCode = "var i = 1 - 1;";
     var mutatedCode = "var i = 1 + 1;";
     consoleReporter = new ConsoleReporter();
-    var location = {
-      mutatedCol: 11,
-      startCol: 9,
-      endCol: 13,
-      startLine: 1,
-      endLine: 1
+
+    var location: ESTree.SourceLocation = {
+      start: {
+        line: 1,
+        column: 11
+      },
+      end: {
+        line: 1,
+        column: 12
+      }
     };
-    mutant = new Mutant(new MathMutation(), 'a.js', originalCode, '1 + 1', location);
+    mutant = new Mutant(new MathMutation(), 'a.js', originalCode, '+', location);
   });
   
   

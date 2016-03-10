@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 import BaseMutation from './BaseMutation';
-import Mutant, {MutatedLocation} from '../Mutant';
+import Mutant from '../Mutant';
 import OperatorMutationMap from './OperatorMutationMap';
 
 abstract class BaseOperatorMutation extends BaseMutation {
@@ -25,12 +25,15 @@ abstract class BaseOperatorMutation extends BaseMutation {
     //The code 'a * b * c' has the nodes: `a * b * c` and `a * b` so to change `b * c` into `b / c` we have to start at the last index
     var mutatedColumn = originalCode.split("\n")[node.loc.start.line - 1].lastIndexOf(node.operator, node.loc.end.column);
 
-    var location: MutatedLocation = {
-      mutatedCol: mutatedColumn,
-      startCol:mutatedColumn,
-      endCol: mutatedColumn + node.operator.length,
-      startLine: node.loc.start.line,
-      endLine: node.loc.end.line
+    var location: ESTree.SourceLocation = {
+      start: {
+        line: node.loc.start.line,
+        column: mutatedColumn
+      },
+      end: {
+        line: node.loc.end.line,
+        column: mutatedColumn + node.operator.length
+      }
     };
     
     mutants.push(new Mutant(this, filename, originalCode, substitude, location));

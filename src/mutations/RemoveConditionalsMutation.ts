@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 import {Syntax} from 'esprima';
 import BaseMutation from './BaseMutation';
-import Mutant, {MutatedLocation} from '../Mutant';
+import Mutant from '../Mutant';
 
 /**
  * Represents a mutation which can remove the conditional clause from statements.
@@ -17,12 +17,15 @@ export default class RemoveConditionalsMutation extends BaseMutation {
   applyMutation(filename: string, originalCode: string, node: ESTree.IfStatement| ESTree.DoWhileStatement| ESTree.WhileStatement| ESTree.ForStatement, ast: ESTree.Program) {
     var mutants: Mutant[] = [];
     
-    var location: MutatedLocation = {
-      mutatedCol: node.test.loc.start.column,
-      startCol: node.test.loc.start.column,
-      endCol: node.test.loc.end.column,
-      startLine: node.test.loc.start.line,
-      endLine: node.test.loc.end.line
+    var location: ESTree.SourceLocation = {
+      start: {
+        line: node.test.loc.start.line,
+        column: node.test.loc.start.column
+      },
+      end: {
+        line: node.test.loc.end.line,
+        column: node.test.loc.end.column
+      }
     };
     mutants.push(new Mutant(this, filename, originalCode, 'false', location));
     if (node.type === Syntax.IfStatement) {

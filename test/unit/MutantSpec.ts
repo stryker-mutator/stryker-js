@@ -35,15 +35,18 @@ describe('Mutant', function() {
     mutation = new MathMutation();
     ast = parserUtils.parse(mutatedCode);
     node = (<ESTree.VariableDeclaration>ast.body[1]).declarations[0].init;
-    
-    var location = {
-      mutatedCol: 11,
-      startCol: 8, //Start col is 8 instead of 9 for some reason
-      endCol: 13,
-      startLine: 2,
-      endLine: 2
+      
+    var location: ESTree.SourceLocation = {
+      start: {
+        line: 2,
+        column: 10
+      },
+      end: {
+        line: 2,
+        column: 11
+      }
     };
-    mutant = new Mutant(mutation, filename, originalCode, 'i / 2', location);
+    mutant = new Mutant(mutation, filename, originalCode, '/', location);
   });
 
   describe('should set', function() {
@@ -64,7 +67,7 @@ describe('Mutant', function() {
     });
 
     it('the column number', function() {
-      expect(mutant.columnNumber).to.equal(11);
+      expect(mutant.columnNumber).to.equal(10);
     });
 
     it('the original line of code', function() {
