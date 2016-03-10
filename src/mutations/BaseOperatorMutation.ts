@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 import BaseMutation from './BaseMutation';
-import Mutant from '../Mutant';
+import Mutant, {MutatedLocation} from '../Mutant';
 import ParserUtils from '../utils/ParserUtils';
 import OperatorMutationMap from './OperatorMutationMap';
 
@@ -25,10 +25,18 @@ abstract class BaseOperatorMutation extends BaseMutation {
     node.operator = this.getOperator(node.operator);
 
     var parserUtils = new ParserUtils();
-    var lineOfCode = parserUtils.generate(node, originalCode);
+    var substitude = parserUtils.generate(node);
     // Use native indexOf because the operator may be multiple characters.
-    var columnNumber = (lineOfCode.indexOf(node.operator) + 1) + node.loc.start.column;
-    mutants.push(new Mutant(filename, originalCode, this, ast, node, columnNumber));
+    var mutatedColumn = (substitude.indexOf(node.operator) + 1) + node.loc.start.column;
+    
+    var location: MutatedLocation = {
+      mutatedCol: mutatedColumn,
+      startCol: node.loc.start.column,
+      endCol: node.loc.end.column,
+      startLine: node.loc.start.line,
+      endLine: node.loc.end.line
+    };
+    mutants.push(new Mutant(this, filename, originalCode, substitude, location));
 
     node.operator = originalOperator;
 

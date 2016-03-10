@@ -15,6 +15,15 @@ export interface MutantsTestedCallback {
   (mutants: Mutant[]): void
 }
 
+export interface MutatedLocation {
+  mutatedCol: number;
+  startCol: number;
+  endCol: number;
+  startLine: number;
+  endLine: number;
+}
+
+
 export enum MutantStatus {
   
   /**
@@ -52,14 +61,13 @@ export default class Mutant {
   private fileUtils = new FileUtils();
   private parserUtils = new ParserUtils();
   private typeUtils = new TypeUtils();
-  private _lineNumber: number;
   private _mutatedCode: string;
   private _mutatedFilename: string;
   private _mutatedLine: string;
   private _originalLine: string;
   
   get columnNumber(): number {
-    return this._columnNumber;
+    return this.mutatedLocation.mutatedCol;
   };
 
   get filename(): string {
@@ -67,7 +75,7 @@ export default class Mutant {
   };
 
   get lineNumber(): number {
-    return this._lineNumber;
+    return this.mutatedLocation.startLine;
   };
 
   get mutatedCode(): string {
@@ -91,22 +99,29 @@ export default class Mutant {
   };
 
   /**
+   * @param mutation - The mutation which was applied to this Mutant.
    * @param filename - The name of the file which was mutated, including the path.
    * @param originalCode - The original content of the file which has not been mutated.
-   * @param mutation - The mutation which was applied to this Mutant.
-   * @param ast - The abstract syntax tree of the file.
-   * @param node - The part of the ast which has been mutated.
-   * @param columnNumber - The column which has been mutated.
+   * @param substitude - The mutated code wich will replace a part of the originalCode.
+   * @param mutatedLocation - The part of the originalCode which has been mutated.
    */
-  constructor(private _filename: string, originalCode: string, private _mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, private _columnNumber: number) {
-    this.typeUtils.expectParameterObject(ast, 'Mutant', 'ast');
-    this.typeUtils.expectParameterObject(node, 'Mutant', 'node');
-    
-    this._lineNumber = node.loc.start.line;
-    this._mutatedCode = this.parserUtils.generate(ast, originalCode);
+  constructor(private _mutation: BaseMutation, private _filename: string, private _originalCode: string, substitude: string, private mutatedLocation: MutatedLocation) {   
     this.status = MutantStatus.UNTESTED;
-    this._mutatedLine = _.trim(this.mutatedCode.split('\n')[this._lineNumber - 1]);
-    this._originalLine = _.trim(originalCode.split('\n')[this._lineNumber - 1]);
+    
+    var linesOfCode = this._originalCode.split('\n');
+      
+    if(this.mutatedLocation.startLine === this.mutatedLocation.endLine){
+      this._originalLine = linesOfCode[this.mutatedLocation.startLine - 1];
+      this._mutatedLine = this._originalLine.substring(0, this.mutatedLocation.startCol) + substitude + this._originalLine.substring(this.mutatedLocation.endCol);
+      linesOfCode[this.mutatedLocation.startLine - 1] = this._mutatedLine;
+      this._mutatedCode = linesOfCode.join('\n');
+    } else {
+      throw Error();
+    }
+    
+    this._originalLine.trim();
+    this._mutatedLine.trim();
+    
     this.save();
   }
 

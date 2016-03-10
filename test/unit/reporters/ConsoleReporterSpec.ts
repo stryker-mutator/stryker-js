@@ -4,7 +4,6 @@ var expect = require('chai').expect;
 import ConsoleReporter from '../../../src/reporters/ConsoleReporter';
 import MathMutation from '../../../src/mutations/MathMutation';
 import Mutant from '../../../src/Mutant';
-import ParserUtils from '../../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('ConsoleReporter', function() {
@@ -20,10 +19,15 @@ describe('ConsoleReporter', function() {
 
     var originalCode = "var i = 1 - 1;";
     var mutatedCode = "var i = 1 + 1;";
-    var parserUtils = new ParserUtils();
-    var ast = parserUtils.parse(mutatedCode);
     consoleReporter = new ConsoleReporter();
-    mutant = new Mutant('a.js', originalCode, new MathMutation(), ast, ast.body[0].declarations[0].init, 1);
+    var location = {
+      mutatedCol: 11,
+      startCol: 9,
+      endCol: 13,
+      startLine: 1,
+      endLine: 1
+    };
+    mutant = new Mutant(new MathMutation(), 'a.js', originalCode, '1 + 1', location);
   });
   
   

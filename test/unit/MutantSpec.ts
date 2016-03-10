@@ -35,8 +35,15 @@ describe('Mutant', function() {
     mutation = new MathMutation();
     ast = parserUtils.parse(mutatedCode);
     node = (<ESTree.VariableDeclaration>ast.body[1]).declarations[0].init;
-
-    mutant = new Mutant(filename, originalCode, mutation, ast, node, 11);
+    
+    var location = {
+      mutatedCol: 11,
+      startCol: 8, //Start col is 8 instead of 9 for some reason
+      endCol: 13,
+      startLine: 2,
+      endLine: 2
+    };
+    mutant = new Mutant(mutation, filename, originalCode, 'i / 2', location);
   });
 
   describe('should set', function() {
