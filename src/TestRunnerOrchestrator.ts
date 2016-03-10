@@ -52,15 +52,17 @@ export default class TestRunnerOrchestrator {
   private runSingleTestsRecursive(testSelector: TestSelector, testRunner: IsolatedTestRunnerAdapter, runResults: RunResult[], currentTestIndex: number)
     : Promise<RunResult[]> {
     return new Promise<RunResult[]>(resolve => {
-      testSelector.select([currentTestIndex]).then(() => testRunner.run({ timeout: 2000 })).then(runResult => {
-        if (runResult.result === TestResult.Complete && (runResult.succeeded > 0 || runResult.failed > 0)) {
-          runResults[currentTestIndex] = runResult;
-          resolve(this.runSingleTestsRecursive(testSelector, testRunner, runResults, currentTestIndex + 1));
-        } else {
-          testRunner.dispose();
-          resolve(runResults);
-        }
-      });
+      testSelector.select([currentTestIndex])
+        .then(() => testRunner.run({ timeout: 2000 }))
+        .then(runResult => {
+          if (runResult.result === TestResult.Complete && (runResult.succeeded > 0 || runResult.failed > 0)) {
+            runResults[currentTestIndex] = runResult;
+            resolve(this.runSingleTestsRecursive(testSelector, testRunner, runResults, currentTestIndex + 1));
+          } else {
+            testRunner.dispose();
+            resolve(runResults);
+          }
+        });
     })
   }
 

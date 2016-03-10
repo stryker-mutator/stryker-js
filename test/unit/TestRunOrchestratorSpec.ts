@@ -18,10 +18,17 @@ describe('TestRunnerOrchestrator', () => {
   let directCompleteTestRunner: any;
   let selector: TestSelector;
 
+
   beforeEach(() => {
+    let runCallback = sinon.stub();
+    runCallback
+      .onFirstCall().returns(Promise.resolve({ result: TestResult.Complete, succeeded: 1 }))
+      .onSecondCall().returns(Promise.resolve({ result: TestResult.Complete, failed: 1 }))
+      .onThirdCall().returns(Promise.resolve({ result: TestResult.Complete }));
     directCompleteTestRunner = {
-      run: sinon.stub().returns(Promise.resolve({ result: TestResult.Complete })),
+      run: runCallback,
       destroy: sinon.stub(),
+      dispose: sinon.stub()
     };
     selector = {
       files: sinon.stub().returns(['some', 'files']),
@@ -33,7 +40,7 @@ describe('TestRunnerOrchestrator', () => {
     sut = new TestRunnerOrchestrator(strykerOptions, sourceFiles, otherFiles);
   });
 
-  describe('record coverage', () => {
+  describe('recordCoverage()', () => {
     let results: Promise<RunResult[]>;
 
     beforeEach(() => {
@@ -48,6 +55,24 @@ describe('TestRunnerOrchestrator', () => {
 
     it('should have created the test selector', () => {
       expect(TestSelectorFactory.instance().create).to.have.been.calledWith(strykerOptions.testFrameork, { options: strykerOptions });
+    });
+
+    describe('.then()', () => {
+      let runResults: RunResult[];
+      beforeEach((done) => {
+        results.then((r) => {
+          runResults = r;
+          done();
+        });
+      });
+
+      it('should have reported the correct results', () => {
+        expect(runResults).to.deep.equal([{ result: TestResult.Complete, succeeded: 1 }, { result: TestResult.Complete, failed: 1 }]);
+      });
+
+      it('should have disposed the test runner', () => {
+        expect(directCompleteTestRunner.dispose).to.have.been.calledWith();
+      });
     });
   });
 
