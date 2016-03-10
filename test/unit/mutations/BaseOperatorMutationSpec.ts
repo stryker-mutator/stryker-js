@@ -66,7 +66,7 @@ describe('BaseOperatorMutation', function() {
   it('should set the correct column number', function() {
     this.sinon.stub(Mutant.prototype, 'save');
     var code = 'var i = 5 * 3;';
-    var column = 11;
+    var column = 10; //Esprima starts at column 0
     var mockMutation = new MockBaseOperatorMutation();
     var parserUtils = new ParserUtils();
     var ast = parserUtils.parse(code);
