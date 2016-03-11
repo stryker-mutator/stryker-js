@@ -1,11 +1,14 @@
 import TestRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as sinon from 'sinon';
+import {StrykerTempFolder} from '../../src/api/util';
 import {TestSelector, TestSelectorFactory} from '../../src/api/test_selector';
-import {TestRunner, TestRunnerFactory, RunResult, RunOptions, RunnerOptions, TestResult} from '../../src/api/test_runner';
+import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from '../../src/api/test_runner';
 import IsolatedTestRunnerAdapter from '../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as chai from 'chai';
 import * as _ from 'lodash';
+import * as os from 'os';
+import * as path from 'path';
 let expect = chai.expect;
 
 
@@ -74,6 +77,35 @@ describe('TestRunnerOrchestrator', () => {
         expect(directCompleteTestRunner.dispose).to.have.been.calledWith();
       });
     });
+  });
+
+  describe.only('runMutations()', () => {
+    let donePromise: Promise<void>;
+    let mutants: any[];
+    let reporter: any;
+
+    let mockMutant = (id: number) => {
+      return { filename: `mutant${id}`, save: sinon.stub().returns(Promise.resolve()), scopedTestIds: [id], timeSpentScopedTests: id, reset: sinon.stub().returns(Promise.resolve()) };
+    }
+
+    beforeEach(() => {
+      sandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
+      sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns('a-folder');
+      sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve());
+      reporter = {
+        mutantTested: sinon.stub()
+      };
+      mutants = [mockMutant(1), mockMutant(2), mockMutant(3)];
+      return sut.runMutations(mutants, reporter);
+    });
+
+    it('should have created 2 test runners', () => {
+      expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWithMatch
+        ({ additionalFiles: ["some", "files", "aSpec.js", "bSpec.js"], sourceFiles: [`a-folder${path.sep}a.js`, `a-folder${path.sep}b.js`], port: 42, coverageEnabled: false, strykerOptions });
+      expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith
+        ({ additionalFiles: ["some", "files", "aSpec.js", "bSpec.js"], sourceFiles: [`a-folder${path.sep}a.js`, `a-folder${path.sep}b.js`], port: 43, coverageEnabled: false, strykerOptions });
+    });
+
   });
 
 

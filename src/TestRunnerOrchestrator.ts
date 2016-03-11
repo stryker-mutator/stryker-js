@@ -6,7 +6,8 @@ import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapt
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as path from 'path';
 import * as os from 'os';
-import Mutant from './Mutant';
+import Mutant, {MutantStatus} from './Mutant';
+import BaseReporter from './reporters/BaseReporter';
 const PromisePool = require('es6-promise-pool')
 
 interface FileMap {
@@ -30,7 +31,7 @@ export default class TestRunnerOrchestrator {
     return this.runSingleTestsRecursive(testSelector, testRunner, [], 0);
   }
 
-  runMutations(mutants: Mutant[]): Promise<void> {
+  runMutations(mutants: Mutant[], reporter: BaseReporter): Promise<void> {
     return this.createTestRunners().then(testRunners => {
       let promiseProducer = () => {
         if (mutants.length === 0) {
@@ -39,9 +40,13 @@ export default class TestRunnerOrchestrator {
           var mutant = mutants.pop();
           let nextRunner = testRunners.pop();
           let sourceFileCopy = nextRunner.sourceFileMap[mutant.filename];
-          return Promise.all([mutant.save(sourceFileCopy), nextRunner.selector.select([23])])
-            .then(() => nextRunner.runnerAdapter.run({ timeout: 2000 }))
-            .then(() => mutant.reset(sourceFileCopy))
+          return Promise.all([mutant.save(sourceFileCopy), nextRunner.selector.select(mutant.scopedTestIds)])
+            .then(() => nextRunner.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
+            .then((runResult) => {
+              this.updateMutantStatus(mutant, runResult);
+              reporter.mutantTested(mutant);
+              return mutant.reset(sourceFileCopy);
+            })
             .then(() => testRunners.push(nextRunner)); // mark the runner as available again
         }
       }
@@ -49,11 +54,31 @@ export default class TestRunnerOrchestrator {
     });
   }
 
+  private calculateTimeout(baseTimeout: number) {
+    return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMs;
+  }
+
+  private updateMutantStatus(mutant: Mutant, runResult: RunResult) {
+    switch (runResult.result) {
+      case TestResult.Timeout:
+        mutant.status = MutantStatus.TIMEDOUT;
+        break;
+      case TestResult.Complete:
+        if (runResult.failed > 0) {
+          mutant.status = MutantStatus.KILLED;
+        } else {
+          mutant.status = MutantStatus.SURVIVED;
+        }
+        break;
+    }
+    mutant.specsRan = runResult.specNames;
+  }
+
   private runSingleTestsRecursive(testSelector: TestSelector, testRunner: IsolatedTestRunnerAdapter, runResults: RunResult[], currentTestIndex: number)
     : Promise<RunResult[]> {
     return new Promise<RunResult[]>(resolve => {
       testSelector.select([currentTestIndex])
-        .then(() => testRunner.run({ timeout: 2000 }))
+        .then(() => testRunner.run({ timeout: 10000 }))
         .then(runResult => {
           if (runResult.result === TestResult.Complete && (runResult.succeeded > 0 || runResult.failed > 0)) {
             runResults[currentTestIndex] = runResult;
@@ -68,11 +93,12 @@ export default class TestRunnerOrchestrator {
 
   private createTestRunners(): Promise<TestRunnerMetadata[]> {
     return new Promise<TestRunnerMetadata[]>((resolve, reject) => {
-      let cpuCount = os.cpus.length;
+      let cpuCount = os.cpus().length;
       let testRunnerMetadatas: TestRunnerMetadata[] = [];
+      let allPromises: Promise<void>[] = [];
       for (let i = 0; i < cpuCount; i++) {
-        ((n: number) => {
-          this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
+        ((portOffset: number) => {
+          allPromises.push(this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
             let selector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
             let tempSourceFiles: string[] = [];
             for (let i in sourceFileMap) {
@@ -80,12 +106,13 @@ export default class TestRunnerOrchestrator {
             }
             testRunnerMetadatas.push({
               sourceFileMap,
-              runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(tempSourceFiles, selector, this.options.port + n, false)),
+              runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(tempSourceFiles, selector, this.options.port + portOffset, false)),
               selector
             });
-          });
+          }));
         })(i);
       }
+      Promise.all(allPromises).then(() => resolve(testRunnerMetadatas));
     });
   }
 
