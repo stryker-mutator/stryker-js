@@ -111,8 +111,8 @@ describe('Mutant', function() {
   describe('should be able to handle multi-line mutations', () => {
     let originalLine: string;
     let originalCode: string;
-    let location: ESTree.SourceLocation;
-    let substitude = 'false';
+    let mutatedCode: string;
+    let restOfCode: string;
     let multiLineMutant: Mutant;
 
     beforeEach(() => {
@@ -120,11 +120,13 @@ describe('Mutant', function() {
         `if(a > b
         && c < d
         || b == c) {`;
-      originalCode =
-        originalLine + `
+      restOfCode =  `
           console.log('hello world!');
         }`;
-      location = {
+      originalCode = originalLine + restOfCode;
+      let substitude = 'false';
+      mutatedLine = 'if(' + substitude + ') {';
+      let location = {
         start: {
           line: 1,
           column: 3
@@ -139,12 +141,20 @@ describe('Mutant', function() {
     });
 
     it('and generate the correct mutated line', () => {
-      expect('if(' + substitude + ') {').to.equal(multiLineMutant.mutatedLine);
+      expect(mutatedLine).to.equal(multiLineMutant.mutatedLine);
     });
 
     it('and generate the correct original line', () => {
       expect(originalLine).to.equal(multiLineMutant.originalLine);
     });
 
+    it('and generate the correct mutated code', () => {
+      var code = mutatedLine + 
+`
+
+` + restOfCode;
+      //Some empty lines are needed. These are not allowed to contain spaces
+      expect(code).to.equal(multiLineMutant.mutatedCode);
+    });
   });
 });

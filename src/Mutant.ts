@@ -15,7 +15,7 @@ export interface MutantsTestedCallback {
 }
 
 export enum MutantStatus {
-  
+
   /**
    * The status of an untested Mutant.
    * @static
@@ -47,14 +47,14 @@ export enum MutantStatus {
 export default class Mutant {
   public status: MutantStatus;
   public testsRan: TestFile[] = [];
-  
+
   private fileUtils = new FileUtils();
   private typeUtils = new TypeUtils();
   private _mutatedCode: string;
   private _mutatedFilename: string;
-  private _mutatedLine: string;
-  private _originalLine: string;
-  
+  private _mutatedLine: string = '';
+  private _originalLine: string = '';
+
   get columnNumber(): number {
     return this.mutatedLocation.start.column;
   };
@@ -70,7 +70,7 @@ export default class Mutant {
   get mutatedCode(): string {
     return this._mutatedCode;
   };
-  
+
   get mutatedFilename(): string {
     return this._mutatedFilename;
   };
@@ -78,7 +78,7 @@ export default class Mutant {
   get mutatedLine(): string {
     return this._mutatedLine;
   };
-  
+
   get mutation(): BaseMutation {
     return this._mutation;
   };
@@ -91,42 +91,50 @@ export default class Mutant {
    * @param mutation - The mutation which was applied to this Mutant.
    * @param filename - The name of the file which was mutated, including the path.
    * @param originalCode - The original content of the file which has not been mutated.
-   * @param substitude - The mutated code wich will replace a part of the originalCode.
+   * @param substitude - The mutated code which will replace a part of the originalCode.
    * @param mutatedLocation - The part of the originalCode which has been mutated.
    */
-  constructor(private _mutation: BaseMutation, private _filename: string, private _originalCode: string, substitude: string, private mutatedLocation: ESTree.SourceLocation) {   
+  constructor(private _mutation: BaseMutation, private _filename: string, private _originalCode: string, substitude: string, private mutatedLocation: ESTree.SourceLocation) {
     this.status = MutantStatus.UNTESTED;
-    
-    var linesOfCode = this._originalCode.split('\n');
-      
-    if(this.mutatedLocation.start.line === this.mutatedLocation.end.line){
+
+    this.insertSubstitude(substitude);
+
+    this.save();
+  }
+
+  /**
+   * Inserts the substitude into the mutatedCode based on the mutatedLocation.
+   * This also alters the originalLine and mutatedLine.
+   * @param substitude - The mutated code which will replace a part of the originalCode
+   */
+  private insertSubstitude(substitude: string) {
+    let linesOfCode = this._originalCode.split('\n');
+
+    if (this.mutatedLocation.start.line === this.mutatedLocation.end.line) {
       this._originalLine = linesOfCode[this.mutatedLocation.start.line - 1];
-      this._mutatedLine = this._originalLine.substring(0, this.mutatedLocation.start.column) + substitude + this._originalLine.substring(this.mutatedLocation.end.column);
-      linesOfCode[this.mutatedLocation.start.line - 1] = this._mutatedLine;
-    } else {
-      this._originalLine = "";
-      for (var lineNum = this.mutatedLocation.start.line - 1; lineNum < this.mutatedLocation.end.line; lineNum++) {
-        this._originalLine += linesOfCode[lineNum];
-        if(lineNum >= this.mutatedLocation.start.line && lineNum < this.mutatedLocation.end.line - 1) {
-          linesOfCode[lineNum] = '';
-        }
-        if(lineNum < this.mutatedLocation.end.line - 1){
-          this._originalLine += '\n';
-        }       
-      }  
       
-      this._mutatedLine = linesOfCode[this.mutatedLocation.start.line - 1].substring(0, this.mutatedLocation.start.column);
-      this._mutatedLine += substitude;
-      this._mutatedLine += linesOfCode[this.mutatedLocation.end.line - 1].substring(this.mutatedLocation.end.column);
-      linesOfCode[this.mutatedLocation.end.line - 1] = this._mutatedLine;
+      this._mutatedLine = this._originalLine.substring(0, this.mutatedLocation.start.column) + 
+        substitude + this._originalLine.substring(this.mutatedLocation.end.column);
+    } else {
+      for (let lineNum = this.mutatedLocation.start.line - 1; lineNum < this.mutatedLocation.end.line; lineNum++) {
+        this._originalLine += linesOfCode[lineNum];
+        if (lineNum < this.mutatedLocation.end.line - 1) {
+          this._originalLine += '\n';
+        }
+      }
+
+      this._mutatedLine = linesOfCode[this.mutatedLocation.start.line - 1].substring(0, this.mutatedLocation.start.column) +
+        substitude + linesOfCode[this.mutatedLocation.end.line - 1].substring(this.mutatedLocation.end.column);
     }
-    
+
+    for (let lineNum = this.mutatedLocation.start.line; lineNum < this.mutatedLocation.end.line; lineNum++) {
+      linesOfCode[lineNum] = '';
+    }
+    linesOfCode[this.mutatedLocation.start.line - 1] = this._mutatedLine;
     this._mutatedCode = linesOfCode.join('\n');
-    
+
     this._originalLine.trim();
     this._mutatedLine.trim();
-    
-    this.save();
   }
 
   /**
@@ -135,7 +143,7 @@ export default class Mutant {
    * @param {String[]} sourceFiles - The list of source files of which one has to be replaced with the mutated file.
    * @returns {String[]} The list of source files of which one source file has been replaced.
    */
-  insertMutatedFile = function(sourceFiles: string[]) {
+  insertMutatedFile(sourceFiles: string[]) {
     this.typeUtils.expectParameterArray(sourceFiles, 'Mutant', 'sourceFiles');
     var mutatedSrc = _.clone(sourceFiles);
     var mutantSourceFileIndex = _.indexOf(mutatedSrc, this.filename);
