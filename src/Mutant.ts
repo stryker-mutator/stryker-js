@@ -3,7 +3,6 @@
 import * as _ from'lodash';
 import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
-import TypeUtils from './utils/TypeUtils';
 import TestFile from './TestFile';
 
 export interface MutantTestedCallback {
@@ -49,7 +48,6 @@ export default class Mutant {
   public testsRan: TestFile[] = [];
 
   private fileUtils = new FileUtils();
-  private typeUtils = new TypeUtils();
   private _mutatedCode: string;
   private _mutatedFilename: string;
   private _mutatedLine: string = '';
@@ -144,7 +142,6 @@ export default class Mutant {
    * @returns {String[]} The list of source files of which one source file has been replaced.
    */
   insertMutatedFile(sourceFiles: string[]) {
-    this.typeUtils.expectParameterArray(sourceFiles, 'Mutant', 'sourceFiles');
     var mutatedSrc = _.clone(sourceFiles);
     var mutantSourceFileIndex = _.indexOf(mutatedSrc, this.filename);
     mutatedSrc[mutantSourceFileIndex] = this.mutatedFilename;

@@ -4,13 +4,11 @@ import * as _ from 'lodash';
 import fs = require('fs');
 import os = require('os');
 import path = require('path');
-import TypeUtils from './TypeUtils';
 
 /**
  * Utility class for handling temporary files.
  */
 export default class FileUtils {
-  private typeUtils = new TypeUtils();
   private _baseTempFolder = os.tmpdir() + path.sep + 'stryker-temp';
   private static foldersCreated = 0;
   
@@ -37,8 +35,6 @@ export default class FileUtils {
    * @param dirname - The path to the directory.
    */
   public removeFolderRecursively (dirname: string): void {
-    this.typeUtils.expectParameterString(dirname, 'FileUtils', 'dirname');
-
     // Source: https://gist.github.com/tkihira/2367067
     var list = fs.readdirSync(dirname);
     for (var i = 0; i < list.length; i++) {
@@ -65,9 +61,6 @@ export default class FileUtils {
    * @returns The path to the created file.
    */
   createFileInTempFolder (filePath: string, data: string) : string {
-    this.typeUtils.expectParameterString(filePath, 'FileUtils', 'filePath');
-    this.typeUtils.expectParameterString(data, 'FileUtils', 'data');
-
     var baseFolderPath = this._baseTempFolder + path.sep + 'temp-' + Date.now() + '-' + FileUtils.foldersCreated;
     this.createDirectory(baseFolderPath);
     var tempFilePath = baseFolderPath + path.sep + path.basename(filePath);
@@ -81,8 +74,6 @@ export default class FileUtils {
    * @param dirName - The name of the directory which has to be created.
    */
   createDirectory (dirName: string): void {
-    this.typeUtils.expectParameterString(dirName, 'FileUtils', 'dirName');
-
     if (!this.fileOrFolderExists(dirName)) {
       fs.mkdirSync(dirName);
     }
@@ -93,8 +84,6 @@ export default class FileUtils {
    * @param dirName - The name of the directory which has to be removed.
    */
   removeDirectory (dirName: string): void {
-    this.typeUtils.expectParameterString(dirName, 'FileUtils', 'dirName');
-
     if (this.fileOrFolderExists(dirName)) {
       fs.rmdirSync(dirName);
     }
@@ -106,9 +95,6 @@ export default class FileUtils {
    * @param data - The data which has to be written to the file.
    */
   createFile (filename: string, data: string): void {
-    this.typeUtils.expectParameterString(filename, 'FileUtils', 'filename');
-    this.typeUtils.expectParameterString(data, 'FileUtils', 'data');
-
     fs.writeFileSync(filename, data);
   };
 
@@ -117,8 +103,6 @@ export default class FileUtils {
    * @param files - The list of filenames which have to be normalized.
    */
   normalize (files: string[]): void {
-    this.typeUtils.expectParameterArray(files, 'FileUtils', 'files');
-
     _.forEach(files, function(file, key) {
       files[key] = path.resolve(path.normalize(file));
     });
@@ -130,8 +114,6 @@ export default class FileUtils {
    * @param tempFilename - The path to the temp file, including the name of the file.
    */
   removeTempFile (tempFilename: string): void {
-    this.typeUtils.expectParameterString(tempFilename, 'FileUtils', 'tempFilename');
-
     fs.unlinkSync(tempFilename);
     this.removeDirectory(path.dirname(tempFilename));
   };
@@ -143,8 +125,6 @@ export default class FileUtils {
    * @returns The content of the file.
    */
   readFile (filename: string) {
-    this.typeUtils.expectParameterString(filename, 'FileUtils', 'filename');
-
     return fs.readFileSync(filename, 'utf8');
   };
 
@@ -155,7 +135,6 @@ export default class FileUtils {
    * @returns True if the file exists.
    */
   fileOrFolderExists (path: string): boolean {
-    this.typeUtils.expectParameterString(path, 'FileUtils', 'path');
     try {
       var stats = fs.lstatSync(path);
       return true;

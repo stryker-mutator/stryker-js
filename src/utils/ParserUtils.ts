@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import * as esprima from 'esprima';
 import * as escodegen from 'escodegen';
 import AbstractSyntaxTreeNode from '../AbstractSyntaxTreeNode';
-import TypeUtils from './TypeUtils';
 
 /**
  * Utility class for parsing and generating code.
@@ -24,8 +23,6 @@ export default class ParserUtils {
       preserveBlankLines: true
     }
   };
-  private typeUtils = new TypeUtils();
-
 
   /**
    * Parses code to generate an Abstract Syntax Tree.
@@ -34,7 +31,6 @@ export default class ParserUtils {
    * @returns {Object} The generated Abstract Syntax Tree.
    */
   public parse (code: string): any {
-    this.typeUtils.expectParameterString(code, 'ParserUtils', 'code');
     if (code === '') {
       return {};
     }
@@ -55,20 +51,18 @@ export default class ParserUtils {
    * @returns  All nodes which have one of the requested types.
    */
   public getNodesWithType (abstractSyntaxTree: any, types: string[], nodes?: AbstractSyntaxTreeNode[], parent?: AbstractSyntaxTreeNode, key?: string): AbstractSyntaxTreeNode[] {
-    this.typeUtils.expectParameterObject(abstractSyntaxTree, 'Mutator', 'abstractSyntaxTree');
-    this.typeUtils.expectParameterArray(types, 'Mutator', 'types');
     nodes = nodes || [];
 
-    if (this.typeUtils.isObject(abstractSyntaxTree) && _.indexOf(types, abstractSyntaxTree.type) >= 0) {
+    if (abstractSyntaxTree instanceof Object && !(abstractSyntaxTree instanceof Array) && _.indexOf(types, abstractSyntaxTree.type) >= 0) {
       nodes.push(new AbstractSyntaxTreeNode(abstractSyntaxTree, parent, key));
     }
 
     _.forOwn(abstractSyntaxTree, (childNode, key) => {
-      if (this.typeUtils.isObject(childNode)) {
+      if (childNode instanceof Object && !(childNode instanceof Array)) {
         this.getNodesWithType(childNode, types, nodes, abstractSyntaxTree, key);
-      } else if (this.typeUtils.isArray(childNode)) {
+      } else if (childNode instanceof Array) {
         _.forEach(childNode, (arrayChild, index) => {
-          if (this.typeUtils.isObject(arrayChild)) {
+          if (arrayChild instanceof Object && !(arrayChild instanceof Array)) {
             this.getNodesWithType(arrayChild, types, nodes, childNode, index);
           }
         });
@@ -87,8 +81,6 @@ export default class ParserUtils {
    * @returns The generated code.
    */
   public generate (ast: ESTree.Node, originalCode?: string): string {
-    this.typeUtils.expectParameterObject(ast, 'ParserUtils', 'ast');
-
     this.escodegenOptions.sourceCode = originalCode || this.escodegenOptions.sourceCode;
 
     return escodegen.generate(ast, this.escodegenOptions);
