@@ -15,6 +15,16 @@ interface StrykerOptions {
   testRunner?: string;
   
   /**
+   * Amount of additional time, in milliseconds, the mutation test is allowed to run
+   */
+  timeoutMs?: number;
+  
+  /**
+   * The factor is applied on top of the other timeouts when during mutation testing
+   */
+  timeoutFactor?: number;
+ 
+  /**
    * A list of plugins. These plugins will be imported ('required') by Stryker upon loading.
    */
   plugins?: string[];
