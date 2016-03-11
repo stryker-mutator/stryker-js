@@ -1,5 +1,5 @@
 
-interface Mutation {
+interface Mutator {
   
   name: string;
   
@@ -10,4 +10,4 @@ interface Mutation {
   applyMutations(copy: () => ESTree.Node): ESTree.Node[];
 }
 
-export default Mutation;
+export default Mutator;

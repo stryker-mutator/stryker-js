@@ -1,2 +1,2 @@
 
-export {default as Mutation} from './mutant/Mutation';
+export {default as Mutator} from './mutant/Mutator';
