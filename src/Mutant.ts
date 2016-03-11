@@ -16,7 +16,7 @@ export interface MutantsTestedCallback {
 }
 
 export enum MutantStatus {
-  
+
   /**
    * The status of an untested Mutant.
    * @static
@@ -48,14 +48,18 @@ export enum MutantStatus {
 export default class Mutant {
   public status: MutantStatus;
   public testsRan: TestFile[] = [];
-  
+
   private fileUtils = new FileUtils();
   private parserUtils = new ParserUtils();
   private _lineNumber: number;
   private _mutatedCode: string;
   private _mutatedLine: string;
   private _originalLine: string;
-  
+
+  public timeSpentScopedTests: number;
+  public scopedTestIds: number[];
+  public specsRan: string[];
+
   get columnNumber(): number {
     return this._columnNumber;
   };
@@ -71,11 +75,11 @@ export default class Mutant {
   get mutatedCode(): string {
     return this._mutatedCode;
   };
-  
+
   get mutatedLine(): string {
     return this._mutatedLine;
   };
-  
+
   get mutation(): BaseMutation {
     return this._mutation;
   };
@@ -92,7 +96,7 @@ export default class Mutant {
    * @param node - The part of the ast which has been mutated.
    * @param columnNumber - The column which has been mutated.
    */
-  constructor(private _filename: string, private originalCode: string, private _mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, private _columnNumber: number) {    
+  constructor(private _filename: string, private originalCode: string, private _mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, private _columnNumber: number) {
     this._lineNumber = node.loc.start.line;
     this._mutatedCode = this.parserUtils.generate(ast, originalCode);
     this.status = MutantStatus.UNTESTED;
@@ -117,7 +121,7 @@ export default class Mutant {
    * Saves the mutated code in a mutated file.
    * @function
    */
-  save(fileName: string) {
+save(fileName: string) {
     return StrykerTempFolder.writeFile(fileName, this.mutatedCode);
   };
 
