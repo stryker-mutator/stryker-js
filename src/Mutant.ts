@@ -56,7 +56,7 @@ export default class Mutant {
   private _originalLine: string = '';
 
   get columnNumber(): number {
-    return this.mutatedLocation.start.column;
+    return this.mutatedLocation.start.column + 1; //esprima starts at column 0
   };
 
   get filename(): string {

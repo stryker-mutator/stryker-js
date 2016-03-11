@@ -67,7 +67,7 @@ describe('Mutant', function() {
     });
 
     it('the column number', function() {
-      expect(mutant.columnNumber).to.equal(10);
+      expect(mutant.columnNumber).to.equal(11);
     });
 
     it('the original line of code', function() {
