@@ -4,7 +4,9 @@
   "description": "The extendable JavaScript mutation testing framwork",
   "main": "src/Stryker.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
+    "tsc:w": "tsc -w"
   },
   "repository": {
     "type": "git",
@@ -36,6 +38,7 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "chai-as-promised": "^5.2.0",
+    "concurrently": "^2.0.0",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^1.0.0",
