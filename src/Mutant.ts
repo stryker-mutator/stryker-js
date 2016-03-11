@@ -3,7 +3,6 @@
 import * as _ from'lodash';
 import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
-import ParserUtils from './utils/ParserUtils';
 import TypeUtils from './utils/TypeUtils';
 import TestFile from './TestFile';
 
@@ -50,7 +49,6 @@ export default class Mutant {
   public testsRan: TestFile[] = [];
   
   private fileUtils = new FileUtils();
-  private parserUtils = new ParserUtils();
   private typeUtils = new TypeUtils();
   private _mutatedCode: string;
   private _mutatedFilename: string;
@@ -105,10 +103,25 @@ export default class Mutant {
       this._originalLine = linesOfCode[this.mutatedLocation.start.line - 1];
       this._mutatedLine = this._originalLine.substring(0, this.mutatedLocation.start.column) + substitude + this._originalLine.substring(this.mutatedLocation.end.column);
       linesOfCode[this.mutatedLocation.start.line - 1] = this._mutatedLine;
-      this._mutatedCode = linesOfCode.join('\n');
     } else {
-      throw Error();
+      this._originalLine = "";
+      for (var lineNum = this.mutatedLocation.start.line - 1; lineNum < this.mutatedLocation.end.line; lineNum++) {
+        this._originalLine += linesOfCode[lineNum];
+        if(lineNum >= this.mutatedLocation.start.line && lineNum < this.mutatedLocation.end.line - 1) {
+          linesOfCode[lineNum] = '';
+        }
+        if(lineNum < this.mutatedLocation.end.line - 1){
+          this._originalLine += '\n';
+        }       
+      }  
+      
+      this._mutatedLine = linesOfCode[this.mutatedLocation.start.line - 1].substring(0, this.mutatedLocation.start.column);
+      this._mutatedLine += substitude;
+      this._mutatedLine += linesOfCode[this.mutatedLocation.end.line - 1].substring(this.mutatedLocation.end.column);
+      linesOfCode[this.mutatedLocation.end.line - 1] = this._mutatedLine;
     }
+    
+    this._mutatedCode = linesOfCode.join('\n');
     
     this._originalLine.trim();
     this._mutatedLine.trim();
