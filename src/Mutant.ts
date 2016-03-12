@@ -107,23 +107,16 @@ export default class Mutant {
    */
   private insertSubstitude(substitude: string) {
     let linesOfCode = this._originalCode.split('\n');
-
-    if (this.mutatedLocation.start.line === this.mutatedLocation.end.line) {
-      this._originalLine = linesOfCode[this.mutatedLocation.start.line - 1];
       
-      this._mutatedLine = this._originalLine.substring(0, this.mutatedLocation.start.column) + 
-        substitude + this._originalLine.substring(this.mutatedLocation.end.column);
-    } else {
-      for (let lineNum = this.mutatedLocation.start.line - 1; lineNum < this.mutatedLocation.end.line; lineNum++) {
-        this._originalLine += linesOfCode[lineNum];
-        if (lineNum < this.mutatedLocation.end.line - 1) {
-          this._originalLine += '\n';
-        }
+    for (let lineNum = this.mutatedLocation.start.line - 1; lineNum < this.mutatedLocation.end.line; lineNum++) {
+      this._originalLine += linesOfCode[lineNum];
+      if (lineNum < this.mutatedLocation.end.line - 1) {
+        this._originalLine += '\n';
       }
-
-      this._mutatedLine = linesOfCode[this.mutatedLocation.start.line - 1].substring(0, this.mutatedLocation.start.column) +
-        substitude + linesOfCode[this.mutatedLocation.end.line - 1].substring(this.mutatedLocation.end.column);
     }
+
+    this._mutatedLine = linesOfCode[this.mutatedLocation.start.line - 1].substring(0, this.mutatedLocation.start.column) +
+      substitude + linesOfCode[this.mutatedLocation.end.line - 1].substring(this.mutatedLocation.end.column);
 
     for (let lineNum = this.mutatedLocation.start.line; lineNum < this.mutatedLocation.end.line; lineNum++) {
       linesOfCode[lineNum] = '';
