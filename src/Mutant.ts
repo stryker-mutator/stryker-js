@@ -3,7 +3,6 @@
 import * as _ from'lodash';
 import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
-import ParserUtils from './utils/ParserUtils';
 import TestFile from './TestFile';
 import {StrykerTempFolder} from './api/util';
 
@@ -50,18 +49,17 @@ export default class Mutant {
   public testsRan: TestFile[] = [];
 
   private fileUtils = new FileUtils();
-  private parserUtils = new ParserUtils();
-  private _lineNumber: number;
   private _mutatedCode: string;
   private _mutatedLine: string;
-  private _originalLine: string;
+  private _originalLine = '';
 
   public timeSpentScopedTests: number;
   public scopedTestIds: number[];
   public specsRan: string[];
+  private _mutatedFilename: string;
 
   get columnNumber(): number {
-    return this._columnNumber;
+    return this.mutatedLocation.start.column + 1; //esprima starts at column 0
   };
 
   get filename(): string {
@@ -69,11 +67,15 @@ export default class Mutant {
   };
 
   get lineNumber(): number {
-    return this._lineNumber;
+    return this.mutatedLocation.start.line;
   };
 
   get mutatedCode(): string {
     return this._mutatedCode;
+  };
+
+  get mutatedFilename(): string {
+    return this._mutatedFilename;
   };
 
   get mutatedLine(): string {
@@ -89,19 +91,46 @@ export default class Mutant {
   };
 
   /**
+   * @param mutation - The mutation which was applied to this Mutant.
    * @param filename - The name of the file which was mutated, including the path.
    * @param originalCode - The original content of the file which has not been mutated.
-   * @param mutation - The mutation which was applied to this Mutant.
-   * @param ast - The abstract syntax tree of the file.
-   * @param node - The part of the ast which has been mutated.
-   * @param columnNumber - The column which has been mutated.
+   * @param substitude - The mutated code which will replace a part of the originalCode.
+   * @param mutatedLocation - The part of the originalCode which has been mutated.
    */
-  constructor(private _filename: string, private originalCode: string, private _mutation: BaseMutation, ast: ESTree.Program, node: ESTree.Node, private _columnNumber: number) {
-    this._lineNumber = node.loc.start.line;
-    this._mutatedCode = this.parserUtils.generate(ast, originalCode);
+  constructor(private _mutation: BaseMutation, private _filename: string, private originalCode: string, substitude: string, private mutatedLocation: ESTree.SourceLocation) {
     this.status = MutantStatus.UNTESTED;
-    this._mutatedLine = _.trim(this.mutatedCode.split('\n')[this._lineNumber - 1]);
-    this._originalLine = _.trim(originalCode.split('\n')[this._lineNumber - 1]);
+
+    this.insertSubstitude(substitude);
+
+    this.save();
+  }
+
+  /**
+   * Inserts the substitude into the mutatedCode based on the mutatedLocation.
+   * This also alters the originalLine and mutatedLine.
+   * @param substitude - The mutated code which will replace a part of the originalCode
+   */
+  private insertSubstitude(substitude: string) {
+    let linesOfCode = this.originalCode.split('\n');
+
+    for (let lineNum = this.mutatedLocation.start.line - 1; lineNum < this.mutatedLocation.end.line; lineNum++) {
+      this._originalLine += linesOfCode[lineNum];
+      if (lineNum < this.mutatedLocation.end.line - 1) {
+        this._originalLine += '\n';
+      }
+    }
+
+    this._mutatedLine = linesOfCode[this.mutatedLocation.start.line - 1].substring(0, this.mutatedLocation.start.column) +
+      substitude + linesOfCode[this.mutatedLocation.end.line - 1].substring(this.mutatedLocation.end.column);
+
+    for (let lineNum = this.mutatedLocation.start.line; lineNum < this.mutatedLocation.end.line; lineNum++) {
+      linesOfCode[lineNum] = '';
+    }
+    linesOfCode[this.mutatedLocation.start.line - 1] = this._mutatedLine;
+    this._mutatedCode = linesOfCode.join('\n');
+
+    this._originalLine.trim();
+    this._mutatedLine.trim();
   }
 
   /**
@@ -110,7 +139,7 @@ export default class Mutant {
    * @param {String[]} sourceFiles - The list of source files of which one has to be replaced with the mutated file.
    * @returns {String[]} The list of source files of which one source file has been replaced.
    */
-  insertMutatedFile = function(sourceFiles: string[]) {
+  insertMutatedFile(sourceFiles: string[]) {
     var mutatedSrc = _.clone(sourceFiles);
     var mutantSourceFileIndex = _.indexOf(mutatedSrc, this.filename);
     mutatedSrc[mutantSourceFileIndex] = this.mutatedFilename;
@@ -121,8 +150,12 @@ export default class Mutant {
    * Saves the mutated code in a mutated file.
    * @function
    */
-save(fileName: string) {
-    return StrykerTempFolder.writeFile(fileName, this.mutatedCode);
+  save(fileName?: string) {
+    if (fileName) {
+      return StrykerTempFolder.writeFile(fileName, this.mutatedCode);
+    } else {
+      this._mutatedFilename = this.fileUtils.createFileInTempFolder(this.filename, this.mutatedCode);
+    }
   };
 
   /**

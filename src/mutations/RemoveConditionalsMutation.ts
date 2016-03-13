@@ -15,22 +15,12 @@ export default class RemoveConditionalsMutation extends BaseMutation {
   }
 
   applyMutation(filename: string, originalCode: string, node: ESTree.IfStatement| ESTree.DoWhileStatement| ESTree.WhileStatement| ESTree.ForStatement, ast: ESTree.Program) {
-    var originalTest = node.test;
-
     var mutants: Mutant[] = [];
-    node.test = <ESTree.Literal>{
-      type: Syntax.Literal,
-      value: false,
-      raw: 'false'
-    };
-    mutants.push(new Mutant(filename, originalCode, this, ast, node, node.loc.start.column));
+    
+    mutants.push(new Mutant(this, filename, originalCode, 'false', node.test.loc));
     if (node.type === Syntax.IfStatement) {
-      (<ESTree.Literal>node.test).value = true;
-      (<ESTree.Literal>node.test).raw = (<ESTree.Literal>node.test).value.toString();
-      mutants.push(new Mutant(filename, originalCode, this, ast, node, node.loc.start.column));
+      mutants.push(new Mutant(this, filename, originalCode, 'true', node.test.loc));
     }
-
-    node.test = originalTest;
 
     return mutants;
   };

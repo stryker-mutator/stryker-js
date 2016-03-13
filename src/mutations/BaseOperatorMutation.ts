@@ -3,7 +3,6 @@
 import * as _ from 'lodash';
 import BaseMutation from './BaseMutation';
 import Mutant from '../Mutant';
-import ParserUtils from '../utils/ParserUtils';
 import OperatorMutationMap from './OperatorMutationMap';
 
 abstract class BaseOperatorMutation extends BaseMutation {
@@ -20,18 +19,25 @@ abstract class BaseOperatorMutation extends BaseMutation {
   }
 
   applyMutation(filename: string, originalCode: string, node: ESTree.BinaryExpression, ast: ESTree.Program) {
-    var originalOperator = node.operator;
     var mutants: Mutant[] = [];
-    node.operator = this.getOperator(node.operator);
 
-    var parserUtils = new ParserUtils();
-    var lineOfCode = parserUtils.generate(node, originalCode);
-    // Use native indexOf because the operator may be multiple characters.
-    var columnNumber = (lineOfCode.indexOf(node.operator) + 1) + node.loc.start.column;
-    mutants.push(new Mutant(filename, originalCode, this, ast, node, columnNumber));
+    var substitude = this.getOperator(node.operator);
+    //The code 'a * b * c' has the nodes: `a * b * c` and `a * b` so to change `b * c` into `b / c` we have to start at the last index
+    var mutatedColumn = originalCode.split("\n")[node.loc.start.line - 1].lastIndexOf(node.operator, node.loc.end.column);
 
-    node.operator = originalOperator;
-
+    var location: ESTree.SourceLocation = {
+      start: {
+        line: node.loc.start.line,
+        column: mutatedColumn
+      },
+      end: {
+        line: node.loc.end.line,
+        column: mutatedColumn + node.operator.length
+      }
+    };
+    
+    mutants.push(new Mutant(this, filename, originalCode, substitude, location));
+    
     return mutants;
   }
 
