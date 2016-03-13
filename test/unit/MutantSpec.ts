@@ -19,7 +19,7 @@ describe('Mutant', function() {
   var node: ESTree.Node;
 
   beforeEach(function() {
-    this.sinon.stub(Mutant.prototype, 'save', function(){
+    this.sinon.stub(Mutant.prototype, 'save', function() {
       this._mutatedFilename = 'mutatedSrc.js';
     });
     var parserUtils = new ParserUtils();
@@ -36,7 +36,17 @@ describe('Mutant', function() {
     ast = parserUtils.parse(mutatedCode);
     node = (<ESTree.VariableDeclaration>ast.body[1]).declarations[0].init;
 
-    mutant = new Mutant(filename, originalCode, mutation, ast, node, 11);
+    var location: ESTree.SourceLocation = {
+      start: {
+        line: 2,
+        column: 10
+      },
+      end: {
+        line: 2,
+        column: 11
+      }
+    };
+    mutant = new Mutant(mutation, filename, originalCode, '/', location);
   });
 
   describe('should set', function() {
@@ -79,8 +89,8 @@ describe('Mutant', function() {
     });
   });
 
-  describe('should be able to insert a mutated file', function(){
-    it('without changing the original array of source files', function(){
+  describe('should be able to insert a mutated file', function() {
+    it('without changing the original array of source files', function() {
       var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
       var sourceFilesBackup = sourceFiles.slice(0);
 
@@ -89,12 +99,62 @@ describe('Mutant', function() {
       expect(sourceFiles).to.deep.equal(sourceFilesBackup);
     });
 
-    it('and replace the original filename with the mutated filename', function(){
+    it('and replace the original filename with the mutated filename', function() {
       var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
 
       var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
 
       expect(mutatedSourceFiles[1]).to.equal(mutant.mutatedFilename);
+    });
+  });
+
+  describe('should be able to handle multi-line mutations', () => {
+    let originalLine: string;
+    let originalCode: string;
+    let mutatedCode: string;
+    let restOfCode: string;
+    let multiLineMutant: Mutant;
+
+    beforeEach(() => {
+      originalLine =
+        `if(a > b
+        && c < d
+        || b == c) {`;
+      restOfCode =  `
+          console.log('hello world!');
+        }`;
+      originalCode = originalLine + restOfCode;
+      let substitude = 'false';
+      mutatedLine = 'if(' + substitude + ') {';
+      let location = {
+        start: {
+          line: 1,
+          column: 3
+        },
+        end: {
+          line: 3,
+          column: 17
+        }
+      };
+
+      multiLineMutant = new Mutant(mutation, filename, originalCode, substitude, location);
+    });
+
+    it('and generate the correct mutated line', () => {
+      expect(mutatedLine).to.equal(multiLineMutant.mutatedLine);
+    });
+
+    it('and generate the correct original line', () => {
+      expect(originalLine).to.equal(multiLineMutant.originalLine);
+    });
+
+    it('and generate the correct mutated code', () => {
+      var code = mutatedLine + 
+`
+
+` + restOfCode;
+      //Some empty lines are needed. These are not allowed to contain spaces
+      expect(code).to.equal(multiLineMutant.mutatedCode);
     });
   });
 });
