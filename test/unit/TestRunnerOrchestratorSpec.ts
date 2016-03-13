@@ -3,6 +3,7 @@ import * as sinon from 'sinon';
 import {StrykerTempFolder} from '../../src/api/util';
 import {TestSelector, TestSelectorFactory} from '../../src/api/test_selector';
 import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from '../../src/api/test_runner';
+import {MutantStatus} from '../../src/Mutant';
 import IsolatedTestRunnerAdapter from '../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as chai from 'chai';
@@ -18,27 +19,32 @@ describe('TestRunnerOrchestrator', () => {
   let sourceFiles = ['a.js', 'b.js'];
   let otherFiles = ['aSpec.js', 'bSpec.js'];
   let strykerOptions = { testFrameork: 'superFramework', testRunner: 'superRunner', port: 42 };
-  let directCompleteTestRunner: any;
+  let firstTestRunner: any;
+  let secondTestRunner: any;
   let selector: TestSelector;
 
-
   beforeEach(() => {
-    let runCallback = sinon.stub();
-    runCallback
+    firstTestRunner = {
+      run: sinon.stub(),
+      dispose: sinon.stub()
+    };
+    secondTestRunner = {
+      run: sinon.stub(),
+      dispose: sinon.stub()
+    };
+    firstTestRunner.run
       .onFirstCall().returns(Promise.resolve({ result: TestResult.Complete, succeeded: 1 }))
       .onSecondCall().returns(Promise.resolve({ result: TestResult.Complete, failed: 1 }))
       .onThirdCall().returns(Promise.resolve({ result: TestResult.Complete }));
-    directCompleteTestRunner = {
-      run: runCallback,
-      destroy: sinon.stub(),
-      dispose: sinon.stub()
-    };
+    secondTestRunner.run.returns(Promise.resolve({ result: TestResult.Timeout }));
     selector = {
       files: sinon.stub().returns(['some', 'files']),
       select: sinon.stub().returns(Promise.resolve())
     };
     sandbox = sinon.sandbox.create();
-    sandbox.stub(IsolatedTestRunnerAdapterFactory, 'create', () => directCompleteTestRunner);
+    sandbox.stub(IsolatedTestRunnerAdapterFactory, 'create')
+      .onFirstCall().returns(firstTestRunner)
+      .onSecondCall().returns(secondTestRunner);
     sandbox.stub(TestSelectorFactory.instance(), 'create', () => selector);
     sut = new TestRunnerOrchestrator(strykerOptions, sourceFiles, otherFiles);
   });
@@ -74,12 +80,12 @@ describe('TestRunnerOrchestrator', () => {
       });
 
       it('should have disposed the test runner', () => {
-        expect(directCompleteTestRunner.dispose).to.have.been.calledWith();
+        expect(firstTestRunner.dispose).to.have.been.calledWith();
       });
     });
   });
 
-  describe.only('runMutations()', () => {
+  describe('runMutations()', () => {
     let donePromise: Promise<void>;
     let mutants: any[];
     let reporter: any;
@@ -106,6 +112,19 @@ describe('TestRunnerOrchestrator', () => {
         ({ additionalFiles: ["some", "files", "aSpec.js", "bSpec.js"], sourceFiles: [`a-folder${path.sep}a.js`, `a-folder${path.sep}b.js`], port: 43, coverageEnabled: false, strykerOptions });
     });
 
+    it('should have ran mutant 1 and 3 on the first test runner', () => {
+      expect(firstTestRunner.run).to.have.been.calledTwice;
+    });
+    
+    it('should have ran mutant 2 on the second test runner', () => {
+      expect(secondTestRunner.run).to.have.been.calledOnce;
+    });
+    
+    it('should have reporterd mutant state correctly', () => {
+      expect(mutants[0].status).to.be.eq(MutantStatus.KILLED);
+      expect(mutants[1].status).to.be.eq(MutantStatus.SURVIVED);
+      expect(mutants[2].status).to.be.eq(MutantStatus.TIMEDOUT);
+    });
   });
 
 

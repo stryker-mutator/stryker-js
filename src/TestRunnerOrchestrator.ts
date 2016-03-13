@@ -6,6 +6,7 @@ import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapt
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as path from 'path';
 import * as os from 'os';
+import * as _ from 'lodash';
 import Mutant, {MutantStatus} from './Mutant';
 import BaseReporter from './reporters/BaseReporter';
 const PromisePool = require('es6-promise-pool')
@@ -32,6 +33,7 @@ export default class TestRunnerOrchestrator {
   }
 
   runMutations(mutants: Mutant[], reporter: BaseReporter): Promise<void> {
+    mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     return this.createTestRunners().then(testRunners => {
       let promiseProducer = () => {
         if (mutants.length === 0) {
@@ -92,30 +94,32 @@ export default class TestRunnerOrchestrator {
   }
 
   private createTestRunners(): Promise<TestRunnerMetadata[]> {
+
     return new Promise<TestRunnerMetadata[]>((resolve, reject) => {
       let cpuCount = os.cpus().length;
       let testRunnerMetadatas: TestRunnerMetadata[] = [];
-      let allPromises: Promise<void>[] = [];
+      let allPromises: Promise<any>[] = [];
       for (let i = 0; i < cpuCount; i++) {
-        ((portOffset: number) => {
-          allPromises.push(this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
-            let selector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
-            let tempSourceFiles: string[] = [];
-            for (let i in sourceFileMap) {
-              tempSourceFiles.push(sourceFileMap[i]);
-            }
-            testRunnerMetadatas.push({
-              sourceFileMap,
-              runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(tempSourceFiles, selector, this.options.port + portOffset, false)),
-              selector
-            });
-          }));
-        })(i);
+        allPromises.push(this.createTestRunner(i).then(testRunnerMetadata => testRunnerMetadatas.push(testRunnerMetadata)));
       }
       Promise.all(allPromises).then(() => resolve(testRunnerMetadatas));
     });
   }
 
+  private createTestRunner(portOffset: number): Promise<TestRunnerMetadata> {
+    return this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
+      let selector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
+      let tempSourceFiles: string[] = [];
+      for (let i in sourceFileMap) {
+        tempSourceFiles.push(sourceFileMap[i]);
+      }
+      return {
+        sourceFileMap,
+        runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(tempSourceFiles, selector, this.options.port + portOffset, false)),
+        selector
+      };
+    });
+  }
 
   private copyAllSourceFilesToTempFolder() {
     return new Promise<FileMap>((resolve, reject) => {
