@@ -65,7 +65,10 @@ export default class Stryker {
   runMutationTest(cb: () => void) {
     console.log('INFO: Running initial test run');
     this.testRunner.testAndCollectCoverage(this.sourceFiles, this.testFiles, (testResults: TestResult[]) => {
-      if (this.allTestsSuccessful(testResults)) {
+      let unsuccessfulTests = testResults.filter((result: TestResult) => {
+        return !result.allTestsSuccessful;
+      });
+      if (unsuccessfulTests.length === 0) {
         console.log('INFO: Initial test run succeeded');
         var mutator = new Mutator();
         var mutants = mutator.mutate(this.sourceFiles);
@@ -94,23 +97,31 @@ export default class Stryker {
             }
           });
       } else {
-        console.log('ERROR: One or more tests failed in the inial test run!');
+        this.logFailedTests(unsuccessfulTests);
       }
     });
   }
 
   /**
-   * Looks through a list of TestResults to see if all tests have passed.
+   * Logs all (unique) tests in the array of TestResults with the message that they have failed.
+   * @param unsuccessfulTests - The TestResults which contain tests which have failed.
    * @function
-   * @param {TestResult[]} testResults - The list of TestResults.
-   * @returns {Boolean} True if all tests passed.
    */
-  private allTestsSuccessful(testResults: TestResult[]): boolean {
-    var unsuccessfulTest = _.find(testResults, (result: TestResult) => {
-      return !result.allTestsSuccessful;
+  private logFailedTests(unsuccessfulTests: TestResult[]): void {
+    let testFilenames: string[] = [];
+    unsuccessfulTests.forEach(testResult => {
+      testResult.testFiles.forEach(testFile => {
+        if (testFilenames.indexOf(testFile.name) < 0) {
+          testFilenames.push(testFile.name);
+        }
+      });
     });
-    return _.isUndefined(unsuccessfulTest);
-  };
+    
+    console.log('ERROR: One or more tests failed in the inial test run:');
+    testFilenames.forEach(filename => {
+      console.log('\t', filename);
+    });
+  }
 }
 (function run() {
   function list(val: string) {
