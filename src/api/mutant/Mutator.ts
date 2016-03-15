@@ -3,11 +3,7 @@ interface Mutator {
   
   name: string;
   
-  nodeTypes: string[];
-  
-  canMutate(node: ESTree.Node): boolean;
-  
-  applyMutations(copy: () => ESTree.Node): ESTree.Node[];
+  applyMutations(node: ESTree.Node): ESTree.Node[];
 }
 
 export default Mutator;
