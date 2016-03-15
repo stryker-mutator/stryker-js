@@ -206,7 +206,7 @@ abstract class BaseTestRunner {
           mutant.status = MutantStatus.SURVIVED;
         }
 
-        mutant.remove();
+        // mutant.remove();
         singleMutantTestedCallback(mutant);
         mutantsTested++;
         // Checking against `mutantsTested` instead of the index because test runs MAY finish in a random order.

@@ -35,8 +35,8 @@ module.exports = function (grunt) {
     },
     watch: {
       testFiles: {
-        files: ['test/**/*.ts'],
-        tasks: ['test']
+        files: ['dist/**/*.js'],
+        tasks: ['coverage']
       }
     },
     mochaTest: {

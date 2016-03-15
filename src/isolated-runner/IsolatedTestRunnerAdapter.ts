@@ -16,6 +16,7 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   private currentPromiseFulfillmentCallback: (result: RunResult) => void;
   private currentPromise: Promise<RunResult>;
   private currentRunIndex = 0;
+  private currentRunStartedTimestamp: Date;
 
   constructor(private realTestRunnerName: string, runnerOptions: RunnerOptions) {
     super(runnerOptions);
@@ -46,8 +47,13 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
     this.currentPromise = new Promise<RunResult>(resolve => {
       this.currentPromiseFulfillmentCallback = resolve;
       this.sendRunCommand(options);
+      this.currentRunStartedTimestamp = new Date();
     });
     return this.currentPromise;
+  }
+  
+  dispose(){
+    this.workerProcess.kill();
   }
 
   private sendRunCommand(options: RunOptions) {
@@ -72,6 +78,7 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   }
 
   private handleResultMessage(message: Message<ResultMessageBody>) {
+    message.body.result.timeSpent = (new Date().getTime() - this.currentRunStartedTimestamp.getTime());
     this.currentPromiseFulfillmentCallback(message.body.result);
   }
 
