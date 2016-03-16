@@ -9,8 +9,7 @@ export interface Location {
   end: Position
 }
 
-export interface StatementMap {
-  [ref: number]: Location;
+export interface StatementMap extends Array<Location> {
 }
 
 export interface FunctionDescription {

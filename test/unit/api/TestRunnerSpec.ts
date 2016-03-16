@@ -13,9 +13,7 @@ class MyTestRunner extends TestRunner {
       timeSpent: 20,
       coverage: {
         '': {
-          statementMap: {
-            '5': { start: { line: 23, column: 23 }, end: { line: 23, column: 23 } },
-          },
+          statementMap: [ undefined, undefined, undefined, undefined, { start: { line: 23, column: 23 }, end: { line: 23, column: 23 } }],
           s: {
             '5': 23
           }
