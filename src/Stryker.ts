@@ -57,7 +57,7 @@ export default class Stryker {
     }
     //this.fileUtils.normalize(options.libs);
     
-    options.testFrameork = 'jasmine';
+    options.testFramework = 'jasmine';
     options.testRunner = 'karma';
     options.port = 1234;
     this.testRunnerOrchestrator = new TestRunnerOrchestrator(options, sourceFiles, testFiles);

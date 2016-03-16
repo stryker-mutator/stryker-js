@@ -27,7 +27,7 @@ export default class TestRunnerOrchestrator {
   }
 
   recordCoverage(): Promise<RunResult[]> {
-    let testSelector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
+    let testSelector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
     let testRunner = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.sourceFiles, testSelector, this.options.port, true));
     return this.runSingleTestsRecursive(testSelector, testRunner, [], 0).then((testResults) => {
       testRunner.dispose();
@@ -111,7 +111,7 @@ export default class TestRunnerOrchestrator {
 
   private createTestRunner(portOffset: number): Promise<TestRunnerMetadata> {
     return this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
-      let selector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
+      let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
       let tempSourceFiles: string[] = [];
       for (let i in sourceFileMap) {
         tempSourceFiles.push(sourceFileMap[i]);
