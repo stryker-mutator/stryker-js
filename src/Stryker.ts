@@ -9,14 +9,15 @@ import ReporterFactory from './ReporterFactory';
 //import TestRunnerFactory from './TestRunnerFactory';
 import BaseReporter from './reporters/BaseReporter';
 //import BaseTestRunner from './testrunners/BaseTestRunner';
-import TestFile from './TestFile';
-import TestResult from './TestResult';
+//import TestFile from './TestFile';
+//import TestResult from './TestResult';
 //import StrykerOptions from './StrykerOptions';
 
-import StrykerOptions from './api/core/StrykerOptions';
+import {StrykerOptions} from './api/core';
 import TestRunnerOrchestrator from './TestRunnerOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
-import './karma-runner/KarmaTestRunner'; 
+import './karma-runner/KarmaTestRunner';
+import {RunResult, TestResult} from './api/test_runner';
 
 export default class Stryker {
 
@@ -56,7 +57,7 @@ export default class Stryker {
       };
     }
     //this.fileUtils.normalize(options.libs);
-    
+
     options.testFramework = 'jasmine';
     options.testRunner = 'karma';
     options.port = 1234;
@@ -67,23 +68,27 @@ export default class Stryker {
    * Runs mutation testing. This may take a while.
    * @function
    */
-    runMutationTest(cb: () => void) {
+  runMutationTest(cb: () => void) {
     console.log('INFO: Running initial test run');
     this.testRunnerOrchestrator.recordCoverage().then((runResults) => {
-      console.log('INFO: Initial test run succeeded');
-      console.log(runResults);
+      if (this.allTestsSuccessful(runResults)) {
+        console.log('INFO: Initial test run succeeded');
+        console.log(runResults);
 
-      let mutator = new Mutator();
-      let mutants = mutator.mutate(this.sourceFiles);
-      console.log('INFO: ' + mutants.length + ' Mutants generated');
+        let mutator = new Mutator();
+        let mutants = mutator.mutate(this.sourceFiles);
+        console.log('INFO: ' + mutants.length + ' Mutants generated');
 
-      this.testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
-        this.reporter.allMutantsTested(mutants);
-        console.log('Done!');
-        cb();
-      });
+        this.testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
+          this.reporter.allMutantsTested(mutants);
+          console.log('Done!');
+          cb();
+        });
+      } else {
+        console.log('ERROR: One or more tests failed in the inial test run!');
+      }
     });
-    
+
     // this.testRunner.testAndCollectCoverage(this.sourceFiles, this.testFiles, (testResults: TestResult[]) => {
     //   if (this.allTestsSuccessful(testResults)) {
     //     console.log('INFO: Initial test run succeeded');
@@ -120,14 +125,14 @@ export default class Stryker {
   }
 
   /**
-   * Looks through a list of TestResults to see if all tests have passed.
+   * Looks through a list of RunResults to see if all tests have passed.
    * @function
-   * @param {TestResult[]} testResults - The list of TestResults.
+   * @param {RunResult[]} runResults - The list of RunResults.
    * @returns {Boolean} True if all tests passed.
    */
-  private allTestsSuccessful(testResults: TestResult[]): boolean {
-    var unsuccessfulTest = _.find(testResults, (result: TestResult) => {
-      return !result.allTestsSuccessful;
+  private allTestsSuccessful(runResults: RunResult[]): boolean {
+    var unsuccessfulTest = _.find(runResults, (runResult: RunResult) => {
+      return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
     });
     return _.isUndefined(unsuccessfulTest);
   };
