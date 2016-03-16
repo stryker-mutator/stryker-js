@@ -68,15 +68,21 @@ export default class Stryker {
    * @function
    */
     runMutationTest(cb: () => void) {
-      console.log('INFO: Running initial test run');
-      this.testRunnerOrchestrator.recordCoverage().then((runResults) => {
-          console.log('INFO: Initial test run succeeded');
-          console.log(runResults);
-          runResults.forEach(runResult => {
-            // console.log(runResult.specNames);
-          });
-          cb();
+    console.log('INFO: Running initial test run');
+    this.testRunnerOrchestrator.recordCoverage().then((runResults) => {
+      console.log('INFO: Initial test run succeeded');
+      console.log(runResults);
+
+      let mutator = new Mutator();
+      let mutants = mutator.mutate(this.sourceFiles);
+      console.log('INFO: ' + mutants.length + ' Mutants generated');
+
+      this.testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
+        this.reporter.allMutantsTested(mutants);
+        console.log('Done!');
+        cb();
       });
+    });
     
     // this.testRunner.testAndCollectCoverage(this.sourceFiles, this.testFiles, (testResults: TestResult[]) => {
     //   if (this.allTestsSuccessful(testResults)) {
