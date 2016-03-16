@@ -29,7 +29,10 @@ export default class TestRunnerOrchestrator {
   recordCoverage(): Promise<RunResult[]> {
     let testSelector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
     let testRunner = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.sourceFiles, testSelector, this.options.port, true));
-    return this.runSingleTestsRecursive(testSelector, testRunner, [], 0);
+    return this.runSingleTestsRecursive(testSelector, testRunner, [], 0).then((testResults) => {
+      testRunner.dispose();
+      return testResults;
+    });
   }
 
   runMutations(mutants: Mutant[], reporter: BaseReporter): Promise<void> {

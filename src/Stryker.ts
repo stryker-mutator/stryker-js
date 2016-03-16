@@ -11,13 +11,19 @@ import BaseReporter from './reporters/BaseReporter';
 import BaseTestRunner from './testrunners/BaseTestRunner';
 import TestFile from './TestFile';
 import TestResult from './TestResult';
-import StrykerOptions from './StrykerOptions';
+//import StrykerOptions from './StrykerOptions';
+
+import StrykerOptions from './api/core/StrykerOptions';
+import TestRunnerOrchestrator from './TestRunnerOrchestrator';
+import './jasmine_test_selector/JasmineTestSelector';
+import './karma-runner/KarmaTestRunner'; 
 
 export default class Stryker {
 
   fileUtils = new FileUtils();
   reporter: BaseReporter;
   testRunner: BaseTestRunner;
+  private testRunnerOrchestrator: TestRunnerOrchestrator;
 
   /**
    * The Stryker mutation tester.
@@ -36,10 +42,10 @@ export default class Stryker {
 
     if (options) {
       options = {
-        libs: options.libs || [],
+        //libs: options.libs || [],
         timeoutMs: options.timeoutMs || 3000,
         timeoutFactor: options.timeoutFactor || 1.25,
-        individualTests: options.individualTests || false
+        //individualTests: options.individualTests || false
       };
     } else {
       options = {
@@ -49,54 +55,62 @@ export default class Stryker {
         individualTests: false
       };
     }
-    this.fileUtils.normalize(options.libs);
-
-    var reporterFactory = new ReporterFactory();
-    var testRunnerFactory = new TestRunnerFactory();
-
-    this.reporter = reporterFactory.getReporter('console');
-    this.testRunner = testRunnerFactory.getTestRunner('jasmine', options);
+    //this.fileUtils.normalize(options.libs);
+    
+    options.testFrameork = 'jasmine';
+    options.testRunner = 'karma';
+    options.port = 1234;
+    this.testRunnerOrchestrator = new TestRunnerOrchestrator(options, sourceFiles, testFiles);
   }
 
   /**
    * Runs mutation testing. This may take a while.
    * @function
    */
-  runMutationTest(cb: () => void) {
-    console.log('INFO: Running initial test run');
-    this.testRunner.testAndCollectCoverage(this.sourceFiles, this.testFiles, (testResults: TestResult[]) => {
-      if (this.allTestsSuccessful(testResults)) {
-        console.log('INFO: Initial test run succeeded');
-        var mutator = new Mutator();
-        var mutants = mutator.mutate(this.sourceFiles);
-        console.log('INFO: ' + mutants.length + ' Mutants generated');
-
-        var testFilesToRemove: TestFile[] = [];
-        _.forEach(testResults, (testResult: TestResult) => {
-          testFilesToRemove = testFilesToRemove.concat(testResult.testFiles);
-        });
-
-        this.testRunner.testMutants(mutants, this.sourceFiles, testResults,
-          (mutant: Mutant) => {
-            // Call the reporter like this instead of passing the function directly to ensure that `this` in the reporter is still the reporter.
-            this.reporter.mutantTested(mutant);
-          },
-          (mutants: Mutant[]) => {
-            this.reporter.allMutantsTested(mutants);
-
-            _.forEach(testFilesToRemove, (testFile: TestFile) => {
-              testFile.remove();
-            });
-            this.fileUtils.removeBaseTempFolder();
-
-            if (cb) {
-              cb();
-            }
+    runMutationTest(cb: () => void) {
+      console.log('INFO: Running initial test run');
+      this.testRunnerOrchestrator.recordCoverage().then((runResults) => {
+          console.log('INFO: Initial test run succeeded');
+          console.log(runResults);
+          runResults.forEach(runResult => {
+            // console.log(runResult.specNames);
           });
-      } else {
-        console.log('ERROR: One or more tests failed in the inial test run!');
-      }
-    });
+          cb();
+      });
+    
+    // this.testRunner.testAndCollectCoverage(this.sourceFiles, this.testFiles, (testResults: TestResult[]) => {
+    //   if (this.allTestsSuccessful(testResults)) {
+    //     console.log('INFO: Initial test run succeeded');
+    //     var mutator = new Mutator();
+    //     var mutants = mutator.mutate(this.sourceFiles);
+    //     console.log('INFO: ' + mutants.length + ' Mutants generated');
+
+    //     var testFilesToRemove: TestFile[] = [];
+    //     _.forEach(testResults, (testResult: TestResult) => {
+    //       testFilesToRemove = testFilesToRemove.concat(testResult.testFiles);
+    //     });
+
+    //     this.testRunner.testMutants(mutants, this.sourceFiles, testResults,
+    //       (mutant: Mutant) => {
+    //         // Call the reporter like this instead of passing the function directly to ensure that `this` in the reporter is still the reporter.
+    //         this.reporter.mutantTested(mutant);
+    //       },
+    //       (mutants: Mutant[]) => {
+    //         this.reporter.allMutantsTested(mutants);
+
+    //         _.forEach(testFilesToRemove, (testFile: TestFile) => {
+    //           testFile.remove();
+    //         });
+    //         this.fileUtils.removeBaseTempFolder();
+
+    //         if (cb) {
+    //           cb();
+    //         }
+    //       });
+    //   } else {
+    //     console.log('ERROR: One or more tests failed in the inial test run!');
+    //   }
+    //});
   }
 
   /**
@@ -116,6 +130,7 @@ export default class Stryker {
   function list(val: string) {
     return val.split(',');
   }
+  //TODO: Implement the new Stryker options
   program
     .usage('-s <items> -t <items> [other options]')
     .option('-s, --src <items>', 'A list of source files. Example: a.js,b.js', list)

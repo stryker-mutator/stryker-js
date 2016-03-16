@@ -53,6 +53,7 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   }
   
   dispose(){
+    this.currentRunIndex++;
     this.workerProcess.kill();
   }
 
