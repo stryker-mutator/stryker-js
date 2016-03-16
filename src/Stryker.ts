@@ -6,9 +6,9 @@ import FileUtils from './utils/FileUtils';
 import Mutator from './Mutator';
 import Mutant from './Mutant';
 import ReporterFactory from './ReporterFactory';
-import TestRunnerFactory from './TestRunnerFactory';
+//import TestRunnerFactory from './TestRunnerFactory';
 import BaseReporter from './reporters/BaseReporter';
-import BaseTestRunner from './testrunners/BaseTestRunner';
+//import BaseTestRunner from './testrunners/BaseTestRunner';
 import TestFile from './TestFile';
 import TestResult from './TestResult';
 //import StrykerOptions from './StrykerOptions';
@@ -22,7 +22,7 @@ export default class Stryker {
 
   fileUtils = new FileUtils();
   reporter: BaseReporter;
-  testRunner: BaseTestRunner;
+  //testRunner: BaseTestRunner;
   private testRunnerOrchestrator: TestRunnerOrchestrator;
 
   /**
