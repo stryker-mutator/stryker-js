@@ -9,7 +9,8 @@ export interface Location {
   end: Position
 }
 
-export interface StatementMap extends Array<Location> {
+export interface StatementMap {
+  [ref: number]: Location;
 }
 
 export interface FunctionDescription {
@@ -18,18 +19,18 @@ export interface FunctionDescription {
   loc: Location;
 }
 
-export interface BranchDescription{
+export interface BranchDescription {
   line: number;
   type: string;
   locations: Location[];
 }
 
-export interface BranchMap{
+export interface BranchMap {
   [ref: string]: BranchDescription;
 }
 
 export interface FunctionMap {
-  [ref: string] : FunctionDescription;
+  [ref: string]: FunctionDescription;
 }
 
 export interface CoverageData {
