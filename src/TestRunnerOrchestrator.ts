@@ -85,8 +85,8 @@ export default class TestRunnerOrchestrator {
       testSelector.select([currentTestIndex])
         .then(() => testRunner.run({ timeout: 10000 }))
         .then(runResult => {
+          runResults[currentTestIndex] = runResult;
           if (runResult.result === TestResult.Complete && (runResult.succeeded > 0 || runResult.failed > 0)) {
-            runResults[currentTestIndex] = runResult;
             resolve(this.runSingleTestsRecursive(testSelector, testRunner, runResults, currentTestIndex + 1));
           } else {
             testRunner.dispose();
