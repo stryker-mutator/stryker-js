@@ -5,6 +5,7 @@ import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
 import TestFile from './TestFile';
 import {StrykerTempFolder} from './api/util';
+import {RunResult} from './api/test_runner';
 
 export interface MutantTestedCallback {
   (mutant: Mutant): void
@@ -53,10 +54,31 @@ export default class Mutant {
   private _mutatedLine: string;
   private _originalLine = '';
 
-  public timeSpentScopedTests: number;
-  public scopedTestIds: number[];
-  public specsRan: string[];
+  private scopedTestsById: RunResult[] = [];
+  private _scopedTestIds: number[] = [];
   private _mutatedFilename: string;
+  private _specsRan: string[];
+  private _timeSpentScopedTests = 0;
+  
+  get scopedTestIds() : number[] {
+    return this._scopedTestIds;
+  }
+  
+  get timeSpentScopedTests() {
+    return this._timeSpentScopedTests;
+  }
+  
+  get specsRan (){
+    return this._specsRan;
+  }
+  
+  public addRunResultForTest(index: number, runResult: RunResult){
+    this._scopedTestIds.push(index);
+    this._timeSpentScopedTests += runResult.timeSpent;
+    runResult.specNames.forEach(specName => this._specsRan.push(specName));
+    this.scopedTestsById[index] = runResult;
+  }
+
 
   get columnNumber(): number {
     return this.mutatedLocation.start.column + 1; //esprima starts at column 0
