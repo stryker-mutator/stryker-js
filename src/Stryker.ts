@@ -70,8 +70,11 @@ export default class Stryker {
    */
   runMutationTest(cb: () => void) {
     console.log('INFO: Running initial test run');
-    this.testRunnerOrchestrator.recordCoverage().then((runResults) => {
-      if (this.allTestsSuccessful(runResults)) {
+    this.testRunnerOrchestrator.recordCoverage().then((runResults) => {          
+      let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
+        return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
+      });
+      if (unsuccessfulTests.length === 0) {
         console.log('INFO: Initial test run succeeded');
         console.log(runResults);
 
@@ -85,7 +88,7 @@ export default class Stryker {
           cb();
         });
       } else {
-        console.log('ERROR: One or more tests failed in the inial test run!');
+        this.logFailedTests(unsuccessfulTests);
       }
     });
 
@@ -130,12 +133,21 @@ export default class Stryker {
    * @param {RunResult[]} runResults - The list of RunResults.
    * @returns {Boolean} True if all tests passed.
    */
-  private allTestsSuccessful(runResults: RunResult[]): boolean {
-    var unsuccessfulTest = _.find(runResults, (runResult: RunResult) => {
-      return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
+  private logFailedTests(unsuccessfulTests: RunResult[]): void {
+    let specNames: string[] = [];
+    unsuccessfulTests.forEach(runResult => {
+      runResult.specNames.forEach(specName => {
+        if (specNames.indexOf(specName) < 0) {
+          specNames.push(specName);
+        }
+      });
     });
-    return _.isUndefined(unsuccessfulTest);
-  };
+    
+    console.log('ERROR: One or more tests failed in the inial test run:');
+    specNames.forEach(filename => {
+      console.log('\t', filename);
+    });
+  }
 }
 (function run() {
   function list(val: string) {
