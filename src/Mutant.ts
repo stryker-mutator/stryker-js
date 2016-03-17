@@ -57,7 +57,7 @@ export default class Mutant {
   private scopedTestsById: RunResult[] = [];
   private _scopedTestIds: number[] = [];
   private _mutatedFilename: string;
-  private _specsRan: string[];
+  private _specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
   
   get scopedTestIds() : number[] {
