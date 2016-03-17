@@ -18,6 +18,7 @@ import TestRunnerOrchestrator from './TestRunnerOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
 import './karma-runner/KarmaTestRunner';
 import {RunResult, TestResult} from './api/test_runner';
+import MutantRunResultMatcher from './MutantRunResultMatcher';
 
 export default class Stryker {
 
@@ -62,6 +63,9 @@ export default class Stryker {
     options.testRunner = 'karma';
     options.port = 1234;
     this.testRunnerOrchestrator = new TestRunnerOrchestrator(options, sourceFiles, testFiles);
+    
+    var reporterFactory = new ReporterFactory();
+    this.reporter = reporterFactory.getReporter('console');
   }
 
   /**
@@ -81,7 +85,10 @@ export default class Stryker {
         let mutator = new Mutator();
         let mutants = mutator.mutate(this.sourceFiles);
         console.log('INFO: ' + mutants.length + ' Mutants generated');
-
+        
+        let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
+        mutantRunResultMatcher.matchWithMutants();
+        
         this.testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
           this.reporter.allMutantsTested(mutants);
           console.log('Done!');
