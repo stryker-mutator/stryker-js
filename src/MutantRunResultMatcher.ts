@@ -27,16 +27,11 @@ export default class MutantRunResultMatcher {
   }
 
   private mutantCovers(mutant: Mutant, location: Location): boolean {
-
-    if (mutant.lineNumber > location.start.line && 
-      (mutant.lineNumber < location.end.line || (mutant.lineNumber === location.end.line && mutant.columnNumber <= location.end.column))) {
-      return true;
-    } else if ((mutant.lineNumber > location.start.line || (mutant.lineNumber === location.start.line && mutant.columnNumber >= location.start.column))
-       && mutant.lineNumber < location.end.line) {
-      return true;
-    } else if (mutant.lineNumber === location.start.line && mutant.lineNumber === location.end.line) {
-      return mutant.columnNumber >= location.start.column && mutant.columnNumber <= location.end.column;
-    }
-    return false;
+    let mutantIsAfterStart = mutant.lineNumber > location.start.line ||
+      (mutant.lineNumber === location.start.line && mutant.columnNumber >= location.start.column);
+    let mutantIsBeforeEnd = mutant.lineNumber < location.end.line ||
+      (mutant.lineNumber === location.end.line && mutant.columnNumber <= location.end.column);
+    
+    return mutantIsAfterStart && mutantIsBeforeEnd;
   }
 }
