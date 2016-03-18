@@ -12,7 +12,7 @@ function createRandomFolder(prefix: string) {
 }
 
 function random() {
-  Math.ceil(Math.random() * 10000000)
+  return Math.ceil(Math.random() * 10000000);
 }
 
 function ensureFolderExists(path: string) {

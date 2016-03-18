@@ -27,9 +27,12 @@ export default class TestRunnerOrchestrator {
   }
 
   recordCoverage(): Promise<RunResult[]> {
-    let testSelector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
+    let testSelector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
     let testRunner = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.sourceFiles, testSelector, this.options.port, true));
-    return this.runSingleTestsRecursive(testSelector, testRunner, [], 0);
+    return this.runSingleTestsRecursive(testSelector, testRunner, [], 0).then((testResults) => {
+      testRunner.dispose();
+      return testResults;
+    });
   }
 
   runMutations(mutants: Mutant[], reporter: BaseReporter): Promise<void> {
@@ -52,7 +55,9 @@ export default class TestRunnerOrchestrator {
             .then(() => testRunners.push(nextRunner)); // mark the runner as available again
         }
       }
-      return new PromisePool(promiseProducer, testRunners.length).start();
+      return new PromisePool(promiseProducer, testRunners.length)
+        .start()
+        .then(() => testRunners.forEach( testRunner => testRunner.runnerAdapter.dispose()));
     });
   }
 
@@ -82,7 +87,7 @@ export default class TestRunnerOrchestrator {
       testSelector.select([currentTestIndex])
         .then(() => testRunner.run({ timeout: 10000 }))
         .then(runResult => {
-          if (runResult.result === TestResult.Complete && (runResult.succeeded > 0 || runResult.failed > 0)) {
+          if (runResult.succeeded > 0 || runResult.failed > 0) {
             runResults[currentTestIndex] = runResult;
             resolve(this.runSingleTestsRecursive(testSelector, testRunner, runResults, currentTestIndex + 1));
           } else {
@@ -99,6 +104,7 @@ export default class TestRunnerOrchestrator {
       let cpuCount = os.cpus().length;
       let testRunnerMetadatas: TestRunnerMetadata[] = [];
       let allPromises: Promise<any>[] = [];
+      console.log(`INFO: Creating ${cpuCount} test runners (based on cpu count)`);
       for (let i = 0; i < cpuCount; i++) {
         allPromises.push(this.createTestRunner(i).then(testRunnerMetadata => testRunnerMetadatas.push(testRunnerMetadata)));
       }
@@ -108,7 +114,7 @@ export default class TestRunnerOrchestrator {
 
   private createTestRunner(portOffset: number): Promise<TestRunnerMetadata> {
     return this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
-      let selector = TestSelectorFactory.instance().create(this.options.testFrameork, { options: this.options });
+      let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
       let tempSourceFiles: string[] = [];
       for (let i in sourceFileMap) {
         tempSourceFiles.push(sourceFileMap[i]);

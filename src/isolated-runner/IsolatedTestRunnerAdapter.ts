@@ -5,6 +5,7 @@ import Message, {MessageType} from './Message';
 import StartMessageBody from './StartMessageBody';
 import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
+import * as _ from 'lodash';
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
@@ -15,34 +16,42 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   private workerProcess: ChildProcess;
   private currentPromiseFulfillmentCallback: (result: RunResult) => void;
   private currentPromise: Promise<RunResult>;
-  private currentRunIndex = 0;
+  private currentInteractionCount = 0;
   private currentRunStartedTimestamp: Date;
 
   constructor(private realTestRunnerName: string, runnerOptions: RunnerOptions) {
     super(runnerOptions);
     this.startWorker();
   }
-  
+
   private startWorker() {
-    this.workerProcess = fork(`${__dirname}/IsolatedTestRunnerAdapterWorker`, [], { silent: true });
+    // Remove --debug-brk from process arguments. 
+    // When debugging, it will try to reuse the same debug port, which will be taken by the main process.
+    let execArgv = _.clone(process.execArgv);
+    _.remove(execArgv, arg => arg.substr(0, 11) === '--debug-brk');
+    this.workerProcess = fork(`${__dirname}/IsolatedTestRunnerAdapterWorker`, [], { silent: true, execArgv });
     this.sendStartCommand();
     this.listenToWorkerProcess();
   }
 
   private listenToWorkerProcess() {
     this.workerProcess.on('message', (message: Message<any>) => {
+      this.currentInteractionCount++;
       switch (message.type) {
         case MessageType.Result:
           this.handleResultMessage(message);
+          break;
+        default:
+          console.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`)
           break;
       }
     });
   }
 
   run(options: RunOptions): Promise<RunResult> {
-    this.currentRunIndex++;
+    this.currentInteractionCount++;
     if (options.timeout) {
-      this.markNoResultTimeout(options.timeout, this.currentRunIndex);
+      this.markNoResultTimeout(options.timeout, this.currentInteractionCount);
     }
     this.currentPromise = new Promise<RunResult>(resolve => {
       this.currentPromiseFulfillmentCallback = resolve;
@@ -51,8 +60,9 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
     });
     return this.currentPromise;
   }
-  
-  dispose(){
+
+  dispose() {
+    this.currentInteractionCount++;
     this.workerProcess.kill();
   }
 
@@ -82,10 +92,11 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
     this.currentPromiseFulfillmentCallback(message.body.result);
   }
 
-  private markNoResultTimeout(timeoutMs: number, forRunIndex: number) {
+  private markNoResultTimeout(timeoutMs: number, forInteractionNumber: number) {
     setTimeout(() => {
       // See if the current run was not already resolved
-      if (this.currentRunIndex === forRunIndex && !this.currentPromise.isFulfilled) {
+      if (this.currentInteractionCount === forInteractionNumber && !this.currentPromise.isFulfilled) {
+        console.log('TIMEOUT occurred, restarting test runner', this.realTestRunnerName);
         this.handleTimeout();
       }
     }, timeoutMs);

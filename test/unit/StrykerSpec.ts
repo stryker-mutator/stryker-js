@@ -1,3 +1,5 @@
+//TODO: Fix this test when the new testrunner has been implemented
+
 // 'use strict';
 
 // var expect = require('chai').expect;

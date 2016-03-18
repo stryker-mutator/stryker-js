@@ -47,7 +47,7 @@ describe('IsolatedTestRunnerAdapter', () => {
 
     it('should spawn a child process', () => {
       let expectedWorkerProcessPath = path.resolve(__dirname + '/../../../src/isolated-runner/') + '/IsolatedTestRunnerAdapterWorker';
-      expect(child_process.fork).to.have.been.calledWith(expectedWorkerProcessPath, [], { silent: true });
+      expect(child_process.fork).to.have.been.calledWith(expectedWorkerProcessPath, [], {  execArgv: [], silent: true });
       expect(fakeChildProcess.on).to.have.been.calledWith('message');
     });
 

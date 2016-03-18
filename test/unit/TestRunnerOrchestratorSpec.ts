@@ -18,7 +18,7 @@ describe('TestRunnerOrchestrator', () => {
   let sandbox: Sinon.SinonSandbox;
   let sourceFiles = ['a.js', 'b.js'];
   let otherFiles = ['aSpec.js', 'bSpec.js'];
-  let strykerOptions = { testFrameork: 'superFramework', testRunner: 'superRunner', port: 42 };
+  let strykerOptions = { testFramework: 'superFramework', testRunner: 'superRunner', port: 42 };
   let firstTestRunner: any;
   let secondTestRunner: any;
   let selector: TestSelector;
@@ -63,7 +63,7 @@ describe('TestRunnerOrchestrator', () => {
     });
 
     it('should have created the test selector', () => {
-      expect(TestSelectorFactory.instance().create).to.have.been.calledWith(strykerOptions.testFrameork, { options: strykerOptions });
+      expect(TestSelectorFactory.instance().create).to.have.been.calledWith(strykerOptions.testFramework, { options: strykerOptions });
     });
 
     describe('.then()', () => {

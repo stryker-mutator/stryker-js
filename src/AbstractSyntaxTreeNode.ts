@@ -1,7 +1,5 @@
 'use strict';
 
-import BaseTestRunner from './testrunners/BaseTestRunner';
-
 /**
  * Represents a node on the abstract syntax tree.
  * @constructor
