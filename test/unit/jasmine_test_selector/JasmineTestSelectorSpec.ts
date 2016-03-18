@@ -14,7 +14,6 @@ const INTERCEPTOR_CODE = `(function(window){
     window.it = function(){
         if(window.____scopedTests && window.____scopedTests.indexOf(count) >= 0){
             var spec = realIt.apply(window, arguments);
-            console.log('spec: ', spec);
         }
         count ++;
     }
