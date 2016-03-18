@@ -25,33 +25,19 @@ export default class Stryker {
    * The Stryker mutation tester.
    * @constructor
    * @param {String[]} sourceFiles - The list of source files which should be mutated.
-   * @param {String[]} testFiles - The list of test files.
+   * @param {String[]} otherFiles - The list of test files.
    * @param {Object} [options] - Optional options.
-   * @param {Number} [options].[timeoutMs] - Amount of additional time, in milliseconds, the mutation test is allowed to run.
-   * @param {Number} [options].[timeoutFactor] - A factor which is applied to the timeout.
    */
-  constructor(private sourceFiles: string[], private testFiles: string[], options?: StrykerOptions) {
+  constructor(private sourceFiles: string[], private otherFiles: string[], options?: StrykerOptions) {
     this.fileUtils.normalize(sourceFiles);
-    this.fileUtils.normalize(testFiles);
+    this.fileUtils.normalize(otherFiles);
     this.fileUtils.createBaseTempFolder();
-
-    if (options) {
-      options = {
-        timeoutMs: options.timeoutMs || 3000,
-        timeoutFactor: options.timeoutFactor || 1.25,
-      };
-    } else {
-      options = {
-        libs: [],
-        timeoutMs: 3000,
-        timeoutFactor: 1.25,
-        individualTests: false
-      };
-    }
+    
+    options = options || {};
     options.testFramework = 'jasmine';
     options.testRunner = 'karma';
     options.port = 1234;
-    this.testRunnerOrchestrator = new TestRunnerOrchestrator(options, sourceFiles, testFiles);
+    this.testRunnerOrchestrator = new TestRunnerOrchestrator(options, sourceFiles, otherFiles);
     
     var reporterFactory = new ReporterFactory();
     this.reporter = reporterFactory.getReporter('console');
@@ -119,20 +105,11 @@ export default class Stryker {
   program
     .usage('-s <items> -t <items> [other options]')
     .option('-s, --src <items>', 'A list of source files. Example: a.js,b.js', list)
-    .option('-t, --tests <items>', 'A list of test files. Example: a.js,b.js', list)
-    .option('-m, --timeout-ms [amount]', 'Amount of additional time, in milliseconds, the mutation test is allowed to run')
-    .option('-f, --timeout-factor [amount]', 'The factor is applied on top of the other timeouts when during mutation testing')
+    .option('-o, --other-files <items>', 'A list of other files, such as test files or library files. Example: a.js,b.js', list)
     .parse(process.argv);
 
-  if (program.src && program.tests) {
-    var options: StrykerOptions = {
-      libs: program.libs,
-      timeoutMs: Number(program.timeoutMs),
-      timeoutFactor: Number(program.timeoutFactor),
-      individualTests: program.individualTests
-    };
-
-    var stryker = new Stryker(program.src, program.tests, options);
+  if (program.src && program.otherFiles) {
+    var stryker = new Stryker(program.src, program.otherFiles);
     stryker.runMutationTest(function() { });
   }
 })();
