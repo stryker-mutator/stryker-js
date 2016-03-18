@@ -57,7 +57,7 @@ export default class Mutant {
   private scopedTestsById: RunResult[] = [];
   private _scopedTestIds: number[] = [];
   private _mutatedFilename: string;
-  private _specsRan: string[] = [];
+  public specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
   
   get scopedTestIds() : number[] {
@@ -68,14 +68,9 @@ export default class Mutant {
     return this._timeSpentScopedTests;
   }
   
-  get specsRan (){
-    return this._specsRan;
-  }
-  
   public addRunResultForTest(index: number, runResult: RunResult){
     this._scopedTestIds.push(index);
     this._timeSpentScopedTests += runResult.timeSpent;
-    runResult.specNames.forEach(specName => this._specsRan.push(specName));
     this.scopedTestsById[index] = runResult;
   }
 
