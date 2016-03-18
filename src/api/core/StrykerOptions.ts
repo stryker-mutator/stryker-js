@@ -7,7 +7,7 @@ interface StrykerOptions {
   /**
    * The name of the test framework to use
    */
-  testFrameork?: string;
+  testFramework?: string;
 
   /**
    * The name of the test runner to use

@@ -143,7 +143,7 @@ export default class KarmaTestRunner extends TestRunner {
     return new Promise<void>((resolve) => {
       let p = this.options.port;
       karma.runner.run({ port: p }, (exitCode) => {
-        console.log('karma exit with', exitCode);
+        console.log('karma run done with ', exitCode);
         resolve();
       });
     });
