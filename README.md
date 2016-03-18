@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/infosupport/stryker.svg?branch=master)](https://travis-ci.org/infosupport/stryker)
+[![NPM](https://img.shields.io/npm/dm/stryker.svg)](https://www.npmjs.com/package/stryker)
 [![Gitter](https://badges.gitter.im/infosupport/stryker.svg)](https://gitter.im/infosupport/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Stryker
