@@ -55,7 +55,9 @@ export default class TestRunnerOrchestrator {
             .then(() => testRunners.push(nextRunner)); // mark the runner as available again
         }
       }
-      return new PromisePool(promiseProducer, testRunners.length).start();
+      return new PromisePool(promiseProducer, testRunners.length)
+        .start()
+        .then(() => testRunners.forEach( testRunner => testRunner.runnerAdapter.dispose()));
     });
   }
 
@@ -102,6 +104,7 @@ export default class TestRunnerOrchestrator {
       let cpuCount = os.cpus().length;
       let testRunnerMetadatas: TestRunnerMetadata[] = [];
       let allPromises: Promise<any>[] = [];
+      console.log(`INFO: Creating ${cpuCount} test runners (based on cpu count)`);
       for (let i = 0; i < cpuCount; i++) {
         allPromises.push(this.createTestRunner(i).then(testRunnerMetadata => testRunnerMetadatas.push(testRunnerMetadata)));
       }
