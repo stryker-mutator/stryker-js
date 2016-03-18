@@ -13,14 +13,16 @@ This repository is a work in progress. As of now, stryker is not published on NP
 ## Getting started
 Stryker is a mutation testing framework for JavaScript. It allows you to test your test by temporarily inserting bugs.
 
-To install stryker, do the following:
-
-1. Download or clone the repository
-2. Add `"stryker": "^0.0.1"` to devDependencies in your `package.json`
-3. Run the command `npm link ../path/to/styker/` from the root of your project
-4. Run the command `node node_modules/stryker/src/Stryker.js --help` to test if stryker works
-
+To install stryker, execute the command:
+```
+npm install stryker --save-dev
+```
 ***Note****: During the installation you may run into errors caused by [node-gyp](https://github.com/nodejs/node-gyp). It is safe to ignore these errors.*
+
+To test if stryker is working, execute the command:
+```
+node node_modules/stryker/dist/src/Stryker.js --help
+```
 
 ## Configuration
 ### Available options
