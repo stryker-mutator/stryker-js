@@ -8,7 +8,7 @@
 *William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
 
 ## Work in progress
-This repository is a work in progress. As of now, stryker is not published on NPM yet. We also only support Jasmine tests in the browser for now. Please create and vote on [issues](https://github.com/infosupport/stryker/issues) to help us determine the priority on features.
+This repository is a work in progress. We only support Jasmine tests in the browser for now. Please create and vote on [issues](https://github.com/infosupport/stryker/issues) to help us determine the priority on features.
 
 ## Getting started
 Stryker is a mutation testing framework for JavaScript. It allows you to test your test by temporarily inserting bugs.
