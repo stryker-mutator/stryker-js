@@ -19,18 +19,17 @@ const DEFAULT_OPTIONS: ConfigOptions = {
 
 const DEFAULT_COVERAGE_REPORTER = {
   coverageReporter: {
-    type: 'json',
-    subdir: 'json'
+    type: 'in-memory'
   }
 }
 
 export default class KarmaTestRunner extends TestRunner {
 
-  private coverageFolder = `${os.tmpdir()}${path.sep}coverage-result-${Math.ceil(Math.random() * 1000000)}`;
   private server: karma.Server;
   private serverStartedPromise: Promise<Object>;
   private currentTestResults: karma.TestResults;
   private currentSpecNames: string[];
+  private currentCoverageReport: CoverageCollection;
 
   constructor(runnerOptions: RunnerOptions) {
     super(runnerOptions);
@@ -46,6 +45,7 @@ export default class KarmaTestRunner extends TestRunner {
     this.listenToBrowserStarted();
     this.listenToRunComplete();
     this.listenToSpecComplete();
+    this.listenToCoverage();
 
     this.server.start();
   }
@@ -60,6 +60,12 @@ export default class KarmaTestRunner extends TestRunner {
     this.server.on('spec_complete', (browser: any, spec: any) => {
       let specName = `${spec.suite.join(' ')} ${spec.description}`;
       this.currentSpecNames.push(specName);
+    });
+  }
+  
+  private listenToCoverage(){
+    this.server.on('coverage_complete', (browser: any, coverageReport: CoverageCollection) => {
+      this.currentCoverageReport = coverageReport;
     });
   }
 
@@ -80,7 +86,6 @@ export default class KarmaTestRunner extends TestRunner {
       karmaConfig = _.assign(karmaConfig, _.cloneDeep(DEFAULT_COVERAGE_REPORTER));
       this.configureCoveragePreprocessors(karmaConfig);
       this.configureCoverageReporters(karmaConfig);
-      this.configureCoverageDir(karmaConfig);
       this.configureCoveragePlugin(karmaConfig);
     }
     return karmaConfig;
@@ -88,15 +93,6 @@ export default class KarmaTestRunner extends TestRunner {
 
   private configureCoveragePlugin(karmaConfig: ConfigOptions){
     karmaConfig.plugins.push('karma-coverage');
-  }
-
-  private configureCoverageDir(karmaConfig: ConfigOptions) {
-    try {
-      fs.lstatSync(this.coverageFolder);
-    } catch (errror) {
-      fs.mkdirSync(this.coverageFolder);
-    }
-    karmaConfig.coverageReporter.dir = this.coverageFolder;
   }
 
   private configureCoverageReporters(karmaConfig: ConfigOptions) {
@@ -153,51 +149,21 @@ export default class KarmaTestRunner extends TestRunner {
     return this.serverStartedPromise.then(() => new Promise<RunResult>((resolve) => {
       this.currentTestResults = null;
       this.currentSpecNames = [];
+      this.currentCoverageReport = null;
       this.runServer().then(() => {
-        if (this.options.coverageEnabled) {
-          this.collectCoverage().then(coverage => {
-            var convertedTestResult = this.convertResult(this.currentTestResults, coverage);
-            resolve(convertedTestResult);
-          });
-        } else {
           resolve(this.convertResult(this.currentTestResults));
-        }
       });
     }));
   }
 
-  private convertResult(testResults: karma.TestResults, coverage: CoverageCollection = null): RunResult {
+  private convertResult(testResults: karma.TestResults): RunResult {
     return {
       specNames: this.currentSpecNames,
       result: KarmaTestRunner.convertTestResult(testResults),
       succeeded: testResults.success,
       failed: testResults.failed,
-      coverage: coverage
+      coverage: this.currentCoverageReport
     }
-  }
-
-  private collectCoverage() {
-    return new Promise<CoverageCollection>(resolve => {
-      let coverage: CoverageCollection;
-      let nrOfTries = 0;
-      let coveragePath = `${this.coverageFolder}/json/coverage-final.json`;
-      let tryReportCoverage = () => {
-        try {
-          coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
-          resolve(coverage);
-        } catch (error) {
-          // Added this timeout to make sure the coverage report is written. Remove in the future if we have an other way to make sure it is written
-          if (nrOfTries > 2) {
-            console.error('ERROR while trying to read code coverage: ', error);
-            resolve(null);
-          } else {
-            nrOfTries++;
-            setTimeout(tryReportCoverage, 10);
-          }
-        }
-      };
-      tryReportCoverage();
-    });
   }
 
   private static convertTestResult(testResults: karma.TestResults) {
