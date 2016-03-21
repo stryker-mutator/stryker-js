@@ -27,16 +27,34 @@ export default class MutantRunResultMatcher {
 
   private mutantCoversFile(mutant: Mutant, coveredFile: CoverageResult): boolean {
     let smallestStatementFound = "";
-    
+    let smallestStatementLocation: Location;
+
     Object.keys(coveredFile.statementMap).forEach(statementId => {
       let location = coveredFile.statementMap[parseInt(statementId)];
-        
-      if(this.mutantCoversLocation(mutant, location)){
+
+      if (this.mutantCoversLocation(mutant, location) && this.isNewSmallestStatement(smallestStatementLocation, location)) {
         smallestStatementFound = statementId;
+        smallestStatementLocation = location;
       }
     });
 
     return smallestStatementFound.length > 0 && coveredFile.s[smallestStatementFound] !== 0;
+  }
+
+  private isNewSmallestStatement(originalLocation: Location, newLocation: Location): boolean {
+    let statementIsSmallestStatement = false;
+    if (!originalLocation) {
+      statementIsSmallestStatement = true;
+    } else {
+      let lineDifference = (originalLocation.end.line - originalLocation.start.line) - (newLocation.end.line - newLocation.start.line);
+      let coversLessLines = lineDifference > 0;
+      let coversLessColumns = lineDifference === 0 && (newLocation.start.column - originalLocation.start.column) + (originalLocation.end.column - newLocation.end.column) > 0;
+      if (coversLessLines || coversLessColumns) {
+        statementIsSmallestStatement = true;
+      }
+    }
+
+    return statementIsSmallestStatement;
   }
 
   private mutantCoversLocation(mutant: Mutant, location: Location): boolean {
