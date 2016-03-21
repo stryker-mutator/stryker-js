@@ -7,12 +7,16 @@ export default class MutantRunResultMatcher {
 
   matchWithMutants() {
     this.mutants.forEach(mutant => {
+      let smallestStatement: string;
       this.runResultsByTestId.forEach((testResult, id) => {
         let covered = false;
         if (testResult.coverage) {
           let coveredFile = testResult.coverage[mutant.filename];
           if (coveredFile) {
-            covered = this.fileCoversMutant(mutant, coveredFile);
+            if (!smallestStatement) {
+              smallestStatement = this.findSmallestCoveringStatement(mutant, coveredFile)
+            }
+            covered = coveredFile.s[smallestStatement] > 0;
           }
         } else {
           // If there is no coverage result we have to assume the source code is covered
@@ -26,25 +30,23 @@ export default class MutantRunResultMatcher {
   }
 
   /**
-   * Indicates whether a mutant is covered by a filename.
+   * Finds the smallest statement that covers a mutant.
    * @param mutant The mutant.
-   * @param coveredFile The CoverageResult which may or may not cover the mutant.
-   * @returns true if the mutant is covered.
+   * @param coveredFile The CoverageResult.
+   * @returns The index of the coveredFile which contains the smallest statement surrounding the mutant.
    */
-  private fileCoversMutant(mutant: Mutant, coveredFile: CoverageResult): boolean {
-    let smallestStatementFound = "";
-    let smallestStatementLocation: Location;
+  private findSmallestCoveringStatement(mutant: Mutant, coveredFile: CoverageResult): string {
+    let smallestStatement: string;
 
     Object.keys(coveredFile.statementMap).forEach(statementId => {
       let location = coveredFile.statementMap[parseInt(statementId)];
 
-      if (this.statementCoversMutant(mutant, location) && this.isNewSmallestStatement(smallestStatementLocation, location)) {
-        smallestStatementFound = statementId;
-        smallestStatementLocation = location;
+      if (this.statementCoversMutant(mutant, location) && this.isNewSmallestStatement(coveredFile.statementMap[parseInt(smallestStatement)], location)) {
+        smallestStatement = statementId;
       }
     });
 
-    return smallestStatementFound.length > 0 && coveredFile.s[smallestStatementFound] !== 0;
+    return smallestStatement;
   }
 
   /**
