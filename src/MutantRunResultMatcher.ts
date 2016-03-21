@@ -12,7 +12,7 @@ export default class MutantRunResultMatcher {
         if (testResult.coverage) {
           let coveredFile = testResult.coverage[mutant.filename];
           if (coveredFile) {
-            covered = this.mutantCoversFile(mutant, coveredFile);
+            covered = this.fileCoversMutant(mutant, coveredFile);
           }
         } else {
           // If there is no coverage result we have to assume the source code is covered
@@ -25,14 +25,20 @@ export default class MutantRunResultMatcher {
     });
   }
 
-  private mutantCoversFile(mutant: Mutant, coveredFile: CoverageResult): boolean {
+  /**
+   * Indicates whether a mutant is covered by a filename.
+   * @param mutant The mutant.
+   * @param coveredFile The CoverageResult which may or may not cover the mutant.
+   * @returns true if the mutant is covered.
+   */
+  private fileCoversMutant(mutant: Mutant, coveredFile: CoverageResult): boolean {
     let smallestStatementFound = "";
     let smallestStatementLocation: Location;
 
     Object.keys(coveredFile.statementMap).forEach(statementId => {
       let location = coveredFile.statementMap[parseInt(statementId)];
 
-      if (this.mutantCoversLocation(mutant, location) && this.isNewSmallestStatement(smallestStatementLocation, location)) {
+      if (this.statementCoversMutant(mutant, location) && this.isNewSmallestStatement(smallestStatementLocation, location)) {
         smallestStatementFound = statementId;
         smallestStatementLocation = location;
       }
@@ -41,6 +47,12 @@ export default class MutantRunResultMatcher {
     return smallestStatementFound.length > 0 && coveredFile.s[smallestStatementFound] !== 0;
   }
 
+  /**
+   * Indicates whether a statement is the smallest statement of the two statements provided.
+   * @param originalLocation The area which may cover a bigger area than the newLocation.
+   * @param newLocation The area which may cover a smaller area than the originalLocation.
+   * @returns true if the newLocation covers a smaller area than the originalLocation, making it the smaller statement.
+   */
   private isNewSmallestStatement(originalLocation: Location, newLocation: Location): boolean {
     let statementIsSmallestStatement = false;
     if (!originalLocation) {
@@ -57,7 +69,13 @@ export default class MutantRunResultMatcher {
     return statementIsSmallestStatement;
   }
 
-  private mutantCoversLocation(mutant: Mutant, location: Location): boolean {
+  /**
+   * Indicates whether a statement covers a mutant.
+   * @param mutant The mutant.
+   * @param location The location which may cover the mutant.
+   * @returns true if the statment covers the mutant.
+   */
+  private statementCoversMutant(mutant: Mutant, location: Location): boolean {
     let mutantIsAfterStart = mutant.lineNumber > location.start.line ||
       (mutant.lineNumber === location.start.line && mutant.columnNumber >= location.start.column);
     let mutantIsBeforeEnd = mutant.lineNumber < location.end.line ||
