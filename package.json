@@ -50,7 +50,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-istanbul": "^3.0.1",
     "grunt-mocha-test": "^0.12.7",
-    "grunt-ts": "5.3.2",
+    "grunt-ts": "https://github.com/errorx666/grunt-ts/tarball/exclude-files",
     "istanbul": "^0.4.0",
     "mocha": "^2.3.3",
     "mocha-sinon": "^1.1.4",
