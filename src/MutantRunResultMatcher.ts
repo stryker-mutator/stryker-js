@@ -13,6 +13,8 @@ export default class MutantRunResultMatcher {
         if (testResult.coverage) {
           let coveredFile = testResult.coverage[mutant.filename];
           if (coveredFile) {
+            // Statement map should change between test run results.
+            // We should be able to safely reuse the smallest statement found in first run.
             if (!smallestStatement) {
               smallestStatement = this.findSmallestCoveringStatement(mutant, coveredFile)
             }
