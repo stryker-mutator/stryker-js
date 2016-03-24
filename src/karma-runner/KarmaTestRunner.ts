@@ -167,7 +167,7 @@ export default class KarmaTestRunner extends TestRunner {
   }
 
   private static convertTestResult(testResults: karma.TestResults) {
-    if (testResults.error) {
+    if (testResults.error && testResults.failed === 0) {
       return TestResult.Error;
     } else if (testResults.disconnected) {
       return TestResult.Timeout;

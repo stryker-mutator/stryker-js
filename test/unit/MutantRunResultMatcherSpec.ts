@@ -59,16 +59,16 @@ describe('MutantRunResultMatcher', () => {
               statementMap: {
                 1: {
                   start: { line: 3, column: 0 },
-                  end: { line: 5, column: 5 }
+                  end: { line: 5, column: 10 }
                 },
                 2: {
-                  start: { line: 5, column: 7 },
+                  start: { line: 5, column: 0 },
+                  end: { line: 5, column: 10 }
+                },
+                3: { // Smallest statement that surrounds the mutant. Differs based on column number
+                  start: { line: 5, column: 4 },
                   end: { line: 5, column: 8 }
                 },
-                3: { // covers but not in 's' map
-                  start: { line: 5, column: 0 },
-                  end: { line: 5, column: 8 }
-                }
               },
               s: {
                 1: 1,
@@ -79,12 +79,22 @@ describe('MutantRunResultMatcher', () => {
             5: {
               statementMap: {
                 1: {
+                  start: { line: 0, column: 1 },
+                  end: { line: 10, column: 5 }
+                },
+                2: { // Smallest  statement that surround the mutant. Differs based on line number
+                  start: { line: 9, column: 1 },
+                  end: { line: 10, column: 5 }
+                },
+                3: {
                   start: { line: 10, column: 1 },
                   end: { line: 10, column: 5 }
                 }
               },
-              s: {
-                1: 1
+              s: {  
+                1: 1,
+                2: 0,
+                3: 1
               }
             }
           };
