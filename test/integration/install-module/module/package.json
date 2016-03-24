@@ -1,0 +1,17 @@
+{
+  "name": "test-module",
+  "version": "0.0.0",
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "postinstall": "typings install"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "stryker": "file:../../../../",
+    "typescript": "~1.8.9",
+    "typings": "^0.7.9"
+  }
+}

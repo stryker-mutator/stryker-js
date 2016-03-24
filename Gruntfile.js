@@ -10,6 +10,9 @@ module.exports = function (grunt) {
       },
       coverage: {
         src: ['coverage']
+      },
+      test: {
+        src: ['test/integration/install-module/module/node_modules/stryker']
       }
     },
 
@@ -78,7 +81,7 @@ module.exports = function (grunt) {
         failOnTypeErrors: true
       },
       build: {
-        tsconfig: true
+        tsconfig: true,
       },
     }
   });
