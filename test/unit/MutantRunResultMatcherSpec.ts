@@ -47,54 +47,54 @@ describe('MutantRunResultMatcher', () => {
         beforeEach(() => {
           runResultOne.coverage = {
             anOtherFile: {
-              1: { // covers but in wrong src file
+              '1': { // covers but in wrong src file
                 start: { line: 5, column: 0 },
                 end: { line: 5, column: 8 }
               }
             },
-            s: { 1: 1 }
+            s: { '1': 1 }
           };
           runResultTwo.coverage = {
             1: {
               statementMap: {
-                1: {
+                '1': {
                   start: { line: 3, column: 0 },
                   end: { line: 5, column: 10 }
                 },
-                2: {
+                '2': {
                   start: { line: 5, column: 0 },
                   end: { line: 5, column: 10 }
                 },
-                3: { // Smallest statement that surrounds the mutant. Differs based on column number
+                '3': { // Smallest statement that surrounds the mutant. Differs based on column number
                   start: { line: 5, column: 4 },
                   end: { line: 5, column: 8 }
                 },
               },
               s: {
-                1: 1,
-                2: 1,
-                3: 0
+                '1': 1,
+                '2': 1,
+                '3': 0
               }
             },
             5: {
               statementMap: {
-                1: {
+                '1': {
                   start: { line: 0, column: 1 },
                   end: { line: 10, column: 5 }
                 },
-                2: { // Smallest  statement that surround the mutant. Differs based on line number
+                '2': { // Smallest  statement that surround the mutant. Differs based on line number
                   start: { line: 9, column: 1 },
                   end: { line: 10, column: 5 }
                 },
-                3: {
+                '3': {
                   start: { line: 10, column: 1 },
                   end: { line: 10, column: 5 }
                 }
               },
               s: {  
-                1: 1,
-                2: 0,
-                3: 1
+                '1': 1,
+                '2': 0,
+                '3': 1
               }
             }
           };
@@ -115,29 +115,29 @@ describe('MutantRunResultMatcher', () => {
           runResultOne.coverage = {
             1: {
               statementMap: {
-                1: {
+                '1': {
                   start: { line: 4, column: 0 },
                   end: { line: 6, column: 0 }
                 }
-              }, s: { 1: 1 }
+              }, s: { '1': 1 }
             },
             5: {
               statementMap: {
-                1: {
+                '1': {
                   start: { line: 10, column: 0 },
                   end: { line: 10, column: 0 }
                 }
-              }, s: { 1: 1 }
+              }, s: { '1': 1 }
             }
           };
           runResultTwo.coverage = {
             1: {
               statementMap: {
-                1: {
+                '1': {
                   start: { line: 4, column: 0 },
                   end: { line: 5, column: 6 }
                 }
-              }, s: { 1: 1 }
+              }, s: { '1': 1 }
             }
           };
           sut.matchWithMutants();

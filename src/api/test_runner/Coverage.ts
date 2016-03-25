@@ -1,44 +1,5 @@
-
-export interface Position {
-  line: number;
-  column: number;
-}
-
-export interface Location {
-  start: Position,
-  end: Position
-}
-
-export interface StatementMap {
-  [ref: number]: Location;
-}
-
-export interface FunctionDescription {
-  name: string;
-  line: number;
-  loc: Location;
-}
-
-export interface BranchDescription {
-  line: number;
-  type: string;
-  locations: Location[];
-}
-
-export interface BranchMap {
-  [ref: string]: BranchDescription;
-}
-
-export interface FunctionMap {
-  [ref: string]: FunctionDescription;
-}
-
-export interface CoverageData {
-  [ref: string]: number;
-}
-
-export interface BrancheCoverageData {
-  [ref: string]: [number, number];
+export interface CoverageCollection {
+  [fileName: string]: CoverageResult;
 }
 
 export interface CoverageResult {
@@ -52,6 +13,44 @@ export interface CoverageResult {
   path?: string;
 }
 
-export interface CoverageCollection {
-  [fileName: string]: CoverageResult;
+export interface CoverageData {
+  [ref: string]: number;
+}
+
+export interface BrancheCoverageData {
+  [ref: string]: [number, number];
+}
+
+export interface FunctionMap {
+  [ref: string]: FunctionDescription;
+}
+
+export interface FunctionDescription {
+  name: string;
+  line: number;
+  loc: Location;
+}
+
+export interface BranchMap {
+  [ref: string]: BranchDescription;
+}
+
+export interface BranchDescription {
+  line: number;
+  type: string;
+  locations: Location[];
+}
+
+export interface StatementMap {
+  [ref: string]: Location;
+}
+
+export interface Location {
+  start: Position,
+  end: Position
+}
+
+export interface Position {
+  line: number;
+  column: number;
 }
