@@ -52,7 +52,7 @@ describe('MutantRunResultMatcher', () => {
                 end: { line: 5, column: 8 }
               }
             },
-            s: { 1: 1 }
+            s: { '1': 1 }
           };
           runResultTwo.coverage = {
             1: {
@@ -71,9 +71,9 @@ describe('MutantRunResultMatcher', () => {
                 },
               },
               s: {
-                1: 1,
-                2: 1,
-                3: 0
+                '1': 1,
+                '2': 1,
+                '3': 0
               }
             },
             5: {
@@ -92,9 +92,9 @@ describe('MutantRunResultMatcher', () => {
                 }
               },
               s: {  
-                1: 1,
-                2: 0,
-                3: 1
+                '1': 1,
+                '2': 0,
+                '3': 1
               }
             }
           };
@@ -119,7 +119,7 @@ describe('MutantRunResultMatcher', () => {
                   start: { line: 4, column: 0 },
                   end: { line: 6, column: 0 }
                 }
-              }, s: { 1: 1 }
+              }, s: { '1': 1 }
             },
             5: {
               statementMap: {
@@ -127,7 +127,7 @@ describe('MutantRunResultMatcher', () => {
                   start: { line: 10, column: 0 },
                   end: { line: 10, column: 0 }
                 }
-              }, s: { 1: 1 }
+              }, s: { '1': 1 }
             }
           };
           runResultTwo.coverage = {
@@ -137,7 +137,7 @@ describe('MutantRunResultMatcher', () => {
                   start: { line: 4, column: 0 },
                   end: { line: 5, column: 6 }
                 }
-              }, s: { 1: 1 }
+              }, s: { '1': 1 }
             }
           };
           sut.matchWithMutants();
