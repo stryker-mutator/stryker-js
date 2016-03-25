@@ -41,9 +41,9 @@ export default class MutantRunResultMatcher {
     let smallestStatement: string;
 
     Object.keys(coveredFile.statementMap).forEach(statementId => {
-      let location = coveredFile.statementMap[parseInt(statementId)];
+      let location = coveredFile.statementMap[statementId];
 
-      if (this.statementCoversMutant(mutant, location) && this.isNewSmallestStatement(coveredFile.statementMap[parseInt(smallestStatement)], location)) {
+      if (this.statementCoversMutant(mutant, location) && this.isNewSmallestStatement(coveredFile.statementMap[smallestStatement], location)) {
         smallestStatement = statementId;
       }
     });

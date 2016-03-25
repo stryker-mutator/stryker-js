@@ -10,7 +10,7 @@ export interface Location {
 }
 
 export interface StatementMap {
-  [ref: number]: Location;
+  [ref: string]: Location;
 }
 
 export interface FunctionDescription {
