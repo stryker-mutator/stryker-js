@@ -16,7 +16,7 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   private workerProcess: ChildProcess;
   private currentPromiseFulfillmentCallback: (result: RunResult) => void;
   private currentPromise: Promise<RunResult>;
-  private currentInteractionCount = 0;
+  private currentTimeoutTimer: NodeJS.Timer;
   private currentRunStartedTimestamp: Date;
 
   constructor(private realTestRunnerName: string, runnerOptions: RunnerOptions) {
@@ -36,7 +36,7 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
 
   private listenToWorkerProcess() {
     this.workerProcess.on('message', (message: Message<any>) => {
-      this.currentInteractionCount++;
+      this.clearCurrentTimer();
       switch (message.type) {
         case MessageType.Result:
           this.handleResultMessage(message);
@@ -49,9 +49,9 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   }
 
   run(options: RunOptions): Promise<RunResult> {
-    this.currentInteractionCount++;
+    this.clearCurrentTimer();
     if (options.timeout) {
-      this.markNoResultTimeout(options.timeout, this.currentInteractionCount);
+      this.markNoResultTimeout(options.timeout);
     }
     this.currentPromise = new Promise<RunResult>(resolve => {
       this.currentPromiseFulfillmentCallback = resolve;
@@ -62,7 +62,7 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   }
 
   dispose() {
-    this.currentInteractionCount++;
+    this.clearCurrentTimer();
     this.workerProcess.kill();
   }
 
@@ -92,17 +92,20 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
     this.currentPromiseFulfillmentCallback(message.body.result);
   }
 
-  private markNoResultTimeout(timeoutMs: number, forInteractionNumber: number) {
-    setTimeout(() => {
-      // See if the current run was not already resolved
-      if (this.currentInteractionCount === forInteractionNumber && !this.currentPromise.isFulfilled) {
-        console.log('TIMEOUT occurred, restarting test runner', this.realTestRunnerName);
-        this.handleTimeout();
-      }
+  private clearCurrentTimer() {
+    if (this.currentTimeoutTimer) {
+      clearTimeout(this.currentTimeoutTimer);
+    }
+  }
+
+  private markNoResultTimeout(timeoutMs: number) {
+    this.currentTimeoutTimer = setTimeout(() => {
+      this.handleTimeout();
     }, timeoutMs);
   }
 
   private handleTimeout() {
+    console.log('TIMEOUT occurred, restarting test runner', this.realTestRunnerName);
     this.workerProcess.kill();
     this.startWorker();
     this.currentPromiseFulfillmentCallback({ result: TestResult.Timeout });
