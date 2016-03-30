@@ -1,4 +1,4 @@
-import {StrykerOptions} from './api/core';
+import {StrykerOptions, InputFile} from './api/core';
 import {RunResult, RunnerOptions, TestResult} from './api/test_runner';
 import {TestSelector, TestSelectorFactory} from './api/test_selector';
 import {StrykerTempFolder} from './api/util';
@@ -23,12 +23,12 @@ interface TestRunnerMetadata {
 
 export default class TestRunnerOrchestrator {
 
-  constructor(private options: StrykerOptions, private sourceFiles: string[], private otherFiles: string[]) {
+  constructor(private options: StrykerOptions, private files: InputFile[]) {
   }
 
   recordCoverage(): Promise<RunResult[]> {
     let testSelector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
-    let testRunner = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.sourceFiles, testSelector, this.options.port, true));
+    let testRunner = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.files, testSelector, this.options.port, true));
     return this.runSingleTestsRecursive(testSelector, testRunner, [], 0).then((testResults) => {
       testRunner.dispose();
       return testResults;
@@ -119,13 +119,17 @@ export default class TestRunnerOrchestrator {
   private createTestRunner(portOffset: number): Promise<TestRunnerMetadata> {
     return this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
       let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
-      let tempSourceFiles: string[] = [];
-      for (let i in sourceFileMap) {
-        tempSourceFiles.push(sourceFileMap[i]);
-      }
+      let runnerFiles: InputFile[] = [];
+      this.files.forEach(originalFile => {
+        if (Object.keys(sourceFileMap).indexOf(originalFile.path) >= 0) {
+          runnerFiles.push({ path: sourceFileMap[originalFile.path], shouldMutate: originalFile.shouldMutate });
+        } else {
+          runnerFiles.push(originalFile);
+        }
+      });
       return {
         sourceFileMap,
-        runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(tempSourceFiles, selector, this.options.port + portOffset, false)),
+        runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(runnerFiles, selector, this.options.port + portOffset, false)),
         selector
       };
     });
@@ -135,20 +139,23 @@ export default class TestRunnerOrchestrator {
     return new Promise<FileMap>((resolve, reject) => {
       let fileMap: FileMap = Object.create(null);
       var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-source-files');
-      let copyPromises: Promise<void>[] = this.sourceFiles.map(sourceFile => {
-        let targetFile = tempFolder + path.sep + path.basename(sourceFile);
-        fileMap[sourceFile] = targetFile;
-        return StrykerTempFolder.copyFile(sourceFile, targetFile);
+      let copyPromises: Promise<void>[] = this.files.map(file => {
+        if (file.shouldMutate) {
+          let targetFile = tempFolder + path.sep + path.basename(file.path);
+          fileMap[file.path] = targetFile;
+          return StrykerTempFolder.copyFile(file.path, targetFile);
+        } else {
+          return Promise.resolve();
+        }
       });
       Promise.all(copyPromises).then(() => { resolve(fileMap); }, reject);
     });
   }
 
-  private createTestRunSettings(sourceFiles: string[], selector: TestSelector, port: number, coverageEnabled: boolean): RunnerOptions {
+  private createTestRunSettings(files: InputFile[], selector: TestSelector, port: number, coverageEnabled: boolean): RunnerOptions {
     return {
       coverageEnabled,
-      sourceFiles: sourceFiles,
-      additionalFiles: [].concat(selector.files()).concat(this.otherFiles),
+      files: selector.files().map(f => { return { path: f, shouldMutate: false }; }).concat(files),
       strykerOptions: this.options,
       port: port
     };

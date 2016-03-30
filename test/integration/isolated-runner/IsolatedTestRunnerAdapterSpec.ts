@@ -18,8 +18,7 @@ describe('TestRunnerChildProcessAdapter', function() {
       testFrameork: 'jasmine',
       port: null  
     },
-    additionalFiles: [],
-    sourceFiles: [],
+    files: [],
     port: null,
   };
 

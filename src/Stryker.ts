@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 var program = require('commander');
-import FileUtils, {glob} from './utils/FileUtils';
+import {normalize} from './utils/FileUtils';
 import Mutator from './Mutator';
 import Mutant from './Mutant';
 import ReporterFactory from './ReporterFactory';
@@ -14,29 +14,26 @@ import './jasmine_test_selector/JasmineTestSelector';
 import './karma-runner/KarmaTestRunner';
 import {RunResult, TestResult} from './api/test_runner';
 import MutantRunResultMatcher from './MutantRunResultMatcher';
+import InputFileResolver from './InputFileResolver';
 
 export default class Stryker {
 
-  fileUtils = new FileUtils();
   reporter: BaseReporter;
-  private testRunnerOrchestrator: TestRunnerOrchestrator;
+  options: StrykerOptions;
 
   /**
    * The Stryker mutation tester.
    * @constructor
-   * @param {String[]} sourceFiles - The list of source files which should be mutated.
-   * @param {String[]} otherFiles - The list of test files.
+   * @param {String[]} mutateFilePatterns - A comma seperated list of globbing expression used for selecting the files that should be mutated
+   * @param {String[]} allFilePatterns - A comma seperated list of globbing expression used for selecting all files needed to run the tests. These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine)
    * @param {Object} [options] - Optional options.
    */
-  constructor(private mutateFiles: string[], private allFiles: string[], options?: StrykerOptions) {
-    this.fileUtils.normalize(mutateFiles);
-    this.fileUtils.normalize(allFiles);
+  constructor(private mutateFilePatterns: string[], private allFilePatterns: string[], options?: StrykerOptions) {
 
-    options = options || {};
-    options.testFramework = 'jasmine';
-    options.testRunner = 'karma';
-    options.port = 1234;
-    this.testRunnerOrchestrator = new TestRunnerOrchestrator(options, mutateFiles, allFiles);
+    this.options = options || {};
+    this.options.testFramework = 'jasmine';
+    this.options.testRunner = 'karma';
+    this.options.port = 1234;
 
     var reporterFactory = new ReporterFactory();
     this.reporter = reporterFactory.getReporter('console');
@@ -47,34 +44,49 @@ export default class Stryker {
    * @function
    */
   runMutationTest(): Promise<void> {
+
     return new Promise<void>(resolve => {
-      console.log('INFO: Running initial test run');
-      this.testRunnerOrchestrator.recordCoverage().then((runResults) => {
-        let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
-          return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
-        });
-        if (unsuccessfulTests.length === 0) {
-          console.log('INFO: Initial test run succeeded');
 
-          let mutator = new Mutator();
-          let mutants = mutator.mutate(this.mutateFiles);
-          console.log('INFO: ' + mutants.length + ' Mutants generated');
+      new InputFileResolver(this.mutateFilePatterns, this.allFilePatterns)
+        .resolve().then(inputFiles => {
+          let testRunnerOrchestrator = new TestRunnerOrchestrator(this.options, inputFiles)
 
-          let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
-          mutantRunResultMatcher.matchWithMutants();
+          testRunnerOrchestrator.recordCoverage().then((runResults) => {
+            let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
+              return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
+            });
+            if (unsuccessfulTests.length === 0) {
+              console.log(`INFO: Initial test run succeeded. Ran ${runResults.length} tests.`);
 
-          this.testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
-            this.reporter.allMutantsTested(mutants);
-            console.log('Done!');
-            resolve();
+              let mutator = new Mutator();
+              let mutants = mutator.mutate(inputFiles
+                .filter(inputFile => inputFile.shouldMutate)
+                .map(file => file.path));
+              console.log('INFO: ' + mutants.length + ' Mutants generated');
+
+              let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
+              mutantRunResultMatcher.matchWithMutants();
+
+              testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
+                this.reporter.allMutantsTested(mutants);
+                console.log('Done!');
+                resolve();
+              });
+            } else {
+              this.logFailedTests(unsuccessfulTests);
+            }
           });
-        } else {
-          this.logFailedTests(unsuccessfulTests);
-        }
-      });
-    });
+        }, (errors: string[]) => {
+          errors.forEach(error => console.log(`ERROR: ${error}`))
+        });
 
+
+      console.log('INFO: Running initial test run');
+
+    });
   }
+
+
 
   /**
    * Looks through a list of RunResults to see if all tests have passed.
@@ -105,19 +117,6 @@ export default class Stryker {
   }
 }
 
-function reportEmptyGlobbingExpression(expression: string) {
-  console.log(`WARNING: Globbing expression ${expression} did not result in any files.`)
-}
-
-function resolveFileGlobes(sourceExpressions: string[], resultFiles: string[]): Promise<void[]> {
-  return Promise.all(sourceExpressions.map((mutateFileExpression: string) => glob(mutateFileExpression).then(files => {
-    if (files.length === 0) {
-      reportEmptyGlobbingExpression(mutateFileExpression);
-    }
-    files.forEach(f => resultFiles.push(f));
-  })));
-}
-
 (function run() {
   function list(val: string) {
     return val.split(',');
@@ -133,17 +132,6 @@ function resolveFileGlobes(sourceExpressions: string[], resultFiles: string[]): 
     .parse(process.argv);
 
   if (program.mutate && program.files) {
-    let mutateFiles: string[] = [];
-    let allFiles: string[] = [];
-
-    Promise.all([resolveFileGlobes(program.mutate, mutateFiles), resolveFileGlobes(program.files, allFiles)])
-      .then(() => {
-        
-        var stryker = new Stryker(mutateFiles, allFiles);
-        stryker.runMutationTest();
-      }, error => {
-        console.log('ERROR: ', error);
-      });
-
+    new Stryker(program.mutate, program.files).runMutationTest();
   }
 })();

@@ -108,15 +108,17 @@ export default class KarmaTestRunner extends TestRunner {
     if (!karmaConfig.preprocessors) {
       karmaConfig.preprocessors = {};
     }
-    this.options.sourceFiles.forEach(sourceFile => {
-      let preprocessor = karmaConfig.preprocessors[sourceFile];
-      if (!preprocessor) {
-        karmaConfig.preprocessors[sourceFile] = 'coverage';
-      } else {
-        if (Array.isArray(preprocessor)) {
-          preprocessor.push('coverage');
+    this.options.files.forEach(file => {
+      if (file.shouldMutate) {
+        let preprocessor = karmaConfig.preprocessors[file.path];
+        if (!preprocessor) {
+          karmaConfig.preprocessors[file.path] = 'coverage';
         } else {
-          karmaConfig.preprocessors[sourceFile] = ['coverage', preprocessor];
+          if (Array.isArray(preprocessor)) {
+            preprocessor.push('coverage');
+          } else {
+            karmaConfig.preprocessors[file.path] = ['coverage', preprocessor];
+          }
         }
       }
     });
@@ -128,8 +130,12 @@ export default class KarmaTestRunner extends TestRunner {
 
     // Override files
     karmaConfig.files = [];
+<<<<<<< 4c210754d6283fa640360d4f7d511ae5bb2c5c8f
     this.options.sourceFiles.forEach(file => karmaConfig.files.push(file));
     this.options.additionalFiles.forEach(file => karmaConfig.files.push(file));
+=======
+    this.options.files.forEach(file => karmaConfig.files.push(file.path));
+>>>>>>> (feature-order-files) Changed test runner workings to use the an InputFile array instead of 2 lists of strings.
 
     // Override port
     karmaConfig.port = this.options.port;

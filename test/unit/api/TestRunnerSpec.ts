@@ -36,7 +36,7 @@ describe('TestRunner', () => {
 
   before(() => {
     strykerOptions = { testFrameork: '', testRunner: '', port: 23, karma: { 'my-karma-options': {} } };
-    sut = new MyTestRunner({ sourceFiles: [], additionalFiles: [], strykerOptions, port: 58 });
+    sut = new MyTestRunner({ files: [], strykerOptions, port: 58 });
   });
 
   it('should supply options', () => {
