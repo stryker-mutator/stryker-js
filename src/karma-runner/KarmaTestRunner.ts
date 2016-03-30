@@ -29,6 +29,7 @@ export default class KarmaTestRunner extends TestRunner {
   private serverStartedPromise: Promise<Object>;
   private currentTestResults: karma.TestResults;
   private currentSpecNames: string[];
+  private currentErrorMessages: string[];
   private currentCoverageReport: CoverageCollection;
 
   constructor(runnerOptions: RunnerOptions) {
@@ -46,6 +47,7 @@ export default class KarmaTestRunner extends TestRunner {
     this.listenToRunComplete();
     this.listenToSpecComplete();
     this.listenToCoverage();
+    this.listenToBrowserError();
 
     this.server.start();
   }
@@ -62,8 +64,8 @@ export default class KarmaTestRunner extends TestRunner {
       this.currentSpecNames.push(specName);
     });
   }
-  
-  private listenToCoverage(){
+
+  private listenToCoverage() {
     this.server.on('coverage_complete', (browser: any, coverageReport: CoverageCollection) => {
       this.currentCoverageReport = coverageReport;
     });
@@ -77,7 +79,7 @@ export default class KarmaTestRunner extends TestRunner {
 
   private listenToBrowserError() {
     this.server.on('browser_error', (browser: any, error: any) => {
-      console.log('ERROR: ', error);
+      this.currentErrorMessages.push(error);
     });
   }
 
@@ -91,7 +93,7 @@ export default class KarmaTestRunner extends TestRunner {
     return karmaConfig;
   }
 
-  private configureCoveragePlugin(karmaConfig: ConfigOptions){
+  private configureCoveragePlugin(karmaConfig: ConfigOptions) {
     karmaConfig.plugins.push('karma-coverage');
   }
 
@@ -123,12 +125,12 @@ export default class KarmaTestRunner extends TestRunner {
   private configureTestRunner(karmaConfig: ConfigOptions) {
     // Merge defaults with given
     karmaConfig = _.assign<ConfigOptions, ConfigOptions>(_.cloneDeep(DEFAULT_OPTIONS), karmaConfig);
-    
+
     // Override files
     karmaConfig.files = [];
     this.options.sourceFiles.forEach(file => karmaConfig.files.push(file));
     this.options.additionalFiles.forEach(file => karmaConfig.files.push(file));
-    
+
     // Override port
     karmaConfig.port = this.options.port;
 
@@ -149,9 +151,10 @@ export default class KarmaTestRunner extends TestRunner {
     return this.serverStartedPromise.then(() => new Promise<RunResult>((resolve) => {
       this.currentTestResults = null;
       this.currentSpecNames = [];
+      this.currentErrorMessages = [];
       this.currentCoverageReport = null;
       this.runServer().then(() => {
-          resolve(this.convertResult(this.currentTestResults));
+        resolve(this.convertResult(this.currentTestResults));
       });
     }));
   }
@@ -159,16 +162,22 @@ export default class KarmaTestRunner extends TestRunner {
   private convertResult(testResults: karma.TestResults): RunResult {
     return {
       specNames: this.currentSpecNames,
-      result: KarmaTestRunner.convertTestResult(testResults),
+      result: this.convertTestResult(testResults),
       succeeded: testResults.success,
       failed: testResults.failed,
-      coverage: this.currentCoverageReport
+      coverage: this.currentCoverageReport,
+      errorMessages: this.currentErrorMessages
     }
   }
 
-  private static convertTestResult(testResults: karma.TestResults) {
-    if (testResults.error && testResults.failed === 0) {
-      return TestResult.Error;
+  private convertTestResult(testResults: karma.TestResults) {
+    if (testResults.error) {
+      if (this.currentErrorMessages.length > 0) {
+        // The error flag is set by default, even if no tests have ran. 
+        return TestResult.Error;
+      }else{
+        return TestResult.Complete;
+      }
     } else if (testResults.disconnected) {
       return TestResult.Timeout;
     } else {

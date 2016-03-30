@@ -57,7 +57,7 @@ export default class TestRunnerOrchestrator {
       }
       return new PromisePool(promiseProducer, testRunners.length)
         .start()
-        .then(() => testRunners.forEach( testRunner => testRunner.runnerAdapter.dispose()));
+        .then(() => testRunners.forEach(testRunner => testRunner.runnerAdapter.dispose()));
     });
   }
 
@@ -87,10 +87,14 @@ export default class TestRunnerOrchestrator {
       testSelector.select([currentTestIndex])
         .then(() => testRunner.run({ timeout: 10000 }))
         .then(runResult => {
-          if (runResult.succeeded > 0 || runResult.failed > 0) {
+          if (runResult.result === TestResult.Complete && runResult.succeeded > 0 || runResult.failed > 0) {
             runResults[currentTestIndex] = runResult;
             resolve(this.runSingleTestsRecursive(testSelector, testRunner, runResults, currentTestIndex + 1));
           } else {
+            if(runResult.result !== TestResult.Complete){
+              // If this was iteration n+1 (n = number of tests), the runResult.result will be Complete, so we don't record it
+              runResults[currentTestIndex] = runResult;
+            }
             testRunner.dispose();
             resolve(runResults);
           }

@@ -32,13 +32,13 @@ export default class Stryker {
     this.fileUtils.normalize(sourceFiles);
     this.fileUtils.normalize(otherFiles);
     this.fileUtils.createBaseTempFolder();
-    
+
     options = options || {};
     options.testFramework = 'jasmine';
     options.testRunner = 'karma';
     options.port = 1234;
     this.testRunnerOrchestrator = new TestRunnerOrchestrator(options, sourceFiles, otherFiles);
-    
+
     var reporterFactory = new ReporterFactory();
     this.reporter = reporterFactory.getReporter('console');
   }
@@ -49,20 +49,18 @@ export default class Stryker {
    */
   runMutationTest(cb: () => void) {
     console.log('INFO: Running initial test run');
-    this.testRunnerOrchestrator.recordCoverage().then((runResults) => {          
-      let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
-        return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
-      });
+    this.testRunnerOrchestrator.recordCoverage().then((runResults) => {
+      let unsuccessfulTests = runResults.filter((runResult: RunResult) => runResult.failed > 0 || runResult.result !== TestResult.Complete);
       if (unsuccessfulTests.length === 0) {
         console.log('INFO: Initial test run succeeded');
 
         let mutator = new Mutator();
         let mutants = mutator.mutate(this.sourceFiles);
         console.log('INFO: ' + mutants.length + ' Mutants generated');
-        
+
         let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
         mutantRunResultMatcher.matchWithMutants();
-        
+
         this.testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
           this.reporter.allMutantsTested(mutants);
           console.log('Done!');
@@ -83,18 +81,33 @@ export default class Stryker {
    */
   private logFailedTests(unsuccessfulTests: RunResult[]): void {
     let specNames: string[] = [];
-    unsuccessfulTests.forEach(runResult => {
-      runResult.specNames.forEach(specName => {
-        if (specNames.indexOf(specName) < 0) {
-          specNames.push(specName);
-        }
+    unsuccessfulTests.forEach((runResult, i) => {
+      switch (runResult.result) {
+        case TestResult.Complete:
+          runResult.specNames.forEach(specName => {
+            if (specNames.indexOf(specName) < 0) {
+              specNames.push(specName);
+            }
+          });
+          break;
+        case TestResult.Error:
+          console.log(`ERROR: test iteration ${i} resulted in an error`);
+          break;
+        case TestResult.Timeout:
+          console.log(`ERROR: test iteration ${i} resulted in a timeout`);
+          break;
+      }
+
+      if (runResult.errorMessages) {
+        runResult.errorMessages.forEach(error => console.log(`ERROR: ${error}`));
+      }
+    });
+    if (specNames.length > 0) {
+      console.log('ERROR: One or more tests failed in the inial test run:');
+      specNames.forEach(filename => {
+        console.log('\t', filename);
       });
-    });
-    
-    console.log('ERROR: One or more tests failed in the inial test run:');
-    specNames.forEach(filename => {
-      console.log('\t', filename);
-    });
+    }
   }
 }
 (function run() {
