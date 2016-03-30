@@ -130,12 +130,7 @@ export default class KarmaTestRunner extends TestRunner {
 
     // Override files
     karmaConfig.files = [];
-<<<<<<< 4c210754d6283fa640360d4f7d511ae5bb2c5c8f
-    this.options.sourceFiles.forEach(file => karmaConfig.files.push(file));
-    this.options.additionalFiles.forEach(file => karmaConfig.files.push(file));
-=======
     this.options.files.forEach(file => karmaConfig.files.push(file.path));
->>>>>>> (feature-order-files) Changed test runner workings to use the an InputFile array instead of 2 lists of strings.
 
     // Override port
     karmaConfig.port = this.options.port;
