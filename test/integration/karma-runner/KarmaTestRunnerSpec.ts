@@ -17,7 +17,7 @@ describe('KarmaTestRunner', function() {
 
     before(() => {
       testRunnerOptions = {
-        files: [{path: 'test/sampleProject/src/Add.js', shouldMutate: true }, { path: 'test/sampleProject/test/AddSpec.js', shouldMutate: false }],
+        files: [{ path: 'test/sampleProject/src/Add.js', shouldMutate: true }, { path: 'test/sampleProject/test/AddSpec.js', shouldMutate: false }],
         port: 9877,
         coverageEnabled: true,
         strykerOptions: {}
@@ -82,8 +82,7 @@ describe('KarmaTestRunner', function() {
 
     before(() => {
       let testRunnerOptions = {
-        sourceFiles: ['test/sampleProject/src/Error.js'],
-        additionalFiles: ['test/sampleProject/test/AddSpec.js'],
+        files: [{ path: 'test/sampleProject/src/Error.js', shouldMutate: true }, { path: 'test/sampleProject/test/AddSpec.js', shouldMutate: false }],
         port: 9879,
         coverageEnabled: false,
         strykerOptions: {}
@@ -102,21 +101,20 @@ describe('KarmaTestRunner', function() {
       });
     });
   })
-  
+
   describe('when no error occured and no test is performed', () => {
-     before(() => {
+    before(() => {
       let testRunnerOptions = {
-        sourceFiles: ['test/sampleProject/src/Add.js'],
-        additionalFiles: ['test/sampleProject/test/EmptySpec.js'],
+        files: [{ path: 'test/sampleProject/src/Add.js', shouldMutate: true }, { path: 'test/sampleProject/test/EmptySpec.js', shouldMutate: true }],
         port: 9880,
         coverageEnabled: false,
         strykerOptions: {}
       };
       sut = new KarmaTestRunner(testRunnerOptions);
     });
-    
+
     it('should report Complete without errors', () => {
-       return expect(sut.run()).to.eventually.satisfy((testResult: RunResult) => {
+      return expect(sut.run()).to.eventually.satisfy((testResult: RunResult) => {
         expect(testResult.succeeded).to.be.eq(0);
         expect(testResult.failed).to.be.eq(0);
         expect(testResult.result).to.be.eq(TestResult.Complete);
