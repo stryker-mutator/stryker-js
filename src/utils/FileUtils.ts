@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import fs = require('fs');
 import os = require('os');
 import path = require('path');
+import * as nodeGlob from 'glob';
 
 /**
  * Utility class for handling temporary files.
@@ -142,4 +143,18 @@ export default class FileUtils {
       return false;
     }
   };
+}
+
+export function glob(expression: string): Promise<string[]> {
+  return new Promise<string[]>((resolve, reject) => {
+
+    nodeGlob(expression, (error, matches) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(matches);
+      }
+    });
+
+  });
 }
