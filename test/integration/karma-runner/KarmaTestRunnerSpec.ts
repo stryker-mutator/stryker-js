@@ -80,4 +80,52 @@ describe('KarmaTestRunner', function() {
     });
   });
 
+  describe('when an error occures while running tests', () => {
+
+    before(() => {
+      let testRunnerOptions = {
+        sourceFiles: ['test/sampleProject/src/Error.js'],
+        additionalFiles: ['test/sampleProject/test/AddSpec.js'],
+        port: 9879,
+        coverageEnabled: false,
+        strykerOptions: {}
+      };
+      sut = new KarmaTestRunner(testRunnerOptions);
+    });
+
+    it('should report Error with the error message', () => {
+      return expect(sut.run()).to.eventually.satisfy((testResult: RunResult) => {
+        expect(testResult.succeeded).to.be.eq(0);
+        expect(testResult.failed).to.be.eq(0);
+        expect(testResult.result).to.be.eq(TestResult.Error);
+        expect(testResult.errorMessages.length).to.equal(1);
+        expect(testResult.errorMessages[0].indexOf('ReferenceError: Can\'t find variable: someGlobalVariableThatIsNotDeclared\nat')).to.eq(0);
+        return true;
+      });
+    });
+  })
+  
+  describe('when no error occured and no test is performed', () => {
+     before(() => {
+      let testRunnerOptions = {
+        sourceFiles: ['test/sampleProject/src/Add.js'],
+        additionalFiles: ['test/sampleProject/test/EmptySpec.js'],
+        port: 9880,
+        coverageEnabled: false,
+        strykerOptions: {}
+      };
+      sut = new KarmaTestRunner(testRunnerOptions);
+    });
+    
+    it('should report Complete without errors', () => {
+       return expect(sut.run()).to.eventually.satisfy((testResult: RunResult) => {
+        expect(testResult.succeeded).to.be.eq(0);
+        expect(testResult.failed).to.be.eq(0);
+        expect(testResult.result).to.be.eq(TestResult.Complete);
+        expect(testResult.errorMessages.length).to.equal(0);
+        return true;
+      });
+    });
+  });
+
 });

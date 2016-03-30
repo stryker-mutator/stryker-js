@@ -10,6 +10,7 @@ import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as sinonChai from 'sinon-chai';
 import * as path from 'path';
+import * as _ from 'lodash';
 
 let expect = chai.expect;
 chai.use(sinonChai);
@@ -47,7 +48,9 @@ describe('IsolatedTestRunnerAdapter', () => {
 
     it('should spawn a child process', () => {
       let expectedWorkerProcessPath = path.resolve(__dirname + '/../../../src/isolated-runner/') + '/IsolatedTestRunnerAdapterWorker';
-      expect(child_process.fork).to.have.been.calledWith(expectedWorkerProcessPath, [], {  execArgv: [], silent: true });
+      let expectedExecArgv = _.clone(process.execArgv);
+      _.remove(expectedExecArgv, arg => arg.substr(0, 11) === '--debug-brk');
+      expect(child_process.fork).to.have.been.calledWith(expectedWorkerProcessPath, [], { execArgv: expectedExecArgv, silent: true });
       expect(fakeChildProcess.on).to.have.been.calledWith('message');
     });
 
@@ -84,14 +87,14 @@ describe('IsolatedTestRunnerAdapter', () => {
       });
 
       describe('and a result message occurred after 1900 ms', () => {
-        
-        function receiveResultMessage(){
+
+        function receiveResultMessage() {
           let callback: (message: Message<ResultMessageBody>) => void = fakeChildProcess.on.getCall(0).args[1];
           let message = { type: MessageType.Result, body: { result: { result: TestResult.Complete } } };
           callback(message);
           return message;
         }
-        
+
         let expectedMessage: Message<ResultMessageBody>;
         beforeEach(() => {
           clock.tick(1900);

@@ -8,6 +8,7 @@ interface RunResult {
   failed?: number;
   timeSpent?: number;
   coverage?: CoverageCollection;
+  errorMessages?: string[];
 }
 
 export default RunResult;
