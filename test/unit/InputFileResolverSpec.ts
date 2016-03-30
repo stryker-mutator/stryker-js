@@ -20,7 +20,7 @@ describe('InputFileResolver', () => {
     let results: InputFile[];
     beforeEach(() => {
       sut = new InputFileResolver(['mut*tion*'], ['file1', 'mutation1', 'file2', 'mutation2', 'file3']);
-      globStub.withArgs('mut*tion*').returns(Promise.resolve(['\\mute1.js', '\\mute2.js']))
+      globStub.withArgs('mut*tion*').returns(Promise.resolve(['/mute1.js', '/mute2.js']))
       globStub.withArgs('mutation1').returns(Promise.resolve(['/mute1.js']));
       globStub.withArgs('mutation2').returns(Promise.resolve(['/mute2.js']));
       globStub.withArgs('file1').returns(Promise.resolve(['/file1.js']));
@@ -46,13 +46,13 @@ describe('InputFileResolver', () => {
     let error: any;
     beforeEach(() => {
       sut = new InputFileResolver(['mut*tion*'], ['file1']);
-      globStub.withArgs('mut*tion*').returns(Promise.resolve(['\\mute1.js', '\\mute2.js']))
+      globStub.withArgs('mut*tion*').returns(Promise.resolve(['/mute1.js', '/mute2.js']))
       globStub.withArgs('file1').returns(Promise.resolve(['/file1.js']));
       return sut.resolve().then(r => results = r, e => error = e);
     });
 
     it('should reject the result', () => {
-      let expectedFilesNames = ['\\mute1.js', '\\mute2.js'];
+      let expectedFilesNames = ['/mute1.js', '/mute2.js'];
       fileUtils.normalize(expectedFilesNames)
       expect(results).to.not.be.ok;
       expect(error).to.deep.equal(
