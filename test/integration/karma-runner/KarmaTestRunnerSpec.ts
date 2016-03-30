@@ -17,8 +17,7 @@ describe('KarmaTestRunner', function() {
 
     before(() => {
       testRunnerOptions = {
-        sourceFiles: ['test/sampleProject/src/Add.js'],
-        additionalFiles: ['test/sampleProject/test/AddSpec.js'],
+        files: [{path: 'test/sampleProject/src/Add.js', shouldMutate: true }, { path: 'test/sampleProject/test/AddSpec.js', shouldMutate: false }],
         port: 9877,
         coverageEnabled: true,
         strykerOptions: {}
@@ -54,8 +53,7 @@ describe('KarmaTestRunner', function() {
 
     before(() => {
       testRunnerOptions = {
-        sourceFiles: ['test/sampleProject/src/Add.js'],
-        additionalFiles: ['test/sampleProject/test/AddSpec.js'],
+        files: [{ path: 'test/sampleProject/src/Add.js', shouldMutate: true }, { path: 'test/sampleProject/test/AddSpec.js', shouldMutate: false }],
         port: 9878,
         coverageEnabled: false,
         strykerOptions: {}

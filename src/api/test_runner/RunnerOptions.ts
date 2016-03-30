@@ -1,15 +1,10 @@
-import {StrykerOptions} from '../core';
+import {StrykerOptions, InputFile} from '../core';
 
 interface RunnerOptions{
   /**
-   * A collection representing the source files
+   * A collection of paths to the files
    */
-  sourceFiles: string[];
-  
-  /**
-   * A collection representing the additional files (test files and needed library files)
-   */
-  additionalFiles: string[];
+  files: InputFile[];
   
   /**
    * Represents a free port which the test runner can choose to use

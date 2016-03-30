@@ -1,5 +1,6 @@
 import {TestSelector, TestSelectorSettings, TestSelectorFactory} from '../api/test_selector';
 import {StrykerTempFolder} from '../api/util';
+import {InputFile} from '../api/core';
 import * as fs from 'fs';
 
 const INTERCEPTOR_CODE = `(function(window){

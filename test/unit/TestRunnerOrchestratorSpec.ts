@@ -16,8 +16,7 @@ let expect = chai.expect;
 describe('TestRunnerOrchestrator', () => {
   let sut: TestRunnerOrchestrator;
   let sandbox: Sinon.SinonSandbox;
-  let sourceFiles = ['a.js', 'b.js'];
-  let otherFiles = ['aSpec.js', 'bSpec.js'];
+  let files = [{ path: 'a.js', shouldMutate: true }, { path: 'b.js', shouldMutate: true }, { path: 'aSpec.js', shouldMutate: false }, { path: 'bSpec.js', shouldMutate: false }];
   let strykerOptions = { testFramework: 'superFramework', testRunner: 'superRunner', port: 42 };
   let firstTestRunner: any;
   let secondTestRunner: any;
@@ -46,7 +45,7 @@ describe('TestRunnerOrchestrator', () => {
       .onFirstCall().returns(firstTestRunner)
       .onSecondCall().returns(secondTestRunner);
     sandbox.stub(TestSelectorFactory.instance(), 'create', () => selector);
-    sut = new TestRunnerOrchestrator(strykerOptions, sourceFiles, otherFiles);
+    sut = new TestRunnerOrchestrator(strykerOptions, files);
   });
 
   describe('recordCoverage()', () => {
@@ -57,9 +56,9 @@ describe('TestRunnerOrchestrator', () => {
     });
 
     it('should have created an isolated test runner', () => {
-      let expectedOtherFiles = ['some', 'files'];
-      otherFiles.forEach(file => expectedOtherFiles.push(file));
-      expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith({ sourceFiles, additionalFiles: expectedOtherFiles, port: 42, coverageEnabled: true, strykerOptions });
+      let expectedFiles = [{ path: 'some', shouldMutate: false }, { path: 'files', shouldMutate: false }];
+      files.forEach(file => expectedFiles.push(file));
+      expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith({ files: expectedFiles, port: 42, coverageEnabled: true, strykerOptions });
     });
 
     it('should have created the test selector', () => {
@@ -106,20 +105,29 @@ describe('TestRunnerOrchestrator', () => {
     });
 
     it('should have created 2 test runners', () => {
+      let expectedFiles = [
+        { path: 'some', shouldMutate: false },
+        { path: 'files', shouldMutate: false },
+        { path: `a-folder${path.sep}a.js`, shouldMutate: true },
+        { path: `a-folder${path.sep}b.js`, shouldMutate: true },
+        { path: 'aSpec.js', shouldMutate: false },
+        { path: 'bSpec.js', shouldMutate: false }
+      ];
+
       expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWithMatch
-        ({ additionalFiles: ["some", "files", "aSpec.js", "bSpec.js"], sourceFiles: [`a-folder${path.sep}a.js`, `a-folder${path.sep}b.js`], port: 42, coverageEnabled: false, strykerOptions });
+        ({ files: expectedFiles, port: 42, coverageEnabled: false, strykerOptions });
       expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith
-        ({ additionalFiles: ["some", "files", "aSpec.js", "bSpec.js"], sourceFiles: [`a-folder${path.sep}a.js`, `a-folder${path.sep}b.js`], port: 43, coverageEnabled: false, strykerOptions });
+        ({ files: expectedFiles, port: 43, coverageEnabled: false, strykerOptions });
     });
 
     it('should have ran mutant 1 and 3 on the first test runner', () => {
       expect(firstTestRunner.run).to.have.been.calledTwice;
     });
-    
+
     it('should have ran mutant 2 on the second test runner', () => {
       expect(secondTestRunner.run).to.have.been.calledOnce;
     });
-    
+
     it('should have reporterd mutant state correctly', () => {
       expect(mutants[0].status).to.be.eq(MutantStatus.KILLED);
       expect(mutants[1].status).to.be.eq(MutantStatus.SURVIVED);
