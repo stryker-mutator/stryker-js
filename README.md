@@ -26,21 +26,21 @@ node node_modules/stryker/dist/src/Stryker.js --help
 
 ## Configuration
 ### Available options
-#### Source files
-**Short notation:** -s  
-**Full notation:** --src  
+#### Files to mutate
+**Short notation:** -m  
+**Full notation:** --mutate  
 **Optional:** **No**  
 **Description:**  
-The list of source files which should be mutated, separated by comma's.  
-**Example:** -s src/a.js,src/b.js
+A comma seperated list of globbing expression used for selecting the files that should be mutated.  
+**Example:** -m src/\*\*/\*.js,a.js`
 
-#### Other files
-**Short notation:** -o 
-**Full notation:** --other-files  
+#### All files
+**Short notation:** -f  
+**Full notation:** --files  
 **Optional:** **No**  
 **Description:**  
-The list of other files which are needed, separated by comma's. These should be: test files, library files and any other file you need to run your project.
-**Example:** -o test/a.js,test/b.js
+A comma seperated list of globbing expression used for selecting all files needed to run the tests. These should be: test files, library files, source files and any other file you need to run your project. The order of the files could have an impact on the test result.  
+**Example:** -f node_modules/a-lib/\*\*/\*.js,src/\*\*/\*.js,a.js,test/\*\*/\*.js
 
 ### Default config
 By default, stryker requires two arguments: the source and test files.  
@@ -48,7 +48,7 @@ When calling stryker with multiple source and/or test files, they have to be sep
 
 A basic usage of stryker is:
 ```
-node node_modules/stryker/src/Stryker.js –s src/myFirstFile.js,src/mySecondFile.js –o test/myFirstFileSpec.js,test/mySecondsFileSpec.js,libs/externalLibrary.js
+node node_modules/stryker/src/Stryker.js –m src/myFirstFile.js,src/mySecondFile.js –f libs/externalLibrary.js,src/myFirstFile.js,src/mySecondFile.js,test/*.js,
 ```
 
 ## Supported mutations
