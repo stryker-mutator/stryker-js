@@ -70,14 +70,15 @@ export default class Stryker {
               testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
                 this.reporter.allMutantsTested(mutants);
                 console.log('Done!');
-                resolve();
               });
             } else {
               this.logFailedTests(unsuccessfulTests);
             }
+            resolve();
           });
         }, (errors: string[]) => {
-          errors.forEach(error => console.log(`ERROR: ${error}`))
+          errors.forEach(error => console.log(`ERROR: ${error}`));
+          resolve();
         });
 
 
@@ -95,24 +96,27 @@ export default class Stryker {
    * @returns {Boolean} True if all tests passed.
    */
   private logFailedTests(unsuccessfulTests: RunResult[]): void {
-    let specNames: string[] = [];
-    unsuccessfulTests.forEach(runResult => {
-      runResult.specNames.forEach(specName => {
-        if (specNames.indexOf(specName) < 0) {
-          specNames.push(specName);
-        }
-      });
-    });
-
-    console.log('ERROR: One or more tests failed in the inial test run:');
-    specNames.forEach(filename => {
-      console.log('\t', filename);
-    });
-    if (specNames.length > 0) {
+    let failedSpecNames =
+      _.uniq(
+        _.flatten(unsuccessfulTests
+          .filter(runResult => runResult.result === TestResult.Complete)
+          .map(runResult => runResult.specNames)
+        ))
+        .sort();
+    if (failedSpecNames.length > 0) {
       console.log('ERROR: One or more tests failed in the inial test run:');
-      specNames.forEach(filename => {
-        console.log('\t', filename);
-      });
+      failedSpecNames.forEach(filename => console.log('\t', filename));
+    }
+
+    let errors =
+      _.flatten(unsuccessfulTests
+        .filter(runResult => runResult.result === TestResult.Error)
+        .map(runResult => runResult.errorMessages))
+        .sort();
+
+    if (errors.length > 0) {
+      console.log('ERROR: One or more tests errored in the initial test run:')
+      errors.forEach(error => console.log('\t', error));
     }
   }
 }
