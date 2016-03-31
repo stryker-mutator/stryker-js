@@ -25,13 +25,13 @@ node node_modules/stryker/dist/src/Stryker.js --help
 ```
 
 ## Configuration
-### Available options
+### Required options
 #### Files to mutate
 **Short notation:** -m  
 **Full notation:** --mutate  
 **Optional:** **No**  
 **Description:**  
-A comma seperated list of globbing expression used for selecting the files that should be mutated.  
+A comma seperated list of globbing expressions used for selecting the files that should be mutated.  
 **Example:** -m src/\*\*/\*.js,a.js`
 
 #### All files
@@ -39,7 +39,9 @@ A comma seperated list of globbing expression used for selecting the files that 
 **Full notation:** --files  
 **Optional:** **No**  
 **Description:**  
-A comma seperated list of globbing expression used for selecting all files needed to run the tests. These should be: test files, library files, source files and any other file you need to run your project. The order of the files could have an impact on the test result.  
+A comma seperated list of globbing expressions used for selecting all files needed to run the tests.
+These include: test files, library files, source files (the files selected with `--mutate`) and any other file you need to run your tests. 
+The order of the files specified here will be the order used to load the file in the test runner, for example: karma.   
 **Example:** -f node_modules/a-lib/\*\*/\*.js,src/\*\*/\*.js,a.js,test/\*\*/\*.js
 
 ### Default config
