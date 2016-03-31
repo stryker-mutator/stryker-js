@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 var program = require('commander');
-import FileUtils from './utils/FileUtils';
+import {normalize} from './utils/FileUtils';
 import Mutator from './Mutator';
 import Mutant from './Mutant';
 import ReporterFactory from './ReporterFactory';
@@ -14,30 +14,26 @@ import './jasmine_test_selector/JasmineTestSelector';
 import './karma-runner/KarmaTestRunner';
 import {RunResult, TestResult} from './api/test_runner';
 import MutantRunResultMatcher from './MutantRunResultMatcher';
+import InputFileResolver from './InputFileResolver';
 
 export default class Stryker {
 
-  fileUtils = new FileUtils();
   reporter: BaseReporter;
-  private testRunnerOrchestrator: TestRunnerOrchestrator;
+  options: StrykerOptions;
 
   /**
    * The Stryker mutation tester.
    * @constructor
-   * @param {String[]} sourceFiles - The list of source files which should be mutated.
-   * @param {String[]} otherFiles - The list of test files.
+   * @param {String[]} mutateFilePatterns - A comma seperated list of globbing expression used for selecting the files that should be mutated
+   * @param {String[]} allFilePatterns - A comma seperated list of globbing expression used for selecting all files needed to run the tests. These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine)
    * @param {Object} [options] - Optional options.
    */
-  constructor(private sourceFiles: string[], private otherFiles: string[], options?: StrykerOptions) {
-    this.fileUtils.normalize(sourceFiles);
-    this.fileUtils.normalize(otherFiles);
-    this.fileUtils.createBaseTempFolder();
+  constructor(private mutateFilePatterns: string[], private allFilePatterns: string[], options?: StrykerOptions) {
 
-    options = options || {};
-    options.testFramework = 'jasmine';
-    options.testRunner = 'karma';
-    options.port = 1234;
-    this.testRunnerOrchestrator = new TestRunnerOrchestrator(options, sourceFiles, otherFiles);
+    this.options = options || {};
+    this.options.testFramework = 'jasmine';
+    this.options.testRunner = 'karma';
+    this.options.port = 1234;
 
     var reporterFactory = new ReporterFactory();
     this.reporter = reporterFactory.getReporter('console');
@@ -47,31 +43,50 @@ export default class Stryker {
    * Runs mutation testing. This may take a while.
    * @function
    */
-  runMutationTest(cb: () => void) {
-    console.log('INFO: Running initial test run');
-    this.testRunnerOrchestrator.recordCoverage().then((runResults) => {
-      let unsuccessfulTests = runResults.filter((runResult: RunResult) => runResult.failed > 0 || runResult.result !== TestResult.Complete);
-      if (unsuccessfulTests.length === 0) {
-        console.log('INFO: Initial test run succeeded');
+  runMutationTest(): Promise<void> {
 
-        let mutator = new Mutator();
-        let mutants = mutator.mutate(this.sourceFiles);
-        console.log('INFO: ' + mutants.length + ' Mutants generated');
+    return new Promise<void>(resolve => {
 
-        let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
-        mutantRunResultMatcher.matchWithMutants();
+      new InputFileResolver(this.mutateFilePatterns, this.allFilePatterns)
+        .resolve().then(inputFiles => {
+          let testRunnerOrchestrator = new TestRunnerOrchestrator(this.options, inputFiles)
 
-        this.testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
-          this.reporter.allMutantsTested(mutants);
-          console.log('Done!');
-          cb();
+          testRunnerOrchestrator.recordCoverage().then((runResults) => {
+            let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
+              return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
+            });
+            if (unsuccessfulTests.length === 0) {
+              console.log(`INFO: Initial test run succeeded. Ran ${runResults.length} tests.`);
+
+              let mutator = new Mutator();
+              let mutants = mutator.mutate(inputFiles
+                .filter(inputFile => inputFile.shouldMutate)
+                .map(file => file.path));
+              console.log('INFO: ' + mutants.length + ' Mutants generated');
+
+              let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
+              mutantRunResultMatcher.matchWithMutants();
+
+              testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
+                this.reporter.allMutantsTested(mutants);
+                console.log('Done!');
+                resolve();
+              });
+            } else {
+              this.logFailedTests(unsuccessfulTests);
+            }
+          });
+        }, (errors: string[]) => {
+          errors.forEach(error => console.log(`ERROR: ${error}`))
         });
-      } else {
-        this.logFailedTests(unsuccessfulTests);
-      }
-    });
 
+
+      console.log('INFO: Running initial test run');
+
+    });
   }
+
+
 
   /**
    * Looks through a list of RunResults to see if all tests have passed.
@@ -81,26 +96,17 @@ export default class Stryker {
    */
   private logFailedTests(unsuccessfulTests: RunResult[]): void {
     let specNames: string[] = [];
-    unsuccessfulTests.forEach((runResult, i) => {
-      switch (runResult.result) {
-        case TestResult.Complete:
-          runResult.specNames.forEach(specName => {
-            if (specNames.indexOf(specName) < 0) {
-              specNames.push(specName);
-            }
-          });
-          break;
-        case TestResult.Error:
-          console.log(`ERROR: test iteration ${i} resulted in an error`);
-          break;
-        case TestResult.Timeout:
-          console.log(`ERROR: test iteration ${i} resulted in a timeout`);
-          break;
-      }
+    unsuccessfulTests.forEach(runResult => {
+      runResult.specNames.forEach(specName => {
+        if (specNames.indexOf(specName) < 0) {
+          specNames.push(specName);
+        }
+      });
+    });
 
-      if (runResult.errorMessages) {
-        runResult.errorMessages.forEach(error => console.log(`ERROR: ${error}`));
-      }
+    console.log('ERROR: One or more tests failed in the inial test run:');
+    specNames.forEach(filename => {
+      console.log('\t', filename);
     });
     if (specNames.length > 0) {
       console.log('ERROR: One or more tests failed in the inial test run:');
@@ -110,19 +116,22 @@ export default class Stryker {
     }
   }
 }
+
 (function run() {
   function list(val: string) {
     return val.split(',');
   }
   //TODO: Implement the new Stryker options
   program
-    .usage('-s <items> -t <items> [other options]')
-    .option('-s, --src <items>', 'A list of source files. Example: a.js,b.js', list)
-    .option('-o, --other-files <items>', 'A list of other files, such as test files or library files. Example: a.js,b.js', list)
+    .usage('-f <files> -m <filesToMutate> [other options]')
+    .description('Starts the stryker mutation testing process. Required arguments are --mutate and --files. You can use globbing expressions to target multiple files. See https://github.com/isaacs/node-glob#glob-primer for more information about the globbing syntax.')
+    .option('-m, --mutate <filesToMutate>', `A comma seperated list of globbing expression used for selecting the files that should be mutated.
+                              Example: src/**/*.js,a.js`, list)
+    .option('-f, --files <allFiles>', `A comma seperated list of globbing expression used for selecting all files needed to run the tests. These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine).
+                              Example: node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`, list)
     .parse(process.argv);
 
-  if (program.src && program.otherFiles) {
-    var stryker = new Stryker(program.src, program.otherFiles);
-    stryker.runMutationTest(function() { });
+  if (program.mutate && program.files) {
+    new Stryker(program.mutate, program.files).runMutationTest();
   }
 })();

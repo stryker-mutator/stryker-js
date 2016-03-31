@@ -26,8 +26,7 @@ describe('IsolatedTestRunnerAdapter', () => {
   beforeEach(() => {
     runnerOptions = {
       port: 42,
-      sourceFiles: [],
-      additionalFiles: [],
+      files: [],
       strykerOptions: null
     };
     sinonSandbox = sinon.sandbox.create();

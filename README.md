@@ -25,22 +25,24 @@ node node_modules/stryker/dist/src/Stryker.js --help
 ```
 
 ## Configuration
-### Available options
-#### Source files
-**Short notation:** -s  
-**Full notation:** --src  
+### Required options
+#### Files to mutate
+**Short notation:** -m  
+**Full notation:** --mutate  
 **Optional:** **No**  
 **Description:**  
-The list of source files which should be mutated, separated by comma's.  
-**Example:** -s src/a.js,src/b.js
+A comma seperated list of globbing expressions used for selecting the files that should be mutated.  
+**Example:** -m src/\*\*/\*.js,a.js`
 
-#### Other files
-**Short notation:** -o 
-**Full notation:** --other-files  
+#### All files
+**Short notation:** -f  
+**Full notation:** --files  
 **Optional:** **No**  
 **Description:**  
-The list of other files which are needed, separated by comma's. These should be: test files, library files and any other file you need to run your project.
-**Example:** -o test/a.js,test/b.js
+A comma seperated list of globbing expressions used for selecting all files needed to run the tests.
+These include: test files, library files, source files (the files selected with `--mutate`) and any other file you need to run your tests. 
+The order of the files specified here will be the order used to load the file in the test runner, for example: karma.   
+**Example:** -f node_modules/a-lib/\*\*/\*.js,src/\*\*/\*.js,a.js,test/\*\*/\*.js
 
 ### Default config
 By default, stryker requires two arguments: the source and test files.  
@@ -48,7 +50,7 @@ When calling stryker with multiple source and/or test files, they have to be sep
 
 A basic usage of stryker is:
 ```
-node node_modules/stryker/src/Stryker.js –s src/myFirstFile.js,src/mySecondFile.js –o test/myFirstFileSpec.js,test/mySecondsFileSpec.js,libs/externalLibrary.js
+node node_modules/stryker/src/Stryker.js –m src/myFirstFile.js,src/mySecondFile.js –f libs/externalLibrary.js,src/myFirstFile.js,src/mySecondFile.js,test/*.js,
 ```
 
 ## Supported mutations
