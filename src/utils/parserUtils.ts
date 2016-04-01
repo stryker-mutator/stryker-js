@@ -2,7 +2,6 @@
 
 import * as _ from 'lodash';
 import * as esprima from 'esprima';
-import * as escodegen from 'escodegen';
 
 /**
  * Utility class for parsing and generating code.
@@ -30,8 +29,6 @@ export function parse(code: string): any {
   }
 
   var abstractSyntaxTree = esprima.parse(code, esprimaOptions);
-  //Attaching the comments is needed to keep the comments and to allow blank lines to be preserved.
-  abstractSyntaxTree = escodegen.attachComments(abstractSyntaxTree, abstractSyntaxTree.comments, abstractSyntaxTree.tokens);
 
   return abstractSyntaxTree;
 };
