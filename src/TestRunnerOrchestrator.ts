@@ -43,16 +43,24 @@ export default class TestRunnerOrchestrator {
           return null; // we're done
         } else {
           var mutant = mutants.pop();
-          let nextRunner = testRunners.pop();
-          let sourceFileCopy = nextRunner.sourceFileMap[mutant.filename];
-          return Promise.all([mutant.save(sourceFileCopy), nextRunner.selector.select(mutant.scopedTestIds)])
-            .then(() => nextRunner.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
-            .then((runResult) => {
-              this.updateMutantStatus(mutant, runResult);
+
+          if (mutant.scopedTestIds.length > 0) {
+            let nextRunner = testRunners.pop();
+            let sourceFileCopy = nextRunner.sourceFileMap[mutant.filename];
+            return Promise.all([mutant.save(sourceFileCopy), nextRunner.selector.select(mutant.scopedTestIds)])
+              .then(() => nextRunner.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
+              .then((runResult) => {
+                this.updateMutantStatus(mutant, runResult);
+                reporter.mutantTested(mutant);
+                return mutant.reset(sourceFileCopy);
+              })
+              .then(() => testRunners.push(nextRunner)); // mark the runner as available again
+          } else {
+            return new Promise<number>(resolve => {
               reporter.mutantTested(mutant);
-              return mutant.reset(sourceFileCopy);
-            })
-            .then(() => testRunners.push(nextRunner)); // mark the runner as available again
+              resolve();
+            });
+          }
         }
       }
       return new PromisePool(promiseProducer, testRunners.length)
@@ -91,7 +99,7 @@ export default class TestRunnerOrchestrator {
             runResults[currentTestIndex] = runResult;
             resolve(this.runSingleTestsRecursive(testSelector, testRunner, runResults, currentTestIndex + 1));
           } else {
-            if(runResult.result !== TestResult.Complete){
+            if (runResult.result !== TestResult.Complete) {
               // If this was iteration n+1 (n = number of tests), the runResult.result will be Complete, so we don't record it
               runResults[currentTestIndex] = runResult;
             }
