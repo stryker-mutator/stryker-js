@@ -5,7 +5,7 @@ import BaseMutation from './mutations/BaseMutation';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import MutationRegistry from './MutationRegistry';
-import ParserUtils from './utils/ParserUtils';
+import * as parserUtils from './utils/ParserUtils';
 
 /**
  * Class capable of finding spots to mutate in files.
@@ -26,7 +26,6 @@ export default class Mutator {
    */
   mutate(sourceFiles: string[]) {
     var mutants: Mutant[] = [];
-    var parserUtils = new ParserUtils();
     var types = _.uniq(_.flatten(_.map(this.mutations, function(mutation: BaseMutation) {
       return mutation.types;
     })));

@@ -3,7 +3,7 @@
 var expect = require('chai').expect;
 import Mutant from '../../../src/Mutant';
 import RemoveConditionalsMutation from '../../../src/mutations/RemoveConditionalsMutation';
-import ParserUtils from '../../../src/utils/ParserUtils';
+import * as parserUtils from '../../../src/utils/ParserUtils';
 require('mocha-sinon');
 
 describe('RemoveConditionalsMutation', function() {
@@ -35,7 +35,6 @@ describe('RemoveConditionalsMutation', function() {
       console.log("I would like to buy the item");\
     }';
 
-    var parserUtils = new ParserUtils();
     ast = parserUtils.parse(code);
     ifStatement = <ESTree.IfStatement>ast.body[1];
     whileLoop = <ESTree.WhileStatement>ast.body[2];
