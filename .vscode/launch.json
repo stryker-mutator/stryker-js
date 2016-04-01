@@ -6,7 +6,7 @@
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
-            "preLaunchTask": "ts",
+            // "preLaunchTask": "ts",
             "stopOnEntry": false,
             "args": [
                 "mochaTest:unit"
@@ -50,7 +50,7 @@
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/dist/src/Stryker.js",
-            "preLaunchTask": "ts",
+            // "preLaunchTask": "ts",
             "stopOnEntry": false,
             "args": [
                 "--mutate",
