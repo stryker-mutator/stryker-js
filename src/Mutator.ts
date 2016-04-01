@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 import BaseMutation from './mutations/BaseMutation';
-import FileUtils from './utils/FileUtils';
+import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import MutationRegistry from './MutationRegistry';
 import ParserUtils from './utils/ParserUtils';
@@ -12,7 +12,6 @@ import ParserUtils from './utils/ParserUtils';
  */
 export default class Mutator {
   private mutationRegistry = new MutationRegistry();
-  private fileUtils = new FileUtils();
   private mutations: BaseMutation[];
 
   public constructor() {
@@ -34,7 +33,7 @@ export default class Mutator {
 
     _.forEach(sourceFiles, (sourceFile: string) => {
       try {
-        var fileContent = this.fileUtils.readFile(sourceFile);
+        var fileContent = fileUtils.readFile(sourceFile);
         var abstractSyntaxTree = parserUtils.parse(fileContent);
         var nodes = parserUtils.getNodesWithType(abstractSyntaxTree, types);
         var newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);

@@ -2,31 +2,10 @@
 
 var expect = require('chai').expect;
 var fs = require('fs');
-import FileUtils from '../../../src/utils/FileUtils';
+import * as fileUtils from '../../../src/utils/fileUtils';
 require('mocha-sinon');
 
-describe('FileUtils', function() {
-  var fileUtils: FileUtils;
-
-  beforeEach(function() {
-    fileUtils = new FileUtils();
-  });
-
-  it('should generate different file names if they are made at the same time', function() {
-    var baseFolderName = 'stryker';
-    var filePath = '/src/hello.js';
-    var data = 'var i = 5;';
-    this.sinon.stub(FileUtils.prototype, 'createDirectory');
-    this.sinon.stub(FileUtils.prototype, 'createFile');
-    this.sinon.stub(Date, 'now', function() {
-      return 1447849085;
-    });
-
-    var file1 = fileUtils.createFileInTempFolder(baseFolderName + filePath, data);
-    var file2 = fileUtils.createFileInTempFolder(baseFolderName + filePath, data);
-
-    expect(file1).to.not.equal(file2);
-  });
+describe('fileUtils', function() {
 
   describe('should be able to read a file', function() {
     it('synchronously', function() {
