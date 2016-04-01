@@ -4,7 +4,6 @@ import * as  _ from 'lodash';
 import * as chalk from 'chalk';
 import BaseReporter from './BaseReporter';
 import Mutant, {MutantStatus} from '../Mutant';
-import TestFile from '../TestFile';
 
 /**
  * Represents a reporter which logs output to the console.
