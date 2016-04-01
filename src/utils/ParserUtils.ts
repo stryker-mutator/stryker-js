@@ -3,7 +3,6 @@
 import * as _ from 'lodash';
 import * as esprima from 'esprima';
 import * as escodegen from 'escodegen';
-import AbstractSyntaxTreeNode from '../AbstractSyntaxTreeNode';
 
 /**
  * Utility class for parsing and generating code.
@@ -50,20 +49,20 @@ export default class ParserUtils {
    * @param  types - The list of types which are requested.
    * @returns  All nodes which have one of the requested types.
    */
-  public getNodesWithType (abstractSyntaxTree: any, types: string[], nodes?: AbstractSyntaxTreeNode[], parent?: AbstractSyntaxTreeNode, key?: string): AbstractSyntaxTreeNode[] {
+  public getNodesWithType (abstractSyntaxTree: any, types: string[], nodes?: any[], key?: string): any[] {
     nodes = nodes || [];
 
     if (abstractSyntaxTree instanceof Object && !(abstractSyntaxTree instanceof Array) && _.indexOf(types, abstractSyntaxTree.type) >= 0) {
-      nodes.push(new AbstractSyntaxTreeNode(abstractSyntaxTree, parent, key));
+      nodes.push(abstractSyntaxTree);
     }
 
     _.forOwn(abstractSyntaxTree, (childNode, key) => {
       if (childNode instanceof Object && !(childNode instanceof Array)) {
-        this.getNodesWithType(childNode, types, nodes, abstractSyntaxTree, key);
+        this.getNodesWithType(childNode, types, nodes, key);
       } else if (childNode instanceof Array) {
         _.forEach(childNode, (arrayChild, index) => {
           if (arrayChild instanceof Object && !(arrayChild instanceof Array)) {
-            this.getNodesWithType(arrayChild, types, nodes, childNode, index);
+            this.getNodesWithType(arrayChild, types, nodes, index);
           }
         });
       }
