@@ -105,7 +105,6 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   }
 
   private handleTimeout() {
-    console.log('TIMEOUT occurred, restarting test runner', this.realTestRunnerName);
     this.workerProcess.kill();
     this.startWorker();
     this.currentPromiseFulfillmentCallback({ result: TestResult.Timeout });
