@@ -1,6 +1,5 @@
 'use strict';
 
-import FileUtils from '../../src/utils/FileUtils';
 import Stryker from '../../src/Stryker';
 import {InputFile} from '../../src/api/core';
 import {RunResult, TestResult} from '../../src/api/test_runner';

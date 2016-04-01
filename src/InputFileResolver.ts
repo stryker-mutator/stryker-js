@@ -1,5 +1,5 @@
 import {InputFile} from './api/core';
-import {glob, normalize} from './utils/FileUtils';
+import {glob, normalize} from './utils/fileUtils';
 
 export default class InputFileResolver {
 
