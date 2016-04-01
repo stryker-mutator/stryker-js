@@ -5,7 +5,7 @@ import BaseMutation from './mutations/BaseMutation';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import MutationRegistry from './MutationRegistry';
-import * as parserUtils from './utils/ParserUtils';
+import * as parserUtils from './utils/parserUtils';
 
 /**
  * Class capable of finding spots to mutate in files.

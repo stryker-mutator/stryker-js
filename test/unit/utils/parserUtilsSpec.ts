@@ -1,10 +1,10 @@
 'use strict';
 
 var expect = require('chai').expect;
-import * as parserUtils from '../../../src/utils/ParserUtils';
+import * as parserUtils from '../../../src/utils/parserUtils';
 require('mocha-sinon');
 
-describe('ParserUtils', function() {
+describe('parserUtils', function() {
 
   describe('should throw an error', function(){
     it('if no code is provided when parsing', function() {
