@@ -20,10 +20,16 @@ New features are welcome! Either as requests or proposals.
 2. Create a fork on your github account.
 3. When writing your code, please confirm to the existing coding style.
    See [.editorconfig](https://github.com/infosupport/stryker/blob/master/.editorconfig) and the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines)
-4. Please write unit tests or integration tests.
-5. Run the tests using `npm test` 
+4. Please create or edit unit tests or integration tests.
+5. Run the tests using `npm test`
+6. When creating commits, please confirm to [the angular commit message cheat](https://docs.google.com/document/d/1rk04jEuGfk9kYzfqCuOlPTSJw3hEDZJTBN5E5f1SALo/edit).
+   Namely in thise form `<type>(<scope>): <subject>\n\n[body]`
+   * Type: feat, fix, docs, style, refactor, test, chore.
+   * Scope can the the file or group of files (not a strict right or wrong)
+   * Subject and body: present tense (~changed~*change*, ~added~*add*) and include motivation and contrasts with previous behavior
+  
 
-Don’t get discouraged! We estimate that the response time from the
+Don't get discouraged! We estimate that the response time from the
 maintainers is around a day or so. 
 
 # Bug triage
