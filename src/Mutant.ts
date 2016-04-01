@@ -3,7 +3,6 @@
 import * as _ from'lodash';
 import BaseMutation from './mutations/BaseMutation';
 import FileUtils from './utils/FileUtils';
-import TestFile from './TestFile';
 import {StrykerTempFolder} from './api/util';
 import {RunResult} from './api/test_runner';
 
@@ -47,7 +46,6 @@ export enum MutantStatus {
  */
 export default class Mutant {
   public status: MutantStatus;
-  public testsRan: TestFile[] = [];
 
   private fileUtils = new FileUtils();
   private _mutatedCode: string;
