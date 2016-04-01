@@ -3,7 +3,7 @@
 var expect = require('chai').expect;
 import BaseOperatorMutation from '../../../src/mutations/BaseOperatorMutation';
 import Mutant from '../../../src/Mutant';
-import ParserUtils from '../../../src/utils/ParserUtils';
+import * as parserUtils from '../../../src/utils/parserUtils';
 require('mocha-sinon');
 
 describe('BaseOperatorMutation', function() {
@@ -68,7 +68,6 @@ describe('BaseOperatorMutation', function() {
     var code = 'var i = 5 * 3;';
     var column = 11;
     var mockMutation = new MockBaseOperatorMutation();
-    var parserUtils = new ParserUtils();
     var ast = parserUtils.parse(code);
     var node = ast.body[0].declarations[0].init;
     

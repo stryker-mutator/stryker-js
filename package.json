@@ -33,7 +33,6 @@
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
     "es6-promise-pool": "^2.4.1",
-    "escodegen": "^1.7.0",
     "esprima": "^2.7.0",
     "glob": "^7.0.3",
     "jasmine-core": "^2.3.4",

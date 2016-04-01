@@ -2,8 +2,6 @@
 
 import * as _ from'lodash';
 import BaseMutation from './mutations/BaseMutation';
-import FileUtils from './utils/FileUtils';
-import TestFile from './TestFile';
 import {StrykerTempFolder} from './api/util';
 import {RunResult} from './api/test_runner';
 
@@ -47,9 +45,7 @@ export enum MutantStatus {
  */
 export default class Mutant {
   public status: MutantStatus;
-  public testsRan: TestFile[] = [];
 
-  private fileUtils = new FileUtils();
   private _mutatedCode: string;
   private _mutatedLine: string;
   private _originalLine = '';
@@ -59,16 +55,16 @@ export default class Mutant {
   private _mutatedFilename: string;
   public specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
-  
-  get scopedTestIds() : number[] {
+
+  get scopedTestIds(): number[] {
     return this._scopedTestIds;
   }
-  
+
   get timeSpentScopedTests() {
     return this._timeSpentScopedTests;
   }
-  
-  public addRunResultForTest(index: number, runResult: RunResult){
+
+  public addRunResultForTest(index: number, runResult: RunResult) {
     this._scopedTestIds.push(index);
     this._timeSpentScopedTests += runResult.timeSpent;
     this.scopedTestsById[index] = runResult;
@@ -116,10 +112,7 @@ export default class Mutant {
    */
   constructor(private _mutation: BaseMutation, private _filename: string, private originalCode: string, substitude: string, private mutatedLocation: ESTree.SourceLocation) {
     this.status = MutantStatus.UNTESTED;
-
     this.insertSubstitude(substitude);
-
-    this.save();
   }
 
   /**
@@ -167,12 +160,8 @@ export default class Mutant {
    * Saves the mutated code in a mutated file.
    * @function
    */
-  save(fileName?: string) {
-    if (fileName) {
-      return StrykerTempFolder.writeFile(fileName, this.mutatedCode);
-    } else {
-      this._mutatedFilename = this.fileUtils.createFileInTempFolder(this.filename, this.mutatedCode);
-    }
+  save(fileName: string) {
+    return StrykerTempFolder.writeFile(fileName, this.mutatedCode);
   };
 
   /**

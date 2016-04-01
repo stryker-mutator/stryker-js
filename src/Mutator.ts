@@ -1,19 +1,17 @@
 'use strict';
 
 import * as _ from 'lodash';
-import AbstractSyntaxTreeNode from './AbstractSyntaxTreeNode';
 import BaseMutation from './mutations/BaseMutation';
-import FileUtils from './utils/FileUtils';
+import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import MutationRegistry from './MutationRegistry';
-import ParserUtils from './utils/ParserUtils';
+import * as parserUtils from './utils/parserUtils';
 
 /**
  * Class capable of finding spots to mutate in files.
  */
 export default class Mutator {
   private mutationRegistry = new MutationRegistry();
-  private fileUtils = new FileUtils();
   private mutations: BaseMutation[];
 
   public constructor() {
@@ -28,14 +26,13 @@ export default class Mutator {
    */
   mutate(sourceFiles: string[]) {
     var mutants: Mutant[] = [];
-    var parserUtils = new ParserUtils();
     var types = _.uniq(_.flatten(_.map(this.mutations, function(mutation: BaseMutation) {
       return mutation.types;
     })));
 
     _.forEach(sourceFiles, (sourceFile: string) => {
       try {
-        var fileContent = this.fileUtils.readFile(sourceFile);
+        var fileContent = fileUtils.readFile(sourceFile);
         var abstractSyntaxTree = parserUtils.parse(fileContent);
         var nodes = parserUtils.getNodesWithType(abstractSyntaxTree, types);
         var newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
@@ -63,13 +60,13 @@ export default class Mutator {
    * @param {AbstractSyntaxTreeNode[]} nodes - The nodes which could be used by mutations to generate mutants.
    * @returns {Mutant[]} All possible Mutants for the given set of nodes.
    */
-  private findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: AbstractSyntaxTreeNode[]) {
+  private findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: any[]) {
     var mutants: Mutant[] = [];
     _.forEach(nodes, (astnode, index) => {
-      if (astnode.node.type) {
+      if (astnode.type) {
         _.forEach(this.mutations, (mutation: BaseMutation) => {
-          if (mutation.canMutate(astnode.node)) {
-            mutants = mutants.concat(mutation.applyMutation(sourceFile, originalCode, astnode.node, ast));
+          if (mutation.canMutate(astnode)) {
+            mutants = mutants.concat(mutation.applyMutation(sourceFile, originalCode, astnode, ast));
           }
         });
       }

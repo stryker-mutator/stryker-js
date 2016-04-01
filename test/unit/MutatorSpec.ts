@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-import FileUtils from '../../src/utils/FileUtils';
+import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
 import Mutator from '../../src/Mutator';
 require('mocha-sinon');
@@ -20,7 +20,7 @@ describe('Mutator', function() {
   });
 
   it('should return an empty array if nothing could be mutated', function() {
-    this.sinon.stub(FileUtils.prototype, 'readFile', function() {
+    this.sinon.stub(fileUtils, 'readFile', function() {
       return '';
     });
 
@@ -30,7 +30,7 @@ describe('Mutator', function() {
   });
 
   it('should return an array with a single mutant if only one mutant could be found in a file', function() {
-    this.sinon.stub(FileUtils.prototype, 'readFile', function() {
+    this.sinon.stub(fileUtils, 'readFile', function() {
       return 'var i = 1 + 2;';
     });
 
@@ -42,7 +42,7 @@ describe('Mutator', function() {
   it('should be able to mutate code', function() {
     var originalCode = 'var i = 1 + 2;';
     var mutatedCode = 'var i = 1 - 2;';
-    this.sinon.stub(FileUtils.prototype, 'readFile', function() {
+    this.sinon.stub(fileUtils, 'readFile', function() {
       return originalCode;
     });
 
@@ -54,7 +54,7 @@ describe('Mutator', function() {
   it('should set the mutated line number', function() {
     var originalCode = '\n\nvar i = 1 + 2;';
     var mutatedCode = '\n\nvar i = 1 - 2;';
-    this.sinon.stub(FileUtils.prototype, 'readFile', function() {
+    this.sinon.stub(fileUtils, 'readFile', function() {
       return originalCode;
     });
 

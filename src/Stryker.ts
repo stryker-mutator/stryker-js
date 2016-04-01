@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 var program = require('commander');
-import {normalize} from './utils/FileUtils';
+import {normalize} from './utils/fileUtils';
 import Mutator from './Mutator';
 import Mutant from './Mutant';
 import ReporterFactory from './ReporterFactory';

@@ -1,6 +1,6 @@
 import InputFileResolver from '../../src/InputFileResolver';
 import * as sinon from 'sinon';
-import * as fileUtils from '../../src/utils/FileUtils';
+import * as fileUtils from '../../src/utils/fileUtils';
 import {InputFile} from '../../src/api/core';
 import {expect} from 'chai';
 import {normalize} from 'path';

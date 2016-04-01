@@ -3,7 +3,7 @@
 var expect = require('chai').expect;
 import Mutant, {MutantStatus} from '../../src/Mutant';
 import MathMutation from '../../src/mutations/MathMutation';
-import ParserUtils from '../../src/utils/ParserUtils';
+import * as parserUtils from '../../src/utils/parserUtils';
 require('mocha-sinon');
 
 describe('Mutant', function() {
@@ -22,7 +22,6 @@ describe('Mutant', function() {
     this.sinon.stub(Mutant.prototype, 'save', function() {
       this._mutatedFilename = 'mutatedSrc.js';
     });
-    var parserUtils = new ParserUtils();
 
     var baseCode = 'var i = 1 + 2;\n';
     originalLine = 'var j = i * 2;';
