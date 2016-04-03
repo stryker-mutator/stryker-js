@@ -38,11 +38,11 @@ export default class TestRunnerOrchestrator {
   runMutations(mutants: Mutant[], reporter: BaseReporter): Promise<void> {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     return this.createTestRunners().then(testRunners => {
-      let promiseProducer = () => {
+      let promiseProducer: () => Promise<number> | Promise<void> = () => {
         if (mutants.length === 0) {
           return null; // we're done
         } else {
-          var mutant = mutants.pop();
+          var mutant = mutants.pop(); 
 
           if (mutant.scopedTestIds.length > 0) {
             let nextRunner = testRunners.pop();
@@ -56,10 +56,7 @@ export default class TestRunnerOrchestrator {
               })
               .then(() => testRunners.push(nextRunner)); // mark the runner as available again
           } else {
-            return new Promise<number>(resolve => {
-              reporter.mutantTested(mutant);
-              resolve();
-            });
+            return Promise.resolve(reporter.mutantTested(mutant));
           }
         }
       }
