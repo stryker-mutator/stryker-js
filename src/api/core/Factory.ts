@@ -1,5 +1,7 @@
 /**
  * Represents a Factory to which items can register themselves and which can be used to create instances of said items.
+ * <TSettings> represents the type of the (one single) constructor argument used to create the instances.
+ * <T> represents the Type of the items created by this factory. 
  */
 abstract class Factory<TSettings, T> {
 
