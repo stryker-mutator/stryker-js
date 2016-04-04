@@ -77,7 +77,7 @@ export default class ConsoleReporter extends BaseReporter {
     });
 
     var mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / mutants.length) * 100).toFixed(2);
-    var mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / (mutants.length - mutantsUntested)) * 100).toFixed(2);
+    var mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((mutants.length - mutantsUntested) || 1)) * 100).toFixed(2);
     var codebaseColor = this.getColorForMutationScore(+mutationScoreCodebase);
     var codecoverageColor = this.getColorForMutationScore(+mutationScoreCodeCoverage);
 

@@ -90,7 +90,7 @@ describe('TestRunnerOrchestrator', () => {
     let reporter: any;
 
     let mockMutant = (id: number) => {
-      return { filename: `mutant${id}`, save: sinon.stub().returns(Promise.resolve()), scopedTestIds: [id], timeSpentScopedTests: id, reset: sinon.stub().returns(Promise.resolve()) };
+      return { filename: `mutant${id}`, save: sinon.stub().returns(Promise.resolve()), scopedTestIds: [id], timeSpentScopedTests: id, reset: sinon.stub().returns(Promise.resolve()), status: MutantStatus.UNTESTED };
     }
 
     beforeEach(() => {
@@ -100,7 +100,11 @@ describe('TestRunnerOrchestrator', () => {
       reporter = {
         mutantTested: sinon.stub()
       };
-      mutants = [mockMutant(1), mockMutant(2), mockMutant(3)];
+      
+      var untestedMutant = mockMutant(0);
+      untestedMutant.scopedTestIds = [];
+      
+      mutants = [mockMutant(1), mockMutant(2), mockMutant(3), untestedMutant];
       return sut.runMutations(mutants, reporter);
     });
 
@@ -128,10 +132,14 @@ describe('TestRunnerOrchestrator', () => {
       expect(secondTestRunner.run).to.have.been.calledOnce;
     });
 
-    it('should have reporterd mutant state correctly', () => {
+    it('should have reported the mutant state of tested mutants correctly', () => {
       expect(mutants[0].status).to.be.eq(MutantStatus.KILLED);
       expect(mutants[1].status).to.be.eq(MutantStatus.SURVIVED);
       expect(mutants[2].status).to.be.eq(MutantStatus.TIMEDOUT);
+    });
+    
+    it('should have reported the mutant state of an untested mutant correctly', () => {
+      expect(mutants[3].status).to.be.eq(MutantStatus.UNTESTED);
     });
   });
 
