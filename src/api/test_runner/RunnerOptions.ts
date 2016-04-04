@@ -1,5 +1,8 @@
 import {StrykerOptions, InputFile} from '../core';
 
+/**
+ * Represents an options object to configure a TestRunner.
+ */
 interface RunnerOptions{
   /**
    * A collection of paths to the files
