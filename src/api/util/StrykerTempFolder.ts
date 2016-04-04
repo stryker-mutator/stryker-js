@@ -52,13 +52,13 @@ function fileOrFolderExists(path: string): boolean {
 
 /**
  * Writes data to a specified file.
- * @param fileName The path to the file.
+ * @param filename The path to the file.
  * @param data The content of the file.
  * @returns A promise to eventually save the file.
  */
-function writeFile(fileName: string, data: string): Promise<void> {
+function writeFile(filename: string, data: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    fs.writeFile(fileName, data, { encoding: 'utf8' }, (error) => {
+    fs.writeFile(filename, data, { encoding: 'utf8' }, (error) => {
       if (error) {
         reject(error);
       } else {
@@ -70,14 +70,14 @@ function writeFile(fileName: string, data: string): Promise<void> {
 
 /**
  * Copies a file.
- * @param fromFileName The path to the existing file.
- * @param toFileName The path to copy the file to.
+ * @param fromFilename The path to the existing file.
+ * @param toFilename The path to copy the file to.
  * @returns A promise to eventually copy the file.
  */
-function copyFile(fromFileName: string, toFileName: string): Promise<void> {
+function copyFile(fromFilename: string, toFilename: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    let readStream = fs.createReadStream(fromFileName, { encoding: 'utf8' });
-    let writeStream = fs.createWriteStream(toFileName, { encoding: 'utf8' });
+    let readStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
+    let writeStream = fs.createWriteStream(toFilename, { encoding: 'utf8' });
     readStream.on('error', reject);
     writeStream.on('error', reject);
     readStream.pipe(writeStream);
