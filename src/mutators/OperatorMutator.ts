@@ -1,8 +1,4 @@
-'use strict';
-
-import * as _ from 'lodash';
 import {Mutator} from '../api/mutant';
-import Mutant from '../Mutant';
 import OperatorMutationMap from '../mutations/OperatorMutationMap';
 
 abstract class OperatorMutator implements Mutator {
@@ -29,7 +25,7 @@ abstract class OperatorMutator implements Mutator {
   }
 
   private canMutate(node: ESTree.BinaryExpression): boolean {
-    return !!(node && _.indexOf(this.types, node.type) >= 0 && this.getOperator(node.operator));
+    return !!(node && this.types.indexOf(node.type) >= 0 && this.getOperator(node.operator));
   }
 
   /**
