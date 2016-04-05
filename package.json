@@ -7,7 +7,8 @@
   "scripts": {
     "test": "grunt test",
     "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
-    "tsc:w": "tsc -w"
+    "tsc:w": "tsc -w",
+    "postinstall": "typings install"
   },
   "repository": {
     "type": "git",
@@ -61,6 +62,7 @@
     "mocha-sinon": "^1.1.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
-    "typescript": "^1.8.9"
+    "typescript": "^1.8.9",
+    "typings": "^0.7.11"
   }
 }

@@ -6,8 +6,8 @@ import {expect} from 'chai';
 import {normalize} from 'path';
 
 describe('InputFileResolver', () => {
-  let sandbox: Sinon.SinonSandbox;
-  let globStub: Sinon.SinonStub;
+  let sandbox: sinon.SinonSandbox;
+  let globStub: sinon.SinonStub;
   let sut: InputFileResolver;
 
   beforeEach(() => {
