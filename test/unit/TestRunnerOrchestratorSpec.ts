@@ -15,7 +15,7 @@ let expect = chai.expect;
 
 describe('TestRunnerOrchestrator', () => {
   let sut: TestRunnerOrchestrator;
-  let sandbox: Sinon.SinonSandbox;
+  let sandbox: sinon.SinonSandbox;
   let files = [{ path: 'a.js', shouldMutate: true }, { path: 'b.js', shouldMutate: true }, { path: 'aSpec.js', shouldMutate: false }, { path: 'bSpec.js', shouldMutate: false }];
   let strykerOptions = { testFramework: 'superFramework', testRunner: 'superRunner', port: 42 };
   let firstTestRunner: any;

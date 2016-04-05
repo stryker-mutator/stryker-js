@@ -10,7 +10,7 @@ import * as testRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 
 describe('Stryker runMutationTest()', function() {
   let sut: Stryker;
-  let sandbox: Sinon.SinonSandbox;
+  let sandbox: sinon.SinonSandbox;
   let inputFileResolverStub: any;
   let testRunnerOrchestratorStub: any;
   let inputFiles: InputFile[];

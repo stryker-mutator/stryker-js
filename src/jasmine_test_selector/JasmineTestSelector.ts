@@ -2,6 +2,8 @@ import {TestSelector, TestSelectorSettings, TestSelectorFactory} from '../api/te
 import {StrykerTempFolder} from '../api/util';
 import {InputFile} from '../api/core';
 import * as fs from 'fs';
+import {Promise} from 'es6-promise';
+
 
 const INTERCEPTOR_CODE = `(function(window){
     var realIt = window.it, count = 0;
