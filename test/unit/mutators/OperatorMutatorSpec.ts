@@ -1,10 +1,6 @@
-'use strict';
-
-var expect = require('chai').expect;
 import OperatorMutator from '../../../src/mutators/OperatorMutator';
-import Mutant from '../../../src/Mutant';
-import * as parserUtils from '../../../src/utils/parserUtils';
-require('mocha-sinon');
+import * as chai from 'chai';
+let expect = chai.expect;
 
 describe('OperatorMutator', () => {
   class MockOperatorMutator extends OperatorMutator {
@@ -44,7 +40,7 @@ describe('OperatorMutator', () => {
     it('a valid Node', () => {
       let mutatedNodes = mockMutator.applyMutations(validNode);
       
-      expect(mutatedNodes.length).to.equal(1);
+      expect(mutatedNodes).to.have.lengthOf(1);
     });
   });
   
@@ -52,7 +48,7 @@ describe('OperatorMutator', () => {
     it('an invalid Node', () => {
       let mutatedNodes = mockMutator.applyMutations(invalidNode);
       
-      expect(mutatedNodes.length).to.equal(0);
+      expect(mutatedNodes).to.have.lengthOf(0);
     });
   });
 });
