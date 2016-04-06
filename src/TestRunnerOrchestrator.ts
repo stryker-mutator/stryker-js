@@ -144,7 +144,7 @@ export default class TestRunnerOrchestrator {
     return new Promise<FileMap>((resolve, reject) => {
       let fileMap: FileMap = Object.create(null);
       var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-source-files');
-      let copyPromises: Promise<void>[] = this.files.map(file => {
+      let copyPromises: Promise<any>[] = this.files.map(file => {
         if (file.shouldMutate) {
           let targetFile = tempFolder + path.sep + path.basename(file.path);
           fileMap[file.path] = targetFile;

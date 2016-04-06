@@ -1,11 +1,11 @@
 // Type definitions for karma v0.13.9
 // Project: https://github.com/karma-runner/karma
 // Definitions by: Tanguy Krotoff <https://github.com/tkrotoff>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-/// <reference path="../bluebird/bluebird.d.ts" />
-/// <reference path="../node/node.d.ts" />
-/// <reference path="../log4js/log4js.d.ts" />
+/// <reference path="../typings/main/definitions/bluebird/index.d.ts" />
+/// <reference path="../typings/main/ambient/node/index.d.ts" />
+/// <reference path="../typings/main/ambient/log4js/index.d.ts" />
 
 declare module 'karma' {
     // See Karma public API https://karma-runner.github.io/0.13/dev/public-api.html
@@ -34,7 +34,7 @@ declare module 'karma' {
         interface LauncherStatic {
             generateId(): string;
             //TODO: injector should be of type `di.Injector`
-            new(emitter: NodeJS.EventEmitter, injector: any): Launcher;
+            new (emitter: NodeJS.EventEmitter, injector: any): Launcher;
         }
 
         interface Launcher {
@@ -53,19 +53,19 @@ declare module 'karma' {
         }
 
         interface Runner {
-            run(options?: ConfigOptions|ConfigFile, callback?: ServerCallback): void;
+            run(options?: ConfigOptions | ConfigFile, callback?: ServerCallback): void;
         }
-        
-        interface TestResults{
-          disconnected: boolean;
-          error: boolean;
-          exitCode: number;
-          failed: number;
-          success: number;
+
+        interface TestResults {
+            disconnected: boolean;
+            error: boolean;
+            exitCode: number;
+            failed: number;
+            success: number;
         }
 
         interface Server extends NodeJS.EventEmitter {
-            new(options?: ConfigOptions|ConfigFile, callback?: ServerCallback): Server;
+            new (options?: ConfigOptions | ConfigFile, callback?: ServerCallback): Server;
             /**
              * Start the server
              */
@@ -79,9 +79,13 @@ declare module 'karma' {
              * Force a refresh of the file list
              */
             refreshFiles(): Promise<any>;
+
+            on(event: string, listener: Function): this;
             
-            on(event: string, listener: Function): Server;
-            on(event: 'run_complete', listener: (browsers: any, results: TestResults ) => void): Server;
+            /**
+             * Listen to the 'run_complete' event.
+             */
+            on(event: 'run_complete', listener: (browsers: any, results: TestResults ) => void): this;
 
             ///**
             // * Backward-compatibility with karma-intellij bundled with WebStorm.
@@ -202,7 +206,7 @@ declare module 'karma' {
              * @default []
              * @description List of files/patterns to load in the browser.
              */
-            files?: (/*FilePattern|*/string)[];
+            files?: (FilePattern | string)[];
             /**
              * @default []
              * @description List of test frameworks you want to use. Typically, you will set this to ['jasmine'], ['mocha'] or ['qunit']...
@@ -268,7 +272,7 @@ declare module 'karma' {
              * but your interactive debugging does not.
              *
              */
-            preprocessors?: { [name: string]: string|string[] }
+            preprocessors?: { [name: string]: string | string[] }
             /**
              * @default 'http:'
              * Possible Values:

@@ -13,6 +13,8 @@
     "exclude": [
         "node_modules",
         "dist",
+        "typings/browser",
+        "typings/browser.d.ts",
         "test/integration/install-module/module"
     ]
 }

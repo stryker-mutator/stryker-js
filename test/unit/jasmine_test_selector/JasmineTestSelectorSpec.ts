@@ -23,8 +23,8 @@ describe('JasmineTestSelector', () => {
 
   let sut: JasmineTestSelector;
   let settings: TestSelectorSettings;
-  let sinonSandbox: Sinon.SinonSandbox;
-  let sinonStubs: Sinon.SinonStub[];
+  let sinonSandbox: sinon.SinonSandbox;
+  let sinonStubs: sinon.SinonStub[];
 
   beforeEach(() => {
     settings = { options: null };
