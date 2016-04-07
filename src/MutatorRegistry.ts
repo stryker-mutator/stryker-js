@@ -1,17 +1,17 @@
 import {Mutator} from './api/mutant';
-// import ConditionalBoundaryMutation from './mutations/ConditionalBoundaryMutation';
-// import MathMutation from './mutations/MathMutation';
+import ConditionalBoundaryMutator from './mutators/ConditionalBoundaryMutator';
+import MathMutator from './mutators/MathMutator';
 import RemoveConditionalsMutator from './mutators/RemoveConditionalsMutator';
-// import ReverseConditionalMutation from './mutations/ReverseConditionalMutation';
-// import UnaryOperatorMutation from './mutations/UnaryOperatorMutation';
+import ReverseConditionalMutator from './mutators/ReverseConditionalMutator';
+import UnaryOperatorMutator from './mutators/UnaryOperatorMutator';
 
 
 export default class MutatorRegistry {
   public static mutators: Mutator[] = [
-      // new ConditionalBoundaryMutation(),
-      // new MathMutation(),
+      new ConditionalBoundaryMutator(),
+      new MathMutator(),
       new RemoveConditionalsMutator(),
-      // new ReverseConditionalMutation(),
-      // new UnaryOperatorMutation()
+      new ReverseConditionalMutator(),
+      new UnaryOperatorMutator()
     ];
 }
