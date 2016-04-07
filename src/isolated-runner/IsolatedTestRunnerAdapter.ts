@@ -35,6 +35,16 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   }
 
   private listenToWorkerProcess() {
+
+    if (this.workerProcess.stdout) {
+      this.workerProcess.stdout.on('data', (data: any) => { /* do nothing */ });
+    }
+    if (this.workerProcess.stderr) {
+      this.workerProcess.stderr.on('data', (data: any) => {
+        console.log('ERROR: ' + data);
+      });
+    }
+
     this.workerProcess.on('message', (message: Message<any>) => {
       this.clearCurrentTimer();
       switch (message.type) {
