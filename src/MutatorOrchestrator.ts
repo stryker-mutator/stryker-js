@@ -8,7 +8,6 @@ import * as parserUtils from './utils/parserUtils';
  * Class capable of finding spots to mutate in files.
  */
 export default class MutatorOrchestrator {
-  private mutatorRegistry = new MutatorRegistry();
   private mutators: Mutator[];
 
   public constructor() {
