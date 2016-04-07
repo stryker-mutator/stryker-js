@@ -41,6 +41,25 @@ describe('InputFileResolver', () => {
     });
   });
 
+  describe('with file expressions that resolve in different order', () => {
+    let results: InputFile[];
+    beforeEach(() => {
+      let resolveFile1: (result: string[]) => void;
+      let resolveFile2: (result: string[]) => void;
+      sut = new InputFileResolver([], ['file1', 'file2']);
+      globStub.withArgs('file1').returns(new Promise(resolve => resolveFile1 = resolve));
+      globStub.withArgs('file2').returns(new Promise(resolve => resolveFile2 = resolve));
+      let p = sut.resolve().then(r => results = r);
+      resolveFile2(['file2']);
+      resolveFile1(['file1']);
+      return p;
+    });
+
+    it('should retain original glob order', () => {
+        expect(results.map(m => m.path.substr(m.path.length - 5))).to.deep.equal(['file1', 'file2'])
+    });
+  });
+
   describe('with mutant file expressions which result in files which are not included in result of all globbing files and resolve is called', () => {
     let results: InputFile[];
     let error: any;
