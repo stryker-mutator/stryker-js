@@ -43,5 +43,4 @@ export default class RemoveConditionalsMutator implements Mutator {
   private copyNode(node: ESTree.Node) {
     return JSON.parse(JSON.stringify(node));
   }
-
 }

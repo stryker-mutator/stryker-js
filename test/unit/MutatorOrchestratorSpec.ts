@@ -3,20 +3,20 @@
 var expect = require('chai').expect;
 import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
-import Mutator from '../../src/Mutator';
+import MutatorOrchestrator from '../../src/MutatorOrchestrator';
 require('mocha-sinon');
 
-describe('Mutator', function() {
-  var mutator: Mutator;
+describe('MutatorOrchestrator', function() {
+  var mutatorOrchestrator: MutatorOrchestrator;
 
   beforeEach(function() {
     this.sinon.stub(Mutant.prototype, 'save');
 
-    mutator = new Mutator();
+    mutatorOrchestrator = new MutatorOrchestrator();
   });
 
   it('should throw an error if no source files are provided', function() {
-    expect(mutator.mutate).to.throw(Error);
+    expect(mutatorOrchestrator.mutate).to.throw(Error);
   });
 
   it('should return an empty array if nothing could be mutated', function() {
@@ -24,7 +24,7 @@ describe('Mutator', function() {
       return '';
     });
 
-    var mutants = mutator.mutate(['test.js']);
+    var mutants = mutatorOrchestrator.mutate(['test.js']);
 
     expect(mutants.length).to.equal(0);
   });
@@ -34,7 +34,7 @@ describe('Mutator', function() {
       return 'var i = 1 + 2;';
     });
 
-    var mutants = mutator.mutate(['test.js']);
+    var mutants = mutatorOrchestrator.mutate(['test.js']);
 
     expect(mutants.length).to.equal(1);
   });
@@ -46,7 +46,7 @@ describe('Mutator', function() {
       return originalCode;
     });
 
-    var mutants = mutator.mutate(['test.js']);
+    var mutants = mutatorOrchestrator.mutate(['test.js']);
 
     expect(mutants[0].mutatedCode).to.equal(mutatedCode);
   });
@@ -58,13 +58,13 @@ describe('Mutator', function() {
       return originalCode;
     });
 
-    var mutants = mutator.mutate(['test.js']);
+    var mutants = mutatorOrchestrator.mutate(['test.js']);
 
     expect(mutants[0].lineNumber).to.equal(3);
   });
 
   it('should not stop executing when a file does not exist', function() {
-    var mutants = mutator.mutate(['someFileWhichShouldNotExist.js']);
+    var mutants = mutatorOrchestrator.mutate(['someFileWhichShouldNotExist.js']);
 
     expect(mutants.length).to.equal(0);
   });

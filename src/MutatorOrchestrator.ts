@@ -10,7 +10,7 @@ import * as parserUtils from './utils/parserUtils';
 /**
  * Class capable of finding spots to mutate in files.
  */
-export default class Mutator {
+export default class MutatorOrchestrator {
   private mutationRegistry = new MutationRegistry();
   private mutations: BaseMutation[];
 

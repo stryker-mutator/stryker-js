@@ -3,7 +3,7 @@
 import * as _ from 'lodash';
 var program = require('commander');
 import {normalize} from './utils/fileUtils';
-import Mutator from './Mutator';
+import MutatorOrchestrator from './MutatorOrchestrator';
 import Mutant from './Mutant';
 import ReporterFactory from './ReporterFactory';
 import BaseReporter from './reporters/BaseReporter';
@@ -58,8 +58,8 @@ export default class Stryker {
             if (unsuccessfulTests.length === 0) {
               console.log(`INFO: Initial test run succeeded. Ran ${runResults.length} tests.`);
 
-              let mutator = new Mutator();
-              let mutants = mutator.mutate(inputFiles
+              let mutatorOrchestrator = new MutatorOrchestrator();
+              let mutants = mutatorOrchestrator.mutate(inputFiles
                 .filter(inputFile => inputFile.shouldMutate)
                 .map(file => file.path));
               console.log('INFO: ' + mutants.length + ' Mutants generated');
