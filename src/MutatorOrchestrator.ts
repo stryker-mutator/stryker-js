@@ -21,14 +21,14 @@ export default class MutatorOrchestrator {
    * @returns {Mutant[]} The generated Mutants.
    */
   mutate(sourceFiles: string[]) {
-    var mutants: Mutant[] = [];
+    let mutants: Mutant[] = [];
 
     sourceFiles.forEach((sourceFile: string) => {
       try {
-        var fileContent = fileUtils.readFile(sourceFile);
-        var abstractSyntaxTree = parserUtils.parse(fileContent);
-        var nodes = parserUtils.getNodesWithType(abstractSyntaxTree);
-        var newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
+        let fileContent = fileUtils.readFile(sourceFile);
+        let abstractSyntaxTree = parserUtils.parse(fileContent);
+        let nodes = parserUtils.getNodesWithType(abstractSyntaxTree);
+        let newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
         mutants = mutants.concat(newMutants);
       } catch (err) {
         switch (err.code) {
@@ -54,7 +54,7 @@ export default class MutatorOrchestrator {
    * @returns {Mutant[]} All possible Mutants for the given set of nodes.
    */
   private findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: any[]) {
-    var mutants: Mutant[] = [];
+    let mutants: Mutant[] = [];
     nodes.forEach((astnode, index) => {
       if (astnode.type) {
         // _.forEach(this.mutations, (mutation: BaseMutation) => {
