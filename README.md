@@ -2,10 +2,12 @@
 [![NPM](https://img.shields.io/npm/dm/stryker.svg)](https://www.npmjs.com/package/stryker)
 [![Gitter](https://badges.gitter.im/infosupport/stryker.svg)](https://gitter.im/infosupport/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+![Stryker](stryker-80x80.png)
 # Stryker
 
 *Professor X: For someone who hates mutants... you certainly keep some strange company.*  
 *William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
+
 
 ## Work in progress
 This repository is a work in progress. We only support Jasmine tests in the browser for now. Please create and vote on [issues](https://github.com/infosupport/stryker/issues) to help us determine the priority on features.
