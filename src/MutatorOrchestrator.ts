@@ -1,6 +1,3 @@
-'use strict';
-
-import * as _ from 'lodash';
 import {Mutator} from './api/mutant';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
@@ -27,7 +24,7 @@ export default class MutatorOrchestrator {
   mutate(sourceFiles: string[]) {
     var mutants: Mutant[] = [];
 
-    _.forEach(sourceFiles, (sourceFile: string) => {
+    sourceFiles.forEach((sourceFile: string) => {
       try {
         var fileContent = fileUtils.readFile(sourceFile);
         var abstractSyntaxTree = parserUtils.parse(fileContent);
@@ -59,7 +56,7 @@ export default class MutatorOrchestrator {
    */
   private findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: any[]) {
     var mutants: Mutant[] = [];
-    _.forEach(nodes, (astnode, index) => {
+    nodes.forEach((astnode, index) => {
       if (astnode.type) {
         // _.forEach(this.mutations, (mutation: BaseMutation) => {
         //   if (mutation.canMutate(astnode)) {
