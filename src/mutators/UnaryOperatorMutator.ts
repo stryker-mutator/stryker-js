@@ -1,9 +1,7 @@
-'use strict';
-
 import {Syntax} from 'esprima';
-import BaseOperatorMutation from './BaseOperatorMutation';
+import OperatorMutator from './OperatorMutator';
 
-export default class UnaryOperatorMutation extends BaseOperatorMutation {
+export default class UnaryOperatorMutator extends OperatorMutator {
   constructor() {
     super('Unary operator', [Syntax.UpdateExpression, Syntax.UnaryExpression], {
         '++': '--',

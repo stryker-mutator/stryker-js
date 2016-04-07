@@ -1,9 +1,7 @@
-'use strict';
-
 import {Syntax} from 'esprima';
-import BaseOperatorMutation from './BaseOperatorMutation';
+import OperatorMutator from './OperatorMutator';
 
-export default class ConditionalBoundayMutation extends BaseOperatorMutation {
+export default class ConditionalBoundayMutator extends OperatorMutator {
 
   constructor() {
     super('ConditionalBoundary', [Syntax.BinaryExpression], {

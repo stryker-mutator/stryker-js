@@ -1,5 +1,5 @@
 import {Mutator} from '../api/mutant';
-import OperatorMutationMap from '../mutations/OperatorMutationMap';
+import OperatorMutatorMap from './OperatorMutatorMap';
 
 abstract class OperatorMutator implements Mutator {
   
@@ -9,7 +9,7 @@ abstract class OperatorMutator implements Mutator {
    * @param types The type of operators which should be mutated.
    * @param operators The object containing a map for targeted operators and their mutated values.
    */
-  constructor(public name: string, public types: string[], private operators: OperatorMutationMap) {
+  constructor(public name: string, public types: string[], private operators: OperatorMutatorMap) {
   }
   
   applyMutations(node: ESTree.Node): ESTree.Node[] {
@@ -34,6 +34,7 @@ abstract class OperatorMutator implements Mutator {
    * @param {String} operator - An umutated operator.
    * @returns {String} The mutated operator.
    */
+  
   private getOperator(operator: string): string {
     return this.operators[operator];
   }

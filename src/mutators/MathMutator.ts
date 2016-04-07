@@ -1,9 +1,7 @@
-'use strict';
-
 import {Syntax} from 'esprima';
-import BaseOperatorMutation from './BaseOperatorMutation';
+import OperatorMutator from './OperatorMutator';
 
-export default class MathMutation extends BaseOperatorMutation {
+export default class MathMutator extends OperatorMutator {
   
   constructor () {
    super('Math', [Syntax.BinaryExpression], {

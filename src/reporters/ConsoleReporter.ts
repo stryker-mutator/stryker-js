@@ -60,7 +60,7 @@ export default class ConsoleReporter extends BaseReporter {
         case MutantStatus.SURVIVED:
           console.log(chalk.bold.red('Mutant survived!'));
           console.log(mutant.filename + ': line ' + mutant.lineNumber + ':' + mutant.columnNumber);
-          console.log('Mutation: ' + mutant.mutation.name);
+          console.log('Mutation: ' + mutant.mutator.name);
           console.log(chalk.red('-   ' + mutant.originalLine));
           console.log(chalk.green('+   ' + mutant.mutatedLine));
           console.log('\n');
