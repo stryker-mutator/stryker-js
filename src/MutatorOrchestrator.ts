@@ -1,21 +1,21 @@
 'use strict';
 
 import * as _ from 'lodash';
-import BaseMutation from './mutations/BaseMutation';
+import {Mutator} from './api/mutant';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
-import MutationRegistry from './MutationRegistry';
+import MutatorRegistry from './MutatorRegistry';
 import * as parserUtils from './utils/parserUtils';
 
 /**
  * Class capable of finding spots to mutate in files.
  */
 export default class MutatorOrchestrator {
-  private mutationRegistry = new MutationRegistry();
-  private mutations: BaseMutation[];
+  private mutatorRegistry = new MutatorRegistry();
+  private mutators: Mutator[];
 
   public constructor() {
-    this.mutations = this.mutationRegistry.getAllMutations();
+    this.mutators = MutatorRegistry.mutators;
   }
 
   /**
@@ -26,15 +26,12 @@ export default class MutatorOrchestrator {
    */
   mutate(sourceFiles: string[]) {
     var mutants: Mutant[] = [];
-    var types = _.uniq(_.flatten(_.map(this.mutations, function(mutation: BaseMutation) {
-      return mutation.types;
-    })));
 
     _.forEach(sourceFiles, (sourceFile: string) => {
       try {
         var fileContent = fileUtils.readFile(sourceFile);
         var abstractSyntaxTree = parserUtils.parse(fileContent);
-        var nodes = parserUtils.getNodesWithType(abstractSyntaxTree, types);
+        var nodes = parserUtils.getNodesWithType(abstractSyntaxTree);
         var newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
         mutants = mutants.concat(newMutants);
       } catch (err) {
@@ -64,11 +61,11 @@ export default class MutatorOrchestrator {
     var mutants: Mutant[] = [];
     _.forEach(nodes, (astnode, index) => {
       if (astnode.type) {
-        _.forEach(this.mutations, (mutation: BaseMutation) => {
-          if (mutation.canMutate(astnode)) {
-            mutants = mutants.concat(mutation.applyMutation(sourceFile, originalCode, astnode, ast));
-          }
-        });
+        // _.forEach(this.mutations, (mutation: BaseMutation) => {
+        //   if (mutation.canMutate(astnode)) {
+        //     mutants = mutants.concat(mutation.applyMutation(sourceFile, originalCode, astnode, ast));
+        //   }
+        // });
       }
     });
 
