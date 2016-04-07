@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
   grunt.initConfig({
 
@@ -14,6 +14,10 @@ module.exports = function (grunt) {
       test: {
         src: ['test/integration/install-module/module/node_modules/stryker']
       }
+    },
+
+    typings: {
+      install: {}
     },
 
     jshint: {
@@ -87,16 +91,17 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-typings');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-mocha-istanbul');
   grunt.loadNpmTasks('grunt-ts');
-
+  
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
   grunt.registerTask('test', ['build', 'coverage']);
-  grunt.registerTask('build', ['clean', 'ts']);
+  grunt.registerTask('build', ['typings', 'clean', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('serve', ['watch']);
