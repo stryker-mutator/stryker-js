@@ -36,6 +36,7 @@ export default class MutatorOrchestrator {
             console.log(`Skipping file ${err.path} because it does not exist`);
             break;
           default:
+            console.log(err);
             throw err;
         }
       }
@@ -55,13 +56,15 @@ export default class MutatorOrchestrator {
    */
   private findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: any[]) {
     let mutants: Mutant[] = [];
-    nodes.forEach((astnode, index) => {
+    nodes.forEach((astnode) => {
       if (astnode.type) {
-        // _.forEach(this.mutations, (mutation: BaseMutation) => {
-        //   if (mutation.canMutate(astnode)) {
-        //     mutants = mutants.concat(mutation.applyMutation(sourceFile, originalCode, astnode, ast));
-        //   }
-        // });
+        Object.freeze(astnode);
+        this.mutators.forEach((mutator: Mutator) => {
+          mutator.applyMutations(astnode).forEach((mutatedNode: ESTree.Node) => {
+            let mutatedCode = parserUtils.generate(mutatedNode);
+            mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, astnode.loc));
+          })
+        });
       }
     });
 

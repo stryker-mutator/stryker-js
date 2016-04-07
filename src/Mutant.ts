@@ -120,7 +120,7 @@ export default class Mutant {
    */
   private insertSubstitude(substitude: string) {
     let linesOfCode = this.originalCode.split('\n');
-
+    
     for (let lineNum = this.mutatedLocation.start.line - 1; lineNum < this.mutatedLocation.end.line; lineNum++) {
       this._originalLine += linesOfCode[lineNum];
       if (lineNum < this.mutatedLocation.end.line - 1) {

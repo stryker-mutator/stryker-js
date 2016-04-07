@@ -1,7 +1,6 @@
-'use strict';
-
 import * as _ from 'lodash';
 import * as esprima from 'esprima';
+var escodegen = require('escodegen');
 
 /**
  * Utility class for parsing and generating code.
@@ -60,3 +59,12 @@ export function getNodesWithType(abstractSyntaxTree: any, nodes?: any[], key?: s
 
   return nodes;
 };
+
+/**
+   * Parses a Node to generate code.
+   * @param The Node which has to be transformed into code.
+   * @returns The generated code.
+   */
+  export function generate(node: ESTree.Node): string {
+    return escodegen.generate(node);
+  };
