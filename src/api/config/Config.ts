@@ -7,6 +7,7 @@ export default class Config implements StrykerOptions {
 
   files: string[];
   mutate: string[];
+
   testFramework = 'jasmine';
   testRunner = 'karma';
   timeoutMs = 2000;
