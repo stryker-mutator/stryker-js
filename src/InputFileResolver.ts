@@ -1,5 +1,6 @@
 import {InputFile} from './api/core';
 import {glob, normalize} from './utils/fileUtils';
+import * as _ from 'lodash';
 
 export default class InputFileResolver {
 
@@ -8,12 +9,12 @@ export default class InputFileResolver {
 
   public resolve(): Promise<InputFile[]> {
     return new Promise<InputFile[]>((resolve, reject) => {
-      let mutateFiles: string[] = [];
-      let allFiles: string[] = [];
       let errors: string[] = [];
 
-      Promise.all([InputFileResolver.resolveFileGlobs(this.mutateFileExpressions, mutateFiles), InputFileResolver.resolveFileGlobs(this.allFileExpressions, allFiles)])
-        .then(() => {
+      Promise.all([InputFileResolver.resolveFileGlobs(this.mutateFileExpressions), InputFileResolver.resolveFileGlobs(this.allFileExpressions)])
+        .then((files) => {
+          let mutateFiles = files[0];
+          let allFiles = files[1];
           normalize(allFiles);
           normalize(mutateFiles);
 
@@ -25,7 +26,7 @@ export default class InputFileResolver {
           if (errors.length > 0) {
             reject(errors);
           } else {
-            resolve(allFiles.map(file => { return { path: file, shouldMutate: mutateFiles.some(mutateFile => mutateFile === file) };}))
+            resolve(allFiles.map(file => { return { path: file, shouldMutate: mutateFiles.some(mutateFile => mutateFile === file) }; }))
           }
         }, error => reject(error));
     });
@@ -36,12 +37,12 @@ export default class InputFileResolver {
     console.log(`WARNING: Globbing expression "${expression}" did not result in any files.`)
   }
 
-  private static resolveFileGlobs(sourceExpressions: string[], resultFiles: string[]): Promise<void[]> {
-    return Promise.all(sourceExpressions.map((mutateFileExpression: string) => glob(mutateFileExpression).then(files => {
+  private static resolveFileGlobs(sourceExpressions: string[]): Promise<string[]> {
+    return Promise.all(sourceExpressions.map(expression => glob(expression).then(files => {
       if (files.length === 0) {
-        this.reportEmptyGlobbingExpression(mutateFileExpression);
+        this.reportEmptyGlobbingExpression(expression);
       }
-      files.forEach(f => resultFiles.push(f));
-    })));
+      return files;
+    }))).then(files => _.flatten(files));
   }
 }
