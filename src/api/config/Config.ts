@@ -2,7 +2,7 @@
 import {StrykerOptions} from '../core';
 
 export default class Config implements StrykerOptions {
-
+  
   [customConfig: string]: any;
 
   files: string[];
