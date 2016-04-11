@@ -2,7 +2,11 @@
 import {StrykerOptions} from '../core';
 
 export default class Config implements StrykerOptions {
+  
+  [customConfig: string]: any;
 
+  files: string[];
+  mutate: string[];
   testFramework = 'jasmine';
   testRunner = 'karma';
   timeoutMs = 2000;
@@ -11,8 +15,8 @@ export default class Config implements StrykerOptions {
   port = 9234;
 
   public set(newConfig: StrykerOptions) {
-    Object.keys(newConfig).forEach(function(key) {
+    Object.keys(newConfig).forEach((key) => {
       this[key] = newConfig[key];
-    })
+    });
   }
 }
