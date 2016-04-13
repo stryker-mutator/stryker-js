@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/infosupport/stryker.svg?branch=master)](https://travis-ci.org/infosupport/stryker)
+[![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
 [![NPM](https://img.shields.io/npm/dm/stryker.svg)](https://www.npmjs.com/package/stryker)
-[![Gitter](https://badges.gitter.im/infosupport/stryker.svg)](https://gitter.im/infosupport/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ![Stryker](stryker-80x80.png)
 # Stryker
@@ -10,7 +10,7 @@
 
 
 ## Work in progress
-This repository is a work in progress. We only support Jasmine tests in the browser for now. Please create and vote on [issues](https://github.com/infosupport/stryker/issues) to help us determine the priority on features.
+This repository is a work in progress. We only support Jasmine tests in the browser for now. Please create and vote on [issues](https://github.com/stryker-mutator/stryker/issues) to help us determine the priority on features.
 
 ## Getting started
 Stryker is a mutation testing framework for JavaScript. It allows you to test your test by temporarily inserting bugs.
