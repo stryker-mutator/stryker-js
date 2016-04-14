@@ -2,7 +2,7 @@
 import {StrykerOptions} from '../core';
 
 export default class Config implements StrykerOptions {
-  
+
   [customConfig: string]: any;
 
   files: string[];
@@ -15,8 +15,10 @@ export default class Config implements StrykerOptions {
   port = 9234;
 
   public set(newConfig: StrykerOptions) {
-    Object.keys(newConfig).forEach((key) => {
-      this[key] = newConfig[key];
-    });
+    if (newConfig) {
+      Object.keys(newConfig).forEach((key) => {
+        this[key] = newConfig[key];
+      });
+    }
   }
 }
