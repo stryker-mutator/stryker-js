@@ -45,12 +45,12 @@ export default class Stryker {
    */
   runMutationTest(): Promise<void> {
 
-    return new Promise<void>(resolve => {
+    return new Promise<void>((strykerResolve, strykerReject) => {
 
       new InputFileResolver(this.mutateFilePatterns, this.allFilePatterns)
         .resolve().then(inputFiles => {
           let testRunnerOrchestrator = new TestRunnerOrchestrator(this.options, inputFiles)
-
+          console.log('INFO: Running initial test run');
           testRunnerOrchestrator.recordCoverage().then((runResults) => {
             let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
               return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
@@ -69,21 +69,19 @@ export default class Stryker {
 
               testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
                 this.reporter.allMutantsTested(mutants);
-                console.log('Done!');
+                strykerResolve();
               });
             } else {
               this.logFailedTests(unsuccessfulTests);
+              strykerReject();
             }
-            resolve();
+          }, (errors) => {
+            strykerReject(errors);
           });
         }, (errors: string[]) => {
           errors.forEach(error => console.log(`ERROR: ${error}`));
-          resolve();
+          strykerReject();
         });
-
-
-      console.log('INFO: Running initial test run');
-
     });
   }
 
