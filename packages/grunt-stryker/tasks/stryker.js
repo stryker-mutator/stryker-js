@@ -11,7 +11,6 @@ module.exports = function(grunt) {
 
     grunt.config.requires(filesProperty);
     grunt.config.requires(mutateProperty);
-    console.log(grunt.files);
 
     var files = grunt.file.expand(grunt.util.toArray(grunt.config.get(filesProperty)));
     var mutate = grunt.file.expand(grunt.util.toArray(grunt.config.get(mutateProperty)));
