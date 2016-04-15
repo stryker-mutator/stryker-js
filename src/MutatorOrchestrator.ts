@@ -60,10 +60,15 @@ export default class MutatorOrchestrator {
       if (astnode.type) {
         Object.freeze(astnode);
         this.mutators.forEach((mutator: Mutator) => {
-          mutator.applyMutations(astnode).forEach((mutatedNode: ESTree.Node) => {
-            let mutatedCode = parserUtils.generate(mutatedNode);
-            mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, astnode.loc));
-          })
+          try {
+            mutator.applyMutations(astnode).forEach((mutatedNode: ESTree.Node) => {
+              let mutatedCode = parserUtils.generate(mutatedNode);
+              mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, astnode.loc));
+            })
+          } catch (error) {
+            throw new Error(`The mutator named '${mutator.name}' caused an error: ${error}`);
+          }
+
         });
       }
     });
