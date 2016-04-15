@@ -20,7 +20,7 @@ var esprimaOptions = {
  * @returns {Object} The generated Abstract Syntax Tree.
  */
 export function parse(code: string): any {
-  if(code === undefined){
+  if (code === undefined) {
     throw new Error('Code parameter cannot be undefined');
   }
   if (code === '') {
@@ -42,8 +42,11 @@ export function getNodesWithType(abstractSyntaxTree: any, nodes?: any[], key?: s
   nodes = nodes || [];
 
   if (abstractSyntaxTree instanceof Object && !(abstractSyntaxTree instanceof Array) && abstractSyntaxTree.type) {
+    abstractSyntaxTree.nodeID = nodes.length;
     nodes.push(abstractSyntaxTree);
   }
+
+  Object.freeze(abstractSyntaxTree);
 
   _.forOwn(abstractSyntaxTree, (childNode, key) => {
     if (childNode instanceof Object && !(childNode instanceof Array)) {
@@ -65,6 +68,6 @@ export function getNodesWithType(abstractSyntaxTree: any, nodes?: any[], key?: s
    * @param The Node which has to be transformed into code.
    * @returns The generated code.
    */
-  export function generate(node: ESTree.Node): string {
-    return escodegen.generate(node);
-  };
+export function generate(node: ESTree.Node): string {
+  return escodegen.generate(node);
+};

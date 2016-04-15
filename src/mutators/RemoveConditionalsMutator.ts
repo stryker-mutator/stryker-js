@@ -7,24 +7,24 @@ import {Mutator} from '../api/mutant';
 export default class RemoveConditionalsMutator implements Mutator {
   name = 'RemoveConditionals';
   types = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement];
-  
-  constructor() {}
-  
+
+  constructor() { }
+
   applyMutations(node: ESTree.Node): ESTree.Node[] {
     let nodes: ESTree.Node[] = [];
-    
-    if(this.canMutate(node)){
+
+    if (this.canMutate(node)) {
       let mutatedFalseNode: ESTree.ConditionalExpression = this.copyNode(node);
       this.mutateTestExpression(mutatedFalseNode, false);
       nodes.push(mutatedFalseNode);
-      
-      if(node.type === Syntax.IfStatement){
+
+      if (node.type === Syntax.IfStatement) {
         let mutatedTrueNode: ESTree.ConditionalExpression = this.copyNode(node);
         this.mutateTestExpression(mutatedTrueNode, true);
         nodes.push(mutatedTrueNode);
       }
     }
-    
+
     return nodes;
   }
 
@@ -39,7 +39,7 @@ export default class RemoveConditionalsMutator implements Mutator {
   private canMutate(node: ESTree.Node) {
     return !!(node && this.types.indexOf(node.type) >= 0);
   };
-  
+
   private copyNode(node: ESTree.Node) {
     return JSON.parse(JSON.stringify(node));
   }

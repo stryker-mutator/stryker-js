@@ -2,7 +2,7 @@ import {Mutator} from '../api/mutant';
 import OperatorMutatorMap from './OperatorMutatorMap';
 
 abstract class OperatorMutator implements Mutator {
-  
+
   /**
    * Represents a base class for all operator based mutations.
    * @param name The name of the mutator.
@@ -11,16 +11,16 @@ abstract class OperatorMutator implements Mutator {
    */
   constructor(public name: string, public types: string[], private operators: OperatorMutatorMap) {
   }
-  
+
   applyMutations(node: ESTree.Node): ESTree.Node[] {
     let nodes: ESTree.Node[] = [];
-    
-    if(this.canMutate(<ESTree.BinaryExpression> node)){
+
+    if (this.canMutate(<ESTree.BinaryExpression>node)) {
       let mutatedNode: ESTree.BinaryExpression = JSON.parse(JSON.stringify(node));
-      mutatedNode.operator = this.getOperator((<ESTree.BinaryExpression> node).operator);
+      mutatedNode.operator = this.getOperator((<ESTree.BinaryExpression>node).operator);
       nodes.push(mutatedNode);
     }
-    
+
     return nodes;
   }
 
@@ -34,7 +34,7 @@ abstract class OperatorMutator implements Mutator {
    * @param {String} operator - An umutated operator.
    * @returns {String} The mutated operator.
    */
-  
+
   private getOperator(operator: string): string {
     return this.operators[operator];
   }
