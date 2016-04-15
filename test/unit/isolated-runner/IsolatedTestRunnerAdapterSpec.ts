@@ -18,8 +18,8 @@ chai.use(chaiAsPromised);
 
 describe('IsolatedTestRunnerAdapter', () => {
   let sut: IsolatedTestRunnerAdapter;
-  let sinonSandbox: Sinon.SinonSandbox;
-  let clock: Sinon.SinonFakeTimers;
+  let sinonSandbox: sinon.SinonSandbox;
+  let clock: sinon.SinonFakeTimers;
   let fakeChildProcess: any;
   let runnerOptions: RunnerOptions;
 

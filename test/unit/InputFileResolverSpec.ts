@@ -6,8 +6,8 @@ import {expect} from 'chai';
 import {normalize} from 'path';
 
 describe('InputFileResolver', () => {
-  let sandbox: Sinon.SinonSandbox;
-  let globStub: Sinon.SinonStub;
+  let sandbox: sinon.SinonSandbox;
+  let globStub: sinon.SinonStub;
   let sut: InputFileResolver;
 
   beforeEach(() => {
@@ -38,6 +38,25 @@ describe('InputFileResolver', () => {
         expect(results.map(m => m.shouldMutate)).to.deep.equal([false, true, false, true, false])
         expect(results.map(m => m.path.substr(m.path.length - 8))).to.deep.equal(['file1.js', 'mute1.js', 'file2.js', 'mute2.js', 'file3.js'])
       });
+    });
+  });
+
+  describe('with file expressions that resolve in different order', () => {
+    let results: InputFile[];
+    beforeEach(() => {
+      let resolveFile1: (result: string[]) => void;
+      let resolveFile2: (result: string[]) => void;
+      sut = new InputFileResolver([], ['file1', 'file2']);
+      globStub.withArgs('file1').returns(new Promise(resolve => resolveFile1 = resolve));
+      globStub.withArgs('file2').returns(new Promise(resolve => resolveFile2 = resolve));
+      let p = sut.resolve().then(r => results = r);
+      resolveFile2(['file2']);
+      resolveFile1(['file1']);
+      return p;
+    });
+
+    it('should retain original glob order', () => {
+        expect(results.map(m => m.path.substr(m.path.length - 5))).to.deep.equal(['file1', 'file2'])
     });
   });
 
