@@ -3,7 +3,17 @@
 interface StrykerOptions {
   // this ensures that custom config for for example 'karma' can be added under the 'karma' key
   [customConfig: string]: any;
-
+  
+  /**
+   * A list of globbing expression used for selecting all files needed to run the tests. These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine).
+   */
+  files?: string[],
+  
+  /**
+   * A list of globbing expression used for selecting the files that should be mutated.
+   */
+  mutate?: string[],
+  
   /**
    * The name of the test framework to use
    */
@@ -13,6 +23,11 @@ interface StrykerOptions {
    * The name of the test runner to use
    */
   testRunner?: string;
+  
+  /**
+   * The log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
+   */
+  logLevel?: string;
   
   /**
    * Amount of additional time, in milliseconds, the mutation test is allowed to run
