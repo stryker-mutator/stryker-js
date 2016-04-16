@@ -36,6 +36,6 @@
   },
   "peerDependencies": {
     "grunt": "~0.4.5",
-    "stryker": "^0.2.0"
+    "stryker": "^0.2.2"
   }
 }
