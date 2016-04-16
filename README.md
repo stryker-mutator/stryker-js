@@ -31,16 +31,16 @@ Options can be configured either via the command line or via a config file.
 
 ### Required options
 #### Files to mutate
-**Short notation:** -m  
-**Full notation:** --mutate  
+**Short notation:** `-m`  
+**Full notation:** `--mutate`  
 **Optional:** **No**  
 **Description:**  
 A comma seperated list of globbing expressions used for selecting the files that should be mutated.  
 **Example:** -m src/\*\*/\*.js,a.js`
 
 #### All files
-**Short notation:** -f  
-**Full notation:** --files  
+**Short notation:** `-f`  
+**Full notation:** `--files`  
 **Optional:** **No**  
 **Description:**  
 A comma seperated list of globbing expressions used for selecting all files needed to run the tests.
@@ -50,15 +50,15 @@ The order of the files specified here will be the order used to load the file in
 
 #### Log level
 **Short notation:** (none)  
-**Full notation:** --logLevel  
+**Full notation:** `--logLevel`  
 **Optional:** Yes  
 **Description:**  
  Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
  *Note: We are still adding debug messages*
 
 ### Config file
-**Short notation:** -c  
-**Full notation:** --configFile  
+**Short notation:** `-c`  
+**Full notation:** `--configFile`  
 **Optional:** Yes  
 **Description:**  
 A location to a config file. That file should export a function which accepts a "config" object.
