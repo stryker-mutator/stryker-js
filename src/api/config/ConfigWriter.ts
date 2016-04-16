@@ -1,7 +1,7 @@
 import Config from './Config';
 
 interface ConfigWriter {
-  writer(config: Config): void;
+  write(config: Config): void;
 }
 
 export default ConfigWriter;
