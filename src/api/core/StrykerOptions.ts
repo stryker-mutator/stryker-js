@@ -7,12 +7,17 @@ interface StrykerOptions {
   /**
    * A list of globbing expression used for selecting all files needed to run the tests. These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine).
    */
-  files?: string[],
+  files?: string[];
   
   /**
    * A list of globbing expression used for selecting the files that should be mutated.
    */
-  mutate?: string[],
+  mutate?: string[];
+  
+  /**
+   * A location to a config file. That file should export a function which accepts a "config" object which it uses to configure stryker
+   */
+  configFile?: string;
   
   /**
    * The name of the test framework to use

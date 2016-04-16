@@ -1,4 +1,5 @@
 import {Config} from './api/config';
+import {StrykerOptions} from './api/core';
 import * as log4js from 'log4js';
 import * as path from 'path';
 import * as _ from 'lodash';
@@ -13,7 +14,7 @@ const log = log4js.getLogger('ConfigReader');
 
 export default class ConfigReader {
 
-  constructor(private cliOptions: any, private configFilePath: string) { }
+  constructor(private options: StrykerOptions) { }
 
   readConfig() {
     let configModule = this.loadConfigModule();
@@ -26,19 +27,19 @@ export default class ConfigReader {
     }
 
     // merge the config from config file and cliOptions (precedence)
-    config.set(this.cliOptions);
+    config.set(this.options);
     return config;
   }
 
   private loadConfigModule(): Function {
     let configModule: Function;
-    if (this.configFilePath) {
-      log.debug('Loading config %s', this.configFilePath);
+    if (this.options.configFile) {
+      log.debug('Loading config %s', this.options.configFile);
       try {
-        configModule = require(`${process.cwd()}/${this.configFilePath}`);
+        configModule = require(`${process.cwd()}/${this.options.configFile}`);
       } catch (e) {
-        if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(this.configFilePath) !== -1) {
-          log.fatal('File %s does not exist!', this.configFilePath);
+        if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(this.options.configFile) !== -1) {
+          log.fatal('File %s does not exist!', this.options.configFile);
           log.fatal(e);
         } else {
           log.fatal('Invalid config file!\n  ' + e.stack);

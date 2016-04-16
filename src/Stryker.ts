@@ -8,6 +8,7 @@ import Mutant from './Mutant';
 import ReporterFactory from './ReporterFactory';
 import BaseReporter from './reporters/BaseReporter';
 import {Config, ConfigWriterFactory} from './api/config';
+import {StrykerOptions} from './api/core';
 import TestRunnerOrchestrator from './TestRunnerOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
 import './karma-runner/KarmaTestRunner';
@@ -31,8 +32,8 @@ export default class Stryker {
    * @param {String[]} allFilePatterns - A comma seperated list of globbing expression used for selecting all files needed to run the tests. These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine)
    * @param {Object} [options] - Optional options.
    */
-  constructor(args: any) {
-    let configReader = new ConfigReader(args, args.configFile);
+  constructor(options: StrykerOptions) {
+    let configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
     this.setGlobalLogLevel(); // loglevel could be changed
     this.loadPlugins();
