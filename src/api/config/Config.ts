@@ -7,10 +7,11 @@ export default class Config implements StrykerOptions {
 
   files: string[];
   mutate: string[];
-
+  
+  logLevel = 'info';
   testFramework = 'jasmine';
   testRunner = 'karma';
-  timeoutMs = 2000;
+  timeoutMs = 5000;
   timeoutFactor = 1.5;
   plugins: string[] = ['stryker-*'];
   port = 9234;
