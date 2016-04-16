@@ -35,10 +35,11 @@ export default class ConfigReader {
     if (this.configFilePath) {
       log.debug('Loading config %s', this.configFilePath);
       try {
-        configModule = require(this.configFilePath);
+        configModule = require(`${process.cwd()}/${this.configFilePath}`);
       } catch (e) {
         if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(this.configFilePath) !== -1) {
           log.fatal('File %s does not exist!', this.configFilePath);
+          log.fatal(e);
         } else {
           log.fatal('Invalid config file!\n  ' + e.stack);
         }
