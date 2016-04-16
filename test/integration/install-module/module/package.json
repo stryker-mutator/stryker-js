@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
-    "postinstall": "typings install"
+    "postinstall": "typings install",
+    "stryker:config": "node node_modules/stryker/dist/src/Stryker.js --configFile stryker.conf.js"
   },
   "author": "",
   "license": "ISC",
