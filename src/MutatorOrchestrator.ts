@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {Mutator} from './api/mutant';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
@@ -61,7 +62,7 @@ export default class MutatorOrchestrator {
         Object.freeze(astnode);
         this.mutators.forEach((mutator: Mutator) => {
           try {
-            mutator.applyMutations(astnode).forEach((mutatedNode: ESTree.Node) => {
+            mutator.applyMutations(astnode, _.cloneDeep).forEach((mutatedNode: ESTree.Node) => {
               let mutatedCode = parserUtils.generate(mutatedNode);
               mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, astnode.loc));
             })

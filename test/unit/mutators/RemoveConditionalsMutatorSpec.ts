@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import RemoveConditionalsMutator from '../../../src/mutators/RemoveConditionalsMutator';
 import * as parserUtils from '../../../src/utils/parserUtils';
 import * as chai from 'chai';
@@ -36,7 +37,7 @@ describe('RemoveConditionalsMutator', function() {
   });
 
   function applyMutation(node: ESTree.IfStatement| ESTree.DoWhileStatement | ESTree.WhileStatement | ESTree.ForStatement){
-    return removeConditionalsMutator.applyMutations(node);
+    return removeConditionalsMutator.applyMutations(node, _.cloneDeep);
   }
 
   describe('should not generate an infinite loop', function() {

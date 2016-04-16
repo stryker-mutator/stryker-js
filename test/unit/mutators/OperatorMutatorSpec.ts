@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import OperatorMutator from '../../../src/mutators/OperatorMutator';
 import * as chai from 'chai';
 let expect = chai.expect;
@@ -38,7 +39,7 @@ describe('OperatorMutator', () => {
   
   describe('should mutate', () => {
     it('a valid Node', () => {
-      let mutatedNodes = mockMutator.applyMutations(validNode);
+      let mutatedNodes = mockMutator.applyMutations(validNode, _.cloneDeep);
       
       expect(mutatedNodes).to.have.lengthOf(1);
     });
@@ -46,7 +47,7 @@ describe('OperatorMutator', () => {
   
   describe('should not mutate', () => {
     it('an invalid Node', () => {
-      let mutatedNodes = mockMutator.applyMutations(invalidNode);
+      let mutatedNodes = mockMutator.applyMutations(invalidNode, _.cloneDeep);
       
       expect(mutatedNodes).to.have.lengthOf(0);
     });

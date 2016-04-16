@@ -10,16 +10,16 @@ export default class RemoveConditionalsMutator implements Mutator {
 
   constructor() { }
 
-  applyMutations(node: ESTree.Node): ESTree.Node[] {
+  applyMutations(node: ESTree.Node, deepCopy: (obj: any) => any): ESTree.Node[] {
     let nodes: ESTree.Node[] = [];
 
     if (this.canMutate(node)) {
-      let mutatedFalseNode: ESTree.ConditionalExpression = this.copyNode(node);
+      let mutatedFalseNode: ESTree.ConditionalExpression = deepCopy(node);
       this.mutateTestExpression(mutatedFalseNode, false);
       nodes.push(mutatedFalseNode);
 
       if (node.type === Syntax.IfStatement) {
-        let mutatedTrueNode: ESTree.ConditionalExpression = this.copyNode(node);
+        let mutatedTrueNode: ESTree.ConditionalExpression = deepCopy(node);
         this.mutateTestExpression(mutatedTrueNode, true);
         nodes.push(mutatedTrueNode);
       }
