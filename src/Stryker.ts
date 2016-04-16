@@ -17,6 +17,7 @@ import InputFileResolver from './InputFileResolver';
 import ConfigReader, {CONFIG_SYNTAX_HELP} from './ConfigReader';
 import PluginLoader from './PluginLoader';
 import {freezeRecursively} from './utils/objectUtils';
+import * as log4js from 'log4js';
 
 export default class Stryker {
 
@@ -33,8 +34,10 @@ export default class Stryker {
   constructor(args: any) {
     let configReader = new ConfigReader(args, args.configFile);
     this.config = configReader.readConfig();
+    this.setGlobalLogLevel(); // loglevel could be changed
     this.loadPlugins();
     this.applyConfigWriters();
+    this.setGlobalLogLevel(); // loglevel could be changed
     freezeRecursively(this.config);
     var reporterFactory = new ReporterFactory();
     this.reporter = reporterFactory.getReporter('console');
@@ -87,15 +90,19 @@ export default class Stryker {
   }
 
   private loadPlugins() {
-    if(this.config.plugins){
-     new PluginLoader(this.config.plugins).load(); 
+    if (this.config.plugins) {
+      new PluginLoader(this.config.plugins).load();
     }
   }
-  
-  private applyConfigWriters(){
+
+  private applyConfigWriters() {
     ConfigWriterFactory.instance().knownNames().forEach(configWriterName => {
       ConfigWriterFactory.instance().create(configWriterName, undefined).write(this.config);
     });
+  }
+
+  private setGlobalLogLevel() {
+    log4js.setGlobalLogLevel(this.config.logLevel);
   }
 
   /**
@@ -134,7 +141,6 @@ export default class Stryker {
   function list(val: string) {
     return val.split(',');
   }
-  //TODO: Implement the new Stryker options
   program
     .usage('-f <files> -m <filesToMutate> -c <configFileLocation> [other options]')
     .description('Starts the stryker mutation testing process. Required arguments are --mutate and --files. You can use globbing expressions to target multiple files. See https://github.com/isaacs/node-glob#glob-primer for more information about the globbing syntax.')
@@ -144,7 +150,10 @@ export default class Stryker {
                               Example: node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`, list)
     .option('-c, --configFile <configFileLocation>', 'A location to a config file. That file should export a function which accepts a "config" object\n' +
     CONFIG_SYNTAX_HELP)
+    .option('--logLevel <level>', 'Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
     .parse(process.argv);
+
+  log4js.setGlobalLogLevel(program['logLevel'] || 'info')
 
   new Stryker(program).runMutationTest();
 })();
