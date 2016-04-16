@@ -18,17 +18,23 @@ export default class PluginLoader {
 
   private getModules() {
     let modules: string[] = [];
-    this.plugins.forEach(function(plugin) {
+    this.plugins.forEach(function (plugin) {
       if (_.isString(plugin)) {
         if (plugin.indexOf('*') !== -1) {
-          var pluginDirectory = path.normalize(__dirname + '/../..')
-          var regexp = new RegExp('^' + plugin.replace('*', '.*'))
+          var pluginDirectory = path.normalize(__dirname + '/../../..');
+          var regexp = new RegExp('^' + plugin.replace('*', '.*'));
 
-          log.debug('Loading %s from %s', plugin, pluginDirectory)
-          fs.readdirSync(pluginDirectory)
+          log.debug('Loading %s from %s', plugin, pluginDirectory);
+          let plugins = fs.readdirSync(pluginDirectory)
             .filter(pluginName => IGNORED_PACKAGES.indexOf(pluginName) === -1 && regexp.test(pluginName))
-            .map(pluginName => pluginDirectory + '/' + pluginName)
-            .forEach(moduleName => modules.push(moduleName));
+            .map(pluginName => pluginDirectory + '/' + pluginName);
+          if (plugins.length === 0) {
+            log.debug('Expression %s not resulted in plugins to load', plugin);
+          } else {
+            log.debug('Expression %s resulted in plugins: %s', plugin, plugins);
+          }
+          plugins
+            .forEach(p => modules.push(p));
         } else {
           modules.push(plugin);
         }
@@ -36,6 +42,7 @@ export default class PluginLoader {
         log.warn('Ignoring plugin %s, as its not a string type', plugin)
       }
     });
+
     return modules
   }
 
