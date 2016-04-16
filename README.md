@@ -49,18 +49,18 @@ The order of the files specified here will be the order used to load the file in
 **Example:** -f node_modules/a-lib/\*\*/\*.js,src/\*\*/\*.js,a.js,test/\*\*/\*.js
 
 #### Log level
-**Short notation:** (none)
-**Full notation:** --logLevel
-**Optional:** Yes
-**Description:**
+**Short notation:** (none)  
+**Full notation:** --logLevel  
+**Optional:** Yes  
+**Description:**  
  Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
  *Note: We are still adding debug messages*
 
 ### Config file
-**Short notation:** -c
-**Full notation:** --configFile
-**Optional:** Yes
-**Description:**
+**Short notation:** -c  
+**Full notation:** --configFile  
+**Optional:** Yes  
+**Description:**  
 A location to a config file. That file should export a function which accepts a "config" object.
 On that object you can configure all options as an alternative for the command line. 
 If an option is configured on both the command line and in the config file, the command line wins.
