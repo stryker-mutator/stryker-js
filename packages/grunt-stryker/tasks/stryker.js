@@ -2,9 +2,9 @@
 
 var Stryker = require('stryker').default;
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
-  grunt.registerMultiTask('stryker', 'The extendable JavaScript mutation testing framework.', function() {
+  grunt.registerMultiTask('stryker', 'The extendable JavaScript mutation testing framework.', function () {
     var target = this.name + "." + this.target + ".";
     var filesProperty = target + 'files';
     var mutateProperty = target + 'mutate';
@@ -14,13 +14,26 @@ module.exports = function(grunt) {
 
     var files = grunt.file.expand(grunt.util.toArray(grunt.config.get(filesProperty)));
     var mutate = grunt.file.expand(grunt.util.toArray(grunt.config.get(mutateProperty)));
+    
+    var strykerConfig = {
+      files: files,
+      mutate: mutate,
+      logLevel: this.options().logLevel,
+      testFramework: this.options().testFramework,
+      testRunner: this.options().testRunner,
+      timeoutMs: this.options().timeoutMs,
+      timeoutFactor: this.options().timeoutFactor,
+      plugins: this.options().plugins,
+      port: this.options().port
+    };
 
     var done = this.async();
-    var stryker = new Stryker(mutate, files, this.options());
-    stryker.runMutationTest(function() {
+    var stryker = new Stryker(strykerConfig);
+    stryker.runMutationTest().then(function () {
       done();
+    }, function () {
+      grunt.fail.fatal("Stryker was unable to run the mutation test");
     });
-
   });
 
 };
