@@ -8,16 +8,22 @@ module.exports = function (grunt) {
     var target = this.name + "." + this.target + ".";
     var filesProperty = target + 'files';
     var mutateProperty = target + 'mutate';
+    var configFileProperty = target + 'configFile';
 
-    grunt.config.requires(filesProperty);
-    grunt.config.requires(mutateProperty);
+    var configFile = grunt.config.get(configFileProperty);
+
+    if (!configFile) {
+      grunt.config.requires(filesProperty);
+      grunt.config.requires(mutateProperty);
+    }
 
     var files = grunt.file.expand(grunt.util.toArray(grunt.config.get(filesProperty)));
     var mutate = grunt.file.expand(grunt.util.toArray(grunt.config.get(mutateProperty)));
-    
+
     var strykerConfig = {
       files: files,
       mutate: mutate,
+      configFile: configFile,
       logLevel: this.options().logLevel,
       testFramework: this.options().testFramework,
       testRunner: this.options().testRunner,
@@ -26,7 +32,7 @@ module.exports = function (grunt) {
       plugins: this.options().plugins,
       port: this.options().port
     };
-
+    
     var done = this.async();
     var stryker = new Stryker(strykerConfig);
     stryker.runMutationTest().then(function () {
