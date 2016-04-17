@@ -8,17 +8,12 @@ module.exports = function (grunt) {
     var target = this.name + "." + this.target + ".";
     var filesProperty = target + 'files';
     var mutateProperty = target + 'mutate';
-    var configFileProperty = target + 'configFile';
     
     var options = this.options();
 
-    var configFile = grunt.config.get(configFileProperty);
-
-    if (!configFile || configFile.length === 0) {
+    if (!options.configFile || options.configFile.length === 0) {
       grunt.config.requires(filesProperty);
       grunt.config.requires(mutateProperty);
-    } else {
-      options.configFile = configFile;
     }
     
     if (grunt.config.get(filesProperty)) {

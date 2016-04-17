@@ -57,7 +57,7 @@ Type: `Object`
 
 An object with arraysof globbing expressions used for selecting the files that should be mutated.
 
-### configFile
+### options.configFile
 Type: `string`
 
 A location to a config file. That file should export a function which accepts a "config" object.
@@ -110,13 +110,8 @@ In this example, we run grunt-stryker using a config file. We **could overwrite*
 grunt.initConfig({
   stryker: {
     jasmine: {
-      configFile: 'stryker.conf.js' 
-      {
-        src: ['src/**/*.js'],
-        tests: ['test/**/*.js', '!test/IgnoredTestFile.js']
-      },
-      mutate: {
-        src: ['src/**/*.js']
+      options: {
+        configFile: 'stryker.conf.js' 
       }
     },
   },
