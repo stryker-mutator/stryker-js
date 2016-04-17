@@ -45,10 +45,46 @@ grunt.initConfig({
 });
 ```
 
+### Options
+
+#### files
+Type: `Object`
+
+An object with arrays of globbing expressions used for selecting all files needed to run the tests. These include: test files, library files, source files (the files selected with `mutate`) and any other file you need to run your tests. The order of the files specified here will be the order used to load the file in the test runner (karma).
+
+#### mutate
+Type: `Object`
+
+An object with arraysof globbing expressions used for selecting the files that should be mutated.
+
+### configFile
+Type: `string`
+
+A location to a config file. That file should export a function which accepts a "config" object.
+On that object you can configure all options as an alternative for the Gruntfile. 
+If an option is configured in both the Gruntfile and in the config file, the Gruntfile wins.
+An example config: 
+```javascript
+module.exports = function(config){
+  config.set({
+    files: ['src/**/*.js', 'test/myFirstFile.spec.js', 'test/mySecondFile.spec.js'],
+    mutate: ['src/**/*.js'],
+    logLevel: 'debug'
+  });
+}
+```
+
+### options.logLevel
+Optional  
+Type: `string`  
+Default: `"info"`
+
+Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Note: We are still migrating to using log4js. Some messages are not configurable
+
 ### Usage Examples
 
 #### Default Options
-In this example, we run mutation testing on every JavaScript file in the `src` folder except for `src/IgnoredSourceFile.js`. The same goes for the tests.  
+In this example, we run mutation testing using every JavaScript file in the `src` folder and every file in the `test` folder except for `test/IgnoredTestFile.js`.  
 We've called the task `jasmine` here due to the fact that we plan on using the task for running Jasmine tests, but feel free to use any name you want.  
 Feel free to also choose the names of the arrays of files, we've used `src` and `tests` in this example.
 
@@ -57,16 +93,46 @@ grunt.initConfig({
   stryker: {
     jasmine: {
       files: {
-        src: ['src/**/*.js', '!src/IgnoredSourceFile.js'],
+        src: ['src/**/*.js'],
         tests: ['test/**/*.js', '!test/IgnoredTestFile.js']
       },
       mutate: {
-        src: ['src/**/*.js', '!src/IgnoredSourceFile.js']
+        src: ['src/**/*.js']
       }
     },
   },
 });
 ```
+
+#### Config file
+In this example, we run grunt-stryker using a config file. We **could overwrite** the config file by manually configuring our grunt task as well.
+```js
+grunt.initConfig({
+  stryker: {
+    jasmine: {
+      configFile: 'stryker.conf.js' 
+      {
+        src: ['src/**/*.js'],
+        tests: ['test/**/*.js', '!test/IgnoredTestFile.js']
+      },
+      mutate: {
+        src: ['src/**/*.js']
+      }
+    },
+  },
+});
+```
+
+The content of the file `stryker.conf.js` in this example is:
+```javascript
+module.exports = function(config){
+  config.set({
+    files: ['src/**/*.js', 'test/myFirstFile.spec.js', 'test/mySecondFile.spec.js'],
+    mutate: ['src/**/*.js']
+  });
+}
+```
+**Note:** It's not possible to exclude files in a config file using `!` like: `!myFile.js`. This is possible when you don't use a config file but define the options your Gruntfile
 
 ## Supported mutations
 For the list of supported mutations, please take a look at the [mutations supported by stryker](https://github.com/stryker-mutator/stryker#supported-mutations)
