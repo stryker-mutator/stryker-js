@@ -36,7 +36,7 @@ export function readFile(filename: string) {
    * @param files - The list of filenames which have to be normalized.
    */
 export function normalize(files: string[]): void {
-  _.forEach(files, function(file, key) {
+  _.forEach(files, function (file, key) {
     files[key] = path.resolve(path.normalize(file));
   });
 };
@@ -53,4 +53,11 @@ export function glob(expression: string): Promise<string[]> {
     });
 
   });
+}
+
+/**
+ * Wrapper around the 'require' function (for testability)
+ */
+export function importModule(moduleName: string) {
+  require(moduleName);
 }
