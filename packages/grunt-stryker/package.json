@@ -1,6 +1,6 @@
 {
   "name": "grunt-stryker",
-  "description": "The JavaScript mutation tester.",
+  "description": "Grunt plugin for the mutation testing framework 'stryker'",
   "version": "0.1.0",
   "homepage": "",
   "repository": {
