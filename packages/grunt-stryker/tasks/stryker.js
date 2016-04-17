@@ -9,32 +9,28 @@ module.exports = function (grunt) {
     var filesProperty = target + 'files';
     var mutateProperty = target + 'mutate';
     var configFileProperty = target + 'configFile';
+    
+    var options = this.options();
 
     var configFile = grunt.config.get(configFileProperty);
 
-    if (!configFile) {
+    if (!configFile || configFile.length === 0) {
       grunt.config.requires(filesProperty);
       grunt.config.requires(mutateProperty);
+    } else {
+      options.configFile = configFile;
+    }
+    
+    if (grunt.config.get(filesProperty)) {
+      options.files = grunt.file.expand(grunt.util.toArray(grunt.config.get(filesProperty)));
     }
 
-    var files = grunt.file.expand(grunt.util.toArray(grunt.config.get(filesProperty)));
-    var mutate = grunt.file.expand(grunt.util.toArray(grunt.config.get(mutateProperty)));
+    if (grunt.config.get(mutateProperty)) {
+      options.mutate = grunt.file.expand(grunt.util.toArray(grunt.config.get(mutateProperty)));
+    }
 
-    var strykerConfig = {
-      files: files,
-      mutate: mutate,
-      configFile: configFile,
-      logLevel: this.options().logLevel,
-      testFramework: this.options().testFramework,
-      testRunner: this.options().testRunner,
-      timeoutMs: this.options().timeoutMs,
-      timeoutFactor: this.options().timeoutFactor,
-      plugins: this.options().plugins,
-      port: this.options().port
-    };
-    
     var done = this.async();
-    var stryker = new Stryker(strykerConfig);
+    var stryker = new Stryker(options);
     stryker.runMutationTest().then(function () {
       done();
     }, function () {
