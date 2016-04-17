@@ -28,6 +28,8 @@ module.exports = function(grunt) {
             'test/sampleProject/src/**/*.js',
             '!test/sampleProject/src/InfiniteAdd.js'
           ]
+        },
+        options: {
         }
       }
     },
