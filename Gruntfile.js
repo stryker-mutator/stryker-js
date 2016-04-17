@@ -51,20 +51,22 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec'
         },
-        src: ['dist/test/unit/**/*.js']
+        // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
+        src: ['dist/test/helpers/**/*.js', 'dist/test/unit/**/*.js']
       },
       integration: {
         options: {
           reporter: 'spec',
           timeout: 5000
         },
-        src: ['dist/test/integration/**/*.js']
+        // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
+        src: ['dist/test/helpers/**/*.js', 'dist/test/integration/**/*.js']
       }
     },
-    /* Start code coverage */
     mocha_istanbul: {
       coverage: {
-        src: ['dist/test/integration/**/*.js', 'dist/test/unit/**/*.js'],
+        // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
+        src: ['dist/test/helpers/**/*.js', 'dist/test/integration/**/*.js', 'dist/test/unit/**/*.js'],
       }
     },
     istanbul_check_coverage: {

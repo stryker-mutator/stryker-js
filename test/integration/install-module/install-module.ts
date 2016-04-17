@@ -1,6 +1,7 @@
 import Executor from './Executor';
+import {expect} from 'chai';
 
-describe('we have a module using stryker', function() {
+describe('we have a module using stryker', function () {
 
   this.timeout(100000);
 
@@ -9,12 +10,28 @@ describe('we have a module using stryker', function() {
 
     before((done) => {
       executor = new Executor('module');
-      executor.exec('npm install', {}, done);
+      executor.exec('npm install', {}, (errors) => done(errors));
     });
 
     describe('when compiling typescript', () => {
       it('should not result in errors', (done) => {
-        executor.exec('npm run tsc', {}, done);
+        executor.exec('npm run tsc', {}, (errors) => done(errors));
+      });
+    });
+
+    describe('when running stryker with a config file', () => {
+      let resultOutput: string;
+      before((done) => {
+        executor.exec('npm run stryker:config', {}, (errors, stdout) => {
+          resultOutput = stdout;
+          done(errors);
+        });
+      });
+
+      it('should have ran stryker', () => {
+        expect(resultOutput).to.have.string('INFO: Initial test run succeeded. Ran 6 tests.');
+        expect(resultOutput).to.have.string('Mutation score based on code coverage');
+        expect(resultOutput).to.have.string('Mutation score based on codebase');
       });
     });
   });

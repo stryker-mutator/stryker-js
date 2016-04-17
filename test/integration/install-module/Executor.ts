@@ -8,7 +8,7 @@ export default class Executor {
     this.cwd = __dirname + '/../../../../test/integration/install-module/' + cwd;
   }
 
-  exec(command: string, options: any, done: (error?: any) => any) {
+  exec(command: string, options: any, done: (error: any, stdout: string) => any) {
     console.log(`exec: ${this.cwd}/${command}`);
 
     let args = command.split(' ');
@@ -25,7 +25,7 @@ export default class Executor {
     this.handleProcess(child, done);
   }
 
-  private handleProcess(child: ChildProcess, done: (error?: any) => any) {
+  private handleProcess(child: ChildProcess, done: (error: any, output: string) => any) {
     var stderr = new Buffer('');
     var stdout = new Buffer('');
     if (child.stdout) {
@@ -47,9 +47,9 @@ export default class Executor {
     child.on('close', function(code: number) {
       if (code !== 0) {
         let error = stdout.toString() + stderr.toString();
-        done(error);
+        done(error, stdout.toString());
       } else {
-        done();
+        done(null, stdout.toString());
       }
     });
   }

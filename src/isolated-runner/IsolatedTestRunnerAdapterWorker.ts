@@ -3,6 +3,7 @@ import {RunnerOptions, TestRunner, TestResult, TestRunnerFactory, RunResult} fro
 import StartMessageBody from './StartMessageBody';
 import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
+import PluginLoader from '../PluginLoader';
 
 // Remove later when we have dynamic plugin system
 import '../karma-runner/KarmaTestRunner';
@@ -39,9 +40,7 @@ class TestRunnerChildProcessAdapterWorker {
   }
 
   private loadPlugins(plugins: string[]) {
-    if (plugins) {
-      plugins.forEach(plugin => require(plugin));
-    }
+    new PluginLoader(plugins).load();
   }
 
   private reportResult(result: RunResult) {
