@@ -7,7 +7,8 @@
   "scripts": {
     "test": "grunt test",
     "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
-    "tsc:w": "tsc -w"
+    "tsc:w": "tsc -w",
+    "prepublish": "grunt"
   },
   "repository": {
     "type": "git",
