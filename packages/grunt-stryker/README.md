@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/stryker-mutator/grunt-stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/grunt-stryker)
+
 # Grunt-stryker
 
 *Professor X: For someone who hates mutants... you certainly keep some strange company.*  
