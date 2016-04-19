@@ -29,14 +29,8 @@ node node_modules/stryker/dist/src/Stryker.js --help
 
 Stryker can be used in two ways:
 
-1. Using a config file
-```
-node node_modules/stryker/src/Stryker.js -c stryker.conf.js
-```
-2. Using command line arguments
-```
-node node_modules/stryker/src/Stryker.js –m src/myFirstFile.js,src/mySecondFile.js –f libs/externalLibrary.js,src/myFirstFile.js,src/mySecondFile.js,test/*.js
-```
+1. Using a config file `node node_modules/stryker/src/Stryker.js -c stryker.conf.js`
+2. Using command line arguments `node node_modules/stryker/src/Stryker.js –m src/file.js,src/file2.js –f libs/externalLibrary.js,src/file2.js,src/file.js,test/*.js`
 
 The config file is *not* a simple json file, it should be a common js (a.k.a. npm) module looking like this:
 ```javascript
