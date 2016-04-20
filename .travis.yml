@@ -1,7 +1,17 @@
 language: node_js
 node_js:
+   - "5"
+  - "5.1"
+  - "4"
+  - "4.2"
   - "4.1"
   - "4.0"
+  - "0.12"
+  - "0.11"
+  - "0.10"
+  - "0.8"
+  - "0.6"
+  - "iojs"
 before_install: npm install -g grunt-cli
 install: npm install
 before_script:
