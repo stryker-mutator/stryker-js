@@ -18,7 +18,7 @@ interface FileMap {
   [sourceFile: string]: string
 }
 
-interface TestRunnerMetadata {
+interface TestRunnerSandbox {
   index: number;
   runnerAdapter: IsolatedTestRunnerAdapter;
   selector: TestSelector;
@@ -41,7 +41,7 @@ export default class TestRunnerOrchestrator {
 
   runMutations(mutants: Mutant[], reporter: BaseReporter): Promise<void> {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
-    return this.createTestRunners().then(testRunners => {
+    return this.createTestRunnerSandboxes().then(testRunners => {
       let promiseProducer: () => Promise<number> | Promise<void> = () => {
         if (mutants.length === 0) {
           return null; // we're done
@@ -110,22 +110,22 @@ export default class TestRunnerOrchestrator {
     })
   }
 
-  private createTestRunners(): Promise<TestRunnerMetadata[]> {
+  private createTestRunnerSandboxes(): Promise<TestRunnerSandbox[]> {
 
-    return new Promise<TestRunnerMetadata[]>((resolve, reject) => {
+    return new Promise<TestRunnerSandbox[]>((resolve, reject) => {
       let cpuCount = os.cpus().length;
-      let testRunnerMetadatas: TestRunnerMetadata[] = [];
+      let testRunnerSandboxes: TestRunnerSandbox[] = [];
       let allPromises: Promise<any>[] = [];
       log.info(`Creating ${cpuCount} test runners (based on cpu count)`);
       for (let i = 0; i < cpuCount; i++) {
-        allPromises.push(this.createTestRunner(i).then(testRunnerMetadata => testRunnerMetadatas.push(testRunnerMetadata)));
+        allPromises.push(this.createSandbox(i).then(sandbox => testRunnerSandboxes.push(sandbox)));
       }
-      Promise.all(allPromises).then(() => resolve(testRunnerMetadatas));
+      Promise.all(allPromises).then(() => resolve(testRunnerSandboxes));
     });
   }
 
-  private createTestRunner(index: number): Promise<TestRunnerMetadata> {
-    return this.createSandbox().then(sourceFileMap => {
+  private createSandbox(index: number): Promise<TestRunnerSandbox> {
+    return this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
       let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
       let runnerFiles: InputFile[] = [];
       this.files.forEach(originalFile => {
@@ -144,7 +144,7 @@ export default class TestRunnerOrchestrator {
     });
   }
 
-  private createSandbox() {
+  private copyAllSourceFilesToTempFolder() {
     return new Promise<FileMap>((resolve, reject) => {
       let fileMap: FileMap = Object.create(null);
       var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-source-files');
