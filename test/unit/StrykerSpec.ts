@@ -10,6 +10,7 @@ import * as inputFileResolver from '../../src/InputFileResolver';
 import * as configReader from '../../src/ConfigReader';
 import * as testRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as pluginLoader from '../../src/PluginLoader';
+import log from '../helpers/log4jsMock';
 
 class FakeConfigWriter implements ConfigWriter {
   constructor() { }
@@ -38,7 +39,6 @@ describe('Stryker', function () {
     };
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
-    sandbox.stub(console, 'log');
   });
 
   function itShouldResultInARejection() {
@@ -128,8 +128,7 @@ describe('Stryker', function () {
           });
 
           it('should have logged the errors', () => {
-            expect(console.log).to.have.been.calledWith('ERROR: One or more tests errored in the initial test run:');
-            expect(console.log).to.have.been.calledWith('\t', 'An error!');
+            expect(log.error).to.have.been.calledWith('One or more tests errored in the initial test run:\n\tAn error!');
           });
 
           itShouldResultInARejection();

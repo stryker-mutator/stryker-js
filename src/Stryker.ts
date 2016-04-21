@@ -20,6 +20,8 @@ import PluginLoader from './PluginLoader';
 import {freezeRecursively} from './utils/objectUtils';
 import * as log4js from 'log4js';
 
+const log = log4js.getLogger('Stryker');
+
 export default class Stryker {
 
   reporter: BaseReporter;
@@ -54,20 +56,20 @@ export default class Stryker {
 
       new InputFileResolver(this.config.mutate, this.config.files)
         .resolve().then(inputFiles => {
-          console.log('INFO: Running initial test run');
+          log.info('Running initial test run');
           let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles)
           testRunnerOrchestrator.recordCoverage().then((runResults) => {
             let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
               return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
             });
             if (unsuccessfulTests.length === 0) {
-              console.log(`INFO: Initial test run succeeded. Ran ${runResults.length} tests.`);
+              log.info(`Initial test run succeeded. Ran ${runResults.length} tests.`);
 
               let mutator = new Mutator();
               let mutants = mutator.mutate(inputFiles
                 .filter(inputFile => inputFile.shouldMutate)
                 .map(file => file.path));
-              console.log('INFO: ' + mutants.length + ' Mutants generated');
+              log.info(`${mutants.length} Mutant(s) generated`);
 
               let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
               mutantRunResultMatcher.matchWithMutants();
@@ -84,7 +86,7 @@ export default class Stryker {
             strykerReject(errors);
           });
         }, (errors: string[]) => {
-          errors.forEach(error => console.log(`ERROR: ${error}`));
+          errors.forEach(error => log.error(error));
           strykerReject();
         });
     });
@@ -121,8 +123,9 @@ export default class Stryker {
         ))
         .sort();
     if (failedSpecNames.length > 0) {
-      console.log('ERROR: One or more tests failed in the inial test run:');
-      failedSpecNames.forEach(filename => console.log('\t', filename));
+      let message = 'One or more tests failed in the inial test run:';
+      failedSpecNames.forEach(filename => message += `\n\t${filename}`);
+      log.error(message);
     }
 
     let errors =
@@ -132,8 +135,9 @@ export default class Stryker {
         .sort();
 
     if (errors.length > 0) {
-      console.log('ERROR: One or more tests errored in the initial test run:')
-      errors.forEach(error => console.log('\t', error));
+      let message = 'One or more tests errored in the initial test run:';
+      errors.forEach(error => message += `\n\t${error}`);
+      log.error(message);
     }
   }
 }
