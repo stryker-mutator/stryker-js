@@ -41,7 +41,7 @@ export default class Stryker {
     this.loadPlugins();
     this.applyConfigWriters();
     this.setGlobalLogLevel(); // loglevel could be changed
-    freezeRecursively(this.config);
+    this.freezeConfig();
     var reporterFactory = new ReporterFactory();
     this.reporter = reporterFactory.getReporter('console');
   }
@@ -104,6 +104,13 @@ export default class Stryker {
     });
   }
 
+  private freezeConfig() {
+    freezeRecursively(this.config);
+    if (log.isDebugEnabled()) {
+      log.debug(`Using config: ${JSON.stringify(this.config)}`);
+    }
+  }
+
   private setGlobalLogLevel() {
     log4js.setGlobalLogLevel(this.config.logLevel);
   }
@@ -159,6 +166,17 @@ export default class Stryker {
     .parse(process.argv);
 
   log4js.setGlobalLogLevel(program['logLevel'] || 'info')
+
+  // Cleanup commander state
+  delete program.options;
+  delete program.rawArgs;
+  delete program.args;
+  delete program.commands;
+  for (let i in program) {
+    if (i.charAt(0) === '_') {
+      delete program[i];
+    }
+  }
 
   new Stryker(program).runMutationTest();
 })();
