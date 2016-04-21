@@ -40,8 +40,11 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   private listenToWorkerProcess() {
 
     if (this.workerProcess.stdout) {
+      let traceEnabled = log.isTraceEnabled();
       this.workerProcess.stdout.on('data', (data: Buffer) => {
-        log.debug(data.toString());
+        if (traceEnabled) {
+          log.trace(data.toString());
+        }
       });
     }
     if (this.workerProcess.stderr) {
