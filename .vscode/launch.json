@@ -6,7 +6,7 @@
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
-            // "preLaunchTask": "ts",
+            "preLaunchTask": "ts",
             "stopOnEntry": false,
             "args": [
                 "mochaTest:unit"
@@ -50,13 +50,15 @@
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/dist/src/Stryker.js",
-            // "preLaunchTask": "ts",
+            "preLaunchTask": "ts",
             "stopOnEntry": false,
             "args": [
                 "--mutate",
                 "test/sampleProject/src/+(Add|Circle).js",
                 "--files",
-                "test/sampleProject/src/Add.js,test/sampleProject/src/Circle.js,test/sampleProject/test/AddSpec.js,test/sampleProject/test/CircleSpec.js"
+                "test/sampleProject/src/Add.js,test/sampleProject/src/Circle.js,test/sampleProject/test/AddSpec.js,test/sampleProject/test/CircleSpec.js",
+                "--logLevel",
+                "debug"
             ],
             "cwd": "${workspaceRoot}/.",
             "runtimeExecutable": null,

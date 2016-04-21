@@ -4,6 +4,7 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import {InputFile} from '../../src/api/core';
 import {expect} from 'chai';
 import {normalize} from 'path';
+import log from '../helpers/log4jsMock';
 
 describe('InputFileResolver', () => {
   let sandbox: sinon.SinonSandbox;
@@ -92,7 +93,7 @@ describe('InputFileResolver', () => {
     });
 
     it('should log a warning', () => {
-      expect(console.log).to.have.been.calledWith(`WARNING: Globbing expression "notExists" did not result in any files.`)
+      expect(log.warn).to.have.been.calledWith('Globbing expression "notExists" did not result in any files.');
     });
   });
 
