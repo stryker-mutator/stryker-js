@@ -36,7 +36,6 @@ describe('ConfigReader', () => {
     describe('with config file', () => {
 
       beforeEach(() => {
-        console.log(process.cwd());
         sut = new ConfigReader({ configFile: 'test/integration/config-reader/valid.conf.js' });
         result = sut.readConfig();
       });

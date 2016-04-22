@@ -83,7 +83,6 @@ The order of the files specified here will be the order used to load the file in
 **Config file key:** `logLevel`  
 **Description:**  
  Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
- *Note: We are still migrating to using log4js. Some messages are not configurable*
 
 ### Config file
 **Short notation:** `-c`  
