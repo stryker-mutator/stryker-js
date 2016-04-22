@@ -29,7 +29,7 @@ describe('we have a module using stryker', function () {
       });
 
       it('should have ran stryker', () => {
-        expect(resultOutput).to.have.string('INFO: Initial test run succeeded. Ran 6 tests.');
+        expect(resultOutput).to.have.string('Initial test run succeeded. Ran 6 tests.');
         expect(resultOutput).to.have.string('Mutation score based on code coverage');
         expect(resultOutput).to.have.string('Mutation score based on codebase');
       });

@@ -4,6 +4,9 @@ import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import * as log4js from 'log4js';
+
+const log = log4js.getLogger('KarmaTestRunner');
 
 interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string }
@@ -38,7 +41,7 @@ export default class KarmaTestRunner extends TestRunner {
     let karmaConfig = this.configureTestRunner(runnerOptions.strykerOptions['karma']);
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
 
-    console.log(`using config ${JSON.stringify(karmaConfig)}`);
+    log.info(`using config ${JSON.stringify(karmaConfig)}`);
     this.server = new karma.Server(karmaConfig, function(exitCode) {
       process.exit(1);
     });
@@ -142,7 +145,7 @@ export default class KarmaTestRunner extends TestRunner {
     return new Promise<void>((resolve) => {
       let p = this.options.port;
       karma.runner.run({ port: p }, (exitCode) => {
-        console.log('karma run done with ', exitCode);
+        log.info('karma run done with ', exitCode);
         resolve();
       });
     });

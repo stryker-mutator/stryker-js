@@ -6,6 +6,9 @@ import StartMessageBody from './StartMessageBody';
 import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
 import * as _ from 'lodash';
+import * as log4js from 'log4js';
+
+const log = log4js.getLogger('IsolatedTestRunnerAdapter');
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
@@ -37,11 +40,16 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   private listenToWorkerProcess() {
 
     if (this.workerProcess.stdout) {
-      this.workerProcess.stdout.on('data', (data: any) => { /* do nothing */ });
+      let traceEnabled = log.isTraceEnabled();
+      this.workerProcess.stdout.on('data', (data: Buffer) => {
+        if (traceEnabled) {
+          log.trace(data.toString());
+        }
+      });
     }
     if (this.workerProcess.stderr) {
       this.workerProcess.stderr.on('data', (data: any) => {
-        console.log('ERROR: ' + data);
+        log.error(data.toString());
       });
     }
 
@@ -52,7 +60,7 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
           this.handleResultMessage(message);
           break;
         default:
-          console.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`)
+          log.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`)
           break;
       }
     });

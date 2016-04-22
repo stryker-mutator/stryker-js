@@ -6,6 +6,9 @@ import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import MutationRegistry from './MutationRegistry';
 import * as parserUtils from './utils/parserUtils';
+import * as log4js from 'log4js';
+
+const log = log4js.getLogger('Mutator');
 
 /**
  * Class capable of finding spots to mutate in files.
@@ -40,7 +43,7 @@ export default class Mutator {
       } catch (err) {
         switch (err.code) {
           case 'ENOENT':
-            console.log(`Skipping file ${err.path} because it does not exist`);
+            log.info(`Skipping file ${err.path} because it does not exist`);
             break;
           default:
             throw err;
