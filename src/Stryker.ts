@@ -95,6 +95,7 @@ export default class Stryker {
 
   private loadDefaultPlugins() {
     new PluginLoader([
+      '../mutators/BlockStatementMutator',
       '../mutators/ConditionalBoundaryMutator',
       '../mutators/MathMutator',
       '../mutators/RemoveConditionalsMutator',
