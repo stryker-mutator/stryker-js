@@ -68,7 +68,6 @@ export default class Mutant {
     this.scopedTestsById[index] = runResult;
   }
 
-
   get columnNumber(): number {
     return this.mutatedLocation.start.column + 1; //esprima starts at column 0
   };
@@ -89,6 +88,7 @@ export default class Mutant {
     return this._mutatedFilename;
   };
 
+  //TODO: Give this a new name. This string can be longer than a single line. Same goes for 'originalLine'.
   get mutatedLine(): string {
     return this._mutatedLine;
   };
