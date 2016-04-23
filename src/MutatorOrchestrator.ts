@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import {Mutator} from './api/mutant';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
-import MutatorRegistry from './MutatorRegistry';
+import MutatorFactory from './MutatorFactory';
 import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
 
@@ -15,7 +15,11 @@ export default class MutatorOrchestrator {
   private mutators: Mutator[];
 
   public constructor() {
-    this.mutators = MutatorRegistry.mutators;
+    let mutatorFactory = MutatorFactory.instance();
+    this.mutators = [];
+    mutatorFactory.knownNames().forEach((name) => {
+      this.mutators.push(mutatorFactory.create(name, null));
+    });
   }
 
   /**

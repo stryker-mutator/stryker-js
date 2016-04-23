@@ -38,6 +38,7 @@ export default class Stryker {
     let configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
     this.setGlobalLogLevel(); // loglevel could be changed
+    this.loadDefaultPlugins();
     this.loadPlugins();
     this.applyConfigWriters();
     this.setGlobalLogLevel(); // loglevel could be changed
@@ -90,6 +91,16 @@ export default class Stryker {
           strykerReject();
         });
     });
+  }
+
+  private loadDefaultPlugins() {
+    new PluginLoader([
+      '../mutators/ConditionalBoundaryMutator',
+      '../mutators/MathMutator',
+      '../mutators/RemoveConditionalsMutator',
+      '../mutators/ReverseConditionalMutator',
+      '../mutators/UnaryOperatorMutator'
+    ]).load();
   }
 
   private loadPlugins() {

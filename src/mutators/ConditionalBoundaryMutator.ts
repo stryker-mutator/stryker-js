@@ -1,5 +1,6 @@
 import {Syntax} from 'esprima';
 import OperatorMutator from './OperatorMutator';
+import MutatorFactory from '../MutatorFactory';
 
 export default class ConditionalBoundayMutator extends OperatorMutator {
 
@@ -13,3 +14,5 @@ export default class ConditionalBoundayMutator extends OperatorMutator {
   }
 
 }
+
+MutatorFactory.instance().register('ConditionalBoundary', ConditionalBoundayMutator);

@@ -1,5 +1,6 @@
 import {Syntax} from 'esprima';
 import {Mutator} from '../api/mutant';
+import MutatorFactory from '../MutatorFactory';
 
 /**
  * Represents a mutator which can remove the conditional clause from statements.
@@ -44,3 +45,5 @@ export default class RemoveConditionalsMutator implements Mutator {
     return JSON.parse(JSON.stringify(node));
   }
 }
+
+MutatorFactory.instance().register('RemoveConditionals', RemoveConditionalsMutator);
