@@ -73,26 +73,30 @@ export default class ConsoleReporter extends BaseReporter {
     var codebaseColor = this.getColorForMutationScore(+mutationScoreCodebase);
     var codecoverageColor = this.getColorForMutationScore(+mutationScoreCodeCoverage);
 
-    console.log((numberOfMutants - mutantsUntested) + ' mutants tested.');
-    console.log(mutantsUntested + ' mutants untested.');
-    console.log(mutantsTimedOut + ' mutants timed out.');
-    console.log(mutantsKilled + ' mutants killed.');
-    console.log('Mutation score based on code coverage: ' + codecoverageColor(mutationScoreCodeCoverage + '%'));
-    console.log('Mutation score based on codebase: ' + codebaseColor(mutationScoreCodebase + '%'));
+    console.log(
+      `${numberOfMutants - mutantsUntested} mutants tested.
+${mutantsUntested} mutants untested.
+${mutantsTimedOut} mutants timed out.
+${mutantsKilled} mutants killed.
+Mutation score based on code coverage: ${codecoverageColor(mutationScoreCodeCoverage + '%')}
+Mutation score based on codebase: ${codebaseColor(mutationScoreCodebase + '%')}`);
   }
 
   private logSurvivedMutant(mutant: Mutant): void {
-    console.log(chalk.bold.red('Mutant survived!'));
-    console.log(mutant.filename + ': line ' + mutant.lineNumber + ':' + mutant.columnNumber);
-    console.log('Mutation: ' + mutant.mutator.name);
-    console.log(chalk.red('-   ' + mutant.originalLine));
-    console.log(chalk.green('+   ' + mutant.mutatedLine));
-    console.log('\n');
-    console.log('Tests ran: ');
-    _.forEach(mutant.specsRan, function (spec: string) {
-      console.log('    ' + spec);
-    });
-    console.log('\n');
+    let specsRan = mutant.specsRan.map((spec) => `  ${spec}`).join('\n');
+    let originalCode = mutant.originalLine.split('\n').map((line) => `-   ${line}`).join('\n');
+    let mutatedCode = mutant.mutatedLine.split('\n').map((line) => `+   ${line}`).join('\n');
+
+    console.log(
+      `${chalk.bold.red('Mutant survived!')}
+${mutant.filename}: line ${mutant.lineNumber}: ${mutant.columnNumber}
+Mutation: ${mutant.mutator.name}
+${chalk.red(originalCode)}
+${chalk.green(mutatedCode)}
+
+Tests ran:
+${specsRan}
+`);
   }
 
   /**
