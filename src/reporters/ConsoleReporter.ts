@@ -1,5 +1,3 @@
-'use strict';
-
 import * as  _ from 'lodash';
 import * as chalk from 'chalk';
 import BaseReporter from './BaseReporter';
@@ -58,17 +56,7 @@ export default class ConsoleReporter extends BaseReporter {
           mutantsTimedOut++;
           break;
         case MutantStatus.SURVIVED:
-          console.log(chalk.bold.red('Mutant survived!'));
-          console.log(mutant.filename + ': line ' + mutant.lineNumber + ':' + mutant.columnNumber);
-          console.log('Mutation: ' + mutant.mutator.name);
-          console.log(chalk.red('-   ' + mutant.originalLine));
-          console.log(chalk.green('+   ' + mutant.mutatedLine));
-          console.log('\n');
-          console.log('Tests ran: ');
-          _.forEach(mutant.specsRan, function(spec: string) {
-            console.log('    ' + spec);
-          });
-          console.log('\n');
+          this.logSurvivedMutant(mutant);
           break;
         case MutantStatus.UNTESTED:
           mutantsUntested++;
@@ -76,17 +64,35 @@ export default class ConsoleReporter extends BaseReporter {
       }
     });
 
-    var mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / mutants.length) * 100).toFixed(2);
-    var mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((mutants.length - mutantsUntested) || 1)) * 100).toFixed(2);
+    this.logRunSummary(mutants.length, mutantsKilled, mutantsTimedOut, mutantsUntested);
+  }
+
+  private logRunSummary(numberOfMutants: number, mutantsKilled: number, mutantsTimedOut: number, mutantsUntested: number): void {
+    var mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / numberOfMutants) * 100).toFixed(2);
+    var mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((numberOfMutants - mutantsUntested) || 1)) * 100).toFixed(2);
     var codebaseColor = this.getColorForMutationScore(+mutationScoreCodebase);
     var codecoverageColor = this.getColorForMutationScore(+mutationScoreCodeCoverage);
 
-    console.log((mutants.length - mutantsUntested) + ' mutants tested.');
+    console.log((numberOfMutants - mutantsUntested) + ' mutants tested.');
     console.log(mutantsUntested + ' mutants untested.');
     console.log(mutantsTimedOut + ' mutants timed out.');
     console.log(mutantsKilled + ' mutants killed.');
     console.log('Mutation score based on code coverage: ' + codecoverageColor(mutationScoreCodeCoverage + '%'));
     console.log('Mutation score based on codebase: ' + codebaseColor(mutationScoreCodebase + '%'));
+  }
+
+  private logSurvivedMutant(mutant: Mutant): void {
+    console.log(chalk.bold.red('Mutant survived!'));
+    console.log(mutant.filename + ': line ' + mutant.lineNumber + ':' + mutant.columnNumber);
+    console.log('Mutation: ' + mutant.mutator.name);
+    console.log(chalk.red('-   ' + mutant.originalLine));
+    console.log(chalk.green('+   ' + mutant.mutatedLine));
+    console.log('\n');
+    console.log('Tests ran: ');
+    _.forEach(mutant.specsRan, function (spec: string) {
+      console.log('    ' + spec);
+    });
+    console.log('\n');
   }
 
   /**
