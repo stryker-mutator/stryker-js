@@ -28,7 +28,7 @@ describe('TestRunnerChildProcessAdapter', function() {
     });
 
     it('should run and resolve', () =>
-      expect(sut.run({ timeout: 2000 })).to.eventually.satisfy((result: RunResult) => result.result === TestResult.Complete));
+      expect(sut.run({ timeout: 4000 })).to.eventually.satisfy((result: RunResult) => result.result === TestResult.Complete));
 
   });
 

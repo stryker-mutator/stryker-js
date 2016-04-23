@@ -1,17 +1,18 @@
 {
   "name": "stryker",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "dist/src/Stryker.js",
   "typings": "dist/src/Stryker.d.ts",
   "scripts": {
     "test": "grunt test",
     "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
-    "tsc:w": "tsc -w"
+    "tsc:w": "tsc -w",
+    "preversion": "grunt"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/infosupport/stryker"
+    "url": "https://github.com/stryker-mutator/stryker"
   },
   "keywords": [
     "mutation testing",
@@ -26,6 +27,9 @@
     "Nico Jansen <nicoj@infosupport.com> https://nicojs.github.io"
   ],
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=0.12.0"
+  },
   "files": [
     "dist"
   ],
@@ -42,6 +46,7 @@
     "karma-jasmine": "^0.3.6",
     "karma-phantomjs-launcher": "^0.2.1",
     "lodash": "^3.10.1",
+    "log4js": "^0.6.33",
     "node-glob": "^1.2.0",
     "phantomjs": "^1.9.18"
   },

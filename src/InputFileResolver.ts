@@ -1,6 +1,9 @@
 import {InputFile} from './api/core';
 import {glob, normalize} from './utils/fileUtils';
 import * as _ from 'lodash';
+import * as log4js from 'log4js';
+
+const log = log4js.getLogger('InputFileResolver');
 
 export default class InputFileResolver {
 
@@ -34,7 +37,7 @@ export default class InputFileResolver {
 
 
   private static reportEmptyGlobbingExpression(expression: string) {
-    console.log(`WARNING: Globbing expression "${expression}" did not result in any files.`)
+    log.warn(`Globbing expression "${expression}" did not result in any files.`);
   }
 
   private static resolveFileGlobs(sourceExpressions: string[]): Promise<string[]> {

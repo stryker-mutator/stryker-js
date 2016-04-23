@@ -1,3 +1,3 @@
 import Stryker from  'stryker';
 
-new Stryker(['mutateFiles: string[]'], ['allFiles: string[]']).runMutationTest().then(() => console.log('done'));
+new Stryker({ mutateFiles: [], allFiles: []} ).runMutationTest().then(() => console.log('done'));

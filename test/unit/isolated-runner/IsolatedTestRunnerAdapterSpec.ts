@@ -6,15 +6,9 @@ import Message, {MessageType} from '../../../src/isolated-runner/Message';
 import ResultMessageBody from '../../../src/isolated-runner/ResultMessageBody';
 import RunMessageBody from '../../../src/isolated-runner/RunMessageBody';
 import StartMessageBody from '../../../src/isolated-runner/StartMessageBody';
-import * as chai from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
-import * as sinonChai from 'sinon-chai';
+import {expect} from 'chai';
 import * as path from 'path';
 import * as _ from 'lodash';
-
-let expect = chai.expect;
-chai.use(sinonChai);
-chai.use(chaiAsPromised);
 
 describe('IsolatedTestRunnerAdapter', () => {
   let sut: IsolatedTestRunnerAdapter;

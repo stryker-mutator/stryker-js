@@ -10,16 +10,16 @@ This is the contribution guide for Stryker. Great to have you here! Here are a f
 
 ## Learn & listen
 
-Get in touch with us through twitter or via the [Stryker gitter](https://gitter.im/infosupport/stryker)
+Get in touch with us through twitter or via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker)
 
 ## Adding new features
 
 New features are welcome! Either as requests or proposals. 
 
-1. Please create an issue first or let us know via the [Stryker gitter](https://gitter.im/infosupport/stryker)
+1. Please create an issue first or let us know via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker)
 2. Create a fork on your github account.
 3. When writing your code, please conform to the existing coding style.
-   See [.editorconfig](https://github.com/infosupport/stryker/blob/master/.editorconfig) and the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines)
+   See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig) and the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines)
 4. Please create or edit unit tests or integration tests.
 5. Run the tests using `npm test`
 6. When creating commits, please conform to [the angular commit message style](https://docs.google.com/document/d/1rk04jEuGfk9kYzfqCuOlPTSJw3hEDZJTBN5E5f1SALo/edit).
@@ -36,7 +36,7 @@ maintainers is around a day or so.
 
 Found a bug? Don't worry, we'll fix it, or you can ;) 
 
-Please report a bug report on our [issues page](https://github.com/infosupport/stryker/issues). In this please:
+Please report a bug report on our [issues page](https://github.com/stryker-mutator/stryker/issues). In this please:
 
 1. Label the issue as bug
 2. Explain what the bug is in clear English
