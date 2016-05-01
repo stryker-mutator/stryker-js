@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {Mutator} from './api/mutant';
+import {Mutator, StrykerNode} from './api/mutant';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import MutatorFactory from './MutatorFactory';
@@ -71,7 +71,8 @@ export default class MutatorOrchestrator {
           try {
             mutator.applyMutations(astnode, _.cloneDeep).forEach((mutatedNode: ESTree.Node) => {
               let mutatedCode = parserUtils.generate(mutatedNode);
-              mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, astnode.loc));
+              let originalNode = nodes[(<StrykerNode>mutatedNode).nodeID];
+              mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, originalNode.loc));
             })
           } catch (error) {
             throw new Error(`The mutator named '${mutator.name}' caused an error: ${error}`);
