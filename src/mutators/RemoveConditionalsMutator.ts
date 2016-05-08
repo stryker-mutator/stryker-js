@@ -15,12 +15,12 @@ export default class RemoveConditionalsMutator implements Mutator {
     let nodes: ESTree.Node[] = [];
 
     if (this.canMutate(node)) {
-      let mutatedFalseNode: ESTree.ConditionalExpression = deepCopy(node);
+      let mutatedFalseNode: ESTree.Literal = deepCopy((<ESTree.ConditionalExpression>node).test);
       this.mutateTestExpression(mutatedFalseNode, false);
       nodes.push(mutatedFalseNode);
 
       if (node.type === Syntax.IfStatement) {
-        let mutatedTrueNode: ESTree.ConditionalExpression = deepCopy(node);
+        let mutatedTrueNode: ESTree.Literal = deepCopy((<ESTree.ConditionalExpression>node).test);
         this.mutateTestExpression(mutatedTrueNode, true);
         nodes.push(mutatedTrueNode);
       }
@@ -29,12 +29,9 @@ export default class RemoveConditionalsMutator implements Mutator {
     return nodes;
   }
 
-  private mutateTestExpression(node: ESTree.ConditionalExpression, newValue: boolean) {
-    node.test = <ESTree.Literal>{
-      type: Syntax.Literal,
-      value: newValue,
-      raw: newValue.toString()
-    };
+  private mutateTestExpression(node: ESTree.Literal, newValue: boolean) {
+    node.type = Syntax.Literal;
+    node.value = newValue;
   }
 
   private canMutate(node: ESTree.Node) {
