@@ -1,6 +1,6 @@
-import {Mutator} from './api/mutant';
-import {Factory} from './api/core';
-import {TestSelectorSettings} from './api/test_selector';
+import Mutator from './Mutator';
+import {Factory} from '../core';
+import {TestSelectorSettings} from '../test_selector';
 
 namespace MutatorFactory {
   /**

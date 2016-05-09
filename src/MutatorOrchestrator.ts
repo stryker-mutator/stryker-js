@@ -1,8 +1,7 @@
 import * as _ from 'lodash';
-import {Mutator, StrykerNode} from './api/mutant';
+import {Mutator, StrykerNode, MutatorFactory} from './api/mutant';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
-import MutatorFactory from './MutatorFactory';
 import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
 

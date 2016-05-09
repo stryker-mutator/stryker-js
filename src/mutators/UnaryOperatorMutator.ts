@@ -1,6 +1,6 @@
 import {Syntax} from 'esprima';
 import OperatorMutator from './OperatorMutator';
-import MutatorFactory from '../MutatorFactory';
+import {MutatorFactory} from '../api/mutant';
 
 export default class UnaryOperatorMutator extends OperatorMutator {
   constructor() {

@@ -1,6 +1,5 @@
 import {Syntax} from 'esprima';
-import {Mutator} from '../api/mutant';
-import MutatorFactory from '../MutatorFactory';
+import {Mutator, MutatorFactory} from '../api/mutant';
 
 /**
  * Represents a mutator which can remove the conditional clause from statements.

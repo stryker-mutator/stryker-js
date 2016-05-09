@@ -2,9 +2,8 @@ var expect = require('chai').expect;
 import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
 import MutatorOrchestrator from '../../src/MutatorOrchestrator';
-import MutatorFactory from '../../src/MutatorFactory';
 import RemoveConditionalsMutator from '../../src/mutators/RemoveConditionalsMutator';
-import {Mutator} from '../../src/api/mutant';
+import {Mutator, MutatorFactory} from '../../src/api/mutant';
 import * as sinon from 'sinon';
 import {Syntax} from 'esprima';
 
@@ -103,7 +102,7 @@ describe('MutatorOrchestrator', () => {
       });
       mutatorOrchestrator = new MutatorOrchestrator();
     });
-    
+
     afterEach(() => {
       sinon.restore(MutatorFactory.instance().knownNames);
       sinon.restore(MutatorFactory.instance().create);
