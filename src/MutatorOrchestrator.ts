@@ -27,7 +27,7 @@ export default class MutatorOrchestrator {
    * @param sourceFiles - The list of files which should be mutated.
    * @returns {Mutant[]} The generated Mutants.
    */
-  mutate(sourceFiles: string[]) {
+  generateMutants(sourceFiles: string[]) {
     let mutants: Mutant[] = [];
 
     sourceFiles.forEach((sourceFile: string) => {

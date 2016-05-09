@@ -22,7 +22,7 @@ describe('MutatorOrchestrator', () => {
   });
 
   it('should throw an error if no source files are provided', () => {
-    expect(mutatorOrchestrator.mutate).to.throw(Error);
+    expect(mutatorOrchestrator.generateMutants).to.throw(Error);
   });
 
   it('should return an empty array if nothing could be mutated', () => {
@@ -30,7 +30,7 @@ describe('MutatorOrchestrator', () => {
       return '';
     });
 
-    var mutants = mutatorOrchestrator.mutate(['test.js']);
+    var mutants = mutatorOrchestrator.generateMutants(['test.js']);
 
     expect(mutants.length).to.equal(0);
   });
@@ -40,7 +40,7 @@ describe('MutatorOrchestrator', () => {
       return 'var i = 1 + 2;';
     });
 
-    var mutants = mutatorOrchestrator.mutate(['test.js']);
+    var mutants = mutatorOrchestrator.generateMutants(['test.js']);
 
     expect(mutants.length).to.equal(1);
   });
@@ -52,7 +52,7 @@ describe('MutatorOrchestrator', () => {
       return originalCode;
     });
 
-    var mutants = mutatorOrchestrator.mutate(['test.js']);
+    var mutants = mutatorOrchestrator.generateMutants(['test.js']);
 
     expect(mutants[0].mutatedCode).to.equal(mutatedCode);
   });
@@ -64,13 +64,13 @@ describe('MutatorOrchestrator', () => {
       return originalCode;
     });
 
-    var mutants = mutatorOrchestrator.mutate(['test.js']);
+    var mutants = mutatorOrchestrator.generateMutants(['test.js']);
 
     expect(mutants[0].lineNumber).to.equal(3);
   });
 
   it('should not stop executing when a file does not exist', () => {
-    var mutants = mutatorOrchestrator.mutate(['someFileWhichShouldNotExist.js']);
+    var mutants = mutatorOrchestrator.generateMutants(['someFileWhichShouldNotExist.js']);
 
     expect(mutants.length).to.equal(0);
   });
@@ -113,7 +113,7 @@ describe('MutatorOrchestrator', () => {
         return 'if (true);';
       });
 
-      let mutants = mutatorOrchestrator.mutate(['src.js']);
+      let mutants = mutatorOrchestrator.generateMutants(['src.js']);
 
       expect(mutants[0].originalLine).to.equal(mutants[0].mutatedLine);
     });
@@ -123,7 +123,7 @@ describe('MutatorOrchestrator', () => {
         return '1 * 2';
       });
 
-      let mutants = mutatorOrchestrator.mutate(['src.js']);
+      let mutants = mutatorOrchestrator.generateMutants(['src.js']);
 
       expect(mutants[0].originalLine).to.equal(mutants[0].mutatedLine);
     });
