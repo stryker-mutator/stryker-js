@@ -6,7 +6,6 @@ import Reporter from './Reporter';
 export default class BaseReporter implements Reporter {
 
   onConfigReadingComplete(options: StrykerOptions): void {
-
   }
 
   onSourceFileRead(file: SourceFile): void {
