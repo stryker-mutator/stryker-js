@@ -1,3 +1,5 @@
+import {Location} from '../core'
+
 /**
  * Represents a collection of Coverage results for a set of files.
  */
