@@ -110,18 +110,3 @@ export interface StatementMap {
   [ref: string]: Location;
 }
 
-/**
- * A location in the source code which can span multiple lines and/or columns.
- */
-export interface Location {
-  start: Position,
-  end: Position
-}
-
-/**
- * A specific spot in the source code.
- */
-export interface Position {
-  line: number;
-  column: number;
-}
