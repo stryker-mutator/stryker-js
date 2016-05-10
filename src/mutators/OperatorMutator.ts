@@ -9,7 +9,7 @@ abstract class OperatorMutator implements Mutator {
    * @param types The type of operators which should be mutated.
    * @param operators The object containing a map for targeted operators and their mutated values.
    */
-  constructor(public name: string, public types: string[], private operators: OperatorMutatorMap) {
+  constructor(public name: string, private types: string[], private operators: OperatorMutatorMap) {
   }
 
   applyMutations(node: ESTree.Node, deepCopy: (obj: any) => any): ESTree.Node[] {

@@ -6,7 +6,7 @@ import {Mutator, MutatorFactory} from '../api/mutant';
  */
 export default class BlockStatementMutator implements Mutator {
   name = 'BlockStatement';
-  types = [Syntax.BlockStatement];
+  private types = [Syntax.BlockStatement];
 
   constructor() { }
 

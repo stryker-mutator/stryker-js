@@ -6,7 +6,7 @@ import {Mutator, MutatorFactory} from '../api/mutant';
  */
 export default class RemoveConditionalsMutator implements Mutator {
   name = 'RemoveConditionals';
-  types = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement];
+  private types = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement];
 
   constructor() { }
 
