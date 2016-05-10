@@ -53,10 +53,8 @@
             "preLaunchTask": "ts",
             "stopOnEntry": false,
             "args": [
-                "--mutate",
-                "test/sampleProject/src/+(Add|Circle).js",
-                "--files",
-                "test/sampleProject/src/Add.js,test/sampleProject/src/Circle.js,test/sampleProject/test/AddSpec.js,test/sampleProject/test/CircleSpec.js",
+                "--configFile",
+                "test/sampleProject/stryker.conf.js",
                 "--logLevel",
                 "debug"
             ],
