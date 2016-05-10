@@ -1,6 +1,5 @@
 import {Syntax} from 'esprima';
 import OperatorMutator from './OperatorMutator';
-import {MutatorFactory} from '../api/mutant';
 
 export default class MathMutator extends OperatorMutator {
   
@@ -14,5 +13,3 @@ export default class MathMutator extends OperatorMutator {
   }
 
 }
-
-MutatorFactory.instance().register('Math', MathMutator);

@@ -1,4 +1,10 @@
 import * as _ from 'lodash';
+import BlockStatementMutator from './mutators/BlockStatementMutator';
+import ConditionalBoundaryMutator from './mutators/ConditionalBoundaryMutator';
+import MathMutator from './mutators/MathMutator';
+import RemoveConditionalsMutator from './mutators/RemoveConditionalsMutator';
+import ReverseConditionalMutator from './mutators/ReverseConditionalMutator';
+import UnaryOperatorMutator from './mutators/UnaryOperatorMutator';
 import {Mutator, StrykerNode, MutatorFactory} from './api/mutant';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
@@ -14,8 +20,9 @@ export default class MutatorOrchestrator {
   private mutators: Mutator[];
 
   public constructor() {
-    let mutatorFactory = MutatorFactory.instance();
+    this.registerDefaultMutators();
     this.mutators = [];
+    let mutatorFactory = MutatorFactory.instance();
     mutatorFactory.knownNames().forEach((name) => {
       this.mutators.push(mutatorFactory.create(name, null));
     });
@@ -51,6 +58,16 @@ export default class MutatorOrchestrator {
 
     return mutants;
   };
+  
+  private registerDefaultMutators(){
+    let mutatorFactory = MutatorFactory.instance();
+    mutatorFactory.register('BlockStatement', BlockStatementMutator);
+    mutatorFactory.register('ConditionalBoundary', ConditionalBoundaryMutator);
+    mutatorFactory.register('Math', MathMutator);
+    mutatorFactory.register('RemoveConditionals', RemoveConditionalsMutator);
+    mutatorFactory.register('ReverseConditional', ReverseConditionalMutator);
+    mutatorFactory.register('UnaryOperator', UnaryOperatorMutator);
+  }
 
   /**
    * Finds all mutants for a given set of nodes.

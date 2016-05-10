@@ -1,5 +1,5 @@
 import {Syntax} from 'esprima';
-import {Mutator, MutatorFactory} from '../api/mutant';
+import {Mutator} from '../api/mutant';
 
 /**
  * Represents a mutator which can remove the content of a BlockStatement.
@@ -26,5 +26,3 @@ export default class BlockStatementMutator implements Mutator {
     return !!(node && this.types.indexOf(node.type) >= 0);
   };
 }
-
-MutatorFactory.instance().register('BlockStatement', BlockStatementMutator);
