@@ -85,7 +85,12 @@ export default class MutatorOrchestrator {
         Object.freeze(astnode);
         this.mutators.forEach((mutator: Mutator) => {
           try {
-            mutator.applyMutations(astnode, _.cloneDeep).forEach((mutatedNode: ESTree.Node) => {
+            let mutatedNodes = mutator.applyMutations(astnode, _.cloneDeep)
+            if(mutatedNodes.length > 0){
+              log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astnode.loc.start.line}, Col ${astnode.loc.start.column}) and (Ln ${astnode.loc.end.line}, Col ${astnode.loc.end.column}) in file ${sourceFile}`)
+            }
+            
+            mutatedNodes.forEach((mutatedNode: ESTree.Node) => {
               let mutatedCode = parserUtils.generate(mutatedNode);
               let originalNode = nodes[(<StrykerNode>mutatedNode).nodeID];
               mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, originalNode.loc));
