@@ -33,12 +33,12 @@ export function parse(code: string): any {
 };
 
 /**
- * Finds all nodes which a type in a syntax tree.
+ * Finds all nodes which have a 'type' property and freezes them.
  * @function
  * @param abstractSyntaxTree - The current part of the abstract syntax tree which will be investigated.
  * @returns  All nodes with a type.
  */
-export function getNodesWithType(abstractSyntaxTree: any, nodes?: any[], key?: string): any[] {
+export function collectNodes(abstractSyntaxTree: any, nodes?: any[]): any[] {
   nodes = nodes || [];
 
   if (abstractSyntaxTree instanceof Object && !(abstractSyntaxTree instanceof Array) && abstractSyntaxTree.type) {
@@ -48,13 +48,13 @@ export function getNodesWithType(abstractSyntaxTree: any, nodes?: any[], key?: s
 
   Object.freeze(abstractSyntaxTree);
 
-  _.forOwn(abstractSyntaxTree, (childNode, key) => {
+  _.forOwn(abstractSyntaxTree, (childNode) => {
     if (childNode instanceof Object && !(childNode instanceof Array)) {
-      getNodesWithType(childNode, nodes, key);
+      collectNodes(childNode, nodes);
     } else if (childNode instanceof Array) {
-      _.forEach(childNode, (arrayChild, index) => {
+      _.forEach(childNode, (arrayChild) => {
         if (arrayChild instanceof Object && !(arrayChild instanceof Array)) {
-          getNodesWithType(arrayChild, nodes, index);
+          collectNodes(arrayChild, nodes);
         }
       });
     }
