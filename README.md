@@ -102,7 +102,7 @@ module.exports = function(config){
 }
 ```
 
-## Supported mutations
+## Supported mutators
 ### Math
 | Original | Mutated  |
 | -------- | -------- |
@@ -152,3 +152,16 @@ module.exports = function(config){
 | do { } while (a > b);            | do { } while (false);           |
 | if (a > b) { }                   | if (true) { }                   |
 | if (a > b) { }                   | if (false) { }                  |
+
+### Block statement
+This mutator removes the content of every block statement. For example the code:
+```js
+function saySomething() {
+   console.log('Hello world!');   
+}
+```
+becomes:
+```js
+function saySomething() { 
+}
+```

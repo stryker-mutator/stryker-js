@@ -1,7 +1,5 @@
-'use strict';
-
 import * as _ from'lodash';
-import BaseMutation from './mutations/BaseMutation';
+import {Mutator} from './api/mutant';
 import {StrykerTempFolder} from './api/util';
 import {RunResult} from './api/test_runner';
 
@@ -70,7 +68,6 @@ export default class Mutant {
     this.scopedTestsById[index] = runResult;
   }
 
-
   get columnNumber(): number {
     return this.mutatedLocation.start.column + 1; //esprima starts at column 0
   };
@@ -91,12 +88,13 @@ export default class Mutant {
     return this._mutatedFilename;
   };
 
+  //TODO: Give this a new name. This string can be longer than a single line. Same goes for 'originalLine'.
   get mutatedLine(): string {
     return this._mutatedLine;
   };
 
-  get mutation(): BaseMutation {
-    return this._mutation;
+  get mutator(): Mutator {
+    return this._mutator;
   };
 
   get originalLine(): string {
@@ -104,13 +102,13 @@ export default class Mutant {
   };
 
   /**
-   * @param mutation - The mutation which was applied to this Mutant.
+   * @param mutator - The Mutator which was applied to this Mutant.
    * @param filename - The name of the file which was mutated, including the path.
    * @param originalCode - The original content of the file which has not been mutated.
    * @param substitude - The mutated code which will replace a part of the originalCode.
    * @param mutatedLocation - The part of the originalCode which has been mutated.
    */
-  constructor(private _mutation: BaseMutation, private _filename: string, private originalCode: string, substitude: string, private mutatedLocation: ESTree.SourceLocation) {
+  constructor(private _mutator: Mutator, private _filename: string, private originalCode: string, substitude: string, private mutatedLocation: ESTree.SourceLocation) {
     this.status = MutantStatus.UNTESTED;
     this.insertSubstitude(substitude);
   }
@@ -122,7 +120,7 @@ export default class Mutant {
    */
   private insertSubstitude(substitude: string) {
     let linesOfCode = this.originalCode.split('\n');
-
+    
     for (let lineNum = this.mutatedLocation.start.line - 1; lineNum < this.mutatedLocation.end.line; lineNum++) {
       this._originalLine += linesOfCode[lineNum];
       if (lineNum < this.mutatedLocation.end.line - 1) {

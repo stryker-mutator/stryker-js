@@ -2,14 +2,14 @@
 
 var expect = require('chai').expect;
 import Mutant, {MutantStatus} from '../../src/Mutant';
-import MathMutation from '../../src/mutations/MathMutation';
+import MathMutator from '../../src/mutators/MathMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 require('mocha-sinon');
 
 describe('Mutant', function() {
   var mutant: Mutant;
   var filename: string;
-  var mutation: MathMutation;
+  var mutator: MathMutator;
   var originalLine: string;
   var originalCode: string;
   var mutatedLine: string;
@@ -31,7 +31,7 @@ describe('Mutant', function() {
     lineNumber = 2;
 
     filename = 'something.js';
-    mutation = new MathMutation();
+    mutator = new MathMutator();
     ast = parserUtils.parse(mutatedCode);
     node = (<ESTree.VariableDeclaration>ast.body[1]).declarations[0].init;
 
@@ -45,7 +45,7 @@ describe('Mutant', function() {
         column: 11
       }
     };
-    mutant = new Mutant(mutation, filename, originalCode, '/', location);
+    mutant = new Mutant(mutator, filename, originalCode, '/', location);
   });
 
   describe('should set', function() {
@@ -53,8 +53,8 @@ describe('Mutant', function() {
       expect(mutant.filename).to.equal(filename);
     });
 
-    it('the mutation', function() {
-      expect(mutant.mutation).to.equal(mutation);
+    it('the mutator', function() {
+      expect(mutant.mutator).to.equal(mutator);
     });
 
     it('the mutated code', function() {
@@ -136,7 +136,7 @@ describe('Mutant', function() {
         }
       };
 
-      multiLineMutant = new Mutant(mutation, filename, originalCode, substitude, location);
+      multiLineMutant = new Mutant(mutator, filename, originalCode, substitude, location);
     });
 
     it('and generate the correct mutated line', () => {

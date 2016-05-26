@@ -11,6 +11,7 @@
   "ambientDependencies": {
     "chalk": "registry:dt/chalk#0.4.0+20160317120654",
     "es6-promise": "registry:dt/es6-promise#0.0.0+20160317120654",
+    "escodegen": "registry:dt/escodegen#0.0.0+20160514173019",
     "esprima": "registry:dt/esprima#2.1.0+20160317120654",
     "estree": "registry:dt/estree#0.0.0+20160317120654",
     "express": "registry:dt/express#4.0.0+20160317120654",
