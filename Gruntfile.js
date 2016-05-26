@@ -16,10 +16,6 @@ module.exports = function(grunt) {
       }
     },
 
-    typings: {
-      install: {}
-    },
-
     jshint: {
       files: ['Gruntfile.js', 'dist/src/**/*.js', 'dist/test/**/*.js'],
       options: {
@@ -43,7 +39,7 @@ module.exports = function(grunt) {
     watch: {
       testFiles: {
         files: ['dist/**/*.js'],
-        tasks: ['coverage']
+        tasks: ['mochaTest:unit']
       }
     },
     mochaTest: {
@@ -66,7 +62,7 @@ module.exports = function(grunt) {
     mocha_istanbul: {
       coverage: {
         // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
-        src: ['dist/test/helpers/**/*.js', 'dist/test/integration/**/*.js', 'dist/test/unit/**/*.js'],
+        src: ['dist/test/helpers/**/*.js', 'dist/test/unit/**/*.js', 'dist/test/integration/**/*.js'],
       }
     },
     istanbul_check_coverage: {
@@ -103,7 +99,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
   grunt.registerTask('test', ['build', 'coverage']);
-  grunt.registerTask('build', ['typings', 'clean', 'ts']);
+  grunt.registerTask('build', ['clean', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('serve', ['watch']);
