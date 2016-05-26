@@ -4,15 +4,15 @@ import {StrykerOptions} from '../core';
 
 interface Reporter {
 
-  onConfigReadingComplete(config: StrykerOptions): void;
+  onConfigRead?(config: StrykerOptions): void;
 
-  onSourceFileRead(file: SourceFile): void;
+  onSourceFileRead?(file: SourceFile): void;
 
-  onSourceFileReadingComplete(files: SourceFile[]): void;
+  onAllSourceFilesRead?(files: SourceFile[]): void;
 
-  onMutantTested(result: MutantResult): void;
+  onMutantTested?(result: MutantResult): void;
 
-  onMutationTestingComplete(results: MutantResult[], files: SourceFile[]): void;
+  onAllMutantsTested?(results: MutantResult[]): void;
 }
 
 export default Reporter;
