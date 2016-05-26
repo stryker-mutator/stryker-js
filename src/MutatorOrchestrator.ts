@@ -85,7 +85,9 @@ export default class MutatorOrchestrator {
         Object.freeze(astnode);
         this.mutators.forEach((mutator: Mutator) => {
           try {
-            let mutatedNodes = mutator.applyMutations(astnode, _.cloneDeep)
+            let mutatedNodes = mutator.applyMutations(astnode, (node, deepClone) => {
+              return deepClone ? _.cloneDeep(node): _.clone(node);
+            });
             if(mutatedNodes.length > 0){
               log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astnode.loc.start.line}, Col ${astnode.loc.start.column}) and (Ln ${astnode.loc.end.line}, Col ${astnode.loc.end.column}) in file ${sourceFile}`)
             }

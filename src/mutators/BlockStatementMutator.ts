@@ -10,11 +10,11 @@ export default class BlockStatementMutator implements Mutator {
 
   constructor() { }
 
-  applyMutations(node: ESTree.Node, deepCopy: (obj: any) => any): ESTree.Node[] {
+  applyMutations(node: ESTree.Node, copy: (obj: any, deep?: boolean) => any): ESTree.Node[] {
     let nodes: ESTree.Node[] = [];
 
     if (this.canMutate(node)) {
-      let mutatedNode: ESTree.BlockStatement = deepCopy(node);
+      let mutatedNode: ESTree.BlockStatement = copy(node);
       mutatedNode.body = [];
       nodes.push(mutatedNode);
     }

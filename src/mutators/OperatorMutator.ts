@@ -12,11 +12,11 @@ abstract class OperatorMutator implements Mutator {
   constructor(public name: string, private types: string[], private operators: OperatorMutatorMap) {
   }
 
-  applyMutations(node: ESTree.Node, deepCopy: (obj: any) => any): ESTree.Node[] {
+  applyMutations(node: ESTree.Node, copy: (obj: any, deep?: boolean) => any): ESTree.Node[] {
     let nodes: ESTree.Node[] = [];
 
     if (this.canMutate(<ESTree.BinaryExpression>node)) {
-      let mutatedNode: ESTree.BinaryExpression = deepCopy(node);
+      let mutatedNode: ESTree.BinaryExpression = copy(node);
       mutatedNode.operator = this.getOperator((<ESTree.BinaryExpression>node).operator);
       nodes.push(mutatedNode);
     }
