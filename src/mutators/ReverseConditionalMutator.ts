@@ -1,9 +1,7 @@
-'use strict';
-
 import {Syntax} from 'esprima';
-import BaseOperatorMutation from './BaseOperatorMutation';
+import OperatorMutator from './OperatorMutator';
 
-export default class ReverseConditionalMutation extends BaseOperatorMutation {
+export default class ReverseConditionalMutator extends OperatorMutator {
   constructor(){
     super('ReverseConditional', [Syntax.BinaryExpression, Syntax.LogicalExpression], {
         '==': '!=',

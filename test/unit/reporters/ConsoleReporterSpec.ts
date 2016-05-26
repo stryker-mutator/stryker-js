@@ -1,8 +1,6 @@
-'use strict';
-
 var expect = require('chai').expect;
 import ConsoleReporter from '../../../src/reporters/ConsoleReporter';
-import MathMutation from '../../../src/mutations/MathMutation';
+import MathMutator from '../../../src/mutators/MathMutator';
 import Mutant from '../../../src/Mutant';
 require('mocha-sinon');
 
@@ -31,7 +29,7 @@ describe('ConsoleReporter', function() {
         column: 12
       }
     };
-    mutant = new Mutant(new MathMutation(), 'a.js', originalCode, '+', location);
+    mutant = new Mutant(new MathMutator(), 'a.js', originalCode, '+', location);
   });
   
   
