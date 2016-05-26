@@ -1,5 +1,6 @@
 import Mutant from './Mutant';
-import {RunResult, Location, CoverageResult} from './api/test_runner';
+import {RunResult, CoverageResult} from './api/test_runner';
+import {Location} from './api/core';
 
 export default class MutantRunResultMatcher {
 
