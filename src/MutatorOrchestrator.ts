@@ -41,7 +41,7 @@ export default class MutatorOrchestrator {
       try {
         let fileContent = fileUtils.readFile(sourceFile);
         let abstractSyntaxTree = parserUtils.parse(fileContent);
-        let nodes = parserUtils.collectNodes(abstractSyntaxTree);
+        let nodes = parserUtils.collectFrozenNodes(abstractSyntaxTree);
         let newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
         mutants = mutants.concat(newMutants);
       } catch (err) {

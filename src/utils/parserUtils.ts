@@ -38,7 +38,7 @@ export function parse(code: string): any {
  * @param abstractSyntaxTree - The current part of the abstract syntax tree which will be investigated.
  * @returns  All nodes with a type.
  */
-export function collectNodes(abstractSyntaxTree: any, nodes?: any[]): any[] {
+export function collectFrozenNodes(abstractSyntaxTree: any, nodes?: any[]): any[] {
   nodes = nodes || [];
 
   if (abstractSyntaxTree instanceof Object && !(abstractSyntaxTree instanceof Array) && abstractSyntaxTree.type) {
@@ -50,11 +50,11 @@ export function collectNodes(abstractSyntaxTree: any, nodes?: any[]): any[] {
 
   _.forOwn(abstractSyntaxTree, (childNode) => {
     if (childNode instanceof Object && !(childNode instanceof Array)) {
-      collectNodes(childNode, nodes);
+      collectFrozenNodes(childNode, nodes);
     } else if (childNode instanceof Array) {
       _.forEach(childNode, (arrayChild) => {
         if (arrayChild instanceof Object && !(arrayChild instanceof Array)) {
-          collectNodes(arrayChild, nodes);
+          collectFrozenNodes(arrayChild, nodes);
         }
       });
     }
