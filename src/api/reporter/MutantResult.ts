@@ -3,7 +3,7 @@ import {Location} from '../core';
 
 interface MutantResult {
   sourceFilePath: string;
-  mutationType: string;
+  mutatorName: string;
   status: MutantStatus;
   replacement: string;
   location: Location;

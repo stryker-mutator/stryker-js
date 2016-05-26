@@ -1,6 +1,5 @@
 
 export {default as Reporter} from './reporter/Reporter';
-export {default as BaseReporter} from './reporter/BaseReporter';
 export {default as MutantResult} from './reporter/MutantResult';
 export {default as MutantStatus} from './reporter/MutantStatus';
 export {default as ReporterFactory} from './reporter/ReporterFactory';
