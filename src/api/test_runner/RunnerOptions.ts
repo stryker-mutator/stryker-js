@@ -12,7 +12,7 @@ interface RunnerOptions{
   /**
    * Represents a free port which the test runner can choose to use
    */
-  port: number;
+  port?: number;
    
   /**
    * The underlying strykerOptions
