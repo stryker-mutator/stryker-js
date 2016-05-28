@@ -2,6 +2,7 @@ import {expect} from 'chai';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
 import * as sinon from 'sinon';
 import {MutantStatus, MutantResult} from '../../../src/api/report';
+import * as chalk from 'chalk';
 
 describe('ClearTextReporter', function () {
   let sut: ClearTextReporter;
@@ -18,16 +19,16 @@ describe('ClearTextReporter', function () {
     beforeEach(() => {
       sut.onAllMutantsTested(mutantResults(MutantStatus.KILLED, MutantStatus.SURVIVED, MutantStatus.TIMEDOUT, MutantStatus.UNTESTED));
     });
-    
+
     it('should report on the survived mutant', () => {
       expect(process.stdout.write).to.have.been.calledWith('Mutator: Math\n');
-      expect(process.stdout.write).to.have.been.calledWith('-   original line\n');
-      expect(process.stdout.write).to.have.been.calledWith('+   mutated line\n');
+      expect(process.stdout.write).to.have.been.calledWith(chalk.red('-   original line') + '\n');
+      expect(process.stdout.write).to.have.been.calledWith(chalk.green('+   mutated line') + '\n');
     });
 
     it('should make a correct calculation', () => {
-      expect(process.stdout.write).to.have.been.calledWith('Mutation score based on all code: 50.00%\n');
-      expect(process.stdout.write).to.have.been.calledWith('Mutation score based on covered code: 66.67%\n');
+      expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on all code: ${chalk.red('50.00%')}\n`);
+      expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on covered code: ${chalk.yellow('66.67%')}\n`);
     });
 
   });

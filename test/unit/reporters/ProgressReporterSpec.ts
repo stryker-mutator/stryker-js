@@ -2,6 +2,7 @@ import ProgressReporter from '../../../src/reporters/ProgressReporter';
 import * as sinon from 'sinon';
 import {MutantStatus, MutantResult} from '../../../src/api/report';
 import {expect} from 'chai';
+import * as chalk from 'chalk';
 
 describe('ProgressReporter', () => {
 
@@ -34,7 +35,7 @@ describe('ProgressReporter', () => {
       });
       
       it('should log "T"', () => {
-        expect(process.stdout.write).to.have.been.calledWith('T');
+        expect(process.stdout.write).to.have.been.calledWith(chalk.yellow('T'));
       });
     });
     
@@ -45,7 +46,7 @@ describe('ProgressReporter', () => {
       });
       
       it('should log "S"', () => {
-        expect(process.stdout.write).to.have.been.calledWith('S');
+        expect(process.stdout.write).to.have.been.calledWith(chalk.bold.red('S'));
       });
     });
 
