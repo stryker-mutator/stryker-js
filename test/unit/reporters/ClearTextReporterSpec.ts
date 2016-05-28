@@ -1,41 +1,51 @@
-var expect = require('chai').expect;
-import ConsoleReporter from '../../../src/reporters/ClearTextReporter';
-import MathMutator from '../../../src/mutators/MathMutator';
-import Mutant from '../../../src/Mutant';
+import {expect} from 'chai';
+import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
 import * as sinon from 'sinon';
-
+import {MutantStatus, MutantResult} from '../../../src/api/report';
 
 describe('ClearTextReporter', function () {
-  let consoleReporter: ConsoleReporter;
-  let mutant: Mutant;
+  let sut: ClearTextReporter;
   let sandbox: sinon.SinonSandbox;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    sandbox.stub(Mutant.prototype, 'save');
-    var log = console.log;
-    sandbox.stub(console, 'log', function () {
-      return log.apply(log, arguments);
-    });
-
-    var originalCode = "var i = 1 - 1;";
-    var mutatedCode = "var i = 1 + 1;";
-    consoleReporter = new ConsoleReporter();
-
-    var location: ESTree.SourceLocation = {
-      start: {
-        line: 1,
-        column: 11
-      },
-      end: {
-        line: 1,
-        column: 12
-      }
-    };
-    mutant = new Mutant('some mutator', 'a.js', originalCode, '+', location);
+    sandbox.stub(process.stdout, 'write');
+    sut = new ClearTextReporter();
   });
 
-  
+  describe('onAllMutantsTested()', () => {
+
+    beforeEach(() => {
+      sut.onAllMutantsTested(mutantResults(MutantStatus.KILLED, MutantStatus.SURVIVED, MutantStatus.TIMEDOUT, MutantStatus.UNTESTED));
+    });
+    
+    it('should report on the survived mutant', () => {
+      expect(process.stdout.write).to.have.been.calledWith('Mutator: Math\n');
+      expect(process.stdout.write).to.have.been.calledWith('-   original line\n');
+      expect(process.stdout.write).to.have.been.calledWith('+   mutated line\n');
+    });
+
+    it('should make a correct calculation', () => {
+      expect(process.stdout.write).to.have.been.calledWith('Mutation score based on all code: 50.00%\n');
+      expect(process.stdout.write).to.have.been.calledWith('Mutation score based on covered code: 66.67%\n');
+    });
+
+  });
+
+  function mutantResults(...status: MutantStatus[]): MutantResult[] {
+    return status.map(s => {
+      return {
+        location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
+        mutatedLines: 'mutated line',
+        mutatorName: 'Math',
+        originalLines: 'original line',
+        replacement: '',
+        sourceFilePath: '',
+        specsRan: [''],
+        status: s
+      }
+    });
+  }
 
   afterEach(() => sandbox.restore());
 });

@@ -26,7 +26,7 @@ export default class ClearTextReporter implements Reporter {
         case MutantStatus.SURVIVED:
           this.writeLine(chalk.bold.red('Mutant survived!'));
           this.writeLine(result.sourceFilePath + ': line ' + result.location.start.line + ':' + result.location.start.column);
-          this.writeLine('Mutation: ' + result.mutatorName);
+          this.writeLine('Mutator: ' + result.mutatorName);
           this.writeLine(chalk.red('-   ' + result.originalLines));
           this.writeLine(chalk.green('+   ' + result.mutatedLines));
           this.writeLine('\n');
