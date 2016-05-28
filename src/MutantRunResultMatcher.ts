@@ -12,7 +12,7 @@ export default class MutantRunResultMatcher {
       this.runResultsByTestId.forEach((testResult, id) => {
         let covered = false;
         if (testResult.coverage) {
-          let coveredFile = testResult.coverage[mutant.filename];
+          let coveredFile = testResult.coverage[mutant.fileName];
           if (coveredFile) {
             // Statement map should change between test run results.
             // We should be able to safely reuse the smallest statement found in first run.
@@ -81,10 +81,10 @@ export default class MutantRunResultMatcher {
    * @returns true if the statment covers the mutant.
    */
   private statementCoversMutant(mutant: Mutant, location: Location): boolean {
-    let mutantIsAfterStart = mutant.lineNumber > location.start.line ||
-      (mutant.lineNumber === location.start.line && mutant.columnNumber >= location.start.column);
-    let mutantIsBeforeEnd = mutant.lineNumber < location.end.line ||
-      (mutant.lineNumber === location.end.line && mutant.columnNumber <= location.end.column);
+    let mutantIsAfterStart = mutant.location.end.line > location.start.line ||
+      (mutant.location.end.line === location.start.line && mutant.location.end.column >= location.start.column);
+    let mutantIsBeforeEnd = mutant.location.start.line < location.end.line ||
+      (mutant.location.start.line === location.end.line && mutant.location.start.column <= location.end.column);
 
     return mutantIsAfterStart && mutantIsBeforeEnd;
   }

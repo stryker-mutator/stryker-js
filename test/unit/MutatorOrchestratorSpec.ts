@@ -1,4 +1,4 @@
-var expect = require('chai').expect;
+import {expect} from 'chai';
 import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
 import MutatorOrchestrator from '../../src/MutatorOrchestrator';
@@ -6,19 +6,21 @@ import RemoveConditionalsMutator from '../../src/mutators/RemoveConditionalsMuta
 import {Mutator, MutatorFactory} from '../../src/api/mutant';
 import * as sinon from 'sinon';
 import {Syntax} from 'esprima';
+import {StrykerTempFolder} from '../../src/api/util';
 
 describe('MutatorOrchestrator', () => {
   var mutatorOrchestrator: MutatorOrchestrator;
   let fileUtilsStub: sinon.SinonStub;
+  let sandbox: sinon.SinonSandbox;
 
   beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+    sandbox.stub(StrykerTempFolder, 'writeFile');
     mutatorOrchestrator = new MutatorOrchestrator();
   });
 
   afterEach(() => {
-    if (fileUtilsStub) {
-      fileUtilsStub.restore();
-    }
+    sandbox.restore();
   });
 
   it('should throw an error if no source files are provided', () => {
@@ -26,7 +28,7 @@ describe('MutatorOrchestrator', () => {
   });
 
   it('should return an empty array if nothing could be mutated', () => {
-    fileUtilsStub = sinon.stub(fileUtils, 'readFile', () => {
+    fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => {
       return '';
     });
 
@@ -36,7 +38,7 @@ describe('MutatorOrchestrator', () => {
   });
 
   it('should return an array with a single mutant if only one mutant could be found in a file', () => {
-    fileUtilsStub = sinon.stub(fileUtils, 'readFile', () => {
+    fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => {
       return 'var i = 1 + 2;';
     });
 
@@ -48,25 +50,23 @@ describe('MutatorOrchestrator', () => {
   it('should be able to mutate code', () => {
     var originalCode = 'var i = 1 + 2;';
     var mutatedCode = 'var i = 1 - 2;';
-    fileUtilsStub = sinon.stub(fileUtils, 'readFile', () => {
-      return originalCode;
-    });
+    fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () =>  originalCode );
 
     var mutants = mutatorOrchestrator.generateMutants(['test.js']);
-
-    expect(mutants[0].mutatedCode).to.equal(mutatedCode);
+    mutants[0].save('some file');
+    expect(StrykerTempFolder.writeFile).to.have.been.calledWith('some file', mutatedCode);
   });
 
   it('should set the mutated line number', () => {
     var originalCode = '\n\nvar i = 1 + 2;';
     var mutatedCode = '\n\nvar i = 1 - 2;';
-    fileUtilsStub = sinon.stub(fileUtils, 'readFile', () => {
+    fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => {
       return originalCode;
     });
 
     var mutants = mutatorOrchestrator.generateMutants(['test.js']);
 
-    expect(mutants[0].lineNumber).to.equal(3);
+    expect(mutants[0].location.start.line).to.equal(3);
   });
 
   it('should not stop executing when a file does not exist', () => {
@@ -93,11 +93,11 @@ describe('MutatorOrchestrator', () => {
     }
 
     beforeEach(() => {
-      sinon.stub(MutatorFactory.instance(), 'knownNames', () => {
+      sandbox.stub(MutatorFactory.instance(), 'knownNames', () => {
         return ['test'];
       });
 
-      sinon.stub(MutatorFactory.instance(), 'create', () => {
+      sandbox.stub(MutatorFactory.instance(), 'create', () => {
         return new StubMutator();
       });
       mutatorOrchestrator = new MutatorOrchestrator();
@@ -109,23 +109,23 @@ describe('MutatorOrchestrator', () => {
     });
 
     it('the same nodeID', () => {
-      fileUtilsStub = sinon.stub(fileUtils, 'readFile', () => {
+      fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => {
         return 'if (true);';
       });
 
       let mutants = mutatorOrchestrator.generateMutants(['src.js']);
-
-      expect(mutants[0].originalLine).to.equal(mutants[0].mutatedLine);
+      mutants[0].save('some file');
+      expect(StrykerTempFolder.writeFile).to.have.been.calledWith('some file', 'if (true);');
     });
 
     it('a different nodeID', () => {
-      fileUtilsStub = sinon.stub(fileUtils, 'readFile', () => {
+      fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => {
         return '1 * 2';
       });
 
       let mutants = mutatorOrchestrator.generateMutants(['src.js']);
-
-      expect(mutants[0].originalLine).to.equal(mutants[0].mutatedLine);
+      mutants[0].save('some file');
+      expect(StrykerTempFolder.writeFile).to.have.been.calledWith('some file', '1 * 2');
     });
   });
 

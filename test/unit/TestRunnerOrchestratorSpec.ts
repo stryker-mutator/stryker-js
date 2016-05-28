@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import {StrykerTempFolder} from '../../src/api/util';
 import {TestSelector, TestSelectorFactory} from '../../src/api/test_selector';
 import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from '../../src/api/test_runner';
-import {MutantStatus} from '../../src/Mutant';
+import {MutantStatus, MutantResult} from '../../src/api/report';
 import IsolatedTestRunnerAdapter from '../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as chai from 'chai';
@@ -88,9 +88,16 @@ describe('TestRunnerOrchestrator', () => {
     let donePromise: Promise<void>;
     let mutants: any[];
     let reporter: any;
+    let mutantResults: MutantResult[];
 
     let mockMutant = (id: number) => {
-      return { filename: `mutant${id}`, save: sinon.stub().returns(Promise.resolve()), scopedTestIds: [id], timeSpentScopedTests: id, reset: sinon.stub().returns(Promise.resolve()), status: MutantStatus.UNTESTED };
+      return {
+        fileName: `mutant${id}`,
+        save: sinon.stub().returns(Promise.resolve()),
+        scopedTestIds: [id],
+        timeSpentScopedTests: id,
+        reset: sinon.stub().returns(Promise.resolve()),
+      };
     }
 
     beforeEach(() => {
@@ -98,14 +105,15 @@ describe('TestRunnerOrchestrator', () => {
       sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns('a-folder');
       sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve());
       reporter = {
-        mutantTested: sinon.stub()
+        onMutantTested: sinon.stub()
       };
-      
+
       var untestedMutant = mockMutant(0);
       untestedMutant.scopedTestIds = [];
-      
-      mutants = [mockMutant(1), mockMutant(2), mockMutant(3), untestedMutant];
-      return sut.runMutations(mutants, reporter);
+
+      mutants = [untestedMutant, mockMutant(1), mockMutant(2), mockMutant(3)];
+      return sut.runMutations(mutants, reporter)
+        .then(results => mutantResults = results);
     });
 
     it('should have created 2 test runners', () => {
@@ -132,17 +140,17 @@ describe('TestRunnerOrchestrator', () => {
       expect(secondTestRunner.run).to.have.been.calledOnce;
     });
 
-    it('should have reported the mutant state of tested mutants correctly', () => {
-      expect(mutants[0].status).to.be.eq(MutantStatus.KILLED);
-      expect(mutants[1].status).to.be.eq(MutantStatus.SURVIVED);
-      expect(mutants[2].status).to.be.eq(MutantStatus.TIMEDOUT);
-    });
-    
-    it('should have reported the mutant state of an untested mutant correctly', () => {
-      expect(mutants[3].status).to.be.eq(MutantStatus.UNTESTED);
+    it('should eventually resolve the correct mutant results', () => {
+      expect(mutantResults.length).to.be.eq(4);
+      
+      let sortedMutantResults = _.sortBy(mutantResults, r => r.sourceFilePath);
+      
+      expect(sortedMutantResults[0].status).to.be.eq(MutantStatus.UNTESTED);
+      expect(sortedMutantResults[1].status).to.be.eq(MutantStatus.KILLED);
+      expect(sortedMutantResults[2].status).to.be.eq(MutantStatus.SURVIVED);
+      expect(sortedMutantResults[3].status).to.be.eq(MutantStatus.TIMEDOUT);
     });
   });
-
 
   afterEach(() => {
     sandbox.restore();

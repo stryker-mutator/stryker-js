@@ -5,11 +5,11 @@ var program = require('commander');
 import {normalize} from './utils/fileUtils';
 import MutatorOrchestrator from './MutatorOrchestrator';
 import Mutant from './Mutant';
-import ReporterFactory from './ReporterFactory';
-import BaseReporter from './reporters/BaseReporter';
 import {Config, ConfigWriterFactory} from './api/config';
 import {StrykerOptions} from './api/core';
+import {Reporter} from './api/report';
 import TestRunnerOrchestrator from './TestRunnerOrchestrator';
+import ReporterOrchestrator from './ReporterOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
 import './karma-runner/KarmaTestRunner';
 import {RunResult, TestResult} from './api/test_runner';
@@ -24,7 +24,6 @@ const log = log4js.getLogger('Stryker');
 
 export default class Stryker {
 
-  reporter: BaseReporter;
   config: Config;
 
   /**
@@ -42,8 +41,6 @@ export default class Stryker {
     this.applyConfigWriters();
     this.setGlobalLogLevel(); // loglevel could be changed
     this.freezeConfig();
-    var reporterFactory = new ReporterFactory();
-    this.reporter = reporterFactory.getReporter('console');
   }
 
   /**
@@ -51,6 +48,7 @@ export default class Stryker {
    * @function
    */
   runMutationTest(): Promise<void> {
+    let reporter = new ReporterOrchestrator(this.config).createSingleReporter();
 
     return new Promise<void>((strykerResolve, strykerReject) => {
 
@@ -74,8 +72,8 @@ export default class Stryker {
               let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
               mutantRunResultMatcher.matchWithMutants();
 
-              testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
-                this.reporter.allMutantsTested(mutants);
+              testRunnerOrchestrator.runMutations(mutants, reporter).then((mutantResults) => {
+                reporter.onAllMutantsTested(mutantResults);
                 strykerResolve();
               });
             } else {

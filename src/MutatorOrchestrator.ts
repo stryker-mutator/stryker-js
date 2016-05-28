@@ -95,7 +95,7 @@ export default class MutatorOrchestrator {
             mutatedNodes.forEach((mutatedNode: ESTree.Node) => {
               let mutatedCode = parserUtils.generate(mutatedNode);
               let originalNode = nodes[(<StrykerNode>mutatedNode).nodeID];
-              mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, originalNode.loc));
+              mutants.push(new Mutant(mutator.name, sourceFile, originalCode, mutatedCode, originalNode.loc));
             })
           } catch (error) {
             throw new Error(`The mutator named '${mutator.name}' caused an error: ${error}`);
