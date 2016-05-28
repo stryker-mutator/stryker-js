@@ -11,7 +11,7 @@ export interface NamedReporter {
 }
 
 export default class BroadcastReporter implements Reporter {
-
+  
   constructor(private reporters: NamedReporter[]) {
     ['onSourceFileRead', 'onAllSourceFilesRead', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead'].forEach(method => {
       (<any>this)[method] = (arg: any) => {
@@ -27,7 +27,7 @@ export default class BroadcastReporter implements Reporter {
         try {
           reporter[methodName](eventArgs);
         } catch (error) {
-          log.error(`An error occurred during '${methodName}' on reporter '${namedReporter.name}'. Error was: ${error}`);
+          log.error(`An error occurred during '${methodName}' on reporter '${namedReporter.name}'. Error is: ${error}`);
         }
       }
     })
