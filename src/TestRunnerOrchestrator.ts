@@ -28,7 +28,7 @@ interface TestRunnerSandbox {
 
 export default class TestRunnerOrchestrator {
 
-  constructor(private options: StrykerOptions, private files: InputFile[]) {
+  constructor(private options: StrykerOptions, private files: InputFile[], private reporter: Reporter) {
   }
 
   recordCoverage(): Promise<RunResult[]> {
@@ -40,7 +40,7 @@ export default class TestRunnerOrchestrator {
     });
   }
 
-  runMutations(mutants: Mutant[], reporter: Reporter): Promise<MutantResult[]> {
+  runMutations(mutants: Mutant[]): Promise<MutantResult[]> {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     let results: MutantResult[] = [];
     return this.createTestRunnerSandboxes().then(testRunners => {
@@ -57,22 +57,28 @@ export default class TestRunnerOrchestrator {
               .then((runResult) => {
                 let result = this.collectFrozenMutantResult(mutant, runResult);
                 results.push(result);
-                reporter.onMutantTested(result);
+                this.reporter.onMutantTested(result);
                 return mutant.reset(sourceFileCopy);
               })
               .then(() => testRunners.push(nextRunner)); // mark the runner as available again
           } else {
             let result = this.collectFrozenMutantResult(mutant);
             results.push(result);
-            return Promise.resolve(reporter.onMutantTested(result));
+            return Promise.resolve(this.reporter.onMutantTested(result));
           }
         }
       }
       return new PromisePool(promiseProducer, testRunners.length)
         .start()
         .then(() => testRunners.forEach(testRunner => testRunner.runnerAdapter.dispose()))
+        .then(() => this.reportAllMutantsTested(results))
         .then(() => results);
     });
+  }
+
+  private reportAllMutantsTested(results: MutantResult[]) {
+    freezeRecursively(results);
+    this.reporter.onAllMutantsTested(results);
   }
 
   private calculateTimeout(baseTimeout: number) {

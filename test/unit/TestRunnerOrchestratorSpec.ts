@@ -1,6 +1,7 @@
 import TestRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as sinon from 'sinon';
 import {StrykerTempFolder} from '../../src/api/util';
+import {Reporter} from '../../src/api/report';
 import {TestSelector, TestSelectorFactory} from '../../src/api/test_selector';
 import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from '../../src/api/test_runner';
 import {MutantStatus, MutantResult} from '../../src/api/report';
@@ -21,6 +22,7 @@ describe('TestRunnerOrchestrator', () => {
   let firstTestRunner: any;
   let secondTestRunner: any;
   let selector: TestSelector;
+  let reporter: Reporter;
 
   beforeEach(() => {
     firstTestRunner = {
@@ -40,12 +42,16 @@ describe('TestRunnerOrchestrator', () => {
       files: sinon.stub().returns(['some', 'files']),
       select: sinon.stub().returns(Promise.resolve())
     };
+    reporter = {
+      onMutantTested: sinon.stub(),
+      onAllMutantsTested: sinon.stub()
+    };
     sandbox = sinon.sandbox.create();
     sandbox.stub(IsolatedTestRunnerAdapterFactory, 'create')
       .onFirstCall().returns(firstTestRunner)
       .onSecondCall().returns(secondTestRunner);
     sandbox.stub(TestSelectorFactory.instance(), 'create', () => selector);
-    sut = new TestRunnerOrchestrator(strykerOptions, files);
+    sut = new TestRunnerOrchestrator(strykerOptions, files, reporter);
   });
 
   describe('recordCoverage()', () => {
@@ -84,10 +90,9 @@ describe('TestRunnerOrchestrator', () => {
     });
   });
 
-  describe('runMutations()', () => {
+  describe('runMutations() with 2 cpus and 4 mutants', () => {
     let donePromise: Promise<void>;
     let mutants: any[];
-    let reporter: any;
     let mutantResults: MutantResult[];
 
     let mockMutant = (id: number) => {
@@ -104,15 +109,12 @@ describe('TestRunnerOrchestrator', () => {
       sandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
       sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns('a-folder');
       sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve());
-      reporter = {
-        onMutantTested: sinon.stub()
-      };
 
       var untestedMutant = mockMutant(0);
       untestedMutant.scopedTestIds = [];
 
       mutants = [untestedMutant, mockMutant(1), mockMutant(2), mockMutant(3)];
-      return sut.runMutations(mutants, reporter)
+      return sut.runMutations(mutants)
         .then(results => mutantResults = results);
     });
 
@@ -140,11 +142,23 @@ describe('TestRunnerOrchestrator', () => {
       expect(secondTestRunner.run).to.have.been.calledOnce;
     });
 
+    it('should have reported onMutantTested on all mutants', () => {
+      expect(reporter.onMutantTested).to.have.callCount(4)
+      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[0]);
+      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[1]);
+      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[2]);
+      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[3]);
+    });
+
+    it('should have reported onAllMutantsTested', () => {
+      expect(reporter.onAllMutantsTested).to.have.been.calledWith(mutantResults);
+    });
+
     it('should eventually resolve the correct mutant results', () => {
       expect(mutantResults.length).to.be.eq(4);
-      
+
       let sortedMutantResults = _.sortBy(mutantResults, r => r.sourceFilePath);
-      
+
       expect(sortedMutantResults[0].status).to.be.eq(MutantStatus.UNTESTED);
       expect(sortedMutantResults[1].status).to.be.eq(MutantStatus.KILLED);
       expect(sortedMutantResults[2].status).to.be.eq(MutantStatus.SURVIVED);

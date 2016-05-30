@@ -2,6 +2,7 @@
 
 import Stryker from '../../src/Stryker';
 import {InputFile} from '../../src/api/core';
+import {MutantResult} from '../../src/api/report';
 import {Config, ConfigWriterFactory, ConfigWriter} from '../../src/api/config';
 import {RunResult, TestResult} from '../../src/api/test_runner';
 import {expect} from 'chai';
@@ -108,7 +109,7 @@ describe('Stryker', function () {
 
       describe('when coverage can be collected', () => {
         let runMutationsPromiseResolve: () => any;
-        let strykerPromise: Promise<void>;
+        let strykerPromise: Promise<MutantResult[]>;
 
         beforeEach(() => {
           initialRunResults = [];

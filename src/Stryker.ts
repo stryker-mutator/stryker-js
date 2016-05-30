@@ -7,7 +7,7 @@ import MutatorOrchestrator from './MutatorOrchestrator';
 import Mutant from './Mutant';
 import {Config, ConfigWriterFactory} from './api/config';
 import {StrykerOptions} from './api/core';
-import {Reporter} from './api/report';
+import {Reporter, MutantResult} from './api/report';
 import TestRunnerOrchestrator from './TestRunnerOrchestrator';
 import ReporterOrchestrator from './ReporterOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
@@ -47,19 +47,17 @@ export default class Stryker {
    * Runs mutation testing. This may take a while.
    * @function
    */
-  runMutationTest(): Promise<void> {
+  runMutationTest(): Promise<MutantResult[]> {
     let reporter = new ReporterOrchestrator(this.config).createSingleReporter();
 
-    return new Promise<void>((strykerResolve, strykerReject) => {
+    return new Promise<MutantResult[]>((strykerResolve, strykerReject) => {
 
       new InputFileResolver(this.config.mutate, this.config.files)
         .resolve().then(inputFiles => {
           log.info('Running initial test run');
-          let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles)
+          let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, reporter)
           testRunnerOrchestrator.recordCoverage().then((runResults) => {
-            let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
-              return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
-            });
+            let unsuccessfulTests = runResults.filter((runResult: RunResult) => !(runResult.failed === 0 && runResult.result === TestResult.Complete));
             if (unsuccessfulTests.length === 0) {
               log.info(`Initial test run succeeded. Ran ${runResults.length} tests.`);
 
@@ -72,10 +70,7 @@ export default class Stryker {
               let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
               mutantRunResultMatcher.matchWithMutants();
 
-              testRunnerOrchestrator.runMutations(mutants, reporter).then((mutantResults) => {
-                reporter.onAllMutantsTested(mutantResults);
-                strykerResolve();
-              });
+              testRunnerOrchestrator.runMutations(mutants).then(strykerResolve);
             } else {
               this.logFailedTests(unsuccessfulTests);
               strykerReject();
