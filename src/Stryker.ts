@@ -63,7 +63,7 @@ export default class Stryker {
             if (unsuccessfulTests.length === 0) {
               log.info(`Initial test run succeeded. Ran ${runResults.length} tests.`);
 
-              let mutatorOrchestrator = new MutatorOrchestrator();
+              let mutatorOrchestrator = new MutatorOrchestrator(reporter);
               let mutants = mutatorOrchestrator.generateMutants(inputFiles
                 .filter(inputFile => inputFile.shouldMutate)
                 .map(file => file.path));
