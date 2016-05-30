@@ -58,8 +58,8 @@ export default class MutatorOrchestrator {
             throw err;
         }
       }
-      this.reportAllFilesRead();
     });
+    this.reportAllFilesRead();
 
     return mutants;
   };
@@ -70,8 +70,8 @@ export default class MutatorOrchestrator {
     this.sourceFiles.push(fileToReport);
     this.reporter.onSourceFileRead(fileToReport);
   }
-  
-  private reportAllFilesRead(){
+
+  private reportAllFilesRead() {
     freezeRecursively(this.sourceFiles);
     this.reporter.onAllSourceFilesRead(this.sourceFiles);
   }
