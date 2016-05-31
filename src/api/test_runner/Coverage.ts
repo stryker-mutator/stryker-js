@@ -7,7 +7,7 @@ export interface CoverageCollection {
   /**
    * An array of CoverageResults for files.
    */
-  [fileName: string]: CoverageResult;
+  [filename: string]: CoverageResult;
 }
 
 /**

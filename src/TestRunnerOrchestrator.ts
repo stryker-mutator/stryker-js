@@ -51,7 +51,7 @@ export default class TestRunnerOrchestrator {
           var mutant = mutants.pop();
           if (mutant.scopedTestIds.length > 0) {
             let nextRunner = testRunners.pop();
-            let sourceFileCopy = nextRunner.sourceFileMap[mutant.fileName];
+            let sourceFileCopy = nextRunner.sourceFileMap[mutant.filename];
             return Promise.all([mutant.save(sourceFileCopy), nextRunner.selector.select(mutant.scopedTestIds)])
               .then(() => nextRunner.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
               .then((runResult) => {
@@ -108,7 +108,7 @@ export default class TestRunnerOrchestrator {
     }
 
     let result: MutantResult = {
-      sourceFilePath: mutant.fileName,
+      sourceFilePath: mutant.filename,
       mutatorName: mutant.mutatorName,
       status: status,
       replacement: mutant.replacement,

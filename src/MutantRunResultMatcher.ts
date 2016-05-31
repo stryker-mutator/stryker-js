@@ -12,7 +12,7 @@ export default class MutantRunResultMatcher {
       this.runResultsByTestId.forEach((testResult, id) => {
         let covered = false;
         if (testResult.coverage) {
-          let coveredFile = testResult.coverage[mutant.fileName];
+          let coveredFile = testResult.coverage[mutant.filename];
           if (coveredFile) {
             // Statement map should change between test run results.
             // We should be able to safely reuse the smallest statement found in first run.

@@ -97,7 +97,7 @@ describe('TestRunnerOrchestrator', () => {
 
     let mockMutant = (id: number) => {
       return {
-        fileName: `mutant${id}`,
+        filename: `mutant${id}`,
         save: sinon.stub().returns(Promise.resolve()),
         scopedTestIds: [id],
         timeSpentScopedTests: id,

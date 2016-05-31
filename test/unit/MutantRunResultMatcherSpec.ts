@@ -18,8 +18,8 @@ describe('MutantRunResultMatcher', () => {
     describe('with 2 mutants and 2 runResults', () => {
       let mutantOne: any, mutantTwo: any, runResultOne: any, runResultTwo: any;
       beforeEach(() => {
-        mutantOne = { mutantOne: true, fileName: '1', location: { start: { line: 5, column: 6 }, end: { line: 5, column: 6 } }, addRunResultForTest: sinon.stub() };
-        mutantTwo = { mutantTwo: true, fileName: '5',  location: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } }, addRunResultForTest: sinon.stub() };
+        mutantOne = { mutantOne: true, filename: '1', location: { start: { line: 5, column: 6 }, end: { line: 5, column: 6 } }, addRunResultForTest: sinon.stub() };
+        mutantTwo = { mutantTwo: true, filename: '5',  location: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } }, addRunResultForTest: sinon.stub() };
         runResultOne = { testOne: true }; // Add some data to make them not equal to each other
         runResultTwo = { testTwo: true };
         mutants.push(mutantOne);

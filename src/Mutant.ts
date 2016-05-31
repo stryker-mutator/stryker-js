@@ -38,13 +38,12 @@ export default class Mutant {
    * @param replacement - The mutated code which will replace a part of the originalCode.
    * @param location - The location of the code to be replaced
    */
-  constructor(public mutatorName: string, public fileName: string, private originalCode: string, public replacement: string, public location: ESTree.SourceLocation) {
+  constructor(public mutatorName: string, public filename: string, private originalCode: string, public replacement: string, public location: ESTree.SourceLocation) {
     this.applyMutation();
   }
 
   /**
    * Inserts the replacement into the mutatedCode based on the specified location.
-   * @param substitude - The mutated code which will replace a part of the originalCode
    */
   private applyMutation() {
     let linesOfCode = this.originalCode.split('\n');
@@ -71,15 +70,15 @@ export default class Mutant {
    * Saves the mutated code in a mutated file.
    * @function
    */
-  save(fileName: string) {
-    return StrykerTempFolder.writeFile(fileName, this.mutatedCode);
+  save(filename: string) {
+    return StrykerTempFolder.writeFile(filename, this.mutatedCode);
   };
 
   /**
    * Removes the mutated file.
    * @function
    */
-  reset(fileName: string) {
-    return StrykerTempFolder.writeFile(fileName, this.originalCode);
+  reset(filename: string) {
+    return StrykerTempFolder.writeFile(filename, this.originalCode);
   };
 }

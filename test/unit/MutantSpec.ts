@@ -56,7 +56,7 @@ describe('Mutant', function () {
     });
     describe('should set', function () {
       it('the filename', function () {
-        expect(sut.fileName).to.equal(filename);
+        expect(sut.filename).to.equal(filename);
       });
 
       it('the mutator', function () {
