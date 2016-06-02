@@ -48,7 +48,7 @@ export default class Stryker {
    * @function
    */
   runMutationTest(): Promise<MutantResult[]> {
-    let reporter = new ReporterOrchestrator(this.config).createSingleReporter();
+    let reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
 
     return new Promise<MutantResult[]>((strykerResolve, strykerReject) => {
 

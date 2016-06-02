@@ -14,7 +14,7 @@ export default class ReporterOrchestrator {
     this.registerDefaultReporters();
   }
 
-  public createSingleReporter(): Reporter {
+  public createBroadcastReporter(): Reporter {
     let reporters: NamedReporter[] = [];
     let reporterOption = this.options.reporter;
     if (reporterOption) {
