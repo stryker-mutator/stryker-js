@@ -23,7 +23,7 @@ npm install stryker --save-dev
 
 To test if stryker is working, execute the command:
 ```
-node node_modules/stryker/dist/src/Stryker.js --help
+node node_modules/stryker/src/Stryker.js --help
 ```
 
 ## Usage

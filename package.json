@@ -2,14 +2,14 @@
   "name": "stryker",
   "version": "0.3.2",
   "description": "The extendable JavaScript mutation testing framework",
-  "main": "dist/src/Stryker.js",
-  "typings": "dist/src/Stryker.d.ts",
+  "main": "src/Stryker.js",
+  "typings": "src/Stryker.d.ts",
   "scripts": {
     "pretest": "typings install",
     "test": "grunt test",
     "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
     "tsc:w": "tsc -w",
-    "sample": "node dist/src/Stryker.js --configFile test/sampleProject/stryker.conf.js",
+    "sample": "node src/Stryker.js --configFile testResources/sampleProject/stryker.conf.js",
     "preversion": "grunt"
   },
   "repository": {
@@ -32,9 +32,6 @@
   "engines": {
     "node": ">=0.12.0"
   },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
