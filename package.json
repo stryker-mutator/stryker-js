@@ -9,7 +9,7 @@
     "test": "grunt test",
     "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
     "tsc:w": "tsc -w",
-    "sample": "node dist/src/Stryker.js --configFile test/sampleProject/stryker.conf.js",
+    "sample": "node src/Stryker.js --configFile testResources/sampleProject/stryker.conf.js",
     "preversion": "grunt"
   },
   "repository": {
