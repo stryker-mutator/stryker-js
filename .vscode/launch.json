@@ -6,7 +6,7 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
-      "preLaunchTask": "ts",
+      "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "mochaTest:unit"
@@ -20,7 +20,8 @@
         "NODE_ENV": "development"
       },
       "externalConsole": false,
-      "sourceMaps": true
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
     },
     {
       "name": "Run integration tests",
@@ -41,22 +42,23 @@
         "NODE_ENV": "development"
       },
       "externalConsole": false,
-      "sourceMaps": true
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
     },
     {
       "name": "Run stryker example",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/dist/src/Stryker.js",
-      "preLaunchTask": "ts",
+      "program": "${workspaceRoot}/src/Stryker.js",
+      "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "--configFile",
-        "test/sampleProject/stryker.conf.js",
+        "testResources/sampleProject/stryker.conf.js",
         "--logLevel",
         "debug"
       ],
-      "cwd": "${workspaceRoot}/.",
+      "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -65,14 +67,15 @@
         "NODE_ENV": "development"
       },
       "externalConsole": false,
-      "sourceMaps": true
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
     },
     {
       "name": "Run stryker help",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/dist/src/Stryker.js",
-      "preLaunchTask": "ts",
+      "program": "${workspaceRoot}/src/Stryker.js",
+      "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "--help"
@@ -86,7 +89,8 @@
         "NODE_ENV": "development"
       },
       "externalConsole": false,
-      "sourceMaps": true
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
     }
   ]
 }
