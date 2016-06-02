@@ -17,10 +17,10 @@ describe('KarmaTestRunner', function() {
 
     before(() => {
       testRunnerOptions = {
-        files: [{ path: 'test/sampleProject/src/Add.js', shouldMutate: true }, { path: 'test/sampleProject/test/AddSpec.js', shouldMutate: false }],
+        files: [{ path: 'testResources/sampleProject/src/Add.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/AddSpec.js', shouldMutate: false }],
         port: 9877,
         coverageEnabled: true,
-        strykerOptions: {}
+        strykerOptions: { logLevel: 'trace' }
       };
     });
 
@@ -53,7 +53,7 @@ describe('KarmaTestRunner', function() {
 
     before(() => {
       testRunnerOptions = {
-        files: [{ path: 'test/sampleProject/src/Add.js', shouldMutate: true }, { path: 'test/sampleProject/test/AddSpec.js', shouldMutate: false }],
+        files: [{ path: 'testResources/sampleProject/src/Add.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/AddSpec.js', shouldMutate: false }],
         port: 9878,
         coverageEnabled: false,
         strykerOptions: {}
@@ -82,7 +82,7 @@ describe('KarmaTestRunner', function() {
 
     before(() => {
       let testRunnerOptions = {
-        files: [{ path: 'test/sampleProject/src/Error.js', shouldMutate: true }, { path: 'test/sampleProject/test/AddSpec.js', shouldMutate: false }],
+        files: [{ path: 'testResources/sampleProject/src/Error.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/AddSpec.js', shouldMutate: false }],
         port: 9879,
         coverageEnabled: false,
         strykerOptions: {}
@@ -105,7 +105,7 @@ describe('KarmaTestRunner', function() {
   describe('when no error occured and no test is performed', () => {
     before(() => {
       let testRunnerOptions = {
-        files: [{ path: 'test/sampleProject/src/Add.js', shouldMutate: true }, { path: 'test/sampleProject/test/EmptySpec.js', shouldMutate: true }],
+        files: [{ path: 'testResources/sampleProject/src/Add.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/EmptySpec.js', shouldMutate: true }],
         port: 9880,
         coverageEnabled: false,
         strykerOptions: {}

@@ -5,19 +5,19 @@ module.exports = function(grunt) {
   grunt.initConfig({
 
     clean: {
-      dist: {
-        src: ['dist']
+      build: {
+        src: ['+(test|src)/**/*+(.d.ts|.js|.map)']
       },
       coverage: {
         src: ['coverage']
       },
       test: {
-        src: ['test/integration/install-module/module/node_modules/stryker']
+        src: ['testResources/module/node_modules/stryker']
       }
     },
 
     jshint: {
-      files: ['Gruntfile.js', 'dist/src/**/*.js', 'dist/test/**/*.js'],
+      files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
       options: {
         node: true,
         globals: {
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
     },
     watch: {
       testFiles: {
-        files: ['dist/**/*.js'],
+        files: ['**/*.js'],
         tasks: ['mochaTest:unit']
       }
     },
@@ -48,7 +48,7 @@ module.exports = function(grunt) {
           reporter: 'spec'
         },
         // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
-        src: ['dist/test/helpers/**/*.js', 'dist/test/unit/**/*.js']
+        src: ['test/helpers/**/*.js', 'test/unit/**/*.js']
       },
       integration: {
         options: {
@@ -56,13 +56,13 @@ module.exports = function(grunt) {
           timeout: 5000
         },
         // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
-        src: ['dist/test/helpers/**/*.js', 'dist/test/integration/**/*.js']
+        src: ['test/helpers/**/*.js', 'test/integration/**/*.js']
       }
     },
     mocha_istanbul: {
       coverage: {
         // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
-        src: ['dist/test/helpers/**/*.js', 'dist/test/unit/**/*.js', 'dist/test/integration/**/*.js'],
+        src: ['test/helpers/**/*.js', 'test/unit/**/*.js', 'test/integration/**/*.js'],
       }
     },
     istanbul_check_coverage: {
