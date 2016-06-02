@@ -6,15 +6,16 @@
         "moduleResolution": "node",
         "rootDir": ".",
         "sourceMap": true,
-        "outDir": "dist",
         "declaration": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "allowJs": false
     },
     "exclude": [
         "node_modules",
-        "dist",
+        "src/**/*.d.ts",
+        "test/**/*.d.ts",
         "typings/browser",
         "typings/browser.d.ts",
-        "test/integration/install-module/module"
+        "testResources"
     ]
 }
