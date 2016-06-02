@@ -36,7 +36,7 @@ describe('ConfigReader', () => {
     describe('with config file', () => {
 
       beforeEach(() => {
-        sut = new ConfigReader({ configFile: 'test/integration/config-reader/valid.conf.js' });
+        sut = new ConfigReader({ configFile: 'testResources/config-reader/valid.conf.js' });
         result = sut.readConfig();
       });
 
@@ -65,7 +65,7 @@ describe('ConfigReader', () => {
     describe('with an existing file, but not a module', () => {
 
       beforeEach(() => {
-        sut = new ConfigReader({ configFile: '../../test/integration/config-reader/invalid.conf.js' });
+        sut = new ConfigReader({ configFile: '../../testResources/config-reader/invalid.conf.js' });
         result = sut.readConfig();
       });
 
@@ -87,7 +87,7 @@ describe('ConfigReader', () => {
     describe('with an existing file, but has syntax errors', () => {
 
       beforeEach(() => {
-        sut = new ConfigReader({ configFile: 'test/integration/config-reader/syntax-error.conf.js' });
+        sut = new ConfigReader({ configFile: 'testResources/config-reader/syntax-error.conf.js' });
         result = sut.readConfig();
       });
 

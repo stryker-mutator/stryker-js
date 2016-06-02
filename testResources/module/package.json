@@ -6,12 +6,12 @@
   "scripts": {
     "tsc": "tsc",
     "postinstall": "typings install",
-    "stryker:config": "node node_modules/stryker/dist/src/Stryker.js --configFile stryker.conf.js"
+    "stryker:config": "node node_modules/stryker/src/Stryker.js --configFile stryker.conf.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "stryker": "file:../../../../",
+    "stryker": "file:../../",
     "typescript": "~1.8.9",
     "typings": "^0.7.9"
   }

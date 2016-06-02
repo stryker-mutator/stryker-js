@@ -5,7 +5,7 @@ export default class Executor {
   private cwd: string;
 
   constructor(cwd: string, private silent: boolean = true) {
-    this.cwd = __dirname + '/../../../../test/integration/install-module/' + cwd;
+    this.cwd = `${__dirname}/${cwd}`;
   }
 
   exec(command: string, options: any, done: (error: any, stdout: string) => any) {

@@ -9,7 +9,7 @@ describe('we have a module using stryker', function () {
     let executor: Executor
 
     before((done) => {
-      executor = new Executor('module');
+      executor = new Executor('../../../testResources/module');
       executor.exec('npm install', {}, (errors) => done(errors));
     });
 
