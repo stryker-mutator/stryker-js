@@ -66,7 +66,8 @@ describe('ProgressReporter', () => {
       replacement: null,
       sourceFilePath: null,
       specsRan: null,
-      status
+      status,
+      range: null
     }
   }
 

@@ -1,4 +1,5 @@
 import * as _ from'lodash';
+import {Location, Range} from './api/core';
 import {Mutator} from './api/mutant';
 import {StrykerTempFolder} from './api/util';
 import {RunResult} from './api/test_runner';
@@ -8,9 +9,6 @@ import {RunResult} from './api/test_runner';
  * Represents a mutation which has been applied to a file.
  */
 export default class Mutant {
-  private mutatedCode: string;
-  public originalLines: string;
-  public mutatedLines: string;
 
   private scopedTestsById: RunResult[] = [];
   private _scopedTestIds: number[] = [];
@@ -36,34 +34,41 @@ export default class Mutant {
    * @param filename - The name of the file which was mutated, including the path.
    * @param originalCode - The original content of the file which has not been mutated.
    * @param replacement - The mutated code which will replace a part of the originalCode.
-   * @param location - The location of the code to be replaced
+   * @param location - The location of the code to be mutated - line and column based
+   * @param range - The location of the code to be mutated - index based
    */
-  constructor(public mutatorName: string, public filename: string, private originalCode: string, public replacement: string, public location: ESTree.SourceLocation) {
-    this.applyMutation();
+  constructor(public mutatorName: string, public filename: string, private originalCode: string, public replacement: string, public location: Location, public range: Range) {
   }
 
-  /**
-   * Inserts the replacement into the mutatedCode based on the specified location.
-   */
-  private applyMutation() {
-    let linesOfCode = this.originalCode.split('\n');
-    
-    this.originalLines = '';
-    for (let lineNum = this.location.start.line - 1; lineNum < this.location.end.line; lineNum++) {
-      this.originalLines += linesOfCode[lineNum];
-      if (lineNum < this.location.end.line - 1) {
-        this.originalLines += '\n';
-      }
-    }
-    
-    this.mutatedLines = linesOfCode[this.location.start.line - 1].substring(0, this.location.start.column) +
-      this.replacement + linesOfCode[this.location.end.line - 1].substring(this.location.end.column);
+  private isNewLine(index: number) {
+    let char = this.originalCode[index];
+    return char === '\n' || char === '\r';
+  }
 
-    for (let lineNum = this.location.start.line; lineNum < this.location.end.line; lineNum++) {
-      linesOfCode[lineNum] = '';
+  private getMutationLineIndexes() {
+    let startIndexLines = this.range[0],
+      endIndexLines = this.range[1];
+    while (startIndexLines > 0 && !this.isNewLine(startIndexLines - 1)) {
+      startIndexLines--;
     }
-    linesOfCode[this.location.start.line - 1] = this.mutatedLines;
-    this.mutatedCode = linesOfCode.join('\n');
+    while (endIndexLines < this.originalCode.length && !this.isNewLine(endIndexLines)) {
+      endIndexLines++;
+    }
+    return [startIndexLines, endIndexLines];
+  }
+
+  public get originalLines() {
+    let [startIndex, endIndex] = this.getMutationLineIndexes();
+    return this.originalCode.substring(startIndex, endIndex);
+  }
+
+  public get mutatedLines() {
+    let [startIndex, endIndex] = this.getMutationLineIndexes();
+    return this.originalCode.substring(startIndex, this.range[0]) + this.replacement + this.originalCode.substring(this.range[1], endIndex);
+  }
+
+  private get mutatedCode() {
+    return this.originalCode.substr(0, this.range[0]) + this.replacement + this.originalCode.substr(this.range[1] );
   }
 
   /**
