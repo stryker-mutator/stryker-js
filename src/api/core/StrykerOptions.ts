@@ -30,6 +30,13 @@ interface StrykerOptions {
   testRunner?: string;
   
   /**
+   * The name (or names) of the reporter to use
+   * Possible values: 'clear-text', 'progress'. 
+   * Load more plugins to be able to use more plugins 
+   */
+  reporter?: string | string[];
+  
+  /**
    * The log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
    */
   logLevel?: string;

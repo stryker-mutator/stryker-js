@@ -5,11 +5,11 @@ var program = require('commander');
 import {normalize} from './utils/fileUtils';
 import MutatorOrchestrator from './MutatorOrchestrator';
 import Mutant from './Mutant';
-import ReporterFactory from './ReporterFactory';
-import BaseReporter from './reporters/BaseReporter';
 import {Config, ConfigWriterFactory} from './api/config';
 import {StrykerOptions} from './api/core';
+import {Reporter, MutantResult} from './api/report';
 import TestRunnerOrchestrator from './TestRunnerOrchestrator';
+import ReporterOrchestrator from './ReporterOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
 import './karma-runner/KarmaTestRunner';
 import {RunResult, TestResult} from './api/test_runner';
@@ -24,7 +24,6 @@ const log = log4js.getLogger('Stryker');
 
 export default class Stryker {
 
-  reporter: BaseReporter;
   config: Config;
 
   /**
@@ -42,30 +41,27 @@ export default class Stryker {
     this.applyConfigWriters();
     this.setGlobalLogLevel(); // loglevel could be changed
     this.freezeConfig();
-    var reporterFactory = new ReporterFactory();
-    this.reporter = reporterFactory.getReporter('console');
   }
 
   /**
    * Runs mutation testing. This may take a while.
    * @function
    */
-  runMutationTest(): Promise<void> {
+  runMutationTest(): Promise<MutantResult[]> {
+    let reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
 
-    return new Promise<void>((strykerResolve, strykerReject) => {
+    return new Promise<MutantResult[]>((strykerResolve, strykerReject) => {
 
       new InputFileResolver(this.config.mutate, this.config.files)
         .resolve().then(inputFiles => {
           log.info('Running initial test run');
-          let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles)
+          let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, reporter)
           testRunnerOrchestrator.recordCoverage().then((runResults) => {
-            let unsuccessfulTests = runResults.filter((runResult: RunResult) => {
-              return !(runResult.failed === 0 && runResult.result === TestResult.Complete);
-            });
+            let unsuccessfulTests = runResults.filter((runResult: RunResult) => !(runResult.failed === 0 && runResult.result === TestResult.Complete));
             if (unsuccessfulTests.length === 0) {
               log.info(`Initial test run succeeded. Ran ${runResults.length} tests.`);
 
-              let mutatorOrchestrator = new MutatorOrchestrator();
+              let mutatorOrchestrator = new MutatorOrchestrator(reporter);
               let mutants = mutatorOrchestrator.generateMutants(inputFiles
                 .filter(inputFile => inputFile.shouldMutate)
                 .map(file => file.path));
@@ -74,10 +70,7 @@ export default class Stryker {
               let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
               mutantRunResultMatcher.matchWithMutants();
 
-              testRunnerOrchestrator.runMutations(mutants, this.reporter).then(() => {
-                this.reporter.allMutantsTested(mutants);
-                strykerResolve();
-              });
+              testRunnerOrchestrator.runMutations(mutants).then(strykerResolve);
             } else {
               this.logFailedTests(unsuccessfulTests);
               strykerReject();

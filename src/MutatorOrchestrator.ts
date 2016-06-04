@@ -6,10 +6,12 @@ import RemoveConditionalsMutator from './mutators/RemoveConditionalsMutator';
 import ReverseConditionalMutator from './mutators/ReverseConditionalMutator';
 import UnaryOperatorMutator from './mutators/UnaryOperatorMutator';
 import {Mutator, StrykerNode, MutatorFactory} from './api/mutant';
+import {Reporter, SourceFile} from './api/report';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
+import {freezeRecursively} from './utils/objectUtils';
 
 const log = log4js.getLogger('Mutator');
 
@@ -17,15 +19,16 @@ const log = log4js.getLogger('Mutator');
  * Class capable of finding spots to mutate in files.
  */
 export default class MutatorOrchestrator {
-  private mutators: Mutator[];
+  private mutators: Mutator[] = [];
+  private sourceFiles: SourceFile[];
 
-  public constructor() {
+  /**
+   * @param reporter - The reporter to report read input files to
+   */
+  public constructor(private reporter: Reporter) {
     this.registerDefaultMutators();
-    this.mutators = [];
     let mutatorFactory = MutatorFactory.instance();
-    mutatorFactory.knownNames().forEach((name) => {
-      this.mutators.push(mutatorFactory.create(name, null));
-    });
+    mutatorFactory.knownNames().forEach((name) => this.mutators.push(mutatorFactory.create(name, null)));
   }
 
   /**
@@ -36,10 +39,11 @@ export default class MutatorOrchestrator {
    */
   generateMutants(sourceFiles: string[]) {
     let mutants: Mutant[] = [];
-
+    this.sourceFiles = [];
     sourceFiles.forEach((sourceFile: string) => {
       try {
         let fileContent = fileUtils.readFile(sourceFile);
+        this.reportFileRead(sourceFile, fileContent);
         let abstractSyntaxTree = parserUtils.parse(fileContent);
         let nodes = parserUtils.collectFrozenNodes(abstractSyntaxTree);
         let newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
@@ -55,11 +59,24 @@ export default class MutatorOrchestrator {
         }
       }
     });
+    this.reportAllFilesRead();
 
     return mutants;
   };
-  
-  private registerDefaultMutators(){
+
+  private reportFileRead(path: string, content: string) {
+    let fileToReport = { path, content };
+    freezeRecursively(fileToReport);
+    this.sourceFiles.push(fileToReport);
+    this.reporter.onSourceFileRead(fileToReport);
+  }
+
+  private reportAllFilesRead() {
+    freezeRecursively(this.sourceFiles);
+    this.reporter.onAllSourceFilesRead(this.sourceFiles);
+  }
+
+  private registerDefaultMutators() {
     let mutatorFactory = MutatorFactory.instance();
     mutatorFactory.register('BlockStatement', BlockStatementMutator);
     mutatorFactory.register('ConditionalBoundary', ConditionalBoundaryMutator);
@@ -86,16 +103,16 @@ export default class MutatorOrchestrator {
         this.mutators.forEach((mutator: Mutator) => {
           try {
             let mutatedNodes = mutator.applyMutations(astnode, (node, deepClone) => {
-              return deepClone ? _.cloneDeep(node): _.clone(node);
+              return deepClone ? _.cloneDeep(node) : _.clone(node);
             });
-            if(mutatedNodes.length > 0){
+            if (mutatedNodes.length > 0) {
               log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astnode.loc.start.line}, Col ${astnode.loc.start.column}) and (Ln ${astnode.loc.end.line}, Col ${astnode.loc.end.column}) in file ${sourceFile}`)
             }
-            
+
             mutatedNodes.forEach((mutatedNode: ESTree.Node) => {
               let mutatedCode = parserUtils.generate(mutatedNode);
               let originalNode = nodes[(<StrykerNode>mutatedNode).nodeID];
-              mutants.push(new Mutant(mutator, sourceFile, originalCode, mutatedCode, originalNode.loc));
+              mutants.push(new Mutant(mutator.name, sourceFile, originalCode, mutatedCode, originalNode.loc));
             })
           } catch (error) {
             throw new Error(`The mutator named '${mutator.name}' caused an error: ${error}`);

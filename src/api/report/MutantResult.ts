@@ -7,6 +7,8 @@ interface MutantResult {
   status: MutantStatus;
   replacement: string;
   location: Location;
+  originalLines: string;
+  mutatedLines: string;
   specsRan: string[];
 }
 
