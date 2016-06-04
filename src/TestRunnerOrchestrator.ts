@@ -7,9 +7,10 @@ import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunn
 import * as path from 'path';
 import * as os from 'os';
 import * as _ from 'lodash';
-import Mutant, {MutantStatus} from './Mutant';
-import BaseReporter from './reporters/BaseReporter';
+import Mutant from './Mutant';
+import {Reporter, MutantStatus, MutantResult} from './api/report';
 import * as log4js from 'log4js';
+import {freezeRecursively} from './utils/objectUtils';
 const PromisePool = require('es6-promise-pool')
 
 const log = log4js.getLogger('TestRunnerOrchestrator');
@@ -27,7 +28,7 @@ interface TestRunnerSandbox {
 
 export default class TestRunnerOrchestrator {
 
-  constructor(private options: StrykerOptions, private files: InputFile[]) {
+  constructor(private options: StrykerOptions, private files: InputFile[], private reporter: Reporter) {
   }
 
   recordCoverage(): Promise<RunResult[]> {
@@ -39,54 +40,85 @@ export default class TestRunnerOrchestrator {
     });
   }
 
-  runMutations(mutants: Mutant[], reporter: BaseReporter): Promise<void> {
+  runMutations(mutants: Mutant[]): Promise<MutantResult[]> {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
+    let results: MutantResult[] = [];
     return this.createTestRunnerSandboxes().then(testRunners => {
       let promiseProducer: () => Promise<number> | Promise<void> = () => {
         if (mutants.length === 0) {
           return null; // we're done
         } else {
-          var mutant = mutants.pop(); 
+          var mutant = mutants.pop();
           if (mutant.scopedTestIds.length > 0) {
             let nextRunner = testRunners.pop();
             let sourceFileCopy = nextRunner.sourceFileMap[mutant.filename];
             return Promise.all([mutant.save(sourceFileCopy), nextRunner.selector.select(mutant.scopedTestIds)])
               .then(() => nextRunner.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
               .then((runResult) => {
-                this.updateMutantStatus(mutant, runResult);
-                reporter.mutantTested(mutant);
+                let result = this.collectFrozenMutantResult(mutant, runResult);
+                results.push(result);
+                this.reporter.onMutantTested(result);
                 return mutant.reset(sourceFileCopy);
               })
               .then(() => testRunners.push(nextRunner)); // mark the runner as available again
           } else {
-            return Promise.resolve(reporter.mutantTested(mutant));
+            let result = this.collectFrozenMutantResult(mutant);
+            results.push(result);
+            return Promise.resolve(this.reporter.onMutantTested(result));
           }
         }
       }
       return new PromisePool(promiseProducer, testRunners.length)
         .start()
-        .then(() => testRunners.forEach(testRunner => testRunner.runnerAdapter.dispose()));
+        .then(() => testRunners.forEach(testRunner => testRunner.runnerAdapter.dispose()))
+        .then(() => this.reportAllMutantsTested(results))
+        .then(() => results);
     });
+  }
+
+  private reportAllMutantsTested(results: MutantResult[]) {
+    freezeRecursively(results);
+    this.reporter.onAllMutantsTested(results);
   }
 
   private calculateTimeout(baseTimeout: number) {
     return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMs;
   }
 
-  private updateMutantStatus(mutant: Mutant, runResult: RunResult) {
-    switch (runResult.result) {
-      case TestResult.Timeout:
-        mutant.status = MutantStatus.TIMEDOUT;
-        break;
-      case TestResult.Complete:
-        if (runResult.failed > 0) {
-          mutant.status = MutantStatus.KILLED;
-        } else {
-          mutant.status = MutantStatus.SURVIVED;
-        }
-        break;
+  private collectFrozenMutantResult(mutant: Mutant, runResult?: RunResult): MutantResult {
+    let status: MutantStatus;
+    let specsRan: string[];
+    if (runResult) {
+      switch (runResult.result) {
+        case TestResult.Timeout:
+          status = MutantStatus.TIMEDOUT;
+          break;
+        case TestResult.Complete:
+          if (runResult.failed > 0) {
+            status = MutantStatus.KILLED;
+          } else {
+            status = MutantStatus.SURVIVED;
+          }
+          break;
+      }
+      specsRan = runResult.specNames;
+    } else {
+      specsRan = [];
+      status = MutantStatus.UNTESTED;
     }
-    mutant.specsRan = runResult.specNames;
+
+    let result: MutantResult = {
+      sourceFilePath: mutant.filename,
+      mutatorName: mutant.mutatorName,
+      status: status,
+      replacement: mutant.replacement,
+      location: mutant.location,
+      specsRan: specsRan,
+      originalLines: mutant.originalLines,
+      mutatedLines: mutant.mutatedLines
+    };
+    freezeRecursively(result);
+    return result;
   }
 
   private runSingleTestsRecursive(testSelector: TestSelector, testRunner: IsolatedTestRunnerAdapter, runResults: RunResult[], currentTestIndex: number)

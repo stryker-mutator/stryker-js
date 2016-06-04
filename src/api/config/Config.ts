@@ -15,6 +15,7 @@ export default class Config implements StrykerOptions {
   timeoutFactor = 1.5;
   plugins: string[] = ['stryker-*'];
   port = 9234;
+  reporter = ['progress', 'clear-text'];
 
   public set(newConfig: StrykerOptions) {
     if (newConfig) {

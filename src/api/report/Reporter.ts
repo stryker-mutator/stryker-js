@@ -4,8 +4,6 @@ import {StrykerOptions} from '../core';
 
 interface Reporter {
 
-  onConfigRead?(config: StrykerOptions): void;
-
   onSourceFileRead?(file: SourceFile): void;
 
   onAllSourceFilesRead?(files: SourceFile[]): void;

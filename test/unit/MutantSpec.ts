@@ -1,13 +1,15 @@
 'use strict';
 
-var expect = require('chai').expect;
-import Mutant, {MutantStatus} from '../../src/Mutant';
+import {expect} from 'chai';
+import Mutant from '../../src/Mutant';
+import {MutantStatus} from '../../src/api/report';
 import MathMutator from '../../src/mutators/MathMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
-require('mocha-sinon');
+import * as sinon from 'sinon';
+import StrykerTempFolder from '../../src/api/util/StrykerTempFolder';
 
-describe('Mutant', function() {
-  var mutant: Mutant;
+describe('Mutant', function () {
+  var sut: Mutant;
   var filename: string;
   var mutator: MathMutator;
   var originalLine: string;
@@ -17,11 +19,12 @@ describe('Mutant', function() {
   var lineNumber: number;
   var ast: ESTree.Program;
   var node: ESTree.Node;
+  var sandbox: sinon.SinonSandbox;
 
-  beforeEach(function() {
-    this.sinon.stub(Mutant.prototype, 'save', function() {
-      this._mutatedFilename = 'mutatedSrc.js';
-    });
+  beforeEach(() => {
+
+    sandbox = sinon.sandbox.create();
+    sandbox.stub(StrykerTempFolder, 'writeFile');
 
     var baseCode = 'var i = 1 + 2;\n';
     originalLine = 'var j = i * 2;';
@@ -31,95 +34,50 @@ describe('Mutant', function() {
     lineNumber = 2;
 
     filename = 'something.js';
-    mutator = new MathMutator();
     ast = parserUtils.parse(mutatedCode);
     node = (<ESTree.VariableDeclaration>ast.body[1]).declarations[0].init;
-
-    var location: ESTree.SourceLocation = {
-      start: {
-        line: 2,
-        column: 10
-      },
-      end: {
-        line: 2,
-        column: 11
-      }
-    };
-    mutant = new Mutant(mutator, filename, originalCode, '/', location);
   });
 
-  describe('should set', function() {
-    it('the filename', function() {
-      expect(mutant.filename).to.equal(filename);
-    });
+  describe('with single line code', () => {
 
-    it('the mutator', function() {
-      expect(mutant.mutator).to.equal(mutator);
-    });
+    beforeEach(() => {
+      let location: ESTree.SourceLocation = {
+        start: {
+          line: 2,
+          column: 10
+        },
+        end: {
+          line: 2,
+          column: 11
+        }
+      };
+      sut = new Mutant('Math', filename, originalCode, '/', location);
 
-    it('the mutated code', function() {
-      expect(mutant.mutatedCode).to.equal(mutatedCode);
     });
+    describe('should set', function () {
+      it('the filename', function () {
+        expect(sut.filename).to.equal(filename);
+      });
 
-    it('the line number', function() {
-      expect(mutant.lineNumber).to.equal(lineNumber);
-    });
+      it('the mutator', function () {
+        expect(sut.mutatorName).to.equal('Math');
+      });
 
-    it('the column number', function() {
-      expect(mutant.columnNumber).to.equal(11);
-    });
-
-    it('the original line of code', function() {
-      expect(mutant.originalLine).to.equal(originalLine);
-    });
-
-    it('the mutated line of code', function() {
-      expect(mutant.mutatedLine).to.equal(mutatedLine);
     });
   });
 
-  it('should default to the status untested', function() {
-    expect(mutant.status).to.equal(MutantStatus.UNTESTED);
-  });
-
-  describe('should throw an error', function() {
-    it('if no sourceFiles are provided to insertMutatedFile', function() {
-      expect(mutant.insertMutatedFile).to.throw(Error);
-    });
-  });
-
-  describe('should be able to insert a mutated file', function() {
-    it('without changing the original array of source files', function() {
-      var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
-      var sourceFilesBackup = sourceFiles.slice(0);
-
-      var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
-
-      expect(sourceFiles).to.deep.equal(sourceFilesBackup);
-    });
-
-    it('and replace the original filename with the mutated filename', function() {
-      var sourceFiles = ['sample.js', mutant.mutatedFilename, 'somethingElse.js'];
-
-      var mutatedSourceFiles = mutant.insertMutatedFile(sourceFiles);
-
-      expect(mutatedSourceFiles[1]).to.equal(mutant.mutatedFilename);
-    });
-  });
-
-  describe('should be able to handle multi-line mutations', () => {
+  describe('with multi-line substitude', () => {
     let originalLine: string;
     let originalCode: string;
     let mutatedCode: string;
     let restOfCode: string;
-    let multiLineMutant: Mutant;
 
     beforeEach(() => {
       originalLine =
         `if(a > b
         && c < d
         || b == c) {`;
-      restOfCode =  `
+      restOfCode = `
           console.log('hello world!');
         }`;
       originalCode = originalLine + restOfCode;
@@ -136,24 +94,21 @@ describe('Mutant', function() {
         }
       };
 
-      multiLineMutant = new Mutant(mutator, filename, originalCode, substitude, location);
+      sut = new Mutant('mutator', filename, originalCode, substitude, location);
     });
 
-    it('and generate the correct mutated line', () => {
-      expect(mutatedLine).to.equal(multiLineMutant.mutatedLine);
-    });
-
-    it('and generate the correct original line', () => {
-      expect(originalLine).to.equal(multiLineMutant.originalLine);
-    });
-
-    it('and generate the correct mutated code', () => {
-      var code = mutatedLine + 
-`
+    it('should generate the correct mutated code', () => {
+      var code = mutatedLine +
+        `
 
 ` + restOfCode;
       //Some empty lines are needed. These are not allowed to contain spaces
-      expect(code).to.equal(multiLineMutant.mutatedCode);
+      sut.save('a file');
+      expect(StrykerTempFolder.writeFile).to.have.been.calledWith('a file', code);
     });
+  });
+
+  afterEach(() => {
+    sandbox.restore();
   });
 });
