@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   grunt.initConfig({
 
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
     },
     watch: {
       testFiles: {
-        files: ['**/*.js'],
+        files: ['test/**/*.js', 'src/**/*.js'],
         tasks: ['mochaTest:unit']
       }
     },
@@ -95,7 +95,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-mocha-istanbul');
   grunt.loadNpmTasks('grunt-ts');
-  
+
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
   grunt.registerTask('test', ['build', 'coverage']);

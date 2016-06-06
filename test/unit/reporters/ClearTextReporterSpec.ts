@@ -34,16 +34,17 @@ describe('ClearTextReporter', function () {
   });
 
   function mutantResults(...status: MutantStatus[]): MutantResult[] {
-    return status.map(s => {
+    return status.map(status => {
       return {
         location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
+        range: null,
         mutatedLines: 'mutated line',
         mutatorName: 'Math',
         originalLines: 'original line',
         replacement: '',
         sourceFilePath: '',
         specsRan: [''],
-        status: s
+        status
       }
     });
   }

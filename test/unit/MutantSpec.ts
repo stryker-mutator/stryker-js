@@ -3,6 +3,7 @@
 import {expect} from 'chai';
 import Mutant from '../../src/Mutant';
 import {MutantStatus} from '../../src/api/report';
+import {Location} from '../../src/api/core';
 import MathMutator from '../../src/mutators/MathMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
@@ -41,17 +42,17 @@ describe('Mutant', function () {
   describe('with single line code', () => {
 
     beforeEach(() => {
-      let location: ESTree.SourceLocation = {
+      let location: Location = {
         start: {
           line: 2,
-          column: 10
+          column: 0
         },
         end: {
           line: 2,
-          column: 11
-        }
+          column: 14
+        },
       };
-      sut = new Mutant('Math', filename, originalCode, '/', location);
+      sut = new Mutant('Math', filename, originalCode, '/', location, [16, 30]);
 
     });
     describe('should set', function () {
@@ -67,23 +68,27 @@ describe('Mutant', function () {
   });
 
   describe('with multi-line substitude', () => {
-    let originalLine: string;
+    let expectedOriginalLines: string;
+    let expectedMutatedLines: string;
     let originalCode: string;
     let mutatedCode: string;
     let restOfCode: string;
 
     beforeEach(() => {
-      originalLine =
-        `if(a > b
+      let start = 'if(';
+      let toBeMutated = `a > b
         && c < d
-        || b == c) {`;
+        || b == c`;
+        
+      expectedOriginalLines =
+        `${start}${toBeMutated}) {`;
       restOfCode = `
           console.log('hello world!');
         }`;
-      originalCode = originalLine + restOfCode;
+      originalCode = expectedOriginalLines + restOfCode;
       let substitude = 'false';
-      mutatedLine = 'if(' + substitude + ') {';
-      let location = {
+      expectedMutatedLines = 'if(' + substitude + ') {';
+      let location: Location = {
         start: {
           line: 1,
           column: 3
@@ -91,20 +96,25 @@ describe('Mutant', function () {
         end: {
           line: 3,
           column: 17
-        }
+        },
       };
 
-      sut = new Mutant('mutator', filename, originalCode, substitude, location);
+      sut = new Mutant('mutator', filename, originalCode, substitude, location, [start.length, start.length + toBeMutated.length]);
     });
 
     it('should generate the correct mutated code', () => {
-      var code = mutatedLine +
-        `
-
-` + restOfCode;
+      var code = expectedMutatedLines + restOfCode;
       //Some empty lines are needed. These are not allowed to contain spaces
       sut.save('a file');
       expect(StrykerTempFolder.writeFile).to.have.been.calledWith('a file', code);
+    });
+    
+    it('should set the correct originalLines', () => {
+      expect(sut.originalLines).to.be.eq(expectedOriginalLines);
+    });
+    
+    it('should set the correct mutatedLines', () => {
+      expect(sut.mutatedLines).to.be.eq(expectedMutatedLines);
     });
   });
 

@@ -113,9 +113,10 @@ export default class TestRunnerOrchestrator {
       status: status,
       replacement: mutant.replacement,
       location: mutant.location,
+      range: mutant.range,
       specsRan: specsRan,
       originalLines: mutant.originalLines,
-      mutatedLines: mutant.mutatedLines
+      mutatedLines: mutant.mutatedLines,
     };
     freezeRecursively(result);
     return result;
