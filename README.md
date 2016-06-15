@@ -31,7 +31,7 @@ node node_modules/stryker/src/Stryker.js --help
 Stryker can be used in two ways:
 
 1. Using a config file `node node_modules/stryker/src/Stryker.js -c stryker.conf.js`
-2. Using command line arguments `node node_modules/stryker/src/Stryker.js –m src/file.js,src/file2.js –f libs/externalLibrary.js,src/file2.js,src/file.js,test/*.js`
+2. Using command line arguments `node node_modules/stryker/src/Stryker.js –m src/file.js,src/file2.js –f libs/externalLibrary.js,src/file2.js,src/file.js,test/*.js --testFramework 'jasmine' --testRunner 'karma'`
 
 The config file is *not* a simple json file, it should be a common js (a.k.a. npm) module looking like this:
 ```javascript
@@ -45,10 +45,12 @@ You might recognize this way of working from the karma test runner.
  
 If both the config file and command line options are combined, the command line arguments will overrule the options in the config file.
 
-All options are optional except the `files` (or `-f`) and `mutate` (or `-m`) options. 
+All options are optional except the `files` (or `-f`), `mutate` (or `-m`), `testFramework` and `testRunner` options. 
 With `files` you configure all files needed to run the tests, except the test framework files themselves (jasmine).
 The order in this list is important, because that will be the order in which the files are loaded.
 With `mutate` you configure the subset of files to target for mutation. These should be your source files.
+With `testFramework` you configure which test framework you used for your tests. Currently **only** `'jasmine'` is supported.
+With `testRunner` you configure which framework should run your tests. Currently **only** `'karma'` is supported.
 
 Both the `files` and `mutate` options are a list of globbing expressions. The globbing expressions will be resolved
 using [node glob](https://github.com/isaacs/node-glob). This is the same globbing format you might know from 
@@ -65,7 +67,7 @@ Options can be configured either via the command line or via a config file.
 **Config file key:** `mutate`  
 **Description:**  
 A comma seperated list of globbing expressions used for selecting the files that should be mutated.  
-**Example:** -m src/\*\*/\*.js,a.js`
+**Example:** `-m src/\*\*/\*.js,a.js`
 
 #### All files
 **Short notation:** `-f`  
@@ -76,6 +78,20 @@ A comma seperated list of globbing expressions used for selecting all files need
 These include: test files, library files, source files (the files selected with `--mutate`) and any other file you need to run your tests. 
 The order of the files specified here will be the order used to load the file in the test runner (karma).   
 **Example:** `-f node_modules/a-lib/\*\*/\*.js,src/\*\*/\*.js,a.js,test/\*\*/\*.js`
+
+#### Test framework 
+**Full notation:** `--testFramework`  
+**Config file key:** `testFramework`  
+**Description:**  
+The test framework you want to use. Currently supported frameworks: `'jasmine'`  
+**Example:** `--testFramework 'jasmine'`
+
+#### Test runner 
+**Full notation:** `--testRunner`  
+**Config file key:** `testRunner`  
+**Description:**  
+The test runner you want to use. Currently supported runners: `'karma'`  
+**Example:** `--testFramework 'karma'`
 
 #### Log level
 **Short notation:** (none)  
@@ -97,6 +113,8 @@ module.exports = function(config){
   config.set({
     files: ['../../../sampleProject/src/?(Circle|Add).js', '../../../sampleProject/test/?(AddSpec|CircleSpec).js'],
     mutate: ['../../../sampleProject/src/?(Circle|Add).js'],
+    testFramework: 'jasmine',
+    testRunner: 'karma',
     logLevel: 'debug'
   });
 }
