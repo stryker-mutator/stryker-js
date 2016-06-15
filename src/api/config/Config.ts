@@ -9,8 +9,8 @@ export default class Config implements StrykerOptions {
   mutate: string[];
   
   logLevel = 'info';
-  testFramework = 'jasmine';
-  testRunner = 'karma';
+  testFramework: string;
+  testRunner: string;
   timeoutMs = 5000;
   timeoutFactor = 1.5;
   plugins: string[] = ['stryker-*'];
