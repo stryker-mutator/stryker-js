@@ -176,10 +176,13 @@ export default class TestRunnerOrchestrator {
   private copyAllFilesToTempFolder() {
     return new Promise<FileMap>((resolve, reject) => {
       let fileMap: FileMap = Object.create(null);
+      let cwd = process.cwd();
       var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-files');
       log.debug('Making a sandbox for files in %s', tempFolder);
       let copyPromises: Promise<any>[] = this.files.map(file => {
-        let targetFile = tempFolder + path.sep + path.basename(file.path);
+        let relativePath = file.path.substr(cwd.length);
+        let folderName = StrykerTempFolder.ensureFolderExists(tempFolder + path.dirname(relativePath));
+        let targetFile = folderName + path.sep + path.basename(relativePath);
         fileMap[file.path] = targetFile;
         return StrykerTempFolder.copyFile(file.path, targetFile);
       });

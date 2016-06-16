@@ -1,6 +1,7 @@
 import * as os from 'os'
 import * as fs from 'fs';
 import * as path from 'path';
+import * as mkdirp from 'mkdirp';
 
 let baseTempFolder = os.tmpdir() + path.sep + 'stryker';
 let tempFolder = baseTempFolder + path.sep + random();
@@ -31,7 +32,7 @@ function random(): number {
  */
 function ensureFolderExists(path: string): string {
   if (!fileOrFolderExists(path)) {
-    fs.mkdirSync(path);
+    mkdirp.sync(path);
   }
   return path;
 }
@@ -88,5 +89,6 @@ function copyFile(fromFilename: string, toFilename: string): Promise<void> {
 export default {
   createRandomFolder,
   writeFile,
-  copyFile
+  copyFile,
+  ensureFolderExists
 };

@@ -46,6 +46,7 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "lodash": "^3.10.1",
     "log4js": "^0.6.33",
+    "mkdirp": "^0.5.1",
     "node-glob": "^1.2.0",
     "phantomjs": "^1.9.18"
   },

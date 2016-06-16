@@ -18,6 +18,7 @@
     "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160322035842",
     "log4js": "registry:dt/log4js#0.0.0+20160316155526",
     "mime": "registry:dt/mime#0.0.0+20160316155526",
+    "mkdirp": "registry:dt/mkdirp#0.3.0+20160317120654",
     "mocha": "registry:dt/mocha#2.2.5+20160317120654",
     "node": "registry:dt/node#4.0.0+20160330064709",
     "serve-static": "registry:dt/serve-static#0.0.0+20160317120654"
