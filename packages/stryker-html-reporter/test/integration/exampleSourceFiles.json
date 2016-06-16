@@ -1,0 +1,10 @@
+[
+  {
+    "path": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "content": "var add = function(num1, num2) {\r\n  return num1 + num2;\r\n};\r\n\r\nvar addOne = function(number) {\r\n  number++;\r\n  return number;\r\n};\r\n\r\nvar negate = function(number) {\r\n  return -number;\r\n};\r\n\r\nvar isNegativeNumber = function(number) {\r\n  var isNegative = false;\r\n  if(number < 0){\r\n    isNegative = true;\r\n  }\r\n  return isNegative;\r\n};\r\n"
+  },
+  {
+    "path": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "content": "var getCircumference = function(radius) {\r\n  //Function to test multiple math mutations in a single function.\r\n  return 2 * Math.PI * radius;\r\n};\r\n\r\nvar untestedFunction = function() {\r\n  var i = 5 / 2 * 3;\r\n};\r\n"
+  }
+]

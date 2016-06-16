@@ -1,0 +1,24 @@
+<div class="totals col-md-12">
+    <h2>Totals</h2>
+    <table class="table">
+        {{>resultTableHead}}
+        <tbody class="">
+            {{>resultRow}}
+        </tbody>
+    </table>
+    <hr>
+</div>
+<div class="finegrained col-md-12">
+    <h2>Finegrained</h2>
+    <table class="table">
+        {{>resultTableHead}}
+        <tbody>
+            {{#each children}}
+            {{>resultRow}}            
+            {{/each}}
+            {{#each leafs}}
+            {{>resultRow}}            
+            {{/each}}
+        </tbody>
+    </table>
+</div>

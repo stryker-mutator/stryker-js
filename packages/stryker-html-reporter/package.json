@@ -1,0 +1,55 @@
+{
+  "name": "stryker-html-reporter",
+  "version": "0.0.0",
+  "description": "An html reporter for the JavaScript mutation testing framework Stryker",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stryker-mutator/stryker-html-reporter.git"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "html",
+    "report",
+    "mutation",
+    "testing"
+  ],
+  "author": "Nico Jansen <nicoj@infosupport.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-html-reporter/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker-html-reporter#readme",
+  "dependencies": {
+    "handlebars": "^4.0.5",
+    "lodash": "^4.13.1",
+    "log4js": "^0.6.36",
+    "stryker-api": "0.0.2"
+  },
+  "devDependencies": {
+    "bootstrap": "3.3.6",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-mocha-istanbul": "^5.0.1",
+    "grunt-mocha-test": "^0.12.7",
+    "grunt-protractor": "0.0.0",
+    "grunt-protractor-runner": "^3.2.0",
+    "grunt-ts": "^5.5.1",
+    "highlight.js": "^9.4.0",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.5.3",
+    "protractor": "^3.3.0",
+    "typescript": "^1.8.10",
+    "typings": "^1.0.4"
+  }
+}

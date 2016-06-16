@@ -1,0 +1,20 @@
+.stryker-image{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.original-code-disabled{
+    text-decoration: line-through;
+}
+
+.label *{
+    color: #fff;
+}
+
+*[hidden]{
+    display: none !important;
+}
+
+/*.stryker-*/
+    
