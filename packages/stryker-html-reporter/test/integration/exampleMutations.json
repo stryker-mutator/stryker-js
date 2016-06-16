@@ -1,0 +1,450 @@
+[
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "mutatorName": "Math",
+    "status": 0,
+    "replacement": "5 * 2",
+    "location": {
+      "start": {
+        "line": 7,
+        "column": 10
+      },
+      "end": {
+        "line": 7,
+        "column": 15
+      }
+    },
+    "range": [
+      196,
+      201
+    ],
+    "specsRan": [],
+    "originalLines": " var i = 5 / 2 * 3;",
+    "mutatedLines": " var i = 5 * 2 * 3;"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "mutatorName": "Math",
+    "status": 0,
+    "replacement": "5 / 2 / 3",
+    "location": {
+      "start": {
+        "line": 7,
+        "column": 10
+      },
+      "end": {
+        "line": 7,
+        "column": 19
+      }
+    },
+    "range": [
+      196,
+      205
+    ],
+    "specsRan": [],
+    "originalLines": " var i = 5 / 2 * 3;",
+    "mutatedLines": " var i = 5 / 2 / 3;"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "mutatorName": "BlockStatement",
+    "status": 0,
+    "replacement": "{\n}",
+    "location": {
+      "start": {
+        "line": 6,
+        "column": 34
+      },
+      "end": {
+        "line": 8,
+        "column": 1
+      }
+    },
+    "range": [
+      183,
+      209
+    ],
+    "specsRan": [],
+    "originalLines": "var untestedFunction = function() {\r\n var i = 5 / 2 * 3;\r\n};",
+    "mutatedLines": "var untestedFunction = function() {\n};"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "RemoveConditionals",
+    "status": 1,
+    "replacement": "false",
+    "location": {
+      "start": {
+        "line": 16,
+        "column": 5
+      },
+      "end": {
+        "line": 16,
+        "column": 15
+      }
+    },
+    "range": [
+      266,
+      276
+    ],
+    "specsRan": [
+      "Add should be able to recognize a negative number",
+      "Add should be able to recognize that 0 is not a negative number"
+    ],
+    "originalLines": " if(number < 0){",
+    "mutatedLines": " if(false){"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "ReverseConditional",
+    "status": 1,
+    "replacement": "number >= 0",
+    "location": {
+      "start": {
+        "line": 16,
+        "column": 5
+      },
+      "end": {
+        "line": 16,
+        "column": 15
+      }
+    },
+    "range": [
+      266,
+      276
+    ],
+    "specsRan": [
+      "Add should be able to recognize a negative number",
+      "Add should be able to recognize that 0 is not a negative number"
+    ],
+    "originalLines": " if(number < 0){",
+    "mutatedLines": " if(number >= 0){"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "ConditionalBoundary",
+    "status": 1,
+    "replacement": "number <= 0",
+    "location": {
+      "start": {
+        "line": 16,
+        "column": 5
+      },
+      "end": {
+        "line": 16,
+        "column": 15
+      }
+    },
+    "range": [
+      266,
+      276
+    ],
+    "specsRan": [
+      "Add should be able to recognize a negative number",
+      "Add should be able to recognize that 0 is not a negative number"
+    ],
+    "originalLines": " if(number < 0){",
+    "mutatedLines": " if(number <= 0){"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "BlockStatement",
+    "status": 1,
+    "replacement": "{\n}",
+    "location": {
+      "start": {
+        "line": 14,
+        "column": 40
+      },
+      "end": {
+        "line": 20,
+        "column": 1
+      }
+    },
+    "range": [
+      231,
+      332
+    ],
+    "specsRan": [
+      "Add should be able to recognize a negative number"
+    ],
+    "originalLines": "var isNegativeNumber = function(number) {\r\n var isNegative = false;\r\n if(number < 0){\r\n isNegative = true;\r\n }\r\n return isNegative;\r\n};",
+    "mutatedLines": "var isNegativeNumber = function(number) {\n};"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "UnaryOperator",
+    "status": 1,
+    "replacement": "+number",
+    "location": {
+      "start": {
+        "line": 11,
+        "column": 9
+      },
+      "end": {
+        "line": 11,
+        "column": 16
+      }
+    },
+    "range": [
+      175,
+      182
+    ],
+    "specsRan": [
+      "Add should be able negate a number"
+    ],
+    "originalLines": " return -number;",
+    "mutatedLines": " return +number;"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "BlockStatement",
+    "status": 1,
+    "replacement": "{\n}",
+    "location": {
+      "start": {
+        "line": 10,
+        "column": 30
+      },
+      "end": {
+        "line": 12,
+        "column": 1
+      }
+    },
+    "range": [
+      163,
+      186
+    ],
+    "specsRan": [
+      "Add should be able negate a number"
+    ],
+    "originalLines": "var negate = function(number) {\r\n return -number;\r\n};",
+    "mutatedLines": "var negate = function(number) {\n};"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "UnaryOperator",
+    "status": 1,
+    "replacement": "number--",
+    "location": {
+      "start": {
+        "line": 6,
+        "column": 2
+      },
+      "end": {
+        "line": 6,
+        "column": 10
+      }
+    },
+    "range": [
+      98,
+      106
+    ],
+    "specsRan": [
+      "Add should be able 1 to a number"
+    ],
+    "originalLines": " number++;",
+    "mutatedLines": " number--;"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "BlockStatement",
+    "status": 1,
+    "replacement": "{\n}",
+    "location": {
+      "start": {
+        "line": 5,
+        "column": 30
+      },
+      "end": {
+        "line": 8,
+        "column": 1
+      }
+    },
+    "range": [
+      93,
+      128
+    ],
+    "specsRan": [
+      "Add should be able 1 to a number"
+    ],
+    "originalLines": "var addOne = function(number) {\r\n number++;\r\n return number;\r\n};",
+    "mutatedLines": "var addOne = function(number) {\n};"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "Math",
+    "status": 1,
+    "replacement": "num1 - num2",
+    "location": {
+      "start": {
+        "line": 2,
+        "column": 9
+      },
+      "end": {
+        "line": 2,
+        "column": 20
+      }
+    },
+    "range": [
+      43,
+      54
+    ],
+    "specsRan": [
+      "Add should be able to add two numbers"
+    ],
+    "originalLines": " return num1 + num2;",
+    "mutatedLines": " return num1 - num2;"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "mutatorName": "BlockStatement",
+    "status": 1,
+    "replacement": "{\n}",
+    "location": {
+      "start": {
+        "line": 1,
+        "column": 40
+      },
+      "end": {
+        "line": 4,
+        "column": 1
+      }
+    },
+    "range": [
+      40,
+      144
+    ],
+    "specsRan": [
+      "Circle should have a circumference of 2PI when the radius is 1"
+    ],
+    "originalLines": "var getCircumference = function(radius) {\r\n //Function to test multiple math mutations in a single function.\r\n return 2 * Math.PI * radius;\r\n};",
+    "mutatedLines": "var getCircumference = function(radius) {\n};"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "RemoveConditionals",
+    "status": 1,
+    "replacement": "true",
+    "location": {
+      "start": {
+        "line": 16,
+        "column": 5
+      },
+      "end": {
+        "line": 16,
+        "column": 15
+      }
+    },
+    "range": [
+      266,
+      276
+    ],
+    "specsRan": [
+      "Add should be able to recognize a negative number",
+      "Add should be able to recognize that 0 is not a negative number"
+    ],
+    "originalLines": " if(number < 0){",
+    "mutatedLines": " if(true){"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "BlockStatement",
+    "status": 1,
+    "replacement": "{\n}",
+    "location": {
+      "start": {
+        "line": 1,
+        "column": 31
+      },
+      "end": {
+        "line": 3,
+        "column": 1
+      }
+    },
+    "range": [
+      31,
+      58
+    ],
+    "specsRan": [
+      "Add should be able to add two numbers"
+    ],
+    "originalLines": "var add = function(num1, num2) {\r\n return num1 + num2;\r\n};",
+    "mutatedLines": "var add = function(num1, num2) {\n};"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "mutatorName": "Math",
+    "status": 2,
+    "replacement": "2 * Math.PI / radius",
+    "location": {
+      "start": {
+        "line": 3,
+        "column": 9
+      },
+      "end": {
+        "line": 3,
+        "column": 29
+      }
+    },
+    "range": [
+      120,
+      140
+    ],
+    "specsRan": [
+      "Circle should have a circumference of 2PI when the radius is 1"
+    ],
+    "originalLines": " return 2 * Math.PI * radius;",
+    "mutatedLines": " return 2 * Math.PI / radius;"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "mutatorName": "Math",
+    "status": 1,
+    "replacement": "2 / Math.PI",
+    "location": {
+      "start": {
+        "line": 3,
+        "column": 9
+      },
+      "end": {
+        "line": 3,
+        "column": 20
+      }
+    },
+    "range": [
+      120,
+      131
+    ],
+    "specsRan": [
+      "Circle should have a circumference of 2PI when the radius is 1"
+    ],
+    "originalLines": " return 2 * Math.PI * radius;",
+    "mutatedLines": " return 2 / Math.PI * radius;"
+  },
+  {
+    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "mutatorName": "BlockStatement",
+    "status": 1,
+    "replacement": "{\n}",
+    "location": {
+      "start": {
+        "line": 16,
+        "column": 16
+      },
+      "end": {
+        "line": 18,
+        "column": 3
+      }
+    },
+    "range": [
+      277,
+      307
+    ],
+    "specsRan": [
+      "Add should be able to recognize a negative number"
+    ],
+    "originalLines": " if(number < 0){\r\n isNegative = true;\r\n }",
+    "mutatedLines": " if(number < 0){\n}"
+  }
+]
