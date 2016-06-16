@@ -23,7 +23,7 @@ interface TestRunnerSandbox {
   index: number;
   runnerAdapter: IsolatedTestRunnerAdapter;
   selector: TestSelector;
-  sourceFileMap: FileMap;
+  fileMap: FileMap;
 }
 
 export default class TestRunnerOrchestrator {
@@ -51,7 +51,7 @@ export default class TestRunnerOrchestrator {
           var mutant = mutants.pop();
           if (mutant.scopedTestIds.length > 0) {
             let nextRunner = testRunners.pop();
-            let sourceFileCopy = nextRunner.sourceFileMap[mutant.filename];
+            let sourceFileCopy = nextRunner.fileMap[mutant.filename];
             return Promise.all([mutant.save(sourceFileCopy), nextRunner.selector.select(mutant.scopedTestIds)])
               .then(() => nextRunner.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
               .then((runResult) => {
@@ -158,38 +158,30 @@ export default class TestRunnerOrchestrator {
   }
 
   private createSandbox(index: number): Promise<TestRunnerSandbox> {
-    return this.copyAllSourceFilesToTempFolder().then(sourceFileMap => {
+    return this.copyAllFilesToTempFolder().then(fileMap => {
       let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
       let runnerFiles: InputFile[] = [];
       this.files.forEach(originalFile => {
-        if (Object.keys(sourceFileMap).indexOf(originalFile.path) >= 0) {
-          runnerFiles.push({ path: sourceFileMap[originalFile.path], shouldMutate: originalFile.shouldMutate });
-        } else {
-          runnerFiles.push(originalFile);
-        }
+          runnerFiles.push({ path: fileMap[originalFile.path], shouldMutate: originalFile.shouldMutate });
       });
       return {
         index,
-        sourceFileMap,
+        fileMap,
         runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(runnerFiles, selector, index, false)),
         selector
       };
     });
   }
 
-  private copyAllSourceFilesToTempFolder() {
+  private copyAllFilesToTempFolder() {
     return new Promise<FileMap>((resolve, reject) => {
       let fileMap: FileMap = Object.create(null);
-      var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-source-files');
-      log.debug('Making a sandbox for source files in %s', tempFolder);
+      var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-files');
+      log.debug('Making a sandbox for files in %s', tempFolder);
       let copyPromises: Promise<any>[] = this.files.map(file => {
-        if (file.shouldMutate) {
-          let targetFile = tempFolder + path.sep + path.basename(file.path);
-          fileMap[file.path] = targetFile;
-          return StrykerTempFolder.copyFile(file.path, targetFile);
-        } else {
-          return Promise.resolve();
-        }
+        let targetFile = tempFolder + path.sep + path.basename(file.path);
+        fileMap[file.path] = targetFile;
+        return StrykerTempFolder.copyFile(file.path, targetFile);
       });
       Promise.all(copyPromises).then(() => { resolve(fileMap); }, reject);
     });
