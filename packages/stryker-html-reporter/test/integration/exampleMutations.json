@@ -1,6 +1,6 @@
 [
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "sourceFilePath": "sampleProject/src/Circle.js",
     "mutatorName": "Math",
     "status": 0,
     "replacement": "5 * 2",
@@ -23,7 +23,7 @@
     "mutatedLines": " var i = 5 * 2 * 3;"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "sourceFilePath": "sampleProject/src/Circle.js",
     "mutatorName": "Math",
     "status": 0,
     "replacement": "5 / 2 / 3",
@@ -46,7 +46,7 @@
     "mutatedLines": " var i = 5 / 2 / 3;"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "sourceFilePath": "sampleProject/src/Circle.js",
     "mutatorName": "BlockStatement",
     "status": 0,
     "replacement": "{\n}",
@@ -69,7 +69,7 @@
     "mutatedLines": "var untestedFunction = function() {\n};"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "RemoveConditionals",
     "status": 1,
     "replacement": "false",
@@ -95,7 +95,7 @@
     "mutatedLines": " if(false){"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "ReverseConditional",
     "status": 1,
     "replacement": "number >= 0",
@@ -121,7 +121,7 @@
     "mutatedLines": " if(number >= 0){"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "ConditionalBoundary",
     "status": 1,
     "replacement": "number <= 0",
@@ -147,7 +147,7 @@
     "mutatedLines": " if(number <= 0){"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "BlockStatement",
     "status": 1,
     "replacement": "{\n}",
@@ -172,7 +172,7 @@
     "mutatedLines": "var isNegativeNumber = function(number) {\n};"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "UnaryOperator",
     "status": 1,
     "replacement": "+number",
@@ -197,7 +197,7 @@
     "mutatedLines": " return +number;"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "BlockStatement",
     "status": 1,
     "replacement": "{\n}",
@@ -222,7 +222,7 @@
     "mutatedLines": "var negate = function(number) {\n};"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "UnaryOperator",
     "status": 1,
     "replacement": "number--",
@@ -247,7 +247,7 @@
     "mutatedLines": " number--;"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "BlockStatement",
     "status": 1,
     "replacement": "{\n}",
@@ -272,7 +272,7 @@
     "mutatedLines": "var addOne = function(number) {\n};"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "Math",
     "status": 1,
     "replacement": "num1 - num2",
@@ -297,7 +297,7 @@
     "mutatedLines": " return num1 - num2;"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "sourceFilePath": "sampleProject/src/Circle.js",
     "mutatorName": "BlockStatement",
     "status": 1,
     "replacement": "{\n}",
@@ -322,7 +322,7 @@
     "mutatedLines": "var getCircumference = function(radius) {\n};"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "RemoveConditionals",
     "status": 1,
     "replacement": "true",
@@ -348,7 +348,7 @@
     "mutatedLines": " if(true){"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "BlockStatement",
     "status": 1,
     "replacement": "{\n}",
@@ -373,7 +373,7 @@
     "mutatedLines": "var add = function(num1, num2) {\n};"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "sourceFilePath": "sampleProject/src/Circle.js",
     "mutatorName": "Math",
     "status": 2,
     "replacement": "2 * Math.PI / radius",
@@ -398,7 +398,7 @@
     "mutatedLines": " return 2 * Math.PI / radius;"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Circle.js",
+    "sourceFilePath": "sampleProject/src/Circle.js",
     "mutatorName": "Math",
     "status": 1,
     "replacement": "2 / Math.PI",
@@ -423,7 +423,7 @@
     "mutatedLines": " return 2 / Math.PI * radius;"
   },
   {
-    "sourceFilePath": "c:\\z\\github\\stryker-mutator\\stryker\\testResources\\sampleProject\\src\\Add.js",
+    "sourceFilePath": "sampleProject/src/Add.js",
     "mutatorName": "BlockStatement",
     "status": 1,
     "replacement": "{\n}",
