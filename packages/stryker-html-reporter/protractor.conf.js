@@ -1,4 +1,4 @@
-exports.config = {
+var config = {
   directConnect: true,
 
   capabilities: {
@@ -19,3 +19,5 @@ if (process.env.TRAVIS) {
     browserName: 'firefox'
   };
 }
+
+exports.config = config;
