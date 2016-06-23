@@ -114,7 +114,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
-  grunt.registerTask('test', ['build', 'coverage']);
+  grunt.registerTask('test', ['build', 'coverage', 'protractor']);
   grunt.registerTask('build', ['clean', 'copy', 'browserify', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
