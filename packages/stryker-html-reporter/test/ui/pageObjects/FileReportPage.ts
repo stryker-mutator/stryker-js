@@ -8,6 +8,7 @@ export default class FilePage {
   title = () => $('h1').getText();
 
   mutationButtonCount = () => element.all(by.css('.stryker-mutant-button')).count();
-  mutationButton = (index: number) => new MutantSelection($(`.stryker-mutant-button[data-mutant="${index}"]`), $(`.stryker-original-code[data-mutant="${index}"]`), $(`.stryker-mutant-replacement[data-mutant="${index}"]`));
+  mutantSelection = (index: number) => new MutantSelection($(`.stryker-mutant-button[data-mutant="${index}"]`), $(`.stryker-original-code[data-mutant="${index}"]`), $(`.stryker-mutant-replacement[data-mutant="${index}"]`));
+  displayKilledCheckbox = () => $('.stryker-display-killed');
 }
 
