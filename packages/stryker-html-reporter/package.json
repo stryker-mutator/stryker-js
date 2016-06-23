@@ -4,7 +4,8 @@
   "description": "An html reporter for the JavaScript mutation testing framework Stryker",
   "main": "index.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "postinstall": "typings install"
   },
   "repository": {
     "type": "git",
