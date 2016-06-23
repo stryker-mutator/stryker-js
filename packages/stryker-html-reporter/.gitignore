@@ -12,5 +12,6 @@ test/**/*.d.ts
 *.js
 *.d.ts
 !Gruntfile.js
+!*.conf.js
 !testResources
 reports
