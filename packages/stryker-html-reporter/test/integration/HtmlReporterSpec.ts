@@ -6,11 +6,11 @@ import {expect} from 'chai';
 const exampleMutations = require('./exampleMutations.json');
 const exampleSourceFiles = require('./exampleSourceFiles.json');
 
-function expectFileExists(file: string, expected: boolean){
-  try{
+function expectFileExists(file: string, expected: boolean) {
+  try {
     fs.readFileSync(file);
     expect(expected, `file ${file} does not exist`).to.be.true;
-  }catch(err){
+  } catch (err) {
     expect(expected, `file ${file} exists`).to.be.false;
   }
 }
@@ -36,18 +36,23 @@ describe.only('HtmlReporter with example project', () => {
         expectFileExists(`${baseDir}/Circle.js.html`, true);
         expectFileExists(`${baseDir}/Add.js.html`, true);
       });
+
+      afterEach(() => {
+        console.log(fs.readdirSync(baseDir));
+        console.log(path.resolve(baseDir));
+      });
     });
 
     describe('when initiated a second time with empty events', () => {
 
-      beforeEach( () => {
+      beforeEach(() => {
         sut = new HtmlReporter({ htmlReporter: { baseDir } });
         sut.onAllSourceFilesRead([]);
         sut.onAllMutantsTested([]);
         return sut.wrapUp();
       });
 
-      it(`should clean the folder ${baseDir}`, () => { 
+      it(`should clean the folder ${baseDir}`, () => {
         expectFileExists(`${baseDir}/index.html`, false);
         expectFileExists(`${baseDir}/Circle.js.html`, false);
         expectFileExists(`${baseDir}/Add.js.html`, false);
