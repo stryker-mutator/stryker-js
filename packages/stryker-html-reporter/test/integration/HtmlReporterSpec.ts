@@ -37,10 +37,6 @@ describe.only('HtmlReporter with example project', () => {
         expectFileExists(`${baseDir}/Add.js.html`, true);
       });
 
-      afterEach(() => {
-        console.log(fs.readdirSync(baseDir));
-        console.log(path.resolve(baseDir));
-      });
     });
 
     describe('when initiated a second time with empty events', () => {
