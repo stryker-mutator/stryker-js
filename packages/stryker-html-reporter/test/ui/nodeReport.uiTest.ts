@@ -38,7 +38,7 @@ describe('Node results page', () => {
     });
 
     it('should set the width to 77%', () => {
-      return expect(page.totalsBar.relativeBarWidth).to.eventually.be.within(-75, -78); // allow for rounding errors
+      return expect(page.totalsBar.relativeBarWidth).to.eventually.be.within(75, 78); // allow for rounding errors
     });
     
   });
