@@ -14,10 +14,8 @@ var config = {
   }
 };
 
-if (process.env.TRAVIS) {
   config.capabilities = {
     browserName: 'firefox'
   };
-}
 
 exports.config = config;
