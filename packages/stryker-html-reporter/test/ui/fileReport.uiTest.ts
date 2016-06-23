@@ -3,7 +3,7 @@ import MutantSelection from './pageObjects/MutantSelection';
 import * as path from 'path';
 import {expect} from 'chai';
 
-describe.only('File report page "Circle.js.html"', () => {
+describe('File report page "Circle.js.html"', () => {
 
   let page: FileReportPage;
 
