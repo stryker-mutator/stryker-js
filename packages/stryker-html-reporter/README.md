@@ -9,7 +9,9 @@ An HTML Reporter for the JavaScript mutation testing framework [Stryker](https:/
 
 ## Example
 
-Comming soon
+Click on the image below to see a real-life example of the generated html report.
+
+[![example](https://github.com/stryker-mutator/stryker-html-reporter/raw/master/example.png)](https://stryker-mutator.github.io/stryker-html-reporter)
 
 ## Install
 
@@ -42,7 +44,7 @@ You can configure the html reporter by adding a `htmlReporter` to your config.
 
 Configure the base directory to write the html report to. 
 
-### Example
+### Full config example
 
 ```javascript
 // stryker.conf.js
