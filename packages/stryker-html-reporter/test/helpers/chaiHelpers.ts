@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import * as sinonChai from 'sinon-chai';
 
 (<any>chai.Assertion).addMethod('equalData', function (expected: any) {
   var actual = this._obj;
@@ -11,3 +12,4 @@ import * as chaiAsPromised from 'chai-as-promised';
 });
 
 chai.use(chaiAsPromised);
+chai.use(sinonChai);

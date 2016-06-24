@@ -7,7 +7,7 @@ var config = {
 
   framework: 'mocha',
 
-  specs: ['test/helpers.js', 'test/ui/**/*.js'],
+  specs: ['test/helpers/**/*.js', 'test/ui/**/*.js'],
 
   mochaOpts: {
     timeout: 30000
