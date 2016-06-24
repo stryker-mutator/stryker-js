@@ -18,10 +18,10 @@ describe('TestRunnerOrchestrator', () => {
   let sut: TestRunnerOrchestrator;
   let sandbox: sinon.SinonSandbox;
   let files = [
-    { path: process.cwd() + path.sep + 'a.js', shouldMutate: true },
-    { path: process.cwd() + path.sep + 'b.js', shouldMutate: true },
-    { path: process.cwd() + path.sep + 'aSpec.js', shouldMutate: false },
-    { path: process.cwd() + path.sep + 'bSpec.js', shouldMutate: false }
+    { path: path.join(process.cwd(), 'a.js'), shouldMutate: true },
+    { path: path.join(process.cwd(), 'b.js'), shouldMutate: true },
+    { path: path.join(process.cwd(), 'aSpec.js'), shouldMutate: false },
+    { path: path.join(process.cwd(), 'bSpec.js'), shouldMutate: false }
   ];
   let strykerOptions = { testFramework: 'superFramework', testRunner: 'superRunner', port: 42 };
   let firstTestRunner: any;

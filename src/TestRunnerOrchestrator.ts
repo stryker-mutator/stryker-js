@@ -182,7 +182,7 @@ export default class TestRunnerOrchestrator {
       let copyPromises: Promise<any>[] = this.files.map(file => {
         let relativePath = file.path.substr(cwd.length);
         let folderName = StrykerTempFolder.ensureFolderExists(tempFolder + path.dirname(relativePath));
-        let targetFile = folderName + path.sep + path.basename(relativePath);
+        let targetFile = path.join(folderName, path.basename(relativePath));
         fileMap[file.path] = targetFile;
         return StrykerTempFolder.copyFile(file.path, targetFile);
       });
