@@ -17,7 +17,12 @@ let expect = chai.expect;
 describe('TestRunnerOrchestrator', () => {
   let sut: TestRunnerOrchestrator;
   let sandbox: sinon.SinonSandbox;
-  let files = [{ path: 'a.js', shouldMutate: true }, { path: 'b.js', shouldMutate: true }, { path: 'aSpec.js', shouldMutate: false }, { path: 'bSpec.js', shouldMutate: false }];
+  let files = [
+    { path: path.join(process.cwd(), 'a.js'), shouldMutate: true },
+    { path: path.join(process.cwd(), 'b.js'), shouldMutate: true },
+    { path: path.join(process.cwd(), 'aSpec.js'), shouldMutate: false },
+    { path: path.join(process.cwd(), 'bSpec.js'), shouldMutate: false }
+  ];
   let strykerOptions = { testFramework: 'superFramework', testRunner: 'superRunner', port: 42 };
   let firstTestRunner: any;
   let secondTestRunner: any;
@@ -108,6 +113,7 @@ describe('TestRunnerOrchestrator', () => {
     beforeEach(() => {
       sandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
       sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns('a-folder');
+      sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returns('a-folder');
       sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve());
 
       var untestedMutant = mockMutant(0);
@@ -124,8 +130,8 @@ describe('TestRunnerOrchestrator', () => {
         { path: 'files', shouldMutate: false },
         { path: `a-folder${path.sep}a.js`, shouldMutate: true },
         { path: `a-folder${path.sep}b.js`, shouldMutate: true },
-        { path: 'aSpec.js', shouldMutate: false },
-        { path: 'bSpec.js', shouldMutate: false }
+        { path: `a-folder${path.sep}aSpec.js`, shouldMutate: false },
+        { path: `a-folder${path.sep}bSpec.js`, shouldMutate: false }
       ];
 
       expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWithMatch
