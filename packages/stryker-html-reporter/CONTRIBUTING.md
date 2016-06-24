@@ -2,11 +2,9 @@
 
 This is the contribution guide for Stryker. Great to have you here! Here are a few ways you can help make this project better.
 
-## Team members
+## Author
 
-* Simon de Lang: First developer on Stryker. Started Stryker as part of his thesis at Info Support. [simondel](http://github.com/simondel) on github.
-* Nico Jansen: Second developer on Stryker. Originaly came up with the idea for the mutation testing framework as a thesis at Info Support. 
-[nicojs](http://github.com/nicojs) on github or [@_nicojs](https://twitter.com/_nicojs) on twitter
+Nico Jansen: [nicojs](http://github.com/nicojs) on github or [@_nicojs](https://twitter.com/_nicojs) on twitter
 
 ## Learn & listen
 
