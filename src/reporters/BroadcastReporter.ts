@@ -1,6 +1,6 @@
 
-import {Reporter, SourceFile, MutantResult} from '../api/report';
-import {StrykerOptions} from '../api/core';
+import {Reporter, SourceFile, MutantResult} from 'stryker-api/report';
+import {StrykerOptions} from 'stryker-api/core';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('BroadcastReporter');

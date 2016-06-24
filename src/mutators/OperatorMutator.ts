@@ -1,4 +1,4 @@
-import {Mutator} from '../api/mutant';
+import {Mutator} from 'stryker-api/mutant';
 import OperatorMutatorMap from './OperatorMutatorMap';
 
 abstract class OperatorMutator implements Mutator {

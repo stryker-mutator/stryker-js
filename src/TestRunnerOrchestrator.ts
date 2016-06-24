@@ -1,14 +1,14 @@
-import {StrykerOptions, InputFile} from './api/core';
-import {RunResult, RunnerOptions, TestResult} from './api/test_runner';
-import {TestSelector, TestSelectorFactory} from './api/test_selector';
-import {StrykerTempFolder} from './api/util';
+import {StrykerOptions, InputFile} from 'stryker-api/core';
+import {RunResult, RunnerOptions, TestResult} from 'stryker-api/test_runner';
+import {TestSelector, TestSelectorFactory} from 'stryker-api/test_selector';
+import StrykerTempFolder from './utils/StrykerTempFolder';
 import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as path from 'path';
 import * as os from 'os';
 import * as _ from 'lodash';
 import Mutant from './Mutant';
-import {Reporter, MutantStatus, MutantResult} from './api/report';
+import {Reporter, MutantStatus, MutantResult} from 'stryker-api/report';
 import * as log4js from 'log4js';
 import {freezeRecursively} from './utils/objectUtils';
 const PromisePool = require('es6-promise-pool')

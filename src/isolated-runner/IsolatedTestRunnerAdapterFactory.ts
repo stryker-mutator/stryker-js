@@ -1,4 +1,4 @@
-import {TestRunnerFactory, TestRunner, RunnerOptions} from '../api/test_runner';
+import {TestRunnerFactory, TestRunner, RunnerOptions} from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from './IsolatedTestRunnerAdapter';
 
 export default {

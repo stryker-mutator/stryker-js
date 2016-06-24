@@ -1,5 +1,5 @@
 import {Syntax} from 'esprima';
-import {Mutator} from '../api/mutant';
+import {Mutator} from 'stryker-api/mutant';
 
 /**
  * Represents a mutator which can remove the conditional clause from statements.

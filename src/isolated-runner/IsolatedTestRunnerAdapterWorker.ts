@@ -1,5 +1,5 @@
 import Message, {MessageType} from './Message';
-import {RunnerOptions, TestRunner, TestResult, TestRunnerFactory, RunResult} from '../api/test_runner';
+import {RunnerOptions, TestRunner, TestResult, TestRunnerFactory, RunResult} from 'stryker-api/test_runner';
 import StartMessageBody from './StartMessageBody';
 import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
@@ -56,7 +56,7 @@ class TestRunnerChildProcessAdapterWorker {
       type: MessageType.Result,
       body: {
         result: {
-          specNames: [],
+          testNames: [],
           result: TestResult.Error,
         }
       }

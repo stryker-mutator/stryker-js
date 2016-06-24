@@ -1,10 +1,10 @@
 import TestRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as sinon from 'sinon';
-import {StrykerTempFolder} from '../../src/api/util';
-import {Reporter} from '../../src/api/report';
-import {TestSelector, TestSelectorFactory} from '../../src/api/test_selector';
-import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from '../../src/api/test_runner';
-import {MutantStatus, MutantResult} from '../../src/api/report';
+import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
+import {Reporter} from 'stryker-api/report';
+import {TestSelector, TestSelectorFactory} from 'stryker-api/test_selector';
+import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from 'stryker-api/test_runner';
+import {MutantStatus, MutantResult} from 'stryker-api/report';
 import IsolatedTestRunnerAdapter from '../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as chai from 'chai';

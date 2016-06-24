@@ -1,4 +1,4 @@
-import {Reporter, MutantResult, MutantStatus, SourceFile} from '../api/report';
+import {Reporter, MutantResult, MutantStatus, SourceFile} from 'stryker-api/report';
 import * as chalk from 'chalk';
 import * as _ from 'lodash';
 

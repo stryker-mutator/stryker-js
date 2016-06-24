@@ -1,5 +1,5 @@
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import {Reporter} from '../../../src/api/report';
+import {Reporter} from 'stryker-api/report';
 import * as sinon from 'sinon';
 import {expect} from 'chai';
 import logger from '../../helpers/log4jsMock';

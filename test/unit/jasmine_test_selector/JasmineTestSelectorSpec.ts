@@ -1,6 +1,6 @@
 import JasmineTestSelector from '../../../src/jasmine_test_selector/JasmineTestSelector';
-import {TestSelectorSettings, TestSelectorFactory} from '../../../src/api/test_selector';
-import {StrykerTempFolder} from '../../../src/api/util';
+import {TestSelectorSettings, TestSelectorFactory} from 'stryker-api/test_selector';
+import {StrykerTempFolder} from 'stryker-api/util';
 
 import * as sinon from 'sinon';
 import * as chai from 'chai';

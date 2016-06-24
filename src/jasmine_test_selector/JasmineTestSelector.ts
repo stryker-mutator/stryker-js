@@ -1,6 +1,6 @@
-import {TestSelector, TestSelectorSettings, TestSelectorFactory} from '../api/test_selector';
-import {StrykerTempFolder} from '../api/util';
-import {InputFile} from '../api/core';
+import {TestSelector, TestSelectorSettings, TestSelectorFactory} from 'stryker-api/test_selector';
+import {StrykerTempFolder} from 'stryker-api/util';
+import {InputFile} from 'stryker-api/core';
 import * as fs from 'fs';
 import {Promise} from 'es6-promise';
 

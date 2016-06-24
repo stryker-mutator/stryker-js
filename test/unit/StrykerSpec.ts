@@ -1,10 +1,10 @@
 'use strict';
 
 import Stryker from '../../src/Stryker';
-import {InputFile} from '../../src/api/core';
-import {MutantResult} from '../../src/api/report';
-import {Config, ConfigWriterFactory, ConfigWriter} from '../../src/api/config';
-import {RunResult, TestResult} from '../../src/api/test_runner';
+import {InputFile} from 'stryker-api/core';
+import {MutantResult} from 'stryker-api/report';
+import {Config, ConfigWriterFactory, ConfigWriter} from 'stryker-api/config';
+import {RunResult, TestResult} from 'stryker-api/test_runner';
 import {expect} from 'chai';
 import * as sinon from 'sinon';
 import * as inputFileResolver from '../../src/InputFileResolver';

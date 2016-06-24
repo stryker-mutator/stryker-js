@@ -1,4 +1,4 @@
-import {RunnerOptions} from '../api/test_runner';
+import {RunnerOptions} from 'stryker-api/test_runner';
 
 interface StartMessageBody {
   runnerName: string;
