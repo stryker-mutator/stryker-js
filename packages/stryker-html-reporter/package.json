@@ -51,6 +51,8 @@
     "istanbul": "^0.4.3",
     "mocha": "^2.5.3",
     "protractor": "^3.3.0",
+    "sinon": "^1.17.4",
+    "sinon-chai": "^2.8.0",
     "typescript": "^1.8.10",
     "typings": "^1.0.4"
   }

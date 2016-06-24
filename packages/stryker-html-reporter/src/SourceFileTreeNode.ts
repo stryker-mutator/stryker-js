@@ -118,7 +118,7 @@ export default class SourceFileTreeNode {
     }
     let str = `${prefix}${this.name}\n`;
     this.leafs.forEach(l => {
-      str += `${prefix}.${l.name}`;
+      str += `${prefix}./${l.name}`;
       if (l.results.length) {
         str += ' [';
         l.results.forEach(m => str += SourceFileTreeNode.mutantStatusToString(m.status));

@@ -16,5 +16,9 @@
     "node": "registry:dt/node#6.0.0+20160621231320",
     "selenium-webdriver": "registry:dt/selenium-webdriver#2.44.0+20160317120654",
     "serve-static": "registry:dt/serve-static#0.0.0+20160606155157"
+  },
+  "devDependencies": {
+    "sinon": "registry:npm/sinon#1.16.0+20160427193336",
+    "sinon-chai": "registry:npm/sinon-chai#2.8.0+20160310030142"
   }
 }

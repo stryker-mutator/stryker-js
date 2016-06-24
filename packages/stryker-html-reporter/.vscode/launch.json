@@ -6,7 +6,6 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
-      "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "mochaTest:unit"
