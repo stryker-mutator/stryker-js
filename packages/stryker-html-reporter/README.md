@@ -7,6 +7,9 @@
 
 An HTML Reporter for the JavaScript mutation testing framework [Stryker](https://stryker-mutator.github.io)
 
+## Warning
+The stryker-html-reporter will be available from stryker v0.4.0 onward (which should be released soon).
+
 ## Example
 
 Click on the image below to see a real-life example of the generated html report.
