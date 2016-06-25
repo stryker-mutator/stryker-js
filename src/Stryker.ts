@@ -119,7 +119,7 @@ export default class Stryker {
       _.uniq(
         _.flatten(unsuccessfulTests
           .filter(runResult => runResult.result === TestResult.Complete)
-          .map(runResult => runResult.specNames)
+          .map(runResult => runResult.testNames)
         ))
         .sort();
     if (failedSpecNames.length > 0) {

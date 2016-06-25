@@ -7,7 +7,7 @@ import {Location} from 'stryker-api/core';
 import MathMutator from '../../src/mutators/MathMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
-import StrykerTempFolder from 'stryker-api/util/StrykerTempFolder';
+import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 
 describe('Mutant', function () {
   var sut: Mutant;

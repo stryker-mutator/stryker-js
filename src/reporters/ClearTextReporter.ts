@@ -31,7 +31,7 @@ export default class ClearTextReporter implements Reporter {
           this.writeLine(chalk.green('+   ' + result.mutatedLines));
           this.writeLine('\n');
           this.writeLine('Tests ran: ');
-          _.forEach(result.specsRan, (spec: string) => {
+          _.forEach(result.testsRan, (spec: string) => {
             this.writeLine('    ' + spec);
           });
           this.writeLine('\n');

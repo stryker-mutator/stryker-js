@@ -44,8 +44,7 @@ describe('TestRunnerOrchestrator', () => {
       .onThirdCall().returns(Promise.resolve({ result: TestResult.Complete }));
     secondTestRunner.run.returns(Promise.resolve({ result: TestResult.Timeout }));
     selector = {
-      files: sinon.stub().returns(['some', 'files']),
-      select: sinon.stub().returns(Promise.resolve())
+      select: sinon.stub().returns('some selected contents')
     };
     reporter = {
       onMutantTested: sinon.stub(),
@@ -56,18 +55,20 @@ describe('TestRunnerOrchestrator', () => {
       .onFirstCall().returns(firstTestRunner)
       .onSecondCall().returns(secondTestRunner);
     sandbox.stub(TestSelectorFactory.instance(), 'create', () => selector);
+    sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns('a-folder');
+    sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returns('a-folder');
+    sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve());
+    sandbox.stub(StrykerTempFolder, 'writeFile').returns(Promise.resolve());
     sut = new TestRunnerOrchestrator(strykerOptions, files, reporter);
   });
 
   describe('recordCoverage()', () => {
-    let results: Promise<RunResult[]>;
+    let results: RunResult[];
 
-    beforeEach(() => {
-      results = sut.recordCoverage();
-    });
+    beforeEach(() => sut.recordCoverage().then(res => results = res));
 
     it('should have created an isolated test runner', () => {
-      let expectedFiles = [{ path: 'some', shouldMutate: false }, { path: 'files', shouldMutate: false }];
+      let expectedFiles = [{ path: path.join('a-folder', '___testSelection.js'), shouldMutate: false }];
       files.forEach(file => expectedFiles.push(file));
       expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith({ files: expectedFiles, port: 42, coverageEnabled: true, strykerOptions });
     });
@@ -77,16 +78,17 @@ describe('TestRunnerOrchestrator', () => {
     });
 
     describe('.then()', () => {
-      let runResults: RunResult[];
-      beforeEach((done) => {
-        results.then((r) => {
-          runResults = r;
-          done();
-        });
+
+      it('should have selected 3 tests in total', () => {
+        expect(selector.select).to.have.callCount(3);
+        expect(selector.select).to.have.been.calledWith([0]);
+        expect(selector.select).to.have.been.calledWith([1]);
+        expect(selector.select).to.have.been.calledWith([2]);
+        expect(StrykerTempFolder.writeFile).to.have.been.calledWith(path.join('a-folder', '___testSelection.js'), 'some selected contents').with.callCount(3);
       });
 
       it('should have reported the correct results', () => {
-        expect(runResults).to.deep.equal([{ result: TestResult.Complete, succeeded: 1 }, { result: TestResult.Complete, failed: 1 }]);
+        expect(results).to.deep.equal([{ result: TestResult.Complete, succeeded: 1 }, { result: TestResult.Complete, failed: 1 }]);
       });
 
       it('should have disposed the test runner', () => {
@@ -112,9 +114,6 @@ describe('TestRunnerOrchestrator', () => {
 
     beforeEach(() => {
       sandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
-      sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns('a-folder');
-      sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returns('a-folder');
-      sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve());
 
       var untestedMutant = mockMutant(0);
       untestedMutant.scopedTestIds = [];
@@ -126,8 +125,7 @@ describe('TestRunnerOrchestrator', () => {
 
     it('should have created 2 test runners', () => {
       let expectedFiles = [
-        { path: 'some', shouldMutate: false },
-        { path: 'files', shouldMutate: false },
+        { path: `a-folder${path.sep}___testSelection.js`, shouldMutate: false },
         { path: `a-folder${path.sep}a.js`, shouldMutate: true },
         { path: `a-folder${path.sep}b.js`, shouldMutate: true },
         { path: `a-folder${path.sep}aSpec.js`, shouldMutate: false },

@@ -6,7 +6,7 @@ import RemoveConditionalsMutator from '../../src/mutators/RemoveConditionalsMuta
 import {Mutator, MutatorFactory} from 'stryker-api/mutant';
 import * as sinon from 'sinon';
 import {Syntax} from 'esprima';
-import {StrykerTempFolder} from 'stryker-api/util';
+import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import {Reporter} from 'stryker-api/report';
 
 describe('MutatorOrchestrator', () => {
