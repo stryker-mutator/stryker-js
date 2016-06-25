@@ -2,6 +2,7 @@
 import {Reporter, SourceFile, MutantResult} from 'stryker-api/report';
 import {StrykerOptions} from 'stryker-api/core';
 import * as log4js from 'log4js';
+import {isPromise} from '../utils/objectUtils';
 
 const log = log4js.getLogger('BroadcastReporter');
 
@@ -11,25 +12,39 @@ export interface NamedReporter {
 }
 
 export default class BroadcastReporter implements Reporter {
-  
+
   constructor(private reporters: NamedReporter[]) {
-    ['onSourceFileRead', 'onAllSourceFilesRead', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead'].forEach(method => {
+    ['onSourceFileRead', 'onAllSourceFilesRead', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead', 'wrapUp'].forEach(method => {
       (<any>this)[method] = (arg: any) => {
-        this.broadcast(method, arg);
+        return this.broadcast(method, arg);
       }
     })
   }
 
   private broadcast(methodName: string, eventArgs: any) {
+    let allPromises: Promise<any>[] = [];
     this.reporters.forEach(namedReporter => {
       let reporter = <any>namedReporter.reporter;
       if (reporter[methodName] && typeof reporter[methodName] === 'function') {
         try {
-          reporter[methodName](eventArgs);
+          let maybePromise: void | Promise<any> = reporter[methodName](eventArgs);
+          if (isPromise(maybePromise)) {
+            allPromises.push(maybePromise.catch(error => {
+              this.handleError(error, methodName, namedReporter.name);
+            }));
+          }
         } catch (error) {
-          log.error(`An error occurred during '${methodName}' on reporter '${namedReporter.name}'. Error is: ${error}`);
+          this.handleError(error, methodName, namedReporter.name);
         }
       }
     })
+    if (allPromises.length) {
+      return Promise.all(allPromises);
+    }
   }
+
+  private handleError(error: any, methodName: string, reporterName: string) {
+    log.error(`An error occurred during '${methodName}' on reporter '${reporterName}'. Error is: ${error}`);
+  }
+
 }

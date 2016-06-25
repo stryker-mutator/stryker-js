@@ -17,7 +17,7 @@ import MutantRunResultMatcher from './MutantRunResultMatcher';
 import InputFileResolver from './InputFileResolver';
 import ConfigReader, {CONFIG_SYNTAX_HELP} from './ConfigReader';
 import PluginLoader from './PluginLoader';
-import {freezeRecursively} from './utils/objectUtils';
+import {freezeRecursively, isPromise} from './utils/objectUtils';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('Stryker');
@@ -77,6 +77,13 @@ export default class Stryker {
           this.logFailedTests(unsuccessfulTests);
           throw new Error('There were failed tests in the initial test run');
         }
+      }).then(mutantResults => {
+        let maybePromise = reporter.wrapUp();
+        if(isPromise(maybePromise)){
+          return maybePromise.then(() => mutantResults);
+        }else{
+          return mutantResults;
+        }        
       });
   }
 
