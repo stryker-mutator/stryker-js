@@ -2,12 +2,12 @@
 
 import {expect} from 'chai';
 import Mutant from '../../src/Mutant';
-import {MutantStatus} from '../../src/api/report';
-import {Location} from '../../src/api/core';
+import {MutantStatus} from 'stryker-api/report';
+import {Location} from 'stryker-api/core';
 import MathMutator from '../../src/mutators/MathMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
-import StrykerTempFolder from '../../src/api/util/StrykerTempFolder';
+import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 
 describe('Mutant', function () {
   var sut: Mutant;

@@ -1,4 +1,4 @@
-import {RunOptions} from '../api/test_runner';
+import {RunOptions} from 'stryker-api/test_runner';
 
 interface RunMessageBody {
   runOptions: RunOptions;

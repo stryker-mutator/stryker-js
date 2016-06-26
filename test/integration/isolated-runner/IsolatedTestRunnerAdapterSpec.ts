@@ -1,6 +1,6 @@
 import TestRunnerChildProcessAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
-import {TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult, RunnerOptions} from '../../../src/api/test_runner';
-import {StrykerOptions} from '../../../src/api/core';
+import {TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult, RunnerOptions} from 'stryker-api/test_runner';
+import {StrykerOptions} from 'stryker-api/core';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);

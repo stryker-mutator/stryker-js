@@ -1,14 +1,14 @@
-import {StrykerOptions, InputFile} from './api/core';
-import {RunResult, RunnerOptions, TestResult} from './api/test_runner';
-import {TestSelector, TestSelectorFactory} from './api/test_selector';
-import {StrykerTempFolder} from './api/util';
+import {StrykerOptions, InputFile} from 'stryker-api/core';
+import {RunResult, RunnerOptions, TestResult} from 'stryker-api/test_runner';
+import {TestSelector, TestSelectorFactory} from 'stryker-api/test_selector';
+import StrykerTempFolder from './utils/StrykerTempFolder';
 import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as path from 'path';
 import * as os from 'os';
 import * as _ from 'lodash';
 import Mutant from './Mutant';
-import {Reporter, MutantStatus, MutantResult} from './api/report';
+import {Reporter, MutantStatus, MutantResult} from 'stryker-api/report';
 import * as log4js from 'log4js';
 import {freezeRecursively} from './utils/objectUtils';
 const PromisePool = require('es6-promise-pool')
@@ -24,6 +24,7 @@ interface TestRunnerSandbox {
   runnerAdapter: IsolatedTestRunnerAdapter;
   selector: TestSelector;
   fileMap: FileMap;
+  testSelectionFilePath: string;
 }
 
 export default class TestRunnerOrchestrator {
@@ -32,10 +33,18 @@ export default class TestRunnerOrchestrator {
   }
 
   recordCoverage(): Promise<RunResult[]> {
-    let testSelector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
-    let testRunner = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.files, testSelector, 0, true));
-    return this.runSingleTestsRecursive(testSelector, testRunner, [], 0).then((testResults) => {
-      testRunner.dispose();
+    let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
+    let testSelectionFilePath = this.createTestSelectorFileName(this.createTempFolder());
+    let runnerAdapter = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.files, testSelectionFilePath, 0, true));
+    let sandbox: TestRunnerSandbox = {
+      runnerAdapter,
+      selector,
+      fileMap: null,
+      testSelectionFilePath,
+      index: 0
+    };
+    return this.runSingleTestsRecursive(sandbox, [], 0).then((testResults) => {
+      runnerAdapter.dispose();
       return testResults;
     });
   }
@@ -43,24 +52,24 @@ export default class TestRunnerOrchestrator {
   runMutations(mutants: Mutant[]): Promise<MutantResult[]> {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     let results: MutantResult[] = [];
-    return this.createTestRunnerSandboxes().then(testRunners => {
+    return this.createTestRunnerSandboxes().then(sandboxes => {
       let promiseProducer: () => Promise<number> | Promise<void> = () => {
         if (mutants.length === 0) {
           return null; // we're done
         } else {
           var mutant = mutants.pop();
           if (mutant.scopedTestIds.length > 0) {
-            let nextRunner = testRunners.pop();
-            let sourceFileCopy = nextRunner.fileMap[mutant.filename];
-            return Promise.all([mutant.save(sourceFileCopy), nextRunner.selector.select(mutant.scopedTestIds)])
-              .then(() => nextRunner.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
+            let sandbox = sandboxes.pop();
+            let sourceFileCopy = sandbox.fileMap[mutant.filename];
+            return Promise.all([mutant.save(sourceFileCopy), this.selectTests(sandbox, mutant.scopedTestIds)])
+              .then(() => sandbox.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
               .then((runResult) => {
                 let result = this.collectFrozenMutantResult(mutant, runResult);
                 results.push(result);
                 this.reporter.onMutantTested(result);
                 return mutant.reset(sourceFileCopy);
               })
-              .then(() => testRunners.push(nextRunner)); // mark the runner as available again
+              .then(() => sandboxes.push(sandbox)); // mark the runner as available again
           } else {
             let result = this.collectFrozenMutantResult(mutant);
             results.push(result);
@@ -68,9 +77,9 @@ export default class TestRunnerOrchestrator {
           }
         }
       }
-      return new PromisePool(promiseProducer, testRunners.length)
+      return new PromisePool(promiseProducer, sandboxes.length)
         .start()
-        .then(() => testRunners.forEach(testRunner => testRunner.runnerAdapter.dispose()))
+        .then(() => sandboxes.forEach(testRunner => testRunner.runnerAdapter.dispose()))
         .then(() => this.reportAllMutantsTested(results))
         .then(() => results);
     });
@@ -87,7 +96,7 @@ export default class TestRunnerOrchestrator {
 
   private collectFrozenMutantResult(mutant: Mutant, runResult?: RunResult): MutantResult {
     let status: MutantStatus;
-    let specsRan: string[];
+    let testNames: string[];
     if (runResult) {
       switch (runResult.result) {
         case TestResult.Timeout:
@@ -101,9 +110,9 @@ export default class TestRunnerOrchestrator {
           }
           break;
       }
-      specsRan = runResult.specNames;
+      testNames = runResult.testNames;
     } else {
-      specsRan = [];
+      testNames = [];
       status = MutantStatus.UNTESTED;
     }
 
@@ -114,7 +123,7 @@ export default class TestRunnerOrchestrator {
       replacement: mutant.replacement,
       location: mutant.location,
       range: mutant.range,
-      specsRan: specsRan,
+      testsRan: testNames,
       originalLines: mutant.originalLines,
       mutatedLines: mutant.mutatedLines,
     };
@@ -122,21 +131,22 @@ export default class TestRunnerOrchestrator {
     return result;
   }
 
-  private runSingleTestsRecursive(testSelector: TestSelector, testRunner: IsolatedTestRunnerAdapter, runResults: RunResult[], currentTestIndex: number)
+  private runSingleTestsRecursive(sandbox: TestRunnerSandbox, runResults: RunResult[], currentTestIndex: number)
     : Promise<RunResult[]> {
+
     return new Promise<RunResult[]>(resolve => {
-      testSelector.select([currentTestIndex])
-        .then(() => testRunner.run({ timeout: 10000 }))
+      this.selectTests(sandbox, [currentTestIndex])
+        .then(() => sandbox.runnerAdapter.run({ timeout: 10000 }))
         .then(runResult => {
           if (runResult.result === TestResult.Complete && runResult.succeeded > 0 || runResult.failed > 0) {
             runResults[currentTestIndex] = runResult;
-            resolve(this.runSingleTestsRecursive(testSelector, testRunner, runResults, currentTestIndex + 1));
+            resolve(this.runSingleTestsRecursive(sandbox, runResults, currentTestIndex + 1));
           } else {
             if (runResult.result !== TestResult.Complete) {
               // If this was iteration n+1 (n = number of tests), the runResult.result will be Complete, so we don't record it
               runResults[currentTestIndex] = runResult;
             }
-            testRunner.dispose();
+            sandbox.runnerAdapter.dispose();
             resolve(runResults);
           }
         });
@@ -157,31 +167,45 @@ export default class TestRunnerOrchestrator {
     });
   }
 
+  private selectTests(sandbox: TestRunnerSandbox, ids: number[]) {
+    let fileContent = sandbox.selector.select(ids);
+    return StrykerTempFolder.writeFile(sandbox.testSelectionFilePath, fileContent);
+  }
+
   private createSandbox(index: number): Promise<TestRunnerSandbox> {
-    return this.copyAllFilesToTempFolder().then(fileMap => {
+    var tempFolder = this.createTempFolder();
+    return this.copyAllFilesToFolder(tempFolder).then(fileMap => {
       let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
       let runnerFiles: InputFile[] = [];
-      this.files.forEach(originalFile => {
-          runnerFiles.push({ path: fileMap[originalFile.path], shouldMutate: originalFile.shouldMutate });
-      });
+      let testSelectionFilePath = this.createTestSelectorFileName(tempFolder);
+      this.files.forEach(originalFile => runnerFiles.push({ path: fileMap[originalFile.path], shouldMutate: originalFile.shouldMutate }));
       return {
         index,
         fileMap,
-        runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(runnerFiles, selector, index, false)),
-        selector
+        runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(runnerFiles, testSelectionFilePath, index, false)),
+        selector,
+        testSelectionFilePath
       };
     });
   }
 
-  private copyAllFilesToTempFolder() {
+  private createTempFolder() {
+    var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-files');
+    log.debug('Creating a sandbox for files in %s', tempFolder);
+    return tempFolder;
+  }
+
+  private createTestSelectorFileName(folder: string) {
+    return path.join(folder, '___testSelection.js');
+  }
+
+  private copyAllFilesToFolder(folder: string) {
     return new Promise<FileMap>((resolve, reject) => {
       let fileMap: FileMap = Object.create(null);
       let cwd = process.cwd();
-      var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-files');
-      log.debug('Making a sandbox for files in %s', tempFolder);
       let copyPromises: Promise<any>[] = this.files.map(file => {
         let relativePath = file.path.substr(cwd.length);
-        let folderName = StrykerTempFolder.ensureFolderExists(tempFolder + path.dirname(relativePath));
+        let folderName = StrykerTempFolder.ensureFolderExists(folder + path.dirname(relativePath));
         let targetFile = path.join(folderName, path.basename(relativePath));
         fileMap[file.path] = targetFile;
         return StrykerTempFolder.copyFile(file.path, targetFile);
@@ -190,10 +214,10 @@ export default class TestRunnerOrchestrator {
     });
   }
 
-  private createTestRunSettings(files: InputFile[], selector: TestSelector, index: number, coverageEnabled: boolean): RunnerOptions {
+  private createTestRunSettings(files: InputFile[], testSelectionFilePath: string, index: number, coverageEnabled: boolean): RunnerOptions {
     let settings = {
       coverageEnabled,
-      files: selector.files().map(f => { return { path: f, shouldMutate: false }; }).concat(files),
+      files: [{ path: testSelectionFilePath, shouldMutate: false } ].concat(files),
       strykerOptions: this.options,
       port: this.options.port + index
     };

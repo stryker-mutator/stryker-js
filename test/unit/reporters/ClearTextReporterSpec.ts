@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
 import * as sinon from 'sinon';
-import {MutantStatus, MutantResult} from '../../../src/api/report';
+import {MutantStatus, MutantResult} from 'stryker-api/report';
 import * as chalk from 'chalk';
 
 describe('ClearTextReporter', function () {
@@ -43,7 +43,7 @@ describe('ClearTextReporter', function () {
         originalLines: 'original line',
         replacement: '',
         sourceFilePath: '',
-        specsRan: [''],
+        testsRan: [''],
         status
       }
     });

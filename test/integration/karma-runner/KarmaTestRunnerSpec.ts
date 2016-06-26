@@ -2,7 +2,7 @@
 
 import * as chai from 'chai';
 import KarmaTestRunner from '../../../src/karma-runner/KarmaTestRunner';
-import {TestResult, RunnerOptions, RunResult} from '../../../src/api/test_runner';
+import {TestResult, RunnerOptions, RunResult} from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 let expect = chai.expect;

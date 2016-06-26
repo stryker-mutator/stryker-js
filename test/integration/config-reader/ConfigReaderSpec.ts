@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 import ConfigReader from '../../../src/ConfigReader';
-import {Config} from '../../../src/api/config';
+import {Config} from 'stryker-api/config';
 import log from '../../helpers/log4jsMock';
 
 describe('ConfigReader', () => {

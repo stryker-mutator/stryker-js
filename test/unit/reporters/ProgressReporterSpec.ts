@@ -1,6 +1,6 @@
 import ProgressReporter from '../../../src/reporters/ProgressReporter';
 import * as sinon from 'sinon';
-import {MutantStatus, MutantResult} from '../../../src/api/report';
+import {MutantStatus, MutantResult} from 'stryker-api/report';
 import {expect} from 'chai';
 import * as chalk from 'chalk';
 
@@ -65,7 +65,7 @@ describe('ProgressReporter', () => {
       originalLines: null,
       replacement: null,
       sourceFilePath: null,
-      specsRan: null,
+      testsRan: null,
       status,
       range: null
     }

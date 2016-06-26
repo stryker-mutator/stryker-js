@@ -1,7 +1,7 @@
 import InputFileResolver from '../../src/InputFileResolver';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../src/utils/fileUtils';
-import {InputFile} from '../../src/api/core';
+import {InputFile} from 'stryker-api/core';
 import {expect} from 'chai';
 import {normalize} from 'path';
 import log from '../helpers/log4jsMock';

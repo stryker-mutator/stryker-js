@@ -1,6 +1,6 @@
 import Mutant from './Mutant';
-import {RunResult, CoverageResult} from './api/test_runner';
-import {Location} from './api/core';
+import {RunResult, CoverageResult} from 'stryker-api/test_runner';
+import {Location} from 'stryker-api/core';
 
 export default class MutantRunResultMatcher {
 
