@@ -1,8 +1,8 @@
 import * as _ from'lodash';
-import {Location, Range} from './api/core';
-import {Mutator} from './api/mutant';
-import {StrykerTempFolder} from './api/util';
-import {RunResult} from './api/test_runner';
+import {Location, Range} from 'stryker-api/core';
+import {Mutator} from 'stryker-api/mutant';
+import StrykerTempFolder from './utils/StrykerTempFolder';
+import {RunResult} from 'stryker-api/test_runner';
 
 
 /**

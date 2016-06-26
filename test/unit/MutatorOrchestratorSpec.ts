@@ -3,11 +3,11 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
 import MutatorOrchestrator from '../../src/MutatorOrchestrator';
 import RemoveConditionalsMutator from '../../src/mutators/RemoveConditionalsMutator';
-import {Mutator, MutatorFactory} from '../../src/api/mutant';
+import {Mutator, MutatorFactory} from 'stryker-api/mutant';
 import * as sinon from 'sinon';
 import {Syntax} from 'esprima';
-import {StrykerTempFolder} from '../../src/api/util';
-import {Reporter} from '../../src/api/report';
+import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
+import {Reporter} from 'stryker-api/report';
 
 describe('MutatorOrchestrator', () => {
   var sut: MutatorOrchestrator;

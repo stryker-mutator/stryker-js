@@ -1,4 +1,4 @@
-import {InputFile} from './api/core';
+import {InputFile} from 'stryker-api/core';
 import {glob, normalize} from './utils/fileUtils';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';

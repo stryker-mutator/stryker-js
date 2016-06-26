@@ -1,1 +1,0 @@
-export {default as StrykerTempFolder } from './util/StrykerTempFolder';

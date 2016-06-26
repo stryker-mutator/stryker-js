@@ -1,4 +1,4 @@
-import {Reporter, MutantResult, MutantStatus} from '../api/report';
+import {Reporter, MutantResult, MutantStatus} from 'stryker-api/report';
 import * as chalk from 'chalk';
 
 export default class ProgressReporter implements Reporter {

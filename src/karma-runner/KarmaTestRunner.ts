@@ -1,4 +1,4 @@
-import {TestRunner, TestResult, RunResult, RunnerOptions, CoverageCollection, TestRunnerFactory} from '../api/test_runner';
+import {TestRunner, TestResult, RunResult, RunnerOptions, CoverageCollection, TestRunnerFactory} from 'stryker-api/test_runner';
 import * as karma from 'karma';
 import * as _ from 'lodash';
 import * as fs from 'fs';
@@ -26,7 +26,7 @@ const DEFAULT_COVERAGE_REPORTER = {
   }
 }
 
-export default class KarmaTestRunner extends TestRunner {
+export default class KarmaTestRunner implements TestRunner {
 
   private server: karma.Server;
   private serverStartedPromise: Promise<Object>;
@@ -35,10 +35,8 @@ export default class KarmaTestRunner extends TestRunner {
   private currentErrorMessages: string[];
   private currentCoverageReport: CoverageCollection;
 
-  constructor(runnerOptions: RunnerOptions) {
-    super(runnerOptions);
-
-    let karmaConfig = this.configureTestRunner(runnerOptions.strykerOptions['karma']);
+  constructor(private options: RunnerOptions) {
+    let karmaConfig = this.configureTestRunner(options.strykerOptions['karma']);
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
 
     log.info(`using config ${JSON.stringify(karmaConfig)}`);
@@ -165,7 +163,7 @@ export default class KarmaTestRunner extends TestRunner {
 
   private convertResult(testResults: karma.TestResults): RunResult {
     return {
-      specNames: this.currentSpecNames,
+      testNames: this.currentSpecNames,
       result: this.convertTestResult(testResults),
       succeeded: testResults.success,
       failed: testResults.failed,

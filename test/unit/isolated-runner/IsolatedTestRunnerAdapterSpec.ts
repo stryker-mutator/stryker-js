@@ -1,6 +1,6 @@
 import * as child_process from 'child_process';
 import * as sinon from 'sinon';
-import {RunnerOptions, RunOptions, RunResult, TestResult} from '../../../src/api/test_runner';
+import {RunnerOptions, RunOptions, RunResult, TestResult} from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import Message, {MessageType} from '../../../src/isolated-runner/Message';
 import ResultMessageBody from '../../../src/isolated-runner/ResultMessageBody';

@@ -1,5 +1,5 @@
-import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from '../api/test_runner';
-import {StrykerOptions} from '../api/core';
+import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from 'stryker-api/test_runner';
+import {StrykerOptions} from 'stryker-api/core';
 import {fork, ChildProcess} from 'child_process';
 import Message, {MessageType} from './Message';
 import StartMessageBody from './StartMessageBody';
@@ -14,7 +14,7 @@ const log = log4js.getLogger('IsolatedTestRunnerAdapter');
  * Runs the given test runner in a child process and forwards reports about test results
  * Also implements timeout-mechanisme (on timeout, restart the child runner and report timeout) 
  */
-export default class TestRunnerChildProcessAdapter extends TestRunner {
+export default class TestRunnerChildProcessAdapter implements TestRunner {
 
   private workerProcess: ChildProcess;
   private currentPromiseFulfillmentCallback: (result: RunResult) => void;
@@ -22,8 +22,7 @@ export default class TestRunnerChildProcessAdapter extends TestRunner {
   private currentTimeoutTimer: NodeJS.Timer;
   private currentRunStartedTimestamp: Date;
 
-  constructor(private realTestRunnerName: string, runnerOptions: RunnerOptions) {
-    super(runnerOptions);
+  constructor(private realTestRunnerName: string, private options: RunnerOptions) {
     this.startWorker();
   }
 

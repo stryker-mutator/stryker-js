@@ -68,6 +68,10 @@
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
     "typescript": "^1.8.9",
-    "typings": "^0.7.11"
+    "typings": "^0.7.11",
+    "stryker-api": "^0.0.2"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.0.2"   
   }
 }
