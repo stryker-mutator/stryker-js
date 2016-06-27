@@ -1,0 +1,23 @@
+{
+  "globalDevDependencies": {
+    "express": "registry:dt/express#4.0.0+20160317120654",
+    "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160625155614",
+    "log4js": "registry:dt/log4js#0.0.0+20160608042355",
+    "mime": "registry:dt/mime#0.0.0+20160316155526",
+    "mocha": "registry:dt/mocha#2.2.5+20160619032855",
+    "node": "registry:dt/node#6.0.0+20160621231320",
+    "serve-static": "registry:dt/serve-static#0.0.0+20160606155157"
+  },
+  "devDependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160415060238",
+    "chai-as-promised": "registry:npm/chai-as-promised#5.1.0+20160310030142",
+    "lodash": "registry:npm/lodash#4.0.0+20160416211519"
+  },
+  "dependencies": {
+    "bluebird": "registry:npm/bluebird#3.3.4+20160622205516"
+  },
+  "globalDependencies": {
+    "es6-promise": "registry:dt/es6-promise#0.0.0+20160614011821",
+    "karma": "registry:dt/karma#0.13.9+20160501125529"
+  }
+}
