@@ -1,0 +1,54 @@
+{
+  "name": "stryker-mocha-runner",
+  "version": "0.0.0",
+  "description": "The Stryker TestRunner for Mocha",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stryker-mutator/stryker-mocha-runner.git"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "mocha",
+    "test",
+    "runner",
+    "testrunner",
+    "mutation",
+    "testing"
+  ],
+  "author": "Simon de Lang <simon.delang@infosupport.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-mocha-runner/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker-mocha-runner#readme",
+  "dependencies": {
+    "es6-promise-pool": "^2.4.2",
+    "log4js": "^0.6.37",
+    "stryker-api": "0.0.2"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "chai-as-promised": "^5.2.0",
+    "concurrently": "^2.0.0",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-mocha-istanbul": "^3.0.1",
+    "grunt-mocha-test": "^0.12.7",
+    "grunt-ts": "5.4.0",
+    "grunt-typings": "^0.1.5",
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.3",
+    "mocha-sinon": "^1.1.4",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0",
+    "typescript": "^1.8.10"
+  }
+}
