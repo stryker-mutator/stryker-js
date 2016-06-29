@@ -18,7 +18,7 @@
     "karma-phantomjs-launcher": "^1.0.1",
     "stryker": "file:../../",
     "stryker-api": "0.0.2",
-    "stryker-karma-runner": "file:../../../stryker-karma-runner",
+    "stryker-karma-runner": "^0.0.1",
     "typescript": "~1.8.9",
     "typings": "^0.7.9"
   }
