@@ -2,7 +2,7 @@ import TestRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as sinon from 'sinon';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import {Reporter} from 'stryker-api/report';
-import {TestSelector, TestSelectorFactory} from 'stryker-api/test_selector';
+import {TestSelector} from 'stryker-api/test_selector';
 import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from 'stryker-api/test_runner';
 import {MutantStatus, MutantResult} from 'stryker-api/report';
 import IsolatedTestRunnerAdapter from '../../src/isolated-runner/IsolatedTestRunnerAdapter';
@@ -23,7 +23,7 @@ describe('TestRunnerOrchestrator', () => {
     { path: path.join(process.cwd(), 'aSpec.js'), shouldMutate: false },
     { path: path.join(process.cwd(), 'bSpec.js'), shouldMutate: false }
   ];
-  let strykerOptions = { testFramework: 'superFramework', testRunner: 'superRunner', port: 42 };
+  let strykerOptions = { testRunner: 'superRunner', port: 42 };
   let firstTestRunner: any;
   let secondTestRunner: any;
   let selector: TestSelector;
@@ -54,12 +54,11 @@ describe('TestRunnerOrchestrator', () => {
     sandbox.stub(IsolatedTestRunnerAdapterFactory, 'create')
       .onFirstCall().returns(firstTestRunner)
       .onSecondCall().returns(secondTestRunner);
-    sandbox.stub(TestSelectorFactory.instance(), 'create', () => selector);
     sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns('a-folder');
     sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returns('a-folder');
     sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve());
     sandbox.stub(StrykerTempFolder, 'writeFile').returns(Promise.resolve());
-    sut = new TestRunnerOrchestrator(strykerOptions, files, reporter);
+    sut = new TestRunnerOrchestrator(strykerOptions, files, selector, reporter);
   });
 
   describe('recordCoverage()', () => {
@@ -72,11 +71,7 @@ describe('TestRunnerOrchestrator', () => {
       files.forEach(file => expectedFiles.push(file));
       expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith({ files: expectedFiles, port: 42, coverageEnabled: true, strykerOptions });
     });
-
-    it('should have created the test selector', () => {
-      expect(TestSelectorFactory.instance().create).to.have.been.calledWith(strykerOptions.testFramework, { options: strykerOptions });
-    });
-
+    
     describe('.then()', () => {
 
       it('should have selected 3 tests in total', () => {

@@ -1,6 +1,6 @@
 import {StrykerOptions, InputFile} from 'stryker-api/core';
 import {RunResult, RunnerOptions, TestResult} from 'stryker-api/test_runner';
-import {TestSelector, TestSelectorFactory} from 'stryker-api/test_selector';
+import {TestSelector} from 'stryker-api/test_selector';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
@@ -22,23 +22,20 @@ interface FileMap {
 interface TestRunnerSandbox {
   index: number;
   runnerAdapter: IsolatedTestRunnerAdapter;
-  selector: TestSelector;
   fileMap: FileMap;
   testSelectionFilePath: string;
 }
 
 export default class TestRunnerOrchestrator {
 
-  constructor(private options: StrykerOptions, private files: InputFile[], private reporter: Reporter) {
+  constructor(private options: StrykerOptions, private files: InputFile[], private testSelector: TestSelector, private reporter: Reporter) {
   }
 
   recordCoverage(): Promise<RunResult[]> {
-    let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
     let testSelectionFilePath = this.createTestSelectorFileName(this.createTempFolder());
     let runnerAdapter = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.files, testSelectionFilePath, 0, true));
     let sandbox: TestRunnerSandbox = {
       runnerAdapter,
-      selector,
       fileMap: null,
       testSelectionFilePath,
       index: 0
@@ -168,14 +165,13 @@ export default class TestRunnerOrchestrator {
   }
 
   private selectTests(sandbox: TestRunnerSandbox, ids: number[]) {
-    let fileContent = sandbox.selector.select(ids);
+    let fileContent = this.testSelector.select(ids);
     return StrykerTempFolder.writeFile(sandbox.testSelectionFilePath, fileContent);
   }
 
   private createSandbox(index: number): Promise<TestRunnerSandbox> {
     var tempFolder = this.createTempFolder();
     return this.copyAllFilesToFolder(tempFolder).then(fileMap => {
-      let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
       let runnerFiles: InputFile[] = [];
       let testSelectionFilePath = this.createTestSelectorFileName(tempFolder);
       this.files.forEach(originalFile => runnerFiles.push({ path: fileMap[originalFile.path], shouldMutate: originalFile.shouldMutate }));
@@ -183,7 +179,6 @@ export default class TestRunnerOrchestrator {
         index,
         fileMap,
         runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(runnerFiles, testSelectionFilePath, index, false)),
-        selector,
         testSelectionFilePath
       };
     });

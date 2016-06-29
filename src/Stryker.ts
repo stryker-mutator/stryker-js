@@ -12,6 +12,7 @@ import TestRunnerOrchestrator from './TestRunnerOrchestrator';
 import ReporterOrchestrator from './ReporterOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
 import {RunResult, TestResult} from 'stryker-api/test_runner';
+import {TestSelectorFactory} from 'stryker-api/test_selector';
 import MutantRunResultMatcher from './MutantRunResultMatcher';
 import InputFileResolver from './InputFileResolver';
 import ConfigReader, {CONFIG_SYNTAX_HELP} from './ConfigReader';
@@ -51,7 +52,8 @@ export default class Stryker {
 
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then(inputFiles => {
-        let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, reporter);
+        let testSelector = TestSelectorFactory.instance().create(this.config.testFramework, { options: this.config });
+        let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, testSelector, reporter);
         return testRunnerOrchestrator.recordCoverage().then(runResults => ({ runResults, inputFiles, testRunnerOrchestrator }))
       })
       .then(tuple => {
@@ -78,11 +80,11 @@ export default class Stryker {
         }
       }).then(mutantResults => {
         let maybePromise = reporter.wrapUp();
-        if(isPromise(maybePromise)){
+        if (isPromise(maybePromise)) {
           return maybePromise.then(() => mutantResults);
-        }else{
+        } else {
           return mutantResults;
-        }        
+        }
       });
   }
 
