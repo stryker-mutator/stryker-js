@@ -28,7 +28,7 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
-      "preLaunchTask": "ts",
+      // "preLa4unchTask": "ts",
       "stopOnEntry": false,
       "args": [
         "mochaTest:integration"

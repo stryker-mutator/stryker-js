@@ -6,7 +6,7 @@ import {importModule} from './utils/fileUtils'
 
 let log = log4js.getLogger('PluginLoader');
 
-var IGNORED_PACKAGES = ['stryker-cli'];
+var IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 
 export default class PluginLoader {
 
@@ -18,28 +18,34 @@ export default class PluginLoader {
 
   private getModules() {
     let modules: string[] = [];
-    this.plugins.forEach(function (plugin) {
-      if (_.isString(plugin)) {
-        if (plugin.indexOf('*') !== -1) {
-          var pluginDirectory = path.normalize(__dirname + '/../../..');
-          var regexp = new RegExp('^' + plugin.replace('*', '.*'));
+    this.plugins.forEach(function (pluginExpression) {
+      if (_.isString(pluginExpression)) {
+        if (pluginExpression.indexOf('*') !== -1) {
 
-          log.debug('Loading %s from %s', plugin, pluginDirectory);
+          // Plugin directory is the node_modules folder of the module that installed stryker
+          // So if current __dirname is './stryker/src' than the plugin directory should be 2 directories above
+          var pluginDirectory = path.normalize(__dirname + '/../..');
+          var regexp = new RegExp('^' + pluginExpression.replace('*', '.*'));
+
+          log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
           let plugins = fs.readdirSync(pluginDirectory)
             .filter(pluginName => IGNORED_PACKAGES.indexOf(pluginName) === -1 && regexp.test(pluginName))
             .map(pluginName => pluginDirectory + '/' + pluginName);
           if (plugins.length === 0) {
-            log.debug('Expression %s not resulted in plugins to load', plugin);
-          } else {
-            log.debug('Expression %s resulted in plugins: %s', plugin, plugins);
+            log.debug('Expression %s not resulted in plugins to load', pluginExpression);
           }
           plugins
+            .map(plugin => path.basename(plugin))
+            .map(plugin => {
+              log.debug('Loading plugins %s (matched with expression %s)', plugin, pluginExpression);
+              return plugin;
+            })
             .forEach(p => modules.push(p));
         } else {
-          modules.push(plugin);
+          modules.push(pluginExpression);
         }
       } else {
-        log.warn('Ignoring plugin %s, as its not a string type', plugin)
+        log.warn('Ignoring plugin %s, as its not a string type', pluginExpression)
       }
     });
 

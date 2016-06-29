@@ -11,7 +11,6 @@ import {Reporter, MutantResult} from 'stryker-api/report';
 import TestRunnerOrchestrator from './TestRunnerOrchestrator';
 import ReporterOrchestrator from './ReporterOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
-import './karma-runner/KarmaTestRunner';
 import {RunResult, TestResult} from 'stryker-api/test_runner';
 import MutantRunResultMatcher from './MutantRunResultMatcher';
 import InputFileResolver from './InputFileResolver';
