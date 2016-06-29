@@ -111,7 +111,7 @@ describe('Stryker', function () {
           resolve: sandbox.stub().returns(Promise.resolve(inputFiles))
         }
         testRunnerOrchestratorStub = {
-          recordCoverage: sandbox.stub(),
+          initialRun: sandbox.stub(),
           runMutations: sandbox.stub()
         };
         sandbox.stub(testRunnerOrchestrator, 'default').returns(testRunnerOrchestratorStub);
@@ -119,10 +119,10 @@ describe('Stryker', function () {
         sut = new Stryker({ mutate: ['mutateFile'], files: ['allFiles'] });
       });
 
-      describe('when recordCoverage() resulted in a rejection', () => {
+      describe('when initialRun() resulted in a rejection', () => {
 
         beforeEach(() => {
-          testRunnerOrchestratorStub.recordCoverage.returns(Promise.reject('a rejection'));
+          testRunnerOrchestratorStub.initialRun.returns(Promise.reject('a rejection'));
         });
 
         itShouldResultInARejection();
@@ -134,7 +134,7 @@ describe('Stryker', function () {
 
         beforeEach(() => {
           initialRunResults = [];
-          testRunnerOrchestratorStub.recordCoverage.returns(Promise.resolve(initialRunResults));
+          testRunnerOrchestratorStub.initialRun.returns(Promise.resolve(initialRunResults));
           testRunnerOrchestratorStub.runMutations.returns(new Promise(res => runMutationsPromiseResolve = res));
         });
 

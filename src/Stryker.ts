@@ -54,7 +54,7 @@ export default class Stryker {
       .then(inputFiles => {
         let testSelector = TestSelectorFactory.instance().create(this.config.testFramework, { options: this.config });
         let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, testSelector, reporter);
-        return testRunnerOrchestrator.recordCoverage().then(runResults => ({ runResults, inputFiles, testRunnerOrchestrator }))
+        return testRunnerOrchestrator.initialRun().then(runResults => ({ runResults, inputFiles, testRunnerOrchestrator }))
       })
       .then(tuple => {
         let runResults = tuple.runResults;

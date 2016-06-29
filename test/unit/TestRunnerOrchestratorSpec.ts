@@ -58,112 +58,126 @@ describe('TestRunnerOrchestrator', () => {
     sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returns('a-folder');
     sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve());
     sandbox.stub(StrykerTempFolder, 'writeFile').returns(Promise.resolve());
-    sut = new TestRunnerOrchestrator(strykerOptions, files, selector, reporter);
   });
 
-  describe('recordCoverage()', () => {
-    let results: RunResult[];
-
-    beforeEach(() => sut.recordCoverage().then(res => results = res));
-
-    it('should have created an isolated test runner', () => {
-      let expectedFiles = [{ path: path.join('a-folder', '___testSelection.js'), shouldMutate: false }];
-      files.forEach(file => expectedFiles.push(file));
-      expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith({ files: expectedFiles, port: 42, coverageEnabled: true, strykerOptions });
+  describe('without test selector', () => {
+    beforeEach(() => {
+      sut = new TestRunnerOrchestrator(strykerOptions, files, null, reporter);
     });
     
-    describe('.then()', () => {
-
-      it('should have selected 3 tests in total', () => {
-        expect(selector.select).to.have.callCount(3);
-        expect(selector.select).to.have.been.calledWith([0]);
-        expect(selector.select).to.have.been.calledWith([1]);
-        expect(selector.select).to.have.been.calledWith([2]);
-        expect(StrykerTempFolder.writeFile).to.have.been.calledWith(path.join('a-folder', '___testSelection.js'), 'some selected contents').with.callCount(3);
-      });
-
-      it('should have reported the correct results', () => {
-        expect(results).to.deep.equal([{ result: TestResult.Complete, succeeded: 1 }, { result: TestResult.Complete, failed: 1 }]);
-      });
-
-      it('should have disposed the test runner', () => {
-        expect(firstTestRunner.dispose).to.have.been.calledWith();
-      });
-    });
   });
 
-  describe('runMutations() with 2 cpus and 4 mutants', () => {
-    let donePromise: Promise<void>;
-    let mutants: any[];
-    let mutantResults: MutantResult[];
-
-    let mockMutant = (id: number) => {
-      return {
-        filename: `mutant${id}`,
-        save: sinon.stub().returns(Promise.resolve()),
-        scopedTestIds: [id],
-        timeSpentScopedTests: id,
-        reset: sinon.stub().returns(Promise.resolve()),
-      };
-    }
-
+  describe('with test selector', () => {
     beforeEach(() => {
-      sandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
-
-      var untestedMutant = mockMutant(0);
-      untestedMutant.scopedTestIds = [];
-
-      mutants = [untestedMutant, mockMutant(1), mockMutant(2), mockMutant(3)];
-      return sut.runMutations(mutants)
-        .then(results => mutantResults = results);
+      sut = new TestRunnerOrchestrator(strykerOptions, files, selector, reporter);
     });
 
-    it('should have created 2 test runners', () => {
-      let expectedFiles = [
-        { path: `a-folder${path.sep}___testSelection.js`, shouldMutate: false },
-        { path: `a-folder${path.sep}a.js`, shouldMutate: true },
-        { path: `a-folder${path.sep}b.js`, shouldMutate: true },
-        { path: `a-folder${path.sep}aSpec.js`, shouldMutate: false },
-        { path: `a-folder${path.sep}bSpec.js`, shouldMutate: false }
-      ];
+    describe('initialRun()', () => {
+      let results: RunResult[];
 
-      expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWithMatch
-        ({ files: expectedFiles, port: 42, coverageEnabled: false, strykerOptions });
-      expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith
-        ({ files: expectedFiles, port: 43, coverageEnabled: false, strykerOptions });
+      beforeEach(() => sut.initialRun().then(res => results = res));
+
+      it('should have created an isolated test runner', () => {
+        let expectedFiles = [{ path: path.join('a-folder', '___testSelection.js'), shouldMutate: false }];
+        files.forEach(file => expectedFiles.push(file));
+        expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith({ files: expectedFiles, port: 42, coverageEnabled: true, strykerOptions });
+      });
+
+      describe('.then()', () => {
+
+        it('should have selected 3 tests in total', () => {
+          expect(selector.select).to.have.callCount(3);
+          expect(selector.select).to.have.been.calledWith([0]);
+          expect(selector.select).to.have.been.calledWith([1]);
+          expect(selector.select).to.have.been.calledWith([2]);
+          expect(StrykerTempFolder.writeFile).to.have.been.calledWith(path.join('a-folder', '___testSelection.js'), 'some selected contents').with.callCount(3);
+        });
+
+        it('should have reported the correct results', () => {
+          expect(results).to.deep.equal([{ result: TestResult.Complete, succeeded: 1 }, { result: TestResult.Complete, failed: 1 }]);
+        });
+
+        it('should have disposed the test runner', () => {
+          expect(firstTestRunner.dispose).to.have.been.calledWith();
+        });
+      });
     });
 
-    it('should have ran mutant 1 and 3 on the first test runner', () => {
-      expect(firstTestRunner.run).to.have.been.calledTwice;
+    describe('runMutations() with 2 cpus and 4 mutants', () => {
+      let donePromise: Promise<void>;
+      let mutants: any[];
+      let mutantResults: MutantResult[];
+
+      let mockMutant = (id: number) => {
+        return {
+          filename: `mutant${id}`,
+          save: sinon.stub().returns(Promise.resolve()),
+          scopedTestIds: [id],
+          timeSpentScopedTests: id,
+          reset: sinon.stub().returns(Promise.resolve()),
+        };
+      }
+
+      beforeEach(() => {
+        sandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
+
+        var untestedMutant = mockMutant(0);
+        untestedMutant.scopedTestIds = [];
+
+        mutants = [untestedMutant, mockMutant(1), mockMutant(2), mockMutant(3)];
+        return sut.runMutations(mutants)
+          .then(results => mutantResults = results);
+      });
+
+      it('should have created 2 test runners', () => {
+        let expectedFiles = [
+          { path: `a-folder${path.sep}___testSelection.js`, shouldMutate: false },
+          { path: `a-folder${path.sep}a.js`, shouldMutate: true },
+          { path: `a-folder${path.sep}b.js`, shouldMutate: true },
+          { path: `a-folder${path.sep}aSpec.js`, shouldMutate: false },
+          { path: `a-folder${path.sep}bSpec.js`, shouldMutate: false }
+        ];
+
+        expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWithMatch
+          ({ files: expectedFiles, port: 42, coverageEnabled: false, strykerOptions });
+        expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith
+          ({ files: expectedFiles, port: 43, coverageEnabled: false, strykerOptions });
+      });
+
+      it('should have ran mutant 1 and 3 on the first test runner', () => {
+        expect(firstTestRunner.run).to.have.been.calledTwice;
+      });
+
+      it('should have ran mutant 2 on the second test runner', () => {
+        expect(secondTestRunner.run).to.have.been.calledOnce;
+      });
+
+      it('should have reported onMutantTested on all mutants', () => {
+        expect(reporter.onMutantTested).to.have.callCount(4)
+        expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[0]);
+        expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[1]);
+        expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[2]);
+        expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[3]);
+      });
+
+      it('should have reported onAllMutantsTested', () => {
+        expect(reporter.onAllMutantsTested).to.have.been.calledWith(mutantResults);
+      });
+
+      it('should eventually resolve the correct mutant results', () => {
+        expect(mutantResults.length).to.be.eq(4);
+
+        let sortedMutantResults = _.sortBy(mutantResults, r => r.sourceFilePath);
+
+        expect(sortedMutantResults[0].status).to.be.eq(MutantStatus.UNTESTED);
+        expect(sortedMutantResults[1].status).to.be.eq(MutantStatus.KILLED);
+        expect(sortedMutantResults[2].status).to.be.eq(MutantStatus.SURVIVED);
+        expect(sortedMutantResults[3].status).to.be.eq(MutantStatus.TIMEDOUT);
+      });
     });
 
-    it('should have ran mutant 2 on the second test runner', () => {
-      expect(secondTestRunner.run).to.have.been.calledOnce;
-    });
-
-    it('should have reported onMutantTested on all mutants', () => {
-      expect(reporter.onMutantTested).to.have.callCount(4)
-      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[0]);
-      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[1]);
-      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[2]);
-      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[3]);
-    });
-
-    it('should have reported onAllMutantsTested', () => {
-      expect(reporter.onAllMutantsTested).to.have.been.calledWith(mutantResults);
-    });
-
-    it('should eventually resolve the correct mutant results', () => {
-      expect(mutantResults.length).to.be.eq(4);
-
-      let sortedMutantResults = _.sortBy(mutantResults, r => r.sourceFilePath);
-
-      expect(sortedMutantResults[0].status).to.be.eq(MutantStatus.UNTESTED);
-      expect(sortedMutantResults[1].status).to.be.eq(MutantStatus.KILLED);
-      expect(sortedMutantResults[2].status).to.be.eq(MutantStatus.SURVIVED);
-      expect(sortedMutantResults[3].status).to.be.eq(MutantStatus.TIMEDOUT);
-    });
   });
+
 
   afterEach(() => {
     sandbox.restore();

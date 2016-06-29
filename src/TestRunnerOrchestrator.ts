@@ -31,7 +31,7 @@ export default class TestRunnerOrchestrator {
   constructor(private options: StrykerOptions, private files: InputFile[], private testSelector: TestSelector, private reporter: Reporter) {
   }
 
-  recordCoverage(): Promise<RunResult[]> {
+  initialRun(): Promise<RunResult[]> {
     let testSelectionFilePath = this.createTestSelectorFileName(this.createTempFolder());
     let runnerAdapter = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.files, testSelectionFilePath, 0, true));
     let sandbox: TestRunnerSandbox = {
