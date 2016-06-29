@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "pretest": "typings install",
-    "test": "grunt test"
+    "test": "grunt test",
+    "preversion": "npm run test"
   },
   "repository": {
     "type": "git",
