@@ -32,8 +32,24 @@ export default class TestRunnerOrchestrator {
   }
 
   initialRun(): Promise<RunResult[]> {
+    if (this.testSelector) {
+      return this.initialRunWithTestSelector();
+    } else {
+      return this.initalRunWithoutTestSelector();
+    }
+  }
+
+  private initalRunWithoutTestSelector() {
+    let testRunner = this.createTestRunner(this.files, true);
+    return testRunner.run({ timeout: 10000 }).then(testResults => {
+      testRunner.dispose();
+      return [testResults];
+    });
+  }
+
+  private initialRunWithTestSelector() {
     let testSelectionFilePath = this.createTestSelectorFileName(this.createTempFolder());
-    let runnerAdapter = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.files, testSelectionFilePath, 0, true));
+    let runnerAdapter = this.createTestRunner(this.files, true, testSelectionFilePath);
     let sandbox: TestRunnerSandbox = {
       runnerAdapter,
       fileMap: null,
@@ -178,7 +194,7 @@ export default class TestRunnerOrchestrator {
       return {
         index,
         fileMap,
-        runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(runnerFiles, testSelectionFilePath, index, false)),
+        runnerAdapter: this.createTestRunner(runnerFiles, false, testSelectionFilePath, index),
         testSelectionFilePath
       };
     });
@@ -209,14 +225,17 @@ export default class TestRunnerOrchestrator {
     });
   }
 
-  private createTestRunSettings(files: InputFile[], testSelectionFilePath: string, index: number, coverageEnabled: boolean): RunnerOptions {
+  private createTestRunner(files: InputFile[], coverageEnabled: boolean, testSelectionFilePath?: string, index: number = 0): IsolatedTestRunnerAdapter {
+    if (testSelectionFilePath) {
+      files = [{ path: testSelectionFilePath, shouldMutate: false }].concat(files);
+    }
     let settings = {
       coverageEnabled,
-      files: [{ path: testSelectionFilePath, shouldMutate: false } ].concat(files),
+      files,
       strykerOptions: this.options,
       port: this.options.port + index
     };
     log.debug(`Creating test runner %s using settings {port: %s, coverageEnabled: %s}`, index, settings.port, settings.coverageEnabled);
-    return settings;
+    return IsolatedTestRunnerAdapterFactory.create(settings);
   }
 }

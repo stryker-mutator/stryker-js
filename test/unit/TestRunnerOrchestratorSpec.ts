@@ -64,7 +64,15 @@ describe('TestRunnerOrchestrator', () => {
     beforeEach(() => {
       sut = new TestRunnerOrchestrator(strykerOptions, files, null, reporter);
     });
-    
+
+    describe('initialRun()', () => {
+      let results: RunResult[];
+      beforeEach(() => sut.initialRun().then(res => results = res));
+
+      it('should run all tests without selecting specific ones and report one runResult', () => {
+        expect(results.length).to.be.eq(1);
+      });
+    });
   });
 
   describe('with test selector', () => {
