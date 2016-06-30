@@ -49,10 +49,10 @@ export default class Stryker {
    */
   runMutationTest(): Promise<MutantResult[]> {
     let reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
-
+    let testSelector = TestSelectorFactory.instance().create(this.config.testFramework, { options: this.config });
+    
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then(inputFiles => {
-        let testSelector = TestSelectorFactory.instance().create(this.config.testFramework, { options: this.config });
         let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, testSelector, reporter);
         return testRunnerOrchestrator.initialRun().then(runResults => ({ runResults, inputFiles, testRunnerOrchestrator }))
       })
@@ -60,10 +60,9 @@ export default class Stryker {
         let runResults = tuple.runResults;
         let inputFiles = tuple.inputFiles;
         let testRunnerOrchestrator = tuple.testRunnerOrchestrator;
-        let unsuccessfulTests = runResults.filter((runResult: RunResult) => !(runResult.failed === 0 && runResult.result === TestResult.Complete));
+        let unsuccessfulTests = this.filterOutUnsuccesfulResults(runResults);
         if (unsuccessfulTests.length === 0) {
-          log.info(`Initial test run succeeded. Ran ${runResults.length} tests.`);
-
+          this.logInitialTestRunSucceeded(runResults);
           let mutatorOrchestrator = new MutatorOrchestrator(reporter);
           let mutants = mutatorOrchestrator.generateMutants(inputFiles
             .filter(inputFile => inputFile.shouldMutate)
@@ -88,6 +87,10 @@ export default class Stryker {
       });
   }
 
+  filterOutUnsuccesfulResults(runResults: RunResult[]) {
+    return runResults.filter((runResult: RunResult) => !(!runResult.failed && runResult.result === TestResult.Complete));
+  }
+
   private loadPlugins() {
     if (this.config.plugins) {
       new PluginLoader(this.config.plugins).load();
@@ -105,6 +108,16 @@ export default class Stryker {
     if (log.isDebugEnabled()) {
       log.debug(`Using config: ${JSON.stringify(this.config)}`);
     }
+  }
+
+  private logInitialTestRunSucceeded(runResults: RunResult[]) {
+    let totalAmountOfTests = 0;
+    runResults.forEach(result => {
+      if (result.succeeded) {
+        totalAmountOfTests += result.succeeded;
+      }
+    });
+    log.info('Initial test run succeeded. Ran %s tests.', totalAmountOfTests);
   }
 
   private setGlobalLogLevel() {

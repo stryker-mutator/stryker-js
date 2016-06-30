@@ -160,6 +160,8 @@ describe('Stryker', function () {
         describe('without errors or failed tests', () => {
           let strykerPromiseResolved: boolean;
           beforeEach(() => {
+            initialRunResults.push({ result: TestResult.Complete, succeeded: 5 });
+            initialRunResults.push({ result: TestResult.Complete, succeeded: 1 });
             strykerPromiseResolved = false
             strykerPromise = sut.runMutationTest().then(() => strykerPromiseResolved = true);
           });
@@ -176,6 +178,10 @@ describe('Stryker', function () {
               runMutationsPromiseResolve();
             });
             it('should resolve the stryker promise', () => strykerPromise);
+
+            it('should have logged the amount of tests ran', () => {
+              expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests.', 6);
+            });
           });
 
           describe('and running of mutators was successfull while reporter.wrapUp() results in a promise', () => {
