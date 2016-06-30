@@ -13,6 +13,15 @@ import * as os from 'os';
 import * as path from 'path';
 let expect = chai.expect;
 
+let mockMutant = (id: number) => {
+  return {
+    filename: `mutant${id}`,
+    save: sinon.stub().returns(Promise.resolve()),
+    scopedTestIds: [id],
+    timeSpentScopedTests: id,
+    reset: sinon.stub().returns(Promise.resolve()),
+  };
+}
 
 describe('TestRunnerOrchestrator', () => {
   let sut: TestRunnerOrchestrator;
@@ -73,6 +82,21 @@ describe('TestRunnerOrchestrator', () => {
         expect(results.length).to.be.eq(1);
       });
     });
+
+    describe('runMutations() with 2 mutants', () => {
+      let mutants: any;
+      let mutantResults: MutantResult[];
+      beforeEach(() => {
+        sandbox.stub(os, 'cpus', () => [1]); // stub 1 cpu1
+        mutants = [mockMutant(0), mockMutant(1)];
+        return sut.runMutations(mutants)
+          .then(results => mutantResults = results);
+      });
+
+      it('should not select test files', () => expect(StrykerTempFolder.writeFile).to.not.have.been.called);
+
+      it('should report 2 results', () => expect(mutantResults.length).to.be.eq(2));
+    });
   });
 
   describe('with test selector', () => {
@@ -115,16 +139,6 @@ describe('TestRunnerOrchestrator', () => {
       let donePromise: Promise<void>;
       let mutants: any[];
       let mutantResults: MutantResult[];
-
-      let mockMutant = (id: number) => {
-        return {
-          filename: `mutant${id}`,
-          save: sinon.stub().returns(Promise.resolve()),
-          scopedTestIds: [id],
-          timeSpentScopedTests: id,
-          reset: sinon.stub().returns(Promise.resolve()),
-        };
-      }
 
       beforeEach(() => {
         sandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
