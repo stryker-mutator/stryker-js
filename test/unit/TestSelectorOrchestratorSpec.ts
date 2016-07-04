@@ -84,7 +84,7 @@ describe('TestSelectorOrchestrator', () => {
     describe('and testSelector is not set', () => {
       actBeforeEach();
 
-      it('should log a warning for the missing setting', () => expect(logger.warn).to.have.been.calledWith('Missing config settings `testFramework` or `testSelector`. Stryker will continue without the ability to select individual tests. Set `testSelector` option explicitly to `null` to ignore this warning.'));
+      it('should log a warning for the missing setting', () => expect(logger.warn).to.have.been.calledWith('Missing config settings `testFramework` or `testSelector`. Stryker will continue without the ability to select individual tests, thus running all test for every generated mutant. Set `testSelector` option explicitly to `null` to ignore this warning.'));
 
       itShouldNotRetrieveATestSelector();
     });
@@ -106,7 +106,7 @@ describe('TestSelectorOrchestrator', () => {
       actBeforeEach();
       it('should log a warning and retrieve `null`', () => {
         expect(actualTestSelector).to.be.eq(null);
-        expect(logger.warn).to.have.been.calledWith('Could not find test selector `thisTestSelectorDoesNotExist`. Stryker will continue without the ability to select individual tests. Did you forget to load a plugin? Known test selectors: ["awesomeFramework","overrideTestSelector"].')
+        expect(logger.warn).to.have.been.calledWith('Could not find test selector `thisTestSelectorDoesNotExist`. Stryker will continue without the ability to select individual tests, thus running all test for every generated mutant. Did you forget to load a plugin? Known test selectors: ["awesomeFramework","overrideTestSelector"].')
       });
     });
 
@@ -115,7 +115,7 @@ describe('TestSelectorOrchestrator', () => {
       actBeforeEach();
       it('should log a warning and retrieve `null`', () => {
         expect(actualTestSelector).to.be.eq(null);
-        expect(logger.warn).to.have.been.calledWith('Could not find test selector `testFrameworkWithoutSelector` (based on the configured testFramework). Stryker will continue without the ability to select individual tests. Set `testSelector` option explicitly to `null` to ignore this warning. Did you forget to load a plugin? Known test selectors: ["awesomeFramework","overrideTestSelector"].')
+        expect(logger.warn).to.have.been.calledWith('Could not find test selector `testFrameworkWithoutSelector` (based on the configured testFramework). Stryker will continue without the ability to select individual tests, thus running all test for every generated mutant. Set `testSelector` option explicitly to `null` to ignore this warning. Did you forget to load a plugin? Known test selectors: ["awesomeFramework","overrideTestSelector"].')
       });
     });
   });

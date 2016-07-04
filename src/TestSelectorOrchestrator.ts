@@ -2,7 +2,7 @@ import {TestSelectorFactory, TestSelector} from 'stryker-api/test_selector';
 import {StrykerOptions} from 'stryker-api/core';
 import * as log4js from 'log4js';
 
-const WARNING_RUNNING_WITHOUT_SELECTOR = 'Stryker will continue without the ability to select individual tests.';
+const WARNING_RUNNING_WITHOUT_SELECTOR = 'Stryker will continue without the ability to select individual tests, thus running all test for every generated mutant.';
 const IGNORE_WARNING = 'Set `testSelector` option explicitly to `null` to ignore this warning.';
 const log = log4js.getLogger('TestSelectorOrchestrator');
 
