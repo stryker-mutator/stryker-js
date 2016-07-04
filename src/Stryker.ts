@@ -171,6 +171,7 @@ export default class Stryker {
                               Example: node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`, list)
     .option('--testFramework <name>', `The name of the test framework you want to use`)
     .option('--testRunner <name>', `The name of the test runner you want to use`)
+    .option('--testSelector <name>', `The name of the test selector you want to use`)
     .option('-c, --configFile <configFileLocation>', 'A location to a config file. That file should export a function which accepts a "config" object\n' +
     CONFIG_SYNTAX_HELP)
     .option('--logLevel <level>', 'Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
