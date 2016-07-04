@@ -12,7 +12,7 @@ import TestRunnerOrchestrator from './TestRunnerOrchestrator';
 import ReporterOrchestrator from './ReporterOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
 import {RunResult, TestResult} from 'stryker-api/test_runner';
-import {TestSelectorFactory} from 'stryker-api/test_selector';
+import TestSelectorOrchestrator from './TestSelectorOrchestrator';
 import MutantRunResultMatcher from './MutantRunResultMatcher';
 import InputFileResolver from './InputFileResolver';
 import ConfigReader, {CONFIG_SYNTAX_HELP} from './ConfigReader';
@@ -49,7 +49,7 @@ export default class Stryker {
    */
   runMutationTest(): Promise<MutantResult[]> {
     let reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
-    let testSelector = TestSelectorFactory.instance().create(this.config.testFramework, { options: this.config });
+    let testSelector = new TestSelectorOrchestrator(this.config).determineTestSelector();
     
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then(inputFiles => {
