@@ -15,7 +15,9 @@ export default class TestSelectorOrchestrator {
     let testSelector: TestSelector = null;
     if (this.options.testSelector) {
       testSelector = this.determineTestSelectorBasedOnTestSelectorSetting();
-    } else if (this.options.testSelector !== null) {
+    } else if (this.options.testSelector === null) {
+      log.debug('Running without testSelector (`testSelector: null`).');
+    } else {
       if (this.options.testFramework) {
         testSelector = this.determineTestSelectorBasedOnTestFrameworkSetting();
       } else {
@@ -49,7 +51,7 @@ export default class TestSelectorOrchestrator {
     return `Did you forget to load a plugin? Known test selectors: ${JSON.stringify(TestSelectorFactory.instance().knownNames())}.`;
   }
 
-  private createTestSelector(name: string){
+  private createTestSelector(name: string) {
     return TestSelectorFactory.instance().create(name, this.createSettings());
   }
   private testSelectorExists(maybeSelector: string) {
