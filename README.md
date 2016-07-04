@@ -46,11 +46,15 @@ You might recognize this way of working from the karma test runner.
 If both the config file and command line options are combined, the command line arguments will overrule the options in the config file.
 
 All options are optional except the `files` (or `-f`), `mutate` (or `-m`), `testFramework` and `testRunner` options. 
-With `files` you configure all files needed to run the tests, except the test framework files themselves (jasmine).
+
+* With `files` you configure all files needed to run the tests, except the test framework files themselves (jasmine).
 The order in this list is important, because that will be the order in which the files are loaded.
-With `mutate` you configure the subset of files to target for mutation. These should be your source files.
-With `testFramework` you configure which test framework you used for your tests. Currently **only** `'jasmine'` is supported.
-With `testRunner` you configure which framework should run your tests. Currently **only** `'karma'` is supported.
+* With `mutate` you configure the subset of files to target for mutation. These should be your source files.
+* With `testRunner` you configure which test runner should run your tests. Currently **only** `'karma'` is supported.
+* With `testFramework` you configure which test framework you used for your tests. The value you configure here is passed through to the test runner, 
+so which values are supporterd here are  determined `'jasmine'` and `null` are supported.
+* With `testSelector` you configure which test selector should be used for your tests. If this value is left out, the value of the `testFramework` is used 
+to determine the `testSelector`. Currently **only** `'jasmine'` is supported. As `Stryker` can run without a `testSelector`, you can explicitly disable it by setting the value to `null`. 
 
 Both the `files` and `mutate` options are a list of globbing expressions. The globbing expressions will be resolved
 using [node glob](https://github.com/isaacs/node-glob). This is the same globbing format you might know from 
@@ -79,6 +83,13 @@ These include: test files, library files, source files (the files selected with 
 The order of the files specified here will be the order used to load the file in the test runner (karma).   
 **Example:** `-f node_modules/a-lib/\*\*/\*.js,src/\*\*/\*.js,a.js,test/\*\*/\*.js`
 
+#### Test runner 
+**Full notation:** `--testRunner`  
+**Config file key:** `testRunner`  
+**Description:**  
+The test runner you want to use. Currently supported runners: `'karma'`  
+**Example:** `--testFramework 'karma'`
+
 #### Test framework 
 **Full notation:** `--testFramework`  
 **Config file key:** `testFramework`  
@@ -86,12 +97,14 @@ The order of the files specified here will be the order used to load the file in
 The test framework you want to use. Currently supported frameworks: `'jasmine'`  
 **Example:** `--testFramework 'jasmine'`
 
-#### Test runner 
-**Full notation:** `--testRunner`  
-**Config file key:** `testRunner`  
-**Description:**  
-The test runner you want to use. Currently supported runners: `'karma'`  
-**Example:** `--testFramework 'karma'`
+#### Test selector
+**Full notation:** `--testSelector`  
+**Config file key:** `testSelector`  
+**Description**:
+Stryker kan use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
+because only the tests covering a particular mutation are ran. If this value is left out, the value of the `testFramework` is used
+to determine the `testSelector`. Currently **only** `'jasmine'` is supported. If you use an other test framework, or you want to disable test selection for an other reason,
+you can explicitly disable the testSelector by setting the value to `null`. 
 
 #### Log level
 **Short notation:** (none)  
