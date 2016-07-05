@@ -37,6 +37,13 @@ describe.only('MochaTestRunner', function() {
           return true;
         });
       });
+
+      it('should be able to run 2 times in a row', () => {
+        return expect(sut.run().then( () => sut.run())).to.eventually.satisfy((testResult: RunResult) => {
+          expect(testResult.succeeded).to.be.eq(5);
+          return true;
+        });
+      });
     });
   });
 

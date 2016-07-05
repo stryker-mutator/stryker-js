@@ -36,6 +36,7 @@ export default class StrykerMochaReporter {
       this.runResult.failed++;
       this.runResult.testNames.push(test.fullTitle());
       this.runResult.errorMessages.push(err.message);
+      console.log(err.stack);
 
       log.debug(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
     });

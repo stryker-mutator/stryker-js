@@ -7,22 +7,24 @@ import StrykerMochaReporter from './StrykerMochaReporter';
 
 const log = log4js.getLogger('MochaTestRunner');
 export default class MochaTestRunner implements TestRunner {
-  private mocha: Mocha;
+  private files: string[];
 
   constructor(runnerOptions: RunnerOptions) {
-    this.mocha = new Mocha({ reporter: StrykerMochaReporter });
+    this.files = runnerOptions.files.map(f => path.resolve(f.path));
+  }
 
-    runnerOptions.files.forEach((file) => {
-      this.mocha.addFile(file.path);
-    });
+  private purgeFiles() {
+    this.files.forEach(f => delete require.cache[f]);
   }
 
   run(): Promise<RunResult> {
     return new Promise<RunResult>((resolve, fail) => {
       try {
-        let runner: any = this.mocha.run((failures: number) => {
+        this.purgeFiles();
+        let mocha = new Mocha({ reporter: StrykerMochaReporter });
+        this.files.forEach(f => mocha.addFile(f));
+        let runner: any = mocha.run((failures: number) => {
           let result: RunResult = runner.runResult;
-
           resolve(result);
         });
       } catch (error) {
