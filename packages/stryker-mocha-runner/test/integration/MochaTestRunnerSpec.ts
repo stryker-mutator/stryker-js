@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import MochaTestRunner from '../../../src/mocha-runner/MochaTestRunner';
+import MochaTestRunner from '../../src/MochaTestRunner';
 import {TestResult, RunnerOptions, RunResult} from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
@@ -15,7 +15,7 @@ describe.only('MochaTestRunner', function() {
 
     before(() => {
       testRunnerOptions = {
-        files: [{ path: 'test/sampleProject-mocha/src/MyMath.js', shouldMutate: true }, { path: 'test/sampleProject-mocha/test/MyMathSpec.js', shouldMutate: false }],
+        files: [{ path: 'testResources/sampleProject/src/MyMath.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/MyMathSpec.js', shouldMutate: false }],
         coverageEnabled: false,
         strykerOptions: {},
         port: 1234
