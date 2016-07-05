@@ -4,7 +4,8 @@
   "description": "The Stryker TestRunner for Mocha",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "typings install",
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
