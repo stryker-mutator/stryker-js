@@ -63,9 +63,10 @@
     "sinon-chai": "^2.8.0",
     "typescript": "^1.8.9",
     "typings": "^0.7.11",
-    "stryker-api": "^0.0.2"
+    "stryker-api": "^0.1.0",
+    "stryker-karma-runner": "^0.1.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.0.2"
+    "stryker-api": "^0.1.0"
   }
 }
