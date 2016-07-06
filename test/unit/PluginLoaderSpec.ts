@@ -4,6 +4,7 @@ import * as sinon from 'sinon';
 import * as fileUtils from '../../src/utils/fileUtils';
 import log from '../helpers/log4jsMock';
 import * as fs from 'fs';
+import * as path from 'path';
 
 describe('PluginLoader', () => {
   let sut: PluginLoader;
@@ -63,10 +64,14 @@ describe('PluginLoader', () => {
         sut.load();
       });
 
+      it('should read from a `node_modules` folder', () => {
+        expect(pluginDirectoryReadMock).to.have.been.calledWith(path.normalize(__dirname + '/../../..'));
+      });
+
       it('should load "stryker-jasmine" and "stryker-karma"', () => {
-        expect(fileUtils.importModule).to.have.been.calledWithMatch(/.*stryker-jasmine/);
-        expect(fileUtils.importModule).to.have.been.calledWithMatch(/.*stryker-karma/);
-        expect(fileUtils.importModule).to.not.have.been.calledWithMatch(/.*stryker-cli/);
+        expect(fileUtils.importModule).to.have.been.calledWithMatch('stryker-jasmine');
+        expect(fileUtils.importModule).to.have.been.calledWithMatch('stryker-karma');
+        expect(fileUtils.importModule).to.not.have.been.calledWithMatch('stryker-cli');
       });
     });
 

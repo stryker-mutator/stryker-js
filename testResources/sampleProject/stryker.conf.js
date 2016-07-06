@@ -3,6 +3,8 @@ module.exports = function(config){
     files: ['testResources/sampleProject/src/?(Circle|Add).js', 'testResources/sampleProject/test/?(AddSpec|CircleSpec).js'],
     mutate: ['testResources/sampleProject/src/?(Circle|Add).js'],
     testFramework: 'jasmine',
-    testRunner: 'karma'
+    testRunner: 'karma',
+    // testSelector: null,
+    plugins: ['stryker-karma-runner']
   });
 }

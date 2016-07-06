@@ -5,10 +5,6 @@ import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
 import PluginLoader from '../PluginLoader';
 
-// Remove later when we have dynamic plugin system
-import '../karma-runner/KarmaTestRunner';
-
-
 class TestRunnerChildProcessAdapterWorker {
 
   underlyingTestRunner: TestRunner;
