@@ -13,10 +13,10 @@ export default class TestSelectorOrchestrator {
 
   determineTestSelector(): TestSelector {
     let testSelector: TestSelector = null;
-    if (this.options.testSelector) {
+    if (this.options.testSelector && this.options.testSelector !== 'null') {
       testSelector = this.determineTestSelectorBasedOnTestSelectorSetting();
-    } else if (this.options.testSelector === null) {
-      log.debug('Running without testSelector (`testSelector: null`).');
+    } else if (this.options.testSelector === null || this.options.testSelector === 'null') {
+      log.debug('Running without testSelector (testSelector was null).');
     } else {
       if (this.options.testFramework) {
         testSelector = this.determineTestSelectorBasedOnTestFrameworkSetting();

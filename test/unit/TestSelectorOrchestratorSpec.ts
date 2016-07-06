@@ -35,6 +35,12 @@ describe('TestSelectorOrchestrator', () => {
     });
   };
 
+  let itShouldLogTestSelectorNullOnDebug = () => {
+    it('should log on debug that testSelector was null', () => {
+      expect(logger.debug).to.have.been.calledWith('Running without testSelector (testSelector was null).');
+    });
+  };
+
   let itShouldNotLogAWarningAboutTheMissingSetting = () => {
     it('should not log a warning for the missing setting', () => expect(logger.warn).not.to.have.been.called);
   };
@@ -66,6 +72,18 @@ describe('TestSelectorOrchestrator', () => {
       actBeforeEach();
 
       itShouldNotRetrieveATestSelector();
+      itShouldLogTestSelectorNullOnDebug();
+    });
+    
+    describe('and testSelector is explicitly "null"', () => {
+      beforeEach(() => {
+        options.testSelector = 'null';
+      });
+
+      actBeforeEach();
+
+      itShouldNotRetrieveATestSelector();
+      itShouldLogTestSelectorNullOnDebug();
     });
 
     describe('and testSelector is "overrideTestSelector"', () => {
@@ -94,6 +112,7 @@ describe('TestSelectorOrchestrator', () => {
       actBeforeEach();
       itShouldNotLogAWarningAboutTheMissingSetting();
       itShouldNotRetrieveATestSelector();
+      itShouldLogTestSelectorNullOnDebug();
     });
     describe('and testSelector is set to "overrideTestSelector"', () => {
       beforeEach(() => options.testSelector = 'overrideTestSelector');
