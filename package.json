@@ -57,14 +57,19 @@
     "grunt-mocha-test": "^0.12.7",
     "grunt-ts": "5.4.0",
     "istanbul": "^0.4.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^1.0.0",
+    "karma-coverage": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.1",
     "mocha": "^2.3.3",
     "mocha-sinon": "^1.1.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
-    "typescript": "^1.8.9",
-    "typings": "^0.7.11",
     "stryker-api": "^0.1.0",
-    "stryker-karma-runner": "^0.1.0"
+    "stryker-karma-runner": "^0.1.0",
+    "typescript": "^1.8.9",
+    "typings": "^0.7.11"
   },
   "peerDependencies": {
     "stryker-api": "^0.1.0"
