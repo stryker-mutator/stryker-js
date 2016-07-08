@@ -1,0 +1,1 @@
+{"sourceFilePath":"c:\\z\\github\\stryker-mutator\\stryker\\src\\Mutant.js","mutatorName":"UnaryOperator","status":1,"replacement":"endIndexLines--","location":{"start":{"line":56,"column":12},"end":{"line":56,"column":27}},"range":[2361,2376],"originalLines":"            endIndexLines++;","mutatedLines":"            endIndexLines--;"}

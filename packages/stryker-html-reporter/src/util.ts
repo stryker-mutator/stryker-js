@@ -2,28 +2,27 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as handlebars from 'handlebars';
 import * as _ from 'lodash';
+import * as mkdirp from 'mkdirp';
 import {MutantStatus, MutantResult} from 'stryker-api/report';
 import SourceFileTreeNode from './SourceFileTreeNode';
 import SourceFileTreeLeaf from './SourceFileTreeLeaf';
 
-export function copyFolder(fromPath: string, to: string): Promise<void> {
-  return mkdirRecursive(to).then(() => {
-    readdir(fromPath).then(files => {
-      let promisses: Promise<void>[] = [];
-      files.forEach(file => {
-        let currentPath = path.join(fromPath, file);
-        let toCurrentPath = path.join(to, file);
-        promisses.push(stats(currentPath).then(stats => {
-          if (stats.isDirectory()) {
-            return copyFolder(currentPath, toCurrentPath);
-          } else {
-            return copyFile(currentPath, toCurrentPath);
-          }
-        }));
-      });
-      return Promise.all(promisses);
+export function copyFolder(fromPath: string, to: string): Promise<any> {
+  return mkdirRecursive(to).then(() => readdir(fromPath).then(files => {
+    let promisses: Promise<void>[] = [];
+    files.forEach(file => {
+      let currentPath = path.join(fromPath, file);
+      let toCurrentPath = path.join(to, file);
+      promisses.push(stats(currentPath).then(stats => {
+        if (stats.isDirectory()) {
+          return copyFolder(currentPath, toCurrentPath);
+        } else {
+          return copyFile(currentPath, toCurrentPath);
+        }
+      }));
     });
-  });
+    return Promise.all(promisses);
+  }));
 }
 
 
@@ -115,19 +114,20 @@ function readdir(path: string): Promise<string[]> {
   });
 }
 
-
+export function mkdirRecursiveSync(folderName: string) {
+  mkdirp.sync(folderName);
+}
 
 export function mkdirRecursive(folderName: string): Promise<void> {
+
   return new Promise<void>((resolve, reject) => {
-    fileOrFolderExists(folderName).then(exists => {
-      if (!exists) {
-        mkdirRecursive(path.dirname(folderName)).then(() => {
-          mkdir(folderName).then(resolve, reject);
-        }).catch(reject);
+    mkdirp(folderName, err => {
+      if (err) {
+        reject(err);
       } else {
         resolve();
       }
-    });
+    })
   });
 }
 

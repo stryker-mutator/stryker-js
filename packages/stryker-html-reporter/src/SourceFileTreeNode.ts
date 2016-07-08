@@ -105,7 +105,7 @@ export default class SourceFileTreeNode {
   }
 
   public writeReportNodeRecursive(directory: string) {
-    util.mkdirRecursive(directory);
+    util.mkdirRecursiveSync(directory);
     fs.writeFileSync(path.join(directory, 'index.html'), util.nodeTemplate(this));
     this.children.forEach(child => child.writeReportNodeRecursive(path.join(directory, child.name)));
     this.leafs.forEach(leaf => leaf.writeFileReport(directory));
