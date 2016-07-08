@@ -1,6 +1,6 @@
 {
   "name": "stryker-html-reporter",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "An html reporter for the JavaScript mutation testing framework Stryker",
   "main": "index.js",
   "scripts": {
