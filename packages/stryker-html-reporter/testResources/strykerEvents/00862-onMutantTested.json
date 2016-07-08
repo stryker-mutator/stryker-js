@@ -1,0 +1,1 @@
+{"sourceFilePath":"c:\\z\\github\\stryker-mutator\\stryker\\src\\ConfigReader.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":54,"column":39},"end":{"line":54,"column":42}},"range":[2069,2072],"originalLines":"            configModule = function () { };","mutatedLines":"            configModule = function () {\n};"}

@@ -1,0 +1,1 @@
+{"sourceFilePath":"c:\\z\\github\\stryker-mutator\\stryker\\src\\ConfigReader.js","mutatorName":"RemoveConditionals","status":1,"replacement":"false","location":{"start":{"line":31,"column":12},"end":{"line":31,"column":35}},"range":[1020,1043],"originalLines":"        if (this.options.configFile) {","mutatedLines":"        if (false) {"}

@@ -1,0 +1,1 @@
+{"sourceFilePath":"c:\\z\\github\\stryker-mutator\\stryker\\src\\InputFileResolver.js","mutatorName":"ConditionalBoundary","status":1,"replacement":"errors.length >= 0","location":{"start":{"line":26,"column":20},"end":{"line":26,"column":37}},"range":[1267,1284],"originalLines":"                if (errors.length > 0) {","mutatedLines":"                if (errors.length >= 0) {"}

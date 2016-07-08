@@ -59,7 +59,7 @@ module.exports = function (grunt) {
       integration: {
         options: {
           reporter: 'spec',
-          timeout: 5000
+          timeout: 10000
         },
         // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
         src: ['test/helpers/**/*.js', 'test/integration/**/*.js']
@@ -69,6 +69,9 @@ module.exports = function (grunt) {
       coverage: {
         // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
         src: ['test/helpers/**/*.js', 'test/unit/**/*.js', 'test/integration/**/*.js'],
+        options: { 
+          timeout: 10000 
+        }
       }
     },
     istanbul_check_coverage: {
