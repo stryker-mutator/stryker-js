@@ -1,6 +1,6 @@
 import {StrykerOptions, InputFile} from 'stryker-api/core';
 import {RunResult, RunnerOptions, TestResult} from 'stryker-api/test_runner';
-import {TestSelector, TestSelectorFactory} from 'stryker-api/test_selector';
+import {TestSelector} from 'stryker-api/test_selector';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
@@ -22,23 +22,36 @@ interface FileMap {
 interface TestRunnerSandbox {
   index: number;
   runnerAdapter: IsolatedTestRunnerAdapter;
-  selector: TestSelector;
   fileMap: FileMap;
   testSelectionFilePath: string;
 }
 
 export default class TestRunnerOrchestrator {
 
-  constructor(private options: StrykerOptions, private files: InputFile[], private reporter: Reporter) {
+  constructor(private options: StrykerOptions, private files: InputFile[], private testSelector: TestSelector, private reporter: Reporter) {
   }
 
-  recordCoverage(): Promise<RunResult[]> {
-    let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
+  initialRun(): Promise<RunResult[]> {
+    if (this.testSelector) {
+      return this.initialRunWithTestSelector();
+    } else {
+      return this.initalRunWithoutTestSelector();
+    }
+  }
+
+  private initalRunWithoutTestSelector() {
+    let testRunner = this.createTestRunner(this.files, true);
+    return testRunner.run({ timeout: 10000 }).then(testResults => {
+      testRunner.dispose();
+      return [testResults];
+    });
+  }
+
+  private initialRunWithTestSelector() {
     let testSelectionFilePath = this.createTestSelectorFileName(this.createTempFolder());
-    let runnerAdapter = IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(this.files, testSelectionFilePath, 0, true));
+    let runnerAdapter = this.createTestRunner(this.files, true, testSelectionFilePath);
     let sandbox: TestRunnerSandbox = {
       runnerAdapter,
-      selector,
       fileMap: null,
       testSelectionFilePath,
       index: 0
@@ -61,7 +74,7 @@ export default class TestRunnerOrchestrator {
           if (mutant.scopedTestIds.length > 0) {
             let sandbox = sandboxes.pop();
             let sourceFileCopy = sandbox.fileMap[mutant.filename];
-            return Promise.all([mutant.save(sourceFileCopy), this.selectTests(sandbox, mutant.scopedTestIds)])
+            return Promise.all([mutant.save(sourceFileCopy), this.selectTestsIfPossible(sandbox, mutant.scopedTestIds)])
               .then(() => sandbox.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
               .then((runResult) => {
                 let result = this.collectFrozenMutantResult(mutant, runResult);
@@ -135,7 +148,7 @@ export default class TestRunnerOrchestrator {
     : Promise<RunResult[]> {
 
     return new Promise<RunResult[]>(resolve => {
-      this.selectTests(sandbox, [currentTestIndex])
+      this.selectTestsIfPossible(sandbox, [currentTestIndex])
         .then(() => sandbox.runnerAdapter.run({ timeout: 10000 }))
         .then(runResult => {
           if (runResult.result === TestResult.Complete && runResult.succeeded > 0 || runResult.failed > 0) {
@@ -154,36 +167,38 @@ export default class TestRunnerOrchestrator {
   }
 
   private createTestRunnerSandboxes(): Promise<TestRunnerSandbox[]> {
-
-    return new Promise<TestRunnerSandbox[]>((resolve, reject) => {
-      let cpuCount = os.cpus().length;
-      let testRunnerSandboxes: TestRunnerSandbox[] = [];
-      let allPromises: Promise<any>[] = [];
-      log.info(`Creating ${cpuCount} test runners (based on cpu count)`);
-      for (let i = 0; i < cpuCount; i++) {
-        allPromises.push(this.createSandbox(i).then(sandbox => testRunnerSandboxes.push(sandbox)));
-      }
-      Promise.all(allPromises).then(() => resolve(testRunnerSandboxes));
-    });
+    let cpuCount = os.cpus().length;
+    let testRunnerSandboxes: TestRunnerSandbox[] = [];
+    let allPromises: Promise<any>[] = [];
+    log.info(`Creating ${cpuCount} test runners (based on cpu count)`);
+    for (let i = 0; i < cpuCount; i++) {
+      allPromises.push(this.createSandbox(i).then(sandbox => testRunnerSandboxes.push(sandbox)));
+    }
+    return Promise.all(allPromises).then(() => testRunnerSandboxes);
   }
 
-  private selectTests(sandbox: TestRunnerSandbox, ids: number[]) {
-    let fileContent = sandbox.selector.select(ids);
-    return StrykerTempFolder.writeFile(sandbox.testSelectionFilePath, fileContent);
+  private selectTestsIfPossible(sandbox: TestRunnerSandbox, ids: number[]): Promise<void> {
+    if (this.testSelector) {
+      let fileContent = this.testSelector.select(ids);
+      return StrykerTempFolder.writeFile(sandbox.testSelectionFilePath, fileContent);
+    }else{
+      return Promise.resolve(void 0);
+    }
   }
 
   private createSandbox(index: number): Promise<TestRunnerSandbox> {
     var tempFolder = this.createTempFolder();
     return this.copyAllFilesToFolder(tempFolder).then(fileMap => {
-      let selector = TestSelectorFactory.instance().create(this.options.testFramework, { options: this.options });
       let runnerFiles: InputFile[] = [];
-      let testSelectionFilePath = this.createTestSelectorFileName(tempFolder);
+      let testSelectionFilePath: string = null;
+      if(this.testSelector){
+        testSelectionFilePath = this.createTestSelectorFileName(tempFolder);
+      }
       this.files.forEach(originalFile => runnerFiles.push({ path: fileMap[originalFile.path], shouldMutate: originalFile.shouldMutate }));
       return {
         index,
         fileMap,
-        runnerAdapter: IsolatedTestRunnerAdapterFactory.create(this.createTestRunSettings(runnerFiles, testSelectionFilePath, index, false)),
-        selector,
+        runnerAdapter: this.createTestRunner(runnerFiles, false, testSelectionFilePath, index),
         testSelectionFilePath
       };
     });
@@ -214,14 +229,17 @@ export default class TestRunnerOrchestrator {
     });
   }
 
-  private createTestRunSettings(files: InputFile[], testSelectionFilePath: string, index: number, coverageEnabled: boolean): RunnerOptions {
+  private createTestRunner(files: InputFile[], coverageEnabled: boolean, testSelectionFilePath?: string, index: number = 0): IsolatedTestRunnerAdapter {
+    if (testSelectionFilePath) {
+      files = [{ path: testSelectionFilePath, shouldMutate: false }].concat(files);
+    }
     let settings = {
       coverageEnabled,
-      files: [{ path: testSelectionFilePath, shouldMutate: false } ].concat(files),
+      files,
       strykerOptions: this.options,
       port: this.options.port + index
     };
     log.debug(`Creating test runner %s using settings {port: %s, coverageEnabled: %s}`, index, settings.port, settings.coverageEnabled);
-    return settings;
+    return IsolatedTestRunnerAdapterFactory.create(settings);
   }
 }

@@ -5,10 +5,12 @@ import {InputFile} from 'stryker-api/core';
 import {MutantResult, Reporter} from 'stryker-api/report';
 import {Config, ConfigWriterFactory, ConfigWriter} from 'stryker-api/config';
 import {RunResult, TestResult} from 'stryker-api/test_runner';
+import {TestSelector} from 'stryker-api/test_selector';
 import {expect} from 'chai';
 import * as sinon from 'sinon';
 import * as inputFileResolver from '../../src/InputFileResolver';
 import * as configReader from '../../src/ConfigReader';
+import * as testSelectorOrchestrator from '../../src/TestSelectorOrchestrator';
 import * as testRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as reporterOrchestrator from '../../src/ReporterOrchestrator';
 import * as pluginLoader from '../../src/PluginLoader';
@@ -24,8 +26,10 @@ class FakeConfigWriter implements ConfigWriter {
 describe('Stryker', function () {
   let sut: Stryker;
   let sandbox: sinon.SinonSandbox;
+  let testSelector: any;
   let inputFileResolverStub: any;
   let testRunnerOrchestratorStub: any;
+  let testSelectorOrchestratorStub: any;
   let inputFiles: InputFile[];
   let initialRunResults: RunResult[];
   let config: any;
@@ -46,16 +50,21 @@ describe('Stryker', function () {
     pluginLoaderMock = {
       load: sandbox.stub()
     };
-    var reporterOrchestratorMock = {
+    let reporterOrchestratorMock = {
       createBroadcastReporter: () => reporter
     };
+    testSelector = 'some test selector';
+    testSelectorOrchestratorStub = {
+      determineTestSelector: sandbox.stub().returns(testSelector)
+    };
 
+    sandbox.stub(testSelectorOrchestrator, 'default').returns(testSelectorOrchestratorStub);
     sandbox.stub(reporterOrchestrator, 'default').returns(reporterOrchestratorMock);
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
   });
 
-  function itShouldResultInARejection() {
+  function actAndShouldResultInARejection() {
     it('should result in a rejection', (done) => {
       sut.runMutationTest().then(() => {
         done(new Error('Stryker resolved while a rejection was expected'));
@@ -68,6 +77,7 @@ describe('Stryker', function () {
   describe('constructor', () => {
     beforeEach(() => {
       ConfigWriterFactory.instance().register('FakeConfigWriter', FakeConfigWriter);
+      config.plugins = ['plugin1'];
       sut = new Stryker({});
     });
 
@@ -77,6 +87,11 @@ describe('Stryker', function () {
 
     it('should freeze the config', () => {
       expect(Object.isFrozen(sut.config)).to.be.eq(true);
+    });
+
+    it('should load plugins', () => {
+      expect(pluginLoader.default).to.have.been.calledWith(config.plugins);
+      expect(pluginLoaderMock.load).to.have.been.calledWith();
     });
   });
 
@@ -91,7 +106,7 @@ describe('Stryker', function () {
         sut = new Stryker({});
       });
 
-      itShouldResultInARejection();
+      actAndShouldResultInARejection();
     });
 
     describe('with correct input file globbing', () => {
@@ -100,24 +115,22 @@ describe('Stryker', function () {
         inputFileResolverStub = {
           resolve: sandbox.stub().returns(Promise.resolve(inputFiles))
         }
-        config.plugins = ['plugin1'];
+        testRunnerOrchestratorStub = {
+          initialRun: sandbox.stub(),
+          runMutations: sandbox.stub()
+        };
+        sandbox.stub(testRunnerOrchestrator, 'default').returns(testRunnerOrchestratorStub);
         sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverStub);
         sut = new Stryker({ mutate: ['mutateFile'], files: ['allFiles'] });
       });
 
-      it('should load plugins', () => {
-        expect(pluginLoader.default).to.have.been.calledWith(config.plugins);
-        expect(pluginLoaderMock.load).to.have.been.calledWith();
-      });
-
-      describe('when recordCoverage() resulted in a rejection', () => {
+      describe('when initialRun() resulted in a rejection', () => {
 
         beforeEach(() => {
-          testRunnerOrchestratorStub = { recordCoverage: sandbox.stub().returns(Promise.reject('a rejection')) };
-          sandbox.stub(testRunnerOrchestrator, 'default').returns(testRunnerOrchestratorStub);
+          testRunnerOrchestratorStub.initialRun.returns(Promise.reject('a rejection'));
         });
 
-        itShouldResultInARejection();
+        actAndShouldResultInARejection();
       });
 
       describe('when coverage can be collected', () => {
@@ -126,11 +139,8 @@ describe('Stryker', function () {
 
         beforeEach(() => {
           initialRunResults = [];
-          testRunnerOrchestratorStub = {
-            recordCoverage: sandbox.stub().returns(Promise.resolve(initialRunResults)),
-            runMutations: sandbox.stub().returns(new Promise(res => runMutationsPromiseResolve = res))
-          };
-          sandbox.stub(testRunnerOrchestrator, 'default').returns(testRunnerOrchestratorStub);
+          testRunnerOrchestratorStub.initialRun.returns(Promise.resolve(initialRunResults));
+          testRunnerOrchestratorStub.runMutations.returns(new Promise(res => runMutationsPromiseResolve = res));
         });
 
         describe('but contains an error and failed tests', () => {
@@ -140,18 +150,31 @@ describe('Stryker', function () {
             strykerPromise.then(() => done(), () => done());
           });
 
+          it('should create the testRunnerOrchestrator', () => {
+            expect(testRunnerOrchestrator.default).to.have.been.calledWithNew;
+            expect(testRunnerOrchestrator.default).to.have.been.calledWith(config, inputFiles, testSelector, reporter);
+          });
+
           it('should have logged the errors', () => {
             expect(log.error).to.have.been.calledWith('One or more tests errored in the initial test run:\n\tAn error!');
           });
 
-          itShouldResultInARejection();
+          actAndShouldResultInARejection();
         });
 
         describe('without errors or failed tests', () => {
           let strykerPromiseResolved: boolean;
           beforeEach(() => {
+            initialRunResults.push({ result: TestResult.Complete, succeeded: 5 });
+            initialRunResults.push({ result: TestResult.Complete, succeeded: 1 });
             strykerPromiseResolved = false
             strykerPromise = sut.runMutationTest().then(() => strykerPromiseResolved = true);
+          });
+
+          it('should determine the testSelector', () => {
+            expect(testSelectorOrchestrator.default).to.have.been.calledWithNew;
+            expect(testSelectorOrchestrator.default).to.have.been.calledWith(config);
+            expect(testSelectorOrchestratorStub.determineTestSelector).to.have.been.called;
           });
 
           it('should not directly resolve the stryker promise', (done) => {
@@ -166,6 +189,10 @@ describe('Stryker', function () {
               runMutationsPromiseResolve();
             });
             it('should resolve the stryker promise', () => strykerPromise);
+
+            it('should have logged the amount of tests ran', () => {
+              expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests.', 6);
+            });
           });
 
           describe('and running of mutators was successfull while reporter.wrapUp() results in a promise', () => {
