@@ -12,6 +12,7 @@ import TestRunnerOrchestrator from './TestRunnerOrchestrator';
 import ReporterOrchestrator from './ReporterOrchestrator';
 import './jasmine_test_selector/JasmineTestSelector';
 import {RunResult, TestResult} from 'stryker-api/test_runner';
+import TestSelectorOrchestrator from './TestSelectorOrchestrator';
 import MutantRunResultMatcher from './MutantRunResultMatcher';
 import InputFileResolver from './InputFileResolver';
 import ConfigReader, {CONFIG_SYNTAX_HELP} from './ConfigReader';
@@ -48,20 +49,20 @@ export default class Stryker {
    */
   runMutationTest(): Promise<MutantResult[]> {
     let reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
-
+    let testSelector = new TestSelectorOrchestrator(this.config).determineTestSelector();
+    
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then(inputFiles => {
-        let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, reporter);
-        return testRunnerOrchestrator.recordCoverage().then(runResults => ({ runResults, inputFiles, testRunnerOrchestrator }))
+        let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, testSelector, reporter);
+        return testRunnerOrchestrator.initialRun().then(runResults => ({ runResults, inputFiles, testRunnerOrchestrator }))
       })
       .then(tuple => {
         let runResults = tuple.runResults;
         let inputFiles = tuple.inputFiles;
         let testRunnerOrchestrator = tuple.testRunnerOrchestrator;
-        let unsuccessfulTests = runResults.filter((runResult: RunResult) => !(runResult.failed === 0 && runResult.result === TestResult.Complete));
+        let unsuccessfulTests = this.filterOutUnsuccesfulResults(runResults);
         if (unsuccessfulTests.length === 0) {
-          log.info(`Initial test run succeeded. Ran ${runResults.length} tests.`);
-
+          this.logInitialTestRunSucceeded(runResults);
           let mutatorOrchestrator = new MutatorOrchestrator(reporter);
           let mutants = mutatorOrchestrator.generateMutants(inputFiles
             .filter(inputFile => inputFile.shouldMutate)
@@ -78,12 +79,16 @@ export default class Stryker {
         }
       }).then(mutantResults => {
         let maybePromise = reporter.wrapUp();
-        if(isPromise(maybePromise)){
+        if (isPromise(maybePromise)) {
           return maybePromise.then(() => mutantResults);
-        }else{
+        } else {
           return mutantResults;
-        }        
+        }
       });
+  }
+
+  filterOutUnsuccesfulResults(runResults: RunResult[]) {
+    return runResults.filter((runResult: RunResult) => !(!runResult.failed && runResult.result === TestResult.Complete));
   }
 
   private loadPlugins() {
@@ -103,6 +108,16 @@ export default class Stryker {
     if (log.isDebugEnabled()) {
       log.debug(`Using config: ${JSON.stringify(this.config)}`);
     }
+  }
+
+  private logInitialTestRunSucceeded(runResults: RunResult[]) {
+    let totalAmountOfTests = 0;
+    runResults.forEach(result => {
+      if (result.succeeded) {
+        totalAmountOfTests += result.succeeded;
+      }
+    });
+    log.info('Initial test run succeeded. Ran %s tests.', totalAmountOfTests);
   }
 
   private setGlobalLogLevel() {
@@ -156,6 +171,7 @@ export default class Stryker {
                               Example: node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`, list)
     .option('--testFramework <name>', `The name of the test framework you want to use`)
     .option('--testRunner <name>', `The name of the test runner you want to use`)
+    .option('--testSelector <name>', `The name of the test selector you want to use`)
     .option('-c, --configFile <configFileLocation>', 'A location to a config file. That file should export a function which accepts a "config" object\n' +
     CONFIG_SYNTAX_HELP)
     .option('--logLevel <level>', 'Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
