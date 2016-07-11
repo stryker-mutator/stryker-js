@@ -115,6 +115,10 @@ export default class TestRunnerOrchestrator {
         case TestResult.Timeout:
           status = MutantStatus.TIMEDOUT;
           break;
+        case TestResult.Error:
+          log.debug('Converting a test result `error` to mutant status `killed`.');
+          status = MutantStatus.KILLED;
+          break;
         case TestResult.Complete:
           if (runResult.failed > 0) {
             status = MutantStatus.KILLED;
