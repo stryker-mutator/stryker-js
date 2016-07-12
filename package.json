@@ -32,6 +32,9 @@
   "engines": {
     "node": ">=0.12.0"
   },
+  "bin": {
+    "stryker": "./bin/stryker"
+  },
   "dependencies": {
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
