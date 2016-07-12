@@ -1,7 +1,7 @@
+console.log('l4js:', require.resolve('log4js'));
 import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 
-const l = log4js.getLogger();
 let logger = {
   isTraceEnabled: sinon.stub(),
   trace: sinon.stub(),
@@ -16,8 +16,10 @@ let logger = {
   isFatalEnabled: sinon.stub(),
   fatal: sinon.stub()
 };
+let sandbox = sinon.sandbox.create();
 
-sinon.stub(log4js, 'getLogger').returns(logger);
+// Stub away even before other files are loaded and tests have started
+sandbox.stub(log4js, 'getLogger').returns(logger);
 
 beforeEach(() => {
   logger.trace.reset();
@@ -26,6 +28,11 @@ beforeEach(() => {
   logger.warn.reset();
   logger.error.reset();
   logger.fatal.reset();
+});
+
+after( () => {
+  // Restore for next (stryker) test run
+  sandbox.restore();
 });
 
 export default logger;
