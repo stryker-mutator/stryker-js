@@ -3,8 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 
-let baseTempFolder = os.tmpdir() + path.sep + 'stryker';
-let tempFolder = baseTempFolder + path.sep + random();
+let baseTempFolder = path.join(process.cwd(), '.stryker-tmp');
+let tempFolder = path.join(baseTempFolder, random().toString());
 ensureFolderExists(baseTempFolder);
 ensureFolderExists(tempFolder);
 
