@@ -6,7 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "postinstall": "typings install",
-    "stryker:config": "node node_modules/stryker/src/Stryker.js --configFile stryker.conf.js"
+    "stryker:config": "stryker --configFile stryker.conf.js"
   },
   "author": "",
   "license": "ISC",
