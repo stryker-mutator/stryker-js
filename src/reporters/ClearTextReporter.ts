@@ -78,7 +78,7 @@ export default class ClearTextReporter implements Reporter {
       log.debug(chalk.green('+   ' + line));
     });
     log.debug('');
-    if(result.testsRan.length > 0){
+    if(result.testsRan && result.testsRan.length > 0){
       log.debug('Tests ran: ');
       _.forEach(result.testsRan, (spec: string) => {
         log.debug('    ' + spec);
