@@ -1,6 +1,9 @@
 import {Reporter, MutantResult, MutantStatus, SourceFile} from 'stryker-api/report';
 import * as chalk from 'chalk';
 import * as _ from 'lodash';
+import * as log4js from 'log4js';
+
+const log = log4js.getLogger('ClearTextReporter');
 
 export default class ClearTextReporter implements Reporter {
 
@@ -19,25 +22,22 @@ export default class ClearTextReporter implements Reporter {
       switch (result.status) {
         case MutantStatus.KILLED:
           mutantsKilled++;
+          log.debug(chalk.bold.green('Mutant killed!'));
+          this.logMutantResultToDebug(result);
           break;
         case MutantStatus.TIMEDOUT:
-          mutantsTimedOut++;
+          mutantsTimedOut++; 
+          log.debug(chalk.bold.yellow('Mutant timedout!'));
+          this.logMutantResultToDebug(result);
           break;
         case MutantStatus.SURVIVED:
           this.writeLine(chalk.bold.red('Mutant survived!'));
-          this.writeLine(result.sourceFilePath + ': line ' + result.location.start.line + ':' + result.location.start.column);
-          this.writeLine('Mutator: ' + result.mutatorName);
-          this.writeLine(chalk.red('-   ' + result.originalLines));
-          this.writeLine(chalk.green('+   ' + result.mutatedLines));
-          this.writeLine('\n');
-          this.writeLine('Tests ran: ');
-          _.forEach(result.testsRan, (spec: string) => {
-            this.writeLine('    ' + spec);
-          });
-          this.writeLine('\n');
+          this.logMutantResult(result);
           break;
         case MutantStatus.UNTESTED:
           mutantsUntested++;
+          log.debug(chalk.bold.yellow('Mutant untested!'));
+          this.logMutantResultToDebug(result);
           break;
       }
     });
@@ -53,6 +53,38 @@ export default class ClearTextReporter implements Reporter {
     this.writeLine(mutantsKilled + ' mutants killed.');
     this.writeLine('Mutation score based on covered code: ' + codecoverageColor(mutationScoreCodeCoverage + '%'));
     this.writeLine('Mutation score based on all code: ' + codebaseColor(mutationScoreCodebase + '%'));
+  }
+
+  private logMutantResult(result: MutantResult): void {
+    this.writeLine(result.sourceFilePath + ': line ' + result.location.start.line + ':' + result.location.start.column);
+    this.writeLine('Mutator: ' + result.mutatorName);
+    this.writeLine(chalk.red('-   ' + result.originalLines));
+    this.writeLine(chalk.green('+   ' + result.mutatedLines));
+    this.writeLine('\n');
+    this.writeLine('Tests ran: ');
+    _.forEach(result.testsRan, (spec: string) => {
+      this.writeLine('    ' + spec);
+    });
+    this.writeLine('\n');
+  }
+
+  private logMutantResultToDebug(result: MutantResult): void {
+    log.debug(result.sourceFilePath + ': line ' + result.location.start.line + ':' + result.location.start.column);
+    log.debug('Mutator: ' + result.mutatorName);
+    result.originalLines.split('\n').forEach(line => {
+      log.debug(chalk.red('-   ' + line));
+    });
+    result.mutatedLines.split('\n').forEach(line => {
+      log.debug(chalk.green('+   ' + line));
+    });
+    log.debug('');
+    if(result.testsRan.length > 0){
+      log.debug('Tests ran: ');
+      _.forEach(result.testsRan, (spec: string) => {
+        log.debug('    ' + spec);
+      });
+      log.debug('');
+    }
   }
 
   /**
