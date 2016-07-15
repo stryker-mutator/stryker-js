@@ -65,28 +65,50 @@ describe('IsolatedTestRunnerAdapter', () => {
       });
 
       describe('and a timeout occurred', () => {
+
         beforeEach(() => {
           clock.tick(2100);
         });
 
-        it('should resolve the promise in a Timeout', () => {
-          return expect(runPromise).to.eventually.satisfy((result: RunResult) => result.result === TestResult.Timeout);
+        it('should send `dispose` to worker process', () => expect(fakeChildProcess.send).to.have.been.calledWith({ type: MessageType.Dispose }));
+
+        let actAssertTimeout = () => {
+          it('should kill the child process and start a new one', () => {
+            expect(fakeChildProcess.kill).to.have.been.calledWith();
+            expect(child_process.fork).to.have.been.called.callCount(2);
+          });
+
+          describe('and to init', () => {
+            let actualRunResult: RunResult;
+            beforeEach(() => {
+              receiveMessage({ type: MessageType.InitDone });
+            });
+
+            it('should result in a `timeout` after the restart', () => expect(runPromise).to.eventually.satisfy((result: RunResult) => result.result === TestResult.Timeout));
+          });
+        };
+
+        describe('and child process responses to dispose', () => {
+          beforeEach(() => {
+            receiveMessage({ type: MessageType.DisposeDone });
+            return sut.dispose(); // should return newly created promise
+          });
+
+          actAssertTimeout();
         });
 
-        it('should kill the child process and start a new one', () => {
-          expect(fakeChildProcess.kill).to.have.been.calledWith();
-          expect(child_process.fork).to.have.been.called.callCount(2);
+        describe('and child process is unresponsive', () => {
+          beforeEach(() => {
+            clock.tick(2100); // default wait for child process is 2000
+            return sut.dispose(); // should return newly created promise
+          });
+
+          actAssertTimeout();
         });
+
       });
 
       describe('and a result message occurred after 1900 ms', () => {
-
-        function receiveResultMessage() {
-          let callback: (message: Message<ResultMessageBody>) => void = fakeChildProcess.on.getCall(0).args[1];
-          let message = { type: MessageType.Result, body: { result: { result: TestResult.Complete } } };
-          callback(message);
-          return message;
-        }
 
         let expectedMessage: Message<ResultMessageBody>;
         beforeEach(() => {
@@ -94,9 +116,7 @@ describe('IsolatedTestRunnerAdapter', () => {
           expectedMessage = receiveResultMessage();
         });
 
-        it('should pass along the result', () => {
-          return expect(runPromise).to.eventually.eq(expectedMessage.body.result);
-        });
+        it('should pass along the result', () => expect(runPromise).to.eventually.eq(expectedMessage.body.result));
 
         describe('when we run a second time, wait 500ms and then receive the second result', () => {
 
@@ -114,6 +134,18 @@ describe('IsolatedTestRunnerAdapter', () => {
       });
     });
   });
+
+  let receiveResultMessage = () => {
+    let message = { type: MessageType.Result, body: { result: { result: TestResult.Complete } } };
+    receiveMessage(message);
+    return message;
+  };
+
+  let receiveMessage = (message: Message<any>) => {
+    let callback: (message: Message<ResultMessageBody>) => void = fakeChildProcess.on.getCall(0).args[1];
+    callback(message);
+    return message;
+  };
 
   afterEach(() => {
     clock.restore();

@@ -1,9 +1,9 @@
 import {StrykerOptions, InputFile} from 'stryker-api/core';
-import {RunResult, RunnerOptions, TestResult} from 'stryker-api/test_runner';
+import {TestRunner, RunResult, RunnerOptions, TestResult} from 'stryker-api/test_runner';
 import {TestSelector} from 'stryker-api/test_selector';
 import StrykerTempFolder from './utils/StrykerTempFolder';
-import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
+import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
 import * as path from 'path';
 import * as os from 'os';
 import * as _ from 'lodash';
@@ -21,7 +21,7 @@ interface FileMap {
 
 interface TestRunnerSandbox {
   index: number;
-  runnerAdapter: IsolatedTestRunnerAdapter;
+  runner: IsolatedTestRunnerAdapter;
   fileMap: FileMap;
   testSelectionFilePath: string;
 }
@@ -49,17 +49,14 @@ export default class TestRunnerOrchestrator {
 
   private initialRunWithTestSelector() {
     let testSelectionFilePath = this.createTestSelectorFileName(this.createTempFolder());
-    let runnerAdapter = this.createTestRunner(this.files, true, testSelectionFilePath);
+    let runner = this.createTestRunner(this.files, true, testSelectionFilePath);
     let sandbox: TestRunnerSandbox = {
-      runnerAdapter,
+      runner,
       fileMap: null,
       testSelectionFilePath,
       index: 0
     };
-    return this.runSingleTestsRecursive(sandbox, [], 0).then((testResults) => {
-      runnerAdapter.dispose();
-      return testResults;
-    });
+    return this.runSingleTestsRecursive(sandbox, [], 0).then((testResults) => runner.dispose().then(() => testResults));
   }
 
   runMutations(mutants: Mutant[]): Promise<MutantResult[]> {
@@ -75,7 +72,7 @@ export default class TestRunnerOrchestrator {
             let sandbox = sandboxes.pop();
             let sourceFileCopy = sandbox.fileMap[mutant.filename];
             return Promise.all([mutant.save(sourceFileCopy), this.selectTestsIfPossible(sandbox, mutant.scopedTestIds)])
-              .then(() => sandbox.runnerAdapter.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
+              .then(() => sandbox.runner.run({ timeout: this.calculateTimeout(mutant.timeSpentScopedTests) }))
               .then((runResult) => {
                 let result = this.collectFrozenMutantResult(mutant, runResult);
                 results.push(result);
@@ -92,8 +89,8 @@ export default class TestRunnerOrchestrator {
       }
       return new PromisePool(promiseProducer, sandboxes.length)
         .start()
-        .then(() => sandboxes.forEach(testRunner => testRunner.runnerAdapter.dispose()))
         .then(() => this.reportAllMutantsTested(results))
+        .then(() => Promise.all(sandboxes.map(testRunner => testRunner.runner.dispose())))
         .then(() => results);
     });
   }
@@ -149,7 +146,7 @@ export default class TestRunnerOrchestrator {
 
     return new Promise<RunResult[]>(resolve => {
       this.selectTestsIfPossible(sandbox, [currentTestIndex])
-        .then(() => sandbox.runnerAdapter.run({ timeout: 10000 }))
+        .then(() => sandbox.runner.run({ timeout: 10000 }))
         .then(runResult => {
           if (runResult.result === TestResult.Complete && runResult.succeeded > 0 || runResult.failed > 0) {
             runResults[currentTestIndex] = runResult;
@@ -159,7 +156,7 @@ export default class TestRunnerOrchestrator {
               // If this was iteration n+1 (n = number of tests), the runResult.result will be Complete, so we don't record it
               runResults[currentTestIndex] = runResult;
             }
-            sandbox.runnerAdapter.dispose();
+            sandbox.runner.dispose();
             resolve(runResults);
           }
         });
@@ -172,35 +169,37 @@ export default class TestRunnerOrchestrator {
     let allPromises: Promise<any>[] = [];
     log.info(`Creating ${cpuCount} test runners (based on cpu count)`);
     for (let i = 0; i < cpuCount; i++) {
-      allPromises.push(this.createSandbox(i).then(sandbox => testRunnerSandboxes.push(sandbox)));
+      allPromises.push(this.createInitializedSandbox(i));
     }
-    return Promise.all(allPromises).then(() => testRunnerSandboxes);
+    return Promise.all(allPromises);
+
   }
 
   private selectTestsIfPossible(sandbox: TestRunnerSandbox, ids: number[]): Promise<void> {
     if (this.testSelector) {
       let fileContent = this.testSelector.select(ids);
       return StrykerTempFolder.writeFile(sandbox.testSelectionFilePath, fileContent);
-    }else{
+    } else {
       return Promise.resolve(void 0);
     }
   }
 
-  private createSandbox(index: number): Promise<TestRunnerSandbox> {
+  private createInitializedSandbox(index: number): Promise<TestRunnerSandbox> {
     var tempFolder = this.createTempFolder();
     return this.copyAllFilesToFolder(tempFolder).then(fileMap => {
       let runnerFiles: InputFile[] = [];
       let testSelectionFilePath: string = null;
-      if(this.testSelector){
+      if (this.testSelector) {
         testSelectionFilePath = this.createTestSelectorFileName(tempFolder);
       }
       this.files.forEach(originalFile => runnerFiles.push({ path: fileMap[originalFile.path], shouldMutate: originalFile.shouldMutate }));
-      return {
+      let runner = this.createTestRunner(runnerFiles, false, testSelectionFilePath, index);
+      return runner.init().then(() => ({
         index,
         fileMap,
-        runnerAdapter: this.createTestRunner(runnerFiles, false, testSelectionFilePath, index),
+        runner,
         testSelectionFilePath
-      };
+      }));
     });
   }
 

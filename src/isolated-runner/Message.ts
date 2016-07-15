@@ -1,13 +1,17 @@
 
-export enum MessageType{
+export enum MessageType {
   Start,
+  Init,
+  InitDone,
   Run,
-  Result
+  Result,
+  Dispose,
+  DisposeDone
 }
 
-interface Message<T> {
+export interface Message<T> {
   type: MessageType;
-  body: T;
+  body?: T;
 }
 
 export default Message;

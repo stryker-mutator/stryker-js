@@ -1,7 +1,7 @@
 import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from 'stryker-api/test_runner';
 import {StrykerOptions} from 'stryker-api/core';
 import {fork, ChildProcess} from 'child_process';
-import Message, {MessageType} from './Message';
+import Message, {MessageType } from './Message';
 import StartMessageBody from './StartMessageBody';
 import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapter');
+const MAX_WAIT_FOR_DISPOSE = 2000;
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
@@ -17,10 +18,15 @@ const log = log4js.getLogger('IsolatedTestRunnerAdapter');
 export default class TestRunnerChildProcessAdapter implements TestRunner {
 
   private workerProcess: ChildProcess;
-  private currentPromiseFulfillmentCallback: (result: RunResult) => void;
-  private currentPromise: Promise<RunResult>;
+  private initPromiseFulfillmentCallback: () => void;
+  private runPromiseFulfillmentCallback: (result: RunResult) => void;
+  private disposePromiseFulfillmentCallback: () => void;
+  private initPromise: Promise<void>;
+  private runPromise: Promise<RunResult>;
+  private disposingPromise: Promise<any>;
   private currentTimeoutTimer: NodeJS.Timer;
   private currentRunStartedTimestamp: Date;
+  private isDisposing: boolean;
 
   constructor(private realTestRunnerName: string, private options: RunnerOptions) {
     this.startWorker();
@@ -56,7 +62,15 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
       this.clearCurrentTimer();
       switch (message.type) {
         case MessageType.Result:
-          this.handleResultMessage(message);
+          if (!this.isDisposing) {
+            this.handleResultMessage(message);
+          }
+          break;
+        case MessageType.InitDone:
+          this.initPromiseFulfillmentCallback();
+          break;
+        case MessageType.DisposeDone:
+          this.disposePromiseFulfillmentCallback();
           break;
         default:
           log.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`)
@@ -65,22 +79,41 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
     });
   }
 
+  init(): Promise<any> {
+    this.initPromise = new Promise<void>(resolve => this.initPromiseFulfillmentCallback = resolve);
+    this.sendInitCommand();
+    return this.initPromise;
+  }
+
   run(options: RunOptions): Promise<RunResult> {
     this.clearCurrentTimer();
     if (options.timeout) {
       this.markNoResultTimeout(options.timeout);
     }
-    this.currentPromise = new Promise<RunResult>(resolve => {
-      this.currentPromiseFulfillmentCallback = resolve;
+    this.runPromise = new Promise<RunResult>(resolve => {
+      this.runPromiseFulfillmentCallback = resolve;
       this.sendRunCommand(options);
       this.currentRunStartedTimestamp = new Date();
     });
-    return this.currentPromise;
+    return this.runPromise;
   }
 
-  dispose() {
-    this.clearCurrentTimer();
-    this.workerProcess.kill();
+  dispose(): Promise<any> {
+    if (this.isDisposing) {
+      return this.disposingPromise;
+    } else {
+      this.isDisposing = true;
+      this.disposingPromise = new Promise(resolve => this.disposePromiseFulfillmentCallback = resolve)
+        .then(() => {
+          clearTimeout(timer);
+          this.workerProcess.kill();
+          this.isDisposing = false;
+        });
+      this.clearCurrentTimer();
+      this.sendDisposeCommand();
+      let timer = setTimeout(this.disposePromiseFulfillmentCallback, MAX_WAIT_FOR_DISPOSE);
+      return this.disposingPromise;
+    }
   }
 
   private sendRunCommand(options: RunOptions) {
@@ -104,9 +137,17 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
     this.workerProcess.send(startMessage);
   }
 
+  private sendInitCommand() {
+    this.workerProcess.send(this.emptyMessage(MessageType.Init));
+  }
+
+  private sendDisposeCommand() {
+    this.workerProcess.send(this.emptyMessage(MessageType.Dispose));
+  }
+
   private handleResultMessage(message: Message<ResultMessageBody>) {
     message.body.result.timeSpent = (new Date().getTime() - this.currentRunStartedTimestamp.getTime());
-    this.currentPromiseFulfillmentCallback(message.body.result);
+    this.runPromiseFulfillmentCallback(message.body.result);
   }
 
   private clearCurrentTimer() {
@@ -122,8 +163,13 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
   }
 
   private handleTimeout() {
-    this.workerProcess.kill();
-    this.startWorker();
-    this.currentPromiseFulfillmentCallback({ result: TestResult.Timeout });
+    this.dispose()
+      .then(() => this.startWorker())
+      .then(() => this.init())
+      .then(() => this.runPromiseFulfillmentCallback({ result: TestResult.Timeout }))
+  }
+
+  private emptyMessage(type: MessageType): Message<void> {
+    return { type };
   }
 }
