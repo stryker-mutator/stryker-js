@@ -7,13 +7,15 @@ const log = log4js.getLogger('KarmaTestRunner');
 
 interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string }
+  detached?: boolean;
 }
 
 const DEFAULT_OPTIONS: ConfigOptions = {
   browsers: ['PhantomJS'],
   frameworks: ['jasmine'],
   autoWatch: false,
-  singleRun: false
+  singleRun: false,
+  detached: false
 }
 
 const DEFAULT_COVERAGE_REPORTER = {
@@ -25,7 +27,7 @@ const DEFAULT_COVERAGE_REPORTER = {
 export default class KarmaTestRunner implements TestRunner {
 
   private server: karma.Server;
-  private serverStartedPromise: Promise<Object>;
+  private serverStartedPromise: Promise<void>;
   private currentTestResults: karma.TestResults;
   private currentSpecNames: string[];
   private currentErrorMessages: string[];
@@ -50,10 +52,23 @@ export default class KarmaTestRunner implements TestRunner {
     this.server.start();
   }
 
+  init(): Promise<void> {
+    return this.serverStartedPromise;
+  }
+
+  run(): Promise<RunResult> {
+    this.currentTestResults = null;
+    this.currentSpecNames = [];
+    this.currentErrorMessages = [];
+    this.currentCoverageReport = null;
+    return this.runServer().then(() => this.convertResult(this.currentTestResults));
+  }
+
+  // Don't use dispose() to stop karma (using karma.stopper.stop)
+  // It only works when in `detached` mode, as specified here: http://karma-runner.github.io/1.0/config/configuration-file.html
+
   private listenToBrowserStarted() {
-    this.serverStartedPromise = new Promise((res) => {
-      this.server.on('browsers_ready', res);
-    });
+    this.serverStartedPromise = new Promise<void>((res) => this.server.on('browsers_ready', res));
   }
 
   private listenToSpecComplete() {
@@ -146,24 +161,11 @@ export default class KarmaTestRunner implements TestRunner {
 
   private runServer() {
     return new Promise<void>((resolve) => {
-      let p = this.options.port;
-      karma.runner.run({ port: p }, (exitCode) => {
+      karma.runner.run({ port: this.options.port }, (exitCode) => {
         log.info('karma run done with ', exitCode);
         resolve();
       });
     });
-  }
-
-  run(): Promise<RunResult> {
-    return this.serverStartedPromise.then(() => new Promise<RunResult>((resolve) => {
-      this.currentTestResults = null;
-      this.currentSpecNames = [];
-      this.currentErrorMessages = [];
-      this.currentCoverageReport = null;
-      this.runServer().then(() => {
-        resolve(this.convertResult(this.currentTestResults));
-      });
-    }));
   }
 
   private convertResult(testResults: karma.TestResults): RunResult {
