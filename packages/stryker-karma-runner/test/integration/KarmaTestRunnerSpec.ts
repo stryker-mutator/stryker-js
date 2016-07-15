@@ -7,7 +7,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 let expect = chai.expect;
 
-describe('KarmaTestRunner', function() {
+describe('KarmaTestRunner', function () {
 
   var sut: KarmaTestRunner;
   this.timeout(10000);
@@ -28,6 +28,7 @@ describe('KarmaTestRunner', function() {
 
       before(() => {
         sut = new KarmaTestRunner(testRunnerOptions);
+        return sut.init();
       });
 
       it('should report completed tests with code coverage', () => {
@@ -64,6 +65,7 @@ describe('KarmaTestRunner', function() {
 
       before(() => {
         sut = new KarmaTestRunner(testRunnerOptions);
+        return sut.init();
       });
 
       it('should report completed tests without coverage', () => {
@@ -88,6 +90,7 @@ describe('KarmaTestRunner', function() {
         strykerOptions: {}
       };
       sut = new KarmaTestRunner(testRunnerOptions);
+      return sut.init();
     });
 
     it('should report Error with the error message', () => {
@@ -111,6 +114,7 @@ describe('KarmaTestRunner', function() {
         strykerOptions: {}
       };
       sut = new KarmaTestRunner(testRunnerOptions);
+      return sut.init();
     });
 
     it('should report Complete without errors', () => {
