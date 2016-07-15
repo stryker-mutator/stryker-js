@@ -21,13 +21,13 @@ describe('fileUtils', function() {
   });
 
   it('should indicate that an existing file exists', function() {
-    var exists = fileUtils.fileOrFolderExists('src/Stryker.ts');
+    var exists = fileUtils.fileOrFolderExistsSync('src/Stryker.ts');
 
     expect(exists).to.equal(true);
   });
 
   it('should indicate that an non-existing file does not exists', function() {
-    var exists = fileUtils.fileOrFolderExists('src/Strykerfaefeafe.js');
+    var exists = fileUtils.fileOrFolderExistsSync('src/Strykerfaefeafe.js');
 
     expect(exists).to.equal(false);
   });
