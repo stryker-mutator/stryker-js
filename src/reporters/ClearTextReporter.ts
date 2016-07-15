@@ -15,29 +15,34 @@ export default class ClearTextReporter implements Reporter {
 
   onAllMutantsTested(mutantResults: MutantResult[]): void {
     this.writeLine();
-    var mutantsKilled = 0;
-    var mutantsTimedOut = 0;
-    var mutantsUntested = 0;
+    let mutantsKilled = 0;
+    let mutantsTimedOut = 0;
+    let mutantsUntested = 0;
+
+    // use these fn's in order to preserve the 'this` pointer
+    let logDebugFn = (input: string) => log.debug(input); 
+    let writeLineFn = (input: string) => this.writeLine(input);
+
     mutantResults.forEach(result => {
       switch (result.status) {
         case MutantStatus.KILLED:
           mutantsKilled++;
           log.debug(chalk.bold.green('Mutant killed!'));
-          this.logMutantResultToDebug(result);
+          this.logMutantResult(result, logDebugFn);
           break;
         case MutantStatus.TIMEDOUT:
-          mutantsTimedOut++; 
-          log.debug(chalk.bold.yellow('Mutant timedout!'));
-          this.logMutantResultToDebug(result);
+          mutantsTimedOut++;
+          log.debug(chalk.bold.yellow('Mutant timed out!'));
+          this.logMutantResult(result, logDebugFn);
           break;
         case MutantStatus.SURVIVED:
           this.writeLine(chalk.bold.red('Mutant survived!'));
-          this.logMutantResult(result);
+          this.logMutantResult(result, writeLineFn);
           break;
         case MutantStatus.UNTESTED:
           mutantsUntested++;
           log.debug(chalk.bold.yellow('Mutant untested!'));
-          this.logMutantResultToDebug(result);
+          this.logMutantResult(result, logDebugFn);
           break;
       }
     });
@@ -55,35 +60,22 @@ export default class ClearTextReporter implements Reporter {
     this.writeLine('Mutation score based on all code: ' + codebaseColor(mutationScoreCodebase + '%'));
   }
 
-  private logMutantResult(result: MutantResult): void {
-    this.writeLine(result.sourceFilePath + ': line ' + result.location.start.line + ':' + result.location.start.column);
-    this.writeLine('Mutator: ' + result.mutatorName);
-    this.writeLine(chalk.red('-   ' + result.originalLines));
-    this.writeLine(chalk.green('+   ' + result.mutatedLines));
-    this.writeLine('\n');
-    this.writeLine('Tests ran: ');
-    _.forEach(result.testsRan, (spec: string) => {
-      this.writeLine('    ' + spec);
-    });
-    this.writeLine('\n');
-  }
-
-  private logMutantResultToDebug(result: MutantResult): void {
-    log.debug(result.sourceFilePath + ': line ' + result.location.start.line + ':' + result.location.start.column);
-    log.debug('Mutator: ' + result.mutatorName);
+  private logMutantResult(result: MutantResult, logImplementation: (input: string) => void): void {
+    logImplementation(result.sourceFilePath + ': line ' + result.location.start.line + ':' + result.location.start.column);
+    logImplementation('Mutator: ' + result.mutatorName);
     result.originalLines.split('\n').forEach(line => {
-      log.debug(chalk.red('-   ' + line));
+      logImplementation(chalk.red('-   ' + line));
     });
     result.mutatedLines.split('\n').forEach(line => {
-      log.debug(chalk.green('+   ' + line));
+      logImplementation(chalk.green('+   ' + line));
     });
-    log.debug('');
-    if(result.testsRan && result.testsRan.length > 0){
-      log.debug('Tests ran: ');
+    logImplementation('');
+    if (result.testsRan && result.testsRan.length > 0) {
+      logImplementation('Tests ran: ');
       _.forEach(result.testsRan, (spec: string) => {
-        log.debug('    ' + spec);
+        logImplementation('    ' + spec);
       });
-      log.debug('');
+      logImplementation('');
     }
   }
 
