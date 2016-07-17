@@ -4,10 +4,14 @@ import StartMessageBody from './StartMessageBody';
 import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
 import PluginLoader from '../PluginLoader';
+import * as log4js from 'log4js';
+import {isPromise} from '../utils/objectUtils';
+
+const log = log4js.getLogger('TestRunnerChildProcessAdapterWorker');
 
 class TestRunnerChildProcessAdapterWorker {
 
-  underlyingTestRunner: TestRunner;
+  private underlyingTestRunner: TestRunner;
 
   constructor() {
     this.listenToMessages();
@@ -22,6 +26,14 @@ class TestRunnerChildProcessAdapterWorker {
         case MessageType.Run:
           this.run(message.body);
           break;
+        case MessageType.Init:
+          this.init();
+          break;
+        case MessageType.Dispose:
+          this.dispose();
+          break;
+        default:
+          log.warn('Received unsupported message: {}', JSON.stringify(message));
       }
     });
   }
@@ -29,6 +41,38 @@ class TestRunnerChildProcessAdapterWorker {
   start(body: StartMessageBody) {
     this.loadPlugins(body.runnerOptions.strykerOptions.plugins);
     this.underlyingTestRunner = TestRunnerFactory.instance().create(body.runnerName, body.runnerOptions);
+  }
+
+  init() {
+    let initPromise: Promise<any> | void = void 0;
+    if (this.underlyingTestRunner.init) {
+      initPromise = this.underlyingTestRunner.init();
+    }
+    if (isPromise(initPromise)) {
+      initPromise.then(this.sendInitDone);
+    } else {
+      this.sendInitDone();
+    }
+  }
+
+  sendInitDone() {
+    process.send({ type: MessageType.InitDone });
+  }
+
+  dispose() {
+    let disposePromise: Promise<any> | void = void 0;
+    if (this.underlyingTestRunner.dispose) {
+      disposePromise = this.underlyingTestRunner.dispose();
+    }
+    if (isPromise(disposePromise)) {
+      disposePromise.then(this.sendDisposeDone);
+    } else {
+      this.sendDisposeDone();
+    }
+  }
+
+  sendDisposeDone() {
+    process.send({ type: MessageType.DisposeDone });
   }
 
   run(body: RunMessageBody) {
