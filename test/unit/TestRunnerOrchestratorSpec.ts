@@ -40,12 +40,14 @@ describe('TestRunnerOrchestrator', () => {
 
   beforeEach(() => {
     firstTestRunner = {
+      init: sinon.stub().returns(Promise.resolve()),
       run: sinon.stub(),
-      dispose: sinon.stub()
+      dispose: sinon.stub().returns(Promise.resolve())
     };
     secondTestRunner = {
+      init: sinon.stub().returns(Promise.resolve()),
       run: sinon.stub(),
-      dispose: sinon.stub()
+      dispose: sinon.stub().returns(Promise.resolve())
     };
 
     let configureTestRunner = (stub: sinon.SinonStub) => stub

@@ -1,4 +1,3 @@
-console.log('l4js:', require.resolve('log4js'));
 import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 
