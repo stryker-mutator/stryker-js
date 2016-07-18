@@ -17,7 +17,7 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       testRunnerOptions = {
-        files: [{ path: 'testResources/sampleProject/src/Add.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/AddSpec.js', shouldMutate: false }],
+        files: [{ path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true  }, { path: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true  }],
         port: 9877,
         coverageEnabled: true,
         strykerOptions: { logLevel: 'trace' }
@@ -54,7 +54,7 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       testRunnerOptions = {
-        files: [{ path: 'testResources/sampleProject/src/Add.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/AddSpec.js', shouldMutate: false }],
+        files: [{ path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true  }, { path: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true  }],
         port: 9878,
         coverageEnabled: false,
         strykerOptions: {}
@@ -84,7 +84,7 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       let testRunnerOptions = {
-        files: [{ path: 'testResources/sampleProject/src/Error.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/AddSpec.js', shouldMutate: false }],
+        files: [{ path: 'testResources/sampleProject/src/Error.js', mutated: true, included: true  }, { path: 'testResources/sampleProject/test/AddSpec.js', mutated: true, included: true  }],
         port: 9879,
         coverageEnabled: false,
         strykerOptions: {}
@@ -108,7 +108,7 @@ describe('KarmaTestRunner', function () {
   describe('when no error occured and no test is performed', () => {
     before(() => {
       let testRunnerOptions = {
-        files: [{ path: 'testResources/sampleProject/src/Add.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/EmptySpec.js', shouldMutate: true }],
+        files: [{ path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true }, { path: 'testResources/sampleProject/test/EmptySpec.js', mutated: true, included: true }],
         port: 9880,
         coverageEnabled: false,
         strykerOptions: {}
@@ -128,4 +128,27 @@ describe('KarmaTestRunner', function () {
     });
   });
 
+  describe('when adding an error file with included: false', () => {
+
+    before(() => {
+      let testRunnerOptions = {
+        files: [
+          { path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
+          { path: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true },
+          { path: 'testResources/sampleProject/src/Error.js', mutated: false, included: false }],
+        port: 9881,
+        coverageEnabled: false,
+        strykerOptions: {}
+      };
+      sut = new KarmaTestRunner(testRunnerOptions);
+      return sut.init();
+    });
+
+    it('should report Complete without errors', () => {
+      return expect(sut.run()).to.eventually.satisfy((testResult: RunResult) => {
+        expect(testResult.result).to.be.eq(TestResult.Complete);
+        return true;
+      });
+    });
+  })
 });

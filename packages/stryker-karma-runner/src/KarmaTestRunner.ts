@@ -130,7 +130,7 @@ export default class KarmaTestRunner implements TestRunner {
       karmaConfig.preprocessors = {};
     }
     this.options.files.forEach(file => {
-      if (file.shouldMutate) {
+      if (file.mutated) {
         let preprocessor = karmaConfig.preprocessors[file.path];
         if (!preprocessor) {
           karmaConfig.preprocessors[file.path] = 'coverage';
@@ -150,8 +150,7 @@ export default class KarmaTestRunner implements TestRunner {
     karmaConfig = _.assign<ConfigOptions, ConfigOptions>(_.cloneDeep(DEFAULT_OPTIONS), karmaConfig);
 
     // Override files
-    karmaConfig.files = [];
-    this.options.files.forEach(file => karmaConfig.files.push(file.path));
+    karmaConfig.files = this.options.files.map(file => ({ pattern: file.path, included: file.included }) );
 
     // Override port
     karmaConfig.port = this.options.port;
