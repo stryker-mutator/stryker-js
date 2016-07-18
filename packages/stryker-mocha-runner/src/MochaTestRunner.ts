@@ -23,10 +23,17 @@ export default class MochaTestRunner implements TestRunner {
         this.purgeFiles();
         let mocha = new Mocha({ reporter: StrykerMochaReporter });
         this.files.forEach(f => mocha.addFile(f));
-        let runner: any = mocha.run((failures: number) => {
-          let result: RunResult = runner.runResult;
-          resolve(result);
-        });
+        try {
+          let runner: any = mocha.run((failures: number) => {
+            let result: RunResult = runner.runResult;
+            resolve(result);
+          });
+        } catch (error) {
+          resolve({
+            result: TestResult.Error,
+            errorMessages: [error]
+          });
+        }
       } catch (error) {
         log.error(error);
         fail();
