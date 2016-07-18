@@ -191,19 +191,18 @@ export default class TestRunnerOrchestrator {
   private createInitializedSandbox(index: number): Promise<TestRunnerSandbox> {
     var tempFolder = this.createTempFolder();
     return this.copyAllFilesToFolder(tempFolder).then(fileMap => {
-      let runnerFiles: InputFile[] = [];
       let testSelectionFilePath: string = null;
       if (this.testSelector) {
         testSelectionFilePath = this.createTestSelectorFileName(tempFolder);
       }
-      this.files.forEach(originalFile => runnerFiles.push({ path: fileMap[originalFile.path], shouldMutate: originalFile.shouldMutate }));
+      let runnerFiles = this.files.map(originalFile => <InputFile>_.assign(_.cloneDeep(originalFile), { path: fileMap[originalFile.path] }));
       let runner = this.createTestRunner(runnerFiles, false, testSelectionFilePath, index);
-      return runner.init().then(() => ({
+      return {
         index,
         fileMap,
         runner,
         testSelectionFilePath
-      }));
+      }
     });
   }
 
@@ -234,7 +233,7 @@ export default class TestRunnerOrchestrator {
 
   private createTestRunner(files: InputFile[], coverageEnabled: boolean, testSelectionFilePath?: string, index: number = 0): IsolatedTestRunnerAdapter {
     if (testSelectionFilePath) {
-      files = [{ path: testSelectionFilePath, shouldMutate: false }].concat(files);
+      files = [{ path: testSelectionFilePath, mutated: false, included: true }].concat(files);
     }
     let settings = {
       coverageEnabled,

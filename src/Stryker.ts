@@ -64,7 +64,7 @@ export default class Stryker {
           this.logInitialTestRunSucceeded(runResults);
           let mutatorOrchestrator = new MutatorOrchestrator(reporter);
           let mutants = mutatorOrchestrator.generateMutants(inputFiles
-            .filter(inputFile => inputFile.shouldMutate)
+            .filter(inputFile => inputFile.mutated)
             .map(file => file.path));
           log.info(`${mutants.length} Mutant(s) generated`);
 

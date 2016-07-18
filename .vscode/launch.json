@@ -49,7 +49,7 @@
       "name": "Run stryker example",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/src/Stryker.js",
+      "program": "${workspaceRoot}/bin/stryker",
       "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
