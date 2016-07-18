@@ -1,4 +1,5 @@
 import {TestRunner, TestResult, RunResult, RunnerOptions, CoverageCollection} from 'stryker-api/test_runner';
+import {InputFile} from 'stryker-api/core';
 import * as path from 'path';
 import * as log4js from 'log4js';
 // import * as Mocha from 'mocha';
@@ -7,14 +8,14 @@ import StrykerMochaReporter from './StrykerMochaReporter';
 
 const log = log4js.getLogger('MochaTestRunner');
 export default class MochaTestRunner implements TestRunner {
-  private files: string[];
+  private files: InputFile[];
 
   constructor(runnerOptions: RunnerOptions) {
-    this.files = runnerOptions.files.map(f => path.resolve(f.path));
+    this.files = runnerOptions.files;
   }
 
   private purgeFiles() {
-    this.files.forEach(f => delete require.cache[f]);
+    this.files.forEach(f => delete require.cache[f.path]);
   }
 
   run(): Promise<RunResult> {
@@ -22,7 +23,7 @@ export default class MochaTestRunner implements TestRunner {
       try {
         this.purgeFiles();
         let mocha = new Mocha({ reporter: StrykerMochaReporter });
-        this.files.forEach(f => mocha.addFile(f));
+        this.files.filter(file => file.included).forEach(f => mocha.addFile(f.path));
         try {
           let runner: any = mocha.run((failures: number) => {
             let result: RunResult = runner.runResult;
@@ -36,7 +37,7 @@ export default class MochaTestRunner implements TestRunner {
         }
       } catch (error) {
         log.error(error);
-        fail();
+        fail(error);
       }
     });
 

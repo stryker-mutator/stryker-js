@@ -31,7 +31,7 @@
     "log4js": "^0.6.37"
   },
   "peerDependencies": {
-    "stryker-api": "^0.1.0",
+    "stryker-api": "^0.1.2",
     "mocha": "^2.3.3"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "mocha-sinon": "^1.1.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "0.1.0",
+    "stryker-api": "0.1.2",
     "typescript": "^1.8.10",
     "typings": "^1.3.1"
   }

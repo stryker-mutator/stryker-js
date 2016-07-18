@@ -2,10 +2,11 @@ import * as chai from 'chai';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import {TestResult, RunnerOptions, RunResult} from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
+import * as path from 'path';
 chai.use(chaiAsPromised);
 let expect = chai.expect;
 
-describe.only('MochaTestRunner', function() {
+describe('MochaTestRunner', function () {
 
   var sut: MochaTestRunner;
   this.timeout(10000);
@@ -15,7 +16,9 @@ describe.only('MochaTestRunner', function() {
 
     before(() => {
       testRunnerOptions = {
-        files: [{ path: 'testResources/sampleProject/src/MyMath.js', shouldMutate: true }, { path: 'testResources/sampleProject/test/MyMathSpec.js', shouldMutate: false }],
+        files: [
+          file('./testResources/sampleProject/src/MyMath.js'),
+          file('./testResources/sampleProject/test/MyMathSpec.js')],
         coverageEnabled: false,
         strykerOptions: {},
         port: 1234
@@ -39,12 +42,33 @@ describe.only('MochaTestRunner', function() {
       });
 
       it('should be able to run 2 times in a row', () => {
-        return expect(sut.run().then( () => sut.run())).to.eventually.satisfy((testResult: RunResult) => {
+        return expect(sut.run().then(() => sut.run())).to.eventually.satisfy((testResult: RunResult) => {
           expect(testResult.succeeded).to.be.eq(5);
           return true;
         });
       });
     });
+
+    describe('with an error in an unincluded input file', () => {
+      before(() => {
+        let options = {
+          files: [
+            file('testResources/sampleProject/src/MyMath.js'),
+            file('testResources/sampleProject/src/Error.js', false, false),
+            file('testResources/sampleProject/test/MyMathSpec.js')],
+          coverageEnabled: false,
+          strykerOptions: {},
+          port: 1234
+        };
+        sut = new MochaTestRunner(options);
+      });
+
+      it('should report completed tests without errors', () => expect(sut.run()).to.eventually.satisfy((testResult: RunResult) => {
+        expect(testResult.result).to.be.eq(TestResult.Complete, 'Test result did not match');
+        return true;
+      }));
+    });
   });
 
+  let file = (filePath: string, mutated: boolean = true, included: boolean = true) => ({ path: path.resolve(filePath), mutated, included });
 });
