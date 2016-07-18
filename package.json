@@ -69,12 +69,12 @@
     "mocha-sinon": "^1.1.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.1.1",
+    "stryker-api": "0.1.1",
     "stryker-karma-runner": "^0.1.0",
     "typescript": "^1.8.9",
     "typings": "^0.7.11"
   },
   "peerDependencies": {
-    "stryker-api": "^0.1.1"
+    "stryker-api": "0.1.1"
   }
 }
