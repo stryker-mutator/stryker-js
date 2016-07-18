@@ -2,7 +2,7 @@
   "name": "stryker-mocha-runner",
   "version": "0.0.0",
   "description": "The Stryker TestRunner for Mocha",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "pretest": "typings install",
     "test": "grunt test"
@@ -28,9 +28,11 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker-mocha-runner#readme",
   "dependencies": {
-    "es6-promise-pool": "^2.4.2",
-    "log4js": "^0.6.37",
-    "stryker-api": "0.0.2"
+    "log4js": "^0.6.37"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.1.0",
+    "mocha": "^2.3.3"
   },
   "devDependencies": {
     "chai": "^3.4.1",
@@ -50,6 +52,7 @@
     "mocha-sinon": "^1.1.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
+    "stryker-api": "0.1.0",
     "typescript": "^1.8.10",
     "typings": "^1.3.1"
   }
