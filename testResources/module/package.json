@@ -6,7 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "postinstall": "typings install",
-    "stryker:config": "node node_modules/stryker/src/Stryker.js --configFile stryker.conf.js"
+    "stryker:config": "stryker --configFile stryker.conf.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,7 +17,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
     "stryker": "file:../../",
-    "stryker-api": "^0.1.0",
+    "stryker-api": "0.1.1",
     "stryker-karma-runner": "^0.1.0",
     "typescript": "~1.8.9",
     "typings": "^0.7.9"

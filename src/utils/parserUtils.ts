@@ -41,14 +41,14 @@ export function parse(code: string): any {
 export function collectFrozenNodes(abstractSyntaxTree: any, nodes?: any[]): any[] {
   nodes = nodes || [];
 
-  if (abstractSyntaxTree instanceof Object && !(abstractSyntaxTree instanceof Array) && abstractSyntaxTree.type) {
+  if (!_.isArray(abstractSyntaxTree) && _.isObject(abstractSyntaxTree) && abstractSyntaxTree.type && _.isUndefined(abstractSyntaxTree.nodeID)) {
     abstractSyntaxTree.nodeID = nodes.length;
     nodes.push(abstractSyntaxTree);
   }
 
   Object.freeze(abstractSyntaxTree);
-
-  _.forOwn(abstractSyntaxTree, (childNode) => {
+  
+  _.forOwn(abstractSyntaxTree, (childNode, i) => {
     if (childNode instanceof Object && !(childNode instanceof Array)) {
       collectFrozenNodes(childNode, nodes);
     } else if (childNode instanceof Array) {

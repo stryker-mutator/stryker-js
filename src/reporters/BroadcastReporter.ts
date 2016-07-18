@@ -11,10 +11,12 @@ export interface NamedReporter {
   reporter: Reporter
 }
 
+export const ALL_EVENT_METHOD_NAMES = ['onSourceFileRead', 'onAllSourceFilesRead', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead'];
+
 export default class BroadcastReporter implements Reporter {
 
   constructor(private reporters: NamedReporter[]) {
-    ['onSourceFileRead', 'onAllSourceFilesRead', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead', 'wrapUp'].forEach(method => {
+    ALL_EVENT_METHOD_NAMES.concat('wrapUp').forEach(method => {
       (<any>this)[method] = (arg: any) => {
         return this.broadcast(method, arg);
       }
