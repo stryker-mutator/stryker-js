@@ -33,8 +33,8 @@ describe('TestRunnerOrchestrator', () => {
     { path: path.join(process.cwd(), 'bSpec.js'), shouldMutate: false }
   ];
   let strykerOptions: StrykerOptions = { testRunner: 'superRunner', port: 42, timeoutFactor: 1, timeoutMs: 0 };
-  let firstTestRunner: { run: sinon.SinonStub, dispose: sinon.SinonStub };
-  let secondTestRunner: { run: sinon.SinonStub, dispose: sinon.SinonStub };
+  let firstTestRunner: { init: sinon.SinonStub, run: sinon.SinonStub, dispose: sinon.SinonStub };
+  let secondTestRunner: { init: sinon.SinonStub, run: sinon.SinonStub, dispose: sinon.SinonStub };
   let selector: TestSelector;
   let reporter: Reporter;
 
@@ -57,14 +57,13 @@ describe('TestRunnerOrchestrator', () => {
       .withArgs({ timeout: 2 }).returns(Promise.resolve({ result: TestResult.Complete }))
       .withArgs({ timeout: 3 }).returns(Promise.resolve({ result: TestResult.Timeout }))
       .withArgs({ timeout: 4 }).returns(Promise.resolve({ result: TestResult.Error }))
-      
+
       // Initial test run
       .withArgs({ timeout: 10000 })
         .onCall(0).returns(Promise.resolve({ result: TestResult.Complete, succeeded: 1 }))
         .onCall(1).returns(Promise.resolve({ result: TestResult.Complete, failed: 1 }))
         .onCall(2).returns(Promise.resolve({ result: TestResult.Complete }));
             
-
     configureTestRunner(firstTestRunner.run);
     configureTestRunner(secondTestRunner.run);
     selector = {
