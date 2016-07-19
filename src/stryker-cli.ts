@@ -3,6 +3,8 @@ import {CONFIG_SYNTAX_HELP} from './ConfigReader';
 import Stryker from './Stryker';
 import * as log4js from 'log4js';
 
+const log = log4js.getLogger('stryker-cli');
+
 function list(val: string) {
   return val.split(',');
 }
@@ -34,4 +36,5 @@ for (let i in program) {
   }
 }
 
-new Stryker(program).runMutationTest();
+new Stryker(program).runMutationTest()
+  .catch(err => log.error(`an error occurred`, err));

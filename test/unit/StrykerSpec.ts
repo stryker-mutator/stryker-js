@@ -113,7 +113,7 @@ describe('Stryker', function () {
 
     describe('with correct input file globbing', () => {
       beforeEach(() => {
-        inputFiles = [{ path: 'someFile', shouldMutate: true }];
+        inputFiles = [{ path: 'someFile', mutated: true, included: true }];
         inputFileResolverStub = {
           resolve: sandbox.stub().returns(Promise.resolve(inputFiles))
         }
