@@ -76,14 +76,14 @@
       "name": "Run own dog food",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/run.js",
-      // "preLaunchTask": "build",
+      "program": "${workspaceRoot}/bin/stryker",
+      "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "--configFile",
         "stryker.conf.js",
         "--logLevel",
-        "trace"
+        "info"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
