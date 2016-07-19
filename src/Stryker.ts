@@ -17,6 +17,7 @@ import InputFileResolver from './InputFileResolver';
 import ConfigReader from './ConfigReader';
 import PluginLoader from './PluginLoader';
 import {freezeRecursively, isPromise} from './utils/objectUtils';
+import StrykerTempFolder from './utils/StrykerTempFolder';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('Stryker');
@@ -49,7 +50,7 @@ export default class Stryker {
   runMutationTest(): Promise<MutantResult[]> {
     let reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
     let testSelector = new TestSelectorOrchestrator(this.config).determineTestSelector();
-    
+
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then(inputFiles => {
         let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, testSelector, reporter);
@@ -83,7 +84,7 @@ export default class Stryker {
         } else {
           return mutantResults;
         }
-      });
+      }).then(mutantResults => StrykerTempFolder.clean().then(() => mutantResults));
   }
 
   filterOutUnsuccesfulResults(runResults: RunResult[]) {
