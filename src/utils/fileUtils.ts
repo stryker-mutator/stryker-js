@@ -103,30 +103,41 @@ function rmFile(path: string) {
   });
 }
 
-export function deleteDir(dirToDelete: string): Promise<void> {
+function rmdir(dirToDelete: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    fileOrFolderExists(dirToDelete).then(exists => {
-      if (exists) {
-        readdir(dirToDelete).then(files => {
-          let promisses: Promise<void>[] = [];
-          files.forEach(file => {
-            let currentPath = path.join(dirToDelete, file);
-            promisses.push(stats(currentPath).then(stats => {
-              if (stats.isDirectory()) {
-                // recurse
-                return deleteDir(currentPath);
-              } else {
-                // delete file
-                return rmFile(currentPath);
-              }
-            }));
-          });
-          Promise.all(promisses).then(() => resolve());
-        });
+    fs.rmdir(dirToDelete, error => {
+      if (error) {
+        reject(error);
       } else {
         resolve();
       }
-    });
+    })
+  });
+}
+
+/**
+ * Deletes a directory recursively
+ */
+export function deleteDir(dirToDelete: string): Promise<void> {
+  return fileOrFolderExists(dirToDelete).then(exists => {
+    if (exists) {
+      return readdir(dirToDelete).then(files => {
+        let promisses = files.map(file => {
+          let currentPath = path.join(dirToDelete, file);
+          return stats(currentPath).then(stats => {
+            if (stats.isDirectory()) {
+              // recursive
+              return deleteDir(currentPath);
+            } else {
+              // delete file
+              return rmFile(currentPath);
+            }
+          });
+        });
+        // delete dir
+        return Promise.all(promisses).then(() => rmdir(dirToDelete));
+      });
+    }
   });
 }
 
@@ -136,7 +147,7 @@ export function cleanFolder(folderName: string) {
       if (exists) {
         return deleteDir(folderName)
           .then(() => mkdirRecursive(folderName));
-      }else{
+      } else {
         return mkdirRecursive(folderName);
       }
     });

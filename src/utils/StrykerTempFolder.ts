@@ -2,9 +2,13 @@ import * as os from 'os'
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
+import * as fileUtils from './fileUtils';
+import * as log4js from 'log4js';
 
-let baseTempFolder = os.tmpdir() + path.sep + 'stryker';
-let tempFolder = baseTempFolder + path.sep + random();
+const log = log4js.getLogger('fileUtils');
+
+let baseTempFolder = path.join(process.cwd(), '.stryker-tmp');
+let tempFolder = path.join(baseTempFolder, random().toString());
 ensureFolderExists(baseTempFolder);
 ensureFolderExists(tempFolder);
 
@@ -86,9 +90,18 @@ function copyFile(fromFilename: string, toFilename: string): Promise<void> {
   });
 }
 
+/**
+ * Deletes the Stryker-temp folder
+ */
+function clean() {
+  log.info(`Cleaning stryker temp folder ${baseTempFolder}`)
+  return fileUtils.deleteDir(baseTempFolder);
+}
+
 export default {
   createRandomFolder,
   writeFile,
   copyFile,
-  ensureFolderExists
+  ensureFolderExists,
+  clean
 };
