@@ -33,7 +33,7 @@
     "mkdirp": "^0.5.1"
   },
   "peerDependencies": {
-    "stryker-api": "0.1.0"
+    "stryker-api": "^0.1.2"
   },
   "devDependencies": {
     "bootstrap": "3.3.6",
@@ -58,6 +58,6 @@
     "sinon-chai": "^2.8.0",
     "typescript": "^1.8.10",
     "typings": "^1.0.4",
-    "stryker-api": "0.1.0"
+    "stryker-api": "^0.1.2"
   }
 }
