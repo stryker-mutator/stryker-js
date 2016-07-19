@@ -27,10 +27,10 @@ describe('TestRunnerOrchestrator', () => {
   let sut: TestRunnerOrchestrator;
   let sandbox: sinon.SinonSandbox;
   let files = [
-    { path: path.join(process.cwd(), 'a.js'), shouldMutate: true },
-    { path: path.join(process.cwd(), 'b.js'), shouldMutate: true },
-    { path: path.join(process.cwd(), 'aSpec.js'), shouldMutate: false },
-    { path: path.join(process.cwd(), 'bSpec.js'), shouldMutate: false }
+    { path: path.join(process.cwd(), 'a.js'), mutated: true, included: true },
+    { path: path.join(process.cwd(), 'b.js'), mutated: true, included: false },
+    { path: path.join(process.cwd(), 'aSpec.js'), mutated: false, included: true },
+    { path: path.join(process.cwd(), 'bSpec.js'), mutated: false, included: false }
   ];
   let strykerOptions: StrykerOptions = { testRunner: 'superRunner', port: 42, timeoutFactor: 1, timeoutMs: 0 };
   let firstTestRunner: { init: sinon.SinonStub, run: sinon.SinonStub, dispose: sinon.SinonStub };
@@ -124,7 +124,7 @@ describe('TestRunnerOrchestrator', () => {
       beforeEach(() => sut.initialRun().then(res => results = res));
 
       it('should have created an isolated test runner', () => {
-        let expectedFiles = [{ path: path.join('a-folder', '___testSelection.js'), shouldMutate: false }];
+        let expectedFiles = [{ path: path.join('a-folder', '___testSelection.js'), mutated: false, included: true }];
         files.forEach(file => expectedFiles.push(file));
         expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith({ files: expectedFiles, port: 42, coverageEnabled: true, strykerOptions });
       });
@@ -167,11 +167,11 @@ describe('TestRunnerOrchestrator', () => {
 
       it('should have created 2 test runners', () => {
         let expectedFiles = [
-          { path: `a-folder${path.sep}___testSelection.js`, shouldMutate: false },
-          { path: `a-folder${path.sep}a.js`, shouldMutate: true },
-          { path: `a-folder${path.sep}b.js`, shouldMutate: true },
-          { path: `a-folder${path.sep}aSpec.js`, shouldMutate: false },
-          { path: `a-folder${path.sep}bSpec.js`, shouldMutate: false }
+          { path: `a-folder${path.sep}___testSelection.js`, mutated: false, included: true },
+          { path: `a-folder${path.sep}a.js`, mutated: true, included: true },
+          { path: `a-folder${path.sep}b.js`, mutated: true, included: false },
+          { path: `a-folder${path.sep}aSpec.js`, mutated: false, included: true },
+          { path: `a-folder${path.sep}bSpec.js`, mutated: false, included: false }
         ];
 
         expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWithMatch
