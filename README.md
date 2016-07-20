@@ -55,7 +55,7 @@ Options can be configured either via the command line or via a config file.
 ### Avalailable options
 #### Config file
 **Command line:** `-c stryker.conf.js` or `--configile stryker.conf.js`    
-**Config file:** *none, used to set the config file*
+**Config file:** *none, used to set the config file*  
 **Default value:** *none*  
 **Description:**  
 A location to a config file. That file should export a function which accepts a "config" object.
@@ -79,17 +79,16 @@ module.exports = function(config){
 #### All files
 **Command line:** `--files node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js` or `-f node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`        
 **Config file:** `files: ['test/helpers/**/*.js', 'test/unit/**/*.js', { pattern: 'src/**/*.js', included: false, mutated: true }]`  
-**Config file key:** `files: <allFiles>`   
 **Default value:** *none*  
 **Description:**  
 With `files` you configure all files needed to run the tests. If the test runner you use already provides the test framework (jasmine, mocha, etc),
 you should not add those files here as well. The order in this list is important, because that will be the order in which the files are loaded.  
 
-When using the command line, the list can only contain a seperated list of globbing expressions.
+When using the command line, the list can only contain a comma seperated list of globbing expressions.
 When using the config file you can fill an array with strings or objects:
 
 * `string`: A globbing expression used for selecting the files needed to run the tests.
-* { pattern: 'pattern', included: true } :
+* `{ pattern: 'pattern', included: true, mutated: false }` :
    * The `pattern` property is mandatory and contains the globbing expression used for selecting the files
    * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true)
    * The `mutated` property is optional and determines whether or not this file should be targeted for mutations (default: false)   
