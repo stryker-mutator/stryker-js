@@ -18,7 +18,7 @@ program
   .option('--testFramework <name>', `The name of the test framework you want to use`)
   .option('--testRunner <name>', `The name of the test runner you want to use`)
   .option('--testSelector <name>', `The name of the test selector you want to use`)
-  .option('--reporter <name>', 'The name of the reporter you want to use', list)
+  .option('--reporter <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
   .option('--port <n>', 'A free port for the test runner to use (if it needs to). Any additional test runners will be spawned using n+1, n+2, etc', parseInt)
   .option('--timeoutMs <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
   .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
