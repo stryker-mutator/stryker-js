@@ -9,29 +9,26 @@
 *Professor X: For someone who hates mutants... you certainly keep some strange company.*  
 *William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
 
-## Work in progress
-This repository is a work in progress. We only support Jasmine tests in the browser for now. Please create and vote on [issues](https://github.com/stryker-mutator/stryker/issues) to help us determine the priority on features.
-
 ## Getting started
 Stryker is a mutation testing framework for JavaScript. It allows you to test your test by temporarily inserting bugs.
 
 To install stryker, execute the command:
 ```
-npm install stryker --save-dev
+npm install stryker stryker-api --save-dev
 ```
 ***Note****: During the installation you may run into errors caused by [node-gyp](https://github.com/nodejs/node-gyp). It is safe to ignore these errors.*
 
 To test if stryker is working, execute the command:
 ```
-node node_modules/stryker/src/Stryker.js --help
+node node_modules/stryker/bin/stryker --help
 ```
 
 ## Usage
 
 Stryker can be used in two ways:
 
-1. Using a config file `node node_modules/stryker/src/Stryker.js -c stryker.conf.js`
-2. Using command line arguments `node node_modules/stryker/src/Stryker.js –m src/file.js,src/file2.js –f libs/externalLibrary.js,src/file2.js,src/file.js,test/*.js --testFramework 'jasmine' --testRunner 'karma'`
+1. Using a config file `node node_modules/stryker/bin/stryker -c stryker.conf.js`
+2. Using command line arguments `node node_modules/stryker/bin/stryker –m src/file.js,src/file2.js –f libs/externalLibrary.js,src/file2.js,src/file.js,test/*.js --testFramework 'jasmine' --testRunner 'karma'`
 
 The config file is *not* a simple json file, it should be a common js (a.k.a. npm) module looking like this:
 ```javascript
@@ -45,16 +42,7 @@ You might recognize this way of working from the karma test runner.
  
 If both the config file and command line options are combined, the command line arguments will overrule the options in the config file.
 
-All options are optional except the `files` (or `-f`), `mutate` (or `-m`), `testFramework` and `testRunner` options. 
-
-* With `files` you configure all files needed to run the tests, except the test framework files themselves (jasmine).
-The order in this list is important, because that will be the order in which the files are loaded.
-* With `mutate` you configure the subset of files to target for mutation. These should be your source files.
-* With `testRunner` you configure which test runner should run your tests. Currently **only** `'karma'` is supported.
-* With `testFramework` you configure which test framework you used for your tests. The value you configure here is passed through to the test runner, 
-so which values are supporterd here are  determined `'jasmine'` and `null` are supported.
-* With `testSelector` you configure which test selector should be used for your tests. If this value is left out, the value of the `testFramework` is used 
-to determine the `testSelector`. Currently **only** `'jasmine'` is supported. As `Stryker` can run without a `testSelector`, you can explicitly disable it by setting the value to `null`. 
+All options are optional except the `files` (or `-f`) and `testRunner` options.  
 
 Both the `files` and `mutate` options are a list of globbing expressions. The globbing expressions will be resolved
 using [node glob](https://github.com/isaacs/node-glob). This is the same globbing format you might know from 
@@ -65,73 +53,145 @@ The way to provide this list is as an array in the config file, or as a comma se
 Options can be configured either via the command line or via a config file.
 
 ### Avalailable options
-#### Files to mutate
-**Short notation:** `-m`  
-**Full notation:** `--mutate`  
-**Config file key:** `mutate`  
-**Description:**  
-A comma seperated list of globbing expressions used for selecting the files that should be mutated.  
-**Example:** `-m src/\*\*/\*.js,a.js`
-
-#### All files
-**Short notation:** `-f`  
-**Full notation:** `--files`    
-**Config file key:** `files`   
-**Description:**  
-A comma seperated list of globbing expressions used for selecting all files needed to run the tests.
-These include: test files, library files, source files (the files selected with `--mutate`) and any other file you need to run your tests. 
-The order of the files specified here will be the order used to load the file in the test runner (karma).   
-**Example:** `-f node_modules/a-lib/\*\*/\*.js,src/\*\*/\*.js,a.js,test/\*\*/\*.js`
-
-#### Test runner 
-**Full notation:** `--testRunner`  
-**Config file key:** `testRunner`  
-**Description:**  
-The test runner you want to use. Currently supported runners: `'karma'`  
-**Example:** `--testFramework 'karma'`
-
-#### Test framework 
-**Full notation:** `--testFramework`  
-**Config file key:** `testFramework`  
-**Description:**  
-The test framework you want to use. Currently supported frameworks: `'jasmine'`  
-**Example:** `--testFramework 'jasmine'`
-
-#### Test selector
-**Full notation:** `--testSelector`  
-**Config file key:** `testSelector`  
-**Description**:
-Stryker kan use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
-because only the tests covering a particular mutation are ran. If this value is left out, the value of the `testFramework` is used
-to determine the `testSelector`. Currently **only** `'jasmine'` is supported. If you use an other test framework, or you want to disable test selection for an other reason,
-you can explicitly disable the testSelector by setting the value to `null`. 
-
-#### Log level
-**Short notation:** (none)  
-**Full notation:** `--logLevel`  
-**Config file key:** `logLevel`  
-**Description:**  
- Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
-
 ### Config file
-**Short notation:** `-c`  
-**Full notation:** `--configFile`  
+**Usage from command line:** `-c stryker.conf.js` or `--configile stryker.conf.js`    
+**Usage from config file:** *none, used to set the config file*
+**Default value:** *none*  
 **Description:**  
 A location to a config file. That file should export a function which accepts a "config" object.
 On that object you can configure all options as an alternative for the command line. 
 If an option is configured on both the command line and in the config file, the command line wins.
 An example config: 
+
 ```javascript
 module.exports = function(config){
   config.set({
-    files: ['../../../sampleProject/src/?(Circle|Add).js', '../../../sampleProject/test/?(AddSpec|CircleSpec).js'],
-    mutate: ['../../../sampleProject/src/?(Circle|Add).js'],
-    testFramework: 'jasmine',
-    testRunner: 'karma',
-    logLevel: 'debug'
+    files: ['test/helpers/**/*.js', 'test/unit/**/*.js', { pattern: 'src/**/*.js', included: false, mutated: true }],
+    testFramework: 'mocha',
+    testRunner: 'mocha',
+    reporter: ['progress', 'clear-text', 'html', 'event-recorder'],
+    testSelector: null,
+    plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
   });
 }
 ```
+
+#### All files
+**Usage from command line:** `--files node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js` or `-f node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`        
+**Usage from config file:** `files: ['test/helpers/**/*.js', 'test/unit/**/*.js', { pattern: 'src/**/*.js', included: false, mutated: true }]`  
+**Config file key:** `files: <allFiles>`   
+**Default value:** *none*  
+**Description** 
+With `files` you configure all files needed to run the tests. If the test runner you use already provides the test framework (jasmine, mocha, etc),
+you should not add those files here as well. The order in this list is important, because that will be the order in which the files are loaded.  
+
+When using the command line, the list can only contain seperated list of globbing expressions.
+When using the config file you can fill an array with strings or objects:
+
+* `string`: A globbing expression used for selecting the files needed to run the tests.
+* { pattern: 'pattern', included: true } :
+   * The `pattern` property is mandatory and contains the globbing expression used for selecting the files
+   * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true)
+   * The `mutated` property is optional and determines whether or not this file should be targeted for mutations (default: false)   
+
+#### Files to mutate
+**Usage from command line:** `-m src/**/*.js,a.js` or `--mutate src/**/*.js,a.js`  
+**Usage from config file:** `mutate: ['src/**/*.js', 'a.js']  
+**Default value:** *none*  
+**Description:** 
+With `mutate` you configure the subset of files to target for mutation. These should be your source files. 
+This is optional, as you can also use the `mutated` property with `files`, or not select files to be mutated at all to perform a dry-run (test-run).
+Provide a comma seperated list of globbing expressions which will be used to select the files to be mutated.
+
+#### Test runner 
+**Usage from command line:** `--testRunner karma`  
+**Usage from config file:** `testRunner: 'karma'`  
+**Default value:** *none*  
+**Description:**  
+With `testRunner` you configure which test runner should run your tests. This option is required.
+Make sure the plugin to use the test runner is installed next to stryker. For example install the `stryker-karma-runner` to use `karma` as test runner. 
+See [stryker-mutator.github.io](http://stryker-mutator.github.io) for an up-to-date list of supported test runners and plugins.
+
+#### Test framework 
+**Usage from command line:** `--testFramework jasmine`  
+**Usage from config file:** `testFramework: 'jasmine'`    
+**Default value:** *none*  
+**Description:**  
+With `testFramework` you configure which test framework you used for your tests. The value you configure here is passed through to the test runner, 
+so which values are supporterd here are determined by the test runner. By default, this value is also used for `testSelector`.  
+
+#### Test selector
+**Full notation:** `--testSelector jasmine` or `--testSelector null`    
+**Config file key:** `testSelector: 'jasmine'` or `testSelector: null`    
+**Default value:** *none*  
+**Description**  
+Stryker kan use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
+because only the tests covering a particular mutation are ran. If this value is left out, the value of the `testFramework` is used
+to determine the `testSelector`. Currently **only** `'jasmine'` is supported. If you use an other test framework, or you want to disable test selection for an other reason,
+you can explicitly disable the testSelector by setting the value to `null`. 
+
+#### Reporter
+**Usage from command line:** `--reporter clear-text,progress`  
+**Usage from config file:** `reporter: ['clear-text', 'progress']`     
+**Default value:** `['clear-text', 'progress']`  
+**Description**:
+With `reporter` you can set a reporter or group of reporters for stryker to use.
+These reporters can be used out of the box: `clear-text`, `progress` and `event-recorder`.
+By default `clear-text` and `progress` are active if no reporter is configured.
+You can load additional plugins to get more reporters. See [stryker-mutator.github.io](http://stryker-mutator.github.io)
+for an up-to-date list of supported reporter plugins and a description on each reporter.
+  
+#### Plugins
+**Usage from command line:** `--plugins stryker-html-reporter,stryker-karma-runner`  
+**Usage from config file:** `plugins: ['stryker-html-reporter', 'stryker-karma-runner']`  
+**Default value:** `['stryker-*']`  
+**Description**  
+With `plugins` you can add additional node-modules for stryker to load (or `require`).
+By default, all node_modules beginning with `stryker-` will be loaded, so you would normally not need to specify this option.
+These modules should be installed right next to stryker. See [npm](https://www.npmjs.com/search?q=%40stryker-plugin) for 
+[stryker-mutator.github.io](http://stryker-mutator.github.io) the current list of stryker plugins.
+
+#### Port
+**Usage from command line:** `--port 9234`  
+**Usage from config file:** `port: 9234`    
+**Default value:** `9234`  
+**Description**  
+A free port for the test runner to use (if it needs to). Any additional test runners will be spawned using n+1, n+2, etc.
+For example, when you configure 9234 and Stryker decides to start 4 test runner processes, ports 9234 to 9237 will be passed to the test runner.
+If the test runner decides to use the port, it should be free for use.
+
+#### Abolute timeout ms
+**Usage from command line:** `--timeoutMs 5000`  
+**Usage from config file:** `timeoutMs: 5000`  
+**Default value:** `5000`  
+**Description**  
+When stryker is mutating code, it cannot determine indefinitely whether or not a code mutatation results in an infinite loop (see [Halting problem](https://en.wikipedia.org/wiki/Halting_problem)).
+In order to battle infinite loops, a test run gets killed after a certain period. This period is configurable with two settings, `timeoutMs` and `timeoutFactor`. 
+
+To determine the timeout in milliseconds for a test run, the following formula is used.
+
+```
+timeoutForTestRunMs = timeOfTheInitialTestRunMs * timeoutFactor + timeoutMs
+``` 
+
+With `timeoutFactor` you can configure the alowed deviation relative to the time of a normal test run. Tweak this if mutants are prone to create slower, but not infinite, code.
+With `timeoutMs` you can configure an absolute deviation. Tweak this if you are running Stryker on a busy machine, where you need to wait longer to make sure that there indeed is an inifinite loop.  
+
+#### Timeout factor
+**Usage from command line:** `--timeoutFactor 1.5`  
+**Usage from config file:** `timeoutFactor: 1.5`  
+**Default value:** `1.5`  
+**Description**  
+See *TimeoutMs*.
+
+#### Log level
+**Usage from command line:** `--logLevel info`    
+**Usage from config file:** `logLevel: 'info'`
+**Default value:** `info`  
+**Description:**  
+ Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"  
+ *Note*: Test runners are run as child processes. All output (stdout) of the testRunner is logged as 'trace'.
+ To see logging from the test runner, set the `logLevel` to `all` or `trace`.   
 
 ## Supported mutators
 ### Math
