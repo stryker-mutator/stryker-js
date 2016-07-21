@@ -41,10 +41,10 @@ export default class TestRunnerOrchestrator {
 
   private initalRunWithoutTestSelector() {
     let testRunner = this.createTestRunner(this.files, true);
-    return testRunner.run({ timeout: 10000 }).then(testResults => {
+    return testRunner.init().then( () => testRunner.run({ timeout: 10000 }).then(testResults => {
       testRunner.dispose();
       return [testResults];
-    });
+    }));
   }
 
   private initialRunWithTestSelector() {
@@ -56,7 +56,7 @@ export default class TestRunnerOrchestrator {
       testSelectionFilePath,
       index: 0
     };
-    return this.runSingleTestsRecursive(sandbox, [], 0).then((testResults) => runner.dispose().then(() => testResults));
+    return sandbox.runner.init().then(() => this.runSingleTestsRecursive(sandbox, [], 0).then((testResults) => runner.dispose().then(() => testResults)));
   }
 
   runMutations(mutants: Mutant[]): Promise<MutantResult[]> {
