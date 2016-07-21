@@ -21,7 +21,7 @@
   "author": "Nico Jansen <nicoj@infosupport.com>",
   "license": "Apache-2.0",
   "peerDependencies": {
-    "karma": "^0.13.0 || 1.0.0",
+    "karma": "^0.13.0 || ~1.0.0 || ^1.1.1",
     "karma-coverage": "^0.5.5 || ^1.0.0",
     "stryker-api": "^0.1.2"
   },
@@ -37,7 +37,7 @@
     "grunt-ts": "^5.5.1",
     "istanbul": "^0.4.4",
     "jasmine-core": "^2.4.1",
-    "karma": "^0.13.0 || 1.0.0",
+    "karma": "^0.13.0 || ~1.0.0 || ^1.1.1",
     "karma-coverage": "^0.5.5 || ^1.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
