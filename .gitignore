@@ -1,6 +1,8 @@
 node_modules
 coverage
 .tscache
+.stryker-tmp
+reports
 typings
 *.js.map
 src/**/*.js

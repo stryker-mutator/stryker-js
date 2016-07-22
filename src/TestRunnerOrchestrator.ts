@@ -41,10 +41,10 @@ export default class TestRunnerOrchestrator {
 
   private initalRunWithoutTestSelector() {
     let testRunner = this.createTestRunner(this.files, true);
-    return testRunner.run({ timeout: 10000 }).then(testResults => {
+    return testRunner.init().then(() => testRunner.run({ timeout: 10000 }).then(testResults => {
       testRunner.dispose();
       return [testResults];
-    });
+    }));
   }
 
   private initialRunWithTestSelector() {
@@ -56,7 +56,7 @@ export default class TestRunnerOrchestrator {
       testSelectionFilePath,
       index: 0
     };
-    return this.runSingleTestsRecursive(sandbox, [], 0).then((testResults) => runner.dispose().then(() => testResults));
+    return sandbox.runner.init().then(() => this.runSingleTestsRecursive(sandbox, [], 0).then((testResults) => runner.dispose().then(() => testResults)));
   }
 
   runMutations(mutants: Mutant[]): Promise<MutantResult[]> {
@@ -111,6 +111,10 @@ export default class TestRunnerOrchestrator {
       switch (runResult.result) {
         case TestResult.Timeout:
           status = MutantStatus.TIMEDOUT;
+          break;
+        case TestResult.Error:
+          log.debug('Converting a test result `error` to mutant status `killed`.');
+          status = MutantStatus.KILLED;
           break;
         case TestResult.Complete:
           if (runResult.failed > 0) {
@@ -187,19 +191,13 @@ export default class TestRunnerOrchestrator {
   private createInitializedSandbox(index: number): Promise<TestRunnerSandbox> {
     var tempFolder = this.createTempFolder();
     return this.copyAllFilesToFolder(tempFolder).then(fileMap => {
-      let runnerFiles: InputFile[] = [];
       let testSelectionFilePath: string = null;
       if (this.testSelector) {
         testSelectionFilePath = this.createTestSelectorFileName(tempFolder);
       }
-      this.files.forEach(originalFile => runnerFiles.push({ path: fileMap[originalFile.path], shouldMutate: originalFile.shouldMutate }));
+      let runnerFiles = this.files.map(originalFile => <InputFile>_.assign(_.cloneDeep(originalFile), { path: fileMap[originalFile.path] }));
       let runner = this.createTestRunner(runnerFiles, false, testSelectionFilePath, index);
-      return runner.init().then(() => ({
-        index,
-        fileMap,
-        runner,
-        testSelectionFilePath
-      }));
+      return runner.init().then(() => ({index, fileMap, runner, testSelectionFilePath }));
     });
   }
 
@@ -230,7 +228,7 @@ export default class TestRunnerOrchestrator {
 
   private createTestRunner(files: InputFile[], coverageEnabled: boolean, testSelectionFilePath?: string, index: number = 0): IsolatedTestRunnerAdapter {
     if (testSelectionFilePath) {
-      files = [{ path: testSelectionFilePath, shouldMutate: false }].concat(files);
+      files = [{ path: testSelectionFilePath, mutated: false, included: true }].concat(files);
     }
     let settings = {
       coverageEnabled,

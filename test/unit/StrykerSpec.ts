@@ -14,6 +14,7 @@ import * as testSelectorOrchestrator from '../../src/TestSelectorOrchestrator';
 import * as testRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as reporterOrchestrator from '../../src/ReporterOrchestrator';
 import * as pluginLoader from '../../src/PluginLoader';
+import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import log from '../helpers/log4jsMock';
 
 class FakeConfigWriter implements ConfigWriter {
@@ -62,6 +63,7 @@ describe('Stryker', function () {
     sandbox.stub(reporterOrchestrator, 'default').returns(reporterOrchestratorMock);
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
+    sandbox.stub(StrykerTempFolder, 'clean').returns(Promise.resolve());
   });
 
   function actAndShouldResultInARejection() {
@@ -111,7 +113,7 @@ describe('Stryker', function () {
 
     describe('with correct input file globbing', () => {
       beforeEach(() => {
-        inputFiles = [{ path: 'someFile', shouldMutate: true }];
+        inputFiles = [{ path: 'someFile', mutated: true, included: true }];
         inputFileResolverStub = {
           resolve: sandbox.stub().returns(Promise.resolve(inputFiles))
         }
@@ -187,12 +189,15 @@ describe('Stryker', function () {
           describe('and running of mutators was successfull while reporter.wrapUp() results in void', () => {
             beforeEach(() => {
               runMutationsPromiseResolve();
+              return strykerPromise;
             });
             it('should resolve the stryker promise', () => strykerPromise);
 
             it('should have logged the amount of tests ran', () => {
               expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests.', 6);
             });
+
+            it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
           });
 
           describe('and running of mutators was successfull while reporter.wrapUp() results in a promise', () => {
@@ -213,10 +218,14 @@ describe('Stryker', function () {
 
             describe('and the reporter has wrapped up', () => {
 
-              beforeEach(() => wrapUpDoneFn());
+              beforeEach(() => {
+                wrapUpDoneFn();
+                return strykerPromise;
+              });
 
               it('should resolve the stryker promise', () => strykerPromise);
 
+              it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
             });
           });
         });

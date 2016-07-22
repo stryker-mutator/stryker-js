@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -9,7 +9,7 @@
     "test": "grunt test",
     "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
     "tsc:w": "tsc -w",
-    "sample": "node src/Stryker.js --configFile testResources/sampleProject/stryker.conf.js",
+    "sample": "node src/stryker-cli.js --configFile testResources/sampleProject/stryker.conf.js",
     "preversion": "grunt"
   },
   "repository": {
@@ -31,6 +31,9 @@
   "license": "Apache-2.0",
   "engines": {
     "node": ">=0.12.0"
+  },
+  "bin": {
+    "stryker": "./bin/stryker"
   },
   "dependencies": {
     "chalk": "^1.1.1",
@@ -66,12 +69,14 @@
     "mocha-sinon": "^1.1.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.1.1",
-    "stryker-karma-runner": "^0.1.0",
+    "stryker-api": "^0.2.0",
+    "stryker-html-reporter": "^0.2.0",
+    "stryker-karma-runner": "^0.2.0",
+    "stryker-mocha-runner": "0.1.0",
     "typescript": "^1.8.9",
     "typings": "^0.7.11"
   },
   "peerDependencies": {
-    "stryker-api": "^0.1.1"
+    "stryker-api": "^0.2.0"
   }
 }

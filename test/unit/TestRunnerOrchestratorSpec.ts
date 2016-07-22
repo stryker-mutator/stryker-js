@@ -1,10 +1,10 @@
 import TestRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as sinon from 'sinon';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
-import {Reporter} from 'stryker-api/report';
+import {Reporter, MutantStatus, MutantResult} from 'stryker-api/report';
 import {TestSelector} from 'stryker-api/test_selector';
 import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from 'stryker-api/test_runner';
-import {MutantStatus, MutantResult} from 'stryker-api/report';
+import {StrykerOptions} from 'stryker-api/core';
 import IsolatedTestRunnerAdapter from '../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
 import * as chai from 'chai';
@@ -27,14 +27,14 @@ describe('TestRunnerOrchestrator', () => {
   let sut: TestRunnerOrchestrator;
   let sandbox: sinon.SinonSandbox;
   let files = [
-    { path: path.join(process.cwd(), 'a.js'), shouldMutate: true },
-    { path: path.join(process.cwd(), 'b.js'), shouldMutate: true },
-    { path: path.join(process.cwd(), 'aSpec.js'), shouldMutate: false },
-    { path: path.join(process.cwd(), 'bSpec.js'), shouldMutate: false }
+    { path: path.join(process.cwd(), 'a.js'), mutated: true, included: true },
+    { path: path.join(process.cwd(), 'b.js'), mutated: true, included: false },
+    { path: path.join(process.cwd(), 'aSpec.js'), mutated: false, included: true },
+    { path: path.join(process.cwd(), 'bSpec.js'), mutated: false, included: false }
   ];
-  let strykerOptions = { testRunner: 'superRunner', port: 42 };
-  let firstTestRunner: any;
-  let secondTestRunner: any;
+  let strykerOptions: StrykerOptions = { testRunner: 'superRunner', port: 42, timeoutFactor: 1, timeoutMs: 0 };
+  let firstTestRunner: { init: sinon.SinonStub, run: sinon.SinonStub, dispose: sinon.SinonStub };
+  let secondTestRunner: { init: sinon.SinonStub, run: sinon.SinonStub, dispose: sinon.SinonStub };
   let selector: TestSelector;
   let reporter: Reporter;
 
@@ -49,11 +49,23 @@ describe('TestRunnerOrchestrator', () => {
       run: sinon.stub(),
       dispose: sinon.stub().returns(Promise.resolve())
     };
-    firstTestRunner.run
-      .onFirstCall().returns(Promise.resolve({ result: TestResult.Complete, succeeded: 1 }))
-      .onSecondCall().returns(Promise.resolve({ result: TestResult.Complete, failed: 1 }))
-      .onThirdCall().returns(Promise.resolve({ result: TestResult.Complete }));
-    secondTestRunner.run.returns(Promise.resolve({ result: TestResult.Timeout }));
+
+    let configureTestRunner = (stub: sinon.SinonStub) => stub
+      // Run mutants
+      .withArgs({ timeout: 0 }).returns(Promise.resolve({ result: TestResult.Complete, succeeded: 1 }))
+      .withArgs({ timeout: 1 }).returns(Promise.resolve({ result: TestResult.Complete, failed: 1 }))
+      .withArgs({ timeout: 2 }).returns(Promise.resolve({ result: TestResult.Complete }))
+      .withArgs({ timeout: 3 }).returns(Promise.resolve({ result: TestResult.Timeout }))
+      .withArgs({ timeout: 4 }).returns(Promise.resolve({ result: TestResult.Error }))
+
+      // Initial test run
+      .withArgs({ timeout: 10000 })
+        .onCall(0).returns(Promise.resolve({ result: TestResult.Complete, succeeded: 1 }))
+        .onCall(1).returns(Promise.resolve({ result: TestResult.Complete, failed: 1 }))
+        .onCall(2).returns(Promise.resolve({ result: TestResult.Complete }));
+            
+    configureTestRunner(firstTestRunner.run);
+    configureTestRunner(secondTestRunner.run);
     selector = {
       select: sinon.stub().returns('some selected contents')
     };
@@ -112,7 +124,7 @@ describe('TestRunnerOrchestrator', () => {
       beforeEach(() => sut.initialRun().then(res => results = res));
 
       it('should have created an isolated test runner', () => {
-        let expectedFiles = [{ path: path.join('a-folder', '___testSelection.js'), shouldMutate: false }];
+        let expectedFiles = [{ path: path.join('a-folder', '___testSelection.js'), mutated: false, included: true }];
         files.forEach(file => expectedFiles.push(file));
         expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith({ files: expectedFiles, port: 42, coverageEnabled: true, strykerOptions });
       });
@@ -137,7 +149,7 @@ describe('TestRunnerOrchestrator', () => {
       });
     });
 
-    describe('runMutations() with 2 cpus and 4 mutants', () => {
+    describe('runMutations() with 2 cpus and 5 mutants', () => {
       let donePromise: Promise<void>;
       let mutants: any[];
       let mutantResults: MutantResult[];
@@ -148,18 +160,18 @@ describe('TestRunnerOrchestrator', () => {
         var untestedMutant = mockMutant(0);
         untestedMutant.scopedTestIds = [];
 
-        mutants = [untestedMutant, mockMutant(1), mockMutant(2), mockMutant(3)];
+        mutants = [untestedMutant, mockMutant(1), mockMutant(2), mockMutant(3), mockMutant(4)];
         return sut.runMutations(mutants)
           .then(results => mutantResults = results);
       });
 
       it('should have created 2 test runners', () => {
         let expectedFiles = [
-          { path: `a-folder${path.sep}___testSelection.js`, shouldMutate: false },
-          { path: `a-folder${path.sep}a.js`, shouldMutate: true },
-          { path: `a-folder${path.sep}b.js`, shouldMutate: true },
-          { path: `a-folder${path.sep}aSpec.js`, shouldMutate: false },
-          { path: `a-folder${path.sep}bSpec.js`, shouldMutate: false }
+          { path: `a-folder${path.sep}___testSelection.js`, mutated: false, included: true },
+          { path: `a-folder${path.sep}a.js`, mutated: true, included: true },
+          { path: `a-folder${path.sep}b.js`, mutated: true, included: false },
+          { path: `a-folder${path.sep}aSpec.js`, mutated: false, included: true },
+          { path: `a-folder${path.sep}bSpec.js`, mutated: false, included: false }
         ];
 
         expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWithMatch
@@ -172,16 +184,17 @@ describe('TestRunnerOrchestrator', () => {
         expect(firstTestRunner.run).to.have.been.calledTwice;
       });
 
-      it('should have ran mutant 2 on the second test runner', () => {
-        expect(secondTestRunner.run).to.have.been.calledOnce;
+      it('should have ran mutant 2 and mutant 4 on the second test runner', () => {
+        expect(secondTestRunner.run).to.have.been.calledTwice;
       });
 
       it('should have reported onMutantTested on all mutants', () => {
-        expect(reporter.onMutantTested).to.have.callCount(4)
+        expect(reporter.onMutantTested).to.have.callCount(5)
         expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[0]);
         expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[1]);
         expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[2]);
         expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[3]);
+        expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[4]);
       });
 
       it('should have reported onAllMutantsTested', () => {
@@ -189,7 +202,7 @@ describe('TestRunnerOrchestrator', () => {
       });
 
       it('should eventually resolve the correct mutant results', () => {
-        expect(mutantResults.length).to.be.eq(4);
+        expect(mutantResults.length).to.be.eq(5);
 
         let sortedMutantResults = _.sortBy(mutantResults, r => r.sourceFilePath);
 
@@ -197,6 +210,7 @@ describe('TestRunnerOrchestrator', () => {
         expect(sortedMutantResults[1].status).to.be.eq(MutantStatus.KILLED);
         expect(sortedMutantResults[2].status).to.be.eq(MutantStatus.SURVIVED);
         expect(sortedMutantResults[3].status).to.be.eq(MutantStatus.TIMEDOUT);
+        expect(sortedMutantResults[4].status).to.be.eq(MutantStatus.KILLED);
       });
     });
 

@@ -49,16 +49,41 @@
       "name": "Run stryker example",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/src/Stryker.js",
+      "program": "${workspaceRoot}/bin/stryker",
       "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "--configFile",
         "testResources/sampleProject/stryker.conf.js",
         "--logLevel",
-        "debug",
+        "trace",
         "--testFramework",
         "jasmine"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
+    },
+    {
+      "name": "Run own dog food",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/stryker",
+      "preLaunchTask": "build",
+      "stopOnEntry": false,
+      "args": [
+        "--configFile",
+        "stryker.conf.js",
+        "--logLevel",
+        "info"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
