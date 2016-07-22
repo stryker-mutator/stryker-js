@@ -41,7 +41,7 @@ export default class TestRunnerOrchestrator {
 
   private initalRunWithoutTestSelector() {
     let testRunner = this.createTestRunner(this.files, true);
-    return testRunner.init().then( () => testRunner.run({ timeout: 10000 }).then(testResults => {
+    return testRunner.init().then(() => testRunner.run({ timeout: 10000 }).then(testResults => {
       testRunner.dispose();
       return [testResults];
     }));
@@ -197,12 +197,7 @@ export default class TestRunnerOrchestrator {
       }
       let runnerFiles = this.files.map(originalFile => <InputFile>_.assign(_.cloneDeep(originalFile), { path: fileMap[originalFile.path] }));
       let runner = this.createTestRunner(runnerFiles, false, testSelectionFilePath, index);
-      return {
-        index,
-        fileMap,
-        runner,
-        testSelectionFilePath
-      }
+      return runner.init().then(() => ({index, fileMap, runner, testSelectionFilePath }));
     });
   }
 
