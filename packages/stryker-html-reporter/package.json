@@ -1,6 +1,6 @@
 {
   "name": "stryker-html-reporter",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "An html reporter for the JavaScript mutation testing framework Stryker",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "mkdirp": "^0.5.1"
   },
   "peerDependencies": {
-    "stryker-api": "^0.1.2"
+    "stryker-api": "^0.2.0"
   },
   "devDependencies": {
     "bootstrap": "3.3.6",
@@ -58,6 +58,6 @@
     "sinon-chai": "^2.8.0",
     "typescript": "^1.8.10",
     "typings": "^1.0.4",
-    "stryker-api": "^0.1.2"
+    "stryker-api": "^0.2.0"
   }
 }

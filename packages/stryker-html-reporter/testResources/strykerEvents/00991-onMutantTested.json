@@ -1,0 +1,1 @@
+{"sourceFilePath":"/stryker/src/ConfigReader.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":12,"column":35},"end":{"line":14,"column":5}},"range":[406,447],"originalLines":"    function ConfigReader(options) {\r\n        this.options = options;\r\n    }","mutatedLines":"    function ConfigReader(options) {\n}"}

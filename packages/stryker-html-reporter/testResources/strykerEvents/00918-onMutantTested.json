@@ -1,0 +1,1 @@
+{"sourceFilePath":"/stryker/src/InputFileResolver.js","mutatorName":"RemoveConditionals","status":1,"replacement":"true","location":{"start":{"line":53,"column":16},"end":{"line":53,"column":77}},"range":[2759,2820],"originalLines":"            if (Object.keys(maybeInputFileDescriptor).indexOf('pattern') > -1) {","mutatedLines":"            if (true) {"}
