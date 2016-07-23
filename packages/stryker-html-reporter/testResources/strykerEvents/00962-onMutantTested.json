@@ -1,0 +1,1 @@
+{"sourceFilePath":"/stryker/src/InputFileResolver.js","mutatorName":"ReverseConditional","status":1,"replacement":"mutate && []","location":{"start":{"line":9,"column":37},"end":{"line":9,"column":49}},"range":[387,399],"originalLines":"        this.mutateFileExpressions = mutate || [];","mutatedLines":"        this.mutateFileExpressions = mutate && [];"}

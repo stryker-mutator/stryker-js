@@ -12,7 +12,7 @@ The stryker-html-reporter will be available from stryker v0.4.0 onward (which sh
 
 ## Example
 
-Click on the image below to see a real-life example of the generated html report.
+Click on the image below to see a real-life example of a report generated from a test un on stryker itself!
 
 [![example](https://github.com/stryker-mutator/stryker-html-reporter/raw/master/example.png)](https://stryker-mutator.github.io/stryker-html-reporter)
 
@@ -30,7 +30,7 @@ You can either configure the html reporter from the `stryker.conf.js` file or fr
 
 ### Load the plugin
 
-In order to use the `stryker-html-reporter` it must me loaded in the stryker mutation testing framework via the stryker configuration. 
+In order to use the `stryker-html-reporter` it must be loaded in the stryker mutation testing framework via the stryker configuration. 
 Easiest is to *leave out* the `plugins` section from your config entirely. That way, all node_modules starting with `stryker-` will be loaded.
 
 If you do descide to choose specific modules, don't forget to add `'stryker-html-reporter'` to the list of plugins to load.

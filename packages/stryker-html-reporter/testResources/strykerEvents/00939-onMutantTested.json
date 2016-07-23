@@ -1,0 +1,1 @@
+{"sourceFilePath":"/stryker/src/InputFileResolver.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":34,"column":31},"end":{"line":36,"column":9}},"range":[1720,1780],"originalLines":"        if (errors.length > 0) {\r\n            throw new Error(errors.join(' '));\r\n        }","mutatedLines":"        if (errors.length > 0) {\n}"}
