@@ -1,16 +1,20 @@
 import * as _ from 'lodash';
-import * as esprima from 'esprima';
+import * as espree from 'espree';
 var escodegen = require('escodegen');
 
 /**
  * Utility class for parsing and generating code.
  * @constructor
  */
-var esprimaOptions = {
+var espreeOptions = {
   comment: true,
   loc: true,
   range: true,
   tokens: true,
+  sourceType: 'module',
+  ecmaFeatures: {
+    experimentalObjectRestSpread: true
+  }
 };
 
 /**
@@ -27,7 +31,7 @@ export function parse(code: string): any {
     return {};
   }
 
-  var abstractSyntaxTree = esprima.parse(code, esprimaOptions);
+  var abstractSyntaxTree = espree.parse(code, espreeOptions);
 
   return abstractSyntaxTree;
 };
@@ -47,7 +51,7 @@ export function collectFrozenNodes(abstractSyntaxTree: any, nodes?: any[]): any[
   }
 
   Object.freeze(abstractSyntaxTree);
-  
+
   _.forOwn(abstractSyntaxTree, (childNode, i) => {
     if (childNode instanceof Object && !(childNode instanceof Array)) {
       collectFrozenNodes(childNode, nodes);
