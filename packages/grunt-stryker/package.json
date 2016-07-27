@@ -25,12 +25,10 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt",
+    "preversion": "npm test"
   },
   "main": "Gruntfile.js",
-  "scripts": {
-    "test": "grunt"
-  },
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-cli": "^1.2.0",
