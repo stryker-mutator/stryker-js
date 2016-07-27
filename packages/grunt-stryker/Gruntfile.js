@@ -11,25 +11,33 @@ module.exports = function(grunt) {
         jshintrc: '.jshintrc'
       }
     },
+
     stryker: {
-      jasmine: {
+      withoutConfigFile: {
         files: {
           src: [
-            'test/sampleProject/src/**/*.js',
-            '!test/sampleProject/src/InfiniteAdd.js'
+            'testResources/sampleProject/src/**/*.js',
+            '!testResources/sampleProject/src/InfiniteAdd.js'
           ],
           tests: [
-            'test/sampleProject/test/**/*.js',
-            '!test/sampleProject/test/FailingAddSpec.js'
+            'testResources/sampleProject/test/**/*.js',
+            '!testResources/sampleProject/test/FailingAddSpec.js'
           ]
         },
         mutate: {
           src: [
-            'test/sampleProject/src/**/*.js',
-            '!test/sampleProject/src/InfiniteAdd.js'
+            'testResources/sampleProject/src/**/*.js',
+            '!testResources/sampleProject/src/InfiniteAdd.js'
           ]
         },
         options: {
+          testFramework: 'jasmine',
+          testRunner: 'karma'
+        }
+      },
+      withConfigFile:{
+        options:{
+          configFile: 'testResources/stryker.conf.js'
         }
       }
     },

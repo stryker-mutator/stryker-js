@@ -8,20 +8,22 @@ module.exports = function (grunt) {
     var target = this.name + "." + this.target + ".";
     var filesProperty = target + 'files';
     var mutateProperty = target + 'mutate';
-    
+
     var options = this.options();
 
     if (!options.configFile || options.configFile.length === 0) {
       grunt.config.requires(filesProperty);
       grunt.config.requires(mutateProperty);
     }
-    
-    if (grunt.config.get(filesProperty)) {
-      options.files = grunt.file.expand(grunt.util.toArray(grunt.config.get(filesProperty)));
+
+    var files = grunt.config.get(filesProperty);
+    if (files) {
+      options.files = grunt.file.expand(grunt.util.toArray(files));
     }
 
-    if (grunt.config.get(mutateProperty)) {
-      options.mutate = grunt.file.expand(grunt.util.toArray(grunt.config.get(mutateProperty)));
+    var mutatedFiles = grunt.config.get(mutateProperty);
+    if (mutatedFiles) {
+      options.mutate = grunt.file.expand(grunt.util.toArray(mutatedFiles));
     }
 
     var done = this.async();
