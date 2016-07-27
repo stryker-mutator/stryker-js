@@ -11,7 +11,7 @@ var esprimaOptions = {
   loc: true,
   range: true,
   tokens: true,
-  sourcetype: 'module'
+  sourceType: 'module'
 };
 
 /**
