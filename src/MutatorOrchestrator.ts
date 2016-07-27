@@ -12,6 +12,7 @@ import Mutant from './Mutant';
 import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
 import {freezeRecursively} from './utils/objectUtils';
+import babel from 'babel-core';
 
 const log = log4js.getLogger('Mutator');
 
@@ -43,6 +44,8 @@ export default class MutatorOrchestrator {
     sourceFiles.forEach((sourceFile: string) => {
       try {
         let fileContent = fileUtils.readFile(sourceFile);
+        fileContent = babel.transform(fileContent, { plugins: ["transform-object-rest-spread", "transform-runtime"] }).code;
+        //somehow customise this compiler? ^^
         this.reportFileRead(sourceFile, fileContent);
         let abstractSyntaxTree = parserUtils.parse(fileContent);
         let nodes = parserUtils.collectFrozenNodes(abstractSyntaxTree);
