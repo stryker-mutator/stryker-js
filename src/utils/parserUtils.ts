@@ -11,6 +11,7 @@ var esprimaOptions = {
   loc: true,
   range: true,
   tokens: true,
+  sourceType: 'module'
 };
 
 /**
@@ -47,7 +48,7 @@ export function collectFrozenNodes(abstractSyntaxTree: any, nodes?: any[]): any[
   }
 
   Object.freeze(abstractSyntaxTree);
-  
+
   _.forOwn(abstractSyntaxTree, (childNode, i) => {
     if (childNode instanceof Object && !(childNode instanceof Array)) {
       collectFrozenNodes(childNode, nodes);
