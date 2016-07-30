@@ -27,9 +27,7 @@
   "author": "Simon de Lang",
   "contributors": [
     "Simon de Lang <simondelang@gmail.com>",
-    "Nico Jansen <jansennico@gmail.com>",
-    "Nico (N.C.) Jansen <nico.jansen@ing.nl>",
-    "unknown <nicoj@NicoJ02.corp.infosupport.com>"
+    "Nico Jansen <jansennico@gmail.com>"
   ],
   "license": "Apache-2.0",
   "engines": {
