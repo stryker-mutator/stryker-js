@@ -1,6 +1,9 @@
 'use strict';
 
+
 module.exports = function (grunt) {
+
+  require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
 
@@ -85,15 +88,34 @@ module.exports = function (grunt) {
       build: {
         tsconfig: true,
       },
+    },
+
+    'npm-contributors': {
+      options: {
+        commitMessage: 'chore: update contributors'
+      }
+    },
+    conventionalChangelog: {
+      release: {
+        options: {
+          changelogOpts: {
+            preset: 'angular'
+          }
+        },
+        src: 'CHANGELOG.md'
+      }
+    },
+    bump: {
+      options: {
+        commitFiles: [
+          'package.json',
+          'CHANGELOG.md'
+        ],
+        commitMessage: 'chore: release v%VERSION%',
+        prereleaseName: 'rc'
+      }
     }
   });
-
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-mocha-istanbul');
-  grunt.loadNpmTasks('grunt-ts');
 
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
@@ -102,4 +124,16 @@ module.exports = function (grunt) {
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('serve', ['watch']);
+
+  grunt.registerTask('release', 'Build, bump and publish to NPM.', function (type) {
+    grunt.task.run([
+      'test',
+      'npm-contributors',
+      'bump:' + (type || 'patch') + ':bump-only',
+      'conventionalChangelog',
+      'bump-commit',
+      // 'npm-publish'
+    ]);
+  });
+
 };
