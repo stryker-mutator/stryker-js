@@ -1,6 +1,15 @@
+.bithoundrc
+.tmp
+.tscache
+.vscode
+.npmignore
+.editorconfig
 *.ts
 !*.d.ts
+coverage
 Gruntfile.js
+reports
+stryker.conf.js
 test
 testResources
 tsconfig.json
