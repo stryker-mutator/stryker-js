@@ -19,7 +19,7 @@ describe('TestRunnerChildProcessAdapter', function () {
         '../../test/integration/isolated-runner/NeverResolvedTestRunner',
         '../../test/integration/isolated-runner/SlowInitAndDisposeTestRunner'],
       testRunner: 'karma',
-      testFrameork: 'jasmine',
+      testFramework: 'jasmine',
       port: null
     },
     files: [],
