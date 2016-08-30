@@ -1,4 +1,4 @@
-import {TestRunner, TestResult, RunResult, RunnerOptions, CoverageCollection} from 'stryker-api/test_runner';
+import { TestRunner, TestResult, RunResult, RunnerOptions, CoverageCollection } from 'stryker-api/test_runner';
 import * as karma from 'karma';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
@@ -145,15 +145,20 @@ export default class KarmaTestRunner implements TestRunner {
     });
   }
 
-  private configureTestRunner(karmaConfig: ConfigOptions) {
+  private configureTestRunner(overrides: ConfigOptions) {
     // Merge defaults with given
-    karmaConfig = _.assign<ConfigOptions, ConfigOptions>(_.cloneDeep(DEFAULT_OPTIONS), karmaConfig);
+    let karmaConfig = _.assign<ConfigOptions, ConfigOptions>(_.cloneDeep(DEFAULT_OPTIONS), overrides);
 
     // Override files
-    karmaConfig.files = this.options.files.map(file => ({ pattern: file.path, included: file.included }) );
+    karmaConfig.files = this.options.files.map(file => ({ pattern: file.path, included: file.included }));
 
     // Override port
     karmaConfig.port = this.options.port;
+
+    // Override frameworks
+    if (this.options.strykerOptions.testFramework && !(overrides && overrides.frameworks)) {
+      karmaConfig.frameworks = [this.options.strykerOptions.testFramework]
+    }
 
     return karmaConfig;
   }
