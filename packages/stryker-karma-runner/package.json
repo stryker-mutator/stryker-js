@@ -55,5 +55,9 @@
   "dependencies": {
     "lodash": "^4.13.1",
     "log4js": "^0.6.37"
-  }
+  },
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>"
+  ]
 }
