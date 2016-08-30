@@ -1,0 +1,31 @@
+<a name="0.2.0"></a>
+# [0.2.0](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.1.0...v0.2.0) (2016-07-21)
+
+
+### Bug Fixes
+
+* **deps:** Add support for karma ^1.1.1 ([3e46c22](https://github.io/stryker-mutator/stryker-karma-runner/commit/3e46c22))
+
+
+### Features
+
+* **life-cycle:** Add init lifecycle event. ([985739d](https://github.io/stryker-mutator/stryker-karma-runner/commit/985739d))
+* **unincluded-files:** Unincluded files support ([ef80460](https://github.io/stryker-mutator/stryker-karma-runner/commit/ef80460))
+
+
+
+<a name="0.1.0"></a>
+# [0.1.0](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.0.1...v0.1.0) (2016-07-01)
+
+
+### Bug Fixes
+
+* **deps:** Update stryker-api version ([ceb60e6](https://github.io/stryker-mutator/stryker-karma-runner/commit/ceb60e6))
+
+
+
+<a name="0.0.1"></a>
+## 0.0.1 (2016-06-29)
+
+
+
