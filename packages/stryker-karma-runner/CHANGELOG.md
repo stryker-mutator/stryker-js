@@ -1,3 +1,13 @@
+<a name="0.2.1"></a>
+## [0.2.1](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.2.0...v0.2.1) (2016-08-30)
+
+
+### Features
+
+* **testFramework:** Use test framework (#3) ([9c7a750](https://github.io/stryker-mutator/stryker-karma-runner/commit/9c7a750))
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.1.0...v0.2.0) (2016-07-21)
 
