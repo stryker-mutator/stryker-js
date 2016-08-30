@@ -11,7 +11,9 @@
   "devDependencies": {
     "chai": "registry:npm/chai#3.5.0+20160415060238",
     "chai-as-promised": "registry:npm/chai-as-promised#5.1.0+20160310030142",
-    "lodash": "registry:npm/lodash#4.0.0+20160416211519"
+    "lodash": "registry:npm/lodash#4.0.0+20160416211519",
+    "sinon": "registry:npm/sinon#1.16.0+20160723033700",
+    "sinon-chai": "registry:npm/sinon-chai#2.8.0+20160310030142"
   },
   "dependencies": {
     "bluebird": "registry:npm/bluebird#3.3.4+20160622205516"
