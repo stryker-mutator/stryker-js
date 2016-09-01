@@ -6,6 +6,7 @@ import Message, {MessageType} from '../../../src/isolated-runner/Message';
 import ResultMessageBody from '../../../src/isolated-runner/ResultMessageBody';
 import RunMessageBody from '../../../src/isolated-runner/RunMessageBody';
 import StartMessageBody from '../../../src/isolated-runner/StartMessageBody';
+import {serialize} from '../../../src/utils/objectUtils';
 import {expect} from 'chai';
 import * as path from 'path';
 import * as _ from 'lodash';
@@ -61,7 +62,7 @@ describe('IsolatedTestRunnerAdapter', () => {
           type: MessageType.Run,
           body: { runOptions }
         }
-        expect(fakeChildProcess.send).to.have.been.calledWith(expectedMessage)
+        expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
       });
 
       describe('and a timeout occurred', () => {
@@ -70,7 +71,7 @@ describe('IsolatedTestRunnerAdapter', () => {
           clock.tick(2100);
         });
 
-        it('should send `dispose` to worker process', () => expect(fakeChildProcess.send).to.have.been.calledWith({ type: MessageType.Dispose }));
+        it('should send `dispose` to worker process', () => expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ type: MessageType.Dispose })));
 
         let actAssertTimeout = () => {
           it('should kill the child process and start a new one', () => {
