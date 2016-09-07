@@ -201,7 +201,7 @@ See [Abolute timeout ms](#abolute-timeout-ms).
 | a - b    | a + b    |
 | a * b    | a / b    |
 | a / b    | a * b    |
-| a & b    | a * b    |
+| a % b    | a * b    |
 
 ### Unary
 | Original | Mutated  |
