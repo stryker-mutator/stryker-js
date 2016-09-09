@@ -132,7 +132,7 @@ module.exports = function (grunt) {
       'bump:' + (type || 'patch') + ':bump-only',
       'conventionalChangelog',
       'bump-commit',
-      // 'npm-publish'
+      'npm-publish'
     ]);
   });
 
