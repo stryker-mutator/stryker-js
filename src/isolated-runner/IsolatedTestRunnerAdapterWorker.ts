@@ -5,7 +5,7 @@ import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
-import {isPromise} from '../utils/objectUtils';
+import {isPromise, deserialize} from '../utils/objectUtils';
 
 const log = log4js.getLogger('TestRunnerChildProcessAdapterWorker');
 
@@ -18,7 +18,8 @@ class TestRunnerChildProcessAdapterWorker {
   }
 
   listenToMessages() {
-    process.on('message', (message: Message<any>) => {
+    process.on('message', (serializedMessage: string) => {
+      let message: Message<any> = deserialize(serializedMessage);
       switch (message.type) {
         case MessageType.Start:
           this.start(message.body);

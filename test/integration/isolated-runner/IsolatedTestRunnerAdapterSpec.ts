@@ -1,11 +1,8 @@
 import TestRunnerChildProcessAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import {TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult, RunnerOptions} from 'stryker-api/test_runner';
 import {StrykerOptions} from 'stryker-api/core';
-import * as chai from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
-chai.use(chaiAsPromised);
-let expect = chai.expect;
-import * as log4js from 'log4js';
+import {expect} from 'chai';
+import logger from '../../helpers/log4jsMock';
 
 describe('TestRunnerChildProcessAdapter', function () {
 
@@ -17,14 +14,24 @@ describe('TestRunnerChildProcessAdapter', function () {
       plugins: [
         '../../test/integration/isolated-runner/DirectResolvedTestRunner',
         '../../test/integration/isolated-runner/NeverResolvedTestRunner',
-        '../../test/integration/isolated-runner/SlowInitAndDisposeTestRunner'],
+        '../../test/integration/isolated-runner/SlowInitAndDisposeTestRunner',
+        '../../test/integration/isolated-runner/DiscoverRegexTestRunner'],
       testRunner: 'karma',
       testFramework: 'jasmine',
-      port: null
+      port: null,
+      'someRegex': /someRegex/
     },
     files: [],
-    port: null,
+    port: null
   };
+
+  describe('when sending a regex in the options', () => {
+    before(() => sut = new TestRunnerChildProcessAdapter('discover-regex',  options));
+
+    it('correctly receive the regex on the other end', 
+      () => expect(sut.run({timeout: 4000})).to.eventually.have.property('result', TestResult.Complete));
+
+  });
 
   describe('when test runner behind responds quickly', () => {
     before(() => {
@@ -32,7 +39,7 @@ describe('TestRunnerChildProcessAdapter', function () {
     });
 
     it('should run and resolve', () =>
-      expect(sut.run({ timeout: 4000 })).to.eventually.satisfy((result: RunResult) => result.result === TestResult.Complete));
+      expect(sut.run({ timeout: 4000 })).to.eventually.have.property('result', TestResult.Complete));
 
   });
 

@@ -7,6 +7,7 @@ import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
+import {serialize} from '../utils/objectUtils';
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapter');
 const MAX_WAIT_FOR_DISPOSE = 2000;
@@ -123,7 +124,13 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
         runOptions: options
       }
     }
-    this.workerProcess.send(message);
+    this.send(message);
+  }
+
+  private send<T>(message: Message<T>){
+    // Serialize message before sending to preserve all javascript, including regexes and functions
+    // See https://github.com/stryker-mutator/stryker/issues/143
+    this.workerProcess.send(serialize(message));
   }
 
   private sendStartCommand() {
@@ -134,15 +141,15 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
         runnerOptions: this.options
       }
     }
-    this.workerProcess.send(startMessage);
+    this.send(startMessage);
   }
 
   private sendInitCommand() {
-    this.workerProcess.send(this.emptyMessage(MessageType.Init));
+    this.send(this.emptyMessage(MessageType.Init));
   }
 
   private sendDisposeCommand() {
-    this.workerProcess.send(this.emptyMessage(MessageType.Dispose));
+    this.send(this.emptyMessage(MessageType.Dispose));
   }
 
   private handleResultMessage(message: Message<ResultMessageBody>) {
