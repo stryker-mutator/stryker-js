@@ -8,6 +8,7 @@ import * as sinon from 'sinon';
 import {Syntax} from 'esprima';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import {Reporter} from 'stryker-api/report';
+import * as estree from 'stryker-api/estree';
 
 describe('MutatorOrchestrator', () => {
   var sut: MutatorOrchestrator;
@@ -83,11 +84,11 @@ describe('MutatorOrchestrator', () => {
 
     class StubMutator implements Mutator {
       name: 'stub';
-      applyMutations(node: ESTree.Node, deepCopy: (obj: any) => any): ESTree.Node[] {
-        let nodes: ESTree.Node[] = [];
+      applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
+        let nodes: estree.Node[] = [];
         if (node.type === Syntax.BinaryExpression) {
           // eg: '1 * 2': push child node
-          nodes.push((<ESTree.BinaryExpression>node).left);
+          nodes.push(<estree.Expression>(<estree.BinaryExpression>node).left);
         } else if (node.type === Syntax.IfStatement) {
           // eg: 'if(true);': push original node
           nodes.push(node);

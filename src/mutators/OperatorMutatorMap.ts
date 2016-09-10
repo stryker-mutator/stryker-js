@@ -1,5 +1,6 @@
+import {BinaryOperator, LogicalOperator} from 'stryker-api/estree';
 
 interface OperatorMutatorMap{
-  [targetedOperators: string]: string;
+  [targetedOperator: string]: BinaryOperator;
 }
 export default OperatorMutatorMap;

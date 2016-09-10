@@ -5,13 +5,14 @@ import MathMutator from './mutators/MathMutator';
 import RemoveConditionalsMutator from './mutators/RemoveConditionalsMutator';
 import ReverseConditionalMutator from './mutators/ReverseConditionalMutator';
 import UnaryOperatorMutator from './mutators/UnaryOperatorMutator';
-import {Mutator, StrykerNode, MutatorFactory} from 'stryker-api/mutant';
+import {Mutator, MutatorFactory} from 'stryker-api/mutant';
 import {Reporter, SourceFile} from 'stryker-api/report';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
 import {freezeRecursively} from './utils/objectUtils';
+import * as estree from 'stryker-api/estree';
 
 const log = log4js.getLogger('Mutator');
 
@@ -95,7 +96,7 @@ export default class MutatorOrchestrator {
    * @param {AbstractSyntaxTreeNode[]} nodes - The nodes which could be used by mutations to generate mutants.
    * @returns {Mutant[]} All possible Mutants for the given set of nodes.
    */
-  private findMutants(sourceFile: string, originalCode: string, ast: ESTree.Program, nodes: any[]) {
+  private findMutants(sourceFile: string, originalCode: string, ast: estree.Program, nodes: any[]) {
     let mutants: Mutant[] = [];
     nodes.forEach((astnode) => {
       if (astnode.type) {
@@ -109,9 +110,9 @@ export default class MutatorOrchestrator {
               log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astnode.loc.start.line}, Col ${astnode.loc.start.column}) and (Ln ${astnode.loc.end.line}, Col ${astnode.loc.end.column}) in file ${sourceFile}`)
             }
 
-            mutatedNodes.forEach((mutatedNode: ESTree.Node) => {
+            mutatedNodes.forEach((mutatedNode: estree.Node) => {
               let mutatedCode = parserUtils.generate(mutatedNode);
-              let originalNode = nodes[(<StrykerNode>mutatedNode).nodeID];
+              let originalNode = nodes[mutatedNode.nodeID];
               mutants.push(new Mutant(mutator.name, sourceFile, originalCode, mutatedCode, originalNode.loc, originalNode.range));
             })
           } catch (error) {

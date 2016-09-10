@@ -8,6 +8,7 @@ import MathMutator from '../../src/mutators/MathMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
+import * as estree from 'stryker-api/estree';
 
 describe('Mutant', function () {
   var sut: Mutant;
@@ -18,8 +19,8 @@ describe('Mutant', function () {
   var mutatedLine: string;
   var mutatedCode: string;
   var lineNumber: number;
-  var ast: ESTree.Program;
-  var node: ESTree.Node;
+  var ast: estree.Program;
+  var node: estree.Node;
   var sandbox: sinon.SinonSandbox;
 
   beforeEach(() => {
@@ -36,7 +37,7 @@ describe('Mutant', function () {
 
     filename = 'something.js';
     ast = parserUtils.parse(mutatedCode);
-    node = (<ESTree.VariableDeclaration>ast.body[1]).declarations[0].init;
+    node = <estree.Expression>(<estree.VariableDeclaration>ast.body[1]).declarations[0].init;
   });
 
   describe('with single line code', () => {

@@ -2,14 +2,15 @@ import * as _ from 'lodash';
 import RemoveConditionalsMutator from '../../../src/mutators/RemoveConditionalsMutator';
 import * as parserUtils from '../../../src/utils/parserUtils';
 import * as chai from 'chai';
+import * as estree from 'stryker-api/estree';
 let expect = chai.expect;
 
 describe('RemoveConditionalsMutator', function () {
   let removeConditionalsMutator: RemoveConditionalsMutator;
-  let doWhileLoop: ESTree.DoWhileStatement;
-  let forLoop: ESTree.ForStatement;
-  let whileLoop: ESTree.WhileStatement;
-  let ifStatement: ESTree.IfStatement;
+  let doWhileLoop: estree.DoWhileStatement;
+  let forLoop: estree.ForStatement;
+  let whileLoop: estree.WhileStatement;
+  let ifStatement: estree.IfStatement;
 
   beforeEach(function () {
     removeConditionalsMutator = new RemoveConditionalsMutator();
@@ -30,34 +31,34 @@ describe('RemoveConditionalsMutator', function () {
     }`;
 
     let ast = parserUtils.parse(code);
-    ifStatement = <ESTree.IfStatement>ast.body[1];
-    whileLoop = <ESTree.WhileStatement>ast.body[2];
-    doWhileLoop = <ESTree.DoWhileStatement>ast.body[3];
-    forLoop = <ESTree.ForStatement>ast.body[4];
+    ifStatement = <estree.IfStatement>ast.body[1];
+    whileLoop = <estree.WhileStatement>ast.body[2];
+    doWhileLoop = <estree.DoWhileStatement>ast.body[3];
+    forLoop = <estree.ForStatement>ast.body[4];
   });
 
-  function applyMutation(node: ESTree.IfStatement | ESTree.DoWhileStatement | ESTree.WhileStatement | ESTree.ForStatement) {
+  function applyMutation(node: estree.IfStatement | estree.DoWhileStatement | estree.WhileStatement | estree.ForStatement) {
     return removeConditionalsMutator.applyMutations(node, _.cloneDeep);
   }
 
   describe('should not generate an infinite loop', function () {
     it('when given a do-while loop', function () {
       let mutatedNodes = applyMutation(doWhileLoop);
-      let testValue = (<ESTree.Literal>mutatedNodes[0]).value;
+      let testValue = (<estree.Literal>mutatedNodes[0]).value;
 
       expect(testValue).to.be.false;
     });
 
     it('when given a while loop', function () {
       let mutatedNodes = applyMutation(whileLoop);
-      let testValue = (<ESTree.Literal>mutatedNodes[0]).value;
+      let testValue = (<estree.Literal>mutatedNodes[0]).value;
 
       expect(testValue).to.be.false;
     });
 
     it('when given a for loop', function () {
       let mutatedNodes = applyMutation(forLoop);
-      let testValue = (<ESTree.Literal>mutatedNodes[0]).value;
+      let testValue = (<estree.Literal>mutatedNodes[0]).value;
 
       expect(testValue).to.be.false;
     });

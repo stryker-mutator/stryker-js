@@ -1,11 +1,12 @@
 import * as _ from 'lodash';
 import OperatorMutator from '../../../src/mutators/OperatorMutator';
 import * as chai from 'chai';
+import * as estree from 'stryker-api/estree';
 let expect = chai.expect;
 
 describe('OperatorMutator', () => {
   class MockOperatorMutator extends OperatorMutator {
-    constructor(){super('Mock', ['SomeType', 'SomeOtherType'], {
+    constructor(){super('Mock', ['SomeType', 'BinaryExpression'], {
       '+': '-',
       '*': '/'
     });
@@ -13,23 +14,24 @@ describe('OperatorMutator', () => {
   }
   
   let mockMutator: OperatorMutator;
-  let invalidNode: ESTree.Node;
-  let validNode: ESTree.Node;
+  let invalidNode: estree.Node;
+  let validNode: estree.Node;
   
   beforeEach(() => {
     mockMutator = new MockOperatorMutator();
-    invalidNode = <ESTree.Node> {
-      type: 'SomeType',
+    invalidNode = <estree.Node> {
+      type: 'Identifier',
     };
-    validNode = <ESTree.BinaryExpression> {
-      type: 'SomeType',
+    validNode = <estree.BinaryExpression> {
+      nodeID: 23,
+      type: 'BinaryExpression',
       operator: '+',
-      left: <ESTree.Literal> {
+      left: <estree.Literal> {
         type: "Literal",
         value: 6,
         raw: "6"
       },
-      right:<ESTree.Literal> {
+      right:<estree.Literal> {
         type: "Literal",
         value: 7,
         raw: "7"

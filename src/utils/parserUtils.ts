@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as esprima from 'esprima';
+import * as estree from 'stryker-api/estree';
 var escodegen = require('escodegen');
 
 /**
@@ -68,6 +69,6 @@ export function collectFrozenNodes(abstractSyntaxTree: any, nodes?: any[]): any[
    * @param The Node which has to be transformed into code.
    * @returns The generated code.
    */
-export function generate(node: ESTree.Node): string {
+export function generate(node: estree.Node): string {
   return escodegen.generate(node);
 };

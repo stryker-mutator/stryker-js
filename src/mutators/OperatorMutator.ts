@@ -1,5 +1,6 @@
 import {Mutator} from 'stryker-api/mutant';
 import OperatorMutatorMap from './OperatorMutatorMap';
+import * as estree from 'stryker-api/estree';
 
 abstract class OperatorMutator implements Mutator {
 
@@ -12,19 +13,19 @@ abstract class OperatorMutator implements Mutator {
   constructor(public name: string, private types: string[], private operators: OperatorMutatorMap) {
   }
 
-  applyMutations(node: ESTree.Node, copy: (obj: any, deep?: boolean) => any): ESTree.Node[] {
-    let nodes: ESTree.Node[] = [];
+  applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
+    let nodes: estree.Node[] = [];
 
-    if (this.canMutate(<ESTree.BinaryExpression>node)) {
-      let mutatedNode: ESTree.BinaryExpression = copy(node);
-      mutatedNode.operator = this.getOperator((<ESTree.BinaryExpression>node).operator);
+    if (this.canMutate(<estree.BinaryExpression>node)) {
+      let mutatedNode: estree.BinaryExpression = copy(node);
+      mutatedNode.operator = this.getOperator((<estree.BinaryExpression>node).operator);
       nodes.push(mutatedNode);
     }
 
     return nodes;
   }
 
-  private canMutate(node: ESTree.BinaryExpression): boolean {
+  private canMutate(node: estree.BinaryExpression): boolean {
     return !!(node && this.types.indexOf(node.type) >= 0 && this.getOperator(node.operator));
   }
 
@@ -35,7 +36,7 @@ abstract class OperatorMutator implements Mutator {
    * @returns {String} The mutated operator.
    */
 
-  private getOperator(operator: string): string {
+  private getOperator(operator: string): estree.BinaryOperator {
     return this.operators[operator];
   }
 }
