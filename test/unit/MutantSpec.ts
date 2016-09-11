@@ -4,7 +4,7 @@ import {expect} from 'chai';
 import Mutant from '../../src/Mutant';
 import {MutantStatus} from 'stryker-api/report';
 import {Location} from 'stryker-api/core';
-import MathMutator from '../../src/mutators/MathMutator';
+import BinaryOperatorMutator from '../../src/mutators/BinaryOperatorMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
@@ -13,7 +13,7 @@ import * as estree from 'stryker-api/estree';
 describe('Mutant', function () {
   var sut: Mutant;
   var filename: string;
-  var mutator: MathMutator;
+  var mutator: BinaryOperatorMutator;
   var originalLine: string;
   var originalCode: string;
   var mutatedLine: string;

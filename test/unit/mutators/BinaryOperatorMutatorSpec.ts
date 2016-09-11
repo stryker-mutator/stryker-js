@@ -1,24 +1,16 @@
 import * as _ from 'lodash';
-import OperatorMutator from '../../../src/mutators/OperatorMutator';
+import BinaryOperatorMutator from '../../../src/mutators/BinaryOperatorMutator';
 import * as chai from 'chai';
 import * as estree from 'stryker-api/estree';
 let expect = chai.expect;
 
-describe('OperatorMutator', () => {
-  class MockOperatorMutator extends OperatorMutator {
-    constructor(){super('Mock', ['SomeType', 'BinaryExpression'], {
-      '+': '-',
-      '*': '/'
-    });
-    }
-  }
-  
-  let mockMutator: OperatorMutator;
+describe('BinaryOperatorMutator', () => {
+  let mutator: BinaryOperatorMutator
   let invalidNode: estree.Node;
   let validNode: estree.Node;
   
   beforeEach(() => {
-    mockMutator = new MockOperatorMutator();
+    mutator = new BinaryOperatorMutator();
     invalidNode = <estree.Node> {
       type: 'Identifier',
     };
@@ -41,7 +33,7 @@ describe('OperatorMutator', () => {
   
   describe('should mutate', () => {
     it('a valid Node', () => {
-      let mutatedNodes = mockMutator.applyMutations(validNode, _.cloneDeep);
+      let mutatedNodes = mutator.applyMutations(validNode, _.cloneDeep);
       
       expect(mutatedNodes).to.have.lengthOf(1);
     });
@@ -49,7 +41,7 @@ describe('OperatorMutator', () => {
   
   describe('should not mutate', () => {
     it('an invalid Node', () => {
-      let mutatedNodes = mockMutator.applyMutations(invalidNode, _.cloneDeep);
+      let mutatedNodes = mutator.applyMutations(invalidNode, _.cloneDeep);
       
       expect(mutatedNodes).to.have.lengthOf(0);
     });

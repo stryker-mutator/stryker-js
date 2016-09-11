@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
+import BinaryOperatorMutator from './mutators/BinaryOperatorMutator';
 import BlockStatementMutator from './mutators/BlockStatementMutator';
-import ConditionalBoundaryMutator from './mutators/ConditionalBoundaryMutator';
-import MathMutator from './mutators/MathMutator';
+import LogicalOperatorMutator from './mutators/LogicalOperatorMutator';
 import RemoveConditionalsMutator from './mutators/RemoveConditionalsMutator';
-import ReverseConditionalMutator from './mutators/ReverseConditionalMutator';
 import UnaryOperatorMutator from './mutators/UnaryOperatorMutator';
+import UpdateOperatorMutator from './mutators/UpdateOperatorMutator';
 import {Mutator, MutatorFactory} from 'stryker-api/mutant';
 import {Reporter, SourceFile} from 'stryker-api/report';
 import * as fileUtils from './utils/fileUtils';
@@ -79,12 +79,12 @@ export default class MutatorOrchestrator {
 
   private registerDefaultMutators() {
     let mutatorFactory = MutatorFactory.instance();
-    mutatorFactory.register('BlockStatement', BlockStatementMutator);
-    mutatorFactory.register('ConditionalBoundary', ConditionalBoundaryMutator);
-    mutatorFactory.register('Math', MathMutator);
-    mutatorFactory.register('RemoveConditionals', RemoveConditionalsMutator);
-    mutatorFactory.register('ReverseConditional', ReverseConditionalMutator);
-    mutatorFactory.register('UnaryOperator', UnaryOperatorMutator);
+    mutatorFactory.register('BinaryOperator', BinaryOperatorMutator);
+    //mutatorFactory.register('BlockStatement', BlockStatementMutator);
+    //mutatorFactory.register('LogicalOperator', LogicalOperatorMutator);
+    //mutatorFactory.register('RemoveConditionals', RemoveConditionalsMutator);
+    // mutatorFactory.register('UnaryOperator', UnaryOperatorMutator);
+    // mutatorFactory.register('UpdateOperator', UpdateOperatorMutator);
   }
 
   /**
