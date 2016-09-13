@@ -1,6 +1,7 @@
 import {Mutator} from 'stryker-api/mutant';
-import {Syntax} from 'esprima';
-import * as estree from 'stryker-api/estree';
+import {Syntax} from 'esprima-custom';
+import * as estree from 'estree';
+import * as _ from 'lodash';
 
 export default class BinaryOperatorMutator implements Mutator  {
   name = 'BinaryOperator';
@@ -21,20 +22,19 @@ export default class BinaryOperatorMutator implements Mutator  {
       '!==': '==='
     };
 
-  applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
     let nodes: estree.Node[] = [];
 
-    if (node.type === Syntax.BinaryExpression && this.operators[(<estree.BinaryExpression>node).operator]) {
-      let mutatedOperators = this.operators[(<estree.BinaryExpression>node).operator];
+    if (node.type === Syntax.BinaryExpression && this.operators[node.operator]) {
+      let mutatedOperators = this.operators[node.operator];
       if(typeof mutatedOperators === "string"){
         mutatedOperators = [mutatedOperators];
       }
       
       mutatedOperators.forEach(operator => {
-        let mutatedNode: estree.BinaryExpression = copy(node);
+        let mutatedNode = copy(<estree.BinaryExpression>node);
         mutatedNode.operator = operator;
         nodes.push(mutatedNode);
-        
       });
     }
 

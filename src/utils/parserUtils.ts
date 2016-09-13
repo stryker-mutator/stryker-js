@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as esprima from 'esprima';
-import * as estree from 'stryker-api/estree';
+import * as estree from 'estree';
 var escodegen = require('escodegen');
 
 /**

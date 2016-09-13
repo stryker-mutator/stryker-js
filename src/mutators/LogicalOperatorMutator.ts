@@ -1,6 +1,6 @@
 import {Mutator} from 'stryker-api/mutant';
-import {Syntax} from 'esprima';
-import * as estree from 'stryker-api/estree';
+import {Syntax} from 'esprima-custom';
+import * as estree from 'estree';
 
 export default class LogicalOperatorMutator implements Mutator  {
   name = 'LogicalOperator';
@@ -10,12 +10,12 @@ export default class LogicalOperatorMutator implements Mutator  {
       '||': '&&'
   };
 
-  applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
     let nodes: estree.Node[] = [];
 
-    if (node.type === Syntax.LogicalExpression && this.operators[(<estree.LogicalExpression>node).operator]) {
-      let mutatedNode: estree.LogicalExpression = copy(node);
-      mutatedNode.operator = this.operators[(<estree.LogicalExpression>node).operator];
+    if (node.type === Syntax.LogicalExpression && this.operators[node.operator]) {
+      let mutatedNode = copy(<estree.LogicalExpression>node);
+      mutatedNode.operator = this.operators[node.operator];
       nodes.push(mutatedNode);
     }
 

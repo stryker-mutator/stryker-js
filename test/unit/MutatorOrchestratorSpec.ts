@@ -8,7 +8,7 @@ import * as sinon from 'sinon';
 import {Syntax} from 'esprima';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import {Reporter} from 'stryker-api/report';
-import * as estree from 'stryker-api/estree';
+import * as estree from 'estree';
 
 describe('MutatorOrchestrator', () => {
   var sut: MutatorOrchestrator;

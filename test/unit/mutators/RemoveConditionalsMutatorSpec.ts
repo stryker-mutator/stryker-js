@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import RemoveConditionalsMutator from '../../../src/mutators/RemoveConditionalsMutator';
 import * as parserUtils from '../../../src/utils/parserUtils';
 import * as chai from 'chai';
-import * as estree from 'stryker-api/estree';
+import * as estree from 'estree';
 let expect = chai.expect;
 
 describe('RemoveConditionalsMutator', function () {

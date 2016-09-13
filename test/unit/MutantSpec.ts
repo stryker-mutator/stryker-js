@@ -8,7 +8,7 @@ import BinaryOperatorMutator from '../../src/mutators/BinaryOperatorMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
-import * as estree from 'stryker-api/estree';
+import * as estree from 'estree';
 
 describe('Mutant', function () {
   var sut: Mutant;

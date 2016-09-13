@@ -12,7 +12,8 @@ import Mutant from './Mutant';
 import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
 import {freezeRecursively} from './utils/objectUtils';
-import * as estree from 'stryker-api/estree';
+import * as estree from 'estree';
+import 'stryker-api/estree';
 
 const log = log4js.getLogger('Mutator');
 
@@ -103,9 +104,7 @@ export default class MutatorOrchestrator {
         Object.freeze(astnode);
         this.mutators.forEach((mutator: Mutator) => {
           try {
-            let mutatedNodes = mutator.applyMutations(astnode, (node, deepClone) => {
-              return deepClone ? _.cloneDeep(node) : _.clone(node);
-            });
+            let mutatedNodes = mutator.applyMutations(astnode, (node: estree.Node, deep?: boolean) => deep ? _.cloneDeep(node) : _.clone(node));
             if (mutatedNodes.length > 0) {
               log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astnode.loc.start.line}, Col ${astnode.loc.start.column}) and (Ln ${astnode.loc.end.line}, Col ${astnode.loc.end.column}) in file ${sourceFile}`)
             }

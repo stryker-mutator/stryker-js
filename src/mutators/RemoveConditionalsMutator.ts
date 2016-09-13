@@ -1,6 +1,6 @@
-import {Syntax} from 'esprima';
+import {Syntax} from 'esprima-custom';
 import {Mutator} from 'stryker-api/mutant';
-import * as estree from 'stryker-api/estree';
+import * as estree from 'estree';
 
 /**
  * Represents a mutator which can remove the conditional clause from statements.
@@ -11,16 +11,16 @@ export default class RemoveConditionalsMutator implements Mutator {
 
   constructor() { }
 
-  applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
     let nodes: estree.Node[] = [];
 
     if (this.canMutate(node)) {
-      let mutatedFalseNode: estree.Literal = copy((<estree.ConditionalExpression>node).test);
+      let mutatedFalseNode: estree.Expression = copy((<estree.ConditionalExpression>node).test);
       this.mutateTestExpression(mutatedFalseNode, false);
       nodes.push(mutatedFalseNode);
 
       if (node.type === Syntax.IfStatement) {
-        let mutatedTrueNode: estree.Literal = copy((<estree.ConditionalExpression>node).test);
+        let mutatedTrueNode: estree.Literal = copy(node.test);
         this.mutateTestExpression(mutatedTrueNode, true);
         nodes.push(mutatedTrueNode);
       }
@@ -29,7 +29,7 @@ export default class RemoveConditionalsMutator implements Mutator {
     return nodes;
   }
 
-  private mutateTestExpression(node: estree.Literal, newValue: boolean) {
+  private mutateTestExpression(node: estree.Expression, newValue: boolean) {
     node.value = newValue;
   }
 

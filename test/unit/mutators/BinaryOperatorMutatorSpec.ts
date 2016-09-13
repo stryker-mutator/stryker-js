@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import BinaryOperatorMutator from '../../../src/mutators/BinaryOperatorMutator';
 import * as chai from 'chai';
-import * as estree from 'stryker-api/estree';
+import * as estree from 'estree';
 let expect = chai.expect;
 
 describe('BinaryOperatorMutator', () => {

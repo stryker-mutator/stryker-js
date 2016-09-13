@@ -1,6 +1,6 @@
 import {Mutator} from 'stryker-api/mutant';
-import {Syntax} from 'esprima';
-import * as estree from 'stryker-api/estree';
+import {Syntax} from 'esprima-custom';
+import * as estree from 'estree';
 
 export default class UnaryOperatorMutator implements Mutator  {
   name = 'UnaryOperator';
@@ -10,12 +10,12 @@ export default class UnaryOperatorMutator implements Mutator  {
       '-': '+'
   };
 
-  applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
     let nodes: estree.Node[] = [];
 
-    if (node.type === Syntax.UnaryExpression && this.operators[(<estree.UnaryExpression>node).operator]) {
-      let mutatedNode: estree.UnaryExpression = copy(node);
-      mutatedNode.operator = this.operators[(<estree.UnaryExpression>node).operator];
+    if (node.type === Syntax.UnaryExpression && this.operators[node.operator]) {
+      let mutatedNode = copy(<estree.UnaryExpression>node);
+      mutatedNode.operator = this.operators[node.operator];
       nodes.push(mutatedNode);
     }
 

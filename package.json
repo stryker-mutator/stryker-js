@@ -93,7 +93,7 @@
     "stryker-html-reporter": "^0.2.0",
     "stryker-karma-runner": "^0.2.0",
     "stryker-mocha-runner": "0.1.0",
-    "typescript": "^2.0.0"
+    "typescript": "^2.0.2"
   },
   "peerDependencies": {
     "stryker-api": "^0.2.0"
