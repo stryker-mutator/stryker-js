@@ -14,7 +14,7 @@ export default class UnaryOperatorMutator implements Mutator  {
     let nodes: estree.Node[] = [];
 
     if (node.type === Syntax.UnaryExpression && this.operators[node.operator]) {
-      let mutatedNode = copy(<estree.UnaryExpression>node);
+      let mutatedNode = copy(node);
       mutatedNode.operator = this.operators[node.operator];
       nodes.push(mutatedNode);
     }

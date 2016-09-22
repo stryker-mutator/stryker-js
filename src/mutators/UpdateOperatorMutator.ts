@@ -10,12 +10,12 @@ export default class UpdateOperatorMutator implements Mutator  {
       '--': '++'
   };
 
-  applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
     let nodes: estree.Node[] = [];
 
     if (node.type === Syntax.UpdateExpression && this.operators[node.operator]) {
-      let mutatedNode: estree.UpdateExpression = copy(node);
-      mutatedNode.operator = this.operators[(<estree.UpdateExpression>node).operator];
+      let mutatedNode = copy(node);
+      mutatedNode.operator = this.operators[node.operator];
       nodes.push(mutatedNode);
     }
 
