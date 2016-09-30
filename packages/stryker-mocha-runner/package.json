@@ -49,7 +49,6 @@
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-mocha-istanbul": "^5.0.2",
-    "grunt-mocha-test": "^0.13.2",
     "grunt-ts": "^6.0.0-beta.3",
     "grunt-tslint": "^3.2.1",
     "istanbul": "^0.4.0",
