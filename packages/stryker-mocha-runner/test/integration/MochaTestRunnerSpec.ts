@@ -4,11 +4,11 @@ import {TestResult, RunnerOptions, RunResult} from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
 chai.use(chaiAsPromised);
-let expect = chai.expect;
+const expect = chai.expect;
 
 describe('MochaTestRunner', function () {
 
-  var sut: MochaTestRunner;
+  let sut: MochaTestRunner;
   this.timeout(10000);
 
   describe('when code coverage is disabled', () => {

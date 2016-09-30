@@ -2,6 +2,8 @@
 
 module.exports = function (grunt) {
 
+  require('load-grunt-tasks')(grunt);
+
   grunt.initConfig({
 
     clean: {
@@ -85,20 +87,22 @@ module.exports = function (grunt) {
       build: {
         tsconfig: true,
       },
+    },
+    
+    tslint: {
+      src: {
+        src: ['*.ts', 'src/**/*.ts']
+      },
+      test: {
+        src: ['test/**/*.ts']
+      }
     }
   });
-
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-mocha-istanbul');
-  grunt.loadNpmTasks('grunt-ts');
 
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
   grunt.registerTask('test', ['build', 'coverage']);
-  grunt.registerTask('build', ['clean', 'ts']);
+  grunt.registerTask('build', ['clean', 'tslint', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('serve', ['watch']);

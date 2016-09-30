@@ -3,7 +3,7 @@ import {InputFile} from 'stryker-api/core';
 import * as path from 'path';
 import * as log4js from 'log4js';
 // import * as Mocha from 'mocha';
-var Mocha = require('mocha');
+const Mocha = require('mocha');
 import StrykerMochaReporter from './StrykerMochaReporter';
 
 const log = log4js.getLogger('MochaTestRunner');

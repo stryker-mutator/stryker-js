@@ -14,6 +14,7 @@
         "node_modules",
         "src/**/*.d.ts",
         "test/**/*.d.ts",
+        "typings/**",
         "testResources"
     ]
 }
