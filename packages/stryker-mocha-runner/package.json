@@ -32,7 +32,7 @@
   },
   "peerDependencies": {
     "stryker-api": "0.3.0-0",
-    "mocha": "^2.3.3"
+    "mocha": "^2.3.3|^3.0.2"
   },
   "devDependencies": {
     "@types/chai": "^3.4.32",
@@ -47,7 +47,6 @@
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-mocha-istanbul": "^5.0.2",
     "grunt-mocha-test": "^0.13.2",
@@ -55,7 +54,7 @@
     "grunt-tslint": "^3.2.1",
     "istanbul": "^0.4.0",
     "load-grunt-tasks": "^3.5.2",
-    "mocha": "^2.3.3",
+    "mocha": "^3.1.0",
     "mocha-sinon": "^1.1.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
