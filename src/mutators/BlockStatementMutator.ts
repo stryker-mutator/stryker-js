@@ -7,23 +7,15 @@ import * as estree from 'estree';
  */
 export default class BlockStatementMutator implements Mutator {
   name = 'BlockStatement';
-  private types = [Syntax.BlockStatement];
+  private type = Syntax.BlockStatement;
 
   constructor() { }
 
-  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
-    let nodes: estree.Node[] = [];
-
-    if (this.canMutate(node)) {
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T) {
+    if (node.type === Syntax.BlockStatement) {
       let mutatedNode = copy(<estree.BlockStatement>node);
       mutatedNode.body = [];
-      nodes.push(mutatedNode);
+      return mutatedNode;
     }
-
-    return nodes;
   }
-
-  private canMutate(node: estree.Node) {
-    return !!(node && this.types.indexOf(node.type) >= 0);
-  };
 }

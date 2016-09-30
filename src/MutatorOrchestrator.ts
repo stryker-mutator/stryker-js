@@ -81,11 +81,11 @@ export default class MutatorOrchestrator {
   private registerDefaultMutators() {
     let mutatorFactory = MutatorFactory.instance();
     mutatorFactory.register('BinaryOperator', BinaryOperatorMutator);
-    //mutatorFactory.register('BlockStatement', BlockStatementMutator);
-    //mutatorFactory.register('LogicalOperator', LogicalOperatorMutator);
-    //mutatorFactory.register('RemoveConditionals', RemoveConditionalsMutator);
-    // mutatorFactory.register('UnaryOperator', UnaryOperatorMutator);
-    // mutatorFactory.register('UpdateOperator', UpdateOperatorMutator);
+    mutatorFactory.register('BlockStatement', BlockStatementMutator);
+    mutatorFactory.register('LogicalOperator', LogicalOperatorMutator);
+    mutatorFactory.register('RemoveConditionals', RemoveConditionalsMutator);
+    mutatorFactory.register('UnaryOperator', UnaryOperatorMutator);
+    mutatorFactory.register('UpdateOperator', UpdateOperatorMutator);
   }
 
   /**
@@ -105,15 +105,23 @@ export default class MutatorOrchestrator {
         this.mutators.forEach((mutator: Mutator) => {
           try {
             let mutatedNodes = mutator.applyMutations(astnode, (node: estree.Node, deep?: boolean) => deep ? _.cloneDeep(node) : _.clone(node));
-            if (mutatedNodes.length > 0) {
-              log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astnode.loc.start.line}, Col ${astnode.loc.start.column}) and (Ln ${astnode.loc.end.line}, Col ${astnode.loc.end.column}) in file ${sourceFile}`)
-            }
+            
+            if(mutatedNodes){
+              if(!Array.isArray(mutatedNodes)){
+                mutatedNodes = [mutatedNodes];
+              }
+              
+              if (mutatedNodes.length > 0) {
+                log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astnode.loc.start.line}, Col ${astnode.loc.start.column}) and (Ln ${astnode.loc.end.line}, Col ${astnode.loc.end.column}) in file ${sourceFile}`)
+              }
 
-            mutatedNodes.forEach((mutatedNode: estree.Node) => {
-              let mutatedCode = parserUtils.generate(mutatedNode);
-              let originalNode = nodes[mutatedNode.nodeID];
-              mutants.push(new Mutant(mutator.name, sourceFile, originalCode, mutatedCode, originalNode.loc, originalNode.range));
-            })
+              mutatedNodes.forEach((mutatedNode: estree.Node) => {
+                let mutatedCode = parserUtils.generate(mutatedNode);
+                let originalNode = nodes[mutatedNode.nodeID];
+                mutants.push(new Mutant(mutator.name, sourceFile, originalCode, mutatedCode, originalNode.loc, originalNode.range));
+              })
+            }
+            
           } catch (error) {
             throw new Error(`The mutator named '${mutator.name}' caused an error: ${error}`);
           }

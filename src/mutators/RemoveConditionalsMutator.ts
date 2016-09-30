@@ -1,4 +1,4 @@
-import {Syntax} from 'esprima-custom';
+import {Syntax} from 'esprima';
 import {Mutator} from 'stryker-api/mutant';
 import * as estree from 'estree';
 
@@ -7,7 +7,7 @@ import * as estree from 'estree';
  */
 export default class RemoveConditionalsMutator implements Mutator {
   name = 'RemoveConditionals';
-  private types = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement];
+  private types: string[] = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement];
 
   constructor() { }
 
@@ -15,14 +15,14 @@ export default class RemoveConditionalsMutator implements Mutator {
     let nodes: estree.Node[] = [];
 
     if (this.canMutate(node)) {
-      let mutatedFalseNode: estree.Expression = copy((<estree.ConditionalExpression>node).test);
-      this.mutateTestExpression(mutatedFalseNode, false);
-      nodes.push(mutatedFalseNode);
+      let mutatableFalseNode: estree.Expression = copy((<estree.ConditionalExpression>node).test);
+      let mutatedFalseNode = this.mutateTestExpression(mutatableFalseNode, false);
+      //nodes.push(mutatedFalseNode);
 
       if (node.type === Syntax.IfStatement) {
-        let mutatedTrueNode: estree.Literal = copy(node.test);
-        this.mutateTestExpression(mutatedTrueNode, true);
-        nodes.push(mutatedTrueNode);
+        // let mutatedTrueNode: estree.Literal = copy(node.test);
+        // this.mutateTestExpression(mutatedTrueNode, true);
+        // nodes.push(mutatedTrueNode);
       }
     }
 
@@ -30,7 +30,8 @@ export default class RemoveConditionalsMutator implements Mutator {
   }
 
   private mutateTestExpression(node: estree.Expression, newValue: boolean) {
-    node.value = newValue;
+    // TODO: Implement this method
+    // Change the node from an estree.Expression into an estree.Literal containing the value of `newValue`
   }
 
   private canMutate(node: estree.Node) {

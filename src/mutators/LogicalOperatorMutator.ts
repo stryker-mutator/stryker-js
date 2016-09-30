@@ -1,5 +1,5 @@
 import {Mutator} from 'stryker-api/mutant';
-import {Syntax} from 'esprima-custom';
+import {Syntax} from 'esprima';
 import * as estree from 'estree';
 
 export default class LogicalOperatorMutator implements Mutator  {
