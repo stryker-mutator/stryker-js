@@ -103,7 +103,7 @@ describe('Stryker', function () {
       beforeEach(() => {
         inputFileResolverStub = {
           resolve: sandbox.stub().returns(Promise.reject(['a rejection']))
-        }
+        };
         sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverStub);
         sut = new Stryker({});
       });
@@ -116,7 +116,7 @@ describe('Stryker', function () {
         inputFiles = [{ path: 'someFile', mutated: true, included: true }];
         inputFileResolverStub = {
           resolve: sandbox.stub().returns(Promise.resolve(inputFiles))
-        }
+        };
         testRunnerOrchestratorStub = {
           initialRun: sandbox.stub(),
           runMutations: sandbox.stub()
@@ -147,7 +147,7 @@ describe('Stryker', function () {
 
         describe('but contains an error and failed tests', () => {
           beforeEach((done) => {
-            initialRunResults.push({ result: TestResult.Error, errorMessages: ['An error!'] })
+            initialRunResults.push({ result: TestResult.Error, errorMessages: ['An error!'] });
             strykerPromise = sut.runMutationTest();
             strykerPromise.then(() => done(), () => done());
           });
@@ -169,7 +169,7 @@ describe('Stryker', function () {
           beforeEach(() => {
             initialRunResults.push({ result: TestResult.Complete, succeeded: 5 });
             initialRunResults.push({ result: TestResult.Complete, succeeded: 1 });
-            strykerPromiseResolved = false
+            strykerPromiseResolved = false;
             strykerPromise = sut.runMutationTest().then(() => strykerPromiseResolved = true);
           });
 
@@ -203,7 +203,7 @@ describe('Stryker', function () {
           describe('and running of mutators was successfull while reporter.wrapUp() results in a promise', () => {
             let wrapUpDoneFn: Function;
             beforeEach((done) => {
-              (<sinon.SinonStub>reporter.wrapUp).returns(new Promise((wrapUpDone) => wrapUpDoneFn = wrapUpDone))
+              (<sinon.SinonStub>reporter.wrapUp).returns(new Promise((wrapUpDone) => wrapUpDoneFn = wrapUpDone));
               runMutationsPromiseResolve();
               setTimeout(done, 1); // give the wrapup promise some time to resolve and go to the next step (i don't know of any other way)
             });

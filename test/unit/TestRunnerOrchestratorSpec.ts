@@ -21,7 +21,7 @@ let mockMutant = (id: number) => {
     timeSpentScopedTests: id,
     reset: sinon.stub().returns(Promise.resolve()),
   };
-}
+};
 
 describe('TestRunnerOrchestrator', () => {
   let sut: TestRunnerOrchestrator;
@@ -157,7 +157,7 @@ describe('TestRunnerOrchestrator', () => {
       beforeEach(() => {
         sandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
 
-        var untestedMutant = mockMutant(0);
+        const untestedMutant = mockMutant(0);
         untestedMutant.scopedTestIds = [];
 
         mutants = [untestedMutant, mockMutant(1), mockMutant(2), mockMutant(3), mockMutant(4)];
@@ -189,7 +189,7 @@ describe('TestRunnerOrchestrator', () => {
       });
 
       it('should have reported onMutantTested on all mutants', () => {
-        expect(reporter.onMutantTested).to.have.callCount(5)
+        expect(reporter.onMutantTested).to.have.callCount(5);
         expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[0]);
         expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[1]);
         expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[2]);

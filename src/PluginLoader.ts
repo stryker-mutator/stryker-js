@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
-import {importModule} from './utils/fileUtils'
+import { importModule } from './utils/fileUtils';
 
 let log = log4js.getLogger('PluginLoader');
 
-var IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
+const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 
 export default class PluginLoader {
 
@@ -24,8 +24,8 @@ export default class PluginLoader {
 
           // Plugin directory is the node_modules folder of the module that installed stryker
           // So if current __dirname is './stryker/src' than the plugin directory should be 2 directories above
-          var pluginDirectory = path.normalize(__dirname + '/../..');
-          var regexp = new RegExp('^' + pluginExpression.replace('*', '.*'));
+          const pluginDirectory = path.normalize(__dirname + '/../..');
+          const regexp = new RegExp('^' + pluginExpression.replace('*', '.*'));
 
           log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
           let plugins = fs.readdirSync(pluginDirectory)
@@ -45,11 +45,11 @@ export default class PluginLoader {
           modules.push(pluginExpression);
         }
       } else {
-        log.warn('Ignoring plugin %s, as its not a string type', pluginExpression)
+        log.warn('Ignoring plugin %s, as its not a string type', pluginExpression);
       }
     });
 
-    return modules
+    return modules;
   }
 
   private requirePlugin(name: string) {
@@ -59,9 +59,9 @@ export default class PluginLoader {
     } catch (e) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
         log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' +
-          '  npm install %s --save-dev', name, name)
+          '  npm install %s --save-dev', name, name);
       } else {
-        log.warn('Error during loading "%s" plugin:\n  %s', name, e.message)
+        log.warn('Error during loading "%s" plugin:\n  %s', name, e.message);
       }
     }
   }

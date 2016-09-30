@@ -55,7 +55,7 @@ describe('PluginLoader', () => {
 
     beforeEach(() => {
       sut = new PluginLoader(['stryker-*']);
-      pluginDirectoryReadMock.returns(['stryker-cli', 'stryker-jasmine', 'stryker-karma'])
+      pluginDirectoryReadMock.returns(['stryker-cli', 'stryker-jasmine', 'stryker-karma']);
     });
 
     describe('load()', () => {

@@ -21,7 +21,7 @@ describe('InputFileResolver', () => {
   describe('with mutant file expressions which result in files which are included in result of all globbing files', () => {
     beforeEach(() => {
       sut = new InputFileResolver(['mut*tion*'], ['file1', 'mutation1', 'file2', 'mutation2', 'file3']);
-      globStub.withArgs('mut*tion*').returns(Promise.resolve(['/mute1.js', '/mute2.js']))
+      globStub.withArgs('mut*tion*').returns(Promise.resolve(['/mute1.js', '/mute2.js']));
       globStub.withArgs('mutation1').returns(Promise.resolve(['/mute1.js']));
       globStub.withArgs('mutation2').returns(Promise.resolve(['/mute2.js']));
       globStub.withArgs('file1').returns(Promise.resolve(['/file1.js']));
@@ -36,8 +36,8 @@ describe('InputFileResolver', () => {
 
       it('should result in the expected input files', () => {
         expect(results.length).to.be.eq(5);
-        expect(results.map(m => m.mutated)).to.deep.equal([false, true, false, true, false])
-        expect(results.map(m => m.path.substr(m.path.length - 8))).to.deep.equal(['file1.js', 'mute1.js', 'file2.js', 'mute2.js', 'file3.js'])
+        expect(results.map(m => m.mutated)).to.deep.equal([false, true, false, true, false]);
+        expect(results.map(m => m.path.substr(m.path.length - 8))).to.deep.equal(['file1.js', 'mute1.js', 'file2.js', 'mute2.js', 'file3.js']);
       });
     });
   });
@@ -98,7 +98,7 @@ describe('InputFileResolver', () => {
     });
 
     it('should retain original glob order', () => {
-      expect(results.map(m => m.path.substr(m.path.length - 5))).to.deep.equal(['file1', 'file2'])
+      expect(results.map(m => m.path.substr(m.path.length - 5))).to.deep.equal(['file1', 'file2']);
     });
   });
 
@@ -107,14 +107,14 @@ describe('InputFileResolver', () => {
     let error: any;
     beforeEach(() => {
       sut = new InputFileResolver(['mut*tion*'], ['file1']);
-      globStub.withArgs('mut*tion*').returns(Promise.resolve(['/mute1.js', '/mute2.js']))
+      globStub.withArgs('mut*tion*').returns(Promise.resolve(['/mute1.js', '/mute2.js']));
       globStub.withArgs('file1').returns(Promise.resolve(['/file1.js']));
       return sut.resolve().then(r => results = r, e => error = e);
     });
 
     it('should reject the result', () => {
       let expectedFilesNames = ['/mute1.js', '/mute2.js'];
-      fileUtils.normalize(expectedFilesNames)
+      fileUtils.normalize(expectedFilesNames);
       expect(results).to.not.be.ok;
       expect(error.message).to.be.eq([
         `Could not find mutate file "${expectedFilesNames[0]}" in list of files.`,

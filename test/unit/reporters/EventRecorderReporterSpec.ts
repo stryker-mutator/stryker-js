@@ -80,10 +80,8 @@ describe('EventRecorderReporter', () => {
         });
 
         it('should reject', () => expect(result).to.be.eq('Some error'));
-      })
-
+      });
     });
-
   });
 
   afterEach(() => {

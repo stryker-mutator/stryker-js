@@ -1,9 +1,9 @@
 'use strict';
 
-import {expect} from 'chai';
+import { expect } from 'chai';
 import Mutant from '../../src/Mutant';
-import {MutantStatus} from 'stryker-api/report';
-import {Location} from 'stryker-api/core';
+import { MutantStatus } from 'stryker-api/report';
+import { Location } from 'stryker-api/core';
 import BinaryOperatorMutator from '../../src/mutators/BinaryOperatorMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
@@ -11,24 +11,24 @@ import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import * as estree from 'estree';
 
 describe('Mutant', function () {
-  var sut: Mutant;
-  var filename: string;
-  var mutator: BinaryOperatorMutator;
-  var originalLine: string;
-  var originalCode: string;
-  var mutatedLine: string;
-  var mutatedCode: string;
-  var lineNumber: number;
-  var ast: estree.Program;
-  var node: estree.Node;
-  var sandbox: sinon.SinonSandbox;
+  let sut: Mutant;
+  let filename: string;
+  let mutator: BinaryOperatorMutator;
+  let originalLine: string;
+  let originalCode: string;
+  let mutatedLine: string;
+  let mutatedCode: string;
+  let lineNumber: number;
+  let ast: estree.Program;
+  let node: estree.Node;
+  let sandbox: sinon.SinonSandbox;
 
   beforeEach(() => {
 
     sandbox = sinon.sandbox.create();
     sandbox.stub(StrykerTempFolder, 'writeFile');
 
-    var baseCode = 'var i = 1 + 2;\n';
+    const baseCode = 'var i = 1 + 2;\n';
     originalLine = 'var j = i * 2;';
     mutatedLine = 'var j = i / 2;';
     originalCode = baseCode + originalLine;
@@ -80,7 +80,7 @@ describe('Mutant', function () {
       let toBeMutated = `a > b
         && c < d
         || b == c`;
-        
+
       expectedOriginalLines =
         `${start}${toBeMutated}) {`;
       restOfCode = `
@@ -104,16 +104,16 @@ describe('Mutant', function () {
     });
 
     it('should generate the correct mutated code', () => {
-      var code = expectedMutatedLines + restOfCode;
-      //Some empty lines are needed. These are not allowed to contain spaces
+      const code = expectedMutatedLines + restOfCode;
+      // Some empty lines are needed. These are not allowed to contain spaces
       sut.save('a file');
       expect(StrykerTempFolder.writeFile).to.have.been.calledWith('a file', code);
     });
-    
+
     it('should set the correct originalLines', () => {
       expect(sut.originalLines).to.be.eq(expectedOriginalLines);
     });
-    
+
     it('should set the correct mutatedLines', () => {
       expect(sut.mutatedLines).to.be.eq(expectedMutatedLines);
     });

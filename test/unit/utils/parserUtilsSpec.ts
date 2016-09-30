@@ -1,6 +1,6 @@
 'use strict';
 
-var expect = require('chai').expect;
+import { expect } from 'chai';
 import * as parserUtils from '../../../src/utils/parserUtils';
 require('mocha-sinon');
 
@@ -33,9 +33,9 @@ describe('parserUtils', () => {
 
 
     it('should return an empty object if an empty string is parsed', () => {
-      var emptyObject = {};
+      const emptyObject = {};
 
-      var result = parserUtils.parse('');
+      const result = parserUtils.parse('');
       expect(JSON.stringify(result)).to.equal(JSON.stringify(emptyObject));
     });
   });

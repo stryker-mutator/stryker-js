@@ -11,7 +11,7 @@ import {Reporter} from 'stryker-api/report';
 import * as estree from 'estree';
 
 describe('MutatorOrchestrator', () => {
-  var sut: MutatorOrchestrator;
+  let sut: MutatorOrchestrator;
   let fileUtilsStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
   let reporter: Reporter;
@@ -34,7 +34,7 @@ describe('MutatorOrchestrator', () => {
   it('should return an empty array if nothing could be mutated', () => {
     fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => '');
 
-    var mutants = sut.generateMutants(['test.js']);
+    const mutants = sut.generateMutants(['test.js']);
 
     expect(mutants.length).to.equal(0);
   });
@@ -75,7 +75,7 @@ describe('MutatorOrchestrator', () => {
   });
 
   it('should not stop executing when a file does not exist', () => {
-    var mutants = sut.generateMutants(['someFileWhichShouldNotExist.js']);
+    const mutants = sut.generateMutants(['someFileWhichShouldNotExist.js']);
 
     expect(mutants.length).to.equal(0);
   });

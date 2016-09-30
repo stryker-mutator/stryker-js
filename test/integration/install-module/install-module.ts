@@ -6,7 +6,7 @@ describe('we have a module using stryker', function () {
   this.timeout(100000);
 
   describe('after installing Stryker', () => {
-    let executor: Executor
+    let executor: Executor;
 
     before((done) => {
       executor = new Executor('../../../testResources/module');

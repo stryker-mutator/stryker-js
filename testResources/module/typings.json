@@ -1,6 +1,0 @@
-{
-  "ambientDependencies": {
-    "bluebird": "registry:dt/bluebird#2.0.0+20160319051630",
-    "estree": "registry:dt/estree#0.0.0+20160317120654"
-  }
-}

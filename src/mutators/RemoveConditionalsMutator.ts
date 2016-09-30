@@ -1,5 +1,5 @@
-import {Syntax} from 'esprima';
-import {Mutator} from 'stryker-api/mutant';
+import { Syntax } from 'esprima';
+import { Mutator } from 'stryker-api/mutant';
 import * as estree from 'estree';
 
 type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree.ForStatement | estree.WhileStatement | estree.ConditionalExpression;
@@ -14,33 +14,28 @@ export default class RemoveConditionalsMutator implements Mutator {
   constructor() { }
 
   applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
-    let nodes: estree.Node[] = [];
-
     if (this.canMutate(node)) {
-      let mutatedFalseNode = copy(node.test);
-      this.mutateTestExpression(mutatedFalseNode, false);
-      //nodes.push(mutatedFalseNode);
+      let nodes: estree.Node[] = [];
+      nodes.push(this.booleanLiteralNode(node.nodeID, false));
 
       if (node.type === Syntax.IfStatement) {
-        // let mutatedTrueNode: estree.Literal = copy(node.test);
-        // this.mutateTestExpression(mutatedTrueNode, true);
-        // nodes.push(mutatedTrueNode);
+        nodes.push(this.booleanLiteralNode(node.nodeID, true));
       }
+      return nodes;
     }
-
-    return nodes;
   }
 
-  private mutateTestExpression(node: estree.Expression, newValue: boolean) {
-    // TODO: Implement this method
-    // Change the node from an estree.Expression into an estree.Literal containing the value of `newValue`
+  private booleanLiteralNode(nodeID: number, value: boolean): estree.SimpleLiteral {
+    return {
+      nodeID: nodeID,
+      type: Syntax.Literal,
+      value: value,
+      raw: value.toString()
+    };
   }
 
-  private canMutate(node: estree.Node) : node is ConditionExpression {
+  private canMutate(node: estree.Node): node is ConditionExpression {
     return this.types.indexOf(node.type) >= 0;
   };
 
-  private copyNode(node: estree.Node) {
-    return JSON.parse(JSON.stringify(node));
-  }
 }

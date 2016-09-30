@@ -26,8 +26,8 @@ export default class Executor {
   }
 
   private handleProcess(child: ChildProcess, done: (error: any, output: string) => any) {
-    var stderr = new Buffer('');
-    var stdout = new Buffer('');
+    let stderr = new Buffer('');
+    let stdout = new Buffer('');
     if (child.stdout) {
       child.stdout.on('data', (buf: Buffer) => {
         if (!this.silent) {
