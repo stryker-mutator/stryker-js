@@ -14,7 +14,7 @@ export default class LogicalOperatorMutator implements Mutator  {
     let nodes: estree.Node[] = [];
 
     if (node.type === Syntax.LogicalExpression && this.operators[node.operator]) {
-      let mutatedNode = copy(<estree.LogicalExpression>node);
+      let mutatedNode = copy(node);
       mutatedNode.operator = this.operators[node.operator];
       nodes.push(mutatedNode);
     }

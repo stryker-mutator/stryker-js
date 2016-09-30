@@ -26,13 +26,13 @@ export default class BinaryOperatorMutator implements Mutator  {
     let nodes: estree.Node[] = [];
 
     if (node.type === Syntax.BinaryExpression && this.operators[node.operator]) {
+      let binaryNode = node;
       let mutatedOperators = this.operators[node.operator];
       if(typeof mutatedOperators === "string"){
         mutatedOperators = [mutatedOperators];
       }
-      
       mutatedOperators.forEach(operator => {
-        let mutatedNode = copy(<estree.BinaryExpression>node);
+        let mutatedNode = copy(binaryNode);
         mutatedNode.operator = operator;
         nodes.push(mutatedNode);
       });

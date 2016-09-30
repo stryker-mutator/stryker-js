@@ -1,4 +1,4 @@
-import {Syntax} from 'esprima';
+import {Syntax} from 'esprima-custom';
 import {Mutator} from 'stryker-api/mutant';
 import * as estree from 'estree';
 
