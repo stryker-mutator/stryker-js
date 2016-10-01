@@ -7,7 +7,7 @@ export default class HandlebarsModel {
     this.totalMutations = totalKilled + totalSurvived + totalUntested;
     this.totalCoveredMutations = totalKilled + totalSurvived;
     this.percentageBasedOnAllCode = Math.floor(totalKilled / this.totalMutations * 100) || 0,
-      this.percentageBasedOnCoveredCode = Math.floor(totalKilled / this.totalCoveredMutations * 100) || 0
+      this.percentageBasedOnCoveredCode = Math.floor(totalKilled / this.totalCoveredMutations * 100) || 0;
   };
 
   public totalMutations: number;

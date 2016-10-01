@@ -39,7 +39,7 @@ export default class SourceFileTreeNode {
     } else {
       let nodeToAddTo = this.children.filter(node => node.name === nextPathComponent).pop();
       if (!nodeToAddTo) {
-        nodeToAddTo = new SourceFileTreeNode(nextPathComponent)
+        nodeToAddTo = new SourceFileTreeNode(nextPathComponent);
         this.children.push(nodeToAddTo);
       }
       nodeToAddTo.addSourceFile(file, pathComponents);

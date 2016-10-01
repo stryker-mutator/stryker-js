@@ -11,12 +11,12 @@ describe('File report page "Circle.js.html"', () => {
     for (let i = 0; i < 6; i++) {
       fn(page.mutantSelection(i));
     }
-  }
+  };
 
   let get = () => {
     let f = `file:///${path.resolve(path.join(__dirname, '../../reports/mutation/html/Circle.js.html')).replace(/\\/g, '/')}`;
     return browser.get(f);
-  }
+  };
 
   beforeEach(() => {
     get();

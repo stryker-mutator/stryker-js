@@ -82,7 +82,7 @@ function rmdir(dirToDelete: string): Promise<void> {
       } else {
         resolve();
       }
-    })
+    });
   });
 }
 
@@ -135,7 +135,7 @@ export function mkdirRecursive(folderName: string): Promise<void> {
       } else {
         resolve();
       }
-    })
+    });
   });
 }
 
@@ -144,7 +144,7 @@ function fileOrFolderExists(path: string): Promise<boolean> {
     fs.lstat(path, (error, stats) => {
       resolve(!error);
     });
-  })
+  });
 }
 
 function readTemplate(name: string) {
@@ -190,7 +190,7 @@ handlebars.registerHelper('code', function () {
         currentCursorMutantStatusses.untested += valueToAdd;
         break;
     }
-  }
+  };
 
   let determineBackground = () => {
     if (currentCursorMutantStatusses.survived > 0) {
@@ -203,7 +203,7 @@ handlebars.registerHelper('code', function () {
       return getContextClassForStatus(MutantStatus.KILLED);
     }
     return null;
-  }
+  };
 
   let annotate = (char: string, index: number) => {
     let mutantsStarting = numberedMutants.filter(m => m.mutant.range[0] === index);
@@ -249,7 +249,7 @@ function escape(input: string): string {
  */
 function mapString<T>(source: string, fn: (char: string, index?: number) => T): T[] {
   let results: T[] = [];
-  for (var i = 0; i < source.length; i++) {
+  for (let i = 0; i < source.length; i++) {
     results.push(fn(source[i], i));
   }
   return results;
