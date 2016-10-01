@@ -9,7 +9,7 @@ let expect = chai.expect;
 
 describe('KarmaTestRunner', function () {
 
-  var sut: KarmaTestRunner;
+  let sut: KarmaTestRunner;
   this.timeout(10000);
 
   describe('when code coverage is enabled', () => {
@@ -103,7 +103,7 @@ describe('KarmaTestRunner', function () {
         return true;
       });
     });
-  })
+  });
 
   describe('when no error occured and no test is performed', () => {
     before(() => {
@@ -150,5 +150,5 @@ describe('KarmaTestRunner', function () {
         return true;
       });
     });
-  })
+  });
 });

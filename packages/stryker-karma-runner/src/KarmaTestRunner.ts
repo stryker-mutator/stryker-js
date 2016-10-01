@@ -6,7 +6,7 @@ import * as log4js from 'log4js';
 const log = log4js.getLogger('KarmaTestRunner');
 
 interface ConfigOptions extends karma.ConfigOptions {
-  coverageReporter?: { type: string, dir?: string, subdir?: string }
+  coverageReporter?: { type: string, dir?: string, subdir?: string };
   detached?: boolean;
 }
 
@@ -16,13 +16,13 @@ const DEFAULT_OPTIONS: ConfigOptions = {
   autoWatch: false,
   singleRun: false,
   detached: false
-}
+};
 
 const DEFAULT_COVERAGE_REPORTER = {
   coverageReporter: {
     type: 'in-memory'
   }
-}
+};
 
 export default class KarmaTestRunner implements TestRunner {
 
@@ -157,7 +157,7 @@ export default class KarmaTestRunner implements TestRunner {
 
     // Override frameworks
     if (this.options.strykerOptions.testFramework && !(overrides && overrides.frameworks)) {
-      karmaConfig.frameworks = [this.options.strykerOptions.testFramework]
+      karmaConfig.frameworks = [this.options.strykerOptions.testFramework];
     }
 
     return karmaConfig;
@@ -180,7 +180,7 @@ export default class KarmaTestRunner implements TestRunner {
       failed: testResults.failed,
       coverage: this.currentCoverageReport,
       errorMessages: this.currentErrorMessages
-    }
+    };
   }
 
   private convertTestResult(testResults: karma.TestResults) {
