@@ -1,5 +1,5 @@
-import {Reporter, MutantResult, SourceFile } from 'stryker-api/report';
-import {StrykerOptions} from 'stryker-api/core';
+import { Reporter, MutantResult, SourceFile } from 'stryker-api/report';
+import { StrykerOptions } from 'stryker-api/core';
 import SourceFileTreeNode from './SourceFileTreeNode';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -38,12 +38,12 @@ export default class HtmlReporter implements Reporter {
     });
   }
 
-  private writeBootstrapAndHighlightResources(){
+  private writeBootstrapAndHighlightResources() {
     let resourcesDir = path.join(__dirname, '..', 'resources');
     return util.copyFolder(resourcesDir, this.baseFolder);
   }
 
-  private writeStrykerResources(){
+  private writeStrykerResources() {
     let resourcesDir = path.join(__dirname, 'resources', 'stryker');
     return util.copyFolder(resourcesDir, this.baseFolder);
   }
@@ -62,7 +62,7 @@ export default class HtmlReporter implements Reporter {
     if (!this._baseFolder) {
       if (this.options['htmlReporter'] && this.options['htmlReporter']['baseDir']) {
         this._baseFolder = this.options['htmlReporter']['baseDir'];
-        log.debug(`Using configured output folder ${this._baseFolder}`)
+        log.debug(`Using configured output folder ${this._baseFolder}`);
       } else {
         log.debug(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
         this._baseFolder = DEFAULT_BASE_FOLDER;

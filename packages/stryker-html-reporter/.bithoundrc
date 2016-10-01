@@ -1,0 +1,10 @@
+{
+    "critics": {
+        "lint": { "engine": "tslint" },
+        "wc": { "limit": 3000 }
+    },
+    "test": [
+        "test/**",
+        "testResources/**"
+     ]
+}

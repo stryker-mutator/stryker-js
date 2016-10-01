@@ -15,7 +15,7 @@ describe('SourceFileTreeNode', () => {
     describe('with one SourceFile "some/random/path/file1.js"', () => {
 
       beforeEach(() => {
-        sut.addSourceFile(file('some/random/path/file1.js'))
+        sut.addSourceFile(file('some/random/path/file1.js'));
       });
       it('should make a list of nodes with one leaf', () => {
         expect(sut.toString()).to.eq('/\n.some\n..random\n...path\n..../file1.js\n');

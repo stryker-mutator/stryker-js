@@ -2,6 +2,8 @@
 
 module.exports = function (grunt) {
 
+  require('load-grunt-tasks')(grunt);
+
   grunt.initConfig({
 
     clean: {
@@ -69,8 +71,8 @@ module.exports = function (grunt) {
       coverage: {
         // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
         src: ['test/helpers/**/*.js', 'test/unit/**/*.js', 'test/integration/**/*.js'],
-        options: { 
-          timeout: 30000 
+        options: {
+          timeout: 30000
         }
       }
     },
@@ -103,22 +105,22 @@ module.exports = function (grunt) {
       },
       ui: {
       }
+    },
+
+    tslint: {
+      src: {
+        src: ['*.ts', 'src/**/*.ts']
+      },
+      test: {
+        src: ['test/**/*.ts', 'testResources/module/*.ts']
+      }
     }
   });
-
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-protractor-runner');
-  grunt.loadNpmTasks('grunt-mocha-istanbul');
-  grunt.loadNpmTasks('grunt-ts');
-  grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
   grunt.registerTask('test', ['build', 'coverage', 'protractor']);
-  grunt.registerTask('build', ['clean', 'copy', 'browserify', 'ts']);
+  grunt.registerTask('build', ['clean', 'tslint', 'copy', 'browserify', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('serve', ['watch']);

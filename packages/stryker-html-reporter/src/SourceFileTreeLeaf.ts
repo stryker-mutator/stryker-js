@@ -1,4 +1,4 @@
-import {SourceFile, MutantResult, MutantStatus} from 'stryker-api/report';
+import { SourceFile, MutantResult, MutantStatus } from 'stryker-api/report';
 import HandlebarsModel from './HandlebarsModel';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -8,14 +8,14 @@ export default class SourceFileTreeLeaf {
   public name: string;
   public model: HandlebarsModel;
   public filename: string;
-  
+
   constructor(public file: SourceFile, public results: MutantResult[] = []) {
     this.name = path.basename(file.path);
     this.filename = `${this.name}.html`;
   }
-  
-  public writeFileReport(directory: string){
-    fs.writeFileSync(path.join(directory, this.filename), util.sourceFileTemplate(this), 'utf8');    
+
+  public writeFileReport(directory: string) {
+    fs.writeFileSync(path.join(directory, this.filename), util.sourceFileTemplate(this), 'utf8');
   }
 
   public calculateModel(urlPrefix: string) {
