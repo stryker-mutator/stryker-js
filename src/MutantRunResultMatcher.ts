@@ -1,6 +1,6 @@
 import Mutant from './Mutant';
-import {RunResult, CoverageResult} from 'stryker-api/test_runner';
-import {Location} from 'stryker-api/core';
+import { RunResult, CoverageResult } from 'stryker-api/test_runner';
+import { Location } from 'stryker-api/core';
 
 export default class MutantRunResultMatcher {
 
@@ -81,11 +81,11 @@ export default class MutantRunResultMatcher {
    * @returns true if the statment covers the mutant.
    */
   private statementCoversMutant(mutant: Mutant, location: Location): boolean {
-    let mutantIsAfterStart = mutant.location.end.line > location.start.line ||
-      (mutant.location.end.line === location.start.line && mutant.location.end.column >= location.start.column);
-    let mutantIsBeforeEnd = mutant.location.start.line < location.end.line ||
-      (mutant.location.start.line === location.end.line && mutant.location.start.column <= location.end.column);
-
+    let mutantIsAfterStart = mutant.location.start.line > location.start.line ||
+      (mutant.location.start.line === location.start.line && mutant.location.start.column >= location.start.column);
+    let mutantIsBeforeEnd = mutant.location.end.line < location.end.line ||
+      (mutant.location.end.line === location.end.line && mutant.location.end.column <= location.end.column);
+      
     return mutantIsAfterStart && mutantIsBeforeEnd;
   }
 }
