@@ -2,7 +2,6 @@
 
 module.exports = function (grunt) {
 
-
   require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
@@ -91,6 +90,14 @@ module.exports = function (grunt) {
         commitMessage: 'chore: release v%VERSION%',
         prereleaseName: 'rc'
       }
+    },
+    tslint: {
+      src: {
+        src: ['*.ts', 'src/**/*.ts']
+      },
+      test: {
+        src: ['test/**/*.ts', 'testResources/module/*.ts']
+      }
     }
   });
 
@@ -109,7 +116,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['test']);
   grunt.registerTask('watch-test', ['test', 'watch']);
   grunt.registerTask('test', ['build', 'coverage']);
-  grunt.registerTask('build', ['clean', 'ts']);
+  grunt.registerTask('build', ['clean', 'tslint', 'ts']);
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('serve', ['watch']);
