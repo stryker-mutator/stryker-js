@@ -1,3 +1,18 @@
+<a name="0.2.2"></a>
+## [0.2.2](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.2.1...v0.2.2) (2016-10-03)
+
+
+### Bug Fixes
+
+* **deps:** Update stryker-api version ([559c77c](https://github.io/stryker-mutator/stryker-karma-runner/commit/559c77c))
+
+
+### Features
+
+* **ts2.0:** Migrate to typescript 2.0 (#5) ([8f206bd](https://github.io/stryker-mutator/stryker-karma-runner/commit/8f206bd))
+
+
+
 <a name="0.2.1"></a>
 ## [0.2.1](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.2.0...v0.2.1) (2016-08-30)
 
