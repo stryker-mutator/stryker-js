@@ -3,6 +3,7 @@ import * as parserUtils from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
 import * as chai from 'chai';
 import * as estree from 'estree';
+import 'stryker-api/estree';
 
 let expect = chai.expect;
 
