@@ -1,6 +1,6 @@
 {
   "name": "stryker-mocha-runner",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The Stryker TestRunner for Mocha",
   "main": "src/index.js",
   "scripts": {
