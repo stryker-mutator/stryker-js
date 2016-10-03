@@ -54,7 +54,7 @@ export default class Stryker {
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then(inputFiles => {
         let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, testSelector, reporter);
-        return testRunnerOrchestrator.initialRun().then(runResults => ({ runResults, inputFiles, testRunnerOrchestrator }))
+        return testRunnerOrchestrator.initialRun().then(runResults => ({ runResults, inputFiles, testRunnerOrchestrator }));
       })
       .then(tuple => {
         let runResults = tuple.runResults;

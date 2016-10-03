@@ -1,4 +1,4 @@
-var program = require('commander');
+const program = require('commander');
 import {CONFIG_SYNTAX_HELP} from './ConfigReader';
 import Stryker from './Stryker';
 import * as log4js from 'log4js';
@@ -28,7 +28,7 @@ program
   .option('--logLevel <level>', 'Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
   .parse(process.argv);
 
-log4js.setGlobalLogLevel(program['logLevel'] || 'info')
+log4js.setGlobalLogLevel(program['logLevel'] || 'info');
 
 // Cleanup commander state
 delete program.options;

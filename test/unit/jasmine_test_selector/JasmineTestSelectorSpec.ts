@@ -1,6 +1,6 @@
 import JasmineTestSelector from '../../../src/jasmine_test_selector/JasmineTestSelector';
-import {TestSelectorSettings, TestSelectorFactory} from 'stryker-api/test_selector';
-import {expect} from 'chai';
+import { TestSelectorSettings, TestSelectorFactory } from 'stryker-api/test_selector';
+import { expect } from 'chai';
 
 describe('JasmineTestSelector', () => {
 
@@ -10,8 +10,8 @@ describe('JasmineTestSelector', () => {
   beforeEach(() => {
     settings = { options: null };
   });
-  
-  it('should register it under "jasmine" in the TestSelectorFactory', () =>{
+
+  it('should register it under "jasmine" in the TestSelectorFactory', () => {
     expect(TestSelectorFactory.instance().create('jasmine', settings)).to.be.instanceof(JasmineTestSelector);
   });
 
@@ -38,7 +38,7 @@ describe('JasmineTestSelector', () => {
         }
         count ++;
     }
-})(window || global);`)
+})(window || global);`);
       });
     });
 

@@ -1,13 +1,13 @@
-import {TestRunner, RunResult, RunOptions, RunnerOptions, TestResult} from 'stryker-api/test_runner';
-import {StrykerOptions} from 'stryker-api/core';
-import {fork, ChildProcess} from 'child_process';
-import Message, {MessageType } from './Message';
+import { TestRunner, RunResult, RunOptions, RunnerOptions, TestResult } from 'stryker-api/test_runner';
+import { StrykerOptions } from 'stryker-api/core';
+import { fork, ChildProcess } from 'child_process';
+import Message, { MessageType } from './Message';
 import StartMessageBody from './StartMessageBody';
 import RunMessageBody from './RunMessageBody';
 import ResultMessageBody from './ResultMessageBody';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
-import {serialize} from '../utils/objectUtils';
+import { serialize } from '../utils/objectUtils';
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapter');
 const MAX_WAIT_FOR_DISPOSE = 2000;
@@ -74,7 +74,7 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
           this.disposePromiseFulfillmentCallback();
           break;
         default:
-          log.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`)
+          log.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`);
           break;
       }
     });
@@ -123,11 +123,11 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
       body: {
         runOptions: options
       }
-    }
+    };
     this.send(message);
   }
 
-  private send<T>(message: Message<T>){
+  private send<T>(message: Message<T>) {
     // Serialize message before sending to preserve all javascript, including regexes and functions
     // See https://github.com/stryker-mutator/stryker/issues/143
     this.workerProcess.send(serialize(message));
@@ -140,7 +140,7 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
         runnerName: this.realTestRunnerName,
         runnerOptions: this.options
       }
-    }
+    };
     this.send(startMessage);
   }
 
@@ -173,7 +173,7 @@ export default class TestRunnerChildProcessAdapter implements TestRunner {
     this.dispose()
       .then(() => this.startWorker())
       .then(() => this.init())
-      .then(() => this.runPromiseFulfillmentCallback({ result: TestResult.Timeout }))
+      .then(() => this.runPromiseFulfillmentCallback({ result: TestResult.Timeout }));
   }
 
   private emptyMessage(type: MessageType): Message<void> {

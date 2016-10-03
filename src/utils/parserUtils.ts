@@ -1,12 +1,13 @@
 import * as _ from 'lodash';
 import * as esprima from 'esprima';
-var escodegen = require('escodegen');
+import * as estree from 'estree';
+const escodegen = require('escodegen');
 
 /**
  * Utility class for parsing and generating code.
  * @constructor
  */
-var esprimaOptions = {
+const esprimaOptions = {
   comment: true,
   loc: true,
   range: true,
@@ -27,7 +28,7 @@ export function parse(code: string): any {
     return {};
   }
 
-  var abstractSyntaxTree = esprima.parse(code, esprimaOptions);
+  const abstractSyntaxTree = esprima.parse(code, esprimaOptions);
 
   return abstractSyntaxTree;
 };
@@ -68,6 +69,6 @@ export function collectFrozenNodes(abstractSyntaxTree: any, nodes?: any[]): any[
    * @param The Node which has to be transformed into code.
    * @returns The generated code.
    */
-export function generate(node: ESTree.Node): string {
+export function generate(node: estree.Node): string {
   return escodegen.generate(node);
 };

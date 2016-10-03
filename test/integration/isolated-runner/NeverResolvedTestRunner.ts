@@ -1,9 +1,9 @@
-import {TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult} from 'stryker-api/test_runner';
+import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult } from 'stryker-api/test_runner';
 
 class NeverResolvedTestRunner implements TestRunner {
-  
-  run(options: RunOptions){
-    return new Promise<RunResult>(res => {});
+
+  run(options: RunOptions) {
+    return new Promise<RunResult>(res => { });
   }
 }
 

@@ -8,9 +8,10 @@ import * as sinon from 'sinon';
 import {Syntax} from 'esprima';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import {Reporter} from 'stryker-api/report';
+import * as estree from 'estree';
 
 describe('MutatorOrchestrator', () => {
-  var sut: MutatorOrchestrator;
+  let sut: MutatorOrchestrator;
   let fileUtilsStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
   let reporter: Reporter;
@@ -33,7 +34,7 @@ describe('MutatorOrchestrator', () => {
   it('should return an empty array if nothing could be mutated', () => {
     fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => '');
 
-    var mutants = sut.generateMutants(['test.js']);
+    const mutants = sut.generateMutants(['test.js']);
 
     expect(mutants.length).to.equal(0);
   });
@@ -74,7 +75,7 @@ describe('MutatorOrchestrator', () => {
   });
 
   it('should not stop executing when a file does not exist', () => {
-    var mutants = sut.generateMutants(['someFileWhichShouldNotExist.js']);
+    const mutants = sut.generateMutants(['someFileWhichShouldNotExist.js']);
 
     expect(mutants.length).to.equal(0);
   });
@@ -83,11 +84,11 @@ describe('MutatorOrchestrator', () => {
 
     class StubMutator implements Mutator {
       name: 'stub';
-      applyMutations(node: ESTree.Node, deepCopy: (obj: any) => any): ESTree.Node[] {
-        let nodes: ESTree.Node[] = [];
+      applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
+        let nodes: estree.Node[] = [];
         if (node.type === Syntax.BinaryExpression) {
           // eg: '1 * 2': push child node
-          nodes.push((<ESTree.BinaryExpression>node).left);
+          nodes.push(<estree.Expression>(<estree.BinaryExpression>node).left);
         } else if (node.type === Syntax.IfStatement) {
           // eg: 'if(true);': push original node
           nodes.push(node);

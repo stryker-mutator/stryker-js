@@ -11,12 +11,12 @@ import Mutant from './Mutant';
 import {Reporter, MutantStatus, MutantResult} from 'stryker-api/report';
 import * as log4js from 'log4js';
 import {freezeRecursively} from './utils/objectUtils';
-const PromisePool = require('es6-promise-pool')
+const PromisePool = require('es6-promise-pool');
 
 const log = log4js.getLogger('TestRunnerOrchestrator');
 
 interface FileMap {
-  [sourceFile: string]: string
+  [sourceFile: string]: string;
 }
 
 interface TestRunnerSandbox {
@@ -68,7 +68,7 @@ export default class TestRunnerOrchestrator {
         if (mutants.length === 0) {
           return null; // we're done
         } else {
-          var mutant = mutants.pop();
+          const mutant = mutants.pop();
           if (mutant.scopedTestIds.length > 0) {
             let sandbox = sandboxes.pop();
             let sourceFileCopy = sandbox.fileMap[mutant.filename];
@@ -87,7 +87,7 @@ export default class TestRunnerOrchestrator {
             return Promise.resolve(this.reporter.onMutantTested(result));
           }
         }
-      }
+      };
       return new PromisePool(promiseProducer, sandboxes.length)
         .start()
         .then(() => this.reportAllMutantsTested(results))
@@ -146,8 +146,7 @@ export default class TestRunnerOrchestrator {
     return result;
   }
 
-  private runSingleTestsRecursive(sandbox: TestRunnerSandbox, runResults: RunResult[], currentTestIndex: number)
-    : Promise<RunResult[]> {
+  private runSingleTestsRecursive(sandbox: TestRunnerSandbox, runResults: RunResult[], currentTestIndex: number): Promise<RunResult[]> {
 
     return new Promise<RunResult[]>(resolve => {
       this.selectTestsIfPossible(sandbox, [currentTestIndex])
@@ -165,7 +164,7 @@ export default class TestRunnerOrchestrator {
             resolve(runResults);
           }
         });
-    })
+    });
   }
 
   private createTestRunnerSandboxes(): Promise<TestRunnerSandbox[]> {
@@ -190,7 +189,7 @@ export default class TestRunnerOrchestrator {
   }
 
   private createInitializedSandbox(index: number): Promise<TestRunnerSandbox> {
-    var tempFolder = this.createTempFolder();
+    const tempFolder = this.createTempFolder();
     return this.copyAllFilesToFolder(tempFolder).then(fileMap => {
       let testSelectionFilePath: string = null;
       if (this.testSelector) {
@@ -203,7 +202,7 @@ export default class TestRunnerOrchestrator {
   }
 
   private createTempFolder() {
-    var tempFolder = StrykerTempFolder.createRandomFolder('test-runner-files');
+    const tempFolder = StrykerTempFolder.createRandomFolder('test-runner-files');
     log.debug('Creating a sandbox for files in %s', tempFolder);
     return tempFolder;
   }

@@ -1,28 +1,21 @@
 import {Syntax} from 'esprima';
 import {Mutator} from 'stryker-api/mutant';
+import * as estree from 'estree';
 
 /**
  * Represents a mutator which can remove the content of a BlockStatement.
  */
 export default class BlockStatementMutator implements Mutator {
   name = 'BlockStatement';
-  private types = [Syntax.BlockStatement];
+  private type = Syntax.BlockStatement;
 
   constructor() { }
 
-  applyMutations(node: ESTree.Node, copy: (obj: any, deep?: boolean) => any): ESTree.Node[] {
-    let nodes: ESTree.Node[] = [];
-
-    if (this.canMutate(node)) {
-      let mutatedNode: ESTree.BlockStatement = copy(node);
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T):  void | estree.Node | estree.Node[] {
+    if (node.type === Syntax.BlockStatement) {
+      let mutatedNode = copy(node);
       mutatedNode.body = [];
-      nodes.push(mutatedNode);
+      return mutatedNode;
     }
-
-    return nodes;
   }
-
-  private canMutate(node: ESTree.Node) {
-    return !!(node && this.types.indexOf(node.type) >= 0);
-  };
 }

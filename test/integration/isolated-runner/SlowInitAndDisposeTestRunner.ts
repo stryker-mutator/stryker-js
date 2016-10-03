@@ -1,12 +1,12 @@
-import {TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult} from 'stryker-api/test_runner';
+import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult } from 'stryker-api/test_runner';
 
 class SlowInitAndDisposeTestRunner implements TestRunner {
-  
-  inInit: boolean;
-  runResult: RunResult = { result: TestResult.Complete, testNames: []};
 
-  init(){
-    return new Promise<void>( resolve => {
+  inInit: boolean;
+  runResult: RunResult = { result: TestResult.Complete, testNames: [] };
+
+  init() {
+    return new Promise<void>(resolve => {
       this.inInit = true;
       setTimeout(() => {
         this.inInit = false;
@@ -15,14 +15,14 @@ class SlowInitAndDisposeTestRunner implements TestRunner {
     });
   }
 
-  run(options: RunOptions){
-    if(this.inInit){
-      throw new Error("Test should fail! Not yet initialized!")
+  run(options: RunOptions) {
+    if (this.inInit) {
+      throw new Error('Test should fail! Not yet initialized!');
     }
     return new Promise<RunResult>(res => res(this.runResult));
   }
 
-  dispose(){
+  dispose() {
     return this.init();
   }
 }

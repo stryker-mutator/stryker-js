@@ -1,5 +1,5 @@
-import {Config} from 'stryker-api/config';
-import {StrykerOptions} from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
+import { StrykerOptions } from 'stryker-api/core';
 import * as log4js from 'log4js';
 import * as path from 'path';
 import * as _ from 'lodash';
@@ -8,7 +8,7 @@ export var CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +
   '      // your config\n' +
   '    });\n' +
-  '  };\n'
+  '  };\n';
 
 const log = log4js.getLogger('ConfigReader');
 
@@ -17,12 +17,12 @@ export default class ConfigReader {
   constructor(private options: StrykerOptions) { }
 
   readConfig() {
-    let configModule = this.loadConfigModule();
-    var config = new Config();
+    const configModule = this.loadConfigModule();
+    const config = new Config();
     try {
       configModule(config);
     } catch (e) {
-      log.fatal('Error in config file!\n', e)
+      log.fatal('Error in config file!\n', e);
       process.exit(1);
     }
 
@@ -47,13 +47,13 @@ export default class ConfigReader {
         process.exit(1);
       }
       if (!_.isFunction(configModule)) {
-        log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP)
-        process.exit(1)
+        log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
+        process.exit(1);
       }
     } else {
-      log.debug('No config file specified.')
+      log.debug('No config file specified.');
       // if no config file path is passed, we define a dummy config module.
-      configModule = function () { }
+      configModule = function () { };
     }
     return configModule;
   }

@@ -1,14 +1,14 @@
 
-import {Reporter, SourceFile, MutantResult} from 'stryker-api/report';
-import {StrykerOptions} from 'stryker-api/core';
+import { Reporter, SourceFile, MutantResult } from 'stryker-api/report';
+import { StrykerOptions } from 'stryker-api/core';
 import * as log4js from 'log4js';
-import {isPromise} from '../utils/objectUtils';
+import { isPromise } from '../utils/objectUtils';
 
 const log = log4js.getLogger('BroadcastReporter');
 
 export interface NamedReporter {
-  name: string,
-  reporter: Reporter
+  name: string;
+  reporter: Reporter;
 }
 
 export const ALL_EVENT_METHOD_NAMES = ['onSourceFileRead', 'onAllSourceFilesRead', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead'];
@@ -19,8 +19,8 @@ export default class BroadcastReporter implements Reporter {
     ALL_EVENT_METHOD_NAMES.concat('wrapUp').forEach(method => {
       (<any>this)[method] = (arg: any) => {
         return this.broadcast(method, arg);
-      }
-    })
+      };
+    });
   }
 
   private broadcast(methodName: string, eventArgs: any) {
@@ -39,7 +39,7 @@ export default class BroadcastReporter implements Reporter {
           this.handleError(error, methodName, namedReporter.name);
         }
       }
-    })
+    });
     if (allPromises.length) {
       return Promise.all(allPromises);
     }

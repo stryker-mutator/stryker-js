@@ -68,7 +68,7 @@ describe('ProgressReporter', () => {
       testsRan: null,
       status,
       range: null
-    }
+    };
   }
 
 });

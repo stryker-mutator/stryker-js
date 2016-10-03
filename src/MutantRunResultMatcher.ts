@@ -17,7 +17,7 @@ export default class MutantRunResultMatcher {
             // Statement map should change between test run results.
             // We should be able to safely reuse the smallest statement found in first run.
             if (!smallestStatement) {
-              smallestStatement = this.findSmallestCoveringStatement(mutant, coveredFile)
+              smallestStatement = this.findSmallestCoveringStatement(mutant, coveredFile);
             }
             covered = coveredFile.s[smallestStatement] > 0;
           }

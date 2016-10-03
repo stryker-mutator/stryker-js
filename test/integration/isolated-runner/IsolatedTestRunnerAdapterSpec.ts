@@ -1,7 +1,7 @@
 import TestRunnerChildProcessAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
-import {TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult, RunnerOptions} from 'stryker-api/test_runner';
-import {StrykerOptions} from 'stryker-api/core';
-import {expect} from 'chai';
+import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult, RunnerOptions } from 'stryker-api/test_runner';
+import { StrykerOptions } from 'stryker-api/core';
+import { expect } from 'chai';
 import logger from '../../helpers/log4jsMock';
 
 describe('TestRunnerChildProcessAdapter', function () {
@@ -26,10 +26,10 @@ describe('TestRunnerChildProcessAdapter', function () {
   };
 
   describe('when sending a regex in the options', () => {
-    before(() => sut = new TestRunnerChildProcessAdapter('discover-regex',  options));
+    before(() => sut = new TestRunnerChildProcessAdapter('discover-regex', options));
 
-    it('correctly receive the regex on the other end', 
-      () => expect(sut.run({timeout: 4000})).to.eventually.have.property('result', TestResult.Complete));
+    it('correctly receive the regex on the other end',
+      () => expect(sut.run({ timeout: 4000 })).to.eventually.have.property('result', TestResult.Complete));
 
   });
 

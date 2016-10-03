@@ -45,7 +45,7 @@ describe('ClearTextReporter', function () {
         sourceFilePath: '',
         testsRan: [''],
         status
-      }
+      };
     });
   }
 

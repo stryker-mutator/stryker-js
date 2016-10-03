@@ -29,7 +29,7 @@ describe('IsolatedTestRunnerAdapter', () => {
       kill: sinon.spy(),
       send: sinon.spy(),
       on: sinon.spy()
-    }
+    };
     sinonSandbox.stub(child_process, 'fork', () => fakeChildProcess);
     clock = sinon.useFakeTimers();
   });
@@ -61,7 +61,7 @@ describe('IsolatedTestRunnerAdapter', () => {
         let expectedMessage: Message<RunMessageBody> = {
           type: MessageType.Run,
           body: { runOptions }
-        }
+        };
         expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
       });
 

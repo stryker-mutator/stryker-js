@@ -18,5 +18,15 @@ export function isPromise(input: void | Promise<any>): input is Promise<any> {
 
 export function deserialize(serializedJavascript: String): any {
   // Don't use JSON.parse, as it does not allow for regexes or functions, etc
+  // tslint:disable
   return eval(`(${serializedJavascript})`);
+  // tslint:enable
+}
+
+export function copy<T>(obj: T, deep?: boolean) {
+  if (deep) {
+    return _.cloneDeep(obj);
+  } else {
+    return _.clone(obj);
+  }
 }

@@ -47,10 +47,10 @@ export default class ClearTextReporter implements Reporter {
       }
     });
 
-    var mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / mutantResults.length) * 100).toFixed(2);
-    var mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((mutantResults.length - mutantsUntested) || 1)) * 100).toFixed(2);
-    var codebaseColor = this.getColorForMutationScore(+mutationScoreCodebase);
-    var codecoverageColor = this.getColorForMutationScore(+mutationScoreCodeCoverage);
+    const mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / mutantResults.length) * 100).toFixed(2);
+    const mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((mutantResults.length - mutantsUntested) || 1)) * 100).toFixed(2);
+    const codebaseColor = this.getColorForMutationScore(+mutationScoreCodebase);
+    const codecoverageColor = this.getColorForMutationScore(+mutationScoreCodeCoverage);
 
     this.writeLine((mutantResults.length - mutantsUntested) + ' mutants tested.');
     this.writeLine(mutantsUntested + ' mutants untested.');
@@ -86,7 +86,7 @@ export default class ClearTextReporter implements Reporter {
    * @returns {Function} The function which can give the mutation score the right color.
    */
   private getColorForMutationScore(score: number) {
-    var color: chalk.ChalkChain;
+    let color: chalk.ChalkChain;
     if (score > 80) {
       color = chalk.green;
     } else if (score > 50) {

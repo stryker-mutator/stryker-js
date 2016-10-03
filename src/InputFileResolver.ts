@@ -1,5 +1,5 @@
-import {InputFile, InputFileDescriptor} from 'stryker-api/core';
-import {glob, normalize} from './utils/fileUtils';
+import { InputFile, InputFileDescriptor } from 'stryker-api/core';
+import { glob, normalize } from './utils/fileUtils';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
 
@@ -60,7 +60,7 @@ export default class InputFileResolver {
     if (_.isObject(maybeInputFileDescriptor)) {
       if (Object.keys(maybeInputFileDescriptor).indexOf('pattern') > -1) {
         return true;
-      }else{
+      } else {
         throw Error(`File descriptor ${JSON.stringify(maybeInputFileDescriptor)} is missing mandatory property 'pattern'.`);
       }
     } else {

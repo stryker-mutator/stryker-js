@@ -1,6 +1,6 @@
-import {Reporter} from 'stryker-api/report';
-import {StrykerOptions} from 'stryker-api/core';
-import {ALL_EVENT_METHOD_NAMES} from './BroadcastReporter';
+import { Reporter } from 'stryker-api/report';
+import { StrykerOptions } from 'stryker-api/core';
+import { ALL_EVENT_METHOD_NAMES } from './BroadcastReporter';
 import * as fileUtils from '../utils/fileUtils';
 import * as log4js from 'log4js';
 import * as path from 'path';
@@ -20,7 +20,7 @@ export default class EventRecorderReporter implements Reporter {
     ALL_EVENT_METHOD_NAMES.forEach(method => {
       (<any>this)[method] = (data: any) => {
         this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(index++, method, data)));
-      }
+      };
     });
   }
 
@@ -28,7 +28,7 @@ export default class EventRecorderReporter implements Reporter {
     if (!this._baseFolder) {
       if (this.options['eventReporter'] && this.options['eventReporter']['baseDir']) {
         this._baseFolder = this.options['eventReporter']['baseDir'];
-        log.debug(`Using configured output folder ${this._baseFolder}`)
+        log.debug(`Using configured output folder ${this._baseFolder}`);
       } else {
         log.debug(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
         this._baseFolder = DEFAULT_BASE_FOLDER;
@@ -47,7 +47,7 @@ export default class EventRecorderReporter implements Reporter {
   private format(input: number) {
     let str = input.toString();
     for (let i = 10000; i > 1; i = i / 10) {
-      if(i > input){
+      if (i > input) {
         str = '0' + str;
       }
     }
@@ -55,6 +55,6 @@ export default class EventRecorderReporter implements Reporter {
   }
 
   wrapUp(): Promise<any> {
-    return this.createBaseFolderTask.then( () => Promise.all(this.allWork));
+    return this.createBaseFolderTask.then(() => Promise.all(this.allWork));
   }
 }
