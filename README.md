@@ -49,6 +49,9 @@ using [node glob](https://github.com/isaacs/node-glob). This is the same globbin
 [Grunt](https://github.com/gruntjs/grunt) and [Karma](https://github.com/karma-runner/karma).
 The way to provide this list is as an array in the config file, or as a comma seperated list on the command line (without spaces or quotes) 
 
+## Supported mutators
+The mutators that are supported by Stryker can be found on [our website](http://stryker-mutator.github.io/mutators.html)
+
 ## Configuration
 Options can be configured either via the command line or via a config file.
 
@@ -192,67 +195,3 @@ See [Abolute timeout ms](#abolute-timeout-ms).
  Set the log4js log level that Stryker uses. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"  
  *Note*: Test runners are run as child processes. All output (stdout) of the testRunner is logged as 'trace'.
  To see logging from the test runner, set the `logLevel` to `all` or `trace`.   
-
-## Supported mutators
-### Math
-| Original | Mutated  |
-| -------- | -------- |
-| a + b    | a - b    |
-| a - b    | a + b    |
-| a * b    | a / b    |
-| a / b    | a * b    |
-| a % b    | a * b    |
-
-### Unary
-| Original | Mutated  |
-| -------- | -------- |
-| a++      | a--      |
-| a--      | a++      |
-| ++a      | --a      |
-| --a      | ++a      |
-| +a       | -a       |
-| -a       | +a       |
-
-### Conditional boundary
-| Original | Mutated  |
-| -------- | -------- |
-| a < b    | a <= b   |
-| a <= b   | a < b    |
-| a > b    | a >= b   |
-| a >= b   | a < b    |
-
-### Reverse conditional
-| Original | Mutated  |
-| -------- | -------- |
-| a == b   | a != b   |
-| a != b   | a == b   |
-| a === b  | a !== b  |
-| a !== b  | a === b  |
-| a <= b   | a > b    |
-| a >= b   | a < b    |
-| a < b    | a >= b   |
-| a > b    | a <= b   |
-| a && b   | a \|\| b   |
-| a \|\| b   | a && b   |
-
-### Remove conditionals
-| Original                         | Mutated                         |
-| -------------------------------- | ------------------------------- |
-| for (var i = 0; i < 10; i++) { } | for (var i = 0; false; i++) { } |
-| while (a > b) { }                | while (false) { }               |
-| do { } while (a > b);            | do { } while (false);           |
-| if (a > b) { }                   | if (true) { }                   |
-| if (a > b) { }                   | if (false) { }                  |
-
-### Block statement
-This mutator removes the content of every block statement. For example the code:
-```js
-function saySomething() {
-   console.log('Hello world!');   
-}
-```
-becomes:
-```js
-function saySomething() { 
-}
-```
