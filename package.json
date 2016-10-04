@@ -95,6 +95,6 @@
     "typescript": "^2.0.2"
   },
   "peerDependencies": {
-    "stryker-api": "^0.3.0-0"
+    "stryker-api": "^0.2.1"
   }
 }
