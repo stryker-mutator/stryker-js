@@ -32,6 +32,7 @@ export default class TestRunnerOrchestrator {
   }
 
   initialRun(): Promise<RunResult[]> {
+    log.info(`Starting initial test run. This may take a while.`);
     if (this.testSelector) {
       return this.initialRunWithTestSelector();
     } else {

@@ -16,8 +16,8 @@
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
     "stryker": "file:../../",
-    "stryker-api": "^0.2.0",
-    "stryker-karma-runner": "^0.2.0",
+    "stryker-api": "^0.2.1",
+    "stryker-karma-runner": "^0.2.2",
     "typescript": "~2.0.2"
   }
 }

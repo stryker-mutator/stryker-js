@@ -13,13 +13,13 @@ export default class RemoveConditionalsMutator implements Mutator {
 
   constructor() { }
 
-  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] | void {
     if (this.canMutate(node)) {
       let nodes: estree.Node[] = [];
-      nodes.push(this.booleanLiteralNode(node.nodeID, false));
+      nodes.push(this.booleanLiteralNode(node.test.nodeID, false));
 
-      if (node.type === Syntax.IfStatement) {
-        nodes.push(this.booleanLiteralNode(node.nodeID, true));
+      if (node.type === Syntax.IfStatement || node.type === Syntax.ConditionalExpression) {
+        nodes.push(this.booleanLiteralNode(node.test.nodeID, true));
       }
       return nodes;
     }
