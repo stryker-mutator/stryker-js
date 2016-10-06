@@ -49,6 +49,11 @@ describe('File report page "Circle.js.html"', () => {
     expect(page.mutantSelection(2).isButtonVisible()).to.eventually.eq(false);
   });
 
+  it('should not mark the correct piece of code as original', () => {
+    // Fix issue https://github.com/stryker-mutator/stryker-html-reporter/issues/5
+    expect(page.mutantSelection(1).originalCode()).to.eventually.eq('2 * Math.PI * radius');
+  });
+
   it('should show survived mutants', () => {
     expect(page.mutantSelection(1).isButtonVisible()).to.eventually.eq(true);
     expect(page.mutantSelection(3).isButtonVisible()).to.eventually.eq(true);

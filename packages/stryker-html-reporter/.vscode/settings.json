@@ -5,7 +5,7 @@
       "**/*.js": {
         "when": "$(basename).ts"
       },
-      "**/*.d.ts": false,
+      "**/*.d.ts": true,
       "**/*.map": {
         "when": "$(basename)"
       }
