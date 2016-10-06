@@ -82,7 +82,7 @@ hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascri
   function reflectCheckboxDisplayKilledValue() {
     for (var i in buttonMap) {
       if (buttonMap[i].dataset.mutantStatusAnnotation === 'success') {
-        hideMutant(i, !checkboxDisplayKilled.checked)
+        hideMutant(i, !checkboxDisplayKilled.checked);
       }
     }
   }

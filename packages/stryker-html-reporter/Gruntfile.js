@@ -114,7 +114,33 @@ module.exports = function (grunt) {
       test: {
         src: ['test/**/*.ts', 'testResources/module/*.ts']
       }
-    }
+    },
+    'npm-contributors': {
+      options: {
+        commitMessage: 'chore: update contributors'
+      }
+    },
+    conventionalChangelog: {
+      release: {
+        options: {
+          changelogOpts: {
+            preset: 'angular'
+          },
+          releaseCount: 0
+        },
+        src: 'CHANGELOG.md'
+      }
+    },
+    bump: {
+      options: {
+        commitFiles: [
+          'package.json',
+          'CHANGELOG.md'
+        ],
+        commitMessage: 'chore: release v%VERSION%',
+        prereleaseName: 'rc'
+      }
+    },
   });
 
   grunt.registerTask('default', ['test']);
@@ -124,4 +150,16 @@ module.exports = function (grunt) {
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('serve', ['watch']);
+
+  grunt.registerTask('release', 'Build, bump and publish to NPM.', function (type) {
+    grunt.task.run([
+      'test',
+      'npm-contributors',
+      'bump:' + (type || 'patch') + ':bump-only',
+      'conventionalChangelog',
+      'bump-commit',
+      'npm-publish'
+    ]);
+  });
+
 };
