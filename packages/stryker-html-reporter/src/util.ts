@@ -207,7 +207,7 @@ handlebars.registerHelper('code', function () {
 
   let annotate = (char: string, index: number) => {
     let mutantsStarting = numberedMutants.filter(m => m.mutant.range[0] === index);
-    let mutantsEnding = numberedMutants.filter(m => m.mutant.range[1] === index - 1);
+    let mutantsEnding = numberedMutants.filter(m => m.mutant.range[1] === index);
     mutantsStarting.forEach(adjustCurrentMutantResult(1));
     mutantsEnding.forEach(adjustCurrentMutantResult(-1));
     let backgroundColorAnnotation = mutantsStarting.length || mutantsEnding.length || index === 0 ? `<span class="bg-${determineBackground()}">` : '';

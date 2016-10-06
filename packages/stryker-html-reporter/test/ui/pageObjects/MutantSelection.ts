@@ -7,6 +7,7 @@ export default class MutantSelection {
   isMutantReplacementCodeVisible = () => this.mutantReplacementSpan.isDisplayed();
   originalCodeTextDecoration = () => this.originalCodeSpan.getCssValue('text-decoration');
   mutantStatusAnnotation = () => this.button.getAttribute('data-mutant-status-annotation');
+  originalCode = () => this.originalCodeSpan.getText();
   isButtonVisible = () => this.button.isDisplayed();
 
   enableMutant = () => this.button.click();
