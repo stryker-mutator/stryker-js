@@ -1,3 +1,13 @@
+<a name="0.2.2"></a>
+## [0.2.2](https://github.com/stryker-mutator/stryker-html-reporter/compare/v0.2.1...v0.2.2) (2016-10-06)
+
+
+### Bug Fixes
+
+* **file-report:** Remove strikethrough extra char ([#6](https://github.com/stryker-mutator/stryker-html-reporter/issues/6)) ([4cd02be](https://github.com/stryker-mutator/stryker-html-reporter/commit/4cd02be))
+
+
+
 <a name="0.2.1"></a>
 ## [0.2.1](https://github.com/stryker-mutator/stryker-html-reporter/compare/v0.1.1...v0.2.1) (2016-10-03)
 
