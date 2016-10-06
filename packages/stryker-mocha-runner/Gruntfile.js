@@ -96,6 +96,31 @@ module.exports = function (grunt) {
       test: {
         src: ['test/**/*.ts']
       }
+    },
+     'npm-contributors': {
+      options: {
+        commitMessage: 'chore: update contributors'
+      }
+    },
+    conventionalChangelog: {
+      release: {
+        options: {
+          changelogOpts: {
+            preset: 'angular'
+          }
+        },
+        src: 'CHANGELOG.md'
+      }
+    },
+    bump: {
+      options: {
+        commitFiles: [
+          'package.json',
+          'CHANGELOG.md'
+        ],
+        commitMessage: 'chore: release v%VERSION%',
+        prereleaseName: 'rc'
+      }
     }
   });
 
