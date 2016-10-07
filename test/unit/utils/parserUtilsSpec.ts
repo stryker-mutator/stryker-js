@@ -31,13 +31,6 @@ describe('parserUtils', () => {
 
     });
 
-
-    it('should return an empty object if an empty string is parsed', () => {
-      const emptyObject = {};
-
-      const result = parserUtils.parse('');
-      expect(JSON.stringify(result)).to.equal(JSON.stringify(emptyObject));
-    });
   });
 
 });

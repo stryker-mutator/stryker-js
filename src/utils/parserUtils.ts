@@ -20,12 +20,9 @@ const esprimaOptions = {
  * @param code - The code which has to be parsed.
  * @returns {Object} The generated Abstract Syntax Tree.
  */
-export function parse(code: string): any {
+export function parse(code: string): estree.Program {
   if (code === undefined) {
     throw new Error('Code parameter cannot be undefined');
-  }
-  if (code === '') {
-    return {};
   }
 
   const abstractSyntaxTree = esprima.parse(code, esprimaOptions);
@@ -39,7 +36,7 @@ export function parse(code: string): any {
  * @param abstractSyntaxTree - The current part of the abstract syntax tree which will be investigated.
  * @returns  All nodes with a type.
  */
-export function collectFrozenNodes(abstractSyntaxTree: any, nodes?: any[]): any[] {
+export function collectFrozenNodes(abstractSyntaxTree: estree.Node, nodes?: estree.Node[]): estree.Node[] {
   nodes = nodes || [];
 
   if (!_.isArray(abstractSyntaxTree) && _.isObject(abstractSyntaxTree) && abstractSyntaxTree.type && _.isUndefined(abstractSyntaxTree.nodeID)) {
