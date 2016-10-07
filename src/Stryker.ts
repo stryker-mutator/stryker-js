@@ -55,10 +55,8 @@ export default class Stryker {
   runMutationTest(): Promise<MutantResult[]> {
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then((inputFiles) => this.initialTestRun(inputFiles))
-      .then(({runResults, inputFiles, testRunnerOrchestrator}) => {
-        let mutants = this.generateMutants(inputFiles, runResults);
-          return testRunnerOrchestrator.runMutations(mutants);
-      })
+      .then(({runResults, inputFiles, testRunnerOrchestrator}) =>
+        this.generateAndRunMutations(inputFiles, runResults, testRunnerOrchestrator))
       .then(mutantResults => this.wrapUpReporter()
         .then(StrykerTempFolder.clean)
         .then(() => mutantResults));
@@ -87,6 +85,16 @@ export default class Stryker {
           return { runResults, inputFiles, testRunnerOrchestrator };
         }
       });
+  }
+
+  private generateAndRunMutations(inputFiles: InputFile[], initialRunResults: RunResult[], testRunnerOrchestrator: TestRunnerOrchestrator): Promise<MutantResult[]> {
+    let mutants = this.generateMutants(inputFiles, initialRunResults);
+    if (mutants.length) {
+      return testRunnerOrchestrator.runMutations(mutants);
+    } else {
+      log.info('It\'s a mutant-free world, nothing to test.');
+      return Promise.resolve([]);
+    }
   }
 
   private generateMutants(inputFiles: InputFile[], runResults: RunResult[]) {
