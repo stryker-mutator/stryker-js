@@ -1,5 +1,3 @@
-'use strict';
-
 import Stryker from '../../src/Stryker';
 import {InputFile} from 'stryker-api/core';
 import {MutantResult, Reporter} from 'stryker-api/report';
@@ -76,7 +74,7 @@ describe('Stryker', function () {
     });
   }
 
-  describe('constructor', () => {
+  describe('when constructed', () => {
     beforeEach(() => {
       ConfigWriterFactory.instance().register('FakeConfigWriter', FakeConfigWriter);
       config.plugins = ['plugin1'];

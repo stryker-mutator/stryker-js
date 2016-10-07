@@ -19,7 +19,7 @@
       "env": {
         "NODE_ENV": "development"
       },
-      "externalConsole": false,
+      "console": "internalConsole",
       "sourceMaps": true,
       "outDir": "${workspaceRoot}"
     },
@@ -41,7 +41,7 @@
       "env": {
         "NODE_ENV": "development"
       },
-      "externalConsole": false,
+      "console": "internalConsole",
       "sourceMaps": true,
       "outDir": "${workspaceRoot}"
     },
@@ -50,13 +50,13 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/stryker",
-      "preLaunchTask": "build",
+      // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "--configFile",
         "testResources/sampleProject/stryker.conf.js",
         "--logLevel",
-        "trace",
+        "info",
         "--testFramework",
         "jasmine"
       ],
@@ -68,7 +68,7 @@
       "env": {
         "NODE_ENV": "development"
       },
-      "externalConsole": false,
+      "console": "internalConsole",
       "sourceMaps": true,
       "outDir": "${workspaceRoot}"
     },
@@ -77,13 +77,11 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/stryker",
-      "preLaunchTask": "build",
+      // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "--configFile",
-        "stryker.conf.js",
-        "--logLevel",
-        "info"
+        "stryker.conf.js"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
@@ -93,7 +91,7 @@
       "env": {
         "NODE_ENV": "development"
       },
-      "externalConsole": false,
+      "console": "internalConsole",
       "sourceMaps": true,
       "outDir": "${workspaceRoot}"
     },
@@ -115,7 +113,7 @@
       "env": {
         "NODE_ENV": "development"
       },
-      "externalConsole": false,
+      "console": "internalConsole",
       "sourceMaps": true,
       "outDir": "${workspaceRoot}"
     }
