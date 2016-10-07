@@ -60,7 +60,7 @@ describe('Stryker', function () {
     };
     let mutantRunResultMatcherMock = {
       matchWithMutants: () => { }
-    }
+    };
     mutants = [];
     testSelector = 'some test selector';
     testSelectorOrchestratorStub = {
