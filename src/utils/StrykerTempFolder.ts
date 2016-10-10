@@ -94,7 +94,7 @@ function copyFile(fromFilename: string, toFilename: string): Promise<void> {
  * Deletes the Stryker-temp folder
  */
 function clean() {
-  log.info(`Cleaning stryker temp folder ${baseTempFolder}`);
+  log.debug(`Cleaning stryker temp folder ${baseTempFolder}`);
   return fileUtils.deleteDir(baseTempFolder);
 }
 

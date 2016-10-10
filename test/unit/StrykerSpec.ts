@@ -1,18 +1,18 @@
-'use strict';
-
 import Stryker from '../../src/Stryker';
-import {InputFile} from 'stryker-api/core';
-import {MutantResult, Reporter} from 'stryker-api/report';
-import {Config, ConfigWriterFactory, ConfigWriter} from 'stryker-api/config';
-import {RunResult, TestResult} from 'stryker-api/test_runner';
-import {TestSelector} from 'stryker-api/test_selector';
-import {expect} from 'chai';
+import { InputFile } from 'stryker-api/core';
+import { MutantResult, Reporter } from 'stryker-api/report';
+import { Config, ConfigWriterFactory, ConfigWriter } from 'stryker-api/config';
+import { RunResult, TestResult } from 'stryker-api/test_runner';
+import { TestSelector } from 'stryker-api/test_selector';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as inputFileResolver from '../../src/InputFileResolver';
 import * as configReader from '../../src/ConfigReader';
 import * as testSelectorOrchestrator from '../../src/TestSelectorOrchestrator';
 import * as testRunnerOrchestrator from '../../src/TestRunnerOrchestrator';
 import * as reporterOrchestrator from '../../src/ReporterOrchestrator';
+import * as mutatorOrchestrator from '../../src/MutatorOrchestrator';
+import * as mutantRunResultMatcher from '../../src/MutantRunResultMatcher';
 import * as pluginLoader from '../../src/PluginLoader';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import log from '../helpers/log4jsMock';
@@ -34,6 +34,7 @@ describe('Stryker', function () {
   let inputFiles: InputFile[];
   let initialRunResults: RunResult[];
   let config: any;
+  let mutants: any[];
   let reporter: Reporter, configReaderMock: any, pluginLoaderMock: any;
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -54,6 +55,13 @@ describe('Stryker', function () {
     let reporterOrchestratorMock = {
       createBroadcastReporter: () => reporter
     };
+    let mutatorOrchestratorMock = {
+      generateMutants: () => mutants
+    };
+    let mutantRunResultMatcherMock = {
+      matchWithMutants: () => { }
+    };
+    mutants = [];
     testSelector = 'some test selector';
     testSelectorOrchestratorStub = {
       determineTestSelector: sandbox.stub().returns(testSelector)
@@ -61,6 +69,8 @@ describe('Stryker', function () {
 
     sandbox.stub(testSelectorOrchestrator, 'default').returns(testSelectorOrchestratorStub);
     sandbox.stub(reporterOrchestrator, 'default').returns(reporterOrchestratorMock);
+    sandbox.stub(mutatorOrchestrator, 'default').returns(mutatorOrchestratorMock);
+    sandbox.stub(mutantRunResultMatcher, 'default').returns(mutantRunResultMatcherMock);
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
     sandbox.stub(StrykerTempFolder, 'clean').returns(Promise.resolve());
@@ -76,7 +86,7 @@ describe('Stryker', function () {
     });
   }
 
-  describe('constructor', () => {
+  describe('when constructed', () => {
     beforeEach(() => {
       ConfigWriterFactory.instance().register('FakeConfigWriter', FakeConfigWriter);
       config.plugins = ['plugin1'];
@@ -94,6 +104,12 @@ describe('Stryker', function () {
     it('should load plugins', () => {
       expect(pluginLoader.default).to.have.been.calledWith(config.plugins);
       expect(pluginLoaderMock.load).to.have.been.calledWith();
+    });
+
+    it('should determine the testSelector', () => {
+      expect(testSelectorOrchestrator.default).to.have.been.calledWithNew;
+      expect(testSelectorOrchestrator.default).to.have.been.calledWith(config);
+      expect(testSelectorOrchestratorStub.determineTestSelector).to.have.been.called;
     });
   });
 
@@ -170,67 +186,84 @@ describe('Stryker', function () {
             initialRunResults.push({ result: TestResult.Complete, succeeded: 5 });
             initialRunResults.push({ result: TestResult.Complete, succeeded: 1 });
             strykerPromiseResolved = false;
-            strykerPromise = sut.runMutationTest().then(() => strykerPromiseResolved = true);
           });
 
-          it('should determine the testSelector', () => {
-            expect(testSelectorOrchestrator.default).to.have.been.calledWithNew;
-            expect(testSelectorOrchestrator.default).to.have.been.calledWith(config);
-            expect(testSelectorOrchestratorStub.determineTestSelector).to.have.been.called;
-          });
-
-          it('should not directly resolve the stryker promise', (done) => {
-            setTimeout(() => {
-              expect(strykerPromiseResolved).to.be.eq(false);
-              done();
-            }, 100);
-          });
-
-          describe('and running of mutators was successfull while reporter.wrapUp() results in void', () => {
+          let beforeEachRunMutationTest = () => {
             beforeEach(() => {
-              runMutationsPromiseResolve();
-              return strykerPromise;
+              strykerPromise = sut.runMutationTest().then(() => strykerPromiseResolved = true);
             });
-            it('should resolve the stryker promise', () => strykerPromise);
+          };
 
-            it('should have logged the amount of tests ran', () => {
-              expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests.', 6);
+          describe('but the mutator does not create any mutants', () => {
+            beforeEachRunMutationTest();
+
+            // wait for Stryker to finish
+            beforeEach(() => strykerPromise);
+
+            it('should log to have quite early', () => {
+              expect(log.info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
             });
 
-            it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
+            it('should not have ran mutations', () => {
+              expect(testRunnerOrchestratorStub.runMutations).not.to.have.been.called;
+            });
           });
 
-          describe('and running of mutators was successfull while reporter.wrapUp() results in a promise', () => {
-            let wrapUpDoneFn: Function;
-            beforeEach((done) => {
-              (<sinon.SinonStub>reporter.wrapUp).returns(new Promise((wrapUpDone) => wrapUpDoneFn = wrapUpDone));
-              runMutationsPromiseResolve();
-              setTimeout(done, 1); // give the wrapup promise some time to resolve and go to the next step (i don't know of any other way)
+          describe('and the mutator creates mutants', () => {
+            beforeEach(() => mutants.push({ a: 'mutant' }));
+            beforeEachRunMutationTest();
+            it('should not directly resolve the stryker promise', (done) => {
+              setTimeout(() => {
+                expect(strykerPromiseResolved).to.be.eq(false);
+                done();
+              }, 100);
             });
 
-            it('should let the reporters wrapUp any async tasks', () => {
-              expect(reporter.wrapUp).to.have.been.called;
-            });
-
-            it('should not yet have resolved the stryker promise', () => {
-              expect(strykerPromiseResolved).to.be.eq(false);
-            });
-
-            describe('and the reporter has wrapped up', () => {
-
+            describe('and running of mutators was successfull while reporter.wrapUp() results in void', () => {
               beforeEach(() => {
-                wrapUpDoneFn();
+                runMutationsPromiseResolve();
                 return strykerPromise;
               });
-
               it('should resolve the stryker promise', () => strykerPromise);
 
+              it('should have logged the amount of tests ran', () => {
+                expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests.', 6);
+              });
+
               it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
+            });
+
+            describe('and running of mutators was successfull while reporter.wrapUp() results in a promise', () => {
+              let wrapUpDoneFn: Function;
+              beforeEach((done) => {
+                (<sinon.SinonStub>reporter.wrapUp).returns(new Promise((wrapUpDone) => wrapUpDoneFn = wrapUpDone));
+                runMutationsPromiseResolve();
+                setTimeout(done, 1); // give the wrapup promise some time to resolve and go to the next step (i don't know of any other way)
+              });
+
+              it('should let the reporters wrapUp any async tasks', () => {
+                expect(reporter.wrapUp).to.have.been.called;
+              });
+
+              it('should not yet have resolved the stryker promise', () => {
+                expect(strykerPromiseResolved).to.be.eq(false);
+              });
+
+              describe('and the reporter has wrapped up', () => {
+
+                beforeEach(() => {
+                  wrapUpDoneFn();
+                  return strykerPromise;
+                });
+
+                it('should resolve the stryker promise', () => strykerPromise);
+
+                it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
+              });
             });
           });
         });
       });
-
     });
   });
 
