@@ -4,6 +4,8 @@ import * as log4js from 'log4js';
 import * as path from 'path';
 import * as _ from 'lodash';
 
+const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
+
 export var CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +
   '      // your config\n' +
@@ -28,6 +30,7 @@ export default class ConfigReader {
 
     // merge the config from config file and cliOptions (precedence)
     config.set(this.options);
+    this.validate(config);
     return config;
   }
 
@@ -56,5 +59,12 @@ export default class ConfigReader {
       configModule = function () { };
     }
     return configModule;
+  }
+
+  private validate(options: StrykerOptions) {
+    if (!_.find(VALID_COVERAGE_ANALYSIS_VALUES, v => v === options.coverageAnalysis)) {
+      log.fatal(`Value "${options.coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the folowing: ${VALID_COVERAGE_ANALYSIS_VALUES.map(v => `"${v}"`).join(', ')}`);
+      process.exit(1);
+    }
   }
 }

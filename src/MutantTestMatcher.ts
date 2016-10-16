@@ -1,32 +1,34 @@
 import Mutant from './Mutant';
-import { RunResult, CoverageResult } from 'stryker-api/test_runner';
+import { RunResult, CoverageCollection, CoverageCollectionPerTest } from 'stryker-api/test_runner';
 import { Location } from 'stryker-api/core';
 
-export default class MutantRunResultMatcher {
+export default class MutantTestMatcher {
 
-  constructor(private mutants: Mutant[], private runResultsByTestId: RunResult[]) { }
+  constructor(private mutants: Mutant[], private initialRunResult: RunResult) { }
 
   matchWithMutants() {
     this.mutants.forEach(mutant => {
       let smallestStatement: string;
-      this.runResultsByTestId.forEach((testResult, id) => {
+      this.initialRunResult.tests.forEach((testResult, id) => {
         let covered = false;
-        if (testResult.coverage) {
-          let coveredFile = testResult.coverage[mutant.filename];
-          if (coveredFile) {
-            // Statement map should change between test run results.
-            // We should be able to safely reuse the smallest statement found in first run.
-            if (!smallestStatement) {
-              smallestStatement = this.findSmallestCoveringStatement(mutant, coveredFile);
-            }
-            covered = coveredFile.s[smallestStatement] > 0;
-          }
+        const coverage = false; // this.findCoverage(id);
+        if (coverage) {
+          // let coveredFile = testResult.coverage[mutant.filename];
+          // if (coveredFile) {
+          //   // Statement map should change between test run results.
+          //   // We should be able to safely reuse the smallest statement found in first run.
+          //   if (!smallestStatement) {
+          //     smallestStatement = this.findSmallestCoveringStatement(mutant, coveredFile);
+          //   }
+          //   covered = coveredFile.s[smallestStatement] > 0;
+          // }
+          covered = true;
         } else {
           // If there is no coverage result we have to assume the source code is covered
           covered = true;
         }
         if (covered) {
-          mutant.addRunResultForTest(id, testResult);
+          mutant.addTestResult(id, testResult);
         }
       });
     });
@@ -38,19 +40,19 @@ export default class MutantRunResultMatcher {
    * @param coveredFile The CoverageResult.
    * @returns The index of the coveredFile which contains the smallest statement surrounding the mutant.
    */
-  private findSmallestCoveringStatement(mutant: Mutant, coveredFile: CoverageResult): string {
-    let smallestStatement: string;
+  // private findSmallestCoveringStatement(mutant: Mutant, coveredFile: CoverageResult): string {
+  //   let smallestStatement: string;
 
-    Object.keys(coveredFile.statementMap).forEach(statementId => {
-      let location = coveredFile.statementMap[statementId];
+  //   Object.keys(coveredFile.statementMap).forEach(statementId => {
+  //     let location = coveredFile.statementMap[statementId];
 
-      if (this.statementCoversMutant(mutant, location) && this.isNewSmallestStatement(coveredFile.statementMap[smallestStatement], location)) {
-        smallestStatement = statementId;
-      }
-    });
+  //     if (this.statementCoversMutant(mutant, location) && this.isNewSmallestStatement(coveredFile.statementMap[smallestStatement], location)) {
+  //       smallestStatement = statementId;
+  //     }
+  //   });
 
-    return smallestStatement;
-  }
+  //   return smallestStatement;
+  // }
 
   /**
    * Indicates whether a statement is the smallest statement of the two statements provided.
@@ -85,7 +87,19 @@ export default class MutantRunResultMatcher {
       (mutant.location.start.line === location.start.line && mutant.location.start.column >= location.start.column);
     let mutantIsBeforeEnd = mutant.location.end.line < location.end.line ||
       (mutant.location.end.line === location.end.line && mutant.location.end.column <= location.end.column);
-      
+
     return mutantIsAfterStart && mutantIsBeforeEnd;
+  }
+
+  // private findCoverage(id: number) {
+  //   if (this.initialRunResult.coverage) {
+
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
+  private isCoverageCollectionPerTest(coverage: CoverageCollection | CoverageCollectionPerTest) {
+    // if(this.)
   }
 }

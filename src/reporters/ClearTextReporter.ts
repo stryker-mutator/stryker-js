@@ -17,7 +17,7 @@ export default class ClearTextReporter implements Reporter {
     this.writeLine();
     let mutantsKilled = 0;
     let mutantsTimedOut = 0;
-    let mutantsUntested = 0;
+    let mutantsNoCoverage = 0;
 
     // use these fn's in order to preserve the 'this` pointer
     let logDebugFn = (input: string) => log.debug(input); 
@@ -25,35 +25,35 @@ export default class ClearTextReporter implements Reporter {
 
     mutantResults.forEach(result => {
       switch (result.status) {
-        case MutantStatus.KILLED:
+        case MutantStatus.Killed:
           mutantsKilled++;
           log.debug(chalk.bold.green('Mutant killed!'));
           this.logMutantResult(result, logDebugFn);
           break;
-        case MutantStatus.TIMEDOUT:
+        case MutantStatus.TimedOut:
           mutantsTimedOut++;
           log.debug(chalk.bold.yellow('Mutant timed out!'));
           this.logMutantResult(result, logDebugFn);
           break;
-        case MutantStatus.SURVIVED:
+        case MutantStatus.Survived:
           this.writeLine(chalk.bold.red('Mutant survived!'));
           this.logMutantResult(result, writeLineFn);
           break;
-        case MutantStatus.UNTESTED:
-          mutantsUntested++;
-          log.debug(chalk.bold.yellow('Mutant untested!'));
+        case MutantStatus.NoCoverage:
+          mutantsNoCoverage++;
+          log.debug(chalk.bold.yellow('Mutant not covered!'));
           this.logMutantResult(result, logDebugFn);
           break;
       }
     });
 
     const mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / mutantResults.length) * 100).toFixed(2);
-    const mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((mutantResults.length - mutantsUntested) || 1)) * 100).toFixed(2);
+    const mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((mutantResults.length - mutantsNoCoverage) || 1)) * 100).toFixed(2);
     const codebaseColor = this.getColorForMutationScore(+mutationScoreCodebase);
     const codecoverageColor = this.getColorForMutationScore(+mutationScoreCodeCoverage);
 
-    this.writeLine((mutantResults.length - mutantsUntested) + ' mutants tested.');
-    this.writeLine(mutantsUntested + ' mutants untested.');
+    this.writeLine((mutantResults.length - mutantsNoCoverage) + ' mutants tested.');
+    this.writeLine(mutantsNoCoverage + ' mutants not covered.');
     this.writeLine(mutantsTimedOut + ' mutants timed out.');
     this.writeLine(mutantsKilled + ' mutants killed.');
     this.writeLine('Mutation score based on covered code: ' + codecoverageColor(mutationScoreCodeCoverage + '%'));

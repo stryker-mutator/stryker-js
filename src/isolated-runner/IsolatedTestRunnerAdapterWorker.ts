@@ -1,11 +1,8 @@
-import Message, {MessageType} from './Message';
-import {RunnerOptions, TestRunner, TestResult, TestRunnerFactory, RunResult} from 'stryker-api/test_runner';
-import StartMessageBody from './StartMessageBody';
-import RunMessageBody from './RunMessageBody';
-import ResultMessageBody from './ResultMessageBody';
+import { AdapterMessage, RunMessage, StartMessage, ResultMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
+import { RunnerOptions, TestRunner, RunState, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
-import {isPromise, deserialize} from '../utils/objectUtils';
+import { isPromise, deserialize } from '../utils/objectUtils';
 
 const log = log4js.getLogger('TestRunnerChildProcessAdapterWorker');
 
@@ -19,29 +16,33 @@ class TestRunnerChildProcessAdapterWorker {
 
   listenToMessages() {
     process.on('message', (serializedMessage: string) => {
-      let message: Message<any> = deserialize(serializedMessage);
-      switch (message.type) {
-        case MessageType.Start:
-          this.start(message.body);
+      let message: AdapterMessage = deserialize(serializedMessage);
+      switch (message.kind) {
+        case 'start':
+          this.start(message);
           break;
-        case MessageType.Run:
-          this.run(message.body);
+        case 'run':
+          this.run(message);
           break;
-        case MessageType.Init:
+        case 'init':
           this.init();
           break;
-        case MessageType.Dispose:
+        case 'dispose':
           this.dispose();
           break;
         default:
-          log.warn('Received unsupported message: {}', JSON.stringify(message));
+          this.logReceivedMessageWarning(message);
       }
     });
   }
 
-  start(body: StartMessageBody) {
-    this.loadPlugins(body.runnerOptions.strykerOptions.plugins);
-    this.underlyingTestRunner = TestRunnerFactory.instance().create(body.runnerName, body.runnerOptions);
+  private logReceivedMessageWarning(message: never) {
+    log.warn('Received unsupported message: {}', JSON.stringify(message));
+  }
+
+  start(message: StartMessage) {
+    this.loadPlugins(message.runnerOptions.strykerOptions.plugins);
+    this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
   }
 
   init() {
@@ -57,7 +58,8 @@ class TestRunnerChildProcessAdapterWorker {
   }
 
   sendInitDone() {
-    process.send({ type: MessageType.InitDone });
+    const message: EmptyWorkerMessage = { kind: 'initDone' };
+    process.send(message);
   }
 
   dispose() {
@@ -73,11 +75,15 @@ class TestRunnerChildProcessAdapterWorker {
   }
 
   sendDisposeDone() {
-    process.send({ type: MessageType.DisposeDone });
+    this.send({ kind: 'disposeDone' });
   }
 
-  run(body: RunMessageBody) {
-    this.underlyingTestRunner.run(body.runOptions).then(this.reportResult, this.reportErrorResult);
+  run(body: RunMessage) {
+    this.underlyingTestRunner.run(body.runOptions).then((res) => this.reportResult(res), (error) => this.reportErrorResult(error));
+  }
+
+  private send(message: WorkerMessage) {
+    process.send(message);
   }
 
   private loadPlugins(plugins: string[]) {
@@ -85,24 +91,28 @@ class TestRunnerChildProcessAdapterWorker {
   }
 
   private reportResult(result: RunResult) {
-    let message: Message<ResultMessageBody> = {
-      type: MessageType.Result,
-      body: { result }
-    };
-    process.send(message);
+    this.send({
+      kind: 'result',
+      result
+    });
   }
 
   private reportErrorResult(error: any) {
-    let message: Message<ResultMessageBody> = {
-      type: MessageType.Result,
-      body: {
-        result: {
-          testNames: [],
-          result: TestResult.Error,
-        }
+    const message: ResultMessage = {
+      kind: 'result',
+      result: {
+        tests: [],
+        state: RunState.Error,
       }
     };
-    process.send(message);
+    if (error) {
+      if (Array.isArray(error)) {
+        message.result.errorMessages = error.map((e: any) => e.toString());
+      } else {
+        message.result.errorMessages = [error.toString()];
+      }
+    }
+    this.send(message);
   }
 }
 

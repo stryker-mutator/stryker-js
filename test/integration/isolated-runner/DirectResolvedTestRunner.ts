@@ -1,8 +1,9 @@
-import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult } from 'stryker-api/test_runner';
+import { EventEmitter } from 'events'; 
+import { RunResult, RunState, RunOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
 
-class DirectResolvedTestRunner implements TestRunner {
+class DirectResolvedTestRunner extends EventEmitter implements TestRunner {
 
-  runResult: RunResult = { result: TestResult.Complete, testNames: [] };
+  runResult: RunResult = { state: RunState.Complete, tests: [] };
 
   run(options: RunOptions) {
     return Promise.resolve(this.runResult);

@@ -17,7 +17,7 @@ describe('ClearTextReporter', function () {
   describe('onAllMutantsTested()', () => {
 
     beforeEach(() => {
-      sut.onAllMutantsTested(mutantResults(MutantStatus.KILLED, MutantStatus.SURVIVED, MutantStatus.TIMEDOUT, MutantStatus.UNTESTED));
+      sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
     });
 
     it('should report on the survived mutant', () => {

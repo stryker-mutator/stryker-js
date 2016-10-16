@@ -73,7 +73,7 @@ module.exports = function(config){
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporter: ['progress', 'clear-text', 'html', 'event-recorder'],
-    testSelector: null,
+    testFramework: null,
     plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
   });
 }
@@ -120,17 +120,17 @@ See [stryker-mutator.github.io](http://stryker-mutator.github.io) for an up-to-d
 **Default value:** *none*  
 **Description:**  
 With `testFramework` you configure which test framework you used for your tests. The value you configure here is passed through to the test runner, 
-so which values are supporterd here are determined by the test runner. By default, this value is also used for `testSelector`.  
+so which values are supporterd here are determined by the test runner. By default, this value is also used for `testFramework`.  
 
 #### Test selector
-**Full notation:** `--testSelector jasmine` or `--testSelector null`    
-**Config file key:** `testSelector: 'jasmine'` or `testSelector: null`    
+**Full notation:** `--testFramework jasmine` or `--testFramework null`    
+**Config file key:** `testFramework: 'jasmine'` or `testFramework: null`    
 **Default value:** *none*  
 **Description:**  
 Stryker kan use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
 because only the tests covering a particular mutation are ran. If this value is left out, the value of the `testFramework` is used
-to determine the `testSelector`. Currently **only** `'jasmine'` is supported. If you use an other test framework, or you want to disable test selection for an other reason,
-you can explicitly disable the testSelector by setting the value to `null`. 
+to determine the `testFramework`. Currently **only** `'jasmine'` is supported. If you use an other test framework, or you want to disable test selection for an other reason,
+you can explicitly disable the testFramework by setting the value to `null`. 
 
 #### Reporter
 **Command line:** `--reporter clear-text,progress`  

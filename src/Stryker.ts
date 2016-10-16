@@ -7,13 +7,13 @@ import Mutant from './Mutant';
 import { Config, ConfigWriterFactory } from 'stryker-api/config';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
 import { Reporter, MutantResult } from 'stryker-api/report';
-import { TestSelector } from 'stryker-api/test_selector';
-import TestRunnerOrchestrator from './TestRunnerOrchestrator';
+import { TestFramework } from 'stryker-api/test_framework';
+import SandboxCoordinator from './SandboxCoordinator';
 import ReporterOrchestrator from './ReporterOrchestrator';
-import './jasmine_test_selector/JasmineTestSelector';
-import { RunResult, TestResult } from 'stryker-api/test_runner';
-import TestSelectorOrchestrator from './TestSelectorOrchestrator';
-import MutantRunResultMatcher from './MutantRunResultMatcher';
+import './jasmine_test_framework/JasmineTestFramework';
+import { RunResult, TestResult, RunState, TestState } from 'stryker-api/test_runner';
+import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
+import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './InputFileResolver';
 import ConfigReader from './ConfigReader';
 import PluginLoader from './PluginLoader';
@@ -23,11 +23,22 @@ import * as log4js from 'log4js';
 
 const log = log4js.getLogger('Stryker');
 
+const humanReadableTestState = (testState: TestState) => {
+  switch (testState) {
+    case TestState.Success:
+      return 'SUCCESS';
+    case TestState.Failed:
+      return 'FAILED';
+    case TestState.Skipped:
+      return 'SKIPPED';
+  }
+};
+
 export default class Stryker {
 
   config: Config;
   private reporter: Reporter;
-  private testSelector: TestSelector;
+  private testFramework: TestFramework;
 
   /**
    * The Stryker mutation tester.
@@ -45,7 +56,7 @@ export default class Stryker {
     this.setGlobalLogLevel(); // loglevel could be changed
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
-    this.testSelector = new TestSelectorOrchestrator(this.config).determineTestSelector();
+    this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
   }
 
   /**
@@ -55,15 +66,15 @@ export default class Stryker {
   runMutationTest(): Promise<MutantResult[]> {
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then((inputFiles) => this.initialTestRun(inputFiles))
-      .then(({runResults, inputFiles, testRunnerOrchestrator}) =>
-        this.generateAndRunMutations(inputFiles, runResults, testRunnerOrchestrator))
+      .then(({runResult, inputFiles, sandboxCoordinator}) =>
+        this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator))
       .then(mutantResults => this.wrapUpReporter()
         .then(StrykerTempFolder.clean)
         .then(() => mutantResults));
   }
 
-  private filterOutUnsuccesfulResults(runResults: RunResult[]) {
-    return runResults.filter((runResult: RunResult) => !(!runResult.failed && runResult.result === TestResult.Complete));
+  private filterOutFailedTests(runResult: RunResult) {
+    return runResult.tests.filter(testResult => testResult.state === TestState.Failed);
   }
 
   private loadPlugins() {
@@ -73,37 +84,46 @@ export default class Stryker {
   }
 
   private initialTestRun(inputFiles: InputFile[]) {
-    let testRunnerOrchestrator = new TestRunnerOrchestrator(this.config, inputFiles, this.testSelector, this.reporter);
-    return testRunnerOrchestrator.initialRun()
-      .then(runResults => {
-        let unsuccessfulTests = this.filterOutUnsuccesfulResults(runResults);
-        if (unsuccessfulTests.length) {
-          this.logFailedTests(unsuccessfulTests);
-          throw new Error('There were failed tests in the initial test run');
-        } else {
-          this.logInitialTestRunSucceeded(runResults);
-          return { runResults, inputFiles, testRunnerOrchestrator };
+    let sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
+    return sandboxCoordinator.initialRun()
+      .then(runResult => {
+        switch (runResult.state) {
+          case RunState.Complete:
+            let failedTests = this.filterOutFailedTests(runResult);
+            if (failedTests.length) {
+              this.logFailedTestsInInitialRun(failedTests);
+              throw new Error('There were failed tests in the initial test run:');
+            } else {
+              this.logInitialTestRunSucceeded(runResult.tests);
+              return { runResult, inputFiles, sandboxCoordinator };
+            }
+          case RunState.Error:
+            this.logErrorredInitialRun(runResult);
+            break;
+          case RunState.Timeout:
+            this.logTimeoutInitialRun(runResult);
+            break;
         }
       });
   }
 
-  private generateAndRunMutations(inputFiles: InputFile[], initialRunResults: RunResult[], testRunnerOrchestrator: TestRunnerOrchestrator): Promise<MutantResult[]> {
-    let mutants = this.generateMutants(inputFiles, initialRunResults);
+  private generateAndRunMutations(inputFiles: InputFile[], initialRunResult: RunResult, sandboxCoordinator: SandboxCoordinator): Promise<MutantResult[]> {
+    let mutants = this.generateMutants(inputFiles, initialRunResult);
     if (mutants.length) {
-      return testRunnerOrchestrator.runMutations(mutants);
+      return sandboxCoordinator.runMutants(mutants);
     } else {
       log.info('It\'s a mutant-free world, nothing to test.');
       return Promise.resolve([]);
     }
   }
 
-  private generateMutants(inputFiles: InputFile[], runResults: RunResult[]) {
+  private generateMutants(inputFiles: InputFile[], runResult: RunResult) {
     let mutatorOrchestrator = new MutatorOrchestrator(this.reporter);
     let mutants = mutatorOrchestrator.generateMutants(inputFiles
       .filter(inputFile => inputFile.mutated)
       .map(file => file.path));
     log.info(`${mutants.length} Mutant(s) generated`);
-    let mutantRunResultMatcher = new MutantRunResultMatcher(mutants, runResults);
+    let mutantRunResultMatcher = new MutantTestMatcher(mutants, runResult);
     mutantRunResultMatcher.matchWithMutants();
     return mutants;
   }
@@ -130,50 +150,35 @@ export default class Stryker {
     }
   }
 
-  private logInitialTestRunSucceeded(runResults: RunResult[]) {
-    let totalAmountOfTests = 0;
-    runResults.forEach(result => {
-      if (result.succeeded) {
-        totalAmountOfTests += result.succeeded;
-      }
-    });
-    log.info('Initial test run succeeded. Ran %s tests.', totalAmountOfTests);
+  private logInitialTestRunSucceeded(tests: TestResult[]) {
+    log.info('Initial test run succeeded. Ran %s tests.', tests.length);
   }
 
   private setGlobalLogLevel() {
     log4js.setGlobalLogLevel(this.config.logLevel);
   }
 
-  /**
-   * Looks through a list of RunResults to see if all tests have passed.
-   * @function
-   * @param {RunResult[]} runResults - The list of RunResults.
-   * @returns {Boolean} True if all tests passed.
-   */
-  private logFailedTests(unsuccessfulTests: RunResult[]): void {
-    let failedSpecNames =
-      _.uniq(
-        _.flatten(unsuccessfulTests
-          .filter(runResult => runResult.result === TestResult.Complete)
-          .map(runResult => runResult.testNames)
-        ))
-        .sort();
-    if (failedSpecNames.length > 0) {
-      let message = 'One or more tests failed in the inial test run:';
-      failedSpecNames.forEach(filename => message += `\n\t${filename}`);
-      log.error(message);
+  private logFailedTestsInInitialRun(failedTests: TestResult[]): void {
+    let message = 'One or more tests failed in the initial test run:';
+    failedTests.forEach(test => {
+      message += `\n\t${test.name}`;
+      if (test.errorMessages && test.errorMessages.length) {
+        message += `\n\t${test.errorMessages.join('\n\t')}`;
+      }
+    });
+    log.error(message);
+  }
+  private logErrorredInitialRun(runResult: RunResult) {
+    let message = 'One or more tests errored in the initial test run:';
+    if (runResult.errorMessages && runResult.errorMessages.length) {
+      runResult.errorMessages.forEach(error => message += `\n\t${error}`);
     }
+    log.error(message);
+  }
 
-    let errors =
-      _.flatten(unsuccessfulTests
-        .filter(runResult => runResult.result === TestResult.Error)
-        .map(runResult => runResult.errorMessages))
-        .sort();
-
-    if (errors.length > 0) {
-      let message = 'One or more tests errored in the initial test run:';
-      errors.forEach(error => message += `\n\t${error}`);
-      log.error(message);
-    }
+  private logTimeoutInitialRun(runResult: RunResult) {
+    let message = 'Initial run timed out! Ran following tests before timeout:';
+    runResult.tests.forEach(test => `\n\t${test.name} ${humanReadableTestState(test.state)}`);
+    log.error(message);
   }
 }

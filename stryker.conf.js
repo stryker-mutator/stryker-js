@@ -4,7 +4,7 @@ module.exports = function (config) {
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporter: ['progress', 'clear-text', 'html', 'event-recorder'],
-    testSelector: null,
+    testFramework: null,
     plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
   });
 }

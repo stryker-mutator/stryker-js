@@ -12,7 +12,6 @@ import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
 import { freezeRecursively, copy } from './utils/objectUtils';
 import * as estree from 'estree';
-// import 'stryker-api/estree'; TODO: uncomment when doing next major release
 
 const log = log4js.getLogger('Mutator');
 
@@ -116,7 +115,7 @@ export default class MutatorOrchestrator {
 
               mutatedNodes.forEach((mutatedNode: estree.Node) => {
                 let mutatedCode = parserUtils.generate(mutatedNode);
-                let originalNode = nodes[(mutatedNode as any).nodeID];
+                let originalNode = nodes[mutatedNode.nodeID];
                 mutants.push(new Mutant(mutator.name, sourceFile, originalCode, mutatedCode, originalNode.loc, originalNode.range));
               });
             }

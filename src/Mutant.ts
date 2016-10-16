@@ -1,8 +1,8 @@
-import * as _ from'lodash';
-import {Location, Range} from 'stryker-api/core';
-import {Mutator} from 'stryker-api/mutant';
+import * as _ from 'lodash';
+import { Location, Range } from 'stryker-api/core';
+import { Mutator } from 'stryker-api/mutant';
 import StrykerTempFolder from './utils/StrykerTempFolder';
-import {RunResult} from 'stryker-api/test_runner';
+import { TestResult } from 'stryker-api/test_runner';
 
 
 /**
@@ -10,7 +10,6 @@ import {RunResult} from 'stryker-api/test_runner';
  */
 export default class Mutant {
 
-  private scopedTestsById: RunResult[] = [];
   private _scopedTestIds: number[] = [];
   public specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
@@ -23,10 +22,9 @@ export default class Mutant {
     return this._timeSpentScopedTests;
   }
 
-  public addRunResultForTest(index: number, runResult: RunResult) {
+  public addTestResult(index: number, testResult: TestResult) {
     this._scopedTestIds.push(index);
-    this._timeSpentScopedTests += runResult.timeSpent;
-    this.scopedTestsById[index] = runResult;
+    this._timeSpentScopedTests += testResult.timeSpentMs;
   }
 
   /**
@@ -68,7 +66,7 @@ export default class Mutant {
   }
 
   private get mutatedCode() {
-    return this.originalCode.substr(0, this.range[0]) + this.replacement + this.originalCode.substr(this.range[1] );
+    return this.originalCode.substr(0, this.range[0]) + this.replacement + this.originalCode.substr(this.range[1]);
   }
 
   /**
