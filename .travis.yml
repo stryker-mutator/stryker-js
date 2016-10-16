@@ -3,7 +3,9 @@ node_js:
   - "5"
   - "4"
   - "0.12"
-before_install: npm install -g grunt-cli
+before_install: 
+  - npm install -g grunt-cli
+  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
 install: npm install
 before_script:
   - export DISPLAY=:99.0
