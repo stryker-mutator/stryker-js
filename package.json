@@ -15,6 +15,9 @@
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
   },
+  "engines": {
+    "npm": ">= 3.0.0"
+  },
   "keywords": [
     "mutation testing",
     "mutation",
@@ -59,7 +62,7 @@
     "@types/glob": "^5.0.29",
     "@types/karma": "^0.13.32",
     "@types/lodash": "^4.14.34",
-    "@types/log4js": "0.0.31",
+    "@types/log4js": "0.0.32",
     "@types/mkdirp": "^0.3.28",
     "@types/mocha": "^2.2.31",
     "@types/sinon": "^1.16.29",
