@@ -1,30 +1,26 @@
 import Mutant from './Mutant';
-import { RunResult, CoverageCollection, CoverageCollectionPerTest } from 'stryker-api/test_runner';
-import { Location } from 'stryker-api/core';
+import { StatementMapDictionary } from './coverage/CoverageInstrumenter';
+import { RunResult, CoverageCollection, CoverageCollectionPerTest, CoverageResult, StatementMap } from 'stryker-api/test_runner';
+import { Location, StrykerOptions } from 'stryker-api/core';
 
 export default class MutantTestMatcher {
 
-  constructor(private mutants: Mutant[], private initialRunResult: RunResult) { }
+  constructor(private mutants: Mutant[], private initialRunResult: RunResult, private statementMaps: StatementMapDictionary, private options: StrykerOptions) { }
 
   matchWithMutants() {
     this.mutants.forEach(mutant => {
-      let smallestStatement: string;
+      const statementMap = this.statementMaps[mutant.filename];
+      const smallestStatement = this.findSmallestCoveringStatement(mutant, statementMap);
       this.initialRunResult.tests.forEach((testResult, id) => {
         let covered = false;
-        const coverage = false; // this.findCoverage(id);
-        if (coverage) {
-          // let coveredFile = testResult.coverage[mutant.filename];
-          // if (coveredFile) {
-          //   // Statement map should change between test run results.
-          //   // We should be able to safely reuse the smallest statement found in first run.
-          //   if (!smallestStatement) {
-          //     smallestStatement = this.findSmallestCoveringStatement(mutant, coveredFile);
-          //   }
-          //   covered = coveredFile.s[smallestStatement] > 0;
-          // }
-          covered = true;
+        const coverageCollection = this.findCoverageCollectionForTest(id);
+        if (coverageCollection && smallestStatement) {
+          let coveredFile = coverageCollection[mutant.filename];
+          if (coveredFile) {
+            covered = coveredFile.s[smallestStatement] > 0;
+          }
         } else {
-          // If there is no coverage result we have to assume the source code is covered
+          // If there is no coverage data we have to assume that the test covers the mutant
           covered = true;
         }
         if (covered) {
@@ -37,22 +33,23 @@ export default class MutantTestMatcher {
   /**
    * Finds the smallest statement that covers a mutant.
    * @param mutant The mutant.
-   * @param coveredFile The CoverageResult.
+   * @param statementMap of the covering file.
    * @returns The index of the coveredFile which contains the smallest statement surrounding the mutant.
    */
-  // private findSmallestCoveringStatement(mutant: Mutant, coveredFile: CoverageResult): string {
-  //   let smallestStatement: string;
+  private findSmallestCoveringStatement(mutant: Mutant, statementMap: StatementMap): string {
+    let smallestStatement: string = null;
+    if (statementMap) {
+      Object.keys(statementMap).forEach(statementId => {
+        let location = statementMap[statementId];
 
-  //   Object.keys(coveredFile.statementMap).forEach(statementId => {
-  //     let location = coveredFile.statementMap[statementId];
+        if (this.statementCoversMutant(mutant.location, location) && this.isNewSmallestStatement(statementMap[smallestStatement], location)) {
+          smallestStatement = statementId;
+        }
+      });
+    }
 
-  //     if (this.statementCoversMutant(mutant, location) && this.isNewSmallestStatement(coveredFile.statementMap[smallestStatement], location)) {
-  //       smallestStatement = statementId;
-  //     }
-  //   });
-
-  //   return smallestStatement;
-  // }
+    return smallestStatement;
+  }
 
   /**
    * Indicates whether a statement is the smallest statement of the two statements provided.
@@ -72,34 +69,37 @@ export default class MutantTestMatcher {
         statementIsSmallestStatement = true;
       }
     }
-
     return statementIsSmallestStatement;
   }
 
   /**
    * Indicates whether a statement covers a mutant.
-   * @param mutant The mutant.
-   * @param location The location which may cover the mutant.
+   * @param mutantLocation The location of the mutant.
+   * @param statementLocation The location of the statement.
    * @returns true if the statment covers the mutant.
    */
-  private statementCoversMutant(mutant: Mutant, location: Location): boolean {
-    let mutantIsAfterStart = mutant.location.start.line > location.start.line ||
-      (mutant.location.start.line === location.start.line && mutant.location.start.column >= location.start.column);
-    let mutantIsBeforeEnd = mutant.location.end.line < location.end.line ||
-      (mutant.location.end.line === location.end.line && mutant.location.end.column <= location.end.column);
+  private statementCoversMutant(mutantLocation: Location, statementLocation: Location): boolean {
+    let mutantIsAfterStart = mutantLocation.start.line > statementLocation.start.line ||
+      (mutantLocation.start.line === statementLocation.start.line && mutantLocation.start.column >= statementLocation.start.column);
+    let mutantIsBeforeEnd = mutantLocation.end.line < statementLocation.end.line ||
+      (mutantLocation.end.line === statementLocation.end.line && mutantLocation.end.column <= statementLocation.end.column);
 
     return mutantIsAfterStart && mutantIsBeforeEnd;
   }
 
-  // private findCoverage(id: number) {
-  //   if (this.initialRunResult.coverage) {
+  private findCoverageCollectionForTest(testId: number): CoverageCollection {
+    if (this.initialRunResult.coverage) {
+      if (this.isCoverageCollectionPerTest(this.initialRunResult.coverage)) {
+        return this.initialRunResult.coverage[testId];
+      } else {
+        return this.initialRunResult.coverage;
+      }
+    } else {
+      return null;
+    }
+  }
 
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
-  private isCoverageCollectionPerTest(coverage: CoverageCollection | CoverageCollectionPerTest) {
-    // if(this.)
+  private isCoverageCollectionPerTest(coverage: CoverageCollection | CoverageCollectionPerTest): coverage is CoverageCollectionPerTest {
+    return this.options.coverageAnalysis === 'perTest';
   }
 }

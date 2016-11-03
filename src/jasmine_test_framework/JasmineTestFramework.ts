@@ -1,25 +1,40 @@
-// import {TestFramework, TestFrameworkSettings, TestFrameworkFactory} from 'stryker-api/test_framework';
+import { TestFramework, TestFrameworkSettings, TestFrameworkFactory } from 'stryker-api/test_framework';
 
-// const INTERCEPTOR_CODE = `(function(global){
-//     var realIt = global.it, count = 0;
-//     var scoped = %IDS_PLACEHOLDER%;
-//     global.it = function(){
-//         if(scoped && scoped.indexOf(count) >= 0){
-//             var spec = realIt.apply(global, arguments);
-//         }
-//         count ++;
-//     }
-// })(window || global);`;
+export default class JasmineTestFramework implements TestFramework {
 
+  constructor(private settings: TestFrameworkSettings) {
+  }
 
-// export default class JasmineTestFramework implements TestFramework {
+  beforeEach(codeFragment: string) {
+    return `
+    jasmine.getEnv().addReporter({
+      specStarted: function () {
+        ${codeFragment}
+      }
+    });`;
+  }
 
-//   constructor(private settings: TestFrameworkSettings) {
-//   }
+  afterEach(codeFragment: string) {
+    return `
+    jasmine.getEnv().addReporter({
+      specDone: function () {
+        ${codeFragment}
+      }
+    });`;
+  }
 
-//   select(ids: number[]): string {
-//     return INTERCEPTOR_CODE.replace('%IDS_PLACEHOLDER%', JSON.stringify(ids));
-//   }
-// }
+  filter(testIds: number[]) {
+    return `    
+    var currentTestId = 0;
+    jasmine.getEnv().specFilter = function (spec) {
+        var filterOut = false;
+        if(${JSON.stringify(testIds)}.indexOf(currentTestId) >= 0){
+          filterOut = true;
+        }
+        currentTestId++;
+        return filterOut;
+    }`;
+  }
+}
 
-// TestFrameworkFactory.instance().register('jasmine', JasmineTestFramework);
+TestFrameworkFactory.instance().register('jasmine', JasmineTestFramework);

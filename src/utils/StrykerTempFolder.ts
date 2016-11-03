@@ -77,14 +77,18 @@ function writeFile(filename: string, data: string): Promise<void> {
  * Copies a file.
  * @param fromFilename The path to the existing file.
  * @param toFilename The path to copy the file to.
+ * @param instrumenter An optional additional intrumenter to stream the file through
  * @returns A promise to eventually copy the file.
  */
-function copyFile(fromFilename: string, toFilename: string): Promise<void> {
+function copyFile(fromFilename: string, toFilename: string, instrumenter?: NodeJS.ReadWriteStream): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    let readStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
+    let readStream: NodeJS.ReadableStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
     let writeStream = fs.createWriteStream(toFilename, { encoding: 'utf8' });
     readStream.on('error', reject);
     writeStream.on('error', reject);
+    if (instrumenter) {
+      readStream = readStream.pipe(instrumenter);
+    }
     readStream.pipe(writeStream);
     readStream.on('end', () => resolve());
   });

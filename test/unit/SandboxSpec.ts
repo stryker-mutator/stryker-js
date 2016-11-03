@@ -4,8 +4,10 @@ import * as path from 'path';
 import * as os from 'os';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
 import { RunnerOptions, RunResult } from 'stryker-api/test_runner';
+import CoverageInstrumenter from '../../src/coverage/CoverageInstrumenter';
 import Sandbox from '../../src/Sandbox';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
+import { wrapInClosure } from '../../src/utils/objectUtils';
 import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
 
 describe('Sandbox', () => {
@@ -15,8 +17,11 @@ describe('Sandbox', () => {
   let files: InputFile[];
   let testRunner: any;
   let testFramework: any;
-  let expectedFileToMutate: InputFile = { path: path.resolve('file1'), mutated: true, included: true };
+  const expectedFileToMutate: InputFile = { path: path.resolve('file1'), mutated: true, included: true };
+  const notMutatedFile: InputFile = { path: path.resolve('file2'), mutated: false, included: false };
   const workingFolder = 'random-folder-3';
+  const expectedTargetFileToMutate = path.join(workingFolder, 'file1');
+  const expectedTestFrameworkHooksFile = path.join(workingFolder, '___testHooksForStryker.js');
 
   beforeEach(() => {
     options = { port: 43, timeoutFactor: 23, timeoutMs: 1000 };
@@ -27,7 +32,7 @@ describe('Sandbox', () => {
     };
     files = [
       expectedFileToMutate,
-      { path: path.resolve('file2'), mutated: false, included: false }
+      notMutatedFile
     ];
     sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns(workingFolder);
     sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returnsArg(0);
@@ -38,15 +43,43 @@ describe('Sandbox', () => {
 
   afterEach(() => sandbox.restore());
 
-  describe('when constructed with a testFramework', () => {
+  describe('when constructed with a CoverageInstrumenter', () => {
 
-    beforeEach(() => sut = new Sandbox(options, 3, files, testFramework));
+    let coverageInstrumenter: {
+      instrumenterStreamForFile: sinon.SinonStub;
+      hooksForTestRun: sinon.SinonStub;
+    };
+    let expectedInstrumenterStream: any;
+
+    beforeEach(() => {
+      expectedInstrumenterStream = 'an instrumenter stream';
+      coverageInstrumenter = {
+        instrumenterStreamForFile: sinon.stub(),
+        hooksForTestRun: sinon.stub()
+      };
+      coverageInstrumenter.instrumenterStreamForFile.returns(expectedInstrumenterStream);
+      sut = new Sandbox(options, 3, files, testFramework, <any>coverageInstrumenter);
+    });
+
+    describe('when initialize()', () => {
+
+      beforeEach(() => sut.initialize());
+
+      it('should have instrumented the input files', () => {
+        expect(coverageInstrumenter.instrumenterStreamForFile).to.have.been.calledWith(expectedFileToMutate);
+        expect(coverageInstrumenter.instrumenterStreamForFile).to.have.been.calledWith(expectedFileToMutate);
+        expect(StrykerTempFolder.copyFile).to.have.been.calledWith(expectedFileToMutate.path, expectedTargetFileToMutate, expectedInstrumenterStream);
+      });
+    });
+  });
+
+  describe('when constructed with a testFramework but without a CoverageInstrumenter', () => {
+
+    beforeEach(() => sut = new Sandbox(options, 3, files, testFramework, null));
 
     it('should have created a workingFolder', () => expect(StrykerTempFolder.createRandomFolder).to.have.been.calledWith('sandbox'));
 
     describe('when initialized()', () => {
-      const expectedTargetFileToMutate = path.join(workingFolder, 'file1');
-      const expectedTestFrameworkHooksFile = path.join(workingFolder, '___testFrameworkHooksForStryker.js');
 
       beforeEach(() => sut.initialize());
 
@@ -73,7 +106,7 @@ describe('Sandbox', () => {
       describe('when runMutant()', () => {
         let mutant: any;
         let actualRunResult: RunResult;
-        const expectedTestFilterCodeFragment = 'Some code fragment';
+        const testFilterCodeFragment = 'Some code fragment';
 
         beforeEach(() => {
           mutant = {
@@ -83,7 +116,7 @@ describe('Sandbox', () => {
             timeSpentScopedTests: 12,
             reset: sinon.stub().returns(Promise.resolve()),
           };
-          testFramework.filter.returns(expectedTestFilterCodeFragment);
+          testFramework.filter.returns(testFilterCodeFragment);
         });
 
         describe('when mutant has scopedTestIds', () => {
@@ -96,7 +129,7 @@ describe('Sandbox', () => {
           it('should filter the scoped tests', () => expect(testFramework.filter).to.have.been.calledWith(mutant.scopedTestIds));
 
           it('should write the filter code fragment to hooks file', () => expect(StrykerTempFolder.writeFile)
-            .to.have.been.calledWith(expectedTestFrameworkHooksFile, expectedTestFilterCodeFragment));
+            .to.have.been.calledWith(expectedTestFrameworkHooksFile, wrapInClosure(testFilterCodeFragment)));
 
           it('should have ran testRunner with correct timeout', () => expect(testRunner.run)
             .to.have.been.calledWith({ timeout: 12 * 23 + 1000 }));
@@ -106,20 +139,19 @@ describe('Sandbox', () => {
         });
       });
     });
-
-
   });
 
-  describe('when constructed without a testFramework', () => {
-    beforeEach(() => sut = new Sandbox(options, 3, files, undefined));
+  describe('when constructed without a testFramework or CoverageInstrumenter', () => {
+    beforeEach(() => sut = new Sandbox(options, 3, files, undefined, null));
 
     describe('and initialized', () => {
 
       beforeEach(() => sut.initialize());
 
-      it('should have created the isolated test runner without framework hooks file', () => {
+      it('should have created the isolated test runner', () => {
         const expectedSettings: RunnerOptions = {
           files: [
+            { path: path.join(workingFolder, '___testHooksForStryker.js'), mutated: false, included: true },
             { path: path.join(workingFolder, 'file1'), mutated: true, included: true },
             { path: path.join(workingFolder, 'file2'), mutated: false, included: false }
           ],
@@ -142,7 +174,7 @@ describe('Sandbox', () => {
           return sut.runMutant(mutant);
         });
 
-        it('should not filter any tests', () => expect(StrykerTempFolder.writeFile).to.not.have.been.called);
+        it('should not filter any tests', () => expect(StrykerTempFolder.writeFile).to.have.been.calledWith(expectedTestFrameworkHooksFile, '').and.with.callCount(1));
       });
     });
   });

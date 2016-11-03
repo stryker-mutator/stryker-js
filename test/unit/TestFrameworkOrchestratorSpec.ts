@@ -7,41 +7,40 @@ import logger from '../helpers/log4jsMock';
 
 describe('TestFrameworkOrchestrator', () => {
 
-  let testFramework = 'the testFramework, \'duh';
+  const testFramework = 'the testFramework, \'duh';
   let sandbox: sinon.SinonSandbox;
   let sut: TestFrameworkOrchestrator;
   let actualTestFramework: any;
   let options: StrykerOptions;
 
-  let actBeforeEach = () => {
+  const actBeforeEach = () => {
     beforeEach(() => {
       sut = new TestFrameworkOrchestrator(options);
       actualTestFramework = sut.determineTestFramework();
     });
   };
 
-  let itShouldRetrieveTheTestFramework = () => {
+  const itShouldRetrieveTheTestFramework = () => {
     it('should retrieve the test framework', () => expect(actualTestFramework).to.be.eq(testFramework));
   };
 
-  let itShouldUseTheValueOf = (expectedTestFrameworkName: string) => {
+  const itShouldUseTheValueOf = (expectedTestFrameworkName: string) => {
     it(`should use the value of "${expectedTestFrameworkName}"`, () => expect(TestFrameworkFactory.instance().create).to.have.been.calledWith(expectedTestFrameworkName, { options }));
   };
 
-  let itShouldNotRetrieveATestFramework = () => {
+  const itShouldNotRetrieveATestFramework = () => {
     it('should not retrieve a testFramework', () => {
       expect(actualTestFramework).to.be.eq(null);
       expect(TestFrameworkFactory.instance().create).not.to.have.been.called;
     });
   };
 
-  let itShouldLogCoverageAnalysisOffOnDebug = () => {
-    it('should log on debug that coverageAnalysis was "off"', () => {
-      expect(logger.debug).to.have.been.calledWith('The `coverageAnalysis` setting is "off", not hooking into the test framework to achieve performance benefits.');
-    });
+  const itShouldLogCoverageAnalysisOffOnDebug = () => {
+    it('should log on debug that coverageAnalysis was "off"', () => 
+      expect(logger.debug).to.have.been.calledWith('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', 'off'));
   };
 
-  let itShouldNotLogAWarningAboutTheMissingSetting = () => {
+  const itShouldNotLogAWarningAboutTheMissingSetting = () => {
     it('should not log a warning for the missing setting', () => expect(logger.warn).not.to.have.been.called);
   };
 
@@ -75,7 +74,7 @@ describe('TestFrameworkOrchestrator', () => {
     describe('and coverageAnalysis is not "off"', () => {
       actBeforeEach();
 
-      it('should log a warning for the missing setting', () => expect(logger.warn).to.have.been.calledWith('Missing config settings `testFramework`. Stryker will continue without hooking into the test framework, thus running all test for every generated mutant. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.'));
+      it('should log a warning for the missing setting', () => expect(logger.warn).to.have.been.calledWith('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.'));
 
       itShouldNotRetrieveATestFramework();
     });

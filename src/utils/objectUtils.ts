@@ -30,3 +30,10 @@ export function copy<T>(obj: T, deep?: boolean) {
     return _.clone(obj);
   }
 }
+
+export function wrapInClosure(codeFragment: string) {
+  return `
+    (function (window) {
+      ${codeFragment}
+    })((Function('return this'))());`;
+}

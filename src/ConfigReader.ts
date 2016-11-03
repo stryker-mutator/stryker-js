@@ -66,5 +66,10 @@ export default class ConfigReader {
       log.fatal(`Value "${options.coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the folowing: ${VALID_COVERAGE_ANALYSIS_VALUES.map(v => `"${v}"`).join(', ')}`);
       process.exit(1);
     }
+    if (options.coverageAnalysis === 'perTest' && !options.testFramework) {
+      const validCoverageAnalysisSettingsExceptPerTest = VALID_COVERAGE_ANALYSIS_VALUES.filter(v => v !== 'perTest').map(v => `"${v}"`).join(', ');
+      log.fatal(`Configured coverage analysis 'perTest' requires a test framework to be configured. Either configure your test framework (for example testFramework: 'jasmine') or set coverageAnalysis setting to one of the following: ${validCoverageAnalysisSettingsExceptPerTest}`);
+      process.exit(1);
+    }
   }
 }

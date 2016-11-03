@@ -56,9 +56,7 @@
         "--configFile",
         "testResources/sampleProject/stryker.conf.js",
         "--logLevel",
-        "info",
-        "--testFramework",
-        "jasmine"
+        "debug"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,

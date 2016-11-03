@@ -30,12 +30,14 @@ describe('SandboxCoordinator', () => {
   let secondSandbox: { initialize: sinon.SinonStub, run: sinon.SinonStub, runMutant: sinon.SinonStub, dispose: sinon.SinonStub };
   let options: StrykerOptions;
   let reporter: any;
+  let coverageInstrumenter: any;
   const expectedTestFramework: any = 'expected test framework';
   const expectedRunResult = { isTheExpectedRunResult: true };
   const expectedInputFiles: any = { isInputFiles: true };
 
   beforeEach(() => {
     options = {};
+    coverageInstrumenter = 'a coverage instrumenter';
     sinonSandbox = sinon.sandbox.create();
     const createSandbox = () => ({
       initialize: sinonSandbox.stub().returns(Promise.resolve()),
@@ -57,10 +59,10 @@ describe('SandboxCoordinator', () => {
 
   describe('on initialRun', () => {
     let actualRunResult: RunResult;
-    beforeEach(() => sut.initialRun().then(runResult => actualRunResult = runResult));
+    beforeEach(() => sut.initialRun(coverageInstrumenter).then(runResult => actualRunResult = runResult));
 
     it('should create a sandbox with correct arguments',
-      () => expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework));
+      () => expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, coverageInstrumenter));
 
     it('should initialize the sandbox', () => expect(firstSandbox.initialize).to.have.been.called);
 
@@ -98,8 +100,8 @@ describe('SandboxCoordinator', () => {
     it('should have created 2 sandboxes', () => {
       expect(sandbox.default).to.have.been.calledWithNew;
       expect(sandbox.default).to.have.been.calledTwice;
-      expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework);
-      expect(sandbox.default).to.have.been.calledWith(options, 1, expectedInputFiles, expectedTestFramework);
+      expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
+      expect(sandbox.default).to.have.been.calledWith(options, 1, expectedInputFiles, expectedTestFramework, null);
     });
 
     it('should have ran 2 mutants on the first sandbox', () => expect(firstSandbox.runMutant).to.have.been.calledTwice);

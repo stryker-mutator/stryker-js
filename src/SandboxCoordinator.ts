@@ -6,6 +6,7 @@ import { TestRunner, RunResult, RunnerOptions, TestResult, RunState, TestState }
 import { Reporter, MutantResult, MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { freezeRecursively } from './utils/objectUtils';
+import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import Sandbox from './Sandbox';
 import Mutant from './Mutant';
 const PromisePool = require('es6-promise-pool');
@@ -21,9 +22,9 @@ export default class SandboxCoordinator {
 
   constructor(private options: StrykerOptions, private files: InputFile[], private testFramework: TestFramework, private reporter: Reporter) { }
 
-  initialRun(): Promise<RunResult> {
+  initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
     log.info(`Starting initial test run. This may take a while.`);
-    const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework);
+    const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
     return sandbox
       .initialize()
       .then(() => sandbox.run(INITIAL_RUN_TIMEOUT))
@@ -62,7 +63,7 @@ export default class SandboxCoordinator {
     const cpuCount = os.cpus().length;
     const sandboxes: Sandbox[] = [];
     for (let i = 0; i < cpuCount; i++) {
-      sandboxes.push(new Sandbox(this.options, i, this.files, this.testFramework));
+      sandboxes.push(new Sandbox(this.options, i, this.files, this.testFramework, null));
     }
     log.info(`Creating ${cpuCount} test runners (based on cpu count)`);
     return Promise.all(sandboxes.map(s => s.initialize()))

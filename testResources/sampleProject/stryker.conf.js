@@ -3,7 +3,7 @@ module.exports = function (config) {
     files: [{ pattern: 'testResources/sampleProject/src/?(Circle|Add).js', mutated: true }, 'testResources/sampleProject/test/?(AddSpec|CircleSpec).js'],
     testFramework: 'jasmine',
     testRunner: 'karma',
-    // testFramework: null,
+    coverageAnalysis: 'off',
     plugins: ['stryker-karma-runner']
   });
 }

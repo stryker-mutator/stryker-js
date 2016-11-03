@@ -10,16 +10,17 @@ import { Reporter, MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import SandboxCoordinator from './SandboxCoordinator';
 import ReporterOrchestrator from './ReporterOrchestrator';
-import './jasmine_test_framework/JasmineTestFramework';
 import { RunResult, TestResult, RunState, TestState } from 'stryker-api/test_runner';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './InputFileResolver';
 import ConfigReader from './ConfigReader';
 import PluginLoader from './PluginLoader';
+import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import * as log4js from 'log4js';
+import './jasmine_test_framework/JasmineTestFramework';
 
 const log = log4js.getLogger('Stryker');
 
@@ -39,6 +40,7 @@ export default class Stryker {
   config: Config;
   private reporter: Reporter;
   private testFramework: TestFramework;
+  private coverageInstrumenter: CoverageInstrumenter;
 
   /**
    * The Stryker mutation tester.
@@ -57,7 +59,10 @@ export default class Stryker {
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
+    this.coverageInstrumenter = new CoverageInstrumenter(this.config.coverageAnalysis, this.testFramework);
+    this.verify();
   }
+
 
   /**
    * Runs mutation testing. This may take a while.
@@ -83,9 +88,16 @@ export default class Stryker {
     }
   }
 
+  private verify() {
+    if (this.config.coverageAnalysis === 'perTest' && !this.testFramework) {
+      log.fatal('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
+      process.exit(1);
+    }
+  }
+
   private initialTestRun(inputFiles: InputFile[]) {
-    let sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
-    return sandboxCoordinator.initialRun()
+    const sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
+    return sandboxCoordinator.initialRun(this.coverageInstrumenter)
       .then(runResult => {
         switch (runResult.state) {
           case RunState.Complete:
@@ -123,7 +135,7 @@ export default class Stryker {
       .filter(inputFile => inputFile.mutated)
       .map(file => file.path));
     log.info(`${mutants.length} Mutant(s) generated`);
-    let mutantRunResultMatcher = new MutantTestMatcher(mutants, runResult);
+    let mutantRunResultMatcher = new MutantTestMatcher(mutants, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config);
     mutantRunResultMatcher.matchWithMutants();
     return mutants;
   }

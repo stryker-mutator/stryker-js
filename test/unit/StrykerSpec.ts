@@ -73,6 +73,7 @@ describe('Stryker', function () {
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
     sandbox.stub(StrykerTempFolder, 'clean').returns(Promise.resolve());
+    sandbox.stub(process, 'exit');
   });
 
   function actAndShouldResultInARejection() {
@@ -84,6 +85,20 @@ describe('Stryker', function () {
       });
     });
   }
+
+  describe('when constructed with coverageAnalysis "perTest" without a testFramework', () => {
+    beforeEach(() => {
+      config.coverageAnalysis = 'perTest';
+      const stub = (<sinon.SinonStub>testFrameworkOrchestratorStub.determineTestFramework); 
+      stub.resetBehavior();
+      stub.returns(null);
+      sut = new Stryker({});
+    });
+
+    it('should exit the process', () => expect(process.exit).to.have.been.calledWith(1));
+
+    it('should log a fatal error', () => expect(log.fatal).to.have.been.calledWith('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".'));
+  });
 
   describe('when constructed', () => {
     beforeEach(() => {
