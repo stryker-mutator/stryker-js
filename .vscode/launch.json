@@ -97,8 +97,8 @@
       "name": "Run stryker help",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/src/Stryker.js",
-      "preLaunchTask": "build",
+      "program": "${workspaceRoot}/src/stryker-cli.js",
+      // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
         "--help"

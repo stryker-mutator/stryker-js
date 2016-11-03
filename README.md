@@ -73,13 +73,13 @@ module.exports = function(config){
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporter: ['progress', 'clear-text', 'html', 'event-recorder'],
-    testFramework: null,
+    coverageAnalysis: 'perTest',
     plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
   });
 }
 ```
 
-#### All files
+#### Files
 **Command line:** `--files node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js` or `-f node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`        
 **Config file:** `files: ['test/helpers/**/*.js', 'test/unit/**/*.js', { pattern: 'src/**/*.js', included: false, mutated: true }]`  
 **Default value:** *none*  
@@ -122,15 +122,20 @@ See [stryker-mutator.github.io](http://stryker-mutator.github.io) for an up-to-d
 With `testFramework` you configure which test framework you used for your tests. The value you configure here is passed through to the test runner, 
 so which values are supporterd here are determined by the test runner. By default, this value is also used for `testFramework`.  
 
-#### Test selector
-**Full notation:** `--testFramework jasmine` or `--testFramework null`    
-**Config file key:** `testFramework: 'jasmine'` or `testFramework: null`    
-**Default value:** *none*  
+#### Coverage analysis
+**Full notation:** `--coverageAnalysis perTest`    
+**Config file key:** `coverageAnalysis: 'perTest'`    
+**Default value:** `perTest`  
 **Description:**  
-Stryker kan use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
-because only the tests covering a particular mutation are ran. If this value is left out, the value of the `testFramework` is used
-to determine the `testFramework`. Currently **only** `'jasmine'` is supported. If you use an other test framework, or you want to disable test selection for an other reason,
-you can explicitly disable the testFramework by setting the value to `null`. 
+The coverage analysis strategy you want to use.
+Stryker can analyse code coverage results. When doing so, it can potentially speed up mutation testing a lot, 
+because only the tests covering a particular mutation are tested for each mutant. 
+However this should *not* influence the resulting mutation testing score, only the performance.
+
+Possible values are: 
+* **off**: Stryker will not determine the covered code during the initial test run fase. All tests are always tested for each mutant during the mutation testing fase.
+* **all**: Stryker will determine the covered code of all tests during the initial test run fase. Only mutants that are actually covered by your test suite are tested during the mutation testing fase. This setting requires your test runner to be able to *report* the code coverage back to Stryker, which is the case for the stryker-mocha-runner and the stryker-karma-runner.
+* **perTest**: Stryker will determine the covered code per executed test during the initial test run fase. Only mutants that are actually covered by your test suite are tested during the mutation testing fase. Only those tests that cover a particular mutant are tested for each mutant. This requires your tests to be able to run independently of each other and in random order. In addition to the requirement for your test runner to be able to *report* the code coverage back to Stryker, your choosen testFramework also needs to support running code before and after each test and test filtering. 
 
 #### Reporter
 **Command line:** `--reporter clear-text,progress`  
