@@ -13,7 +13,6 @@ export function streamToString(stream: Stream) {
 }
 
 export function readable() {
-  const input = new Readable();
-  input._read = function noop() { };
+  const input = new Readable({ read: function noop () {} });
   return input;
 }
