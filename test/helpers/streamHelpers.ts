@@ -12,7 +12,13 @@ export function streamToString(stream: Stream) {
   });
 }
 
-export function readable() {
-  const input = new Readable({ read: function noop () {} });
+export function readable(): Readable {
+  const input = new SimpleReadable();
   return input;
+}
+
+class SimpleReadable extends Readable {
+  _read() {
+    // noop
+  }
 }
