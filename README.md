@@ -55,7 +55,7 @@ The mutators that are supported by Stryker can be found on [our website](http://
 ## Configuration
 Options can be configured either via the command line or via a config file.
 
-### Avalailable options
+### Available options
 #### Config file
 **Command line:** `-c stryker.conf.js` or `--configile stryker.conf.js`    
 **Config file:** *none, used to set the config file*  
@@ -98,7 +98,7 @@ When using the config file you can fill an array with strings or objects:
 
 #### Files to mutate
 **Command line:** `-m src/**/*.js,a.js` or `--mutate src/**/*.js,a.js`  
-**Config file:** `mutate: ['src/**/*.js', 'a.js']  
+**Config file:** `mutate: ['src/**/*.js', 'a.js']`  
 **Default value:** *none*  
 **Description:** 
 With `mutate` you configure the subset of files to target for mutation. These should be your source files. 
@@ -127,7 +127,7 @@ so which values are supporterd here are determined by the test runner. By defaul
 **Config file key:** `testSelector: 'jasmine'` or `testSelector: null`    
 **Default value:** *none*  
 **Description:**  
-Stryker kan use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
+Stryker can use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
 because only the tests covering a particular mutation are ran. If this value is left out, the value of the `testFramework` is used
 to determine the `testSelector`. Currently **only** `'jasmine'` is supported. If you use an other test framework, or you want to disable test selection for an other reason,
 you can explicitly disable the testSelector by setting the value to `null`. 
