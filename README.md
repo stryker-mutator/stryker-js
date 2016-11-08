@@ -98,7 +98,7 @@ When using the config file you can fill an array with strings or objects:
 
 #### Files to mutate
 **Command line:** `-m src/**/*.js,a.js` or `--mutate src/**/*.js,a.js`  
-**Config file:** `mutate: ['src/**/*.js', 'a.js']  
+**Config file:** `mutate: ['src/**/*.js', 'a.js']`  
 **Default value:** *none*  
 **Description:** 
 With `mutate` you configure the subset of files to target for mutation. These should be your source files. 
