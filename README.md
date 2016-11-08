@@ -127,7 +127,7 @@ so which values are supporterd here are determined by the test runner. By defaul
 **Config file key:** `testSelector: 'jasmine'` or `testSelector: null`    
 **Default value:** *none*  
 **Description:**  
-Stryker kan use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
+Stryker can use a test selector to select individual or groups of tests. If a test selector is used, it can potentially speed up the tests, 
 because only the tests covering a particular mutation are ran. If this value is left out, the value of the `testFramework` is used
 to determine the `testSelector`. Currently **only** `'jasmine'` is supported. If you use an other test framework, or you want to disable test selection for an other reason,
 you can explicitly disable the testSelector by setting the value to `null`. 
