@@ -6,6 +6,7 @@ class DirectResolvedTestRunner extends EventEmitter implements TestRunner {
   runResult: RunResult = { state: RunState.Complete, tests: [] };
 
   run(options: RunOptions) {
+    (Function('return this'))().__coverage__ = 'coverageObject';
     return Promise.resolve(this.runResult);
   }
 }

@@ -15,6 +15,7 @@ describe('TestRunnerChildProcessAdapter', function () {
         '../../test/integration/isolated-runner/DirectResolvedTestRunner',
         '../../test/integration/isolated-runner/NeverResolvedTestRunner',
         '../../test/integration/isolated-runner/SlowInitAndDisposeTestRunner',
+        '../../test/integration/isolated-runner/CoverageReportingTestRunner',
         '../../test/integration/isolated-runner/DiscoverRegexTestRunner'],
       testRunner: 'karma',
       testFramework: 'jasmine',
@@ -33,6 +34,13 @@ describe('TestRunnerChildProcessAdapter', function () {
 
   });
 
+  describe('when test runner behind reports coverage', () => {
+    before(() => sut = new TestRunnerChildProcessAdapter('coverage-reporting', options));
+
+    it('should not be overriden by the worker',
+      () => expect(sut.run({ timeout: 3000 })).to.eventually.have.property('coverage', 'realCoverage'));
+  });
+
   describe('when test runner behind responds quickly', () => {
     before(() => {
       sut = new TestRunnerChildProcessAdapter('direct-resolved', options);
@@ -41,6 +49,8 @@ describe('TestRunnerChildProcessAdapter', function () {
     it('should run and resolve', () =>
       expect(sut.run({ timeout: 4000 })).to.eventually.have.property('state', RunState.Complete));
 
+    it('should report the coverage object if underlying test runner does not', () =>
+      expect(sut.run({ timeout: 4000 })).to.eventually.have.property('coverage', 'coverageObject'));
   });
 
   describe('when test runner behind never responds', () => {

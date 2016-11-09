@@ -91,6 +91,10 @@ class TestRunnerChildProcessAdapterWorker {
   }
 
   private reportResult(result: RunResult) {
+    // If the test runner didn't report on coverage, let's try to do it ourselves.
+    if (!result.coverage) {
+      result.coverage = (Function('return this'))().__coverage__;
+    }
     this.send({
       kind: 'result',
       result
