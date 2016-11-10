@@ -6,4 +6,4 @@ module.exports = function (config) {
     // testSelector: null,
     plugins: ['stryker-karma-runner']
   });
-}
+};

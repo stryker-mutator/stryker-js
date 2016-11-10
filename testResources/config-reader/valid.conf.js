@@ -5,4 +5,4 @@ module.exports = function(config){
     'should': 'be',
     'read': true
   });  
-}
+};

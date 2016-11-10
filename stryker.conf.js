@@ -7,4 +7,4 @@ module.exports = function (config) {
     testSelector: null,
     plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
   });
-}
+};
