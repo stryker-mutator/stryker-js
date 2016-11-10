@@ -86,7 +86,7 @@ describe('Stryker', function () {
     });
   }
 
-  describe('when constructed with coverageAnalysis "perTest" without a testFramework', () => {
+  xdescribe('when constructed with coverageAnalysis "perTest" without a testFramework', () => {
     beforeEach(() => {
       config.coverageAnalysis = 'perTest';
       const stub = (<sinon.SinonStub>testFrameworkOrchestratorStub.determineTestFramework); 
@@ -100,7 +100,7 @@ describe('Stryker', function () {
     it('should log a fatal error', () => expect(log.fatal).to.have.been.calledWith('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".'));
   });
 
-  describe('when constructed', () => {
+  xdescribe('when constructed', () => {
     beforeEach(() => {
       ConfigWriterFactory.instance().register('FakeConfigWriter', FakeConfigWriter);
       config.plugins = ['plugin1'];
@@ -129,10 +129,10 @@ describe('Stryker', function () {
 
   describe('runMutationTest()', () => {
 
-    describe('when input file globbing results in a rejection', () => {
+    xdescribe('when input file globbing results in a rejection', () => {
       beforeEach(() => {
         inputFileResolverStub = {
-          resolve: sandbox.stub().returns(Promise.reject(['a rejection']))
+          resolve: sandbox.stub().rejects('a rejection')
         };
         sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverStub);
         sut = new Stryker({});
@@ -159,7 +159,7 @@ describe('Stryker', function () {
       describe('when initialRun() resulted in a rejection', () => {
 
         beforeEach(() => {
-          sandboxCoordinatorStub.initialRun.returns(Promise.reject('a rejection'));
+          sandboxCoordinatorStub.initialRun.rejects('a rejection');
         });
 
         actAndShouldResultInARejection();
