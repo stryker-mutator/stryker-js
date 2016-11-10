@@ -6,4 +6,4 @@ module.exports = function(config){
     testFramework: 'jasmine',
     testRunner: 'karma'
   });
-}
+};

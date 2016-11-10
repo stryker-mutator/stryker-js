@@ -6,4 +6,4 @@ module.exports = function (config) {
     coverageAnalysis: 'off',
     plugins: ['stryker-karma-runner']
   });
-}
+};

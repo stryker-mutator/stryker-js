@@ -55,7 +55,7 @@ The mutators that are supported by Stryker can be found on [our website](http://
 ## Configuration
 Options can be configured either via the command line or via a config file.
 
-### Avalailable options
+### Available options
 #### Config file
 **Command line:** `-c stryker.conf.js` or `--configile stryker.conf.js`    
 **Config file:** *none, used to set the config file*  
@@ -98,7 +98,7 @@ When using the config file you can fill an array with strings or objects:
 
 #### Files to mutate
 **Command line:** `-m src/**/*.js,a.js` or `--mutate src/**/*.js,a.js`  
-**Config file:** `mutate: ['src/**/*.js', 'a.js']  
+**Config file:** `mutate: ['src/**/*.js', 'a.js']`  
 **Default value:** *none*  
 **Description:** 
 With `mutate` you configure the subset of files to target for mutation. These should be your source files. 
