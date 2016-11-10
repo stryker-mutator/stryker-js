@@ -6,5 +6,8 @@
     "test": [
         "test/**",
         "testResources/**"
-     ]
+     ],
+     "ignore": [
+        "testResources/config-reader/syntax-error.conf.js"
+    ]
 }
