@@ -13,7 +13,7 @@ var negate = function(number) {
 
 var notCovered = function(number) {
   return number > 10;
-}
+};
 
 var isNegativeNumber = function(number) {
   var isNegative = false;
