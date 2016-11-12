@@ -20,6 +20,7 @@ import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import * as log4js from 'log4js';
+import Timer from './utils/Timer';
 import './jasmine_test_framework/JasmineTestFramework';
 
 const log = log4js.getLogger('Stryker');
@@ -38,6 +39,7 @@ const humanReadableTestState = (testState: TestState) => {
 export default class Stryker {
 
   config: Config;
+  private timer = new Timer();
   private reporter: Reporter;
   private testFramework: TestFramework;
   private coverageInstrumenter: CoverageInstrumenter;
@@ -69,12 +71,14 @@ export default class Stryker {
    * @function
    */
   runMutationTest(): Promise<MutantResult[]> {
+    this.timer.reset();
     return new InputFileResolver(this.config.mutate, this.config.files).resolve()
       .then((inputFiles) => this.initialTestRun(inputFiles))
       .then(({runResult, inputFiles, sandboxCoordinator}) =>
         this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator))
       .then(mutantResults => this.wrapUpReporter()
         .then(StrykerTempFolder.clean)
+        .then(() => this.logDone())
         .then(() => mutantResults));
   }
 
@@ -163,7 +167,11 @@ export default class Stryker {
   }
 
   private logInitialTestRunSucceeded(tests: TestResult[]) {
-    log.info('Initial test run succeeded. Ran %s tests.', tests.length);
+    log.info('Initial test run succeeded. Ran %s tests in %s.', tests.length, this.timer.humanReadableElapsed());
+  }
+
+  private logDone() {
+    log.info('Done in %s.', this.timer.humanReadableElapsed());
   }
 
   private setGlobalLogLevel() {

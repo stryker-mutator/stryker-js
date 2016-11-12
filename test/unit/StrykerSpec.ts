@@ -86,7 +86,7 @@ describe('Stryker', function () {
     });
   }
 
-  xdescribe('when constructed with coverageAnalysis "perTest" without a testFramework', () => {
+  describe('when constructed with coverageAnalysis "perTest" without a testFramework', () => {
     beforeEach(() => {
       config.coverageAnalysis = 'perTest';
       const stub = (<sinon.SinonStub>testFrameworkOrchestratorStub.determineTestFramework); 
@@ -100,7 +100,7 @@ describe('Stryker', function () {
     it('should log a fatal error', () => expect(log.fatal).to.have.been.calledWith('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".'));
   });
 
-  xdescribe('when constructed', () => {
+  describe('when constructed', () => {
     beforeEach(() => {
       ConfigWriterFactory.instance().register('FakeConfigWriter', FakeConfigWriter);
       config.plugins = ['plugin1'];
@@ -129,7 +129,7 @@ describe('Stryker', function () {
 
   describe('runMutationTest()', () => {
 
-    xdescribe('when input file globbing results in a rejection', () => {
+    describe('when input file globbing results in a rejection', () => {
       beforeEach(() => {
         inputFileResolverStub = {
           resolve: sandbox.stub().rejects('a rejection')
@@ -255,7 +255,7 @@ describe('Stryker', function () {
               it('should resolve the stryker promise', () => strykerPromise);
 
               it('should have logged the amount of tests ran', () => {
-                expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests.', 2);
+                expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s.', 2);
               });
 
               it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
