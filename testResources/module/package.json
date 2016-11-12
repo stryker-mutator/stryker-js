@@ -11,6 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "jasmine-core": "^2.4.1",
+    "stryker-jasmine": "0.0.1",
     "karma": "1.0.0",
     "karma-coverage": "^1.0.0",
     "karma-jasmine": "^1.0.2",

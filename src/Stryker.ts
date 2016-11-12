@@ -21,7 +21,6 @@ import { freezeRecursively, isPromise } from './utils/objectUtils';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import * as log4js from 'log4js';
 import Timer from './utils/Timer';
-import './jasmine_test_framework/JasmineTestFramework';
 
 const log = log4js.getLogger('Stryker');
 
