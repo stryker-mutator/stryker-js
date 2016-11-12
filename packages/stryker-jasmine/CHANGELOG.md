@@ -1,3 +1,13 @@
+<a name="0.0.1"></a>
+## 0.0.1 (2016-11-12)
+
+
+### Features
+
+* **jasmine:** Add jasmine test framework ([4f992e4](https://github.com/stryker-mutator/stryker-jasmine/commit/4f992e4))
+
+
+
 <a name="0.0.0"></a>
 # 0.0.0 (2016-11-12)
 
