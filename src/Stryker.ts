@@ -181,8 +181,8 @@ export default class Stryker {
     let message = 'One or more tests failed in the initial test run:';
     failedTests.forEach(test => {
       message += `\n\t${test.name}`;
-      if (test.errorMessages && test.errorMessages.length) {
-        message += `\n\t${test.errorMessages.join('\n\t')}`;
+      if (test.failureMessages && test.failureMessages.length) {
+        message += `\n\t${test.failureMessages.join('\n\t')}`;
       }
     });
     log.error(message);

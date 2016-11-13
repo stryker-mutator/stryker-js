@@ -177,7 +177,7 @@ describe('Stryker', function () {
         describe('but contains an error and failed tests', () => {
           beforeEach((done) => {
             resolveInitialTestRun({
-              tests: [{ status: TestStatus.Failed, name: 'should fail' }],
+              tests: [{ status: TestStatus.Failed, name: 'should fail', timeSpentMs: 5 }],
               status: RunStatus.Error,
               errorMessages: ['An error!']
             });
@@ -202,8 +202,8 @@ describe('Stryker', function () {
           beforeEach(() => {
             resolveInitialTestRun({
               status: RunStatus.Complete, tests: [
-                { status: TestStatus.Success, name: 'should succeed' },
-                { status: TestStatus.Success, name: 'should succeed as well' }]
+                { status: TestStatus.Success, name: 'should succeed', timeSpentMs: 5 },
+                { status: TestStatus.Success, name: 'should succeed as well', timeSpentMs: 5 }]
             });
             strykerPromiseResolved = false;
           });

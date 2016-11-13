@@ -34,12 +34,14 @@ describe('MutantTestMatcher', () => {
           mutantTwo = { mutantTwo: true, filename: 'fileWithMutantTwo', location: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } }, addTestResult: sinon.stub() };
           testResultOne = {
             status: TestStatus.Success,
-            name: 'test one'
+            name: 'test one',
+            timeSpentMs: 5
           };
           runResult.tests.push(testResultOne);
           testResultTwo = {
             status: TestStatus.Success,
-            name: 'test two'
+            name: 'test two',
+            timeSpentMs: 5
           };
           runResult.tests.push(testResultTwo);
           mutants.push(mutantOne);
@@ -162,7 +164,8 @@ describe('MutantTestMatcher', () => {
           runResult.coverage = { 0: coverageResult };
           runResult.tests.push({
             name: 'controllers SearchResultController should open a modal dialog with product details',
-            status: TestStatus.Success
+            status: TestStatus.Success,
+            timeSpentMs: 5
           });
           sut.matchWithMutants();
           expect(mutant.scopedTestIds).to.have.length(1);
