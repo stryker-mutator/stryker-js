@@ -95,6 +95,18 @@ class TestRunnerChildProcessAdapterWorker {
     if (!result.coverage) {
       result.coverage = (Function('return this'))().__coverage__;
     }
+    if (result.errorMessages) {
+      // errorMessages should be a string[]
+      // Just in case the test runner implementer forgot to convert `Error`s to string, we will do it here
+      // https://github.com/stryker-mutator/stryker/issues/141
+      result.errorMessages = result.errorMessages.map((error: any) => {
+        if (error instanceof Error) {
+          return `${error.name}: ${error.message}\n${error.stack.toString()}`;
+        } else {
+          return error.toString();
+        }
+      });
+    }
     this.send({
       kind: 'result',
       result
@@ -102,21 +114,18 @@ class TestRunnerChildProcessAdapterWorker {
   }
 
   private reportErrorResult(error: any) {
-    const message: ResultMessage = {
-      kind: 'result',
-      result: {
-        tests: [],
-        status: RunStatus.Error,
-      }
+    const runResult: RunResult = {
+      tests: [],
+      status: RunStatus.Error,
     };
     if (error) {
       if (Array.isArray(error)) {
-        message.result.errorMessages = error.map((e: any) => e.toString());
+        runResult.errorMessages = error.map((e: any) => e);
       } else {
-        message.result.errorMessages = [error.toString()];
+        runResult.errorMessages = [error];
       }
     }
-    this.send(message);
+    this.reportResult(runResult);
   }
 }
 

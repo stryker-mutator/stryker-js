@@ -16,6 +16,7 @@ describe('TestRunnerChildProcessAdapter', function () {
         '../../test/integration/isolated-runner/NeverResolvedTestRunner',
         '../../test/integration/isolated-runner/SlowInitAndDisposeTestRunner',
         '../../test/integration/isolated-runner/CoverageReportingTestRunner',
+        '../../test/integration/isolated-runner/ErroredTestRunner',
         '../../test/integration/isolated-runner/DiscoverRegexTestRunner'],
       testRunner: 'karma',
       testFramework: 'jasmine',
@@ -32,6 +33,7 @@ describe('TestRunnerChildProcessAdapter', function () {
     it('correctly receive the regex on the other end',
       () => expect(sut.run({ timeout: 4000 })).to.eventually.have.property('status', RunStatus.Complete));
 
+    after(() => sut.dispose());
   });
 
   describe('when test runner behind reports coverage', () => {
@@ -39,6 +41,8 @@ describe('TestRunnerChildProcessAdapter', function () {
 
     it('should not be overriden by the worker',
       () => expect(sut.run({ timeout: 3000 })).to.eventually.have.property('coverage', 'realCoverage'));
+
+    after(() => sut.dispose());
   });
 
   describe('when test runner behind responds quickly', () => {
@@ -51,6 +55,8 @@ describe('TestRunnerChildProcessAdapter', function () {
 
     it('should report the coverage object if underlying test runner does not', () =>
       expect(sut.run({ timeout: 4000 })).to.eventually.have.property('coverage', 'coverageObject'));
+
+    after(() => sut.dispose());
   });
 
   describe('when test runner behind never responds', () => {
@@ -64,6 +70,26 @@ describe('TestRunnerChildProcessAdapter', function () {
 
     it('should be able to recover from a timeout', () =>
       expect(sut.run({ timeout: 1000 }).then(() => sut.run({ timeout: 1000 }))).to.eventually.satisfy((result: RunResult) => result.status === RunStatus.Timeout));
+
+    after(() => sut.dispose());
+  });
+
+  describe('when test runner behind reports an error as `Error` instead of `string`', () => {
+    before(() => {
+      sut = new TestRunnerChildProcessAdapter('errored', options);
+      return sut.init();
+    });
+
+    it('should report the error as `string`', () =>
+      expect(sut.run({ timeout: 1000 })).to.eventually.satisfy((result: RunResult) => {
+        // Issue https://github.com/stryker-mutator/stryker/issues/141
+        expect(result.status).to.be.eq(RunStatus.Error);
+        expect(result.errorMessages).to.have.length(1);
+        expect(result.errorMessages[0]).to.contain('SyntaxError: This is invalid syntax!\n    at ErroredTestRunner.run');
+        return true;
+      }));
+
+    after(() => sut.dispose());
   });
 
   describe('when test runner behind has a slow init and dispose cycle', () => {
