@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'; 
-import { TestRunnerFactory, RunnerOptions, TestRunner, RunOptions, RunState, RunResult, TestResult } from 'stryker-api/test_runner';
+import { TestRunnerFactory, RunnerOptions, TestRunner, RunOptions, RunStatus, RunResult, TestResult } from 'stryker-api/test_runner';
 import { isRegExp } from 'util';
 
 class DiscoverRegexTestRunner extends EventEmitter implements TestRunner {
@@ -10,9 +10,9 @@ class DiscoverRegexTestRunner extends EventEmitter implements TestRunner {
 
   run(options: RunOptions): Promise<RunResult> {
     if (isRegExp(this.runnerOptions.strykerOptions['someRegex'])) {
-      return Promise.resolve({ state: RunState.Complete, tests: []});
+      return Promise.resolve({ status: RunStatus.Complete, tests: []});
     } else {
-      return Promise.resolve({ state: RunState.Error, tests: [], errorMessages: ['No regex found in runnerOptions.strykerOptions.someRegex'] });
+      return Promise.resolve({ status: RunStatus.Error, tests: [], errorMessages: ['No regex found in runnerOptions.strykerOptions.someRegex'] });
     }
   }
 }

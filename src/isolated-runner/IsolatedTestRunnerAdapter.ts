@@ -1,4 +1,4 @@
-import { TestRunner, RunResult, RunOptions, RunnerOptions, TestResult, RunState } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunOptions, RunnerOptions, TestResult, RunStatus } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
 import { fork, ChildProcess } from 'child_process';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
@@ -165,7 +165,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.dispose()
       .then(() => this.startWorker())
       .then(() => this.init())
-      .then(() => this.runPromiseFulfillmentCallback({ state: RunState.Timeout, tests: [] }));
+      .then(() => this.runPromiseFulfillmentCallback({ status: RunStatus.Timeout, tests: [] }));
   }
 
 }

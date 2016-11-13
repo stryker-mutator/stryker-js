@@ -11,14 +11,14 @@
   "license": "ISC",
   "devDependencies": {
     "jasmine-core": "^2.4.1",
-    "stryker-jasmine": "0.0.1",
     "karma": "1.0.0",
     "karma-coverage": "^1.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
     "stryker": "file:../../",
-    "stryker-api": "^0.3.0-rc4",
-    "stryker-karma-runner": "^0.3.0-rc1",
+    "stryker-api": "^0.3.0-rc5",
+    "stryker-jasmine": "0.0.2",
+    "stryker-karma-runner": "^0.3.0-rc2",
     "typescript": "~2.0.2"
   }
 }

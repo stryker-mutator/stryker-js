@@ -2,7 +2,7 @@ import * as log4js from 'log4js';
 import * as os from 'os';
 import * as _ from 'lodash';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
-import { TestRunner, RunResult, RunnerOptions, TestResult, RunState, TestState } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunnerOptions, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { Reporter, MutantResult, MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { freezeRecursively } from './utils/objectUtils';
@@ -80,16 +80,16 @@ export default class SandboxCoordinator {
     let status: MutantStatus;
     let testNames: string[];
     if (runResult) {
-      switch (runResult.state) {
-        case RunState.Timeout:
+      switch (runResult.status) {
+        case RunStatus.Timeout:
           status = MutantStatus.TimedOut;
           break;
-        case RunState.Error:
+        case RunStatus.Error:
           log.debug('Converting a test result `error` to mutant status `killed`.');
           status = MutantStatus.Killed;
           break;
-        case RunState.Complete:
-          if (runResult.tests.some(t => t.state === TestState.Failed)) {
+        case RunStatus.Complete:
+          if (runResult.tests.some(t => t.status === TestStatus.Failed)) {
             status = MutantStatus.Killed;
           } else {
             status = MutantStatus.Survived;
@@ -97,7 +97,7 @@ export default class SandboxCoordinator {
           break;
       }
       testNames = runResult.tests
-        .filter(t => t.state !== TestState.Skipped)
+        .filter(t => t.status !== TestStatus.Skipped)
         .map(t => t.name);
     } else {
       testNames = [];

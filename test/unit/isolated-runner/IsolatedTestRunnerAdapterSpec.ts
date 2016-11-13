@@ -1,6 +1,6 @@
 import * as child_process from 'child_process';
 import * as sinon from 'sinon';
-import { RunnerOptions, RunOptions, RunResult, RunState } from 'stryker-api/test_runner';
+import { RunnerOptions, RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import { WorkerMessage, AdapterMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
@@ -82,7 +82,7 @@ describe('IsolatedTestRunnerAdapter', () => {
               receiveMessage({ kind: 'initDone' });
             });
 
-            it('should result in a `timeout` after the restart', () => expect(runPromise).to.eventually.satisfy((result: RunResult) => result.state === RunState.Timeout));
+            it('should result in a `timeout` after the restart', () => expect(runPromise).to.eventually.satisfy((result: RunResult) => result.status === RunStatus.Timeout));
           });
         };
 
@@ -126,7 +126,7 @@ describe('IsolatedTestRunnerAdapter', () => {
           });
 
           it('should not have resolved in a timeout', () => {
-            return expect(secondResultPromise).to.eventually.satisfy((runResult: RunResult) => runResult.state !== RunState.Timeout);
+            return expect(secondResultPromise).to.eventually.satisfy((runResult: RunResult) => runResult.status !== RunStatus.Timeout);
           });
         });
       });
@@ -134,7 +134,7 @@ describe('IsolatedTestRunnerAdapter', () => {
   });
 
   let receiveResultMessage = () => {
-    let message: ResultMessage = { kind: 'result', result: { state: RunState.Complete, tests: [] } };
+    let message: ResultMessage = { kind: 'result', result: { status: RunStatus.Complete, tests: [] } };
     receiveMessage(message);
     return message;
   };

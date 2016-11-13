@@ -1,6 +1,6 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { RunResult, TestResult, RunState, TestState, CoverageCollectionPerTest, CoverageCollection } from 'stryker-api/test_runner';
+import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollectionPerTest, CoverageCollection } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
 import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
@@ -17,7 +17,7 @@ describe('MutantTestMatcher', () => {
   beforeEach(() => {
     mutants = [];
     statementMapDictionary = Object.create(null);
-    runResult = { tests: [], state: RunState.Complete };
+    runResult = { tests: [], status: RunStatus.Complete };
     strykerOptions = {};
     sut = new MutantTestMatcher(mutants, runResult, statementMapDictionary, strykerOptions);
   });
@@ -33,12 +33,12 @@ describe('MutantTestMatcher', () => {
           mutantOne = { mutantOne: true, filename: 'fileWithMutantOne', location: { start: { line: 5, column: 6 }, end: { line: 5, column: 6 } }, addTestResult: sinon.stub() };
           mutantTwo = { mutantTwo: true, filename: 'fileWithMutantTwo', location: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } }, addTestResult: sinon.stub() };
           testResultOne = {
-            state: TestState.Success,
+            status: TestStatus.Success,
             name: 'test one'
           };
           runResult.tests.push(testResultOne);
           testResultTwo = {
-            state: TestState.Success,
+            status: TestStatus.Success,
             name: 'test two'
           };
           runResult.tests.push(testResultTwo);
@@ -162,7 +162,7 @@ describe('MutantTestMatcher', () => {
           runResult.coverage = { 0: coverageResult };
           runResult.tests.push({
             name: 'controllers SearchResultController should open a modal dialog with product details',
-            state: TestState.Success
+            status: TestStatus.Success
           });
           sut.matchWithMutants();
           expect(mutant.scopedTestIds).to.have.length(1);

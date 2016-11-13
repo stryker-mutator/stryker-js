@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as os from 'os';
 import { expect } from 'chai';
 import { MutantStatus, MutantResult } from 'stryker-api/report';
-import { RunResult, RunState, TestState } from 'stryker-api/test_runner';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
 import SandboxCoordinator from '../../src/SandboxCoordinator';
 import * as sandbox from '../../src/Sandbox';
@@ -85,13 +85,13 @@ describe('SandboxCoordinator', () => {
       // The uncovered mutant should not be run in a sandbox
       // Mock first sandbox to return first success, then failed
       firstSandbox.runMutant
-        .withArgs(mutants[1]).returns(Promise.resolve({ state: RunState.Complete, tests: [{ name: 'test1', state: TestState.Success }, { name: 'skipped', state: TestState.Skipped }] }))
-        .withArgs(mutants[3]).returns(Promise.resolve({ state: RunState.Complete, tests: [{ name: 'test2', state: TestState.Failed }] }));
+        .withArgs(mutants[1]).returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }, { name: 'skipped', status: TestStatus.Skipped }] }))
+        .withArgs(mutants[3]).returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test2', status: TestStatus.Failed }] }));
 
       // Mock second sandbox to return first timeout, then error
       secondSandbox.runMutant
-        .withArgs(mutants[2]).returns(Promise.resolve({ state: RunState.Timeout, tests: [{ name: 'test3', state: TestState.Skipped }] }))
-        .withArgs(mutants[4]).returns(Promise.resolve({ state: RunState.Error, tests: [{ name: 'test4', state: TestState.Skipped }] }));
+        .withArgs(mutants[2]).returns(Promise.resolve({ status: RunStatus.Timeout, tests: [{ name: 'test3', status: TestStatus.Skipped }] }))
+        .withArgs(mutants[4]).returns(Promise.resolve({ status: RunStatus.Error, tests: [{ name: 'test4', status: TestStatus.Skipped }] }));
 
       return sut.runMutants(mutants)
         .then(results => actualMutantResults = results);

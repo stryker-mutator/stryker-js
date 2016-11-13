@@ -2,7 +2,7 @@ import Stryker from '../../src/Stryker';
 import { InputFile } from 'stryker-api/core';
 import { MutantResult, Reporter } from 'stryker-api/report';
 import { Config, ConfigWriterFactory, ConfigWriter } from 'stryker-api/config';
-import { RunResult, TestResult, RunState, TestState } from 'stryker-api/test_runner';
+import { RunResult, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -177,8 +177,8 @@ describe('Stryker', function () {
         describe('but contains an error and failed tests', () => {
           beforeEach((done) => {
             resolveInitialTestRun({
-              tests: [{ state: TestState.Failed, name: 'should fail' }],
-              state: RunState.Error,
+              tests: [{ status: TestStatus.Failed, name: 'should fail' }],
+              status: RunStatus.Error,
               errorMessages: ['An error!']
             });
             strykerPromise = sut.runMutationTest();
@@ -201,9 +201,9 @@ describe('Stryker', function () {
           let strykerPromiseResolved: boolean;
           beforeEach(() => {
             resolveInitialTestRun({
-              state: RunState.Complete, tests: [
-                { state: TestState.Success, name: 'should succeed' },
-                { state: TestState.Success, name: 'should succeed as well' }]
+              status: RunStatus.Complete, tests: [
+                { status: TestStatus.Success, name: 'should succeed' },
+                { status: TestStatus.Success, name: 'should succeed as well' }]
             });
             strykerPromiseResolved = false;
           });

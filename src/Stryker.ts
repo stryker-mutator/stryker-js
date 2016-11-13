@@ -10,7 +10,7 @@ import { Reporter, MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import SandboxCoordinator from './SandboxCoordinator';
 import ReporterOrchestrator from './ReporterOrchestrator';
-import { RunResult, TestResult, RunState, TestState } from 'stryker-api/test_runner';
+import { RunResult, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './InputFileResolver';
@@ -24,13 +24,13 @@ import Timer from './utils/Timer';
 
 const log = log4js.getLogger('Stryker');
 
-const humanReadableTestState = (testState: TestState) => {
+const humanReadableTestState = (testState: TestStatus) => {
   switch (testState) {
-    case TestState.Success:
+    case TestStatus.Success:
       return 'SUCCESS';
-    case TestState.Failed:
+    case TestStatus.Failed:
       return 'FAILED';
-    case TestState.Skipped:
+    case TestStatus.Skipped:
       return 'SKIPPED';
   }
 };
@@ -82,7 +82,7 @@ export default class Stryker {
   }
 
   private filterOutFailedTests(runResult: RunResult) {
-    return runResult.tests.filter(testResult => testResult.state === TestState.Failed);
+    return runResult.tests.filter(testResult => testResult.status === TestStatus.Failed);
   }
 
   private loadPlugins() {
@@ -102,8 +102,8 @@ export default class Stryker {
     const sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
     return sandboxCoordinator.initialRun(this.coverageInstrumenter)
       .then(runResult => {
-        switch (runResult.state) {
-          case RunState.Complete:
+        switch (runResult.status) {
+          case RunStatus.Complete:
             let failedTests = this.filterOutFailedTests(runResult);
             if (failedTests.length) {
               this.logFailedTestsInInitialRun(failedTests);
@@ -112,10 +112,10 @@ export default class Stryker {
               this.logInitialTestRunSucceeded(runResult.tests);
               return { runResult, inputFiles, sandboxCoordinator };
             }
-          case RunState.Error:
+          case RunStatus.Error:
             this.logErrorredInitialRun(runResult);
             break;
-          case RunState.Timeout:
+          case RunStatus.Timeout:
             this.logTimeoutInitialRun(runResult);
             break;
         }
@@ -197,7 +197,7 @@ export default class Stryker {
 
   private logTimeoutInitialRun(runResult: RunResult) {
     let message = 'Initial run timed out! Ran following tests before timeout:';
-    runResult.tests.forEach(test => `\n\t${test.name} ${humanReadableTestState(test.state)}`);
+    runResult.tests.forEach(test => `\n\t${test.name} ${humanReadableTestState(test.status)}`);
     log.error(message);
   }
 }

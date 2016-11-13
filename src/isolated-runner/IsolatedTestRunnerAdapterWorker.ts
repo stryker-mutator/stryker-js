@@ -1,5 +1,5 @@
 import { AdapterMessage, RunMessage, StartMessage, ResultMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
-import { RunnerOptions, TestRunner, RunState, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
+import { RunnerOptions, TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
 import { isPromise, deserialize } from '../utils/objectUtils';
@@ -106,7 +106,7 @@ class TestRunnerChildProcessAdapterWorker {
       kind: 'result',
       result: {
         tests: [],
-        state: RunState.Error,
+        status: RunStatus.Error,
       }
     };
     if (error) {
