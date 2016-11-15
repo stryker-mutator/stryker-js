@@ -15,7 +15,13 @@ let logger = {
   isFatalEnabled: sinon.stub(),
   fatal: sinon.stub()
 };
-let sandbox = sinon.sandbox.create();
+
+if ((global as any).log4jsSandbox) {
+  (global as any).log4jsSandbox.restore();
+}
+
+let sandbox: sinon.SinonSandbox;
+(global as any).log4jsSandbox = sandbox = sinon.sandbox.create();
 
 // Stub away even before other files are loaded and tests have started
 sandbox.stub(log4js, 'getLogger').returns(logger);
@@ -29,9 +35,10 @@ beforeEach(() => {
   logger.fatal.reset();
 });
 
-after( () => {
+after(() => {
   // Restore for next (stryker) test run
   sandbox.restore();
+  (global as any).log4jsSandbox = null;
 });
 
 export default logger;

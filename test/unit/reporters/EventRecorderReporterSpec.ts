@@ -1,10 +1,10 @@
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import {Reporter, MutantStatus, MutantResult} from 'stryker-api/report';
+import { Reporter, MutantStatus, MutantResult } from 'stryker-api/report';
 import * as sinon from 'sinon';
 import log from '../../helpers/log4jsMock';
-import {expect} from 'chai';
-import {ALL_EVENT_METHOD_NAMES} from '../../../src/reporters/BroadcastReporter';
+import { expect } from 'chai';
+import { ALL_EVENT_METHOD_NAMES } from '../../../src/reporters/BroadcastReporter';
 
 
 describe('EventRecorderReporter', () => {
@@ -18,6 +18,10 @@ describe('EventRecorderReporter', () => {
     sandbox = sinon.sandbox.create();
     cleanFolderStub = sandbox.stub(fileUtils, 'cleanFolder');
     writeFileStub = sandbox.stub(fileUtils, 'writeFile');
+  });
+
+  afterEach(() => {
+    sandbox.restore();
   });
 
   describe('when constructed with empty options', () => {
@@ -38,7 +42,7 @@ describe('EventRecorderReporter', () => {
 
       let arrangeActAssertEvent = (eventName: string) => {
         describe(`${eventName} event`, () => {
-          
+
           let writeFileRejection: any;
           const expected: any = { some: 'eventData' };
 
@@ -49,10 +53,11 @@ describe('EventRecorderReporter', () => {
           });
 
           describe('when writeFile results in a rejection', () => {
-            beforeEach(() => writeFileStub.returns(Promise.reject('some error')));
+            const expectedError = new Error('some error');
+            beforeEach(() => writeFileStub.rejects(expectedError));
             arrange();
 
-            it('should reject `wrapUp`', () => expect(writeFileRejection).to.be.eq('some error'));
+            it('should reject `wrapUp`', () => expect(writeFileRejection).to.be.eq(expectedError));
           });
 
           describe('when writeFile is successful', () => {
@@ -66,8 +71,10 @@ describe('EventRecorderReporter', () => {
     });
 
     describe('and cleanFolder results in a rejection', () => {
+      let expectedError: Error;
       beforeEach(() => {
-        cleanFolderStub.returns(Promise.reject('Some error'));
+        expectedError = new Error('Some error');
+        cleanFolderStub.rejects(expectedError);
         sut = new EventRecorderReporter({});
       });
 
@@ -79,12 +86,9 @@ describe('EventRecorderReporter', () => {
           return promise.then(() => result = true, (error: any) => result = error);
         });
 
-        it('should reject', () => expect(result).to.be.eq('Some error'));
+        it('should reject', () => expect(result).to.be.eq(expectedError));
       });
     });
   });
 
-  afterEach(() => {
-    sandbox.restore();
-  });
 });

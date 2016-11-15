@@ -139,18 +139,21 @@ describe('InputFileResolver', () => {
 
   describe('when a globbing expression results in a reject', () => {
     let results: InputFile[];
-    let error: any;
+    let actualError: any;
+    let expectedError: Error;
+
     beforeEach(() => {
       sut = new InputFileResolver(['file1'], ['file2', 'file2']);
       globStub.withArgs('notExists').returns(Promise.resolve([]));
       globStub.withArgs('file1').returns(Promise.resolve(['file1.js']));
-      globStub.withArgs('file2').returns(Promise.reject(['ERROR: something went wrongue']));
-      return sut.resolve().then(r => results = r, e => error = e);
+      expectedError = new Error('ERROR: something went wrongue');
+      globStub.withArgs('file2').rejects(expectedError);
+      return sut.resolve().then(r => results = r, e => actualError = e);
     });
 
     it('should reject the promise', () => {
       expect(results).to.not.be.ok;
-      expect(error).to.deep.equal(['ERROR: something went wrongue']);
+      expect(actualError).to.deep.equal(expectedError);
     });
   });
 

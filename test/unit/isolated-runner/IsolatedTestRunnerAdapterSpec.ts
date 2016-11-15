@@ -1,13 +1,10 @@
 import * as child_process from 'child_process';
 import * as sinon from 'sinon';
-import {RunnerOptions, RunOptions, RunResult, TestResult} from 'stryker-api/test_runner';
+import { RunnerOptions, RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
-import Message, {MessageType} from '../../../src/isolated-runner/Message';
-import ResultMessageBody from '../../../src/isolated-runner/ResultMessageBody';
-import RunMessageBody from '../../../src/isolated-runner/RunMessageBody';
-import StartMessageBody from '../../../src/isolated-runner/StartMessageBody';
-import {serialize} from '../../../src/utils/objectUtils';
-import {expect} from 'chai';
+import { WorkerMessage, AdapterMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
+import { serialize } from '../../../src/utils/objectUtils';
+import { expect } from 'chai';
 import * as path from 'path';
 import * as _ from 'lodash';
 
@@ -58,9 +55,9 @@ describe('IsolatedTestRunnerAdapter', () => {
       });
 
       it('should send run-message to worker', () => {
-        let expectedMessage: Message<RunMessageBody> = {
-          type: MessageType.Run,
-          body: { runOptions }
+        const expectedMessage: RunMessage = {
+          kind: 'run',
+          runOptions
         };
         expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
       });
@@ -71,7 +68,7 @@ describe('IsolatedTestRunnerAdapter', () => {
           clock.tick(2100);
         });
 
-        it('should send `dispose` to worker process', () => expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ type: MessageType.Dispose })));
+        it('should send `dispose` to worker process', () => expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ kind: 'dispose' })));
 
         let actAssertTimeout = () => {
           it('should kill the child process and start a new one', () => {
@@ -82,16 +79,16 @@ describe('IsolatedTestRunnerAdapter', () => {
           describe('and to init', () => {
             let actualRunResult: RunResult;
             beforeEach(() => {
-              receiveMessage({ type: MessageType.InitDone });
+              receiveMessage({ kind: 'initDone' });
             });
 
-            it('should result in a `timeout` after the restart', () => expect(runPromise).to.eventually.satisfy((result: RunResult) => result.result === TestResult.Timeout));
+            it('should result in a `timeout` after the restart', () => expect(runPromise).to.eventually.satisfy((result: RunResult) => result.status === RunStatus.Timeout));
           });
         };
 
         describe('and child process responses to dispose', () => {
           beforeEach(() => {
-            receiveMessage({ type: MessageType.DisposeDone });
+            receiveMessage({ kind: 'disposeDone' });
             return sut.dispose(); // should return newly created promise
           });
 
@@ -111,13 +108,13 @@ describe('IsolatedTestRunnerAdapter', () => {
 
       describe('and a result message occurred after 1900 ms', () => {
 
-        let expectedMessage: Message<ResultMessageBody>;
+        let expectedMessage: ResultMessage;
         beforeEach(() => {
           clock.tick(1900);
           expectedMessage = receiveResultMessage();
         });
 
-        it('should pass along the result', () => expect(runPromise).to.eventually.eq(expectedMessage.body.result));
+        it('should pass along the result', () => expect(runPromise).to.eventually.eq(expectedMessage.result));
 
         describe('when we run a second time, wait 500ms and then receive the second result', () => {
 
@@ -129,7 +126,7 @@ describe('IsolatedTestRunnerAdapter', () => {
           });
 
           it('should not have resolved in a timeout', () => {
-            return expect(secondResultPromise).to.eventually.satisfy((runResult: RunResult) => runResult.result !== TestResult.Timeout);
+            return expect(secondResultPromise).to.eventually.satisfy((runResult: RunResult) => runResult.status !== RunStatus.Timeout);
           });
         });
       });
@@ -137,13 +134,13 @@ describe('IsolatedTestRunnerAdapter', () => {
   });
 
   let receiveResultMessage = () => {
-    let message = { type: MessageType.Result, body: { result: { result: TestResult.Complete } } };
+    let message: ResultMessage = { kind: 'result', result: { status: RunStatus.Complete, tests: [] } };
     receiveMessage(message);
     return message;
   };
 
-  let receiveMessage = (message: Message<any>) => {
-    let callback: (message: Message<ResultMessageBody>) => void = fakeChildProcess.on.getCall(0).args[1];
+  let receiveMessage = (message: WorkerMessage) => {
+    let callback: (message: WorkerMessage) => void = fakeChildProcess.on.getCall(0).args[1];
     callback(message);
     return message;
   };

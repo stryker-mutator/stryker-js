@@ -6,7 +6,7 @@
 .editorconfig
 *.ts
 !*.d.ts
-coverage
+/coverage
 Gruntfile.js
 reports
 stryker.conf.js

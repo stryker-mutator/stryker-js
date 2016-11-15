@@ -1,5 +1,6 @@
 node_modules
-coverage
+/coverage
+/testResources/module/coverage
 .tscache
 .stryker-tmp
 reports

@@ -1,9 +1,10 @@
-import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult } from 'stryker-api/test_runner';
+import { EventEmitter } from 'events';
+import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult, RunStatus } from 'stryker-api/test_runner';
 
-class SlowInitAndDisposeTestRunner implements TestRunner {
+class SlowInitAndDisposeTestRunner extends EventEmitter implements TestRunner {
 
   inInit: boolean;
-  runResult: RunResult = { result: TestResult.Complete, testNames: [] };
+  runResult: RunResult = { status: RunStatus.Complete, tests: [] };
 
   init() {
     return new Promise<void>(resolve => {

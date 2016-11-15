@@ -10,7 +10,7 @@ import * as sinon from 'sinon';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import * as estree from 'estree';
 
-describe('Mutant', function () {
+describe('Mutant', () => {
   let sut: Mutant;
   let filename: string;
   let mutator: BinaryOperatorMutator;

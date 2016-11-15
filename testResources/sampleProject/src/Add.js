@@ -11,6 +11,10 @@ var negate = function(number) {
   return -number;
 };
 
+var notCovered = function(number) {
+  return number > 10;
+};
+
 var isNegativeNumber = function(number) {
   var isNegative = false;
   if(number < 0){

@@ -20,7 +20,7 @@ describe('ProgressReporter', () => {
     describe('when status is KILLED', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.KILLED));
+        sut.onMutantTested(mutantResult(MutantStatus.Killed));
       });
       
       it('should log "."', () => {
@@ -31,7 +31,7 @@ describe('ProgressReporter', () => {
     describe('when status is TIMEDOUT', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.TIMEDOUT));
+        sut.onMutantTested(mutantResult(MutantStatus.TimedOut));
       });
       
       it('should log "T"', () => {
@@ -42,7 +42,7 @@ describe('ProgressReporter', () => {
     describe('when status is SURVIVED', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.SURVIVED));
+        sut.onMutantTested(mutantResult(MutantStatus.Survived));
       });
       
       it('should log "S"', () => {

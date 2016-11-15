@@ -5,13 +5,13 @@ export default class ProgressReporter implements Reporter {
   onMutantTested(result: MutantResult) {
     let toLog: string;
     switch (result.status) {
-      case MutantStatus.KILLED:
+      case MutantStatus.Killed:
         toLog = '.';
         break;
-      case MutantStatus.TIMEDOUT:
+      case MutantStatus.TimedOut:
         toLog = chalk.yellow('T');
         break;
-      case MutantStatus.SURVIVED:
+      case MutantStatus.Survived:
         toLog = chalk.bold.red('S');
         break;
       default:

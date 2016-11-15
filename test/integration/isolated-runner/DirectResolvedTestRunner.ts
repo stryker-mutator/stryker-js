@@ -1,10 +1,12 @@
-import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult } from 'stryker-api/test_runner';
+import { EventEmitter } from 'events'; 
+import { RunResult, RunStatus, RunOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
 
-class DirectResolvedTestRunner implements TestRunner {
+class DirectResolvedTestRunner extends EventEmitter implements TestRunner {
 
-  runResult: RunResult = { result: TestResult.Complete, testNames: [] };
+  runResult: RunResult = { status: RunStatus.Complete, tests: [] };
 
   run(options: RunOptions) {
+    (Function('return this'))().__coverage__ = 'coverageObject';
     return Promise.resolve(this.runResult);
   }
 }

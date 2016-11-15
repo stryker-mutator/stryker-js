@@ -10,14 +10,17 @@ function list(val: string) {
 }
 program
   .usage('-f <files> -m <filesToMutate> -c <configFileLocation> [other options]')
-  .description('Starts the stryker mutation testing process. Required arguments are --mutate, --files, --testFramework and --testRunner. You can use globbing expressions to target multiple files. See https://github.com/isaacs/node-glob#glob-primer for more information about the globbing syntax.')
+  .description('Starts the stryker mutation testing process. Required arguments are --files, --testFramework and --testRunner. You can use globbing expressions to target multiple files. See https://github.com/isaacs/node-glob#glob-primer for more information about the globbing syntax.')
   .option('-m, --mutate <filesToMutate>', `A comma seperated list of globbing expression used for selecting the files that should be mutated.
-                              Example: src/**/*.js,a.js`, list)
+  Example: src/**/*.js,a.js`, list)
   .option('-f, --files <allFiles>', `A comma seperated list of globbing expression used for selecting all files needed to run the tests. These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine). For a more detailed way of selecting inputfiles, please use a configFile.
-                              Example: node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`, list)
-  .option('--testFramework <name>', `The name of the test framework you want to use`)
+  Example: node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`, list)
+  .option('--coverageAnalysis <perTest|all|off>', `The coverage analysis strategy you want to use. Default value: "perTest"
+  * "off": Stryker will not determine the covered code during the initial test run fase. All tests are always tested for each mutant during the mutation testing fase.
+  * "all": Stryker will determine the covered code of all tests during the initial test run fase. Only mutants that are actually covered by your test suite are tested during the mutation testing fase.
+  * "perTest": Stryker will determine the covered code per executed test during the initial test run fase. Only mutants that are actually covered by your test suite are tested during the mutation testing fase. Only those tests that cover the mutant are tested per mutant.`)
+  .option('--testFramework <name>', `The name of the test framework you want to use.`)
   .option('--testRunner <name>', `The name of the test runner you want to use`)
-  .option('--testSelector <name>', `The name of the test selector you want to use`)
   .option('--reporter <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
   .option('--port <n>', 'A free port for the test runner to use (if it needs to). Any additional test runners will be spawned using n+1, n+2, etc', parseInt)
   .option('--timeoutMs <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
