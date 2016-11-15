@@ -2,7 +2,6 @@ import { TestFrameworkFactory, TestFramework } from 'stryker-api/test_framework'
 import { StrykerOptions } from 'stryker-api/core';
 import * as log4js from 'log4js';
 
-const IGNORE_WARNING = 'Set `coverageAnalysis` option explicitly to "off" to ignore this warning.';
 const log = log4js.getLogger('TestFrameworkOrchestrator');
 
 export default class TestFrameworkOrchestrator {
@@ -10,7 +9,7 @@ export default class TestFrameworkOrchestrator {
   constructor(private options: StrykerOptions) {
   }
 
-  determineTestFramework(): TestFramework {
+  determineTestFramework(): TestFramework | null {
     if (this.options.coverageAnalysis !== 'perTest') {
       log.debug('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', this.options.coverageAnalysis);
       return null;
@@ -19,7 +18,7 @@ export default class TestFrameworkOrchestrator {
     }
   }
 
-  private determineFrameworkWithCoverageAnalysis() {
+  private determineFrameworkWithCoverageAnalysis(): TestFramework | null {
     let testFramework: TestFramework = null;
     if (this.options.testFramework) {
       if (this.testFrameworkExists(this.options.testFramework)) {
@@ -29,7 +28,7 @@ export default class TestFrameworkOrchestrator {
         log.warn(`Could not find test framework \`${this.options.testFramework}\`. ${this.informAboutKnownTestFrameworks()}`);
       }
     } else {
-      log.warn(`Missing config settings \`testFramework\`. ${IGNORE_WARNING}`);
+      log.warn('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.');
     }
     return testFramework;
   }

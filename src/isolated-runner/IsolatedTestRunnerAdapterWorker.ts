@@ -4,9 +4,9 @@ import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
 import { isPromise, deserialize } from '../utils/objectUtils';
 
-const log = log4js.getLogger('TestRunnerChildProcessAdapterWorker');
+const log = log4js.getLogger('IsolatedTestRunnerAdapterWorker');
 
-class TestRunnerChildProcessAdapterWorker {
+class IsolatedTestRunnerAdapterWorker {
 
   private underlyingTestRunner: TestRunner;
 
@@ -129,4 +129,4 @@ class TestRunnerChildProcessAdapterWorker {
   }
 }
 
-new TestRunnerChildProcessAdapterWorker();
+new IsolatedTestRunnerAdapterWorker();

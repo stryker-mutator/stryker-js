@@ -62,7 +62,7 @@ export default class ConfigReader {
   }
 
   private validate(options: StrykerOptions) {
-    if (!_.find(VALID_COVERAGE_ANALYSIS_VALUES, v => v === options.coverageAnalysis)) {
+    if (VALID_COVERAGE_ANALYSIS_VALUES.indexOf(options.coverageAnalysis) < 0) {
       log.fatal(`Value "${options.coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the folowing: ${VALID_COVERAGE_ANALYSIS_VALUES.map(v => `"${v}"`).join(', ')}`);
       process.exit(1);
     }
