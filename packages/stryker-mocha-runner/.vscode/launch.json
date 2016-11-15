@@ -30,7 +30,7 @@
       // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
-        "mochaTest:integration"
+        "integration"
       ],
       "cwd": "${workspaceRoot}/.",
       "runtimeExecutable": null,
