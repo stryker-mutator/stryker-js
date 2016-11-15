@@ -1,8 +1,8 @@
-import {expect} from 'chai';
-import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
-import {MutantStatus, MutantResult} from 'stryker-api/report';
 import * as chalk from 'chalk';
+import { MutantStatus, MutantResult } from 'stryker-api/report';
+import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
 
 describe('ClearTextReporter', function () {
   let sut: ClearTextReporter;
@@ -11,27 +11,78 @@ describe('ClearTextReporter', function () {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     sandbox.stub(process.stdout, 'write');
-    sut = new ClearTextReporter();
   });
 
-  describe('onAllMutantsTested()', () => {
+  describe('when coverageAnalysis is "all"', () => {
+    beforeEach(() => sut = new ClearTextReporter({ coverageAnalysis: 'all' }));
 
-    beforeEach(() => {
-      sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+    describe('onAllMutantsTested()', () => {
+
+      beforeEach(() => {
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+      });
+
+      it('should report on the survived mutant', () => {
+        expect(process.stdout.write).to.have.been.calledWith('Mutator: Math\n');
+        expect(process.stdout.write).to.have.been.calledWith(chalk.red('-   original line') + '\n');
+        expect(process.stdout.write).to.have.been.calledWith(chalk.green('+   mutated line') + '\n');
+      });
+
+      it('should not log individual ran tests', () => {
+        expect(process.stdout.write).to.not.have.been.calledWith('Tests ran: \n');
+        expect(process.stdout.write).to.have.been.calledWith('Ran all tests for this mutant.\n');
+      });
+
+      it('should make a correct calculation', () => {
+        expect(process.stdout.write).to.have.been.calledWith(`4 total mutants.\n`);
+        expect(process.stdout.write).to.have.been.calledWith(`2 mutants survived.\n`);
+        expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on all code: ${chalk.red('50.00%')}\n`);
+        expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on covered code: ${chalk.yellow('66.67%')}\n`);
+      });
     });
-
-    it('should report on the survived mutant', () => {
-      expect(process.stdout.write).to.have.been.calledWith('Mutator: Math\n');
-      expect(process.stdout.write).to.have.been.calledWith(chalk.red('-   original line') + '\n');
-      expect(process.stdout.write).to.have.been.calledWith(chalk.green('+   mutated line') + '\n');
-    });
-
-    it('should make a correct calculation', () => {
-      expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on all code: ${chalk.red('50.00%')}\n`);
-      expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on covered code: ${chalk.yellow('66.67%')}\n`);
-    });
-
   });
+
+  describe('when coverageAnalysis: "perTest"', () => {
+
+    beforeEach(() => sut = new ClearTextReporter({ coverageAnalysis: 'perTest' }));
+
+    describe('onAllMutantsTested()', () => {
+
+      beforeEach(() => {
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+      });
+
+      it('should log individual ran tests', () => {
+        expect(process.stdout.write).to.have.been.calledWith('Tests ran: \n');
+        expect(process.stdout.write).to.have.been.calledWith('    a test\n');
+        expect(process.stdout.write).to.have.been.calledWith('    a second test\n');
+        expect(process.stdout.write).to.not.have.been.calledWith('Ran all tests for this mutant.\n');
+      });
+    });
+  });
+
+  describe('when coverageAnalysis: "off"', () => {
+
+    beforeEach(() => sut = new ClearTextReporter({ coverageAnalysis: 'off' }));
+
+    describe('onAllMutantsTested()', () => {
+      beforeEach(() => {
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+      });
+
+      it('should not log individual ran tests', () => {
+        expect(process.stdout.write).to.not.have.been.calledWith('Tests ran: \n');
+        expect(process.stdout.write).to.have.been.calledWith('Ran all tests for this mutant.\n');
+      });
+
+      it('should indicate that mutation score based on covered code is not available', () =>
+        expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on covered code: n/a\n`));
+
+      it('should report the average amount of tests ran', () =>
+        expect(process.stdout.write).to.have.been.calledWith(`Ran 2.00 tests per mutant on average.\n`));
+    });
+  });
+
 
   function mutantResults(...status: MutantStatus[]): MutantResult[] {
     return status.map(status => {
@@ -43,7 +94,7 @@ describe('ClearTextReporter', function () {
         originalLines: 'original line',
         replacement: '',
         sourceFilePath: '',
-        testsRan: [''],
+        testsRan: ['a test', 'a second test'],
         status
       };
     });
