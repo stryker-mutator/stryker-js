@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
-    "stryker:config": "stryker --configFile stryker.conf.js"
+    "stryker:config": "stryker run stryker.conf.js"
   },
   "author": "",
   "license": "ISC",

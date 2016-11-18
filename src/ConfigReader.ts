@@ -10,7 +10,7 @@ export var CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +
   '      // your config\n' +
   '    });\n' +
-  '  };\n';
+  '  };';
 
 const log = log4js.getLogger('ConfigReader');
 

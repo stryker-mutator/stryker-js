@@ -97,11 +97,13 @@
       "name": "Run stryker help",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/src/stryker-cli.js",
+      "program": "${workspaceRoot}/bin/stryker",
       // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
-        "--help"
+        "run",
+        "--coverageAnalysis",
+        "sdsd"
       ],
       "cwd": "${workspaceRoot}/.",
       "runtimeExecutable": null,
