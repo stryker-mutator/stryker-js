@@ -20,51 +20,19 @@ npm install stryker stryker-api --save-dev
 
 To test if stryker is working, execute the command:
 ```
-node node_modules/stryker/bin/stryker --help
+node_modules/.bin/stryker --version
 ```
 
 ## Usage
 
-Stryker can be used in two ways:
-
-1. Using a config file `node node_modules/stryker/bin/stryker -c stryker.conf.js`
-2. Using command line arguments `node node_modules/stryker/bin/stryker –m src/file.js,src/file2.js –f libs/externalLibrary.js,src/file2.js,src/file.js,test/*.js --testFramework 'jasmine' --testRunner 'karma'`
-
-The config file is *not* a simple json file, it should be a common js (a.k.a. npm) module looking like this:
-```javascript
-module.exports = function(config){
-  config.set({
-    // Your config here
-  });
-}
+```bash
+node_modules/.bin/stryker <command> [options] [stryker.conf.js]
 ```
-You might recognize this way of working from the karma test runner.
- 
-If both the config file and command line options are combined, the command line arguments will overrule the options in the config file.
 
-All options are optional except the `files` (or `-f`) and `testRunner` options.  
+The only command supported at the moment is `run`. The last argument is the location to the stryker config file. This is optional, you can also command line options instead. 
+If both the config file and options are combined, the command line options will overrule the options in the config file.
 
-Both the `files` and `mutate` options are a list of globbing expressions. The globbing expressions will be resolved
-using [node glob](https://github.com/isaacs/node-glob). This is the same globbing format you might know from 
-[Grunt](https://github.com/gruntjs/grunt) and [Karma](https://github.com/karma-runner/karma).
-The way to provide this list is as an array in the config file, or as a comma seperated list on the command line (without spaces or quotes) 
-
-## Supported mutators
-The mutators that are supported by Stryker can be found on [our website](http://stryker-mutator.github.io/mutators.html)
-
-## Configuration
-Options can be configured either via the command line or via a config file.
-
-### Available options
-#### Config file
-**Command line:** `-c stryker.conf.js` or `--configile stryker.conf.js`    
-**Config file:** *none, used to set the config file*  
-**Default value:** *none*  
-**Description:**  
-A location to a config file. That file should export a function which accepts a "config" object.
-On that object you can configure all options as an alternative for the command line. 
-If an option is configured on both the command line and in the config file, the command line wins.
-An example config: 
+An example stryker.conf.js file:
 
 ```javascript
 module.exports = function(config){
@@ -77,7 +45,21 @@ module.exports = function(config){
     plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
   });
 }
-```
+``` 
+
+As you can see, the config file is *not* a simple json file, it should be a common js (a.k.a. npm) module.
+You might recognize this way of working from the karma test runner.
+ 
+Between the config file and your command line options, you should *at least* specify `files` (or `-f`) and the `testRunner` options.  
+
+## Supported mutators
+The mutators that are supported by Stryker can be found on [our website](http://stryker-mutator.github.io/mutators.html)
+
+## Configuration
+All options can be configured either via the command line or via a config file.
+
+Both `files` and `mutate` support globbing expressions using [node glob](https://github.com/isaacs/node-glob). This is the same globbing format you might know from 
+[Grunt](https://github.com/gruntjs/grunt) and [Karma](https://github.com/karma-runner/karma).
 
 #### Files
 **Command line:** `--files node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js` or `-f node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`        

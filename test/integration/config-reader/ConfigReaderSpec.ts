@@ -90,8 +90,7 @@ describe('ConfigReader', () => {
     config.set({
       // your config
     });
-  };
-`);
+  };`);
       });
 
       it('should exit with 1', () => {

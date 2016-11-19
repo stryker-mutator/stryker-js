@@ -2,7 +2,7 @@
 
 'use strict';
 
-process.title = 'grunt';
+process.title = 'stryker';
 
 // Run the TypeScript compiled stryker-cli.js
 require('../src/stryker-cli');
