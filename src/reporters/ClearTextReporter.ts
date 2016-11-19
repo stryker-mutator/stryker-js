@@ -23,6 +23,7 @@ export default class ClearTextReporter implements Reporter {
     let mutantsTimedOut = 0;
     let mutantsNoCoverage = 0;
     let mutantsSurvived = 0;
+    let mutantsErrored = 0;
 
     // use these fn's in order to preserve the 'this` pointer
     let logDebugFn = (input: string) => log.debug(input);
@@ -43,6 +44,11 @@ export default class ClearTextReporter implements Reporter {
           log.debug(chalk.bold.yellow('Mutant timed out!'));
           this.logMutantResult(result, logDebugFn);
           break;
+        case MutantStatus.Error:
+          mutantsErrored++;
+          log.debug(chalk.bold.yellow('Mutant caused an error!'));
+          this.logMutantResult(result, logDebugFn);
+          break;
         case MutantStatus.Survived:
           mutantsSurvived++;
           this.writeLine(chalk.bold.red('Mutant survived!'));
@@ -56,8 +62,9 @@ export default class ClearTextReporter implements Reporter {
       }
     });
 
-    const mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / mutantResults.length) * 100).toFixed(2);
-    const mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((mutantResults.length - mutantsNoCoverage) || 1)) * 100).toFixed(2);
+    let mutantsWithoutErrors = mutantResults.length - mutantsErrored;
+    const mutationScoreCodebase: string = (((mutantsKilled + mutantsTimedOut) / mutantsWithoutErrors) * 100).toFixed(2);
+    const mutationScoreCodeCoverage: string = (((mutantsKilled + mutantsTimedOut) / ((mutantsWithoutErrors - mutantsNoCoverage) || 1)) * 100).toFixed(2);
     const codebaseColor = this.getColorForMutationScore(+mutationScoreCodebase);
     const codecoverageColor = this.getColorForMutationScore(+mutationScoreCodeCoverage);
 
@@ -65,6 +72,9 @@ export default class ClearTextReporter implements Reporter {
     this.writeLine((mutantsSurvived + mutantsNoCoverage) + ' mutants survived.');
     if (mutantsNoCoverage > 0) {
       this.writeLine(`  of which ${mutantsNoCoverage} were not covered by the tests.`);
+    }
+    if (mutantsErrored > 0) {
+      this.writeLine(mutantsErrored + ' mutant(s) caused an error and were therefore not accounted for in the mutation score.');
     }
     this.writeLine(mutantsTimedOut + ' mutants timed out.');
     this.writeLine(mutantsKilled + ' mutants killed.');
