@@ -73,7 +73,9 @@ export default class ClearTextReporter implements Reporter {
     if (mutantsNoCoverage > 0) {
       this.writeLine(`  of which ${mutantsNoCoverage} were not covered by the tests.`);
     }
-    this.writeLine(mutantsErrored + ' mutants caused an unexpected error.');
+    if (mutantsErrored > 0) {
+      this.writeLine(mutantsErrored + ' mutant(s) caused an error and were therefore not accounted for in the mutation score.');
+    }
     this.writeLine(mutantsTimedOut + ' mutants timed out.');
     this.writeLine(mutantsKilled + ' mutants killed.');
     this.writeLine(`Ran ${(totalTests / mutantResults.length).toFixed(2)} tests per mutant on average.`);
