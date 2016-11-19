@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/PluginLoader.js","mutatorName":"UnaryOperator","status":1,"replacement":"+1","location":{"start":{"line":20,"column":54},"end":{"line":20,"column":56}},"range":[751,753],"originalLines":"                if (pluginExpression.indexOf('*') !== -1) {","mutatedLines":"                if (pluginExpression.indexOf('*') !== +1) {"}

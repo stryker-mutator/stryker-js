@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ClearTextReporter.js","mutatorName":"ReverseConditional","status":1,"replacement":"score <= 80","location":{"start":{"line":76,"column":12},"end":{"line":76,"column":22}},"range":[3883,3893],"originalLines":"        if (score > 80) {","mutatedLines":"        if (score <= 80) {"}

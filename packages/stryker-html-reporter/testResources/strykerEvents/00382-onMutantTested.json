@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/Stryker.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":46,"column":49},"end":{"line":46,"column":78}},"range":[2626,2655],"originalLines":"                    .filter(function (inputFile) { return inputFile.mutated; })","mutatedLines":"                    .filter(function (inputFile) {\n})"}

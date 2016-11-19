@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/Stryker.js","mutatorName":"ReverseConditional","status":1,"replacement":"errors.length <= 0","location":{"start":{"line":113,"column":12},"end":{"line":113,"column":29}},"range":[6027,6044],"originalLines":"        if (errors.length > 0) {","mutatedLines":"        if (errors.length <= 0) {"}

@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/Stryker.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":62,"column":17},"end":{"line":64,"column":13}},"range":[3488,3543],"originalLines":"            else {\r\n                return mutantResults;\r\n            }","mutatedLines":"            else {\n}"}

@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/utils/parserUtils.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":12,"column":28},"end":{"line":14,"column":5}},"range":[270,342],"originalLines":"    if (code === undefined) {\r\n        throw new Error('Code parameter cannot be undefined');\r\n    }","mutatedLines":"    if (code === undefined) {\n}"}

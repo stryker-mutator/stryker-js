@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ClearTextReporter.js","mutatorName":"RemoveConditionals","status":1,"replacement":"false","location":{"start":{"line":79,"column":17},"end":{"line":79,"column":27}},"range":[3960,3970],"originalLines":"        else if (score > 50) {","mutatedLines":"        else if (false) {"}

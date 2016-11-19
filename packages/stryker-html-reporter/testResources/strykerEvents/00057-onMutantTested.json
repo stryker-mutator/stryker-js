@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/utils/parserUtils.js","mutatorName":"RemoveConditionals","status":1,"replacement":"true","location":{"start":{"line":36,"column":20},"end":{"line":36,"column":82}},"range":[1220,1282],"originalLines":"                if (arrayChild instanceof Object && !(arrayChild instanceof Array)) {","mutatedLines":"                if (true) {"}

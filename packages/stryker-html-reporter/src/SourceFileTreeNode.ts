@@ -1,4 +1,4 @@
-import {SourceFile, MutantResult, MutantStatus} from 'stryker-api/report';
+import { SourceFile, MutantResult, MutantStatus } from 'stryker-api/report';
 import * as log4js from 'log4js';
 import * as path from 'path';
 import * as util from './util';
@@ -32,7 +32,7 @@ export default class SourceFileTreeNode {
     if (!pathComponents) {
       pathComponents = file.path.split(path.sep);
     }
-    let nextPathComponent = pathComponents.shift();
+    let nextPathComponent = pathComponents.shift() || '';
 
     if (!pathComponents.length) {
       this.leafs.push(new SourceFileTreeLeaf(file));
@@ -56,12 +56,12 @@ export default class SourceFileTreeNode {
     if (!pathComponents) {
       pathComponents = result.sourceFilePath.split(path.sep);
     }
-    let nextPathComponent = pathComponents.shift();
-    let childNode = this.children.filter(n => n.name === nextPathComponent).pop();
+    const nextPathComponent = pathComponents.shift();
+    const childNode = this.children.filter(n => n.name === nextPathComponent).pop();
     if (childNode) {
       childNode.addMutantResult(result, pathComponents);
     } else {
-      let leaf = this.leafs.filter(leaf => leaf.file.path === result.sourceFilePath).pop();
+      const leaf = this.leafs.filter(leaf => leaf.file.path === result.sourceFilePath).pop();
       if (leaf) {
         leaf.results.push(result);
       } else {
@@ -87,21 +87,25 @@ export default class SourceFileTreeNode {
   }
 
   public calculateModel(urlPrefix: string) {
-    let totalKilled = 0, totalSurvived = 0, totalUntested = 0;
+    let totalKilled = 0, totalSurvived = 0, totalTimedOut = 0, totalNoCoverage = 0, totalErrors = 0;
     this.children.forEach(child => {
       child.calculateModel(`../${urlPrefix}`);
       totalKilled += child.model.totalKilled;
+      totalTimedOut += child.model.totalTimedOut;
       totalSurvived += child.model.totalSurvived;
-      totalUntested += child.model.totalUntested;
+      totalNoCoverage += child.model.totalNoCoverage;
+      totalErrors += child.model.totalErrors;
     });
 
     this.leafs.forEach(leaf => {
       leaf.calculateModel(urlPrefix);
       totalKilled += leaf.model.totalKilled;
       totalSurvived += leaf.model.totalSurvived;
-      totalUntested += leaf.model.totalUntested;
+      totalTimedOut += leaf.model.totalTimedOut;
+      totalNoCoverage += leaf.model.totalNoCoverage;
+      totalErrors += leaf.model.totalErrors;
     });
-    this.model = new HandlebarsModel(this.name, urlPrefix, `${this.name}/index.html`, totalKilled, totalSurvived, totalUntested);
+    this.model = new HandlebarsModel(this.name, urlPrefix, `${this.name}/index.html`, totalKilled, totalTimedOut, totalSurvived, totalNoCoverage, totalErrors);
   }
 
   public writeReportNodeRecursive(directory: string) {
@@ -132,14 +136,16 @@ export default class SourceFileTreeNode {
 
   private static mutantStatusToString(status: MutantStatus) {
     switch (status) {
-      case MutantStatus.KILLED:
+      case MutantStatus.Killed:
         return '.';
-      case MutantStatus.SURVIVED:
+      case MutantStatus.Survived:
         return 'S';
-      case MutantStatus.TIMEDOUT:
+      case MutantStatus.TimedOut:
         return 'T';
-      case MutantStatus.UNTESTED:
+      case MutantStatus.NoCoverage:
         return 'O';
+      case MutantStatus.Error:
+        return 'E';
     }
   }
 }

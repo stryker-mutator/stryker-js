@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/MutantRunResultMatcher.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":22,"column":21},"end":{"line":24,"column":17}},"range":[1001,1058],"originalLines":"                else {\r\n                    covered = true;\r\n                }","mutatedLines":"                else {\n}"}

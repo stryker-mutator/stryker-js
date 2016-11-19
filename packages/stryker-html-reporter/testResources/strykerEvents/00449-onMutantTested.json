@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ClearTextReporter.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":76,"column":24},"end":{"line":78,"column":9}},"range":[3895,3941],"originalLines":"        if (score > 80) {\r\n            color = chalk.green;\r\n        }","mutatedLines":"        if (score > 80) {\n}"}

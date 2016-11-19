@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/PluginLoader.js","mutatorName":"Math","status":1,"replacement":"'Loading plugins ' - name","location":{"start":{"line":49,"column":18},"end":{"line":49,"column":43}},"range":[2299,2324],"originalLines":"        log.debug(\"Loading plugins \" + name);","mutatedLines":"        log.debug('Loading plugins ' - name);"}

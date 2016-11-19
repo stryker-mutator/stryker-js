@@ -19,21 +19,26 @@ export default class SourceFileTreeLeaf {
   }
 
   public calculateModel(urlPrefix: string) {
-    let killed = 0, survived = 0, untested = 0;
+    let killed = 0, timedOut = 0, survived = 0, noCoverage = 0, errors = 0;
     this.results.forEach(mutation => {
       switch (mutation.status) {
-        case MutantStatus.KILLED:
-        case MutantStatus.TIMEDOUT:
+        case MutantStatus.Killed:
           killed++;
           break;
-        case MutantStatus.SURVIVED:
+        case MutantStatus.TimedOut:
+          timedOut++;
+          break;
+        case MutantStatus.Survived:
           survived++;
           break;
-        case MutantStatus.UNTESTED:
-          untested++;
+        case MutantStatus.NoCoverage:
+          noCoverage++;
+          break;
+        case MutantStatus.Error:
+          errors++;
           break;
       }
     });
-    this.model = new HandlebarsModel(this.name, urlPrefix, this.filename, killed, survived, untested);
+    this.model = new HandlebarsModel(this.name, urlPrefix, this.filename, killed, timedOut, survived, noCoverage, errors);
   };
 }

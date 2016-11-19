@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/TestRunnerOrchestrator.js","mutatorName":"UnaryOperator","status":1,"replacement":"i--","location":{"start":{"line":157,"column":38},"end":{"line":157,"column":41}},"range":[7481,7484],"originalLines":"        for (var i = 0; i < cpuCount; i++) {","mutatedLines":"        for (var i = 0; i < cpuCount; i--) {"}

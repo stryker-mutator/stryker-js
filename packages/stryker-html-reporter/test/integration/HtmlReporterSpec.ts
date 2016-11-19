@@ -16,7 +16,7 @@ function expectFileExists(file: string, expected: boolean) {
 }
 
 describe('HtmlReporter with example project', () => {
-  let sut: HtmlReporter, baseDir = 'reports/mutation/integrationTest/' + Math.random();
+  let sut: HtmlReporter, baseDir = 'reports/mutation/integrationTest' + Math.random();
 
   describe(`with baseDir ${baseDir}`, () => {
     beforeEach(() => {

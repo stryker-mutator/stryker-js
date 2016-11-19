@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/TestSelectorOrchestrator.js","mutatorName":"RemoveConditionals","status":1,"replacement":"false","location":{"start":{"line":30,"column":12},"end":{"line":30,"column":62}},"range":[1554,1604],"originalLines":"        if (this.testSelectorExists(this.options.testSelector)) {","mutatedLines":"        if (false) {"}

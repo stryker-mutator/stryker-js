@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/PluginLoader.js","mutatorName":"RemoveConditionals","status":1,"replacement":"true","location":{"start":{"line":20,"column":20},"end":{"line":20,"column":56}},"range":[717,753],"originalLines":"                if (pluginExpression.indexOf('*') !== -1) {","mutatedLines":"                if (true) {"}

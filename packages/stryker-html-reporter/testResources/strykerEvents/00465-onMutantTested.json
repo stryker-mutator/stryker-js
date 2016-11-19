@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ClearTextReporter.js","mutatorName":"Math","status":1,"replacement":"'-   ' - line","location":{"start":{"line":60,"column":40},"end":{"line":60,"column":53}},"range":[3279,3292],"originalLines":"            logImplementation(chalk.red('-   ' + line));","mutatedLines":"            logImplementation(chalk.red('-   ' - line));"}

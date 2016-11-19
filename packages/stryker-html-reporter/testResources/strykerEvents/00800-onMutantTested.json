@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/Mutant.js","mutatorName":"ReverseConditional","status":1,"replacement":"char !== '\\r'","location":{"start":{"line":37,"column":32},"end":{"line":37,"column":45}},"range":[1368,1381],"originalLines":"        return char === '\\n' || char === '\\r';","mutatedLines":"        return char === '\\n' || char !== '\\r';"}
