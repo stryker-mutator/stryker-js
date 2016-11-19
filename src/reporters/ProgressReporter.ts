@@ -14,6 +14,9 @@ export default class ProgressReporter implements Reporter {
       case MutantStatus.Survived:
         toLog = chalk.bold.red('S');
         break;
+      case MutantStatus.Error:
+        toLog = chalk.yellow('E');
+        break;
       default:
         toLog = '';
         break;
