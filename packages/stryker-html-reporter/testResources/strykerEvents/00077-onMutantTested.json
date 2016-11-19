@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/utils/parserUtils.js","mutatorName":"ReverseConditional","status":1,"replacement":"code !== ''","location":{"start":{"line":15,"column":8},"end":{"line":15,"column":19}},"range":[352,363],"originalLines":"    if (code === '') {","mutatedLines":"    if (code !== '') {"}

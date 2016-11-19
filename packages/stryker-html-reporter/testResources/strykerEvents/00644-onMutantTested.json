@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/mutators/MathMutator.js","mutatorName":"RemoveConditionals","status":1,"replacement":"true","location":{"start":{"line":3,"column":25},"end":{"line":3,"column":44}},"range":[103,122],"originalLines":"    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];","mutatedLines":"    for (var p in b) if (true) d[p] = b[p];"}

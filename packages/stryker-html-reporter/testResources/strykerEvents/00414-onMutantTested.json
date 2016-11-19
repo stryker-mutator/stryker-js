@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/EventRecorderReporter.js","mutatorName":"Math","status":1,"replacement":"i * 10","location":{"start":{"line":45,"column":39},"end":{"line":45,"column":45}},"range":[2189,2195],"originalLines":"        for (var i = 10000; i > 1; i = i / 10) {","mutatedLines":"        for (var i = 10000; i > 1; i = i * 10) {"}

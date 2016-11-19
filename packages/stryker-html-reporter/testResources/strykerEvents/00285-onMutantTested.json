@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/TestRunnerOrchestrator.js","mutatorName":"ConditionalBoundary","status":1,"replacement":"runResult.failed >= 0","location":{"start":{"line":104,"column":24},"end":{"line":104,"column":44}},"range":[5186,5206],"originalLines":"                    if (runResult.failed > 0) {","mutatedLines":"                    if (runResult.failed >= 0) {"}

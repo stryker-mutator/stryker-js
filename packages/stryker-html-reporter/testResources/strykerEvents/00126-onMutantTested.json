@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/utils/fileUtils.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":91,"column":23},"end":{"line":93,"column":13}},"range":[2334,2382],"originalLines":"            if (error) {\r\n                reject(error);\r\n            }","mutatedLines":"            if (error) {\n}"}

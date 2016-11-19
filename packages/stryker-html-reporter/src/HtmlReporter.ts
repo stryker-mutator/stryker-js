@@ -19,7 +19,7 @@ export default class HtmlReporter implements Reporter {
 
   constructor(private options: StrykerOptions) {
     this.rootNode = new SourceFileTreeNode('/');
-    log4js.setGlobalLogLevel(options.logLevel);
+    log4js.setGlobalLogLevel(options.logLevel || 'info');
   }
 
   onAllSourceFilesRead(files: SourceFile[]) {

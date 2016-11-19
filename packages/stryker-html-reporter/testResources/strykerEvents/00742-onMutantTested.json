@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/MutantRunResultMatcher.js","mutatorName":"ConditionalBoundary","status":1,"replacement":"lineDifference >= 0","location":{"start":{"line":49,"column":34},"end":{"line":49,"column":52}},"range":[2242,2260],"originalLines":"            var coversLessLines = lineDifference > 0;","mutatedLines":"            var coversLessLines = lineDifference >= 0;"}

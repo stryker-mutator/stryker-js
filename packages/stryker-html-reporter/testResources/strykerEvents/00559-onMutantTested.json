@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/PluginLoader.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":50,"column":12},"end":{"line":52,"column":9}},"range":[2340,2397],"originalLines":"        try {\r\n            fileUtils_1.importModule(name);\r\n        }","mutatedLines":"        try {\n}"}

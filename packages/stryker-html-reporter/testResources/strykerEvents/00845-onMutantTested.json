@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/isolated-runner/IsolatedTestRunnerAdapter.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":138,"column":30},"end":{"line":138,"column":61}},"range":[5888,5919],"originalLines":"            .then(function () { return _this.startWorker(); })","mutatedLines":"            .then(function () {\n})"}

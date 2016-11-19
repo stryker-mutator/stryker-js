@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/Stryker.js","mutatorName":"RemoveConditionals","status":1,"replacement":"true","location":{"start":{"line":59,"column":16},"end":{"line":59,"column":53}},"range":[3332,3369],"originalLines":"            if (objectUtils_1.isPromise(maybePromise)) {","mutatedLines":"            if (true) {"}

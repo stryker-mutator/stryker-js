@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/utils/StrykerTempFolder.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":15,"column":18},"end":{"line":17,"column":1}},"range":[553,606],"originalLines":"function random() {\r\n    return Math.ceil(Math.random() * 10000000);\r\n}","mutatedLines":"function random() {\n}"}

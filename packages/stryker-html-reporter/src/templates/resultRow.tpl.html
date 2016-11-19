@@ -8,7 +8,13 @@
             </div>
         </div>
     </td>
-    <td>{{model.totalKilled}}/{{model.totalMutations}}</td>
-    <td>{{model.percentageBasedOnCoveredCode}}%</td>
-    <td>{{model.totalKilled}}/{{model.totalCoveredMutations}}</td>
+    <th class="text-center" style="width: 10%">{{model.totalDetected}}/{{model.totalMutations}}</th>
+    <td class="text-center">{{model.totalKilled}}</td>
+    <td class="text-center">{{model.totalSurvived}}</td>
+    <td class="text-center">{{model.totalTimedOut}}</td>
+    <td class="text-center">{{model.totalNoCoverage}}</td>
+    <td class="text-center">{{model.totalErrors}}</td>
+    <th class="text-center">{{model.totalDetected}}</th>
+    <th class="text-center">{{model.totalUndetected}}</th>
+    <th class="text-center">{{model.totalMutations}}</th>
 </tr>

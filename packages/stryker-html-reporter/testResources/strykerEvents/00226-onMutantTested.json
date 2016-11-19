@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/TestRunnerOrchestrator.js","mutatorName":"Math","status":1,"replacement":"this.options.port - index","location":{"start":{"line":221,"column":18},"end":{"line":221,"column":43}},"range":[10657,10682],"originalLines":"            port: this.options.port + index","mutatedLines":"            port: this.options.port - index"}

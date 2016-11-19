@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ClearTextReporter.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":20,"column":42},"end":{"line":20,"column":70}},"range":[721,749],"originalLines":"        var logDebugFn = function (input) { return log.debug(input); };","mutatedLines":"        var logDebugFn = function (input) {\n};"}

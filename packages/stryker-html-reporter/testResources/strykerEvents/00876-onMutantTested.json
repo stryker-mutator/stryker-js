@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/isolated-runner/IsolatedTestRunnerAdapter.js","mutatorName":"RemoveConditionals","status":1,"replacement":"false","location":{"start":{"line":41,"column":24},"end":{"line":41,"column":42}},"range":[1814,1832],"originalLines":"                    if (!_this.isDisposing) {","mutatedLines":"                    if (false) {"}

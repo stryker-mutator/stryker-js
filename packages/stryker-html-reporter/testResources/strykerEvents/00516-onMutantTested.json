@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/BroadcastReporter.js","mutatorName":"RemoveConditionals","status":1,"replacement":"true","location":{"start":{"line":24,"column":24},"end":{"line":24,"column":61}},"range":[1114,1151],"originalLines":"                    if (objectUtils_1.isPromise(maybePromise)) {","mutatedLines":"                    if (true) {"}

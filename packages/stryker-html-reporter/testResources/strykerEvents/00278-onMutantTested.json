@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/TestRunnerOrchestrator.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":136,"column":34},"end":{"line":136,"column":84}},"range":[6411,6461],"originalLines":"                .then(function () { return sandbox.runner.run({ timeout: 10000 }); })","mutatedLines":"                .then(function () {\n})"}

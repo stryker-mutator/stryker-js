@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ClearTextReporter.js","mutatorName":"UnaryOperator","status":1,"replacement":"mutantsKilled--","location":{"start":{"line":25,"column":20},"end":{"line":25,"column":35}},"range":[993,1008],"originalLines":"                    mutantsKilled++;","mutatedLines":"                    mutantsKilled--;"}

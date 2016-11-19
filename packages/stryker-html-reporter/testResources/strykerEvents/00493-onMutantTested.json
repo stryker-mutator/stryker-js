@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ClearTextReporter.js","mutatorName":"UnaryOperator","status":1,"replacement":"mutantsTimedOut--","location":{"start":{"line":30,"column":20},"end":{"line":30,"column":37}},"range":[1245,1262],"originalLines":"                    mutantsTimedOut++;","mutatedLines":"                    mutantsTimedOut--;"}

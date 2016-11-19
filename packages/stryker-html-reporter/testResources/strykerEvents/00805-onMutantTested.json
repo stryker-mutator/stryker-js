@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/Mutant.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":24,"column":25},"end":{"line":26,"column":9}},"range":[876,936],"originalLines":"        get: function () {\r\n            return this._timeSpentScopedTests;\r\n        },","mutatedLines":"        get: function () {\n},"}

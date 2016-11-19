@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/stryker-cli.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":28,"column":29},"end":{"line":30,"column":5}},"range":[2092,2128],"originalLines":"    if (i.charAt(0) === '_') {\r\n        delete program[i];\r\n    }","mutatedLines":"    if (i.charAt(0) === '_') {\n}"}

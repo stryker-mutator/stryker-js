@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/TestRunnerOrchestrator.js","mutatorName":"RemoveConditionals","status":1,"replacement":"false","location":{"start":{"line":157,"column":24},"end":{"line":157,"column":36}},"range":[7467,7479],"originalLines":"        for (var i = 0; i < cpuCount; i++) {","mutatedLines":"        for (var i = 0; false; i++) {"}

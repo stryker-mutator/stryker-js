@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ClearTextReporter.js","mutatorName":"ConditionalBoundary","status":1,"replacement":"score >= 50","location":{"start":{"line":79,"column":17},"end":{"line":79,"column":27}},"range":[3960,3970],"originalLines":"        else if (score > 50) {","mutatedLines":"        else if (score >= 50) {"}

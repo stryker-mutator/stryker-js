@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/ReporterOrchestrator.js","mutatorName":"RemoveConditionals","status":1,"replacement":"false","location":{"start":{"line":18,"column":12},"end":{"line":18,"column":26}},"range":[798,812],"originalLines":"        if (reporterOption) {","mutatedLines":"        if (false) {"}

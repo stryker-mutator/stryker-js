@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/EventRecorderReporter.js","mutatorName":"Math","status":1,"replacement":"'0' - str","location":{"start":{"line":47,"column":22},"end":{"line":47,"column":31}},"range":[2252,2261],"originalLines":"                str = '0' + str;","mutatedLines":"                str = '0' - str;"}

@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/InputFileResolver.js","mutatorName":"ReverseConditional","status":1,"replacement":"files.length !== 0","location":{"start":{"line":80,"column":16},"end":{"line":80,"column":34}},"range":[4224,4242],"originalLines":"            if (files.length === 0) {","mutatedLines":"            if (files.length !== 0) {"}

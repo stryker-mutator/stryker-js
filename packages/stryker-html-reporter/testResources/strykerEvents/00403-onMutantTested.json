@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/ProgressReporter.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":5,"column":32},"end":{"line":6,"column":5}},"range":[164,172],"originalLines":"    function ProgressReporter() {\r\n    }","mutatedLines":"    function ProgressReporter() {\n}"}

@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/PluginLoader.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":38,"column":21},"end":{"line":40,"column":17}},"range":[1955,2028],"originalLines":"                else {\r\n                    modules.push(pluginExpression);\r\n                }","mutatedLines":"                else {\n}"}

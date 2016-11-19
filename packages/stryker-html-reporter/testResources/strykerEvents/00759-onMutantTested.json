@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/MutantRunResultMatcher.js","mutatorName":"RemoveConditionals","status":1,"replacement":"false","location":{"start":{"line":25,"column":20},"end":{"line":25,"column":27}},"range":[1080,1087],"originalLines":"                if (covered) {","mutatedLines":"                if (false) {"}

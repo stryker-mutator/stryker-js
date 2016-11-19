@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/reporters/EventRecorderReporter.js","mutatorName":"ConditionalBoundary","status":1,"replacement":"i >= 1","location":{"start":{"line":45,"column":28},"end":{"line":45,"column":33}},"range":[2178,2183],"originalLines":"        for (var i = 10000; i > 1; i = i / 10) {","mutatedLines":"        for (var i = 10000; i >= 1; i = i / 10) {"}

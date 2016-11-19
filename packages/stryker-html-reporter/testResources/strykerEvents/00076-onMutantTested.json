@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/utils/parserUtils.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":15,"column":21},"end":{"line":17,"column":5}},"range":[365,393],"originalLines":"    if (code === '') {\r\n        return {};\r\n    }","mutatedLines":"    if (code === '') {\n}"}

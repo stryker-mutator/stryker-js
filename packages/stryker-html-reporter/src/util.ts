@@ -1,19 +1,19 @@
-import * as fs from 'fs';
+import * as mzfs from 'mz/fs';
 import * as path from 'path';
 import * as handlebars from 'handlebars';
 import * as _ from 'lodash';
 import * as mkdirp from 'mkdirp';
-import {MutantStatus, MutantResult} from 'stryker-api/report';
+import { MutantStatus, MutantResult } from 'stryker-api/report';
 import SourceFileTreeNode from './SourceFileTreeNode';
 import SourceFileTreeLeaf from './SourceFileTreeLeaf';
 
 export function copyFolder(fromPath: string, to: string): Promise<any> {
-  return mkdirRecursive(to).then(() => readdir(fromPath).then(files => {
+  return mkdirRecursive(to).then(() => mzfs.readdir(fromPath).then(files => {
     let promisses: Promise<void>[] = [];
     files.forEach(file => {
       let currentPath = path.join(fromPath, file);
       let toCurrentPath = path.join(to, file);
-      promisses.push(stats(currentPath).then(stats => {
+      promisses.push(mzfs.stat(currentPath).then(stats => {
         if (stats.isDirectory()) {
           return copyFolder(currentPath, toCurrentPath);
         } else {
@@ -28,8 +28,8 @@ export function copyFolder(fromPath: string, to: string): Promise<any> {
 
 export function copyFile(fromFilename: string, toFilename: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    let readStream = fs.createReadStream(fromFilename);
-    let writeStream = fs.createWriteStream(toFilename);
+    let readStream = mzfs.createReadStream(fromFilename);
+    let writeStream = mzfs.createWriteStream(toFilename);
     readStream.on('error', reject);
     writeStream.on('error', reject);
     readStream.pipe(writeStream);
@@ -39,60 +39,16 @@ export function copyFile(fromFilename: string, toFilename: string): Promise<void
 
 
 function rmFile(path: string) {
-  return new Promise<void>((fileResolve, fileReject) => {
-    fs.unlink(path, error => {
-      if (error) {
-        fileReject(error);
-      } else {
-        fileResolve();
-      }
-    });
-  });
-}
-
-function mkdir(path: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    fs.mkdir(path, error => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-function stats(path: string): Promise<fs.Stats> {
-  return new Promise((resolve, reject) => {
-    fs.stat(path, (error, stats) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(stats);
-      }
-    });
-  });
-}
-
-function rmdir(dirToDelete: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    fs.rmdir(dirToDelete, error => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
+  return mzfs.unlink(path);
 }
 
 export function deleteDir(dirToDelete: string): Promise<void> {
   return fileOrFolderExists(dirToDelete).then(exists => {
     if (exists) {
-      return readdir(dirToDelete).then(files => {
+      return mzfs.readdir(dirToDelete).then(files => {
         let promisses = files.map(file => {
           let currentPath = path.join(dirToDelete, file);
-          return stats(currentPath).then(stats => {
+          return mzfs.stat(currentPath).then(stats => {
             if (stats.isDirectory()) {
               // recursive
               return deleteDir(currentPath);
@@ -103,22 +59,9 @@ export function deleteDir(dirToDelete: string): Promise<void> {
           });
         });
         // delete dir
-        return Promise.all(promisses).then(() => rmdir(dirToDelete));
+        return Promise.all(promisses).then(() => mzfs.rmdir(dirToDelete));
       });
     }
-  });
-}
-
-
-function readdir(path: string): Promise<string[]> {
-  return new Promise<string[]>((resolve, reject) => {
-    fs.readdir(path, (error, files) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(files);
-      }
-    });
   });
 }
 
@@ -141,14 +84,14 @@ export function mkdirRecursive(folderName: string): Promise<void> {
 
 function fileOrFolderExists(path: string): Promise<boolean> {
   return new Promise(resolve => {
-    fs.lstat(path, (error, stats) => {
+    mzfs.lstat(path, (error, stats) => {
       resolve(!error);
     });
   });
 }
 
 function readTemplate(name: string) {
-  return fs.readFileSync(path.join(__dirname, 'templates', `${name}.tpl.html`), 'utf8');
+  return mzfs.readFileSync(path.join(__dirname, 'templates', `${name}.tpl.html`), 'utf8');
 }
 function compileTemplate(name: string) {
   return handlebars.compile(readTemplate(name));
@@ -164,12 +107,12 @@ handlebars.registerPartial('resultRow', readTemplate('resultRow'));
 handlebars.registerPartial('resultTableHead', readTemplate('resultTableHead'));
 handlebars.registerHelper('code', function () {
   let leaf: SourceFileTreeLeaf = this;
-  let currentBackground: string = null;
+  let currentBackground: string | null = null;
   let currentCursorMutantStatusses = {
     killed: 0,
     survived: 0,
     timeout: 0,
-    untested: 0
+    noCoverage: 0
   };
   let maxIndex = leaf.file.content.length - 1;
   let numberedMutants = _.sortBy(leaf.results, m => m.range[0] * 10000 + m.range[1] * -1)
@@ -177,30 +120,30 @@ handlebars.registerHelper('code', function () {
 
   let adjustCurrentMutantResult = (valueToAdd: number) => (numberedMutant: { mutant: MutantResult, index: number }) => {
     switch (numberedMutant.mutant.status) {
-      case MutantStatus.KILLED:
+      case MutantStatus.Killed:
         currentCursorMutantStatusses.killed += valueToAdd;
         break;
-      case MutantStatus.SURVIVED:
+      case MutantStatus.Survived:
         currentCursorMutantStatusses.survived += valueToAdd;
         break;
-      case MutantStatus.TIMEDOUT:
+      case MutantStatus.TimedOut:
         currentCursorMutantStatusses.timeout += valueToAdd;
         break;
-      case MutantStatus.UNTESTED:
-        currentCursorMutantStatusses.untested += valueToAdd;
+      case MutantStatus.NoCoverage:
+        currentCursorMutantStatusses.noCoverage += valueToAdd;
         break;
     }
   };
 
   let determineBackground = () => {
     if (currentCursorMutantStatusses.survived > 0) {
-      return getContextClassForStatus(MutantStatus.SURVIVED);
-    } else if (currentCursorMutantStatusses.untested > 0) {
-      return getContextClassForStatus(MutantStatus.UNTESTED);
+      return getContextClassForStatus(MutantStatus.Survived);
+    } else if (currentCursorMutantStatusses.noCoverage > 0) {
+      return getContextClassForStatus(MutantStatus.NoCoverage);
     } else if (currentCursorMutantStatusses.timeout > 0) {
-      return getContextClassForStatus(MutantStatus.TIMEDOUT);
+      return getContextClassForStatus(MutantStatus.TimedOut);
     } else if (currentCursorMutantStatusses.killed > 0) {
-      return getContextClassForStatus(MutantStatus.KILLED);
+      return getContextClassForStatus(MutantStatus.Killed);
     }
     return null;
   };
@@ -230,12 +173,12 @@ handlebars.registerHelper('code', function () {
 
 function getContextClassForStatus(status: MutantStatus) {
   switch (status) {
-    case MutantStatus.KILLED:
+    case MutantStatus.Killed:
       return 'success';
-    case MutantStatus.UNTESTED:
-    case MutantStatus.SURVIVED:
+    case MutantStatus.NoCoverage:
+    case MutantStatus.Survived:
       return 'danger';
-    case MutantStatus.TIMEDOUT:
+    case MutantStatus.TimedOut:
       return 'warning';
   }
 }

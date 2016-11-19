@@ -1,1 +1,0 @@
-{"sourceFilePath":"/stryker/src/Stryker.js","mutatorName":"BlockStatement","status":1,"replacement":"{\n}","location":{"start":{"line":60,"column":53},"end":{"line":60,"column":78}},"range":[3427,3452],"originalLines":"                return maybePromise.then(function () { return mutantResults; });","mutatedLines":"                return maybePromise.then(function () {\n});"}
