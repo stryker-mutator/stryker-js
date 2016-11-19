@@ -1,13 +1,25 @@
-import { TestRunner, TestResult, RunResult, RunnerOptions, CoverageCollection } from 'stryker-api/test_runner';
+import { TestRunner, TestResult, TestStatus, RunStatus, RunResult, RunnerOptions, CoverageCollection, CoverageCollectionPerTest } from 'stryker-api/test_runner';
 import * as karma from 'karma';
-import * as _ from 'lodash';
 import * as log4js from 'log4js';
+import * as _ from 'lodash';
+import { EventEmitter } from 'events';
+import * as rawCoverageReporter from './RawCoverageReporter';
 
 const log = log4js.getLogger('KarmaTestRunner');
 
 interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string };
   detached?: boolean;
+}
+
+interface KarmaSpec {
+  description: string;
+  id: string;
+  skipped: boolean;
+  success: boolean;
+  time: number;
+  suite: string[];
+  log: string[];
 }
 
 const DEFAULT_OPTIONS: ConfigOptions = {
@@ -18,22 +30,17 @@ const DEFAULT_OPTIONS: ConfigOptions = {
   detached: false
 };
 
-const DEFAULT_COVERAGE_REPORTER = {
-  coverageReporter: {
-    type: 'in-memory'
-  }
-};
-
-export default class KarmaTestRunner implements TestRunner {
+export default class KarmaTestRunner extends EventEmitter implements TestRunner {
 
   private server: karma.Server;
   private serverStartedPromise: Promise<void>;
-  private currentTestResults: karma.TestResults;
-  private currentSpecNames: string[];
+  private currentTestResults: TestResult[];
   private currentErrorMessages: string[];
-  private currentCoverageReport: CoverageCollection;
+  private currentCoverageReport: CoverageCollection | CoverageCollectionPerTest;
+  private currentRunResult: karma.TestResults;
 
   constructor(private options: RunnerOptions) {
+    super();
     let karmaConfig = this.configureTestRunner(options.strykerOptions['karmaConfig']);
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
     karmaConfig = this.configureProperties(karmaConfig);
@@ -58,10 +65,11 @@ export default class KarmaTestRunner implements TestRunner {
 
   run(): Promise<RunResult> {
     this.currentTestResults = null;
-    this.currentSpecNames = [];
+    this.currentTestResults = [];
     this.currentErrorMessages = [];
     this.currentCoverageReport = null;
-    return this.runServer().then(() => this.convertResult(this.currentTestResults));
+    this.currentRunResult = null;
+    return this.runServer().then(() => this.collectRunResult());
   }
 
   // Don't use dispose() to stop karma (using karma.stopper.stop)
@@ -72,27 +80,38 @@ export default class KarmaTestRunner implements TestRunner {
   }
 
   private listenToSpecComplete() {
-    this.server.on('spec_complete', (browser: any, spec: any) => {
-      let specName = `${spec.suite.join(' ')} ${spec.description}`;
-      this.currentSpecNames.push(specName);
+    this.server.on('spec_complete', (browser: any, spec: KarmaSpec) => {
+      const name = `${spec.suite.join(' ')} ${spec.description}`;
+      let status = TestStatus.Failed;
+      if (spec.skipped) {
+        status = TestStatus.Skipped;
+      } else if (spec.success) {
+        status = TestStatus.Success;
+      }
+      this.currentTestResults.push({
+        name,
+        status,
+        timeSpentMs: spec.time,
+        failureMessages: spec.log
+      });
     });
   }
 
   private listenToCoverage() {
-    this.server.on('coverage_complete', (browser: any, coverageReport: CoverageCollection) => {
+    this.server.on('raw_coverage_complete', (coverageReport: CoverageCollection | CoverageCollectionPerTest) => {
       this.currentCoverageReport = coverageReport;
     });
   }
 
   private listenToRunComplete() {
-    this.server.on('run_complete', (browsers, results) => {
-      this.currentTestResults = results;
+    this.server.on('run_complete', (browsers, runResult) => {
+      this.currentRunResult = runResult;
     });
   }
 
   private listenToBrowserError() {
     this.server.on('browser_error', (browser: any, error: any) => {
-      this.currentErrorMessages.push(error);
+      this.currentErrorMessages.push(error.toString());
     });
   }
 
@@ -103,46 +122,25 @@ export default class KarmaTestRunner implements TestRunner {
   }
 
   private configureCoverageIfEnabled(karmaConfig: ConfigOptions) {
-    if (this.options.coverageEnabled) {
-      karmaConfig = _.assign(karmaConfig, _.cloneDeep(DEFAULT_COVERAGE_REPORTER));
-      this.configureCoveragePreprocessors(karmaConfig);
+    if (this.options.strykerOptions.coverageAnalysis !== 'off') {
       this.configureCoverageReporters(karmaConfig);
       this.configureCoveragePlugin(karmaConfig);
     }
     return karmaConfig;
   }
 
-  private configureCoveragePlugin(karmaConfig: ConfigOptions) {
-    if (karmaConfig.plugins) { // by default, all plugins are loaded (starting with `karma-*`)
-      karmaConfig.plugins.push('karma-coverage');
-    }
-  }
-
   private configureCoverageReporters(karmaConfig: ConfigOptions) {
     if (!karmaConfig.reporters) {
       karmaConfig.reporters = [];
     }
-    karmaConfig.reporters.push('coverage');
+    karmaConfig.reporters.push('rawCoverage');
   }
 
-  private configureCoveragePreprocessors(karmaConfig: ConfigOptions) {
-    if (!karmaConfig.preprocessors) {
-      karmaConfig.preprocessors = {};
+  private configureCoveragePlugin(karmaConfig: ConfigOptions) {
+    if (!karmaConfig.plugins) {
+      karmaConfig.plugins = ['karma-*'];
     }
-    this.options.files.forEach(file => {
-      if (file.mutated) {
-        let preprocessor = karmaConfig.preprocessors[file.path];
-        if (!preprocessor) {
-          karmaConfig.preprocessors[file.path] = 'coverage';
-        } else {
-          if (Array.isArray(preprocessor)) {
-            preprocessor.push('coverage');
-          } else {
-            karmaConfig.preprocessors[file.path] = ['coverage', preprocessor];
-          }
-        }
-      }
-    });
+    karmaConfig.plugins.push(rawCoverageReporter);
   }
 
   private configureTestRunner(overrides: ConfigOptions) {
@@ -172,29 +170,22 @@ export default class KarmaTestRunner implements TestRunner {
     });
   }
 
-  private convertResult(testResults: karma.TestResults): RunResult {
+  private collectRunResult(): RunResult {
     return {
-      testNames: this.currentSpecNames,
-      result: this.convertTestResult(testResults),
-      succeeded: testResults.success,
-      failed: testResults.failed,
+      tests: this.currentTestResults,
+      status: this.collectRunState(),
       coverage: this.currentCoverageReport,
       errorMessages: this.currentErrorMessages
     };
   }
 
-  private convertTestResult(testResults: karma.TestResults) {
-    if (testResults.error) {
-      if (this.currentErrorMessages.length > 0) {
-        // The error flag is set by default, even if no tests have ran. 
-        return TestResult.Error;
-      } else {
-        return TestResult.Complete;
-      }
-    } else if (testResults.disconnected) {
-      return TestResult.Timeout;
+  private collectRunState(): RunStatus {
+    if (this.currentRunResult.disconnected) {
+      return RunStatus.Timeout;
+    } else if (this.currentRunResult.error && this.currentErrorMessages.length > 0) {
+      return RunStatus.Error;
     } else {
-      return TestResult.Complete;
+      return RunStatus.Complete;
     }
   }
 }

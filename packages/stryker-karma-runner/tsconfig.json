@@ -1,19 +1,21 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
-        "noImplicitAny": true,
-        "moduleResolution": "node",
-        "rootDir": ".",
-        "sourceMap": true,
-        "declaration": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowJs": false
-    },
-    "exclude": [
-        "node_modules",
-        "src/**/*.d.ts",
-        "test/**/*.d.ts",
-        "testResources"
-    ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": false,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true
+  },
+  "exclude": [
+    "node_modules",
+    "src/**/*.d.ts",
+    "test/**/*.d.ts",
+    "testResources"
+  ]
 }
