@@ -128,7 +128,7 @@ describe('SandboxCoordinator', () => {
       expect(sortedMutantResults[1].status).to.be.eq(MutantStatus.Survived);
       expect(sortedMutantResults[2].status).to.be.eq(MutantStatus.TimedOut);
       expect(sortedMutantResults[3].status).to.be.eq(MutantStatus.Killed);
-      expect(sortedMutantResults[4].status).to.be.eq(MutantStatus.Killed);
+      expect(sortedMutantResults[4].status).to.be.eq(MutantStatus.Error);
     });
 
     it('should have disposed all sandboxes', () => {

@@ -19,7 +19,7 @@ describe('ClearTextReporter', function () {
     describe('onAllMutantsTested()', () => {
 
       beforeEach(() => {
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage, MutantStatus.Error));
       });
 
       it('should report on the survived mutant', () => {
@@ -34,7 +34,8 @@ describe('ClearTextReporter', function () {
       });
 
       it('should make a correct calculation', () => {
-        expect(process.stdout.write).to.have.been.calledWith(`4 total mutants.\n`);
+        expect(process.stdout.write).to.have.been.calledWith(`5 total mutants.\n`);
+        expect(process.stdout.write).to.have.been.calledWith(`1 mutants caused an unexpected error.\n`);
         expect(process.stdout.write).to.have.been.calledWith(`2 mutants survived.\n`);
         expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on all code: ${chalk.red('50.00%')}\n`);
         expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on covered code: ${chalk.yellow('66.67%')}\n`);

@@ -85,8 +85,7 @@ export default class SandboxCoordinator {
           status = MutantStatus.TimedOut;
           break;
         case RunStatus.Error:
-          log.debug('Converting a test result `error` to mutant status `killed`.');
-          status = MutantStatus.Killed;
+          status = MutantStatus.Error;
           break;
         case RunStatus.Complete:
           if (runResult.tests.some(t => t.status === TestStatus.Failed)) {
