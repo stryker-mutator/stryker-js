@@ -30,7 +30,9 @@
   "contributors": [
     "Simon de Lang <simondelang@gmail.com>",
     "Nico Jansen <jansennico@gmail.com>",
-    "global <jansennico@gmail.com>"
+    "global <jansennico@gmail.com>",
+    "Nico Stapelbroek <nstapelbroek@gmail.com>",
+    "Michael Williamson <mike@zwobble.org>"
   ],
   "license": "Apache-2.0",
   "bin": {
