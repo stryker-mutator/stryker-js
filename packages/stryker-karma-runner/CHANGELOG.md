@@ -1,3 +1,14 @@
+<a name="0.3.1"></a>
+## [0.3.1](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.2.2...v0.3.1) (2016-11-20)
+
+
+### Features
+
+* **one-pass-coverage:** Enable one pass coverage (#6) ([6a9fa98](https://github.io/stryker-mutator/stryker-karma-runner/commit/6a9fa98))
+* **test-runner:** Allow for big coverage objects ([661c46b](https://github.io/stryker-mutator/stryker-karma-runner/commit/661c46b))
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.2.1...v0.2.2) (2016-10-03)
 
