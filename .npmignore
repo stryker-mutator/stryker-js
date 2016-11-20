@@ -2,6 +2,7 @@
 .tmp
 .tscache
 .vscode
+.stryker-temp
 .npmignore
 .editorconfig
 *.ts
