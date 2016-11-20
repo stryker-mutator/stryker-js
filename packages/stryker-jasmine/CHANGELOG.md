@@ -1,3 +1,8 @@
+<a name="0.1.0"></a>
+# [0.1.0](https://github.com/stryker-mutator/stryker-jasmine/compare/v0.0.3...v0.1.0) (2016-11-20)
+
+
+
 <a name="0.0.3"></a>
 ## 0.0.3 (2016-11-13)
 
