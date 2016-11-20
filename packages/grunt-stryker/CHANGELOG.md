@@ -1,3 +1,18 @@
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/stryker-mutator/grunt-stryker/compare/v0.3.0...v0.4.0) (2016-11-20)
+
+
+### Bug Fixes
+
+* **deps:** Add accept grunt >= 1.0.0 ([4266c89](https://github.com/stryker-mutator/grunt-stryker/commit/4266c89))
+
+
+### Features
+
+* Update stryker-api dependency to ^0.4.0 ([22d70bf](https://github.com/stryker-mutator/grunt-stryker/commit/22d70bf))
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/stryker-mutator/grunt-stryker/compare/v0.2.0...v0.3.0) (2016-08-11)
 
