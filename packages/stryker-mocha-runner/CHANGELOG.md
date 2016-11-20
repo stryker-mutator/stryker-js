@@ -1,3 +1,13 @@
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/stryker-mutator/stryker-mocha-runner/compare/v0.1.1...v0.2.0) (2016-11-20)
+
+
+### Features
+
+* **one-pass-coverage:** Update test runner  ([#4](https://github.com/stryker-mutator/stryker-mocha-runner/issues/4)) ([d6aebaa](https://github.com/stryker-mutator/stryker-mocha-runner/commit/d6aebaa))
+
+
+
 <a name="0.1.1"></a>
 ## [0.1.1](https://github.com/stryker-mutator/stryker-mocha-runner/compare/v0.1.0...v0.1.1) (2016-10-03)
 
