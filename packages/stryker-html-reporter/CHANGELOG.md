@@ -1,3 +1,13 @@
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/stryker-mutator/stryker-html-reporter/compare/v0.2.2...v0.3.0) (2016-11-20)
+
+
+### Features
+
+* **error-result:** Show error and other statistics ([#7](https://github.com/stryker-mutator/stryker-html-reporter/issues/7)) ([3d61cee](https://github.com/stryker-mutator/stryker-html-reporter/commit/3d61cee))
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.com/stryker-mutator/stryker-html-reporter/compare/v0.2.1...v0.2.2) (2016-10-06)
 
