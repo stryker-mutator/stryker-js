@@ -68,11 +68,20 @@ module.exports = function (grunt) {
     }
   });
 
+  require('load-grunt-tasks')(grunt);
   grunt.loadTasks('tasks');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-
+  
   grunt.registerTask('default', ['jshint', 'test']);
   grunt.registerTask('test', ['stryker']);
 
+  grunt.registerTask('release', 'Build, bump and publish to NPM.', function (type) {
+    grunt.task.run([
+      'test',
+      'npm-contributors',
+      'bump:' + (type || 'patch') + ':bump-only',
+      'conventionalChangelog',
+      'bump-commit',
+      'npm-publish'
+    ]);
+  });
 };
