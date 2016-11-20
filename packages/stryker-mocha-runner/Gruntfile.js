@@ -131,4 +131,15 @@ module.exports = function (grunt) {
   grunt.registerTask('integration', ['mochaTest:integration']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
   grunt.registerTask('serve', ['watch']);
+
+  grunt.registerTask('release', 'Build, bump and publish to NPM.', function (type) {
+    grunt.task.run([
+      'test',
+      'npm-contributors',
+      'bump:' + (type || 'patch') + ':bump-only',
+      'conventionalChangelog',
+      'bump-commit',
+      'npm-publish'
+    ]);
+  });
 };
