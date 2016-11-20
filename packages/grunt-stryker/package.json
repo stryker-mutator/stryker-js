@@ -42,12 +42,13 @@
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
-    "stryker": "^0.4.1",
-    "stryker-api": "^0.2.0",
-    "stryker-karma-runner": "^0.2.0"
+    "stryker": "^0.5.0",
+    "stryker-api": "^0.4.0",
+    "stryker-jasmine": "^0.1.0",
+    "stryker-karma-runner": "^0.3.0"
   },
   "peerDependencies": {
     "grunt": ">=0.4.5",
-    "stryker": "^0.4.1"
+    "stryker": "^0.5.0"
   }
 }
