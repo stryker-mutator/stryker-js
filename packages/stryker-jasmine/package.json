@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker-jasmine#readme",
   "peerDependencies": {
-    "stryker-api": "^0.3.0-rc6",
+    "stryker-api": "^0.4.0",
     "jasmine-core": ">=2"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "mocha": "^3.1.0",
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.3.0-rc6",
+    "stryker-api": "^0.4.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.3"
   },
