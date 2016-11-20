@@ -1,3 +1,13 @@
+<a name="0.4.1"></a>
+## [0.4.1](https://github.com/stryker-mutator/grunt-stryker/compare/v0.4.0...v0.4.1) (2016-11-20)
+
+
+### Bug Fixes
+
+* **deps:** Update stryker version ([278a851](https://github.com/stryker-mutator/grunt-stryker/commit/278a851))
+
+
+
 <a name="0.4.0"></a>
 # [0.4.0](https://github.com/stryker-mutator/grunt-stryker/compare/v0.3.0...v0.4.0) (2016-11-20)
 
