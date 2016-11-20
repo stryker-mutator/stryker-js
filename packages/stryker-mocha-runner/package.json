@@ -64,5 +64,9 @@
     "stryker-api": "^0.4.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.2"
-  }
+  },
+  "contributors": [
+    "nicojs <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>"
+  ]
 }
