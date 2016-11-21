@@ -96,7 +96,7 @@ const cloneFunctionFragment = `
     }`;
 
 const beforeEachFragmentPerTest = `
-if (!coverageStateAtStart) {
+if (!coverageStateAtStart && window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME}) {
   coverageStateAtStart = clone(window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME});
 }`;
 
@@ -104,8 +104,10 @@ const afterEachFragmentPerTest = `
        globalCoverage[id] = coverageResult = {};
       id++;
            var coveragePerTest = window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME};
-            Object.keys(coveragePerTest).forEach(function (file) {
-                var coverage = coveragePerTest[file];
-                coverageResult[file] = { s: coverage.s };
-                coverage.s = clone(coverageStateAtStart[file].s);
-            });`;
+           if(window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME}) {
+              Object.keys(coveragePerTest).forEach(function (file) {
+                  var coverage = coveragePerTest[file];
+                  coverageResult[file] = { s: coverage.s };
+                  coverage.s = clone(coverageStateAtStart[file].s);
+              });
+           }`;
