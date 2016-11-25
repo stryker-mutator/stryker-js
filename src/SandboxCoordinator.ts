@@ -15,7 +15,7 @@ const log = log4js.getLogger('SandboxCoordinator');
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
-// Lets take 5 minutes just to be sure 
+// Lets take 5 minutes just to be sure
 const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 
 export default class SandboxCoordinator {
@@ -60,12 +60,13 @@ export default class SandboxCoordinator {
   }
 
   private createSandboxes(): Promise<Sandbox[]> {
-    const cpuCount = os.cpus().length;
+    const numConcurrentRunners = this.options.maxConcurrentTestRunners || os.cpus().length;
+    const numConcurrentRunnersSource = this.options.maxConcurrentTestRunners ? 'maxConcurrentTestRunners config' : 'cpu count';
     const sandboxes: Sandbox[] = [];
-    for (let i = 0; i < cpuCount; i++) {
+    for (let i = 0; i < numConcurrentRunners; i++) {
       sandboxes.push(new Sandbox(this.options, i, this.files, this.testFramework, null));
     }
-    log.info(`Creating ${cpuCount} test runners (based on cpu count)`);
+    log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
     return Promise.all(sandboxes.map(s => s.initialize()))
       .then(() => sandboxes);
   }
