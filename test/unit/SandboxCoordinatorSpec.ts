@@ -39,14 +39,12 @@ describe('SandboxCoordinator', () => {
     options = {};
     coverageInstrumenter = 'a coverage instrumenter';
     sinonSandbox = sinon.sandbox.create();
-    const createSandbox = () => {
-      return ({
-        initialize: sinonSandbox.stub().returns(Promise.resolve()),
-        run: sinonSandbox.stub().returns(expectedRunResult),
-        runMutant: sinonSandbox.stub(),
-        dispose: sinonSandbox.stub().returns(Promise.resolve())
-      });
-    };
+    const createSandbox = () => ({
+      initialize: sinonSandbox.stub().returns(Promise.resolve()),
+      run: sinonSandbox.stub().returns(expectedRunResult),
+      runMutant: sinonSandbox.stub(),
+      dispose: sinonSandbox.stub().returns(Promise.resolve())
+    });
     firstSandbox = createSandbox();
     secondSandbox = createSandbox();
     const genericSandboxForAllSubsequentCallsToNewSandbox = createSandbox();
