@@ -1,3 +1,13 @@
+<a name="0.5.3"></a>
+## [0.5.3](https://github.com/stryker-mutator/stryker/compare/v0.5.2...v0.5.3) (2016-11-26)
+
+
+### Features
+
+* **test-runner:** Config for `maxConcurrentTestRunners` ([492bb80](https://github.com/stryker-mutator/stryker/commit/492bb80))
+
+
+
 <a name="0.5.2"></a>
 ## [0.5.2](https://github.com/stryker-mutator/stryker/compare/v0.5.1...v0.5.2) (2016-11-21)
 
