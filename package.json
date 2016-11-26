@@ -32,7 +32,9 @@
     "Nico Jansen <jansennico@gmail.com>",
     "global <jansennico@gmail.com>",
     "Nico Stapelbroek <nstapelbroek@gmail.com>",
-    "Michael Williamson <mike@zwobble.org>"
+    "Jeremy Nagel <jeremy.nagel@learnosity.com>",
+    "Michael Williamson <mike@zwobble.org>",
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
   ],
   "license": "Apache-2.0",
   "bin": {
