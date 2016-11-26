@@ -29,10 +29,11 @@ Optional location to the stryker.conf.js file as last argument. That file should
   .option('--testFramework <name>', `The name of the test framework you want to use.`)
   .option('--testRunner <name>', `The name of the test runner you want to use`)
   .option('--reporter <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
+  .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
   .option('--port <n>', 'A free port for the test runner to use (if it needs to). Any additional test runners will be spawned using n+1, n+2, etc', parseInt)
   .option('--timeoutMs <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
   .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
-  .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
+  .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
   .option('--logLevel <level>', 'Set the log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
   .parse(process.argv);
 

@@ -174,6 +174,21 @@ With `timeoutMs` you can configure an absolute deviation. Tweak this if you are 
 **Description:**  
 See [Abolute timeout ms](#abolute-timeout-ms).
 
+#### maxConcurrentTestRunners
+**Command line:** `--maxConcurrentTestRunners 3`  
+**Config file:** `maxConcurrentTestRunners: 3`  
+**Default value:** `Infinity` (translates to cpu count)  
+**Description:**  
+Set the maximum number of concurrent test runners to spawn.
+Mutation testing is time consuming. By default, stryker tries to maximize the use of your cpu by spawning as much test runners as you have cpu's.
+If for this is too much, you can lower it here.
+
+Reasons for lowering the max concurrent test runners: 
+
+* The test runner your using needs to start a browser (another cpu heavy process)
+* Your running on a build server and need to share resources with other projects
+* Your hard disk cannot handle the IO of all test runners 
+
 #### Log level
 **Command line:** `--logLevel info`    
 **Config file:** `logLevel: 'info'`
