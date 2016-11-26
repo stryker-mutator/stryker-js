@@ -79,8 +79,28 @@ describe('SandboxCoordinator', () => {
   });
 
   describe('Given that maxConcurrentTestRunners config has been set', () => {
-    it('Then runMutants should use that config rather than cpuCount', (done) => {
+    it('if config is less than cpuCount, then runMutants should use that config rather than cpuCount', (done) => {
       const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
+
+      sut = new SandboxCoordinator({
+        maxConcurrentTestRunners: 1
+      }, expectedInputFiles, expectedTestFramework, reporter);
+
+      firstSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
+      secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
+
+      sut.runMutants(mutants)
+        .then(() =>  {
+          expect(sandbox.default).to.have.been.calledWithNew;
+          expect(sandbox.default).to.have.callCount(1);
+          expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: 1 }, 0, expectedInputFiles, expectedTestFramework, null);
+          done();
+        });
+    });
+
+    it('if config is greater than cpuCount, then runMutants should use the cpuCount', (done) => {
+      const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
+      sinonSandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
 
       sut = new SandboxCoordinator({
         maxConcurrentTestRunners: 100
@@ -92,8 +112,28 @@ describe('SandboxCoordinator', () => {
       sut.runMutants(mutants)
         .then(() =>  {
           expect(sandbox.default).to.have.been.calledWithNew;
-          expect(sandbox.default).to.have.callCount(100);
+          expect(sandbox.default).to.have.callCount(2);
           expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: 100 }, 0, expectedInputFiles, expectedTestFramework, null);
+          done();
+        });
+    });
+
+    it('if config is less than zero, then runMutants should use the cpuCount as cannot have negative number of test runners', (done) => {
+      const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
+      sinonSandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
+
+      sut = new SandboxCoordinator({
+        maxConcurrentTestRunners: -100
+      }, expectedInputFiles, expectedTestFramework, reporter);
+
+      firstSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
+      secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
+
+      sut.runMutants(mutants)
+        .then(() =>  {
+          expect(sandbox.default).to.have.been.calledWithNew;
+          expect(sandbox.default).to.have.callCount(2);
+          expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: -100 }, 0, expectedInputFiles, expectedTestFramework, null);
           done();
         });
     });

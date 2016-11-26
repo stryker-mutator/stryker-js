@@ -60,8 +60,12 @@ export default class SandboxCoordinator {
   }
 
   private createSandboxes(): Promise<Sandbox[]> {
-    const numConcurrentRunners = this.options.maxConcurrentTestRunners || os.cpus().length;
-    const numConcurrentRunnersSource = this.options.maxConcurrentTestRunners ? 'maxConcurrentTestRunners config' : 'cpu count';
+    let numConcurrentRunners = os.cpus().length;
+    let numConcurrentRunnersSource = 'CPU count';
+    if (numConcurrentRunners > this.options.maxConcurrentTestRunners && this.options.maxConcurrentTestRunners > 0) {
+      numConcurrentRunners = this.options.maxConcurrentTestRunners;
+      numConcurrentRunnersSource = 'maxConcurrentTestRunners config';
+    }
     const sandboxes: Sandbox[] = [];
     for (let i = 0; i < numConcurrentRunners; i++) {
       sandboxes.push(new Sandbox(this.options, i, this.files, this.testFramework, null));
