@@ -8,6 +8,7 @@
         "testResources/**"
      ],
      "ignore": [
+        "src/TestFrameworkOrchestrator.ts",
         "testResources/config-reader/syntax-error.conf.js"
     ]
 }
