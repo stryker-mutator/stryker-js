@@ -8,7 +8,7 @@
         "testResources/**"
      ],
      "ignore": [
-        "src/TestFrameworkOrchestrator.ts", //Temporarily ignore this file due to an issue in Bithound
+        "src/TestFrameworkOrchestrator.ts",
         "testResources/config-reader/syntax-error.conf.js"
     ]
 }
