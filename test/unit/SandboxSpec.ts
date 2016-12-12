@@ -1,14 +1,15 @@
-import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as path from 'path';
 import * as os from 'os';
+import { expect } from 'chai';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
-import { RunnerOptions, RunResult } from 'stryker-api/test_runner';
+import { RunResult } from 'stryker-api/test_runner';
+import { wrapInClosure } from '../../src/utils/objectUtils';
 import CoverageInstrumenter from '../../src/coverage/CoverageInstrumenter';
 import Sandbox from '../../src/Sandbox';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
-import { wrapInClosure } from '../../src/utils/objectUtils';
 import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
+import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
 
 describe('Sandbox', () => {
   let sut: Sandbox;
@@ -87,14 +88,15 @@ describe('Sandbox', () => {
         .and.calledWith(files[1].path, path.join(workingFolder, 'file2')));
 
       it('should have created the isolated test runner inc framework hook', () => {
-        const expectedSettings: RunnerOptions = {
+        const expectedSettings: IsolatedRunnerOptions = {
           files: [
             { path: expectedTestFrameworkHooksFile, mutated: false, included: true },
             { path: expectedTargetFileToMutate, mutated: true, included: true },
             { path: path.join(workingFolder, 'file2'), mutated: false, included: false }
           ],
           port: 46,
-          strykerOptions: options
+          strykerOptions: options,
+          sandboxWorkingFolder: workingFolder
         };
         expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith(expectedSettings);
       });
@@ -149,14 +151,15 @@ describe('Sandbox', () => {
       beforeEach(() => sut.initialize());
 
       it('should have created the isolated test runner', () => {
-        const expectedSettings: RunnerOptions = {
+        const expectedSettings: IsolatedRunnerOptions = {
           files: [
             { path: path.join(workingFolder, '___testHooksForStryker.js'), mutated: false, included: true },
             { path: path.join(workingFolder, 'file1'), mutated: true, included: true },
             { path: path.join(workingFolder, 'file2'), mutated: false, included: false }
           ],
           port: 46,
-          strykerOptions: options
+          strykerOptions: options,
+          sandboxWorkingFolder: workingFolder 
         };
         expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith(expectedSettings);
       });

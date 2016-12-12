@@ -1,5 +1,5 @@
 import { AdapterMessage, RunMessage, StartMessage, ResultMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
-import { RunnerOptions, TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
+import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
 import { isPromise, deserialize } from '../utils/objectUtils';
@@ -42,6 +42,8 @@ class IsolatedTestRunnerAdapterWorker {
 
   start(message: StartMessage) {
     this.loadPlugins(message.runnerOptions.strykerOptions.plugins);
+    log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
+    process.chdir(message.runnerOptions.sandboxWorkingFolder);
     this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
   }
 
