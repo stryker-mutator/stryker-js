@@ -59,24 +59,27 @@ The mutators that are supported by Stryker can be found on [our website](http://
 All options can be configured either via the command line or via a config file.
 
 Both `files` and `mutate` support globbing expressions using [node glob](https://github.com/isaacs/node-glob). This is the same globbing format you might know from 
-[Grunt](https://github.com/gruntjs/grunt) and [Karma](https://github.com/karma-runner/karma).
+[Grunt](https://github.com/gruntjs/grunt) and [Karma](https://github.com/karma-runner/karma). 
+It is possible to *ignore* files by adding an exclamation mark `!` to the start of the expression.
 
 #### Files
 **Command line:** `--files node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js` or `-f node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`        
-**Config file:** `files: ['test/helpers/**/*.js', 'test/unit/**/*.js', { pattern: 'src/**/*.js', included: false, mutated: true }]`  
+**Config file:** `files: ['{ pattern: 'src/**/*.js', mutated: true }, '!src/**/index.js', 'test/**/*.js']`  
 **Default value:** *none*  
 **Description:**  
 With `files` you configure all files needed to run the tests. If the test runner you use already provides the test framework (jasmine, mocha, etc),
 you should not add those files here as well. The order in this list is important, because that will be the order in which the files are loaded.  
 
 When using the command line, the list can only contain a comma seperated list of globbing expressions.
-When using the config file you can fill an array with strings or objects:
+When using the config file you can fill an array with `string`s or `InputFileDescriptor` objects:
 
-* `string`: A globbing expression used for selecting the files needed to run the tests.
-* `{ pattern: 'pattern', included: true, mutated: false }` :
-   * The `pattern` property is mandatory and contains the globbing expression used for selecting the files
+* `string`: The globbing expression used for selecting the files needed to run the tests.
+* `InputFileDescriptor` object: `{ pattern: 'pattern', included: true, mutated: false }` :
+   * The `pattern` property is mandatory and contains the globbing expression used for selecting the files. Using `!` to ignore files is *not* supported here. 
    * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true)
    * The `mutated` property is optional and determines whether or not this file should be targeted for mutations (default: false)   
+
+*Note*: To include a file/folder which start with an exclamation mark (`!`), use the `InputFileDescriptor` syntax
 
 #### Files to mutate
 **Command line:** `-m src/**/*.js,a.js` or `--mutate src/**/*.js,a.js`  

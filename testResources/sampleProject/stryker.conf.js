@@ -1,6 +1,11 @@
 module.exports = function (config) {
   config.set({
-    files: [{ pattern: 'testResources/sampleProject/src/?(Circle|Add).js', mutated: true }, 'testResources/sampleProject/test/?(AddSpec|CircleSpec).js'],
+    files: [
+      { pattern: 'testResources/sampleProject/src/*.js', mutated: true },
+      'testResources/sampleProject/test/*.js',
+      '!testResources/sampleProject/src/Error.js',
+      '!testResources/sampleProject/src/InfiniteAdd.js',
+      '!testResources/sampleProject/test/FailingAddSpec.js',],
     testFramework: 'jasmine',
     testRunner: 'karma',
     coverageAnalysis: 'off',
