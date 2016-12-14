@@ -25,8 +25,7 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.32",
-    "@types/chai-as-promised": "0.0.28",
-    "@types/es6-promise": "0.0.31",
+    "@types/chai-as-promised": "0.0.29",
     "@types/karma": "^0.13.32",
     "@types/lodash": "^4.14.34",
     "@types/log4js": "0.0.32",
@@ -46,7 +45,7 @@
     "grunt-mocha-test": "^0.13.2",
     "grunt-npm": "0.0.2",
     "grunt-ts": "^6.0.0-beta.3",
-    "grunt-tslint": "^3.2.1",
+    "grunt-tslint": "^4.0.0",
     "istanbul": "^0.4.4",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.0 || ~1.0.0 || ^1.1.1",
@@ -56,13 +55,13 @@
     "mocha": "^3.0.2",
     "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.4.0",
-    "tslint": "^3.15.1",
+    "stryker-api": "^0.4.1",
+    "tslint": "^4.0.2",
     "typescript": "^2.0.2"
   },
   "dependencies": {
     "lodash": "^4.13.1",
-    "log4js": "^0.6.37"
+    "log4js": "^1.0.1"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",
