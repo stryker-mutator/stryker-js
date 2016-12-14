@@ -1,3 +1,13 @@
+<a name="0.3.2"></a>
+## [0.3.2](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.3.1...v0.3.2) (2016-12-14)
+
+
+### Features
+
+* **es2015-promise:** Remove dep to es6-promise (#9) ([c64ed08](https://github.io/stryker-mutator/stryker-karma-runner/commit/c64ed08))
+
+
+
 <a name="0.3.1"></a>
 ## [0.3.1](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.2.2...v0.3.1) (2016-11-20)
 
