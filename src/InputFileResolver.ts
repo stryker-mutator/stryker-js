@@ -13,7 +13,7 @@ export default class InputFileResolver {
   private mutateResolver: PatternResolver;
 
   constructor(mutate: string[], allFileExpressions: Array<InputFileDescriptor | string>) {
-    InputFileResolver.validateFileDescriptor(allFileExpressions);
+    this.validateFileDescriptor(allFileExpressions);
     this.mutateResolver = PatternResolver.parse(mutate || []);
     this.inputFileResolver = PatternResolver.parse(allFileExpressions);
   }
@@ -22,13 +22,13 @@ export default class InputFileResolver {
     return Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]).then(results => {
       const inputFiles = results[0];
       const mutateFiles = results[1];
-      InputFileResolver.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.path));
-      InputFileResolver.logFilesToMutate(inputFiles);
+      this.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.path));
+      this.logFilesToMutate(inputFiles);
       return inputFiles;
     });
   }
 
-  private static validateFileDescriptor(maybeInputFileDescriptors: Array<InputFileDescriptor | string>) {
+  private validateFileDescriptor(maybeInputFileDescriptors: Array<InputFileDescriptor | string>) {
     maybeInputFileDescriptors.forEach(maybeInputFileDescriptor => {
       if (_.isObject(maybeInputFileDescriptor)) {
         if (Object.keys(maybeInputFileDescriptor).indexOf('pattern') === -1) {
@@ -38,7 +38,7 @@ export default class InputFileResolver {
     });
   }
 
-  private static markAdditionalFilesToMutate(allInputFiles: InputFile[], additionalMutateFiles: string[]) {
+  private markAdditionalFilesToMutate(allInputFiles: InputFile[], additionalMutateFiles: string[]) {
     let errors: string[] = [];
     additionalMutateFiles.forEach(mutateFile => {
       if (!allInputFiles.filter(inputFile => inputFile.path === mutateFile).length) {
@@ -51,7 +51,7 @@ export default class InputFileResolver {
     allInputFiles.forEach(file => file.mutated = additionalMutateFiles.some(mutateFile => mutateFile === file.path) || file.mutated);
   }
 
-  private static logFilesToMutate(allInputFiles: InputFile[]) {
+  private logFilesToMutate(allInputFiles: InputFile[]) {
     let mutateFiles = allInputFiles.filter(file => file.mutated);
     if (mutateFiles.length) {
       log.info(`Found ${mutateFiles.length} of ${allInputFiles.length} file(s) to be mutated.`);
@@ -87,8 +87,8 @@ class PatternResolver {
       return Promise.resolve([]);
     } else {
       // Start the globbing task for the current descriptor
-      const globbingTask = PatternResolver.resolveFileGlob(this.descriptor.pattern)
-        .then(filePaths => filePaths.map(filePath => PatternResolver.createInputFile(filePath, this.descriptor)));
+      const globbingTask = this.resolveFileGlob(this.descriptor.pattern)
+        .then(filePaths => filePaths.map(filePath => this.createInputFile(filePath)));
       if (this.previous) {
         // If there is a previous globbing expression, resolve that one as well
         return Promise.all([this.previous.resolve(), globbingTask]).then(results => {
@@ -123,22 +123,22 @@ class PatternResolver {
     return current;
   }
 
-  private static resolveFileGlob(pattern: string): Promise<string[]> {
+  private resolveFileGlob(pattern: string): Promise<string[]> {
     return glob(pattern).then(files => {
       if (files.length === 0) {
-        PatternResolver.reportEmptyGlobbingExpression(pattern);
+        this.reportEmptyGlobbingExpression(pattern);
       }
       normalize(files);
       return files;
     });
   }
 
-  private static reportEmptyGlobbingExpression(expression: string) {
+  private reportEmptyGlobbingExpression(expression: string) {
     log.warn(`Globbing expression "${expression}" did not result in any files.`);
   }
 
-  private static createInputFile(path: string, descriptor: InputFileDescriptor): InputFile {
-    let inputFile: InputFile = <InputFile>_.assign({ path }, DEFAULT_INPUT_FILE_PROPERTIES, descriptor);
+  private createInputFile(path: string): InputFile {
+    let inputFile: InputFile = <InputFile>_.assign({ path }, DEFAULT_INPUT_FILE_PROPERTIES, this.descriptor);
     delete (<any>inputFile)['pattern'];
     return inputFile;
   }
