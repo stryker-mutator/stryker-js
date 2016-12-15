@@ -22,7 +22,7 @@ Optional location to the stryker.conf.js file as last argument. That file should
     strykerConfig = config;
   })
   .option('-f, --files <allFiles>', `A comma seperated list of globbing expression used for selecting all files needed to run the tests. For a more detailed way of selecting inputfiles, please use a configFile.
-  Example: node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`, list)
+  Example: node_modules/a-lib/**/*.js,src/**/*.js,!src/index.js,a.js,test/**/*.js`, list)
   .option('-m, --mutate <filesToMutate>', `A comma seperated list of globbing expression used for selecting the files that should be mutated.
   Example: src/**/*.js,a.js`, list)
   .option('--coverageAnalysis <perTest|all|off>', `The coverage analysis strategy you want to use. Default value: "perTest"`)
