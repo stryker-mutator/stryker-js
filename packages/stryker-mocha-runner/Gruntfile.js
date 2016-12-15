@@ -85,7 +85,9 @@ module.exports = function (grunt) {
         failOnTypeErrors: true
       },
       build: {
-        tsconfig: true,
+        tsconfig: {
+          passThrough: true
+        }
       },
     },
     

@@ -37,7 +37,6 @@
   "devDependencies": {
     "@types/chai": "^3.4.32",
     "@types/chai-as-promised": "0.0.29",
-    "@types/es6-promise": "0.0.31",
     "@types/log4js": "0.0.31",
     "@types/mocha": "^2.2.31",
     "@types/node": "^6.0.38",
@@ -61,9 +60,9 @@
     "mocha": "^3.1.0",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.4.0",
+    "stryker-api": "^0.4.1",
     "tslint": "^3.15.1",
-    "typescript": "^2.0.2"
+    "typescript": "~2.0.2"
   },
   "contributors": [
     "nicojs <jansennico@gmail.com>",
