@@ -148,7 +148,7 @@ export default class Stryker {
     if (isPromise(maybePromise)) {
       return maybePromise;
     } else {
-      return Promise.resolve<void>();
+      return Promise.resolve();
     }
   }
 

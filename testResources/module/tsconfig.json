@@ -4,7 +4,11 @@
     "moduleResolution": "node",
     "target": "es5",
     "noImplicitAny": true,
-    "sourceMap": false
+    "sourceMap": false,
+    "lib": [
+      "es5",
+      "es2015.promise"
+    ]
   },
   "exclude": [
     "node_modules",
