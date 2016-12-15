@@ -1,12 +1,13 @@
 import * as path from 'path';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
-import { RunnerOptions, RunResult, StatementMap } from 'stryker-api/test_runner';
+import { RunResult, StatementMap } from 'stryker-api/test_runner';
 import { InputFile, StrykerOptions } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
 import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
+import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import Mutant from './Mutant';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
@@ -76,10 +77,11 @@ export default class Sandbox {
   private initializeTestRunner(): void | Promise<any> {
     let files = this.files.map(originalFile => <InputFile>_.assign(_.cloneDeep(originalFile), { path: this.fileMap[originalFile.path] }));
     files.unshift({ path: this.testHooksFile, mutated: false, included: true });
-    let settings: RunnerOptions = {
+    let settings: IsolatedRunnerOptions = {
       files,
       strykerOptions: this.options,
-      port: this.options.port + this.index
+      port: this.options.port + this.index,
+      sandboxWorkingFolder: this.workingFolder
     };
     log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
     this.testRunner = IsolatedTestRunnerAdapterFactory.create(settings);

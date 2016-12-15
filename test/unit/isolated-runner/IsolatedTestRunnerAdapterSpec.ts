@@ -1,7 +1,8 @@
 import * as child_process from 'child_process';
 import * as sinon from 'sinon';
-import { RunnerOptions, RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
+import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
+import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import { WorkerMessage, AdapterMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
 import { expect } from 'chai';
@@ -13,12 +14,13 @@ describe('IsolatedTestRunnerAdapter', () => {
   let sinonSandbox: sinon.SinonSandbox;
   let clock: sinon.SinonFakeTimers;
   let fakeChildProcess: any;
-  let runnerOptions: RunnerOptions;
+  let runnerOptions: IsolatedRunnerOptions;
 
   beforeEach(() => {
     runnerOptions = {
       port: 42,
       files: [],
+      sandboxWorkingFolder: 'a working directory',
       strykerOptions: null
     };
     sinonSandbox = sinon.sandbox.create();

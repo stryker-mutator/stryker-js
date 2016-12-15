@@ -1,15 +1,16 @@
-import TestRunnerChildProcessAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
-import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestStatus, RunnerOptions, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
+import * as path from 'path';
 import { expect } from 'chai';
-import logger from '../../helpers/log4jsMock';
+import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
+import { StrykerOptions } from 'stryker-api/core';
+import TestRunnerChildProcessAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
+import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 
 describe('TestRunnerChildProcessAdapter', function () {
 
   this.timeout(10000);
 
   let sut: TestRunnerChildProcessAdapter;
-  let options: RunnerOptions = {
+  let options: IsolatedRunnerOptions = {
     strykerOptions: {
       plugins: [
         '../../test/integration/isolated-runner/DirectResolvedTestRunner',
@@ -17,6 +18,7 @@ describe('TestRunnerChildProcessAdapter', function () {
         '../../test/integration/isolated-runner/SlowInitAndDisposeTestRunner',
         '../../test/integration/isolated-runner/CoverageReportingTestRunner',
         '../../test/integration/isolated-runner/ErroredTestRunner',
+        '../../test/integration/isolated-runner/VerifyWorkingFolderTestRunner',
         '../../test/integration/isolated-runner/DiscoverRegexTestRunner'],
       testRunner: 'karma',
       testFramework: 'jasmine',
@@ -24,7 +26,8 @@ describe('TestRunnerChildProcessAdapter', function () {
       'someRegex': /someRegex/
     },
     files: [],
-    port: null
+    port: null,
+    sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner')
   };
 
   describe('when sending a regex in the options', () => {
@@ -108,4 +111,17 @@ describe('TestRunnerChildProcessAdapter', function () {
     after(() => sut.dispose());
   });
 
+  describe('when test runner verifies the current working folder', () => {
+    before(() => {
+      sut = new TestRunnerChildProcessAdapter('verify-working-folder', options);
+      return sut.init();
+    });
+
+    it('should run and resolve', () => sut.run({ timeout: 4000 })
+      .then(result => {
+        if (result.errorMessages && result.errorMessages.length) {
+          expect.fail(null, null, result.errorMessages[0]);
+        }
+      }));
+  });
 }); 

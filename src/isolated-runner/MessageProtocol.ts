@@ -1,5 +1,6 @@
 import { RunResult, RunnerOptions } from 'stryker-api/test_runner';
 import { RunOptions } from 'stryker-api/test_runner';
+import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 
 export type AdapterMessage = RunMessage | StartMessage | EmptyAdapterMessage;
 export type WorkerMessage = ResultMessage | EmptyWorkerMessage;
@@ -17,7 +18,7 @@ export interface RunMessage {
 export interface StartMessage {
   kind: 'start';
   runnerName: string;
-  runnerOptions: RunnerOptions;
+  runnerOptions: IsolatedRunnerOptions;
 }
 
 export interface EmptyAdapterMessage {

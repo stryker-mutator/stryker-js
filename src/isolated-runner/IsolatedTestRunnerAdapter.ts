@@ -1,11 +1,12 @@
-import { TestRunner, RunResult, RunOptions, RunnerOptions, TestResult, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
-import { fork, ChildProcess } from 'child_process';
-import { AdapterMessage, WorkerMessage } from './MessageProtocol';
-import * as _ from 'lodash';
-import * as log4js from 'log4js';
 import { EventEmitter } from 'events';
+import * as log4js from 'log4js';
+import * as _ from 'lodash';
+import { fork, ChildProcess } from 'child_process';
+import { TestRunner, RunResult, RunOptions, TestResult, RunStatus } from 'stryker-api/test_runner';
+import { StrykerOptions } from 'stryker-api/core';
 import { serialize } from '../utils/objectUtils';
+import { AdapterMessage, WorkerMessage } from './MessageProtocol';
+import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapter');
 const MAX_WAIT_FOR_DISPOSE = 2000;
@@ -27,7 +28,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   private currentRunStartedTimestamp: Date;
   private isDisposing: boolean;
 
-  constructor(private realTestRunnerName: string, private options: RunnerOptions) {
+  constructor(private realTestRunnerName: string, private options: IsolatedRunnerOptions) {
     super();
     this.startWorker();
   }
