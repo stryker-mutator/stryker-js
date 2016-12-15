@@ -7,14 +7,13 @@ const log = log4js.getLogger('InputFileResolver');
 
 const DEFAULT_INPUT_FILE_PROPERTIES = { mutated: false, included: true };
 
-
 export default class InputFileResolver {
 
   private inputFileResolver: PatternResolver;
   private mutateResolver: PatternResolver;
 
   constructor(mutate: string[], allFileExpressions: Array<InputFileDescriptor | string>) {
-    validateFileDescriptor(allFileExpressions);
+    InputFileResolver.validateFileDescriptor(allFileExpressions);
     this.mutateResolver = PatternResolver.parse(mutate || []);
     this.inputFileResolver = PatternResolver.parse(allFileExpressions);
   }
@@ -23,10 +22,45 @@ export default class InputFileResolver {
     return Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]).then(results => {
       const inputFiles = results[0];
       const mutateFiles = results[1];
-      markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.path));
-      logFilesToMutate(inputFiles);
+      InputFileResolver.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.path));
+      InputFileResolver.logFilesToMutate(inputFiles);
       return inputFiles;
     });
+  }
+
+  private static validateFileDescriptor(maybeInputFileDescriptors: Array<InputFileDescriptor | string>) {
+    maybeInputFileDescriptors.forEach(maybeInputFileDescriptor => {
+      if (_.isObject(maybeInputFileDescriptor)) {
+        if (Object.keys(maybeInputFileDescriptor).indexOf('pattern') === -1) {
+          throw Error(`File descriptor ${JSON.stringify(maybeInputFileDescriptor)} is missing mandatory property 'pattern'.`);
+        }
+      }
+    });
+  }
+
+  private static markAdditionalFilesToMutate(allInputFiles: InputFile[], additionalMutateFiles: string[]) {
+    let errors: string[] = [];
+    additionalMutateFiles.forEach(mutateFile => {
+      if (!allInputFiles.filter(inputFile => inputFile.path === mutateFile).length) {
+        errors.push(`Could not find mutate file "${mutateFile}" in list of files.`);
+      }
+    });
+    if (errors.length > 0) {
+      throw new Error(errors.join(' '));
+    }
+    allInputFiles.forEach(file => file.mutated = additionalMutateFiles.some(mutateFile => mutateFile === file.path) || file.mutated);
+  }
+
+  private static logFilesToMutate(allInputFiles: InputFile[]) {
+    let mutateFiles = allInputFiles.filter(file => file.mutated);
+    if (mutateFiles.length) {
+      log.info(`Found ${mutateFiles.length} of ${allInputFiles.length} file(s) to be mutated.`);
+    } else {
+      log.warn(`No files marked to be mutated, stryker will perform a dry-run without actually mutating anything.`);
+    }
+    if (log.isDebugEnabled) {
+      log.debug('All input files in order:%s', allInputFiles.map(file => '\n\t' + JSON.stringify(file)));
+    }
   }
 }
 
@@ -53,8 +87,8 @@ class PatternResolver {
       return Promise.resolve([]);
     } else {
       // Start the globbing task for the current descriptor
-      const globbingTask = resolveFileGlob(this.descriptor.pattern)
-        .then(filePaths => filePaths.map(filePath => createInputFile(filePath, this.descriptor)));
+      const globbingTask = PatternResolver.resolveFileGlob(this.descriptor.pattern)
+        .then(filePaths => filePaths.map(filePath => PatternResolver.createInputFile(filePath, this.descriptor)));
       if (this.previous) {
         // If there is a previous globbing expression, resolve that one as well
         return Promise.all([this.previous.resolve(), globbingTask]).then(results => {
@@ -88,59 +122,25 @@ class PatternResolver {
     }
     return current;
   }
-}
 
-function resolveFileGlob(pattern: string): Promise<string[]> {
-  return glob(pattern).then(files => {
-    if (files.length === 0) {
-      reportEmptyGlobbingExpression(pattern);
-    }
-    normalize(files);
-    return files;
-  });
-}
-
-function reportEmptyGlobbingExpression(expression: string) {
-  log.warn(`Globbing expression "${expression}" did not result in any files.`);
-}
-
-function createInputFile(path: string, descriptor: InputFileDescriptor): InputFile {
-  let inputFile: InputFile = <InputFile>_.assign({ path }, DEFAULT_INPUT_FILE_PROPERTIES, descriptor);
-  delete (<any>inputFile)['pattern'];
-  return inputFile;
-}
-
-function validateFileDescriptor(maybeInputFileDescriptors: Array<InputFileDescriptor | string>) {
-  maybeInputFileDescriptors.forEach(maybeInputFileDescriptor => {
-    if (_.isObject(maybeInputFileDescriptor)) {
-      if (Object.keys(maybeInputFileDescriptor).indexOf('pattern') === -1) {
-        throw Error(`File descriptor ${JSON.stringify(maybeInputFileDescriptor)} is missing mandatory property 'pattern'.`);
+  private static resolveFileGlob(pattern: string): Promise<string[]> {
+    return glob(pattern).then(files => {
+      if (files.length === 0) {
+        PatternResolver.reportEmptyGlobbingExpression(pattern);
       }
-    }
-  });
+      normalize(files);
+      return files;
+    });
+  }
+
+  private static reportEmptyGlobbingExpression(expression: string) {
+    log.warn(`Globbing expression "${expression}" did not result in any files.`);
+  }
+
+  private static createInputFile(path: string, descriptor: InputFileDescriptor): InputFile {
+    let inputFile: InputFile = <InputFile>_.assign({ path }, DEFAULT_INPUT_FILE_PROPERTIES, descriptor);
+    delete (<any>inputFile)['pattern'];
+    return inputFile;
+  }
 }
 
-function markAdditionalFilesToMutate(allInputFiles: InputFile[], additionalMutateFiles: string[]) {
-  let errors: string[] = [];
-  additionalMutateFiles.forEach(mutateFile => {
-    if (!allInputFiles.filter(inputFile => inputFile.path === mutateFile).length) {
-      errors.push(`Could not find mutate file "${mutateFile}" in list of files.`);
-    }
-  });
-  if (errors.length > 0) {
-    throw new Error(errors.join(' '));
-  }
-  allInputFiles.forEach(file => file.mutated = additionalMutateFiles.some(mutateFile => mutateFile === file.path) || file.mutated);
-}
-
-function logFilesToMutate(allInputFiles: InputFile[]) {
-  let mutateFiles = allInputFiles.filter(file => file.mutated);
-  if (mutateFiles.length) {
-    log.info(`Found ${mutateFiles.length} of ${allInputFiles.length} file(s) to be mutated.`);
-  } else {
-    log.warn(`No files marked to be mutated, stryker will perform a dry-run without actually mutating anything.`);
-  }
-  if (log.isDebugEnabled) {
-    log.debug('All input files in order:%s', allInputFiles.map(file => '\n\t' + JSON.stringify(file)));
-  }
-}
