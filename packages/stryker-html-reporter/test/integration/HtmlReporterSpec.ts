@@ -1,7 +1,9 @@
 import HtmlReporter from '../../src/HtmlReporter';
 import * as fs from 'fs';
 import * as path from 'path';
-import {expect} from 'chai';
+import { expect } from 'chai';
+import logger from '../helpers/log4jsMock';
+import fileUrl = require('file-url');
 
 const exampleMutations = require('./exampleMutations.json');
 const exampleSourceFiles = require('./exampleSourceFiles.json');
@@ -37,6 +39,9 @@ describe('HtmlReporter with example project', () => {
         expectFileExists(`${baseDir}/Add.js.html`, true);
       });
 
+      it('should output a log message with a link to the HTML report', () => {
+        expect(logger.info).to.have.been.calledWith(`Your report can be found at: ${fileUrl(baseDir + '/index.html')}`);
+      });
     });
 
     describe('when initiated a second time with empty events', () => {
@@ -56,7 +61,5 @@ describe('HtmlReporter with example project', () => {
     });
 
   });
-
-
 });
 
