@@ -2,7 +2,6 @@
 
 import { expect } from 'chai';
 import * as parserUtils from '../../../src/utils/parserUtils';
-require('mocha-sinon');
 
 describe('parserUtils', () => {
 
