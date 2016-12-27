@@ -10,7 +10,11 @@
         "declaration": true,
         "forceConsistentCasingInFileNames": true,
         "allowJs": false,
-        "types": [ "mocha", "protractor" ]
+        "types": [ "mocha", "protractor" ],
+        "lib": [
+          "es5",
+          "es2015.promise"
+        ]
     },
     "exclude": [
         "node_modules",
