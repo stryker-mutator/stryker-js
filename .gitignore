@@ -10,3 +10,5 @@ src/**/*.js
 test/**/*.js
 src/**/*.d.ts
 test/**/*.d.ts
+.idea
+*.iml

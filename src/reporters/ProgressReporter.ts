@@ -1,5 +1,6 @@
 import {Reporter, MutantResult, MutantStatus} from 'stryker-api/report';
 import * as chalk from 'chalk';
+import * as os from 'os';
 
 export default class ProgressReporter implements Reporter {
   onMutantTested(result: MutantResult) {
@@ -22,5 +23,9 @@ export default class ProgressReporter implements Reporter {
         break;
     }
     process.stdout.write(toLog);
+  }
+
+  onAllMutantsTested(): void {
+    process.stdout.write(os.EOL);
   }
 }
