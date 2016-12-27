@@ -1,32 +1,35 @@
-'use strict';
-
-const expect = require('chai').expect;
-const fs = require('fs');
+import * as fs from 'fs';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
-require('mocha-sinon');
 
-describe('fileUtils', function() {
+describe('fileUtils', () => {
 
-  describe('should be able to read a file', function() {
-    it('synchronously', function() {
+  let sandbox: sinon.SinonSandbox;
+
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+  });
+
+  afterEach(() => sandbox.restore());
+
+  describe('should be able to read a file', () => {
+
+    it('synchronously', () => {
       const msg = 'hello 1 2';
-      this.sinon.stub(fs, 'readFileSync', function(filename: string, encoding: string) {
-        return msg;
-      });
-
+      sandbox.stub(fs, 'readFileSync', (filename: string, encoding: string) => msg);
       const data = fileUtils.readFile('hello.js');
-
       expect(data).to.equal(msg);
     });
   });
 
-  it('should indicate that an existing file exists', function() {
+  it('should indicate that an existing file exists', () => {
     const exists = fileUtils.fileOrFolderExistsSync('src/Stryker.ts');
 
     expect(exists).to.equal(true);
   });
 
-  it('should indicate that an non-existing file does not exists', function() {
+  it('should indicate that an non-existing file does not exists', () => {
     const exists = fileUtils.fileOrFolderExistsSync('src/Strykerfaefeafe.js');
 
     expect(exists).to.equal(false);
