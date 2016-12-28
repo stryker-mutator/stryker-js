@@ -132,6 +132,8 @@ These reporters can be used out of the box: `clear-text`, `progress` and `event-
 By default `clear-text` and `progress` are active if no reporter is configured.
 You can load additional plugins to get more reporters. See [stryker-mutator.github.io](http://stryker-mutator.github.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
+
+The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
   
 #### Plugins
 **Command line:** `--plugins stryker-html-reporter,stryker-karma-runner`  
