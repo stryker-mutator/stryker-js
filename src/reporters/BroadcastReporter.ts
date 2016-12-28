@@ -11,7 +11,7 @@ export interface NamedReporter {
   reporter: Reporter;
 }
 
-export const ALL_EVENT_METHOD_NAMES = ['onSourceFileRead', 'onAllSourceFilesRead', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead'];
+export const ALL_EVENT_METHOD_NAMES = ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead'];
 
 export default class BroadcastReporter implements Reporter {
 

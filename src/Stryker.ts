@@ -138,7 +138,7 @@ export default class Stryker {
       .filter(inputFile => inputFile.mutated)
       .map(file => file.path));
     log.info(`${mutants.length} Mutant(s) generated`);
-    let mutantRunResultMatcher = new MutantTestMatcher(mutants, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config);
+    let mutantRunResultMatcher = new MutantTestMatcher(mutants, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config, this.reporter);
     mutantRunResultMatcher.matchWithMutants();
     return mutants;
   }

@@ -78,7 +78,7 @@
       // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
-        "--configFile",
+        "run",
         "stryker.conf.js"
       ],
       "cwd": "${workspaceRoot}",

@@ -5,6 +5,7 @@ import { StrykerOptions } from 'stryker-api/core';
 import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import Mutant from '../../src/Mutant';
+import { Reporter, MatchedMutant } from 'stryker-api/report';
 
 describe('MutantTestMatcher', () => {
 
@@ -13,25 +14,48 @@ describe('MutantTestMatcher', () => {
   let runResult: RunResult;
   let statementMapDictionary: StatementMapDictionary;
   let strykerOptions: StrykerOptions;
+  let reporter: Reporter;
 
   beforeEach(() => {
     mutants = [];
     statementMapDictionary = Object.create(null);
     runResult = { tests: [], status: RunStatus.Complete };
     strykerOptions = {};
-    sut = new MutantTestMatcher(mutants, runResult, statementMapDictionary, strykerOptions);
+    reporter = { onAllMutantsMatchedWithTests: sinon.stub() };
+    sut = new MutantTestMatcher(mutants, runResult, statementMapDictionary, strykerOptions, reporter);
   });
 
   describe('with coverageAnalysis: "perTest"', () => {
 
-    beforeEach(() => strykerOptions.coverageAnalysis = 'perTest');
+    beforeEach(() => {
+      strykerOptions.coverageAnalysis = 'perTest';
+    });
 
     describe('matchWithMutants()', () => {
       describe('with 2 mutants and 2 testResults', () => {
         let mutantOne: any, mutantTwo: any, testResultOne: TestResult, testResultTwo: TestResult;
         beforeEach(() => {
-          mutantOne = { mutantOne: true, filename: 'fileWithMutantOne', location: { start: { line: 5, column: 6 }, end: { line: 5, column: 6 } }, addTestResult: sinon.stub() };
-          mutantTwo = { mutantTwo: true, filename: 'fileWithMutantTwo', location: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } }, addTestResult: sinon.stub() };
+          mutantOne = {
+            mutatorName: 'myMutator',
+            mutantOne: true,
+            filename: 'fileWithMutantOne',
+            location: { start: { line: 5, column: 6 }, end: { line: 5, column: 6 } },
+            replacement: '>',
+            addTestResult: sinon.stub(),
+            scopedTestIds: [1, 2],
+            timeSpentScopedTests: 1,
+          };
+          mutantTwo = {
+            mutatorName: 'myMutator',
+            mutantTwo: true,
+            filename: 'fileWithMutantTwo',
+            location: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } },
+            replacement: '<',
+            addTestResult: sinon.stub(),
+            scopedTestIds: [9, 10],
+            timeSpentScopedTests: 59,
+          };
+
           testResultOne = {
             status: TestStatus.Success,
             name: 'test one',
@@ -59,6 +83,25 @@ describe('MutantTestMatcher', () => {
             expect(mutantOne.addTestResult).to.have.been.calledWith(1, testResultTwo);
             expect(mutantTwo.addTestResult).to.have.been.calledWith(0, testResultOne);
             expect(mutantTwo.addTestResult).to.have.been.calledWith(1, testResultTwo);
+          });
+          it('should have both mutants matched', () => {
+            let matchedMutants: MatchedMutant[] = [
+              {
+                mutatorName: mutants[0].mutatorName,
+                scopedTestIds: mutants[0].scopedTestIds,
+                timeSpentScopedTests: mutants[0].timeSpentScopedTests,
+                filename: mutants[0].filename,
+                replacement: mutants[0].replacement
+              },
+              {
+                mutatorName: mutants[1].mutatorName,
+                scopedTestIds: mutants[1].scopedTestIds,
+                timeSpentScopedTests: mutants[1].timeSpentScopedTests,
+                filename: mutants[1].filename,
+                replacement: mutants[1].replacement
+              }
+            ];
+            expect(reporter.onAllMutantsMatchedWithTests).to.have.been.calledWith(Object.freeze(matchedMutants));
           });
         });
 

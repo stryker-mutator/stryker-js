@@ -1,11 +1,13 @@
 import Mutant from './Mutant';
+import { Reporter, MatchedMutant } from 'stryker-api/report';
 import { StatementMapDictionary } from './coverage/CoverageInstrumenter';
 import { RunResult, CoverageCollection, CoverageCollectionPerTest, CoverageResult, StatementMap } from 'stryker-api/test_runner';
 import { Location, StrykerOptions } from 'stryker-api/core';
+import * as _ from 'lodash';
 
 export default class MutantTestMatcher {
 
-  constructor(private mutants: Mutant[], private initialRunResult: RunResult, private statementMaps: StatementMapDictionary, private options: StrykerOptions) { }
+  constructor(private mutants: Mutant[], private initialRunResult: RunResult, private statementMaps: StatementMapDictionary, private options: StrykerOptions, private reporter: Reporter) { }
 
   matchWithMutants() {
     this.mutants.forEach(mutant => {
@@ -28,6 +30,24 @@ export default class MutantTestMatcher {
         }
       });
     });
+
+    this.reporter.onAllMutantsMatchedWithTests(Object.freeze(this.mutants.map(this.mapMutantOnMatchedMutant)));
+  }
+
+  /**
+   * Map the Mutant object on the MatchMutant Object.
+   * @param mutant The mutant.
+   * @returns The MatchedMutant
+   */
+  private mapMutantOnMatchedMutant(mutant: Mutant): MatchedMutant {
+    const matchedMutant = _.cloneDeep({
+      mutatorName: mutant.mutatorName, 
+      scopedTestIds: mutant.scopedTestIds,
+      timeSpentScopedTests: mutant.timeSpentScopedTests,
+      filename: mutant.filename,
+      replacement: mutant.replacement
+    });
+    return Object.freeze(matchedMutant);
   }
 
   /**
