@@ -98,13 +98,35 @@ export default class ClearTextReporter implements Reporter {
     });
     logImplementation('');
     if (this.options.coverageAnalysis === 'perTest') {
-      if (result.testsRan && result.testsRan.length > 0) {
-        logImplementation('Tests ran: ');
-        result.testsRan.forEach(spec => logImplementation('    ' + spec));
-        logImplementation('');
-      }
+      this.logExecutedTests(result, logImplementation);
     } else if (result.testsRan && result.testsRan.length > 0) {
       logImplementation('Ran all tests for this mutant.');
+    }
+  }
+
+  private logExecutedTests(result: MutantResult, logImplementation: (input: string) => void) {
+    const clearTextReporterConfig = this.options['clearTextReporter'];
+
+    if (result.testsRan && result.testsRan.length > 0) {
+      let testsToLog = 3;
+      if (clearTextReporterConfig && typeof clearTextReporterConfig.maxTestsToLog === 'number') {
+        testsToLog = clearTextReporterConfig.maxTestsToLog;
+      }
+
+      if (testsToLog > 0) {
+        logImplementation('Tests ran: ');
+        for (let i = 0; i < testsToLog; i++) {
+          if (i > result.testsRan.length - 1) {
+            break;
+          }
+
+          logImplementation('    ' + result.testsRan[i]);
+        }
+        if (testsToLog < result.testsRan.length) {
+          logImplementation(`  and ${result.testsRan.length - testsToLog} more tests!`);
+        }
+        logImplementation('');
+      }
     }
   }
 
