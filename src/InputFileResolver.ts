@@ -52,7 +52,7 @@ export default class InputFileResolver {
     if (mutationArray) {
       mutationArray.forEach(mutation => {
         if (isWebUrl(mutation)) {
-          throw new Error(`Cannot mutate web url "${mutation}".`)
+          throw new Error(`Cannot mutate web url "${mutation}".`);
         }
       });
     }
