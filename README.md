@@ -152,10 +152,13 @@ In addition to requiring your test runner to be able to report the code coverage
 **Default value:** `['clear-text', 'progress']`  
 **Mandatory**: no  
 **Description:**  
-With `reporter` you can specify a reporter or a list of different reporters to generate reports with.  
-The following reporters are supported out-of-the-box: `clear-text`, `progress` and `event-recorder`.  
-By default `clear-text` and `progress` are active if no reporter is configured.  
-Additional reporters are available as plugins. See [the official list of plugins](http://stryker-mutator.github.io/plugins.html) for more.
+With `reporter` you can set a reporter or group of reporters for stryker to use.
+These reporters can be used out of the box: `clear-text`, `progress` and `event-recorder`.
+By default `clear-text` and `progress` are active if no reporter is configured.
+You can load additional plugins to get more reporters. See [stryker-mutator.github.io](http://stryker-mutator.github.io)
+for an up-to-date list of supported reporter plugins and a description on each reporter.
+
+The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
   
 #### Plugins  
 **Command line:** `--plugins stryker-html-reporter,stryker-karma-runner`  
