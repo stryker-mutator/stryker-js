@@ -6,8 +6,7 @@
   "typings": "src/Stryker.d.ts",
   "scripts": {
     "test": "grunt test",
-    "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
-    "tsc:w": "tsc -w",
+    "start": "tsc -w",
     "sample": "node src/stryker-cli.js --configFile testResources/sampleProject/stryker.conf.js",
     "preversion": "grunt"
   },
@@ -34,7 +33,8 @@
     "Nico Stapelbroek <nstapelbroek@gmail.com>",
     "Jeremy Nagel <jeremy.nagel@learnosity.com>",
     "Michael Williamson <mike@zwobble.org>",
-    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
+    "Alex van Assem <avassem@gmail.com"
   ],
   "license": "Apache-2.0",
   "bin": {
@@ -51,6 +51,7 @@
     "lodash": "^3.10.1",
     "log4js": "^0.6.33",
     "mkdirp": "^0.5.1",
+    "progress": "^1.1.8",
     "serialize-javascript": "^1.3.0"
   },
   "devDependencies": {
@@ -66,6 +67,7 @@
     "@types/log4js": "0.0.32",
     "@types/mkdirp": "^0.3.28",
     "@types/mocha": "^2.2.34",
+    "@types/progress": "^1.1.28",
     "@types/sinon": "^1.16.33",
     "@types/sinon-as-promised": "^4.0.5",
     "@types/sinon-chai": "^2.7.27",
@@ -93,11 +95,11 @@
     "sinon": "^1.17.2",
     "sinon-as-promised": "^4.0.2",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.4.1",
+    "stryker-api": "^0.4.2-rc1",
     "tslint": "^3.15.1",
     "typescript": "^2.1.4"
   },
   "peerDependencies": {
-    "stryker-api": "^0.4.0"
+    "stryker-api": "^0.4.2-rc1"
   }
 }
