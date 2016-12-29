@@ -5,12 +5,19 @@ import * as _ from 'lodash';
 
 export default class ProgressReporter implements Reporter {
   private progressBar: ProgressBar;
+
+  // tickValues contains Labels, because on initation of the ProgressBar the width is determined based on the amount of characters of the progressBarContent inclusive ASCII-codes for colors
   private tickValues = {
     error: 0,
     survived: 0,
     killed: 0,
     timeout: 0,
-    noCoverage: 0
+    noCoverage: 0,
+    killedLabel: `${chalk.green.bold('killed')}`,
+    survivedLabel: `${chalk.red.bold('survived')}`,
+    noCoverageLabel: `${chalk.red.bold('no coverage')}`,
+    timeoutLabel: `${chalk.yellow.bold('timeout')}`,
+    errorLabel: `${chalk.yellow.bold('error')}`
   };
 
   onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
@@ -18,11 +25,11 @@ export default class ProgressReporter implements Reporter {
 
     progressBarContent =
       `Mutation testing  [:bar] :percent (ETC :etas)` +
-      `[:killed] ` +
-      `[:survived] ` +
-      `[:noCoverage] ` +
-      `[:timeout] ` +
-      `[:error]`;
+      `[:killed :killedLabel] ` +
+      `[:survived :survivedLabel] ` +
+      `[:noCoverage :noCoverageLabel] ` +
+      `[:timeout :timeoutLabel] ` +
+      `[:error :errorLabel]`;
 
     this.progressBar = new ProgressBar(progressBarContent, {
       width: 50,
@@ -58,12 +65,6 @@ export default class ProgressReporter implements Reporter {
   }
 
   tick(): void {
-    const vals = _.clone(this.tickValues);
-    (vals as any).killed = `${vals.killed} ${chalk.green.bold('killed')}`;
-    (vals as any).survived = `${vals.survived} ${chalk.red.bold('survived')}`;
-    (vals as any).noCoverage = `${vals.noCoverage} ${chalk.red.bold('no coverage')}`;
-    (vals as any).timeout = `${vals.timeout} ${chalk.yellow.bold('timeout')}`;
-    (vals as any).error = `${vals.error} ${chalk.yellow.bold('error')}`;
-    this.progressBar.tick(vals);
+    this.progressBar.tick(this.tickValues);
   }
 }
