@@ -1,5 +1,5 @@
 import { Reporter, MatchedMutant, MutantResult, MutantStatus } from 'stryker-api/report';
-import ProgressBar = require('progress');
+import ProgressBar from './ProgressBar';
 import * as chalk from 'chalk';
 
 export default class ProgressReporter implements Reporter {
@@ -13,21 +13,20 @@ export default class ProgressReporter implements Reporter {
     };
 
     onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
-        let progressBarString: string;
+        let progressBarContent: string;
 
-        progressBarString = 
-            `Mutation testing [:bar] :percent (ETA :etas)` +
-            `[:killed ${chalk.green.bold('killed')}]` +
-            `[:survived ${chalk.red.bold('survived')}]` +
-            `[:noCoverage ${chalk.red.bold('no coverage')}]` +
-            `[:timeout ${chalk.yellow.bold('timeout')}]` +
+        progressBarContent =
+            `Mutation testing [:bar] :percent (ETC :etas) ` +
+            `[:killed ${chalk.green.bold('killed')}] ` +
+            `[:survived ${chalk.red.bold('survived')}] ` +
+            `[:noCoverage ${chalk.red.bold('no coverage')}] ` +
+            `[:timeout ${chalk.yellow.bold('timeout')}] ` +
             `[:error ${chalk.yellow.bold('error')}]`;
 
-        this.progressBar = new ProgressBar(progressBarString, {
+        this.progressBar = new ProgressBar(progressBarContent, {
             complete: '=',
             incomplete: ' ',
-            width: 50,
-            total: matchedMutants.filter(m => m.scopedTestIds.length).length
+            total: matchedMutants.filter(m => m.scopedTestIds.length > 0).length
         });
     }
 
@@ -35,6 +34,7 @@ export default class ProgressReporter implements Reporter {
         switch (result.status) {
             case MutantStatus.NoCoverage:
                 this.tickValues.noCoverage++;
+                this.progressBar.render(this.tickValues);
                 break;
             case MutantStatus.Killed:
                 this.tickValues.killed++;
