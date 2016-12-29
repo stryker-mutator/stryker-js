@@ -1,15 +1,11 @@
 import { InputFile, InputFileDescriptor } from 'stryker-api/core';
-import { glob, normalize } from './utils/fileUtils';
+import { glob, normalize, isOnlineFile } from './utils/fileUtils';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('InputFileResolver');
 
 const DEFAULT_INPUT_FILE_PROPERTIES = { mutated: false, included: true };
-
-function isWebUrl(pattern: string): boolean {
-  return pattern.indexOf('http://') === 0 || pattern.indexOf('https://') === 0;
-}
 
 export default class InputFileResolver {
 
@@ -40,7 +36,7 @@ export default class InputFileResolver {
           throw Error(`File descriptor ${JSON.stringify(maybeInputFileDescriptor)} is missing mandatory property 'pattern'.`);
         } else {
           maybeInputFileDescriptor = maybeInputFileDescriptor as InputFileDescriptor;
-          if (isWebUrl(maybeInputFileDescriptor.pattern) && maybeInputFileDescriptor.mutated) {
+          if (isOnlineFile(maybeInputFileDescriptor.pattern) && maybeInputFileDescriptor.mutated) {
             throw new Error(`Cannot mutate web url "${maybeInputFileDescriptor.pattern}".`);
           }
         }
@@ -51,7 +47,7 @@ export default class InputFileResolver {
   private validateMutationArray(mutationArray: Array<string>) {
     if (mutationArray) {
       mutationArray.forEach(mutation => {
-        if (isWebUrl(mutation)) {
+        if (isOnlineFile(mutation)) {
           throw new Error(`Cannot mutate web url "${mutation}".`);
         }
       });
@@ -144,7 +140,7 @@ class PatternResolver {
   }
 
   private resolveGlobbingExpression(pattern: string): Promise<string[]> {
-    if (isWebUrl(pattern)) {
+    if (isOnlineFile(pattern)) {
       return Promise.resolve([pattern]);
     } else {
       return glob(pattern).then(files => {

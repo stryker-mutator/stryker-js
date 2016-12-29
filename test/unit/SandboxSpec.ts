@@ -20,6 +20,7 @@ describe('Sandbox', () => {
   let testFramework: any;
   const expectedFileToMutate: InputFile = { path: path.resolve('file1'), mutated: true, included: true };
   const notMutatedFile: InputFile = { path: path.resolve('file2'), mutated: false, included: false };
+  const onlineFile = 'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular.js';
   const workingFolder = 'random-folder-3';
   const expectedTargetFileToMutate = path.join(workingFolder, 'file1');
   const expectedTestFrameworkHooksFile = path.join(workingFolder, '___testHooksForStryker.js');
@@ -33,7 +34,8 @@ describe('Sandbox', () => {
     };
     files = [
       expectedFileToMutate,
-      notMutatedFile
+      notMutatedFile,
+      { path: onlineFile, mutated: false, included: true }
     ];
     sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns(workingFolder);
     sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returnsArg(0);
@@ -71,6 +73,13 @@ describe('Sandbox', () => {
         expect(coverageInstrumenter.instrumenterStreamForFile).to.have.been.calledWith(expectedFileToMutate);
         expect(StrykerTempFolder.copyFile).to.have.been.calledWith(expectedFileToMutate.path, expectedTargetFileToMutate, expectedInstrumenterStream);
       });
+
+      it('should not have copied online files', () => {
+        let expectedBaseFolder = onlineFile.substr(workingFolder.length - 1); // The Sandbox expects all files to be absolute paths. An online file is not an absolute path.
+
+        expect(StrykerTempFolder.ensureFolderExists).to.not.have.been.calledWith(workingFolder + path.dirname(expectedBaseFolder));
+        expect(StrykerTempFolder.copyFile).to.not.have.been.calledWith(onlineFile, sinon.match.any, sinon.match.any);
+      });
     });
   });
 
@@ -92,7 +101,8 @@ describe('Sandbox', () => {
           files: [
             { path: expectedTestFrameworkHooksFile, mutated: false, included: true },
             { path: expectedTargetFileToMutate, mutated: true, included: true },
-            { path: path.join(workingFolder, 'file2'), mutated: false, included: false }
+            { path: path.join(workingFolder, 'file2'), mutated: false, included: false },
+            { path: onlineFile, mutated: false, included: true }
           ],
           port: 46,
           strykerOptions: options,
@@ -155,7 +165,8 @@ describe('Sandbox', () => {
           files: [
             { path: path.join(workingFolder, '___testHooksForStryker.js'), mutated: false, included: true },
             { path: path.join(workingFolder, 'file1'), mutated: true, included: true },
-            { path: path.join(workingFolder, 'file2'), mutated: false, included: false }
+            { path: path.join(workingFolder, 'file2'), mutated: false, included: false },
+            { path: onlineFile, mutated: false, included: true }
           ],
           port: 46,
           strykerOptions: options,

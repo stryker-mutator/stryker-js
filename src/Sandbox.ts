@@ -5,6 +5,7 @@ import { RunResult, StatementMap } from 'stryker-api/test_runner';
 import { InputFile, StrykerOptions } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
+import { isOnlineFile } from './utils/fileUtils';
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
 import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
@@ -64,6 +65,11 @@ export default class Sandbox {
   }
 
   private copyFile(file: InputFile): Promise<void> {
+    if (isOnlineFile(file.path)) {
+      this.fileMap[file.path] = file.path;
+      return Promise.resolve();
+    }
+
     const cwd = process.cwd();
     const relativePath = file.path.substr(cwd.length);
     const folderName = StrykerTempFolder.ensureFolderExists(this.workingFolder + path.dirname(relativePath));

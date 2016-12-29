@@ -65,7 +65,6 @@ export function glob(expression: string): Promise<string[]> {
   });
 }
 
-
 export function readdir(path: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
     fs.readdir(path, (error, files) => {
@@ -177,4 +176,8 @@ export function mkdirRecursive(folderName: string) {
  */
 export function importModule(moduleName: string) {
   require(moduleName);
+}
+
+export function isOnlineFile(path: string): boolean {
+  return path.indexOf('http://') === 0 || path.indexOf('https://') === 0;
 }
