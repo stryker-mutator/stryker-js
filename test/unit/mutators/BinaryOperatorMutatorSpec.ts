@@ -20,12 +20,12 @@ describe('BinaryOperatorMutator', () => {
       operator: '+',
       left: <estree.Literal>{
         type: 'Literal',
-        value: 6,
+        value: typeof 6,
         raw: '6'
       },
       right: <estree.Literal>{
         type: 'Literal',
-        value: 7,
+        value: typeof 7,
         raw: '7'
       }
     };
