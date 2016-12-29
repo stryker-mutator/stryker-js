@@ -91,7 +91,7 @@ When using the config file you can provide an array with `string`s or `InputFile
 *Note*: To include a file/folder which start with an exclamation mark (`!`), use the `InputFileDescriptor` syntax.  
 
 #### Source code files to mutate  
-**Command line:** `--mutate src/**/*.js,a.js` or `-m src/**/*.js,a.js`  
+**Command line:** `[--mutate|-m] src/**/*.js,a.js`
 **Config file:** `mutate: ['src/**/*.js', 'a.js']`  
 **Default value:** *none*  
 **Mandatory**: no  
@@ -123,12 +123,12 @@ depends what framework that specific test runner supports. By default, this valu
 **Full notation:** `--coverageAnalysis perTest`  
 **Config file key:** `coverageAnalysis: 'perTest'`  
 **Default value:** `perTest`  
-**Mandatory**: yes  
+**Mandatory**: no  
 **Description:**  
 With `coverageAnalysis` you specify which coverage analysis strategy you want to use.  
 Stryker can analyse code coverage results. This can potentially speed up mutation testing a lot, as only the tests covering a 
 particular mutation are tested for each mutant. 
-This does *not* influence the resulting mutation testing score. It only improves performance.
+This does *not* influence the resulting mutation testing score. It only improves performance, so we enable it by default.
 
 The possible values are: 
 * **off**: Stryker will not determine the code covered by tests during the initial test run phase. All tests will be executed for each mutant 
@@ -143,8 +143,8 @@ test suite are tested during the mutation testing phase.
 Only the tests that cover a particular mutant are tested for each one. This requires your tests to be able to run independently of each other and in random order. 
 In addition to requiring your test runner to be able to report the code coverage back to Stryker, your chosen `testFramework` also needs to support running code
  before and after each test, as well as test filtering.  
- Currently, only `stryker-mocha-runner` fully supports this. `stryker-karma-runner` support is limited to using it with `Jasmine` as the test framework 
- (`Mocha` is not supported).
+ Currently, `stryker-mocha-runner` as well as `stryker-karma-runner` support this. However, `stryker-karma-runner` support is limited to using it with `Jasmine` as the test framework 
+ (`Mocha` is not yet supported).
 
 #### Reporters  
 **Command line:** `--reporter clear-text,progress`  
@@ -152,10 +152,13 @@ In addition to requiring your test runner to be able to report the code coverage
 **Default value:** `['clear-text', 'progress']`  
 **Mandatory**: no  
 **Description:**  
-With `reporter` you can specify a reporter or a list of different reporters to generate reports with.  
-The following reporters are supported out-of-the-box: `clear-text`, `progress` and `event-recorder`.  
-By default `clear-text` and `progress` are active if no reporter is configured.  
-Additional reporters are available as plugins. See [the official list of plugins](http://stryker-mutator.github.io/plugins.html) for more.
+With `reporter` you can set a reporter or group of reporters for stryker to use.
+These reporters can be used out of the box: `clear-text`, `progress` and `event-recorder`.
+By default `clear-text` and `progress` are active if no reporter is configured.
+You can load additional plugins to get more reporters. See [stryker-mutator.github.io](http://stryker-mutator.github.io)
+for an up-to-date list of supported reporter plugins and a description on each reporter.
+
+The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
   
 #### Plugins  
 **Command line:** `--plugins stryker-html-reporter,stryker-karma-runner`  

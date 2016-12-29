@@ -21,7 +21,7 @@ describe('ClearTextReporter', function () {
       beforeEach(() => {
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
       });
-      it('should not report the error', () => {        
+      it('should not report the error', () => {
         expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match(/error/));
       });
     });
@@ -60,15 +60,68 @@ describe('ClearTextReporter', function () {
 
     describe('onAllMutantsTested()', () => {
 
-      beforeEach(() => {
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-      });
-
       it('should log individual ran tests', () => {
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
         expect(process.stdout.write).to.have.been.calledWith('Tests ran: \n');
         expect(process.stdout.write).to.have.been.calledWith('    a test\n');
         expect(process.stdout.write).to.have.been.calledWith('    a second test\n');
+        expect(process.stdout.write).to.have.been.calledWith('    a third test\n');
         expect(process.stdout.write).to.not.have.been.calledWith('Ran all tests for this mutant.\n');
+      });
+
+      describe('with less tests that may be logged', () => {
+        it('should log less tests', () => {
+          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 1} });
+
+          sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
+          expect(process.stdout.write).to.have.been.calledWith('Tests ran: \n');
+          expect(process.stdout.write).to.have.been.calledWith('    a test\n');
+          expect(process.stdout.write).to.have.been.calledWith('  and 2 more tests!\n');
+          expect(process.stdout.write).to.not.have.been.calledWith('Ran all tests for this mutant.\n');
+        });
+      });
+
+      describe('with more tests that may be logged', () => {
+        it('should log all tests', () => {
+          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 10} });
+
+          sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
+          expect(process.stdout.write).to.have.been.calledWith('Tests ran: \n');
+          expect(process.stdout.write).to.have.been.calledWith('    a test\n');
+          expect(process.stdout.write).to.have.been.calledWith('    a second test\n');
+          expect(process.stdout.write).to.have.been.calledWith('    a third test\n');
+          expect(process.stdout.write).to.not.have.been.calledWith('Ran all tests for this mutant.\n');
+        });
+      });
+
+      describe('with the default amount of tests that may be logged', () => {
+        it('should log all tests', () => {
+          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 3} });
+
+          sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
+          expect(process.stdout.write).to.have.been.calledWith('Tests ran: \n');
+          expect(process.stdout.write).to.have.been.calledWith('    a test\n');
+          expect(process.stdout.write).to.have.been.calledWith('    a second test\n');
+          expect(process.stdout.write).to.have.been.calledWith('    a third test\n');
+          expect(process.stdout.write).to.not.have.been.calledWith('Ran all tests for this mutant.\n');
+        });
+      });
+
+      describe('with no tests that may be logged', () => {
+        it('should not log a test', () => {
+          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 0} });
+
+          sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
+          expect(process.stdout.write).to.not.have.been.calledWith('Tests ran: \n');
+          expect(process.stdout.write).to.not.have.been.calledWith('    a test\n');
+          expect(process.stdout.write).to.not.have.been.calledWith('    a second test\n');
+          expect(process.stdout.write).to.not.have.been.calledWith('    a third test\n');
+          expect(process.stdout.write).to.not.have.been.calledWith('Ran all tests for this mutant.\n');
+        });
       });
     });
   });
@@ -91,7 +144,7 @@ describe('ClearTextReporter', function () {
         expect(process.stdout.write).to.have.been.calledWith(`Mutation score based on covered code: n/a\n`));
 
       it('should report the average amount of tests ran', () =>
-        expect(process.stdout.write).to.have.been.calledWith(`Ran 2.00 tests per mutant on average.\n`));
+        expect(process.stdout.write).to.have.been.calledWith(`Ran 3.00 tests per mutant on average.\n`));
     });
   });
 
@@ -106,7 +159,7 @@ describe('ClearTextReporter', function () {
         originalLines: 'original line',
         replacement: '',
         sourceFilePath: '',
-        testsRan: ['a test', 'a second test'],
+        testsRan: ['a test', 'a second test', 'a third test'],
         status
       };
     });
