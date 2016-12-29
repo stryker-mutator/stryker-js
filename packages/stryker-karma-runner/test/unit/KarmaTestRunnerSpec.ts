@@ -18,72 +18,91 @@ describe('KarmaTestRunner', () => {
       strykerOptions: {}
     };
     sandbox = sinon.sandbox.create();
+    sandbox.stub(karma.stopper, 'stop');
     sandbox.stub(karma, 'Server').returns({ on: sandbox.stub(), start: sandbox.stub() });
   });
 
-  describe('when no testFramework is supplied', () => {
-    beforeEach(() => sut = new KarmaTestRunner(options));
+  describe('when constructed', () => {
 
-    it('should use "jasmine" as a default', () => {
-      expect(karma.Server).to.have.been.calledWithNew;
-      expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ 'frameworks': ['jasmine'] }), sinon.match.func);
-    });
-  });
+    describe('and no testFramework is supplied', () => {
+      beforeEach(() => sut = new KarmaTestRunner(options));
 
-  describe(`when coverageAnalysis = 'off'`, () => {
-
-    beforeEach(() => {
-      options.strykerOptions.coverageAnalysis = 'off';
-      sut = new KarmaTestRunner(options);
+      it('should use "jasmine" as a default', () => {
+        expect(karma.Server).to.have.been.calledWithNew;
+        expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ 'frameworks': ['jasmine'] }), sinon.match.func);
+      });
     });
 
-    it('should not configure raw coverage reporter', () =>
-      expect(karma.Server).to.not.have.been.calledWithMatch(sinon.match({ 'reporters': ['rawCoverage'] }), sinon.match.func));
-  });
-
-  describe(`when coverageAnalysis != 'off'`, () => {
-    beforeEach(() => {
-      options.strykerOptions.coverageAnalysis = 'all';
-      sut = new KarmaTestRunner(options);
-    });
-
-    it('should configure raw coverage reporter', () =>
-      expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ reporters: ['rawCoverage'], plugins: ['karma-*', rawCoverageReporter] }), sinon.match.func));
-  });
-
-  describe('when testFramework is supplied', () => {
-
-    beforeEach(() => {
-      options.strykerOptions.testFramework = 'some framework';
-    });
-
-    describe('and karmaConfig overrides the frameworks', () => {
+    describe(`and coverageAnalysis = 'off'`, () => {
 
       beforeEach(() => {
-        options.strykerOptions['karmaConfig'] = { frameworks: ['karma config override', 'second framework'] };
+        options.strykerOptions.coverageAnalysis = 'off';
         sut = new KarmaTestRunner(options);
       });
 
-      it('should use the testFramework specified in karma config', () => {
-        expect(karma.Server).to.have.been.calledWithNew;
-        expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ 'frameworks': ['karma config override', 'second framework'] }), sinon.match.func);
-      });
-
+      it('should not configure raw coverage reporter', () =>
+        expect(karma.Server).to.not.have.been.calledWithMatch(sinon.match({ 'reporters': ['rawCoverage'] }), sinon.match.func));
     });
 
-    describe('and no karmaConfig overrides the framework', () => {
-
+    describe(`and coverageAnalysis != 'off'`, () => {
       beforeEach(() => {
+        options.strykerOptions.coverageAnalysis = 'all';
         sut = new KarmaTestRunner(options);
       });
 
-      it('should use the testFramework', () => {
-        expect(karma.Server).to.have.been.calledWithNew;
-        expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ 'frameworks': ['some framework'] }), sinon.match.func);
+      it('should configure raw coverage reporter', () =>
+        expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ reporters: ['rawCoverage'], plugins: ['karma-*', rawCoverageReporter] }), sinon.match.func));
+    });
+
+    describe('and testFramework is supplied', () => {
+
+      beforeEach(() => {
+        options.strykerOptions.testFramework = 'some framework';
       });
 
+      describe('but karmaConfig overrides the frameworks', () => {
+
+        beforeEach(() => {
+          options.strykerOptions['karmaConfig'] = { frameworks: ['karma config override', 'second framework'] };
+          sut = new KarmaTestRunner(options);
+        });
+
+        it('should use the testFramework specified in karma config', () => {
+          expect(karma.Server).to.have.been.calledWithNew;
+          expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ 'frameworks': ['karma config override', 'second framework'] }), sinon.match.func);
+        });
+
+      });
+
+      describe('without karmaConfig overriding the framework', () => {
+
+        beforeEach(() => {
+          sut = new KarmaTestRunner(options);
+        });
+
+        it('should use the testFramework', () => {
+          expect(karma.Server).to.have.been.calledWithNew;
+          expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ 'frameworks': ['some framework'] }), sinon.match.func);
+        });
+      });
     });
   });
+
+  describe('dispose()', () => {
+
+    beforeEach(() => {
+      sut = new KarmaTestRunner(options);
+    });
+
+    it('should stop karma', () => {
+      const promise = sut.dispose();
+      (karma.stopper.stop as sinon.SinonStub).callArg(1);
+      expect(karma.stopper.stop).to.have.been.calledWith({ port: options.port });
+      return promise;
+    });
+  });
+
+
 
   afterEach(() => sandbox.restore());
 });

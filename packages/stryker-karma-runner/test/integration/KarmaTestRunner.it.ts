@@ -1,9 +1,6 @@
-import * as chai from 'chai';
-import KarmaTestRunner from '../../src/KarmaTestRunner';
+import { expect } from 'chai';
 import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import * as chaiAsPromised from 'chai-as-promised';
-chai.use(chaiAsPromised);
-let expect = chai.expect;
+import KarmaTestRunner from '../../src/KarmaTestRunner';
 
 describe('KarmaTestRunner', function () {
 
