@@ -6,8 +6,7 @@
   "typings": "src/Stryker.d.ts",
   "scripts": {
     "test": "grunt test",
-    "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
-    "tsc:w": "tsc -w",
+    "start": "tsc -w",
     "sample": "node src/stryker-cli.js --configFile testResources/sampleProject/stryker.conf.js",
     "preversion": "grunt"
   },
