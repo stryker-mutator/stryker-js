@@ -30,11 +30,12 @@
     "Simon de Lang <simondelang@gmail.com>",
     "Nico Jansen <jansennico@gmail.com>",
     "global <jansennico@gmail.com>",
-    "Nico Stapelbroek <nstapelbroek@gmail.com>",
-    "Jeremy Nagel <jeremy.nagel@learnosity.com>",
-    "Michael Williamson <mike@zwobble.org>",
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
-    "Alex van Assem <avassem@gmail.com"
+    "Jasper Catthoor <jasper.catthoor@gmail.com>",
+    "Nico Stapelbroek <nstapelbroek@gmail.com>",
+    "Alex van Assem <avassem@gmail.com>",
+    "Jeremy Nagel <jeremy.nagel@learnosity.com>",
+    "Michael Williamson <mike@zwobble.org>"
   ],
   "license": "Apache-2.0",
   "bin": {
