@@ -77,7 +77,7 @@
     "sinon-chai": "^2.8.0",
     "stryker-api": "^0.4.1",
     "tslint": "^3.15.1",
-    "typescript": "~2.0.10"
+    "typescript": "^2.1.4"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",
