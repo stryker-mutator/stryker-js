@@ -1,3 +1,16 @@
+<a name="0.3.3"></a>
+## [0.3.3](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.3.2...v0.3.3) (2016-12-30)
+
+
+### Features
+
+* **lifetime-support:** Drop Node 0.12 support (#14) ([16724af](https://github.io/stryker-mutator/stryker-karma-runner/commit/16724af))
+* **package.json:** Upgrade to TypeScript 2.1 (#13) ([31a291f](https://github.io/stryker-mutator/stryker-karma-runner/commit/31a291f))
+* **read-karma-config:** Use karma configuration (#10) ([d466abb](https://github.io/stryker-mutator/stryker-karma-runner/commit/d466abb))
+* **stop-karma:** Stop karma on dispose (#11) ([05545eb](https://github.io/stryker-mutator/stryker-karma-runner/commit/05545eb))
+
+
+
 <a name="0.3.2"></a>
 ## [0.3.2](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.3.1...v0.3.2) (2016-12-14)
 
