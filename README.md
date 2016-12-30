@@ -24,10 +24,7 @@ To test if Stryker is installed correctly, execute the command:
 $ node_modules/.bin/stryker --version
 ```
 
-This should print:
-```sh
-$ 0.5.4
-```
+This should print the latest version of Stryker.
 
 ## Usage
 
@@ -47,7 +44,7 @@ module.exports = function(config){
     files: ['test/helpers/**/*.js', 'test/unit/**/*.js', { pattern: 'src/**/*.js', included: false, mutated: true }],
     testFramework: 'mocha',
     testRunner: 'mocha',
-    reporter: ['progress', 'clear-text', 'html', 'event-recorder'],
+    reporter: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
     coverageAnalysis: 'perTest',
     plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
   });
@@ -147,8 +144,8 @@ In addition to requiring your test runner to be able to report the code coverage
  (`Mocha` is not yet supported).
 
 #### Reporters  
-**Command line:** `--reporter clear-text,progress`  
-**Config file:** `reporter: ['clear-text', 'progress']`     
+**Command line:** `--reporter clear-text,progress,dots`  
+**Config file:** `reporter: ['clear-text', 'progress', 'dots']`     
 **Default value:** `['clear-text', 'progress']`  
 **Mandatory**: no  
 **Description:**  
