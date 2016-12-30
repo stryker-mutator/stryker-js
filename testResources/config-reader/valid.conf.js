@@ -1,8 +1,1 @@
-
-module.exports = function(config){
-  config.set({
-    'valid': 'config',
-    'should': 'be',
-    'read': true
-  });  
-};
+module.exports = require('./stryker.conf.js');
