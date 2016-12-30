@@ -97,19 +97,11 @@
     "sinon": "^1.17.2",
     "sinon-as-promised": "^4.0.2",
     "sinon-chai": "^2.8.0",
-<<<<<<< HEAD
-    "stryker-api": "^0.4.2-rc1",
-=======
     "stryker-api": "^0.4.2",
->>>>>>> master
     "tslint": "^3.15.1",
     "typescript": "^2.1.4"
   },
   "peerDependencies": {
-<<<<<<< HEAD
-    "stryker-api": "^0.4.2-rc1"
-=======
     "stryker-api": "^0.4.2"
->>>>>>> master
   }
 }
