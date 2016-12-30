@@ -105,18 +105,15 @@ class PatternResolver {
       // Start the globbing task for the current descriptor
       const globbingTask = this.resolveGlobbingExpression(this.descriptor.pattern)
         .then(filePaths => filePaths.map(filePath => this.createInputFile(filePath)));
+     
+      // If there is a previous globbing expression, resolve that one as well
       if (this.previous) {
-        // If there is a previous globbing expression, resolve that one as well
         return Promise.all([this.previous.resolve(), globbingTask]).then(results => {
           const previousFiles = results[0];
           const currentFiles = results[1];
           // If this expression started with a '!', exclude current files
           if (this.ignore) {
-            // Don't filter files when there are no current files
-            if (currentFiles.length === 0) {
-              return previousFiles;
-            }
-            return previousFiles.filter(previousFile => currentFiles.some(currentFile => previousFile.path !== currentFile.path));
+            return previousFiles.filter(previousFile => currentFiles.every(currentFile => previousFile.path !== currentFile.path));
           } else {
             // Only add files which were not already added
             return previousFiles.concat(currentFiles.filter(currentFile => !previousFiles.some(file => file.path === currentFile.path)));

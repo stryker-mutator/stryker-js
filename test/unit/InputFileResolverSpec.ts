@@ -161,24 +161,27 @@ describe('InputFileResolver', () => {
 
     it('should not exclude files added using an input file descriptor', () =>
       expect(new InputFileResolver([], ['file2', { pattern: '!file2' }]).resolve()).to.eventually.deep.equal(fileDescriptors(['/file2.js'])));
+
+    it('should not exlude files when the globbing expression results in an empty array', () =>
+      expect(new InputFileResolver([], ['file2', '!does/not/exist']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file2.js'])));
   });
 
   describe('when provided duplicate files', () => {
 
-    it('should deduplicate files that occur more than once', () => 
+    it('should deduplicate files that occur more than once', () =>
       expect(new InputFileResolver([], ['file2', 'file2']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file2.js'])));
-    
-    it('should deduplicate files that previously occured in a wildcard expression', () => 
+
+    it('should deduplicate files that previously occured in a wildcard expression', () =>
       expect(new InputFileResolver([], ['file*', 'file2']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file1.js', '/file2.js', '/file3.js'])));
-    
-    it('should order files by expression order', () => 
+
+    it('should order files by expression order', () =>
       expect(new InputFileResolver([], ['file2', 'file*']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file2.js', '/file1.js', '/file3.js'])));
 
   });
 
   describe('with url as file pattern', () => {
     it('should pass through the web urls without globbing', () => {
-      return new InputFileResolver([], ['http://www', {pattern: 'https://ok'}])
+      return new InputFileResolver([], ['http://www', { pattern: 'https://ok' }])
         .resolve()
         .then(() => expect(fileUtils.glob).to.not.have.been.called);
     });
@@ -188,7 +191,7 @@ describe('InputFileResolver', () => {
     });
 
     it('should fail when web url is to be mutated', () => {
-      expect(() => new InputFileResolver([], [ { pattern: 'http://www', mutated: true } ])).throws('Cannot mutate web url "http://www".');
+      expect(() => new InputFileResolver([], [{ pattern: 'http://www', mutated: true }])).throws('Cannot mutate web url "http://www".');
     });
   });
 
