@@ -12,11 +12,11 @@ export default class ProgressReporter implements Reporter {
     killed: 0,
     timeout: 0,
     noCoverage: 0,
-    killedLabel: `${chalk.green.bold('killed')}`,
-    survivedLabel: `${chalk.red.bold('survived')}`,
-    noCoverageLabel: `${chalk.red.bold('no coverage')}`,
-    timeoutLabel: `${chalk.yellow.bold('timeout')}`,
-    errorLabel: `${chalk.yellow.bold('error')}`
+    killedLabel: chalk.green.bold('killed'),
+    survivedLabel: chalk.red.bold('survived'),
+    noCoverageLabel: chalk.red.bold('no coverage'),
+    timeoutLabel: chalk.yellow.bold('timeout'),
+    errorLabel: chalk.yellow.bold('error')
   };
 
   onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
