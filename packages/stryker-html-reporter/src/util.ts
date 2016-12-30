@@ -9,11 +9,11 @@ import SourceFileTreeLeaf from './SourceFileTreeLeaf';
 
 export function copyFolder(fromPath: string, to: string): Promise<any> {
   return mkdirRecursive(to).then(() => mzfs.readdir(fromPath).then(files => {
-    let promisses: Promise<void>[] = [];
+    let promises: Promise<mzfs.Stats>[] = [];
     files.forEach(file => {
       let currentPath = path.join(fromPath, file);
       let toCurrentPath = path.join(to, file);
-      promisses.push(mzfs.stat(currentPath).then(stats => {
+      promises.push(mzfs.stat(currentPath).then(stats => {
         if (stats.isDirectory()) {
           return copyFolder(currentPath, toCurrentPath);
         } else {
@@ -21,7 +21,7 @@ export function copyFolder(fromPath: string, to: string): Promise<any> {
         }
       }));
     });
-    return Promise.all(promisses);
+    return Promise.all(promises);
   }));
 }
 
@@ -46,7 +46,7 @@ export function deleteDir(dirToDelete: string): Promise<void> {
   return fileOrFolderExists(dirToDelete).then(exists => {
     if (exists) {
       return mzfs.readdir(dirToDelete).then(files => {
-        let promisses = files.map(file => {
+        let promises = files.map(file => {
           let currentPath = path.join(dirToDelete, file);
           return mzfs.stat(currentPath).then(stats => {
             if (stats.isDirectory()) {
@@ -59,7 +59,7 @@ export function deleteDir(dirToDelete: string): Promise<void> {
           });
         });
         // delete dir
-        return Promise.all(promisses).then(() => mzfs.rmdir(dirToDelete));
+        return Promise.all(promises).then(() => mzfs.rmdir(dirToDelete));
       });
     }
   });
@@ -108,7 +108,7 @@ handlebars.registerPartial('resultTableHead', readTemplate('resultTableHead'));
 handlebars.registerHelper('code', function () {
   let leaf: SourceFileTreeLeaf = this;
   let currentBackground: string | null = null;
-  let currentCursorMutantStatusses = {
+  let currentCursorMutantStatuses = {
     killed: 0,
     survived: 0,
     timeout: 0,
@@ -121,28 +121,28 @@ handlebars.registerHelper('code', function () {
   let adjustCurrentMutantResult = (valueToAdd: number) => (numberedMutant: { mutant: MutantResult, index: number }) => {
     switch (numberedMutant.mutant.status) {
       case MutantStatus.Killed:
-        currentCursorMutantStatusses.killed += valueToAdd;
+        currentCursorMutantStatuses.killed += valueToAdd;
         break;
       case MutantStatus.Survived:
-        currentCursorMutantStatusses.survived += valueToAdd;
+        currentCursorMutantStatuses.survived += valueToAdd;
         break;
       case MutantStatus.TimedOut:
-        currentCursorMutantStatusses.timeout += valueToAdd;
+        currentCursorMutantStatuses.timeout += valueToAdd;
         break;
       case MutantStatus.NoCoverage:
-        currentCursorMutantStatusses.noCoverage += valueToAdd;
+        currentCursorMutantStatuses.noCoverage += valueToAdd;
         break;
     }
   };
 
   let determineBackground = () => {
-    if (currentCursorMutantStatusses.survived > 0) {
+    if (currentCursorMutantStatuses.survived > 0) {
       return getContextClassForStatus(MutantStatus.Survived);
-    } else if (currentCursorMutantStatusses.noCoverage > 0) {
+    } else if (currentCursorMutantStatuses.noCoverage > 0) {
       return getContextClassForStatus(MutantStatus.NoCoverage);
-    } else if (currentCursorMutantStatusses.timeout > 0) {
+    } else if (currentCursorMutantStatuses.timeout > 0) {
       return getContextClassForStatus(MutantStatus.TimedOut);
-    } else if (currentCursorMutantStatusses.killed > 0) {
+    } else if (currentCursorMutantStatuses.killed > 0) {
       return getContextClassForStatus(MutantStatus.Killed);
     }
     return null;
