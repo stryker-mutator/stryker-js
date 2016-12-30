@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "grunt test",
-    "preversion": "npm run test"
+    "preversion": "npm run test",
+    "start": "tsc -w"
   },
   "repository": {
     "type": "git",
