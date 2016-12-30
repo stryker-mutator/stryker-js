@@ -176,6 +176,22 @@ describe('InputFileResolver', () => {
 
   });
 
+  describe('with url as file pattern', () => {
+    it('should pass through the web urls without globbing', () => {
+      return new InputFileResolver([], ['http://www', {pattern: 'https://ok'}])
+        .resolve()
+        .then(() => expect(fileUtils.glob).to.not.have.been.called);
+    });
+
+    it('should fail when web url is in the mutated array', () => {
+      expect(() => new InputFileResolver(['http://www'], ['http://www'])).throws('Cannot mutate web url "http://www".');
+    });
+
+    it('should fail when web url is to be mutated', () => {
+      expect(() => new InputFileResolver([], [ { pattern: 'http://www', mutated: true } ])).throws('Cannot mutate web url "http://www".');
+    });
+  });
+
   afterEach(() => {
     sandbox.restore();
   });

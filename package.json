@@ -1,13 +1,12 @@
 {
   "name": "stryker",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
   "scripts": {
     "test": "grunt test",
-    "start": "concurrently \"npm run tsc:w\" \"grunt serve\"",
-    "tsc:w": "tsc -w",
+    "start": "tsc -w",
     "sample": "node src/stryker-cli.js --configFile testResources/sampleProject/stryker.conf.js",
     "preversion": "grunt"
   },
@@ -30,8 +29,10 @@
   "contributors": [
     "Simon de Lang <simondelang@gmail.com>",
     "Nico Jansen <jansennico@gmail.com>",
-    "global <jansennico@gmail.com>",
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
+    "Jasper Catthoor <jasper.catthoor@gmail.com>",
     "Nico Stapelbroek <nstapelbroek@gmail.com>",
+    "Alex van Assem <avassem@gmail.com>",
     "Jeremy Nagel <jeremy.nagel@learnosity.com>",
     "Michael Williamson <mike@zwobble.org>",
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
@@ -96,11 +97,19 @@
     "sinon": "^1.17.2",
     "sinon-as-promised": "^4.0.2",
     "sinon-chai": "^2.8.0",
+<<<<<<< HEAD
     "stryker-api": "^0.4.2-rc1",
+=======
+    "stryker-api": "^0.4.2",
+>>>>>>> master
     "tslint": "^3.15.1",
-    "typescript": "~2.0.2"
+    "typescript": "^2.1.4"
   },
   "peerDependencies": {
+<<<<<<< HEAD
     "stryker-api": "^0.4.2-rc1"
+=======
+    "stryker-api": "^0.4.2"
+>>>>>>> master
   }
 }

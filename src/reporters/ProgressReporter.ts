@@ -1,7 +1,6 @@
 import { Reporter, MatchedMutant, MutantResult, MutantStatus } from 'stryker-api/report';
 import ProgressBar from './ProgressBar';
 import * as chalk from 'chalk';
-import * as _ from 'lodash';
 
 export default class ProgressReporter implements Reporter {
   private progressBar: ProgressBar;

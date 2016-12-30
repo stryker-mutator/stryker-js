@@ -16,7 +16,7 @@ const log = log4js.getLogger('ConfigReader');
 
 export default class ConfigReader {
 
-  constructor(private options: StrykerOptions) { }
+  constructor(private cliOptions: StrykerOptions) { }
 
   readConfig() {
     const configModule = this.loadConfigModule();
@@ -29,20 +29,20 @@ export default class ConfigReader {
     }
 
     // merge the config from config file and cliOptions (precedence)
-    config.set(this.options);
+    config.set(this.cliOptions);
     this.validate(config);
     return config;
   }
 
   private loadConfigModule(): Function {
     let configModule: Function;
-    if (this.options.configFile) {
-      log.debug('Loading config %s', this.options.configFile);
+    if (this.cliOptions.configFile) {
+      log.debug('Loading config %s', this.cliOptions.configFile);
       try {
-        configModule = require(`${process.cwd()}/${this.options.configFile}`);
+        configModule = require(`${process.cwd()}/${this.cliOptions.configFile}`);
       } catch (e) {
-        if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(this.options.configFile) !== -1) {
-          log.fatal('File %s does not exist!', this.options.configFile);
+        if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(this.cliOptions.configFile) !== -1) {
+          log.fatal(`File ${process.cwd()}/${this.cliOptions.configFile} does not exist!`);
           log.fatal(e);
         } else {
           log.fatal('Invalid config file!\n  ' + e.stack);
@@ -53,8 +53,12 @@ export default class ConfigReader {
         log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
         process.exit(1);
       }
+    } else if (Object.keys(this.cliOptions).length === 0) {
+      log.info('Using stryker.conf.js in the current working directory.');
+      this.cliOptions.configFile = 'stryker.conf.js';
+      return this.loadConfigModule();
     } else {
-      log.debug('No config file specified.');
+      log.info('No config file specified. Running with command line arguments');
       // if no config file path is passed, we define a dummy config module.
       configModule = function () { };
     }

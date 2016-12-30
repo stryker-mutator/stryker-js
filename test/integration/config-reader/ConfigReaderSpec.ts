@@ -1,8 +1,8 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 import ConfigReader from '../../../src/ConfigReader';
-import {Config} from 'stryker-api/config';
+import { Config } from 'stryker-api/config';
 import log from '../../helpers/log4jsMock';
 
 describe('ConfigReader', () => {
@@ -32,6 +32,34 @@ describe('ConfigReader', () => {
         expect(result['someOther']).to.be.eq(2);
       });
     });
+
+    describe('without config file or CLI options', () => {
+        describe('with a stryker.conf.js in the CWD', () => {
+          it('should parse the config', () => {
+            let mockCwd = process.cwd() + '/testResources/config-reader';
+            sandbox.stub(process, 'cwd').returns(mockCwd);
+            sut = new ConfigReader({});
+
+            result = sut.readConfig();
+
+            expect(result['valid']).to.be.eq('config');
+            expect(result['should']).to.be.eq('be');
+            expect(result['read']).to.be.eq(true);
+          });
+        });
+
+        describe('without a stryker.conf.js in the CWD', () => {
+          it('should report a fatal error', () => {
+            let mockCwd = process.cwd() + '/testResources/config-reader/no-config';
+            sandbox.stub(process, 'cwd').returns(mockCwd);
+            sut = new ConfigReader({});
+
+            result = sut.readConfig(); 
+
+            expect(log.fatal).to.have.been.calledWith(`File ${mockCwd}/stryker.conf.js does not exist!`);
+          });
+        });
+      });
 
     describe('with invalid coverageAnalysis', () => {
       beforeEach(() => {
@@ -69,7 +97,7 @@ describe('ConfigReader', () => {
       });
 
       it('should report a fatal error', () => {
-        expect(log.fatal).to.have.been.calledWith('File %s does not exist!', '/did/you/know/that/this/file/does/not/exists/questionmark');
+        expect(log.fatal).to.have.been.calledWith(`File ${process.cwd()}//did/you/know/that/this/file/does/not/exists/questionmark does not exist!`);
       });
 
       it('should exit with 1', () => {

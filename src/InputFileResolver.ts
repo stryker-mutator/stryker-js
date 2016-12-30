@@ -1,5 +1,5 @@
 import { InputFile, InputFileDescriptor } from 'stryker-api/core';
-import { glob, normalize } from './utils/fileUtils';
+import { glob, normalize, isOnlineFile } from './utils/fileUtils';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
 
@@ -14,6 +14,7 @@ export default class InputFileResolver {
 
   constructor(mutate: string[], allFileExpressions: Array<InputFileDescriptor | string>) {
     this.validateFileDescriptor(allFileExpressions);
+    this.validateMutationArray(mutate);
     this.mutateResolver = PatternResolver.parse(mutate || []);
     this.inputFileResolver = PatternResolver.parse(allFileExpressions);
   }
@@ -33,9 +34,24 @@ export default class InputFileResolver {
       if (_.isObject(maybeInputFileDescriptor)) {
         if (Object.keys(maybeInputFileDescriptor).indexOf('pattern') === -1) {
           throw Error(`File descriptor ${JSON.stringify(maybeInputFileDescriptor)} is missing mandatory property 'pattern'.`);
+        } else {
+          maybeInputFileDescriptor = maybeInputFileDescriptor as InputFileDescriptor;
+          if (isOnlineFile(maybeInputFileDescriptor.pattern) && maybeInputFileDescriptor.mutated) {
+            throw new Error(`Cannot mutate web url "${maybeInputFileDescriptor.pattern}".`);
+          }
         }
       }
     });
+  }
+
+  private validateMutationArray(mutationArray: Array<string>) {
+    if (mutationArray) {
+      mutationArray.forEach(mutation => {
+        if (isOnlineFile(mutation)) {
+          throw new Error(`Cannot mutate web url "${mutation}".`);
+        }
+      });
+    }
   }
 
   private markAdditionalFilesToMutate(allInputFiles: InputFile[], additionalMutateFiles: string[]) {
@@ -70,7 +86,7 @@ class PatternResolver {
   private descriptor: InputFileDescriptor;
 
   constructor(descriptor: InputFileDescriptor | string, private previous?: PatternResolver) {
-    if (typeof descriptor === 'string') {
+    if (typeof descriptor === 'string') { // mutator array is a string array
       this.descriptor = <InputFileDescriptor>_.assign({ pattern: descriptor }, DEFAULT_INPUT_FILE_PROPERTIES);
       this.ignore = descriptor.indexOf('!') === 0;
       if (this.ignore) {
@@ -87,7 +103,7 @@ class PatternResolver {
       return Promise.resolve([]);
     } else {
       // Start the globbing task for the current descriptor
-      const globbingTask = this.resolveFileGlob(this.descriptor.pattern)
+      const globbingTask = this.resolveGlobbingExpression(this.descriptor.pattern)
         .then(filePaths => filePaths.map(filePath => this.createInputFile(filePath)));
       if (this.previous) {
         // If there is a previous globbing expression, resolve that one as well
@@ -127,14 +143,18 @@ class PatternResolver {
     return current;
   }
 
-  private resolveFileGlob(pattern: string): Promise<string[]> {
-    return glob(pattern).then(files => {
-      if (files.length === 0) {
-        this.reportEmptyGlobbingExpression(pattern);
-      }
-      normalize(files);
-      return files;
-    });
+  private resolveGlobbingExpression(pattern: string): Promise<string[]> {
+    if (isOnlineFile(pattern)) {
+      return Promise.resolve([pattern]);
+    } else {
+      return glob(pattern).then(files => {
+        if (files.length === 0) {
+          this.reportEmptyGlobbingExpression(pattern);
+        }
+        normalize(files);
+        return files;
+      });
+    }
   }
 
   private reportEmptyGlobbingExpression(expression: string) {

@@ -18,7 +18,6 @@ describe('ProgressReporter', () => {
     `[:noCoverage :noCoverageLabel] ` +
     `[:timeout :timeoutLabel] ` +
     `[:error :errorLabel]`;
-  let progressBarOptions: any = { complete: '=', incomplete: ' ', total: null };
 
   beforeEach(() => {
     sut = new ProgressReporter();
@@ -40,8 +39,7 @@ describe('ProgressReporter', () => {
       });
 
       it('the total of MatchedMutants in the progressbar should be 3', () => {
-        progressBarOptions.total = 3;
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, progressBarOptions);
+        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
       });
     });
     describe('when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesnt have tests', () => {
@@ -52,8 +50,7 @@ describe('ProgressReporter', () => {
       });
 
       it('the total of MatchedMutants in the progressbar should be 2', () => {
-        progressBarOptions.total = 2;
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, progressBarOptions);
+        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
   });

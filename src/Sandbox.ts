@@ -5,6 +5,7 @@ import { RunResult, StatementMap } from 'stryker-api/test_runner';
 import { InputFile, StrykerOptions } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
+import { isOnlineFile } from './utils/fileUtils';
 import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
 import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
@@ -64,14 +65,19 @@ export default class Sandbox {
   }
 
   private copyFile(file: InputFile): Promise<void> {
-    const cwd = process.cwd();
-    const relativePath = file.path.substr(cwd.length);
-    const folderName = StrykerTempFolder.ensureFolderExists(this.workingFolder + path.dirname(relativePath));
-    const targetFile = path.join(folderName, path.basename(relativePath));
-    this.fileMap[file.path] = targetFile;
-    const instrumentingStream = this.coverageInstrumenter ?
-      this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
-    return StrykerTempFolder.copyFile(file.path, targetFile, instrumentingStream);
+    if (isOnlineFile(file.path)) {
+      this.fileMap[file.path] = file.path;
+      return Promise.resolve();
+    } else {
+      const cwd = process.cwd();
+      const relativePath = file.path.substr(cwd.length);
+      const folderName = StrykerTempFolder.ensureFolderExists(this.workingFolder + path.dirname(relativePath));
+      const targetFile = path.join(folderName, path.basename(relativePath));
+      this.fileMap[file.path] = targetFile;
+      const instrumentingStream = this.coverageInstrumenter ?
+        this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
+      return StrykerTempFolder.copyFile(file.path, targetFile, instrumentingStream);
+    }
   }
 
   private initializeTestRunner(): void | Promise<any> {
