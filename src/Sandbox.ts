@@ -68,16 +68,16 @@ export default class Sandbox {
     if (isOnlineFile(file.path)) {
       this.fileMap[file.path] = file.path;
       return Promise.resolve();
+    } else {
+      const cwd = process.cwd();
+      const relativePath = file.path.substr(cwd.length);
+      const folderName = StrykerTempFolder.ensureFolderExists(this.workingFolder + path.dirname(relativePath));
+      const targetFile = path.join(folderName, path.basename(relativePath));
+      this.fileMap[file.path] = targetFile;
+      const instrumentingStream = this.coverageInstrumenter ?
+        this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
+      return StrykerTempFolder.copyFile(file.path, targetFile, instrumentingStream);
     }
-
-    const cwd = process.cwd();
-    const relativePath = file.path.substr(cwd.length);
-    const folderName = StrykerTempFolder.ensureFolderExists(this.workingFolder + path.dirname(relativePath));
-    const targetFile = path.join(folderName, path.basename(relativePath));
-    this.fileMap[file.path] = targetFile;
-    const instrumentingStream = this.coverageInstrumenter ?
-      this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
-    return StrykerTempFolder.copyFile(file.path, targetFile, instrumentingStream);
   }
 
   private initializeTestRunner(): void | Promise<any> {
