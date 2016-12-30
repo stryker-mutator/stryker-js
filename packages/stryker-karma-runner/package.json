@@ -11,6 +11,9 @@
     "type": "git",
     "url": "https://github.io/stryker-mutator/stryker-karma-runner"
   },
+  "engines": {
+    "node": ">=4"
+  },
   "keywords": [
     "stryker",
     "stryker-plugin",
