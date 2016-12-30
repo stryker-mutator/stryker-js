@@ -96,6 +96,10 @@ class PatternResolver {
           const currentFiles = results[1];
           // If this expression started with a '!', exclude current files
           if (this.ignore) {
+            // Don't filter files when there are no current files
+            if (currentFiles.length === 0) {
+              return previousFiles;
+            }
             return previousFiles.filter(previousFile => currentFiles.some(currentFile => previousFile.path !== currentFile.path));
           } else {
             // Only add files which were not already added
