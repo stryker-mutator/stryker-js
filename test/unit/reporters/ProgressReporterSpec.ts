@@ -18,7 +18,6 @@ describe('ProgressReporter', () => {
     `[:noCoverage :noCoverageLabel] ` +
     `[:timeout :timeoutLabel] ` +
     `[:error :errorLabel]`;
-  let progressBarOptions: any;
 
   beforeEach(() => {
     sut = new ProgressReporter();

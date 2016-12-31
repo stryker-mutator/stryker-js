@@ -54,7 +54,7 @@ export function normalize(files: string[]): void {
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
 
-    nodeGlob(expression, (error, matches) => {
+    nodeGlob(expression, { nodir: true }, (error, matches) => {
       if (error) {
         reject(error);
       } else {

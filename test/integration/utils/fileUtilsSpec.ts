@@ -13,9 +13,8 @@ describe('fileUtils', () => {
 
   afterEach(() => sandbox.restore());
 
-  describe('should be able to read a file', () => {
-
-    it('synchronously', () => {
+  describe('readFileSync()', () => {
+    it('should synchronously', () => {
       const msg = 'hello 1 2';
       sandbox.stub(fs, 'readFileSync', (filename: string, encoding: string) => msg);
       const data = fileUtils.readFile('hello.js');
@@ -23,16 +22,25 @@ describe('fileUtils', () => {
     });
   });
 
-  it('should indicate that an existing file exists', () => {
-    const exists = fileUtils.fileOrFolderExistsSync('src/Stryker.ts');
+  describe('fileOrFolderExistsSync()', () => {
+    it('should indicate that an existing file exists', () => {
+      const exists = fileUtils.fileOrFolderExistsSync('src/Stryker.ts');
 
-    expect(exists).to.equal(true);
+      expect(exists).to.equal(true);
+    });
+    it('should indicate that an non-existing file does not exists', () => {
+      const exists = fileUtils.fileOrFolderExistsSync('src/Strykerfaefeafe.js');
+
+      expect(exists).to.equal(false);
+    });
   });
 
-  it('should indicate that an non-existing file does not exists', () => {
-    const exists = fileUtils.fileOrFolderExistsSync('src/Strykerfaefeafe.js');
+  describe('glob', () => {
+    it('should resolve files', () => 
+      expect(fileUtils.glob('testResources/sampleProject/**/*.js')).to.eventually.have.length(9));
 
-    expect(exists).to.equal(false);
+    it('should not resolve to directories', () => 
+      expect(fileUtils.glob('testResources/vendor/**/*.js')).to.eventually.have.length(1));
   });
 
 });
