@@ -4,6 +4,7 @@ import * as chalk from 'chalk';
 import { expect } from 'chai';
 import { MatchedMutant, MutantResult, MutantStatus } from 'stryker-api/report';
 import ProgressAppendOnlyReporter from '../../../src/reporters/ProgressAppendOnlyReporter';
+import { matchedMutant, mutantResult } from '../../helpers/producers';
 
 describe('ProgressAppendOnlyReporter', () => {
   let sut: ProgressAppendOnlyReporter;
@@ -51,29 +52,3 @@ describe('ProgressAppendOnlyReporter', () => {
     });
   });
 });
-function matchedMutant(numberOfTests: number): MatchedMutant {
-  let scopedTestIds: number[] = [];
-  for (let i = 0; i < numberOfTests; i++) {
-    scopedTestIds.push(1);
-  }
-  return {
-    mutatorName: null,
-    scopedTestIds: scopedTestIds,
-    timeSpentScopedTests: null,
-    filename: null,
-    replacement: null
-  };
-}
-function mutantResult(status: MutantStatus): MutantResult {
-  return {
-    location: null,
-    mutatedLines: null,
-    mutatorName: null,
-    originalLines: null,
-    replacement: null,
-    sourceFilePath: null,
-    testsRan: null,
-    status,
-    range: null
-  };
-}

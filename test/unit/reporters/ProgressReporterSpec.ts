@@ -1,9 +1,10 @@
-import ProgressReporter from '../../../src/reporters/ProgressReporter';
-import * as progressBarModule from '../../../src/reporters/ProgressBar';
-import { MutantStatus, MutantResult, MatchedMutant } from 'stryker-api/report';
-import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as chalk from 'chalk';
+import { expect } from 'chai';
+import { MutantStatus, MutantResult, MatchedMutant } from 'stryker-api/report';
+import ProgressReporter from '../../../src/reporters/ProgressReporter';
+import * as progressBarModule from '../../../src/reporters/ProgressBar';
+import { matchedMutant, mutantResult } from '../../helpers/producers';
 
 describe('ProgressReporter', () => {
 
@@ -129,31 +130,3 @@ describe('ProgressReporter', () => {
     });
   });
 });
-
-function mutantResult(status: MutantStatus): MutantResult {
-  return {
-    location: null,
-    mutatedLines: null,
-    mutatorName: null,
-    originalLines: null,
-    replacement: null,
-    sourceFilePath: null,
-    testsRan: null,
-    status,
-    range: null
-  };
-}
-
-function matchedMutant(numberOfTests: number): MatchedMutant {
-  let scopedTestIds: number[] = [];
-  for (let i = 0; i < numberOfTests; i++) {
-    scopedTestIds.push(1);
-  }
-  return {
-    mutatorName: null,
-    scopedTestIds: scopedTestIds,
-    timeSpentScopedTests: null,
-    filename: null,
-    replacement: null
-  };
-}
