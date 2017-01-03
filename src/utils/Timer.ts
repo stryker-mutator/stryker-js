@@ -11,9 +11,13 @@ export default class Timer {
   }
 
   humanReadableElapsed() {
-    const elapsedMs = new Date().getTime() - this.start.getTime();
-    const elapsedSeconds = Math.floor(elapsedMs / 1000);
+    const elapsedSeconds = this.elapsedSeconds();
     return Timer.humanReadableElapsedMinutes(elapsedSeconds) + Timer.humanReadableElapsedSeconds(elapsedSeconds);
+  }
+
+  elapsedSeconds() {
+    const elapsedMs = new Date().getTime() - this.start.getTime();
+    return Math.floor(elapsedMs / 1000);
   }
 
   private static humanReadableElapsedSeconds(elapsedSeconds: number) {
