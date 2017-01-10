@@ -1,11 +1,11 @@
-import { TestRunner, RunnerOptions, RunOptions, RunResult, TestResult, RunState, TestState } from 'stryker-api/test_runner';
+import { TestRunner, RunnerOptions, RunOptions, RunResult, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { EventEmitter } from 'events';
 
 /**
  * Represents a TestRunner which can execute tests, resulting in a RunResult.
  *
  * A test runner should:
- *  - Report per a `testResult` per test. See `TestResult` interfact to know what is expected.
+ *  - Report a `testResult` per test. See `TestResult` interfact to know what is expected.
  *  - Emit `'test_done'` event with a TestResult as argument every time a test is executed (for reporting purposes)
  *  - Report on code coverage after the initial test run (maybe, see below)
  *
@@ -24,10 +24,10 @@ import { EventEmitter } from 'events';
  * 3. If `coverageStrategy: 'perTest'`: Coverage should be collected per test.
  *
  * For 2 and 3, Stryker will instrument the code with the istanbul code coverage engine during initial run.
- * In case of 3, Stryker will also inject beforeEach and afterEach hooks (specific to each test framework) in distinct between specific tests.
+ * In case of 3, Stryker will also inject `beforeEach` and `afterEach` hooks (specific to each test framework) in distinct between specific tests.
  *
  * At the end of the test run, the code coverage report is ready in a global variable called `__coverage__`. Node based test runners
- * which run there tests in the same process as the test runner is spawned in actually don't have to do any work, Stryker will be able
+ * which run their tests in the same process as the test runner is spawned in actually don't have to do any work, Stryker will be able
  * to pick up the report globally. However, if running in worker processes or a browser, it is the test runner's responsibility to
  * report the `__coverage__` at the end of the test run.
  *
@@ -56,17 +56,17 @@ export default class MyTestRunner extends EventEmitter implements TestRunner {
   run(options: RunOptions): Promise<RunResult> {
     const oneTestResult: TestResult = {
       /**
-      * The full human readable name of the test
-      */
+       * The full human readable name of the test
+       */
       name: '',
       /**
-       * The state of the test
+       * The status of the test
        */
-      state: TestState.Success,
+      status: TestStatus.Success,
       /**
        * Optional: any error messages
        */
-      // errorMessages: string[];
+      // failureMessages: string[];
 
       /**
        * Optional: the time it took
@@ -76,20 +76,20 @@ export default class MyTestRunner extends EventEmitter implements TestRunner {
 
     return Promise.resolve({
       /**
-          * The individual test results.
-          */
+       * The individual test results.
+       */
       tests: [oneTestResult],
       /**
-       * If `state` is `error`, this collection should contain the error messages
+       * If `status` is `error`, this collection should contain the error messages
        */
       errorMessages: ['Error, test runner not implemented'],
       /**
-       * The state of the run
+       * The status of the run
        */
-      state: RunState.Complete,
+      status: RunStatus.Complete,
       /**
-     * Optional: the code coverage result of the run.
-     */
+       * Optional: the code coverage result of the run.
+       */
       // coverage?: CoverageCollection | CoverageCollectionPerTest;
 
     });
