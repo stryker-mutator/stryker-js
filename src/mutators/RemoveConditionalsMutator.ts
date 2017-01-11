@@ -16,7 +16,14 @@ export default class RemoveConditionalsMutator implements Mutator {
   applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] | void {
     if (this.canMutate(node)) {
       let nodes: estree.Node[] = [];
-      nodes.push(this.booleanLiteralNode(node.test.nodeID, false));
+
+      if (node.test) {
+        nodes.push(this.booleanLiteralNode(node.test.nodeID, false));
+      } else {
+        let mutatedNode = copy(node);
+        mutatedNode.test = this.booleanLiteralNode(null, false);
+        nodes.push(mutatedNode);
+      }
 
       if (node.type === Syntax.IfStatement || node.type === Syntax.ConditionalExpression) {
         nodes.push(this.booleanLiteralNode(node.test.nodeID, true));
