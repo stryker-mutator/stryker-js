@@ -3,6 +3,7 @@ import * as parserUtils from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
 import * as chai from 'chai';
 import * as estree from 'estree';
+import { Syntax } from 'esprima';
 import 'stryker-api/estree';
 
 let expect = chai.expect;
@@ -52,7 +53,7 @@ describe('RemoveConditionalsMutator', () => {
   function actMutator(node: estree.IfStatement | estree.DoWhileStatement | estree.WhileStatement | estree.ForStatement | estree.ConditionalExpression) {
     const mutants = sut.applyMutations(node, copy);
     if (Array.isArray(mutants)) {
-      return <estree.SimpleLiteral[]>mutants;
+      return mutants;
     } else {
       return [];
     }
@@ -87,11 +88,14 @@ describe('RemoveConditionalsMutator', () => {
     });
 
     it('when given an infinite-for loop', () => {
-      let mutatedNodes = actMutator(infiniteForLoop);
-
-      let testValue = (<estree.Literal>(<estree.ForStatement>(<estree.BaseStatement>mutatedNodes[0])).test).value;
-      expect(testValue).to.be.false;
-      expect(mutatedNodes[0].nodeID).to.eq(infiniteForLoop.nodeID);
+      const forStatementNode = actMutator(infiniteForLoop)[0];
+      if (forStatementNode.type === Syntax.ForStatement && forStatementNode.test.type === Syntax.Literal) {
+        const testValue = forStatementNode.test.value;
+        expect(testValue).to.be.false;
+        expect(forStatementNode.nodeID).to.eq(infiniteForLoop.nodeID);
+      }else {
+        expect.fail(`Node ${forStatementNode} unexpected.`);
+      }
     });
   });
 
