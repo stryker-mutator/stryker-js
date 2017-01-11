@@ -19,6 +19,7 @@ describe('TestRunnerChildProcessAdapter', function () {
         '../../test/integration/isolated-runner/CoverageReportingTestRunner',
         '../../test/integration/isolated-runner/ErroredTestRunner',
         '../../test/integration/isolated-runner/VerifyWorkingFolderTestRunner',
+        '../../test/integration/isolated-runner/CrashingTestRunner',
         '../../test/integration/isolated-runner/DiscoverRegexTestRunner'],
       testRunner: 'karma',
       testFramework: 'jasmine',
@@ -29,6 +30,14 @@ describe('TestRunnerChildProcessAdapter', function () {
     port: null,
     sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner')
   };
+
+  describe.only('when test runner is crashing', () => {
+    before(() => sut = new TestRunnerChildProcessAdapter('crashing', options));
+
+    it('should not give a channel error', () => {
+      return sut.run({ timeout: 2000 }).then(() => sut.run({ timeout: 2000 }));
+    });
+  });
 
   describe('when sending a regex in the options', () => {
     before(() => sut = new TestRunnerChildProcessAdapter('discover-regex', options));
