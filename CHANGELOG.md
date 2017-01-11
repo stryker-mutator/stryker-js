@@ -1,3 +1,13 @@
+<a name="0.5.6"></a>
+## [0.5.6](https://github.com/stryker-mutator/stryker/compare/v0.5.5...v0.5.6) (2016-12-31)
+
+
+### Bug Fixes
+
+* **InputFileResolver:** Don't ignore all files ([#210](https://github.com/stryker-mutator/stryker/issues/210)) ([ef3dde4](https://github.com/stryker-mutator/stryker/commit/ef3dde4))
+
+
+
 <a name="0.5.5"></a>
 ## [0.5.5](https://github.com/stryker-mutator/stryker/compare/v0.5.4...v0.5.5) (2016-12-30)
 

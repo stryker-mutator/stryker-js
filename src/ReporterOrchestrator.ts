@@ -1,19 +1,27 @@
-import {StrykerOptions} from 'stryker-api/core';
-import {Reporter, ReporterFactory} from 'stryker-api/report';
+import { StrykerOptions } from 'stryker-api/core';
+import { Reporter, ReporterFactory } from 'stryker-api/report';
 import ClearTextReporter from './reporters/ClearTextReporter';
 import ProgressReporter from './reporters/ProgressReporter';
+import ProgressAppendOnlyReporter from './reporters/ProgressAppendOnlyReporter';
 import DotsReporter from './reporters/DotsReporter';
 import EventRecorderReporter from './reporters/EventRecorderReporter';
-import BroadcastReporter, {NamedReporter} from './reporters/BroadcastReporter';
+import BroadcastReporter, { NamedReporter } from './reporters/BroadcastReporter';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('ReporterOrchestrator');
 
+function registerDefaultReporters() {
+  ReporterFactory.instance().register('progress-append-only', ProgressAppendOnlyReporter);
+  ReporterFactory.instance().register('progress', ProgressReporter);
+  ReporterFactory.instance().register('dots', DotsReporter);
+  ReporterFactory.instance().register('clear-text', ClearTextReporter);
+  ReporterFactory.instance().register('event-recorder', EventRecorderReporter);
+}
+registerDefaultReporters();
 
 export default class ReporterOrchestrator {
 
   constructor(private options: StrykerOptions) {
-    this.registerDefaultReporters();
   }
 
   public createBroadcastReporter(): Reporter {
@@ -21,15 +29,24 @@ export default class ReporterOrchestrator {
     let reporterOption = this.options.reporter;
     if (reporterOption) {
       if (Array.isArray(reporterOption)) {
-        reporterOption.forEach(reporterName => reporters.push({ name: reporterName, reporter: ReporterFactory.instance().create(reporterName, this.options) }));
+        reporterOption.forEach(reporterName => reporters.push(this.createReporter(reporterName)));
       } else {
-        reporters.push({ name: reporterOption, reporter: ReporterFactory.instance().create(reporterOption, this.options) });
+        reporters.push(this.createReporter(reporterOption));
       }
     } else {
       log.warn(`No reporter configured. Please configure one or more reporters in the (for example: reporter: 'progress')`);
       this.logPossibleReporters();
     }
     return new BroadcastReporter(reporters);
+  }
+
+  private createReporter(name: string) {
+    if (name === 'progress' && !(process.stdout as any)['isTTY']) {
+      log.info('Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter');
+      return { name: 'progress-append-only', reporter: ReporterFactory.instance().create('progress-append-only', this.options) };
+    } else {
+      return { name, reporter: ReporterFactory.instance().create(name, this.options) };
+    }
   }
 
   private logPossibleReporters() {
@@ -43,10 +60,4 @@ export default class ReporterOrchestrator {
     log.warn(`Possible reporters: ${possibleReportersCsv}`);
   }
 
-  private registerDefaultReporters() {
-    ReporterFactory.instance().register('progress', ProgressReporter);
-    ReporterFactory.instance().register('dots', DotsReporter);
-    ReporterFactory.instance().register('clear-text', ClearTextReporter);
-    ReporterFactory.instance().register('event-recorder', EventRecorderReporter); 
- }
 }
