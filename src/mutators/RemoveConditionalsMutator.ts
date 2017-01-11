@@ -17,12 +17,12 @@ export default class RemoveConditionalsMutator implements Mutator {
     if (this.canMutate(node)) {
       let nodes: estree.Node[] = [];
 
-      if (node.type === Syntax.ForStatement && node.test === null) {
+      if (node.test) {
+        nodes.push(this.booleanLiteralNode(node.test.nodeID, false));
+      } else {
         let mutatedNode = copy(node);
         mutatedNode.test = this.booleanLiteralNode(null, false);
         nodes.push(mutatedNode);
-      } else {
-        nodes.push(this.booleanLiteralNode(node.test.nodeID, false));
       }
 
       if (node.type === Syntax.IfStatement || node.type === Syntax.ConditionalExpression) {
