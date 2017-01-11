@@ -3,7 +3,7 @@ import {expect} from 'chai';
 
 describe('we have a module using stryker', function () {
 
-  this.timeout(100000);
+  this.timeout(500000);
 
   describe('after installing Stryker', () => {
     let executor: Executor;
