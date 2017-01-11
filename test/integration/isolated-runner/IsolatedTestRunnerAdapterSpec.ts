@@ -101,11 +101,15 @@ describe('TestRunnerChildProcessAdapter', function () {
       return sut.init();
     });
     it('should run only after it is initialized',
-      () => expect(sut.run({ timeout: 20 })).to.eventually.satisfy((result: RunResult) => result.status === RunStatus.Complete));
+      () => expect(sut.run({ timeout: 20 })).to.eventually.satisfy((result: RunResult) => {
+        expect(result.status).to.be.eq(RunStatus.Complete, `Run status was ${RunStatus[result.status]}, while ${RunStatus[RunStatus.Complete]} expected`);
+        return true;
+      }));
 
     it('should be able to run twice in quick succession',
       () => expect(sut.run({ timeout: 20 }).then(() => sut.run({ timeout: 20 }))).to.eventually.satisfy((result: RunResult) => {
-        return result.status === RunStatus.Complete;
+        expect(result.status).to.be.eq(RunStatus.Complete, `Run status was ${RunStatus[result.status]}, while ${RunStatus[RunStatus.Complete]} expected`);
+        return true;
       }));
 
     after(() => sut.dispose());

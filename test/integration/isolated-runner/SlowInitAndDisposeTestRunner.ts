@@ -4,7 +4,6 @@ import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult, RunSt
 class SlowInitAndDisposeTestRunner extends EventEmitter implements TestRunner {
 
   inInit: boolean;
-  runResult: RunResult = { status: RunStatus.Complete, tests: [] };
 
   init() {
     return new Promise<void>(resolve => {
@@ -20,7 +19,7 @@ class SlowInitAndDisposeTestRunner extends EventEmitter implements TestRunner {
     if (this.inInit) {
       throw new Error('Test should fail! Not yet initialized!');
     }
-    return new Promise<RunResult>(res => res(this.runResult));
+    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 
   dispose() {
