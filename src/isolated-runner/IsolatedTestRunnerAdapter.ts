@@ -13,20 +13,14 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
- * Also implements timeout-mechanisme (on timeout, restart the child runner and report timeout) 
+ * Also implements timeout-mechanism (on timeout, restart the child runner and report timeout) 
  */
 export default class TestRunnerChildProcessAdapter extends EventEmitter implements TestRunner {
 
   private workerProcess: ChildProcess;
-  private initPromiseFulfillmentCallback: () => void;
-  private runPromiseFulfillmentCallback: (result: RunResult) => void;
-  private disposePromiseFulfillmentCallback: () => void;
-  private initPromise: Promise<void>;
-  private runPromise: Promise<RunResult>;
-  private disposingPromise: Promise<any>;
-  private currentTimeoutTimer: NodeJS.Timer;
-  private currentRunStartedTimestamp: Date;
-  private isDisposing: boolean;
+  private initTask: Task<void>;
+  private runTask: Task<RunResult>;
+  private disposeTask: Task<undefined>;
 
   constructor(private realTestRunnerName: string, private options: IsolatedRunnerOptions) {
     super();
@@ -60,18 +54,17 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     }
 
     this.workerProcess.on('message', (message: WorkerMessage) => {
-      this.clearCurrentTimer();
       switch (message.kind) {
         case 'result':
-          if (!this.isDisposing) {
-            this.runPromiseFulfillmentCallback(message.result);
+          if (!this.disposeTask || this.disposeTask.isResolved) {
+            this.runTask.resolve(message.result);
           }
           break;
         case 'initDone':
-          this.initPromiseFulfillmentCallback();
+          this.initTask.resolve(null);
           break;
         case 'disposeDone':
-          this.disposePromiseFulfillmentCallback();
+          this.disposeTask.resolve(null);
           break;
         default:
           this.logReceivedMessageWarning(message);
@@ -85,39 +78,30 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   }
 
   init(): Promise<any> {
-    this.initPromise = new Promise<void>(resolve => this.initPromiseFulfillmentCallback = resolve);
+    this.initTask = new Task<void>();
     this.sendInitCommand();
-    return this.initPromise;
+    return this.initTask.promise;
   }
 
   run(options: RunOptions): Promise<RunResult> {
-    this.clearCurrentTimer();
-    if (options.timeout) {
-      this.markNoResultTimeout(options.timeout);
-    }
-    this.runPromise = new Promise<RunResult>(resolve => {
-      this.runPromiseFulfillmentCallback = resolve;
-      this.sendRunCommand(options);
-      this.currentRunStartedTimestamp = new Date();
+    this.runTask = new Task<RunResult>(options.timeout, () => {
+      this.handleTimeout();
     });
-    return this.runPromise;
+    this.sendRunCommand(options);
+    return this.runTask.promise;
   }
 
-  dispose(): Promise<any> {
-    if (this.isDisposing) {
-      return this.disposingPromise;
+  dispose(): Promise<undefined> {
+    if (this.disposeTask && !this.disposeTask.isResolved) {
+      return this.disposeTask.promise;
     } else {
-      this.isDisposing = true;
-      this.disposingPromise = new Promise(resolve => this.disposePromiseFulfillmentCallback = resolve)
-        .then(() => {
-          clearTimeout(timer);
-          this.workerProcess.kill();
-          this.isDisposing = false;
-        });
-      this.clearCurrentTimer();
+      this.disposeTask = new Task<undefined>(MAX_WAIT_FOR_DISPOSE, () => {
+        log.warn(`Test runner did not respond to dispose command within ${MAX_WAIT_FOR_DISPOSE}ms, force killing the process at "${this.options.sandboxWorkingFolder}".`);
+        this.disposeTask.resolve(undefined);
+      });
       this.sendDisposeCommand();
-      let timer = setTimeout(this.disposePromiseFulfillmentCallback, MAX_WAIT_FOR_DISPOSE);
-      return this.disposingPromise;
+      return this.disposeTask.promise
+        .then(() => this.workerProcess.kill());
     }
   }
 
@@ -150,23 +134,50 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.send({ kind: 'dispose' });
   }
 
-  private clearCurrentTimer() {
-    if (this.currentTimeoutTimer) {
-      clearTimeout(this.currentTimeoutTimer);
+  private handleTimeout() {
+    return this.dispose()
+      .then(() => this.startWorker())
+      .then(() => this.init())
+      .then(() => this.runTask.resolve({ status: RunStatus.Timeout, tests: [] }));
+  }
+}
+
+
+class Task<T> {
+
+  private _promise: Promise<T>;
+  private resolveFn: (value?: T | PromiseLike<T>) => void;
+  private _isResolved = false;
+  private timeout: NodeJS.Timer;
+
+  constructor(timeoutMs?: number, private timeoutHandler?: () => void) {
+    this._promise = new Promise<T>((resolve, reject) => {
+      this.resolveFn = resolve;
+    });
+    if (timeoutMs) {
+      this.timeout = setTimeout(() => this.handleTimeout(), timeoutMs);
     }
   }
 
-  private markNoResultTimeout(timeoutMs: number) {
-    this.currentTimeoutTimer = setTimeout(() => {
-      this.handleTimeout();
-    }, timeoutMs);
+  get isResolved() {
+    return this._isResolved;
   }
 
-  private handleTimeout() {
-    this.dispose()
-      .then(() => this.startWorker())
-      .then(() => this.init())
-      .then(() => this.runPromiseFulfillmentCallback({ status: RunStatus.Timeout, tests: [] }));
+  get promise() {
+    return this._promise;
   }
 
+  handleTimeout() {
+    if (this.timeoutHandler) {
+      this.timeoutHandler();
+    }
+  }
+
+  resolve(result: T | PromiseLike<T>) {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+    this._isResolved = true;
+    this.resolveFn(result);
+  }
 }

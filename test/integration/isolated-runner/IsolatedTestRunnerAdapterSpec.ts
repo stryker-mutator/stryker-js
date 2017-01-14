@@ -26,8 +26,15 @@ describe('TestRunnerChildProcessAdapter', function () {
   xdescribe('when test runner is crashing', () => {
     before(() => sut = new TestRunnerChildProcessAdapter('crashing', options));
 
-    it('should not give a channel error', () => {
-      return sut.run({ timeout: 2000 }).then(() => sut.run({ timeout: 2000 }));
+    it('should result in an error', () => {
+      try {
+        return sut.run({ timeout: 2000 }).then(result => {
+          expect(result.status).to.be.eq(RunStatus.Error);
+          expect(result.errorMessages).to.be.eq([]);
+        });
+      } catch (err) {
+        console.log(err);
+      }
     });
   });
 
