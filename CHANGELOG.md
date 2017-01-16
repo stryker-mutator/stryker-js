@@ -1,3 +1,13 @@
+<a name="0.5.7"></a>
+## [0.5.7](https://github.com/stryker-mutator/stryker/compare/v0.5.6...v0.5.7) (2017-01-16)
+
+
+### Features
+
+* **append-only-progress:** Implement new reporter ([#213](https://github.com/stryker-mutator/stryker/issues/213)) ([7b68506](https://github.com/stryker-mutator/stryker/commit/7b68506))
+
+
+
 <a name="0.5.6"></a>
 ## [0.5.6](https://github.com/stryker-mutator/stryker/compare/v0.5.5...v0.5.6) (2016-12-31)
 
