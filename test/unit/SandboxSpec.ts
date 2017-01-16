@@ -8,7 +8,7 @@ import { wrapInClosure } from '../../src/utils/objectUtils';
 import CoverageInstrumenter from '../../src/coverage/CoverageInstrumenter';
 import Sandbox from '../../src/Sandbox';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
-import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
+import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
 
 describe('Sandbox', () => {
@@ -26,7 +26,7 @@ describe('Sandbox', () => {
   const expectedTestFrameworkHooksFile = path.join(workingFolder, '___testHooksForStryker.js');
 
   beforeEach(() => {
-    options = { port: 43, timeoutFactor: 23, timeoutMs: 1000 };
+    options = { port: 43, timeoutFactor: 23, timeoutMs: 1000, testRunner: 'sandboxUnitTestRunner' };
     sandbox = sinon.sandbox.create();
     testRunner = { init: sandbox.stub(), run: sandbox.stub().returns(Promise.resolve()) };
     testFramework = {
@@ -41,7 +41,7 @@ describe('Sandbox', () => {
     sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returnsArg(0);
     sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve({}));
     sandbox.stub(StrykerTempFolder, 'writeFile').returns(Promise.resolve({}));
-    sandbox.stub(IsolatedTestRunnerAdapterFactory, 'create').returns(testRunner);
+    sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
   });
 
   afterEach(() => sandbox.restore());
@@ -108,7 +108,7 @@ describe('Sandbox', () => {
           strykerOptions: options,
           sandboxWorkingFolder: workingFolder
         };
-        expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith(expectedSettings);
+        expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings);
       });
 
       describe('when run', () => {
@@ -172,7 +172,7 @@ describe('Sandbox', () => {
           strykerOptions: options,
           sandboxWorkingFolder: workingFolder 
         };
-        expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith(expectedSettings);
+        expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings);
       });
 
       describe('when runMutant()', () => {

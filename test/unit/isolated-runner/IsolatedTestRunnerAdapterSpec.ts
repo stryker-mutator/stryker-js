@@ -1,13 +1,13 @@
+import * as path from 'path';
 import * as child_process from 'child_process';
+import * as _ from 'lodash';
 import * as sinon from 'sinon';
+import { expect } from 'chai';
 import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import { WorkerMessage, AdapterMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
-import { expect } from 'chai';
-import * as path from 'path';
-import * as _ from 'lodash';
 
 describe('IsolatedTestRunnerAdapter', () => {
   let sut: IsolatedTestRunnerAdapter;
@@ -47,7 +47,28 @@ describe('IsolatedTestRunnerAdapter', () => {
       expect(fakeChildProcess.on).to.have.been.calledWith('message');
     });
 
-    describe('and "run" is called with 2000ms timeout', () => {
+    describe('init', () => {
+
+      let initPromise: Promise<void>;
+      beforeEach(() => {
+        initPromise = sut.init();
+        clock.tick(500);
+        receiveResultMessage();
+      });
+
+      it('should call "init" on child process', () => {
+        const expectedMessage: AdapterMessage = { kind: 'init' };
+        expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
+      });
+
+
+      it('should resolve the promise when the process responds with "initDone"', () => {
+        receiveMessage({ kind: 'initDone' });
+        return expect(initPromise).to.eventually.eq(null);
+      });
+    });
+
+    describe('run(options)', () => {
       let runOptions: RunOptions;
       let runPromise: Promise<RunResult>;
 
@@ -64,85 +85,59 @@ describe('IsolatedTestRunnerAdapter', () => {
         expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
       });
 
+      it('should proxy run response', () => {
+        const expectedResult: RunResult = {
+          status: RunStatus.Error,
+          errorMessages: ['OK, only used for unit testing'],
+          tests: []
+        };
+        receiveMessage({ kind: 'result', result: expectedResult });
+        expect(runPromise).to.eventually.be.eq(expectedResult);
+      });
+    });
+
+    describe('dispose()', () => {
+      let disposePromise: Promise<void>;
+
+      beforeEach(() => {
+        disposePromise = sut.dispose();
+      });
+
+      it('should send `dispose` to worker process',
+        () => expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ kind: 'dispose' })));
+
+      describe('and child process responses to dispose', () => {
+        beforeEach(() => {
+          receiveMessage({ kind: 'disposeDone' });
+          return disposePromise;
+        });
+
+        it('should kill the child process', () =>
+          expect(fakeChildProcess.kill).to.have.been.calledWith());
+      });
+
       describe('and a timeout occurred', () => {
 
         beforeEach(() => {
-          clock.tick(2100);
+          // Wait for worker process takes 2000 ms
+          clock.tick(2000);
+          return disposePromise;
         });
 
-        it('should send `dispose` to worker process', () => expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ kind: 'dispose' })));
-
-        let actAssertTimeout = () => {
-          it('should kill the child process and start a new one', () => {
-            expect(fakeChildProcess.kill).to.have.been.calledWith();
-            expect(child_process.fork).to.have.been.called.callCount(2);
-          });
-
-          describe('and to init', () => {
-            let actualRunResult: RunResult;
-            beforeEach(() => {
-              receiveMessage({ kind: 'initDone' });
-            });
-
-            it('should result in a `timeout` after the restart', () => expect(runPromise).to.eventually.satisfy((result: RunResult) => result.status === RunStatus.Timeout));
-          });
-        };
-
-        describe('and child process responses to dispose', () => {
-          beforeEach(() => {
-            receiveMessage({ kind: 'disposeDone' });
-            return sut.dispose(); // should return newly created promise
-          });
-
-          actAssertTimeout();
-        });
-
-        describe('and child process is unresponsive', () => {
-          beforeEach(() => {
-            clock.tick(2100); // default wait for child process is 2000
-            return sut.dispose(); // should return newly created promise
-          });
-
-          actAssertTimeout();
-        });
-
-      });
-
-      describe('and a result message occurred after 1900 ms', () => {
-
-        let expectedMessage: ResultMessage;
-        beforeEach(() => {
-          clock.tick(1900);
-          expectedMessage = receiveResultMessage();
-        });
-
-        it('should pass along the result', () => expect(runPromise).to.eventually.eq(expectedMessage.result));
-
-        describe('when we run a second time, wait 500ms and then receive the second result', () => {
-
-          let secondResultPromise: Promise<RunResult>;
-          beforeEach(() => {
-            secondResultPromise = sut.run({ timeout: 2000 });
-            clock.tick(500);
-            receiveResultMessage();
-          });
-
-          it('should not have resolved in a timeout', () => {
-            return expect(secondResultPromise).to.eventually.satisfy((runResult: RunResult) => runResult.status !== RunStatus.Timeout);
-          });
-        });
+        it('should kill the child process', () =>
+          expect(fakeChildProcess.kill).to.have.been.calledWith('SIGKILL'));
       });
     });
   });
 
-  let receiveResultMessage = () => {
-    let message: ResultMessage = { kind: 'result', result: { status: RunStatus.Complete, tests: [] } };
+  const receiveResultMessage = () => {
+    const message: ResultMessage = { kind: 'result', result: { status: RunStatus.Complete, tests: [] } };
     receiveMessage(message);
     return message;
   };
 
-  let receiveMessage = (message: WorkerMessage) => {
-    let callback: (message: WorkerMessage) => void = fakeChildProcess.on.getCall(0).args[1];
+  const receiveMessage = (message: WorkerMessage) => {
+    const callback: (message: WorkerMessage) => void = fakeChildProcess.on.getCall(0).args[1];
     callback(message);
     return message;
   };

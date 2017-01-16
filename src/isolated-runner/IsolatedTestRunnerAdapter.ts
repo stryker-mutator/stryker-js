@@ -7,9 +7,21 @@ import { StrykerOptions } from 'stryker-api/core';
 import { serialize } from '../utils/objectUtils';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
+import Task from '../utils/Task';
+const MAX_WAIT_FOR_DISPOSE = 2000;
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapter');
-const MAX_WAIT_FOR_DISPOSE = 2000;
+
+class InitTask extends Task<void> {
+  readonly kind = 'init';
+}
+class DisposeTask extends Task<void> {
+  readonly kind = 'dispose';
+}
+class RunTask extends Task<RunResult> {
+  readonly kind = 'run';
+}
+type WorkerTask = InitTask | DisposeTask | RunTask;
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
@@ -18,9 +30,7 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
 export default class TestRunnerChildProcessAdapter extends EventEmitter implements TestRunner {
 
   private workerProcess: ChildProcess;
-  private initTask: Task<void>;
-  private runTask: Task<RunResult>;
-  private disposeTask: Task<undefined>;
+  private currentTask: WorkerTask;
 
   constructor(private realTestRunnerName: string, private options: IsolatedRunnerOptions) {
     super();
@@ -56,15 +66,25 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.workerProcess.on('message', (message: WorkerMessage) => {
       switch (message.kind) {
         case 'result':
-          if (!this.disposeTask || this.disposeTask.isResolved) {
-            this.runTask.resolve(message.result);
+          if (this.currentTask.kind === 'run') {
+            this.currentTask.resolve(message.result);
+          } else {
+            this.logReceivedUnexpectedMessageWarning(message);
           }
           break;
         case 'initDone':
-          this.initTask.resolve(null);
+          if (this.currentTask.kind === 'init') {
+            this.currentTask.resolve(null);
+          } else {
+            this.logReceivedUnexpectedMessageWarning(message);
+          }
           break;
         case 'disposeDone':
-          this.disposeTask.resolve(null);
+          if (this.currentTask.kind === 'dispose') {
+            this.currentTask.resolve(null);
+          } else {
+            this.logReceivedUnexpectedMessageWarning(message);
+          }
           break;
         default:
           this.logReceivedMessageWarning(message);
@@ -73,36 +93,31 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     });
   }
 
+  private logReceivedUnexpectedMessageWarning(message: WorkerMessage) {
+    log.warn(`Received unexpected message from test runner worker process: "${message.kind}" while current task is ${this.currentTask.kind}. Ignoring this message.`);
+  }
+
   private logReceivedMessageWarning(message: never) {
     log.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`);
   }
 
   init(): Promise<any> {
-    this.initTask = new Task<void>();
     this.sendInitCommand();
-    return this.initTask.promise;
+    this.currentTask = new InitTask();
+    return this.currentTask.promise;
   }
 
   run(options: RunOptions): Promise<RunResult> {
-    this.runTask = new Task<RunResult>(options.timeout, () => {
-      this.handleTimeout();
-    });
     this.sendRunCommand(options);
-    return this.runTask.promise;
+    this.currentTask = new RunTask();
+    return this.currentTask.promise;
   }
 
   dispose(): Promise<undefined> {
-    if (this.disposeTask && !this.disposeTask.isResolved) {
-      return this.disposeTask.promise;
-    } else {
-      this.disposeTask = new Task<undefined>(MAX_WAIT_FOR_DISPOSE, () => {
-        log.warn(`Test runner did not respond to dispose command within ${MAX_WAIT_FOR_DISPOSE}ms, force killing the process at "${this.options.sandboxWorkingFolder}".`);
-        this.disposeTask.resolve(undefined);
-      });
-      this.sendDisposeCommand();
-      return this.disposeTask.promise
-        .then(() => this.workerProcess.kill());
-    }
+    this.sendDisposeCommand();
+    this.currentTask = new DisposeTask(MAX_WAIT_FOR_DISPOSE);
+    return this.currentTask.promise
+      .then(() => this.workerProcess.kill('SIGKILL'));
   }
 
   private sendRunCommand(options: RunOptions) {
@@ -112,7 +127,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     });
   }
 
-  private send<T>(message: AdapterMessage) {
+  private send(message: AdapterMessage) {
     // Serialize message before sending to preserve all javascript, including regexes and functions
     // See https://github.com/stryker-mutator/stryker/issues/143
     this.workerProcess.send(serialize(message));
@@ -132,52 +147,5 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
 
   private sendDisposeCommand() {
     this.send({ kind: 'dispose' });
-  }
-
-  private handleTimeout() {
-    return this.dispose()
-      .then(() => this.startWorker())
-      .then(() => this.init())
-      .then(() => this.runTask.resolve({ status: RunStatus.Timeout, tests: [] }));
-  }
-}
-
-
-class Task<T> {
-
-  private _promise: Promise<T>;
-  private resolveFn: (value?: T | PromiseLike<T>) => void;
-  private _isResolved = false;
-  private timeout: NodeJS.Timer;
-
-  constructor(timeoutMs?: number, private timeoutHandler?: () => void) {
-    this._promise = new Promise<T>((resolve, reject) => {
-      this.resolveFn = resolve;
-    });
-    if (timeoutMs) {
-      this.timeout = setTimeout(() => this.handleTimeout(), timeoutMs);
-    }
-  }
-
-  get isResolved() {
-    return this._isResolved;
-  }
-
-  get promise() {
-    return this._promise;
-  }
-
-  handleTimeout() {
-    if (this.timeoutHandler) {
-      this.timeoutHandler();
-    }
-  }
-
-  resolve(result: T | PromiseLike<T>) {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-    this._isResolved = true;
-    this.resolveFn(result);
   }
 }
