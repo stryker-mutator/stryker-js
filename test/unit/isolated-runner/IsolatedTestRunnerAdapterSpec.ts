@@ -82,7 +82,7 @@ describe('IsolatedTestRunnerAdapter', () => {
     });
 
     describe('run(options)', () => {
-      const runOptions: { readonly timeout: 2000 } = { timeout: 2000 };
+      const runOptions: { timeout: 2000 } = { timeout: 2000 };
       let runPromise: Promise<RunResult>;
 
       function act() {
