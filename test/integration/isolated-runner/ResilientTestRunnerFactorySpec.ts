@@ -4,12 +4,19 @@ import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestStatus, RunSt
 import { StrykerOptions } from 'stryker-api/core';
 import ResilientTestRunnerFactory from '../../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
+import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorator';
+
+function sleep(ms: number) {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+}
 
 describe('ResilientTestRunnerFactory', function () {
 
   this.timeout(10000);
 
-  let sut: TestRunner;
+  let sut: TestRunnerDecorator;
   let options: IsolatedRunnerOptions = {
     strykerOptions: {
       plugins: ['../../test/integration/isolated-runner/AdditionalTestRunners'],
@@ -22,21 +29,6 @@ describe('ResilientTestRunnerFactory', function () {
     port: null,
     sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner')
   };
-
-  xdescribe('when test runner is crashing', () => {
-    before(() => sut = ResilientTestRunnerFactory.create('crashing', options));
-
-    it('should result in an error', () => {
-      try {
-        return sut.run({ timeout: 2000 }).then(result => {
-          expect(result.status).to.be.eq(RunStatus.Error);
-          expect(result.errorMessages).to.be.eq([]);
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    });
-  });
 
   describe('when sending a regex in the options', () => {
     before(() => sut = ResilientTestRunnerFactory.create('discover-regex', options));
@@ -136,4 +128,18 @@ describe('ResilientTestRunnerFactory', function () {
         }
       }));
   });
+
+  describe('when test runner is crashing after 100ms', () => {
+    before(() => sut = ResilientTestRunnerFactory.create('time-bomb', options));
+
+    it('should be able to recover from crash', () => {
+      return sleep(101)
+        .then(() => sut.run({ timeout: 2000 })
+          .then(result => {
+            expect(result.status).to.be.eq(RunStatus.Complete);
+            expect(result.errorMessages).to.be.undefined;
+          }));
+    });
+  });
+
 }); 

@@ -2,12 +2,8 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { TestRunner, RunStatus } from 'stryker-api/test_runner';
 import TimeoutDecorator from '../../../src/isolated-runner/TimeoutDecorator';
-
-interface TestRunnerMock {
-  init: sinon.SinonStub;
-  run: sinon.SinonStub;
-  dispose: sinon.SinonStub;
-};
+import { isPromise } from '../../../src/utils/objectUtils';
+import TestRunnerMock from '../../helpers/TestRunnerMock';
 
 describe('TimeoutDecorator', () => {
   let sut: TimeoutDecorator;
@@ -20,8 +16,8 @@ describe('TimeoutDecorator', () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     clock = sandbox.useFakeTimers();
-    testRunner1 = createTestRunnerMock();
-    testRunner2 = createTestRunnerMock();
+    testRunner1 = new TestRunnerMock();
+    testRunner2 = new TestRunnerMock();
     availableTestRunners = [testRunner1, testRunner2];
     sut = new TimeoutDecorator(() => {
       return <any>availableTestRunners.shift();
@@ -36,7 +32,7 @@ describe('TimeoutDecorator', () => {
       testRunner1[methodName].resolves('str');
       const promise = action();
       expect(testRunner1[methodName]).to.have.been.called;
-      expect(promise).to.be.instanceof(Promise);
+      expect(isPromise(promise), `timeoutDecorator.${methodName} did not provide a promise`).to.be.true;
     });
 
     it('should resolve when inner promise resolves', () => {
@@ -96,12 +92,4 @@ describe('TimeoutDecorator', () => {
       })).to.eventually.be.deep.equal({ status: RunStatus.Timeout, tests: [] });
     });
   });
-
-  function createTestRunnerMock() {
-    return {
-      init: sinon.stub(),
-      run: sinon.stub(),
-      dispose: sinon.stub()
-    };
-  }
 });

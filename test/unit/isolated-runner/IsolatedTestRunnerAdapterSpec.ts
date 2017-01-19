@@ -13,7 +13,11 @@ describe('IsolatedTestRunnerAdapter', () => {
   let sut: IsolatedTestRunnerAdapter;
   let sinonSandbox: sinon.SinonSandbox;
   let clock: sinon.SinonFakeTimers;
-  let fakeChildProcess: any;
+  let fakeChildProcess: {
+    kill: sinon.SinonStub;
+    send: sinon.SinonStub;
+    on: sinon.SinonStub;
+  };
   let runnerOptions: IsolatedRunnerOptions;
 
   beforeEach(() => {
@@ -25,9 +29,9 @@ describe('IsolatedTestRunnerAdapter', () => {
     };
     sinonSandbox = sinon.sandbox.create();
     fakeChildProcess = {
-      kill: sinon.spy(),
-      send: sinon.spy(),
-      on: sinon.spy()
+      kill: sinon.stub(),
+      send: sinon.stub(),
+      on: sinon.stub()
     };
     sinonSandbox.stub(child_process, 'fork', () => fakeChildProcess);
     clock = sinon.useFakeTimers();
@@ -50,34 +54,43 @@ describe('IsolatedTestRunnerAdapter', () => {
     describe('init', () => {
 
       let initPromise: Promise<void>;
-      beforeEach(() => {
+
+      function arrangeAct() {
         initPromise = sut.init();
         clock.tick(500);
         receiveResultMessage();
-      });
+      }
 
       it('should call "init" on child process', () => {
+        arrangeAct();
         const expectedMessage: AdapterMessage = { kind: 'init' };
         expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
       });
 
 
       it('should resolve the promise when the process responds with "initDone"', () => {
+        arrangeAct();
         receiveMessage({ kind: 'initDone' });
         return expect(initPromise).to.eventually.eq(null);
+      });
+
+      it('should reject any exceptions', () => {
+        fakeChildProcess.send.throws(new Error('some error'));
+        arrangeAct();
+        return expect(initPromise).to.be.rejectedWith('some error');
       });
     });
 
     describe('run(options)', () => {
-      let runOptions: RunOptions;
+      const runOptions: { readonly timeout: 2000 } = { timeout: 2000 };
       let runPromise: Promise<RunResult>;
 
-      beforeEach(() => {
-        runOptions = { timeout: 2000 };
+      function act() {
         runPromise = sut.run(runOptions);
-      });
+      };
 
       it('should send run-message to worker', () => {
+        act();
         const expectedMessage: RunMessage = {
           kind: 'run',
           runOptions
@@ -91,25 +104,30 @@ describe('IsolatedTestRunnerAdapter', () => {
           errorMessages: ['OK, only used for unit testing'],
           tests: []
         };
+        act();
         receiveMessage({ kind: 'result', result: expectedResult });
         expect(runPromise).to.eventually.be.eq(expectedResult);
+      });
+
+      it('should reject any exceptions', () => {
+        fakeChildProcess.send.throws(new Error('some error'));
+        act();
+        return expect(runPromise).to.be.rejectedWith('some error');
       });
     });
 
     describe('dispose()', () => {
-      let disposePromise: Promise<void>;
 
-      beforeEach(() => {
-        disposePromise = sut.dispose();
+      it('should send `dispose` to worker process', () => {
+        sut.dispose();
+        return expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ kind: 'dispose' }));
       });
-
-      it('should send `dispose` to worker process',
-        () => expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ kind: 'dispose' })));
 
       describe('and child process responses to dispose', () => {
         beforeEach(() => {
+          const promise = sut.dispose();
           receiveMessage({ kind: 'disposeDone' });
-          return disposePromise;
+          return promise;
         });
 
         it('should kill the child process', () =>
@@ -120,13 +138,18 @@ describe('IsolatedTestRunnerAdapter', () => {
 
         beforeEach(() => {
           // Wait for worker process takes 2000 ms
+          const promise = sut.dispose();
           clock.tick(2000);
-          return disposePromise;
+          return promise;
         });
 
         it('should kill the child process', () =>
           expect(fakeChildProcess.kill).to.have.been.calledWith('SIGKILL'));
       });
+    });
+    it('should reject any exceptions', () => {
+      fakeChildProcess.send.throws(new Error('some error'));
+      return expect(sut.run({ timeout: 24 })).to.be.rejectedWith('some error');
     });
   });
 

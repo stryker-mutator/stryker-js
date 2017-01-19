@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events'; 
+import { EventEmitter } from 'events';
 import { RunResult, RunStatus, RunOptions, RunnerOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
 import { isRegExp } from 'util';
 
@@ -9,9 +9,13 @@ class CoverageReportingTestRunner extends EventEmitter implements TestRunner {
   }
 }
 
-class CrashingTestRunner extends EventEmitter implements TestRunner {
+class TimeBombTestRunner extends EventEmitter implements TestRunner {
+  constructor() {
+    super();
+    // Setting a time bomb after 100 ms
+    setTimeout(() => process.exit(), 100);
+  }
   run(options: RunOptions) {
-    process.exit();
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
@@ -31,7 +35,7 @@ class DiscoverRegexTestRunner extends EventEmitter implements TestRunner {
 
   run(options: RunOptions): Promise<RunResult> {
     if (isRegExp(this.runnerOptions.strykerOptions['someRegex'])) {
-      return Promise.resolve({ status: RunStatus.Complete, tests: []});
+      return Promise.resolve({ status: RunStatus.Complete, tests: [] });
     } else {
       return Promise.resolve({ status: RunStatus.Error, tests: [], errorMessages: ['No regex found in runnerOptions.strykerOptions.someRegex'] });
     }
@@ -88,7 +92,7 @@ class VerifyWorkingFolderTestRunner extends EventEmitter implements TestRunner {
   runResult: RunResult = { status: RunStatus.Complete, tests: [] };
 
   run(options: RunOptions) {
-   if (process.cwd() === __dirname) {
+    if (process.cwd() === __dirname) {
       return Promise.resolve(this.runResult);
     } else {
       return Promise.reject(new Error(`Expected ${process.cwd()} to be ${__dirname}`));
@@ -103,4 +107,4 @@ TestRunnerFactory.instance().register('errored', ErroredTestRunner);
 TestRunnerFactory.instance().register('discover-regex', DiscoverRegexTestRunner);
 TestRunnerFactory.instance().register('direct-resolved', DirectResolvedTestRunner);
 TestRunnerFactory.instance().register('coverage-reporting', CoverageReportingTestRunner);
-TestRunnerFactory.instance().register('crash', CrashingTestRunner);
+TestRunnerFactory.instance().register('time-bomb', TimeBombTestRunner);

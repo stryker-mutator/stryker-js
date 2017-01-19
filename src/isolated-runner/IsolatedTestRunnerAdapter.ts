@@ -102,20 +102,20 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   }
 
   init(): Promise<any> {
-    this.sendInitCommand();
     this.currentTask = new InitTask();
+    this.sendInitCommand();
     return this.currentTask.promise;
   }
 
   run(options: RunOptions): Promise<RunResult> {
-    this.sendRunCommand(options);
     this.currentTask = new RunTask();
+    this.sendRunCommand(options);
     return this.currentTask.promise;
   }
 
   dispose(): Promise<undefined> {
-    this.sendDisposeCommand();
     this.currentTask = new DisposeTask(MAX_WAIT_FOR_DISPOSE);
+    this.sendDisposeCommand();
     return this.currentTask.promise
       .then(() => this.workerProcess.kill('SIGKILL'));
   }
@@ -128,9 +128,13 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   }
 
   private send(message: AdapterMessage) {
-    // Serialize message before sending to preserve all javascript, including regexes and functions
-    // See https://github.com/stryker-mutator/stryker/issues/143
-    this.workerProcess.send(serialize(message));
+    try {
+      // Serialize message before sending to preserve all javascript, including regex's and functions
+      // See https://github.com/stryker-mutator/stryker/issues/143
+      this.workerProcess.send(serialize(message));
+    } catch (error) {
+      this.currentTask.reject(error);
+    }
   }
 
   private sendStartCommand() {

@@ -2,33 +2,23 @@ import { EventEmitter } from 'events';
 import { TestRunner, RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { isPromise } from '../utils/objectUtils';
 import Task from '../utils/Task';
+import TestRunnerDecorator from './TestRunnerDecorator';
 
 const MAX_WAIT_FOR_DISPOSE = 2500;
 
 /**
  * Wraps a test runner and implements the timeout functionality.
  */
-export default class TimeoutDecorator extends EventEmitter implements TestRunner {
-
-  private testRunner: TestRunner;
-
-  constructor(private testRunnerProducer: () => TestRunner) {
-    super();
-    this.testRunner = testRunnerProducer();
-  }
-
-  init(): Promise<any> {
-    return this.proxy(() => this.testRunner.init());
-  }
+export default class TimeoutDecorator extends TestRunnerDecorator {
 
   run(options: RunOptions): Promise<RunResult> {
     const runTask = new Task<RunResult>(options.timeout, () => this.handleTimeout());
-    runTask.chainTo(this.testRunner.run(options));
+    runTask.chainTo(super.run(options));
     return runTask.promise;
   }
 
   dispose(): Promise<any> {
-    return this.proxy(() => this.testRunner.dispose(), MAX_WAIT_FOR_DISPOSE);
+    return this.proxy(() => super.dispose(), MAX_WAIT_FOR_DISPOSE);
   }
 
   private proxy(action?: () => Promise<void> | void, timeoutMs?: number): Promise<void> {
@@ -45,7 +35,7 @@ export default class TimeoutDecorator extends EventEmitter implements TestRunner
 
   private handleTimeout(): Promise<RunResult> {
     return this.dispose()
-      .then(() => this.testRunner = this.testRunnerProducer())
+      .then(() => this.createInnerRunner())
       .then(() => this.init())
       .then(() => ({ status: RunStatus.Timeout, tests: [] }));
   }

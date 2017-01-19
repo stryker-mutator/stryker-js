@@ -2,7 +2,7 @@ import { AdapterMessage, RunMessage, StartMessage, ResultMessage, EmptyWorkerMes
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
-import { isPromise, deserialize } from '../utils/objectUtils';
+import { isPromise, deserialize, errorToString } from '../utils/objectUtils';
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapterWorker');
 
@@ -101,13 +101,7 @@ class IsolatedTestRunnerAdapterWorker {
       // errorMessages should be a string[]
       // Just in case the test runner implementer forgot to convert `Error`s to string, we will do it here
       // https://github.com/stryker-mutator/stryker/issues/141
-      result.errorMessages = result.errorMessages.map((error: any) => {
-        if (error instanceof Error) {
-          return `${error.name}: ${error.message}\n${error.stack.toString()}`;
-        } else {
-          return error.toString();
-        }
-      });
+      result.errorMessages = result.errorMessages.map(errorToString);
     }
     this.send({
       kind: 'result',

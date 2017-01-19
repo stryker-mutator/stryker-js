@@ -1,4 +1,5 @@
 import { MutantStatus, MatchedMutant, MutantResult } from 'stryker-api/report';
+import * as sinon from 'sinon';
 
 export function mutantResult(status: MutantStatus): MutantResult {
   return {
