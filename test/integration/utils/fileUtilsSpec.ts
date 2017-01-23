@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';

@@ -1,9 +1,7 @@
-'use strict';
-
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'graceful-fs';
 import * as _ from 'lodash';
-import fs = require('fs');
-import os = require('os');
-import path = require('path');
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 

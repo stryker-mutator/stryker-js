@@ -1,10 +1,10 @@
-import PluginLoader from '../../src/PluginLoader';
-import {expect} from 'chai';
-import * as sinon from 'sinon';
-import * as fileUtils from '../../src/utils/fileUtils';
-import log from '../helpers/log4jsMock';
-import * as fs from 'fs';
 import * as path from 'path';
+import * as fs from 'graceful-fs';
+import * as sinon from 'sinon';
+import { expect } from 'chai';
+import * as fileUtils from '../../src/utils/fileUtils';
+import PluginLoader from '../../src/PluginLoader';
+import log from '../helpers/log4jsMock';
 
 describe('PluginLoader', () => {
   let sut: PluginLoader;
