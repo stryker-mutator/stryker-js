@@ -72,10 +72,6 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     return this.runServer().then(() => this.collectRunResult());
   }
 
-  dispose(): Promise<void> {
-    return this.stopServer();
-  }
-
   // Don't use dispose() to stop karma (using karma.stopper.stop)
   // It only works when in `detached` mode, as specified here: http://karma-runner.github.io/1.0/config/configuration-file.html
 
@@ -157,7 +153,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     // Override port
     karmaConfig.port = this.options.port;
 
-    // Override browserNoActivityTimeout. Default value 10000 might not enought to send perTest coverage results
+    // Override browserNoActivityTimeout. Default value 10000 might not enough to send perTest coverage results
     karmaConfig.browserNoActivityTimeout = 1000000;
 
     // Override frameworks
@@ -166,15 +162,6 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     }
 
     return karmaConfig;
-  }
-
-  private stopServer() {
-    return new Promise<void>(resolve => {
-      karma.stopper.stop({ port: this.options.port }, exitCode => {
-        log.info('karma stopped on command with %s', exitCode);
-        resolve();
-      });
-    });
   }
 
   private runServer() {
