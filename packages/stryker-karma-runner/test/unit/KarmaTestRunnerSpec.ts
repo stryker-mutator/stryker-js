@@ -88,21 +88,5 @@ describe('KarmaTestRunner', () => {
     });
   });
 
-  describe('dispose()', () => {
-
-    beforeEach(() => {
-      sut = new KarmaTestRunner(options);
-    });
-
-    it('should stop karma', () => {
-      const promise = sut.dispose();
-      (karma.stopper.stop as sinon.SinonStub).callArg(1);
-      expect(karma.stopper.stop).to.have.been.calledWith({ port: options.port });
-      return promise;
-    });
-  });
-
-
-
   afterEach(() => sandbox.restore());
 });
