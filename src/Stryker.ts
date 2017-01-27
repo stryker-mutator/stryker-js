@@ -196,7 +196,7 @@ export default class Stryker {
   }
 
   private logTimeoutInitialRun(runResult: RunResult) {
-    let message = 'Initial run timed out! Ran following tests before timeout:';
+    let message = 'Initial test run timed out! Ran following tests before timeout:';
     runResult.tests.forEach(test => `\n\t${test.name} ${humanReadableTestState(test.status)}`);
     log.error(message);
   }

@@ -51,9 +51,8 @@ export default class CoverageInstrumenter {
     if (this.coverageAnalysis === 'perTest') {
       log.debug(`Adding test hooks file for coverageAnalysis "perTest"`);
       return wrapInClosure(`
-          var id = 0, coverageStateAtStart;
-          window.__coverage__ = globalCoverage = {};
-
+          var id = 0;
+          window.__coverage__ = globalCoverage = { deviations: {} };
           ${this.testFramework.beforeEach(beforeEachFragmentPerTest)}
           ${this.testFramework.afterEach(afterEachFragmentPerTest)}
           ${cloneFunctionFragment};
@@ -86,7 +85,6 @@ const cloneFunctionFragment = `
                 result[index] = clone(child);
             });
         } else if (typeof source == "object") {
-            // it is an object literal
             result = {};
             for (var i in source) {
                 result[i] = clone(source[i]);
@@ -96,18 +94,28 @@ const cloneFunctionFragment = `
     }`;
 
 const beforeEachFragmentPerTest = `
-if (!coverageStateAtStart && window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME}) {
-  coverageStateAtStart = clone(window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME});
+if (!globalCoverage.baseline && window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME}) {
+  globalCoverage.baseline = clone(window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME});
 }`;
 
 const afterEachFragmentPerTest = `
-       globalCoverage[id] = coverageResult = {};
-      id++;
-           var coveragePerTest = window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME};
-           if(window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME}) {
-              Object.keys(coveragePerTest).forEach(function (file) {
-                  var coverage = coveragePerTest[file];
-                  coverageResult[file] = { s: coverage.s };
-                  coverage.s = clone(coverageStateAtStart[file].s);
-              });
-           }`;
+  globalCoverage.deviations[id] = coverageResult = {};
+  id++;
+  var coveragePerFile = window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME};
+  if(coveragePerFile) {
+    Object.keys(coveragePerFile).forEach(function (file) {
+        var coverage = coveragePerFile[file];
+        var baseline = globalCoverage.baseline[file];
+        var fileResult = { s: {} };
+        var touchedFile = false;
+        for(var i in coverage.s){
+          if(coverage.s[i] !== baseline.s[i]){
+            fileResult.s[i] = coverage.s[i];
+            touchedFile = true;
+          }
+        }
+        if(touchedFile){
+          coverageResult[file] = fileResult;
+        }
+    });
+  }`;

@@ -64,6 +64,9 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
       switch (message.kind) {
         case 'result':
           if (!this.isDisposing) {
+            if (message.result && message.result.coverage && log.isDebugEnabled()) {
+              log.debug('Received ' + JSON.stringify(message.result.coverage).length + ' bytes of coverage data.');
+            }
             this.runPromiseFulfillmentCallback(message.result);
           }
           break;
