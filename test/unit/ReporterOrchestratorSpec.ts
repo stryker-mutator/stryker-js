@@ -21,8 +21,8 @@ describe('ReporterOrchestrator', () => {
     restoreTTY();
   });
 
-  it('should register default reporters', () => {
-    expect(ReporterFactory.instance().knownNames()).to.have.lengthOf(5);
+  it('should at least register the 5 default reporters', () => {
+    expect(ReporterFactory.instance().knownNames()).length.to.be.above(4);
   });
 
   describe('createBroadcastReporter()', () => {
