@@ -1,4 +1,3 @@
-import * as os from 'os';
 import * as fs from 'graceful-fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';

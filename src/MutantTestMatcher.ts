@@ -1,7 +1,7 @@
 import Mutant from './Mutant';
 import { Reporter, MatchedMutant } from 'stryker-api/report';
 import { StatementMapDictionary } from './coverage/CoverageInstrumenter';
-import { RunResult, CoverageCollection, CoverageCollectionPerTest, CoverageResult, StatementMap } from 'stryker-api/test_runner';
+import { RunResult, CoverageCollection, CoverageCollectionPerTest, StatementMap } from 'stryker-api/test_runner';
 import { Location, StrykerOptions } from 'stryker-api/core';
 import * as _ from 'lodash';
 

@@ -4,7 +4,7 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import * as path from 'path';
 import { InputFile } from 'stryker-api/core';
 import { expect } from 'chai';
-import { normalize, resolve } from 'path';
+import { resolve } from 'path';
 import log from '../helpers/log4jsMock';
 
 const fileDescriptors = (paths: Array<string>) => paths.map(p => ({ included: true, mutated: false, path: path.resolve(p) }));

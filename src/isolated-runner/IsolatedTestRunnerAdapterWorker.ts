@@ -1,4 +1,4 @@
-import { AdapterMessage, RunMessage, StartMessage, ResultMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
+import { AdapterMessage, RunMessage, StartMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';

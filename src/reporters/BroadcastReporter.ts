@@ -1,6 +1,5 @@
 
-import { Reporter, SourceFile, MutantResult } from 'stryker-api/report';
-import { StrykerOptions } from 'stryker-api/core';
+import { Reporter } from 'stryker-api/report';
 import * as log4js from 'log4js';
 import { isPromise } from '../utils/objectUtils';
 

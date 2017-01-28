@@ -54,7 +54,8 @@ describe('SandboxCoordinator', () => {
       onMutantTested: sinonSandbox.stub(),
       onAllMutantsTested: sinonSandbox.stub()
     };
-    const sandboxStub = sinonSandbox.stub(sandbox, 'default')
+    
+    sinonSandbox.stub(sandbox, 'default')
       .returns(genericSandboxForAllSubsequentCallsToNewSandbox)
       .onCall(0).returns(firstSandbox)
       .onCall(1).returns(secondSandbox);

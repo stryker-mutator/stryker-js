@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { expect } from 'chai';
-import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
+import { RunResult, RunStatus } from 'stryker-api/test_runner';
 import TestRunnerChildProcessAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 

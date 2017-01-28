@@ -15,7 +15,7 @@ export default class CoverageInstrumenterStream extends Transform {
   private source: string;
   public statementMap: StatementMap;
 
-  constructor(public coverageVariable: string, private filename: string, private opts?: TransformOptions) {
+  constructor(public coverageVariable: string, private filename: string, opts?: TransformOptions) {
     super(opts);
     this.source = '';
   }
