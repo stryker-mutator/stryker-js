@@ -31,32 +31,30 @@ export default class SandboxCoordinator {
     return runResult;
   }
 
-  runMutants(mutants: Mutant[]): Promise<MutantResult[]> {
+  async runMutants(mutants: Mutant[]): Promise<MutantResult[]> {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     let results: MutantResult[] = [];
-    return this.createSandboxes().then(sandboxes => {
-      let promiseProducer: () => Promise<number> | Promise<void> = () => {
-        if (mutants.length === 0) {
-          return null; // we're done
+    let sandboxes = await this.createSandboxes();
+    let promiseProducer: () => Promise<number> | Promise<void> = () => {
+      if (mutants.length === 0) {
+        return null; // we're done
+      } else {
+        const mutant = mutants.shift();
+        if (mutant.scopedTestIds.length > 0) {
+          let sandbox = sandboxes.shift();
+          return sandbox.runMutant(mutant)
+            .then((runResult) => this.reportMutantTested(mutant, runResult, results))
+            .then(() => sandboxes.push(sandbox)); // mark the sandbox as available again
         } else {
-          const mutant = mutants.shift();
-          if (mutant.scopedTestIds.length > 0) {
-            let sandbox = sandboxes.shift();
-            return sandbox.runMutant(mutant)
-              .then((runResult) => this.reportMutantTested(mutant, runResult, results))
-              .then(() => sandboxes.push(sandbox)); // mark the sandbox as available again
-          } else {
-            this.reportMutantTested(mutant, null, results);
-            return Promise.resolve();
-          }
+          this.reportMutantTested(mutant, null, results);
+          return Promise.resolve();
         }
-      };
-      return new PromisePool(promiseProducer, sandboxes.length)
-        .start()
-        .then(() => this.reportAllMutantsTested(results))
-        .then(() => Promise.all(sandboxes.map(sandbox => sandbox.dispose())))
-        .then(() => results);
-    });
+      }
+    };
+    await new PromisePool(promiseProducer, sandboxes.length).start();
+    await this.reportAllMutantsTested(results);
+    await Promise.all(sandboxes.map(sandbox => sandbox.dispose()));
+    return results;
   }
 
   private createSandboxes(): Promise<Sandbox[]> {
