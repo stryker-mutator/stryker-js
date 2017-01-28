@@ -1,4 +1,4 @@
-const program = require('commander');
+import * as program from 'commander';
 import { CONFIG_SYNTAX_HELP } from './ConfigReader';
 import Stryker from './Stryker';
 import StrykerInitializer from './initializer/StrykerInitializer';
@@ -42,12 +42,12 @@ Optional location to the stryker.conf.js file as last argument. That file should
 log4js.setGlobalLogLevel(program['logLevel'] || 'info');
 
 // Cleanup commander state
-delete program.options;
-delete program.rawArgs;
+delete program['options'];
+delete program['rawArgs'];
 delete program.args;
 delete program.Command;
 delete program.Option;
-delete program.commands;
+delete program['commands'];
 for (let i in program) {
   if (i.charAt(0) === '_') {
     delete program[i];
@@ -55,12 +55,12 @@ for (let i in program) {
 }
 
 if (strykerConfig) {
-  program.configFile = strykerConfig;
+  program['configFile'] = strykerConfig;
 }
 
 const commands: { [cmd: string]: () => void } = {
   run: () => new Stryker(program).runMutationTest().catch(err => log.error(`an error occurred`, err)),
-  init: () => new StrykerInitializer().inquire()
+  init: () => new StrykerInitializer().initialize()
 };
 
 if (Object.keys(commands).indexOf(command) >= 0) {
