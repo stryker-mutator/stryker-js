@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 
 const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
 
-export var CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
+export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +
   '      // your config\n' +
   '    });\n' +
