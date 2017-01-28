@@ -32,9 +32,9 @@ export default class Sandbox {
     this.testHooksFile = path.join(this.workingFolder, '___testHooksForStryker.js');
   }
 
-  public initialize(): Promise<void> {
-    return this.fillSandbox()
-      .then(() => this.initializeTestRunner());
+  public async initialize(): Promise<void> {
+    await this.fillSandbox();
+    return this.initializeTestRunner();
   }
 
   public run(timeout: number): Promise<RunResult> {
@@ -45,7 +45,7 @@ export default class Sandbox {
     return this.testRunner.dispose();
   }
 
-  public runMutant(mutant: Mutant): Promise<RunResult> {
+  public async runMutant(mutant: Mutant): Promise<RunResult> {
     const targetedFile = this.fileMap[mutant.filename];
     return Promise.all([mutant.save(targetedFile), this.filterTests(mutant)])
       .then(() => this.run(this.calculateTimeout(mutant)))
