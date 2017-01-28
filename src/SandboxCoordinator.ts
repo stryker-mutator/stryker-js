@@ -57,7 +57,7 @@ export default class SandboxCoordinator {
     return results;
   }
 
-  private createSandboxes(): Promise<Sandbox[]> {
+  private async createSandboxes(): Promise<Sandbox[]> {
     let numConcurrentRunners = os.cpus().length;
     let numConcurrentRunnersSource = 'CPU count';
     if (numConcurrentRunners > this.options.maxConcurrentTestRunners && this.options.maxConcurrentTestRunners > 0) {
@@ -69,8 +69,8 @@ export default class SandboxCoordinator {
       sandboxes.push(new Sandbox(this.options, i, this.files, this.testFramework, null));
     }
     log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
-    return Promise.all(sandboxes.map(s => s.initialize()))
-      .then(() => sandboxes);
+    await Promise.all(sandboxes.map(s => s.initialize()));
+    return sandboxes;
   }
 
   private reportMutantTested(mutant: Mutant, runResult: RunResult, results: MutantResult[]) {
