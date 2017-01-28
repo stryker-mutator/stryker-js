@@ -66,16 +66,24 @@ export default class Stryker {
    * Runs mutation testing. This may take a while.
    * @function
    */
-  runMutationTest(): Promise<MutantResult[]> {
+  async runMutationTest(): Promise<MutantResult[]> {
     this.timer.reset();
-    return new InputFileResolver(this.config.mutate, this.config.files).resolve()
-      .then((inputFiles) => this.initialTestRun(inputFiles))
-      .then(({runResult, inputFiles, sandboxCoordinator}) =>
-        this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator))
-      .then(mutantResults => this.wrapUpReporter()
-        .then(StrykerTempFolder.clean)
-        .then(() => this.logDone())
-        .then(() => mutantResults));
+
+    let inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
+    let mutantResults: MutantResult[];
+    let obj = await this.initialTestRun(inputFiles);
+
+    if (obj.runResult && obj.inputFiles && obj.sandboxCoordinator) {
+      mutantResults = await this.generateAndRunMutations(obj.inputFiles, obj.runResult, obj.sandboxCoordinator);
+
+      await this.wrapUpReporter();
+      await StrykerTempFolder.clean();
+      await this.logDone();
+
+      return mutantResults;
+    } else {
+      throw new Error('Resulting object did not contain runResult, inputFiles or sandboxCoordinator');
+    }
   }
 
   private filterOutFailedTests(runResult: RunResult) {
@@ -95,9 +103,9 @@ export default class Stryker {
     }
   }
 
-  private async initialTestRun(inputFiles: InputFile[]) {
+  private async initialTestRun(inputFiles: InputFile[]): Promise<any> {
     const sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
-    let runResult = await sandboxCoordinator.initialRun(this.coverageInstrumenter)
+    let runResult = await sandboxCoordinator.initialRun(this.coverageInstrumenter);
     switch (runResult.status) {
       case RunStatus.Complete:
         let failedTests = this.filterOutFailedTests(runResult);
