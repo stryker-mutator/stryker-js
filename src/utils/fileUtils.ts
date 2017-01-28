@@ -114,27 +114,24 @@ function rmdir(dirToDelete: string): Promise<void> {
 /**
  * Deletes a directory recursively
  */
-export function deleteDir(dirToDelete: string): Promise<void> {
-  return fileOrFolderExists(dirToDelete).then(exists => {
-    if (exists) {
-      return readdir(dirToDelete).then(files => {
-        let promisses = files.map(file => {
-          let currentPath = path.join(dirToDelete, file);
-          return stats(currentPath).then(stats => {
-            if (stats.isDirectory()) {
-              // recursive
-              return deleteDir(currentPath);
-            } else {
-              // delete file
-              return rmFile(currentPath);
-            }
-          });
-        });
-        // delete dir
-        return Promise.all(promisses).then(() => rmdir(dirToDelete));
-      });
-    }
-  });
+export async function deleteDir(dirToDelete: string): Promise<void> {
+  let exists = await fileOrFolderExists(dirToDelete);
+  if (exists) {
+    let files = await readdir(dirToDelete);
+    let promisses = files.map(async(file) => {
+      let currentPath = path.join(dirToDelete, file);
+      let statistics = await stats(currentPath);
+      if (statistics.isDirectory()) {
+        // recursive
+        return deleteDir(currentPath);
+      } else {
+        // delete file
+        return rmFile(currentPath);
+      };
+    });
+    // delete dir
+    return Promise.all(promisses).then(() => rmdir(dirToDelete));
+  }
 }
 
 export function cleanFolder(folderName: string) {
