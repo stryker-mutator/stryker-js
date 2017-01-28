@@ -1,3 +1,5 @@
+import {TestRunnerDefinition, TestFrameworkDefinition} from './initializer.conf';
+
 export class ContextChoices {
-  constructor(public testRunner: Object, public testFramework: Object) { };
+  constructor(public testRunner: TestRunnerDefinition, public testFramework: TestFrameworkDefinition) { };
 }

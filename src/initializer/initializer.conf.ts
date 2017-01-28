@@ -1,16 +1,16 @@
 export interface InitializerDefinitions {
-  testRunners: TestRunnerDefinition[],
-  testFrameworks: FrameworkDefinition[],
+  testRunners: TestRunnerDefinition[];
+  testFrameworks: TestFrameworkDefinition[];
 }
 
 export interface Definition {
-  name: string,
-  npm: string,
-  config: any
+  name: string;
+  npm: string;
+  config: any;
 }
 
 export interface TestRunnerDefinition extends Definition {}
-export interface FrameworkDefinition extends Definition {}
+export interface TestFrameworkDefinition extends Definition {}
 
 const config: InitializerDefinitions = {
     testRunners: [

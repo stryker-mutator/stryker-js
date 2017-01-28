@@ -16,7 +16,8 @@ export default class StrykerInitializer {
   initialize(): void {
     const contextChoices = this.promptContextChoices()
       .then((contextChoices) => {
-        console.log(contextChoices);
+        // console.log(contextChoices);
+        this.installNpmDependencies(this.buildNpmPackagesArray(contextChoices));
       });
   };
 
@@ -25,7 +26,6 @@ export default class StrykerInitializer {
   * @function
   */
   promptContextChoices(): Promise<ContextChoices> {
-    console.log(this.buildQuestions());
     return inquirer.prompt(this.buildQuestions())
       .then((answers) => {
         const possibleTestFrameworks = config.testFrameworks;
@@ -48,6 +48,14 @@ export default class StrykerInitializer {
         return new ContextChoices(chosenTestRunner, chosenTestFramework);
       });
   };
+
+  buildNpmPackagesArray(contextChoices: ContextChoices): Array<String> {
+    let npmPackages = [];
+    npmPackages.push('stryker-html-reporter');
+    npmPackages.push(contextChoices.testFramework.npm);
+    npmPackages.push(contextChoices.testRunner.npm);
+    return npmPackages;
+  }
 
   buildQuestions(): inquirer.Questions {
     let testFrameworkChoices: Array<string> = [];
@@ -87,22 +95,8 @@ export default class StrykerInitializer {
 
     let result: boolean = true;
 
-    for (let dependency in dependencies) {
-      npmi({ name: dependency }, function (err: any, result: any) {
-        if (err) {
-          if (err.code === npmi.LOAD_ERR) {
-            console.error("Failed installing " + dependency + ": load error");
-          } else if (err.code === npmi.INSTALL_ERR) {
-            console.error("Failed installing " + dependency + ": installation error");
-          }
-
-          result = false;
-        } else {
-          console.log(dependency + "@latest: installed successfully");
-        }
-      })
-    }
-    return result;
+    console.log(`npm i ${dependencies.join(' ')} --save-dev`);
+    require('child_process').execSync(`npm i ${dependencies.join(' ')} --save-dev`, {stdio: [0, 1, 2]});
   };
 
   installStrykerConfiguration(parameters: Object) {
