@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 // Don't use JSON.parse, as it does not allow for regexes or functions, etc
-export var serialize: (obj: any) => string = require('serialize-javascript');
+export const serialize: (obj: any) => string = require('serialize-javascript');
 
 export function freezeRecursively(target: { [customConfig: string]: any }) {
   Object.freeze(target);
