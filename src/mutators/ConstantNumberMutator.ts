@@ -11,7 +11,7 @@ export default class ConstantNumberMutator implements Mutator {
     constructor() { }
 
     applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): void | estree.Node | estree.Node[] {
-        if (node.type === Syntax.VariableDeclaration && node.kind === "const" && node.declarations.length == 1) {
+        if (node.type === Syntax.VariableDeclaration && node.kind === 'const' && node.declarations.length === 1) {
             let mutatedNode = copy(node, true);
             let dec = mutatedNode.declarations[0];
             if (dec.init.type === Syntax.Literal) {
