@@ -19,14 +19,13 @@ export default class InputFileResolver {
     this.inputFileResolver = PatternResolver.parse(allFileExpressions);
   }
 
-  public resolve(): Promise<InputFile[]> {
-    return Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]).then(results => {
-      const inputFiles = results[0];
-      const mutateFiles = results[1];
-      this.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.path));
-      this.logFilesToMutate(inputFiles);
-      return inputFiles;
-    });
+  public async resolve(): Promise<InputFile[]> {
+    let results = await Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]);
+    const inputFiles = results[0];
+    const mutateFiles = results[1];
+    this.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.path));
+    this.logFilesToMutate(inputFiles);
+    return inputFiles;
   }
 
   private validateFileDescriptor(maybeInputFileDescriptors: Array<InputFileDescriptor | string>) {
@@ -97,7 +96,7 @@ class PatternResolver {
     }
   }
 
-  resolve(): Promise<InputFile[]> {
+  async resolve(): Promise<InputFile[]> {
     // When the first expression starts with an '!', we skip that one
     if (this.ignore && !this.previous) {
       return Promise.resolve([]);
@@ -108,17 +107,16 @@ class PatternResolver {
      
       // If there is a previous globbing expression, resolve that one as well
       if (this.previous) {
-        return Promise.all([this.previous.resolve(), globbingTask]).then(results => {
-          const previousFiles = results[0];
-          const currentFiles = results[1];
-          // If this expression started with a '!', exclude current files
-          if (this.ignore) {
-            return previousFiles.filter(previousFile => currentFiles.every(currentFile => previousFile.path !== currentFile.path));
-          } else {
-            // Only add files which were not already added
-            return previousFiles.concat(currentFiles.filter(currentFile => !previousFiles.some(file => file.path === currentFile.path)));
-          }
-        });
+        let results = await Promise.all([this.previous.resolve(), globbingTask]);
+        const previousFiles = results[0];
+        const currentFiles = results[1];
+        // If this expression started with a '!', exclude current files
+        if (this.ignore) {
+          return previousFiles.filter(previousFile => currentFiles.every(currentFile => previousFile.path !== currentFile.path));
+        } else {
+          // Only add files which were not already added
+          return previousFiles.concat(currentFiles.filter(currentFile => !previousFiles.some(file => file.path === currentFile.path)));
+        }
       } else {
         return globbingTask;
       }
@@ -140,17 +138,16 @@ class PatternResolver {
     return current;
   }
 
-  private resolveGlobbingExpression(pattern: string): Promise<string[]> {
+  private async resolveGlobbingExpression(pattern: string): Promise<string[]> {
     if (isOnlineFile(pattern)) {
       return Promise.resolve([pattern]);
     } else {
-      return glob(pattern).then(files => {
-        if (files.length === 0) {
-          this.reportEmptyGlobbingExpression(pattern);
-        }
-        normalize(files);
-        return files;
-      });
+      let files = await glob(pattern);
+      if (files.length === 0) {
+        this.reportEmptyGlobbingExpression(pattern);
+      }
+      normalize(files);
+      return files;
     }
   }
 
