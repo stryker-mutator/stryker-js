@@ -22,7 +22,7 @@ describe('ReporterOrchestrator', () => {
   });
 
   it('should register default reporters', () => {
-    expect(ReporterFactory.instance().knownNames()).to.have.lengthOf(5);
+    expect(ReporterFactory.instance().knownNames()).length.to.be.above(4);
   });
 
   describe('createBroadcastReporter()', () => {
