@@ -2,6 +2,7 @@ import * as log4js from 'log4js';
 import * as os from 'os';
 import * as _ from 'lodash';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
 import { TestRunner, RunResult, RunnerOptions, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { Reporter, MutantResult, MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
@@ -9,6 +10,8 @@ import { freezeRecursively } from './utils/objectUtils';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import Sandbox from './Sandbox';
 import Mutant from './Mutant';
+import StrictReporter from './reporters/StrictReporter';
+
 const PromisePool = require('es6-promise-pool');
 
 const log = log4js.getLogger('SandboxCoordinator');
@@ -20,7 +23,7 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 
 export default class SandboxCoordinator {
 
-  constructor(private options: StrykerOptions, private files: InputFile[], private testFramework: TestFramework, private reporter: Reporter) { }
+  constructor(private options: Config, private files: InputFile[], private testFramework: TestFramework | void, private reporter: StrictReporter) { }
 
   initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
     log.info(`Starting initial test run. This may take a while.`);
@@ -35,16 +38,18 @@ export default class SandboxCoordinator {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     let results: MutantResult[] = [];
     return this.createSandboxes().then(sandboxes => {
-      let promiseProducer: () => Promise<number> | Promise<void> = () => {
-        if (mutants.length === 0) {
+      let promiseProducer: () => Promise<number> | Promise<void> | null | undefined = () => {
+        const mutant = mutants.shift();
+        if (!mutant) {
           return null; // we're done
         } else {
-          const mutant = mutants.shift();
           if (mutant.scopedTestIds.length > 0) {
-            let sandbox = sandboxes.shift();
-            return sandbox.runMutant(mutant)
-              .then((runResult) => this.reportMutantTested(mutant, runResult, results))
-              .then(() => sandboxes.push(sandbox)); // mark the sandbox as available again
+            const sandbox = sandboxes.shift();
+            if (sandbox) {
+              return sandbox.runMutant(mutant)
+                .then((runResult) => this.reportMutantTested(mutant, runResult, results))
+                .then(() => sandboxes.push(sandbox)); // mark the sandbox as available again
+            }
           } else {
             this.reportMutantTested(mutant, null, results);
             return Promise.resolve();
@@ -75,14 +80,14 @@ export default class SandboxCoordinator {
       .then(() => sandboxes);
   }
 
-  private reportMutantTested(mutant: Mutant, runResult: RunResult, results: MutantResult[]) {
+  private reportMutantTested(mutant: Mutant, runResult: RunResult | null, results: MutantResult[]) {
     let result = this.collectFrozenMutantResult(mutant, runResult);
     results.push(result);
     this.reporter.onMutantTested(result);
   }
 
-  private collectFrozenMutantResult(mutant: Mutant, runResult?: RunResult): MutantResult {
-    let status: MutantStatus;
+  private collectFrozenMutantResult(mutant: Mutant, runResult: RunResult | null): MutantResult {
+    let status: MutantStatus = MutantStatus.NoCoverage;
     let testNames: string[];
     if (runResult) {
       switch (runResult.status) {
@@ -105,7 +110,6 @@ export default class SandboxCoordinator {
         .map(t => t.name);
     } else {
       testNames = [];
-      status = MutantStatus.NoCoverage;
     }
 
     let result: MutantResult = {

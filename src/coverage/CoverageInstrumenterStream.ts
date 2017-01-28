@@ -34,7 +34,7 @@ export default class CoverageInstrumenterStream extends Transform {
       const instrumenter = new Instrumenter({ coverageVariable: this.coverageVariable });
       const instrumentedCode = instrumenter.instrumentSync(this.source, this.filename);
       coverageObjRegex.lastIndex = 0;
-      const coverageObjectMatch = coverageObjRegex.exec(instrumentedCode).toString();
+      const coverageObjectMatch = coverageObjRegex.exec(instrumentedCode) + '';
       const coverageObj = JSON.parse(coverageObjectMatch);
       this.statementMap = coverageObj.statementMap;
       this.push(instrumentedCode);

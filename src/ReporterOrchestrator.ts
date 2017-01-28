@@ -6,6 +6,7 @@ import ProgressAppendOnlyReporter from './reporters/ProgressAppendOnlyReporter';
 import DotsReporter from './reporters/DotsReporter';
 import EventRecorderReporter from './reporters/EventRecorderReporter';
 import BroadcastReporter, { NamedReporter } from './reporters/BroadcastReporter';
+import StrictReporter from './reporters/StrictReporter';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('ReporterOrchestrator');
@@ -24,7 +25,7 @@ export default class ReporterOrchestrator {
   constructor(private options: StrykerOptions) {
   }
 
-  public createBroadcastReporter(): Reporter {
+  public createBroadcastReporter(): StrictReporter {
     let reporters: NamedReporter[] = [];
     let reporterOption = this.options.reporter;
     if (reporterOption) {

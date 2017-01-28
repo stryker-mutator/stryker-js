@@ -1,4 +1,5 @@
 import Mutant from './Mutant';
+import StrictReporter from './reporters/StrictReporter';
 import { Reporter, MatchedMutant } from 'stryker-api/report';
 import { StatementMapDictionary } from './coverage/CoverageInstrumenter';
 import { RunResult, CoverageCollection, CoverageCollectionPerTest, CoverageResult, StatementMap } from 'stryker-api/test_runner';
@@ -7,7 +8,7 @@ import * as _ from 'lodash';
 
 export default class MutantTestMatcher {
 
-  constructor(private mutants: Mutant[], private initialRunResult: RunResult, private statementMaps: StatementMapDictionary, private options: StrykerOptions, private reporter: Reporter) { }
+  constructor(private mutants: Mutant[], private initialRunResult: RunResult, private statementMaps: StatementMapDictionary, private options: StrykerOptions, private reporter: StrictReporter) { }
 
   matchWithMutants() {
     this.mutants.forEach(mutant => {
@@ -41,7 +42,7 @@ export default class MutantTestMatcher {
    */
   private mapMutantOnMatchedMutant(mutant: Mutant): MatchedMutant {
     const matchedMutant = _.cloneDeep({
-      mutatorName: mutant.mutatorName, 
+      mutatorName: mutant.mutatorName,
       scopedTestIds: mutant.scopedTestIds,
       timeSpentScopedTests: mutant.timeSpentScopedTests,
       filename: mutant.filename,
@@ -56,18 +57,17 @@ export default class MutantTestMatcher {
    * @param statementMap of the covering file.
    * @returns The index of the coveredFile which contains the smallest statement surrounding the mutant.
    */
-  private findSmallestCoveringStatement(mutant: Mutant, statementMap: StatementMap): string {
-    let smallestStatement: string = null;
+  private findSmallestCoveringStatement(mutant: Mutant, statementMap: StatementMap): string | undefined {
+    let smallestStatement: string | undefined = undefined;
     if (statementMap) {
       Object.keys(statementMap).forEach(statementId => {
         let location = statementMap[statementId];
 
-        if (this.statementCoversMutant(mutant.location, location) && this.isNewSmallestStatement(statementMap[smallestStatement], location)) {
+        if (this.statementCoversMutant(mutant.location, location) && (!smallestStatement || this.isNewSmallestStatement(statementMap[smallestStatement], location))) {
           smallestStatement = statementId;
         }
       });
     }
-
     return smallestStatement;
   }
 
@@ -107,7 +107,7 @@ export default class MutantTestMatcher {
     return mutantIsAfterStart && mutantIsBeforeEnd;
   }
 
-  private findCoverageCollectionForTest(testId: number): CoverageCollection {
+  private findCoverageCollectionForTest(testId: number): CoverageCollection | null {
     if (this.initialRunResult.coverage) {
       if (this.isCoverageCollectionPerTest(this.initialRunResult.coverage)) {
         return this.initialRunResult.coverage[testId];

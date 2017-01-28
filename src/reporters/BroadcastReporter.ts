@@ -18,7 +18,7 @@ export const ALL_EVENT_METHOD_NAMES = ['onSourceFileRead', 'onAllSourceFilesRead
 export default class BroadcastReporter implements StrictReporter {
 
   constructor(private reporters: NamedReporter[]) {
-    //Empty constructor
+    // Empty constructor
   }
 
   private broadcast(methodName: string, eventArgs?: any) {

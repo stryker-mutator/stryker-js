@@ -15,7 +15,7 @@ export default class Executor {
     if (!options) {
       options = {};
     }
-    command = args.shift();
+    command = args.shift() || '';
     options.cwd = this.cwd;
     options.env = options.env || process.env;
     if (process.platform.substr(0, 3) === 'win') {

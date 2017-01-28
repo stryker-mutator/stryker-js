@@ -153,7 +153,7 @@ describe('ClearTextReporter', function () {
     return status.map(status => {
       return {
         location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
-        range: null,
+        range: [ 0, 0 ],
         mutatedLines: 'mutated line',
         mutatorName: 'Math',
         originalLines: 'original line',

@@ -9,17 +9,16 @@ export default class TestFrameworkOrchestrator {
   constructor(private options: StrykerOptions) {
   }
 
-  determineTestFramework(): TestFramework | null {
+  determineTestFramework(): TestFramework | void {
     if (this.options.coverageAnalysis !== 'perTest') {
       log.debug('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', this.options.coverageAnalysis);
-      return null;
     } else {
       return this.determineFrameworkWithCoverageAnalysis();
     }
   }
 
-  private determineFrameworkWithCoverageAnalysis(): TestFramework | null {
-    let testFramework: TestFramework = null;
+  private determineFrameworkWithCoverageAnalysis(): TestFramework {
+    let testFramework: TestFramework;
     if (this.options.testFramework) {
       if (this.testFrameworkExists(this.options.testFramework)) {
         log.debug(`Using testFramework ${this.options.testFramework} based on \`testFramework\` setting`);

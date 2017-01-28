@@ -108,7 +108,7 @@ describe('ConfigReader', () => {
     describe('with an existing file, but not a module', () => {
 
       beforeEach(() => {
-        sut = new ConfigReader({ configFile: '../../testResources/config-reader/invalid.conf.js' });
+        sut = new ConfigReader({ configFile: 'testResources/config-reader/invalid.conf.js' });
         result = sut.readConfig();
       });
 

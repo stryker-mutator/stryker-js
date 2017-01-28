@@ -9,6 +9,7 @@
         "declaration": true,
         "forceConsistentCasingInFileNames": true,
         "allowJs": false,
+        "strictNullChecks": true,
         "lib": [
           "es5",
           "es2015.promise"

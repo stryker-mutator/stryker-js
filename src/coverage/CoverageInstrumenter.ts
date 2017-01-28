@@ -23,7 +23,7 @@ export default class CoverageInstrumenter {
 
   private coverageInstrumenterStreamPerFile: { [fileName: string]: CoverageInstrumenterStream } = Object.create(null);
 
-  constructor(private coverageAnalysis: 'all' | 'off' | 'perTest', private testFramework: TestFramework) { }
+  constructor(private coverageAnalysis: 'all' | 'off' | 'perTest', private testFramework: TestFramework | void) { }
 
   public instrumenterStreamForFile(file: InputFile): NodeJS.ReadWriteStream {
     if (file.mutated) {

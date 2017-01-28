@@ -35,7 +35,8 @@ export default class ConfigReader {
   }
 
   private loadConfigModule(): Function {
-    let configModule: Function;
+    // we start with a dummy configModule
+    let configModule: Function = function() { };
     if (this.cliOptions.configFile) {
       log.debug('Loading config %s', this.cliOptions.configFile);
       try {
@@ -59,13 +60,13 @@ export default class ConfigReader {
       return this.loadConfigModule();
     } else {
       log.info('No config file specified. Running with command line arguments');
-      // if no config file path is passed, we define a dummy config module.
-      configModule = function () { };
+      // if no config file path is passed, we create and return a dummy config module.
     }
     return configModule;
   }
 
-  private validate(options: StrykerOptions) {
+  private validate(options: Config) {
+
     if (VALID_COVERAGE_ANALYSIS_VALUES.indexOf(options.coverageAnalysis) < 0) {
       log.fatal(`Value "${options.coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the folowing: ${VALID_COVERAGE_ANALYSIS_VALUES.map(v => `"${v}"`).join(', ')}`);
       process.exit(1);

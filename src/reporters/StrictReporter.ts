@@ -3,7 +3,7 @@ import {Reporter, SourceFile, MutantResult, MatchedMutant} from 'stryker-api/rep
 /**
  * Represents a reporter which can report during or after a Stryker run
  */
-interface StrictReporter extends Reporter{
+interface StrictReporter extends Reporter {
 
     onSourceFileRead(file: SourceFile): void;
 
