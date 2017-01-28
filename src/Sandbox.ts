@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
-import { RunResult, StatementMap } from 'stryker-api/test_runner';
+import { RunResult } from 'stryker-api/test_runner';
 import { InputFile, StrykerOptions } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';

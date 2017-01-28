@@ -2,7 +2,6 @@ import {expect} from 'chai';
 import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
 import MutatorOrchestrator from '../../src/MutatorOrchestrator';
-import RemoveConditionalsMutator from '../../src/mutators/RemoveConditionalsMutator';
 import {Mutator, MutatorFactory} from 'stryker-api/mutant';
 import * as sinon from 'sinon';
 import {Syntax} from 'esprima';

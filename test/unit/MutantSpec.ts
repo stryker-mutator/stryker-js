@@ -2,9 +2,7 @@
 
 import { expect } from 'chai';
 import Mutant from '../../src/Mutant';
-import { MutantStatus } from 'stryker-api/report';
 import { Location } from 'stryker-api/core';
-import BinaryOperatorMutator from '../../src/mutators/BinaryOperatorMutator';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
@@ -13,7 +11,6 @@ import * as estree from 'estree';
 describe('Mutant', () => {
   let sut: Mutant;
   let filename: string;
-  let mutator: BinaryOperatorMutator;
   let originalLine: string;
   let originalCode: string;
   let mutatedLine: string;
@@ -72,7 +69,6 @@ describe('Mutant', () => {
     let expectedOriginalLines: string;
     let expectedMutatedLines: string;
     let originalCode: string;
-    let mutatedCode: string;
     let restOfCode: string;
 
     beforeEach(() => {

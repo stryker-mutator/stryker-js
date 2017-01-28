@@ -1,9 +1,8 @@
 import Stryker from '../../src/Stryker';
 import { InputFile } from 'stryker-api/core';
-import { MutantResult, Reporter } from 'stryker-api/report';
+import { Reporter } from 'stryker-api/report';
 import { Config, ConfigWriterFactory, ConfigWriter } from 'stryker-api/config';
-import { RunResult, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import { TestFramework } from 'stryker-api/test_framework';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as inputFileResolver from '../../src/InputFileResolver';

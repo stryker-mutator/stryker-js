@@ -2,7 +2,7 @@ import * as log4js from 'log4js';
 import * as os from 'os';
 import * as _ from 'lodash';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
-import { TestRunner, RunResult, RunnerOptions, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { Reporter, MutantResult, MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { freezeRecursively } from './utils/objectUtils';

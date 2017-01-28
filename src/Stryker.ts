@@ -1,9 +1,6 @@
 'use strict';
 
-import * as _ from 'lodash';
-import { normalize } from './utils/fileUtils';
 import MutatorOrchestrator from './MutatorOrchestrator';
-import Mutant from './Mutant';
 import { Config, ConfigWriterFactory } from 'stryker-api/config';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
 import { Reporter, MutantResult } from 'stryker-api/report';
