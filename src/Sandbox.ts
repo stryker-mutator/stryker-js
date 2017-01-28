@@ -32,9 +32,9 @@ export default class Sandbox {
     this.testHooksFile = path.join(this.workingFolder, '___testHooksForStryker.js');
   }
 
-  public initialize(): Promise<void> {
-    return this.fillSandbox()
-      .then(() => this.initializeTestRunner());
+  public async initialize(): Promise<void> {
+    await this.fillSandbox();
+    return this.initializeTestRunner();
   }
 
   public run(timeout: number): Promise<RunResult> {
