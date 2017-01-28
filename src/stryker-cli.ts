@@ -1,6 +1,7 @@
 const program = require('commander');
 import { CONFIG_SYNTAX_HELP } from './ConfigReader';
 import Stryker from './Stryker';
+import StrykerInitializer from './initializer/StrykerInitializer';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('stryker-cli');
@@ -14,6 +15,7 @@ program
   .usage('<command> [options] [stryker.conf.js]')
   .description(`Possible commands: 
     run: Run mutation testing
+    init: Initalize Stryker for your project
 
 Optional location to the stryker.conf.js file as last argument. That file should export a function which accepts a "config" object\n${CONFIG_SYNTAX_HELP}`)
   .arguments('<command> [stryker.conf.js]')
@@ -57,7 +59,8 @@ if (strykerConfig) {
 }
 
 const commands: { [cmd: string]: () => void } = {
-  run: () => new Stryker(program).runMutationTest().catch(err => log.error(`an error occurred`, err))
+  run: () => new Stryker(program).runMutationTest().catch(err => log.error(`an error occurred`, err)),
+  init: () => new StrykerInitializer().inquire()
 };
 
 if (Object.keys(commands).indexOf(command) >= 0) {
