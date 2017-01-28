@@ -32,7 +32,7 @@ const config = {
         }]
       }
     ],  
-    defaults: [{testRunner: 'Karma', testFramework: 'Mocha' }]
+    defaults: {testRunner: 'Mocha', testFramework: 'Mocha' }
 };
 
 export default config;
