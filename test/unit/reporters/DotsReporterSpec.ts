@@ -72,7 +72,7 @@ describe('DotsReporter', () => {
       replacement: '',
       sourceFilePath: '',
       testsRan: [''],
-      status: 0,
+      status: status,
       range: [0, 0]
     };
   }
