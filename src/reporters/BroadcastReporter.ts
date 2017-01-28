@@ -22,7 +22,7 @@ export default class BroadcastReporter implements Reporter {
     });
   }
 
-  private broadcast(methodName: string, eventArgs: any) {
+  private broadcast(methodName: string, eventArgs: any): Promise<any> | void {
     let allPromises: Promise<any>[] = [];
     this.reporters.forEach(namedReporter => {
       let reporter = <any>namedReporter.reporter;
