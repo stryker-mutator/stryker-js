@@ -22,13 +22,13 @@ export default class SandboxCoordinator {
 
   constructor(private options: StrykerOptions, private files: InputFile[], private testFramework: TestFramework, private reporter: Reporter) { }
 
-  initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
+  async initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
     log.info(`Starting initial test run. This may take a while.`);
     const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
-    return sandbox
-      .initialize()
-      .then(() => sandbox.run(INITIAL_RUN_TIMEOUT))
-      .then((runResult) => sandbox.dispose().then(() => runResult));
+    await sandbox.initialize();
+    let runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
+    await sandbox.dispose();
+    return runResult;
   }
 
   runMutants(mutants: Mutant[]): Promise<MutantResult[]> {
