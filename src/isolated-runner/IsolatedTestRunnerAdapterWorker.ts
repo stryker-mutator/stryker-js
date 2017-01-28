@@ -47,16 +47,11 @@ class IsolatedTestRunnerAdapterWorker {
     this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
   }
 
-  init() {
-    let initPromise: Promise<any> | void = void 0;
+  async init() {
     if (this.underlyingTestRunner.init) {
-      initPromise = this.underlyingTestRunner.init();
-    }
-    if (isPromise(initPromise)) {
-      initPromise.then(this.sendInitDone);
-    } else {
-      this.sendInitDone();
-    }
+      await this.underlyingTestRunner.init();
+    };
+    this.sendInitDone();
   }
 
   sendInitDone() {
