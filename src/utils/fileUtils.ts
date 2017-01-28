@@ -138,7 +138,7 @@ export async function deleteDir(dirToDelete: string): Promise<void> {
 export async function cleanFolder(folderName: string) {
   let exists = await fileOrFolderExists(folderName);
   if (exists) {
-    await deleteDir(folderName)
+    await deleteDir(folderName);
     return mkdirRecursive(folderName);
   } else {
     return mkdirRecursive(folderName);
