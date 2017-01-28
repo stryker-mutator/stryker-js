@@ -5,9 +5,8 @@ module.exports = function(config){
         { pattern: 'src/**/*.js', mutated: true, included: false},
         'test/**/*.js'
     ],
-    testRunner: '%testRunner%',
-    testFramework: '%testFramework%',
     coverageAnalysis: 'perTest',
     reporter: ['html', 'progress'],
+    %initializer_config%
   });
 }

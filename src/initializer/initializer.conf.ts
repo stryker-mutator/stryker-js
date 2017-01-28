@@ -1,38 +1,51 @@
-const config = {
+export interface InitializerDefinitions {
+  testRunners: TestRunnerDefinition[],
+  testFrameworks: FrameworkDefinition[],
+}
+
+export interface Definition {
+  name: string,
+  npm: string,
+  config: any
+}
+
+export interface TestRunnerDefinition extends Definition {}
+export interface FrameworkDefinition extends Definition {}
+
+const config: InitializerDefinitions = {
     testRunners: [
       {
         name: 'Mocha',
         npm: 'stryker-mocha-runner',
-        config: [{
+        config: {
           testRunner: 'mocha'
-        }]
+        }
       },
       {
         name: 'Karma', 
         npm: 'stryker-karma-runner', 
-        config: [{
+        config: {
           testRunner: 'karma', 
           karmaConfigFile: './karma.conf.js'
-        }]
+        }
       }
     ],
     testFrameworks: [
       {
         name: 'Mocha',
         npm: '',
-        config: [{
+        config: {
           testFramework: 'mocha'
-        }]
+        }
       },
       {
         name: 'Jasmine',
         npm: 'stryker-jasmine',
-        config: [{
+        config: {
           testFramework: 'jasmine'
-        }]
+        }
       }
-    ],  
-    defaults: [{testRunner: 'Karma', testFramework: 'Mocha' }]
+    ]
 };
 
 export default config;
