@@ -4,7 +4,7 @@ import LogicalOperatorMutator from './mutators/LogicalOperatorMutator';
 import RemoveConditionalsMutator from './mutators/RemoveConditionalsMutator';
 import UnaryOperatorMutator from './mutators/UnaryOperatorMutator';
 import UpdateOperatorMutator from './mutators/UpdateOperatorMutator';
-import ArrayDeclarationMutator from './mutators/ArrayDeclarationMutator';
+import ArrayDeclaratorMutator from './mutators/ArrayDeclaratorMutator';
 import { Mutator, MutatorFactory } from 'stryker-api/mutant';
 import { Reporter, SourceFile } from 'stryker-api/report';
 import * as fileUtils from './utils/fileUtils';
@@ -85,7 +85,7 @@ export default class MutatorOrchestrator {
     mutatorFactory.register('RemoveConditionals', RemoveConditionalsMutator);
     mutatorFactory.register('UnaryOperator', UnaryOperatorMutator);
     mutatorFactory.register('UpdateOperator', UpdateOperatorMutator);
-    mutatorFactory.register('ArrayDeclaration', ArrayDeclarationMutator);
+    mutatorFactory.register('ArrayDeclarator', ArrayDeclaratorMutator);
   }
 
   /**
