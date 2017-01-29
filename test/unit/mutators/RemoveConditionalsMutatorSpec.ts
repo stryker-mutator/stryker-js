@@ -84,12 +84,16 @@ describe('RemoveConditionalsMutator', () => {
       let testValue = (<estree.Literal>mutatedNodes[0]).value;
       expect(testValue).to.be.false;
       expect(mutatedNodes[0].nodeID).to.not.eq(forLoop.nodeID);
-      expect(mutatedNodes[0].nodeID).to.eq(forLoop.test.nodeID);
+      if(forLoop.test){
+        expect(mutatedNodes[0].nodeID).to.eq(forLoop.test.nodeID);      
+      } else {
+        expect.fail('test.nodeID was expected to be not undefined');
+      }
     });
 
     it('when given an infinite-for loop', () => {
       const forStatementNode = actMutator(infiniteForLoop)[0];
-      if (forStatementNode.type === Syntax.ForStatement && forStatementNode.test.type === Syntax.Literal) {
+      if (forStatementNode.type === Syntax.ForStatement && forStatementNode.test && forStatementNode.test.type === Syntax.Literal) {
         const testValue = forStatementNode.test.value;
         expect(testValue).to.be.false;
         expect(forStatementNode.nodeID).to.eq(infiniteForLoop.nodeID);
