@@ -45,11 +45,12 @@ export default class Sandbox {
     return this.testRunner.dispose();
   }
 
-  public runMutant(mutant: Mutant): Promise<RunResult> {
+  public async runMutant(mutant: Mutant): Promise<RunResult> {
     const targetedFile = this.fileMap[mutant.filename];
-    return Promise.all([mutant.save(targetedFile), this.filterTests(mutant)])
-      .then(() => this.run(this.calculateTimeout(mutant)))
-      .then(runResult => mutant.reset(targetedFile).then(() => runResult));
+    await Promise.all([mutant.save(targetedFile), this.filterTests(mutant)]);
+    let runResult = await this.run(this.calculateTimeout(mutant));
+    await mutant.reset(targetedFile);
+    return runResult;
   }
 
   private fillSandbox(): Promise<void[]> {

@@ -47,8 +47,10 @@ export default class SandboxCoordinator {
           const sandbox = sandboxes.shift();
           if (sandbox) {
             return sandbox.runMutant(mutant)
-              .then((runResult) => this.reportMutantTested(mutant, runResult, results))
-              .then(() => sandboxes.push(sandbox)); // mark the sandbox as available again
+              .then((runResult) => {
+                this.reportMutantTested(mutant, runResult, results);
+                sandboxes.push(sandbox); // mark the sandbox as available again
+            });
           }
           else {
             return null;
