@@ -1,4 +1,4 @@
-import ConstantNumberMutator from '../../../src/mutators/ConstantNumberMutator'
+import ConstantNumberMutator from '../../../src/mutators/ConstantNumberMutator';
 import { expect } from 'chai';
 import { copy } from '../../../src/utils/objectUtils';
 import * as parser from '../../../src/utils/parserUtils';
@@ -17,7 +17,7 @@ describe('ConstantNumberMutator', () => {
             node: (variableDeclaration.declarations[0].init as estree.SimpleLiteral),
             mutatedNode: (mutator.applyMutations(variableDeclaration, copy) as estree.SimpleLiteral)
         };
-    }
+    };
 
     describe('Should mutate', () => {
         it('a number not equal to 0', () => {
