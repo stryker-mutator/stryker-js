@@ -2,7 +2,7 @@ import { AdapterMessage, RunMessage, StartMessage, EmptyWorkerMessage, WorkerMes
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
-import { isPromise, deserialize } from '../utils/objectUtils';
+import { deserialize } from '../utils/objectUtils';
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapterWorker');
 
