@@ -12,16 +12,11 @@ export default class ConstantNumberMutator implements Mutator {
 
     applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): void | estree.Node | estree.Node[] {
         if (node.type === Syntax.VariableDeclaration && node.kind === 'const' && node.declarations.length === 1) {
-            let mutatedNode = copy(node, true);
-            let dec = mutatedNode.declarations[0];
-            if (dec.init.type === Syntax.Literal) {
-                let init: estree.SimpleLiteral | estree.RegExpLiteral = dec.init;
-                if (typeof(init.value) === 'number') {
-                    if (init.value === 0) {
-                        init.value = 1;
-                    } else {
-                        init.value = 0;
-                    }
+            let declaration = node.declarations[0];
+            if (declaration.init.type === Syntax.Literal) {
+                let mutatedNode: estree.SimpleLiteral | estree.RegExpLiteral = copy(declaration.init);
+                if (typeof(mutatedNode.value) === 'number') {
+                    mutatedNode.value = mutatedNode.value === 0 ? 1 : 0;
                     return mutatedNode;
                 }
             }
