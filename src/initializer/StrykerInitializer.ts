@@ -2,7 +2,10 @@
 
 import * as inquirer from 'inquirer';
 import * as fs from 'fs';
-import config from './initializer.conf';
+import * as path from 'path';
+import * as _ from "lodash";
+import initializerConfig from './initializer.conf';
+import strykerConfig from './stryker.conf';
 import { ContextChoices } from './contextChoices';
 import * as child from 'child_process';
 
@@ -14,9 +17,9 @@ export default class StrykerInitializer {
   initialize(): void {
     const contextChoices = this.promptContextChoices()
       .then((contextChoices) => {
-        // console.log(contextChoices);
         this.installNpmDependencies(this.buildNpmPackagesArray(contextChoices));
-      });
+        this.installStrykerConfiguration(contextChoices);
+      })
   };
 
   /**
@@ -26,8 +29,8 @@ export default class StrykerInitializer {
   promptContextChoices(): Promise<ContextChoices> {
     return inquirer.prompt(this.buildQuestions())
       .then((answers) => {
-        const possibleTestFrameworks = config.testFrameworks;
-        const possibleTestRunners = config.testRunners;
+        const possibleTestFrameworks = initializerConfig.testFrameworks;
+        const possibleTestRunners = initializerConfig.testRunners;
         let chosenTestFramework;
         let chosenTestRunner;
 
@@ -57,9 +60,9 @@ export default class StrykerInitializer {
 
   buildQuestions(): inquirer.Questions {
     let testFrameworkChoices: Array<string> = [];
-    const possibleTestFrameworks = config.testFrameworks;
+    const possibleTestFrameworks = initializerConfig.testFrameworks;
     let testRunnerChoices: Array<string> = [];
-    const possibleTestRunners = config.testRunners;
+    const possibleTestRunners = initializerConfig.testRunners;
 
     for (let i = 0; i < possibleTestFrameworks.length; i++) {
 
@@ -89,25 +92,34 @@ export default class StrykerInitializer {
   };
 
   installNpmDependencies(dependencies: Array<String>): void {
-    console.log('Installing NPM dependencies: ' + dependencies);
+    console.log('Installing NPM dependencies...');
 
-    child.execSync(`npm i ${dependencies.join(' ')} --save-dev`, {stdio: [0, 1, 2]});
+    child.execSync(`npm i ${dependencies.join(' ')} --save-dev`, { stdio: [0, 1, 2] });
   };
 
-  installStrykerConfiguration(parameters: Object) {
-    fs.readFile(__dirname + '/stryker.conf.js.template', function (err, data) {
+  installStrykerConfiguration(contextChoices: ContextChoices): void {
+    console.log('Installing Stryker configuration...');
+
+    let configurationObject = strykerConfig;
+
+    configurationObject = _.assign(configurationObject, contextChoices.testFramework.config);
+    configurationObject = _.assign(configurationObject, contextChoices.testRunner.config);
+
+    let newConfiguration = wrapInModule(JSON.stringify(configurationObject, null, 2));
+
+    fs.writeFile(process.cwd() + path.sep + 'stryker.conf.js', newConfiguration, function (err) {
       if (err) {
         throw err;
       }
-
-      let regExp: RegExp = new RegExp('%initializer_config%');
-      let newParams: string = "";
-
-      for (let param in parameters) {
-        newParams += param + ": " + ", ";
-      }
-
-      console.log(data.toString().replace(regExp, newParams));
     });
   }
+}
+
+function wrapInModule(configParameters: string) { 
+return `
+  module.exports = function(config){
+    config.set(
+      ${configParameters}
+    );
+  }`;
 }
