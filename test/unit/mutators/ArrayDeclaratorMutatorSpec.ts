@@ -10,22 +10,22 @@ describe('BlockStatementMutator', () => {
 
   beforeEach(() => sut = new ArrayDeclaratorMutator());
   
-  const getVariableDeclaration = (program: estree.Program) => (program.body[0] as estree.VariableDeclaration)
+  const getVariableDeclaration = (program: estree.Program) => (program.body[0] as estree.VariableDeclaration);
 
   const getArrayExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
     return (variableDeclaration.declarations[0].init as estree.ArrayExpression);
-  }
+  };
 
   const getArrayCallExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
     return (variableDeclaration.declarations[0].init as estree.SimpleCallExpression);
-  }
+  };
 
   const getArrayNewExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
     return (variableDeclaration.declarations[0].init as estree.NewExpression);
-  }
+  };
   
   it('should mutate when supplied with an array expression', () => {
     // Arrange
