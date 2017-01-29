@@ -1,3 +1,13 @@
+<a name="0.3.4"></a>
+## [0.3.4](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.3.3...v0.3.4) (2017-01-29)
+
+
+### Bug Fixes
+
+* **TestRunner:** Remove stopper (#16) ([f2f9e78](https://github.io/stryker-mutator/stryker-karma-runner/commit/f2f9e78))
+
+
+
 <a name="0.3.3"></a>
 ## [0.3.3](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.3.2...v0.3.3) (2016-12-30)
 
