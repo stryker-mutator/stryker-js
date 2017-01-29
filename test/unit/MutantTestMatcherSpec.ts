@@ -5,7 +5,7 @@ import { StrykerOptions } from 'stryker-api/core';
 import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import Mutant from '../../src/Mutant';
-import { Reporter, MatchedMutant } from 'stryker-api/report';
+import { MatchedMutant } from 'stryker-api/report';
 import StrictReporter from '../../src/reporters/StrictReporter';
 describe('MutantTestMatcher', () => {
 

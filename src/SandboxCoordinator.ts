@@ -60,7 +60,7 @@ export default class SandboxCoordinator {
           return Promise.resolve();
         }
       }
-    }
+    };
     await new PromisePool(promiseProducer, sandboxes.length).start();
     await this.reportAllMutantsTested(results);
     await Promise.all(sandboxes.map(sandbox => sandbox.dispose()));

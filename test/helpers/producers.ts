@@ -1,5 +1,4 @@
 import { MutantStatus, MatchedMutant, MutantResult } from 'stryker-api/report';
-import { Location, Range, Position } from 'stryker-api/core';
 export function mutantResult(status: MutantStatus): MutantResult {
   return {
     location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },

@@ -1,6 +1,6 @@
 import Mutant from './Mutant';
 import StrictReporter from './reporters/StrictReporter';
-import { Reporter, MatchedMutant } from 'stryker-api/report';
+import { MatchedMutant } from 'stryker-api/report';
 import { StatementMapDictionary } from './coverage/CoverageInstrumenter';
 import { RunResult, CoverageCollection, CoverageCollectionPerTest, StatementMap } from 'stryker-api/test_runner';
 import { Location, StrykerOptions } from 'stryker-api/core';

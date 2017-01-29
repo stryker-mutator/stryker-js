@@ -5,7 +5,7 @@ import RemoveConditionalsMutator from './mutators/RemoveConditionalsMutator';
 import UnaryOperatorMutator from './mutators/UnaryOperatorMutator';
 import UpdateOperatorMutator from './mutators/UpdateOperatorMutator';
 import { Mutator, MutatorFactory } from 'stryker-api/mutant';
-import { Reporter, SourceFile } from 'stryker-api/report';
+import { SourceFile } from 'stryker-api/report';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import * as parserUtils from './utils/parserUtils';

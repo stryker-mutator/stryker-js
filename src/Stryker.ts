@@ -3,7 +3,7 @@
 import MutatorOrchestrator from './MutatorOrchestrator';
 import { Config, ConfigWriterFactory } from 'stryker-api/config';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
-import { Reporter, MutantResult } from 'stryker-api/report';
+import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import SandboxCoordinator from './SandboxCoordinator';
 import ReporterOrchestrator from './ReporterOrchestrator';

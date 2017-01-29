@@ -1,5 +1,5 @@
 import { StrykerOptions } from 'stryker-api/core';
-import { Reporter, ReporterFactory } from 'stryker-api/report';
+import { ReporterFactory } from 'stryker-api/report';
 import ClearTextReporter from './reporters/ClearTextReporter';
 import ProgressReporter from './reporters/ProgressReporter';
 import ProgressAppendOnlyReporter from './reporters/ProgressAppendOnlyReporter';
