@@ -75,8 +75,13 @@ class IsolatedTestRunnerAdapterWorker {
     this.send({ kind: 'disposeDone' });
   }
 
-  run(body: RunMessage) {
-    this.underlyingTestRunner.run(body.runOptions).then((res) => this.reportResult(res), (error) => this.reportErrorResult(error));
+  async run(body: RunMessage) {
+    let res = await this.underlyingTestRunner.run(body.runOptions);
+    try {
+      this.reportResult(res);
+    } catch (error) {
+      this.reportErrorResult(error);
+    }
   }
 
   private send(message: WorkerMessage) {
