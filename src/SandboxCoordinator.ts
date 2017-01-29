@@ -23,7 +23,7 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 
 export default class SandboxCoordinator {
 
-  constructor(private options: Config, private files: InputFile[], private testFramework: TestFramework | void, private reporter: StrictReporter) { }
+  constructor(private options: Config, private files: InputFile[], private testFramework: TestFramework | null, private reporter: StrictReporter) { }
 
   initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
     log.info(`Starting initial test run. This may take a while.`);

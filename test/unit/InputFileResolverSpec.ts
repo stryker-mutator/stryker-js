@@ -89,8 +89,8 @@ describe('InputFileResolver', () => {
   describe('with file expressions that resolve in different order', () => {
     let results: InputFile[];
     beforeEach(() => {
-      let resolveFile1: (result: string[]) => void;
-      let resolveFile2: (result: string[]) => void;
+      let resolveFile1 = (result: string[]) => {};
+      let resolveFile2 = (result: string[]) => {};
       sut = new InputFileResolver([], ['fileWhichResolvesLast', 'fileWichResolvesFirst']);
       globStub.withArgs('fileWhichResolvesLast').returns(new Promise(resolve => resolveFile1 = resolve));
       globStub.withArgs('fileWichResolvesFirst').returns(new Promise(resolve => resolveFile2 = resolve));

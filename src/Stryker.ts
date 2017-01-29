@@ -40,7 +40,7 @@ export default class Stryker {
   config: Config;
   private timer = new Timer();
   private reporter: StrictReporter;
-  private testFramework: TestFramework | void;
+  private testFramework: TestFramework | null;
   private coverageInstrumenter: CoverageInstrumenter;
 
   /**

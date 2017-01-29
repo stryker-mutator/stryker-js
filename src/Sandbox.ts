@@ -26,7 +26,7 @@ export default class Sandbox {
   private workingFolder: string;
   private testHooksFile: string;
 
-  constructor(private options: StrykerOptions, private index: number, private files: InputFile[], private testFramework: TestFramework | void, private coverageInstrumenter: CoverageInstrumenter | null) {
+  constructor(private options: StrykerOptions, private index: number, private files: InputFile[], private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
     this.workingFolder = StrykerTempFolder.createRandomFolder('sandbox');
     log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.testHooksFile = path.join(this.workingFolder, '___testHooksForStryker.js');

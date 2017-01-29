@@ -6,7 +6,7 @@ import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter'
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import Mutant from '../../src/Mutant';
 import { Reporter, MatchedMutant } from 'stryker-api/report';
-
+import StrictReporter from '../../src/reporters/StrictReporter';
 describe('MutantTestMatcher', () => {
 
   let sut: MutantTestMatcher;
@@ -14,14 +14,14 @@ describe('MutantTestMatcher', () => {
   let runResult: RunResult;
   let statementMapDictionary: StatementMapDictionary;
   let strykerOptions: StrykerOptions;
-  let reporter: Reporter;
+  let reporter: StrictReporter;
 
   beforeEach(() => {
     mutants = [];
     statementMapDictionary = Object.create(null);
     runResult = { tests: [], status: RunStatus.Complete };
     strykerOptions = {};
-    reporter = { onAllMutantsMatchedWithTests: sinon.stub() };
+    reporter = { onAllMutantsMatchedWithTests: sinon.stub(), onSourceFileRead: sinon.stub(), onAllMutantsTested: sinon.stub(), onAllSourceFilesRead: sinon.stub(), onMutantTested: sinon.stub(), wrapUp: sinon.stub()};
     sut = new MutantTestMatcher(mutants, runResult, statementMapDictionary, strykerOptions, reporter);
   });
 
