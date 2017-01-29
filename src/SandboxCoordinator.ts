@@ -35,7 +35,7 @@ export default class SandboxCoordinator {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     let results: MutantResult[] = [];
     let sandboxes = await this.createSandboxes();
-    let promiseProducer: () => Promise<number> | Promise<void> = () => {
+    let promiseProducer: () => Promise<void> = () => {
       if (mutants.length === 0) {
         return null; // we're done
       } else {
@@ -43,8 +43,10 @@ export default class SandboxCoordinator {
         if (mutant.scopedTestIds.length > 0) {
           let sandbox = sandboxes.shift();
           return sandbox.runMutant(mutant)
-            .then((runResult) => this.reportMutantTested(mutant, runResult, results))
-            .then(() => sandboxes.push(sandbox)); // mark the sandbox as available again
+            .then((runResult) => {
+              this.reportMutantTested(mutant, runResult, results);
+              sandboxes.push(sandbox); // mark the sandbox as available again
+            });
         } else {
           this.reportMutantTested(mutant, null, results);
           return Promise.resolve();
