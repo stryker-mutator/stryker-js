@@ -1,12 +1,10 @@
 'use strict';
 
 import * as inquirer from 'inquirer';
-const npmi = require('npmi');
 import * as fs from 'fs';
-
 import config from './initializer.conf';
 import { ContextChoices } from './contextChoices';
-
+import * as child from 'child_process';
 
 export default class StrykerInitializer {
   /**
@@ -90,13 +88,10 @@ export default class StrykerInitializer {
     ];
   };
 
-  installNpmDependencies(dependencies: Array<String>): boolean {
-    console.log("Installing NPM dependencies: " + dependencies);
+  installNpmDependencies(dependencies: Array<String>): void {
+    console.log('Installing NPM dependencies: ' + dependencies);
 
-    let result: boolean = true;
-
-    console.log(`npm i ${dependencies.join(' ')} --save-dev`);
-    require('child_process').execSync(`npm i ${dependencies.join(' ')} --save-dev`, {stdio: [0, 1, 2]});
+    child.execSync(`npm i ${dependencies.join(' ')} --save-dev`, {stdio: [0, 1, 2]});
   };
 
   installStrykerConfiguration(parameters: Object) {
