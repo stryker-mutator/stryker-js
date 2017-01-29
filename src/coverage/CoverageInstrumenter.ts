@@ -23,7 +23,7 @@ export default class CoverageInstrumenter {
 
   private coverageInstrumenterStreamPerFile: { [fileName: string]: CoverageInstrumenterStream } = Object.create(null);
 
-  constructor(private coverageAnalysis: 'all' | 'off' | 'perTest', private testFramework: TestFramework) { }
+  constructor(private coverageAnalysis: 'all' | 'off' | 'perTest', private testFramework: TestFramework | null) { }
 
   public instrumenterStreamForFile(file: InputFile): NodeJS.ReadWriteStream {
     if (file.mutated) {
@@ -48,12 +48,11 @@ export default class CoverageInstrumenter {
   }
 
   public hooksForTestRun(): string {
-    if (this.coverageAnalysis === 'perTest') {
+    if (this.testFramework && this.coverageAnalysis === 'perTest') {
       log.debug(`Adding test hooks file for coverageAnalysis "perTest"`);
       return wrapInClosure(`
           var id = 0, coverageStateAtStart;
           window.__coverage__ = globalCoverage = {};
-
           ${this.testFramework.beforeEach(beforeEachFragmentPerTest)}
           ${this.testFramework.afterEach(afterEachFragmentPerTest)}
           ${cloneFunctionFragment};

@@ -21,11 +21,11 @@ describe('TestRunnerChildProcessAdapter', function () {
         '../../test/integration/isolated-runner/DiscoverRegexTestRunner'],
       testRunner: 'karma',
       testFramework: 'jasmine',
-      port: null,
+      port: 0,
       'someRegex': /someRegex/
     },
     files: [],
-    port: null,
+    port: 0,
     sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner')
   };
 
@@ -87,7 +87,9 @@ describe('TestRunnerChildProcessAdapter', function () {
         // Issue https://github.com/stryker-mutator/stryker/issues/141
         expect(result.status).to.be.eq(RunStatus.Error);
         expect(result.errorMessages).to.have.length(1);
-        expect(result.errorMessages[0]).to.contain('SyntaxError: This is invalid syntax!\n    at ErroredTestRunner.run');
+        if (result.errorMessages) {
+          expect(result.errorMessages[0]).to.contain('SyntaxError: This is invalid syntax!\n    at ErroredTestRunner.run');
+        }
         return true;
       }));
 

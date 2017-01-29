@@ -1,7 +1,7 @@
-
-import { Reporter } from 'stryker-api/report';
+import { Reporter, SourceFile, MutantResult, MatchedMutant } from 'stryker-api/report';
 import * as log4js from 'log4js';
 import { isPromise } from '../utils/objectUtils';
+import StrictReporter from './StrictReporter';
 
 const log = log4js.getLogger('BroadcastReporter');
 
@@ -10,25 +10,21 @@ export interface NamedReporter {
   reporter: Reporter;
 }
 
-export const ALL_EVENT_METHOD_NAMES = ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead'];
+export const ALL_EVENT_METHOD_NAMES = ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested'];
 
-export default class BroadcastReporter implements Reporter {
+export default class BroadcastReporter implements StrictReporter {
 
   constructor(private reporters: NamedReporter[]) {
-    ALL_EVENT_METHOD_NAMES.concat('wrapUp').forEach(method => {
-      (<any>this)[method] = (arg: any) => {
-        return this.broadcast(method, arg);
-      };
-    });
+    // Empty constructor
   }
 
-  private broadcast(methodName: string, eventArgs: any): Promise<any> | void {
+  private broadcast(methodName: string, eventArgs?: any): Promise<any> | void {
     let allPromises: Promise<any>[] = [];
     this.reporters.forEach(namedReporter => {
       let reporter = <any>namedReporter.reporter;
       if (reporter[methodName] && typeof reporter[methodName] === 'function') {
         try {
-          let maybePromise: void | Promise<any> = reporter[methodName](eventArgs);
+          let maybePromise: void | Promise<any> = eventArgs ? reporter[methodName](eventArgs) : reporter[methodName]();
           if (isPromise(maybePromise)) {
             allPromises.push(maybePromise.catch(error => {
               this.handleError(error, methodName, namedReporter.name);
@@ -41,6 +37,33 @@ export default class BroadcastReporter implements Reporter {
     });
     if (allPromises.length) {
       return Promise.all(allPromises);
+    }
+  }
+
+  onSourceFileRead(file: SourceFile): void {
+    this.broadcast('onSourceFileRead', file);
+  }
+
+  onAllSourceFilesRead(files: SourceFile[]): void {
+    this.broadcast('onAllSourceFilesRead', files);
+  }
+
+  onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
+    this.broadcast('onAllMutantsMatchedWithTests', results);
+  }
+
+  onMutantTested(result: MutantResult): void {
+    this.broadcast('onMutantTested', result);
+  }
+
+  onAllMutantsTested(results: MutantResult[]): void {
+    this.broadcast('onAllMutantsTested', results);
+  }
+
+  wrapUp(): void | Promise<void> {
+    let maybePromise: void | Promise<any> = this.broadcast('wrapUp', 'wrapUp');
+    if (isPromise(maybePromise)) {
+      return Promise.resolve(maybePromise);
     }
   }
 

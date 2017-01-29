@@ -21,7 +21,7 @@ describe('IsolatedTestRunnerAdapter', () => {
       port: 42,
       files: [],
       sandboxWorkingFolder: 'a working directory',
-      strykerOptions: null
+      strykerOptions: {}
     };
     sinonSandbox = sinon.sandbox.create();
     fakeChildProcess = {

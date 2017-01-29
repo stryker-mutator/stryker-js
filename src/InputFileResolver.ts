@@ -132,8 +132,10 @@ class PatternResolver {
   static parse(inputFileExpressions: Array<string | InputFileDescriptor>): PatternResolver {
     const expressions = inputFileExpressions.map(i => i); // work on a copy as we're changing the array state
     let current = PatternResolver.empty();
-    while (expressions.length) {
-      current = new PatternResolver(expressions.shift(), current);
+    let expression = expressions.shift();
+    while (expression) {
+        current = new PatternResolver(expression, current);
+        expression = expressions.shift();
     }
     return current;
   }

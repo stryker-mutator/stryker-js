@@ -7,7 +7,7 @@ import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
 import SandboxCoordinator from '../../src/SandboxCoordinator';
 import * as sandbox from '../../src/Sandbox';
-
+import { Config } from 'stryker-api/config';
 
 const mockMutant = (id: number, scopedTests?: number[]) => {
   const dummyString = `mutant${id}`;
@@ -28,7 +28,7 @@ describe('SandboxCoordinator', () => {
   let sinonSandbox: sinon.SinonSandbox;
   let firstSandbox: { initialize: sinon.SinonStub, run: sinon.SinonStub, runMutant: sinon.SinonStub, dispose: sinon.SinonStub };
   let secondSandbox: { initialize: sinon.SinonStub, run: sinon.SinonStub, runMutant: sinon.SinonStub, dispose: sinon.SinonStub };
-  let options: StrykerOptions;
+  let options: Config;
   let reporter: any;
   let coverageInstrumenter: any;
   const expectedTestFramework: any = 'expected test framework';
@@ -36,7 +36,22 @@ describe('SandboxCoordinator', () => {
   const expectedInputFiles: any = { isInputFiles: true };
 
   beforeEach(() => {
-    options = {};
+    options = {    
+    files: [''],
+    mutate: [''],
+    logLevel: '',
+    timeoutMs: 0,
+    timeoutFactor: 0,
+    plugins: [''],
+    port: 0,
+    reporter: [''],
+    coverageAnalysis: 'off',
+    testRunner: '',
+    testFramework: '',
+    maxConcurrentTestRunners: 0,
+    set: (newConfig: StrykerOptions) => {}
+  };
+
     coverageInstrumenter = 'a coverage instrumenter';
     sinonSandbox = sinon.sandbox.create();
     const createSandbox = () => ({
@@ -82,10 +97,8 @@ describe('SandboxCoordinator', () => {
   describe('Given that maxConcurrentTestRunners config has been set', () => {
     it('runMutants should use that config rather than cpuCount if config is less than cpuCount', () => {
       const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
-
-      sut = new SandboxCoordinator({
-        maxConcurrentTestRunners: 1
-      }, expectedInputFiles, expectedTestFramework, reporter);
+      options.maxConcurrentTestRunners = 1;
+      sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
 
       firstSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
       secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
@@ -94,17 +107,15 @@ describe('SandboxCoordinator', () => {
         .then(() =>  {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(1);
-          expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: 1 }, 0, expectedInputFiles, expectedTestFramework, null);
+          expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
         });
     });
 
     it('runMutants should use the cpuCount if config is greater than cpuCount (should not have more runners than CPUs)', () => {
       const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
       sinonSandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
-
-      sut = new SandboxCoordinator({
-        maxConcurrentTestRunners: 100
-      }, expectedInputFiles, expectedTestFramework, reporter);
+      options.maxConcurrentTestRunners = 100;
+    sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
 
       firstSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
       secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
@@ -113,17 +124,15 @@ describe('SandboxCoordinator', () => {
         .then(() =>  {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(2);
-          expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: 100 }, 0, expectedInputFiles, expectedTestFramework, null);
+          expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
         });
     });
 
     it('runMutants should use the cpuCount if config is less than zero as cannot have negative number of test runners', () => {
       const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
       sinonSandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
-
-      sut = new SandboxCoordinator({
-        maxConcurrentTestRunners: -100
-      }, expectedInputFiles, expectedTestFramework, reporter);
+      options.maxConcurrentTestRunners = -100;
+      sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
 
       firstSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
       secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
@@ -132,7 +141,7 @@ describe('SandboxCoordinator', () => {
         .then(() =>  {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(2);
-          expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: -100 }, 0, expectedInputFiles, expectedTestFramework, null);
+          expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
         });
     });
   });
