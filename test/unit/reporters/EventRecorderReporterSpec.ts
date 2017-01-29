@@ -5,11 +5,11 @@ import * as sinon from 'sinon';
 import log from '../../helpers/log4jsMock';
 import { expect } from 'chai';
 import { ALL_EVENT_METHOD_NAMES } from '../../../src/reporters/BroadcastReporter';
-
+import StrictReporter from '../../../src/reporters/StrictReporter';
 
 describe('EventRecorderReporter', () => {
 
-  let sut: Reporter;
+  let sut: StrictReporter;
   let sandbox: sinon.SinonSandbox;
   let cleanFolderStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;

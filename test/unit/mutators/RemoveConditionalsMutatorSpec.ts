@@ -84,7 +84,7 @@ describe('RemoveConditionalsMutator', () => {
       let testValue = (<estree.Literal>mutatedNodes[0]).value;
       expect(testValue).to.be.false;
       expect(mutatedNodes[0].nodeID).to.not.eq(forLoop.nodeID);
-      if(forLoop.test){
+      if (forLoop.test) {
         expect(mutatedNodes[0].nodeID).to.eq(forLoop.test.nodeID);      
       } else {
         expect.fail('test.nodeID was expected to be not undefined');

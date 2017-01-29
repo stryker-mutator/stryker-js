@@ -106,7 +106,7 @@ describe('SandboxCoordinator', () => {
         .then(() =>  {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(1);
-          expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: 1 }, 0, expectedInputFiles, expectedTestFramework, null);
+          expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
         });
     });
 
@@ -114,7 +114,7 @@ describe('SandboxCoordinator', () => {
       const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
       sinonSandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
       options.maxConcurrentTestRunners = 100;
-      sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
+    sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
 
       firstSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
       secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
@@ -123,7 +123,7 @@ describe('SandboxCoordinator', () => {
         .then(() =>  {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(2);
-          expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: 100 }, 0, expectedInputFiles, expectedTestFramework, null);
+          expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
         });
     });
 
@@ -140,7 +140,7 @@ describe('SandboxCoordinator', () => {
         .then(() =>  {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(2);
-          expect(sandbox.default).to.have.been.calledWith({ maxConcurrentTestRunners: -100 }, 0, expectedInputFiles, expectedTestFramework, null);
+          expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
         });
     });
   });
