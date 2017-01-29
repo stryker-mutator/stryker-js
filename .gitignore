@@ -12,3 +12,4 @@ src/**/*.d.ts
 test/**/*.d.ts
 .idea
 *.iml
+.DS_Store
