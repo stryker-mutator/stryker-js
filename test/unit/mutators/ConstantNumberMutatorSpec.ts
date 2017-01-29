@@ -9,49 +9,45 @@ describe('ConstantNumberMutator', () => {
 
     beforeEach(() => mutator = new ConstantNumberMutator());
 
+    const mutateProgram = (programString: string) => {
+        const program = parser.parse(programString);
+        const variableDeclaration = (program.body[0] as estree.VariableDeclaration);
+        
+        return {
+            node: (variableDeclaration.declarations[0].init as estree.SimpleLiteral),
+            mutatedNode: (mutator.applyMutations(variableDeclaration, copy) as estree.SimpleLiteral)
+        };
+    }
+
     describe('Should mutate', () => {
         it('a number not equal to 0', () => {
-            const program = parser.parse(`const testValue = 54;`);
-            const variableDeclaration = (program.body[0] as estree.VariableDeclaration);
-            
-            const actual = <estree.SimpleLiteral>mutator.applyMutations(variableDeclaration, copy);
-            const originalLiteral = (variableDeclaration.declarations[0].init as estree.SimpleLiteral);
+            const result = mutateProgram(`const testValue = 54;`);
 
-            expect(actual).to.be.ok;
-            expect(actual.nodeID).to.be.eq(originalLiteral.nodeID);
-            expect(actual.value).to.be.eq(0);
+            expect(result.mutatedNode).to.be.ok;
+            expect(result.mutatedNode.nodeID).to.be.eq(result.node.nodeID);
+            expect(result.mutatedNode.value).to.be.eq(0);
         });
         it('a number equal to 0', () => {
-            const program = parser.parse(`const testValue = 0;`);
-            const variableDeclaration = (program.body[0] as estree.VariableDeclaration);
-            
-            const actual = <estree.SimpleLiteral>mutator.applyMutations(variableDeclaration, copy);
-            const originalLiteral = (variableDeclaration.declarations[0].init as estree.SimpleLiteral);
+            const result = mutateProgram(`const testValue = 0;`);
 
-            expect(actual).to.be.ok;
-            expect(actual.nodeID).to.be.eq(originalLiteral.nodeID);
-            expect(actual.value).to.be.eq(1);
+            expect(result.mutatedNode).to.be.ok;
+            expect(result.mutatedNode.nodeID).to.be.eq(result.node.nodeID);
+            expect(result.mutatedNode.value).to.be.eq(1);
         });
     });
 
     describe('Should not mutate', () => {
         it('a RegEx value', () => {
-            const program = parser.parse(`const testValue = /[0-9]/;`);
-            const variableDeclaration = (program.body[0] as estree.VariableDeclaration);
-            
-            const actual = <estree.SimpleLiteral>mutator.applyMutations(variableDeclaration, copy);
-            const originalLiteral = (variableDeclaration.declarations[0].init as estree.SimpleLiteral);
-
-            expect(actual).to.be.undefined;
+            const result = mutateProgram(`const testValue = /[0-9]/;`);
+            expect(result.mutatedNode).to.be.undefined;
         });
         it('a string value', () => {
-            const program = parser.parse(`const testValue = 'Some string';`);
-            const variableDeclaration = (program.body[0] as estree.VariableDeclaration);
-            
-            const actual = <estree.SimpleLiteral>mutator.applyMutations(variableDeclaration, copy);
-            const originalLiteral = (variableDeclaration.declarations[0].init as estree.SimpleLiteral);
-
-            expect(actual).to.be.undefined;
+            const result = mutateProgram(`const testValue = 'Some string';`);
+            expect(result.mutatedNode).to.be.undefined;
+        });
+        it('a boolean value', () => {
+            const result = mutateProgram(`const testValue = true;`);
+            expect(result.mutatedNode).to.be.undefined;
         });
     });
 });
