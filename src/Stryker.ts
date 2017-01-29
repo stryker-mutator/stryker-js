@@ -110,6 +110,7 @@ export default class Stryker {
               throw new Error('There were failed tests in the initial test run:');
             } else {
               this.logInitialTestRunSucceeded(runResult.tests);
+              return { runResult, inputFiles, sandboxCoordinator };
             }
           case RunStatus.Error:
             this.logErrorredInitialRun(runResult);
@@ -118,7 +119,7 @@ export default class Stryker {
             this.logTimeoutInitialRun(runResult);
             break;
         }
-        return { runResult, inputFiles, sandboxCoordinator };
+        throw new Error('Something went wrong in the initial test run');
       });
   }
 
