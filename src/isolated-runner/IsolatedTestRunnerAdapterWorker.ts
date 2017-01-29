@@ -61,7 +61,9 @@ class IsolatedTestRunnerAdapterWorker {
 
   sendInitDone() {
     const message: EmptyWorkerMessage = { kind: 'initDone' };
+    if (process.send) {
       process.send(message);
+    }
   }
 
   dispose() {
@@ -85,7 +87,9 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   private send(message: WorkerMessage) {
-    process.send(message);
+    if (process.send) {
+      process.send(message);
+    }
   }
 
   private loadPlugins(plugins: string[]) {
