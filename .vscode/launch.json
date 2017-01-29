@@ -53,10 +53,8 @@
       // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
-        "--configFile",
-        "testResources/sampleProject/stryker.conf.js",
-        "--logLevel",
-        "debug"
+        "run",
+        "testResources/sampleProject/stryker.conf.js"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
