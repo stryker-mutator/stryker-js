@@ -12,4 +12,4 @@ src/**/*.d.ts
 test/**/*.d.ts
 .idea
 *.iml
-.tmp.txt
+*.tmp.txt
