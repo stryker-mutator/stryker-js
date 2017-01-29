@@ -118,32 +118,31 @@ export async function deleteDir(dirToDelete: string): Promise<void> {
   let exists = await fileOrFolderExists(dirToDelete);
   if (exists) {
     let files = await readdir(dirToDelete);
-    let promisses = files.map(async(file) => {
+    let promisses = files.map(async (file) => {
       let currentPath = path.join(dirToDelete, file);
-      let statistics = await stats(currentPath);
-      if (statistics.isDirectory()) {
-        // recursive
-        return deleteDir(currentPath);
-      } else {
-        // delete file
-        return rmFile(currentPath);
-      };
+      let sts = await stats(currentPath);
+        if (sts.isDirectory()) {
+          // recursive
+          return deleteDir(currentPath);
+        } else {
+          // delete file
+          return rmFile(currentPath);
+        }
     });
     // delete dir
-    return Promise.all(promisses).then(() => rmdir(dirToDelete));
+    await Promise.all(promisses);
+    return rmdir(dirToDelete);
   }
 }
 
-export function cleanFolder(folderName: string) {
-  return fileOrFolderExists(folderName)
-    .then(exists => {
-      if (exists) {
-        return deleteDir(folderName)
-          .then(() => mkdirRecursive(folderName));
-      } else {
-        return mkdirRecursive(folderName);
-      }
-    });
+export async function cleanFolder(folderName: string) {
+  let exists = await fileOrFolderExists(folderName);
+  if (exists) {
+    await deleteDir(folderName);
+    return mkdirRecursive(folderName);
+  } else {
+    return mkdirRecursive(folderName);
+  };
 }
 
 export function writeFile(fileName: string, content: string) {
