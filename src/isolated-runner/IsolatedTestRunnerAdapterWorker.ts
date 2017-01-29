@@ -59,16 +59,11 @@ class IsolatedTestRunnerAdapterWorker {
     process.send(message);
   }
 
-  dispose() {
-    let disposePromise: Promise<any> | void = void 0;
+  async dispose() {
     if (this.underlyingTestRunner.dispose) {
-      disposePromise = this.underlyingTestRunner.dispose();
+      await this.underlyingTestRunner.dispose();
     }
-    if (isPromise(disposePromise)) {
-      disposePromise.then(this.sendDisposeDone);
-    } else {
-      this.sendDisposeDone();
-    }
+    this.sendDisposeDone();
   }
 
   sendDisposeDone() {

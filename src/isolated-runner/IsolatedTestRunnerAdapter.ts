@@ -102,7 +102,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     return this.runPromise;
   }
 
-  async dispose(): Promise<any> {
+  dispose(): Promise<any> {
     if (this.isDisposing) {
       return this.disposingPromise;
     } else {
