@@ -103,8 +103,6 @@
     "sinon-as-promised": "^4.0.2",
     "sinon-chai": "^2.8.0",
     "stryker-api": "^0.4.2",
-    "stryker-html-reporter": "^0.3.0",
-    "stryker-mocha-runner": "^0.2.0",
     "tslint": "^4.4.2",
     "typescript": "^2.1.4"
   },

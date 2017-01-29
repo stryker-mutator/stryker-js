@@ -12,7 +12,7 @@ export interface Definition {
 export interface TestRunnerDefinition extends Definition {}
 export interface TestFrameworkDefinition extends Definition {}
 
-const config: InitializerDefinitions = {
+const initializerConfig: InitializerDefinitions = {
     testRunners: [
       {
         name: 'Mocha',
@@ -48,4 +48,4 @@ const config: InitializerDefinitions = {
     ]
 };
 
-export default config;
+export default initializerConfig;
