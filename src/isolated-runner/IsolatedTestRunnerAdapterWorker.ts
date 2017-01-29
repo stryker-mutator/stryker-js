@@ -76,8 +76,8 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   async run(body: RunMessage) {
-    let res = await this.underlyingTestRunner.run(body.runOptions);
     try {
+      let res = await this.underlyingTestRunner.run(body.runOptions);
       this.reportResult(res);
     } catch (error) {
       this.reportErrorResult(error);
