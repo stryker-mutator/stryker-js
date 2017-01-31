@@ -101,8 +101,8 @@ class IsolatedTestRunnerAdapterWorker {
       // Just in case the test runner implementer forgot to convert `Error`s to string, we will do it here
       // https://github.com/stryker-mutator/stryker/issues/141
       result.errorMessages = result.errorMessages.map((error: any) => {
-        if (error instanceof Error) {
-          return `${error.name}: ${error.message}\n${new String(error.stack).toString()}`;
+        if (error instanceof Error && error.stack) {
+            return `${error.name}: ${error.message}\n${error.stack.toString()}`;
         } else {
           return error.toString();
         }

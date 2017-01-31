@@ -57,8 +57,8 @@ export default class MutantTestMatcher {
    * @param statementMap of the covering file.
    * @returns The index of the coveredFile which contains the smallest statement surrounding the mutant.
    */
-  private findSmallestCoveringStatement(mutant: Mutant, statementMap: StatementMap): string | undefined {
-    let smallestStatement: string | undefined = undefined;
+  private findSmallestCoveringStatement(mutant: Mutant, statementMap: StatementMap): string | null {
+    let smallestStatement: string | null = null;
     if (statementMap) {
       Object.keys(statementMap).forEach(statementId => {
         let location = statementMap[statementId];
