@@ -53,7 +53,7 @@ describe('InputFileResolver', () => {
     let result: Error;
     beforeEach(() => {
       try {
-        sut = new InputFileResolver([''], [<any>{ included: false, mutated: true }]);
+        sut = new InputFileResolver([], [<any>{ included: false, mutated: true }]);
       } catch (error) {
         result = error;
       }
