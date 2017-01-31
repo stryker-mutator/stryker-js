@@ -21,7 +21,7 @@ export default class RemoveConditionalsMutator implements Mutator {
         nodes.push(this.booleanLiteralNode(node.test.nodeID, false));
       } else {
         let mutatedNode = copy(node);
-        mutatedNode.test = this.booleanLiteralNode(0, false);
+        mutatedNode.test = this.booleanLiteralNode(-1, false);
         nodes.push(mutatedNode);
       }
 
