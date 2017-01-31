@@ -24,7 +24,7 @@ export default class BroadcastReporter implements StrictReporter {
       let reporter = <any>namedReporter.reporter;
       if (reporter[methodName] && typeof reporter[methodName] === 'function') {
         try {
-          let maybePromise: void | Promise<any> = eventArgs ? reporter[methodName](eventArgs) : reporter[methodName]();
+          let maybePromise: void | Promise<any> = reporter[methodName](eventArgs);
           if (isPromise(maybePromise)) {
             allPromises.push(maybePromise.catch(error => {
               this.handleError(error, methodName, namedReporter.name);
