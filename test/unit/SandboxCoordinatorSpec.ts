@@ -4,7 +4,6 @@ import * as os from 'os';
 import { expect } from 'chai';
 import { MutantStatus, MutantResult } from 'stryker-api/report';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
 import SandboxCoordinator from '../../src/SandboxCoordinator';
 import * as sandbox from '../../src/Sandbox';
 import { Config } from 'stryker-api/config';
@@ -36,21 +35,7 @@ describe('SandboxCoordinator', () => {
   const expectedInputFiles: any = { isInputFiles: true };
 
   beforeEach(() => {
-    options = {    
-    files: [''],
-    mutate: [''],
-    logLevel: '',
-    timeoutMs: 0,
-    timeoutFactor: 0,
-    plugins: [''],
-    port: 0,
-    reporter: [''],
-    coverageAnalysis: 'off',
-    testRunner: '',
-    testFramework: '',
-    maxConcurrentTestRunners: 0,
-    set: (newConfig: StrykerOptions) => {}
-  };
+    options = <any>{};
 
     coverageInstrumenter = 'a coverage instrumenter';
     sinonSandbox = sinon.sandbox.create();
