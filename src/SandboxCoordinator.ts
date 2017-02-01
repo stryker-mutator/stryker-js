@@ -38,7 +38,7 @@ export default class SandboxCoordinator {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     let results: MutantResult[] = [];
     let sandboxes = await this.createSandboxes();
-    let promiseProducer: () => Promise<number> | Promise<void> | null | undefined = () => {
+    let promiseProducer: () => Promise<any> | null = () => {
       const mutant = mutants.shift();
       if (!mutant) {
         return null; // we're done

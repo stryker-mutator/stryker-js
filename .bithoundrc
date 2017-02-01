@@ -9,11 +9,14 @@
      ],
      "ignore": [
         "src/TestFrameworkOrchestrator.ts",
+        "src/SandboxCoordinator.ts",
+        "src/MutantTestMatcher.ts",
         "testResources/config-reader/syntax-error.conf.js"
     ],
     "dependencies": {
         "unused-ignores": [
-            "tslib"
+            "tslib",
+            "commander"
         ]
     }
 }
