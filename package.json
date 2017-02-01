@@ -8,7 +8,16 @@
     "test": "grunt test",
     "start": "tsc -w",
     "sample": "node src/stryker-cli.js --configFile testResources/sampleProject/stryker.conf.js",
-    "preversion": "grunt"
+    "preversion": "grunt",
+    "clean": "grunt clean",
+    "jshint": "grunt jshint",
+    "tslint": "grunt tslint",
+    "coverage": "grunt coverage",
+    "intergration": "grunt intergration",
+    "build": "grunt build",
+    "serve": "grunt serve",
+    "watch-test": "grunt watch-test",
+    "release": "grunt release"
   },
   "repository": {
     "type": "git",
