@@ -70,11 +70,9 @@ export default class Stryker {
     this.timer.reset();
 
     let inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
-    let mutantResults: MutantResult[];
-    let obj = await this.initialTestRun(inputFiles);
-
-    if (obj.runResult && obj.inputFiles && obj.sandboxCoordinator) {
-      mutantResults = await this.generateAndRunMutations(obj.inputFiles, obj.runResult, obj.sandboxCoordinator);
+    let {runResult, sandboxCoordinator} = await this.initialTestRun(inputFiles);
+    if (runResult && inputFiles && sandboxCoordinator) {
+      let mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);
 
       await this.wrapUpReporter();
       await StrykerTempFolder.clean();
@@ -103,7 +101,7 @@ export default class Stryker {
     }
   }
 
-  private async initialTestRun(inputFiles: InputFile[]): Promise<any> {
+  private async initialTestRun(inputFiles: InputFile[]) {
     const sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
     let runResult = await sandboxCoordinator.initialRun(this.coverageInstrumenter);
     switch (runResult.status) {
@@ -114,7 +112,7 @@ export default class Stryker {
           throw new Error('There were failed tests in the initial test run:');
         } else {
           this.logInitialTestRunSucceeded(runResult.tests);
-          return { runResult, inputFiles, sandboxCoordinator };
+          return { runResult, sandboxCoordinator };
         }
       case RunStatus.Error:
         this.logErrorredInitialRun(runResult);
