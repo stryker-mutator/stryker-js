@@ -16,7 +16,8 @@
     "dependencies": {
         "unused-ignores": [
             "tslib",
-            "commander"
+            "commander",
+            "es6-promise-pool"
         ]
     }
 }
