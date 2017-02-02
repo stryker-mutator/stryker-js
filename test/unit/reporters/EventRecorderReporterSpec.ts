@@ -1,10 +1,9 @@
-import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
-import * as fileUtils from '../../../src/utils/fileUtils';
-import * as sinon from 'sinon';
-import log from '../../helpers/log4jsMock';
 import { expect } from 'chai';
-import { ALL_EVENT_METHOD_NAMES } from '../../../src/reporters/BroadcastReporter';
+import * as sinon from 'sinon';
 import StrictReporter from '../../../src/reporters/StrictReporter';
+import * as fileUtils from '../../../src/utils/fileUtils';
+import log from '../../helpers/log4jsMock';
+import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 
 describe('EventRecorderReporter', () => {
 
@@ -28,7 +27,7 @@ describe('EventRecorderReporter', () => {
     describe('and cleanFolder resolves correctly', () => {
       beforeEach(() => {
         cleanFolderStub.returns(Promise.resolve());
-        sut = new EventRecorderReporter({});
+        sut = new EventRecorderReporter({}) as any;
       });
 
       it('should log about the default baseFolder', () => {
@@ -40,15 +39,15 @@ describe('EventRecorderReporter', () => {
       });
 
       let arrangeActAssertEvent = (eventName: string) => {
-        describe(`${eventName} event`, () => {
+        describe(`${eventName}`, () => {
 
           let writeFileRejection: any;
           const expected: any = { some: 'eventData' };
 
           let arrange = () => beforeEach(() => {
             writeFileRejection = undefined;
-            (<any>sut)[eventName](expected);
-            return (<Promise<any>>sut.wrapUp()).then(() => void 0, (error) => writeFileRejection = error);
+            (sut as any)[eventName](expected);
+            return (sut.wrapUp() as Promise<any>).then(() => void 0, (error) => writeFileRejection = error);
           });
 
           describe('when writeFile results in a rejection', () => {
@@ -66,7 +65,8 @@ describe('EventRecorderReporter', () => {
         });
       };
 
-      ALL_EVENT_METHOD_NAMES.forEach(arrangeActAssertEvent);
+      ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested']
+        .forEach(arrangeActAssertEvent);
     });
 
     describe('and cleanFolder results in a rejection', () => {
@@ -74,7 +74,7 @@ describe('EventRecorderReporter', () => {
       beforeEach(() => {
         expectedError = new Error('Some error');
         cleanFolderStub.rejects(expectedError);
-        sut = new EventRecorderReporter({});
+        sut = new EventRecorderReporter({}) as any;
       });
 
       describe('and `wrapUp()` is called', () => {

@@ -1,22 +1,27 @@
-import { StrykerOptions } from 'stryker-api/core';
-import * as fileUtils from '../utils/fileUtils';
 import * as log4js from 'log4js';
 import * as path from 'path';
-import StrictReporter from './StrictReporter';
-import { SourceFile, MutantResult, MatchedMutant } from 'stryker-api/report';
+import { Reporter } from 'stryker-api/report';
+import { StrykerOptions } from 'stryker-api/core';
+import * as fileUtils from '../utils/fileUtils';
+import { ALL_EVENT_METHOD_NAMES } from './BroadcastReporter'; 
 
 const log = log4js.getLogger('EventRecorderReporter');
 const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 
-export default class EventRecorderReporter implements StrictReporter {
+export default class EventRecorderReporter implements Reporter {
 
   private allWork: Promise<any>[] = [];
   private createBaseFolderTask: Promise<any>;
   private _baseFolder: string;
-  private index = 0;
   
   constructor(private options: StrykerOptions) {
+    let index = 0;
     this.createBaseFolderTask = fileUtils.cleanFolder(this.baseFolder);
+    ALL_EVENT_METHOD_NAMES.filter(event => event !== 'wrapUp').forEach(method => {
+      (<any>this)[method] = (data: any) => {
+        this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(index++, method, data)));
+      };
+    });
   }
 
   private get baseFolder() {
@@ -49,29 +54,8 @@ export default class EventRecorderReporter implements StrictReporter {
     return str;
   }
 
-  onSourceFileRead(file: SourceFile): void {
-    this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(this.index++, 'onSourceFileRead', file)));
-  }
-
-  onAllSourceFilesRead(files: SourceFile[]): void {
-    this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(this.index++, 'onAllSourceFilesRead', files)));
-  }
-
-  onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
-    this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(this.index++, 'onAllMutantsMatchedWithTests', results)));
-  }
-
-  onMutantTested(result: MutantResult): void {
-    this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(this.index++, 'onMutantTested', result)));
-  }
-
-  onAllMutantsTested(results: MutantResult[]): void {
-        this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(this.index++, 'onAllMutantsTested', results)));
-  }
-
   async wrapUp(): Promise<any> {
     await this.createBaseFolderTask;
-
     return Promise.all(this.allWork);
   }
 }
