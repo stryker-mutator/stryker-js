@@ -3,7 +3,6 @@ import * as fileUtils from '../../../src/utils/fileUtils';
 import * as sinon from 'sinon';
 import log from '../../helpers/log4jsMock';
 import { expect } from 'chai';
-import { ALL_EVENT_METHOD_NAMES } from '../../../src/reporters/BroadcastReporter';
 import StrictReporter from '../../../src/reporters/StrictReporter';
 
 describe('EventRecorderReporter', () => {
@@ -66,7 +65,8 @@ describe('EventRecorderReporter', () => {
         });
       };
 
-      ALL_EVENT_METHOD_NAMES.forEach(arrangeActAssertEvent);
+      ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead']
+        .forEach(arrangeActAssertEvent);
     });
 
     describe('and cleanFolder results in a rejection', () => {

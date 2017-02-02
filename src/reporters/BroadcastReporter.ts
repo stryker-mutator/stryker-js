@@ -10,21 +10,19 @@ export interface NamedReporter {
   reporter: Reporter;
 }
 
-export const ALL_EVENT_METHOD_NAMES = ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested'];
-
 export default class BroadcastReporter implements StrictReporter {
 
   constructor(private reporters: NamedReporter[]) {
-    // Empty constructor
   }
 
-  private broadcast(methodName: string, eventArgs?: any): Promise<any> | void {
+  private broadcast(methodName: keyof Reporter, eventArgs: any = undefined): Promise<any> | void {
     let allPromises: Promise<any>[] = [];
     this.reporters.forEach(namedReporter => {
-      let reporter = <any>namedReporter.reporter;
-      if (reporter[methodName] && typeof reporter[methodName] === 'function') {
+      let reporter = namedReporter.reporter;
+      let fn = reporter[methodName];
+      if (typeof fn === 'function') {
         try {
-          let maybePromise: void | Promise<any> = reporter[methodName](eventArgs);
+          let maybePromise = (fn as any)(eventArgs);
           if (isPromise(maybePromise)) {
             allPromises.push(maybePromise.catch(error => {
               this.handleError(error, methodName, namedReporter.name);
@@ -61,10 +59,7 @@ export default class BroadcastReporter implements StrictReporter {
   }
 
   wrapUp(): void | Promise<void> {
-    let maybePromise: void | Promise<any> = this.broadcast('wrapUp', 'wrapUp');
-    if (isPromise(maybePromise)) {
-      return Promise.resolve(maybePromise);
-    }
+    return this.broadcast('wrapUp');
   }
 
   private handleError(error: any, methodName: string, reporterName: string) {
