@@ -55,7 +55,7 @@ export default class ClearTextReporter implements Reporter {
           break;
         case MutantStatus.NoCoverage:
           mutantsNoCoverage++;
-          this.writeLine(chalk.bold.yellow('Mutant survived! (not coverage)'));
+          this.writeLine(chalk.bold.yellow('Mutant survived! (no coverage)'));
           this.logMutantResult(result, writeLineFn);
           break;
       }
