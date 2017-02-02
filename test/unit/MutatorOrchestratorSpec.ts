@@ -1,25 +1,26 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
 import MutatorOrchestrator from '../../src/MutatorOrchestrator';
 import RemoveConditionalsMutator from '../../src/mutators/RemoveConditionalsMutator';
-import {Mutator, MutatorFactory} from 'stryker-api/mutant';
+import { Mutator, MutatorFactory } from 'stryker-api/mutant';
 import * as sinon from 'sinon';
-import {Syntax} from 'esprima';
+import { Syntax } from 'esprima';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
-import {Reporter} from 'stryker-api/report';
+import { Reporter } from 'stryker-api/report';
 import * as estree from 'estree';
+import StrictReporter from '../../src/reporters/StrictReporter';
 
 describe('MutatorOrchestrator', () => {
   let sut: MutatorOrchestrator;
   let fileUtilsStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
-  let reporter: Reporter;
+  let reporter: StrictReporter;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     sandbox.stub(StrykerTempFolder, 'writeFile');
-    reporter = { onSourceFileRead: sandbox.stub(), onAllSourceFilesRead: sandbox.stub() };
+    reporter = { onSourceFileRead: sandbox.stub(), onAllSourceFilesRead: sandbox.stub(), onAllMutantsMatchedWithTests: sandbox.stub(), onMutantTested: sandbox.stub(), onAllMutantsTested: sandbox.stub(), wrapUp: sandbox.stub()};
     sut = new MutatorOrchestrator(reporter);
   });
 
@@ -98,7 +99,7 @@ describe('MutatorOrchestrator', () => {
     }
 
     beforeEach(() => {
-      sandbox.stub(MutatorFactory.instance(), 'knownNames', () => ['test'] );
+      sandbox.stub(MutatorFactory.instance(), 'knownNames', () => ['test']);
 
       sandbox.stub(MutatorFactory.instance(), 'create', () => new StubMutator());
       sut = new MutatorOrchestrator(reporter);

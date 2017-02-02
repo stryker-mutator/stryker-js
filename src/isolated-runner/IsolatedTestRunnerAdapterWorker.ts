@@ -41,7 +41,7 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   start(message: StartMessage) {
-    this.loadPlugins(message.runnerOptions.strykerOptions.plugins);
+    this.loadPlugins(message.runnerOptions.strykerOptions.plugins || []);
     log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
     process.chdir(message.runnerOptions.sandboxWorkingFolder);
     this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
@@ -61,7 +61,9 @@ class IsolatedTestRunnerAdapterWorker {
 
   sendInitDone() {
     const message: EmptyWorkerMessage = { kind: 'initDone' };
-    process.send(message);
+    if (process.send) {
+      process.send(message);
+    }
   }
 
   dispose() {
@@ -85,7 +87,9 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   private send(message: WorkerMessage) {
-    process.send(message);
+    if (process.send) {
+      process.send(message);
+    }
   }
 
   private loadPlugins(plugins: string[]) {
@@ -103,7 +107,7 @@ class IsolatedTestRunnerAdapterWorker {
       // https://github.com/stryker-mutator/stryker/issues/141
       result.errorMessages = result.errorMessages.map((error: any) => {
         if (error instanceof Error) {
-          return `${error.name}: ${error.message}\n${error.stack.toString()}`;
+          return `${error.name}: ${error.message}\n${new String(error.stack).toString()}`;
         } else {
           return error.toString();
         }

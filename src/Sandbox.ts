@@ -26,7 +26,7 @@ export default class Sandbox {
   private workingFolder: string;
   private testHooksFile: string;
 
-  constructor(private options: StrykerOptions, private index: number, private files: InputFile[], private testFramework: TestFramework, private coverageInstrumenter: CoverageInstrumenter) {
+  constructor(private options: StrykerOptions, private index: number, private files: InputFile[], private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
     this.workingFolder = StrykerTempFolder.createRandomFolder('sandbox');
     log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.testHooksFile = path.join(this.workingFolder, '___testHooksForStryker.js');
@@ -74,7 +74,7 @@ export default class Sandbox {
       const folderName = StrykerTempFolder.ensureFolderExists(this.workingFolder + path.dirname(relativePath));
       const targetFile = path.join(folderName, path.basename(relativePath));
       this.fileMap[file.path] = targetFile;
-      const instrumentingStream = this.coverageInstrumenter ?
+      const instrumentingStream = this.coverageInstrumenter ? 
         this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
       return StrykerTempFolder.copyFile(file.path, targetFile, instrumentingStream);
     }

@@ -21,7 +21,7 @@ import { freezeRecursively, isPromise } from './utils/objectUtils';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import * as log4js from 'log4js';
 import Timer from './utils/Timer';
-
+import StrictReporter from './reporters/StrictReporter';
 const log = log4js.getLogger('Stryker');
 
 const humanReadableTestState = (testState: TestStatus) => {
@@ -39,8 +39,8 @@ export default class Stryker {
 
   config: Config;
   private timer = new Timer();
-  private reporter: Reporter;
-  private testFramework: TestFramework;
+  private reporter: StrictReporter;
+  private testFramework: TestFramework | null;
   private coverageInstrumenter: CoverageInstrumenter;
 
   /**
@@ -119,6 +119,7 @@ export default class Stryker {
             this.logTimeoutInitialRun(runResult);
             break;
         }
+        throw new Error('Something went wrong in the initial test run');
       });
   }
 

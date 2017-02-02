@@ -1,16 +1,16 @@
 import { MutantStatus, MatchedMutant, MutantResult } from 'stryker-api/report';
-
+import { Location, Range, Position } from 'stryker-api/core';
 export function mutantResult(status: MutantStatus): MutantResult {
   return {
-    location: null,
-    mutatedLines: null,
-    mutatorName: null,
-    originalLines: null,
-    replacement: null,
-    sourceFilePath: null,
-    testsRan: null,
-    status,
-    range: null
+    location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+    mutatedLines: '',
+    mutatorName: '',
+    originalLines: '',
+    replacement: '',
+    sourceFilePath: '',
+    testsRan: [''],
+    status: status,
+    range: [0, 0]
   };
 }
 
@@ -20,10 +20,10 @@ export function matchedMutant(numberOfTests: number): MatchedMutant {
     scopedTestIds.push(1);
   }
   return {
-    mutatorName: null,
+    mutatorName: '',
     scopedTestIds: scopedTestIds,
-    timeSpentScopedTests: null,
-    filename: null,
-    replacement: null
+    timeSpentScopedTests: 0,
+    filename: '',
+    replacement: ''
   };
 }

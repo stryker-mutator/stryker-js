@@ -6,6 +6,6 @@ import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 
 export default {
   create(settings: IsolatedRunnerOptions): IsolatedTestRunnerAdapter {
-    return new IsolatedTestRunnerAdapter(settings.strykerOptions.testRunner, settings);
+    return new IsolatedTestRunnerAdapter(settings.strykerOptions.testRunner || '', settings);
   }
 };

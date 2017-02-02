@@ -154,7 +154,7 @@ describe('Sandbox', () => {
   });
 
   describe('when constructed without a testFramework or CoverageInstrumenter', () => {
-    beforeEach(() => sut = new Sandbox(options, 3, files, undefined, null));
+    beforeEach(() => sut = new Sandbox(options, 3, files, null, null));
 
     describe('and initialized', () => {
 
