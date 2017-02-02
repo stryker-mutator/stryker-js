@@ -38,7 +38,7 @@ export default class ReporterOrchestrator {
       log.warn(`No reporter configured. Please configure one or more reporters in the (for example: reporter: 'progress')`);
       this.logPossibleReporters();
     }
-    return new BroadcastReporter(reporters) as any;
+    return new BroadcastReporter(reporters);
   }
 
   private createReporter(name: string) {
