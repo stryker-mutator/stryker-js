@@ -1,9 +1,11 @@
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { Reporter } from 'stryker-api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import * as sinon from 'sinon';
 import log from '../../helpers/log4jsMock';
-import { expect } from 'chai';
 import StrictReporter from '../../../src/reporters/StrictReporter';
+import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
 
 describe('EventRecorderReporter', () => {
 
@@ -38,7 +40,7 @@ describe('EventRecorderReporter', () => {
         expect(fileUtils.cleanFolder).to.have.been.calledWith('reports/mutation/events');
       });
 
-      let arrangeActAssertEvent = (eventName: string) => {
+      let arrangeActAssertEvent = (eventName: keyof Reporter) => {
         describe(`${eventName} event`, () => {
 
           let writeFileRejection: any;
@@ -46,7 +48,7 @@ describe('EventRecorderReporter', () => {
 
           let arrange = () => beforeEach(() => {
             writeFileRejection = undefined;
-            (<any>sut)[eventName](expected);
+            (sut[eventName] as any)(expected);
             return (<Promise<any>>sut.wrapUp()).then(() => void 0, (error) => writeFileRejection = error);
           });
 
@@ -65,8 +67,7 @@ describe('EventRecorderReporter', () => {
         });
       };
 
-      ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onConfigRead']
-        .forEach(arrangeActAssertEvent);
+      ALL_REPORTER_EVENTS.filter(event => event !== 'wrapUp').forEach(arrangeActAssertEvent);
     });
 
     describe('and cleanFolder results in a rejection', () => {
