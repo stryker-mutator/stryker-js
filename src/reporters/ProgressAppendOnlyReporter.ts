@@ -1,5 +1,4 @@
-import { MatchedMutant, MutantResult, MutantStatus } from 'stryker-api/report';
-import * as chalk from 'chalk';
+import { MatchedMutant } from 'stryker-api/report';
 import * as os from 'os';
 import ProgressKeeper from './ProgressKeeper';
 import Timer from '../utils/Timer';

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Readable, Duplex, Stream } from 'stream';
+import { Readable, Duplex } from 'stream';
 import { InputFile } from 'stryker-api/core';
 import CoverageInstrumenterStream from '../../../src/coverage/CoverageInstrumenterStream';
 import logger from '../../helpers/log4jsMock';
@@ -38,9 +38,6 @@ describe('CoverageInstrumenterStream', () => {
         expect(output).to.eventually.contain('function something(){__cov_').and.contain('.f[\'1\']++'));
 
       it('should contain the statement map', () => output.then(() => {
-        const expectedStatementMap = {
-          1: { start: { line: 1, column: 0 }, end: { line: 1, column: 24 } }
-        };
         expect(sut.statementMap).to.deep.eq(sut.statementMap);
       }));
     });

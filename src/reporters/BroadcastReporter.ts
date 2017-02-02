@@ -1,6 +1,5 @@
 
-import { Reporter, SourceFile, MutantResult } from 'stryker-api/report';
-import { StrykerOptions } from 'stryker-api/core';
+import { Reporter } from 'stryker-api/report';
 import * as log4js from 'log4js';
 import { isPromise } from '../utils/objectUtils';
 
@@ -23,7 +22,7 @@ export default class BroadcastReporter implements Reporter {
     });
   }
 
-  private broadcast(methodName: string, eventArgs: any) {
+  private broadcast(methodName: string, eventArgs: any): Promise<any> | void {
     let allPromises: Promise<any>[] = [];
     this.reporters.forEach(namedReporter => {
       let reporter = <any>namedReporter.reporter;

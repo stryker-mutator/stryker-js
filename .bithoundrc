@@ -10,5 +10,10 @@
      "ignore": [
         "src/TestFrameworkOrchestrator.ts",
         "testResources/config-reader/syntax-error.conf.js"
-    ]
+    ],
+    "dependencies": {
+        "unused-ignores": [
+            "tslib"
+        ]
+    }
 }

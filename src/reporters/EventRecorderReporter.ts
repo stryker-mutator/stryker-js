@@ -54,7 +54,9 @@ export default class EventRecorderReporter implements Reporter {
     return str;
   }
 
-  wrapUp(): Promise<any> {
-    return this.createBaseFolderTask.then(() => Promise.all(this.allWork));
+  async wrapUp(): Promise<any> {
+    await this.createBaseFolderTask;
+
+    return Promise.all(this.allWork);
   }
 }

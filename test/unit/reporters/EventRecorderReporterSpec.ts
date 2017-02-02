@@ -1,6 +1,6 @@
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import { Reporter, MutantStatus, MutantResult } from 'stryker-api/report';
+import { Reporter } from 'stryker-api/report';
 import * as sinon from 'sinon';
 import log from '../../helpers/log4jsMock';
 import { expect } from 'chai';

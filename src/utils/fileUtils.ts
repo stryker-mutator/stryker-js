@@ -1,5 +1,4 @@
 import * as path from 'path';
-import * as os from 'os';
 import * as fs from 'graceful-fs';
 import * as _ from 'lodash';
 import * as nodeGlob from 'glob';
@@ -115,39 +114,35 @@ function rmdir(dirToDelete: string): Promise<void> {
 /**
  * Deletes a directory recursively
  */
-export function deleteDir(dirToDelete: string): Promise<void> {
-  return fileOrFolderExists(dirToDelete).then(exists => {
-    if (exists) {
-      return readdir(dirToDelete).then(files => {
-        let promisses = files.map(file => {
-          let currentPath = path.join(dirToDelete, file);
-          return stats(currentPath).then(stats => {
-            if (stats.isDirectory()) {
-              // recursive
-              return deleteDir(currentPath);
-            } else {
-              // delete file
-              return rmFile(currentPath);
-            }
-          });
-        });
-        // delete dir
-        return Promise.all(promisses).then(() => rmdir(dirToDelete));
-      });
-    }
-  });
+export async function deleteDir(dirToDelete: string): Promise<void> {
+  let exists = await fileOrFolderExists(dirToDelete);
+  if (exists) {
+    let files = await readdir(dirToDelete);
+    let promisses = files.map(async (file) => {
+      let currentPath = path.join(dirToDelete, file);
+      let sts = await stats(currentPath);
+        if (sts.isDirectory()) {
+          // recursive
+          return deleteDir(currentPath);
+        } else {
+          // delete file
+          return rmFile(currentPath);
+        }
+    });
+    // delete dir
+    await Promise.all(promisses);
+    return rmdir(dirToDelete);
+  }
 }
 
-export function cleanFolder(folderName: string) {
-  return fileOrFolderExists(folderName)
-    .then(exists => {
-      if (exists) {
-        return deleteDir(folderName)
-          .then(() => mkdirRecursive(folderName));
-      } else {
-        return mkdirRecursive(folderName);
-      }
-    });
+export async function cleanFolder(folderName: string) {
+  let exists = await fileOrFolderExists(folderName);
+  if (exists) {
+    await deleteDir(folderName);
+    return mkdirRecursive(folderName);
+  } else {
+    return mkdirRecursive(folderName);
+  };
 }
 
 export function writeFile(fileName: string, content: string) {

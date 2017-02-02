@@ -1,11 +1,9 @@
 import * as sinon from 'sinon';
 import * as path from 'path';
-import * as os from 'os';
 import { expect } from 'chai';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { wrapInClosure } from '../../src/utils/objectUtils';
-import CoverageInstrumenter from '../../src/coverage/CoverageInstrumenter';
 import Sandbox from '../../src/Sandbox';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';

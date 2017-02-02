@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { RunResult, RunStatus, RunOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
+import { RunStatus, RunOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
 
 class ErroredTestRunner extends EventEmitter implements TestRunner {
 

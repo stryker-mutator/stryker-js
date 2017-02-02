@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
-import { RunResult, StatementMap } from 'stryker-api/test_runner';
+import { RunResult } from 'stryker-api/test_runner';
 import { InputFile, StrykerOptions } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
@@ -32,9 +32,9 @@ export default class Sandbox {
     this.testHooksFile = path.join(this.workingFolder, '___testHooksForStryker.js');
   }
 
-  public initialize(): Promise<void> {
-    return this.fillSandbox()
-      .then(() => this.initializeTestRunner());
+  public async initialize(): Promise<void> {
+    await this.fillSandbox();
+    return this.initializeTestRunner();
   }
 
   public run(timeout: number): Promise<RunResult> {
@@ -45,11 +45,12 @@ export default class Sandbox {
     return this.testRunner.dispose();
   }
 
-  public runMutant(mutant: Mutant): Promise<RunResult> {
+  public async runMutant(mutant: Mutant): Promise<RunResult> {
     const targetedFile = this.fileMap[mutant.filename];
-    return Promise.all([mutant.save(targetedFile), this.filterTests(mutant)])
-      .then(() => this.run(this.calculateTimeout(mutant)))
-      .then(runResult => mutant.reset(targetedFile).then(() => runResult));
+    await Promise.all([mutant.save(targetedFile), this.filterTests(mutant)]);
+    let runResult = await this.run(this.calculateTimeout(mutant));
+    await mutant.reset(targetedFile);
+    return runResult;
   }
 
   private fillSandbox(): Promise<void[]> {

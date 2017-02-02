@@ -2,7 +2,6 @@ import BlockStatementMutator from '../../../src/mutators/BlockStatementMutator';
 import { expect } from 'chai';
 import * as parser from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
-import { Syntax } from 'esprima';
 import * as estree from 'estree';
 
 describe('BlockStatementMutator', () => {

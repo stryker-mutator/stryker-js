@@ -1,8 +1,8 @@
-import { AdapterMessage, RunMessage, StartMessage, ResultMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
+import { AdapterMessage, RunMessage, StartMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
-import { isPromise, deserialize } from '../utils/objectUtils';
+import { deserialize } from '../utils/objectUtils';
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapterWorker');
 
@@ -47,16 +47,11 @@ class IsolatedTestRunnerAdapterWorker {
     this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
   }
 
-  init() {
-    let initPromise: Promise<any> | void = void 0;
+  async init() {
     if (this.underlyingTestRunner.init) {
-      initPromise = this.underlyingTestRunner.init();
-    }
-    if (isPromise(initPromise)) {
-      initPromise.then(this.sendInitDone);
-    } else {
-      this.sendInitDone();
-    }
+      await this.underlyingTestRunner.init();
+    };
+    this.sendInitDone();
   }
 
   sendInitDone() {
@@ -64,24 +59,24 @@ class IsolatedTestRunnerAdapterWorker {
     process.send(message);
   }
 
-  dispose() {
-    let disposePromise: Promise<any> | void = void 0;
+  async dispose() {
     if (this.underlyingTestRunner.dispose) {
-      disposePromise = this.underlyingTestRunner.dispose();
+      await this.underlyingTestRunner.dispose();
     }
-    if (isPromise(disposePromise)) {
-      disposePromise.then(this.sendDisposeDone);
-    } else {
-      this.sendDisposeDone();
-    }
+    this.sendDisposeDone();
   }
 
   sendDisposeDone() {
     this.send({ kind: 'disposeDone' });
   }
 
-  run(body: RunMessage) {
-    this.underlyingTestRunner.run(body.runOptions).then((res) => this.reportResult(res), (error) => this.reportErrorResult(error));
+  async run(body: RunMessage) {
+    try {
+      let res = await this.underlyingTestRunner.run(body.runOptions);
+      this.reportResult(res);
+    } catch (error) {
+      this.reportErrorResult(error);
+    }
   }
 
   private send(message: WorkerMessage) {

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'; 
-import { TestRunnerFactory, RunnerOptions, TestRunner, RunOptions, RunStatus, RunResult, TestResult } from 'stryker-api/test_runner';
+import { TestRunnerFactory, RunnerOptions, TestRunner, RunOptions, RunStatus, RunResult } from 'stryker-api/test_runner';
 import { isRegExp } from 'util';
 
 class DiscoverRegexTestRunner extends EventEmitter implements TestRunner {

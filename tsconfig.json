@@ -9,6 +9,9 @@
         "declaration": true,
         "forceConsistentCasingInFileNames": true,
         "allowJs": false,
+        "importHelpers": true,
+        "noUnusedLocals": true,
+        "noImplicitReturns": true,
         "lib": [
           "es5",
           "es2015.promise"

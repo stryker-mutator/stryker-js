@@ -1,7 +1,6 @@
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import * as log4js from 'log4js';
-import * as path from 'path';
 import * as _ from 'lodash';
 
 const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
