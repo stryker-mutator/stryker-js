@@ -19,7 +19,7 @@ export default class TestFrameworkOrchestrator {
   }
 
   private determineFrameworkWithCoverageAnalysis(): TestFramework | null {
-    let testFramework: TestFramework = null;
+    let testFramework: TestFramework | null = null;
     if (this.options.testFramework) {
       if (this.testFrameworkExists(this.options.testFramework)) {
         log.debug(`Using testFramework ${this.options.testFramework} based on \`testFramework\` setting`);

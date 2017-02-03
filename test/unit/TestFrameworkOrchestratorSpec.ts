@@ -20,14 +20,6 @@ describe('TestFrameworkOrchestrator', () => {
     });
   };
 
-  const itShouldRetrieveTheTestFramework = () => {
-    it('should retrieve the test framework', () => expect(actualTestFramework).to.be.eq(testFramework));
-  };
-
-  const itShouldUseTheValueOf = (expectedTestFrameworkName: string) => {
-    it(`should use the value of "${expectedTestFrameworkName}"`, () => expect(TestFrameworkFactory.instance().create).to.have.been.calledWith(expectedTestFrameworkName, { options }));
-  };
-
   const itShouldNotRetrieveATestFramework = () => {
     it('should not retrieve a testFramework', () => {
       expect(actualTestFramework).to.be.eq(null);

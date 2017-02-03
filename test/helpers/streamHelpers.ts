@@ -1,4 +1,4 @@
-import { Readable, Duplex, Stream } from 'stream';
+import { Readable, Stream } from 'stream';
 
 export function streamToString(stream: Stream) {
   return new Promise<string>(resolve => {

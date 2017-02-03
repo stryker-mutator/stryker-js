@@ -1,12 +1,9 @@
 'use strict';
 
-import * as _ from 'lodash';
-import { normalize } from './utils/fileUtils';
 import MutatorOrchestrator from './MutatorOrchestrator';
-import Mutant from './Mutant';
 import { Config, ConfigWriterFactory } from 'stryker-api/config';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
-import { Reporter, MutantResult } from 'stryker-api/report';
+import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import SandboxCoordinator from './SandboxCoordinator';
 import ReporterOrchestrator from './ReporterOrchestrator';
@@ -21,7 +18,7 @@ import { freezeRecursively, isPromise } from './utils/objectUtils';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import * as log4js from 'log4js';
 import Timer from './utils/Timer';
-
+import StrictReporter from './reporters/StrictReporter';
 const log = log4js.getLogger('Stryker');
 
 const humanReadableTestState = (testState: TestStatus) => {
@@ -39,8 +36,8 @@ export default class Stryker {
 
   config: Config;
   private timer = new Timer();
-  private reporter: Reporter;
-  private testFramework: TestFramework;
+  private reporter: StrictReporter;
+  private testFramework: TestFramework | null;
   private coverageInstrumenter: CoverageInstrumenter;
 
   /**
@@ -69,16 +66,22 @@ export default class Stryker {
    * Runs mutation testing. This may take a while.
    * @function
    */
-  runMutationTest(): Promise<MutantResult[]> {
+  async runMutationTest(): Promise<MutantResult[]> {
     this.timer.reset();
-    return new InputFileResolver(this.config.mutate, this.config.files).resolve()
-      .then((inputFiles) => this.initialTestRun(inputFiles))
-      .then(({runResult, inputFiles, sandboxCoordinator}) =>
-        this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator))
-      .then(mutantResults => this.wrapUpReporter()
-        .then(StrykerTempFolder.clean)
-        .then(() => this.logDone())
-        .then(() => mutantResults));
+
+    let inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
+    let {runResult, sandboxCoordinator} = await this.initialTestRun(inputFiles);
+    if (runResult && inputFiles && sandboxCoordinator) {
+      let mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);
+
+      await this.wrapUpReporter();
+      await StrykerTempFolder.clean();
+      await this.logDone();
+
+      return mutantResults;
+    } else {
+      throw new Error('Resulting object did not contain runResult, inputFiles or sandboxCoordinator');
+    }
   }
 
   private filterOutFailedTests(runResult: RunResult) {
@@ -98,28 +101,27 @@ export default class Stryker {
     }
   }
 
-  private initialTestRun(inputFiles: InputFile[]) {
+  private async initialTestRun(inputFiles: InputFile[]) {
     const sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
-    return sandboxCoordinator.initialRun(this.coverageInstrumenter)
-      .then(runResult => {
-        switch (runResult.status) {
-          case RunStatus.Complete:
-            let failedTests = this.filterOutFailedTests(runResult);
-            if (failedTests.length) {
-              this.logFailedTestsInInitialRun(failedTests);
-              throw new Error('There were failed tests in the initial test run:');
-            } else {
-              this.logInitialTestRunSucceeded(runResult.tests);
-              return { runResult, inputFiles, sandboxCoordinator };
-            }
-          case RunStatus.Error:
-            this.logErrorredInitialRun(runResult);
-            break;
-          case RunStatus.Timeout:
-            this.logTimeoutInitialRun(runResult);
-            break;
+    let runResult = await sandboxCoordinator.initialRun(this.coverageInstrumenter);
+    switch (runResult.status) {
+      case RunStatus.Complete:
+        let failedTests = this.filterOutFailedTests(runResult);
+        if (failedTests.length) {
+          this.logFailedTestsInInitialRun(failedTests);
+          throw new Error('There were failed tests in the initial test run:');
+        } else {
+          this.logInitialTestRunSucceeded(runResult.tests);
+          return { runResult, sandboxCoordinator };
         }
-      });
+      case RunStatus.Error:
+        this.logErrorredInitialRun(runResult);
+        break;
+      case RunStatus.Timeout:
+        this.logTimeoutInitialRun(runResult);
+        break;
+    };
+    throw new Error('Something went wrong in the initial test run');
   }
 
   private generateAndRunMutations(inputFiles: InputFile[], initialRunResult: RunResult, sandboxCoordinator: SandboxCoordinator): Promise<MutantResult[]> {

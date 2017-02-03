@@ -4,7 +4,7 @@ import Stryker from './Stryker';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('stryker-cli');
-let command: string, strykerConfig: string;
+let command: string = '', strykerConfig: string | null = null;
 
 function list(val: string) {
   return val.split(',');

@@ -1,7 +1,6 @@
 import * as sinon from 'sinon';
-import * as chalk from 'chalk';
 import { expect } from 'chai';
-import { MutantStatus, MutantResult, MatchedMutant } from 'stryker-api/report';
+import { MutantStatus, MatchedMutant } from 'stryker-api/report';
 import ProgressReporter from '../../../src/reporters/ProgressReporter';
 import * as progressBarModule from '../../../src/reporters/ProgressBar';
 import { matchedMutant, mutantResult } from '../../helpers/producers';
