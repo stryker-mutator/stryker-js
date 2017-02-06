@@ -13,28 +13,28 @@ describe('LogicalOperatorMutator', () => {
   it('should mutate \'||\' to \'&&\'', () => {
     // Arrange
     const program = parser.parse(`true || false`);
-    const useStrictLogicalOperator = ((program.body[0] as estree.ExpressionStatement).expression as estree.LogicalExpression);
+    const logicalOperator = ((program.body[0] as estree.ExpressionStatement).expression as estree.LogicalExpression);
 
     // Act
-    const actual = <estree.LogicalExpression> sut.applyMutations(useStrictLogicalOperator, copy)[0];
+    const result = <estree.LogicalExpression> sut.applyMutations(logicalOperator, copy)[0];
 
     // Assert
-    expect(actual).to.be.ok;
-    expect(actual.nodeID).to.eq(useStrictLogicalOperator.nodeID);
-    expect(actual.operator).to.be.eq('&&');
+    expect(result).to.be.ok;
+    expect(result.nodeID).to.eq(logicalOperator.nodeID);
+    expect(result.operator).to.be.eq('&&');
   });
 
   it('should mutate \'&&\' to \'||\'', () => {
     // Arrange
     const program = parser.parse(`false && false`);
-    const useStrictLogicalOperator = ((program.body[0] as estree.ExpressionStatement).expression as estree.LogicalExpression);
+    const logicalOperator = ((program.body[0] as estree.ExpressionStatement).expression as estree.LogicalExpression);
     
     // Act
-    const actual = <estree.LogicalExpression> sut.applyMutations(useStrictLogicalOperator, copy)[0];
+    const result = <estree.LogicalExpression> sut.applyMutations(logicalOperator, copy)[0];
 
     // Assert
-    expect(actual).to.be.ok;
-    expect(actual.nodeID).to.eq(useStrictLogicalOperator.nodeID);
-    expect(actual.operator).to.be.eq('||');
+    expect(result).to.be.ok;
+    expect(result.nodeID).to.eq(logicalOperator.nodeID);
+    expect(result.operator).to.be.eq('||');
   });
 });
