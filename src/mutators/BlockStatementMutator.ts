@@ -12,7 +12,7 @@ export default class BlockStatementMutator implements Mutator {
   constructor() { }
 
   applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T):  void | estree.Node | estree.Node[] {
-    if (node.type === Syntax.BlockStatement && node.body.length > 0) {
+    if (node.type === this.type && node.body.length > 0) {
       let mutatedNode = copy(node);
       mutatedNode.body = [];
       return mutatedNode;

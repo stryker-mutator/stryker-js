@@ -71,7 +71,7 @@ describe('ClearTextReporter', function () {
 
       describe('with less tests that may be logged', () => {
         it('should log less tests', () => {
-          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 1} });
+          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 1 } });
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -84,7 +84,7 @@ describe('ClearTextReporter', function () {
 
       describe('with more tests that may be logged', () => {
         it('should log all tests', () => {
-          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 10} });
+          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 10 } });
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -98,7 +98,7 @@ describe('ClearTextReporter', function () {
 
       describe('with the default amount of tests that may be logged', () => {
         it('should log all tests', () => {
-          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 3} });
+          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 3 } });
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -112,7 +112,7 @@ describe('ClearTextReporter', function () {
 
       describe('with no tests that may be logged', () => {
         it('should not log a test', () => {
-          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 0} });
+          sut = new ClearTextReporter({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 0 } });
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -151,17 +151,18 @@ describe('ClearTextReporter', function () {
 
   function mutantResults(...status: MutantStatus[]): MutantResult[] {
     return status.map(status => {
-      return {
+      const result: MutantResult = {
         location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
-        range: null,
+        range: [0, 0],
         mutatedLines: 'mutated line',
         mutatorName: 'Math',
         originalLines: 'original line',
         replacement: '',
         sourceFilePath: '',
         testsRan: ['a test', 'a second test', 'a third test'],
-        status
+        status: status
       };
+      return result;
     });
   }
 

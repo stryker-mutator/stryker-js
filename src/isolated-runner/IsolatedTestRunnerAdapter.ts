@@ -2,8 +2,7 @@ import { EventEmitter } from 'events';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
 import { fork, ChildProcess } from 'child_process';
-import { TestRunner, RunResult, RunOptions, TestResult, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
+import { TestRunner, RunResult, RunOptions,  RunStatus } from 'stryker-api/test_runner';
 import { serialize } from '../utils/objectUtils';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
@@ -128,7 +127,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     });
   }
 
-  private send<T>(message: AdapterMessage) {
+  private send(message: AdapterMessage) {
     // Serialize message before sending to preserve all javascript, including regexes and functions
     // See https://github.com/stryker-mutator/stryker/issues/143
     this.workerProcess.send(serialize(message));

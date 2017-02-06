@@ -5,15 +5,16 @@ import RemoveConditionalsMutator from './mutators/RemoveConditionalsMutator';
 import UnaryOperatorMutator from './mutators/UnaryOperatorMutator';
 import UpdateOperatorMutator from './mutators/UpdateOperatorMutator';
 import ConstantNumberMutator from './mutators/ConstantNumberMutator';
+import ArrayDeclaratorMutator from './mutators/ArrayDeclaratorMutator';
 import { Mutator, MutatorFactory } from 'stryker-api/mutant';
-import { Reporter, SourceFile } from 'stryker-api/report';
+import { SourceFile } from 'stryker-api/report';
 import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
 import { freezeRecursively, copy } from './utils/objectUtils';
 import * as estree from 'estree';
-
+import StrictReporter from './reporters/StrictReporter';
 const log = log4js.getLogger('Mutator');
 
 /**
@@ -26,10 +27,10 @@ export default class MutatorOrchestrator {
   /**
    * @param reporter - The reporter to report read input files to
    */
-  public constructor(private reporter: Reporter) {
+  public constructor(private reporter: StrictReporter) {
     this.registerDefaultMutators();
     let mutatorFactory = MutatorFactory.instance();
-    mutatorFactory.knownNames().forEach((name) => this.mutators.push(mutatorFactory.create(name, null)));
+    mutatorFactory.knownNames().forEach((name) => this.mutators.push(mutatorFactory.create(name, undefined)));
   }
 
   /**
@@ -86,6 +87,7 @@ export default class MutatorOrchestrator {
     mutatorFactory.register('UnaryOperator', UnaryOperatorMutator);
     mutatorFactory.register('UpdateOperator', UpdateOperatorMutator);
     mutatorFactory.register('ConstantNumberMutator', ConstantNumberMutator);
+    mutatorFactory.register('ArrayDeclarator', ArrayDeclaratorMutator);
   }
 
   /**

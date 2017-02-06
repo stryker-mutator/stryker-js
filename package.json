@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -8,7 +8,16 @@
     "test": "grunt test",
     "start": "tsc -w",
     "sample": "node src/stryker-cli.js --configFile testResources/sampleProject/stryker.conf.js",
-    "preversion": "grunt"
+    "preversion": "grunt",
+    "clean": "grunt clean",
+    "jshint": "grunt jshint",
+    "tslint": "grunt tslint",
+    "coverage": "grunt coverage",
+    "intergration": "grunt intergration",
+    "build": "grunt build",
+    "serve": "grunt serve",
+    "watch-test": "grunt watch-test",
+    "release": "grunt release"
   },
   "repository": {
     "type": "git",
@@ -29,11 +38,13 @@
   "contributors": [
     "Simon de Lang <simondelang@gmail.com>",
     "Nico Jansen <jansennico@gmail.com>",
+    "Sander Koenders <sanderkoenders@gmail.com>",
     "global <jansennico@gmail.com>",
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
     "Jasper Catthoor <jasper.catthoor@gmail.com>",
     "Nico Stapelbroek <nstapelbroek@gmail.com>",
     "Alex van Assem <avassem@gmail.com>",
+    "Jelle Peters <JellePetersHAN@users.noreply.github.com>",
     "Jeremy Nagel <jeremy.nagel@learnosity.com>",
     "Michael Williamson <mike@zwobble.org>"
   ],
@@ -44,7 +55,7 @@
   "dependencies": {
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
-    "es6-promise-pool": "^2.4.1",
+    "es6-promise-pool": "^2.4.4",
     "escodegen": "^1.8.0",
     "esprima": "^2.7.0",
     "glob": "^7.0.3",
@@ -54,7 +65,8 @@
     "log4js": "^1.1.0",
     "mkdirp": "^0.5.1",
     "progress": "^1.1.8",
-    "serialize-javascript": "^1.3.0"
+    "serialize-javascript": "^1.3.0",
+    "tslib": "^1.5.0"
   },
   "devDependencies": {
     "@types/chai-as-promised": "0.0.29",

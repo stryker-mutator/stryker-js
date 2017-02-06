@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestResult, RunStatus } from 'stryker-api/test_runner';
+import { TestRunnerFactory, TestRunner, RunOptions, RunStatus } from 'stryker-api/test_runner';
 
 class SlowInitAndDisposeTestRunner extends EventEmitter implements TestRunner {
 
