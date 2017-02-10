@@ -1,6 +1,6 @@
 {
   "name": "stryker-jest-runner",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "engines": {
@@ -72,6 +72,7 @@
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",
     "Simon de Lang <simondelang@gmail.com>",
+    "Maarten Mulders <m.th.mulders@xs4all.nl>",
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
   ]
 }
