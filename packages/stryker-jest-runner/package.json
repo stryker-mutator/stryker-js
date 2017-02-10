@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
-  "engines" : {
-    "node" : ">=6.0.0"
+  "engines": {
+    "node": ">=6.0.0"
   },
   "scripts": {
     "test": "grunt test"
@@ -68,5 +68,10 @@
   "dependencies": {
     "lodash": "^4.13.1",
     "log4js": "^1.0.1"
-  }
+  },
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>",
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
+  ]
 }
