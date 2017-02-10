@@ -9,16 +9,19 @@ module.exports = function (grunt) {
 
     clean: {
       build: {
-        src: ['+(test|src)/**/*+(.d.ts|.js|.map)']
+        src: ['+(test|src)/**/*+(.d.ts|.js|.map)', '*+(.js|.d.ts|.map)', '!src/resources/**/*.*', '!Gruntfile.js', '!protractor.conf.js']
       },
       coverage: {
         src: ['coverage']
+      },
+      reports: {
+        src: ['reports']
       }
     },
 
     watch: {
       testFiles: {
-        files: ['test/**/*.js', 'src/**/*.js'],
+        files: ['test/**/*.js'],
         tasks: ['mochaTest:unit']
       }
     },
@@ -27,7 +30,6 @@ module.exports = function (grunt) {
         options: {
           reporter: 'spec'
         },
-        // Register helpers before, it includes a log4js mock which has to be loaded as early as possible
         src: ['test/helpers/**/*.js', 'test/unit/**/*.js']
       },
       integration: {
@@ -56,7 +58,6 @@ module.exports = function (grunt) {
         }
       }
     },
-    /* End code coverage */
 
     ts: {
       options: {
@@ -68,7 +69,6 @@ module.exports = function (grunt) {
         }
       },
     },
-
     'npm-contributors': {
       options: {
         commitMessage: 'chore: update contributors'
@@ -104,12 +104,6 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', ['test']);
-  grunt.registerTask('test', ['build', 'coverage']);
-  grunt.registerTask('build', ['clean', 'tslint', 'ts']);
-  grunt.registerTask('integration', ['mochaTest:integration']);
-  grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
-  grunt.registerTask('serve', ['watch']);
 
   grunt.registerTask('release', 'Build, bump and publish to NPM.', function (type) {
     grunt.task.run([
@@ -121,5 +115,12 @@ module.exports = function (grunt) {
       'npm-publish'
     ]);
   });
-
+  
+  grunt.registerTask('default', ['test']);
+  grunt.registerTask('watch-test', ['test', 'watch']);
+  grunt.registerTask('test', ['build', 'coverage']);
+  grunt.registerTask('build', ['clean', 'tslint', 'ts']);
+  grunt.registerTask('integration', ['mochaTest:integration']);
+  grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
+  grunt.registerTask('serve', ['watch']);
 };

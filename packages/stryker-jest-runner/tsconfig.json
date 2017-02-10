@@ -12,7 +12,6 @@
     "allowJs": false,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
-    "strictNullChecks": true,
     "lib": [
       "es5",
       "es2015.promise"
