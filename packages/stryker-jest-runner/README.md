@@ -27,6 +27,7 @@ For the current versions, see the `peerDependencies` section in the [package.jso
 ## Configuring
 
 For the time being, the Jest runner uses a default configuration.
+But pull requests are - obviously - welcome. 
 
 ### Load the plugin
 
@@ -36,3 +37,4 @@ The easiest way to achieve this, is *not have a `plugins` section* in your confi
 ### Use the test runner
 
 In order to use Jest as the test runner, you simply specify it in your config file: `testRunner: 'jest'`.
+Note that coverageAnalysis is not yet supported, so you must explicitly set it to `off` in your Stryker configration.
