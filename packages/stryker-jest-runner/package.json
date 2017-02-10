@@ -1,6 +1,6 @@
 {
   "name": "stryker-jest-runner",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "engines" : {
@@ -26,6 +26,8 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker-jest-runner#readme",
   "peerDependencies": {
+    "jest-cli": "^18.1.0",
+    "jest-runtime": "^18.1.0",
     "stryker-api": "^0.4.1"
   },
   "devDependencies": {
@@ -52,7 +54,7 @@
     "grunt-ts": "^6.0.0-beta.3",
     "grunt-tslint": "^4.0.0",
     "istanbul": "^0.4.4",
-    "jest": "^18.0.0",
+    "jest": "^18.1.0",
     "jest-cli": "^18.0.0",
     "jest-runtime": "^18.1.0",
     "load-grunt-tasks": "^3.5.2",

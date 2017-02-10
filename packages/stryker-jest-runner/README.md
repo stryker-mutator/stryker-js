@@ -3,16 +3,36 @@
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
-# Stryker Plugin Seed
-This project can be used as a blue print for writing plugins for [Stryker](http://stryker-mutator.github.io), the JavaScript mutation testing framework.
+# Stryker Jest Runner
+A plugin to use the [Jest](http://facebook.github.io/jest/) test runner in [Stryker](http://stryker-mutator.github.io), the JavaScript mutation testing framework.
 
-This project contains:
+## Install
 
-* An empty shell for all 5 kinds of plugins in Stryker
-* An index file which registers the plugins using the Stryker way of plugin loading.
-* A bootstrap for testing using [mocha](https://mochajs.org), [sinon](http://sinonjs.org/) and [chai](http://chaijs.com/)
-* A correct list of dependencies to get you started with [TypeScript](http://typescriptlang.org/)
-* A simple build system using [Grunt](http://gruntjs.com)
-* A [vscode](https://code.visualstudio.com) configuration for easy running of the tests by hitting `f5`, inc debugging your typescript code.
+Install stryker-jest-runner locally within your project folder, like so:
 
-**NOTE**: This seed is bootstrapped for the next major version of the stryker-api (0.3.0) using the tag `npm i stryker-api@next`
+```bash
+npm i --save-dev stryker-jest-runner
+```
+
+## Peer dependencies
+
+The `stryker-jest-runner` is a plugin for Stryker to enable Jest as a test runner. 
+As such, you should make sure you have the correct versions of its dependencies installed:
+
+* `jest-cli`
+* `jest-runtime`
+
+For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker-jest-runner/blob/master/package.json).
+
+## Configuring
+
+For the time being, the Jest runner uses a default configuration.
+
+### Load the plugin
+
+In order to use the `stryker-jest-runner` it must be loaded in the Stryker mutation testing framework via the Stryker configuration. 
+The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all `node_modules` starting with `stryker-` will be loaded.
+
+### Use the test runner
+
+In order to use Jest as the test runner, you simply specify it in your config file: `testRunner: 'jest'`.
