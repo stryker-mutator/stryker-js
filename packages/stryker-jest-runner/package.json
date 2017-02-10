@@ -70,9 +70,9 @@
     "log4js": "^1.0.1"
   },
   "contributors": [
+    "Maarten Mulders <mthmulders@users.noreply.github.com>",
     "Nico Jansen <jansennico@gmail.com>",
     "Simon de Lang <simondelang@gmail.com>",
-    "Maarten Mulders <m.th.mulders@xs4all.nl>",
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
   ]
 }
