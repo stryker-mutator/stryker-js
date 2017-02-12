@@ -43,6 +43,7 @@ describe('JestTestRunner', function () {
                     expectToHaveSuccessfulTests(runResult, 5);
                     expectToHaveFailedTests(runResult, []);
                     expect(runResult.status).to.be.eq(RunStatus.Complete);
+                    expect(runResult.errorMessages).to.have.length(0);
                     return true;
                 });
             });
