@@ -122,7 +122,7 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
   }
 
   private createErrorMessages(result: any[]): string[] {
-    return result.map((r: any) => r.failureMessage);
+    return result.map((r: any) => r.failureMessage).filter(msg => !!msg);
   }
 
   dispose?(): Promise<any> | void {
