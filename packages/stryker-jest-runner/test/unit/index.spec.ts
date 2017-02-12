@@ -36,7 +36,7 @@ describe('index', () => {
   });
 
   it('should register the JestTestRunner', () =>
-    expect(testRunnerFactoryMock.register).to.have.been.calledWith('jest-test-runner', JestTestRunner));
+    expect(testRunnerFactoryMock.register).to.have.been.calledWith('jest', JestTestRunner));
 
   afterEach(() => sandbox.restore());
 });
