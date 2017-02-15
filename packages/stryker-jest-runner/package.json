@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.io/stryker-mutator/stryker-jest-runner.git"
+    "url": "https://github.com/stryker-mutator/stryker-jest-runner.git"
   },
   "keywords": [
     "stryker",
@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker-jest-runner/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker-jest-runner#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker-jest-runner",
   "peerDependencies": {
     "jest-cli": "^18.1.0",
     "jest-runtime": "^18.1.0",
