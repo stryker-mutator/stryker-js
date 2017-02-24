@@ -23,7 +23,6 @@ const DEFAULT_OPTIONS: Object = {
   setupFiles: [],
   snapshotSerializers: [],
   testEnvironment: 'jest-environment-jsdom',
-  testRegex: '.*Spec\\.js$',
   testRunner: 'jest-jasmine2',
   verbose: true
 };
