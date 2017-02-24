@@ -1,15 +1,15 @@
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { Reporter } from 'stryker-api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import { Reporter, MutantStatus, MutantResult } from 'stryker-api/report';
-import * as sinon from 'sinon';
 import log from '../../helpers/log4jsMock';
-import { expect } from 'chai';
-import { ALL_EVENT_METHOD_NAMES } from '../../../src/reporters/BroadcastReporter';
-
+import StrictReporter from '../../../src/reporters/StrictReporter';
+import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
 
 describe('EventRecorderReporter', () => {
 
-  let sut: Reporter;
+  let sut: StrictReporter;
   let sandbox: sinon.SinonSandbox;
   let cleanFolderStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
@@ -40,7 +40,7 @@ describe('EventRecorderReporter', () => {
         expect(fileUtils.cleanFolder).to.have.been.calledWith('reports/mutation/events');
       });
 
-      let arrangeActAssertEvent = (eventName: string) => {
+      let arrangeActAssertEvent = (eventName: keyof Reporter) => {
         describe(`${eventName} event`, () => {
 
           let writeFileRejection: any;
@@ -48,7 +48,7 @@ describe('EventRecorderReporter', () => {
 
           let arrange = () => beforeEach(() => {
             writeFileRejection = undefined;
-            (<any>sut)[eventName](expected);
+            (sut[eventName] as any)(expected);
             return (<Promise<any>>sut.wrapUp()).then(() => void 0, (error) => writeFileRejection = error);
           });
 
@@ -67,7 +67,7 @@ describe('EventRecorderReporter', () => {
         });
       };
 
-      ALL_EVENT_METHOD_NAMES.forEach(arrangeActAssertEvent);
+      ALL_REPORTER_EVENTS.filter(event => event !== 'wrapUp').forEach(arrangeActAssertEvent);
     });
 
     describe('and cleanFolder results in a rejection', () => {

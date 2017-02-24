@@ -1,4 +1,3 @@
-import { TestRunnerFactory } from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from './IsolatedTestRunnerAdapter';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 import TimeoutDecorator from './TimeoutDecorator';

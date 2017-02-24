@@ -1,14 +1,13 @@
-import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import {Reporter} from 'stryker-api/report';
 import * as sinon from 'sinon';
-import {expect} from 'chai';
+import { expect } from 'chai';
 import logger from '../../helpers/log4jsMock';
+import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
+import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
 
 describe('BroadcastReporter', () => {
 
   let sut: any;
   let reporter: any, reporter2: any;
-  const allEvents = ['onSourceFileRead', 'onAllSourceFilesRead', 'onMutantTested', 'onAllMutantsTested', 'wrapUp'];
 
   beforeEach(() => {
     reporter = mockReporter();
@@ -59,7 +58,7 @@ describe('BroadcastReporter', () => {
   describe('with one faulty reporter', () => {
 
     beforeEach(() => {
-      allEvents.forEach(eventName => reporter[eventName].throws('some error'));
+      ALL_REPORTER_EVENTS.forEach(eventName => reporter[eventName].throws('some error'));
     });
 
     it('should still broadcast to other reporters', () => {
@@ -67,7 +66,7 @@ describe('BroadcastReporter', () => {
     });
 
     it('should log each error', () => {
-      allEvents.forEach(eventName => {
+      ALL_REPORTER_EVENTS.forEach(eventName => {
         sut[eventName]();
         expect(logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'. Error is: some error`);
       });
@@ -78,15 +77,16 @@ describe('BroadcastReporter', () => {
 
   function mockReporter() {
     let reporter: any = {};
-    allEvents.forEach(event => reporter[event] = sinon.stub());
+    ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sinon.stub());
     return reporter;
   }
 
   function actArrangeAssertAllEvents() {
-    allEvents.forEach(eventName => {
+    ALL_REPORTER_EVENTS.forEach(eventName => {
+      const eventData = eventName === 'wrapUp' ? undefined : eventName;
       sut[eventName](eventName);
-      expect(reporter[eventName]).to.have.been.calledWith(eventName);
-      expect(reporter2[eventName]).to.have.been.calledWith(eventName);
+      expect(reporter[eventName]).to.have.been.calledWith(eventData);
+      expect(reporter2[eventName]).to.have.been.calledWith(eventData);
     });
   }
 });

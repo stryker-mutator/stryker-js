@@ -4,7 +4,7 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import * as path from 'path';
 import { InputFile } from 'stryker-api/core';
 import { expect } from 'chai';
-import { normalize, resolve } from 'path';
+import { resolve } from 'path';
 import log from '../helpers/log4jsMock';
 
 const fileDescriptors = (paths: Array<string>) => paths.map(p => ({ included: true, mutated: false, path: path.resolve(p) }));
@@ -53,7 +53,7 @@ describe('InputFileResolver', () => {
     let result: Error;
     beforeEach(() => {
       try {
-        sut = new InputFileResolver(undefined, [<any>{ included: false, mutated: true }]);
+        sut = new InputFileResolver([], [<any>{ included: false, mutated: true }]);
       } catch (error) {
         result = error;
       }
@@ -65,7 +65,7 @@ describe('InputFileResolver', () => {
   describe('without mutate property, but with mutated: true in files', () => {
 
     beforeEach(() => {
-      sut = new InputFileResolver(undefined, ['file1', { pattern: 'mutation1', included: false, mutated: true }]);
+      sut = new InputFileResolver([], ['file1', { pattern: 'mutation1', included: false, mutated: true }]);
       return sut.resolve().then(r => results = r);
     });
 
@@ -79,7 +79,7 @@ describe('InputFileResolver', () => {
   describe('without mutate property and without mutated: true in files', () => {
 
     beforeEach(() => {
-      sut = new InputFileResolver(undefined, ['file1', { pattern: 'mutation1', included: false, mutated: false }]);
+      sut = new InputFileResolver([], ['file1', { pattern: 'mutation1', included: false, mutated: false }]);
       return sut.resolve().then(r => results = r);
     });
 
@@ -89,8 +89,8 @@ describe('InputFileResolver', () => {
   describe('with file expressions that resolve in different order', () => {
     let results: InputFile[];
     beforeEach(() => {
-      let resolveFile1: (result: string[]) => void;
-      let resolveFile2: (result: string[]) => void;
+      let resolveFile1 = (result: string[]) => {};
+      let resolveFile2 = (result: string[]) => {};
       sut = new InputFileResolver([], ['fileWhichResolvesLast', 'fileWichResolvesFirst']);
       globStub.withArgs('fileWhichResolvesLast').returns(new Promise(resolve => resolveFile1 = resolve));
       globStub.withArgs('fileWichResolvesFirst').returns(new Promise(resolve => resolveFile2 = resolve));

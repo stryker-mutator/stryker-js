@@ -10,7 +10,11 @@ export default class TestRunnerDecorator extends EventEmitter implements TestRun
   }
 
   init(): Promise<any> {
-    return this.innerRunner.init() || Promise.resolve();
+    if (this.innerRunner.init) {
+      return this.innerRunner.init() || Promise.resolve();
+    } else {
+      return Promise.resolve();
+    }
   }
 
   protected createInnerRunner() {
@@ -22,7 +26,11 @@ export default class TestRunnerDecorator extends EventEmitter implements TestRun
   }
 
   dispose(): Promise<any> {
-    return this.innerRunner.dispose() || Promise.resolve();
+    if (this.innerRunner.dispose) {
+      return this.innerRunner.dispose() || Promise.resolve();
+    } else {
+      return Promise.resolve();
+    }
   }
 
 

@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
@@ -37,7 +37,7 @@ describe('fileUtils', () => {
 
   describe('glob', () => {
     it('should resolve files', () => 
-      expect(fileUtils.glob('testResources/sampleProject/**/*.js')).to.eventually.have.length(9));
+      expect(fileUtils.glob('testResources/sampleProject/**/*.js')).to.eventually.have.length(10));
 
     it('should not resolve to directories', () => 
       expect(fileUtils.glob('testResources/vendor/**/*.js')).to.eventually.have.length(1));

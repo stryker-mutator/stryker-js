@@ -1,9 +1,6 @@
-import * as _ from 'lodash';
 import { Location, Range } from 'stryker-api/core';
-import { Mutator } from 'stryker-api/mutant';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import { TestResult } from 'stryker-api/test_runner';
-
 
 /**
  * Represents a mutation which has been applied to a file.

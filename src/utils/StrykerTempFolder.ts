@@ -1,5 +1,4 @@
-import * as os from 'os';
-import * as fs from 'fs';
+import * as fs from 'graceful-fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import * as fileUtils from './fileUtils';
@@ -77,10 +76,10 @@ function writeFile(filename: string, data: string): Promise<void> {
  * Copies a file.
  * @param fromFilename The path to the existing file.
  * @param toFilename The path to copy the file to.
- * @param instrumenter An optional additional intrumenter to stream the file through
+ * @param instrumenter An optional additional instrumenter to stream the file through
  * @returns A promise to eventually copy the file.
  */
-function copyFile(fromFilename: string, toFilename: string, instrumenter?: NodeJS.ReadWriteStream): Promise<void> {
+function copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     let readStream: NodeJS.ReadableStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
     let writeStream = fs.createWriteStream(toFilename, { encoding: 'utf8' });

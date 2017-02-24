@@ -1,12 +1,13 @@
+import { EmptyAdapterMessage } from './../../../src/isolated-runner/MessageProtocol';
 import * as path from 'path';
 import * as child_process from 'child_process';
 import * as _ from 'lodash';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
+import { RunResult, RunStatus } from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
-import { WorkerMessage, AdapterMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
+import { WorkerMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
 
 describe('IsolatedTestRunnerAdapter', () => {
@@ -25,7 +26,7 @@ describe('IsolatedTestRunnerAdapter', () => {
       port: 42,
       files: [],
       sandboxWorkingFolder: 'a working directory',
-      strykerOptions: null
+      strykerOptions: {}
     };
     sinonSandbox = sinon.sandbox.create();
     fakeChildProcess = {
@@ -63,15 +64,15 @@ describe('IsolatedTestRunnerAdapter', () => {
 
       it('should call "init" on child process', () => {
         arrangeAct();
-        const expectedMessage: AdapterMessage = { kind: 'init' };
+        const expectedMessage: EmptyAdapterMessage = { kind: 'init' };
         expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
       });
 
 
-      it('should resolve the promise when the process responds with "initDone"', () => {
+      it(' "initDone"', () => {
         arrangeAct();
         receiveMessage({ kind: 'initDone' });
-        return expect(initPromise).to.eventually.eq(null);
+        return expect(initPromise).to.eventually.eq(undefined);
       });
 
       it('should reject any exceptions', () => {

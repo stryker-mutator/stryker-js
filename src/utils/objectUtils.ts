@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 // Don't use JSON.parse, as it does not allow for regexes or functions, etc
-export var serialize: (obj: any) => string = require('serialize-javascript');
+export const serialize: (obj: any) => string = require('serialize-javascript');
 
 export function freezeRecursively(target: { [customConfig: string]: any }) {
   Object.freeze(target);
@@ -12,8 +12,8 @@ export function freezeRecursively(target: { [customConfig: string]: any }) {
   });
 }
 
-export function isPromise(input: void | Promise<any>): input is Promise<any> {
-  return input && typeof (<any>input)['then'] === 'function';
+export function isPromise(input: any): input is Promise<any> {
+  return input && typeof input['then'] === 'function';
 }
 
 export function deserialize(serializedJavascript: String): any {
@@ -35,7 +35,12 @@ export function errorToString(error: any) {
     return `${error.name}: ${error.code} (${error.syscall}) ${error.stack}`;
   }
   else if (error instanceof Error) {
-    return `${error.name}: ${error.message}\n${error.stack.toString()}`;
+    const message = `${error.name}: ${error.message}`;
+    if (error.stack) {
+      return `${message}\n${error.stack.toString()}`;
+    } else {
+      return message;
+    }
   } else {
     return error.toString();
   }

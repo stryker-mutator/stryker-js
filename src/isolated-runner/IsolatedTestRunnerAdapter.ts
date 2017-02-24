@@ -2,8 +2,7 @@ import { EventEmitter } from 'events';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
 import { fork, ChildProcess } from 'child_process';
-import { TestRunner, RunResult, RunOptions, TestResult, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
+import { TestRunner, RunResult, RunOptions } from 'stryker-api/test_runner';
 import { serialize } from '../utils/objectUtils';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
@@ -74,14 +73,14 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
           break;
         case 'initDone':
           if (this.currentTask.kind === 'init') {
-            this.currentTask.resolve(null);
+            this.currentTask.resolve(undefined);
           } else {
             this.logReceivedUnexpectedMessageWarning(message);
           }
           break;
         case 'disposeDone':
           if (this.currentTask.kind === 'dispose') {
-            this.currentTask.resolve(null);
+            this.currentTask.resolve(undefined);
           } else {
             this.logReceivedUnexpectedMessageWarning(message);
           }

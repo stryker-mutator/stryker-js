@@ -1,14 +1,17 @@
 import * as log4js from 'log4js';
 import * as os from 'os';
 import * as _ from 'lodash';
-import { StrykerOptions, InputFile } from 'stryker-api/core';
-import { TestRunner, RunResult, RunnerOptions, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import { Reporter, MutantResult, MutantStatus } from 'stryker-api/report';
+import { InputFile } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { MutantResult, MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { freezeRecursively } from './utils/objectUtils';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import Sandbox from './Sandbox';
 import Mutant from './Mutant';
+import StrictReporter from './reporters/StrictReporter';
+
 const PromisePool = require('es6-promise-pool');
 
 const log = log4js.getLogger('SandboxCoordinator');
@@ -20,46 +23,51 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 
 export default class SandboxCoordinator {
 
-  constructor(private options: StrykerOptions, private files: InputFile[], private testFramework: TestFramework, private reporter: Reporter) { }
+  constructor(private options: Config, private files: InputFile[], private testFramework: TestFramework | null, private reporter: StrictReporter) { }
 
-  initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
+  async initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
     log.info(`Starting initial test run. This may take a while.`);
     const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
-    return sandbox
-      .initialize()
-      .then(() => sandbox.run(INITIAL_RUN_TIMEOUT))
-      .then((runResult) => sandbox.dispose().then(() => runResult));
+    await sandbox.initialize();
+    let runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
+    await sandbox.dispose();
+    return runResult;
   }
 
-  runMutants(mutants: Mutant[]): Promise<MutantResult[]> {
+  async runMutants(mutants: Mutant[]): Promise<MutantResult[]> {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     let results: MutantResult[] = [];
-    return this.createSandboxes().then(sandboxes => {
-      let promiseProducer: () => Promise<number> | Promise<void> = () => {
-        if (mutants.length === 0) {
-          return null; // we're done
-        } else {
-          const mutant = mutants.shift();
-          if (mutant.scopedTestIds.length > 0) {
-            let sandbox = sandboxes.shift();
+    let sandboxes = await this.createSandboxes();
+    let promiseProducer: () => Promise<any> | null = () => {
+      const mutant = mutants.shift();
+      if (!mutant) {
+        return null; // we're done
+      } else {
+        if (mutant.scopedTestIds.length > 0) {
+          const sandbox = sandboxes.shift();
+          if (sandbox) {
             return sandbox.runMutant(mutant)
-              .then((runResult) => this.reportMutantTested(mutant, runResult, results))
-              .then(() => sandboxes.push(sandbox)); // mark the sandbox as available again
-          } else {
-            this.reportMutantTested(mutant, null, results);
-            return Promise.resolve();
+              .then((runResult) => {
+                this.reportMutantTested(mutant, runResult, results);
+                sandboxes.push(sandbox); // mark the sandbox as available again
+            });
           }
+          else {
+            return null;
+          }
+        } else {
+          this.reportMutantTested(mutant, null, results);
+          return Promise.resolve();
         }
-      };
-      return new PromisePool(promiseProducer, sandboxes.length)
-        .start()
-        .then(() => this.reportAllMutantsTested(results))
-        .then(() => Promise.all(sandboxes.map(sandbox => sandbox.dispose())))
-        .then(() => results);
-    });
+      }
+    };
+    await new PromisePool(promiseProducer, sandboxes.length).start();
+    await this.reportAllMutantsTested(results);
+    await Promise.all(sandboxes.map(sandbox => sandbox.dispose()));
+    return results;
   }
 
-  private createSandboxes(): Promise<Sandbox[]> {
+  private async createSandboxes(): Promise<Sandbox[]> {
     let numConcurrentRunners = os.cpus().length;
     let numConcurrentRunnersSource = 'CPU count';
     if (numConcurrentRunners > this.options.maxConcurrentTestRunners && this.options.maxConcurrentTestRunners > 0) {
@@ -71,18 +79,18 @@ export default class SandboxCoordinator {
       sandboxes.push(new Sandbox(this.options, i, this.files, this.testFramework, null));
     }
     log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
-    return Promise.all(sandboxes.map(s => s.initialize()))
-      .then(() => sandboxes);
+    await Promise.all(sandboxes.map(s => s.initialize()));
+    return sandboxes;
   }
 
-  private reportMutantTested(mutant: Mutant, runResult: RunResult, results: MutantResult[]) {
+  private reportMutantTested(mutant: Mutant, runResult: RunResult | null, results: MutantResult[]) {
     let result = this.collectFrozenMutantResult(mutant, runResult);
     results.push(result);
     this.reporter.onMutantTested(result);
   }
 
-  private collectFrozenMutantResult(mutant: Mutant, runResult?: RunResult): MutantResult {
-    let status: MutantStatus;
+  private collectFrozenMutantResult(mutant: Mutant, runResult: RunResult | null): MutantResult {
+    let status: MutantStatus = MutantStatus.NoCoverage;
     let testNames: string[];
     if (runResult) {
       switch (runResult.status) {
@@ -105,7 +113,6 @@ export default class SandboxCoordinator {
         .map(t => t.name);
     } else {
       testNames = [];
-      status = MutantStatus.NoCoverage;
     }
 
     let result: MutantResult = {

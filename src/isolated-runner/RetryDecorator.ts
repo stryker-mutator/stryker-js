@@ -1,5 +1,4 @@
-import { EventEmitter } from 'events';
-import { TestRunner, RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
+import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { isErrnoException, errorToString } from '../utils/objectUtils';
 import TestRunnerDecorator from './TestRunnerDecorator';
 import Task from '../utils/Task';
@@ -21,7 +20,9 @@ export default class RetryDecorator extends TestRunnerDecorator {
 
   dispose(): Promise<void> {
     return super.dispose().catch(err => {
-      if (!this.innerProcessIsCrashed(err)) {
+      if (this.innerProcessIsCrashed(err)) {
+        return;
+      } else {
         // Oops, not intended to catch this one. Pass through
         return Promise.reject(err);
       }
@@ -35,7 +36,7 @@ export default class RetryDecorator extends TestRunnerDecorator {
   private tryRun(options: RunOptions, retriesLeft = 2, lastError?: any) {
     if (retriesLeft > 0) {
       this.innerRunner.run(options).then(result =>
-        this.currentRunTask.resolve(result), 
+        this.currentRunTask.resolve(result),
         rejectReason => {
           if (this.innerProcessIsCrashed(rejectReason)) {
             this.recover().then(

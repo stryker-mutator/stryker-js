@@ -1,5 +1,4 @@
-import { EventEmitter } from 'events';
-import { TestRunner, RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
+import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { isPromise } from '../utils/objectUtils';
 import Task from '../utils/Task';
 import TestRunnerDecorator from './TestRunnerDecorator';

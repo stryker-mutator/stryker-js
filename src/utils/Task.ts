@@ -4,14 +4,14 @@
  */
 export default class Task<T> {
 
-  private _promise: Promise<T>;
-  private resolveFn: (value?: T | PromiseLike<T>) => void;
+  private _promise: Promise<T | undefined>;
+  private resolveFn: (value?: undefined | T | PromiseLike<T>) => void;
   private rejectFn: (reason: any) => void;
   private _isResolved = false;
   private timeout: NodeJS.Timer;
 
   constructor(timeoutMs?: number, private timeoutHandler?: () => PromiseLike<T>) {
-    this._promise = new Promise<T>((resolve, reject) => {
+    this._promise = new Promise<T | undefined>((resolve, reject) => {
       this.resolveFn = resolve;
       this.rejectFn = reject;
     });
@@ -32,7 +32,7 @@ export default class Task<T> {
     if (this.timeoutHandler) {
       this.timeoutHandler().then(val => this.resolve(val));
     } else {
-      this.resolve(null);
+      this.resolve(undefined);
     }
   }
 
@@ -40,7 +40,7 @@ export default class Task<T> {
     promise.then(value => this.resolve(value), reason => this.reject(reason));
   }
 
-  resolve(result: T | PromiseLike<T>) {
+  resolve(result: undefined | T | PromiseLike<T>) {
     this.resolveTimeout();
     this.resolveFn(result);
   }

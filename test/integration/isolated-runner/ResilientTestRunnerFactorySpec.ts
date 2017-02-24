@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { expect } from 'chai';
-import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
+import { RunResult, RunStatus } from 'stryker-api/test_runner';
 import ResilientTestRunnerFactory from '../../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorator';
@@ -22,11 +21,11 @@ describe('ResilientTestRunnerFactory', function () {
       plugins: ['../../test/integration/isolated-runner/AdditionalTestRunners'],
       testRunner: 'karma',
       testFramework: 'jasmine',
-      port: null,
+      port: 0,
       'someRegex': /someRegex/
     },
     files: [],
-    port: null,
+    port: 0,
     sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner')
   };
 
@@ -88,7 +87,9 @@ describe('ResilientTestRunnerFactory', function () {
         // Issue https://github.com/stryker-mutator/stryker/issues/141
         expect(result.status).to.be.eq(RunStatus.Error);
         expect(result.errorMessages).to.have.length(1);
-        expect(result.errorMessages[0]).to.contain('SyntaxError: This is invalid syntax!\n    at ErroredTestRunner.run');
+        if (result.errorMessages) {
+          expect(result.errorMessages[0]).to.contain('SyntaxError: This is invalid syntax!\n    at ErroredTestRunner.run');
+        }
         return true;
       }));
 

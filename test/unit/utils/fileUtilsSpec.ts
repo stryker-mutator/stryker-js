@@ -2,11 +2,8 @@ import { expect } from 'chai';
 import { isOnlineFile } from '../../../src/utils/fileUtils';
 
 describe('fileUtils', () => {
-
   describe('isOnlineFile', () => {
-
     describe('returns true', () => {
-      
       it('when provided with http://google.com', () => {
         let url = 'http://google.com';
 
@@ -22,11 +19,9 @@ describe('fileUtils', () => {
 
         expect(result).to.be.true;
       });
-
     });
 
-    describe('returns true', () => {
-      
+    describe('returns false', () => {
       it('when provided with http:/google.com', () => {
         let url = 'http:/google.com';
 
@@ -42,9 +37,6 @@ describe('fileUtils', () => {
 
         expect(result).to.be.false;
       });
-      
     });
-
   });
-
 });

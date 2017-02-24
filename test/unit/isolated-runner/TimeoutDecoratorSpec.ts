@@ -1,6 +1,6 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { TestRunner, RunStatus } from 'stryker-api/test_runner';
+import { RunStatus } from 'stryker-api/test_runner';
 import TimeoutDecorator from '../../../src/isolated-runner/TimeoutDecorator';
 import { isPromise } from '../../../src/utils/objectUtils';
 import TestRunnerMock from '../../helpers/TestRunnerMock';
@@ -63,7 +63,7 @@ describe('TimeoutDecorator', () => {
       testRunner1.dispose.returns(new Promise(res => { }));
       const disposePromise = sut.dispose();
       clock.tick(2500);
-      const p = expect(disposePromise).to.eventually.be.eq(null);
+      const p = expect(disposePromise).to.eventually.be.eq(undefined);
       return p;
     });
   });
@@ -72,7 +72,7 @@ describe('TimeoutDecorator', () => {
     itShouldProxyRequests(() => sut.run({ timeout: 20 }), 'run');
 
     it('should not handle timeouts premature', () => {
-      let resolve: (result: string) => void;
+      let resolve: (result: string) => void = () => { };
       testRunner1.run.returns(new Promise<string>(res => resolve = res));
       const runPromise = sut.run({ timeout: 20 });
       clock.tick(19);
