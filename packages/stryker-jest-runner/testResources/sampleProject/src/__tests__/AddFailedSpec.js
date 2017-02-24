@@ -19,4 +19,4 @@ describe('Add', function() {
 
     expect(actual).toBe(expected);
   });
-})
+});
