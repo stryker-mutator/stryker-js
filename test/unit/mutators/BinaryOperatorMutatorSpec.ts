@@ -18,15 +18,17 @@ describe('BinaryOperatorMutator', () => {
       nodeID: 23,
       type: 'BinaryExpression',
       operator: '+',
-      left: <estree.Literal>{
+      left: <estree.SimpleLiteral>{
         type: 'Literal',
-        value: typeof 6,
-        raw: '6'
+        value: 6,
+        raw: '6',
+        nodeID: 24
       },
-      right: <estree.Literal>{
+      right: <estree.SimpleLiteral>{
         type: 'Literal',
-        value: typeof 7,
-        raw: '7'
+        value: 7,
+        raw: '7',
+        nodeID: 25
       }
     };
   });
