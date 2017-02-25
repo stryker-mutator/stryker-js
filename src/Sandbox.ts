@@ -2,7 +2,8 @@ import * as path from 'path';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
 import { RunResult } from 'stryker-api/test_runner';
-import { InputFile, StrykerOptions } from 'stryker-api/core';
+import { InputFile } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
 import { isOnlineFile } from './utils/fileUtils';
@@ -26,7 +27,7 @@ export default class Sandbox {
   private workingFolder: string;
   private testHooksFile: string;
 
-  constructor(private options: StrykerOptions, private index: number, private files: InputFile[], private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
+  constructor(private options: Config, private index: number, private files: InputFile[], private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
     this.workingFolder = StrykerTempFolder.createRandomFolder('sandbox');
     log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.testHooksFile = path.join(this.workingFolder, '___testHooksForStryker.js');
