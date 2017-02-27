@@ -1,7 +1,8 @@
-import { Config } from 'stryker-api/config';
-import { StrykerOptions } from 'stryker-api/core';
+import * as path from 'path';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
+import { Config } from 'stryker-api/config';
+import { StrykerOptions } from 'stryker-api/core';
 
 const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
 
@@ -27,6 +28,10 @@ export default class ConfigReader {
       process.exit(1);
     }
 
+    if (this.cliOptions.configFile) {
+      this.setCurrentWorkingDirectory(this.cliOptions.configFile);
+    }
+
     // merge the config from config file and cliOptions (precedence)
     config.set(this.cliOptions);
     this.validate(config);
@@ -35,14 +40,15 @@ export default class ConfigReader {
 
   private loadConfigModule(): Function {
     // we start with a dummy configModule
-    let configModule: Function = function() { };
+    let configModule: Function = function () { };
     if (this.cliOptions.configFile) {
       log.debug('Loading config %s', this.cliOptions.configFile);
+      const configFileFullPath = path.resolve(process.cwd(), this.cliOptions.configFile);
       try {
-        configModule = require(`${process.cwd()}/${this.cliOptions.configFile}`);
+        configModule = require(configFileFullPath);
       } catch (e) {
-        if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(this.cliOptions.configFile) !== -1) {
-          log.fatal(`File ${process.cwd()}/${this.cliOptions.configFile} does not exist!`);
+        if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(configFileFullPath) !== -1) {
+          log.fatal(`File ${configFileFullPath} does not exist!`);
           log.fatal(e);
         } else {
           log.fatal('Invalid config file!\n  ' + e.stack);
@@ -75,5 +81,9 @@ export default class ConfigReader {
       log.fatal(`Configured coverage analysis 'perTest' requires a test framework to be configured. Either configure your test framework (for example testFramework: 'jasmine') or set coverageAnalysis setting to one of the following: ${validCoverageAnalysisSettingsExceptPerTest}`);
       process.exit(1);
     }
+  }
+
+  private setCurrentWorkingDirectory(configFileLocation: string) {
+    process.chdir(path.dirname(configFileLocation));
   }
 }
