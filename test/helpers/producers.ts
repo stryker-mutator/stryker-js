@@ -1,4 +1,5 @@
 import { MutantStatus, MatchedMutant, MutantResult, Reporter } from 'stryker-api/report';
+
 export function mutantResult(status: MutantStatus): MutantResult {
   return {
     location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },

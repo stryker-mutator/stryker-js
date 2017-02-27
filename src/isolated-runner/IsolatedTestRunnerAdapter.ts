@@ -2,30 +2,34 @@ import { EventEmitter } from 'events';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
 import { fork, ChildProcess } from 'child_process';
-import { TestRunner, RunResult, RunOptions,  RunStatus } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunOptions } from 'stryker-api/test_runner';
 import { serialize } from '../utils/objectUtils';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
+import Task from '../utils/Task';
+const MAX_WAIT_FOR_DISPOSE = 2000;
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapter');
-const MAX_WAIT_FOR_DISPOSE = 2000;
+
+class InitTask extends Task<void> {
+  readonly kind = 'init';
+}
+class DisposeTask extends Task<void> {
+  readonly kind = 'dispose';
+}
+class RunTask extends Task<RunResult> {
+  readonly kind = 'run';
+}
+type WorkerTask = InitTask | DisposeTask | RunTask;
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
- * Also implements timeout-mechanisme (on timeout, restart the child runner and report timeout) 
+ * Also implements timeout-mechanism (on timeout, restart the child runner and report timeout) 
  */
 export default class TestRunnerChildProcessAdapter extends EventEmitter implements TestRunner {
 
   private workerProcess: ChildProcess;
-  private initPromiseFulfillmentCallback: () => void;
-  private runPromiseFulfillmentCallback: (result: RunResult) => void;
-  private disposePromiseFulfillmentCallback: () => void;
-  private initPromise: Promise<void>;
-  private runPromise: Promise<RunResult>;
-  private disposingPromise: Promise<any>;
-  private currentTimeoutTimer: NodeJS.Timer;
-  private currentRunStartedTimestamp: Date;
-  private isDisposing: boolean;
+  private currentTask: WorkerTask;
 
   constructor(private realTestRunnerName: string, private options: IsolatedRunnerOptions) {
     super();
@@ -59,18 +63,27 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     }
 
     this.workerProcess.on('message', (message: WorkerMessage) => {
-      this.clearCurrentTimer();
       switch (message.kind) {
         case 'result':
-          if (!this.isDisposing) {
-            this.runPromiseFulfillmentCallback(message.result);
+          if (this.currentTask.kind === 'run') {
+            this.currentTask.resolve(message.result);
+          } else {
+            this.logReceivedUnexpectedMessageWarning(message);
           }
           break;
         case 'initDone':
-          this.initPromiseFulfillmentCallback();
+          if (this.currentTask.kind === 'init') {
+            this.currentTask.resolve(undefined);
+          } else {
+            this.logReceivedUnexpectedMessageWarning(message);
+          }
           break;
         case 'disposeDone':
-          this.disposePromiseFulfillmentCallback();
+          if (this.currentTask.kind === 'dispose') {
+            this.currentTask.resolve(undefined);
+          } else {
+            this.logReceivedUnexpectedMessageWarning(message);
+          }
           break;
         default:
           this.logReceivedMessageWarning(message);
@@ -79,45 +92,31 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     });
   }
 
+  private logReceivedUnexpectedMessageWarning(message: WorkerMessage) {
+    log.warn(`Received unexpected message from test runner worker process: "${message.kind}" while current task is ${this.currentTask.kind}. Ignoring this message.`);
+  }
+
   private logReceivedMessageWarning(message: never) {
     log.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`);
   }
 
   init(): Promise<any> {
-    this.initPromise = new Promise<void>(resolve => this.initPromiseFulfillmentCallback = resolve);
+    this.currentTask = new InitTask();
     this.sendInitCommand();
-    return this.initPromise;
+    return this.currentTask.promise;
   }
 
   run(options: RunOptions): Promise<RunResult> {
-    this.clearCurrentTimer();
-    if (options.timeout) {
-      this.markNoResultTimeout(options.timeout);
-    }
-    this.runPromise = new Promise<RunResult>(resolve => {
-      this.runPromiseFulfillmentCallback = resolve;
-      this.sendRunCommand(options);
-      this.currentRunStartedTimestamp = new Date();
-    });
-    return this.runPromise;
+    this.currentTask = new RunTask();
+    this.sendRunCommand(options);
+    return this.currentTask.promise;
   }
 
-  dispose(): Promise<any> {
-    if (this.isDisposing) {
-      return this.disposingPromise;
-    } else {
-      this.isDisposing = true;
-      this.disposingPromise = new Promise(resolve => this.disposePromiseFulfillmentCallback = resolve)
-        .then(() => {
-          clearTimeout(timer);
-          this.workerProcess.kill();
-          this.isDisposing = false;
-        });
-      this.clearCurrentTimer();
-      this.sendDisposeCommand();
-      let timer = setTimeout(this.disposePromiseFulfillmentCallback, MAX_WAIT_FOR_DISPOSE);
-      return this.disposingPromise;
-    }
+  dispose(): Promise<undefined> {
+    this.currentTask = new DisposeTask(MAX_WAIT_FOR_DISPOSE);
+    this.sendDisposeCommand();
+    return this.currentTask.promise
+      .then(() => this.workerProcess.kill('SIGKILL'));
   }
 
   private sendRunCommand(options: RunOptions) {
@@ -128,9 +127,13 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   }
 
   private send(message: AdapterMessage) {
-    // Serialize message before sending to preserve all javascript, including regexes and functions
-    // See https://github.com/stryker-mutator/stryker/issues/143
-    this.workerProcess.send(serialize(message));
+    try {
+      // Serialize message before sending to preserve all javascript, including regex's and functions
+      // See https://github.com/stryker-mutator/stryker/issues/143
+      this.workerProcess.send(serialize(message));
+    } catch (error) {
+      this.currentTask.reject(error);
+    }
   }
 
   private sendStartCommand() {
@@ -148,24 +151,4 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   private sendDisposeCommand() {
     this.send({ kind: 'dispose' });
   }
-
-  private clearCurrentTimer() {
-    if (this.currentTimeoutTimer) {
-      clearTimeout(this.currentTimeoutTimer);
-    }
-  }
-
-  private markNoResultTimeout(timeoutMs: number) {
-    this.currentTimeoutTimer = setTimeout(() => {
-      this.handleTimeout();
-    }, timeoutMs);
-  }
-
-  private handleTimeout() {
-    this.dispose()
-      .then(() => this.startWorker())
-      .then(() => this.init())
-      .then(() => this.runPromiseFulfillmentCallback({ status: RunStatus.Timeout, tests: [] }));
-  }
-
 }
