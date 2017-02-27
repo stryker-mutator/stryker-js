@@ -1,13 +1,14 @@
+import { Config } from 'stryker-api/config';
 import * as path from 'path';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
 import { RunResult } from 'stryker-api/test_runner';
-import { InputFile, StrykerOptions } from 'stryker-api/core';
+import { InputFile } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
+import TestRunnerDecorator from './isolated-runner/TestRunnerDecorator';
 import { isOnlineFile } from './utils/fileUtils';
-import IsolatedTestRunnerAdapterFactory from './isolated-runner/IsolatedTestRunnerAdapterFactory';
-import IsolatedTestRunnerAdapter from './isolated-runner/IsolatedTestRunnerAdapter';
+import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import Mutant from './Mutant';
@@ -21,12 +22,12 @@ interface FileMap {
 
 export default class Sandbox {
 
-  private testRunner: IsolatedTestRunnerAdapter;
+  private testRunner: TestRunnerDecorator;
   private fileMap: FileMap;
   private workingFolder: string;
   private testHooksFile: string;
 
-  constructor(private options: StrykerOptions, private index: number, private files: InputFile[], private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
+  constructor(private options: Config, private index: number, private files: InputFile[], private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
     this.workingFolder = StrykerTempFolder.createRandomFolder('sandbox');
     log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.testHooksFile = path.join(this.workingFolder, '___testHooksForStryker.js');
@@ -42,7 +43,7 @@ export default class Sandbox {
   }
 
   public dispose(): Promise<void> {
-    return this.testRunner.dispose();
+    return this.testRunner.dispose() || Promise.resolve();
   }
 
   public async runMutant(mutant: Mutant): Promise<RunResult> {
@@ -75,7 +76,7 @@ export default class Sandbox {
       const folderName = StrykerTempFolder.ensureFolderExists(this.workingFolder + path.dirname(relativePath));
       const targetFile = path.join(folderName, path.basename(relativePath));
       this.fileMap[file.path] = targetFile;
-      const instrumentingStream = this.coverageInstrumenter ? 
+      const instrumentingStream = this.coverageInstrumenter ?
         this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
       return StrykerTempFolder.copyFile(file.path, targetFile, instrumentingStream);
     }
@@ -91,7 +92,7 @@ export default class Sandbox {
       sandboxWorkingFolder: this.workingFolder
     };
     log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
-    this.testRunner = IsolatedTestRunnerAdapterFactory.create(settings);
+    this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings);
     return this.testRunner.init();
   }
 
