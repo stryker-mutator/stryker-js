@@ -47,13 +47,7 @@ export default class ConfigReader {
       try {
         configModule = require(configFileFullPath);
       } catch (e) {
-        if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(configFileFullPath) !== -1) {
-          log.fatal(`File ${configFileFullPath} does not exist!`);
-          log.fatal(e);
-        } else {
-          log.fatal('Invalid config file!\n  ' + e.stack);
-        }
-        process.exit(1);
+        this.handleFatalError(e, configFileFullPath);
       }
       if (!_.isFunction(configModule)) {
         log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
@@ -68,6 +62,16 @@ export default class ConfigReader {
       // if no config file path is passed, we create and return a dummy config module.
     }
     return configModule;
+  }
+
+  private handleFatalError(error: any, configFileFullPath: string) {
+    if (error.code === 'MODULE_NOT_FOUND' && error.message.indexOf(configFileFullPath) !== -1) {
+      log.fatal(`File ${configFileFullPath} does not exist!`);
+      log.fatal(error);
+    } else {
+      log.fatal('Invalid config file!\n  ' + error.stack);
+    }
+    process.exit(1);
   }
 
   private validate(options: Config) {
