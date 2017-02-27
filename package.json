@@ -112,7 +112,7 @@
     "sinon-chai": "^2.8.0",
     "stryker-api": "^0.4.2",
     "tslint": "^4.4.2",
-    "typescript": "^2.1.4"
+    "typescript": "~2.2.1"
   },
   "peerDependencies": {
     "stryker-api": "^0.4.2"
