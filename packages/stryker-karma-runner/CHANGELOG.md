@@ -1,3 +1,13 @@
+<a name="0.3.5"></a>
+## [0.3.5](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.3.4...v0.3.5) (2017-03-01)
+
+
+### Features
+
+* **KarmaTestRunner:** Force cwd as basePath (#18) ([5df1090](https://github.io/stryker-mutator/stryker-karma-runner/commit/5df1090))
+
+
+
 <a name="0.3.4"></a>
 ## [0.3.4](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.3.3...v0.3.4) (2017-01-29)
 
