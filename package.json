@@ -46,7 +46,9 @@
     "Alex van Assem <avassem@gmail.com>",
     "Jelle Peters <JellePetersHAN@users.noreply.github.com>",
     "Jeremy Nagel <jeremy.nagel@learnosity.com>",
-    "Michael Williamson <mike@zwobble.org>"
+    "MarktHart <git@markhart.nl>",
+    "Michael Williamson <mike@zwobble.org>",
+    "Willem Meints <willem@mein-design.nl>"
   ],
   "license": "Apache-2.0",
   "bin": {
