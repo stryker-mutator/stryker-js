@@ -13,7 +13,7 @@ describe('KarmaTestRunner', function () {
   let expectToHaveFailedTests = (result: RunResult, expectedFailureMessages: string[]) => {
     const actualFailedTests = result.tests.filter(t => t.status === TestStatus.Failed);
     expect(actualFailedTests).to.have.length(expectedFailureMessages.length);
-    actualFailedTests.forEach(failedTest => expect(failedTest.failureMessages[0]).to.contain(expectedFailureMessages.shift()));
+    actualFailedTests.forEach(failedTest => expect((failedTest.failureMessages as any)[0]).to.contain(expectedFailureMessages.shift() as any));
   };
 
   describe('when all tests succeed', () => {
@@ -92,8 +92,9 @@ describe('KarmaTestRunner', function () {
         expectToHaveSuccessfulTests(runResult, 0);
         expectToHaveFailedTests(runResult, []);
         expect(runResult.status).to.be.eq(RunStatus.Error);
-        expect(runResult.errorMessages.length).to.equal(1);
-        expect(runResult.errorMessages[0].indexOf('ReferenceError: Can\'t find variable: someGlobalVariableThatIsNotDeclared\nat')).to.eq(0);
+        expect((runResult.errorMessages as any).length).to.equal(1);
+        expect((runResult.errorMessages as any)[0].indexOf('ReferenceError: Can\'t find variable: someGlobalVariableThatIsNotDeclared\nat')).to.eq(0);
+
         return true;
       });
     });
@@ -115,7 +116,8 @@ describe('KarmaTestRunner', function () {
         expectToHaveSuccessfulTests(runResult, 0);
         expectToHaveFailedTests(runResult, []);
         expect(runResult.status).to.be.eq(RunStatus.Complete);
-        expect(runResult.errorMessages.length).to.equal(0);
+        expect((runResult.errorMessages as any).length).to.equal(0);
+
         return true;
       });
     });

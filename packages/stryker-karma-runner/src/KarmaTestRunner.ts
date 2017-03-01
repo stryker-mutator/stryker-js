@@ -36,7 +36,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
   private serverStartedPromise: Promise<void>;
   private currentTestResults: TestResult[];
   private currentErrorMessages: string[];
-  private currentCoverageReport: CoverageCollection | CoverageCollectionPerTest;
+  private currentCoverageReport?: CoverageCollection | CoverageCollectionPerTest;
   private currentRunResult: karma.TestResults;
 
   constructor(private options: RunnerOptions) {
@@ -64,11 +64,16 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
   }
 
   run(): Promise<RunResult> {
-    this.currentTestResults = null;
     this.currentTestResults = [];
     this.currentErrorMessages = [];
-    this.currentCoverageReport = null;
-    this.currentRunResult = null;
+    this.currentCoverageReport = undefined;
+    this.currentRunResult = {
+      disconnected: false,
+      error: false,
+      exitCode: 0,
+      failed: 0,
+      success: 0
+    };
     return this.runServer().then(() => this.collectRunResult());
   }
 

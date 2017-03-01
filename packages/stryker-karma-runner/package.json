@@ -25,7 +25,7 @@
   "license": "Apache-2.0",
   "peerDependencies": {
     "karma": "^0.13.0 || ~1.0.0 || ^1.1.1",
-    "stryker-api": "^0.4.2-rc0"
+    "stryker-api": "^0.4.2"
   },
   "devDependencies": {
     "@types/chai": "^3.4.32",
@@ -59,7 +59,7 @@
     "mocha": "^3.0.2",
     "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.4.2-rc0",
+    "stryker-api": "^0.4.2",
     "tslint": "^4.0.2",
     "typescript": "^2.1.4"
   },
