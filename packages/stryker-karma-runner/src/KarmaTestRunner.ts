@@ -7,7 +7,7 @@ import * as rawCoverageReporter from './RawCoverageReporter';
 
 const log = log4js.getLogger('KarmaTestRunner');
 
-interface ConfigOptions extends karma.ConfigOptions {
+export interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string };
   detached?: boolean;
 }
@@ -22,13 +22,26 @@ interface KarmaSpec {
   log: string[];
 }
 
-const DEFAULT_OPTIONS: ConfigOptions = {
+const FORCED_OPTIONS = (() => {
+  const config: ConfigOptions = {
+    // Override browserNoActivityTimeout. Default value 10000 might not enough to send perTest coverage results
+    browserNoActivityTimeout: 1000000,
+    // Override base, we don't want to original karma baseDir to be interfering with the stryker setup
+    basePath: '.',
+    // No auto watch, stryker will inform us when we need to test
+    autoWatch: false,
+    // Don't stop after first run
+    singleRun: false,
+    // Never detach, always run in this same process (is already a separate process)
+    detached: false
+  };
+  return Object.freeze(config);
+})();
+
+const DEFAULT_OPTIONS: Readonly<ConfigOptions> = Object.freeze({
   browsers: ['PhantomJS'],
   frameworks: ['jasmine'],
-  autoWatch: false,
-  singleRun: false,
-  detached: false
-};
+});
 
 export default class KarmaTestRunner extends EventEmitter implements TestRunner {
 
@@ -158,8 +171,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     // Override port
     karmaConfig.port = this.options.port;
 
-    // Override browserNoActivityTimeout. Default value 10000 might not enough to send perTest coverage results
-    karmaConfig.browserNoActivityTimeout = 1000000;
+    this.forceOptions(karmaConfig);
 
     // Override frameworks
     if (this.options.strykerOptions.testFramework && !(overrides && overrides.frameworks)) {
@@ -167,6 +179,13 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     }
 
     return karmaConfig;
+  }
+
+  private forceOptions(karmaConfig: ConfigOptions) {
+    let i: keyof ConfigOptions;
+    for (i in FORCED_OPTIONS) {
+      karmaConfig[i] = FORCED_OPTIONS[i];
+    }
   }
 
   private runServer() {
