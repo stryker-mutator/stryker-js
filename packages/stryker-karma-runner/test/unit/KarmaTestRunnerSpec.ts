@@ -1,3 +1,4 @@
+import { ConfigOptions } from './../../src/KarmaTestRunner';
 import { expect } from 'chai';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { RunnerOptions } from 'stryker-api/test_runner';
@@ -23,6 +24,25 @@ describe('KarmaTestRunner', () => {
   });
 
   describe('when constructed', () => {
+
+    it('should force some non-overridable options', () => {
+      const karmaConfig: ConfigOptions = {
+        browserNoActivityTimeout: 100,
+        basePath: '../',
+        autoWatch: true,
+        singleRun: true,
+        detached: true
+      };
+      options.strykerOptions.karmaConfig = karmaConfig;
+      new KarmaTestRunner(options);
+      expect(karma.Server).to.have.been.calledWith(sinon.match({
+        browserNoActivityTimeout: 1000000,
+        basePath: '.',
+        autoWatch: false,
+        singleRun: false,
+        detached: false
+      }));
+    });
 
     describe('and no testFramework is supplied', () => {
       beforeEach(() => sut = new KarmaTestRunner(options));
