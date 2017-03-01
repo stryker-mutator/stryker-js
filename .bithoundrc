@@ -7,7 +7,9 @@
         "test/**",
         "testResources/**"
      ],
-     "ignore": [
+     "ignore": [        
+        "src/TestFrameworkOrchestrator.ts",		
+        "src/MutantTestMatcher.ts",
         "testResources/config-reader/syntax-error.conf.js"
     ],
     "dependencies": {
