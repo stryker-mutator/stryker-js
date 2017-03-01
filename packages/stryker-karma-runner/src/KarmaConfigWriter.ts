@@ -16,9 +16,10 @@ export default class KarmaConfigWriter implements ConfigWriter {
   }
 
   private static importFiles(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
-    if (!strykerConfig.files) {
-      strykerConfig.files = [];
-    }
+    if (!strykerConfig.files) { strykerConfig.files = []; }
+    if (!karmaConfig.files) { karmaConfig.files = []; }
+    if (!karmaConfig.exclude) { karmaConfig.exclude = []; }
+
     const files: (karma.FilePattern | string)[] = karmaConfig.files;
     const exclude: string[] = karmaConfig.exclude;
     if (files && Array.isArray(files)) {
