@@ -1,3 +1,14 @@
+<a name="0.5.9"></a>
+## [0.5.9](https://github.com/stryker-mutator/stryker/compare/v0.5.8...v0.5.9) (2017-03-01)
+
+
+### Bug Fixes
+
+* **fileUtilsSpec:** Fix test naming ([#240](https://github.com/stryker-mutator/stryker/issues/240)) ([f1321be](https://github.com/stryker-mutator/stryker/commit/f1321be))
+* **IsolatedTestRunner:** Fix channel closed error ([#219](https://github.com/stryker-mutator/stryker/issues/219)) ([202d4b5](https://github.com/stryker-mutator/stryker/commit/202d4b5))
+
+
+
 <a name="0.5.8"></a>
 ## [0.5.8](https://github.com/stryker-mutator/stryker/compare/v0.5.7...v0.5.8) (2017-02-03)
 
