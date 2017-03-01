@@ -40,7 +40,8 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
     log.debug(`Received options ${JSON.stringify(options)}`);
 
     this.options = _.assign(DEFAULT_OPTIONS, {
-      rootDir: process.cwd()
+      rootDir: process.cwd(),
+      testPathDirs: [process.cwd()]
     });
     log.debug(`Using options ${JSON.stringify(this.options)}`);
     
