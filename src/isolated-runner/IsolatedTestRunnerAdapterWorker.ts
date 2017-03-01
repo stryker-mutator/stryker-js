@@ -1,8 +1,8 @@
-import { AdapterMessage, RunMessage, StartMessage, ResultMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
+import { AdapterMessage, RunMessage, StartMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
 import * as log4js from 'log4js';
-import { isPromise, deserialize } from '../utils/objectUtils';
+import { deserialize, errorToString } from '../utils/objectUtils';
 
 const log = log4js.getLogger('IsolatedTestRunnerAdapterWorker');
 
@@ -41,51 +41,50 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   start(message: StartMessage) {
-    this.loadPlugins(message.runnerOptions.strykerOptions.plugins);
+    this.loadPlugins(message.runnerOptions.strykerOptions.plugins || []);
     log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
     process.chdir(message.runnerOptions.sandboxWorkingFolder);
     this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
   }
 
-  init() {
-    let initPromise: Promise<any> | void = void 0;
+  async init() {
     if (this.underlyingTestRunner.init) {
-      initPromise = this.underlyingTestRunner.init();
-    }
-    if (isPromise(initPromise)) {
-      initPromise.then(this.sendInitDone);
-    } else {
-      this.sendInitDone();
-    }
+      await this.underlyingTestRunner.init();
+    };
+    this.sendInitDone();
   }
 
   sendInitDone() {
     const message: EmptyWorkerMessage = { kind: 'initDone' };
-    process.send(message);
+    if (process.send) {
+      process.send(message);
+    }
   }
 
-  dispose() {
-    let disposePromise: Promise<any> | void = void 0;
+  async dispose() {
     if (this.underlyingTestRunner.dispose) {
-      disposePromise = this.underlyingTestRunner.dispose();
+      await this.underlyingTestRunner.dispose();
     }
-    if (isPromise(disposePromise)) {
-      disposePromise.then(this.sendDisposeDone);
-    } else {
-      this.sendDisposeDone();
-    }
+    this.sendDisposeDone();
   }
 
   sendDisposeDone() {
     this.send({ kind: 'disposeDone' });
   }
 
-  run(body: RunMessage) {
-    this.underlyingTestRunner.run(body.runOptions).then((res) => this.reportResult(res), (error) => this.reportErrorResult(error));
+  async run(body: RunMessage) {
+    try {
+      let res = await this.underlyingTestRunner.run(body.runOptions);
+      this.reportResult(res);
+    } catch (error) {
+      this.reportErrorResult(error);
+    }
   }
 
   private send(message: WorkerMessage) {
-    process.send(message);
+    if (process.send) {
+      process.send(message);
+    }
   }
 
   private loadPlugins(plugins: string[]) {
@@ -101,13 +100,7 @@ class IsolatedTestRunnerAdapterWorker {
       // errorMessages should be a string[]
       // Just in case the test runner implementer forgot to convert `Error`s to string, we will do it here
       // https://github.com/stryker-mutator/stryker/issues/141
-      result.errorMessages = result.errorMessages.map((error: any) => {
-        if (error instanceof Error) {
-          return `${error.name}: ${error.message}\n${error.stack.toString()}`;
-        } else {
-          return error.toString();
-        }
-      });
+      result.errorMessages = result.errorMessages.map(errorToString);
     }
     this.send({
       kind: 'result',

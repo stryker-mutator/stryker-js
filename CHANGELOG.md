@@ -1,3 +1,31 @@
+<a name="0.5.9"></a>
+## [0.5.9](https://github.com/stryker-mutator/stryker/compare/v0.5.8...v0.5.9) (2017-03-01)
+
+
+### Bug Fixes
+
+* **fileUtilsSpec:** Fix test naming ([#240](https://github.com/stryker-mutator/stryker/issues/240)) ([f1321be](https://github.com/stryker-mutator/stryker/commit/f1321be))
+* **IsolatedTestRunner:** Fix channel closed error ([#219](https://github.com/stryker-mutator/stryker/issues/219)) ([202d4b5](https://github.com/stryker-mutator/stryker/commit/202d4b5))
+
+
+
+<a name="0.5.8"></a>
+## [0.5.8](https://github.com/stryker-mutator/stryker/compare/v0.5.7...v0.5.8) (2017-02-03)
+
+
+### Bug Fixes
+
+* **bin/stryker:** Changed file permissions on stryker so it's executable on Linux ([#226](https://github.com/stryker-mutator/stryker/issues/226)) ([c1a5798](https://github.com/stryker-mutator/stryker/commit/c1a5798))
+* **fs:** Use graceful-fs instead of fs directly ([#221](https://github.com/stryker-mutator/stryker/issues/221)) ([4c1bf41](https://github.com/stryker-mutator/stryker/commit/4c1bf41))
+* **typo:** change not coverage to no coverage ([f2c7198](https://github.com/stryker-mutator/stryker/commit/f2c7198))
+
+
+### Features
+
+* **ArrayDeclarationMutator:** Add new mutator. ([#229](https://github.com/stryker-mutator/stryker/issues/229)) ([9805917](https://github.com/stryker-mutator/stryker/commit/9805917))
+
+
+
 <a name="0.5.7"></a>
 ## [0.5.7](https://github.com/stryker-mutator/stryker/compare/v0.5.6...v0.5.7) (2017-01-16)
 

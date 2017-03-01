@@ -1,13 +1,13 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollectionPerTest, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
+import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
-import { Reporter, MatchedMutant } from 'stryker-api/report';
+import { MatchedMutant } from 'stryker-api/report';
 import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import Mutant from '../../src/Mutant';
 import log from '../helpers/log4jsMock';
-
+import StrictReporter from '../../src/reporters/StrictReporter';
 describe('MutantTestMatcher', () => {
 
   let sut: MutantTestMatcher;
@@ -15,14 +15,14 @@ describe('MutantTestMatcher', () => {
   let runResult: RunResult;
   let statementMapDictionary: StatementMapDictionary;
   let strykerOptions: StrykerOptions;
-  let reporter: Reporter;
+  let reporter: StrictReporter;
 
   beforeEach(() => {
     mutants = [];
     statementMapDictionary = Object.create(null);
     runResult = { tests: [], status: RunStatus.Complete };
     strykerOptions = {};
-    reporter = { onAllMutantsMatchedWithTests: sinon.stub() };
+    reporter = { onAllMutantsMatchedWithTests: sinon.stub(), onSourceFileRead: sinon.stub(), onAllMutantsTested: sinon.stub(), onAllSourceFilesRead: sinon.stub(), onMutantTested: sinon.stub(), wrapUp: sinon.stub()};
     sut = new MutantTestMatcher(mutants, runResult, statementMapDictionary, strykerOptions, reporter);
   });
 

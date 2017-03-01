@@ -1,4 +1,4 @@
-import { RunResult, RunnerOptions } from 'stryker-api/test_runner';
+import { RunResult } from 'stryker-api/test_runner';
 import { RunOptions } from 'stryker-api/test_runner';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 

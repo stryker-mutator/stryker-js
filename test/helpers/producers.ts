@@ -1,18 +1,21 @@
-import { MutantStatus, MatchedMutant, MutantResult } from 'stryker-api/report';
+import { MutantStatus, MatchedMutant, MutantResult, Reporter } from 'stryker-api/report';
 
 export function mutantResult(status: MutantStatus): MutantResult {
   return {
-    location: null,
-    mutatedLines: null,
-    mutatorName: null,
-    originalLines: null,
-    replacement: null,
-    sourceFilePath: null,
-    testsRan: null,
-    status,
-    range: null
+    location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+    mutatedLines: '',
+    mutatorName: '',
+    originalLines: '',
+    replacement: '',
+    sourceFilePath: '',
+    testsRan: [''],
+    status: status,
+    range: [0, 0]
   };
 }
+
+export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
+  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'wrapUp'];
 
 export function matchedMutant(numberOfTests: number): MatchedMutant {
   let scopedTestIds: number[] = [];
@@ -20,10 +23,10 @@ export function matchedMutant(numberOfTests: number): MatchedMutant {
     scopedTestIds.push(1);
   }
   return {
-    mutatorName: null,
+    mutatorName: '',
     scopedTestIds: scopedTestIds,
-    timeSpentScopedTests: null,
-    filename: null,
-    replacement: null
+    timeSpentScopedTests: 0,
+    filename: '',
+    replacement: ''
   };
 }

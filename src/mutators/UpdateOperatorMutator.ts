@@ -10,16 +10,11 @@ export default class UpdateOperatorMutator implements Mutator  {
       '--': '++'
   };
 
-  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
-    let nodes: estree.Node[] = [];
-
-    if (node.type === Syntax.UpdateExpression && this.operators[node.operator]) {
+  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T):  void | estree.Node | estree.Node[] {
+    if (node.type === this.type && this.operators[node.operator]) {
       let mutatedNode = copy(node);
       mutatedNode.operator = this.operators[node.operator];
-      nodes.push(mutatedNode);
+      return mutatedNode;
     }
-
-    return nodes;
   }
-
 }

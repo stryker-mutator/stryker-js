@@ -1,19 +1,18 @@
+import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
 import * as path from 'path';
-import * as os from 'os';
 import { expect } from 'chai';
-import { StrykerOptions, InputFile } from 'stryker-api/core';
+import { InputFile } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { wrapInClosure } from '../../src/utils/objectUtils';
-import CoverageInstrumenter from '../../src/coverage/CoverageInstrumenter';
 import Sandbox from '../../src/Sandbox';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
-import IsolatedTestRunnerAdapterFactory from '../../src/isolated-runner/IsolatedTestRunnerAdapterFactory';
+import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
 
 describe('Sandbox', () => {
   let sut: Sandbox;
-  let options: StrykerOptions;
+  let options: Config;
   let sandbox: sinon.SinonSandbox;
   let files: InputFile[];
   let testRunner: any;
@@ -26,7 +25,7 @@ describe('Sandbox', () => {
   const expectedTestFrameworkHooksFile = path.join(workingFolder, '___testHooksForStryker.js');
 
   beforeEach(() => {
-    options = { port: 43, timeoutFactor: 23, timeoutMs: 1000 };
+    options = { port: 43, timeoutFactor: 23, timeoutMs: 1000, testRunner: 'sandboxUnitTestRunner' } as any;
     sandbox = sinon.sandbox.create();
     testRunner = { init: sandbox.stub(), run: sandbox.stub().returns(Promise.resolve()) };
     testFramework = {
@@ -41,7 +40,7 @@ describe('Sandbox', () => {
     sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returnsArg(0);
     sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve({}));
     sandbox.stub(StrykerTempFolder, 'writeFile').returns(Promise.resolve({}));
-    sandbox.stub(IsolatedTestRunnerAdapterFactory, 'create').returns(testRunner);
+    sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
   });
 
   afterEach(() => sandbox.restore());
@@ -108,7 +107,7 @@ describe('Sandbox', () => {
           strykerOptions: options,
           sandboxWorkingFolder: workingFolder
         };
-        expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith(expectedSettings);
+        expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings);
       });
 
       describe('when run', () => {
@@ -154,7 +153,7 @@ describe('Sandbox', () => {
   });
 
   describe('when constructed without a testFramework or CoverageInstrumenter', () => {
-    beforeEach(() => sut = new Sandbox(options, 3, files, undefined, null));
+    beforeEach(() => sut = new Sandbox(options, 3, files, null, null));
 
     describe('and initialized', () => {
 
@@ -170,9 +169,9 @@ describe('Sandbox', () => {
           ],
           port: 46,
           strykerOptions: options,
-          sandboxWorkingFolder: workingFolder 
+          sandboxWorkingFolder: workingFolder
         };
-        expect(IsolatedTestRunnerAdapterFactory.create).to.have.been.calledWith(expectedSettings);
+        expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings);
       });
 
       describe('when runMutant()', () => {

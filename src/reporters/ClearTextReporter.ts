@@ -1,7 +1,6 @@
 import * as chalk from 'chalk';
-import * as _ from 'lodash';
 import * as log4js from 'log4js';
-import { Reporter, MutantResult, MutantStatus, SourceFile } from 'stryker-api/report';
+import { Reporter, MutantResult, MutantStatus } from 'stryker-api/report';
 import { StrykerOptions } from 'stryker-api/core';
 
 const log = log4js.getLogger('ClearTextReporter');
@@ -56,7 +55,7 @@ export default class ClearTextReporter implements Reporter {
           break;
         case MutantStatus.NoCoverage:
           mutantsNoCoverage++;
-          this.writeLine(chalk.bold.yellow('Mutant survived! (not coverage)'));
+          this.writeLine(chalk.bold.yellow('Mutant survived! (no coverage)'));
           this.logMutantResult(result, writeLineFn);
           break;
       }

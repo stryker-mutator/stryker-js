@@ -2,7 +2,7 @@ import * as os from 'os';
 import * as sinon from 'sinon';
 import * as chalk from 'chalk';
 import { expect } from 'chai';
-import { MatchedMutant, MutantResult, MutantStatus } from 'stryker-api/report';
+import { MutantStatus } from 'stryker-api/report';
 import ProgressAppendOnlyReporter from '../../../src/reporters/ProgressAppendOnlyReporter';
 import { matchedMutant, mutantResult } from '../../helpers/producers';
 

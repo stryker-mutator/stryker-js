@@ -1,37 +1,36 @@
 import * as path from 'path';
 import { expect } from 'chai';
-import { TestRunnerFactory, TestRunner, RunOptions, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
-import TestRunnerChildProcessAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
+import { RunResult, RunStatus } from 'stryker-api/test_runner';
+import ResilientTestRunnerFactory from '../../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
+import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorator';
 
-describe('TestRunnerChildProcessAdapter', function () {
+function sleep(ms: number) {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+}
+
+describe('ResilientTestRunnerFactory', function () {
 
   this.timeout(10000);
 
-  let sut: TestRunnerChildProcessAdapter;
+  let sut: TestRunnerDecorator;
   let options: IsolatedRunnerOptions = {
     strykerOptions: {
-      plugins: [
-        '../../test/integration/isolated-runner/DirectResolvedTestRunner',
-        '../../test/integration/isolated-runner/NeverResolvedTestRunner',
-        '../../test/integration/isolated-runner/SlowInitAndDisposeTestRunner',
-        '../../test/integration/isolated-runner/CoverageReportingTestRunner',
-        '../../test/integration/isolated-runner/ErroredTestRunner',
-        '../../test/integration/isolated-runner/VerifyWorkingFolderTestRunner',
-        '../../test/integration/isolated-runner/DiscoverRegexTestRunner'],
+      plugins: ['../../test/integration/isolated-runner/AdditionalTestRunners'],
       testRunner: 'karma',
       testFramework: 'jasmine',
-      port: null,
+      port: 0,
       'someRegex': /someRegex/
     },
     files: [],
-    port: null,
+    port: 0,
     sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner')
   };
 
   describe('when sending a regex in the options', () => {
-    before(() => sut = new TestRunnerChildProcessAdapter('discover-regex', options));
+    before(() => sut = ResilientTestRunnerFactory.create('discover-regex', options));
 
     it('correctly receive the regex on the other end',
       () => expect(sut.run({ timeout: 4000 })).to.eventually.have.property('status', RunStatus.Complete));
@@ -40,9 +39,9 @@ describe('TestRunnerChildProcessAdapter', function () {
   });
 
   describe('when test runner behind reports coverage', () => {
-    before(() => sut = new TestRunnerChildProcessAdapter('coverage-reporting', options));
+    before(() => sut = ResilientTestRunnerFactory.create('coverage-reporting', options));
 
-    it('should not be overriden by the worker',
+    it('should not be overridden by the worker',
       () => expect(sut.run({ timeout: 3000 })).to.eventually.have.property('coverage', 'realCoverage'));
 
     after(() => sut.dispose());
@@ -50,7 +49,7 @@ describe('TestRunnerChildProcessAdapter', function () {
 
   describe('when test runner behind responds quickly', () => {
     before(() => {
-      sut = new TestRunnerChildProcessAdapter('direct-resolved', options);
+      sut = ResilientTestRunnerFactory.create('direct-resolved', options);
     });
 
     it('should run and resolve', () =>
@@ -64,7 +63,7 @@ describe('TestRunnerChildProcessAdapter', function () {
 
   describe('when test runner behind never responds', () => {
     before(() => {
-      sut = new TestRunnerChildProcessAdapter('never-resolved', options);
+      sut = ResilientTestRunnerFactory.create('never-resolved', options);
       return sut.init();
     });
 
@@ -79,7 +78,7 @@ describe('TestRunnerChildProcessAdapter', function () {
 
   describe('when test runner behind reports an error as `Error` instead of `string`', () => {
     before(() => {
-      sut = new TestRunnerChildProcessAdapter('errored', options);
+      sut = ResilientTestRunnerFactory.create('errored', options);
       return sut.init();
     });
 
@@ -88,7 +87,9 @@ describe('TestRunnerChildProcessAdapter', function () {
         // Issue https://github.com/stryker-mutator/stryker/issues/141
         expect(result.status).to.be.eq(RunStatus.Error);
         expect(result.errorMessages).to.have.length(1);
-        expect(result.errorMessages[0]).to.contain('SyntaxError: This is invalid syntax!\n    at ErroredTestRunner.run');
+        if (result.errorMessages) {
+          expect(result.errorMessages[0]).to.contain('SyntaxError: This is invalid syntax!\n    at ErroredTestRunner.run');
+        }
         return true;
       }));
 
@@ -97,7 +98,7 @@ describe('TestRunnerChildProcessAdapter', function () {
 
   describe('when test runner behind has a slow init and dispose cycle', () => {
     before(() => {
-      sut = new TestRunnerChildProcessAdapter('slow-init-dispose', options);
+      sut = ResilientTestRunnerFactory.create('slow-init-dispose', options);
       return sut.init();
     });
     it('should run only after it is initialized',
@@ -117,7 +118,7 @@ describe('TestRunnerChildProcessAdapter', function () {
 
   describe('when test runner verifies the current working folder', () => {
     before(() => {
-      sut = new TestRunnerChildProcessAdapter('verify-working-folder', options);
+      sut = ResilientTestRunnerFactory.create('verify-working-folder', options);
       return sut.init();
     });
 
@@ -128,4 +129,18 @@ describe('TestRunnerChildProcessAdapter', function () {
         }
       }));
   });
+
+  describe('when test runner is crashing after 100ms', () => {
+    before(() => sut = ResilientTestRunnerFactory.create('time-bomb', options));
+
+    it('should be able to recover from crash', () => {
+      return sleep(101)
+        .then(() => sut.run({ timeout: 2000 })
+          .then(result => {
+            expect(result.status).to.be.eq(RunStatus.Complete);
+            expect(result.errorMessages).to.be.undefined;
+          }));
+    });
+  });
+
 }); 
