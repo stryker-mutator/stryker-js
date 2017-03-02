@@ -1,3 +1,16 @@
+<a name="0.0.6"></a>
+## [0.0.6](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.0.5...v0.0.6) (2017-03-02)
+
+
+### Bug Fixes
+
+* **configuration:** Allow more test file names ([f54dfc3](https://github.com/stryker-mutator/stryker-jest-runner/commit/f54dfc3))
+* **configuration:** Remove test regex filter ([14ca864](https://github.com/stryker-mutator/stryker-jest-runner/commit/14ca864))
+* **configuration:** Remove unnecessary options ([278a754](https://github.com/stryker-mutator/stryker-jest-runner/commit/278a754))
+* **configuration:** Revert removal of testPathDirs ([dd5de98](https://github.com/stryker-mutator/stryker-jest-runner/commit/dd5de98))
+
+
+
 <a name="0.0.5"></a>
 ## 0.0.5 (2017-02-13)
 
