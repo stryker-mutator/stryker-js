@@ -30,8 +30,8 @@ module.exports = function (grunt) {
     var stryker = new Stryker(options);
     stryker.runMutationTest().then(function () {
       done();
-    }, function () {
-      grunt.fail.fatal("Stryker was unable to run the mutation test");
+    }, function (error) {
+        grunt.fail.fatal("Stryker was unable to run the mutation test. " + error);
     });
   });
 
