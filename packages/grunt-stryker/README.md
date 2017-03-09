@@ -1,4 +1,7 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/grunt-stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/grunt-stryker)
+[![NPM](https://img.shields.io/npm/dm/grunt-stryker.svg)](https://www.npmjs.com/package/grunt-stryker)
+[![Node version](https://img.shields.io/node/v/grunt-stryker.svg)](https://img.shields.io/node/v/grunt-stryker.svg)
+[![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Grunt-stryker
 
