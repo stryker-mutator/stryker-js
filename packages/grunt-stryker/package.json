@@ -23,7 +23,7 @@
   ],
   "license": "Apache-2.0",
   "engines": {
-    "node": ">= 0.8.0"
+    "node": ">= 4"
   },
   "scripts": {
     "test": "grunt",
@@ -43,14 +43,14 @@
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
     "load-grunt-tasks": "^3.5.2",
-    "stryker": "^0.5.1",
-    "stryker-api": "^0.4.0",
+    "stryker": "^0.5.9",
+    "stryker-api": "^0.4.2",
     "stryker-jasmine": "^0.1.0",
     "stryker-karma-runner": "^0.3.0"
   },
   "peerDependencies": {
     "grunt": ">=0.4.5",
-    "stryker": "^0.5.1"
+    "stryker": "^0.5.9"
   },
   "dependencies": {}
 }

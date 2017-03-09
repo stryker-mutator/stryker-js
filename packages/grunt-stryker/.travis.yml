@@ -1,8 +1,9 @@
 language: node_js
 node_js:
-  - "0.12"
-  - "4.0"
-  - "5.0"
+  - "node"
+  - "7"
+  - "6"
+  - "4"
 install: npm install
 before_script:
   - export DISPLAY=:99.0
