@@ -112,11 +112,11 @@
     "sinon": "^1.17.2",
     "sinon-as-promised": "^4.0.2",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.4.2",
+    "stryker-api": "^0.5.0-rc0",
     "tslint": "^4.4.2",
     "typescript": "~2.2.1"
   },
   "peerDependencies": {
-    "stryker-api": "^0.4.2"
+    "stryker-api": "^0.5.0-rc0"
   }
 }

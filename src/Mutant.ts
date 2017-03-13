@@ -1,6 +1,6 @@
 import { Location, Range } from 'stryker-api/core';
 import StrykerTempFolder from './utils/StrykerTempFolder';
-import { TestResult } from 'stryker-api/test_runner';
+import { TestResult, RunResult } from 'stryker-api/test_runner';
 
 /**
  * Represents a mutation which has been applied to a file.
@@ -17,6 +17,10 @@ export default class Mutant {
 
   get timeSpentScopedTests() {
     return this._timeSpentScopedTests;
+  }
+
+  public addAllTestResults(runResult: RunResult) {
+    runResult.tests.forEach((testResult, id) => this.addTestResult(id, testResult));
   }
 
   public addTestResult(index: number, testResult: TestResult) {
@@ -81,4 +85,8 @@ export default class Mutant {
   reset(filename: string) {
     return StrykerTempFolder.writeFile(filename, this.originalCode);
   };
+
+  toString() {
+    return `${this.mutatorName} (${this.filename}@${this.location.start.line}:${this.location.start.column})`;
+  }
 }

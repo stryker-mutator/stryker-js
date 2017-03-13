@@ -1,38 +1,68 @@
+import * as log4js from 'log4js';
+import * as _ from 'lodash';
 import Mutant from './Mutant';
 import StrictReporter from './reporters/StrictReporter';
 import { MatchedMutant } from 'stryker-api/report';
 import { StatementMapDictionary } from './coverage/CoverageInstrumenter';
-import { RunResult, CoverageCollection, CoverageCollectionPerTest, StatementMap } from 'stryker-api/test_runner';
+import { RunResult, CoverageCollection, StatementMap, CoveragePerTestResult } from 'stryker-api/test_runner';
 import { Location, StrykerOptions } from 'stryker-api/core';
-import * as _ from 'lodash';
+
+const log = log4js.getLogger('MutantTestMatcher');
 
 export default class MutantTestMatcher {
 
-  constructor(private mutants: Mutant[], private initialRunResult: RunResult, private statementMaps: StatementMapDictionary, private options: StrykerOptions, private reporter: StrictReporter) { }
+  constructor(private mutants: Mutant[], private initialRunResult: RunResult, private statementMaps: StatementMapDictionary, private options: StrykerOptions, private reporter: StrictReporter) {
+  }
+
+  private get baseline(): CoverageCollection | null {
+    if (this.isCoveragePerTestResult(this.initialRunResult.coverage)) {
+      return this.initialRunResult.coverage.baseline;
+    } else {
+      return null;
+    }
+  }
 
   matchWithMutants() {
-    this.mutants.forEach(mutant => {
-      const statementMap = this.statementMaps[mutant.filename];
-      const smallestStatement = this.findSmallestCoveringStatement(mutant, statementMap);
-      this.initialRunResult.tests.forEach((testResult, id) => {
-        let covered = false;
-        const coverageCollection = this.findCoverageCollectionForTest(id);
-        if (coverageCollection && smallestStatement) {
-          let coveredFile = coverageCollection[mutant.filename];
-          if (coveredFile) {
-            covered = coveredFile.s[smallestStatement] > 0;
+    if (this.options.coverageAnalysis === 'off') {
+      this.mutants.forEach(mutant => mutant.addAllTestResults(this.initialRunResult));
+    } else if (!this.initialRunResult.coverage) {
+      log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
+      this.mutants.forEach(mutant => mutant.addAllTestResults(this.initialRunResult));
+    } else
+      this.mutants.forEach(mutant => {
+        const statementMap = this.statementMaps[mutant.filename];
+        const smallestStatement = this.findSmallestCoveringStatement(mutant, statementMap);
+        if (smallestStatement) {
+          if (this.isCoveredByBaseline(mutant.filename, smallestStatement)) {
+            mutant.addAllTestResults(this.initialRunResult);
+          } else {
+            this.initialRunResult.tests.forEach((testResult, id) => {
+              if (this.isCoveredByTest(id, mutant.filename, smallestStatement)) {
+                mutant.addTestResult(id, testResult);
+              }
+            });
           }
         } else {
-          // If there is no coverage data we have to assume that the test covers the mutant
-          covered = true;
-        }
-        if (covered) {
-          mutant.addTestResult(id, testResult);
+          log.warn('Cannot find statement for mutant %s in statement map for file. Assuming that all tests cover this mutant. This might have a big impact on the performance.', mutant.toString());
+          mutant.addAllTestResults(this.initialRunResult);
         }
       });
-    });
-
     this.reporter.onAllMutantsMatchedWithTests(Object.freeze(this.mutants.map(this.mapMutantOnMatchedMutant)));
+  }
+
+  private isCoveredByBaseline(filename: string, statementId: string): boolean {
+    if (this.baseline) {
+      const coverageCollection = this.baseline[filename];
+      return coverageCollection && coverageCollection.s[statementId] > 0;
+    } else {
+      return false;
+    }
+  }
+
+  private isCoveredByTest(testId: number, filename: string, statementId: string) {
+    const coverageCollection = this.findCoverageCollectionForTest(testId);
+    const coveredFile = coverageCollection && coverageCollection[filename];
+    return coveredFile && coveredFile.s[statementId] > 0;
   }
 
   /**
@@ -109,8 +139,8 @@ export default class MutantTestMatcher {
 
   private findCoverageCollectionForTest(testId: number): CoverageCollection | null {
     if (this.initialRunResult.coverage) {
-      if (this.isCoverageCollectionPerTest(this.initialRunResult.coverage)) {
-        return this.initialRunResult.coverage[testId];
+      if (this.isCoveragePerTestResult(this.initialRunResult.coverage)) {
+        return this.initialRunResult.coverage.deviations[testId];
       } else {
         return this.initialRunResult.coverage;
       }
@@ -119,7 +149,7 @@ export default class MutantTestMatcher {
     }
   }
 
-  private isCoverageCollectionPerTest(coverage: CoverageCollection | CoverageCollectionPerTest): coverage is CoverageCollectionPerTest {
+  private isCoveragePerTestResult(coverage: CoverageCollection | CoveragePerTestResult | undefined): coverage is CoveragePerTestResult {
     return this.options.coverageAnalysis === 'perTest';
   }
 }
