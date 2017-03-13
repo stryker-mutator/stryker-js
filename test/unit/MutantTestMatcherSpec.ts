@@ -8,6 +8,7 @@ import MutantTestMatcher from '../../src/MutantTestMatcher';
 import Mutant from '../../src/Mutant';
 import log from '../helpers/log4jsMock';
 import StrictReporter from '../../src/reporters/StrictReporter';
+
 describe('MutantTestMatcher', () => {
 
   let sut: MutantTestMatcher;
@@ -35,6 +36,7 @@ describe('MutantTestMatcher', () => {
     describe('matchWithMutants()', () => {
       describe('with 2 mutants and 2 testResults', () => {
         let mutantOne: any, mutantTwo: any, testResultOne: TestResult, testResultTwo: TestResult;
+
         beforeEach(() => {
           mutantOne = {
             mutatorName: 'myMutator',
