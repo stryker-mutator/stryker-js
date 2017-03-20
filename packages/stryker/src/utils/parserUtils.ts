@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as esprima from 'esprima';
 import * as estree from 'estree';
+import { IdentifiedNode, Identified } from 'stryker-api/mutant';
 const escodegen = require('escodegen');
 
 /**
@@ -31,37 +32,6 @@ export function parse(code: string): estree.Program {
 };
 
 /**
- * Finds all nodes which have a 'type' property and freezes them.
- * @function
- * @param abstractSyntaxTree - The current part of the abstract syntax tree which will be investigated.
- * @returns  All nodes with a type.
- */
-export function collectFrozenNodes(abstractSyntaxTree: estree.Node, nodes?: estree.Node[]): estree.Node[] {
-  nodes = nodes || [];
-
-  if (!_.isArray(abstractSyntaxTree) && _.isObject(abstractSyntaxTree) && abstractSyntaxTree.type && _.isUndefined(abstractSyntaxTree.nodeID)) {
-    abstractSyntaxTree.nodeID = nodes.length;
-    nodes.push(abstractSyntaxTree);
-  }
-
-  Object.freeze(abstractSyntaxTree);
-  
-  _.forOwn(abstractSyntaxTree, (childNode, i) => {
-    if (childNode instanceof Object && !(childNode instanceof Array)) {
-      collectFrozenNodes(childNode, nodes);
-    } else if (childNode instanceof Array) {
-      _.forEach(childNode, (arrayChild) => {
-        if (arrayChild instanceof Object && !(arrayChild instanceof Array)) {
-          collectFrozenNodes(arrayChild, nodes);
-        }
-      });
-    }
-  });
-
-  return nodes;
-};
-
-/**
    * Parses a Node to generate code.
    * @param The Node which has to be transformed into code.
    * @returns The generated code.
@@ -69,3 +39,60 @@ export function collectFrozenNodes(abstractSyntaxTree: estree.Node, nodes?: estr
 export function generate(node: estree.Node): string {
   return escodegen.generate(node);
 };
+
+/**
+ * Returns n as T & Identified, purely syntactic.
+ * @param n The estree node which is identified
+ */
+export function identified<T extends estree.Node>(n: T) {
+  return n as T & Identified;
+}
+
+
+
+/**
+ * Represents an object responsible to identify estree nodes (estree.Node).
+ * Labels all nodes with a `nodeID` recursively.
+ */
+export class NodeIdentifier {
+
+  private identifiedNodes: Readonly<IdentifiedNode>[] = [];
+
+  identifyAndFreeze(program: estree.Program): Readonly<IdentifiedNode>[] {
+    this.identifiedNodes = [];
+    this.identifyAndFreezeRecursively(program);
+    return this.identifiedNodes;
+  }
+
+  private identifyAndFreezeRecursively(maybeNode: any) {
+    if (this.isNode(maybeNode)) {
+      if (!this.isIdentified(maybeNode)) {
+        this.identify(maybeNode);
+      }
+      Object.freeze(maybeNode);
+
+      _.forOwn(maybeNode, childNode => {
+        this.identifyAndFreezeRecursively(childNode);
+      });
+    } else if (Array.isArray(maybeNode)) {
+      maybeNode.forEach(grandChild => {
+        this.identifyAndFreezeRecursively(grandChild);
+      });
+    }
+  }
+
+  private isNode(maybeNode: any): estree.Node {
+    return !_.isArray(maybeNode) && _.isObject(maybeNode) && maybeNode.type;
+  }
+
+  private isIdentified(node: estree.Node): node is IdentifiedNode {
+    const n = node as IdentifiedNode;
+    return _.isNumber(n.nodeID);
+  }
+
+  private identify(node: estree.Node) {
+    const n = node as IdentifiedNode;
+    n.nodeID = this.identifiedNodes.length;
+    this.identifiedNodes.push(n);
+  }
+}

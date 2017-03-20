@@ -1,3 +1,4 @@
+import { Identified } from 'stryker-api/mutant';
 import UpdateOperatorMutator from '../../../src/mutators/UpdateOperatorMutator';
 import { expect } from 'chai';
 import * as parser from '../../../src/utils/parserUtils';
@@ -13,10 +14,10 @@ describe('UpdateOperatorMutator', () => {
     it('"i++" to "i--"', () => {
       // Arrange
       const program = parser.parse(`i++`);
-      const expression = (program.body[0] as estree.ExpressionStatement).expression;
+      const expression = (program.body[0] as estree.ExpressionStatement).expression as estree.Expression & Identified;
 
       // Act
-      const result = <estree.UpdateExpression>sut.applyMutations(expression, copy);
+      const result = sut.applyMutations(expression, copy) as estree.UpdateExpression & Identified;
 
       // Assert
       expect(result).to.be.ok;
@@ -27,10 +28,10 @@ describe('UpdateOperatorMutator', () => {
     it('"i--" to "i++"', () => {
       // Arrange
       const program = parser.parse(`i--`);
-      const expression = (program.body[0] as estree.ExpressionStatement).expression;
+      const expression = (program.body[0] as estree.ExpressionStatement).expression as estree.Expression & Identified;
 
       // Act
-      const result = <estree.UpdateExpression>sut.applyMutations(expression, copy);
+      const result = sut.applyMutations(expression, copy) as estree.UpdateExpression & Identified;
 
       // Assert
       expect(result).to.be.ok;
@@ -41,10 +42,10 @@ describe('UpdateOperatorMutator', () => {
     it('"++i" to "--i"', () => {
       // Arrange
       const program = parser.parse(`++i`);
-      const expression = (program.body[0] as estree.ExpressionStatement).expression;
+      const expression = (program.body[0] as estree.ExpressionStatement).expression as estree.Expression & Identified;
 
       // Act
-      const result = <estree.UpdateExpression>sut.applyMutations(expression, copy);
+      const result = sut.applyMutations(expression, copy) as estree.UpdateExpression & Identified;
 
       // Assert
       expect(result).to.be.ok;
@@ -55,10 +56,10 @@ describe('UpdateOperatorMutator', () => {
     it('"--i" to "++i"', () => {
       // Arrange
       const program = parser.parse(`--i`);
-      const expression = (program.body[0] as estree.ExpressionStatement).expression;
+      const expression = (program.body[0] as estree.ExpressionStatement).expression as estree.Expression & Identified;
 
       // Act
-      const result = <estree.UpdateExpression>sut.applyMutations(expression, copy);
+      const result = sut.applyMutations(expression, copy) as estree.UpdateExpression & Identified;
 
       // Assert
       expect(result).to.be.ok;
@@ -71,7 +72,7 @@ describe('UpdateOperatorMutator', () => {
     it('"+i" to "-i"', () => {
       // Arrange
       const program = parser.parse(`-i`);
-      const expression = (program.body[0] as estree.ExpressionStatement).expression;
+      const expression = (program.body[0] as estree.ExpressionStatement).expression as estree.Expression & Identified;
 
       // Act
       const result = sut.applyMutations(expression, copy);

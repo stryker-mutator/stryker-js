@@ -1,8 +1,9 @@
-import BlockStatementMutator from '../../../src/mutators/BlockStatementMutator';
 import { expect } from 'chai';
-import * as parser from '../../../src/utils/parserUtils';
-import { copy } from '../../../src/utils/objectUtils';
 import * as estree from 'estree';
+import { Identified } from 'stryker-api/mutant';
+import BlockStatementMutator from '../../../src/mutators/BlockStatementMutator';
+import { parse, identified } from '../../../src/utils/parserUtils';
+import { copy } from '../../../src/utils/objectUtils';
 
 describe('BlockStatementMutator', () => {
   let sut: BlockStatementMutator;
@@ -11,13 +12,13 @@ describe('BlockStatementMutator', () => {
 
   it('should mutate when supplied a block statement', () => {
     // Arrange
-    const program = parser.parse(`function a () { 
+    const program = parse(`function a () { 
       'use strict';
     }`);
-    const useStrictBlockStatement = (program.body[0] as estree.FunctionDeclaration).body;
+    const useStrictBlockStatement = identified((program.body[0] as estree.FunctionDeclaration).body);
 
     // Act
-    const actual = <estree.BlockStatement>sut.applyMutations(useStrictBlockStatement, copy);
+    const actual = sut.applyMutations(useStrictBlockStatement, copy) as estree.BlockStatement & Identified;
 
     // Assert
     expect(actual).to.be.ok;
@@ -27,10 +28,10 @@ describe('BlockStatementMutator', () => {
 
   it('should not mutate an empty expression', () => {
     // Arrange
-    const program = parser.parse(`function a () { 
+    const program = parse(`function a () { 
       
     }`);
-    const emptyBlockStatement = (program.body[0] as estree.FunctionDeclaration).body;
+    const emptyBlockStatement = identified((program.body[0] as estree.FunctionDeclaration).body);
 
     // Act
     const actual = sut.applyMutations(emptyBlockStatement, copy);

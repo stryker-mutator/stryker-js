@@ -46,7 +46,7 @@ export default class MutatorOrchestrator {
         let fileContent = fileUtils.readFile(sourceFile);
         this.reportFileRead(sourceFile, fileContent);
         let abstractSyntaxTree = parserUtils.parse(fileContent);
-        let nodes = parserUtils.collectFrozenNodes(abstractSyntaxTree);
+        let nodes = new parserUtils.NodeIdentifier().identifyAndFreeze(abstractSyntaxTree);
         let newMutants = this.findMutants(sourceFile, fileContent, abstractSyntaxTree, nodes);
         mutants = mutants.concat(newMutants);
       } catch (err) {
@@ -115,7 +115,7 @@ export default class MutatorOrchestrator {
                 log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astnode.loc.start.line}, Col ${astnode.loc.start.column}) and (Ln ${astnode.loc.end.line}, Col ${astnode.loc.end.column}) in file ${sourceFile}`);
               }
 
-              mutatedNodes.forEach((mutatedNode: estree.Node) => {
+              mutatedNodes.forEach(mutatedNode => {
                 let mutatedCode = parserUtils.generate(mutatedNode);
                 let originalNode = nodes[mutatedNode.nodeID];
                 mutants.push(new Mutant(mutator.name, sourceFile, originalCode, mutatedCode, originalNode.loc, originalNode.range));

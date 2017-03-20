@@ -1,20 +1,20 @@
+import { expect } from 'chai';
+import * as estree from 'estree';
 import * as _ from 'lodash';
 import BinaryOperatorMutator from '../../../src/mutators/BinaryOperatorMutator';
-import * as chai from 'chai';
-import * as estree from 'estree';
-let expect = chai.expect;
+import { Identified, IdentifiedNode } from 'stryker-api/mutant';
 
 describe('BinaryOperatorMutator', () => {
   let mutator: BinaryOperatorMutator;
-  let invalidNode: estree.Node;
-  let validNode: estree.Node;
+  let invalidNode: IdentifiedNode;
+  let validNode: IdentifiedNode;
 
   beforeEach(() => {
     mutator = new BinaryOperatorMutator();
-    invalidNode = <estree.Node>{
+    invalidNode = {
       type: 'Identifier',
-    };
-    validNode = <estree.BinaryExpression>{
+    } as estree.Node & Identified;
+    validNode = {
       nodeID: 23,
       type: 'BinaryExpression',
       operator: '+',
@@ -24,13 +24,13 @@ describe('BinaryOperatorMutator', () => {
         value: typeof 6,
         raw: '6'
       },
-      right: <estree.SimpleLiteral>{
+      right: {
         nodeID: -2,
         type: 'Literal',
         value: typeof 7,
         raw: '7'
       }
-    };
+    } as estree.BinaryExpression & Identified;
   });
 
   describe('should mutate', () => {

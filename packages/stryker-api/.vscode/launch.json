@@ -1,0 +1,48 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run unit tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
+      "preLaunchTask": "build",
+      "stopOnEntry": false,
+      "args": [
+        "mochaTest:unit"
+      ],
+      "cwd": "${workspaceRoot}/.",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
+    },{
+      "name": "Run integration tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
+      // "preLaunchTask": "build",
+      "stopOnEntry": false,
+      "args": [
+        "mochaTest:integration"
+      ],
+      "cwd": "${workspaceRoot}/.",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
+    }
+  ]
+}

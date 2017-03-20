@@ -1,21 +1,21 @@
-import RemoveConditionalsMutator from '../../../src/mutators/RemoveConditionalsMutator';
-import * as parserUtils from '../../../src/utils/parserUtils';
-import { copy } from '../../../src/utils/objectUtils';
 import * as chai from 'chai';
-import * as estree from 'estree';
 import { Syntax } from 'esprima';
-import 'stryker-api/estree';
+import * as estree from 'estree';
+import { Identified, IdentifiedNode } from 'stryker-api/mutant';
+import RemoveConditionalsMutator from '../../../src/mutators/RemoveConditionalsMutator';
+import { NodeIdentifier, parse, identified } from '../../../src/utils/parserUtils';
+import { copy } from '../../../src/utils/objectUtils';
 
 let expect = chai.expect;
 
 describe('RemoveConditionalsMutator', () => {
   let sut: RemoveConditionalsMutator;
-  let doWhileLoop: estree.DoWhileStatement;
-  let forLoop: estree.ForStatement;
-  let infiniteForLoop: estree.ForStatement;
-  let whileLoop: estree.WhileStatement;
-  let ifStatement: estree.IfStatement;
-  let ternaryExpression: estree.ConditionalExpression;
+  let doWhileLoop: estree.DoWhileStatement & Identified;
+  let forLoop: estree.ForStatement & Identified;
+  let infiniteForLoop: estree.ForStatement & Identified;
+  let whileLoop: estree.WhileStatement & Identified;
+  let ifStatement: estree.IfStatement & Identified;
+  let ternaryExpression: estree.ConditionalExpression & Identified;
 
   beforeEach(() => {
     sut = new RemoveConditionalsMutator();
@@ -40,17 +40,17 @@ describe('RemoveConditionalsMutator', () => {
     price < 20? 40 : 10;
     `;
 
-    const ast = parserUtils.parse(code);
-    parserUtils.collectFrozenNodes(ast);
-    ifStatement = <estree.IfStatement>ast.body[1];
-    whileLoop = <estree.WhileStatement>ast.body[2];
-    doWhileLoop = <estree.DoWhileStatement>ast.body[3];
-    forLoop = <estree.ForStatement>ast.body[4];
-    infiniteForLoop = <estree.ForStatement>ast.body[5];
-    ternaryExpression = (ast.body[6] as estree.ExpressionStatement).expression as estree.ConditionalExpression;
+    const ast = parse(code);
+    new NodeIdentifier().identifyAndFreeze(ast);
+    ifStatement = ast.body[1] as estree.IfStatement & Identified;
+    whileLoop = ast.body[2] as estree.WhileStatement & Identified;
+    doWhileLoop = ast.body[3] as estree.DoWhileStatement & Identified;
+    forLoop = ast.body[4] as estree.ForStatement & Identified;
+    infiniteForLoop = ast.body[5] as estree.ForStatement & Identified;
+    ternaryExpression = (ast.body[6] as estree.ExpressionStatement).expression as estree.ConditionalExpression & Identified;
   });
 
-  function actMutator(node: estree.IfStatement | estree.DoWhileStatement | estree.WhileStatement | estree.ForStatement | estree.ConditionalExpression) {
+  function actMutator(node: IdentifiedNode) {
     const mutants = sut.applyMutations(node, copy);
     if (Array.isArray(mutants)) {
       return mutants;
@@ -60,13 +60,14 @@ describe('RemoveConditionalsMutator', () => {
   }
 
   describe('should not generate an infinite loop', () => {
+
     it('when given a do-while loop', () => {
       const mutatedNodes = actMutator(doWhileLoop);
 
       const testValue = (<estree.Literal>mutatedNodes[0]).value;
       expect(testValue).to.be.false;
       expect(mutatedNodes[0].nodeID).to.not.eq(doWhileLoop.nodeID);
-      expect(mutatedNodes[0].nodeID).to.eq(doWhileLoop.test.nodeID);
+      expect(mutatedNodes[0].nodeID).to.eq(identified(doWhileLoop.test).nodeID);
     });
 
     it('when given a while loop', () => {
@@ -75,7 +76,7 @@ describe('RemoveConditionalsMutator', () => {
       const testValue = (<estree.Literal>mutatedNodes[0]).value;
       expect(testValue).to.be.false;
       expect(mutatedNodes[0].nodeID).to.not.eq(whileLoop.nodeID);
-      expect(mutatedNodes[0].nodeID).to.eq(whileLoop.test.nodeID);
+      expect(mutatedNodes[0].nodeID).to.eq(identified(whileLoop.test).nodeID);
     });
 
     it('when given a for loop', () => {
@@ -85,7 +86,7 @@ describe('RemoveConditionalsMutator', () => {
       expect(testValue).to.be.false;
       expect(mutatedNodes[0].nodeID).to.not.eq(forLoop.nodeID);
       if (forLoop.test) {
-        expect(mutatedNodes[0].nodeID).to.eq(forLoop.test.nodeID);      
+        expect(mutatedNodes[0].nodeID).to.eq(identified(forLoop.test).nodeID);
       } else {
         expect.fail('test.nodeID was expected to be not undefined');
       }
@@ -97,7 +98,7 @@ describe('RemoveConditionalsMutator', () => {
         const testValue = forStatementNode.test.value;
         expect(testValue).to.be.false;
         expect(forStatementNode.nodeID).to.eq(infiniteForLoop.nodeID);
-      }else {
+      } else {
         expect.fail(`Node ${forStatementNode} unexpected.`);
       }
     });
@@ -125,25 +126,25 @@ describe('RemoveConditionalsMutator', () => {
 
   describe('should generate multiple mutants', () => {
     it('when given an if-statement', () => {
-      let mutatedNodes = <estree.SimpleLiteral[]>actMutator(ifStatement);
+      let mutatedNodes = actMutator(ifStatement) as [estree.SimpleLiteral & Identified];
 
       expect(mutatedNodes).to.have.length(2);
       expect(mutatedNodes[0].nodeID).not.to.eq(ifStatement.nodeID);
       expect(mutatedNodes[1].nodeID).not.to.eq(ifStatement.nodeID);
-      expect(mutatedNodes[0].nodeID).to.eq(ifStatement.test.nodeID);
-      expect(mutatedNodes[1].nodeID).to.eq(ifStatement.test.nodeID);
+      expect(mutatedNodes[0].nodeID).to.eq(identified(ifStatement.test).nodeID);
+      expect(mutatedNodes[1].nodeID).to.eq(identified(ifStatement.test).nodeID);
       expect(mutatedNodes[0].value).to.be.false;
       expect(mutatedNodes[1].value).to.be.true;
     });
 
     it('when given a ternary-statement', () => {
-      let mutatedNodes = <estree.SimpleLiteral[]>actMutator(ternaryExpression);
+      let mutatedNodes = actMutator(ternaryExpression) as [estree.SimpleLiteral & Identified];
 
       expect(mutatedNodes).to.have.length(2);
       expect(mutatedNodes[0].nodeID).not.to.eq(ternaryExpression.nodeID);
       expect(mutatedNodes[1].nodeID).not.to.eq(ternaryExpression.nodeID);
-      expect(mutatedNodes[1].nodeID).to.eq(ternaryExpression.test.nodeID);
-      expect(mutatedNodes[1].nodeID).to.eq(ternaryExpression.test.nodeID);
+      expect(mutatedNodes[1].nodeID).to.eq(identified(ternaryExpression.test).nodeID);
+      expect(mutatedNodes[1].nodeID).to.eq(identified(ternaryExpression.test).nodeID);
       expect(mutatedNodes[0].value).to.be.false;
       expect(mutatedNodes[1].value).to.be.true;
     });

@@ -1,0 +1,22 @@
+{
+  "name": "test-module",
+  "version": "0.0.0",
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "useTestFramework": "node useTestFramework.js",
+    "use:core": "node useCore.js",
+    "use:config": "node useConfig.js",
+    "use:test_framework": "node useTestFramework.js",
+    "use:mutant": "node useMutant.js",
+    "use:report": "node useReport.js",
+    "use:test_runner": "node useTestRunner.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "stryker-api": "file:../../",
+    "typescript": "^2.1.4"
+  }
+}

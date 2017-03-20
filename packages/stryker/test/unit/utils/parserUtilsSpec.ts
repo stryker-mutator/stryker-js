@@ -1,5 +1,3 @@
-'use strict';
-
 import { expect } from 'chai';
 import * as parserUtils from '../../../src/utils/parserUtils';
 
@@ -17,7 +15,7 @@ describe('parserUtils', () => {
       catch (e) {
         process.exit(1);
       }`);
-      parserUtils.collectFrozenNodes(parsedTryCatch);
+      new parserUtils.NodeIdentifier().identifyAndFreeze(parsedTryCatch);
     });
   });
 

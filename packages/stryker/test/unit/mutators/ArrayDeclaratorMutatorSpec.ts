@@ -1,8 +1,9 @@
-import ArrayDeclaratorMutator from '../../../src/mutators/ArrayDeclaratorMutator';
 import { expect } from 'chai';
+import * as estree from 'estree';
+import { Identified } from 'stryker-api/mutant';
+import ArrayDeclaratorMutator from '../../../src/mutators/ArrayDeclaratorMutator';
 import * as parser from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
-import * as estree from 'estree';
 
 describe('BlockStatementMutator', () => {
   let sut: ArrayDeclaratorMutator;
@@ -13,17 +14,17 @@ describe('BlockStatementMutator', () => {
 
   const getArrayExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
-    return (variableDeclaration.declarations[0].init as estree.ArrayExpression);
+    return (variableDeclaration.declarations[0].init as estree.ArrayExpression & Identified);
   };
 
   const getArrayCallExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
-    return (variableDeclaration.declarations[0].init as estree.SimpleCallExpression);
+    return (variableDeclaration.declarations[0].init as estree.SimpleCallExpression & Identified);
   };
 
   const getArrayNewExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
-    return (variableDeclaration.declarations[0].init as estree.NewExpression);
+    return (variableDeclaration.declarations[0].init as estree.NewExpression & Identified);
   };
   
   it('should mutate when supplied with an array expression', () => {
@@ -32,7 +33,7 @@ describe('BlockStatementMutator', () => {
     const arrayExpression = getArrayExpression(program);
 
     // Act
-    const actual = <estree.ArrayExpression>sut.applyMutations(arrayExpression, copy);
+    const actual = sut.applyMutations(arrayExpression, copy) as estree.ArrayExpression & Identified;
 
     // Assert
     expect(actual).to.be.ok;
@@ -46,7 +47,7 @@ describe('BlockStatementMutator', () => {
     const arrayExpression = getArrayCallExpression(program);
 
     // Act
-    const actual = <estree.CallExpression>sut.applyMutations(arrayExpression, copy);
+    const actual = sut.applyMutations(arrayExpression, copy) as estree.CallExpression & Identified;
 
     // Assert
     expect(actual).to.be.ok;
@@ -60,7 +61,7 @@ describe('BlockStatementMutator', () => {
     const arrayExpression = getArrayNewExpression(program);
 
     // Act
-    const actual = <estree.CallExpression>sut.applyMutations(arrayExpression, copy);
+    const actual = sut.applyMutations(arrayExpression, copy) as estree.CallExpression & Identified;
 
     // Assert
     expect(actual).to.be.ok;

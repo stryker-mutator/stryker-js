@@ -1,5 +1,5 @@
 import { Syntax } from 'esprima';
-import { Mutator } from 'stryker-api/mutant';
+import { Mutator, IdentifiedNode, Identified } from 'stryker-api/mutant';
 import * as estree from 'estree';
 
 type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree.ForStatement | estree.WhileStatement | estree.ConditionalExpression;
@@ -13,12 +13,12 @@ export default class RemoveConditionalsMutator implements Mutator {
 
   constructor() { }
 
-  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] | void {
+  applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): IdentifiedNode[] | void {
     if (this.canMutate(node)) {
-      let nodes: estree.Node[] = [];
+      let nodes: IdentifiedNode[] = [];
 
       if (node.test) {
-        nodes.push(this.booleanLiteralNode(node.test.nodeID, false));
+        nodes.push(this.booleanLiteralNode((node.test as IdentifiedNode).nodeID, false));
       } else {
         let mutatedNode = copy(node);
         mutatedNode.test = this.booleanLiteralNode(-1, false);
@@ -26,13 +26,13 @@ export default class RemoveConditionalsMutator implements Mutator {
       }
 
       if (node.type === Syntax.IfStatement || node.type === Syntax.ConditionalExpression) {
-        nodes.push(this.booleanLiteralNode(node.test.nodeID, true));
+        nodes.push(this.booleanLiteralNode((node.test as IdentifiedNode).nodeID, true));
       }
       return nodes;
     }
   }
 
-  private booleanLiteralNode(nodeID: number, value: boolean): estree.SimpleLiteral {
+  private booleanLiteralNode(nodeID: number, value: boolean): estree.SimpleLiteral & Identified {
     return {
       nodeID: nodeID,
       type: Syntax.Literal,

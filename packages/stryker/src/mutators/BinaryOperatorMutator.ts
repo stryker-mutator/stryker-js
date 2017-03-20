@@ -1,4 +1,4 @@
-import { Mutator } from 'stryker-api/mutant';
+import { Mutator, IdentifiedNode } from 'stryker-api/mutant';
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
 
@@ -21,8 +21,8 @@ export default class BinaryOperatorMutator implements Mutator {
     '!==': '==='
   };
 
-  applyMutations(node: estree.Node, copy: <T>(obj: T, deep?: boolean) => T): estree.Node[] {
-    let nodes: estree.Node[] = [];
+  applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): IdentifiedNode[] {
+    let nodes: IdentifiedNode[] = [];
 
     if (node.type === this.type && this.operators[node.operator]) {
       let binaryNode = node;
@@ -36,8 +36,6 @@ export default class BinaryOperatorMutator implements Mutator {
         nodes.push(mutatedNode);
       });
     }
-
     return nodes;
   }
-
 }

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
 import MutatorOrchestrator from '../../src/MutatorOrchestrator';
-import { Mutator, MutatorFactory } from 'stryker-api/mutant';
+import { Mutator, MutatorFactory, IdentifiedNode, Identified } from 'stryker-api/mutant';
 import * as sinon from 'sinon';
 import { Syntax } from 'esprima';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
@@ -83,11 +83,11 @@ describe('MutatorOrchestrator', () => {
 
     class StubMutator implements Mutator {
       name: 'stub';
-      applyMutations(node: estree.Node, copy: (obj: any, deep?: boolean) => any): estree.Node[] {
-        let nodes: estree.Node[] = [];
+      applyMutations(node: IdentifiedNode, copy: (obj: any, deep?: boolean) => any): IdentifiedNode[] {
+        let nodes: IdentifiedNode[] = [];
         if (node.type === Syntax.BinaryExpression) {
           // eg: '1 * 2': push child node
-          nodes.push(<estree.Expression>(<estree.BinaryExpression>node).left);
+          nodes.push((node as estree.BinaryExpression).left as estree.Expression & Identified);
         } else if (node.type === Syntax.IfStatement) {
           // eg: 'if(true);': push original node
           nodes.push(node);

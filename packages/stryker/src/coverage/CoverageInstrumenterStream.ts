@@ -2,7 +2,6 @@ import { StatementMap } from 'stryker-api/test_runner';
 import { Transform, TransformOptions } from 'stream';
 import { Instrumenter } from 'istanbul';
 import * as log4js from 'log4js';
-import 'stryker-api/estree';
 
 const coverageObjRegex = /\{.*"path".*"fnMap".*"statementMap".*"branchMap".*\}/g;
 const log = log4js.getLogger('CoverageInstrumenterStream');
