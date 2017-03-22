@@ -1,6 +1,6 @@
 {
   "name": "stryker-api",
-  "version": "0.5.0-rc0",
+  "version": "0.5.0-0",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "scripts": {
     "test": "grunt test",
