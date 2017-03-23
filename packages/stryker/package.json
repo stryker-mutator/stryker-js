@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.6.0-1",
+  "version": "0.6.0-2",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -112,11 +112,11 @@
     "sinon": "^1.17.2",
     "sinon-as-promised": "^4.0.2",
     "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.5.0-1",
+    "stryker-api": "^0.5.0-2",
     "tslint": "^4.4.2",
     "typescript": "~2.2.1"
   },
   "peerDependencies": {
-    "stryker-api": "^0.5.0-1"
+    "stryker-api": "^0.5.0-2"
   }
 }
