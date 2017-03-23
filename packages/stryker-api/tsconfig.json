@@ -7,7 +7,7 @@
         "rootDir": ".",
         "sourceMap": true,
         "removeComments": false,
-        "declaration": false,
+        "declaration": true,
         "forceConsistentCasingInFileNames": true,
         "allowJs": false,
         "noUnusedLocals": true,
