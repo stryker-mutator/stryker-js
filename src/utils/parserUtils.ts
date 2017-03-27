@@ -10,8 +10,9 @@ const escodegen = require('escodegen');
 const esprimaOptions = {
   comment: true,
   loc: true,
+  sourceType: 'module',
   range: true,
-  tokens: true,
+  tokens: true
 };
 
 /**
@@ -45,7 +46,7 @@ export function collectFrozenNodes(abstractSyntaxTree: estree.Node, nodes?: estr
   }
 
   Object.freeze(abstractSyntaxTree);
-  
+
   _.forOwn(abstractSyntaxTree, (childNode, i) => {
     if (childNode instanceof Object && !(childNode instanceof Array)) {
       collectFrozenNodes(childNode, nodes);
