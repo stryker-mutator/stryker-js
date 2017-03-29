@@ -1,6 +1,7 @@
-import { expect } from 'chai';
+import * as path from 'path';
 import * as log4js from 'log4js';
 import * as sinon from 'sinon';
+import { expect } from 'chai';
 import ConfigReader from '../../../src/ConfigReader';
 import { Config } from 'stryker-api/config';
 import log from '../../helpers/log4jsMock';
@@ -8,11 +9,14 @@ import log from '../../helpers/log4jsMock';
 describe('ConfigReader', () => {
   let sut: ConfigReader;
   let sandbox: sinon.SinonSandbox;
+  const baseDir = process.cwd();
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     sandbox.stub(process, 'exit');
   });
+
+  afterEach(() => process.chdir(baseDir));
 
   it('should create a logger with the correct name', () => {
     expect(log4js.getLogger).to.have.been.calledWith('ConfigReader');
@@ -34,32 +38,29 @@ describe('ConfigReader', () => {
     });
 
     describe('without config file or CLI options', () => {
-        describe('with a stryker.conf.js in the CWD', () => {
-          it('should parse the config', () => {
-            let mockCwd = process.cwd() + '/testResources/config-reader';
-            sandbox.stub(process, 'cwd').returns(mockCwd);
-            sut = new ConfigReader({});
+      describe('with a stryker.conf.js in the CWD', () => {
+        it('should parse the config', () => {
+          process.chdir(process.cwd() + '/testResources/config-reader');
+          sut = new ConfigReader({});
 
-            result = sut.readConfig();
+          result = sut.readConfig();
 
-            expect(result['valid']).to.be.eq('config');
-            expect(result['should']).to.be.eq('be');
-            expect(result['read']).to.be.eq(true);
-          });
-        });
-
-        describe('without a stryker.conf.js in the CWD', () => {
-          it('should report a fatal error', () => {
-            let mockCwd = process.cwd() + '/testResources/config-reader/no-config';
-            sandbox.stub(process, 'cwd').returns(mockCwd);
-            sut = new ConfigReader({});
-
-            result = sut.readConfig(); 
-
-            expect(log.fatal).to.have.been.calledWith(`File ${mockCwd}/stryker.conf.js does not exist!`);
-          });
+          expect(result['valid']).to.be.eq('config');
+          expect(result['should']).to.be.eq('be');
+          expect(result['read']).to.be.eq(true);
         });
       });
+
+      describe('without a stryker.conf.js in the CWD', () => {
+        it('should report a fatal error', () => {
+          const emptyDir = process.cwd() + '/testResources/config-reader/no-config';
+          process.chdir(emptyDir);
+          sut = new ConfigReader({});
+          result = sut.readConfig();
+          expect(log.fatal).to.have.been.calledWith(`File ${path.resolve(emptyDir, 'stryker.conf.js')} does not exist!`);
+        });
+      });
+    });
 
     describe('with invalid coverageAnalysis', () => {
       beforeEach(() => {
@@ -88,19 +89,26 @@ describe('ConfigReader', () => {
         expect(result['should']).to.be.eq('be');
         expect(result['read']).to.be.eq(true);
       });
+
+      it('should change the cwd', () => {
+        expect(process.cwd()).to.eq(path.dirname(path.resolve(baseDir, 'testResources/config-reader/valid.conf.js')));
+      });
     });
 
     describe('with non-existing config file', () => {
+      const nonExistingFile = 'testResources/config-reader/no-config/thisFileDoesNotExist';
       beforeEach(() => {
-        sut = new ConfigReader({ configFile: '/did/you/know/that/this/file/does/not/exists/questionmark' });
-        result = sut.readConfig();
+        sut = new ConfigReader({ configFile: nonExistingFile });
       });
 
       it('should report a fatal error', () => {
-        expect(log.fatal).to.have.been.calledWith(`File ${process.cwd()}//did/you/know/that/this/file/does/not/exists/questionmark does not exist!`);
+        const expectedFile = path.resolve(process.cwd(), nonExistingFile);
+        result = sut.readConfig();
+        expect(log.fatal).to.have.been.calledWith(`File ${expectedFile} does not exist!`);
       });
 
       it('should exit with 1', () => {
+        result = sut.readConfig();
         expect(process.exit).to.have.been.calledWith(1);
       });
     });
