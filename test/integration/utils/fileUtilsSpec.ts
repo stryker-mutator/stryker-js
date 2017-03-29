@@ -37,7 +37,7 @@ describe('fileUtils', () => {
 
   describe('glob', () => {
     it('should resolve files', () => 
-      expect(fileUtils.glob('testResources/sampleProject/**/*.js')).to.eventually.have.length(10));
+      expect(fileUtils.glob('testResources/sampleProject/**/*.js')).to.eventually.have.length(11));
 
     it('should not resolve to directories', () => 
       expect(fileUtils.glob('testResources/vendor/**/*.js')).to.eventually.have.length(1));
