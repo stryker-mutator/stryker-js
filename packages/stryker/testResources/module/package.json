@@ -18,6 +18,6 @@
     "stryker-api": "^0.4.1",
     "stryker-jasmine": "^0.1.0",
     "stryker-karma-runner": "^0.3.2",
-    "typescript": "~2.1.4"
+    "typescript": "~2.2.2"
   }
 }
