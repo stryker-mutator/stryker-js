@@ -1,5 +1,7 @@
 'use strict';
 
+import * as sinon from 'sinon';
+import * as esprima from 'esprima';
 import { expect } from 'chai';
 import * as parserUtils from '../../../src/utils/parserUtils';
 
@@ -27,9 +29,13 @@ describe('parserUtils', () => {
       it('if no code is provided when parsing', () => {
         expect(parserUtils.parse).to.throw(Error);
       });
-
     });
 
+    it('should use sourceType: module for esprima', () => {
+      const esprimaParseSpy = sinon.spy(esprima, 'parse');
+      parserUtils.parse('function() {}');
+      expect(esprimaParseSpy.args[0][1].sourceType).to.equal('module');
+    });
   });
 
 });
