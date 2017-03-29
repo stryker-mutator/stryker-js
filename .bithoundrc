@@ -8,7 +8,7 @@
         "packages/**/testResources/**"
      ],
      "ignore": [
-        "packages/**/Gruntfile.js"
+        "packages/**/Gruntfile.js",
         "packages/stryker/testResources/config-reader/syntax-error.conf.js"
     ],
     "dependencies": {
