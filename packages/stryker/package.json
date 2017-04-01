@@ -7,7 +7,7 @@
   "scripts": {
     "test": "grunt test",
     "start": "tsc -w",
-    "sample": "node src/stryker-cli.js --configFile testResources/sampleProject/stryker.conf.js",
+    "sample": "node src/stryker-cli.js run testResources/sampleProject/stryker.conf.js",
     "preversion": "grunt",
     "clean": "grunt clean",
     "jshint": "grunt jshint",
