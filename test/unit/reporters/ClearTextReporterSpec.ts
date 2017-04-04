@@ -13,6 +13,44 @@ describe('ClearTextReporter', function () {
     sandbox.stub(process.stdout, 'write');
   });
 
+  describe('onMutantTested', () => {
+    describe('given that realTime option is enabled', () => {
+      beforeEach(() => sut = new ClearTextReporter({ coverageAnalysis: 'all', reporterOptions: {
+        realTime: true
+      } }));
+
+      it('onMutantTested() with a killed status should not output anything', () => {
+        sut.onMutantTested(mutantResults(MutantStatus.Killed)[0]);
+
+        expect(process.stdout.write).to.not.have.been.called;
+      });
+
+      it('onMutantTested() with a survived status should output details about survived mutant', () => {
+        sut.onMutantTested(mutantResults(MutantStatus.Survived)[0]);
+        expect(process.stdout.write).to.have.been.calledWith('Mutator: Math\n');
+        expect(process.stdout.write).to.have.been.calledWith(chalk.red('-   original line') + '\n');
+        expect(process.stdout.write).to.have.been.calledWith(chalk.green('+   mutated line') + '\n');
+      });
+    });
+
+    describe('given that realTime option is not enabled', () => {
+      beforeEach(() => sut = new ClearTextReporter({ coverageAnalysis: 'all', reporterOptions: {
+        realTime: false
+      } }));
+
+      it('onMutantTested() with a killed status should not output anything', () => {
+        sut.onMutantTested(mutantResults(MutantStatus.Killed)[0]);
+
+        expect(process.stdout.write).to.not.have.been.called;
+      });
+
+      it('onMutantTested() with a survived status should not output anything', () => {
+        sut.onMutantTested(mutantResults(MutantStatus.Survived)[0]);
+        expect(process.stdout.write).to.not.have.been.called;
+      });
+    });
+  });
+
   describe('when coverageAnalysis is "all"', () => {
     beforeEach(() => sut = new ClearTextReporter({ coverageAnalysis: 'all' }));
 
