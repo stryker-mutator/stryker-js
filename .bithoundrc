@@ -4,13 +4,12 @@
         "wc": { "limit": 3000 }
     },
     "test": [
-        "test/**",
-        "testResources/**"
+        "packages/**/test/**",
+        "packages/**/testResources/**"
      ],
-     "ignore": [        
-        "src/TestFrameworkOrchestrator.ts",		
-        "src/MutantTestMatcher.ts",
-        "testResources/config-reader/syntax-error.conf.js"
+     "ignore": [
+        "packages/**/Gruntfile.js",
+        "packages/stryker/testResources/config-reader/syntax-error.conf.js"
     ],
     "dependencies": {
         "unused-ignores": [

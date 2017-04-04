@@ -1,0 +1,15 @@
+node_modules
+/coverage
+/testResources/module/coverage
+.tscache
+.stryker-tmp
+reports
+typings
+*.js.map
+src/**/*.js
+test/**/*.js
+src/**/*.d.ts
+test/**/*.d.ts
+.idea
+*.iml
+*.tmp.txt
