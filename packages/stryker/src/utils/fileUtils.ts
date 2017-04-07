@@ -17,7 +17,7 @@ export function fileOrFolderExistsSync(path: string): boolean {
   } catch (error) {
     return false;
   }
-};
+}
 
 export function fileOrFolderExists(path: string): Promise<boolean> {
   return new Promise(resolve => {
@@ -36,7 +36,7 @@ export function fileOrFolderExists(path: string): Promise<boolean> {
  */
 export function readFile(filename: string) {
   return fs.readFileSync(filename, 'utf8');
-};
+}
 
 /**
    * Normalizes the paths of a list of filenames.
@@ -46,7 +46,7 @@ export function normalize(files: string[]): void {
   _.forEach(files, function (file, key) {
     files[key] = path.resolve(path.normalize(file));
   });
-};
+}
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
@@ -142,7 +142,7 @@ export async function cleanFolder(folderName: string) {
     return mkdirRecursive(folderName);
   } else {
     return mkdirRecursive(folderName);
-  };
+  }
 }
 
 export function writeFile(fileName: string, content: string) {

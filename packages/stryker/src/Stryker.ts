@@ -120,7 +120,7 @@ export default class Stryker {
       case RunStatus.Timeout:
         this.logTimeoutInitialRun(runResult);
         break;
-    };
+    }
     throw new Error('Something went wrong in the initial test run');
   }
 

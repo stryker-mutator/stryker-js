@@ -50,7 +50,7 @@ class IsolatedTestRunnerAdapterWorker {
   async init() {
     if (this.underlyingTestRunner.init) {
       await this.underlyingTestRunner.init();
-    };
+    }
     this.sendInitDone();
   }
 

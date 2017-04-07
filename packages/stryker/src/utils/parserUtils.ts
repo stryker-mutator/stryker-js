@@ -29,7 +29,7 @@ export function parse(code: string): estree.Program {
   const abstractSyntaxTree = esprima.parse(code, esprimaOptions);
 
   return abstractSyntaxTree;
-};
+}
 
 /**
    * Parses a Node to generate code.
@@ -38,7 +38,7 @@ export function parse(code: string): estree.Program {
    */
 export function generate(node: estree.Node): string {
   return escodegen.generate(node);
-};
+}
 
 /**
  * Returns n as T & Identified, purely syntactic.

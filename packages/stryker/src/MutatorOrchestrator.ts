@@ -63,7 +63,7 @@ export default class MutatorOrchestrator {
     this.reportAllFilesRead();
 
     return mutants;
-  };
+  }
 
   private reportFileRead(path: string, content: string) {
     let fileToReport = { path, content };
@@ -131,5 +131,5 @@ export default class MutatorOrchestrator {
     });
 
     return mutants;
-  };
+  }
 }

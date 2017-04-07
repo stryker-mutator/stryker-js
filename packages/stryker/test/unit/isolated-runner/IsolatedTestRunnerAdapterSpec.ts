@@ -88,7 +88,7 @@ describe('IsolatedTestRunnerAdapter', () => {
 
       function act() {
         runPromise = sut.run(runOptions);
-      };
+      }
 
       it('should send run-message to worker', () => {
         act();
