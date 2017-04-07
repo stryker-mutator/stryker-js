@@ -10,14 +10,12 @@ testResources
 .gitattributes
 .gitignore
 .npmignore
-.tscache
-.vscode
-tsconfig.json
-Gruntfile.js
-
-# Stryker specific
 .stryker-temp
 .tmp
+.tscache
+.vscode
+stryker.conf.js
+tsconfig.json
+Gruntfile.js
 /coverage
 reports
-stryker.conf.js

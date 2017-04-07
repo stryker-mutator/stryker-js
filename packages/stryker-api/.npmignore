@@ -10,7 +10,12 @@ testResources
 .gitattributes
 .gitignore
 .npmignore
+.stryker-temp
+.tmp
 .tscache
 .vscode
+stryker.conf.js
 tsconfig.json
 Gruntfile.js
+/coverage
+reports
