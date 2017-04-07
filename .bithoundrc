@@ -4,11 +4,18 @@
         "wc": { "limit": 3000 }
     },
     "test": [
-        "test/**",
-        "testResources/**"
+        "packages/**/test/**",
+        "packages/**/testResources/**"
      ],
      "ignore": [
-        "src/TestFrameworkOrchestrator.ts",
-        "testResources/config-reader/syntax-error.conf.js"
-    ]
+        "packages/**/Gruntfile.js",
+        "packages/stryker/testResources/config-reader/syntax-error.conf.js"
+    ],
+    "dependencies": {
+        "unused-ignores": [
+            "tslib",
+            "commander",
+            "es6-promise-pool"
+        ]
+    }
 }
