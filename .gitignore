@@ -1,1 +1,15 @@
 node_modules
+lerna-debug.log
+npm-debug.log
+
+.tscache
+.stryker-tmp
+*.js.map
+packages/**/src/**/*.js
+packages/**/test/**/*.js
+packages/**/src/**/*.d.ts
+packages/**/test/**/*.d.ts
+.idea
+*.iml
+*.tmp.txt
+.nyc_output
