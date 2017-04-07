@@ -116,7 +116,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.currentTask = new DisposeTask(MAX_WAIT_FOR_DISPOSE);
     this.sendDisposeCommand();
     return this.currentTask.promise
-      .then(() => this.workerProcess.kill('SIGKILL'));
+      .then(() => this.workerProcess.kill());
   }
 
   private sendRunCommand(options: RunOptions) {
