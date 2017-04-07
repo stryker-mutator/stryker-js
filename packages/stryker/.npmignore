@@ -14,7 +14,7 @@ testResources
 .tmp
 .tscache
 .vscode
-stryker.conf.js
+/stryker.conf.js
 tsconfig.json
 Gruntfile.js
 /coverage

@@ -11,5 +11,7 @@ test/**/*.js
 src/**/*.d.ts
 test/**/*.d.ts
 .idea
+lerna-debug.log
 *.iml
 *.tmp.txt
+.DS_Store
