@@ -12,6 +12,22 @@ This is the contribution guide for Stryker. Great to have you here! Here are a f
 
 Get in touch with us through twitter or via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker)
 
+## Runner Stryker locally
+We use [Lerna](https://lernajs.io/) to manage the packages in this repository. You don't have to install it globally. The packages themselves can be found in the [packages folder](https://github.com/stryker-mutator/stryker/tree/master/packages). npm commands such as `npm test` can be executed from the root of the project but executing them inside of a package folder is more time efficient. However, we suggest running `npm test` in the root of the project before a commit to ensure that everything still works. To get Stryker running locally, please follow these steps:
+
+1. Clone the repository
+1. Install dependencies using `npm install` in the root of the project
+1. Run `npm test` in the root of the project or in one of the package folders
+
+## Running Stryker on Stryker
+We support mutation testing Stryker with Stryker! After you got Stryker working locally, you can follow these steps to mutation test Stryker:
+1. Navigate to the root of the project
+1. Build all Stryker packages: `npm run build`
+1. Navigate to `packages/stryker` 
+1. Install the stryker-mocha-runner: `npm install stryker-mocha-runner`
+1. Run `node bin/stryker run stryker.conf.js`
+1. If you want to have a html report, install the package `stryker-html-reporter` and add it to the plugins section in the `stryker.conf.js` (Note: We only need to do this because we are running Stryker on Stryker)
+
 ## Adding new features
 
 New features are welcome! Either as requests or proposals. 
@@ -45,15 +61,6 @@ Please report a bug report on our [issues page](https://github.com/stryker-mutat
 4. Include the expected behaviour.
 5. Include actual behaviour.
 6. Add more details if required (i.e. which browser, which test runner, which versions, etc)
-
-# Beta testing
-
-Stryker is still in Beta mode. So we need your input! What do you want to see changed in our api?
-Or do you think there is a better approach? Please let us know!
-
-# Documentation
-
-Todo... sorry ;)
 
 # Community 
 Do you want to help? Great! These are a few things you can do:
