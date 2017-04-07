@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as _ from 'lodash';
 import initializerConfig from './initializer.conf';
+import {} from './initializer.conf';
 import strykerConfig from './stryker.conf';
 import { ContextChoices } from './contextChoices';
 import * as child from 'child_process';
@@ -15,7 +16,7 @@ export default class StrykerInitializer {
    * @function
    */
   initialize(): void {
-    const contextChoices = this.promptContextChoices()
+    this.promptContextChoices()
       .then((contextChoices) => {
         this.installNpmDependencies(this.buildNpmPackagesArray(contextChoices));
         this.installStrykerConfiguration(contextChoices);
@@ -53,8 +54,13 @@ export default class StrykerInitializer {
   buildNpmPackagesArray(contextChoices: ContextChoices): Array<String> {
     let npmPackages = [];
     npmPackages.push('stryker-html-reporter');
-    npmPackages.push(contextChoices.testFramework.npm);
-    npmPackages.push(contextChoices.testRunner.npm);
+    if (contextChoices.testFramework !== undefined) {
+      npmPackages.push(contextChoices.testFramework.npm);
+    }
+    if (contextChoices.testRunner !== undefined) {
+      npmPackages.push(contextChoices.testRunner.npm);
+    }
+     
     return npmPackages;
   }
 
@@ -102,8 +108,13 @@ export default class StrykerInitializer {
 
     let configurationObject = strykerConfig;
 
-    configurationObject = _.assign(configurationObject, contextChoices.testFramework.config);
-    configurationObject = _.assign(configurationObject, contextChoices.testRunner.config);
+    if (contextChoices.testFramework !== undefined) {
+      configurationObject = _.assign(configurationObject, contextChoices.testFramework.config);
+    }
+
+    if (contextChoices.testRunner !== undefined) {
+      configurationObject = _.assign(configurationObject, contextChoices.testRunner.config);
+    }
 
     let newConfiguration = wrapInModule(JSON.stringify(configurationObject, null, 2));
 

@@ -2,7 +2,7 @@ import {TestRunnerDefinition, TestFrameworkDefinition} from './initializer.conf'
 
 export class ContextChoices {
   constructor(
-    public testRunner: TestRunnerDefinition, 
-    public testFramework: TestFrameworkDefinition
+    public testRunner: TestRunnerDefinition | undefined, 
+    public testFramework: TestFrameworkDefinition | undefined
   ) { };
 }
