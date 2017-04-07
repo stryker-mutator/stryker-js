@@ -3,7 +3,7 @@
 import * as inquirer from 'inquirer';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 import initializerConfig from './initializer.conf';
 import strykerConfig from './stryker.conf';
 import { ContextChoices } from './contextChoices';
@@ -19,7 +19,7 @@ export default class StrykerInitializer {
       .then((contextChoices) => {
         this.installNpmDependencies(this.buildNpmPackagesArray(contextChoices));
         this.installStrykerConfiguration(contextChoices);
-      })
+      });
   };
 
   /**
