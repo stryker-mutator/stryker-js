@@ -11,5 +11,4 @@ test/**/*.d.ts
 *.js
 *.d.ts
 .nyc_output
-!Gruntfile.js
 !testResources
