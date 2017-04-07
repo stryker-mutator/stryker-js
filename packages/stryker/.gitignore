@@ -13,3 +13,4 @@ test/**/*.d.ts
 .idea
 *.iml
 *.tmp.txt
+.nyc_output
