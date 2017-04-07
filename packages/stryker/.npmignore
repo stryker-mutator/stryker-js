@@ -1,17 +1,23 @@
-.bithoundrc
-.tmp
-.tscache
-.vscode
-.stryker-temp
-.npmignore
-.editorconfig
+# General code
 *.ts
 !*.d.ts
-/coverage
-Gruntfile.js
-reports
-stryker.conf.js
+*.js.map
 test
 testResources
+
+# General related files
+.editorconfig
+.gitattributes
+.gitignore
+.npmignore
+.tscache
+.vscode
 tsconfig.json
-typings.json
+Gruntfile.js
+
+# Stryker specific
+.stryker-temp
+.tmp
+coverage
+reports
+stryker.conf.js

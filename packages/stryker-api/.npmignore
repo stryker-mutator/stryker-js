@@ -1,9 +1,16 @@
+# General code
 *.ts
 !*.d.ts
 *.js.map
-Gruntfile.js
 test
-tsconfig.json
-typings.json
 testResources
-typings
+
+# General related files
+.editorconfig
+.gitattributes
+.gitignore
+.npmignore
+.tscache
+.vscode
+tsconfig.json
+Gruntfile.js
