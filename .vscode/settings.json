@@ -4,9 +4,9 @@
     "exclude": {
       ".git": "",
       ".tscache": "",
-      // "**/*.js": {
-      //   "when": "$(basename).ts"
-      // },
+      "**/*.js": {
+        "when": "$(basename).ts"
+      },
       "**/*.d.ts": true,
       "**/*.map": {
         "when": "$(basename)"
