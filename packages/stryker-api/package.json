@@ -33,20 +33,6 @@
     "node": ">=4"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.32",
-    "@types/estree": "0.0.32",
-    "@types/mocha": "^2.2.31",
-    "@types/node": "^6.0.38",
-    "chai": "^3.4.1",
-    "chai-as-promised": "^6.0.0",
-    "mocha": "^3.0.2",
-    "mocha-sinon": "^1.1.6",
-    "nyc": "^10.2.0",
-    "rimraf": "^2.6.1",
-    "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0",
-    "tslint": "^5.0.0",
-    "typescript": "^2.1.4"
   },
   "dependencies": {
     "tslib": "^1.6.0"

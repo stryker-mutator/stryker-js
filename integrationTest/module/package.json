@@ -14,10 +14,10 @@
     "karma": "1.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
-    "stryker": "file:../../",
-    "stryker-api": "^0.4.1",
-    "stryker-jasmine": "^0.1.0",
-    "stryker-karma-runner": "^0.3.2",
+    "stryker": "file:../../packages/stryker",
+    "stryker-api": "file:../../packages/stryker-api",
+    "stryker-jasmine": "^0.2.0-0",
+    "stryker-karma-runner": "^0.4.0-0",
     "typescript": "~2.2.2"
   }
 }

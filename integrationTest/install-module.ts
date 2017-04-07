@@ -8,8 +8,8 @@ describe('we have a module using stryker', function () {
   describe('after installing Stryker', () => {
     let executor: Executor;
 
-    before((done) => {
-      executor = new Executor('../../../testResources/module');
+    before(done => {
+      executor = new Executor('./module');
       executor.exec('npm install', {}, (errors) => done(errors));
     });
 
