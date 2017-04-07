@@ -1,4 +1,4 @@
-import { TestRunner, TestResult, TestStatus, RunStatus, RunResult, RunnerOptions, CoverageCollection, CoverageCollectionPerTest } from 'stryker-api/test_runner';
+import { TestRunner, TestResult, TestStatus, RunStatus, RunResult, RunnerOptions, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
 import * as karma from 'karma';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
@@ -49,7 +49,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
   private serverStartedPromise: Promise<void>;
   private currentTestResults: TestResult[];
   private currentErrorMessages: string[];
-  private currentCoverageReport?: CoverageCollection | CoverageCollectionPerTest;
+  private currentCoverageReport?: CoverageCollection | CoveragePerTestResult;
   private currentRunResult: karma.TestResults;
 
   constructor(private options: RunnerOptions) {
@@ -116,7 +116,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
   }
 
   private listenToCoverage() {
-    this.server.on('raw_coverage_complete', (coverageReport: CoverageCollection | CoverageCollectionPerTest) => {
+    this.server.on('raw_coverage_complete', (coverageReport: CoverageCollection | CoveragePerTestResult) => {
       this.currentCoverageReport = coverageReport;
     });
   }
