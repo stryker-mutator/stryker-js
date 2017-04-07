@@ -20,6 +20,7 @@
     "@types/sinon-chai": "^2.7.27",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
+    "concurrently": "^3.4.0",
     "lerna": "^2.0.0-rc.0",
     "mocha": "^3.2.0",
     "nyc": "^10.2.0",
@@ -36,6 +37,8 @@
     "pretest": "npm run build",
     "test": "lerna run test",
     "posttest": "mocha integrationTest/*.js",
-    "test:stryker": "lerna run test --scope stryker"
+    "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\"",
+    "test:stryker": "lerna run test --scope stryker",
+    "test:stryker-api": "lerna run test --scope stryker"
   }
 }
