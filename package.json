@@ -33,10 +33,13 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap",
+    "prebuild": "npm run clean-integration-test",
     "build": "lerna run build",
+    "postbuild": "tsc -p integrationTest",
     "pretest": "npm run build",
     "test": "lerna run test",
     "posttest": "mocha integrationTest/*.js",
+    "clean-integration-test": "node tasks/cleanIntegrationTest.js",
     "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\"",
     "test:stryker": "lerna run test --scope stryker",
     "test:stryker-api": "lerna run test --scope stryker"
