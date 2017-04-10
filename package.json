@@ -34,11 +34,12 @@
   "scripts": {
     "postinstall": "lerna bootstrap",
     "prebuild": "npm run clean-integration-test",
-    "build": "lerna run build && tsc -p integrationTest",
+    "build": "lerna run build",
+    "postbuild": "tsc -p integrationTest",
     "pretest": "npm run build",
     "test": "lerna run test",
     "posttest": "mocha integrationTest/*.js",
-    "clean-integration-test": "rimraf integrationTest/*/node_modules/stryker* integrationTest/*/usingStryker.js integrationTest/*/*.d.ts integrationTest/*/*.map integrationTest/*.d.ts integrationTest/*.js integrationTest/*.map",
+    "clean-integration-test": "node tasks/cleanIntegrationTest.js",
     "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\"",
     "test:stryker": "lerna run test --scope stryker",
     "test:stryker-api": "lerna run test --scope stryker"
