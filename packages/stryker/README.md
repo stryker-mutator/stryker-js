@@ -41,7 +41,11 @@ The following is an example `stryker.conf.js` file:
 ```javascript
 module.exports = function(config){
   config.set({
-    files: ['test/helpers/**/*.js', 'test/unit/**/*.js', { pattern: 'src/**/*.js', included: false, mutated: true }],
+    files: ['test/helpers/**/*.js', 
+            'test/unit/**/*.js', 
+            { pattern: 'src/**/*.js', included: false, mutated: true }
+            { pattern: 'src/templates/*.html', included: false, mutated: false }
+            '!src/fileToIgnore.js'],
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporter: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
@@ -74,7 +78,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 **Description:**  
 With `files` you specify all files needed to run your tests. If the test runner you use already provides the test framework (Jasmine, Mocha, etc.),
 you should *not* include those files here as well.  
-The files will be loaded in the other in which they are specified.
+The files will be loaded in the order in which they are specified. Files that you want to ignore should be mentioned last.
 
 When using the command line, the list can only contain a comma separated list of globbing expressions.  
 When using the config file you can provide an array with `string`s or `InputFileDescriptor` objects, like so:  
@@ -82,7 +86,7 @@ When using the config file you can provide an array with `string`s or `InputFile
 * `string`: The globbing expression used for selecting the files needed to run the tests.  
 * `InputFileDescriptor` object: `{ pattern: 'pattern', included: true, mutated: false }`:  
    * The `pattern` property is mandatory and contains the globbing expression used for selecting the files. Using `!` to ignore files is *not* supported here.  
-   * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true)  
+   * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true). With `included: false` the files will be copied to the sandbox during testing, but they wont be explicitly loaded by the test runner. Two usecases for `included: false` are for HTML files and for source files when your tests `require()` them.
    * The `mutated` property is optional and determines whether or not this file should be targeted for mutations (default: false)  
 
 *Note*: To include a file/folder which start with an exclamation mark (`!`), use the `InputFileDescriptor` syntax.  
