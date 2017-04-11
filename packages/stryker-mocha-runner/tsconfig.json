@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowJs": false,
+        "lib": [
+          "es5",
+          "es2015.promise"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "src/**/*.d.ts",
+        "test/**/*.d.ts",
+        "typings/**",
+        "testResources"
+    ]
+}
