@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "node"
+  - "6"
+  - "4"
+install: npm install
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start

@@ -1,0 +1,50 @@
+{
+  "name": "stryker-mocha-runner",
+  "version": "0.2.0",
+  "description": "The Stryker TestRunner for Mocha",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "prebuild": "rimraf \"+(*.js|*.map)\" \"src/**/+(*.js|*.map)\" \"test/**/+(*.js|*.map)\"",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc mocha \"test/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stryker-mutator/stryker-mocha-runner.git"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "mocha",
+    "test",
+    "runner",
+    "testrunner",
+    "mutation",
+    "testing"
+  ],
+  "author": "Simon de Lang <simon.delang@infosupport.com>",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=4"
+  },
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-mocha-runner/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker-mocha-runner#readme",
+  "dependencies": {
+    "log4js": "^1.0.1"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.4.0",
+    "mocha": ">= 2.3.3 < 4"
+  },
+  "devDependencies": {
+    "stryker-api": "^0.4.1"
+  },
+  "contributors": [
+    "nicojs <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>"
+  ]
+}
