@@ -33,7 +33,8 @@
     "typescript": "^2.2.2"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap && link-parent-bin --log-level trace",
+    "postinstall": "lerna bootstrap && npm run link",
+    "link": "link-parent-bin --log-level trace",
     "prebuild": "npm run clean-integration-test",
     "build": "lerna run build",
     "postbuild": "tsc -p integrationTest",
