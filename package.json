@@ -34,7 +34,7 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap && npm run link",
-    "link": "link-parent-bin --log-level trace",
+    "link": "link-parent-bin --log-level debug",
     "prebuild": "npm run clean-integration-test",
     "build": "lerna run build",
     "postbuild": "tsc -p integrationTest",
