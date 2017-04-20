@@ -11,7 +11,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 let expect = chai.expect;
 
-describe.only('StrykerInitializer', function () {
+describe('StrykerInitializer', function () {
   let sut: StrykerInitializer;
   let sandbox: sinon.SinonSandbox;
 
@@ -45,7 +45,7 @@ describe.only('StrykerInitializer', function () {
     };
 
     beforeEach(() => {
-      sut.promptContextChoices = sandbox.stub().resolves(contextChoices);
+      sut.promptContextChoices = sandbox.stub().returns(Promise.resolve(contextChoices));
       sut.installNpmDependencies = sandbox.stub();
       sut.installStrykerConfiguration = sandbox.stub();
       sandbox.spy(sut, 'buildQuestions');
@@ -62,18 +62,18 @@ describe.only('StrykerInitializer', function () {
     });
 
     it('should call buildNpmPackagesArray()', function (done) {
-      expect(sut.buildNpmPackagesArray).to.have.been.called;
       done();
+      expect(sut.buildNpmPackagesArray).to.have.been.called;
     });
 
     it('should call installNpmDependencies()', function (done) {
-      expect(sut.installNpmDependencies).to.have.been.called;
       done();
+      expect(sut.installNpmDependencies).to.have.been.called;
     });
 
     it('should call installStrykerConfiguration()', function (done) {
-        expect(sut.installStrykerConfiguration).to.have.been.called;
-        done();
+      done();
+      expect(sut.installStrykerConfiguration).to.have.been.called;
     });
   });
 
