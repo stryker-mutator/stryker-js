@@ -88,7 +88,7 @@ describe('IsolatedTestRunnerAdapter', () => {
 
       function act() {
         runPromise = sut.run(runOptions);
-      };
+      }
 
       it('should send run-message to worker', () => {
         act();
@@ -124,15 +124,17 @@ describe('IsolatedTestRunnerAdapter', () => {
         return expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ kind: 'dispose' }));
       });
 
-      describe('and child process responses to dispose', () => {
+      describe('and child process responds to dispose', () => {
         beforeEach(() => {
           const promise = sut.dispose();
           receiveMessage({ kind: 'disposeDone' });
           return promise;
         });
 
-        it('should kill the child process', () =>
-          expect(fakeChildProcess.kill).to.have.been.calledWith());
+        it('should kill the child process', () => {
+          expect(fakeChildProcess.kill).to.not.have.been.calledWith('SIGKILL');
+          expect(fakeChildProcess.kill).to.have.been.called;
+        });
       });
 
       describe('and a timeout occurred', () => {
@@ -144,8 +146,10 @@ describe('IsolatedTestRunnerAdapter', () => {
           return promise;
         });
 
-        it('should kill the child process', () =>
-          expect(fakeChildProcess.kill).to.have.been.calledWith('SIGKILL'));
+        it('should kill the child process', () => {
+          expect(fakeChildProcess.kill).to.not.have.been.calledWith('SIGKILL');
+          expect(fakeChildProcess.kill).to.have.been.called;
+        });
       });
     });
     it('should reject any exceptions', () => {

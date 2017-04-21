@@ -1,12 +1,48 @@
 {
   "private": true,
   "devDependencies": {
-    "lerna": "^2.0.0-beta.38",
-    "typescript": "^2.2.1"
+    "@types/chai-as-promised": "0.0.29",
+    "@types/chalk": "^0.4.28",
+    "@types/escodegen": "0.0.6",
+    "@types/esprima": "^2.1.31",
+    "@types/estree": "0.0.32",
+    "@types/glob": "^5.0.29",
+    "@types/graceful-fs": "^2.0.29",
+    "@types/istanbul": "^0.4.29",
+    "@types/karma": "^0.13.32",
+    "@types/lodash": "^4.14.34",
+    "@types/log4js": "0.0.32",
+    "@types/mkdirp": "^0.3.28",
+    "@types/mocha": "^2.2.34",
+    "@types/progress": "^1.1.28",
+    "@types/sinon": "^1.16.33",
+    "@types/sinon-as-promised": "^4.0.5",
+    "@types/sinon-chai": "^2.7.27",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "concurrently": "^3.4.0",
+    "lerna": "^2.0.0-rc.0",
+    "link-parent-bin": "^0.1.1",
+    "mocha": "^3.2.0",
+    "nyc": "^10.2.0",
+    "rimraf": "^2.6.1",
+    "sinon": "^1.17.7",
+    "sinon-as-promised": "^4.0.3",
+    "sinon-chai": "^2.9.0",
+    "tslint": "^5.0.0",
+    "typescript": "^2.2.2"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap",
+    "postinstall": "lerna bootstrap && link-parent-bin",
+    "prebuild": "npm run clean-integration-test",
     "build": "lerna run build",
-    "test": "lerna run test"
+    "postbuild": "tsc -p integrationTest",
+    "pretest": "npm run build",
+    "test": "lerna run test",
+    "posttest": "mocha integrationTest/*.js",
+    "clean-integration-test": "node tasks/cleanIntegrationTest.js",
+    "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\"",
+    "test:stryker": "lerna run test --scope stryker",
+    "test:stryker-api": "lerna run test --scope stryker"
   }
 }

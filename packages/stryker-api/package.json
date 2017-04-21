@@ -3,10 +3,11 @@
   "version": "0.5.0-2",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "scripts": {
-    "test": "grunt test",
-    "tsc:w": "tsc -w",
-    "preversion": "grunt",
-    "build": "grunt build"
+    "start": "tsc -w",
+    "prebuild": "rimraf \"+(*.js|*.map)\" \"src/**/+(*.js|*.map)\" \"test/**/+(*.js|*.map)\" \"testResources/module/+(*.js|*.map)\" \"testResources/module/node_modules/stryker-api\"",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -28,36 +29,14 @@
     "Simon de Lang <simondelang@gmail.com>"
   ],
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-api#readme",
   "engines": {
     "node": ">=4"
   },
-  "devDependencies": {
-    "@types/chai": "^3.4.32",
-    "@types/estree": "0.0.32",
-    "@types/mocha": "^2.2.31",
-    "@types/node": "^6.0.38",
-    "chai": "^3.4.1",
-    "chai-as-promised": "^6.0.0",
-    "grunt": "^1.0.1",
-    "grunt-bump": "^0.8.0",
-    "grunt-cli": "^1.2.0",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-conventional-changelog": "^6.1.0",
-    "grunt-mocha-istanbul": "^5.0.1",
-    "grunt-mocha-test": "^0.13.2",
-    "grunt-npm": "0.0.2",
-    "grunt-ts": "^6.0.0-beta.3",
-    "grunt-tslint": "^3.2.1",
-    "istanbul": "^0.4.0",
-    "load-grunt-tasks": "^3.5.2",
-    "mocha": "^3.0.2",
-    "mocha-sinon": "^1.1.6",
-    "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0",
-    "tslint": "^3.15.1",
-    "typescript": "^2.1.4"
-  },
+  "devDependencies": {},
   "dependencies": {
     "tslib": "^1.6.0"
   }

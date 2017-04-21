@@ -1,0 +1,14 @@
+{
+  "files": {
+    "exclude": {
+      ".git": "",
+      "**/*.js": {
+        "when": "$(basename).ts"
+      },
+      "**/*.d.ts": true,
+      "**/*.map": {
+        "when": "$(basename)"
+      }
+    }
+  }
+}
