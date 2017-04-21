@@ -30,12 +30,12 @@ export default class KarmaConfigReader {
   }
 
   private validateConfig() {
-    // Deligate validation of configuration to karma config lib, as it has nice and recognizable error handling
+    // Delegate validation of configuration to karma config lib, as it has nice and recognizable error handling
     this.parseNativeKarmaConfig();
   }
 
   private readConfig(): karma.ConfigOptions {
-    // We cannot deligate config reading to karma's config reader, because we cannot serialize the result to child processes
+    // We cannot delegate config reading to karma's config reader, because we cannot serialize the result to child processes
     // It results in: TypeError: Serializing native function: bound configure
     const configModule = requireModule(this.karmaConfigFile);
     const config = new Config();
