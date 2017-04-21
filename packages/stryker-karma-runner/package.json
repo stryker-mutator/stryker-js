@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.io/stryker-mutator/stryker-karma-runner"
+    "url": "https://github.io/stryker-mutator/stryker"
   },
   "engines": {
     "node": ">=4"
@@ -25,6 +25,10 @@
   ],
   "author": "Nico Jansen <nicoj@infosupport.com>",
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-karma-runner#readme",
   "peerDependencies": {
     "karma": "^0.13.0 || ~1.0.0 || ^1.1.1",
     "stryker-api": "^0.5.0-2"
