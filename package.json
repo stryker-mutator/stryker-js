@@ -29,6 +29,7 @@
     "sinon": "^1.17.7",
     "sinon-as-promised": "^4.0.3",
     "sinon-chai": "^2.9.0",
+    "tslint": "^5.0.0",
     "typescript": "^2.2.2"
   },
   "scripts": {
