@@ -1,0 +1,53 @@
+{
+  "name": "stryker-karma-runner",
+  "version": "0.4.0-0",
+  "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.io/stryker-mutator/stryker"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "karma",
+    "stryker-test-runner"
+  ],
+  "author": "Nico Jansen <nicoj@infosupport.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-karma-runner#readme",
+  "peerDependencies": {
+    "karma": "^0.13.0 || ~1.0.0 || ^1.1.1",
+    "stryker-api": "^0.5.0-2"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.0 || ~1.0.0 || ^1.1.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.1",
+    "stryker-api": "^0.5.0-2"
+  },
+  "dependencies": {
+    "lodash": "^4.13.1",
+    "log4js": "^1.0.1",
+    "tslib": "^1.6.1"
+  },
+  "contributors": [
+    "nicojs <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>",
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
+  ]
+}

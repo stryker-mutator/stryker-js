@@ -1,0 +1,47 @@
+{
+  "name": "stryker-mocha-runner",
+  "version": "0.2.0",
+  "description": "A plugin to use the mocha in Stryker, the JavaScript mutation testing framework",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "mocha",
+    "test",
+    "runner",
+    "testrunner",
+    "mutation",
+    "testing"
+  ],
+  "author": "Simon de Lang <simon.delang@infosupport.com>",
+  "contributors": [
+    "nicojs <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "log4js": "^1.1.1"
+  },
+  "devDependencies": {
+    "stryker-api": "^0.4.1",
+    "tslib": "^1.5.0"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.4.0",
+    "mocha": ">= 2.3.3 < 4"
+  }
+}
