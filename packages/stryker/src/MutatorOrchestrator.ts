@@ -7,10 +7,10 @@ import UpdateOperatorMutator from './mutators/UpdateOperatorMutator';
 import ArrayDeclaratorMutator from './mutators/ArrayDeclaratorMutator';
 import { Mutator, MutatorFactory } from 'stryker-api/mutant';
 import { SourceFile } from 'stryker-api/report';
-import * as fileUtils from './utils/fileUtils';
 import Mutant from './Mutant';
 import * as parserUtils from './utils/parserUtils';
 import * as log4js from 'log4js';
+import * as fs from 'mz/fs';
 import { freezeRecursively, copy } from './utils/objectUtils';
 import * as estree from 'estree';
 import StrictReporter from './reporters/StrictReporter';
@@ -43,7 +43,7 @@ export default class MutatorOrchestrator {
     this.sourceFiles = [];
     sourceFiles.forEach((sourceFile: string) => {
       try {
-        let fileContent = fileUtils.readFile(sourceFile);
+        let fileContent = fs.readFileSync(sourceFile, 'utf8');
         this.reportFileRead(sourceFile, fileContent);
         let abstractSyntaxTree = parserUtils.parse(fileContent);
         let nodes = new parserUtils.NodeIdentifier().identifyAndFreeze(abstractSyntaxTree);

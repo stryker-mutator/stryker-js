@@ -2,6 +2,7 @@ import { Config } from 'stryker-api/config';
 import * as path from 'path';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
+import * as mkdirp from 'mkdirp';
 import { RunResult } from 'stryker-api/test_runner';
 import { InputFile } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
@@ -73,7 +74,8 @@ export default class Sandbox {
     } else {
       const cwd = process.cwd();
       const relativePath = file.path.substr(cwd.length);
-      const folderName = StrykerTempFolder.ensureFolderExists(this.workingFolder + path.dirname(relativePath));
+      const folderName = this.workingFolder + path.dirname(relativePath);
+      mkdirp.sync(folderName);
       const targetFile = path.join(folderName, path.basename(relativePath));
       this.fileMap[file.path] = targetFile;
       const instrumentingStream = this.coverageInstrumenter ?

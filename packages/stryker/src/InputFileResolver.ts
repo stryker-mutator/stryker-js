@@ -1,7 +1,8 @@
 import { InputFile, InputFileDescriptor } from 'stryker-api/core';
-import { glob, normalize, isOnlineFile } from './utils/fileUtils';
+import { glob, isOnlineFile } from './utils/fileUtils';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
+import * as path from 'path';
 
 const log = log4js.getLogger('InputFileResolver');
 
@@ -148,8 +149,7 @@ class PatternResolver {
       if (files.length === 0) {
         this.reportEmptyGlobbingExpression(pattern);
       }
-      normalize(files);
-      return files;
+      return files.map((f) => path.resolve(path.normalize(f)));
     }
   }
 
