@@ -1,5 +1,5 @@
+import * as fs from 'mz/fs';
 import { expect } from 'chai';
-import * as fileUtils from '../../src/utils/fileUtils';
 import Mutant from '../../src/Mutant';
 import MutatorOrchestrator from '../../src/MutatorOrchestrator';
 import { Mutator, MutatorFactory, IdentifiedNode, Identified } from 'stryker-api/mutant';
@@ -31,7 +31,7 @@ describe('MutatorOrchestrator', () => {
   });
 
   it('should return an empty array if nothing could be mutated', () => {
-    fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => '');
+    fileUtilsStub = sandbox.stub(fs, 'readFileSync', () => '');
 
     const mutants = sut.generateMutants(['test.js']);
 
@@ -46,7 +46,7 @@ describe('MutatorOrchestrator', () => {
     beforeEach(() => {
       originalCode = 'var i = 1 + 2;';
       mutatedCode = 'var i = 1 - 2;';
-      fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => originalCode);
+      fileUtilsStub = sandbox.stub(fs, 'readFileSync', () => originalCode);
       mutants = sut.generateMutants(['test.js']);
     });
 
@@ -109,7 +109,7 @@ describe('MutatorOrchestrator', () => {
     });
 
     it('the same nodeID', () => {
-      fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => {
+      fileUtilsStub = sandbox.stub(fs, 'readFileSync', () => {
         return 'if (true);';
       });
 
@@ -119,7 +119,7 @@ describe('MutatorOrchestrator', () => {
     });
 
     it('a different nodeID', () => {
-      fileUtilsStub = sandbox.stub(fileUtils, 'readFile', () => {
+      fileUtilsStub = sandbox.stub(fs, 'readFileSync', () => {
         return '1 * 2';
       });
 

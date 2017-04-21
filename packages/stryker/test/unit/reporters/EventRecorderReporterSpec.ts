@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import * as fs from 'mz/fs';
 import { Reporter } from 'stryker-api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
@@ -17,7 +18,7 @@ describe('EventRecorderReporter', () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     cleanFolderStub = sandbox.stub(fileUtils, 'cleanFolder');
-    writeFileStub = sandbox.stub(fileUtils, 'writeFile');
+    writeFileStub = sandbox.stub(fs, 'writeFile');
   });
 
   afterEach(() => {
@@ -62,7 +63,7 @@ describe('EventRecorderReporter', () => {
 
           describe('when writeFile is successful', () => {
             arrange();
-            it('should writeFile', () => expect(fileUtils.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
+            it('should writeFile', () => expect(fs.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
           });
         });
       };

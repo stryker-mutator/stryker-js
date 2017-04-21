@@ -17,6 +17,12 @@
         "lib": [
           "es5",
           "es2015.promise"
+        ],
+        "types": [
+           "mocha",
+           "node",
+           "chai",
+           "estree"
         ]
     },
     "exclude": [
