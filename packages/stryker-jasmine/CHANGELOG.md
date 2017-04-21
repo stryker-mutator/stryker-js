@@ -1,3 +1,25 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="0.2.0"></a>
+# 0.2.0 (2017-04-21)
+
+
+### Bug Fixes
+
+* **deps:** Update stryker-api version ([d685481](https://github.com/stryker-mutator/stryker/commit/d685481))
+
+
+### Features
+
+* **es2015-promise:** Remove dep to es6-promise (#2) ([413c22a](https://github.com/stryker-mutator/stryker/commit/413c22a))
+* **jasmine:** Add jasmine test framework ([85709b0](https://github.com/stryker-mutator/stryker/commit/85709b0))
+
+
+
+
 <a name="0.1.0"></a>
 # [0.1.0](https://github.com/stryker-mutator/stryker-jasmine/compare/v0.0.3...v0.1.0) (2016-11-20)
 
@@ -27,6 +49,3 @@
 * chore: release v0.0.1 ([4bbede4](https://github.com/stryker-mutator/stryker-jasmine/commit/4bbede4))
 * chore: update contributors ([380aeed](https://github.com/stryker-mutator/stryker-jasmine/commit/380aeed))
 * feat(jasmine): Add jasmine test framework ([4f992e4](https://github.com/stryker-mutator/stryker-jasmine/commit/4f992e4))
-
-
-

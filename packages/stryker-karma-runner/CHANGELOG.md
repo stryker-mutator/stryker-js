@@ -1,3 +1,39 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="0.4.0"></a>
+# 0.4.0 (2017-04-21)
+
+
+### Bug Fixes
+
+* **deps:** Add support for karma ^1.1.1 ([149ecd2](https://github.io/stryker-mutator/stryker/commit/149ecd2))
+* **deps:** Update stryker-api version ([07ab5b0](https://github.io/stryker-mutator/stryker/commit/07ab5b0))
+* **deps:** Update stryker-api version ([0207787](https://github.io/stryker-mutator/stryker/commit/0207787))
+* **README:** Use lerna project structure ([fc15678](https://github.io/stryker-mutator/stryker/commit/fc15678))
+* **TestRunner:** Remove stopper (#16) ([e65d6ab](https://github.io/stryker-mutator/stryker/commit/e65d6ab))
+
+
+### Features
+
+* **es2015-promise:** Remove dep to es6-promise (#9) ([d5ad84b](https://github.io/stryker-mutator/stryker/commit/d5ad84b))
+* **KarmaTestRunner:** Force cwd as basePath (#18) ([205a393](https://github.io/stryker-mutator/stryker/commit/205a393))
+* **life-cycle:** Add init lifecycle event. ([51a756f](https://github.io/stryker-mutator/stryker/commit/51a756f))
+* **lifetime-support:** Drop Node 0.12 support (#14) ([aa85cd7](https://github.io/stryker-mutator/stryker/commit/aa85cd7))
+* **one-pass-coverage:** Enable one pass coverage (#6) ([3c9e6e1](https://github.io/stryker-mutator/stryker/commit/3c9e6e1))
+* **package.json:** Upgrade to TypeScript 2.1 (#13) ([456e6aa](https://github.io/stryker-mutator/stryker/commit/456e6aa))
+* **read-karma-config:** Use karma configuration (#10) ([93e26f5](https://github.io/stryker-mutator/stryker/commit/93e26f5))
+* **stop-karma:** Stop karma on dispose (#11) ([aab66a2](https://github.io/stryker-mutator/stryker/commit/aab66a2))
+* **test-runner:** Allow for big coverage objects ([dff523e](https://github.io/stryker-mutator/stryker/commit/dff523e))
+* **testFramework:** Use test framework (#3) ([eb7cb13](https://github.io/stryker-mutator/stryker/commit/eb7cb13))
+* **ts2.0:** Migrate to typescript 2.0 (#5) ([d344bce](https://github.io/stryker-mutator/stryker/commit/d344bce))
+* **unincluded-files:** Unincluded files support ([302ce73](https://github.io/stryker-mutator/stryker/commit/302ce73))
+
+
+
+
 <a name="0.3.5"></a>
 ## [0.3.5](https://github.io/stryker-mutator/stryker-karma-runner/compare/v0.3.4...v0.3.5) (2017-03-01)
 
@@ -105,6 +141,3 @@
 
 <a name="0.0.1"></a>
 ## 0.0.1 (2016-06-29)
-
-
-

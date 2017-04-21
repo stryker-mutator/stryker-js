@@ -1,3 +1,24 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="0.5.0"></a>
+# 0.5.0 (2017-04-21)
+
+
+### Bug Fixes
+
+* **package.json:** Use stryker repo url (#266) ([de7d1cd](https://github.com/stryker-mutator/stryker/commit/de7d1cd))
+
+
+### Features
+
+* **multi-package:** Migrate to multi-package repo (#257) ([0c2fde5](https://github.com/stryker-mutator/stryker/commit/0c2fde5))
+
+
+
+
 <a name="0.4.2"></a>
 ## [0.4.2](https://github.com/stryker-mutator/stryker-api/compare/v0.4.1...v0.4.2) (2016-12-30)
 
@@ -100,6 +121,3 @@
 * refactor(package.json) Remove unused dependencies ([b9ba1a4](https://github.com/stryker-mutator/stryker-api/commit/b9ba1a4))
 * refactor(report) Rename spec to test as it is more logical in the context of a test report. ([9396c98](https://github.com/stryker-mutator/stryker-api/commit/9396c98))
 * test(integration) Add a lot of integration tests ([ed24290](https://github.com/stryker-mutator/stryker-api/commit/ed24290))
-
-
-

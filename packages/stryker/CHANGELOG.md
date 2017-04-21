@@ -1,3 +1,25 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="0.6.0"></a>
+# 0.6.0 (2017-04-21)
+
+
+### Bug Fixes
+
+* **IsolatedTestRunnerAdapter:** Don't kill processes using SIGKILL (#270) ([f606e9d](https://github.com/stryker-mutator/stryker/commit/f606e9d))
+* **IsolatedTestRunnerAdapter:** Improve error handling when test runner worker process crashes (#285) ([2b4bda7](https://github.com/stryker-mutator/stryker/commit/2b4bda7))
+
+
+### Features
+
+* **multi-package:** Migrate to multi-package repo (#257) ([0c2fde5](https://github.com/stryker-mutator/stryker/commit/0c2fde5))
+
+
+
+
 <a name="0.5.9"></a>
 ## [0.5.9](https://github.com/stryker-mutator/stryker/compare/v0.5.8...v0.5.9) (2017-03-01)
 
@@ -255,6 +277,3 @@
 
 <a name="0.1.0"></a>
 # [0.1.0](https://github.com/stryker-mutator/stryker/compare/v0.0.0...v0.1.0) (2016-03-24)
-
-
-
