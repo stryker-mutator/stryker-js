@@ -41,7 +41,7 @@
     "test": "lerna run test",
     "posttest": "mocha integrationTest/*.js",
     "clean-integration-test": "node tasks/cleanIntegrationTest.js",
-    "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\"",
+    "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\" \"tsc -w -p packages/stryker-jasmine\" \"tsc -w -p packages/stryker-karma-runner\" \"tsc -w -p packages/stryker-mocha-runner\"",
     "test:stryker": "lerna run test --scope stryker",
     "test:stryker-api": "lerna run test --scope stryker"
   }
