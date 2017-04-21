@@ -1,7 +1,6 @@
-import { TestFramework, TestFrameworkSettings } from 'stryker-api/test_framework';
+import { TestFramework } from 'stryker-api/test_framework';
 
 export default class MochaTestFramework implements TestFramework {
-  constructor(private settings: TestFrameworkSettings) { }
 
   beforeEach(codeFragment: string): string {
     return `beforeEach(function() {

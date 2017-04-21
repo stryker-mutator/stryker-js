@@ -1,4 +1,4 @@
-import { RunResult, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import * as log4js from 'log4js';
 import Timer from './Timer';
 
@@ -44,6 +44,9 @@ export default class StrykerMochaReporter {
         timeSpentMs: this.timer.elapsedMs(),
         failureMessages: [err.message]
       });
+      if (!this.runResult.errorMessages) {
+        this.runResult.errorMessages = [];
+      }
       this.runResult.errorMessages.push(err.message);
       log.debug(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
     });

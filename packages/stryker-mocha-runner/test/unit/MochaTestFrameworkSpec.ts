@@ -3,7 +3,7 @@ import MochaTestFramework from '../../src/MochaTestFramework';
 
 describe('MochaTestFramework', () => {
   let sut: MochaTestFramework;
-  beforeEach(() => sut = new MochaTestFramework({ options: {} }));
+  beforeEach(() => sut = new MochaTestFramework());
 
   describe('beforeEach()', () => {
     it('should result in a beforeEach mocha hook', () =>

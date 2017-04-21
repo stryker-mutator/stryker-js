@@ -1,9 +1,1 @@
-node_modules
-coverage
-.tscache
-typings
-*.js.map
-src/**/*.js
-test/**/*.js
-src/**/*.d.ts
-test/**/*.d.ts
+/coverage

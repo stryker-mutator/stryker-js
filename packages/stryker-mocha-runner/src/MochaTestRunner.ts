@@ -1,7 +1,6 @@
-import * as path from 'path';
 import * as log4js from 'log4js';
 import { EventEmitter } from 'events';
-import { TestRunner, TestResult, RunResult, TestStatus, RunStatus, RunnerOptions, CoverageCollection } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
 import { InputFile } from 'stryker-api/core';
 
 

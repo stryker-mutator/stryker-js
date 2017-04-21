@@ -1,15 +1,21 @@
 {
   "name": "stryker-mocha-runner",
   "version": "0.2.0",
-  "description": "The Stryker TestRunner for Mocha",
+  "description": "A plugin to use the mocha in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
-    "test": "grunt test",
-    "preversion": "npm test"
+    "start": "tsc -w",
+    "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stryker-mutator/stryker-mocha-runner.git"
+    "url": "https://github.com/stryker-mutator/stryker"
+  },
+  "engines": {
+    "node": ">=4"
   },
   "keywords": [
     "stryker",
@@ -22,53 +28,20 @@
     "testing"
   ],
   "author": "Simon de Lang <simon.delang@infosupport.com>",
+  "contributors": [
+    "nicojs <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>"
+  ],
   "license": "Apache-2.0",
-  "engines": {
-    "node": ">=4"
-  },
-  "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker-mocha-runner/issues"
-  },
-  "homepage": "https://github.com/stryker-mutator/stryker-mocha-runner#readme",
   "dependencies": {
-    "log4js": "^1.0.1"
+    "log4js": "^1.1.1"
+  },
+  "devDependencies": {
+    "stryker-api": "^0.4.1",
+    "tslib": "^1.5.0"
   },
   "peerDependencies": {
     "stryker-api": "^0.4.0",
     "mocha": ">= 2.3.3 < 4"
-  },
-  "devDependencies": {
-    "@types/chai": "^3.4.32",
-    "@types/chai-as-promised": "0.0.29",
-    "@types/log4js": "0.0.31",
-    "@types/mocha": "^2.2.31",
-    "@types/node": "^6.0.38",
-    "@types/sinon": "^1.16.31",
-    "@types/sinon-chai": "^2.7.27",
-    "chai": "^3.4.1",
-    "chai-as-promised": "^6.0.0",
-    "grunt": "^1.0.1",
-    "grunt-bump": "^0.8.0",
-    "grunt-cli": "^1.2.0",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-conventional-changelog": "^6.1.0",
-    "grunt-mocha-istanbul": "^5.0.2",
-    "grunt-mocha-test": "^0.13.2",
-    "grunt-npm": "0.0.2",
-    "grunt-ts": "^6.0.0-beta.3",
-    "grunt-tslint": "^3.2.1",
-    "istanbul": "^0.4.0",
-    "load-grunt-tasks": "^3.5.2",
-    "mocha": "^3.1.0",
-    "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.4.1",
-    "tslint": "^3.15.1",
-    "typescript": "^2.1.4"
-  },
-  "contributors": [
-    "nicojs <jansennico@gmail.com>",
-    "Simon de Lang <simondelang@gmail.com>"
-  ]
+  }
 }

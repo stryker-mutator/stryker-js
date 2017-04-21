@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import MochaTestRunner from '../../src/MochaTestRunner';
-import { TestResult, RunnerOptions, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
+import { TestResult, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
 chai.use(chaiAsPromised);
