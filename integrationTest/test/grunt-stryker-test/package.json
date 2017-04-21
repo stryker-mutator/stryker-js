@@ -3,17 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "grunt test"
-  },
-  "devDependencies": {
-    "jasmine-core": "^2.4.1",
-    "karma": "1.0.0",
-    "karma-jasmine": "^1.0.2",
-    "karma-phantomjs-launcher": "^1.0.1",
-    "stryker": "file:../../packages/stryker",
-    "stryker-api": "file:../../packages/stryker-api",
-    "stryker-jasmine": "file:../../packages/stryker-jasmine",
-    "stryker-jasmine": "file:../../packages/stryker-jasmine",
-    "typescript": "~2.2.2"
+    "test": "grunt",
+    "v": "node --version"
   }
 }

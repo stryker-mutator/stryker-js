@@ -1,5 +1,4 @@
-'use strict';
-
+console.log('gruntsworking');
 module.exports = function (grunt) {
   grunt.initConfig({
     stryker: {
