@@ -5,6 +5,7 @@ module.exports = function (config) {
       'testResources/sampleProject/test/**/!(FailingAddSpec).js',
     ],
     testFramework: 'jasmine',
-    testRunner: 'karma'
+    testRunner: 'karma',
+    logLevel: 'debug'
   });
 }

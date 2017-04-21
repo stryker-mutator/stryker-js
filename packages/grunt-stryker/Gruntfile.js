@@ -32,38 +32,14 @@ module.exports = function (grunt) {
         },
         options: {
           testFramework: 'jasmine',
-          testRunner: 'karma'
-        }
+          testRunner: 'karma',
+          logLevel: 'debug'
+        },
       },
       withConfigFile: {
         options: {
-          configFile: 'testResources/stryker.conf.js'
+          configFile: './testResources/stryker.conf.js'
         }
-      }
-    },
-    'npm-contributors': {
-      options: {
-        commitMessage: 'chore: update contributors'
-      }
-    },
-    conventionalChangelog: {
-      release: {
-        options: {
-          changelogOpts: {
-            preset: 'angular'
-          }
-        },
-        src: 'CHANGELOG.md'
-      }
-    },
-    bump: {
-      options: {
-        commitFiles: [
-          'package.json',
-          'CHANGELOG.md'
-        ],
-        commitMessage: 'chore: release v%VERSION%',
-        prereleaseName: 'rc'
       }
     }
   });
@@ -73,15 +49,4 @@ module.exports = function (grunt) {
   
   grunt.registerTask('default', ['jshint', 'test']);
   grunt.registerTask('test', ['stryker']);
-
-  grunt.registerTask('release', 'Build, bump and publish to NPM.', function (type) {
-    grunt.task.run([
-      'test',
-      'npm-contributors',
-      'bump:' + (type || 'patch') + ':bump-only',
-      'conventionalChangelog',
-      'bump-commit',
-      'npm-publish'
-    ]);
-  });
 };

@@ -1,14 +1,10 @@
 {
-  "name": "test-module",
+  "name": "grunt-stryker-test",
   "version": "0.0.0",
-  "description": "A module to perform an integration test",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "tsc": "tsc",
-    "stryker:config": "stryker run stryker.conf.js"
+    "test": "grunt test"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "jasmine-core": "^2.4.1",
     "karma": "1.0.0",
@@ -16,8 +12,8 @@
     "karma-phantomjs-launcher": "^1.0.1",
     "stryker": "file:../../packages/stryker",
     "stryker-api": "file:../../packages/stryker-api",
-    "stryker-jasmine": "^0.2.0-0",
-    "stryker-karma-runner": "^0.4.0-0",
+    "stryker-jasmine": "file:../../packages/stryker-jasmine",
+    "stryker-jasmine": "file:../../packages/stryker-jasmine",
     "typescript": "~2.2.2"
   }
 }

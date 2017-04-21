@@ -1,0 +1,21 @@
+{
+  "name": "integration-test",
+  "version": "0.0.0",
+  "private": true,
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-stryker": "file:../packages/grunt-stryker",
+    "jasmine-core": "^2.4.1",
+    "karma": "^1.1.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.1",
+    "load-grunt-tasks": "^3.5.2",
+    "stryker": "file:../packages/stryker",
+    "stryker-api": "file:../packages/stryker-api",
+    "stryker-jasmine": "file:../packages/stryker-jasmine",
+    "stryker-karma-runner": "file:../packages/stryker-karma-runner"
+  }
+}
