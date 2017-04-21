@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/stryker-mutator/stryker-karma-runner.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker-karma-runner)
+[![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
 [![NPM](https://img.shields.io/npm/dm/stryker-karma-runner.svg)](https://www.npmjs.com/package/stryker-karma-runner)
 [![Node version](https://img.shields.io/node/v/stryker-karma-runner.svg)](https://img.shields.io/node/v/stryker-karma-runner.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-#Stryker Karma Runner
+# Stryker Karma Runner
 
 A plugin to use the karma test runner in [Stryker](https://stryker-mutator.github.io), the JavaScript mutation testing framework
 
@@ -23,7 +23,7 @@ As such, you should make sure you have the correct versions of its dependencies 
 * `karma`
 * `stryker-api`
 
-For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker-karma-runner/blob/master/package.json).
+For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker-karma-runner/package.json).
 
 These are marked as `peerDependencies` of `stryker-karma-runner` so you get a warning during installation when the correct versions are not installed.
 *Note*: Karma itself also requires some plugins to work.  
