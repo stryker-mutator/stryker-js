@@ -33,6 +33,10 @@
     "Simon de Lang <simondelang@gmail.com>"
   ],
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-runner#readme",
   "dependencies": {
     "log4js": "^1.1.1"
   },
