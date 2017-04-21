@@ -103,6 +103,9 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.workerProcess.on('exit', (code: number | null, signal: string) => {
       if (code !== 0 && code !== null) {
         log.error(`Child process exited with non-zero exit code ${code}. Last 10 message from the child process were: \r\n${this.lastMessagesQueue.map(msg => `\t${msg}`).join('\r\n')}`);
+        if (this.currentTask) {
+          this.currentTask.reject(`Test runner child process exited with non-zero exit code ${code}`);
+        }
       }
     });
   }
