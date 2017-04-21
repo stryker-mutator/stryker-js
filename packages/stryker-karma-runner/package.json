@@ -4,9 +4,11 @@
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
-    "test": "grunt test",
-    "preversion": "npm run test",
-    "start": "tsc -w"
+    "start": "tsc -w",
+    "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -28,44 +30,16 @@
     "stryker-api": "^0.5.0-2"
   },
   "devDependencies": {
-    "@types/chai": "^3.4.32",
-    "@types/chai-as-promised": "0.0.29",
-    "@types/karma": "^0.13.32",
-    "@types/lodash": "^4.14.34",
-    "@types/log4js": "0.0.32",
-    "@types/mocha": "^2.2.31",
-    "@types/node": "^6.0.45",
-    "@types/sinon": "^1.16.29",
-    "@types/sinon-chai": "^2.7.26",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "grunt": "^1.0.1",
-    "grunt-bump": "^0.8.0",
-    "grunt-cli": "^1.2.0",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-conventional-changelog": "^6.1.0",
-    "grunt-mocha-istanbul": "^5.0.1",
-    "grunt-mocha-test": "^0.13.2",
-    "grunt-npm": "0.0.2",
-    "grunt-ts": "^6.0.0-beta.3",
-    "grunt-tslint": "^4.0.0",
-    "istanbul": "^0.4.4",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.0 || ~1.0.0 || ^1.1.1",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
-    "load-grunt-tasks": "^3.5.2",
-    "mocha": "^3.0.2",
-    "sinon": "^1.17.5",
-    "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.5.0-2",
-    "tslint": "^4.0.2",
-    "typescript": "^2.2.1"
+    "stryker-api": "^0.5.0-2"
   },
   "dependencies": {
     "lodash": "^4.13.1",
-    "log4js": "^1.0.1"
+    "log4js": "^1.0.1",
+    "tslib": "^1.6.1"
   },
   "contributors": [
     "nicojs <jansennico@gmail.com>",
