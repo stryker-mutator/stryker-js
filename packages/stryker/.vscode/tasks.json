@@ -4,10 +4,8 @@
     "version": "0.1.0",
     "command": "npm",
     "isShellCommand": true,
-    "args": [
-        "start"
-    ],
-    "showOutput": "always",
-    "suppressTaskName": true,
-    "isBackground": true
+    "args": ["start"],
+    "showOutput": "silent",
+    "isBackground": true,
+    "problemMatcher": "$tsc-watch"
 }

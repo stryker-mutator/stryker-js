@@ -17,7 +17,8 @@
     "stryker": "file:../packages/stryker",
     "stryker-api": "file:../packages/stryker-api",
     "stryker-jasmine": "file:../packages/stryker-jasmine",
-    "stryker-karma-runner": "file:../packages/stryker-karma-runner"
+    "stryker-karma-runner": "file:../packages/stryker-karma-runner",
+    "typescript": "^2.2.2"
   },
   "scripts": {
     "postinstall": "link-parent-bin -c test"
