@@ -16,7 +16,13 @@ describe('integration-tests', function () {
   dirs.forEach(testDir => {
     describe(testDir, () => {
       it('should run test', (done) => {
-        new Executor(path.join('test', testDir)).exec('npm test', {}, done);
+        new Executor(path.join('test', testDir)).exec('npm test', {}, error => {
+          if (error) {
+            done(new Error(error));
+          } else {
+            done();
+          }
+        });
       });
     });
   });
