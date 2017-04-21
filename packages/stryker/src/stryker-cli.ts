@@ -57,7 +57,11 @@ if (strykerConfig) {
 }
 
 const commands: { [cmd: string]: () => void } = {
-  run: () => new Stryker(program).runMutationTest().catch(err => log.error(`an error occurred`, err))
+  run: () => new Stryker(program).runMutationTest().catch(err => { 
+    log.error(`an error occurred`, err); 
+    process.exitCode = 1;
+    process.kill(process.pid, 'SIGINT');
+  })
 };
 
 if (Object.keys(commands).indexOf(command) >= 0) {
