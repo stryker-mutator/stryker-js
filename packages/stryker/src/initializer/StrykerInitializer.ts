@@ -22,7 +22,7 @@ export default class StrykerInitializer {
         this.installNpmDependencies(this.buildNpmPackagesArray(contextChoices));
         this.installStrykerConfiguration(contextChoices);
       });
-  };
+  }
 
   /**
   * Ask the user for the used framework and testrunner
@@ -30,7 +30,7 @@ export default class StrykerInitializer {
   */
   promptContextChoices(buildQuestions: inquirer.Questions): Promise<ContextChoices> {
     return inquirer.prompt(buildQuestions)
-      .then((answers) => {
+      .then((answers: inquirer.Answers) => {
         const possibleTestFrameworks = initializerConfig.testFrameworks;
         const possibleTestRunners = initializerConfig.testRunners;
         let chosenTestFramework;
@@ -50,7 +50,7 @@ export default class StrykerInitializer {
 
         return new ContextChoices(chosenTestRunner, chosenTestFramework);
       });
-  };
+  }
 
   /**
   * Build an array of strings with the neccessary npm packages based on the chosen framework and testrunner
@@ -104,7 +104,7 @@ export default class StrykerInitializer {
         default: 'Mocha'
       }
     ];
-  };
+  }
 
   /**
   * Install the npm packages
@@ -115,7 +115,7 @@ export default class StrykerInitializer {
       console.log('Installing NPM dependencies...');
       child.execSync(`npm i ${dependencies.join(' ')} --save-dev`, { stdio: [0, 1, 2] });
     }
-  };
+  }
 
   /**
   * Create stryker.conf.js based on the chosen framework and testrunner
