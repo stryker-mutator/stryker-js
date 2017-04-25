@@ -4,14 +4,7 @@ node_js:
   - "7"
   - "6"
   - "4"
-addons:
-  firefox: "latest"
-  apt:
-    packages:
-      - oracle-java8-set-default
 install: npm install
 before_script:
   - "export DISPLAY=:99.0"
-  - ./node_modules/.bin/webdriver-manager update
-  - ./node_modules/.bin/webdriver-manager start &
   - "sh -e /etc/init.d/xvfb start"
