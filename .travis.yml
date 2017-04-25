@@ -1,20 +1,17 @@
-sudo: required
-dist: trusty
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
 language: node_js
 node_js:
   - "node"
   - "7"
   - "6"
   - "4"
-before_install: 
-  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+addons:
+  firefox: "latest"
+  apt:
+    packages:
+      - oracle-java8-set-default
 install: npm install
 before_script:
   - "export DISPLAY=:99.0"
+  - ./node_modules/.bin/webdriver-manager update
+  - ./node_modules/.bin/webdriver-manager start &
   - "sh -e /etc/init.d/xvfb start"

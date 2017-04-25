@@ -10,8 +10,7 @@
     "postbuild": "tslint -p tsconfig.json",
     "start": "tsc -w -p .",
     "test": "nyc --check-coverage --lines 95 --functions 95 --branches 95 mocha \"test/helpers/*.js\" \"test/unit/*.js\" \"test/integration/*.js\"",
-    "posttest": "webdriver-manager update && npm run uiTest",
-    "uiTest": "protractor"
+    "posttest": "protractor"
   },
   "repository": {
     "type": "git",

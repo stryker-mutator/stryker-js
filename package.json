@@ -37,7 +37,7 @@
     "typescript": "^2.2.2"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap && link-parent-bin",
+    "postinstall": "webdriver-manager update && lerna bootstrap && link-parent-bin",
     "prebuild": "npm run clean-integration-test",
     "build": "lerna run build",
     "postbuild": "tsc -p integrationTest",
