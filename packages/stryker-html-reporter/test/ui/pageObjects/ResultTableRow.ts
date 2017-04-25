@@ -1,8 +1,9 @@
 import ProgressBar from './ProgressBar';
+import { ElementFinder, by } from 'protractor';
 
 export default class ResultTableRow {
 
-  constructor(private host: protractor.ElementFinder) {
+  constructor(private host: ElementFinder) {
   }
 
   name = () => this.host.element(by.css(':nth-child(1)')).getText();

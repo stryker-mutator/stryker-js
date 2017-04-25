@@ -1,5 +1,6 @@
 import ProgressBar from './ProgressBar';
 import MutantSelection from './MutantSelection';
+import { element, by, $ } from 'protractor';
 
 export default class FilePage {
 

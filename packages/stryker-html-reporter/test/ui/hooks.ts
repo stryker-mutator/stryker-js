@@ -1,6 +1,9 @@
 import HtmlReporter from '../../src/HtmlReporter';
 import * as path from 'path';
 import { MutantResult, SourceFile } from 'stryker-api/report';
+import { browser } from 'protractor';
+
+
 const exampleMutations = (require('../integration/exampleMutations.json') as MutantResult[]).map(mutantResult => {
   while (mutantResult.sourceFilePath.indexOf('/') !== -1) {
     mutantResult.sourceFilePath = mutantResult.sourceFilePath.replace('/', path.sep);
