@@ -4,6 +4,20 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Run ui tests",
+      "runtimeExecutable": "npm",
+      "windows": {
+        "runtimeExecutable": "npm.cmd"
+      },
+      "runtimeArgs": [
+        "run-script",
+        "uiTest"
+      ],
+      "port": 5858
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Run unit tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
@@ -32,29 +46,6 @@
         "${workspaceRoot}/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
-    },
-    {
-      "name": "Run ui tests",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/../../node_modules/protractor/bin/protractor",
-      // "preLaunchTask": "build",
-      "stopOnEntry": false,
-      "args": [
-        "protractor.conf.js",
-        "--nolazy"
-      ],
-      "cwd": "${workspaceRoot}/.",
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "externalConsole": false,
-      "sourceMaps": true,
-      "outDir": "${workspaceRoot}"
-    },
+    }
   ]
 }
