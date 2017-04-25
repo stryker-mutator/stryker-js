@@ -1,26 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "moduleResolution": "node",
-        "rootDir": ".",
-        "sourceMap": true,
-        "declaration": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowJs": false,
-        "types": [ "mocha", "protractor" ],
-        "lib": [
-          "es5",
-          "es2015.promise"
-        ]
-    },
-    "exclude": [
-        "node_modules",
-        "src/**/*.d.ts",
-        "test/**/*.d.ts",
-        "typings/**",
-        "testResources"
-    ]
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "declaration": false,
+    "noUnusedLocals": false,
+    "noImplicitReturns": false
+  },
+  "exclude": [
+    "node_modules",
+    "src/**/*.d.ts",
+    "test/**/*.d.ts",
+    "typings/**",
+    "testResources"
+  ]
 }

@@ -8,7 +8,7 @@ module.exports = function (grunt) {
 
     clean: {
       build: {
-        src: ['+(test|src)/**/*+(.d.ts|.js|.map)', '*+(.js|.d.ts|.map)', '!src/resources/**/*.*', '!Gruntfile.js', '!protractor.conf.js']
+        src: ['+(test|src)/!(resources)/*+(.d.ts|.js|.map)', '*+(.js|.d.ts|.map)', '!src/resources/**/*.*', '!Gruntfile.js', '!protractor.conf.js']
       },
       coverage: {
         src: ['coverage']
