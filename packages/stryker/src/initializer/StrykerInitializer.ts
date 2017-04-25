@@ -15,9 +15,9 @@ export default class StrykerInitializer {
    * Runs the initializer ask used framework and testrunner en setup enviromnment
    * @function
    */
-  initialize(): void {
+  initialize(): Promise<void> {
     const buildQuestions: inquirer.Questions = this.buildQuestions();
-    this.promptContextChoices(buildQuestions)
+    return this.promptContextChoices(buildQuestions)
       .then((contextChoices) => {
         this.installNpmDependencies(this.buildNpmPackagesArray(contextChoices));
         this.installStrykerConfiguration(contextChoices);
