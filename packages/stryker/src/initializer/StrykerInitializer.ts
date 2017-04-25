@@ -136,7 +136,6 @@ export default class StrykerInitializer {
 
     let newConfiguration = wrapInModule(JSON.stringify(configurationObject, null, 2));
 
-    console.log('fs.writeFile');
     fs.writeFile(process.cwd() + path.sep + 'stryker.conf.js', newConfiguration, function (err) {
       if (err) {
         throw err;
