@@ -15,9 +15,9 @@ export default class StrykerInitializer {
    * Runs the initializer ask used framework and testrunner en setup enviromnment
    * @function
    */
-  initialize(): Promise<void> {
+  async initialize(): Promise<void> {
     const buildQuestions: inquirer.Questions = this.buildQuestions();
-    return this.promptContextChoices(buildQuestions)
+    await this.promptContextChoices(buildQuestions)
       .then((contextChoices) => {
         this.installNpmDependencies(this.buildNpmPackagesArray(contextChoices));
         this.installStrykerConfiguration(contextChoices);
@@ -52,6 +52,10 @@ export default class StrykerInitializer {
       });
   };
 
+  /**
+  * Build an array of strings with the neccessary npm packages based on the chosen framework and testrunner
+  * @function
+  */
   buildNpmPackagesArray(contextChoices: ContextChoices): Array<String> {
     let npmPackages = [];
     npmPackages.push('stryker-html-reporter');
@@ -65,6 +69,10 @@ export default class StrykerInitializer {
     return npmPackages;
   }
 
+  /**
+  * Build a Questions object as input for inquirer.prompt
+  * @function
+  */
   buildQuestions(): inquirer.Questions {
     let testFrameworkChoices: Array<string> = [];
     const possibleTestFrameworks = initializerConfig.testFrameworks;
@@ -98,6 +106,10 @@ export default class StrykerInitializer {
     ];
   };
 
+  /**
+  * Install the npm packages
+  * @function
+  */
   installNpmDependencies(dependencies: Array<String>): void {
     if (dependencies.length > 0) {
       console.log('Installing NPM dependencies...');
@@ -105,6 +117,10 @@ export default class StrykerInitializer {
     }
   };
 
+  /**
+  * Create stryker.conf.js based on the chosen framework and testrunner
+  * @function
+  */
   installStrykerConfiguration(contextChoices: ContextChoices): void {
     console.log('Installing Stryker configuration...');
 
