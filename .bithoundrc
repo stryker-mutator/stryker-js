@@ -7,9 +7,11 @@
         "packages/**/test/**"
      ],
      "ignore": [
-        "packages/**/Gruntfile.js",
-	"integrationTest/**",
-        "packages/**/testResources/**"
+        "integrationTest/**",
+        "packages/**/testResources/**",
+        "packages/stryker-html-reporter/test/ui/pageObjects/ProgressBar.ts",
+        "packages/stryker-html-reporter/test/ui/pageObjects/MutantSelection.ts",
+        "packages/stryker-html-reporter/test/ui/pageObjects/NodePage.ts"
     ],
     "dependencies": {
         "unused-ignores": [
