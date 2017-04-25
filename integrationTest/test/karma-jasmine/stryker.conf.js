@@ -3,6 +3,7 @@ module.exports = function(config){
     files: ['src/*.js', 'test/*.js'],
     mutate: ['src/*.js'],
     testFramework: 'jasmine',
-    testRunner: 'karma'
+    testRunner: 'karma',
+    reporter: ['clear-text', 'html']
   });
 };
