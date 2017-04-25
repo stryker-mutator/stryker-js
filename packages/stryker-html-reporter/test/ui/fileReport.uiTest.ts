@@ -2,6 +2,7 @@ import * as path from 'path';
 import { expect } from 'chai';
 import FileReportPage from './pageObjects/FileReportPage';
 import MutantSelection from './pageObjects/MutantSelection';
+import { browser } from 'protractor';
 
 describe('File report page "Circle.js.html"', () => {
 

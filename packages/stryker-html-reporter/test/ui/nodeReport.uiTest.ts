@@ -2,6 +2,8 @@ import * as path from 'path';
 import { expect } from 'chai';
 import NodePage from './pageObjects/NodePage';
 import ResultTableRow from './pageObjects/ResultTableRow';
+import { browser } from 'protractor';
+import { ILocation } from 'selenium-webdriver';
 
 describe('Node results page', () => {
 
@@ -25,7 +27,7 @@ describe('Node results page', () => {
   });
 
   it('should position the image on the top right', () => {
-    return expect(page.strykerImageLocation()).to.eventually.satisfy((loc: webdriver.ILocation) => {
+    return expect(page.strykerImageLocation()).to.eventually.satisfy((loc: ILocation) => {
       expect(loc.y).to.be.lessThan(10);
       expect(loc.x).to.be.greaterThan(50);
       return true;

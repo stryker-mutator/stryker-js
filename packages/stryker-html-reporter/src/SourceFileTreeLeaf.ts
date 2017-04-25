@@ -40,5 +40,5 @@ export default class SourceFileTreeLeaf {
       }
     });
     this.model = new HandlebarsModel(this.name, urlPrefix, this.filename, killed, timedOut, survived, noCoverage, errors);
-  };
+  }
 }
