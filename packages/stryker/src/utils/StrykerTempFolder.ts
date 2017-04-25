@@ -1,15 +1,15 @@
-import * as fs from 'graceful-fs';
+import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
-import * as fileUtils from './fileUtils';
 import * as log4js from 'log4js';
+import { deleteDir} from './fileUtils';
 
-const log = log4js.getLogger('fileUtils');
+const log = log4js.getLogger('StrykerTempFolder');
 
 let baseTempFolder = path.join(process.cwd(), '.stryker-tmp');
 let tempFolder = path.join(baseTempFolder, random().toString());
-ensureFolderExists(baseTempFolder);
-ensureFolderExists(tempFolder);
+mkdirp.sync(baseTempFolder);
+mkdirp.sync(tempFolder);
 
 /**
  * Creates a new random folder with the specified prefix.
@@ -17,7 +17,9 @@ ensureFolderExists(tempFolder);
  * @returns The path to the folder.
  */
 function createRandomFolder(prefix: string): string {
-  return ensureFolderExists(tempFolder + path.sep + prefix + random());
+  let dir = tempFolder + path.sep + prefix + random();
+  mkdirp.sync(dir);
+  return dir;
 }
 
 /**
@@ -29,47 +31,13 @@ function random(): number {
 }
 
 /**
- * Creates a folder at the specified path if it doesn't already exist.
- * @param path The path to check.
- * @returns The path of the folder.
- */
-function ensureFolderExists(path: string): string {
-  if (!fileOrFolderExists(path)) {
-    mkdirp.sync(path);
-  }
-  return path;
-}
-
-/**
- * Checks if a file or folder exists.
- * @param path The path to the file or folder.
- * @returns True if the file exists.
- */
-function fileOrFolderExists(path: string): boolean {
-  try {
-    fs.lstatSync(path);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-/**
  * Writes data to a specified file.
  * @param filename The path to the file.
  * @param data The content of the file.
  * @returns A promise to eventually save the file.
  */
 function writeFile(filename: string, data: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    fs.writeFile(filename, data, { encoding: 'utf8' }, (error) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
+  return fs.writeFile(filename, data, { encoding: 'utf8' });
 }
 
 /**
@@ -98,13 +66,13 @@ function copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS
  */
 function clean() {
   log.debug(`Cleaning stryker temp folder ${baseTempFolder}`);
-  return fileUtils.deleteDir(baseTempFolder);
+  return deleteDir(baseTempFolder)
+    .catch(() => log.info(`Failed to clean stryker temp folder ${baseTempFolder}`));
 }
 
 export default {
   createRandomFolder,
   writeFile,
   copyFile,
-  ensureFolderExists,
   clean
 };

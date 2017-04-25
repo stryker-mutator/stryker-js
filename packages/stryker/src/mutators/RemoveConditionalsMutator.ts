@@ -43,6 +43,6 @@ export default class RemoveConditionalsMutator implements Mutator {
 
   private canMutate(node: estree.Node): node is ConditionExpression {
     return this.types.indexOf(node.type) >= 0;
-  };
+  }
 
 }

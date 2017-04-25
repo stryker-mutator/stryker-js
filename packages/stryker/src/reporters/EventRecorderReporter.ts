@@ -1,8 +1,9 @@
 import * as log4js from 'log4js';
 import * as path from 'path';
+import * as fs from 'mz/fs';
 import { StrykerOptions } from 'stryker-api/core';
 import { SourceFile, MutantResult, MatchedMutant, Reporter } from 'stryker-api/report';
-import * as fileUtils from '../utils/fileUtils';
+import { cleanFolder } from '../utils/fileUtils';
 import StrictReporter from './StrictReporter';
 
 const log = log4js.getLogger('EventRecorderReporter');
@@ -16,7 +17,7 @@ export default class EventRecorderReporter implements StrictReporter {
   private index = 0;
 
   constructor(private options: StrykerOptions) {
-    this.createBaseFolderTask = fileUtils.cleanFolder(this.baseFolder);
+    this.createBaseFolderTask = cleanFolder(this.baseFolder);
   }
 
   private get baseFolder() {
@@ -36,7 +37,7 @@ export default class EventRecorderReporter implements StrictReporter {
   private writeToFile(index: number, methodName: keyof Reporter, data: any) {
     let filename = path.join(this.baseFolder, `${this.format(index)}-${methodName}.json`);
     log.debug(`Writing event ${methodName} to file ${filename}`);
-    return fileUtils.writeFile(filename, JSON.stringify(data));
+    return fs.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
   }
 
   private format(input: number) {

@@ -1,23 +1,15 @@
 {
   "name": "stryker",
-  "version": "0.6.0-2",
+  "version": "0.6.0",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
   "scripts": {
-    "test": "grunt test",
     "start": "tsc -w",
-    "sample": "node src/stryker-cli.js run testResources/sampleProject/stryker.conf.js",
-    "preversion": "grunt",
-    "clean": "grunt clean",
-    "jshint": "grunt jshint",
-    "tslint": "grunt tslint",
-    "coverage": "grunt coverage",
-    "intergration": "grunt intergration",
-    "build": "grunt build",
-    "serve": "grunt serve",
-    "watch-test": "grunt watch-test",
-    "release": "grunt release"
+    "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage testResources/module/node_modules/stryker",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -51,6 +43,10 @@
     "Willem Meints <willem@mein-design.nl>"
   ],
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker#readme",
   "bin": {
     "stryker": "./bin/stryker"
   },
@@ -61,64 +57,20 @@
     "escodegen": "^1.8.0",
     "esprima": "^2.7.0",
     "glob": "^7.0.3",
-    "graceful-fs": "^4.1.11",
     "istanbul": "^0.4.5",
     "lodash": "^4.17.4",
     "log4js": "^1.1.0",
     "mkdirp": "^0.5.1",
+    "mz": "^2.6.0",
     "progress": "^1.1.8",
+    "rimraf": "^2.6.1",
     "serialize-javascript": "^1.3.0",
     "tslib": "^1.5.0"
   },
   "devDependencies": {
-    "@types/chai-as-promised": "0.0.29",
-    "@types/chalk": "^0.4.28",
-    "@types/commander": "^2.3.31",
-    "@types/escodegen": "0.0.6",
-    "@types/esprima": "^2.1.31",
-    "@types/estree": "0.0.32",
-    "@types/glob": "^5.0.29",
-    "@types/graceful-fs": "^2.0.29",
-    "@types/inquirer": "0.0.32",
-    "@types/istanbul": "^0.4.29",
-    "@types/karma": "^0.13.32",
-    "@types/lodash": "^4.14.34",
-    "@types/log4js": "0.0.32",
-    "@types/mkdirp": "^0.3.28",
-    "@types/mocha": "^2.2.34",
-    "@types/progress": "^1.1.28",
-    "@types/sinon": "^1.16.33",
-    "@types/sinon-as-promised": "^4.0.5",
-    "@types/sinon-chai": "^2.7.27",
-    "chai": "^3.4.1",
-    "chai-as-promised": "^6.0.0",
-    "grunt": "^1.0.1",
-    "grunt-bump": "^0.8.0",
-    "grunt-cli": "^1.2.0",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-jshint": "^1.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-conventional-changelog": "^6.1.0",
-    "grunt-mocha-istanbul": "^5.0.1",
-    "grunt-mocha-test": "^0.13.2",
-    "grunt-npm": "0.0.2",
-    "grunt-ts": "^6.0.0-beta.3",
-    "grunt-tslint": "^4.0.0",
-    "jasmine-core": "^2.4.1",
-    "karma": "1.0.0",
-    "karma-coverage": "^1.0.0",
-    "karma-jasmine": "^1.0.2",
-    "karma-phantomjs-launcher": "^1.0.1",
-    "load-grunt-tasks": "^3.5.0",
-    "mocha": "^3.2.0",
-    "sinon": "^1.17.2",
-    "sinon-as-promised": "^4.0.2",
-    "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.5.0-2",
-    "tslint": "^4.4.2",
-    "typescript": "~2.2.1"
+    "stryker-api": "^0.5.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.5.0-2"
+    "stryker-api": "^0.5.0"
   }
 }

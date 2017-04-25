@@ -76,7 +76,7 @@ export default class Mutant {
    */
   save(filename: string) {
     return StrykerTempFolder.writeFile(filename, this.mutatedCode);
-  };
+  }
 
   /**
    * Removes the mutated file.
@@ -84,7 +84,7 @@ export default class Mutant {
    */
   reset(filename: string) {
     return StrykerTempFolder.writeFile(filename, this.originalCode);
-  };
+  }
 
   toString() {
     return `${this.mutatorName} (${this.filename}@${this.location.start.line}:${this.location.start.column})`;

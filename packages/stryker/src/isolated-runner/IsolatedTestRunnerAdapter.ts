@@ -30,6 +30,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
 
   private workerProcess: ChildProcess;
   private currentTask: WorkerTask;
+  private lastMessagesQueue: string[] = [];
 
   constructor(private realTestRunnerName: string, private options: IsolatedRunnerOptions) {
     super();
@@ -51,11 +52,19 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     if (this.workerProcess.stdout) {
       let traceEnabled = log.isTraceEnabled();
       this.workerProcess.stdout.on('data', (data: Buffer) => {
+        const msg = data.toString();
+
+        this.lastMessagesQueue.push(msg);
+        if (this.lastMessagesQueue.length > 10) {
+          this.lastMessagesQueue.shift();
+        }
+
         if (traceEnabled) {
-          log.trace(data.toString());
+          log.trace(msg);
         }
       });
     }
+
     if (this.workerProcess.stderr) {
       this.workerProcess.stderr.on('data', (data: any) => {
         log.error(data.toString());
@@ -90,6 +99,15 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
           break;
       }
     });
+
+    this.workerProcess.on('exit', (code: number | null, signal: string) => {
+      if (code !== 0 && code !== null) {
+        log.error(`Child process exited with non-zero exit code ${code}. Last 10 message from the child process were: \r\n${this.lastMessagesQueue.map(msg => `\t${msg}`).join('\r\n')}`);
+        if (this.currentTask) {
+          this.currentTask.reject(`Test runner child process exited with non-zero exit code ${code}`);
+        }
+      }
+    });
   }
 
   private logReceivedUnexpectedMessageWarning(message: WorkerMessage) {
@@ -116,7 +134,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.currentTask = new DisposeTask(MAX_WAIT_FOR_DISPOSE);
     this.sendDisposeCommand();
     return this.currentTask.promise
-      .then(() => this.workerProcess.kill('SIGKILL'));
+      .then(() => this.workerProcess.kill());
   }
 
   private sendRunCommand(options: RunOptions) {

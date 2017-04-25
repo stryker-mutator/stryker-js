@@ -1,6 +1,7 @@
 import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
 import * as path from 'path';
+import * as mkdirp from 'mkdirp';
 import { expect } from 'chai';
 import { InputFile } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
@@ -37,9 +38,9 @@ describe('Sandbox', () => {
       { path: onlineFile, mutated: false, included: true }
     ];
     sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns(workingFolder);
-    sandbox.stub(StrykerTempFolder, 'ensureFolderExists').returnsArg(0);
     sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve({}));
     sandbox.stub(StrykerTempFolder, 'writeFile').returns(Promise.resolve({}));
+    sandbox.stub(mkdirp, 'sync').returns('');
     sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
   });
 
@@ -76,7 +77,7 @@ describe('Sandbox', () => {
       it('should not have copied online files', () => {
         let expectedBaseFolder = onlineFile.substr(workingFolder.length - 1); // The Sandbox expects all files to be absolute paths. An online file is not an absolute path.
 
-        expect(StrykerTempFolder.ensureFolderExists).to.not.have.been.calledWith(workingFolder + path.dirname(expectedBaseFolder));
+        expect(mkdirp.sync).to.not.have.been.calledWith(workingFolder + path.dirname(expectedBaseFolder));
         expect(StrykerTempFolder.copyFile).to.not.have.been.calledWith(onlineFile, sinon.match.any, sinon.match.any);
       });
     });

@@ -1,0 +1,123 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run unit tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/grunt/bin/grunt",
+      // "preLaunchTask": "build",
+      "stopOnEntry": false,
+      "args": [
+        "mochaTest:unit"
+      ],
+      "cwd": "${workspaceRoot}/.",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
+    },
+    {
+      "name": "Run integration tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
+      // "preLa4unchTask": "ts",
+      "stopOnEntry": false,
+      "args": [
+        "mochaTest:integration"
+      ],
+      "cwd": "${workspaceRoot}/.",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
+    },
+    {
+      "name": "Run stryker example",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/stryker",
+      "preLaunchTask": "build",
+      "stopOnEntry": false,
+      "args": [
+        "--configFile",
+        "testResources/sampleProject/stryker.conf.js",
+        "--logLevel",
+        "trace",
+        "--testFramework",
+        "jasmine"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
+    },
+    {
+      "name": "Run own dog food",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/stryker",
+      "preLaunchTask": "build",
+      "stopOnEntry": false,
+      "args": [
+        "--configFile",
+        "stryker.conf.js",
+        "--logLevel",
+        "info"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
+    },
+    {
+      "name": "Run stryker help",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/src/Stryker.js",
+      "preLaunchTask": "build",
+      "stopOnEntry": false,
+      "args": [
+        "--help"
+      ],
+      "cwd": "${workspaceRoot}/.",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "externalConsole": false,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}"
+    }
+  ]
+}

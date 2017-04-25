@@ -44,7 +44,11 @@ The following is an example `stryker.conf.js` file:
 ```javascript
 module.exports = function(config){
   config.set({
-    files: ['test/helpers/**/*.js', 'test/unit/**/*.js', { pattern: 'src/**/*.js', included: false, mutated: true }],
+    files: ['test/helpers/**/*.js', 
+            'test/unit/**/*.js', 
+            { pattern: 'src/**/*.js', included: false, mutated: true }
+            { pattern: 'src/templates/*.html', included: false, mutated: false }
+            '!src/fileToIgnore.js'],
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporter: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
@@ -63,4 +67,4 @@ Make sure you *at least* specify the `files` and the `testRunner` options when m
 See our website for the [list of currently supported mutators](http://stryker-mutator.github.io/mutators.html).
 
 ## Configuration  
-See the [stryker's package readme](https://github.com/stryker-mutator/stryker/packages/stryker/README.md#Configuration) for all config options.
+See the [stryker's package readme](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker/README.md#configuration) for all config options.

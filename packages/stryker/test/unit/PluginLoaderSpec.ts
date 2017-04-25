@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as fs from 'graceful-fs';
+import * as fs from 'mz/fs';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as fileUtils from '../../src/utils/fileUtils';
