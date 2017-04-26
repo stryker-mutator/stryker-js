@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stryker-mutator/stryker-html-reporter.git"
+    "url": "https://github.com/stryker-mutator/stryker.git"
   },
   "keywords": [
     "stryker",
@@ -26,9 +26,9 @@
   "author": "Nico Jansen <nicoj@infosupport.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker-html-reporter/issues"
+    "url": "https://github.com/stryker-mutator/stryker/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker-html-reporter#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-html-reporter#readme",
   "dependencies": {
     "file-url": "^2.0.0",
     "handlebars": "^4.0.5",
