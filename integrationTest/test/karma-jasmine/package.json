@@ -5,9 +5,9 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
-    "test": "npm run tsc && npm run stryker:config",
-    "tsc": "tsc",
-    "stryker:config": "stryker run stryker.conf.js"
+    "pretest": "rimraf \"reports\" \"verify/*.js\" \"verify/*.map\" && tsc -p .",
+    "test": "stryker run stryker.conf.js",
+    "posttest": "mocha verify/*.js"
   },
   "author": "",
   "license": "ISC"

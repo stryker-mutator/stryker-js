@@ -1,0 +1,55 @@
+{
+  "name": "stryker-html-reporter",
+  "version": "0.4.0",
+  "description": "An html reporter for the JavaScript mutation testing framework Stryker",
+  "main": "src/index.js",
+  "typings": "src/index.d.ts",
+  "scripts": {
+    "clean": "rimraf \"+(test|src)/!(resources)/**/*+(.d.ts|.js|.map)\" coverage",
+    "build": "tsc -p . && node tasks/clientResources.js && browserify src/resources/stryker.js -o resources/stryker.js",
+    "postbuild": "tslint -p tsconfig.json",
+    "start": "tsc -w -p .",
+    "test": "nyc --check-coverage --lines 95 --functions 95 --branches 95 mocha \"test/helpers/*.js\" \"test/unit/*.js\" \"test/integration/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker.git"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "html",
+    "report",
+    "mutation",
+    "testing"
+  ],
+  "author": "Nico Jansen <nicoj@infosupport.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-html-reporter#readme",
+  "dependencies": {
+    "file-url": "^2.0.0",
+    "handlebars": "^4.0.5",
+    "lodash": "^4.13.1",
+    "log4js": "^1.0.1",
+    "mkdirp": "^0.5.1",
+    "mz": "^2.5.0"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.4.0"
+  },
+  "devDependencies": {
+    "@types/file-url": "^1.0.28",
+    "@types/handlebars": "^4.0.32",
+    "@types/selenium-webdriver": "^3.0.3",
+    "bootstrap": "3.3.7",
+    "highlight.js": "^9.4.0",
+    "stryker-api": "^0.4.1"
+  },
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>"
+  ]
+}

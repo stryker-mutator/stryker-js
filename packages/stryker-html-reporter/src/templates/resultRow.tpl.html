@@ -1,0 +1,20 @@
+<tr>
+    <td><a href="{{model.relativeUrl}}">{{name}}</a></td>
+    <td>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{model.percentageBasedOnAllCode}}" aria-valuemin="0" aria-valuemax="100"
+                style="width: {{model.percentageBasedOnAllCode}}%;">
+                {{model.percentageBasedOnAllCode}}%
+            </div>
+        </div>
+    </td>
+    <th class="text-center" style="width: 10%">{{model.totalDetected}}/{{model.totalMutations}}</th>
+    <td class="text-center">{{model.totalKilled}}</td>
+    <td class="text-center">{{model.totalSurvived}}</td>
+    <td class="text-center">{{model.totalTimedOut}}</td>
+    <td class="text-center">{{model.totalNoCoverage}}</td>
+    <td class="text-center">{{model.totalErrors}}</td>
+    <th class="text-center">{{model.totalDetected}}</th>
+    <th class="text-center">{{model.totalUndetected}}</th>
+    <th class="text-center">{{model.totalMutations}}</th>
+</tr>

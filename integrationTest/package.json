@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",
@@ -14,8 +16,11 @@
     "karma-phantomjs-launcher": "^1.0.1",
     "link-parent-bin": "^0.1.1",
     "load-grunt-tasks": "^3.5.2",
+    "mocha": "^3.3.0",
+    "mz": "^2.6.0",
     "stryker": "file:../packages/stryker",
     "stryker-api": "file:../packages/stryker-api",
+    "stryker-html-reporter": "file:../packages/stryker-html-reporter",
     "stryker-jasmine": "file:../packages/stryker-jasmine",
     "stryker-karma-runner": "file:../packages/stryker-karma-runner",
     "typescript": "^2.2.2"
