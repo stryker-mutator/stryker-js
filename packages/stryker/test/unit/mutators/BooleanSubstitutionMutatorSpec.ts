@@ -5,7 +5,7 @@ import BooleanSubstitutionMutator from '../../../src/mutators/BooleanSubstitutio
 import { parse } from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
 
-describe.only('BooleanSubstitutionMutator', () => {
+describe('BooleanSubstitutionMutator', () => {
   let sut: BooleanSubstitutionMutator;
 
   beforeEach(() => sut = new BooleanSubstitutionMutator());

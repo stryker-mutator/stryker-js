@@ -12,7 +12,6 @@ export default class BooleanSubstitutionMutator implements Mutator {
   applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): IdentifiedNode[] {
     let nodes: IdentifiedNode[] = [];
     
-
     // !a -> a
     if (node.type === Syntax.UnaryExpression && node.operator === '!') {
       let mutatedNode = copy(node.argument) as IdentifiedNode;
