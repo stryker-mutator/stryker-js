@@ -17,7 +17,8 @@
   "keywords": [
     "stryker",
     "jasmine",
-    "stryker-plugin"
+    "stryker-plugin",
+    "stryker-test-framework"
   ],
   "author": "nicojs",
   "license": "Apache-2.0",
