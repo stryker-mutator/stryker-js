@@ -21,10 +21,10 @@ export default class RetryDecorator extends TestRunnerDecorator {
   dispose(): Promise<void> {
     return super.dispose().catch(err => {
       if (this.innerProcessIsCrashed(err)) {
-        return;
+        return null;
       } else {
         // Oops, not intended to catch this one. Pass through
-        return Promise.reject(err);
+        throw err;
       }
     });
   }
