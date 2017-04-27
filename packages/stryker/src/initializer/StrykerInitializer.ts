@@ -1,146 +1,49 @@
-'use strict';
-
-import * as inquirer from 'inquirer';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as _ from 'lodash';
-import initializerConfig from './initializer.conf';
-import { } from './initializer.conf';
-import strykerConfig from './stryker.conf';
-import { ContextChoices } from './contextChoices';
 import * as child from 'child_process';
+import * as fs from 'mz/fs';
+import * as _ from 'lodash';
+import StrykerConfigFactory from './StrykerConfigFactory';
+import { StrykerInquirer } from './StrykerInquirer';
 
 export default class StrykerInitializer {
+
+  constructor(private log = console.log) { }
+
   /**
-   * Runs the initializer ask used framework and testrunner en setup enviromnment
+   * Runs the initializer ask used framework and test runner en setup environment
    * @function
    */
   async initialize(): Promise<void> {
-    const buildQuestions: inquirer.Questions = this.buildQuestions();
-    await this.promptContextChoices(buildQuestions)
-      .then((contextChoices) => {
-        this.installNpmDependencies(this.buildNpmPackagesArray(contextChoices));
-        this.installStrykerConfiguration(contextChoices);
-      });
-  }
-
-  /**
-  * Ask the user for the used framework and testrunner
-  * @function
-  */
-  promptContextChoices(buildQuestions: inquirer.Questions): Promise<ContextChoices> {
-    return inquirer.prompt(buildQuestions)
-      .then((answers: inquirer.Answers) => {
-        const possibleTestFrameworks = initializerConfig.testFrameworks;
-        const possibleTestRunners = initializerConfig.testRunners;
-        let chosenTestFramework;
-        let chosenTestRunner;
-
-        for (let i = 0; i < possibleTestFrameworks.length; i++) {
-          if (possibleTestFrameworks[i].name === answers['testFramework']) {
-            chosenTestFramework = possibleTestFrameworks[i];
-          }
-        }
-
-        for (let i = 0; i < possibleTestRunners.length; i++) {
-          if (possibleTestRunners[i].name === answers['testRunner']) {
-            chosenTestRunner = possibleTestRunners[i];
-          }
-        }
-
-        return new ContextChoices(chosenTestRunner, chosenTestFramework);
-      });
-  }
-
-  /**
-  * Build an array of strings with the neccessary npm packages based on the chosen framework and testrunner
-  * @function
-  */
-  buildNpmPackagesArray(contextChoices: ContextChoices): Array<String> {
-    let npmPackages = [];
-    npmPackages.push('stryker-html-reporter');
-    if (contextChoices.testFramework !== undefined && contextChoices.testFramework.npm !== '') {
-      npmPackages.push(contextChoices.testFramework.npm);
-    }
-    if (contextChoices.testRunner !== undefined && contextChoices.testRunner.npm !== '') {
-      npmPackages.push(contextChoices.testRunner.npm);
-    }
-
-    return npmPackages;
-  }
-
-  /**
-  * Build a Questions object as input for inquirer.prompt
-  * @function
-  */
-  buildQuestions(): inquirer.Questions {
-    let testFrameworkChoices: Array<string> = [];
-    const possibleTestFrameworks = initializerConfig.testFrameworks;
-    let testRunnerChoices: Array<string> = [];
-    const possibleTestRunners = initializerConfig.testRunners;
-
-    for (let i = 0; i < possibleTestFrameworks.length; i++) {
-
-      testFrameworkChoices.push(possibleTestFrameworks[i].name);
-    }
-
-    for (let i = 0; i < possibleTestRunners.length; i++) {
-      testRunnerChoices.push(possibleTestRunners[i].name);
-    }
-
-    return [
-      {
-        type: 'list',
-        name: 'testRunner',
-        message: 'Which Test Runner do you use?',
-        choices: testRunnerChoices,
-        default: 'Mocha'
-      },
-      {
-        type: 'list',
-        name: 'testFramework',
-        message: 'Which Test Framework do you use?',
-        choices: testFrameworkChoices,
-        default: 'Mocha'
-      }
-    ];
+    const answers = await new StrykerInquirer().prompt();
+    this.installNpmDependencies(answers.additionalNpmDependencies.concat(['stryker-html-reporter']));
+    await this.installStrykerConfiguration(answers.additionalConfig);
+    this.log('Let\'s kill some mutants with this command: `stryker run`');
   }
 
   /**
   * Install the npm packages
   * @function
   */
-  installNpmDependencies(dependencies: Array<String>): void {
+  private installNpmDependencies(dependencies: string[]): void {
     if (dependencies.length > 0) {
-      console.log('Installing NPM dependencies...');
-      child.execSync(`npm i ${dependencies.join(' ')} --save-dev`, { stdio: [0, 1, 2] });
+      this.log('Installing NPM dependencies...');
+      const cmd = `npm i --save-dev ${dependencies.join(' ')}`;
+      try {
+        child.execSync(cmd, { stdio: [0, 1, 2] });
+      } catch (_) {
+        this.log(`An error occurred during installation, please try it yourself: "${cmd}"`);
+      }
     }
   }
 
   /**
-  * Create stryker.conf.js based on the chosen framework and testrunner
+  * Create stryker.conf.js based on the chosen framework and test runner
   * @function
   */
-  installStrykerConfiguration(contextChoices: ContextChoices): void {
-    console.log('Installing Stryker configuration...');
-
-    let configurationObject = strykerConfig;
-
-    if (contextChoices.testFramework !== undefined) {
-      configurationObject = _.assign(configurationObject, contextChoices.testFramework.config);
-    }
-
-    if (contextChoices.testRunner !== undefined) {
-      configurationObject = _.assign(configurationObject, contextChoices.testRunner.config);
-    }
-
-    let newConfiguration = wrapInModule(JSON.stringify(configurationObject, null, 2));
-
-    fs.writeFile(process.cwd() + path.sep + 'stryker.conf.js', newConfiguration, function (err) {
-      if (err) {
-        throw err;
-      }
-    });
+  private installStrykerConfiguration(configurationObject: object): Promise<void> {
+    this.log('Writing stryker.conf.js...');
+    const strykerConfig = _.assign(StrykerConfigFactory.default(), configurationObject);
+    const newConfiguration = wrapInModule(JSON.stringify(strykerConfig, null, 2));
+    return fs.writeFile('stryker.conf.js', newConfiguration);
   }
 }
 

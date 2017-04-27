@@ -16,6 +16,10 @@ export function isPromise(input: any): input is Promise<any> {
   return input && typeof input['then'] === 'function';
 }
 
+export function filterEmpty<T>(input: (T | undefined | null)[]) {
+  return input.filter(item => item !== undefined && item !== null) as T[];
+}
+
 export function deserialize(serializedJavascript: String): any {
   // Don't use JSON.parse, as it does not allow for regexes or functions, etc
   // tslint:disable
