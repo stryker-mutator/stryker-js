@@ -1,7 +1,6 @@
 import * as program from 'commander';
 import { CONFIG_SYNTAX_HELP } from './ConfigReader';
 import Stryker from './Stryker';
-import StrykerInitializer from './initializer/StrykerInitializer';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('stryker-cli');
@@ -59,7 +58,6 @@ if (strykerConfig) {
 }
 
 const commands: { [cmd: string]: () => void } = {
-  init: () => new StrykerInitializer().initialize(),
   run: () => new Stryker(program).runMutationTest().catch(err => { 
     log.error(`an error occurred`, err); 
     process.exitCode = 1;

@@ -2,14 +2,16 @@ import { expect } from 'chai';
 import * as estree from 'estree';
 import { Identified } from 'stryker-api/mutant';
 import BooleanSubstitutionMutator from '../../../src/mutators/BooleanSubstitutionMutator';
-import { parse } from '../../../src/utils/parserUtils';
+import { parse, generate } from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
 
-describe('BooleanSubstitutionMutator', () => {
+describe.only('BooleanSubstitutionMutator', () => {
   let sut: BooleanSubstitutionMutator;
 
-  beforeEach(() => sut = new BooleanSubstitutionMutator());
-
+  beforeEach(() => {
+    sut = new BooleanSubstitutionMutator();
+  });
+  
   it('should mutate when supplied a expression with !', () => {
     // Arrange
     const program = parse(`!a.a()`);
@@ -22,6 +24,7 @@ describe('BooleanSubstitutionMutator', () => {
     expect(result).to.be.ok;
     expect(result.type).to.be.eq(nodeUnaryExpression.argument.type);
     expect(result.nodeID).to.be.eq(nodeUnaryExpression.nodeID);
+    expect(generate(result)).to.be.eq('a.a()');
   });
 
   it('should mutate true -> false', () => {
@@ -37,6 +40,7 @@ describe('BooleanSubstitutionMutator', () => {
     expect(result.raw).to.be.eq('false');
     expect(result.value).to.be.false;
     expect(result.nodeID).to.be.eq(nodeLiteral.nodeID);
+    expect(generate(result)).to.be.eq('false');
   });
 
   it('should mutate false -> true', () => {
@@ -52,5 +56,21 @@ describe('BooleanSubstitutionMutator', () => {
     expect(result.raw).to.be.eq('true');
     expect(result.value).to.be.true;
     expect(result.nodeID).to.be.eq(nodeLiteral.nodeID);
+    expect(generate(result)).to.be.eq('true');
   });
+
+  it('should not mutate', () => {
+    // Arrange
+    const invalidNode: IdentifiedNode = {
+      type: 'Identifier',
+    } as estree.Node & Identified;
+
+    // Act
+    const result = sut.applyMutations(invalidNode, copy);
+
+    // Assert
+    expect(result).to.have.lengthOf(0);
+  });
+
+
 });

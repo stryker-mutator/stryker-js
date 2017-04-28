@@ -87,7 +87,7 @@ export default class MutatorOrchestrator {
     mutatorFactory.register('UnaryOperator', UnaryOperatorMutator);
     mutatorFactory.register('UpdateOperator', UpdateOperatorMutator);
     mutatorFactory.register('ArrayDeclarator', ArrayDeclaratorMutator);
-    mutatorFactory.register('BooleanSubstitutionMutator', BooleanSubstitutionMutator);
+    mutatorFactory.register('BooleanSubstitution', BooleanSubstitutionMutator);
   }
 
   /**

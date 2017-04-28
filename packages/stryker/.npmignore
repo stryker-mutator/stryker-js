@@ -16,7 +16,6 @@ testResources
 .tmp
 .tscache
 .vscode
-/stryker.conf.js
 tsconfig.json
 /coverage
 reports
