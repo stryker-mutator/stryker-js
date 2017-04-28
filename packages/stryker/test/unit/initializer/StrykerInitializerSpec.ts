@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
-// import { StrykerConfigOptions } from '../../../src/initializer/StrykerConfigOptions';
+import * as restClient from 'typed-rest-client/RestClient';
 
 describe('StrykerInitializer', () => {
   let sut: StrykerInitializer;
@@ -12,6 +12,7 @@ describe('StrykerInitializer', () => {
   let inquirerPrompt: sinon.SinonStub;
   let childExecSync: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStub;
+  let restClientGet: sinon.SinonStub;
   let log: sinon.SinonStub;
 
   beforeEach(() => {
@@ -20,6 +21,7 @@ describe('StrykerInitializer', () => {
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
     fsWriteFile = sandbox.stub(fs, 'writeFile');
+    restClientGet = sandbox.stub(restClient.RestClient, 'get');
     sut = new StrykerInitializer(log);
   });
 

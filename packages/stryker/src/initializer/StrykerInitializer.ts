@@ -5,6 +5,19 @@ import * as _ from 'lodash';
 import StrykerConfigFactory from './StrykerConfigFactory';
 import { StrykerInquirer } from './StrykerInquirer';
 import { StrykerConfigOptions } from './StrykerConfigOptions';
+import * as rm from 'typed-rest-client/RestClient';
+
+interface NpmSearch {
+    total: number;
+    results: NpmPackage[];
+}
+
+interface NpmPackage {
+  package: {
+    name: string;
+    version: string;
+  };
+}
 
 export default class StrykerInitializer {
 
@@ -15,11 +28,43 @@ export default class StrykerInitializer {
    * @function
    */
   async initialize(): Promise<void> {
+    await this.addAdditionalTestRunners();
     this.detectKarmaConfigFile();
     const answers = await new StrykerInquirer().prompt(StrykerConfigOptions);
     this.installNpmDependencies(answers.additionalNpmDependencies.concat(['stryker-html-reporter']));
     await this.installStrykerConfiguration(answers.additionalConfig);
     this.log('Let\'s kill some mutants with this command: `stryker run`');
+  }
+
+  async addAdditionalTestRunners() {
+    let restc: rm.RestClient = new rm.RestClient('npm', 'https://api.npms.io');
+    let res: rm.IRestResponse<NpmSearch> = await restc.get<NpmSearch>('/v2/search?q=stryker-runner');
+
+    // Check if response is ok and packages return
+    if (res.statusCode === 200 && res.result.results.length > 0) {
+      const packages = res.result.results;
+
+      // For every packages that is returned:
+      packages.map((npmPackage) => {
+        const thisPackage = npmPackage.package;
+
+        // Check if it is not already known as testrunner
+        if (StrykerConfigOptions.testRunners.filter((testRunner) => { 
+          return testRunner.npm === thisPackage.name;
+        }).length === 0) {
+          
+          // Add testrunner to config options
+          const name = thisPackage.name.split('-')[1];
+          StrykerConfigOptions.testRunners.push({
+            name: name[0].toUpperCase() + name.substr(1),
+            npm: thisPackage.name,
+            config: {
+              testRunner: name
+            }
+          });
+        }
+      });
+    }
   }
 
   /**
@@ -34,7 +79,7 @@ export default class StrykerInitializer {
       config.karmaConfigFile = './karma.conf.js';
       StrykerConfigOptions.defaultTestRunner = karmaTestRunner.name;
     }
-  }
+  };
 
   /**
   * Install the npm packages
