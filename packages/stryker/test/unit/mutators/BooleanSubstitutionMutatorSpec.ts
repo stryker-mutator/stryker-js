@@ -57,7 +57,7 @@ describe('BooleanSubstitutionMutator', () => {
     expect(generate(result)).to.be.eq('true');
   });
 
-  it('should not mutate', () => {
+  it('should not mutate other nodes', () => {
     // Arrange
     const invalidNode: IdentifiedNode = {
       type: 'Identifier',
