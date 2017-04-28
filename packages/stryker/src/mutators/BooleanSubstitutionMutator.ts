@@ -3,13 +3,9 @@ import { Syntax } from 'esprima';
 
 export default class BooleanSubstitutionMutator implements Mutator {
   name = 'BooleanSubstitution';
-  private booleanValues: { [targetedOperator: string]: string } = {
-    'true': 'false',
-    'false': 'true'
-  };
 
   applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): IdentifiedNode[] {
-    let nodes: IdentifiedNode[] = [];
+    const nodes: IdentifiedNode[] = [];
     
     // !a -> a
     if (node.type === Syntax.UnaryExpression && node.operator === '!') {
@@ -19,7 +15,7 @@ export default class BooleanSubstitutionMutator implements Mutator {
     }
 
     // true -> false or false -> true
-    if (node.type === Syntax.Literal && this.booleanValues[node.raw]) {
+    if (node.type === Syntax.Literal && typeof node.value === 'boolean') {
       let mutatedNode = copy(node);
       mutatedNode.value = !mutatedNode.value;
       nodes.push(mutatedNode);
