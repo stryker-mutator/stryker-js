@@ -35,7 +35,7 @@ describe('StrykerInitializer', () => {
     sandbox.restore();
   });
 
-  describe.only('initialize()', () => {
+  describe('initialize()', () => {
 
     describe('when everything goes well', () => {
       beforeEach(() => {

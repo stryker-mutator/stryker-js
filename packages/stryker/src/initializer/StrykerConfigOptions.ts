@@ -38,6 +38,12 @@ export const StrykerConfigOptions: Options = {
         config: {
           testFramework: 'jasmine'
         }
+      }, {
+        name: 'Other/none',
+        npm: null,
+        config: {
+          coverageAnalysis: 'all',
+        }
       }
     ],
     defaultFrameWork: 'Mocha',

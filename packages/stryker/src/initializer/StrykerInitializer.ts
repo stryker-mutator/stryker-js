@@ -79,7 +79,7 @@ export default class StrykerInitializer {
       config.karmaConfigFile = './karma.conf.js';
       StrykerConfigOptions.defaultTestRunner = karmaTestRunner.name;
     }
-  };
+  }
 
   /**
   * Install the npm packages
