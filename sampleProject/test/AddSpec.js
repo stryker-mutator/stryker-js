@@ -42,4 +42,16 @@ describe('Add', function() {
 
     expect(isNegative).toBe(false);
   });
+
+  it('should be able to recognize that true = true', function() {
+    expect(isTrue(true)).toBe(true);
+  });
+
+  it('should be able to recognize that false = false', function() {
+    expect(isFalse(false)).toBe(true);
+  });
+
+  it('should be able to recognize that !true = false', function() {
+    expect(getOppositeBoolean(true)).toBe(false);
+  });
 });

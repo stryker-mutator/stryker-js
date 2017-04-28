@@ -22,3 +22,19 @@ var isNegativeNumber = function(number) {
   }
   return isNegative;
 };
+
+var isTrue = function(boolean) {
+  return boolean === true;
+};
+
+var isFalse = function(boolean) {
+  return boolean === false;
+};
+
+var getOppositeBoolean  = function(boolean) {
+  if(!boolean){
+    return true;
+  } else {
+    return false;
+  }
+};
