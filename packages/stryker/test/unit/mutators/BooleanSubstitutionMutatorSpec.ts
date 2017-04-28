@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as estree from 'estree';
-import { Identified } from 'stryker-api/mutant';
+import { Identified, IdentifiedNode } from 'stryker-api/mutant';
 import BooleanSubstitutionMutator from '../../../src/mutators/BooleanSubstitutionMutator';
 import { parse, generate } from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
