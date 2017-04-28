@@ -4,6 +4,7 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
+// import { StrykerConfigOptions } from '../../../src/initializer/StrykerConfigOptions';
 
 describe('StrykerInitializer', () => {
   let sut: StrykerInitializer;
@@ -26,7 +27,7 @@ describe('StrykerInitializer', () => {
     sandbox.restore();
   });
 
-  describe('initialize()', () => {
+  describe.only('initialize()', () => {
 
     describe('when everything goes well', () => {
       beforeEach(() => {

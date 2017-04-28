@@ -1,6 +1,7 @@
 import * as inquirer from 'inquirer';
 import * as _ from 'lodash';
 import { filterEmpty } from '../utils/objectUtils';
+import { Options } from './StrykerConfigOptions';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];
@@ -9,11 +10,11 @@ export interface PromptResult {
 
 export class StrykerInquirer {
 
-  public prompt(): Promise<PromptResult> {
-    return inquirer.prompt(this.buildQuestions())
+  public prompt(options: Options): Promise<PromptResult> {
+    return inquirer.prompt(this.buildQuestions(options))
       .then(answers => {
-        const chosenTestFramework = allOptions.testFrameworks.filter(testFramework => testFramework.name === answers['testFramework'])[0];
-        const chosenTestRunner = allOptions.testRunners.filter(testRunner => testRunner.name === answers['testRunner'])[0];
+        const chosenTestFramework = options.testFrameworks.filter(testFramework => testFramework.name === answers['testFramework'])[0];
+        const chosenTestRunner = options.testRunners.filter(testRunner => testRunner.name === answers['testRunner'])[0];
         const result: PromptResult = {
           additionalNpmDependencies: filterEmpty([chosenTestFramework.npm, chosenTestRunner.npm]),
           additionalConfig: _.assign({}, chosenTestFramework.config, chosenTestRunner.config)
@@ -27,63 +28,22 @@ export class StrykerInquirer {
   * Build a Questions object as input for inquirer.prompt
   * @function
   */
-  private buildQuestions(): inquirer.Question[] {
+  private buildQuestions(options: Options): inquirer.Question[] {
     return [
       {
         type: 'list',
         name: 'testRunner',
         message: 'Which Test Runner do you use?',
-        choices: allOptions.testRunners.map(runner => runner.name),
-        default: 'Mocha'
+        choices: options.testRunners.map(runner => runner.name),
+        default: options.defaultTestRunner
       },
       {
         type: 'list',
         name: 'testFramework',
         message: 'Which Test Framework do you use?',
-        choices: allOptions.testFrameworks.map(framework => framework.name),
-        default: 'Mocha'
+        choices: options.testFrameworks.map(framework => framework.name),
+        default: options.defaultFrameWork
       }
     ];
   }
 }
-
-interface Option {
-  name: string;
-  npm: string | null;
-  config: object;
-}
-
-const allOptions: {
-  testRunners: Option[],
-  testFrameworks: Option[]
-} = {
-    testRunners: [{
-      name: 'Mocha',
-      npm: 'stryker-mocha-runner',
-      config: {
-        testRunner: 'mocha'
-      }
-    }, {
-      name: 'Karma',
-      npm: 'stryker-karma-runner',
-      config: {
-        testRunner: 'karma',
-        karmaConfigFile: './karma.conf.js'
-      }
-    }],
-    testFrameworks: [
-      {
-        name: 'Mocha',
-        npm: null,
-        config: {
-          testFramework: 'mocha'
-        }
-      }, {
-        name: 'Jasmine',
-        npm: 'stryker-jasmine',
-        config: {
-          testFramework: 'jasmine'
-        }
-      }
-    ]
-  };

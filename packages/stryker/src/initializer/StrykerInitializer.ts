@@ -1,8 +1,10 @@
 import * as child from 'child_process';
 import * as fs from 'mz/fs';
+import * as path from 'path';
 import * as _ from 'lodash';
 import StrykerConfigFactory from './StrykerConfigFactory';
 import { StrykerInquirer } from './StrykerInquirer';
+import { StrykerConfigOptions } from './StrykerConfigOptions';
 
 export default class StrykerInitializer {
 
@@ -13,10 +15,25 @@ export default class StrykerInitializer {
    * @function
    */
   async initialize(): Promise<void> {
-    const answers = await new StrykerInquirer().prompt();
+    this.detectKarmaConfigFile();
+    const answers = await new StrykerInquirer().prompt(StrykerConfigOptions);
     this.installNpmDependencies(answers.additionalNpmDependencies.concat(['stryker-html-reporter']));
     await this.installStrykerConfiguration(answers.additionalConfig);
     this.log('Let\'s kill some mutants with this command: `stryker run`');
+  }
+
+  /**
+   * Detects if there is a karm.conf.js in the root and make karma testrunner the defaults
+   * @function
+   */
+  private detectKarmaConfigFile(): void {
+    if (fs.existsSync(path.resolve(process.cwd(), 'karma.conf.js'))) {
+      this.log('Found karma.conf.js');
+      const karmaTestRunner = StrykerConfigOptions.testRunners.filter(testRunner => testRunner.npm === 'stryker-karma-runner')[0];
+      const config: any = karmaTestRunner.config;
+      config.karmaConfigFile = './karma.conf.js';
+      StrykerConfigOptions.defaultTestRunner = karmaTestRunner.name;
+    }
   }
 
   /**
