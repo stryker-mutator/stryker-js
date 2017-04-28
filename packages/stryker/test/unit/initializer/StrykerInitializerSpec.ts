@@ -12,6 +12,7 @@ describe('StrykerInitializer', () => {
   let inquirerPrompt: sinon.SinonStub;
   let childExecSync: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStub;
+  let restClientNew: sinon.SinonStub;
   let restClientGet: sinon.SinonStub;
   let log: sinon.SinonStub;
 
@@ -21,7 +22,12 @@ describe('StrykerInitializer', () => {
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
     fsWriteFile = sandbox.stub(fs, 'writeFile');
-    restClientGet = sandbox.stub(restClient.RestClient, 'get');
+    restClientGet = sandbox.stub().returns({
+      statusCode: 404
+    });
+    restClientNew = sandbox.stub(restClient, 'RestClient').returns({
+      get: restClientGet
+    });
     sut = new StrykerInitializer(log);
   });
 
