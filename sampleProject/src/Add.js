@@ -25,11 +25,11 @@ var isNegativeNumber = function(number) {
 
 var isTrue = function(boolean) {
   return boolean === true;
-}
+};
 
 var isFalse = function(boolean) {
   return boolean === false;
-}
+};
 
 var getOppositeBoolean  = function(boolean) {
   if(!boolean){
@@ -37,4 +37,4 @@ var getOppositeBoolean  = function(boolean) {
   } else {
     return false;
   }
-}
+};
