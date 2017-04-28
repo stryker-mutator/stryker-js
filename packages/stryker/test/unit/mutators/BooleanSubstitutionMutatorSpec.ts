@@ -37,7 +37,6 @@ describe('BooleanSubstitutionMutator', () => {
 
     // Assert
     expect(result).to.be.ok;
-    expect(result.raw).to.be.eq('false');
     expect(result.value).to.be.false;
     expect(result.nodeID).to.be.eq(nodeLiteral.nodeID);
     expect(generate(result)).to.be.eq('false');
@@ -53,7 +52,6 @@ describe('BooleanSubstitutionMutator', () => {
 
     // Assert
     expect(result).to.be.ok;
-    expect(result.raw).to.be.eq('true');
     expect(result.value).to.be.true;
     expect(result.nodeID).to.be.eq(nodeLiteral.nodeID);
     expect(generate(result)).to.be.eq('true');

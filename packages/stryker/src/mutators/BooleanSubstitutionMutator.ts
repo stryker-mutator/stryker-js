@@ -3,7 +3,6 @@ import { Syntax } from 'esprima';
 
 export default class BooleanSubstitutionMutator implements Mutator {
   name = 'BooleanSubstitution';
-  private readonly type = Syntax.Literal;
   private booleanValues: { [targetedOperator: string]: string } = {
     'true': 'false',
     'false': 'true'
@@ -20,9 +19,8 @@ export default class BooleanSubstitutionMutator implements Mutator {
     }
 
     // true -> false or false -> true
-    if (node.type === this.type && this.booleanValues[node.raw]) {
+    if (node.type === Syntax.Literal && this.booleanValues[node.raw]) {
       let mutatedNode = copy(node);
-      mutatedNode.raw = this.booleanValues[node.raw];
       mutatedNode.value = !mutatedNode.value;
       nodes.push(mutatedNode);
     }
