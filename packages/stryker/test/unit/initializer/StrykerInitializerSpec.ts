@@ -6,7 +6,7 @@ import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
 
-describe.only('StrykerInitializer', () => {
+describe('StrykerInitializer', () => {
   let sut: StrykerInitializer;
   let sandbox: sinon.SinonSandbox;
   let inquirerPrompt: sinon.SinonStub;
