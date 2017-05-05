@@ -18,7 +18,8 @@
     "stryker",
     "jasmine",
     "stryker-plugin",
-    "stryker-test-framework"
+    "stryker-test-framework",
+    "stryker-karma-runner"
   ],
   "author": "nicojs",
   "license": "Apache-2.0",

@@ -21,11 +21,7 @@
     "stryker",
     "stryker-plugin",
     "mocha",
-    "test",
-    "runner",
-    "testrunner",
-    "mutation",
-    "testing"
+    "stryker-test-runner"
   ],
   "author": "Simon de Lang <simon.delang@infosupport.com>",
   "contributors": [
