@@ -21,8 +21,7 @@
     "stryker",
     "stryker-plugin",
     "mocha",
-    "stryker-test-runner",
-    "stryker-mocha-runner"
+    "stryker-test-runner"
   ],
   "author": "Simon de Lang <simon.delang@infosupport.com>",
   "contributors": [
