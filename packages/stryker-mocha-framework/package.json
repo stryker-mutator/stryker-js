@@ -1,14 +1,14 @@
 {
-  "name": "stryker-mocha-runner",
-  "version": "0.3.1",
-  "description": "A plugin to use the mocha test runner in Stryker, the JavaScript mutation testing framework",
+  "name": "stryker-mocha-framework",
+  "version": "0.0.0",
+  "description": "A plugin to use the mocha test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
     "start": "tsc -w",
     "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
+    "test": "nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -21,18 +21,19 @@
     "stryker",
     "stryker-plugin",
     "mocha",
-    "stryker-test-runner"
+    "stryker-test-framework",
+    "stryker-mocha-runner"
   ],
-  "author": "Simon de Lang <simon.delang@infosupport.com>",
-  "contributors": [
-    "niNico Jansencojs <jansennico@gmail.com>",
-    "Simon de Lang <simondelang@gmail.com>"
-  ],
-  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-runner#readme",
+  "author": "Nico Jansen <jansennico@gmail.com>",
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>"
+  ],
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-framework#readme",
+  "license": "Apache-2.0",
   "dependencies": {
     "log4js": "^1.1.1"
   },
