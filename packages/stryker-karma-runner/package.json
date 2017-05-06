@@ -49,5 +49,10 @@
     "nicojs <jansennico@gmail.com>",
     "Simon de Lang <simondelang@gmail.com>",
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
-  ]
+  ],
+  "initStrykerConfig": {
+    "karmaConfigFile": "karma.conf.js",
+    "files": null,
+    "mutate": "src/**/*.js"
+  }
 }

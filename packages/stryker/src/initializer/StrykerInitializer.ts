@@ -1,84 +1,79 @@
+import { StrykerOptions } from 'stryker-api/core';
 import * as child from 'child_process';
 import * as fs from 'mz/fs';
-import * as path from 'path';
 import * as _ from 'lodash';
-import StrykerConfigFactory from './StrykerConfigFactory';
 import { StrykerInquirer } from './StrykerInquirer';
-import { StrykerConfigOptions } from './StrykerConfigOptions';
-import * as rm from 'typed-rest-client/RestClient';
+import NpmClient from './NpmClient';
+import PromptOption from './PromptOption';
+import * as log4js from 'log4js';
+import { filterEmpty } from '../utils/objectUtils';
 
-interface NpmSearch {
-    total: number;
-    results: NpmPackage[];
-}
-
-interface NpmPackage {
-  package: {
-    name: string;
-    version: string;
-  };
-}
+const log = log4js.getLogger('StrykerInitializer');
 
 export default class StrykerInitializer {
 
-  constructor(private log = console.log) { }
+  private inquirer = new StrykerInquirer();
+
+  constructor(private out = console.log, private client: NpmClient = new NpmClient()) { }
 
   /**
    * Runs the initializer ask used framework and test runner en setup environment
    * @function
    */
   async initialize(): Promise<void> {
-    await this.addAdditionalTestRunners();
-    this.detectKarmaConfigFile();
-    const answers = await new StrykerInquirer().prompt(StrykerConfigOptions);
-    this.installNpmDependencies(answers.additionalNpmDependencies.concat(['stryker-html-reporter']));
-    await this.installStrykerConfiguration(answers.additionalConfig);
-    this.log('Let\'s kill some mutants with this command: `stryker run`');
+    const selectedTestRunner = await this.selectTestRunner();
+    const selectedTestFramework = await this.selectTestFramework(selectedTestRunner);
+    const reporters = await this.selectReporters();
+    const npmDependencies = this.getNpmDependencies(selectedTestRunner, selectedTestFramework, reporters);
+    this.installNpmDependencies(npmDependencies);
+    await this.setupStrykerConfig(selectedTestRunner, selectedTestFramework, reporters, npmDependencies);
+    this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure your files and test runner correctly.');
+    this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
 
-  async addAdditionalTestRunners() {
-    let restc: rm.RestClient = new rm.RestClient('npm', 'https://api.npms.io');
-    let res: rm.IRestResponse<NpmSearch> = await restc.get<NpmSearch>('/v2/search?q=stryker-runner');
+  private async selectTestRunner(): Promise<PromptOption> {
+    const testRunnerOptions = await this.client.getTestRunnerOptions();
+    log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
+    return await this.inquirer.promptTestRunners(testRunnerOptions);
+  }
 
-    // Check if response is ok and packages return
-    if (res.statusCode === 200 && res.result.results.length > 0) {
-      const packages = res.result.results;
-
-      // For every packages that is returned:
-      packages.map((npmPackage) => {
-        const thisPackage = npmPackage.package;
-
-        // Check if it is not already known as testrunner
-        if (StrykerConfigOptions.testRunners.filter((testRunner) => { 
-          return testRunner.npm === thisPackage.name;
-        }).length === 0) {
-          
-          // Add testrunner to config options
-          const name = thisPackage.name.split('-')[1];
-          StrykerConfigOptions.testRunners.push({
-            name: name[0].toUpperCase() + name.substr(1),
-            npm: thisPackage.name,
-            config: {
-              testRunner: name
-            }
-          });
-        }
+  private async selectReporters(): Promise<PromptOption[]> {
+    const reporterOptions = await this.client.getTestReporterOptions();
+    reporterOptions.push({
+      name: 'clear-text',
+      npm: null
+    }, {
+        name: 'progress',
+        npm: null
       });
-    }
+    return this.inquirer.promptReporters(reporterOptions);
   }
 
-  /**
-   * Detects if there is a karm.conf.js in the root and make karma testrunner the defaults
-   * @function
-   */
-  private detectKarmaConfigFile(): void {
-    if (fs.existsSync(path.resolve(process.cwd(), 'karma.conf.js'))) {
-      this.log('Found karma.conf.js');
-      const karmaTestRunner = StrykerConfigOptions.testRunners.filter(testRunner => testRunner.npm === 'stryker-karma-runner')[0];
-      const config: any = karmaTestRunner.config;
-      config.karmaConfigFile = './karma.conf.js';
-      StrykerConfigOptions.defaultTestRunner = karmaTestRunner.name;
+  private async selectTestFramework(testRunnerOption: PromptOption): Promise<null | PromptOption> {
+    let selectedTestFramework: PromptOption | null = null;
+    const testFrameworkOptions = await this.client.getTestFrameworkOptions(testRunnerOption.npm);
+    if (testFrameworkOptions.length) {
+      log.debug(`Found test frameworks for ${testRunnerOption.name}: ${JSON.stringify(testFrameworkOptions)}`);
+      const none = {
+        name: 'None/other',
+        npm: null
+      };
+      testFrameworkOptions.push(none);
+      selectedTestFramework = await this.inquirer.promptTestFrameworks(testFrameworkOptions);
+      if (selectedTestFramework === none) {
+        selectedTestFramework = null;
+        this.out('OK, downgrading coverageAnalysis to "all"');
+      }
+    } else {
+      this.out(`No stryker test framework plugin found that is compatible with ${testRunnerOption.name}, downgrading coverageAnalysis to "all"`);
     }
+    return selectedTestFramework;
+  }
+
+  private getNpmDependencies(testRunner: PromptOption, testFramework: PromptOption | null, reporters: PromptOption[]) {
+    return filterEmpty([testRunner.npm]
+      .concat(reporters.map(rep => rep.npm))
+      .concat(filterEmpty([testFramework && testFramework.npm])));
   }
 
   /**
@@ -87,12 +82,13 @@ export default class StrykerInitializer {
   */
   private installNpmDependencies(dependencies: string[]): void {
     if (dependencies.length > 0) {
-      this.log('Installing NPM dependencies...');
-      const cmd = `npm i --save-dev ${dependencies.join(' ')}`;
+      this.out('Installing NPM dependencies...');
+      const cmd = `npm i --save-dev stryker stryker-api ${dependencies.join(' ')}`;
+      this.out(cmd);
       try {
         child.execSync(cmd, { stdio: [0, 1, 2] });
       } catch (_) {
-        this.log(`An error occurred during installation, please try it yourself: "${cmd}"`);
+        this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
       }
     }
   }
@@ -101,11 +97,32 @@ export default class StrykerInitializer {
   * Create stryker.conf.js based on the chosen framework and test runner
   * @function
   */
-  private installStrykerConfiguration(configurationObject: object): Promise<void> {
-    this.log('Writing stryker.conf.js...');
-    const strykerConfig = _.assign(StrykerConfigFactory.default(), configurationObject);
-    const newConfiguration = wrapInModule(JSON.stringify(strykerConfig, null, 2));
-    return fs.writeFile('stryker.conf.js', newConfiguration);
+  private async setupStrykerConfig(testRunnerOption: PromptOption, testFrameworkOption: null | PromptOption, reporters: PromptOption[], dependencies: string[]): Promise<void> {
+    const configObject: Partial<StrykerOptions> = {
+      files: [
+        { pattern: 'src/**/*.js', mutated: true, included: false },
+        'test/**/*.js'
+      ],
+      testRunner: testRunnerOption.name,
+      reporter: reporters.map(rep => rep.name)
+    };
+    if (testFrameworkOption) {
+      configObject.testFramework = testFrameworkOption.name;
+      configObject.coverageAnalysis = 'perTest';
+    } else {
+      configObject.coverageAnalysis = 'all';
+    }
+    const additionalPiecesOfConfig = filterEmpty(await Promise.all(dependencies.map(dep => this.client.getAdditionalConfig(dep)
+      .catch(err => {
+        log.warn(`Could not fetch additional initialization config for dependency ${dep}. You might need to configure it manually`, err);
+      }))));
+    _.assign(configObject, ...additionalPiecesOfConfig);
+    if (configObject.files === null) {
+      // stryker-karma-runner sets files to null, lets make sure they are not written out as "files": null
+      delete configObject.files;
+    }
+    this.out('Writing stryker.conf.js...');
+    return fs.writeFile('stryker.conf.js', wrapInModule(JSON.stringify(configObject, null, 2)));
   }
 }
 

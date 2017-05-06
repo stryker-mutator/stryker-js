@@ -13,24 +13,27 @@ describe('StrykerInitializer', () => {
   let childExecSync: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStub;
   let fsExistsSync: sinon.SinonStub;
-  let restClientNew: sinon.SinonStub;
-  let restClientGet: sinon.SinonStub;
-  let log: sinon.SinonStub;
+  let restClientPackageGet: sinon.SinonStub;
+  let restClientSearchGet: sinon.SinonStub;
+  let out: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    log = sandbox.stub();
+    out = sandbox.stub();
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
     fsWriteFile = sandbox.stub(fs, 'writeFile');
     fsExistsSync = sandbox.stub(fs, 'existsSync');
-    restClientGet = sandbox.stub().returns({
-      statusCode: 404
-    });
-    restClientNew = sandbox.stub(restClient, 'RestClient').returns({
-      get: restClientGet
-    });
-    sut = new StrykerInitializer(log);
+    restClientSearchGet = sandbox.stub();
+    restClientPackageGet = sandbox.stub();
+    sandbox.stub(restClient, 'RestClient')
+      .withArgs('npmSearch').returns({
+        get: restClientSearchGet
+      })
+      .withArgs('npm').returns({
+        get: restClientPackageGet
+      });
+    sut = new StrykerInitializer(out);
   });
 
   afterEach(() => {
@@ -39,147 +42,94 @@ describe('StrykerInitializer', () => {
 
   describe('initialize()', () => {
 
-    describe('when everything goes well', () => {
-      beforeEach(() => {
-        fsWriteFile.resolves({});
+    beforeEach(() => {
+      stubTestRunners('stryker-awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
+      stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] }, { name: 'stryker-hyper-framework', keywords: ['stryker-hyper-runner'] });
+      stubReporters('stryker-dimension-reporter', 'stryker-mars-reporter');
+      stubPackageClient({
+        'stryker-awesome-runner': null,
+        'stryker-hyper-runner': {
+          files: null,
+          someOtherSetting: 'enabled'
+        },
+        'stryker-ghost-runner': null,
+        'stryker-awesome-framework': null,
+        'stryker-hyper-framework': null,
+        'stryker-dimension-reporter': null,
+        'stryker-mars-reporter': null
       });
-
-      it('should prompt for test runner and test framework', async () => {
-        inquirerPrompt.resolves({ 'testFramework': 'Mocha', 'testRunner': 'Mocha' });
-        await sut.initialize();
-        expect(inquirer.prompt).to.have.been.calledWith(sinon.match((questions: inquirer.Question[]) => {
-          const testRunner = questions[0];
-          const testFramework = questions[1];
-          expect(testRunner.type).to.eq('list');
-          expect(testRunner.name).to.eq('testRunner');
-          expect(testFramework.type).to.eq('list');
-          expect(testFramework.name).to.eq('testFramework');
-          return true;
-        }));
-      });
-
-      describe('when additional testrunners are found on npm', () => {
-
-        beforeEach(() => {
-          restClientGet.returns({
-            statusCode: 200,
-            result: {
-              total: 1,
-              results: [{ package: { name: 'stryker-jest-runner' } }]
-            }
-          });
-          inquirerPrompt.resolves({ 'testFramework': 'Mocha', 'testRunner': 'Mocha' });
-        });
-
-        it('should prompt the new testrunners as options', async () => {
-          await sut.initialize();
-          expect(inquirer.prompt).to.have.been.calledWith(sinon.match((questions: inquirer.Question[]) => {
-            const testRunner = questions[0];
-            expect(testRunner.choices).to.deep.include('Jest');
-            return true;
-          }));
-        });
-
-        describe('when new testrunner jest is selected', () => {
-          beforeEach(() => {
-            inquirerPrompt.resolves({ 'testFramework': 'Other/none', 'testRunner': 'Jest' });
-          });
-
-          it('should install jest-runner and html-reporter', async () => {
-            await sut.initialize();
-            expect(log).to.have.been.calledWith('Installing NPM dependencies...');
-            expect(child.execSync).to.have.been.calledWith('npm i --save-dev stryker-jest-runner stryker-html-reporter', { stdio: [0, 1, 2] });
-          });
-
-          it('should configure stryker with jest', async () => {
-            await sut.initialize();
-            expect(log).to.have.been.calledWith('Writing stryker.conf.js...');
-            expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"testRunner": "jest"'));
-          });
-        });
-      });
-
-      describe('when karm.conf.js is found in project directory', () => {
-
-        beforeEach(() => {
-          fsExistsSync.returns(true);
-          inquirerPrompt.resolves({ 'testFramework': 'Jasmine', 'testRunner': 'Karma' });
-        });
-        
-        it('should log that karma.conf.js is found', async () => {
-          await sut.initialize();
-          expect(log).to.have.been.calledWith('Found karma.conf.js');
-        });
-
-        it('should select karma as default testrunner', async () => {
-          await sut.initialize();
-          expect(inquirer.prompt).to.have.been.calledWith(sinon.match((questions: inquirer.Question[]) => {
-            const testRunner = questions[0];
-            expect(testRunner.default).to.eq('Karma');
-            return true;
-          }));
-        });
-
-        it('should configure the karma.conf.js in stryker.conf.js', async () => {
-          await sut.initialize();
-          expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"karmaConfigFile": "./karma.conf.js"'));
-        });
-      });
-
-      describe('when answered with mocha', () => {
-
-        beforeEach(() => inquirerPrompt.resolves({ testFramework: 'Mocha', testRunner: 'Mocha' }));
-
-        it('should install mocha-runner and html-reporter', async () => {
-          await sut.initialize();
-          expect(log).to.have.been.calledWith('Installing NPM dependencies...');
-          expect(child.execSync).to.have.been.calledWith('npm i --save-dev stryker-mocha-runner stryker-html-reporter', { stdio: [0, 1, 2] });
-        });
-
-        it('should configure stryker with mocha', async () => {
-          await sut.initialize();
-          expect(log).to.have.been.calledWith('Writing stryker.conf.js...');
-          expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"testRunner": "mocha"')
-            .and(sinon.match('"testFramework": "mocha"'))
-            .and(sinon.match('"reporter"'))
-            .and(sinon.match('"html"'))
-            .and(sinon.match('"progress"')));
-        });
-
-      });
-
-      describe('when answered with jasmine/karma', () => {
-
-        beforeEach(() => inquirerPrompt.resolves({ testFramework: 'Jasmine', testRunner: 'Karma' }));
-
-        it('should install karma-runner, jasmine and html-reporter', async () => {
-          await sut.initialize();
-          expect(child.execSync).to.have.been.calledWith('npm i --save-dev stryker-jasmine stryker-karma-runner stryker-html-reporter', { stdio: [0, 1, 2] });
-        });
-
-        it('should configure stryker with jasmine/karma', async () => {
-          await sut.initialize();
-          expect(log).to.have.been.calledWith('Writing stryker.conf.js...');
-          expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"testRunner": "karma"')
-            .and(sinon.match('"testFramework": "jasmine"'))
-            .and(sinon.match('"reporter"'))
-            .and(sinon.match('"html"'))
-            .and(sinon.match('"progress"')));
-        });
-      });
+      fsWriteFile.resolves({});
     });
 
-    describe('when install fails', () => {
-      beforeEach(() => {
-        fsWriteFile.resolves({});
-        childExecSync.throws('error');
-        inquirerPrompt.resolves({ 'testFramework': 'Mocha', 'testRunner': 'Mocha' });
+    it('should prompt for test runner, test framework and reporters', async () => {
+      inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', reporters: ['dimension', 'mars'] });
+      await sut.initialize();
+      expect(inquirerPrompt).to.have.been.callCount(3);
+      const [promptTestRunner, promptTestFramework, promptReporters]: inquirer.Question[] = [inquirerPrompt.getCall(0).args[0], inquirerPrompt.getCall(1).args[0], inquirerPrompt.getCall(2).args[0]];
+      expect(promptTestRunner.type).to.eq('list');
+      expect(promptTestRunner.name).to.eq('testRunner');
+      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost']);
+      expect(promptTestFramework.type).to.eq('list');
+      expect(promptTestFramework.choices).to.deep.eq(['awesome', 'None/other']);
+      expect(promptReporters.type).to.eq('checkbox');
+      expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress']);
+    });
+
+    it('should configure coverageAnalysis: "all" when the user did not select a testFramework', async () => {
+      inquirerPrompt.resolves({ testFramework: 'None/other', testRunner: 'awesome', reporters: ['dimension', 'mars'] });
+      await sut.initialize();
+      expect(inquirerPrompt).to.have.been.callCount(3);
+      expect(out).to.have.been.calledWith('OK, downgrading coverageAnalysis to "all"');
+      expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
+    });
+
+    it('should install any additional dependencies', async () => {
+      inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', reporters: ['dimension', 'mars'] });
+      await sut.initialize();
+      expect(out).to.have.been.calledWith('Installing NPM dependencies...');
+      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker stryker-api stryker-awesome-runner stryker-dimension-reporter stryker-mars-reporter stryker-awesome-framework',
+        { stdio: [0, 1, 2] });
+    });
+
+    it('should configure testFramework, testRunner and reporters', async () => {
+      inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', reporters: ['dimension', 'mars', 'progress'] });
+      await sut.initialize();
+      let expectedReporters = JSON.stringify({
+        reporter: [
+          'dimension',
+          'mars',
+          'progress'
+        ]
+      }, null, 2);
+      expectedReporters = expectedReporters.substr(1, expectedReporters.lastIndexOf(']') - 1);
+      expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"testRunner": "awesome"')
+        .and(sinon.match('"testFramework": "awesome"'))
+        .and(sinon.match('"coverageAnalysis": "perTest"'))
+        .and(sinon.match(expectedReporters)));
+    });
+
+    it('should configure the additional settings from the plugins', async () => {
+      inquirerPrompt.resolves({ testFramework: 'hyper', testRunner: 'hyper', reporters: [] });
+      await sut.initialize();
+      expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"someOtherSetting": "enabled"'));
+      expect(fs.writeFile).not.to.have.been.calledWith('stryker.conf.js', sinon.match('"files"'));
+    });
+
+    describe('but no testFramework can be found that supports the testRunner', () => {
+
+      beforeEach(() => inquirerPrompt.resolves({ testRunner: 'ghost', reporters: ['dimension', 'mars'] }));
+
+      it('should not prompt for test framework', async () => {
+        await sut.initialize();
+        expect(inquirerPrompt).to.have.been.callCount(2);
+        expect(inquirerPrompt).not.calledWithMatch(sinon.match({ name: 'testFramework' }));
       });
 
-      it('should recover', async () => {
+      it('should configure coverageAnalysis: "all"', async () => {
+        inquirerPrompt.resolves({ testRunner: 'ghost', reporters: ['dimension', 'mars'] });
         await sut.initialize();
-        expect(log).to.have.been.calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker-mocha-runner stryker-html-reporter"');
-        expect(fs.writeFile).to.have.been.called;
+        expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with ghost, downgrading coverageAnalysis to "all"');
+        expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
       });
     });
 
@@ -187,12 +137,70 @@ describe('StrykerInitializer', () => {
       const expectedError = new Error('something');
       beforeEach(() => {
         fsWriteFile.rejects(expectedError);
-        inquirerPrompt.resolves({ 'testFramework': 'Mocha', 'testRunner': 'Mocha' });
+        inquirerPrompt.resolves({ testRunner: 'ghost', reporters: [] });
       });
 
       it('should reject with that error', () => {
         return expect(sut.initialize()).to.eventually.be.rejectedWith(expectedError);
       });
     });
+
+
+    describe('when install fails', () => {
+      beforeEach(() => {
+        childExecSync.throws('error');
+        inquirerPrompt.resolves({ testRunner: 'ghost', reporters: [] });
+      });
+
+      it('should recover', async () => {
+        await sut.initialize();
+        expect(out).to.have.been.calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker stryker-api stryker-ghost-runner"');
+        expect(fs.writeFile).to.have.been.called;
+      });
+    });
   });
+
+
+
+  const stubTestRunners = (...testRunners: string[]) => {
+    restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').resolves({
+      statusCode: 200,
+      result: {
+        results: testRunners.map(testRunner => ({ package: { name: testRunner } }))
+      }
+    });
+  };
+
+  const stubTestFrameworks = (...testFrameworks: { name: string; keywords: string[]; }[]) => {
+    restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').resolves({
+      statusCode: 200,
+      result: {
+        results: testFrameworks.map(testFramework => ({ package: testFramework }))
+      }
+    });
+  };
+
+  const stubReporters = (...reporters: string[]) => {
+    restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-reporter').resolves({
+      statusCode: 200,
+      result: {
+        results: reporters.map(reporter => ({ package: { name: reporter } }))
+      }
+    });
+  };
+  const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: object | null; }) => {
+    Object.keys(packageConfigPerPackage).forEach(packageName => {
+      const pkgConfig: { name: string; initStrykerConfig?: object; } = {
+        name: packageName
+      };
+      const cfg = packageConfigPerPackage[packageName];
+      if (cfg) {
+        pkgConfig.initStrykerConfig = cfg;
+      }
+      restClientPackageGet.withArgs(`/${packageName}/latest`).resolves({
+        statusCode: 200,
+        result: pkgConfig
+      });
+    });
+  };
 });

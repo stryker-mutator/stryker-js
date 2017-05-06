@@ -1,7 +1,5 @@
 import * as inquirer from 'inquirer';
-import * as _ from 'lodash';
-import { filterEmpty } from '../utils/objectUtils';
-import { Options } from './StrykerConfigOptions';
+import PromptOption from './PromptOption';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];
@@ -10,40 +8,36 @@ export interface PromptResult {
 
 export class StrykerInquirer {
 
-  public prompt(options: Options): Promise<PromptResult> {
-    return inquirer.prompt(this.buildQuestions(options))
-      .then(answers => {
-        const chosenTestFramework = options.testFrameworks.filter(testFramework => testFramework.name === answers['testFramework'])[0];
-        const chosenTestRunner = options.testRunners.filter(testRunner => testRunner.name === answers['testRunner'])[0];
-        const result: PromptResult = {
-          additionalNpmDependencies: filterEmpty([chosenTestFramework.npm, chosenTestRunner.npm]),
-          additionalConfig: _.assign({}, chosenTestFramework.config, chosenTestRunner.config)
-        };
-        return result;
-      });
+  public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
+    const answers = await inquirer.prompt({
+      type: 'list',
+      name: 'testRunner',
+      message: 'Which test runner do you want to use?',
+      choices: options.map(_ => _.name),
+      default: 'Mocha'
+    });
+    return options.filter(_ => _.name === answers['testRunner'])[0] || { name: 'mocha', npm: 'stryker-mocha-runner' };
   }
 
+  public async promptTestFrameworks(options: PromptOption[]): Promise<PromptOption> {
+    const answers = await inquirer.prompt({
+      type: 'list',
+      name: 'testFramework',
+      message: 'Which test framework do you want to use?',
+      choices: options.map(_ => _.name),
+      default: 'Mocha'
+    });
+    return options.filter(_ => _.name === answers['testFramework'])[0] || { name: 'mocha', npm: 'stryker-mocha-runner' };
+  }
 
-  /**
-  * Build a Questions object as input for inquirer.prompt
-  * @function
-  */
-  private buildQuestions(options: Options): inquirer.Question[] {
-    return [
-      {
-        type: 'list',
-        name: 'testRunner',
-        message: 'Which Test Runner do you use?',
-        choices: options.testRunners.map(runner => runner.name),
-        default: options.defaultTestRunner
-      },
-      {
-        type: 'list',
-        name: 'testFramework',
-        message: 'Which Test Framework do you use?',
-        choices: options.testFrameworks.map(framework => framework.name),
-        default: options.defaultFrameWork
-      }
-    ];
+  public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {
+    const answers = await inquirer.prompt({
+      type: 'checkbox',
+      name: 'reporters',
+      message: 'Which reporter(s) do you want to use?',
+      choices: options.map(_ => _.name),
+      default: ['html', 'clear-text', 'progress']
+    });
+    return options.filter(option => (answers['reporters'] as string[]).some(reporterName => option.name === reporterName));
   }
 }
