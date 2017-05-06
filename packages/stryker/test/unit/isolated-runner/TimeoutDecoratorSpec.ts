@@ -42,7 +42,7 @@ describe('TimeoutDecorator', () => {
     });
 
     it('should reject when inner promise rejects', () => {
-      testRunner1[methodName].rejects('some error');
+      testRunner1[methodName].rejects(new Error('some error'));
       const promise = action();
       return expect(promise).to.be.rejectedWith('some error');
     });

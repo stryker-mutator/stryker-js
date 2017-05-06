@@ -47,7 +47,7 @@ describe('RetryDecorator', () => {
     });
 
     it('should pass through non-crash related rejections', () => {
-      testRunner1.dispose.rejects('someError');
+      testRunner1.dispose.rejects(new Error('someError'));
       return expect(sut.dispose()).to.be.rejectedWith('someError');
     });
   });
@@ -61,8 +61,8 @@ describe('RetryDecorator', () => {
     });
 
     it('should pass through non-crash related rejects', () => {
-      testRunner1.run.rejects(expectedResult);
-      return expect(sut.run(options)).to.be.rejectedWith(expectedResult);
+      testRunner1.run.rejects(new Error('Error'));
+      return expect(sut.run(options)).to.be.rejectedWith('Error');
     });
 
     it('should retry on a new test runner if a crash related reject appears', () => {
