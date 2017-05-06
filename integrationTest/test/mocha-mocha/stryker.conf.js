@@ -4,6 +4,7 @@ module.exports = function(config){
     mutate: ['src/*.js'],
     testFramework: 'mocha',
     testRunner: 'mocha',
-    reporter: ['clear-text', 'html']
+    reporter: ['clear-text', 'html'],
+    maxConcurrentTestRunners : 2
   });
 };
