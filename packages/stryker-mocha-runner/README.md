@@ -15,7 +15,7 @@ npm i --save-dev stryker-mocha-runner
 
 ## Peer dependencies
 
-The `stryker-mocha-runner` is a plugin for `stryker` to enable `mocha` as a test runner and test framework. 
+The `stryker-mocha-runner` is a plugin for `stryker` to enable `mocha` as a test runner. 
 As such, you should make sure you have the correct versions of its dependencies installed:
 
 * `mocha`
