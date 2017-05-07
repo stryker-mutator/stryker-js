@@ -31,7 +31,6 @@ module.exports = function (config) {
     config.set({
         ...
         testRunner: 'mocha',
-        testFramework: 'mocha',
         ...
     });
 }
