@@ -6,6 +6,6 @@ module.exports = function (config) {
     testRunner: 'karma',
     reporter: ['clear-text', 'html'],
     maxConcurrentTestRunners: 2,
-    port: 9244
+    port: 9254
   });
 };
