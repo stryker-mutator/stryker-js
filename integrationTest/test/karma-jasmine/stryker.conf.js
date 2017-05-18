@@ -4,6 +4,6 @@ module.exports = function(config){
     mutate: ['src/*.js'],
     testFramework: 'jasmine',
     testRunner: 'karma',
-    reporter: ['clear-text', 'html']
+    reporter: ['clear-text', 'html', 'event-recorder']
   });
 };

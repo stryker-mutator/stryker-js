@@ -1,7 +1,7 @@
 import { MutantStatus, MatchedMutant, MutantResult, Reporter } from 'stryker-api/report';
 
-export function mutantResult(status: MutantStatus): MutantResult {
-  return {
+export function mutantResult(status: Partial<MutantResult>): MutantResult {
+  return Object.assign({
     location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
     mutatedLines: '',
     mutatorName: '',
@@ -9,9 +9,9 @@ export function mutantResult(status: MutantStatus): MutantResult {
     replacement: '',
     sourceFilePath: '',
     testsRan: [''],
-    status: status,
+    status: MutantStatus.Killed,
     range: [0, 0]
-  };
+  }, status as any);
 }
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
