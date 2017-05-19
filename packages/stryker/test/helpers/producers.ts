@@ -15,7 +15,7 @@ export function mutantResult(status: Partial<MutantResult>): MutantResult {
 }
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
-  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'wrapUp'];
+  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScore', 'wrapUp'];
 
 export function matchedMutant(numberOfTests: number): MatchedMutant {
   let scopedTestIds: number[] = [];
