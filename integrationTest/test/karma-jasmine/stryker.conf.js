@@ -4,7 +4,7 @@ module.exports = function (config) {
     mutate: ['src/*.js'],
     testFramework: 'jasmine',
     testRunner: 'karma',
-    reporter: ['clear-text', 'progress'],
+    reporter: ['clear-text', 'html'],
     maxConcurrentTestRunners: 2,
     port: 9254
   });

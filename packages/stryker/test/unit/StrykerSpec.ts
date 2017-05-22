@@ -253,7 +253,7 @@ describe('Stryker', function () {
                 expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s.', 2);
               });
 
-              it.only('should report mutant score', () => {
+              it('should report mutant score', () => {
                 expect(reporter.onScore).to.have.been.called;
               });
 
