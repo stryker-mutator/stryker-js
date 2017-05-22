@@ -242,7 +242,7 @@ describe('Stryker', function () {
               }, 100);
             });
 
-            describe('and running of mutators was successful while reporter.wrapUp() results in void', () => {
+            describe('and running of mutants was successful while reporter.wrapUp() results in void', () => {
               beforeEach(() => {
                 runMutantsPromiseResolve([]);
                 return strykerPromise;
@@ -253,10 +253,14 @@ describe('Stryker', function () {
                 expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s.', 2);
               });
 
+              it.only('should report mutant score', () => {
+                expect(reporter.onScore).to.have.been.called;
+              });
+
               it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
             });
 
-            describe('and running of mutators was successful while reporter.wrapUp() results in a promise', () => {
+            describe('and running of mutants was successful while reporter.wrapUp() results in a promise', () => {
               let wrapUpDoneFn: Function;
               beforeEach((done) => {
                 (<sinon.SinonStub>reporter.wrapUp).returns(new Promise((wrapUpDone) => wrapUpDoneFn = wrapUpDone));
