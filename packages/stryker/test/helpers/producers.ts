@@ -1,7 +1,8 @@
-import { MutantStatus, MatchedMutant, MutantResult, Reporter } from 'stryker-api/report';
+import * as sinon from 'sinon';
+import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
 
 export function mutantResult(status: Partial<MutantResult>): MutantResult {
-  return Object.assign({
+  const defaults: MutantResult = {
     location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
     mutatedLines: '',
     mutatorName: '',
@@ -11,11 +12,42 @@ export function mutantResult(status: Partial<MutantResult>): MutantResult {
     testsRan: [''],
     status: MutantStatus.Killed,
     range: [0, 0]
-  }, status as any);
+  };
+  return Object.assign(defaults, status);
+}
+
+export function scoreResult(score: Partial<ScoreResult>): ScoreResult {
+  const defaults: ScoreResult = {
+    name: 'name',
+    childResults: [],
+    killed: 0,
+    timedOut: 0,
+    survived: 0,
+    totalCovered: 0,
+    totalMutants: 0,
+    totalDetected: 0,
+    totalUndetected: 0,
+    errors: 0,
+    noCoverage: 0,
+    mutationScore: 0,
+    mutationScoreBasedOnCoveredCode: 0
+  };
+  return Object.assign(defaults, score);
 }
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScore', 'wrapUp'];
+
+export function reporterStub() {
+  return {
+    onAllMutantsMatchedWithTests: sinon.stub(),
+    onSourceFileRead: sinon.stub(),
+    onAllMutantsTested: sinon.stub(),
+    onAllSourceFilesRead: sinon.stub(),
+    onMutantTested: sinon.stub(),
+    onScore: sinon.stub(), wrapUp: sinon.stub()
+  };
+}
 
 export function matchedMutant(numberOfTests: number): MatchedMutant {
   let scopedTestIds: number[] = [];

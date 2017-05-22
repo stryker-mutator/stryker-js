@@ -13,6 +13,7 @@ import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './InputFileResolver';
 import ConfigReader from './ConfigReader';
 import PluginLoader from './PluginLoader';
+import ScoreResultCalculator from './ScoreResultCalculator';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
 import StrykerTempFolder from './utils/StrykerTempFolder';
@@ -69,11 +70,11 @@ export default class Stryker {
   async runMutationTest(): Promise<MutantResult[]> {
     this.timer.reset();
 
-    let inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
-    let {runResult, sandboxCoordinator} = await this.initialTestRun(inputFiles);
+    const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
+    const {runResult, sandboxCoordinator} = await this.initialTestRun(inputFiles);
     if (runResult && inputFiles && sandboxCoordinator) {
-      let mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);
-
+      const mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);
+      this.reporter.onScore(ScoreResultCalculator.calculate(mutantResults));  
       await this.wrapUpReporter();
       await StrykerTempFolder.clean();
       await this.logDone();

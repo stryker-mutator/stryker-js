@@ -12,6 +12,18 @@ export default class ScoreResultCalculator {
     return freezeRecursively(_.assign(numbers, { name, childResults }));
   }
 
+  private static compareScoreResults(a: ScoreResult, b: ScoreResult) {
+    const sortValue = (scoreResult: ScoreResult) => {
+      // Directories first
+      if (scoreResult.childResults.length) {
+        return `0${scoreResult.name}`;
+      } else {
+        return `1${scoreResult.name}`;
+      }
+    };
+    return sortValue(a).localeCompare(sortValue(b));
+  }
+
   private static calculateChildScores(results: MutantResult[], name: string, basePath: string) {
     const childrenBasePath = path.join(basePath, name) + path.sep;
     const resultsByFiles = _.groupBy(results, result => result.sourceFilePath.substr(childrenBasePath.length));
@@ -19,7 +31,8 @@ export default class ScoreResultCalculator {
     if (uniqueFiles.length > 1) {
       const filesGroupedByDirectory = _.groupBy(uniqueFiles, file => file.split(path.sep)[0]);
       return Object.keys(filesGroupedByDirectory)
-        .map(directory => this.calculate(_.flatMap(filesGroupedByDirectory[directory], file => resultsByFiles[file]), childrenBasePath));
+        .map(directory => this.calculate(_.flatMap(filesGroupedByDirectory[directory], file => resultsByFiles[file]), childrenBasePath))
+        .sort(this.compareScoreResults);
     } else {
       return [];
     }

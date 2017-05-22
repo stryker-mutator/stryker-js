@@ -62,26 +62,44 @@ describe('ScoreResult', () => {
   it('should group results per directory', () => {
     const actual = ScoreResultCalculator.calculate(
       [
-        mutantResult({ sourceFilePath: path.join('a', 'b', 'c.js'), status: MutantStatus.Killed }),
-        mutantResult({ sourceFilePath: path.join('a', 'b', 'd.js'), status: MutantStatus.Survived }),
-        mutantResult({ sourceFilePath: path.join('a', 'b', 'e', 'f', 'g.js'), status: MutantStatus.NoCoverage }),
-        mutantResult({ sourceFilePath: path.join('a', 'b', 'e', 'f', 'h.js'), status: MutantStatus.Error }),
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'e.js'), status: MutantStatus.Killed }),
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'f.js'), status: MutantStatus.Survived }),
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'g.js'), status: MutantStatus.NoCoverage }),
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'h.js'), status: MutantStatus.Error }),
       ]);
     expect(actual.name).to.eq(path.join('a', 'b'));
     expect(totals(actual)).to.deep.eq({ killed: 1, survived: 1, noCoverage: 1, errors: 1 });
     expect(actual.childResults).to.have.lengthOf(3);
-    expect(actual.childResults[0].name).to.eq('c.js');
-    expect(actual.childResults[0].killed).to.eq(1);
-    expect(actual.childResults[1].name).to.eq('d.js');
-    expect(actual.childResults[1].survived).to.eq(1);
-    expect(actual.childResults[2].name).to.eq(path.join('e', 'f'));
-    expect(totals(actual.childResults[2])).to.deep.eq({ errors: 1, noCoverage: 1, killed: 0, survived: 0 });
-    expect(actual.childResults[2].childResults).to.have.lengthOf(2);
-    const abef = actual.childResults[2].childResults;
-    expect(abef[0].name).to.eq('g.js');
-    expect(abef[0].noCoverage).to.eq(1);
-    expect(abef[1].name).to.eq('h.js');
-    expect(abef[1].errors).to.eq(1);
+    expect(actual.childResults[0].name).to.eq(path.join('c', 'd'));
+    expect(totals(actual.childResults[0])).to.deep.eq({ errors: 0, noCoverage: 0, killed: 1, survived: 1 });
+    expect(actual.childResults[0].childResults).to.have.lengthOf(2);
+    const cdef = actual.childResults[0].childResults;
+    expect(cdef[0].name).to.eq('e.js');
+    expect(cdef[0].killed).to.eq(1);
+    expect(cdef[1].name).to.eq('f.js');
+    expect(cdef[1].survived).to.eq(1);
+    expect(actual.childResults[1].name).to.eq('g.js');
+    expect(actual.childResults[1].noCoverage).to.eq(1);
+    expect(actual.childResults[2].name).to.eq('h.js');
+    expect(actual.childResults[2].errors).to.eq(1);
+  });
+
+  it('should order by directory/files first and than on alphabet', () => {
+    const actual = ScoreResultCalculator.calculate(
+      [
+        mutantResult({ sourceFilePath: path.join('a', 'z', 'c.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'z', 'a.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'b.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'a.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'A.js') })
+      ]);
+    expect(actual.name).to.eq('a');
+    expect(actual.childResults[0].name).to.eq('z');
+    expect(actual.childResults[0].childResults[0].name).to.eq('a.js');
+    expect(actual.childResults[0].childResults[1].name).to.eq('c.js');
+    expect(actual.childResults[1].name).to.eq('a.js');
+    expect(actual.childResults[2].name).to.eq('A.js');
+    expect(actual.childResults[3].name).to.eq('b.js');
   });
 
   it('should be able to handle no results', () => {
