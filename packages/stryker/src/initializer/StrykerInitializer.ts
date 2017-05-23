@@ -21,6 +21,7 @@ export default class StrykerInitializer {
    * @function
    */
   async initialize(): Promise<void> {
+    this.patchProxies();
     const selectedTestRunner = await this.selectTestRunner();
     const selectedTestFramework = await this.selectTestFramework(selectedTestRunner);
     const reporters = await this.selectReporters();
@@ -31,6 +32,20 @@ export default class StrykerInitializer {
     this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
 
+  /**
+  * The typed rest client works only with the specific HTTP_PROXY and HTTPS_PROXY env settings.
+  * Let's make sure they are available.
+  */
+  private patchProxies() {
+    const copy = (from: string, to: string) => {
+      if (process.env[from] && !process.env[to]) {
+        process.env[to] = process.env[from];
+      }
+    };
+    copy('http_proxy', 'HTTP_PROXY');
+    copy('https_proxy', 'HTTPS_PROXY');
+  }
+  
   private async selectTestRunner(): Promise<PromptOption> {
     const testRunnerOptions = await this.client.getTestRunnerOptions();
     log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
