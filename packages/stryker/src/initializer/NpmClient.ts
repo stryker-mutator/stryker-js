@@ -78,6 +78,9 @@ export default class NpmClient {
     const call = BASE_NPM_SEARCH + query;
     log.debug(`Searching: ${call}`);
     return this.searchClient.get<NpmSearchResult>(query)
-      .then(handleResult(call));
+      .then(handleResult(call))
+      .catch(() => {
+        log.error('Unable to reach npm search. Please check your internet connection.');
+      });
   }
 }
