@@ -22,18 +22,14 @@ export default class StrykerInitializer {
    */
   async initialize(): Promise<void> {
     this.patchProxies();
-    try {
-      const selectedTestRunner = await this.selectTestRunner();
-      const selectedTestFramework = await this.selectTestFramework(selectedTestRunner);
-      const reporters = await this.selectReporters();
-      const npmDependencies = this.getNpmDependencies(selectedTestRunner, selectedTestFramework, reporters);
-      this.installNpmDependencies(npmDependencies);
-      await this.setupStrykerConfig(selectedTestRunner, selectedTestFramework, reporters, npmDependencies);
-      this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure your files and test runner correctly.');
-      this.out('Let\'s kill some mutants with this command: `stryker run`');
-    } catch (err) {
-      this.out('An error occurred during initialization.');
-    }
+    const selectedTestRunner = await this.selectTestRunner();
+    const selectedTestFramework = await this.selectTestFramework(selectedTestRunner);
+    const reporters = await this.selectReporters();
+    const npmDependencies = this.getNpmDependencies(selectedTestRunner, selectedTestFramework, reporters);
+    this.installNpmDependencies(npmDependencies);
+    await this.setupStrykerConfig(selectedTestRunner, selectedTestFramework, reporters, npmDependencies);
+    this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure your files and test runner correctly.');
+    this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
 
   /**
