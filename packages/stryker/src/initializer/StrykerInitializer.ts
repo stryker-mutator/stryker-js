@@ -23,7 +23,7 @@ export default class StrykerInitializer {
   async initialize(): Promise<void> {
     this.patchProxies();
     const selectedTestRunner = await this.selectTestRunner();
-    const selectedTestFramework = await this.selectTestFramework(selectedTestRunner);
+    const selectedTestFramework = await (selectedTestRunner ? this.selectTestFramework(selectedTestRunner) : null);
     const reporters = await this.selectReporters();
     const npmDependencies = this.getNpmDependencies(selectedTestRunner, selectedTestFramework, reporters);
     this.installNpmDependencies(npmDependencies);
@@ -46,14 +46,25 @@ export default class StrykerInitializer {
     copy('https_proxy', 'HTTPS_PROXY');
   }
   
-  private async selectTestRunner(): Promise<PromptOption> {
-    const testRunnerOptions = await this.client.getTestRunnerOptions();
-    log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
-    return await this.inquirer.promptTestRunners(testRunnerOptions);
+  private async selectTestRunner(): Promise<null | PromptOption> {
+    try {
+      const testRunnerOptions = await this.client.getTestRunnerOptions();
+      log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
+      return await this.inquirer.promptTestRunners(testRunnerOptions);
+    } catch (err) {
+      this.out('Unable to select a test runner. You will need to configure it manually.');
+      return null;
+    }
   }
 
   private async selectReporters(): Promise<PromptOption[]> {
-    const reporterOptions = await this.client.getTestReporterOptions();
+    let reporterOptions: PromptOption[];
+    try {
+      reporterOptions = await this.client.getTestReporterOptions();
+    } catch (err) {
+      this.out('Unable to fetch additional test reporters.');
+      reporterOptions = [];
+    }
     reporterOptions.push({
       name: 'clear-text',
       npm: null
@@ -85,8 +96,8 @@ export default class StrykerInitializer {
     return selectedTestFramework;
   }
 
-  private getNpmDependencies(testRunner: PromptOption, testFramework: PromptOption | null, reporters: PromptOption[]) {
-    return filterEmpty([testRunner.npm]
+  private getNpmDependencies(testRunner: PromptOption | null, testFramework: PromptOption | null, reporters: PromptOption[]) {
+    return filterEmpty([testRunner && testRunner.npm]
       .concat(reporters.map(rep => rep.npm))
       .concat(filterEmpty([testFramework && testFramework.npm])));
   }
@@ -112,13 +123,13 @@ export default class StrykerInitializer {
   * Create stryker.conf.js based on the chosen framework and test runner
   * @function
   */
-  private async setupStrykerConfig(testRunnerOption: PromptOption, testFrameworkOption: null | PromptOption, reporters: PromptOption[], dependencies: string[]): Promise<void> {
+  private async setupStrykerConfig(testRunnerOption: null | PromptOption, testFrameworkOption: null | PromptOption, reporters: PromptOption[], dependencies: string[]): Promise<void> {
     const configObject: Partial<StrykerOptions> = {
       files: [
         { pattern: 'src/**/*.js', mutated: true, included: false },
         'test/**/*.js'
       ],
-      testRunner: testRunnerOption.name,
+      testRunner: (testRunnerOption ? testRunnerOption.name : ''),
       reporter: reporters.map(rep => rep.name)
     };
     if (testFrameworkOption) {
