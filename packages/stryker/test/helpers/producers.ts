@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
 
-export function mutantResult(status: Partial<MutantResult>): MutantResult {
+export function mutantResult(overrides: Partial<MutantResult>): MutantResult {
   const defaults: MutantResult = {
     location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
     mutatedLines: '',
@@ -13,7 +13,7 @@ export function mutantResult(status: Partial<MutantResult>): MutantResult {
     status: MutantStatus.Killed,
     range: [0, 0]
   };
-  return Object.assign(defaults, status);
+  return Object.assign(defaults, overrides);
 }
 
 export function scoreResult(score: Partial<ScoreResult>): ScoreResult {

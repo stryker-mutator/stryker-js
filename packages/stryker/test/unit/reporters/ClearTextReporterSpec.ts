@@ -73,7 +73,7 @@ describe('ClearTextReporter', () => {
         const rows = serializedTable.split(os.EOL);
         expect(rows).to.deep.eq([
           '-------------------------------|---------|----------|-----------|------------|----------|---------|',
-          'File                           | % score | # killed | # timeout | # survived | # no cvg | # error |',
+          'File                           | % score | # killed | # timeout | # survived | # no cov | # error |',
           '-------------------------------|---------|----------|-----------|------------|----------|---------|',
           `All files                      |${chalk.green('   80.00 ')}|        1 |         2 |          3 |        4 |       5 |`,
           ` child1                        |${chalk.yellow('   60.00 ')}|        0 |         0 |          0 |        0 |       0 |`,

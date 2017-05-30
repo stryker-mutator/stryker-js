@@ -106,7 +106,18 @@ describe('ScoreResult', () => {
     const actual = ScoreResultCalculator.calculate([]);
     expect(totals(actual)).to.deep.eq({ killed: 0, survived: 0, errors: 0, noCoverage: 0 });
     expect(actual.childResults.length).to.be.eq(0);
-    expect(actual.name).to.be.eq('/');
+    expect(actual.name).to.be.eq('');
+  });
+
+  it('should be able to handle children that do not start with the same path', () => {
+    const actual = ScoreResultCalculator.calculate([
+      mutantResult({ sourceFilePath: 'dir1/one' }),
+      mutantResult({ sourceFilePath: 'dir2/two' })
+    ]);
+    expect(actual.childResults.length).to.eq(2);
+    expect(actual.name).to.eq('');
+    expect(actual.childResults[0].name).to.eq('dir1/one');
+    expect(actual.childResults[1].name).to.eq('dir2/two');
   });
 
   const totals = (actual: ScoreResult) => ({ killed: actual.killed, errors: actual.errors, survived: actual.survived, noCoverage: actual.noCoverage });

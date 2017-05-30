@@ -9,21 +9,9 @@ interface TableCellValueFactory {
   (row: ScoreResult, ancestorCount: number): string;
 }
 
-const spaces = (n: number): string => {
-  if (n) {
-    return ` ${spaces(n - 1)}`;
-  } else {
-    return '';
-  }
-};
-
-const dots = (n: number): string => {
-  if (n) {
-    return `.${dots(n - 1)}`;
-  } else {
-    return '';
-  }
-};
+const repeat = (char: string, nTimes: number) => new Array(nTimes > -1 ? nTimes + 1 : 0).join(char);
+const spaces = (n: number) => repeat(' ', n);
+const dots = (n: number) => repeat('.', n);
 
 /**
  * Represents a column in the clear text table
@@ -33,7 +21,7 @@ class Column {
 
   constructor(public header: string, public valueFactory: TableCellValueFactory, public rows: ScoreResult) {
     const maxContentSize = this.determineValueSize();
-    this.width = this.pad(dots(maxContentSize), maxContentSize).length;
+    this.width = this.pad(dots(maxContentSize)).length;
   }
 
   protected determineValueSize(row: ScoreResult = this.rows, ancestorCount: number = 0): number {
@@ -46,31 +34,13 @@ class Column {
   /**
    * Adds padding (spaces) to the front and end of a value
    * @param input The string input
-   * @param targetLength The min length that has to be reached
    */
-  protected pad(input: string, targetLength: number = this.width): string {
-    // End with space
-    if (!input.endsWith(' ')) {
-      return this.pad(input + ' ', targetLength);
-    }
-    // Start with space
-    else if (!input.startsWith(' ')) {
-      return this.pad(' ' + input, targetLength);
-    }
-    else if (input.length < targetLength) {
-      // Pad rest with spaces in front
-      return spaces(targetLength - input.length) + input;
-    } else {
-      return input;
-    }
+  protected pad(input: string): string {
+    return `${spaces(this.width - input.length - 2)} ${input} `;
   }
 
-  drawLine(length = this.width): string {
-    if (length) {
-      return '-' + this.drawLine(length - 1);
-    } else {
-      return '';
-    }
+  drawLine(): string {
+    return repeat('-', this.width);
   }
 
   drawTableCell(score: ScoreResult, ancestorCount: number) {
@@ -105,14 +75,8 @@ class FileColumn extends Column {
   constructor(rows: ScoreResult) {
     super('File', (row, ancestorCount) => spaces(ancestorCount) + (ancestorCount === 0 ? FILES_ROOT_NAME : row.name), rows);
   }
-  protected pad(input: string, targetLength: number = this.width): string {
-    if (!input.endsWith(' ')) {
-      return this.pad(`${input} `, targetLength);
-    } else if (input.length < targetLength) {
-      return input + spaces(targetLength - input.length);
-    } else {
-      return input;
-    }
+  protected pad(input: string): string {
+    return `${input} ${spaces(this.width - input.length - 1)}`;
   }
 }
 
@@ -130,7 +94,7 @@ export default class ClearTextScoreTable {
       new Column('# killed', row => row.killed.toString(), score),
       new Column('# timeout', row => row.timedOut.toString(), score),
       new Column('# survived', row => row.survived.toString(), score),
-      new Column('# no cvg', row => row.noCoverage.toString(), score),
+      new Column('# no cov', row => row.noCoverage.toString(), score),
       new Column('# error', row => row.errors.toString(), score)
     ];
   }
