@@ -100,19 +100,19 @@ export default class ClearTextScoreTable {
   }
 
   private drawBorder() {
-    return this.drawPerColumn(column => column.drawLine());
+    return this.drawRow(column => column.drawLine());
   }
 
   private drawHeader() {
-    return this.drawPerColumn(c => c.drawHeader());
+    return this.drawRow(c => c.drawHeader());
   }
 
-  private drawPerColumn(toDraw: (col: Column) => string) {
+  private drawRow(toDraw: (col: Column) => string) {
     return this.columns.map(toDraw).join('|') + '|';
   }
 
   private drawValues(current = this.score, ancestorCount = 0): string[] {
-    return [this.drawPerColumn(c => c.drawTableCell(current, ancestorCount))]
+    return [this.drawRow(c => c.drawTableCell(current, ancestorCount))]
       .concat(_.flatMap(current.childResults, child => this.drawValues(child, ancestorCount + 1)));
   }
 
