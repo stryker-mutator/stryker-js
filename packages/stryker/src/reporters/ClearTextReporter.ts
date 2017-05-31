@@ -98,7 +98,7 @@ export default class ClearTextReporter implements Reporter {
     }
   }
 
-  onScore(score: ScoreResult) {
+  onScoreCalculated(score: ScoreResult) {
     this.writeLine(new ClearTextScoreTable(score).draw());
   }
 }

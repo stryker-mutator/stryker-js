@@ -48,9 +48,9 @@ describe('ClearTextReporter', () => {
       });
     });
 
-    describe('onScore', () => {
+    describe('onScoreCalculated', () => {
       it('should report the clear text table with correct values', () => {
-        sut.onScore(scoreResult({
+        sut.onScoreCalculated(scoreResult({
           name: 'root',
           killed: 1,
           timedOut: 2,
@@ -84,7 +84,7 @@ describe('ClearTextReporter', () => {
       });
 
       it('should grow columns widths based on value size', () => {
-        sut.onScore(scoreResult({
+        sut.onScoreCalculated(scoreResult({
           killed: 1000000000
         }));
         const serializedTable: string = stdoutStub.getCall(0).args[0];
