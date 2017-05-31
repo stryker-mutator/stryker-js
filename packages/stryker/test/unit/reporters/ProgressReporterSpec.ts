@@ -38,18 +38,18 @@ describe('ProgressReporter', () => {
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
 
-      it('the total of MatchedMutants in the progressbar should be 3', () => {
+      it('the total of MatchedMutants in the progress bar should be 3', () => {
         expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
       });
     });
-    describe('when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesnt have tests', () => {
+    describe('when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesn\'t have tests', () => {
       beforeEach(() => {
         matchedMutants = [matchedMutant(1), matchedMutant(0), matchedMutant(2)];
 
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
 
-      it('the total of MatchedMutants in the progressbar should be 2', () => {
+      it('the total of MatchedMutants in the progress bar should be 2', () => {
         expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
@@ -67,7 +67,7 @@ describe('ProgressReporter', () => {
     describe('when status is KILLED', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.Killed));
+        sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
       });
 
       it('should tick the ProgressBar with 1 killed mutant', () => {
@@ -76,10 +76,10 @@ describe('ProgressReporter', () => {
       });
     });
 
-    describe('when status is TIMEDOUT', () => {
+    describe('when status is TimedOut', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.TimedOut));
+        sut.onMutantTested(mutantResult({ status: MutantStatus.TimedOut }));
       });
 
       it('should tick the ProgressBar with 1 timed out mutant', () => {
@@ -88,10 +88,10 @@ describe('ProgressReporter', () => {
       });
     });
 
-    describe('when status is SURVIVED', () => {
+    describe('when status is Survived', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.Survived));
+        sut.onMutantTested(mutantResult({ status: MutantStatus.Survived }));
       });
 
       it('should tick the ProgressBar with 1 survived mutant', () => {
@@ -100,22 +100,22 @@ describe('ProgressReporter', () => {
       });
     });
 
-    describe('when status is ERRORED', () => {
+    describe('when status is Error', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.Error));
+        sut.onMutantTested(mutantResult({ status: MutantStatus.Error }));
       });
 
-      it('should tick the ProgressBar with 1 errored mutant', () => {
+      it('should tick the ProgressBar with 1 Error mutant', () => {
         progressBarTickTokens = { error: 1, killed: 0, noCoverage: 0, survived: 0, timeout: 0 };
         expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
       });
     });
 
-    describe('when status is NO COVERAGE', () => {
+    describe('when status is NoCoverage', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.NoCoverage));
+        sut.onMutantTested(mutantResult({ status: MutantStatus.NoCoverage }));
       });
 
       it('should not tick the ProgressBar', () => {

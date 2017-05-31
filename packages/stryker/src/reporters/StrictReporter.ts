@@ -1,4 +1,4 @@
-import {Reporter, SourceFile, MutantResult, MatchedMutant} from 'stryker-api/report';
+import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from 'stryker-api/report';
 
 /**
  * Represents a Stryker reporter with all methods implemented
@@ -9,6 +9,7 @@ interface StrictReporter extends Reporter {
     onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void;
     onMutantTested(result: MutantResult): void;
     onAllMutantsTested(results: MutantResult[]): void;
+    onScoreCalculated(score: ScoreResult): void;
     wrapUp(): void | Promise<void>;
 }
 export default StrictReporter;

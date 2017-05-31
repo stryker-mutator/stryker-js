@@ -1,6 +1,6 @@
 import Stryker from '../../src/Stryker';
 import { InputFile } from 'stryker-api/core';
-import { Reporter } from 'stryker-api/report';
+import { Reporter, MutantResult } from 'stryker-api/report';
 import { Config, ConfigWriterFactory, ConfigWriter } from 'stryker-api/config';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { expect } from 'chai';
@@ -15,6 +15,7 @@ import * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
 import * as pluginLoader from '../../src/PluginLoader';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import log from '../helpers/log4jsMock';
+import { reporterStub } from '../helpers/producers';
 
 class FakeConfigWriter implements ConfigWriter {
   constructor() { }
@@ -38,13 +39,7 @@ describe('Stryker', function () {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     config = {};
-    reporter = {
-      onSourceFileRead: sandbox.stub(),
-      onAllSourceFilesRead: sandbox.stub(),
-      onMutantTested: sandbox.stub(),
-      onAllMutantsTested: sandbox.stub(),
-      wrapUp: sandbox.stub()
-    };
+    reporter = reporterStub();
     configReaderMock = {
       readConfig: sandbox.stub().returns(config)
     };
@@ -88,7 +83,7 @@ describe('Stryker', function () {
   describe('when constructed with coverageAnalysis "perTest" without a testFramework', () => {
     beforeEach(() => {
       config.coverageAnalysis = 'perTest';
-      const stub = (<sinon.SinonStub>testFrameworkOrchestratorStub.determineTestFramework); 
+      const stub = (<sinon.SinonStub>testFrameworkOrchestratorStub.determineTestFramework);
       stub.resetBehavior();
       stub.returns(null);
       sut = new Stryker({});
@@ -165,7 +160,7 @@ describe('Stryker', function () {
       });
 
       describe('when initial test run completes', () => {
-        let runMutantsPromiseResolve: () => any;
+        let runMutantsPromiseResolve: (mutantResults: MutantResult[]) => any;
         let strykerPromise: Promise<any>;
 
         beforeEach(() => {
@@ -220,6 +215,7 @@ describe('Stryker', function () {
           };
 
           describe('but the mutator does not create any mutants', () => {
+
             beforeEachRunMutationTest();
 
             // wait for Stryker to finish
@@ -246,9 +242,9 @@ describe('Stryker', function () {
               }, 100);
             });
 
-            describe('and running of mutators was successfull while reporter.wrapUp() results in void', () => {
+            describe('and running of mutants was successful while reporter.wrapUp() results in void', () => {
               beforeEach(() => {
-                runMutantsPromiseResolve();
+                runMutantsPromiseResolve([]);
                 return strykerPromise;
               });
               it('should resolve the stryker promise', () => strykerPromise);
@@ -257,15 +253,19 @@ describe('Stryker', function () {
                 expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s.', 2);
               });
 
+              it('should report mutant score', () => {
+                expect(reporter.onScoreCalculated).to.have.been.called;
+              });
+
               it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
             });
 
-            describe('and running of mutators was successfull while reporter.wrapUp() results in a promise', () => {
+            describe('and running of mutants was successful while reporter.wrapUp() results in a promise', () => {
               let wrapUpDoneFn: Function;
               beforeEach((done) => {
                 (<sinon.SinonStub>reporter.wrapUp).returns(new Promise((wrapUpDone) => wrapUpDoneFn = wrapUpDone));
-                runMutantsPromiseResolve();
-                setTimeout(done, 1); // give the wrapup promise some time to resolve and go to the next step (i don't know of any other way)
+                runMutantsPromiseResolve([]);
+                setTimeout(done, 1); // give the wrap up promise some time to resolve and go to the next step (i don't know of any other way)
               });
 
               it('should let the reporters wrapUp any async tasks', () => {

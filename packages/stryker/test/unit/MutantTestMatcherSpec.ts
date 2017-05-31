@@ -7,6 +7,7 @@ import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter'
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import Mutant from '../../src/Mutant';
 import log from '../helpers/log4jsMock';
+import { reporterStub } from '../helpers/producers';
 import StrictReporter from '../../src/reporters/StrictReporter';
 
 describe('MutantTestMatcher', () => {
@@ -23,7 +24,7 @@ describe('MutantTestMatcher', () => {
     statementMapDictionary = Object.create(null);
     runResult = { tests: [], status: RunStatus.Complete };
     strykerOptions = {};
-    reporter = { onAllMutantsMatchedWithTests: sinon.stub(), onSourceFileRead: sinon.stub(), onAllMutantsTested: sinon.stub(), onAllSourceFilesRead: sinon.stub(), onMutantTested: sinon.stub(), wrapUp: sinon.stub()};
+    reporter = reporterStub();
     sut = new MutantTestMatcher(mutants, runResult, statementMapDictionary, strykerOptions, reporter);
   });
 
