@@ -56,8 +56,8 @@ export default class BroadcastReporter implements StrictReporter {
     this.broadcast('onAllMutantsTested', results);
   }
 
-  onScore(score: ScoreResult): void {
-    this.broadcast('onScore', score);
+  onScoreCalculated(score: ScoreResult): void {
+    this.broadcast('onScoreCalculated', score);
   }
 
   wrapUp(): void | Promise<void> {

@@ -42,7 +42,7 @@ interface Reporter {
    * Called when the mutation score is calculated.
    * @param score The immutable structured score result (tree)
    */
-  onScore?(score: ScoreResult): void;
+  onScoreCalculated?(score: ScoreResult): void;
 
   /**
    * Called when stryker wants to quit

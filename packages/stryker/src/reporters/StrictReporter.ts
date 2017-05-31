@@ -9,7 +9,7 @@ interface StrictReporter extends Reporter {
     onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void;
     onMutantTested(result: MutantResult): void;
     onAllMutantsTested(results: MutantResult[]): void;
-    onScore(score: ScoreResult): void;
+    onScoreCalculated(score: ScoreResult): void;
     wrapUp(): void | Promise<void>;
 }
 export default StrictReporter;

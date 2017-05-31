@@ -254,7 +254,7 @@ describe('Stryker', function () {
               });
 
               it('should report mutant score', () => {
-                expect(reporter.onScore).to.have.been.called;
+                expect(reporter.onScoreCalculated).to.have.been.called;
               });
 
               it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);

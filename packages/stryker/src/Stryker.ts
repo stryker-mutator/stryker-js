@@ -74,7 +74,7 @@ export default class Stryker {
     const {runResult, sandboxCoordinator} = await this.initialTestRun(inputFiles);
     if (runResult && inputFiles && sandboxCoordinator) {
       const mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);
-      this.reporter.onScore(ScoreResultCalculator.calculate(mutantResults));  
+      this.reporter.onScoreCalculated(ScoreResultCalculator.calculate(mutantResults));  
       await this.wrapUpReporter();
       await StrykerTempFolder.clean();
       await this.logDone();

@@ -36,7 +36,7 @@ export function scoreResult(score: Partial<ScoreResult>): ScoreResult {
 }
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
-  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScore', 'wrapUp'];
+  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
 
 export function reporterStub() {
   return {
@@ -45,7 +45,8 @@ export function reporterStub() {
     onAllMutantsTested: sinon.stub(),
     onAllSourceFilesRead: sinon.stub(),
     onMutantTested: sinon.stub(),
-    onScore: sinon.stub(), wrapUp: sinon.stub()
+    onScoreCalculated: sinon.stub(), 
+    wrapUp: sinon.stub()
   };
 }
 

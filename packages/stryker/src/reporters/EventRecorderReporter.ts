@@ -69,8 +69,8 @@ export default class EventRecorderReporter implements StrictReporter {
     this.work('onMutantTested', result);
   }
 
-  onScore(score: ScoreResult): void {
-    this.work('onScore', score);
+  onScoreCalculated(score: ScoreResult): void {
+    this.work('onScoreCalculated', score);
   }
 
   onAllMutantsTested(results: MutantResult[]): void {
