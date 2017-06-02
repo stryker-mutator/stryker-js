@@ -58,17 +58,21 @@ if (strykerConfig) {
   program['configFile'] = strykerConfig;
 }
 
-const commands: { [cmd: string]: () => void } = {
+if (program['logLevel']) {
+  log4js.setGlobalLogLevel(program['logLevel']);
+}
+
+const commands: { [cmd: string]: () => Promise<any> } = {
   init: () => new StrykerInitializer().initialize(),
-  run: () => new Stryker(program).runMutationTest().catch(err => { 
-    log.error(`an error occurred`, err); 
-    process.exitCode = 1;
-    process.kill(process.pid, 'SIGINT');
-  })
+  run: () => new Stryker(program).runMutationTest()
 };
 
 if (Object.keys(commands).indexOf(command) >= 0) {
-  commands[command]();
+  commands[command]().catch(err => {
+    log.error(`an error occurred`, err);
+    process.exitCode = 1;
+    process.kill(process.pid, 'SIGINT');
+  });
 } else {
   log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', command, Object.keys(commands));
 }
