@@ -22,6 +22,9 @@
     "stryker-html-reporter": "file:../packages/stryker-html-reporter",
     "stryker-jasmine": "file:../packages/stryker-jasmine",
     "stryker-karma-runner": "file:../packages/stryker-karma-runner",
+    "stryker-mocha-framework": "file:../packages/stryker-mocha-framework",
+    "stryker-mocha-runner": "file:../packages/stryker-mocha-runner",
+    "ts-node": "^3.0.4",
     "typescript": "^2.2.2"
   },
   "scripts": {

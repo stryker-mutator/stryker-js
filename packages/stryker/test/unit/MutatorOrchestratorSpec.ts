@@ -8,6 +8,7 @@ import { Syntax } from 'esprima';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import * as estree from 'estree';
 import StrictReporter from '../../src/reporters/StrictReporter';
+import { reporterStub } from '../helpers/producers';
 
 describe('MutatorOrchestrator', () => {
   let sut: MutatorOrchestrator;
@@ -18,7 +19,7 @@ describe('MutatorOrchestrator', () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     sandbox.stub(StrykerTempFolder, 'writeFile');
-    reporter = { onSourceFileRead: sandbox.stub(), onAllSourceFilesRead: sandbox.stub(), onAllMutantsMatchedWithTests: sandbox.stub(), onMutantTested: sandbox.stub(), onAllMutantsTested: sandbox.stub(), wrapUp: sandbox.stub()};
+    reporter = reporterStub();
     sut = new MutatorOrchestrator(reporter);
   });
 
