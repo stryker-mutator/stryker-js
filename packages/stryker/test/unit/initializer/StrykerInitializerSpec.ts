@@ -50,7 +50,7 @@ describe('StrykerInitializer', () => {
       stubPackageClient({
         'stryker-awesome-runner': null,
         'stryker-hyper-runner': {
-          files: null,
+          files: [],
           someOtherSetting: 'enabled'
         },
         'stryker-ghost-runner': null,
@@ -113,7 +113,7 @@ describe('StrykerInitializer', () => {
       inquirerPrompt.resolves({ testFramework: 'hyper', testRunner: 'hyper', reporters: [] });
       await sut.initialize();
       expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"someOtherSetting": "enabled"'));
-      expect(fs.writeFile).not.to.have.been.calledWith('stryker.conf.js', sinon.match('"files"'));
+      expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"files": []'));
     });
 
     describe('but no testFramework can be found that supports the testRunner', () => {

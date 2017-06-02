@@ -12,14 +12,14 @@ export default class StrykerConfigWriter {
 
   private configObject: Partial<StrykerOptions>;
 
-  constructor(private out: (output: string) => void, testRunnerOption: null | PromptOption, private testFrameworkOption: null | PromptOption, reporters: PromptOption[], private additionalPiecesOfConfig: Partial<StrykerOptions>[]) {
+  constructor(private out: (output: string) => void, selectedTestRunner: null | PromptOption, private selectedTestFramework: null | PromptOption, selectedReporters: PromptOption[], private additionalPiecesOfConfig: Partial<StrykerOptions>[]) {
     this.configObject = {
       files: [
         { pattern: 'src/**/*.js', mutated: true, included: false },
         'test/**/*.js'
       ],
-      testRunner: (testRunnerOption ? testRunnerOption.name : ''),
-      reporter: reporters.map(rep => rep.name)
+      testRunner: (selectedTestRunner ? selectedTestRunner.name : ''),
+      reporter: selectedReporters.map(rep => rep.name)
     };
   }
 
@@ -39,25 +39,16 @@ export default class StrykerConfigWriter {
   public async write(): Promise<void> {
     this.configureTestFramework();
     _.assign(this.configObject, ...this.additionalPiecesOfConfig);
-    this.cleanFilesIfNeeded(this.configObject);
     return this.writeStrykerConfig(this.configObject);
   }
 
 
   private configureTestFramework() {
-    if (this.testFrameworkOption) {
-      this.configObject.testFramework = this.testFrameworkOption.name;
+    if (this.selectedTestFramework) {
+      this.configObject.testFramework = this.selectedTestFramework.name;
       this.configObject.coverageAnalysis = 'perTest';
     } else {
       this.configObject.coverageAnalysis = 'all';
-    }
-  }
-
-
-  private cleanFilesIfNeeded(configObject: Partial<StrykerOptions>) {
-    if (configObject.files === null) {
-      // stryker-karma-runner sets files to null, lets make sure they are not written out as "files": null
-      delete configObject.files;
     }
   }
 

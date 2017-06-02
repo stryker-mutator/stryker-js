@@ -52,7 +52,6 @@ export default class StrykerInitializer {
   private async selectTestRunner(): Promise<PromptOption | null> {
     const testRunnerOptions = await this.client.getTestRunnerOptions();
     if (testRunnerOptions.length) {
-      const testRunnerOptions = await this.client.getTestRunnerOptions();
       log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
       return await this.inquirer.promptTestRunners(testRunnerOptions);
     } else {
