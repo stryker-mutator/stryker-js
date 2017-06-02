@@ -1,6 +1,7 @@
 import * as program from 'commander';
 import { CONFIG_SYNTAX_HELP } from './ConfigReader';
 import Stryker from './Stryker';
+import StrykerInitializer from './initializer/StrykerInitializer';
 import * as log4js from 'log4js';
 
 const log = log4js.getLogger('stryker-cli');
@@ -14,6 +15,7 @@ program
   .usage('<command> [options] [stryker.conf.js]')
   .description(`Possible commands: 
     run: Run mutation testing
+    init: Initalize Stryker for your project
 
 Optional location to the stryker.conf.js file as last argument. That file should export a function which accepts a "config" object\n${CONFIG_SYNTAX_HELP}`)
   .arguments('<command> [stryker.conf.js]')
@@ -56,16 +58,21 @@ if (strykerConfig) {
   program['configFile'] = strykerConfig;
 }
 
-const commands: { [cmd: string]: () => void } = {
-  run: () => new Stryker(program).runMutationTest().catch(err => { 
-    log.error(`an error occurred`, err); 
-    process.exitCode = 1;
-    process.kill(process.pid, 'SIGINT');
-  })
+if (program['logLevel']) {
+  log4js.setGlobalLogLevel(program['logLevel']);
+}
+
+const commands: { [cmd: string]: () => Promise<any> } = {
+  init: () => new StrykerInitializer().initialize(),
+  run: () => new Stryker(program).runMutationTest()
 };
 
 if (Object.keys(commands).indexOf(command) >= 0) {
-  commands[command]();
+  commands[command]().catch(err => {
+    log.error(`an error occurred`, err);
+    process.exitCode = 1;
+    process.kill(process.pid, 'SIGINT');
+  });
 } else {
   log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', command, Object.keys(commands));
 }

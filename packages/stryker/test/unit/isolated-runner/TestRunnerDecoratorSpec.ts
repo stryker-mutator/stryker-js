@@ -19,7 +19,7 @@ describe('TestRunnerDecorator', () => {
       });
 
       it('should pass through rejected results', () => {
-        testRunner[methodName].rejects('some error');
+        testRunner[methodName].rejects(new Error('some error'));
         return expect((<any>sut[methodName])()).to.be.rejectedWith('some error');
       });
     });
