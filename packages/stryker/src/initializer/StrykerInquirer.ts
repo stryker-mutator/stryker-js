@@ -36,7 +36,7 @@ export class StrykerInquirer {
       name: 'reporters',
       message: 'Which reporter(s) do you want to use?',
       choices: options.map(_ => _.name),
-      default: ['html', 'clear-text', 'progress']
+      default: ['clear-text', 'progress']
     });
     return options.filter(option => (answers['reporters'] as string[]).some(reporterName => option.name === reporterName));
   }

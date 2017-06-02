@@ -1,6 +1,7 @@
 import { RestClient, IRestResponse } from 'typed-rest-client/RestClient';
 import PromptOption from './PromptOption';
 import * as log4js from 'log4js';
+import { errorToString } from '../utils/objectUtils';
 
 const log = log4js.getLogger('NpmClient');
 
@@ -71,7 +72,10 @@ export default class NpmClient {
   getAdditionalConfig(packageName: string): Promise<object> {
     return this.packageClient.get<NpmPackage>(`/${packageName}/latest`)
       .then(handleResult(`${BASE_NPM_PACKAGE}/${packageName}`))
-      .then(pkg => pkg.initStrykerConfig || {});
+      .then(pkg => pkg.initStrykerConfig || {})
+      .catch(err => {
+        log.error('');
+      });
   }
 
   private search(query: string): Promise<NpmSearchResult> {
@@ -79,8 +83,13 @@ export default class NpmClient {
     log.debug(`Searching: ${call}`);
     return this.searchClient.get<NpmSearchResult>(query)
       .then(handleResult(call))
-      .catch(() => {
-        log.error('Unable to reach npm search. Please check your internet connection.');
+      .catch(err => {
+        log.error('Unable to reach npm search. Please check your internet connection.', errorToString(err));
+        const result: NpmSearchResult = {
+          total: 0,
+          results: []
+        };
+        return result;
       });
   }
 }

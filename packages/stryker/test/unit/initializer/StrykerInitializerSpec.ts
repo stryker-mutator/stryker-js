@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
+import logger from '../../helpers/log4jsMock';
 
 describe('StrykerInitializer', () => {
   let sut: StrykerInitializer;
@@ -34,6 +35,18 @@ describe('StrykerInitializer', () => {
         get: restClientPackageGet
       });
     sut = new StrykerInitializer(out);
+    stubPackageClient({
+      'stryker-awesome-runner': null,
+      'stryker-hyper-runner': {
+        files: null,
+        someOtherSetting: 'enabled'
+      },
+      'stryker-ghost-runner': null,
+      'stryker-awesome-framework': null,
+      'stryker-hyper-framework': null,
+      'stryker-dimension-reporter': null,
+      'stryker-mars-reporter': null
+    });
   });
 
   afterEach(() => {
@@ -46,18 +59,6 @@ describe('StrykerInitializer', () => {
       stubTestRunners('stryker-awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] }, { name: 'stryker-hyper-framework', keywords: ['stryker-hyper-runner'] });
       stubReporters('stryker-dimension-reporter', 'stryker-mars-reporter');
-      stubPackageClient({
-        'stryker-awesome-runner': null,
-        'stryker-hyper-runner': {
-          files: null,
-          someOtherSetting: 'enabled'
-        },
-        'stryker-ghost-runner': null,
-        'stryker-awesome-framework': null,
-        'stryker-hyper-framework': null,
-        'stryker-dimension-reporter': null,
-        'stryker-mars-reporter': null
-      });
       fsWriteFile.resolves({});
     });
 
@@ -145,7 +146,6 @@ describe('StrykerInitializer', () => {
       });
     });
 
-
     describe('when install fails', () => {
       beforeEach(() => {
         childExecSync.throws('error');
@@ -160,7 +160,39 @@ describe('StrykerInitializer', () => {
     });
   });
 
+  describe('initialize() when no internet', () => {
 
+    it('should log error and continue when fetching test runners', async () => {
+      restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
+      inquirerPrompt.resolves({ reporters: ['clear-text'] });
+      await sut.initialize();
+      expect(logger.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
+      expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
+      expect(fs.writeFile).to.have.been.called;
+    });
+
+    it('should log error and continue when fetching test frameworks', async () => {
+      stubTestRunners('stryker-awesome-runner');
+      restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
+      inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
+      await sut.initialize();
+      expect(logger.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
+      expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with awesome, downgrading coverageAnalysis to "all"');
+      expect(fs.writeFile).to.have.been.called;
+    });
+
+    it('should log error and continue when fetching stryker reporters', async () => {
+      stubTestRunners('stryker-awesome-runner');
+      stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] });
+      restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
+      inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
+      await sut.initialize();
+      expect(logger.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
+      expect(out).to.have.been.calledWith('Unable to fetch additional reporters.');
+      expect(fs.writeFile).to.have.been.called;
+    });
+
+  });
 
   const stubTestRunners = (...testRunners: string[]) => {
     restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').resolves({
@@ -204,3 +236,4 @@ describe('StrykerInitializer', () => {
     });
   };
 });
+

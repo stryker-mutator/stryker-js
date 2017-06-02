@@ -23,7 +23,7 @@ export default class StrykerInitializer {
   async initialize(): Promise<void> {
     this.patchProxies();
     const selectedTestRunner = await this.selectTestRunner();
-    const selectedTestFramework = await (selectedTestRunner ? this.selectTestFramework(selectedTestRunner) : null);
+    const selectedTestFramework = selectedTestRunner ? await this.selectTestFramework(selectedTestRunner) : null;
     const reporters = await this.selectReporters();
     const npmDependencies = this.getNpmDependencies(selectedTestRunner, selectedTestFramework, reporters);
     this.installNpmDependencies(npmDependencies);
@@ -45,13 +45,13 @@ export default class StrykerInitializer {
     copy('http_proxy', 'HTTP_PROXY');
     copy('https_proxy', 'HTTPS_PROXY');
   }
-  
-  private async selectTestRunner(): Promise<null | PromptOption> {
-    try {
-      const testRunnerOptions = await this.client.getTestRunnerOptions();
+
+  private async selectTestRunner(): Promise<PromptOption | null> {
+    const testRunnerOptions = await this.client.getTestRunnerOptions();
+    if (testRunnerOptions.length) {
       log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
       return await this.inquirer.promptTestRunners(testRunnerOptions);
-    } catch (err) {
+    } else {
       this.out('Unable to select a test runner. You will need to configure it manually.');
       return null;
     }
@@ -62,7 +62,7 @@ export default class StrykerInitializer {
     try {
       reporterOptions = await this.client.getTestReporterOptions();
     } catch (err) {
-      this.out('Unable to fetch additional test reporters.');
+      this.out('Unable to fetch additional reporters.');
       reporterOptions = [];
     }
     reporterOptions.push({
