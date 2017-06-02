@@ -28,7 +28,7 @@ const getName = (packageName: string) => {
   return packageName.split('-')[1];
 };
 
-const searchResultToOptions = (searchResults: NpmSearchResult): PromptOption[] => searchResults.results.map(result => ({
+const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOption[] => searchResults.results.map(result => ({
   name: getName(result.package.name),
   npm: result.package.name
 }));
@@ -50,7 +50,7 @@ export default class NpmClient {
 
   getTestRunnerOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:stryker-test-runner')
-      .then(searchResultToOptions);
+      .then(mapSearchResultToPromptOption);
   }
 
   getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
@@ -61,12 +61,12 @@ export default class NpmClient {
         }
         return searchResult;
       })
-      .then(searchResultToOptions);
+      .then(mapSearchResultToPromptOption);
   }
 
   getTestReporterOptions(): Promise<PromptOption[]> {
     return this.search(`/v2/search?q=keywords:stryker-reporter`)
-      .then(searchResultToOptions);
+      .then(mapSearchResultToPromptOption);
   }
 
   getAdditionalConfig(packageName: string): Promise<object> {
