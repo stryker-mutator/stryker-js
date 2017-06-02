@@ -132,10 +132,6 @@ describe('StrykerInitializer', () => {
         expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with ghost, downgrading coverageAnalysis to "all"');
         expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
       });
-
-      it('should stop with an error if there already is a `stryker.conf.js` file', () => {
-
-      });
     });
 
     describe('when writing of the config file fails', () => {

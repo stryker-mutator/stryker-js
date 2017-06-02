@@ -1,16 +1,12 @@
-import { StrykerOptions } from 'stryker-api/core';
 import * as child from 'child_process';
-import * as fs from 'mz/fs';
-import * as _ from 'lodash';
 import { StrykerInquirer } from './StrykerInquirer';
 import NpmClient from './NpmClient';
 import PromptOption from './PromptOption';
 import * as log4js from 'log4js';
 import { filterEmpty } from '../utils/objectUtils';
+import StrykerConfigWriter from './StrykerConfigWriter';
 
 const log = log4js.getLogger('StrykerInitializer');
-
-const STRYKER_CONFIG_FILE = 'stryker.conf.js';
 
 export default class StrykerInitializer {
 
@@ -23,14 +19,19 @@ export default class StrykerInitializer {
    * @function
    */
   async initialize(): Promise<void> {
-    this.guardForExistingConfig();
+    StrykerConfigWriter.guardForExistingConfig();
     this.patchProxies();
     const selectedTestRunner = await this.selectTestRunner();
     const selectedTestFramework = selectedTestRunner ? await this.selectTestFramework(selectedTestRunner) : null;
     const selectedReporters = await this.selectReporters();
     const npmDependencies = this.getSelectedNpmDependencies(selectedTestRunner, selectedTestFramework, selectedReporters);
     this.installNpmDependencies(npmDependencies);
-    await this.setupStrykerConfig(selectedTestRunner, selectedTestFramework, selectedReporters, npmDependencies);
+    await new StrykerConfigWriter(this.out,
+      selectedTestRunner,
+      selectedTestFramework,
+      selectedReporters,
+      npmDependencies,
+      await this.fetchAdditionalConfig(npmDependencies)).write();
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure your files and test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
@@ -47,14 +48,6 @@ export default class StrykerInitializer {
     };
     copy('http_proxy', 'HTTP_PROXY');
     copy('https_proxy', 'HTTPS_PROXY');
-  }
-
-  private guardForExistingConfig() {
-    if (fs.existsSync(STRYKER_CONFIG_FILE)) {
-      const msg = 'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
-      log.error(msg);
-      throw new Error(msg);
-    }
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {
@@ -131,60 +124,10 @@ export default class StrykerInitializer {
     }
   }
 
-  /**
-  * Create stryker.conf.js based on the chosen framework and test runner
-  * @function
-  */
-  private async setupStrykerConfig(testRunnerOption: null | PromptOption, testFrameworkOption: null | PromptOption, reporters: PromptOption[], dependencies: string[]): Promise<void> {
-    const configObject: Partial<StrykerOptions> = this.createStrykerConfig(testRunnerOption, reporters);
-    this.configureTestFramework(configObject, testFrameworkOption);
-    const additionalPiecesOfConfig = await this.fetchAdditionalConfig(dependencies);
-    _.assign(configObject, ...additionalPiecesOfConfig);
-    this.cleanFilesIfNeeded(configObject);
-    this.out('Writing stryker.conf.js...');
-    return fs.writeFile(STRYKER_CONFIG_FILE, wrapInModule(JSON.stringify(configObject, null, 2)));
-  }
-
-  private createStrykerConfig(testRunnerOption: null | PromptOption, reporters: PromptOption[]): Partial<StrykerOptions> {
-    return {
-      files: [
-        { pattern: 'src/**/*.js', mutated: true, included: false },
-        'test/**/*.js'
-      ],
-      testRunner: (testRunnerOption ? testRunnerOption.name : ''),
-      reporter: reporters.map(rep => rep.name)
-    };
-  }
-
-  private configureTestFramework(configObject: Partial<StrykerOptions>, testFrameworkOption: null | PromptOption) {
-    if (testFrameworkOption) {
-      configObject.testFramework = testFrameworkOption.name;
-      configObject.coverageAnalysis = 'perTest';
-    } else {
-      configObject.coverageAnalysis = 'all';
-    }
-  }
-
   private async fetchAdditionalConfig(dependencies: string[]): Promise<object[]> {
     return filterEmpty(await Promise.all(dependencies.map(dep => this.client.getAdditionalConfig(dep)
       .catch(err => {
         log.warn(`Could not fetch additional initialization config for dependency ${dep}. You might need to configure it manually`, err);
       }))));
   }
-
-  private cleanFilesIfNeeded(configObject: Partial<StrykerOptions>) {
-    if (configObject.files === null) {
-      // stryker-karma-runner sets files to null, lets make sure they are not written out as "files": null
-      delete configObject.files;
-    }
-  }
-}
-
-function wrapInModule(configParameters: string) {
-  return `
-  module.exports = function(config){
-    config.set(
-      ${configParameters}
-    );
-  }`;
 }
