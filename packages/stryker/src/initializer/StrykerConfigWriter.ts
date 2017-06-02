@@ -12,7 +12,7 @@ export default class StrykerConfigWriter {
 
   private configObject: Partial<StrykerOptions>;
 
-  constructor(private out: (output: string) => void, testRunnerOption: null | PromptOption, private testFrameworkOption: null | PromptOption, private reporters: PromptOption[], private dependencies: string[], private additionalPiecesOfConfig: Partial<StrykerOptions>[]) {
+  constructor(private out: (output: string) => void, testRunnerOption: null | PromptOption, private testFrameworkOption: null | PromptOption, reporters: PromptOption[], private additionalPiecesOfConfig: Partial<StrykerOptions>[]) {
     this.configObject = {
       files: [
         { pattern: 'src/**/*.js', mutated: true, included: false },

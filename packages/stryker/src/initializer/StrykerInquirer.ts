@@ -25,9 +25,8 @@ export class StrykerInquirer {
       name: 'testFramework',
       message: 'Which test framework do you want to use?',
       choices: options.map(_ => _.name),
-      default: 'Mocha'
     });
-    return options.filter(_ => _.name === answers['testFramework'])[0] || { name: 'mocha', npm: 'stryker-mocha-runner' };
+    return options.filter(_ => _.name === answers['testFramework'])[0];
   }
 
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {

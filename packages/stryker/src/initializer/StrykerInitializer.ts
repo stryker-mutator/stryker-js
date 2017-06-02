@@ -30,7 +30,6 @@ export default class StrykerInitializer {
       selectedTestRunner,
       selectedTestFramework,
       selectedReporters,
-      npmDependencies,
       await this.fetchAdditionalConfig(npmDependencies)).write();
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure your files and test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');
@@ -125,9 +124,10 @@ export default class StrykerInitializer {
   }
 
   private async fetchAdditionalConfig(dependencies: string[]): Promise<object[]> {
-    return filterEmpty(await Promise.all(dependencies.map(dep => this.client.getAdditionalConfig(dep)
-      .catch(err => {
-        log.warn(`Could not fetch additional initialization config for dependency ${dep}. You might need to configure it manually`, err);
-      }))));
+    return filterEmpty(await Promise.all(dependencies.map(dep =>
+      this.client.getAdditionalConfig(dep)
+        .catch(err => {
+          log.warn(`Could not fetch additional initialization config for dependency ${dep}. You might need to configure it manually`, err);
+        }))));
   }
 }

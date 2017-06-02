@@ -72,10 +72,7 @@ export default class NpmClient {
   getAdditionalConfig(packageName: string): Promise<object> {
     return this.packageClient.get<NpmPackage>(`/${packageName}/latest`)
       .then(handleResult(`${BASE_NPM_PACKAGE}/${packageName}`))
-      .then(pkg => pkg.initStrykerConfig || {})
-      .catch(err => {
-        log.error('');
-      });
+      .then(pkg => pkg.initStrykerConfig || {});      
   }
 
   private search(query: string): Promise<NpmSearchResult> {

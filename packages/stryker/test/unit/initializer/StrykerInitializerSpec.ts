@@ -35,18 +35,6 @@ describe('StrykerInitializer', () => {
         get: restClientPackageGet
       });
     sut = new StrykerInitializer(out);
-    stubPackageClient({
-      'stryker-awesome-runner': null,
-      'stryker-hyper-runner': {
-        files: null,
-        someOtherSetting: 'enabled'
-      },
-      'stryker-ghost-runner': null,
-      'stryker-awesome-framework': null,
-      'stryker-hyper-framework': null,
-      'stryker-dimension-reporter': null,
-      'stryker-mars-reporter': null
-    });
   });
 
   afterEach(() => {
@@ -59,6 +47,18 @@ describe('StrykerInitializer', () => {
       stubTestRunners('stryker-awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] }, { name: 'stryker-hyper-framework', keywords: ['stryker-hyper-runner'] });
       stubReporters('stryker-dimension-reporter', 'stryker-mars-reporter');
+      stubPackageClient({
+        'stryker-awesome-runner': null,
+        'stryker-hyper-runner': {
+          files: null,
+          someOtherSetting: 'enabled'
+        },
+        'stryker-ghost-runner': null,
+        'stryker-awesome-framework': null,
+        'stryker-hyper-framework': null,
+        'stryker-dimension-reporter': null,
+        'stryker-mars-reporter': null
+      });
       fsWriteFile.resolves({});
     });
 
@@ -173,6 +173,7 @@ describe('StrykerInitializer', () => {
 
     it('should log error and continue when fetching test frameworks', async () => {
       stubTestRunners('stryker-awesome-runner');
+      stubPackageClient({ 'stryker-awesome-runner': null });
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
       await sut.initialize();
@@ -186,9 +187,21 @@ describe('StrykerInitializer', () => {
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] });
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
+      stubPackageClient({ 'stryker-awesome-runner': null });
       await sut.initialize();
       expect(log.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to fetch additional reporters.');
+      expect(fs.writeFile).to.have.been.called;
+    });
+
+    it('should log warning and continue when fetching custom config', async () => {
+      stubTestRunners('stryker-awesome-runner');
+      stubTestFrameworks();
+      stubReporters();
+      inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
+      restClientPackageGet.rejects();
+      await sut.initialize();
+      expect(log.warn).to.have.been.calledWith('Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually');
       expect(fs.writeFile).to.have.been.called;
     });
 
