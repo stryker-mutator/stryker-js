@@ -15,7 +15,7 @@ export default class StrykerInitializer {
   constructor(private out = console.log, private client: NpmClient = new NpmClient()) { }
 
   /**
-   * Runs the initializer ask used framework and test runner en setup environment
+   * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
    * @function
    */
   async initialize(): Promise<void> {
@@ -24,7 +24,7 @@ export default class StrykerInitializer {
     const selectedTestRunner = await this.selectTestRunner();
     const selectedTestFramework = selectedTestRunner ? await this.selectTestFramework(selectedTestRunner) : null;
     const selectedReporters = await this.selectReporters();
-    const npmDependencies = this.getSelectedNpmDependencies(selectedTestRunner, selectedTestFramework, selectedReporters);
+    const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner, selectedTestFramework].concat(selectedReporters));
     this.installNpmDependencies(npmDependencies);
     await new StrykerConfigWriter(this.out,
       selectedTestRunner,
@@ -40,13 +40,13 @@ export default class StrykerInitializer {
   * Let's make sure they are available.
   */
   private patchProxies() {
-    const copy = (from: string, to: string) => {
+    const copyEnvVariable = (from: string, to: string) => {
       if (process.env[from] && !process.env[to]) {
         process.env[to] = process.env[from];
       }
     };
-    copy('http_proxy', 'HTTP_PROXY');
-    copy('https_proxy', 'HTTPS_PROXY');
+    copyEnvVariable('http_proxy', 'HTTP_PROXY');
+    copyEnvVariable('https_proxy', 'HTTPS_PROXY');
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {
@@ -99,10 +99,9 @@ export default class StrykerInitializer {
     return selectedTestFramework;
   }
 
-  private getSelectedNpmDependencies(testRunner: PromptOption | null, testFramework: PromptOption | null, reporters: PromptOption[]) {
-    return filterEmpty([testRunner && testRunner.npm]
-      .concat(reporters.map(rep => rep.npm))
-      .concat(filterEmpty([testFramework && testFramework.npm])));
+  private getSelectedNpmDependencies(selectedOptions: (PromptOption | null)[]) {
+    return filterEmpty(filterEmpty(selectedOptions)
+      .map(option => option.npm));
   }
 
   /**

@@ -88,7 +88,7 @@ describe('StrykerInitializer', () => {
       inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', reporters: ['dimension', 'mars'] });
       await sut.initialize();
       expect(out).to.have.been.calledWith('Installing NPM dependencies...');
-      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker stryker-api stryker-awesome-runner stryker-dimension-reporter stryker-mars-reporter stryker-awesome-framework',
+      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker stryker-api stryker-awesome-runner stryker-awesome-framework stryker-dimension-reporter stryker-mars-reporter',
         { stdio: [0, 1, 2] });
     });
 
