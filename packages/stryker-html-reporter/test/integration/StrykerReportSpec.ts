@@ -7,8 +7,9 @@ import * as _ from 'lodash';
 const EVENTS_DIR = 'testResources/strykerEvents';
 const REPORT_DIR = 'reports/stryker';
 
-describe('Html report of stryker', () => {
+describe('Html report of stryker', function () {
   let sut: any;
+  this.timeout(10000);
 
   let replayAll = (eventPromisses: Promise<{ name: string, content: any }>[]) => {
     return Promise.all(eventPromisses).then(events => {

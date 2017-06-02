@@ -1,3 +1,4 @@
+import ScoreResult from './ScoreResult';
 import SourceFile from './SourceFile';
 import MutantResult from './MutantResult';
 import MatchedMutant from './MatchedMutant';
@@ -38,9 +39,15 @@ interface Reporter {
   onAllMutantsTested?(results: MutantResult[]): void;
 
   /**
-   * Called when stryker wants to quite
+   * Called when the mutation score is calculated.
+   * @param score The immutable structured score result (tree)
+   */
+  onScoreCalculated?(score: ScoreResult): void;
+
+  /**
+   * Called when stryker wants to quit
    * Gives a reporter the ability to finish up any async tasks
-   * Stryker will not close untill the promise is either resolved or rejected.
+   * Stryker will not close until the promise is either resolved or rejected.
    * @return a promise which will resolve when the reporter is done reporting
    */
   wrapUp?(): void | Promise<void>;

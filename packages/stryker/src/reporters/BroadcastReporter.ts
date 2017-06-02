@@ -1,4 +1,4 @@
-import { Reporter, SourceFile, MutantResult, MatchedMutant } from 'stryker-api/report';
+import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from 'stryker-api/report';
 import * as log4js from 'log4js';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
@@ -54,6 +54,10 @@ export default class BroadcastReporter implements StrictReporter {
 
   onAllMutantsTested(results: MutantResult[]): void {
     this.broadcast('onAllMutantsTested', results);
+  }
+
+  onScoreCalculated(score: ScoreResult): void {
+    this.broadcast('onScoreCalculated', score);
   }
 
   wrapUp(): void | Promise<void> {
