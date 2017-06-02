@@ -72,7 +72,11 @@ export default class NpmClient {
   getAdditionalConfig(packageName: string): Promise<object> {
     return this.packageClient.get<NpmPackage>(`/${packageName}/latest`)
       .then(handleResult(`${BASE_NPM_PACKAGE}/${packageName}`))
-      .then(pkg => pkg.initStrykerConfig || {});      
+      .then(pkg => pkg.initStrykerConfig || {})
+      .catch(err => {
+        log.warn(`Could not fetch additional initialization config for dependency ${packageName}. You might need to configure it manually`, err);
+        return {};
+      });
   }
 
   private search(query: string): Promise<NpmSearchResult> {
@@ -81,7 +85,7 @@ export default class NpmClient {
     return this.searchClient.get<NpmSearchResult>(query)
       .then(handleResult(call))
       .catch(err => {
-        log.error('Unable to reach npm search. Please check your internet connection.', errorToString(err));
+        log.error(`Unable to reach ${BASE_NPM_SEARCH} (for query ${query}). Please check your internet connection.`, errorToString(err));
         const result: NpmSearchResult = {
           total: 0,
           results: []

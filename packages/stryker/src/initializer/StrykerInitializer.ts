@@ -62,12 +62,7 @@ export default class StrykerInitializer {
 
   private async selectReporters(): Promise<PromptOption[]> {
     let reporterOptions: PromptOption[];
-    try {
-      reporterOptions = await this.client.getTestReporterOptions();
-    } catch (err) {
-      this.out('Unable to fetch additional reporters.');
-      reporterOptions = [];
-    }
+    reporterOptions = await this.client.getTestReporterOptions();
     reporterOptions.push({
       name: 'clear-text',
       npm: null
@@ -123,9 +118,6 @@ export default class StrykerInitializer {
 
   private async fetchAdditionalConfig(dependencies: string[]): Promise<object[]> {
     return filterEmpty(await Promise.all(dependencies.map(dep =>
-      this.client.getAdditionalConfig(dep)
-        .catch(err => {
-          log.warn(`Could not fetch additional initialization config for dependency ${dep}. You might need to configure it manually`, err);
-        }))));
+      this.client.getAdditionalConfig(dep))));
   }
 }

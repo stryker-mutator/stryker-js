@@ -164,9 +164,10 @@ describe('StrykerInitializer', () => {
 
     it('should log error and continue when fetching test runners', async () => {
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
+      stubReporters();
       inquirerPrompt.resolves({ reporters: ['clear-text'] });
       await sut.initialize();
-      expect(log.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
+      expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-runner). Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
       expect(fs.writeFile).to.have.been.called;
     });
@@ -176,8 +177,9 @@ describe('StrykerInitializer', () => {
       stubPackageClient({ 'stryker-awesome-runner': null });
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
+      stubReporters();
       await sut.initialize();
-      expect(log.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
+      expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-framework). Please check your internet connection.');
       expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with awesome, downgrading coverageAnalysis to "all"');
       expect(fs.writeFile).to.have.been.called;
     });
@@ -185,12 +187,11 @@ describe('StrykerInitializer', () => {
     it('should log error and continue when fetching stryker reporters', async () => {
       stubTestRunners('stryker-awesome-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] });
-      restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
+      restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-reporter').rejects();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
       stubPackageClient({ 'stryker-awesome-runner': null });
       await sut.initialize();
-      expect(log.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
-      expect(out).to.have.been.calledWith('Unable to fetch additional reporters.');
+      expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-reporter). Please check your internet connection.');
       expect(fs.writeFile).to.have.been.called;
     });
 
