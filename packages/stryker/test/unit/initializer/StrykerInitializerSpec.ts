@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
-import logger from '../../helpers/log4jsMock';
+import log from '../../helpers/log4jsMock';
 
 describe('StrykerInitializer', () => {
   let sut: StrykerInitializer;
@@ -132,6 +132,10 @@ describe('StrykerInitializer', () => {
         expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with ghost, downgrading coverageAnalysis to "all"');
         expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
       });
+
+      it('should stop with an error if there already is a `stryker.conf.js` file', () => {
+
+      });
     });
 
     describe('when writing of the config file fails', () => {
@@ -166,7 +170,7 @@ describe('StrykerInitializer', () => {
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
       inquirerPrompt.resolves({ reporters: ['clear-text'] });
       await sut.initialize();
-      expect(logger.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
+      expect(log.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
       expect(fs.writeFile).to.have.been.called;
     });
@@ -176,7 +180,7 @@ describe('StrykerInitializer', () => {
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
       await sut.initialize();
-      expect(logger.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
+      expect(log.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
       expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with awesome, downgrading coverageAnalysis to "all"');
       expect(fs.writeFile).to.have.been.called;
     });
@@ -187,11 +191,22 @@ describe('StrykerInitializer', () => {
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
       await sut.initialize();
-      expect(logger.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
+      expect(log.error).to.have.been.calledWith('Unable to reach npm search. Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to fetch additional reporters.');
       expect(fs.writeFile).to.have.been.called;
     });
 
+  });
+
+  describe('initialize() when `stryker.conf.js` file already exists', () => {
+    beforeEach(() => {
+      fsExistsSync.resolves(true);
+    });
+
+    it('should log an error and quit', async () => {
+      expect(sut.initialize()).to.be.rejected;
+      expect(log.error).to.have.been.calledWith('Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.');
+    });
   });
 
   const stubTestRunners = (...testRunners: string[]) => {
@@ -236,4 +251,3 @@ describe('StrykerInitializer', () => {
     });
   };
 });
-
