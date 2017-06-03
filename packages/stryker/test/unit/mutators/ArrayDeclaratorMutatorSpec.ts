@@ -5,7 +5,7 @@ import ArrayDeclaratorMutator from '../../../src/mutators/ArrayDeclaratorMutator
 import * as parser from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
 
-describe('BlockStatementMutator', () => {
+describe('ArrayDeclaratorMutator', () => {
   let sut: ArrayDeclaratorMutator;
 
   beforeEach(() => sut = new ArrayDeclaratorMutator());
