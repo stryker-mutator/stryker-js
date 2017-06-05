@@ -88,7 +88,7 @@ describe('StrykerInitializer', () => {
       inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', reporters: ['dimension', 'mars'] });
       await sut.initialize();
       expect(out).to.have.been.calledWith('Installing NPM dependencies...');
-      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker stryker-api stryker-awesome-runner stryker-awesome-framework stryker-dimension-reporter stryker-mars-reporter',
+      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker-api stryker-awesome-runner stryker-awesome-framework stryker-dimension-reporter stryker-mars-reporter',
         { stdio: [0, 1, 2] });
     });
 
@@ -154,7 +154,7 @@ describe('StrykerInitializer', () => {
 
       it('should recover', async () => {
         await sut.initialize();
-        expect(out).to.have.been.calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker stryker-api stryker-ghost-runner"');
+        expect(out).to.have.been.calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker-api stryker-ghost-runner"');
         expect(fs.writeFile).to.have.been.called;
       });
     });
