@@ -106,7 +106,7 @@ export default class StrykerInitializer {
   private installNpmDependencies(dependencies: string[]): void {
     if (dependencies.length > 0) {
       this.out('Installing NPM dependencies...');
-      const cmd = `npm i --save-dev stryker stryker-api ${dependencies.join(' ')}`;
+      const cmd = `npm i --save-dev stryker-api ${dependencies.join(' ')}`;
       this.out(cmd);
       try {
         child.execSync(cmd, { stdio: [0, 1, 2] });
