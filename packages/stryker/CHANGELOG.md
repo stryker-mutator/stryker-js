@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.6.3"></a>
+## 0.6.3 (2017-06-02)
+
+
+### Features
+
+* **Mutators:** Add Boolean substitution mutators (#294) ([a137a97](https://github.com/stryker-mutator/stryker/commit/a137a97))
+* **report-score-result:** Report score result as tree (#309) ([965c575](https://github.com/stryker-mutator/stryker/commit/965c575))
+
 <a name="0.6.0"></a>
 # 0.6.0 (2017-04-21)
 

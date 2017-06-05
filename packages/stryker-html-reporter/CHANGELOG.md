@@ -1,3 +1,11 @@
+<a name="0.4.2"></a>
+## 0.4.2 (2017-06-05)
+
+### Bug Fixes
+
+* **deps:** Alter stryker-api to be a peerDependency ([340487f](https://github.com/stryker-mutator/stryker/commit/340487f))
+* **deps:** Set version of stryker-api ([cf1f125](https://github.com/stryker-mutator/stryker/commit/cf1f125))
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/stryker-mutator/stryker-html-reporter/compare/v0.2.2...v0.3.0) (2016-11-20)
 
