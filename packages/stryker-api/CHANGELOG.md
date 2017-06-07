@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.5.1"></a>
+## 0.5.1 (2017-06-02)
+
+### Features
+
+* **report-score-result:** Report score result as tree (#309) ([965c575](https://github.com/stryker-mutator/stryker/commit/965c575))
+
 <a name="0.5.0"></a>
 # 0.5.0 (2017-04-21)
 
