@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 <a name="0.6.3"></a>
+## [0.6.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.6.2...stryker@0.6.3) (2017-06-08)
+
+
+### Bug Fixes
+
+* **intializer:** Remove install of `stryker` itself (#317) ([8b8dd30](https://github.com/stryker-mutator/stryker/commit/8b8dd30)), closes [#316](https://github.com/stryker-mutator/stryker/issues/316)
+* **MethodChainMutatorSpec:** Fix test name, so it matches the name of the mutator. (#313) ([5e53982](https://github.com/stryker-mutator/stryker/commit/5e53982)), closes [#313](https://github.com/stryker-mutator/stryker/issues/313)
+
+
+
+
+<a name="0.6.3"></a>
 ## 0.6.3 (2017-06-02)
 
 
