@@ -26,12 +26,22 @@ export default class SandboxCoordinator {
   constructor(private options: Config, private files: InputFile[], private testFramework: TestFramework | null, private reporter: StrictReporter) { }
 
   async initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
-    log.info(`Starting initial test run. This may take a while.`);
-    const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
-    await sandbox.initialize();
-    let runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
-    await sandbox.dispose();
-    return runResult;
+    if (this.files.length > 0) {
+      log.info(`Starting initial test run. This may take a while.`);
+      const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
+      await sandbox.initialize();
+      let runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
+      await sandbox.dispose();
+      return runResult;
+    } else {
+      log.info(`No files have been found. Aborting initial test run.`);
+      let runResult = {
+        status: RunStatus.Complete,
+        tests: [],
+        errorMessages: []
+      };
+      return runResult; 
+    }
   }
 
   async runMutants(mutants: Mutant[]): Promise<MutantResult[]> {
