@@ -1,8 +1,10 @@
-*.ts
+**/*
 !*.d.ts
-Gruntfile.js
-test
-tsconfig.json
-typings.json
-testResources
-typings
+!bin/**
+!src/**
+src/**/*.map
+src/**/*.ts
+!src/**/*.d.ts
+!readme.md
+!LICENSE
+!CHANGELOG.md
