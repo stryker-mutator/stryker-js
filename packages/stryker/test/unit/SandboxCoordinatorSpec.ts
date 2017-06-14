@@ -34,7 +34,7 @@ describe('SandboxCoordinator', () => {
   let coverageInstrumenter: any;
   const expectedTestFramework: any = 'expected test framework';
   const expectedRunResult = { isTheExpectedRunResult: true };
-  const expectedInputFiles: InputFile[] = [];
+  let expectedInputFiles: InputFile[];
 
   beforeEach(() => {
     options = <any>{};
@@ -61,7 +61,8 @@ describe('SandboxCoordinator', () => {
       .returns(genericSandboxForAllSubsequentCallsToNewSandbox)
       .onCall(0).returns(firstSandbox)
       .onCall(1).returns(secondSandbox);
-
+      
+    expectedInputFiles = [];
     sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
   });
 
