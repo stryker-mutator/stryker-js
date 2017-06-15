@@ -7,7 +7,6 @@ node_js:
 install: npm install
 before_install: 
   - if [[ `npm -v` = 2* ]]; then npm i -g npm@3; fi
-  - if [[ `npm -v` = 5* ]]; then npm i -g npm@4; fi
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
