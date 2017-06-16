@@ -3,7 +3,6 @@
 !bin/**
 !src/**
 !*.js
-!*.d.ts
 src/**/*.map
 src/**/*.ts
 !src/**/*.d.ts
