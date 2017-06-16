@@ -8,26 +8,29 @@
     "grunt": "^1.0.1",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-jshint": "^1.0.0",
-    "grunt-stryker": "file:../packages/grunt-stryker",
+    "install-local": "^0.3.0",
     "jasmine-core": "^2.4.1",
     "karma": "^1.1.1",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
-    "link-parent-bin": "^0.1.1",
+    "link-parent-bin": "^0.1.2",
     "load-grunt-tasks": "^3.5.2",
     "mocha": "^3.3.0",
     "mz": "^2.6.0",
-    "stryker": "file:../packages/stryker",
-    "stryker-api": "file:../packages/stryker-api",
-    "stryker-html-reporter": "file:../packages/stryker-html-reporter",
-    "stryker-jasmine": "file:../packages/stryker-jasmine",
-    "stryker-karma-runner": "file:../packages/stryker-karma-runner",
-    "stryker-mocha-framework": "file:../packages/stryker-mocha-framework",
-    "stryker-mocha-runner": "file:../packages/stryker-mocha-runner",
     "ts-node": "^3.0.4",
     "typescript": "^2.2.2"
   },
   "scripts": {
-    "postinstall": "link-parent-bin -c test"
+    "postinstall": "install-local && link-parent-bin -c test --link-local-dependencies true"
+  },
+  "localDependencies": {
+    "grunt-stryker": "../packages/grunt-stryker",
+    "stryker": "../packages/stryker",
+    "stryker-api": "../packages/stryker-api",
+    "stryker-html-reporter": "../packages/stryker-html-reporter",
+    "stryker-jasmine": "../packages/stryker-jasmine",
+    "stryker-karma-runner": "../packages/stryker-karma-runner",
+    "stryker-mocha-framework": "../packages/stryker-mocha-framework",
+    "stryker-mocha-runner": "../packages/stryker-mocha-runner"
   }
 }
