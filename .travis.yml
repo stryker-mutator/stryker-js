@@ -10,7 +10,7 @@ before_install:
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-after_success: ".travis/after_success.jsh"
+after_success: ".travis/ci-release.jsh"
 env:
   global:
   - secure: "Bdlddvmo/Edm5Il21e0c1ivzA9GR7wZCyZinGJNXxXVD41blefmCLTyfahLT5dgtnqFabFgDUAeDM5VQS88nIDakzql47DD9J7xkjkIlr8B0J9L3DthUrV6Z1IZE/tp0Lq8ttpbgo0KakNqrQ7w7N2QyZqPIw64KsRXTiV/fCPYoa0cLEkWkF1WKHMhZDh6x8m9j4y0n3GIhuu6zNgSGvCv3cJdiIeQ4VzyTnIyQXikpmvGNldU8kJHwxwdHnOtycMWP8o6OX9vY4fJ+OQlcw6B8kfSzoDk0M8ED4TwDK984mhNUJFOfIyGJZ+UZsGUt/P1wG8E5RzbiKMowsb4nAO6bqgjH/qJnQDjPUTfhysQYyQ37nDiFljLLd/fRgz3JfnDb1TTzvGOGEfRshv87QcC3XavLnMrV0HmhAdL1dSzjFO9VZzlXrfdAKSb2mdJf/YdAc8Uxu2ErPe062XQ2/8S+Byr8QSt5Mhz8mPfcJFr6CKCeMIil+FIe9/P5nEj2oLzfeK0M0W+/muCPxC23c6K9DpIjns5ks+mw6b6NGIBXn0t3zDzQTXAaZLA8q2BkGcCXEztpKSA5tO8CrwaX1mn2vdbsomvggVzGpqkacgcmcFEGmNUHf3Oz5Vud5FIzLB9rQzw8rDi98xltwRZlWEcxxTLB1eBjul4MZ4iifqk="
