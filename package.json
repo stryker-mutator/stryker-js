@@ -7,6 +7,7 @@
     "@types/escodegen": "0.0.6",
     "@types/esprima": "^2.1.31",
     "@types/estree": "0.0.32",
+    "@types/express-serve-static-core": "4.0.46",
     "@types/glob": "^5.0.29",
     "@types/istanbul": "^0.4.29",
     "@types/karma": "^0.13.32",
