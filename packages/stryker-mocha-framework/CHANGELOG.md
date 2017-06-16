@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.3"></a>
+## [0.1.3](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.1.2...stryker-mocha-framework@0.1.3) (2017-06-16)
+
+
+### Bug Fixes
+
+* **npmignore:** Align npm ignores (#321) ([db2a56e](https://github.com/stryker-mutator/stryker/commit/db2a56e))
+
+
+
+
 <a name="0.1.1"></a>
 ## [0.1.1](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.1.0...stryker-mocha-framework@0.1.1) (2017-06-08)
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.4.4"></a>
+## [0.4.4](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.4.3...stryker-karma-runner@0.4.4) (2017-06-16)
+
+
+### Bug Fixes
+
+* **npmignore:** Align npm ignores (#321) ([db2a56e](https://github.io/stryker-mutator/stryker/commit/db2a56e))
+
+
+
+
 <a name="0.4.2"></a>
 ## [0.4.2](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.4.1...stryker-karma-runner@0.4.2) (2017-06-08)
 

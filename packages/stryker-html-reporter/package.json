@@ -1,6 +1,6 @@
 {
   "name": "stryker-html-reporter",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "An html reporter for the JavaScript mutation testing framework Stryker",
   "main": "src/index.js",
   "typings": "src/index.d.ts",
@@ -39,7 +39,7 @@
     "mz": "^2.5.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.5.3"
+    "stryker-api": "^0.5.5"
   },
   "devDependencies": {
     "@types/file-url": "^1.0.28",
@@ -47,7 +47,7 @@
     "@types/selenium-webdriver": "^3.0.3",
     "bootstrap": "3.3.7",
     "highlight.js": "^9.4.0",
-    "stryker-api": "^0.5.3"
+    "stryker-api": "^0.5.5"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",

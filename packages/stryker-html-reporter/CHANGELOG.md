@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.4.6"></a>
+## [0.4.6](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.4.4...stryker-html-reporter@0.4.6) (2017-06-16)
+
+
+### Bug Fixes
+
+* **npmignore:** Align npm ignores (#321) ([db2a56e](https://github.com/stryker-mutator/stryker/commit/db2a56e))
+* Manual version bump ([a67d90b](https://github.com/stryker-mutator/stryker/commit/a67d90b))
+
+
+
+
 <a name="0.4.3"></a>
 ## [0.4.3](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.4.2...stryker-html-reporter@0.4.3) (2017-06-08)
 
