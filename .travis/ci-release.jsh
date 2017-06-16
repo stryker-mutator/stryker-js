@@ -15,7 +15,7 @@ if (process.env.TRAVIS_PULL_REQUEST === releaseRequirements.pullRequest
     && process.env.TRAVIS_BRANCH === releaseRequirements.branch
     && process.env.TRAVIS_NODE_VERSION === releaseRequirements.nodeVersion) {
     console.log('Alright man, let\'s do this!');
-    exec(`git remote add gh-publish https://${process.env.GIT_TOKEN}@github.com/nicojs/ci-npm-with-lerna.git`)
+    exec(`git remote add gh-publish https://${process.env.GIT_TOKEN}@github.com/stryker-mutator/stryker.git`)
     exec('git config --global user.email "release-bot@noreply.com"');
     exec('git config --global user.name "Release bot"');
     exec('git fetch gh-publish');
