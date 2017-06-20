@@ -74,7 +74,7 @@ You can install the Stryker-CLI using:
 $ npm install -g stryker-cli
 ```
 
-The Stryker-CLI works by passing received commands to your local Stryker installation. If we cannot find your local Stryker installation, it will prompt you to install Stryker automatically. This method allows us to provide additional commands with updates of Stryker itself.
+The Stryker-CLI works by passing received commands to your local Stryker installation. If you don't have Stryker installed yet, the Stryker-CLI will help you with your Stryker installation. This method allows us to provide additional commands with updates of Stryker itself.
 
 ## Supported mutators  
 See our website for the [list of currently supported mutators](http://stryker-mutator.github.io/mutators.html).
