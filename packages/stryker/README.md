@@ -71,7 +71,7 @@ Stryker can also be installed, configured and run using the [Stryker-CLI](https:
 You can install the Stryker-CLI using:
 
 ```
-npm install -g stryker-cli
+$ npm install -g stryker-cli
 ```
 
 The Stryker-CLI works by passing received commands to your local Stryker installation. If we cannot find your local Stryker installation, it will prompt you to install Stryker automatically. This method allows us to provide additional commands with updates of Stryker itself.
