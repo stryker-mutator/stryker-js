@@ -36,9 +36,11 @@ This should print the latest version of Stryker.
 $ node_modules/.bin/stryker <command> [options] [stryker.conf.js]
 ```
 
-The only `command` currently available is `run`, which kicks off mutation testing.
+The main `command` for Stryker is `run`, which kicks off mutation testing.
 
 By default, we expect a `stryker.conf.js` file in the current working directory. This can be overridden by specifying a different file as the last parameter.
+
+Before your first run, we recommend you try the `init` command, which helps you to set up this `stryker.conf.js` file and install any missing packages needed for your specific configuration. We recommend you verify the contents of the configuration file after this initialization, to make sure everything is setup correctly. Of course, you can still make changes to it, before you run Stryker for the first time.
 
 The following is an example `stryker.conf.js` file:
 
@@ -59,10 +61,20 @@ module.exports = function(config){
 }
 ```
 
-As you can see, the config file is *not* a simple JSON file, it should be a common js (a.k.a. npm) module.  
-You might recognize this way of working from the karma test runner.
+As you can see, the config file is *not* a simple JSON file. It should be a common js (a.k.a. node) module. You might recognize this way of working from the karma test runner.
 
 Make sure you *at least* specify the `files` and the `testRunner` options when mixing the config file and/or command line options.
+
+## Command-line interface
+Stryker can also be installed, configured and run using the [Stryker-CLI](https://github.com/stryker-mutator/stryker-cli). If you plan on using Stryker in more projects, the Stryker-CLI is the easiest way to install, configure and run Stryker for your project.
+
+You can install the Stryker-CLI using:
+
+```
+$ npm install -g stryker-cli
+```
+
+The Stryker-CLI works by passing received commands to your local Stryker installation. If you don't have Stryker installed yet, the Stryker-CLI will help you with your Stryker installation. This method allows us to provide additional commands with updates of Stryker itself.
 
 ## Supported mutators  
 See our website for the [list of currently supported mutators](http://stryker-mutator.github.io/mutators.html).
