@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.5.6"></a>
+## [0.5.6](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.5.4...grunt-stryker@0.5.6) (2017-06-16)
+
+
+### Bug Fixes
+
+* Manual version bump ([a67d90b](https://github.com/stryker-mutator/stryker/commit/a67d90b))
+
+
+
+
 <a name="0.5.3"></a>
 ## [0.5.3](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.5.2...grunt-stryker@0.5.3) (2017-06-08)
 

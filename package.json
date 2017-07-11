@@ -7,6 +7,7 @@
     "@types/escodegen": "0.0.6",
     "@types/esprima": "^2.1.31",
     "@types/estree": "0.0.32",
+    "@types/express-serve-static-core": "4.0.46",
     "@types/glob": "^5.0.29",
     "@types/istanbul": "^0.4.29",
     "@types/karma": "^0.13.32",
@@ -24,7 +25,7 @@
     "chai-as-promised": "^6.0.0",
     "concurrently": "^3.4.0",
     "glob": "^7.1.1",
-    "lerna": "^2.0.0-rc.0",
+    "lerna": "^2.0.0-rc.5",
     "link-parent-bin": "^0.1.1",
     "mocha": "^3.2.0",
     "nyc": "^10.2.0",
@@ -46,6 +47,7 @@
     "clean-integration-test": "node tasks/cleanIntegrationTest.js",
     "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\" \"tsc -w -p packages/stryker-jasmine\" \"tsc -w -p packages/stryker-karma-runner\" \"tsc -w -p packages/stryker-mocha-runner\" \"tsc -w packages/stryker-mocha-framework\"",
     "test:stryker": "lerna run test --scope stryker",
-    "test:stryker-api": "lerna run test --scope stryker"
+    "test:stryker-api": "lerna run test --scope stryker",
+    "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
   }
 }

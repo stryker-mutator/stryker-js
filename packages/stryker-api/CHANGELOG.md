@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.5.5"></a>
+## [0.5.5](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.5.3...stryker-api@0.5.5) (2017-06-16)
+
+
+### Bug Fixes
+
+* **npmignore:** Align npm ignores (#321) ([db2a56e](https://github.com/stryker-mutator/stryker/commit/db2a56e))
+* Manual version bump ([a67d90b](https://github.com/stryker-mutator/stryker/commit/a67d90b))
+
+
+
+
 <a name="0.5.2"></a>
 ## [0.5.2](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.5.1...stryker-api@0.5.2) (2017-06-08)
 
