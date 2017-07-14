@@ -13,7 +13,7 @@ export default class RemoveConditionalsMutator implements Mutator {
 
   constructor() { }
 
-  applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): IdentifiedNode[] | void {
+  applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] | void {
     if (this.canMutate(node)) {
       let nodes: IdentifiedNode[] = [];
 

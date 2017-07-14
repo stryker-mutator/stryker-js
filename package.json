@@ -25,7 +25,7 @@
     "chai-as-promised": "^6.0.0",
     "concurrently": "^3.4.0",
     "glob": "^7.1.1",
-    "lerna": "^2.0.0-rc.5",
+    "lerna": "^2.0.0",
     "link-parent-bin": "^0.1.1",
     "mocha": "^3.2.0",
     "nyc": "^10.2.0",

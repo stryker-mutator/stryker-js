@@ -4,14 +4,14 @@
  */
 export default class Task<T> {
 
-  private _promise: Promise<T | undefined>;
-  private resolveFn: (value?: undefined | T | PromiseLike<T>) => void;
+  private _promise: Promise<T>;
+  private resolveFn: (value?: T | PromiseLike<T>) => void;
   private rejectFn: (reason: any) => void;
   private _isResolved = false;
   private timeout: NodeJS.Timer;
 
   constructor(timeoutMs?: number, private timeoutHandler?: () => PromiseLike<T>) {
-    this._promise = new Promise<T | undefined>((resolve, reject) => {
+    this._promise = new Promise<T>((resolve, reject) => {
       this.resolveFn = resolve;
       this.rejectFn = reject;
     });
