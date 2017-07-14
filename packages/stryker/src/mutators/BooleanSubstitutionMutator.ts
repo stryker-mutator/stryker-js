@@ -1,15 +1,16 @@
-import { Mutator, IdentifiedNode } from 'stryker-api/mutant';
+import { Mutator, IdentifiedNode, Identified } from 'stryker-api/mutant';
 import { Syntax } from 'esprima';
+import { Expression } from 'estree';
 
 export default class BooleanSubstitutionMutator implements Mutator {
   name = 'BooleanSubstitution';
 
-  applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): IdentifiedNode[] {
+  applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] {
     const nodes: IdentifiedNode[] = [];
     
     // !a -> a
     if (node.type === Syntax.UnaryExpression && node.operator === '!') {
-      let mutatedNode = copy(node.argument) as IdentifiedNode;
+      let mutatedNode = copy(node.argument as Expression & Identified) as IdentifiedNode;
       mutatedNode.nodeID = node.nodeID;
       nodes.push(mutatedNode);
     }

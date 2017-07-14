@@ -10,7 +10,7 @@ export default class LogicalOperatorMutator implements Mutator {
     '||': '&&'
   };
 
-  applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): IdentifiedNode[] {
+  applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] {
     let nodes: IdentifiedNode[] = [];
 
     if (node.type === this.type && this.operators[node.operator]) {

@@ -40,7 +40,7 @@ describe('ProgressAppendOnlyReporter', () => {
     });
 
     it('should should log 50% with 10s ETC after 10s with 1 completed test', () => {
-      sut.onMutantTested(mutantResult(MutantStatus.Killed));
+      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
       expect(process.stdout.write).to.not.have.been.called;
       sandbox.clock.tick(10000);
       expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 50% (ETC 10s) ` +

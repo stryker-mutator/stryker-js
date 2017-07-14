@@ -10,7 +10,7 @@ export default class BlockStatementMutator implements Mutator {
 
   constructor() { }
 
-  applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): void | IdentifiedNode {
+  applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): void | IdentifiedNode {
     if (node.type === this.type && node.body.length > 0) {
       let mutatedNode = copy(node);
       mutatedNode.body = [];
