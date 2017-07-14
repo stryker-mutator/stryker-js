@@ -11,12 +11,16 @@
     "use:test_framework": "node useTestFramework.js",
     "use:mutant": "node useMutant.js",
     "use:report": "node useReport.js",
-    "use:test_runner": "node useTestRunner.js"
+    "use:test_runner": "node useTestRunner.js",
+    "postinstall": "install-local"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "stryker-api": "file:../../",
+    "install-local": "^0.4.0",
     "typescript": "^2.2.2"
+  },
+  "localDependencies": {
+    "stryker-api": "../.."
   }
 }

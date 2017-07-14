@@ -130,7 +130,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     return this.currentTask.promise;
   }
 
-  dispose(): Promise<undefined> {
+  dispose(): Promise<void> {
     this.currentTask = new DisposeTask(MAX_WAIT_FOR_DISPOSE);
     this.sendDisposeCommand();
     return this.currentTask.promise

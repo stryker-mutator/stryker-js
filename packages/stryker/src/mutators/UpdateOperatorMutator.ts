@@ -10,7 +10,7 @@ export default class UpdateOperatorMutator implements Mutator {
     '--': '++'
   };
 
-  applyMutations(node: IdentifiedNode, copy: <T>(obj: T, deep?: boolean) => T): void | IdentifiedNode {
+  applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): void | IdentifiedNode {
     if (node.type === this.type && this.operators[node.operator]) {
       let mutatedNode = copy(node);
       mutatedNode.operator = this.operators[node.operator];

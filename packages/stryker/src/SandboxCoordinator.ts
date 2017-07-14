@@ -26,12 +26,13 @@ export default class SandboxCoordinator {
   constructor(private options: Config, private files: InputFile[], private testFramework: TestFramework | null, private reporter: StrictReporter) { }
 
   async initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
-    log.info(`Starting initial test run. This may take a while.`);
-    const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
-    await sandbox.initialize();
-    let runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
-    await sandbox.dispose();
-    return runResult;
+    if (this.files.length > 0) {
+      log.info(`Starting initial test run. This may take a while.`);
+      return this.startTestRun(coverageInstrumenter);
+    } else {
+      log.info(`No files have been found. Aborting initial test run.`);
+      return this.createDryRunResult(); 
+    }
   }
 
   async runMutants(mutants: Mutant[]): Promise<MutantResult[]> {
@@ -81,6 +82,23 @@ export default class SandboxCoordinator {
     log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
     await Promise.all(sandboxes.map(s => s.initialize()));
     return sandboxes;
+  }
+
+  private async startTestRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
+      const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
+      await sandbox.initialize();
+      let runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
+      await sandbox.dispose();
+
+      return runResult;
+  }
+
+  private createDryRunResult(): RunResult {
+    return {
+        status: RunStatus.Complete,
+        tests: [],
+        errorMessages: []
+      };
   }
 
   private reportMutantTested(mutant: Mutant, runResult: RunResult | null, results: MutantResult[]) {

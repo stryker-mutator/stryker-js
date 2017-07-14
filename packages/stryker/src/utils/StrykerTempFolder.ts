@@ -50,7 +50,7 @@ function writeFile(filename: string, data: string): Promise<void> {
 function copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     let readStream: NodeJS.ReadableStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
-    let writeStream = fs.createWriteStream(toFilename, { encoding: 'utf8' });
+    let writeStream = fs.createWriteStream(toFilename);
     readStream.on('error', reject);
     writeStream.on('error', reject);
     if (instrumenter) {
