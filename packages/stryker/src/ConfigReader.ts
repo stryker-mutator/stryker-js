@@ -47,6 +47,8 @@ export default class ConfigReader {
         } else {
           log.fatal('Invalid config file!\n  ' + e.stack);
         }
+        log.info('Stryker can help you setup a `stryker.conf` file for your project.');
+        log.info('Please execute `stryker init` in your project\'s root directory.');
         process.exit(1);
       }
       if (!_.isFunction(configModule)) {
