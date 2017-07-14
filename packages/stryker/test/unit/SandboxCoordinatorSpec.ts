@@ -1,3 +1,4 @@
+import { InputFile } from 'stryker-api/core';
 import * as sinon from 'sinon';
 import * as _ from 'lodash';
 import * as os from 'os';
@@ -7,6 +8,7 @@ import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import SandboxCoordinator from '../../src/SandboxCoordinator';
 import * as sandbox from '../../src/Sandbox';
 import { Config } from 'stryker-api/config';
+import log from '../helpers/log4jsMock';
 
 const mockMutant = (id: number, scopedTests?: number[]) => {
   const dummyString = `mutant${id}`;
@@ -32,7 +34,7 @@ describe('SandboxCoordinator', () => {
   let coverageInstrumenter: any;
   const expectedTestFramework: any = 'expected test framework';
   const expectedRunResult = { isTheExpectedRunResult: true };
-  const expectedInputFiles: any = { isInputFiles: true };
+  let expectedInputFiles: InputFile[];
 
   beforeEach(() => {
     options = <any>{};
@@ -54,18 +56,22 @@ describe('SandboxCoordinator', () => {
       onMutantTested: sinonSandbox.stub(),
       onAllMutantsTested: sinonSandbox.stub()
     };
-    
+
     sinonSandbox.stub(sandbox, 'default')
       .returns(genericSandboxForAllSubsequentCallsToNewSandbox)
       .onCall(0).returns(firstSandbox)
       .onCall(1).returns(secondSandbox);
-
+      
+    expectedInputFiles = [];
     sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
   });
 
-  describe('on initialRun', () => {
+  describe('on initialRun with files', () => {
     let actualRunResult: RunResult;
-    beforeEach(() => sut.initialRun(coverageInstrumenter).then(runResult => actualRunResult = runResult));
+    beforeEach(() => {
+      expectedInputFiles.push({ path: '', mutated: true, included: true });
+      return sut.initialRun(coverageInstrumenter).then(runResult => actualRunResult = runResult);
+    });
 
     it('should create a sandbox with correct arguments',
       () => expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, coverageInstrumenter));
@@ -79,6 +85,14 @@ describe('SandboxCoordinator', () => {
     it('should resolve in expected result', () => expect(actualRunResult).to.be.eq(expectedRunResult));
   });
 
+  describe('on initialRun without input files', () => {
+    it('should log a warning and cancel the test run', async () => {
+      const result = await sut.initialRun(coverageInstrumenter);
+      expect(result.status).to.be.eq(RunStatus.Complete);
+      expect(log.info).to.have.been.calledWith('No files have been found. Aborting initial test run.');
+    });
+  });
+
   describe('Given that maxConcurrentTestRunners config has been set', () => {
     it('runMutants should use that config rather than cpuCount if config is less than cpuCount', () => {
       const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
@@ -89,7 +103,7 @@ describe('SandboxCoordinator', () => {
       secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
 
       return sut.runMutants(mutants)
-        .then(() =>  {
+        .then(() => {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(1);
           expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
@@ -100,13 +114,13 @@ describe('SandboxCoordinator', () => {
       const mutants: any[] = [mockMutant(0, []), mockMutant(1, [])];
       sinonSandbox.stub(os, 'cpus', () => [1, 2]); // stub 2 cpus
       options.maxConcurrentTestRunners = 100;
-    sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
+      sut = new SandboxCoordinator(options, expectedInputFiles, expectedTestFramework, reporter);
 
       firstSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
       secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
 
       return sut.runMutants(mutants)
-        .then(() =>  {
+        .then(() => {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(2);
           expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
@@ -123,7 +137,7 @@ describe('SandboxCoordinator', () => {
       secondSandbox.runMutant.returns(Promise.resolve({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }] }));
 
       return sut.runMutants(mutants)
-        .then(() =>  {
+        .then(() => {
           expect(sandbox.default).to.have.been.calledWithNew;
           expect(sandbox.default).to.have.callCount(2);
           expect(sandbox.default).to.have.been.calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
