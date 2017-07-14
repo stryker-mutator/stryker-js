@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.4.5"></a>
+## [0.4.5](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.4.4...stryker-karma-runner@0.4.5) (2017-07-14)
+
+
+### Bug Fixes
+
+* **ts-2.4:** Fix type issues for typescript 2.4 (#337) ([c18079b](https://github.io/stryker-mutator/stryker/commit/c18079b)), closes [#337](https://github.io/stryker-mutator/stryker/issues/337)
+
+
+
+
 <a name="0.4.4"></a>
 ## [0.4.4](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.4.3...stryker-karma-runner@0.4.4) (2017-06-16)
 

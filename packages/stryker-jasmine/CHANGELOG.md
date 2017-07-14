@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.2.7"></a>
+## [0.2.7](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.2.6...stryker-jasmine@0.2.7) (2017-07-14)
+
+
+
+
 <a name="0.2.6"></a>
 ## [0.2.6](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.2.4...stryker-jasmine@0.2.6) (2017-06-16)
 

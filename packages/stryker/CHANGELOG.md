@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.6.7"></a>
+## [0.6.7](https://github.com/stryker-mutator/stryker/compare/stryker@0.6.6...stryker@0.6.7) (2017-07-14)
+
+
+### Bug Fixes
+
+* **ts-2.4:** Fix type issues for typescript 2.4 (#337) ([c18079b](https://github.com/stryker-mutator/stryker/commit/c18079b)), closes [#337](https://github.com/stryker-mutator/stryker/issues/337)
+
+
+
+
 <a name="0.6.6"></a>
 ## [0.6.6](https://github.com/stryker-mutator/stryker/compare/stryker@0.6.4...stryker@0.6.6) (2017-06-16)
 
