@@ -19,7 +19,9 @@ export function mutantResult(overrides: Partial<MutantResult>): MutantResult {
 export function scoreResult(score: Partial<ScoreResult>): ScoreResult {
   const defaults: ScoreResult = {
     name: 'name',
+    path: 'path',
     childResults: [],
+    representsFile: true,
     killed: 0,
     timedOut: 0,
     survived: 0,
