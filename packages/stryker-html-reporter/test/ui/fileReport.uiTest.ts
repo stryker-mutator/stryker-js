@@ -3,8 +3,9 @@ import { expect } from 'chai';
 import FileReportPage from './pageObjects/FileReportPage';
 import MutantSelection from './pageObjects/MutantSelection';
 import { browser } from 'protractor';
+import { baseDir } from './hooks';
 
-describe('File report page "Circle.js.html"', () => {
+describe.only('File report page "Circle.js.html"', () => {
 
   let page: FileReportPage;
 
@@ -15,7 +16,7 @@ describe('File report page "Circle.js.html"', () => {
   };
 
   let get = () => {
-    let f = `file:///${path.resolve(path.join(__dirname, '../../reports/mutation/html/Circle.js.html')).replace(/\\/g, '/')}`;
+    let f = `file:///${path.resolve(baseDir, 'Circle.js.html').replace(/\\/g, '/')}`;
     return browser.get(f);
   };
 
