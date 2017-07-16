@@ -20,7 +20,7 @@ export function copyFolder(fromPath: string, to: string): Promise<void> {
     .then(_ => void 0);
 }
 
-export function copyFile(fromFilename: string, toFilename: string): Promise<void> {
+function copyFile(fromFilename: string, toFilename: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     let readStream = fs.createReadStream(fromFilename);
     let writeStream = fs.createWriteStream(toFilename);
