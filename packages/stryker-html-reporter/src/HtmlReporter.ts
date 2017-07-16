@@ -1,14 +1,14 @@
-import { Reporter, MutantResult, SourceFile, ScoreResult } from 'stryker-api/report';
-import { StrykerOptions } from 'stryker-api/core';
-import * as fs from 'mz/fs';
-import * as path from 'path';
-import * as log4js from 'log4js';
-import * as util from './util';
 import fileUrl = require('file-url');
+import * as log4js from 'log4js';
+import * as path from 'path';
+import * as fs from 'mz/fs';
+import { StrykerOptions } from 'stryker-api/core';
+import { Reporter, MutantResult, SourceFile, ScoreResult } from 'stryker-api/report';
+import * as util from './util';
 import * as templates from './templates';
 
 const log = log4js.getLogger('HtmlReporter');
-const DEFAULT_BASE_FOLDER = 'reports/mutation/html';
+const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 
 export default class HtmlReporter implements Reporter {
 
@@ -43,38 +43,48 @@ export default class HtmlReporter implements Reporter {
     return this.cleanBaseFolder()
       .then(() => this.writeCommonResources())
       .then(() => this.writeReportDirectory())
-      .then(() => log.info(`Your report can be found at: ${fileUrl(path.resolve(this.baseDir, 'index.html'))}`));
+      .then(location => log.info(`Your report can be found at: ${fileUrl(location)}`));
   }
 
   private writeCommonResources() {
-    return Promise.all([this.writeStrykerResources(), this.writeBootstrapAndHighlightResources()]);
+    return Promise.all([this.copyStrykerResources(), this.copyBootstrapAndHighlightResources()]);
   }
 
-  private writeBootstrapAndHighlightResources() {
+  private copyBootstrapAndHighlightResources() {
     const resourcesDir = path.join(__dirname, '..', 'resources');
     return util.copyFolder(resourcesDir, this.baseDir);
   }
 
-  private writeStrykerResources() {
+  private copyStrykerResources() {
     const resourcesDir = path.join(__dirname, 'resources', 'stryker');
     return util.copyFolder(resourcesDir, this.baseDir);
   }
 
-  private writeReportDirectory(scoreResult = this.scoreResult, currentDirectory = this.baseDir, depth = 0, title = 'All files'): Promise<void> {
+  private writeReportDirectory(scoreResult = this.scoreResult, currentDirectory = this.baseDir, depth = 0, title = 'All files')
+    : Promise<string> {
     const fileContent = templates.directory(title, scoreResult, depth);
+    const location = path.join(currentDirectory, 'index.html');
     return util.mkdir(currentDirectory)
-      .then(_ => fs.writeFile(path.join(currentDirectory, 'index.html'), fileContent))
+      .then(_ => fs.writeFile(location, fileContent))
       .then(_ => this.writeChildren(scoreResult, currentDirectory, depth))
-      .then(_ => void 0);
+      .then(_ => location);
   }
 
   private writeChildren(scoreResult: ScoreResult, currentDirectory: string, depth: number) {
-    return Promise.all(scoreResult.childResults.map(child =>
-      child.representsFile ?
-        this.writeReportFile(child, currentDirectory, depth) :
-        this.writeReportDirectory(child, path.join(currentDirectory, child.name), depth + 1, child.name)));
+    return Promise.all(scoreResult.childResults.map(child => {
+      if (child.representsFile) {
+        return this.writeReportFile(child, currentDirectory, depth);
+      } else {
+        // New depth is dependent on the depth of the child.
+        // - If the child name is 'a.js', it should be depth + 1
+        // - If the child name is 'a/b.js', it should be depth + 2
+        // etc
+        const newDepth = child.name.split(path.sep).length + depth;
+        return this.writeReportDirectory(child, path.join(currentDirectory, child.name), newDepth, child.name)
+          .then(_ => void 0);
+      }
+    }));
   }
-
 
   private writeReportFile(scoreResult: ScoreResult, baseDir: string, depth: number) {
     const fileContent = templates.sourceFile(scoreResult, this.findFile(scoreResult.path), this.findMutants(scoreResult.path), depth);
@@ -82,7 +92,7 @@ export default class HtmlReporter implements Reporter {
   }
 
   private findFile(filePath: string) {
-    return this.files.filter(file => file.path === filePath)[0];
+    return this.files.find(file => file.path === filePath);
   }
 
   private findMutants(filePath: string) {
