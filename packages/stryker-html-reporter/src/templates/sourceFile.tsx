@@ -4,7 +4,7 @@ import { resultTable } from './resultTable';
 import { layout } from './layout';
 import { ScoreResult, SourceFile, MutantResult, MutantStatus } from 'stryker-api/report';
 
-export function sourceFile(result: ScoreResult, sourceFile: SourceFile, mutants: MutantResult[], depth: number) {
+export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], depth: number) {
     return layout(result.name, depth,
         <div class="col-md-12">
             <div class="row">
@@ -25,19 +25,27 @@ export function sourceFile(result: ScoreResult, sourceFile: SourceFile, mutants:
             {code(sourceFile, mutants)}
         </div>);
 }
-function code(sourceFile: SourceFile, mutants: MutantResult[]) {
+function code(sourceFile: SourceFile | undefined, mutants: MutantResult[]) {
+    if (sourceFile) {
+        return annotateCode(sourceFile, mutants);
+    }else {
+        return <pre><code>The source code itself was not reported at the `stryker-html-reporter`. Please report this issue at https://github.com/stryker-mutator/stryker/issues</code></pre>;
+    }
+}
+
+function annotateCode(sourceFile: SourceFile, mutants: MutantResult[]) {
     const currentCursorMutantStatuses = {
         killed: 0,
         survived: 0,
         timeout: 0,
         noCoverage: 0
     };
-    let maxIndex = sourceFile.content.length - 1;
-    let numberedMutants = _
+    const maxIndex = sourceFile.content.length - 1;
+    const numberedMutants = _
         .sortBy(mutants, m => m.range[0] * 10000 + m.range[1] * -1)
         .map((mutant, index) => ({ mutant, index }));
 
-    let adjustCurrentMutantResult = (valueToAdd: number) => (numberedMutant: { mutant: MutantResult, index: number }) => {
+    const adjustCurrentMutantResult = (valueToAdd: number) => (numberedMutant: { mutant: MutantResult, index: number }) => {
         switch (numberedMutant.mutant.status) {
             case MutantStatus.Killed:
                 currentCursorMutantStatuses.killed += valueToAdd;
@@ -54,7 +62,7 @@ function code(sourceFile: SourceFile, mutants: MutantResult[]) {
         }
     };
 
-    let determineBackground = () => {
+    const determineBackground = () => {
         if (currentCursorMutantStatuses.survived > 0) {
             return getContextClassForStatus(MutantStatus.Survived);
         } else if (currentCursorMutantStatuses.noCoverage > 0) {
@@ -88,10 +96,8 @@ function code(sourceFile: SourceFile, mutants: MutantResult[]) {
             console.log(err);
         }
     };
-
     return <pre><code class="lang-javascript">{mapString(sourceFile.content, annotate).join('')}</code></pre>;
 }
-
 
 
 function escapeHtml(unsafe: string) {
