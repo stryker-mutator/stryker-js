@@ -1,0 +1,51 @@
+{
+  "private": true,
+  "name": "stryker-for-typescript",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha \"test/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "typescript",
+    "stryker-transpiler"
+  ],
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "author": "Thomas Peters <thomaspeters4@outlook.com>",
+  "contributors": [
+    "Simon de Lang <simondelang@gmail.com>"
+  ],
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-framework#readme",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "log4js": "^1.1.1",
+    "typescript": "^2.2.2"
+  },
+  "devDependencies": {
+    "byots": "2.4.0-dev.20170429.2.8",
+    "stryker-api": "^0.5.6",
+    "ts-node": "^3.0.2",
+    "typescript-simple": "^8.0.0",
+    "tslib": "^1.5.0"
+  },
+  "peerDependencies": {
+    "mocha": ">= 2.3.3 < 4",
+    "stryker-api": "^0.5.6"
+  }
+}
