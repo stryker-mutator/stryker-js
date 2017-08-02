@@ -27,7 +27,7 @@ export default class MutatorOrchestrator {
   /**
    * @param reporter - The reporter to report read input files to
    */
-  public constructor(private reporter: StrictReporter) {
+  public constructor(private reporter: StrictReporter, private options: {}) {
     this.registerDefaultMutators();
     let mutatorFactory = MutatorFactory.instance();
     mutatorFactory.knownNames().forEach((name) => this.mutators.push(mutatorFactory.create(name, undefined)));
@@ -132,6 +132,27 @@ export default class MutatorOrchestrator {
       }
     });
 
-    return mutants;
+    return this.reduceMutantSize(mutants, this.options.proportionOfMutantsToUse);
+  }
+
+  private reduceMutantSize(mutants: Mutant[], proportionToKeep: number) {
+    const mutantMap = {};
+    mutants.forEach(mutant => {
+      const mutantsOfThisType = mutantMap[mutant.mutatorName];
+      if (!mutantsOfThisType) {
+        mutantMap[mutant.mutatorName] = [mutant];
+      } else {
+        mutantsOfThisType.push(mutant);
+      }
+    });
+
+    let mutantsThatMakeTheCut: Mutant[] = [];
+    Object.keys(mutantMap).forEach(mutantType => {
+      const mutantsOfThisType: Mutant[] = mutantMap[mutantType];
+      const numberOfThisTypeToKeep = Math.ceil(proportionToKeep * mutantsOfThisType.length);
+      mutantsThatMakeTheCut = mutantsThatMakeTheCut.concat(mutantsOfThisType.slice(0, numberOfThisTypeToKeep));
+    });
+
+    return mutantsThatMakeTheCut;
   }
 }

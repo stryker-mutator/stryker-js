@@ -6,6 +6,9 @@ module.exports = function (config) {
     reporter: ['progress', 'clear-text'],
     coverageAnalysis: 'perTest',
     logLevel: 'info',
-    plugins: ['stryker-mocha-runner']
+    plugins: ['stryker-mocha-runner'],
+    mutationOptions: {
+      proportionOfMutantsToUse: 0.1
+    }
   });
 };
