@@ -13,8 +13,16 @@ export default class EventPlayer {
     return Promise.all(files.map(
       filename => fs.readFile(path.join(this.fromDirectory, filename), 'utf8').then(content => ({
         name: eventName(filename),
-        content: JSON.parse(content)
+        content: JSON.parse(this.replacePathSeparator(content))
       }))
     )).then(events => events.forEach(event => (target as any)[event.name](event.content)));
+  }
+
+  private replacePathSeparator(content: string) {
+    if (path.sep === '/') {
+      return content.replace(/\\\\/g, path.sep);
+    } else {
+      return content;
+    }
   }
 }
