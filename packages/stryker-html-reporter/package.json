@@ -6,6 +6,7 @@
   "typings": "src/index.d.ts",
   "scripts": {
     "clean": "rimraf \"+(test|src)/!(resources)/**/*+(.d.ts|.js|.map)\" coverage",
+    "prebuild": "npm run clean",
     "build": "tsc -p . && node tasks/clientResources.js && browserify src/resources/stryker.js -o resources/stryker.js",
     "postbuild": "tslint -p tsconfig.json",
     "start": "tsc -w -p .",
