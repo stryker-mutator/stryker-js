@@ -17,13 +17,4 @@ var config = {
   }
 };
 
-if (process.env.TRAVIS) {
-  // Use the travis selenium server spawned in the container, only firefox is working atm
-  config.capabilities = {
-    browserName: 'firefox'
-  };
-  config.seleniumAddress = 'http://localhost:4444/wd/hub';
-  config.directConnect = false;
-}
-
 exports.config = config;

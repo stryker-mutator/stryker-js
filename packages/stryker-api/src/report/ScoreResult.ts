@@ -7,7 +7,17 @@ interface ScoreResult {
    * The file or directory name of this score result node
    */
   readonly name: string;
-  
+
+  /**
+   * Full path to file or directory of this score result node
+   */
+  readonly path: string;
+
+  /**
+   * True if this score result represents a file, false if it represents a directory
+   */
+  readonly representsFile: boolean;
+
   /**
    * Any child directory/file score result nodes
    * If this score result represents a file, the length will be 0

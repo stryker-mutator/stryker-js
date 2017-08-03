@@ -5,15 +5,13 @@
       "type": "node",
       "request": "launch",
       "name": "Run ui tests",
-      "runtimeExecutable": "npm",
-      "windows": {
-        "runtimeExecutable": "npm.cmd"
-      },
-      "runtimeArgs": [
-        "run-script",
-        "uiTest"
+      "program": "${workspaceRoot}/../../node_modules/protractor/bin/protractor",
+      "args": [
+        "${workspaceRoot}/protractor.conf.js"
       ],
-      "port": 5858
+      "stopOnEntry": false,
+      "port": 5858,
+      "sourceMaps": true
     },
     {
       "type": "node",

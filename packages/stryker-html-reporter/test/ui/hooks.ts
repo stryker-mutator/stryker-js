@@ -1,26 +1,14 @@
-import HtmlReporter from '../../src/HtmlReporter';
 import * as path from 'path';
-import { MutantResult, SourceFile } from 'stryker-api/report';
+import HtmlReporter from '../../src/HtmlReporter';
 import { browser } from 'protractor';
+import EventPlayer from '../helpers/EventPlayer';
 
-
-const exampleMutations = (require('../integration/exampleMutations.json') as MutantResult[]).map(mutantResult => {
-  while (mutantResult.sourceFilePath.indexOf('/') !== -1) {
-    mutantResult.sourceFilePath = mutantResult.sourceFilePath.replace('/', path.sep);
-  }
-  return mutantResult;
-});
-const exampleSourceFiles = (require('../integration/exampleSourceFiles.json') as SourceFile[]).map(file => {
-  while (file.path.indexOf('/') !== -1) {
-    file.path = file.path.replace('/', path.sep);
-  }
-  return file;
-});
+export const baseDir = path.join(__dirname, '../../reports/mutation/uiTest');
 
 before(() => {
-  let reporter = new HtmlReporter({ baseDir: 'sampleProject' });
-  reporter.onAllSourceFilesRead(exampleSourceFiles);
-  reporter.onAllMutantsTested(exampleMutations);
   browser.ignoreSynchronization = true;
-  return reporter.wrapUp();
+  const reporter = new HtmlReporter({ htmlReporter: { baseDir } });
+  return new EventPlayer('testResources/mathEvents')
+    .replay(reporter)
+    .then(() => reporter.wrapUp());
 });
