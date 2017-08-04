@@ -74,22 +74,14 @@ describe('EventRecorderReporter', () => {
     describe('and cleanFolder results in a rejection', () => {
       let expectedError: Error;
       beforeEach(() => {
-        expectedError = new Error('Some error');
+        expectedError = new Error('Some error 1');
         cleanFolderStub.rejects(expectedError);
         sut = new EventRecorderReporter({});
       });
 
-      describe('and `wrapUp()` is called', () => {
-        let result: any;
-
-        beforeEach(() => {
-          let promise = <Promise<any>>sut.wrapUp();
-          return promise.then(() => result = true, (error: any) => result = error);
-        });
-
-        it('should reject', () => expect(result).to.be.eq(expectedError));
+      it('should reject when `wrapUp()` is called', () => {
+        expect(sut.wrapUp()).rejectedWith(expectedError);
       });
     });
   });
-
 });
