@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.6.7...stryker@0.7.0) (2017-08-04)
+
+
+### Features
+
+* **ConfigReader:** Inform about init command (#340) ([7f3e61f](https://github.com/stryker-mutator/stryker/commit/7f3e61f))
+* **html-reporter:** Score result as single source of truth (#341) ([47b3295](https://github.com/stryker-mutator/stryker/commit/47b3295)), closes [#335](https://github.com/stryker-mutator/stryker/issues/335)
+
+
+
+
 <a name="0.6.7"></a>
 ## [0.6.7](https://github.com/stryker-mutator/stryker/compare/stryker@0.6.6...stryker@0.6.7) (2017-07-14)
 

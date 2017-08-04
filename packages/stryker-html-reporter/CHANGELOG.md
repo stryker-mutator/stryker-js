@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.4.7...stryker-html-reporter@0.5.0) (2017-08-04)
+
+
+### Features
+
+* **html-reporter:** Score result as single source of truth (#341) ([47b3295](https://github.com/stryker-mutator/stryker/commit/47b3295)), closes [#335](https://github.com/stryker-mutator/stryker/issues/335)
+
+
+
+
 <a name="0.4.7"></a>
 ## [0.4.7](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.4.6...stryker-html-reporter@0.4.7) (2017-07-14)
 
