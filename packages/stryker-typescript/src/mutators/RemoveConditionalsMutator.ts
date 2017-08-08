@@ -2,9 +2,9 @@ import { Location, Range } from "stryker-api/core";
 import * as ts from "typescript";
 import Mutant from "../Mutant";
 import {createLocation, createRange} from "../utils/utilCreator";
-import IMutator from "./IMutator";
+import Mutator from "../Mutator";
 
-export default class RemoveConditionalsMutator implements IMutator {
+export default class RemoveConditionalsMutator implements Mutator {
     name: string = "RemoveConditionalsMutator";
     replaceTokens: {[original: number]: string[]} = {
         [ts.SyntaxKind.ConditionalExpression] : ["true", "false"],
