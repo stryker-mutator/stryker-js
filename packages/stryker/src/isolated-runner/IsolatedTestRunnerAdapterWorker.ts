@@ -46,7 +46,7 @@ class IsolatedTestRunnerAdapterWorker {
     const unhandledRejections: Promise<any>[] = [];
     process.on('unhandledRejection', (reason, promise) => {
       const unhandledPromiseId = unhandledRejections.push(promise);
-      log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): `);
+      log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
     });
     process.on('rejectionHandled', (promise) => {
       const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;
