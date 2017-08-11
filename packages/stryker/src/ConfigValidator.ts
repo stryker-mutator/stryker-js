@@ -29,7 +29,7 @@ export default class ConfigValidator {
     this.validateThresholdValue('high', thresholds.high);
     this.validateThresholdValue('low', thresholds.low);
     this.validateThresholdValue('break', thresholds.break);
-    if (typeof thresholds.high === 'number' && typeof thresholds.low === 'number' && thresholds.high < thresholds.low) {
+    if (thresholds.high < thresholds.low) {
       this.invalidate(`\`thresholds.high\` is lower than \`thresholds.low\` (${thresholds.high} < ${thresholds.low})`);
     }
   }
