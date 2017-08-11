@@ -9,12 +9,31 @@ const log = log4js.getLogger('ClearTextReporter');
 
 export default class ClearTextReporter implements Reporter {
 
-  constructor(private options: StrykerOptions) { }
+  constructor(private options: StrykerOptions) {
+    this.reporterOptions = options.reporterOptions || {};
+  }
+
+  private reporterOptions: any;
 
   private out: NodeJS.WritableStream = process.stdout;
 
   private writeLine(output?: string) {
     this.out.write(`${output || ''}${os.EOL}`);
+  }
+
+  private outputResult(result: MutantResult) {
+    if (result.status === MutantStatus.Survived) {
+      this.writeLine(chalk.bold.red('Mutant survived!'));
+      this.logMutantResult(result, this.writeLine.bind(this));
+    } else {
+      this.logMutantResult(result, log.debug);
+    }
+  }
+
+  onMutantTested(result: MutantResult): void {
+    if (this.reporterOptions.realTime) {
+      this.outputResult(result);
+    }
   }
 
   onAllMutantsTested(mutantResults: MutantResult[]): void {
@@ -102,5 +121,3 @@ export default class ClearTextReporter implements Reporter {
     this.writeLine(new ClearTextScoreTable(score).draw());
   }
 }
-
-
