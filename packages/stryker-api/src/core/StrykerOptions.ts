@@ -48,16 +48,7 @@ interface StrykerOptions {
   testRunner?: string;
 
   /**
-   * Thresholds for mutation score:
-   * 
-   * Default:
-   *  thresholds: {
-   *    high: 80,
-   *    low: 60,
-   *    break: null (disabled)
-   *  }
-   * 
-   *  Every thresholds is optional and can be disabled with null.
+   * Thresholds for mutation score.
    */
   thresholds?: Partial<MutationScoreThresholds>;
 
