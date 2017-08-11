@@ -34,18 +34,23 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-framework#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "log4js": "^1.1.1",
-    "typescript": "^2.2.2"
+    "lodash.clone": "^4.5.0",
+    "lodash.clonedeep": "^4.5.0",
+    "log4js": "^1.1.1"
   },
   "devDependencies": {
+    "@types/lodash.clone": "^4.5.3",
+    "@types/lodash.clonedeep": "^4.5.3",
     "byots": "2.4.0-dev.20170429.2.8",
     "stryker-api": "^0.5.6",
     "ts-node": "^3.0.2",
-    "typescript-simple": "^8.0.0",
-    "tslib": "^1.5.0"
+    "tslib": "^1.5.0",
+    "typescript": "^2.4.2",
+    "typescript-simple": "^8.0.0"
   },
   "peerDependencies": {
     "mocha": ">= 2.3.3 < 4",
-    "stryker-api": "^0.5.6"
+    "stryker-api": "^0.5.6",
+    "typescript": "^2.4.2"
   }
 }

@@ -1,5 +1,4 @@
-import { Location, Range } from "stryker-api/core";
-import { RunResult, TestResult } from "stryker-api/test_runner";
+import { Location, Range } from 'stryker-api/core';
 
 export default class Mutant {
 

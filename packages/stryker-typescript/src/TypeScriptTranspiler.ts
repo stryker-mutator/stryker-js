@@ -1,3 +1,4 @@
+import { MutantCandidate } from './MutantCandidate';
 import * as path from 'path';
 import * as log4js from 'log4js';
 import { readFileSync } from 'mz/fs';
@@ -37,7 +38,7 @@ export default class TypeScriptTranspiler {
   mutate(): Mutant[] {
     // const factory = MutatorFactory.instance();
     // const mutators = factory.knownNames().map(name => factory.create(name, undefined));
-
+    this.mutants = [];
     this.tsSourceFiles.forEach(tsSourceFile => {
       this.checkNodeForMutants(tsSourceFile, tsSourceFile);
     });
@@ -47,7 +48,7 @@ export default class TypeScriptTranspiler {
   private checkNodeForMutants(node: ts.Node, sourceFile: ts.SourceFile) {
     if (node.getChildCount(sourceFile) > 0) {
       node.getChildren(sourceFile).forEach((innerNode) => {
-        let mutants: Mutant[] = [];
+        let mutants: MutantCandidate[] = [];
         switch (innerNode.kind) {
           case ts.SyntaxKind.BinaryExpression:
             mutants = MutatorFactory.instance().create('BinaryOperator', undefined).applyMutation(sourceFile.fileName, sourceFile.getFullText(), innerNode, sourceFile);
@@ -68,12 +69,12 @@ export default class TypeScriptTranspiler {
             // reset to original program
             this.compilerHost.resetToOriginalFiles();
             // insert mutant in program
-            this.compilerHost.addFile(sourceFile.fileName, mutant.getMutatedCode());
+            this.compilerHost.addFile(sourceFile.fileName, mutant.replacement);
             const compilationResult = this.compileProgram(true);
             if (compilationResult) {
-              this.mutants.push(mutant);
+              this.mutants.push(new Mutant(mutant.mutatorName, mutant.filename, mutant.originalCode, mutant.replacement, mutant.location, mutant.range));
             } else {
-              log.trace(`Skipping mutant of type "${mutant.mutatorName}" because it does not compile. Mutated code: "${mutant.getMutatedCode()}"`)
+              log.debug(`Skipping mutant of type '${mutant.mutatorName}' because it does not compile. Mutated code: '${mutant.replacement}'`);
             }
           });
         }
@@ -87,14 +88,14 @@ export default class TypeScriptTranspiler {
   private includeDefaultLibFile() {
     // File necessary for compilation
     let libFile = readFileSync(this.compilerHost.getDefaultLibFileLocation());
-    this.compilerHost.addFile("lib.d.ts", libFile.toString());
-    this.compilerHost.addFileToOriginalFiles("lib.d.ts", libFile.toString());
+    this.compilerHost.addFile('lib.d.ts', libFile.toString());
+    this.compilerHost.addFileToOriginalFiles('lib.d.ts', libFile.toString());
   }
 
   private setCompilerOptions() {
-    log.trace("Looking for typescript configuration file");
-    // let result = ts.readConfigFile("tsconfig.json", () => readFileSync("./tsconfig.json").toString());
-    log.warn("Not reading tsconfig as it should be passed by stryker config! Setting default compiler options");
+    log.trace('Looking for typescript configuration file');
+    // let result = ts.readConfigFile('tsconfig.json', () => readFileSync('./tsconfig.json').toString());
+    log.warn('Not reading tsconfig as it should be passed by stryker config! Setting default compiler options');
     this.compilerOptions = {
       allowJs: false,
       module: ts.ModuleKind.CommonJS,
@@ -130,7 +131,7 @@ export default class TypeScriptTranspiler {
     if (emitResult.emitSkipped) {
       logError('Compilation of TypeScript code failed');
       emitResult.diagnostics.forEach(diagnostic => {
-        logWarning(ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"));
+        logWarning(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
       });
       return undefined;
     } else {
