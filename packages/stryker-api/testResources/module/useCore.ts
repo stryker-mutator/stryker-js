@@ -12,6 +12,11 @@ let optionsAllArgs: StrykerOptions = {
   timeoutMs: 1,
   timeoutFactor: 2,
   plugins: ['string'],
+  thresholds: {
+    high: 80,
+    low: 70,
+    break: 60
+  },
   port: 3,
 };
 

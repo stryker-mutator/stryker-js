@@ -1,6 +1,6 @@
 {
   "name": "stryker-mocha-framework",
-  "version": "0.1.4",
+  "version": "0.3.0",
   "description": "A plugin to use the mocha test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --check-coverage --lines 100 --functions 100 --branches 100 mocha \"test/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 100 --functions 100 --branches 100 mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -38,11 +38,11 @@
     "log4js": "^1.1.1"
   },
   "devDependencies": {
-    "stryker-api": "^0.5.6",
+    "stryker-api": "^0.7.0",
     "tslib": "^1.5.0"
   },
   "peerDependencies": {
     "mocha": ">= 2.3.3 < 4",
-    "stryker-api": "^0.5.6"
+    "stryker-api": "^0.7.0"
   }
 }

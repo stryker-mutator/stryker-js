@@ -42,7 +42,7 @@ export default class ReporterOrchestrator {
   }
 
   private createReporter(name: string) {
-    if (name === 'progress' && !(process.stdout as any)['isTTY']) {
+    if (name === 'progress' && !process.stdout.isTTY) {
       log.info('Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter');
       return { name: 'progress-append-only', reporter: ReporterFactory.instance().create('progress-append-only', this.options) };
     } else {

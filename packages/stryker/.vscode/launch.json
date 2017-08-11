@@ -16,6 +16,21 @@
         "${workspaceRoot}/test/unit/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
+    }, {
+      "type": "node",
+      "request": "launch",
+      "name": "Integration tests",
+      "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
+      "args": [
+        "-u",
+        "tdd",
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceRoot}/test/helpers/**/*.js",
+        "${workspaceRoot}/test/integration/**/*.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
     },
     {
       "name": "Run stryker example",

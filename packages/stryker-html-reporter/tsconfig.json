@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
-    "noUnusedLocals": false,
-    "noImplicitReturns": false
+    "noImplicitReturns": false,
+    "jsx": "react",
+    "jsxFactory": "typedHtml.createElement"
   },
   "exclude": [
     "node_modules",

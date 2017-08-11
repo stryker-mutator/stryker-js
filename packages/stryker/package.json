@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.6.7",
+  "version": "0.8.0",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -9,7 +9,8 @@
     "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage testResources/module/node_modules/stryker",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\"",
+    "stryker": "node bin/stryker run"
   },
   "repository": {
     "type": "git",
@@ -72,9 +73,9 @@
   "devDependencies": {
     "@types/commander": "^2.9.0",
     "@types/inquirer": "0.0.33",
-    "stryker-api": "^0.5.6"
+    "stryker-api": "^0.7.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.5.6"
+    "stryker-api": "^0.7.0"
   }
 }

@@ -4,6 +4,7 @@ import { RunResult, RunStatus } from 'stryker-api/test_runner';
 import ResilientTestRunnerFactory from '../../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorator';
+import log from '../../helpers/log4jsMock';
 
 function sleep(ms: number) {
   return new Promise(res => {
@@ -143,4 +144,13 @@ describe('ResilientTestRunnerFactory', function () {
     });
   });
 
+  describe('when test runner handles promise rejections asynchronously', () => {
+    before(() => sut = ResilientTestRunnerFactory.create('async-promise-rejection-handler', options));
+
+    it('should be logging the unhandled rejection errors', async () => {
+      await sut.init();
+      await sut.run({ timeout: 2000 });
+      expect(log.error).not.called;
+    });
+  });
 }); 

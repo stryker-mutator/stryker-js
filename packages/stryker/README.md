@@ -240,6 +240,21 @@ Reasons you might want to lower this setting:
 * You're running on a shared server and/or
 * Your hard disk cannot handle the I/O of all test runners
 
+#### Thresholds for mutation score  
+**Config file:** `thresholds: { high: 80, low: 60, break: null }`  
+**Default value:** `{ high: 80, low: 60, break: null }`  
+**Mandatory**: no  
+**Description**  
+Specify the thresholds for mutation score. 
+
+* `mutation score >= high`: Awesome! Reporters should color this green and happy.
+* `high > mutation score >= low`: Warning! Reporters should color this orange/yellow. Watch yourself!
+* `mutation score < low`: Danger! Reporters should color this in red. You're in danger!
+* `mutation score < break`: Error! Stryker will exit with exit code 1, indicating a build failure. No consequence for reporters, though.
+
+It is not allowed to only supply one value. However, `high` and `low` values can be the same, making sure colors are either red or green. 
+Set `break` to `null` (default) to never let the process crash.
+
 #### Log level  
 **Command line:** `--logLevel info`    
 **Config file:** `logLevel: 'info'`

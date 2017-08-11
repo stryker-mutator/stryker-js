@@ -1,7 +1,10 @@
-import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
-import { freezeRecursively } from './utils/objectUtils';
-import * as _ from 'lodash';
 import * as path from 'path';
+import * as _ from 'lodash';
+import { getLogger } from 'log4js';
+import { MutationScoreThresholds } from 'stryker-api/core';
+import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
+import { freezeRecursively, setExitCode } from './utils/objectUtils';
+
 
 export default class ScoreResultCalculator {
 
@@ -9,20 +12,46 @@ export default class ScoreResultCalculator {
     return this.calculateScoreResult(results, '');
   }
 
+  static determineExitCode(score: ScoreResult, thresholds: MutationScoreThresholds | undefined) {
+    const breaking = thresholds && thresholds.break;
+    const formattedScore = score.mutationScore.toFixed(2);
+    if (typeof breaking === 'number') {
+      if (score.mutationScore < breaking) {
+        log.error(`Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`);
+        log.info('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
+        setExitCode(1);
+      } else {
+        log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
+      }
+    } else {
+      log.debug('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
+    }
+  }
+
   private static calculateScoreResult(results: MutantResult[], basePath: string): ScoreResult {
+    const numbers = this.countNumbers(results);
+    const facts = this.determineFacts(basePath, results);
+    return freezeRecursively(_.assign(numbers, facts));
+  }
+
+  private static determineFacts(basePath: string, results: MutantResult[]) {
     const name = this.determineCommonBasePath(results, basePath);
     const childResults = this.calculateChildScores(results, name, basePath);
-    const numbers = this.countNumbers(results);
-    return freezeRecursively(_.assign(numbers, { name, childResults }));
+    return {
+      name,
+      path: path.join(basePath, name),
+      childResults,
+      representsFile: childResults.length === 0
+    };
   }
 
   private static compareScoreResults(a: ScoreResult, b: ScoreResult) {
     const sortValue = (scoreResult: ScoreResult) => {
       // Directories first
-      if (scoreResult.childResults.length) {
-        return `0${scoreResult.name}`;
-      } else {
+      if (scoreResult.representsFile) {
         return `1${scoreResult.name}`;
+      } else {
+        return `0${scoreResult.name}`;
       }
     };
     return sortValue(a).localeCompare(sortValue(b));
@@ -36,8 +65,8 @@ export default class ScoreResultCalculator {
     if (uniqueFiles.length > 1) {
       const filesGroupedByDirectory = _.groupBy(uniqueFiles, file => file.split(path.sep)[0]);
       return Object.keys(filesGroupedByDirectory)
-      
-        .map(directory => this.calculateScoreResult( _.flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath))
+
+        .map(directory => this.calculateScoreResult(_.flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath))
         .sort(this.compareScoreResults);
     } else {
       return [];
@@ -47,7 +76,7 @@ export default class ScoreResultCalculator {
   private static determineCommonBasePath(results: MutantResult[], basePath: string) {
     const uniqueFiles = _.uniq(results.map(result => result.sourceFilePath));
     const uniqueFileDirectories = uniqueFiles.map(file => file.substr(basePath.length).split(path.sep));
-    
+
     if (uniqueFileDirectories.length) {
       return uniqueFileDirectories
         .reduce((previousDirectories, currentDirectories) => previousDirectories.filter((token, index) => currentDirectories[index] === token))
@@ -84,3 +113,5 @@ export default class ScoreResultCalculator {
     };
   }
 }
+
+const log = getLogger(ScoreResultCalculator.name);
