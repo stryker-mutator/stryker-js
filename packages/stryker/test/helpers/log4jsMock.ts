@@ -1,7 +1,7 @@
 import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 
-let logger = {
+const logger = {
   isTraceEnabled: sinon.stub(),
   trace: sinon.stub(),
   isDebugEnabled: sinon.stub(),

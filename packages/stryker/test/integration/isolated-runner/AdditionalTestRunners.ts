@@ -100,6 +100,19 @@ class VerifyWorkingFolderTestRunner extends EventEmitter implements TestRunner {
   }
 }
 
+class AsyncronousPromiseRejectionHandlerTestRunner extends EventEmitter implements TestRunner {
+  promise: Promise<void>;
+
+  init() {
+    this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
+  }
+
+  run(options: RunOptions) {
+    this.promise.catch(() => {});
+    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
+  }
+}
+
 TestRunnerFactory.instance().register('verify-working-folder', VerifyWorkingFolderTestRunner);
 TestRunnerFactory.instance().register('slow-init-dispose', SlowInitAndDisposeTestRunner);
 TestRunnerFactory.instance().register('never-resolved', NeverResolvedTestRunner);
@@ -108,3 +121,4 @@ TestRunnerFactory.instance().register('discover-regex', DiscoverRegexTestRunner)
 TestRunnerFactory.instance().register('direct-resolved', DirectResolvedTestRunner);
 TestRunnerFactory.instance().register('coverage-reporting', CoverageReportingTestRunner);
 TestRunnerFactory.instance().register('time-bomb', TimeBombTestRunner);
+TestRunnerFactory.instance().register('async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner);

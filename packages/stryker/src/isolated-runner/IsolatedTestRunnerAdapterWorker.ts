@@ -11,12 +11,13 @@ class IsolatedTestRunnerAdapterWorker {
   private underlyingTestRunner: TestRunner;
 
   constructor() {
+    this.handlePromiseRejections();
     this.listenToMessages();
   }
 
-  listenToMessages() {
+  private listenToMessages() {
     process.on('message', (serializedMessage: string) => {
-      let message: AdapterMessage = deserialize(serializedMessage);
+      const message: AdapterMessage = deserialize(serializedMessage);
       switch (message.kind) {
         case 'start':
           this.start(message);
@@ -33,6 +34,23 @@ class IsolatedTestRunnerAdapterWorker {
         default:
           this.logReceivedMessageWarning(message);
       }
+    });
+  }
+
+  /**
+   * During mutation testing, it's to be expected that promise rejections are not handled synchronously anymore (or not at all)
+   * Let's handle those events so future versions of node don't crash
+   * See issue 350: https://github.com/stryker-mutator/stryker/issues/350
+   */
+  private handlePromiseRejections() {
+    const unhandledRejections: Promise<any>[] = [];
+    process.on('unhandledRejection', (reason, promise) => {
+      const unhandledPromiseId = unhandledRejections.push(promise);
+      log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
+    });
+    process.on('rejectionHandled', (promise) => {
+      const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;
+      log.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
     });
   }
 
