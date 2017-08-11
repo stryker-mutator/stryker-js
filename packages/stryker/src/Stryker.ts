@@ -14,6 +14,7 @@ import InputFileResolver from './InputFileResolver';
 import ConfigReader from './ConfigReader';
 import PluginLoader from './PluginLoader';
 import ScoreResultCalculator from './ScoreResultCalculator';
+import ConfigValidator from './ConfigValidator';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
 import StrykerTempFolder from './utils/StrykerTempFolder';
@@ -44,22 +45,20 @@ export default class Stryker {
   /**
    * The Stryker mutation tester.
    * @constructor
-   * @param {String[]} mutateFilePatterns - A comma seperated list of globbing expression used for selecting the files that should be mutated
-   * @param {String[]} allFilePatterns - A comma seperated list of globbing expression used for selecting all files needed to run the tests. These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine)
    * @param {Object} [options] - Optional options.
    */
   constructor(options: StrykerOptions) {
     let configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
-    this.setGlobalLogLevel(); // loglevel could be changed
+    this.setGlobalLogLevel(); // logLevel could be changed
     this.loadPlugins();
     this.applyConfigWriters();
-    this.setGlobalLogLevel(); // loglevel could be changed
+    this.setGlobalLogLevel(); // logLevel could be changed
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
     this.coverageInstrumenter = new CoverageInstrumenter(this.config.coverageAnalysis, this.testFramework);
-    this.verify();
+    new ConfigValidator(this.config, this.testFramework).validate();
   }
 
 
@@ -71,14 +70,15 @@ export default class Stryker {
     this.timer.reset();
 
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
-    const {runResult, sandboxCoordinator} = await this.initialTestRun(inputFiles);
+    const { runResult, sandboxCoordinator } = await this.initialTestRun(inputFiles);
     if (runResult && inputFiles && sandboxCoordinator) {
       const mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);
-      this.reporter.onScoreCalculated(ScoreResultCalculator.calculate(mutantResults));  
+      const score = ScoreResultCalculator.calculate(mutantResults);
+      this.reporter.onScoreCalculated(score);
+      ScoreResultCalculator.determineExitCode(score, this.config.thresholds);
       await this.wrapUpReporter();
       await StrykerTempFolder.clean();
       await this.logDone();
-
       return mutantResults;
     } else {
       throw new Error('Resulting object did not contain runResult, inputFiles or sandboxCoordinator');
@@ -92,13 +92,6 @@ export default class Stryker {
   private loadPlugins() {
     if (this.config.plugins) {
       new PluginLoader(this.config.plugins).load();
-    }
-  }
-
-  private verify() {
-    if (this.config.coverageAnalysis === 'perTest' && !this.testFramework) {
-      log.fatal('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
-      process.exit(1);
     }
   }
 
@@ -116,7 +109,7 @@ export default class Stryker {
           return { runResult, sandboxCoordinator };
         }
       case RunStatus.Error:
-        this.logErrorredInitialRun(runResult);
+        this.logErrorsInInitialRun(runResult);
         break;
       case RunStatus.Timeout:
         this.logTimeoutInitialRun(runResult);
@@ -190,8 +183,8 @@ export default class Stryker {
     });
     log.error(message);
   }
-  private logErrorredInitialRun(runResult: RunResult) {
-    let message = 'One or more tests errored in the initial test run:';
+  private logErrorsInInitialRun(runResult: RunResult) {
+    let message = 'One or more tests resulted in an error in the initial test run:';
     if (runResult.errorMessages && runResult.errorMessages.length) {
       runResult.errorMessages.forEach(error => message += `\n\t${error}`);
     }

@@ -1,16 +1,19 @@
-import HtmlReporter from '../../src/HtmlReporter';
 import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
+import { Config } from 'stryker-api/config';
 import logger from '../helpers/log4jsMock';
 import EventPlayer from '../helpers/EventPlayer';
 import fileUrl = require('file-url');
+import HtmlReporter from '../../src/HtmlReporter';
 
 describe('HtmlReporter with example math project', () => {
   let sut: HtmlReporter, baseDir = 'reports/mutation/math';
 
   beforeEach(() => {
-    sut = new HtmlReporter({ htmlReporter: { baseDir } });
+    const config = new Config();
+    config.set({ htmlReporter: { baseDir } });
+    sut = new HtmlReporter(config);
     return new EventPlayer(path.join('testResources', 'mathEvents'))
       .replay(sut)
       .then(() => sut.wrapUp());
@@ -28,7 +31,9 @@ describe('HtmlReporter with example math project', () => {
 
   describe('when initiated a second time with empty events', () => {
     beforeEach(() => {
-      sut = new HtmlReporter({ htmlReporter: { baseDir } });
+      const config = new Config();
+      config.set({ htmlReporter: { baseDir } });
+      sut = new HtmlReporter(config);
       sut.onAllSourceFilesRead([]);
       sut.onAllMutantsTested([]);
       return sut.wrapUp();

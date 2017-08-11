@@ -1,3 +1,4 @@
+import { MutationScoreThresholds } from 'stryker-api/core';
 import { ScoreResult } from 'stryker-api/report';
 import * as os from 'os';
 import * as _ from 'lodash';
@@ -57,13 +58,13 @@ class Column {
 }
 
 class MutationScoreColumn extends Column {
-  constructor(rows: ScoreResult) {
+  constructor(rows: ScoreResult, private thresholds: MutationScoreThresholds) {
     super('% score', row => row.mutationScore.toFixed(2), rows);
   }
   protected color(score: ScoreResult) {
-    if (score.mutationScore >= 80) {
+    if (score.mutationScore >= this.thresholds.high) {
       return chalk.green;
-    } else if (score.mutationScore >= 60) {
+    } else if (score.mutationScore >= this.thresholds.low) {
       return chalk.yellow;
     } else {
       return chalk.red;
@@ -87,10 +88,10 @@ export default class ClearTextScoreTable {
 
   private columns: Column[];
 
-  constructor(private score: ScoreResult) {
+  constructor(private score: ScoreResult, thresholds: MutationScoreThresholds) {
     this.columns = [
       new FileColumn(score),
-      new MutationScoreColumn(score),
+      new MutationScoreColumn(score, thresholds),
       new Column('# killed', row => row.killed.toString(), score),
       new Column('# timeout', row => row.timedOut.toString(), score),
       new Column('# survived', row => row.survived.toString(), score),

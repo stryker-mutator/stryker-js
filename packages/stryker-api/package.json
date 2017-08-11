@@ -7,7 +7,7 @@
     "prebuild": "rimraf \"+(*.js|*.map)\" \"src/**/+(*.js|*.map)\" \"test/**/+(*.js|*.map)\" \"testResources/module/+(*.js|*.map)\" \"testResources/module/node_modules/stryker-api\"",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc mocha \"test/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 90 --functions 68 --branches 64 mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",

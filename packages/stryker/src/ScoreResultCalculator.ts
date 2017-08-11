@@ -1,12 +1,31 @@
-import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
-import { freezeRecursively } from './utils/objectUtils';
-import * as _ from 'lodash';
 import * as path from 'path';
+import * as _ from 'lodash';
+import { getLogger } from 'log4js';
+import { MutationScoreThresholds } from 'stryker-api/core';
+import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
+import { freezeRecursively, setExitCode } from './utils/objectUtils';
+
 
 export default class ScoreResultCalculator {
 
   static calculate(results: MutantResult[]): ScoreResult {
     return this.calculateScoreResult(results, '');
+  }
+
+  static determineExitCode(score: ScoreResult, thresholds: MutationScoreThresholds | undefined) {
+    const breaking = thresholds && thresholds.break;
+    const formattedScore = score.mutationScore.toFixed(2);
+    if (typeof breaking === 'number') {
+      if (score.mutationScore < breaking) {
+        log.error(`Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`);
+        log.info('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
+        setExitCode(1);
+      } else {
+        log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
+      }
+    } else {
+      log.debug('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
+    }
   }
 
   private static calculateScoreResult(results: MutantResult[], basePath: string): ScoreResult {
@@ -94,3 +113,5 @@ export default class ScoreResultCalculator {
     };
   }
 }
+
+const log = getLogger(ScoreResultCalculator.name);

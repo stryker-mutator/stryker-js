@@ -8,9 +8,14 @@ module.exports = function (config) {
       { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false }],
     testFramework: 'mocha',
     testRunner: 'mocha',
-    reporter: ['progress', 'clear-text', 'event-recorder'],
+    reporter: ['progress', 'html', 'clear-text', 'event-recorder'],
     coverageAnalysis: 'perTest',
+    thresholds: {
+      high: 80,
+      low: 60,
+      break: null
+    },
     logLevel: 'info',
-    plugins: ['stryker-mocha-runner', 'stryker-mocha-framework']
+    plugins: ['stryker-mocha-runner', 'stryker-mocha-framework', 'stryker-html-reporter']
   });
 };

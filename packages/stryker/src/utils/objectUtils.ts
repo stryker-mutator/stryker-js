@@ -65,3 +65,10 @@ export function wrapInClosure(codeFragment: string) {
       ${codeFragment}
     })((Function('return this'))());`;
 }
+
+/**
+ * A wrapper around `process.exitCode = n` (for testability)
+ */
+export function setExitCode(n: number) {
+  process.exitCode = n;
+}

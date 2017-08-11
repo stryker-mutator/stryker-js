@@ -9,7 +9,8 @@
     "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" coverage testResources/module/node_modules/stryker",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\"",
+    "stryker": "node bin/stryker run"
   },
   "repository": {
     "type": "git",
