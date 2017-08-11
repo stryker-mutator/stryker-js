@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { expect } from 'chai';
 import * as fs from 'mz/fs';
+import { Config } from 'stryker-api/config';
 import HtmlReporter from '../../src/HtmlReporter';
 import EventPlayer from '../helpers/EventPlayer';
 
@@ -11,7 +12,9 @@ describe('Html report of stryker', function () {
   this.timeout(10000);
 
   beforeEach(() => {
-    sut = new HtmlReporter({ htmlReporter: { baseDir: REPORT_DIR } });
+    const config = new Config();
+    config.set({ htmlReporter: { baseDir: REPORT_DIR } });
+    sut = new HtmlReporter(config);
     return new EventPlayer('testResources/strykerEvents')
       .replay(sut)
       .then(() => sut.wrapUp());

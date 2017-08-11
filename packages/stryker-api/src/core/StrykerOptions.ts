@@ -1,4 +1,5 @@
 import InputFileDescriptor from './InputFileDescriptor';
+import MutationScoreThresholds from './MutationScoreThresholds';
 
 interface StrykerOptions {
   // this ensures that custom config for for example 'karma' can be added under the 'karma' key
@@ -47,8 +48,22 @@ interface StrykerOptions {
   testRunner?: string;
 
   /**
+   * Thresholds for mutation score:
+   * 
+   * Default:
+   *  thresholds: {
+   *    high: 80,
+   *    low: 60,
+   *    break: null (disabled)
+   *  }
+   * 
+   *  Every thresholds is optional and can be disabled with null.
+   */
+  thresholds?: Partial<MutationScoreThresholds>;
+
+  /**
    * Indicates which coverage analysis strategy to use.
-   * During mutation testion, stryker will try to only run the tests that cover a particular line of code.
+   * During mutation testing, stryker will try to only run the tests that cover a particular line of code.
    * 
    * 'perTest' (default): Analyse coverage per test.
    * 'all': Analyse the coverage for the entire test suite.
@@ -64,7 +79,7 @@ interface StrykerOptions {
   reporter?: string | string[];
 
   /**
-   * The log4js loglevel. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
+   * The log4js log level. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
    */
   logLevel?: string;
 
@@ -85,7 +100,7 @@ interface StrykerOptions {
 
   /**
    * The starting port to used for test frameworks that need to run a server (for example karma). 
-   * If more test runners will run simultaniously, subsequent port numbers will be used (n+1, n+2, etc.)
+   * If more test runners will run simultaneously, subsequent port numbers will be used (n+1, n+2, etc.)
    */
   port?: number;
 }

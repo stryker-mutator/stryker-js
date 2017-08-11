@@ -5,7 +5,7 @@ import MutantSelection from './pageObjects/MutantSelection';
 import { browser } from 'protractor';
 import { baseDir } from './hooks';
 
-describe.only('File report page "Circle.js.html"', () => {
+describe('File report page "Circle.js.html"', () => {
 
   let page: FileReportPage;
 

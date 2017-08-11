@@ -2,7 +2,7 @@ import fileUrl = require('file-url');
 import * as log4js from 'log4js';
 import * as path from 'path';
 import * as fs from 'mz/fs';
-import { StrykerOptions } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
 import { Reporter, MutantResult, SourceFile, ScoreResult } from 'stryker-api/report';
 import * as util from './util';
 import * as templates from './templates';
@@ -18,7 +18,7 @@ export default class HtmlReporter implements Reporter {
   private files: SourceFile[];
   private scoreResult: ScoreResult;
 
-  constructor(private options: StrykerOptions) {
+  constructor(private options: Config) {
     log4js.setGlobalLogLevel(options.logLevel || 'info');
   }
 
@@ -62,7 +62,7 @@ export default class HtmlReporter implements Reporter {
 
   private writeReportDirectory(scoreResult = this.scoreResult, currentDirectory = this.baseDir, depth = 0, title = 'All files')
     : Promise<string> {
-    const fileContent = templates.directory(title, scoreResult, depth);
+    const fileContent = templates.directory(title, scoreResult, depth, this.options.thresholds);
     const location = path.join(currentDirectory, 'index.html');
     return util.mkdir(currentDirectory)
       .then(_ => fs.writeFile(location, fileContent))
@@ -87,7 +87,7 @@ export default class HtmlReporter implements Reporter {
   }
 
   private writeReportFile(scoreResult: ScoreResult, baseDir: string, depth: number) {
-    const fileContent = templates.sourceFile(scoreResult, this.findFile(scoreResult.path), this.findMutants(scoreResult.path), depth);
+    const fileContent = templates.sourceFile(scoreResult, this.findFile(scoreResult.path), this.findMutants(scoreResult.path), depth, this.options.thresholds);
     return fs.writeFile(path.join(baseDir, `${scoreResult.name}.html`), fileContent);
   }
 

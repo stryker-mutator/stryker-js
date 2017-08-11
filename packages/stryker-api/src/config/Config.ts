@@ -1,4 +1,4 @@
-import { StrykerOptions, InputFileDescriptor } from '../../core';
+import { StrykerOptions, InputFileDescriptor, MutationScoreThresholds } from '../../core';
 
 export default class Config implements StrykerOptions {
 
@@ -17,11 +17,18 @@ export default class Config implements StrykerOptions {
   testRunner: string;
   testFramework: string;
   maxConcurrentTestRunners: number = Infinity;
+  thresholds: MutationScoreThresholds = {
+    high: 80,
+    low: 60,
+    break: null
+  };
 
   public set(newConfig: StrykerOptions) {
     if (newConfig) {
       Object.keys(newConfig).forEach((key) => {
-        this[key] = newConfig[key];
+        if (typeof newConfig[key] !== 'undefined') {
+          this[key] = newConfig[key];
+        }
       });
     }
   }

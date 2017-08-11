@@ -8,7 +8,7 @@
     "prebuild": "rimraf \"src/**/+(*.js|*.map)\" \"test/**/+(*.js|*.map)\"",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --check-coverage --lines 100 --functions 100 --branches 100  mocha \"test/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 100 --functions 100 --branches 100  mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",

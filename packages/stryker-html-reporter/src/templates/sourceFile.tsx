@@ -1,15 +1,16 @@
 import * as _ from 'lodash';
 import * as typedHtml from 'typed-html';
+import { MutationScoreThresholds } from 'stryker-api/core';
 import { resultTable } from './resultTable';
 import { layout } from './layout';
 import { ScoreResult, SourceFile, MutantResult, MutantStatus } from 'stryker-api/report';
 
-export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], depth: number) {
+export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], depth: number, thresholds: MutationScoreThresholds) {
     return layout(result.name, depth,
         <div class="col-md-12">
             <div class="row">
                 <div class="col-xs-11">
-                    {resultTable(result, result.name)}
+                    {resultTable(result, result.name, thresholds)}
                 </div>
             </div>
             <div class="row">

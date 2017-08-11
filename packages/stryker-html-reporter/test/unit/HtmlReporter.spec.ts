@@ -1,7 +1,8 @@
 import { normalize, join } from 'path';
-import { expect } from 'chai';
 import * as fs from 'mz/fs';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
 import * as util from '../../src/util';
 import HtmlReporter from '../../src/HtmlReporter';
 import { sourceFile, mutantResult, scoreResult } from '../helpers/producers';
@@ -20,7 +21,7 @@ describe('HtmlReporter', () => {
     writeFileStub = sandbox.stub(fs, 'writeFile');
     deleteDirStub = sandbox.stub(util, 'deleteDir');
     mkdirStub = sandbox.stub(util, 'mkdir');
-    sut = new HtmlReporter({});
+    sut = new HtmlReporter(new Config());
   });
 
   afterEach(() => sandbox.restore());

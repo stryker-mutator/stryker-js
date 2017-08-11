@@ -1,7 +1,7 @@
 import * as chalk from 'chalk';
 import * as log4js from 'log4js';
 import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
-import { StrykerOptions } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
 import ClearTextScoreTable from './ClearTextScoreTable';
 import * as os from 'os';
 
@@ -9,7 +9,7 @@ const log = log4js.getLogger('ClearTextReporter');
 
 export default class ClearTextReporter implements Reporter {
 
-  constructor(private options: StrykerOptions) { }
+  constructor(private options: Config) { }
 
   private out: NodeJS.WritableStream = process.stdout;
 
@@ -99,7 +99,7 @@ export default class ClearTextReporter implements Reporter {
   }
 
   onScoreCalculated(score: ScoreResult) {
-    this.writeLine(new ClearTextScoreTable(score).draw());
+    this.writeLine(new ClearTextScoreTable(score, this.options.thresholds).draw());
   }
 }
 
