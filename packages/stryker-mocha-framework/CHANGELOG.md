@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.2.0...stryker-mocha-framework@0.3.0) (2017-08-11)
+
+
+### Features
+
+* **ci-integration:** Configurable thresholds based on mutation score (#355) ([93f28cc](https://github.com/stryker-mutator/stryker/commit/93f28cc)), closes [#220](https://github.com/stryker-mutator/stryker/issues/220)
+
+
+
+
 <a name="0.2.0"></a>
 ## [0.2.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.1.4...stryker-mocha-framework@0.2.0) (2017-08-04)
 

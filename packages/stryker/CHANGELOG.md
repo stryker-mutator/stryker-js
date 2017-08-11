@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.7.0...stryker@0.8.0) (2017-08-11)
+
+
+### Features
+
+* **ci-integration:** Configurable thresholds based on mutation score (#355) ([93f28cc](https://github.com/stryker-mutator/stryker/commit/93f28cc)), closes [#220](https://github.com/stryker-mutator/stryker/issues/220)
+* **IsolatedTestRunner:** Handle promise rejections (#351) ([f596993](https://github.com/stryker-mutator/stryker/commit/f596993))
+
+
+
+
 <a name="0.7.0"></a>
 # [0.7.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.6.7...stryker@0.7.0) (2017-08-04)
 
