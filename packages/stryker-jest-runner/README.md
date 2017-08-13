@@ -6,7 +6,7 @@
 # Stryker Jest Runner
 A plugin to use the [Jest](http://facebook.github.io/jest/) test runner in [Stryker](http://stryker-mutator.github.io), the JavaScript mutation testing framework.
 
-## Install
+## Installation
 
 Install stryker-jest-runner locally within your project folder, like so:
 
@@ -14,7 +14,7 @@ Install stryker-jest-runner locally within your project folder, like so:
 npm i --save-dev stryker-jest-runner
 ```
 
-## Peer dependencies
+### Peer dependencies
 
 The `stryker-jest-runner` is a plugin for Stryker to enable Jest as a test runner. 
 As such, you should make sure you have the correct versions of its dependencies installed:
@@ -22,19 +22,26 @@ As such, you should make sure you have the correct versions of its dependencies 
 * `jest-cli`
 * `jest-runtime`
 
-For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker-jest-runner/blob/master/package.json).
+For the minimum supported versions, see the `peerDependencies` section in [package.json](https://github.com/stryker-mutator/stryker-jest-runner/blob/master/package.json).
+For all supported version, see the `env` section in [.travis.yml](https://github.com/stryker-mutator/stryker-jest-runner/blob/master/.travis.yml).
 
 ## Configuring
 
 For the time being, the Jest runner uses a default configuration.
 But pull requests are - obviously - welcome. 
 
-### Load the plugin
+### Loading the plugin
 
 In order to use the `stryker-jest-runner` it must be loaded in the Stryker mutation testing framework via the Stryker configuration. 
 The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all `node_modules` starting with `stryker-` will be loaded.
 
-### Use the test runner
+### Using the test runner
 
 In order to use Jest as the test runner, you simply specify it in your config file: `testRunner: 'jest'`.
 Note that coverageAnalysis is not yet supported, so you must explicitly set it to `off` in your Stryker configration.
+Again, pull requests are - obviously - welcome.
+
+## Contributing
+
+Before you start hacking along, make sure to install a supported version of Jest inside your working copy.
+The versions supported are listed above.
