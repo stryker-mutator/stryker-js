@@ -5,13 +5,10 @@ import * as _ from 'lodash';
 const os = require('os');
 const path = require('path');
 
-const Console = require('console').Console;
-const Runtime = require('jest-runtime');
-
-const runTest = require('jest-cli/build/runTest');
-
 import * as log4js from 'log4js';
 const log = log4js.getLogger('JestTestRunner');
+
+import { findJestAdapter, JestAdapter } from './JestVersionAdapters';
 
 const DEFAULT_OPTIONS: Object = {
   cacheDirectory: path.join(os.tmpdir(), 'jest'),
@@ -31,12 +28,14 @@ const DEFAULT_OPTIONS: Object = {
 export default class JestTestRunner extends EventEmitter implements TestRunner {
   // Seems there are no up-to-date TypeScript definitions for Jest
 
+  private jestAdapter: JestAdapter;
   private hasteContext: Promise<any>;
   private options: any;
   private paths: string[];
 
   constructor(options: RunnerOptions) {
     super();
+    this.jestAdapter = findJestAdapter();
     log.debug(`Received options ${JSON.stringify(options)}`);
 
     this.options = _.assign(DEFAULT_OPTIONS, {
@@ -57,10 +56,7 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
 
   init(): Promise<any> | void {
     log.info(`Initializing Jest`);
-
-    const console = new Console(process.stdout, process.stderr);
-    const maxWorkers = this.options.maxWorkers;
-    return this.hasteContext = Runtime.createHasteContext(this.options, { console,  maxWorkers });
+    this.hasteContext = this.jestAdapter.buildHasteContext(this.options);
   }
 
   run(): Promise<RunResult> {
@@ -72,7 +68,11 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
 
   private runTests(hasteContext: any): Promise<any[]> {
     const promises = this.paths.map((specPath: string) => {
-      return runTest(path.resolve(specPath), this.options, hasteContext.resolver);
+      return this.jestAdapter.runTest(
+        path.resolve(specPath),
+        this.options,
+        hasteContext.resolver
+      );
     });
     return Promise.all(promises);
   }

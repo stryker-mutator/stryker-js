@@ -2,7 +2,13 @@ language: node_js
 node_js:
   - "7"
   - "6"
+env:
+  - JEST_VERSION=18.0.0
+  - JEST_VERSION=19.0.0
+  - JEST_VERSION=20.0.0
 install: npm install
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  # Install desired version of Jest
+  - npm i -D jest@${JEST_VERSION} jest-cli@${JEST_VERSION}
