@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.6.1...grunt-stryker@0.7.0) (2017-08-16)
+
+
+### Features
+
+* **grunt:** Update stryker peer dependency version ([7cb6fd2](https://github.com/stryker-mutator/stryker/commit/7cb6fd2))
+
+
+
+
 <a name="0.6.1"></a>
 ## [0.6.1](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.6.0...grunt-stryker@0.6.1) (2017-08-11)
 
