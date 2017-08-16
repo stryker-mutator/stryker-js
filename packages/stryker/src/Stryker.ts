@@ -52,7 +52,7 @@ export default class Stryker {
     this.config = configReader.readConfig();
     this.setGlobalLogLevel(); // logLevel could be changed
     this.loadPlugins();
-    this.applyConfigWriters();
+    this.applyConfigEditors();
     this.setGlobalLogLevel(); // logLevel could be changed
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
@@ -148,9 +148,9 @@ export default class Stryker {
     }
   }
 
-  private applyConfigWriters() {
-    ConfigEditorFactory.instance().knownNames().forEach(configWriterName => {
-      ConfigEditorFactory.instance().create(configWriterName, undefined).write(this.config);
+  private applyConfigEditors() {
+    ConfigEditorFactory.instance().knownNames().forEach(configEditorName => {
+      ConfigEditorFactory.instance().create(configEditorName, undefined).write(this.config);
     });
   }
 
