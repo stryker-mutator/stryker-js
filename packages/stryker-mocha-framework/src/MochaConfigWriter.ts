@@ -1,7 +1,7 @@
-import { Config, ConfigWriter } from 'stryker-api/config';
+import { Config, ConfigEditor } from 'stryker-api/config';
 import * as log4js from 'log4js';
 
-export default class MochaConfigWriter implements ConfigWriter {
+export default class MochaConfigWriter implements ConfigEditor {
   private log: log4js.Logger;
 
   constructor() {
