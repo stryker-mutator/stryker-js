@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as log4js from 'log4js';
-import MochaConfigWriter from '../../src/MochaConfigWriter';
+import MochaConfigEditor from '../../src/MochaConfigEditor';
 
 
-describe('MochaConfigWriter', () => {
-  let sut: MochaConfigWriter;
+describe('MochaConfigEditor', () => {
+  let sut: MochaConfigEditor;
   let log: {
     warn: sinon.SinonStub
   };
@@ -17,7 +17,7 @@ describe('MochaConfigWriter', () => {
       warn: sandbox.stub()
     };
     sandbox.stub(log4js, 'getLogger').returns(log);
-    sut = new MochaConfigWriter();
+    sut = new MochaConfigEditor();
   });
 
   afterEach(() => sandbox.restore());

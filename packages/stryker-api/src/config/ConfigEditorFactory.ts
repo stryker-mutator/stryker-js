@@ -4,7 +4,7 @@ import ConfigEditor from './ConfigEditor';
 namespace ConfigEditorFactory {
 
   /**
-   * Represents a Factory for ConfigWriters.
+   * Represents a Factory for ConfigEditors.
    */
   class ConfigEditorFactory extends Factory<void, ConfigEditor> {
 

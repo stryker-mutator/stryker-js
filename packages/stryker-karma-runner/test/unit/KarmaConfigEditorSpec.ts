@@ -1,17 +1,17 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as karmaConfigReaderModule from '../../src/KarmaConfigReader';
-import KarmaConfigWriter from '../../src/KarmaConfigWriter';
+import KarmaConfigEditor from '../../src/KarmaConfigEditor';
 import { Config } from 'stryker-api/config';
 
-describe('KarmaConfigWriter', () => {
-  let sut: KarmaConfigWriter;
+describe('KarmaConfigEditor', () => {
+  let sut: KarmaConfigEditor;
   let sandbox: sinon.SinonSandbox;
   let karmaConfigReader: { read: sinon.SinonStub };
   let config: Config;
 
   beforeEach(() => {
-    sut = new KarmaConfigWriter();
+    sut = new KarmaConfigEditor();
     sandbox = sinon.sandbox.create();
     karmaConfigReader = { read: sandbox.stub() };
     sandbox.stub(karmaConfigReaderModule, 'default').returns(karmaConfigReader);

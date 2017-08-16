@@ -4,14 +4,14 @@ import { InputFileDescriptor } from 'stryker-api/core';
 import { ConfigEditor, Config as StrykerConfig } from 'stryker-api/config';
 import KarmaConfigReader from './KarmaConfigReader';
 
-const log = log4js.getLogger('KarmaConfigWriter');
+const log = log4js.getLogger('KarmaConfigEditor');
 
-export default class KarmaConfigWriter implements ConfigEditor {
+export default class KarmaConfigEditor implements ConfigEditor {
   write(strykerConfig: StrykerConfig) {
     const karmaConfig = new KarmaConfigReader(strykerConfig['karmaConfigFile']).read();
     if (karmaConfig) {
-      KarmaConfigWriter.importFiles(strykerConfig, karmaConfig);
-      KarmaConfigWriter.importDefaultKarmaConfig(strykerConfig, karmaConfig);
+      KarmaConfigEditor.importFiles(strykerConfig, karmaConfig);
+      KarmaConfigEditor.importDefaultKarmaConfig(strykerConfig, karmaConfig);
     }
   }
 
@@ -23,7 +23,7 @@ export default class KarmaConfigWriter implements ConfigEditor {
     const files: (karma.FilePattern | string)[] = karmaConfig.files;
     const exclude: string[] = karmaConfig.exclude;
     if (files && Array.isArray(files)) {
-      const karmaFiles = files.map(KarmaConfigWriter.toInputFileDescriptor);
+      const karmaFiles = files.map(KarmaConfigEditor.toInputFileDescriptor);
       log.debug(`Importing following files from karma.conf file to stryker: ${JSON.stringify(karmaFiles)}`);
       strykerConfig.files = strykerConfig.files.concat(karmaFiles);
     }
