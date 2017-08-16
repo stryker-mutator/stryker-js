@@ -1,7 +1,7 @@
 'use strict';
 
 import MutatorOrchestrator from './MutatorOrchestrator';
-import { Config, ConfigWriterFactory } from 'stryker-api/config';
+import { Config, ConfigEditorFactory } from 'stryker-api/config';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
@@ -149,8 +149,8 @@ export default class Stryker {
   }
 
   private applyConfigWriters() {
-    ConfigWriterFactory.instance().knownNames().forEach(configWriterName => {
-      ConfigWriterFactory.instance().create(configWriterName, undefined).write(this.config);
+    ConfigEditorFactory.instance().knownNames().forEach(configWriterName => {
+      ConfigEditorFactory.instance().create(configWriterName, undefined).write(this.config);
     });
   }
 
