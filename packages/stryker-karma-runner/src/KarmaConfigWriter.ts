@@ -1,12 +1,12 @@
 import * as log4js from 'log4js';
 import * as karma from 'karma';
 import { InputFileDescriptor } from 'stryker-api/core';
-import { ConfigWriter, Config as StrykerConfig } from 'stryker-api/config';
+import { ConfigEditor, Config as StrykerConfig } from 'stryker-api/config';
 import KarmaConfigReader from './KarmaConfigReader';
 
 const log = log4js.getLogger('KarmaConfigWriter');
 
-export default class KarmaConfigWriter implements ConfigWriter {
+export default class KarmaConfigWriter implements ConfigEditor {
   write(strykerConfig: StrykerConfig) {
     const karmaConfig = new KarmaConfigReader(strykerConfig['karmaConfigFile']).read();
     if (karmaConfig) {

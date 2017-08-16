@@ -1,4 +1,4 @@
-import {Config, ConfigWriter, ConfigWriterFactory} from 'stryker-api/config';
+import {Config, ConfigEditor, ConfigWriterFactory} from 'stryker-api/config';
 
 let config: Config = new Config();
 

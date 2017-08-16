@@ -1,7 +1,7 @@
 import Stryker from '../../src/Stryker';
 import { InputFile } from 'stryker-api/core';
 import { Reporter, MutantResult } from 'stryker-api/report';
-import { Config, ConfigWriterFactory, ConfigWriter } from 'stryker-api/config';
+import { Config, ConfigWriterFactory, ConfigEditor } from 'stryker-api/config';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { expect } from 'chai';
@@ -20,7 +20,7 @@ import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import log from '../helpers/log4jsMock';
 import { reporterStub, mock, Mock, testFramework as testFrameworkMock } from '../helpers/producers';
 
-class FakeConfigWriter implements ConfigWriter {
+class FakeConfigWriter implements ConfigEditor {
   constructor() { }
   write(config: Config) {
     config.testRunner = 'fakeTestRunner';
