@@ -1,7 +1,7 @@
 import Config from './Config';
 
-interface Configurator {
+interface ConfigEditor {
   write(config: Config): void;
 }
 
-export default Configurator;
+export default ConfigEditor;
