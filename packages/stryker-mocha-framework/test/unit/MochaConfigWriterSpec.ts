@@ -30,7 +30,7 @@ describe('MochaConfigEditor', () => {
     it('should not do anything when test runner is "mocha" and test framework is "mocha"', () => {
       options.testFramework = 'mocha';
       options.testRunner = 'mocha';
-      sut.write(options);
+      sut.edit(options);
       expect(log.warn).to.not.have.been.called;
       expect(options.coverageAnalysis).to.be.eq('perTest');
     });
@@ -38,7 +38,7 @@ describe('MochaConfigEditor', () => {
     it('should not do anything when test framework isn\'t mocha', () => {
       options.testFramework = 'asd';
       options.testRunner = 'mocha';
-      sut.write(options);
+      sut.edit(options);
       expect(log.warn).to.not.have.been.called;
       expect(options.coverageAnalysis).to.be.eq('perTest');
     });
@@ -46,7 +46,7 @@ describe('MochaConfigEditor', () => {
     it('should not do anything when test runner is\'t mocha but test framework is "mocha"', () => {
       options.testFramework = 'mocha';
       options.testRunner = 'asd';
-      sut.write(options);
+      sut.edit(options);
       expect(log.warn).to.have.been.calledWith('Framework "mocha" with coverageAnalysis "perTest" is only supported with the "mocha" test runner (not "asd"). Downgrading to coverageAnalysis "all".');
       expect(options.coverageAnalysis).to.be.eq('all');
     });

@@ -22,7 +22,7 @@ import { reporterStub, mock, Mock, testFramework as testFrameworkMock } from '..
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
-  write(config: Config) {
+  edit(config: Config) {
     config.testRunner = 'fakeTestRunner';
   }
 }

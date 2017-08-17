@@ -8,7 +8,7 @@ export default class MochaConfigEditor implements ConfigEditor {
     this.log = log4js.getLogger('MochaConfigEditor');
   }
 
-  write(config: Config) {
+  edit(config: Config) {
     if (config.coverageAnalysis === 'perTest' && config.testRunner !== 'mocha') {
       this.log.warn(`Framework "mocha" with coverageAnalysis "perTest" is only supported with the "mocha" test runner (not "${config.testRunner}"). Downgrading to coverageAnalysis "all".`);
       config.coverageAnalysis = 'all';

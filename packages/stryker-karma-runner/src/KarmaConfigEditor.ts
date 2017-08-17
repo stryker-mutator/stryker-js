@@ -7,7 +7,7 @@ import KarmaConfigReader from './KarmaConfigReader';
 const log = log4js.getLogger('KarmaConfigEditor');
 
 export default class KarmaConfigEditor implements ConfigEditor {
-  write(strykerConfig: StrykerConfig) {
+  edit(strykerConfig: StrykerConfig) {
     const karmaConfig = new KarmaConfigReader(strykerConfig['karmaConfigFile']).read();
     if (karmaConfig) {
       KarmaConfigEditor.importFiles(strykerConfig, karmaConfig);

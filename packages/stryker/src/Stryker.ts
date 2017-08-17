@@ -150,7 +150,7 @@ export default class Stryker {
 
   private applyConfigEditors() {
     ConfigEditorFactory.instance().knownNames().forEach(configEditorName => {
-      ConfigEditorFactory.instance().create(configEditorName, undefined).write(this.config);
+      ConfigEditorFactory.instance().create(configEditorName, undefined).edit(this.config);
     });
   }
 

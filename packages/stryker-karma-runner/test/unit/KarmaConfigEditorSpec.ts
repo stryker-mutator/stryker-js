@@ -24,7 +24,7 @@ describe('KarmaConfigEditor', () => {
   describe('write', () => {
 
     it('should create karmaConfigReader using "karmaConfigFile"', () => {
-      sut.write(config);
+      sut.edit(config);
       expect(karmaConfigReaderModule.default).to.have.been.calledWith('expectedFile');
       expect(karmaConfigReaderModule.default).to.have.been.calledWithNew;
     });
@@ -32,7 +32,7 @@ describe('KarmaConfigEditor', () => {
     describe('without readable config', () => {
 
       it('should not override the runner', () => {
-        sut.write(config);
+        sut.edit(config);
         expect(config.testRunner).to.be.undefined;
       });
     });
@@ -46,38 +46,38 @@ describe('KarmaConfigEditor', () => {
       });
 
       it('should not override the runner if it was not provided already, as it could result in strange behavior', () => {
-        sut.write(config);
+        sut.edit(config);
         expect(config.testRunner).to.be.undefined;
       });
 
       it('should not override the runner if it was provided already', () => {
         config.testRunner = 'harry';
-        sut.write(config);
+        sut.edit(config);
         expect(config.testRunner).to.be.eq('harry');
       });
 
       it('should import files', () => {
         karmaConfig.files = [{ pattern: 'somePattern' }];
-        sut.write(config);
+        sut.edit(config);
         expect(config.files).to.be.deep.eq([{ pattern: 'somePattern', mutated: false, included: false }]);
       });
 
       it('should not completely override files', () => {
         karmaConfig.files = [{ pattern: 'somePattern' }];
         config.files = ['someFile'];
-        sut.write(config);
+        sut.edit(config);
         expect(config.files).to.be.deep.eq(['someFile', { pattern: 'somePattern', mutated: false, included: false }]);
       });
 
       it('should exclude the excluded files', () => {
         karmaConfig.exclude = ['someFile'];
-        sut.write(config);
+        sut.edit(config);
         expect(config.files).to.be.deep.eq(['!someFile']);
       });
 
       it('should add karmaConfig to the options', () => {
         karmaConfig.something = 'blaat';
-        sut.write(config);
+        sut.edit(config);
         expect(config['karmaConfig']).to.be.eq(karmaConfig);
       });
 
@@ -85,7 +85,7 @@ describe('KarmaConfigEditor', () => {
         config['karmaConfig'] = { value: 'overriden' };
         karmaConfig.value = 'base';
         karmaConfig.theAnswer = 42;
-        sut.write(config);
+        sut.edit(config);
         expect(config['karmaConfig'].value).to.be.eq('overriden');
         expect(config['karmaConfig'].theAnswer).to.be.eq(42);
       });
