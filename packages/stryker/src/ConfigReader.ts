@@ -35,7 +35,7 @@ export default class ConfigReader {
 
   private loadConfigModule(): Function {
     // we start with a dummy configModule
-    let configModule: Function = function() { };
+    let configModule: Function = function () { };
     if (this.cliOptions.configFile) {
       log.debug('Loading config %s', this.cliOptions.configFile);
       try {
