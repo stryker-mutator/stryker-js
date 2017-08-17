@@ -1,7 +1,7 @@
 import { TestRunnerFactory } from 'stryker-api/test_runner';
-import { ConfigWriterFactory } from 'stryker-api/config';
+import { ConfigEditorFactory } from 'stryker-api/config';
 import KarmaTestRunner from './KarmaTestRunner';
-import KarmaConfigWriter from './KarmaConfigWriter';
+import KarmaConfigEditor from './KarmaConfigEditor';
 
 TestRunnerFactory.instance().register('karma', KarmaTestRunner);
-ConfigWriterFactory.instance().register('karma', KarmaConfigWriter);
+ConfigEditorFactory.instance().register('karma', KarmaConfigEditor);

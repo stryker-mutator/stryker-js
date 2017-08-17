@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "tsc -w",
-    "prebuild": "rimraf \"src/**/+(*.js|*.map)\" \"test/**/+(*.js|*.map)\"",
+    "clean": "rimraf \"src/**/+(*.d.ts|*.js|*.map)\" \"test/**/+(*.d.ts|*.js|*.map)\" .nyc_output reports",
+    "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
     "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 100 --functions 100 --branches 100  mocha \"test/**/*.js\""

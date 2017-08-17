@@ -1,7 +1,7 @@
 import Stryker from '../../src/Stryker';
 import { InputFile } from 'stryker-api/core';
 import { Reporter, MutantResult } from 'stryker-api/report';
-import { Config, ConfigWriterFactory, ConfigWriter } from 'stryker-api/config';
+import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { expect } from 'chai';
@@ -20,9 +20,9 @@ import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import log from '../helpers/log4jsMock';
 import { reporterStub, mock, Mock, testFramework as testFrameworkMock } from '../helpers/producers';
 
-class FakeConfigWriter implements ConfigWriter {
+class FakeConfigEditor implements ConfigEditor {
   constructor() { }
-  write(config: Config) {
+  edit(config: Config) {
     config.testRunner = 'fakeTestRunner';
   }
 }
@@ -84,12 +84,12 @@ describe('Stryker', function () {
 
   describe('when constructed', () => {
     beforeEach(() => {
-      ConfigWriterFactory.instance().register('FakeConfigWriter', FakeConfigWriter);
+      ConfigEditorFactory.instance().register('FakeConfigEditor', FakeConfigEditor);
       config.plugins = ['plugin1'];
       sut = new Stryker({});
     });
 
-    it('should use the config writer to override config', () => {
+    it('should use the config editor to override config', () => {
       expect(sut.config.testRunner).to.be.eq('fakeTestRunner');
     });
 

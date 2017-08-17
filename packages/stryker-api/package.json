@@ -4,7 +4,8 @@
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "scripts": {
     "start": "tsc -w",
-    "prebuild": "rimraf \"+(*.js|*.map)\" \"src/**/+(*.js|*.map)\" \"test/**/+(*.js|*.map)\" \"testResources/module/+(*.js|*.map)\" \"testResources/module/node_modules/stryker-api\"",
+    "clean": "rimraf \"+(*.d.ts|*.js|*.map)\" \"src/**/+(*.d.ts|*.js|*.map)\" \"test/**/+(*.d.ts|*.js|*.map)\" \"testResources/module/+(*.d.ts|*.js|*.map)\" \"testResources/module/node_modules/stryker-api\" .nyc_output reports",
+    "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
     "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 90 --functions 68 --branches 64 mocha \"test/**/*.js\""

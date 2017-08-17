@@ -37,6 +37,7 @@
     "typescript": "^2.2.2"
   },
   "scripts": {
+    "clean": "lerna run prebuild",
     "postinstall": "lerna bootstrap && link-parent-bin",
     "prebuild": "npm run clean-integration-test",
     "build": "lerna run build",
