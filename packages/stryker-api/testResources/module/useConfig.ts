@@ -6,12 +6,12 @@ class MyConfigEditor {
   constructor() {
   }
 
-  write(config: Config) {
+  edit(config: Config) {
     config.set({ 'myConfig': true });
   }
 }
 
 ConfigEditorFactory.instance().register('myConfigEditor', MyConfigEditor);
 let myConfigEditor = ConfigEditorFactory.instance().create('myConfigEditor', undefined);
-myConfigEditor.write(config);
+myConfigEditor.edit(config);
 console.log(config);
