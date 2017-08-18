@@ -4,7 +4,8 @@ import { Config } from 'stryker-api/config';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptMutantGenerator from '../../src/TypescriptMutantGenerator';
 
-describe('Sample integration', () => {
+describe('Sample integration', function () {
+  this.timeout(10000);
   it('should work', () => {
     const configEditor = new TypescriptConfigEditor();
     const config = new Config();
