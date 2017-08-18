@@ -1,7 +1,7 @@
 'use strict';
 
 import MutatorOrchestrator from './MutatorOrchestrator';
-import { Config, ConfigWriterFactory } from 'stryker-api/config';
+import { Config, ConfigEditorFactory } from 'stryker-api/config';
 import { StrykerOptions, InputFile } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
@@ -52,7 +52,7 @@ export default class Stryker {
     this.config = configReader.readConfig();
     this.setGlobalLogLevel(); // logLevel could be changed
     this.loadPlugins();
-    this.applyConfigWriters();
+    this.applyConfigEditors();
     this.setGlobalLogLevel(); // logLevel could be changed
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
@@ -148,9 +148,9 @@ export default class Stryker {
     }
   }
 
-  private applyConfigWriters() {
-    ConfigWriterFactory.instance().knownNames().forEach(configWriterName => {
-      ConfigWriterFactory.instance().create(configWriterName, undefined).write(this.config);
+  private applyConfigEditors() {
+    ConfigEditorFactory.instance().knownNames().forEach(configEditorName => {
+      ConfigEditorFactory.instance().create(configEditorName, undefined).edit(this.config);
     });
   }
 
