@@ -6,7 +6,7 @@ import TypescriptMutantGenerator from '../../src/TypescriptMutantGenerator';
 
 describe('Sample integration', function () {
   this.timeout(10000);
-  it('should work', () => {
+  it('should work for the math sample', () => {
     const configEditor = new TypescriptConfigEditor();
     const config = new Config();
     config.set({

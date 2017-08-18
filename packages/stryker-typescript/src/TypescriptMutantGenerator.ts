@@ -14,14 +14,14 @@ export function filterValues<T>(array: (T | null | undefined)[]): T[] {
   return array.filter(a => a !== null && a !== undefined) as T[];
 }
 
-export default class TypeScriptMutantGenerator {
+export default class TypescriptMutantGenerator {
 
   private readonly log: Logger;
 
   constructor(private config: Config, public mutators: Mutator[] = [
     new BinaryExpressionMutator()
   ]) {
-    this.log = getLogger(TypeScriptMutantGenerator.name);
+    this.log = getLogger(TypescriptMutantGenerator.name);
   }
 
   generateMutants(inputFiles: InputFile[]): Mutant[] {
@@ -37,6 +37,7 @@ export default class TypeScriptMutantGenerator {
     this.log.info(`${mutants.length} of the ${candidates.length} mutants resulted in valid typescript.`);
     return mutants;
   }
+  
   static printer = ts.createPrinter({
     removeComments: false,
     newLine: ts.NewLineKind.CarriageReturnLineFeed
