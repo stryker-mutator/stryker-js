@@ -3,17 +3,12 @@ import * as path from 'path';
 import * as os from 'os';
 import * as ts from 'typescript';
 import { getLogger } from 'log4js';
-import { ConfigWriter, Config } from 'stryker-api/config';
+import { ConfigEditor, Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './keys';
 
-export class TypescriptConfigEditor implements ConfigWriter {
+export class TypescriptConfigEditor implements ConfigEditor {
 
   private log = getLogger(TypescriptConfigEditor.name);
-
-  // TODO: Remove once `ConfigWriter` is renamed to `ConfigEditor`
-  write(strykerConfig: Config) {
-    return this.edit(strykerConfig);
-  }
 
   edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
     if (typeof strykerConfig[CONFIG_KEY_FILE] === 'string') {
