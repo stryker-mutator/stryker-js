@@ -10,7 +10,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 92 --functions 62 --branches 91 mocha \"test/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 92 --functions 62 --branches 77 mocha \"test/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -35,13 +35,11 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-framework#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "lodash.clone": "^4.5.0",
-    "lodash.clonedeep": "^4.5.0",
+    "lodash.flatmap": "^4.5.0",
     "log4js": "^1.1.1"
   },
   "devDependencies": {
-    "@types/lodash.clone": "^4.5.3",
-    "@types/lodash.clonedeep": "^4.5.3",
+    "@types/lodash.flatmap": "^4.5.3",
     "stryker-api": "^0.7.0",
     "tslib": "^1.5.0",
     "typescript": "^2.4.2"

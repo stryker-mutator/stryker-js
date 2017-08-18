@@ -5,7 +5,7 @@ import * as ts from 'typescript';
 import { expect } from 'chai';
 import { SinonStub, match } from 'sinon';
 import { Config } from 'stryker-api/config';
-import { TypescriptConfigEditor } from './../../src/TypescriptConfigEditor';
+import TypescriptConfigEditor from './../../src/TypescriptConfigEditor';
 
 const CONFIG_KEY = 'tsconfigFile';
 
