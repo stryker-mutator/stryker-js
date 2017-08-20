@@ -29,7 +29,7 @@ export default class MutantCandidateCompiler {
 
   validateMutant(mutantCandidate: MutantCandidate): boolean {
     this.host.mutate(mutantCandidate);
-    const errors = this.languageService.getSemanticDiagnostics(mutantCandidate.sourceFile.fileName);
+    const errors = this.languageService.getSemanticDiagnostics(mutantCandidate.fileName);
     const isValid = !errors.length;
     this.logErrors(errors, mutantCandidate);
     this.host.restore();

@@ -14,9 +14,6 @@ export default class MutableLanguageServiceHost implements ts.LanguageServiceHos
     this.originalFiles = Object.create(null);
     this.currentMutatedFiles = Object.create(null);
     this.getDefaultLibFileName = ts.getDefaultLibFileName;
-    this.fileExists = ts.sys.fileExists;
-    this.readFile = ts.sys.readFile;
-    this.readDirectory = ts.sys.readDirectory;
     rootFiles.forEach(fileName => this.pullFileIntoMemory(fileName));
   }
 
@@ -87,7 +84,4 @@ export default class MutableLanguageServiceHost implements ts.LanguageServiceHos
     return this.compilerOptions;
   }
   getDefaultLibFileName: (options: ts.CompilerOptions) => string;
-  fileExists: (path: string) => boolean;
-  readFile: (path: string, encoding?: string) => string;
-  readDirectory: (path: string, extensions?: string[], exclude?: string[], include?: string[]) => string[];
 }

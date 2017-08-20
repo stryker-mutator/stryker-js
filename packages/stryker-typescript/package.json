@@ -10,7 +10,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 92 --functions 62 --branches 77 mocha \"test/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 50 --functions 50 --branches 50 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -36,16 +36,19 @@
   "license": "Apache-2.0",
   "dependencies": {
     "lodash.flatmap": "^4.5.0",
-    "log4js": "^1.1.1"
+    "log4js": "^1.1.1",
+    "source-map": "^0.5.6",
+    "streamify-string": "^1.0.1"
   },
   "devDependencies": {
     "@types/lodash.flatmap": "^4.5.3",
+    "@types/source-map": "^0.5.1",
     "stryker-api": "^0.7.0",
     "tslib": "^1.5.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.6.0-dev.20170819"
   },
   "peerDependencies": {
     "stryker-api": "^0.7.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.6.0-dev.20170819"
   }
 }
