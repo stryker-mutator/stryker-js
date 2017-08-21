@@ -1,59 +1,50 @@
 import { Config } from 'stryker-api/config';
-import { Transpiler, FileStream, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
-import { filterOutTypescriptFiles, isTypescriptFile, getCompilerOptions, getProjectDirectory } from './helpers/tsHelpers';
-import { streamToString } from './helpers/streamUtils';
+import { Transpiler, TranspileFile, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
+import { filterOutTypescriptFiles, isTypescriptFile, isTextFile, getCompilerOptions, getProjectDirectory } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
-import InMemoryFile from './transpiler/InMemoryFile';
-const streamify = require('streamify-string');
+import { Logger, getLogger } from 'log4js';
 
 export default class TypescriptTranspiler implements Transpiler {
   private languageService: TranspilingLanguageService;
   private readonly next: Transpiler;
   private readonly config: Config;
   private readonly keepSourceMaps: boolean;
+  private readonly log: Logger;
 
   constructor(options: TranspilerOptions) {
+    this.log = getLogger(TypescriptTranspiler.name);
     this.config = options.config;
-    this.next = options.nextTranspiler;
     this.keepSourceMaps = options.keepSourceMaps;
   }
 
-  transpile(files: FileStream[]): Promise<string | null> {
+  transpile(files: TranspileFile[]): Promise<TranspileResult> {
     const { typescriptFiles, otherFiles } = filterOutTypescriptFiles(files);
-    return loadAll(typescriptFiles).then(
-      files => {
-        this.languageService = new TranspilingLanguageService(
-          getCompilerOptions(this.config), files, getProjectDirectory(this.config), this.keepSourceMaps);
-        const result = this.languageService.getAllSemanticDiagnostics();
-        if (result.length) {
-          return result;
-        } else {
-          const outputFiles = this.languageService.emitAll();
-          return this.transpileNext(outputFiles, otherFiles);
-        }
-      }
-    );
+    this.languageService = new TranspilingLanguageService(
+      getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.keepSourceMaps);
+    const error = this.languageService.getAllSemanticDiagnostics();
+    if (error.length) {
+      return this.resolveError(error);
+    } else {
+      const outputFiles = this.languageService.emitAll();
+      return this.resolveOutputFiles(otherFiles.concat(outputFiles));
+    }
   }
 
-  mutate(file: FileStream): Promise<string | null> {
-    if (isTypescriptFile(file.name)) {
-      return streamToString(file.content)
-        .then(content => {
-          this.languageService.replace(file.name, content);
-          const error = this.languageService.getSemanticDiagnostics(file.name);
-          const outputFile = this.languageService.emit(file.name);
-          this.languageService.restore();
-          if (error.length) {
-            return error;
-          } else {
-            return this.mutateNext({
-              name: outputFile.name,
-              content: streamify(outputFile.content)
-            });
-          }
-        });
+  mutate(file: TranspileFile): Promise<TranspileResult> {
+    if (isTypescriptFile(file) && isTextFile(file)) {
+      this.languageService.replace(file.name, file.content);
+      const error = this.languageService.getSemanticDiagnostics(file.name);
+      const outputFile = this.languageService.emit(file.name);
+      this.languageService.restore();
+      if (error.length) {
+        return this.resolveError(error);
+      } else {
+        return this.resolveOutputFiles([outputFile]);
+      }
     } else {
-      return this.mutateNext(file);
+      const error = `Cannot perform transpile action on mutated file ${file.name} as it does not seem to be a typescript file`;
+      this.log.warn(error);
+      return this.resolveError(error);
     }
   }
 
@@ -66,20 +57,17 @@ export default class TypescriptTranspiler implements Transpiler {
     }
   }
 
-  private transpileNext(inMemoryFiles: InMemoryFile[], otherFileStreams: FileStream[]) {
-    return this.next.transpile(otherFileStreams.concat(inMemoryFiles.map(inMemoryFile => ({
-      name: inMemoryFile.name,
-      content: streamify(inMemoryFile.content)
-    }))));
+  private resolveError(error: string): Promise<TranspileResult> {
+    return Promise.resolve({
+      error,
+      outputFiles: []
+    });
   }
 
-  private mutateNext(file: FileStream): Promise<string | null> {
-    return this.next.mutate(file);
+  private resolveOutputFiles(outputFiles: TranspileFile[]): Promise<TranspileResult> {
+    return Promise.resolve({
+      error: null,
+      outputFiles
+    });
   }
-}
-
-function loadAll(files: FileStream[]) {
-  return Promise.all(files.map(
-    file => streamToString(file.content).then(content => ({ name: file.name, content })))
-  );
 }

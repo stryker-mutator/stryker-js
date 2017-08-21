@@ -1,70 +1,66 @@
+import { Mutant } from 'stryker-api/mutant';
 import * as path from 'path';
 import * as fs from 'fs';
 import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
-import { Transpiler, FileStream, FileLocation } from 'stryker-api/transpile';
-import { streamToString } from '../../src/helpers/streamUtils';
+import { TextFile } from 'stryker-api/transpile';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptMutantGenerator from '../../src/TypescriptMutantGenerator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
-const streamify = require('streamify-string');
-
-class CatchTranspiler implements Transpiler {
-  files: FileStream[];
-  transpile(files: FileStream[]): Promise<string | null> {
-    this.files = files;
-    return Promise.resolve(null);
-  }
-  mutate(file: FileStream): Promise<string | null> {
-    this.files.push(file);
-    return Promise.resolve(null);
-  }
-  getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
-    return sourceFileLocation;
-  }
-}
 
 describe('Sample integration', function () {
   this.timeout(10000);
-  it('should work for the math sample', async () => {
+
+  let config: Config;
+  let inputFiles: TextFile[];
+
+  beforeEach(() => {
     // Read config
     const configEditor = new TypescriptConfigEditor();
-    const config = new Config();
+    config = new Config();
     config.set({
       tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'tsconfig.json')
     });
     configEditor.edit(config);
+    inputFiles = config.files.map(file => ({ name: file as string, content: fs.readFileSync(file as string, 'utf8') }));
+  });
 
+  it('should be able to generate mutants', () => {
     // Generate mutants
     const mutantGenerator = new TypescriptMutantGenerator(config);
     const mutants = mutantGenerator.generateMutants(config.files.map(file => ({ path: file as string, mutated: true, included: true })));
-    expect(mutants.length).to.eq(5);
-
-    // Create transpiler chain
-    const lastTranspiler = new CatchTranspiler();
-    const transpiler = new TypescriptTranspiler({ config, nextTranspiler: lastTranspiler, keepSourceMaps: true });
-
-    // Transpile files
-    const error = await transpiler.transpile(config.files.map(file => ({ name: file as string, content: fs.createReadStream(file as string) })));
-    expect(error).to.be.null;
-    const outputFiles = await Promise.all(lastTranspiler.files.map(file => streamToString(file.content).then(content => ({ name: file.name, content }))));
-    expect(outputFiles.length).to.eq(2);
-
-    // Transpile mutants
-    const originalSourceFiles = config.files.map(file => ({ name: file, content: fs.readFileSync(file as string, 'utf8') }));
-    const mutatedFiles = mutants.map(mutant => {
-      const file = originalSourceFiles.find(f => f.name === mutant.fileName);
-      if (file) {
-        return {
-          name: file.name as string,
-          content: streamify(file.content.slice(0, mutant.range[0]) + mutant.replacementSourceCode + file.content.slice(mutant.range[1]))
-        };
-      } else {
-        throw new Error('error');
-      }
-    });
-    await Promise.all(mutatedFiles.map(mutatedFile => transpiler.mutate(mutatedFile)));
-    expect(lastTranspiler.files.length).to.eq(7);
-    
+    expect(mutants.length).to.eq(2);
   });
+
+  it('should be able to transpile source code', async () => {
+    const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
+    const transpileResult = await transpiler.transpile(inputFiles);
+    expect(transpileResult.error).to.be.null;
+    const outputFiles = transpileResult.outputFiles;
+    expect(outputFiles.length).to.eq(2);
+  });
+
+  it('should be able to mutate transpiled code', async () => {
+    // Transpile mutants
+    const mutantGenerator = new TypescriptMutantGenerator(config);
+    const mutants = mutantGenerator.generateMutants(config.files.map(file => ({ path: file as string, mutated: true, included: true })));
+    const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
+    await transpiler.transpile(inputFiles);
+    const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
+    const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpressionMutator');
+    const correctResult = await transpiler.mutate(mutateFile(mathDotTS, firstBinaryMutant));
+    const errorResult = await transpiler.mutate(mutateFile(mathDotTS, stringSubtractMutant));
+    expect(correctResult.error).null;
+    expect(correctResult.outputFiles).lengthOf(1);
+    expect(path.resolve(correctResult.outputFiles[0].name)).eq(path.resolve(path.dirname(mathDotTS.name), 'math.js'));
+    expect(errorResult.error).matches(/error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number' or an enum type/);
+    expect(errorResult.outputFiles).lengthOf(0);
+  });
+
+  function mutateFile(file: TextFile, mutant: Mutant): TextFile {
+    return {
+      name: file.name,
+      content: file.content.slice(0, mutant.range[0]) + mutant.replacement + file.content.slice(mutant.range[1])
+    };
+  }
 });

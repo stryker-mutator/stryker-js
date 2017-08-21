@@ -1,14 +1,12 @@
-import * as ts from 'typescript';
-import { Mutant } from 'stryker-api/mutant';
-import { Config } from 'stryker-api/config';
 import { Logger, getLogger } from 'log4js';
-import Mutator from './mutator/Mutator';
-import BinaryExpressionMutator from './mutator/BinaryExpressionMutator';
+import * as ts from 'typescript';
 import flatMap = require('lodash.flatmap');
 import { InputFile } from 'stryker-api/core';
+import { Mutant } from 'stryker-api/mutant';
+import { Config } from 'stryker-api/config';
 import { createProgram } from './helpers/tsHelpers';
-import MutantCandidate from './mutator/MutantCandidate';
-import MutantCandidateCompiler from './mutator/MutantCandidateCompiler';
+import Mutator from './mutator/Mutator';
+import BinaryExpressionMutator from './mutator/BinaryExpressionMutator';
 
 export function filterValues<T>(array: (T | null | undefined)[]): T[] {
   return array.filter(a => a !== null && a !== undefined) as T[];
@@ -26,29 +24,26 @@ export default class TypescriptMutantGenerator {
 
   generateMutants(inputFiles: InputFile[]): Mutant[] {
     const program = createProgram(inputFiles, this.config);
-    const mutantValidator = new MutantCandidateCompiler(inputFiles, this.config);
     const mutatedInputFiles = inputFiles.filter(inputFile => inputFile.mutated);
     const candidates = flatMap(mutatedInputFiles, inputFile => {
       const sourceFile = program.getSourceFile(inputFile.path);
       return this.generateMutantsForNode(sourceFile, sourceFile);
     });
-    this.log.info(`Found ${candidates.length} possible mutant candidates. Making sure it results in valid typescript.`);
-    const mutants = candidates.filter(_ => mutantValidator.validateMutant(_));
-    this.log.info(`${mutants.length} of the ${candidates.length} mutants resulted in valid typescript.`);
-    return mutants;
+    return candidates;
   }
-  
+
   static printer = ts.createPrinter({
     removeComments: false,
     newLine: ts.NewLineKind.CarriageReturnLineFeed
   });
-  private generateMutantsForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): MutantCandidate[] {
+
+  private generateMutantsForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): Mutant[] {
     const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
-    const candidates = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
+    const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
     node.forEachChild(child => {
       // It is important that forEachChild does not return a true, otherwise node visiting is halted!
-      candidates.push(... this.generateMutantsForNode(child, sourceFile));
+      mutants.push(... this.generateMutantsForNode(child, sourceFile));
     });
-    return candidates;
+    return mutants;
   }
 }

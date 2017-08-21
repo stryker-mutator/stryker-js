@@ -4,8 +4,7 @@ import * as fs from 'fs';
 import * as ts from 'typescript';
 import { Logger, getLogger } from 'log4js';
 import flatMap = require('lodash.flatmap');
-import { FileLocation } from 'stryker-api/transpile';
-import InMemoryFile from './InMemoryFile';
+import { FileLocation, TextFile } from 'stryker-api/transpile';
 import ScriptFile from './ScriptFile';
 import OutputFile from './OutputFile';
 
@@ -20,7 +19,7 @@ export default class TranspilingLanguageService {
   private logger: Logger;
   private readonly diagnosticsFormatter: ts.FormatDiagnosticsHost;
 
-  constructor(compilerOptions: Readonly<ts.CompilerOptions>, private rootFiles: InMemoryFile[], private projectDirectory: string, private keepSourceMaps: boolean) {
+  constructor(compilerOptions: Readonly<ts.CompilerOptions>, private rootFiles: TextFile[], private projectDirectory: string, private keepSourceMaps: boolean) {
     this.logger = getLogger(TranspilingLanguageService.name);
     this.files = Object.create(null);
     this.outputFiles = Object.create(null);
@@ -77,7 +76,7 @@ export default class TranspilingLanguageService {
     return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
   }
 
-  emitAll(): InMemoryFile[] {
+  emitAll(): TextFile[] {
     if (this.compilerOptions.outFile) {
       // If it is a single out file, just transpile one file as it is all bundled together anyway.
       return [this.emit(this.rootFiles[0].name)];
@@ -86,7 +85,7 @@ export default class TranspilingLanguageService {
     }
   }
 
-  emit(fileName: string): InMemoryFile {
+  emit(fileName: string): TextFile {
     const outputFiles = this.languageService.getEmitOutput(fileName).outputFiles;
     const mapFile = outputFiles.find(file => file.name.endsWith('.js.map'));
     const jsFile = outputFiles.find(file => file.name.endsWith('.js'));

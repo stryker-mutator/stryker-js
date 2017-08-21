@@ -1,4 +1,4 @@
-import { FileStream } from 'stryker-api/transpile';
+import { TranspileFile, TextFile } from 'stryker-api/transpile';
 import { CONFIG_KEY_OPTIONS, CONFIG_KEY_FILE } from './keys';
 import { Config } from 'stryker-api/config';
 import * as ts from 'typescript';
@@ -22,15 +22,19 @@ export function getProjectDirectory(config: Config) {
 }
 
 const allExtensions: string[] = Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
-export function isTypescriptFile(fileName: string) {
-  return allExtensions.some(extension => fileName.endsWith(extension));
+export function isTypescriptFile(file: TranspileFile) {
+  return allExtensions.some(extension => file.name.endsWith(extension));
 }
 
-export function filterOutTypescriptFiles(files: FileStream[]) {
-  const typescriptFiles: FileStream[] = [];
-  const otherFiles: FileStream[] = [];
+export function isTextFile(file: TranspileFile): file is TextFile {
+  return typeof file.content === 'string';
+}
+
+export function filterOutTypescriptFiles(files: TranspileFile[]) {
+  const typescriptFiles: TextFile[] = [];
+  const otherFiles: TranspileFile[] = [];
   files.forEach(file => {
-    if (isTypescriptFile(file.name)) {
+    if (isTypescriptFile(file) && isTextFile(file)) {
       typescriptFiles.push(file);
     } else {
       otherFiles.push(file);
