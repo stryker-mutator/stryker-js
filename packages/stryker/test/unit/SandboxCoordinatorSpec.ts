@@ -1,4 +1,4 @@
-import { InputFile } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import * as sinon from 'sinon';
 import * as _ from 'lodash';
 import * as os from 'os';
@@ -34,7 +34,7 @@ describe('SandboxCoordinator', () => {
   let coverageInstrumenter: any;
   const expectedTestFramework: any = 'expected test framework';
   const expectedRunResult = { isTheExpectedRunResult: true };
-  let expectedInputFiles: InputFile[];
+  let expectedInputFiles: File[];
 
   beforeEach(() => {
     options = <any>{};
@@ -69,7 +69,7 @@ describe('SandboxCoordinator', () => {
   describe('on initialRun with files', () => {
     let actualRunResult: RunResult;
     beforeEach(() => {
-      expectedInputFiles.push({ path: '', mutated: true, included: true });
+      expectedInputFiles.push({ name: '', mutated: true, included: true, content: '' });
       return sut.initialRun(coverageInstrumenter).then(runResult => actualRunResult = runResult);
     });
 

@@ -166,7 +166,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     let karmaConfig = _.assign<ConfigOptions, ConfigOptions>(_.cloneDeep(DEFAULT_OPTIONS), overrides);
 
     // Override files
-    karmaConfig.files = this.options.files.map(file => ({ pattern: file.path, included: file.included }));
+    karmaConfig.files = this.options.files.map(file => ({ pattern: file.name, included: file.included }));
 
     // Override port
     karmaConfig.port = this.options.port;

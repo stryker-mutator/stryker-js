@@ -1,8 +1,6 @@
-'use strict';
-
 import MutatorOrchestrator from './MutatorOrchestrator';
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
-import { StrykerOptions, InputFile } from 'stryker-api/core';
+import { StrykerOptions, FileDescriptor } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import SandboxCoordinator from './SandboxCoordinator';
@@ -95,7 +93,7 @@ export default class Stryker {
     }
   }
 
-  private async initialTestRun(inputFiles: InputFile[]) {
+  private async initialTestRun(inputFiles: FileDescriptor[]) {
     const sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
     let runResult = await sandboxCoordinator.initialRun(this.coverageInstrumenter);
     switch (runResult.status) {
@@ -118,7 +116,7 @@ export default class Stryker {
     throw new Error('Something went wrong in the initial test run');
   }
 
-  private generateAndRunMutations(inputFiles: InputFile[], initialRunResult: RunResult, sandboxCoordinator: SandboxCoordinator): Promise<MutantResult[]> {
+  private generateAndRunMutations(inputFiles: FileDescriptor[], initialRunResult: RunResult, sandboxCoordinator: SandboxCoordinator): Promise<MutantResult[]> {
     let mutants = this.generateMutants(inputFiles, initialRunResult);
     if (mutants.length) {
       return sandboxCoordinator.runMutants(mutants);
@@ -128,11 +126,11 @@ export default class Stryker {
     }
   }
 
-  private generateMutants(inputFiles: InputFile[], runResult: RunResult) {
+  private generateMutants(inputFiles: FileDescriptor[], runResult: RunResult) {
     let mutatorOrchestrator = new MutatorOrchestrator(this.reporter);
     let mutants = mutatorOrchestrator.generateMutants(inputFiles
       .filter(inputFile => inputFile.mutated)
-      .map(file => file.path));
+      .map(file => file.name));
     log.info(`${mutants.length} Mutant(s) generated`);
     let mutantRunResultMatcher = new MutantTestMatcher(mutants, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config, this.reporter);
     mutantRunResultMatcher.matchWithMutants();

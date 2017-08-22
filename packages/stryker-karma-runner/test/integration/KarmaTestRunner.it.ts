@@ -22,8 +22,8 @@ describe('KarmaTestRunner', function () {
     before(() => {
       testRunnerOptions = {
         files: [
-          { path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
-          { path: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true }],
+          { name: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
+          { name: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true }],
         port: 9877,
         strykerOptions: { logLevel: 'trace' }
       };
@@ -54,9 +54,9 @@ describe('KarmaTestRunner', function () {
     before(() => {
       const testRunnerOptions = {
         files: [
-          { path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
-          { path: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true },
-          { path: 'testResources/sampleProject/test/AddFailedSpec.js', mutated: false, included: true }
+          { name: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
+          { name: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true },
+          { name: 'testResources/sampleProject/test/AddFailedSpec.js', mutated: false, included: true }
         ],
         port: 9878,
         strykerOptions: { logLevel: 'trace' }
@@ -79,7 +79,9 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       const testRunnerOptions = {
-        files: [{ path: 'testResources/sampleProject/src/Error.js', mutated: true, included: true }, { path: 'testResources/sampleProject/test/AddSpec.js', mutated: true, included: true }],
+        files: [
+          { name: 'testResources/sampleProject/src/Error.js', mutated: true, included: true }, 
+          { name: 'testResources/sampleProject/test/AddSpec.js', mutated: true, included: true }],
         port: 9879,
         strykerOptions: {}
       };
@@ -103,7 +105,10 @@ describe('KarmaTestRunner', function () {
   describe('when no error occured and no test is performed', () => {
     before(() => {
       const testRunnerOptions = {
-        files: [{ path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true }, { path: 'testResources/sampleProject/test/EmptySpec.js', mutated: true, included: true }],
+        files: [
+          { name: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
+          { name: 'testResources/sampleProject/test/EmptySpec.js', mutated: true, included: true }
+        ],
         port: 9880,
         strykerOptions: {}
       };
@@ -128,9 +133,9 @@ describe('KarmaTestRunner', function () {
     before(() => {
       const testRunnerOptions = {
         files: [
-          { path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
-          { path: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true },
-          { path: 'testResources/sampleProject/src/Error.js', mutated: false, included: false }],
+          { name: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
+          { name: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true },
+          { name: 'testResources/sampleProject/src/Error.js', mutated: false, included: false }],
         port: 9881,
         strykerOptions: {}
       };
@@ -151,8 +156,8 @@ describe('KarmaTestRunner', function () {
     before(() => {
       const testRunnerOptions: RunnerOptions = {
         files: [
-          { path: 'testResources/sampleProject/src-instrumented/Add.js', mutated: true, included: true },
-          { path: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true }
+          { name: 'testResources/sampleProject/src-instrumented/Add.js', mutated: true, included: true },
+          { name: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true }
         ],
         port: 9882,
         strykerOptions: { coverageAnalysis: 'all' }

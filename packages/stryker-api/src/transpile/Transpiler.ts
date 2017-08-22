@@ -1,6 +1,6 @@
 import FileLocation from './FileLocation';
-import TranspileFile from './TranspileFile';
 import TranspileResult from './TranspileResult';
+import { File } from '../../core';
 
 /**
  * Represents a transpiler plugin.
@@ -21,7 +21,7 @@ export default interface Transpiler {
    * 
    * @returns a Promise that resolves in an error message (if transpiling failed) or the result of the next transpiler
    */
-  transpile(files: TranspileFile[]): Promise<TranspileResult>;
+  transpile(files: File[]): Promise<TranspileResult>;
 
   /**
    * Transpile a (temporary) mutant in one file.
@@ -29,7 +29,7 @@ export default interface Transpiler {
    * It is important that the transpiled file is reset before the next time `mutate` is called with a different file,
    * mutated state should never linger.
    */
-  mutate(file: TranspileFile): Promise<TranspileResult>;
+  mutate(file: File): Promise<TranspileResult>;
 
   /**
    * Retrieve the location of a source location in the transpiled file. 

@@ -1,8 +1,9 @@
-import { InputFile, InputFileDescriptor } from 'stryker-api/core';
-import { glob, isOnlineFile } from './utils/fileUtils';
+import { FileDescriptor, InputFileDescriptor } from 'stryker-api/core';
+import { glob, isOnlineFile, isBinaryFile } from './utils/fileUtils';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
 import * as path from 'path';
+import * as fs from 'mz/fs';
 
 const log = log4js.getLogger('InputFileResolver');
 
@@ -20,11 +21,9 @@ export default class InputFileResolver {
     this.inputFileResolver = PatternResolver.parse(allFileExpressions);
   }
 
-  public async resolve(): Promise<InputFile[]> {
-    let results = await Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]);
-    const inputFiles = results[0];
-    const mutateFiles = results[1];
-    this.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.path));
+  public async resolve(): Promise<FileDescriptor[]> {
+    const [inputFiles, mutateFiles] = await Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]);
+    this.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.name));
     this.logFilesToMutate(inputFiles);
     return inputFiles;
   }
@@ -54,20 +53,20 @@ export default class InputFileResolver {
     }
   }
 
-  private markAdditionalFilesToMutate(allInputFiles: InputFile[], additionalMutateFiles: string[]) {
-    let errors: string[] = [];
+  private markAdditionalFilesToMutate(allInputFiles: FileDescriptor[], additionalMutateFiles: string[]) {
+    const errors: string[] = [];
     additionalMutateFiles.forEach(mutateFile => {
-      if (!allInputFiles.filter(inputFile => inputFile.path === mutateFile).length) {
+      if (!allInputFiles.filter(inputFile => inputFile.name === mutateFile).length) {
         errors.push(`Could not find mutate file "${mutateFile}" in list of files.`);
       }
     });
     if (errors.length > 0) {
       throw new Error(errors.join(' '));
     }
-    allInputFiles.forEach(file => file.mutated = additionalMutateFiles.some(mutateFile => mutateFile === file.path) || file.mutated);
+    allInputFiles.forEach(file => file.mutated = additionalMutateFiles.some(mutateFile => mutateFile === file.name) || file.mutated);
   }
 
-  private logFilesToMutate(allInputFiles: InputFile[]) {
+  private logFilesToMutate(allInputFiles: FileDescriptor[]) {
     let mutateFiles = allInputFiles.filter(file => file.mutated);
     if (mutateFiles.length) {
       log.info(`Found ${mutateFiles.length} of ${allInputFiles.length} file(s) to be mutated.`);
@@ -87,7 +86,7 @@ class PatternResolver {
 
   constructor(descriptor: InputFileDescriptor | string, private previous?: PatternResolver) {
     if (typeof descriptor === 'string') { // mutator array is a string array
-      this.descriptor = <InputFileDescriptor>_.assign({ pattern: descriptor }, DEFAULT_INPUT_FILE_PROPERTIES);
+      this.descriptor = Object.assign({ pattern: descriptor }, DEFAULT_INPUT_FILE_PROPERTIES);
       this.ignore = descriptor.indexOf('!') === 0;
       if (this.ignore) {
         this.descriptor.pattern = descriptor.substring(1);
@@ -97,26 +96,26 @@ class PatternResolver {
     }
   }
 
-  async resolve(): Promise<InputFile[]> {
+  async resolve(): Promise<FileDescriptor[]> {
     // When the first expression starts with an '!', we skip that one
     if (this.ignore && !this.previous) {
       return Promise.resolve([]);
     } else {
       // Start the globbing task for the current descriptor
       const globbingTask = this.resolveGlobbingExpression(this.descriptor.pattern)
-        .then(filePaths => filePaths.map(filePath => this.createInputFile(filePath)));
-     
+        .then(filePaths => Promise.all(filePaths.map(filePath => this.readInputFile(filePath))));
+
       // If there is a previous globbing expression, resolve that one as well
       if (this.previous) {
-        let results = await Promise.all([this.previous.resolve(), globbingTask]);
+        const results = await Promise.all([this.previous.resolve(), globbingTask]);
         const previousFiles = results[0];
         const currentFiles = results[1];
         // If this expression started with a '!', exclude current files
         if (this.ignore) {
-          return previousFiles.filter(previousFile => currentFiles.every(currentFile => previousFile.path !== currentFile.path));
+          return previousFiles.filter(previousFile => currentFiles.every(currentFile => previousFile.name !== currentFile.name));
         } else {
           // Only add files which were not already added
-          return previousFiles.concat(currentFiles.filter(currentFile => !previousFiles.some(file => file.path === currentFile.path)));
+          return previousFiles.concat(currentFiles.filter(currentFile => !previousFiles.some(file => file.name === currentFile.name)));
         }
       } else {
         return globbingTask;
@@ -135,8 +134,8 @@ class PatternResolver {
     let current = PatternResolver.empty();
     let expression = expressions.shift();
     while (expression) {
-        current = new PatternResolver(expression, current);
-        expression = expressions.shift();
+      current = new PatternResolver(expression, current);
+      expression = expressions.shift();
     }
     return current;
   }
@@ -149,7 +148,7 @@ class PatternResolver {
       if (files.length === 0) {
         this.reportEmptyGlobbingExpression(pattern);
       }
-      return files.map((f) => path.resolve(path.normalize(f)));
+      return files.map((f) => path.resolve(f));
     }
   }
 
@@ -157,10 +156,22 @@ class PatternResolver {
     log.warn(`Globbing expression "${expression}" did not result in any files.`);
   }
 
-  private createInputFile(path: string): InputFile {
-    let inputFile: InputFile = <InputFile>_.assign({ path }, DEFAULT_INPUT_FILE_PROPERTIES, this.descriptor);
-    delete (<any>inputFile)['pattern'];
-    return inputFile;
+  private readInputFile(name: string): Promise<FileDescriptor> {
+    return this.readInputFileContent(name)
+      .then(content => ({
+        name,
+        content: content as string,
+        mutated: !!this.descriptor.mutated,
+        included: !!this.descriptor.included
+      }));
+  }
+
+  private readInputFileContent(name: string): Promise<Buffer | string> {
+    if (isBinaryFile(name)) {
+      return fs.readFile(name);
+    } else {
+      return fs.readFile(name, 'utf8');
+    }
   }
 }
 

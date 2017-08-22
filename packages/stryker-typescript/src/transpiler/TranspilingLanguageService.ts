@@ -4,7 +4,8 @@ import * as fs from 'fs';
 import * as ts from 'typescript';
 import { Logger, getLogger } from 'log4js';
 import flatMap = require('lodash.flatmap');
-import { FileLocation, TextFile } from 'stryker-api/transpile';
+import { TextFile, FileDescriptor } from 'stryker-api/core';
+import { FileLocation } from 'stryker-api/transpile';
 import ScriptFile from './ScriptFile';
 import OutputFile from './OutputFile';
 
@@ -79,30 +80,34 @@ export default class TranspilingLanguageService {
   emitAll(): TextFile[] {
     if (this.compilerOptions.outFile) {
       // If it is a single out file, just transpile one file as it is all bundled together anyway.
-      return [this.emit(this.rootFiles[0].name)];
+      return [this.emit(this.rootFiles[0])];
     } else {
-      return this.rootFiles.map(file => this.emit(file.name));
+      return this.rootFiles.map(file => this.emit(file));
     }
   }
 
-  emit(fileName: string): TextFile {
-    const outputFiles = this.languageService.getEmitOutput(fileName).outputFiles;
+  emit(fileDescriptor: FileDescriptor): TextFile {
+    const outputFiles = this.languageService.getEmitOutput(fileDescriptor.name).outputFiles;
     const mapFile = outputFiles.find(file => file.name.endsWith('.js.map'));
     const jsFile = outputFiles.find(file => file.name.endsWith('.js'));
     if (jsFile) {
       const outputFile = new OutputFile(jsFile.name, jsFile.text, mapFile ? mapFile.text : '');
+      let included = fileDescriptor.included;
       if (this.compilerOptions.outFile) {
         // All output is bundled together. Configure this output file for all root files.
         this.rootFiles.forEach(rootFile => this.outputFiles[rootFile.name] = outputFile);
+        included = true; // Override included, as it should be included when there is only one output file
       } else {
-        this.outputFiles[fileName] = outputFile;
+        this.outputFiles[fileDescriptor.name] = outputFile;
       }
       return {
         name: jsFile.name,
-        content: jsFile.text
+        content: jsFile.text,
+        mutated: fileDescriptor.mutated,
+        included
       };
     } else {
-      throw new Error(`Emit error! Could not emit file ${fileName}`);
+      throw new Error(`Emit error! Could not emit file ${fileDescriptor.name}`);
     }
   }
 

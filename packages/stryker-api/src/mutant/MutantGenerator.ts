@@ -1,6 +1,6 @@
-import { InputFile } from '../../core';
+import { File } from '../../core';
 import Mutant from './Mutant';
 
 export default interface MutantGenerator {
-  generateMutants(inputFiles: InputFile[]): Mutant[];
+  generateMutants(inputFiles: File[]): Mutant[];
 }

@@ -2,25 +2,28 @@ import InputFileResolver from '../../src/InputFileResolver';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../src/utils/fileUtils';
 import * as path from 'path';
-import { InputFile } from 'stryker-api/core';
+import * as fs from 'mz/fs';
+import { FileDescriptor } from 'stryker-api/core';
 import { expect } from 'chai';
 import { resolve } from 'path';
 import log from '../helpers/log4jsMock';
+import { file } from '../helpers/producers';
 
-const fileDescriptors = (paths: Array<string>) => paths.map(p => ({ included: true, mutated: false, path: path.resolve(p) }));
+const files = (names: string[]): FileDescriptor[] =>
+  names.map(p => file({ included: true, mutated: false, name: path.resolve(p), content: '' }));
 
 describe('InputFileResolver', () => {
 
   let sandbox: sinon.SinonSandbox;
   let globStub: sinon.SinonStub;
   let sut: InputFileResolver;
-  let results: InputFile[];
+  let results: FileDescriptor[];
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     globStub = sandbox.stub(fileUtils, 'glob');
     sandbox.stub(console, 'log');
-
+    sandbox.stub(fs, 'readFile').resolves('');
     globStub.withArgs('mut*tion*').resolves(['/mute1.js', '/mute2.js']);
     globStub.withArgs('mutation1').resolves(['/mute1.js']);
     globStub.withArgs('mutation2').resolves(['/mute2.js']);
@@ -44,7 +47,13 @@ describe('InputFileResolver', () => {
       it('should result in the expected input files', () => {
         expect(results.length).to.be.eq(5);
         expect(results.map(m => m.mutated)).to.deep.equal([false, true, false, true, false]);
-        expect(results.map(m => m.path.substr(m.path.length - 8))).to.deep.equal(['file1.js', 'mute1.js', 'file2.js', 'mute2.js', 'file3.js']);
+        expect(results.map(m => m.name)).to.deep.equal([
+          path.resolve('/file1.js'),
+          path.resolve('/mute1.js'),
+          path.resolve('/file2.js'),
+          path.resolve('/mute2.js'),
+          path.resolve('/file3.js')]
+        );
       });
     });
   });
@@ -70,8 +79,8 @@ describe('InputFileResolver', () => {
     });
 
     it('should result in the expected input files', () => expect(results).to.deep.equal([
-      { included: true, mutated: false, path: resolve('/file1.js') },
-      { included: false, mutated: true, path: resolve('/mute1.js') }]));
+      { included: true, mutated: false, name: resolve('/file1.js'), content: '' },
+      { included: false, mutated: true, name: resolve('/mute1.js'), content: '' }]));
 
     it('should log that one file is about to be mutated', () => expect(log.info).to.have.been.calledWith('Found 1 of 2 file(s) to be mutated.'));
   });
@@ -87,10 +96,10 @@ describe('InputFileResolver', () => {
   });
 
   describe('with file expressions that resolve in different order', () => {
-    let results: InputFile[];
+    let results: FileDescriptor[];
     beforeEach(() => {
-      let resolveFile1 = (result: string[]) => {};
-      let resolveFile2 = (result: string[]) => {};
+      let resolveFile1 = (result: string[]) => { };
+      let resolveFile2 = (result: string[]) => { };
       sut = new InputFileResolver([], ['fileWhichResolvesLast', 'fileWichResolvesFirst']);
       globStub.withArgs('fileWhichResolvesLast').returns(new Promise(resolve => resolveFile1 = resolve));
       globStub.withArgs('fileWichResolvesFirst').returns(new Promise(resolve => resolveFile2 = resolve));
@@ -101,12 +110,12 @@ describe('InputFileResolver', () => {
     });
 
     it('should retain original glob order', () => {
-      expect(results.map(m => m.path.substr(m.path.length - 5))).to.deep.equal(['file1', 'file2']);
+      expect(results.map(m => m.name.substr(m.name.length - 5))).to.deep.equal(['file1', 'file2']);
     });
   });
 
   describe('when selecting files to mutate which are not included', () => {
-    let results: InputFile[];
+    let results: FileDescriptor[];
     let error: any;
     beforeEach(() => {
       sut = new InputFileResolver(['mut*tion*'], ['file1']);
@@ -134,7 +143,7 @@ describe('InputFileResolver', () => {
   });
 
   describe('when a globbing expression results in a reject', () => {
-    let results: InputFile[];
+    let results: FileDescriptor[];
     let actualError: any;
     let expectedError: Error;
 
@@ -154,28 +163,28 @@ describe('InputFileResolver', () => {
   describe('when excluding files with "!"', () => {
 
     it('should exclude the files that were previously included', () =>
-      expect(new InputFileResolver([], ['file2', 'file1', '!file2']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file1.js'])));
+      expect(new InputFileResolver([], ['file2', 'file1', '!file2']).resolve()).to.eventually.deep.equal(files(['/file1.js'])));
 
     it('should exclude the files that were previously with a wild card', () =>
-      expect(new InputFileResolver([], ['file*', '!file2']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file1.js', '/file3.js'])));
+      expect(new InputFileResolver([], ['file*', '!file2']).resolve()).to.eventually.deep.equal(files(['/file1.js', '/file3.js'])));
 
     it('should not exclude files added using an input file descriptor', () =>
-      expect(new InputFileResolver([], ['file2', { pattern: '!file2' }]).resolve()).to.eventually.deep.equal(fileDescriptors(['/file2.js'])));
+      expect(new InputFileResolver([], ['file2', { pattern: '!file2' }]).resolve()).to.eventually.deep.equal(files(['/file2.js'])));
 
     it('should not exlude files when the globbing expression results in an empty array', () =>
-      expect(new InputFileResolver([], ['file2', '!does/not/exist']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file2.js'])));
+      expect(new InputFileResolver([], ['file2', '!does/not/exist']).resolve()).to.eventually.deep.equal(files(['/file2.js'])));
   });
 
   describe('when provided duplicate files', () => {
 
     it('should deduplicate files that occur more than once', () =>
-      expect(new InputFileResolver([], ['file2', 'file2']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file2.js'])));
+      expect(new InputFileResolver([], ['file2', 'file2']).resolve()).to.eventually.deep.equal(files(['/file2.js'])));
 
     it('should deduplicate files that previously occured in a wildcard expression', () =>
-      expect(new InputFileResolver([], ['file*', 'file2']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file1.js', '/file2.js', '/file3.js'])));
+      expect(new InputFileResolver([], ['file*', 'file2']).resolve()).to.eventually.deep.equal(files(['/file1.js', '/file2.js', '/file3.js'])));
 
     it('should order files by expression order', () =>
-      expect(new InputFileResolver([], ['file2', 'file*']).resolve()).to.eventually.deep.equal(fileDescriptors(['/file2.js', '/file1.js', '/file3.js'])));
+      expect(new InputFileResolver([], ['file2', 'file*']).resolve()).to.eventually.deep.equal(files(['/file2.js', '/file1.js', '/file3.js'])));
 
   });
 

@@ -1,5 +1,6 @@
 import { Config } from 'stryker-api/config';
-import { Transpiler, TranspileFile, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
+import { Transpiler, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
+import { File } from 'stryker-api/core';
 import { filterOutTypescriptFiles, isTypescriptFile, isTextFile, getCompilerOptions, getProjectDirectory } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import { Logger, getLogger } from 'log4js';
@@ -17,7 +18,7 @@ export default class TypescriptTranspiler implements Transpiler {
     this.keepSourceMaps = options.keepSourceMaps;
   }
 
-  transpile(files: TranspileFile[]): Promise<TranspileResult> {
+  transpile(files: File[]): Promise<TranspileResult> {
     const { typescriptFiles, otherFiles } = filterOutTypescriptFiles(files);
     this.languageService = new TranspilingLanguageService(
       getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.keepSourceMaps);
@@ -30,11 +31,11 @@ export default class TypescriptTranspiler implements Transpiler {
     }
   }
 
-  mutate(file: TranspileFile): Promise<TranspileResult> {
+  mutate(file: File): Promise<TranspileResult> {
     if (isTypescriptFile(file) && isTextFile(file)) {
       this.languageService.replace(file.name, file.content);
       const error = this.languageService.getSemanticDiagnostics(file.name);
-      const outputFile = this.languageService.emit(file.name);
+      const outputFile = this.languageService.emit(file);
       this.languageService.restore();
       if (error.length) {
         return this.resolveError(error);
@@ -64,7 +65,7 @@ export default class TypescriptTranspiler implements Transpiler {
     });
   }
 
-  private resolveOutputFiles(outputFiles: TranspileFile[]): Promise<TranspileResult> {
+  private resolveOutputFiles(outputFiles: File[]): Promise<TranspileResult> {
     return Promise.resolve({
       error: null,
       outputFiles

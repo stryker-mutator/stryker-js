@@ -2,7 +2,7 @@ import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
 import { TestFramework } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
-import { MutationScoreThresholds } from 'stryker-api/core';
+import { MutationScoreThresholds, File } from 'stryker-api/core';
 
 export type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;
@@ -55,6 +55,16 @@ export function scoreResult(score: Partial<ScoreResult>): ScoreResult {
     mutationScoreBasedOnCoveredCode: 0
   };
   return Object.assign(defaults, score);
+}
+
+export function file(overrides?: Partial<File>): File {
+  const defaults: File = {
+    name: 'file.js',
+    content: '',
+    mutated: true,
+    included: true
+  };
+  return Object.assign(defaults, overrides);
 }
 
 export function mutationScoreThresholds(overrides?: Partial<MutationScoreThresholds>) {

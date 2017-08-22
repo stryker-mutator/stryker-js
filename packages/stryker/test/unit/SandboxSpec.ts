@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import { expect } from 'chai';
-import { InputFile } from 'stryker-api/core';
+import { FileDescriptor } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { wrapInClosure } from '../../src/utils/objectUtils';
 import Sandbox from '../../src/Sandbox';
@@ -15,11 +15,11 @@ describe('Sandbox', () => {
   let sut: Sandbox;
   let options: Config;
   let sandbox: sinon.SinonSandbox;
-  let files: InputFile[];
+  let files: FileDescriptor[];
   let testRunner: any;
   let testFramework: any;
-  const expectedFileToMutate: InputFile = { path: path.resolve('file1'), mutated: true, included: true };
-  const notMutatedFile: InputFile = { path: path.resolve('file2'), mutated: false, included: false };
+  const expectedFileToMutate: FileDescriptor = { name: path.resolve('file1'), mutated: true, included: true };
+  const notMutatedFile: FileDescriptor = { name: path.resolve('file2'), mutated: false, included: false };
   const onlineFile = 'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular.js';
   const workingFolder = 'random-folder-3';
   const expectedTargetFileToMutate = path.join(workingFolder, 'file1');
@@ -35,7 +35,7 @@ describe('Sandbox', () => {
     files = [
       expectedFileToMutate,
       notMutatedFile,
-      { path: onlineFile, mutated: false, included: true }
+      { name: onlineFile, mutated: false, included: true }
     ];
     sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns(workingFolder);
     sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve({}));
@@ -71,7 +71,7 @@ describe('Sandbox', () => {
       it('should have instrumented the input files', () => {
         expect(coverageInstrumenter.instrumenterStreamForFile).to.have.been.calledWith(expectedFileToMutate);
         expect(coverageInstrumenter.instrumenterStreamForFile).to.have.been.calledWith(expectedFileToMutate);
-        expect(StrykerTempFolder.copyFile).to.have.been.calledWith(expectedFileToMutate.path, expectedTargetFileToMutate, expectedInstrumenterStream);
+        expect(StrykerTempFolder.copyFile).to.have.been.calledWith(expectedFileToMutate.name, expectedTargetFileToMutate, expectedInstrumenterStream);
       });
 
       it('should not have copied online files', () => {
@@ -93,16 +93,16 @@ describe('Sandbox', () => {
 
       beforeEach(() => sut.initialize());
 
-      it('should have copied the input files', () => expect(StrykerTempFolder.copyFile).to.have.been.calledWith(files[0].path, expectedTargetFileToMutate)
-        .and.calledWith(files[1].path, path.join(workingFolder, 'file2')));
+      it('should have copied the input files', () => expect(StrykerTempFolder.copyFile).to.have.been.calledWith(files[0].name, expectedTargetFileToMutate)
+        .and.calledWith(files[1].name, path.join(workingFolder, 'file2')));
 
       it('should have created the isolated test runner inc framework hook', () => {
         const expectedSettings: IsolatedRunnerOptions = {
           files: [
-            { path: expectedTestFrameworkHooksFile, mutated: false, included: true },
-            { path: expectedTargetFileToMutate, mutated: true, included: true },
-            { path: path.join(workingFolder, 'file2'), mutated: false, included: false },
-            { path: onlineFile, mutated: false, included: true }
+            { name: expectedTestFrameworkHooksFile, mutated: false, included: true },
+            { name: expectedTargetFileToMutate, mutated: true, included: true },
+            { name: path.join(workingFolder, 'file2'), mutated: false, included: false },
+            { name: onlineFile, mutated: false, included: true }
           ],
           port: 46,
           strykerOptions: options,
@@ -122,7 +122,7 @@ describe('Sandbox', () => {
 
         beforeEach(() => {
           mutant = {
-            filename: expectedFileToMutate.path,
+            filename: expectedFileToMutate.name,
             save: sinon.stub().returns(Promise.resolve()),
             scopedTestIds: [1, 2],
             timeSpentScopedTests: 12,
@@ -163,10 +163,10 @@ describe('Sandbox', () => {
       it('should have created the isolated test runner', () => {
         const expectedSettings: IsolatedRunnerOptions = {
           files: [
-            { path: path.join(workingFolder, '___testHooksForStryker.js'), mutated: false, included: true },
-            { path: path.join(workingFolder, 'file1'), mutated: true, included: true },
-            { path: path.join(workingFolder, 'file2'), mutated: false, included: false },
-            { path: onlineFile, mutated: false, included: true }
+            { name: path.join(workingFolder, '___testHooksForStryker.js'), mutated: false, included: true },
+            { name: path.join(workingFolder, 'file1'), mutated: true, included: true },
+            { name: path.join(workingFolder, 'file2'), mutated: false, included: false },
+            { name: onlineFile, mutated: false, included: true }
           ],
           port: 46,
           strykerOptions: options,
@@ -179,7 +179,7 @@ describe('Sandbox', () => {
 
         beforeEach(() => {
           const mutant: any = {
-            filename: expectedFileToMutate.path,
+            filename: expectedFileToMutate.name,
             save: sinon.stub().returns(Promise.resolve()),
             scopedTestIds: [1, 2],
             timeSpentScopedTests: 12,

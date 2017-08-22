@@ -1,7 +1,7 @@
 import { Logger, getLogger } from 'log4js';
 import * as ts from 'typescript';
 import flatMap = require('lodash.flatmap');
-import { InputFile } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
 import { createProgram } from './helpers/tsHelpers';
@@ -22,11 +22,11 @@ export default class TypescriptMutantGenerator {
     this.log = getLogger(TypescriptMutantGenerator.name);
   }
 
-  generateMutants(inputFiles: InputFile[]): Mutant[] {
+  generateMutants(inputFiles: File[]): Mutant[] {
     const program = createProgram(inputFiles, this.config);
     const mutatedInputFiles = inputFiles.filter(inputFile => inputFile.mutated);
     const candidates = flatMap(mutatedInputFiles, inputFile => {
-      const sourceFile = program.getSourceFile(inputFile.path);
+      const sourceFile = program.getSourceFile(inputFile.name);
       return this.generateMutantsForNode(sourceFile, sourceFile);
     });
     return candidates;

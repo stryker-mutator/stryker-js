@@ -1,7 +1,7 @@
 import * as log4js from 'log4js';
 import * as os from 'os';
 import * as _ from 'lodash';
-import { InputFile } from 'stryker-api/core';
+import { FileDescriptor } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { MutantResult, MutantStatus } from 'stryker-api/report';
@@ -23,7 +23,7 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 
 export default class SandboxCoordinator {
 
-  constructor(private options: Config, private files: InputFile[], private testFramework: TestFramework | null, private reporter: StrictReporter) { }
+  constructor(private options: Config, private files: FileDescriptor[], private testFramework: TestFramework | null, private reporter: StrictReporter) { }
 
   async initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
     if (this.files.length > 0) {

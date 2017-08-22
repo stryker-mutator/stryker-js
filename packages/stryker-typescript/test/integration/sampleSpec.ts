@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
-import { TextFile } from 'stryker-api/transpile';
+import { TextFile } from 'stryker-api/core';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptMutantGenerator from '../../src/TypescriptMutantGenerator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
@@ -22,13 +22,13 @@ describe('Sample integration', function () {
       tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'tsconfig.json')
     });
     configEditor.edit(config);
-    inputFiles = config.files.map(file => ({ name: file as string, content: fs.readFileSync(file as string, 'utf8') }));
+    inputFiles = config.files.map(file => ({ name: file as string, content: fs.readFileSync(file as string, 'utf8'), included: true, mutated: false }));
   });
 
   it('should be able to generate mutants', () => {
     // Generate mutants
     const mutantGenerator = new TypescriptMutantGenerator(config);
-    const mutants = mutantGenerator.generateMutants(config.files.map(file => ({ path: file as string, mutated: true, included: true })));
+    const mutants = mutantGenerator.generateMutants(config.files.map(file => ({ name: file as string, content: '', mutated: true, included: true })));
     expect(mutants.length).to.eq(2);
   });
 
@@ -43,7 +43,7 @@ describe('Sample integration', function () {
   it('should be able to mutate transpiled code', async () => {
     // Transpile mutants
     const mutantGenerator = new TypescriptMutantGenerator(config);
-    const mutants = mutantGenerator.generateMutants(config.files.map(file => ({ path: file as string, mutated: true, included: true })));
+    const mutants = mutantGenerator.generateMutants(config.files.map(file => ({ name: file as string, content: '', mutated: true, included: true })));
     const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
     await transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
@@ -60,7 +60,9 @@ describe('Sample integration', function () {
   function mutateFile(file: TextFile, mutant: Mutant): TextFile {
     return {
       name: file.name,
-      content: file.content.slice(0, mutant.range[0]) + mutant.replacement + file.content.slice(mutant.range[1])
+      content: file.content.slice(0, mutant.range[0]) + mutant.replacement + file.content.slice(mutant.range[1]),
+      mutated: true,
+      included: true
     };
   }
 });

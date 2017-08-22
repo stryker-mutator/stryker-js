@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import { InputFile } from 'stryker-api/core';
+import { FileDescriptor } from 'stryker-api/core';
 import { PassThrough } from 'stream';
 import { StatementMap } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
@@ -25,7 +25,7 @@ export default class CoverageInstrumenter {
 
   constructor(private coverageAnalysis: 'all' | 'off' | 'perTest', private testFramework: TestFramework | null) { }
 
-  public instrumenterStreamForFile(file: InputFile): NodeJS.ReadWriteStream {
+  public instrumenterStreamForFile(file: FileDescriptor): NodeJS.ReadWriteStream {
     if (file.mutated) {
       /*
       Coverage variable *must* have the name '__coverage__'. Only that variable 
@@ -38,9 +38,9 @@ export default class CoverageInstrumenter {
        */
       switch (this.coverageAnalysis) {
         case 'all':
-          return this.createStreamForFile('__coverage__', file.path);
+          return this.createStreamForFile('__coverage__', file.name);
         case 'perTest':
-          return this.createStreamForFile(COVERAGE_CURRENT_TEST_VARIABLE_NAME, file.path);
+          return this.createStreamForFile(COVERAGE_CURRENT_TEST_VARIABLE_NAME, file.name);
       }
     }
     // By default, do not instrument for code coverage

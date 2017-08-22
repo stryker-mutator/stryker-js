@@ -35,6 +35,7 @@ describe('we have a module using stryker', function () {
       arrangeActAndAssertModule('mutant', ['nodeID: 3', 'type: \'Literal\'']);
       arrangeActAndAssertModule('report', ['empty', 'all', 'status: 3', 'originalLines: \'string\'', 'Mutant status error: Error']);
       arrangeActAndAssertModule('test_runner', ['MyTestRunner']);
+      arrangeActAndAssertModule('transpile', ['my-file', 'foo', 'bar']);
     });
   });
 });

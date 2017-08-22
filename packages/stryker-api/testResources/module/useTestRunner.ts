@@ -26,11 +26,13 @@ class MyTestRunner extends EventEmitter implements TestRunner {
       status: RunStatus.Complete,
       coverage
     }));
-  };
+  }
 }
 
 let runnerOptions: RunnerOptions = {
-  files: [{ path: 'some', mutated: true, included: false }, { path: 'files', mutated: false, included: true }],
+  files: [
+    { name: 'some', mutated: true, included: false },
+    { name: 'files', mutated: false, included: true }],
   port: 1,
   strykerOptions: null
 };

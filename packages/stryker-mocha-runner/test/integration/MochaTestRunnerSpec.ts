@@ -87,5 +87,5 @@ describe('MochaTestRunner', function () {
     }));
   });
 
-  let file = (filePath: string, mutated: boolean = true, included: boolean = true) => ({ path: path.resolve(filePath), mutated, included });
+  let file = (name: string, mutated: boolean = true, included: boolean = true) => ({ name: path.resolve(name), mutated, included });
 });

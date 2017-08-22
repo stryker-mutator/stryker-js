@@ -12,6 +12,7 @@
     "use:mutant": "node useMutant.js",
     "use:report": "node useReport.js",
     "use:test_runner": "node useTestRunner.js",
+    "use:transpile": "node useTranspile.js",
     "postinstall": "install-local"
   },
   "author": "",

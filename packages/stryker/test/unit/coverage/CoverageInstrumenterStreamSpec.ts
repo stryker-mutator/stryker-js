@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { Readable, Duplex } from 'stream';
-import { InputFile } from 'stryker-api/core';
+import { FileDescriptor } from 'stryker-api/core';
 import CoverageInstrumenterStream from '../../../src/coverage/CoverageInstrumenterStream';
 import logger from '../../helpers/log4jsMock';
 import { streamToString, readable } from '../../helpers/streamHelpers';
 
 describe('CoverageInstrumenterStream', () => {
   let sut: CoverageInstrumenterStream;
-  let inputFiles: InputFile[];
+  let inputFiles: FileDescriptor[];
   const filename = 'thefile.js';
 
   beforeEach(() => {

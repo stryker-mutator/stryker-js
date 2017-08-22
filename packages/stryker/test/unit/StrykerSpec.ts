@@ -1,5 +1,5 @@
 import Stryker from '../../src/Stryker';
-import { InputFile } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { Reporter, MutantResult } from 'stryker-api/report';
 import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
@@ -37,7 +37,7 @@ describe('Stryker', function () {
   let sandboxCoordinatorMock: Mock<SandboxCoordinator>;
   let configReaderMock: Mock<ConfigReader>; 
   let pluginLoaderMock: Mock<PluginLoader>;
-  let inputFiles: InputFile[];
+  let inputFiles: File[];
   let determineExitCodeStub: sinon.SinonStub;
   let resolveInitialTestRun: (runResult: RunResult) => void;
   let config: any;
@@ -131,7 +131,7 @@ describe('Stryker', function () {
 
     describe('with correct input file globbing', () => {
       beforeEach(() => {
-        inputFiles = [{ path: 'someFile', mutated: true, included: true }];
+        inputFiles = [{ name: 'someFile', mutated: true, included: true, content: '' }];
         inputFileResolverMock = {
           resolve: sandbox.stub().returns(Promise.resolve(inputFiles))
         };

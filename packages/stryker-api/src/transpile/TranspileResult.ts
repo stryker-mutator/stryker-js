@@ -1,6 +1,6 @@
-import TranspileFile from './TranspileFile';
+import { File } from '../../core';
 
 export default interface TranspileResult {
-  outputFiles: TranspileFile[];
+  outputFiles: File[];
   error: string | null;
 }

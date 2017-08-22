@@ -1,4 +1,5 @@
 import * as fs from 'mz/fs';
+import * as path from 'path';
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
@@ -35,4 +36,14 @@ export function importModule(moduleName: string) {
 
 export function isOnlineFile(path: string): boolean {
   return path.indexOf('http://') === 0 || path.indexOf('https://') === 0;
+}
+
+const binaryExtensions = [
+  '.png',
+  '.jpeg',
+  '.gif' // Still more to add
+];
+
+export function isBinaryFile(name: string): boolean {
+  return binaryExtensions.indexOf(path.extname(name)) > -1;
 }
