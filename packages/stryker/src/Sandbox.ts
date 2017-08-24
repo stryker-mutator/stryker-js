@@ -12,8 +12,8 @@ import { isOnlineFile } from './utils/fileUtils';
 import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import StrykerTempFolder from './utils/StrykerTempFolder';
-import Mutant from './Mutant';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
+import TestableMutant from './TestableMutant';
 
 const log = log4js.getLogger('Sandbox');
 
@@ -47,11 +47,11 @@ export default class Sandbox {
     return this.testRunner.dispose() || Promise.resolve();
   }
 
-  public async runMutant(mutant: Mutant): Promise<RunResult> {
-    const targetedFile = this.fileMap[mutant.filename];
-    await Promise.all([mutant.save(targetedFile), this.filterTests(mutant)]);
+  public async runMutant(mutant: TestableMutant): Promise<RunResult> {
+    const targetedFile = this.fileMap[mutant.fileName];
+    await Promise.all([StrykerTempFolder.writeFile(targetedFile, mutant.mutatedCode), this.filterTests(mutant)]);
     let runResult = await this.run(this.calculateTimeout(mutant));
-    await mutant.reset(targetedFile);
+    await StrykerTempFolder.writeFile(targetedFile, mutant.originalCode);
     return runResult;
   }
 
@@ -98,12 +98,12 @@ export default class Sandbox {
     return this.testRunner.init();
   }
 
-  private calculateTimeout(mutant: Mutant) {
+  private calculateTimeout(mutant: TestableMutant) {
     const baseTimeout = mutant.timeSpentScopedTests;
     return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMs;
   }
 
-  private filterTests(mutant: Mutant) {
+  private filterTests(mutant: TestableMutant) {
     if (this.testFramework) {
       let fileContent = wrapInClosure(this.testFramework.filter(mutant.scopedTestIds));
       return StrykerTempFolder.writeFile(this.testHooksFile, fileContent);

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as esprima from 'esprima';
 import * as estree from 'estree';
-import { IdentifiedNode, Identified } from 'stryker-api/mutant';
+import { Identified, IdentifiedNode } from '../mutators/IdentifiedNode';
 const escodegen = require('escodegen');
 
 /**

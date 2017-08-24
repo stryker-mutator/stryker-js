@@ -1,20 +1,23 @@
-import { IdentifiedNode } from 'stryker-api/mutant';
-import {Mutator, MutatorFactory} from 'stryker-api/mutant';
+import { Config } from 'stryker-api/config';
+import { File } from 'stryker-api/core';
+import { Mutant, MutantGenerator, MutantGeneratorFactory } from 'stryker-api/mutant';
 
 
-class MyMutator implements Mutator {
+class MyMutantGenerator implements MutantGenerator {
   public name = 'myMutator';
-
-  applyMutations(node: IdentifiedNode, copy: (obj: any, deep?: boolean) => any): IdentifiedNode[] {
-    return null;
-  }
+  generateMutants(inputFiles: File[]): Mutant[] {
+    return [{
+      fileName: 'file',
+      range: [1, 2],
+      mutatorName: 'foo',
+      replacement: 'bar'
+    }];
+  } 
 }
 
-MutatorFactory.instance().register('myMutator', MyMutator);
-let myMutator = MutatorFactory.instance().create('myMutator', null);
-if (!(myMutator instanceof MyMutator)) {
+MutantGeneratorFactory.instance().register('myMutantGenerator', MyMutantGenerator);
+let myMutator = MutantGeneratorFactory.instance().create('myMutantGenerator', new Config());
+if (!(myMutator instanceof MyMutantGenerator)) {
   throw Error('Something wrong with myMutator');
 }
-
-let node: IdentifiedNode = { nodeID: 3, type: 'Literal', value: null, raw: '' };
-console.log(node);
+console.log(myMutator.generateMutants([]));

@@ -1,3 +1,4 @@
+import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
 import * as path from 'path';
@@ -10,6 +11,9 @@ import Sandbox from '../../src/Sandbox';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
+import TestableMutant from '../../src/TestableMutant';
+import { mutant as createMutant, testResult, textFile } from '../helpers/producers';
+import SourceFile from '../../src/SourceFile';
 
 describe('Sandbox', () => {
   let sut: Sandbox;
@@ -38,8 +42,8 @@ describe('Sandbox', () => {
       { name: onlineFile, mutated: false, included: true }
     ];
     sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns(workingFolder);
-    sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve({}));
-    sandbox.stub(StrykerTempFolder, 'writeFile').returns(Promise.resolve({}));
+    sandbox.stub(StrykerTempFolder, 'copyFile').resolves();
+    sandbox.stub(StrykerTempFolder, 'writeFile').resolves();
     sandbox.stub(mkdirp, 'sync').returns('');
     sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
   });
@@ -116,29 +120,31 @@ describe('Sandbox', () => {
       });
 
       describe('when runMutant()', () => {
-        let mutant: any;
+        let testableMutant: TestableMutant;
         let actualRunResult: RunResult;
+        let mutant: Mutant;
+        let sourceFile: SourceFile;
         const testFilterCodeFragment = 'Some code fragment';
 
         beforeEach(() => {
-          mutant = {
-            filename: expectedFileToMutate.name,
-            save: sinon.stub().returns(Promise.resolve()),
-            scopedTestIds: [1, 2],
-            timeSpentScopedTests: 12,
-            reset: sinon.stub().returns(Promise.resolve()),
-          };
+          mutant = createMutant({ fileName: expectedFileToMutate.name, replacement: 'mutated', range: [0, 8] });
+          sourceFile = new SourceFile(textFile({ content: 'original code' }));
+          testableMutant = new TestableMutant(
+            mutant,
+            new SourceFile(textFile({ content: 'original code' })));
           testFramework.filter.returns(testFilterCodeFragment);
+          testableMutant.addTestResult(1, testResult({ timeSpentMs: 10 }));
+          testableMutant.addTestResult(2, testResult({ timeSpentMs: 2 }));
         });
 
         describe('when mutant has scopedTestIds', () => {
 
-          beforeEach(() => sut.runMutant(mutant)
+          beforeEach(() => sut.runMutant(testableMutant)
             .then(result => actualRunResult = result));
 
-          it('should save the mutant to disk', () => expect(mutant.save).to.have.been.calledWith(expectedTargetFileToMutate));
+          it('should save the mutant to disk', () => expect(StrykerTempFolder.writeFile).to.have.been.calledWith(expectedTargetFileToMutate, 'mutated code'));
 
-          it('should filter the scoped tests', () => expect(testFramework.filter).to.have.been.calledWith(mutant.scopedTestIds));
+          it('should filter the scoped tests', () => expect(testFramework.filter).to.have.been.calledWith(testableMutant.scopedTestIds));
 
           it('should write the filter code fragment to hooks file', () => expect(StrykerTempFolder.writeFile)
             .to.have.been.calledWith(expectedTestFrameworkHooksFile, wrapInClosure(testFilterCodeFragment)));
@@ -146,7 +152,7 @@ describe('Sandbox', () => {
           it('should have ran testRunner with correct timeout', () => expect(testRunner.run)
             .to.have.been.calledWith({ timeout: 12 * 23 + 1000 }));
 
-          it('should have resetted the source file', () => expect(mutant.reset).to.have.been.calledWith(expectedTargetFileToMutate));
+          it('should have reset the source file', () => expect(StrykerTempFolder.writeFile).to.have.been.calledWith(expectedTargetFileToMutate, 'original code'));
 
         });
       });
@@ -178,17 +184,13 @@ describe('Sandbox', () => {
       describe('when runMutant()', () => {
 
         beforeEach(() => {
-          const mutant: any = {
-            filename: expectedFileToMutate.name,
-            save: sinon.stub().returns(Promise.resolve()),
-            scopedTestIds: [1, 2],
-            timeSpentScopedTests: 12,
-            reset: sinon.stub().returns(Promise.resolve()),
-          };
+          const mutant = new TestableMutant(createMutant(), new SourceFile(textFile()));
           return sut.runMutant(mutant);
         });
 
-        it('should not filter any tests', () => expect(StrykerTempFolder.writeFile).to.have.been.calledWith(expectedTestFrameworkHooksFile, '').and.with.callCount(1));
+        it('should not filter any tests', () => {
+          expect(StrykerTempFolder.writeFile).to.have.been.calledWith(expectedTestFrameworkHooksFile, '');
+        });
       });
     });
   });

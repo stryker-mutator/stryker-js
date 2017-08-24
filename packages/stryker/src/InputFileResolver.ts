@@ -1,4 +1,4 @@
-import { FileDescriptor, InputFileDescriptor } from 'stryker-api/core';
+import { File, InputFileDescriptor } from 'stryker-api/core';
 import { glob, isOnlineFile, isBinaryFile } from './utils/fileUtils';
 import * as _ from 'lodash';
 import * as log4js from 'log4js';
@@ -21,7 +21,7 @@ export default class InputFileResolver {
     this.inputFileResolver = PatternResolver.parse(allFileExpressions);
   }
 
-  public async resolve(): Promise<FileDescriptor[]> {
+  public async resolve(): Promise<File[]> {
     const [inputFiles, mutateFiles] = await Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]);
     this.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.name));
     this.logFilesToMutate(inputFiles);
@@ -53,7 +53,7 @@ export default class InputFileResolver {
     }
   }
 
-  private markAdditionalFilesToMutate(allInputFiles: FileDescriptor[], additionalMutateFiles: string[]) {
+  private markAdditionalFilesToMutate(allInputFiles: File[], additionalMutateFiles: string[]) {
     const errors: string[] = [];
     additionalMutateFiles.forEach(mutateFile => {
       if (!allInputFiles.filter(inputFile => inputFile.name === mutateFile).length) {
@@ -66,7 +66,7 @@ export default class InputFileResolver {
     allInputFiles.forEach(file => file.mutated = additionalMutateFiles.some(mutateFile => mutateFile === file.name) || file.mutated);
   }
 
-  private logFilesToMutate(allInputFiles: FileDescriptor[]) {
+  private logFilesToMutate(allInputFiles: File[]) {
     let mutateFiles = allInputFiles.filter(file => file.mutated);
     if (mutateFiles.length) {
       log.info(`Found ${mutateFiles.length} of ${allInputFiles.length} file(s) to be mutated.`);
@@ -96,7 +96,7 @@ class PatternResolver {
     }
   }
 
-  async resolve(): Promise<FileDescriptor[]> {
+  async resolve(): Promise<File[]> {
     // When the first expression starts with an '!', we skip that one
     if (this.ignore && !this.previous) {
       return Promise.resolve([]);
@@ -156,7 +156,7 @@ class PatternResolver {
     log.warn(`Globbing expression "${expression}" did not result in any files.`);
   }
 
-  private readInputFile(name: string): Promise<FileDescriptor> {
+  private readInputFile(name: string): Promise<File> {
     return this.readInputFileContent(name)
       .then(content => ({
         name,

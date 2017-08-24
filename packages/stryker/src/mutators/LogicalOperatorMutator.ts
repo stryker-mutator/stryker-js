@@ -1,6 +1,7 @@
-import { Mutator, IdentifiedNode } from 'stryker-api/mutant';
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
+import Mutator from './Mutator';
+import { IdentifiedNode } from './IdentifiedNode';
 
 export default class LogicalOperatorMutator implements Mutator {
   name = 'LogicalOperator';

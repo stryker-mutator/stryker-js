@@ -16,6 +16,8 @@ export default class Config implements StrykerOptions {
   coverageAnalysis: 'perTest' | 'all' | 'off' = 'perTest';
   testRunner: string;
   testFramework: string;
+  mutantGenerator: string = 'es5';
+  transpilers: string[] = [];
   maxConcurrentTestRunners: number = Infinity;
   thresholds: MutationScoreThresholds = {
     high: 80,

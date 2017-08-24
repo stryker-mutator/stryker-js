@@ -1,5 +1,6 @@
 import { Syntax } from 'esprima';
-import { Mutator, IdentifiedNode } from 'stryker-api/mutant';
+import Mutator from './Mutator';
+import { IdentifiedNode } from './IdentifiedNode';
 
 /**
  * Represents a mutator which can remove the content of an array's elements.

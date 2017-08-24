@@ -77,37 +77,29 @@ export default class TranspilingLanguageService {
     return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
   }
 
-  emitAll(): TextFile[] {
+  emit(sourceFiles: FileDescriptor[] = this.rootFiles): TextFile[] {
     if (this.compilerOptions.outFile) {
       // If it is a single out file, just transpile one file as it is all bundled together anyway.
-      return [this.emit(this.rootFiles[0])];
+      const outputFile = this.mapToOutput(sourceFiles[0]);
+      // All output is bundled together. Configure this output file for all root files.
+      this.rootFiles.forEach(rootFile => this.outputFiles[rootFile.name] = outputFile);
+      return [{
+        name: outputFile.name,
+        content: outputFile.content,
+        mutated: sourceFiles[0].mutated,
+        included: true // Override included, as it should be included when there is only one output file
+      }];
     } else {
-      return this.rootFiles.map(file => this.emit(file));
-    }
-  }
-
-  emit(fileDescriptor: FileDescriptor): TextFile {
-    const outputFiles = this.languageService.getEmitOutput(fileDescriptor.name).outputFiles;
-    const mapFile = outputFiles.find(file => file.name.endsWith('.js.map'));
-    const jsFile = outputFiles.find(file => file.name.endsWith('.js'));
-    if (jsFile) {
-      const outputFile = new OutputFile(jsFile.name, jsFile.text, mapFile ? mapFile.text : '');
-      let included = fileDescriptor.included;
-      if (this.compilerOptions.outFile) {
-        // All output is bundled together. Configure this output file for all root files.
-        this.rootFiles.forEach(rootFile => this.outputFiles[rootFile.name] = outputFile);
-        included = true; // Override included, as it should be included when there is only one output file
-      } else {
-        this.outputFiles[fileDescriptor.name] = outputFile;
-      }
-      return {
-        name: jsFile.name,
-        content: jsFile.text,
-        mutated: fileDescriptor.mutated,
-        included
-      };
-    } else {
-      throw new Error(`Emit error! Could not emit file ${fileDescriptor.name}`);
+      return sourceFiles.map(sourceFile => {
+        const outputFile = this.mapToOutput(sourceFile);
+        this.outputFiles[sourceFile.name] = outputFile;
+        return {
+          name: outputFile.name,
+          content: outputFile.content,
+          mutated: sourceFile.mutated,
+          included: sourceFile.included
+        };
+      });
     }
   }
 
@@ -123,6 +115,17 @@ export default class TranspilingLanguageService {
       }
     }
     return null;
+  }
+
+  private mapToOutput(fileDescriptor: FileDescriptor) {
+    const outputFiles = this.languageService.getEmitOutput(fileDescriptor.name).outputFiles;
+    const mapFile = outputFiles.find(file => file.name.endsWith('.js.map'));
+    const jsFile = outputFiles.find(file => file.name.endsWith('.js'));
+    if (jsFile) {
+      return new OutputFile(jsFile.name, jsFile.text, mapFile ? mapFile.text : '');
+    } else {
+      throw new Error(`Emit error! Could not emit file ${fileDescriptor.name}`);
+    }
   }
 
   private createLanguageServiceHost(): ts.LanguageServiceHost {

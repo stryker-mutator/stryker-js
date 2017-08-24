@@ -5,7 +5,8 @@ import * as estree from 'estree';
 import { Mutant } from 'stryker-api/mutant';
 import { file } from '../../helpers/producers';
 import ES5MutantGenerator from '../../../src/mutators/ES5MutantGenerator';
-import { Mutator, IdentifiedNode, Identified } from 'stryker-api/mutant';
+import Mutator from '../../../src/mutators/Mutator';
+import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
 import StrykerTempFolder from '../../../src/utils/StrykerTempFolder';
 
 describe('ES5MutantGenerator', () => {

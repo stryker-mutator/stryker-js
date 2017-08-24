@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as estree from 'estree';
 import * as _ from 'lodash';
 import BinaryOperatorMutator from '../../../src/mutators/BinaryOperatorMutator';
-import { Identified, IdentifiedNode } from 'stryker-api/mutant';
+import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
 
 describe('BinaryOperatorMutator', () => {
   let mutator: BinaryOperatorMutator;

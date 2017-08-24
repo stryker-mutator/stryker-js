@@ -1,6 +1,5 @@
-import MutatorOrchestrator from './MutatorOrchestrator';
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
-import { StrykerOptions, FileDescriptor } from 'stryker-api/core';
+import { StrykerOptions, FileDescriptor, File } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import SandboxCoordinator from './SandboxCoordinator';
@@ -19,18 +18,8 @@ import StrykerTempFolder from './utils/StrykerTempFolder';
 import * as log4js from 'log4js';
 import Timer from './utils/Timer';
 import StrictReporter from './reporters/StrictReporter';
+import MutantGeneratorFacade from './MutantGeneratorFacade';
 const log = log4js.getLogger('Stryker');
-
-const humanReadableTestState = (testState: TestStatus) => {
-  switch (testState) {
-    case TestStatus.Success:
-      return 'SUCCESS';
-    case TestStatus.Failed:
-      return 'FAILED';
-    case TestStatus.Skipped:
-      return 'SKIPPED';
-  }
-};
 
 export default class Stryker {
 
@@ -116,7 +105,7 @@ export default class Stryker {
     throw new Error('Something went wrong in the initial test run');
   }
 
-  private generateAndRunMutations(inputFiles: FileDescriptor[], initialRunResult: RunResult, sandboxCoordinator: SandboxCoordinator): Promise<MutantResult[]> {
+  private generateAndRunMutations(inputFiles: File[], initialRunResult: RunResult, sandboxCoordinator: SandboxCoordinator): Promise<MutantResult[]> {
     let mutants = this.generateMutants(inputFiles, initialRunResult);
     if (mutants.length) {
       return sandboxCoordinator.runMutants(mutants);
@@ -126,15 +115,12 @@ export default class Stryker {
     }
   }
 
-  private generateMutants(inputFiles: FileDescriptor[], runResult: RunResult) {
-    let mutatorOrchestrator = new MutatorOrchestrator(this.reporter);
-    let mutants = mutatorOrchestrator.generateMutants(inputFiles
-      .filter(inputFile => inputFile.mutated)
-      .map(file => file.name));
+  private generateMutants(inputFiles: File[], runResult: RunResult) {
+    const mutantGenerator = new MutantGeneratorFacade(this.config);
+    const mutants = mutantGenerator.generateMutants(inputFiles);
     log.info(`${mutants.length} Mutant(s) generated`);
-    let mutantRunResultMatcher = new MutantTestMatcher(mutants, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config, this.reporter);
-    mutantRunResultMatcher.matchWithMutants();
-    return mutants;
+    const mutantRunResultMatcher = new MutantTestMatcher(mutants, inputFiles, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config, this.reporter);
+    return mutantRunResultMatcher.matchWithMutants();
   }
 
   private wrapUpReporter(): Promise<void> {
@@ -191,7 +177,7 @@ export default class Stryker {
 
   private logTimeoutInitialRun(runResult: RunResult) {
     let message = 'Initial test run timed out! Ran following tests before timeout:';
-    runResult.tests.forEach(test => `\n\t${test.name} ${humanReadableTestState(test.status)}`);
+    runResult.tests.forEach(test => `\n\t${test.name} ${TestStatus[test.status]}`);
     log.error(message);
   }
 }

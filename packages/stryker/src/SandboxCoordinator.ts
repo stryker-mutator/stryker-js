@@ -9,7 +9,7 @@ import { TestFramework } from 'stryker-api/test_framework';
 import { freezeRecursively } from './utils/objectUtils';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import Sandbox from './Sandbox';
-import Mutant from './Mutant';
+import TestableMutant from './TestableMutant';
 import StrictReporter from './reporters/StrictReporter';
 
 const PromisePool = require('es6-promise-pool');
@@ -23,19 +23,22 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 
 export default class SandboxCoordinator {
 
-  constructor(private options: Config, private files: FileDescriptor[], private testFramework: TestFramework | null, private reporter: StrictReporter) { }
+
+  constructor(private options: Config, private files: FileDescriptor[], private testFramework: TestFramework | null, private reporter: StrictReporter) {
+  }
 
   async initialRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
+    // const transpiler = new TranspilerFacade({ config: this.options, keepSourceMaps: true });
     if (this.files.length > 0) {
       log.info(`Starting initial test run. This may take a while.`);
-      return this.startTestRun(coverageInstrumenter);
+      return this.initialRunInSandbox(coverageInstrumenter);
     } else {
       log.info(`No files have been found. Aborting initial test run.`);
-      return this.createDryRunResult(); 
+      return this.createDryRunResult();
     }
   }
 
-  async runMutants(mutants: Mutant[]): Promise<MutantResult[]> {
+  async runMutants(mutants: TestableMutant[]): Promise<MutantResult[]> {
     mutants = _.clone(mutants); // work with a copy because we're changing state (pop'ing values)
     let results: MutantResult[] = [];
     let sandboxes = await this.createSandboxes();
@@ -51,7 +54,7 @@ export default class SandboxCoordinator {
               .then((runResult) => {
                 this.reportMutantTested(mutant, runResult, results);
                 sandboxes.push(sandbox); // mark the sandbox as available again
-            });
+              });
           }
           else {
             return null;
@@ -84,30 +87,29 @@ export default class SandboxCoordinator {
     return sandboxes;
   }
 
-  private async startTestRun(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
-      const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
-      await sandbox.initialize();
-      let runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
-      await sandbox.dispose();
-
-      return runResult;
+  private async initialRunInSandbox(coverageInstrumenter: CoverageInstrumenter): Promise<RunResult> {
+    const sandbox = new Sandbox(this.options, 0, this.files, this.testFramework, coverageInstrumenter);
+    await sandbox.initialize();
+    let runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
+    await sandbox.dispose();
+    return runResult;
   }
 
   private createDryRunResult(): RunResult {
     return {
-        status: RunStatus.Complete,
-        tests: [],
-        errorMessages: []
-      };
+      status: RunStatus.Complete,
+      tests: [],
+      errorMessages: []
+    };
   }
 
-  private reportMutantTested(mutant: Mutant, runResult: RunResult | null, results: MutantResult[]) {
+  private reportMutantTested(mutant: TestableMutant, runResult: RunResult | null, results: MutantResult[]) {
     let result = this.collectFrozenMutantResult(mutant, runResult);
     results.push(result);
     this.reporter.onMutantTested(result);
   }
 
-  private collectFrozenMutantResult(mutant: Mutant, runResult: RunResult | null): MutantResult {
+  private collectFrozenMutantResult(mutant: TestableMutant, runResult: RunResult | null): MutantResult {
     let status: MutantStatus = MutantStatus.NoCoverage;
     let testNames: string[];
     if (runResult) {
@@ -134,7 +136,7 @@ export default class SandboxCoordinator {
     }
 
     let result: MutantResult = {
-      sourceFilePath: mutant.filename,
+      sourceFilePath: mutant.fileName,
       mutatorName: mutant.mutatorName,
       status: status,
       replacement: mutant.replacement,

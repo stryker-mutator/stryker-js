@@ -1,7 +1,7 @@
 import { Config } from 'stryker-api/config';
 import { Transpiler, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
-import { filterOutTypescriptFiles, isTypescriptFile, isTextFile, getCompilerOptions, getProjectDirectory } from './helpers/tsHelpers';
+import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import { Logger, getLogger } from 'log4js';
 
@@ -18,35 +18,19 @@ export default class TypescriptTranspiler implements Transpiler {
     this.keepSourceMaps = options.keepSourceMaps;
   }
 
-  transpile(files: File[]): Promise<TranspileResult> {
+  transpile(files: File[]): TranspileResult {
     const { typescriptFiles, otherFiles } = filterOutTypescriptFiles(files);
     this.languageService = new TranspilingLanguageService(
       getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.keepSourceMaps);
-    const error = this.languageService.getAllSemanticDiagnostics();
-    if (error.length) {
-      return this.resolveError(error);
-    } else {
-      const outputFiles = this.languageService.emitAll();
-      return this.resolveOutputFiles(otherFiles.concat(outputFiles));
-    }
+    return this.transpileAndResult(typescriptFiles, otherFiles);
   }
 
-  mutate(file: File): Promise<TranspileResult> {
-    if (isTypescriptFile(file) && isTextFile(file)) {
-      this.languageService.replace(file.name, file.content);
-      const error = this.languageService.getSemanticDiagnostics(file.name);
-      const outputFile = this.languageService.emit(file);
-      this.languageService.restore();
-      if (error.length) {
-        return this.resolveError(error);
-      } else {
-        return this.resolveOutputFiles([outputFile]);
-      }
-    } else {
-      const error = `Cannot perform transpile action on mutated file ${file.name} as it does not seem to be a typescript file`;
-      this.log.warn(error);
-      return this.resolveError(error);
-    }
+  mutate(files: File[]): TranspileResult {
+    const { typescriptFiles, otherFiles } = filterOutTypescriptFiles(files);
+    typescriptFiles.map(file => this.languageService.replace(file.name, file.content));
+    const result = this.transpileAndResult(typescriptFiles, otherFiles);
+    this.languageService.restore();
+    return result;
   }
 
   getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
@@ -58,17 +42,27 @@ export default class TypescriptTranspiler implements Transpiler {
     }
   }
 
-  private resolveError(error: string): Promise<TranspileResult> {
-    return Promise.resolve({
-      error,
-      outputFiles: []
-    });
+  private transpileAndResult(typescriptFiles: File[], otherFiles: File[]) {
+    const error = this.languageService.getAllSemanticDiagnostics();
+    if (error.length) {
+      return this.createErrorResult(error);
+    } else {
+      const outputFiles = this.languageService.emit(typescriptFiles);
+      return this.createSuccessResult(otherFiles.concat(outputFiles));
+    }
   }
 
-  private resolveOutputFiles(outputFiles: File[]): Promise<TranspileResult> {
-    return Promise.resolve({
+  private createErrorResult(error: string): TranspileResult {
+    return {
+      error,
+      outputFiles: []
+    };
+  }
+
+  private createSuccessResult(outputFiles: File[]): TranspileResult {
+    return {
       error: null,
       outputFiles
-    });
+    };
   }
 }

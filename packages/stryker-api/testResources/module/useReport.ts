@@ -50,7 +50,7 @@ const matchedMutant: MatchedMutant = {
    mutatorName: '',
    scopedTestIds: [52],
    timeSpentScopedTests: 52,
-   filename: 'string',
+   fileName: 'string',
    replacement: 'string'
 };
 

@@ -1,6 +1,7 @@
-import { Mutator, IdentifiedNode, Identified } from 'stryker-api/mutant';
 import { Syntax } from 'esprima';
 import { Expression } from 'estree';
+import Mutator from './Mutator';
+import { IdentifiedNode, Identified } from './IdentifiedNode';
 
 export default class BooleanSubstitutionMutator implements Mutator {
   name = 'BooleanSubstitution';

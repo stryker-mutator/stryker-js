@@ -1,6 +1,7 @@
 import { Syntax } from 'esprima';
-import { Mutator, IdentifiedNode, Identified } from 'stryker-api/mutant';
 import * as estree from 'estree';
+import Mutator from './Mutator';
+import { IdentifiedNode, Identified } from './IdentifiedNode';
 
 type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree.ForStatement | estree.WhileStatement | estree.ConditionalExpression;
 

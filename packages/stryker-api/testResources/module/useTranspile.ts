@@ -6,17 +6,17 @@ class MyTranspiler implements Transpiler {
 
   constructor(private transpilerOptions: TranspilerOptions) { }
 
-  transpile(files: File[]): Promise<TranspileResult> {
-    return Promise.resolve({
+  transpile(files: File[]): TranspileResult {
+    return {
       outputFiles: [{ name: 'foo', content: 'string', mutated: this.transpilerOptions.keepSourceMaps, included: false }],
       error: null
-    });
+    };
   }
-  mutate(file: File): Promise<TranspileResult> {
-    return Promise.resolve({
+  mutate(file: File[]): TranspileResult {
+    return {
       outputFiles: [{ name: 'bar', content: Buffer.from([2, 3]), mutated: true, included: false }],
       error: 'no error at all'
-    });
+    };
   }
   getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
     return sourceFileLocation;
@@ -26,12 +26,11 @@ class MyTranspiler implements Transpiler {
 TranspilerFactory.instance().register('my-transpiler', MyTranspiler);
 const transpiler = TranspilerFactory.instance().create('my-transpiler', { keepSourceMaps: true, config: new Config() });
 
-transpiler.transpile([{ content: '', name: '', mutated: true, included: false }]).then(
-  result => console.log(JSON.stringify(result))
-);
-transpiler.mutate({ content: '', name: '', mutated: true, included: false }).then(
-  result => console.log(JSON.stringify(result))
-);
+const transpileResult = transpiler.transpile([{ content: '', name: '', mutated: true, included: false }]);
+console.log(JSON.stringify(transpileResult));
+const mutateResult = transpiler.mutate([{ content: '', name: '', mutated: true, included: false }]);
+console.log(JSON.stringify(mutateResult));
+
 console.log(JSON.stringify(
   transpiler.getMappedLocation({ fileName: 'my-file', start: { line: 1, column: 2 }, end: { line: 3, column: 4 } })
 ));

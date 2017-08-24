@@ -48,6 +48,30 @@ interface StrykerOptions {
   testRunner?: string;
 
   /**
+   * The name of the mutant generator to use to generate mutants based on your input file. 
+   * This is often dependent on the language of your source files.
+   * Or example: 'es5', 'typescript'
+   */
+  mutantGenerator?: string;
+
+  /**
+   * The names of the transpilers to use (in order). Default: [].
+   * A transpiler in this context is a plugin that can transform input files (source code)
+   * before testing.
+   * 
+   * Example use cases: 
+   * * You need to transpile typescript before testing it in nodejs
+   * * You want to bundle nodejs code before testing it in the browser.
+   * 
+   * The order of your defined transpilers is important, as each transpiler
+   * will be fead the output files of the previous transpiler. For example:
+   * 
+   * foo.ts   ==> Typescript  ==> foo.js ==> Webpack ==> foobar.js
+   * bar.ts   ==> Transpiler  ==> bar.js ==> Transpiler
+   */
+  transpilers?: string[];
+
+  /**
    * Thresholds for mutation score.
    */
   thresholds?: Partial<MutationScoreThresholds>;
