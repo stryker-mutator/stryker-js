@@ -26,10 +26,10 @@ export default class BinaryExpressionMutator extends Mutator<ts.BinaryExpression
     return node.kind === ts.SyntaxKind.BinaryExpression;
   }
 
-  public mutate(node: ts.BinaryExpression, sourceFile: ts.SourceFile): Mutant[] {
+  public mutate(node: ts.BinaryExpression): Mutant[] {
     if (replaceTokens[node.operatorToken.kind]) {
       return replaceTokens[node.operatorToken.kind]
-        .map(replacement => this.createMutant(node.operatorToken, sourceFile, replacement));
+        .map(replacement => this.createMutant(node.operatorToken, replacement));
     } else {
       return [];
     }

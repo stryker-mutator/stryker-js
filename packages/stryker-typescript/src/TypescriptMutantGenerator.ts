@@ -39,7 +39,7 @@ export default class TypescriptMutantGenerator {
 
   private generateMutantsForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): Mutant[] {
     const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
-    const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
+    const mutants = flatMap(targetMutators, mutator => mutator.generateMutants(node, sourceFile));
     node.forEachChild(child => {
       // It is important that forEachChild does not return a true, otherwise node visiting is halted!
       mutants.push(... this.generateMutantsForNode(child, sourceFile));

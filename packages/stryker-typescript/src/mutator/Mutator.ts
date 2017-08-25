@@ -4,14 +4,21 @@ import * as ts from 'typescript';
 export default abstract class Mutator<T extends ts.Node = ts.Node> {
   abstract name: string;
   abstract guard(node: ts.Node): node is T;
-  abstract mutate(node: T, sourceFile: ts.SourceFile): Mutant[];
+  private currentSourceFile: ts.SourceFile;
 
-  createMutant(original: ts.Node, sourceFile: ts.SourceFile, replacement: string): Mutant {
+  generateMutants(node: T, sourceFile: ts.SourceFile): Mutant[] {
+    this.currentSourceFile = sourceFile;
+    return this.mutate(node);
+  }
+
+  protected abstract mutate(node: T): Mutant[];
+
+  createMutant(original: ts.Node, replacement: string): Mutant {
     return {
       mutatorName: this.name,
       replacement,
-      fileName: sourceFile.fileName,
-      range: [original.getStart(sourceFile), original.getEnd()]
+      fileName: this.currentSourceFile.fileName,
+      range: [original.getStart(this.currentSourceFile), original.getEnd()]
     };
   }
 }  
