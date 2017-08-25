@@ -12,12 +12,6 @@ class MyTranspiler implements Transpiler {
       error: null
     };
   }
-  mutate(file: File[]): TranspileResult {
-    return {
-      outputFiles: [{ name: 'bar', kind: FileKind.Binary, content: Buffer.from([2, 3]), mutated: true, included: false }],
-      error: 'no error at all'
-    };
-  }
   getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
     return sourceFileLocation;
   }
@@ -28,8 +22,6 @@ const transpiler = TranspilerFactory.instance().create('my-transpiler', { keepSo
 
 const transpileResult = transpiler.transpile([{ kind: FileKind.Text, content: '', name: '', mutated: true, included: false }]);
 console.log(JSON.stringify(transpileResult));
-const mutateResult = transpiler.mutate([{ kind: FileKind.Text, content: '', name: '', mutated: true, included: false }]);
-console.log(JSON.stringify(mutateResult));
 
 console.log(JSON.stringify(
   transpiler.getMappedLocation({ fileName: 'my-file', start: { line: 1, column: 2 }, end: { line: 3, column: 4 } })

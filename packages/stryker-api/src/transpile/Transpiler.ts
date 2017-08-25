@@ -19,17 +19,20 @@ export default interface Transpiler {
    * Transpile each file and return the result.
    * Should also return any untouched files in the result.
    * 
-   * @returns a Promise that resolves in an error message (if transpiling failed) or the result of the next transpiler
+   * Any consecutive calls to transpile will not include all files, instead only the changed files in relation to the previous call.
+   * This makes any Transpiler stateful.
+   * 
+   * @example An example of consecutive transpiler calls:
+   * 
+   *      call 1: [foo.es6, bar.es6, fooSpec.es6, barSpec.es6, image.png, http://example.com]
+   *      call 2: [foo.es6 (mutated)]
+   *      call 3: [foo.es6 (mutated)]
+   *      call 4: [foo.es6, bar.es6 (mutated)]
+   *      call 5: [bar.es6 (mutated)]
+   * 
+   * @returns an error message (if transpiling failed) or the output files to be used in the next transpiler
    */
   transpile(files: File[]): TranspileResult;
-
-  /**
-   * Transpile a (temporary) mutant in one file.
-   * Should return only the output file that is changed.
-   * It is important that the transpiled file is reset before the next time `mutate` is called with a different file,
-   * mutated state should never linger.
-   */
-  mutate(file: File[]): TranspileResult;
 
   /**
    * Retrieve the location of a source location in the transpiled file. 

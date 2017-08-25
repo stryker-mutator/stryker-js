@@ -48,8 +48,8 @@ describe('Sample integration', function () {
     transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
     const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpressionMutator');
-    const correctResult = transpiler.mutate([mutateFile(mathDotTS, firstBinaryMutant)]);
-    const errorResult = transpiler.mutate([mutateFile(mathDotTS, stringSubtractMutant)]);
+    const correctResult = transpiler.transpile([mutateFile(mathDotTS, firstBinaryMutant)]);
+    const errorResult = transpiler.transpile([mutateFile(mathDotTS, stringSubtractMutant)]);
     expect(correctResult.error).null;
     expect(correctResult.outputFiles).lengthOf(1);
     expect(path.resolve(correctResult.outputFiles[0].name)).eq(path.resolve(path.dirname(mathDotTS.name), 'math.js'));

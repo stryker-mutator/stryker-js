@@ -16,7 +16,6 @@ export default class TranspilingLanguageService {
   private compilerOptions: ts.CompilerOptions;
   private readonly files: ts.MapLike<ScriptFile>;
   private readonly outputFiles: ts.MapLike<OutputFile>;
-  private replacedFiles: string[];
   private logger: Logger;
   private readonly diagnosticsFormatter: ts.FormatDiagnosticsHost;
 
@@ -24,7 +23,6 @@ export default class TranspilingLanguageService {
     this.logger = getLogger(TranspilingLanguageService.name);
     this.files = Object.create(null);
     this.outputFiles = Object.create(null);
-    this.replacedFiles = [];
     this.compilerOptions = this.adaptCompilerOptions(compilerOptions);
     rootFiles.forEach(file => this.files[file.name] = new ScriptFile(file.name, file.content));
     const host = this.createLanguageServiceHost();
@@ -51,20 +49,12 @@ export default class TranspilingLanguageService {
   }
 
   /**
-   * Temporarily mutate the in-memory source file in-memory
+   * Replaces the content of the given text files
    * @param mutantCandidate The mutant used to replace the original source
    */
-  replace(fileName: string, content: string) {
-    this.replacedFiles.push(fileName);
-    this.files[fileName].replace(content);
-  }
-
-  /**
-   * Restores all mutated files (in-memory) to the original sources
-   */
-  restore() {
-    this.replacedFiles.forEach(replacedFile => this.files[replacedFile].restore());
-    this.replacedFiles = [];
+  replace(replacements: TextFile[]) {
+    replacements.forEach(replacement =>
+      this.files[replacement.name].replace(replacement.content));
   }
 
   getAllSemanticDiagnostics() {
