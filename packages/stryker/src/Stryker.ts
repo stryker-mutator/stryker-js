@@ -71,7 +71,11 @@ export default class Stryker {
 
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
     const { runResult, sandboxCoordinator } = await this.initialTestRun(inputFiles);
-    if (runResult && inputFiles && sandboxCoordinator) {
+
+     if (runResult.tests.length === 0) {
+      log.warn('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
+      return [];
+    } else if (runResult && inputFiles && sandboxCoordinator) {
       const mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);
       const score = ScoreResultCalculator.calculate(mutantResults);
       this.reporter.onScoreCalculated(score);
