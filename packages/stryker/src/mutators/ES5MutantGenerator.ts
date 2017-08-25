@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { Logger, getLogger } from 'log4js';
 import { Config } from 'stryker-api/config';
-import { File, TextFile } from 'stryker-api/core';
+import { File, TextFile, FileKind } from 'stryker-api/core';
 import { MutantGenerator, Mutant } from 'stryker-api/mutant';
 import * as parserUtils from '../utils/parserUtils';
 import { copy } from '../utils/objectUtils';
@@ -36,8 +36,8 @@ export default class ES5MutantGenerator implements MutantGenerator {
 
   generateMutants(files: File[]): Mutant[] {
     return _.flatMap(files, file => {
-      if (file.mutated && typeof file.content === 'string') {
-        return this.generateMutantsForFile(file as TextFile);
+      if (file.mutated && file.kind === FileKind.Text) {
+        return this.generateMutantsForFile(file);
       } else {
         return [];
       }

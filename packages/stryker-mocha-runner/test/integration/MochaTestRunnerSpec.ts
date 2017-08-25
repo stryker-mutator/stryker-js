@@ -3,6 +3,7 @@ import MochaTestRunner from '../../src/MochaTestRunner';
 import { TestResult, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
+import { FileKind } from 'stryker-api/core';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -50,7 +51,7 @@ describe('MochaTestRunner', function () {
     });
   });
 
-  describe('with an error in an unincluded input file', () => {
+  describe('with an error in an un-included input file', () => {
     beforeEach(() => {
       let options = {
         files: [
@@ -87,5 +88,5 @@ describe('MochaTestRunner', function () {
     }));
   });
 
-  let file = (name: string, mutated: boolean = true, included: boolean = true) => ({ name: path.resolve(name), mutated, included });
+  let file = (name: string, mutated = true, included = true, kind = FileKind.Text) => ({ name: path.resolve(name), mutated, included, kind });
 });

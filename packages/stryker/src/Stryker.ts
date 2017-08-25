@@ -56,7 +56,7 @@ export default class Stryker {
   async runMutationTest(): Promise<MutantResult[]> {
     this.timer.reset();
 
-    const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
+    const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
     const { runResult, sandboxCoordinator } = await this.initialTestRun(inputFiles);
     if (runResult && inputFiles && sandboxCoordinator) {
       const mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);

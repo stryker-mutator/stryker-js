@@ -1,6 +1,6 @@
 import { Config } from 'stryker-api/config';
 import { Transpiler, FileLocation, TranspileResult, TranspilerFactory, TranspilerOptions } from 'stryker-api/transpile';
-import { TextFile, File } from 'stryker-api/core';
+import { TextFile, File, FileKind } from 'stryker-api/core';
 
 class MyTranspiler implements Transpiler {
 
@@ -8,13 +8,13 @@ class MyTranspiler implements Transpiler {
 
   transpile(files: File[]): TranspileResult {
     return {
-      outputFiles: [{ name: 'foo', content: 'string', mutated: this.transpilerOptions.keepSourceMaps, included: false }],
+      outputFiles: [{ name: 'foo', content: 'string', kind: FileKind.Text, mutated: this.transpilerOptions.keepSourceMaps, included: false }],
       error: null
     };
   }
   mutate(file: File[]): TranspileResult {
     return {
-      outputFiles: [{ name: 'bar', content: Buffer.from([2, 3]), mutated: true, included: false }],
+      outputFiles: [{ name: 'bar', kind: FileKind.Binary, content: Buffer.from([2, 3]), mutated: true, included: false }],
       error: 'no error at all'
     };
   }
@@ -26,9 +26,9 @@ class MyTranspiler implements Transpiler {
 TranspilerFactory.instance().register('my-transpiler', MyTranspiler);
 const transpiler = TranspilerFactory.instance().create('my-transpiler', { keepSourceMaps: true, config: new Config() });
 
-const transpileResult = transpiler.transpile([{ content: '', name: '', mutated: true, included: false }]);
+const transpileResult = transpiler.transpile([{ kind: FileKind.Text, content: '', name: '', mutated: true, included: false }]);
 console.log(JSON.stringify(transpileResult));
-const mutateResult = transpiler.mutate([{ content: '', name: '', mutated: true, included: false }]);
+const mutateResult = transpiler.mutate([{ kind: FileKind.Text, content: '', name: '', mutated: true, included: false }]);
 console.log(JSON.stringify(mutateResult));
 
 console.log(JSON.stringify(

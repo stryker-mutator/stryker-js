@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import { expect } from 'chai';
-import { FileDescriptor } from 'stryker-api/core';
+import { FileDescriptor, FileKind } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { wrapInClosure } from '../../src/utils/objectUtils';
 import Sandbox from '../../src/Sandbox';
@@ -12,7 +12,7 @@ import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
 import TestableMutant from '../../src/TestableMutant';
-import { mutant as createMutant, testResult, textFile } from '../helpers/producers';
+import { mutant as createMutant, testResult, textFile, fileDescriptor } from '../helpers/producers';
 import SourceFile from '../../src/SourceFile';
 
 describe('Sandbox', () => {
@@ -22,8 +22,8 @@ describe('Sandbox', () => {
   let files: FileDescriptor[];
   let testRunner: any;
   let testFramework: any;
-  const expectedFileToMutate: FileDescriptor = { name: path.resolve('file1'), mutated: true, included: true };
-  const notMutatedFile: FileDescriptor = { name: path.resolve('file2'), mutated: false, included: false };
+  const expectedFileToMutate = fileDescriptor({ name: path.resolve('file1'), mutated: true, included: true });
+  const notMutatedFile = fileDescriptor({ name: path.resolve('file2'), mutated: false, included: false });
   const onlineFile = 'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular.js';
   const workingFolder = 'random-folder-3';
   const expectedTargetFileToMutate = path.join(workingFolder, 'file1');
@@ -39,7 +39,7 @@ describe('Sandbox', () => {
     files = [
       expectedFileToMutate,
       notMutatedFile,
-      { name: onlineFile, mutated: false, included: true }
+      fileDescriptor({ name: onlineFile, mutated: false, included: true, kind: FileKind.Web })
     ];
     sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns(workingFolder);
     sandbox.stub(StrykerTempFolder, 'copyFile').resolves();
@@ -103,10 +103,10 @@ describe('Sandbox', () => {
       it('should have created the isolated test runner inc framework hook', () => {
         const expectedSettings: IsolatedRunnerOptions = {
           files: [
-            { name: expectedTestFrameworkHooksFile, mutated: false, included: true },
-            { name: expectedTargetFileToMutate, mutated: true, included: true },
-            { name: path.join(workingFolder, 'file2'), mutated: false, included: false },
-            { name: onlineFile, mutated: false, included: true }
+            fileDescriptor({ name: expectedTestFrameworkHooksFile, mutated: false, included: true }),
+            fileDescriptor({ name: expectedTargetFileToMutate, mutated: true, included: true }),
+            fileDescriptor({ name: path.join(workingFolder, 'file2'), mutated: false, included: false }),
+            fileDescriptor({ name: onlineFile, mutated: false, included: true, kind: FileKind.Web })
           ],
           port: 46,
           strykerOptions: options,
@@ -169,10 +169,10 @@ describe('Sandbox', () => {
       it('should have created the isolated test runner', () => {
         const expectedSettings: IsolatedRunnerOptions = {
           files: [
-            { name: path.join(workingFolder, '___testHooksForStryker.js'), mutated: false, included: true },
-            { name: path.join(workingFolder, 'file1'), mutated: true, included: true },
-            { name: path.join(workingFolder, 'file2'), mutated: false, included: false },
-            { name: onlineFile, mutated: false, included: true }
+            fileDescriptor({ name: path.join(workingFolder, '___testHooksForStryker.js'), mutated: false, included: true }),
+            fileDescriptor({ name: path.join(workingFolder, 'file1'), mutated: true, included: true }),
+            fileDescriptor({ name: path.join(workingFolder, 'file2'), mutated: false, included: false }),
+            fileDescriptor({ name: onlineFile, mutated: false, included: true, kind: FileKind.Web })
           ],
           port: 46,
           strykerOptions: options,

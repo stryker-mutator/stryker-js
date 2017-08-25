@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
+import { FileKind } from 'stryker-api/core';
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
@@ -44,6 +45,16 @@ const binaryExtensions = [
   '.gif' // Still more to add
 ];
 
-export function isBinaryFile(name: string): boolean {
+function isBinaryFile(name: string): boolean {
   return binaryExtensions.indexOf(path.extname(name)) > -1;
+}
+
+export function determineFileKind(fileName: string): FileKind {
+  if (isOnlineFile(fileName)) {
+    return FileKind.Web;
+  } if (isBinaryFile(fileName)) {
+    return FileKind.Binary;
+  } else {
+    return FileKind.Text;
+  }
 }

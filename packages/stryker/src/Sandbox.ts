@@ -4,7 +4,7 @@ import * as log4js from 'log4js';
 import * as _ from 'lodash';
 import * as mkdirp from 'mkdirp';
 import { RunResult } from 'stryker-api/test_runner';
-import { FileDescriptor } from 'stryker-api/core';
+import { FileDescriptor, FileKind } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
 import TestRunnerDecorator from './isolated-runner/TestRunnerDecorator';
@@ -86,7 +86,7 @@ export default class Sandbox {
 
   private initializeTestRunner(): void | Promise<any> {
     let files = this.files.map(originalFile => <FileDescriptor>_.assign(_.cloneDeep(originalFile), { name: this.fileMap[originalFile.name] }));
-    files.unshift({ name: this.testHooksFile, mutated: false, included: true });
+    files.unshift({ name: this.testHooksFile, mutated: false, included: true, kind: FileKind.Text });
     let settings: IsolatedRunnerOptions = {
       files,
       strykerOptions: this.options,

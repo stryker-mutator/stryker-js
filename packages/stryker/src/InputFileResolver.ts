@@ -1,20 +1,28 @@
-import { File, InputFileDescriptor } from 'stryker-api/core';
-import { glob, isOnlineFile, isBinaryFile } from './utils/fileUtils';
-import * as _ from 'lodash';
-import * as log4js from 'log4js';
 import * as path from 'path';
 import * as fs from 'mz/fs';
+import * as _ from 'lodash';
+import * as log4js from 'log4js';
+import { File, InputFileDescriptor, FileDescriptor, FileKind, TextFile, BinaryFile } from 'stryker-api/core';
+import { glob, isOnlineFile, determineFileKind } from './utils/fileUtils';
+import StrictReporter from './reporters/StrictReporter';
 
 const log = log4js.getLogger('InputFileResolver');
 
 const DEFAULT_INPUT_FILE_PROPERTIES = { mutated: false, included: true };
+
+function testFileToReportFile(textFile: TextFile) {
+  return {
+    path: textFile.name,
+    content: textFile.content
+  };
+}
 
 export default class InputFileResolver {
 
   private inputFileResolver: PatternResolver;
   private mutateResolver: PatternResolver;
 
-  constructor(mutate: string[], allFileExpressions: Array<InputFileDescriptor | string>) {
+  constructor(mutate: string[], allFileExpressions: Array<InputFileDescriptor | string>, private reporter: StrictReporter) {
     this.validateFileDescriptor(allFileExpressions);
     this.validateMutationArray(mutate);
     this.mutateResolver = PatternResolver.parse(mutate || []);
@@ -22,10 +30,12 @@ export default class InputFileResolver {
   }
 
   public async resolve(): Promise<File[]> {
-    const [inputFiles, mutateFiles] = await Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]);
-    this.markAdditionalFilesToMutate(inputFiles, mutateFiles.map(m => m.name));
-    this.logFilesToMutate(inputFiles);
-    return inputFiles;
+    const [inputFileDescriptors, mutateFiles] = await Promise.all([this.inputFileResolver.resolve(), this.mutateResolver.resolve()]);
+    const files: File[] = await this.readFiles(inputFileDescriptors);
+    this.markAdditionalFilesToMutate(files, mutateFiles.map(m => m.name));
+    this.logFilesToMutate(files);
+    this.reportAllSourceFilesRead(files);
+    return files;
   }
 
   private validateFileDescriptor(maybeInputFileDescriptors: Array<InputFileDescriptor | string>) {
@@ -77,6 +87,55 @@ export default class InputFileResolver {
       log.debug('All input files in order:%s', allInputFiles.map(file => '\n\t' + JSON.stringify(file)));
     }
   }
+
+  private reportAllSourceFilesRead(allFiles: File[]) {
+    this.reporter.onAllSourceFilesRead(this.filterTextFiles(allFiles).map(testFileToReportFile));
+  }
+
+  private reportSourceFilesRead(textFile: TextFile) {
+    this.reporter.onSourceFileRead(testFileToReportFile(textFile));
+  }
+
+  private filterTextFiles(files: File[]): TextFile[] {
+    return files.filter(file => file.kind === FileKind.Text) as TextFile[];
+  }
+
+  private readFiles(inputFileDescriptors: FileDescriptor[]): Promise<File[]> {
+    return Promise.all(inputFileDescriptors.map(file => this.readInputFile(file)));
+  }
+
+  private readInputFile(descriptor: FileDescriptor): Promise<File> {
+    switch (descriptor.kind) {
+      case FileKind.Web:
+        const web: { kind: FileKind.Web } = { kind: FileKind.Web };
+        return Promise.resolve(Object.assign({}, descriptor, web));
+      case FileKind.Text:
+        return this.readLocalFile(descriptor, descriptor.kind).then(textFile => {
+          this.reportSourceFilesRead(textFile as TextFile);
+          return textFile;
+        });
+      default:
+        return this.readLocalFile(descriptor, descriptor.kind);
+    }
+  }
+
+  private readLocalFile(descriptor: FileDescriptor, kind: FileKind.Text | FileKind.Binary): Promise<TextFile | BinaryFile> {
+    return this.readInputFileContent(descriptor.name, kind).then(content => ({
+      name: descriptor.name,
+      kind: descriptor.kind,
+      content,
+      included: descriptor.included,
+      mutated: descriptor.mutated
+    }) as TextFile | BinaryFile);
+  }
+
+  private readInputFileContent(fileName: string, kind: FileKind.Binary | FileKind.Text): Promise<Buffer | string> {
+    if (kind === FileKind.Binary) {
+      return fs.readFile(fileName);
+    } else {
+      return fs.readFile(fileName, 'utf8');
+    }
+  }
 }
 
 class PatternResolver {
@@ -96,14 +155,14 @@ class PatternResolver {
     }
   }
 
-  async resolve(): Promise<File[]> {
+  async resolve(): Promise<FileDescriptor[]> {
     // When the first expression starts with an '!', we skip that one
     if (this.ignore && !this.previous) {
       return Promise.resolve([]);
     } else {
       // Start the globbing task for the current descriptor
       const globbingTask = this.resolveGlobbingExpression(this.descriptor.pattern)
-        .then(filePaths => Promise.all(filePaths.map(filePath => this.readInputFile(filePath))));
+        .then(filePaths => filePaths.map(filePath => this.createInputFile(filePath)));
 
       // If there is a previous globbing expression, resolve that one as well
       if (this.previous) {
@@ -156,22 +215,10 @@ class PatternResolver {
     log.warn(`Globbing expression "${expression}" did not result in any files.`);
   }
 
-  private readInputFile(name: string): Promise<File> {
-    return this.readInputFileContent(name)
-      .then(content => ({
-        name,
-        content: content as string,
-        mutated: !!this.descriptor.mutated,
-        included: !!this.descriptor.included
-      }));
-  }
-
-  private readInputFileContent(name: string): Promise<Buffer | string> {
-    if (isBinaryFile(name)) {
-      return fs.readFile(name);
-    } else {
-      return fs.readFile(name, 'utf8');
-    }
+  private createInputFile(name: string): FileDescriptor {
+    const inputFile = _.assign({ name, kind: determineFileKind(name) }, DEFAULT_INPUT_FILE_PROPERTIES, this.descriptor);
+    delete (<any>inputFile)['pattern'];
+    return inputFile;
   }
 }
 

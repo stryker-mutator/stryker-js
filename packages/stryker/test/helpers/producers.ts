@@ -5,7 +5,7 @@ import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
 import { TestFramework } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
-import { MutationScoreThresholds, File, Location, TextFile, BinaryFile } from 'stryker-api/core';
+import { MutationScoreThresholds, File, Location, TextFile, BinaryFile, FileKind, WebFile, FileDescriptor } from 'stryker-api/core';
 import StrictReporter from '../../src/reporters/StrictReporter';
 
 export type Mock<T> = {
@@ -34,6 +34,13 @@ export const mutantResult = factory<MutantResult>({
   range: [0, 0]
 });
 
+export const fileDescriptor = factory<FileDescriptor>({
+  name: 'fileName',
+  included: true,
+  mutated: true,
+  kind: FileKind.Text
+});
+
 export const mutant = factory<Mutant>({
   mutatorName: 'foobarMutator',
   fileName: 'file',
@@ -45,7 +52,8 @@ export const textFile = factory<TextFile>({
   name: 'file.js',
   content: '',
   mutated: true,
-  included: true
+  included: true,
+  kind: FileKind.Text
 });
 
 export const fileLocation = factory<FileLocation>({
@@ -93,14 +101,23 @@ export const file = factory<File>({
   name: 'file.js',
   content: '',
   mutated: true,
-  included: true
+  included: true,
+  kind: FileKind.Text
+});
+
+export const webFile = factory<WebFile>({
+  name: 'http://example.org',
+  mutated: false,
+  included: true,
+  kind: FileKind.Web
 });
 
 export const binaryFile = factory<BinaryFile>({
   name: 'file.js',
   content: Buffer.from(''),
   mutated: true,
-  included: true
+  included: true,
+  kind: FileKind.Binary
 });
 
 

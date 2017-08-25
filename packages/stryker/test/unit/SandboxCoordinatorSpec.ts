@@ -9,6 +9,7 @@ import SandboxCoordinator from '../../src/SandboxCoordinator';
 import * as sandbox from '../../src/Sandbox';
 import { Config } from 'stryker-api/config';
 import log from '../helpers/log4jsMock';
+import { textFile } from '../helpers/producers';
 
 const mockMutant = (id: number, scopedTests?: number[]) => {
   const dummyString = `mutant${id}`;
@@ -69,7 +70,7 @@ describe('SandboxCoordinator', () => {
   describe('on initialRun with files', () => {
     let actualRunResult: RunResult;
     beforeEach(() => {
-      expectedInputFiles.push({ name: '', mutated: true, included: true, content: '' });
+      expectedInputFiles.push(textFile({ name: '', mutated: true, included: true, content: '' }));
       return sut.initialRun(coverageInstrumenter).then(runResult => actualRunResult = runResult);
     });
 

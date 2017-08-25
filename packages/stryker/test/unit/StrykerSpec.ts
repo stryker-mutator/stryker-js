@@ -18,7 +18,7 @@ import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import log from '../helpers/log4jsMock';
-import { reporterStub, mock, Mock, testFramework as testFrameworkMock } from '../helpers/producers';
+import { reporterStub, mock, Mock, testFramework as testFrameworkMock, textFile } from '../helpers/producers';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
@@ -132,7 +132,7 @@ describe('Stryker', function () {
 
     describe('with correct input file globbing', () => {
       beforeEach(() => {
-        inputFiles = [{ name: 'someFile', mutated: true, included: true, content: '' }];
+        inputFiles = [textFile({ name: 'someFile', mutated: true, included: true, content: '' })];
         inputFileResolverMock = {
           resolve: sandbox.stub().returns(Promise.resolve(inputFiles))
         };

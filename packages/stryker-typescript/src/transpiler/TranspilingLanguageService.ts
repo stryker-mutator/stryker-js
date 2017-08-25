@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as ts from 'typescript';
 import { Logger, getLogger } from 'log4js';
 import flatMap = require('lodash.flatmap');
-import { TextFile, FileDescriptor } from 'stryker-api/core';
+import { TextFile, FileDescriptor, FileKind } from 'stryker-api/core';
 import { FileLocation } from 'stryker-api/transpile';
 import ScriptFile from './ScriptFile';
 import OutputFile from './OutputFile';
@@ -87,18 +87,21 @@ export default class TranspilingLanguageService {
         name: outputFile.name,
         content: outputFile.content,
         mutated: sourceFiles[0].mutated,
+        kind: FileKind.Text,
         included: true // Override included, as it should be included when there is only one output file
       }];
     } else {
       return sourceFiles.map(sourceFile => {
         const outputFile = this.mapToOutput(sourceFile);
         this.outputFiles[sourceFile.name] = outputFile;
-        return {
+        const textOutput: TextFile = {
           name: outputFile.name,
           content: outputFile.content,
           mutated: sourceFile.mutated,
-          included: sourceFile.included
+          included: sourceFile.included,
+          kind: FileKind.Text,
         };
+        return textOutput;
       });
     }
   }
