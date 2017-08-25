@@ -35,7 +35,7 @@ describe('Stryker', function () {
   let testFrameworkOrchestratorMock: Mock<TestFrameworkOrchestrator>;
   let configValidatorMock: Mock<ConfigValidator>;
   let sandboxCoordinatorMock: Mock<SandboxCoordinator>;
-  let configReaderMock: Mock<ConfigReader>; 
+  let configReaderMock: Mock<ConfigReader>;
   let pluginLoaderMock: Mock<PluginLoader>;
   let inputFiles: InputFile[];
   let determineExitCodeStub: sinon.SinonStub;
@@ -43,7 +43,7 @@ describe('Stryker', function () {
   let config: any;
   let mutants: any[];
   let reporter: Reporter;
-  
+
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     config = {};
@@ -286,6 +286,25 @@ describe('Stryker', function () {
                 it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
               });
             });
+          });
+        });
+
+        describe('with no tests executed', () => {
+          beforeEach(() => {
+            resolveInitialTestRun({
+              status: RunStatus.Complete,
+              tests: []
+            });
+          });
+
+          it('should log to have quit early', async () => {
+            await sut.runMutationTest();
+            expect(log.warn).to.have.been.calledWith('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
+          });
+
+          it('should not have tested mutations', async () => {
+            await sut.runMutationTest();
+            expect(sandboxCoordinatorMock.runMutants).not.to.have.been.called;
           });
         });
       });

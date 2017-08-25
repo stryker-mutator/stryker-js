@@ -87,5 +87,28 @@ describe('MochaTestRunner', function () {
     }));
   });
 
-  let file = (filePath: string, mutated: boolean = true, included: boolean = true) => ({ path: path.resolve(filePath), mutated, included });
+  describe('when no tests are executed', () => {
+
+    beforeEach(() => {
+      const testRunnerOptions = {
+        files: [
+          file('./testResources/sampleProject/src/MyMath.js')],
+        strykerOptions: {},
+        port: 1234
+      };
+      sut = new MochaTestRunner(testRunnerOptions);
+    });
+
+    it('should report no completed tests', () =>
+      expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
+        expect(countSucceeded(runResult)).to.be.eq(0, 'Succeeded tests did not match');
+        expect(countFailed(runResult)).to.be.eq(0, 'Failed tests did not match');
+        runResult.tests.forEach(t => expect(t.timeSpentMs).to.be.greaterThan(-1).and.to.be.lessThan(1000));
+        expect(runResult.status).to.be.eq(RunStatus.Complete, 'Test result did not match');
+        expect(runResult.coverage).to.not.be.ok;
+        return true;
+      }));
+  });
+
+  let file = (name: string, mutated: boolean = true, included: boolean = true) => ({ path: path.resolve(name), mutated, included });
 });
