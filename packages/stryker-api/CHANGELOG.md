@@ -1,7 +1,23 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.7.0...stryker-api@0.8.0) (2017-08-25)
+
+
+### Code Refactoring
+
+* change ConfigWriter interface name to ConfigEditor (#357) ([ec4ae03](https://github.com/stryker-mutator/stryker/commit/ec4ae03))
+
+
+### BREAKING CHANGES
+
+* Public api for `ConfigWriter` is renamed to `ConfigEditor`. The corresponding `write` method is renamed to `edit`. If you're using custom `ConfigWriter` plugins you should rename the `write` method to `edit`. Please update the `stryker-mocha-framework` and `stryker-karma-runner` to the latest versions as they provide the new `ConfigEditor` plugin.
+
+
+
 
 <a name="0.7.0"></a>
 # [0.7.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.6.0...stryker-api@0.7.0) (2017-08-11)

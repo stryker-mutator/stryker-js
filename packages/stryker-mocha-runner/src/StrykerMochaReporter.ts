@@ -6,12 +6,15 @@ const log = log4js.getLogger('StrykerMochaReporter');
 
 export default class StrykerMochaReporter {
 
-  private runResult: RunResult;
+  public runResult: RunResult;
   private timer = new Timer();
   private passedCount = 0;
 
+  static CurrentInstance: StrykerMochaReporter | undefined;
+
   constructor(private runner: NodeJS.EventEmitter) {
     this.registerEvents();
+    StrykerMochaReporter.CurrentInstance = this;
   }
 
   private registerEvents() {
@@ -53,7 +56,6 @@ export default class StrykerMochaReporter {
 
     this.runner.on('end', () => {
       this.runResult.status = RunStatus.Complete;
-      (this.runner as any).runResult = this.runResult;
       log.debug(`Mocha test run completed: ${this.passedCount}/${this.runResult.tests.length} passed`);
     });
   }
