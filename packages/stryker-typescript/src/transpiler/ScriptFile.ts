@@ -10,8 +10,4 @@ export default class ScriptFile {
     this.content = tempContent;
     this.version++;
   }
-  restore() {
-    this.content = this.originalContent;
-    this.version++;
-  }
 }

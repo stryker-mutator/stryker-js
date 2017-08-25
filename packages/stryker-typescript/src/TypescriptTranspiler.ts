@@ -20,17 +20,13 @@ export default class TypescriptTranspiler implements Transpiler {
 
   transpile(files: File[]): TranspileResult {
     const { typescriptFiles, otherFiles } = filterOutTypescriptFiles(files);
-    this.languageService = new TranspilingLanguageService(
-      getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.keepSourceMaps);
+    if (!this.languageService) {
+      this.languageService = new TranspilingLanguageService(
+        getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.keepSourceMaps);
+    } else {
+      this.languageService.replace(typescriptFiles);
+    }
     return this.transpileAndResult(typescriptFiles, otherFiles);
-  }
-
-  mutate(files: File[]): TranspileResult {
-    const { typescriptFiles, otherFiles } = filterOutTypescriptFiles(files);
-    typescriptFiles.map(file => this.languageService.replace(file.name, file.content));
-    const result = this.transpileAndResult(typescriptFiles, otherFiles);
-    this.languageService.restore();
-    return result;
   }
 
   getMappedLocation(sourceFileLocation: FileLocation): FileLocation {

@@ -11,13 +11,7 @@ export default class TranspilerFacade implements Transpiler {
   }
 
   transpile(files: File[]): TranspileResult {
-    return this.performTranspileChain(this.createPassThruTranspileResult(files),
-      (transpiler, intermediateFiles) => transpiler.transpile(intermediateFiles));
-  }
-
-  mutate(files: File[]): TranspileResult {
-    return this.performTranspileChain(this.createPassThruTranspileResult(files),
-      (transpiler, intermediateFiles) => transpiler.mutate(intermediateFiles));
+    return this.performTranspileChain(this.createPassThruTranspileResult(files));
   }
 
   getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
@@ -38,16 +32,15 @@ export default class TranspilerFacade implements Transpiler {
 
   private performTranspileChain(
     currentResult: TranspileResult,
-    action: (transpiler: Transpiler, files: File[]) => TranspileResult,
     remainingChain: Transpiler[] = this.innerTranspilers.slice()
   ): TranspileResult {
     const next = remainingChain.shift();
     if (next) {
-      const nextResult = action(next, currentResult.outputFiles);
+      const nextResult = next.transpile(currentResult.outputFiles);
       if (nextResult.error) {
         return nextResult;
       } else {
-        return this.performTranspileChain(nextResult, action, remainingChain);
+        return this.performTranspileChain(nextResult, remainingChain);
       }
     } else {
       return currentResult;

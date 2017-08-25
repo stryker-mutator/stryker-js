@@ -26,14 +26,6 @@ describe('TranspilerFacade', () => {
       expect(result.outputFiles).eq(input);
     });
 
-    it('should return input when `mutate` is called', () => {
-      const input = [file({ name: 'input' })];
-      const result = sut.mutate(input);
-      expect(createStub).not.called;
-      expect(result.error).is.null;
-      expect(result.outputFiles).eq(input);
-    });
-
     it('should return input when `getMappedLocation` is called', () => {
       const input = fileLocation({ fileName: 'input' });
       const result = sut.getMappedLocation(input);
@@ -63,11 +55,9 @@ describe('TranspilerFacade', () => {
       createStub
         .withArgs('transpiler-one').returns(transpilerOne)
         .withArgs('transpiler-two').returns(transpilerTwo);
-      transpilerOne.mutate.returns(resultOne);
       transpilerOne.transpile.returns(resultOne);
       transpilerOne.getMappedLocation.returns(locationOne);
       transpilerTwo.transpile.returns(resultTwo);
-      transpilerTwo.mutate.returns(resultTwo);
       transpilerTwo.getMappedLocation.returns(locationTwo);
       sut = new TranspilerFacade({ config, keepSourceMaps: true });
     });
@@ -93,14 +83,6 @@ describe('TranspilerFacade', () => {
       expect(result).eq(resultOne);
       expect(transpilerOne.transpile).calledWith(input);
       expect(transpilerTwo.transpile).not.called;
-    });
-
-    it('should chain the transpilers when `mutate` is called', () => {
-      const input = [file({ name: 'input' })];
-      const result = sut.mutate(input);
-      expect(result).eq(resultTwo);
-      expect(transpilerOne.mutate).calledWith(input);
-      expect(transpilerTwo.mutate).calledWith(resultOne.outputFiles);
     });
 
     it('should chain the transpilers when `getMappedLocation` is called', () => {

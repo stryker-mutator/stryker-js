@@ -35,7 +35,7 @@ describe('we have a module using stryker', function () {
       arrangeActAndAssertModule('mutant', ['mutatorName: \'foo\'']);
       arrangeActAndAssertModule('report', ['empty', 'all', 'status: 3', 'originalLines: \'string\'', 'Mutant status error: Error']);
       arrangeActAndAssertModule('test_runner', ['MyTestRunner']);
-      arrangeActAndAssertModule('transpile', ['my-file', 'foo', 'bar']);
+      arrangeActAndAssertModule('transpile', ['my-file', 'foo']);
     });
   });
 });
