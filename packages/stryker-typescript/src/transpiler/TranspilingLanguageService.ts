@@ -9,6 +9,7 @@ import { FileLocation } from 'stryker-api/transpile';
 import ScriptFile from './ScriptFile';
 import OutputFile from './OutputFile';
 
+const libRegex = /^lib\.(?:\w|\.)*\.?d\.ts$/;
 
 export default class TranspilingLanguageService {
   private languageService: ts.LanguageService;
@@ -133,25 +134,36 @@ export default class TranspilingLanguageService {
         this.pullFileIntoMemoryIfNeeded(fileName);
         return this.files[fileName] && ts.ScriptSnapshot.fromString(this.files[fileName].content);
       },
-      getCurrentDirectory: () => this.projectDirectory,
-      getDefaultLibFileName: (compilerSettings) => {
-        const typescriptLocation = require.resolve('typescript');
-        return path.resolve(path.dirname(typescriptLocation), ts.getDefaultLibFileName(compilerSettings));
-      },
+      getCurrentDirectory: () => path.resolve(this.projectDirectory),
+      getDefaultLibFileName: ts.getDefaultLibFileName,
       fileExists: ts.sys.fileExists,
       readFile: ts.sys.readFile,
-      readDirectory: ts.sys.readDirectory
+      readDirectory: ts.sys.readDirectory,
+      getDirectories: ts.sys.getDirectories,
+      directoryExists: ts.sys.directoryExists
     };
   }
 
   private pullFileIntoMemoryIfNeeded(fileName: string) {
     if (!this.files[fileName]) {
-      if (fs.existsSync(fileName)) {
+      const resolvedFile = this.resolveFileName(fileName);
+      if (fs.existsSync(resolvedFile)) {
         this.logger.debug('Pulling file into memory: %s', fileName);
-        this.files[fileName] = new ScriptFile(fileName, fs.readFileSync(fileName, 'utf8'));
+        this.files[fileName] = new ScriptFile(fileName, fs.readFileSync(resolvedFile, 'utf8'));
       } else {
-        this.logger.error(`File ${fileName} does not exist.`);
+        this.logger.error(`File ${resolvedFile} does not exist.`);
       }
+    }
+  }
+
+  private resolveFileName(fileName: string) {
+    if (fileName.match(libRegex)) {
+      const typescriptLocation = require.resolve('typescript');
+      const newFileName = path.resolve(path.dirname(typescriptLocation), fileName);
+      this.logger.debug(`Resolving lib file ${fileName} to ${newFileName}`);
+      return newFileName;
+    } else {
+      return fileName;
     }
   }
 }

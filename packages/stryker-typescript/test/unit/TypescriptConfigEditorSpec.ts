@@ -59,8 +59,8 @@ describe('TypescriptConfigEditor edit', () => {
     expect(fs.readFileSync).calledWith(path.resolve('tsconfig.json'));
     expect(config['tsconfig']).deep.eq({
       module: ts.ModuleKind.CommonJS,
-      configFilePath: path.resolve('tsconfig.json'),
-      project: path.resolve('.'),
+      configFilePath: path.resolve('tsconfig.json').replace(/\\/g, '/'),
+      project: path.resolve('.').replace(/\\/g, '/'),
       noImplicitAny: true,
       removeComments: true,
       preserveConstEnums: true,

@@ -5,6 +5,7 @@ import * as ts from 'typescript';
 import { getLogger } from 'log4js';
 import { ConfigEditor, Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
+import { normalizeForTypescript } from './helpers/tsHelpers';
 
 export default class TypescriptConfigEditor implements ConfigEditor {
 
@@ -28,9 +29,10 @@ export default class TypescriptConfigEditor implements ConfigEditor {
   }
 
   private readTypescriptConfig(tsconfigFileName: string, host: ts.ParseConfigHost) {
-    const configFileBase = path.dirname(tsconfigFileName);
+    const configFileBase = normalizeForTypescript(path.dirname(tsconfigFileName));
     const configFileText = fs.readFileSync(tsconfigFileName, 'utf8');
-    const parseResult = ts.parseConfigFileTextToJson(tsconfigFileName, configFileText);
+    const tsconfigFileNameNormalizedForTypeScript = normalizeForTypescript(tsconfigFileName);
+    const parseResult = ts.parseConfigFileTextToJson(tsconfigFileNameNormalizedForTypeScript, configFileText);
     if (parseResult.error) {
       const error = ts.formatDiagnostics([parseResult.error], this.diagnosticsHost(configFileBase));
       this.log.error(`Error while loading tsconfig file '${tsconfigFileName}': ${error}`);
@@ -41,7 +43,7 @@ export default class TypescriptConfigEditor implements ConfigEditor {
         host,
         configFileBase,
         { project: configFileBase },
-        tsconfigFileName);
+        tsconfigFileNameNormalizedForTypeScript);
       if (tsconfig.errors.length) {
         const error = ts.formatDiagnostics(tsconfig.errors, this.diagnosticsHost(configFileBase));
         this.log.error(`Error while loading tsconfig file '${tsconfigFileName}': ${error}`);

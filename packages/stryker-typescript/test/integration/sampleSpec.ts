@@ -7,6 +7,7 @@ import { TextFile, FileKind } from 'stryker-api/core';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptMutantGenerator from '../../src/TypescriptMutantGenerator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
+import { setGlobalLogLevel } from 'log4js';
 
 describe('Sample integration', function () {
   this.timeout(10000);
@@ -15,7 +16,7 @@ describe('Sample integration', function () {
   let inputFiles: TextFile[];
 
   beforeEach(() => {
-    // Read config
+    setGlobalLogLevel('error');
     const configEditor = new TypescriptConfigEditor();
     config = new Config();
     config.set({
@@ -23,6 +24,10 @@ describe('Sample integration', function () {
     });
     configEditor.edit(config);
     inputFiles = config.files.map((file): TextFile => ({ name: file as string, content: fs.readFileSync(file as string, 'utf8'), included: true, mutated: true, kind: FileKind.Text }));
+  });
+
+  afterEach(() => {
+    setGlobalLogLevel('trace');
   });
 
   it('should be able to generate mutants', () => {

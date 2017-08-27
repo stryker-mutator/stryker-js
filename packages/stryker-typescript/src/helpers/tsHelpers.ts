@@ -5,13 +5,24 @@ import * as ts from 'typescript';
 import * as path from 'path';
 
 export function createProgram(inputFiles: File[], strykerConfig: Config) {
-  return ts.createProgram(inputFiles
+  const files = inputFiles
     .filter(file => file.kind === FileKind.Text)
-    .map(file => file.name), getTSConfig(strykerConfig));
+    .map(file => file.name);
+  const options = getTSConfig(strykerConfig);
+
+  return ts.createProgram(files, options);
 }
 
 export function getTSConfig(strykerConfig: Config): ts.CompilerOptions {
   return strykerConfig[CONFIG_KEY_OPTIONS];
+}
+
+/**
+ * For some reason, typescript on windows doesn't like back slashes
+ * @param fileName The file name to be normalized
+ */
+export function normalizeForTypescript(fileName: string) {
+  return fileName.replace(/\\/g, '/');
 }
 
 export function getCompilerOptions(config: Config) {

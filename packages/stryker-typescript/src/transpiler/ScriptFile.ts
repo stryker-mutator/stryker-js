@@ -1,13 +1,11 @@
 
 
 export default class ScriptFile {
-  private originalContent: string;
   constructor(public name: string, public content: string, public version = 0) {
-    this.originalContent = content;
   }
 
-  replace(tempContent: string) {
-    this.content = tempContent;
+  replace(newContent: string) {
+    this.content = newContent;
     this.version++;
   }
 }
