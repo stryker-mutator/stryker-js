@@ -11,7 +11,7 @@ export default class UnaryNotMutator extends Mutator<ts.PrefixUnaryExpression> {
   }
 
   public mutate(node: ts.PrefixUnaryExpression): Mutant[] {
-    if(node.operator === ts.SyntaxKind.ExclamationToken) {
+    if (node.operator === ts.SyntaxKind.ExclamationToken) {
       return [this.createMutant(node, node.operand.getText())];
     } else {
       return [];

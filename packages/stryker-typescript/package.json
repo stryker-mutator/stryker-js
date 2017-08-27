@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "stryker-for-typescript",
+  "name": "stryker-typescript",
   "version": "0.0.0",
   "description": "",
   "main": "src/index.js",
