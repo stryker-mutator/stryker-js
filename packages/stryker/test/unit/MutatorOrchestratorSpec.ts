@@ -5,7 +5,7 @@ import MutatorOrchestrator from '../../src/MutatorOrchestrator';
 import { Mutator, MutatorFactory, IdentifiedNode, Identified } from 'stryker-api/mutant';
 import * as sinon from 'sinon';
 import { Syntax } from 'esprima';
-import { StrykerTempFolder } from '../../src/utils/StrykerTempFolder';
+import { TempFolder } from '../../src/utils/TempFolder';
 import * as estree from 'estree';
 import StrictReporter from '../../src/reporters/StrictReporter';
 import { reporterStub } from '../helpers/producers';
@@ -16,12 +16,12 @@ describe('MutatorOrchestrator', () => {
   let fileUtilsStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
   let reporter: StrictReporter;
-  let tempFolderMock: Mock<StrykerTempFolder>;
+  let tempFolderMock: Mock<TempFolder>;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    tempFolderMock = mock(StrykerTempFolder);
-    sandbox.stub(StrykerTempFolder, 'instance').returns(tempFolderMock);
+    tempFolderMock = mock(TempFolder);
+    sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
     reporter = reporterStub();
     sut = new MutatorOrchestrator(reporter);
   });

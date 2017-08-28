@@ -7,7 +7,7 @@ import { InputFile } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { wrapInClosure } from '../../src/utils/objectUtils';
 import Sandbox from '../../src/Sandbox';
-import { StrykerTempFolder } from '../../src/utils/StrykerTempFolder';
+import { TempFolder } from '../../src/utils/TempFolder';
 import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
 import { Mock, mock } from '../helpers/producers';
@@ -25,7 +25,7 @@ describe('Sandbox', () => {
   const workingFolder = 'random-folder-3';
   const expectedTargetFileToMutate = path.join(workingFolder, 'file1');
   const expectedTestFrameworkHooksFile = path.join(workingFolder, '___testHooksForStryker.js');
-  let tempFolderMock: Mock<StrykerTempFolder>;
+  let tempFolderMock: Mock<TempFolder>;
 
   beforeEach(() => {
     options = { port: 43, timeoutFactor: 23, timeoutMs: 1000, testRunner: 'sandboxUnitTestRunner' } as any;
@@ -39,8 +39,8 @@ describe('Sandbox', () => {
       notMutatedFile,
       { path: onlineFile, mutated: false, included: true }
     ];
-    tempFolderMock = mock(StrykerTempFolder);
-    sandbox.stub(StrykerTempFolder, 'instance').returns(tempFolderMock);
+    tempFolderMock = mock(TempFolder);
+    sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
     tempFolderMock.createRandomFolder.returns(workingFolder);
     tempFolderMock.copyFile.resolves({});
     tempFolderMock.writeFile.resolves({});

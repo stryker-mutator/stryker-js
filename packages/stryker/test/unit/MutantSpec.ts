@@ -5,7 +5,7 @@ import Mutant from '../../src/Mutant';
 import { Location } from 'stryker-api/core';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
-import { StrykerTempFolder } from '../../src/utils/StrykerTempFolder';
+import { TempFolder } from '../../src/utils/TempFolder';
 import * as estree from 'estree';
 import { Mock, mock } from '../helpers/producers';
 
@@ -20,13 +20,13 @@ describe('Mutant', () => {
   let ast: estree.Program;
   let node: estree.Node;
   let sandbox: sinon.SinonSandbox;
-  let tempFolderMock: Mock<StrykerTempFolder>;
+  let tempFolderMock: Mock<TempFolder>;
 
   beforeEach(() => {
 
     sandbox = sinon.sandbox.create();
-    tempFolderMock = mock(StrykerTempFolder);
-    sandbox.stub(StrykerTempFolder, 'instance').returns(tempFolderMock);
+    tempFolderMock = mock(TempFolder);
+    sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
 
     const baseCode = 'var i = 1 + 2;\n';
     originalLine = 'var j = i * 2;';

@@ -4,9 +4,9 @@ import * as mkdirp from 'mkdirp';
 import * as log4js from 'log4js';
 import { deleteDir} from './fileUtils';
 
-const log = log4js.getLogger('StrykerTempFolder');
+const log = log4js.getLogger('TempFolder');
 
-export class StrykerTempFolder {
+export class TempFolder {
   baseTempFolder: string;
   tempFolder: string;
 
@@ -76,10 +76,10 @@ export class StrykerTempFolder {
     return Math.ceil(Math.random() * 10000000);
   }
 
-  private static _instance: StrykerTempFolder;
+  private static _instance: TempFolder;
   static instance() {
     if (!this._instance) {
-      this._instance = new StrykerTempFolder();
+      this._instance = new TempFolder();
     }
     return this._instance;
   }

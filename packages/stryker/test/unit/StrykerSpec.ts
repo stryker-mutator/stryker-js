@@ -16,7 +16,7 @@ import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/Mutan
 import ConfigValidator, * as configValidator from '../../src/ConfigValidator';
 import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
-import { StrykerTempFolder } from '../../src/utils/StrykerTempFolder';
+import { TempFolder } from '../../src/utils/TempFolder';
 import log from '../helpers/log4jsMock';
 import { reporterStub, mock, Mock, testFramework as testFrameworkMock } from '../helpers/producers';
 
@@ -43,7 +43,7 @@ describe('Stryker', function () {
   let config: any;
   let mutants: any[];
   let reporter: Reporter;
-  let tempFolderMock: Mock<StrykerTempFolder>;
+  let tempFolderMock: Mock<TempFolder>;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -69,8 +69,8 @@ describe('Stryker', function () {
     sandbox.stub(mutantRunResultMatcher, 'default').returns(mutantRunResultMatcherMock);
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
-    tempFolderMock = mock(StrykerTempFolder);
-    sandbox.stub(StrykerTempFolder, 'instance').returns(tempFolderMock);
+    tempFolderMock = mock(TempFolder);
+    sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
     tempFolderMock.clean.resolves();
     determineExitCodeStub = sandbox.stub(ScoreResultCalculator, 'determineExitCode');
   });
