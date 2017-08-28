@@ -7,9 +7,10 @@ import { InputFile } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { wrapInClosure } from '../../src/utils/objectUtils';
 import Sandbox from '../../src/Sandbox';
-import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
+import { StrykerTempFolder } from '../../src/utils/StrykerTempFolder';
 import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
+import { Mock, mock } from '../helpers/producers';
 
 describe('Sandbox', () => {
   let sut: Sandbox;
@@ -24,6 +25,7 @@ describe('Sandbox', () => {
   const workingFolder = 'random-folder-3';
   const expectedTargetFileToMutate = path.join(workingFolder, 'file1');
   const expectedTestFrameworkHooksFile = path.join(workingFolder, '___testHooksForStryker.js');
+  let tempFolderMock: Mock<StrykerTempFolder>;
 
   beforeEach(() => {
     options = { port: 43, timeoutFactor: 23, timeoutMs: 1000, testRunner: 'sandboxUnitTestRunner' } as any;
@@ -37,9 +39,14 @@ describe('Sandbox', () => {
       notMutatedFile,
       { path: onlineFile, mutated: false, included: true }
     ];
-    sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns(workingFolder);
-    sandbox.stub(StrykerTempFolder, 'copyFile').returns(Promise.resolve({}));
-    sandbox.stub(StrykerTempFolder, 'writeFile').returns(Promise.resolve({}));
+    tempFolderMock = mock(StrykerTempFolder);
+    sandbox.stub(StrykerTempFolder, 'instance').returns(tempFolderMock);
+    tempFolderMock.createRandomFolder.returns(workingFolder);
+    tempFolderMock.copyFile.resolves({});
+    tempFolderMock.writeFile.resolves({});
+
+    console.error(tempFolderMock.copyFile);
+
     sandbox.stub(mkdirp, 'sync').returns('');
     sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
   });
@@ -71,14 +78,14 @@ describe('Sandbox', () => {
       it('should have instrumented the input files', () => {
         expect(coverageInstrumenter.instrumenterStreamForFile).to.have.been.calledWith(expectedFileToMutate);
         expect(coverageInstrumenter.instrumenterStreamForFile).to.have.been.calledWith(expectedFileToMutate);
-        expect(StrykerTempFolder.copyFile).to.have.been.calledWith(expectedFileToMutate.path, expectedTargetFileToMutate, expectedInstrumenterStream);
+        expect(tempFolderMock.copyFile).to.have.been.calledWith(expectedFileToMutate.path, expectedTargetFileToMutate, expectedInstrumenterStream);
       });
 
       it('should not have copied online files', () => {
         let expectedBaseFolder = onlineFile.substr(workingFolder.length - 1); // The Sandbox expects all files to be absolute paths. An online file is not an absolute path.
 
         expect(mkdirp.sync).to.not.have.been.calledWith(workingFolder + path.dirname(expectedBaseFolder));
-        expect(StrykerTempFolder.copyFile).to.not.have.been.calledWith(onlineFile, sinon.match.any, sinon.match.any);
+        expect(tempFolderMock.copyFile).to.not.have.been.calledWith(onlineFile, sinon.match.any, sinon.match.any);
       });
     });
   });
@@ -87,13 +94,13 @@ describe('Sandbox', () => {
 
     beforeEach(() => sut = new Sandbox(options, 3, files, testFramework, null));
 
-    it('should have created a workingFolder', () => expect(StrykerTempFolder.createRandomFolder).to.have.been.calledWith('sandbox'));
+    it('should have created a workingFolder', () => expect(tempFolderMock.createRandomFolder).to.have.been.calledWith('sandbox'));
 
     describe('when initialized()', () => {
 
       beforeEach(() => sut.initialize());
 
-      it('should have copied the input files', () => expect(StrykerTempFolder.copyFile).to.have.been.calledWith(files[0].path, expectedTargetFileToMutate)
+      it('should have copied the input files', () => expect(tempFolderMock.copyFile).to.have.been.calledWith(files[0].path, expectedTargetFileToMutate)
         .and.calledWith(files[1].path, path.join(workingFolder, 'file2')));
 
       it('should have created the isolated test runner inc framework hook', () => {
@@ -140,7 +147,7 @@ describe('Sandbox', () => {
 
           it('should filter the scoped tests', () => expect(testFramework.filter).to.have.been.calledWith(mutant.scopedTestIds));
 
-          it('should write the filter code fragment to hooks file', () => expect(StrykerTempFolder.writeFile)
+          it('should write the filter code fragment to hooks file', () => expect(tempFolderMock.writeFile)
             .to.have.been.calledWith(expectedTestFrameworkHooksFile, wrapInClosure(testFilterCodeFragment)));
 
           it('should have ran testRunner with correct timeout', () => expect(testRunner.run)
@@ -188,7 +195,7 @@ describe('Sandbox', () => {
           return sut.runMutant(mutant);
         });
 
-        it('should not filter any tests', () => expect(StrykerTempFolder.writeFile).to.have.been.calledWith(expectedTestFrameworkHooksFile, '').and.with.callCount(1));
+        it('should not filter any tests', () => expect(tempFolderMock.writeFile).to.have.been.calledWith(expectedTestFrameworkHooksFile, '').and.with.callCount(1));
       });
     });
   });

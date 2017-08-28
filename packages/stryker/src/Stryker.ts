@@ -17,7 +17,7 @@ import ScoreResultCalculator from './ScoreResultCalculator';
 import ConfigValidator from './ConfigValidator';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
-import StrykerTempFolder from './utils/StrykerTempFolder';
+import { StrykerTempFolder } from './utils/StrykerTempFolder';
 import * as log4js from 'log4js';
 import Timer from './utils/Timer';
 import StrictReporter from './reporters/StrictReporter';
@@ -81,7 +81,7 @@ export default class Stryker {
       this.reporter.onScoreCalculated(score);
       ScoreResultCalculator.determineExitCode(score, this.config.thresholds);
       await this.wrapUpReporter();
-      await StrykerTempFolder.clean();
+      await StrykerTempFolder.instance().clean();
       await this.logDone();
       return mutantResults;
     } else {

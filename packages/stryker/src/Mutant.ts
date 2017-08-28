@@ -1,5 +1,5 @@
 import { Location, Range } from 'stryker-api/core';
-import StrykerTempFolder from './utils/StrykerTempFolder';
+import { StrykerTempFolder } from './utils/StrykerTempFolder';
 import { TestResult, RunResult } from 'stryker-api/test_runner';
 
 /**
@@ -75,7 +75,7 @@ export default class Mutant {
    * @function
    */
   save(filename: string) {
-    return StrykerTempFolder.writeFile(filename, this.mutatedCode);
+    return StrykerTempFolder.instance().writeFile(filename, this.mutatedCode);
   }
 
   /**
@@ -83,7 +83,7 @@ export default class Mutant {
    * @function
    */
   reset(filename: string) {
-    return StrykerTempFolder.writeFile(filename, this.originalCode);
+    return StrykerTempFolder.instance().writeFile(filename, this.originalCode);
   }
 
   toString() {
