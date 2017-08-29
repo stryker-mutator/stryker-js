@@ -2,7 +2,7 @@ import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import * as log4js from 'log4js';
-import { deleteDir} from './fileUtils';
+import { deleteDir } from './fileUtils';
 
 const log = log4js.getLogger('TempFolder');
 
