@@ -10,7 +10,7 @@ export class TempFolder {
   baseTempFolder: string;
   tempFolder: string;
 
-  constructor (tempDirName = '.stryker-tmp') {
+  initialize(tempDirName = '.stryker-tmp') {
     this.baseTempFolder = path.join(process.cwd(), tempDirName);
     this.tempFolder = path.join(this.baseTempFolder, this.random().toString());
     mkdirp.sync(this.baseTempFolder);

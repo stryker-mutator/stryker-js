@@ -81,6 +81,7 @@ export default class Stryker {
       this.reporter.onScoreCalculated(score);
       ScoreResultCalculator.determineExitCode(score, this.config.thresholds);
       await this.wrapUpReporter();
+      TempFolder.instance().initialize();
       await TempFolder.instance().clean();
       await this.logDone();
       return mutantResults;
