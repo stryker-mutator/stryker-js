@@ -20,7 +20,7 @@ describe('MutatorOrchestrator', () => {
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    tempFolderMock = mock(TempFolder);
+    tempFolderMock = mock<TempFolder>(TempFolder);
     sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
     reporter = reporterStub();
     sut = new MutatorOrchestrator(reporter);
