@@ -33,9 +33,9 @@ export function getProjectDirectory(config: Config) {
   return path.dirname(config[CONFIG_KEY_FILE] || '.');
 }
 
-const allExtensions: string[] = Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
+const allExtensions: string[] = ['ts', 'tsx']; // TODO Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
 export function isTypescriptFile(file: File) {
-  return allExtensions.some(extension => file.name.endsWith(extension));
+  return allExtensions.some(extension => file.name.endsWith(extension)) && !file.name.endsWith('.d.ts');
 }
 
 

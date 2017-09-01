@@ -1,24 +1,28 @@
 import Stryker from '../../src/Stryker';
 import { File } from 'stryker-api/core';
-import { Reporter, MutantResult } from 'stryker-api/report';
+import { MutantResult } from 'stryker-api/report';
 import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
-import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { RunResult } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import InputFileResolver, * as inputFileResolver from '../../src/InputFileResolver';
 import ConfigReader, * as configReader from '../../src/ConfigReader';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
-import SandboxCoordinator, * as sandboxCoordinator from '../../src/SandboxCoordinator';
 import ReporterOrchestrator, * as reporterOrchestrator from '../../src/ReporterOrchestrator';
 import MutantGeneratorFacade, * as mutantGeneratorFacade from '../../src/MutantGeneratorFacade';
 import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
+import InitialTestExecutor, * as initialTestExecutor from '../../src/process/InitialTestExecutor';
+import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/MutationTestExecutor';
 import ConfigValidator, * as configValidator from '../../src/ConfigValidator';
 import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
 import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
 import log from '../helpers/log4jsMock';
-import { reporterStub, mock, Mock, testFramework as testFrameworkMock, textFile } from '../helpers/producers';
+import { mock, Mock, testFramework as testFrameworkMock, textFile, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
+import BroadcastReporter from '../../src/reporters/BroadcastReporter';
+import TestableMutant from '../../src/TestableMutant';
+import '../helpers/globals';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
@@ -29,39 +33,39 @@ class FakeConfigEditor implements ConfigEditor {
 
 describe('Stryker', function () {
   let sut: Stryker;
-  let sandbox: sinon.SinonSandbox;
   let testFramework: TestFramework;
   let inputFileResolverMock: Mock<InputFileResolver>;
   let testFrameworkOrchestratorMock: Mock<TestFrameworkOrchestrator>;
   let configValidatorMock: Mock<ConfigValidator>;
-  let sandboxCoordinatorMock: Mock<SandboxCoordinator>;
   let configReaderMock: Mock<ConfigReader>;
+  let initialTestExecutorMock: Mock<InitialTestExecutor>;
+  let mutationTestExecutorMock: Mock<MutationTestExecutor>;
+  let mutantRunResultMatcherMock: Mock<MutantRunResultMatcher>;
+  let mutantGeneratorMock: Mock<MutantGeneratorFacade>;
   let pluginLoaderMock: Mock<PluginLoader>;
-  let inputFiles: File[];
   let determineExitCodeStub: sinon.SinonStub;
-  let resolveInitialTestRun: (runResult: RunResult) => void;
-  let config: any;
-  let mutants: any[];
-  let reporter: Reporter;
+  let strykerConfig: Config;
+  let reporter: Mock<BroadcastReporter>;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
-    config = {};
-    reporter = reporterStub();
+    strykerConfig = config();
+    reporter = mock(BroadcastReporter);
     configValidatorMock = mock(ConfigValidator);
     configReaderMock = mock(ConfigReader);
-    configReaderMock.readConfig.returns(config);
+    configReaderMock.readConfig.returns(strykerConfig);
     pluginLoaderMock = mock(PluginLoader);
     const reporterOrchestratorMock = mock(ReporterOrchestrator);
-    const mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
-    const mutantGeneratorMock = mock(MutantGeneratorFacade);
+    mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
+    mutantGeneratorMock = mock(MutantGeneratorFacade);
+    inputFileResolverMock = mock(InputFileResolver);
     reporterOrchestratorMock.createBroadcastReporter.returns(reporter);
-    mutants = [];
-    mutantRunResultMatcherMock.matchWithMutants.returns(mutants);
-    mutantGeneratorMock.generateMutants.returns(mutants);
     testFramework = testFrameworkMock();
+    initialTestExecutorMock = mock(InitialTestExecutor);
+    mutationTestExecutorMock = mock(MutationTestExecutor);
     testFrameworkOrchestratorMock = mock(TestFrameworkOrchestrator);
     testFrameworkOrchestratorMock.determineTestFramework.returns(testFramework);
+    sandbox.stub(mutationTestExecutor, 'default').returns(mutationTestExecutorMock);
+    sandbox.stub(initialTestExecutor, 'default').returns(initialTestExecutorMock);
     sandbox.stub(configValidator, 'default').returns(configValidatorMock);
     sandbox.stub(testFrameworkOrchestrator, 'default').returns(testFrameworkOrchestratorMock);
     sandbox.stub(reporterOrchestrator, 'default').returns(reporterOrchestratorMock);
@@ -69,24 +73,15 @@ describe('Stryker', function () {
     sandbox.stub(mutantRunResultMatcher, 'default').returns(mutantRunResultMatcherMock);
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
+    sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverMock);
     sandbox.stub(StrykerTempFolder, 'clean').resolves();
     determineExitCodeStub = sandbox.stub(ScoreResultCalculator, 'determineExitCode');
   });
 
-  function actAndShouldResultInARejection() {
-    it('should result in a rejection', (done) => {
-      sut.runMutationTest().then(() => {
-        done(new Error('Stryker resolved while a rejection was expected'));
-      }, () => {
-        done();
-      });
-    });
-  }
-
   describe('when constructed', () => {
     beforeEach(() => {
       ConfigEditorFactory.instance().register('FakeConfigEditor', FakeConfigEditor);
-      config.plugins = ['plugin1'];
+      strykerConfig.plugins = ['plugin1'];
       sut = new Stryker({});
     });
 
@@ -99,221 +94,128 @@ describe('Stryker', function () {
     });
 
     it('should load plugins', () => {
-      expect(pluginLoader.default).to.have.been.calledWith(config.plugins);
+      expect(pluginLoader.default).to.have.been.calledWith(strykerConfig.plugins);
       expect(pluginLoaderMock.load).to.have.been.calledWith();
     });
 
     it('should determine the testFramework', () => {
       expect(testFrameworkOrchestrator.default).to.have.been.calledWithNew;
-      expect(testFrameworkOrchestrator.default).to.have.been.calledWith(config);
+      expect(testFrameworkOrchestrator.default).to.have.been.calledWith(strykerConfig);
       expect(testFrameworkOrchestratorMock.determineTestFramework).to.have.been.called;
     });
 
     it('should validate the config', () => {
       expect(configValidator.default).calledWithNew;
-      expect(configValidator.default).calledWith(config, testFramework);
+      expect(configValidator.default).calledWith(strykerConfig, testFramework);
       expect(configValidatorMock.validate).called;
     });
   });
 
   describe('runMutationTest()', () => {
 
-    describe('when input file globbing results in a rejection', () => {
-      beforeEach(() => {
-        inputFileResolverMock = {
-          resolve: sandbox.stub().rejects('a rejection')
-        };
-        sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverMock);
-        sut = new Stryker({});
-      });
+    let inputFiles: File[];
+    let initialRunResult: RunResult;
+    let transpiledFiles: File[];
+    let mutants: TestableMutant[];
+    let mutantResults: MutantResult[];
 
-      actAndShouldResultInARejection();
+    beforeEach(() => {
+      mutants = [testableMutant()];
+      mutantResults = [mutantResult()];
+      mutantRunResultMatcherMock.matchWithMutants.returns(mutants);
+      mutantGeneratorMock.generateMutants.returns(mutants);
+      mutationTestExecutorMock.run.resolves(mutantResults);
+      inputFiles = [textFile({ name: 'input.ts ' })];
+      transpiledFiles = [textFile({ name: 'output.js' })];
+      inputFileResolverMock.resolve.resolves(inputFiles);
+      initialRunResult = runResult();
+      initialTestExecutorMock.run.resolves({ runResult: initialRunResult, transpiledFiles });
+      sut = new Stryker({});
     });
 
-    describe('with correct input file globbing', () => {
+    it('should reject when input file globbing results in a rejection', async () => {
+      const expectedError = Error('expected error');
+      inputFileResolverMock.resolve.rejects(expectedError);
+      await expect(sut.runMutationTest()).rejectedWith(expectedError);
+    });
+
+    it('should reject when initial test run rejects', async () => {
+      const expectedError = Error('expected error');
+      initialTestExecutorMock.run.rejects(expectedError);
+      await expect(sut.runMutationTest()).rejectedWith(expectedError);
+    });
+
+    it('should reject when mutation tester rejects', async () => {
+      const expectedError = Error('expected error');
+      mutationTestExecutorMock.run.rejects(expectedError);
+      await expect(sut.runMutationTest()).rejectedWith(expectedError);
+    });
+
+    it('should quit early if no tests were executed in initial test run', async () => {
+      while (initialRunResult.tests.pop());
+      const actualResults = await sut.runMutationTest();
+      expect(mutationTestExecutorMock.run).not.called;
+      expect(actualResults).lengthOf(0);
+    });
+
+    it('should log to have quit early if no mutants were generated', async () => {
+      while (mutants.pop()); // clear all mutants
+      await sut.runMutationTest();
+      expect(log.info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
+      expect(mutationTestExecutorMock.run).not.called;
+    });
+
+    describe('happy flow', () => {
+
       beforeEach(() => {
-        inputFiles = [textFile({ name: 'someFile', mutated: true, included: true, content: '' })];
-        inputFileResolverMock = {
-          resolve: sandbox.stub().returns(Promise.resolve(inputFiles))
-        };
-        sandboxCoordinatorMock = {
-          initialRun: sandbox.stub(),
-          runMutants: sandbox.stub()
-        };
-        sandbox.stub(sandboxCoordinator, 'default').returns(sandboxCoordinatorMock);
-        sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverMock);
-        sut = new Stryker({ mutate: ['mutateFile'], files: ['allFiles'] });
+        return sut.runMutationTest();
       });
 
-      describe('when initialRun() resulted in a rejection', () => {
-
-        beforeEach(() => {
-          sandboxCoordinatorMock.initialRun.rejects('a rejection');
-        });
-
-        actAndShouldResultInARejection();
+      it('should report mutant score', () => {
+        expect(reporter.onScoreCalculated).to.have.been.called;
       });
 
-      describe('when initial test run completes', () => {
-        let runMutantsPromiseResolve: (mutantResults: MutantResult[]) => any;
-        let strykerPromise: Promise<any>;
+      it('should determine the exit code', () => {
+        expect(determineExitCodeStub).called;
+      });
 
-        beforeEach(() => {
-          sandboxCoordinatorMock.initialRun.returns(new Promise(res => resolveInitialTestRun = res));
-          sandboxCoordinatorMock.runMutants.returns(new Promise(res => runMutantsPromiseResolve = res));
-        });
+      it('should determine the testFramework', () => {
+        expect(testFrameworkOrchestrator.default).calledWithNew;
+        expect(testFrameworkOrchestrator.default).calledWith(strykerConfig);
+        expect(testFrameworkOrchestratorMock.determineTestFramework).to.have.been.called;
+      });
 
-        describe('but contains an error and failed tests', () => {
-          beforeEach((done) => {
-            resolveInitialTestRun({
-              tests: [{ status: TestStatus.Failed, name: 'should fail', timeSpentMs: 5 }],
-              status: RunStatus.Error,
-              errorMessages: ['An error!']
-            });
-            strykerPromise = sut.runMutationTest();
-            strykerPromise.then(() => done(), () => done());
-          });
+      it('should create the InputFileResolver', () => {
+        expect(inputFileResolver.default).calledWithNew;
+        expect(inputFileResolver.default).calledWith(strykerConfig.mutate, strykerConfig.files, reporter);
+        expect(inputFileResolverMock.resolve).called;
+      });
+      
+      it('should create the InitialTestRunner', () => {
+        expect(initialTestExecutor.default).calledWithNew;
+        expect(initialTestExecutor.default).calledWith(strykerConfig, inputFiles);
+        expect(initialTestExecutorMock.run).called;
+      });
 
-          it('should create the testRunnerOrchestrator', () => {
-            expect(sandboxCoordinator.default).to.have.been.calledWithNew;
-            expect(sandboxCoordinator.default).to.have.been.calledWith(config, inputFiles, testFramework, reporter);
-          });
+      it('should create the mutant generator', () => {
+        expect(mutantGeneratorFacade.default).calledWithNew;
+        expect(mutantGeneratorFacade.default).calledWith(strykerConfig);
+        expect(mutantGeneratorMock.generateMutants).calledWith(inputFiles);
+      });
 
-          it('should have logged the errors', () => {
-            expect(log.error).to.have.been.calledWith('One or more tests resulted in an error in the initial test run:\n\tAn error!');
-          });
+      it('should create the mutation test executor', () => {
+        expect(mutationTestExecutor.default).calledWithNew;
+        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles, transpiledFiles, testFramework, reporter);
+        expect(mutationTestExecutorMock.run).calledWith(mutants);
+      });
 
-          actAndShouldResultInARejection();
-        });
+      it('should clean the stryker temp folder', () => {
+        expect(StrykerTempFolder.clean).called;
+      });
 
-        describe('without errors or failed tests', () => {
-          let strykerPromiseResolved: boolean;
-          beforeEach(() => {
-            resolveInitialTestRun({
-              status: RunStatus.Complete, tests: [
-                { status: TestStatus.Success, name: 'should succeed', timeSpentMs: 5 },
-                { status: TestStatus.Success, name: 'should succeed as well', timeSpentMs: 5 }]
-            });
-            strykerPromiseResolved = false;
-          });
-
-          it('should determine the testFramework', () => {
-            expect(testFrameworkOrchestrator.default).to.have.been.calledWithNew;
-            expect(testFrameworkOrchestrator.default).to.have.been.calledWith(config);
-            expect(testFrameworkOrchestratorMock.determineTestFramework).to.have.been.called;
-          });
-
-          let beforeEachRunMutationTest = () => {
-            beforeEach(() => {
-              strykerPromise = sut.runMutationTest().then(() => strykerPromiseResolved = true);
-            });
-          };
-
-          describe('but the mutator does not create any mutants', () => {
-
-            beforeEachRunMutationTest();
-
-            // wait for Stryker to finish
-            beforeEach(() => strykerPromise);
-
-            it('should log to have quit early', () => {
-              expect(log.info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
-            });
-
-            it('should not have ran mutations', () => {
-              expect(sandboxCoordinatorMock.runMutants).not.to.have.been.called;
-            });
-          });
-
-          describe('and the mutator creates mutants', () => {
-            beforeEach(() => {
-              mutants.push({ a: 'mutant' });
-            });
-            beforeEachRunMutationTest();
-            it('should not directly resolve the stryker promise', (done) => {
-              setTimeout(() => {
-                expect(strykerPromiseResolved).to.be.eq(false);
-                done();
-              }, 100);
-            });
-
-            describe('and running of mutants was successful while reporter.wrapUp() results in void', () => {
-              beforeEach(() => {
-                runMutantsPromiseResolve([]);
-                return strykerPromise;
-              });
-              it('should resolve the stryker promise', () => strykerPromise);
-
-              it('should have logged the amount of tests ran', () => {
-                expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s.', 2);
-              });
-
-              it('should report mutant score', () => {
-                expect(reporter.onScoreCalculated).to.have.been.called;
-              });
-
-              it('should determine the exit code', () => {
-                expect(determineExitCodeStub).called;
-              });
-
-              it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
-            });
-
-            describe('and running of mutants was successful while reporter.wrapUp() results in a promise', () => {
-              let wrapUpDoneFn: Function;
-              beforeEach((done) => {
-                (<sinon.SinonStub>reporter.wrapUp).returns(new Promise((wrapUpDone) => wrapUpDoneFn = wrapUpDone));
-                runMutantsPromiseResolve([]);
-                setTimeout(done, 1); // give the wrap up promise some time to resolve and go to the next step (i don't know of any other way)
-              });
-
-              it('should let the reporters wrapUp any async tasks', () => {
-                expect(reporter.wrapUp).to.have.been.called;
-              });
-
-              it('should not yet have resolved the stryker promise', () => {
-                expect(strykerPromiseResolved).to.be.eq(false);
-              });
-
-              describe('and the reporter has wrapped up', () => {
-
-                beforeEach(() => {
-                  wrapUpDoneFn();
-                  return strykerPromise;
-                });
-
-                it('should resolve the stryker promise', () => strykerPromise);
-
-                it('should clean the stryker temp folder', () => expect(StrykerTempFolder.clean).to.have.been.called);
-              });
-            });
-          });
-        });
-
-        describe('with no tests executed', () => {
-          beforeEach(() => {
-            resolveInitialTestRun({
-              status: RunStatus.Complete,
-              tests: []
-            });
-          });
-
-          it('should log to have quit early', async () => {
-            await sut.runMutationTest();
-            expect(log.warn).to.have.been.calledWith('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
-          });
-
-          it('should not have tested mutations', async () => {
-            await sut.runMutationTest();
-            expect(sandboxCoordinatorMock.runMutants).not.to.have.been.called;
-          });
-        });
+      it('should let the reporters wrapUp any async tasks', () => {
+        expect(reporter.wrapUp).to.have.been.called;
       });
     });
   });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
 });

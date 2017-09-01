@@ -38,7 +38,7 @@ export default class ClearTextReporter implements Reporter {
           log.debug(chalk.bold.yellow('Mutant timed out!'));
           this.logMutantResult(result, logDebugFn);
           break;
-        case MutantStatus.Error:
+        case MutantStatus.RuntimeError:
           log.debug(chalk.bold.yellow('Mutant caused an error!'));
           this.logMutantResult(result, logDebugFn);
           break;

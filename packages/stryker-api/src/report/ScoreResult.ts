@@ -41,10 +41,15 @@ interface ScoreResult {
  */
   readonly noCoverage: number;
   /**
-   * The total number of mutants that caused an error.
+   * The total number of mutants that caused an error during testing.
    * These didn't effect the mutation score, as they are treated as false positives.
    */
-  readonly errors: number;
+  readonly runtimeErrors: number;
+  /**
+   * The total number of mutants that caused an error during transpiling.
+   * These didn't effect the mutation score. as they are treated as false positives.
+   */
+  readonly transpileErrors: number;
   /**
  * The total number of mutants that were detected, meaning either killed or caused a time out.
  * `killed + timed out`
@@ -56,19 +61,28 @@ interface ScoreResult {
  */
   readonly totalUndetected: number;
   /**
+   * The total number of invalid mutants.
+   * `runtimeErrors + transpileErrors`
+   */
+  readonly totalInvalid: number;
+  /**
+   * Total number of valid mutants. 
+   * `totalDetected + totalUndetected`
+   */
+  readonly totalValid: number;
+  /**
    * The total number of mutants.
-   * Excluding any mutants that caused an error as they are treated as false positives.
-   * `killed + timed out + survived + no coverage`
+   * `totalInvalid + totalValid`
    */
   readonly totalMutants: number;
   /**
    * The total number of mutants tested in an area that had code coverage result
-   * `killed + timed out + survived`
+   * `totalDetected + survived`
    */
   readonly totalCovered: number;
   /**
    * The total percentage of mutants that were killed.
-   * `totalDetected / totalMutants * 100`,
+   * `totalDetected / totalValid * 100`,
    */
   readonly mutationScore: number;
   /**

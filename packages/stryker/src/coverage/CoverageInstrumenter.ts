@@ -47,7 +47,7 @@ export default class CoverageInstrumenter {
     return new PassThrough();
   }
 
-  public hooksForTestRun(): string {
+  public hooksForTestRun(): string | null {
     if (this.testFramework && this.coverageAnalysis === 'perTest') {
       log.debug(`Adding test hooks file for coverageAnalysis "perTest"`);
       return wrapInClosure(`
@@ -58,7 +58,7 @@ export default class CoverageInstrumenter {
           ${cloneFunctionFragment};
       `);
     } else {
-      return '';
+      return null;
     }
   }
 

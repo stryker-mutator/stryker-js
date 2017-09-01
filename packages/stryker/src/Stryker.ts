@@ -1,10 +1,9 @@
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
-import { StrykerOptions, FileDescriptor, File } from 'stryker-api/core';
+import { StrykerOptions, File } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
-import SandboxCoordinator from './SandboxCoordinator';
 import ReporterOrchestrator from './ReporterOrchestrator';
-import { RunResult, TestResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { RunResult } from 'stryker-api/test_runner';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './InputFileResolver';
@@ -19,6 +18,8 @@ import * as log4js from 'log4js';
 import Timer from './utils/Timer';
 import StrictReporter from './reporters/StrictReporter';
 import MutantGeneratorFacade from './MutantGeneratorFacade';
+import InitialTestExecutor from './process/InitialTestExecutor';
+import MutationTestExecutor from './process/MutationTestExecutor';
 const log = log4js.getLogger('Stryker');
 
 export default class Stryker {
@@ -48,73 +49,21 @@ export default class Stryker {
     new ConfigValidator(this.config, this.testFramework).validate();
   }
 
-
-  /**
-   * Runs mutation testing. This may take a while.
-   * @function
-   */
   async runMutationTest(): Promise<MutantResult[]> {
     this.timer.reset();
-
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
-    const { runResult, sandboxCoordinator } = await this.initialTestRun(inputFiles);
-
-     if (runResult.tests.length === 0) {
-      log.warn('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
-      return [];
-    } else if (runResult && inputFiles && sandboxCoordinator) {
-      const mutantResults = await this.generateAndRunMutations(inputFiles, runResult, sandboxCoordinator);
-      const score = ScoreResultCalculator.calculate(mutantResults);
-      this.reporter.onScoreCalculated(score);
-      ScoreResultCalculator.determineExitCode(score, this.config.thresholds);
+    const initialTestRunProcess = this.createInitialTestRunner(inputFiles);
+    const { runResult, transpiledFiles } = await initialTestRunProcess.run();
+    const testableMutants = await this.generateMutants(inputFiles, runResult);
+    if (runResult.tests.length && testableMutants.length) {
+      const mutationTestExecutor = this.createMutationTester(inputFiles, transpiledFiles);
+      const mutantResults = await mutationTestExecutor.run(testableMutants);
+      this.reportScore(mutantResults);
       await this.wrapUpReporter();
       await StrykerTempFolder.clean();
       await this.logDone();
       return mutantResults;
     } else {
-      throw new Error('Resulting object did not contain runResult, inputFiles or sandboxCoordinator');
-    }
-  }
-
-  private filterOutFailedTests(runResult: RunResult) {
-    return runResult.tests.filter(testResult => testResult.status === TestStatus.Failed);
-  }
-
-  private loadPlugins() {
-    if (this.config.plugins) {
-      new PluginLoader(this.config.plugins).load();
-    }
-  }
-
-  private async initialTestRun(inputFiles: FileDescriptor[]) {
-    const sandboxCoordinator = new SandboxCoordinator(this.config, inputFiles, this.testFramework, this.reporter);
-    let runResult = await sandboxCoordinator.initialRun(this.coverageInstrumenter);
-    switch (runResult.status) {
-      case RunStatus.Complete:
-        let failedTests = this.filterOutFailedTests(runResult);
-        if (failedTests.length) {
-          this.logFailedTestsInInitialRun(failedTests);
-          throw new Error('There were failed tests in the initial test run:');
-        } else {
-          this.logInitialTestRunSucceeded(runResult.tests);
-          return { runResult, sandboxCoordinator };
-        }
-      case RunStatus.Error:
-        this.logErrorsInInitialRun(runResult);
-        break;
-      case RunStatus.Timeout:
-        this.logTimeoutInitialRun(runResult);
-        break;
-    }
-    throw new Error('Something went wrong in the initial test run');
-  }
-
-  private generateAndRunMutations(inputFiles: File[], initialRunResult: RunResult, sandboxCoordinator: SandboxCoordinator): Promise<MutantResult[]> {
-    let mutants = this.generateMutants(inputFiles, initialRunResult);
-    if (mutants.length) {
-      return sandboxCoordinator.runMutants(mutants);
-    } else {
-      log.info('It\'s a mutant-free world, nothing to test.');
       return Promise.resolve([]);
     }
   }
@@ -122,9 +71,19 @@ export default class Stryker {
   private generateMutants(inputFiles: File[], runResult: RunResult) {
     const mutantGenerator = new MutantGeneratorFacade(this.config);
     const mutants = mutantGenerator.generateMutants(inputFiles);
-    log.info(`${mutants.length} Mutant(s) generated`);
+    if (mutants.length) {
+      log.info(`${mutants.length} Mutant(s) generated`);
+    } else {
+      log.info('It\'s a mutant-free world, nothing to test.');
+    }
     const mutantRunResultMatcher = new MutantTestMatcher(mutants, inputFiles, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config, this.reporter);
     return mutantRunResultMatcher.matchWithMutants();
+  }
+
+  private loadPlugins() {
+    if (this.config.plugins) {
+      new PluginLoader(this.config.plugins).load();
+    }
   }
 
   private wrapUpReporter(): Promise<void> {
@@ -149,10 +108,6 @@ export default class Stryker {
     }
   }
 
-  private logInitialTestRunSucceeded(tests: TestResult[]) {
-    log.info('Initial test run succeeded. Ran %s tests in %s.', tests.length, this.timer.humanReadableElapsed());
-  }
-
   private logDone() {
     log.info('Done in %s.', this.timer.humanReadableElapsed());
   }
@@ -161,27 +116,17 @@ export default class Stryker {
     log4js.setGlobalLogLevel(this.config.logLevel);
   }
 
-  private logFailedTestsInInitialRun(failedTests: TestResult[]): void {
-    let message = 'One or more tests failed in the initial test run:';
-    failedTests.forEach(test => {
-      message += `\n\t${test.name}`;
-      if (test.failureMessages && test.failureMessages.length) {
-        message += `\n\t${test.failureMessages.join('\n\t')}`;
-      }
-    });
-    log.error(message);
-  }
-  private logErrorsInInitialRun(runResult: RunResult) {
-    let message = 'One or more tests resulted in an error in the initial test run:';
-    if (runResult.errorMessages && runResult.errorMessages.length) {
-      runResult.errorMessages.forEach(error => message += `\n\t${error}`);
-    }
-    log.error(message);
+  private createMutationTester(inputFiles: File[], transpiledFiles: File[]) {
+    return new MutationTestExecutor(this.config, inputFiles, transpiledFiles, this.testFramework, this.reporter);
   }
 
-  private logTimeoutInitialRun(runResult: RunResult) {
-    let message = 'Initial test run timed out! Ran following tests before timeout:';
-    runResult.tests.forEach(test => `\n\t${test.name} ${TestStatus[test.status]}`);
-    log.error(message);
+  private createInitialTestRunner(inputFiles: File[]) {
+    return new InitialTestExecutor(this.config, inputFiles, this.coverageInstrumenter, this.testFramework, this.timer);
+  }
+
+  private reportScore(mutantResults: MutantResult[]) {
+    const score = ScoreResultCalculator.calculate(mutantResults);
+    this.reporter.onScoreCalculated(score);
+    ScoreResultCalculator.determineExitCode(score, this.config.thresholds);
   }
 }

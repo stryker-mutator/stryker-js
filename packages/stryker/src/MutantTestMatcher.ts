@@ -82,7 +82,7 @@ export default class MutantTestMatcher {
       if (sourceFile) {
         return new TestableMutant(mutant, sourceFile);
       } else {
-        log.error(`Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${mutant.fileName}`);
+        log.error(`Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${mutant.fileName}. List of source files: \n\t${sourceFiles.map(s => s.name).join('\n\t')}`);
         return null;
       }
     }));

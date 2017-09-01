@@ -1,8 +1,5 @@
 import * as _ from 'lodash';
 
-// Don't use JSON.parse, as it does not allow for regexes or functions, etc
-export const serialize: (obj: any) => string = require('serialize-javascript');
-
 export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
   Object.freeze(target);
   Object.keys(target).forEach(key => {
@@ -21,8 +18,17 @@ export function filterEmpty<T>(input: (T | null | void)[]) {
   return input.filter(item => item !== undefined && item !== null) as T[];
 }
 
+
+/**
+ * Serializes javascript without using `JSON.stringify` (directly), as it does not allow for regexes or functions, etc
+ */
+export const serialize: (obj: any) => string = require('serialize-javascript');
+
+/**
+ * Deserialize javascript without using `JSON.parse` (directly), as it does not allow for regexes or functions, etc
+ * (Uses eval instead)
+ */
 export function deserialize(serializedJavascript: String): any {
-  // Don't use JSON.parse, as it does not allow for regexes or functions, etc
   // tslint:disable
   return eval(`(${serializedJavascript})`);
   // tslint:enable

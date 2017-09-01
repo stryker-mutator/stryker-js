@@ -7,10 +7,10 @@ import { MatchedMutant } from 'stryker-api/report';
 import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import log from '../helpers/log4jsMock';
-import { reporterStub, file, mutant } from '../helpers/producers';
-import StrictReporter from '../../src/reporters/StrictReporter';
+import { file, mutant, Mock, mock } from '../helpers/producers';
 import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
+import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 
 describe('MutantTestMatcher', () => {
 
@@ -19,7 +19,7 @@ describe('MutantTestMatcher', () => {
   let runResult: RunResult;
   let statementMapDictionary: StatementMapDictionary;
   let strykerOptions: StrykerOptions;
-  let reporter: StrictReporter;
+  let reporter: Mock<BroadcastReporter>;
   let files: File[];
 
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe('MutantTestMatcher', () => {
     statementMapDictionary = Object.create(null);
     runResult = { tests: [], status: RunStatus.Complete };
     strykerOptions = {};
-    reporter = reporterStub();
+    reporter = mock(BroadcastReporter);
     files = [file({
       name: 'fileWithMutantOne',
       content: '\n\n\n\n12345'

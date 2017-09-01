@@ -30,7 +30,7 @@ export default class SourceFile {
 
   private lineStarts: number[];
 
-  constructor(private file: TextFile) {
+  constructor(public file: TextFile) {
     this.lineStarts = this.computeLineStarts();
   }
 

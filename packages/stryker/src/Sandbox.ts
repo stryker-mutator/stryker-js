@@ -1,19 +1,18 @@
 import { Config } from 'stryker-api/config';
 import * as path from 'path';
 import * as log4js from 'log4js';
-import * as _ from 'lodash';
 import * as mkdirp from 'mkdirp';
 import { RunResult } from 'stryker-api/test_runner';
-import { FileDescriptor, FileKind } from 'stryker-api/core';
+import { File, FileKind, FileDescriptor } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
 import TestRunnerDecorator from './isolated-runner/TestRunnerDecorator';
-import { isOnlineFile } from './utils/fileUtils';
 import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import StrykerTempFolder from './utils/StrykerTempFolder';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import TestableMutant from './TestableMutant';
+import TranspiledMutant from './TranspiledMutant';
 
 const log = log4js.getLogger('Sandbox');
 
@@ -25,13 +24,24 @@ export default class Sandbox {
 
   private testRunner: TestRunnerDecorator;
   private fileMap: FileMap;
+  private files: File[];
   private workingFolder: string;
-  private testHooksFile: string;
+  private testHooksFile = path.resolve('___testHooksForStryker.js');
 
-  constructor(private options: Config, private index: number, private files: FileDescriptor[], private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
+  constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
     this.workingFolder = StrykerTempFolder.createRandomFolder('sandbox');
     log.debug('Creating a sandbox for files in %s', this.workingFolder);
-    this.testHooksFile = path.join(this.workingFolder, '___testHooksForStryker.js');
+    this.files = files.slice(); // Create a copy
+    if (testFramework) {
+      this.testHooksFile = path.resolve('___testHooksForStryker.js');
+      this.files.unshift({
+        name: this.testHooksFile,
+        content: coverageInstrumenter && coverageInstrumenter.hooksForTestRun() || '',
+        mutated: false,
+        included: true,
+        kind: FileKind.Text
+      });
+    }
   }
 
   public async initialize(): Promise<void> {
@@ -47,47 +57,69 @@ export default class Sandbox {
     return this.testRunner.dispose() || Promise.resolve();
   }
 
-  public async runMutant(mutant: TestableMutant): Promise<RunResult> {
-    const targetedFile = this.fileMap[mutant.fileName];
-    await Promise.all([StrykerTempFolder.writeFile(targetedFile, mutant.mutatedCode), this.filterTests(mutant)]);
-    let runResult = await this.run(this.calculateTimeout(mutant));
-    await StrykerTempFolder.writeFile(targetedFile, mutant.originalCode);
+  public async runMutant(transpiledMutant: TranspiledMutant): Promise<RunResult> {
+    const mutantFiles = transpiledMutant.transpileResult.outputFiles;
+    await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)).concat(this.filterTests(transpiledMutant.mutant)));
+    const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant));
+    await this.reset(mutantFiles);
     return runResult;
+  }
+
+  private reset(mutatedFiles: File[]) {
+    const originalFiles = this.files.filter(originalFile => mutatedFiles.some(mutatedFile => mutatedFile.name === originalFile.name));
+
+    return Promise.all(originalFiles.map(file => {
+      if (file.kind !== FileKind.Web) {
+        return StrykerTempFolder.writeFile(this.fileMap[file.name], file.content);
+      } else {
+        return Promise.resolve();
+      }
+    }));
+  }
+
+  private writeFileInSandbox(file: File): Promise<void> {
+    switch (file.kind) {
+      case FileKind.Web:
+        return Promise.resolve();
+      default:
+        const fileNameInSandbox = this.fileMap[file.name];
+        return StrykerTempFolder.writeFile(fileNameInSandbox, file.content);
+    }
   }
 
   private fillSandbox(): Promise<void[]> {
     this.fileMap = Object.create(null);
     let copyPromises = this.files
-      .map(file => this.copyFile(file));
-    if (this.coverageInstrumenter) {
-      copyPromises.push(StrykerTempFolder.writeFile(this.testHooksFile, this.coverageInstrumenter.hooksForTestRun()));
-    } else {
-      copyPromises.push(StrykerTempFolder.writeFile(this.testHooksFile, ''));
-    }
+      .map(file => this.fillFile(file));
     return Promise.all(copyPromises);
   }
 
-  private copyFile(file: FileDescriptor): Promise<void> {
-    if (isOnlineFile(file.name)) {
-      this.fileMap[file.name] = file.name;
-      return Promise.resolve();
-    } else {
-      const cwd = process.cwd();
-      const relativePath = file.name.substr(cwd.length);
-      const folderName = this.workingFolder + path.dirname(relativePath);
-      mkdirp.sync(folderName);
-      const targetFile = path.join(folderName, path.basename(relativePath));
-      this.fileMap[file.name] = targetFile;
-      const instrumentingStream = this.coverageInstrumenter ?
-        this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
-      return StrykerTempFolder.copyFile(file.name, targetFile, instrumentingStream);
+  private fillFile(file: File): Promise<void> {
+    switch (file.kind) {
+      case FileKind.Web:
+        this.fileMap[file.name] = file.name;
+        return Promise.resolve();
+      default:
+        const cwd = process.cwd();
+        const relativePath = file.name.substr(cwd.length);
+        const folderName = this.workingFolder + path.dirname(relativePath);
+        mkdirp.sync(folderName);
+        const targetFile = path.join(folderName, path.basename(relativePath));
+        this.fileMap[file.name] = targetFile;
+        const instrumentingStream = this.coverageInstrumenter ?
+          this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
+        return StrykerTempFolder.writeFile(targetFile, file.content, instrumentingStream);
     }
   }
 
   private initializeTestRunner(): void | Promise<any> {
-    let files = this.files.map(originalFile => <FileDescriptor>_.assign(_.cloneDeep(originalFile), { name: this.fileMap[originalFile.name] }));
-    files.unshift({ name: this.testHooksFile, mutated: false, included: true, kind: FileKind.Text });
-    let settings: IsolatedRunnerOptions = {
+    const files: FileDescriptor[] = this.files.map(originalFile => ({
+      name: this.fileMap[originalFile.name],
+      mutated: originalFile.mutated,
+      included: originalFile.included,
+      kind: originalFile.kind
+    }));
+    const settings: IsolatedRunnerOptions = {
       files,
       strykerOptions: this.options,
       port: this.options.port + this.index,
@@ -106,7 +138,7 @@ export default class Sandbox {
   private filterTests(mutant: TestableMutant) {
     if (this.testFramework) {
       let fileContent = wrapInClosure(this.testFramework.filter(mutant.scopedTestIds));
-      return StrykerTempFolder.writeFile(this.testHooksFile, fileContent);
+      return StrykerTempFolder.writeFile(this.fileMap[this.testHooksFile], fileContent);
     } else {
       return Promise.resolve(void 0);
     }

@@ -23,7 +23,8 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
       `[${this.progress.survived} ${this.progress.survivedLabel}] ` +
       `[${this.progress.noCoverage} ${this.progress.noCoverageLabel}] ` +
       `[${this.progress.timeout} ${this.progress.timeoutLabel}] ` +
-      `[${this.progress.error} ${this.progress.errorLabel}]` +
+      `[${this.progress.runtimeError} ${this.progress.runtimeErrorLabel}] ` +
+      `[${this.progress.transpileError} ${this.progress.transpileErrorLabel}]` +
       os.EOL);
   }
 

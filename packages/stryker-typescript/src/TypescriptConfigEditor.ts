@@ -20,7 +20,8 @@ export default class TypescriptConfigEditor implements ConfigEditor {
         if (!strykerConfig.files) {
           strykerConfig.files = [];
         }
-        strykerConfig.files.push(...tsconfig.fileNames);
+        // add the files to the beginning. That way they can still be excluded by the user
+        strykerConfig.files.unshift(...tsconfig.fileNames); 
         strykerConfig[CONFIG_KEY_OPTIONS] = tsconfig.options;
       }
     } else {

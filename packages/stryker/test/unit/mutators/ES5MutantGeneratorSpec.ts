@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
 import { Mutant } from 'stryker-api/mutant';
@@ -7,15 +6,11 @@ import { file, textFile } from '../../helpers/producers';
 import ES5MutantGenerator from '../../../src/mutators/ES5MutantGenerator';
 import Mutator from '../../../src/mutators/Mutator';
 import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
-import StrykerTempFolder from '../../../src/utils/StrykerTempFolder';
 
 describe('ES5MutantGenerator', () => {
   let sut: ES5MutantGenerator;
-  let sandbox: sinon.SinonSandbox;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
-    sandbox.stub(StrykerTempFolder, 'writeFile');
     sut = new ES5MutantGenerator();
   });
 

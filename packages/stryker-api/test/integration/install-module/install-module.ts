@@ -33,7 +33,7 @@ describe('we have a module using stryker', function () {
       arrangeActAndAssertModule('config', ['plugins: [ \'stryker-*\' ]', 'port: 9234']);
       arrangeActAndAssertModule('test_framework', ['framework-1']);
       arrangeActAndAssertModule('mutant', ['mutatorName: \'foo\'']);
-      arrangeActAndAssertModule('report', ['empty', 'all', 'status: 3', 'originalLines: \'string\'', 'Mutant status error: Error']);
+      arrangeActAndAssertModule('report', ['empty', 'all', 'status: 3', 'originalLines: \'string\'', 'Mutant status runtime error: RuntimeError', 'transpile error: TranspileError']);
       arrangeActAndAssertModule('test_runner', ['MyTestRunner']);
       arrangeActAndAssertModule('transpile', ['my-file', 'foo']);
     });

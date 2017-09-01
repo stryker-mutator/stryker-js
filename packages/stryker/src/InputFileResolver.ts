@@ -1,3 +1,4 @@
+import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'mz/fs';
 import * as _ from 'lodash';
@@ -84,7 +85,7 @@ export default class InputFileResolver {
       log.warn(`No files marked to be mutated, stryker will perform a dry-run without actually mutating anything.`);
     }
     if (log.isDebugEnabled) {
-      log.debug('All input files in order:%s', allInputFiles.map(file => '\n\t' + JSON.stringify(file)));
+      log.debug('All input files in order:%s', allInputFiles.map(file => `${os.EOL}\t${file.name} (included: ${file.included}, mutated: ${file.mutated})`));
     }
   }
 

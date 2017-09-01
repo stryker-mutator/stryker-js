@@ -31,6 +31,7 @@
     "stryker-jasmine": "../packages/stryker-jasmine",
     "stryker-karma-runner": "../packages/stryker-karma-runner",
     "stryker-mocha-framework": "../packages/stryker-mocha-framework",
-    "stryker-mocha-runner": "../packages/stryker-mocha-runner"
+    "stryker-mocha-runner": "../packages/stryker-mocha-runner",
+    "stryker-typescript": "../packages/stryker-typescript"
   }
 }

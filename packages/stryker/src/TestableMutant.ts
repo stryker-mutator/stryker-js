@@ -2,6 +2,8 @@ import { Location } from 'stryker-api/core';
 import { RunResult, TestResult } from 'stryker-api/test_runner';
 import { Mutant } from 'stryker-api/mutant';
 import SourceFile, { isLineBreak } from './SourceFile';
+import { MutantStatus, MutantResult } from 'stryker-api/report';
+import { freezeRecursively } from './utils/objectUtils';
 
 
 export default class TestableMutant {
@@ -23,7 +25,11 @@ export default class TestableMutant {
     return this.mutant.fileName;
   }
 
-  get mutatorName(){
+  get included() {
+    return this.sourceFile.file.included;
+  }
+
+  get mutatorName() {
     return this.mutant.mutatorName;
   }
 
@@ -61,7 +67,7 @@ export default class TestableMutant {
     this._timeSpentScopedTests += testResult.timeSpentMs;
   }
 
-  constructor(public mutant: Mutant, private sourceFile: SourceFile) {
+  constructor(public mutant: Mutant, public sourceFile: SourceFile) {
   }
 
   public get originalLines() {
@@ -84,6 +90,20 @@ export default class TestableMutant {
       endIndexLines++;
     }
     return [startIndexLines, endIndexLines];
+  }
+
+  public result(status: MutantStatus, testsRan: string[]): MutantResult {
+    return freezeRecursively({
+      sourceFilePath: this.fileName,
+      mutatorName: this.mutatorName,
+      status,
+      replacement: this.replacement,
+      originalLines: this.originalLines,
+      mutatedLines: this.mutatedLines,
+      testsRan,
+      location: this.location,
+      range: this.range
+    });
   }
 
 }

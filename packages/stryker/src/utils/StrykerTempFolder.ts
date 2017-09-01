@@ -2,7 +2,7 @@ import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import * as log4js from 'log4js';
-import { deleteDir} from './fileUtils';
+import { deleteDir } from './fileUtils';
 
 const log = log4js.getLogger('StrykerTempFolder');
 
@@ -32,32 +32,30 @@ function random(): number {
 
 /**
  * Writes data to a specified file.
- * @param filename The path to the file.
+ * @param fileName The path to the file.
  * @param data The content of the file.
  * @returns A promise to eventually save the file.
  */
-function writeFile(filename: string, data: string): Promise<void> {
-  return fs.writeFile(filename, data, { encoding: 'utf8' });
+function writeFile(fileName: string, data: string | Buffer, instrumenter: NodeJS.ReadWriteStream | null = null): Promise<void> {
+  if (Buffer.isBuffer(data)) {
+    return fs.writeFile(fileName, data);
+  } else if (instrumenter) {
+    instrumenter.pipe(fs.createWriteStream(fileName, 'utf8'));
+    return writeToStream(data, instrumenter);
+  } else {
+    return fs.writeFile(fileName, data, 'utf8');
+  }
 }
 
-/**
- * Copies a file.
- * @param fromFilename The path to the existing file.
- * @param toFilename The path to copy the file to.
- * @param instrumenter An optional additional instrumenter to stream the file through
- * @returns A promise to eventually copy the file.
- */
-function copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    let readStream: NodeJS.ReadableStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
-    let writeStream = fs.createWriteStream(toFilename);
-    readStream.on('error', reject);
-    writeStream.on('error', reject);
-    if (instrumenter) {
-      readStream = readStream.pipe(instrumenter);
-    }
-    readStream.pipe(writeStream);
-    readStream.on('end', () => resolve());
+function writeToStream(data: string | Buffer, stream: NodeJS.WritableStream): Promise<void> {
+  return new Promise((res, rej) => {
+    stream.end(data as string, (err: any) => {
+      if (err) {
+        rej(err);
+      } else {
+        res();
+      }
+    });
   });
 }
 
@@ -73,6 +71,5 @@ function clean() {
 export default {
   createRandomFolder,
   writeFile,
-  copyFile,
   clean
 };

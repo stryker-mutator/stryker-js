@@ -36,7 +36,8 @@ describe('ProgressAppendOnlyReporter', () => {
         `[0 ${chalk.red.bold('survived')}] ` +
         `[0 ${chalk.red.bold('no coverage')}] ` +
         `[0 ${chalk.yellow.bold('timeout')}] ` +
-        `[0 ${chalk.yellow.bold('error')}]${os.EOL}`);
+        `[0 ${chalk.yellow.bold('runtime error')}] ` +
+        `[0 ${chalk.yellow.bold('transpile error')}]${os.EOL}`);
     });
 
     it('should should log 50% with 10s ETC after 10s with 1 completed test', () => {
@@ -48,7 +49,8 @@ describe('ProgressAppendOnlyReporter', () => {
         `[0 ${chalk.red.bold('survived')}] ` +
         `[0 ${chalk.red.bold('no coverage')}] ` +
         `[0 ${chalk.yellow.bold('timeout')}] ` +
-        `[0 ${chalk.yellow.bold('error')}]${os.EOL}`);
+        `[0 ${chalk.yellow.bold('runtime error')}] ` +
+        `[0 ${chalk.yellow.bold('transpile error')}]${os.EOL}`);
     });
   });
 });

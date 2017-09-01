@@ -15,7 +15,7 @@ export default class DotsReporter implements Reporter {
       case MutantStatus.Survived:
         toLog = chalk.bold.red('S');
         break;
-      case MutantStatus.Error:
+      case MutantStatus.RuntimeError:
         toLog = chalk.yellow('E');
         break;
       default:

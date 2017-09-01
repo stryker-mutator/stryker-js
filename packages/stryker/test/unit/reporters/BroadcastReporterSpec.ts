@@ -1,6 +1,6 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import logger from '../../helpers/log4jsMock';
+import log from '../../helpers/log4jsMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
 
@@ -50,7 +50,7 @@ describe('BroadcastReporter', () => {
       it('should not result in a rejection', () => result);
 
       it('should log the error', () => {
-        expect(logger.error).to.have.been.calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'. Error is: some error`);
+        expect(log.error).to.have.been.calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'. Error is: some error`);
       });
     });
   });
@@ -68,7 +68,7 @@ describe('BroadcastReporter', () => {
     it('should log each error', () => {
       ALL_REPORTER_EVENTS.forEach(eventName => {
         sut[eventName]();
-        expect(logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'. Error is: some error`);
+        expect(log.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'. Error is: some error`);
       });
     });
 

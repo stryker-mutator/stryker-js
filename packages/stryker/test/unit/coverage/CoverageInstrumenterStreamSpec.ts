@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { Readable, Duplex } from 'stream';
 import { FileDescriptor } from 'stryker-api/core';
 import CoverageInstrumenterStream from '../../../src/coverage/CoverageInstrumenterStream';
-import logger from '../../helpers/log4jsMock';
+import log from '../../helpers/log4jsMock';
 import { streamToString, readable } from '../../helpers/streamHelpers';
 
 describe('CoverageInstrumenterStream', () => {
@@ -53,7 +53,7 @@ describe('CoverageInstrumenterStream', () => {
 
       it('should just pass through the input', () => expect(output).to.eventually.eq(expected));
 
-      it('should log the error', () => expect(logger.error).to.have.been.calledWith('Error while instrumenting file "thefile.js", error was: Error: Line 1: Unexpected token {'));
+      it('should log the error', () => expect(log.error).to.have.been.calledWith('Error while instrumenting file "thefile.js", error was: Error: Line 1: Unexpected token {'));
     });
   });
 });

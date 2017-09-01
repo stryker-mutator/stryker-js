@@ -51,9 +51,8 @@
       "env": {
         "NODE_ENV": "development"
       },
-      "console": "internalConsole",
-      "sourceMaps": true,
-      "outDir": "${workspaceRoot}"
+      "console": "integratedTerminal",
+      "sourceMaps": true
     },
     {
       "name": "Run own dog food",

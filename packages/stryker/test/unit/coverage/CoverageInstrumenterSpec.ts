@@ -68,7 +68,9 @@ describe('CoverageInstrumenter', () => {
     });
 
     describe('when hooksForTestRun()', () => {
-      it('should return the empty string', () => expect(sut.hooksForTestRun()).to.have.length(0));
+      it('should return null', () => {
+        expect(sut.hooksForTestRun()).be.null;
+      });
     });
 
     describe('when instrumenterStreamForFile()', () => {
@@ -97,7 +99,9 @@ describe('CoverageInstrumenter', () => {
     });
 
     describe('when hooksForTestRun()', () => {
-      it('should return the empty string', () => expect(sut.hooksForTestRun()).to.have.length(0));
+      it('should return null', () => {
+        expect(sut.hooksForTestRun()).null;
+      });
     });
 
     describe('when instrumenterStreamForFile()', () => {

@@ -6,7 +6,10 @@ import * as sinon from 'sinon';
 import { TestFramework } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
 import { MutationScoreThresholds, File, Location, TextFile, BinaryFile, FileKind, WebFile, FileDescriptor } from 'stryker-api/core';
-import StrictReporter from '../../src/reporters/StrictReporter';
+import TestableMutant from '../../src/TestableMutant';
+import SourceFile from '../../src/SourceFile';
+import TranspiledMutant from '../../src/TranspiledMutant';
+import { Logger } from 'log4js';
 
 export type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;
@@ -16,8 +19,20 @@ export function mock<T>(constructorFn: { new(...args: any[]): T; }): Mock<T> {
   return sinon.createStubInstance(constructorFn) as Mock<T>;
 }
 
+/**
+ * Use this factory to create flat test data
+ * @param defaults 
+ */
 function factory<T>(defaults: T) {
   return (overrides?: Partial<T>) => Object.assign({}, defaults, overrides);
+}
+
+/**
+ * Use this factory method to create deep test data
+ * @param defaults 
+ */
+function factoryMethod<T>(defaultsFactory: () => T) {
+  return (overrides?: Partial<T>) => Object.assign({}, defaultsFactory(), overrides);
 }
 
 export const location = factory<Location>({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } });
@@ -47,6 +62,25 @@ export const mutant = factory<Mutant>({
   range: [0, 0],
   replacement: 'replacement'
 });
+
+export const logger = (): Mock<Logger> => {
+  return {
+    setLevel: sinon.stub(),
+    isLevelEnabled: sinon.stub(),
+    isTraceEnabled: sinon.stub(),
+    isDebugEnabled: sinon.stub(),
+    isInfoEnabled: sinon.stub(),
+    isWarnEnabled: sinon.stub(),
+    isErrorEnabled: sinon.stub(),
+    isFatalEnabled: sinon.stub(),
+    trace: sinon.stub(),
+    debug: sinon.stub(),
+    info: sinon.stub(),
+    warn: sinon.stub(),
+    error: sinon.stub(),
+    fatal: sinon.stub()
+  };
+};
 
 export const textFile = factory<TextFile>({
   name: 'file.js',
@@ -79,8 +113,11 @@ export const scoreResult = factory<ScoreResult>({
   totalCovered: 0,
   totalMutants: 0,
   totalDetected: 0,
+  totalInvalid: 0,
+  totalValid: 0,
   totalUndetected: 0,
-  errors: 0,
+  runtimeErrors: 0,
+  transpileErrors: 0,
   noCoverage: 0,
   mutationScore: 0,
   mutationScoreBasedOnCoveredCode: 0
@@ -92,10 +129,10 @@ export const testResult = factory<TestResult>({
   timeSpentMs: 10
 });
 
-export const runResult = factory<RunResult>({
+export const runResult = factoryMethod<RunResult>(() => ({
   tests: [testResult()],
   status: RunStatus.Complete
-});
+}));
 
 export const file = factory<File>({
   name: 'file.js',
@@ -132,15 +169,6 @@ export const config = factory<Config>(new Config());
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
 
-export const reporterStub = factory<StrictReporter>({
-  onAllMutantsMatchedWithTests: sinon.stub(),
-  onSourceFileRead: sinon.stub(),
-  onAllMutantsTested: sinon.stub(),
-  onAllSourceFilesRead: sinon.stub(),
-  onMutantTested: sinon.stub(),
-  onScoreCalculated: sinon.stub(),
-  wrapUp: sinon.stub()
-});
 
 export function matchedMutant(numberOfTests: number): MatchedMutant {
   let scopedTestIds: number[] = [];
@@ -160,3 +188,16 @@ export const transpileResult = factory<TranspileResult>({
   error: null,
   outputFiles: [file(), file()]
 });
+
+export const sourceFile = () => new SourceFile(textFile());
+
+export const testableMutant = (fileName = 'file') => new TestableMutant(mutant({
+  range: [12, 13],
+  replacement: '-',
+  fileName
+}), new SourceFile(
+  textFile({ name: fileName, content: 'const a = 4 + 5' })
+));
+
+export const transpiledMutant = (fileName = 'file') =>
+  new TranspiledMutant(testableMutant(fileName), transpileResult());

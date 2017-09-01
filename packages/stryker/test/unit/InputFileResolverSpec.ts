@@ -8,8 +8,8 @@ import { FileDescriptor, TextFile, FileKind } from 'stryker-api/core';
 import { expect } from 'chai';
 import { resolve } from 'path';
 import log from '../helpers/log4jsMock';
-import { reporterStub } from '../helpers/producers';
-import StrictReporter from '../../src/reporters/StrictReporter';
+import BroadcastReporter from '../../src/reporters/BroadcastReporter';
+import { Mock, mock } from '../helpers/producers';
 
 const files = (...namesWithContent: [string, string][]): TextFile[] =>
   namesWithContent.map((nameAndContent): TextFile => ({
@@ -24,10 +24,10 @@ describe('InputFileResolver', () => {
 
   let globStub: sinon.SinonStub;
   let sut: InputFileResolver;
-  let reporter: StrictReporter;
+  let reporter: Mock<BroadcastReporter>;
 
   beforeEach(() => {
-    reporter = reporterStub();
+    reporter = mock(BroadcastReporter);
     globStub = sandbox.stub(fileUtils, 'glob');
     sandbox.stub(fs, 'readFile').resolves('') // fall back
       .withArgs(sinon.match('file1')).resolves('file 1 content')

@@ -1,4 +1,5 @@
 import { Mutant } from 'stryker-api/mutant';
+import * as path from 'path';
 import * as ts from 'typescript';
 
 export default abstract class Mutator<T extends ts.Node = ts.Node> {
@@ -17,7 +18,7 @@ export default abstract class Mutator<T extends ts.Node = ts.Node> {
     return {
       mutatorName: this.name,
       replacement,
-      fileName: this.currentSourceFile.fileName,
+      fileName: this.currentSourceFile.fileName.replace(/\//g, path.sep),
       range: [original.getStart(this.currentSourceFile), original.getEnd()]
     };
   }
