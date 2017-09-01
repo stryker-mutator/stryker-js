@@ -9,6 +9,8 @@ const log = log4js.getLogger('TempFolder');
 export class TempFolder {
   baseTempFolder: string;
   tempFolder: string;
+  
+  private constructor() { }
 
   initialize(tempDirName = '.stryker-tmp') {
     this.baseTempFolder = path.join(process.cwd(), tempDirName);
