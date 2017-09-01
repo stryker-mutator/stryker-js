@@ -64,7 +64,7 @@ describe.only('TempFolder', () => {
 
       expect(fileUtils.deleteDir).to.have.been.calledWith(tempFolderInstance.baseTempFolder);
       
-      result.then(data => expect(data).equals('delResolveStub'))
+      result.then(data => expect(data).equals('delResolveStub'));
     });
   });
 
