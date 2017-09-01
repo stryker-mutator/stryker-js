@@ -14,7 +14,6 @@ describe.only('TempFolder', () => {
     sandbox = sinon.sandbox.create();
     TempFolder.instance().initialize();
 
-
     sandbox.stub(mkdirp, 'sync');
     sandbox.stub(fs, 'writeFile');
     cwdStub = sandbox.stub(process, 'cwd');
