@@ -7,15 +7,22 @@ import * as fs from 'mz/fs';
 
 describe.only('TempFolder', () => {
   let sandbox: sinon.SinonSandbox;
+  let cwdStub: sinon.SinonStub;
+  let randomStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
+    TempFolder.instance().initialize();
+
+
+    sandbox.stub(mkdirp, 'sync');
+    sandbox.stub(fs, 'writeFile');
+    cwdStub = sandbox.stub(process, 'cwd');
+    randomStub = sandbox.stub(TempFolder.instance(), 'random');
   });
   afterEach(() => sandbox.restore());
 
   it('TempFolder is presented', () => {
-    expect(TempFolder).not.to.be.undefined;
-
     const tempFolderInstance = TempFolder.instance();
 
     expect(tempFolderInstance.createRandomFolder).to.exist;
@@ -28,14 +35,13 @@ describe.only('TempFolder', () => {
   describe('createRandomFolder', () => {
     it('should create dir with correct path', () => {
       const mockCwd = process.cwd() + '/some/dir';
-      sandbox.stub(mkdirp, 'sync');
-      sandbox.stub(process, 'cwd').returns(mockCwd);
-      sandbox.stub(TempFolder.instance(), 'random').returns('rand');
+      
+      cwdStub.returns(mockCwd);
+      randomStub.returns('rand');
 
       const result = TempFolder.instance().createRandomFolder('prefix');
 
-      // expect(mkdirp.sync).to.have.been.calledThrice;
-      expect(mkdirp.sync).to.have.been.calledOnce; // only once since I added test which also calls instance 
+      expect(mkdirp.sync).to.have.been.calledOnce;
       expect(result.includes('prefix')).to.be.true;
       expect(result.includes('rand')).to.be.true;
     });
@@ -54,30 +60,10 @@ describe.only('TempFolder', () => {
   });
 
   describe('writeFile', () => {
-    beforeEach(() => {
-      sandbox.stub(fs, 'writeFile');
-    });
     it('should call fs.writeFile', () => {
       TempFolder.instance().writeFile('filename', 'data');
       expect(fs.writeFile).to.have.been.calledWith('filename', 'data', {
         encoding: 'utf8'
-      });
-    });
-  });
-
-  xdescribe('constructor logic', () => {
-    beforeEach(() => sandbox.stub(mkdirp, 'sync'));
-    it('should create directories on first access to instance', () => {
-      TempFolder.instance();
-      expect(mkdirp.sync).to.have.been.calledTwice;
-    });
-    describe('on second access to instance', () => {
-      beforeEach(() => {
-        TempFolder.instance();
-      });
-      it('should not create directories', () => {
-        TempFolder.instance();
-        expect(mkdirp.sync).to.have.been.calledTwice;
       });
     });
   });
