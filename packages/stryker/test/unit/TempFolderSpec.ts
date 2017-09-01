@@ -7,7 +7,7 @@ import * as fs from 'mz/fs';
 import * as fileUtils from '../../src/utils/fileUtils';
 import * as path from 'path';
 
-describe.only('TempFolder', () => {
+describe('TempFolder', () => {
   let sandbox: sinon.SinonSandbox;
   let cwdStub: sinon.SinonStub;
   let randomStub: sinon.SinonStub;
