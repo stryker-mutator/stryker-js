@@ -65,9 +65,9 @@ export class TempFolder {
    * Deletes the Stryker-temp folder
    */
   clean() {
-    log.debug(`Cleaning stryker temp folder ${this.baseTempFolder}`);
+    log.debug(`Deleting stryker temp folder ${this.baseTempFolder}`);
     return deleteDir(this.baseTempFolder)
-      .catch(() => log.info(`Failed to clean stryker temp folder ${this.baseTempFolder}`));
+      .catch(() => log.info(`Failed to delete stryker temp folder ${this.baseTempFolder}`));
   }
 
   /**
