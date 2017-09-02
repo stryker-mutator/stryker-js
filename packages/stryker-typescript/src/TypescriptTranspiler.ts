@@ -3,18 +3,16 @@ import { Transpiler, TranspileResult, TranspilerOptions, FileLocation } from 'st
 import { File } from 'stryker-api/core';
 import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
-import { Logger, getLogger, setGlobalLogLevel } from 'log4js';
+import { setGlobalLogLevel } from 'log4js';
 
 export default class TypescriptTranspiler implements Transpiler {
   private languageService: TranspilingLanguageService;
   private readonly next: Transpiler;
   private readonly config: Config;
   private readonly keepSourceMaps: boolean;
-  private readonly log: Logger;
 
   constructor(options: TranspilerOptions) {
     setGlobalLogLevel(options.config.logLevel);
-    this.log = getLogger(TypescriptTranspiler.name);
     this.config = options.config;
     this.keepSourceMaps = options.keepSourceMaps;
   }
@@ -40,7 +38,7 @@ export default class TypescriptTranspiler implements Transpiler {
   }
 
   private transpileAndResult(typescriptFiles: File[], otherFiles: File[]) {
-    const error = this.languageService.getAllSemanticDiagnostics();
+    const error = this.languageService.getSemanticDiagnostics(typescriptFiles.map(file => file.name));
     if (error.length) {
       return this.createErrorResult(error);
     } else {

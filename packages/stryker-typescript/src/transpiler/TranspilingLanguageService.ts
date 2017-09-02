@@ -58,13 +58,8 @@ export default class TranspilingLanguageService {
       this.files[replacement.name].replace(replacement.content));
   }
 
-  getAllSemanticDiagnostics() {
-    const errors = flatMap(this.rootFiles, file => this.languageService.getSemanticDiagnostics(file.name));
-    return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
-  }
-
-  getSemanticDiagnostics(fileName: string) {
-    const errors = this.languageService.getSemanticDiagnostics(fileName);
+  getSemanticDiagnostics(fileNames: string[]) {
+    const errors = flatMap(fileNames, fileName => this.languageService.getSemanticDiagnostics(fileName));
     return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
   }
 
