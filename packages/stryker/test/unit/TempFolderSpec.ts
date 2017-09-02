@@ -5,14 +5,12 @@ import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
 import * as fs from 'mz/fs';
 import * as fileUtils from '../../src/utils/fileUtils';
-import * as path from 'path';
 
 describe('TempFolder', () => {
   let sandbox: sinon.SinonSandbox;
   let cwdStub: sinon.SinonStub;
   let randomStub: sinon.SinonStub;
   let deleteDirStub: sinon.SinonStub;
-  const defaultTempDirName = '.stryker-tmp';
   const mockCwd = '/x/y/z/some/dir';
 
   beforeEach(() => {
@@ -25,15 +23,11 @@ describe('TempFolder', () => {
     cwdStub.returns(mockCwd);
     randomStub = sandbox.stub(TempFolder.instance(), 'random');
     randomStub.returns('rand');
-   
-    TempFolder.instance().initialize();
+
+    TempFolder.instance().baseTempFolder = '';
+    TempFolder.instance().tempFolder = '';
   });
   afterEach(() => sandbox.restore());
-
-  it('should have correct internal state after initialize call', () => {
-    expect(TempFolder.instance().baseTempFolder).to.equal(`${path.join(mockCwd, defaultTempDirName)}`);
-    expect(TempFolder.instance().tempFolder).to.equal(`${path.join(mockCwd, defaultTempDirName, 'rand')}`);
-  });
 
   it('TempFolder is presented', () => {
     const tempFolderInstance = TempFolder.instance();
@@ -46,31 +40,48 @@ describe('TempFolder', () => {
   });
 
   describe('createRandomFolder', () => {
-    it('should create dir with correct path', () => {
-      const result = TempFolder.instance().createRandomFolder('prefix');
+    describe('when temp folder is initialized', () => {
+      beforeEach(() => TempFolder.instance().initialize());
+      it('should create dir with correct path', () => {
+        const result = TempFolder.instance().createRandomFolder('prefix');
 
-      expect(mkdirp.sync).to.have.been.calledThrice;
-      expect(result.includes('prefix')).to.be.true;
-      expect(result.includes('rand')).to.be.true;
+        expect(mkdirp.sync).to.have.been.calledThrice;
+        expect(result.includes('prefix')).to.be.true;
+        expect(result.includes('rand')).to.be.true;
+      });
+    });
+    describe('when temp folder is not initialized', () => {
+      it('should throw error', () => {
+        expect(() => {
+          TempFolder.instance().createRandomFolder('prefix');
+        }).to.throw();
+      });
     });
   });
 
   describe('clean', () => {
-    it('should call deleteDir fileApi', () => {
-      deleteDirStub.resolves('delResolveStub');
+    describe('when temp folder is initialized', () => {
+      beforeEach(() => TempFolder.instance().initialize());
+      it('should call deleteDir fileApi', () => {
+        deleteDirStub.resolves('delResolveStub');
 
-      const tempFolderInstance = TempFolder.instance();
-      const result = tempFolderInstance.clean();
+        const tempFolderInstance = TempFolder.instance();
+        const result = tempFolderInstance.clean();
 
-      expect(fileUtils.deleteDir).to.have.been.calledWith(tempFolderInstance.baseTempFolder);
-      
-      result.then(data => expect(data).equals('delResolveStub'));
+        expect(fileUtils.deleteDir).to.have.been.calledWith(
+          tempFolderInstance.baseTempFolder
+        );
+
+        result.then(data => expect(data).equals('delResolveStub'));
+      });
     });
-  });
 
-  describe('copyFile', () => {
-    it('should call fs api', () => {
-      // TODO
+    describe('when temp folder is not initialized', () => {
+      it('should throw error', () => {
+        expect(() => {
+          TempFolder.instance().createRandomFolder('prefix');
+        }).to.throw();
+      });
     });
   });
 

@@ -25,6 +25,9 @@ export class TempFolder {
    * @returns The path to the folder.
    */
   createRandomFolder(prefix: string): string {
+    if (!this.baseTempFolder) {
+      throw new Error('initialize() was not called!');
+    }
     let dir = this.baseTempFolder + path.sep + prefix + this.random();
     mkdirp.sync(dir);
     return dir;
@@ -65,6 +68,9 @@ export class TempFolder {
    * Deletes the Stryker-temp folder
    */
   clean() {
+    if (!this.baseTempFolder) {
+      throw new Error('initialize() was not called!');
+    }
     log.debug(`Deleting stryker temp folder ${this.baseTempFolder}`);
     return deleteDir(this.baseTempFolder)
       .catch(() => log.info(`Failed to delete stryker temp folder ${this.baseTempFolder}`));
