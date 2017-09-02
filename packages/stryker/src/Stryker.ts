@@ -70,6 +70,7 @@ export default class Stryker {
     this.timer.reset();
 
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files).resolve();
+    TempFolder.instance().initialize();
     const { runResult, sandboxCoordinator } = await this.initialTestRun(inputFiles);
 
      if (runResult.tests.length === 0) {
@@ -81,7 +82,6 @@ export default class Stryker {
       this.reporter.onScoreCalculated(score);
       ScoreResultCalculator.determineExitCode(score, this.config.thresholds);
       await this.wrapUpReporter();
-      TempFolder.instance().initialize();
       await TempFolder.instance().clean();
       await this.logDone();
       return mutantResults;
