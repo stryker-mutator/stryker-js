@@ -6,7 +6,6 @@ import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
 import log from '../../helpers/log4jsMock';
-import { format } from 'prettier';
 
 describe('StrykerInitializer', () => {
   let sut: StrykerInitializer;
