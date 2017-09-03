@@ -5,8 +5,9 @@ import Mutant from '../../src/Mutant';
 import { Location } from 'stryker-api/core';
 import * as parserUtils from '../../src/utils/parserUtils';
 import * as sinon from 'sinon';
-import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
+import { TempFolder } from '../../src/utils/TempFolder';
 import * as estree from 'estree';
+import { Mock, mock } from '../helpers/producers';
 
 describe('Mutant', () => {
   let sut: Mutant;
@@ -19,11 +20,13 @@ describe('Mutant', () => {
   let ast: estree.Program;
   let node: estree.Node;
   let sandbox: sinon.SinonSandbox;
+  let tempFolderMock: Mock<TempFolder>;
 
   beforeEach(() => {
 
     sandbox = sinon.sandbox.create();
-    sandbox.stub(StrykerTempFolder, 'writeFile');
+    tempFolderMock = mock(TempFolder);
+    sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
 
     const baseCode = 'var i = 1 + 2;\n';
     originalLine = 'var j = i * 2;';
@@ -103,7 +106,7 @@ describe('Mutant', () => {
       const code = expectedMutatedLines + restOfCode;
       // Some empty lines are needed. These are not allowed to contain spaces
       sut.save('a file');
-      expect(StrykerTempFolder.writeFile).to.have.been.calledWith('a file', code);
+      expect(tempFolderMock.writeFile).to.have.been.calledWith('a file', code);
     });
 
     it('should set the correct originalLines', () => {
