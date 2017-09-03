@@ -52,6 +52,7 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
+    "@types/prettier": "^1.6.0",
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
     "es6-promise-pool": "^2.4.4",
@@ -64,6 +65,7 @@
     "log4js": "^1.1.0",
     "mkdirp": "^0.5.1",
     "mz": "^2.6.0",
+    "prettier": "^1.6.1",
     "progress": "^1.1.8",
     "rimraf": "^2.6.1",
     "serialize-javascript": "^1.3.0",
