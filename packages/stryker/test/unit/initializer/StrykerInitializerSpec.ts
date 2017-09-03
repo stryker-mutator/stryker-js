@@ -6,6 +6,7 @@ import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
 import log from '../../helpers/log4jsMock';
+import { format } from 'prettier';
 
 describe('StrykerInitializer', () => {
   let sut: StrykerInitializer;
@@ -92,21 +93,13 @@ describe('StrykerInitializer', () => {
         { stdio: [0, 1, 2] });
     });
 
-    it.only('should configure testFramework, testRunner and reporters', async () => {
+    it('should configure testFramework, testRunner and reporters', async () => {
       inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', reporters: ['dimension', 'mars', 'progress'] });
       await sut.initialize();
-      let expectedReporters = JSON.stringify({
-        reporter: [
-          'dimension',
-          'mars',
-          'progress'
-        ]
-      }, null, 2);
-      expectedReporters = expectedReporters.substr(1, expectedReporters.lastIndexOf(']') - 1);
       expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('testRunner: "awesome"')
         .and(sinon.match('testFramework: "awesome"'))
         .and(sinon.match('coverageAnalysis: "perTest"'))
-        .and(sinon.match(expectedReporters)));
+        .and(sinon.match(`"dimension", "mars", "progress"`)));
     });
 
     it('should configure the additional settings from the plugins', async () => {
