@@ -122,7 +122,7 @@ describe('StrykerInitializer', () => {
         inquirerPrompt.resolves({ testRunner: 'ghost', reporters: ['dimension', 'mars'] });
         await sut.initialize();
         expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with ghost, downgrading coverageAnalysis to "all"');
-        expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
+        expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('coverageAnalysis: "all"'));
       });
     });
 
