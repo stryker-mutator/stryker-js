@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.8.1"></a>
+## [0.8.1](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.8.0...grunt-stryker@0.8.1) (2017-09-03)
+
+
+### Bug Fixes
+
+* **stryker task:** Guard against clearing the require cache ([#362](https://github.com/stryker-mutator/stryker/issues/362)) ([#369](https://github.com/stryker-mutator/stryker/issues/369)) ([0c70b45](https://github.com/stryker-mutator/stryker/commit/0c70b45))
+
+
+
+
 <a name="0.8.0"></a>
 ## [0.8.0](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.7.0...grunt-stryker@0.8.0) (2017-08-25)
 

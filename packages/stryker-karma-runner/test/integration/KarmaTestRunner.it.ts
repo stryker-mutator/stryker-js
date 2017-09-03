@@ -75,7 +75,7 @@ describe('KarmaTestRunner', function () {
     });
   });
 
-  describe('when an error occures while running tests', () => {
+  describe('when an error occurs while running tests', () => {
 
     before(() => {
       const testRunnerOptions = {
@@ -100,7 +100,7 @@ describe('KarmaTestRunner', function () {
     });
   });
 
-  describe('when no error occured and no test is performed', () => {
+  describe('when no error occurred and no test is performed', () => {
     before(() => {
       const testRunnerOptions = {
         files: [{ path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true }, { path: 'testResources/sampleProject/test/EmptySpec.js', mutated: true, included: true }],
@@ -164,7 +164,7 @@ describe('KarmaTestRunner', function () {
     it('should report coverage data', () => expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
       expect(runResult.coverage).to.be.ok;
       expect(runResult.status).to.be.eq(RunStatus.Complete);
-      const files = Object.keys(runResult.coverage);
+      const files = Object.keys(runResult.coverage || {});
       expect(files).to.have.length(1);
       const coverageResult = (runResult.coverage as CoverageCollection)[files[0]];
       expect(coverageResult.s).to.be.ok;

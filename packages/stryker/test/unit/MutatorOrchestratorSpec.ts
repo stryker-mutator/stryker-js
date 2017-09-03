@@ -5,20 +5,23 @@ import MutatorOrchestrator from '../../src/MutatorOrchestrator';
 import { Mutator, MutatorFactory, IdentifiedNode, Identified } from 'stryker-api/mutant';
 import * as sinon from 'sinon';
 import { Syntax } from 'esprima';
-import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
+import { TempFolder } from '../../src/utils/TempFolder';
 import * as estree from 'estree';
 import StrictReporter from '../../src/reporters/StrictReporter';
 import { reporterStub } from '../helpers/producers';
+import { Mock, mock } from '../helpers/producers';
 
 describe('MutatorOrchestrator', () => {
   let sut: MutatorOrchestrator;
   let fileUtilsStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
   let reporter: StrictReporter;
+  let tempFolderMock: Mock<TempFolder>;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    sandbox.stub(StrykerTempFolder, 'writeFile');
+    tempFolderMock = mock<TempFolder>(TempFolder);
+    sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
     reporter = reporterStub();
     sut = new MutatorOrchestrator(reporter);
   });
@@ -57,7 +60,7 @@ describe('MutatorOrchestrator', () => {
 
     it('should be able to mutate code', () => {
       mutants[0].save('some file');
-      expect(StrykerTempFolder.writeFile).to.have.been.calledWith('some file', mutatedCode);
+      expect(tempFolderMock.writeFile).to.have.been.calledWith('some file', mutatedCode);
     });
 
     it('should set the mutated line number', () => {
@@ -116,7 +119,7 @@ describe('MutatorOrchestrator', () => {
 
       let mutants = sut.generateMutants(['src.js']);
       mutants[0].save('some file');
-      expect(StrykerTempFolder.writeFile).to.have.been.calledWith('some file', 'if (true);');
+      expect(tempFolderMock.writeFile).to.have.been.calledWith('some file', 'if (true);');
     });
 
     it('a different nodeID', () => {
@@ -126,7 +129,7 @@ describe('MutatorOrchestrator', () => {
 
       let mutants = sut.generateMutants(['src.js']);
       mutants[0].save('some file');
-      expect(StrykerTempFolder.writeFile).to.have.been.calledWith('some file', '1 * 2');
+      expect(tempFolderMock.writeFile).to.have.been.calledWith('some file', '1 * 2');
     });
   });
 
