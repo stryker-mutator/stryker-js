@@ -19,11 +19,22 @@ export function mock<T>(constructorFn: { new(...args: any[]): T; }): Mock<T> {
   return sinon.createStubInstance(constructorFn) as Mock<T>;
 }
 
+function isPrimitive(value: any) {
+  return value !== 'object' && !Array.isArray(value);
+}
+
 /**
  * Use this factory to create flat test data
  * @param defaults 
  */
 function factory<T>(defaults: T) {
+  for (let key in defaults) {
+    const value = defaults[key];
+    if (!isPrimitive(value)) {
+      throw Error(`Cannot create factory, as value for '${key}' is not a primitive type (use \`factoryMethod\` instead)`);
+    }
+  }
+
   return (overrides?: Partial<T>) => Object.assign({}, defaults, overrides);
 }
 
@@ -35,9 +46,9 @@ function factoryMethod<T>(defaultsFactory: () => T) {
   return (overrides?: Partial<T>) => Object.assign({}, defaultsFactory(), overrides);
 }
 
-export const location = factory<Location>({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } });
+export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
 
-export const mutantResult = factory<MutantResult>({
+export const mutantResult = factoryMethod<MutantResult>(() => ({
   location: location(),
   mutatedLines: '',
   mutatorName: '',
@@ -47,7 +58,7 @@ export const mutantResult = factory<MutantResult>({
   testsRan: [''],
   status: MutantStatus.Killed,
   range: [0, 0]
-});
+}));
 
 export const fileDescriptor = factory<FileDescriptor>({
   name: 'fileName',
@@ -56,12 +67,12 @@ export const fileDescriptor = factory<FileDescriptor>({
   kind: FileKind.Text
 });
 
-export const mutant = factory<Mutant>({
+export const mutant = factoryMethod<Mutant>(() => ({
   mutatorName: 'foobarMutator',
   fileName: 'file',
   range: [0, 0],
   replacement: 'replacement'
-});
+}));
 
 export const logger = (): Mock<Logger> => {
   return {
@@ -102,7 +113,7 @@ export const testFramework = factory<TestFramework>({
   filter(ids: number[]) { return `filter: ${ids}`; }
 });
 
-export const scoreResult = factory<ScoreResult>({
+export const scoreResult = factoryMethod<ScoreResult>(() => ({
   name: 'name',
   path: 'path',
   childResults: [],
@@ -121,7 +132,7 @@ export const scoreResult = factory<ScoreResult>({
   noCoverage: 0,
   mutationScore: 0,
   mutationScoreBasedOnCoveredCode: 0
-});
+}));
 
 export const testResult = factory<TestResult>({
   name: 'name',
@@ -164,7 +175,7 @@ export const mutationScoreThresholds = factory<MutationScoreThresholds>({
   break: null
 });
 
-export const config = factory<Config>(new Config());
+export const config = factoryMethod<Config>(() => new Config());
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
@@ -184,10 +195,10 @@ export function matchedMutant(numberOfTests: number): MatchedMutant {
   };
 }
 
-export const transpileResult = factory<TranspileResult>({
+export const transpileResult = factoryMethod<TranspileResult>(() => ({
   error: null,
   outputFiles: [file(), file()]
-});
+}));
 
 export const sourceFile = () => new SourceFile(textFile());
 

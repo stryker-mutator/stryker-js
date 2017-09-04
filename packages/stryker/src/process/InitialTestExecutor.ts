@@ -90,8 +90,8 @@ export default class InitialTestExecutor {
   }
 
   private logTranspileResult(transpileResult: TranspileResult) {
-    if (this.options.transpilers.length) {
-      this.log.debug(`Transpiled files: ${transpileResult.outputFiles.map(f => f.name).join(',')}`);
+    if (this.options.transpilers.length && this.log.isDebugEnabled()) {
+      this.log.debug(`Transpiled files in order:${EOL}${transpileResult.outputFiles.map(f => `${f.name} (included: ${f.included})`).join(EOL)}`);
     }
   }
 

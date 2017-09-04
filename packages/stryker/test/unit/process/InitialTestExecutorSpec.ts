@@ -33,7 +33,12 @@ describe('InitialTestExecutor run', () => {
     sandbox.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
     testFrameworkMock = producers.testFramework();
     coverageInstrumenter = new CoverageInstrumenter('off', testFrameworkMock);
-    transpileResultMock = producers.transpileResult();
+    transpileResultMock = producers.transpileResult({
+      outputFiles: [
+        producers.textFile({ name: 'transpiled-file-1.js' }),
+        producers.textFile({ name: 'transpiled-file-2.js' })
+      ]
+    });
     transpilerFacadeMock.transpile.returns(transpileResultMock);
     options = producers.config();
     expectedRunResult = producers.runResult();
@@ -79,6 +84,30 @@ describe('InitialTestExecutor run', () => {
       };
       const actualRunResult = await sut.run();
       expect(actualRunResult).deep.eq(expectedResult);
+    });
+
+    it('should log the transpiled results if transpilers are specified and log.debug is enabled', async () => {
+      options.transpilers.push('a transpiler');
+      log.isDebugEnabled.returns(true);
+      await sut.run();
+      expect(log.debug).calledOnce;
+      const actualLogMessage: string = log.debug.getCall(0).args[0];
+      expect(actualLogMessage).contains('Transpiled files in order');
+      expect(actualLogMessage).contains('transpiled-file-1.js (included: true)');
+      expect(actualLogMessage).contains('transpiled-file-2.js (included: true)');
+    });
+
+    it('should not log the transpiled results if transpilers are not specified', async () => {
+      log.isDebugEnabled.returns(true);
+      await sut.run();
+      expect(log.debug).not.called;
+    });
+
+    it('should not log the transpiled results if log.debug is disabled', async () => {
+      options.transpilers.push('a transpiler');
+      log.isDebugEnabled.returns(false);
+      await sut.run();
+      expect(log.debug).not.called;
     });
 
     it('should have logged the amount of tests ran', async () => {
