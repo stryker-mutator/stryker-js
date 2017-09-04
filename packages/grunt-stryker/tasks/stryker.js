@@ -28,7 +28,12 @@ module.exports = function (grunt) {
     var done = this.async();
     var stryker = new Stryker(options);
     stryker.runMutationTest().then(function () {
-      done();
+      var success = true;
+
+      if(process.exitCode > 0) {
+        success = false;
+      }
+      done(success);
     }, function (error) {
         grunt.fail.fatal("Stryker was unable to run the mutation test. " + error);
     });
