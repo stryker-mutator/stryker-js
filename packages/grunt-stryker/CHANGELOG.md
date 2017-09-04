@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.8.2"></a>
+## [0.8.2](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.8.1...grunt-stryker@0.8.2) (2017-09-04)
+
+
+### Bug Fixes
+
+* **stryker task:** Fail grunt task if exit code from runMutationTest greater than zero ([#367](https://github.com/stryker-mutator/stryker/issues/367))  ([#374](https://github.com/stryker-mutator/stryker/issues/374)) ([202076c](https://github.com/stryker-mutator/stryker/commit/202076c))
+
+
+
+
 <a name="0.8.1"></a>
 ## [0.8.1](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.8.0...grunt-stryker@0.8.1) (2017-09-03)
 
