@@ -13,6 +13,7 @@ export default class ConfigValidator {
   validate() {
     this.validateTestFramework();
     this.validateThresholds();
+    this.downgradeCoverageAnalysisIfNeeded();
     this.crashIfNeeded();
   }
 
@@ -43,6 +44,13 @@ export default class ConfigValidator {
   private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: number | undefined) {
     if (typeof value !== 'number') {
       this.invalidate(`thresholds.${name} is invalid, expected a number between 0 and 100 (was ${value}).`);
+    }
+  }
+
+  private downgradeCoverageAnalysisIfNeeded() {
+    if (this.strykerConfig.transpilers.length && this.strykerConfig.coverageAnalysis !== 'off') {
+      log.info('Disabled coverage analysis for this run (off). Coverage analysis using transpilers is not supported yet.');
+      this.strykerConfig.coverageAnalysis = 'off';
     }
   }
 
