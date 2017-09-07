@@ -49,6 +49,36 @@ function isBinaryFile(name: string): boolean {
   return binaryExtensions.indexOf(path.extname(name)) > -1;
 }
 
+/**
+ * Writes data to a specified file.
+ * @param fileName The path to the file.
+ * @param data The content of the file.
+ * @returns A promise to eventually save the file.
+ */
+export function writeFile(fileName: string, data: string | Buffer, instrumenter: NodeJS.ReadWriteStream | null = null): Promise<void> {
+  if (Buffer.isBuffer(data)) {
+    return fs.writeFile(fileName, data);
+  } else if (instrumenter) {
+    instrumenter.pipe(fs.createWriteStream(fileName, 'utf8'));
+    return writeToStream(data, instrumenter);
+  } else {
+    return fs.writeFile(fileName, data, 'utf8');
+  }
+}
+
+function writeToStream(data: string | Buffer, stream: NodeJS.WritableStream): Promise<void> {
+  return new Promise((res, rej) => {
+    stream.end(data as string, (err: any) => {
+      if (err) {
+        rej(err);
+      } else {
+        res();
+      }
+    });
+  });
+}
+
+
 export function determineFileKind(fileName: string): FileKind {
   if (isOnlineFile(fileName)) {
     return FileKind.Web;

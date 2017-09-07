@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.9.2"></a>
+## [0.9.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.9.1...stryker@0.9.2) (2017-09-06)
+
+
+### Bug Fixes
+
+* **init command:** indent "stryker.conf.js" file after "stryker init" ([52ac439](https://github.com/stryker-mutator/stryker/commit/52ac439))
+
+
+
+
+<a name="0.9.1"></a>
+## [0.9.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.9.0...stryker@0.9.1) (2017-09-04)
+
+
+### Bug Fixes
+
+* **stryker-init:** Stryker init won't create temp folder ([#361](https://github.com/stryker-mutator/stryker/issues/361)) ([a4333c9](https://github.com/stryker-mutator/stryker/commit/a4333c9))
+
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.8.0...stryker@0.9.0) (2017-08-25)
 

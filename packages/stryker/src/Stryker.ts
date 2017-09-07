@@ -13,7 +13,7 @@ import ScoreResultCalculator from './ScoreResultCalculator';
 import ConfigValidator from './ConfigValidator';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
-import StrykerTempFolder from './utils/StrykerTempFolder';
+import { TempFolder } from './utils/TempFolder';
 import * as log4js from 'log4js';
 import Timer from './utils/Timer';
 import StrictReporter from './reporters/StrictReporter';
@@ -52,6 +52,7 @@ export default class Stryker {
   async runMutationTest(): Promise<MutantResult[]> {
     this.timer.reset();
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
+    TempFolder.instance().initialize();    
     const initialTestRunProcess = this.createInitialTestRunner(inputFiles);
     const { runResult, transpiledFiles } = await initialTestRunProcess.run();
     const testableMutants = await this.generateMutants(inputFiles, runResult);
@@ -60,7 +61,7 @@ export default class Stryker {
       const mutantResults = await mutationTestExecutor.run(testableMutants);
       this.reportScore(mutantResults);
       await this.wrapUpReporter();
-      await StrykerTempFolder.clean();
+      await TempFolder.instance().clean();
       await this.logDone();
       return mutantResults;
     } else {

@@ -1,10 +1,9 @@
 'use strict';
 
-var Stryker = require('stryker').default;
-
 module.exports = function (grunt) {
 
   grunt.registerMultiTask('stryker', 'The extendable JavaScript mutation testing framework.', function () {
+    var Stryker = require('stryker').default;
     var target = this.name + "." + this.target + ".";
     var filesProperty = target + 'files';
     var mutateProperty = target + 'mutate';
@@ -29,7 +28,12 @@ module.exports = function (grunt) {
     var done = this.async();
     var stryker = new Stryker(options);
     stryker.runMutationTest().then(function () {
-      done();
+      var success = true;
+
+      if(process.exitCode > 0) {
+        success = false;
+      }
+      done(success);
     }, function (error) {
         grunt.fail.fatal("Stryker was unable to run the mutation test. " + error);
     });

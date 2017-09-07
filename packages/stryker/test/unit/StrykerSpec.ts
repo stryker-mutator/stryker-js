@@ -17,7 +17,7 @@ import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/M
 import ConfigValidator, * as configValidator from '../../src/ConfigValidator';
 import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
-import StrykerTempFolder from '../../src/utils/StrykerTempFolder';
+import { TempFolder } from '../../src/utils/TempFolder';
 import log from '../helpers/log4jsMock';
 import { mock, Mock, testFramework as testFrameworkMock, textFile, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
@@ -46,6 +46,7 @@ describe('Stryker', function () {
   let determineExitCodeStub: sinon.SinonStub;
   let strykerConfig: Config;
   let reporter: Mock<BroadcastReporter>;
+  let tempFolderMock: Mock<TempFolder>;
 
   beforeEach(() => {
     strykerConfig = config();
@@ -74,7 +75,9 @@ describe('Stryker', function () {
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
     sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverMock);
-    sandbox.stub(StrykerTempFolder, 'clean').resolves();
+    tempFolderMock = mock(TempFolder);
+    sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
+    tempFolderMock.clean.resolves();
     determineExitCodeStub = sandbox.stub(ScoreResultCalculator, 'determineExitCode');
   });
 
@@ -190,7 +193,7 @@ describe('Stryker', function () {
         expect(inputFileResolver.default).calledWith(strykerConfig.mutate, strykerConfig.files, reporter);
         expect(inputFileResolverMock.resolve).called;
       });
-      
+
       it('should create the InitialTestRunner', () => {
         expect(initialTestExecutor.default).calledWithNew;
         expect(initialTestExecutor.default).calledWith(strykerConfig, inputFiles);
@@ -210,7 +213,7 @@ describe('Stryker', function () {
       });
 
       it('should clean the stryker temp folder', () => {
-        expect(StrykerTempFolder.clean).called;
+        expect(tempFolderMock.clean).called;
       });
 
       it('should let the reporters wrapUp any async tasks', () => {

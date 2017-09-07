@@ -9,7 +9,8 @@ import { wrapInClosure } from './utils/objectUtils';
 import TestRunnerDecorator from './isolated-runner/TestRunnerDecorator';
 import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
-import StrykerTempFolder from './utils/StrykerTempFolder';
+import { TempFolder } from './utils/TempFolder';
+import * as fileUtils from './utils/fileUtils';
 import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import TestableMutant from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
@@ -29,7 +30,7 @@ export default class Sandbox {
   private testHooksFile = path.resolve('___testHooksForStryker.js');
 
   constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
-    this.workingFolder = StrykerTempFolder.createRandomFolder('sandbox');
+    this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
     log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.files = files.slice(); // Create a copy
     if (testFramework) {
@@ -71,7 +72,7 @@ export default class Sandbox {
 
     return Promise.all(originalFiles.map(file => {
       if (file.kind !== FileKind.Web) {
-        return StrykerTempFolder.writeFile(this.fileMap[file.name], file.content);
+        return fileUtils.writeFile(this.fileMap[file.name], file.content);
       } else {
         return Promise.resolve();
       }
@@ -84,7 +85,7 @@ export default class Sandbox {
         return Promise.resolve();
       default:
         const fileNameInSandbox = this.fileMap[file.name];
-        return StrykerTempFolder.writeFile(fileNameInSandbox, file.content);
+        return fileUtils.writeFile(fileNameInSandbox, file.content);
     }
   }
 
@@ -109,7 +110,7 @@ export default class Sandbox {
         this.fileMap[file.name] = targetFile;
         const instrumentingStream = this.coverageInstrumenter ?
           this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
-        return StrykerTempFolder.writeFile(targetFile, file.content, instrumentingStream);
+        return fileUtils.writeFile(targetFile, file.content, instrumentingStream);
     }
   }
 
@@ -140,7 +141,7 @@ export default class Sandbox {
   private filterTests(mutant: TestableMutant) {
     if (this.testFramework) {
       let fileContent = wrapInClosure(this.testFramework.filter(mutant.scopedTestIds));
-      return StrykerTempFolder.writeFile(this.fileMap[this.testHooksFile], fileContent);
+      return fileUtils.writeFile(this.fileMap[this.testHooksFile], fileContent);
     } else {
       return Promise.resolve(void 0);
     }
