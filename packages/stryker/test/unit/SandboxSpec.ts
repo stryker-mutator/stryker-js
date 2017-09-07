@@ -48,7 +48,7 @@ describe('Sandbox', () => {
       expectedFileToMutate,
       notMutatedFile,
     ];
-    files = (textFiles as File[]).concat([webFile({ name: webFileUrl, mutated: false, included: true })]);
+    files = (textFiles as File[]).concat([webFile({ name: webFileUrl, mutated: false, included: true, transpiled: false })]);
     sandbox.stub(StrykerTempFolder, 'createRandomFolder').returns(workingFolder);
     sandbox.stub(StrykerTempFolder, 'writeFile').resolves();
     sandbox.stub(mkdirp, 'sync').returns('');
@@ -86,10 +86,10 @@ describe('Sandbox', () => {
       it('should have created the isolated test runner inc framework hook', () => {
         const expectedSettings: IsolatedRunnerOptions = {
           files: [
-            fileDescriptor({ name: expectedTestFrameworkHooksFile, mutated: false, included: true }),
+            fileDescriptor({ name: expectedTestFrameworkHooksFile, mutated: false, included: true, transpiled: false }),
             fileDescriptor({ name: expectedTargetFileToMutate, mutated: true, included: true }),
             fileDescriptor({ name: path.join(workingFolder, 'file2'), mutated: false, included: false }),
-            fileDescriptor({ name: webFileUrl, mutated: false, included: true, kind: FileKind.Web })
+            fileDescriptor({ name: webFileUrl, mutated: false, included: true, kind: FileKind.Web, transpiled: false })
           ],
           port: 46,
           strykerOptions: options,
@@ -128,10 +128,10 @@ describe('Sandbox', () => {
       it('should have created the isolated test runner without framework hook', () => {
         const expectedSettings: IsolatedRunnerOptions = {
           files: [
-            fileDescriptor({ name: expectedTestFrameworkHooksFile, mutated: false, included: true }),
+            fileDescriptor({ name: expectedTestFrameworkHooksFile, mutated: false, included: true, transpiled: false }),
             fileDescriptor({ name: expectedTargetFileToMutate, mutated: true, included: true }),
             fileDescriptor({ name: path.join(workingFolder, 'file2'), mutated: false, included: false }),
-            fileDescriptor({ name: webFileUrl, mutated: false, included: true, kind: FileKind.Web })
+            fileDescriptor({ name: webFileUrl, mutated: false, included: true, kind: FileKind.Web, transpiled: false })
           ],
           port: 46,
           strykerOptions: options,
@@ -209,7 +209,7 @@ describe('Sandbox', () => {
           files: [
             fileDescriptor({ name: path.join(workingFolder, 'file1'), mutated: true, included: true }),
             fileDescriptor({ name: path.join(workingFolder, 'file2'), mutated: false, included: false }),
-            fileDescriptor({ name: webFileUrl, mutated: false, included: true, kind: FileKind.Web })
+            fileDescriptor({ name: webFileUrl, mutated: false, included: true, transpiled: false, kind: FileKind.Web })
           ],
           port: 46,
           strykerOptions: options,

@@ -1,4 +1,3 @@
-import { Logger, getLogger } from 'log4js';
 import * as ts from 'typescript';
 import flatMap = require('lodash.flatmap');
 import { File } from 'stryker-api/core';
@@ -14,22 +13,18 @@ export function filterValues<T>(array: (T | null | undefined)[]): T[] {
 
 export default class TypescriptMutantGenerator {
 
-  private readonly log: Logger;
-
   constructor(private config: Config, public mutators: Mutator[] = [
     new BinaryExpressionMutator()
-  ]) {
-    this.log = getLogger(TypescriptMutantGenerator.name);
-  }
+  ]) { }
 
   generateMutants(inputFiles: File[]): Mutant[] {
     const program = createProgram(inputFiles, this.config);
     const mutatedInputFiles = inputFiles.filter(inputFile => inputFile.mutated);
-    const candidates = flatMap(mutatedInputFiles, inputFile => {
+    const mutants = flatMap(mutatedInputFiles, inputFile => {
       const sourceFile = program.getSourceFile(inputFile.name);
       return this.generateMutantsForNode(sourceFile, sourceFile);
     });
-    return candidates;
+    return mutants;
   }
 
   static printer = ts.createPrinter({

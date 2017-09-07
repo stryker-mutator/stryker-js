@@ -64,6 +64,7 @@ export const fileDescriptor = factory<FileDescriptor>({
   name: 'fileName',
   included: true,
   mutated: true,
+  transpiled: true,
   kind: FileKind.Text
 });
 
@@ -98,6 +99,7 @@ export const textFile = factory<TextFile>({
   content: '',
   mutated: true,
   included: true,
+  transpiled: true,
   kind: FileKind.Text
 });
 
@@ -150,6 +152,7 @@ export const file = factory<File>({
   content: '',
   mutated: true,
   included: true,
+  transpiled: true,
   kind: FileKind.Text
 });
 
@@ -157,6 +160,7 @@ export const webFile = factory<WebFile>({
   name: 'http://example.org',
   mutated: false,
   included: true,
+  transpiled: false,
   kind: FileKind.Web
 });
 
@@ -165,6 +169,7 @@ export const binaryFile = factory<BinaryFile>({
   content: Buffer.from(''),
   mutated: true,
   included: true,
+  transpiled: false,
   kind: FileKind.Binary
 });
 

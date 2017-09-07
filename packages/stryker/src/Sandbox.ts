@@ -39,6 +39,7 @@ export default class Sandbox {
         content: coverageInstrumenter && coverageInstrumenter.hooksForTestRun() || '',
         mutated: false,
         included: true,
+        transpiled: false,
         kind: FileKind.Text
       });
     }
@@ -117,7 +118,8 @@ export default class Sandbox {
       name: this.fileMap[originalFile.name],
       mutated: originalFile.mutated,
       included: originalFile.included,
-      kind: originalFile.kind
+      kind: originalFile.kind,
+      transpiled: originalFile.transpiled
     }));
     const settings: IsolatedRunnerOptions = {
       files,

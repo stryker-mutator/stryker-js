@@ -9,7 +9,7 @@ import StrictReporter from './reporters/StrictReporter';
 
 const log = log4js.getLogger('InputFileResolver');
 
-const DEFAULT_INPUT_FILE_PROPERTIES = { mutated: false, included: true };
+const DEFAULT_INPUT_FILE_PROPERTIES = { mutated: false, included: true, transpiled: true };
 
 function testFileToReportFile(textFile: TextFile) {
   return {
@@ -126,7 +126,8 @@ export default class InputFileResolver {
       kind: descriptor.kind,
       content,
       included: descriptor.included,
-      mutated: descriptor.mutated
+      mutated: descriptor.mutated,
+      transpiled: descriptor.transpiled
     }) as TextFile | BinaryFile);
   }
 
@@ -222,4 +223,3 @@ class PatternResolver {
     return inputFile;
   }
 }
-

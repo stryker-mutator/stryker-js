@@ -8,7 +8,7 @@ class MyTranspiler implements Transpiler {
 
   transpile(files: File[]): TranspileResult {
     return {
-      outputFiles: [{ name: 'foo', content: 'string', kind: FileKind.Text, mutated: this.transpilerOptions.keepSourceMaps, included: false }],
+      outputFiles: [{ name: 'foo', content: 'string', kind: FileKind.Text, mutated: this.transpilerOptions.keepSourceMaps, included: false, transpiled: true }],
       error: null
     };
   }
@@ -20,7 +20,7 @@ class MyTranspiler implements Transpiler {
 TranspilerFactory.instance().register('my-transpiler', MyTranspiler);
 const transpiler = TranspilerFactory.instance().create('my-transpiler', { keepSourceMaps: true, config: new Config() });
 
-const transpileResult = transpiler.transpile([{ kind: FileKind.Text, content: '', name: '', mutated: true, included: false }]);
+const transpileResult = transpiler.transpile([{ kind: FileKind.Text, content: '', name: '', mutated: true, included: false, transpiled: true }]);
 console.log(JSON.stringify(transpileResult));
 
 console.log(JSON.stringify(

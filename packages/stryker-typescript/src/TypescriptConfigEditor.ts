@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as ts from 'typescript';
-import { getLogger } from 'log4js';
+import { getLogger, setGlobalLogLevel } from 'log4js';
 import { ConfigEditor, Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
 import { normalizeForTypescript } from './helpers/tsHelpers';
@@ -12,6 +12,7 @@ export default class TypescriptConfigEditor implements ConfigEditor {
   private log = getLogger(TypescriptConfigEditor.name);
 
   edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
+    setGlobalLogLevel(strykerConfig.logLevel);
     if (typeof strykerConfig[CONFIG_KEY_FILE] === 'string') {
       const tsconfigFileName = path.resolve(strykerConfig[CONFIG_KEY_FILE]);
       this.log.info(`Loading tsconfig file ${tsconfigFileName}`);
@@ -21,7 +22,7 @@ export default class TypescriptConfigEditor implements ConfigEditor {
           strykerConfig.files = [];
         }
         // add the files to the beginning. That way they can still be excluded by the user
-        strykerConfig.files.unshift(...tsconfig.fileNames); 
+        strykerConfig.files.unshift(...tsconfig.fileNames);
         strykerConfig[CONFIG_KEY_OPTIONS] = tsconfig.options;
       }
     } else {

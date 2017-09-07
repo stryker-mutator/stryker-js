@@ -1,7 +1,7 @@
 import { Config } from 'stryker-api/config';
 import { Transpiler, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
-import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory } from './helpers/tsHelpers';
+import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory, isToBeTranspiled, filterEmpty } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import { setGlobalLogLevel } from 'log4js';
 
@@ -18,14 +18,14 @@ export default class TypescriptTranspiler implements Transpiler {
   }
 
   transpile(files: File[]): TranspileResult {
-    const { typescriptFiles, otherFiles } = filterOutTypescriptFiles(files);
+    const typescriptFiles = filterOutTypescriptFiles(files);
     if (!this.languageService) {
       this.languageService = new TranspilingLanguageService(
         getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.keepSourceMaps);
     } else {
       this.languageService.replace(typescriptFiles);
     }
-    return this.transpileAndResult(typescriptFiles, otherFiles);
+    return this.transpileAndResult(typescriptFiles, files);
   }
 
   getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
@@ -37,13 +37,21 @@ export default class TypescriptTranspiler implements Transpiler {
     }
   }
 
-  private transpileAndResult(typescriptFiles: File[], otherFiles: File[]) {
+  private transpileAndResult(typescriptFiles: File[], allFiles: File[]) {
     const error = this.languageService.getSemanticDiagnostics(typescriptFiles.map(file => file.name));
     if (error.length) {
       return this.createErrorResult(error);
     } else {
       const outputFiles = this.languageService.emit(typescriptFiles);
-      return this.createSuccessResult(otherFiles.concat(outputFiles));
+      // Keep original order of the files
+      const resultFiles = filterEmpty(allFiles.map(file => {
+        if (isToBeTranspiled(file)) {
+          return outputFiles[file.name];
+        } else {
+          return file;
+        }
+      }));
+      return this.createSuccessResult(resultFiles);
     }
   }
 

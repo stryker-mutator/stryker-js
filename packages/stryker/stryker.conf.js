@@ -9,8 +9,8 @@ module.exports = function (config) {
         '!test/integration/**/*.ts',
         '!src/**/*.ts',
         { pattern: 'src/**/*.ts', included: false, mutated: true },
-        { pattern: 'node_modules/stryker-api/*.js', included: false, mutated: false },
-        { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false }
+        { pattern: 'node_modules/stryker-api/*.js', included: false, mutated: false, transpiled: false },
+        { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false, transpiled: false }
       ],
       coverageAnalysis: 'off',
       tsconfigFile: 'tsconfig.json',

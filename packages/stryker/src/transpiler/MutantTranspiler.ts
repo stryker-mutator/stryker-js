@@ -62,7 +62,8 @@ export default class MutantTranspiler {
       name: mutant.fileName,
       content: mutant.mutatedCode,
       kind: FileKind.Text,
-      mutated: true,
+      mutated: this.currentMutatedFile.file.mutated,
+      transpiled: this.currentMutatedFile.file.transpiled,
       included: mutant.included
     };
     filesToTranspile.push(mutatedFile);

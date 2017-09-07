@@ -24,6 +24,7 @@ const textFile: File = createFile({
   name: 'string',
   mutated: true,
   included: true,
+  transpiled: true,
   content: 'string',
   kind: FileKind.Text
 });
@@ -31,6 +32,7 @@ const binaryFile = createFile({
   name: '',
   mutated: false,
   included: false,
+  transpiled: false,
   content: Buffer.from('sdssdsd'),
   kind: FileKind.Binary
 });
@@ -39,6 +41,7 @@ const webFile = createFile({
   name: 'http://example.com',
   mutated: false,
   included: false,
+  transpiled: false,
   kind: FileKind.Web
 });
 

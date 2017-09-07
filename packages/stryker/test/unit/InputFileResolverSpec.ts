@@ -4,20 +4,19 @@ import * as sinon from 'sinon';
 import * as fileUtils from '../../src/utils/fileUtils';
 import * as path from 'path';
 import * as fs from 'mz/fs';
-import { FileDescriptor, TextFile, FileKind } from 'stryker-api/core';
+import { FileDescriptor, TextFile } from 'stryker-api/core';
 import { expect } from 'chai';
 import { resolve } from 'path';
 import log from '../helpers/log4jsMock';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
-import { Mock, mock } from '../helpers/producers';
+import { Mock, mock, textFile } from '../helpers/producers';
 
 const files = (...namesWithContent: [string, string][]): TextFile[] =>
-  namesWithContent.map((nameAndContent): TextFile => ({
-    included: true,
+  namesWithContent.map((nameAndContent): TextFile => textFile({
     mutated: false,
+    transpiled: true,
     name: path.resolve(nameAndContent[0]),
-    content: nameAndContent[1],
-    kind: FileKind.Text
+    content: nameAndContent[1]
   }));
 
 describe('InputFileResolver', () => {
@@ -104,8 +103,8 @@ describe('InputFileResolver', () => {
     it('should result in the expected input files', async () => {
       const results = await sut.resolve();
       expect(results).to.deep.equal([
-        { included: true, mutated: false, name: resolve('/file1.js'), content: 'file 1 content', kind: FileKind.Text },
-        { included: false, mutated: true, name: resolve('/mute1.js'), content: 'mutate 1 content', kind: FileKind.Text }]);
+        textFile({ included: true, mutated: false, name: resolve('/file1.js'), content: 'file 1 content' }),
+        textFile({ included: false, mutated: true, name: resolve('/mute1.js'), content: 'mutate 1 content' })]);
     });
 
     it('should log that one file is about to be mutated', async () => {
@@ -174,7 +173,7 @@ describe('InputFileResolver', () => {
 
     beforeEach(() => {
       sut = new InputFileResolver(['file1'], ['fileError', 'fileError'], reporter);
-      expectedError = new Error('ERROR: something went wrongue');
+      expectedError = new Error('ERROR: something went wrong');
       globStub.withArgs('fileError').rejects(expectedError);
       return sut.resolve().then(r => results = r, e => actualError = e);
     });

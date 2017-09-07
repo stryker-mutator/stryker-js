@@ -63,21 +63,31 @@ export default class TranspilingLanguageService {
     return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
   }
 
-  emit(sourceFiles: FileDescriptor[] = this.rootFiles): TextFile[] {
+  /**
+   * Get the output text for given source files
+   * @param sourceFiles Emit output files based on given source files
+   * @return  Map<TextFile> Returns a map of source file names with their output files.
+   *          If all output files are bundled together, only returns the output file once using the first file as key
+   */
+  emit(sourceFiles: FileDescriptor[] = this.rootFiles): ts.MapLike<TextFile> {
     if (this.compilerOptions.outFile) {
       // If it is a single out file, just transpile one file as it is all bundled together anyway.
       const outputFile = this.mapToOutput(sourceFiles[0]);
       // All output is bundled together. Configure this output file for all root files.
       this.rootFiles.forEach(rootFile => this.outputFiles[rootFile.name] = outputFile);
-      return [{
-        name: outputFile.name,
-        content: outputFile.content,
-        mutated: sourceFiles[0].mutated,
-        kind: FileKind.Text,
-        included: true // Override included, as it should be included when there is only one output file
-      }];
+
+      return {
+        [sourceFiles[0].name]: {
+          name: outputFile.name,
+          content: outputFile.content,
+          mutated: sourceFiles[0].mutated,
+          kind: FileKind.Text,
+          transpiled: true, // Override transpiled. If a next transpiler comes along, definitely pick up this file.
+          included: true // Override included, as it should be included when there is only one output file
+        }
+      };
     } else {
-      return sourceFiles.map(sourceFile => {
+      return sourceFiles.reduce((fileMap, sourceFile) => {
         const outputFile = this.mapToOutput(sourceFile);
         this.outputFiles[sourceFile.name] = outputFile;
         const textOutput: TextFile = {
@@ -85,10 +95,12 @@ export default class TranspilingLanguageService {
           content: outputFile.content,
           mutated: sourceFile.mutated,
           included: sourceFile.included,
+          transpiled: sourceFile.transpiled,
           kind: FileKind.Text,
         };
-        return textOutput;
-      });
+        fileMap[sourceFile.name] = textOutput;
+        return fileMap;
+      }, Object.create(null));
     }
   }
 

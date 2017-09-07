@@ -32,8 +32,8 @@ class MyTestRunner extends EventEmitter implements TestRunner {
 
 let runnerOptions: RunnerOptions = {
   files: [
-    { name: 'some', mutated: true, included: false, kind: FileKind.Text },
-    { name: 'files', mutated: false, included: true, kind: FileKind.Text }],
+    { name: 'some', mutated: true, included: false, transpiled: true, kind: FileKind.Text },
+    { name: 'files', mutated: false, included: true, transpiled: false, kind: FileKind.Text }],
   port: 1,
   strykerOptions: null
 };

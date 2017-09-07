@@ -111,5 +111,5 @@ describe('MochaTestRunner', function () {
       }));
   });
 
-  let file = (name: string, mutated = true, included = true, kind = FileKind.Text) => ({ name: path.resolve(name), mutated, included, kind });
+  let file = (name: string, mutated = true, included = true, transpiled = true, kind = FileKind.Text) => ({ name: path.resolve(name), mutated, included, kind, transpiled });
 });

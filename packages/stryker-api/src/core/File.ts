@@ -10,6 +10,7 @@ export interface FileDescriptor {
   name: string;
   included: boolean;
   mutated: boolean;
+  transpiled: boolean;
   kind: FileKind;
 }
 

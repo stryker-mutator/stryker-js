@@ -33,21 +33,18 @@ export function getProjectDirectory(config: Config) {
   return path.dirname(config[CONFIG_KEY_FILE] || '.');
 }
 
-const allExtensions: string[] = ['ts', 'tsx']; // TODO Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
-export function isTypescriptFile(file: File) {
-  return allExtensions.some(extension => file.name.endsWith(extension)) && !file.name.endsWith('.d.ts');
+const allExtensions: string[] = Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
+export function isToBeTranspiled(file: File) {
+  return file.kind === FileKind.Text &&
+    file.transpiled &&
+    allExtensions.some(extension => file.name.endsWith(extension)) && !file.name.endsWith('.d.ts');
 }
 
 
-export function filterOutTypescriptFiles(files: File[]) {
-  const typescriptFiles: TextFile[] = [];
-  const otherFiles: File[] = [];
-  files.forEach(file => {
-    if (isTypescriptFile(file) && file.kind === FileKind.Text) {
-      typescriptFiles.push(file);
-    } else {
-      otherFiles.push(file);
-    }
-  });
-  return { typescriptFiles, otherFiles };
+export function filterOutTypescriptFiles(files: File[]): TextFile[] {
+  return files.filter(isToBeTranspiled) as TextFile[];
+}
+
+export function filterEmpty<T>(input: (T | undefined | null)[]): T[] {
+  return input.filter(item => item !== void 0 && item !== null) as T[];
 }

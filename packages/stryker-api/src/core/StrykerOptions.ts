@@ -10,10 +10,11 @@ interface StrykerOptions {
    * These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine).
    * Each element can be either a string or an object with 2 properties
    * * `string`: A globbing expression used for selecting the files needed to run the tests.
-   * * { pattern: 'pattern', included: true } : 
+   * * { pattern: 'pattern', included: true, mutated: false, transpiled: true }: 
    *    * The `pattern` property is mandatory and contains the globbing expression used for selecting the files
    *    * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true)
    *    * The `mutated` property is optional and determines whether or not this file should be targeted for mutations (default: false)
+   *    * The `transpiled` property is optional and determines whether or not this file should be transpiled by a transpiler (see `transpilers` config option) (default: true)
    * 
    * @example
    *     files: ['test/helpers/**\/*.js', 'test/unit/**\/*.js', { pattern: 'src/**\/*.js', included: false }],
@@ -68,6 +69,8 @@ interface StrykerOptions {
    * 
    * foo.ts   ==> Typescript  ==> foo.js ==> Webpack ==> foobar.js
    * bar.ts   ==> Transpiler  ==> bar.js ==> Transpiler
+   * 
+   * Transpilers should ignore files marked with `transpiled = false`. See `files` array.
    */
   transpilers?: string[];
 

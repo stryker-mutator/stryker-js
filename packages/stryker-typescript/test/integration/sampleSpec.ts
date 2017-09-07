@@ -23,7 +23,14 @@ describe('Sample integration', function () {
       tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'tsconfig.json'),
     });
     configEditor.edit(config);
-    inputFiles = config.files.map((file): TextFile => ({ name: file as string, content: fs.readFileSync(file as string, 'utf8'), included: true, mutated: true, kind: FileKind.Text }));
+    inputFiles = config.files.map((file): TextFile => ({
+      name: file as string,
+      content: fs.readFileSync(file as string, 'utf8'),
+      included: true,
+      mutated: true, 
+      transpiled: true,
+      kind: FileKind.Text
+    }));
   });
 
   afterEach(() => {
@@ -67,7 +74,8 @@ describe('Sample integration', function () {
       name: file.name,
       content: file.content.slice(0, mutant.range[0]) + mutant.replacement + file.content.slice(mutant.range[1]),
       mutated: true,
-      included: true,
+      included: true, 
+      transpiled: true,
       kind: FileKind.Text
     };
   }
