@@ -54,7 +54,7 @@ describe('TypescriptMutantGenerator', () => {
       .filter(mutatorFile => path.extname(mutatorFile) === '.ts'
         && !mutatorFile.endsWith('.d.ts')
         && mutatorFile !== 'Mutator.ts')
-      .map(fileName => path.parse(fileName).name);
+      .map(fileName => fileName.substr(0, fileName.length - 'Mutator.ts'.length));
 
     // Act
     const actualMutators = new TypescriptMutantGenerator(config).mutators.map(m => m.name);

@@ -59,7 +59,7 @@ describe('Sample integration', function () {
     const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
     transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
-    const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpressionMutator');
+    const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpression');
     const correctResult = transpiler.transpile([mutateFile(mathDotTS, firstBinaryMutant)]);
     const errorResult = transpiler.transpile([mutateFile(mathDotTS, stringSubtractMutant)]);
     expect(correctResult.error).null;
