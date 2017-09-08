@@ -4,7 +4,7 @@ import Mutator from './Mutator';
 
 export default class BooleanSubstitutionMutator extends Mutator<ts.BooleanLiteral> {
 
-  name: string = 'BooleanSubstitutionMutator';
+  name: string = 'BooleanSubstitution';
 
   public guard(node: ts.Node): node is ts.BooleanLiteral {
     return node.kind === ts.SyntaxKind.FalseKeyword || node.kind === ts.SyntaxKind.TrueKeyword;

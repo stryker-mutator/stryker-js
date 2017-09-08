@@ -20,7 +20,7 @@ const replaceTokens = {
 
 export default class BinaryExpressionMutator extends Mutator<ts.BinaryExpression> {
 
-  name: string = 'BinaryExpressionMutator';
+  name: string = 'BinaryExpression';
 
   public guard(node: ts.Node): node is ts.BinaryExpression {
     return node.kind === ts.SyntaxKind.BinaryExpression;

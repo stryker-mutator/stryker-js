@@ -4,7 +4,7 @@ import Mutator from './Mutator';
 
 export default class UnaryNotMutator extends Mutator<ts.PrefixUnaryExpression> {
 
-  name: string = 'UnaryNotMutator';
+  name: string = 'UnaryNot';
 
   public guard(node: ts.Node): node is ts.PrefixUnaryExpression {
     return node.kind === ts.SyntaxKind.PrefixUnaryExpression;
@@ -12,7 +12,7 @@ export default class UnaryNotMutator extends Mutator<ts.PrefixUnaryExpression> {
 
   public mutate(node: ts.PrefixUnaryExpression): Mutant[] {
     if (node.operator === ts.SyntaxKind.ExclamationToken) {
-      return [this.createMutant(node, node.operand.getText())];
+      return [this.createMutant(node, node.operand.getFullText(this.currentSourceFile))];
     } else {
       return [];
     }
