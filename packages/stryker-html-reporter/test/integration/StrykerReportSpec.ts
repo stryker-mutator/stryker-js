@@ -1,9 +1,8 @@
-import * as path from 'path';
 import { expect } from 'chai';
-import * as fs from 'mz/fs';
 import { Config } from 'stryker-api/config';
 import HtmlReporter from '../../src/HtmlReporter';
 import EventPlayer from '../helpers/EventPlayer';
+import { readDirectoryTree } from '../helpers/fsHelpers';
 
 const REPORT_DIR = 'reports/mutation/stryker';
 
@@ -21,33 +20,102 @@ describe('Html report of stryker', function () {
   });
 
   it('should build all files in the report', () => {
-    expect(readDirectoryTree()).to.be.deep.equal({ 'name': 'stryker', 'directories': [{ 'name': 'bootstrap', 'directories': [{ 'name': 'css', 'directories': [], 'files': ['bootstrap-theme.css', 'bootstrap-theme.min.css', 'bootstrap.css', 'bootstrap.min.css'] }, { 'name': 'js', 'directories': [], 'files': ['bootstrap.js', 'bootstrap.min.js', 'npm.js'] }], 'files': [] }, { 'name': 'coverage', 'directories': [], 'files': ['CoverageInstrumenter.js.html', 'CoverageInstrumenterStream.js.html', 'index.html'] }, { 'name': 'highlightjs', 'directories': [{ 'name': 'styles', 'directories': [], 'files': ['default.css'] }], 'files': [] }, { 'name': 'initializer', 'directories': [], 'files': ['NpmClient.js.html', 'PromptOption.js.html', 'StrykerConfigWriter.js.html', 'StrykerInitializer.js.html', 'StrykerInquirer.js.html', 'index.html'] }, { 'name': 'isolated-runner', 'directories': [], 'files': ['IsolatedRunnerOptions.js.html', 'IsolatedTestRunnerAdapter.js.html', 'IsolatedTestRunnerAdapterFactory.js.html', 'IsolatedTestRunnerAdapterWorker.js.html', 'MessageProtocol.js.html', 'ResilientTestRunnerFactory.js.html', 'RetryDecorator.js.html', 'TestRunnerDecorator.js.html', 'TimeoutDecorator.js.html', 'index.html'] }, { 'name': 'mutators', 'directories': [], 'files': ['ArrayDeclaratorMutator.js.html', 'BinaryOperatorMutator.js.html', 'BlockStatementMutator.js.html', 'BooleanSubstitutionMutator.js.html', 'LogicalOperatorMutator.js.html', 'RemoveConditionalsMutator.js.html', 'UnaryOperatorMutator.js.html', 'UpdateOperatorMutator.js.html', 'index.html'] }, { 'name': 'reporters', 'directories': [], 'files': ['BroadcastReporter.js.html', 'ClearTextReporter.js.html', 'ClearTextScoreTable.js.html', 'DotsReporter.js.html', 'EventRecorderReporter.js.html', 'ProgressAppendOnlyReporter.js.html', 'ProgressBar.js.html', 'ProgressKeeper.js.html', 'ProgressReporter.js.html', 'StrictReporter.js.html', 'index.html'] }, { 'name': 'utils', 'directories': [], 'files': ['StrykerTempFolder.js.html', 'Task.js.html', 'Timer.js.html', 'fileUtils.js.html', 'index.html', 'objectUtils.js.html', 'parserUtils.js.html'] }], 'files': ['ConfigReader.js.html', 'FileStatements.js.html', 'InputFileResolver.js.html', 'Mutant.js.html', 'MutantTestMatcher.js.html', 'MutatorOrchestrator.js.html', 'PluginLoader.js.html', 'ReporterOrchestrator.js.html', 'Sandbox.js.html', 'SandboxCoordinator.js.html', 'ScoreResultCalculator.js.html', 'Stryker.js.html', 'TestFrameworkOrchestrator.js.html', 'index.html', 'stryker-80x80.png', 'stryker-cli.js.html', 'stryker.css', 'stryker.js'] });
-  });
-});
-
-interface Directory {
-  name: string;
-  files: string[];
-  directories: Directory[];
-}
-
-let readDirectoryTree = (current = REPORT_DIR): Directory => {
-  let dir: Directory = {
-    name: path.basename(current),
-    directories: [],
-    files: []
-  };
-  let fileNames = fs.readdirSync(current);
-  fileNames
-    .sort()
-    .map(filename => path.join(current, filename))
-    .map(path => ({ path, stats: fs.statSync(path) }))
-    .forEach(file => {
-      if (file.stats.isDirectory()) {
-        dir.directories.push(readDirectoryTree(file.path));
-      } else {
-        dir.files.push(path.basename(file.path));
+    const dir = readDirectoryTree(REPORT_DIR);
+    expect(dir).to.be.deep.equal({
+      'ConfigReader.js.html': 'ConfigReader.js.html',
+      'FileStatements.js.html': 'FileStatements.js.html',
+      'InputFileResolver.js.html': 'InputFileResolver.js.html',
+      'Mutant.js.html': 'Mutant.js.html',
+      'MutantTestMatcher.js.html': 'MutantTestMatcher.js.html',
+      'MutatorOrchestrator.js.html': 'MutatorOrchestrator.js.html',
+      'PluginLoader.js.html': 'PluginLoader.js.html',
+      'ReporterOrchestrator.js.html': 'ReporterOrchestrator.js.html',
+      'Sandbox.js.html': 'Sandbox.js.html',
+      'SandboxCoordinator.js.html': 'SandboxCoordinator.js.html',
+      'ScoreResultCalculator.js.html': 'ScoreResultCalculator.js.html',
+      'Stryker.js.html': 'Stryker.js.html',
+      'TestFrameworkOrchestrator.js.html': 'TestFrameworkOrchestrator.js.html',
+      'bootstrap': {
+        'css': {
+          'bootstrap-theme.css': 'bootstrap-theme.css',
+          'bootstrap-theme.min.css': 'bootstrap-theme.min.css',
+          'bootstrap.css': 'bootstrap.css',
+          'bootstrap.min.css': 'bootstrap.min.css'
+        },
+        'js': {
+          'bootstrap.js': 'bootstrap.js',
+          'bootstrap.min.js': 'bootstrap.min.js',
+          'npm.js': 'npm.js'
+        }
+      },
+      'coverage': {
+        'CoverageInstrumenter.js.html': 'CoverageInstrumenter.js.html',
+        'CoverageInstrumenterStream.js.html': 'CoverageInstrumenterStream.js.html',
+        'index.html': 'index.html'
+      },
+      'highlightjs': {
+        'styles': {
+          'default.css': 'default.css'
+        }
+      },
+      'index.html': 'index.html',
+      'initializer': {
+        'NpmClient.js.html': 'NpmClient.js.html',
+        'PromptOption.js.html': 'PromptOption.js.html',
+        'StrykerConfigWriter.js.html': 'StrykerConfigWriter.js.html',
+        'StrykerInitializer.js.html': 'StrykerInitializer.js.html',
+        'StrykerInquirer.js.html': 'StrykerInquirer.js.html',
+        'index.html': 'index.html'
+      },
+      'isolated-runner': {
+        'IsolatedRunnerOptions.js.html': 'IsolatedRunnerOptions.js.html',
+        'IsolatedTestRunnerAdapter.js.html': 'IsolatedTestRunnerAdapter.js.html',
+        'IsolatedTestRunnerAdapterFactory.js.html': 'IsolatedTestRunnerAdapterFactory.js.html',
+        'IsolatedTestRunnerAdapterWorker.js.html': 'IsolatedTestRunnerAdapterWorker.js.html',
+        'MessageProtocol.js.html': 'MessageProtocol.js.html',
+        'ResilientTestRunnerFactory.js.html': 'ResilientTestRunnerFactory.js.html',
+        'RetryDecorator.js.html': 'RetryDecorator.js.html',
+        'TestRunnerDecorator.js.html': 'TestRunnerDecorator.js.html',
+        'TimeoutDecorator.js.html': 'TimeoutDecorator.js.html',
+        'index.html': 'index.html'
+      },
+      'mutators': {
+        'ArrayDeclaratorMutator.js.html': 'ArrayDeclaratorMutator.js.html',
+        'BinaryOperatorMutator.js.html': 'BinaryOperatorMutator.js.html',
+        'BlockStatementMutator.js.html': 'BlockStatementMutator.js.html',
+        'BooleanSubstitutionMutator.js.html': 'BooleanSubstitutionMutator.js.html',
+        'LogicalOperatorMutator.js.html': 'LogicalOperatorMutator.js.html',
+        'RemoveConditionalsMutator.js.html': 'RemoveConditionalsMutator.js.html',
+        'UnaryOperatorMutator.js.html': 'UnaryOperatorMutator.js.html',
+        'UpdateOperatorMutator.js.html': 'UpdateOperatorMutator.js.html',
+        'index.html': 'index.html'
+      },
+      'reporters': {
+        'BroadcastReporter.js.html': 'BroadcastReporter.js.html',
+        'ClearTextReporter.js.html': 'ClearTextReporter.js.html',
+        'ClearTextScoreTable.js.html': 'ClearTextScoreTable.js.html',
+        'DotsReporter.js.html': 'DotsReporter.js.html',
+        'EventRecorderReporter.js.html': 'EventRecorderReporter.js.html',
+        'ProgressAppendOnlyReporter.js.html': 'ProgressAppendOnlyReporter.js.html',
+        'ProgressBar.js.html': 'ProgressBar.js.html',
+        'ProgressKeeper.js.html': 'ProgressKeeper.js.html',
+        'ProgressReporter.js.html': 'ProgressReporter.js.html',
+        'StrictReporter.js.html': 'StrictReporter.js.html',
+        'index.html': 'index.html'
+      },
+      'stryker-80x80.png': 'stryker-80x80.png',
+      'stryker-cli.js.html': 'stryker-cli.js.html',
+      'stryker.css': 'stryker.css',
+      'stryker.js': 'stryker.js',
+      'utils': {
+        'StrykerTempFolder.js.html': 'StrykerTempFolder.js.html',
+        'Task.js.html': 'Task.js.html',
+        'Timer.js.html': 'Timer.js.html',
+        'fileUtils.js.html': 'fileUtils.js.html',
+        'index.html': 'index.html',
+        'objectUtils.js.html': 'objectUtils.js.html',
+        'parserUtils.js.html': 'parserUtils.js.html'
       }
     });
-  return dir;
-};
+  });
+});
