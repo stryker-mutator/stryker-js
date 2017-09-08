@@ -10,7 +10,7 @@
     "build": "tsc -p . && node tasks/clientResources.js && browserify src/resources/stryker.js -o resources/stryker.js",
     "postbuild": "tslint -p tsconfig.json",
     "start": "tsc -w -p .",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 95 --functions 95 --branches 94 mocha \"test/helpers/*.js\" \"test/unit/*.js\" \"test/integration/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 95 --functions 95 --branches 90 mocha \"test/helpers/*.js\" \"test/unit/*.js\" \"test/integration/*.js\""
   },
   "repository": {
     "type": "git",
