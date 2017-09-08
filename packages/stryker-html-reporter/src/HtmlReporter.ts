@@ -1,7 +1,6 @@
 import fileUrl = require('file-url');
 import * as log4js from 'log4js';
 import * as path from 'path';
-import * as fs from 'mz/fs';
 import { Config } from 'stryker-api/config';
 import { Reporter, MutantResult, SourceFile, ScoreResult } from 'stryker-api/report';
 import * as util from './util';
@@ -65,7 +64,7 @@ export default class HtmlReporter implements Reporter {
     const fileContent = templates.directory(title, scoreResult, depth, this.options.thresholds);
     const location = path.join(currentDirectory, 'index.html');
     return util.mkdir(currentDirectory)
-      .then(_ => fs.writeFile(location, fileContent))
+      .then(_ => util.writeFile(location, fileContent))
       .then(_ => this.writeChildren(scoreResult, currentDirectory, depth))
       .then(_ => location);
   }
@@ -73,13 +72,9 @@ export default class HtmlReporter implements Reporter {
   private writeChildren(scoreResult: ScoreResult, currentDirectory: string, depth: number) {
     return Promise.all(scoreResult.childResults.map(child => {
       if (child.representsFile) {
-        return this.writeReportFile(child, currentDirectory, depth);
+        return this.writeReportFile(child, currentDirectory, depth + util.countPathSep(child.name));
       } else {
-        // New depth is dependent on the depth of the child.
-        // - If the child name is 'a.js', it should be depth + 1
-        // - If the child name is 'a/b.js', it should be depth + 2
-        // etc
-        const newDepth = child.name.split(path.sep).length + depth;
+        const newDepth = util.countPathSep(child.name) + depth + 1;
         return this.writeReportDirectory(child, path.join(currentDirectory, child.name), newDepth, child.name)
           .then(_ => void 0);
       }
@@ -87,8 +82,12 @@ export default class HtmlReporter implements Reporter {
   }
 
   private writeReportFile(scoreResult: ScoreResult, baseDir: string, depth: number) {
-    const fileContent = templates.sourceFile(scoreResult, this.findFile(scoreResult.path), this.findMutants(scoreResult.path), depth, this.options.thresholds);
-    return fs.writeFile(path.join(baseDir, `${scoreResult.name}.html`), fileContent);
+    if (scoreResult.representsFile) {
+      const fileContent = templates.sourceFile(scoreResult, this.findFile(scoreResult.path), this.findMutants(scoreResult.path), depth, this.options.thresholds);
+      return util.writeFile(path.join(baseDir, `${scoreResult.name}.html`), fileContent);
+    } else {
+      return Promise.resolve(); // not a report file
+    }
   }
 
   private findFile(filePath: string) {
