@@ -6,15 +6,15 @@ import { Config } from 'stryker-api/config';
 import { createProgram } from './helpers/tsHelpers';
 import Mutator from './mutator/Mutator';
 import BinaryExpressionMutator from './mutator/BinaryExpressionMutator';
-
-export function filterValues<T>(array: (T | null | undefined)[]): T[] {
-  return array.filter(a => a !== null && a !== undefined) as T[];
-}
+import BooleanSubstitutionMutator from './mutator/BooleanSubstitutionMutator';
+import UnaryNotMutator from './mutator/UnaryNotMutator';
 
 export default class TypescriptMutantGenerator {
 
   constructor(private config: Config, public mutators: Mutator[] = [
-    new BinaryExpressionMutator()
+    new BinaryExpressionMutator(),
+    new BooleanSubstitutionMutator(),
+    new UnaryNotMutator()
   ]) { }
 
   generateMutants(inputFiles: File[]): Mutant[] {
