@@ -6,7 +6,9 @@ export enum WorkerMessageKind {
 export type WorkerMessage = InitMessage | WorkMessage;
 export type ParentMessage = WorkResult | 'init_done';
 
-export const autoStart = 'childProcessAutoStart';
+// Make this an unlikely command line argument 
+// (prevents incidental start of child process)
+export const autoStart = 'childProcessAutoStart12937129s7d';
 
 export interface InitMessage {
   kind: WorkerMessageKind.Init;

@@ -39,6 +39,9 @@ export default class ChildProcessProxyWorker {
     });
   }
 }
+
+// Prevent side effects for merely requiring the file
+// Only actually start the child worker when it is requested
 if (process.argv.indexOf(autoStart) !== -1) {
   new ChildProcessProxyWorker();
 }
