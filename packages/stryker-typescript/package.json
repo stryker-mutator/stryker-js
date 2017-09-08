@@ -43,11 +43,10 @@
     "@types/lodash.flatmap": "^4.5.3",
     "@types/source-map": "^0.5.1",
     "stryker-api": "^0.8.0",
-    "tslib": "^1.5.0",
-    "typescript": "^2.6.0-dev.20170819"
+    "tslib": "^1.5.0"
   },
   "peerDependencies": {
     "stryker-api": "^0.8.0",
-    "typescript": "^2.6.0-dev.20170819"
+    "typescript": "^2.5.0"
   }
 }
