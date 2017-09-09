@@ -1,5 +1,4 @@
 import { normalize, join } from 'path';
-import * as fs from 'mz/fs';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Config } from 'stryker-api/config';
@@ -18,7 +17,7 @@ describe('HtmlReporter', () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     copyFolderStub = sandbox.stub(util, 'copyFolder');
-    writeFileStub = sandbox.stub(fs, 'writeFile');
+    writeFileStub = sandbox.stub(util, 'writeFile');
     deleteDirStub = sandbox.stub(util, 'deleteDir');
     mkdirStub = sandbox.stub(util, 'mkdir');
     sut = new HtmlReporter(new Config());

@@ -118,8 +118,7 @@ function getContextClassForStatus(status: MutantStatus) {
         case MutantStatus.NoCoverage:
         case MutantStatus.Survived:
             return 'danger';
-        case MutantStatus.TimedOut:
-        case MutantStatus.Error:
+        default:
             return 'warning';
     }
 }
