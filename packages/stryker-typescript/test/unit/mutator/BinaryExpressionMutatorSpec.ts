@@ -34,12 +34,12 @@ describe('BinaryExpressionMutator', () => {
     expectMutation(sut, 'a >= b', 'a < b', 'a > b');
   });
 
-  it('should == and ===', () => { 
+  it('should mutate == and ===', () => { 
     expectMutation(sut, 'a == b', 'a != b');
     expectMutation(sut, 'a === b', 'a !== b');
   });
 
-  it('should != and !==', () => { 
+  it('should mutate != and !==', () => { 
     expectMutation(sut, 'a != b', 'a == b');
     expectMutation(sut, 'a !== b', 'a === b');
   });
