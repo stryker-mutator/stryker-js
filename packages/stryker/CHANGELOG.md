@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.9.3"></a>
+## [0.9.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.9.2...stryker@0.9.3) (2017-09-09)
+
+
+### Bug Fixes
+
+* **score-result:** Wrap single file reports ([#379](https://github.com/stryker-mutator/stryker/issues/379)) ([986eb6b](https://github.com/stryker-mutator/stryker/commit/986eb6b))
+
+
+
+
 <a name="0.9.2"></a>
 ## [0.9.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.9.1...stryker@0.9.2) (2017-09-06)
 

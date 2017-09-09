@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.7.2"></a>
+## [0.7.2](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.7.1...stryker-html-reporter@0.7.2) (2017-09-09)
+
+
+### Bug Fixes
+
+* **one file directories:** Add support single file dirs ([#377](https://github.com/stryker-mutator/stryker/issues/377)) ([27c3e10](https://github.com/stryker-mutator/stryker/commit/27c3e10))
+
+
+
+
 <a name="0.7.1"></a>
 ## [0.7.1](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.7.0...stryker-html-reporter@0.7.1) (2017-09-03)
 
