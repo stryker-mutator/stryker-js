@@ -54,3 +54,18 @@ export function mkdir(folderName: string): Promise<void> {
     });
   });
 }
+
+export function writeFile(fileName: string, content: string) {
+  return mkdir(path.dirname(fileName))
+    .then(_ => fs.writeFile(fileName, content, 'utf8'));
+}
+
+export function countPathSep(fileName: string) {
+  let count = 0;
+  for (let ch of fileName) {
+    if (ch === path.sep) {
+      count++;
+    }
+  }
+  return count;
+}

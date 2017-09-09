@@ -29,22 +29,35 @@ describe('ScoreResult', () => {
         mutantResult({ status: MutantStatus.Killed, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.TimedOut, sourceFilePath: fileName }),
       ]);
-      expect(actual.name).to.eq(fileName);
-      expect(actual.killed, 'killed').to.eq(2);
-      expect(actual.transpileErrors, 'transpileErrors').eq(1);
-      expect(actual.runtimeErrors, 'runtimeErrors').eq(1);
-      expect(actual.survived, 'survived').to.eq(1);
-      expect(actual.noCoverage, 'noCoverage').to.eq(1);
-      expect(actual.timedOut, 'timedOut').to.eq(1);
-      expect(actual.totalCovered, 'totalCovered').to.eq(4);
-      expect(actual.totalDetected, 'detected').to.eq(3);
-      expect(actual.totalMutants, 'mutants').to.eq(7);
-      expect(actual.totalValid, 'mutants').to.eq(5);
-      expect(actual.totalInvalid, 'mutants').to.eq(2);
-      expect(actual.totalUndetected, 'undetected').to.eq(2);
-      expect(actual.mutationScoreBasedOnCoveredCode, 'percentageBasedOnCoveredCode').to.eq(75);
-      expect(actual.mutationScore, 'mutationScore').to.eq(60);
-      expect(actual.childResults).to.have.lengthOf(0);
+      expect(actual.name).to.eq('base');
+      function assertNumbers(actual: ScoreResult) {
+        expect(actual.killed, 'killed').to.eq(2);
+        expect(actual.transpileErrors, 'transpileErrors').eq(1);
+        expect(actual.runtimeErrors, 'runtimeErrors').eq(1);
+        expect(actual.survived, 'survived').to.eq(1);
+        expect(actual.noCoverage, 'noCoverage').to.eq(1);
+        expect(actual.timedOut, 'timedOut').to.eq(1);
+        expect(actual.totalCovered, 'totalCovered').to.eq(4);
+        expect(actual.totalDetected, 'detected').to.eq(3);
+        expect(actual.totalMutants, 'mutants').to.eq(7);
+        expect(actual.totalValid, 'mutants').to.eq(5);
+        expect(actual.totalInvalid, 'mutants').to.eq(2);
+        expect(actual.totalUndetected, 'undetected').to.eq(2);
+        expect(actual.mutationScoreBasedOnCoveredCode, 'percentageBasedOnCoveredCode').to.eq(75);
+        expect(actual.mutationScore, 'mutationScore').to.eq(60);
+      }
+      assertNumbers(actual);
+      assertNumbers(actual.childResults[0]);
+    });
+
+    it('should wrap a single result in its base directory', () => {
+      const fileName = path.join('base', 'something');
+      const actual = ScoreResultCalculator.calculate([
+        mutantResult({ status: MutantStatus.RuntimeError, sourceFilePath: fileName })
+      ]);
+      expect(actual.name).eq('base');
+      expect(actual.childResults).lengthOf(1);
+      expect(actual.childResults[0].name).eq('something');
     });
 
     it('should count results of multiple files', () => {

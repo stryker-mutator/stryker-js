@@ -5,11 +5,11 @@ import { MutationScoreThresholds } from 'stryker-api/core';
 import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
 
-
 export default class ScoreResultCalculator {
 
   static calculate(results: MutantResult[]): ScoreResult {
-    return this.calculateScoreResult(results, '');
+    const scoreResult = this.calculateScoreResult(results, '');
+    return this.wrapIfSingleFileScoreResult(scoreResult);
   }
 
   static determineExitCode(score: ScoreResult, thresholds: MutationScoreThresholds | undefined) {
@@ -28,10 +28,26 @@ export default class ScoreResultCalculator {
     }
   }
 
+  private static wrapIfSingleFileScoreResult(scoreResult: ScoreResult): ScoreResult {
+    if (scoreResult.representsFile) {
+      return this.copy(scoreResult, {
+        name: path.dirname(scoreResult.name), childResults: [
+          this.copy(scoreResult, { name: path.basename(scoreResult.name) })
+        ]
+      });
+    } else {
+      return scoreResult;
+    }
+  }
+
   private static calculateScoreResult(results: MutantResult[], basePath: string): ScoreResult {
     const numbers = this.countNumbers(results);
     const facts = this.determineFacts(basePath, results);
     return freezeRecursively(_.assign(numbers, facts));
+  }
+
+  private static copy(defaults: ScoreResult, overrides: Partial<ScoreResult>): ScoreResult {
+    return Object.assign({}, defaults, overrides);
   }
 
   private static determineFacts(basePath: string, results: MutantResult[]) {
@@ -41,7 +57,7 @@ export default class ScoreResultCalculator {
       name,
       path: path.join(basePath, name),
       childResults,
-      representsFile: childResults.length === 0
+      representsFile: childResults.length === 0 && results.length > 0
     };
   }
 
