@@ -40,10 +40,9 @@
       // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
-        "run",
-        "testResources/sampleProject/stryker.conf.js"
+        "run"
       ],
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceRoot}/../../sampleProject",
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"

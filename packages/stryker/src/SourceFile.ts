@@ -62,8 +62,8 @@ export default class SourceFile {
       lineNumber = ~lineNumber - 1;
     }
     return {
-      line: lineNumber + 1,
-      column: pos - this.lineStarts[lineNumber] + 1
+      line: lineNumber,
+      column: pos - this.lineStarts[lineNumber]
     };
   }
 

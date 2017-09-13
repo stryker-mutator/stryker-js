@@ -36,6 +36,11 @@ export default class CoverageInstrumenterStream extends Transform {
       const coverageObjectMatch = coverageObjRegex.exec(instrumentedCode) + '';
       const coverageObj = JSON.parse(coverageObjectMatch);
       this.statementMap = coverageObj.statementMap;
+      Object.keys(this.statementMap).forEach(key => {
+        // Lines from istanbul are one-based, lines in Stryker are 0-based
+        this.statementMap[key].end.line--;
+        this.statementMap[key].start.line--;
+      });
       this.push(instrumentedCode);
     } catch (err) {
       const error = `Error while instrumenting file "${this.filename}", error was: ${err.toString()}`;

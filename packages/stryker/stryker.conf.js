@@ -28,7 +28,7 @@ module.exports = function (config) {
         { pattern: 'node_modules/stryker-api/*.js', included: false, mutated: false },
         { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false }
       ],
-      coverageAnalysis: 'off',
+      coverageAnalysis: 'perTest',
       mutantGenerator: 'es5'
     });
   }
@@ -43,6 +43,7 @@ module.exports = function (config) {
       break: null
     },
     logLevel: 'info',
+    maxConcurrentTestRunners: 6,
     plugins: [
       require.resolve('../stryker-mocha-runner/src/index'),
       require.resolve('../stryker-mocha-framework/src/index'),

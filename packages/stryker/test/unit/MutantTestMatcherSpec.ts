@@ -53,16 +53,16 @@ describe('MutantTestMatcher', () => {
             mutatorName: 'myMutator',
             fileName: 'fileWithMutantOne',
             replacement: '>',
-            range: [9, 9] // line 5:6 -> line 5:6
-            // location: { start: { line: 5, column: 6 }, end: { line: 5, column: 6 } },
+            range: [9, 9] // line 4:5 -> line 4:5
+            // location: { start: { line: 4, column: 5 }, end: { line: 4, column: 5 } },
           };
 
           mutantTwo = {
             mutatorName: 'myMutator',
             fileName: 'fileWithMutantTwo',
             replacement: '<',
-            range: [9, 9] // line 10:1 -> line 10:1
-            // location: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } },
+            range: [9, 9] // line 9:0 -> line 9:0
+            // location: { start: { line: 9, column: 0 }, end: { line: 9, column: 0 } },
           };
 
           testResultOne = {
@@ -128,36 +128,36 @@ describe('MutantTestMatcher', () => {
 
             statementMapDictionary['anOtherFile'] = {
               '1': { // covers but in wrong src file
-                start: { line: 5, column: 1 },
-                end: { line: 5, column: 8 }
+                start: { line: 4, column: 0 },
+                end: { line: 4, column: 7 }
               }
             };
             statementMapDictionary['fileWithMutantOne'] = {
               '1': {
-                start: { line: 3, column: 1 },
-                end: { line: 5, column: 10 }
+                start: { line: 2, column: 0 },
+                end: { line: 4, column: 9 }
               },
               '2': {
-                start: { line: 5, column: 1 },
-                end: { line: 5, column: 10 }
+                start: { line: 4, column: 0 },
+                end: { line: 4, column: 9 }
               },
               '3': { // Smallest statement that surrounds the mutant. Differs based on column number
-                start: { line: 5, column: 4 },
-                end: { line: 5, column: 8 }
+                start: { line: 4, column: 3 },
+                end: { line: 4, column: 7 }
               }
             };
             statementMapDictionary['fileWithMutantTwo'] = {
               '1': {
-                start: { line: 1, column: 1 },
-                end: { line: 10, column: 5 }
+                start: { line: 0, column: 0 },
+                end: { line: 9, column: 4 }
               },
               '2': { // Smallest  statement that surround the mutant. Differs based on line number
-                start: { line: 9, column: 1 },
-                end: { line: 10, column: 5 }
+                start: { line: 8, column: 0 },
+                end: { line: 9, column: 4 }
               },
               '3': {
-                start: { line: 10, column: 2 },
-                end: { line: 10, column: 5 }
+                start: { line: 9, column: 1 },
+                end: { line: 9, column: 4 }
               }
             };
           });
