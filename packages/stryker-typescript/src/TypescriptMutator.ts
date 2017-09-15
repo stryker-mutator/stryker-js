@@ -10,6 +10,7 @@ import BooleanSubstitutionMutator from './mutator/BooleanSubstitutionMutator';
 import UnaryNotMutator from './mutator/UnaryNotMutator';
 import ArrayLiteralMutator from './mutator/ArrayLiteralMutator';
 import ArrayNewExpressionMutator from './mutator/ArrayNewExpressionMutator';
+import BlockMutator from './mutator/BlockMutator';
 
 export default class TypescriptMutator {
 
@@ -18,7 +19,8 @@ export default class TypescriptMutator {
     new BooleanSubstitutionMutator(),
     new UnaryNotMutator(),
     new ArrayLiteralMutator(),
-    new ArrayNewExpressionMutator()
+    new ArrayNewExpressionMutator(),
+    new BlockMutator()
   ]) { }
 
   mutate(inputFiles: File[]): Mutant[] {

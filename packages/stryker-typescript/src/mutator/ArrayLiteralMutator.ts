@@ -8,7 +8,7 @@ export default class ArrayLiteralMutator extends NodeMutator<ts.ArrayLiteralExpr
     return node.kind === ts.SyntaxKind.ArrayLiteralExpression;
   }
 
-  protected identifyReplacements(node: ts.ArrayLiteralExpression, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(node: ts.ArrayLiteralExpression): NodeReplacement[] {
     if (node.elements.length) {
       return [{ node, replacement: '[]' }];
     } else {
