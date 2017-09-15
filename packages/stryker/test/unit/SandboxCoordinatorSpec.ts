@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import SandboxCoordinator from '../../src/SandboxCoordinator';
 import { TestFramework } from 'stryker-api/test_framework';
-import { Mock, mock, testFramework, textFile } from '../helpers/producers';
+import { Mock, mock, testFramework, textFile, config } from '../helpers/producers';
 import * as strykerSandbox from '../../src/Sandbox';
 import Sandbox from '../../src/Sandbox';
 import '../helpers/globals';
@@ -19,7 +19,7 @@ describe('SandboxCoordinator', () => {
   let expectedInputFiles: File[];
 
   beforeEach(() => {
-    options = <any>{};
+    options = config();
     expectedTestFramework = testFramework();
     coverageInstrumenter = 'a coverage instrumenter';
     firstSandbox = mock(Sandbox);
@@ -54,8 +54,8 @@ describe('SandboxCoordinator', () => {
       options.maxConcurrentTestRunners = 100;
       const actual = await sut.streamSandboxes().toArray().toPromise();
       expect(strykerSandbox.default).calledWithNew;
-      expect(actual).lengthOf(2);
-      expect(strykerSandbox.default).to.have.callCount(2);
+      expect(actual).lengthOf(3);
+      expect(strykerSandbox.default).to.have.callCount(3);
       expect(strykerSandbox.default).calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
     });
 
@@ -64,9 +64,18 @@ describe('SandboxCoordinator', () => {
       options.maxConcurrentTestRunners = 0;
       const actual = await sut.streamSandboxes().toArray().toPromise();
       expect(strykerSandbox.default).calledWithNew;
-      expect(strykerSandbox.default).to.have.callCount(2);
-      expect(actual).lengthOf(2);
+      expect(strykerSandbox.default).to.have.callCount(3);
+      expect(actual).lengthOf(3);
       expect(strykerSandbox.default).calledWith(options, 0, expectedInputFiles, expectedTestFramework, null);
+    });
+
+    it('should use the cpuCount - 1 when a transpiler is configured', async () => {
+      options.transpilers = ['a transpiler'];
+      options.maxConcurrentTestRunners = 2;
+      global.sandbox.stub(os, 'cpus').returns([1, 2]); // stub 2 cpus
+      const actual = await sut.streamSandboxes().toArray().toPromise();
+      expect(strykerSandbox.default).to.have.callCount(1);
+      expect(actual).lengthOf(1);
     });
   });
   describe('dispose', () => {

@@ -43,7 +43,6 @@ module.exports = function (config) {
       break: null
     },
     logLevel: 'info',
-    maxConcurrentTestRunners: 6,
     plugins: [
       require.resolve('../stryker-mocha-runner/src/index'),
       require.resolve('../stryker-mocha-framework/src/index'),

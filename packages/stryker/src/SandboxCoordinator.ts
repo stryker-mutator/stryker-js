@@ -15,7 +15,11 @@ export default class SandboxCoordinator {
   }
 
   public streamSandboxes(): Observable<Sandbox> {
-    let numConcurrentRunners = os.cpus().length - 1;
+    let numConcurrentRunners = os.cpus().length;
+    if (this.options.transpilers.length) {
+      // If transpilers are configured, one core is reserved for the compiler (for now)
+      numConcurrentRunners--;
+    }
     let numConcurrentRunnersSource = 'CPU count';
     if (numConcurrentRunners > this.options.maxConcurrentTestRunners && this.options.maxConcurrentTestRunners > 0) {
       numConcurrentRunners = this.options.maxConcurrentTestRunners;

@@ -5,29 +5,49 @@ import TestableMutant from '../TestableMutant';
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import SourceFile from '../SourceFile';
 import { getLogger, Logger } from 'log4js';
-import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
-import { TranspileResult } from 'stryker-api/transpile';
+import ChildProcessProxy, { ChildProxy } from '../child-proxy/ChildProcessProxy';
+import { TranspileResult, FileLocation } from 'stryker-api/transpile';
 import TranspiledMutant from '../TranspiledMutant';
 
 export default class MutantTranspiler {
 
-  private transpilerProxy: ChildProcessProxy<TranspilerFacade>;
+  private transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
+  private proxy: ChildProxy<TranspilerFacade>;
   private currentMutatedFile: SourceFile;
   private log: Logger;
 
+  /**
+   * Creates the mutant transpiler in a child process if one is defined. 
+   * Otherwise will just forward input as output in same process.
+   * @param config The Stryker config
+   */
   constructor(config: Config) {
-    this.transpilerProxy = ChildProcessProxy.create(
-      require.resolve(`./${TranspilerFacade.name}`),
-      config.logLevel,
-      config.plugins,
-      TranspilerFacade,
-      { config, keepSourceMaps: false }
-    );
+    const transpilerOptions = { config, keepSourceMaps: false };
+    if (config.transpilers.length) {
+      this.transpilerChildProcess = ChildProcessProxy.create(
+        require.resolve('./TranspilerFacade'),
+        config.logLevel,
+        config.plugins,
+        TranspilerFacade,
+        transpilerOptions
+      );
+      this.proxy = this.transpilerChildProcess.proxy;
+    } else {
+      let transpiler = new TranspilerFacade(transpilerOptions);
+      this.proxy = {
+        transpile(files: File[]) {
+          return Promise.resolve(transpiler.transpile(files));
+        },
+        getMappedLocation(sourceFileLocation: FileLocation) {
+          return Promise.resolve(transpiler.getMappedLocation(sourceFileLocation));
+        }
+      };
+    }
     this.log = getLogger(MutantTranspiler.name);
   }
 
   initialize(files: File[]): Promise<TranspileResult> {
-    return this.transpilerProxy.proxy.transpile(files);
+    return this.proxy.transpile(files);
   }
 
   transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
@@ -49,7 +69,9 @@ export default class MutantTranspiler {
   }
 
   dispose() {
-    this.transpilerProxy.dispose();
+    if (this.transpilerChildProcess) {
+      this.transpilerChildProcess.dispose();
+    }
   }
 
   private transpileMutant(mutant: TestableMutant): Promise<TranspileResult> {
@@ -67,6 +89,6 @@ export default class MutantTranspiler {
       included: mutant.included
     };
     filesToTranspile.push(mutatedFile);
-    return this.transpilerProxy.proxy.transpile(filesToTranspile);
+    return this.proxy.transpile(filesToTranspile);
   }
 }
