@@ -1,8 +1,7 @@
 import * as ts from 'typescript';
-import { Mutant } from 'stryker-api/mutant';
-import Mutator from './Mutator';
+import NodeMutator, { NodeReplacement } from './NodeMutator';
 
-export default class UnaryNotMutator extends Mutator<ts.PrefixUnaryExpression> {
+export default class UnaryNotMutator extends NodeMutator<ts.PrefixUnaryExpression> {
 
   name: string = 'UnaryNot';
 
@@ -10,9 +9,9 @@ export default class UnaryNotMutator extends Mutator<ts.PrefixUnaryExpression> {
     return node.kind === ts.SyntaxKind.PrefixUnaryExpression;
   }
 
-  public mutate(node: ts.PrefixUnaryExpression): Mutant[] {
+  public identifyReplacements(node: ts.PrefixUnaryExpression, sourceFile: ts.SourceFile): NodeReplacement[] {
     if (node.operator === ts.SyntaxKind.ExclamationToken) {
-      return [this.createMutant(node, node.operand.getFullText(this.currentSourceFile))];
+      return [ { node, replacement: node.operand.getFullText(sourceFile) }];
     } else {
       return [];
     }

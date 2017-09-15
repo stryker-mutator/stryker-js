@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import { TextFile, FileKind } from 'stryker-api/core';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
-import TypescriptMutantGenerator from '../../src/TypescriptMutantGenerator';
+import TypescriptMutator from '../../src/TypescriptMutator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { setGlobalLogLevel } from 'log4js';
 
@@ -39,8 +39,8 @@ describe('Sample integration', function () {
 
   it('should be able to generate mutants', () => {
     // Generate mutants
-    const mutantGenerator = new TypescriptMutantGenerator(config);
-    const mutants = mutantGenerator.generateMutants(inputFiles);
+    const mutator = new TypescriptMutator(config);
+    const mutants = mutator.mutate(inputFiles);
     expect(mutants.length).to.eq(2);
   });
 
@@ -54,8 +54,8 @@ describe('Sample integration', function () {
 
   it('should be able to mutate transpiled code', () => {
     // Transpile mutants
-    const mutantGenerator = new TypescriptMutantGenerator(config);
-    const mutants = mutantGenerator.generateMutants(inputFiles);
+    const mutator = new TypescriptMutator(config);
+    const mutants = mutator.mutate(inputFiles);
     const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
     transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];

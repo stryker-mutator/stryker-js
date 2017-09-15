@@ -1,11 +1,11 @@
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import { Mutant, MutantGenerator, MutantGeneratorFactory } from 'stryker-api/mutant';
+import { Mutant, Mutator, MutatorFactory } from 'stryker-api/mutant';
 
 
-class MyMutantGenerator implements MutantGenerator {
+class MyMutator implements Mutator {
   public name = 'myMutator';
-  generateMutants(inputFiles: File[]): Mutant[] {
+  mutate(inputFiles: File[]): Mutant[] {
     return [{
       fileName: 'file',
       range: [1, 2],
@@ -15,9 +15,9 @@ class MyMutantGenerator implements MutantGenerator {
   } 
 }
 
-MutantGeneratorFactory.instance().register('myMutantGenerator', MyMutantGenerator);
-let myMutator = MutantGeneratorFactory.instance().create('myMutantGenerator', new Config());
-if (!(myMutator instanceof MyMutantGenerator)) {
+MutatorFactory.instance().register('myMutator', MyMutator);
+let myMutator = MutatorFactory.instance().create('myMutator', new Config());
+if (!(myMutator instanceof MyMutator)) {
   throw Error('Something wrong with myMutator');
 }
-console.log(myMutator.generateMutants([]));
+console.log(myMutator.mutate([]));

@@ -2,10 +2,10 @@ import * as _ from 'lodash';
 import { Logger, getLogger } from 'log4js';
 import { Config } from 'stryker-api/config';
 import { File, TextFile, FileKind } from 'stryker-api/core';
-import { MutantGenerator, Mutant } from 'stryker-api/mutant';
+import { Mutator, Mutant } from 'stryker-api/mutant';
 import * as parserUtils from '../utils/parserUtils';
 import { copy } from '../utils/objectUtils';
-import Mutator from './Mutator';
+import NodeMutator from './NodeMutator';
 import BinaryOperatorMutator from './BinaryOperatorMutator';
 import BlockStatementMutator from './BlockStatementMutator';
 import LogicalOperatorMutator from './LogicalOperatorMutator';
@@ -16,11 +16,11 @@ import ArrayDeclaratorMutator from './ArrayDeclaratorMutator';
 import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
 
 
-export default class ES5MutantGenerator implements MutantGenerator {
+export default class ES5Mutator implements Mutator {
 
   private readonly log: Logger;
 
-  constructor(_?: Config, private mutators: Mutator[] = [
+  constructor(_?: Config, private mutators: NodeMutator[] = [
     new BinaryOperatorMutator(),
     new BlockStatementMutator(),
     new LogicalOperatorMutator(),
@@ -30,27 +30,27 @@ export default class ES5MutantGenerator implements MutantGenerator {
     new ArrayDeclaratorMutator(),
     new BooleanSubstitutionMutator()
   ]) {
-    this.log = getLogger(ES5MutantGenerator.name);
+    this.log = getLogger(ES5Mutator.name);
   }
 
 
-  generateMutants(files: File[]): Mutant[] {
+  mutate(files: File[]): Mutant[] {
     return _.flatMap(files, file => {
       if (file.mutated && file.kind === FileKind.Text) {
-        return this.generateMutantsForFile(file);
+        return this.mutateForFile(file);
       } else {
         return [];
       }
     });
   }
 
-  private generateMutantsForFile(file: TextFile): Mutant[] {
+  private mutateForFile(file: TextFile): Mutant[] {
     const abstractSyntaxTree = parserUtils.parse(file.content);
     const nodes = new parserUtils.NodeIdentifier().identifyAndFreeze(abstractSyntaxTree);
-    return this.generateMutantsForNodes(file, nodes);
+    return this.mutateForNodes(file, nodes);
   }
 
-  private generateMutantsForNodes(sourceFile: TextFile, nodes: any[]): Mutant[] {
+  private mutateForNodes(sourceFile: TextFile, nodes: any[]): Mutant[] {
     return _.flatMap(nodes, astNode => {
       if (astNode.type) {
         Object.freeze(astNode);

@@ -4,25 +4,25 @@ import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
 import { createProgram } from './helpers/tsHelpers';
-import Mutator from './mutator/Mutator';
+import NodeMutator from './mutator/NodeMutator';
 import BinaryExpressionMutator from './mutator/BinaryExpressionMutator';
 import BooleanSubstitutionMutator from './mutator/BooleanSubstitutionMutator';
 import UnaryNotMutator from './mutator/UnaryNotMutator';
 
-export default class TypescriptMutantGenerator {
+export default class TypescriptMutator {
 
-  constructor(private config: Config, public mutators: Mutator[] = [
+  constructor(private config: Config, public mutators: NodeMutator[] = [
     new BinaryExpressionMutator(),
     new BooleanSubstitutionMutator(),
     new UnaryNotMutator()
   ]) { }
 
-  generateMutants(inputFiles: File[]): Mutant[] {
+  mutate(inputFiles: File[]): Mutant[] {
     const program = createProgram(inputFiles, this.config);
     const mutatedInputFiles = inputFiles.filter(inputFile => inputFile.mutated);
     const mutants = flatMap(mutatedInputFiles, inputFile => {
       const sourceFile = program.getSourceFile(inputFile.name);
-      return this.generateMutantsForNode(sourceFile, sourceFile);
+      return this.mutateForNode(sourceFile, sourceFile);
     });
     return mutants;
   }
@@ -32,12 +32,12 @@ export default class TypescriptMutantGenerator {
     newLine: ts.NewLineKind.CarriageReturnLineFeed
   });
 
-  private generateMutantsForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): Mutant[] {
+  private mutateForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): Mutant[] {
     const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
-    const mutants = flatMap(targetMutators, mutator => mutator.generateMutants(node, sourceFile));
+    const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
     node.forEachChild(child => {
       // It is important that forEachChild does not return a true, otherwise node visiting is halted!
-      mutants.push(... this.generateMutantsForNode(child, sourceFile));
+      mutants.push(... this.mutateForNode(child, sourceFile));
     });
     return mutants;
   }

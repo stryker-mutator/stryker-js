@@ -10,7 +10,7 @@ import InputFileResolver, * as inputFileResolver from '../../src/InputFileResolv
 import ConfigReader, * as configReader from '../../src/ConfigReader';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import ReporterOrchestrator, * as reporterOrchestrator from '../../src/ReporterOrchestrator';
-import MutantGeneratorFacade, * as mutantGeneratorFacade from '../../src/MutantGeneratorFacade';
+import MutatorFacade, * as mutatorFacade from '../../src/MutatorFacade';
 import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
 import InitialTestExecutor, * as initialTestExecutor from '../../src/process/InitialTestExecutor';
 import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/MutationTestExecutor';
@@ -41,7 +41,7 @@ describe('Stryker', function () {
   let initialTestExecutorMock: Mock<InitialTestExecutor>;
   let mutationTestExecutorMock: Mock<MutationTestExecutor>;
   let mutantRunResultMatcherMock: Mock<MutantRunResultMatcher>;
-  let mutantGeneratorMock: Mock<MutantGeneratorFacade>;
+  let mutatorMock: Mock<MutatorFacade>;
   let pluginLoaderMock: Mock<PluginLoader>;
   let determineExitCodeStub: sinon.SinonStub;
   let strykerConfig: Config;
@@ -57,7 +57,7 @@ describe('Stryker', function () {
     pluginLoaderMock = mock(PluginLoader);
     const reporterOrchestratorMock = mock(ReporterOrchestrator);
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
-    mutantGeneratorMock = mock(MutantGeneratorFacade);
+    mutatorMock = mock(MutatorFacade);
     inputFileResolverMock = mock(InputFileResolver);
     reporterOrchestratorMock.createBroadcastReporter.returns(reporter);
     testFramework = testFrameworkMock();
@@ -70,7 +70,7 @@ describe('Stryker', function () {
     sandbox.stub(configValidator, 'default').returns(configValidatorMock);
     sandbox.stub(testFrameworkOrchestrator, 'default').returns(testFrameworkOrchestratorMock);
     sandbox.stub(reporterOrchestrator, 'default').returns(reporterOrchestratorMock);
-    sandbox.stub(mutantGeneratorFacade, 'default').returns(mutantGeneratorMock);
+    sandbox.stub(mutatorFacade, 'default').returns(mutatorMock);
     sandbox.stub(mutantRunResultMatcher, 'default').returns(mutantRunResultMatcherMock);
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
@@ -126,7 +126,7 @@ describe('Stryker', function () {
       mutants = [testableMutant()];
       mutantResults = [mutantResult()];
       mutantRunResultMatcherMock.matchWithMutants.returns(mutants);
-      mutantGeneratorMock.generateMutants.returns(mutants);
+      mutatorMock.mutate.returns(mutants);
       mutationTestExecutorMock.run.resolves(mutantResults);
       inputFiles = [textFile({ name: 'input.ts ' })];
       transpiledFiles = [textFile({ name: 'output.js' })];
@@ -201,9 +201,9 @@ describe('Stryker', function () {
       });
 
       it('should create the mutant generator', () => {
-        expect(mutantGeneratorFacade.default).calledWithNew;
-        expect(mutantGeneratorFacade.default).calledWith(strykerConfig);
-        expect(mutantGeneratorMock.generateMutants).calledWith(inputFiles);
+        expect(mutatorFacade.default).calledWithNew;
+        expect(mutatorFacade.default).calledWith(strykerConfig);
+        expect(mutatorMock.mutate).calledWith(inputFiles);
       });
 
       it('should create the mutation test executor', () => {

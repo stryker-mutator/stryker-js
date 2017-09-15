@@ -3,38 +3,37 @@ import * as fs from 'mz/fs';
 import { expect } from 'chai';
 import * as ts from 'typescript';
 import { Config } from 'stryker-api/config';
-import { Mutant } from 'stryker-api/mutant';
-import TypescriptMutantGenerator from '../../src/TypescriptMutantGenerator';
-import Mutator from '../../src/mutator/Mutator';
+import TypescriptMutator from '../../src/TypescriptMutator';
+import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
 import * as tsHelpers from '../../src/helpers/tsHelpers';
 import { textFile } from '../helpers/producers';
 
 
-class FunctionDeclarationMutator extends Mutator<ts.FunctionDeclaration> {
+class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
   name = 'FunctionDeclarationForTest';
   guard(node: ts.Node): node is ts.FunctionDeclaration {
     return node.kind === ts.SyntaxKind.FunctionDeclaration;
   }
-  protected mutate(node: ts.FunctionDeclaration): Mutant[] {
+  protected identifyReplacements(node: ts.FunctionDeclaration): NodeReplacement[] {
     return [
-      this.createMutant(node, '// Function declaration removed'),
-      this.createMutant(node, 'changedToOtherCall()')
+      { node, replacement: '// Function declaration removed' },
+      { node, replacement: 'changedToOtherCall()' }
     ];
   }
 }
 
-class SourceFileMutator extends Mutator<ts.SourceFile> {
+class SourceFileMutator extends NodeMutator<ts.SourceFile> {
   name = 'SourceFileForTest';
   guard(node: ts.Node): node is ts.SourceFile {
     return node.kind === ts.SyntaxKind.SourceFile;
   }
-  protected mutate(node: ts.SourceFile): Mutant[] {
-    return [this.createMutant(node, '"stryker was here"')];
+  protected identifyReplacements(node: ts.SourceFile): NodeReplacement[] {
+    return [{ node, replacement: '"stryker was here"' }];
   }
 }
 
-describe('TypescriptMutantGenerator', () => {
-  let sut: TypescriptMutantGenerator;
+describe('TypescriptMutator', () => {
+  let sut: TypescriptMutator;
   let config: Config;
   let program: {
     getSourceFile: sinon.SinonStub;
@@ -53,11 +52,11 @@ describe('TypescriptMutantGenerator', () => {
       .readdirSync(path.resolve(__dirname, '..', '..', 'src', 'mutator'))
       .filter(mutatorFile => path.extname(mutatorFile) === '.ts'
         && !mutatorFile.endsWith('.d.ts')
-        && mutatorFile !== 'Mutator.ts')
+        && mutatorFile !== 'NodeMutator.ts')
       .map(fileName => fileName.substr(0, fileName.length - 'Mutator.ts'.length));
 
     // Act
-    const actualMutators = new TypescriptMutantGenerator(config).mutators.map(m => m.name);
+    const actualMutators = new TypescriptMutator(config).mutators.map(m => m.name);
 
     // Assert
     expect(expectedMutatorNames).length.greaterThan(2); // sanity check
@@ -67,7 +66,7 @@ describe('TypescriptMutantGenerator', () => {
   describe('using 2 mutators', () => {
 
     beforeEach(() => {
-      sut = new TypescriptMutantGenerator(config, [
+      sut = new TypescriptMutator(config, [
         new FunctionDeclarationMutator(),
         new SourceFileMutator()
       ]);
@@ -88,7 +87,7 @@ describe('TypescriptMutantGenerator', () => {
     });
 
     it('should deliver 6 mutants', () => {
-      const mutants = sut.generateMutants([
+      const mutants = sut.mutate([
         textFile({ name: 'file1.ts', content: 'file 1 content' }),
         textFile({ name: 'file2.ts', content: 'file 2 content' })
       ]);

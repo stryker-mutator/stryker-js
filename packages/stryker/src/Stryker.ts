@@ -17,7 +17,7 @@ import { TempFolder } from './utils/TempFolder';
 import * as log4js from 'log4js';
 import Timer from './utils/Timer';
 import StrictReporter from './reporters/StrictReporter';
-import MutantGeneratorFacade from './MutantGeneratorFacade';
+import MutatorFacade from './MutatorFacade';
 import InitialTestExecutor from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
 const log = log4js.getLogger('Stryker');
@@ -55,7 +55,7 @@ export default class Stryker {
     TempFolder.instance().initialize();    
     const initialTestRunProcess = this.createInitialTestRunner(inputFiles);
     const { runResult, transpiledFiles } = await initialTestRunProcess.run();
-    const testableMutants = await this.generateMutants(inputFiles, runResult);
+    const testableMutants = await this.mutate(inputFiles, runResult);
     if (runResult.tests.length && testableMutants.length) {
       const mutationTestExecutor = this.createMutationTester(inputFiles, transpiledFiles);
       const mutantResults = await mutationTestExecutor.run(testableMutants);
@@ -69,9 +69,9 @@ export default class Stryker {
     }
   }
 
-  private generateMutants(inputFiles: File[], runResult: RunResult) {
-    const mutantGenerator = new MutantGeneratorFacade(this.config);
-    const mutants = mutantGenerator.generateMutants(inputFiles);
+  private mutate(inputFiles: File[], runResult: RunResult) {
+    const mutator = new MutatorFacade(this.config);
+    const mutants = mutator.mutate(inputFiles);
     if (mutants.length) {
       log.info(`${mutants.length} Mutant(s) generated`);
     } else {

@@ -1,9 +1,9 @@
 import { Syntax } from 'esprima';
 import { Expression } from 'estree';
-import Mutator from './Mutator';
+import NodeMutator from './NodeMutator';
 import { IdentifiedNode, Identified } from './IdentifiedNode';
 
-export default class BooleanSubstitutionMutator implements Mutator {
+export default class BooleanSubstitutionMutator implements NodeMutator {
   name = 'BooleanSubstitution';
 
   applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] {

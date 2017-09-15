@@ -30,7 +30,7 @@ Optional location to the stryker.conf.js file as last argument. That file should
   .option('--coverageAnalysis <perTest|all|off>', `The coverage analysis strategy you want to use. Default value: "perTest"`)
   .option('--testFramework <name>', `The name of the test framework you want to use.`)
   .option('--testRunner <name>', `The name of the test runner you want to use`)
-  .option('--mutantGenerator <name>', `The name of the mutant generator you want to use`)
+  .option('--mutator <name>', `The name of the mutant generator you want to use`)
   .option('--transpilers <listOfTranspilers>', 'A comma separated list of transpilers to use.', list)
   .option('--reporter <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
   .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)

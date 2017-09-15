@@ -1,6 +1,6 @@
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
-import Mutator from './Mutator';
+import NodeMutator from './NodeMutator';
 import { IdentifiedNode, Identified } from './IdentifiedNode';
 
 type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree.ForStatement | estree.WhileStatement | estree.ConditionalExpression;
@@ -8,7 +8,7 @@ type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree
 /**
  * Represents a mutator which can remove the conditional clause from statements.
  */
-export default class RemoveConditionalsMutator implements Mutator {
+export default class RemoveConditionalsMutator implements NodeMutator {
   name = 'RemoveConditionals';
   private types: string[] = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement, Syntax.ConditionalExpression];
 

@@ -1,20 +1,19 @@
 import * as ts from 'typescript';
-import { Mutant } from 'stryker-api/mutant';
-import Mutator from './Mutator';
+import NodeMutator, { NodeReplacement } from './NodeMutator';
 
-export default class BooleanSubstitutionMutator extends Mutator<ts.BooleanLiteral> {
+export default class BooleanSubstitutionMutator extends NodeMutator<ts.BooleanLiteral> {
 
   name: string = 'BooleanSubstitution';
 
-  public guard(node: ts.Node): node is ts.BooleanLiteral {
+  guard(node: ts.Node): node is ts.BooleanLiteral {
     return node.kind === ts.SyntaxKind.FalseKeyword || node.kind === ts.SyntaxKind.TrueKeyword;
   }
 
-  public mutate(node: ts.BooleanLiteral): Mutant[] {
+  protected identifyReplacements(node: ts.BooleanLiteral): NodeReplacement[] {
     if (node.kind === ts.SyntaxKind.FalseKeyword) {
-      return [this.createMutant(node, 'true')];
+      return [{ node, replacement: 'true'}];
     } else {
-      return [this.createMutant(node, 'false')];
+      return [{ node, replacement: 'false'}];
     }
   }
 }

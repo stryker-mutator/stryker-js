@@ -53,7 +53,7 @@ interface StrykerOptions {
    * This is often dependent on the language of your source files.
    * Or example: 'es5', 'typescript'
    */
-  mutantGenerator?: string;
+  mutator?: string;
 
   /**
    * The names of the transpilers to use (in order). Default: [].

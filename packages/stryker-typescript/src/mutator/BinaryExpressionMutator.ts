@@ -1,6 +1,5 @@
 import * as ts from 'typescript';
-import { Mutant } from 'stryker-api/mutant';
-import Mutator from './Mutator';
+import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 const replaceTokens = {
   [ts.SyntaxKind.PlusToken]: ['-'],
@@ -18,7 +17,7 @@ const replaceTokens = {
   [ts.SyntaxKind.ExclamationEqualsEqualsToken]: ['==='],
 };
 
-export default class BinaryExpressionMutator extends Mutator<ts.BinaryExpression> {
+export default class BinaryExpressionMutator extends NodeMutator<ts.BinaryExpression> {
 
   name: string = 'BinaryExpression';
 
@@ -26,10 +25,10 @@ export default class BinaryExpressionMutator extends Mutator<ts.BinaryExpression
     return node.kind === ts.SyntaxKind.BinaryExpression;
   }
 
-  public mutate(node: ts.BinaryExpression): Mutant[] {
+  public identifyReplacements(node: ts.BinaryExpression): NodeReplacement[] {
     if (replaceTokens[node.operatorToken.kind]) {
       return replaceTokens[node.operatorToken.kind]
-        .map(replacement => this.createMutant(node.operatorToken, replacement));
+        .map(replacement => ({node: node.operatorToken, replacement }));
     } else {
       return [];
     }

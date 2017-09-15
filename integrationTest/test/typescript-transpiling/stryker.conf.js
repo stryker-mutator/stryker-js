@@ -7,7 +7,7 @@ module.exports = function (config) {
     coverageAnalysis: 'off',
     reporter: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
-    mutantGenerator: 'typescript',
+    mutator: 'typescript',
     logLevel: 'info',
     transpilers: [
       'typescript'

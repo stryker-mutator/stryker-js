@@ -14,7 +14,7 @@ module.exports = function (config) {
       ],
       coverageAnalysis: 'off',
       tsconfigFile: 'tsconfig.json',
-      mutantGenerator: 'typescript',
+      mutator: 'typescript',
       transpilers: [
         'typescript'
       ]
@@ -29,7 +29,7 @@ module.exports = function (config) {
         { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false }
       ],
       coverageAnalysis: 'perTest',
-      mutantGenerator: 'es5'
+      mutator: 'es5'
     });
   }
 

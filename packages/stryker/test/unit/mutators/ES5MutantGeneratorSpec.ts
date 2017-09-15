@@ -3,15 +3,15 @@ import { Syntax } from 'esprima';
 import * as estree from 'estree';
 import { Mutant } from 'stryker-api/mutant';
 import { file, textFile } from '../../helpers/producers';
-import ES5MutantGenerator from '../../../src/mutators/ES5MutantGenerator';
-import Mutator from '../../../src/mutators/Mutator';
+import ES5Mutator from '../../../src/mutators/ES5Mutator';
+import NodeMutator from '../../../src/mutators/NodeMutator';
 import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
 
-describe('ES5MutantGenerator', () => {
-  let sut: ES5MutantGenerator;
+describe('ES5Mutator', () => {
+  let sut: ES5Mutator;
 
   beforeEach(() => {
-    sut = new ES5MutantGenerator();
+    sut = new ES5Mutator();
   });
 
   afterEach(() => {
@@ -19,7 +19,7 @@ describe('ES5MutantGenerator', () => {
   });
 
   it('should return an empty array if nothing could be mutated', () => {
-    const mutants = sut.generateMutants([textFile({ name: 'test.js', included: false, mutated: true, content: '' })]);
+    const mutants = sut.mutate([textFile({ name: 'test.js', included: false, mutated: true, content: '' })]);
     expect(mutants.length).to.equal(0);
   });
 
@@ -27,7 +27,7 @@ describe('ES5MutantGenerator', () => {
     let mutants: Mutant[];
 
     beforeEach(() => {
-      mutants = sut.generateMutants([file({ content: 'var i = 1 + 2;' })]);
+      mutants = sut.mutate([file({ content: 'var i = 1 + 2;' })]);
     });
 
     it('should return an array with a single mutant', () => {
@@ -40,7 +40,7 @@ describe('ES5MutantGenerator', () => {
 
     it('should set the range', () => {
       const originalCode = '\n\nvar i = 1 + 2;';
-      mutants = sut.generateMutants([file({ content: originalCode })]);
+      mutants = sut.mutate([file({ content: originalCode })]);
       expect(mutants[0].range[0]).to.equal(10);
       expect(mutants[0].range[1]).to.equal(15);
     });
@@ -48,7 +48,7 @@ describe('ES5MutantGenerator', () => {
 
   describe('should be able to handle a Mutator that returns', () => {
 
-    class StubMutator implements Mutator {
+    class StubMutator implements NodeMutator {
       name: 'stub';
       applyMutations(node: IdentifiedNode, copy: (obj: any, deep?: boolean) => any): IdentifiedNode[] {
         let nodes: IdentifiedNode[] = [];
@@ -64,17 +64,17 @@ describe('ES5MutantGenerator', () => {
     }
 
     beforeEach(() => {
-      sut = new ES5MutantGenerator(undefined, [new StubMutator()]);
+      sut = new ES5Mutator(undefined, [new StubMutator()]);
     });
 
     it('the same nodeID', () => {
-      const mutants = sut.generateMutants([file({ name: 'some file', content: 'if (true);' })]);
+      const mutants = sut.mutate([file({ name: 'some file', content: 'if (true);' })]);
       expect(mutants[0].fileName).eq('some file');
       expect(mutants[0].replacement).eq('if (true);');
     });
 
     it('a different nodeID', () => {
-      const mutants = sut.generateMutants([file({ name: 'src.js', content: '1 * 2' })]);
+      const mutants = sut.mutate([file({ name: 'src.js', content: '1 * 2' })]);
       expect(mutants[0].fileName).eq('src.js');
       expect(mutants[0].replacement).eq('1');
     });

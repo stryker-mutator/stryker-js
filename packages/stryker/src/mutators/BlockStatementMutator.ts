@@ -1,11 +1,11 @@
 import { Syntax } from 'esprima';
-import Mutator from './Mutator';
+import NodeMutator from './NodeMutator';
 import { IdentifiedNode } from './IdentifiedNode';
 
 /**
  * Represents a mutator which can remove the content of a BlockStatement.
  */
-export default class BlockStatementMutator implements Mutator {
+export default class BlockStatementMutator implements NodeMutator {
   name = 'BlockStatement';
   private type = Syntax.BlockStatement;
 

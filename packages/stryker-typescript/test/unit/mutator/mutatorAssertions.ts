@@ -1,10 +1,10 @@
 import * as ts from 'typescript';
 import { expect } from 'chai';
 import { Mutant } from 'stryker-api/mutant';
-import Mutator from '../../../src/mutator/Mutator';
+import NodeMutator from '../../../src/mutator/NodeMutator';
 
 
-export function expectMutation(mutator: Mutator, sourceText: string, ...expectedTexts: string[]) {
+export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
   const sourceFile = ts.createSourceFile('file.ts', sourceText, ts.ScriptTarget.ES5);
   const mutants = mutate(mutator, sourceFile, sourceFile);
   expect(mutants).lengthOf(expectedTexts.length);
@@ -12,10 +12,10 @@ export function expectMutation(mutator: Mutator, sourceText: string, ...expected
   expectedTexts.forEach(expected => expect(actualMutantTexts).to.include(expected));
 }
 
-function mutate(mutator: Mutator, node: ts.Node, sourceFile: ts.SourceFile): Mutant[] {
+function mutate(mutator: NodeMutator, node: ts.Node, sourceFile: ts.SourceFile): Mutant[] {
   const mutants: Mutant[] = [];
   if (mutator.guard(node)) {
-    mutants.push(...mutator.generateMutants(node, sourceFile));
+    mutants.push(...mutator.mutate(node, sourceFile));
   }
   node.forEachChild(child => {
     mutants.push(...mutate(mutator, child, sourceFile));
