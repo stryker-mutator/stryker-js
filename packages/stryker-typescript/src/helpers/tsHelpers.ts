@@ -39,7 +39,7 @@ const printer = ts.createPrinter({
   newLine: os.EOL === '\r\n' ? ts.NewLineKind.CarriageReturnLineFeed : ts.NewLineKind.LineFeed
 });
 
-export function print(node: ts.Node, originalSourceFile: ts.SourceFile): string {
+export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): string {
   return printer.printNode(ts.EmitHint.Unspecified, node, originalSourceFile);
 }
 

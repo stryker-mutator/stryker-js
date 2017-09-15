@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
-import { print } from '../helpers/tsHelpers';
+import { printNode } from '../helpers/tsHelpers';
 
 export default class ForStatementMutator extends NodeMutator<ts.ForStatement> {
 
@@ -16,7 +16,7 @@ export default class ForStatementMutator extends NodeMutator<ts.ForStatement> {
     } else {
       // No node to replace. Happens when for statement is defined as `for(let i=0;;i++)`
       // Replace the entire node
-      const replacement = print(ts.createFor(node.initializer, ts.createFalse(), node.incrementor, node.statement), sourceFile);
+      const replacement = printNode(ts.createFor(node.initializer, ts.createFalse(), node.incrementor, node.statement), sourceFile);
       return [{ node, replacement }];
     }
   }

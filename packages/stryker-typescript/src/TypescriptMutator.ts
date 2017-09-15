@@ -16,6 +16,7 @@ import WhileStatementMutator from './mutator/WhileStatementMutator';
 import ForStatementMutator from './mutator/ForStatementMutator';
 import DoStatementMutator from './mutator/DoStatementMutator';
 import ConditionalExpressionMutator from './mutator/ConditionalExpressionMutator';
+import PrefixUnaryExpressionMutator from './mutator/PrefixUnaryExpressionMutator';
 
 export default class TypescriptMutator {
 
@@ -30,7 +31,8 @@ export default class TypescriptMutator {
     new WhileStatementMutator(),
     new ForStatementMutator(),
     new DoStatementMutator(),
-    new ConditionalExpressionMutator()
+    new ConditionalExpressionMutator(),
+    new PrefixUnaryExpressionMutator()
   ]) { }
 
   mutate(inputFiles: File[]): Mutant[] {
