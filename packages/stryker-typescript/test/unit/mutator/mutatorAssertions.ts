@@ -9,7 +9,7 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
   const mutants = mutate(mutator, sourceFile, sourceFile);
   expect(mutants).lengthOf(expectedTexts.length);
   const actualMutantTexts = mutants.map(mutant => mutantToString(mutant, sourceText));
-  expectedTexts.forEach(expected => expect(actualMutantTexts).to.include(expected));
+  expectedTexts.forEach(expected => expect(actualMutantTexts, `was: ${actualMutantTexts.join(',')}`).to.include(expected));
 }
 
 function mutate(mutator: NodeMutator, node: ts.Node, sourceFile: ts.SourceFile): Mutant[] {

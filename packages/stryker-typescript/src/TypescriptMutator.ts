@@ -11,6 +11,11 @@ import UnaryNotMutator from './mutator/UnaryNotMutator';
 import ArrayLiteralMutator from './mutator/ArrayLiteralMutator';
 import ArrayNewExpressionMutator from './mutator/ArrayNewExpressionMutator';
 import BlockMutator from './mutator/BlockMutator';
+import IfStatementMutator from './mutator/IfStatementMutator';
+import WhileStatementMutator from './mutator/WhileStatementMutator';
+import ForStatementMutator from './mutator/ForStatementMutator';
+import DoStatementMutator from './mutator/DoStatementMutator';
+import ConditionalExpressionMutator from './mutator/ConditionalExpressionMutator';
 
 export default class TypescriptMutator {
 
@@ -20,7 +25,12 @@ export default class TypescriptMutator {
     new UnaryNotMutator(),
     new ArrayLiteralMutator(),
     new ArrayNewExpressionMutator(),
-    new BlockMutator()
+    new BlockMutator(),
+    new IfStatementMutator(),
+    new WhileStatementMutator(),
+    new ForStatementMutator(),
+    new DoStatementMutator(),
+    new ConditionalExpressionMutator()
   ]) { }
 
   mutate(inputFiles: File[]): Mutant[] {
@@ -32,11 +42,6 @@ export default class TypescriptMutator {
     });
     return mutants;
   }
-
-  static printer = ts.createPrinter({
-    removeComments: false,
-    newLine: ts.NewLineKind.CarriageReturnLineFeed
-  });
 
   private mutateForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): Mutant[] {
     const targetMutators = this.mutators.filter(mutator => mutator.guard(node));

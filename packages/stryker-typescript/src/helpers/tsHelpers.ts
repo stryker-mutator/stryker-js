@@ -1,3 +1,4 @@
+import * as os from 'os';
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import { CONFIG_KEY_OPTIONS, CONFIG_KEY_FILE } from './keys';
 import { Config } from 'stryker-api/config';
@@ -31,6 +32,15 @@ export function getCompilerOptions(config: Config) {
 
 export function getProjectDirectory(config: Config) {
   return path.dirname(config[CONFIG_KEY_FILE] || '.');
+}
+
+const printer = ts.createPrinter({
+  removeComments: false,
+  newLine: os.EOL === '\r\n' ? ts.NewLineKind.CarriageReturnLineFeed : ts.NewLineKind.LineFeed
+});
+
+export function print(node: ts.Node, originalSourceFile: ts.SourceFile): string {
+  return printer.printNode(ts.EmitHint.Unspecified, node, originalSourceFile);
 }
 
 const allExtensions: string[] = Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
