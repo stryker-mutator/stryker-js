@@ -44,4 +44,9 @@ describe('BinaryExpressionMutator', () => {
     expectMutation(sut, 'a !== b', 'a === b');
   });
 
+  it('should mutate && and ||', () => { 
+    expectMutation(sut, 'a && b', 'a || b');
+    expectMutation(sut, 'a || b', 'a && b');
+  });
+
 });

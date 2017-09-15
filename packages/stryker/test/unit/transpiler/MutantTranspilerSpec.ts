@@ -5,7 +5,6 @@ import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/Tra
 import { Mock, mock, transpileResult, config, textFile, webFile, testableMutant } from '../../helpers/producers';
 import { TranspileResult } from 'stryker-api/transpile';
 import '../../helpers/globals';
-import TranspiledMutant from '../../../src/TranspiledMutant';
 
 describe('MutantTranspiler', () => {
   let sut: MutantTranspiler;

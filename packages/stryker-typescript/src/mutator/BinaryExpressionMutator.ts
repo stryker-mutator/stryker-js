@@ -15,6 +15,8 @@ const replaceTokens = {
   [ts.SyntaxKind.ExclamationEqualsToken]: ['=='],
   [ts.SyntaxKind.EqualsEqualsEqualsToken]: ['!=='],
   [ts.SyntaxKind.ExclamationEqualsEqualsToken]: ['==='],
+  [ts.SyntaxKind.BarBarToken]: ['&&'],
+  [ts.SyntaxKind.AmpersandAmpersandToken]: ['||']
 };
 
 export default class BinaryExpressionMutator extends NodeMutator<ts.BinaryExpression> {
