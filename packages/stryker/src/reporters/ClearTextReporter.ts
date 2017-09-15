@@ -39,7 +39,11 @@ export default class ClearTextReporter implements Reporter {
           this.logMutantResult(result, logDebugFn);
           break;
         case MutantStatus.RuntimeError:
-          log.debug(chalk.bold.yellow('Mutant caused an error!'));
+          log.debug(chalk.bold.yellow('Mutant caused a runtime error!'));
+          this.logMutantResult(result, logDebugFn);
+          break;
+        case MutantStatus.TranspileError:
+          log.debug(chalk.bold.yellow('Mutant caused a transpile error!'));
           this.logMutantResult(result, logDebugFn);
           break;
         case MutantStatus.Survived:
@@ -56,7 +60,7 @@ export default class ClearTextReporter implements Reporter {
   }
 
   private logMutantResult(result: MutantResult, logImplementation: (input: string) => void): void {
-    logImplementation(result.sourceFilePath + ': line ' + result.location.start.line + ':' + result.location.start.column);
+    logImplementation(result.sourceFilePath + ':' + result.location.start.line + ':' + result.location.start.column);
     logImplementation('Mutator: ' + result.mutatorName);
     result.originalLines.split('\n').forEach(line => {
       logImplementation(chalk.red('-   ' + line));
