@@ -8,13 +8,17 @@ import NodeMutator from './mutator/NodeMutator';
 import BinaryExpressionMutator from './mutator/BinaryExpressionMutator';
 import BooleanSubstitutionMutator from './mutator/BooleanSubstitutionMutator';
 import UnaryNotMutator from './mutator/UnaryNotMutator';
+import ArrayLiteralMutator from './mutator/ArrayLiteralMutator';
+import ArrayNewExpressionMutator from './mutator/ArrayNewExpressionMutator';
 
 export default class TypescriptMutator {
 
   constructor(private config: Config, public mutators: NodeMutator[] = [
     new BinaryExpressionMutator(),
     new BooleanSubstitutionMutator(),
-    new UnaryNotMutator()
+    new UnaryNotMutator(),
+    new ArrayLiteralMutator(),
+    new ArrayNewExpressionMutator()
   ]) { }
 
   mutate(inputFiles: File[]): Mutant[] {
