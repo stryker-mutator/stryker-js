@@ -7,7 +7,6 @@ export type ChildProxy<T> = {
   [K in keyof T]: (...args: any[]) => Promise<any>;
 };
 
-
 export default class ChildProcessProxy<T> {
   readonly proxy: ChildProxy<T> = {} as ChildProxy<T>;
 
@@ -29,8 +28,17 @@ export default class ChildProcessProxy<T> {
     this.initProxy();
   }
 
+  /**
+  * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
+  */
   static create<T, P1>(requirePath: string, logLevel: string, plugins: string[], constructorFunction: { new(arg: P1): T }, arg: P1): ChildProcessProxy<T>;
+  /**
+  * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
+  */
   static create<T, P1, P2>(requirePath: string, logLevel: string, plugins: string[], constructorFunction: { new(arg: P1, arg2: P2): T }, arg1: P1, arg2: P2): ChildProcessProxy<T>;
+  /**
+  * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
+  */
   static create<T>(requirePath: string, logLevel: string, plugins: string[], constructorFunction: { new(...params: any[]): T }, ...constructorArgs: any[]) {
     return new ChildProcessProxy(requirePath, logLevel, plugins, constructorFunction, constructorArgs);
   }
