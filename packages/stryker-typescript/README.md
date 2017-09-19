@@ -1,0 +1,113 @@
+[![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
+[![NPM](https://img.shields.io/npm/dm/stryker-typescript.svg)](https://www.npmjs.com/package/stryker-typescript)
+[![Node version](https://img.shields.io/node/v/stryker-typescript.svg)](https://img.shields.io/node/v/stryker-typescript.svg)
+[![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
+
+![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
+
+# Stryker Typescript
+
+A collection of plugins for native support TypeScript in [Stryker](https://stryker-mutator.github.io), the ~~JavaScript~~ *TypeScript* Mutation testing framework.
+
+## Quickstart
+
+First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.github.io/quickstart.html))
+
+Next, install this package:
+
+```bash
+npm install --save-dev stryker-typescript
+```
+
+Now open up your stryker.conf.js file and add the following components:
+
+```javascript
+    coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
+    tsconfigFile: 'tsconfig.json', // Location of your tsconfig.json file
+    mutator: 'typescript', // Specify that you want to mutate typescript code
+    transpilers: [
+        'typescript' // Specify that your typescript code needs to be transpiled before tests can be run. Not needed if you're using ts-node Just-in-time compilation.
+    ]
+```
+
+Now give it a go stryker
+
+```bash
+$ stryker run
+```
+
+## Peer dependencies
+
+The `stryker-typescript` package is collection a plugins for `stryker` to enable `typescript` support. As such, you should make sure you have the correct versions of its dependencies installed:
+
+* `typescript`
+* `stryker-api`
+
+For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker-typescript/package.json).
+
+These are marked as `peerDependencies` so you get a warning during installation when the correct versions are not installed.
+
+## Load the plugins
+
+In order to use one of the `stryker-typescript` plugins it must be loaded into Stryker. 
+The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all `node_modules` starting with `stryker-` will be loaded.
+
+If you do decide to choose specific modules, don't forget to add `'stryker-typescript'` to the list of plugins to load.
+
+## 3 Plugins
+
+This package contains 3 plugins to support TypeScript
+
+1. TypescriptConfigEditor
+1. TypescriptMutator
+1. TypescriptTranspiler
+
+### TypescriptConfigEditor
+
+The `TypescriptConfigEditor` is a handy plugin that reads **your** tsconfig.json file and loads it into stryker.conf.js. It edits 2 config properties:
+
+1. `files` property
+It adds all your typescript files in the `files` property as `{ pattern: 'your/file.ts', mutated: false, transpiled: true, included: true }`;
+1. `tsconfig` property
+It will capture all your tsconfig settings to the `tsconfig` in stryker (this property is later used by the `TypescriptMutator` and the `TypescriptTranspiler`)
+
+Enable the config editor by pointing the `tsconfigFile` property to your tsconfig location:
+
+```javascript
+// stryker.conf.js
+{
+ tsconfigFile: 'tsconfig.json',
+}
+``` 
+
+### TypescriptMutator
+
+The `TypescriptMutator` is a plugin to mutate typescript code. It builds a Typescript [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and mutates your code using different kind of mutators.
+
+See [source code](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-typescript/src/mutator) to know which mutations are supported.
+
+Configure the Typescript mutator in your stryker.conf.js file:
+
+```javascript
+// stryker.conf.js
+{
+    mutator: 'typescript'
+}
+```
+
+### TypescriptTranspiler
+
+The `TypescriptTranspiler` is a plugin to transpile typescript source code before running tests. Given Typescript input files it will use the `tsconfig` option in your stryker configuration (see **TypescriptConfigEditor**) to generate the javascript output. This is also used to transpile each mutant to javascript. Internally, it uses the same method as Typescript's watch mode (`tsc -w`), so it can transpile mutants very efficiently.
+
+Configure the Typescript transpiler in your stryker.conf.js file:
+
+```javascript
+// stryker.conf.js
+{
+    transpilers: [
+        'typescript'
+        // You can specify more transpilers if needed
+    ]
+}
+```
