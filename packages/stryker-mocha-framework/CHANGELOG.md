@@ -1,7 +1,13 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="0.5.0"></a>
+## [0.5.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.4.0...stryker-mocha-framework@0.5.0) (2017-09-19)
+
+
+
 
 <a name="0.4.0"></a>
 # [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.3.0...stryker-mocha-framework@0.4.0) (2017-08-25)

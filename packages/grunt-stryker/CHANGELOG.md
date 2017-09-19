@@ -1,7 +1,13 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="0.9.0"></a>
+## [0.9.0](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.8.2...grunt-stryker@0.9.0) (2017-09-19)
+
+
+
 
 <a name="0.8.2"></a>
 ## [0.8.2](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.8.1...grunt-stryker@0.8.2) (2017-09-04)
