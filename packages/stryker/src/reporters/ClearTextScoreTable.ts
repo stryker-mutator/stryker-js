@@ -96,7 +96,7 @@ export default class ClearTextScoreTable {
       new Column('# timeout', row => row.timedOut.toString(), score),
       new Column('# survived', row => row.survived.toString(), score),
       new Column('# no cov', row => row.noCoverage.toString(), score),
-      new Column('# error', row => row.errors.toString(), score)
+      new Column('# error', row => (row.runtimeErrors + row.transpileErrors).toString(), score)
     ];
   }
 

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
-import logger from '../helpers/log4jsMock';
+import log from '../helpers/log4jsMock';
 
 describe('TestFrameworkOrchestrator', () => {
 
@@ -29,11 +29,11 @@ describe('TestFrameworkOrchestrator', () => {
 
   const itShouldLogCoverageAnalysisOffOnDebug = () => {
     it('should log on debug that coverageAnalysis was "off"', () => 
-      expect(logger.debug).to.have.been.calledWith('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', 'off'));
+      expect(log.debug).to.have.been.calledWith('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', 'off'));
   };
 
   const itShouldNotLogAWarningAboutTheMissingSetting = () => {
-    it('should not log a warning for the missing setting', () => expect(logger.warn).not.to.have.been.called);
+    it('should not log a warning for the missing setting', () => expect(log.warn).not.to.have.been.called);
   };
 
   beforeEach(() => {
@@ -66,7 +66,7 @@ describe('TestFrameworkOrchestrator', () => {
     describe('and coverageAnalysis is not "off"', () => {
       actBeforeEach();
 
-      it('should log a warning for the missing setting', () => expect(logger.warn).to.have.been.calledWith('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.'));
+      it('should log a warning for the missing setting', () => expect(log.warn).to.have.been.calledWith('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.'));
 
       itShouldNotRetrieveATestFramework();
     });

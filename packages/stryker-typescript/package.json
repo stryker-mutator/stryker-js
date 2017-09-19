@@ -1,0 +1,53 @@
+{
+  "private": true,
+  "name": "stryker-typescript",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "typescript",
+    "stryker-transpiler",
+    "stryker-mutator"
+  ],
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "author": "Thomas Peters <thomaspeters4@outlook.com>",
+  "contributors": [
+    "Simon de Lang <simondelang@gmail.com>"
+  ],
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-framework#readme",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "lodash.flatmap": "^4.5.0",
+    "log4js": "^1.1.1",
+    "source-map": "^0.5.6"
+  },
+  "devDependencies": {
+    "@types/lodash.flatmap": "^4.5.3",
+    "@types/source-map": "^0.5.1",
+    "stryker-api": "^0.8.0",
+    "tslib": "^1.5.0"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.8.0",
+    "typescript": "^2.5.0"
+  }
+}

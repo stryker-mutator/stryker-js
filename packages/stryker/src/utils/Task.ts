@@ -2,7 +2,7 @@
 /**
  * Wraps a promise in a Task api for convenience.
  */
-export default class Task<T> {
+export default class Task<T = void> {
 
   private _promise: Promise<T>;
   private resolveFn: (value?: T | PromiseLike<T>) => void;

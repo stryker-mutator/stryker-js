@@ -109,22 +109,28 @@ export default class ScoreResultCalculator {
     const timedOut = count(MutantStatus.TimedOut);
     const survived = count(MutantStatus.Survived);
     const noCoverage = count(MutantStatus.NoCoverage);
-    const errors = count(MutantStatus.Error);
+    const runtimeErrors = count(MutantStatus.RuntimeError);
+    const transpileErrors = count(MutantStatus.TranspileError);
     const totalDetected = timedOut + killed;
     const totalUndetected = survived + noCoverage;
-    const totalMutants = totalDetected + totalUndetected;
     const totalCovered = totalDetected + survived;
+    const totalValid = totalUndetected + totalDetected;
+    const totalInvalid = runtimeErrors + transpileErrors;
+    const totalMutants = totalValid + totalInvalid;
     return {
       killed,
       survived,
       noCoverage,
-      errors,
+      runtimeErrors,
+      transpileErrors,
       timedOut,
       totalDetected,
       totalUndetected,
-      totalMutants,
       totalCovered,
-      mutationScore: totalDetected / totalMutants * 100 || 0,
+      totalValid,
+      totalInvalid,
+      totalMutants,
+      mutationScore: totalDetected / totalValid * 100 || 0,
       mutationScoreBasedOnCoveredCode: totalDetected / totalCovered * 100 || 0
     };
   }

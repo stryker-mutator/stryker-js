@@ -19,7 +19,8 @@ const head = <thead>
         <th class="rotate text-center" style="width: 50px"><div><span># Survived</span></div></th>
         <th class="rotate text-center" style="width: 50px"><div><span># Timeout</span></div></th>
         <th class="rotate text-center" style="width: 50px"><div><span># No coverage</span></div></th>
-        <th class="rotate text-center" style="width: 50px"><div><span># Errors</span></div></th>
+        <th class="rotate text-center" style="width: 50px"><div><span># Runtime errors</span></div></th>
+        <th class="rotate text-center" style="width: 50px"><div><span># Transpile errors</span></div></th>
         <th class="rotate rotate-width-70 text-center" style="width: 70px"><div><span>Total detected</span></div></th>
         <th class="rotate rotate-width-70 text-center" style="width: 70px"><div><span>Total undetected</span></div></th>
         <th class="rotate rotate-width-70 text-center" style="width: 70px"><div><span>Total mutants</span></div></th>
@@ -55,7 +56,8 @@ function row(model: ScoreResult, title: string, thresholds: MutationScoreThresho
         <td class="text-center">{model.survived}</td>
         <td class="text-center">{model.timedOut}</td>
         <td class="text-center">{model.noCoverage}</td>
-        <td class="text-center">{model.errors}</td>
+        <td class="text-center">{model.runtimeErrors}</td>
+        <td class="text-center">{model.transpileErrors}</td>
         <th class="text-center">{model.totalDetected}</th>
         <th class="text-center">{model.totalUndetected}</th>
         <th class="text-center">{model.totalMutants}</th>

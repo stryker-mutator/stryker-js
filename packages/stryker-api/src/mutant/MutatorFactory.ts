@@ -1,22 +1,23 @@
 import Mutator from './Mutator';
 import { Factory } from '../../core';
+import { Config } from '../../config';
 
 namespace MutatorFactory {
   /**
-   * Represents a Factory for TestFrameworks.
+   * Represents a Factory for Mutators.
    */
-  class MutatorFactory extends Factory<void, Mutator> {
+  class MutatorFactory extends Factory<Config, Mutator> {
     constructor() {
-      super('mutator');
+      super('mutant-generator');
     }
   }
-  let mutatorFactoryInstance = new MutatorFactory();
+  const mutatorFactoryInstance = new MutatorFactory();
 
   /**
    * Returns the current instance of the MutatorFactory.
    */
   export function instance() {
-    return <Factory<void, Mutator>>mutatorFactoryInstance;
+    return <Factory<Config, Mutator>>mutatorFactoryInstance;
   }
 }
 

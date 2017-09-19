@@ -13,7 +13,8 @@ export default class ProgressBarReporter extends ProgressKeeper {
       `[:survived :survivedLabel] ` +
       `[:noCoverage :noCoverageLabel] ` +
       `[:timeout :timeoutLabel] ` +
-      `[:error :errorLabel]`;
+      `[:runtimeError :runtimeErrorLabel] ` + 
+      `[:transpileError :transpileErrorLabel]`;
 
     this.progressBar = new ProgressBar(progressBarContent, {
       width: 50,

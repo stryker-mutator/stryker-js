@@ -9,7 +9,7 @@ const log = log4js.getLogger('TempFolder');
 export class TempFolder {
   baseTempFolder: string;
   tempFolder: string;
-  
+
   private constructor() { }
 
   initialize(tempDirName = '.stryker-tmp') {
@@ -34,16 +34,6 @@ export class TempFolder {
   }
 
   /**
-   * Writes data to a specified file.
-   * @param filename The path to the file.
-   * @param data The content of the file.
-   * @returns A promise to eventually save the file.
-   */
-  writeFile(filename: string, data: string): Promise<void> {
-    return fs.writeFile(filename, data, { encoding: 'utf8' });
-  }
-
-  /**
    * Copies a file.
    * @param fromFilename The path to the existing file.
    * @param toFilename The path to copy the file to.
@@ -53,7 +43,7 @@ export class TempFolder {
   copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       let readStream: NodeJS.ReadableStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
-      let writeStream = fs.createWriteStream(toFilename);
+      const writeStream = fs.createWriteStream(toFilename);
       readStream.on('error', reject);
       writeStream.on('error', reject);
       if (instrumenter) {
@@ -92,4 +82,3 @@ export class TempFolder {
     return this._instance;
   }
 }
-

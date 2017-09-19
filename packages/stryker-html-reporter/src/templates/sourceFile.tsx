@@ -29,7 +29,7 @@ export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefin
 function code(sourceFile: SourceFile | undefined, mutants: MutantResult[]) {
     if (sourceFile) {
         return annotateCode(sourceFile, mutants);
-    }else {
+    } else {
         return <pre><code>The source code itself was not reported at the `stryker-html-reporter`. Please report this issue at https://github.com/stryker-mutator/stryker/issues</code></pre>;
     }
 }
@@ -118,8 +118,11 @@ function getContextClassForStatus(status: MutantStatus) {
         case MutantStatus.NoCoverage:
         case MutantStatus.Survived:
             return 'danger';
-        default:
+        case MutantStatus.TimedOut:
+        case MutantStatus.RuntimeError:
             return 'warning';
+        case MutantStatus.TranspileError:
+            return 'default';
     }
 }
 

@@ -10,10 +10,11 @@ interface StrykerOptions {
    * These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine).
    * Each element can be either a string or an object with 2 properties
    * * `string`: A globbing expression used for selecting the files needed to run the tests.
-   * * { pattern: 'pattern', included: true } : 
+   * * { pattern: 'pattern', included: true, mutated: false, transpiled: true }: 
    *    * The `pattern` property is mandatory and contains the globbing expression used for selecting the files
    *    * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true)
    *    * The `mutated` property is optional and determines whether or not this file should be targeted for mutations (default: false)
+   *    * The `transpiled` property is optional and determines whether or not this file should be transpiled by a transpiler (see `transpilers` config option) (default: true)
    * 
    * @example
    *     files: ['test/helpers/**\/*.js', 'test/unit/**\/*.js', { pattern: 'src/**\/*.js', included: false }],
@@ -46,6 +47,32 @@ interface StrykerOptions {
    * The name of the test runner to use (default is the same name as the testFramework)
    */
   testRunner?: string;
+
+  /**
+   * The name of the mutant generator to use to generate mutants based on your input file. 
+   * This is often dependent on the language of your source files.
+   * For example: 'es5', 'typescript'
+   */
+  mutator?: string;
+
+  /**
+   * The names of the transpilers to use (in order). Default: [].
+   * A transpiler in this context is a plugin that can transform input files (source code)
+   * before testing.
+   * 
+   * Example use cases: 
+   * * You need to transpile typescript before testing it in nodejs
+   * * You want to bundle nodejs code before testing it in the browser.
+   * 
+   * The order of your defined transpilers is important, as each transpiler
+   * will be fead the output files of the previous transpiler. For example:
+   * 
+   * foo.ts   ==> Typescript  ==> foo.js ==> Webpack ==> foobar.js
+   * bar.ts   ==> Transpiler  ==> bar.js ==> Transpiler
+   * 
+   * Transpilers should ignore files marked with `transpiled = false`. See `files` array.
+   */
+  transpilers?: string[];
 
   /**
    * Thresholds for mutation score.

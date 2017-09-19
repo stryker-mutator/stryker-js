@@ -42,7 +42,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     // When debugging, it will try to reuse the same debug port, which will be taken by the main process.
     let execArgv = _.clone(process.execArgv);
     _.remove(execArgv, arg => arg.substr(0, 11) === '--debug-brk');
-    this.workerProcess = fork(`${__dirname}/IsolatedTestRunnerAdapterWorker`, [], { silent: true, execArgv });
+    this.workerProcess = fork(`${__dirname}/IsolatedTestRunnerAdapterWorker`, [], { silent: true, execArgv: [] });
     this.sendStartCommand();
     this.listenToWorkerProcess();
   }

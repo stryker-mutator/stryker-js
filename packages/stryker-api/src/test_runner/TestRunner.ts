@@ -39,7 +39,7 @@ interface TestRunner extends EventEmitter {
 
   /**
    * Optional. When implemented, will be called before runs are done on this test runner.
-   * @returns A promise if stuff is initialized asyncronously, runs will not start until the promise is resolved.
+   * @returns A promise if stuff is initialized asynchronously, runs will not start until the promise is resolved.
    * Otherwise void
    */
   init?(): Promise<any> | void;
@@ -53,7 +53,7 @@ interface TestRunner extends EventEmitter {
 
   /**
    * Optional. When implemented, will be called before the test runner's process is killed.
-   * @returns A promise if stuff is destroyed asyncronously, the runners process will not end until the promise is resolved.
+   * @returns A promise if stuff is destroyed asynchronously, the runners process will not end until the promise is resolved.
    * Otherwise void 
    */
   dispose?(): Promise<any> | void;

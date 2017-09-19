@@ -1,13 +1,13 @@
 import * as log4js from 'log4js';
 import { EventEmitter } from 'events';
 import { TestRunner, RunResult, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
-import { InputFile } from 'stryker-api/core';
+import { FileDescriptor } from 'stryker-api/core';
 import * as Mocha from 'mocha';
 import StrykerMochaReporter from './StrykerMochaReporter';
 
 const log = log4js.getLogger('MochaTestRunner');
 export default class MochaTestRunner extends EventEmitter implements TestRunner {
-  private files: InputFile[];
+  private files: FileDescriptor[];
 
   constructor(runnerOptions: RunnerOptions) {
     super();
@@ -15,7 +15,7 @@ export default class MochaTestRunner extends EventEmitter implements TestRunner 
   }
 
   private purgeFiles() {
-    this.files.forEach(f => delete require.cache[f.path]);
+    this.files.forEach(f => delete require.cache[f.name]);
   }
 
   run(): Promise<RunResult> {
@@ -23,7 +23,7 @@ export default class MochaTestRunner extends EventEmitter implements TestRunner 
       try {
         this.purgeFiles();
         let mocha = new Mocha({ reporter: StrykerMochaReporter as any, bail: true });
-        this.files.filter(file => file.included).forEach(f => mocha.addFile(f.path));
+        this.files.filter(file => file.included).forEach(f => mocha.addFile(f.name));
         try {
           mocha.run((failures: number) => {
             const reporter = StrykerMochaReporter.CurrentInstance;

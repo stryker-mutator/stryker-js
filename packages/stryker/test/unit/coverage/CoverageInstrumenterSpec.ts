@@ -2,14 +2,15 @@ import { expect } from 'chai';
 import { PassThrough } from 'stream';
 import { readable, streamToString } from '../../helpers/streamHelpers';
 import { TestFramework } from 'stryker-api/test_framework';
+import { file } from '../../helpers/producers';
 import CoverageInstrumenter from '../../../src/coverage/CoverageInstrumenter';
 import CoverageInstrumenterStream from '../../../src/coverage/CoverageInstrumenterStream';
 
 describe('CoverageInstrumenter', () => {
   let sut: CoverageInstrumenter;
   let testFramework: TestFramework;
-  const streamToFile = (path: string, mutated: boolean, content: string): Promise<string> => {
-    const stream = sut.instrumenterStreamForFile({ path, mutated, included: true });
+  const streamToFile = (name: string, mutated: boolean, content: string): Promise<string> => {
+    const stream = sut.instrumenterStreamForFile(file({ name, mutated, included: true }));
     const input = readable();
     input.push(content);
     input.push(null);
@@ -48,7 +49,7 @@ describe('CoverageInstrumenter', () => {
     describe('when instrumenterStreamForFile()', () => {
 
       it('should retrieve an intrumenter stream for mutated files', () => {
-        const actual = sut.instrumenterStreamForFile({ path: '', mutated: true, included: true });
+        const actual = sut.instrumenterStreamForFile(file({ name: '', mutated: true, included: true }));
         expect(actual).to.be.an.instanceof(CoverageInstrumenterStream);
         if (actual instanceof CoverageInstrumenterStream) {
           expect(actual.coverageVariable).to.be.eq('__strykerCoverageCurrentTest__');
@@ -56,7 +57,7 @@ describe('CoverageInstrumenter', () => {
       });
 
       it('should retrieve a PassThrough stream for non-mutated files', () =>
-        expect(sut.instrumenterStreamForFile({ path: '', mutated: false, included: true })).to.be.an.instanceof(PassThrough));
+        expect(sut.instrumenterStreamForFile(file({ name: '', mutated: false, included: true }))).to.be.an.instanceof(PassThrough));
     });
   });
 
@@ -67,12 +68,14 @@ describe('CoverageInstrumenter', () => {
     });
 
     describe('when hooksForTestRun()', () => {
-      it('should return the empty string', () => expect(sut.hooksForTestRun()).to.have.length(0));
+      it('should return null', () => {
+        expect(sut.hooksForTestRun()).be.null;
+      });
     });
 
     describe('when instrumenterStreamForFile()', () => {
       it('should retrieve a PassThrough stream for mutated files', () =>
-        expect(sut.instrumenterStreamForFile({ path: '', mutated: true, included: true })).to.be.an.instanceof(PassThrough));
+        expect(sut.instrumenterStreamForFile(file({ name: '', mutated: true, included: true }))).to.be.an.instanceof(PassThrough));
     });
 
     describe('retrieveStatementMapsPerFile() with 2 streams', () => {
@@ -96,12 +99,14 @@ describe('CoverageInstrumenter', () => {
     });
 
     describe('when hooksForTestRun()', () => {
-      it('should return the empty string', () => expect(sut.hooksForTestRun()).to.have.length(0));
+      it('should return null', () => {
+        expect(sut.hooksForTestRun()).null;
+      });
     });
 
     describe('when instrumenterStreamForFile()', () => {
       it('should retrieve a CoverageInstrumenterStream stream for mutated files', () => {
-        const actual = sut.instrumenterStreamForFile({ path: '', mutated: true, included: true });
+        const actual = sut.instrumenterStreamForFile(file({ name: '', mutated: true, included: true }));
         expect(actual).to.be.an.instanceof(CoverageInstrumenterStream);
         if (actual instanceof CoverageInstrumenterStream) {
           expect(actual.coverageVariable).to.be.eq('__coverage__');

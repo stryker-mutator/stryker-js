@@ -27,7 +27,8 @@ describe('ClearTextReporter', () => {
         timedOut: 2,
         survived: 3,
         noCoverage: 4,
-        errors: 5,
+        transpileErrors: 5,
+        runtimeErrors: 6,
         mutationScore: 80,
         childResults: [scoreResult({
           name: 'child1',
@@ -46,7 +47,7 @@ describe('ClearTextReporter', () => {
         '-------------------------------|---------|----------|-----------|------------|----------|---------|',
         'File                           | % score | # killed | # timeout | # survived | # no cov | # error |',
         '-------------------------------|---------|----------|-----------|------------|----------|---------|',
-        `All files                      |${chalk.green('   80.00 ')}|        1 |         2 |          3 |        4 |       5 |`,
+        `All files                      |${chalk.green('   80.00 ')}|        1 |         2 |          3 |        4 |      11 |`,
         ` child1                        |${chalk.yellow('   60.00 ')}|        0 |         0 |          0 |        0 |       0 |`,
         `  some/test/for/a/deep/file.js |${chalk.red('   59.99 ')}|        0 |         0 |          0 |        0 |       0 |`,
         '-------------------------------|---------|----------|-----------|------------|----------|---------|',
@@ -116,7 +117,7 @@ describe('ClearTextReporter', () => {
     describe('onAllMutantsTested() with mutants of all kinds', () => {
 
       beforeEach(() => {
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage, MutantStatus.Error));
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage, MutantStatus.RuntimeError, MutantStatus.TranspileError));
       });
 
       it('should report on the survived mutant', () => {

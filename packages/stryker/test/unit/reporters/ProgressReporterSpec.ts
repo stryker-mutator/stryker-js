@@ -17,7 +17,8 @@ describe('ProgressReporter', () => {
     `[:survived :survivedLabel] ` +
     `[:noCoverage :noCoverageLabel] ` +
     `[:timeout :timeoutLabel] ` +
-    `[:error :errorLabel]`;
+    `[:runtimeError :runtimeErrorLabel] ` +
+    `[:transpileError :transpileErrorLabel]`;
 
   beforeEach(() => {
     sut = new ProgressReporter();
@@ -71,7 +72,7 @@ describe('ProgressReporter', () => {
       });
 
       it('should tick the ProgressBar with 1 killed mutant', () => {
-        progressBarTickTokens = { error: 0, killed: 1, noCoverage: 0, survived: 0, timeout: 0 };
+        progressBarTickTokens = { runtimeError: 0, transpileError: 0, killed: 1, noCoverage: 0, survived: 0, timeout: 0 };
         expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
       });
     });
@@ -83,7 +84,7 @@ describe('ProgressReporter', () => {
       });
 
       it('should tick the ProgressBar with 1 timed out mutant', () => {
-        progressBarTickTokens = { error: 0, killed: 0, noCoverage: 0, survived: 0, timeout: 1 };
+        progressBarTickTokens = { runtimeError: 0, transpileError: 0, killed: 0, noCoverage: 0, survived: 0, timeout: 1 };
         expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
       });
     });
@@ -95,19 +96,19 @@ describe('ProgressReporter', () => {
       });
 
       it('should tick the ProgressBar with 1 survived mutant', () => {
-        progressBarTickTokens = { error: 0, killed: 0, noCoverage: 0, survived: 1, timeout: 0 };
+        progressBarTickTokens = { runtimeError: 0, transpileError: 0, killed: 0, noCoverage: 0, survived: 1, timeout: 0 };
         expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
       });
     });
 
-    describe('when status is Error', () => {
+    describe('when status is RuntimeError', () => {
 
       beforeEach(() => {
-        sut.onMutantTested(mutantResult({ status: MutantStatus.Error }));
+        sut.onMutantTested(mutantResult({ status: MutantStatus.RuntimeError }));
       });
 
-      it('should tick the ProgressBar with 1 Error mutant', () => {
-        progressBarTickTokens = { error: 1, killed: 0, noCoverage: 0, survived: 0, timeout: 0 };
+      it('should tick the ProgressBar with 1 RuntimeError mutant', () => {
+        progressBarTickTokens = { runtimeError: 1, transpileError: 0, killed: 0, noCoverage: 0, survived: 0, timeout: 0 };
         expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
       });
     });
@@ -123,8 +124,19 @@ describe('ProgressReporter', () => {
       });
 
       it('should render the ProgressBar', () => {
-        progressBarTickTokens = { error: 0, killed: 0, noCoverage: 1, survived: 0, timeout: 0 };
+        progressBarTickTokens = { runtimeError: 0, transpileError: 0, killed: 0, noCoverage: 1, survived: 0, timeout: 0 };
         expect(progressBar.render).to.have.been.calledWithMatch(progressBarTickTokens);
+      });
+    });
+    describe('when status is TranspileError', () => {
+
+      beforeEach(() => {
+        sut.onMutantTested(mutantResult({ status: MutantStatus.TranspileError }));
+      });
+
+      it('should tick the ProgressBar with 1 TranspileError mutant', () => {
+        progressBarTickTokens = { runtimeError: 0, transpileError: 1, killed: 0, noCoverage: 0, survived: 0, timeout: 0 };
+        expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
       });
     });
   });

@@ -1,0 +1,14 @@
+{
+  "typescript.tsdk": "../../node_modules/typescript/lib",
+  "files.exclude": {
+      ".git": true,
+      ".tscache": true,
+      "**/*.js": {
+        "when": "$(basename).ts"
+      },
+      "**/*.d.ts": true,
+      "**/*.map": {
+        "when": "$(basename)"
+      }
+  }
+}

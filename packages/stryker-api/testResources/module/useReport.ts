@@ -44,13 +44,14 @@ let result: MutantResult = {
 };
 allReporter.onMutantTested(result);
 console.log(result);
-console.log(`Mutant status error: ${MutantStatus[MutantStatus.Error]}`);
+console.log(`Mutant status runtime error: ${MutantStatus[MutantStatus.RuntimeError]}`);
+console.log(`Mutant status transpile error: ${MutantStatus[MutantStatus.TranspileError]}`);
 
 const matchedMutant: MatchedMutant = {
    mutatorName: '',
    scopedTestIds: [52],
    timeSpentScopedTests: 52,
-   filename: 'string',
+   fileName: 'string',
    replacement: 'string'
 };
 

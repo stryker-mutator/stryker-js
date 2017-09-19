@@ -1,4 +1,4 @@
-import { Identified } from 'stryker-api/mutant';
+import { Identified } from '../../../src/mutators/IdentifiedNode';
 import UpdateOperatorMutator from '../../../src/mutators/UpdateOperatorMutator';
 import { expect } from 'chai';
 import * as parser from '../../../src/utils/parserUtils';

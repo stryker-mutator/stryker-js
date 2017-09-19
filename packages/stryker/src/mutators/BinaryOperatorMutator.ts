@@ -1,8 +1,9 @@
-import { Mutator, IdentifiedNode } from 'stryker-api/mutant';
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
+import NodeMutator from './NodeMutator';
+import { IdentifiedNode } from './IdentifiedNode';
 
-export default class BinaryOperatorMutator implements Mutator {
+export default class BinaryOperatorMutator implements NodeMutator {
   name = 'BinaryOperator';
   private type = Syntax.BinaryExpression;
   private operators: { [targetedOperator: string]: estree.BinaryOperator | estree.BinaryOperator[] } = {

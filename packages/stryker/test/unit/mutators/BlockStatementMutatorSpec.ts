@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as estree from 'estree';
-import { Identified } from 'stryker-api/mutant';
+import { Identified } from '../../../src/mutators/IdentifiedNode';
 import BlockStatementMutator from '../../../src/mutators/BlockStatementMutator';
 import { parse, identified } from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';

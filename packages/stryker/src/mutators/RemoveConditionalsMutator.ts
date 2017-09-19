@@ -1,13 +1,14 @@
 import { Syntax } from 'esprima';
-import { Mutator, IdentifiedNode, Identified } from 'stryker-api/mutant';
 import * as estree from 'estree';
+import NodeMutator from './NodeMutator';
+import { IdentifiedNode, Identified } from './IdentifiedNode';
 
 type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree.ForStatement | estree.WhileStatement | estree.ConditionalExpression;
 
 /**
  * Represents a mutator which can remove the conditional clause from statements.
  */
-export default class RemoveConditionalsMutator implements Mutator {
+export default class RemoveConditionalsMutator implements NodeMutator {
   name = 'RemoveConditionals';
   private types: string[] = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement, Syntax.ConditionalExpression];
 

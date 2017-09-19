@@ -1,7 +1,7 @@
 {
   "private": true,
   "devDependencies": {
-    "@types/chai-as-promised": "0.0.29",
+    "@types/chai-as-promised": "0.0.31",
     "@types/chalk": "^0.4.28",
     "@types/commander": "^2.9.0",
     "@types/escodegen": "0.0.6",
@@ -21,8 +21,8 @@
     "@types/sinon": "^2.2.1",
     "@types/sinon-chai": "^2.7.27",
     "browserify": "^14.3.0",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
+    "chai": "^4.1.1",
+    "chai-as-promised": "^7.1.1",
     "concurrently": "^3.4.0",
     "glob": "^7.1.1",
     "lerna": "^2.0.0",
@@ -33,7 +33,8 @@
     "rimraf": "^2.6.1",
     "sinon": "^2.2.0",
     "sinon-chai": "^2.10.0",
-    "tslint": "^5.0.0",
+    "source-map-support": "^0.4.16",
+    "tslint": "^5.6.0",
     "typescript": "^2.2.2"
   },
   "scripts": {

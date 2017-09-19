@@ -40,10 +40,9 @@
       // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
-        "run",
-        "testResources/sampleProject/stryker.conf.js"
+        "run"
       ],
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceRoot}/../../sampleProject",
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -51,9 +50,8 @@
       "env": {
         "NODE_ENV": "development"
       },
-      "console": "internalConsole",
-      "sourceMaps": true,
-      "outDir": "${workspaceRoot}"
+      "console": "integratedTerminal",
+      "sourceMaps": true
     },
     {
       "name": "Run own dog food",

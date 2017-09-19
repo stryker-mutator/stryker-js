@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
-import { Identified, IdentifiedNode } from 'stryker-api/mutant';
+import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
 import RemoveConditionalsMutator from '../../../src/mutators/RemoveConditionalsMutator';
 import { NodeIdentifier, parse, identified } from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
