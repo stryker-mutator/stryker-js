@@ -23,7 +23,8 @@
     "stryker",
     "stryker-plugin",
     "typescript",
-    "stryker-transpiler"
+    "stryker-transpiler",
+    "stryker-mutator"
   ],
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
