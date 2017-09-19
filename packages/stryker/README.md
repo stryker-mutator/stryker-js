@@ -163,6 +163,20 @@ In addition to requiring your test runner to be able to report the code coverage
  Currently, `stryker-mocha-runner` as well as `stryker-karma-runner` support this. However, `stryker-karma-runner` support is limited to using it with `Jasmine` as the test framework 
  (`Mocha` is not yet supported).
 
+#### Mutator 
+**Config file:** `mutator: 'es5'`  
+**Default value:** `es5`  
+**Mandatory**: no  
+**Description:**  
+With `mutator` you configure which mutator plugin you want to use. This defaults to es5.  
+
+#### Transpilers  
+**Config file:** `transpilers: '['typescript']'`  
+**Default value:** `[ ]`  
+**Mandatory**: no  
+**Description:**  
+With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.  
+
 #### Reporters  
 **Command line:** `--reporter clear-text,progress,dots`  
 **Config file:** `reporter: ['clear-text', 'progress', 'dots']`     

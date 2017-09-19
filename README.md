@@ -54,6 +54,7 @@ module.exports = function(config){
             '!src/fileToIgnore.js'],
     testFramework: 'mocha',
     testRunner: 'mocha',
+    mutator: 'es5',
     reporter: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
     coverageAnalysis: 'perTest',
     plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
