@@ -23,15 +23,15 @@ npm install --save-dev stryker-typescript
 Now open up your stryker.conf.js file and add the following components:
 
 ```javascript
-    coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
-    tsconfigFile: 'tsconfig.json', // Location of your tsconfig.json file
-    mutator: 'typescript', // Specify that you want to mutate typescript code
-    transpilers: [
-        'typescript' // Specify that your typescript code needs to be transpiled before tests can be run. Not needed if you're using ts-node Just-in-time compilation.
-    ]
+coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
+tsconfigFile: 'tsconfig.json', // Location of your tsconfig.json file
+mutator: 'typescript', // Specify that you want to mutate typescript code
+transpilers: [
+    'typescript' // Specify that your typescript code needs to be transpiled before tests can be run. Not needed if you're using ts-node Just-in-time compilation.
+]
 ```
 
-Now give it a go stryker
+Now give it a go:
 
 ```bash
 $ stryker run
@@ -59,9 +59,9 @@ If you do decide to choose specific modules, don't forget to add `'stryker-types
 
 This package contains 3 plugins to support TypeScript
 
-1. TypescriptConfigEditor
-1. TypescriptMutator
-1. TypescriptTranspiler
+1. [TypescriptConfigEditor](#typescriptconfigeditor)
+1. [TypescriptMutator](#typescriptmutator)
+1. [TypescriptTranspiler](#typescripttranspiler)
 
 ### TypescriptConfigEditor
 
