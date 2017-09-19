@@ -51,7 +51,7 @@ interface StrykerOptions {
   /**
    * The name of the mutant generator to use to generate mutants based on your input file. 
    * This is often dependent on the language of your source files.
-   * Or example: 'es5', 'typescript'
+   * For example: 'es5', 'typescript'
    */
   mutator?: string;
 
