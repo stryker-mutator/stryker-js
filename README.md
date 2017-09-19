@@ -21,8 +21,6 @@ To install Stryker, execute the command:
 $ npm install stryker stryker-api --save-dev
 ```
 
-***Note:*** *During installation you may run into errors caused by [node-gyp](https://github.com/nodejs/node-gyp). It is safe to ignore them.*
-
 To test if Stryker is installed correctly, execute the command:
 ```sh
 $ node_modules/.bin/stryker --version
