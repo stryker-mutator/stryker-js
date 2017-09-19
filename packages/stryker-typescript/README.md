@@ -8,7 +8,7 @@
 
 # Stryker Typescript
 
-A collection of plugins for native support TypeScript in [Stryker](https://stryker-mutator.github.io), the ~~JavaScript~~ *TypeScript* Mutation testing framework.
+A collection of plugins for native TypeScript support in [Stryker](https://stryker-mutator.github.io), the ~~JavaScript~~ *TypeScript* Mutation testing framework.
 
 ## Quickstart
 
@@ -85,7 +85,7 @@ Enable the config editor by pointing the `tsconfigFile` property to your tsconfi
 
 The `TypescriptMutator` is a plugin to mutate typescript code. It builds a Typescript [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and mutates your code using different kind of mutators.
 
-See [source code](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-typescript/src/mutator) to know which mutations are supported.
+See [test code](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-typescript/test/unit/mutator) to know which mutations are supported.
 
 Configure the Typescript mutator in your stryker.conf.js file:
 
