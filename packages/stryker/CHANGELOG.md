@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.10.2"></a>
+# [0.10.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.10.1...stryker@0.10.2) (2017-09-20)
+
+
+### Bug Fixes
+
+* **dependency on 'rx':** Remove requires to `'rx'` directly ([71f7330](https://github.com/stryker-mutator/stryker/commit/71f7330))
+* **missing dependency:** Remove invalid package-lock file ([aeeeb7b](https://github.com/stryker-mutator/stryker/commit/aeeeb7b))
+* **MutationTestExecutor:** Only complete defined observables ([#381](https://github.com/stryker-mutator/stryker/issues/381)) ([a0a1355](https://github.com/stryker-mutator/stryker/commit/a0a1355))
+
+
 <a name="0.10.1"></a>
 # [0.10.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.9.3...stryker@0.10.1) (2017-09-20)
 
