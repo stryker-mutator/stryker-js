@@ -1,6 +1,6 @@
 import * as os from 'os';
 import { getLogger } from 'log4js';
-import { Observable } from 'rx';
+import { Observable } from 'rxjs';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';

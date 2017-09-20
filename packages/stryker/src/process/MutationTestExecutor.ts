@@ -1,5 +1,5 @@
 import Sandbox from '../Sandbox';
-import { Observable, Observer } from 'rx';
+import { Observable, Observer } from 'rxjs';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { MutantResult, MutantStatus } from 'stryker-api/report';
 import { Config } from 'stryker-api/config';
@@ -31,11 +31,11 @@ export default class MutationTestExecutor {
 
   private runInsideSandboxes(sandboxes: Observable<Sandbox>, transpiledMutants: Observable<TranspiledMutant>): Promise<MutantResult[]> {
     let recycleObserver: Observer<Sandbox>;
-    const recycled = Observable.create<Sandbox>(observer => {
+    const recycled = new Observable<Sandbox>(observer => {
       recycleObserver = observer;
     });
-    function recycle(sandbox: { sandbox: Sandbox }) {
-      return recycleObserver.onNext(sandbox.sandbox);
+    function recycle(sandbox: { sandbox: Sandbox, result: MutantResult }) {
+      return recycleObserver.next(sandbox.sandbox);
     }
 
     return transpiledMutants
@@ -45,7 +45,7 @@ export default class MutationTestExecutor {
       .map(({ result }) => result)
       .do(reportResult(this.reporter))
       .toArray()
-      .do(() => recycleObserver.onCompleted())
+      .do(() => recycleObserver.complete())
       .do(reportAll(this.reporter))
       .toPromise(Promise);
   }

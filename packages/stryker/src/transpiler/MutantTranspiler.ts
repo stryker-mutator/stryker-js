@@ -1,4 +1,4 @@
-import { Observable } from 'rx';
+import { Observable } from 'rxjs';
 import { Config } from 'stryker-api/config';
 import TranspilerFacade from './TranspilerFacade';
 import TestableMutant from '../TestableMutant';
@@ -52,16 +52,16 @@ export default class MutantTranspiler {
 
   transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
     const mutants = allMutants.slice();
-    return Observable.create<TranspiledMutant>(observer => {
+    return new Observable<TranspiledMutant>(observer => {
       const nextMutant = () => {
         const mutant = mutants.shift();
         if (mutant) {
           this.transpileMutant(mutant)
-            .then(transpileResult => observer.onNext({ mutant, transpileResult }))
+            .then(transpileResult => observer.next({ mutant, transpileResult }))
             .then(nextMutant)
-            .catch(error => observer.onError(error));
+            .catch(error => observer.error(error));
         } else {
-          observer.onCompleted();
+          observer.complete();
         }
       };
       nextMutant();

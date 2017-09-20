@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Observable } from 'rx';
+import { Observable } from 'rxjs';
 import * as _ from 'lodash';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
@@ -93,8 +93,8 @@ describe('MutationTestExecutor', () => {
 
       firstSandbox = mock(Sandbox);
       secondSandbox = mock(Sandbox);
-      mutantTranspilerMock.transpileMutants.returns(Observable.fromArray(transpiledMutants));
-      sandboxCoordinatorMock.streamSandboxes.returns(Observable.fromArray([firstSandbox, secondSandbox]));
+      mutantTranspilerMock.transpileMutants.returns(Observable.of(...transpiledMutants));
+      sandboxCoordinatorMock.streamSandboxes.returns(Observable.of(...[firstSandbox, secondSandbox]));
 
       sut = new MutantTestExecutor(config(), inputFiles, transpiledFiles, testFrameworkMock, reporter);
 
