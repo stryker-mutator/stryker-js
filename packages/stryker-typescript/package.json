@@ -30,7 +30,8 @@
   },
   "author": "Thomas Peters <thomaspeters4@outlook.com>",
   "contributors": [
-    "Simon de Lang <simondelang@gmail.com>"
+    "Simon de Lang <simondelang@gmail.com>",
+    "Nico Jansen <jansennico@gmail.com>"
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-framework#readme",
   "license": "Apache-2.0",

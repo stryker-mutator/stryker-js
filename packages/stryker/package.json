@@ -32,7 +32,6 @@
     "Simon de Lang <simondelang@gmail.com>",
     "Nico Jansen <jansennico@gmail.com>",
     "Sander Koenders <sanderkoenders@gmail.com>",
-    "global <jansennico@gmail.com>",
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
     "Jasper Catthoor <jasper.catthoor@gmail.com>",
     "Nico Stapelbroek <nstapelbroek@gmail.com>",
@@ -41,7 +40,9 @@
     "Jeremy Nagel <jeremy.nagel@learnosity.com>",
     "MarktHart <git@markhart.nl>",
     "Michael Williamson <mike@zwobble.org>",
-    "Willem Meints <willem@mein-design.nl>"
+    "Willem Meints <willem@mein-design.nl>",
+    "Sharikov Vladislav <sharikov.vladislav@gmail.com>",
+    "Jonathan Presson <jonathan.presson@gmail.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
