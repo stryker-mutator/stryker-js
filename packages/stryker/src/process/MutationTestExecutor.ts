@@ -38,6 +38,12 @@ export default class MutationTestExecutor {
       return recycleObserver.next(sandbox.sandbox);
     }
 
+    function completeRecycle() {
+      if (recycleObserver) {
+        recycleObserver.complete();
+      }
+    }
+
     return transpiledMutants
       .zip(recycled.merge(sandboxes), createTuple)
       .flatMap(runInSandbox)
@@ -45,7 +51,7 @@ export default class MutationTestExecutor {
       .map(({ result }) => result)
       .do(reportResult(this.reporter))
       .toArray()
-      .do(() => recycleObserver.complete())
+      .do(completeRecycle)
       .do(reportAll(this.reporter))
       .toPromise(Promise);
   }
