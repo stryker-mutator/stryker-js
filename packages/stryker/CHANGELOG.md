@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.10.1"></a>
+# [0.10.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.9.3...stryker@0.10.1) (2017-09-20)
+
+
+### Bug Fixes
+
+* **missing dependency:** Remove invalid package-lock file ([aeeeb7b](https://github.com/stryker-mutator/stryker/commit/aeeeb7b))
+
 <a name="0.10.0"></a>
 # [0.10.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.9.3...stryker@0.10.0) (2017-09-19)
 
