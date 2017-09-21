@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import JestTestRunner from '../../src/JestTestRunner';
 import { RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { FileKind, FileDescriptor } from 'stryker-api/core';
 import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 let expect = chai.expect;
@@ -19,14 +20,24 @@ describe('JestTestRunner', function () {
         actualFailedTests.forEach(failedTest => expect(failedTest.failureMessages[0]).to.contain(expectedFailureMessages.shift()));
     };
 
+    function file(overrides?: Partial<FileDescriptor>): FileDescriptor {
+      return Object.assign({}, {
+        name: 'file.js',
+        transpiled: true,
+        included: true,
+        mutated: true,
+        kind: FileKind.Text
+      }, overrides);
+    }
+
     describe('when all tests succeed', () => {
         let testRunnerOptions: RunnerOptions;
 
         before(() => {
             testRunnerOptions = {
                 files: [
-                    { path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
-                    { path: 'testResources/sampleProject/src/__tests__/AddSpec.js', mutated: false, included: true } ],
+                    file({ name: 'testResources/sampleProject/src/Add.js', mutated: true }),
+                    file({ name: 'testResources/sampleProject/src/__tests__/AddSpec.js', mutated: false })],
                 port: 9877,
                 strykerOptions: { logLevel: 'trace' }
             };
@@ -58,9 +69,9 @@ describe('JestTestRunner', function () {
         before(() => {
             const testRunnerOptions = {
                 files: [
-                    { path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
-                    { path: 'testResources/sampleProject/src/__tests__/AddSpec.js', mutated: false, included: true },
-                    { path: 'testResources/sampleProject/src/__tests__/AddFailedSpec.js', mutated: false, included: true } ],
+                    file({ name: 'testResources/sampleProject/src/Add.js', mutated: true }),
+                    file({ name: 'testResources/sampleProject/src/__tests__/AddSpec.js', mutated: false }),
+                    file({ name: 'testResources/sampleProject/src/__tests__/AddFailedSpec.js', mutated: false })],
                 port: 9878,
                 strykerOptions: { logLevel: 'trace' }
             };
@@ -87,8 +98,8 @@ describe('JestTestRunner', function () {
         before(() => {
             const testRunnerOptions = {
                 files: [
-                    { path: 'testResources/sampleProject/src/Error.js', mutated: true, included: true },
-                    { path: 'testResources/sampleProject/src/__tests__/ErrorSpec.js', mutated: true, included: true }],
+                    file({ name: 'testResources/sampleProject/src/Error.js', mutated: true }),
+                    file({ name: 'testResources/sampleProject/src/__tests__/ErrorSpec.js', mutated: true })],
                 port: 9879,
                 strykerOptions: { logLevel: 'trace' }
             };
@@ -113,8 +124,8 @@ describe('JestTestRunner', function () {
         before(() => {
             const testRunnerOptions = {
                 files: [
-                    { path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
-                    { path: 'testResources/sampleProject/src/__tests__/EmptySpec.js', mutated: true, included: true }],
+                    file({ name: 'testResources/sampleProject/src/Add.js', mutated: true }),
+                    file({ name: 'testResources/sampleProject/src/__tests__/EmptySpec.js', mutated: true })],
                 port: 9880,
                 strykerOptions: {}
             };
@@ -125,6 +136,7 @@ describe('JestTestRunner', function () {
         it('should report Complete without errors', () => {
             return expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
                 expectToHaveSuccessfulTests(runResult, 0);
+
                 expectToHaveFailedTests(runResult, []);
                 expect(runResult.status).to.be.eq(RunStatus.Complete);
                 expect(runResult.errorMessages.length).to.equal(0);
@@ -138,9 +150,9 @@ describe('JestTestRunner', function () {
         before(() => {
             const testRunnerOptions = {
                 files: [
-                    { path: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
-                    { path: 'testResources/sampleProject/src/__tests__/AddSpec.js', mutated: false, included: true },
-                    { path: 'testResources/sampleProject/src/Error.js', mutated: false, included: false }],
+                    file({ name: 'testResources/sampleProject/src/Add.js', mutated: true }),
+                    file({ name: 'testResources/sampleProject/src/__tests__/AddSpec.js', mutated: false }),
+                    file({ name: 'testResources/sampleProject/src/Error.js', mutated: false })],
                 port: 9881,
                 strykerOptions: {}
             };

@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { TestRunnerFactory } from 'stryker-api/test_runner';
 import { TestFrameworkFactory } from 'stryker-api/test_framework';
-import { ConfigWriterFactory } from 'stryker-api/config';
+import { ConfigEditorFactory } from 'stryker-api/config';
 import { ReporterFactory } from 'stryker-api/report';
 import JestTestRunner from '../../src/JestTestRunner';
 import { expect } from 'chai';
@@ -14,19 +14,19 @@ describe('index', () => {
   let testRunnerFactoryMock: any;
   let testFrameworkFactoryMock: any;
   let reporterFactoryMock: any;
-  let configWriterFactoryMock: any;
+  let configEditorFactoryMock: any;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     testRunnerFactoryMock = mockFactory();
     testFrameworkFactoryMock = mockFactory();
     reporterFactoryMock = mockFactory();
-    configWriterFactoryMock = mockFactory();
+    configEditorFactoryMock = mockFactory();
 
     sandbox.stub(TestFrameworkFactory, 'instance').returns(testFrameworkFactoryMock);
     sandbox.stub(TestRunnerFactory, 'instance').returns(testRunnerFactoryMock);
     sandbox.stub(ReporterFactory, 'instance').returns(reporterFactoryMock);
-    sandbox.stub(ConfigWriterFactory, 'instance').returns(configWriterFactoryMock);
+    sandbox.stub(ConfigEditorFactory, 'instance').returns(configEditorFactoryMock);
 
     // Do not import the `index` file es6 style, because we need to 
     // make sure it is re-imported every time.
