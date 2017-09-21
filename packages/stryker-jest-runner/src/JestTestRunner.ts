@@ -48,7 +48,7 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
     const isTest = (file: string) => _testRegex.test(file);
 
     this.paths = options.files
-      .map(file => file.path)
+      .map(file => file.name)
       .filter(isTest);
 
     log.info(`Discovered specs ${JSON.stringify(this.paths)}`);
