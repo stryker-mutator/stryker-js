@@ -24,9 +24,7 @@ We support mutation testing Stryker with Stryker! After you got Stryker working 
 1. Navigate to the root of the project
 1. Build all Stryker packages: `npm run build`
 1. Navigate to `packages/stryker` 
-1. Install the stryker-mocha-runner: `npm install stryker-mocha-runner`
-1. Run `node bin/stryker run stryker.conf.js`
-1. If you want to have a html report, install the package `stryker-html-reporter` and add it to the plugins section in the `stryker.conf.js` (Note: We only need to do this because we are running Stryker on Stryker)
+1. Run `node bin/stryker run`
 
 ## Adding new features
 
