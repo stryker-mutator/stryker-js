@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
-const tenMegabyte = 1000 * 1000 * 10;
+//const tenMegabyte = 1000 * 1000 * 10;
 
 describe('integration-tests', function () {
 
@@ -20,7 +20,7 @@ describe('integration-tests', function () {
       it('should run test', () => {
         const currentTestDir = path.resolve(testRootDir, testDir);
         console.log(`Exec in ${testDir}: $npm test`);
-        execSync('npm test', { cwd: currentTestDir , maxBuffer: tenMegabyte });
+        execSync('npm test', { cwd: currentTestDir , stdio: [0, 1, 2] });
       });
     });
   });
