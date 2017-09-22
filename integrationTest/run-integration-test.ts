@@ -7,7 +7,7 @@ describe('integration-tests', function () {
   this.timeout(500000);
 
   before(() => {
-    execSync('npm install', { cwd: __dirname, stdio: [0, 1, 2] });
+    execSync('npm install', { cwd: __dirname, maxBuffer: Infinity  });
   });
 
   const testRootDir = path.resolve(__dirname, 'test');
@@ -16,7 +16,9 @@ describe('integration-tests', function () {
   dirs.forEach(testDir => {
     describe(testDir, () => {
       it('should run test', () => {
-        execSync('npm test', { cwd: path.resolve(testRootDir, testDir), stdio: [0, 1, 2]});
+        const currentTestDir = path.resolve(testRootDir, testDir);
+        console.log(`Exec in ${testDir}: $npm test`);
+        execSync('npm test', { cwd: currentTestDir , maxBuffer: Infinity });
       });
     });
   });
