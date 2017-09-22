@@ -1,7 +1,7 @@
 {
   "name": "stryker-typescript",
   "version": "0.0.1",
-  "description": "",
+  "description": "A plugin for TypeScript-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
     "start": "tsc -w",

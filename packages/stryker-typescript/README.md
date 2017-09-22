@@ -50,7 +50,7 @@ These are marked as `peerDependencies` so you get a warning during installation 
 
 ## Load the plugins
 
-In order to use one of the `stryker-typescript` plugins it must be loaded into Stryker. 
+In order to use one of the `stryker-typescript`'s plugins it must be loaded into Stryker. 
 The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all `node_modules` starting with `stryker-` will be loaded.
 
 If you do decide to choose specific modules, don't forget to add `'stryker-typescript'` to the list of plugins to load.
