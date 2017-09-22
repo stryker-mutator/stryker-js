@@ -4,9 +4,10 @@ import { MutationScoreThresholds } from 'stryker-api/core';
 import { resultTable } from './resultTable';
 import { layout } from './layout';
 import { ScoreResult, SourceFile, MutantResult, MutantStatus } from 'stryker-api/report';
+import Breadcrumb from '../Breadcrumb';
 
-export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], depth: number, thresholds: MutationScoreThresholds) {
-    return layout(result.name, depth,
+export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], breadcrumb: Breadcrumb, thresholds: MutationScoreThresholds) {
+    return layout(breadcrumb,
         <div class="col-lg-12">
             <div class="row">
                 <div class="col-sm-11">
@@ -88,7 +89,7 @@ function annotateCode(sourceFile: SourceFile, mutants: MutantResult[]) {
                 <a href="#" class="stryker-mutant-button" data-mutant-status-annotation={getContextClassForStatus(m.mutant.status)} data-mutant={m.index}>
                     <span class={`badge badge-${getContextClassForStatus(m.mutant.status)}`}>{m.index}</span>
                 </a>
-                + <span class="label label-info stryker-mutant-replacement" hidden="hidden" data-mutant={m.index}>{escapeHtml(m.mutant.replacement)}</span>);
+                + <span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant={m.index}>{escapeHtml(m.mutant.replacement)}</span>);
             const originalCodeStartAnnotations = mutantsStarting.map(m => `<span class="stryker-original-code" data-mutant="${m.index}">`);
             const originalCodeEndAnnotations = mutantsEnding.map(m => '</span>');
 
@@ -119,7 +120,7 @@ function getContextClassForStatus(status: MutantStatus) {
         case MutantStatus.Survived:
             return 'danger';
         case MutantStatus.TimedOut:
-        return 'warning';
+            return 'warning';
         case MutantStatus.RuntimeError:
         case MutantStatus.TranspileError:
             return 'secondary';

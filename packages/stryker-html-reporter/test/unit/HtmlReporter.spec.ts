@@ -56,7 +56,7 @@ describe('HtmlReporter', () => {
       expect(writeFileStub).calledWithMatch(
         sinon.match(normalize('reports/mutation/html/a.js.html')),
         sinon.match('10.67%')
-          .and(sinon.match('<span class="label label-info stryker-mutant-replacement" hidden="hidden" data-mutant="0">{}</span>'))
+          .and(sinon.match('<span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="0">{}</span>'))
           .and(sinon.match('<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">')));
       expect(writeFileStub).calledWithMatch(
         sinon.match(normalize('reports/mutation/html/b.js.html')),
