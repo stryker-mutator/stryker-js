@@ -152,7 +152,7 @@ describe('JestTestRunner', function () {
                 files: [
                     file({ name: 'testResources/sampleProject/src/Add.js', mutated: true }),
                     file({ name: 'testResources/sampleProject/src/__tests__/AddSpec.js', mutated: false }),
-                    file({ name: 'testResources/sampleProject/src/Error.js', mutated: false })],
+                    file({ name: 'testResources/sampleProject/src/Error.js', mutated: false, included: false })],
                 port: 9881,
                 strykerOptions: {}
             };
