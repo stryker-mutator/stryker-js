@@ -42,9 +42,9 @@ hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascri
 
     originalCodeMap[mutantId].classList.toggle('original-code-disabled', force);
     replacementMap[mutantId].hidden = force === undefined ? !replacementMap[mutantId].hidden : !force;
-    var label = button.querySelectorAll('.label').item(0);
-    label.classList.toggle('label-info', force);
-    label.classList.toggle('label-' + button.dataset.mutantStatusAnnotation, antiForce);
+    var label = button.querySelectorAll('.badge').item(0);
+    label.classList.toggle('badge-info', force);
+    label.classList.toggle('badge-' + button.dataset.mutantStatusAnnotation, antiForce);
   }
 
   function bindMutantButton(button, mutantId) {
