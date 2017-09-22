@@ -7,6 +7,14 @@ import { ConfigEditor, Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
 import { normalizeForTypescript } from './helpers/tsHelpers';
 
+// Override some compiler options that have to do code quality. When mutating, we're not interested in the resulting code quality
+// See https://github.com/stryker-mutator/stryker/issues/391 for more info
+const compilerOptionsOverrides: Partial<ts.CompilerOptions> = {
+  allowUnreachableCode: true,
+  noUnusedLocals: false,
+  noUnusedParameters: false
+};
+
 export default class TypescriptConfigEditor implements ConfigEditor {
 
   private log = getLogger(TypescriptConfigEditor.name);
@@ -23,11 +31,15 @@ export default class TypescriptConfigEditor implements ConfigEditor {
         }
         // add the files to the beginning. That way they can still be excluded by the user
         strykerConfig.files.unshift(...tsconfig.fileNames);
-        strykerConfig[CONFIG_KEY_OPTIONS] = tsconfig.options;
+        strykerConfig[CONFIG_KEY_OPTIONS] = this.overrideQualityOptions(tsconfig.options);
       }
     } else {
       this.log.debug('No \'%s\' specified, not loading any config', CONFIG_KEY_FILE);
     }
+  }
+
+  private overrideQualityOptions(options: ts.CompilerOptions) {
+    return Object.assign({}, options, compilerOptionsOverrides);
   }
 
   private readTypescriptConfig(tsconfigFileName: string, host: ts.ParseConfigHost) {
