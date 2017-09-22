@@ -2,11 +2,12 @@ import * as typedHtml from 'typed-html';
 
 export function layout(title: string, depth: number, content: string) {
     const urlPrefix = Array(depth + 1).join('../');
-    return <html>
+    return '<!DOCTYPE html>\n' + <html>
         <head>
             <title>{title} - Stryker report</title>
+            <meta charset="utf-8"></meta>
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
             <link rel="stylesheet" href={`${urlPrefix}bootstrap/css/bootstrap.min.css`}></link>
-            <link rel="stylesheet" href={`${urlPrefix}bootstrap/css/bootstrap-theme.min.css`}></link>
             <link rel="stylesheet" href={`${urlPrefix}highlightjs/styles/default.css`}></link>
             <link rel="stylesheet" href={`${urlPrefix}stryker.css`}></link>
         </head>
@@ -16,8 +17,8 @@ export function layout(title: string, depth: number, content: string) {
 
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-12">
-                        <h1>{title} - Stryker report</h1>
+                    <div class="col-lg-12">
+                        <h1 class="display-4">{title} <small class="text-muted">- Stryker report</small></h1>
                     </div>
                 </div>
                 <div class="row">

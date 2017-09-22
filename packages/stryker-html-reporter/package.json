@@ -46,7 +46,7 @@
   "devDependencies": {
     "@types/file-url": "^1.0.28",
     "@types/rimraf": "0.0.28",
-    "bootstrap": "3.3.7",
+    "bootstrap": "^4.0.0-beta",
     "highlight.js": "^9.4.0",
     "stryker-api": "^0.9.0"
   },

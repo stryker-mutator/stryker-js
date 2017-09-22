@@ -37,15 +37,16 @@ describe('Html report of stryker', function () {
       'TestFrameworkOrchestrator.js.html': 'TestFrameworkOrchestrator.js.html',
       'bootstrap': {
         'css': {
-          'bootstrap-theme.css': 'bootstrap-theme.css',
-          'bootstrap-theme.min.css': 'bootstrap-theme.min.css',
+          'bootstrap-grid.css': 'bootstrap-grid.css',
+          'bootstrap-grid.min.css': 'bootstrap-grid.min.css',
+          'bootstrap-reboot.css': 'bootstrap-reboot.css',
+          'bootstrap-reboot.min.css': 'bootstrap-reboot.min.css',
           'bootstrap.css': 'bootstrap.css',
           'bootstrap.min.css': 'bootstrap.min.css'
         },
         'js': {
           'bootstrap.js': 'bootstrap.js',
-          'bootstrap.min.js': 'bootstrap.min.js',
-          'npm.js': 'npm.js'
+          'bootstrap.min.js': 'bootstrap.min.js'
         }
       },
       'coverage': {

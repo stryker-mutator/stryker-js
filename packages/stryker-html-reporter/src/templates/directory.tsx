@@ -5,9 +5,9 @@ import { resultTable } from './resultTable';
 import { layout } from './layout';
 
 export function directory(title: string, scoreResult: ScoreResult, depth: number, thresholds: MutationScoreThresholds) {
-    return layout(title, depth, <div class="col-md-12">
+    return layout(title, depth, <div class="col-lg-12">
         <div class="row">
-            <div class="totals col-xs-11">
+            <div class="totals col-sm-11">
                 {resultTable(scoreResult, title, thresholds)}
             </div>
         </div>

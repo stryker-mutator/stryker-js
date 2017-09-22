@@ -12,8 +12,29 @@
     color: #fff;
 }
 
+h1 small{
+    font-weight: 200;
+}
+
+h1 {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
 *[hidden]{
     display: none !important;
+}
+.bg-danger-light {
+    background-color: #f2dede;
+}
+.bg-success-light {
+    background-color: #dff0d8;
+}
+.bg-warning-light {
+    background-color: #fcf8e3;
+}
+a:hover {
+    text-decoration: none;
 }
 
 .progress {
@@ -24,6 +45,10 @@ th.rotate {
   /* Something you can count on */
   height: 50px;
   white-space: nowrap;
+}
+
+th.rotate {
+    padding-bottom: 10px;
 }
 
 th.rotate > div {
@@ -41,7 +66,7 @@ th.rotate-width-70 > div {
 
 th.rotate > div > span {
   border-bottom: 1px solid #ccc;
-  padding: 5px 10px;
+  padding: 5px 0;
 }
 
 .table-no-top>thead>tr>th {
