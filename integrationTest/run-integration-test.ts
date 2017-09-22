@@ -7,7 +7,7 @@ describe('integration-tests', function () {
   this.timeout(500000);
 
   before(() => {
-    execSync('npm install', { cwd: __dirname, maxBuffer: Infinity  });
+    execSync('npm install', { cwd: __dirname, stdio: [0, 1, 2]  });
   });
 
   const testRootDir = path.resolve(__dirname, 'test');
