@@ -1,28 +1,22 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import Executor from './Executor';
+import { execSync } from 'child_process';
 
 describe('integration-tests', function () {
 
   this.timeout(500000);
 
-  before(done => {
-    new Executor('.').exec('npm install', {}, done);
+  before(() => {
+    execSync('npm install', { stdio: [0, 1, 2] });
   });
 
-  const root = path.join('integrationTest', 'test');
+  const root = path.resolve(__dirname, 'test');
   const dirs = fs.readdirSync(root)
-    .filter(f => fs.statSync(path.join(root, f)).isDirectory());
+    .filter(file => fs.statSync(path.join(root, file)).isDirectory());
   dirs.forEach(testDir => {
     describe(testDir, () => {
-      it('should run test', (done) => {
-        new Executor(path.join('test', testDir)).exec('npm test', {}, error => {
-          if (error) {
-            done(new Error(error));
-          } else {
-            done();
-          }
-        });
+      it('should run test', () => {
+        execSync('npm test', { cwd: path.join('test', testDir), stdio: [0, 1, 2]});
       });
     });
   });
