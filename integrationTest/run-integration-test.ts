@@ -18,7 +18,7 @@ describe('integration-tests', function () {
       it('should run test', () => {
         const currentTestDir = path.resolve(testRootDir, testDir);
         console.log(`Exec in ${testDir}: $npm test`);
-        execSync('npm test', { cwd: currentTestDir , maxBuffer: Infinity });
+        execSync('npm test', { cwd: currentTestDir , maxBuffer: Number.MAX_SAFE_INTEGER });
       });
     });
   });
