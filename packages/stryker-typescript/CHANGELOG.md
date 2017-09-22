@@ -1,7 +1,18 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="0.0.2"></a>
+## [0.0.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.0.1...stryker-typescript@0.0.2) (2017-09-22)
+
+
+### Bug Fixes
+
+* **package.json:** Add dependency to tslib. ([#387](https://github.com/stryker-mutator/stryker/issues/387)) ([fcc8b88](https://github.com/stryker-mutator/stryker/commit/fcc8b88))
+
+
+
 
 <a name="0.0.1"></a>
 # 0.0.1 (2017-09-19)

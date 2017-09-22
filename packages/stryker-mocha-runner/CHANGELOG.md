@@ -1,7 +1,18 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="0.8.1"></a>
+## [0.8.1](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.8.0...stryker-mocha-runner@0.8.1) (2017-09-22)
+
+
+### Bug Fixes
+
+* **package.json:** Add dependency to tslib. ([#387](https://github.com/stryker-mutator/stryker/issues/387)) ([fcc8b88](https://github.com/stryker-mutator/stryker/commit/fcc8b88))
+
+
+
 
 <a name="0.8.0"></a>
 # [0.8.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.7.0...stryker-mocha-runner@0.8.0) (2017-09-19)
