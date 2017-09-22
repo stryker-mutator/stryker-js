@@ -7,16 +7,16 @@ describe('integration-tests', function () {
   this.timeout(500000);
 
   before(() => {
-    execSync('npm install', { stdio: [0, 1, 2] });
+    execSync('npm install', { cwd: __dirname, stdio: [0, 1, 2] });
   });
 
-  const root = path.resolve(__dirname, 'test');
-  const dirs = fs.readdirSync(root)
-    .filter(file => fs.statSync(path.join(root, file)).isDirectory());
+  const testRootDir = path.resolve(__dirname, 'test');
+  const dirs = fs.readdirSync(testRootDir)
+    .filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory());
   dirs.forEach(testDir => {
     describe(testDir, () => {
       it('should run test', () => {
-        execSync('npm test', { cwd: path.join('test', testDir), stdio: [0, 1, 2]});
+        execSync('npm test', { cwd: path.resolve(testRootDir, testDir), stdio: [0, 1, 2]});
       });
     });
   });
