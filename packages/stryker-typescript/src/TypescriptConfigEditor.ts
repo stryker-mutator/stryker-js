@@ -7,7 +7,7 @@ import { ConfigEditor, Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
 import { normalizeForTypescript } from './helpers/tsHelpers';
 
-// Override some compiler options that have to do code quality. When mutating, we're not interested in the resulting code quality
+// Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker/issues/391 for more info
 const compilerOptionsOverrides: Partial<ts.CompilerOptions> = {
   allowUnreachableCode: true,
