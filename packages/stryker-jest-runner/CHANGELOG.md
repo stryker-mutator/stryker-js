@@ -1,3 +1,14 @@
+<a name="0.2.0"></a>
+# 0.2.0 (2017-09-23)
+
+* 0.2.0 ([897fbba](https://github.com/stryker-mutator/stryker-jest-runner/commit/897fbba))
+* chore(docs) Update changelog ([790d317](https://github.com/stryker-mutator/stryker-jest-runner/commit/790d317))
+* fix(test): Fix accidentally modified test ([62a1785](https://github.com/stryker-mutator/stryker-jest-runner/commit/62a1785))
+* chore(dependencies): Update to stryker-api 0.9 ([09e59d2](https://github.com/stryker-mutator/stryker-jest-runner/commit/09e59d2))
+* chore(package-lock): Disable lock on packages ([48b39b6](https://github.com/stryker-mutator/stryker-jest-runner/commit/48b39b6))
+
+
+
 <a name="0.1.0"></a>
 # 0.1.0 (2017-08-14)
 
