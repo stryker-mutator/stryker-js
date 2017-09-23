@@ -81,6 +81,14 @@ Enable the config editor by pointing the `tsconfigFile` property to your tsconfi
 }
 ``` 
 
+We always override some properties to enforce these rules:
+```js
+allowUnreachableCode: true
+noUnusedLocals: false
+noUnusedParameters: false
+```
+
+
 ### TypescriptMutator
 
 The `TypescriptMutator` is a plugin to mutate typescript code. It builds a Typescript [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and mutates your code using different kind of mutators.
