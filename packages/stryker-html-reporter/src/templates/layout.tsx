@@ -12,7 +12,7 @@ function printBreadcrumbLinks(breadcrumb: Breadcrumb | undefined, pageDepth: num
     }
 }
 
-export function printBreadcrumb(breadcrumb: Breadcrumb) {
+function printBreadcrumb(breadcrumb: Breadcrumb) {
     return <ol class="breadcrumb">
         {printBreadcrumbLinks(breadcrumb.previousItem, breadcrumb.depth)}
         <li class="breadcrumb-item active">{breadcrumb.title}</li>
