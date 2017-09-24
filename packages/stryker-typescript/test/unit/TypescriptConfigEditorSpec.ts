@@ -57,7 +57,7 @@ describe('TypescriptConfigEditor edit', () => {
   }`);
     sut.edit(config, parseConfigHost());
     expect(fs.readFileSync).calledWith(path.resolve('tsconfig.json'));
-    expect(config['tsconfig']).deep.eq({
+    expect(config['tsconfig']).include({
       module: ts.ModuleKind.CommonJS,
       configFilePath: path.resolve('tsconfig.json').replace(/\\/g, '/'),
       project: path.resolve('.').replace(/\\/g, '/'),
@@ -67,6 +67,23 @@ describe('TypescriptConfigEditor edit', () => {
       sourceMap: true
     });
     expect(config.files).deep.eq(['file1.ts', 'file2.ts']);
+  });
+
+  it('should override quality options', () => {
+    config[CONFIG_KEY] = 'tsconfig.json';
+    readFileSyncStub.returns(`{
+      "compilerOptions": {
+        "allowUnreachableCode": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+       },
+  }`);
+    sut.edit(config, parseConfigHost());
+    expect(config['tsconfig']).include({
+      allowUnreachableCode: true,
+      noUnusedLocals: false,
+      noUnusedParameters: false
+    });
   });
 
   it('should log errors on failure during load', () => {
