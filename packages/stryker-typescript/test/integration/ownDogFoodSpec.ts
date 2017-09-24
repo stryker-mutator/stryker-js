@@ -40,16 +40,16 @@ describe('stryker-typescript', function () {
     expect(outputFiles.length).greaterThan(10);
   });
 
-  it('should result in an error if an unused variable is declared when noUnusedLocals = true', () => {
+  it('should result in an error if a variable is declared as any and noImplicitAny = true', () => {
     const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
-    inputFiles[0].content += 'const shouldResultInError = 3';
+    inputFiles[0].content += 'function foo(bar) { return bar; } ';
     const transpileResult = transpiler.transpile(inputFiles);
-    expect(transpileResult.error).contains('error TS6133: \'shouldResultInError\' is declared but never used');
+    expect(transpileResult.error).contains('error TS7006: Parameter \'bar\' implicitly has an \'any\' type');
     expect(transpileResult.outputFiles.length).eq(0);
   });
 
-  it('should not result in an error if an unused variable is declared when noUnusedLocals = false', () => {
-    config['tsconfig'].noUnusedLocals = false;
+  it('should not result in an error if a variable is declared as any and noImplicitAny = false', () => {
+    config['tsconfig'].noImplicitAny = false;
     inputFiles[0].content += 'const shouldResultInError = 3';
     const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
     const transpileResult = transpiler.transpile(inputFiles);
