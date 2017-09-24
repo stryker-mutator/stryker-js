@@ -81,7 +81,8 @@ Enable the config editor by pointing the `tsconfigFile` property to your tsconfi
 }
 ``` 
 
-We always override some properties to enforce these rules:
+We always override some properties to enforce these rules (see [issue 391](https://github.com/stryker-mutator/stryker/issues/391) to find out why):
+
 ```js
 allowUnreachableCode: true
 noUnusedLocals: false
