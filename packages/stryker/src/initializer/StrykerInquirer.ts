@@ -34,8 +34,7 @@ export class StrykerInquirer {
       type: 'list',
       name: 'mutator',
       message: 'What kind of code do you want to mutate?',
-      choices: options.map(_ => _.name),
-      default: ['clear-text', 'progress']
+      choices: options.map(_ => _.name)
     });
     return options.filter(_ => _.name === answers['mutator'])[0];
   }
