@@ -64,6 +64,11 @@ export default class NpmClient {
       .then(mapSearchResultToPromptOption);
   }
 
+  getMutatorOptions(): Promise<PromptOption[]> {
+    return this.search('/v2/search?q=keywords:stryker-mutator')
+    .then(mapSearchResultToPromptOption);
+  }
+
   getTestReporterOptions(): Promise<PromptOption[]> {
     return this.search(`/v2/search?q=keywords:stryker-reporter`)
       .then(mapSearchResultToPromptOption);
