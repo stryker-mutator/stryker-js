@@ -1,15 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { execSync } from 'child_process';
-
-//const tenMegabyte = 1000 * 1000 * 10;
+import execa = require('execa');
 
 describe('integration-tests', function () {
 
   this.timeout(500000);
 
   before(() => {
-    execSync('npm install', { cwd: __dirname, stdio: [0, 1, 2]  });
+    return execa('npm', ['install'], { cwd: __dirname });
   });
 
   const testRootDir = path.resolve(__dirname, 'test');
@@ -19,8 +17,8 @@ describe('integration-tests', function () {
     describe(testDir, () => {
       it('should run test', () => {
         const currentTestDir = path.resolve(testRootDir, testDir);
-        console.log(`Exec in ${testDir}: $npm test`);
-        execSync('npm test', { cwd: currentTestDir , stdio: [0, 1, 2] });
+        console.log(`Exec ${testDir} npm test`);
+        return execa('npm', ['test'], { cwd: currentTestDir });
       });
     });
   });
