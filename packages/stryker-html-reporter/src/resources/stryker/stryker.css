@@ -11,6 +11,9 @@
 .badge *{
     color: #fff;
 }
+.stryker-mutant-button:focus {
+    outline: none;
+}
 
 h1 small{
     font-weight: 200;

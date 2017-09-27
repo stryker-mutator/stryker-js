@@ -1,5 +1,5 @@
-import fileUrl = require('file-url');
 import * as log4js from 'log4js';
+import fileUrl = require('file-url');
 import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { Reporter, MutantResult, SourceFile, ScoreResult } from 'stryker-api/report';

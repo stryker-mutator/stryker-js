@@ -86,7 +86,12 @@ function annotateCode(sourceFile: SourceFile, mutants: MutantResult[]) {
         const backgroundColorEndAnnotation = ((mutantsStarting.length || mutantsEnding.length) && index > 0) || index === maxIndex ? '</span>' : '';
         try {
             const mutantsAnnotations = mutantsStarting.map(m =>
-                <a href="#" class="stryker-mutant-button" data-mutant-status-annotation={getContextClassForStatus(m.mutant.status)} data-mutant={m.index}>
+                <a href="#" class="stryker-mutant-button"
+                    tabindex="0"
+                    title={m.mutant.mutatorName}
+                    data-content={getMutantContent(m.mutant)}
+                    data-mutant-status-annotation={getContextClassForStatus(m.mutant.status)}
+                    data-mutant={m.index}>
                     <span class={`badge badge-${getContextClassForStatus(m.mutant.status)}`}>{m.index}</span>
                 </a>
                 + <span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant={m.index}>{escapeHtml(m.mutant.replacement)}</span>);
@@ -111,6 +116,10 @@ function escapeHtml(unsafe: string) {
         .replace(/'/g, '&#039;');
 }
 
+
+function getMutantContent(mutant: MutantResult) {
+    return `status: ${MutantStatus[mutant.status]}`;
+}
 
 function getContextClassForStatus(status: MutantStatus) {
     switch (status) {

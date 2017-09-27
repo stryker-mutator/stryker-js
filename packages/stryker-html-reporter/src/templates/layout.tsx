@@ -48,6 +48,9 @@ export function layout(breadcrumb: Breadcrumb, content: string) {
                     Generated with stryker-html-reporter generator. Visit the <a href="http://stryker-mutator.github.io" target="_blank">Stryker website</a></footer>
             </div>
 
+            <script src={`${urlPrefix}popper.js/dist/umd/popper.min.js`} defer="defer"></script>
+            <script src={`${urlPrefix}jquery/dist/jquery.slim.min.js`} defer="defer"></script>
+            <script src={`${urlPrefix}bootstrap/js/bootstrap.min.js`} defer="defer"></script>
             <script src={`${urlPrefix}stryker.js`} defer="defer"></script>
         </body>
     </html>;
