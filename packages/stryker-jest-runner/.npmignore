@@ -6,3 +6,5 @@ tsconfig.json
 typings.json
 testResources
 typings
+.vscode
+*.png
