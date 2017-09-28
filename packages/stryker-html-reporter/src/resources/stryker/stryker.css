@@ -14,6 +14,14 @@
 .stryker-mutant-button:focus {
     outline: none;
 }
+.legend{
+    position: sticky;
+    top: 0;
+    background: #FFF;
+}
+.stryker-collapse-expand-all{
+    padding-left: 10px;
+}
 
 h1 small{
     font-weight: 200;

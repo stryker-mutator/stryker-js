@@ -39,8 +39,8 @@ describe('HtmlReporter', () => {
       sut.onAllMutantsTested([]);
       sut.onScoreCalculated(scoreResult());
       await sut.wrapUp();
-      expect(copyFolderStub).calledWith(join(__dirname, '..', '..', 'src', 'resources', 'stryker'), normalize('reports/mutation/html'));
-      expect(copyFolderStub).calledWith(join(__dirname, '..', '..', 'resources'), normalize('reports/mutation/html'));
+      expect(copyFolderStub).calledWith(join(__dirname, '..', '..', 'src', 'resources', 'stryker'), normalize('reports/mutation/html/__resources'));
+      expect(copyFolderStub).calledWith(join(__dirname, '..', '..', 'resources'), normalize('reports/mutation/html/__resources'));
     });
 
     it('should write an html report', async () => {
@@ -57,7 +57,7 @@ describe('HtmlReporter', () => {
         sinon.match(normalize('reports/mutation/html/a.js.html')),
         sinon.match('10.67%')
           .and(sinon.match('<span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="0">{}</span>'))
-          .and(sinon.match('<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">')));
+          .and(sinon.match('<link rel="stylesheet" href="__resources/bootstrap/css/bootstrap.min.css">')));
       expect(writeFileStub).calledWithMatch(
         sinon.match(normalize('reports/mutation/html/b.js.html')),
         sinon.match('10.67%'));
@@ -84,8 +84,8 @@ describe('HtmlReporter', () => {
       await sut.wrapUp();
       expect(writeFileStub).calledWith(
         normalize('reports/mutation/html/a/b/c.js.html'),
-        sinon.match('<link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">')
-          .and(sinon.match('<script src="../../stryker.js" defer="defer"></script>')));
+        sinon.match('<link rel="stylesheet" href="../../__resources/bootstrap/css/bootstrap.min.css">')
+          .and(sinon.match('<script src="../../__resources/stryker.js" defer="defer"></script>')));
     });
 
     it('should not fail when input files are missing', async () => {

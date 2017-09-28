@@ -5,6 +5,7 @@ import { resultTable } from './resultTable';
 import { layout } from './layout';
 import { ScoreResult, SourceFile, MutantResult, MutantStatus } from 'stryker-api/report';
 import Breadcrumb from '../Breadcrumb';
+import { mutantTable } from './mutantTable';
 
 export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], breadcrumb: Breadcrumb, thresholds: MutationScoreThresholds) {
     return layout(breadcrumb,
@@ -15,18 +16,45 @@ export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefin
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
-                    <a href="#" class="stryker-collapse-expand-all">Expand all</a>
+                <div class="col-lg-7">
+                    {legend(mutants)}
+                    {code(sourceFile, mutants)}
                 </div>
-                <div class="col-md-offset-2 col-md-4">
-                    <label>
-                        <input class="stryker-display-killed" type="checkbox"></input> Also show killed mutants
-            </label>
+                <div class="col-lg-5">
+                    {mutantTable(mutants, sourceFile ? sourceFile.content : '')}
                 </div>
             </div>
-            {code(sourceFile, mutants)}
         </div>);
 }
+
+function legend(mutants: MutantResult[]) {
+    function displayCheckbox(state: MutantStatus, isChecked: boolean) {
+        const filtered = mutants.filter(mutant => mutant.status === state);
+        if (filtered.length) {
+            return <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input stryker-display" checked={isChecked} value={state.toString()} type="checkbox"></input>
+                    {MutantStatus[state]} {`(${filtered.length})`}
+                </label>
+            </div>;
+        } else {
+            return '';
+        }
+    }
+
+    return <div class="row legend">
+        <form class="col-md-12" novalidate="novalidate">
+            {displayCheckbox(MutantStatus.NoCoverage, true)}
+            {displayCheckbox(MutantStatus.Survived, true)}
+            {displayCheckbox(MutantStatus.Killed, false)}
+            {displayCheckbox(MutantStatus.TimedOut, false)}
+            {displayCheckbox(MutantStatus.RuntimeError, false)}
+            {displayCheckbox(MutantStatus.TranspileError, false)}
+            <a href="#" class="stryker-collapse-expand-all">Expand all</a>
+        </form>
+    </div>;
+}
+
 function code(sourceFile: SourceFile | undefined, mutants: MutantResult[]) {
     if (sourceFile) {
         return annotateCode(sourceFile, mutants);
@@ -91,6 +119,7 @@ function annotateCode(sourceFile: SourceFile, mutants: MutantResult[]) {
                     title={m.mutant.mutatorName}
                     data-content={getMutantContent(m.mutant)}
                     data-mutant-status-annotation={getContextClassForStatus(m.mutant.status)}
+                    data-mutant-status={m.mutant.status}
                     data-mutant={m.index}>
                     <span class={`badge badge-${getContextClassForStatus(m.mutant.status)}`}>{m.index}</span>
                 </a>
@@ -147,3 +176,5 @@ function mapString<T>(source: string, fn: (char: string, index?: number) => T): 
     }
     return results;
 }
+
+

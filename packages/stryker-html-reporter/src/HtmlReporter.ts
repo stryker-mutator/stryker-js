@@ -52,12 +52,12 @@ export default class HtmlReporter implements Reporter {
 
   private copyBootstrapAndHighlightResources() {
     const resourcesDir = path.join(__dirname, '..', 'resources');
-    return util.copyFolder(resourcesDir, this.baseDir);
+    return util.copyFolder(resourcesDir, this.resourcesDir);
   }
 
   private copyStrykerResources() {
     const resourcesDir = path.join(__dirname, 'resources', 'stryker');
-    return util.copyFolder(resourcesDir, this.baseDir);
+    return util.copyFolder(resourcesDir, this.resourcesDir);
   }
 
   private writeReportDirectory(scoreResult = this.scoreResult, currentDirectory = this.baseDir, breadcrumb = Breadcrumb.start)
@@ -96,6 +96,10 @@ export default class HtmlReporter implements Reporter {
 
   private findMutants(filePath: string) {
     return this.mutantResults.filter(mutant => mutant.sourceFilePath === filePath);
+  }
+
+  private get resourcesDir() {
+    return path.join(this.baseDir, '__resources');
   }
 
   private get baseDir() {

@@ -21,7 +21,7 @@ hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascri
 
   // Controls
   var collapseExpandButton = document.getElementsByClassName('stryker-collapse-expand-all').item(0);
-  var checkboxDisplayKilled = document.getElementsByClassName('stryker-display-killed').item(0);
+  var displayCheckboxes = document.getElementsByClassName('stryker-display');
 
   /** 
    * Creates a map of mutant id to elements using given class name to select the elements
@@ -99,14 +99,21 @@ hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascri
     buttonMap[index].hidden = enableHide;
   }
 
-  function reflectCheckboxDisplayKilledValue() {
+  function updateMutantButtonsForCheckbox(checkbox) {
+    var mutantState = checkbox.value;
     for (var i in buttonMap) {
-      if (buttonMap[i].dataset.mutantStatusAnnotation === 'success') {
-        hideMutant(i, !checkboxDisplayKilled.checked);
+      if (buttonMap[i].dataset.mutantStatus === mutantState) {
+        hideMutant(i, !checkbox.checked);
       }
     }
   }
 
-  checkboxDisplayKilled.addEventListener('change', reflectCheckboxDisplayKilledValue);
-  reflectCheckboxDisplayKilledValue();
+  for (var i = 0; i < displayCheckboxes.length; i++) {
+    var checkbox = displayCheckboxes.item(i);
+    checkbox.addEventListener('change', function (event) {
+      updateMutantButtonsForCheckbox(event.target);
+    });
+    // Update them right away as well
+    updateMutantButtonsForCheckbox(checkbox);
+  }
 })();

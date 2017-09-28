@@ -20,7 +20,7 @@ function printBreadcrumb(breadcrumb: Breadcrumb) {
 }
 
 export function layout(breadcrumb: Breadcrumb, content: string) {
-    const urlPrefix = Array(breadcrumb.depth + 1).join('../');
+    const urlPrefix = Array(breadcrumb.depth + 1).join('../') + '__resources/';
     return '<!DOCTYPE html>\n' + <html>
         <head>
             <title>{breadcrumb.title} - Stryker report</title>
