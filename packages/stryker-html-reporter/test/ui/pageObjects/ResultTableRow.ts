@@ -6,7 +6,9 @@ export default class ResultTableRow {
   constructor(private host: ElementFinder) {
   }
 
-  name = () => this.host.element(by.css('td:nth-child(1)')).getText();
+  private nameTableElement = () => this.host.element(by.css('td:nth-child(1)'));
+  navigate = () => this.nameTableElement().element(by.css('a')).click();
+  name = () => this.nameTableElement().getText();
   progressBar = () => new ProgressBar(this.host.element(by.css('td:nth-child(2)>div.progress')));
   mutationScore = () => this.host.element(by.css('th:nth-child(3)')).getText();
   killed = () => this.host.element(by.css('td:nth-child(4)')).getText();

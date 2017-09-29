@@ -45,8 +45,8 @@ describe('Directory results page', () => {
       });
     });
 
-    it('show circle.js in the correct way', async () => {
-      const circleRow = await page.resultTable().row('  Circle.js');
+    it('should show circle.js in the correct way', async () => {
+      const circleRow = await page.resultTable().row('Circle.js');
       return Promise.all([
         expect(circleRow.progressBar().percentageText()).to.eventually.be.eq('33.33 %'),
         expect(circleRow.mutationScore()).to.eventually.be.eq('33.33'),
