@@ -18,22 +18,17 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
   }
 
   private render() {
-    process.stdout.write(`Mutation testing ${this.procent()} (ETC ${this.etc()}) ` +
-      `[${this.progress.killed} ${this.progress.killedLabel}] ` +
-      `[${this.progress.survived} ${this.progress.survivedLabel}] ` +
-      `[${this.progress.noCoverage} ${this.progress.noCoverageLabel}] ` +
-      `[${this.progress.timeout} ${this.progress.timeoutLabel}] ` +
-      `[${this.progress.runtimeError} ${this.progress.runtimeErrorLabel}] ` +
-      `[${this.progress.transpileError} ${this.progress.transpileErrorLabel}]` +
+    process.stdout.write(`Mutation testing ${this.percent()} (ETC ${this.etc()}) ` +
+      `${this.progress.tested}/${this.progress.total} tested (${this.progress.survived} survived)` +
       os.EOL);
   }
 
-  private procent() {
-    return Math.floor(this.progress.testedCount / this.progress.totalCount * 100) + '%';
+  private percent() {
+    return Math.floor(this.progress.tested / this.progress.total * 100) + '%';
   }
 
   private etc() {
-    const etcSeconds = Math.floor(this.timer.elapsedSeconds() / this.progress.testedCount * (this.progress.totalCount - this.progress.testedCount));
+    const etcSeconds = Math.floor(this.timer.elapsedSeconds() / this.progress.tested * (this.progress.total - this.progress.tested));
     if (isFinite(etcSeconds)) {
       return etcSeconds + 's';
     } else {

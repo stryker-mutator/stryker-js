@@ -8,27 +8,21 @@ export default class ProgressBarReporter extends ProgressKeeper {
   onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
     const progressBarContent =
-      `Mutation testing  [:bar] :percent (ETC :etas)` +
-      `[:killed :killedLabel] ` +
-      `[:survived :survivedLabel] ` +
-      `[:noCoverage :noCoverageLabel] ` +
-      `[:timeout :timeoutLabel] ` +
-      `[:runtimeError :runtimeErrorLabel] ` + 
-      `[:transpileError :transpileErrorLabel]`;
+      `Mutation testing  [:bar] :percent (ETC :etas) :tested/:total tested (:survived survived)`;
 
     this.progressBar = new ProgressBar(progressBarContent, {
       width: 50,
       complete: '=',
       incomplete: ' ',
       stream: process.stdout,
-      total: this.progress.totalCount
+      total: this.progress.total
     });
   }
 
   onMutantTested(result: MutantResult): void {
-    const ticksBefore = this.progress.testedCount;
+    const ticksBefore = this.progress.tested;
     super.onMutantTested(result);
-    if (ticksBefore < this.progress.testedCount) {
+    if (ticksBefore < this.progress.tested) {
       this.tick();
     } else {
       this.render();
