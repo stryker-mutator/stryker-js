@@ -24,13 +24,15 @@ export default class StrykerInitializer {
     const selectedTestRunner = await this.selectTestRunner();
     const selectedTestFramework = selectedTestRunner ? await this.selectTestFramework(selectedTestRunner) : null;
     const selectedMutator = await this.selectMutator();
+    const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
-    const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner, selectedTestFramework, selectedMutator].concat(selectedReporters));
+    const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner, selectedTestFramework, selectedMutator].concat(selectedTranspilers).concat(selectedReporters));
     this.installNpmDependencies(npmDependencies);
     await new StrykerConfigWriter(this.out,
       selectedTestRunner,
       selectedTestFramework,
       selectedMutator,
+      selectedTranspilers,
       selectedReporters,
       await this.fetchAdditionalConfig(npmDependencies)).write();
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure your files and test runner correctly.');
@@ -103,6 +105,17 @@ export default class StrykerInitializer {
       return await this.inquirer.promptMutator(mutatorOptions);
     } else {
       this.out('Unable to select a mutator. You will need to configure it manually.');
+      return null;
+    }
+  }
+
+  private async selectTranspilers(): Promise<PromptOption[] | null> {
+    const options = await this.client.getTranspilerOptions();
+    if (options.length) {
+      log.debug(`Found transpilers: ${JSON.stringify(options)}`);
+      return await this.inquirer.promptTranspilers(options);
+    } else {
+      this.out('Unable to select transpilers. You will need to configure it manually, if you want to use any.');
       return null;
     }
   }

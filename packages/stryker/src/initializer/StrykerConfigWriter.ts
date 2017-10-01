@@ -17,6 +17,7 @@ export default class StrykerConfigWriter {
     selectedTestRunner: null | PromptOption,
     private selectedTestFramework: null | PromptOption,
     selectedMutator: null | PromptOption,
+    selectedTranspilers: null | PromptOption[],
     selectedReporters: PromptOption[],
     private additionalPiecesOfConfig: Partial<StrykerOptions>[]
   ) {
@@ -27,6 +28,7 @@ export default class StrykerConfigWriter {
       ],
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',
       mutator: selectedMutator ? selectedMutator.name : '',
+      transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : [],
       reporter: selectedReporters.map(rep => rep.name)
     };
   }
