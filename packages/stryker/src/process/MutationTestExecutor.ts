@@ -9,7 +9,7 @@ import TranspiledMutant from '../TranspiledMutant';
 import StrictReporter from '../reporters/StrictReporter';
 import TestableMutant from '../TestableMutant';
 import MutantTranspiler from '../transpiler/MutantTranspiler';
-import SandboxCoordinator from '../SandboxCoordinator';
+import SandboxPool from '../SandboxPool';
 
 export default class MutationTestExecutor {
 
@@ -18,7 +18,7 @@ export default class MutationTestExecutor {
   }
 
   async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
-    const sandboxPool = new SandboxCoordinator(this.config, this.testFramework, this.transpiledFiles);
+    const sandboxPool = new SandboxPool(this.config, this.testFramework, this.transpiledFiles);
     const mutantTranspiler = new MutantTranspiler(this.config);
     await mutantTranspiler.initialize(this.inputFiles);
     const result = await this.runInsideSandboxes(
