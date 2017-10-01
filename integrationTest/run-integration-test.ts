@@ -19,7 +19,7 @@ describe('integration-tests', function () {
       it('should run test', () => {
         const currentTestDir = path.resolve(testRootDir, testDir);
         console.log(`    Exec ${testDir} npm test`);
-        execa.sync('npm', ['test'], { cwd: currentTestDir, stdio: [0, 1, 2] });
+        execa.sync('npm', ['test'], { cwd: currentTestDir });
       });
     });
   });
