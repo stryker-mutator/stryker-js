@@ -46,7 +46,7 @@ describe('StrykerInitializer', () => {
     beforeEach(() => {
       stubTestRunners('stryker-awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] }, { name: 'stryker-hyper-framework', keywords: ['stryker-hyper-runner'] });
-      stubMutators('stryker-typescript', 'stryker-es5', 'stryker-es6');
+      stubMutators('stryker-typescript', 'stryker-es6');
       stubTranspilers('stryker-typescript', 'stryker-webpack');
       stubReporters('stryker-dimension-reporter', 'stryker-mars-reporter');
       stubPackageClient({
@@ -79,7 +79,7 @@ describe('StrykerInitializer', () => {
       expect(promptTestFramework.type).to.eq('list');
       expect(promptTestFramework.choices).to.deep.eq(['awesome', 'None/other']);
       expect(promptMutator.type).to.eq('list');
-      expect(promptMutator.choices).to.deep.eq(['typescript', 'es5', 'es6']);
+      expect(promptMutator.choices).to.deep.eq(['typescript', 'es6', 'es5']);
       expect(promptTranspilers.type).to.eq('checkbox');
       expect(promptTranspilers.choices).to.deep.eq(['typescript', 'webpack']);
       expect(promptReporters.type).to.eq('checkbox');
