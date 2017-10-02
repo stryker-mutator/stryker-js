@@ -49,14 +49,15 @@ describe('ConfigReader', () => {
         });
 
         describe('without a stryker.conf.js in the CWD', () => {
-          it('should report a fatal error', () => {
+          it('should return default config', () => {
             let mockCwd = process.cwd() + '/testResources/config-reader/no-config';
             sandbox.stub(process, 'cwd').returns(mockCwd);
+
             sut = new ConfigReader({});
 
             result = sut.readConfig(); 
 
-            expect(log.fatal).to.have.been.calledWith(`File ${mockCwd}/stryker.conf.js does not exist!`);
+            expect(result).to.deep.equal(new Config());
           });
         });
       });
@@ -77,16 +78,24 @@ describe('ConfigReader', () => {
     });
 
     describe('with config file', () => {
-
-      beforeEach(() => {
-        sut = new ConfigReader({ configFile: 'testResources/config-reader/valid.conf.js' });
-        result = sut.readConfig();
-      });
-
       it('should read config file', () => {
+        sut = new ConfigReader({ configFile: 'testResources/config-reader/valid.conf.js' });
+
+        result = sut.readConfig();
+
         expect(result['valid']).to.be.eq('config');
         expect(result['should']).to.be.eq('be');
         expect(result['read']).to.be.eq(true);
+      });
+
+      describe('with CLI options', () => {
+        it('should give precedence to CLI options', () => {
+          sut = new ConfigReader({ configFile: 'testResources/config-reader/valid.conf.js', read: false });
+
+          result = sut.readConfig();
+
+          expect(result['read']).to.be.eq(false);
+        });
       });
     });
 

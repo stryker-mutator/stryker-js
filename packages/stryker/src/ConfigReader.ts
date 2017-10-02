@@ -1,5 +1,6 @@
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
+import * as fs from 'mz/fs';
 import * as log4js from 'log4js';
 import * as _ from 'lodash';
 
@@ -10,6 +11,8 @@ export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '      // your config\n' +
   '    });\n' +
   '  };';
+
+const DEFAULT_CONFIG_FILE = 'stryker.conf.js';
 
 const log = log4js.getLogger('ConfigReader');
 
@@ -34,10 +37,21 @@ export default class ConfigReader {
   }
 
   private loadConfigModule(): Function {
-    // we start with a dummy configModule
+    // Dummy module to be returned if no config file is loaded.
     let configModule: Function = function () { };
+
+    if (!this.cliOptions.configFile) {
+      try {
+        fs.accessSync(`${process.cwd()}/${DEFAULT_CONFIG_FILE}`);
+        log.info(`Using ${DEFAULT_CONFIG_FILE} in the current working directory.`);
+        this.cliOptions.configFile = DEFAULT_CONFIG_FILE;
+      } catch (e) {
+        log.info('No config file specified. Running with command line arguments.');
+      }
+    }
+
     if (this.cliOptions.configFile) {
-      log.debug('Loading config %s', this.cliOptions.configFile);
+      log.debug(`Loading config ${this.cliOptions.configFile}`);
       try {
         configModule = require(`${process.cwd()}/${this.cliOptions.configFile}`);
       } catch (e) {
@@ -55,14 +69,8 @@ export default class ConfigReader {
         log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
         process.exit(1);
       }
-    } else if (Object.keys(this.cliOptions).length === 0) {
-      log.info('Using stryker.conf.js in the current working directory.');
-      this.cliOptions.configFile = 'stryker.conf.js';
-      return this.loadConfigModule();
-    } else {
-      log.info('No config file specified. Running with command line arguments');
-      // if no config file path is passed, we create and return a dummy config module.
     }
+
     return configModule;
   }
 
