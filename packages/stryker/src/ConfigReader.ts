@@ -2,6 +2,7 @@ import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import * as fs from 'mz/fs';
 import * as log4js from 'log4js';
+import * as path from 'path';
 import * as _ from 'lodash';
 
 const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
@@ -42,7 +43,7 @@ export default class ConfigReader {
 
     if (!this.cliOptions.configFile) {
       try {
-        fs.accessSync(`${process.cwd()}/${DEFAULT_CONFIG_FILE}`);
+        fs.accessSync(path.resolve(`./${DEFAULT_CONFIG_FILE}`));
         log.info(`Using ${DEFAULT_CONFIG_FILE} in the current working directory.`);
         this.cliOptions.configFile = DEFAULT_CONFIG_FILE;
       } catch (e) {
