@@ -48,6 +48,7 @@ export default class ConfigReader {
         this.cliOptions.configFile = DEFAULT_CONFIG_FILE;
       } catch (e) {
         log.info('No config file specified. Running with command line arguments.');
+        log.info('Use `stryker init` command to generate your config file.');
       }
     }
 
