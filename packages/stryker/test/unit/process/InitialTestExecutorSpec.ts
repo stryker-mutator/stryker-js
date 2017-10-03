@@ -1,6 +1,5 @@
 import { EOL } from 'os';
 import { expect } from 'chai';
-import * as strykerSandbox from '../../../src/Sandbox';
 import { default as StrykerSandbox } from '../../../src/Sandbox';
 import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
 import { File } from 'stryker-api/core';
@@ -29,7 +28,7 @@ describe('InitialTestExecutor run', () => {
   beforeEach(() => {
     strykerSandboxMock = producers.mock(StrykerSandbox);
     transpilerFacadeMock = producers.mock(TranspilerFacade);
-    sandbox.stub(strykerSandbox, 'default').returns(strykerSandboxMock);
+    sandbox.stub(StrykerSandbox, 'create').resolves(strykerSandboxMock);
     sandbox.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
     testFrameworkMock = producers.testFramework();
     coverageInstrumenter = new CoverageInstrumenter('off', testFrameworkMock);
@@ -66,13 +65,11 @@ describe('InitialTestExecutor run', () => {
 
     it('should create a sandbox with correct arguments', async () => {
       await sut.run();
-      expect(strykerSandbox.default).calledWith(options, 0, transpileResultMock.outputFiles, testFrameworkMock, coverageInstrumenter);
-      expect(strykerSandbox.default).calledWithNew;
+      expect(StrykerSandbox.create).calledWith(options, 0, transpileResultMock.outputFiles, testFrameworkMock, coverageInstrumenter);
     });
 
     it('should initialize, run and dispose the sandbox', async () => {
       await sut.run();
-      expect(strykerSandboxMock.initialize).to.have.been.called;
       expect(strykerSandboxMock.run).to.have.been.calledWith(60 * 1000 * 5);
       expect(strykerSandboxMock.dispose).to.have.been.called;
     });

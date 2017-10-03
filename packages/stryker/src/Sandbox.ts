@@ -29,7 +29,7 @@ export default class Sandbox {
   private workingFolder: string;
   private testHooksFile = path.resolve('___testHooksForStryker.js');
 
-  constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
+  private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
     this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
     log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.files = files.slice(); // Create a copy
@@ -46,9 +46,15 @@ export default class Sandbox {
     }
   }
 
-  public async initialize(): Promise<void> {
+  private async initialize(): Promise<void> {
     await this.fillSandbox();
     return this.initializeTestRunner();
+  }
+
+  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, coverageInstrumenter: CoverageInstrumenter | null)
+    : Promise<Sandbox> {
+    const sandbox = new Sandbox(options, index, files, testFramework, coverageInstrumenter);
+    return sandbox.initialize().then(() => sandbox);
   }
 
   public run(timeout: number): Promise<RunResult> {

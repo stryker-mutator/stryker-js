@@ -57,8 +57,7 @@ export default class InitialTestExecutor {
       throw new Error(`Could not transpile input files: ${transpileResult.error}`);
     } else {
       this.logTranspileResult(transpileResult);
-      const sandbox = new Sandbox(this.options, 0, transpileResult.outputFiles, this.testFramework, this.coverageInstrumenter);
-      await sandbox.initialize();
+      const sandbox = await Sandbox.create(this.options, 0, transpileResult.outputFiles, this.testFramework, this.coverageInstrumenter);
       const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
       await sandbox.dispose();
       return { runResult, transpiledFiles: transpileResult.outputFiles };

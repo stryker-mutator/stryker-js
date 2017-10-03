@@ -6,10 +6,11 @@ import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import Sandbox from './Sandbox';
 
-export default class SandboxCoordinator {
+export default class SandboxPool {
 
-  private readonly log = getLogger(SandboxCoordinator.name);
+  private readonly log = getLogger(SandboxPool.name);
   private readonly sandboxes: Sandbox[] = [];
+  private isDisposed: boolean = false;
 
   constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: File[]) {
   }
@@ -29,19 +30,27 @@ export default class SandboxCoordinator {
       numConcurrentRunners = 1;
     }
     this.log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
+
     const sandboxes = Observable.range(0, numConcurrentRunners)
-      .map(n => new Sandbox(this.options, n, this.initialFiles, this.testFramework, null))
-      .flatMap(sandbox => sandbox.initialize()
-        .then(() => sandbox))
-      .do(sandbox => this.registerSandbox(sandbox));
+      .flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, null)));
     return sandboxes;
   }
 
-  private registerSandbox(sandbox: Sandbox) {
-    this.sandboxes.push(sandbox);
+  private registerSandbox(promisedSandbox: Promise<Sandbox>): Promise<Sandbox> {
+    return promisedSandbox.then(sandbox => {
+      if (this.isDisposed) {
+        // This sandbox is too late for the party. Dispose it to prevent hanging child processes
+        // See issue #396
+        sandbox.dispose();
+      } else {
+        this.sandboxes.push(sandbox);
+      }
+      return sandbox;
+    });
   }
 
   public disposeAll() {
+    this.isDisposed = true;
     return Promise.all(this.sandboxes.map(sandbox => sandbox.dispose()));
   }
 }
