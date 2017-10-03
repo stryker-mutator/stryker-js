@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.1.0"></a>
+# [0.1.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.0.2...stryker-typescript@0.1.0) (2017-10-03)
+
+
+### Features
+
+* **typescript:** Force no code quality compiler options ([#393](https://github.com/stryker-mutator/stryker/issues/393)) ([3445cbf](https://github.com/stryker-mutator/stryker/commit/3445cbf))
+
+
+
+
 <a name="0.0.2"></a>
 ## [0.0.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.0.1...stryker-typescript@0.0.2) (2017-09-22)
 

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.10.3...stryker@0.11.0) (2017-10-03)
+
+
+### Bug Fixes
+
+* **progress reporter:** Simpify reported progress ([#401](https://github.com/stryker-mutator/stryker/issues/401)) ([6258ef1](https://github.com/stryker-mutator/stryker/commit/6258ef1)), closes [#400](https://github.com/stryker-mutator/stryker/issues/400)
+* **sandbox:** Prevent hanging child processes ([#402](https://github.com/stryker-mutator/stryker/issues/402)) ([ff6962a](https://github.com/stryker-mutator/stryker/commit/ff6962a)), closes [#396](https://github.com/stryker-mutator/stryker/issues/396)
+
+
+### Features
+
+* **ConfigReader:** Use CLI options with default config file ([#404](https://github.com/stryker-mutator/stryker/issues/404)) ([99cdc61](https://github.com/stryker-mutator/stryker/commit/99cdc61)), closes [#390](https://github.com/stryker-mutator/stryker/issues/390)
+* **StrykerInitializer:** Add the option to select mutators and transpilers ([#403](https://github.com/stryker-mutator/stryker/issues/403)) ([c61786f](https://github.com/stryker-mutator/stryker/commit/c61786f))
+
+
+
+
 <a name="0.10.3"></a>
 ## [0.10.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.10.2...stryker@0.10.3) (2017-09-22)
 
