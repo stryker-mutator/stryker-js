@@ -43,7 +43,7 @@ export class StrykerInquirer {
     const answers = await inquirer.prompt({
       type: 'checkbox',
       name: 'transpilers',
-      message: 'What kind transformations should be applied to your code?',
+      message: '[optional] What kind transformations should be applied to your code?',
       choices: options.map(_ => _.name)
     });
     return options.filter(option => (answers['transpilers'] as string[]).some(transpilerName => option.name === transpilerName));
