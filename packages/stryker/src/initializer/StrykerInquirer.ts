@@ -29,6 +29,26 @@ export class StrykerInquirer {
     return options.filter(_ => _.name === answers['testFramework'])[0];
   }
 
+  public async promptMutator(options: PromptOption[]): Promise<PromptOption> {
+    const answers = await inquirer.prompt({
+      type: 'list',
+      name: 'mutator',
+      message: 'What kind of code do you want to mutate?',
+      choices: options.map(_ => _.name)
+    });
+    return options.filter(_ => _.name === answers['mutator'])[0];
+  }
+
+  public async promptTranspilers(options: PromptOption[]): Promise<PromptOption[]> {
+    const answers = await inquirer.prompt({
+      type: 'checkbox',
+      name: 'transpilers',
+      message: '[optional] What kind transformations should be applied to your code?',
+      choices: options.map(_ => _.name)
+    });
+    return options.filter(option => (answers['transpilers'] as string[]).some(transpilerName => option.name === transpilerName));
+  }
+
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {
     const answers = await inquirer.prompt({
       type: 'checkbox',
