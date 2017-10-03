@@ -26,7 +26,11 @@ export default class StrykerInitializer {
     const selectedMutator = await this.selectMutator();
     const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
-    const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner, selectedTestFramework, selectedMutator].concat(selectedTranspilers).concat(selectedReporters));
+    const npmDependencies = this.getSelectedNpmDependencies(
+        [selectedTestRunner, selectedTestFramework, selectedMutator]
+        .concat(selectedTranspilers)
+        .concat(selectedReporters)
+      );
     this.installNpmDependencies(npmDependencies);
     await new StrykerConfigWriter(this.out,
       selectedTestRunner,
