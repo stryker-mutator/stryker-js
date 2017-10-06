@@ -4,6 +4,7 @@ import { FileDescriptor } from 'stryker-api/core';
 import CoverageInstrumenterStream from '../../../src/coverage/CoverageInstrumenterStream';
 import log from '../../helpers/log4jsMock';
 import { streamToString, readable } from '../../helpers/streamHelpers';
+import { StatementMap } from 'stryker-api/test_runner';
 
 describe('CoverageInstrumenterStream', () => {
   let sut: CoverageInstrumenterStream;
@@ -27,18 +28,20 @@ describe('CoverageInstrumenterStream', () => {
     });
 
     describe('when input is a valid javascript file', () => {
+      let statementMap: StatementMap;
 
       beforeEach(() => {
         input.push('function something () {', 'utf8');
         input.push('}', 'utf8');
         input.push(null); // signal the end
+        statementMap = { '1': { start: { line: 0, column: 0 }, end: { line: 0, column: 24 } } };
       });
 
       it('should instrument the input', () =>
         expect(output).to.eventually.contain('function something(){__cov_').and.contain('.f[\'1\']++'));
 
       it('should contain the statement map', () => output.then(() => {
-        expect(sut.statementMap).to.deep.eq(sut.statementMap);
+        expect(sut.statementMap).to.deep.eq(statementMap);
       }));
     });
 

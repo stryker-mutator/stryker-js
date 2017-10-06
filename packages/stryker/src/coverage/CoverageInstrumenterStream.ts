@@ -20,11 +20,7 @@ export default class CoverageInstrumenterStream extends Transform {
   }
 
   _transform(chunk: Buffer | string, encoding: string, callback: Function): void {
-    if (typeof chunk === 'string') {
-      this.source += chunk;
-    } else {
-      this.source += chunk.toString();
-    }
+    this.source += chunk.toString();
     callback();
   }
 
