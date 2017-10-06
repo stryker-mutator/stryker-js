@@ -40,7 +40,7 @@ describe('CoverageInstrumenterStream', () => {
       it('should instrument the input', () =>
         expect(output).to.eventually.contain('function something(){__cov_').and.contain('.f[\'1\']++'));
 
-      it.only('should contain the statement map', () => output.then(() => {
+      it('should contain the statement map', () => output.then(() => {
         expect(sut.statementMap).to.deep.eq(statementMap);
       }));
     });
