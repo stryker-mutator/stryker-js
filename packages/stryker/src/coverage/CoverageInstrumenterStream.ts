@@ -1,15 +1,16 @@
 import { StatementMap } from 'stryker-api/test_runner';
 import { Transform, TransformOptions } from 'stream';
 import { Instrumenter } from 'istanbul';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 
 const coverageObjRegex = /\{.*"path".*"fnMap".*"statementMap".*"branchMap".*\}/g;
-const log = log4js.getLogger('CoverageInstrumenterStream');
 
 /**
  * Represents a stream responsible to add code coverage instrumentation and reporting back on the statement map
  */
 export default class CoverageInstrumenterStream extends Transform {
+
+  private readonly log = getLogger(CoverageInstrumenterStream.name);
 
   private source: string;
   public statementMap: StatementMap;
@@ -44,7 +45,7 @@ export default class CoverageInstrumenterStream extends Transform {
       this.push(instrumentedCode);
     } catch (err) {
       const error = `Error while instrumenting file "${this.filename}", error was: ${err.toString()}`;
-      log.error(error);
+      this.log.error(error);
       this.push(this.source);
     }
     callback();

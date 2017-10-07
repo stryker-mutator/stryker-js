@@ -1,15 +1,15 @@
 import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import { deleteDir } from './fileUtils';
 
-const log = log4js.getLogger('TempFolder');
 
 export class TempFolder {
+  private readonly log = getLogger(TempFolder.name);
   baseTempFolder: string;
   tempFolder: string;
-
+  
   private constructor() { }
 
   initialize(tempDirName = '.stryker-tmp') {
@@ -61,9 +61,9 @@ export class TempFolder {
     if (!this.baseTempFolder) {
       throw new Error('initialize() was not called!');
     }
-    log.debug(`Deleting stryker temp folder ${this.baseTempFolder}`);
+    this.log.debug(`Deleting stryker temp folder ${this.baseTempFolder}`);
     return deleteDir(this.baseTempFolder)
-      .catch(() => log.info(`Failed to delete stryker temp folder ${this.baseTempFolder}`));
+      .catch(() => this.log.info(`Failed to delete stryker temp folder ${this.baseTempFolder}`));
   }
 
   /**

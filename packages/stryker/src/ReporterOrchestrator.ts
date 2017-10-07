@@ -7,9 +7,7 @@ import DotsReporter from './reporters/DotsReporter';
 import EventRecorderReporter from './reporters/EventRecorderReporter';
 import BroadcastReporter, { NamedReporter } from './reporters/BroadcastReporter';
 import StrictReporter from './reporters/StrictReporter';
-import * as log4js from 'log4js';
-
-const log = log4js.getLogger('ReporterOrchestrator');
+import { getLogger } from 'log4js';
 
 function registerDefaultReporters() {
   ReporterFactory.instance().register('progress-append-only', ProgressAppendOnlyReporter);
@@ -22,6 +20,7 @@ registerDefaultReporters();
 
 export default class ReporterOrchestrator {
 
+  private readonly log = getLogger(ReporterOrchestrator.name);
   constructor(private options: StrykerOptions) {
   }
 
@@ -35,7 +34,7 @@ export default class ReporterOrchestrator {
         reporters.push(this.createReporter(reporterOption));
       }
     } else {
-      log.warn(`No reporter configured. Please configure one or more reporters in the (for example: reporter: 'progress')`);
+      this.log.warn(`No reporter configured. Please configure one or more reporters in the (for example: reporter: 'progress')`);
       this.logPossibleReporters();
     }
     return new BroadcastReporter(reporters);
@@ -43,7 +42,7 @@ export default class ReporterOrchestrator {
 
   private createReporter(name: string) {
     if (name === 'progress' && !process.stdout.isTTY) {
-      log.info('Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter');
+      this.log.info('Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter');
       return { name: 'progress-append-only', reporter: ReporterFactory.instance().create('progress-append-only', this.options) };
     } else {
       return { name, reporter: ReporterFactory.instance().create(name, this.options) };
@@ -58,7 +57,7 @@ export default class ReporterOrchestrator {
       }
       possibleReportersCsv += name;
     });
-    log.warn(`Possible reporters: ${possibleReportersCsv}`);
+    this.log.warn(`Possible reporters: ${possibleReportersCsv}`);
   }
 
 }

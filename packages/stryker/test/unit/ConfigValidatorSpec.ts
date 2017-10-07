@@ -1,9 +1,10 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { Logger } from 'log4js';
 import { Config } from 'stryker-api/config';
 import ConfigValidator from './../../src/ConfigValidator';
-import log from '../helpers/log4jsMock';
-import { testFramework } from '../helpers/producers';
+import currentLogMock from '../helpers/log4jsMock';
+import { testFramework, Mock } from '../helpers/producers';
 
 describe('ConfigValidator', () => {
 
@@ -11,8 +12,10 @@ describe('ConfigValidator', () => {
   let sandbox: sinon.SinonSandbox;
   let exitStub: sinon.SinonStub;
   let sut: ConfigValidator;
+  let log: Mock<Logger>;
 
   beforeEach(() => {
+    log = currentLogMock();
     config = new Config();
     sandbox = sinon.sandbox.create();
     exitStub = sandbox.stub(process, 'exit');

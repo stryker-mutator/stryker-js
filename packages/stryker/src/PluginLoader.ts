@@ -1,24 +1,22 @@
 import * as fs from 'mz/fs';
 import * as path from 'path';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import * as _ from 'lodash';
 import { importModule } from './utils/fileUtils';
-
-let log = log4js.getLogger('PluginLoader');
 
 const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 
 export default class PluginLoader {
-
+  private readonly log = getLogger(PluginLoader.name);
   constructor(private plugins: string[]) { }
 
   public load() {
-    this.getModules().forEach(this.requirePlugin);
+    this.getModules().forEach(moduleName => this.requirePlugin(moduleName));
   }
 
   private getModules() {
     let modules: string[] = [];
-    this.plugins.forEach(function (pluginExpression) {
+    this.plugins.forEach((pluginExpression) => {
       if (_.isString(pluginExpression)) {
         if (pluginExpression.indexOf('*') !== -1) {
 
@@ -27,17 +25,17 @@ export default class PluginLoader {
           const pluginDirectory = path.normalize(__dirname + '/../..');
           const regexp = new RegExp('^' + pluginExpression.replace('*', '.*'));
 
-          log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
+          this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
           let plugins = fs.readdirSync(pluginDirectory)
             .filter(pluginName => IGNORED_PACKAGES.indexOf(pluginName) === -1 && regexp.test(pluginName))
             .map(pluginName => pluginDirectory + '/' + pluginName);
           if (plugins.length === 0) {
-            log.debug('Expression %s not resulted in plugins to load', pluginExpression);
+            this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);
           }
           plugins
             .map(plugin => path.basename(plugin))
             .map(plugin => {
-              log.debug('Loading plugins %s (matched with expression %s)', plugin, pluginExpression);
+              this.log.debug('Loading plugins %s (matched with expression %s)', plugin, pluginExpression);
               return plugin;
             })
             .forEach(p => modules.push(p));
@@ -45,7 +43,7 @@ export default class PluginLoader {
           modules.push(pluginExpression);
         }
       } else {
-        log.warn('Ignoring plugin %s, as its not a string type', pluginExpression);
+        this.log.warn('Ignoring plugin %s, as its not a string type', pluginExpression);
       }
     });
 
@@ -53,15 +51,15 @@ export default class PluginLoader {
   }
 
   private requirePlugin(name: string) {
-    log.debug(`Loading plugins ${name}`);
+    this.log.debug(`Loading plugins ${name}`);
     try {
       importModule(name);
     } catch (e) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
-        log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' +
+        this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' +
           '  npm install %s --save-dev', name, name);
       } else {
-        log.warn('Error during loading "%s" plugin:\n  %s', name, e.message);
+        this.log.warn('Error during loading "%s" plugin:\n  %s', name, e.message);
       }
     }
   }

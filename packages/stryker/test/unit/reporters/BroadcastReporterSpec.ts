@@ -1,15 +1,18 @@
 import * as sinon from 'sinon';
+import { Logger } from 'log4js';
 import { expect } from 'chai';
-import log from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/log4jsMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
+import { ALL_REPORTER_EVENTS, Mock } from '../../helpers/producers';
 
 describe('BroadcastReporter', () => {
 
+  let log: Mock<Logger>;
   let sut: any;
   let reporter: any, reporter2: any;
 
   beforeEach(() => {
+    log = currentLogMock();
     reporter = mockReporter();
     reporter2 = mockReporter();
     sut = new BroadcastReporter([{ name: 'rep1', reporter }, { name: 'rep2', reporter: reporter2 }]);

@@ -1,6 +1,6 @@
 import { Config } from 'stryker-api/config';
 import * as path from 'path';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import * as mkdirp from 'mkdirp';
 import { RunResult } from 'stryker-api/test_runner';
 import { File, FileKind, FileDescriptor } from 'stryker-api/core';
@@ -15,14 +15,13 @@ import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import TestableMutant from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
 
-const log = log4js.getLogger('Sandbox');
-
 interface FileMap {
   [sourceFile: string]: string;
 }
 
 export default class Sandbox {
 
+  private readonly log = getLogger(Sandbox.name);
   private testRunner: TestRunnerDecorator;
   private fileMap: FileMap;
   private files: File[];
@@ -31,7 +30,7 @@ export default class Sandbox {
 
   private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
     this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
-    log.debug('Creating a sandbox for files in %s', this.workingFolder);
+    this.log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.files = files.slice(); // Create a copy
     if (testFramework) {
       this.testHooksFile = path.resolve('___testHooksForStryker.js');
@@ -134,7 +133,7 @@ export default class Sandbox {
       port: this.options.port + this.index,
       sandboxWorkingFolder: this.workingFolder
     };
-    log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
+    this.log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
     this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings);
     return this.testRunner.init();
   }

@@ -6,6 +6,7 @@ import { getLogger } from 'log4js';
 export default class ConfigValidator {
 
   private isValid = true;
+  private readonly log = getLogger(ConfigValidator.name);
 
   constructor(private strykerConfig: Config, private testFramework: TestFramework | null) {
   }
@@ -49,7 +50,7 @@ export default class ConfigValidator {
 
   private downgradeCoverageAnalysisIfNeeded() {
     if (this.strykerConfig.transpilers.length && this.strykerConfig.coverageAnalysis !== 'off') {
-      log.info('Disabled coverage analysis for this run (off). Coverage analysis using transpilers is not supported yet.');
+      this.log.info('Disabled coverage analysis for this run (off). Coverage analysis using transpilers is not supported yet.');
       this.strykerConfig.coverageAnalysis = 'off';
     }
   }
@@ -61,9 +62,7 @@ export default class ConfigValidator {
   }
 
   private invalidate(message: string) {
-    log.fatal(message);
+    this.log.fatal(message);
     this.isValid = false;
   }
 }
-
-const log = getLogger(ConfigValidator.name);

@@ -1,3 +1,6 @@
+import { resolve } from 'path';
+import { expect } from 'chai';
+import { Logger } from 'log4js';
 import { SourceFile } from 'stryker-api/report';
 import InputFileResolver from '../../src/InputFileResolver';
 import * as sinon from 'sinon';
@@ -5,9 +8,7 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import * as path from 'path';
 import * as fs from 'mz/fs';
 import { FileDescriptor, TextFile } from 'stryker-api/core';
-import { expect } from 'chai';
-import { resolve } from 'path';
-import log from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/log4jsMock';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import { Mock, mock, textFile } from '../helpers/producers';
 
@@ -20,12 +21,13 @@ const files = (...namesWithContent: [string, string][]): TextFile[] =>
   }));
 
 describe('InputFileResolver', () => {
-
+  let log: Mock<Logger>;
   let globStub: sinon.SinonStub;
   let sut: InputFileResolver;
   let reporter: Mock<BroadcastReporter>;
 
   beforeEach(() => {
+    log = currentLogMock();
     reporter = mock(BroadcastReporter);
     globStub = sandbox.stub(fileUtils, 'glob');
     sandbox.stub(fs, 'readFile').resolves('') // fall back

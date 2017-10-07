@@ -6,29 +6,30 @@ import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
 
 export default class ScoreResultCalculator {
-
-  static calculate(results: MutantResult[]): ScoreResult {
+  private readonly log = getLogger(ScoreResultCalculator.name);
+  
+  calculate(results: MutantResult[]): ScoreResult {
     const scoreResult = this.calculateScoreResult(results, '');
     return this.wrapIfSingleFileScoreResult(scoreResult);
   }
 
-  static determineExitCode(score: ScoreResult, thresholds: MutationScoreThresholds | undefined) {
+  determineExitCode(score: ScoreResult, thresholds: MutationScoreThresholds | undefined) {
     const breaking = thresholds && thresholds.break;
     const formattedScore = score.mutationScore.toFixed(2);
     if (typeof breaking === 'number') {
       if (score.mutationScore < breaking) {
-        log.error(`Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`);
-        log.info('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
+        this.log.error(`Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`);
+        this.log.info('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
         setExitCode(1);
       } else {
-        log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
+        this.log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
       }
     } else {
-      log.debug('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
+      this.log.debug('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
     }
   }
 
-  private static wrapIfSingleFileScoreResult(scoreResult: ScoreResult): ScoreResult {
+  private wrapIfSingleFileScoreResult(scoreResult: ScoreResult): ScoreResult {
     if (scoreResult.representsFile) {
       return this.copy(scoreResult, {
         name: path.dirname(scoreResult.name), childResults: [
@@ -40,17 +41,17 @@ export default class ScoreResultCalculator {
     }
   }
 
-  private static calculateScoreResult(results: MutantResult[], basePath: string): ScoreResult {
+  private calculateScoreResult(results: MutantResult[], basePath: string): ScoreResult {
     const numbers = this.countNumbers(results);
     const facts = this.determineFacts(basePath, results);
     return freezeRecursively(_.assign(numbers, facts));
   }
 
-  private static copy(defaults: ScoreResult, overrides: Partial<ScoreResult>): ScoreResult {
+  private copy(defaults: ScoreResult, overrides: Partial<ScoreResult>): ScoreResult {
     return Object.assign({}, defaults, overrides);
   }
 
-  private static determineFacts(basePath: string, results: MutantResult[]) {
+  private determineFacts(basePath: string, results: MutantResult[]) {
     const name = this.determineCommonBasePath(results, basePath);
     const childResults = this.calculateChildScores(results, name, basePath);
     return {
@@ -61,7 +62,7 @@ export default class ScoreResultCalculator {
     };
   }
 
-  private static compareScoreResults(a: ScoreResult, b: ScoreResult) {
+  private compareScoreResults(a: ScoreResult, b: ScoreResult) {
     const sortValue = (scoreResult: ScoreResult) => {
       // Directories first
       if (scoreResult.representsFile) {
@@ -73,7 +74,7 @@ export default class ScoreResultCalculator {
     return sortValue(a).localeCompare(sortValue(b));
   }
 
-  private static calculateChildScores(results: MutantResult[], parentName: string, basePath: string) {
+  private calculateChildScores(results: MutantResult[], parentName: string, basePath: string) {
     const childrenBasePath = parentName.length ? path.join(basePath, parentName) + path.sep : '';
     const resultsGroupedByFiles = _.groupBy(results, result => result.sourceFilePath.substr(childrenBasePath.length));
     const uniqueFiles = Object.keys(resultsGroupedByFiles);
@@ -89,7 +90,7 @@ export default class ScoreResultCalculator {
     }
   }
 
-  private static determineCommonBasePath(results: MutantResult[], basePath: string) {
+  private determineCommonBasePath(results: MutantResult[], basePath: string) {
     const uniqueFiles = _.uniq(results.map(result => result.sourceFilePath));
     const uniqueFileDirectories = uniqueFiles.map(file => file.substr(basePath.length).split(path.sep));
 
@@ -102,7 +103,7 @@ export default class ScoreResultCalculator {
     }
   }
 
-  private static countNumbers(mutantResults: MutantResult[]) {
+  private countNumbers(mutantResults: MutantResult[]) {
     const count = (mutantResult: MutantStatus) => mutantResults.filter(_ => _.status === mutantResult).length;
 
     const killed = count(MutantStatus.Killed);
@@ -135,5 +136,3 @@ export default class ScoreResultCalculator {
     };
   }
 }
-
-const log = getLogger(ScoreResultCalculator.name);

@@ -1,10 +1,12 @@
 import * as path from 'path';
+import { Logger } from 'log4js';
 import { expect } from 'chai';
 import { RunResult, RunStatus } from 'stryker-api/test_runner';
 import ResilientTestRunnerFactory from '../../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorator';
-import log from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/log4jsMock';
+import { Mock } from '../../helpers/producers';
 
 function sleep(ms: number) {
   return new Promise(res => {
@@ -15,7 +17,7 @@ function sleep(ms: number) {
 describe('ResilientTestRunnerFactory', function () {
 
   this.timeout(10000);
-
+  let log: Mock<Logger>;
   let sut: TestRunnerDecorator;
   let options: IsolatedRunnerOptions = {
     strykerOptions: {
@@ -29,6 +31,10 @@ describe('ResilientTestRunnerFactory', function () {
     port: 0,
     sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner')
   };
+
+  beforeEach(() => {
+    log = currentLogMock();
+  });
 
   describe('when sending a regex in the options', () => {
     before(() => sut = ResilientTestRunnerFactory.create('discover-regex', options));

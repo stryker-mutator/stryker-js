@@ -1,4 +1,4 @@
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import * as path from 'path';
 import * as fs from 'mz/fs';
 import { StrykerOptions } from 'stryker-api/core';
@@ -6,11 +6,11 @@ import { SourceFile, MutantResult, MatchedMutant, Reporter, ScoreResult } from '
 import { cleanFolder } from '../utils/fileUtils';
 import StrictReporter from './StrictReporter';
 
-const log = log4js.getLogger('EventRecorderReporter');
 const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 
 export default class EventRecorderReporter implements StrictReporter {
 
+  private readonly log = getLogger(EventRecorderReporter.name);
   private allWork: Promise<any>[] = [];
   private createBaseFolderTask: Promise<any>;
   private _baseFolder: string;
@@ -24,9 +24,9 @@ export default class EventRecorderReporter implements StrictReporter {
     if (!this._baseFolder) {
       if (this.options['eventReporter'] && this.options['eventReporter']['baseDir']) {
         this._baseFolder = this.options['eventReporter']['baseDir'];
-        log.debug(`Using configured output folder ${this._baseFolder}`);
+        this.log.debug(`Using configured output folder ${this._baseFolder}`);
       } else {
-        log.debug(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
+        this.log.debug(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
         this._baseFolder = DEFAULT_BASE_FOLDER;
       }
     }
@@ -35,7 +35,7 @@ export default class EventRecorderReporter implements StrictReporter {
 
   private writeToFile(methodName: keyof Reporter, data: any) {
     let filename = path.join(this.baseFolder, `${this.format(this.index++)}-${methodName}.json`);
-    log.debug(`Writing event ${methodName} to file ${filename}`);
+    this.log.debug(`Writing event ${methodName} to file ${filename}`);
     return fs.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
   }
 

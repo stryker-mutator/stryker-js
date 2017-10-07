@@ -20,7 +20,6 @@ import StrictReporter from './reporters/StrictReporter';
 import MutatorFacade from './MutatorFacade';
 import InitialTestExecutor from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
-const log = log4js.getLogger('Stryker');
 
 export default class Stryker {
 
@@ -29,6 +28,7 @@ export default class Stryker {
   private reporter: StrictReporter;
   private testFramework: TestFramework | null;
   private coverageInstrumenter: CoverageInstrumenter;
+  private readonly log = log4js.getLogger(Stryker.name);
 
   /**
    * The Stryker mutation tester.
@@ -73,9 +73,9 @@ export default class Stryker {
     const mutator = new MutatorFacade(this.config);
     const mutants = mutator.mutate(inputFiles);
     if (mutants.length) {
-      log.info(`${mutants.length} Mutant(s) generated`);
+      this.log.info(`${mutants.length} Mutant(s) generated`);
     } else {
-      log.info('It\'s a mutant-free world, nothing to test.');
+      this.log.info('It\'s a mutant-free world, nothing to test.');
     }
     const mutantRunResultMatcher = new MutantTestMatcher(mutants, inputFiles, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config, this.reporter);
     return mutantRunResultMatcher.matchWithMutants();
@@ -104,13 +104,13 @@ export default class Stryker {
 
   private freezeConfig() {
     freezeRecursively(this.config);
-    if (log.isDebugEnabled()) {
-      log.debug(`Using config: ${JSON.stringify(this.config)}`);
+    if (this.log.isDebugEnabled()) {
+      this.log.debug(`Using config: ${JSON.stringify(this.config)}`);
     }
   }
 
   private logDone() {
-    log.info('Done in %s.', this.timer.humanReadableElapsed());
+    this.log.info('Done in %s.', this.timer.humanReadableElapsed());
   }
 
   private setGlobalLogLevel() {
@@ -126,8 +126,9 @@ export default class Stryker {
   }
 
   private reportScore(mutantResults: MutantResult[]) {
-    const score = ScoreResultCalculator.calculate(mutantResults);
+    const calculator = new ScoreResultCalculator();
+    const score = calculator.calculate(mutantResults);
     this.reporter.onScoreCalculated(score);
-    ScoreResultCalculator.determineExitCode(score, this.config.thresholds);
+    calculator.determineExitCode(score, this.config.thresholds);
   }
 }
