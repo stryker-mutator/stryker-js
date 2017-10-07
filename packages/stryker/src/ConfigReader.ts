@@ -17,7 +17,7 @@ const DEFAULT_CONFIG_FILE = 'stryker.conf.js';
 
 export default class ConfigReader {
 
-  private readonly log = log4js.getLogger('ConfigReader');
+  private readonly log = log4js.getLogger(ConfigReader.name);
 
   constructor(private cliOptions: StrykerOptions) { }
 
