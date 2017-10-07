@@ -1,13 +1,16 @@
 import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import { expect } from 'chai';
+import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
-import log from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/log4jsMock';
+import { Mock } from '../helpers/producers';
 
 describe('TestFrameworkOrchestrator', () => {
 
   const testFramework = 'the testFramework, \'duh';
+  let log: Mock<Logger>;
   let sandbox: sinon.SinonSandbox;
   let sut: TestFrameworkOrchestrator;
   let actualTestFramework: any;
@@ -15,6 +18,7 @@ describe('TestFrameworkOrchestrator', () => {
 
   const actBeforeEach = () => {
     beforeEach(() => {
+      log = currentLogMock();
       sut = new TestFrameworkOrchestrator(options);
       actualTestFramework = sut.determineTestFramework();
     });

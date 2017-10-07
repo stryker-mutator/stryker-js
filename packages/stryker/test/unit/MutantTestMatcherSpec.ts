@@ -1,3 +1,4 @@
+import { Logger } from 'log4js';
 import { Mutant } from 'stryker-api/mutant';
 import { textFile, testResult } from './../helpers/producers';
 import { expect } from 'chai';
@@ -6,14 +7,15 @@ import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
 import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
-import log from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/log4jsMock';
 import { file, mutant, Mock, mock } from '../helpers/producers';
 import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 
 describe('MutantTestMatcher', () => {
-
+  
+  let log: Mock<Logger>;
   let sut: MutantTestMatcher;
   let mutants: Mutant[];
   let runResult: RunResult;
@@ -23,6 +25,7 @@ describe('MutantTestMatcher', () => {
   let files: File[];
 
   beforeEach(() => {
+    log = currentLogMock();
     mutants = [];
     statementMapDictionary = Object.create(null);
     runResult = { tests: [], status: RunStatus.Complete };

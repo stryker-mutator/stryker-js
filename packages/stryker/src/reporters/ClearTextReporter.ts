@@ -1,13 +1,13 @@
 import * as chalk from 'chalk';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { Config } from 'stryker-api/config';
 import ClearTextScoreTable from './ClearTextScoreTable';
 import * as os from 'os';
 
-const log = log4js.getLogger('ClearTextReporter');
-
 export default class ClearTextReporter implements Reporter {
+
+  private readonly log = getLogger(ClearTextReporter.name);
 
   constructor(private options: Config) { }
 
@@ -22,7 +22,7 @@ export default class ClearTextReporter implements Reporter {
     let totalTests = 0;
 
     // use these fn's in order to preserve the 'this` pointer
-    const logDebugFn = (input: string) => log.debug(input);
+    const logDebugFn = (input: string) => this.log.debug(input);
     const writeLineFn = (input: string) => this.writeLine(input);
 
     mutantResults.forEach(result => {
@@ -31,19 +31,19 @@ export default class ClearTextReporter implements Reporter {
       }
       switch (result.status) {
         case MutantStatus.Killed:
-          log.debug(chalk.bold.green('Mutant killed!'));
+          this.log.debug(chalk.bold.green('Mutant killed!'));
           this.logMutantResult(result, logDebugFn);
           break;
         case MutantStatus.TimedOut:
-          log.debug(chalk.bold.yellow('Mutant timed out!'));
+          this.log.debug(chalk.bold.yellow('Mutant timed out!'));
           this.logMutantResult(result, logDebugFn);
           break;
         case MutantStatus.RuntimeError:
-          log.debug(chalk.bold.yellow('Mutant caused a runtime error!'));
+          this.log.debug(chalk.bold.yellow('Mutant caused a runtime error!'));
           this.logMutantResult(result, logDebugFn);
           break;
         case MutantStatus.TranspileError:
-          log.debug(chalk.bold.yellow('Mutant caused a transpile error!'));
+          this.log.debug(chalk.bold.yellow('Mutant caused a transpile error!'));
           this.logMutantResult(result, logDebugFn);
           break;
         case MutantStatus.Survived:

@@ -1,4 +1,4 @@
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import * as _ from 'lodash';
 import { RunResult, CoverageCollection, StatementMap, CoveragePerTestResult } from 'stryker-api/test_runner';
 import { Location, StrykerOptions, File, TextFile } from 'stryker-api/core';
@@ -10,10 +10,9 @@ import { StatementMapDictionary } from './coverage/CoverageInstrumenter';
 import { filterEmpty } from './utils/objectUtils';
 import SourceFile from './SourceFile';
 
-const log = log4js.getLogger('MutantTestMatcher');
-
 export default class MutantTestMatcher {
 
+  private readonly log = getLogger(MutantTestMatcher.name);
   constructor(private mutants: Mutant[], private files: File[], private initialRunResult: RunResult, private statementMaps: StatementMapDictionary, private options: StrykerOptions, private reporter: StrictReporter) {
   }
 
@@ -32,7 +31,7 @@ export default class MutantTestMatcher {
     if (this.options.coverageAnalysis === 'off') {
       testableMutants.forEach(mutant => mutant.addAllTestResults(this.initialRunResult));
     } else if (!this.initialRunResult.coverage) {
-      log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
+      this.log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
       testableMutants.forEach(mutant => mutant.addAllTestResults(this.initialRunResult));
     } else {
       testableMutants.forEach(testableMutant => this.enrichWithCoveredTests(testableMutant));
@@ -55,7 +54,7 @@ export default class MutantTestMatcher {
         });
       }
     } else {
-      log.warn('Cannot find statement for mutant %s in statement map for file. Assuming that all tests cover this mutant. This might have a big impact on the performance.', testableMutant.toString());
+      this.log.warn('Cannot find statement for mutant %s in statement map for file. Assuming that all tests cover this mutant. This might have a big impact on the performance.', testableMutant.toString());
       testableMutant.addAllTestResults(this.initialRunResult);
     }
   }
@@ -82,7 +81,7 @@ export default class MutantTestMatcher {
       if (sourceFile) {
         return new TestableMutant(mutant, sourceFile);
       } else {
-        log.error(`Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${mutant.fileName}. List of source files: \n\t${sourceFiles.map(s => s.name).join('\n\t')}`);
+        this.log.error(`Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${mutant.fileName}. List of source files: \n\t${sourceFiles.map(s => s.name).join('\n\t')}`);
         return null;
       }
     }));

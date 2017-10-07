@@ -1,9 +1,7 @@
 import { RestClient, IRestResponse } from 'typed-rest-client/RestClient';
 import PromptOption from './PromptOption';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import { errorToString } from '../utils/objectUtils';
-
-const log = log4js.getLogger('NpmClient');
 
 interface NpmSearchPackageInfo {
   package: {
@@ -42,6 +40,8 @@ const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
 };
 
 export default class NpmClient {
+
+  private readonly log = getLogger(NpmClient.name);
 
   constructor(
     private searchClient = new RestClient('npmSearch', BASE_NPM_SEARCH),
@@ -84,18 +84,18 @@ export default class NpmClient {
       .then(handleResult(`${BASE_NPM_PACKAGE}/${packageName}`))
       .then(pkg => pkg.initStrykerConfig || {})
       .catch(err => {
-        log.warn(`Could not fetch additional initialization config for dependency ${packageName}. You might need to configure it manually`, err);
+        this.log.warn(`Could not fetch additional initialization config for dependency ${packageName}. You might need to configure it manually`, err);
         return {};
       });
   }
 
   private search(query: string): Promise<NpmSearchResult> {
     const call = BASE_NPM_SEARCH + query;
-    log.debug(`Searching: ${call}`);
+    this.log.debug(`Searching: ${call}`);
     return this.searchClient.get<NpmSearchResult>(query)
       .then(handleResult(call))
       .catch(err => {
-        log.error(`Unable to reach ${BASE_NPM_SEARCH} (for query ${query}). Please check your internet connection.`, errorToString(err));
+        this.log.error(`Unable to reach ${BASE_NPM_SEARCH} (for query ${query}). Please check your internet connection.`, errorToString(err));
         const result: NpmSearchResult = {
           total: 0,
           results: []

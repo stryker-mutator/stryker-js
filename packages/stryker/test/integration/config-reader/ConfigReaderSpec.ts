@@ -3,15 +3,18 @@ import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 import ConfigReader from '../../../src/ConfigReader';
 import { Config } from 'stryker-api/config';
-import log from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/log4jsMock';
+import { Mock } from '../../helpers/producers';
 
 describe('ConfigReader', () => {
   let sut: ConfigReader;
   let sandbox: sinon.SinonSandbox;
+  let log: Mock<log4js.Logger>;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     sandbox.stub(process, 'exit');
+    log = currentLogMock();
   });
 
   it('should create a logger with the correct name', () => {

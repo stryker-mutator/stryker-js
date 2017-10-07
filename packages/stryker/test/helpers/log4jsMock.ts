@@ -1,32 +1,13 @@
 import * as log4js from 'log4js';
-import * as sinon from 'sinon';
-import { logger } from './producers';
+import { logger, Mock } from './producers';
 
-const log = logger();
-
-if ((global as any).log4jsSandbox) {
-  (global as any).log4jsSandbox.restore();
-}
-
-let sandbox: sinon.SinonSandbox;
-(global as any).log4jsSandbox = sandbox = sinon.sandbox.create();
-
-// Stub away even before other files are loaded and tests have started
-sandbox.stub(log4js, 'getLogger').returns(log);
+let log: Mock<log4js.Logger>;
 
 beforeEach(() => {
-  log.trace.reset();
-  log.debug.reset();
-  log.info.reset();
-  log.warn.reset();
-  log.error.reset();
-  log.fatal.reset();
+  log = logger();
+  sandbox.stub(log4js, 'getLogger').returns(log);
 });
 
-after(() => {
-  // Restore for next (stryker) test run
-  sandbox.restore();
-  (global as any).log4jsSandbox = null;
-});
-
-export default log;
+export default function currentLogMock() {
+  return log;
+}

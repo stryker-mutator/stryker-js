@@ -2,14 +2,13 @@ import * as child from 'child_process';
 import { StrykerInquirer } from './StrykerInquirer';
 import NpmClient from './NpmClient';
 import PromptOption from './PromptOption';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
 
-const log = log4js.getLogger('StrykerInitializer');
-
 export default class StrykerInitializer {
 
+  private readonly log = getLogger(StrykerInitializer.name);
   private inquirer = new StrykerInquirer();
 
   constructor(private out = console.log, private client: NpmClient = new NpmClient()) { }
@@ -19,7 +18,8 @@ export default class StrykerInitializer {
    * @function
    */
   async initialize(): Promise<void> {
-    StrykerConfigWriter.guardForExistingConfig();
+    const configWriter = new StrykerConfigWriter(this.out);
+    configWriter.guardForExistingConfig();
     this.patchProxies();
     const selectedTestRunner = await this.selectTestRunner();
     const selectedTestFramework = selectedTestRunner ? await this.selectTestFramework(selectedTestRunner) : null;
@@ -32,13 +32,12 @@ export default class StrykerInitializer {
         .concat(selectedReporters)
       );
     this.installNpmDependencies(npmDependencies);
-    await new StrykerConfigWriter(this.out,
-      selectedTestRunner,
+    await configWriter.write(selectedTestRunner,
       selectedTestFramework,
       selectedMutator,
       selectedTranspilers,
       selectedReporters,
-      await this.fetchAdditionalConfig(npmDependencies)).write();
+      await this.fetchAdditionalConfig(npmDependencies));
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure your files and test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
@@ -60,7 +59,7 @@ export default class StrykerInitializer {
   private async selectTestRunner(): Promise<PromptOption | null> {
     const testRunnerOptions = await this.client.getTestRunnerOptions();
     if (testRunnerOptions.length) {
-      log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
+      this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
       return await this.inquirer.promptTestRunners(testRunnerOptions);
     } else {
       this.out('Unable to select a test runner. You will need to configure it manually.');
@@ -85,7 +84,7 @@ export default class StrykerInitializer {
     let selectedTestFramework: PromptOption | null = null;
     const testFrameworkOptions = await this.client.getTestFrameworkOptions(testRunnerOption.npm);
     if (testFrameworkOptions.length) {
-      log.debug(`Found test frameworks for ${testRunnerOption.name}: ${JSON.stringify(testFrameworkOptions)}`);
+      this.log.debug(`Found test frameworks for ${testRunnerOption.name}: ${JSON.stringify(testFrameworkOptions)}`);
       const none = {
         name: 'None/other',
         npm: null
@@ -105,7 +104,7 @@ export default class StrykerInitializer {
   private async selectMutator(): Promise<PromptOption | null> {
     const mutatorOptions = await this.client.getMutatorOptions();
     if (mutatorOptions.length) {
-      log.debug(`Found mutators: ${JSON.stringify(mutatorOptions)}`);
+      this.log.debug(`Found mutators: ${JSON.stringify(mutatorOptions)}`);
       const es5 = {
         name: 'es5',
         npm: null
@@ -121,7 +120,7 @@ export default class StrykerInitializer {
   private async selectTranspilers(): Promise<PromptOption[] | null> {
     const options = await this.client.getTranspilerOptions();
     if (options.length) {
-      log.debug(`Found transpilers: ${JSON.stringify(options)}`);
+      this.log.debug(`Found transpilers: ${JSON.stringify(options)}`);
       return await this.inquirer.promptTranspilers(options);
     } else {
       this.out('Unable to select transpilers. You will need to configure it manually, if you want to use any.');

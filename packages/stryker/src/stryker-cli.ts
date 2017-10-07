@@ -4,7 +4,6 @@ import Stryker from './Stryker';
 import StrykerInitializer from './initializer/StrykerInitializer';
 import * as log4js from 'log4js';
 
-const log = log4js.getLogger('stryker-cli');
 let command: string = '', strykerConfig: string | null = null;
 
 function list(val: string) {
@@ -70,11 +69,13 @@ const commands: { [cmd: string]: () => Promise<any> } = {
 };
 
 if (Object.keys(commands).indexOf(command) >= 0) {
+  const log = log4js.getLogger('stryker-cli');
   commands[command]().catch(err => {
     log.error(`an error occurred`, err);
     process.exitCode = 1;
     process.kill(process.pid, 'SIGINT');
   });
 } else {
+  const log = log4js.getLogger('stryker-cli');
   log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', command, Object.keys(commands));
 }

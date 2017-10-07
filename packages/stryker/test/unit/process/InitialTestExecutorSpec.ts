@@ -1,5 +1,6 @@
 import { EOL } from 'os';
 import { expect } from 'chai';
+import { Logger } from 'log4js';
 import { default as StrykerSandbox } from '../../../src/Sandbox';
 import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
 import { File } from 'stryker-api/core';
@@ -10,11 +11,13 @@ import CoverageInstrumenter from '../../../src/coverage/CoverageInstrumenter';
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
 import { TranspileResult } from 'stryker-api/transpile';
 import { RunStatus, RunResult, TestStatus } from 'stryker-api/test_runner';
-import log from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/log4jsMock';
 import Timer from '../../../src/utils/Timer';
+import { Mock } from '../../helpers/producers';
 
 describe('InitialTestExecutor run', () => {
 
+  let log: Mock<Logger>;
   let strykerSandboxMock: producers.Mock<StrykerSandbox>;
   let sut: InitialTestExecutor;
   let testFrameworkMock: TestFramework;
@@ -26,6 +29,7 @@ describe('InitialTestExecutor run', () => {
   let expectedRunResult: RunResult;
 
   beforeEach(() => {
+    log = currentLogMock();
     strykerSandboxMock = producers.mock(StrykerSandbox);
     transpilerFacadeMock = producers.mock(TranspilerFacade);
     sandbox.stub(StrykerSandbox, 'create').resolves(strykerSandboxMock);

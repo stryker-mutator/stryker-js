@@ -1,13 +1,21 @@
 import * as path from 'path';
+import { Logger } from 'log4js';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { MutantStatus, ScoreResult } from 'stryker-api/report';
 import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import * as objectUtils from '../../src/utils/objectUtils';
-import { mutantResult, scoreResult, mutationScoreThresholds } from '../helpers/producers';
-import log from '../helpers/log4jsMock';
+import { mutantResult, scoreResult, mutationScoreThresholds, Mock } from '../helpers/producers';
+import currentLogMock from '../helpers/log4jsMock';
 
 describe('ScoreResult', () => {
+  let log: Mock<Logger>;
+  let sut: ScoreResultCalculator;
+
+  beforeEach(() => {
+    log = currentLogMock();
+    sut = new ScoreResultCalculator();
+  });
 
   describe('calculate', () => {
     const extractNumbers = (actual: ScoreResult) => ({
@@ -20,7 +28,7 @@ describe('ScoreResult', () => {
 
     it('should count results of a single file', () => {
       const fileName = path.join('base', 'something');
-      const actual = ScoreResultCalculator.calculate([
+      const actual =  sut.calculate([
         mutantResult({ status: MutantStatus.RuntimeError, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.Killed, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.TranspileError, sourceFilePath: fileName }),
@@ -52,7 +60,7 @@ describe('ScoreResult', () => {
 
     it('should wrap a single result in its base directory', () => {
       const fileName = path.join('base', 'something');
-      const actual = ScoreResultCalculator.calculate([
+      const actual =  sut.calculate([
         mutantResult({ status: MutantStatus.RuntimeError, sourceFilePath: fileName })
       ]);
       expect(actual.name).eq('base');
@@ -61,7 +69,7 @@ describe('ScoreResult', () => {
     });
 
     it('should count results of multiple files', () => {
-      const actual = ScoreResultCalculator.calculate(
+      const actual =  sut.calculate(
         [
           mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.NoCoverage }),
           mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
@@ -90,7 +98,7 @@ describe('ScoreResult', () => {
     });
 
     it('should group results per directory', () => {
-      const actual = ScoreResultCalculator.calculate(
+      const actual =  sut.calculate(
         [
           mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'e.js'), status: MutantStatus.Killed }),
           mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'f.js'), status: MutantStatus.Survived }),
@@ -115,7 +123,7 @@ describe('ScoreResult', () => {
     });
 
     it('should order by directory/files first and than on alphabet', () => {
-      const actual = ScoreResultCalculator.calculate(
+      const actual =  sut.calculate(
         [
           mutantResult({ sourceFilePath: path.join('a', 'z', 'c.js') }),
           mutantResult({ sourceFilePath: path.join('a', 'z', 'a.js') }),
@@ -133,14 +141,14 @@ describe('ScoreResult', () => {
     });
 
     it('should be able to handle no results', () => {
-      const actual = ScoreResultCalculator.calculate([]);
+      const actual =  sut.calculate([]);
       expect(extractNumbers(actual)).to.deep.eq({ killed: 0, survived: 0, transpileErrors: 0, runtimeErrors: 0, noCoverage: 0 });
       expect(actual.childResults.length).to.be.eq(0);
       expect(actual.name).to.be.eq('');
     });
 
     it('should be able to handle children that do not start with the same path', () => {
-      const actual = ScoreResultCalculator.calculate([
+      const actual =  sut.calculate([
         mutantResult({ sourceFilePath: 'dir1/one' }),
         mutantResult({ sourceFilePath: 'dir2/two' })
       ]);
@@ -165,20 +173,20 @@ describe('ScoreResult', () => {
     });
 
     it('should not set exit code = 1 if `threshold.break` is not configured', () => {
-      ScoreResultCalculator.determineExitCode(scoreResult({ mutationScore: 0 }), mutationScoreThresholds({ break: null }));
+       sut.determineExitCode(scoreResult({ mutationScore: 0 }), mutationScoreThresholds({ break: null }));
 
       expect(setExitCodeStub).not.called;
       expect(log.debug).calledWith('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
     });
 
     it('should not set exit code = 1 if `threshold.break` === score', () => {
-      ScoreResultCalculator.determineExitCode(scoreResult({ mutationScore: 10.000001 }), mutationScoreThresholds({ break: 10.000001 }));
+       sut.determineExitCode(scoreResult({ mutationScore: 10.000001 }), mutationScoreThresholds({ break: 10.000001 }));
       expect(setExitCodeStub).not.called;
       expect(log.info).calledWith('Final mutation score of 10.00 is greater than or equal to break threshold 10.000001');
     });
 
     it('should set exit code = 1 if `threshold.break` > score', () => {
-      ScoreResultCalculator.determineExitCode(scoreResult({ mutationScore: 56.6 }), mutationScoreThresholds({ break: 56.7 }));
+       sut.determineExitCode(scoreResult({ mutationScore: 56.6 }), mutationScoreThresholds({ break: 56.7 }));
       expect(setExitCodeStub).calledWith(1);
       expect(log.error).calledWith('Final mutation score 56.60 under breaking threshold 56.7, setting exit code to 1 (failure).');
       expect(log.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
