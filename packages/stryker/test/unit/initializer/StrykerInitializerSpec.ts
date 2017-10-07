@@ -73,7 +73,6 @@ describe('StrykerInitializer', () => {
     });
 
     it('should prompt for test runner, test framework, mutator, transpilers and reporters', async () => {
-      console.error('RUNNING should prompt for test runner, test framework, mutator, transpilers and reporters');
       inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', mutator: 'typescript', transpilers: ['webpack'], reporters: ['dimension', 'mars'] });
       await sut.initialize();
       expect(inquirerPrompt).to.have.been.callCount(5);
