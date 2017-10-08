@@ -4,7 +4,7 @@ import * as fs from 'mz/fs';
 import { Reporter } from 'stryker-api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import log from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/log4jsMock';
 import StrictReporter from '../../../src/reporters/StrictReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
 
@@ -34,7 +34,7 @@ describe('EventRecorderReporter', () => {
       });
 
       it('should log about the default baseFolder', () => {
-        expect(log.debug).to.have.been.calledWith(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events`);
+        expect(currentLogMock().debug).to.have.been.calledWith(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events`);
       });
 
       it('should clean the baseFolder', () => {

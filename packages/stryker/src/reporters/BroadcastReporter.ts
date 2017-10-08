@@ -1,9 +1,7 @@
 import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from 'stryker-api/report';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
-
-const log = log4js.getLogger('BroadcastReporter');
 
 export interface NamedReporter {
   name: string;
@@ -12,6 +10,7 @@ export interface NamedReporter {
 
 export default class BroadcastReporter implements StrictReporter {
 
+  private readonly log = getLogger(BroadcastReporter.name);
   constructor(private reporters: NamedReporter[]) {
   }
 
@@ -65,7 +64,7 @@ export default class BroadcastReporter implements StrictReporter {
   }
 
   private handleError(error: any, methodName: string, reporterName: string) {
-    log.error(`An error occurred during '${methodName}' on reporter '${reporterName}'. Error is: ${error}`);
+    this.log.error(`An error occurred during '${methodName}' on reporter '${reporterName}'. Error is: ${error}`);
   }
 
 }

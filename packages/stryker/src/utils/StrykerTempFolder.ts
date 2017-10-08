@@ -1,10 +1,8 @@
 import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import { deleteDir } from './fileUtils';
-
-const log = log4js.getLogger('StrykerTempFolder');
 
 let baseTempFolder = path.join(process.cwd(), '.stryker-tmp');
 let tempFolder = path.join(baseTempFolder, random().toString());
@@ -63,6 +61,7 @@ function writeToStream(data: string | Buffer, stream: NodeJS.WritableStream): Pr
  * Deletes the Stryker-temp folder
  */
 function clean() {
+  const log = getLogger('StrykerTempFolder');
   log.debug(`Cleaning stryker temp folder ${baseTempFolder}`);
   return deleteDir(baseTempFolder)
     .catch(() => log.info(`Failed to clean stryker temp folder ${baseTempFolder}`));

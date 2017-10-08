@@ -1,12 +1,10 @@
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import { FileDescriptor } from 'stryker-api/core';
 import { PassThrough } from 'stream';
 import { StatementMap } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure } from '../utils/objectUtils';
 import CoverageInstrumenterStream from './CoverageInstrumenterStream';
-
-const log = log4js.getLogger('CoverageInstrumenter');
 
 export interface StatementMapDictionary {
   [file: string]: StatementMap;
@@ -17,11 +15,13 @@ const COVERAGE_CURRENT_TEST_VARIABLE_NAME = '__strykerCoverageCurrentTest__';
 /**
  * Represents the CoverageInstrumenter
  * Responsible for managing the instrumentation of all files to be mutated.
- * In case of `perTest` coverageAnalysis it will hookin to the test framework to accomplish that.
+ * In case of `perTest` coverageAnalysis it will hook into the test framework to accomplish that.
  */
 export default class CoverageInstrumenter {
 
-  private coverageInstrumenterStreamPerFile: { [fileName: string]: CoverageInstrumenterStream } = Object.create(null);
+  private readonly log = getLogger(CoverageInstrumenter.name);
+  
+  private readonly coverageInstrumenterStreamPerFile: { [fileName: string]: CoverageInstrumenterStream } = Object.create(null);
 
   constructor(private coverageAnalysis: 'all' | 'off' | 'perTest', private testFramework: TestFramework | null) { }
 
@@ -49,7 +49,7 @@ export default class CoverageInstrumenter {
 
   public hooksForTestRun(): string | null {
     if (this.testFramework && this.coverageAnalysis === 'perTest') {
-      log.debug(`Adding test hooks file for coverageAnalysis "perTest"`);
+      this.log.debug(`Adding test hooks file for coverageAnalysis "perTest"`);
       return wrapInClosure(`
           var id = 0;
           window.__coverage__ = globalCoverage = { deviations: {} };

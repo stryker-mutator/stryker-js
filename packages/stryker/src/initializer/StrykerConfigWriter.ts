@@ -7,21 +7,33 @@ import { format } from 'prettier';
 
 const STRYKER_CONFIG_FILE = 'stryker.conf.js';
 
-const log = getLogger('StrykerConfigWriter');
-
 export default class StrykerConfigWriter {
-  private configObject: Partial<StrykerOptions>;
 
-  constructor(
-    private out: (output: string) => void,
+  private readonly log = getLogger(StrykerConfigWriter.name);
+  constructor(private out: (output: string) => void) {
+  }
+
+  guardForExistingConfig() {
+    if (fs.existsSync(STRYKER_CONFIG_FILE)) {
+      const msg =
+        'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
+      this.log.error(msg);
+      throw new Error(msg);
+    }
+  }
+
+  /**
+  * Create stryker.conf.js based on the chosen framework and test runner
+  * @function
+  */
+  public async write(
     selectedTestRunner: null | PromptOption,
-    private selectedTestFramework: null | PromptOption,
+    selectedTestFramework: null | PromptOption,
     selectedMutator: null | PromptOption,
     selectedTranspilers: null | PromptOption[],
     selectedReporters: PromptOption[],
-    private additionalPiecesOfConfig: Partial<StrykerOptions>[]
-  ) {
-    this.configObject = {
+    additionalPiecesOfConfig: Partial<StrykerOptions>[]): Promise<void> {
+    const configObject: Partial<StrykerOptions> = {
       files: [
         { pattern: 'src/**/*.js', mutated: true, included: false },
         'test/**/*.js'
@@ -31,46 +43,31 @@ export default class StrykerConfigWriter {
       transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : [],
       reporter: selectedReporters.map(rep => rep.name)
     };
+
+    this.configureTestFramework(configObject, selectedTestFramework);
+    _.assign(configObject, ...additionalPiecesOfConfig);
+    return this.writeStrykerConfig(configObject);
   }
 
-  static guardForExistingConfig() {
-    if (fs.existsSync(STRYKER_CONFIG_FILE)) {
-      const msg =
-        'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
-      log.error(msg);
-      throw new Error(msg);
-    }
-  }
-
-  /**
-  * Create stryker.conf.js based on the chosen framework and test runner
-  * @function
-  */
-  public async write(): Promise<void> {
-    this.configureTestFramework();
-    _.assign(this.configObject, ...this.additionalPiecesOfConfig);
-    return this.writeStrykerConfig(this.configObject);
-  }
-
-  private configureTestFramework() {
-    if (this.selectedTestFramework) {
-      this.configObject.testFramework = this.selectedTestFramework.name;
-      this.configObject.coverageAnalysis = 'perTest';
+  private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {
+    if (selectedTestFramework) {
+      configObject.testFramework = selectedTestFramework.name;
+      configObject.coverageAnalysis = 'perTest';
     } else {
-      this.configObject.coverageAnalysis = 'all';
+      configObject.coverageAnalysis = 'all';
     }
   }
 
   private writeStrykerConfig(configObject: Partial<StrykerOptions>) {
     this.out('Writing stryker.conf.js...');
-    return fs.writeFile(STRYKER_CONFIG_FILE, this.wrapInModule());
+    return fs.writeFile(STRYKER_CONFIG_FILE, this.wrapInModule(configObject));
   }
 
-  private wrapInModule() {
+  private wrapInModule(configObject: Partial<StrykerOptions>) {
     return format(`
       module.exports = function(config){
         config.set(
-          ${JSON.stringify(this.configObject, null, 2)}
+          ${JSON.stringify(configObject, null, 2)}
         );
       }`);
   }

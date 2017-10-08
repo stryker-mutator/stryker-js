@@ -1,13 +1,12 @@
 import { AdapterMessage, RunMessage, StartMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
-import * as log4js from 'log4js';
+import { getLogger} from 'log4js';
 import { deserialize, errorToString } from '../utils/objectUtils';
-
-const log = log4js.getLogger('IsolatedTestRunnerAdapterWorker');
 
 class IsolatedTestRunnerAdapterWorker {
 
+  private readonly log = getLogger(IsolatedTestRunnerAdapterWorker.name);
   private underlyingTestRunner: TestRunner;
 
   constructor() {
@@ -46,21 +45,21 @@ class IsolatedTestRunnerAdapterWorker {
     const unhandledRejections: Promise<any>[] = [];
     process.on('unhandledRejection', (reason, promise) => {
       const unhandledPromiseId = unhandledRejections.push(promise);
-      log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
+      this.log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
     });
     process.on('rejectionHandled', (promise) => {
       const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;
-      log.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
+      this.log.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
     });
   }
 
   private logReceivedMessageWarning(message: never) {
-    log.warn('Received unsupported message: {}', JSON.stringify(message));
+    this.log.warn('Received unsupported message: {}', JSON.stringify(message));
   }
 
   start(message: StartMessage) {
     this.loadPlugins(message.runnerOptions.strykerOptions.plugins || []);
-    log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
+    this.log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
     process.chdir(message.runnerOptions.sandboxWorkingFolder);
     this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
   }

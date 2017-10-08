@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import * as _ from 'lodash';
 import { fork, ChildProcess } from 'child_process';
 import { TestRunner, RunResult, RunOptions } from 'stryker-api/test_runner';
@@ -8,8 +8,6 @@ import { AdapterMessage, WorkerMessage } from './MessageProtocol';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 import Task from '../utils/Task';
 const MAX_WAIT_FOR_DISPOSE = 2000;
-
-const log = log4js.getLogger('IsolatedTestRunnerAdapter');
 
 class InitTask extends Task<void> {
   readonly kind = 'init';
@@ -28,6 +26,7 @@ type WorkerTask = InitTask | DisposeTask | RunTask;
  */
 export default class TestRunnerChildProcessAdapter extends EventEmitter implements TestRunner {
 
+  private readonly log = getLogger(TestRunnerChildProcessAdapter.name);
   private workerProcess: ChildProcess;
   private currentTask: WorkerTask;
   private lastMessagesQueue: string[] = [];
@@ -50,7 +49,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   private listenToWorkerProcess() {
 
     if (this.workerProcess.stdout) {
-      let traceEnabled = log.isTraceEnabled();
+      let traceEnabled = this.log.isTraceEnabled();
       this.workerProcess.stdout.on('data', (data: Buffer) => {
         const msg = data.toString();
 
@@ -60,14 +59,14 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
         }
 
         if (traceEnabled) {
-          log.trace(msg);
+          this.log.trace(msg);
         }
       });
     }
 
     if (this.workerProcess.stderr) {
       this.workerProcess.stderr.on('data', (data: any) => {
-        log.error(data.toString());
+        this.log.error(data.toString());
       });
     }
 
@@ -102,7 +101,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
 
     this.workerProcess.on('exit', (code: number | null, signal: string) => {
       if (code !== 0 && code !== null) {
-        log.error(`Child process exited with non-zero exit code ${code}. Last 10 message from the child process were: \r\n${this.lastMessagesQueue.map(msg => `\t${msg}`).join('\r\n')}`);
+        this.log.error(`Child process exited with non-zero exit code ${code}. Last 10 message from the child process were: \r\n${this.lastMessagesQueue.map(msg => `\t${msg}`).join('\r\n')}`);
         if (this.currentTask) {
           this.currentTask.reject(`Test runner child process exited with non-zero exit code ${code}`);
         }
@@ -111,11 +110,11 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   }
 
   private logReceivedUnexpectedMessageWarning(message: WorkerMessage) {
-    log.warn(`Received unexpected message from test runner worker process: "${message.kind}" while current task is ${this.currentTask.kind}. Ignoring this message.`);
+    this.log.warn(`Received unexpected message from test runner worker process: "${message.kind}" while current task is ${this.currentTask.kind}. Ignoring this message.`);
   }
 
   private logReceivedMessageWarning(message: never) {
-    log.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`);
+    this.log.error(`Retrieved unrecognized message from child process: ${JSON.stringify(message)}`);
   }
 
   init(): Promise<any> {

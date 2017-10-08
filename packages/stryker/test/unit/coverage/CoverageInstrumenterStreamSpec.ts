@@ -1,17 +1,21 @@
 import { expect } from 'chai';
+import { Logger } from 'log4js';
 import { Readable, Duplex } from 'stream';
 import { FileDescriptor } from 'stryker-api/core';
 import CoverageInstrumenterStream from '../../../src/coverage/CoverageInstrumenterStream';
-import log from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/log4jsMock';
 import { streamToString, readable } from '../../helpers/streamHelpers';
 import { StatementMap } from 'stryker-api/test_runner';
+import { Mock } from '../../helpers/producers';
 
 describe('CoverageInstrumenterStream', () => {
+  let log: Mock<Logger>;
   let sut: CoverageInstrumenterStream;
   let inputFiles: FileDescriptor[];
   const filename = 'thefile.js';
 
   beforeEach(() => {
+    log = currentLogMock();
     inputFiles = [];
     sut = new CoverageInstrumenterStream('myCoverageVariable', filename);
   });

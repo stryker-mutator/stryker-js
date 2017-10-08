@@ -1,13 +1,16 @@
 import * as child from 'child_process';
 import * as fs from 'mz/fs';
+import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
-import log from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/log4jsMock';
+import { Mock } from '../../helpers/producers';
 
 describe('StrykerInitializer', () => {
+  let log: Mock<Logger>;
   let sut: StrykerInitializer;
   let sandbox: sinon.SinonSandbox;
   let inquirerPrompt: sinon.SinonStub;
@@ -19,6 +22,7 @@ describe('StrykerInitializer', () => {
   let out: sinon.SinonStub;
 
   beforeEach(() => {
+    log = currentLogMock();
     sandbox = sinon.sandbox.create();
     out = sandbox.stub();
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');

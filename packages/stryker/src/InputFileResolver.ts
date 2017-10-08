@@ -2,12 +2,10 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'mz/fs';
 import * as _ from 'lodash';
-import * as log4js from 'log4js';
+import { getLogger } from 'log4js';
 import { File, InputFileDescriptor, FileDescriptor, FileKind, TextFile, BinaryFile } from 'stryker-api/core';
 import { glob, isOnlineFile, determineFileKind } from './utils/fileUtils';
 import StrictReporter from './reporters/StrictReporter';
-
-const log = log4js.getLogger('InputFileResolver');
 
 const DEFAULT_INPUT_FILE_PROPERTIES = { mutated: false, included: true, transpiled: true };
 
@@ -20,6 +18,7 @@ function testFileToReportFile(textFile: TextFile) {
 
 export default class InputFileResolver {
 
+  private readonly log = getLogger(InputFileResolver.name);
   private inputFileResolver: PatternResolver;
   private mutateResolver: PatternResolver;
 
@@ -80,12 +79,12 @@ export default class InputFileResolver {
   private logFilesToMutate(allInputFiles: File[]) {
     let mutateFiles = allInputFiles.filter(file => file.mutated);
     if (mutateFiles.length) {
-      log.info(`Found ${mutateFiles.length} of ${allInputFiles.length} file(s) to be mutated.`);
+      this.log.info(`Found ${mutateFiles.length} of ${allInputFiles.length} file(s) to be mutated.`);
     } else {
-      log.warn(`No files marked to be mutated, stryker will perform a dry-run without actually mutating anything.`);
+      this.log.warn(`No files marked to be mutated, stryker will perform a dry-run without actually mutating anything.`);
     }
-    if (log.isDebugEnabled) {
-      log.debug('All input files in order:%s', allInputFiles.map(file => `${os.EOL}\t${file.name} (included: ${file.included}, mutated: ${file.mutated})`));
+    if (this.log.isDebugEnabled) {
+      this.log.debug('All input files in order:%s', allInputFiles.map(file => `${os.EOL}\t${file.name} (included: ${file.included}, mutated: ${file.mutated})`));
     }
   }
 
@@ -142,6 +141,7 @@ export default class InputFileResolver {
 
 class PatternResolver {
 
+  private readonly log = getLogger(InputFileResolver.name);
   private ignore = false;
   private descriptor: InputFileDescriptor;
 
@@ -214,7 +214,7 @@ class PatternResolver {
   }
 
   private reportEmptyGlobbingExpression(expression: string) {
-    log.warn(`Globbing expression "${expression}" did not result in any files.`);
+    this.log.warn(`Globbing expression "${expression}" did not result in any files.`);
   }
 
   private createInputFile(name: string): FileDescriptor {

@@ -1,18 +1,23 @@
 import * as path from 'path';
 import * as fs from 'mz/fs';
+import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as fileUtils from '../../src/utils/fileUtils';
 import PluginLoader from '../../src/PluginLoader';
-import log from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/log4jsMock';
+import { Mock } from '../helpers/producers';
 
 describe('PluginLoader', () => {
+
+  let log: Mock<Logger>;
   let sut: PluginLoader;
   let sandbox: sinon.SinonSandbox;
   let importModuleStub: sinon.SinonStub;
   let pluginDirectoryReadMock: sinon.SinonStub;
 
   beforeEach(() => {
+    log = currentLogMock();
     sandbox = sinon.sandbox.create();
     importModuleStub = sandbox.stub(fileUtils, 'importModule');
     pluginDirectoryReadMock = sandbox.stub(fs, 'readdirSync');
@@ -51,7 +56,7 @@ describe('PluginLoader', () => {
     });
   });
 
-  describe('with wildcard rolving to "stryker-cli", "stryker-jasmine" and "stryker-karma"', () => {
+  describe('with wildcard resolving to "stryker-cli", "stryker-jasmine" and "stryker-karma"', () => {
 
     beforeEach(() => {
       sut = new PluginLoader(['stryker-*']);

@@ -1,20 +1,21 @@
 import { expect } from 'chai';
 import * as log4js from 'log4js';
-import * as sinon from 'sinon';
 import ConfigReader from '../../../src/ConfigReader';
 import { Config } from 'stryker-api/config';
-import log from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/log4jsMock';
+import { Mock } from '../../helpers/producers';
 
 describe('ConfigReader', () => {
   let sut: ConfigReader;
-  let sandbox: sinon.SinonSandbox;
+  let log: Mock<log4js.Logger>;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    log = currentLogMock();
     sandbox.stub(process, 'exit');
   });
 
   it('should create a logger with the correct name', () => {
+    sut = new ConfigReader({});
     expect(log4js.getLogger).to.have.been.calledWith('ConfigReader');
   });
 
@@ -146,9 +147,5 @@ describe('ConfigReader', () => {
         expect(log.fatal).to.have.been.calledWithMatch(/Invalid config file!.*/);
       });
     });
-  });
-
-  afterEach(() => {
-    sandbox.restore();
   });
 });
