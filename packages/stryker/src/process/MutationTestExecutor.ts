@@ -61,7 +61,7 @@ function runInSandbox([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]):
   if (transpiledMutant.transpileResult.error) {
     const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
     return Promise.resolve({ sandbox, result });
-  } else if (!transpiledMutant.mutant.scopedTestIds.length) {
+  } else if (!transpiledMutant.mutant.selectedTests.length) {
     const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
     return Promise.resolve({ sandbox, result });
   } else {

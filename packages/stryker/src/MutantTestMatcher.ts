@@ -96,7 +96,7 @@ export default class MutantTestMatcher {
   private mapMutantOnMatchedMutant(testableMutant: TestableMutant): MatchedMutant {
     const matchedMutant = _.cloneDeep({
       mutatorName: testableMutant.mutant.mutatorName,
-      scopedTestIds: testableMutant.scopedTestIds,
+      scopedTestIds: testableMutant.selectedTests.map(testSelection => testSelection.id),
       timeSpentScopedTests: testableMutant.timeSpentScopedTests,
       fileName: testableMutant.mutant.fileName,
       replacement: testableMutant.mutant.replacement

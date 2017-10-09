@@ -26,9 +26,9 @@ describe('TestableMutant', () => {
   });
 
   it('should reflect timeSpentScopedTests and scopedTestIds', () => {
-    sut.addAllTestResults(runResult({ tests: [testResult({ timeSpentMs: 12 }), testResult({ timeSpentMs: 42 })] }));
+    sut.addAllTestResults(runResult({ tests: [testResult({ name: 'spec1', timeSpentMs: 12 }), testResult({ name: 'spec2', timeSpentMs: 42 })] }));
     expect(sut.timeSpentScopedTests).eq(54);
-    expect(sut.scopedTestIds).deep.eq([0, 1]);
+    expect(sut.selectedTests).deep.eq([{ id: 0, name: 'spec1' }, { id: 1, name: 'spec2' }]);
   });
 
   it('should calculate position using sourceFile', () => {

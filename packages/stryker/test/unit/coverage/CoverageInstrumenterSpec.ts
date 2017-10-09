@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { PassThrough } from 'stream';
 import { readable, streamToString } from '../../helpers/streamHelpers';
-import { TestFramework } from 'stryker-api/test_framework';
+import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { file } from '../../helpers/producers';
 import CoverageInstrumenter from '../../../src/coverage/CoverageInstrumenter';
 import CoverageInstrumenterStream from '../../../src/coverage/CoverageInstrumenterStream';
@@ -25,8 +25,8 @@ describe('CoverageInstrumenter', () => {
       afterEach: function (codeFragment: string): string {
         return `afterEach() { ${codeFragment} }`;
       },
-      filter: function (testIds: number[]): string {
-        return `filter(${JSON.stringify(testIds)})`;
+      filter: function (selections: TestSelection[]): string {
+        return `filter(${JSON.stringify(selections)})`;
       }
     };
   });

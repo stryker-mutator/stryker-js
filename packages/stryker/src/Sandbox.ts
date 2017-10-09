@@ -145,7 +145,7 @@ export default class Sandbox {
 
   private filterTests(mutant: TestableMutant) {
     if (this.testFramework) {
-      let fileContent = wrapInClosure(this.testFramework.filter(mutant.scopedTestIds));
+      let fileContent = wrapInClosure(this.testFramework.filter(mutant.selectedTests));
       return fileUtils.writeFile(this.fileMap[this.testHooksFile], fileContent);
     } else {
       return Promise.resolve(void 0);

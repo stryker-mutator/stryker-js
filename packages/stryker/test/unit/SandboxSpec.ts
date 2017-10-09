@@ -178,7 +178,7 @@ describe('Sandbox', () => {
         });
 
         it('should filter the scoped tests', () => {
-          expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.scopedTestIds);
+          expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.selectedTests);
         });
 
         it('should write the filter code fragment to hooks file', () => {

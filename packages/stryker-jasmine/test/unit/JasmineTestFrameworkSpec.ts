@@ -3,7 +3,7 @@ import JasmineTestFramework from '../../src/JasmineTestFramework';
 
 describe('JasmineTestFramework', () => {
   let sut: JasmineTestFramework;
-  beforeEach(() => sut = new JasmineTestFramework({ options: {} }));
+  beforeEach(() => sut = new JasmineTestFramework());
 
   describe('beforeEach()', () => {
     it('should result in a specStarted reporter hook', () =>
@@ -17,8 +17,8 @@ describe('JasmineTestFramework', () => {
 
   describe('filter()', () => {
     it('should result in a specFilter of jasmine it\'s', () =>
-      expect(sut.filter([5, 8]))
+      expect(sut.filter([{ id: 5, name: 'test five' }, { id: 8, name: 'test eight' }]))
         .to.contain('jasmine.getEnv().specFilter = function (spec)')
-        .and.to.contain('if([5,8].indexOf(currentTestId) >= 0){'));
+        .and.to.contain('return [5,8].indexOf(currentTestId++) !== -1;'));
   });
 });
