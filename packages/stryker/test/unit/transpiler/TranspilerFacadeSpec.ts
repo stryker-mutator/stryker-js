@@ -42,9 +42,10 @@ describe('TranspilerFacade', () => {
     let resultTwo: TranspileResult;
     let locationOne: FileLocation;
     let locationTwo: FileLocation;
+    let config: Config;
 
     beforeEach(() => {
-      const config = new Config();
+      config = new Config();
       config.transpilers.push('transpiler-one', 'transpiler-two');
       transpilerOne = mock(TranspilerFacade);
       transpilerTwo = mock(TranspilerFacade);
@@ -59,16 +60,17 @@ describe('TranspilerFacade', () => {
       transpilerOne.getMappedLocation.returns(locationOne);
       transpilerTwo.transpile.returns(resultTwo);
       transpilerTwo.getMappedLocation.returns(locationTwo);
-      sut = new TranspilerFacade({ config, keepSourceMaps: true });
     });
 
     it('should create two transpilers', () => {
+      sut = new TranspilerFacade({ config, keepSourceMaps: true });
       expect(createStub).calledTwice;
       expect(createStub).calledWith('transpiler-one');
       expect(createStub).calledWith('transpiler-two');
     });
 
     it('should chain the transpilers when `transpile` is called', () => {
+      sut = new TranspilerFacade({ config, keepSourceMaps: true });
       const input = [file({ name: 'input' })];
       const result = sut.transpile(input);
       expect(result).eq(resultTwo);
@@ -76,7 +78,23 @@ describe('TranspilerFacade', () => {
       expect(transpilerTwo.transpile).calledWith(resultOne.outputFiles);
     });
 
+    it('should chain an additional transpiler when requested', () => {
+      const additionalTranspiler = mock(TranspilerFacade);
+      const expectedResult = transpileResult({ outputFiles: [file({ name: 'result-3' })] });
+      additionalTranspiler.transpile.returns(expectedResult);
+      const input = [file({ name: 'input' })];
+      sut = new TranspilerFacade(
+        { config, keepSourceMaps: true },
+        { name: 'someTranspiler', transpiler: additionalTranspiler }
+      );
+      const output = sut.transpile(input);
+      expect(output).eq(expectedResult);
+      expect(additionalTranspiler.transpile).calledWith(resultTwo.outputFiles);
+    });
+
+
     it('should stop chaining if an error occurs during `transpile`', () => {
+      sut = new TranspilerFacade({ config, keepSourceMaps: true });
       const input = [file({ name: 'input' })];
       resultOne.error = 'an error';
       const result = sut.transpile(input);
@@ -86,6 +104,7 @@ describe('TranspilerFacade', () => {
     });
 
     it('should chain the transpilers when `getMappedLocation` is called', () => {
+      sut = new TranspilerFacade({ config, keepSourceMaps: true });
       const input = fileLocation({ fileName: 'input' });
       const result = sut.getMappedLocation(input);
       expect(result).eq(locationTwo);

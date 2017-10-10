@@ -6,7 +6,7 @@ import { MatchedMutant } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
 import TestableMutant from './TestableMutant';
 import StrictReporter from './reporters/StrictReporter';
-import { StatementMapDictionary } from './coverage/CoverageInstrumenter';
+import { StatementMapDictionary } from './transpiler/CoverageInstrumenterTranspiler';
 import { filterEmpty } from './utils/objectUtils';
 import SourceFile from './SourceFile';
 
