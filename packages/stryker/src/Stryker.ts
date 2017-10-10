@@ -3,7 +3,6 @@ import { StrykerOptions, File } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import ReporterOrchestrator from './ReporterOrchestrator';
-import { RunResult } from 'stryker-api/test_runner';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './InputFileResolver';
@@ -11,14 +10,13 @@ import ConfigReader from './ConfigReader';
 import PluginLoader from './PluginLoader';
 import ScoreResultCalculator from './ScoreResultCalculator';
 import ConfigValidator from './ConfigValidator';
-import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
 import { TempFolder } from './utils/TempFolder';
 import * as log4js from 'log4js';
 import Timer from './utils/Timer';
 import StrictReporter from './reporters/StrictReporter';
 import MutatorFacade from './MutatorFacade';
-import InitialTestExecutor from './process/InitialTestExecutor';
+import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
 
 export default class Stryker {
@@ -27,7 +25,6 @@ export default class Stryker {
   private timer = new Timer();
   private reporter: StrictReporter;
   private testFramework: TestFramework | null;
-  private coverageInstrumenter: CoverageInstrumenter;
   private readonly log = log4js.getLogger(Stryker.name);
 
   /**
@@ -45,19 +42,18 @@ export default class Stryker {
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
-    this.coverageInstrumenter = new CoverageInstrumenter(this.config.coverageAnalysis, this.testFramework);
     new ConfigValidator(this.config, this.testFramework).validate();
   }
 
   async runMutationTest(): Promise<MutantResult[]> {
     this.timer.reset();
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
-    TempFolder.instance().initialize();    
+    TempFolder.instance().initialize();
     const initialTestRunProcess = this.createInitialTestRunner(inputFiles);
-    const { runResult, transpiledFiles } = await initialTestRunProcess.run();
-    const testableMutants = await this.mutate(inputFiles, runResult);
-    if (runResult.tests.length && testableMutants.length) {
-      const mutationTestExecutor = this.createMutationTester(inputFiles, transpiledFiles);
+    const initialTestRunResult = await initialTestRunProcess.run();
+    const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
+    if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
+      const mutationTestExecutor = this.createMutationTester(inputFiles);
       const mutantResults = await mutationTestExecutor.run(testableMutants);
       this.reportScore(mutantResults);
       await this.wrapUpReporter();
@@ -69,7 +65,7 @@ export default class Stryker {
     }
   }
 
-  private mutate(inputFiles: File[], runResult: RunResult) {
+  private mutate(inputFiles: File[], initialTestRunResult: InitialTestRunResult) {
     const mutator = new MutatorFacade(this.config);
     const mutants = mutator.mutate(inputFiles);
     if (mutants.length) {
@@ -77,7 +73,13 @@ export default class Stryker {
     } else {
       this.log.info('It\'s a mutant-free world, nothing to test.');
     }
-    const mutantRunResultMatcher = new MutantTestMatcher(mutants, inputFiles, runResult, this.coverageInstrumenter.retrieveStatementMapsPerFile(), this.config, this.reporter);
+    const mutantRunResultMatcher = new MutantTestMatcher(
+      mutants,
+      inputFiles,
+      initialTestRunResult.runResult,
+      initialTestRunResult.statementMaps,
+      this.config,
+      this.reporter);
     return mutantRunResultMatcher.matchWithMutants();
   }
 
@@ -117,12 +119,12 @@ export default class Stryker {
     log4js.setGlobalLogLevel(this.config.logLevel);
   }
 
-  private createMutationTester(inputFiles: File[], transpiledFiles: File[]) {
-    return new MutationTestExecutor(this.config, inputFiles, transpiledFiles, this.testFramework, this.reporter);
+  private createMutationTester(inputFiles: File[]) {
+    return new MutationTestExecutor(this.config, inputFiles, this.testFramework, this.reporter);
   }
 
   private createInitialTestRunner(inputFiles: File[]) {
-    return new InitialTestExecutor(this.config, inputFiles, this.coverageInstrumenter, this.testFramework, this.timer);
+    return new InitialTestExecutor(this.config, inputFiles, this.testFramework, this.timer);
   }
 
   private reportScore(mutantResults: MutantResult[]) {

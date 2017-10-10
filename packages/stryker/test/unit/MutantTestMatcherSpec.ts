@@ -5,13 +5,13 @@ import { expect } from 'chai';
 import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
 import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
-import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import currentLogMock from '../helpers/log4jsMock';
 import { file, mutant, Mock, mock } from '../helpers/producers';
 import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
+import { StatementMapDictionary } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 
 describe('MutantTestMatcher', () => {
 
