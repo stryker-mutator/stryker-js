@@ -29,6 +29,6 @@ describe('HtmlReporter single file in a folder', () => {
     expect(dir.math).deep.eq({
       'Add.js.html': 'Add.js.html'
     });
-    expect(fs.readFileSync(path.resolve(REPORT_DIR, 'math', 'Add.js.html'), 'utf8')).contains('"../bootstrap/css/bootstrap.min.css"');
+    expect(fs.readFileSync(path.resolve(REPORT_DIR, 'math', 'Add.js.html'), 'utf8')).contains('"../__resources/bootstrap/css/bootstrap.min.css"');
   });
 });

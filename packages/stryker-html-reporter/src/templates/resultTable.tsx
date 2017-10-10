@@ -5,7 +5,7 @@ import { MutationScoreThresholds } from 'stryker-api/core';
 import UrlHelper from './UrlHelper';
 
 export function resultTable(model: ScoreResult, title: string, thresholds: MutationScoreThresholds) {
-    return <table class="table table-hover table-bordered table-no-top">
+    return <table class="table table-sm table-hover table-bordered table-no-top">
         {head}
         {tbody(model, title, thresholds)}
     </table>;
@@ -45,7 +45,7 @@ function row(model: ScoreResult, title: string, thresholds: MutationScoreThresho
         <td>{title}</td>
         <td>
             <div class="progress">
-                <div class={'progress-bar progress-bar-' + coloringClass} role="progressbar" aria-valuenow={mutationScoreRounded} aria-valuemin="0" aria-valuemax="100"
+                <div class={'progress-bar bg-' + coloringClass} role="progressbar" aria-valuenow={mutationScoreRounded} aria-valuemin="0" aria-valuemax="100"
                     style={`width: ${mutationScoreRounded}%;`}>
                     {mutationScoreRounded}%
             </div>

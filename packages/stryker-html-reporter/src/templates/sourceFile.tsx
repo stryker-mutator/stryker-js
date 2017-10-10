@@ -4,28 +4,57 @@ import { MutationScoreThresholds } from 'stryker-api/core';
 import { resultTable } from './resultTable';
 import { layout } from './layout';
 import { ScoreResult, SourceFile, MutantResult, MutantStatus } from 'stryker-api/report';
+import Breadcrumb from '../Breadcrumb';
+import { mutantTable } from './mutantTable';
 
-export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], depth: number, thresholds: MutationScoreThresholds) {
-    return layout(result.name, depth,
-        <div class="col-md-12">
+export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], breadcrumb: Breadcrumb, thresholds: MutationScoreThresholds) {
+    return layout(breadcrumb,
+        <div class="col-lg-12">
             <div class="row">
-                <div class="col-xs-11">
+                <div class="col-sm-11">
                     {resultTable(result, result.name, thresholds)}
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6">
-                    <a href="#" class="stryker-collapse-expand-all">Expand all</a>
+                <div class="col-lg-7">
+                    {legend(mutants)}
+                    {code(sourceFile, mutants)}
                 </div>
-                <div class="col-sm-offset-2 col-sm-4">
-                    <label>
-                        <input class="stryker-display-killed" type="checkbox"></input> Also show killed mutants
-            </label>
+                <div class="col-lg-5">
+                    {mutantTable(mutants, sourceFile ? sourceFile.content : '')}
                 </div>
             </div>
-            {code(sourceFile, mutants)}
         </div>);
 }
+
+function legend(mutants: MutantResult[]) {
+    function displayCheckbox(state: MutantStatus, isChecked: boolean) {
+        const filtered = mutants.filter(mutant => mutant.status === state);
+        if (filtered.length) {
+            return <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input stryker-display" checked={isChecked} value={state.toString()} type="checkbox"></input>
+                    {MutantStatus[state]} {`(${filtered.length})`}
+                </label>
+            </div>;
+        } else {
+            return '';
+        }
+    }
+
+    return <div class="row legend">
+        <form class="col-md-12" novalidate="novalidate">
+            {displayCheckbox(MutantStatus.NoCoverage, true)}
+            {displayCheckbox(MutantStatus.Survived, true)}
+            {displayCheckbox(MutantStatus.Killed, false)}
+            {displayCheckbox(MutantStatus.TimedOut, false)}
+            {displayCheckbox(MutantStatus.RuntimeError, false)}
+            {displayCheckbox(MutantStatus.TranspileError, false)}
+            <a href="#" class="stryker-collapse-expand-all">Expand all</a>
+        </form>
+    </div>;
+}
+
 function code(sourceFile: SourceFile | undefined, mutants: MutantResult[]) {
     if (sourceFile) {
         return annotateCode(sourceFile, mutants);
@@ -65,13 +94,13 @@ function annotateCode(sourceFile: SourceFile, mutants: MutantResult[]) {
 
     const determineBackground = () => {
         if (currentCursorMutantStatuses.survived > 0) {
-            return getContextClassForStatus(MutantStatus.Survived);
+            return getContextClassForStatus(MutantStatus.Survived) + '-light';
         } else if (currentCursorMutantStatuses.noCoverage > 0) {
-            return getContextClassForStatus(MutantStatus.NoCoverage);
+            return getContextClassForStatus(MutantStatus.NoCoverage) + '-light';
         } else if (currentCursorMutantStatuses.timeout > 0) {
-            return getContextClassForStatus(MutantStatus.TimedOut);
+            return getContextClassForStatus(MutantStatus.TimedOut) + '-light';
         } else if (currentCursorMutantStatuses.killed > 0) {
-            return getContextClassForStatus(MutantStatus.Killed);
+            return getContextClassForStatus(MutantStatus.Killed) + '-light';
         }
         return null;
     };
@@ -85,10 +114,16 @@ function annotateCode(sourceFile: SourceFile, mutants: MutantResult[]) {
         const backgroundColorEndAnnotation = ((mutantsStarting.length || mutantsEnding.length) && index > 0) || index === maxIndex ? '</span>' : '';
         try {
             const mutantsAnnotations = mutantsStarting.map(m =>
-                <a href="#" class="stryker-mutant-button" data-mutant-status-annotation={getContextClassForStatus(m.mutant.status)} data-mutant={m.index}>
-                    <span class={`label label-${getContextClassForStatus(m.mutant.status)}`}>{m.index}</span>
+                <a href="#" class="stryker-mutant-button"
+                    tabindex="0"
+                    title={m.mutant.mutatorName}
+                    data-content={getMutantContent(m.mutant)}
+                    data-mutant-status-annotation={getContextClassForStatus(m.mutant.status)}
+                    data-mutant-status={m.mutant.status}
+                    data-mutant={m.index}>
+                    <span class={`badge badge-${getContextClassForStatus(m.mutant.status)}`}>{m.index}</span>
                 </a>
-                + <span class="label label-info stryker-mutant-replacement" hidden="hidden" data-mutant={m.index}>{escapeHtml(m.mutant.replacement)}</span>);
+                + <span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant={m.index}>{escapeHtml(m.mutant.replacement)}</span>);
             const originalCodeStartAnnotations = mutantsStarting.map(m => `<span class="stryker-original-code" data-mutant="${m.index}">`);
             const originalCodeEndAnnotations = mutantsEnding.map(m => '</span>');
 
@@ -111,6 +146,10 @@ function escapeHtml(unsafe: string) {
 }
 
 
+function getMutantContent(mutant: MutantResult) {
+    return `status: ${MutantStatus[mutant.status]}`;
+}
+
 function getContextClassForStatus(status: MutantStatus) {
     switch (status) {
         case MutantStatus.Killed:
@@ -119,10 +158,10 @@ function getContextClassForStatus(status: MutantStatus) {
         case MutantStatus.Survived:
             return 'danger';
         case MutantStatus.TimedOut:
-        case MutantStatus.RuntimeError:
             return 'warning';
+        case MutantStatus.RuntimeError:
         case MutantStatus.TranspileError:
-            return 'default';
+            return 'secondary';
     }
 }
 
@@ -137,3 +176,5 @@ function mapString<T>(source: string, fn: (char: string, index?: number) => T): 
     }
     return results;
 }
+
+

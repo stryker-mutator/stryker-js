@@ -5,22 +5,23 @@ hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascri
 
 (function () {
 
-  // Enable manually. If we enable on page load, click events for mutant labels might be overriden
+  // Enable manually. If we enable on page load, click events for mutant labels might be overridden
   (function enableHighlightJS() {
     var codeBlocks = document.querySelectorAll('pre code');
     for (var i = 0; i < codeBlocks.length; i++) {
       hljs.highlightBlock(codeBlocks.item(i));
     }
-  } ());
+  }());
 
   // Create the maps of elements with mutants 
   var originalCodeMap = createMutantMap('stryker-original-code');
   var replacementMap = createMutantMap('stryker-mutant-replacement');
   var buttonMap = createMutantMap('stryker-mutant-button');
+  initializePopovers();
 
   // Controls
   var collapseExpandButton = document.getElementsByClassName('stryker-collapse-expand-all').item(0);
-  var checkboxDisplayKilled = document.getElementsByClassName('stryker-display-killed').item(0);
+  var displayCheckboxes = document.getElementsByClassName('stryker-display');
 
   /** 
    * Creates a map of mutant id to elements using given class name to select the elements
@@ -36,15 +37,34 @@ hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascri
     return map;
   }
 
-  function toggleMutant(mutantId, force) {
-    var button = buttonMap[mutantId];
-    var antiForce = force === undefined ? undefined : !force;
+  function initializePopovers() {
+    Object.keys(buttonMap).forEach(function (mutantId) {
+      var $button = $(buttonMap[mutantId]);
+      $button.popover({
+        trigger: 'focus',
+        placement: 'bottom'
+      });
+    });
+  }
 
-    originalCodeMap[mutantId].classList.toggle('original-code-disabled', force);
-    replacementMap[mutantId].hidden = force === undefined ? !replacementMap[mutantId].hidden : !force;
-    var label = button.querySelectorAll('.label').item(0);
-    label.classList.toggle('label-info', force);
-    label.classList.toggle('label-' + button.dataset.mutantStatusAnnotation, antiForce);
+
+  function toggleMutant(mutantId, forceOpen) {
+    var button = buttonMap[mutantId];
+    var $button = $(button);
+    var shouldOpen = forceOpen === undefined ? replacementMap[mutantId].hidden : forceOpen;
+    if (forceOpen === undefined) {
+      if (shouldOpen) {
+        $button.popover('show');
+      } else {
+        $button.popover('hide');
+      }
+    }
+
+    originalCodeMap[mutantId].classList.toggle('original-code-disabled', shouldOpen);
+    replacementMap[mutantId].hidden = !shouldOpen;
+    var label = button.querySelectorAll('.badge').item(0);
+    label.classList.toggle('badge-info', shouldOpen);
+    label.classList.toggle('badge-' + button.dataset.mutantStatusAnnotation, !shouldOpen);
   }
 
   function bindMutantButton(button, mutantId) {
@@ -79,14 +99,21 @@ hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascri
     buttonMap[index].hidden = enableHide;
   }
 
-  function reflectCheckboxDisplayKilledValue() {
+  function updateMutantButtonsForCheckbox(checkbox) {
+    var mutantState = checkbox.value;
     for (var i in buttonMap) {
-      if (buttonMap[i].dataset.mutantStatusAnnotation === 'success') {
-        hideMutant(i, !checkboxDisplayKilled.checked);
+      if (buttonMap[i].dataset.mutantStatus === mutantState) {
+        hideMutant(i, !checkbox.checked);
       }
     }
   }
 
-  checkboxDisplayKilled.addEventListener('change', reflectCheckboxDisplayKilledValue);
-  reflectCheckboxDisplayKilledValue();
+  for (var i = 0; i < displayCheckboxes.length; i++) {
+    var checkbox = displayCheckboxes.item(i);
+    checkbox.addEventListener('change', function (event) {
+      updateMutantButtonsForCheckbox(event.target);
+    });
+    // Update them right away as well
+    updateMutantButtonsForCheckbox(checkbox);
+  }
 })();
