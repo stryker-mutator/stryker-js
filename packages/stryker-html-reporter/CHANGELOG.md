@@ -1,7 +1,18 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="0.9.0"></a>
+# [0.9.0](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.8.0...stryker-html-reporter@0.9.0) (2017-10-10)
+
+
+### Features
+
+* **html-report:** Revamp html report ([#399](https://github.com/stryker-mutator/stryker/issues/399)) ([5390d15](https://github.com/stryker-mutator/stryker/commit/5390d15)), closes [#386](https://github.com/stryker-mutator/stryker/issues/386) [#385](https://github.com/stryker-mutator/stryker/issues/385) [#383](https://github.com/stryker-mutator/stryker/issues/383)
+
+
+
 
 <a name="0.8.0"></a>
 # [0.8.0](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.7.2...stryker-html-reporter@0.8.0) (2017-09-19)
