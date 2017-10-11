@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.2"></a>
+## [0.11.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.11.1...stryker@0.11.2) (2017-10-11)
+
+
+### Bug Fixes
+
+* **deps:** Remove types for prettier as a dev ([7014322](https://github.com/stryker-mutator/stryker/commit/7014322))
+
+
+
+
 <a name="0.11.1"></a>
 ## [0.11.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.11.0...stryker@0.11.1) (2017-10-10)
 
