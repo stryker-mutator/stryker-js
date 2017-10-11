@@ -1,10 +1,11 @@
-import fileUrl = require('file-url');
 import * as log4js from 'log4js';
+import fileUrl = require('file-url');
 import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { Reporter, MutantResult, SourceFile, ScoreResult } from 'stryker-api/report';
 import * as util from './util';
 import * as templates from './templates';
+import Breadcrumb from './Breadcrumb';
 
 const log = log4js.getLogger('HtmlReporter');
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
@@ -51,39 +52,38 @@ export default class HtmlReporter implements Reporter {
 
   private copyBootstrapAndHighlightResources() {
     const resourcesDir = path.join(__dirname, '..', 'resources');
-    return util.copyFolder(resourcesDir, this.baseDir);
+    return util.copyFolder(resourcesDir, this.resourcesDir);
   }
 
   private copyStrykerResources() {
     const resourcesDir = path.join(__dirname, 'resources', 'stryker');
-    return util.copyFolder(resourcesDir, this.baseDir);
+    return util.copyFolder(resourcesDir, this.resourcesDir);
   }
 
-  private writeReportDirectory(scoreResult = this.scoreResult, currentDirectory = this.baseDir, depth = 0, title = 'All files')
+  private writeReportDirectory(scoreResult = this.scoreResult, currentDirectory = this.baseDir, breadcrumb = Breadcrumb.start)
     : Promise<string> {
-    const fileContent = templates.directory(title, scoreResult, depth, this.options.thresholds);
+    const fileContent = templates.directory(scoreResult, breadcrumb, this.options.thresholds);
     const location = path.join(currentDirectory, 'index.html');
     return util.mkdir(currentDirectory)
       .then(_ => util.writeFile(location, fileContent))
-      .then(_ => this.writeChildren(scoreResult, currentDirectory, depth))
+      .then(_ => this.writeChildren(scoreResult, currentDirectory, breadcrumb))
       .then(_ => location);
   }
 
-  private writeChildren(scoreResult: ScoreResult, currentDirectory: string, depth: number) {
+  private writeChildren(scoreResult: ScoreResult, currentDirectory: string, breadcrumb: Breadcrumb) {
     return Promise.all(scoreResult.childResults.map(child => {
       if (child.representsFile) {
-        return this.writeReportFile(child, currentDirectory, depth + util.countPathSep(child.name));
+        return this.writeReportFile(child, currentDirectory, breadcrumb.add(child.name, util.countPathSep(child.name)));
       } else {
-        const newDepth = util.countPathSep(child.name) + depth + 1;
-        return this.writeReportDirectory(child, path.join(currentDirectory, child.name), newDepth, child.name)
+        return this.writeReportDirectory(child, path.join(currentDirectory, child.name), breadcrumb.add(child.name,  util.countPathSep(child.name) + 1))
           .then(_ => void 0);
       }
     }));
   }
 
-  private writeReportFile(scoreResult: ScoreResult, baseDir: string, depth: number) {
+  private writeReportFile(scoreResult: ScoreResult, baseDir: string, breadcrumb: Breadcrumb) {
     if (scoreResult.representsFile) {
-      const fileContent = templates.sourceFile(scoreResult, this.findFile(scoreResult.path), this.findMutants(scoreResult.path), depth, this.options.thresholds);
+      const fileContent = templates.sourceFile(scoreResult, this.findFile(scoreResult.path), this.findMutants(scoreResult.path), breadcrumb, this.options.thresholds);
       return util.writeFile(path.join(baseDir, `${scoreResult.name}.html`), fileContent);
     } else {
       return Promise.resolve(); // not a report file
@@ -96,6 +96,10 @@ export default class HtmlReporter implements Reporter {
 
   private findMutants(filePath: string) {
     return this.mutantResults.filter(mutant => mutant.sourceFilePath === filePath);
+  }
+
+  private get resourcesDir() {
+    return path.join(this.baseDir, '__resources');
   }
 
   private get baseDir() {

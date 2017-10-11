@@ -1,22 +1,23 @@
 import * as path from 'path';
 import { expect } from 'chai';
+import { browser } from 'protractor';
+import { MutantStatus } from 'stryker-api/report';
+import { baseDir } from './hooks';
 import FileReportPage from './pageObjects/FileReportPage';
 import MutantSelection from './pageObjects/MutantSelection';
-import { browser } from 'protractor';
-import { baseDir } from './hooks';
 
-describe('File report page "Circle.js.html"', () => {
+describe('File report page "Add.js.html"', () => {
 
   let page: FileReportPage;
 
-  let forAllMutantSelections = (fn: (mutantSelection: MutantSelection) => any) => {
+  const forAllMutantSelections = (fn: (mutantSelection: MutantSelection) => any) => {
     for (let i = 0; i < 6; i++) {
       fn(page.mutantSelection(i));
     }
   };
 
-  let get = () => {
-    let f = `file:///${path.resolve(baseDir, 'Circle.js.html').replace(/\\/g, '/')}`;
+  const get = () => {
+    const f = `file:///${path.resolve(baseDir, 'Add.js.html').replace(/\\/g, '/')}`;
     return browser.get(f);
   };
 
@@ -25,50 +26,54 @@ describe('File report page "Circle.js.html"', () => {
     page = new FileReportPage();
   });
 
-  it('should show title "Circle.js"', () => {
-    return expect(page.title()).to.eventually.be.eq('Circle.js - Stryker report');
+  it('should show title "Add.js"', () => {
+    return expect(page.title()).to.eventually.be.eq('Add.js - Stryker report');
   });
 
-  it('should show 6 mutants in the file', () => {
-    return expect(page.mutationButtonCount()).to.eventually.be.eq(6);
+  it('should show 7 mutants in the file', () => {
+    return expect(page.mutationButtonCount()).to.eventually.be.eq(17);
   });
 
   it('should not "line-through" any of the original code lines', () => forAllMutantSelections(selection => expect(selection.originalCodeTextDecoration()).to.eventually.equal('none')));
 
   it('should not display any of the mutated code', () => forAllMutantSelections(selection => expect(selection.originalCodeTextDecoration()).to.eventually.equal('none')));
 
-  it('should have 2 killed mutants and 4 survived', () => {
-    expect(page.mutantSelection(0).mutantStatusAnnotation()).to.eventually.eq('success');
-    expect(page.mutantSelection(1).mutantStatusAnnotation()).to.eventually.eq('danger');
-    expect(page.mutantSelection(2).mutantStatusAnnotation()).to.eventually.eq('success');
-    expect(page.mutantSelection(3).mutantStatusAnnotation()).to.eventually.eq('danger');
-    expect(page.mutantSelection(4).mutantStatusAnnotation()).to.eventually.eq('danger');
-    expect(page.mutantSelection(5).mutantStatusAnnotation()).to.eventually.eq('danger');
+  it('should only display Survived and NoCoverage mutants', () => {
+    expect(page.legend.displayButton(MutantStatus.Killed).isChecked()).to.eventually.false;
+    expect(page.legend.displayButton(MutantStatus.Survived).isChecked()).to.eventually.true;
+    expect(page.legend.displayButton(MutantStatus.NoCoverage).isChecked()).to.eventually.true;
+    expect(page.legend.displayButton(MutantStatus.RuntimeError).isChecked()).to.eventually.false;
+    expect(page.legend.displayButton(MutantStatus.TimedOut).isChecked()).to.eventually.false;
+    expect(page.legend.displayButton(MutantStatus.TranspileError).isChecked()).to.eventually.false;
   });
 
   it('should hide killed mutants', () => {
     expect(page.mutantSelection(0).isButtonVisible()).to.eventually.eq(false);
-    expect(page.mutantSelection(2).isButtonVisible()).to.eventually.eq(false);
+    expect(page.mutantSelection(9).isButtonVisible()).to.eventually.eq(false);
   });
 
   it('should not mark the correct piece of code as original', () => {
     // Fix issue https://github.com/stryker-mutator/stryker-html-reporter/issues/5
-    expect(page.mutantSelection(1).originalCode()).to.eventually.eq('2 * Math.PI * radius');
+    expect(page.mutantSelection(1).originalCode()).to.eventually.eq('num1 + num2');
   });
 
-  it('should show survived mutants', () => {
+  it('should show Survived mutants', () => {
     expect(page.mutantSelection(1).isButtonVisible()).to.eventually.eq(true);
-    expect(page.mutantSelection(3).isButtonVisible()).to.eventually.eq(true);
-    expect(page.mutantSelection(4).isButtonVisible()).to.eventually.eq(true);
-    expect(page.mutantSelection(5).isButtonVisible()).to.eventually.eq(true);
+    expect(page.mutantSelection(6).isButtonVisible()).to.eventually.eq(true);
   });
 
-  describe('when "Also show killed mutants" is enabled', () => {
-    beforeEach(() => page.displayKilledCheckbox().click());
+  it('should show NoCoverage mutants', () => {
+    expect(page.mutantSelection(5).isButtonVisible()).to.eventually.eq(true);
+    expect(page.mutantSelection(7).isButtonVisible()).to.eventually.eq(true);
+    expect(page.mutantSelection(8).isButtonVisible()).to.eventually.eq(true);
+  });
+
+  describe('when "Killed" is enabled', () => {
+    beforeEach(() => page.legend.displayButton(MutantStatus.Killed).click());
 
     it('should also show the killed mutants', () => {
       expect(page.mutantSelection(0).isButtonVisible()).to.eventually.eq(true);
-      expect(page.mutantSelection(2).isButtonVisible()).to.eventually.eq(true);
+      expect(page.mutantSelection(9).isButtonVisible()).to.eventually.eq(true);
     });
 
     describe('and a killed mutant is enabled', () => {
@@ -78,8 +83,8 @@ describe('File report page "Circle.js.html"', () => {
         expect(page.mutantSelection(0).originalCodeTextDecoration()).to.eventually.eq('line-through');
       });
 
-      describe('and later the "Also show killed mutants" button is disabled', () => {
-        beforeEach(() => page.displayKilledCheckbox().click());
+      describe('and later  "Killed" is disabled', () => {
+        beforeEach(() => page.legend.displayButton(MutantStatus.Killed).click());
 
         it('should have removed the "line-through" from the mutant\'s original code', () => {
           expect(page.mutantSelection(0).originalCodeTextDecoration()).to.eventually.eq('none');

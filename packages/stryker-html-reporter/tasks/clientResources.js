@@ -32,4 +32,7 @@ const copyAll = (from, to, globExpression) => Promise.all([globAsPromised(globEx
   .catch(err => console.error(`Error during copy from ${from}/${globExpression} to ${to}`, err));
 
 copyAll('node_modules/bootstrap/dist', 'resources/bootstrap', '**/*+(.css|.js)');
+copyAll('node_modules/jquery', 'resources/jquery', 'dist/jquery.slim.min.js');
+copyAll('node_modules/tooltip.js', 'resources/tooltip.js', 'dist/umd/tooltip.min.js');
+copyAll('node_modules/popper.js', 'resources/popper.js', 'dist/umd/popper.min.js');
 copyAll('node_modules/highlight.js', 'resources/highlightjs', 'styles/default.css');

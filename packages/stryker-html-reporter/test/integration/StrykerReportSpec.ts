@@ -34,30 +34,50 @@ describe('Html report of stryker', function () {
       'SandboxCoordinator.js.html': 'SandboxCoordinator.js.html',
       'ScoreResultCalculator.js.html': 'ScoreResultCalculator.js.html',
       'Stryker.js.html': 'Stryker.js.html',
+      'stryker-cli.js.html': 'stryker-cli.js.html',
       'TestFrameworkOrchestrator.js.html': 'TestFrameworkOrchestrator.js.html',
-      'bootstrap': {
-        'css': {
-          'bootstrap-theme.css': 'bootstrap-theme.css',
-          'bootstrap-theme.min.css': 'bootstrap-theme.min.css',
-          'bootstrap.css': 'bootstrap.css',
-          'bootstrap.min.css': 'bootstrap.min.css'
+      '__resources': {
+        'popper.js': {
+          'dist': {
+            'umd': {
+              'popper.min.js': 'popper.min.js'
+            }
+          }
         },
-        'js': {
-          'bootstrap.js': 'bootstrap.js',
-          'bootstrap.min.js': 'bootstrap.min.js',
-          'npm.js': 'npm.js'
-        }
+        'highlightjs': {
+          'styles': {
+            'default.css': 'default.css'
+          }
+        },
+        'jquery': {
+          'dist': {
+            'jquery.slim.min.js': 'jquery.slim.min.js'
+          }
+        },
+        'bootstrap': {
+          'css': {
+            'bootstrap-grid.css': 'bootstrap-grid.css',
+            'bootstrap-grid.min.css': 'bootstrap-grid.min.css',
+            'bootstrap-reboot.css': 'bootstrap-reboot.css',
+            'bootstrap-reboot.min.css': 'bootstrap-reboot.min.css',
+            'bootstrap.css': 'bootstrap.css',
+            'bootstrap.min.css': 'bootstrap.min.css'
+          },
+          'js': {
+            'bootstrap.js': 'bootstrap.js',
+            'bootstrap.min.js': 'bootstrap.min.js'
+          }
+        },
+        'stryker-80x80.png': 'stryker-80x80.png',
+        'stryker.css': 'stryker.css',
+        'stryker.js': 'stryker.js'
       },
       'coverage': {
         'CoverageInstrumenter.js.html': 'CoverageInstrumenter.js.html',
         'CoverageInstrumenterStream.js.html': 'CoverageInstrumenterStream.js.html',
         'index.html': 'index.html'
       },
-      'highlightjs': {
-        'styles': {
-          'default.css': 'default.css'
-        }
-      },
+
       'index.html': 'index.html',
       'initializer': {
         'NpmClient.js.html': 'NpmClient.js.html',
@@ -103,10 +123,6 @@ describe('Html report of stryker', function () {
         'StrictReporter.js.html': 'StrictReporter.js.html',
         'index.html': 'index.html'
       },
-      'stryker-80x80.png': 'stryker-80x80.png',
-      'stryker-cli.js.html': 'stryker-cli.js.html',
-      'stryker.css': 'stryker.css',
-      'stryker.js': 'stryker.js',
       'utils': {
         'StrykerTempFolder.js.html': 'StrykerTempFolder.js.html',
         'Task.js.html': 'Task.js.html',

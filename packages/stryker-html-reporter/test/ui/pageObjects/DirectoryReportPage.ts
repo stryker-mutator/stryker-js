@@ -1,9 +1,8 @@
 import ResultTable from './ResultTable';
-import { browser, by, $ } from 'protractor';
+import { $ } from 'protractor';
+import Page from './Page';
 
-export default class DirectoryReportPage {
-
-  title = () => browser.element(by.tagName('h1')).getText();
+export default class DirectoryReportPage extends Page {
 
   strykerImageSize = () => $('.stryker-image').getSize();
   strykerImageLocation = () => $('.stryker-image').getLocation();

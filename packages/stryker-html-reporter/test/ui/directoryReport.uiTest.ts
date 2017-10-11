@@ -45,8 +45,8 @@ describe('Directory results page', () => {
       });
     });
 
-    it('show circle.js in the correct way', async () => {
-      const circleRow = await page.resultTable().row('  Circle.js');
+    it('should show circle.js in the correct way', async () => {
+      const circleRow = await page.resultTable().row('Circle.js');
       return Promise.all([
         expect(circleRow.progressBar().percentageText()).to.eventually.be.eq('33.33 %'),
         expect(circleRow.mutationScore()).to.eventually.be.eq('33.33'),
@@ -54,7 +54,7 @@ describe('Directory results page', () => {
         expect(circleRow.survived()).to.eventually.be.eq('2'),
         expect(circleRow.timeout()).to.eventually.be.eq('0'),
         expect(circleRow.noCoverage()).to.eventually.be.eq('2'),
-        expect(circleRow.errors()).to.eventually.be.eq('0'),
+        expect(circleRow.runtimeErrors()).to.eventually.be.eq('0'),
         expect(circleRow.totalDetected()).to.eventually.be.eq('2'),
         expect(circleRow.totalUndetected()).to.eventually.be.eq('4'),
         expect(circleRow.totalMutants()).to.eventually.be.eq('6')]);
