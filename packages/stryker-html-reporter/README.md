@@ -7,14 +7,11 @@
 
 An HTML Reporter for the JavaScript mutation testing framework [Stryker](https://stryker-mutator.github.io)
 
-## Warning
-The stryker-html-reporter will be available from stryker v0.4.0 onward (which should be released soon).
-
 ## Example
 
-Click on the image below to see a real-life example of a report generated from a test un on stryker itself!
+Click on the image below to see a real-life example of a report generated from a test run on stryker itself!
 
-[![example](https://github.com/stryker-mutator/stryker-html-reporter/raw/master/example.png)](https://stryker-mutator.github.io/stryker-html-reporter)
+[![example](https://github.com/stryker-mutator/stryker/blob/html-docs/packages/stryker-html-reporter/example.png)](https://stryker-mutator.github.io/stryker-html-reporter)
 
 ## Install
 
@@ -41,7 +38,7 @@ In order to use the reporter, you must add `'html'` as single reporter or add it
 
 ### Options
 
-You can configure the html reporter by adding a `htmlReporter` to your config.
+You can configure the html reporter by adding a `htmlReporter` object to your config.
 
 #### htmlReporter.baseDir
 
