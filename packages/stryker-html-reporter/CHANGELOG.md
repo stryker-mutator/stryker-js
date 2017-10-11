@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.9.1"></a>
+## [0.9.1](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.9.0...stryker-html-reporter@0.9.1) (2017-10-11)
+
+
+### Bug Fixes
+
+* **readme:** Remove old warning and update the example image ([#416](https://github.com/stryker-mutator/stryker/issues/416)) ([7e66214](https://github.com/stryker-mutator/stryker/commit/7e66214))
+
+
+
+
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.8.0...stryker-html-reporter@0.9.0) (2017-10-10)
 
