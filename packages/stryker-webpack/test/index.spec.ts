@@ -8,7 +8,7 @@ describe("index.js", () => {
          main = new Main();
     });
 
-    it("Should return \"Hello world\" when the hello function is called", () => {
+    it("should return \"Hello world\" when the hello function is called", () => {
         expect(main.hello()).to.equal("Hello World!");
     });
 });
