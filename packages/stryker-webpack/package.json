@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "name": "stryker-webpack",
+  "version": "0.0.1",
+  "description": "A plugin for Webpack-based projects using Stryker",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Archcry/stryker-webpack.git"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "typescript",
+    "webpack",
+    "stryker-transpiler"
+  ],
+  "author": "Sander koenders <sanderkoenders@gmail.com>",
+  "contributors": [
+    "Simon de Lang <simondelang@gmail.com>",
+    "Nico Jansen <jansennico@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Archcry/stryker-webpack/issues"
+  },
+  "homepage": "https://github.com/Archcry/stryker-webpack#readme"
+}
