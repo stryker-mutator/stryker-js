@@ -5,7 +5,9 @@
   "description": "A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "pretest": "tsc",
+    "test": "mocha --recursive test/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -30,5 +32,15 @@
   "bugs": {
     "url": "https://github.com/Archcry/stryker-webpack/issues"
   },
-  "homepage": "https://github.com/Archcry/stryker-webpack#readme"
+  "homepage": "https://github.com/Archcry/stryker-webpack#readme",
+  "devDependencies": {
+    "@types/chai": "^4.0.4",
+    "@types/mocha": "^2.2.43",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "typescript": "^2.2.2"
+  },
+  "peerDependencies": {
+    "webpack": "^3.7.1"
+  }
 }
