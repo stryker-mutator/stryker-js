@@ -4,5 +4,6 @@
 
 process.title = 'stryker';
 
-// Run the TypeScript compiled stryker-cli.js
-require('../src/stryker-cli');
+// Run the Stryker CLI
+const StrykerCli = require('../src/StrykerCli').default;
+new StrykerCli(process.argv).run();
