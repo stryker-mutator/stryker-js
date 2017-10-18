@@ -11,13 +11,13 @@ export default class StrykerCli {
   private command: string = '';
   private strykerConfig: string | null = null;
 
-  constructor(private argv: string[]){}
+  constructor(private argv: string[]) { }
 
   private list(val: string) {
     return val.split(',');
   }
 
-  public run()  {
+  public run() {
     program
       .version(require('../package.json').version)
       .usage('<command> [options] [stryker.conf.js]')
