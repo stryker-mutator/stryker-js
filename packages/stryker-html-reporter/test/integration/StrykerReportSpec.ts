@@ -8,7 +8,7 @@ const REPORT_DIR = 'reports/mutation/stryker';
 
 describe('Html report of stryker', function () {
   let sut: any;
-  this.timeout(10000);
+  this.timeout(20000);
 
   beforeEach(() => {
     const config = new Config();
