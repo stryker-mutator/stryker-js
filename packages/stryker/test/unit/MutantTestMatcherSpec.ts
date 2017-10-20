@@ -5,16 +5,16 @@ import { expect } from 'chai';
 import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
 import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
-import { StatementMapDictionary } from '../../src/coverage/CoverageInstrumenter';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import currentLogMock from '../helpers/log4jsMock';
 import { file, mutant, Mock, mock } from '../helpers/producers';
 import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
+import { StatementMapDictionary } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 
 describe('MutantTestMatcher', () => {
-  
+
   let log: Mock<Logger>;
   let sut: MutantTestMatcher;
   let mutants: Mutant[];
@@ -87,22 +87,24 @@ describe('MutantTestMatcher', () => {
 
           it('should add both tests to the mutants', () => {
             const result = sut.matchWithMutants();
-            expect(result[0].scopedTestIds).deep.eq([0, 1]);
-            expect(result[1].scopedTestIds).deep.eq([0, 1]);
+            const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
+            expect(result[0].selectedTests).deep.eq(expectedTestSelection);
+            expect(result[1].selectedTests).deep.eq(expectedTestSelection);
           });
+
           it('should have both mutants matched', () => {
             const result = sut.matchWithMutants();
-            let matchedMutants: MatchedMutant[] = [
+            const matchedMutants: MatchedMutant[] = [
               {
                 mutatorName: result[0].mutatorName,
-                scopedTestIds: result[0].scopedTestIds,
+                scopedTestIds: result[0].selectedTests.map(test => test.id),
                 timeSpentScopedTests: result[0].timeSpentScopedTests,
                 fileName: result[0].fileName,
                 replacement: result[0].replacement
               },
               {
                 mutatorName: result[1].mutatorName,
-                scopedTestIds: result[1].scopedTestIds,
+                scopedTestIds: result[1].selectedTests.map(test => test.id),
                 timeSpentScopedTests: result[1].timeSpentScopedTests,
                 fileName: result[1].fileName,
                 replacement: result[1].replacement
@@ -167,8 +169,8 @@ describe('MutantTestMatcher', () => {
 
           it('should not have added the run results to the mutants', () => {
             const result = sut.matchWithMutants();
-            expect(result[0].scopedTestIds).lengthOf(0);
-            expect(result[1].scopedTestIds).lengthOf(0);
+            expect(result[0].selectedTests).lengthOf(0);
+            expect(result[1].selectedTests).lengthOf(0);
           });
         });
 
@@ -198,8 +200,9 @@ describe('MutantTestMatcher', () => {
 
           it('should have added the run results to the mutants', () => {
             const result = sut.matchWithMutants();
-            expect(result[0].scopedTestIds).deep.eq([0, 1]);
-            expect(result[1].scopedTestIds).deep.eq([0, 1]);
+            const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
+            expect(result[0].selectedTests).deep.eq(expectedTestSelection);
+            expect(result[1].selectedTests).deep.eq(expectedTestSelection);
           });
         });
 
@@ -222,8 +225,9 @@ describe('MutantTestMatcher', () => {
 
           it('should add all test results to the mutant that is covered by the baseline', () => {
             const result = sut.matchWithMutants();
-            expect(result[0].scopedTestIds).deep.eq([0, 1]);
-            expect(result[1].scopedTestIds).deep.eq([0, 1]);
+            const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
+            expect(result[0].selectedTests).deep.eq(expectedTestSelection);
+            expect(result[1].selectedTests).deep.eq(expectedTestSelection);
           });
         });
       });
@@ -247,7 +251,10 @@ describe('MutantTestMatcher', () => {
             timeSpentMs: 5
           });
           sut.enrichWithCoveredTests(testableMutant);
-          expect(testableMutant.scopedTestIds).deep.eq([0]);
+          expect(testableMutant.selectedTests).deep.eq([{
+            id: 0,
+            name: 'controllers SearchResultController should open a modal dialog with product details'
+          }]);
         });
       });
     });
@@ -261,8 +268,9 @@ describe('MutantTestMatcher', () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
       runResult.tests.push(testResult(), testResult());
       const result = sut.matchWithMutants();
-      expect(result[0].scopedTestIds).deep.eq([0, 1]);
-      expect(result[1].scopedTestIds).deep.eq([0, 1]);
+      const expectedTestSelection = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
+      expect(result[0].selectedTests).deep.eq(expectedTestSelection);
+      expect(result[1].selectedTests).deep.eq(expectedTestSelection);
       expect(log.warn).to.have.been.calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'all');
     });
   });
@@ -275,8 +283,9 @@ describe('MutantTestMatcher', () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
       runResult.tests.push(testResult(), testResult());
       const result = sut.matchWithMutants();
-      expect(result[0].scopedTestIds).deep.eq([0, 1]);
-      expect(result[1].scopedTestIds).deep.eq([0, 1]);
+      const expectedTestSelection = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
+      expect(result[0].selectedTests).deep.eq(expectedTestSelection);
+      expect(result[1].selectedTests).deep.eq(expectedTestSelection);
     });
   });
 });

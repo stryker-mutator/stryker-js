@@ -14,13 +14,13 @@ import SandboxPool from '../SandboxPool';
 export default class MutationTestExecutor {
 
 
-  constructor(private config: Config, private inputFiles: File[], private transpiledFiles: File[], private testFramework: TestFramework | null, private reporter: StrictReporter) {
+  constructor(private config: Config, private inputFiles: File[], private testFramework: TestFramework | null, private reporter: StrictReporter) {
   }
 
   async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
-    const sandboxPool = new SandboxPool(this.config, this.testFramework, this.transpiledFiles);
     const mutantTranspiler = new MutantTranspiler(this.config);
-    await mutantTranspiler.initialize(this.inputFiles);
+    const transpileResult = await mutantTranspiler.initialize(this.inputFiles);
+    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpileResult.outputFiles);
     const result = await this.runInsideSandboxes(
       sandboxPool.streamSandboxes(),
       mutantTranspiler.transpileMutants(allMutants));
@@ -61,7 +61,7 @@ function runInSandbox([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]):
   if (transpiledMutant.transpileResult.error) {
     const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
     return Promise.resolve({ sandbox, result });
-  } else if (!transpiledMutant.mutant.scopedTestIds.length) {
+  } else if (!transpiledMutant.mutant.selectedTests.length) {
     const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
     return Promise.resolve({ sandbox, result });
   } else {

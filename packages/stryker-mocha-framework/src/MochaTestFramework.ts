@@ -1,4 +1,4 @@
-import { TestFramework } from 'stryker-api/test_framework';
+import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 
 export default class MochaTestFramework implements TestFramework {
 
@@ -14,22 +14,23 @@ export default class MochaTestFramework implements TestFramework {
     });`;
   }
 
-  filter(testIds: number[]) {
-    return `
-      var mocha = window.mocha || require('mocha');
+  filter(testSelections: TestSelection[]) {
+    const selectedTestNames = testSelections.map(selection => selection.name);
+    return `var Mocha = window.Mocha || require('mocha');
+      var selectedTestNames = ${JSON.stringify(selectedTestNames)};
       if (window.____mochaAddTest) {
-        mocha.Suite.prototype.addTest = window.____mochaAddTest;
+        Mocha.Suite.prototype.addTest = window.____mochaAddTest;
       } else {
-        window.____mochaAddTest = mocha.Suite.prototype.addTest
+        window.____mochaAddTest = Mocha.Suite.prototype.addTest
       }
-      var current = 0;
-      var realAddTest = mocha.Suite.prototype.addTest;
-      mocha.Suite.prototype.addTest = function () {
-        if (${JSON.stringify(testIds)}.indexOf(current) > -1) {
+      var realAddTest = Mocha.Suite.prototype.addTest;
+      
+      Mocha.Suite.prototype.addTest = function (test) {
+        // Only actually add the tests with the expected names
+        var name = this.fullTitle() + ' ' + test.title;
+        if(selectedTestNames.indexOf(name) !== -1) {
           realAddTest.apply(this, arguments);
         }
-        current++;
-      };
-    `;
+      };`;
   }
 }

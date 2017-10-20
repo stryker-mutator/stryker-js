@@ -4,17 +4,18 @@ import { Mutant } from 'stryker-api/mutant';
 import SourceFile, { isLineBreak } from './SourceFile';
 import { MutantStatus, MutantResult } from 'stryker-api/report';
 import { freezeRecursively } from './utils/objectUtils';
+import { TestSelection } from 'stryker-api/test_framework';
 
 
 export default class TestableMutant {
 
-  private _scopedTestIds: number[] = [];
+  private _selectedTests: TestSelection[] = [];
   public specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
   private _location: Location;
 
-  get scopedTestIds(): number[] {
-    return this._scopedTestIds;
+  get selectedTests(): TestSelection[] {
+    return this._selectedTests;
   }
 
   get timeSpentScopedTests() {
@@ -63,7 +64,7 @@ export default class TestableMutant {
   }
 
   public addTestResult(index: number, testResult: TestResult) {
-    this._scopedTestIds.push(index);
+    this._selectedTests.push({ id: index, name: testResult.name });
     this._timeSpentScopedTests += testResult.timeSpentMs;
   }
 

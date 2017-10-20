@@ -11,7 +11,6 @@ import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFac
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import { TempFolder } from './utils/TempFolder';
 import * as fileUtils from './utils/fileUtils';
-import CoverageInstrumenter from './coverage/CoverageInstrumenter';
 import TestableMutant from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
 
@@ -28,7 +27,7 @@ export default class Sandbox {
   private workingFolder: string;
   private testHooksFile = path.resolve('___testHooksForStryker.js');
 
-  private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private coverageInstrumenter: CoverageInstrumenter | null) {
+  private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null) {
     this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.files = files.slice(); // Create a copy
@@ -36,7 +35,7 @@ export default class Sandbox {
       this.testHooksFile = path.resolve('___testHooksForStryker.js');
       this.files.unshift({
         name: this.testHooksFile,
-        content: coverageInstrumenter && coverageInstrumenter.hooksForTestRun() || '',
+        content: '',
         mutated: false,
         included: true,
         transpiled: false,
@@ -50,9 +49,9 @@ export default class Sandbox {
     return this.initializeTestRunner();
   }
 
-  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, coverageInstrumenter: CoverageInstrumenter | null)
+  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null)
     : Promise<Sandbox> {
-    const sandbox = new Sandbox(options, index, files, testFramework, coverageInstrumenter);
+    const sandbox = new Sandbox(options, index, files, testFramework);
     return sandbox.initialize().then(() => sandbox);
   }
 
@@ -108,14 +107,12 @@ export default class Sandbox {
         return Promise.resolve();
       default:
         const cwd = process.cwd();
-        const relativePath = file.name.substr(cwd.length);
-        const folderName = this.workingFolder + path.dirname(relativePath);
+        const relativePath = path.relative(cwd, file.name);
+        const folderName = path.join(this.workingFolder, path.dirname(relativePath));
         mkdirp.sync(folderName);
         const targetFile = path.join(folderName, path.basename(relativePath));
         this.fileMap[file.name] = targetFile;
-        const instrumentingStream = this.coverageInstrumenter ?
-          this.coverageInstrumenter.instrumenterStreamForFile(file) : null;
-        return fileUtils.writeFile(targetFile, file.content, instrumentingStream);
+        return fileUtils.writeFile(targetFile, file.content);
     }
   }
 
@@ -145,7 +142,7 @@ export default class Sandbox {
 
   private filterTests(mutant: TestableMutant) {
     if (this.testFramework) {
-      let fileContent = wrapInClosure(this.testFramework.filter(mutant.scopedTestIds));
+      let fileContent = wrapInClosure(this.testFramework.filter(mutant.selectedTests));
       return fileUtils.writeFile(this.fileMap[this.testHooksFile], fileContent);
     } else {
       return Promise.resolve(void 0);

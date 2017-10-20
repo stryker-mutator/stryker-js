@@ -32,7 +32,7 @@ export default class SandboxPool {
     this.log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
 
     const sandboxes = Observable.range(0, numConcurrentRunners)
-      .flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, null)));
+      .flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework)));
     return sandboxes;
   }
 

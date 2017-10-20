@@ -16,10 +16,12 @@ describe('MochaTestFramework', () => {
   });
 
   describe('filter()', () => {
-    it('should result in a filtering of mocha it\'s', () =>
-      expect(sut.filter([5, 8]))
-        .to.contain('var realAddTest = mocha.Suite.prototype.addTest;')
-        .and.to.contain('if ([5,8].indexOf(current) > -1)')
-        .and.to.contain('realAddTest.apply(this, arguments);'));
+    it('should result in a filtering of mocha it\'s', () => {
+      expect(sut.filter([{ id: 5, name: 'test five' }, { id: 8, name: 'test eight' }]))
+        .to.contain('var realAddTest = Mocha.Suite.prototype.addTest;')
+        .and.to.contain('selectedTestNames = ["test five","test eight"];')
+        .and.to.contain('if(selectedTestNames.indexOf(name) !== -1)')
+        .and.to.contain('realAddTest.apply(this, arguments);');
+    });
   });
 });

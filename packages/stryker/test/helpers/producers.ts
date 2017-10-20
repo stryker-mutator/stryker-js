@@ -3,7 +3,7 @@ import { Mutant } from 'stryker-api/mutant';
 import { FileLocation, TranspileResult } from 'stryker-api/transpile';
 import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
-import { TestFramework } from 'stryker-api/test_framework';
+import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
 import { MutationScoreThresholds, File, Location, TextFile, BinaryFile, FileKind, WebFile, FileDescriptor } from 'stryker-api/core';
 import TestableMutant from '../../src/TestableMutant';
@@ -114,7 +114,7 @@ export const fileLocation = factory<FileLocation>({
 export const testFramework = factory<TestFramework>({
   beforeEach(codeFragment: string) { return `beforeEach(){ ${codeFragment}}`; },
   afterEach(codeFragment: string) { return `afterEach(){ ${codeFragment}}`; },
-  filter(ids: number[]) { return `filter: ${ids}`; }
+  filter(selections: TestSelection[]) { return `filter: ${selections}`; }
 });
 
 export const scoreResult = factoryMethod<ScoreResult>(() => ({

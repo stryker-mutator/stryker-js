@@ -1,3 +1,5 @@
+import TestSelection from './TestSelection';
+
 /**
  * Represents a TestFramework which can select one or more tests to be executed.
  */
@@ -20,10 +22,10 @@ interface TestFramework {
    * will be responsible for filtering out tests with given ids.
    * The first test gets id 0, the second id 1, etc.
    * 
-   * @param indices A list of testId's to select.
+   * @param selections A list indicating the tests to select.
    * @returns A script which, if included in the test run, will filter out the correct tests.
    */
-  filter(ids: number[]): string;
+  filter(selections: TestSelection[]): string;
 }
 
 export default TestFramework;

@@ -2,13 +2,13 @@ import { EOL } from 'os';
 import { RunStatus, RunResult, TestResult, TestStatus } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { Config } from 'stryker-api/config';
-import { TranspileResult } from 'stryker-api/transpile';
+import { TranspileResult, TranspilerOptions, Transpiler } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
 import TranspilerFacade from '../transpiler/TranspilerFacade';
-import CoverageInstrumenter from '../coverage/CoverageInstrumenter';
 import { getLogger } from 'log4js';
 import Sandbox from '../Sandbox';
 import Timer from '../utils/Timer';
+import CoverageInstrumenterTranspiler, { StatementMapDictionary } from '../transpiler/CoverageInstrumenterTranspiler';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
@@ -18,13 +18,14 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 export interface InitialTestRunResult {
   runResult: RunResult;
   transpiledFiles: File[];
+  statementMaps: StatementMapDictionary;
 }
 
 export default class InitialTestExecutor {
 
   private readonly log = getLogger(InitialTestExecutor.name);
 
-  constructor(private options: Config, private files: File[], private coverageInstrumenter: CoverageInstrumenter, private testFramework: TestFramework | null, private timer: Timer) {
+  constructor(private options: Config, private files: File[], private testFramework: TestFramework | null, private timer: Timer) {
   }
 
   async run(): Promise<InitialTestRunResult> {
@@ -39,28 +40,18 @@ export default class InitialTestExecutor {
     }
   }
 
-  private createDryRunResult(): InitialTestRunResult {
-    return {
-      runResult: {
-        status: RunStatus.Complete,
-        tests: [],
-        errorMessages: []
-      },
-      transpiledFiles: []
-    };
-  }
-
-  private async initialRunInSandbox(): Promise<{ runResult: RunResult, transpiledFiles: File[] }> {
-    const transpiler = new TranspilerFacade({ config: this.options, keepSourceMaps: true });
-    const transpileResult = transpiler.transpile(this.files);
+  private async initialRunInSandbox(): Promise<InitialTestRunResult> {
+    const coverageInstrumenterTranspiler = this.createCoverageInstrumenterTranspiler();
+    const transpilerFacade = this.createTranspilerFacade(coverageInstrumenterTranspiler);
+    const transpileResult = transpilerFacade.transpile(this.files);
     if (transpileResult.error) {
       throw new Error(`Could not transpile input files: ${transpileResult.error}`);
     } else {
       this.logTranspileResult(transpileResult);
-      const sandbox = await Sandbox.create(this.options, 0, transpileResult.outputFiles, this.testFramework, this.coverageInstrumenter);
+      const sandbox = await Sandbox.create(this.options, 0, transpileResult.outputFiles, this.testFramework);
       const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
       await sandbox.dispose();
-      return { runResult, transpiledFiles: transpileResult.outputFiles };
+      return { runResult, transpiledFiles: transpileResult.outputFiles, statementMaps: coverageInstrumenterTranspiler.statementMapsPerFile };
     }
   }
 
@@ -86,6 +77,36 @@ export default class InitialTestExecutor {
         break;
     }
     throw new Error('Something went wrong in the initial test run');
+  }
+
+  private createDryRunResult(): InitialTestRunResult {
+    return {
+      runResult: {
+        status: RunStatus.Complete,
+        tests: [],
+        errorMessages: []
+      },
+      transpiledFiles: [],
+      statementMaps: Object.create(null)
+    };
+  }
+
+  /**
+   * Creates a facade for the transpile pipeline.
+   * Also includes the coverage instrumenter transpiler,
+   * which is used to instrument for code coverage when needed.
+   */
+  private createTranspilerFacade(coverageInstrumenterTranspiler: CoverageInstrumenterTranspiler): Transpiler {
+    const transpilerSettings: TranspilerOptions = { config: this.options, keepSourceMaps: true };
+    const transpiler = new TranspilerFacade(transpilerSettings, {
+      name: CoverageInstrumenterTranspiler.name,
+      transpiler: coverageInstrumenterTranspiler
+    });
+    return transpiler;
+  }
+
+  private createCoverageInstrumenterTranspiler() {
+    return new CoverageInstrumenterTranspiler({ keepSourceMaps: true, config: this.options }, this.testFramework);
   }
 
   private logTranspileResult(transpileResult: TranspileResult) {

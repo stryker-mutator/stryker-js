@@ -8,7 +8,7 @@ const REPORT_DIR = 'reports/mutation/stryker';
 
 describe('Html report of stryker', function () {
   let sut: any;
-  this.timeout(10000);
+  this.timeout(20000);
 
   beforeEach(() => {
     const config = new Config();
@@ -64,6 +64,8 @@ describe('Html report of stryker', function () {
             'bootstrap.min.css': 'bootstrap.min.css'
           },
           'js': {
+            'bootstrap.bundle.js': 'bootstrap.bundle.js',
+            'bootstrap.bundle.min.js': 'bootstrap.bundle.min.js',
             'bootstrap.js': 'bootstrap.js',
             'bootstrap.min.js': 'bootstrap.min.js'
           }
