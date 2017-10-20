@@ -23,8 +23,6 @@ export default class ES6Mutator implements Mutator {
     const factory = NodeMutatorFactory.instance();
     const mutators = factory.knownNames().map(name => factory.create(name, undefined));
 
-    this.log.info(`${mutators.length} mutators`);
-
     inputFiles.filter(i => i.kind === FileKind.Text && i.mutated).forEach((file: TextFile) => {
       const ast = BabelParser.getAst(file.content);
       const baseAst = copy(ast, true);
