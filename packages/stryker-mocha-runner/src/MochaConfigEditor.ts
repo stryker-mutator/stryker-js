@@ -7,7 +7,7 @@ import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
 
 export default class MochaConfigEditor implements ConfigEditor {
 
-  private log = getLogger('MochaTestRunner');
+  private log = getLogger(MochaConfigEditor.name);
 
   edit(config: Config): void {
     const mochaOptions = config[mochaOptionsKey];
