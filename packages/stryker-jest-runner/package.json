@@ -28,7 +28,7 @@
   "peerDependencies": {
     "jest-cli": ">=18.0.0",
     "jest-runtime": ">=18.0.0",
-    "stryker-api": "^0.9.0"
+    "stryker-api": "^0.10.0"
   },
   "devDependencies": {
     "@types/chai": "^3.4.32",
