@@ -6,7 +6,7 @@ import JasmineTestFramework from '../../src/JasmineTestFramework';
 import * as fs from 'fs';
 import * as rimraf from 'rimraf';
 
-interface JasmineTest  {
+interface JasmineTest {
   id: string;
   description: string;
   fullName: string;
@@ -69,6 +69,17 @@ describe('Selecting tests with nested suites', function () {
     expect(result[0].status).eq('disabled');
     expect(result[1].status).eq('disabled');
     expect(result[2].status).eq('passed');
+    expect(result[2].fullName).eq('outer test 3');
+  });
+
+  it('should only run tests 1 and 3 if filtered on indices 0 and 2', () => {
+    filter([0, 2]);
+    const result = execJasmine(selectTestFile, nestedSuiteFile);
+    expect(result).lengthOf(3);
+    expect(result[0].status).eq('passed');
+    expect(result[1].status).eq('disabled');
+    expect(result[2].status).eq('passed');
+    expect(result[0].fullName).eq('outer test 1');
     expect(result[2].fullName).eq('outer test 3');
   });
 

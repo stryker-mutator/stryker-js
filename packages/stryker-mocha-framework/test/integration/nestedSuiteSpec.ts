@@ -68,6 +68,15 @@ describe('Selecting tests with nested suites', function () {
     expect(result.passes[0].fullTitle).eq('outer inner test 3');
   });
 
+  it('should run tests 1 and 3 if filtered on indices 0 and 2', () => {
+    filter([0, 2]);
+    const result = execMocha(selectTestFile, nestedSuiteFile);
+    expect(result.tests).lengthOf(2);
+    expect(result.passes).lengthOf(2);
+    expect(result.passes[0].fullTitle).eq('outer test 1');
+    expect(result.passes[1].fullTitle).eq('outer inner test 3');
+  });
+
   function filter(testIds: number[]) {
     const selections = testIds.map(id => testSelections[id]);
     const filterFn = `(function (window) {${sut.filter(selections)}})(global);`;

@@ -23,7 +23,6 @@ export default class MochaTestFramework implements TestFramework {
       } else {
         window.____mochaAddTest = Mocha.Suite.prototype.addTest
       }
-      var current = 0;
       var realAddTest = Mocha.Suite.prototype.addTest;
       
       Mocha.Suite.prototype.addTest = function (test) {
