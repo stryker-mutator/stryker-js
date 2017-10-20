@@ -1,6 +1,7 @@
 module.exports = function (config) {
 
   var typescript = true;
+  var es6 = false;
 
   if (typescript) {
     config.set({
@@ -29,7 +30,7 @@ module.exports = function (config) {
         { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false }
       ],
       coverageAnalysis: 'perTest',
-      mutator: 'es5'
+      mutator: es6 ? 'es6' : 'es5'
     });
   }
 
@@ -47,7 +48,8 @@ module.exports = function (config) {
       require.resolve('../stryker-mocha-runner/src/index'),
       require.resolve('../stryker-mocha-framework/src/index'),
       require.resolve('../stryker-html-reporter/src/index'),
-      require.resolve('../stryker-typescript/src/index')
+      require.resolve('../stryker-typescript/src/index'),
+      require.resolve('../stryker-es6-mutator/src/index')
     ]
   });
 };

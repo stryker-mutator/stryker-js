@@ -1,0 +1,48 @@
+{
+  "name": "stryker-es6-mutator",
+  "version": "0.1.0",
+  "description": "A plugin for ES6-based projects using Stryker",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" "
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "es6",
+    "stryker-mutator"
+  ],
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "author": "Simon de Lang <simondelang@gmail.com>",
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>"
+  ],
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-es6-mutator#readme",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "log4js": "^1.1.1",
+    "tslib": "^1.8.0"
+  },
+  "devDependencies": {
+    "stryker-api": "^0.9.0"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.9.0",
+    "typescript": "^2.5.3"
+  }
+}
