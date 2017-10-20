@@ -1,4 +1,4 @@
-var MyMath = require('../src/MyMath');
+var MyMath = require('./MyMath');
 
 describe('MyMath should fail', function () {
   var myMath;
