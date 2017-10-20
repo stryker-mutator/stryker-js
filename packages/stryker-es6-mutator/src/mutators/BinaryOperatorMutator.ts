@@ -19,7 +19,7 @@ export default class BinaryOperatorMutator implements NodeMutator {
     '!==': '==='
   };
 
-  name: 'BinaryOperator';
+  name = 'BinaryOperator';
 
   mutate(node: IdentifiedNode, clone: <T extends IdentifiedNode> (node: T, deep?: boolean) => T) {
     if (types.isBinaryExpression(node)) {
