@@ -32,6 +32,7 @@ describe('Sandbox', () => {
   let workingFolder: string;
   let expectedTargetFileToMutate: string;
   let expectedTestFrameworkHooksFile: string;
+  let fileSystemStub: sinon.SinonStub;
 
   beforeEach(() => {
     options = { port: 43, timeoutFactor: 23, timeoutMs: 1000, testRunner: 'sandboxUnitTestRunner' } as any;
@@ -51,7 +52,8 @@ describe('Sandbox', () => {
     ];
     files = (textFiles as File[]).concat([webFile({ name: webFileUrl, mutated: false, included: true, transpiled: false })]);
     sandbox.stub(TempFolder.instance(), 'createRandomFolder').returns(workingFolder);
-    sandbox.stub(fileUtils, 'writeFile').resolves();
+    fileSystemStub = sandbox.stub(fileUtils, 'writeFile');
+    fileSystemStub.resolves();
     sandbox.stub(mkdirp, 'sync').returns('');
     sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
   });
@@ -190,7 +192,10 @@ describe('Sandbox', () => {
         });
 
         it('should have reset the source file', () => {
-          expect(fileUtils.writeFile).to.have.been.calledWith(expectedTargetFileToMutate, 'original code');
+          let timesCalled = fileSystemStub.getCalls().length - 1;
+          let lastCall = fileSystemStub.getCall(timesCalled);
+
+          expect(lastCall.args).to.deep.equal([expectedTargetFileToMutate, 'original code']);
         });
       });
     });
