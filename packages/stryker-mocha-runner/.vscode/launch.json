@@ -2,47 +2,36 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run unit tests",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
-      "stopOnEntry": false,
+      "name": "Unit tests",
+      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [
-        "mochaTest:unit"
+        "-u",
+        "tdd",
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceFolder}/test/helpers/**/*.js",
+        "${workspaceFolder}/test/unit/**/*.js"
       ],
-      "cwd": "${workspaceRoot}/.",
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "externalConsole": false,
-      "sourceMaps": true,
-      "outDir": "${workspaceRoot}"
+      "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "Run integration tests",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
-      // "preLaunchTask": "build",
-      "stopOnEntry": false,
+      "name": "Integration tests",
+      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [
-        "integration"
+        "-u",
+        "tdd",
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceFolder}/test/helpers/**/*.js",
+        "${workspaceFolder}/test/integration/**/*.js"
       ],
-      "cwd": "${workspaceRoot}/.",
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "externalConsole": false,
-      "sourceMaps": true,
-      "outDir": "${workspaceRoot}"
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }

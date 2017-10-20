@@ -3,7 +3,7 @@ import MochaTestRunner from '../../src/MochaTestRunner';
 import { TestResult, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
-import { FileKind } from 'stryker-api/core';
+import { fileDescriptor } from '../helpers/mockHelpers';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -15,7 +15,11 @@ const countSucceeded = (runResult: RunResult) =>
 const countFailed = (runResult: RunResult) =>
   countTests(runResult, t => t.status === TestStatus.Failed);
 
-describe('MochaTestRunner', function () {
+function resolve(fileName: string) {
+  return path.resolve(__dirname, '..', '..', fileName);
+}
+
+describe('Running a sample project', function () {
 
   let sut: MochaTestRunner;
   this.timeout(10000);
@@ -25,8 +29,8 @@ describe('MochaTestRunner', function () {
     beforeEach(() => {
       const testRunnerOptions = {
         files: [
-          file('./testResources/sampleProject/src/MyMath.js'),
-          file('./testResources/sampleProject/test/MyMathSpec.js')],
+          fileDescriptor({ name: resolve('./testResources/sampleProject/src/MyMath.js') }),
+          fileDescriptor({ name: resolve('./testResources/sampleProject/test/MyMathSpec.js') })],
         strykerOptions: {},
         port: 1234
       };
@@ -55,9 +59,9 @@ describe('MochaTestRunner', function () {
     beforeEach(() => {
       let options = {
         files: [
-          file('testResources/sampleProject/src/MyMath.js'),
-          file('testResources/sampleProject/src/Error.js', false, false),
-          file('testResources/sampleProject/test/MyMathSpec.js')],
+          fileDescriptor({ name: resolve('testResources/sampleProject/src/MyMath.js') }),
+          fileDescriptor({ name: resolve('testResources/sampleProject/src/Error.js'), included: false }),
+          fileDescriptor({ name: resolve('testResources/sampleProject/test/MyMathSpec.js') })],
         strykerOptions: {},
         port: 1234
       };
@@ -75,8 +79,8 @@ describe('MochaTestRunner', function () {
     before(() => {
       sut = new MochaTestRunner({
         files: [
-          file('testResources/sampleProject/src/MyMath.js'),
-          file('testResources/sampleProject/test/MyMathFailedSpec.js')],
+          fileDescriptor({ name: resolve('testResources/sampleProject/src/MyMath.js') }),
+          fileDescriptor({ name: resolve('testResources/sampleProject/test/MyMathFailedSpec.js') })],
         strykerOptions: {},
         port: 1234
       });
@@ -93,7 +97,7 @@ describe('MochaTestRunner', function () {
     beforeEach(() => {
       const testRunnerOptions = {
         files: [
-          file('./testResources/sampleProject/src/MyMath.js')],
+          fileDescriptor({ name: resolve('./testResources/sampleProject/src/MyMath.js') })],
         strykerOptions: {},
         port: 1234
       };
@@ -110,6 +114,4 @@ describe('MochaTestRunner', function () {
         return true;
       }));
   });
-
-  let file = (name: string, mutated = true, included = true, transpiled = true, kind = FileKind.Text) => ({ name: path.resolve(name), mutated, included, kind, transpiled });
 });
