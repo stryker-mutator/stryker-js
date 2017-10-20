@@ -56,5 +56,14 @@ describe('BabelParser', () => {
       
       expect(result).to.equal('var a = 1 + 2;');
     });
+
+    it('should keep comments', () => {
+      const ast = BabelParser.getAst('"use strict"; var a = 1 + 2 /* Comment */;');
+      BabelParser.removeUseStrict(ast);
+
+      const result = BabelParser.generateCode(ast, ast.program.body[0]);
+      
+      expect(result).to.equal('var a = 1 + 2 /* Comment */;');
+    });
   });
 });
