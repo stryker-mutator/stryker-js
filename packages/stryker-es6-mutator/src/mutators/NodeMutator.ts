@@ -1,4 +1,4 @@
-import { IdentifiedNode } from '../IdentifiedNode';
+import { types } from 'babel-core';
 
 /**
  * Represents a class which can mutate parts of an Abstract Syntax Tree.
@@ -19,5 +19,5 @@ export default interface NodeMutator {
    * @param copy A function to create a copy of an object.
    * @returns An array of mutated Nodes.
    */
-  mutate(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): void | IdentifiedNode[];
+  mutate(node: types.Node, copy: <T extends types.Node> (obj: T, deep?: boolean) => T): void | types.Node[];
 }

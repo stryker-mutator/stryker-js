@@ -2,7 +2,6 @@ import * as babel from 'babel-core';
 import { getLogger } from 'log4js';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import { File, FileKind, TextFile } from 'stryker-api/core';
-import { IdentifiedNode } from './IdentifiedNode';
 import BabelParser from './helpers/BabelParser';
 import Copy from './helpers/Copy';
 import NodeMutatorFactory from './NodeMutatorFactory';
@@ -35,7 +34,7 @@ export default class ES6Mutator implements Mutator {
     return mutants;
   }
 
-  private generateMutants(nodes: IdentifiedNode[], ast: babel.types.File, file: TextFile, mutatorName: string) {
+  private generateMutants(nodes: babel.types.Node[], ast: babel.types.File, file: TextFile, mutatorName: string) {
     const mutants: Mutant[] = [];
 
     nodes.forEach(node => {

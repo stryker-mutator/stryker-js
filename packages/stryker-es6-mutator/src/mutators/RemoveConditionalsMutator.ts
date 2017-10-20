@@ -1,5 +1,4 @@
 import { types } from 'babel-core';
-import { IdentifiedNode, Identified } from '../IdentifiedNode';
 import NodeMutator from './NodeMutator';
 
 /**
@@ -10,9 +9,9 @@ export default class RemoveConditionalsMutator implements NodeMutator {
 
   constructor() { }
 
-  mutate(node: IdentifiedNode, copy: <T extends IdentifiedNode>(obj: T, deep?: boolean) => T): IdentifiedNode[] | void {
+  mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
     if ((types.isLoop(node) || types.isConditional(node)) && !types.isForXStatement(node)) {
-      let nodes: IdentifiedNode[] = [];
+      let nodes: types.Node[] = [];
 
       if (node.test) {
         nodes.push(this.booleanLiteralNode(node.test as any, false));
@@ -29,9 +28,8 @@ export default class RemoveConditionalsMutator implements NodeMutator {
     }
   }
 
-  private booleanLiteralNode(originalNode: IdentifiedNode, value: boolean): types.BooleanLiteral & Identified {
+  private booleanLiteralNode(originalNode: types.Node, value: boolean): types.BooleanLiteral {
     return {
-      nodeID: originalNode.nodeID,
       start: originalNode.start,
       end: originalNode.end,
       loc: originalNode.loc,

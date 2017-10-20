@@ -28,15 +28,6 @@ describe('BabelParser', () => {
 
       expect(nodes.length).to.equal(9);
     });
-
-    it('should identify the nodes', () => {
-      const ast = BabelParser.getAst('"use strict"; var a = 1 + 2;');
-
-      const nodes = BabelParser.getNodes(ast);
-
-      expect(nodes[0].nodeID).to.equal(0);
-      expect(nodes[1].nodeID).to.equal(1);
-    });
   });
 
   describe('generateCode', () => {

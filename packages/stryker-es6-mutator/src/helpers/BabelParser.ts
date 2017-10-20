@@ -1,19 +1,17 @@
 import * as babel from 'babel-core';
 import { NodePath } from 'babel-traverse';
-import { IdentifiedNode } from '../IdentifiedNode';
 
 export default class BabelParser {
   static getAst(code: string): babel.types.File {
     return babel.transform(code).ast as babel.types.File;
   }
 
-  static getNodes(ast: babel.types.File): IdentifiedNode[] {
-    const nodes: IdentifiedNode[] = [];
+  static getNodes(ast: babel.types.File): babel.types.Node[] {
+    const nodes: babel.types.Node[] = [];
 
     babel.traverse(ast, {
-      enter(path: NodePath<IdentifiedNode>) {
+      enter(path: NodePath<babel.types.Node>) {
         const node = path.node;
-        node.nodeID = nodes.length;
         Object.freeze(node);
         nodes.push(node);
       }

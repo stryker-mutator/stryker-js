@@ -1,5 +1,4 @@
 import { types } from 'babel-core';
-import { IdentifiedNode } from '../IdentifiedNode';
 import NodeMutator from './NodeMutator';
 
 /**
@@ -8,8 +7,8 @@ import NodeMutator from './NodeMutator';
 export default class ArrayDeclaratorMutator implements NodeMutator {
   name = 'ArrayDeclarator';
 
-  mutate(node: IdentifiedNode, copy: <T extends IdentifiedNode>(obj: T, deep?: boolean) => T): void | IdentifiedNode[] {
-    let nodes: IdentifiedNode[] = [];
+  mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[] {
+    let nodes: types.Node[] = [];
 
     if ((types.isCallExpression(node) || types.isNewExpression(node)) && types.isIdentifier(node.callee) && node.callee.name === 'Array' && node.arguments.length > 0) {
       let mutatedNode = copy(node);

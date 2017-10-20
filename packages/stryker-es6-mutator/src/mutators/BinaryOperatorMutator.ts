@@ -1,5 +1,4 @@
 import { types } from 'babel-core';
-import { IdentifiedNode } from '../IdentifiedNode';
 import NodeMutator from './NodeMutator';
 
 export default class BinaryOperatorMutator implements NodeMutator {
@@ -21,7 +20,7 @@ export default class BinaryOperatorMutator implements NodeMutator {
 
   name = 'BinaryOperator';
 
-  mutate(node: IdentifiedNode, clone: <T extends IdentifiedNode> (node: T, deep?: boolean) => T) {
+  mutate(node: types.Node, clone: <T extends types.Node> (node: T, deep?: boolean) => T): void | types.Node[] {
     if (types.isBinaryExpression(node)) {
       let mutatedOperators = this.operators[node.operator];
       if (mutatedOperators) {
@@ -29,13 +28,12 @@ export default class BinaryOperatorMutator implements NodeMutator {
           mutatedOperators = [mutatedOperators];
         }
 
-        return mutatedOperators.map<IdentifiedNode>(mutatedOperator => {
+        return mutatedOperators.map<types.Node>(mutatedOperator => {
           let mutatedNode = clone(node);
           mutatedNode.operator = mutatedOperator as any;
           return mutatedNode;
         });
       }
     }
-    return undefined;
   }
 }

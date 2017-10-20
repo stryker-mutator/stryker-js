@@ -1,17 +1,15 @@
 import { types } from 'babel-core';
-import { IdentifiedNode, Identified } from '../IdentifiedNode';
 import NodeMutator from './NodeMutator';
 
 export default class BooleanSubstitutionMutator implements NodeMutator {
   name = 'BooleanSubstitution';
 
-  mutate(node: IdentifiedNode, copy: <T extends IdentifiedNode>(obj: T, deep?: boolean) => T): IdentifiedNode[] {
-    const nodes: IdentifiedNode[] = [];
+  mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
+    const nodes: types.Node[] = [];
     
     // !a -> a
     if (types.isUnaryExpression(node) && node.operator === '!') {
-      let mutatedNode = copy(node.argument as types.Expression & Identified);
-      mutatedNode.nodeID = node.nodeID;
+      let mutatedNode = copy(node.argument);
       mutatedNode.start = node.start;
       mutatedNode.end = node.end;
       nodes.push(mutatedNode);
