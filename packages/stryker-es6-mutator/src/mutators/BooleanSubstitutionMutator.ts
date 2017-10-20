@@ -12,6 +12,8 @@ export default class BooleanSubstitutionMutator implements NodeMutator {
     if (types.isUnaryExpression(node) && node.operator === '!') {
       let mutatedNode = copy(node.argument as types.Expression & Identified);
       mutatedNode.nodeID = node.nodeID;
+      mutatedNode.start = node.start;
+      mutatedNode.end = node.end;
       nodes.push(mutatedNode);
     }
 
