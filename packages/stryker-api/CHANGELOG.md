@@ -1,7 +1,23 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="0.10.0"></a>
+## [0.10.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.9.0...stryker-api@0.10.0) (2017-10-20)
+
+
+### Bug Fixes
+
+* **mocha framework:** Select tests based on name ([#413](https://github.com/stryker-mutator/stryker/issues/413)) ([bb7c02f](https://github.com/stryker-mutator/stryker/commit/bb7c02f)), closes [#249](https://github.com/stryker-mutator/stryker/issues/249)
+
+
+### BREAKING CHANGES
+
+* **mocha framework:** * Change api of `TestFramework`. It now provides an array of `TestSelection` objects, instead of an array of numbers with test ids.
+
+
+
 
 <a name="0.9.0"></a>
 # [0.9.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.8.0...stryker-api@0.9.0) (2017-09-19)

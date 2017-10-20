@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.2.0"></a>
+## [0.2.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.1.0...stryker-typescript@0.2.0) (2017-10-20)
+
+
+### Bug Fixes
+
+* **homepage:** Set correct hompage in package.json ([#424](https://github.com/stryker-mutator/stryker/issues/424)) ([30e563b](https://github.com/stryker-mutator/stryker/commit/30e563b))
+
+
+
+
 <a name="0.1.0"></a>
 # [0.1.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.0.2...stryker-typescript@0.1.0) (2017-10-03)
 
