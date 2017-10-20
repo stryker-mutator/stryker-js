@@ -58,73 +58,32 @@ describe('Sandbox', () => {
     sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
   });
 
-  describe('when constructed with a CoverageInstrumenter', () => {
-
-    let coverageInstrumenter: {
-      instrumenterStreamForFile: sinon.SinonStub;
-      hooksForTestRun: sinon.SinonStub;
-    };
-    let expectedInstrumenterStream: any;
-
-    beforeEach(() => {
-      expectedInstrumenterStream = 'an instrumenter stream';
-      coverageInstrumenter = {
-        instrumenterStreamForFile: sinon.stub(),
-        hooksForTestRun: sinon.stub().returns('jsm.filter()')
-      };
-      coverageInstrumenter.instrumenterStreamForFile.returns(expectedInstrumenterStream);
-    });
-
-    describe('when create()', () => {
-
-      beforeEach(async () => {
-        sut = await Sandbox.create(options, 3, files, testFrameworkStub, <any>coverageInstrumenter);
-      });
-
-      it('should have instrumented the input files', () => {
-        expect(coverageInstrumenter.instrumenterStreamForFile).calledWith(expectedFileToMutate);
-        expect(coverageInstrumenter.instrumenterStreamForFile).calledWith(expectedFileToMutate);
-        expect(fileUtils.writeFile).calledWith(expectedTargetFileToMutate, expectedFileToMutate.content, expectedInstrumenterStream);
-      });
-
-      it('should have created the isolated test runner inc framework hook', () => {
-        const expectedSettings: IsolatedRunnerOptions = {
-          files: [
-            fileDescriptor({ name: expectedTestFrameworkHooksFile, mutated: false, included: true, transpiled: false }),
-            fileDescriptor({ name: expectedTargetFileToMutate, mutated: true, included: true }),
-            fileDescriptor({ name: path.join(workingFolder, 'file2'), mutated: false, included: false }),
-            fileDescriptor({ name: webFileUrl, mutated: false, included: true, kind: FileKind.Web, transpiled: false })
-          ],
-          port: 46,
-          strykerOptions: options,
-          sandboxWorkingFolder: workingFolder
-        };
-        expect(ResilientTestRunnerFactory.create).calledWith(options.testRunner, expectedSettings);
-      });
-
-
-      it('should not have written online files', () => {
-        let expectedBaseFolder = webFileUrl.substr(workingFolder.length - 1); // The Sandbox expects all files to be absolute paths. An online file is not an absolute path.
-
-        expect(mkdirp.sync).not.calledWith(workingFolder + path.dirname(expectedBaseFolder));
-        expect(fileUtils.writeFile).not.calledWith(webFileUrl, sinon.match.any, sinon.match.any);
-      });
-    });
+  it('should copy input files when created', async () => {
+    sut = await Sandbox.create(options, 3, files, null);
+    expect(fileUtils.writeFile).calledWith(expectedTargetFileToMutate, textFiles[0].content);
+    expect(fileUtils.writeFile).calledWith(path.join(workingFolder, 'file2'), textFiles[1].content);
   });
 
-  describe('when constructed with a testFramework but without a CoverageInstrumenter', () => {
+  it('should copy a local file when created', async () => {
+    sut = await Sandbox.create(options, 3, [textFile({ name: 'localFile.js', content: 'foobar' })], null);
+    expect(fileUtils.writeFile).calledWith(path.join(workingFolder, 'localFile.js'), 'foobar');
+  });
+
+  describe('when constructed with a testFramework', () => {
 
     beforeEach(async () => {
-      sut = await Sandbox.create(options, 3, files, testFrameworkStub, null);
+      sut = await Sandbox.create(options, 3, files, testFrameworkStub);
+    });
+
+    it('should not have written online files', () => {
+      let expectedBaseFolder = webFileUrl.substr(workingFolder.length - 1); // The Sandbox expects all files to be absolute paths. An online file is not an absolute path.
+
+      expect(mkdirp.sync).not.calledWith(workingFolder + path.dirname(expectedBaseFolder));
+      expect(fileUtils.writeFile).not.calledWith(webFileUrl, sinon.match.any, sinon.match.any);
     });
 
     it('should have created a workingFolder', () => {
       expect(TempFolder.instance().createRandomFolder).to.have.been.calledWith('sandbox');
-    });
-
-    it('should have copied the input files', () => {
-      expect(fileUtils.writeFile).calledWith(expectedTargetFileToMutate, textFiles[0].content);
-      expect(fileUtils.writeFile).calledWith(path.join(workingFolder, 'file2'), textFiles[1].content);
     });
 
     it('should have created the isolated test runner without framework hook', () => {
@@ -180,7 +139,7 @@ describe('Sandbox', () => {
         });
 
         it('should filter the scoped tests', () => {
-          expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.scopedTestIds);
+          expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.selectedTests);
         });
 
         it('should write the filter code fragment to hooks file', () => {
@@ -201,9 +160,9 @@ describe('Sandbox', () => {
     });
   });
 
-  describe('when constructed without a testFramework or CoverageInstrumenter', () => {
+  describe('when constructed without a testFramework', () => {
     beforeEach(async () => {
-      sut = await Sandbox.create(options, 3, files, null, null);
+      sut = await Sandbox.create(options, 3, files, null);
     });
 
 

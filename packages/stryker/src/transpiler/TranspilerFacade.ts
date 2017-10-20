@@ -9,9 +9,12 @@ export default class TranspilerFacade implements Transpiler {
 
   private innerTranspilers: NamedTranspiler[];
 
-  constructor(options: TranspilerOptions) {
+  constructor(options: TranspilerOptions, additionalTranspiler?: { name: string, transpiler: Transpiler }) {
     this.innerTranspilers = options.config.transpilers
       .map(transpilerName => new NamedTranspiler(transpilerName, TranspilerFactory.instance().create(transpilerName, options)));
+    if (additionalTranspiler) {
+      this.innerTranspilers.push(new NamedTranspiler(additionalTranspiler.name, additionalTranspiler.transpiler));
+    }
   }
 
   transpile(files: File[]): TranspileResult {

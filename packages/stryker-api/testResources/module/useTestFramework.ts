@@ -1,4 +1,4 @@
-import { TestFramework, TestFrameworkFactory, TestFrameworkSettings } from 'stryker-api/test_framework';
+import { TestFramework, TestFrameworkFactory, TestSelection, TestFrameworkSettings } from 'stryker-api/test_framework';
 
 class TestFramework1 implements TestFramework {
 
@@ -14,8 +14,8 @@ class TestFramework1 implements TestFramework {
     return '';
   }
 
-  filter(ids: number[]) {
-    return ids.toString();
+  filter(selections: TestSelection[]) {
+    return selections.map(selection => selection.id).toString();
   }
 }
 
