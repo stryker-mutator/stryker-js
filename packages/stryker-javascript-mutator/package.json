@@ -1,7 +1,7 @@
 {
-  "name": "stryker-es6-mutator",
+  "name": "stryker-javascript-mutator",
   "version": "0.1.0",
-  "description": "A plugin for ES6-based projects using Stryker",
+  "description": "A plugin for javascript projects using Stryker",
   "main": "src/index.js",
   "scripts": {
     "start": "tsc -w",
@@ -21,7 +21,7 @@
   "keywords": [
     "stryker",
     "stryker-plugin",
-    "es6",
+    "javascript",
     "stryker-mutator"
   ],
   "bugs": {
@@ -31,7 +31,7 @@
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>"
   ],
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-es6-mutator#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator#readme",
   "license": "Apache-2.0",
   "dependencies": {
     "babel-core": "^6.26.0",

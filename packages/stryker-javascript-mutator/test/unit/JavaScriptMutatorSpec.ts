@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import { File, FileKind } from 'stryker-api/core';
-import ES6Mutator from '../../src/ES6Mutator';
+import JavaScriptMutator from '../../src/JavaScriptMutator';
 require('../../src/index');
 
-describe('ES6Mutator', () => {
+describe('JavaScriptMutator', () => {
   it('should generate a correct mutant', () => {
-    let mutator = new ES6Mutator();
+    let mutator = new JavaScriptMutator();
     let files: File[] = [
       {
         name: 'testFile.js',
@@ -30,7 +30,7 @@ describe('ES6Mutator', () => {
 
   
   it('should generate mutants for multiple files', () => {
-    let mutator = new ES6Mutator();
+    let mutator = new JavaScriptMutator();
     let file: File = {
       name: 'testFile.js',
       included: false,
@@ -46,7 +46,7 @@ describe('ES6Mutator', () => {
   });
 
   it('should not mutate files with mutate: false', () => {
-    let mutator = new ES6Mutator();
+    let mutator = new JavaScriptMutator();
     let files: File[] = [
       {
         name: 'testFile.js',

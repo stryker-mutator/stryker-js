@@ -6,8 +6,8 @@ import BabelParser from './helpers/BabelParser';
 import Copy from './helpers/Copy';
 import NodeMutatorFactory from './NodeMutatorFactory';
 
-export default class ES6Mutator implements Mutator {
-  private log = getLogger(ES6Mutator.name);
+export default class JavaScriptMutator implements Mutator {
+  private log = getLogger(JavaScriptMutator.name);
 
   mutate(inputFiles: File[]): Mutant[] {
     let mutants: Mutant[] = [];
