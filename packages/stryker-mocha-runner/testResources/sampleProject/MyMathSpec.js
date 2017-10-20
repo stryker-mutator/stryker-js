@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var MyMath = require('../src/MyMath');
+var MyMath = require('./MyMath');
 
 describe('MyMath', function () {
   var myMath;

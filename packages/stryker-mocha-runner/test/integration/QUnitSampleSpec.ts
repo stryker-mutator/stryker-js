@@ -15,8 +15,8 @@ describe('QUnit sample', function () {
     };
     const sut = new MochaTestRunner(runnerOptions({
       files: [
-        fileDescriptor({ name: resolve('./testResources/qunit-sample/src/MyMath.js'), included: false, mutated: true }),
-        fileDescriptor({ name: resolve('./testResources/qunit-sample/test/MyMathSpec.js'), included: true, mutated: false }),
+        fileDescriptor({ name: resolve('./testResources/qunit-sample/MyMath.js'), included: false, mutated: true }),
+        fileDescriptor({ name: resolve('./testResources/qunit-sample/MyMathSpec.js'), included: true, mutated: false }),
       ],
       strykerOptions: { mochaOptions }
     }));
@@ -34,8 +34,8 @@ describe('QUnit sample', function () {
   it('should not run tests when not configured with "qunit" ui', async () => {
     const sut = new MochaTestRunner(runnerOptions({
       files: [
-        fileDescriptor({ name: resolve('./testResources/qunit-sample/src/MyMath.js'), included: false, mutated: true }),
-        fileDescriptor({ name: resolve('./testResources/qunit-sample/test/MyMathSpec.js'), included: true, mutated: false }),
+        fileDescriptor({ name: resolve('./testResources/qunit-sample/MyMath.js'), included: false, mutated: true }),
+        fileDescriptor({ name: resolve('./testResources/qunit-sample/MyMathSpec.js'), included: true, mutated: false }),
       ]
     }));
     const actualResult = await sut.run();

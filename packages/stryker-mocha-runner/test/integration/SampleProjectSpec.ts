@@ -29,8 +29,8 @@ describe('Running a sample project', function () {
     beforeEach(() => {
       const testRunnerOptions = {
         files: [
-          fileDescriptor({ name: resolve('./testResources/sampleProject/src/MyMath.js') }),
-          fileDescriptor({ name: resolve('./testResources/sampleProject/test/MyMathSpec.js') })],
+          fileDescriptor({ name: resolve('./testResources/sampleProject/MyMath.js') }),
+          fileDescriptor({ name: resolve('./testResources/sampleProject/MyMathSpec.js') })],
         strykerOptions: {},
         port: 1234
       };
@@ -59,9 +59,9 @@ describe('Running a sample project', function () {
     beforeEach(() => {
       let options = {
         files: [
-          fileDescriptor({ name: resolve('testResources/sampleProject/src/MyMath.js') }),
-          fileDescriptor({ name: resolve('testResources/sampleProject/src/Error.js'), included: false }),
-          fileDescriptor({ name: resolve('testResources/sampleProject/test/MyMathSpec.js') })],
+          fileDescriptor({ name: resolve('testResources/sampleProject/MyMath.js') }),
+          fileDescriptor({ name: resolve('testResources/sampleProject/Error.js'), included: false }),
+          fileDescriptor({ name: resolve('testResources/sampleProject/MyMathSpec.js') })],
         strykerOptions: {},
         port: 1234
       };
@@ -79,8 +79,8 @@ describe('Running a sample project', function () {
     before(() => {
       sut = new MochaTestRunner({
         files: [
-          fileDescriptor({ name: resolve('testResources/sampleProject/src/MyMath.js') }),
-          fileDescriptor({ name: resolve('testResources/sampleProject/test/MyMathFailedSpec.js') })],
+          fileDescriptor({ name: resolve('testResources/sampleProject/MyMath.js') }),
+          fileDescriptor({ name: resolve('testResources/sampleProject/MyMathFailedSpec.js') })],
         strykerOptions: {},
         port: 1234
       });
@@ -97,7 +97,7 @@ describe('Running a sample project', function () {
     beforeEach(() => {
       const testRunnerOptions = {
         files: [
-          fileDescriptor({ name: resolve('./testResources/sampleProject/src/MyMath.js') })],
+          fileDescriptor({ name: resolve('./testResources/sampleProject/MyMath.js') })],
         strykerOptions: {},
         port: 1234
       };
