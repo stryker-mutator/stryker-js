@@ -27,13 +27,25 @@ As such, you should make sure you have the correct versions of its dependencies 
 
 You can either configure the mocha test runner using the command line or by providing it in the `stryker.conf.js` file.
 This README describes how to use the `stryker.conf.js` config file:
-```
-// Stryker.conf.js
+
+```javascript
+// stryker.conf.js
 module.exports = function (config) {
     config.set({
-        ...
+        // ...
         testRunner: 'mocha',
-        ...
+        // ...
+        mochaOptions: {
+            // Optional mocha options
+            opts: 'path/to/mocha.opts',
+            ui: 'bdd',
+            require: [ /*'babel-register' */],
+            asyncOnly: false
+        }
     });
 }
 ```
+
+You can pass mocha options in 2 ways: either specify a mocha.opts file or configure `mochaOptions` in stryker.conf.js. When both are specified, the values in stryker.conf.js will overrule the values in your mocha.opts file.
+
+The only supported mocha options are: `--ui`, `--require`, `--async-only` (or their short form counterparts). Others are ignored by the stryker-mocha-runner.

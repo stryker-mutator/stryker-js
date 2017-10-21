@@ -1,7 +1,15 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="0.9.0"></a>
+## [0.9.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.8.0...stryker-karma-runner@0.9.0) (2017-10-20)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
 
 <a name="0.8.0"></a>
 # [0.8.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.7.1...stryker-karma-runner@0.8.0) (2017-09-19)
