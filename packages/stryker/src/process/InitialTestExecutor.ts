@@ -98,11 +98,10 @@ export default class InitialTestExecutor {
    */
   private createTranspilerFacade(coverageInstrumenterTranspiler: CoverageInstrumenterTranspiler): Transpiler {
     const transpilerSettings: TranspilerOptions = { config: this.options, keepSourceMaps: true };
-    const transpiler = new TranspilerFacade(transpilerSettings, {
+    return new TranspilerFacade(transpilerSettings, {
       name: CoverageInstrumenterTranspiler.name,
       transpiler: coverageInstrumenterTranspiler
     });
-    return transpiler;
   }
 
   private createCoverageInstrumenterTranspiler() {
