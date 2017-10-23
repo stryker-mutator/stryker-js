@@ -1,3 +1,11 @@
+<a name="0.2.1"></a>
+## 0.2.1 (2017-09-27)
+
+* 0.2.1 ([b8bb5e8](https://github.com/stryker-mutator/stryker-jest-runner/commit/b8bb5e8))
+* chore(docs) Update changelog ([ccac703](https://github.com/stryker-mutator/stryker-jest-runner/commit/ccac703))
+
+
+
 <a name="0.2.0"></a>
 # 0.2.0 (2017-09-23)
 
