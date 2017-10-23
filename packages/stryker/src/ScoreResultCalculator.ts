@@ -5,9 +5,11 @@ import { MutationScoreThresholds } from 'stryker-api/core';
 import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
 
+const defaultScoreIfNoValidMutants = 100;
+
 export default class ScoreResultCalculator {
   private readonly log = getLogger(ScoreResultCalculator.name);
-  
+
   calculate(results: MutantResult[]): ScoreResult {
     const scoreResult = this.calculateScoreResult(results, '');
     return this.wrapIfSingleFileScoreResult(scoreResult);
@@ -118,6 +120,8 @@ export default class ScoreResultCalculator {
     const totalValid = totalUndetected + totalDetected;
     const totalInvalid = runtimeErrors + transpileErrors;
     const totalMutants = totalValid + totalInvalid;
+    const mutationScore = totalValid > 0 ? totalDetected / totalValid * 100 : defaultScoreIfNoValidMutants;
+    const mutationScoreBasedOnCoveredCode = totalValid > 0 ? totalDetected / totalCovered * 100 || 0 : defaultScoreIfNoValidMutants;
     return {
       killed,
       survived,
@@ -131,8 +135,8 @@ export default class ScoreResultCalculator {
       totalValid,
       totalInvalid,
       totalMutants,
-      mutationScore: totalDetected / totalValid * 100 || 0,
-      mutationScoreBasedOnCoveredCode: totalDetected / totalCovered * 100 || 0
+      mutationScore,
+      mutationScoreBasedOnCoveredCode
     };
   }
 }
