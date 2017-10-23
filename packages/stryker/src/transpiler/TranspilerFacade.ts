@@ -17,11 +17,11 @@ export default class TranspilerFacade implements Transpiler {
     }
   }
 
-  transpile(files: File[]): TranspileResult {
+  public async transpile(files: File[]): Promise<TranspileResult> {
     return this.performTranspileChain(this.createPassThruTranspileResult(files));
   }
 
-  getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
+  public getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
     return this.performMappedLocationChain(sourceFileLocation);
   }
 
@@ -37,13 +37,13 @@ export default class TranspilerFacade implements Transpiler {
     }
   }
 
-  private performTranspileChain(
+  private async performTranspileChain(
     currentResult: TranspileResult,
     remainingChain: NamedTranspiler[] = this.innerTranspilers.slice()
-  ): TranspileResult {
+  ): Promise<TranspileResult> {
     const next = remainingChain.shift();
     if (next) {
-      const nextResult = next.transpiler.transpile(currentResult.outputFiles);
+      const nextResult = await next.transpiler.transpile(currentResult.outputFiles);
       if (nextResult.error) {
         nextResult.error = `Execute ${next.name}: ${nextResult.error}`;
         return nextResult;

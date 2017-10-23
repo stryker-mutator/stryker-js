@@ -24,7 +24,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     this.log = getLogger(CoverageInstrumenterTranspiler.name);
   }
 
-  transpile(files: File[]): TranspileResult {
+  public async transpile(files: File[]): Promise<TranspileResult> {
     try {
       const result: TranspileResult = {
         outputFiles: files.map(file => this.instrumentFileIfNeeded(file)),
@@ -36,7 +36,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     }
   }
 
-  getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
+  public getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
     return sourceFileLocation;
   }
 
