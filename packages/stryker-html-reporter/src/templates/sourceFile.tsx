@@ -7,7 +7,15 @@ import { ScoreResult, SourceFile, MutantResult, MutantStatus } from 'stryker-api
 import Breadcrumb from '../Breadcrumb';
 import { mutantTable } from './mutantTable';
 
+export interface NumberedMutant {
+    index: number;
+    mutant: MutantResult;
+}
+
 export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], breadcrumb: Breadcrumb, thresholds: MutationScoreThresholds) {
+    const numberedMutants = _
+        .sortBy(mutants, m => m.range[0] * 10000 + m.range[1] * -1)
+        .map((mutant, index) => ({ mutant, index }));
     return layout(breadcrumb,
         <div class="col-lg-12">
             <div class="row">
@@ -18,10 +26,10 @@ export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefin
             <div class="row">
                 <div class="col-lg-7">
                     {legend(mutants)}
-                    {code(sourceFile, mutants)}
+                    {code(sourceFile, numberedMutants)}
                 </div>
                 <div class="col-lg-5">
-                    {mutantTable(mutants, sourceFile ? sourceFile.content : '')}
+                    {mutantTable(numberedMutants, sourceFile ? sourceFile.content : '')}
                 </div>
             </div>
         </div>);
@@ -55,7 +63,7 @@ function legend(mutants: MutantResult[]) {
     </div>;
 }
 
-function code(sourceFile: SourceFile | undefined, mutants: MutantResult[]) {
+function code(sourceFile: SourceFile | undefined, mutants: NumberedMutant[]) {
     if (sourceFile) {
         return annotateCode(sourceFile, mutants);
     } else {
@@ -63,7 +71,7 @@ function code(sourceFile: SourceFile | undefined, mutants: MutantResult[]) {
     }
 }
 
-function annotateCode(sourceFile: SourceFile, mutants: MutantResult[]) {
+function annotateCode(sourceFile: SourceFile, numberedMutants: NumberedMutant[]) {
     const currentCursorMutantStatuses = {
         killed: 0,
         survived: 0,
@@ -71,9 +79,6 @@ function annotateCode(sourceFile: SourceFile, mutants: MutantResult[]) {
         noCoverage: 0
     };
     const maxIndex = sourceFile.content.length - 1;
-    const numberedMutants = _
-        .sortBy(mutants, m => m.range[0] * 10000 + m.range[1] * -1)
-        .map((mutant, index) => ({ mutant, index }));
 
     const adjustCurrentMutantResult = (valueToAdd: number) => (numberedMutant: { mutant: MutantResult, index: number }) => {
         switch (numberedMutant.mutant.status) {

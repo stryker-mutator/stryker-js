@@ -1,6 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "lib": [
+      "dom",
+      "es5",
+      "es2015.promise",
+      "es2015.core"
+    ],
     "declaration": false,
     "noImplicitReturns": false,
     "jsx": "react",
