@@ -14,7 +14,7 @@ export interface NumberedMutant {
 
 export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefined, mutants: MutantResult[], breadcrumb: Breadcrumb, thresholds: MutationScoreThresholds) {
     const numberedMutants = _
-        .sortBy(mutants, m => m.range[0] * 10000 + m.range[1] * -1)
+        .sortBy(mutants, m => m.range[0])
         .map((mutant, index) => ({ mutant, index }));
     return layout(breadcrumb,
         <div class="col-lg-12">
