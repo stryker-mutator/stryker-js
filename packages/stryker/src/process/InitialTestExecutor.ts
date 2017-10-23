@@ -43,7 +43,7 @@ export default class InitialTestExecutor {
   private async initialRunInSandbox(): Promise<InitialTestRunResult> {
     const coverageInstrumenterTranspiler = this.createCoverageInstrumenterTranspiler();
     const transpilerFacade = this.createTranspilerFacade(coverageInstrumenterTranspiler);
-    const transpileResult = transpilerFacade.transpile(this.files);
+    const transpileResult = await transpilerFacade.transpile(this.files);
     if (transpileResult.error) {
       throw new Error(`Could not transpile input files: ${transpileResult.error}`);
     } else {
