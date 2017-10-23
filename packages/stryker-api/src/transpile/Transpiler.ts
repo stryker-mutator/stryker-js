@@ -32,7 +32,7 @@ export default interface Transpiler {
    * 
    * @returns an error message (if transpiling failed) or the output files to be used in the next transpiler
    */
-  transpile(files: File[]): TranspileResult;
+  transpile(files: File[]): Promise<TranspileResult>;
 
   /**
    * Retrieve the location of a source location in the transpiled file. 
