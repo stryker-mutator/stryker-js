@@ -74,7 +74,7 @@ export default class MutantTranspiler {
     }
   }
 
-  private async transpileMutant(mutant: TestableMutant): Promise<TranspileResult> {
+  private transpileMutant(mutant: TestableMutant): Promise<TranspileResult> {
     const filesToTranspile: TextFile[] = [];
     if (this.currentMutatedFile && this.currentMutatedFile.file.name !== mutant.fileName) {
       filesToTranspile.push(this.currentMutatedFile.file);

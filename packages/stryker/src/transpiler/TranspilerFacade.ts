@@ -17,7 +17,7 @@ export default class TranspilerFacade implements Transpiler {
     }
   }
 
-  public async transpile(files: File[]): Promise<TranspileResult> {
+  public transpile(files: File[]): Promise<TranspileResult> {
     return this.performTranspileChain(this.createPassThruTranspileResult(files));
   }
 

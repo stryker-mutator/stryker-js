@@ -24,7 +24,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     this.log = getLogger(CoverageInstrumenterTranspiler.name);
   }
 
-  public async transpile(files: File[]): Promise<TranspileResult> {
+  public transpile(files: File[]): Promise<TranspileResult> {
     try {
       const result: TranspileResult = {
         outputFiles: files.map(file => this.instrumentFileIfNeeded(file)),
