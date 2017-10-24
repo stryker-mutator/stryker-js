@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.2.0...stryker-typescript@0.3.0) (2017-10-24)
+
+
+### Features
+
+* **transpiler api:** Async transpiler plugin support ([#433](https://github.com/stryker-mutator/stryker/issues/433)) ([794e587](https://github.com/stryker-mutator/stryker/commit/794e587))
+
+
+
+
 <a name="0.2.0"></a>
 ## [0.2.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.1.0...stryker-typescript@0.2.0) (2017-10-20)
 
