@@ -60,8 +60,8 @@ describe('TypescriptTranspiler', () => {
       sut = new TypescriptTranspiler({ config, keepSourceMaps: true });
     });
 
-    it('should transpile given files', () => {
-      const result = sut.transpile([
+    it('should transpile given files', async () => {
+      const result = await sut.transpile([
         textFile({ name: 'foo.ts', transpiled: true }),
         textFile({ name: 'bar.ts', transpiled: true })
       ]);
@@ -72,7 +72,7 @@ describe('TypescriptTranspiler', () => {
       ]);
     });
 
-    it('should keep file order', () => {
+    it('should keep file order', async () => {
       const input = [
         textFile({ name: 'file1.js', transpiled: false }),
         textFile({ name: 'file2.ts', transpiled: true }),
@@ -80,7 +80,7 @@ describe('TypescriptTranspiler', () => {
         textFile({ name: 'file4.ts', transpiled: true }),
         textFile({ name: 'file5.d.ts', transpiled: true })
       ];
-      const result = sut.transpile(input);
+      const result = await sut.transpile(input);
       expect(result.error).eq(null);
       expect(result.outputFiles).deep.eq([
         textFile({ name: 'file1.js', transpiled: false }),
@@ -91,7 +91,7 @@ describe('TypescriptTranspiler', () => {
       ]);
     });
 
-    it('should keep order if single output result file', () => {
+    it('should keep order if single output result file', async () => {
       singleFileOutputEnabled = true;
       const input = [
         textFile({ name: 'file1.ts', transpiled: false }),
@@ -100,7 +100,7 @@ describe('TypescriptTranspiler', () => {
         textFile({ name: 'file4.ts', transpiled: true }),
         textFile({ name: 'file5.ts', transpiled: false })
       ];
-      const output = sut.transpile(input);
+      const output = await sut.transpile(input);
       expect(output.error).eq(null);
       expect(output.outputFiles).deep.eq([
         textFile({ name: 'file1.ts', transpiled: false }),
@@ -126,10 +126,10 @@ describe('TypescriptTranspiler', () => {
       ]);
     });
 
-    it('should return errors when there are diagnostic messages', () => {
+    it('should return errors when there are diagnostic messages', async () => {
       languageService.getSemanticDiagnostics.returns('foobar');
       const input = [textFile({ name: 'file1.ts' }), textFile({ name: 'file2.ts' })];
-      const result = sut.transpile(input);
+      const result = await sut.transpile(input);
       expect(result.error).eq('foobar');
       expect(result.outputFiles).lengthOf(0);
     });

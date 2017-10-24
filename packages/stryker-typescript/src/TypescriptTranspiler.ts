@@ -17,7 +17,7 @@ export default class TypescriptTranspiler implements Transpiler {
     this.keepSourceMaps = options.keepSourceMaps;
   }
 
-  transpile(files: File[]): TranspileResult {
+  transpile(files: File[]): Promise<TranspileResult> {
     const typescriptFiles = filterOutTypescriptFiles(files);
     if (!this.languageService) {
       this.languageService = new TranspilingLanguageService(
@@ -25,7 +25,7 @@ export default class TypescriptTranspiler implements Transpiler {
     } else {
       this.languageService.replace(typescriptFiles);
     }
-    return this.transpileAndResult(typescriptFiles, files);
+    return Promise.resolve(this.transpileAndResult(typescriptFiles, files));
   }
 
   getMappedLocation(sourceFileLocation: FileLocation): FileLocation {

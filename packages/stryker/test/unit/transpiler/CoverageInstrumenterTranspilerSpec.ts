@@ -12,11 +12,11 @@ describe('CoverageInstrumenterTranspiler', () => {
     config = new Config();
   });
 
-  it('should not instrument any code when coverage analysis is off', () => {
+  it('should not instrument any code when coverage analysis is off', async () => {
     sut = new CoverageInstrumenterTranspiler({ config, keepSourceMaps: false }, null);
     config.coverageAnalysis = 'off';
     const input = [textFile({ mutated: true }), binaryFile({ mutated: true }), webFile({ mutated: true })];
-    const output = sut.transpile(input);
+    const output = await sut.transpile(input);
     expect(output.error).null;
     expect(output.outputFiles).deep.eq(input);
   });
@@ -28,14 +28,14 @@ describe('CoverageInstrumenterTranspiler', () => {
       sut = new CoverageInstrumenterTranspiler({ config, keepSourceMaps: false }, null);
     });
 
-    it('should instrument code of mutated files', () => {
+    it('should instrument code of mutated files', async () => {
       const input = [
         textFile({ mutated: true, content: 'function something() {}' }),
         binaryFile({ mutated: true }),
         webFile({ mutated: true }),
         textFile({ mutated: false })
       ];
-      const output = sut.transpile(input);
+      const output = await sut.transpile(input);
       expect(output.error).null;
       expect(output.outputFiles[1]).eq(output.outputFiles[1]);
       expect(output.outputFiles[2]).eq(output.outputFiles[2]);
@@ -56,9 +56,9 @@ describe('CoverageInstrumenterTranspiler', () => {
       });
     });
 
-    it('should fill error message and not transpile input when the file contains a parse error', () => {
+    it('should fill error message and not transpile input when the file contains a parse error', async () => {
       const invalidJavascriptFile = textFile({ name: 'invalid/file.js', content: 'function something {}', mutated: true });
-      const output = sut.transpile([invalidJavascriptFile]);
+      const output = await sut.transpile([invalidJavascriptFile]);
       expect(output.error).contains('Could not instrument "invalid/file.js" for code coverage. Error: Line 1: Unexpected token {');
     });
   });
@@ -72,15 +72,15 @@ describe('CoverageInstrumenterTranspiler', () => {
       input = [textFile({ mutated: true, content: 'function something() {}' })];
     });
 
-    it('should use the coverage variable "__strykerCoverageCurrentTest__"', () => {
-      const output = sut.transpile(input);
+    it('should use the coverage variable "__strykerCoverageCurrentTest__"', async () => {
+      const output = await sut.transpile(input);
       expect(output.error).null;
       const instrumentedContent = (output.outputFiles[1] as TextFile).content;
       expect(instrumentedContent).to.contain('__strykerCoverageCurrentTest__').and.contain('.f[\'1\']++');
     });
 
-    it('should also add a collectCoveragePerTest file', () => {
-      const output = sut.transpile(input);
+    it('should also add a collectCoveragePerTest file', async () => {
+      const output = await sut.transpile(input);
       expect(output.error).null;
       expect(output.outputFiles).lengthOf(2);
       const actualContent = (output.outputFiles[0] as TextFile).content;
@@ -90,10 +90,10 @@ describe('CoverageInstrumenterTranspiler', () => {
     });
   });
 
-  it('should result in an error if coverage analysis is "perTest" and there is no testFramework', () => {
+  it('should result in an error if coverage analysis is "perTest" and there is no testFramework', async () => {
     config.coverageAnalysis = 'perTest';
     sut = new CoverageInstrumenterTranspiler({ config, keepSourceMaps: true }, null);
-    const output = sut.transpile([textFile({ content: 'a + b' })]);
+    const output = await sut.transpile([textFile({ content: 'a + b' })]);
     expect(output.error).eq('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
   });
 });
