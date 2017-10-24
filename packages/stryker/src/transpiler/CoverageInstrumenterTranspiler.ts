@@ -30,9 +30,9 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
         outputFiles: files.map(file => this.instrumentFileIfNeeded(file)),
         error: null
       };
-      return this.addCollectCoverageFileIfNeeded(result);
+      return Promise.resolve(this.addCollectCoverageFileIfNeeded(result));
     } catch (error) {
-      return this.errorResult(errorToString(error));
+      return Promise.resolve(this.errorResult(errorToString(error)));
     }
   }
 
