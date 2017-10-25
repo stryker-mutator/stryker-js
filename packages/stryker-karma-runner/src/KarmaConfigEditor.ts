@@ -8,6 +8,9 @@ const log = log4js.getLogger('KarmaConfigEditor');
 
 export default class KarmaConfigEditor implements ConfigEditor {
   edit(strykerConfig: StrykerConfig) {
+    // Copy logLevel to local logLevel
+    log4js.setGlobalLogLevel(strykerConfig.logLevel);
+
     const karmaConfig = new KarmaConfigReader(strykerConfig['karmaConfigFile']).read();
     if (karmaConfig) {
       KarmaConfigEditor.importFiles(strykerConfig, karmaConfig);
@@ -17,21 +20,20 @@ export default class KarmaConfigEditor implements ConfigEditor {
 
   private static importFiles(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
     if (!strykerConfig.files) { strykerConfig.files = []; }
-    if (!karmaConfig.files) { karmaConfig.files = []; }
-    if (!karmaConfig.exclude) { karmaConfig.exclude = []; }
+    if (!Array.isArray(karmaConfig.files)) { karmaConfig.files = []; }
+    if (!Array.isArray(karmaConfig.exclude)) { karmaConfig.exclude = []; }
 
     const files: (karma.FilePattern | string)[] = karmaConfig.files;
     const exclude: string[] = karmaConfig.exclude;
-    if (files && Array.isArray(files)) {
-      const karmaFiles = files.map(KarmaConfigEditor.toInputFileDescriptor);
+    const karmaFiles: Array<InputFileDescriptor | string> = files.map(KarmaConfigEditor.toInputFileDescriptor);
+    const ignores = exclude.map(fileToIgnore => `!${fileToIgnore}`);
+    ignores.forEach(ignore => karmaFiles.push(ignore));
+    if (karmaFiles.length) {
       log.debug(`Importing following files from karma.conf file to stryker: ${JSON.stringify(karmaFiles)}`);
-      strykerConfig.files = strykerConfig.files.concat(karmaFiles);
+    } else {
+      log.debug(`Importing no files from karma.conf file`);
     }
-    if (exclude && Array.isArray(exclude)) {
-      const ignores = exclude.map(fileToIgnore => `!${fileToIgnore}`);
-      log.debug(`Importing following "exclude" files from karma configuration: ${JSON.stringify(ignores)}`);
-      strykerConfig.files = strykerConfig.files.concat(ignores);
-    }
+    strykerConfig.files = karmaFiles.concat(strykerConfig.files);
   }
 
   private static importDefaultKarmaConfig(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
