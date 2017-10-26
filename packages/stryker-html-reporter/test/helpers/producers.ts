@@ -1,21 +1,23 @@
 import { SourceFile, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
+import { MutationScoreThresholds } from 'stryker-api/core';
 
-
-export function sourceFile(overrides: Partial<SourceFile>): SourceFile {
-  const defaults: SourceFile = {
-    path: 'src/test.js',
-    content: `
+export const sourceFile = factory<SourceFile>(() => ({
+  path: 'src/test.js',
+  content: `
     function answer(){
       return 42;
-    }
-    `
-  };
-  return produce(overrides, defaults);
-}
+    }`
+}));
 
-export function mutantResult(overrides: Partial<MutantResult> = {}): MutantResult {
+export const thresholds = factory<MutationScoreThresholds>(() => ({
+  break: null,
+  high: 80,
+  low: 60
+}));
+
+export const mutantResult = factory<MutantResult>(() => {
   const range: [number, number] = [24, 38];
-  return produce(overrides, {
+  return {
     sourceFilePath: 'src/test.js',
     mutatorName: 'Math',
     status: MutantStatus.Killed,
@@ -36,32 +38,30 @@ export function mutantResult(overrides: Partial<MutantResult> = {}): MutantResul
       }
     },
     range
-  });
-}
+  };
+});
 
-export function scoreResult(overrides: Partial<ScoreResult> = {}): ScoreResult {
-  return produce(overrides, {
-    name: 'src',
-    path: 'src',
-    representsFile: false,
-    childResults: [],
-    killed: 1,
-    timedOut: 2,
-    survived: 3,
-    noCoverage: 4, 
-    runtimeErrors: 5,
-    transpileErrors: 6,
-    totalDetected: 7,
-    totalUndetected: 8,
-    totalValid: 9,
-    totalInvalid: 10,
-    totalMutants: 11, 
-    totalCovered: 12,
-    mutationScore: 10.6666666667,
-    mutationScoreBasedOnCoveredCode: 11.23232323223
-  });
-}
+export const scoreResult = factory<ScoreResult>(() => ({
+  name: 'src',
+  path: 'src',
+  representsFile: false,
+  childResults: [],
+  killed: 1,
+  timedOut: 2,
+  survived: 3,
+  noCoverage: 4,
+  runtimeErrors: 5,
+  transpileErrors: 6,
+  totalDetected: 7,
+  totalUndetected: 8,
+  totalValid: 9,
+  totalInvalid: 10,
+  totalMutants: 11,
+  totalCovered: 12,
+  mutationScore: 10.6666666667,
+  mutationScoreBasedOnCoveredCode: 11.23232323223
+}));
 
-function produce<T>(overrides: Partial<T>, defaults: T): T {
-  return Object.assign({}, defaults, overrides);
+function factory<T>(defaults: () => T) {
+  return (overrides?: Partial<T>): T => Object.assign({}, defaults(), overrides);
 }
