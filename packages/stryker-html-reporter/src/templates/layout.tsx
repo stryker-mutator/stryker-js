@@ -1,5 +1,6 @@
 import * as typedHtml from 'typed-html';
 import Breadcrumb from '../Breadcrumb';
+import { RESOURCES_DIR_NAME } from '../HtmlReporter';
 
 function printBreadcrumbLinks(breadcrumb: Breadcrumb | undefined, pageDepth: number): string {
     if (breadcrumb) {
@@ -20,7 +21,7 @@ function printBreadcrumb(breadcrumb: Breadcrumb) {
 }
 
 export function layout(breadcrumb: Breadcrumb, content: string) {
-    const urlPrefix = Array(breadcrumb.depth + 1).join('../') + '__resources/';
+    const urlPrefix = Array(breadcrumb.depth + 1).join('../') + RESOURCES_DIR_NAME + '/';
     return '<!DOCTYPE html>\n' + <html>
         <head>
             <title>{breadcrumb.title} - Stryker report</title>

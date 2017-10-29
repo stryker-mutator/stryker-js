@@ -36,7 +36,7 @@ describe('Html report of stryker', function () {
       'Stryker.js.html': 'Stryker.js.html',
       'stryker-cli.js.html': 'stryker-cli.js.html',
       'TestFrameworkOrchestrator.js.html': 'TestFrameworkOrchestrator.js.html',
-      '__resources': {
+      'strykerResources': {
         'popper.js': {
           'dist': {
             'umd': {
