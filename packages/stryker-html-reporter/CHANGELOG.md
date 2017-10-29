@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.10.2...stryker-html-reporter@0.11.0) (2017-10-29)
+
+
+### Features
+
+* **html reporter:** Make report gh-pages compatible ([#432](https://github.com/stryker-mutator/stryker/issues/432)) ([cfc1fb2](https://github.com/stryker-mutator/stryker/commit/cfc1fb2)), closes [#420](https://github.com/stryker-mutator/stryker/issues/420)
+
+
+
+
 <a name="0.10.2"></a>
 ## [0.10.2](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.10.1...stryker-html-reporter@0.10.2) (2017-10-26)
 
