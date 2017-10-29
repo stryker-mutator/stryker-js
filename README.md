@@ -47,8 +47,8 @@ module.exports = function(config){
   config.set({
     files: ['test/helpers/**/*.js', 
             'test/unit/**/*.js', 
-            { pattern: 'src/**/*.js', included: false, mutated: true }
-            { pattern: 'src/templates/*.html', included: false, mutated: false }
+            { pattern: 'src/**/*.js', included: false, mutated: true },
+            { pattern: 'src/templates/*.html', included: false, mutated: false },
             '!src/fileToIgnore.js'],
     testFramework: 'mocha',
     testRunner: 'mocha',
