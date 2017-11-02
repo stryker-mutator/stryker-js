@@ -1,7 +1,4 @@
-class Main {
-    public hello() {
-        return "Hello World!";
-    }
-}
+import { TranspilerFactory } from 'stryker-api/transpile';
+import WebpackTranspiler from "./WebpackTranspiler";
 
-export default Main;
+TranspilerFactory.instance().register('webpack', WebpackTranspiler);
