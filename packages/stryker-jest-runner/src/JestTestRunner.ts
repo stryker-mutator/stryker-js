@@ -40,6 +40,7 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
 
     this.options = _.assign(DEFAULT_OPTIONS, {
       rootDir: process.cwd(),
+      roots: [process.cwd()],
       testPathDirs: [process.cwd()]
     });
     log.debug(`Using options ${JSON.stringify(this.options)}`);
@@ -78,7 +79,7 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
   }
 
   private catchError(error: Error): RunResult {
-    log.error(`An error occured while invoking Jest: ${error.stack}`);
+    log.error(`An error occurred while invoking Jest: ${error.stack}`);
     return {
       coverage: undefined,
       tests: [],
