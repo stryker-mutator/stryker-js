@@ -7,3 +7,11 @@ node_js:
 install: npm install
 before_install:
 - if [[ `npm -v` = 2* ]]; then npm i -g npm@3; fi
+notifications:
+  slack:
+    secure: PaygAi3u8LIEIpsMbzr6BKgU8qW4abz9D+I5fBaxtrCycBYcj6qWSz5SY6XMAsf6cHj0U0CLl7e7tw7sR8FJlha61ej9u/p+gnHlPPQDsAfOYNifuTyCoj7s7HjF1bboKGKB66P/Np/QPyFvTHwVdA6l2JPoJO5a6eiqaUUvhWoZKGvs4HGBzGfd3g/6RZ7ugUH1C6DoUnPv1eoFoA22QH8pj30ugq/E0xZnD64nx0vBrFzfbpH9r9wDOphe9lnLygxHTzXY/smJfXqNrpdRyWnztTcI0XwTEe4lZR1l9y5UkziVvqrVoSblUp68JvB9yrfdZzWkLyXAoYaiOPIsszHnT9ovUWFLYqsbBkjqJOYPZX0koCeP2a07i5UMXbjwKcwdg+HKW3ZMq0oRX5n1dMOVBlCqlaZjW9Q0TJQiseLvrOmtpM2X3mKb+2ibyuoObpnUEBNdluQ1xiqBFsrFNpmowPUidt4TDmT4R2ggOM11O5iW5kv4gaE6N4q6hu1+tlQR6eu5LM5d8CNrJ3k362STqw11bOQbXtondVMV2kOo7+VJT8JHDK4V8aX5FRk8yhrC80FxD7Et7eJOSXOnz8HXQo064+0vjJjdzzEjfJKeqwuhLTjZvQnSjBDRa6u59h4X50RqN/MUmzSd18HqKuX2EhVMl+08u5YhRg+mi0U=
+    on_success: change
+    on_failure: change
+  email:
+    on_success: never
+    on_failure: change
