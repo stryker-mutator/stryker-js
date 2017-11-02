@@ -11,7 +11,7 @@ export default class ResultTable {
   }
 
   async rows() {
-    const rows = await this.host.$$('tbody tr');
+    const rows: ElementFinder[] = await this.host.$$('tbody tr');
     return rows.map(row => new ResultTableRow(row));
   }
 

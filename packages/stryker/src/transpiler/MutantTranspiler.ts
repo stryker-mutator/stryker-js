@@ -4,7 +4,6 @@ import TranspilerFacade from './TranspilerFacade';
 import TestableMutant from '../TestableMutant';
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import SourceFile from '../SourceFile';
-import { getLogger, Logger } from 'log4js';
 import ChildProcessProxy, { ChildProxy } from '../child-proxy/ChildProcessProxy';
 import { TranspileResult, FileLocation } from 'stryker-api/transpile';
 import TranspiledMutant from '../TranspiledMutant';
@@ -14,7 +13,6 @@ export default class MutantTranspiler {
   private transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
   private proxy: ChildProxy<TranspilerFacade>;
   private currentMutatedFile: SourceFile;
-  private log: Logger;
 
   /**
    * Creates the mutant transpiler in a child process if one is defined. 
@@ -43,7 +41,6 @@ export default class MutantTranspiler {
         }
       };
     }
-    this.log = getLogger(MutantTranspiler.name);
   }
 
   initialize(files: File[]): Promise<TranspileResult> {
