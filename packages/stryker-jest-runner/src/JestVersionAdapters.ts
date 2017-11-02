@@ -1,9 +1,10 @@
-const runTest = require('jest-cli/build/runTest');
+const pkg = require('jest-cli/package.json');
 const Runtime = require('jest-runtime');
 
 const Console = require('console').Console;
 
 import * as log4js from 'log4js';
+import * as semver from 'semver';
 const log = log4js.getLogger('JestAdapter');
 
 const console = new Console(process.stdout, process.stderr);
@@ -19,17 +20,21 @@ abstract class JestAdapter {
 }
 
 class JestPre20Adapter extends JestAdapter {
+  private _runTest = require('jest-cli/build/runTest');
+
   public buildHasteContext(options: any): Promise<any> {
     const { maxWorkers } = options;
     return Runtime.createHasteContext(options, { console, maxWorkers });
   }
 
   public runTest(path: string, options: any, resolver: any): Promise<any> {
-    return runTest(path, options, resolver);
+    return this._runTest(path, options, resolver);
   }
 }
 
-class JestPost20Adapter extends JestAdapter {
+class Jest20Adapter extends JestAdapter {
+  private _runTest = require('jest-cli/build/runTest');
+
   public buildHasteContext(options: any): Promise<any> {
     const { maxWorkers } = options;
     return Runtime.createContext(options, { console,  maxWorkers });
@@ -37,20 +42,45 @@ class JestPost20Adapter extends JestAdapter {
   
   public runTest(path: string, options: any, resolver: any): Promise<any> {
     const globalConfig = {};
-    return runTest(path, globalConfig, options, resolver);
+    return this._runTest(path, globalConfig, options, resolver);
   }
 }
 
-const findJestAdapter = () => {
-  const pre20 = typeof Runtime.createHasteContext !== 'undefined';
-  log.info(`Detected Jest ${pre20 ? 'pre' : 'post'} v20.0.0`);
-  const adapter = pre20 ? new JestPre20Adapter() : new JestPost20Adapter();
-  return (adapter as JestAdapter);
+class Jest21UpAdapter extends JestAdapter {
+  private _runTest = require('jest-runner/build/run_test').default;
+  
+  public buildHasteContext(options: any): Promise<any> {
+    const { maxWorkers } = options;
+    return Runtime.createContext(options, { console,  maxWorkers });
+  }
+  
+  public runTest(path: string, options: any, resolver: any): Promise<any> {
+    const globalConfig = {};
+    return this._runTest(path, globalConfig, options, resolver);
+  }
+}
+
+const findJestAdapter: () => JestAdapter = () => {
+  const jestVersion = pkg.version;
+  log.debug(`Found Jest CLI v${jestVersion}`);
+
+  if (!jestVersion) {
+    throw new Error(`Did not find package.json for jest-cli. Is it installed?`); 
+  }
+
+  if (semver.satisfies(jestVersion, '<20.0.0')) {
+    log.info('Detected Jest before v20.0.0');
+    return new JestPre20Adapter();
+  } else if (semver.satisfies(jestVersion, '>=20.0.0 <21.0.0')) {
+    log.info('Detected Jest v20');
+    return new Jest20Adapter();
+  } else {
+    log.info('Detected Jest v21');
+    return new Jest21UpAdapter();
+  }
 };
 
 export {
   JestAdapter,
-  JestPre20Adapter,
-  JestPost20Adapter,
   findJestAdapter,
 }
