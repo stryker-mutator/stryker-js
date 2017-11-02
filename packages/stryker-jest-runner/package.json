@@ -38,6 +38,7 @@
     "@types/log4js": "0.0.32",
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.45",
+    "@types/semver": "^5.4.0",
     "@types/sinon": "^1.16.29",
     "@types/sinon-chai": "^2.7.26",
     "chai": "^3.5.0",
@@ -64,7 +65,8 @@
   },
   "dependencies": {
     "lodash": "^4.13.1",
-    "log4js": "^1.0.1"
+    "log4js": "^1.0.1",
+    "semver": "5.4.1"
   },
   "contributors": [
     "Maarten Mulders <mthmulders@users.noreply.github.com>",

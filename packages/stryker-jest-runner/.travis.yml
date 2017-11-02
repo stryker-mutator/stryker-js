@@ -6,6 +6,7 @@ env:
   - JEST_VERSION=18.0.0
   - JEST_VERSION=19.0.0
   - JEST_VERSION=20.0.0
+  - JEST_VERSION=21.0.0
 install: npm install
 before_script:
   - export DISPLAY=:99.0
