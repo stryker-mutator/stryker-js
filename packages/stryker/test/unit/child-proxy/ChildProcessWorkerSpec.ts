@@ -45,7 +45,6 @@ describe('ChildProcessProxyWorker', () => {
         kind: WorkerMessageKind.Init,
         logLevel: 'FooLevel',
         constructorArgs: ['FooBarName'],
-        correlationId: 0,
         plugins: ['fooPlugin', 'barPlugin'],
         requirePath: require.resolve('./HelloClass')
       };
