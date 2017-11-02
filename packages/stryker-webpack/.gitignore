@@ -3,3 +3,9 @@
 **/*.js
 **/*.js.map
 **/*.d.ts
+
+!testResources/**/*.js
+!stryker.conf.js
+/package-lock.json
+/reports
+/.nyc_output
