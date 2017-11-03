@@ -4,6 +4,7 @@ import * as log4js from 'log4js';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 import * as rawCoverageReporter from './RawCoverageReporter';
+import { KARMA_CONFIG } from './configKeys';
 
 const log = log4js.getLogger('KarmaTestRunner');
 
@@ -54,7 +55,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
 
   constructor(private options: RunnerOptions) {
     super();
-    let karmaConfig = this.configureTestRunner(options.strykerOptions['karmaConfig']);
+    let karmaConfig = this.configureTestRunner(options.strykerOptions[KARMA_CONFIG]);
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
     karmaConfig = this.configureProperties(karmaConfig);
 
@@ -181,6 +182,11 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     return karmaConfig;
   }
 
+  /**
+   * Some options cannot be configured by the user (like timeout, reporter, etc).
+   * This method forces that options on given karma config.
+   * @param karmaConfig The karma config on which options need to be forced
+   */
   private forceOptions(karmaConfig: ConfigOptions) {
     let i: keyof ConfigOptions;
     for (i in FORCED_OPTIONS) {

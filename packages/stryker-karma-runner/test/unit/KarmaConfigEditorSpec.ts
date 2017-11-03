@@ -74,6 +74,13 @@ describe('KarmaConfigEditor', () => {
           ]);
       });
 
+      it('should not override files if files were specified in the karmaConfig', () => {
+        config.karmaConfig = { files: [] };
+        karmaConfig.files = [{ pattern: 'foobar' }];
+        sut.edit(config);
+        expect(config.files).lengthOf(0);
+      });
+
       it('should exclude the excluded files', () => {
         karmaConfig.exclude = ['someFile'];
         sut.edit(config);

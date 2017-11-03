@@ -3,6 +3,7 @@ import * as karma from 'karma';
 import { InputFileDescriptor } from 'stryker-api/core';
 import { ConfigEditor, Config as StrykerConfig } from 'stryker-api/config';
 import KarmaConfigReader from './KarmaConfigReader';
+import { KARMA_CONFIG, KARMA_CONFIG_FILE } from './configKeys';
 
 const log = log4js.getLogger('KarmaConfigEditor');
 
@@ -11,14 +12,15 @@ export default class KarmaConfigEditor implements ConfigEditor {
     // Copy logLevel to local logLevel
     log4js.setGlobalLogLevel(strykerConfig.logLevel);
 
-    const karmaConfig = new KarmaConfigReader(strykerConfig['karmaConfigFile']).read();
+    const karmaConfig = new KarmaConfigReader(strykerConfig[KARMA_CONFIG_FILE]).read();
     if (karmaConfig) {
-      KarmaConfigEditor.importFiles(strykerConfig, karmaConfig);
-      KarmaConfigEditor.importDefaultKarmaConfig(strykerConfig, karmaConfig);
+      KarmaConfigEditor.importKarmaConfig(strykerConfig, karmaConfig);
+      KarmaConfigEditor.importFiles(strykerConfig);
     }
   }
 
-  private static importFiles(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
+  private static importFiles(strykerConfig: StrykerConfig) {
+    const karmaConfig: karma.ConfigOptions = strykerConfig[KARMA_CONFIG];
     if (!strykerConfig.files) { strykerConfig.files = []; }
     if (!Array.isArray(karmaConfig.files)) { karmaConfig.files = []; }
     if (!Array.isArray(karmaConfig.exclude)) { karmaConfig.exclude = []; }
@@ -36,17 +38,8 @@ export default class KarmaConfigEditor implements ConfigEditor {
     strykerConfig.files = karmaFiles.concat(strykerConfig.files);
   }
 
-  private static importDefaultKarmaConfig(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
-    if (strykerConfig['karmaConfig']) {
-      const target = strykerConfig['karmaConfig'];
-      for (let i in karmaConfig) {
-        if (!target[i]) {
-          target[i] = (<any>karmaConfig)[i];
-        }
-      }
-    } else {
-      strykerConfig['karmaConfig'] = karmaConfig;
-    }
+  private static importKarmaConfig(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
+    strykerConfig[KARMA_CONFIG] = Object.assign(karmaConfig, strykerConfig[KARMA_CONFIG]);
   }
 
   private static toInputFileDescriptor(karmaPattern: karma.FilePattern | string): InputFileDescriptor {
