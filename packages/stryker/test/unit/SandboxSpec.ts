@@ -5,7 +5,6 @@ import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import { expect } from 'chai';
 import { FileKind, File } from 'stryker-api/core';
-import { RunResult } from 'stryker-api/test_runner';
 import { TextFile } from 'stryker-api/src/core/File';
 import { wrapInClosure } from '../../src/utils/objectUtils';
 import Sandbox from '../../src/Sandbox';
@@ -107,14 +106,11 @@ describe('Sandbox', () => {
 
     describe('when runMutant()', () => {
       let transpiledMutant: TranspiledMutant;
-      let actualRunResult: RunResult;
       let mutant: Mutant;
-      let sourceFile: SourceFile;
       const testFilterCodeFragment = 'Some code fragment';
 
       beforeEach(() => {
         mutant = createMutant({ fileName: expectedFileToMutate.name, replacement: 'mutated', range: [0, 8] });
-        sourceFile = new SourceFile(textFile({ content: 'original code' }));
 
         const testableMutant = new TestableMutant(
           mutant,
@@ -130,8 +126,8 @@ describe('Sandbox', () => {
 
       describe('when mutant has scopedTestIds', () => {
 
-        beforeEach(async () => {
-          actualRunResult = await sut.runMutant(transpiledMutant);
+        beforeEach(() => {
+          return sut.runMutant(transpiledMutant);
         });
 
         it('should save the mutant to disk', () => {

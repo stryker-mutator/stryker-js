@@ -13,14 +13,12 @@ describe('SandboxPool', () => {
   let firstSandbox: Mock<Sandbox>;
   let secondSandbox: Mock<Sandbox>;
   let options: Config;
-  let coverageInstrumenter: any;
   let expectedTestFramework: TestFramework;
   let expectedInputFiles: File[];
 
   beforeEach(() => {
     options = config();
     expectedTestFramework = testFramework();
-    coverageInstrumenter = 'a coverage instrumenter';
     firstSandbox = mock(Sandbox);
     firstSandbox.dispose.resolves();
     secondSandbox = mock(Sandbox);
