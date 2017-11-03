@@ -1,3 +1,13 @@
+<a name="0.2.2"></a>
+## 0.2.2 (2017-10-23)
+
+* 0.2.2 ([9959ee4](https://github.com/stryker-mutator/stryker-jest-runner/commit/9959ee4))
+* chore(build) Don't include files in npm package that don't belong ([b73430f](https://github.com/stryker-mutator/stryker-jest-runner/commit/b73430f))
+* chore(docs) Update changelog ([403ff0d](https://github.com/stryker-mutator/stryker-jest-runner/commit/403ff0d))
+* chore(dependencies): Update to stryker-api 0.10.0 ([7fefd60](https://github.com/stryker-mutator/stryker-jest-runner/commit/7fefd60))
+
+
+
 <a name="0.2.1"></a>
 ## 0.2.1 (2017-09-27)
 
