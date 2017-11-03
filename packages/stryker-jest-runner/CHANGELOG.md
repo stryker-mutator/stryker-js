@@ -1,3 +1,16 @@
+<a name="0.3.0"></a>
+# 0.3.0 (2017-11-03)
+
+* 0.3.0 ([f9563b7](https://github.com/stryker-mutator/stryker-jest-runner/commit/f9563b7))
+* chore(docs) Update changelog ([c26f442](https://github.com/stryker-mutator/stryker-jest-runner/commit/c26f442))
+* feat(runner) Add support for Jest v21 (#21) (#22) ([98ba822](https://github.com/stryker-mutator/stryker-jest-runner/commit/98ba822))
+* refactor: Add semicolon ([c1d1c1c](https://github.com/stryker-mutator/stryker-jest-runner/commit/c1d1c1c))
+* refactor(.vscode): Reset build files ([5eee921](https://github.com/stryker-mutator/stryker-jest-runner/commit/5eee921))
+* refactor(test): Reset 4 tab whitespace ([eeab8e1](https://github.com/stryker-mutator/stryker-jest-runner/commit/eeab8e1))
+* fix(roots option): Add roots option for jest v19 ([ec7bd35](https://github.com/stryker-mutator/stryker-jest-runner/commit/ec7bd35))
+
+
+
 <a name="0.2.2"></a>
 ## 0.2.2 (2017-10-23)
 
