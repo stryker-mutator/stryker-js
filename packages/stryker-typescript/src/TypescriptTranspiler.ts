@@ -1,7 +1,7 @@
 import { Config } from 'stryker-api/config';
 import { Transpiler, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
-import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory, isToBeTranspiled, filterEmpty } from './helpers/tsHelpers';
+import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory, isToBeTranspiled, filterEmpty, isHeaderFile } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import { setGlobalLogLevel } from 'log4js';
 
@@ -42,7 +42,8 @@ export default class TypescriptTranspiler implements Transpiler {
     if (error.length) {
       return this.createErrorResult(error);
     } else {
-      const outputFiles = this.languageService.emit(typescriptFiles);
+      const implementationFiles = typescriptFiles.filter(file => !isHeaderFile(file));
+      const outputFiles = this.languageService.emit(implementationFiles);
       // Keep original order of the files
       const resultFiles = filterEmpty(allFiles.map(file => {
         if (isToBeTranspiled(file)) {
