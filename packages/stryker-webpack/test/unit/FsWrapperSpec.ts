@@ -49,8 +49,6 @@ describe("FsWrapper", () => {
 
                 assert(false, "Function should throw an error!");
             } catch (err) {
-                console.log(err);
-
                 expect(err).to.equal(fakeErr);
             }
         });

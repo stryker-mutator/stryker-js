@@ -34,12 +34,6 @@ describe("WebpackCompiler", () => {
         sandbox.restore();
     });
 
-    describe("construct", () => {
-        it("should have a compiler with the cache flag set to true", () => {
-            expect(fakeWebpackConfig.cache).to.equal(true);
-        });
-    });
-
     describe("replace", () => {
         it("should call the mkdirp function on the fsWrapper with the basedir of the given file", async () => {
             await webpackCompiler.replace(fakeTextFileArray);

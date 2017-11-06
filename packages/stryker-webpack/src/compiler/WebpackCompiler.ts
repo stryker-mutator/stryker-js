@@ -18,11 +18,8 @@ export default class WebpackCompiler {
     }
 
     private createCompiler(webpackConfig: Configuration, fileSystem: FileSystem): Compiler {
-        // Force cache to on in the webpack configuration to make compilation go faster
-        webpackConfig.cache = true;
-
         // Declare as any here to avoid errors when setting filesystem
-        const compiler: any = webpack(webpackConfig);
+        const compiler: any = webpack(Object.assign({}, webpackConfig));
 
         // Setting filesystem to provided fs so compilation can be done in memory
         compiler.inputFileSystem = fileSystem;
