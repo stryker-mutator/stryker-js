@@ -24,19 +24,19 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     this.log = getLogger(CoverageInstrumenterTranspiler.name);
   }
 
-  transpile(files: File[]): TranspileResult {
+  public transpile(files: File[]): Promise<TranspileResult> {
     try {
       const result: TranspileResult = {
         outputFiles: files.map(file => this.instrumentFileIfNeeded(file)),
         error: null
       };
-      return this.addCollectCoverageFileIfNeeded(result);
+      return Promise.resolve(this.addCollectCoverageFileIfNeeded(result));
     } catch (error) {
-      return this.errorResult(errorToString(error));
+      return Promise.resolve(this.errorResult(errorToString(error)));
     }
   }
 
-  getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
+  public getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
     return sourceFileLocation;
   }
 

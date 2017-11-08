@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.0"></a>
+# [0.13.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.12.0...stryker@0.13.0) (2017-10-24)
+
+
+### Features
+
+* **default score:** Set default score to 100 ([b9231fe](https://github.com/stryker-mutator/stryker/commit/b9231fe))
+* **transpiler api:** Async transpiler plugin support ([#433](https://github.com/stryker-mutator/stryker/issues/433)) ([794e587](https://github.com/stryker-mutator/stryker/commit/794e587))
+
+
+
+
 <a name="0.12.0"></a>
 ## [0.12.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.11.2...stryker@0.12.0) (2017-10-20)
 

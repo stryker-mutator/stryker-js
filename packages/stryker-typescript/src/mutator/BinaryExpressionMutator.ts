@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
-const replaceTokens = {
+const replaceTokens: ts.MapLike<string[]>  = {
   [ts.SyntaxKind.PlusToken]: ['-'],
   [ts.SyntaxKind.MinusToken]: ['+'],
   [ts.SyntaxKind.SlashToken]: ['*'],

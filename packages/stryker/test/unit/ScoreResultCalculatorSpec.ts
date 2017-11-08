@@ -145,6 +145,8 @@ describe('ScoreResult', () => {
       expect(extractNumbers(actual)).to.deep.eq({ killed: 0, survived: 0, transpileErrors: 0, runtimeErrors: 0, noCoverage: 0 });
       expect(actual.childResults.length).to.be.eq(0);
       expect(actual.name).to.be.eq('');
+      expect(actual.mutationScore).eq(100);
+      expect(actual.mutationScoreBasedOnCoveredCode).eq(100);
     });
 
     it('should be able to handle children that do not start with the same path', () => {

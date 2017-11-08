@@ -9,7 +9,7 @@
     "@types/esprima": "^2.1.31",
     "@types/estree": "0.0.32",
     "@types/execa": "^0.7.0",
-    "@types/express-serve-static-core": "4.0.46",
+    "@types/express-serve-static-core": "4.0.54",
     "@types/glob": "^5.0.29",
     "@types/istanbul": "^0.4.29",
     "@types/karma": "^0.13.32",
@@ -39,7 +39,7 @@
     "sinon-chai": "^2.10.0",
     "source-map-support": "^0.4.16",
     "tslint": "^5.6.0",
-    "typescript": "^2.2.2"
+    "typescript": "^2.6.1"
   },
   "scripts": {
     "clean": "lerna run prebuild",

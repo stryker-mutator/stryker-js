@@ -9,6 +9,7 @@ import Breadcrumb from './Breadcrumb';
 
 const log = log4js.getLogger('HtmlReporter');
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
+export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class HtmlReporter implements Reporter {
 
@@ -99,7 +100,7 @@ export default class HtmlReporter implements Reporter {
   }
 
   private get resourcesDir() {
-    return path.join(this.baseDir, '__resources');
+    return path.join(this.baseDir, RESOURCES_DIR_NAME);
   }
 
   private get baseDir() {
