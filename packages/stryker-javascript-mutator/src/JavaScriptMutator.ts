@@ -2,30 +2,37 @@ import * as babel from 'babel-core';
 import { getLogger } from 'log4js';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import { File, FileKind, TextFile } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
 import BabelParser from './helpers/BabelParser';
-import Copy from './helpers/Copy';
+import copy from './helpers/copy';
 import NodeMutatorFactory from './NodeMutatorFactory';
+import NodeMutator from './mutators/NodeMutator';
+
+function defaultMutators(): NodeMutator[] {
+  return NodeMutatorFactory.instance().knownNames().map(name => NodeMutatorFactory.instance().create(name, undefined));
+}
 
 export default class JavaScriptMutator implements Mutator {
   private log = getLogger(JavaScriptMutator.name);
 
+  constructor(config: Config, private mutators: NodeMutator[] = defaultMutators()) {
+  }
+
   mutate(inputFiles: File[]): Mutant[] {
-    let mutants: Mutant[] = [];
-    const factory = NodeMutatorFactory.instance();
-    const mutators = factory.knownNames().map(name => factory.create(name, undefined));
+    const mutants: Mutant[] = [];
 
     inputFiles.filter(i => i.kind === FileKind.Text && i.mutated).forEach((file: TextFile) => {
       const ast = BabelParser.getAst(file.content);
-      const baseAst = Copy(ast, true);
+      const baseAst = copy(ast, true);
       BabelParser.removeUseStrict(baseAst);
 
       BabelParser.getNodes(ast).forEach(node => {
-        mutators.forEach(mutator => {
-          let mutatedNodes = mutator.mutate(node, Copy);
+        this.mutators.forEach(mutator => {
+          let mutatedNodes = mutator.mutate(node, copy);
 
           if (mutatedNodes) {
             const newMutants = this.generateMutants(mutatedNodes, baseAst, file, mutator.name);
-            mutants = mutants.concat(newMutants);
+            newMutants.forEach(mutant => mutants.push(mutant));
           }
         });
       });
@@ -38,7 +45,7 @@ export default class JavaScriptMutator implements Mutator {
     const mutants: Mutant[] = [];
 
     nodes.forEach(node => {
-      const replacement =  BabelParser.generateCode(ast, node);
+      const replacement = BabelParser.generateCode(ast, node);
       if (replacement) {
         const range: [number, number] = [node.start, node.end];
 

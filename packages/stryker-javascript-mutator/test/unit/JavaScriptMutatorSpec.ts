@@ -1,12 +1,21 @@
 import { expect } from 'chai';
 import { File, FileKind } from 'stryker-api/core';
 import JavaScriptMutator from '../../src/JavaScriptMutator';
-require('../../src/index');
+import * as log4js from 'log4js';
+import LogMock from '../helpers/LogMock';
+import '../../src/index';
+import { Config } from 'stryker-api/config';
 
 describe('JavaScriptMutator', () => {
+
+
+  beforeEach(() => {
+    sandbox.stub(log4js, 'getLogger').returns(new LogMock());
+  });
+
   it('should generate a correct mutant', () => {
-    let mutator = new JavaScriptMutator();
-    let files: File[] = [
+    const mutator = new JavaScriptMutator(new Config());
+    const files: File[] = [
       {
         name: 'testFile.js',
         included: false,
@@ -17,7 +26,7 @@ describe('JavaScriptMutator', () => {
       }
     ];
 
-    let mutants = mutator.mutate(files);
+    const mutants = mutator.mutate(files);
 
     expect(mutants.length).to.equal(1);
     expect(mutants[0]).to.deep.equal({
@@ -30,7 +39,7 @@ describe('JavaScriptMutator', () => {
 
   
   it('should generate mutants for multiple files', () => {
-    let mutator = new JavaScriptMutator();
+    let mutator = new JavaScriptMutator(new Config());
     let file: File = {
       name: 'testFile.js',
       included: false,
@@ -46,7 +55,7 @@ describe('JavaScriptMutator', () => {
   });
 
   it('should not mutate files with mutate: false', () => {
-    let mutator = new JavaScriptMutator();
+    let mutator = new JavaScriptMutator(new Config());
     let files: File[] = [
       {
         name: 'testFile.js',
@@ -69,6 +78,6 @@ describe('JavaScriptMutator', () => {
     let mutants = mutator.mutate(files);
 
     expect(mutants.length).to.equal(1);
-    expect(mutants[0].fileName).to.equal(files[1].name);
+    expect(mutants[0].fileName).to.equal('testFile2.js');
   });
 });

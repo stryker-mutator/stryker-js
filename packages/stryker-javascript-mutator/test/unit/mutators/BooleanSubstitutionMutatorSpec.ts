@@ -1,21 +1,29 @@
-import { expect } from 'chai';
 import BooleanSubstitutionMutator from '../../../src/mutators/BooleanSubstitutionMutator';
-import Copy from '../../../src/helpers/Copy';
-import BabelParser from '../../../src/helpers/BabelParser';
+import { expectMutation } from '../../helpers/mutatorAssertions';
+import JavaScriptMutator from '../../../src/JavaScriptMutator';
+import { Config } from 'stryker-api/config';
+import LogMock from '../../helpers/LogMock';
+import * as log4js from 'log4js';
 
 describe('BooleanSubstitutionMutator', () => {
-  const mutator = new BooleanSubstitutionMutator();
+  let mutator: JavaScriptMutator;
+
+  beforeEach(() => {
+    sandbox.stub(log4js, 'getLogger').returns(new LogMock());
+    mutator = new JavaScriptMutator(new Config(), [new BooleanSubstitutionMutator()]);
+  });
 
   it('should remove a unary "!"', () => {
-    const code = '!(1 > 2);';
-    let ast = BabelParser.getAst(code);
-    let nodes = BabelParser.getNodes(ast);
-    
-    let mutatedNodes = mutator.mutate(nodes[2], Copy);
-    let generatedCode = BabelParser.generateCode(Copy(ast, true), mutatedNodes[0]);
+    expectMutation(mutator, '!(1 > 2)', '1 > 2');
+    expectMutation(mutator, '!a', 'a');
+    expectMutation(mutator, '"!a"'); // leave alone any other `!` 
+  });
 
-    expect(generatedCode).to.equal('1 > 2');
-    expect(mutatedNodes[0].start).to.equal(0);
-    expect(mutatedNodes[0].end).to.equal(8);
+  it('should mutate `true` into `false`', () => {
+    expectMutation(mutator, 'true', 'false');
+  });
+
+  it('should mutate `false` into `true`', () => {
+    expectMutation(mutator, 'false', 'true');
   });
 });

@@ -10,7 +10,7 @@ namespace NodeMutatorFactory {
       super('nodeMutator');
     }
   }
-  let nodeMutatorFactoryInstance = new NodeMutatorFactory();
+  const nodeMutatorFactoryInstance = new NodeMutatorFactory();
 
   /**
    * Returns the current instance of the MutatorFactory.
