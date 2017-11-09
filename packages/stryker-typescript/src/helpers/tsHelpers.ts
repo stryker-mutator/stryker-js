@@ -4,6 +4,7 @@ import { CONFIG_KEY_OPTIONS, CONFIG_KEY_FILE } from './keys';
 import { Config } from 'stryker-api/config';
 import * as ts from 'typescript';
 import * as path from 'path';
+import * as semver from 'semver';
 
 export function createProgram(inputFiles: File[], strykerConfig: Config) {
   const files = inputFiles
@@ -32,6 +33,15 @@ export function getCompilerOptions(config: Config) {
 
 export function getProjectDirectory(config: Config) {
   return path.dirname(config[CONFIG_KEY_FILE] || '.');
+}
+
+/**
+ * Verifies that the installed version of typescript satisfies '>=2.5` and otherwise: throws an exception
+ */
+export function guardTypescriptVersion() {
+  if (!semver.satisfies(ts.version, '>=2.5')) {
+    throw new Error(`Installed typescript version ${ts.version} is not supported by stryker-typescript. Please install version 2.5 or higher (\`npm install typescript@^2.5\`).`);
+  }
 }
 
 const printer = ts.createPrinter({

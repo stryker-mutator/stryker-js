@@ -21,6 +21,10 @@ export default class TypescriptConfigEditor implements ConfigEditor {
 
   edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
     setGlobalLogLevel(strykerConfig.logLevel);
+    this.loadTSConfig(strykerConfig, host);
+  }
+
+  private loadTSConfig(strykerConfig: Config, host: ts.ParseConfigHost) {
     if (typeof strykerConfig[CONFIG_KEY_FILE] === 'string') {
       const tsconfigFileName = path.resolve(strykerConfig[CONFIG_KEY_FILE]);
       this.log.info(`Loading tsconfig file ${tsconfigFileName}`);
