@@ -6,8 +6,6 @@ import { EventEmitter } from 'events';
 import * as rawCoverageReporter from './RawCoverageReporter';
 import { KARMA_CONFIG } from './configKeys';
 
-const log = log4js.getLogger('KarmaTestRunner');
-
 export interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string };
   detached?: boolean;
@@ -46,6 +44,7 @@ const DEFAULT_OPTIONS: Readonly<ConfigOptions> = Object.freeze({
 
 export default class KarmaTestRunner extends EventEmitter implements TestRunner {
 
+  private log = log4js.getLogger(KarmaTestRunner.name);
   private server: karma.Server;
   private serverStartedPromise: Promise<void>;
   private currentTestResults: TestResult[];
@@ -59,7 +58,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
     karmaConfig = this.configureProperties(karmaConfig);
 
-    log.info(`using config ${JSON.stringify(karmaConfig)}`);
+    this.log.info(`using config ${JSON.stringify(karmaConfig)}`);
     this.server = new karma.Server(karmaConfig, function (exitCode) {
       process.exit(1);
     });
@@ -197,7 +196,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
   private runServer() {
     return new Promise<void>(resolve => {
       karma.runner.run({ port: this.options.port }, (exitCode) => {
-        log.info('karma run done with ', exitCode);
+        this.log.info('karma run done with ', exitCode);
         resolve();
       });
     });
