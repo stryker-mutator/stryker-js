@@ -1,7 +1,7 @@
 import { Config } from 'stryker-api/config';
 import { Transpiler, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
-import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory, isToBeTranspiled, filterEmpty } from './helpers/tsHelpers';
+import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory, isToBeTranspiled, filterEmpty, guardTypescriptVersion } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import { setGlobalLogLevel } from 'log4js';
 
@@ -12,6 +12,7 @@ export default class TypescriptTranspiler implements Transpiler {
   private readonly keepSourceMaps: boolean;
 
   constructor(options: TranspilerOptions) {
+    guardTypescriptVersion();
     setGlobalLogLevel(options.config.logLevel);
     this.config = options.config;
     this.keepSourceMaps = options.keepSourceMaps;
