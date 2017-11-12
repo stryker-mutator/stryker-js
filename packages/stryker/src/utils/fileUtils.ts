@@ -42,6 +42,9 @@ export function isOnlineFile(path: string): boolean {
 const binaryExtensions = [
   '.png',
   '.jpeg',
+  '.jpg',
+  '.zip',
+  '.tar',
   '.gif' // Still more to add
 ];
 
