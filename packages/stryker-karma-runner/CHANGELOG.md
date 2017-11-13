@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.0"></a>
+# [0.11.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.10.0...stryker-karma-runner@0.11.0) (2017-11-13)
+
+
+### Features
+
+* **karma:** Ability to override options ([#448](https://github.io/stryker-mutator/stryker/issues/448)) ([ee5d008](https://github.io/stryker-mutator/stryker/commit/ee5d008)), closes [#434](https://github.io/stryker-mutator/stryker/issues/434)
+
+
+
+
 <a name="0.10.0"></a>
 # [0.10.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.9.1...stryker-karma-runner@0.10.0) (2017-11-13)
 
