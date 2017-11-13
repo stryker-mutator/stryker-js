@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.0"></a>
+# [0.10.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.9.1...stryker-karma-runner@0.10.0) (2017-11-13)
+
+
+### Features
+
+* **mocha 4:** Add support for mocha version 4 ([#455](https://github.io/stryker-mutator/stryker/issues/455)) ([de6ae4f](https://github.io/stryker-mutator/stryker/commit/de6ae4f))
+
+
+
+
 <a name="0.9.1"></a>
 ## [0.9.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.9.0...stryker-karma-runner@0.9.1) (2017-10-24)
 

@@ -10,7 +10,7 @@ import * as fs from 'mz/fs';
 import { FileDescriptor, TextFile } from 'stryker-api/core';
 import currentLogMock from '../helpers/log4jsMock';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
-import { Mock, mock, textFile } from '../helpers/producers';
+import { Mock, mock, textFile, binaryFile } from '../helpers/producers';
 
 const files = (...namesWithContent: [string, string][]): TextFile[] =>
   namesWithContent.map((nameAndContent): TextFile => textFile({
@@ -30,12 +30,14 @@ describe('InputFileResolver', () => {
     log = currentLogMock();
     reporter = mock(BroadcastReporter);
     globStub = sandbox.stub(fileUtils, 'glob');
-    sandbox.stub(fs, 'readFile').resolves('') // fall back
-      .withArgs(sinon.match('file1')).resolves('file 1 content')
-      .withArgs(sinon.match('file2')).resolves('file 2 content')
-      .withArgs(sinon.match('file3')).resolves('file 3 content')
-      .withArgs(sinon.match('mute1')).resolves('mutate 1 content')
-      .withArgs(sinon.match('mute2')).resolves('mutate 2 content');
+    sandbox.stub(fs, 'readFile')
+      .withArgs(sinon.match.string).resolves(new Buffer(0)) // fall back
+      .withArgs(sinon.match.string, 'utf8').resolves('') // fall back
+      .withArgs(sinon.match('file1'), 'utf8').resolves('file 1 content')
+      .withArgs(sinon.match('file2'), 'utf8').resolves('file 2 content')
+      .withArgs(sinon.match('file3'), 'utf8').resolves('file 3 content')
+      .withArgs(sinon.match('mute1'), 'utf8').resolves('mutate 1 content')
+      .withArgs(sinon.match('mute2'), 'utf8').resolves('mutate 2 content');
     globStub.withArgs('mut*tion*').resolves(['/mute1.js', '/mute2.js']);
     globStub.withArgs('mutation1').resolves(['/mute1.js']);
     globStub.withArgs('mutation2').resolves(['/mute2.js']);
@@ -243,5 +245,23 @@ describe('InputFileResolver', () => {
       expect(() => new InputFileResolver([], [{ pattern: 'http://www', mutated: true }], reporter))
         .throws('Cannot mutate web url "http://www".');
     });
+  });
+
+
+  it(`should presume that files with an extension like .jpeg or .gif are binary`, async () => {
+    // Arrange
+    const binaryFiles = ['file.png', 'file.jpeg', 'file.jpg', 'file.gif', 'file.zip', 'file.tar'];
+    binaryFiles.forEach(file => globStub.withArgs(file).resolves([file]));
+    sut = new InputFileResolver([], binaryFiles, reporter);
+
+    // Act
+    const actual = await sut.resolve();
+
+    // Assert
+    expect(actual).deep.eq(binaryFiles.map(file => binaryFile({ 
+      name: path.resolve(file), 
+      mutated: false, 
+      transpiled: true 
+    })));
   });
 });
