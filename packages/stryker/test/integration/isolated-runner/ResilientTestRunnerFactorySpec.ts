@@ -135,6 +135,7 @@ describe('ResilientTestRunnerFactory', function () {
           expect.fail(null, null, result.errorMessages[0]);
         }
       }));
+    after(() => sut.dispose());
   });
 
   describe('when test runner is crashing after 100ms', () => {
@@ -148,15 +149,19 @@ describe('ResilientTestRunnerFactory', function () {
             expect(result.errorMessages).to.be.undefined;
           }));
     });
+    after(() => sut.dispose());
   });
 
   describe('when test runner handles promise rejections asynchronously', () => {
     before(() => sut = ResilientTestRunnerFactory.create('async-promise-rejection-handler', options));
-
+    
     it('should be logging the unhandled rejection errors', async () => {
       await sut.init();
       await sut.run({ timeout: 2000 });
       expect(log.error).not.called;
     });
+
+    after(() => sut.dispose());
+   
   });
 }); 
