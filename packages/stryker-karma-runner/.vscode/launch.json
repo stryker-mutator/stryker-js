@@ -4,32 +4,32 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Integration Tests",
-      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
+      "name": "Unit tests",
+      "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
         "-u",
         "tdd",
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/integration/**/*.js"
+        "${workspaceRoot}/test/helpers/**/*.js",
+        "${workspaceRoot}/test/unit/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Unit Tests",
-      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
+      "name": "Integration tests",
+      "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
         "-u",
         "tdd",
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/unit/**/*.js"        
+        "${workspaceRoot}/test/helpers/**/*.js",
+        "${workspaceRoot}/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
     }

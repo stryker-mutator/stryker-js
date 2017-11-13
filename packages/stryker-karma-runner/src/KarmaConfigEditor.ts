@@ -3,48 +3,43 @@ import * as karma from 'karma';
 import { InputFileDescriptor } from 'stryker-api/core';
 import { ConfigEditor, Config as StrykerConfig } from 'stryker-api/config';
 import KarmaConfigReader from './KarmaConfigReader';
-
-const log = log4js.getLogger('KarmaConfigEditor');
+import { KARMA_CONFIG, KARMA_CONFIG_FILE } from './configKeys';
 
 export default class KarmaConfigEditor implements ConfigEditor {
+  private log = log4js.getLogger(KarmaConfigEditor.name);
+  
   edit(strykerConfig: StrykerConfig) {
-    const karmaConfig = new KarmaConfigReader(strykerConfig['karmaConfigFile']).read();
+    // Copy logLevel to local logLevel
+    log4js.setGlobalLogLevel(strykerConfig.logLevel);
+
+    const karmaConfig = new KarmaConfigReader(strykerConfig[KARMA_CONFIG_FILE]).read();
     if (karmaConfig) {
-      KarmaConfigEditor.importFiles(strykerConfig, karmaConfig);
-      KarmaConfigEditor.importDefaultKarmaConfig(strykerConfig, karmaConfig);
+      this.importKarmaConfig(strykerConfig, karmaConfig);
+      this.importFiles(strykerConfig);
     }
   }
 
-  private static importFiles(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
+  private importFiles(strykerConfig: StrykerConfig) {
+    const karmaConfig: karma.ConfigOptions = strykerConfig[KARMA_CONFIG];
     if (!strykerConfig.files) { strykerConfig.files = []; }
-    if (!karmaConfig.files) { karmaConfig.files = []; }
-    if (!karmaConfig.exclude) { karmaConfig.exclude = []; }
+    if (!Array.isArray(karmaConfig.files)) { karmaConfig.files = []; }
+    if (!Array.isArray(karmaConfig.exclude)) { karmaConfig.exclude = []; }
 
     const files: (karma.FilePattern | string)[] = karmaConfig.files;
     const exclude: string[] = karmaConfig.exclude;
-    if (files && Array.isArray(files)) {
-      const karmaFiles = files.map(KarmaConfigEditor.toInputFileDescriptor);
-      log.debug(`Importing following files from karma.conf file to stryker: ${JSON.stringify(karmaFiles)}`);
-      strykerConfig.files = strykerConfig.files.concat(karmaFiles);
+    const karmaFiles: Array<InputFileDescriptor | string> = files.map(KarmaConfigEditor.toInputFileDescriptor);
+    const ignores = exclude.map(fileToIgnore => `!${fileToIgnore}`);
+    ignores.forEach(ignore => karmaFiles.push(ignore));
+    if (karmaFiles.length) {
+      this.log.debug(`Importing following files from karma.conf file to stryker: ${JSON.stringify(karmaFiles)}`);
+    } else {
+      this.log.debug(`Importing no files from karma.conf file`);
     }
-    if (exclude && Array.isArray(exclude)) {
-      const ignores = exclude.map(fileToIgnore => `!${fileToIgnore}`);
-      log.debug(`Importing following "exclude" files from karma configuration: ${JSON.stringify(ignores)}`);
-      strykerConfig.files = strykerConfig.files.concat(ignores);
-    }
+    strykerConfig.files = karmaFiles.concat(strykerConfig.files);
   }
 
-  private static importDefaultKarmaConfig(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
-    if (strykerConfig['karmaConfig']) {
-      const target = strykerConfig['karmaConfig'];
-      for (let i in karmaConfig) {
-        if (!target[i]) {
-          target[i] = (<any>karmaConfig)[i];
-        }
-      }
-    } else {
-      strykerConfig['karmaConfig'] = karmaConfig;
-    }
+  private importKarmaConfig(strykerConfig: StrykerConfig, karmaConfig: karma.ConfigOptions) {
+    strykerConfig[KARMA_CONFIG] = Object.assign(karmaConfig, strykerConfig[KARMA_CONFIG]);
   }
 
   private static toInputFileDescriptor(karmaPattern: karma.FilePattern | string): InputFileDescriptor {
