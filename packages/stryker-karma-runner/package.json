@@ -53,9 +53,6 @@
   ],
   "initStrykerConfig": {
     "karmaConfigFile": "karma.conf.js",
-    "files": [],
-    "mutate": [
-      "src/**/*.js"
-    ]
+    "files": []
   }
 }
