@@ -4,8 +4,7 @@ import * as log4js from 'log4js';
 import * as _ from 'lodash';
 import { EventEmitter } from 'events';
 import * as rawCoverageReporter from './RawCoverageReporter';
-
-const log = log4js.getLogger('KarmaTestRunner');
+import { KARMA_CONFIG } from './configKeys';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string };
@@ -45,6 +44,7 @@ const DEFAULT_OPTIONS: Readonly<ConfigOptions> = Object.freeze({
 
 export default class KarmaTestRunner extends EventEmitter implements TestRunner {
 
+  private log = log4js.getLogger(KarmaTestRunner.name);
   private server: karma.Server;
   private serverStartedPromise: Promise<void>;
   private currentTestResults: TestResult[];
@@ -54,11 +54,11 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
 
   constructor(private options: RunnerOptions) {
     super();
-    let karmaConfig = this.configureTestRunner(options.strykerOptions['karmaConfig']);
+    let karmaConfig = this.configureTestRunner(options.strykerOptions[KARMA_CONFIG]);
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
     karmaConfig = this.configureProperties(karmaConfig);
 
-    log.info(`using config ${JSON.stringify(karmaConfig)}`);
+    this.log.info(`using config ${JSON.stringify(karmaConfig)}`);
     this.server = new karma.Server(karmaConfig, function (exitCode) {
       process.exit(1);
     });
@@ -181,6 +181,11 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     return karmaConfig;
   }
 
+  /**
+   * Some options cannot be configured by the user (like timeout, reporter, etc).
+   * This method forces that options on given karma config.
+   * @param karmaConfig The karma config on which options need to be forced
+   */
   private forceOptions(karmaConfig: ConfigOptions) {
     let i: keyof ConfigOptions;
     for (i in FORCED_OPTIONS) {
@@ -191,7 +196,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
   private runServer() {
     return new Promise<void>(resolve => {
       karma.runner.run({ port: this.options.port }, (exitCode) => {
-        log.info('karma run done with ', exitCode);
+        this.log.info('karma run done with ', exitCode);
         resolve();
       });
     });
