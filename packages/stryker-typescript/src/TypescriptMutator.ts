@@ -17,6 +17,7 @@ import ForStatementMutator from './mutator/ForStatementMutator';
 import DoStatementMutator from './mutator/DoStatementMutator';
 import ConditionalExpressionMutator from './mutator/ConditionalExpressionMutator';
 import PrefixUnaryExpressionMutator from './mutator/PrefixUnaryExpressionMutator';
+import ArrowFunctionMutator from './mutator/ArrowFunctionMutator';
 
 export default class TypescriptMutator {
 
@@ -27,6 +28,7 @@ export default class TypescriptMutator {
     new ArrayLiteralMutator(),
     new ArrayNewExpressionMutator(),
     new BlockMutator(),
+    new ArrowFunctionMutator(),
     new IfStatementMutator(),
     new WhileStatementMutator(),
     new ForStatementMutator(),
