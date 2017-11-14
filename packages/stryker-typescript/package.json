@@ -56,9 +56,6 @@
     "tsconfigFile": "tsconfig.json",
     "files": [],
     "coverageAnalysis": "off",
-    "transpilers": [
-      "typescript"
-    ],
     "mutate": [
       "src/**/*.ts"
     ]
