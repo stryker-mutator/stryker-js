@@ -51,5 +51,17 @@
   "peerDependencies": {
     "stryker-api": "^0.11.0",
     "typescript": "^2.5.0"
+  },
+  "initStrykerConfig": {
+    "tsconfigFile": "tsconfig.json",
+    "files": [],
+    "coverageAnalysis": "off",
+    "mutator": "typescript",
+    "transpilers": [
+      "typescript"
+    ],
+    "mutate": [
+      "src/**/*.ts"
+    ]
   }
 }
