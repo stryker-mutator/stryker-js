@@ -26,5 +26,12 @@ describe('BlockMutator', () => {
     expectMutation(sut, 'function() {  }');
   });
 
-  
+  it('should mutate the body of an anonymous function if defined as a block', () => {
+    expectMutation(sut, 'const b = () => { return 4; }', 'const b = () => {}');
+  });
+
+  it('should not mutate the body of an anonymous function if not defined as a block', () => {
+    expectMutation(sut, 'const b = () => 4;');
+  });
+
 });
