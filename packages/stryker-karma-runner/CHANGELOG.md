@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.1"></a>
+## [0.11.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.11.0...stryker-karma-runner@0.11.1) (2017-11-14)
+
+
+### Bug Fixes
+
+* **init stryker typescript:** Add init section ([#459](https://github.io/stryker-mutator/stryker/issues/459)) ([c4510d5](https://github.io/stryker-mutator/stryker/commit/c4510d5)), closes [#454](https://github.io/stryker-mutator/stryker/issues/454)
+
+
+
+
 <a name="0.11.0"></a>
 # [0.11.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.10.0...stryker-karma-runner@0.11.0) (2017-11-13)
 
