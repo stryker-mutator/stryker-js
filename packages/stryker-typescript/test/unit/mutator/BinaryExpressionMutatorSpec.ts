@@ -1,52 +1,5 @@
-import { expect } from 'chai';
 import BinaryExpressionMutator from '../../../src/mutator/BinaryExpressionMutator';
 import { expectMutation } from './mutatorAssertions';
+import BinaryExpressionMutatorSpec from 'stryker-mutator-specification/src/BinaryExpressionMutatorSpec';
 
-describe('BinaryExpressionMutator', () => {
-  let sut: BinaryExpressionMutator;
-
-  beforeEach(() => {
-    sut = new BinaryExpressionMutator();
-  });
-
-  it('should have name "BinaryExpression"', () => {
-    expect(sut.name).eq('BinaryExpression');
-  });
-
-  it('should mutate + and -', () => {
-    expectMutation(sut, 'a + b', 'a - b');
-    expectMutation(sut, 'a - b', 'a + b');
-  });
-
-  it('should mutate *, % and /', () => {
-    expectMutation(sut, 'a * b', 'a / b');
-    expectMutation(sut, 'a / b', 'a * b');
-    expectMutation(sut, 'a % b', 'a * b');
-  });
-
-  it('should mutate < and >', () => {
-    expectMutation(sut, 'a < b', 'a >= b', 'a <= b');
-    expectMutation(sut, 'a > b', 'a <= b', 'a >= b');
-  });
-
-  it('should mutate <= and >=', () => {
-    expectMutation(sut, 'a <= b', 'a < b', 'a > b');
-    expectMutation(sut, 'a >= b', 'a < b', 'a > b');
-  });
-
-  it('should mutate == and ===', () => { 
-    expectMutation(sut, 'a == b', 'a != b');
-    expectMutation(sut, 'a === b', 'a !== b');
-  });
-
-  it('should mutate != and !==', () => { 
-    expectMutation(sut, 'a != b', 'a == b');
-    expectMutation(sut, 'a !== b', 'a === b');
-  });
-
-  it('should mutate && and ||', () => { 
-    expectMutation(sut, 'a && b', 'a || b');
-    expectMutation(sut, 'a || b', 'a && b');
-  });
-
-});
+BinaryExpressionMutatorSpec(new BinaryExpressionMutator().name, expectMutation(new BinaryExpressionMutator()));

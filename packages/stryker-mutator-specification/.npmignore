@@ -1,0 +1,6 @@
+**/*
+!bin/**
+!src/**
+!readme.md
+!LICENSE
+!CHANGELOG.md
