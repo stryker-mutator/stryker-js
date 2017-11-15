@@ -20,7 +20,20 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
   }
 
   protected identifyReplacements(str: AllStringLiterals, sourceFile: ts.SourceFile): NodeReplacement[] {
-    return [{ node: str, replacement: '""' }];
+    if (
+      // Check for empty strings first.
+      (str.kind === ts.SyntaxKind.StringLiteral && str.text === '')
+      // Only check for the Token form of template literals. It's impossible to have a TemplateExpression
+      // that is empty as it's only used when there is a value embedded. I haven't found a case where the
+      // cast fails but the worst that can happen is it is undefined and we fall through to the wrong statement.
+      || (str.kind === ts.SyntaxKind.FirstTemplateToken && (str as ts.Node & { text: string }).text === '')
+    ) {
+      console.log(str);
+      return [{ node: str, replacement: '"Stryker was here!"' }];
+    }
+    else {
+      return [{ node: str, replacement: '""' }];
+    }
   }
 
 }

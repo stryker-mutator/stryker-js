@@ -26,16 +26,24 @@ describe('StringLiteralMutator', () => {
     expectMutation(sut, 'const b = `Hello world!`;', 'const b = "";');
   });
 
-  it('should mutate a template string referencing another variable', () => {
+  it('should mutate a template string referencing another variable (AST 1)', () => {
     expectMutation(sut, 'const a = 10; const b = `${a} mutations`;', 'const a = 10; const b = "";');
   });
 
-  it('should mutate a template string referencing another variable', () => {
+  it('should mutate a template string referencing another variable (AST 2)', () => {
     expectMutation(sut, 'const a = 10; const b = `mutations: ${a}`;', 'const a = 10; const b = "";');
   });
 
-  it('should mutate a template string referencing another variable', () => {
+  it('should mutate a template string referencing another variable (AST 3)', () => {
     expectMutation(sut, 'const a = 10; const b = `mutations: ${a} out of 10`;', 'const a = 10; const b = "";');
+  });
+
+  it('should mutate empty strings', () => {
+    expectMutation(sut, 'const b = "";', 'const b = "Stryker was here!";');
+  });
+
+  it('should mutate empty template strings', () => {
+    expectMutation(sut, 'const b = ``;', 'const b = "Stryker was here!";');
   });
 
   it('should mutate import statements', () => {
