@@ -26,15 +26,9 @@ describe('StringLiteralMutator', () => {
     expectMutation(sut, 'const b = `Hello world!`;', 'const b = "";');
   });
 
-  it('should mutate a template string referencing another variable (AST 1)', () => {
+  it('should mutate a template string referencing another variabled', () => {
     expectMutation(sut, 'const a = 10; const b = `${a} mutations`;', 'const a = 10; const b = "";');
-  });
-
-  it('should mutate a template string referencing another variable (AST 2)', () => {
     expectMutation(sut, 'const a = 10; const b = `mutations: ${a}`;', 'const a = 10; const b = "";');
-  });
-
-  it('should mutate a template string referencing another variable (AST 3)', () => {
     expectMutation(sut, 'const a = 10; const b = `mutations: ${a} out of 10`;', 'const a = 10; const b = "";');
   });
 
@@ -46,11 +40,11 @@ describe('StringLiteralMutator', () => {
     expectMutation(sut, 'const b = ``;', 'const b = "Stryker was here!";');
   });
 
-  it('should mutate import statements', () => {
-    // It would be best if this wasn't actually the case. Thanks to the lack of context (ie. node.parent) it
-    // doesn't seem possible right now. This will virtually always end up in a compile error so shouldn't
-    // affect throughput.
-    expectMutation(sut, 'import * as foo from "foo";', 'import * as foo from "";');
+  it('should not mutate import statements', () => {
+    expectMutation(sut, 'import * as foo from "foo";');
+    expectMutation(sut, 'import { foo } from "foo";');
+    expectMutation(sut, 'import foo from "foo";');
+    expectMutation(sut, 'import "foo";');
   });
 
 });

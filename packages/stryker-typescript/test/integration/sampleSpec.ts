@@ -41,7 +41,7 @@ describe('Sample integration', function () {
     // Generate mutants
     const mutator = new TypescriptMutator(config);
     const mutants = mutator.mutate(inputFiles);
-    expect(mutants.length).to.eq(7);
+    expect(mutants.length).to.eq(5);
   });
 
   it('should be able to transpile source code', async () => {

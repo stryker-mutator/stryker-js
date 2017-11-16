@@ -11,7 +11,6 @@ export type AllStringLiterals =
 
 export default class StringLiteralMutator extends NodeMutator<AllStringLiterals> {
   name = 'StringLiteral';
-  imports: string[] = [];
 
   guard(node: ts.Node): node is AllStringLiterals {
     return node.kind === ts.SyntaxKind.StringLiteral
@@ -20,6 +19,10 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
   }
 
   protected identifyReplacements(str: AllStringLiterals, sourceFile: ts.SourceFile): NodeReplacement[] {
+    if (str.parent && str.parent.kind === ts.SyntaxKind.ImportDeclaration) {
+      return [];
+    }
+
     if (
       // Check for empty strings first.
       (str.kind === ts.SyntaxKind.StringLiteral && str.text === '')
@@ -28,7 +31,6 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
       // cast fails but the worst that can happen is it is undefined and we fall through to the wrong statement.
       || (str.kind === ts.SyntaxKind.FirstTemplateToken && (str as ts.Node & { text: string }).text === '')
     ) {
-      console.log(str);
       return [{ node: str, replacement: '"Stryker was here!"' }];
     }
     else {
