@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as tsHelpers from '../../../src/helpers/tsHelpers';
 import * as semver from 'semver';
 import * as ts from 'typescript';
+import { textFile } from '../../helpers/producers';
 
 describe('tsHelpers', () => {
 
@@ -22,6 +23,16 @@ describe('tsHelpers', () => {
     it('should not throw an error if installed version satisfies >=2.5', () => {
       satisfiesStub.returns(true);
       expect(() => tsHelpers.guardTypescriptVersion()).not.throws();
+    });
+  });
+
+  describe('parseFile', () => {
+    it('should also set parent nodes', () => {
+      const input = textFile({ content: 'const b: string = "hello world";' });
+      const actual = tsHelpers.parseFile(input, undefined);
+      ts.forEachChild(actual, node => {
+        expect(node.parent).ok;
+      });
     });
   });
 });

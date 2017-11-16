@@ -25,7 +25,7 @@ export const binaryFile = factoryMethod<BinaryFile>(() => ({
 }));
 
 export const textFile = factoryMethod<TextFile>(() => ({
-  name: '',
+  name: 'file.ts',
   content: 'c = a^2 + b^2',
   mutated: true,
   included: true,
