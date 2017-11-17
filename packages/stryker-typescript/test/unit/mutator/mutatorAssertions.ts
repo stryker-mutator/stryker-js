@@ -1,7 +1,9 @@
 import * as ts from 'typescript';
+import { parseFile } from '../../../src/helpers/tsHelpers';
 import { expect } from 'chai';
 import { Mutant } from 'stryker-api/mutant';
 import NodeMutator from '../../../src/mutator/NodeMutator';
+import { textFile } from '../../helpers/producers';
 
 
 export function expectMutation(mutator: NodeMutator) {
