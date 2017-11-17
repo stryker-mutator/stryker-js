@@ -64,9 +64,15 @@ export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): str
 const allExtensions: string[] = Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
 export function isTypescriptFile(file: File) {
   return file.kind === FileKind.Text &&
-    allExtensions.some(extension => file.name.endsWith(extension)) && !file.name.endsWith('.d.ts');
+    allExtensions.some(extension => file.name.endsWith(extension));
 }
 
+/**
+ * Determines whether or not given file is a typescript header file (*.d.ts)
+ */
+export function isHeaderFile(file: File) {
+  return file.name.endsWith('.d.ts');
+}
 
 export function filterOutTypescriptFiles(files: File[]): TextFile[] {
   return files.filter(isTypescriptFile) as TextFile[];
