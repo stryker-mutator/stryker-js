@@ -12,3 +12,4 @@ export { default as IfStatementMutatorSpec } from './IfStatementMutatorSpec';
 export { default as PrefixUnaryExpressionMutatorSpec } from './PrefixUnaryExpressionMutatorSpec';
 export { default as UnaryNotMutatorSpec } from './UnaryNotMutatorSpec';
 export { default as WhileStatementMutatorSpec } from './WhileStatementMutatorSpec';
+export { default as StringLiteralMutatorSpec } from './StringLiteralMutatorSpec';
