@@ -1,7 +1,7 @@
 import { Config } from 'stryker-api/config';
 import { Transpiler, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
-import { filterOutTypescriptFiles, getCompilerOptions, getProjectDirectory, isToBeTranspiled, filterEmpty } from './helpers/tsHelpers';
+import { filterTypescriptFiles, getCompilerOptions, getProjectDirectory, filterNotEmpty, isHeaderFile, guardTypescriptVersion, isTypescriptFile } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import { setGlobalLogLevel } from 'log4js';
 
@@ -12,13 +12,15 @@ export default class TypescriptTranspiler implements Transpiler {
   private readonly keepSourceMaps: boolean;
 
   constructor(options: TranspilerOptions) {
+    guardTypescriptVersion();
     setGlobalLogLevel(options.config.logLevel);
     this.config = options.config;
     this.keepSourceMaps = options.keepSourceMaps;
   }
 
   transpile(files: File[]): Promise<TranspileResult> {
-    const typescriptFiles = filterOutTypescriptFiles(files);
+    const typescriptFiles = filterTypescriptFiles(files)
+      .filter(file => file.transpiled);
     if (!this.languageService) {
       this.languageService = new TranspilingLanguageService(
         getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.keepSourceMaps);
@@ -42,10 +44,11 @@ export default class TypescriptTranspiler implements Transpiler {
     if (error.length) {
       return this.createErrorResult(error);
     } else {
-      const outputFiles = this.languageService.emit(typescriptFiles);
+      const implementationFiles = typescriptFiles.filter(file => !isHeaderFile(file));
+      const outputFiles = this.languageService.emit(implementationFiles);
       // Keep original order of the files
-      const resultFiles = filterEmpty(allFiles.map(file => {
-        if (isToBeTranspiled(file)) {
+      const resultFiles = filterNotEmpty(allFiles.map(file => {
+        if (file.transpiled && isTypescriptFile(file)) {
           return outputFiles[file.name];
         } else {
           return file;

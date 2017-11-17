@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.5.0...stryker-typescript@0.6.0) (2017-11-17)
+
+
+### Bug Fixes
+
+* **stryker-typescript:** Add support for header files ([#451](https://github.com/stryker-mutator/stryker/issues/451)) ([517db10](https://github.com/stryker-mutator/stryker/commit/517db10)), closes [#443](https://github.com/stryker-mutator/stryker/issues/443)
+
+
+### Features
+
+* **typescript-mutation:** Add a StringLiteral mutator. ([#461](https://github.com/stryker-mutator/stryker/issues/461)) ([43c581c](https://github.com/stryker-mutator/stryker/commit/43c581c))
+
+
+
+
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.4.1...stryker-typescript@0.5.0) (2017-11-14)
+
+
+### Features
+
+* **typescript-mutator:** Implement new ArrowFunctionMutator ([#460](https://github.com/stryker-mutator/stryker/issues/460)) ([d5fe462](https://github.com/stryker-mutator/stryker/commit/d5fe462)), closes [#456](https://github.com/stryker-mutator/stryker/issues/456)
+
+
+
+
+<a name="0.4.1"></a>
+## [0.4.1](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.4.0...stryker-typescript@0.4.1) (2017-11-14)
+
+
+### Bug Fixes
+
+* **init stryker typescript:** Add init section ([#459](https://github.com/stryker-mutator/stryker/issues/459)) ([c4510d5](https://github.com/stryker-mutator/stryker/commit/c4510d5)), closes [#454](https://github.com/stryker-mutator/stryker/issues/454)
+
+
+
+
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.3.0...stryker-typescript@0.4.0) (2017-11-13)
+
+
+### Features
+
+* **typescript:** Add version check ([#449](https://github.com/stryker-mutator/stryker/issues/449)) ([a780189](https://github.com/stryker-mutator/stryker/commit/a780189)), closes [#437](https://github.com/stryker-mutator/stryker/issues/437)
+
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.2.0...stryker-typescript@0.3.0) (2017-10-24)
 

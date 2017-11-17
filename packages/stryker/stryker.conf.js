@@ -6,7 +6,7 @@ module.exports = function (config) {
   if (typescript) {
     config.set({
       files: [
-        { pattern: 'package.json', included: false, mutated: false },
+        { pattern: 'package.json', transpiled: false, included: false, mutated: false },
         '!test/integration/**/*.ts',
         '!src/**/*.ts',
         { pattern: 'src/**/*.ts', included: false, mutated: true },

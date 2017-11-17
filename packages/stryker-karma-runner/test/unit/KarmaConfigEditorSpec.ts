@@ -62,11 +62,23 @@ describe('KarmaConfigEditor', () => {
         expect(config.files).to.be.deep.eq([{ pattern: 'somePattern', mutated: false, included: false }]);
       });
 
-      it('should not completely override files', () => {
-        karmaConfig.files = [{ pattern: 'somePattern' }];
+      it('should not completely override files, but instead unshift files to the top of the array', () => {
+        karmaConfig.files = [{ pattern: 'somePattern' }, { pattern: 'secondPattern' }];
         config.files = ['someFile'];
         sut.edit(config);
-        expect(config.files).to.be.deep.eq(['someFile', { pattern: 'somePattern', mutated: false, included: false }]);
+        expect(config.files).to.be.deep.eq(
+          [
+            { pattern: 'somePattern', mutated: false, included: false },
+            { pattern: 'secondPattern', mutated: false, included: false },
+            'someFile'
+          ]);
+      });
+
+      it('should not override files if files were specified in the karmaConfig', () => {
+        config.karmaConfig = { files: [] };
+        karmaConfig.files = [{ pattern: 'foobar' }];
+        sut.edit(config);
+        expect(config.files).lengthOf(0);
       });
 
       it('should exclude the excluded files', () => {
@@ -75,18 +87,33 @@ describe('KarmaConfigEditor', () => {
         expect(config.files).to.be.deep.eq(['!someFile']);
       });
 
+      it('should exclude the excluded files before the `files` already defined in stryker', () => {
+        karmaConfig.files = [{ pattern: 'somePattern' }, { pattern: 'secondPattern' }];
+        karmaConfig.exclude = ['excludedFile'];
+        config.files = ['file/from/stryker/config.js'];
+        sut.edit(config);
+        expect(config.files).to.be.deep.eq(
+          [
+            { pattern: 'somePattern', mutated: false, included: false },
+            { pattern: 'secondPattern', mutated: false, included: false },
+            '!excludedFile',
+            'file/from/stryker/config.js'
+          ]
+        );
+      });
+
       it('should add karmaConfig to the options', () => {
-        karmaConfig.something = 'blaat';
+        karmaConfig.something = 'foobar';
         sut.edit(config);
         expect(config['karmaConfig']).to.be.eq(karmaConfig);
       });
 
       it('should not override existing karmaConfig', () => {
-        config['karmaConfig'] = { value: 'overriden' };
+        config['karmaConfig'] = { value: 'overridden' };
         karmaConfig.value = 'base';
         karmaConfig.theAnswer = 42;
         sut.edit(config);
-        expect(config['karmaConfig'].value).to.be.eq('overriden');
+        expect(config['karmaConfig'].value).to.be.eq('overridden');
         expect(config['karmaConfig'].theAnswer).to.be.eq(42);
       });
     });

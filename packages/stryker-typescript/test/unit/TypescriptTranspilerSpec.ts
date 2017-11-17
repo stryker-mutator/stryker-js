@@ -86,8 +86,7 @@ describe('TypescriptTranspiler', () => {
         textFile({ name: 'file1.js', transpiled: false }),
         textFile({ name: 'file2.js', transpiled: true }),
         binaryFile({ name: 'file3.bin', transpiled: true }),
-        textFile({ name: 'file4.js', transpiled: true }),
-        textFile({ name: 'file5.d.ts', transpiled: true })
+        textFile({ name: 'file4.js', transpiled: true })
       ]);
     });
 

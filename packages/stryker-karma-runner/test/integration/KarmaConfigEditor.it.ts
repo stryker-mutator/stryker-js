@@ -26,12 +26,12 @@ describe('KarmaConfigEditor', () => {
       '!' + resolve('files-karma.conf.js')]);
   });
 
-  it('should add to the stryker `files` property when `files` were already present', () => {
+  it('should unshift additional `files` on to the files array if files were already present', () => {
     const config = strykerConfig('testResources/configs/files-karma.conf.js');
     config.files = ['some file'];
     new KarmaConfigEditor().edit(config);
     expect(config.files).to.have.length(6);
-    expect(config.files[0]).to.be.eq('some file');
+    expect(config.files[5]).to.be.eq('some file');
   });
 
   it('should fill the "karmaConfig" object if no "karmaConfig" object was present', () => {

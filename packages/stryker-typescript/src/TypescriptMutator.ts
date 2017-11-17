@@ -3,7 +3,7 @@ import flatMap = require('lodash.flatmap');
 import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
-import { createProgram } from './helpers/tsHelpers';
+import { filterTypescriptFiles, parseFile, getTSConfig } from './helpers/tsHelpers';
 import NodeMutator from './mutator/NodeMutator';
 import BinaryExpressionMutator from './mutator/BinaryExpressionMutator';
 import BooleanSubstitutionMutator from './mutator/BooleanSubstitutionMutator';
@@ -17,6 +17,8 @@ import ForStatementMutator from './mutator/ForStatementMutator';
 import DoStatementMutator from './mutator/DoStatementMutator';
 import ConditionalExpressionMutator from './mutator/ConditionalExpressionMutator';
 import PrefixUnaryExpressionMutator from './mutator/PrefixUnaryExpressionMutator';
+import ArrowFunctionMutator from './mutator/ArrowFunctionMutator';
+import StringLiteralMutator from './mutator/StringLiteralMutator';
 
 export default class TypescriptMutator {
 
@@ -27,19 +29,22 @@ export default class TypescriptMutator {
     new ArrayLiteralMutator(),
     new ArrayNewExpressionMutator(),
     new BlockMutator(),
+    new ArrowFunctionMutator(),
     new IfStatementMutator(),
     new WhileStatementMutator(),
     new ForStatementMutator(),
     new DoStatementMutator(),
     new ConditionalExpressionMutator(),
-    new PrefixUnaryExpressionMutator()
+    new PrefixUnaryExpressionMutator(),
+    new StringLiteralMutator(),
   ]) { }
 
   mutate(inputFiles: File[]): Mutant[] {
-    const program = createProgram(inputFiles, this.config);
-    const mutatedInputFiles = inputFiles.filter(inputFile => inputFile.mutated);
+    const mutatedInputFiles = filterTypescriptFiles(inputFiles)
+      .filter(inputFile => inputFile.mutated);
+    const compilerOptions = getTSConfig(this.config);
     const mutants = flatMap(mutatedInputFiles, inputFile => {
-      const sourceFile = program.getSourceFile(inputFile.name);
+      const sourceFile = parseFile(inputFile, compilerOptions && compilerOptions.target);
       return this.mutateForNode(sourceFile, sourceFile);
     });
     return mutants;

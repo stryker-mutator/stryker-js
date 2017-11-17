@@ -1,6 +1,6 @@
 {
   "name": "stryker-karma-runner",
-  "version": "0.9.1",
+  "version": "0.11.1",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\" --exit"
   },
   "repository": {
     "type": "git",
@@ -53,9 +53,6 @@
   ],
   "initStrykerConfig": {
     "karmaConfigFile": "karma.conf.js",
-    "files": [],
-    "mutate": [
-      "src/**/*.js"
-    ]
+    "files": []
   }
 }
