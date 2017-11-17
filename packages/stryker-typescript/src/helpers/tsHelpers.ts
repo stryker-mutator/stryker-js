@@ -57,9 +57,15 @@ const allExtensions: string[] = Object.keys(ts.Extension).map(extension => ts.Ex
 export function isToBeTranspiled(file: File) {
   return file.kind === FileKind.Text &&
     file.transpiled &&
-    allExtensions.some(extension => file.name.endsWith(extension)) && !file.name.endsWith('.d.ts');
+    allExtensions.some(extension => file.name.endsWith(extension));
 }
 
+/**
+ * Determines whether or not given file is a typescript header file (*.d.ts)
+ */
+export function isHeaderFile(file: File) {
+  return file.name.endsWith('.d.ts');
+}
 
 export function filterOutTypescriptFiles(files: File[]): TextFile[] {
   return files.filter(isToBeTranspiled) as TextFile[];
