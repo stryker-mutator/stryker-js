@@ -1,4 +1,3 @@
-import * as os from 'os';
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
@@ -15,8 +14,7 @@ export default function ForStatementMutatorSpec(name: string, expectMutation: Ex
     });
 
     it('should mutate the condition of a for statement without a condition', () => {
-      expectMutation('for(let i=0;; i++) { console.log(); }', `for (let i = 0; false; i++) {${os.EOL}    console.log();${os.EOL}}`);
+      expectMutation('for(let i=0;; i++) { console.log(); }', `for (let i = 0; false; i++) { console.log(); }`);
     });
-
   });
 }

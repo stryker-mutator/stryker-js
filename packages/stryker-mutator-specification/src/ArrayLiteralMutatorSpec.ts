@@ -20,7 +20,7 @@ export default function ArrayLiteralMutatorSpec(name: string, expectMutation: Ex
     });
 
     it('should mutate empty array literals as a filled array', () => {
-      expectMutation('[]', '[[]]');
+      expectMutation('[]', '[\'Stryker was here\']');
     });
   });
 }
