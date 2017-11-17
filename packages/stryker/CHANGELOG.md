@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.14.1"></a>
+## [0.14.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.14.0...stryker@0.14.1) (2017-11-17)
+
+
+
+
+**Note:** Version bump only for package stryker
+
 <a name="0.14.0"></a>
 # [0.14.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.13.0...stryker@0.14.0) (2017-11-13)
 
