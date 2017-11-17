@@ -18,6 +18,7 @@ import DoStatementMutator from './mutator/DoStatementMutator';
 import ConditionalExpressionMutator from './mutator/ConditionalExpressionMutator';
 import PrefixUnaryExpressionMutator from './mutator/PrefixUnaryExpressionMutator';
 import ArrowFunctionMutator from './mutator/ArrowFunctionMutator';
+import StringLiteralMutator from './mutator/StringLiteralMutator';
 
 export default class TypescriptMutator {
 
@@ -34,7 +35,8 @@ export default class TypescriptMutator {
     new ForStatementMutator(),
     new DoStatementMutator(),
     new ConditionalExpressionMutator(),
-    new PrefixUnaryExpressionMutator()
+    new PrefixUnaryExpressionMutator(),
+    new StringLiteralMutator(),
   ]) { }
 
   mutate(inputFiles: File[]): Mutant[] {

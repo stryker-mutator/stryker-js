@@ -27,7 +27,7 @@ describe('Sample integration', function () {
       name: file as string,
       content: fs.readFileSync(file as string, 'utf8'),
       included: true,
-      mutated: true, 
+      mutated: true,
       transpiled: true,
       kind: FileKind.Text
     }));
@@ -41,7 +41,7 @@ describe('Sample integration', function () {
     // Generate mutants
     const mutator = new TypescriptMutator(config);
     const mutants = mutator.mutate(inputFiles);
-    expect(mutants.length).to.eq(4);
+    expect(mutants.length).to.eq(5);
   });
 
   it('should be able to transpile source code', async () => {
@@ -74,7 +74,7 @@ describe('Sample integration', function () {
       name: file.name,
       content: file.content.slice(0, mutant.range[0]) + mutant.replacement + file.content.slice(mutant.range[1]),
       mutated: true,
-      included: true, 
+      included: true,
       transpiled: true,
       kind: FileKind.Text
     };
