@@ -1,11 +1,14 @@
 import * as ts from 'typescript';
+import { parseFile } from '../../../src/helpers/tsHelpers';
 import { expect } from 'chai';
 import { Mutant } from 'stryker-api/mutant';
 import NodeMutator from '../../../src/mutator/NodeMutator';
+import { textFile } from '../../helpers/producers';
 
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
-  const sourceFile = ts.createSourceFile('file.ts', sourceText, ts.ScriptTarget.ES5);
+  const tsFile = textFile({ content: sourceText });
+  const sourceFile = parseFile(tsFile, undefined);
   const mutants = mutate(mutator, sourceFile, sourceFile);
   expect(mutants).lengthOf(expectedTexts.length);
   const actualMutantTexts = mutants.map(mutant => mutantToString(mutant, sourceText));

@@ -3,9 +3,9 @@ import * as fs from 'mz/fs';
 import { expect } from 'chai';
 import * as ts from 'typescript';
 import { Config } from 'stryker-api/config';
+import { TextFile } from 'stryker-api/core';
 import TypescriptMutator from '../../src/TypescriptMutator';
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
-import * as tsHelpers from '../../src/helpers/tsHelpers';
 import { textFile } from '../helpers/producers';
 
 
@@ -35,15 +35,9 @@ class SourceFileMutator extends NodeMutator<ts.SourceFile> {
 describe('TypescriptMutator', () => {
   let sut: TypescriptMutator;
   let config: Config;
-  let program: {
-    getSourceFile: sinon.SinonStub;
-  };
 
   beforeEach(() => {
-    program = {
-      getSourceFile: sandbox.stub()
-    };
-    sandbox.stub(tsHelpers, 'createProgram').returns(program);
+    config = new Config();
   });
 
   it('should register all mutators by default', () => {
@@ -65,31 +59,35 @@ describe('TypescriptMutator', () => {
 
   describe('using 2 mutators', () => {
 
+    let file1: TextFile;
+    let file2: TextFile;
+
     beforeEach(() => {
       sut = new TypescriptMutator(config, [
         new FunctionDeclarationMutator(),
         new SourceFileMutator()
       ]);
-      const file1SourceFile = ts.createSourceFile('file1.ts', `
-      function add(n...: number[]) {
-        return n.sum();
-      }
-      const a = add(1, 3, 4, 5);`, ts.ScriptTarget.ES5);
-      const file2SourceFile = ts.createSourceFile('file2.ts', `
-      function subtract(n...: numbers[]){
-        return n[0] - n.slice(1).sum();
-      }
-      const b = subtract(10, 3, 4);
-      `, ts.ScriptTarget.ES5);
-      program.getSourceFile
-        .withArgs('file1.ts').returns(file1SourceFile)
-        .withArgs('file2.ts').returns(file2SourceFile);
+      file1 = textFile({
+        name: 'file1.ts',
+        content: `
+          function add(n...: number[]) {
+            return n.sum();
+          }
+          const a = add(1, 3, 4, 5);`});
+      file2 = textFile({
+        name: 'file2.ts',
+        content: `
+        function subtract(n...: numbers[]){
+          return n[0] - n.slice(1).sum();
+        }
+        const b = subtract(10, 3, 4);
+      `});
     });
 
     it('should deliver 6 mutants', () => {
       const mutants = sut.mutate([
-        textFile({ name: 'file1.ts', content: 'file 1 content' }),
-        textFile({ name: 'file2.ts', content: 'file 2 content' })
+        file1,
+        file2
       ]);
       expect(mutants.filter(mutant => mutant.mutatorName === 'SourceFileForTest')).lengthOf(2);
       expect(mutants.filter(mutant => mutant.mutatorName === 'FunctionDeclarationForTest')).lengthOf(4);

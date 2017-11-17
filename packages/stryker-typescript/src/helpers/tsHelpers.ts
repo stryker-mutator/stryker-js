@@ -12,10 +12,18 @@ export function createProgram(inputFiles: File[], strykerConfig: Config) {
     .map(file => file.name);
   const options = getTSConfig(strykerConfig);
 
-  return ts.createProgram(files, options);
+  return ts.createProgram(files, options || {});
 }
 
-export function getTSConfig(strykerConfig: Config): ts.CompilerOptions {
+export function parseFile(file: TextFile, target: ts.ScriptTarget | undefined) {
+  return ts.createSourceFile(
+    file.name,
+    file.content,
+    target || ts.ScriptTarget.ES5,
+    /*setParentNodes*/ true);
+}
+
+export function getTSConfig(strykerConfig: Config): ts.CompilerOptions | undefined {
   return strykerConfig[CONFIG_KEY_OPTIONS];
 }
 
@@ -54,9 +62,8 @@ export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): str
 }
 
 const allExtensions: string[] = Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
-export function isToBeTranspiled(file: File) {
+export function isTypescriptFile(file: File) {
   return file.kind === FileKind.Text &&
-    file.transpiled &&
     allExtensions.some(extension => file.name.endsWith(extension));
 }
 
@@ -67,10 +74,16 @@ export function isHeaderFile(file: File) {
   return file.name.endsWith('.d.ts');
 }
 
-export function filterOutTypescriptFiles(files: File[]): TextFile[] {
-  return files.filter(isToBeTranspiled) as TextFile[];
+/**
+ * Returns all the files that are considered typescript files (text files with *.ts or something like that)
+ */
+export function filterTypescriptFiles(files: File[]): TextFile[] {
+  return files.filter(isTypescriptFile) as TextFile[];
 }
 
-export function filterEmpty<T>(input: (T | undefined | null)[]): T[] {
+/**
+ * Returns all items that are NOT undefined or null
+ */
+export function filterNotEmpty<T>(input: (T | undefined | null)[]): T[] {
   return input.filter(item => item !== void 0 && item !== null) as T[];
 }
