@@ -1,0 +1,27 @@
+{
+  "name": "stryker-mutator-specification",
+  "version": "0.1.0",
+  "description": "A package for maintaining common mutator specifications for Stryker - the JavaScript mutation testing framework",
+  "scripts": {
+    "start": "tsc -w",
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json"
+  },
+  "keywords": [
+    "stryker"
+  ],
+  "main": "src/index.js",
+  "typings": "src/index.ts",
+  "author": "Nico Jansen <jansennico@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator#readme",
+  "license": "Apache-2.0"
+}
