@@ -74,10 +74,16 @@ export function isHeaderFile(file: File) {
   return file.name.endsWith('.d.ts');
 }
 
-export function filterOutTypescriptFiles(files: File[]): TextFile[] {
+/**
+ * Returns all the files that are considered typescript files (text files with *.ts or something like that)
+ */
+export function filterTypescriptFiles(files: File[]): TextFile[] {
   return files.filter(isTypescriptFile) as TextFile[];
 }
 
-export function filterEmpty<T>(input: (T | undefined | null)[]): T[] {
+/**
+ * Returns all items that are NOT undefined or null
+ */
+export function filterNotEmpty<T>(input: (T | undefined | null)[]): T[] {
   return input.filter(item => item !== void 0 && item !== null) as T[];
 }
