@@ -1,4 +1,4 @@
-import FsWrapper from "../../src/helpers/FsWrapper";
+import FsWrapper from "../../../src/helpers/FsWrapper";
 import * as sinon from "sinon";
 import { assert, expect } from "chai";
 import * as fs from "fs";

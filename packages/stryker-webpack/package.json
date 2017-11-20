@@ -8,7 +8,7 @@
     "build": "tsc",
     "premocha": "npm run build",
     "test": "npm run mocha && npm run stryker",
-    "mocha": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
+    "mocha": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/unit/**/**/*.js\" \"test/integration/**/*.js\"",
     "stryker": "stryker run"
   },
   "repository": {
