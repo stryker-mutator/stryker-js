@@ -1,4 +1,4 @@
-import {ConfigEditor, Config} from "stryker-api/config";
+import { ConfigEditor, Config } from "stryker-api/config";
 import { Configuration } from 'webpack';
 import { DefaultPreset, AngularPreset } from "./configEditor/presets";
 
