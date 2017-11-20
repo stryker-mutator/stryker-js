@@ -1,12 +1,12 @@
 import {assert, expect} from "chai";
 import * as sinon from "sinon";
-import {createFakeFileSystem, createFakeWebpackConfig, createTextFile, createWebpackMock} from "../helpers/producers";
-import {WebpackCompilerMock} from "../helpers/mockInterfaces";
-import FsWrapper, * as fsWrapper from "../../src/helpers/FsWrapper";
-import WebpackCompiler from "../../src/compiler/WebpackCompiler";
+import {createFakeFileSystem, createFakeWebpackConfig, createTextFile, createWebpackMock} from "../../helpers/producers";
+import {WebpackCompilerMock} from "../../helpers/mockInterfaces";
+import FsWrapper, * as fsWrapper from "../../../src/helpers/FsWrapper";
+import WebpackCompiler from "../../../src/compiler/WebpackCompiler";
 import {TextFile, FileKind} from "stryker-api/core";
 import * as path from "path";
-import * as webpack from "../../src/compiler/Webpack";
+import * as webpack from "../../../src/compiler/Webpack";
 import {Configuration} from "webpack";
 
 describe("WebpackCompiler", () => {
