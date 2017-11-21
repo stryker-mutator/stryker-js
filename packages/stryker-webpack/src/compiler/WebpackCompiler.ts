@@ -8,13 +8,24 @@ export default class WebpackCompiler {
     private _compiler: Compiler;
     private _fsWrapper: FsWrapper;
     private _outPath: string;
-    private _bundleFileName: string;
+    private _outfiles: Array<string>;
 
     public constructor(webpackConfig: Configuration, fs: FileSystem) {
         this._fsWrapper = new FsWrapper(fs);
         this._compiler = this.createCompiler(webpackConfig, fs);
-        this._outPath = "/out";
-        this._bundleFileName = "bundle.js";
+        this._outPath = '/out';
+        this._outfiles = this.getOutFiles(webpackConfig.entry);
+    }
+
+    private getOutFiles(entry: Array<string>|Object|undefined): Array<string> {
+        if(Array.isArray(entry)) {
+            return ["bundle.js"];
+        } else if(typeof entry == "object") {
+            // If the entry is an object return all the keys
+            return Object.keys(entry).map((name) => name + ".bundle.js");
+        } else {
+            return ["bundle.js"]
+        }
     }
 
     private createCompiler(webpackConfig: Configuration, fileSystem: FileSystem): Compiler {
@@ -37,6 +48,9 @@ export default class WebpackCompiler {
     }
 
     private async writeToFs(file: TextFile): Promise<void> {
+        // Make sure the file has content, the filesystem does not like empty files
+        file.content = file.content || ' ';
+
         // Create the directory
         await this._fsWrapper.mkdirp(path.dirname(file.name));
 
@@ -47,16 +61,24 @@ export default class WebpackCompiler {
     public async emit(): Promise<Array<TextFile>> {
         await this.compile();
 
-        const compileResult: string = await this._fsWrapper.readFile(path.join(this._outPath, this._bundleFileName));
+        return await this.getOutputFiles();
+    }
 
-        return new Array<TextFile>({
-            content: compileResult,
-            name: this._bundleFileName,
-            mutated: true, // TODO: change this to the correct value
-            kind: FileKind.Text,
-            transpiled: true,
-            included: true
-        });
+    private async getOutputFiles(): Promise<Array<TextFile>> {
+        const outfiles: Array<TextFile> = [];
+
+        for(let outFileName of this._outfiles) {
+            outfiles.push({
+                content: await this._fsWrapper.readFile(path.join(this._outPath, outFileName)),
+                name: outFileName,
+                mutated: true, // TODO: change this to the correct value
+                kind: FileKind.Text,
+                transpiled: true,
+                included: outFileName == "test.bundle.js"
+            });
+        }
+
+        return outfiles;
     }
 
     private compile(): Promise<webpack.Stats> {
