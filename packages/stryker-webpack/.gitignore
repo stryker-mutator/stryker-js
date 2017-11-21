@@ -9,3 +9,4 @@
 /package-lock.json
 /reports
 /.nyc_output
+.stryker-tmp
