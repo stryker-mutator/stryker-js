@@ -2,7 +2,8 @@ import {TranspilerOptions, Transpiler, TranspileResult, FileLocation} from "stry
 import {File, TextFile} from "stryker-api/core";
 import {Config} from "stryker-api/config"
 import WebpackCompiler from "./compiler/WebpackCompiler";
-import { FileSystem } from "./helpers/FsWrapper";
+import HybridFS from "./helpers/HybridFs";
+import * as fs from "fs";
 
 // TODO: Fix types for memory-fs
 import MemoryFileSystem = require("memory-fs");
@@ -13,9 +14,9 @@ class WebpackTranspiler implements Transpiler {
 
     public constructor(options: TranspilerOptions) {
         this._config = options.config;
-        const fs = new MemoryFileSystem() as FileSystem;
+        const filesystem: any = new HybridFS(fs, new MemoryFileSystem());
 
-        this._compiler = new WebpackCompiler(this._config.webpackConfig, fs);
+        this._compiler = new WebpackCompiler(this._config.webpackConfig, filesystem);
     }
 
     public async transpile(files: Array<File>): Promise<TranspileResult> {
