@@ -38,17 +38,6 @@ describe("WebpackTranspiler", () => {
         }
     });
 
-    it("should return an error when the entry file cannot be resolved", async () => {
-        files = files.filter((file) => {
-            return file.name !== path.join(sampleProjectLocation, "index.js");
-        });
-
-        const result: TranspileResult = await webPackTranspiler.transpile(files);
-
-        expect(result.error).to.not.be.null;
-        expect(result.outputFiles).to.be.an("array").that.is.empty;
-    });
-
     async function fetchTextFiles(dir: string, textFileArray?: Array<TextFile>): Promise<Array<TextFile>> {
         const results = await fs.readdir(dir);
         textFileArray = textFileArray || [];
