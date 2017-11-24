@@ -8,8 +8,8 @@ import ConditionalExpressionMutator from './ConditionalExpressionMutator';
 import DoStatementMutator from './DoStatementMutator';
 import ForStatementMutator from './ForStatementMutator';
 import IfStatementMutator from './IfStatementMutator';
-import UnaryOperatorMutator from './UnaryOperatorMutator';
-import UpdateOperatorMutator from './UpdateOperatorMutator';
+import PrefixUnaryExpressionMutator from './PrefixUnaryExpressionMutator';
+import PostfixUnaryExpressionMutator from './PostfixUnaryExpressionMutator';
 import WhileStatementMutator from './WhileStatementMutator';
 
 const factory = NodeMutatorFactory.instance();
@@ -22,6 +22,6 @@ factory.register(ConditionalExpressionMutator.name, ConditionalExpressionMutator
 factory.register(DoStatementMutator.name, DoStatementMutator);
 factory.register(ForStatementMutator.name, ForStatementMutator);
 factory.register(IfStatementMutator.name, IfStatementMutator);
-factory.register(UnaryOperatorMutator.name, UnaryOperatorMutator);
-factory.register(UpdateOperatorMutator.name, UpdateOperatorMutator);
+factory.register(PrefixUnaryExpressionMutator.name, PrefixUnaryExpressionMutator);
+factory.register(PostfixUnaryExpressionMutator.name, PostfixUnaryExpressionMutator);
 factory.register(WhileStatementMutator.name, WhileStatementMutator);
