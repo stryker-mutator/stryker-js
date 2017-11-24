@@ -1,7 +1,7 @@
 import { FileKind, File } from 'stryker-api/core';
 
 export function createFile(name: string, content: string, fileKind?: FileKind): File {
-    fileKind = fileKind || FileKind.Text;
+    fileKind = (fileKind !== undefined) ? fileKind : FileKind.Text;
 
     const file: any = {
         name: name,
