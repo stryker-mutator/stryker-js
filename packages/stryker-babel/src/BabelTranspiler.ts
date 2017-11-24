@@ -2,61 +2,59 @@ import { Transpiler, TranspilerOptions, TranspileResult, FileLocation } from 'st
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import * as babel from 'babel-core';
 
-class BabelTranspiler implements Transpiler {
-    private _babelConfig: babel.GeneratorOptions;
+export default class BabelTranspiler implements Transpiler {
+  private _babelConfig: babel.GeneratorOptions;
 
-    public constructor(options: TranspilerOptions) {
-        this._babelConfig = options.config.babelConfig;
-    }
-    
-    public transpile(files: Array<File>): Promise<TranspileResult> {
-        const results: Array<File> = [];
+  public constructor(options: TranspilerOptions) {
+    this._babelConfig = options.config.babelConfig;
+  }
 
-        try {
-            files.forEach((file) => {
-                if (file.kind === FileKind.Text) {
-                    results.push(this.transform(file));
-                }
-                else {
-                    results.push(file);
-                }
-            });            
-        } catch (err) {
-            return Promise.resolve(this.createErrorResult(err.message));
+  public transpile(files: Array<File>): Promise<TranspileResult> {
+    const results: Array<File> = [];
+
+    try {
+      files.forEach((file) => {
+        if (file.kind === FileKind.Text) {
+          results.push(this.transform(file));
         }
-
-        return Promise.resolve(this.createSuccessResult(results));
-    }
-
-    private transform(file: TextFile) {
-        const result = babel.transform(file.content, this._babelConfig).code;
-        
-        if (!result) {
-            throw new Error('Could not transpile file with the Babel transform function');
+        else {
+          results.push(file);
         }
-
-        file.content = result;
-
-        return file;
+      });
+    } catch (err) {
+      return Promise.resolve(this.createErrorResult(err.message));
     }
 
-    private createErrorResult(error: string): TranspileResult {
-        return {
-            error: error,
-            outputFiles: []
-        };
+    return Promise.resolve(this.createSuccessResult(results));
+  }
+
+  private transform(file: TextFile) {
+    const result = babel.transform(file.content, this._babelConfig).code;
+
+    if (!result) {
+      throw new Error('Could not transpile file with the Babel transform function');
     }
 
-    private createSuccessResult(files: Array<File>): TranspileResult {
-        return {
-            error: null,
-            outputFiles: files
-        };
-    }
+    file.content = result;
 
-    public getMappedLocation(): FileLocation {
-        throw new Error('Not implemented');
-    }
+    return file;
+  }
+
+  private createErrorResult(error: string): TranspileResult {
+    return {
+      error: error,
+      outputFiles: []
+    };
+  }
+
+  private createSuccessResult(files: Array<File>): TranspileResult {
+    return {
+      error: null,
+      outputFiles: files
+    };
+  }
+
+  public getMappedLocation(): FileLocation {
+    throw new Error('Not implemented');
+  }
 }
-
-export default BabelTranspiler;
