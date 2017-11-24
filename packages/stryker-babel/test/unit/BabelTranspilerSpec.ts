@@ -1,18 +1,61 @@
 import BabelTranspiler from '../../src/BabelTranspiler';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
+import { File } from 'stryker-api/core';
 import { Transpiler } from 'stryker-api/transpile';
-import { Position } from 'stryker-api/core';
+import { Position, FileKind } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
+import * as sinon from 'sinon';
+import * as babel from 'babel-core';
+import { createFile } from '../helpers/producers';
 
 describe('BabelTranspiler', () => {
     let babelTranspiler: Transpiler;
-    
+    let sandbox: sinon.SinonSandbox;
+    let files: Array<File> = [];
+    let transformStub: sinon.SinonStub;
+
     beforeEach(() => {
-        babelTranspiler = new BabelTranspiler();
+        sandbox = sinon.sandbox.create();
+
+        transformStub = sandbox.stub(babel, 'transform').callsFake((content) => {
+            return {
+                code: content
+            };
+        });
+
+        babelTranspiler = new BabelTranspiler({config: new Config, keepSourceMaps: false});
+
+        files = [
+            createFile('sum', 'lkjghjk'),
+            createFile('main', 'asdfasd'),
+            createFile('lol', 'sretsd')
+        ];
     });
 
+    afterEach(() => sandbox.restore());
+
     describe('Transpile', () => {
-        it('Should throw a not implemented error', () => {
-            expect(() => babelTranspiler.transpile(new Array())).to.throw(Error, 'Not implemented');
+        it('Should call the babel transform function with all given text files', async () => {
+            const transpileResult = await babelTranspiler.transpile(files);
+
+            expect(transpileResult.outputFiles).to.deep.equal(files);
+        });
+
+        it('Should not call the transform function with any file other than text files', async () => {
+            files.push(createFile('binaryFile', 'asdgvfhaklsnd', FileKind.Binary));
+
+            await babelTranspiler.transpile(files);
+
+            assert(transformStub.callCount === 3);
+        });
+
+        it('Should return with an error when the babel transform fails', async () => {
+            transformStub.callsFake(() => '');
+
+            const transpileResult = await babelTranspiler.transpile(files);
+
+            expect(transpileResult.outputFiles).to.be.empty;
+            expect(transpileResult.error).to.deep.equal('Could not transpile file with the Babel transform function');
         });
     });
 
