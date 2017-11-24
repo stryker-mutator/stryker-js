@@ -46,7 +46,7 @@
   "peerDependencies": {
     "stryker-api": "^0.11.0"
   },
-   "initStrykerConfig": {
+  "initStrykerConfig": {
     "babelrcFile": ".babelrc"
   }
 }
