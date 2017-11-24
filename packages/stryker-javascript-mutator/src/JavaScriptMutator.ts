@@ -18,7 +18,7 @@ export default class JavaScriptMutator implements Mutator {
   constructor(config: Config, private mutators: NodeMutator[] = defaultMutators()) {
   }
 
-  mutate(inputFiles: File[]): Mutant[] {
+  public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
 
     inputFiles.filter(i => i.kind === FileKind.Text && i.mutated).forEach((file: TextFile) => {
