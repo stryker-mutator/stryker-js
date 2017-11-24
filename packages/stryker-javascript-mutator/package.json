@@ -1,0 +1,56 @@
+{
+  "name": "stryker-javascript-mutator",
+  "version": "0.2.0",
+  "description": "A plugin for javascript projects using Stryker",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 60 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" "
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "keywords": [
+    "stryker",
+    "stryker-plugin",
+    "javascript",
+    "stryker-mutator"
+  ],
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "author": "Simon de Lang <simondelang@gmail.com>",
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>",
+    "Niek te Grootenhuis <ntegro@hotmail.com>",
+    "Thomas Peters <thomaspeters4@outlook.com>",
+    "Sander Koenders <sanderkoenders@gmail.com>"
+  ],
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator#readme",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-generator": "^6.26.0",
+    "babylon": "^6.18.0",
+    "log4js": "^1.1.1",
+    "tslib": "^1.8.0"
+  },
+  "devDependencies": {
+    "@types/babel-generator": "^6.25.1",
+    "@types/babylon": "^6.16.2",
+    "stryker-api": "^0.11.0",
+    "stryker-mutator-specification": "^0.2.0"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.11.0",
+    "typescript": "^2.5.3"
+  }
+}

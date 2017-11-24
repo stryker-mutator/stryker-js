@@ -10,7 +10,7 @@ export default function ConditionalExpressionMutatorSpec(name: string, expectMut
     });
 
     it('should replace conditional expressions', () => {
-      expectMutation('a < 3? b : c', 'false? b : c');
+      expectMutation('a < 3? b : c', 'false? b : c', 'true? b : c');
     });
   });
 }
