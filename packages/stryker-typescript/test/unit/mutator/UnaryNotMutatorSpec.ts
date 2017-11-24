@@ -1,20 +1,5 @@
 import UnaryNotMutator from '../../../src/mutator/UnaryNotMutator';
-import { expect } from 'chai';
-import { expectMutation } from './mutatorAssertions';
+import { verifySpecification } from './mutatorAssertions';
+import UnaryNotMutatorSpec from 'stryker-mutator-specification/src/UnaryNotMutatorSpec';
 
-describe('UnaryNotMutator', () => {
-  let sut: UnaryNotMutator;
-
-  beforeEach(() => {
-    sut = new UnaryNotMutator();
-  });
-
-  it('should have name "UnaryNot"', () => {
-    expect(sut.name).eq('UnaryNot');
-  });
-
-  it('should mutate `!a` into `a`', () => {
-    expectMutation(sut, '!a', 'a');
-  });
-
-});
+verifySpecification(UnaryNotMutatorSpec, UnaryNotMutator);
