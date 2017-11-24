@@ -30,17 +30,4 @@ describe('BabelConfigEditor', () => {
         babelConfigEditor.edit(config);
         expect(config.babelConfig).to.deep.equal(JSON.parse(babelConfigResult));
     });
-
-    /* it('Should not alter the config object', () => {
-         const customObj = { my: 'super', awesome: 'object' };
-         const initialConfig = new Config();
-         const config = new Config();
-         initialConfig.set(customObj);
-         config.set(customObj);
- 
-         babelConfigEditor.edit(config);
- 
- 
-         expect(config).to.deep.equal(initialConfig);
-     });*/
 });
