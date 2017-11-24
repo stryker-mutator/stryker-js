@@ -29,7 +29,10 @@
   },
   "author": "Simon de Lang <simondelang@gmail.com>",
   "contributors": [
-    "Nico Jansen <jansennico@gmail.com>"
+    "Nico Jansen <jansennico@gmail.com>",
+    "Niek te Grootenhuis <ntegro@hotmail.com>",
+    "Thomas Peters <thomaspeters4@outlook.com>",
+    "Sander Koenders <sanderkoenders@gmail.com>"
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator#readme",
   "license": "Apache-2.0",
