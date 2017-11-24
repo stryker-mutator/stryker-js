@@ -11,7 +11,7 @@ class BabelTranspiler implements Transpiler {
     
     public transpile(files: Array<File>): Promise<TranspileResult> {
         const results: Array<File> = [];
-        
+
         try {
             files.forEach((file) => {
                 if (file.kind === FileKind.Text) {
@@ -22,7 +22,7 @@ class BabelTranspiler implements Transpiler {
                 }
             });            
         } catch (err) {
-            return Promise.resolve(this.createErrorResult(err));
+            return Promise.resolve(this.createErrorResult(err.message));
         }
 
         return Promise.resolve(this.createSuccessResult(results));
@@ -32,7 +32,7 @@ class BabelTranspiler implements Transpiler {
         const result = babel.transform(file.content, this._babelConfig).code;
         
         if (!result) {
-            throw new Error('Could not transplile file with the Babel transform function');
+            throw new Error('Could not transpile file with the Babel transform function');
         }
 
         file.content = result;
