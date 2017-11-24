@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.1"></a>
+## [0.15.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.0...stryker@0.15.1) (2017-11-24)
+
+
+### Bug Fixes
+
+* **Initializer:** Remove es5 option ([#469](https://github.com/stryker-mutator/stryker/issues/469)) ([98048f4](https://github.com/stryker-mutator/stryker/commit/98048f4))
+
+
+
+
 <a name="0.15.0"></a>
 # [0.15.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.14.1...stryker@0.15.0) (2017-11-24)
 
