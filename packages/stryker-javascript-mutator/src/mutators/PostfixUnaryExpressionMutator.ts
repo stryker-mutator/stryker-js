@@ -6,7 +6,7 @@ export default class PostfixUnaryExpressionMutator implements NodeMutator {
 
   private operators: { [targetedOperator: string]: string } = {
     '++': '--',
-    '--': '++',
+    '--': '++'
   };
 
   mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[] {
