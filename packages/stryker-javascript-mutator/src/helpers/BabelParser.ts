@@ -1,6 +1,6 @@
 import * as babel from 'babel-core';
-import * as babylon from "babylon";
-import generate from "babel-generator";
+import * as babylon from 'babylon';
+import generate from 'babel-generator';
 import { NodePath } from 'babel-traverse';
 
 export default class BabelParser {
