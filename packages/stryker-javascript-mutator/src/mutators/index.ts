@@ -8,6 +8,7 @@ import LogicalOperatorMutator from './LogicalOperatorMutator';
 import RemoveConditionalsMutator from './RemoveConditionalsMutator';
 import UnaryOperatorMutator from './UnaryOperatorMutator';
 import UpdateOperatorMutator from './UpdateOperatorMutator';
+import WhileStatementMutator from './WhileStatementMutator';
 
 const factory = NodeMutatorFactory.instance();
 factory.register(ArrayLiteralMutator.name, ArrayLiteralMutator);
@@ -19,3 +20,4 @@ factory.register(LogicalOperatorMutator.name, LogicalOperatorMutator);
 factory.register(RemoveConditionalsMutator.name, RemoveConditionalsMutator);
 factory.register(UnaryOperatorMutator.name, UnaryOperatorMutator);
 factory.register(UpdateOperatorMutator.name, UpdateOperatorMutator);
+factory.register(WhileStatementMutator.name, WhileStatementMutator);
