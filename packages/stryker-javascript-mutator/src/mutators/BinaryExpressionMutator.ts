@@ -1,7 +1,7 @@
 import { types } from 'babel-core';
 import NodeMutator from './NodeMutator';
 
-export default class BinaryOperatorMutator implements NodeMutator {
+export default class BinaryExpressionMutator implements NodeMutator {
   private operators: { [targetedOperator: string]: string | string[] } = {
     '+': '-',
     '-': '+',
@@ -15,10 +15,12 @@ export default class BinaryOperatorMutator implements NodeMutator {
     '==': '!=',
     '!=': '==',
     '===': '!==',
-    '!==': '==='
+    '!==': '===',
+    '||': '&&',
+    '&&': '||'
   };
 
-  name = 'BinaryOperator';
+  name = 'BinaryExpression';
 
   mutate(node: types.Node, clone: <T extends types.Node> (node: T, deep?: boolean) => T): void | types.Node[] {
     if (types.isBinaryExpression(node)) {

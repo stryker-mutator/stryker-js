@@ -1,7 +1,8 @@
 import NodeMutatorFactory from '../NodeMutatorFactory';
-import ArrayDeclaratorMutator from './ArrayDeclaratorMutator';
-import BinaryOperatorMutator from './BinaryOperatorMutator';
-import BlockStatementMutator from './BlockStatementMutator';
+import ArrayLiteralMutator from './ArrayLiteralMutator';
+import ArrayNewExpressionMutator from './ArrayNewExpressionMutator';
+import BinaryExpressionMutator from './BinaryExpressionMutator';
+import BlockMutator from './BlockMutator';
 import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
 import LogicalOperatorMutator from './LogicalOperatorMutator';
 import RemoveConditionalsMutator from './RemoveConditionalsMutator';
@@ -9,9 +10,10 @@ import UnaryOperatorMutator from './UnaryOperatorMutator';
 import UpdateOperatorMutator from './UpdateOperatorMutator';
 
 const factory = NodeMutatorFactory.instance();
-factory.register(ArrayDeclaratorMutator.name, ArrayDeclaratorMutator);
-factory.register(BinaryOperatorMutator.name, BinaryOperatorMutator);
-factory.register(BlockStatementMutator.name, BlockStatementMutator);
+factory.register(ArrayLiteralMutator.name, ArrayLiteralMutator);
+factory.register(ArrayNewExpressionMutator.name, ArrayNewExpressionMutator);
+factory.register(BinaryExpressionMutator.name, BinaryExpressionMutator);
+factory.register(BlockMutator.name, BlockMutator);
 factory.register(BooleanSubstitutionMutator.name, BooleanSubstitutionMutator);
 factory.register(LogicalOperatorMutator.name, LogicalOperatorMutator);
 factory.register(RemoveConditionalsMutator.name, RemoveConditionalsMutator);

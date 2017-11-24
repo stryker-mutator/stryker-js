@@ -1,17 +1,10 @@
 import { expect } from 'chai';
 import { File, FileKind } from 'stryker-api/core';
 import JavaScriptMutator from '../../src/JavaScriptMutator';
-import * as log4js from 'log4js';
-import LogMock from '../helpers/LogMock';
 import '../../src/index';
 import { Config } from 'stryker-api/config';
 
 describe('JavaScriptMutator', () => {
-
-
-  beforeEach(() => {
-    sandbox.stub(log4js, 'getLogger').returns(new LogMock());
-  });
 
   it('should generate a correct mutant', () => {
     const mutator = new JavaScriptMutator(new Config());
