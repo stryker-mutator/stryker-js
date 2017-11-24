@@ -10,9 +10,9 @@ export default class ArrayNewExpressionMutator implements NodeMutator {
   mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[] {
     let nodes: types.Node[] = [];
 
-    if (types.isArrayExpression(node) && node.elements.length > 0) {
+    if ((types.isCallExpression(node) || types.isNewExpression(node)) && types.isIdentifier(node.callee) && node.callee.name === 'Array' && node.arguments.length > 0) {
       let mutatedNode = copy(node);
-      mutatedNode.elements = [];
+      mutatedNode.arguments = [];
       nodes.push(mutatedNode);
     }
 

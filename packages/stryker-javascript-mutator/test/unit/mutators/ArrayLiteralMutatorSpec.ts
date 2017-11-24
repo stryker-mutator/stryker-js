@@ -1,7 +1,7 @@
 import ArrayLiteralMutator from '../../../src/mutators/ArrayLiteralMutator';
 import { expectMutation } from '../../helpers/mutatorAssertions';
 
-describe.only('ArrayLiteralMutator', () => {
+describe('ArrayLiteralMutator', () => {
 
   it('should mutate filled array literals as empty arrays', () => {
     expectMutation(new ArrayLiteralMutator(), '[a, 1 + 1]', '[]');
