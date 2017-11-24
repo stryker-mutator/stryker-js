@@ -1,9 +1,21 @@
-import JavaScriptMutator from '../../src/JavaScriptMutator';
-import { TextFile, FileKind } from 'stryker-api/core';
 import { expect } from 'chai';
+import { TextFile, FileKind } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
+import { Config } from 'stryker-api/config';
+import JavaScriptMutator from '../../src/JavaScriptMutator';
+import NodeMutator from '../../src/mutators/NodeMutator';
+import ExpectMutation from 'stryker-mutator-specification/src/ExpectMutation';
 
-export function expectMutation(mutator: JavaScriptMutator, sourceText: string, ...expectedTexts: string[]) {
+export interface MutatorConstructor {
+  new(): NodeMutator;
+}
+
+export function verifySpecification(specification: (name: string, expectMutation: ExpectMutation) => void, MutatorClass: MutatorConstructor): void {
+  specification(new MutatorClass().name, (actual: string, ...expected: string[]) => expectMutation(new MutatorClass(), actual, ...expected));
+}
+
+export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
+  const javaScriptMutator = new JavaScriptMutator(new Config(), [mutator]);
   const sourceFile: TextFile = {
     content: sourceText,
     included: true,
@@ -12,7 +24,7 @@ export function expectMutation(mutator: JavaScriptMutator, sourceText: string, .
     transpiled: true,
     kind: FileKind.Text
   };
-  const mutants = mutator.mutate([sourceFile]);
+  const mutants = javaScriptMutator.mutate([sourceFile]);
   expect(mutants).lengthOf(expectedTexts.length);
   const actualMutantTexts = mutants.map(mutant => mutantToString(mutant, sourceText));
   expectedTexts.forEach(expected => expect(actualMutantTexts, `was: ${actualMutantTexts.join(',')}`).to.include(expected));

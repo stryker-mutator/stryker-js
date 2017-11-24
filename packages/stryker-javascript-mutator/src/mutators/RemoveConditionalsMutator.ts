@@ -10,9 +10,9 @@ export default class RemoveConditionalsMutator implements NodeMutator {
   constructor() { }
 
   mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
-    if ((types.isLoop(node) || types.isConditional(node)) && !types.isForXStatement(node)) {
+    if ((types.isLoop(node) || types.isConditional(node)) && !types.isForXStatement(node) && !types.isWhileStatement(node)) {
       let nodes: types.Node[] = [];
-
+      
       if (node.test) {
         nodes.push(this.booleanLiteralNode(node.test as any, false));
       } else {
