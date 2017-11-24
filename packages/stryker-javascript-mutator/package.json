@@ -43,11 +43,11 @@
   "devDependencies": {
     "@types/babel-generator": "^6.25.1",
     "@types/babylon": "^6.16.2",
-    "stryker-api": "^0.9.0",
+    "stryker-api": "^0.11.0",
     "stryker-mutator-specification": "^0.1.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.9.0",
+    "stryker-api": "^0.11.0",
     "typescript": "^2.5.3"
   }
 }
