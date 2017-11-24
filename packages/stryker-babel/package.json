@@ -22,7 +22,7 @@
     "stryker",
     "stryker-plugin",
     "javascript",
-    "stryker-mutator",
+    "stryker-transpiler",
     "babel"
   ],
   "bugs": {
