@@ -30,8 +30,13 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
   expectedTexts.forEach(expected => expect(actualMutantTexts, `was: ${actualMutantTexts.join(',')}`).to.include(expected));
 }
 
+/**
+ * Place the mutant in the sourceText and remove all new-line tokens and excess whitespace in the mutant replacement
+ * @param mutant 
+ * @param sourceText 
+ */
 function mutantToString(mutant: Mutant, sourceText: string) {
   return sourceText.substr(0, mutant.range[0]) +
-    mutant.replacement +
+  mutant.replacement.replace(/\s{2,}/g, ' ').replace(/\n/g, ' ') +
     sourceText.substr(mutant.range[1]);
 }
