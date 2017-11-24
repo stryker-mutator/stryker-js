@@ -23,7 +23,7 @@ describe('JavaScriptMutator', () => {
 
     expect(mutants.length).to.equal(1);
     expect(mutants[0]).to.deep.equal({
-      mutatorName: 'BinaryOperator',
+      mutatorName: 'BinaryExpression',
       fileName: files[0].name,
       range: [22, 27],
       replacement: '1 - 2'
