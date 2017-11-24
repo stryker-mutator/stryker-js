@@ -1,9 +1,11 @@
 import * as babel from 'babel-core';
+import * as babylon from 'babylon';
+import generate from 'babel-generator';
 import { NodePath } from 'babel-traverse';
 
 export default class BabelParser {
   static getAst(code: string): babel.types.File {
-    return babel.transform(code).ast as babel.types.File;
+    return babylon.parse(code);
   }
 
   static getNodes(ast: babel.types.File): babel.types.Node[] {
@@ -22,7 +24,7 @@ export default class BabelParser {
 
   static generateCode(ast: babel.types.File, node: babel.Node) {
     ast.program.body = [node as any];
-    return babel.transformFromAst(ast).code;
+    return generate(ast).code;
   }
 
   static removeUseStrict(ast: babel.types.File) {
