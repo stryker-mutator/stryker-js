@@ -71,10 +71,10 @@ class BabelTranspiler implements Transpiler {
     };
   }
 
-  private createSuccessResult(files: File[]): TranspileResult {
+  private createSuccessResult(outputFiles: File[]): TranspileResult {
     return {
       error: null,
-      outputFiles: files
+      outputFiles
     };
   }
 
