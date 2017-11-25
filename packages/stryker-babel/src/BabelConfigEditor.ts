@@ -30,9 +30,7 @@ export default class BabelConfigEditor implements ConfigEditor {
       } catch (error) {
         this.log.error(`Error while reading .babelrc file: ${error}`);
       }
-    }
-
-    else {
+    } else {
       this.log.error(`babelrc file does not exist at: ${configPath}`);
     }
   }
