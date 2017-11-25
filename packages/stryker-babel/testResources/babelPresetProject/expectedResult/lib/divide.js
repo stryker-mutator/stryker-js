@@ -1,5 +1,5 @@
 "use strict";
 
-var devide = function devide(number) {
+var divide = function divide(number) {
   return number / number;
 };
