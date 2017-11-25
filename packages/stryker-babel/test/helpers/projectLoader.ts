@@ -6,7 +6,11 @@ import { TextFile, FileKind } from 'stryker-api/core';
 export class ProjectLoader {
   public static _knownExtensions = ['.js', '.jsx', '.ts'];
 
-  public static load(basePath: string): Array<TextFile> {
+  public static getFiles(basePath: string) {
+    return this.load(basePath).sort(this.sortFunction);
+  }
+
+  private static load(basePath: string): Array<TextFile> {
     let files: Array<TextFile> = [];
     const entries = fs.readdirSync(basePath);
 
@@ -36,6 +40,13 @@ export class ProjectLoader {
 
     // We are providing FileKind.Text so we can safely cast to TextFile
     return createFile(entry, content, FileKind.Text) as TextFile;
+  }
+
+  private static sortFunction(a: TextFile, b: TextFile) {
+    var textA = path.basename(a.name).toUpperCase();
+    var textB = path.basename(b.name).toUpperCase();
+
+    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
   }
 
   public static loadBabelRc(basePath: string) {
