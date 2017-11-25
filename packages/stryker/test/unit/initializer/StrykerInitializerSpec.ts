@@ -50,7 +50,7 @@ describe('StrykerInitializer', () => {
     beforeEach(() => {
       stubTestRunners('stryker-awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] }, { name: 'stryker-hyper-framework', keywords: ['stryker-hyper-runner'] });
-      stubMutators('stryker-typescript', 'stryker-es6');
+      stubMutators('stryker-typescript', 'stryker-javascript');
       stubTranspilers('stryker-typescript', 'stryker-webpack');
       stubReporters('stryker-dimension-reporter', 'stryker-mars-reporter');
       stubPackageClient({
@@ -63,8 +63,7 @@ describe('StrykerInitializer', () => {
         'stryker-awesome-framework': null,
         'stryker-hyper-framework': null,
         'stryker-typescript' : null,
-        'stryker-es5' : null,
-        'stryker-es6' : null,
+        'stryker-javascript' : null,
         'stryker-dimension-reporter': null,
         'stryker-mars-reporter': null,
         'stryker-webpack': null
@@ -83,7 +82,7 @@ describe('StrykerInitializer', () => {
       expect(promptTestFramework.type).to.eq('list');
       expect(promptTestFramework.choices).to.deep.eq(['awesome', 'None/other']);
       expect(promptMutator.type).to.eq('list');
-      expect(promptMutator.choices).to.deep.eq(['typescript', 'es6', 'es5']);
+      expect(promptMutator.choices).to.deep.eq(['typescript', 'javascript']);
       expect(promptTranspilers.type).to.eq('checkbox');
       expect(promptTranspilers.choices).to.deep.eq(['typescript', 'webpack']);
       expect(promptReporters.type).to.eq('checkbox');
@@ -168,10 +167,10 @@ describe('StrykerInitializer', () => {
 
     it('should log error and continue when fetching test runners', async () => {
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
-      stubMutators('stryker-es5');
+      stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
       stubReporters();
-      stubPackageClient({ 'stryker-es5': null, 'stryker-webpack': null });
+      stubPackageClient({ 'stryker-javascript': null, 'stryker-webpack': null });
       inquirerPrompt.resolves({ reporters: ['clear-text'], transpilers: ['webpack'] });
 
       await sut.initialize();
@@ -185,10 +184,10 @@ describe('StrykerInitializer', () => {
       stubTestRunners('stryker-awesome-runner');
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'], transpilers: ['webpack'] });
-      stubMutators('stryker-es5');
+      stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
       stubReporters();
-      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-es5': null, 'stryker-webpack': null });
+      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null, 'stryker-webpack': null });
 
       await sut.initialize();
 
@@ -216,11 +215,11 @@ describe('StrykerInitializer', () => {
     it('should log error and continue when fetching transpilers', async () => {
       stubTestRunners('stryker-awesome-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] });
-      stubMutators('stryker-es5');
+      stubMutators('stryker-javascript');
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-transpiler').rejects();
       stubReporters();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'] });
-      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-es5': null });
+      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null });
 
       await sut.initialize();
 
@@ -232,11 +231,11 @@ describe('StrykerInitializer', () => {
     it('should log error and continue when fetching stryker reporters', async () => {
       stubTestRunners('stryker-awesome-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] });
-      stubMutators('stryker-es5');
+      stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-reporter').rejects();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'], transpilers: ['webpack'] });
-      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-es5': null, 'stryker-webpack': null });
+      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null, 'stryker-webpack': null });
 
       await sut.initialize();
 
@@ -247,7 +246,7 @@ describe('StrykerInitializer', () => {
     it('should log warning and continue when fetching custom config', async () => {
       stubTestRunners('stryker-awesome-runner');
       stubTestFrameworks();
-      stubMutators('es5');
+      stubMutators();
       stubTranspilers('webpack');
       stubReporters();
       inquirerPrompt.resolves({ testRunner: 'awesome', reporters: ['clear-text'], transpilers: ['webpack'] });
