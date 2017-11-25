@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { createFile } from './producers';
 import { TextFile, FileKind } from 'stryker-api/core';
-import { EOL } from 'os';
 
 export class ProjectLoader {
   public static _knownExtensions = ['.js', '.jsx', '.ts'];
@@ -56,7 +55,7 @@ export class ProjectLoader {
 
   public static removeEOL(files: Array<TextFile>) {
     files.forEach((file) => {
-      file.content.replace(EOL, '');
+      file.content = file.content.replace(/\r?\n|\r/g, '');
     });
 
     return files;
