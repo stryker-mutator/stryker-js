@@ -16,13 +16,22 @@ export default class BabelConfigEditor implements ConfigEditor {
     if (typeof config[CONFIG_KEY_FILE] === 'string') {
       const babelrcPath = path.resolve(config[CONFIG_KEY_FILE]);
       this.log.info(`Reading .babelrc file from path "${babelrcPath}"`);
-      try {
-        return JSON.parse(fs.readFileSync(babelrcPath, 'utf8'));
-      } catch (error) {
-        this.log.error(`Error while reading .babelrc file: ${JSON.stringify(error)}`);
-      }
+      return this.getConfigFile(babelrcPath);
     } else {
       this.log.warn(`No .babelrc file configured. Please set the "${CONFIG_KEY_FILE}" property in your config.`);
+    }
+  }
+
+  private getConfigFile(configPath: string) {
+    if (fs.existsSync(configPath)) {
+      try {
+        let configFile = fs.readFileSync(configPath, 'utf8');
+        return JSON.parse(configFile);
+      } catch (error) {
+        this.log.error(`Error while reading .babelrc file: ${error}`);
+      }
+    } else {
+      this.log.error(`babelrc file does not exist at: ${configPath}`);
     }
   }
 }

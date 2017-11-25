@@ -31,7 +31,9 @@
   "author": "Sander Koenders <sanderkoenders@gmail.com",
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",
-    "Simon de Lang <simondelang@gmail.com>"
+    "Simon de Lang <simondelang@gmail.com>",
+    "Niek te Grootenhuis <ntegro@hotmail.com>",
+    "Thomas Peters <thomaspeters4@outlook.com>"
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-babel#readme",
   "license": "Apache-2.0",

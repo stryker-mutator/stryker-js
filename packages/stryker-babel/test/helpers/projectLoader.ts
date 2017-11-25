@@ -22,12 +22,12 @@ export class ProjectLoader {
   }
 
   private static processEntry(basePath: string, entry: string): Array<TextFile> {
-    const stats = fs.statSync(path.join(basePath, entry));    
+    const stats = fs.statSync(path.join(basePath, entry));
 
-    if(stats.isDirectory()) {
+    if (stats.isDirectory()) {
       return this.load(path.join(basePath, entry));
     } else {
-      if(this._knownExtensions.indexOf(path.extname(entry)) >= 0) {
+      if (this._knownExtensions.indexOf(path.extname(entry)) >= 0) {
         return [this.createTextFile(path.join(basePath, entry))];
       }
     }
