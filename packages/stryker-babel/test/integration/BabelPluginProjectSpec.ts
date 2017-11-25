@@ -5,7 +5,7 @@ import BabelTranspiler from '../../src/BabelTranspiler';
 import { ProjectLoader } from '../helpers/projectLoader';
 import { expect } from 'chai';
 
-describe('BabelProject', () => {
+describe('BabelPluginProject', () => {
   let projectDir = path.resolve(__dirname, '..', '..', 'testResources', 'babelPluginProject');
   let projectFiles: Array<TextFile> = [];
   let expectedResultFiles: Array<TextFile> = [];

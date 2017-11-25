@@ -23,6 +23,8 @@ describe('BabelConfigEditor', () => {
       error: sandbox.stub(),
       warn: sandbox.stub()
     };
+
+    sandbox.stub(log4js, 'getLogger').returns(logStub);
   });
 
   afterEach(() => {
@@ -55,7 +57,7 @@ describe('BabelConfigEditor', () => {
     });
 
     it('should log the path to the babelrc file', () => {
-      sandbox.stub(log4js, 'getLogger').returns(logStub);
+      
       const editor = new BabelConfigEditor();
       const config = new Config();
       config.set({ babelrcFile: '.babelrc' });
@@ -66,7 +68,6 @@ describe('BabelConfigEditor', () => {
 
     describe('when reading the file throws an error', () => {
       it('should log the error', () => {
-        sandbox.stub(log4js, 'getLogger').returns(logStub);
         const editor = new BabelConfigEditor();
         const config = new Config();
         config.set({ babelrcFile: '.nonExistingBabelrc' });
@@ -77,7 +78,6 @@ describe('BabelConfigEditor', () => {
       });
 
       it('should set the babelConfig to an empty object', () => {
-        sandbox.stub(log4js, 'getLogger').returns(logStub);
         const editor = new BabelConfigEditor();
         const config = new Config();
         config.set({ babelrcFile: '.nonExistingBabelrc' });
@@ -91,7 +91,6 @@ describe('BabelConfigEditor', () => {
 
   describe('babelrcFile property is not present', () => {
     it('should log a warning', () => {
-      sandbox.stub(log4js, 'getLogger').returns(logStub);
       const editor = new BabelConfigEditor();
       const config = new Config();
       const configKeyFile = 'babelrcFile';
@@ -102,7 +101,6 @@ describe('BabelConfigEditor', () => {
     });
 
     it('should set the babelConfig to an empty object', () => {
-      sandbox.stub(log4js, 'getLogger').returns(logStub);
       const editor = new BabelConfigEditor();
       const config = new Config();
 
