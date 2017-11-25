@@ -209,7 +209,7 @@ describe('Stryker', function () {
 
       it('should create the mutation test executor', () => {
         expect(mutationTestExecutor.default).calledWithNew;
-        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles, transpiledFiles, testFramework, reporter);
+        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles, testFramework, reporter);
         expect(mutationTestExecutorMock.run).calledWith(mutants);
       });
 
