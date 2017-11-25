@@ -61,6 +61,7 @@ describe('BabelConfigEditor', () => {
       config.set({ babelrcFile: '.babelrc' });
 
       editor.edit(config);
+      expect(logStub.info).calledWith(`Reading .babelrc file from path "${path.resolve(config.babelrcFile)}"`);
     });
 
     describe('when reading the file throws an error', () => {
