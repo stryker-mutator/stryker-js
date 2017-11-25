@@ -4,36 +4,38 @@ import { createFile } from './producers';
 import { TextFile, FileKind } from 'stryker-api/core';
 
 export class ProjectLoader {
-  public static _knownExtensions = ['js', 'jsx', 'ts'];
+  public static _knownExtensions = ['.js', '.jsx', '.ts'];
 
   public static load(basePath: string): Array<TextFile> {
-    const files: Array<TextFile> = [];
+    let files: Array<TextFile> = [];
     const entries = fs.readdirSync(basePath);
 
     entries.forEach((entry) => {
-      files.concat(this.processEntry(basePath, entry));
+      files = files.concat(this.processEntry(basePath, entry));
     });
 
     return files;
   }
 
   private static processEntry(basePath: string, entry: string): Array<TextFile> {
-    const stats = fs.statSync(entry);    
-    
+    const stats = fs.statSync(path.join(basePath, entry));    
+
     if(stats.isDirectory()) {
       return this.load(path.join(basePath, entry));
     } else {
-      if(this._knownExtensions.indexOf(path.extname(entry)) !== -1) {
-        return [this.createTextFile(entry)];
+      if(this._knownExtensions.indexOf(path.extname(entry)) >= 0) {
+        return [this.createTextFile(path.join(basePath, entry))];
       }
     }
+
+    return [];
   }
 
   private static createTextFile(entry: string): TextFile {
     const content = fs.readFileSync(entry, 'utf8');
 
     // We are providing FileKind.Text so we can safely cast to TextFile
-    return createFile(path.basename(entry), content, FileKind.Text) as TextFile;
+    return createFile(entry, content, FileKind.Text) as TextFile;
   }
 
   public static loadBabelRc(basePath: string) {
