@@ -9,7 +9,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 60 mocha \"test/unit/**/*.js\" "
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 60 mocha \"test/unit/**/*Spec.js\" \"test/integration/**/*Spec.js\""
   },
   "repository": {
     "type": "git",
@@ -31,7 +31,9 @@
   "author": "Sander Koenders <sanderkoenders@gmail.com",
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",
-    "Simon de Lang <simondelang@gmail.com>"
+    "Simon de Lang <simondelang@gmail.com>",
+    "Niek te Grootenhuis <ntegro@hotmail.com>",
+    "Thomas Peters <thomaspeters4@outlook.com>"
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-babel#readme",
   "license": "Apache-2.0",
@@ -41,6 +43,8 @@
   },
   "devDependencies": {
     "@types/babel-core": "^6.25.3",
+    "babel-plugin-transform-es2015-spread": "^6.22.0",
+    "babel-preset-es2015": "^6.24.1",
     "stryker-api": "^0.11.0"
   },
   "peerDependencies": {

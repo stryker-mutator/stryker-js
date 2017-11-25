@@ -36,4 +36,4 @@ $ stryker run
 
 The `JavaScript Mutator` is a plugin to mutate JavaScript code. This is done using Babel without any plugins.
 
-See [test code](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator/test/unit/mutator) to know which mutations are supported.
+See [test code](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator/test/unit/mutators) to know which mutations are supported.
