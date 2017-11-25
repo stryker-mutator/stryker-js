@@ -1,1 +1,1 @@
-export const babelrcFileConfigKey: string = 'babelRcFile';
+export const babelrcFileConfigKey: string = 'babelrcFile';

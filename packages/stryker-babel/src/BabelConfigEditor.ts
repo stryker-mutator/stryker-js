@@ -12,10 +12,9 @@ export default class BabelConfigEditor implements ConfigEditor {
     this.log.trace(`babelConfig set to: ${JSON.stringify(config.babelConfig)}`);
   }
 
-  public readConfig(config: Config) {
+  private readConfig(config: Config) {
     if (typeof config[babelrcFileConfigKey] === 'string') {
-      const baseDir = path.resolve(__dirname);
-      const babelrcPath = path.join(baseDir, config[babelrcFileConfigKey]);
+      const babelrcPath = path.resolve(config[babelrcFileConfigKey]);
       this.log.info(`Reading .babelrc file from path "${babelrcPath}"`);
       try {
         return JSON.parse(fs.readFileSync(babelrcPath, 'utf8'));
