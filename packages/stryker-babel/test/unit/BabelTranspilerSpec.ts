@@ -11,7 +11,7 @@ import * as babel from 'babel-core';
 describe('BabelTranspiler', () => {
   let babelTranspiler: Transpiler;
   let sandbox: sinon.SinonSandbox;
-  let files: Array<File> = [];
+  let files: File[] = [];
   let transformStub: sinon.SinonStub;
 
   const knownFileExtensions = ['.js', '.jsx', '.ts'];
@@ -28,9 +28,9 @@ describe('BabelTranspiler', () => {
     babelTranspiler = new BabelTranspiler({ config: new Config, keepSourceMaps: false });
 
     files = [
-      createFile('main.js', 'const main = () => { sum(2); devide(2); }'),
+      createFile('main.js', 'const main = () => { sum(2); divide(2); }'),
       createFile('sum.js', 'const sum = (number) => number + number;'),
-      createFile('devide.js', 'const devide = (number) => number / number;')
+      createFile('divide.js', 'const divide = (number) => number / number;')
     ];
   });
 
@@ -43,14 +43,17 @@ describe('BabelTranspiler', () => {
       expect(transpileResult.outputFiles).to.deep.equal(files);
     });
 
-    it('should not call the transform function with any file other than text files', async () => {
-      await babelTranspiler.transpile([createFile('myBinaryFile.png', 'S�L!##���XLDDDDDDDD\K�', FileKind.Binary)]);
+    it('should not transpile binary files', async () => {
+      const inputFile = createFile('myBinaryFile.png', 'S�L!##���XLDDDDDDDD\K�', FileKind.Binary);
 
-      assert(transformStub.notCalled);
+      const result = await babelTranspiler.transpile([inputFile]);
+
+      expect(result.error).null;
+      expect(result.outputFiles[0]).eq(inputFile);
     });
 
     it('should only call the transform function when the file extension is a known file extension', async () => {
-      const files: Array<File> = [];
+      const files: File[] = [];
 
       knownFileExtensions.forEach((knownFileExtension) => {
         files.push(createFile('file'.concat(knownFileExtension), 'const a = 5;'));
