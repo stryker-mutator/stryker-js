@@ -16,7 +16,7 @@ describe('BabelPresetProject', () => {
   beforeEach(() => {
     config = new Config();
     projectFiles = ProjectLoader.getFiles(path.join(projectDir, 'source'));
-    expectedResultFiles = ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
+    expectedResultFiles = ProjectLoader.removeEOL(ProjectLoader.getFiles(path.join(projectDir, 'expectedResult')));
     babelConfig = ProjectLoader.loadBabelRc(projectDir);
     config.set({ babelConfig });
     babelTranspiler = new BabelTranspiler({ config, keepSourceMaps: false });
@@ -40,6 +40,8 @@ describe('BabelPresetProject', () => {
     expectedResultFiles.forEach((expectedResultFile) => {
       expectedResultFile.name = expectedResultFile.name.replace('expectedResult', 'source');
     });
+
+    result.outputFiles = ProjectLoader.removeEOL(result.outputFiles as Array<TextFile>);
 
     expect(result.outputFiles).to.deep.equal(expectedResultFiles);
   });

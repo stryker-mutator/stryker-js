@@ -15,7 +15,7 @@ describe('BabelProject', () => {
 
   beforeEach(() => {
     projectFiles = ProjectLoader.getFiles(path.join(projectDir, 'source'));
-    expectedResultFiles = ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
+    expectedResultFiles = ProjectLoader.removeEOL(ProjectLoader.getFiles(path.join(projectDir, 'expectedResult')));
     babelConfig = ProjectLoader.loadBabelRc(projectDir);
     config = new Config();
     config.set({ babelConfig });
@@ -41,6 +41,7 @@ describe('BabelProject', () => {
       expectedResultFile.name = expectedResultFile.name.replace('expectedResult', 'source');
     });
 
+    result.outputFiles = ProjectLoader.removeEOL(result.outputFiles as Array<TextFile>);
     expect(result.outputFiles).to.deep.equal(expectedResultFiles);
   });
 });
