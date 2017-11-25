@@ -47,7 +47,7 @@ describe('BabelConfigEditor', () => {
       expect.fail();
     });
 
-    describe('when reading the file throws an error',() => {
+    describe('when reading the file throws an error', () => {
       it('should log the error', () => {
         expect.fail();
       });
@@ -58,7 +58,7 @@ describe('BabelConfigEditor', () => {
     });
   });
 
-  describe('babelrcFile property is not present',() => {
+  describe('babelrcFile property is not present', () => {
     it('should log a warning', () => {
       expect.fail();
     });
