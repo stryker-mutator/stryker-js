@@ -2,31 +2,28 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ConfigEditor, Config } from 'stryker-api/config';
 import { babelrcFileConfigKey } from './helpers/keys';
+import { getLogger } from 'log4js';
 
-class BabelConfigEditor implements ConfigEditor {
-    public edit(config: Config) {
-        config.babelConfig = config.babelConfig || this.getConfig(config);
+export default class BabelConfigEditor implements ConfigEditor {
+  private readonly log = getLogger(BabelConfigEditor.name);
+
+  public edit(config: Config) {
+    config.babelConfig = config.babelConfig || this.readConfig(config) || {};
+    this.log.trace(`babelConfig set to: ${JSON.stringify(config.babelConfig)}`);
+  }
+
+  public readConfig(config: Config) {
+    if (typeof config[babelrcFileConfigKey] === 'string') {
+      const baseDir = path.resolve(__dirname);
+      const babelrcPath = path.join(baseDir, config[babelrcFileConfigKey]);
+      this.log.info(`Reading .babelrc file from path "${babelrcPath}"`);
+      try {
+        return JSON.parse(fs.readFileSync(babelrcPath, 'utf8'));
+      } catch (error) {
+        this.log.error(`Error while reading .babelrc file: ${JSON.stringify(error)}`);
+      }
+    } else {
+      this.log.warn(`No .babelrc file configured. Please set the "${babelrcFileConfigKey}" property in your config.`);
     }
-
-    public getConfig(config: Config) {
-        const baseDir = path.resolve(__dirname);
-
-        let BabelRc;
-        if (typeof config[babelrcFileConfigKey] === 'string') {
-            const babelrcPath = path.join(baseDir, config[babelrcFileConfigKey]);
-            console.log(babelrcPath);
-            BabelRc = this.GetBabelRcFileContents(babelrcPath);
-        }
-        if (BabelRc == null) {
-            console.warn('Babel config not found');
-        }
-        return BabelRc;
-    }
-
-    
-    private GetBabelRcFileContents(path: string) {
-        return JSON.parse(fs.readFileSync(path, 'utf8'));
-    }
+  }
 }
-
-export default BabelConfigEditor;
