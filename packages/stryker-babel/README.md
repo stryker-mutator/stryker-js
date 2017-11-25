@@ -20,14 +20,14 @@ Next, install this package:
 npm install --save-dev stryker-babel
 ```
 
-Next, open up your `stryker.conf.js` file and add the following components:
-```bash
+Next, open up your `stryker.conf.js` file and add the following properties:
+```javascript
 babelrcFile: '.babelrc' // Location of your .babelrc file
 transpilers: [
     'babel' // Specify that your code needs to be transpiled before tests can be run
 ]
 ```
-if you initialize stryker after installing this dependency, both the babelrcFile and the babel transpiler properties will be added automaticly to your `stryker.conf.js`. 
+if you initialize stryker using `stryker init`, the babelrcFile property will be added to your `stryker.conf.js` automatically.
 
 Now give it a go: 
 ```bash
