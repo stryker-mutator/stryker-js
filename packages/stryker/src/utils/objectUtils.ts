@@ -73,6 +73,13 @@ export function wrapInClosure(codeFragment: string) {
 }
 
 /**
+ * A wrapper around `process.env` (for testability)
+ */
+export function getEnvironmentVariable(nameEnvironmentVariable: string): string | undefined {
+  return process.env[nameEnvironmentVariable];
+}
+
+/**
  * A wrapper around `process.exitCode = n` (for testability)
  */
 export function setExitCode(n: number) {
