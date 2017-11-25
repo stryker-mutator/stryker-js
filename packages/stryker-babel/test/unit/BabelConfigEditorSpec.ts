@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 import * as path from 'path';
-import { babelrcFileConfigKey } from '../../src/helpers/keys';
+import { CONFIG_KEY_FILE } from '../../src/helpers/keys';
 
 describe('BabelConfigEditor', () => {
   let sandbox: sinon.SinonSandbox;
@@ -99,7 +99,7 @@ describe('BabelConfigEditor', () => {
       const config = new Config();
 
       editor.edit(config);
-      expect(logStub.warn).calledWith(`No .babelrc file configured. Please set the "${babelrcFileConfigKey}" property in your config.`);
+      expect(logStub.warn).calledWith(`No .babelrc file configured. Please set the "${CONFIG_KEY_FILE}" property in your config.`);
     });
 
     it('should set the babelConfig to an empty object', () => {

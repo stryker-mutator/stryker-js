@@ -1,24 +1,24 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ConfigEditor, Config } from 'stryker-api/config';
-import { babelrcFileConfigKey } from './helpers/keys';
+import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
 import { getLogger } from 'log4js';
 
 export default class BabelConfigEditor implements ConfigEditor {
   private readonly log = getLogger(BabelConfigEditor.name);
 
   public edit(config: Config) {
-    config.babelConfig = config.babelConfig || this.readConfig(config) || {};
-    this.log.trace(`babelConfig set to: ${JSON.stringify(config.babelConfig)}`);
+    config[CONFIG_KEY_OPTIONS] = config[CONFIG_KEY_OPTIONS] || this.readConfig(config) || {};
+    this.log.trace(`babelConfig set to: ${JSON.stringify(config[CONFIG_KEY_OPTIONS])}`);
   }
 
   private readConfig(config: Config) {
-    if (typeof config[babelrcFileConfigKey] === 'string') {
-      const babelrcPath = path.resolve(config[babelrcFileConfigKey]);
+    if (typeof config[CONFIG_KEY_FILE] === 'string') {
+      const babelrcPath = path.resolve(config[CONFIG_KEY_FILE]);
       this.log.info(`Reading .babelrc file from path "${babelrcPath}"`);
       return this.getConfigFile(babelrcPath);
     } else {
-      this.log.warn(`No .babelrc file configured. Please set the "${babelrcFileConfigKey}" property in your config.`);
+      this.log.warn(`No .babelrc file configured. Please set the "${CONFIG_KEY_FILE}" property in your config.`);
     }
   }
 
