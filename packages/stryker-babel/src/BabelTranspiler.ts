@@ -2,13 +2,14 @@ import { Transpiler, TranspilerOptions, TranspileResult, FileLocation } from 'st
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import * as babel from 'babel-core';
 import * as path from 'path';
+import { CONFIG_KEY_FILE } from './helpers/keys';
 
 class BabelTranspiler implements Transpiler {
   private _babelConfig: babel.GeneratorOptions;
   private _knownExtensions: Array<string>;
 
   public constructor(options: TranspilerOptions) {
-    this._babelConfig = options.config.babelConfig;
+    this._babelConfig = options.config[CONFIG_KEY_FILE];
     this._knownExtensions = ['.js', '.jsx', '.ts'];
   }
 
