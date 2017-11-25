@@ -14,7 +14,7 @@ describe('BabelProject', () => {
   let config: Config;
 
   beforeEach(() => {
-    projectFiles = ProjectLoader.getFiles(path.join(projectDir, 'src'));
+    projectFiles = ProjectLoader.getFiles(path.join(projectDir, 'source'));
     expectedResultFiles = ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
     babelConfig = ProjectLoader.loadBabelRc(projectDir);
     config = new Config();
@@ -38,7 +38,7 @@ describe('BabelProject', () => {
     const result = await babelTranspiler.transpile(projectFiles);
 
     expectedResultFiles.forEach((expectedResultFile) => {
-      expectedResultFile.name = expectedResultFile.name.replace('expectedResult', 'src');
+      expectedResultFile.name = expectedResultFile.name.replace('expectedResult', 'source');
     });
 
     expect(result.outputFiles).to.deep.equal(expectedResultFiles);
