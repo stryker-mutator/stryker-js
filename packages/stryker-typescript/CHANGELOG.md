@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.6.0...stryker-typescript@0.7.0) (2017-11-24)
+
+
+### Features
+
+* **JavaScript mutator:** Add stryker-javascript-mutator package ([#467](https://github.com/stryker-mutator/stryker/issues/467)) ([06d6bac](https://github.com/stryker-mutator/stryker/commit/06d6bac)), closes [#429](https://github.com/stryker-mutator/stryker/issues/429)
+
+
+
+
 <a name="0.6.0"></a>
 # [0.6.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.5.0...stryker-typescript@0.6.0) (2017-11-17)
 

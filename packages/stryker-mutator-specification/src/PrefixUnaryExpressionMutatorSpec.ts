@@ -40,5 +40,13 @@ export default function PrefixUnaryExpressionMutatorSpec(name: string, expectMut
     it('should not mutate a-a', () => {
       expectMutation('a-a');
     });
+
+    it('should not mutate a++ to a--', () => {
+      expectMutation('a++');
+    });
+
+    it('should not mutate a-- to a++', () => {
+      expectMutation('a--');
+    });
   });
 }
