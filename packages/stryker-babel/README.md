@@ -6,9 +6,9 @@
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
-# Stryker babel plugin
+# Stryker Babel plugin
 
-A plugin that supports babel for [Stryker](https://stryker-mutator.github.io), the JavaScript Mutation testing framework. This plugin transpiles sourcecode.
+A plugin that adds support for [Babel](https://github.com/babel/babel) to [Stryker](https://stryker-mutator.github.io), the JavaScript Mutation testing framework. 
 
 ## Quickstart
 
@@ -20,8 +20,25 @@ Next, install this package:
 npm install --save-dev stryker-babel
 ```
 
-Now give it a go:
+Next, open up your `stryker.conf.js` file and add the following components:
+```bash
+babelrcFile: '.babelrc' // Location of your .babelrc file
+transpilers: [
+    'babel' // Specify that your code needs to be transpiled before tests can be run
+]
+```
+if you initialize stryker after installing this dependency, both the babelrcFile and the babel transpiler properties will be added automaticly to your `stryker.conf.js`. 
 
+Now give it a go: 
 ```bash
 $ stryker run
 ```
+
+## Peer dependencies
+The `stryker-babel` plugin requires the following packages to be installed in order to work: 
+* `stryker-api`
+* `babel-core`
+
+For the current versions, see the `peerDependencies` section in the package.json file.
+
+These are marked as `peerDependencies` so you get a warning during installation when the correct versions are not installed.
