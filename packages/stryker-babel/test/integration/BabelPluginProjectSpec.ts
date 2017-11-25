@@ -17,7 +17,7 @@ describe('BabelProject', () => {
     projectFiles = ProjectLoader.getFiles(path.join(projectDir, 'src'));
     expectedResultFiles = ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
     babelConfig = ProjectLoader.loadBabelRc(projectDir);
-    config = new Config()
+    config = new Config();
     config.set({ babelConfig });
     babelTranspiler = new BabelTranspiler({ config, keepSourceMaps: false });
   });
@@ -29,7 +29,7 @@ describe('BabelProject', () => {
   it('should have a babelrc file', () => {
     expect(babelConfig).to.deep.equal({
       plugins: [
-        "transform-es2015-spread"
+        'transform-es2015-spread'
       ]
     });
   });

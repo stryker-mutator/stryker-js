@@ -43,8 +43,8 @@ export class ProjectLoader {
   }
 
   private static sortFunction(a: TextFile, b: TextFile) {
-    var textA = path.basename(a.name).toUpperCase();
-    var textB = path.basename(b.name).toUpperCase();
+    const textA = path.basename(a.name).toUpperCase();
+    const textB = path.basename(b.name).toUpperCase();
 
     return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
   }
