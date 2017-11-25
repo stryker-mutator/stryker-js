@@ -2,46 +2,52 @@ import { Transpiler, TranspilerOptions, TranspileResult, FileLocation } from 'st
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import * as babel from 'babel-core';
 import * as path from 'path';
+import { EOL } from 'os';
 import { CONFIG_KEY_FILE } from './helpers/keys';
 
 class BabelTranspiler implements Transpiler {
-  private _babelConfig: babel.GeneratorOptions;
-  private _knownExtensions: Array<string>;
+  private babelConfig: babel.GeneratorOptions;
+  private knownExtensions: string[];
 
   public constructor(options: TranspilerOptions) {
-    this._babelConfig = options.config[CONFIG_KEY_FILE];
-    this._knownExtensions = ['.js', '.jsx', '.ts'];
+    this.babelConfig = options.config[CONFIG_KEY_FILE];
+    this.knownExtensions = ['.js', '.jsx', '.ts'];
   }
 
-  public transpile(files: Array<File>): Promise<TranspileResult> {
-    const results: Array<File> = [];
-    const errorResults: Array<string> = [];
+  public transpile(files: File[]): Promise<TranspileResult> {
+    const outputFiles: File[] = [];
+    const errors: string[] = [];
 
     files.forEach((file) => {
-      if (file.kind === FileKind.Text) {
-        let content: string = file.content;
-
-        if (this.shouldBeTranspiled(file)) {
-          try {
-            content = this.transform(file.content);
-          } catch (err) {
-            errorResults.push(`${file.name}: ${err.message}`);
-          }
+      if (this.shouldBeTranspiled(file)) {
+        try {
+          outputFiles.push({
+            name: file.name,
+            content: this.transform((file as TextFile).content),
+            mutated: file.mutated,
+            included: file.included,
+            transpiled: file.transpiled,
+            kind: FileKind.Text
+          });
+        } catch (err) {
+          errors.push(`${file.name}: ${err.message}`);
         }
-
-        results.push(this.createTextFile(file.name, content, file.mutated, file.included, file.transpiled));
+      } else {
+        outputFiles.push(file);
       }
     });
 
-    return Promise.resolve(this.createResult(results, errorResults));
+    return Promise.resolve(this.createResult(outputFiles, errors));
   }
 
   private shouldBeTranspiled(file: File) {
-    return this._knownExtensions.indexOf(`${path.extname(file.name)}`) !== -1 && file.transpiled;
+    return file.kind === FileKind.Text
+      && file.transpiled
+      && this.knownExtensions.indexOf(path.extname(file.name)) >= 0;
   }
 
-  private transform(content: string) {
-    const result = babel.transform(content, this._babelConfig).code;
+  private transform(code: string) {
+    const result = babel.transform(code, this.babelConfig).code;
 
     if (!result) {
       throw new Error('Could not transpile file with the Babel transform function');
@@ -50,20 +56,9 @@ class BabelTranspiler implements Transpiler {
     return result;
   }
 
-  private createTextFile(name: string, content: string, mutated: boolean, included: boolean, transpiled: boolean): TextFile {
-    return {
-      name: name,
-      content: content,
-      mutated: mutated,
-      included: included,
-      transpiled: transpiled,
-      kind: FileKind.Text
-    };
-  }
-
-  private createResult(results: Array<File>, errorResults: Array<string>): TranspileResult {
+  private createResult(results: File[], errorResults: string[]): TranspileResult {
     if (errorResults.length > 0) {
-      return this.createErrorResult(errorResults.join('\n\r'));
+      return this.createErrorResult(errorResults.join(EOL));
     }
 
     return this.createSuccessResult(results);
@@ -71,12 +66,12 @@ class BabelTranspiler implements Transpiler {
 
   private createErrorResult(error: string): TranspileResult {
     return {
-      error: error,
+      error,
       outputFiles: []
     };
   }
 
-  private createSuccessResult(files: Array<File>): TranspileResult {
+  private createSuccessResult(files: File[]): TranspileResult {
     return {
       error: null,
       outputFiles: files
