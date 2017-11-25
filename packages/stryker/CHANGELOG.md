@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.2"></a>
+## [0.15.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.1...stryker@0.15.2) (2017-11-25)
+
+
+### Bug Fixes
+
+* **StrykerSpec:** Uncomment tests ([#471](https://github.com/stryker-mutator/stryker/issues/471)) ([4a13afa](https://github.com/stryker-mutator/stryker/commit/4a13afa))
+
+
+
+
 <a name="0.15.1"></a>
 ## [0.15.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.0...stryker@0.15.1) (2017-11-24)
 
