@@ -5,7 +5,13 @@ import { NodePath } from 'babel-traverse';
 
 export default class BabelParser {
   static getAst(code: string): babel.types.File {
-    return babylon.parse(code);
+    let ast: babel.types.File;
+    try {
+      ast = babylon.parse(code, { sourceType: 'script' });
+    } catch {
+      ast = babylon.parse(code, { sourceType: 'module' });
+    }
+    return ast;
   }
 
   static getNodes(ast: babel.types.File): babel.types.Node[] {
