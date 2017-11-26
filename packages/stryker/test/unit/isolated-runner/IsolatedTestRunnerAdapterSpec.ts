@@ -34,7 +34,7 @@ describe('IsolatedTestRunnerAdapter', () => {
       send: sinon.stub(),
       on: sinon.stub()
     };
-    sinonSandbox.stub(child_process, 'fork', () => fakeChildProcess);
+    sinonSandbox.stub(child_process, 'fork').returns(fakeChildProcess);
     clock = sinon.useFakeTimers();
   });
 
