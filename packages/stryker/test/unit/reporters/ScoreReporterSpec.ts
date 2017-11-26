@@ -39,7 +39,7 @@ describe('ScoreReporter', () => {
     getEnvironmentVariables.withArgs('STRYKER_BADGE_API_KEY').returns(apiKey);
   }
 
-  describe('When not a pull request and repository, branch and api_key are known', () => {
+  describe('when not a pull request and repository, branch and api_key are known', () => {
     it('report mutations score to badge report server', async () => {
       // Arrange
       setupEnvironmentVariables();
@@ -63,8 +63,8 @@ describe('ScoreReporter', () => {
     });
   });
 
-  describe('When the build is on pull request', () => {
-    it('Log that pull requests are not reported to the badge report server', async () => {
+  describe('when the build is on pull request', () => {
+    it('log that pull requests are not reported to the badge report server', async () => {
       // Arrange
       setupEnvironmentVariables({ pullRequest: '1' });
       sut = new ScoreReporter(badgeClientMock as any);
@@ -80,8 +80,8 @@ describe('ScoreReporter', () => {
     });
   });
 
-  describe('When the repository is unknown', () => {
-    it('Log that the environment variable TRAVIS_REPO_SLUG should be set', async () => {
+  describe('when the repository is unknown', () => {
+    it('log that the environment variable TRAVIS_REPO_SLUG should be set', async () => {
       // Arrange
       setupEnvironmentVariables({ repository: undefined });
       sut = new ScoreReporter(badgeClientMock as any);
@@ -97,8 +97,8 @@ describe('ScoreReporter', () => {
     });
   });
 
-  describe('When the branch is unknown', () => {
-    it('Log that the environment variable TRAVIS_BRANCH should be set', async () => {
+  describe('when the branch is unknown', () => {
+    it('log that the environment variable TRAVIS_BRANCH should be set', async () => {
       // Arrange
       setupEnvironmentVariables({ branch: undefined });
       sut = new ScoreReporter(badgeClientMock as any);
@@ -117,7 +117,7 @@ describe('ScoreReporter', () => {
   });
 
   describe('When the Stryker badge API key is unknown', () => {
-    it('Log that the environment variable STRYKER_BADGE_API_KEY should be set', async () => {
+    it('log that the environment variable STRYKER_BADGE_API_KEY should be set', async () => {
       // Arrange
       setupEnvironmentVariables({ apiKey: undefined });
       sut = new ScoreReporter(badgeClientMock as any);

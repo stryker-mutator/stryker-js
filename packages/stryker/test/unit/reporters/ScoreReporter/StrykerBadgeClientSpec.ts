@@ -26,7 +26,7 @@ describe('StrykerBadgeClient', () => {
     log = currentLogMock();
   });
 
-  it('Report mutations score to badge report server', async () => {
+  it('report mutations score to badge report server', async () => {
       // Arrange
       badgeClient.post.resolves({ 
         message: {
@@ -44,12 +44,12 @@ describe('StrykerBadgeClient', () => {
         ['Content-Type']: 'application/json'
       };
 
-      expect(log.debug).have.been.calledWithMatch(`Posting badge report to ${url}`);
+      expect(log.info).have.been.calledWithMatch(`Posting badge report to ${url}`);
       expect(badgeClient.post).have.been.calledWith(url, report, contentType);
       expect(log.error).have.not.been.called;
   });
 
-  it('When the server returns a invalid statuscode an error will be logged  ', async () => {
+  it('when the server returns a invalid statuscode an error will be logged  ', async () => {
     // Arrange
     badgeClient.post.resolves({ 
       message: {
@@ -64,7 +64,7 @@ describe('StrykerBadgeClient', () => {
     expect(log.error).have.been.calledWithMatch('Post to https://stryker-mutator-badge.azurewebsites.net/ resulted in http status code: 500');
   });
 
-  it('When the server doesnt respon an error will be logged', async () => {
+  it('when the server doesnt respond an error will be logged', async () => {
     // Arrange
     badgeClient.post.rejects({ 
     });

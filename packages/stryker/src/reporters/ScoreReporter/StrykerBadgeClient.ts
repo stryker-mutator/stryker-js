@@ -21,7 +21,7 @@ export default class BadgeClient {
   }
 
   postStrykerBadgeReport(report: StrykerBadgeReport): Promise<void> {
-    this.log.debug(`Posting badge report to ${URL_STRYKER_BADGE_REPORTER}`);
+    this.log.info(`Posting badge report to ${URL_STRYKER_BADGE_REPORTER}`);
     return this.badgeClient.post(URL_STRYKER_BADGE_REPORTER, JSON.stringify(report), 
     {
       ['Content-Type']: 'application/json'
