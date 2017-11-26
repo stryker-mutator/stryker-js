@@ -47,6 +47,7 @@ export default class StrykerCli {
       .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
       .option('--logLevel <level>', 'Set the log4js log level. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
+      .option('--tempFolder <name>', 'Set name of the folder that contains temporary files')
       .parse(this.argv);
 
     setGlobalLogLevel(program['logLevel'] || 'info');

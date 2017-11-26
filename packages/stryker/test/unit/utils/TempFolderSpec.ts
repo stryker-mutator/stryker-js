@@ -14,7 +14,7 @@ describe('TempFolder', () => {
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-
+    
     sandbox.stub(mkdirp, 'sync');
     sandbox.stub(fs, 'writeFile');
     deleteDirStub = sandbox.stub(fileUtils, 'deleteDir');
@@ -50,18 +50,21 @@ describe('TempFolder', () => {
 
   describe('clean', () => {
     describe('when temp folder is initialized', () => {
-      beforeEach(() => TempFolder.instance().initialize());
-      it('should call deleteDir fileApi', () => {
+      beforeEach(() => { 
+        TempFolder.instance().initialize();
+      });
+
+      it('should call deleteDir fileApi', async () => {
         deleteDirStub.resolves('delResolveStub');
 
         const tempFolderInstance = TempFolder.instance();
-        const result = tempFolderInstance.clean();
+        const result = await tempFolderInstance.clean();
 
         expect(fileUtils.deleteDir).to.have.been.calledWith(
           tempFolderInstance.baseTempFolder
         );
 
-        result.then(data => expect(data).equals('delResolveStub'));
+        expect(result).equals('delResolveStub');
       });
     });
 

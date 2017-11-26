@@ -278,3 +278,11 @@ Set `break` to `null` (default) to never let the process crash.
  Set the `log4js` log level that Stryker uses (default is `info`). Possible values: `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` and `off`.  
  *Note*: Test runners are run as child processes of the Stryker Node process. All output (stdout) of the `testRunner` is logged as `trace`.  
  Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
+
+#### Temporary folder  
+**Command line:** `--tempFolder .stryker-tmp`    
+**Config file:** `logLevel: '.stryker-tmp'`
+**Default value:** `.stryker-tmp`  
+**Mandatory**: no 
+**Description:**  
+ Set name of the folder that contains temporary files

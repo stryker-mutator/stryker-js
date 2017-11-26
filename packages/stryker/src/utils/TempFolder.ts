@@ -15,6 +15,7 @@ export class TempFolder {
   initialize(tempDirName = '.stryker-tmp') {
     this.baseTempFolder = path.join(process.cwd(), tempDirName);
     this.tempFolder = path.join(this.baseTempFolder, this.random().toString());
+    this.log.debug(`Using stryker temp folder ${this.baseTempFolder}`);
     mkdirp.sync(this.baseTempFolder);
     mkdirp.sync(this.tempFolder);
   }
