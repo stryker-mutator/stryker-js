@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.2.3"></a>
+## [0.2.3](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.2.2...stryker-javascript-mutator@0.2.3) (2017-11-27)
+
+
+### Bug Fixes
+
+* **peerDependencies:** Remove typescript as a peer dependency ([#479](https://github.com/stryker-mutator/stryker/issues/479)) ([7472418](https://github.com/stryker-mutator/stryker/commit/7472418)), closes [#478](https://github.com/stryker-mutator/stryker/issues/478)
+
+
+
+
 <a name="0.2.2"></a>
 ## [0.2.2](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.2.1...stryker-javascript-mutator@0.2.2) (2017-11-27)
 
