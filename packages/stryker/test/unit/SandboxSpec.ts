@@ -8,7 +8,7 @@ import { FileKind, File } from 'stryker-api/core';
 import { TextFile } from 'stryker-api/src/core/File';
 import { wrapInClosure } from '../../src/utils/objectUtils';
 import Sandbox from '../../src/Sandbox';
-import { TempFolder } from '../../src/utils/TempFolder';
+import { TempDir } from '../../src/utils/TempDir';
 import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
 import TestableMutant from '../../src/TestableMutant';
@@ -50,7 +50,7 @@ describe('Sandbox', () => {
       notMutatedFile,
     ];
     files = (textFiles as File[]).concat([webFile({ name: webFileUrl, mutated: false, included: true, transpiled: false })]);
-    sandbox.stub(TempFolder.instance(), 'createRandomFolder').returns(workingFolder);
+    sandbox.stub(TempDir.instance(), 'createRandomFolder').returns(workingFolder);
     fileSystemStub = sandbox.stub(fileUtils, 'writeFile');
     fileSystemStub.resolves();
     sandbox.stub(mkdirp, 'sync').returns('');
@@ -82,7 +82,7 @@ describe('Sandbox', () => {
     });
 
     it('should have created a workingFolder', () => {
-      expect(TempFolder.instance().createRandomFolder).to.have.been.calledWith('sandbox');
+      expect(TempDir.instance().createRandomFolder).to.have.been.calledWith('sandbox');
     });
 
     it('should have created the isolated test runner without framework hook', () => {

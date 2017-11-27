@@ -16,7 +16,7 @@ import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/M
 import ConfigValidator, * as configValidator from '../../src/ConfigValidator';
 import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
-import { TempFolder } from '../../src/utils/TempFolder';
+import { TempDir } from '../../src/utils/TempDir';
 import currentLogMock from '../helpers/log4jsMock';
 import { mock, Mock, testFramework as testFrameworkMock, textFile, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
@@ -44,7 +44,7 @@ describe('Stryker', function () {
   let pluginLoaderMock: Mock<PluginLoader>;
   let strykerConfig: Config;
   let reporter: Mock<BroadcastReporter>;
-  let tempFolderMock: Mock<TempFolder>;
+  let tempFolderMock: Mock<TempDir>;
   let scoreResultCalculator: ScoreResultCalculator;
 
   beforeEach(() => {
@@ -74,8 +74,8 @@ describe('Stryker', function () {
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
     sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverMock);
-    tempFolderMock = mock(TempFolder);
-    sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
+    tempFolderMock = mock(TempDir);
+    sandbox.stub(TempDir, 'instance').returns(tempFolderMock);
     tempFolderMock.clean.resolves();
     scoreResultCalculator = new ScoreResultCalculator();
     sandbox.stub(scoreResultCalculator, 'determineExitCode').returns(sandbox.stub());

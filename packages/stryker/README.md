@@ -280,8 +280,8 @@ Set `break` to `null` (default) to never let the process crash.
  Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
 
 #### Temporary folder  
-**Command line:** `--tempFolder .stryker-tmp`    
-**Config file:** `logLevel: '.stryker-tmp'`
+**Command line:** `--tempDir .stryker-tmp`    
+**Config file:** `tempDir: '.stryker-tmp'`
 **Default value:** `.stryker-tmp`  
 **Mandatory**: no 
 **Description:**  

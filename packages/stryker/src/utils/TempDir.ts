@@ -5,14 +5,14 @@ import { getLogger } from 'log4js';
 import { deleteDir } from './fileUtils';
 
 
-export class TempFolder {
-  private readonly log = getLogger(TempFolder.name);
+export class TempDir {
+  private readonly log = getLogger(TempDir.name);
   baseTempFolder: string;
   tempFolder: string;
   
   private constructor() { }
 
-  initialize(tempDirName = '.stryker-tmp') {
+  initialize(tempDirName: string) {
     this.baseTempFolder = path.join(process.cwd(), tempDirName);
     this.tempFolder = path.join(this.baseTempFolder, this.random().toString());
     this.log.debug(`Using stryker temp folder ${this.baseTempFolder}`);
@@ -75,10 +75,10 @@ export class TempFolder {
     return Math.ceil(Math.random() * 10000000);
   }
 
-  private static _instance: TempFolder;
+  private static _instance: TempDir;
   static instance() {
     if (!this._instance) {
-      this._instance = new TempFolder();
+      this._instance = new TempDir();
     }
     return this._instance;
   }
