@@ -42,7 +42,7 @@ describe('TestFrameworkOrchestrator', () => {
 
   beforeEach(() => {
     options = { coverageAnalysis: 'perTest' };
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     sandbox.stub(TestFrameworkFactory.instance(), 'create').returns(testFramework);
     sandbox.stub(TestFrameworkFactory.instance(), 'knownNames').returns(['awesomeFramework', 'unusedTestFramework']);
   });

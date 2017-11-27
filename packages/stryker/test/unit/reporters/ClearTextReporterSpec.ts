@@ -13,7 +13,7 @@ describe('ClearTextReporter', () => {
   let stdoutStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     stdoutStub = sandbox.stub(process.stdout, 'write');
   });
 

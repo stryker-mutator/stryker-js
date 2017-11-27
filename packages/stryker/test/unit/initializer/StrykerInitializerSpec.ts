@@ -23,7 +23,7 @@ describe('StrykerInitializer', () => {
 
   beforeEach(() => {
     log = currentLogMock();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     out = sandbox.stub();
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');

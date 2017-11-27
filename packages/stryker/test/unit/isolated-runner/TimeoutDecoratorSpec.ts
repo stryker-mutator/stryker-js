@@ -14,7 +14,7 @@ describe('TimeoutDecorator', () => {
   let availableTestRunners: TestRunnerMock[];
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     clock = sandbox.useFakeTimers();
     testRunner1 = new TestRunnerMock();
     testRunner2 = new TestRunnerMock();
