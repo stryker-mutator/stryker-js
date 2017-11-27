@@ -28,7 +28,7 @@ describe('IsolatedTestRunnerAdapter', () => {
       sandboxWorkingFolder: 'a working directory',
       strykerOptions: {}
     };
-    sinonSandbox = sinon.sandbox.create();
+    sinonSandbox = sinon.createSandbox();
     fakeChildProcess = {
       kill: sinon.stub(),
       send: sinon.stub(),

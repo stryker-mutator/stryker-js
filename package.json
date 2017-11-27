@@ -21,7 +21,7 @@
     "@types/progress": "^1.1.28",
     "@types/rimraf": "0.0.28",
     "@types/sinon": "^4.0.0",
-    "@types/sinon-chai": "^2.7.27",
+    "@types/sinon-chai": "^2.7.29",
     "browserify": "^14.3.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
@@ -36,7 +36,7 @@
     "protractor": "^5.1.2",
     "rimraf": "^2.6.1",
     "sinon": "^4.0.0",
-    "sinon-chai": "^2.10.0",
+    "sinon-chai": "^2.14.0",
     "source-map-support": "^0.4.16",
     "tslint": "^5.6.0",
     "typescript": "^2.6.1"

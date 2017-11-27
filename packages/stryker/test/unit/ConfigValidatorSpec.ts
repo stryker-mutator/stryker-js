@@ -17,7 +17,7 @@ describe('ConfigValidator', () => {
   beforeEach(() => {
     log = currentLogMock();
     config = new Config();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     exitStub = sandbox.stub(process, 'exit');
   });
 
