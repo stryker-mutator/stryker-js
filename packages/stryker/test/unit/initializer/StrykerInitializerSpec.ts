@@ -87,7 +87,7 @@ describe('StrykerInitializer', () => {
       expect(promptTranspilers.type).to.eq('checkbox');
       expect(promptTranspilers.choices).to.deep.eq(['typescript', 'webpack']);
       expect(promptReporters.type).to.eq('checkbox');
-      expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress', 'score']);
+      expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress', 'badge']);
     });
 
     it('should configure coverageAnalysis: "all" when the user did not select a testFramework', async () => {

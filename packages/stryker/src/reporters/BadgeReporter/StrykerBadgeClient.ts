@@ -3,11 +3,11 @@ import { HttpClient } from 'typed-rest-client/HttpClient';
 import { errorToString } from '../../utils/objectUtils';
 
 export interface StrykerBadgeReport {
-  api_key: string;
-  repository_slug: string;
+  apiKey: string;
+  repositorySlug: string;
   branch: string;
-  mutation_score: number;
-  report_data: any;
+  mutationScore: number;
+  reportData: any;
 }
 
 const URL_STRYKER_BADGE_REPORTER = 'https://stryker-mutator-badge.azurewebsites.net/';

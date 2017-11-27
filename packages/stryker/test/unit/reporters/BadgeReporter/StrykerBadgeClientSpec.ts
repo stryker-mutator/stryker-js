@@ -1,5 +1,5 @@
-import StrykerBadgeClient from '../../../../src/reporters/ScoreReporter/StrykerBadgeClient';
-import { StrykerBadgeReport } from '../../../../src/reporters/ScoreReporter/StrykerBadgeClient';
+import StrykerBadgeClient from '../../../../src/reporters/BadgeReporter/StrykerBadgeClient';
+import { StrykerBadgeReport } from '../../../../src/reporters/BadgeReporter/StrykerBadgeClient';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { Mock, mock } from '../../../helpers/producers';
 import { expect } from 'chai';
@@ -13,11 +13,11 @@ describe('StrykerBadgeClient', () => {
   let log: Mock<Logger>;
 
   const badgeReport: StrykerBadgeReport = {
-    api_key: '1',
-    repository_slug: 'github/stryker-mutator/stryker',
+    apiKey: '1',
+    repositorySlug: 'github/stryker-mutator/stryker',
     branch: 'master',
-    mutation_score: 65.1,
-    report_data: null
+    mutationScore: 65.1,
+    reportData: null
   };
 
   beforeEach(() => {
