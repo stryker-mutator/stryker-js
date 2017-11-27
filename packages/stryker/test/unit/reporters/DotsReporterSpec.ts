@@ -12,7 +12,7 @@ describe('DotsReporter', () => {
 
   beforeEach(() => {
     sut = new DotsReporter();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     sandbox.stub(process.stdout, 'write');
   });
 

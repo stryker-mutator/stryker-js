@@ -13,7 +13,7 @@ describe('TempFolder', () => {
   const mockCwd = '/x/y/z/some/dir';
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     sandbox.stub(mkdirp, 'sync');
     sandbox.stub(fs, 'writeFile');

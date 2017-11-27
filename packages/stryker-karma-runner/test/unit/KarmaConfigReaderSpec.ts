@@ -15,7 +15,7 @@ describe('KarmaConfigReader', () => {
 
   beforeEach(() => {
     log = new LoggerStub();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     karmaConfigModule = sandbox.stub();
     sandbox.stub(utils, 'requireModule').returns(karmaConfigModule);
     sandbox.stub(cfg, 'parseConfig');

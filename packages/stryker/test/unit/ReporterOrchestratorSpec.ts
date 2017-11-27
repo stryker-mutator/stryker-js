@@ -11,7 +11,7 @@ describe('ReporterOrchestrator', () => {
   let broadcastReporterMock: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     broadcastReporterMock = sandbox.stub(broadcastReporter, 'default');
     captureTTY();
   });

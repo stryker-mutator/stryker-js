@@ -11,7 +11,7 @@ describe('index', () => {
   let testFrameworkFactoryMock: any;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     testFrameworkFactoryMock = mockFactory();
 
     sandbox.stub(TestFrameworkFactory, 'instance').returns(testFrameworkFactoryMock);
