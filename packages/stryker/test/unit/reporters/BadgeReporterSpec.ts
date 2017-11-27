@@ -52,11 +52,11 @@ describe('BadgeReporter', () => {
 
     // Assert
     const report: StrykerBadgeReport = {
-      api_key: '12345',
-      repository_slug: 'github/stryker-mutator/stryker',
+      apiKey: '12345',
+      repositorySlug: 'github/stryker-mutator/stryker',
       branch: 'master',
-      mutation_score: 79.10,
-      report_data: []
+      mutationScore: 79.10,
+      reportData: []
     };
 
     expect(badgeClientMock.postStrykerBadgeReport).to.have.been.calledWith(report);

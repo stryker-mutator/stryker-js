@@ -36,11 +36,11 @@ export default class BadgeReporter implements Reporter {
 
         if (repository && branch && apiKey) {
           await this.strykerBadgeClient.postStrykerBadgeReport({
-            api_key: apiKey,
-            repository_slug: 'github/' + repository,
+            apiKey: apiKey,
+            repositorySlug: 'github/' + repository,
             branch: branch,
-            mutation_score: mutationScore,
-            report_data: []
+            mutationScore: mutationScore,
+            reportData: []
           });
         }
       } else {
