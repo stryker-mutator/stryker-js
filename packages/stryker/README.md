@@ -285,4 +285,4 @@ Set `break` to `null` (default) to never let the process crash.
 **Default value:** `.stryker-tmp`  
 **Mandatory**: no 
 **Description:**  
- Set name of the folder that contains temporary files
+Set the name of the directory that is used by Stryker as a working directory. This directory is used to keep copies of your files that are used by Stryker to mutate your code safely. This directory will be cleaned after a successful run. **Warning!** If you configure an absolute path (for example `/tmp/stryker`), node-based test runners like mocha will fail, because your `node_modules` cannot be loaded. Use with caution.
