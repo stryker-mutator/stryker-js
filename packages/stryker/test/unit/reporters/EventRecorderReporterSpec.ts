@@ -16,7 +16,7 @@ describe('EventRecorderReporter', () => {
   let writeFileStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     cleanFolderStub = sandbox.stub(fileUtils, 'cleanFolder');
     writeFileStub = sandbox.stub(fs, 'writeFile');
   });

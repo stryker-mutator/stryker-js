@@ -18,7 +18,7 @@ describe('KarmaTestRunner', () => {
       port: 0,
       strykerOptions: {}
     };
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     sandbox.stub(karma.stopper, 'stop');
     sandbox.stub(karma, 'Server').returns({ on: sandbox.stub(), start: sandbox.stub() });
   });

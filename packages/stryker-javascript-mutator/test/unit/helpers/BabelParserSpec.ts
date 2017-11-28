@@ -57,4 +57,18 @@ describe('BabelParser', () => {
       expect(result).to.equal('var a = 1 + 2 /* Comment */;');
     });
   });
+
+  describe('getAst', () => {
+    it('should support scripts', () => {
+      const ast = BabelParser.getAst(`var fs = require('fs'); var a = 1 + 2;`);
+
+      expect(ast).exist;
+    });
+
+    it('should support modules', () => {
+      const ast = BabelParser.getAst(`import fs from 'fs'; var a = 1 + 2;`);
+
+      expect(ast).exist;
+    });
+  });
 });

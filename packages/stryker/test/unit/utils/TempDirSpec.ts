@@ -1,4 +1,3 @@
-import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
 import * as fs from 'mz/fs';
@@ -6,7 +5,6 @@ import { TempDir } from '../../../src/utils/TempDir';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
 describe('tempDir', () => {
-  let sandbox: sinon.SinonSandbox;
   let cwdStub: sinon.SinonStub;
   let randomStub: sinon.SinonStub;
   let deleteDirStub: sinon.SinonStub;
@@ -14,8 +12,6 @@ describe('tempDir', () => {
   const nameTempDir = '.stryker-tmp';
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
-    
     sandbox.stub(mkdirp, 'sync');
     sandbox.stub(fs, 'writeFile');
     deleteDirStub = sandbox.stub(fileUtils, 'deleteDir');
@@ -27,7 +23,6 @@ describe('tempDir', () => {
     TempDir.instance().baseTempFolder = '';
     TempDir.instance().tempFolder = '';
   });
-  afterEach(() => sandbox.restore());
 
   describe('createRandomFolder', () => {
     describe('when temp folder is initialized', () => {
