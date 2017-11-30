@@ -30,7 +30,7 @@ export default class WebpackCompiler {
 
     private createCompiler(webpackConfig: Configuration, fileSystem: FileSystem): Compiler {
         // Declare as any here to avoid errors when setting filesystem
-        const compiler: any = webpack(Object.assign({}, webpackConfig));
+        const compiler: any = webpack(webpackConfig);
 
         // Setting filesystem to provided fs so compilation can be done in memory
         compiler.inputFileSystem = fileSystem;
