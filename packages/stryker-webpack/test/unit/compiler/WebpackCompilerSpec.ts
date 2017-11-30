@@ -81,7 +81,7 @@ describe("WebpackCompiler", () => {
                 name: "bundle.js",
                 content: content,
                 mutated: true,
-                included: true,
+                included: false,
                 transpiled: true,
                 kind: FileKind.Text
             }]);
