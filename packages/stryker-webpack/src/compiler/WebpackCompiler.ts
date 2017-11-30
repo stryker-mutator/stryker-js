@@ -74,7 +74,7 @@ export default class WebpackCompiler {
                 mutated: true, // TODO: change this to the correct value
                 kind: FileKind.Text,
                 transpiled: true,
-                included: outFileName == "test.bundle.js"
+                included: outFileName === "test.bundle.js"
             });
         }
 
