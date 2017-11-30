@@ -9,7 +9,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 60 mocha  \"test/helpers/**/*.js\" \"test/unit/**/*Spec.js\" \"test/integration/**/*Spec.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 80 mocha  \"test/helpers/**/*.js\" \"test/unit/**/*Spec.js\" \"test/integration/**/*Spec.js\""
   },
   "repository": {
     "type": "git",
