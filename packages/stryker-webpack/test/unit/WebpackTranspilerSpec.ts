@@ -19,7 +19,10 @@ describe("WebpackTranspiler", () => {
 
         sandbox.stub(webpackCompiler, 'default').returns(webpackCompilerService);
 
-        webpackTranspiler = new WebpackTranspiler({config: new Config, keepSourceMaps: false});
+        const config = new Config();
+        config.set({ baseDir: "/" });
+
+        webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false});
 
         fakeFileArray = [
             createTextFile("test"),
