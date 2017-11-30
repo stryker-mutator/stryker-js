@@ -1,4 +1,5 @@
 var Bank = require('./Bank').default;
+// We use a require statement to see if stryker will work if users use require statements
 
 export default class Casino extends Bank {
   constructor(chips, money) {
