@@ -6,4 +6,4 @@ export const contextReplacementPlugin = (root: string): Plugin => new ContextRep
   /angular(\\|\/)core(\\|\/)@angular/,
   path.join(root, 'src'), // location of your src
   {} // a map of your routes
-)
+);
