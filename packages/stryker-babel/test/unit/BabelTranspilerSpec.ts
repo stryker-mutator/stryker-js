@@ -75,6 +75,25 @@ describe('BabelTranspiler', () => {
       expect(transpileResult.outputFiles).to.be.empty;
       expect(transpileResult.error).to.deep.equal('picture.js: Could not transpile file with the Babel transform function');
     });
+
+    it('should be able to transpile jsx', async () => {
+      const code = `
+      import './styles/styles.scss';
+      
+      import React from 'react';
+      import ReactDOM from 'react-dom';
+      import HelloWorld from 'components/HelloWorld';
+      
+      const App = () => <HelloWorld/>
+      
+      ReactDOM.render(
+        <App />,
+        document.getElementById('app')
+      );`;
+      const transpileResult = await babelTranspiler.transpile([createFile('index.jsx', code)]);
+
+      expect(transpileResult.outputFiles).to.not.be.empty;
+    });
   });
 
   describe('getMappedLocation', () => {
