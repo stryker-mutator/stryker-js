@@ -1,4 +1,4 @@
-import BabelConfigEditor from '../../src/BabelConfigEditor';
+import BabelConfigReader from '../../src/BabelConfigReader';
 import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
 import * as fs from 'fs';
@@ -6,7 +6,7 @@ import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 import * as path from 'path';
 
-describe('BabelConfigEditor', () => {
+describe('BabelConfigReader', () => {
   let sandbox: sinon.SinonSandbox;
   let logStub: {
     trace: sinon.SinonStub,
@@ -30,81 +30,82 @@ describe('BabelConfigEditor', () => {
   });
 
   it('should not read the .babelrc file from disk if the babelConfig property is present', () => {
-    const editor = new BabelConfigEditor();
+    const editor = new BabelConfigReader();
     const babelConfig = { presets: ['env'] };
     const config = new Config();
     config.set({ babelConfig });
 
-    editor.edit(config);
+    const result = editor.readConfig(config);
 
-    expect(config.babelConfig).eq(babelConfig);
+    expect(result).eq(babelConfig);
   });
 
   describe('babelrcFile property present', () => {
     it('should read the .babelrc file from disk', () => {
-      const editor = new BabelConfigEditor();
+      const editor = new BabelConfigReader();
       const config = new Config();
       config.set({ babelrcFile: '.babelrc' });
       const babelConfig = { presets: ['env'] };
       sandbox.stub(fs, 'existsSync').returns(true);
       sandbox.stub(fs, 'readFileSync').withArgs(path.resolve(config.babelrcFile), 'utf8').returns(JSON.stringify(babelConfig));
 
-      editor.edit(config);
+      const result = editor.readConfig(config);
 
-      expect(config.babelConfig).deep.eq(babelConfig);
+      expect(result).deep.eq(babelConfig);
     });
 
     it('should log the path to the babelrc file', () => {
       
-      const editor = new BabelConfigEditor();
+      const editor = new BabelConfigReader();
       const config = new Config();
       config.set({ babelrcFile: '.babelrc' });
 
-      editor.edit(config);
+      editor.readConfig(config);
+
       expect(logStub.info).calledWith(`Reading .babelrc file from path "${path.resolve(config.babelrcFile)}"`);
     });
 
     describe('when reading the file throws an error', () => {
       it('should log the error', () => {
-        const editor = new BabelConfigEditor();
+        const editor = new BabelConfigReader();
         const config = new Config();
         config.set({ babelrcFile: '.nonExistingBabelrc' });
 
-        editor.edit(config);
+        editor.readConfig(config);
 
         expect(logStub.error).calledWith(`babelrc file does not exist at: ${path.resolve(config.babelrcFile)}`);
       });
 
       it('should set the babelConfig to an empty object', () => {
-        const editor = new BabelConfigEditor();
+        const editor = new BabelConfigReader();
         const config = new Config();
         config.set({ babelrcFile: '.nonExistingBabelrc' });
 
-        editor.edit(config);
+        const result = editor.readConfig(config);
 
-        expect(config.babelConfig).to.deep.equal({});
+        expect(result).to.deep.equal({});
       });
     });
   });
 
   describe('babelrcFile property is not present', () => {
     it('should log a warning', () => {
-      const editor = new BabelConfigEditor();
+      const editor = new BabelConfigReader();
       const config = new Config();
       const configKeyFile = 'babelrcFile';
 
-      editor.edit(config);
+      editor.readConfig(config);
 
       expect(logStub.info).calledWith(`No .babelrc file configured. Please set the "${configKeyFile}" property in your config.`);
     });
 
     it('should set the babelConfig to an empty object', () => {
-      const editor = new BabelConfigEditor();
+      const editor = new BabelConfigReader();
       const config = new Config();
 
-      editor.edit(config);
+      const result = editor.readConfig(config);
 
-      expect(config.babelConfig).to.deep.equal({});
+      expect(result).to.deep.equal({});
     });
   });
 });

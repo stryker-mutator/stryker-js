@@ -1,5 +1,5 @@
 {
-  "name": "stryker-babel",
+  "name": "stryker-babel-transpiler",
   "version": "0.2.0",
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
@@ -35,7 +35,7 @@
     "Niek te Grootenhuis <ntegro@hotmail.com>",
     "Thomas Peters <thomaspeters4@outlook.com>"
   ],
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-babel#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-babel-transpiler#readme",
   "license": "Apache-2.0",
   "dependencies": {
     "babel-core": "^6.26.0",
