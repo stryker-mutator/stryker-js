@@ -32,7 +32,7 @@
     "grunt-stryker": "../packages/grunt-stryker",
     "stryker": "../packages/stryker",
     "stryker-api": "../packages/stryker-api",
-    "stryker-babel": "../packages/stryker-babel",
+    "stryker-babel-transpiler": "../packages/stryker-babel-transpiler",
     "stryker-html-reporter": "../packages/stryker-html-reporter",
     "stryker-jasmine": "../packages/stryker-jasmine",
     "stryker-javascript-mutator": "../packages/stryker-javascript-mutator",
