@@ -14,7 +14,7 @@ describe('BabelTranspiler', () => {
   let files: File[] = [];
   let transformStub: sinon.SinonStub;
 
-  const knownFileExtensions = ['.js', '.jsx', '.ts'];
+  const knownFileExtensions = ['.js', '.jsx'];
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();

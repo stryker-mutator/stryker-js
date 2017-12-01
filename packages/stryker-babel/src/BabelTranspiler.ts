@@ -12,7 +12,7 @@ class BabelTranspiler implements Transpiler {
   public constructor(options: TranspilerOptions) {
     this.babelConfig = options.config[CONFIG_KEY_OPTIONS];
 
-    this.knownExtensions = ['.js', '.jsx', '.ts'];
+    this.knownExtensions = ['.js', '.jsx'];
   }
 
   public transpile(files: File[]): Promise<TranspileResult> {
