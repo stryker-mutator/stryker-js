@@ -18,7 +18,7 @@ export default class BabelConfigEditor implements ConfigEditor {
       this.log.info(`Reading .babelrc file from path "${babelrcPath}"`);
       return this.getConfigFile(babelrcPath);
     } else {
-      this.log.warn(`No .babelrc file configured. Please set the "${CONFIG_KEY_FILE}" property in your config.`);
+      this.log.info(`No .babelrc file configured. Please set the "${CONFIG_KEY_FILE}" property in your config.`);
     }
   }
 

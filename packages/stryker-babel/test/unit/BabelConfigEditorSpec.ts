@@ -11,8 +11,7 @@ describe('BabelConfigEditor', () => {
   let logStub: {
     trace: sinon.SinonStub,
     info: sinon.SinonStub,
-    error: sinon.SinonStub,
-    warn: sinon.SinonStub
+    error: sinon.SinonStub
   };
 
   beforeEach(() => {
@@ -20,8 +19,7 @@ describe('BabelConfigEditor', () => {
     logStub = {
       trace: sandbox.stub(),
       info: sandbox.stub(),
-      error: sandbox.stub(),
-      warn: sandbox.stub()
+      error: sandbox.stub()
     };
 
     sandbox.stub(log4js, 'getLogger').returns(logStub);
@@ -97,7 +95,7 @@ describe('BabelConfigEditor', () => {
 
       editor.edit(config);
 
-      expect(logStub.warn).calledWith(`No .babelrc file configured. Please set the "${configKeyFile}" property in your config.`);
+      expect(logStub.info).calledWith(`No .babelrc file configured. Please set the "${configKeyFile}" property in your config.`);
     });
 
     it('should set the babelConfig to an empty object', () => {
