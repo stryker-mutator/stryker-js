@@ -17,15 +17,17 @@ First, install Stryker itself (you can follow the [quickstart on the website](ht
 Next, install this package:
 
 ```bash
-npm install --save-dev stryker-babel
+npm install --save-dev stryker-babel-transpiler
 ```
 
 Next, open up your `stryker.conf.js` file and add the following properties:
 ```javascript
-babelrcFile: '.babelrc' // Location of your .babelrc file
+babelrcFile: '.babelrc', // Location of your .babelrc file
 transpilers: [
     'babel' // Specify that your code needs to be transpiled before tests can be run
-]
+],
+// If you don't have a .babelrc file you can specify the config directly (Not recommended!):
+// babelConfig: { "presets": ["env"],  "plugins": ["transform-object-rest-spread"] },
 ```
 if you initialize stryker using `stryker init`, the babelrcFile property will be added to your `stryker.conf.js` automatically.
 
@@ -35,7 +37,7 @@ $ stryker run
 ```
 
 ## Peer dependencies
-The `stryker-babel` plugin requires the following packages to be installed in order to work: 
+The `stryker-babel-transpiler` plugin requires the following packages to be installed in order to work: 
 * `stryker-api`
 * `babel-core`
 

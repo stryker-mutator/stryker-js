@@ -35,9 +35,9 @@ describe('BabelConfigEditor', () => {
     const config = new Config();
     config.set({ babelConfig });
 
-    editor.edit(config);
+    const result = editor.readConfig(config);
 
-    expect(config.babelConfig).eq(babelConfig);
+    expect(result).eq(babelConfig);
   });
 
   describe('babelrcFile property present', () => {
@@ -49,9 +49,9 @@ describe('BabelConfigEditor', () => {
       sandbox.stub(fs, 'existsSync').returns(true);
       sandbox.stub(fs, 'readFileSync').withArgs(path.resolve(config.babelrcFile), 'utf8').returns(JSON.stringify(babelConfig));
 
-      editor.edit(config);
+      const result = editor.readConfig(config);
 
-      expect(config.babelConfig).deep.eq(babelConfig);
+      expect(result).deep.eq(babelConfig);
     });
 
     it('should log the path to the babelrc file', () => {
@@ -60,7 +60,8 @@ describe('BabelConfigEditor', () => {
       const config = new Config();
       config.set({ babelrcFile: '.babelrc' });
 
-      editor.edit(config);
+      editor.readConfig(config);
+
       expect(logStub.info).calledWith(`Reading .babelrc file from path "${path.resolve(config.babelrcFile)}"`);
     });
 
@@ -70,7 +71,7 @@ describe('BabelConfigEditor', () => {
         const config = new Config();
         config.set({ babelrcFile: '.nonExistingBabelrc' });
 
-        editor.edit(config);
+        editor.readConfig(config);
 
         expect(logStub.error).calledWith(`babelrc file does not exist at: ${path.resolve(config.babelrcFile)}`);
       });
@@ -80,9 +81,9 @@ describe('BabelConfigEditor', () => {
         const config = new Config();
         config.set({ babelrcFile: '.nonExistingBabelrc' });
 
-        editor.edit(config);
+        const result = editor.readConfig(config);
 
-        expect(config.babelConfig).to.deep.equal({});
+        expect(result).to.deep.equal({});
       });
     });
   });
@@ -93,7 +94,7 @@ describe('BabelConfigEditor', () => {
       const config = new Config();
       const configKeyFile = 'babelrcFile';
 
-      editor.edit(config);
+      editor.readConfig(config);
 
       expect(logStub.info).calledWith(`No .babelrc file configured. Please set the "${configKeyFile}" property in your config.`);
     });
@@ -102,9 +103,9 @@ describe('BabelConfigEditor', () => {
       const editor = new BabelConfigEditor();
       const config = new Config();
 
-      editor.edit(config);
+      const result = editor.readConfig(config);
 
-      expect(config.babelConfig).to.deep.equal({});
+      expect(result).to.deep.equal({});
     });
   });
 });
