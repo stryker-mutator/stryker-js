@@ -4,8 +4,8 @@ import { Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
 import { getLogger } from 'log4js';
 
-export default class BabelConfigEditor {
-  private readonly log = getLogger(BabelConfigEditor.name);
+export default class BabelConfigReader {
+  private readonly log = getLogger(BabelConfigReader.name);
 
   public readConfig(config: Config): babel.TransformOptions {
     let babelrc = config[CONFIG_KEY_OPTIONS] || this.getConfigFile(config) || {};

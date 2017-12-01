@@ -3,14 +3,14 @@ import { File, TextFile, FileKind } from 'stryker-api/core';
 import * as babel from 'babel-core';
 import * as path from 'path';
 import { EOL } from 'os';
-import BabelConfigEditor from './BabelConfigEditor';
+import BabelConfigReader from './BabelConfigReader';
 
 class BabelTranspiler implements Transpiler {
   private babelConfig: babel.TransformOptions;
   private knownExtensions: string[];
 
   public constructor(options: TranspilerOptions) {
-    this.babelConfig = new BabelConfigEditor().readConfig(options.config);
+    this.babelConfig = new BabelConfigReader().readConfig(options.config);
 
     this.knownExtensions = ['.js', '.jsx'];
   }
