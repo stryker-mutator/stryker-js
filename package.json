@@ -2,7 +2,7 @@
   "private": true,
   "devDependencies": {
     "@types/babel-core": "^6.25.2",
-    "@types/chai-as-promised": "0.0.31",
+    "@types/chai-as-promised": "7.1.0",
     "@types/chalk": "^0.4.28",
     "@types/commander": "^2.9.0",
     "@types/escodegen": "0.0.6",
