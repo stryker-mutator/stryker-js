@@ -6,7 +6,7 @@
     "@types/chalk": "^0.4.28",
     "@types/commander": "^2.9.0",
     "@types/escodegen": "0.0.6",
-    "@types/esprima": "^2.1.31",
+    "@types/esprima": "^4.0.1",
     "@types/estree": "0.0.38",
     "@types/execa": "^0.7.0",
     "@types/express-serve-static-core": "4.0.57",
