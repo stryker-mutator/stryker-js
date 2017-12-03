@@ -14,7 +14,7 @@
     "@types/istanbul": "^0.4.29",
     "@types/karma": "^0.13.32",
     "@types/lodash": "^4.14.34",
-    "@types/log4js": "0.0.32",
+    "@types/log4js": "2.3.5",
     "@types/mkdirp": "^0.3.28",
     "@types/mocha": "^2.2.44",
     "@types/mz": "0.0.31",
