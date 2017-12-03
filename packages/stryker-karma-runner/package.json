@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "lodash": "^4.13.1",
-    "log4js": "^1.0.1",
+    "log4js": "^2.3.12",
     "tslib": "^1.6.1"
   },
   "contributors": [
