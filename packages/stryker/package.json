@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "@types/commander": "^2.9.0",
-    "@types/inquirer": "0.0.33",
+    "@types/inquirer": "0.0.35",
     "@types/prettier": "^1.6.0",
     "stryker-api": "^0.11.0"
   },
