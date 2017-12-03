@@ -50,7 +50,6 @@
   "devDependencies": {
     "@types/file-url": "^1.0.28",
     "@types/jsdom": "^11.0.2",
-    "@types/rimraf": "0.0.28",
     "bootstrap": "4.0.0-beta.2",
     "highlight.js": "^9.4.0",
     "jquery": "^3.2.1",
