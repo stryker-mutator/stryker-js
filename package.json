@@ -17,7 +17,7 @@
     "@types/log4js": "0.0.32",
     "@types/mkdirp": "^0.3.28",
     "@types/mocha": "^2.2.44",
-    "@types/mz": "0.0.31",
+    "@types/mz": "0.0.32",
     "@types/progress": "^1.1.28",
     "@types/rimraf": "0.0.28",
     "@types/sinon": "^4.0.0",
