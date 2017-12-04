@@ -48,7 +48,7 @@
     "stryker-api": "^0.11.0"
   },
   "devDependencies": {
-    "@types/file-url": "^1.0.28",
+    "@types/file-url": "^2.0.0",
     "@types/jsdom": "^11.0.2",
     "bootstrap": "4.0.0-beta.2",
     "highlight.js": "^9.4.0",
