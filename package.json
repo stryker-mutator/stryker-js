@@ -13,7 +13,7 @@
     "@types/express-serve-static-core": "4.0.57",
     "@types/glob": "^5.0.29",
     "@types/istanbul": "^0.4.29",
-    "@types/karma": "^0.13.32",
+    "@types/karma": "^1.7.2",
     "@types/lodash": "^4.14.34",
     "@types/log4js": "0.0.32",
     "@types/mkdirp": "^0.3.28",
