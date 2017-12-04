@@ -53,7 +53,7 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "chalk": "^1.1.1",
+    "chalk": "^2.3.0",
     "commander": "^2.9.0",
     "escodegen": "^1.8.0",
     "esprima": "^2.7.0",
