@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - node
-- '7'
+- 'lts/*'
 - '6'
 - '4'
 install: npm install
