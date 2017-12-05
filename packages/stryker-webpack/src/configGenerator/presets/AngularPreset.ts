@@ -31,9 +31,9 @@ class AngularPreset {
     private static getEntryFiles(root: string): EntryFiles {
         return {
             polyfills: path.join(root, "src", "polyfills.ts"),
-            vendor: path.join(root, "stryker", "config", "vendor.ts"),
+            vendor: path.join(root, "stryker", "vendor.ts"),
             app: path.join(root, "src", "polyfills"),
-            test: path.join(root, "stryker", "config", "karma-test-shim.js")
+            test: path.join(root, "stryker", "karma-test-shim.js")
         }
     }
 
