@@ -3,7 +3,7 @@ import {File, TextFile} from "stryker-api/core";
 import {Config} from "stryker-api/config"
 import WebpackCompiler from "./compiler/WebpackCompiler";
 import HybridFS from "./helpers/HybridFs";
-import AngularPreset from "./configEditor/presets/AngularPreset";
+import WebpackConfigGenerator from "./WebpackConfigGenerator";
 import * as fs from "fs";
 
 // TODO: Fix types for memory-fs
@@ -16,8 +16,11 @@ class WebpackTranspiler implements Transpiler {
     public constructor(options: TranspilerOptions) {
         this._config = options.config;
         const filesystem: any = new HybridFS(fs, new MemoryFileSystem());
+        
+        const project = this._config.project || 'default';
+        const webpackConfiguration = new WebpackConfigGenerator().generate(project, this._config.baseDir);
 
-        this._compiler = new WebpackCompiler(AngularPreset.getConfig(this._config.baseDir), filesystem);
+        this._compiler = new WebpackCompiler(webpackConfiguration, filesystem);
     }
 
     public async transpile(files: Array<File>): Promise<TranspileResult> {
