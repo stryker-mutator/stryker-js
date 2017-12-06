@@ -8,7 +8,7 @@ export const typescriptLoader = (root: string): any => {
             {
                 loader: 'awesome-typescript-loader',
                 options: { 
-                    configFileName: path.join(root, 'stryker', 'tsconfig.json') 
+                    configFileName: path.join(root, 'tsconfig.json') 
                 }
             }, 'angular2-template-loader'
         ]
