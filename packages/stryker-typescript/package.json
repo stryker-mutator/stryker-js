@@ -11,7 +11,7 @@
     "postbuild": "tslint -p tsconfig.json",
     "test": "npm run test:ts2.4 && npm run test:current",
     "test:current": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
-    "test:ts2.4": "npm i --no-save typescript@~2.4 && npm run test:current && npm uninstall typescript"
+    "test:ts2.4": "npm i --no-save typescript@~2.4 && npm link ../stryker-api && npm run test:current && npm uninstall typescript && npm link ../stryker-api"
   },
   "repository": {
     "type": "git",
