@@ -7,13 +7,15 @@ import * as path from "path";
 export default class WebpackCompiler {
     private _compiler: Compiler;
     private _fsWrapper: FsWrapper;
-    private _outPath: string | undefined;
+    private _outPath: string;
     private _outfiles: Array<string>;
 
     public constructor(webpackConfig: Configuration, fs: FileSystem) {
+        webpackConfig.output = webpackConfig.output || {};
+        webpackConfig.output.path = path.resolve('out');
         this._fsWrapper = new FsWrapper(fs);
         this._compiler = this.createCompiler(webpackConfig, fs);
-        this._outPath = webpackConfig.output && webpackConfig.output.path;
+        this._outPath = webpackConfig.output.path;
         this._outfiles = this.getOutFiles(webpackConfig.entry);
     }
 
@@ -69,7 +71,7 @@ export default class WebpackCompiler {
 
         for(let outFileName of this._outfiles) {
             outfiles.push({
-                content: await this._fsWrapper.readFile(path.join(this._outPath || '', outFileName)),
+                content: await this._fsWrapper.readFile(path.join(this._outPath, outFileName)),
                 name: outFileName,
                 mutated: true, // TODO: change this to the correct value
                 kind: FileKind.Text,
