@@ -1,8 +1,7 @@
 {
-  "private": true,
   "name": "stryker-webpack",
-  "version": "0.0.1",
-  "description": "A plugin for Webpack-based projects using Stryker",
+  "version": "0.0.0",
+  "description": "[preview] A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
     "build": "tsc",
@@ -60,8 +59,7 @@
   },
   "peerDependencies": {
     "webpack": "^3.7.1",
-    "stryker-api": "^0.11.0",
-    "extract-text-webpack-plugin": "^3.0.2"
+    "stryker-api": "^0.11.0"
   },
   "dependencies": {
     "memory-fs": "^0.4.1"
