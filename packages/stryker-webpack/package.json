@@ -1,6 +1,6 @@
 {
   "name": "stryker-webpack",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "[preview] A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
