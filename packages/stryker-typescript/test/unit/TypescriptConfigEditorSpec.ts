@@ -9,6 +9,9 @@ import TypescriptConfigEditor from './../../src/TypescriptConfigEditor';
 
 const CONFIG_KEY = 'tsconfigFile';
 
+const parseErrorMatcher = match('error TS1005: \'{\' expected.') // ts >= 2.5
+  .or(match('error TS5014: Failed to parse file')); // ts < 2.5
+
 describe('TypescriptConfigEditor edit', () => {
 
   let readFileSyncStub: SinonStub;
@@ -76,7 +79,7 @@ describe('TypescriptConfigEditor edit', () => {
         "allowUnreachableCode": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true
-       },
+       }
   }`);
     sut.edit(config, parseConfigHost());
     expect(config['tsconfig']).include({
@@ -90,14 +93,14 @@ describe('TypescriptConfigEditor edit', () => {
     readFileSyncStub.returns(`invalid json`);
     config[CONFIG_KEY] = 'tsconfig.json';
     sut.edit(config, parseConfigHost());
-    expect(loggerStub.error).calledWithMatch(match('error TS1005: \'{\' expected.'));
+    expect(loggerStub.error).calledWithMatch(parseErrorMatcher);
   });
 
   it('should log errors on failure during load of extending file', () => {
     readFileSyncStub.returns(`{ "extends": "./parent.tsconfig.json" }`);
     config[CONFIG_KEY] = 'tsconfig.json';
     sut.edit(config, parseConfigHost({ readFile: _ => `invalid json` }));
-    expect(loggerStub.error).calledWithMatch(match('error TS1005: \'{\' expected.'));
+    expect(loggerStub.error).calledWithMatch(parseErrorMatcher); // Error ts < 2.5
   });
 
   function parseConfigHost(overrides?: Partial<ts.ParseConfigHost>): ts.ParseConfigHost {
