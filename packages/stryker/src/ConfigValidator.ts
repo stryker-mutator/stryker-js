@@ -14,6 +14,7 @@ export default class ConfigValidator {
   validate() {
     this.validateTestFramework();
     this.validateThresholds();
+    this.validateLogLevel();
     this.downgradeCoverageAnalysisIfNeeded();
     this.crashIfNeeded();
   }
@@ -45,6 +46,14 @@ export default class ConfigValidator {
   private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: number | undefined) {
     if (typeof value !== 'number') {
       this.invalidate(`thresholds.${name} is invalid, expected a number between 0 and 100 (was ${value}).`);
+    }
+  }
+
+  private validateLogLevel() {
+    const logLevel = this.strykerConfig.logLevel;
+    const VALID_LOG_LEVEL_VALUES = ['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'all', 'off'];
+    if (VALID_LOG_LEVEL_VALUES.indexOf(logLevel) < 0) {
+      this.invalidate('\`logLevel\` is invalid, expected one of \`fatal\`, \`error\`, \`warn\`, \`info\`, \`debug\`, \`trace\`, \`all\` and \`off\`');
     }
   }
 

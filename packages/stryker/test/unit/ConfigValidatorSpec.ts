@@ -72,4 +72,11 @@ describe('ConfigValidator', () => {
     expect(config.coverageAnalysis).eq('off');
   });
 
+  it('should be invalid with invalid logLevel', () => {
+    config.logLevel = 'thisTestPasses';
+    sut = new ConfigValidator(config, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('`logLevel` is invalid, expected one of `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` and `off`');
+  });
 });
