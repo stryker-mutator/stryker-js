@@ -99,4 +99,12 @@ describe('ConfigValidator', () => {
     expect(exitStub).calledWith(1);
     expect(log.fatal).calledWith('timeoutFactor is invalid, expected a number');
   });
+
+  it('should be invalid with invalid coverageAnalysis', () => {
+    let brokenConfig = breakConfig(config, 'coverageAnalysis', 'invalid');
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the folowing: "perTest", "all", "off"');
+  });
 });

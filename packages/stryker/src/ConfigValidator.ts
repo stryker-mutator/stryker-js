@@ -22,6 +22,7 @@ export default class ConfigValidator {
     this.validateIsStringArray('plugins', this.strykerConfig.plugins);
     this.validateIsStringArray('reporter', this.strykerConfig.reporter);
     this.validateIsStringArray('transpilers', this.strykerConfig.transpilers);
+    this.validateCoverageAnalysis();
     this.downgradeCoverageAnalysisIfNeeded();
     this.crashIfNeeded();
   }
@@ -67,6 +68,14 @@ export default class ConfigValidator {
   private validateTimeout() {
     this.validateIsNumber('timeoutMs', this.strykerConfig.timeoutMs);
     this.validateIsNumber('timeoutFactor', this.strykerConfig.timeoutFactor);
+  }
+
+  private validateCoverageAnalysis() {
+    const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
+    const coverageAnalysis = this.strykerConfig.coverageAnalysis;
+    if (VALID_COVERAGE_ANALYSIS_VALUES.indexOf(coverageAnalysis) < 0) {
+      this.invalidate(`Value "${coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the folowing: ${VALID_COVERAGE_ANALYSIS_VALUES.map(v => `"${v}"`).join(', ')}`);
+    }
   }
 
   private downgradeCoverageAnalysisIfNeeded() {
