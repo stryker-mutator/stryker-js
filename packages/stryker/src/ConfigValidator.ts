@@ -15,6 +15,13 @@ export default class ConfigValidator {
     this.validateTestFramework();
     this.validateThresholds();
     this.validateLogLevel();
+    this.validateTimeout();
+    this.validateIsNumber('port', this.strykerConfig.port);
+    this.validateIsNumber('maxConcurrentTestRunners', this.strykerConfig.maxConcurrentTestRunners);
+    this.validateIsString('mutator', this.strykerConfig.mutator);
+    this.validateIsStringArray('plugins', this.strykerConfig.plugins);
+    this.validateIsStringArray('reporter', this.strykerConfig.reporter);
+    this.validateIsStringArray('transpilers', this.strykerConfig.transpilers);
     this.downgradeCoverageAnalysisIfNeeded();
     this.crashIfNeeded();
   }
@@ -57,6 +64,11 @@ export default class ConfigValidator {
     }
   }
 
+  private validateTimeout() {
+    this.validateIsNumber('timeoutMs', this.strykerConfig.timeoutMs);
+    this.validateIsNumber('timeoutFactor', this.strykerConfig.timeoutFactor);
+  }
+
   private downgradeCoverageAnalysisIfNeeded() {
     if (this.strykerConfig.transpilers.length && this.strykerConfig.coverageAnalysis !== 'off') {
       this.log.info('Disabled coverage analysis for this run (off). Coverage analysis using transpilers is not supported yet.');
@@ -67,6 +79,30 @@ export default class ConfigValidator {
   private crashIfNeeded() {
     if (!this.isValid) {
       process.exit(1);
+    }
+  }
+
+  private validateIsNumber(fieldName: keyof Config, value: any) {
+    if (typeof value !== 'number') {
+      this.invalidate(`${fieldName} is invalid, expected a number`);
+    }
+  }
+
+  private validateIsString(fieldName: keyof Config, value: any) {
+    if (typeof value !== 'string') {
+      this.invalidate(`${fieldName} is invalid, expected a string`);
+    }
+  }
+
+  private validateIsStringArray(fieldName: keyof Config, value: any) {
+    if (!Array.isArray(value)) {
+      this.invalidate(`${fieldName} is invalid, expected an array`);
+    } else {
+      value.forEach(v => {
+        if (typeof v !== 'string') {
+          this.invalidate(`${fieldName} is invalid, expected an array of strings`);
+        }
+      });
     }
   }
 

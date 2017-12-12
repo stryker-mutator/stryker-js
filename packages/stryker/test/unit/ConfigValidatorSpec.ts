@@ -14,6 +14,10 @@ describe('ConfigValidator', () => {
   let sut: ConfigValidator;
   let log: Mock<Logger>;
 
+  function breakConfig(oldConfig: Config, key: keyof Config, value: any): any {
+    return Object.assign({}, oldConfig, { [key]: value });
+  }
+
   beforeEach(() => {
     log = currentLogMock();
     config = new Config();
@@ -78,5 +82,21 @@ describe('ConfigValidator', () => {
     sut.validate();
     expect(exitStub).calledWith(1);
     expect(log.fatal).calledWith('`logLevel` is invalid, expected one of `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` and `off`');
+  });
+
+  it('should be invalid with nonnumeric timeoutMs', () => {
+    let brokenConfig = breakConfig(config, 'timeoutMs', 'break');
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('timeoutMs is invalid, expected a number');
+  });
+
+  it('should be invalid with nonnumeric timeoutFactor', () => {
+    let brokenConfig = breakConfig(config, 'timeoutFactor', 'break');
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('timeoutFactor is invalid, expected a number');
   });
 });
