@@ -16,7 +16,7 @@ function sleep(ms: number) {
 
 describe('ResilientTestRunnerFactory', function () {
 
-  this.timeout(10000);
+  this.timeout(15000);
   let log: Mock<Logger>;
   let sut: TestRunnerDecorator;
   let options: IsolatedRunnerOptions = {
