@@ -100,6 +100,74 @@ describe('ConfigValidator', () => {
     expect(log.fatal).calledWith('timeoutFactor is invalid, expected a number');
   });
 
+  it('should be invalid with non-string mutator', () => {
+    let brokenConfig = breakConfig(config, 'mutator', 0);
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('mutator is invalid, expected a string');
+  });
+
+  describe('plugins', () => {
+    it('should be invalid with non-array plugins', () => {
+      let brokenConfig = breakConfig(config, 'plugins', 'stryker-typescript');
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('plugins is invalid, expected an array');
+    });
+
+    it('should be invalid with non-string array elements', () => {
+      let brokenConfig = breakConfig(config, 'plugins', ['stryker-jest', 0]);
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('plugins is invalid, expected an array of strings');
+    });
+  });
+
+  describe('reporter', () => {
+    it('should be invalid with non-array reporter', () => {
+      let brokenConfig = breakConfig(config, 'reporter', 'stryker-typescript');
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('reporter is invalid, expected an array');
+    });
+
+    it('should be invalid with non-string array elements', () => {
+      let brokenConfig = breakConfig(config, 'reporter', [
+        'stryker-jest',
+        0
+      ]);
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('reporter is invalid, expected an array of strings');
+    });
+  });
+
+  describe('transpilers', () => {
+    it('should be invalid with non-array transpilers', () => {
+      let brokenConfig = breakConfig(config, 'transpilers', 'stryker-typescript');
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('transpilers is invalid, expected an array');
+    });
+
+    it('should be invalid with non-string array elements', () => {
+      let brokenConfig = breakConfig(config, 'transpilers', [
+        'stryker-jest',
+        0
+      ]);
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('transpilers is invalid, expected an array of strings');
+    });
+  });
+
   it('should be invalid with invalid coverageAnalysis', () => {
     let brokenConfig = breakConfig(config, 'coverageAnalysis', 'invalid');
     sut = new ConfigValidator(brokenConfig, testFramework());
