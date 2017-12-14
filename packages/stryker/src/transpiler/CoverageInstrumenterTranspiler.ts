@@ -8,8 +8,13 @@ import { FileCoverageData, Range } from 'istanbul-lib-coverage';
 
 const COVERAGE_CURRENT_TEST_VARIABLE_NAME = '__strykerCoverageCurrentTest__';
 
+export interface FileCoverageMaps {
+  statementMap: { [key: string]: Range };
+  fnMap: { [key: string]: { loc: Range } };
+}
+
 export interface FileCoverageDataDictionary {
-  [file: string]: FileCoverageData;
+  [file: string]: FileCoverageMaps;
 }
 
 export default class CoverageInstrumenterTranspiler implements Transpiler {

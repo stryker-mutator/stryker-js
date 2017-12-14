@@ -6,10 +6,10 @@ import { MatchedMutant } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
 import TestableMutant from './TestableMutant';
 import StrictReporter from './reporters/StrictReporter';
-import { FileCoverageDataDictionary } from './transpiler/CoverageInstrumenterTranspiler';
+import { FileCoverageDataDictionary, FileCoverageMaps } from './transpiler/CoverageInstrumenterTranspiler';
 import { filterEmpty } from './utils/objectUtils';
 import SourceFile from './SourceFile';
-import { FunctionMapping, FileCoverageData } from 'istanbul-lib-coverage';
+import { Range } from 'istanbul-lib-coverage';
 
 
 enum CoveredCodeIndicatorType {
@@ -132,7 +132,7 @@ export default class MutantTestMatcher {
     return Object.freeze(matchedMutant);
   }
 
-  private findMatchingCoveringIndicator(mutant: TestableMutant, fileCoverage: FileCoverageData): CoveredCodeIndicator | null {
+  private findMatchingCoveringIndicator(mutant: TestableMutant, fileCoverage: FileCoverageMaps): CoveredCodeIndicator | null {
     const statementIndex = this.findMatchingStatement(mutant, fileCoverage.statementMap);
     if (statementIndex) {
       return {
@@ -158,7 +158,7 @@ export default class MutantTestMatcher {
    * @param functionMap The function map of the covering file
    * @returns The index of the smallest function covering the mutant, or null if not found
    */
-  private findMatchingFunction(mutant: TestableMutant, functionMap: { [key: string]: FunctionMapping }): string | null {
+  private findMatchingFunction(mutant: TestableMutant, functionMap: { [key: string]: { loc: Range } }): string | null {
     let smallestFunction: string | null = null;
     if (functionMap) {
       Object.keys(functionMap).forEach(statementId => {
