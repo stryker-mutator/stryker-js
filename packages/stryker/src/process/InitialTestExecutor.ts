@@ -8,7 +8,7 @@ import TranspilerFacade from '../transpiler/TranspilerFacade';
 import { getLogger } from 'log4js';
 import Sandbox from '../Sandbox';
 import Timer from '../utils/Timer';
-import CoverageInstrumenterTranspiler, { StatementMapDictionary } from '../transpiler/CoverageInstrumenterTranspiler';
+import CoverageInstrumenterTranspiler, { FileCoverageDataDictionary } from '../transpiler/CoverageInstrumenterTranspiler';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
@@ -18,7 +18,7 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 export interface InitialTestRunResult {
   runResult: RunResult;
   transpiledFiles: File[];
-  statementMaps: StatementMapDictionary;
+  coverageMaps: FileCoverageDataDictionary;
 }
 
 export default class InitialTestExecutor {
@@ -51,7 +51,7 @@ export default class InitialTestExecutor {
       const sandbox = await Sandbox.create(this.options, 0, transpileResult.outputFiles, this.testFramework);
       const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
       await sandbox.dispose();
-      return { runResult, transpiledFiles: transpileResult.outputFiles, statementMaps: coverageInstrumenterTranspiler.statementMapsPerFile };
+      return { runResult, transpiledFiles: transpileResult.outputFiles, coverageMaps: coverageInstrumenterTranspiler.fileCoveragePerFile };
     }
   }
 
@@ -87,7 +87,7 @@ export default class InitialTestExecutor {
         errorMessages: []
       },
       transpiledFiles: [],
-      statementMaps: Object.create(null)
+      coverageMaps: Object.create(null)
     };
   }
 

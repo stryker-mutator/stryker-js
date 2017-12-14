@@ -41,7 +41,7 @@ describe('CoverageInstrumenterTranspiler', () => {
       expect(output.outputFiles[2]).eq(output.outputFiles[2]);
       expect(output.outputFiles[3]).eq(output.outputFiles[3]);
       const instrumentedContent = (output.outputFiles[0] as TextFile).content;
-      expect(instrumentedContent).to.contain('function something(){__cov_').and.contain('.f[\'1\']++');
+      expect(instrumentedContent).to.contain('function something(){cov_').and.contain('.f[0]++');
     });
 
     it('should create a statement map for mutated files', () => {
@@ -50,16 +50,17 @@ describe('CoverageInstrumenterTranspiler', () => {
         textFile({ name: 'foobar.js', mutated: true, content: 'console.log("foobar");' })
       ];
       sut.transpile(input);
-      expect(sut.statementMapsPerFile).deep.eq({
-        'something.js': { '1': { start: { line: 0, column: 0 }, end: { line: 0, column: 24 } } },
-        'foobar.js': { '1': { start: { line: 0, column: 0 }, end: { line: 0, column: 22 } } }
-      });
+      expect(sut.fileCoveragePerFile['something.js'].statementMap).deep.eq({});
+      expect(sut.fileCoveragePerFile['something.js'].fnMap[0].loc).deep.eq({ start: { line: 0, column: 22 }, end: { line: 0, column: 24 } });
+      expect(sut.fileCoveragePerFile['something.js'].fnMap[1]).undefined;
+      expect(sut.fileCoveragePerFile['foobar.js'].statementMap).deep.eq({ '0': { start: { line: 0, column: 0 }, end: { line: 0, column: 22 } } });
+      expect(sut.fileCoveragePerFile['foobar.js'].fnMap).deep.eq({});
     });
 
     it('should fill error message and not transpile input when the file contains a parse error', async () => {
       const invalidJavascriptFile = textFile({ name: 'invalid/file.js', content: 'function something {}', mutated: true });
       const output = await sut.transpile([invalidJavascriptFile]);
-      expect(output.error).contains('Could not instrument "invalid/file.js" for code coverage. Error: Line 1: Unexpected token {');
+      expect(output.error).contains('Could not instrument "invalid/file.js" for code coverage. SyntaxError: Unexpected token');
     });
   });
 
@@ -76,7 +77,7 @@ describe('CoverageInstrumenterTranspiler', () => {
       const output = await sut.transpile(input);
       expect(output.error).null;
       const instrumentedContent = (output.outputFiles[1] as TextFile).content;
-      expect(instrumentedContent).to.contain('__strykerCoverageCurrentTest__').and.contain('.f[\'1\']++');
+      expect(instrumentedContent).to.contain('__strykerCoverageCurrentTest__').and.contain('.f[0]++');
     });
 
     it('should also add a collectCoveragePerTest file', async () => {
