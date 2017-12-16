@@ -8,19 +8,19 @@ import { FileCoverageData, Range } from 'istanbul-lib-coverage';
 
 const COVERAGE_CURRENT_TEST_VARIABLE_NAME = '__strykerCoverageCurrentTest__';
 
-export interface FileCoverageMaps {
+export interface CoverageMaps {
   statementMap: { [key: string]: Range };
-  fnMap: { [key: string]: { loc: Range } };
+  fnMap: { [key: string]: Range };
 }
 
-export interface FileCoverageDataDictionary {
-  [file: string]: FileCoverageMaps;
+export interface CoverageMapsByFile {
+  [file: string]: CoverageMaps;
 }
 
 export default class CoverageInstrumenterTranspiler implements Transpiler {
 
   private instrumenter: Instrumenter;
-  public fileCoveragePerFile: FileCoverageDataDictionary = Object.create(null);
+  public fileCoveragePerFile: CoverageMapsByFile = Object.create(null);
   private log: Logger;
 
   constructor(private settings: TranspilerOptions, private testFramework: TestFramework | null) {
@@ -95,7 +95,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     try {
       const content = this.instrumenter.instrumentSync(sourceFile.content, sourceFile.name);
       const fileCoverage = this.patchRanges(this.instrumenter.lastFileCoverage());
-      this.fileCoveragePerFile[sourceFile.name] = fileCoverage;
+      this.fileCoveragePerFile[sourceFile.name] = this.retrieveCoverageMaps(fileCoverage);
       return {
         mutated: sourceFile.mutated,
         included: sourceFile.included,
@@ -107,6 +107,15 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     } catch (error) {
       throw new Error(`Could not instrument "${sourceFile.name}" for code coverage. ${errorToString(error)}`);
     }
+  }
+
+  private retrieveCoverageMaps(input: FileCoverageData): CoverageMaps {
+    const output: CoverageMaps = {
+      statementMap: input.statementMap,
+      fnMap: {}
+    };
+    Object.keys(input.fnMap).forEach(key => output.fnMap[key] = input.fnMap[key].loc);
+    return output;
   }
 
   private addCollectCoverageFileIfNeeded(result: TranspileResult): TranspileResult {

@@ -51,7 +51,7 @@ describe('CoverageInstrumenterTranspiler', () => {
       ];
       sut.transpile(input);
       expect(sut.fileCoveragePerFile['something.js'].statementMap).deep.eq({});
-      expect(sut.fileCoveragePerFile['something.js'].fnMap[0].loc).deep.eq({ start: { line: 0, column: 22 }, end: { line: 0, column: 24 } });
+      expect(sut.fileCoveragePerFile['something.js'].fnMap[0]).deep.eq({ start: { line: 0, column: 22 }, end: { line: 0, column: 24 } });
       expect(sut.fileCoveragePerFile['something.js'].fnMap[1]).undefined;
       expect(sut.fileCoveragePerFile['foobar.js'].statementMap).deep.eq({ '0': { start: { line: 0, column: 0 }, end: { line: 0, column: 22 } } });
       expect(sut.fileCoveragePerFile['foobar.js'].fnMap).deep.eq({});

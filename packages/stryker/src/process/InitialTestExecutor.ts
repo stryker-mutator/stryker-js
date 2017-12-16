@@ -8,7 +8,7 @@ import TranspilerFacade from '../transpiler/TranspilerFacade';
 import { getLogger } from 'log4js';
 import Sandbox from '../Sandbox';
 import Timer from '../utils/Timer';
-import CoverageInstrumenterTranspiler, { FileCoverageDataDictionary } from '../transpiler/CoverageInstrumenterTranspiler';
+import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
@@ -18,7 +18,7 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 export interface InitialTestRunResult {
   runResult: RunResult;
   transpiledFiles: File[];
-  coverageMaps: FileCoverageDataDictionary;
+  coverageMaps: CoverageMapsByFile;
 }
 
 export default class InitialTestExecutor {

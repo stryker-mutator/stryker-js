@@ -6,13 +6,11 @@ import { MatchedMutant } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
 import TestableMutant from './TestableMutant';
 import StrictReporter from './reporters/StrictReporter';
-import { FileCoverageDataDictionary, FileCoverageMaps } from './transpiler/CoverageInstrumenterTranspiler';
+import { CoverageMapsByFile, CoverageMaps } from './transpiler/CoverageInstrumenterTranspiler';
 import { filterEmpty } from './utils/objectUtils';
 import SourceFile from './SourceFile';
-import { Range } from 'istanbul-lib-coverage';
 
-
-enum CoveredCodeIndicatorType {
+enum StatementLocationKind {
   function,
   statement
 }
@@ -21,15 +19,15 @@ enum CoveredCodeIndicatorType {
  * Represents a location inside the coverage data of a file
  * Either the function map, or statement map
  */
-interface CoveredCodeIndicator {
-  type: CoveredCodeIndicatorType;
+interface StatementLocation {
+  kind: StatementLocationKind;
   index: string;
 }
 
 export default class MutantTestMatcher {
 
   private readonly log = getLogger(MutantTestMatcher.name);
-  constructor(private mutants: Mutant[], private files: File[], private initialRunResult: RunResult, private coveragePerFile: FileCoverageDataDictionary, private options: StrykerOptions, private reporter: StrictReporter) {
+  constructor(private mutants: Mutant[], private files: File[], private initialRunResult: RunResult, private coveragePerFile: CoverageMapsByFile, private options: StrykerOptions, private reporter: StrictReporter) {
   }
 
   private get baseline(): CoverageCollection | null {
@@ -75,7 +73,7 @@ export default class MutantTestMatcher {
     }
   }
 
-  private isCoveredByBaseline(filename: string, coveredCodeIndicator: CoveredCodeIndicator): boolean {
+  private isCoveredByBaseline(filename: string, coveredCodeIndicator: StatementLocation): boolean {
     if (this.baseline) {
       const coverageResult = this.baseline[filename];
       return this.isCoveredByCoverageCollection(coverageResult, coveredCodeIndicator);
@@ -84,15 +82,15 @@ export default class MutantTestMatcher {
     }
   }
 
-  private isCoveredByTest(testId: number, filename: string, coveredCodeIndicator: CoveredCodeIndicator): boolean {
+  private isCoveredByTest(testId: number, filename: string, coveredCodeIndicator: StatementLocation): boolean {
     const coverageCollection = this.findCoverageCollectionForTest(testId);
     const coveredFile = coverageCollection && coverageCollection[filename];
     return this.isCoveredByCoverageCollection(coveredFile, coveredCodeIndicator);
   }
 
-  private isCoveredByCoverageCollection(coveredFile: CoverageResult | null, coveredCodeIndicator: CoveredCodeIndicator): boolean {
+  private isCoveredByCoverageCollection(coveredFile: CoverageResult | null, coveredCodeIndicator: StatementLocation): boolean {
     if (coveredFile) {
-      if (coveredCodeIndicator.type === CoveredCodeIndicatorType.statement) {
+      if (coveredCodeIndicator.kind === StatementLocationKind.statement) {
         return coveredFile.s[coveredCodeIndicator.index] > 0;
       } else {
         return coveredFile.f[coveredCodeIndicator.index] > 0;
@@ -132,43 +130,24 @@ export default class MutantTestMatcher {
     return Object.freeze(matchedMutant);
   }
 
-  private findMatchingCoveringIndicator(mutant: TestableMutant, fileCoverage: FileCoverageMaps): CoveredCodeIndicator | null {
+  private findMatchingCoveringIndicator(mutant: TestableMutant, fileCoverage: CoverageMaps): StatementLocation | null {
     const statementIndex = this.findMatchingStatement(mutant, fileCoverage.statementMap);
     if (statementIndex) {
       return {
-        type: CoveredCodeIndicatorType.statement,
+        kind: StatementLocationKind.statement,
         index: statementIndex
       };
     } else {
-      const functionIndex = this.findMatchingFunction(mutant, fileCoverage.fnMap);
+      const functionIndex = this.findMatchingStatement(mutant, fileCoverage.fnMap);
       if (functionIndex) {
         return {
-          type: CoveredCodeIndicatorType.function,
+          kind: StatementLocationKind.function,
           index: functionIndex
         };
       } else {
         return null;
       }
     }
-  }
-
-  /**
-   * 
-   * @param mutant The mutant
-   * @param functionMap The function map of the covering file
-   * @returns The index of the smallest function covering the mutant, or null if not found
-   */
-  private findMatchingFunction(mutant: TestableMutant, functionMap: { [key: string]: { loc: Range } }): string | null {
-    let smallestFunction: string | null = null;
-    if (functionMap) {
-      Object.keys(functionMap).forEach(statementId => {
-        let location = functionMap[statementId];
-        if (this.locationCoversMutant(mutant.location, location.loc) && (!smallestFunction || this.isSmallerArea(functionMap[smallestFunction].loc, location.loc))) {
-          smallestFunction = statementId;
-        }
-      });
-    }
-    return smallestFunction;
   }
 
   /**

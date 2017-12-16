@@ -11,7 +11,7 @@ import { file, mutant, Mock, mock } from '../helpers/producers';
 import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
-import { FileCoverageDataDictionary } from '../../src/transpiler/CoverageInstrumenterTranspiler';
+import { CoverageMapsByFile } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 
 describe('MutantTestMatcher', () => {
 
@@ -19,7 +19,7 @@ describe('MutantTestMatcher', () => {
   let sut: MutantTestMatcher;
   let mutants: Mutant[];
   let runResult: RunResult;
-  let fileCoverageDictionary: FileCoverageDataDictionary;
+  let fileCoverageDictionary: CoverageMapsByFile;
   let strykerOptions: StrykerOptions;
   let reporter: Mock<BroadcastReporter>;
   let files: File[];
@@ -223,7 +223,7 @@ describe('MutantTestMatcher', () => {
             fileCoverageDictionary['fileWithMutantOne'] = {
               statementMap: {},
               fnMap: {
-                '1': { loc: { start: { line: 4, column: 0 }, end: { line: 6, column: 0 } } }
+                '1': { start: { line: 4, column: 0 }, end: { line: 6, column: 0 } }
               }
             };
             fileCoverageDictionary['fileWithMutantTwo'] = { statementMap: {}, fnMap: {} };

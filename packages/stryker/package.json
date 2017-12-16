@@ -53,7 +53,6 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@types/istanbul-lib-instrument": "^1.7.0",
     "chalk": "^1.1.1",
     "commander": "^2.9.0",
     "escodegen": "^1.8.0",
@@ -76,6 +75,7 @@
   "devDependencies": {
     "@types/commander": "^2.9.0",
     "@types/inquirer": "0.0.35",
+    "@types/istanbul-lib-instrument": "^1.7.0",
     "@types/prettier": "^1.6.0",
     "stryker-api": "^0.11.0"
   },
