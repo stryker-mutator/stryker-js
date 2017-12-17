@@ -53,8 +53,8 @@ describe('ConfigValidator', () => {
       sut.validate();
       expect(exitStub).calledWith(1);
       expect(log.fatal).calledWith('`thresholds.high` is lower than `thresholds.low` (-1 < 101)');
-      expect(log.fatal).calledWith('thresholds.high should be between 0 and 100 (was -1)');
-      expect(log.fatal).calledWith('thresholds.low should be between 0 and 100 (was 101)');
+      expect(log.fatal).calledWith('Value "-1" is invalid for `thresholds.high`. Expected a number between 0 and 100');
+      expect(log.fatal).calledWith('Value "101" is invalid for `thresholds.low`. Expected a number between 0 and 100');
     });
 
     it('should be invalid with thresholds.high null', () => {
@@ -63,7 +63,7 @@ describe('ConfigValidator', () => {
       sut = new ConfigValidator(config, testFramework());
       sut.validate();
       expect(exitStub).calledWith(1);
-      expect(log.fatal).calledWith('thresholds.high is invalid, expected a number between 0 and 100 (was null).');
+      expect(log.fatal).calledWith('Value "null" is invalid for `thresholds.high`. Expected a number between 0 and 100');
     });
   });
 
@@ -81,7 +81,7 @@ describe('ConfigValidator', () => {
     sut = new ConfigValidator(config, testFramework());
     sut.validate();
     expect(exitStub).calledWith(1);
-    expect(log.fatal).calledWith('`logLevel` is invalid, expected one of `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` and `off`');
+    expect(log.fatal).calledWith('Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "all", "off"');
   });
 
   it('should be invalid with nonnumeric timeoutMs', () => {
@@ -89,7 +89,7 @@ describe('ConfigValidator', () => {
     sut = new ConfigValidator(brokenConfig, testFramework());
     sut.validate();
     expect(exitStub).calledWith(1);
-    expect(log.fatal).calledWith('timeoutMs is invalid, expected a number');
+    expect(log.fatal).calledWith('Value "break" is invalid for `timeoutMs`. Expected a number');
   });
 
   it('should be invalid with nonnumeric timeoutFactor', () => {
@@ -97,7 +97,7 @@ describe('ConfigValidator', () => {
     sut = new ConfigValidator(brokenConfig, testFramework());
     sut.validate();
     expect(exitStub).calledWith(1);
-    expect(log.fatal).calledWith('timeoutFactor is invalid, expected a number');
+    expect(log.fatal).calledWith('Value "break" is invalid for `timeoutFactor`. Expected a number');
   });
 
   it('should be invalid with non-string mutator', () => {
@@ -105,7 +105,7 @@ describe('ConfigValidator', () => {
     sut = new ConfigValidator(brokenConfig, testFramework());
     sut.validate();
     expect(exitStub).calledWith(1);
-    expect(log.fatal).calledWith('mutator is invalid, expected a string');
+    expect(log.fatal).calledWith('Value "0" is invalid for `mutator`. Expected a string');
   });
 
   describe('plugins', () => {
@@ -114,7 +114,7 @@ describe('ConfigValidator', () => {
       sut = new ConfigValidator(brokenConfig, testFramework());
       sut.validate();
       expect(exitStub).calledWith(1);
-      expect(log.fatal).calledWith('plugins is invalid, expected an array');
+      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `plugins`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
@@ -122,7 +122,7 @@ describe('ConfigValidator', () => {
       sut = new ConfigValidator(brokenConfig, testFramework());
       sut.validate();
       expect(exitStub).calledWith(1);
-      expect(log.fatal).calledWith('plugins is invalid, expected an array of strings');
+      expect(log.fatal).calledWith('Value "0" is an invalid element of `plugins`. Expected a string');
     });
   });
 
@@ -132,7 +132,7 @@ describe('ConfigValidator', () => {
       sut = new ConfigValidator(brokenConfig, testFramework());
       sut.validate();
       expect(exitStub).calledWith(1);
-      expect(log.fatal).calledWith('reporter is invalid, expected an array');
+      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `reporter`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
@@ -143,7 +143,7 @@ describe('ConfigValidator', () => {
       sut = new ConfigValidator(brokenConfig, testFramework());
       sut.validate();
       expect(exitStub).calledWith(1);
-      expect(log.fatal).calledWith('reporter is invalid, expected an array of strings');
+      expect(log.fatal).calledWith('Value "0" is an invalid element of `reporter`. Expected a string');
     });
   });
 
@@ -153,7 +153,7 @@ describe('ConfigValidator', () => {
       sut = new ConfigValidator(brokenConfig, testFramework());
       sut.validate();
       expect(exitStub).calledWith(1);
-      expect(log.fatal).calledWith('transpilers is invalid, expected an array');
+      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `transpilers`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
@@ -164,7 +164,7 @@ describe('ConfigValidator', () => {
       sut = new ConfigValidator(brokenConfig, testFramework());
       sut.validate();
       expect(exitStub).calledWith(1);
-      expect(log.fatal).calledWith('transpilers is invalid, expected an array of strings');
+      expect(log.fatal).calledWith('Value "0" is an invalid element of `transpilers`. Expected a string');
     });
   });
 
@@ -173,6 +173,6 @@ describe('ConfigValidator', () => {
     sut = new ConfigValidator(brokenConfig, testFramework());
     sut.validate();
     expect(exitStub).calledWith(1);
-    expect(log.fatal).calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the folowing: "perTest", "all", "off"');
+    expect(log.fatal).calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the following: "perTest", "all", "off"');
   });
 });
