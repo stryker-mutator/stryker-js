@@ -34,7 +34,7 @@ describe('JavaScriptMutator', () => {
     const mutator = new JavaScriptMutator(new Config());
     const files: File[] = [
       {
-        name: 'testFile.js',
+        name: 'testFile.jsx',
         included: false,
         mutated: true,
         transpiled: false,
@@ -63,12 +63,39 @@ describe('JavaScriptMutator', () => {
     expect(mutants.length).to.equal(4);
     expect(mutants).to.deep.include({ 
       mutatorName: 'IfStatement',
-      fileName: 'testFile.js',
+      fileName: 'testFile.jsx',
       range: [ 197, 202 ],
       replacement: 'true' 
     });
   });
-  
+
+  it('should not mutate unknown extensions', () => {
+    const mutator = new JavaScriptMutator(new Config());
+    const files: File[] = [
+      {
+        name: 'testFile.html',
+        included: false,
+        mutated: true,
+        transpiled: false,
+        kind: FileKind.Text,
+        content: `
+          <html>
+            <head>
+              <title>Test</title>
+            </head>
+          </html>
+          <body>
+            <h1>Hello World</h1>
+          </body>
+        `
+      }
+    ];
+
+    const mutants = mutator.mutate(files);
+
+    expect(mutants.length).to.equal(0);
+  });
+
   it('should generate mutants for multiple files', () => {
     let mutator = new JavaScriptMutator(new Config());
     let file: File = {
