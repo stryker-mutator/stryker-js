@@ -96,6 +96,51 @@ describe('JavaScriptMutator', () => {
     expect(mutants.length).to.equal(0);
   });
 
+  it('should generate mutants for flow code', () => {
+    const mutator = new JavaScriptMutator(new Config());
+    const files: File[] = [
+      {
+        name: 'testFile.js',
+        included: false,
+        mutated: true,
+        transpiled: false,
+        kind: FileKind.Text,
+        content: `
+          // @flow
+          import React from 'react'
+          
+          function getMessage(message: string) {
+            if(message) {
+              return message;
+            }
+          
+            return 'Hello!!';
+          }
+          
+          const App = ({ if: message }: Props) => (<div>
+            <h1>{ getMessage(message) }</h1>
+          </div>)
+          
+          type Props = {
+            message: string
+          }
+          
+          export default App
+        `
+      }
+    ];
+
+    const mutants = mutator.mutate(files);
+
+    expect(mutants.length).to.equal(4);
+    expect(mutants).to.deep.include({ 
+      mutatorName: 'IfStatement',
+      fileName: 'testFile.js',
+      range: [ 131, 138 ],
+      replacement: 'false' 
+    });
+  });
+
   it('should generate mutants for multiple files', () => {
     let mutator = new JavaScriptMutator(new Config());
     let file: File = {
