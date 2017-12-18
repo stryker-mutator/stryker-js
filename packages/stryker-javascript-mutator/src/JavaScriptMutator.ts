@@ -15,7 +15,6 @@ function defaultMutators(): NodeMutator[] {
 
 export default class JavaScriptMutator implements Mutator {
   private log = getLogger(JavaScriptMutator.name);
-  private knownExtensions: Array<string> = ['.js', '.jsx'];
 
   constructor(config: Config, private mutators: NodeMutator[] = defaultMutators()) {
   }
@@ -44,13 +43,7 @@ export default class JavaScriptMutator implements Mutator {
   }
 
   private hasValidExtension(file: TextFile): boolean {
-    for (let extension of this.knownExtensions) {
-      if (path.extname(file.name) === extension) {
-        return true;
-      }
-    }
-    
-    return false;
+    return ['.js', '.jsx'].some(extension => path.extname(file.name) === extension);
   }
 
   private generateMutants(nodes: babel.types.Node[], ast: babel.types.File, file: TextFile, mutatorName: string) {
