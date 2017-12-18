@@ -7,6 +7,7 @@ import BabelParser from './helpers/BabelParser';
 import copy from './helpers/copy';
 import NodeMutatorFactory from './NodeMutatorFactory';
 import NodeMutator from './mutators/NodeMutator';
+import * as path from 'path';
 
 function defaultMutators(): NodeMutator[] {
   return NodeMutatorFactory.instance().knownNames().map(name => NodeMutatorFactory.instance().create(name, undefined));
@@ -21,7 +22,7 @@ export default class JavaScriptMutator implements Mutator {
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
 
-    inputFiles.filter(i => i.kind === FileKind.Text && i.mutated).forEach((file: TextFile) => {
+    inputFiles.filter(i => i.kind === FileKind.Text && i.mutated && this.hasValidExtension(i)).forEach((file: TextFile) => {
       const ast = BabelParser.getAst(file.content);
       const baseAst = copy(ast, true);
       BabelParser.removeUseStrict(baseAst);
@@ -39,6 +40,10 @@ export default class JavaScriptMutator implements Mutator {
     });
 
     return mutants;
+  }
+
+  private hasValidExtension(file: TextFile): boolean {
+    return ['.js', '.jsx'].some(extension => path.extname(file.name) === extension);
   }
 
   private generateMutants(nodes: babel.types.Node[], ast: babel.types.File, file: TextFile, mutatorName: string) {
