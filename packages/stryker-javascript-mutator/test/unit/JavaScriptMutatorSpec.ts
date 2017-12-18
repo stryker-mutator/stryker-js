@@ -30,6 +30,44 @@ describe('JavaScriptMutator', () => {
     });
   });
 
+  it('should generate mutant a correct mutant for jsx code', () => {
+    const mutator = new JavaScriptMutator(new Config());
+    const files: File[] = [
+      {
+        name: 'testFile.js',
+        included: false,
+        mutated: true,
+        transpiled: false,
+        kind: FileKind.Text,
+        content: `
+          "use strict";
+          import React from 'react'
+          import { render } from 'react-dom'
+          import App from 'app/components/app'
+
+          const hello = true;
+          if(hello) {
+            console.log("Hello world!");
+          }
+
+          render(
+            <App message="Hello!" />,
+            document.getElementById('appContainer')
+          )
+        `
+      }
+    ];
+
+    const mutants = mutator.mutate(files);
+
+    expect(mutants.length).to.equal(4);
+    expect(mutants).to.deep.include({ 
+      mutatorName: 'IfStatement',
+      fileName: 'testFile.js',
+      range: [ 197, 202 ],
+      replacement: 'true' 
+    });
+  });
   
   it('should generate mutants for multiple files', () => {
     let mutator = new JavaScriptMutator(new Config());
