@@ -1,5 +1,6 @@
 const errors = require("errno");
 
+/* istanbul ignore next */
 class HybridFs {
     private fs: any;
     private memoryFs: any;
@@ -11,8 +12,6 @@ class HybridFs {
 
     public readFileSync(path: string, optionsOrEncoding: string|Object) {
         try {
-            console.log(path);
-
             return this.memoryFs.readFileSync(path, optionsOrEncoding);
         } catch(err) {
             if(err.code == errors.code.ENOENT.code) {
@@ -64,7 +63,6 @@ class HybridFs {
         });
     }
 
-    // Exist
     public existsSync(path: string) {
         try {
             return this.memoryFs.existsSync(path);
@@ -83,7 +81,6 @@ class HybridFs {
         });
     }
 
-    // Stat
     public statSync(path: string) {
         try {
             return this.memoryFs.statSync(path);
@@ -103,7 +100,6 @@ class HybridFs {
         });
     }
 
-    // Mkdirp
     public mkdirpSync = (path: string) => this.memoryFs.mkdirpSync(path);
     public mkdirp = (path: string, callback: Function) => this.memoryFs.mkdirp(path, callback);
 
