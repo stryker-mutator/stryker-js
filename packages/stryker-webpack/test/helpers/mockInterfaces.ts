@@ -1,4 +1,4 @@
-import {Stats} from "webpack";
+import {Stats} from 'webpack';
 
 export interface WebpackCompilerMock {
     run: (callback: (err: Error, stats: Stats) => void) => void;

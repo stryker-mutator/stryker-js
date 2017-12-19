@@ -1,7 +1,7 @@
-import {Configuration, Stats} from "webpack";
-import {FileSystem} from "../../src/helpers/FsWrapper"
-import {FileKind, TextFile} from "stryker-api/core";
-import {WebpackCompilerMock} from "./mockInterfaces";
+import {Configuration, Stats} from 'webpack';
+import {FileSystem} from '../../src/helpers/FsWrapper'
+import {FileKind, TextFile} from 'stryker-api/core';
+import {WebpackCompilerMock} from './mockInterfaces';
 
 export function createFakeFileSystem(): FileSystem {
     return {
@@ -14,10 +14,10 @@ export function createFakeFileSystem(): FileSystem {
 
 export function createFakeWebpackConfig(): Configuration {
     return {
-        entry: ["index.js"],
+        entry: ['index.js'],
         output: {
-            path: "/out",
-            filename: "bundle.js",
+            path: '/out',
+            filename: 'bundle.js',
         }
     };
 }
@@ -44,4 +44,3 @@ export function createWebpackMock(): WebpackCompilerMock {
         }
     }
 }
-

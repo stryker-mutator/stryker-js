@@ -1,60 +1,81 @@
-import {TranspilerOptions, Transpiler, TranspileResult, FileLocation} from "stryker-api/transpile";
-import {File, TextFile} from "stryker-api/core";
-import {Config} from "stryker-api/config"
-import WebpackCompiler from "./compiler/WebpackCompiler";
-import HybridFS from "./helpers/HybridFs";
-import WebpackConfigGenerator from "./WebpackConfigGenerator";
-import * as fs from "fs";
-
-// TODO: Fix types for memory-fs
-import MemoryFileSystem = require("memory-fs");
+import { TranspilerOptions, Transpiler, TranspileResult, FileLocation } from 'stryker-api/transpile';
+import { Config } from 'stryker-api/config';
+import { File, TextFile } from 'stryker-api/core';
+import PresetLoader from './presetLoader/PresetLoader';
+import WebpackCompiler from './compiler/WebpackCompiler';
+import WebpackPreset from './presetLoader/WebpackPreset';
 
 class WebpackTranspiler implements Transpiler {
-    private _config: Config;
-    private _compiler: WebpackCompiler;
+  private config: Config;
+  private presetLoader: PresetLoader;
+  private webpackCompiler: WebpackCompiler;
 
-    public constructor(options: TranspilerOptions) {
-        this._config = options.config;
-        const filesystem: any = new HybridFS(fs, new MemoryFileSystem());
-        
-        const project = this._config.project || 'default';
-        const webpackConfiguration = new WebpackConfigGenerator().generate(project, this._config.baseDir);
+  public constructor(options: TranspilerOptions) {
+    this.config = options.config;
+    this.presetLoader = new PresetLoader;
+  }
 
-        this._compiler = new WebpackCompiler(webpackConfiguration, filesystem);
+  public async transpile(files: Array<File>): Promise<TranspileResult> {
+    try {
+      if (!this.webpackCompiler) {
+        // Initialize the webpack compiler with the current directory (process.cwd)
+        await this.initialize(process.cwd(), this.config.webpack);
+      }
+
+      await this.webpackCompiler.writeFilesToFs(files as Array<TextFile>);
+
+      return this.createSuccessResult(await this.webpackCompiler.emit());
+    } catch (err) {
+      return this.createErrorResult(`${err.name}: ${err.message}`);
     }
+  }
 
-    public async transpile(files: Array<File>): Promise<TranspileResult> {
-        try {
-            await this._compiler.replace(files as Array<TextFile>);
+  private async initialize(projectRoot: string, strykerWebpackConfig?: StrykerWebpackConfig): Promise<void> {
+    strykerWebpackConfig = this.getStrykerWebpackConfig(strykerWebpackConfig);
 
-            const compileResult = await this._compiler.emit();
+    await this.initializeCompiler(projectRoot, strykerWebpackConfig);
+  }
 
-            return this.createSuccessResult(compileResult);
-        } catch (err) {
-            return this.createErrorResult(`${err.name}: ${err.message}`);
-        }
-    }
+  private getStrykerWebpackConfig(strykerWebpackConfig?: StrykerWebpackConfig): StrykerWebpackConfig {
+    return {
+      project: (strykerWebpackConfig && strykerWebpackConfig.project) ? strykerWebpackConfig.project : 'default',
+      configLocation: (strykerWebpackConfig && strykerWebpackConfig.configLocation) ? strykerWebpackConfig.configLocation : undefined
+    };
+  }
 
-    private createErrorResult(error: string): TranspileResult {
-        return {
-            error: error,
-            outputFiles: []
-        };
+  private async initializeCompiler(projectRoot: string, strykerWebpackConfig: StrykerWebpackConfig): Promise<void> {
+    const preset: WebpackPreset = this.presetLoader.loadPreset(strykerWebpackConfig.project.toLowerCase());
 
-    }
+    this.webpackCompiler = new WebpackCompiler(preset.getWebpackConfig(projectRoot, strykerWebpackConfig.configLocation));
 
-    private createSuccessResult(outPutFiles: File[]): TranspileResult {
-        return {
-            error: null,
-            outputFiles: outPutFiles
-        };
-    }
+    // Push the init files to the file system with the replace function
+    await this.webpackCompiler.writeFilesToFs(preset.getInitFiles(projectRoot));
+  }
 
-    public getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
-        // Waiting for a decision on how this is going to be implemented in the future
-        // Return a "Method nog implemented" error for now.
-        throw new Error("Method not implemented.");
-    }
+  private createErrorResult(error: string): TranspileResult {
+    return {
+      error,
+      outputFiles: []
+    };
+  }
+
+  private createSuccessResult(outPutFiles: File[]): TranspileResult {
+    return {
+      error: null,
+      outputFiles: outPutFiles
+    };
+  }
+
+  public getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
+    // Waiting for a decision on how this is going to be implemented in the future
+    // Return a 'Method nog implemented' error for now.
+    throw new Error('Method not implemented.');
+  }
+}
+
+interface StrykerWebpackConfig {
+  project: string;
+  configLocation?: string;
 }
 
 export default WebpackTranspiler;

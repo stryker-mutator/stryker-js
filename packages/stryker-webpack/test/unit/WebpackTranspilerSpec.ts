@@ -1,94 +1,118 @@
-import {expect, assert} from "chai";
-import {Config} from "stryker-api/config";
-import {TranspileResult} from "stryker-api/transpile";
-import {Position, TextFile} from "stryker-api/core";
-import {createTextFile} from "../helpers/producers";
-import * as sinon from "sinon";
-import WebpackTranspiler from "../../src/WebpackTranspiler";
-import WebpackCompiler, * as webpackCompiler from "../../src/compiler/WebpackCompiler";
+import WebpackTranspiler from '../../src/WebpackTranspiler';
+import PresetLoader, * as presetLoader from '../../src/presetLoader/PresetLoader';
+import WebpackCompiler, * as webpackCompiler from '../../src/compiler/WebpackCompiler';
+import { createTextFile } from '../helpers/producers';
+import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
+import { Position, TextFile } from 'stryker-api/core';
+import { expect, assert } from 'chai';
 
-describe("WebpackTranspiler", () => {
-    const sandbox: sinon.SinonSandbox = sinon.createSandbox();
-    let webpackTranspiler: WebpackTranspiler;
-    let webpackCompilerService: WebpackCompilerStubs;
+describe('WebpackTranspiler', () => {
+  let webpackTranspiler: WebpackTranspiler;
+  let sandbox: sinon.SinonSandbox;
+  let config: Config
+  
+  // Stubs
+  let presetLoaderStub: { loadPreset: sinon.SinonStub }
+  let webpackCompilerStub: WebpackCompilerStub;
 
-    let fakeFileArray: Array<TextFile>;
+  // Example files
+  let exampleInitFile: TextFile = createTextFile('exampleInitFile');
+  let exampleBundleFile: TextFile = createTextFile('bundle.js');
 
-    beforeEach(() => {
-        webpackCompilerService = sinon.createStubInstance(WebpackCompiler);
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
 
-        sandbox.stub(webpackCompiler, 'default').returns(webpackCompilerService);
+    webpackCompilerStub = sinon.createStubInstance(WebpackCompiler);
+    webpackCompilerStub.emit.returns([exampleBundleFile]);
 
-        const config = new Config();
-        config.set({ baseDir: "/" });
+    presetLoaderStub = sinon.createStubInstance(PresetLoader);
+    presetLoaderStub.loadPreset.returns({ getWebpackConfig: () => {}, getInitFiles: () => [exampleInitFile] });
 
-        webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false});
+    sandbox.stub(presetLoader, 'default').returns(presetLoaderStub);
+    sandbox.stub(webpackCompiler, 'default').returns(webpackCompilerStub);
 
-        fakeFileArray = [
-            createTextFile("test"),
-            createTextFile("works")
-        ];
-    });
+    config = new Config;
+    config.set({ webpack: { project: 'ExampleProject' } });
 
-    afterEach(() => {
-        sandbox.restore();
-    });
+    webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false });
+  });
 
-    describe("transpile", () => {
-        it("should call the \"replace\" function on the \"webpackCompiler\"", async () => {
-            await webpackTranspiler.transpile(fakeFileArray);
-    
-            assert(webpackCompilerService.replace.calledWith(fakeFileArray));
-        });
-    
-        it("should call the \"emit\" function on the \"webpackCompiler\"", async () => {
-            await webpackTranspiler.transpile([]);
-    
-            assert(webpackCompilerService.emit.calledOnce);
-        });
-    
-        it("should send a successResponse when finished", async () => {
-            const fakeEmitFiles: Array<TextFile> = [createTextFile("bundle.js")];
+  afterEach(() => sandbox.restore());
 
-            webpackCompilerService.emit.resolves(fakeEmitFiles);
-    
-            const result: TranspileResult = await webpackTranspiler.transpile(fakeFileArray);
-    
-            expect(result.outputFiles).to.deep.equal(fakeEmitFiles);
-            expect(result.error).to.be.null;
-        });
-    
-        it("should send a errorResponse when the webpackCompiler throws an error", async () => {
-            const fakeError: string = "fakeError";
-    
-            webpackCompilerService.emit.throwsException(Error(fakeError));
-    
-            const result: TranspileResult = await webpackTranspiler.transpile(fakeFileArray);
-    
-            expect(result.outputFiles).to.be.an("array").that.is.empty;
-            expect(result.error).to.equal(`Error: ${fakeError}`);
-        });
-    });
+  it('should call the presetloader with the configured project when the transpile method is called initially', async () => {
+    await webpackTranspiler.transpile([]);
+    await webpackTranspiler.transpile([]);
 
-    describe("getMappedLocation", () => {
-        it("should throw an error informing the user the function is not implemented", () => {
-            const position: Position = {
-                line: 0,
-                column: 0
-            };
+    assert(presetLoaderStub.loadPreset.called, 'loadPreset not called');
+    assert(presetLoaderStub.loadPreset.calledOnce, 'loadPreset called more than once');
+    assert(presetLoaderStub.loadPreset.calledWith('exampleproject'), `loadPreset not called with 'exampleproject'`);
+  });
+
+  it('should use \'default\' as preset when none is provided', async () => {
+    const config = new Config;
+    const webpackTranspiler = new WebpackTranspiler({ config: config, keepSourceMaps: false });
+
+    await webpackTranspiler.transpile([]);
+
+    assert(presetLoaderStub.loadPreset.calledWith('default'), `loadPreset not called with 'default'`);
+  });
+
+  it('should call the webpackCompiler.writeFilesToFs method with the output of the webpackPreset.getFiles method', async () => {
+    await webpackTranspiler.transpile([]);
+
+    assert(webpackCompilerStub.writeFilesToFs.calledWith([exampleInitFile]), 'Not alled with exampleInitFile');
+  });
+
+  it('should call the webpackCompiler.writeFilesToFs function with the given files', async () => {
+    const files = [createTextFile('main.js'), createTextFile('sum.js'), createTextFile('divide.js')];
+
+    await webpackTranspiler.transpile(files);
+
+    assert(webpackCompilerStub.writeFilesToFs.calledWith(files), `replace function not called with ${files}`);
+  });
+
+  it('should call the webpackCompiler.emit function to get the new bundled files', async () => {
+    await webpackTranspiler.transpile([]);
+
+    assert(webpackCompilerStub.emit.called, 'Emit function not called');
+    assert(webpackCompilerStub.emit.calledOnce, 'Emit function called more than once');
+  });
+
+  it('should return a successResult with the bundled files on success', async () => {
+    const transpileResult = await webpackTranspiler.transpile([]);
+
+    expect(transpileResult.error).to.be.null;
+    expect(transpileResult.outputFiles).to.deep.equal([exampleBundleFile]);
+  });
+
+  it('should return a error result when an error occured', async () => {
+    const fakeError = 'compiler could not compile input files';
+    webpackCompilerStub.emit.throwsException(Error(fakeError));
+
+    const transpileResult = await webpackTranspiler.transpile([]);
     
-            const fileLocation: { fileName: string, start: Position, end: Position } = {
-                fileName: "test",
-                start: position,
-                end: position
-            }
-    
-            expect(webpackTranspiler.getMappedLocation.bind(this, fileLocation)).to.throw(Error, "Method not implemented.");
-        });
-    })
+    expect(transpileResult.outputFiles).to.be.an("array").that.is.empty;
+    expect(transpileResult.error).to.equal(`Error: ${fakeError}`);
+  });
+
+  it('should throw a not implemented error when calling the getMappedLocation method', () => {
+    const position: Position = {
+      line: 0,
+      column: 0
+    };
+
+    const fileLocation: { fileName: string, start: Position, end: Position } = {
+      fileName: "test",
+      start: position,
+      end: position
+    }
+
+    expect(webpackTranspiler.getMappedLocation.bind(this, fileLocation)).to.throw(Error, 'Method not implemented.');
+  });
 });
 
-interface WebpackCompilerStubs {
-    replace: sinon.SinonStub;
-    emit: sinon.SinonStub;
+interface WebpackCompilerStub {
+  writeFilesToFs: sinon.SinonStub;
+  emit: sinon.SinonStub;
 }
