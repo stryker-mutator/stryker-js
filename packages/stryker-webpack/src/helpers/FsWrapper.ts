@@ -1,7 +1,7 @@
 import * as path from "path";
 import {Stats} from "fs";
 
-class FsWrapper {
+export default class FsWrapper {
     static readonly NO_SUCH_DIRECTORY_ENTRY = "ENOENT";
     static readonly FILE_ALREADY_EXISTS = "EEXIST";
     
@@ -69,5 +69,3 @@ export interface FileSystem {
 
     readFile(path: string, options: string, callback: (err: Error, content: string) => void): void
 }
-
-export default FsWrapper;
