@@ -19,7 +19,7 @@
     "@types/mkdirp": "^0.5.2",
     "@types/mocha": "^2.2.44",
     "@types/mz": "0.0.32",
-    "@types/progress": "^1.1.28",
+    "@types/progress": "^2.0.0",
     "@types/rimraf": "2.0.2",
     "@types/sinon": "^4.0.0",
     "@types/sinon-chai": "^2.7.29",
