@@ -59,7 +59,7 @@
     "esprima": "^2.7.0",
     "glob": "^7.0.3",
     "inquirer": "^3.0.6",
-    "istanbul": "^0.4.5",
+    "istanbul-lib-instrument": "^1.9.1",
     "lodash": "^4.17.4",
     "log4js": "^1.1.0",
     "mkdirp": "^0.5.1",
@@ -75,6 +75,7 @@
   "devDependencies": {
     "@types/commander": "^2.9.0",
     "@types/inquirer": "0.0.35",
+    "@types/istanbul-lib-instrument": "^1.7.0",
     "@types/prettier": "^1.6.0",
     "stryker-api": "^0.11.0"
   },

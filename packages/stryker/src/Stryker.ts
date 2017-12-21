@@ -77,7 +77,7 @@ export default class Stryker {
       mutants,
       inputFiles,
       initialTestRunResult.runResult,
-      initialTestRunResult.statementMaps,
+      initialTestRunResult.coverageMaps,
       this.config,
       this.reporter);
     return mutantRunResultMatcher.matchWithMutants();

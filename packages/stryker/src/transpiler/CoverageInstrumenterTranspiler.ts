@@ -1,26 +1,30 @@
 import { Transpiler, TranspileResult, FileLocation, TranspilerOptions } from 'stryker-api/transpile';
 import { File, FileKind, TextFile } from 'stryker-api/core';
-import { StatementMap } from 'stryker-api/test_runner';
-import { Instrumenter } from 'istanbul';
+import { createInstrumenter, Instrumenter } from 'istanbul-lib-instrument';
 import { errorToString, wrapInClosure } from '../utils/objectUtils';
 import { TestFramework } from 'stryker-api/test_framework';
 import { Logger, getLogger } from 'log4js';
+import { FileCoverageData, Range } from 'istanbul-lib-coverage';
 
-const coverageObjRegex = /\{.*"path".*"fnMap".*"statementMap".*"branchMap".*\}/g;
 const COVERAGE_CURRENT_TEST_VARIABLE_NAME = '__strykerCoverageCurrentTest__';
 
-export interface StatementMapDictionary {
-  [file: string]: StatementMap;
+export interface CoverageMaps {
+  statementMap: { [key: string]: Range };
+  fnMap: { [key: string]: Range };
+}
+
+export interface CoverageMapsByFile {
+  [file: string]: CoverageMaps;
 }
 
 export default class CoverageInstrumenterTranspiler implements Transpiler {
 
   private instrumenter: Instrumenter;
-  public statementMapsPerFile: StatementMapDictionary = Object.create(null);
+  public fileCoveragePerFile: CoverageMapsByFile = Object.create(null);
   private log: Logger;
 
   constructor(private settings: TranspilerOptions, private testFramework: TestFramework | null) {
-    this.instrumenter = new Instrumenter({ coverageVariable: this.coverageVariable });
+    this.instrumenter = createInstrumenter({ coverageVariable: this.coverageVariable });
     this.log = getLogger(CoverageInstrumenterTranspiler.name);
   }
 
@@ -58,18 +62,27 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     }
   }
 
-  private retrieveStatementMap(instrumentedCode: string): StatementMap {
-    coverageObjRegex.lastIndex = 0;
-    const coverageObjectMatch = coverageObjRegex.exec(instrumentedCode) + '';
-    const statementMap = JSON.parse(coverageObjectMatch).statementMap as StatementMap;
-    Object.keys(statementMap).forEach(key => {
+  private patchRanges(fileCoverage: FileCoverageData) {
+    function patchRange(range: Range) {
       // Lines from istanbul are one-based, lines in Stryker are 0-based
-      statementMap[key].end.line--;
-      statementMap[key].start.line--;
-    });
-    return statementMap;
-  }
+      range.end.line--;
+      range.start.line--;
+    }
 
+    Object.keys(fileCoverage.statementMap).forEach(key => patchRange(fileCoverage.statementMap[key]));
+    Object.keys(fileCoverage.branchMap).forEach(key => {
+      patchRange(fileCoverage.branchMap[key].loc);
+      fileCoverage.branchMap[key].locations.forEach(patchRange);
+      fileCoverage.branchMap[key].line--;
+    });
+    Object.keys(fileCoverage.fnMap).forEach(key => {
+      patchRange(fileCoverage.fnMap[key].loc);
+      patchRange(fileCoverage.fnMap[key].decl);
+      fileCoverage.fnMap[key].line--;
+    });
+
+    return fileCoverage;
+  }
   private instrumentFileIfNeeded(file: File) {
     if (this.settings.config.coverageAnalysis !== 'off' && file.kind === FileKind.Text && file.mutated) {
       return this.instrumentFile(file);
@@ -81,7 +94,8 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
   private instrumentFile(sourceFile: TextFile): TextFile {
     try {
       const content = this.instrumenter.instrumentSync(sourceFile.content, sourceFile.name);
-      this.statementMapsPerFile[sourceFile.name] = this.retrieveStatementMap(content);
+      const fileCoverage = this.patchRanges(this.instrumenter.lastFileCoverage());
+      this.fileCoveragePerFile[sourceFile.name] = this.retrieveCoverageMaps(fileCoverage);
       return {
         mutated: sourceFile.mutated,
         included: sourceFile.included,
@@ -95,8 +109,17 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     }
   }
 
+  private retrieveCoverageMaps(input: FileCoverageData): CoverageMaps {
+    const output: CoverageMaps = {
+      statementMap: input.statementMap,
+      fnMap: {}
+    };
+    Object.keys(input.fnMap).forEach(key => output.fnMap[key] = input.fnMap[key].loc);
+    return output;
+  }
+
   private addCollectCoverageFileIfNeeded(result: TranspileResult): TranspileResult {
-    if (Object.keys(this.statementMapsPerFile).length && this.settings.config.coverageAnalysis === 'perTest') {
+    if (Object.keys(this.fileCoveragePerFile).length && this.settings.config.coverageAnalysis === 'perTest') {
       if (this.testFramework) {
         // Add piece of javascript to collect coverage per test results
         const content = this.coveragePerTestFileContent(this.testFramework);
@@ -165,11 +188,17 @@ if(coveragePerFile) {
 Object.keys(coveragePerFile).forEach(function (file) {
     var coverage = coveragePerFile[file];
     var baseline = globalCoverage.baseline[file];
-    var fileResult = { s: {} };
+    var fileResult = { s: {}, f: {} };
     var touchedFile = false;
     for(var i in coverage.s){
       if(coverage.s[i] !== baseline.s[i]){
         fileResult.s[i] = coverage.s[i];
+        touchedFile = true;
+      }
+    }
+    for(var i in coverage.f){
+      if(coverage.f[i] !== baseline.f[i]){
+        fileResult.f[i] = coverage.f[i];
         touchedFile = true;
       }
     }
