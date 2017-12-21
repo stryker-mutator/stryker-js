@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.0"></a>
+# 0.11.0 (2017-12-21)
+
+
+### Features
+
+* **typescript:** Add version check ([#449](https://github.com/stryker-mutator/stryker/issues/449)) ([a780189](https://github.com/stryker-mutator/stryker/commit/a780189)), closes [#437](https://github.com/stryker-mutator/stryker/issues/437)
+
+
+
+
 <a name="0.10.1"></a>
 ## [0.10.1](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.10.0...grunt-stryker@0.10.1) (2017-10-24)
 

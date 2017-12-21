@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.17.0"></a>
+# [0.17.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.16.0...stryker@0.17.0) (2017-12-21)
+
+
+### Features
+
+* **cvg analysis:** New coverage instrumenter ([#550](https://github.com/stryker-mutator/stryker/issues/550)) ([2bef577](https://github.com/stryker-mutator/stryker/commit/2bef577))
+
+
+
+
 <a name="0.16.0"></a>
 # [0.16.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.6...stryker@0.16.0) (2017-12-19)
 
