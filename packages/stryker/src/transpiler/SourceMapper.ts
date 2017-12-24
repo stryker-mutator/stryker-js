@@ -10,7 +10,7 @@ export interface MappedLocation {
 }
 
 export default abstract class SourceMapper {
-  abstract transpiledLocationFor(needle: MappedLocation): MappedLocation;
+  abstract transpiledLocationFor(originalLocation: MappedLocation): MappedLocation;
 
   static create(transpiledFiles: File[], transpilers: string[]): SourceMapper {
     if (transpilers.length) {
@@ -29,7 +29,7 @@ interface SourceMapBySource {
   };
 }
 
-class TranspiledSourceMapper extends SourceMapper {
+export class TranspiledSourceMapper extends SourceMapper {
 
   private sourceMaps: SourceMapBySource;
 
@@ -59,19 +59,50 @@ class TranspiledSourceMapper extends SourceMapper {
   }
 
   private getSourceMapForFile(transpiledFile: TextFile) {
-    const sourceMappingFileName = this.getSourceMapUrl(transpiledFile);
-    const sourceMappingFileFullName = path.resolve(path.dirname(transpiledFile.name), sourceMappingFileName);
-    const sourceMapFile = this.transpiledFiles.find(file => path.resolve(file.name) === sourceMappingFileFullName);
-    if (sourceMapFile) {
-      if (sourceMapFile.kind === FileKind.Text) {
-        return sourceMapFile;
-      } else {
-        throw new Error(`Source map file ${sourceMappingFileFullName} was of wrong file kind. '${FileKind[sourceMapFile.kind]}' instead of '${FileKind[FileKind.Text]}'`);
-      }
-    } else {
-      throw new Error(`Source map file ${sourceMappingFileFullName} could not be found.`);
-    }
+    const sourceMappingUrl = this.getSourceMapUrl(transpiledFile);
+    const sourceMapFile = this.getSourceMapFileFromUrl(sourceMappingUrl, transpiledFile);
+    return sourceMapFile;
+  }
 
+  private getSourceMapFileFromUrl(sourceMapUrl: string, transpiledFile: File): TextFile {
+    const sourceMapFile = this.isDataUrl(sourceMapUrl) ?
+      this.getSourceMapFromDataUrl(sourceMapUrl, transpiledFile) : this.getSourceMapFromDisk(sourceMapUrl, transpiledFile);
+    if (sourceMapFile.kind === FileKind.Text) {
+      return sourceMapFile;
+    } else {
+      throw new Error(`Source map file ${sourceMapFile.name} was of wrong file kind. '${FileKind[sourceMapFile.kind]}' instead of '${FileKind[FileKind.Text]}'`);
+    }
+  }
+
+  private isDataUrl(sourceMapUrl: string) {
+    return sourceMapUrl.startsWith('data:');
+  }
+
+  private getSourceMapFromDataUrl(sourceMapUrl: string, transpiledFile: File): TextFile {
+    const supportedDataPrefix = 'data:application/json;base64,';
+    if (sourceMapUrl.startsWith(supportedDataPrefix)) {
+      const content = Buffer.from(sourceMapUrl.substr(supportedDataPrefix.length), 'base64').toString('utf8');
+      return {
+        name: transpiledFile.name,
+        content,
+        kind: FileKind.Text,
+        included: false,
+        mutated: false,
+        transpiled: false
+      };
+    } else {
+      throw new Error('Source map cannot be read. The data type ' + sourceMapUrl.substr(0, sourceMapUrl.lastIndexOf(',')) + ' is not supported. Found in file' + transpiledFile.name);
+    }
+  }
+
+  private getSourceMapFromDisk(sourceMapUrl: string, transpiledFile: File) {
+    const sourceMapFileName = path.resolve(path.dirname(transpiledFile.name), sourceMapUrl);
+    const sourceMapFile = this.transpiledFiles.find(file => path.resolve(file.name) === sourceMapFileName);
+    if (sourceMapFile) {
+      return sourceMapFile;
+    } else {
+      throw new Error(`Source map file ${sourceMapFileName} could not be found.`);
+    }
   }
 
   private getSourceMapUrl(transpiledFile: TextFile): string {
@@ -88,38 +119,43 @@ class TranspiledSourceMapper extends SourceMapper {
     }
   }
 
-  transpiledLocationFor(needle: MappedLocation): MappedLocation {
-    const sourceMapInfo = this.sourceMaps[needle.fileName];
+  transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
+    const sourceMapInfo = this.sourceMaps[originalLocation.fileName];
     if (sourceMapInfo === null) {
-      throw new Error('Source map not found for ' + needle.fileName);
+      throw new Error('Source map not found for ' + originalLocation.fileName);
     }
-    const relativeSource = path.relative(path.dirname(sourceMapInfo.sourceMapFileName), needle.fileName);
+    const relativeSource = path.relative(path.dirname(sourceMapInfo.sourceMapFileName), originalLocation.fileName)
+      .replace(/\\/g, '/');
     const start = sourceMapInfo.sourceMap.generatedPositionFor({
       bias: SourceMapConsumer.LEAST_UPPER_BOUND,
-      column: needle.location.start.column,
-      line: needle.location.start.line + 1, // source maps works 1-based
+      column: originalLocation.location.start.column,
+      line: originalLocation.location.start.line + 1, // source maps works 1-based
       source: relativeSource
     });
     const end = sourceMapInfo.sourceMap.generatedPositionFor({
       bias: SourceMapConsumer.LEAST_UPPER_BOUND,
-      column: needle.location.end.column,
-      line: needle.location.end.line + 1, // source maps works 1-based
+      column: originalLocation.location.end.column,
+      line: originalLocation.location.end.line + 1, // source maps works 1-based
       source: relativeSource
     });
-    end.line--; // Stryker works 0-based
-    start.line--; // Stryker works 0-based
     return {
       fileName: sourceMapInfo.transpiledFile.name,
       location: {
-        start,
-        end
+        start: {
+          line: start.line - 1,  // Stryker works 0-based
+          column: start.column
+        },
+        end: {
+          line: end.line - 1,  // Stryker works 0-based
+          column: end.column
+        }
       }
     };
   }
 }
 
 export class PassThroughSourceMapper extends SourceMapper {
-  transpiledLocationFor(needle: MappedLocation): MappedLocation {
-    return needle;
+  transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
+    return originalLocation;
   }
 }
