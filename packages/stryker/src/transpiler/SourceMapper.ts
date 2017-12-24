@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { SourceMapConsumer, RawSourceMap } from 'source-map';
 import { File, FileKind, TextFile, Location } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
 
 const SOURCE_MAP_URL_REGEX = /\/\/#\s*sourceMappingURL=(.*)/g;
 
@@ -12,8 +13,8 @@ export interface MappedLocation {
 export default abstract class SourceMapper {
   abstract transpiledLocationFor(originalLocation: MappedLocation): MappedLocation;
 
-  static create(transpiledFiles: File[], transpilers: string[]): SourceMapper {
-    if (transpilers.length) {
+  static create(transpiledFiles: File[], config: Config): SourceMapper {
+    if (config.transpilers.length && config.coverageAnalysis !== 'off') {
       return new TranspiledSourceMapper(transpiledFiles);
     } else {
       return new PassThroughSourceMapper();

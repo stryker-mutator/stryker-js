@@ -73,6 +73,27 @@ describe('InitialTestExecutor run', () => {
       expect(StrykerSandbox.create).calledWith(options, 0, transpileResultMock.outputFiles, testFrameworkMock);
     });
 
+    it('should create the transpiler with produceSourceMaps = true when coverage analysis is enabled', async () => {
+      options.coverageAnalysis = 'all';
+      await sut.run();
+      const expectedTranspilerOptions: TranspilerOptions = { 
+        produceSourceMaps: true,
+        config: options
+      };
+      expect(transpilerFacade.default).calledWithNew;
+      expect(transpilerFacade.default).calledWith(expectedTranspilerOptions);
+    });
+
+    it('should create the transpiler with produceSourceMaps = false when coverage analysis is "off"', async () => {
+      options.coverageAnalysis = 'off';
+      await sut.run();
+      const expectedTranspilerOptions: TranspilerOptions = { 
+        produceSourceMaps: false,
+        config: options
+      };
+      expect(transpilerFacade.default).calledWith(expectedTranspilerOptions);
+    });
+
     it('should initialize, run and dispose the sandbox', async () => {
       await sut.run();
       expect(strykerSandboxMock.run).to.have.been.calledWith(60 * 1000 * 5);

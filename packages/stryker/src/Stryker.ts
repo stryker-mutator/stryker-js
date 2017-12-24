@@ -79,7 +79,7 @@ export default class Stryker {
       mutants,
       inputFiles,
       initialTestRunResult.runResult,
-      SourceMapper.create(initialTestRunResult.transpiledFiles, this.config.transpilers),
+      SourceMapper.create(initialTestRunResult.transpiledFiles, this.config),
       initialTestRunResult.coverageMaps,
       this.config,
       this.reporter);
