@@ -2,6 +2,7 @@ import MutantStatus from './MutantStatus';
 import {Location, Range} from '../../core';
 
 interface MutantResult {
+  id: string;
   sourceFilePath: string;
   mutatorName: string;
   status: MutantStatus;

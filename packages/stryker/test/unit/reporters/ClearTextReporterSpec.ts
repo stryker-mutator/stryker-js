@@ -5,7 +5,7 @@ import * as chalk from 'chalk';
 import * as _ from 'lodash';
 import { MutantStatus, MutantResult } from 'stryker-api/report';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
-import { scoreResult, mutationScoreThresholds, config } from '../../helpers/producers';
+import { scoreResult, mutationScoreThresholds, config, mutantResult } from '../../helpers/producers';
 
 describe('ClearTextReporter', () => {
   let sut: ClearTextReporter;
@@ -227,7 +227,7 @@ describe('ClearTextReporter', () => {
 
   function mutantResults(...status: MutantStatus[]): MutantResult[] {
     return status.map(status => {
-      const result: MutantResult = {
+      const result: MutantResult = mutantResult({
         location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
         range: [0, 0],
         mutatedLines: 'mutated line',
@@ -237,7 +237,7 @@ describe('ClearTextReporter', () => {
         sourceFilePath: '',
         testsRan: ['a test', 'a second test', 'a third test'],
         status: status
-      };
+      });
       return result;
     });
   }

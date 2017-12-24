@@ -1,4 +1,4 @@
-import { Transpiler, TranspileResult, FileLocation, TranspilerOptions } from 'stryker-api/transpile';
+import { Transpiler, TranspileResult, TranspilerOptions } from 'stryker-api/transpile';
 import { File, FileKind, TextFile } from 'stryker-api/core';
 import { createInstrumenter, Instrumenter } from 'istanbul-lib-instrument';
 import { errorToString, wrapInClosure } from '../utils/objectUtils';
@@ -20,7 +20,7 @@ export interface CoverageMapsByFile {
 export default class CoverageInstrumenterTranspiler implements Transpiler {
 
   private instrumenter: Instrumenter;
-  public fileCoveragePerFile: CoverageMapsByFile = Object.create(null);
+  public fileCoverageMaps: CoverageMapsByFile = Object.create(null);
   private log: Logger;
 
   constructor(private settings: TranspilerOptions, private testFramework: TestFramework | null) {
@@ -38,10 +38,6 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     } catch (error) {
       return Promise.resolve(this.errorResult(errorToString(error)));
     }
-  }
-
-  public getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
-    return sourceFileLocation;
   }
 
   /**
@@ -95,7 +91,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     try {
       const content = this.instrumenter.instrumentSync(sourceFile.content, sourceFile.name);
       const fileCoverage = this.patchRanges(this.instrumenter.lastFileCoverage());
-      this.fileCoveragePerFile[sourceFile.name] = this.retrieveCoverageMaps(fileCoverage);
+      this.fileCoverageMaps[sourceFile.name] = this.retrieveCoverageMaps(fileCoverage);
       return {
         mutated: sourceFile.mutated,
         included: sourceFile.included,
@@ -119,7 +115,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
   }
 
   private addCollectCoverageFileIfNeeded(result: TranspileResult): TranspileResult {
-    if (Object.keys(this.fileCoveragePerFile).length && this.settings.config.coverageAnalysis === 'perTest') {
+    if (Object.keys(this.fileCoverageMaps).length && this.settings.config.coverageAnalysis === 'perTest') {
       if (this.testFramework) {
         // Add piece of javascript to collect coverage per test results
         const content = this.coveragePerTestFileContent(this.testFramework);

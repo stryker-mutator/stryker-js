@@ -45,18 +45,31 @@ describe('Sample integration', function () {
   });
 
   it('should be able to transpile source code', async () => {
-    const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
+    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: false });
     const transpileResult = await transpiler.transpile(inputFiles);
     expect(transpileResult.error).to.be.null;
     const outputFiles = transpileResult.outputFiles;
     expect(outputFiles.length).to.eq(2);
   });
 
-  it('should be able to mutate transpiled code', async () => {
+  it('should be able to produce source maps', async () => {
+    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
+    const transpileResult = await transpiler.transpile(inputFiles);
+    const outputFiles = transpileResult.outputFiles;
+    expect(outputFiles).lengthOf(4);
+    const mapFiles = outputFiles.filter(file => file.name.endsWith('.map'));
+    expect(mapFiles).lengthOf(2);
+    expect(mapFiles.map(file => file.name)).deep.eq([
+      path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'math.js.map'),
+      path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'useMath.js.map')
+    ]);
+  });
+
+  it('should be able to transpile mutated code', async () => {
     // Transpile mutants
     const mutator = new TypescriptMutator(config);
     const mutants = mutator.mutate(inputFiles);
-    const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
+    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: false });
     transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
     const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpression');

@@ -81,7 +81,7 @@ describe('InitialTestExecutor run', () => {
 
     it('should pass through the result', async () => {
       const coverageData = coverageMaps();
-      coverageInstrumenterTranspilerMock.fileCoveragePerFile = { someFile: coverageData } as any;
+      coverageInstrumenterTranspilerMock.fileCoverageMaps = { someFile: coverageData } as any;
       const expectedResult: InitialTestRunResult = {
         runResult: expectedRunResult,
         transpiledFiles: transpileResultMock.outputFiles,
@@ -139,7 +139,7 @@ describe('InitialTestExecutor run', () => {
       await sut.run();
       const expectedSettings: TranspilerOptions = {
         config: options,
-        keepSourceMaps: true
+        produceSourceMaps: true
       };
       expect(coverageInstrumenterTranspiler.default).calledWithNew;
       expect(coverageInstrumenterTranspiler.default).calledWith(expectedSettings, testFrameworkMock);

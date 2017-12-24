@@ -1,4 +1,5 @@
 interface MatchedMutant {
+  readonly id: string;
   readonly mutatorName: string;
   readonly scopedTestIds: number[];
   readonly timeSpentScopedTests: number;

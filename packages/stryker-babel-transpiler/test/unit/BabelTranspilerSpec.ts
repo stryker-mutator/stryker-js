@@ -2,7 +2,7 @@ import BabelTranspiler from '../../src/BabelTranspiler';
 import { expect, assert } from 'chai';
 import { File } from 'stryker-api/core';
 import { Transpiler } from 'stryker-api/transpile';
-import { Position, FileKind } from 'stryker-api/core';
+import { FileKind } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
 import { createFile } from '../helpers/producers';
 import * as sinon from 'sinon';
@@ -25,7 +25,7 @@ describe('BabelTranspiler', () => {
       };
     });
 
-    babelTranspiler = new BabelTranspiler({ config: new Config, keepSourceMaps: false });
+    babelTranspiler = new BabelTranspiler({ config: new Config, produceSourceMaps: false });
 
     files = [
       createFile('main.js', 'const main = () => { sum(2); divide(2); }'),
@@ -96,20 +96,4 @@ describe('BabelTranspiler', () => {
     });
   });
 
-  describe('getMappedLocation', () => {
-    it('should throw a not implemented error', () => {
-      const position: Position = {
-        line: 0,
-        column: 0
-      };
-
-      const fileLocation: { fileName: string, start: Position, end: Position } = {
-        fileName: 'test',
-        start: position,
-        end: position
-      };
-
-      expect(() => babelTranspiler.getMappedLocation(fileLocation)).to.throw(Error, 'Not implemented');
-    });
-  });
 });

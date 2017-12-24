@@ -14,10 +14,11 @@ describe('TestableMutant', () => {
   beforeEach(() => {
     innerMutant = mutant();
     innerTextFile = textFile();
-    sut = new TestableMutant(innerMutant, new SourceFile(innerTextFile));
+    sut = new TestableMutant('3', innerMutant, new SourceFile(innerTextFile));
   });
 
   it('should pass properties from mutant and source code', () => {
+    expect(sut.id).eq('3');
     expect(sut.fileName).eq(innerMutant.fileName);
     expect(sut.range).eq(innerMutant.range);
     expect(sut.mutatorName).eq(innerMutant.mutatorName);

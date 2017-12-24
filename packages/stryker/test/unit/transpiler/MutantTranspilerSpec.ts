@@ -35,7 +35,7 @@ describe('MutantTranspiler', () => {
         'someLogLevel',
         ['plugin1'],
         TranspilerFacade,
-        { config: expectedConfig, keepSourceMaps: false });
+        { config: expectedConfig, produceSourceMaps: false });
     });
 
     describe('initialize', () => {

@@ -68,7 +68,7 @@ export default class TestableMutant {
     this._timeSpentScopedTests += testResult.timeSpentMs;
   }
 
-  constructor(public mutant: Mutant, public sourceFile: SourceFile) {
+  constructor(public readonly id: string, public mutant: Mutant, public sourceFile: SourceFile) {
   }
 
   public get originalLines() {
@@ -95,6 +95,7 @@ export default class TestableMutant {
 
   public result(status: MutantStatus, testsRan: string[]): MutantResult {
     return freezeRecursively({
+      id: this.id,
       sourceFilePath: this.fileName,
       mutatorName: this.mutatorName,
       status,

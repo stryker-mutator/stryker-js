@@ -113,6 +113,7 @@ describe('Sandbox', () => {
         mutant = createMutant({ fileName: expectedFileToMutate.name, replacement: 'mutated', range: [0, 8] });
 
         const testableMutant = new TestableMutant(
+          '1',
           mutant,
           new SourceFile(textFile({ content: 'original code' })));
         testableMutant.addTestResult(1, testResult({ timeSpentMs: 10 }));
@@ -179,7 +180,7 @@ describe('Sandbox', () => {
     describe('when runMutant()', () => {
 
       beforeEach(() => {
-        const mutant = new TestableMutant(createMutant(), new SourceFile(textFile()));
+        const mutant = new TestableMutant('2', createMutant(), new SourceFile(textFile()));
         return sut.runMutant(new TranspiledMutant(mutant, transpileResult({ outputFiles: [textFile({ name: expectedTargetFileToMutate })] })));
       });
 

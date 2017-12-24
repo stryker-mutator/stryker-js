@@ -1,5 +1,5 @@
 import { File } from 'stryker-api/core';
-import { Transpiler, FileLocation, TranspileResult, TranspilerOptions, TranspilerFactory } from 'stryker-api/transpile';
+import { Transpiler, TranspileResult, TranspilerOptions, TranspilerFactory } from 'stryker-api/transpile';
 
 class NamedTranspiler {
   constructor(public name: string, public transpiler: Transpiler) { }
@@ -19,22 +19,6 @@ export default class TranspilerFacade implements Transpiler {
 
   public transpile(files: File[]): Promise<TranspileResult> {
     return this.performTranspileChain(this.createPassThruTranspileResult(files));
-  }
-
-  public getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
-    return this.performMappedLocationChain(sourceFileLocation);
-  }
-
-  private performMappedLocationChain(
-    sourceFileLocation: FileLocation,
-    remainingChain: NamedTranspiler[] = this.innerTranspilers.slice()
-  ): FileLocation {
-    const next = remainingChain.shift();
-    if (next) {
-      return this.performMappedLocationChain(next.transpiler.getMappedLocation(sourceFileLocation), remainingChain);
-    } else {
-      return sourceFileLocation;
-    }
   }
 
   private async performTranspileChain(

@@ -51,7 +51,11 @@ export default class InitialTestExecutor {
       const sandbox = await Sandbox.create(this.options, 0, transpileResult.outputFiles, this.testFramework);
       const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
       await sandbox.dispose();
-      return { runResult, transpiledFiles: transpileResult.outputFiles, coverageMaps: coverageInstrumenterTranspiler.fileCoveragePerFile };
+      return { 
+        runResult, 
+        transpiledFiles: transpileResult.outputFiles, 
+        coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps 
+      };
     }
   }
 
@@ -97,7 +101,7 @@ export default class InitialTestExecutor {
    * which is used to instrument for code coverage when needed.
    */
   private createTranspilerFacade(coverageInstrumenterTranspiler: CoverageInstrumenterTranspiler): Transpiler {
-    const transpilerSettings: TranspilerOptions = { config: this.options, keepSourceMaps: true };
+    const transpilerSettings: TranspilerOptions = { config: this.options, produceSourceMaps: true };
     return new TranspilerFacade(transpilerSettings, {
       name: CoverageInstrumenterTranspiler.name,
       transpiler: coverageInstrumenterTranspiler
@@ -105,7 +109,7 @@ export default class InitialTestExecutor {
   }
 
   private createCoverageInstrumenterTranspiler() {
-    return new CoverageInstrumenterTranspiler({ keepSourceMaps: true, config: this.options }, this.testFramework);
+    return new CoverageInstrumenterTranspiler({ produceSourceMaps: true, config: this.options }, this.testFramework);
   }
 
   private logTranspileResult(transpileResult: TranspileResult) {

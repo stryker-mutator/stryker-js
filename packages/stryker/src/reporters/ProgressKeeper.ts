@@ -1,4 +1,5 @@
-import { MatchedMutant, Reporter, MutantResult, MutantStatus } from 'stryker-api/report';
+import { MatchedMutant, Reporter, MutantResult } from 'stryker-api/report';
+import { MutantStatus } from 'stryker-api/report';
 
 abstract class ProgressKeeper implements Reporter {
 
@@ -8,19 +9,19 @@ abstract class ProgressKeeper implements Reporter {
     total: 0
   };
 
+  private mutantIdsWithoutCoverage: string[];
+
   onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
-    this.progress.total = matchedMutants.filter(m => m.scopedTestIds.length > 0).length;
+    this.mutantIdsWithoutCoverage = matchedMutants.filter(m => m.scopedTestIds.length === 0).map(m => m.id);
+    this.progress.total = matchedMutants.length - this.mutantIdsWithoutCoverage.length;
   }
 
   onMutantTested(result: MutantResult): void {
-    this.progress.tested++;
-    switch (result.status) {
-      case MutantStatus.NoCoverage:
-        this.progress.tested--; // correct for not tested, because no coverage
-        break;
-      case MutantStatus.Survived:
-        this.progress.survived++;
-        break;
+    if (!this.mutantIdsWithoutCoverage.some(id => result.id === id)) {
+      this.progress.tested++;
+    }
+    if (result.status === MutantStatus.Survived) {
+      this.progress.survived++;
     }
   }
 }

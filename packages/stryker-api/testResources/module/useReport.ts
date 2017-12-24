@@ -32,6 +32,7 @@ if (!(allReporter instanceof AllReporter)) {
 }
 
 let result: MutantResult = {
+  id: '13',
   sourceFilePath: 'string',
   mutatorName: 'string',
   status: MutantStatus.TimedOut,
@@ -48,11 +49,12 @@ console.log(`Mutant status runtime error: ${MutantStatus[MutantStatus.RuntimeErr
 console.log(`Mutant status transpile error: ${MutantStatus[MutantStatus.TranspileError]}`);
 
 const matchedMutant: MatchedMutant = {
-   mutatorName: '',
-   scopedTestIds: [52],
-   timeSpentScopedTests: 52,
-   fileName: 'string',
-   replacement: 'string'
+  id: '13',
+  mutatorName: '',
+  scopedTestIds: [52],
+  timeSpentScopedTests: 52,
+  fileName: 'string',
+  replacement: 'string'
 };
 
 allReporter.onAllMutantsMatchedWithTests([Object.freeze(matchedMutant)]);

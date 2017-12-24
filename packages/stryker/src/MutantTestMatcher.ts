@@ -9,6 +9,7 @@ import StrictReporter from './reporters/StrictReporter';
 import { CoverageMapsByFile, CoverageMaps } from './transpiler/CoverageInstrumenterTranspiler';
 import { filterEmpty } from './utils/objectUtils';
 import SourceFile from './SourceFile';
+import SourceMapper from './transpiler/SourceMapper';
 
 enum StatementLocationKind {
   function,
@@ -27,7 +28,14 @@ interface StatementLocation {
 export default class MutantTestMatcher {
 
   private readonly log = getLogger(MutantTestMatcher.name);
-  constructor(private mutants: Mutant[], private files: File[], private initialRunResult: RunResult, private coveragePerFile: CoverageMapsByFile, private options: StrykerOptions, private reporter: StrictReporter) {
+  constructor(
+    private mutants: Mutant[],
+    private files: File[],
+    private initialRunResult: RunResult,
+    private sourceMapper: SourceMapper,
+    private coveragePerFile: CoverageMapsByFile,
+    private options: StrykerOptions,
+    private reporter: StrictReporter) {
   }
 
   private get baseline(): CoverageCollection | null {
@@ -55,14 +63,18 @@ export default class MutantTestMatcher {
   }
 
   enrichWithCoveredTests(testableMutant: TestableMutant) {
-    const fileCoverage = this.coveragePerFile[testableMutant.mutant.fileName];
-    const smallestCoveringIndicator = this.findMatchingCoveringIndicator(testableMutant, fileCoverage);
+    const transpiledLocation = this.sourceMapper.transpiledLocationFor({
+      fileName: testableMutant.mutant.fileName,
+      location: testableMutant.location
+    });
+    const fileCoverage = this.coveragePerFile[transpiledLocation.fileName];
+    const smallestCoveringIndicator = this.findMatchingCoveringIndicator(transpiledLocation.location, fileCoverage);
     if (smallestCoveringIndicator) {
-      if (this.isCoveredByBaseline(testableMutant.mutant.fileName, smallestCoveringIndicator)) {
+      if (this.isCoveredByBaseline(transpiledLocation.fileName, smallestCoveringIndicator)) {
         testableMutant.addAllTestResults(this.initialRunResult);
       } else {
         this.initialRunResult.tests.forEach((testResult, id) => {
-          if (this.isCoveredByTest(id, testableMutant.mutant.fileName, smallestCoveringIndicator)) {
+          if (this.isCoveredByTest(id, transpiledLocation.fileName, smallestCoveringIndicator)) {
             testableMutant.addTestResult(id, testResult);
           }
         });
@@ -73,18 +85,18 @@ export default class MutantTestMatcher {
     }
   }
 
-  private isCoveredByBaseline(filename: string, coveredCodeIndicator: StatementLocation): boolean {
+  private isCoveredByBaseline(fileName: string, coveredCodeIndicator: StatementLocation): boolean {
     if (this.baseline) {
-      const coverageResult = this.baseline[filename];
+      const coverageResult = this.baseline[fileName];
       return this.isCoveredByCoverageCollection(coverageResult, coveredCodeIndicator);
     } else {
       return false;
     }
   }
 
-  private isCoveredByTest(testId: number, filename: string, coveredCodeIndicator: StatementLocation): boolean {
+  private isCoveredByTest(testId: number, fileName: string, coveredCodeIndicator: StatementLocation): boolean {
     const coverageCollection = this.findCoverageCollectionForTest(testId);
-    const coveredFile = coverageCollection && coverageCollection[filename];
+    const coveredFile = coverageCollection && coverageCollection[fileName];
     return this.isCoveredByCoverageCollection(coveredFile, coveredCodeIndicator);
   }
 
@@ -102,10 +114,10 @@ export default class MutantTestMatcher {
 
   private createTestableMutants(): TestableMutant[] {
     const sourceFiles = this.files.filter(file => file.mutated).map(file => new SourceFile(file as TextFile));
-    return filterEmpty(this.mutants.map(mutant => {
+    return filterEmpty(this.mutants.map((mutant, index) => {
       const sourceFile = sourceFiles.find(file => file.name === mutant.fileName);
       if (sourceFile) {
-        return new TestableMutant(mutant, sourceFile);
+        return new TestableMutant(index.toString(), mutant, sourceFile);
       } else {
         this.log.error(`Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${mutant.fileName}. List of source files: \n\t${sourceFiles.map(s => s.name).join('\n\t')}`);
         return null;
@@ -121,6 +133,7 @@ export default class MutantTestMatcher {
    */
   private mapMutantOnMatchedMutant(testableMutant: TestableMutant): MatchedMutant {
     const matchedMutant = _.cloneDeep({
+      id: testableMutant.id,
       mutatorName: testableMutant.mutant.mutatorName,
       scopedTestIds: testableMutant.selectedTests.map(testSelection => testSelection.id),
       timeSpentScopedTests: testableMutant.timeSpentScopedTests,
@@ -130,15 +143,15 @@ export default class MutantTestMatcher {
     return Object.freeze(matchedMutant);
   }
 
-  private findMatchingCoveringIndicator(mutant: TestableMutant, fileCoverage: CoverageMaps): StatementLocation | null {
-    const statementIndex = this.findMatchingStatement(mutant, fileCoverage.statementMap);
+  private findMatchingCoveringIndicator(location: Location, fileCoverage: CoverageMaps): StatementLocation | null {
+    const statementIndex = this.findMatchingStatement(location, fileCoverage.statementMap);
     if (statementIndex) {
       return {
         kind: StatementLocationKind.statement,
         index: statementIndex
       };
     } else {
-      const functionIndex = this.findMatchingStatement(mutant, fileCoverage.fnMap);
+      const functionIndex = this.findMatchingStatement(location, fileCoverage.fnMap);
       if (functionIndex) {
         return {
           kind: StatementLocationKind.function,
@@ -153,16 +166,17 @@ export default class MutantTestMatcher {
   /**
    * Finds the smallest statement that covers a mutant.
    * @param mutant The mutant.
-   * @param statementMap of the covering file.
+   * @param haystack of the covering file.
    * @returns The index of the smallest statement surrounding the mutant, or null if not found.
    */
-  private findMatchingStatement(mutant: TestableMutant, statementMap: StatementMap): string | null {
+  private findMatchingStatement(needle: Location, haystack: StatementMap): string | null {
     let smallestStatement: string | null = null;
-    if (statementMap) {
-      Object.keys(statementMap).forEach(statementId => {
-        let location = statementMap[statementId];
+    if (haystack) {
+      Object.keys(haystack).forEach(statementId => {
+        const statementLocation = haystack[statementId];
 
-        if (this.locationCoversMutant(mutant.location, location) && (!smallestStatement || this.isSmallerArea(statementMap[smallestStatement], location))) {
+        if (this.locationCoversMutant(needle, statementLocation) && (!smallestStatement
+          || this.isSmallerArea(haystack[smallestStatement], statementLocation))) {
           smallestStatement = statementId;
         }
       });

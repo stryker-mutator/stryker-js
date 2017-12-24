@@ -23,7 +23,7 @@ export default class ConfigValidator {
     this.validateIsStringArray('reporter', this.strykerConfig.reporter);
     this.validateIsStringArray('transpilers', this.strykerConfig.transpilers);
     this.validateCoverageAnalysis();
-    this.downgradeCoverageAnalysisIfNeeded();
+    this.validateCoverageAnalysisWithRespectToTranspilers();
     this.crashIfNeeded();
   }
 
@@ -78,10 +78,13 @@ export default class ConfigValidator {
     }
   }
 
-  private downgradeCoverageAnalysisIfNeeded() {
-    if (this.strykerConfig.transpilers.length && this.strykerConfig.coverageAnalysis !== 'off') {
-      this.log.info('Disabled coverage analysis for this run (off). Coverage analysis using transpilers is not supported yet.');
-      this.strykerConfig.coverageAnalysis = 'off';
+  private validateCoverageAnalysisWithRespectToTranspilers() {
+    if (Array.isArray(this.strykerConfig.transpilers) &&
+      this.strykerConfig.transpilers.length > 1 &&
+      this.strykerConfig.coverageAnalysis !== 'off') {
+      this.invalidate(`Value "${this.strykerConfig.coverageAnalysis}" for \`coverageAnalysis\` is invalid with multiple transpilers (configured transpilers: ${
+        this.strykerConfig.transpilers.join(', ')
+        }). Please report this to the Stryker team if you whish this feature to be implemented`);
     }
   }
 

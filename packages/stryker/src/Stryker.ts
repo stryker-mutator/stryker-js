@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
 import { StrykerOptions, File } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
@@ -18,6 +19,7 @@ import StrictReporter from './reporters/StrictReporter';
 import MutatorFacade from './MutatorFacade';
 import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
+import SourceMapper from './transpiler/SourceMapper';
 
 export default class Stryker {
 
@@ -49,7 +51,7 @@ export default class Stryker {
     this.timer.reset();
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
     TempFolder.instance().initialize();
-    const initialTestRunProcess = this.createInitialTestRunner(inputFiles);
+    const initialTestRunProcess = this.createInitialTestRunProcess(inputFiles);
     const initialTestRunResult = await initialTestRunProcess.run();
     const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
     if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
@@ -77,6 +79,7 @@ export default class Stryker {
       mutants,
       inputFiles,
       initialTestRunResult.runResult,
+      SourceMapper.create(initialTestRunResult.transpiledFiles, this.config.transpilers),
       initialTestRunResult.coverageMaps,
       this.config,
       this.reporter);
@@ -123,7 +126,7 @@ export default class Stryker {
     return new MutationTestExecutor(this.config, inputFiles, this.testFramework, this.reporter);
   }
 
-  private createInitialTestRunner(inputFiles: File[]) {
+  private createInitialTestRunProcess(inputFiles: File[]) {
     return new InitialTestExecutor(this.config, inputFiles, this.testFramework, this.timer);
   }
 

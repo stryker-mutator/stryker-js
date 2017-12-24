@@ -12,6 +12,7 @@ import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import { CoverageMapsByFile } from '../../src/transpiler/CoverageInstrumenterTranspiler';
+import { PassThroughSourceMapper } from '../../src/transpiler/SourceMapper';
 
 describe('MutantTestMatcher', () => {
 
@@ -38,7 +39,14 @@ describe('MutantTestMatcher', () => {
       name: 'fileWithMutantTwo',
       content: '\n\n\n\n\n\n\n\n\n\n'
     })];
-    sut = new MutantTestMatcher(mutants, files, runResult, fileCoverageDictionary, strykerOptions, reporter);
+    sut = new MutantTestMatcher(
+      mutants,
+      files,
+      runResult,
+      new PassThroughSourceMapper(),
+      fileCoverageDictionary,
+      strykerOptions,
+      reporter);
   });
 
   describe('with coverageAnalysis: "perTest"', () => {
@@ -96,6 +104,7 @@ describe('MutantTestMatcher', () => {
             const result = sut.matchWithMutants();
             const matchedMutants: MatchedMutant[] = [
               {
+                id: '0',
                 mutatorName: result[0].mutatorName,
                 scopedTestIds: result[0].selectedTests.map(test => test.id),
                 timeSpentScopedTests: result[0].timeSpentScopedTests,
@@ -103,6 +112,7 @@ describe('MutantTestMatcher', () => {
                 replacement: result[0].replacement
               },
               {
+                id: '1',
                 mutatorName: result[1].mutatorName,
                 scopedTestIds: result[1].selectedTests.map(test => test.id),
                 timeSpentScopedTests: result[1].timeSpentScopedTests,
@@ -275,7 +285,7 @@ describe('MutantTestMatcher', () => {
       it('should match up mutant for issue #151 (https://github.com/stryker-mutator/stryker/issues/151)', () => {
         const sourceFile = new SourceFile(textFile());
         sourceFile.getLocation = () => ({ 'start': { 'line': 13, 'column': 38 }, 'end': { 'line': 24, 'column': 5 } });
-        const testableMutant = new TestableMutant(mutant({
+        const testableMutant = new TestableMutant('1', mutant({
           fileName: 'juice-shop\\app\\js\\controllers\\SearchResultController.js'
         }), sourceFile);
 

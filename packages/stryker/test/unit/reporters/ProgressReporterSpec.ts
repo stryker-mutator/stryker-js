@@ -55,33 +55,27 @@ describe('ProgressReporter', () => {
     let progressBarTickTokens: any;
 
     beforeEach(() => {
-      matchedMutants = [matchedMutant(1), matchedMutant(4), matchedMutant(2)];
-
+      matchedMutants = [matchedMutant(0), matchedMutant(1), matchedMutant(4), matchedMutant(2)];
       sut.onAllMutantsMatchedWithTests(matchedMutants);
     });
 
-    describe('when status is not "Survived"', () => {
-
-      beforeEach(() => {
-        sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
-      });
-
-      it('should tick the ProgressBar with 1 tested mutant, 0 survived', () => {
-        progressBarTickTokens = { total: 3, tested: 1, survived: 0 };
-        expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
-      });
+    it('should tick the ProgressBar with 1 tested mutant, 0 survived when status is not "Survived"', () => {
+      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      progressBarTickTokens = { total: 3, tested: 1, survived: 0 };
+      expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
     });
 
-    describe('when status is "Survived"', () => {
+    it('should not tick the ProgressBar if the result was for a mutant that wasn\'t matched to any tests', () => {
+      // mutant 0 isn't matched to any tests
+      sut.onMutantTested(mutantResult({ id: '0', status: MutantStatus.TranspileError }));
+      progressBarTickTokens = { total: 3, tested: 0, survived: 0 };
+      expect(progressBar.tick).to.not.have.been.called;
+    });
 
-      beforeEach(() => {
-        sut.onMutantTested(mutantResult({ status: MutantStatus.Survived }));
-      });
-
-      it('should tick the ProgressBar with 1 survived mutant', () => {
-        progressBarTickTokens = { total: 3, tested: 1, survived: 1 };
-        expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
-      });
+    it('should tick the ProgressBar with 1 survived mutant when status is "Survived"', () => {
+      sut.onMutantTested(mutantResult({ status: MutantStatus.Survived }));
+      progressBarTickTokens = { total: 3, tested: 1, survived: 1 };
+      expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
     });
   });
 });

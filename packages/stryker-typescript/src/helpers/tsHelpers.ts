@@ -31,8 +31,16 @@ export function getTSConfig(strykerConfig: Config): ts.CompilerOptions | undefin
  * For some reason, typescript on windows doesn't like back slashes
  * @param fileName The file name to be normalized
  */
-export function normalizeForTypescript(fileName: string) {
+export function normalizeFileForTypescript(fileName: string) {
   return fileName.replace(/\\/g, '/');
+}
+
+/**
+ * For some reason, typescript on windows doesn't like back slashes
+ * @param fileName The file name to be normalized
+ */
+export function normalizeFileFromTypescript(fileName: string) {
+  return fileName.replace(/\//g, path.sep);
 }
 
 export function getCompilerOptions(config: Config) {

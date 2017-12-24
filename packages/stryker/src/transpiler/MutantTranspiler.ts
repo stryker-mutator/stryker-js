@@ -5,7 +5,7 @@ import TestableMutant from '../TestableMutant';
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import SourceFile from '../SourceFile';
 import ChildProcessProxy, { ChildProxy } from '../child-proxy/ChildProcessProxy';
-import { TranspileResult, FileLocation } from 'stryker-api/transpile';
+import { TranspileResult, TranspilerOptions } from 'stryker-api/transpile';
 import TranspiledMutant from '../TranspiledMutant';
 
 export default class MutantTranspiler {
@@ -20,7 +20,7 @@ export default class MutantTranspiler {
    * @param config The Stryker config
    */
   constructor(config: Config) {
-    const transpilerOptions = { config, keepSourceMaps: false };
+    const transpilerOptions: TranspilerOptions = { config, produceSourceMaps: false };
     if (config.transpilers.length) {
       this.transpilerChildProcess = ChildProcessProxy.create(
         require.resolve('./TranspilerFacade'),
@@ -31,15 +31,7 @@ export default class MutantTranspiler {
       );
       this.proxy = this.transpilerChildProcess.proxy;
     } else {
-      let transpiler = new TranspilerFacade(transpilerOptions);
-      this.proxy = {
-        transpile(files: File[]) {
-          return Promise.resolve(transpiler.transpile(files));
-        },
-        getMappedLocation(sourceFileLocation: FileLocation) {
-          return Promise.resolve(transpiler.getMappedLocation(sourceFileLocation));
-        }
-      };
+      this.proxy = new TranspilerFacade(transpilerOptions);
     }
   }
 
