@@ -76,6 +76,7 @@
     "@types/commander": "^2.9.0",
     "@types/inquirer": "0.0.35",
     "@types/prettier": "^1.6.0",
+    "@types/progress": "^2.0.1",
     "stryker-api": "^0.11.0"
   },
   "peerDependencies": {
