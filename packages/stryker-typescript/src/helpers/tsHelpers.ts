@@ -44,13 +44,14 @@ export function getProjectDirectory(config: Config) {
 }
 
 /**
- * Verifies that the installed version of typescript satisfies '>=2.5` and otherwise: throws an exception
+ * Verifies that the installed version of typescript satisfies '>=2.4` and otherwise: throws an exception
  */
 export function guardTypescriptVersion() {
-  if (!semver.satisfies(ts.version, '>=2.5')) {
+  if (!semver.satisfies(ts.version, '>=2.4')) {
     throw new Error(`Installed typescript version ${ts.version} is not supported by stryker-typescript. Please install version 2.5 or higher (\`npm install typescript@^2.5\`).`);
   }
 }
+
 
 const printer = ts.createPrinter({
   removeComments: false,
@@ -61,10 +62,20 @@ export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): str
   return printer.printNode(ts.EmitHint.Unspecified, node, originalSourceFile);
 }
 
-const allExtensions: string[] = Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
+function tsExtensions() {
+  // Since ts 2.5 the ts.Extension enum is a string-based enum 
+  if (semver.satisfies(ts.version, '>=2.5')) {
+    return Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
+  } else {
+    // We know that pre 2.5 should have these extensions:
+    return ['.ts', '.tsx', '.js', '.jsx'];
+  }
+}
+
+
 export function isTypescriptFile(file: File) {
   return file.kind === FileKind.Text &&
-    allExtensions.some(extension => file.name.endsWith(extension));
+    tsExtensions().some(extension => file.name.endsWith(extension));
 }
 
 /**
