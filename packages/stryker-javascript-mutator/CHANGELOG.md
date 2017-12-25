@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.3.0...stryker-javascript-mutator@0.3.1) (2017-12-21)
+
+
+
+
+**Note:** Version bump only for package stryker-javascript-mutator
+
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.2.3...stryker-javascript-mutator@0.3.0) (2017-12-18)
+
+
+### Features
+
+* **React:** Add support for jsx and flow ([#552](https://github.com/stryker-mutator/stryker/issues/552)) ([11b3516](https://github.com/stryker-mutator/stryker/commit/11b3516))
+
+
+
+
 <a name="0.2.3"></a>
 ## [0.2.3](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.2.2...stryker-javascript-mutator@0.2.3) (2017-11-27)
 

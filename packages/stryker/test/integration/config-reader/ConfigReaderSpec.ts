@@ -63,21 +63,6 @@ describe('ConfigReader', () => {
         });
       });
 
-    describe('with invalid coverageAnalysis', () => {
-      beforeEach(() => {
-        sut = new ConfigReader({ coverageAnalysis: <any>'invalid' });
-        result = sut.readConfig();
-      });
-
-      it('should report a fatal error', () => {
-        expect(log.fatal).to.have.been.calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the folowing: "perTest", "all", "off"');
-      });
-
-      it('should exit with 1', () => {
-        expect(process.exit).to.have.been.calledWith(1);
-      });
-    });
-
     describe('with config file', () => {
       it('should read config file', () => {
         sut = new ConfigReader({ configFile: 'testResources/config-reader/valid.conf.js' });

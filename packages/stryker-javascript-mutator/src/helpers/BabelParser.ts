@@ -6,10 +6,20 @@ import { NodePath } from 'babel-traverse';
 export default class BabelParser {
   static getAst(code: string): babel.types.File {
     let ast: babel.types.File;
+    
+    const options: babylon.BabylonOptions = {
+      sourceType: 'script',
+      plugins: [
+        'jsx',
+        'flow'
+      ]
+    };
+
     try {
-      ast = babylon.parse(code, { sourceType: 'script' });
+      ast = babylon.parse(code, options);
     } catch {
-      ast = babylon.parse(code, { sourceType: 'module' });
+      options.sourceType = 'module';
+      ast = babylon.parse(code, options);
     }
     return ast;
   }
