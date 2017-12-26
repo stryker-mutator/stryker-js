@@ -1,7 +1,7 @@
-import { getLogger } from 'log4js';
 import * as _ from 'lodash';
+import { getLogger } from 'log4js';
 import { RunResult, CoverageCollection, StatementMap, CoveragePerTestResult, CoverageResult } from 'stryker-api/test_runner';
-import { Location, StrykerOptions, File, TextFile } from 'stryker-api/core';
+import { StrykerOptions, File, TextFile } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
 import TestableMutant from './TestableMutant';
@@ -10,24 +10,26 @@ import { CoverageMapsByFile, CoverageMaps } from './transpiler/CoverageInstrumen
 import { filterEmpty } from './utils/objectUtils';
 import SourceFile from './SourceFile';
 import SourceMapper from './transpiler/SourceMapper';
+import LocationHelper from './utils/LocationHelper';
 
-enum StatementLocationKind {
+enum StatementIndexKind {
   function,
   statement
 }
 
 /**
- * Represents a location inside the coverage data of a file
+ * Represents a statement index inside the coverage maps of a file
  * Either the function map, or statement map
  */
-interface StatementLocation {
-  kind: StatementLocationKind;
+interface StatementIndex {
+  kind: StatementIndexKind;
   index: string;
 }
 
 export default class MutantTestMatcher {
 
   private readonly log = getLogger(MutantTestMatcher.name);
+
   constructor(
     private mutants: Mutant[],
     private files: File[],
@@ -68,44 +70,45 @@ export default class MutantTestMatcher {
       location: testableMutant.location
     });
     const fileCoverage = this.coveragePerFile[transpiledLocation.fileName];
-    const smallestCoveringIndicator = this.findMatchingCoveringIndicator(transpiledLocation.location, fileCoverage);
-    if (smallestCoveringIndicator) {
-      if (this.isCoveredByBaseline(transpiledLocation.fileName, smallestCoveringIndicator)) {
+    const statementIndex = this.findMatchingStatement(new LocationHelper(transpiledLocation.location), fileCoverage);
+    if (statementIndex) {
+      if (this.isCoveredByBaseline(transpiledLocation.fileName, statementIndex)) {
         testableMutant.addAllTestResults(this.initialRunResult);
       } else {
         this.initialRunResult.tests.forEach((testResult, id) => {
-          if (this.isCoveredByTest(id, transpiledLocation.fileName, smallestCoveringIndicator)) {
+          if (this.isCoveredByTest(id, transpiledLocation.fileName, statementIndex)) {
             testableMutant.addTestResult(id, testResult);
           }
         });
       }
     } else {
-      this.log.warn('Cannot find statement for mutant %s in statement map for file. Assuming that all tests cover this mutant. This might have a big impact on the performance.', this.stringify(testableMutant));
+      this.log.warn('Cannot find statement for mutant %s in statement map for file. Assuming that all tests cover this mutant. This might have a big impact on the performance.',
+        testableMutant.toString());
       testableMutant.addAllTestResults(this.initialRunResult);
     }
   }
 
-  private isCoveredByBaseline(fileName: string, coveredCodeIndicator: StatementLocation): boolean {
+  private isCoveredByBaseline(fileName: string, statementIndex: StatementIndex): boolean {
     if (this.baseline) {
       const coverageResult = this.baseline[fileName];
-      return this.isCoveredByCoverageCollection(coverageResult, coveredCodeIndicator);
+      return this.isCoveredByCoverageCollection(coverageResult, statementIndex);
     } else {
       return false;
     }
   }
 
-  private isCoveredByTest(testId: number, fileName: string, coveredCodeIndicator: StatementLocation): boolean {
+  private isCoveredByTest(testId: number, fileName: string, statementIndex: StatementIndex): boolean {
     const coverageCollection = this.findCoverageCollectionForTest(testId);
     const coveredFile = coverageCollection && coverageCollection[fileName];
-    return this.isCoveredByCoverageCollection(coveredFile, coveredCodeIndicator);
+    return this.isCoveredByCoverageCollection(coveredFile, statementIndex);
   }
 
-  private isCoveredByCoverageCollection(coveredFile: CoverageResult | null, coveredCodeIndicator: StatementLocation): boolean {
+  private isCoveredByCoverageCollection(coveredFile: CoverageResult | null, statementIndex: StatementIndex): boolean {
     if (coveredFile) {
-      if (coveredCodeIndicator.kind === StatementLocationKind.statement) {
-        return coveredFile.s[coveredCodeIndicator.index] > 0;
+      if (statementIndex.kind === StatementIndexKind.statement) {
+        return coveredFile.s[statementIndex.index] > 0;
       } else {
-        return coveredFile.f[coveredCodeIndicator.index] > 0;
+        return coveredFile.f[statementIndex.index] > 0;
       }
     } else {
       return false;
@@ -143,18 +146,18 @@ export default class MutantTestMatcher {
     return Object.freeze(matchedMutant);
   }
 
-  private findMatchingCoveringIndicator(location: Location, fileCoverage: CoverageMaps): StatementLocation | null {
-    const statementIndex = this.findMatchingStatement(location, fileCoverage.statementMap);
+  private findMatchingStatement(location: LocationHelper, fileCoverage: CoverageMaps): StatementIndex | null {
+    const statementIndex = this.findMatchingStatementInMap(location, fileCoverage.statementMap);
     if (statementIndex) {
       return {
-        kind: StatementLocationKind.statement,
+        kind: StatementIndexKind.statement,
         index: statementIndex
       };
     } else {
-      const functionIndex = this.findMatchingStatement(location, fileCoverage.fnMap);
+      const functionIndex = this.findMatchingStatementInMap(location, fileCoverage.fnMap);
       if (functionIndex) {
         return {
-          kind: StatementLocationKind.function,
+          kind: StatementIndexKind.function,
           index: functionIndex
         };
       } else {
@@ -164,56 +167,29 @@ export default class MutantTestMatcher {
   }
 
   /**
-   * Finds the smallest statement that covers a mutant.
-   * @param mutant The mutant.
-   * @param haystack of the covering file.
-   * @returns The index of the smallest statement surrounding the mutant, or null if not found.
+   * Finds the smallest statement that covers a location
+   * @param needle The location to find.
+   * @param haystack the statement map or function map to search in.
+   * @returns The index of the smallest statement surrounding the location, or null if not found.
    */
-  private findMatchingStatement(needle: Location, haystack: StatementMap): string | null {
-    let smallestStatement: string | null = null;
+  private findMatchingStatementInMap(needle: LocationHelper, haystack: StatementMap): string | null {
+    let smallestStatement: { index: string | null, location: LocationHelper } = {
+      index: null,
+      location: LocationHelper.MAX_VALUE
+    };
     if (haystack) {
       Object.keys(haystack).forEach(statementId => {
         const statementLocation = haystack[statementId];
 
-        if (this.locationCoversMutant(needle, statementLocation) && (!smallestStatement
-          || this.isSmallerArea(haystack[smallestStatement], statementLocation))) {
-          smallestStatement = statementId;
+        if (needle.isCoveredBy(statementLocation) && smallestStatement.location.isSmallerArea(statementLocation)) {
+          smallestStatement = {
+            index: statementId,
+            location: new LocationHelper(statementLocation)
+          };
         }
       });
     }
-    return smallestStatement;
-  }
-
-  /**
-   * Indicates whether the second location is smaller than the first location.
-   * @param first The area which may cover a bigger area than the second location.
-   * @param second The area which may cover a smaller area than the first location.
-   * @returns true if the second location covers a smaller area than the first.
-   */
-  private isSmallerArea(first: Location, second: Location): boolean {
-    let firstLocationHasSmallerArea = false;
-    let lineDifference = (first.end.line - first.start.line) - (second.end.line - second.start.line);
-    let coversLessLines = lineDifference > 0;
-    let coversLessColumns = lineDifference === 0 && (second.start.column - first.start.column) + (first.end.column - second.end.column) > 0;
-    if (coversLessLines || coversLessColumns) {
-      firstLocationHasSmallerArea = true;
-    }
-    return firstLocationHasSmallerArea;
-  }
-
-  /**
-   * Indicates whether a location covers a mutant.
-   * @param mutantLocation The location of the mutant.
-   * @param statementLocation The location of the statement.
-   * @returns true if the location covers the mutant.
-   */
-  private locationCoversMutant(mutantLocation: Location, statementLocation: Location): boolean {
-    let mutantIsAfterStart = mutantLocation.start.line > statementLocation.start.line ||
-      (mutantLocation.start.line === statementLocation.start.line && mutantLocation.start.column >= statementLocation.start.column);
-    let mutantIsBeforeEnd = mutantLocation.end.line < statementLocation.end.line ||
-      (mutantLocation.end.line === statementLocation.end.line && mutantLocation.end.column <= statementLocation.end.column);
-
-    return mutantIsAfterStart && mutantIsBeforeEnd;
+    return smallestStatement.index;
   }
 
   private findCoverageCollectionForTest(testId: number): CoverageCollection | null {
@@ -230,9 +206,5 @@ export default class MutantTestMatcher {
 
   private isCoveragePerTestResult(coverage: CoverageCollection | CoveragePerTestResult | undefined): coverage is CoveragePerTestResult {
     return this.options.coverageAnalysis === 'perTest';
-  }
-
-  private stringify(mutant: TestableMutant) {
-    return `${mutant.mutant.mutatorName}: (${mutant.replacement}) file://${mutant.fileName}:${mutant.location.start.line + 1}:${mutant.location.start.column}`;
   }
 }

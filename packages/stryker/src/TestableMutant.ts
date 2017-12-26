@@ -108,4 +108,8 @@ export default class TestableMutant {
     });
   }
 
+  toString() {
+    return `${this.mutant.mutatorName}: (${this.replacement}) file://${this.fileName}:${this.location.start.line + 1}:${this.location.start.column}`;
+  }
+
 }
