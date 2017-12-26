@@ -2,7 +2,7 @@ import { MutationScoreThresholds } from 'stryker-api/core';
 import { ScoreResult } from 'stryker-api/report';
 import * as os from 'os';
 import * as _ from 'lodash';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 
 const FILES_ROOT_NAME = 'All files';
 
