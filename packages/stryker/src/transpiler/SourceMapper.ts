@@ -2,12 +2,32 @@ import * as path from 'path';
 import { SourceMapConsumer, RawSourceMap } from 'source-map';
 import { File, FileKind, TextFile, Location } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
+import { base64Decode } from '../utils/objectUtils';
 
-const SOURCE_MAP_URL_REGEX = /\/\/#\s*sourceMappingURL=(.*)/g;
+const SOURCE_MAP_URL_REGEX = /\/\/\s*#\s*sourceMappingURL=(.*)/g;
 
 export interface MappedLocation {
   fileName: string;
   location: Location;
+}
+
+interface SourceMapInfo {
+  transpiledFile: TextFile;
+  sourceMapFileName: string;
+  sourceMap: SourceMapConsumer;
+}
+
+interface SourceMapInfoBySource {
+  [sourceFileName: string]: SourceMapInfo;
+}
+
+export class SourceMapError extends Error {
+  constructor(message: string) {
+    super(`${message}. Cannot analyse code coverage. Setting \`coverageAnalysis: "off"\` in your stryker.conf.js will prevent this error, but forces Stryker to run each test for each mutant.`);
+    Error.captureStackTrace(this, SourceMapError);
+    // TS recommendation: https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
+    Object.setPrototypeOf(this, SourceMapError.prototype);
+  }
 }
 
 export default abstract class SourceMapper {
@@ -22,25 +42,58 @@ export default abstract class SourceMapper {
   }
 }
 
-interface SourceMapBySource {
-  [sourceFileName: string]: {
-    transpiledFile: TextFile;
-    sourceMapFileName: string;
-    sourceMap: SourceMapConsumer;
-  };
-}
-
 export class TranspiledSourceMapper extends SourceMapper {
 
-  private sourceMaps: SourceMapBySource;
+  private sourceMaps: SourceMapInfoBySource;
 
   constructor(private transpiledFiles: File[]) {
     super();
-    this.sourceMaps = this.createSourceMaps();
   }
 
-  private createSourceMaps(): SourceMapBySource {
-    const sourceMaps: SourceMapBySource = Object.create(null);
+  transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
+    const sourceMapInfo = this.getSourceMap(originalLocation.fileName);
+    if (!sourceMapInfo) {
+      throw new SourceMapError(`Source map not found for "${originalLocation.fileName}"`);
+    } else {
+      const relativeSource = path.relative(path.dirname(sourceMapInfo.sourceMapFileName), originalLocation.fileName)
+        .replace(/\\/g, '/');
+      const start = sourceMapInfo.sourceMap.generatedPositionFor({
+        bias: SourceMapConsumer.LEAST_UPPER_BOUND,
+        column: originalLocation.location.start.column,
+        line: originalLocation.location.start.line + 1, // source maps works 1-based
+        source: relativeSource
+      });
+      const end = sourceMapInfo.sourceMap.generatedPositionFor({
+        bias: SourceMapConsumer.LEAST_UPPER_BOUND,
+        column: originalLocation.location.end.column,
+        line: originalLocation.location.end.line + 1, // source maps works 1-based
+        source: relativeSource
+      });
+      return {
+        fileName: sourceMapInfo.transpiledFile.name,
+        location: {
+          start: {
+            line: start.line - 1,  // Stryker works 0-based
+            column: start.column
+          },
+          end: {
+            line: end.line - 1,  // Stryker works 0-based
+            column: end.column
+          }
+        }
+      };
+    }
+  }
+
+  private getSourceMap(sourceFileName: string): SourceMapInfo {
+    if (!this.sourceMaps) {
+      this.sourceMaps = this.createSourceMaps();
+    }
+    return this.sourceMaps[path.resolve(sourceFileName)];
+  }
+
+  private createSourceMaps(): SourceMapInfoBySource {
+    const sourceMaps: SourceMapInfoBySource = Object.create(null);
     this.transpiledFiles.forEach(transpiledFile => {
       if (transpiledFile.mutated && transpiledFile.kind === FileKind.Text) {
         const sourceMapFile = this.getSourceMapForFile(transpiledFile);
@@ -67,11 +120,11 @@ export class TranspiledSourceMapper extends SourceMapper {
 
   private getSourceMapFileFromUrl(sourceMapUrl: string, transpiledFile: File): TextFile {
     const sourceMapFile = this.isDataUrl(sourceMapUrl) ?
-      this.getSourceMapFromDataUrl(sourceMapUrl, transpiledFile) : this.getSourceMapFromDisk(sourceMapUrl, transpiledFile);
+      this.getSourceMapFromDataUrl(sourceMapUrl, transpiledFile) : this.getSourceMapFromTranspiledFiles(sourceMapUrl, transpiledFile);
     if (sourceMapFile.kind === FileKind.Text) {
       return sourceMapFile;
     } else {
-      throw new Error(`Source map file ${sourceMapFile.name} was of wrong file kind. '${FileKind[sourceMapFile.kind]}' instead of '${FileKind[FileKind.Text]}'`);
+      throw new SourceMapError(`Source map file "${sourceMapFile.name}" has the wrong file kind. "${FileKind[sourceMapFile.kind]}" instead of "${FileKind[FileKind.Text]}"`);
     }
   }
 
@@ -82,7 +135,7 @@ export class TranspiledSourceMapper extends SourceMapper {
   private getSourceMapFromDataUrl(sourceMapUrl: string, transpiledFile: File): TextFile {
     const supportedDataPrefix = 'data:application/json;base64,';
     if (sourceMapUrl.startsWith(supportedDataPrefix)) {
-      const content = Buffer.from(sourceMapUrl.substr(supportedDataPrefix.length), 'base64').toString('utf8');
+      const content = base64Decode(sourceMapUrl.substr(supportedDataPrefix.length));
       return {
         name: transpiledFile.name,
         content,
@@ -92,17 +145,17 @@ export class TranspiledSourceMapper extends SourceMapper {
         transpiled: false
       };
     } else {
-      throw new Error('Source map cannot be read. The data type ' + sourceMapUrl.substr(0, sourceMapUrl.lastIndexOf(',')) + ' is not supported. Found in file' + transpiledFile.name);
+      throw new SourceMapError(`Source map file for "${transpiledFile.name}" cannot be read. Data url "${sourceMapUrl.substr(0, sourceMapUrl.lastIndexOf(','))}" found, where "${supportedDataPrefix.substr(0, supportedDataPrefix.length - 1)}" was expected`);
     }
   }
 
-  private getSourceMapFromDisk(sourceMapUrl: string, transpiledFile: File) {
+  private getSourceMapFromTranspiledFiles(sourceMapUrl: string, transpiledFile: File) {
     const sourceMapFileName = path.resolve(path.dirname(transpiledFile.name), sourceMapUrl);
     const sourceMapFile = this.transpiledFiles.find(file => path.resolve(file.name) === sourceMapFileName);
     if (sourceMapFile) {
       return sourceMapFile;
     } else {
-      throw new Error(`Source map file ${sourceMapFileName} could not be found.`);
+      throw new SourceMapError(`Source map file "${sourceMapUrl}" (referenced by "${transpiledFile.name}") cannot be found in list of transpiled files`);
     }
   }
 
@@ -116,42 +169,8 @@ export class TranspiledSourceMapper extends SourceMapper {
     if (lastMatch) {
       return lastMatch[1];
     } else {
-      throw new Error('Source map not defined for transpiled file: ' + transpiledFile.name);
+      throw new SourceMapError(`No source map reference found in transpiled file "${transpiledFile.name}"`);
     }
-  }
-
-  transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
-    const sourceMapInfo = this.sourceMaps[originalLocation.fileName];
-    if (sourceMapInfo === null) {
-      throw new Error('Source map not found for ' + originalLocation.fileName);
-    }
-    const relativeSource = path.relative(path.dirname(sourceMapInfo.sourceMapFileName), originalLocation.fileName)
-      .replace(/\\/g, '/');
-    const start = sourceMapInfo.sourceMap.generatedPositionFor({
-      bias: SourceMapConsumer.LEAST_UPPER_BOUND,
-      column: originalLocation.location.start.column,
-      line: originalLocation.location.start.line + 1, // source maps works 1-based
-      source: relativeSource
-    });
-    const end = sourceMapInfo.sourceMap.generatedPositionFor({
-      bias: SourceMapConsumer.LEAST_UPPER_BOUND,
-      column: originalLocation.location.end.column,
-      line: originalLocation.location.end.line + 1, // source maps works 1-based
-      source: relativeSource
-    });
-    return {
-      fileName: sourceMapInfo.transpiledFile.name,
-      location: {
-        start: {
-          line: start.line - 1,  // Stryker works 0-based
-          column: start.column
-        },
-        end: {
-          line: end.line - 1,  // Stryker works 0-based
-          column: end.column
-        }
-      }
-    };
   }
 }
 

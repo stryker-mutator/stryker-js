@@ -78,3 +78,7 @@ export function wrapInClosure(codeFragment: string) {
 export function setExitCode(n: number) {
   process.exitCode = n;
 }
+
+export function base64Decode(base64EncodedString: string) {
+  return Buffer.from(base64EncodedString, 'base64').toString('utf8');
+}

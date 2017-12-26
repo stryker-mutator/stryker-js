@@ -12,6 +12,7 @@ import TranspiledMutant from '../../src/TranspiledMutant';
 import { Logger } from 'log4js';
 import { FileCoverageData } from 'istanbul-lib-coverage';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
+import { MappedLocation } from '../../src/transpiler/SourceMapper';
 
 export type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;
@@ -107,6 +108,11 @@ export const textFile = factory<TextFile>({
   transpiled: true,
   kind: FileKind.Text
 });
+
+export const mappedLocation = factoryMethod<MappedLocation>(() => ({
+  fileName: 'file.js',
+  location: location()
+}));
 
 export const coverageMaps = factoryMethod<CoverageMaps>(() => ({
   statementMap: {},
