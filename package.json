@@ -4,7 +4,6 @@
     "@types/babel-core": "^6.25.2",
     "@types/chai": "4.0.6",
     "@types/chai-as-promised": "7.1.0",
-    "@types/commander": "^2.9.0",
     "@types/escodegen": "0.0.6",
     "@types/esprima": "^2.1.31",
     "@types/estree": "0.0.38",
