@@ -13,7 +13,7 @@ import { TempFolder } from '../../src/utils/TempFolder';
 import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
-import { mutant as createMutant, testResult, textFile, fileDescriptor, webFile, transpileResult, transpiledMutant, Mock } from '../helpers/producers';
+import { mutant as createMutant, testResult, textFile, fileDescriptor, webFile, transpileResult, Mock } from '../helpers/producers';
 import SourceFile from '../../src/SourceFile';
 import '../helpers/globals';
 import TranspiledMutant from '../../src/TranspiledMutant';
