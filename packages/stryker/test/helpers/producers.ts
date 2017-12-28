@@ -237,4 +237,4 @@ export const testableMutant = (fileName = 'file') => new TestableMutant('1337', 
 ));
 
 export const transpiledMutant = (fileName = 'file') =>
-  new TranspiledMutant(testableMutant(fileName), transpileResult());
+  new TranspiledMutant(testableMutant(fileName), transpileResult(), true);

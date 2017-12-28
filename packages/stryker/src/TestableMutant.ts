@@ -6,6 +6,11 @@ import { MutantStatus, MutantResult } from 'stryker-api/report';
 import { freezeRecursively } from './utils/objectUtils';
 import { TestSelection } from 'stryker-api/test_framework';
 
+export enum TestSelectionResult {
+  Failed,
+  FailedButAlreadyReporter,
+  Success
+}
 
 export default class TestableMutant {
 
@@ -13,6 +18,7 @@ export default class TestableMutant {
   public specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
   private _location: Location;
+  testSelectionResult = TestSelectionResult.Success;
 
   get selectedTests(): TestSelection[] {
     return this._selectedTests;
@@ -59,11 +65,12 @@ export default class TestableMutant {
     return this.sourceFile.content;
   }
 
-  public addAllTestResults(runResult: RunResult) {
-    runResult.tests.forEach((testResult, id) => this.addTestResult(id, testResult));
+  public selectAllTests(runResult: RunResult, testSelectionResult: TestSelectionResult) {
+    this.testSelectionResult = testSelectionResult;
+    runResult.tests.forEach((testResult, id) => this.selectTest(id, testResult));
   }
 
-  public addTestResult(index: number, testResult: TestResult) {
+  public selectTest(index: number, testResult: TestResult) {
     this._selectedTests.push({ id: index, name: testResult.name });
     this._timeSpentScopedTests += testResult.timeSpentMs;
   }

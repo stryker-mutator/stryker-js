@@ -1,5 +1,6 @@
 import { Logger } from 'log4js';
 import { Mutant } from 'stryker-api/mutant';
+import { TestSelection } from 'stryker-api/test_framework';
 import { textFile, testResult } from './../helpers/producers';
 import { expect } from 'chai';
 import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
@@ -8,11 +9,11 @@ import { MatchedMutant } from 'stryker-api/report';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import currentLogMock from '../helpers/log4jsMock';
 import { file, mutant, Mock, mock } from '../helpers/producers';
-import TestableMutant from '../../src/TestableMutant';
+import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import { CoverageMapsByFile } from '../../src/transpiler/CoverageInstrumenterTranspiler';
-import { PassThroughSourceMapper } from '../../src/transpiler/SourceMapper';
+import { PassThroughSourceMapper, MappedLocation } from '../../src/transpiler/SourceMapper';
 
 describe('MutantTestMatcher', () => {
 
@@ -24,6 +25,7 @@ describe('MutantTestMatcher', () => {
   let strykerOptions: StrykerOptions;
   let reporter: Mock<BroadcastReporter>;
   let files: File[];
+  let sourceMapper: PassThroughSourceMapper;
 
   beforeEach(() => {
     log = currentLogMock();
@@ -39,11 +41,13 @@ describe('MutantTestMatcher', () => {
       name: 'fileWithMutantTwo',
       content: '\n\n\n\n\n\n\n\n\n\n'
     })];
+    sourceMapper = new PassThroughSourceMapper();
+    sandbox.spy(sourceMapper, 'transpiledLocationFor');
     sut = new MutantTestMatcher(
       mutants,
       files,
       runResult,
-      new PassThroughSourceMapper(),
+      sourceMapper,
       fileCoverageDictionary,
       strykerOptions,
       reporter);
@@ -93,11 +97,14 @@ describe('MutantTestMatcher', () => {
 
         describe('without code coverage info', () => {
 
-          it('should add both tests to the mutants', () => {
+          it('should add both tests to the mutants and report failure', () => {
             const result = sut.matchWithMutants();
             const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
             expect(result[0].selectedTests).deep.eq(expectedTestSelection);
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
+            expect(result[0].testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReporter);
+            expect(result[1].testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReporter);
+            expect(log.warn).calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'perTest');
           });
 
           it('should have both mutants matched', () => {
@@ -202,7 +209,7 @@ describe('MutantTestMatcher', () => {
             };
             fileCoverageDictionary['fileWithMutantTwo'] = {
               statementMap: {
-                '1': { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } }
+                '1': { start: { line: 0, column: 0 }, end: { line: 10, column: 0 } }
               }, fnMap: {}
             };
 
@@ -222,9 +229,36 @@ describe('MutantTestMatcher', () => {
 
           it('should have added the run results to the mutants', () => {
             const result = sut.matchWithMutants();
-            const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
+            const expectedTestSelectionFirstMutant: TestSelection[] = [
+              { id: 0, name: 'test one' },
+              { id: 1, name: 'test two' }
+            ];
+            const expectedTestSelectionSecondMutant: TestSelection[] = [{ id: 0, name: 'test one' }];
+            expect(result[0].selectedTests).deep.eq(expectedTestSelectionFirstMutant);
+            expect(result[1].selectedTests).deep.eq(expectedTestSelectionSecondMutant);
+            expect(result[0].testSelectionResult).deep.eq(TestSelectionResult.Success);
+            expect(result[1].testSelectionResult).deep.eq(TestSelectionResult.Success);
+          });
+        });
+
+        describe('without matching statements or functions', () => {
+          beforeEach(() => {
+            fileCoverageDictionary['fileWithMutantOne'] = { statementMap: {}, fnMap: {} };
+            fileCoverageDictionary['fileWithMutantTwo'] = { statementMap: {}, fnMap: {} };
+            runResult.coverage = { baseline: {}, deviations: {} };
+          });
+
+          it('should select all test in the test run but not report the error yet', () => {
+            const result = sut.matchWithMutants();
+            const expectedTestSelection: TestSelection[] = [
+              { name: 'test one', id: 0 },
+              { name: 'test two', id: 1 }
+            ];
             expect(result[0].selectedTests).deep.eq(expectedTestSelection);
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
+            expect(result[0].testSelectionResult).eq(TestSelectionResult.Failed);
+            expect(result[1].testSelectionResult).eq(TestSelectionResult.Failed);
+            expect(log.warn).not.called;
           });
         });
 
@@ -316,11 +350,66 @@ describe('MutantTestMatcher', () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
       runResult.tests.push(testResult(), testResult());
       const result = sut.matchWithMutants();
-      const expectedTestSelection = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
+      const expectedTestSelection: TestSelection[] = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
       expect(result[0].selectedTests).deep.eq(expectedTestSelection);
       expect(result[1].selectedTests).deep.eq(expectedTestSelection);
+      expect(result[0].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReporter);
+      expect(result[1].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReporter);
       expect(log.warn).to.have.been.calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'all');
     });
+
+    describe('when there is coverage data', () => {
+
+      beforeEach(() => {
+        runResult.coverage = {
+          fileWithMutantOne: { s: { '0': 1 }, f: {} }
+        };
+        fileCoverageDictionary['fileWithMutantOne'] = {
+          statementMap: {
+            '0': { start: { line: 0, column: 0 }, end: { line: 6, column: 0 } }
+          }, fnMap: {}
+        };
+      });
+
+      it('should retrieves source mapped location', () => {
+        // Arrange
+        mutants.push(mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
+
+        // Act
+        sut.matchWithMutants();
+
+        // Assert
+        const expectedLocation: MappedLocation = {
+          location: {
+            start: { line: 4, column: 0 },
+            end: { line: 4, column: 1 }
+          },
+          fileName: 'fileWithMutantOne'
+        };
+        expect(sourceMapper.transpiledLocationFor).calledWith(expectedLocation);
+      });
+
+      it('should match mutant to single test result', () => {
+        // Arrange
+        mutants.push(mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
+        runResult.tests.push(testResult({ name: 'test 1' }), testResult({ name: 'test 2' }));
+
+        // Act
+        const result = sut.matchWithMutants();
+
+        // Assert
+        const expectedTestSelection: TestSelection[] = [{
+          id: 0,
+          name: 'test 1'
+        }, {
+          id: 1,
+          name: 'test 2'
+        }];
+        expect(result).lengthOf(1);
+        expect(result[0].selectedTests).deep.eq(expectedTestSelection);
+      });
+    });
+
   });
 
   describe('with coverageAnalysis: "off"', () => {

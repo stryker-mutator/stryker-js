@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Mutant } from 'stryker-api/mutant';
-import TestableMutant from '../../src/TestableMutant';
+import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import { mutant, textFile, runResult, testResult } from './../helpers/producers';
 import SourceFile from '../../src/SourceFile';
 import { TextFile } from 'stryker-api/core';
@@ -26,10 +26,11 @@ describe('TestableMutant', () => {
     expect(sut.originalCode).eq(innerTextFile.content);
   });
 
-  it('should reflect timeSpentScopedTests and scopedTestIds', () => {
-    sut.addAllTestResults(runResult({ tests: [testResult({ name: 'spec1', timeSpentMs: 12 }), testResult({ name: 'spec2', timeSpentMs: 42 })] }));
+  it('should reflect timeSpentScopedTests, scopedTestIds and TestSelectionResult', () => {
+    sut.selectAllTests(runResult({ tests: [testResult({ name: 'spec1', timeSpentMs: 12 }), testResult({ name: 'spec2', timeSpentMs: 42 })] }), TestSelectionResult.FailedButAlreadyReporter);
     expect(sut.timeSpentScopedTests).eq(54);
     expect(sut.selectedTests).deep.eq([{ id: 0, name: 'spec1' }, { id: 1, name: 'spec2' }]);
+    expect(sut.testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReporter);
   });
 
   it('should calculate position using sourceFile', () => {

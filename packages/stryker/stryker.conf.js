@@ -14,7 +14,7 @@ module.exports = function (config) {
         { pattern: 'node_modules/stryker-api/*.js', included: false, mutated: false, transpiled: false },
         { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false, transpiled: false }
       ],
-      coverageAnalysis: 'off',
+      coverageAnalysis: 'perTest',
       tsconfigFile: 'tsconfig.json',
       mutator: 'typescript',
       transpilers: [

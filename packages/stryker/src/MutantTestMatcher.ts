@@ -4,7 +4,7 @@ import { RunResult, CoverageCollection, StatementMap, CoveragePerTestResult, Cov
 import { StrykerOptions, File, TextFile } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
-import TestableMutant from './TestableMutant';
+import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import StrictReporter from './reporters/StrictReporter';
 import { CoverageMapsByFile, CoverageMaps } from './transpiler/CoverageInstrumenterTranspiler';
 import { filterEmpty } from './utils/objectUtils';
@@ -53,10 +53,10 @@ export default class MutantTestMatcher {
     const testableMutants = this.createTestableMutants();
 
     if (this.options.coverageAnalysis === 'off') {
-      testableMutants.forEach(mutant => mutant.addAllTestResults(this.initialRunResult));
+      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.Success));
     } else if (!this.initialRunResult.coverage) {
       this.log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
-      testableMutants.forEach(mutant => mutant.addAllTestResults(this.initialRunResult));
+      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.FailedButAlreadyReporter));
     } else {
       testableMutants.forEach(testableMutant => this.enrichWithCoveredTests(testableMutant));
     }
@@ -73,18 +73,20 @@ export default class MutantTestMatcher {
     const statementIndex = this.findMatchingStatement(new LocationHelper(transpiledLocation.location), fileCoverage);
     if (statementIndex) {
       if (this.isCoveredByBaseline(transpiledLocation.fileName, statementIndex)) {
-        testableMutant.addAllTestResults(this.initialRunResult);
+        testableMutant.selectAllTests(this.initialRunResult, TestSelectionResult.Success);
       } else {
         this.initialRunResult.tests.forEach((testResult, id) => {
           if (this.isCoveredByTest(id, transpiledLocation.fileName, statementIndex)) {
-            testableMutant.addTestResult(id, testResult);
+            testableMutant.selectTest(id, testResult);
           }
         });
       }
     } else {
-      this.log.warn('Cannot find statement for mutant %s in statement map for file. Assuming that all tests cover this mutant. This might have a big impact on the performance.',
-        testableMutant.toString());
-      testableMutant.addAllTestResults(this.initialRunResult);
+      // Could not find a statement corresponding to this mutant
+      // This can happen when for example mutating a TypeScript interface
+      // It should result in an early result during mutation testing
+      // Lets delay error reporting for now
+      testableMutant.selectAllTests(this.initialRunResult, TestSelectionResult.Failed);
     }
   }
 

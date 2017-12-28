@@ -13,6 +13,7 @@ export default class MutantTranspiler {
   private transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
   private proxy: ChildProxy<TranspilerFacade>;
   private currentMutatedFile: SourceFile;
+  private unMutatedFiles: File[];
 
   /**
    * Creates the mutant transpiler in a child process if one is defined. 
@@ -36,7 +37,10 @@ export default class MutantTranspiler {
   }
 
   initialize(files: File[]): Promise<TranspileResult> {
-    return this.proxy.transpile(files);
+    return this.proxy.transpile(files).then((transpileResult: TranspileResult) => {
+      this.unMutatedFiles = transpileResult.outputFiles;
+      return transpileResult;
+    });
   }
 
   transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
@@ -46,7 +50,7 @@ export default class MutantTranspiler {
         const mutant = mutants.shift();
         if (mutant) {
           this.transpileMutant(mutant)
-            .then(transpileResult => observer.next({ mutant, transpileResult }))
+            .then(transpileResult => observer.next(TranspiledMutant.create(mutant, transpileResult, this.unMutatedFiles)))
             .then(nextMutant)
             .catch(error => observer.error(error));
         } else {
