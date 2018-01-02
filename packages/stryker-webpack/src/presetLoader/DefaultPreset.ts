@@ -11,17 +11,13 @@ export default class DefaultPreset implements WebpackPreset {
   }
 
   public getWebpackConfig(projectRoot: string, webpackConfigLocation?: string): Configuration {
+    webpackConfigLocation = webpackConfigLocation || 'webpack.config.js';
+    
     try {
-      return this.getWebpackConfigFromProjectRoot(projectRoot, webpackConfigLocation);
+      return this.loader(path.join(projectRoot, webpackConfigLocation));
     } catch {
       return this.generateDefaultWebpackConfig(projectRoot);
     }
-  }
-
-  private getWebpackConfigFromProjectRoot(projectRoot: string, webpackConfigLocation?: string): Configuration {
-    webpackConfigLocation = webpackConfigLocation || 'webpack.config.js';
-
-    return this.loader(path.join(projectRoot, webpackConfigLocation));
   }
 
   private generateDefaultWebpackConfig(projectRoot: string): Configuration {
