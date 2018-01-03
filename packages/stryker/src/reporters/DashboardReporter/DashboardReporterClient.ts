@@ -10,7 +10,7 @@ export interface StrykerDashboardReport {
   reportData: any;
 }
 
-const URL_STRYKER_DASHBOARD_REPORTER = 'https://stryker-mutator-badge.azurewebsites.net/';
+const URL_STRYKER_DASHBOARD_REPORTER = 'https://badge.stryker-mutator.io/';
 
 export default class DashboardReporterClient {
 

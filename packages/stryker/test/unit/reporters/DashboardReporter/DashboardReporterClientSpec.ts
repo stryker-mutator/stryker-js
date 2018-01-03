@@ -12,6 +12,8 @@ describe('DashboardReporterClient', () => {
   let dashboardClient: Mock<HttpClient>;
   let log: Mock<Logger>;
 
+  const url = 'https://badge.stryker-mutator.io/';
+
   const dashboardReport: StrykerDashboardReport = {
     apiKey: '1',
     repositorySlug: 'github/stryker-mutator/stryker',
@@ -38,7 +40,6 @@ describe('DashboardReporterClient', () => {
       await sut.postStrykerDashboardReport(dashboardReport);
 
       // Assert
-      const url = 'https://stryker-mutator-badge.azurewebsites.net/';
       const report = JSON.stringify(dashboardReport);
       const contentType = {
         ['Content-Type']: 'application/json'
@@ -61,7 +62,7 @@ describe('DashboardReporterClient', () => {
     await sut.postStrykerDashboardReport(dashboardReport);
 
     // Assert
-    expect(log.error).have.been.calledWithMatch('Post to https://stryker-mutator-badge.azurewebsites.net/ resulted in http status code: 500');
+    expect(log.error).have.been.calledWithMatch(`Post to ${url} resulted in http status code: 500`);
   });
 
   it('when the server doesnt respond an error will be logged', async () => {
@@ -73,6 +74,6 @@ describe('DashboardReporterClient', () => {
     await sut.postStrykerDashboardReport(dashboardReport);
 
     // Assert
-    expect(log.error).have.been.calledWithMatch('Unable to reach https://stryker-mutator-badge.azurewebsites.net/. Please check your internet connection.');
+    expect(log.error).have.been.calledWithMatch(`Unable to reach ${url}. Please check your internet connection.`);
   });
 });
