@@ -48,7 +48,7 @@
   "devDependencies": {
     "@types/lodash.flatmap": "^4.5.3",
     "@types/semver": "^5.4.0",
-    "@types/source-map": "^0.5.1",
+    "@types/source-map": "0.5.1",
     "stryker-api": "^0.11.0",
     "stryker-mutator-specification": "^0.2.0"
   },
