@@ -1,15 +1,18 @@
 {
   "name": "stryker-typescript",
-  "version": "0.6.0",
+  "version": "0.8.1",
   "description": "A plugin for TypeScript-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
+    "bootstrap": "npm link ../stryker-api && npm link ../stryker-mutator-specification",
     "start": "tsc -w",
     "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+    "test": "npm run test:ts2.4 && npm run test:current",
+    "test:current": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
+    "test:ts2.4": "npm i --no-save typescript@~2.4 && npm run bootstrap && npm run test:current && npm uninstall typescript && npm run bootstrap "
   },
   "repository": {
     "type": "git",
@@ -45,13 +48,13 @@
   "devDependencies": {
     "@types/lodash.flatmap": "^4.5.3",
     "@types/semver": "^5.4.0",
-    "@types/source-map": "^0.5.1",
-    "stryker-api": "^0.11.0",
-    "stryker-mutator-specification": "^0.1.0"
+    "@types/source-map": "0.5.1",
+    "stryker-api": "^0.12.0",
+    "stryker-mutator-specification": "^0.2.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.11.0",
-    "typescript": "^2.5.0"
+    "stryker-api": "^0.12.0",
+    "typescript": "^2.4.2"
   },
   "initStrykerConfig": {
     "tsconfigFile": "tsconfig.json",

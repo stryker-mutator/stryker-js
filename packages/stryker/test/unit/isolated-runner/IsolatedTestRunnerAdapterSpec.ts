@@ -28,13 +28,13 @@ describe('IsolatedTestRunnerAdapter', () => {
       sandboxWorkingFolder: 'a working directory',
       strykerOptions: {}
     };
-    sinonSandbox = sinon.sandbox.create();
+    sinonSandbox = sinon.createSandbox();
     fakeChildProcess = {
       kill: sinon.stub(),
       send: sinon.stub(),
       on: sinon.stub()
     };
-    sinonSandbox.stub(child_process, 'fork', () => fakeChildProcess);
+    sinonSandbox.stub(child_process, 'fork').returns(fakeChildProcess);
     clock = sinon.useFakeTimers();
   });
 

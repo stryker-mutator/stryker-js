@@ -9,7 +9,10 @@ export default class ConditionalExpressionMutator extends NodeMutator<ts.Conditi
   }
 
   protected identifyReplacements(node: ts.ConditionalExpression, sourceFile: ts.SourceFile): NodeReplacement[] {
-    return [{ node: node.condition, replacement: 'false' }];
+    return [
+      { node: node.condition, replacement: 'false' },
+      { node: node.condition, replacement: 'true' }
+    ];
   }
 
 }

@@ -14,6 +14,15 @@ export default class ConfigValidator {
   validate() {
     this.validateTestFramework();
     this.validateThresholds();
+    this.validateLogLevel();
+    this.validateTimeout();
+    this.validateIsNumber('port', this.strykerConfig.port);
+    this.validateIsNumber('maxConcurrentTestRunners', this.strykerConfig.maxConcurrentTestRunners);
+    this.validateIsString('mutator', this.strykerConfig.mutator);
+    this.validateIsStringArray('plugins', this.strykerConfig.plugins);
+    this.validateIsStringArray('reporter', this.strykerConfig.reporter);
+    this.validateIsStringArray('transpilers', this.strykerConfig.transpilers);
+    this.validateCoverageAnalysis();
     this.downgradeCoverageAnalysisIfNeeded();
     this.crashIfNeeded();
   }
@@ -38,13 +47,34 @@ export default class ConfigValidator {
 
   private validateThresholdValue(name: keyof MutationScoreThresholds, value: number | null) {
     if (typeof value === 'number' && (value < 0 || value > 100)) {
-      this.invalidate(`thresholds.${name} should be between 0 and 100 (was ${value})`);
+      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
     }
   }
 
   private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: number | undefined) {
     if (typeof value !== 'number') {
-      this.invalidate(`thresholds.${name} is invalid, expected a number between 0 and 100 (was ${value}).`);
+      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
+    }
+  }
+
+  private validateLogLevel() {
+    const logLevel = this.strykerConfig.logLevel;
+    const VALID_LOG_LEVEL_VALUES = ['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'all', 'off'];
+    if (VALID_LOG_LEVEL_VALUES.indexOf(logLevel) < 0) {
+      this.invalidate(`Value "${logLevel}" is invalid for \`logLevel\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`);
+    }
+  }
+
+  private validateTimeout() {
+    this.validateIsNumber('timeoutMs', this.strykerConfig.timeoutMs);
+    this.validateIsNumber('timeoutFactor', this.strykerConfig.timeoutFactor);
+  }
+
+  private validateCoverageAnalysis() {
+    const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
+    const coverageAnalysis = this.strykerConfig.coverageAnalysis;
+    if (VALID_COVERAGE_ANALYSIS_VALUES.indexOf(coverageAnalysis) < 0) {
+      this.invalidate(`Value "${coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the following: ${this.joinQuotedList(VALID_COVERAGE_ANALYSIS_VALUES)}`);
     }
   }
 
@@ -61,8 +91,36 @@ export default class ConfigValidator {
     }
   }
 
+  private validateIsNumber(fieldName: keyof Config, value: any) {
+    if (typeof value !== 'number') {
+      this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected a number`);
+    }
+  }
+
+  private validateIsString(fieldName: keyof Config, value: any) {
+    if (typeof value !== 'string') {
+      this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected a string`);
+    }
+  }
+
+  private validateIsStringArray(fieldName: keyof Config, value: any) {
+    if (!Array.isArray(value)) {
+      this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected an array`);
+    } else {
+      value.forEach(v => {
+        if (typeof v !== 'string') {
+          this.invalidate(`Value "${v}" is an invalid element of \`${fieldName}\`. Expected a string`);
+        }
+      });
+    }
+  }
+
   private invalidate(message: string) {
     this.log.fatal(message);
     this.isValid = false;
+  }
+
+  private joinQuotedList(arr: string[]) {
+    return arr.map(v => `"${v}"`).join(', ');
   }
 }

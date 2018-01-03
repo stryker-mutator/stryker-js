@@ -13,7 +13,7 @@ import { TranspileResult, TranspilerOptions } from 'stryker-api/transpile';
 import { RunStatus, RunResult, TestStatus } from 'stryker-api/test_runner';
 import currentLogMock from '../../helpers/log4jsMock';
 import Timer from '../../../src/utils/Timer';
-import { Mock } from '../../helpers/producers';
+import { Mock, coverageMaps } from '../../helpers/producers';
 
 describe('InitialTestExecutor run', () => {
 
@@ -80,12 +80,13 @@ describe('InitialTestExecutor run', () => {
     });
 
     it('should pass through the result', async () => {
-      coverageInstrumenterTranspilerMock.statementMapsPerFile = { someFile: {} } as any;
+      const coverageData = coverageMaps();
+      coverageInstrumenterTranspilerMock.fileCoveragePerFile = { someFile: coverageData } as any;
       const expectedResult: InitialTestRunResult = {
         runResult: expectedRunResult,
         transpiledFiles: transpileResultMock.outputFiles,
-        statementMaps: {
-          someFile: {}
+        coverageMaps: {
+          someFile: coverageData
         }
       };
       const actualRunResult = await sut.run();

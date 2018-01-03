@@ -1,7 +1,7 @@
 import * as os from 'os';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import * as _ from 'lodash';
 import { MutantStatus, MutantResult } from 'stryker-api/report';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
@@ -13,7 +13,7 @@ describe('ClearTextReporter', () => {
   let stdoutStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     stdoutStub = sandbox.stub(process.stdout, 'write');
   });
 

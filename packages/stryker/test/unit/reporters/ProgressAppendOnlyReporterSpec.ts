@@ -11,7 +11,7 @@ describe('ProgressAppendOnlyReporter', () => {
 
   beforeEach(() => {
     sut = new ProgressAppendOnlyReporter();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     sandbox.useFakeTimers();
     sandbox.stub(process.stdout, 'write');
   });

@@ -17,7 +17,7 @@ describe('ProgressReporter', () => {
 
   beforeEach(() => {
     sut = new ProgressReporter();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     progressBar = mock(ProgressBar);
     sandbox.stub(progressBarModule, 'default').returns(progressBar);
   });

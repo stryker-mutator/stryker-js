@@ -18,7 +18,7 @@ describe('PluginLoader', () => {
 
   beforeEach(() => {
     log = currentLogMock();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     importModuleStub = sandbox.stub(fileUtils, 'importModule');
     pluginDirectoryReadMock = sandbox.stub(fs, 'readdirSync');
   });

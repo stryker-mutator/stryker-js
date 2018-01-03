@@ -2,7 +2,7 @@ import DotsReporter from '../../../src/reporters/DotsReporter';
 import * as sinon from 'sinon';
 import { MutantStatus, MutantResult } from 'stryker-api/report';
 import { expect } from 'chai';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import * as os from 'os';
 
 describe('DotsReporter', () => {
@@ -12,7 +12,7 @@ describe('DotsReporter', () => {
 
   beforeEach(() => {
     sut = new DotsReporter();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     sandbox.stub(process.stdout, 'write');
   });
 

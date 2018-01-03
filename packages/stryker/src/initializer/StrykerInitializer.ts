@@ -109,11 +109,6 @@ export default class StrykerInitializer {
     const mutatorOptions = await this.client.getMutatorOptions();
     if (mutatorOptions.length) {
       this.log.debug(`Found mutators: ${JSON.stringify(mutatorOptions)}`);
-      const es5 = {
-        name: 'es5',
-        npm: null
-      };
-      mutatorOptions.push(es5);
       return await this.inquirer.promptMutator(mutatorOptions);
     } else {
       this.out('Unable to select a mutator. You will need to configure it manually.');

@@ -15,7 +15,7 @@ describe('HtmlReporter', () => {
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     copyFolderStub = sandbox.stub(util, 'copyFolder');
     writeFileStub = sandbox.stub(util, 'writeFile');
     deleteDirStub = sandbox.stub(util, 'deleteDir');

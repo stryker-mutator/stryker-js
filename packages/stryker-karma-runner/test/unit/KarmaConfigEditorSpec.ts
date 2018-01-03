@@ -12,7 +12,7 @@ describe('KarmaConfigEditor', () => {
 
   beforeEach(() => {
     sut = new KarmaConfigEditor();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     karmaConfigReader = { read: sandbox.stub() };
     sandbox.stub(karmaConfigReaderModule, 'default').returns(karmaConfigReader);
     config = new Config();

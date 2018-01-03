@@ -3,6 +3,93 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.17.0"></a>
+# [0.17.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.16.0...stryker@0.17.0) (2017-12-21)
+
+
+### Features
+
+* **cvg analysis:** New coverage instrumenter ([#550](https://github.com/stryker-mutator/stryker/issues/550)) ([2bef577](https://github.com/stryker-mutator/stryker/commit/2bef577))
+
+
+
+
+<a name="0.16.0"></a>
+# [0.16.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.6...stryker@0.16.0) (2017-12-19)
+
+
+### Features
+
+* **config:** [#438](https://github.com/stryker-mutator/stryker/issues/438) Extensive config validation ([#549](https://github.com/stryker-mutator/stryker/issues/549)) ([dc6fdf2](https://github.com/stryker-mutator/stryker/commit/dc6fdf2))
+
+
+
+
+<a name="0.15.6"></a>
+## [0.15.6](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.5...stryker@0.15.6) (2017-12-18)
+
+
+
+
+**Note:** Version bump only for package stryker
+
+<a name="0.15.5"></a>
+## [0.15.5](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.4...stryker@0.15.5) (2017-12-05)
+
+
+
+
+**Note:** Version bump only for package stryker
+
+<a name="0.15.4"></a>
+## [0.15.4](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.3...stryker@0.15.4) (2017-11-27)
+
+
+
+
+**Note:** Version bump only for package stryker
+
+<a name="0.15.3"></a>
+## [0.15.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.2...stryker@0.15.3) (2017-11-27)
+
+
+
+
+**Note:** Version bump only for package stryker
+
+<a name="0.15.2"></a>
+## [0.15.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.1...stryker@0.15.2) (2017-11-25)
+
+
+### Bug Fixes
+
+* **StrykerSpec:** Uncomment tests ([#471](https://github.com/stryker-mutator/stryker/issues/471)) ([4a13afa](https://github.com/stryker-mutator/stryker/commit/4a13afa))
+
+
+
+
+<a name="0.15.1"></a>
+## [0.15.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.15.0...stryker@0.15.1) (2017-11-24)
+
+
+### Bug Fixes
+
+* **Initializer:** Remove es5 option ([#469](https://github.com/stryker-mutator/stryker/issues/469)) ([98048f4](https://github.com/stryker-mutator/stryker/commit/98048f4))
+
+
+
+
+<a name="0.15.0"></a>
+# [0.15.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.14.1...stryker@0.15.0) (2017-11-24)
+
+
+### Features
+
+* **JavaScript mutator:** Add stryker-javascript-mutator package ([#467](https://github.com/stryker-mutator/stryker/issues/467)) ([06d6bac](https://github.com/stryker-mutator/stryker/commit/06d6bac)), closes [#429](https://github.com/stryker-mutator/stryker/issues/429)
+
+
+
+
 <a name="0.14.1"></a>
 ## [0.14.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.14.0...stryker@0.14.1) (2017-11-17)
 

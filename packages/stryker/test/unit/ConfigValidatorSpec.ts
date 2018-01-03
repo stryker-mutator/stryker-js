@@ -14,10 +14,14 @@ describe('ConfigValidator', () => {
   let sut: ConfigValidator;
   let log: Mock<Logger>;
 
+  function breakConfig(oldConfig: Config, key: keyof Config, value: any): any {
+    return Object.assign({}, oldConfig, { [key]: value });
+  }
+
   beforeEach(() => {
     log = currentLogMock();
     config = new Config();
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     exitStub = sandbox.stub(process, 'exit');
   });
 
@@ -49,8 +53,8 @@ describe('ConfigValidator', () => {
       sut.validate();
       expect(exitStub).calledWith(1);
       expect(log.fatal).calledWith('`thresholds.high` is lower than `thresholds.low` (-1 < 101)');
-      expect(log.fatal).calledWith('thresholds.high should be between 0 and 100 (was -1)');
-      expect(log.fatal).calledWith('thresholds.low should be between 0 and 100 (was 101)');
+      expect(log.fatal).calledWith('Value "-1" is invalid for `thresholds.high`. Expected a number between 0 and 100');
+      expect(log.fatal).calledWith('Value "101" is invalid for `thresholds.low`. Expected a number between 0 and 100');
     });
 
     it('should be invalid with thresholds.high null', () => {
@@ -59,7 +63,7 @@ describe('ConfigValidator', () => {
       sut = new ConfigValidator(config, testFramework());
       sut.validate();
       expect(exitStub).calledWith(1);
-      expect(log.fatal).calledWith('thresholds.high is invalid, expected a number between 0 and 100 (was null).');
+      expect(log.fatal).calledWith('Value "null" is invalid for `thresholds.high`. Expected a number between 0 and 100');
     });
   });
 
@@ -72,4 +76,103 @@ describe('ConfigValidator', () => {
     expect(config.coverageAnalysis).eq('off');
   });
 
+  it('should be invalid with invalid logLevel', () => {
+    config.logLevel = 'thisTestPasses';
+    sut = new ConfigValidator(config, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "all", "off"');
+  });
+
+  it('should be invalid with nonnumeric timeoutMs', () => {
+    let brokenConfig = breakConfig(config, 'timeoutMs', 'break');
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('Value "break" is invalid for `timeoutMs`. Expected a number');
+  });
+
+  it('should be invalid with nonnumeric timeoutFactor', () => {
+    let brokenConfig = breakConfig(config, 'timeoutFactor', 'break');
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('Value "break" is invalid for `timeoutFactor`. Expected a number');
+  });
+
+  it('should be invalid with non-string mutator', () => {
+    let brokenConfig = breakConfig(config, 'mutator', 0);
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('Value "0" is invalid for `mutator`. Expected a string');
+  });
+
+  describe('plugins', () => {
+    it('should be invalid with non-array plugins', () => {
+      let brokenConfig = breakConfig(config, 'plugins', 'stryker-typescript');
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `plugins`. Expected an array');
+    });
+
+    it('should be invalid with non-string array elements', () => {
+      let brokenConfig = breakConfig(config, 'plugins', ['stryker-jest', 0]);
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "0" is an invalid element of `plugins`. Expected a string');
+    });
+  });
+
+  describe('reporter', () => {
+    it('should be invalid with non-array reporter', () => {
+      let brokenConfig = breakConfig(config, 'reporter', 'stryker-typescript');
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `reporter`. Expected an array');
+    });
+
+    it('should be invalid with non-string array elements', () => {
+      let brokenConfig = breakConfig(config, 'reporter', [
+        'stryker-jest',
+        0
+      ]);
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "0" is an invalid element of `reporter`. Expected a string');
+    });
+  });
+
+  describe('transpilers', () => {
+    it('should be invalid with non-array transpilers', () => {
+      let brokenConfig = breakConfig(config, 'transpilers', 'stryker-typescript');
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `transpilers`. Expected an array');
+    });
+
+    it('should be invalid with non-string array elements', () => {
+      let brokenConfig = breakConfig(config, 'transpilers', [
+        'stryker-jest',
+        0
+      ]);
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "0" is an invalid element of `transpilers`. Expected a string');
+    });
+  });
+
+  it('should be invalid with invalid coverageAnalysis', () => {
+    let brokenConfig = breakConfig(config, 'coverageAnalysis', 'invalid');
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    sut.validate();
+    expect(exitStub).calledWith(1);
+    expect(log.fatal).calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the following: "perTest", "all", "off"');
+  });
 });

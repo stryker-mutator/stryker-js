@@ -14,7 +14,8 @@ class MyTestRunner extends EventEmitter implements TestRunner {
       'a/file': {
         s: {
           '23': 32
-        }
+        },
+        f: {}
       }
     };
     return new Promise<RunResult>(r => r({
@@ -51,4 +52,5 @@ statementMap['23'] = { start: { line: 23, column: 23 }, end: { line: 42, column:
 coverageData['32'] = 24;
 let coverageResult: CoverageResult = {
   s: coverageData,
+  f: coverageData
 };
