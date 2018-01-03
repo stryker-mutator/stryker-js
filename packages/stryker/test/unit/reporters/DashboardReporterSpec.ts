@@ -1,23 +1,23 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import BadgeReporter from '../../../src/reporters/BadgeReporter';
-import { StrykerBadgeReport } from '../../../src/reporters/BadgeReporter/StrykerBadgeClient';
+import DashboardReporter from '../../../src/reporters/DashboardReporter';
+import { StrykerDashboardReport } from '../../../src/reporters/DashboardReporter/DashboardReporterClient';
 import * as environmentVariables from '../../../src/utils/objectUtils';
-import StrykerBadgeClient from '../../../src/reporters/BadgeReporter/StrykerBadgeClient';
+import StrykerDashboardClient from '../../../src/reporters/DashboardReporter/DashboardReporterClient';
 import { scoreResult, mock, Mock } from '../../helpers/producers';
 import { Logger } from 'log4js';
 import currentLogMock from '../../helpers/log4jsMock';
 import { Config } from 'stryker-api/config';
 
-describe('BadgeReporter', () => {
-  let sut: BadgeReporter;
+describe('DashboardReporter', () => {
+  let sut: DashboardReporter;
   let log: Mock<Logger>;
-  let badgeClientMock: Mock<StrykerBadgeClient>;
+  let dashboardClientMock: Mock<StrykerDashboardClient>;
   let getEnvironmentVariables: sinon.SinonStub;
 
   beforeEach(() => {
     log = currentLogMock();
-    badgeClientMock = mock(StrykerBadgeClient);
+    dashboardClientMock = mock(StrykerDashboardClient);
     getEnvironmentVariables = sandbox.stub(environmentVariables, 'getEnvironmentVariable');
   });
 
@@ -39,19 +39,19 @@ describe('BadgeReporter', () => {
     getEnvironmentVariables.withArgs('TRAVIS_PULL_REQUEST').returns(pullRequest);
     getEnvironmentVariables.withArgs('TRAVIS_REPO_SLUG').returns(repository);
     getEnvironmentVariables.withArgs('TRAVIS_BRANCH').returns(branch);
-    getEnvironmentVariables.withArgs('STRYKER_BADGE_API_KEY').returns(apiKey);
+    getEnvironmentVariables.withArgs('STRYKER_DASHBOARD_API_KEY').returns(apiKey);
   }
 
   it('should report mutation score to report server', async () => {
     // Arrange
     setupEnvironmentVariables();
-    sut = new BadgeReporter(new Config, badgeClientMock as any);
+    sut = new DashboardReporter(new Config, dashboardClientMock as any);
 
     // Act
     sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
 
     // Assert
-    const report: StrykerBadgeReport = {
+    const report: StrykerDashboardReport = {
       apiKey: '12345',
       repositorySlug: 'github/stryker-mutator/stryker',
       branch: 'master',
@@ -59,53 +59,53 @@ describe('BadgeReporter', () => {
       reportData: []
     };
 
-    expect(badgeClientMock.postStrykerBadgeReport).to.have.been.calledWith(report);
+    expect(dashboardClientMock.postStrykerDashboardReport).to.have.been.calledWith(report);
     expect(log.warn).to.have.not.been.called;
   });
 
   it('should log a info if it is not a travis build', async () => {
     // Arrange
     setupEnvironmentVariables({ travis: undefined });
-    sut = new BadgeReporter(badgeClientMock as any);
+    sut = new DashboardReporter(dashboardClientMock as any);
 
     // Act
     sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
 
     // Assert
-    expect(badgeClientMock.postStrykerBadgeReport).to.have.not.been.called;
-    expect(log.info).to.have.been.calledWithMatch('Badge report is not send when stryker didn\'t run on buildserver {TRAVIS=true}');
+    expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
+    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not send when stryker didn\'t run on buildserver {TRAVIS=true}');
   });
 
   it('should log a info if it is a pull request', async () => {
     // Arrange
     setupEnvironmentVariables({ pullRequest: '1' });
-    sut = new BadgeReporter(badgeClientMock as any);
+    sut = new DashboardReporter(dashboardClientMock as any);
 
     // Act
     sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
 
     // Assert
-    expect(badgeClientMock.postStrykerBadgeReport).to.have.not.been.called;
-    expect(log.info).to.have.been.calledWithMatch('Badge report is not send when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
+    expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
+    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not send when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
   });
 
   it('should log a warning if the repository is unknown', async () => {
     // Arrange
     setupEnvironmentVariables({ repository: undefined });
-    sut = new BadgeReporter(badgeClientMock as any);
+    sut = new DashboardReporter(dashboardClientMock as any);
 
     // Act
     sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
 
     // Assert
-    expect(badgeClientMock.postStrykerBadgeReport).to.have.not.been.called;
+    expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
     expect(log.warn).to.have.been.calledWithMatch('Missing environment variable TRAVIS_REPO_SLUG');
   });
 
   it('should log a warning if the branch is unknown', async () => {
     // Arrange
     setupEnvironmentVariables({ branch: undefined });
-    sut = new BadgeReporter(badgeClientMock as any);
+    sut = new DashboardReporter(dashboardClientMock as any);
 
     // Act
     sut.onScoreCalculated(scoreResult({
@@ -113,14 +113,14 @@ describe('BadgeReporter', () => {
     }));
 
     // Assert
-    expect(badgeClientMock.postStrykerBadgeReport).to.have.not.been.called;
+    expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
     expect(log.warn).to.have.been.calledWithMatch('Missing environment variable TRAVIS_BRANCH');
   });
 
   it('should log a warning if the stryker api key is unknown', async () => {
     // Arrange
     setupEnvironmentVariables({ apiKey: undefined });
-    sut = new BadgeReporter(badgeClientMock as any);
+    sut = new DashboardReporter(dashboardClientMock as any);
 
     // Act
     sut.onScoreCalculated(scoreResult({
@@ -128,7 +128,7 @@ describe('BadgeReporter', () => {
     }));
 
     // Assert
-    expect(badgeClientMock.postStrykerBadgeReport).to.have.not.been.called;
-    expect(log.warn).to.have.been.calledWithMatch('Missing environment variable STRYKER_BADGE_API_KEY');
+    expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
+    expect(log.warn).to.have.been.calledWithMatch('Missing environment variable STRYKER_DASHBOARD_API_KEY');
   });
 });

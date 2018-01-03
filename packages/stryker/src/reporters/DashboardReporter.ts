@@ -1,15 +1,15 @@
 import {Reporter, ScoreResult} from 'stryker-api/report';
-import StrykerBadgeClient from './BadgeReporter/StrykerBadgeClient';
+import DashboardReporterClient from './DashboardReporter/DashboardReporterClient';
 import {getEnvironmentVariable} from '../utils/objectUtils';
 import { getLogger } from 'log4js';
 import { StrykerOptions } from 'stryker-api/core';
 
-export default class BadgeReporter implements Reporter {
-  private readonly log = getLogger(BadgeReporter.name);
+export default class DashboardReporter implements Reporter {
+  private readonly log = getLogger(DashboardReporter.name);
 
   constructor(
     setting: StrykerOptions,
-    private strykerBadgeClient: StrykerBadgeClient = new StrykerBadgeClient()
+    private dashboardReporterClient: DashboardReporterClient = new DashboardReporterClient()
   ) { }
 
   private readEnvironmentVariable(name: string) {
@@ -32,10 +32,10 @@ export default class BadgeReporter implements Reporter {
       if (pullRequest === 'false') {
         const repository = this.readEnvironmentVariable('TRAVIS_REPO_SLUG');
         const branch = this.readEnvironmentVariable('TRAVIS_BRANCH');
-        const apiKey = this.readEnvironmentVariable('STRYKER_BADGE_API_KEY');
+        const apiKey = this.readEnvironmentVariable('STRYKER_DASHBOARD_API_KEY');
 
         if (repository && branch && apiKey) {
-          await this.strykerBadgeClient.postStrykerBadgeReport({
+          await this.dashboardReporterClient.postStrykerDashboardReport({
             apiKey: apiKey,
             repositorySlug: 'github/' + repository,
             branch: branch,
@@ -44,10 +44,10 @@ export default class BadgeReporter implements Reporter {
           });
         }
       } else {
-        this.log.info('Badge report is not send when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
+        this.log.info('Dashboard report is not send when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
       }
     } else {
-      this.log.info('Badge report is not send when stryker didn\'t run on buildserver {TRAVIS=true}');
+      this.log.info('Dashboard report is not send when stryker didn\'t run on buildserver {TRAVIS=true}');
     }
   }
 }

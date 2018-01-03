@@ -77,7 +77,7 @@ export default class StrykerInitializer {
         name: 'progress',
         npm: null
       }, {
-        name: 'badge',
+        name: 'dashboard',
         npm: null
       }
     );

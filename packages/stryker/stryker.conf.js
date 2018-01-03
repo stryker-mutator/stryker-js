@@ -36,7 +36,7 @@ module.exports = function (config) {
   config.set({
     testFramework: 'mocha',
     testRunner: 'mocha',
-    reporter: ['progress', 'html', 'clear-text', 'event-recorder', 'badge'],
+    reporter: ['progress', 'html', 'clear-text', 'event-recorder', 'dashboard'],
     thresholds: {
       high: 80,
       low: 60,

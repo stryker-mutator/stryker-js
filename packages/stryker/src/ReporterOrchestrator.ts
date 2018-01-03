@@ -6,7 +6,7 @@ import ProgressAppendOnlyReporter from './reporters/ProgressAppendOnlyReporter';
 import DotsReporter from './reporters/DotsReporter';
 import EventRecorderReporter from './reporters/EventRecorderReporter';
 import BroadcastReporter, { NamedReporter } from './reporters/BroadcastReporter';
-import BadgeReporter from './reporters/BadgeReporter';
+import DashboardReporter from './reporters/DashboardReporter';
 import StrictReporter from './reporters/StrictReporter';
 import { getLogger } from 'log4js';
 
@@ -16,7 +16,7 @@ function registerDefaultReporters() {
   ReporterFactory.instance().register('dots', DotsReporter);
   ReporterFactory.instance().register('clear-text', ClearTextReporter);
   ReporterFactory.instance().register('event-recorder', EventRecorderReporter);
-  ReporterFactory.instance().register('badge', BadgeReporter);
+  ReporterFactory.instance().register('dashboard', DashboardReporter);
 }
 registerDefaultReporters();
 
