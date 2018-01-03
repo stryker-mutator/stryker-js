@@ -1,5 +1,5 @@
 import {Reporter, MutantResult, MutantStatus} from 'stryker-api/report';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import * as os from 'os';
 
 export default class DotsReporter implements Reporter {

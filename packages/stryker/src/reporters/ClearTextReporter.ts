@@ -1,4 +1,4 @@
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import { getLogger } from 'log4js';
 import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { Config } from 'stryker-api/config';
