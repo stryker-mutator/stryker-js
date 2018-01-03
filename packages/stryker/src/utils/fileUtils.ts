@@ -31,8 +31,8 @@ export async function cleanFolder(folderName: string) {
 /**
  * Wrapper around the 'require' function (for testability)
  */
-export function importModule(moduleName: string) {
-  require(moduleName);
+export function importModule(moduleName: string): any {
+  return require(moduleName);
 }
 
 export function isOnlineFile(path: string): boolean {
