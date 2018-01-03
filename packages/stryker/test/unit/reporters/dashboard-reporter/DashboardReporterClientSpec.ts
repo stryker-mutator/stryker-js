@@ -1,5 +1,4 @@
-import StrykerDashboardClient from '../../../../src/reporters/DashboardReporter/DashboardReporterClient';
-import { StrykerDashboardReport } from '../../../../src/reporters/DashboardReporter/DashboardReporterClient';
+import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { Mock, mock } from '../../../helpers/producers';
 import { expect } from 'chai';

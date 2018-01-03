@@ -1,9 +1,8 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import DashboardReporter from '../../../src/reporters/DashboardReporter';
-import { StrykerDashboardReport } from '../../../src/reporters/DashboardReporter/DashboardReporterClient';
 import * as environmentVariables from '../../../src/utils/objectUtils';
-import StrykerDashboardClient from '../../../src/reporters/DashboardReporter/DashboardReporterClient';
+import StrykerDashboardClient, { StrykerDashboardReport } from '../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { scoreResult, mock, Mock } from '../../helpers/producers';
 import { Logger } from 'log4js';
 import currentLogMock from '../../helpers/log4jsMock';
