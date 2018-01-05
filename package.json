@@ -20,7 +20,7 @@
     "@types/rimraf": "2.0.2",
     "@types/sinon": "^4.0.0",
     "@types/sinon-chai": "^2.7.29",
-    "browserify": "^14.3.0",
+    "browserify": "^15.0.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^3.4.0",
