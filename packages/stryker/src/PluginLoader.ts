@@ -54,10 +54,7 @@ export default class PluginLoader {
   private requirePlugin(name: string) {
     this.log.debug(`Loading plugins ${name}`);
     try {
-      const plugin = importModule(name);
-      if (plugin && plugin.WebpackTranspiler) {
-        TranspilerFactory.instance().register('webpack', plugin.WebpackTranspiler);
-      }
+      importModule(name);
     } catch (e) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
         this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' +
