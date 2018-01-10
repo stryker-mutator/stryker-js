@@ -3,7 +3,6 @@ import * as path from 'path';
 import { getLogger } from 'log4js';
 import * as _ from 'lodash';
 import { importModule } from './utils/fileUtils';
-import { TranspilerFactory } from 'stryker-api/transpile';
 
 const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 
