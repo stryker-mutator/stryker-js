@@ -129,7 +129,12 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
 
   private listenToBrowserError() {
     this.server.on('browser_error', (browser: any, error: any) => {
-      this.currentErrorMessages.push(error.toString());
+      // Karma 2.0 has different error messages
+      if (error.message) {
+        this.currentErrorMessages.push(error.message);
+      } else {
+        this.currentErrorMessages.push(error.toString());
+      }
     });
   }
 

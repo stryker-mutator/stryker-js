@@ -101,16 +101,13 @@ describe('KarmaTestRunner', function () {
       return sut.init();
     });
 
-    it('should report Error with the error message', () => {
-      return expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
-        expectToHaveSuccessfulTests(runResult, 0);
-        expectToHaveFailedTests(runResult, []);
-        expect(runResult.status).to.be.eq(RunStatus.Error);
-        expect((runResult.errorMessages as any).length).to.equal(1);
-        expect((runResult.errorMessages as any)[0].indexOf('ReferenceError: Can\'t find variable: someGlobalVariableThatIsNotDeclared\nat')).to.eq(0);
-
-        return true;
-      });
+    it('should report Error with the error message', async () => {
+      const runResult = await sut.run();
+      expectToHaveSuccessfulTests(runResult, 0);
+      expectToHaveFailedTests(runResult, []);
+      expect(runResult.status).to.be.eq(RunStatus.Error);
+      expect((runResult.errorMessages as any).length).to.equal(1);
+      expect((runResult.errorMessages as any)[0]).include('ReferenceError: Can\'t find variable: someGlobalVariableThatIsNotDeclared\nat');
     });
   });
 
