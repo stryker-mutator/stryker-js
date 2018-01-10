@@ -1,6 +1,6 @@
 import DefaultPreset from '../../../src/presetLoader/DefaultPreset';
 import * as sinon from 'sinon';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import * as path from 'path';
 
 describe('DefaultPreset', () => {
@@ -9,13 +9,13 @@ describe('DefaultPreset', () => {
   let loaderStub: sinon.SinonStub;
 
   let loader: any = {
-    require: () => {}
+    require: () => { }
   };
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    
-    loaderStub = sandbox.stub(loader, 'require').callsFake(fakeRequire);
+
+    loaderStub = sandbox.stub(loader, 'require');
 
     defaultPreset = new DefaultPreset(loader.require);
   });
@@ -24,22 +24,24 @@ describe('DefaultPreset', () => {
 
   it('should load the webpack configuration file from the project root when available', () => {
     // We want the method to return the return the same config as fakeRequire
-    const expectedWebpackConfig = fakeRequire('/path/to/project');
+    const expectedWebpackConfig = { entry: './src/main.js' };
+    loaderStub.returns(expectedWebpackConfig);
 
     const actualWebpackConfig = defaultPreset.getWebpackConfig('/path/to/project');
 
     expect(actualWebpackConfig).to.deep.equal(expectedWebpackConfig);
   });
 
-  it('should return a sensible default webpack configuration when there is no webpack config in the projectroot', () => {
-    const projectRoot = '/path/to/project/without/webpack/config';
+  it('should return a sensible default webpack configuration when there is no webpack config in the project root', () => {
+    const projectRoot = path.join('path', 'to', 'project', 'without', 'webpack', 'config');
+    loaderStub.throws(new Error());
     const webpackConfig = defaultPreset.getWebpackConfig(projectRoot);
-    
+
     expect(webpackConfig).to.deep.equal({
-      entry: [path.join(projectRoot, "src", "main.js")],
+      entry: [path.join(projectRoot, 'src', 'main.js')],
       output: {
-        path: path.join(projectRoot, "dist"),
-        filename: "bundle.js"
+        path: path.join(projectRoot, 'dist'),
+        filename: 'bundle.js'
       }
     });
   });
@@ -51,25 +53,10 @@ describe('DefaultPreset', () => {
 
     defaultPreset.getWebpackConfig(projectRoot, configLocation);
 
-    assert(loaderStub.calledWith(expectedPath), `require method not called with ${ expectedPath }`);
+    expect(loaderStub).calledWith(expectedPath);
   });
 
   it('should return an empty array when calling the getInitFiles method', () => {
-    expect(defaultPreset.getInitFiles('/path/to/project')).to.be.an("array").that.is.empty;
+    expect(defaultPreset.getInitFiles('/path/to/project')).to.be.an('array').that.is.empty;
   });
 });
-
-function fakeRequire(id: string) {
-  if(id === '/path/to/project/without/webpack/config/webpack.config.js') {
-    throw new Error(`Cannot find module '${id}'`);
-  }
-
-  return {
-    entry: './src/main.js',
-
-    output: {
-      path: 'dist',
-      filename: 'bundle.js'
-    }
-  };
-}

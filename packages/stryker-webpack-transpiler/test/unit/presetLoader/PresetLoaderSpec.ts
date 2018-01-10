@@ -13,7 +13,7 @@ describe('PresetLoader', () => {
   let defaultPresetStub: DefaultPresetStub;
 
   let loader: any = {
-    require: () => {}
+    require: () => { }
   };
 
   beforeEach(() => {
@@ -33,13 +33,13 @@ describe('PresetLoader', () => {
     const webpackPreset: WebpackPreset = presetLoader.loadPreset('angular');
 
     expect(webpackPreset).to.have.property('getWebpackConfig');
-    expect(webpackPreset).to.have.property('getInitFiles');    
+    expect(webpackPreset).to.have.property('getInitFiles');
   });
 
   it('should return an error when \'getInitFiles\' is not present on the required module', () => {
-    requireStub.returns({ 
+    requireStub.returns({
       default: class {
-        getWebpackConfig() {};
+        getWebpackConfig() { }
       }
     });
 
@@ -47,9 +47,9 @@ describe('PresetLoader', () => {
   });
 
   it('should return an error when \'getWebpackConfig\' is not present on the required module', () => {
-    requireStub.returns({ 
+    requireStub.returns({
       default: class {
-        getInitFiles() {};
+        getInitFiles() { }
       }
     });
 
@@ -66,21 +66,21 @@ describe('PresetLoader', () => {
     const preset = presetLoader.loadPreset('default');
     preset.getInitFiles('/project/root');
     preset.getWebpackConfig('/project/root');
-    
+
     assert(defaultPresetStub.getInitFiles.calledOnce, 'getInitFiles not called on DefaultPreset');
     assert(defaultPresetStub.getWebpackConfig.calledOnce, 'getWebpackConfig not called on DefaultPreset');
   });
 });
 
 function fakeRequire(id: string): any {
-  if(id === 'stryker-webpack-invalid-preset') {
+  if (id === 'stryker-webpack-invalid-preset') {
     throw new Error(`Cannot find module '${id}'`);
   }
 
   return {
     default: class {
-      getWebpackConfig() {};
-      getInitFiles() {};
+      getWebpackConfig() { }
+      getInitFiles() { }
     }
   };
 }
