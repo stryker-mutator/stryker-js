@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.17.2"></a>
+## [0.17.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.17.1...stryker@0.17.2) (2018-01-10)
+
+
+### Bug Fixes
+
+* **es5-mutator:** Describe migration for users with plugins ([6be95c3](https://github.com/stryker-mutator/stryker/commit/6be95c3))
+
+
+
+
 <a name="0.17.1"></a>
 ## [0.17.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.17.0...stryker@0.17.1) (2018-01-10)
 
