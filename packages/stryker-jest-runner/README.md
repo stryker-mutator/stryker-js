@@ -27,8 +27,30 @@ For all supported version, see the `env` section in [.travis.yml](https://github
 
 ## Configuring
 
-For the time being, the Jest runner uses a default configuration.
-But pull requests are - obviously - welcome. 
+The following is an example stryker.conf.js file that will include the tests in your `__tests__` directories and snapshots in your `__snapshots__` directories.
+
+```
+module.exports = function(config) {
+  config.set({
+    files: [
+      "src/**/__tests__/*.js",
+      "src/**/__snapshots__/*.snap",
+      {
+        pattern: "src/**/*.js",
+        mutated: true,
+        included: false
+      }
+    ],
+    testRunner: "jest",
+    mutator: "javascript",
+    coverageAnalysis: "off"
+  });
+};
+```
+
+For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker#readme).
+
+For the time being, the Jest runner uses a default configuration for [Jest CLI options](https://facebook.github.io/jest/docs/en/cli.html). But pull requests are - obviously - welcome.
 
 ### Loading the plugin
 
