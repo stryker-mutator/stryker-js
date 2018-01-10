@@ -10,10 +10,10 @@ import { expect, assert } from 'chai';
 describe('WebpackTranspiler', () => {
   let webpackTranspiler: WebpackTranspiler;
   let sandbox: sinon.SinonSandbox;
-  let config: Config
-  
+  let config: Config;
+
   // Stubs
-  let presetLoaderStub: { loadPreset: sinon.SinonStub }
+  let presetLoaderStub: { loadPreset: sinon.SinonStub; };
   let webpackCompilerStub: WebpackCompilerStub;
 
   // Example files
@@ -27,7 +27,7 @@ describe('WebpackTranspiler', () => {
     webpackCompilerStub.emit.returns([exampleBundleFile]);
 
     presetLoaderStub = sinon.createStubInstance(PresetLoader);
-    presetLoaderStub.loadPreset.returns({ getWebpackConfig: () => {}, getInitFiles: () => [exampleInitFile] });
+    presetLoaderStub.loadPreset.returns({ getWebpackConfig: () => { }, getInitFiles: () => [exampleInitFile] });
 
     sandbox.stub(presetLoader, 'default').returns(presetLoaderStub);
     sandbox.stub(webpackCompiler, 'default').returns(webpackCompilerStub);
@@ -91,8 +91,8 @@ describe('WebpackTranspiler', () => {
     webpackCompilerStub.emit.throwsException(Error(fakeError));
 
     const transpileResult = await webpackTranspiler.transpile([]);
-    
-    expect(transpileResult.outputFiles).to.be.an("array").that.is.empty;
+
+    expect(transpileResult.outputFiles).to.be.an('array').that.is.empty;
     expect(transpileResult.error).to.equal(`Error: ${fakeError}`);
   });
 
@@ -103,10 +103,10 @@ describe('WebpackTranspiler', () => {
     };
 
     const fileLocation: { fileName: string, start: Position, end: Position } = {
-      fileName: "test",
+      fileName: 'test',
       start: position,
       end: position
-    }
+    };
 
     expect(webpackTranspiler.getMappedLocation.bind(this, fileLocation)).to.throw(Error, 'Method not implemented.');
   });

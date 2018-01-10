@@ -1,15 +1,16 @@
 {
-  "name": "stryker-webpack",
+  "name": "stryker-webpack-transpiler",
   "version": "0.0.2",
   "description": "[preview] A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
+    "prebuild": "npm run clean",
     "build": "tsc",
-    "premocha": "npm run build",
-    "lint": "tslint -c tslint.json **/*.ts --exclude \"**/*.d.ts\"",
-    "test": "npm run lint && npm run mocha && npm run stryker",
-    "mocha": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/unit/**/**/*.js\"",
-    "stryker": "stryker run"
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
+    "posttest": "npm run stryker",
+    "stryker": "node ../stryker/bin/stryker run"
   },
   "repository": {
     "type": "git",

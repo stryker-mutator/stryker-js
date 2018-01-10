@@ -1,4 +1,4 @@
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { createFakeWebpackConfig, createTextFile, createWebpackMock } from '../../helpers/producers';
 import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
@@ -39,7 +39,7 @@ describe('WebpackCompiler', () => {
       await webpackCompiler.writeFilesToFs(fakeTextFileArray);
 
       fakeTextFileArray.forEach((textFile, index) => {
-        assert(fsWrapperStubs.mkdirp.getCall(index).calledWith(path.dirname(textFile.name)));
+        expect(fsWrapperStubs.mkdirp.getCall(index)).calledWith(path.dirname(textFile.name));
       });
     });
 
@@ -47,7 +47,7 @@ describe('WebpackCompiler', () => {
       await webpackCompiler.writeFilesToFs(fakeTextFileArray);
 
       fakeTextFileArray.forEach((textFile, index) => {
-        assert(fsWrapperStubs.writeFile.getCall(index).calledWith(textFile.name));
+        expect(fsWrapperStubs.writeFile.getCall(index)).calledWith(textFile.name);
       });
     });
   });
@@ -62,13 +62,13 @@ describe('WebpackCompiler', () => {
     it('should call the run function on the webpack compiler', async () => {
       await webpackCompiler.emit();
 
-      assert(webpackRunStub.calledOnce);
+      expect(webpackRunStub).calledOnce;
     });
 
     it('should call the readFile function on the fsWrapper with the bundle path', async () => {
       await webpackCompiler.emit();
 
-      assert(fsWrapperStubs.readFile.calledWith('/out/bundle.js'));
+      expect(fsWrapperStubs.readFile).calledWith(`${path.sep}out${path.sep}bundle.js`);
     });
 
     it('should return a new TextFile array with the bundle in it', async () => {
@@ -94,7 +94,7 @@ describe('WebpackCompiler', () => {
       try {
         await webpackCompiler.emit();
 
-        assert(false, 'Function should throw an error!');
+        expect.fail('Function should throw an error!');
       } catch (err) {
         expect(err.name).to.equal('Error');
         expect(err.message).to.equal(fakeError);
@@ -111,7 +111,7 @@ describe('WebpackCompiler', () => {
       try {
         await webpackCompiler.emit();
 
-        assert(false, 'Function should throw an error!');
+        expect.fail(null, null, 'Function should throw an error!');
       } catch (err) {
         expect(err.name).to.equal('Error');
         expect(err.message).to.equal(fakeError);

@@ -1,9 +1,9 @@
-import { FileKind, TextFile } from "stryker-api/core";
+import { FileKind, TextFile } from 'stryker-api/core';
 import FsWrapper from '../helpers/FsWrapper';
 import HybridFs from '../helpers/HybridFs';
-import { Compiler, Configuration } from "webpack";
-import webpack from "./Webpack";
-import * as path from "path";
+import { Compiler, Configuration } from 'webpack';
+import webpack from './Webpack';
+import * as path from 'path';
 import * as fs from 'fs';
 
 const memoryFs = require('memory-fs');
@@ -39,12 +39,12 @@ export default class WebpackCompiler {
 
   private getOutFiles(entry: Array<string> | Object | undefined): Array<string> {
     if (Array.isArray(entry)) {
-      return ["bundle.js"];
-    } else if (typeof entry == "object") {
+      return ['bundle.js'];
+    } else if (typeof entry === 'object') {
       // If the entry is an object return all the keys
-      return Object.keys(entry).map((name) => name + ".bundle.js");
+      return Object.keys(entry).map((name) => name + '.bundle.js');
     } else {
-      return ["bundle.js"]
+      return ['bundle.js'];
     }
   }
 
@@ -81,7 +81,7 @@ export default class WebpackCompiler {
         mutated: true, // TODO: change this to the correct value
         kind: FileKind.Text,
         transpiled: true,
-        included: outFileName === "test.bundle.js"
+        included: outFileName === 'test.bundle.js'
       });
     }
 
@@ -94,7 +94,7 @@ export default class WebpackCompiler {
         if (err) {
           reject(err);
         } else if (stats.hasErrors()) {
-          reject(Error(stats.toString("errors-only")));
+          reject(Error(stats.toString('errors-only')));
         } else {
           resolve(stats);
         }
