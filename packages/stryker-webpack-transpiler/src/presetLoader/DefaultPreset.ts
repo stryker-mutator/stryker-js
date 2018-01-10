@@ -12,7 +12,7 @@ export default class DefaultPreset implements WebpackPreset {
 
   public getWebpackConfig(projectRoot: string, webpackConfigLocation?: string): Configuration {
     webpackConfigLocation = webpackConfigLocation || 'webpack.config.js';
-    
+
     try {
       return this.loader(path.join(projectRoot, webpackConfigLocation));
     } catch {
@@ -22,11 +22,11 @@ export default class DefaultPreset implements WebpackPreset {
 
   private generateDefaultWebpackConfig(projectRoot: string): Configuration {
     return {
-      entry: [path.join(projectRoot, "src", "main.js")],
+      entry: [path.join(projectRoot, 'src', 'main.js')],
 
       output: {
-        path: path.join(projectRoot, "dist"),
-        filename: "bundle.js"
+        path: path.join(projectRoot, 'dist'),
+        filename: 'bundle.js'
       }
     };
   }
