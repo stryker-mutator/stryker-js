@@ -4,9 +4,8 @@ module.exports = function (config) {
       '!src/**/*.ts',
       '!**/*.d.ts',
       { pattern: 'src/**/*.ts', included: false, mutated: true },
-      '!src/helpers/HybridFs.ts',
-      { pattern: 'src/helpers/HybridFs.ts', included: false, mutated: false },
-      '!./src/index.ts'
+      '!./src/index.ts',
+      { pattern: 'testResources/**/+(*.js|*.txt)', transpiled: false, included: false }
     ],
     testRunner: "mocha",
     testFramework: "mocha",
@@ -19,7 +18,7 @@ module.exports = function (config) {
     thresholds: {
       high: 90,
       low: 80,
-      break: 80
+      break: 60
     },
     plugins: [
       '../../../stryker-html-reporter/src/index',
