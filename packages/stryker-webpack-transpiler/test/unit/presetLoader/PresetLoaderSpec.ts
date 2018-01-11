@@ -64,7 +64,7 @@ describe('PresetLoader', () => {
 
   it('should return the default preset when loadPreset is called with the parameter \'default\'', () => {
     const preset = presetLoader.loadPreset('default');
-    preset.getInitFiles('/project/root');
+    preset.getInitFiles();
     preset.getWebpackConfig('/project/root');
 
     assert(defaultPresetStub.getInitFiles.calledOnce, 'getInitFiles not called on DefaultPreset');

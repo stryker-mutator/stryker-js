@@ -3,35 +3,16 @@ import { Configuration } from 'webpack';
 import { TextFile } from 'stryker-api/core';
 import * as path from 'path';
 
+
 export default class DefaultPreset implements WebpackPreset {
-  private loader: NodeRequire;
-
-  public constructor(loader?: NodeRequire) {
-    this.loader = loader || /* istanbul ignore next */ require;
+  public constructor(private loader: NodeRequireFunction = require) {
   }
 
-  public getWebpackConfig(projectRoot: string, webpackConfigLocation?: string): Configuration {
-    webpackConfigLocation = webpackConfigLocation || 'webpack.config.js';
-
-    try {
-      return this.loader(path.join(projectRoot, webpackConfigLocation));
-    } catch {
-      return this.generateDefaultWebpackConfig(projectRoot);
-    }
+  public getWebpackConfig(webpackConfigLocation: string = 'webpack.config.js'): Configuration {
+      return this.loader(path.resolve(webpackConfigLocation));
   }
 
-  private generateDefaultWebpackConfig(projectRoot: string): Configuration {
-    return {
-      entry: [path.join(projectRoot, 'src', 'main.js')],
-
-      output: {
-        path: path.join(projectRoot, 'dist'),
-        filename: 'bundle.js'
-      }
-    };
-  }
-
-  public getInitFiles(projectRoot: string): Array<TextFile> {
+  public getInitFiles(): Array<TextFile> {
     // No init files, just return empty array
     return [];
   }

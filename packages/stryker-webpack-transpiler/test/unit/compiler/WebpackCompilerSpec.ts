@@ -1,53 +1,50 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
-import { createFakeWebpackConfig, createTextFile, createWebpackMock } from '../../helpers/producers';
+import { createFakeWebpackConfig, createTextFile, createWebpackMock, Mock, createMockInstance } from '../../helpers/producers';
 import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
-import FsWrapper, * as fsWrapper from '../../../src/helpers/FsWrapper';
+import InputFileSystem, * as inputFileSystemModule from '../../../src/fs/InputFileSystem';
+import OutputFileSystem, * as outputFileSystemModule from '../../../src/fs/OutputFileSystem';
 import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
-import { TextFile, FileKind } from 'stryker-api/core';
+import { TextFile } from 'stryker-api/core';
 import * as path from 'path';
 import * as webpack from '../../../src/compiler/Webpack';
 import { Configuration } from 'webpack';
 
 describe('WebpackCompiler', () => {
   let webpackCompiler: WebpackCompiler;
-  let sandbox: sinon.SinonSandbox;
-  let fsWrapperStubs: FsWrapperStubs;
+  let inputFileSystemMock: Mock<InputFileSystem>;
+  let outputFileSystemMock: Mock<OutputFileSystem>;
   let webpackCompilerMock: WebpackCompilerMock;
 
-  let fakeTextFileArray: Array<TextFile> = createFakeTextFileArray();
   let fakeWebpackConfig: Configuration = createFakeWebpackConfig();
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
-    fsWrapperStubs = sinon.createStubInstance(FsWrapper);
+    inputFileSystemMock = createMockInstance(InputFileSystem);
+    outputFileSystemMock = createMockInstance(OutputFileSystem);
     webpackCompilerMock = createWebpackMock();
 
     sandbox.stub(webpack, 'default').returns(webpackCompilerMock);
-    sandbox.stub(fsWrapper, 'default').returns(fsWrapperStubs);
+    sandbox.stub(inputFileSystemModule, 'default').returns(inputFileSystemMock);
+    sandbox.stub(outputFileSystemModule, 'default').returns(outputFileSystemMock);
 
     webpackCompiler = new WebpackCompiler(fakeWebpackConfig);
   });
 
-  afterEach(() => {
-    sandbox.restore();
-  });
+  describe('writeFilesToFs', () => {
+    it('should call the mkdirp function on the inputFS with the basedir of the given file', () => {
+      const textFiles = createFakeTextFileArray();
+      webpackCompiler.writeFilesToFs(textFiles);
 
-  describe('replace', () => {
-    it('should call the mkdirp function on the fsWrapper with the basedir of the given file', async () => {
-      await webpackCompiler.writeFilesToFs(fakeTextFileArray);
-
-      fakeTextFileArray.forEach((textFile, index) => {
-        expect(fsWrapperStubs.mkdirp.getCall(index)).calledWith(path.dirname(textFile.name));
+      textFiles.forEach((textFile, index) => {
+        expect(inputFileSystemMock.mkdirpSync).calledWith(path.dirname(textFile.name));
       });
     });
 
-    it('should call the writeFile function on the fsWrapper with the given file', async () => {
-      await webpackCompiler.writeFilesToFs(fakeTextFileArray);
+    it('should call the writeFile function on the inputFS with the given file', () => {
+      const textFiles = createFakeTextFileArray();
+      webpackCompiler.writeFilesToFs(textFiles);
 
-      fakeTextFileArray.forEach((textFile, index) => {
-        expect(fsWrapperStubs.writeFile.getCall(index)).calledWith(textFile.name);
+      textFiles.forEach((textFile, index) => {
+        expect(inputFileSystemMock.writeFileSync).calledWith(textFile.name);
       });
     });
   });
@@ -61,30 +58,15 @@ describe('WebpackCompiler', () => {
 
     it('should call the run function on the webpack compiler', async () => {
       await webpackCompiler.emit();
-
       expect(webpackRunStub).calledOnce;
     });
 
-    it('should call the readFile function on the fsWrapper with the bundle path', async () => {
-      await webpackCompiler.emit();
+    it('should collect files from the outputFS', async () => {
+      const expectedFiles = [{ name: 'foobar' }];
+      outputFileSystemMock.collectFiles.returns(expectedFiles);
+      const actualResult = await webpackCompiler.emit();
 
-      expect(fsWrapperStubs.readFile).calledWith(`${path.sep}out${path.sep}bundle.js`);
-    });
-
-    it('should return a new TextFile array with the bundle in it', async () => {
-      const content: string = 'Hello World!';
-      fsWrapperStubs.readFile.resolves(content);
-
-      const files: Array<TextFile> = await webpackCompiler.emit();
-
-      expect(files).to.deep.equal([{
-        name: 'bundle.js',
-        content: content,
-        mutated: true,
-        included: false,
-        transpiled: true,
-        kind: FileKind.Text
-      }]);
+      expect(actualResult).eq(expectedFiles);
     });
 
     it('should return an error when the webpack compiler fails to compile', async () => {
@@ -128,9 +110,3 @@ describe('WebpackCompiler', () => {
     ];
   }
 });
-
-interface FsWrapperStubs {
-  readFile: sinon.SinonStub;
-  writeFile: sinon.SinonStub;
-  mkdirp: sinon.SinonStub;
-}
