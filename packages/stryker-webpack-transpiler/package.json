@@ -8,7 +8,7 @@
     "prebuild": "npm run clean",
     "build": "tsc",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 84 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
     "posttest": "npm run stryker",
     "stryker": "node ../stryker/bin/stryker run"
   },
@@ -49,6 +49,7 @@
     "mocha": "^3.5.3",
     "mz": "^2.7.0",
     "nyc": "^11.2.1",
+    "raw-loader": "^0.5.1",
     "sinon": "^4.0.1",
     "stryker": "^0.15.5",
     "stryker-api": "^0.11.0",

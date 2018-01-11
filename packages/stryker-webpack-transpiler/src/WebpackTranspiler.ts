@@ -19,10 +19,10 @@ class WebpackTranspiler implements Transpiler {
     try {
       if (!this.webpackCompiler) {
         // Initialize the webpack compiler with the current directory (process.cwd)
-        await this.initialize(process.cwd(), this.config.webpack);
+        await this.initialize(this.config.webpack);
       }
 
-      await this.webpackCompiler.writeFilesToFs(files as Array<TextFile>);
+      this.webpackCompiler.writeFilesToFs(files as Array<TextFile>);
 
       return this.createSuccessResult(await this.webpackCompiler.emit());
     } catch (err) {
@@ -30,10 +30,10 @@ class WebpackTranspiler implements Transpiler {
     }
   }
 
-  private async initialize(projectRoot: string, strykerWebpackConfig?: StrykerWebpackConfig): Promise<void> {
+  private initialize(strykerWebpackConfig?: StrykerWebpackConfig): void {
     strykerWebpackConfig = this.getStrykerWebpackConfig(strykerWebpackConfig);
 
-    await this.initializeCompiler(projectRoot, strykerWebpackConfig);
+    this.initializeCompiler(strykerWebpackConfig);
   }
 
   private getStrykerWebpackConfig(strykerWebpackConfig?: StrykerWebpackConfig): StrykerWebpackConfig {
@@ -43,13 +43,13 @@ class WebpackTranspiler implements Transpiler {
     };
   }
 
-  private async initializeCompiler(projectRoot: string, strykerWebpackConfig: StrykerWebpackConfig): Promise<void> {
+  private initializeCompiler(strykerWebpackConfig: StrykerWebpackConfig): void {
     const preset: WebpackPreset = this.presetLoader.loadPreset(strykerWebpackConfig.project.toLowerCase());
 
-    this.webpackCompiler = new WebpackCompiler(preset.getWebpackConfig(projectRoot, strykerWebpackConfig.configLocation));
+    this.webpackCompiler = new WebpackCompiler(preset.getWebpackConfig(strykerWebpackConfig.configLocation));
 
     // Push the init files to the file system with the replace function
-    await this.webpackCompiler.writeFilesToFs(preset.getInitFiles(projectRoot));
+    this.webpackCompiler.writeFilesToFs(preset.getInitFiles());
   }
 
   private createErrorResult(error: string): TranspileResult {
@@ -73,7 +73,7 @@ class WebpackTranspiler implements Transpiler {
   }
 }
 
-interface StrykerWebpackConfig {
+export interface StrykerWebpackConfig {
   project: string;
   configLocation?: string;
 }

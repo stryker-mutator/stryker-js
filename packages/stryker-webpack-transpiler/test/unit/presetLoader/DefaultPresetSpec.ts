@@ -8,16 +8,12 @@ describe('DefaultPreset', () => {
   let sandbox: sinon.SinonSandbox;
   let loaderStub: sinon.SinonStub;
 
-  let loader: any = {
-    require: () => { }
-  };
-
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
-    loaderStub = sandbox.stub(loader, 'require');
+    loaderStub = sandbox.stub();
 
-    defaultPreset = new DefaultPreset(loader.require);
+    defaultPreset = new DefaultPreset(loaderStub);
   });
 
   beforeEach(() => sandbox.restore());
@@ -32,31 +28,16 @@ describe('DefaultPreset', () => {
     expect(actualWebpackConfig).to.deep.equal(expectedWebpackConfig);
   });
 
-  it('should return a sensible default webpack configuration when there is no webpack config in the project root', () => {
-    const projectRoot = path.join('path', 'to', 'project', 'without', 'webpack', 'config');
-    loaderStub.throws(new Error());
-    const webpackConfig = defaultPreset.getWebpackConfig(projectRoot);
-
-    expect(webpackConfig).to.deep.equal({
-      entry: [path.join(projectRoot, 'src', 'main.js')],
-      output: {
-        path: path.join(projectRoot, 'dist'),
-        filename: 'bundle.js'
-      }
-    });
-  });
-
   it('should call the require method with the given projectRoot and configLocation', () => {
-    const projectRoot = '/path/to/project';
     const configLocation = './config/webpack.conf.js';
-    const expectedPath = path.join(projectRoot, configLocation);
+    const expectedPath = path.resolve(configLocation);
 
-    defaultPreset.getWebpackConfig(projectRoot, configLocation);
+    defaultPreset.getWebpackConfig(configLocation);
 
     expect(loaderStub).calledWith(expectedPath);
   });
 
   it('should return an empty array when calling the getInitFiles method', () => {
-    expect(defaultPreset.getInitFiles('/path/to/project')).to.be.an('array').that.is.empty;
+    expect(defaultPreset.getInitFiles()).to.be.an('array').that.is.empty;
   });
 });

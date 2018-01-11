@@ -1,15 +1,16 @@
 import { Configuration, Stats } from 'webpack';
-import { FileSystem } from '../../src/helpers/FsWrapper';
 import { FileKind, TextFile } from 'stryker-api/core';
 import { WebpackCompilerMock } from './mockInterfaces';
+import * as sinon from 'sinon';
 
-export function createFakeFileSystem(): FileSystem {
-  return {
-    readFile: () => { },
-    writeFile: () => { },
-    mkdir: () => { },
-    stat: () => { }
-  };
+export type Mock<T> = {
+  [K in keyof T]: sinon.SinonStub;
+};
+
+export type Constructor<T> = { new(...args: any[]): T };
+
+export function createMockInstance<T>(type: Constructor<T>) {
+  return sinon.createStubInstance(type) as Mock<T>;
 }
 
 export function createFakeWebpackConfig(): Configuration {
