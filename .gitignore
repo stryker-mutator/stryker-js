@@ -13,10 +13,10 @@ integrationTest/module/*.d.ts
 integrationTest/*.js
 integrationTest/*.map
 integrationTest/*.d.ts
-packages/**/src/**/*.js
-packages/**/test/**/*.js
-packages/**/src/**/*.d.ts
-packages/**/test/**/*.d.ts
+packages/*/src/**/*.js
+packages/*/test/**/*.js
+packages/*/src/**/*.d.ts
+packages/*/test/**/*.d.ts
 packages/**/package-lock.json
 .idea
 *.iml
