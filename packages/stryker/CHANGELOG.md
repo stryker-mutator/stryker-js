@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.18.0"></a>
+# [0.18.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.17.2...stryker@0.18.0) (2018-01-12)
+
+
+### Features
+
+* **Child processes:** Support process message polution ([#572](https://github.com/stryker-mutator/stryker/issues/572)) ([dbe4d84](https://github.com/stryker-mutator/stryker/commit/dbe4d84))
+
+
+
+
 <a name="0.17.2"></a>
 ## [0.17.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.17.1...stryker@0.17.2) (2018-01-10)
 
