@@ -24,7 +24,7 @@
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^3.4.0",
-    "execa": "^0.8.0",
+    "execa": "^0.9.0",
     "glob": "^7.1.1",
     "jasmine": "^2.8.0",
     "lerna": "^2.0.0",
