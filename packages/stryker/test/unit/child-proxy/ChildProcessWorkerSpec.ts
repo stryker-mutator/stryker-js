@@ -11,12 +11,19 @@ describe('ChildProcessProxyWorker', () => {
 
   let processOnStub: sinon.SinonStub;
   let processSendStub: sinon.SinonStub;
+  let processListenersStub: sinon.SinonStub;
   let setGlobalLogLevelStub: sinon.SinonStub;
+  let processRemoveListenerStub: sinon.SinonStub;
   let pluginLoaderMock: Mock<PluginLoader>;
-  let originalProcessSend: undefined | ((message: any, sendHandle?: any) => void);
+  let originalProcessSend: undefined | NodeJS.MessageListener;
+  let processes: NodeJS.MessageListener[];
 
   beforeEach(() => {
+    processes = [];
     processOnStub = sandbox.stub(process, 'on');
+    processListenersStub = sandbox.stub(process, 'listeners');
+    processListenersStub.returns(processes);
+    processRemoveListenerStub = sandbox.stub(process, 'removeListener');
     processSendStub = sandbox.stub();
     // process.send is normally undefined
     originalProcessSend = process.send;
@@ -38,36 +45,53 @@ describe('ChildProcessProxyWorker', () => {
   describe('after init message', () => {
 
     let sut: ChildProcessProxyWorker;
+    let initMessage: WorkerMessage;
 
     beforeEach(() => {
       sut = new ChildProcessProxyWorker();
-      const initMessage: WorkerMessage = {
+      initMessage = {
         kind: WorkerMessageKind.Init,
         logLevel: 'FooLevel',
         constructorArgs: ['FooBarName'],
         plugins: ['fooPlugin', 'barPlugin'],
         requirePath: require.resolve('./HelloClass')
       };
-      processOnStub.callArgWith(1, [serialize(initMessage)]);
     });
-
+    
     it('should create the correct real instance', () => {
+      processOnStub.callArgWith(1, [serialize(initMessage)]);
       expect(sut.realSubject).instanceOf(HelloClass);
       const actual = sut.realSubject as HelloClass;
       expect(actual.name).eq('FooBarName');
     });
-
+    
     it('should send "init_done"', async () => {
+      processOnStub.callArgWith(1, [serialize(initMessage)]);
       const expectedWorkerResponse: ParentMessage = 'init_done';
       await tick(); // make sure promise is resolved
       expect(processSendStub).calledWith(serialize(expectedWorkerResponse));
     });
+    
+    it('should remove any additional listeners', async () => {
+      // Arrange
+      function noop() { }
+      processes.push(noop);
 
+      // Act
+      processOnStub.callArgWith(1, [serialize(initMessage)]);
+      await tick(); // make sure promise is resolved
+
+      // Assert
+      expect(processRemoveListenerStub).calledWith('message', noop);
+    });
+    
     it('should set global log level', () => {
+      processOnStub.callArgWith(1, [serialize(initMessage)]);
       expect(setGlobalLogLevelStub).calledWith('FooLevel');
     });
-
+    
     it('should load plugins', () => {
+      processOnStub.callArgWith(1, [serialize(initMessage)]);
       expect(pluginLoader.default).calledWithNew;
       expect(pluginLoader.default).calledWith(['fooPlugin', 'barPlugin']);
       expect(pluginLoaderMock.load).called;
@@ -77,6 +101,7 @@ describe('ChildProcessProxyWorker', () => {
 
       async function actAndAssert(workerMessage: WorkMessage, expectedResult: WorkResult) {
         // Act
+        processOnStub.callArgWith(1, [serialize(initMessage)]);
         processOnStub.callArgWith(1, serialize(workerMessage));
         await tick();
         // Assert
