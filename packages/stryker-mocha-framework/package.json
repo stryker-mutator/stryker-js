@@ -23,7 +23,8 @@
     "stryker-plugin",
     "mocha",
     "stryker-test-framework",
-    "stryker-mocha-runner"
+    "stryker-mocha-runner",
+    "stryker-karma-runner"
   ],
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
