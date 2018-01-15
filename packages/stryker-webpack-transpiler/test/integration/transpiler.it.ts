@@ -10,8 +10,7 @@ describe('Webpack transpiler', () => {
   function createSut() {
     const config = new Config();
     const strykerWebpackConfig: StrykerWebpackConfig = {
-      project: 'default',
-      configLocation: path.resolve(__dirname, '..', '..', 'testResources', 'gettingStarted', 'webpack.config.js')
+      configFile: path.resolve(__dirname, '..', '..', 'testResources', 'gettingStarted', 'webpack.config.js')
     };
     config.set({
       webpack: strykerWebpackConfig
