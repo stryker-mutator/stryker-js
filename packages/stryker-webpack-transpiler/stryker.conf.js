@@ -16,9 +16,9 @@ module.exports = function (config) {
     coverageAnalysis: "off",
     logLevel: "info",
     thresholds: {
-      high: 90,
-      low: 80,
-      break: 60
+      high: 95,
+      low: 90,
+      break: 90
     },
     plugins: [
       '../../../stryker-html-reporter/src/index',

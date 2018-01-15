@@ -1,11 +1,12 @@
 import WebpackTranspiler from '../../src/WebpackTranspiler';
-import PresetLoader, * as presetLoader from '../../src/presetLoader/PresetLoader';
-import WebpackCompiler, * as webpackCompiler from '../../src/compiler/WebpackCompiler';
-import { createTextFile } from '../helpers/producers';
+import ConfigLoader, * as configLoaderModule from '../../src/compiler/ConfigLoader';
+import WebpackCompiler, * as webpackCompilerModule from '../../src/compiler/WebpackCompiler';
+import { createTextFile, Mock, createMockInstance } from '../helpers/producers';
 import * as sinon from 'sinon';
 import { Config } from 'stryker-api/config';
 import { Position, TextFile } from 'stryker-api/core';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
+import { Configuration } from 'webpack';
 
 describe('WebpackTranspiler', () => {
   let webpackTranspiler: WebpackTranspiler;
@@ -13,12 +14,11 @@ describe('WebpackTranspiler', () => {
   let config: Config;
 
   // Stubs
-  let presetLoaderStub: { loadPreset: sinon.SinonStub; };
+  let configLoaderStub: Mock<ConfigLoader>;
   let webpackCompilerStub: WebpackCompilerStub;
 
-  // Example files
-  let exampleInitFile: TextFile = createTextFile('exampleInitFile');
   let exampleBundleFile: TextFile = createTextFile('bundle.js');
+  let webpackConfig: Configuration;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -26,11 +26,12 @@ describe('WebpackTranspiler', () => {
     webpackCompilerStub = sinon.createStubInstance(WebpackCompiler);
     webpackCompilerStub.emit.returns([exampleBundleFile]);
 
-    presetLoaderStub = sinon.createStubInstance(PresetLoader);
-    presetLoaderStub.loadPreset.returns({ getWebpackConfig: () => { }, getInitFiles: () => [exampleInitFile] });
+    webpackConfig = { entry: './main.js' };
+    configLoaderStub = createMockInstance(ConfigLoader);
+    configLoaderStub.load.returns(webpackConfig);
 
-    sandbox.stub(presetLoader, 'default').returns(presetLoaderStub);
-    sandbox.stub(webpackCompiler, 'default').returns(webpackCompilerStub);
+    sandbox.stub(configLoaderModule, 'default').returns(configLoaderStub);
+    sandbox.stub(webpackCompilerModule, 'default').returns(webpackCompilerStub);
 
     config = new Config;
     config.set({ webpack: { project: 'ExampleProject' } });
@@ -40,28 +41,17 @@ describe('WebpackTranspiler', () => {
 
   afterEach(() => sandbox.restore());
 
-  it('should call the presetloader with the configured project when the transpile method is called initially', async () => {
+  it('should only create the compiler once', async () => {
     await webpackTranspiler.transpile([]);
     await webpackTranspiler.transpile([]);
 
-    assert(presetLoaderStub.loadPreset.called, 'loadPreset not called');
-    assert(presetLoaderStub.loadPreset.calledOnce, 'loadPreset called more than once');
-    assert(presetLoaderStub.loadPreset.calledWith('exampleproject'), `loadPreset not called with 'exampleproject'`);
-  });
+    expect(configLoaderModule.default).calledOnce;
+    expect(configLoaderModule.default).calledWithNew;
+    expect(webpackCompilerModule.default).calledOnce;
+    expect(webpackCompilerModule.default).calledWithNew;
+    expect(configLoaderStub.load).calledOnce;
+    expect(configLoaderStub.load).calledWith('webpack.config.js');
 
-  it('should use \'default\' as preset when none is provided', async () => {
-    const config = new Config;
-    const webpackTranspiler = new WebpackTranspiler({ config: config, keepSourceMaps: false });
-
-    await webpackTranspiler.transpile([]);
-
-    assert(presetLoaderStub.loadPreset.calledWith('default'), `loadPreset not called with 'default'`);
-  });
-
-  it('should call the webpackCompiler.writeFilesToFs method with the output of the webpackPreset.getFiles method', async () => {
-    await webpackTranspiler.transpile([]);
-
-    assert(webpackCompilerStub.writeFilesToFs.calledWith([exampleInitFile]), 'Not alled with exampleInitFile');
   });
 
   it('should call the webpackCompiler.writeFilesToFs function with the given files', async () => {
@@ -69,14 +59,14 @@ describe('WebpackTranspiler', () => {
 
     await webpackTranspiler.transpile(files);
 
-    assert(webpackCompilerStub.writeFilesToFs.calledWith(files), `replace function not called with ${files}`);
+    expect(webpackCompilerStub.writeFilesToFs).calledWith(files);
   });
 
   it('should call the webpackCompiler.emit function to get the new bundled files', async () => {
     await webpackTranspiler.transpile([]);
 
-    assert(webpackCompilerStub.emit.called, 'Emit function not called');
-    assert(webpackCompilerStub.emit.calledOnce, 'Emit function called more than once');
+    expect(webpackCompilerStub.emit).called;
+    expect(webpackCompilerStub.emit).calledOnce;
   });
 
   it('should return a successResult with the bundled files on success', async () => {
@@ -86,7 +76,7 @@ describe('WebpackTranspiler', () => {
     expect(transpileResult.outputFiles).to.deep.equal([exampleBundleFile]);
   });
 
-  it('should return a error result when an error occured', async () => {
+  it('should return a error result when an error occurred', async () => {
     const fakeError = 'compiler could not compile input files';
     webpackCompilerStub.emit.throwsException(Error(fakeError));
 
