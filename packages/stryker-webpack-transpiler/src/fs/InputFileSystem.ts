@@ -1,4 +1,4 @@
-import MemoryFS = require('memory-fs');
+import MemoryFS from './MemoryFS';
 import { webpack, Callback } from '../types';
 import * as fs from 'fs';
 const errors = require('errno');
@@ -74,7 +74,7 @@ export default class InputFileSystem implements webpack.InputFileSystem {
     try {
       return this.memoryFS.readdirSync(path);
     } catch (err) {
-      if (err.code === errors.code.ENOTDIR) {
+      if (err.code === errors.code.ENOTDIR.code) {
         return fs.readdirSync(path);
       }
       else {
