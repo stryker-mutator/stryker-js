@@ -37,9 +37,9 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
           name: fileName,
           content: fileContent,
           transpiled: true,
-          included: true,
+          included: false,
           kind: FileKind.Binary,
-          mutated: true
+          mutated: false
         };
         files.push(file);
       }
@@ -69,7 +69,7 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
 
   writeFile(name: PathLike | number, data: any, options: any, cb?: EmptyCallback): void {
     const callback: EmptyCallback = cb || options;
-    this._files[path.resolve(name.toString())] = data.toString();
+    this._files[path.resolve(name.toString())] = data;
     callback();
   }
 
