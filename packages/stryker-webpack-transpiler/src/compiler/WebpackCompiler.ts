@@ -1,4 +1,4 @@
-import { TextFile, File, BinaryFile } from 'stryker-api/core';
+import { TextFile, File, BinaryFile, FileKind } from 'stryker-api/core';
 import { Compiler, Configuration } from 'webpack';
 import webpack from './Webpack';
 import * as path from 'path';
@@ -27,9 +27,11 @@ export default class WebpackCompiler {
     return compiler as Compiler;
   }
 
-  public writeFilesToFs(files: Array<TextFile | BinaryFile>): void {
+  public writeFilesToFs(files: Array<File>): void {
     for (let file of files) {
-      this.writeToFs(file);
+      if (file.kind !== FileKind.Web) {
+        this.writeToFs(file);
+      }
     }
   }
 
