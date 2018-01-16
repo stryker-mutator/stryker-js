@@ -7,32 +7,43 @@ import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
 import { TextFile } from 'stryker-api/core';
 import * as path from 'path';
 import * as webpack from '../../../src/compiler/Webpack';
-import { Configuration } from 'webpack';
+import { Configuration, Plugin } from 'webpack';
+import OutputSorterPlugin from '../../../src/compiler/OutputSorterPlugin';
 
 describe('WebpackCompiler', () => {
-  let webpackCompiler: WebpackCompiler;
+  let sut: WebpackCompiler;
   let inputFileSystemMock: Mock<InputFileSystem>;
   let outputFileSystemMock: Mock<OutputFileSystem>;
   let webpackCompilerMock: WebpackCompilerMock;
 
-  let fakeWebpackConfig: Configuration = createFakeWebpackConfig();
+  let fakeWebpackConfig: Configuration;
 
   beforeEach(() => {
     inputFileSystemMock = createMockInstance(InputFileSystem);
     outputFileSystemMock = createMockInstance(OutputFileSystem);
     webpackCompilerMock = createWebpackMock();
+    fakeWebpackConfig = createFakeWebpackConfig();
 
     sandbox.stub(webpack, 'default').returns(webpackCompilerMock);
     sandbox.stub(inputFileSystemModule, 'default').returns(inputFileSystemMock);
     sandbox.stub(outputFileSystemModule, 'default').returns(outputFileSystemMock);
+  });
 
-    webpackCompiler = new WebpackCompiler(fakeWebpackConfig);
+  it('should add the OutputSorterPlugin to the list of plugins', () => {
+    new WebpackCompiler(fakeWebpackConfig);
+    const plugins = (fakeWebpackConfig.plugins as Plugin[]);
+    expect(plugins[plugins.length - 1]).instanceOf(OutputSorterPlugin);
   });
 
   describe('writeFilesToFs', () => {
+
+    beforeEach(() => {
+      sut = new WebpackCompiler(fakeWebpackConfig);
+    });
+
     it('should call the mkdirp function on the inputFS with the basedir of the given file', () => {
       const textFiles = createFakeTextFileArray();
-      webpackCompiler.writeFilesToFs(textFiles);
+      sut.writeFilesToFs(textFiles);
 
       textFiles.forEach((textFile, index) => {
         expect(inputFileSystemMock.mkdirpSync).calledWith(path.dirname(textFile.name));
@@ -41,7 +52,7 @@ describe('WebpackCompiler', () => {
 
     it('should call the writeFile function on the inputFS with the given file', () => {
       const textFiles = createFakeTextFileArray();
-      webpackCompiler.writeFilesToFs(textFiles);
+      sut.writeFilesToFs(textFiles);
 
       textFiles.forEach((textFile, index) => {
         expect(inputFileSystemMock.writeFileSync).calledWith(textFile.name);
@@ -53,20 +64,35 @@ describe('WebpackCompiler', () => {
     let webpackRunStub: sinon.SinonStub;
 
     beforeEach(() => {
+      sut = new WebpackCompiler(fakeWebpackConfig);
       webpackRunStub = sandbox.stub(webpackCompilerMock, 'run').callsArgWith(0, null, { hasErrors: () => false });
     });
 
     it('should call the run function on the webpack compiler', async () => {
-      await webpackCompiler.emit();
+      outputFileSystemMock.collectFiles.returns([]);
+      await sut.emit();
       expect(webpackRunStub).calledOnce;
     });
 
     it('should collect files from the outputFS', async () => {
       const expectedFiles = [{ name: 'foobar' }];
       outputFileSystemMock.collectFiles.returns(expectedFiles);
-      const actualResult = await webpackCompiler.emit();
+      const actualResult = await sut.emit();
 
       expect(actualResult).eq(expectedFiles);
+    });
+
+    it('should sort the files based on the sorter plugin', async () => {
+      // Arrange
+      outputFileSystemMock.collectFiles.returns([{ name: path.resolve('3') }, { name: '1' }, { name: '2' }]);
+      const outputSorterPlugin = (fakeWebpackConfig as any).plugins[0] as OutputSorterPlugin;
+      outputSorterPlugin.sortedFileNames = ['1', '2', '3'];
+
+      // Act
+      const actualResult = await sut.emit();
+
+      // Assert
+      expect(actualResult).deep.eq([{ name: '1' }, { name: '2' }, { name: path.resolve('3') }]);
     });
 
     it('should return an error when the webpack compiler fails to compile', async () => {
@@ -74,7 +100,7 @@ describe('WebpackCompiler', () => {
       webpackRunStub.callsArgWith(0, new Error(fakeError));
 
       try {
-        await webpackCompiler.emit();
+        await sut.emit();
 
         expect.fail('Function should throw an error!');
       } catch (err) {
@@ -91,7 +117,7 @@ describe('WebpackCompiler', () => {
       });
 
       try {
-        await webpackCompiler.emit();
+        await sut.emit();
 
         expect.fail(null, null, 'Function should throw an error!');
       } catch (err) {

@@ -4,25 +4,28 @@ import webpack from './Webpack';
 import * as path from 'path';
 import InputFileSystem from '../fs/InputFileSystem';
 import OutputFileSystem from '../fs/OutputFileSystem';
+import OutputSorterPlugin from './OutputSorterPlugin';
 
 export default class WebpackCompiler {
   private _compiler: Compiler;
   private _inputFS = new InputFileSystem();
   private _outputFS = new OutputFileSystem();
+  private _sorter = new OutputSorterPlugin();
 
   public constructor(webpackConfig: Configuration) {
     this._compiler = this.createCompiler(webpackConfig);
   }
 
   private createCompiler(webpackConfig: Configuration): Compiler {
-    // Declare as any here to avoid errors when setting filesystem
-    const compiler: any = webpack(webpackConfig);
+    const plugins = webpackConfig.plugins || (webpackConfig.plugins = []);
+    plugins.push(this._sorter);
+    const compiler = webpack(webpackConfig);
 
     // Setting filesystem to provided fs so compilation can be done in memory
-    compiler.inputFileSystem = this._inputFS;
+    (compiler as any).inputFileSystem = this._inputFS;
     compiler.outputFileSystem = this._outputFS;
-    compiler.resolvers.normal.fileSystem = this._inputFS;
-    compiler.resolvers.context.fileSystem = this._inputFS;
+    (compiler as any).resolvers.normal.fileSystem = this._inputFS;
+    (compiler as any).resolvers.context.fileSystem = this._inputFS;
 
     return compiler as Compiler;
   }
@@ -36,9 +39,6 @@ export default class WebpackCompiler {
   }
 
   private writeToFs(file: TextFile | BinaryFile): void {
-    // Make sure the file has content, the filesystem does not like empty files
-    file.content = file.content || ' ';
-
     // Create the directory
     this._inputFS.mkdirpSync(path.dirname(file.name));
 
@@ -50,6 +50,13 @@ export default class WebpackCompiler {
     return this.compile().then(() => {
       const outputFiles = this._outputFS.collectFiles();
       this._outputFS.purge();
+
+      const sortedFiles = this._sorter.sortedFileNames;
+      outputFiles.sort((a, b) => {
+        const aName = path.basename(a.name);
+        const bName = path.basename(b.name);
+        return sortedFiles.indexOf(aName) - sortedFiles.indexOf(bName);
+      });
       return outputFiles;
     });
   }
