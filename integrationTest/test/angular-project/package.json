@@ -2,9 +2,7 @@
   "name": "angular-project",
   "version": "0.0.0",
   "license": "MIT",
-  "engines": {
-    "node": ">= 6.9.0"
-  },
+  "minimalNodeVersion": "6.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
