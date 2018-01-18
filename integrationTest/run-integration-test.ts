@@ -16,7 +16,7 @@ describe('integration-tests', function () {
   const dirs = fs.readdirSync(testRootDir)
     .filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory());
   dirs.forEach(testDir => {
-    const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json')));
+    const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json'), 'utf8'));
     if (!pkg.engine || !pkg.engines.node || semver.gte(process.version, pkg.engines.node)) {
       describeTestDir(testDir);
     } else {
