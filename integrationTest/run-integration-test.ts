@@ -16,8 +16,13 @@ describe('integration-tests', function () {
     .filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory());
   dirs.forEach(testDir => {
     describe(testDir, () => {
+      const currentTestDir = path.resolve(testRootDir, testDir);
+      before(() => {
+        console.log(`    Exec ${testDir} npm i`);
+        execa.sync('npm', ['i'], { cwd: currentTestDir });
+      });
+
       it('should run test', () => {
-        const currentTestDir = path.resolve(testRootDir, testDir);
         console.log(`    Exec ${testDir} npm test`);
         const testProcess = execa('npm', ['test'], { cwd: currentTestDir, stdio: 'pipe' });
         let stderr = '';
