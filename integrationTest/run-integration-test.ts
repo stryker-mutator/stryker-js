@@ -24,14 +24,14 @@ describe('integration-tests', function () {
 
       it('should run test', () => {
         console.log(`    Exec ${testDir} npm test`);
-        const testProcess = execa('npm', ['test'], { cwd: currentTestDir, stdio: 'inherit' });
-        // let stderr = '';
-        // let stdout = '';
-        // testProcess.stderr.on('data', chunk => stderr += chunk.toString());
-        // testProcess.stdout.on('data', chunk => stdout += chunk.toString());
+        const testProcess = execa('npm', ['test'], { cwd: currentTestDir, stdio: 'pipe' });
+        let stderr = '';
+        let stdout = '';
+        testProcess.stderr.on('data', chunk => stderr += chunk.toString());
+        testProcess.stdout.on('data', chunk => stdout += chunk.toString());
         return testProcess.catch(error => {
-          // console.log(stdout);
-          // console.error(stderr);
+          console.log(stdout);
+          console.error(stderr);
           throw error;
         });
       });
