@@ -2,19 +2,32 @@ import MemoryFS from './MemoryFS';
 import { webpack, Callback } from '../types';
 import * as fs from 'fs';
 const errors = require('errno');
+import { dirname } from 'path';
+import { getLogger } from 'log4js';
 
 export default class InputFileSystem implements webpack.InputFileSystem {
 
+  private log = getLogger(InputFileSystem.name);
   private memoryFS = new MemoryFS();
 
   writeFileSync(name: string, content: string | Buffer) {
+    if (content === '') {
+      // The in-memory fs doesn't like empty strings.
+      content = ' ';
+    }
     return this.memoryFS.writeFileSync(name, content);
   }
 
   stat(path: string, callback: Callback<fs.Stats>): void {
     this.memoryFS.stat(path, (err: Error, stats: any) => {
       if (err) {
-        fs.stat(path, callback);
+        this.pullIntoMemory(path, undefined, (err: Error) => {
+          if (err) {
+            callback(err);
+          } else {
+            this.memoryFS.stat(path, callback);
+          }
+        });
       }
       else {
         callback(err, stats);
@@ -36,6 +49,19 @@ export default class InputFileSystem implements webpack.InputFileSystem {
     });
   }
 
+  private pullIntoMemory(path: any, optArg: any, callback: any) {
+    fs.readFile(path, optArg, (err: Error, content: string) => {
+      if (err) {
+        callback(err);
+      } else {
+        this.log.debug('Pulling file into memory: %s', path);
+        this.mkdirpSync(dirname(path));
+        this.writeFileSync(path, content);
+        callback(null, content);
+      }
+    });
+  }
+
   readFile(path: any, optArg: any, callback?: any) {
     if (!callback) {
       callback = optArg;
@@ -44,7 +70,7 @@ export default class InputFileSystem implements webpack.InputFileSystem {
 
     this.memoryFS.readFile(path, optArg, (err: Error, file: string) => {
       if (err) {
-        fs.readFile(path, optArg, callback);
+        this.pullIntoMemory(path, optArg, callback);
       }
       else {
         callback(err, file);
@@ -96,4 +122,5 @@ export default class InputFileSystem implements webpack.InputFileSystem {
   }
 
   readlinkSync = this.memoryFS.readlinkSync.bind(this.memoryFS);
+
 }

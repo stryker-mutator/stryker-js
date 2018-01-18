@@ -11,12 +11,10 @@ describe('InputFileSystem', () => {
 
   beforeEach(() => {
     memoryFSMock = createMockInstance(MemoryFS);
-
     fsMock = Object.create(null);
     sandbox.stub(memoryFSModule, 'default').returns(memoryFSMock);
     actions('readdirSync', 'readFileSync', 'readFile', 'stat', 'readdir', 'readlink', 'statSync')
       .forEach(action => fsMock[action] = sandbox.stub(fs, action));
-
     sut = new InputFileSystem();
   });
 
@@ -26,9 +24,14 @@ describe('InputFileSystem', () => {
       expect(sut.writeFileSync('path', 'content')).eq('foobar');
       expect(memoryFSMock.writeFileSync).calledWith('path', 'content');
     });
+    it(`should replace empty string content`, () => {
+      memoryFSMock.writeFileSync.returns('foobar');
+      expect(sut.writeFileSync('path', '')).eq('foobar');
+      expect(memoryFSMock.writeFileSync).calledWith('path', ' ');
+    });
   });
 
-  actions('stat', 'readdir', 'readlink').forEach(action => {
+  actions('readdir', 'readlink').forEach(action => {
     describe(action, () => {
       it(`should forward to memory fs`, (done) => {
         memoryFSMock[action].callsArgWith(1, undefined, 'foobar');
@@ -44,6 +47,50 @@ describe('InputFileSystem', () => {
         (sut[action] as any)('arg1', callback);
         expect(fs[action]).calledWith('arg1', callback);
       });
+    });
+  });
+
+  describe('stat', () => {
+
+    it('should forward to memory fs', done => {
+      memoryFSMock.stat.callsArgWith(1, undefined, 'foobar');
+      sut.stat('arg1', (error, value) => {
+        expect(value).eq('foobar');
+        expect(fs.stat).not.called;
+        done();
+      });
+    });
+
+    it('should pull the file into memory if file did not exist in-memory', () => {
+      // Arrange
+      fsMock.readFile.callsArgWith(2, undefined, 'content from fs');
+      memoryFSMock.stat
+        .onFirstCall().callsArgOnWith(1, sut, new Error('foobar'))
+        .onSecondCall().callsArgOnWith(1, sut, null, 'the stats');
+      const callback = sandbox.stub();
+
+      // Act
+      sut.stat('foo/bar', callback);
+
+      // Assert
+      expect(callback).calledWith(null, 'the stats');
+      expectFilePulledIntoMemory('foo/bar', 'content from fs');
+    });
+
+    it('should forward fs errors if file did not exist', () => {
+      // Arrange
+      const expectedError = new Error('File not exists');
+      fsMock.readFile.callsArgWith(2, expectedError);
+      memoryFSMock.stat.callsArgOnWith(1, sut, new Error('foobar'));
+      const callback = sandbox.stub();
+
+      // Act
+      sut.stat('foo/bar/not/exits', callback);
+
+      // Assert
+      expect(callback).calledWith(expectedError);
+      expect(memoryFSMock.writeFileSync).not.called;
+      expect(logMock.debug).not.called;
     });
   });
 
@@ -68,11 +115,34 @@ describe('InputFileSystem', () => {
       });
     });
 
-    it('should forward to real FS if file does not exist in-memory', () => {
+    it('should pull the file into memory if file did not exist', () => {
+      // Arrange
+      fsMock.readFile.callsArgWith(2, undefined, 'content from fs');
       memoryFSMock.readFile.callsArgOnWith(2, sut, new Error('foobar'));
       const callback = sandbox.stub();
-      sut.readFile('path', callback);
-      expect(fs.readFile).calledWith('path', undefined, callback);
+
+      // Act
+      sut.readFile('foo/bar', callback);
+
+      // Assert
+      expect(callback).calledWith(null, 'content from fs');
+      expectFilePulledIntoMemory('foo/bar', 'content from fs');
+    });
+
+    it('should forward fs errors if file did not exist', () => {
+      // Arrange
+      const expectedError = new Error('File not exists');
+      fsMock.readFile.callsArgWith(2, expectedError);
+      memoryFSMock.readFile.callsArgOnWith(2, sut, new Error('foobar'));
+      const callback = sandbox.stub();
+
+      // Act
+      sut.readFile('foo/bar/not/exits', callback);
+
+      // Assert
+      expect(callback).calledWith(expectedError);
+      expect(memoryFSMock.writeFileSync).not.called;
+      expect(logMock.debug).not.called;
     });
   });
 
@@ -92,7 +162,7 @@ describe('InputFileSystem', () => {
       expect(fs.statSync).calledWith('path');
     });
   });
-  
+
   describe('readdirSync', () => {
     it('should forward to memory FS', () => {
       memoryFSMock.readdirSync.returns('foobar dirs');
@@ -142,8 +212,15 @@ describe('InputFileSystem', () => {
       expect(fs.readFileSync).not.called;
     });
   });
-  
+
   function actions(...actions: Array<'stat' | 'readdir' | 'readlink' | 'readdirSync' | 'readFile' | 'readFileSync' | 'statSync' | 'writeFileSync'>) {
     return actions;
+  }
+
+  function expectFilePulledIntoMemory(fileName: string, content: string) {
+    expect(fs.readFile).calledWith(fileName);
+    expect(memoryFSMock.mkdirpSync).calledWith('foo');
+    expect(memoryFSMock.writeFileSync).calledWith(fileName, content);
+    expect(logMock.debug).calledWith('Pulling file into memory: %s', fileName);
   }
 });
