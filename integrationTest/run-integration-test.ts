@@ -17,7 +17,6 @@ describe('integration-tests', function () {
     .filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory());
   dirs.forEach(testDir => {
     const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json'), 'utf8'));
-    console.log(process.version + " gte " + pkg.minimalNodeVersion);
     if (!pkg.minimalNodeVersion || semver.gte(process.version, pkg.minimalNodeVersion)) {
       describeTestDir(testDir);
     } else {
