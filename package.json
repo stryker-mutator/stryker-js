@@ -29,7 +29,7 @@
     "jasmine": "^2.8.0",
     "lerna": "^2.0.0",
     "link-parent-bin": "^0.1.1",
-    "mocha": "^4.0.1",
+    "mocha": "^5.0.0",
     "nyc": "^11.3.0",
     "protractor": "^5.1.2",
     "rimraf": "^2.6.1",
