@@ -1,8 +1,10 @@
 import { PathLike } from 'fs';
 import * as path from 'path';
 import { webpack, EmptyCallback, Callback } from '../types';
-import { File, TextFile, FileKind } from 'stryker-api/core';
-import { BinaryFile } from 'stryker-api/src/core/File';
+import { BinaryFile, TextFile, FileKind } from 'stryker-api/core';
+import ChunkSorter, { Chunk } from '../compiler/ChunkSorter';
+
+const binaryFileExtensions = Object.freeze(['.ico', '.zip']);
 
 export default class OutputFileSystem implements webpack.OutputFileSystem {
 
@@ -18,31 +20,43 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     this._files = Object.create(null);
   }
 
-  collectFiles(): File[] {
-    const files: File[] = [];
+  isBinary(fileName: string) {
+    return binaryFileExtensions.indexOf(path.extname(fileName)) >= 0;
+  }
+
+  collectFiles(chunks: Chunk[]): Array<BinaryFile | TextFile> {
+    const files: Array<BinaryFile | TextFile> = [];
     Object.keys(this._files).forEach(fileName => {
       const fileContent = this._files[fileName];
-      if (typeof fileContent === 'string') {
-        const file: TextFile = {
+      // Best guess the file properties based on the extension
+      // Far from ideal, but i don't know any other way.
+      if (this.isBinary(fileName) && typeof fileContent !== 'string') {
+        files.push({
           name: fileName,
-          content: fileContent,
-          transpiled: true,
-          included: true,
-          kind: FileKind.Text,
-          mutated: true
-        };
-        files.push(file);
-      } else {
-        const file: BinaryFile = {
-          name: fileName,
-          content: fileContent,
-          transpiled: true,
-          included: false,
           kind: FileKind.Binary,
-          mutated: false
-        };
-        files.push(file);
+          mutated: false,
+          included: false,
+          transpiled: true,
+          content: fileContent
+        });
+      } else {
+        files.push({
+          name: fileName,
+          kind: FileKind.Text,
+          mutated: true,
+          included: true,
+          transpiled: true,
+          content: fileContent.toString()
+        });
       }
+    });
+
+    const sortedFiles = new ChunkSorter()
+      .sortedFileNames(chunks);
+    files.sort((a, b) => {
+      const aName = path.basename(a.name);
+      const bName = path.basename(b.name);
+      return sortedFiles.indexOf(aName) - sortedFiles.indexOf(bName);
     });
 
     return files;

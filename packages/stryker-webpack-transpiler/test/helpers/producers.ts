@@ -2,6 +2,7 @@ import { Configuration, Stats } from 'webpack';
 import { FileKind, TextFile } from 'stryker-api/core';
 import { WebpackCompilerMock } from './mockInterfaces';
 import * as sinon from 'sinon';
+import { Chunk } from '../../src/compiler/ChunkSorter';
 
 export type Mock<T> = {
   [K in keyof T]: sinon.SinonStub;
@@ -33,6 +34,27 @@ export function createTextFile(name: string): TextFile {
     kind: FileKind.Text
   };
 }
+
+function createFactory<T>(defaultFn: () => T): (overrides?: Partial<T>) => T {
+  return overrides => Object.assign(defaultFn(), overrides);
+}
+
+export function createStats(chunks: Chunk[]) {
+  return {
+    hasErrors: () => false,
+    toJson() {
+      return {
+        chunks
+      };
+    }
+  };
+}
+
+export const createChunk = createFactory<Chunk>(() => ({
+  files: [],
+  id: '1',
+  parents: []
+}));
 
 export function createWebpackMock(): WebpackCompilerMock {
   return {
