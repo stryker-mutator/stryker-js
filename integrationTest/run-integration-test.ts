@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import execa = require('execa');
+import semver = require('semver');
 
 describe('integration-tests', function () {
 
@@ -15,8 +16,17 @@ describe('integration-tests', function () {
   const dirs = fs.readdirSync(testRootDir)
     .filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory());
   dirs.forEach(testDir => {
+    const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json')));
+    if (!pkg.engine || !pkg.engines.node || semver.gte(process.version, pkg.engines.node)) {
+      describeTestDir(testDir);
+    } else {
+      console.log(`Skipping ${testDir} as it is not supported for node version ${process.version}.`);
+    }
+  });
+
+  function describeTestDir(testDir: string) {
+    const currentTestDir = path.resolve(testRootDir, testDir);
     describe(testDir, () => {
-      const currentTestDir = path.resolve(testRootDir, testDir);
       before(() => {
         console.log(`    Exec ${testDir} npm i`);
         execa.sync('npm', ['i'], { cwd: currentTestDir });
@@ -36,5 +46,5 @@ describe('integration-tests', function () {
         });
       });
     });
-  });
+  }
 });
