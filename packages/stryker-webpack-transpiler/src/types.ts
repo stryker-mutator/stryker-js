@@ -4,7 +4,7 @@ export interface EmptyCallback {
 }
 
 export interface Callback<T> {
-  (err: NodeJS.ErrnoException | null | undefined, arg: T | undefined): void;
+  (err: NodeJS.ErrnoException | null | undefined, arg?: T): void;
 }
 
 export declare namespace webpack {
