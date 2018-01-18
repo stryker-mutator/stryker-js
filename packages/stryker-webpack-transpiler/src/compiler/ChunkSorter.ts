@@ -1,4 +1,3 @@
-import * as webpack from 'webpack';
 import * as _ from 'lodash';
 const toposort = require('toposort');
 
@@ -22,17 +21,11 @@ export interface Chunk {
  * 
  * @see https://www.npmjs.com/package/toposort#usage
  */
-export default class OutputSorterPlugin implements webpack.Plugin {
+export default class ChunkSorter {
 
-  public sortedFileNames: string[];
-
-  apply(compiler: webpack.Compiler) {
-    compiler.plugin('emit', (compilation, callback) => {
-      const allChunks: any[] = (compilation.getStats() as webpack.Stats).toJson().chunks;
-      const sortedChunks = this.sort(allChunks);
-      this.sortedFileNames = _.flatMap(sortedChunks, chunk => chunk.files);
-      callback();
-    });
+  sortedFileNames(allChunks: Chunk[]) {
+    const sortedChunks = this.sort(allChunks);
+    return _.flatMap(sortedChunks, chunk => chunk.files);
   }
 
   private sort(allChunks: Chunk[]): Chunk[] {
