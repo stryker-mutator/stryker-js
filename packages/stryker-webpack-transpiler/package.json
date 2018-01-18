@@ -38,7 +38,6 @@
   "homepage": "https://github.com/Archcry/stryker-webpack#readme",
   "devDependencies": {
     "@types/chai": "^4.0.4",
-    "@types/enhanced-resolve": "^3.0.4",
     "@types/lodash": "^4.14.88",
     "@types/memory-fs": "^0.3.0",
     "@types/mocha": "^2.2.43",
