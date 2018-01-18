@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import execa = require('execa');
+import semver = require('semver');
 
 describe('integration-tests', function () {
 
@@ -15,12 +16,35 @@ describe('integration-tests', function () {
   const dirs = fs.readdirSync(testRootDir)
     .filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory());
   dirs.forEach(testDir => {
+    const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json'), 'utf8'));
+    if (!pkg.minimalNodeVersion || semver.gte(process.version, pkg.minimalNodeVersion)) {
+      describeTestDir(testDir);
+    } else {
+      console.log(`Skipping ${testDir} as it is not supported for node version ${process.version}.`);
+    }
+  });
+
+  function describeTestDir(testDir: string) {
+    const currentTestDir = path.resolve(testRootDir, testDir);
     describe(testDir, () => {
+      before(() => {
+        console.log(`    Exec ${testDir} npm i`);
+        execa.sync('npm', ['i'], { cwd: currentTestDir });
+      });
+
       it('should run test', () => {
-        const currentTestDir = path.resolve(testRootDir, testDir);
         console.log(`    Exec ${testDir} npm test`);
-        execa.sync('npm', ['test'], { cwd: currentTestDir });
+        const testProcess = execa('npm', ['test'], { cwd: currentTestDir, stdio: 'pipe' });
+        let stderr = '';
+        let stdout = '';
+        testProcess.stderr.on('data', chunk => stderr += chunk.toString());
+        testProcess.stdout.on('data', chunk => stdout += chunk.toString());
+        return testProcess.catch(error => {
+          console.log(stdout);
+          console.error(stderr);
+          throw error;
+        });
       });
     });
-  });
+  }
 });
