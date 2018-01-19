@@ -6,7 +6,7 @@ import { Logger, getLogger } from 'log4js';
 import flatMap = require('lodash.flatmap');
 import { TextFile, FileDescriptor, FileKind } from 'stryker-api/core';
 import ScriptFile from './ScriptFile';
-import { normalizeFileFromTypescript } from '../helpers/tsHelpers';
+import { normalizeFileFromTypescript, isJavaScriptFile, isMapFile } from '../helpers/tsHelpers';
 
 const libRegex = /^lib\.(?:\w|\.)*\.?d\.ts$/;
 
@@ -73,8 +73,8 @@ export default class TranspilingLanguageService {
    */
   emit(fileDescriptor: FileDescriptor): EmitOutput {
     const emittedFiles = this.languageService.getEmitOutput(fileDescriptor.name).outputFiles;
-    const jsFile = emittedFiles.find(file => file.name.endsWith('.js'));
-    const mapFile = emittedFiles.find(file => file.name.endsWith('.js.map'));
+    const jsFile = emittedFiles.find(isJavaScriptFile);
+    const mapFile = emittedFiles.find(isMapFile);
     if (jsFile) {
       const outputFiles: TextFile[] = [{
         content: jsFile.text,

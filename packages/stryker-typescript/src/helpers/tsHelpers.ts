@@ -86,6 +86,14 @@ export function isTypescriptFile(file: File) {
     tsExtensions().some(extension => file.name.endsWith(extension));
 }
 
+export function isJavaScriptFile(file: ts.OutputFile) {
+  return file.name.endsWith('.js') || file.name.endsWith('.jsx');
+}
+
+export function isMapFile(file: ts.OutputFile) {
+  return file.name.endsWith('.map');
+}
+
 /**
  * Determines whether or not given file is a typescript header file (*.d.ts)
  */

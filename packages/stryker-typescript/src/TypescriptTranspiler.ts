@@ -36,16 +36,16 @@ export default class TypescriptTranspiler implements Transpiler {
       return this.createErrorResult(error);
     } else {
       // Keep original order of the files
-      let moreOutput = true;
+      let isSingleOutput = false;
       const resultFiles: File[] = flatMap(allFiles, file => {
         if (isHeaderFile(file)) {
           // Header files are not compiled to output
           return [];
         } else if (file.transpiled && isTypescriptFile(file)) {
           // File is a typescript file. Only emit if more output is expected.
-          if (moreOutput) {
+          if (!isSingleOutput) {
             const emitOutput = this.languageService.emit(file);
-            moreOutput = !emitOutput.singleResult;
+            isSingleOutput = emitOutput.singleResult;
             return emitOutput.outputFiles;
           } else {
             return [];

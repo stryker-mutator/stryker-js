@@ -123,8 +123,4 @@ describe('TypescriptTranspiler', () => {
       expect(result.outputFiles).lengthOf(0);
     });
   });
-
-  describe('transpile with source maps', () => {
-
-  });
 });
