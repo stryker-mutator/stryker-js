@@ -3,6 +3,7 @@ import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import WebpackCompiler from './compiler/WebpackCompiler';
 import ConfigLoader from './compiler/ConfigLoader';
+import { setGlobalLogLevel } from 'log4js';
 
 export default class WebpackTranspiler implements Transpiler {
   private config: Config;
@@ -10,6 +11,7 @@ export default class WebpackTranspiler implements Transpiler {
 
   public constructor(options: TranspilerOptions) {
     this.config = options.config;
+    setGlobalLogLevel(options.config.logLevel);
   }
 
   public async transpile(files: Array<File>): Promise<TranspileResult> {
@@ -28,13 +30,11 @@ export default class WebpackTranspiler implements Transpiler {
 
   private initialize(strykerWebpackConfig?: StrykerWebpackConfig): void {
     strykerWebpackConfig = this.getStrykerWebpackConfig(strykerWebpackConfig);
-    this.webpackCompiler = new WebpackCompiler(new ConfigLoader().load(strykerWebpackConfig.configFile));
+    this.webpackCompiler = new WebpackCompiler(new ConfigLoader().load(strykerWebpackConfig));
   }
 
   private getStrykerWebpackConfig(strykerWebpackConfig?: Partial<StrykerWebpackConfig>): StrykerWebpackConfig {
-    return {
-      configFile: (strykerWebpackConfig && strykerWebpackConfig.configFile) || 'webpack.config.js'
-    };
+    return Object.assign({ configFile: 'webpack.config.js', silent: true }, strykerWebpackConfig);
   }
 
   private createErrorResult(error: string): TranspileResult {
@@ -60,4 +60,5 @@ export default class WebpackTranspiler implements Transpiler {
 
 export interface StrykerWebpackConfig {
   configFile: string;
+  silent: boolean;
 }

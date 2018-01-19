@@ -9,7 +9,7 @@ describe('Webpack transpiler', () => {
 
   function createSut() {
     const config = new Config();
-    const strykerWebpackConfig: StrykerWebpackConfig = {
+    const strykerWebpackConfig: Partial<StrykerWebpackConfig> = {
       configFile: path.resolve(__dirname, '..', '..', 'testResources', 'gettingStarted', 'webpack.config.js')
     };
     config.set({

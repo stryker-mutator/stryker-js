@@ -3,6 +3,7 @@ import { FileKind, TextFile } from 'stryker-api/core';
 import { WebpackCompilerMock } from './mockInterfaces';
 import * as sinon from 'sinon';
 import { Chunk } from '../../src/compiler/ChunkSorter';
+import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
 
 export type Mock<T> = {
   [K in keyof T]: sinon.SinonStub;
@@ -54,6 +55,11 @@ export const createChunk = createFactory<Chunk>(() => ({
   files: [],
   id: '1',
   parents: []
+}));
+
+export const createStrykerWebpackConfig = createFactory<StrykerWebpackConfig>(() => ({
+  configFile: 'webpack.config.js',
+  silent: true
 }));
 
 export function createWebpackMock(): WebpackCompilerMock {
