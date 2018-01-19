@@ -62,7 +62,7 @@
     "webpack": "^3.7.1"
   },
   "peerDependencies": {
-    "webpack": "^3.7.1",
+    "webpack": ">= 2.0.0",
     "stryker-api": "^0.12.0"
   },
   "dependencies": {
@@ -70,5 +70,11 @@
     "log4js": "^1.1.0",
     "memory-fs": "^0.4.1",
     "toposort": "^1.0.6"
+  },
+  "initStrykerConfig": {
+    "webpack": {
+      "configFile": "webpack.config.js"
+    },
+    "coverageAnalysis": "off"
   }
 }
