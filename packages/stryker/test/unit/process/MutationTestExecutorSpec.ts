@@ -21,7 +21,7 @@ const createTranspiledMutants = (...n: number[]) => {
   return n.map(n => {
     const mutant = transpiledMutant(`mutant_${n}`);
     if (n) {
-      mutant.mutant.selectTest(n, testResult());
+      mutant.mutant.selectTest(testResult(), n);
     }
     return mutant;
   });

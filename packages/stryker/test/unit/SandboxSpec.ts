@@ -120,8 +120,8 @@ describe('Sandbox', () => {
           '1',
           mutant,
           new SourceFile(textFile({ content: 'original code' })));
-        testableMutant.selectTest(1, testResult({ timeSpentMs: 10 }));
-        testableMutant.selectTest(2, testResult({ timeSpentMs: 2 }));
+        testableMutant.selectTest(testResult({ timeSpentMs: 10 }), 1);
+        testableMutant.selectTest(testResult({ timeSpentMs: 2 }), 2);
         transpiledMutant = new TranspiledMutant(testableMutant, {
           error: null,
           outputFiles: [textFile({ name: expectedFileToMutate.name, content: 'mutated code' })]

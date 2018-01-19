@@ -67,10 +67,10 @@ export default class TestableMutant {
 
   public selectAllTests(runResult: RunResult, testSelectionResult: TestSelectionResult) {
     this.testSelectionResult = testSelectionResult;
-    runResult.tests.forEach((testResult, id) => this.selectTest(id, testResult));
+    runResult.tests.forEach((testResult, id) => this.selectTest(testResult, id));
   }
 
-  public selectTest(index: number, testResult: TestResult) {
+  public selectTest(testResult: TestResult, index: number) {
     this._selectedTests.push({ id: index, name: testResult.name });
     this._timeSpentScopedTests += testResult.timeSpentMs;
   }

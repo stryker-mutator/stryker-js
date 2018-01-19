@@ -77,7 +77,7 @@ export default class MutantTestMatcher {
       } else {
         this.initialRunResult.tests.forEach((testResult, id) => {
           if (this.isCoveredByTest(id, transpiledLocation.fileName, statementIndex)) {
-            testableMutant.selectTest(id, testResult);
+            testableMutant.selectTest(testResult, id);
           }
         });
       }
