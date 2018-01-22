@@ -2,7 +2,6 @@ import { PathLike } from 'fs';
 import * as path from 'path';
 import { webpack, EmptyCallback, Callback } from '../types';
 import { BinaryFile, TextFile, FileKind } from 'stryker-api/core';
-import ChunkSorter, { Chunk } from '../compiler/ChunkSorter';
 
 const binaryFileExtensions = Object.freeze(['.ico', '.zip']);
 
@@ -24,7 +23,7 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     return binaryFileExtensions.indexOf(path.extname(fileName)) >= 0;
   }
 
-  public collectFiles(chunks: Chunk[]): Array<BinaryFile | TextFile> {
+  public collectFiles(): Array<BinaryFile | TextFile> {
     const files: Array<BinaryFile | TextFile> = [];
     Object.keys(this._files).forEach(fileName => {
       const fileContent = this._files[fileName];
@@ -50,15 +49,6 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
         });
       }
     });
-
-    const sortedFiles = new ChunkSorter()
-      .sortedFileNames(chunks);
-    files.sort((a, b) => {
-      const aName = path.basename(a.name);
-      const bName = path.basename(b.name);
-      return sortedFiles.indexOf(aName) - sortedFiles.indexOf(bName);
-    });
-
     return files;
   }
 
