@@ -16,15 +16,15 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     this.purge();
   }
 
-  purge() {
+  public purge() {
     this._files = Object.create(null);
   }
 
-  isBinary(fileName: string) {
+  private isBinary(fileName: string) {
     return binaryFileExtensions.indexOf(path.extname(fileName)) >= 0;
   }
 
-  collectFiles(chunks: Chunk[]): Array<BinaryFile | TextFile> {
+  public collectFiles(chunks: Chunk[]): Array<BinaryFile | TextFile> {
     const files: Array<BinaryFile | TextFile> = [];
     Object.keys(this._files).forEach(fileName => {
       const fileContent = this._files[fileName];
@@ -62,32 +62,32 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     return files;
   }
 
-  mkdirp(dir: string, opts: any, cb?: Callback<string>): void {
+  public mkdirp(dir: string, opts: any, cb?: Callback<string>): void {
     const callback: Callback<string> = cb || opts;
     callback(null, '');
   }
 
-  rmdir(name: PathLike, callback: EmptyCallback): void {
+  public rmdir(name: PathLike, callback: EmptyCallback): void {
     callback();
   }
 
-  mkdir(name: PathLike, callback: EmptyCallback): void {
+  public mkdir(name: PathLike, callback: EmptyCallback): void {
     callback();
   }
 
-  unlink(name: PathLike, callback: EmptyCallback): void {
+  public unlink(name: PathLike, callback: EmptyCallback): void {
     const fullName = path.resolve(name.toString());
     delete this._files[fullName];
     callback();
   }
 
-  writeFile(name: PathLike | number, data: any, options: any, cb?: EmptyCallback): void {
+  public writeFile(name: PathLike | number, data: any, options: any, cb?: EmptyCallback): void {
     const callback: EmptyCallback = cb || options;
     this._files[path.resolve(name.toString())] = data;
     callback();
   }
 
-  join(...paths: string[]): string {
+  public join(...paths: string[]): string {
     return path.join(...paths);
   }
 }
