@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { createFakeWebpackConfig, createTextFile, createWebpackMock, Mock, createMockInstance, createStats, createChunk } from '../../helpers/producers';
 import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
-import InputFileSystem, * as inputFileSystemModule from '../../../src/fs/InputFileSystem';
-import OutputFileSystem, * as outputFileSystemModule from '../../../src/fs/OutputFileSystem';
+import InputFileSystem from '../../../src/fs/InputFileSystem';
+import OutputFileSystem from '../../../src/fs/OutputFileSystem';
 import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
 import { TextFile } from 'stryker-api/core';
 import * as path from 'path';
@@ -29,14 +29,12 @@ describe('WebpackCompiler', () => {
 
     sandbox.stub(chunkSorterModule, 'default').returns(chunkSorterMock);
     sandbox.stub(webpack, 'default').returns(webpackCompilerMock);
-    sandbox.stub(inputFileSystemModule, 'default').returns(inputFileSystemMock);
-    sandbox.stub(outputFileSystemModule, 'default').returns(outputFileSystemMock);
   });
 
   describe('writeFilesToFs', () => {
 
     beforeEach(() => {
-      sut = new WebpackCompiler(fakeWebpackConfig);
+      sut = new WebpackCompiler(fakeWebpackConfig, inputFileSystemMock as any, outputFileSystemMock as any);
     });
 
     it('should call the mkdirp function on the inputFS with the basedir of the given file', () => {
@@ -64,7 +62,7 @@ describe('WebpackCompiler', () => {
 
     beforeEach(() => {
       chunks = [createChunk(), createChunk()];
-      sut = new WebpackCompiler(fakeWebpackConfig);
+      sut = new WebpackCompiler(fakeWebpackConfig, inputFileSystemMock as any, outputFileSystemMock as any);
       webpackRunStub = sandbox.stub(webpackCompilerMock, 'run').callsArgWith(0, null, createStats(chunks));
     });
 
