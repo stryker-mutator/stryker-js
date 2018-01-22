@@ -7,16 +7,15 @@ import OutputFileSystem from '../fs/OutputFileSystem';
 
 export default class WebpackCompiler {
   private _compiler: Compiler;
-  private _inputFS: InputFileSystem;
-  private _outputFS = new OutputFileSystem();
 
-  public constructor(webpackConfig: Configuration) {
+  public constructor(webpackConfig: Configuration,
+    private _inputFS = new InputFileSystem(),
+    private _outputFS = new OutputFileSystem()) {
     this._compiler = this.createCompiler(webpackConfig);
   }
 
   private createCompiler(webpackConfig: Configuration): Compiler {
     const compiler = webpack(webpackConfig);
-    this._inputFS = new InputFileSystem();
     // Setting filesystem to provided fs so compilation can be done in memory
     (compiler as any).inputFileSystem = this._inputFS;
     compiler.outputFileSystem = this._outputFS;
@@ -35,14 +34,13 @@ export default class WebpackCompiler {
   }
 
   private writeToFs(file: TextFile | BinaryFile): void {
-    // Create the directory
     this._inputFS.mkdirpSync(path.dirname(file.name));
     this._inputFS.writeFileSync(file.name, file.content);
   }
 
   public emit(): Promise<File[]> {
     return this.compile().then(stats => {
-      const jsonStats = stats.toJson({ chunks: true});
+      const jsonStats = stats.toJson({ chunks: true });
       const outputFiles = this._outputFS.collectFiles(jsonStats.chunks);
       this._outputFS.purge();
 
