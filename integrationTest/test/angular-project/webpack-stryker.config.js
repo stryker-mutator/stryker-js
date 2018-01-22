@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const angularCliConfig = require('./.angular-cli');
 const getAppFromConfig = require('@angular/cli/utilities/app-utils').getAppFromConfig;
 const WebpackTestConfig = require('@angular/cli/models/webpack-test-config').WebpackTestConfig;
 const AngularCompilerPlugin = require('@ngtools/webpack/src/angular_compiler_plugin').AngularCompilerPlugin;
