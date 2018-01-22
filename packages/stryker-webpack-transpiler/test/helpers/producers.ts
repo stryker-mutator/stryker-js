@@ -2,7 +2,7 @@ import { Configuration, Stats } from 'webpack';
 import { FileKind, TextFile } from 'stryker-api/core';
 import { WebpackCompilerMock } from './mockInterfaces';
 import * as sinon from 'sinon';
-import { Chunk } from '../../src/compiler/ChunkSorter';
+import { Chunk } from '../../src/compiler/FileSorter';
 import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
 
 export type Mock<T> = {

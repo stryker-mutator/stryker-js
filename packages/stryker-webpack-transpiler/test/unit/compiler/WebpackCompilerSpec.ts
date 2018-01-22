@@ -1,33 +1,29 @@
 import { expect } from 'chai';
+import { TextFile } from 'stryker-api/core';
 import { createFakeWebpackConfig, createTextFile, createWebpackMock, Mock, createMockInstance, createStats, createChunk } from '../../helpers/producers';
 import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
 import InputFileSystem from '../../../src/fs/InputFileSystem';
 import OutputFileSystem from '../../../src/fs/OutputFileSystem';
 import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
-import { TextFile } from 'stryker-api/core';
 import * as path from 'path';
 import * as webpack from '../../../src/compiler/Webpack';
 import { Configuration } from 'webpack';
-import ChunkSorter, * as chunkSorterModule from '../../../src/compiler/ChunkSorter';
-import { Chunk } from '../../../src/compiler/ChunkSorter';
+import FileSorter, { Chunk } from '../../../src/compiler/FileSorter';
 
 describe('WebpackCompiler', () => {
   let sut: WebpackCompiler;
   let inputFileSystemMock: Mock<InputFileSystem>;
   let outputFileSystemMock: Mock<OutputFileSystem>;
   let webpackCompilerMock: WebpackCompilerMock;
-  let chunkSorterMock: Mock<ChunkSorter>;
-
+  let sortStub: sinon.SinonStub;
   let fakeWebpackConfig: Configuration;
 
   beforeEach(() => {
     inputFileSystemMock = createMockInstance(InputFileSystem);
     outputFileSystemMock = createMockInstance(OutputFileSystem);
-    chunkSorterMock = createMockInstance(ChunkSorter);
     webpackCompilerMock = createWebpackMock();
     fakeWebpackConfig = createFakeWebpackConfig();
-
-    sandbox.stub(chunkSorterModule, 'default').returns(chunkSorterMock);
+    sortStub = sandbox.stub(FileSorter, 'sort');
     sandbox.stub(webpack, 'default').returns(webpackCompilerMock);
   });
 
@@ -75,10 +71,21 @@ describe('WebpackCompiler', () => {
     it('should collect files from the outputFS', async () => {
       const expectedFiles = [{ name: 'foobar' }];
       outputFileSystemMock.collectFiles.returns(expectedFiles);
+      sortStub.returns(expectedFiles);
       const actualResult = await sut.emit();
-
+      
       expect(actualResult).eq(expectedFiles);
-      expect(outputFileSystemMock.collectFiles).calledWith(chunks);
+      expect(outputFileSystemMock.collectFiles).calledWith();
+    });
+    
+    it('should sort the files based on given chunks', async () => {
+      const expectedFiles = [{ name: 'foobar' }];
+      const expectedResult = ['1', '2', '3'];
+      outputFileSystemMock.collectFiles.returns(expectedFiles);
+      sortStub.returns(expectedResult);
+      const actualResult = await sut.emit();
+      expect(actualResult).deep.eq(expectedResult);
+      expect(sortStub).calledWith(expectedFiles, chunks);
     });
 
     it('should return an error when the webpack compiler fails to compile', async () => {
