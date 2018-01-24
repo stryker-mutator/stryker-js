@@ -15,6 +15,7 @@ if (process.env.TRAVIS_PULL_REQUEST === releaseRequirements.pullRequest
     && process.env.TRAVIS_BRANCH === releaseRequirements.branch
     && process.env.TRAVIS_NODE_VERSION === releaseRequirements.nodeVersion) {
     console.log('Alright man, let\'s do this!');
+    exec('git fetch --unshallow');
     exec('echo "//registry.npmjs.org/:_authToken=\${NPM_KEY}" > ~/.npmrc');
     exec(`git remote add gh-publish https://${process.env.GIT_TOKEN}@github.com/stryker-mutator/stryker.git`)
     exec('git config --global user.email "strykermutator.npa@gmail.com"');
