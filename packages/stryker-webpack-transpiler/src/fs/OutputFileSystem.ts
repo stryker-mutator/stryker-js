@@ -3,7 +3,7 @@ import * as path from 'path';
 import { webpack, EmptyCallback, Callback } from '../types';
 import { BinaryFile, TextFile, FileKind } from 'stryker-api/core';
 
-const binaryFileExtensions = Object.freeze(['.ico', '.zip']);
+const binaryFileExtensions = Object.freeze(['.ico', '.zip', '.eot', '.ttf', '.woff', '.woff2']);
 
 export default class OutputFileSystem implements webpack.OutputFileSystem {
 
