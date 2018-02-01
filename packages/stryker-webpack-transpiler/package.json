@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "log4js": "^1.1.0",
+    "log4js": "^2.5.2",
     "memory-fs": "^0.4.1",
     "toposort": "^1.0.6"
   },
