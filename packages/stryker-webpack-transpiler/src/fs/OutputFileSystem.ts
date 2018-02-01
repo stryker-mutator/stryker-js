@@ -3,7 +3,7 @@ import * as path from 'path';
 import { webpack, EmptyCallback, Callback } from '../types';
 import { BinaryFile, TextFile, FileKind } from 'stryker-api/core';
 
-const binaryFileExtensions = Object.freeze(['.ico', '.zip', '.eot', '.ttf', '.woff', '.woff2']);
+const binaryFileExtensions = Object.freeze(['.ico', '.png', '.zip', '.eot', '.ttf', '.woff', '.woff2']);
 
 export default class OutputFileSystem implements webpack.OutputFileSystem {
 
@@ -23,6 +23,10 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     return binaryFileExtensions.indexOf(path.extname(fileName)) >= 0;
   }
 
+  private isJSFile(fileName: string) {
+    return path.extname(fileName) === '.js';
+  }
+
   public collectFiles(): Array<BinaryFile | TextFile> {
     const files: Array<BinaryFile | TextFile> = [];
     Object.keys(this._files).forEach(fileName => {
@@ -39,11 +43,12 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
           content: fileContent
         });
       } else {
+        const isJS = this.isJSFile(fileName);
         files.push({
           name: fileName,
           kind: FileKind.Text,
-          mutated: true,
-          included: true,
+          mutated: isJS,
+          included: isJS,
           transpiled: true,
           content: fileContent.toString()
         });
