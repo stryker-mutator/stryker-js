@@ -31,7 +31,7 @@ describe('OutputFileSystem', () => {
     });
   });
 
-  describe.only('when "collectFiles"', () => {
+  describe('when "collectFiles"', () => {
 
     ['.ico', '.png', '.zip', '.eot', '.ttf', '.woff', '.woff2'].forEach(binaryExtension => {
       it(`should collect ${binaryExtension} as a binary file`, () => {
