@@ -5,7 +5,6 @@ import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
 import InputFileSystem from '../../../src/fs/InputFileSystem';
 import OutputFileSystem from '../../../src/fs/OutputFileSystem';
 import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
-import * as path from 'path';
 import * as webpack from '../../../src/compiler/Webpack';
 import { Configuration } from 'webpack';
 import FileSorter, { Chunk } from '../../../src/compiler/FileSorter';
@@ -31,15 +30,6 @@ describe('WebpackCompiler', () => {
 
     beforeEach(() => {
       sut = new WebpackCompiler(fakeWebpackConfig, inputFileSystemMock as any, outputFileSystemMock as any);
-    });
-
-    it('should call the mkdirp function on the inputFS with the basedir of the given file', () => {
-      const textFiles = createFakeTextFileArray();
-      sut.writeFilesToFs(textFiles);
-
-      textFiles.forEach((textFile, index) => {
-        expect(inputFileSystemMock.mkdirpSync).calledWith(path.dirname(textFile.name));
-      });
     });
 
     it('should call the writeFile function on the inputFS with the given file', () => {

@@ -1,33 +1,34 @@
 import MemoryFS from './MemoryFS';
 import { webpack, Callback } from '../types';
 import * as fs from 'fs';
-const errors = require('errno');
 import { dirname } from 'path';
-import { getLogger } from 'log4js';
+import { CachedInputFileSystem, NodeJsInputFileSystem, Stats } from 'enhanced-resolve';
 
-export default class InputFileSystem implements webpack.InputFileSystem {
+// Cache duration is same as webpack has
+// => https://github.com/webpack/webpack/blob/efc576c8b744e7a015ab26f1f46932ba3ca7d4f1/lib/node/NodeEnvironmentPlugin.js#L14
+const CACHE_DURATION = 60000;
 
-  private log = getLogger(InputFileSystem.name);
+export default class InputFileSystem extends CachedInputFileSystem implements webpack.InputFileSystem {
+
   private memoryFS = new MemoryFS();
 
+  constructor(innerFS = new NodeJsInputFileSystem()) {
+    super(innerFS, CACHE_DURATION);
+  }
+
   public writeFileSync(name: string, content: string | Buffer) {
+    this.memoryFS.mkdirpSync(dirname(name));
     if (content === '') {
       // The in-memory fs doesn't like empty strings.
       content = ' ';
     }
-    return this.memoryFS.writeFileSync(name, content);
+    this.memoryFS.writeFileSync(name, content);
   }
 
   public stat(path: string, callback: Callback<fs.Stats>): void {
     this.memoryFS.stat(path, (err: Error, stats: any) => {
       if (err) {
-        this.pullIntoMemory(path, undefined, (err: Error) => {
-          if (err) {
-            callback(err);
-          } else {
-            this.memoryFS.stat(path, callback);
-          }
-        });
+        super.stat(path, callback);
       }
       else {
         callback(err, stats);
@@ -35,91 +36,31 @@ export default class InputFileSystem implements webpack.InputFileSystem {
     });
   }
 
-  public mkdirpSync(path: string) {
-    this.memoryFS.mkdirpSync(path);
-  }
-  public readdir(path: string, callback: Callback<string[]>): void {
-    this.memoryFS.readdir(path, (err: Error, file: string[]) => {
-      if (err) {
-        fs.readdir(path, callback);
-      }
-      else {
-        callback(err, file);
+  public readFile(...args: any[]) {
+    const memoryFSArgs = args.filter((_, index) => index !== args.length - 1);
+    memoryFSArgs.push((error: NodeJS.ErrnoException, content: any) => {
+      if (error) {
+        super.readFile.apply(this, args);
+      } else {
+        args.find((_, index) => index === args.length - 1)(error, content);
       }
     });
+    this.memoryFS.readFile.apply(this.memoryFS, memoryFSArgs);
   }
 
-  public readFile(path: any, optArg: any, callback?: any) {
-    if (!callback) {
-      callback = optArg;
-      optArg = undefined;
-    }
-
-    this.memoryFS.readFile(path, optArg, (err: Error, file: string) => {
-      if (err) {
-        this.pullIntoMemory(path, optArg, callback);
-      }
-      else {
-        callback(err, file);
-      }
-    });
-  }
-
-  public readlink(path: any, callback?: any) {
-    this.memoryFS.readlink(path, (err: Error, file: string) => {
-      if (err) {
-        fs.readlink(path, callback);
-      }
-      else {
-        callback(err, file);
-      }
-    });
-  }
-
-  public statSync(path: string): webpack.FileStats {
-    try {
-      return this.memoryFS.statSync(path);
-    } catch (err) {
-      return fs.statSync(path);
-    }
-  }
-  public readdirSync(path: string): string[] {
-    try {
-      return this.memoryFS.readdirSync(path);
-    } catch (err) {
-      if (err.code === errors.code.ENOTDIR.code) {
-        return fs.readdirSync(path);
-      }
-      else {
-        throw err;
-      }
-    }
-  }
-  public readFileSync(path: string, encoding: string) {
+  public readFileSync(path: string, encoding?: string) {
     try {
       return this.memoryFS.readFileSync(path, encoding);
     } catch (err) {
-      if (err.code === errors.code.ENOENT.code) {
-        return fs.readFileSync(path, encoding);
-      }
-      else {
-        throw err;
-      }
+      return super.readFileSync(path, encoding);
     }
   }
 
-  public readlinkSync = this.memoryFS.readlinkSync.bind(this.memoryFS);
-
-  private pullIntoMemory(path: any, optArg: any, callback: any) {
-    fs.readFile(path, optArg, (err: Error, content: string) => {
-      if (err) {
-        callback(err);
-      } else {
-        this.log.debug('Pulling file into memory: %s', path);
-        this.mkdirpSync(dirname(path));
-        this.writeFileSync(path, content);
-        callback(null, content);
-      }
-    });
+  public statSync(path: string): Stats {
+    try {
+      return this.memoryFS.statSync(path);
+    } catch (err) {
+      return super.statSync(path);
+    }
   }
 }

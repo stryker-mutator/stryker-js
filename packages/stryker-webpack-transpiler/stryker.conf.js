@@ -2,10 +2,10 @@ module.exports = function (config) {
   config.set({
     files: [
       '!src/**/*.ts',
-      '!**/*.d.ts',
       { pattern: 'src/**/*.ts', included: false, mutated: true },
+      '!**/*.d.ts',
       '!./src/index.ts',
-      { pattern: 'testResources/**/+(*.js|*.txt)', transpiled: false, included: false }
+      { pattern: 'testResources/**/*.*', transpiled: false, included: false }
     ],
     testRunner: "mocha",
     testFramework: "mocha",
