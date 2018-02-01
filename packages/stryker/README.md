@@ -278,3 +278,11 @@ Set `break` to `null` (default) to never let the process crash.
  Set the `log4js` log level that Stryker uses (default is `info`). Possible values: `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` and `off`.  
  *Note*: Test runners are run as child processes of the Stryker Node process. All output (stdout) of the `testRunner` is logged as `trace`.  
  Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
+
+#### Temporary folder  
+**Command line:** `--tempDir .stryker-tmp`    
+**Config file:** `tempDir: '.stryker-tmp'`
+**Default value:** `.stryker-tmp`  
+**Mandatory**: no 
+**Description:**  
+Set the name of the directory that is used by Stryker as a working directory. This directory is used to keep copies of your files that are used by Stryker to mutate your code safely. This directory will be cleaned after a successful run. **Warning!** If you configure an absolute path (for example `/tmp/stryker`), node-based test runners like mocha will fail, because your `node_modules` cannot be loaded. Use with caution.

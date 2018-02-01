@@ -9,7 +9,7 @@ import { wrapInClosure } from './utils/objectUtils';
 import TestRunnerDecorator from './isolated-runner/TestRunnerDecorator';
 import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
-import { TempFolder } from './utils/TempFolder';
+import { TempDir } from './utils/TempDir';
 import * as fileUtils from './utils/fileUtils';
 import TestableMutant from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
@@ -28,7 +28,7 @@ export default class Sandbox {
   private testHooksFile = path.resolve('___testHooksForStryker.js');
 
   private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null) {
-    this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
+    this.workingFolder = TempDir.instance().createRandomFolder('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.files = files.slice(); // Create a copy
     if (testFramework) {
