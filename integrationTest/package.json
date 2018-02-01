@@ -10,6 +10,7 @@
     "grunt": "^1.0.1",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-jshint": "^1.0.0",
+    "if-node-version": "^1.1.1",
     "install-local": "^0.4.0",
     "jasmine-core": "^2.4.1",
     "karma": "^2.0.0",
@@ -27,9 +28,7 @@
   },
   "scripts": {
     "postinstall": "install-local && link-parent-bin -c test --link-local-dependencies true",
-    "build": "tsc",
-    "pretest": "npm run build",
-    "test": "mocha run-integration-test.js"
+    "test": "ts-node ./run-integration-test.ts"
   },
   "localDependencies": {
     "grunt-stryker": "../packages/grunt-stryker",

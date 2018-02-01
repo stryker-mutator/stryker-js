@@ -2,7 +2,8 @@
     "extends": "../tsconfig.json",
     "compilerOptions": {
         "declaration": false,
-        "importHelpers": false
+        "importHelpers": false,
+        "rootDir": "."
     },
     "include": [
         "*.ts"
