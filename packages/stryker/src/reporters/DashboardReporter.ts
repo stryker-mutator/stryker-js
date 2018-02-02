@@ -36,11 +36,10 @@ export default class DashboardReporter implements Reporter {
 
         if (repository && branch && apiKey) {
           await this.dashboardReporterClient.postStrykerDashboardReport({
-            apiKey: apiKey,
-            repositorySlug: 'github/' + repository,
-            branch: branch,
-            mutationScore: mutationScore,
-            reportData: []
+            apiKey,
+            repositorySlug: 'github.com/' + repository,
+            branch,
+            mutationScore
           });
         }
       } else {

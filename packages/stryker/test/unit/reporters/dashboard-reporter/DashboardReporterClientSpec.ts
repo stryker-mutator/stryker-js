@@ -11,14 +11,13 @@ describe('DashboardReporterClient', () => {
   let dashboardClient: Mock<HttpClient>;
   let log: Mock<Logger>;
 
-  const url = 'https://badge.stryker-mutator.io/';
+  const url = 'https://dashboard.stryker-mutator.io/api/reports';
 
   const dashboardReport: StrykerDashboardReport = {
     apiKey: '1',
-    repositorySlug: 'github/stryker-mutator/stryker',
+    repositorySlug: 'github.com/stryker-mutator/stryker',
     branch: 'master',
-    mutationScore: 65.1,
-    reportData: null
+    mutationScore: 65.1
   };
 
   beforeEach(() => {
@@ -49,7 +48,7 @@ describe('DashboardReporterClient', () => {
       expect(log.error).have.not.been.called;
   });
 
-  it('when the server returns a invalid statuscode an error will be logged  ', async () => {
+  it('when the server returns a invalid status code an error will be logged  ', async () => {
     // Arrange
     dashboardClient.post.resolves({ 
       message: {
@@ -64,10 +63,9 @@ describe('DashboardReporterClient', () => {
     expect(log.error).have.been.calledWithMatch(`Post to ${url} resulted in http status code: 500`);
   });
 
-  it('when the server doesnt respond an error will be logged', async () => {
+  it('when the server doesn\'t respond an error will be logged', async () => {
     // Arrange
-    dashboardClient.post.rejects({ 
-    });
+    dashboardClient.post.rejects();
 
     // Act
     await sut.postStrykerDashboardReport(dashboardReport);

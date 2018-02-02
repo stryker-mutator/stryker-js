@@ -7,10 +7,9 @@ export interface StrykerDashboardReport {
   repositorySlug: string;
   branch: string;
   mutationScore: number;
-  reportData: any;
 }
 
-const URL_STRYKER_DASHBOARD_REPORTER = 'https://badge.stryker-mutator.io/';
+const URL_STRYKER_DASHBOARD_REPORTER = 'https://dashboard.stryker-mutator.io/api/reports';
 
 export default class DashboardReporterClient {
 
@@ -22,7 +21,9 @@ export default class DashboardReporterClient {
 
   postStrykerDashboardReport(report: StrykerDashboardReport): Promise<void> {
     this.log.info(`Posting report to ${URL_STRYKER_DASHBOARD_REPORTER}`);
-    return this.dashboardReporterClient.post(URL_STRYKER_DASHBOARD_REPORTER, JSON.stringify(report), 
+    const reportString = JSON.stringify(report);
+    this.log.debug('Posting data %s', reportString);
+    return this.dashboardReporterClient.post(URL_STRYKER_DASHBOARD_REPORTER, reportString, 
     {
       ['Content-Type']: 'application/json'
     })

@@ -52,10 +52,9 @@ describe('DashboardReporter', () => {
     // Assert
     const report: StrykerDashboardReport = {
       apiKey: '12345',
-      repositorySlug: 'github/stryker-mutator/stryker',
+      repositorySlug: 'github.com/stryker-mutator/stryker',
       branch: 'master',
-      mutationScore: 79.10,
-      reportData: []
+      mutationScore: 79.10
     };
 
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.been.calledWith(report);
