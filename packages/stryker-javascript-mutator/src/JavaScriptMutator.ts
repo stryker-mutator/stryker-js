@@ -1,5 +1,5 @@
 import * as babel from 'babel-core';
-import { getLogger } from 'log4js';
+import { getLogger, setGlobalLogLevel } from 'log4js';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import { File, FileKind, TextFile } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
@@ -17,6 +17,7 @@ export default class JavaScriptMutator implements Mutator {
   private log = getLogger(JavaScriptMutator.name);
 
   constructor(config: Config, private mutators: NodeMutator[] = defaultMutators()) {
+    setGlobalLogLevel(config.logLevel);
   }
 
   public mutate(inputFiles: File[]): Mutant[] {

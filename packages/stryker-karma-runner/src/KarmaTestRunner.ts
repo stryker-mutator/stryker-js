@@ -60,7 +60,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
 
     this.log.info(`using config ${JSON.stringify(karmaConfig)}`);
     this.server = new karma.Server(karmaConfig, function (exitCode) {
-      process.exit(1);
+      process.exit(exitCode);
     });
 
     this.listenToBrowserStarted();
@@ -129,7 +129,12 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
 
   private listenToBrowserError() {
     this.server.on('browser_error', (browser: any, error: any) => {
-      this.currentErrorMessages.push(error.toString());
+      // Karma 2.0 has different error messages
+      if (error.message) {
+        this.currentErrorMessages.push(error.message);
+      } else {
+        this.currentErrorMessages.push(error.toString());
+      }
     });
   }
 

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "es2015"
+    ],
+    "target": "es2015"
+  },
+  "exclude": [
+    "node_modules",
+    "src/**/*.d.ts",
+    "test/**/*.d.ts",
+    "testResources"
+  ]
+}

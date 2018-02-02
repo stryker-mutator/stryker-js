@@ -30,7 +30,7 @@ export default class ES5Mutator implements Mutator {
     new BooleanSubstitutionMutator()
   ]) {
     this.log = getLogger(ES5Mutator.name);
-    this.log.warn(`DEPRECATED: The es5 mutator is deprecated and will be removed in the future. Please upgrade to the stryker-javascript-mutator (npm install --save-dev stryker-javascript-mutator) and set "mutator: 'javascript'" in your stryker.conf.js!`);
+    this.log.warn(`DEPRECATED: The es5 mutator is deprecated and will be removed in the future. Please upgrade to the stryker-javascript-mutator (npm install --save-dev stryker-javascript-mutator) and set "mutator: 'javascript'" in your stryker.conf.js! If you have a plugins array in your stryker.conf.js, be sure to add 'stryker-javascript-mutator'.`);
   }
 
 

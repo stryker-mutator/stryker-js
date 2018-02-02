@@ -32,7 +32,7 @@ const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOp
 }));
 
 const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
-  if (response.statusCode === 200) {
+  if (response.statusCode === 200 && response.result) {
     return response.result;
   } else {
     throw new Error(`Query ${from} resulted in http status code: ${response.statusCode}.`);

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.8.1"></a>
+## [0.8.1](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.8.0...stryker-mocha-framework@0.8.1) (2018-01-19)
+
+
+
+
+**Note:** Version bump only for package stryker-mocha-framework
+
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.7.2...stryker-mocha-framework@0.8.0) (2018-01-12)
+
+
+### Features
+
+* **stryker-mocha-framework:** Support mocha in karma ([#567](https://github.com/stryker-mutator/stryker/issues/567)) ([ca389e5](https://github.com/stryker-mutator/stryker/commit/ca389e5))
+
+
+
+
 <a name="0.7.2"></a>
 ## [0.7.2](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.7.1...stryker-mocha-framework@0.7.2) (2017-12-21)
 
