@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { FileKind, File } from 'stryker-api/core';
+import { FileKind, File, BinaryFile, TextFile } from 'stryker-api/core';
 import { expect } from 'chai';
 import OutputFileSystem from '../../../src/fs/OutputFileSystem';
 
@@ -33,10 +33,42 @@ describe('OutputFileSystem', () => {
 
   describe('when "collectFiles"', () => {
 
+    ['.ico', '.png', '.zip', '.eot', '.ttf', '.woff', '.woff2'].forEach(binaryExtension => {
+      it(`should collect ${binaryExtension} as a binary file`, () => {
+        const binContent = Buffer.from(binaryExtension);
+        const fileName = `file${binaryExtension}`;
+        sut.writeFile(fileName, binContent, () => { });
+        const expectedFile: BinaryFile = {
+          name: path.resolve(fileName),
+          content: binContent,
+          kind: FileKind.Binary,
+          transpiled: true,
+          included: false,
+          mutated: false
+        };
+        expect(sut.collectFiles()).deep.eq([expectedFile]);
+      });
+    });
+
+    it('should collect a css files with included = false', () => {
+      const fileName = 'file.css';
+      const fileContent = 'body: { background: blue }';
+      sut.writeFile(fileName, fileContent, () => { });
+      const expectedFile: TextFile = {
+        name: path.resolve(fileName),
+        content: fileContent,
+        kind: FileKind.Text,
+        transpiled: true,
+        included: false,
+        mutated: false
+      };
+      expect(sut.collectFiles()).deep.eq([expectedFile]);
+    });
+
     it('should collect files', () => {
       const binContent = Buffer.from('');
       sut.writeFile('bin1.ico', binContent, () => { });
-      sut.writeFile('file1', 'data', () => { });
+      sut.writeFile('file1.js', 'data', () => { });
       const expectedFiles: File[] = [
         {
           kind: FileKind.Binary,
@@ -49,7 +81,7 @@ describe('OutputFileSystem', () => {
         {
           kind: FileKind.Text,
           content: 'data',
-          name: path.resolve('file1'),
+          name: path.resolve('file1.js'),
           mutated: true,
           transpiled: true,
           included: true

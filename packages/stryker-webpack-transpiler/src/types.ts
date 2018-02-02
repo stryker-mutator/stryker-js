@@ -1,3 +1,5 @@
+import { Stats } from 'enhanced-resolve';
+
 
 export interface EmptyCallback {
   (err?: NodeJS.ErrnoException | null): void;
@@ -9,21 +11,11 @@ export interface Callback<T> {
 
 export declare namespace webpack {
 
-  interface FileStats {
-    isFile: () => boolean;
-    isDirectory: () => boolean;
-    isBlockDevice: () => boolean;
-    isCharacterDevice: () => boolean;
-    isSymbolicLink: () => boolean;
-    isFIFO: () => boolean;
-    isSocket: () => boolean;
-}
-
   /**
    * Grabbed from https://github.com/webpack/enhanced-resolve/blob/4a9488d1f0954351cbbee80fbf395688f853ef1f/lib/NodeJsInputFileSystem.js
    */
   interface InputFileSystem {
-    stat(path: string, callback: Callback<FileStats>): void;
+    stat(path: string, callback: Callback<Stats>): void;
     readdir(path: string, callback: Callback<string[]>): void;
 
     readFile(path: string, options: { encoding: string; flag?: string; } | string, callback: Callback<string>): void;
@@ -33,7 +25,7 @@ export declare namespace webpack {
 
     readlink(path: string, callback: Callback<string>): void;
 
-    statSync(path: string): FileStats;
+    statSync(path: string): Stats;
     readdirSync(path: string): string[];
 
     readFileSync(path: string, encoding?: string): string;

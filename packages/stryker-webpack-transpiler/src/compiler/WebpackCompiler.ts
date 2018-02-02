@@ -1,7 +1,6 @@
 import { TextFile, File, BinaryFile, FileKind } from 'stryker-api/core';
 import { Compiler, Configuration } from 'webpack';
 import webpack from './Webpack';
-import * as path from 'path';
 import InputFileSystem from '../fs/InputFileSystem';
 import OutputFileSystem from '../fs/OutputFileSystem';
 import FileSorter from './FileSorter';
@@ -35,7 +34,6 @@ export default class WebpackCompiler {
   }
 
   private writeToFs(file: TextFile | BinaryFile): void {
-    this._inputFS.mkdirpSync(path.dirname(file.name));
     this._inputFS.writeFileSync(file.name, file.content);
   }
 
