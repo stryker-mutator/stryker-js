@@ -37,14 +37,16 @@ export default class InputFileSystem extends CachedInputFileSystem implements we
   }
 
   public readFile(...args: any[]) {
-    const memoryFSArgs = args.filter((_, index) => index !== args.length - 1);
-    memoryFSArgs.push((error: NodeJS.ErrnoException, content: any) => {
+    const originalCallback = args[args.length - 1];
+    const newCallback = (error: NodeJS.ErrnoException, content: any) => {
       if (error) {
         super.readFile.apply(this, args);
       } else {
-        args.find((_, index) => index === args.length - 1)(error, content);
+        originalCallback(error, content);
       }
-    });
+    };
+    const memoryFSArgs = args.slice(0, args.length - 1);
+    memoryFSArgs.push(newCallback);
     this.memoryFS.readFile.apply(this.memoryFS, memoryFSArgs);
   }
 
