@@ -40,7 +40,7 @@
     "sinon-chai": "^2.14.0",
     "source-map-support": "^0.5.1",
     "tslint": "^5.9.1",
-    "typescript": "^2.6.1"
+    "typescript": "^2.7.1"
   },
   "scripts": {
     "clean": "lerna run prebuild",
