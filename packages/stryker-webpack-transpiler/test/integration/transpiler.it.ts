@@ -15,7 +15,7 @@ describe('Webpack transpiler', () => {
     config.set({
       webpack: strykerWebpackConfig
     });
-    return new WebpackTranspiler({ keepSourceMaps: false, config });
+    return new WebpackTranspiler({ produceSourceMaps: false, config });
   }
 
   function readFiles(): TextFile[] {

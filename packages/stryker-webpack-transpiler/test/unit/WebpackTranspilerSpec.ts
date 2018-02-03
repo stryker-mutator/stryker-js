@@ -3,7 +3,7 @@ import ConfigLoader, * as configLoaderModule from '../../src/compiler/ConfigLoad
 import WebpackCompiler, * as webpackCompilerModule from '../../src/compiler/WebpackCompiler';
 import { createTextFile, Mock, createMockInstance, createStrykerWebpackConfig } from '../helpers/producers';
 import { Config } from 'stryker-api/config';
-import { Position, TextFile } from 'stryker-api/core';
+import { TextFile } from 'stryker-api/core';
 import { expect } from 'chai';
 import { Configuration } from 'webpack';
 import * as log4js from 'log4js';
@@ -36,7 +36,7 @@ describe('WebpackTranspiler', () => {
   });
 
   it('should only create the compiler once', async () => {
-    webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false });
+    webpackTranspiler = new WebpackTranspiler({ config, produceSourceMaps: false });
     await webpackTranspiler.transpile([]);
     await webpackTranspiler.transpile([]);
 
@@ -50,12 +50,16 @@ describe('WebpackTranspiler', () => {
 
   it('should set global log level when compiler is called', () => {
     config.logLevel = 'foobar level';
-    new WebpackTranspiler({ config, keepSourceMaps: false });
+    new WebpackTranspiler({ config, produceSourceMaps: false });
     expect(log4js.setGlobalLogLevel).calledWith('foobar level');
   });
 
+  it('should throw an error if `produceSourceMaps` is `true`', () => {
+    expect(() => new WebpackTranspiler({ config, produceSourceMaps: true })).throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off"');
+  });
+
   it('should call the webpackCompiler.writeFilesToFs function with the given files', async () => {
-    webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false });
+    webpackTranspiler = new WebpackTranspiler({ config, produceSourceMaps: false });
     const files = [createTextFile('main.js'), createTextFile('sum.js'), createTextFile('divide.js')];
 
     await webpackTranspiler.transpile(files);
@@ -64,7 +68,7 @@ describe('WebpackTranspiler', () => {
   });
 
   it('should call the webpackCompiler.emit function to get the new bundled files', async () => {
-    webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false });
+    webpackTranspiler = new WebpackTranspiler({ config, produceSourceMaps: false });
     await webpackTranspiler.transpile([]);
 
     expect(webpackCompilerStub.emit).called;
@@ -72,7 +76,7 @@ describe('WebpackTranspiler', () => {
   });
 
   it('should return a successResult with the bundled files on success', async () => {
-    webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false });
+    webpackTranspiler = new WebpackTranspiler({ config, produceSourceMaps: false });
     const transpileResult = await webpackTranspiler.transpile([]);
 
     expect(transpileResult.error).to.be.null;
@@ -80,7 +84,7 @@ describe('WebpackTranspiler', () => {
   });
 
   it('should return a error result when an error occurred', async () => {
-    webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false });
+    webpackTranspiler = new WebpackTranspiler({ config, produceSourceMaps: false });
     const fakeError = 'compiler could not compile input files';
     webpackCompilerStub.emit.throwsException(Error(fakeError));
 
@@ -90,19 +94,4 @@ describe('WebpackTranspiler', () => {
     expect(transpileResult.error).to.equal(`Error: ${fakeError}`);
   });
 
-  it('should throw a not implemented error when calling the getMappedLocation method', () => {
-    webpackTranspiler = new WebpackTranspiler({ config, keepSourceMaps: false });
-    const position: Position = {
-      line: 0,
-      column: 0
-    };
-
-    const fileLocation: { fileName: string, start: Position, end: Position } = {
-      fileName: 'test',
-      start: position,
-      end: position
-    };
-
-    expect(webpackTranspiler.getMappedLocation.bind(this, fileLocation)).to.throw(Error, 'Method not implemented.');
-  });
 });
