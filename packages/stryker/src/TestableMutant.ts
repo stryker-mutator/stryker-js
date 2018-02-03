@@ -6,6 +6,11 @@ import { MutantStatus, MutantResult } from 'stryker-api/report';
 import { freezeRecursively } from './utils/objectUtils';
 import { TestSelection } from 'stryker-api/test_framework';
 
+export enum TestSelectionResult {
+  Failed,
+  FailedButAlreadyReporter,
+  Success
+}
 
 export default class TestableMutant {
 
@@ -13,6 +18,7 @@ export default class TestableMutant {
   public specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
   private _location: Location;
+  testSelectionResult = TestSelectionResult.Success;
 
   get selectedTests(): TestSelection[] {
     return this._selectedTests;
@@ -59,16 +65,17 @@ export default class TestableMutant {
     return this.sourceFile.content;
   }
 
-  public addAllTestResults(runResult: RunResult) {
-    runResult.tests.forEach((testResult, id) => this.addTestResult(id, testResult));
+  public selectAllTests(runResult: RunResult, testSelectionResult: TestSelectionResult) {
+    this.testSelectionResult = testSelectionResult;
+    runResult.tests.forEach((testResult, id) => this.selectTest(testResult, id));
   }
 
-  public addTestResult(index: number, testResult: TestResult) {
+  public selectTest(testResult: TestResult, index: number) {
     this._selectedTests.push({ id: index, name: testResult.name });
     this._timeSpentScopedTests += testResult.timeSpentMs;
   }
 
-  constructor(public mutant: Mutant, public sourceFile: SourceFile) {
+  constructor(public readonly id: string, public mutant: Mutant, public sourceFile: SourceFile) {
   }
 
   public get originalLines() {
@@ -95,6 +102,7 @@ export default class TestableMutant {
 
   public result(status: MutantStatus, testsRan: string[]): MutantResult {
     return freezeRecursively({
+      id: this.id,
       sourceFilePath: this.fileName,
       mutatorName: this.mutatorName,
       status,
@@ -105,6 +113,10 @@ export default class TestableMutant {
       location: this.location,
       range: this.range
     });
+  }
+
+  toString() {
+    return `${this.mutant.mutatorName}: (${this.replacement}) file://${this.fileName}:${this.location.start.line + 1}:${this.location.start.column}`;
   }
 
 }

@@ -73,6 +73,27 @@ describe('InitialTestExecutor run', () => {
       expect(StrykerSandbox.create).calledWith(options, 0, transpileResultMock.outputFiles, testFrameworkMock);
     });
 
+    it('should create the transpiler with produceSourceMaps = true when coverage analysis is enabled', async () => {
+      options.coverageAnalysis = 'all';
+      await sut.run();
+      const expectedTranspilerOptions: TranspilerOptions = { 
+        produceSourceMaps: true,
+        config: options
+      };
+      expect(transpilerFacade.default).calledWithNew;
+      expect(transpilerFacade.default).calledWith(expectedTranspilerOptions);
+    });
+
+    it('should create the transpiler with produceSourceMaps = false when coverage analysis is "off"', async () => {
+      options.coverageAnalysis = 'off';
+      await sut.run();
+      const expectedTranspilerOptions: TranspilerOptions = { 
+        produceSourceMaps: false,
+        config: options
+      };
+      expect(transpilerFacade.default).calledWith(expectedTranspilerOptions);
+    });
+
     it('should initialize, run and dispose the sandbox', async () => {
       await sut.run();
       expect(strykerSandboxMock.run).to.have.been.calledWith(60 * 1000 * 5);
@@ -81,7 +102,7 @@ describe('InitialTestExecutor run', () => {
 
     it('should pass through the result', async () => {
       const coverageData = coverageMaps();
-      coverageInstrumenterTranspilerMock.fileCoveragePerFile = { someFile: coverageData } as any;
+      coverageInstrumenterTranspilerMock.fileCoverageMaps = { someFile: coverageData } as any;
       const expectedResult: InitialTestRunResult = {
         runResult: expectedRunResult,
         transpiledFiles: transpileResultMock.outputFiles,
@@ -139,7 +160,7 @@ describe('InitialTestExecutor run', () => {
       await sut.run();
       const expectedSettings: TranspilerOptions = {
         config: options,
-        keepSourceMaps: true
+        produceSourceMaps: true
       };
       expect(coverageInstrumenterTranspiler.default).calledWithNew;
       expect(coverageInstrumenterTranspiler.default).calledWith(expectedSettings, testFrameworkMock);

@@ -4,6 +4,7 @@ import { MutantStatus, MutantResult } from 'stryker-api/report';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import * as os from 'os';
+import * as producers from '../../helpers/producers';
 
 describe('DotsReporter', () => {
 
@@ -18,7 +19,7 @@ describe('DotsReporter', () => {
 
   describe('onMutantTested()', () => {
 
-    describe('when status is KILLED', () => {
+    describe('when status is Killed', () => {
 
       beforeEach(() => {
         sut.onMutantTested(mutantResult(MutantStatus.Killed));
@@ -29,7 +30,7 @@ describe('DotsReporter', () => {
       });
     });
 
-    describe('when status is TIMEDOUT', () => {
+    describe('when status is TimedOut', () => {
 
       beforeEach(() => {
         sut.onMutantTested(mutantResult(MutantStatus.TimedOut));
@@ -40,7 +41,7 @@ describe('DotsReporter', () => {
       });
     });
 
-    describe('when status is SURVIVED', () => {
+    describe('when status is Survived', () => {
 
       beforeEach(() => {
         sut.onMutantTested(mutantResult(MutantStatus.Survived));
@@ -64,7 +65,7 @@ describe('DotsReporter', () => {
   });
 
   function mutantResult(status: MutantStatus): MutantResult {
-    return {
+    return producers.mutantResult({
       location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
       mutatedLines: '',
       mutatorName: '',
@@ -74,7 +75,7 @@ describe('DotsReporter', () => {
       testsRan: [''],
       status: status,
       range: [0, 0]
-    };
+    });
   }
 
 });

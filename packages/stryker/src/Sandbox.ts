@@ -11,7 +11,7 @@ import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFac
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import { TempFolder } from './utils/TempFolder';
 import * as fileUtils from './utils/fileUtils';
-import TestableMutant from './TestableMutant';
+import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
 
 interface FileMap {
@@ -65,6 +65,9 @@ export default class Sandbox {
 
   public async runMutant(transpiledMutant: TranspiledMutant): Promise<RunResult> {
     const mutantFiles = transpiledMutant.transpileResult.outputFiles;
+    if (transpiledMutant.mutant.testSelectionResult === TestSelectionResult.Failed) {
+      this.log.warn(`Failed find coverage data for this mutant, running all tests. This might have an impact on performance: ${transpiledMutant.mutant.toString()}`);
+    }
     await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)).concat(this.filterTests(transpiledMutant.mutant)));
     const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant));
     await this.reset(mutantFiles);

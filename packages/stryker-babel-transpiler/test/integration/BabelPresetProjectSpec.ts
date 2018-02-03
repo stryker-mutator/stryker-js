@@ -19,7 +19,7 @@ describe('BabelPresetProject', () => {
     expectedResultFiles = ProjectLoader.removeEOL(ProjectLoader.getFiles(path.join(projectDir, 'expectedResult')));
     babelConfig = ProjectLoader.loadBabelRc(projectDir);
     config.set({ babelConfig });
-    babelTranspiler = new BabelTranspiler({ config, keepSourceMaps: false });
+    babelTranspiler = new BabelTranspiler({ config, produceSourceMaps: false });
   });
 
   it('should have project files', () => {

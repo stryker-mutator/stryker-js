@@ -5,7 +5,7 @@ import { Mock, mock, textFile, binaryFile } from '../helpers/producers';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { Config } from 'stryker-api/config';
 import { TextFile } from 'stryker-api/core';
-
+import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
 
 describe('TypescriptTranspiler', () => {
 
@@ -22,42 +22,34 @@ describe('TypescriptTranspiler', () => {
 
   it('set global log level', () => {
     config.logLevel = 'foobar';
-    sut = new TypescriptTranspiler({ config, keepSourceMaps: true });
+    sut = new TypescriptTranspiler({ config, produceSourceMaps: true });
     expect(log4js.setGlobalLogLevel).calledWith('foobar');
   });
 
   describe('transpile', () => {
     let singleFileOutputEnabled: boolean;
 
-    function makeOutputFile(file: TextFile) {
+    function makeOutputFile(file: TextFile): EmitOutput {
       const copy = Object.assign({}, file);
-      if (file.name.endsWith('.ts') || file.name.endsWith('.js')) {
+      if (singleFileOutputEnabled) {
+        const singleFileOutput: TextFile = Object.assign({}, textFile({
+          name: 'allOutput.js',
+          content: 'single output',
+        }));
+        return { singleResult: singleFileOutputEnabled, outputFiles: [singleFileOutput] };
+      } else if (file.name.endsWith('.ts') || file.name.endsWith('.js')) {
         copy.name = copy.name.replace('.ts', '.js');
-        return copy;
+        return { singleResult: singleFileOutputEnabled, outputFiles: [copy] };
       } else {
         throw new Error(`Could not transpile "${file.name}"`);
-      }
-    }
-
-    function makeOutput(sourceFiles: TextFile[]) {
-      if (singleFileOutputEnabled) {
-        const singleFileOutput = Object.assign({}, sourceFiles[0], { name: 'allOutput.js' });
-        return {
-          [sourceFiles[0].name]: singleFileOutput
-        };
-      } else {
-        return sourceFiles.reduce((map, sourceFile) => {
-          map[sourceFile.name] = makeOutputFile(sourceFile);
-          return map;
-        }, Object.create(null));
       }
     }
 
     beforeEach(() => {
       singleFileOutputEnabled = false;
       languageService.getSemanticDiagnostics.returns([]); // no errors by default
-      languageService.emit.callsFake(makeOutput);
-      sut = new TypescriptTranspiler({ config, keepSourceMaps: true });
+      languageService.emit.callsFake(makeOutputFile);
+      sut = new TypescriptTranspiler({ config, produceSourceMaps: true });
     });
 
     it('should transpile given files', async () => {
@@ -103,7 +95,7 @@ describe('TypescriptTranspiler', () => {
       expect(output.error).eq(null);
       expect(output.outputFiles).deep.eq([
         textFile({ name: 'file1.ts', transpiled: false }),
-        textFile({ name: 'allOutput.js', transpiled: true }),
+        textFile({ name: 'allOutput.js', content: 'single output', transpiled: true }),
         binaryFile({ name: 'file3.bin' }),
         textFile({ name: 'file5.ts', transpiled: false })
       ]);
@@ -119,10 +111,8 @@ describe('TypescriptTranspiler', () => {
         textFile({ name: 'file6.js', transpiled: true }) // OK, transpiled JS file
       ];
       sut.transpile(input);
-      expect(languageService.emit).calledWith([
-        textFile({ name: 'file1.ts', transpiled: true }),
-        textFile({ name: 'file6.js', transpiled: true })
-      ]);
+      expect(languageService.emit).calledWith(textFile({ name: 'file1.ts', transpiled: true }));
+      expect(languageService.emit).calledWith(textFile({ name: 'file6.js', transpiled: true }));
     });
 
     it('should return errors when there are diagnostic messages', async () => {

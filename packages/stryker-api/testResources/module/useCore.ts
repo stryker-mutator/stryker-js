@@ -33,7 +33,7 @@ const binaryFile = createFile({
   mutated: false,
   included: false,
   transpiled: false,
-  content: Buffer.from('sdssdsd'),
+  content: Buffer.from('foobar'),
   kind: FileKind.Binary
 });
 

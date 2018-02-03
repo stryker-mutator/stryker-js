@@ -19,7 +19,7 @@ describe('BabelProject', () => {
     babelConfig = ProjectLoader.loadBabelRc(projectDir);
     config = new Config();
     config.set({ babelConfig });
-    babelTranspiler = new BabelTranspiler({ config, keepSourceMaps: false });
+    babelTranspiler = new BabelTranspiler({ config, produceSourceMaps: false });
   });
 
   it('should have project files', () => {

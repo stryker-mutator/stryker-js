@@ -1,4 +1,4 @@
-import { Transpiler, TranspilerOptions, TranspileResult, FileLocation } from 'stryker-api/transpile';
+import { Transpiler, TranspilerOptions, TranspileResult } from 'stryker-api/transpile';
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import * as babel from 'babel-core';
 import * as path from 'path';
@@ -11,7 +11,9 @@ class BabelTranspiler implements Transpiler {
 
   public constructor(options: TranspilerOptions) {
     this.babelConfig = new BabelConfigReader().readConfig(options.config);
-
+    if (options.produceSourceMaps) {
+      throw new Error(`Invalid \`coverageAnalysis\` "${options.config.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`);
+    }
     this.knownExtensions = ['.js', '.jsx'];
   }
 
@@ -77,10 +79,6 @@ class BabelTranspiler implements Transpiler {
       error: null,
       outputFiles
     };
-  }
-
-  public getMappedLocation(): FileLocation {
-    throw new Error('Not implemented');
   }
 }
 

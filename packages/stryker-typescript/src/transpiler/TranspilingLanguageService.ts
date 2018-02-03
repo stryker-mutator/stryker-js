@@ -5,25 +5,27 @@ import * as ts from 'typescript';
 import { Logger, getLogger } from 'log4js';
 import flatMap = require('lodash.flatmap');
 import { TextFile, FileDescriptor, FileKind } from 'stryker-api/core';
-import { FileLocation } from 'stryker-api/transpile';
 import ScriptFile from './ScriptFile';
-import OutputFile from './OutputFile';
+import { normalizeFileFromTypescript, isJavaScriptFile, isMapFile } from '../helpers/tsHelpers';
 
 const libRegex = /^lib\.(?:\w|\.)*\.?d\.ts$/;
+
+export interface EmitOutput {
+  singleResult: boolean;
+  outputFiles: TextFile[];
+}
 
 export default class TranspilingLanguageService {
   private languageService: ts.LanguageService;
 
   private compilerOptions: ts.CompilerOptions;
   private readonly files: ts.MapLike<ScriptFile>;
-  private readonly outputFiles: ts.MapLike<OutputFile>;
   private logger: Logger;
   private readonly diagnosticsFormatter: ts.FormatDiagnosticsHost;
 
-  constructor(compilerOptions: Readonly<ts.CompilerOptions>, private rootFiles: TextFile[], private projectDirectory: string, private keepSourceMaps: boolean) {
+  constructor(compilerOptions: Readonly<ts.CompilerOptions>, rootFiles: TextFile[], private projectDirectory: string, private produceSourceMaps: boolean) {
     this.logger = getLogger(TranspilingLanguageService.name);
     this.files = Object.create(null);
-    this.outputFiles = Object.create(null);
     this.compilerOptions = this.adaptCompilerOptions(compilerOptions);
     rootFiles.forEach(file => this.files[file.name] = new ScriptFile(file.name, file.content));
     const host = this.createLanguageServiceHost();
@@ -43,7 +45,7 @@ export default class TranspilingLanguageService {
    */
   private adaptCompilerOptions(source: ts.CompilerOptions) {
     const compilerOptions = Object.assign({}, source);
-    compilerOptions.sourceMap = this.keepSourceMaps;
+    compilerOptions.sourceMap = this.produceSourceMaps;
     compilerOptions.inlineSourceMap = false;
     compilerOptions.declaration = false;
     return compilerOptions;
@@ -64,66 +66,35 @@ export default class TranspilingLanguageService {
   }
 
   /**
-   * Get the output text for given source files
-   * @param sourceFiles Emit output files based on given source files
+   * Get the output text file for given source file
+   * @param sourceFile Emit output file based on this source file
    * @return  Map<TextFile> Returns a map of source file names with their output files.
    *          If all output files are bundled together, only returns the output file once using the first file as key
    */
-  emit(sourceFiles: FileDescriptor[] = this.rootFiles): ts.MapLike<TextFile> {
-    if (this.compilerOptions.outFile) {
-      // If it is a single out file, just transpile one file as it is all bundled together anyway.
-      const outputFile = this.mapToOutput(sourceFiles[0]);
-      // All output is bundled together. Configure this output file for all root files.
-      this.rootFiles.forEach(rootFile => this.outputFiles[rootFile.name] = outputFile);
-
-      return {
-        [sourceFiles[0].name]: {
-          name: outputFile.name,
-          content: outputFile.content,
-          mutated: sourceFiles[0].mutated,
-          kind: FileKind.Text,
-          transpiled: true, // Override transpiled. If a next transpiler comes along, definitely pick up this file.
-          included: true // Override included, as it should be included when there is only one output file
-        }
-      };
-    } else {
-      return sourceFiles.reduce((fileMap, sourceFile) => {
-        const outputFile = this.mapToOutput(sourceFile);
-        this.outputFiles[sourceFile.name] = outputFile;
-        const textOutput: TextFile = {
-          name: outputFile.name,
-          content: outputFile.content,
-          mutated: sourceFile.mutated,
-          included: sourceFile.included,
-          transpiled: sourceFile.transpiled,
-          kind: FileKind.Text,
-        };
-        fileMap[sourceFile.name] = textOutput;
-        return fileMap;
-      }, Object.create(null));
-    }
-  }
-
-  getMappedLocationFor(sourceFileLocation: FileLocation): FileLocation | null {
-    const outputFile = this.outputFiles[sourceFileLocation.fileName];
-    if (outputFile) {
-      const location = this.outputFiles[sourceFileLocation.fileName]
-        .getMappedLocation(sourceFileLocation);
-      if (location) {
-        const targetFileLocation = location as FileLocation;
-        targetFileLocation.fileName = outputFile.name;
-        return targetFileLocation;
-      }
-    }
-    return null;
-  }
-
-  private mapToOutput(fileDescriptor: FileDescriptor) {
-    const outputFiles = this.languageService.getEmitOutput(fileDescriptor.name).outputFiles;
-    const mapFile = outputFiles.find(file => file.name.endsWith('.js.map'));
-    const jsFile = outputFiles.find(file => file.name.endsWith('.js'));
+  emit(fileDescriptor: FileDescriptor): EmitOutput {
+    const emittedFiles = this.languageService.getEmitOutput(fileDescriptor.name).outputFiles;
+    const jsFile = emittedFiles.find(isJavaScriptFile);
+    const mapFile = emittedFiles.find(isMapFile);
     if (jsFile) {
-      return new OutputFile(jsFile.name, jsFile.text, mapFile ? mapFile.text : '');
+      const outputFiles: TextFile[] = [{
+        content: jsFile.text,
+        name: normalizeFileFromTypescript(jsFile.name),
+        included: fileDescriptor.included,
+        kind: FileKind.Text,
+        mutated: fileDescriptor.mutated,
+        transpiled: fileDescriptor.transpiled
+      }];
+      if (mapFile) {
+        outputFiles.push({
+          content: mapFile.text,
+          name: normalizeFileFromTypescript(mapFile.name),
+          included: false,
+          kind: FileKind.Text,
+          mutated: false,
+          transpiled: false
+        });
+      }
+      return { singleResult: !!this.compilerOptions.outFile, outputFiles };
     } else {
       throw new Error(`Emit error! Could not emit file ${fileDescriptor.name}`);
     }

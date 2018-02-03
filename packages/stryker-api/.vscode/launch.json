@@ -4,6 +4,22 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Integration tests",
+      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
+      "args": [
+        "-u",
+        "tdd",
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceFolder}/test/helpers/**/*.js",
+        "${workspaceFolder}/test/integration/**/*.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Unit tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
@@ -12,7 +28,8 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceRoot}/test/**/*.js"
+        "${workspaceRoot}/test/helpers/**/*.js",
+        "${workspaceRoot}/test/unit/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
     }

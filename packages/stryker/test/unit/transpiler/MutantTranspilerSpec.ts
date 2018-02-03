@@ -5,6 +5,7 @@ import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/Tra
 import { Mock, mock, transpileResult, config, textFile, webFile, testableMutant } from '../../helpers/producers';
 import { TranspileResult } from 'stryker-api/transpile';
 import '../../helpers/globals';
+import TranspiledMutant from '../../../src/TranspiledMutant';
 
 describe('MutantTranspiler', () => {
   let sut: MutantTranspiler;
@@ -35,7 +36,7 @@ describe('MutantTranspiler', () => {
         'someLogLevel',
         ['plugin1'],
         TranspilerFacade,
-        { config: expectedConfig, keepSourceMaps: false });
+        { config: expectedConfig, produceSourceMaps: false });
     });
 
     describe('initialize', () => {
@@ -68,10 +69,31 @@ describe('MutantTranspiler', () => {
         const actualResult = await sut.transpileMutants(mutants)
           .toArray()
           .toPromise();
-        expect(actualResult).deep.eq([
-          { mutant: mutants[0], transpileResult: transpileResultOne },
-          { mutant: mutants[1], transpileResult: transpileResultTwo }
-        ]);
+        const expected: TranspiledMutant[] = [
+          { mutant: mutants[0], transpileResult: transpileResultOne, changedAnyTranspiledFiles: true },
+          { mutant: mutants[1], transpileResult: transpileResultTwo, changedAnyTranspiledFiles: true }
+        ];
+        expect(actualResult).deep.eq(expected);
+      });
+
+      it('should set set the changedAnyTranspiledFiles boolean to false if transpiled output did not change', async () => {
+        // Arrange
+        transpilerFacadeMock.transpile.reset();
+        transpilerFacadeMock.transpile.resolves(transpileResultOne);
+        const mutants = [testableMutant()];
+        const files = [textFile()];
+        await sut.initialize(files);
+
+        // Act
+        const actual = await sut.transpileMutants(mutants)
+          .toArray()
+          .toPromise();
+
+        // Assert
+        const expected: TranspiledMutant[] = [
+          { mutant: mutants[0], transpileResult: transpileResultOne, changedAnyTranspiledFiles: false }
+        ];
+        expect(actual).deep.eq(expected);
       });
 
       it('should transpile mutants one by one in sequence', async () => {
