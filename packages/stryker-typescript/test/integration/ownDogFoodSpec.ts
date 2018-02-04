@@ -9,7 +9,7 @@ import { textFile } from '../helpers/producers';
 import { setGlobalLogLevel } from 'log4js';
 
 describe('stryker-typescript', function () {
-  this.timeout(10000);
+  this.timeout(20000);
 
   let config: Config;
   let inputFiles: TextFile[];
