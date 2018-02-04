@@ -7,8 +7,8 @@ export default interface TranspilerOptions {
   config: Config;
 
   /**
-   * Indicates whether or not the source maps need to be kept.
+   * Indicates whether or not the source maps need to be produced as part of the transpiler output.
    * If false, the transpiler may optimize to not calculate source maps.
    */
-  keepSourceMaps: boolean;
+  produceSourceMaps: boolean;
 }

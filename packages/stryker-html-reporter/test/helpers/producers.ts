@@ -18,6 +18,7 @@ export const thresholds = factory<MutationScoreThresholds>(() => ({
 export const mutantResult = factory<MutantResult>(() => {
   const range: [number, number] = [24, 38];
   return {
+    id: '1',
     sourceFilePath: 'src/test.js',
     mutatorName: 'Math',
     status: MutantStatus.Killed,

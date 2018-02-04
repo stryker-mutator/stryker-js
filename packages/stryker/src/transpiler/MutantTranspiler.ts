@@ -5,7 +5,7 @@ import TestableMutant from '../TestableMutant';
 import { File, TextFile, FileKind } from 'stryker-api/core';
 import SourceFile from '../SourceFile';
 import ChildProcessProxy, { ChildProxy } from '../child-proxy/ChildProcessProxy';
-import { TranspileResult, FileLocation } from 'stryker-api/transpile';
+import { TranspileResult, TranspilerOptions } from 'stryker-api/transpile';
 import TranspiledMutant from '../TranspiledMutant';
 
 export default class MutantTranspiler {
@@ -13,6 +13,7 @@ export default class MutantTranspiler {
   private transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
   private proxy: ChildProxy<TranspilerFacade>;
   private currentMutatedFile: SourceFile;
+  private unMutatedFiles: File[];
 
   /**
    * Creates the mutant transpiler in a child process if one is defined. 
@@ -20,7 +21,7 @@ export default class MutantTranspiler {
    * @param config The Stryker config
    */
   constructor(config: Config) {
-    const transpilerOptions = { config, keepSourceMaps: false };
+    const transpilerOptions: TranspilerOptions = { config, produceSourceMaps: false };
     if (config.transpilers.length) {
       this.transpilerChildProcess = ChildProcessProxy.create(
         require.resolve('./TranspilerFacade'),
@@ -31,20 +32,15 @@ export default class MutantTranspiler {
       );
       this.proxy = this.transpilerChildProcess.proxy;
     } else {
-      let transpiler = new TranspilerFacade(transpilerOptions);
-      this.proxy = {
-        transpile(files: File[]) {
-          return Promise.resolve(transpiler.transpile(files));
-        },
-        getMappedLocation(sourceFileLocation: FileLocation) {
-          return Promise.resolve(transpiler.getMappedLocation(sourceFileLocation));
-        }
-      };
+      this.proxy = new TranspilerFacade(transpilerOptions);
     }
   }
 
   initialize(files: File[]): Promise<TranspileResult> {
-    return this.proxy.transpile(files);
+    return this.proxy.transpile(files).then((transpileResult: TranspileResult) => {
+      this.unMutatedFiles = transpileResult.outputFiles;
+      return transpileResult;
+    });
   }
 
   transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
@@ -54,7 +50,7 @@ export default class MutantTranspiler {
         const mutant = mutants.shift();
         if (mutant) {
           this.transpileMutant(mutant)
-            .then(transpileResult => observer.next({ mutant, transpileResult }))
+            .then(transpileResult => observer.next(TranspiledMutant.create(mutant, transpileResult, this.unMutatedFiles)))
             .then(nextMutant)
             .catch(error => observer.error(error));
         } else {

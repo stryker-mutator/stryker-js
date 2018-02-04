@@ -1,6 +1,6 @@
 import { TestResult, TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { Mutant } from 'stryker-api/mutant';
-import { FileLocation, TranspileResult } from 'stryker-api/transpile';
+import { TranspileResult } from 'stryker-api/transpile';
 import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
@@ -12,6 +12,7 @@ import TranspiledMutant from '../../src/TranspiledMutant';
 import { Logger } from 'log4js';
 import { FileCoverageData } from 'istanbul-lib-coverage';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
+import { MappedLocation } from '../../src/transpiler/SourceMapper';
 
 export type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;
@@ -53,6 +54,7 @@ function factoryMethod<T>(defaultsFactory: () => T) {
 export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
 
 export const mutantResult = factoryMethod<MutantResult>(() => ({
+  id: '256',
   location: location(),
   mutatedLines: '',
   mutatorName: '',
@@ -107,10 +109,10 @@ export const textFile = factory<TextFile>({
   kind: FileKind.Text
 });
 
-export const fileLocation = factory<FileLocation>({
-  fileName: 'fileName',
-  start: { line: 0, column: 0 }, end: { line: 0, column: 0 }
-});
+export const mappedLocation = factoryMethod<MappedLocation>(() => ({
+  fileName: 'file.js',
+  location: location()
+}));
 
 export const coverageMaps = factoryMethod<CoverageMaps>(() => ({
   statementMap: {},
@@ -204,12 +206,13 @@ export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
 
 
-export function matchedMutant(numberOfTests: number): MatchedMutant {
+export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
   let scopedTestIds: number[] = [];
   for (let i = 0; i < numberOfTests; i++) {
     scopedTestIds.push(1);
   }
   return {
+    id: mutantId,
     mutatorName: '',
     scopedTestIds: scopedTestIds,
     timeSpentScopedTests: 0,
@@ -225,7 +228,7 @@ export const transpileResult = factoryMethod<TranspileResult>(() => ({
 
 export const sourceFile = () => new SourceFile(textFile());
 
-export const testableMutant = (fileName = 'file') => new TestableMutant(mutant({
+export const testableMutant = (fileName = 'file') => new TestableMutant('1337', mutant({
   range: [12, 13],
   replacement: '-',
   fileName
@@ -234,4 +237,4 @@ export const testableMutant = (fileName = 'file') => new TestableMutant(mutant({
 ));
 
 export const transpiledMutant = (fileName = 'file') =>
-  new TranspiledMutant(testableMutant(fileName), transpileResult());
+  new TranspiledMutant(testableMutant(fileName), transpileResult(), true);

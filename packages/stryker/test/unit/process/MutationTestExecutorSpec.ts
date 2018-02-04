@@ -21,7 +21,7 @@ const createTranspiledMutants = (...n: number[]) => {
   return n.map(n => {
     const mutant = transpiledMutant(`mutant_${n}`);
     if (n) {
-      mutant.mutant.addTestResult(n, testResult());
+      mutant.mutant.selectTest(testResult(), n);
     }
     return mutant;
   });
@@ -89,17 +89,18 @@ describe('MutationTestExecutor', () => {
     let secondSandbox: Mock<Sandbox>;
 
     beforeEach(() => {
-      transpiledMutants = createTranspiledMutants(0, 1, 2, 3, 4, 5);
+      transpiledMutants = createTranspiledMutants(0, 1, 2, 3, 4, 5, 6);
       transpiledMutants[1].transpileResult.error = 'Error! Cannot negate a string (or something)';
+      transpiledMutants[6].changedAnyTranspiledFiles = false;
 
       firstSandbox = mock(Sandbox);
       secondSandbox = mock(Sandbox);
       mutantTranspilerMock.transpileMutants.returns(Observable.of(...transpiledMutants));
-      sandboxPoolMock.streamSandboxes.returns(Observable.of(...[firstSandbox, secondSandbox]));
+      sandboxPoolMock.streamSandboxes.returns(Observable.of(firstSandbox, secondSandbox));
 
       sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter);
 
-      // The uncovered and transpile errors should not be run in a sandbox
+      // The uncovered, transpile error and changedAnyTranspiledFiles = false should not be ran in a sandbox
       // Mock first sandbox to return first success, then failed
       firstSandbox.runMutant
         .withArgs(transpiledMutants[2]).resolves({ status: RunStatus.Complete, tests: [{ name: 'test1', status: TestStatus.Success }, { name: 'skipped', status: TestStatus.Skipped }] })
@@ -119,13 +120,14 @@ describe('MutationTestExecutor', () => {
 
     it('should have reported onMutantTested on all mutants', async () => {
       const actualResults = await sut.run(mutants);
-      expect(reporter.onMutantTested).to.have.callCount(6);
+      expect(reporter.onMutantTested).to.have.callCount(7);
       expect(reporter.onMutantTested).to.have.been.calledWith(actualResults[0]);
       expect(reporter.onMutantTested).to.have.been.calledWith(actualResults[1]);
       expect(reporter.onMutantTested).to.have.been.calledWith(actualResults[2]);
       expect(reporter.onMutantTested).to.have.been.calledWith(actualResults[3]);
       expect(reporter.onMutantTested).to.have.been.calledWith(actualResults[4]);
       expect(reporter.onMutantTested).to.have.been.calledWith(actualResults[5]);
+      expect(reporter.onMutantTested).to.have.been.calledWith(actualResults[6]);
     });
 
     it('should have reported onAllMutantsTested', async () => {
@@ -136,13 +138,14 @@ describe('MutationTestExecutor', () => {
     it('should eventually resolve the correct mutant results', async () => {
       const actualResults = await sut.run(mutants);
       const actualResultsSorted = _.sortBy(actualResults, r => r.sourceFilePath);
-      expect(actualResults.length).to.be.eq(6);
+      expect(actualResults.length).to.be.eq(7);
       expect(actualResultsSorted[0].status).to.be.eq(MutantStatus.NoCoverage);
       expect(actualResultsSorted[1].status).to.be.eq(MutantStatus.TranspileError);
       expect(actualResultsSorted[2].status).to.be.eq(MutantStatus.Survived);
       expect(actualResultsSorted[3].status).to.be.eq(MutantStatus.TimedOut);
       expect(actualResultsSorted[4].status).to.be.eq(MutantStatus.Killed);
       expect(actualResultsSorted[5].status).to.be.eq(MutantStatus.RuntimeError);
+      expect(actualResultsSorted[6].status).to.be.eq(MutantStatus.Survived);
     });
   });
 });

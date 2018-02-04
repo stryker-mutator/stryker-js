@@ -10,9 +10,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "npm run test:ts2.4 && npm run test:current",
-    "test:current": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
-    "test:ts2.4": "npm i --no-save typescript@~2.4 && npm run bootstrap && npm run test:current && npm uninstall typescript && npm run bootstrap "
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -42,7 +40,6 @@
     "lodash.flatmap": "^4.5.0",
     "log4js": "^1.1.1",
     "semver": "^5.4.1",
-    "source-map": "^0.5.6",
     "tslib": "^1.5.0"
   },
   "devDependencies": {

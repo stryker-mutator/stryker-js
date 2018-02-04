@@ -13,7 +13,6 @@ import SandboxPool from '../SandboxPool';
 
 export default class MutationTestExecutor {
 
-
   constructor(private config: Config, private inputFiles: File[], private testFramework: TestFramework | null, private reporter: StrictReporter) {
   }
 
@@ -46,6 +45,7 @@ export default class MutationTestExecutor {
 
     return transpiledMutants
       .zip(recycled.merge(sandboxes), createTuple)
+      .map(earlyResult)
       .flatMap(runInSandbox)
       .do(recycle)
       .map(({ result }) => result)
@@ -57,13 +57,25 @@ export default class MutationTestExecutor {
   }
 }
 
-function runInSandbox([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]): Promise<{ sandbox: Sandbox, result: MutantResult }> {
+function earlyResult([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]): [TranspiledMutant, Sandbox, MutantResult | null] {
   if (transpiledMutant.transpileResult.error) {
     const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
-    return Promise.resolve({ sandbox, result });
+    return [transpiledMutant, sandbox, result];
   } else if (!transpiledMutant.mutant.selectedTests.length) {
     const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
-    return Promise.resolve({ sandbox, result });
+    return [transpiledMutant, sandbox, result];
+  } else if (!transpiledMutant.changedAnyTranspiledFiles) {
+    const result = transpiledMutant.mutant.result(MutantStatus.Survived, []);
+    return [transpiledMutant, sandbox, result];
+  } else {
+    // No early result possible, need to run in the sandbox later
+    return [transpiledMutant, sandbox, null];
+  }
+}
+
+function runInSandbox([transpiledMutant, sandbox, earlyResult]: [TranspiledMutant, Sandbox, MutantResult | null]): Promise<{ sandbox: Sandbox, result: MutantResult }> {
+  if (earlyResult) {
+    return Promise.resolve({ sandbox, result: earlyResult });
   } else {
     return sandbox.runMutant(transpiledMutant)
       .then(runResult => ({ sandbox, result: collectMutantResult(transpiledMutant.mutant, runResult) }));
@@ -107,6 +119,7 @@ function reportResult(reporter: StrictReporter) {
     reporter.onMutantTested(mutantResult);
   };
 }
+
 function reportAll(reporter: StrictReporter) {
   return (mutantResults: MutantResult[]) => {
     reporter.onAllMutantsTested(mutantResults);

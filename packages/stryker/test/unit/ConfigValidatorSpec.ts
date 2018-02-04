@@ -67,13 +67,16 @@ describe('ConfigValidator', () => {
     });
   });
 
-  it('should downgrade coverageAnalysis when transpilers are specified (for now)', () => {
+  it('should be invalid with coverageAnalysis when 2 transpilers are specified (for now)', () => {
     config.transpilers.push('a transpiler');
+    config.transpilers.push('a second transpiler');
     config.coverageAnalysis = 'all';
     sut = new ConfigValidator(config, testFramework());
     sut.validate();
-    expect(log.info).calledWith('Disabled coverage analysis for this run (off). Coverage analysis using transpilers is not supported yet.');
-    expect(config.coverageAnalysis).eq('off');
+    expect(log.fatal).calledWith('Value "all" for `coverageAnalysis` is invalid with multiple transpilers' +
+      ' (configured transpilers: a transpiler, a second transpiler). Please report this to the Stryker team' +
+      ' if you whish this feature to be implemented');
+    expect(exitStub).calledWith(1);
   });
 
   it('should be invalid with invalid logLevel', () => {

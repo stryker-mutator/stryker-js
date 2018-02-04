@@ -13,7 +13,7 @@ describe('CoverageInstrumenterTranspiler', () => {
   });
 
   it('should not instrument any code when coverage analysis is off', async () => {
-    sut = new CoverageInstrumenterTranspiler({ config, keepSourceMaps: false }, null);
+    sut = new CoverageInstrumenterTranspiler({ config, produceSourceMaps: false }, null);
     config.coverageAnalysis = 'off';
     const input = [textFile({ mutated: true }), binaryFile({ mutated: true }), webFile({ mutated: true })];
     const output = await sut.transpile(input);
@@ -25,7 +25,7 @@ describe('CoverageInstrumenterTranspiler', () => {
 
     beforeEach(() => {
       config.coverageAnalysis = 'all';
-      sut = new CoverageInstrumenterTranspiler({ config, keepSourceMaps: false }, null);
+      sut = new CoverageInstrumenterTranspiler({ config, produceSourceMaps: false }, null);
     });
 
     it('should instrument code of mutated files', async () => {
@@ -50,11 +50,11 @@ describe('CoverageInstrumenterTranspiler', () => {
         textFile({ name: 'foobar.js', mutated: true, content: 'console.log("foobar");' })
       ];
       sut.transpile(input);
-      expect(sut.fileCoveragePerFile['something.js'].statementMap).deep.eq({});
-      expect(sut.fileCoveragePerFile['something.js'].fnMap[0]).deep.eq({ start: { line: 0, column: 22 }, end: { line: 0, column: 24 } });
-      expect(sut.fileCoveragePerFile['something.js'].fnMap[1]).undefined;
-      expect(sut.fileCoveragePerFile['foobar.js'].statementMap).deep.eq({ '0': { start: { line: 0, column: 0 }, end: { line: 0, column: 22 } } });
-      expect(sut.fileCoveragePerFile['foobar.js'].fnMap).deep.eq({});
+      expect(sut.fileCoverageMaps['something.js'].statementMap).deep.eq({});
+      expect(sut.fileCoverageMaps['something.js'].fnMap[0]).deep.eq({ start: { line: 0, column: 22 }, end: { line: 0, column: 24 } });
+      expect(sut.fileCoverageMaps['something.js'].fnMap[1]).undefined;
+      expect(sut.fileCoverageMaps['foobar.js'].statementMap).deep.eq({ '0': { start: { line: 0, column: 0 }, end: { line: 0, column: 22 } } });
+      expect(sut.fileCoverageMaps['foobar.js'].fnMap).deep.eq({});
     });
 
     it('should fill error message and not transpile input when the file contains a parse error', async () => {
@@ -69,7 +69,7 @@ describe('CoverageInstrumenterTranspiler', () => {
 
     beforeEach(() => {
       config.coverageAnalysis = 'perTest';
-      sut = new CoverageInstrumenterTranspiler({ config, keepSourceMaps: false }, testFramework());
+      sut = new CoverageInstrumenterTranspiler({ config, produceSourceMaps: false }, testFramework());
       input = [textFile({ mutated: true, content: 'function something() {}' })];
     });
 
@@ -93,7 +93,7 @@ describe('CoverageInstrumenterTranspiler', () => {
 
   it('should result in an error if coverage analysis is "perTest" and there is no testFramework', async () => {
     config.coverageAnalysis = 'perTest';
-    sut = new CoverageInstrumenterTranspiler({ config, keepSourceMaps: true }, null);
+    sut = new CoverageInstrumenterTranspiler({ config, produceSourceMaps: true }, null);
     const output = await sut.transpile([textFile({ content: 'a + b' })]);
     expect(output.error).eq('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
   });

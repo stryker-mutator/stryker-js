@@ -9,7 +9,7 @@ import { textFile } from '../helpers/producers';
 import { setGlobalLogLevel } from 'log4js';
 
 describe('stryker-typescript', function () {
-  this.timeout(10000);
+  this.timeout(20000);
 
   let config: Config;
   let inputFiles: TextFile[];
@@ -33,7 +33,7 @@ describe('stryker-typescript', function () {
   });
 
   it('should be able to transpile itself', async () => {
-    const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
+    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
     const transpileResult = await transpiler.transpile(inputFiles);
     expect(transpileResult.error).to.be.null;
     const outputFiles = transpileResult.outputFiles;
@@ -41,7 +41,7 @@ describe('stryker-typescript', function () {
   });
 
   it('should result in an error if a variable is declared as any and noImplicitAny = true', async () => {
-    const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
+    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
     inputFiles[0].content += 'function foo(bar) { return bar; } ';
     const transpileResult = await transpiler.transpile(inputFiles);
     expect(transpileResult.error).contains('error TS7006: Parameter \'bar\' implicitly has an \'any\' type');
@@ -51,7 +51,7 @@ describe('stryker-typescript', function () {
   it('should not result in an error if a variable is declared as any and noImplicitAny = false', async () => {
     config['tsconfig'].noImplicitAny = false;
     inputFiles[0].content += 'const shouldResultInError = 3';
-    const transpiler = new TypescriptTranspiler({ config, keepSourceMaps: true });
+    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
     const transpileResult = await transpiler.transpile(inputFiles);
     expect(transpileResult.error).null;
   });

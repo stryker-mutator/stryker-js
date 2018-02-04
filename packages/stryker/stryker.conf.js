@@ -1,7 +1,7 @@
 module.exports = function (config) {
 
   var typescript = true;
-  var es6 = false;
+  var es6 = true;
 
   if (typescript) {
     config.set({
@@ -10,10 +10,11 @@ module.exports = function (config) {
         '!test/integration/**/*.ts',
         '!src/**/*.ts',
         { pattern: 'src/**/*.ts', included: false, mutated: true },
+        '!src/**/*.d.ts',
         { pattern: 'node_modules/stryker-api/*.js', included: false, mutated: false, transpiled: false },
         { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false, transpiled: false }
       ],
-      coverageAnalysis: 'off',
+      coverageAnalysis: 'perTest',
       tsconfigFile: 'tsconfig.json',
       mutator: 'typescript',
       transpilers: [
@@ -38,6 +39,7 @@ module.exports = function (config) {
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporter: ['progress', 'html', 'clear-text', 'event-recorder', 'dashboard'],
+    maxConcurrentTestRunners: 5,
     thresholds: {
       high: 80,
       low: 60,

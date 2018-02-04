@@ -1,4 +1,3 @@
-import FileLocation from './FileLocation';
 import TranspileResult from './TranspileResult';
 import { File } from '../../core';
 
@@ -34,8 +33,4 @@ export default interface Transpiler {
    */
   transpile(files: File[]): Promise<TranspileResult>;
 
-  /**
-   * Retrieve the location of a source location in the transpiled file. 
-   */
-  getMappedLocation(sourceFileLocation: FileLocation): FileLocation;
 }

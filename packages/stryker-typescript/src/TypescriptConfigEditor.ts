@@ -5,7 +5,7 @@ import * as ts from 'typescript';
 import { getLogger, setGlobalLogLevel } from 'log4js';
 import { ConfigEditor, Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
-import { normalizeForTypescript } from './helpers/tsHelpers';
+import { normalizeFileForTypescript } from './helpers/tsHelpers';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker/issues/391 for more info
@@ -47,9 +47,9 @@ export default class TypescriptConfigEditor implements ConfigEditor {
   }
 
   private readTypescriptConfig(tsconfigFileName: string, host: ts.ParseConfigHost) {
-    const configFileBase = normalizeForTypescript(path.dirname(tsconfigFileName));
+    const configFileBase = normalizeFileForTypescript(path.dirname(tsconfigFileName));
     const configFileText = fs.readFileSync(tsconfigFileName, 'utf8');
-    const tsconfigFileNameNormalizedForTypeScript = normalizeForTypescript(tsconfigFileName);
+    const tsconfigFileNameNormalizedForTypeScript = normalizeFileForTypescript(tsconfigFileName);
     const parseResult = ts.parseConfigFileTextToJson(tsconfigFileNameNormalizedForTypeScript, configFileText);
     if (parseResult.error) {
       const error = ts.formatDiagnostics([parseResult.error], this.diagnosticsHost(configFileBase));

@@ -1,3 +1,4 @@
+import { Logger } from 'log4js';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
@@ -11,12 +12,13 @@ import Sandbox from '../../src/Sandbox';
 import { TempFolder } from '../../src/utils/TempFolder';
 import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
-import TestableMutant from '../../src/TestableMutant';
-import { mutant as createMutant, testResult, textFile, fileDescriptor, webFile, transpileResult } from '../helpers/producers';
+import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
+import { mutant as createMutant, testResult, textFile, fileDescriptor, webFile, transpileResult, Mock } from '../helpers/producers';
 import SourceFile from '../../src/SourceFile';
 import '../helpers/globals';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import * as fileUtils from '../../src/utils/fileUtils';
+import currentLogMock from '../helpers/log4jsMock';
 
 describe('Sandbox', () => {
   let sut: Sandbox;
@@ -32,6 +34,7 @@ describe('Sandbox', () => {
   let expectedTargetFileToMutate: string;
   let expectedTestFrameworkHooksFile: string;
   let fileSystemStub: sinon.SinonStub;
+  let log: Mock<Logger>;
 
   beforeEach(() => {
     options = { port: 43, timeoutFactor: 23, timeoutMs: 1000, testRunner: 'sandboxUnitTestRunner' } as any;
@@ -55,6 +58,7 @@ describe('Sandbox', () => {
     fileSystemStub.resolves();
     sandbox.stub(mkdirp, 'sync').returns('');
     sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
+    log = currentLogMock();
   });
 
   it('should copy input files when created', async () => {
@@ -113,45 +117,58 @@ describe('Sandbox', () => {
         mutant = createMutant({ fileName: expectedFileToMutate.name, replacement: 'mutated', range: [0, 8] });
 
         const testableMutant = new TestableMutant(
+          '1',
           mutant,
           new SourceFile(textFile({ content: 'original code' })));
-        testableMutant.addTestResult(1, testResult({ timeSpentMs: 10 }));
-        testableMutant.addTestResult(2, testResult({ timeSpentMs: 2 }));
+        testableMutant.selectTest(testResult({ timeSpentMs: 10 }), 1);
+        testableMutant.selectTest(testResult({ timeSpentMs: 2 }), 2);
         transpiledMutant = new TranspiledMutant(testableMutant, {
           error: null,
           outputFiles: [textFile({ name: expectedFileToMutate.name, content: 'mutated code' })]
-        });
+        }, true);
         testFrameworkStub.filter.returns(testFilterCodeFragment);
       });
 
-      describe('when mutant has scopedTestIds', () => {
+      it('should save the mutant to disk', async () => {
+        await sut.runMutant(transpiledMutant);
+        expect(fileUtils.writeFile).to.have.been.calledWith(expectedTargetFileToMutate, 'mutated code');
+        expect(log.warn).not.called;
+      });
 
-        beforeEach(() => {
-          return sut.runMutant(transpiledMutant);
-        });
+      it('should nog log a warning if test selection was failed but already reported', async () => {
+        transpiledMutant.mutant.testSelectionResult = TestSelectionResult.FailedButAlreadyReporter;
+        await sut.runMutant(transpiledMutant);
+        expect(log.warn).not.called;
+      });
 
-        it('should save the mutant to disk', () => {
-          expect(fileUtils.writeFile).to.have.been.calledWith(expectedTargetFileToMutate, 'mutated code');
-        });
+      it('should log a warning if tests could not have been selected', async () => {
+        transpiledMutant.mutant.testSelectionResult = TestSelectionResult.Failed;
+        await sut.runMutant(transpiledMutant);
+        const expectedLogMessage = `Failed find coverage data for this mutant, running all tests. This might have an impact on performance: ${transpiledMutant.mutant.toString()}`;
+        expect(log.warn).calledWith(expectedLogMessage);
+      });
 
-        it('should filter the scoped tests', () => {
-          expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.selectedTests);
-        });
+      it('should filter the scoped tests', async () => {
+        await sut.runMutant(transpiledMutant);
+        expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.selectedTests);
+      });
 
-        it('should write the filter code fragment to hooks file', () => {
-          expect(fileUtils.writeFile).calledWith(expectedTestFrameworkHooksFile, wrapInClosure(testFilterCodeFragment));
-        });
+      it('should write the filter code fragment to hooks file', async () => {
+        await sut.runMutant(transpiledMutant);
+        expect(fileUtils.writeFile).calledWith(expectedTestFrameworkHooksFile, wrapInClosure(testFilterCodeFragment));
+      });
 
-        it('should have ran testRunner with correct timeout', () => {
-          expect(testRunner.run).calledWith({ timeout: 12 * 23 + 1000 });
-        });
+      it('should have ran testRunner with correct timeout', async () => {
+        await sut.runMutant(transpiledMutant);
+        expect(testRunner.run).calledWith({ timeout: 12 * 23 + 1000 });
+      });
 
-        it('should have reset the source file', () => {
-          let timesCalled = fileSystemStub.getCalls().length - 1;
-          let lastCall = fileSystemStub.getCall(timesCalled);
+      it('should have reset the source file', async () => {
+        await sut.runMutant(transpiledMutant);
 
-          expect(lastCall.args).to.deep.equal([expectedTargetFileToMutate, 'original code']);
-        });
+        let timesCalled = fileSystemStub.getCalls().length - 1;
+        let lastCall = fileSystemStub.getCall(timesCalled);
+        expect(lastCall.args).to.deep.equal([expectedTargetFileToMutate, 'original code']);
       });
     });
   });
@@ -179,8 +196,8 @@ describe('Sandbox', () => {
     describe('when runMutant()', () => {
 
       beforeEach(() => {
-        const mutant = new TestableMutant(createMutant(), new SourceFile(textFile()));
-        return sut.runMutant(new TranspiledMutant(mutant, transpileResult({ outputFiles: [textFile({ name: expectedTargetFileToMutate })] })));
+        const mutant = new TestableMutant('2', createMutant(), new SourceFile(textFile()));
+        return sut.runMutant(new TranspiledMutant(mutant, transpileResult({ outputFiles: [textFile({ name: expectedTargetFileToMutate })] }), true));
       });
 
       it('should not filter any tests', () => {

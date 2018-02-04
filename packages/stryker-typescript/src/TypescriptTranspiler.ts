@@ -1,21 +1,21 @@
+import flatMap = require('lodash.flatmap');
 import { Config } from 'stryker-api/config';
-import { Transpiler, TranspileResult, TranspilerOptions, FileLocation } from 'stryker-api/transpile';
+import { Transpiler, TranspileResult, TranspilerOptions } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
-import { filterTypescriptFiles, getCompilerOptions, getProjectDirectory, filterNotEmpty, isHeaderFile, guardTypescriptVersion, isTypescriptFile } from './helpers/tsHelpers';
+import { filterTypescriptFiles, getCompilerOptions, getProjectDirectory, isHeaderFile, guardTypescriptVersion, isTypescriptFile } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import { setGlobalLogLevel } from 'log4js';
 
 export default class TypescriptTranspiler implements Transpiler {
   private languageService: TranspilingLanguageService;
-  private readonly next: Transpiler;
   private readonly config: Config;
-  private readonly keepSourceMaps: boolean;
+  private readonly produceSourceMaps: boolean;
 
   constructor(options: TranspilerOptions) {
     guardTypescriptVersion();
     setGlobalLogLevel(options.config.logLevel);
     this.config = options.config;
-    this.keepSourceMaps = options.keepSourceMaps;
+    this.produceSourceMaps = options.produceSourceMaps;
   }
 
   transpile(files: File[]): Promise<TranspileResult> {
@@ -23,20 +23,11 @@ export default class TypescriptTranspiler implements Transpiler {
       .filter(file => file.transpiled);
     if (!this.languageService) {
       this.languageService = new TranspilingLanguageService(
-        getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.keepSourceMaps);
+        getCompilerOptions(this.config), typescriptFiles, getProjectDirectory(this.config), this.produceSourceMaps);
     } else {
       this.languageService.replace(typescriptFiles);
     }
     return Promise.resolve(this.transpileAndResult(typescriptFiles, files));
-  }
-
-  getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
-    const outputLocation = this.languageService.getMappedLocationFor(sourceFileLocation);
-    if (outputLocation) {
-      return this.next.getMappedLocation(outputLocation);
-    } else {
-      throw new Error(`Could not find mapped location for ${sourceFileLocation.fileName}:${sourceFileLocation.start.line}:${sourceFileLocation.start.column}`);
-    }
   }
 
   private transpileAndResult(typescriptFiles: File[], allFiles: File[]) {
@@ -44,16 +35,26 @@ export default class TypescriptTranspiler implements Transpiler {
     if (error.length) {
       return this.createErrorResult(error);
     } else {
-      const implementationFiles = typescriptFiles.filter(file => !isHeaderFile(file));
-      const outputFiles = this.languageService.emit(implementationFiles);
       // Keep original order of the files
-      const resultFiles = filterNotEmpty(allFiles.map(file => {
-        if (file.transpiled && isTypescriptFile(file)) {
-          return outputFiles[file.name];
+      let isSingleOutput = false;
+      const resultFiles: File[] = flatMap(allFiles, file => {
+        if (isHeaderFile(file)) {
+          // Header files are not compiled to output
+          return [];
+        } else if (file.transpiled && isTypescriptFile(file)) {
+          // File is a typescript file. Only emit if more output is expected.
+          if (!isSingleOutput) {
+            const emitOutput = this.languageService.emit(file);
+            isSingleOutput = emitOutput.singleResult;
+            return emitOutput.outputFiles;
+          } else {
+            return [];
+          }
         } else {
-          return file;
+          // File is not a typescript file
+          return [file];
         }
-      }));
+      });
       return this.createSuccessResult(resultFiles);
     }
   }
