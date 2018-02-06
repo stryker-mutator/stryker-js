@@ -51,18 +51,18 @@
     "react-dom": "^16.2.0",
     "react-scripts": "^1.0.17",
     "sinon": "^4.0.1",
-    "stryker": "^0.15.5",
-    "stryker-api": "^0.11.0",
-    "stryker-html-reporter": "^0.11.3",
-    "stryker-mocha-framework": "^0.7.1",
-    "stryker-mocha-runner": "^0.10.1",
-    "stryker-typescript": "^0.8.0",
+    "stryker": "^0.18.2",
+    "stryker-api": "^0.12.0",
+    "stryker-html-reporter": "^0.11.5",
+    "stryker-mocha-framework": "^0.8.1",
+    "stryker-mocha-runner": "^0.10.3",
+    "stryker-typescript": "^0.8.3",
     "tslib": "^1.8.1",
     "tslint": "^5.8.0",
     "typescript": "^2.5.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.11.0",
+    "stryker-api": "^0.12.0",
     "jest": "^20.0.0"
   },
   "dependencies": {
