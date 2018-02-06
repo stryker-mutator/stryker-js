@@ -1,7 +1,9 @@
+import { ConfigEditorFactory } from 'stryker-api/config';
 import { TestRunnerFactory } from 'stryker-api/test_runner';
+import JestConfigEditor from './JestConfigEditor';
 import JestTestRunner from './JestTestRunner';
 
-// This is the main file loaded when stryker loads this plugin
-// Report your plugin to the correct Factory
+process.env.BABEL_ENV = 'test';
 
+ConfigEditorFactory.instance().register('jest', JestConfigEditor);
 TestRunnerFactory.instance().register('jest', JestTestRunner);

@@ -6,22 +6,17 @@
     "moduleResolution": "node",
     "rootDir": ".",
     "sourceMap": true,
-    "removeComments": false,
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": false,
+    "importHelpers": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
+    "strictNullChecks": true,
     "lib": [
       "es5",
       "es2015.promise",
       "es2015.core"
     ]
-  },
-  "exclude": [
-    "node_modules",
-    "testResources",
-    "**/*.d.ts",
-    "*.d.ts"
-  ]
+  }
 }
