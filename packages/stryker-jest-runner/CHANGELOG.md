@@ -102,4 +102,3 @@
 * fix(README): Fix Travis Badge pointing to the wrong repo ([9177447](https://github.com/stryker-mutator/stryker-jest-runner/commit/9177447))
 
 
-

@@ -3,15 +3,20 @@
   "version": "0.3.0",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
-  "engines": {
-    "node": ">=6.0.0"
-  },
   "scripts": {
-    "test": "grunt test"
+    "build": "tsc",
+    "premocha": "npm run build",
+    "lint": "tslint -c tslint.json \"src/**/*[^.d$].ts\" \"test/**/*[^.d$].ts\"",
+    "test": "npm run lint && npm run mocha && npm run stryker",
+    "mocha": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/integration/**/*.js\" \"test/unit/**/*.js\"",
+    "stryker": "stryker run"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker-jest-runner.git"
+  },
+  "engines": {
+    "node": ">=4"
   },
   "keywords": [
     "stryker",
@@ -19,60 +24,48 @@
     "jest",
     "stryker-test-runner"
   ],
-  "author": "nicojs",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker-jest-runner/issues"
-  },
-  "homepage": "https://github.com/stryker-mutator/stryker-jest-runner",
-  "peerDependencies": {
-    "jest-cli": ">=18.0.0",
-    "jest-runtime": ">=18.0.0",
-    "stryker-api": "^0.10.0"
-  },
-  "devDependencies": {
-    "@types/chai": "^3.4.32",
-    "@types/chai-as-promised": "0.0.29",
-    "@types/estree": "0.0.34",
-    "@types/lodash": "^4.14.37",
-    "@types/log4js": "0.0.32",
-    "@types/mocha": "^2.2.32",
-    "@types/node": "^6.0.45",
-    "@types/semver": "^5.4.0",
-    "@types/sinon": "^1.16.29",
-    "@types/sinon-chai": "^2.7.26",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "grunt": "^1.0.1",
-    "grunt-bump": "^0.8.0",
-    "grunt-cli": "^1.2.0",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-conventional-changelog": "^6.1.0",
-    "grunt-mocha-istanbul": "^5.0.1",
-    "grunt-mocha-test": "^0.13.2",
-    "grunt-npm": "0.0.2",
-    "grunt-ts": "^6.0.0-beta.3",
-    "grunt-tslint": "^4.0.0",
-    "istanbul": "^0.4.4",
-    "load-grunt-tasks": "^3.5.2",
-    "mocha": "^3.0.2",
-    "sinon": "^1.17.5",
-    "sinon-chai": "^2.8.0",
-    "stryker-api": "^0.9.0",
-    "tslint": "^4.0.2",
-    "typescript": "^2.0.3"
-  },
-  "dependencies": {
-    "lodash": "^4.13.1",
-    "log4js": "^1.0.1",
-    "semver": "5.4.1"
-  },
+  "author": "Sander koenders <sanderkoenders@gmail.com>",
   "contributors": [
     "Maarten Mulders <mthmulders@users.noreply.github.com>",
     "mshogren <m_shogren@yahoo.com>",
     "Nico Jansen <jansennico@gmail.com>",
     "Simon de Lang <simondelang@gmail.com>",
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
-  ]
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-jest-runner/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker-jest-runner#readme",
+  "devDependencies": {
+    "@types/chai": "^4.0.4",
+    "@types/mocha": "^2.2.43",
+    "@types/node": "^8.5.1",
+    "@types/semver": "^5.4.0",
+    "@types/sinon": "^2.3.6",
+    "chai": "^4.1.2",
+    "jest": "^20.0.4",
+    "mocha": "^5.0.0",
+    "nyc": "^11.2.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "^1.0.17",
+    "sinon": "^4.0.1",
+    "stryker": "^0.15.5",
+    "stryker-api": "^0.11.0",
+    "stryker-html-reporter": "^0.11.3",
+    "stryker-mocha-framework": "^0.7.1",
+    "stryker-mocha-runner": "^0.10.1",
+    "stryker-typescript": "^0.8.0",
+    "tslib": "^1.8.1",
+    "tslint": "^5.8.0",
+    "typescript": "^2.5.0"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.11.0",
+    "jest": "^20.0.0"
+  },
+  "dependencies": {
+    "semver": "^5.4.1"
+  }
 }

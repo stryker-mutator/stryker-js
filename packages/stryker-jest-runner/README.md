@@ -3,33 +3,56 @@
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
-# Stryker Jest Runner
-A plugin to use the [Jest](http://facebook.github.io/jest/) test runner in [Stryker](http://stryker-mutator.github.io), the JavaScript mutation testing framework.
+# Stryker-jest-runner
 
 ## Installation
-
 Install stryker-jest-runner locally within your project folder, like so:
 
 ```bash
 npm i --save-dev stryker-jest-runner
 ```
 
-### Peer dependencies
+## Peer dependencies
+The stryker-jest-runner is a plugin for Stryker to enable Jest as a test runner. As such, you should make sure you have the correct versions of its dependencies installed:
 
-The `stryker-jest-runner` is a plugin for Stryker to enable Jest as a test runner. 
-As such, you should make sure you have the correct versions of its dependencies installed:
+- jest
+- stryker-api
 
-* `jest-cli`
-* `jest-runtime`
+For the minimum supported versions, see the peerDependencies section in package.json.
 
-For the minimum supported versions, see the `peerDependencies` section in [package.json](https://github.com/stryker-mutator/stryker-jest-runner/blob/master/package.json).
-For all supported version, see the `env` section in [.travis.yml](https://github.com/stryker-mutator/stryker-jest-runner/blob/master/.travis.yml).
+## Configuration
 
-## Configuring
+Make sure you set the `testRunner` option to "jest" and set `coverageAnalysis` to "off" in your Stryker configuration.
+
+```javascript
+{
+    testRunner: 'jest'
+    coverageAnalysis: 'off'
+}
+```
+
+The stryker-jest-runner also provides a couple of configurable options using the `jest` property in your stryker config:
+
+```javascript
+{
+    jest: {
+        project: 'default',
+        config: require('path/to/your/custom/jestConfig.js')
+    }
+}
+```
+
+| option | description | default value |
+|----|----|----|
+| project (optional) | The project you are working on. Currently "react" and "default" are supported. When "react" is configured, "react-scripts" is used (for create-react-app projects). When "default" is configured, your "config" option is used. | default |
+| config (optional) | A custom jest configuration (you can also use `require` to load your config here) | undefined |
+
+**Note:** When neither of the options are specified it will use the jest configuration in your "package.json". \
+**Note:** the `project` option is ignored when the `config` option is specified.
 
 The following is an example stryker.conf.js file that will include the tests in your `__tests__` directories and snapshots in your `__snapshots__` directories.
 
-```
+```javascript
 module.exports = function(config) {
   config.set({
     files: [
@@ -50,20 +73,8 @@ module.exports = function(config) {
 
 For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker#readme).
 
-For the time being, the Jest runner uses a default configuration for [Jest CLI options](https://facebook.github.io/jest/docs/en/cli.html). But pull requests are - obviously - welcome.
-
-### Loading the plugin
-
-In order to use the `stryker-jest-runner` it must be loaded in the Stryker mutation testing framework via the Stryker configuration. 
-The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all `node_modules` starting with `stryker-` will be loaded.
-
-### Using the test runner
-
-In order to use Jest as the test runner, you simply specify it in your config file: `testRunner: 'jest'`.
-Note that coverageAnalysis is not yet supported, so you must explicitly set it to `off` in your Stryker configration.
-Again, pull requests are - obviously - welcome.
+## Loading the plugin
+In order to use the `stryker-jest-runner` it must be loaded in the Stryker mutation testing framework via the Stryker configuration. The easiest way to achieve this, is not have a plugins section in your config file. That way, all node_modules starting with `stryker-` will be loaded.
 
 ## Contributing
-
-Before you start hacking along, make sure to install a supported version of Jest inside your working copy.
-The versions supported are listed above.
+Make sure to read the Stryker contribution guidelines located in the [Stryker mono repository](https://github.com/stryker-mutator/stryker/blob/master/CONTRIBUTING.md).
