@@ -1,3 +1,19 @@
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.2.2...v0.4.0) (2018-02-06)
+
+
+### Bug Fixes
+
+* **deps:** update stryker-api dep to 0.12.0 ([3867190](https://github.com/stryker-mutator/stryker-jest-runner/commit/3867190))
+* **roots option:** Add roots option for jest v19 ([ec7bd35](https://github.com/stryker-mutator/stryker-jest-runner/commit/ec7bd35))
+
+
+### Features
+
+* **Jest-runner:** support jest configuration ([#25](https://github.com/stryker-mutator/stryker-jest-runner/issues/25)) ([630b60b](https://github.com/stryker-mutator/stryker-jest-runner/commit/630b60b))
+
+
+
 <a name="0.3.0"></a>
 # 0.3.0 (2017-11-03)
 
