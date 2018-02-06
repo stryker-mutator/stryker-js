@@ -6,7 +6,8 @@ import { expect } from 'chai';
 import JestTestRunner from '../../src/JestTestRunner';
 import * as path from 'path';
 
-describe('Integration StrykerJestRunner', () => {
+describe('Integration StrykerJestRunner', function () {
+  this.timeout(10000);
   const jestTestRunnerRoot = process.cwd();
   const reactProjectRoot = path.join(jestTestRunnerRoot, 'testResources', 'reactProject');
   const exampleProjectRoot = path.join(jestTestRunnerRoot, 'testResources', 'exampleProject');
