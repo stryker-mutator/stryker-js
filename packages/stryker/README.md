@@ -178,18 +178,27 @@ With `mutator` you configure which mutator plugin you want to use. This defaults
 With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.  
 
 #### Reporters  
-**Command line:** `--reporter clear-text,progress,dots`  
-**Config file:** `reporter: ['clear-text', 'progress', 'dots']`     
+**Command line:** `--reporter clear-text,progress,dots,dashboard`  
+**Config file:** `reporter: ['clear-text', 'progress', 'dots', 'dashboard']`     
 **Default value:** `['clear-text', 'progress']`  
 **Mandatory**: no  
 **Description:**  
 With `reporter` you can set a reporter or group of reporters for stryker to use.
-These reporters can be used out of the box: `clear-text`, `progress` and `event-recorder`.
+These reporters can be used out of the box: `clear-text`, `progress`, `dots`, `dashboard` and `event-recorder`.
 By default `clear-text` and `progress` are active if no reporter is configured.
 You can load additional plugins to get more reporters. See [stryker-mutator.github.io](http://stryker-mutator.github.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
 
 The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
+
+The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are send to the dashboards, it will only send the report if it is run from a build server. The only build server supported at the moment is travis (please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing). It uses these environment settings:
+
+| Environment variable | Description           | Example value |
+| ------------- | ------------- | ----- |
+| TRAVIS | Make sure we're running on the build server | TRUE |
+| TRAVIS\_PULL\_REQUEST | All PR builds are ignored by default | false |
+| TRAVIS\_BRANCH | The branch to be send along with the report | master |
+| STRYKER\_DASHBOARD\_API\_KEY | Your api key (generated for this repository on https://dashboard.stryker-mutator.io) | `52248872-2edc-4102-a43a-bcfca7a9ca99` |
   
 #### Plugins  
 **Command line:** `--plugins stryker-html-reporter,stryker-karma-runner`  
