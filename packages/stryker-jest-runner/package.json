@@ -59,7 +59,7 @@
     "rimraf": "^2.6.2",
     "sinon": "^4.0.1",
     "stryker": "^0.18.2",
-    "stryker-api": "^0.12.0",
+    "stryker-api": "^0.13.0",
     "stryker-html-reporter": "^0.11.5",
     "stryker-mocha-framework": "^0.8.1",
     "stryker-mocha-runner": "^0.10.3",
