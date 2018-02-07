@@ -73,10 +73,14 @@ export default class StrykerInitializer {
     reporterOptions.push({
       name: 'clear-text',
       npm: null
-    }, {
+      }, {
         name: 'progress',
         npm: null
-      });
+      }, {
+        name: 'dashboard',
+        npm: null
+      }
+    );
     return this.inquirer.promptReporters(reporterOptions);
   }
 
