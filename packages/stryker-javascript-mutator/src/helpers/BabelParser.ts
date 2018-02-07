@@ -11,7 +11,11 @@ export default class BabelParser {
       sourceType: 'script',
       plugins: [
         'jsx',
-        'flow'
+        'flow',
+        'objectRestSpread',
+        'classProperties',
+        'asyncGenerators',
+        'dynamicImport'
       ]
     };
 

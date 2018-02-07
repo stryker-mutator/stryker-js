@@ -141,6 +141,41 @@ describe('JavaScriptMutator', () => {
     });
   });
 
+  it('should generate mutants for js vnext code', () => {
+    const sut = new JavaScriptMutator(new Config());
+    const files: File[] = [
+      {
+        name: 'testFile.js',
+        included: false,
+        mutated: true,
+        transpiled: false,
+        kind: FileKind.Text,
+        content: `
+          function objectRestSpread(input) {
+            return {
+              ...input,
+              foo: true,
+            };
+          }
+
+          class ClassProperties { b = 1; }
+
+          async function* asyncGenerators(i) {
+            yield i;
+            yield i + 10;
+          }
+
+          function dynamicImport(){
+            import('./guy').then(a)
+          }
+        `
+      }
+    ];
+
+    const mutants = sut.mutate(files);
+    expect(mutants).lengthOf.above(2);
+  });
+
   it('should generate mutants for multiple files', () => {
     let mutator = new JavaScriptMutator(new Config());
     let file: File = {
