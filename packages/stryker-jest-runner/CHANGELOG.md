@@ -1,3 +1,13 @@
+<a name="0.4.2"></a>
+## [0.4.2](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.4.1...v0.4.2) (2018-02-07)
+
+
+### Bug Fixes
+
+* **package.json:** update stryker-api version ([7ab05e6](https://github.com/stryker-mutator/stryker-jest-runner/commit/7ab05e6))
+
+
+
 <a name="0.4.1"></a>
 ## [0.4.1](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.4.0...v0.4.1) (2018-02-07)
 
