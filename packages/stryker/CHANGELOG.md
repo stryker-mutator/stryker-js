@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.19.0"></a>
+# [0.19.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.18.2...stryker@0.19.0) (2018-02-07)
+
+
+### Features
+
+* **coverage analysis:** Support transpiled code ([#559](https://github.com/stryker-mutator/stryker/issues/559)) ([7c351ad](https://github.com/stryker-mutator/stryker/commit/7c351ad))
+* **dashboard-reporter:** Add dashboard reporter ([#472](https://github.com/stryker-mutator/stryker/issues/472)) ([0693a41](https://github.com/stryker-mutator/stryker/commit/0693a41))
+
+
+
+
 <a name="0.18.2"></a>
 ## [0.18.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.18.1...stryker@0.18.2) (2018-02-02)
 

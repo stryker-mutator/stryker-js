@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.0"></a>
+# [0.13.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.12.0...stryker-api@0.13.0) (2018-02-07)
+
+
+### Features
+
+* **coverage analysis:** Support transpiled code ([#559](https://github.com/stryker-mutator/stryker/issues/559)) ([7c351ad](https://github.com/stryker-mutator/stryker/commit/7c351ad))
+
+
+
+
 <a name="0.12.0"></a>
 # 0.12.0 (2017-12-21)
 
