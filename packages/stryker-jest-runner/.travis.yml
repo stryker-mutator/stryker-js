@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - node
-- 'lts/*'
+- lts/*
 - '6'
 - '4'
 install: npm install
@@ -11,3 +11,6 @@ notifications:
   email:
     on_success: never
     on_failure: change
+env:
+  global:
+    secure: vPxH11c0W9Fc647WTNC3+yczE3xiuOmEb7CiqctMrOIYFiRr7QJIfnE3D7Fj5KHc3OyrgHBQTBCmpNfEjEw6y6aqeSM2Fu6lmFt0/RWedZQKkAnBJ+KUkl0YkpXOb5UOsYH89sJNeHcI9WdhyPGoxxmrQuQwdtXjANXVCOb0qgH3HmoY4r8QAp+6UQWVIkVXpr5CK0owUekI5joUo87CPoXIpnxttlGPRmVFQPO7MhYev20Ihy45nQSKKdL1JPeRdQ5WT421W5c5mgMQmuSv6wrP7VdXn6VZnAsvdkJGE49lNziD2CAjbHfep0XnhkcKd/73d9DzW1qw+8ts4eUkDcz9EsilbQaoPjvPdq1wg30s4vRkMtvtNBMgnwIYeZQG6BXeGHWS2rlaUI29ufBs56fCvqFgaCDHLoXDySeiC9Cq6PIvbDFQPkotV6u0dL1G4pgw12+psJXujfQnb6S2/DWPiXXMiAxXe/d5a+F2jFcLcoUCzZGRkyl9UhGrKDbmTA9V/xA9BpvHnFl0g/amGOyP23VrEU9rDG5K9n7Kc7FsL/vdSzoVziff4pdLRZln+72kxMbvipLNwOMwtlcFTAL155O6Y9QXyQNE7it2c5qmp5rFLl0u4qvZJO2O9Xq6z6++7CoV9Sek7S245nD3++W3NwRhsDFswj9zpOllqjA=
