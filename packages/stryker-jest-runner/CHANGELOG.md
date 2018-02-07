@@ -1,3 +1,8 @@
+<a name="0.4.1"></a>
+## [0.4.1](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.4.0...v0.4.1) (2018-02-07)
+
+
+
 <a name="0.4.0"></a>
 # [0.4.0](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.2.2...v0.4.0) (2018-02-06)
 
