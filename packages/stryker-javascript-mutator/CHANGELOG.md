@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.3.5...stryker-javascript-mutator@0.4.0) (2018-02-07)
+
+
+### Features
+
+* **javascript-mutator:** support more plugins by default ([#615](https://github.com/stryker-mutator/stryker/issues/615)) ([db2e56e](https://github.com/stryker-mutator/stryker/commit/db2e56e))
+
+
+
+
 <a name="0.3.5"></a>
 ## [0.3.5](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.3.4...stryker-javascript-mutator@0.3.5) (2018-02-07)
 
