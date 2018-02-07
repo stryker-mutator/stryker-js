@@ -14,7 +14,8 @@
     "stryker": "stryker run",
     "preversion": "npm test",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
-    "postversion": "npm publish && git push && git push --tags"
+    "postversion": "npm publish && git push && git push --tags",
+    "release:patch": "npm version patch -m \"chore(release): %s\""
   },
   "repository": {
     "type": "git",
