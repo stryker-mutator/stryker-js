@@ -49,7 +49,7 @@
   },
   "peerDependencies": {
     "babel-core": "^6.26.0",
-    "stryker-api": "^0.12.0"
+    "stryker-api": "^0.13.0"
   },
   "initStrykerConfig": {
     "babelrcFile": ".babelrc",

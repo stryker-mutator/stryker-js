@@ -45,6 +45,6 @@
   },
   "peerDependencies": {
     "mocha": ">= 2.3.3 < 6",
-    "stryker-api": "^0.12.0"
+    "stryker-api": "^0.13.0"
   }
 }
