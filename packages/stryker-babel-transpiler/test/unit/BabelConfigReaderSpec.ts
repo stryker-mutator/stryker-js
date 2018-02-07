@@ -11,7 +11,8 @@ describe('BabelConfigReader', () => {
   let logStub: {
     trace: sinon.SinonStub,
     info: sinon.SinonStub,
-    error: sinon.SinonStub
+    error: sinon.SinonStub,
+    debug: sinon.SinonStub
   };
 
   beforeEach(() => {
@@ -19,7 +20,8 @@ describe('BabelConfigReader', () => {
     logStub = {
       trace: sandbox.stub(),
       info: sandbox.stub(),
-      error: sandbox.stub()
+      error: sandbox.stub(),
+      debug: sandbox.stub()
     };
 
     sandbox.stub(log4js, 'getLogger').returns(logStub);
@@ -63,6 +65,17 @@ describe('BabelConfigReader', () => {
       editor.readConfig(config);
 
       expect(logStub.info).calledWith(`Reading .babelrc file from path "${path.resolve(config.babelrcFile)}"`);
+    });
+    
+    it('should log the babel config if read from an babelrc file', () => {
+      const editor = new BabelConfigReader();
+      const config = new Config();
+      config.set({ babelrcFile: '.babelrc' });
+      sandbox.stub(fs, 'readFileSync').returns('{ "presets": ["env"] }');
+      sandbox.stub(fs, 'existsSync').returns(true);
+      editor.readConfig(config);
+
+      expect(logStub.debug).calledWith(`babel config is: ${JSON.stringify({ presets: ['env']}, null, 2)}`);
     });
 
     describe('when reading the file throws an error', () => {
