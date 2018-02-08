@@ -1,4 +1,3 @@
-import 'source-map-support/register';
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
 import { StrykerOptions, File } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
