@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.19.2",
+  "version": "0.19.3",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",

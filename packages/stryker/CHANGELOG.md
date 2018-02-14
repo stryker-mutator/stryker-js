@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.19.3"></a>
+## [0.19.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.2...stryker@0.19.3) (2018-02-14)
+
+
+### Bug Fixes
+
+* **coverage-analysis:** make sure to not erase sourceMappingURL comment ([#625](https://github.com/stryker-mutator/stryker/issues/625)) ([eed7147](https://github.com/stryker-mutator/stryker/commit/eed7147))
+
+
+
+
 <a name="0.19.2"></a>
 ## [0.19.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.1...stryker@0.19.2) (2018-02-08)
 
