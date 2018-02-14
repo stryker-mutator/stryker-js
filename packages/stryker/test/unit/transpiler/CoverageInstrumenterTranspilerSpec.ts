@@ -44,6 +44,16 @@ describe('CoverageInstrumenterTranspiler', () => {
       expect(instrumentedContent).to.contain('function something(){cov_').and.contain('.f[0]++');
     });
 
+    it('should preserve source map comments', async () => { 
+      const input = [
+        textFile({ mutated: true, content: 'function something() {} // # sourceMappingUrl="something.map.js"' }),
+      ];
+      const output = await sut.transpile(input);
+      expect(output.error).null;
+      const instrumentedContent = (output.outputFiles[0] as TextFile).content;
+      expect(instrumentedContent).to.contain('sourceMappingUrl="something.map.js"');
+    });
+
     it('should create a statement map for mutated files', () => {
       const input = [
         textFile({ name: 'something.js', mutated: true, content: 'function something () {}' }),
