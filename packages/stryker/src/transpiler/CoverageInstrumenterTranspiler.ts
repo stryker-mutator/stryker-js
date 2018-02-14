@@ -24,7 +24,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
   private log: Logger;
 
   constructor(private settings: TranspilerOptions, private testFramework: TestFramework | null) {
-    this.instrumenter = createInstrumenter({ coverageVariable: this.coverageVariable });
+    this.instrumenter = createInstrumenter({ coverageVariable: this.coverageVariable, preserveComments: true });
     this.log = getLogger(CoverageInstrumenterTranspiler.name);
   }
 
