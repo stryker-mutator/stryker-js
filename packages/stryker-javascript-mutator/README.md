@@ -8,11 +8,11 @@
 
 # Stryker JavaScript mutator
 
-A mutator that supports JavaScript for [Stryker](https://stryker-mutator.github.io), the JavaScript Mutation testing framework. This plugin does not transpile any code. The code that the stryker-javascript-mutator gets should be executable in your environment (i.e. the stryker-javascript-mutator does not add support for Babel projects). 
+A mutator that supports JavaScript for [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework. This plugin does not transpile any code. The code that the stryker-javascript-mutator gets should be executable in your environment (i.e. the stryker-javascript-mutator does not add support for Babel projects). 
 
 ## Quickstart
 
-First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.github.io/quickstart.html))
+First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.io/quickstart.html))
 
 Next, install this package:
 
