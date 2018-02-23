@@ -11,7 +11,7 @@
 *William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
 
 ## Introduction
-For an introduction to mutation testing and Stryker's features, see [stryker-mutator.github.io](http://stryker-mutator.github.io/).
+For an introduction to mutation testing and Stryker's features, see [stryker-mutator.io](https://stryker-mutator.io/).
 
 ## Getting started
 Stryker is a mutation testing framework for JavaScript. It allows you to test your tests by temporarily inserting bugs.
@@ -77,7 +77,7 @@ $ npm install -g stryker-cli
 The Stryker-CLI works by passing received commands to your local Stryker installation. If you don't have Stryker installed yet, the Stryker-CLI will help you with your Stryker installation. This method allows us to provide additional commands with updates of Stryker itself.
 
 ## Supported mutators  
-See our website for the [list of currently supported mutators](http://stryker-mutator.github.io/mutators.html).
+See our website for the [list of currently supported mutators](https://stryker-mutator.io/mutators.html).
 
 ## Configuration  
 All configuration options can either be set via the command line or via the `stryker.conf.js` config file.
@@ -125,7 +125,7 @@ We expect a comma separated list of globbing expressions, which will be used to 
 **Description:**  
 With `testRunner` you specify the test runner to run your tests. This option is required.  
 Make sure the test runner plugin for Stryker is installed. E.g. we need the `stryker-karma-runner` to use `karma` as a test runner. 
-See the [list of plugins](http://stryker-mutator.github.io/plugins.html) for an up-to-date list of supported test runners and plugins.
+See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-date list of supported test runners and plugins.
 
 #### Test framework  
 **Command line:** `--testFramework jasmine`  
@@ -186,7 +186,7 @@ With `transpilers` you configure which transpiler plugins should transpile the c
 With `reporter` you can set a reporter or group of reporters for stryker to use.
 These reporters can be used out of the box: `clear-text`, `progress`, `dots`, `dashboard` and `event-recorder`.
 By default `clear-text` and `progress` are active if no reporter is configured.
-You can load additional plugins to get more reporters. See [stryker-mutator.github.io](http://stryker-mutator.github.io)
+You can load additional plugins to get more reporters. See [stryker-mutator.io](https://stryker-mutator.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
 
 The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
@@ -212,7 +212,7 @@ With `plugins` you can add additional Node modules for Stryker to load (or `requ
 By default, all `node_modules` starting with `stryker-` will be loaded, so you would normally not need to specify this option.
 These modules should be installed right next to stryker. For a current list of plugins,
 you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or 
-[stryker-mutator.github.io](http://stryker-mutator.github.io).
+[stryker-mutator.io](https://stryker-mutator.io).
 
 #### Start of port range for test runners
 **Command line:** `--port 9234`  

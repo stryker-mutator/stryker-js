@@ -4,7 +4,7 @@
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
 # Stryker API
-This is the repository for maintaining the API of the [Stryker](http://stryker-mutator.github.io) JavaScript mutation testing framework.
+This is the repository for maintaining the API of the [Stryker](https://stryker-mutator.io) JavaScript mutation testing framework.
 Plugin creators should depend on this API rather than on the main Stryker repository directly.
 
 # Extension use cases
@@ -21,4 +21,4 @@ All extension points work in the same basic way.
 1. Create a `constructor function` (or `class`)
 2. Register the `constructor function` to the correct `Factory`.
 
-More info comming soon. In the mean time, take a look at the [Stryker homepage](http://stryker-mutator.github.io).
+More info comming soon. In the mean time, take a look at the [Stryker homepage](https://stryker-mutator.io).

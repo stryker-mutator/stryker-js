@@ -5,7 +5,7 @@
 
 # Stryker Karma Runner
 
-A plugin to use the karma test runner in [Stryker](https://stryker-mutator.github.io), the JavaScript mutation testing framework
+A plugin to use the karma test runner in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework
 
 ## Install
 
@@ -148,7 +148,7 @@ exports = function(config){
 ## Usage
 
 Use Stryker as you normally would.
-See [http://stryker-mutator.github.io](http://stryker-mutator.github.io) for more info. 
+See [https://stryker-mutator.io](https://stryker-mutator.io) for more info. 
 
 ### Debugging
 

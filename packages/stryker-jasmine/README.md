@@ -6,7 +6,7 @@
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
 # Stryker Jasmine
-A plugin to use the Jasmine test framework in [Stryker](http://stryker-mutator.github.io), the JavaScript mutation testing framework.
+A plugin to use the Jasmine test framework in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework.
 
 This plugin provides beforeEach, afterEach and filter hooks to Stryker, so you are able to use `coverageAnalysis: 'perTest'` with jasmine.
 

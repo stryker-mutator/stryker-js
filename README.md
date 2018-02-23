@@ -11,7 +11,7 @@
 *William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
 
 ## Introduction
-For an introduction to mutation testing and Stryker's features, see [stryker-mutator.github.io](http://stryker-mutator.github.io/).
+For an introduction to mutation testing and Stryker's features, see [stryker-mutator.io](https://stryker-mutator.io/).
 
 ## Getting started
 Stryker is a mutation testing framework for JavaScript. It allows you to test your tests by temporarily inserting bugs.
@@ -76,7 +76,7 @@ $ npm install -g stryker-cli
 The Stryker-CLI works by passing received commands to your local Stryker installation. If you don't have Stryker installed yet, the Stryker-CLI will help you with your Stryker installation. This method allows us to provide additional commands with updates of Stryker itself.
 
 ## Supported mutators  
-See our website for the [list of currently supported mutators](http://stryker-mutator.github.io/mutators.html).
+See our website for the [list of currently supported mutators](https://stryker-mutator.io/mutators.html).
 
 ## Configuration  
 See the [stryker's package readme](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker/README.md#configuration) for all config options.

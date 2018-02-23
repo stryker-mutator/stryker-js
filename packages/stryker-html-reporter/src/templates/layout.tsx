@@ -46,7 +46,7 @@ export function layout(breadcrumb: Breadcrumb, content: string) {
                     {content}
                 </div>
                 <footer>
-                    Generated with stryker-html-reporter generator. Visit the <a href="http://stryker-mutator.github.io" target="_blank">Stryker website</a></footer>
+                    Generated with stryker-html-reporter generator. Visit the <a href="https://stryker-mutator.io" target="_blank">Stryker website</a></footer>
             </div>
 
             <script src={`${urlPrefix}popper.js/dist/umd/popper.min.js`} defer="defer"></script>
