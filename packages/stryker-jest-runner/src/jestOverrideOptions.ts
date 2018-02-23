@@ -1,0 +1,16 @@
+const JEST_OVERRIDE_OPTIONS = Object.freeze({
+    // Prevent the user from using his or her own testResultProcessor because this might
+    // Mess with the way Stryker gets the results
+    testResultsProcessor: undefined,
+
+    // Disable code coverage, it is not used in Stryker and will only slow down the test runs
+    collectCoverage: false,
+
+    // Disable verbose logging, this will only slow down Stryker test runs
+    verbose: false,
+
+    // Enable bail so the process quits immediately when one of the tests fails
+    bail: true,
+});
+
+export default JEST_OVERRIDE_OPTIONS;

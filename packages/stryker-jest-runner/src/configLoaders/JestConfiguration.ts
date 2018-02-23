@@ -17,14 +17,17 @@ export interface HasteConfig {
 export default interface JestConfiguration {
   automock: boolean;
   browser: boolean;
-  cache: boolean;
+  bail: boolean;
   cacheDirectory: Path;
-  clearMocks: boolean;
+  collectCoverage: boolean;
+  collectCoverageFrom: Array<string>;
+  coverageDirectory: string;
   coveragePathIgnorePatterns: string[];
+  coverageReporters: Array<string>;
+  forceCoverageMatch: Glob[];
   cwd: Path;
   detectLeaks: boolean;
   displayName: Maybe<string>;
-  forceCoverageMatch: Glob[];
   globals: ConfigGlobals;
   haste: HasteConfig;
   moduleDirectories: string[];
@@ -57,4 +60,6 @@ export default interface JestConfiguration {
   transformIgnorePatterns: Glob[];
   unmockedModulePathPatterns: Maybe<string[]>;
   watchPathIgnorePatterns: string[];
+  testResultsProcessor?: string;
+  verbose: boolean;
 }

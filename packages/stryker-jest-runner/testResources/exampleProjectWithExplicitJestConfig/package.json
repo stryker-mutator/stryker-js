@@ -7,6 +7,10 @@
     "moduleFileExtensions": [],
     "testEnvironment": "some-invalid-test-environment",
     "testRegex": "not-a-regular-expression",
-    "testRunner": "this-testRunner-does-not-exist"
+    "testRunner": "this-testRunner-does-not-exist",
+    "testResultProcessor": "an-invalid-testResult-processor",
+    "collectCoverage": true,
+    "verbose": true,
+    "bail": false
   }
 }

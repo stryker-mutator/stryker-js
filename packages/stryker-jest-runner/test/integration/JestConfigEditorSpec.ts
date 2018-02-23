@@ -62,7 +62,11 @@ describe('Integration JestConfigEditor', () => {
         'node'
       ],
       rootDir: projectRoot,
-      setupTestFrameworkScriptFile: undefined
+      setupTestFrameworkScriptFile: undefined,
+      testResultsProcessor: undefined,
+      collectCoverage: false,
+      verbose: false,
+      bail: true
     };
 
     // Parse the json back to an object in order to match
@@ -76,12 +80,14 @@ describe('Integration JestConfigEditor', () => {
 
     expect(config.jest.project).to.equal('default');
     expect(config.jest.config).to.deep.equal({
-      collectCoverage: false,
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
       testEnvironment: 'jest-environment-jsdom',
       testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$',
       testRunner: 'jest-jasmine2',
-      verbose: true
+      testResultsProcessor: undefined,
+      collectCoverage: false,
+      verbose: false,
+      bail: true
     });
   });
 
@@ -92,12 +98,14 @@ describe('Integration JestConfigEditor', () => {
 
     expect(config.jest.project).to.equal('default');
     expect(config.jest.config).to.deep.equal({
-      collectCoverage: false,
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
       testEnvironment: 'jest-environment-jsdom',
       testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$',
       testRunner: 'jest-jasmine2',
-      verbose: true
+      testResultsProcessor: undefined,
+      collectCoverage: false,
+      verbose: false,
+      bail: true
     });
   });
 
