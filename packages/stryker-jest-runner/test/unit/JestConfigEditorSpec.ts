@@ -4,6 +4,7 @@ import { assert, expect } from 'chai';
 import JestConfigEditor from '../../src/JestConfigEditor';
 import DefaultJestConfigLoader, * as defaultJestConfigLoader from '../../src/configLoaders/DefaultJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
+import JestConfiguration from '../../src/configLoaders/JestConfiguration';
 
 describe('JestConfigEditor', () => {
   let jestConfigEditor: JestConfigEditor;
@@ -21,6 +22,10 @@ describe('JestConfigEditor', () => {
 
     sandbox.stub(defaultJestConfigLoader, 'default').returns(defaultConfigLoaderStub);
     sandbox.stub(reactScriptsJestConfigLoader, 'default').returns(reactConfigLoaderStub);
+
+    const defaultOptions: Partial<JestConfiguration> = { collectCoverage : true, verbose: true, bail: false, testResultsProcessor: 'someResultProcessor' };
+    defaultConfigLoaderStub.loadConfig.returns(defaultOptions);
+    reactConfigLoaderStub.loadConfig.returns(defaultOptions);
 
     jestConfigEditor = new JestConfigEditor();
     config = new Config();
@@ -41,6 +46,17 @@ describe('JestConfigEditor', () => {
     jestConfigEditor.edit(config);
 
     assert(reactConfigLoaderStub.loadConfig.calledOnce, 'ReactConfigLoader loadConfig not called');
+  });
+
+  it('should override verbose, collectcoverage, testResultsProcessor and bail on all loaded configs', () => {
+    jestConfigEditor.edit(config);
+
+    expect(config.jest.config).to.deep.equal({ 
+      testResultsProcessor: undefined,
+      collectCoverage: false,
+      verbose: false,
+      bail: true
+    });
   });
 
   it('should return an error when an invalid project is defined', () => {

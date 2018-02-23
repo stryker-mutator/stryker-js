@@ -3,6 +3,8 @@ import { Config, ConfigEditor } from 'stryker-api/config';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
 import DefaultJestConfigLoader from './configLoaders/DefaultJestConfigLoader';
 import ReactScriptsJestConfigLoader from './configLoaders/ReactScriptsJestConfigLoader';
+import JestConfiguration from './configLoaders/JestConfiguration';
+import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 
 const DEFAULT_PROJECT_NAME = 'default';
 
@@ -16,6 +18,9 @@ export default class JestConfigEditor implements ConfigEditor {
 
     // When no config property is set load the configuration with the project type
     strykerConfig.jest.config = strykerConfig.jest.config || this.getConfigLoader(strykerConfig.jest.project).loadConfig();
+
+    // Override some of the config properties to optimise Jest for Stryker
+    strykerConfig.jest.config = this.overrideProperties(strykerConfig.jest.config);
   }
 
   private getConfigLoader(project: string): JestConfigLoader {
@@ -33,5 +38,9 @@ export default class JestConfigEditor implements ConfigEditor {
     }
 
     return configLoader;
+  }
+
+  private overrideProperties(config: JestConfiguration) {
+    return Object.assign(config, JEST_OVERRIDE_OPTIONS);
   }
 }

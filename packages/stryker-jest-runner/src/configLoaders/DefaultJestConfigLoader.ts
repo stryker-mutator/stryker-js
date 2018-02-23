@@ -17,26 +17,24 @@ export default class DefaultJestConfigLoader implements JestConfigLoader {
   }
 
   public loadConfig(): JestConfiguration {
-    let jestConfig: JestConfiguration;
-    
-    try {
-      jestConfig = this.readConfigFromJestConfigFile();
-    } catch {
-      jestConfig = JSON.parse(this.readConfigFromPackageJson()).jest;
-    }
+    const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson();
 
     if (!jestConfig) {
-      throw new Error('No Jest configuration found in your projectroot, please supply a jest.config.js or a jest config in your package.json');
+      throw new Error('Could not read Jest configuration, please provide a jest.config.js file or a jest config in your package.json');
     }
 
     return jestConfig;
   }
 
   private readConfigFromJestConfigFile() {
-    return this._loader(path.join(this._projectRoot, 'jest.config.js'));
+    try {
+      return this._loader(path.join(this._projectRoot, 'jest.config.js'));
+    } catch { /* Don't return anything (implicitly return undefined) */ }
   }
 
   private readConfigFromPackageJson() {
-    return this._fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8');
+    try {
+      return JSON.parse(this._fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8')).jest;
+    } catch { /* Don't return anything (implicitly return undefined) */ } 
   }
 }
