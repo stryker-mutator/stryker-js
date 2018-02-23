@@ -148,7 +148,7 @@ exports = function(config){
 ## Usage
 
 Use Stryker as you normally would.
-See [http://stryker-mutator.io](http://stryker-mutator.io) for more info. 
+See [https://stryker-mutator.io](https://stryker-mutator.io) for more info. 
 
 ### Debugging
 

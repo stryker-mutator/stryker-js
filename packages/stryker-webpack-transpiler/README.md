@@ -10,7 +10,7 @@ A plugin to support [Webpack](http://webpack.js.org/) bundling as a transpiler i
 
 ## Quick start
 
-First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.io/quickstart.html))
+First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
 
 Next, install this package:
 

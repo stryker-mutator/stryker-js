@@ -64,4 +64,4 @@ exports = function(config){
 ## Usage
 
 Use Stryker as you normally would. The report will be available where you have configured it, or in the `reports/mutation/html` as a default.
-See [http://stryker-mutator.io](http://stryker-mutator.io) for more info. 
+See [https://stryker-mutator.io](https://stryker-mutator.io) for more info. 

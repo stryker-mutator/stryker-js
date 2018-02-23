@@ -1,3 +1,4 @@
+
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
 [![NPM](https://img.shields.io/npm/dm/stryker-javascript-mutator.svg)](https://www.npmjs.com/package/stryker-javascript-mutator)
 [![Node version](https://img.shields.io/node/v/stryker-javascript-mutator.svg)](https://img.shields.io/node/v/stryker-javascript-mutator.svg)
@@ -12,7 +13,7 @@ A mutator that supports JavaScript for [Stryker](https://stryker-mutator.io), th
 
 ## Quickstart
 
-First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.io/quickstart.html))
+First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
 
 Next, install this package:
 

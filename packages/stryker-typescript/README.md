@@ -12,7 +12,7 @@ A collection of plugins for native TypeScript support in [Stryker](https://stryk
 
 ## Quickstart
 
-First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.io/quickstart.html))
+First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
 
 Next, install this package:
 
