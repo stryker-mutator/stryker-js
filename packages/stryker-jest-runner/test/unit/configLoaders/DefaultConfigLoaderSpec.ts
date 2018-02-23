@@ -4,37 +4,55 @@ import { expect, assert } from 'chai';
 import * as path from 'path';
 import * as fs from 'fs';
 
+const fakeRequire: any = {
+  require: () => { }
+};
+
 describe('DefaultJestConfigLoader', () => {
   let defaultConfigLoader: DefaultJestConfigLoader;
   let projectRoot: string = '/path/to/project/root';
   let fsStub: FsStub = {};
+  let requireStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
     fsStub.readFileSync = sandbox.stub(fs, 'readFileSync');
+    requireStub = sandbox.stub(fakeRequire, 'require');
 
-    defaultConfigLoader = new DefaultJestConfigLoader(projectRoot, fs);
+    fsStub.readFileSync.returns('{ "jest": { "exampleProperty": "examplePackageJsonValue" }}');
+    requireStub.returns({ exampleProperty: 'exampleJestConfigValue' });
+
+    defaultConfigLoader = new DefaultJestConfigLoader(projectRoot, fs, fakeRequire.require);
   });
 
   afterEach(() => sandbox.restore());
 
-  it('should load the Jest configuration from the package.json in the project', () => {
-    fsStub.readFileSync.returns('{ "jest": { "exampleProperty": "exampleValue" }}');
-
+  it('should load the Jest configuration from the jest.config.js in the projectroot', () => {
     const config = defaultConfigLoader.loadConfig();
 
-    assert(fsStub.readFileSync.calledWith(path.join(projectRoot, 'package.json'), 'utf8'), 'readFileSync not called with projectRoot');
+    assert(requireStub.calledWith(path.join(projectRoot, 'jest.config.js')), `loader not called with ${projectRoot}/jest.config.js`);
     expect(config).to.deep.equal({
-      exampleProperty: 'exampleValue'
+      exampleProperty: 'exampleJestConfigValue'
     });
   });
 
-  it('should return an error when no Jest configuration is specified in the config.json', () => {
-    fsStub.readFileSync.returns('{}');
+  it('should fallback and load the Jest configuration from the package.json when jest.config.js is not present in the project', () => {
+    requireStub.throws(Error('ENOENT: no such file or directory, open jest.config.js'));
+    const config = defaultConfigLoader.loadConfig();
 
-    expect(() => defaultConfigLoader.loadConfig()).to.throw(Error, 'No Jest configuration found in your package.json');
+    assert(fsStub.readFileSync.calledWith(path.join(projectRoot, 'package.json'), 'utf8'), `readFileSync not called with ${projectRoot}/package.json`);
+    expect(config).to.deep.equal({
+      exampleProperty: 'examplePackageJsonValue'
+    });
+  });
+
+  it('should return an error when no Jest configuration is present in neither jest.config.js or package.json', () => {
+    requireStub.throws(Error('ENOENT: no such file or directory, open jest.config.js'));
+    fsStub.readFileSync.returns('{ "name": "dummy", "version": "0.0.1", "description": "Dummy package.json without jest property"}');
+
+    expect(() => defaultConfigLoader.loadConfig()).to.throw(Error, 'No Jest configuration found in your projectroot, please supply a jest.config.js or a jest config in your package.json');
   });
 });
 
