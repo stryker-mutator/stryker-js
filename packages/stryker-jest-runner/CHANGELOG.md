@@ -1,3 +1,13 @@
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.4.2...v0.5.0) (2018-02-23)
+
+
+### Features
+
+* **jest-config:** override jest config ([#34](https://github.com/stryker-mutator/stryker-jest-runner/issues/34)) ([095e366](https://github.com/stryker-mutator/stryker-jest-runner/commit/095e366))
+
+
+
 <a name="0.4.2"></a>
 ## [0.4.2](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.4.1...v0.4.2) (2018-02-07)
 
