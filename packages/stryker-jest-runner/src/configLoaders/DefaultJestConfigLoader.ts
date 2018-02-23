@@ -8,22 +8,35 @@ import JestConfiguration from './JestConfiguration';
 export default class DefaultJestConfigLoader implements JestConfigLoader {
   private _fs: any;
   private _projectRoot: string;
+  private _loader: NodeRequire;
 
-  constructor(projectRoot: string, fs: any) {
+  constructor(projectRoot: string, fs: any, loader?: NodeRequire) {
     this._projectRoot = projectRoot;
     this._fs = fs;
+    this._loader = loader || /* istanbul ignore next */ require;
   }
 
   public loadConfig(): JestConfiguration {
-    const packageJson = this._fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8');
-
-    // Parse the package.json and return the Jest property
-    const jestConfig = JSON.parse(packageJson).jest;
+    let jestConfig: JestConfiguration;
+    
+    try {
+      jestConfig = this.readConfigFromJestConfigFile();
+    } catch {
+      jestConfig = JSON.parse(this.readConfigFromPackageJson()).jest;
+    }
 
     if (!jestConfig) {
-      throw new Error('No Jest configuration found in your package.json');
+      throw new Error('No Jest configuration found in your projectroot, please supply a jest.config.js or a jest config in your package.json');
     }
 
     return jestConfig;
+  }
+
+  private readConfigFromJestConfigFile() {
+    return this._loader(path.join(this._projectRoot, 'jest.config.js'));
+  }
+
+  private readConfigFromPackageJson() {
+    return this._fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8');
   }
 }

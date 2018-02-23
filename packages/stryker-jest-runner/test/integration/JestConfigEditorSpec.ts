@@ -69,6 +69,22 @@ describe('Integration JestConfigEditor', () => {
     expect(config.jest.config).to.deep.equal(expectedResult);
   });
 
+  it('should load the jest configuration from the jest.config.js', () => {
+    getProjectRootStub.returns(path.join(process.cwd(), 'testResources', 'exampleProjectWithExplicitJestConfig'));
+
+    jestConfigEditor.edit(config);
+
+    expect(config.jest.project).to.equal('default');
+    expect(config.jest.config).to.deep.equal({
+      collectCoverage: false,
+      moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
+      testEnvironment: 'jest-environment-jsdom',
+      testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$',
+      testRunner: 'jest-jasmine2',
+      verbose: true
+    });
+  });
+
   it('should load the jest configuration from the package.json', () => {
     getProjectRootStub.returns(path.join(process.cwd(), 'testResources', 'exampleProject'));
 
