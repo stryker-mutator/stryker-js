@@ -66,7 +66,7 @@ describe('Integration JestConfigEditor', () => {
       testResultsProcessor: undefined,
       collectCoverage: false,
       verbose: false,
-      bail: true
+      bail: false
     };
 
     // Parse the json back to an object in order to match
@@ -87,7 +87,7 @@ describe('Integration JestConfigEditor', () => {
       testResultsProcessor: undefined,
       collectCoverage: false,
       verbose: false,
-      bail: true
+      bail: false
     });
   });
 
@@ -105,7 +105,7 @@ describe('Integration JestConfigEditor', () => {
       testResultsProcessor: undefined,
       collectCoverage: false,
       verbose: false,
-      bail: true
+      bail: false
     });
   });
 

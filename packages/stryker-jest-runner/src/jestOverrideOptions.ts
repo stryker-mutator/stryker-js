@@ -9,8 +9,8 @@ const JEST_OVERRIDE_OPTIONS = Object.freeze({
     // Disable verbose logging, this will only slow down Stryker test runs
     verbose: false,
 
-    // Enable bail so the process quits immediately when one of the tests fails
-    bail: true,
+    // Disable bail so the jest process does not quit with a non-zero exit code
+    bail: false,
 });
 
 export default JEST_OVERRIDE_OPTIONS;
