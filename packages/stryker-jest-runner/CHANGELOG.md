@@ -1,3 +1,13 @@
+<a name="0.5.1"></a>
+## [0.5.1](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.5.0...v0.5.1) (2018-03-02)
+
+
+### Bug Fixes
+
+* **bail:** disable bail ([#36](https://github.com/stryker-mutator/stryker-jest-runner/issues/36)) ([0d44ecc](https://github.com/stryker-mutator/stryker-jest-runner/commit/0d44ecc))
+
+
+
 <a name="0.5.0"></a>
 # [0.5.0](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.4.2...v0.5.0) (2018-02-23)
 
