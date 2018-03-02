@@ -55,7 +55,7 @@ describe('JestConfigEditor', () => {
       testResultsProcessor: undefined,
       collectCoverage: false,
       verbose: false,
-      bail: true
+      bail: false
     });
   });
 
