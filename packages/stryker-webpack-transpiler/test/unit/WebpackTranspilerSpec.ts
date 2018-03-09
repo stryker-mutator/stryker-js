@@ -32,7 +32,7 @@ describe('WebpackTranspiler', () => {
     sandbox.stub(webpackCompilerModule, 'default').returns(webpackCompilerStub);
 
     config = new Config;
-    config.set({ webpack: {} });
+    config.set({ webpack: { context: '/path/to/project/root' } });
   });
 
   it('should only create the compiler once', async () => {
