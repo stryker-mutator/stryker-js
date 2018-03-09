@@ -48,4 +48,13 @@ describe('ConfigLoader', () => {
     const result = sut.load(createStrykerWebpackConfig({ silent: false }));
     expect(result.plugins).deep.eq([new ProgressPlugin(), new BarPlugin()]);
   });
+
+  it('should return a object with the context property pointing to the projectRoot when webpack.config.js does not exist', () => {
+    const contextPath: string = '/path/to/project/root';
+    requireStub.throws(Error('ENOENT: no such file or directory, open webpack.config.js'));
+    
+    const result = sut.load(createStrykerWebpackConfig({ silent: false, context: contextPath }));
+
+    expect(result).to.deep.equal({ context: contextPath });
+  });
 });
