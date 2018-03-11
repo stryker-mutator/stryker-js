@@ -5,7 +5,7 @@
 
 # Grunt-stryker
 
-For more info on stryker, please visit [stryker-mutator.github.io](stryker-mutator.github.io).
+For more info on stryker, please visit [stryker-mutator.io](https://stryker-mutator.io).
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5` and Stryker `^0.4`.

@@ -8,8 +8,8 @@ export default class BabelConfigReader {
   private readonly log = getLogger(BabelConfigReader.name);
 
   public readConfig(config: Config): babel.TransformOptions {
-    let babelrc = config[CONFIG_KEY_OPTIONS] || this.getConfigFile(config) || {};
-    this.log.trace(`babel config is: ${JSON.stringify(config[CONFIG_KEY_OPTIONS])}`);
+    const babelrc = config[CONFIG_KEY_OPTIONS] || this.getConfigFile(config) || {};
+    this.log.debug(`babel config is: ${JSON.stringify(babelrc, null, 2)}`);
     return babelrc;
   }
 

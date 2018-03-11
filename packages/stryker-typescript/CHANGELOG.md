@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.9.1"></a>
+## [0.9.1](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.9.0...stryker-typescript@0.9.1) (2018-02-07)
+
+
+### Bug Fixes
+
+* **dependencies:** update stryker-api requirement to ^0.13.0 ([8eba6d4](https://github.com/stryker-mutator/stryker/commit/8eba6d4))
+
+
+
+
+<a name="0.9.0"></a>
+# [0.9.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.8.3...stryker-typescript@0.9.0) (2018-02-07)
+
+
+### Features
+
+* **coverage analysis:** Support transpiled code ([#559](https://github.com/stryker-mutator/stryker/issues/559)) ([7c351ad](https://github.com/stryker-mutator/stryker/commit/7c351ad))
+
+
+
+
 <a name="0.8.3"></a>
 ## [0.8.3](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.8.2...stryker-typescript@0.8.3) (2018-01-12)
 

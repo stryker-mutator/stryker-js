@@ -3,6 +3,51 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.19.3"></a>
+## [0.19.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.2...stryker@0.19.3) (2018-02-14)
+
+
+### Bug Fixes
+
+* **coverage-analysis:** make sure to not erase sourceMappingURL comment ([#625](https://github.com/stryker-mutator/stryker/issues/625)) ([eed7147](https://github.com/stryker-mutator/stryker/commit/eed7147))
+
+
+
+
+<a name="0.19.2"></a>
+## [0.19.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.1...stryker@0.19.2) (2018-02-08)
+
+
+### Bug Fixes
+
+* **stryker:** remove import to undependant module ([0956194](https://github.com/stryker-mutator/stryker/commit/0956194))
+
+
+
+
+<a name="0.19.1"></a>
+## [0.19.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.0...stryker@0.19.1) (2018-02-07)
+
+
+### Bug Fixes
+
+* **dependencies:** update stryker-api requirement to ^0.13.0 ([8eba6d4](https://github.com/stryker-mutator/stryker/commit/8eba6d4))
+
+
+
+
+<a name="0.19.0"></a>
+# [0.19.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.18.2...stryker@0.19.0) (2018-02-07)
+
+
+### Features
+
+* **coverage analysis:** Support transpiled code ([#559](https://github.com/stryker-mutator/stryker/issues/559)) ([7c351ad](https://github.com/stryker-mutator/stryker/commit/7c351ad))
+* **dashboard-reporter:** Add dashboard reporter ([#472](https://github.com/stryker-mutator/stryker/issues/472)) ([0693a41](https://github.com/stryker-mutator/stryker/commit/0693a41))
+
+
+
+
 <a name="0.18.2"></a>
 ## [0.18.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.18.1...stryker@0.18.2) (2018-02-02)
 

@@ -8,11 +8,11 @@
 
 # Stryker Typescript
 
-A collection of plugins for native TypeScript support in [Stryker](https://stryker-mutator.github.io), the ~~JavaScript~~ *TypeScript* Mutation testing framework.
+A collection of plugins for native TypeScript support in [Stryker](https://stryker-mutator.io), the ~~JavaScript~~ *TypeScript* Mutation testing framework.
 
 ## Quickstart
 
-First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.github.io/quickstart.html))
+First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
 
 Next, install this package:
 

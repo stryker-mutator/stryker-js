@@ -5,7 +5,7 @@
 
 # Stryker Mocha Framework
 
-A plugin to speed up [Mocha](http://mochajs.org/) tests in [Stryker](https://stryker-mutator.github.io), the JavaScript mutation testing framework.
+A plugin to speed up [Mocha](http://mochajs.org/) tests in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework.
 
 This plugin makes it possible for Stryker to use `coverageAnalysis: 'perTest'`, by providing the abstraction to select which individual test(s) to run. You might also be looking for the [stryker-mocha-runner](https://www.npmjs.com/package/stryker-mocha-runner), which makes it possible to use the node-based Mocha test runner in stryker.
 

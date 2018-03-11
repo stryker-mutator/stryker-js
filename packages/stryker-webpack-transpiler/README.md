@@ -6,11 +6,11 @@
 
 # Stryker Webpack Transpiler
 
-A plugin to support [Webpack](http://webpack.js.org/) bundling as a transpiler in [Stryker](https://stryker-mutator.github.io), the JavaScript Mutation testing framework.
+A plugin to support [Webpack](http://webpack.js.org/) bundling as a transpiler in [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework.
 
 ## Quick start
 
-First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.github.io/quickstart.html))
+First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
 
 Next, install this package:
 

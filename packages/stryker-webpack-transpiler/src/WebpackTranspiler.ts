@@ -1,4 +1,4 @@
-import { TranspilerOptions, Transpiler, TranspileResult, FileLocation } from 'stryker-api/transpile';
+import { TranspilerOptions, Transpiler, TranspileResult } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
 import WebpackCompiler from './compiler/WebpackCompiler';
 import ConfigLoader from './compiler/ConfigLoader';
@@ -12,6 +12,9 @@ export default class WebpackTranspiler implements Transpiler {
 
   public constructor(options: TranspilerOptions) {
     setGlobalLogLevel(options.config.logLevel);
+    if (options.produceSourceMaps) {
+      throw new Error(`Invalid \`coverageAnalysis\` "${options.config.coverageAnalysis}" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off".`);
+    }
     this.config = this.getStrykerWebpackConfig(options.config.webpack);
   }
 
@@ -47,11 +50,6 @@ export default class WebpackTranspiler implements Transpiler {
     };
   }
 
-  public getMappedLocation(sourceFileLocation: FileLocation): FileLocation {
-    // Waiting for a decision on how this is going to be implemented in the future
-    // Return a 'Method nog implemented' error for now.
-    throw new Error('Method not implemented.');
-  }
 }
 
 export interface StrykerWebpackConfig {

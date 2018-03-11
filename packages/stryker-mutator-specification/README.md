@@ -5,7 +5,7 @@
 
 # Stryker mutator specification
 
-This package contains a specification for mutators for [Stryker](https://stryker-mutator.github.io) - The JavaScript mutation testing framework. 
+This package contains a specification for mutators for [Stryker](https://stryker-mutator.io) - The JavaScript mutation testing framework. 
 
 Stryker is language agnostic, examples of mutators are the [JavaScript mutator](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator) and the [TypeScript mutator](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-typescript). However, they share a common set of mutators specified in this package. So this package defines a common set of specifications to which a mutator *could* conform. 
 

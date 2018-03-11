@@ -8,11 +8,11 @@
 
 # Stryker Babel plugin
 
-A plugin that adds support for [Babel](https://github.com/babel/babel) to [Stryker](https://stryker-mutator.github.io), the JavaScript Mutation testing framework. 
+A plugin that adds support for [Babel](https://github.com/babel/babel) to [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework. 
 
 ## Quickstart
 
-First, install Stryker itself (you can follow the [quickstart on the website](http://stryker-mutator.github.io/quickstart.html))
+First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
 
 Next, install this package:
 
