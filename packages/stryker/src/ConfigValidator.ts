@@ -22,6 +22,7 @@ export default class ConfigValidator {
     this.validateIsStringArray('plugins', this.strykerConfig.plugins);
     this.validateIsStringArray('reporter', this.strykerConfig.reporter);
     this.validateIsStringArray('transpilers', this.strykerConfig.transpilers);
+    this.validateIsStringArray('excludedMutations', this.strykerConfig.excludedMutations);
     this.validateCoverageAnalysis();
     this.validateCoverageAnalysisWithRespectToTranspilers();
     this.crashIfNeeded();

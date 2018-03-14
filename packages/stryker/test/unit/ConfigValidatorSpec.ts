@@ -129,6 +129,24 @@ describe('ConfigValidator', () => {
     });
   });
 
+  describe('excluded mutations', () => {
+    it('should be invalid with non-array plugins', () => {
+      let brokenConfig = breakConfig(config, 'excludedMutations', 'BooleanSubstitution');
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "BooleanSubstitution" is invalid for `excludedMutations`. Expected an array');
+    });
+
+    it('should be invalid with non-string array elements', () => {
+      let brokenConfig = breakConfig(config, 'excludedMutations', ['BooleanSubstitution', 0]);
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "0" is an invalid element of `excludedMutations`. Expected a string');
+    });
+  });
+
   describe('reporter', () => {
     it('should be invalid with non-array reporter', () => {
       let brokenConfig = breakConfig(config, 'reporter', 'stryker-typescript');

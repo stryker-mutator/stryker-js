@@ -2,6 +2,7 @@ import { Config, ConfigEditorFactory } from 'stryker-api/config';
 import { StrykerOptions, File } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
+import { Mutant } from 'stryker-api/mutant';
 import ReporterOrchestrator from './ReporterOrchestrator';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
@@ -68,14 +69,15 @@ export default class Stryker {
 
   private mutate(inputFiles: File[], initialTestRunResult: InitialTestRunResult) {
     const mutator = new MutatorFacade(this.config);
-    const mutants = mutator.mutate(inputFiles);
-    if (mutants.length) {
-      this.log.info(`${mutants.length} Mutant(s) generated`);
+    const allMutants = mutator.mutate(inputFiles);
+    const includedMutants = this.removeExcludedMutants(allMutants);
+    if (includedMutants.length) {
+      this.log.info(`${includedMutants.length} Mutant(s) generated`);
     } else {
       this.log.info('It\'s a mutant-free world, nothing to test.');
     }
     const mutantRunResultMatcher = new MutantTestMatcher(
-      mutants,
+      includedMutants,
       inputFiles,
       initialTestRunResult.runResult,
       SourceMapper.create(initialTestRunResult.transpiledFiles, this.config),
@@ -83,6 +85,10 @@ export default class Stryker {
       this.config,
       this.reporter);
     return mutantRunResultMatcher.matchWithMutants();
+  }
+
+  private removeExcludedMutants(mutants: Mutant[]): Mutant[] {
+    return mutants.filter(mutant => this.config.excludedMutations.indexOf(mutant.mutatorName) === -1);
   }
 
   private loadPlugins() {

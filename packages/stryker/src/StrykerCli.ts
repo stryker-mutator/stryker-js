@@ -39,6 +39,7 @@ export default class StrykerCli {
       .option('--testFramework <name>', `The name of the test framework you want to use.`)
       .option('--testRunner <name>', `The name of the test runner you want to use`)
       .option('--mutator <name>', `The name of the mutant generator you want to use`)
+      .option('--excludedMutations <listOfExcludedMutations>', 'A comma separated list of the mutation types to exclude from the test.', this.list)
       .option('--transpilers <listOfTranspilers>', 'A comma separated list of transpilers to use.', this.list)
       .option('--reporter <name>', 'A comma separated list of the names of the reporter(s) you want to use', this.list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', this.list)

@@ -18,7 +18,7 @@ import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/S
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
 import { TempFolder } from '../../src/utils/TempFolder';
 import currentLogMock from '../helpers/log4jsMock';
-import { mock, Mock, testFramework as testFrameworkMock, textFile, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
+import { mock, Mock, testFramework as testFrameworkMock, textFile, config, runResult, testableMutant, excludedTestableMutant, mutantResult } from '../helpers/producers';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import TestableMutant from '../../src/TestableMutant';
 import '../helpers/globals';
@@ -120,20 +120,23 @@ describe('Stryker', function () {
     let inputFiles: File[];
     let initialRunResult: RunResult;
     let transpiledFiles: File[];
-    let mutants: TestableMutant[];
+    let allMutants: TestableMutant[];
+    let includedMutants: TestableMutant[];
     let mutantResults: MutantResult[];
 
     beforeEach(() => {
-      mutants = [testableMutant()];
+      includedMutants = [testableMutant()];
+      allMutants = [excludedTestableMutant(), testableMutant()];
       mutantResults = [mutantResult()];
-      mutantRunResultMatcherMock.matchWithMutants.returns(mutants);
-      mutatorMock.mutate.returns(mutants);
+      mutantRunResultMatcherMock.matchWithMutants.returns(includedMutants);
+      mutatorMock.mutate.returns(allMutants);
       mutationTestExecutorMock.run.resolves(mutantResults);
       inputFiles = [textFile({ name: 'input.ts ' })];
       transpiledFiles = [textFile({ name: 'output.js' })];
       inputFileResolverMock.resolve.resolves(inputFiles);
       initialRunResult = runResult();
       initialTestExecutorMock.run.resolves({ runResult: initialRunResult, transpiledFiles });
+      strykerConfig.excludedMutations = ['excludedMutator'];
       sut = new Stryker({});
     });
 
@@ -163,7 +166,8 @@ describe('Stryker', function () {
     });
 
     it('should log to have quit early if no mutants were generated', async () => {
-      while (mutants.pop()); // clear all mutants
+      while (allMutants.pop()); // clear all mutants, for the log assertion
+      while (includedMutants.pop()); // clear all mutants, for the run assertion
       await sut.runMutationTest();
       expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
       expect(mutationTestExecutorMock.run).not.called;
@@ -210,7 +214,12 @@ describe('Stryker', function () {
       it('should create the mutation test executor', () => {
         expect(mutationTestExecutor.default).calledWithNew;
         expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles, testFramework, reporter);
-        expect(mutationTestExecutorMock.run).calledWith(mutants);
+        expect(mutationTestExecutorMock.run).calledWith(includedMutants);
+      });
+
+      it('should filter out the excluded mutations', () => {
+        expect(mutantRunResultMatcher.default).calledWithNew;
+        expect(mutantRunResultMatcher.default).calledWith(includedMutants);
       });
 
       it('should clean the stryker temp folder', () => {

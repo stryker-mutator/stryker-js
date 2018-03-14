@@ -17,6 +17,7 @@ export default class Config implements StrykerOptions {
   testRunner: string;
   testFramework: string;
   mutator: string = 'es5';
+  excludedMutations: string[] = [];
   transpilers: string[] = [];
   maxConcurrentTestRunners: number = Infinity;
   thresholds: MutationScoreThresholds = {

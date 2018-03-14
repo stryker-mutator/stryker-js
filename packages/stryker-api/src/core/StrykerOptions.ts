@@ -56,6 +56,13 @@ interface StrykerOptions {
   mutator?: string;
 
   /**
+   * The names of the specific mutation types to exclude from testing.
+   * The names must match the given names of the mutations.
+   * For example: 'BinaryExpression', 'BooleanSubstitution', etc.
+   */
+  excludedMutations?: string[];
+
+  /**
    * The names of the transpilers to use (in order). Default: [].
    * A transpiler in this context is a plugin that can transform input files (source code)
    * before testing.
