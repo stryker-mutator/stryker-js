@@ -170,13 +170,13 @@ In addition to requiring your test runner to be able to report the code coverage
 **Description:**  
 With `mutator` you configure which mutator plugin you want to use. This defaults to es5.  
 
-#### Excluded mutations
-**Command line:** `--excludedMutations BooleanSubstitution,StringLiteral`
-**Config file:** `excludedMutations: ['BooleanSubstitution', 'StringLiteral']`
-**Default value:** `[ ]`
-**Mandatory**: no
-**Description:**
-With `excludedMutations` you configure which types of mutations to exclude from the test run. The full list of mutation types varies slightly between mutators (for example, the `es5` mutator will not use the same mutation types as the `typescript` mutator). Mutation type names are case-sensitive, and can be found either in the source code or in a generated Stryker report. This defaults to an empty array, meaning all mutation types will be included in the test.
+#### Excluded mutations 
+**Command line:** `--excludedMutations BooleanSubstitution,StringLiteral`  
+**Config file:** `excludedMutations: ['BooleanSubstitution', 'StringLiteral']`  
+**Default value:** `[ ]`  
+**Mandatory**: no  
+**Description:**  
+With `excludedMutations` you configure which types of mutations to exclude from the test run. The full list of mutation types varies slightly between mutators (for example, the `es5` mutator will not use the same mutation types as the `typescript` mutator). Mutation type names are case-sensitive, and can be found either in the source code or in a generated Stryker report. This defaults to an empty array, meaning all mutation types will be included in the test.  
 
 #### Transpilers  
 **Config file:** `transpilers: '['typescript']'`  

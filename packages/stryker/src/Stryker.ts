@@ -71,11 +71,7 @@ export default class Stryker {
     const mutator = new MutatorFacade(this.config);
     const allMutants = mutator.mutate(inputFiles);
     const includedMutants = this.removeExcludedMutants(allMutants);
-    if (includedMutants.length) {
-      this.log.info(`${includedMutants.length} Mutant(s) generated`);
-    } else {
-      this.log.info('It\'s a mutant-free world, nothing to test.');
-    }
+    this.logMutantCount(includedMutants.length, allMutants.length);
     const mutantRunResultMatcher = new MutantTestMatcher(
       includedMutants,
       inputFiles,
@@ -85,6 +81,20 @@ export default class Stryker {
       this.config,
       this.reporter);
     return mutantRunResultMatcher.matchWithMutants();
+  }
+
+  private logMutantCount(includedMutantCount: number, totalMutantCount: number) {
+    let mutantCountMessage;
+    if (includedMutantCount) {
+      mutantCountMessage = `${includedMutantCount} Mutant(s) generated`;
+    } else {
+      mutantCountMessage = `It\'s a mutant-free world, nothing to test.`;
+    }
+    const numberExcluded = totalMutantCount - includedMutantCount;
+    if (numberExcluded) {
+      mutantCountMessage += ` (${numberExcluded} Mutant(s) excluded)`;
+    }
+    this.log.info(mutantCountMessage);
   }
 
   private removeExcludedMutants(mutants: Mutant[]): Mutant[] {
