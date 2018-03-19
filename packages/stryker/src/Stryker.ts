@@ -1,5 +1,5 @@
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
-import { StrykerOptions, File } from 'stryker-api/core';
+import { StrykerOptions, MutatorDescriptor, File } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { Mutant } from 'stryker-api/mutant';
@@ -98,7 +98,11 @@ export default class Stryker {
   }
 
   private removeExcludedMutants(mutants: Mutant[]): Mutant[] {
-    return mutants.filter(mutant => this.config.excludedMutations.indexOf(mutant.mutatorName) === -1);
+    if (typeof this.config.mutator === 'string') {
+      return mutants;
+    }
+    const mutatorDescriptor = this.config.mutator as MutatorDescriptor;
+    return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
   }
 
   private loadPlugins() {

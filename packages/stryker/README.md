@@ -164,19 +164,21 @@ In addition to requiring your test runner to be able to report the code coverage
  (`Mocha` is not yet supported).
 
 #### Mutator 
-**Config file:** `mutator: 'es5'`  
+**Command line:** `--mutator es5`  
+**Config file:** `mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
 **Default value:** `es5`  
 **Mandatory**: no  
 **Description:**  
-With `mutator` you configure which mutator plugin you want to use. This defaults to es5.  
+With `mutator` you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.  
+The mutator plugin name defaults to `es5` if not specified. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.  
+The full list of mutation types varies slightly between mutators (for example, the `es5` mutator will not use the same mutation types as the `typescript` mutator). Mutation type names are case-sensitive, and can be found either in the source code or in a generated Stryker report.  
+ 
+When using the command line, only the mutator name as a string may be provided.  
+When using the config file, you can provide either a string representing the mutator name, or a `MutatorDescriptor` object, like so:  
 
-#### Excluded mutations 
-**Command line:** `--excludedMutations BooleanSubstitution,StringLiteral`  
-**Config file:** `excludedMutations: ['BooleanSubstitution', 'StringLiteral']`  
-**Default value:** `[ ]`  
-**Mandatory**: no  
-**Description:**  
-With `excludedMutations` you configure which types of mutations to exclude from the test run. The full list of mutation types varies slightly between mutators (for example, the `es5` mutator will not use the same mutation types as the `typescript` mutator). Mutation type names are case-sensitive, and can be found either in the source code or in a generated Stryker report. This defaults to an empty array, meaning all mutation types will be included in the test.  
+* `MutatorDescriptor` object: `{ name: 'name', excludedMutations: ['mutationType1', 'mutationType2', ...] }`:  
+   * The `name` property is mandatory and contains the name of the mutator plugin to use.  
+   * The `excludedMutations` property is mandatory and contains the types of mutations to exclude from the test run.  
 
 #### Transpilers  
 **Config file:** `transpilers: '['typescript']'`  

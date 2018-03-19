@@ -245,21 +245,30 @@ describe('Stryker', function () {
     describe('with excluded mutants', () => {
 
       it('should log the number of mutants generated and excluded', async () => {
-        strykerConfig.excludedMutations = ['fooMutator'];
+        strykerConfig.mutator = {
+          name: 'es5',
+          excludedMutations: ['fooMutator']
+        };
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(currentLogMock().info).to.have.been.calledWith('2 Mutant(s) generated (1 Mutant(s) excluded)');
       });
 
       it('should log the absence of mutants and the excluded number when all mutants are excluded', async () => {
-        strykerConfig.excludedMutations = ['fooMutator', 'barMutator', 'bazMutator'];
+        strykerConfig.mutator = {
+          name: 'es5',
+          excludedMutations: ['fooMutator', 'barMutator', 'bazMutator']
+        };
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test. (3 Mutant(s) excluded)');
       });
 
       it('should filter out the excluded mutations', async () => {
-        strykerConfig.excludedMutations = ['barMutator', 'bazMutator'];
+        strykerConfig.mutator = {
+          name: 'es5',
+          excludedMutations: ['barMutator', 'bazMutator']
+        };
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(mutantRunResultMatcher.default).calledWithNew;

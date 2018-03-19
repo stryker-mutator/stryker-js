@@ -5,4 +5,5 @@ export { default as Position } from './src/core/Position';
 export { default as Location } from './src/core/Location';
 export { default as Range } from './src/core/Range';
 export { default as InputFileDescriptor } from './src/core/InputFileDescriptor';
+export { default as MutatorDescriptor } from './src/core/MutatorDescriptor';
 export { default as MutationScoreThresholds } from './src/core/MutationScoreThresholds';

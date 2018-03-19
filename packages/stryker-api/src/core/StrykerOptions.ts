@@ -1,5 +1,6 @@
 import InputFileDescriptor from './InputFileDescriptor';
 import MutationScoreThresholds from './MutationScoreThresholds';
+import MutatorDescriptor from './MutatorDescriptor';
 
 interface StrykerOptions {
   // this ensures that custom config for for example 'karma' can be added under the 'karma' key
@@ -49,18 +50,18 @@ interface StrykerOptions {
   testRunner?: string;
 
   /**
-   * The name of the mutant generator to use to generate mutants based on your input file. 
+   * The mutant generator to use to generate mutants based on your input file.
    * This is often dependent on the language of your source files.
-   * For example: 'es5', 'typescript'
+   *
+   * This value can be either a string, or an object with 2 properties:
+   * * `string`: The name of the mutant generator to use. For example: 'es5', 'typescript'
+   * * { name: 'name', excludedMutations: ['mutationType1', 'mutationType2'] }:
+   *    * The `name` property is mandatory and contains the name of the mutant generator to use.
+   *    * For example: 'es5', 'typescript'
+   *    * The `excludedMutations` property is mandatory and contains the names of the specific mutation types to exclude from testing.
+   *    * The values must match the given names of the mutations. For example: 'BinaryExpression', 'BooleanSubstitution', etc.
    */
-  mutator?: string;
-
-  /**
-   * The names of the specific mutation types to exclude from testing.
-   * The names must match the given names of the mutations.
-   * For example: 'BinaryExpression', 'BooleanSubstitution', etc.
-   */
-  excludedMutations?: string[];
+  mutator?: string | MutatorDescriptor;
 
   /**
    * The names of the transpilers to use (in order). Default: [].
