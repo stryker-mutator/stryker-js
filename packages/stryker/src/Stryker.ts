@@ -100,9 +100,10 @@ export default class Stryker {
   private removeExcludedMutants(mutants: Mutant[]): Mutant[] {
     if (typeof this.config.mutator === 'string') {
       return mutants;
+    } else {
+      const mutatorDescriptor = this.config.mutator as MutatorDescriptor;
+      return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
     }
-    const mutatorDescriptor = this.config.mutator as MutatorDescriptor;
-    return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
   }
 
   private loadPlugins() {

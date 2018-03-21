@@ -20,7 +20,7 @@ export default class MutatorFacade implements Mutator {
     if (typeof mutator === 'string') {
       return mutator;
     } else {
-      return (mutator as MutatorDescriptor).name;
+      return mutator.name;
     }
   }
 }

@@ -54,10 +54,10 @@ interface StrykerOptions {
    * This is often dependent on the language of your source files.
    *
    * This value can be either a string, or an object with 2 properties:
-   * * `string`: The name of the mutant generator to use. For example: 'es5', 'typescript'
+   * * `string`: The name of the mutant generator to use. For example: 'javascript', 'typescript'
    * * { name: 'name', excludedMutations: ['mutationType1', 'mutationType2'] }:
    *    * The `name` property is mandatory and contains the name of the mutant generator to use.
-   *    * For example: 'es5', 'typescript'
+   *    * For example: 'javascript', 'typescript'
    *    * The `excludedMutations` property is mandatory and contains the names of the specific mutation types to exclude from testing.
    *    * The values must match the given names of the mutations. For example: 'BinaryExpression', 'BooleanSubstitution', etc.
    */

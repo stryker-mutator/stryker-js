@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { TestFramework } from 'stryker-api/test_framework';
 import { MutatorDescriptor, MutationScoreThresholds } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
@@ -36,16 +35,12 @@ export default class ConfigValidator {
 
   private validateMutator() {
     const mutator = this.strykerConfig.mutator;
-    if (typeof mutator !== 'string' && !_.isObject(mutator)) {
-      // console.log(`***** FAILED at first assertion: Mutator is: ${mutator}`);
-      this.invalidate(`Value "${mutator}" is invalid for \`mutator\`. Expected either a string or an object`);
-    }
-    if (_.isObject(mutator)) {
+    if (typeof mutator === 'object') {
       const mutatorDescriptor = mutator as MutatorDescriptor;
-      // console.log(`***** It's an object!: Mutator is: ${mutatorDescriptor}`);
-      // TODO: do I need to add checks for the presence of these fields??
       this.validateIsString('mutator.name', mutatorDescriptor.name);
       this.validateIsStringArray('mutator.excludedMutations', mutatorDescriptor.excludedMutations);
+    } else if (typeof mutator !== 'string') {
+      this.invalidate(`Value "${mutator}" is invalid for \`mutator\`. Expected either a string or an object`);
     }
   }
 
