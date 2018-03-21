@@ -1,6 +1,6 @@
 {
   "name": "stryker-jasmine",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "A plugin to use the Jasmine test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "stryker-api": "^0.13.0"
   },
   "devDependencies": {
-    "stryker-api": "^0.13.0"
+    "stryker-api": "^0.13.1"
   },
   "contributors": []
 }

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.6"></a>
+## [0.10.6](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.5...stryker-mocha-runner@0.10.6) (2018-03-21)
+
+
+
+
+**Note:** Version bump only for package stryker-mocha-runner
+
 <a name="0.10.5"></a>
 ## [0.10.5](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.4...stryker-mocha-runner@0.10.5) (2018-02-07)
 
