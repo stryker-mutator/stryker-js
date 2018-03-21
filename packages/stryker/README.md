@@ -239,7 +239,7 @@ timeoutForTestRunMs = timeOfTheInitialTestRunMs * timeoutFactor + timeoutMs
 ``` 
 
 With `timeoutFactor` you can configure the allowed deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops.
-`timeoutMs` let's you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.  
+`timeoutMs` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.  
 
 #### Timeout factor  
 **Command line:** `--timeoutFactor 1.5`  
