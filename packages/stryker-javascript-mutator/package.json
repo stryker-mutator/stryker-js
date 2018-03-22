@@ -51,6 +51,6 @@
     "stryker-mutator-specification": "^0.2.2"
   },
   "peerDependencies": {
-    "stryker-api": "^0.13.0"
+    "stryker-api": "^0.14.0"
   }
 }
