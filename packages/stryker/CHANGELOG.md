@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.20.0"></a>
+# [0.20.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.4...stryker@0.20.0) (2018-03-22)
+
+
+### Features
+
+* **stryker:** add excludedMutations as a config option ([#13](https://github.com/stryker-mutator/stryker/issues/13)) ([#652](https://github.com/stryker-mutator/stryker/issues/652)) ([cc8a5f1](https://github.com/stryker-mutator/stryker/commit/cc8a5f1))
+
+
+
+
 <a name="0.19.4"></a>
 ## [0.19.4](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.3...stryker@0.19.4) (2018-03-21)
 
