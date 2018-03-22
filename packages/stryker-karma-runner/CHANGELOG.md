@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.12.5"></a>
+## [0.12.5](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.4...stryker-karma-runner@0.12.5) (2018-03-22)
+
+
+### Bug Fixes
+
+* **peerDependency:** update stryker-api requirement to ^0.14.0 ([3ce04d4](https://github.io/stryker-mutator/stryker/commit/3ce04d4))
+
+
+
+
 <a name="0.12.4"></a>
 ## [0.12.4](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.3...stryker-karma-runner@0.12.4) (2018-03-22)
 

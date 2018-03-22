@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.8"></a>
+## [0.10.8](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.7...stryker-mocha-runner@0.10.8) (2018-03-22)
+
+
+### Bug Fixes
+
+* **peerDependency:** update stryker-api requirement to ^0.14.0 ([3ce04d4](https://github.com/stryker-mutator/stryker/commit/3ce04d4))
+
+
+
+
 <a name="0.10.7"></a>
 ## [0.10.7](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.6...stryker-mocha-runner@0.10.7) (2018-03-22)
 

@@ -1,6 +1,6 @@
 {
   "name": "stryker-mocha-framework",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "A plugin to use the mocha test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {

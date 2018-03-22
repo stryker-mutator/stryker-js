@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.3.4"></a>
+## [0.3.4](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.3...stryker-babel-transpiler@0.3.4) (2018-03-22)
+
+
+### Bug Fixes
+
+* **peerDependency:** update stryker-api requirement to ^0.14.0 ([3ce04d4](https://github.com/stryker-mutator/stryker/commit/3ce04d4))
+
+
+
+
 <a name="0.3.3"></a>
 ## [0.3.3](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.2...stryker-babel-transpiler@0.3.3) (2018-03-22)
 
