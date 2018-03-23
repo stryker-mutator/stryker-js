@@ -103,14 +103,6 @@ describe('ConfigValidator', () => {
     expect(log.fatal).calledWith('Value "break" is invalid for `timeoutFactor`. Expected a number');
   });
 
-  it('should be invalid with non-string mutator', () => {
-    let brokenConfig = breakConfig(config, 'mutator', 0);
-    sut = new ConfigValidator(brokenConfig, testFramework());
-    sut.validate();
-    expect(exitStub).calledWith(1);
-    expect(log.fatal).calledWith('Value "0" is invalid for `mutator`. Expected a string');
-  });
-
   describe('plugins', () => {
     it('should be invalid with non-array plugins', () => {
       let brokenConfig = breakConfig(config, 'plugins', 'stryker-typescript');
@@ -126,6 +118,62 @@ describe('ConfigValidator', () => {
       sut.validate();
       expect(exitStub).calledWith(1);
       expect(log.fatal).calledWith('Value "0" is an invalid element of `plugins`. Expected a string');
+    });
+  });
+
+  describe('mutator', () => {
+    it('should be invalid with non-string mutator', () => {
+      let brokenConfig = breakConfig(config, 'mutator', 0);
+      sut = new ConfigValidator(brokenConfig, testFramework());
+      sut.validate();
+      expect(exitStub).calledWith(1);
+      expect(log.fatal).calledWith('Value "0" is invalid for `mutator`. Expected either a string or an object');
+    });
+
+    describe('as an object', () => {
+      it('should be valid with string mutator name and string array excluded mutations', () => {
+        let validConfig = breakConfig(config, 'mutator', {
+          name: 'es5',
+          excludedMutations: ['BooleanSubstitution']
+        });
+        sut = new ConfigValidator(validConfig, testFramework());
+        sut.validate();
+        expect(exitStub).not.called;
+        expect(log.fatal).not.called;
+      });
+
+      it('should be invalid with non-string mutator name', () => {
+        let brokenConfig = breakConfig(config, 'mutator', {
+          name: 0,
+          excludedMutations: []
+        });
+        sut = new ConfigValidator(brokenConfig, testFramework());
+        sut.validate();
+        expect(exitStub).calledWith(1);
+        expect(log.fatal).calledWith('Value "0" is invalid for `mutator.name`. Expected a string');
+      });
+
+      it('should be invalid with non-array excluded mutations', () => {
+        let brokenConfig = breakConfig(config, 'mutator', {
+          name: 'es5',
+          excludedMutations: 'BooleanSubstitution'
+        });
+        sut = new ConfigValidator(brokenConfig, testFramework());
+        sut.validate();
+        expect(exitStub).calledWith(1);
+        expect(log.fatal).calledWith('Value "BooleanSubstitution" is invalid for `mutator.excludedMutations`. Expected an array');
+      });
+
+      it('should be invalid with non-string excluded mutation array elements', () => {
+        let brokenConfig = breakConfig(config, 'mutator', {
+          name: 'es5',
+          excludedMutations: ['BooleanSubstitution', 0]
+        });
+        sut = new ConfigValidator(brokenConfig, testFramework());
+        sut.validate();
+        expect(exitStub).calledWith(1);
+        expect(log.fatal).calledWith('Value "0" is an invalid element of `mutator.excludedMutations`. Expected a string');
+      });
     });
   });
 

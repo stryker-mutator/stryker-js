@@ -17,13 +17,26 @@ describe('MutatorFacade', () => {
   });
 
   describe('mutate', () => {
-    it('should create the configured mutant generator', () => {
+    it('should create the configured mutant generator with a string mutator', () => {
       const config = new Config();
       const sut = new MutatorFacade(config);
       const inputFiles = [file()];
       expect(sut.mutate(inputFiles)).deep.eq(['mutant']);
       expect(mutatorMock.mutate).calledWith(inputFiles);
       expect(MutatorFactory.instance().create).calledWith('es5');
+    });
+
+    it('should create the configured mutant generator with an object mutator', () => {
+      const config = new Config();
+      config.mutator = {
+        name: 'javascript',
+        excludedMutations: []
+      };
+      const sut = new MutatorFacade(config);
+      const inputFiles = [file()];
+      expect(sut.mutate(inputFiles)).deep.eq(['mutant']);
+      expect(mutatorMock.mutate).calledWith(inputFiles);
+      expect(MutatorFactory.instance().create).calledWith('javascript');
     });
   });
 });
