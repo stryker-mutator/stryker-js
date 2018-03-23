@@ -30,7 +30,9 @@ describe('Webpack transpiler', () => {
     });
   }
 
-  it('should be able to transpile the "gettingStarted" sample', async () => {
+  it('should be able to transpile the "gettingStarted" sample', async function() {
+    this.timeout(10000);
+
     transpilerConfig.config.set({ webpack: { configFile: path.join(getProjectRoot('gettingStarted'), 'webpack.config.js') }});
     const sut = new WebpackTranspiler(transpilerConfig);
     const files = readFiles();
@@ -41,7 +43,9 @@ describe('Webpack transpiler', () => {
     expect(transpiledFiles.outputFiles).lengthOf(1);
   });
 
-  it('should be able to transpile "zeroConfig" sample without a Webpack config file', async () => {
+  it('should be able to transpile "zeroConfig" sample without a Webpack config file', async function() {
+    this.timeout(10000);
+
     transpilerConfig.config.set({ webpack: { context: getProjectRoot('zeroConfig') }});
     const sut = new WebpackTranspiler(transpilerConfig);
     const files = readFiles();
