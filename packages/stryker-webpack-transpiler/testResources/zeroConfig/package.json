@@ -10,9 +10,5 @@
     "webpack 4"
   ],
   "author": "Sander Koenders",
-  "license": "MIT",
-  "devDependencies": {
-    "webpack": "^4.1.1",
-    "webpack-cli": "^2.0.10"
-  }
+  "license": "MIT"
 }
