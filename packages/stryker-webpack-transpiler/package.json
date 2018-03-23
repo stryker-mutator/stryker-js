@@ -1,6 +1,6 @@
 {
   "name": "stryker-webpack-transpiler",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "[preview] A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.1.7...stryker-webpack-transpiler@0.2.0) (2018-03-23)
+
+
+### Features
+
+* **webpack 4:** support webpack 4 zero config setup ([#664](https://github.com/stryker-mutator/stryker/issues/664)) ([6e4efea](https://github.com/stryker-mutator/stryker/commit/6e4efea))
+
+
+
+
 <a name="0.1.7"></a>
 ## [0.1.7](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.1.6...stryker-webpack-transpiler@0.1.7) (2018-03-22)
 
