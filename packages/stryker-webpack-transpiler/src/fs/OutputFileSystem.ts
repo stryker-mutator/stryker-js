@@ -59,7 +59,7 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
 
   public mkdirp(dir: string, opts: any, cb?: Callback<string>): void {
     const callback: Callback<string> = cb || opts;
-    callback(null, '');
+    callback(null);
   }
 
   public rmdir(name: PathLike, callback: EmptyCallback): void {
