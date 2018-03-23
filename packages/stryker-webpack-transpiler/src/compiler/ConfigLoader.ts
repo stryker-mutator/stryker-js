@@ -11,23 +11,31 @@ export default class ConfigLoader {
 
   public constructor(loader?: NodeRequireFunction) {
     this.loader = loader || require;
-    this.log = getLogger(ConfigLoader.name)
+    this.log = getLogger(ConfigLoader.name);
   }
 
   public load(config: StrykerWebpackConfig): Configuration {
     let webpackConfig: Configuration;
 
-    try {
-      webpackConfig = this.loader(path.resolve(config.configFile));
+    if (config.configFile) {
+      webpackConfig = this.loaderWebpackConfigFromProjectRoot(config.configFile);
       if (config.silent) {
         this.configureSilent(webpackConfig);
       }
-    } catch (err) {
+    } else {
       this.log.debug('Webpack config "%s" not found, trying Webpack 4 zero config', config.configFile);
       webpackConfig = { context: config.context };
     }
 
     return webpackConfig;
+  }
+
+  private loaderWebpackConfigFromProjectRoot(configFileLocation: string) {
+    try {
+      return this.loader(path.resolve(configFileLocation));
+    } catch {
+      throw new Error(`Could not load webpack config at "${configFileLocation}", file not found.`);
+    }
   }
 
   private configureSilent(webpackConfig: Configuration) {
