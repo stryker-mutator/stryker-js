@@ -1,7 +1,8 @@
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
-import { StrykerOptions, File } from 'stryker-api/core';
+import { StrykerOptions, MutatorDescriptor, File } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
+import { Mutant } from 'stryker-api/mutant';
 import ReporterOrchestrator from './ReporterOrchestrator';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
@@ -68,14 +69,11 @@ export default class Stryker {
 
   private mutate(inputFiles: File[], initialTestRunResult: InitialTestRunResult) {
     const mutator = new MutatorFacade(this.config);
-    const mutants = mutator.mutate(inputFiles);
-    if (mutants.length) {
-      this.log.info(`${mutants.length} Mutant(s) generated`);
-    } else {
-      this.log.info('It\'s a mutant-free world, nothing to test.');
-    }
+    const allMutants = mutator.mutate(inputFiles);
+    const includedMutants = this.removeExcludedMutants(allMutants);
+    this.logMutantCount(includedMutants.length, allMutants.length);
     const mutantRunResultMatcher = new MutantTestMatcher(
-      mutants,
+      includedMutants,
       inputFiles,
       initialTestRunResult.runResult,
       SourceMapper.create(initialTestRunResult.transpiledFiles, this.config),
@@ -83,6 +81,29 @@ export default class Stryker {
       this.config,
       this.reporter);
     return mutantRunResultMatcher.matchWithMutants();
+  }
+
+  private logMutantCount(includedMutantCount: number, totalMutantCount: number) {
+    let mutantCountMessage;
+    if (includedMutantCount) {
+      mutantCountMessage = `${includedMutantCount} Mutant(s) generated`;
+    } else {
+      mutantCountMessage = `It\'s a mutant-free world, nothing to test.`;
+    }
+    const numberExcluded = totalMutantCount - includedMutantCount;
+    if (numberExcluded) {
+      mutantCountMessage += ` (${numberExcluded} Mutant(s) excluded)`;
+    }
+    this.log.info(mutantCountMessage);
+  }
+
+  private removeExcludedMutants(mutants: Mutant[]): Mutant[] {
+    if (typeof this.config.mutator === 'string') {
+      return mutants;
+    } else {
+      const mutatorDescriptor = this.config.mutator as MutatorDescriptor;
+      return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
+    }
   }
 
   private loadPlugins() {

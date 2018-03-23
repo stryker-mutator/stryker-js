@@ -1,4 +1,4 @@
-import { StrykerOptions, InputFileDescriptor, MutationScoreThresholds } from '../../core';
+import { StrykerOptions, InputFileDescriptor, MutatorDescriptor, MutationScoreThresholds } from '../../core';
 
 export default class Config implements StrykerOptions {
 
@@ -16,7 +16,7 @@ export default class Config implements StrykerOptions {
   coverageAnalysis: 'perTest' | 'all' | 'off' = 'perTest';
   testRunner: string;
   testFramework: string;
-  mutator: string = 'es5';
+  mutator: string | MutatorDescriptor = 'es5';
   transpilers: string[] = [];
   maxConcurrentTestRunners: number = Infinity;
   thresholds: MutationScoreThresholds = {
