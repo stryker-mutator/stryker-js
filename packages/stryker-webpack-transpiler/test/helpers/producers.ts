@@ -58,8 +58,9 @@ export const createChunk = createFactory<Chunk>(() => ({
 }));
 
 export const createStrykerWebpackConfig = createFactory<StrykerWebpackConfig>(() => ({
-  configFile: 'webpack.config.js',
-  silent: true
+  configFile: undefined,
+  silent: true,
+  context: '/path/to/project/root'
 }));
 
 export function createWebpackMock(): WebpackCompilerMock {

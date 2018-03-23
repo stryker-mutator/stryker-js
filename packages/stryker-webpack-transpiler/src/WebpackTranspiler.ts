@@ -4,7 +4,7 @@ import WebpackCompiler from './compiler/WebpackCompiler';
 import ConfigLoader from './compiler/ConfigLoader';
 import { setGlobalLogLevel } from 'log4js';
 
-const DEFAULT_STRYKER_WEBPACK_CONFIG = Object.freeze({ configFile: 'webpack.config.js', silent: true });
+const DEFAULT_STRYKER_WEBPACK_CONFIG = Object.freeze({ configFile: undefined, silent: true, context: process.cwd() });
 
 export default class WebpackTranspiler implements Transpiler {
   private config: StrykerWebpackConfig;
@@ -53,6 +53,9 @@ export default class WebpackTranspiler implements Transpiler {
 }
 
 export interface StrykerWebpackConfig {
-  configFile: string;
+  configFile?: string;
   silent: boolean;
+
+  // TODO: Remove this when stryker implements projectRoot, see https://github.com/stryker-mutator/stryker/issues/650 */
+  context?: string;
 }

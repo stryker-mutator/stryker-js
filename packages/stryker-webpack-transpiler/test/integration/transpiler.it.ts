@@ -1,22 +1,20 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import WebpackTranspiler, { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
+import WebpackTranspiler from '../../src/WebpackTranspiler';
 import { Config } from 'stryker-api/config';
 import { TextFile, FileKind } from 'stryker-api/core';
 import { expect } from 'chai';
+import { TranspilerOptions } from 'stryker-api/transpile';
 
-describe('Webpack transpiler', () => {
+describe('Webpack transpiler', function () {
+  this.timeout(10000);
 
-  function createSut() {
-    const config = new Config();
-    const strykerWebpackConfig: Partial<StrykerWebpackConfig> = {
-      configFile: path.resolve(__dirname, '..', '..', 'testResources', 'gettingStarted', 'webpack.config.js')
-    };
-    config.set({
-      webpack: strykerWebpackConfig
-    });
-    return new WebpackTranspiler({ produceSourceMaps: false, config });
-  }
+  let transpilerConfig: TranspilerOptions;
+  
+  beforeEach(() => {
+    transpilerConfig = { produceSourceMaps: false, config: new Config };
+    transpilerConfig.config.set({ webpack: {}});
+  });
 
   function readFiles(): TextFile[] {
     const dir = path.resolve(__dirname, '..', '..', 'testResources', 'gettingStarted', 'src');
@@ -35,12 +33,28 @@ describe('Webpack transpiler', () => {
   }
 
   it('should be able to transpile the "gettingStarted" sample', async () => {
-    const sut = createSut();
+    transpilerConfig.config.set({ webpack: { configFile: path.join(getProjectRoot('gettingStarted'), 'webpack.config.js') }});
+    const sut = new WebpackTranspiler(transpilerConfig);
     const files = readFiles();
+
     const transpiledFiles = await sut.transpile(files);
+
     expect(transpiledFiles.error).null;
     expect(transpiledFiles.outputFiles).lengthOf(1);
   });
 
+  it('should be able to transpile "zeroConfig" sample without a Webpack config file', async () => {
+    transpilerConfig.config.set({ webpack: { context: getProjectRoot('zeroConfig') }});
+    const sut = new WebpackTranspiler(transpilerConfig);
+    const files = readFiles();
+
+    const transpiledFiles = await sut.transpile(files);
+
+    expect(transpiledFiles.error).null;
+    expect(transpiledFiles.outputFiles).lengthOf(1);
+  });
 });
 
+function getProjectRoot(testResourceProjectName: string) {
+  return path.join(process.cwd(), 'testResources', testResourceProjectName);
+}
