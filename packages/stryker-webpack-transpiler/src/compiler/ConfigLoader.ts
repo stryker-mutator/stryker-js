@@ -22,7 +22,7 @@ export default class ConfigLoader {
         this.configureSilent(webpackConfig);
       }
     } catch (err) {
-      this._log.debug(`Webpack config "${config.configFile}" not found, trying Webpack 4 zero config`);
+      this._log.debug('Webpack config "%s" not found, trying Webpack 4 zero config', config.configFile);
       webpackConfig = { context: config.context };
     }
 
