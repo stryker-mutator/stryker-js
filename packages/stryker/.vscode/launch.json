@@ -77,7 +77,7 @@
         "run",
         "stryker.conf.js"
       ],
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceRoot}/../../integrationTest/test/typescript-transpiling",
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"

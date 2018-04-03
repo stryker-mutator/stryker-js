@@ -1,7 +1,7 @@
-import { AdapterMessage, RunMessage, StartMessage, EmptyWorkerMessage, WorkerMessage } from './MessageProtocol';
+import { AdapterMessage, RunMessage, StartMessage, WorkerMessage, InitDoneMessage } from './MessageProtocol';
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
-import { getLogger} from 'log4js';
+import { getLogger } from 'log4js';
 import { deserialize, errorToString } from '../utils/objectUtils';
 
 class IsolatedTestRunnerAdapterWorker {
@@ -16,7 +16,7 @@ class IsolatedTestRunnerAdapterWorker {
 
   private listenToMessages() {
     process.on('message', (serializedMessage: string) => {
-      const message: AdapterMessage = deserialize(serializedMessage);
+      const message = deserialize<AdapterMessage>(serializedMessage);
       switch (message.kind) {
         case 'start':
           this.start(message);
@@ -66,13 +66,17 @@ class IsolatedTestRunnerAdapterWorker {
 
   async init() {
     if (this.underlyingTestRunner.init) {
-      await this.underlyingTestRunner.init();
+      try {
+        await this.underlyingTestRunner.init();
+      } catch (err) {
+        this.sendInitDone(errorToString(err));
+      }
     }
     this.sendInitDone();
   }
 
-  sendInitDone() {
-    const message: EmptyWorkerMessage = { kind: 'initDone' };
+  sendInitDone(errorMessage: string | null = null) {
+    const message: InitDoneMessage = { kind: 'initDone', errorMessage };
     if (process.send) {
       process.send(message);
     }

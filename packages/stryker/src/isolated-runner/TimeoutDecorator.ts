@@ -2,6 +2,7 @@ import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { isPromise } from '../utils/objectUtils';
 import Task from '../utils/Task';
 import TestRunnerDecorator from './TestRunnerDecorator';
+import { getLogger } from 'log4js';
 
 const MAX_WAIT_FOR_DISPOSE = 2500;
 
@@ -10,7 +11,10 @@ const MAX_WAIT_FOR_DISPOSE = 2500;
  */
 export default class TimeoutDecorator extends TestRunnerDecorator {
 
+  private readonly log = getLogger(TimeoutDecorator.name);
+
   run(options: RunOptions): Promise<RunResult> {
+    this.log.debug('Starting timeout timer (%s ms) for a test run', options.timeout);
     const runTask = new Task<RunResult>(options.timeout, () => this.handleTimeout());
     runTask.chainTo(super.run(options));
     return runTask.promise;

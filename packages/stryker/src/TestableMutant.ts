@@ -8,7 +8,7 @@ import { TestSelection } from 'stryker-api/test_framework';
 
 export enum TestSelectionResult {
   Failed,
-  FailedButAlreadyReporter,
+  FailedButAlreadyReported,
   Success
 }
 
@@ -30,10 +30,6 @@ export default class TestableMutant {
 
   get fileName() {
     return this.mutant.fileName;
-  }
-
-  get included() {
-    return this.sourceFile.file.included;
   }
 
   get mutatorName() {

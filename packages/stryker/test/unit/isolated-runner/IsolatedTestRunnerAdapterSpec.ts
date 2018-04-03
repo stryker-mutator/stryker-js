@@ -23,8 +23,8 @@ describe('IsolatedTestRunnerAdapter', () => {
 
   beforeEach(() => {
     runnerOptions = {
+      fileNames: [],
       port: 42,
-      files: [],
       sandboxWorkingFolder: 'a working directory',
       strykerOptions: {}
     };
@@ -71,7 +71,7 @@ describe('IsolatedTestRunnerAdapter', () => {
 
       it(' "initDone"', () => {
         arrangeAct();
-        receiveMessage({ kind: 'initDone' });
+        receiveMessage({ kind: 'initDone', errorMessage: null });
         return expect(initPromise).to.eventually.eq(undefined);
       });
 

@@ -5,7 +5,7 @@ import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
 import { RunResult } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { expect } from 'chai';
-import InputFileResolver, * as inputFileResolver from '../../src/InputFileResolver';
+import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
 import ConfigReader, * as configReader from '../../src/ConfigReader';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import ReporterOrchestrator, * as reporterOrchestrator from '../../src/ReporterOrchestrator';
@@ -18,10 +18,11 @@ import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/S
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
 import { TempFolder } from '../../src/utils/TempFolder';
 import currentLogMock from '../helpers/log4jsMock';
-import { mock, Mock, testFramework as testFrameworkMock, textFile, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
+import { mock, Mock, testFramework as testFrameworkMock, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import TestableMutant from '../../src/TestableMutant';
 import '../helpers/globals';
+import InputFileCollection from '../../src/input/InputFileCollection';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
@@ -117,7 +118,7 @@ describe('Stryker', function () {
 
   describe('runMutationTest()', () => {
 
-    let inputFiles: File[];
+    let inputFiles: InputFileCollection;
     let initialRunResult: RunResult;
     let transpiledFiles: File[];
     let mutants: TestableMutant[];
@@ -133,8 +134,8 @@ describe('Stryker', function () {
       mutantRunResultMatcherMock.matchWithMutants.returns(mutants);
       mutatorMock.mutate.returns(mutants);
       mutationTestExecutorMock.run.resolves(mutantResults);
-      inputFiles = [textFile({ name: 'input.ts ' })];
-      transpiledFiles = [textFile({ name: 'output.js' })];
+      inputFiles = new InputFileCollection([new File('input.ts', '')], ['input.ts']);
+      transpiledFiles = [new File('output.js', '')];
       inputFileResolverMock.resolve.resolves(inputFiles);
       initialRunResult = runResult();
       initialTestExecutorMock.run.resolves({ runResult: initialRunResult, transpiledFiles });
@@ -217,15 +218,15 @@ describe('Stryker', function () {
         expect(initialTestExecutorMock.run).called;
       });
 
-      it('should create the mutant generator', () => {
+      it('should create the mutator', () => {
         expect(mutatorFacade.default).calledWithNew;
         expect(mutatorFacade.default).calledWith(strykerConfig);
-        expect(mutatorMock.mutate).calledWith(inputFiles);
+        expect(mutatorMock.mutate).calledWith(inputFiles.filesToMutate);
       });
 
       it('should create the mutation test executor', () => {
         expect(mutationTestExecutor.default).calledWithNew;
-        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles, testFramework, reporter);
+        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles.files, testFramework, reporter);
         expect(mutationTestExecutorMock.run).calledWith(mutants);
       });
 

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as childProcess from 'child_process';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import { autoStart, InitMessage, WorkerMessageKind, ParentMessage, WorkerMessage } from '../../../src/child-proxy/messageProtocol';
+import { autoStart, InitMessage, WorkerMessageKind, ParentMessage, WorkerMessage, ParentMessageKind } from '../../../src/child-proxy/messageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
 import HelloClass from './HelloClass';
 
@@ -53,11 +53,11 @@ describe('ChildProcessProxy', () => {
     });
   });
 
-  describe('when calling messages', () => {
+  describe('when calling methods', () => {
 
     beforeEach(() => {
       sut = ChildProcessProxy.create('', '', [], HelloClass, '');
-      const initDoneResult: ParentMessage = 'init_done';
+      const initDoneResult: ParentMessage = { kind: ParentMessageKind.Initialized };
       const msg = serialize(initDoneResult);
       childProcessMock.on.callArgWith(1, [msg]);
     });
@@ -65,6 +65,7 @@ describe('ChildProcessProxy', () => {
     it('should proxy the message', async () => {
       // Arrange
       const workerResponse: ParentMessage = {
+        kind: ParentMessageKind.Result,
         correlationId: 0,
         result: 'ack'
       };

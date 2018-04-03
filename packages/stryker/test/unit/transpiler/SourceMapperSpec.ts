@@ -3,7 +3,7 @@ import * as sourceMapModule from 'source-map';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import SourceMapper, { PassThroughSourceMapper, TranspiledSourceMapper, MappedLocation, SourceMapError } from '../../../src/transpiler/SourceMapper';
-import { Mock, mock, config as configFactory, location as locationFactory, textFile, mappedLocation, binaryFile } from '../../helpers/producers';
+import { Mock, mock, config as configFactory, location as locationFactory, mappedLocation, PNG_BASE64_ENCODED } from '../../helpers/producers';
 
 const GREATEST_LOWER_BOUND = sourceMapModule.SourceMapConsumer.GREATEST_LOWER_BOUND;
 const LEAST_UPPER_BOUND = sourceMapModule.SourceMapConsumer.LEAST_UPPER_BOUND;
@@ -70,19 +70,13 @@ describe('SourceMapper', () => {
       sut = new TranspiledSourceMapper(transpiledFiles);
     });
 
-    it('should create SourceMapConsumers for mutated text files when transpiledLocationFor is called', () => {
+    it('should create SourceMapConsumers for files when transpiledLocationFor is called', () => {
       // Arrange
       const expectedMapFile1 = { sources: ['file1.ts'] };
       const expectedMapFile2 = { sources: ['file2.ts'] };
-      transpiledFiles.push(textFile({
-        name: 'file1.js', mutated: true, content: `// # sourceMappingURL=file1.js.map`
-      }));
-      transpiledFiles.push(textFile({
-        name: 'file1.js.map', mutated: false, content: JSON.stringify(expectedMapFile1)
-      }));
-      transpiledFiles.push(textFile({
-        name: 'file2.js', mutated: true, content: `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile2))}`
-      }));
+      transpiledFiles.push(new File('file1.js', '// # sourceMappingURL=file1.js.map'));
+      transpiledFiles.push(new File('file1.js.map', JSON.stringify(expectedMapFile1)));
+      transpiledFiles.push(new File('file2.js', `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile2))}`));
 
       // Act
       sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }));
@@ -96,9 +90,7 @@ describe('SourceMapper', () => {
     it('should cache source maps for future use when `transpiledLocationFor` is called', () => {
       // Arrange
       const expectedMapFile1 = { sources: ['file1.ts'] };
-      transpiledFiles.push(textFile({
-        name: 'file1.js', mutated: true, content: `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`
-      }));
+      transpiledFiles.push(new File('file1.js', `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`));
 
       // Act
       sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }));
@@ -114,39 +106,48 @@ describe('SourceMapper', () => {
     });
 
     it('should throw an error if source map file is a binary file', () => {
-      transpiledFiles.push(textFile({
-        name: 'file1.js', mutated: true, content: '// # sourceMappingURL=file1.js.map'
-      }));
-      transpiledFiles.push(binaryFile({
-        name: 'file1.js.map'
-      }));
+      transpiledFiles.push(new File('file.js', '// # sourceMappingURL=file1.js.map'));
+      transpiledFiles.push(new File('file1.js.map', Buffer.from(PNG_BASE64_ENCODED, 'base64')));
       expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
-        .throws(SourceMapError, `Source map file "file1.js.map" has the wrong file kind. "Binary" instead of "Text"${ERROR_POSTFIX}`);
+        .throws(SourceMapError, /^Source map file "file1.js.map" could not be parsed as json. Cannot analyse code coverage. Setting `coverageAnalysis: "off"` in your stryker.conf.js will prevent this error/);
     });
 
     it('should throw an error if source map data url is not supported', () => {
       const expectedMapFile1 = { sources: ['file1.ts'] };
-      transpiledFiles.push(textFile({
-        name: 'file1.js', mutated: true, content: `// # sourceMappingURL=data:application/xml;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`
-      }));
+      transpiledFiles.push(new File('file1.js', `// # sourceMappingURL=data:application/xml;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`));
       expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
         .throws(SourceMapError, `Source map file for "file1.js" cannot be read. Data url "data:application/xml;base64" found, where "data:application/json;base64" was expected${ERROR_POSTFIX}`);
     });
 
     it('should throw an error if source map file cannot be found', () => {
-      transpiledFiles.push(textFile({
-        name: 'file1.js', mutated: true, content: `// # sourceMappingURL=file1.js.map`
-      }));
+      transpiledFiles.push(new File('file1.js', '// # sourceMappingURL=file1.js.map'));
       expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
         .throws(SourceMapError, `Source map file "file1.js.map" (referenced by "file1.js") cannot be found in list of transpiled files${ERROR_POSTFIX}`);
     });
 
     it('should throw an error if source map file url is not declared in a transpiled file', () => {
-      transpiledFiles.push(textFile({
-        name: 'file1.js', mutated: true, content: `// # sourceMapping%%%=file1.js.map`
-      }));
+      transpiledFiles.push(new File('file1.js', `// # sourceMapping%%%=file1.js.map`));
       expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
-        .throws(SourceMapError, `No source map reference found in transpiled file "file1.js"${ERROR_POSTFIX}`);
+        .throws(SourceMapError, `Source map not found for "foobar"${ERROR_POSTFIX}`);
+    });
+
+    it('should not throw an error if one of the files is a binary file', () => {
+      const expectedMapFile1 = { sources: ['file1.ts'] };
+      transpiledFiles.push(new File('file1.js', `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`));
+      transpiledFiles.push(new File('foo.png', Buffer.from(PNG_BASE64_ENCODED, 'base64')));
+      expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }))).deep.eq({
+        fileName: 'file1.js',
+        location: {
+          end: {
+            column: 2,
+            line: 0
+          },
+          start: {
+            column: 2,
+            line: 0
+          }
+        }
+      });
     });
   });
 });

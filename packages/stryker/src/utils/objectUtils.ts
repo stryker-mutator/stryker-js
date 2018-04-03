@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+export { serialize, deserialize } from 'surrial';
 
 export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
   Object.freeze(target);
@@ -16,22 +17,6 @@ export function isPromise(input: any): input is Promise<any> {
 
 export function filterEmpty<T>(input: (T | null | void)[]) {
   return input.filter(item => item !== undefined && item !== null) as T[];
-}
-
-
-/**
- * Serializes javascript without using `JSON.stringify` (directly), as it does not allow for regexes or functions, etc
- */
-export const serialize: (obj: any) => string = require('serialize-javascript');
-
-/**
- * Deserialize javascript without using `JSON.parse` (directly), as it does not allow for regexes or functions, etc
- * (Uses eval instead)
- */
-export function deserialize(serializedJavascript: String): any {
-  // tslint:disable
-  return eval(`(${serializedJavascript})`);
-  // tslint:enable
 }
 
 export function isErrnoException(error: Error): error is NodeJS.ErrnoException {
@@ -88,4 +73,12 @@ export function setExitCode(n: number) {
 
 export function base64Decode(base64EncodedString: string) {
   return Buffer.from(base64EncodedString, 'base64').toString('utf8');
+}
+
+/**
+ * Consolidates multiple consecutive white spaces into a single space.
+ * @param str The string to be normalized
+ */
+export function normalizeWhiteSpaces(str: string) {
+  return str.replace(/\s+/g, ' ').trim();
 }

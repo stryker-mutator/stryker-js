@@ -9,12 +9,16 @@ import * as producers from '../../helpers/producers';
 import { TestFramework } from 'stryker-api/test_framework';
 import CoverageInstrumenterTranspiler, * as coverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { TranspileResult, TranspilerOptions } from 'stryker-api/transpile';
+import { TranspilerOptions } from 'stryker-api/transpile';
 import { RunStatus, RunResult, TestStatus } from 'stryker-api/test_runner';
 import currentLogMock from '../../helpers/log4jsMock';
 import Timer from '../../../src/utils/Timer';
 import { Mock, coverageMaps } from '../../helpers/producers';
+import InputFileCollection from '../../../src/input/InputFileCollection';
+import * as coverageHooks from '../../../src/transpiler/coverageHooks';
+import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
 
+const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
 describe('InitialTestExecutor run', () => {
 
   let log: Mock<Logger>;
@@ -24,7 +28,9 @@ describe('InitialTestExecutor run', () => {
   let coverageInstrumenterTranspilerMock: producers.Mock<CoverageInstrumenterTranspiler>;
   let options: Config;
   let transpilerFacadeMock: producers.Mock<TranspilerFacade>;
-  let transpileResultMock: TranspileResult;
+  let transpiledFiles: File[];
+  let coverageAnnotatedFiles: File[];
+  let sourceMapperMock: producers.Mock<SourceMapper>;
   let timer: producers.Mock<Timer>;
   let expectedRunResult: RunResult;
 
@@ -36,47 +42,43 @@ describe('InitialTestExecutor run', () => {
     sandbox.stub(StrykerSandbox, 'create').resolves(strykerSandboxMock);
     sandbox.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
     sandbox.stub(coverageInstrumenterTranspiler, 'default').returns(coverageInstrumenterTranspilerMock);
+    sourceMapperMock = producers.mock(PassThroughSourceMapper);
+    sandbox.stub(SourceMapper, 'create').returns(sourceMapperMock);
     testFrameworkMock = producers.testFramework();
-    transpileResultMock = producers.transpileResult({
-      outputFiles: [
-        producers.textFile({ name: 'transpiled-file-1.js' }),
-        producers.textFile({ name: 'transpiled-file-2.js' })
-      ]
-    });
-    transpilerFacadeMock.transpile.returns(transpileResultMock);
+    coverageAnnotatedFiles = [
+      new File('cov-annotated-transpiled-file-1.js', ''),
+      new File('cov-annotated-transpiled-file-2.js', ''),
+    ];
+    transpiledFiles = [
+      new File('transpiled-file-1.js', ''),
+      new File('transpiled-file-2.js', '')
+    ];
+    coverageInstrumenterTranspilerMock.transpile.returns(coverageAnnotatedFiles);
+    transpilerFacadeMock.transpile.returns(transpiledFiles);
     options = producers.config();
     expectedRunResult = producers.runResult();
     strykerSandboxMock.run.resolves(expectedRunResult);
     timer = producers.mock(Timer);
   });
 
-  describe('without input files', () => {
-    it('should log a warning and cancel the test run', async () => {
-      sut = new InitialTestExecutor(options, [], testFrameworkMock, timer as any);
-      const result = await sut.run();
-      expect(result.runResult.status).to.be.eq(RunStatus.Complete);
-      expect(log.info).to.have.been.calledWith('No files have been found. Aborting initial test run.');
-    });
-  });
-
   describe('with input files', () => {
 
-    let files: File[];
+    let inputFiles: InputFileCollection;
 
     beforeEach(() => {
-      files = [producers.textFile({ name: '', mutated: true, included: true, content: '' })];
-      sut = new InitialTestExecutor(options, files, testFrameworkMock, timer as any);
+      inputFiles = new InputFileCollection([new File('mutate.js', ''), new File('mutate.spec.js', '')], ['mutate.js']);
+      sut = new InitialTestExecutor(options, inputFiles, testFrameworkMock, timer as any);
     });
 
     it('should create a sandbox with correct arguments', async () => {
       await sut.run();
-      expect(StrykerSandbox.create).calledWith(options, 0, transpileResultMock.outputFiles, testFrameworkMock);
+      expect(StrykerSandbox.create).calledWith(options, 0, coverageAnnotatedFiles, testFrameworkMock);
     });
 
     it('should create the transpiler with produceSourceMaps = true when coverage analysis is enabled', async () => {
       options.coverageAnalysis = 'all';
       await sut.run();
-      const expectedTranspilerOptions: TranspilerOptions = { 
+      const expectedTranspilerOptions: TranspilerOptions = {
         produceSourceMaps: true,
         config: options
       };
@@ -87,7 +89,7 @@ describe('InitialTestExecutor run', () => {
     it('should create the transpiler with produceSourceMaps = false when coverage analysis is "off"', async () => {
       options.coverageAnalysis = 'off';
       await sut.run();
-      const expectedTranspilerOptions: TranspilerOptions = { 
+      const expectedTranspilerOptions: TranspilerOptions = {
         produceSourceMaps: false,
         config: options
       };
@@ -96,7 +98,7 @@ describe('InitialTestExecutor run', () => {
 
     it('should initialize, run and dispose the sandbox', async () => {
       await sut.run();
-      expect(strykerSandboxMock.run).to.have.been.calledWith(60 * 1000 * 5);
+      expect(strykerSandboxMock.run).to.have.been.calledWith(EXPECTED_INITIAL_TIMEOUT);
       expect(strykerSandboxMock.dispose).to.have.been.called;
     });
 
@@ -105,7 +107,7 @@ describe('InitialTestExecutor run', () => {
       coverageInstrumenterTranspilerMock.fileCoverageMaps = { someFile: coverageData } as any;
       const expectedResult: InitialTestRunResult = {
         runResult: expectedRunResult,
-        transpiledFiles: transpileResultMock.outputFiles,
+        sourceMapper: sourceMapperMock,
         coverageMaps: {
           someFile: coverageData
         }
@@ -114,28 +116,19 @@ describe('InitialTestExecutor run', () => {
       expect(actualRunResult).deep.eq(expectedResult);
     });
 
-    it('should log the transpiled results if transpilers are specified and log.debug is enabled', async () => {
+    it('should log the transpiled results if transpilers are specified', async () => {
       options.transpilers.push('a transpiler');
       log.isDebugEnabled.returns(true);
       await sut.run();
-      expect(log.debug).calledOnce;
       const actualLogMessage: string = log.debug.getCall(0).args[0];
-      expect(actualLogMessage).contains('Transpiled files in order');
-      expect(actualLogMessage).contains('transpiled-file-1.js (included: true)');
-      expect(actualLogMessage).contains('transpiled-file-2.js (included: true)');
+      const expectedLogMessage = `Transpiled files: ${JSON.stringify(coverageAnnotatedFiles.map(_ => _.name), null, 2)}`;
+      expect(actualLogMessage).eq(expectedLogMessage);
     });
 
     it('should not log the transpiled results if transpilers are not specified', async () => {
       log.isDebugEnabled.returns(true);
       await sut.run();
-      expect(log.debug).not.called;
-    });
-
-    it('should not log the transpiled results if log.debug is disabled', async () => {
-      options.transpilers.push('a transpiler');
-      log.isDebugEnabled.returns(false);
-      await sut.run();
-      expect(log.debug).not.called;
+      expect(log.debug).not.calledWithMatch('Transpiled files');
     });
 
     it('should have logged the amount of tests ran', async () => {
@@ -156,16 +149,26 @@ describe('InitialTestExecutor run', () => {
       await expect(sut.run()).rejectedWith(expectedError);
     });
 
-    it('should add the coverage instrumenter transpiler', async () => {
+    it('should create the coverage instrumenter transpiler with source-mapped files to mutate', async () => {
+      sourceMapperMock.transpiledFileNameFor.returns('mutate.min.js');
       await sut.run();
-      const expectedSettings: TranspilerOptions = {
-        config: options,
-        produceSourceMaps: true
-      };
       expect(coverageInstrumenterTranspiler.default).calledWithNew;
-      expect(coverageInstrumenterTranspiler.default).calledWith(expectedSettings, testFrameworkMock);
+      expect(coverageInstrumenterTranspiler.default).calledWith(options, ['mutate.min.js']);
+      expect(sourceMapperMock.transpiledFileNameFor).calledWith('mutate.js');
     });
 
+    it('should also add a collectCoveragePerTest file when coverage analysis is "perTest" and there is a testFramework', async () => {
+      sandbox.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
+      await sut.run();
+      expect(strykerSandboxMock.run).calledWith(EXPECTED_INITIAL_TIMEOUT, 'test hook foobar');
+    });
+
+    it('should result log a warning if coverage analysis is "perTest" and there is no testFramework', async () => {
+      sut = new InitialTestExecutor(options, inputFiles, /* test framework */ null, timer as any);
+      sandbox.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
+      await sut.run();
+      expect(log.warn).calledWith('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
+    });
 
     describe('and run has test failures', () => {
       beforeEach(() => {
@@ -218,8 +221,6 @@ describe('InitialTestExecutor run', () => {
         await expect(sut.run()).rejectedWith('Something went wrong in the initial test run');
       });
     });
-
   });
-
 });
 

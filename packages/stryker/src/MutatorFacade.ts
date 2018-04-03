@@ -10,7 +10,7 @@ export default class MutatorFacade implements Mutator {
   constructor(private config: Config) {
   }
 
-  mutate(inputFiles: File[]): Mutant[] {
+  mutate(inputFiles: ReadonlyArray<File>): ReadonlyArray<Mutant> {
     return MutatorFactory.instance()
       .create(this.getMutatorName(this.config.mutator), this.config)
       .mutate(inputFiles);

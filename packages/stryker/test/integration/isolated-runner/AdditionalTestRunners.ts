@@ -56,6 +56,17 @@ class ErroredTestRunner extends EventEmitter implements TestRunner {
   }
 }
 
+class RejectInitRunner implements TestRunner {
+
+  init() {
+    return Promise.reject(new Error('Init was rejected'));
+  }
+
+  run(options: RunOptions): Promise<RunResult> {
+    throw new Error();
+  }
+}
+
 class NeverResolvedTestRunner extends EventEmitter implements TestRunner {
   run(options: RunOptions) {
     return new Promise<RunResult>(res => { });
@@ -67,7 +78,7 @@ class SlowInitAndDisposeTestRunner extends EventEmitter implements TestRunner {
   inInit: boolean;
 
   init() {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       this.inInit = true;
       setTimeout(() => {
         this.inInit = false;
@@ -92,7 +103,7 @@ class VerifyWorkingFolderTestRunner extends EventEmitter implements TestRunner {
   runResult: RunResult = { status: RunStatus.Complete, tests: [] };
 
   run(options: RunOptions) {
-    if (process.cwd() === __dirname) {
+    if (process.cwd().toLowerCase() === __dirname.toLowerCase()) {
       return Promise.resolve(this.runResult);
     } else {
       return Promise.reject(new Error(`Expected ${process.cwd()} to be ${__dirname}`));
@@ -108,7 +119,7 @@ class AsyncronousPromiseRejectionHandlerTestRunner extends EventEmitter implemen
   }
 
   run(options: RunOptions) {
-    this.promise.catch(() => {});
+    this.promise.catch(() => { });
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
@@ -122,3 +133,4 @@ TestRunnerFactory.instance().register('direct-resolved', DirectResolvedTestRunne
 TestRunnerFactory.instance().register('coverage-reporting', CoverageReportingTestRunner);
 TestRunnerFactory.instance().register('time-bomb', TimeBombTestRunner);
 TestRunnerFactory.instance().register('async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner);
+TestRunnerFactory.instance().register('reject-init', RejectInitRunner);

@@ -47,11 +47,10 @@ The following is an example `stryker.conf.js` file:
 ```javascript
 module.exports = function(config){
   config.set({
-    files: ['test/helpers/**/*.js', 
-            'test/unit/**/*.js', 
-            { pattern: 'src/**/*.js', included: false, mutated: true }
-            { pattern: 'src/templates/*.html', included: false, mutated: false }
-            '!src/fileToIgnore.js'],
+    mutate: [
+      'src/**/*.js'
+      '!src/index.js'
+    ],
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporter: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
@@ -61,61 +60,43 @@ module.exports = function(config){
 }
 ```
 
-As you can see, the config file is *not* a simple JSON file. It should be a common js (a.k.a. node) module. You might recognize this way of working from the karma test runner.
+As you can see, the config file is *not* a simple JSON file. It should be a node module. You might recognize this way of working from the karma test runner.
 
-Make sure you *at least* specify the `files` and the `testRunner` options when mixing the config file and/or command line options.
+Make sure you *at least* specify the `testRunner` options when mixing the config file and/or command line options.
 
 ## Command-line interface
 Stryker can also be installed, configured and run using the [Stryker-CLI](https://github.com/stryker-mutator/stryker-cli). If you plan on using Stryker in more projects, the Stryker-CLI is the easiest way to install, configure and run Stryker for your project.
 
 You can install the Stryker-CLI using:
 
-```
+```bash
 $ npm install -g stryker-cli
 ```
 
 The Stryker-CLI works by passing received commands to your local Stryker installation. If you don't have Stryker installed yet, the Stryker-CLI will help you with your Stryker installation. This method allows us to provide additional commands with updates of Stryker itself.
 
-## Supported mutators  
+## Supported mutators
+
 See our website for the [list of currently supported mutators](https://stryker-mutator.io/mutators.html).
 
 ## Configuration  
+
 All configuration options can either be set via the command line or via the `stryker.conf.js` config file.
 
 `files` and `mutate` both support globbing expressions using [node glob](https://github.com/isaacs/node-glob).
 This is the same globbing format you might know from [Grunt](https://github.com/gruntjs/grunt) or [Karma](https://github.com/karma-runner/karma).  
+
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
-#### Files required to run your tests  
-**Command line:** `[--files|-f] node_modules/a-lib/**/*.js,src/**/*.js,a.js,test/**/*.js`  
-**Config file:** `files: ['{ pattern: 'src/**/*.js', mutated: true }, '!src/**/index.js', 'test/**/*.js']`  
-**Default value:** *none*  
-**Mandatory**: yes  
-**Description:**  
-With `files` you specify all files needed to run your tests. If the test runner you use already provides the test framework (Jasmine, Mocha, etc.),
-you should *not* include those files here as well.  
-The files will be loaded in the order in which they are specified. Files that you want to ignore should be mentioned last.
-
-When using the command line, the list can only contain a comma separated list of globbing expressions.  
-When using the config file you can provide an array with `string`s or `InputFileDescriptor` objects, like so:  
-
-* `string`: The globbing expression used for selecting the files needed to run the tests.  
-* `InputFileDescriptor` object: `{ pattern: 'pattern', included: true, mutated: false }`:  
-   * The `pattern` property is mandatory and contains the globbing expression used for selecting the files. Using `!` to ignore files is *not* supported here.  
-   * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true). With `included: false` the files will be copied to the sandbox during testing, but they wont be explicitly loaded by the test runner. Two usecases for `included: false` are for HTML files and for source files when your tests `require()` them.
-   * The `mutated` property is optional and determines whether or not this file should be targeted for mutations (default: false)  
-
-*Note*: To include a file/folder which start with an exclamation mark (`!`), use the `InputFileDescriptor` syntax.  
-
-#### Source code files to mutate  
+#### Files to mutate
 **Command line:** `[--mutate|-m] src/**/*.js,a.js`
 **Config file:** `mutate: ['src/**/*.js', 'a.js']`  
 **Default value:** *none*  
-**Mandatory**: no  
+**Mandatory**: No  
 **Description:**  
-With `mutate` you configure the subset of files to use for mutation testing. Generally speaking, these should be your own source files.  
-This is optional, as you can also use the `mutated` property with the `files` parameter or not mutate any files at all to perform a dry-run (test-run).  
-We expect a comma separated list of globbing expressions, which will be used to select the files to be mutated.
+With `mutate` you configure the subset of files to use for mutation testing. 
+Generally speaking, these should be your own source files.  
+This is optional, as you can choose to not mutate any files at all and perform a dry-run (running only your tests without mutating). 
 
 #### Test runner  
 **Command line:** `--testRunner karma`  
@@ -131,10 +112,13 @@ See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-
 **Command line:** `--testFramework jasmine`  
 **Config file:** `testFramework: 'jasmine'`  
 **Default value:** *none*  
-**Mandatory**: yes  
+**Mandatory**: No  
 **Description:**  
-With `testFramework` you configure which test framework your tests are using. This value is directly consumed by the test runner and therefore
-depends what framework that specific test runner supports. By default, this value is also used for `testFramework`.  
+Configure which test framework you are using. 
+This option is not mandatory, as Stryker is test framework agnostic (it doesn't care what framework you use), 
+However, it is required when `coverageAnalysis` is set to `'perTest'`, because Stryker needs to hook into the test framework in order to measure code coverage results per test and filter tests to run.
+
+Make sure the a plugin is installed for your chosen test framework. E.g. install `stryker-mocha-framework` to use `'mocha'` as a test framework.
 
 #### Type of coverage analysis  
 **Full notation:** `--coverageAnalysis perTest`  
@@ -142,7 +126,8 @@ depends what framework that specific test runner supports. By default, this valu
 **Default value:** `perTest`  
 **Mandatory**: no  
 **Description:**  
-With `coverageAnalysis` you specify which coverage analysis strategy you want to use.  
+With `coverageAnalysis` you specify which coverage analysis strategy you want to use.
+
 Stryker can analyse code coverage results. This can potentially speed up mutation testing a lot, as only the tests covering a 
 particular mutation are tested for each mutant. 
 This does *not* influence the resulting mutation testing score. It only improves performance, so we enable it by default.
@@ -212,6 +197,24 @@ The `dashboard` reporter is a special kind of reporter. It sends a report to htt
 
 All `TRAVIS` environment variables are set by Travis for each build. However, you will need to pass the `STRYKER\_DASHBOARD\_API\_KEY` environment variable yourself. You can create one for your repository by logging in on [the stryker dashboard](https://dashboard.stryker-mutator.io). We strongly recommend you use [encrypted environment variables](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables).
   
+#### Files in the sandbox
+**Command line:** `[--files|-f] src/**/*.js,a.js,test/**/*.js`  
+**Config file:** `files: ['src/**/*.js', '!src/**/index.js', 'test/**/*.js']`  
+**Default value:** result of `git ls-files --others --exclude-standard --cached`  
+**Mandatory**: No  
+**Description:**  
+With `files` you can choose which files should be included in your test runner sandbox. 
+This is normally not needed as it defaults to all files not ignored by git. 
+Try it out yourself with this command: `git ls-files --others --exclude-standard --cached`.
+
+If you do need to override `files` (for example: when your project does not live in a git repository),
+you can override the files here.
+
+When using the command line, the list can only contain a comma separated list of globbing expressions.  
+When using the config file you can provide an array with `string`s
+
+You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
+
 #### Plugins  
 **Command line:** `--plugins stryker-html-reporter,stryker-karma-runner`  
 **Config file:** `plugins: ['stryker-html-reporter', 'stryker-karma-runner']`  
@@ -287,8 +290,7 @@ Specify the thresholds for mutation score.
 * `mutation score < low`: Danger! Reporters should color this in red. You're in danger!
 * `mutation score < break`: Error! Stryker will exit with exit code 1, indicating a build failure. No consequence for reporters, though.
 
-It is not allowed to only supply one value. However, `high` and `low` values can be the same, making sure colors are either red or green. 
-Set `break` to `null` (default) to never let the process crash.
+It is not allowed to only supply one value of the values (it's all or nothing). However, `high` and `low` values can be the same, making sure colors are either red or green. Set `break` to `null` (default) to never let your build fail.
 
 #### Log level  
 **Command line:** `--logLevel info`    
