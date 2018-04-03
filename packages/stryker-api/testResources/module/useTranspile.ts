@@ -1,22 +1,19 @@
 import { Config } from 'stryker-api/config';
-import { Transpiler, TranspileResult, TranspilerFactory, TranspilerOptions } from 'stryker-api/transpile';
-import { TextFile, File, FileKind } from 'stryker-api/core';
+import { Transpiler, TranspilerFactory, TranspilerOptions } from 'stryker-api/transpile';
+import { File } from 'stryker-api/core';
 
 class MyTranspiler implements Transpiler {
 
   constructor(private transpilerOptions: TranspilerOptions) { }
 
-  transpile(files: File[]): Promise<TranspileResult> {
-    return Promise.resolve({
-      outputFiles: [{ name: 'foo', content: 'bar', kind: FileKind.Text, mutated: this.transpilerOptions.produceSourceMaps, included: false, transpiled: true } as File],
-      error: null
-    });
+  transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+    return Promise.resolve([new File('foo/bar.js', 'bar content')]);
   }
 }
 
 TranspilerFactory.instance().register('my-transpiler', MyTranspiler);
 const transpiler = TranspilerFactory.instance().create('my-transpiler', { produceSourceMaps: true, config: new Config() });
 
-transpiler.transpile([{ kind: FileKind.Text, content: '', name: '', mutated: true, included: false, transpiled: true }]).then((transpileResult) => {
-  console.log(JSON.stringify(transpileResult));
+transpiler.transpile([new File('foo/bar.ts', 'foobar')]).then((files: ReadonlyArray<File>) => {
+  console.log(JSON.stringify(files));
 });
