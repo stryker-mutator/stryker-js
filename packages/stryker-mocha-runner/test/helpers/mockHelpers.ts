@@ -1,5 +1,4 @@
 import * as sinon from 'sinon';
-import { FileDescriptor, FileKind } from 'stryker-api/core';
 import { Logger } from 'log4js';
 import { RunnerOptions } from 'stryker-api/test_runner';
 
@@ -31,9 +30,11 @@ export function logger(): Mock<Logger> {
   };
 }
 
-export const runnerOptions = factory<RunnerOptions>(() => ({ files: [fileDescriptor()], port: 0, strykerOptions: {} }));
-
-export const fileDescriptor = factory<FileDescriptor>(() => ({ name: 'file.js', included: true, mutated: true, transpiled: true, kind: FileKind.Text }));
+export const runnerOptions = factory<RunnerOptions>(() => ({
+  port: 0,
+  strykerOptions: { mochaOptions: {} },
+  fileNames: ['src/math.js', 'test/mathSpec.js']
+}));
 
 function factory<T>(defaults: () => T): (overrides?: Partial<T>) => T {
   return (overrides?: Partial<T>): T => {
