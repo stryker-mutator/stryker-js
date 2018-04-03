@@ -4,24 +4,21 @@ module.exports = function (grunt) {
       withoutConfigFile: {
         files: {
           src: [
-            'sampleProject/src/**/*.js',
-            '!sampleProject/src/InfiniteAdd.js'
+            'sampleProject/src/**/*.js'
           ],
           tests: [
-            'sampleProject/test/**/*.js',
-            '!sampleProject/test/FailingAddSpec.js'
+            'sampleProject/test/**/*.js'
           ]
         },
         mutate: {
           src: [
-            'sampleProject/src/**/*.js',
-            '!sampleProject/src/InfiniteAdd.js'
+            'sampleProject/src/**/*.js'
           ]
         },
         options: {
           testFramework: 'jasmine',
           testRunner: 'karma',
-          logLevel: 'debug',
+          logLevel: 'info',
           maxConcurrentTestRunners: 2,
           port: 9244
         },

@@ -1,3 +1,8 @@
-import Stryker from  'stryker';
+import Stryker from 'stryker';
 
-new Stryker({ mutateFiles: [], allFiles: [], coverageAnalysis: 'off'} ).runMutationTest().then(() => console.log('done'));
+new Stryker({
+  testRunner: 'mocha',
+  mutate: [],
+  coverageAnalysis: 'off',
+  files: []
+}).runMutationTest().then(() => console.log('done'));

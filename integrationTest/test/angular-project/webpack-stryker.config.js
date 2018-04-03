@@ -36,6 +36,9 @@ webpackConfig.plugins.unshift(
   new webpack.ContextReplacementPlugin(/angular(\\|\/)core(\\|\/)/, path.resolve(__dirname, './src'))
 );
 
+webpackConfig.output.path = path.resolve('_karma_webpack_/');
+webpackConfig.output.publicPath = path.resolve('_karma_webpack_/');
+
 // Delete global styles entry, we don't want to load them.
 delete webpackConfig.entry.styles;
 webpackConfig.devtool = false;
