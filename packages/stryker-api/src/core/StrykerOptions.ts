@@ -1,4 +1,3 @@
-import InputFileDescriptor from './InputFileDescriptor';
 import MutationScoreThresholds from './MutationScoreThresholds';
 import MutatorDescriptor from './MutatorDescriptor';
 
@@ -20,7 +19,7 @@ interface StrykerOptions {
    * @example
    *     files: ['test/helpers/**\/*.js', 'test/unit/**\/*.js', { pattern: 'src/**\/*.js', included: false }],
    */
-  files?: Array<string | InputFileDescriptor>;
+  files?: string[];
 
   /**
    * A list of globbing expression used for selecting the files that should be mutated.

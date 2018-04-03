@@ -1,8 +1,8 @@
-import { StrykerOptions, Factory, File, InputFileDescriptor, FileKind, Position, Location, Range } from 'stryker-api/core';
+import { StrykerOptions, Factory, File,  Position, Location, Range } from 'stryker-api/core';
 
-let options: StrykerOptions = {};
-let optionsAllArgs: StrykerOptions = {
-  files: ['some', { pattern: 'file' }, { included: false, mutated: true, pattern: 'some pattern' }],
+const options: StrykerOptions = {};
+const optionsAllArgs: StrykerOptions = {
+  files: ['some'],
   mutate: ['some'],
   configFile: 'string',
   testFramework: 'string',
@@ -20,51 +20,9 @@ let optionsAllArgs: StrykerOptions = {
   port: 3,
 };
 
-const textFile: File = createFile({
-  name: 'string',
-  mutated: true,
-  included: true,
-  transpiled: true,
-  content: 'string',
-  kind: FileKind.Text
-});
-const binaryFile = createFile({
-  name: '',
-  mutated: false,
-  included: false,
-  transpiled: false,
-  content: Buffer.from('foobar'),
-  kind: FileKind.Binary
-});
+const textFile: File = new File('foo/bar.js', Buffer.from('foobar'));
+const range: Range = [1, 2];
+const position: Position = { column: 2, line: 2 };
+const location: Location = { start: position, end: position };
 
-const webFile = createFile({
-  name: 'http://example.com',
-  mutated: false,
-  included: false,
-  transpiled: false,
-  kind: FileKind.Web
-});
-
-function createFile(file: File) {
-  // needed to trick the ts compiler to make it an actual files
-  return file;
-}
-
-// Test the type guards
-if (textFile.kind === FileKind.Text) {
-  console.log(textFile.content.substr(3));
-}
-if (binaryFile.kind === FileKind.Binary) {
-  console.log(binaryFile.content.readInt16BE(0, true));
-}
-if (webFile.kind === FileKind.Web) {
-  console.log('Web file does not have a content property');
-}
-
-
-let range: Range = [1, 2];
-let filePatternDescriptor: InputFileDescriptor = { included: true, mutated: false, pattern: '/files/**/*.js' };
-let position: Position = { column: 2, line: 2 };
-let location: Location = { start: position, end: position };
-
-console.log(range, position, location, textFile, optionsAllArgs, options, filePatternDescriptor);
+console.log(range, position, location, textFile, optionsAllArgs, options);
