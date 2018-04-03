@@ -1,14 +1,13 @@
 import { Logger } from 'log4js';
 import { Mutant } from 'stryker-api/mutant';
 import { TestSelection } from 'stryker-api/test_framework';
-import { textFile, testResult } from './../helpers/producers';
 import { expect } from 'chai';
 import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
 import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import currentLogMock from '../helpers/log4jsMock';
-import { file, mutant, Mock, mock } from '../helpers/producers';
+import { testResult, mutant, Mock, mock } from '../helpers/producers';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
@@ -24,7 +23,7 @@ describe('MutantTestMatcher', () => {
   let fileCoverageDictionary: CoverageMapsByFile;
   let strykerOptions: StrykerOptions;
   let reporter: Mock<BroadcastReporter>;
-  let files: File[];
+  let filesToMutate: ReadonlyArray<File>;
   let sourceMapper: PassThroughSourceMapper;
 
   beforeEach(() => {
@@ -34,18 +33,12 @@ describe('MutantTestMatcher', () => {
     runResult = { tests: [], status: RunStatus.Complete };
     strykerOptions = {};
     reporter = mock(BroadcastReporter);
-    files = [file({
-      name: 'fileWithMutantOne',
-      content: '\n\n\n\n12345'
-    }), file({
-      name: 'fileWithMutantTwo',
-      content: '\n\n\n\n\n\n\n\n\n\n'
-    })];
+    filesToMutate = [new File('fileWithMutantOne', '\n\n\n\n12345'), new File('fileWithMutantTwo', '\n\n\n\n\n\n\n\n\n\n')];
     sourceMapper = new PassThroughSourceMapper();
     sandbox.spy(sourceMapper, 'transpiledLocationFor');
     sut = new MutantTestMatcher(
       mutants,
-      files,
+      filesToMutate,
       runResult,
       sourceMapper,
       fileCoverageDictionary,
@@ -102,8 +95,8 @@ describe('MutantTestMatcher', () => {
             const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
             expect(result[0].selectedTests).deep.eq(expectedTestSelection);
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
-            expect(result[0].testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReporter);
-            expect(result[1].testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReporter);
+            expect(result[0].testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReported);
+            expect(result[1].testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReported);
             expect(log.warn).calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'perTest');
           });
 
@@ -317,7 +310,7 @@ describe('MutantTestMatcher', () => {
 
     describe('should not result in regression', () => {
       it('should match up mutant for issue #151 (https://github.com/stryker-mutator/stryker/issues/151)', () => {
-        const sourceFile = new SourceFile(textFile());
+        const sourceFile = new SourceFile(new File('', ''));
         sourceFile.getLocation = () => ({ 'start': { 'line': 13, 'column': 38 }, 'end': { 'line': 24, 'column': 5 } });
         const testableMutant = new TestableMutant('1', mutant({
           fileName: 'juice-shop\\app\\js\\controllers\\SearchResultController.js'
@@ -353,8 +346,8 @@ describe('MutantTestMatcher', () => {
       const expectedTestSelection: TestSelection[] = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
       expect(result[0].selectedTests).deep.eq(expectedTestSelection);
       expect(result[1].selectedTests).deep.eq(expectedTestSelection);
-      expect(result[0].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReporter);
-      expect(result[1].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReporter);
+      expect(result[0].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
+      expect(result[1].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
       expect(log.warn).to.have.been.calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'all');
     });
 

@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import SandboxPool from '../../src/SandboxPool';
 import { TestFramework } from 'stryker-api/test_framework';
-import { Mock, mock, testFramework, textFile, config } from '../helpers/producers';
+import { Mock, mock, testFramework, file, config } from '../helpers/producers';
 import Sandbox from '../../src/Sandbox';
 import '../helpers/globals';
 
@@ -30,7 +30,7 @@ describe('SandboxPool', () => {
       .onCall(0).resolves(firstSandbox)
       .onCall(1).resolves(secondSandbox);
 
-    expectedInputFiles = [textFile()];
+    expectedInputFiles = [file()];
     sut = new SandboxPool(options, expectedTestFramework, expectedInputFiles);
   });
 

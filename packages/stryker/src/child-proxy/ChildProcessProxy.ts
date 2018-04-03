@@ -1,7 +1,9 @@
 import { fork, ChildProcess } from 'child_process';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart } from './messageProtocol';
+import { File } from 'stryker-api/core';
+import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
 import { serialize, deserialize } from '../utils/objectUtils';
 import Task from '../utils/Task';
+import { getLogger } from 'log4js';
 
 export type ChildProxy<T> = {
   [K in keyof T]: (...args: any[]) => Promise<any>;
@@ -13,6 +15,7 @@ export default class ChildProcessProxy<T> {
   private worker: ChildProcess;
   private initTask: Task;
   private workerTasks: Task<any>[] = [];
+  private log = getLogger(ChildProcessProxy.name);
 
   private constructor(requirePath: string, logLevel: string, plugins: string[], private constructorFunction: { new(...params: any[]): T }, constructorParams: any[]) {
     this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: false, execArgv: [] });
@@ -71,16 +74,29 @@ export default class ChildProcessProxy<T> {
 
   private listenToWorkerMessages() {
     this.worker.on('message', (serializedMessage: string) => {
-      const message: ParentMessage = deserialize(serializedMessage);
-      if (message === 'init_done') {
-        this.initTask.resolve(undefined);
-      } else {
-        this.workerTasks[message.correlationId].resolve(message.result);
+      const message: ParentMessage = deserialize(serializedMessage, [File]);
+      switch (message.kind) {
+        case ParentMessageKind.Initialized:
+          this.initTask.resolve(undefined);
+          break;
+        case ParentMessageKind.Result:
+          this.workerTasks[message.correlationId].resolve(message.result);
+          break;
+        case ParentMessageKind.Rejection:
+          this.workerTasks[message.correlationId].reject(new Error(message.error));
+          break;
+        default:
+          this.logUnidentifiedMessage(message);
+          break;
       }
     });
   }
 
   public dispose() {
     this.worker.kill();
+  }
+
+  private logUnidentifiedMessage(message: never) {
+    this.log.error(`Received unidentified message ${message}`);
   }
 }

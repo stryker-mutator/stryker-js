@@ -1,7 +1,7 @@
 import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyWorker';
 import { expect } from 'chai';
 import { serialize } from '../../../src/utils/objectUtils';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, WorkMessage } from '../../../src/child-proxy/messageProtocol';
+import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, WorkMessage, ParentMessageKind } from '../../../src/child-proxy/messageProtocol';
 import * as log4js from 'log4js';
 import PluginLoader, * as pluginLoader from '../../../src/PluginLoader';
 import { Mock, mock } from '../../helpers/producers';
@@ -57,21 +57,21 @@ describe('ChildProcessProxyWorker', () => {
         requirePath: require.resolve('./HelloClass')
       };
     });
-    
+
     it('should create the correct real instance', () => {
       processOnStub.callArgWith(1, [serialize(initMessage)]);
       expect(sut.realSubject).instanceOf(HelloClass);
       const actual = sut.realSubject as HelloClass;
       expect(actual.name).eq('FooBarName');
     });
-    
+
     it('should send "init_done"', async () => {
       processOnStub.callArgWith(1, [serialize(initMessage)]);
-      const expectedWorkerResponse: ParentMessage = 'init_done';
+      const expectedWorkerResponse: ParentMessage = { kind: ParentMessageKind.Initialized };
       await tick(); // make sure promise is resolved
       expect(processSendStub).calledWith(serialize(expectedWorkerResponse));
     });
-    
+
     it('should remove any additional listeners', async () => {
       // Arrange
       function noop() { }
@@ -84,14 +84,14 @@ describe('ChildProcessProxyWorker', () => {
       // Assert
       expect(processRemoveListenerStub).calledWith('message', noop);
     });
-    
+
     it('should set global log level', () => {
-      processOnStub.callArgWith(1, [serialize(initMessage)]);
+      processOnStub.callArgWith(1, serialize(initMessage));
       expect(setGlobalLogLevelStub).calledWith('FooLevel');
     });
-    
+
     it('should load plugins', () => {
-      processOnStub.callArgWith(1, [serialize(initMessage)]);
+      processOnStub.callArgWith(1, serialize(initMessage));
       expect(pluginLoader.default).calledWithNew;
       expect(pluginLoader.default).calledWith(['fooPlugin', 'barPlugin']);
       expect(pluginLoaderMock.load).called;
@@ -101,13 +101,23 @@ describe('ChildProcessProxyWorker', () => {
 
       async function actAndAssert(workerMessage: WorkMessage, expectedResult: WorkResult) {
         // Act
-        processOnStub.callArgWith(1, [serialize(initMessage)]);
+        processOnStub.callArgWith(1, serialize(initMessage));
         processOnStub.callArgWith(1, serialize(workerMessage));
         await tick();
         // Assert
         expect(processSendStub).calledWith(serialize(expectedResult));
       }
 
+      async function actAndAssertRejection(workerMessage: WorkMessage, expectedError: string) {
+        // Act
+        processOnStub.callArgWith(1, serialize(initMessage));
+        processOnStub.callArgWith(1, serialize(workerMessage));
+        await tick();
+        // Assert
+        expect(processSendStub).calledWithMatch(`"correlationId": ${workerMessage.correlationId.toString()}`);
+        expect(processSendStub).calledWithMatch(`"kind": ${ParentMessageKind.Rejection.toString()}`);
+        expect(processSendStub).calledWithMatch(`"error": "Error: ${expectedError}`);
+      }
 
       it('should send the result', async () => {
         // Arrange
@@ -118,11 +128,34 @@ describe('ChildProcessProxyWorker', () => {
           methodName: 'sayHello'
         };
         const expectedResult: WorkResult = {
+          kind: ParentMessageKind.Result,
           correlationId: 32,
           result: 'hello from FooBarName'
         };
 
         await actAndAssert(workerMessage, expectedResult);
+      });
+
+      it('should send a rejection', async () => {
+        // Arrange
+        const workerMessage: WorkerMessage = {
+          kind: WorkerMessageKind.Work,
+          correlationId: 32,
+          args: [],
+          methodName: 'reject'
+        };
+        await actAndAssertRejection(workerMessage, 'Rejected');
+      });
+
+      it('should send a thrown synchronous error as rejection', async () => { 
+        // Arrange
+        const workerMessage: WorkerMessage = {
+          kind: WorkerMessageKind.Work,
+          correlationId: 32,
+          args: ['foo bar'],
+          methodName: 'throw'
+        };
+        await actAndAssertRejection(workerMessage, 'foo bar');
       });
 
       it('should use correct arguments', async () => {
@@ -134,6 +167,7 @@ describe('ChildProcessProxyWorker', () => {
           methodName: 'say'
         };
         const expectedResult: WorkResult = {
+          kind: ParentMessageKind.Result,
           correlationId: 32,
           result: 'hello foo and bar and chair'
         };
@@ -150,6 +184,7 @@ describe('ChildProcessProxyWorker', () => {
           methodName: 'sayDelayed'
         };
         const expectedResult: WorkResult = {
+          kind: ParentMessageKind.Result,
           correlationId: 32,
           result: 'delayed hello from FooBarName'
         };

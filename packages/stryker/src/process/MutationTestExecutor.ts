@@ -13,13 +13,13 @@ import SandboxPool from '../SandboxPool';
 
 export default class MutationTestExecutor {
 
-  constructor(private config: Config, private inputFiles: File[], private testFramework: TestFramework | null, private reporter: StrictReporter) {
+  constructor(private config: Config, private inputFiles: ReadonlyArray<File>, private testFramework: TestFramework | null, private reporter: StrictReporter) {
   }
 
   async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
     const mutantTranspiler = new MutantTranspiler(this.config);
-    const transpileResult = await mutantTranspiler.initialize(this.inputFiles);
-    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpileResult.outputFiles);
+    const transpiledFiles = await mutantTranspiler.initialize(this.inputFiles);
+    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles);
     const result = await this.runInsideSandboxes(
       sandboxPool.streamSandboxes(),
       mutantTranspiler.transpileMutants(allMutants));

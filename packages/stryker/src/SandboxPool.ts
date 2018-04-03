@@ -12,7 +12,7 @@ export default class SandboxPool {
   private readonly sandboxes: Sandbox[] = [];
   private isDisposed: boolean = false;
 
-  constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: File[]) {
+  constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: ReadonlyArray<File>) {
   }
 
   public streamSandboxes(): Observable<Sandbox> {

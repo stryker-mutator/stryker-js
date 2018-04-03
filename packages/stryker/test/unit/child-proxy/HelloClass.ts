@@ -10,4 +10,12 @@ export default class HelloClass {
   say(...things: string[]) {
     return `hello ${things.join(' and ')}`;
   }
+
+  reject() {
+    return Promise.reject(new Error('Rejected'));
+  }
+
+  throw(message: string) {
+    throw new Error(message);
+  }
 }

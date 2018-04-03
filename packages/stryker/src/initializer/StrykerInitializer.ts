@@ -27,18 +27,18 @@ export default class StrykerInitializer {
     const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
     const npmDependencies = this.getSelectedNpmDependencies(
-        [selectedTestRunner, selectedTestFramework, selectedMutator]
+      [selectedTestRunner, selectedTestFramework, selectedMutator]
         .concat(selectedTranspilers)
         .concat(selectedReporters)
-      );
-    this.installNpmDependencies(npmDependencies);
+    );
     await configWriter.write(selectedTestRunner,
       selectedTestFramework,
       selectedMutator,
       selectedTranspilers,
       selectedReporters,
       await this.fetchAdditionalConfig(npmDependencies));
-    this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure your files and test runner correctly.');
+    this.installNpmDependencies(npmDependencies);
+    this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
 
@@ -73,7 +73,7 @@ export default class StrykerInitializer {
     reporterOptions.push({
       name: 'clear-text',
       npm: null
-      }, {
+    }, {
         name: 'progress',
         npm: null
       }, {

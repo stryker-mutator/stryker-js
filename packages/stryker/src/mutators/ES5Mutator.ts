@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { Logger, getLogger } from 'log4js';
 import { Config } from 'stryker-api/config';
-import { File, TextFile, FileKind } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import * as parserUtils from '../utils/parserUtils';
 import { copy } from '../utils/objectUtils';
@@ -35,22 +35,16 @@ export default class ES5Mutator implements Mutator {
 
 
   mutate(files: File[]): Mutant[] {
-    return _.flatMap(files, file => {
-      if (file.mutated && file.kind === FileKind.Text) {
-        return this.mutateForFile(file);
-      } else {
-        return [];
-      }
-    });
+    return _.flatMap(files, file => this.mutateForFile(file));
   }
 
-  private mutateForFile(file: TextFile): Mutant[] {
-    const abstractSyntaxTree = parserUtils.parse(file.content);
+  private mutateForFile(file: File): Mutant[] {
+    const abstractSyntaxTree = parserUtils.parse(file.textContent);
     const nodes = new parserUtils.NodeIdentifier().identifyAndFreeze(abstractSyntaxTree);
     return this.mutateForNodes(file, nodes);
   }
 
-  private mutateForNodes(sourceFile: TextFile, nodes: any[]): Mutant[] {
+  private mutateForNodes(file: File, nodes: any[]): Mutant[] {
     return _.flatMap(nodes, astNode => {
       if (astNode.type) {
         Object.freeze(astNode);
@@ -62,12 +56,12 @@ export default class ES5Mutator implements Mutator {
                 mutatedNodes = [mutatedNodes];
               }
               if (mutatedNodes.length > 0) {
-                this.log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astNode.loc.start.line}, Col ${astNode.loc.start.column}) and (Ln ${astNode.loc.end.line}, Col ${astNode.loc.end.column}) in file ${sourceFile.name}`);
+                this.log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astNode.loc.start.line}, Col ${astNode.loc.start.column}) and (Ln ${astNode.loc.end.line}, Col ${astNode.loc.end.column}) in file ${file.name}`);
               }
               return mutatedNodes.map(mutatedNode => {
                 const replacement = parserUtils.generate(mutatedNode);
                 const originalNode = nodes[mutatedNode.nodeID];
-                const mutant: Mutant = { mutatorName: mutator.name, fileName: sourceFile.name, replacement, range: originalNode.range };
+                const mutant: Mutant = { mutatorName: mutator.name, fileName: file.name, replacement, range: originalNode.range };
                 return mutant;
               });
             } else {

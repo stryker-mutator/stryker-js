@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
 import { Mutant } from 'stryker-api/mutant';
-import { file, textFile } from '../../helpers/producers';
 import ES5Mutator from '../../../src/mutators/ES5Mutator';
 import NodeMutator from '../../../src/mutators/NodeMutator';
 import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
+import { File } from 'stryker-api/core';
 
 describe('ES5Mutator', () => {
   let sut: ES5Mutator;
@@ -18,16 +18,11 @@ describe('ES5Mutator', () => {
     sandbox.restore();
   });
 
-  it('should return an empty array if nothing could be mutated', () => {
-    const mutants = sut.mutate([textFile({ name: 'test.js', included: false, mutated: true, content: '' })]);
-    expect(mutants.length).to.equal(0);
-  });
-
   describe('with single input file with a one possible mutation', () => {
     let mutants: Mutant[];
 
     beforeEach(() => {
-      mutants = sut.mutate([file({ content: 'var i = 1 + 2;' })]);
+      mutants = sut.mutate([new File('', 'var i = 1 + 2;')]);
     });
 
     it('should return an array with a single mutant', () => {
@@ -40,7 +35,7 @@ describe('ES5Mutator', () => {
 
     it('should set the range', () => {
       const originalCode = '\n\nvar i = 1 + 2;';
-      mutants = sut.mutate([file({ content: originalCode })]);
+      mutants = sut.mutate([new File('', originalCode)]);
       expect(mutants[0].range[0]).to.equal(10);
       expect(mutants[0].range[1]).to.equal(15);
     });
@@ -68,13 +63,13 @@ describe('ES5Mutator', () => {
     });
 
     it('the same nodeID', () => {
-      const mutants = sut.mutate([file({ name: 'some file', content: 'if (true);' })]);
+      const mutants = sut.mutate([new File('some file', 'if (true);')]);
       expect(mutants[0].fileName).eq('some file');
       expect(mutants[0].replacement).eq('if (true);');
     });
 
     it('a different nodeID', () => {
-      const mutants = sut.mutate([file({ name: 'src.js', content: '1 * 2' })]);
+      const mutants = sut.mutate([new File('src.js', '1 * 2')]);
       expect(mutants[0].fileName).eq('src.js');
       expect(mutants[0].replacement).eq('1');
     });
