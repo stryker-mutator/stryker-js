@@ -1,4 +1,4 @@
-import { TranspilerOptions, Transpiler, TranspileResult } from 'stryker-api/transpile';
+import { TranspilerOptions, Transpiler } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
 import WebpackCompiler from './compiler/WebpackCompiler';
 import ConfigLoader from './compiler/ConfigLoader';
@@ -18,38 +18,19 @@ export default class WebpackTranspiler implements Transpiler {
     this.config = this.getStrykerWebpackConfig(options.config.webpack);
   }
 
-  public async transpile(files: Array<File>): Promise<TranspileResult> {
-    try {
-      if (!this.webpackCompiler) {
-        // Initialize the webpack compiler with the current directory (process.cwd)
-        this.webpackCompiler = new WebpackCompiler(new ConfigLoader().load(this.config));
-      }
-
-      this.webpackCompiler.writeFilesToFs(files);
-      return this.createSuccessResult(await this.webpackCompiler.emit());
-    } catch (err) {
-      return this.createErrorResult(`${err.name}: ${err.message}`);
+  public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+    if (!this.webpackCompiler) {
+      // Initialize the webpack compiler with the current directory (process.cwd)
+      this.webpackCompiler = new WebpackCompiler(new ConfigLoader().load(this.config));
     }
+
+    this.webpackCompiler.writeFilesToFs(files);
+    return await this.webpackCompiler.emit();
   }
 
   private getStrykerWebpackConfig(strykerWebpackConfig?: Partial<StrykerWebpackConfig>): StrykerWebpackConfig {
     return Object.assign({}, DEFAULT_STRYKER_WEBPACK_CONFIG, strykerWebpackConfig);
   }
-
-  private createErrorResult(error: string): TranspileResult {
-    return {
-      error,
-      outputFiles: []
-    };
-  }
-
-  private createSuccessResult(outputFiles: File[]): TranspileResult {
-    return {
-      error: null,
-      outputFiles
-    };
-  }
-
 }
 
 export interface StrykerWebpackConfig {

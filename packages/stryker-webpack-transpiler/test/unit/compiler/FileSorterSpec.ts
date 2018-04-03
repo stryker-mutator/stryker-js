@@ -1,16 +1,16 @@
 import * as path from 'path';
 import { expect } from 'chai';
-import { TextFile } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import FileSorter, { Chunk } from '../../../src/compiler/FileSorter';
 import { createChunk, createTextFile } from '../../helpers/producers';
 
 describe('FileSorter', () => {
 
-  let file2: TextFile;
-  let file1: TextFile;
-  let file4: TextFile;
-  let file3: TextFile;
-  let fooFile: TextFile;
+  let file2: File;
+  let file1: File;
+  let file4: File;
+  let file3: File;
+  let fooFile: File;
 
   beforeEach(() => {
     file2 = createTextFile('2.js');
