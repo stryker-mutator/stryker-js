@@ -1,13 +1,13 @@
 module.exports = function (config) {
   config.set({
-    files: ['src/*.js', 'test/*.js'],
     mutate: ['src/*.js'],
     mutator: 'javascript',
     testFramework: 'mocha',
     testRunner: 'karma',
     reporter: ['clear-text', 'html'],
     karmaConfig: {
-      frameworks: ['mocha', 'chai']
+      frameworks: ['mocha', 'chai'],
+      files: ['src/*.js', 'test/*.js']
     },
     maxConcurrentTestRunners: 2,
     coverageAnalysis: 'perTest',

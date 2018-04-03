@@ -1,9 +1,11 @@
 module.exports = function (config) {
   config.set({
-    files: [
-      {pattern: 'sampleProject/src/**/!(InfiniteAdd).js', mutated: true, included: true },
-      'sampleProject/test/**/!(FailingAddSpec).js',
+    mutate: [
+      'sampleProject/src/**'
     ],
+    karmaConfig: {
+      files: ['sampleProject/**']
+    },
     testFramework: 'jasmine',
     testRunner: 'karma',
     logLevel: 'info',
