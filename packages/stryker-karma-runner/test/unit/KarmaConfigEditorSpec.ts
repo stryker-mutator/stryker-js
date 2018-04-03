@@ -21,7 +21,7 @@ describe('KarmaConfigEditor', () => {
 
   afterEach(() => sandbox.restore());
 
-  describe('write', () => {
+  describe('edit', () => {
 
     it('should create karmaConfigReader using "karmaConfigFile"', () => {
       sut.edit(config);
@@ -56,50 +56,17 @@ describe('KarmaConfigEditor', () => {
         expect(config.testRunner).to.be.eq('harry');
       });
 
-      it('should import files', () => {
+      it('should import karma files', () => {
         karmaConfig.files = [{ pattern: 'somePattern' }];
         sut.edit(config);
-        expect(config.files).to.be.deep.eq([{ pattern: 'somePattern', mutated: false, included: false }]);
+        expect(config.karmaConfig.files).to.be.deep.eq([{ pattern: 'somePattern'}]);
       });
 
-      it('should not completely override files, but instead unshift files to the top of the array', () => {
-        karmaConfig.files = [{ pattern: 'somePattern' }, { pattern: 'secondPattern' }];
-        config.files = ['someFile'];
-        sut.edit(config);
-        expect(config.files).to.be.deep.eq(
-          [
-            { pattern: 'somePattern', mutated: false, included: false },
-            { pattern: 'secondPattern', mutated: false, included: false },
-            'someFile'
-          ]);
-      });
-
-      it('should not override files if files were specified in the karmaConfig', () => {
+      it('should not override files', () => {
         config.karmaConfig = { files: [] };
         karmaConfig.files = [{ pattern: 'foobar' }];
         sut.edit(config);
-        expect(config.files).lengthOf(0);
-      });
-
-      it('should exclude the excluded files', () => {
-        karmaConfig.exclude = ['someFile'];
-        sut.edit(config);
-        expect(config.files).to.be.deep.eq(['!someFile']);
-      });
-
-      it('should exclude the excluded files before the `files` already defined in stryker', () => {
-        karmaConfig.files = [{ pattern: 'somePattern' }, { pattern: 'secondPattern' }];
-        karmaConfig.exclude = ['excludedFile'];
-        config.files = ['file/from/stryker/config.js'];
-        sut.edit(config);
-        expect(config.files).to.be.deep.eq(
-          [
-            { pattern: 'somePattern', mutated: false, included: false },
-            { pattern: 'secondPattern', mutated: false, included: false },
-            '!excludedFile',
-            'file/from/stryker/config.js'
-          ]
-        );
+        expect(config.files).undefined;
       });
 
       it('should add karmaConfig to the options', () => {
