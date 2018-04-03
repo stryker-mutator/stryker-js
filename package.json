@@ -42,13 +42,11 @@
   "scripts": {
     "clean": "lerna run prebuild",
     "postinstall": "lerna bootstrap && link-parent-bin",
-    "prebuild": "npm run clean-integration-test",
     "build": "lerna run build",
     "pretest": "npm run build",
     "test": "lerna run test",
     "posttest": "cd integrationTest && npm i && npm t && cd ..",
     "clean-integration-test": "node tasks/cleanIntegrationTest.js",
-    "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\" \"tsc -w -p packages/stryker-jasmine\" \"tsc -w -p packages/stryker-karma-runner\" \"tsc -w -p packages/stryker-mocha-runner\" \"tsc -w packages/stryker-mocha-framework\"",
     "test:stryker": "lerna run test --scope stryker",
     "test:stryker-api": "lerna run test --scope stryker",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
