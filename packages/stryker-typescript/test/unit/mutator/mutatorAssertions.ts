@@ -3,8 +3,8 @@ import { parseFile } from '../../../src/helpers/tsHelpers';
 import { expect } from 'chai';
 import { Mutant } from 'stryker-api/mutant';
 import NodeMutator from '../../../src/mutator/NodeMutator';
-import { textFile } from '../../helpers/producers';
 import ExpectMutation from 'stryker-mutator-specification/src/ExpectMutation';
+import { File } from 'stryker-api/core';
 
 export interface MutatorConstructor {
   new(): NodeMutator;
@@ -15,7 +15,7 @@ export function verifySpecification(specification: (name: string, expectMutation
 }
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
-  const tsFile = textFile({ content: sourceText });
+  const tsFile = new File('file1.ts', sourceText);
   const sourceFile = parseFile(tsFile, undefined);
   const mutants = mutate(mutator, sourceFile, sourceFile);
   expect(mutants).lengthOf(expectedTexts.length);
@@ -28,7 +28,7 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
 }
 
 function format(code: string) {
-  const ast = parseFile(textFile({ content: code }), undefined);
+  const ast = parseFile(new File('file1.ts', code), undefined);
   return ts.createPrinter().printFile(ast);
 }
 

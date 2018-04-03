@@ -3,11 +3,9 @@ import * as fs from 'mz/fs';
 import { expect } from 'chai';
 import * as ts from 'typescript';
 import { Config } from 'stryker-api/config';
-import { TextFile } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import TypescriptMutator from '../../src/TypescriptMutator';
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
-import { textFile } from '../helpers/producers';
-
 
 class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
   name = 'FunctionDeclarationForTest';
@@ -59,29 +57,26 @@ describe('TypescriptMutator', () => {
 
   describe('using 2 mutators', () => {
 
-    let file1: TextFile;
-    let file2: TextFile;
+    let file1: File;
+    let file2: File;
 
     beforeEach(() => {
       sut = new TypescriptMutator(config, [
         new FunctionDeclarationMutator(),
         new SourceFileMutator()
       ]);
-      file1 = textFile({
-        name: 'file1.ts',
-        content: `
-          function add(n...: number[]) {
+      file1 = new File(
+        'file1.ts',
+        `function add(n...: number[]) {
             return n.sum();
           }
-          const a = add(1, 3, 4, 5);`});
-      file2 = textFile({
-        name: 'file2.ts',
-        content: `
-        function subtract(n...: numbers[]){
+          const a = add(1, 3, 4, 5);`);
+      file2 = new File(
+        'file2.ts',
+        `function subtract(n...: numbers[]){
           return n[0] - n.slice(1).sum();
         }
-        const b = subtract(10, 3, 4);
-      `});
+        const b = subtract(10, 3, 4);`);
     });
 
     it('should deliver 6 mutants', () => {

@@ -2,34 +2,31 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as ts from 'typescript';
-import { Logger, getLogger } from 'log4js';
+import { getLogger } from 'log4js';
 import flatMap = require('lodash.flatmap');
-import { TextFile, FileDescriptor, FileKind } from 'stryker-api/core';
 import ScriptFile from './ScriptFile';
-import { normalizeFileFromTypescript, isJavaScriptFile, isMapFile } from '../helpers/tsHelpers';
+import { normalizeFileFromTypescript, isJavaScriptFile, isMapFile, normalizeFileForTypescript } from '../helpers/tsHelpers';
+import { File } from 'stryker-api/core';
 
 const libRegex = /^lib\.(?:\w|\.)*\.?d\.ts$/;
 
 export interface EmitOutput {
   singleResult: boolean;
-  outputFiles: TextFile[];
+  outputFiles: File[];
 }
 
 export default class TranspilingLanguageService {
   private languageService: ts.LanguageService;
 
   private compilerOptions: ts.CompilerOptions;
-  private readonly files: ts.MapLike<ScriptFile>;
-  private logger: Logger;
+  private readonly files: ts.MapLike<ScriptFile> = Object.create(null);
+  private logger = getLogger(TranspilingLanguageService.name);
   private readonly diagnosticsFormatter: ts.FormatDiagnosticsHost;
 
-  constructor(compilerOptions: Readonly<ts.CompilerOptions>, rootFiles: TextFile[], private projectDirectory: string, private produceSourceMaps: boolean) {
-    this.logger = getLogger(TranspilingLanguageService.name);
-    this.files = Object.create(null);
+  constructor(compilerOptions: Readonly<ts.CompilerOptions>, rootFiles: ReadonlyArray<File>, private projectDirectory: string, private produceSourceMaps: boolean) {
     this.compilerOptions = this.adaptCompilerOptions(compilerOptions);
-    rootFiles.forEach(file => this.files[file.name] = new ScriptFile(file.name, file.content));
+    rootFiles.forEach(file => this.files[file.name] = new ScriptFile(file.name, file.textContent));
     const host = this.createLanguageServiceHost();
-
     this.languageService = ts.createLanguageService(host);
     this.diagnosticsFormatter = {
       getCurrentDirectory: () => projectDirectory,
@@ -55,13 +52,14 @@ export default class TranspilingLanguageService {
    * Replaces the content of the given text files
    * @param mutantCandidate The mutant used to replace the original source
    */
-  replace(replacements: TextFile[]) {
+  replace(replacements: ReadonlyArray<File>) {
     replacements.forEach(replacement =>
-      this.files[replacement.name].replace(replacement.content));
+      this.files[replacement.name].replace(replacement.textContent));
   }
 
-  getSemanticDiagnostics(fileNames: string[]) {
-    const errors = flatMap(fileNames, fileName => this.languageService.getSemanticDiagnostics(fileName));
+  getSemanticDiagnostics(files: ReadonlyArray<File>) {
+    const fileNames = files.map(file => file.name);
+    const errors = flatMap(fileNames, fileName => this.languageService.getSemanticDiagnostics(normalizeFileForTypescript(fileName)));
     return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
   }
 
@@ -71,32 +69,18 @@ export default class TranspilingLanguageService {
    * @return  Map<TextFile> Returns a map of source file names with their output files.
    *          If all output files are bundled together, only returns the output file once using the first file as key
    */
-  emit(fileDescriptor: FileDescriptor): EmitOutput {
-    const emittedFiles = this.languageService.getEmitOutput(fileDescriptor.name).outputFiles;
+  emit(fileName: string): EmitOutput {
+    const emittedFiles = this.languageService.getEmitOutput(fileName).outputFiles;
     const jsFile = emittedFiles.find(isJavaScriptFile);
     const mapFile = emittedFiles.find(isMapFile);
     if (jsFile) {
-      const outputFiles: TextFile[] = [{
-        content: jsFile.text,
-        name: normalizeFileFromTypescript(jsFile.name),
-        included: fileDescriptor.included,
-        kind: FileKind.Text,
-        mutated: fileDescriptor.mutated,
-        transpiled: fileDescriptor.transpiled
-      }];
+      const outputFiles: File[] = [new File(normalizeFileFromTypescript(jsFile.name), jsFile.text)];
       if (mapFile) {
-        outputFiles.push({
-          content: mapFile.text,
-          name: normalizeFileFromTypescript(mapFile.name),
-          included: false,
-          kind: FileKind.Text,
-          mutated: false,
-          transpiled: false
-        });
+        outputFiles.push(new File(normalizeFileFromTypescript(mapFile.name), mapFile.text));
       }
       return { singleResult: !!this.compilerOptions.outFile, outputFiles };
     } else {
-      throw new Error(`Emit error! Could not emit file ${fileDescriptor.name}`);
+      throw new Error(`Emit error! Could not emit file ${fileName}`);
     }
   }
 

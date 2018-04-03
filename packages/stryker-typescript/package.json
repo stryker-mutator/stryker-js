@@ -47,7 +47,8 @@
     "@types/semver": "^5.4.0",
     "@types/source-map": "0.5.1",
     "stryker-api": "^0.14.0",
-    "stryker-mutator-specification": "^0.2.2"
+    "stryker-mutator-specification": "^0.2.2",
+    "surrial": "^0.1.3"
   },
   "peerDependencies": {
     "stryker-api": "^0.14.0",
@@ -55,8 +56,6 @@
   },
   "initStrykerConfig": {
     "tsconfigFile": "tsconfig.json",
-    "files": [],
-    "coverageAnalysis": "off",
     "mutate": [
       "src/**/*.ts"
     ]
