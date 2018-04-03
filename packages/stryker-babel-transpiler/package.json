@@ -9,7 +9,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 80 mocha  \"test/helpers/**/*.js\" \"test/unit/**/*Spec.js\" \"test/integration/**/*Spec.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 80 mocha  \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -39,12 +39,17 @@
   "license": "Apache-2.0",
   "dependencies": {
     "babel-core": "^6.26.0",
-    "log4js": "^1.1.1"
+    "log4js": "^1.1.1",
+    "minimatch": "^3.0.4"
   },
   "devDependencies": {
     "@types/babel-core": "^6.25.3",
+    "@types/glob": "^5.0.35",
+    "@types/minimatch": "^3.0.3",
+    "babel-cli": "^6.26.0",
     "babel-plugin-transform-es2015-spread": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
+    "glob": "^7.1.2",
     "stryker-api": "^0.14.0"
   },
   "peerDependencies": {
