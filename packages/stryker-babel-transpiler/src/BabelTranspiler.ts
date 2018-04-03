@@ -1,84 +1,75 @@
-import { Transpiler, TranspilerOptions, TranspileResult } from 'stryker-api/transpile';
-import { File, TextFile, FileKind } from 'stryker-api/core';
+import { Transpiler, TranspilerOptions } from 'stryker-api/transpile';
+import { File } from 'stryker-api/core';
 import * as babel from 'babel-core';
 import * as path from 'path';
-import { EOL } from 'os';
 import BabelConfigReader from './BabelConfigReader';
+import { CONFIG_KEY_FILE } from './helpers/keys';
+import { toJSFileName } from './helpers/helpers';
+import { setGlobalLogLevel } from 'log4js';
+
+const KNOWN_EXTENSIONS = Object.freeze([
+  '.es6',
+  '.js',
+  '.es',
+  '.jsx'
+  // => TODO in Babel 7 this list gets even bigger (and is exported from @babel/core: https://github.com/babel/babel/blob/master/packages/babel-core/src/index.js#L41)
+  // Also: you can add custom extensions if your using the babel cli, maybe we should also support that use case
+]);
 
 class BabelTranspiler implements Transpiler {
-  private babelConfig: babel.TransformOptions;
-  private knownExtensions: string[];
+  private babelOptions: babel.TransformOptions;
+  private projectRoot: string;
 
   public constructor(options: TranspilerOptions) {
-    this.babelConfig = new BabelConfigReader().readConfig(options.config);
+    setGlobalLogLevel(options.config.logLevel);
+    this.babelOptions = new BabelConfigReader().readConfig(options.config);
+    this.projectRoot = this.determineProjectRoot(options);
     if (options.produceSourceMaps) {
       throw new Error(`Invalid \`coverageAnalysis\` "${options.config.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`);
     }
-    this.knownExtensions = ['.js', '.jsx'];
   }
 
-  public transpile(files: File[]): Promise<TranspileResult> {
-    const outputFiles: File[] = [];
-    const errors: string[] = [];
+  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+    return new Promise<ReadonlyArray<File>>(res => res(files.map(file => this.transpileFileIfNeeded(file))));
+  }
 
-    files.forEach((file) => {
-      if (this.shouldBeTranspiled(file)) {
-        try {
-          outputFiles.push({
-            name: file.name,
-            content: this.transform((file as TextFile).content),
-            mutated: file.mutated,
-            included: file.included,
-            transpiled: file.transpiled,
-            kind: FileKind.Text
-          });
-        } catch (err) {
-          errors.push(`${file.name}: ${err.message}`);
-        }
-      } else {
-        outputFiles.push(file);
+  private transpileFileIfNeeded(file: File): File {
+    if (KNOWN_EXTENSIONS.some(ext => ext === path.extname(file.name))) {
+      try {
+        return this.transpileFile(file);
+      } catch (error) {
+        throw new Error(`Error while transpiling "${file.name}": ${error.stack || error.message}`);
       }
+    } else {
+      return file; // pass through
+    }
+  }
+
+  private transpileFile(file: File) {
+    const options = Object.assign({}, this.babelOptions, {
+      filename: file.name,
+      filenameRelative: path.relative(this.projectRoot, file.name)
     });
-
-    return Promise.resolve(this.createResult(outputFiles, errors));
-  }
-
-  private shouldBeTranspiled(file: File) {
-    return file.kind === FileKind.Text
-      && file.transpiled
-      && this.knownExtensions.indexOf(path.extname(file.name)) >= 0;
-  }
-
-  private transform(code: string) {
-    const result = babel.transform(code, this.babelConfig).code;
-
-    if (!result) {
-      throw new Error('Could not transpile file with the Babel transform function');
+    const result = babel.transform(file.textContent, options);
+    if ((result as any).ignored) {
+      // Ignored will be true if the file was not transpiled (because it was ignored)
+      // TODO: Babel 7 will change this (according to a conversation I had on Slack).
+      //  => it will return a `null` value in that case
+      return file;
+    } else if (typeof result.code === 'undefined') {
+      throw new Error(`Could not transpile file "${file.name}". Babel transform function delivered \`undefined\`.`);
+    } else {
+      return new File(toJSFileName(file.name), result.code);
     }
-
-    return result;
   }
 
-  private createResult(results: File[], errorResults: string[]): TranspileResult {
-    if (errorResults.length > 0) {
-      return this.createErrorResult(errorResults.join(EOL));
+  private determineProjectRoot(options: TranspilerOptions): string {
+    const configFile = options.config[CONFIG_KEY_FILE];
+    if (configFile) {
+      return path.dirname(configFile);
+    } else {
+      return process.cwd();
     }
-
-    return this.createSuccessResult(results);
-  }
-
-  private createErrorResult(error: string): TranspileResult {
-    return {
-      error,
-      outputFiles: []
-    };
-  }
-
-  private createSuccessResult(outputFiles: File[]): TranspileResult {
-    return {
-      error: null,
-      outputFiles
-    };
   }
 }
 
