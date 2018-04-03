@@ -4,10 +4,8 @@ import {
   RunResult, RunOptions, TestRunnerFactory,
   TestStatus, RunStatus
 } from 'stryker-api/test_runner';
-import { EventEmitter } from 'events';
-import { FileKind } from 'stryker-api/core';
 
-class MyTestRunner extends EventEmitter implements TestRunner {
+class MyTestRunner implements TestRunner {
 
   run(options: RunOptions) {
     const coverage: CoverageCollection | CoverageCollectionPerTest = {
@@ -32,11 +30,17 @@ class MyTestRunner extends EventEmitter implements TestRunner {
 }
 
 let runnerOptions: RunnerOptions = {
-  files: [
-    { name: 'some', mutated: true, included: false, transpiled: true, kind: FileKind.Text },
-    { name: 'files', mutated: false, included: true, transpiled: false, kind: FileKind.Text }],
+  fileNames: [
+    'foobar.js',
+    'foobar.spec.js'
+  ],
   port: 1,
   strykerOptions: null
+};
+
+let runOptions: RunOptions = {
+  testHooks: 'test hooks',
+  timeout: 42
 };
 
 TestRunnerFactory.instance().register('MyTestRunner', MyTestRunner);

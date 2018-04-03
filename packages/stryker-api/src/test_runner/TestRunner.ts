@@ -1,14 +1,11 @@
 import RunResult from './RunResult';
 import RunOptions from './RunOptions';
-import { EventEmitter } from 'events';
-
 
 /**
  * Represents a TestRunner which can execute tests, resulting in a RunResult.
  * 
  * A test runner should:
- *  - Report per a `testResult` per test. See `TestResult` interface to know what is expected.
- *  - Emit a `'test_done'` event with a TestResult as an argument every time a test is executed (for reporting purposes).
+ *  - Report a `testResult` per test. See `TestResult` interface to know what is expected.
  *  - Report on code coverage after the initial test run (maybe, see below).
  * 
  * ## A note on code coverage:
@@ -35,14 +32,14 @@ import { EventEmitter } from 'events';
  * 
  * If it doesn't exists globally, you don't have to do anything. In that case it's not an initial test run and there was no code instrumented.
  */
-interface TestRunner extends EventEmitter {
+interface TestRunner {
 
   /**
    * Optional. When implemented, will be called before runs are done on this test runner.
    * @returns A promise if stuff is initialized asynchronously, runs will not start until the promise is resolved.
    * Otherwise void
    */
-  init?(): Promise<any> | void;
+  init?(): Promise<void> | void;
 
   /**
    * Executes a test run.
@@ -56,7 +53,7 @@ interface TestRunner extends EventEmitter {
    * @returns A promise if stuff is destroyed asynchronously, the runners process will not end until the promise is resolved.
    * Otherwise void 
    */
-  dispose?(): Promise<any> | void;
+  dispose?(): Promise<void> | void;
 }
 
 export default TestRunner;
