@@ -1,10 +1,10 @@
-import { StrykerOptions, InputFileDescriptor, MutatorDescriptor, MutationScoreThresholds } from '../../core';
+import { StrykerOptions, MutatorDescriptor, MutationScoreThresholds } from '../../core';
 
 export default class Config implements StrykerOptions {
 
   [customConfig: string]: any;
 
-  files: Array<string | InputFileDescriptor>;
+  files: string[];
   mutate: string[];
 
   logLevel = 'info';

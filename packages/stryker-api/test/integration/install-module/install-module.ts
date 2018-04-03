@@ -29,7 +29,7 @@ describe('we have a module using stryker', function () {
           });
         });
       };
-      arrangeActAndAssertModule('core', ['files', 'some', 'file', 'pattern']);
+      arrangeActAndAssertModule('core', ['files', 'some', 'file']);
       arrangeActAndAssertModule('config', ['plugins: [ \'stryker-*\' ]', 'port: 9234']);
       arrangeActAndAssertModule('test_framework', ['framework-1']);
       arrangeActAndAssertModule('mutant', ['mutatorName: \'foo\'']);

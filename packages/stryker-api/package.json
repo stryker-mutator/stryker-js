@@ -39,5 +39,8 @@
   },
   "dependencies": {
     "tslib": "^1.6.0"
+  },
+  "devDependencies": {
+    "surrial": "^0.1.1"
   }
 }
