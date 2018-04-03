@@ -1,11 +1,8 @@
 module.exports = function (config) {
   config.set({
-    files: [
-      '!src/**/*.ts',
-      { pattern: 'src/**/*.ts', included: false, mutated: true },
-      '!**/*.d.ts',
-      '!./src/index.ts',
-      { pattern: 'testResources/**/*.*', transpiled: false, included: false }
+    mutate: [
+      'src/**/*.ts',
+      '!src/**/*.d.ts'
     ],
     testRunner: "mocha",
     testFramework: "mocha",
@@ -25,7 +22,10 @@ module.exports = function (config) {
       '../../../stryker-mocha-runner/src/index',
       '../../../stryker-mocha-framework/src/index',
       '../../../stryker-typescript/src/index'
-    ]
+    ],
+    mochaOptions: {
+      files: 'test/**/*.js'
+    }
   });
 
   if (process.env.TRAVIS) {
@@ -34,3 +34,6 @@ module.exports = function (config) {
     });
   }
 };
+
+
+

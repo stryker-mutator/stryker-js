@@ -1,4 +1,4 @@
-import { TextFile, File, BinaryFile, FileKind } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { Compiler, Configuration } from 'webpack';
 import webpack from './Webpack';
 import InputFileSystem from '../fs/InputFileSystem';
@@ -25,15 +25,11 @@ export default class WebpackCompiler {
     return compiler as Compiler;
   }
 
-  public writeFilesToFs(files: Array<File>): void {
-    for (let file of files) {
-      if (file.kind !== FileKind.Web) {
-        this.writeToFs(file);
-      }
-    }
+  public writeFilesToFs(files: ReadonlyArray<File>): void {
+    files.forEach(file => this.writeToFs(file));
   }
 
-  private writeToFs(file: TextFile | BinaryFile): void {
+  private writeToFs(file: File): void {
     this._inputFS.writeFileSync(file.name, file.content);
   }
 

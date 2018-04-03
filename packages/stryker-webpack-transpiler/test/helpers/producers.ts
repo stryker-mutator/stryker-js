@@ -1,9 +1,9 @@
 import { Configuration, Stats } from 'webpack';
-import { FileKind, TextFile } from 'stryker-api/core';
 import { WebpackCompilerMock } from './mockInterfaces';
 import * as sinon from 'sinon';
 import { Chunk } from '../../src/compiler/FileSorter';
 import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
+import { File } from 'stryker-api/core';
 
 export type Mock<T> = {
   [K in keyof T]: sinon.SinonStub;
@@ -25,15 +25,8 @@ export function createFakeWebpackConfig(): Configuration {
   };
 }
 
-export function createTextFile(name: string): TextFile {
-  return {
-    name: name,
-    content: 'c = a^2 + b^2',
-    mutated: true,
-    included: true,
-    transpiled: true,
-    kind: FileKind.Text
-  };
+export function createTextFile(name: string): File {
+  return new File(name, 'c = a^2 + b^2');
 }
 
 function createFactory<T>(defaultFn: () => T): (overrides?: Partial<T>) => T {
