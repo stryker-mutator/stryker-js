@@ -15,25 +15,6 @@ function strykerConfig(karmaConfigPath: string) {
 
 describe('KarmaConfigEditor', () => {
 
-  it('should override the stryker `files` property when no `files` were present', () => {
-    const config = strykerConfig('testResources/configs/files-karma.conf.js');
-    new KarmaConfigEditor().edit(config);
-    expect(config.files).to.deep.eq([
-      { included: true, mutated: false, pattern: resolve('src/**/*.js') },
-      { included: false, mutated: false, pattern: resolve('resources/**/*.js') },
-      '!' + resolve('**/index.js'),
-      '!' + resolve('+(Error|InfiniteAdd).js'),
-      '!' + resolve('files-karma.conf.js')]);
-  });
-
-  it('should unshift additional `files` on to the files array if files were already present', () => {
-    const config = strykerConfig('testResources/configs/files-karma.conf.js');
-    config.files = ['some file'];
-    new KarmaConfigEditor().edit(config);
-    expect(config.files).to.have.length(6);
-    expect(config.files[5]).to.be.eq('some file');
-  });
-
   it('should fill the "karmaConfig" object if no "karmaConfig" object was present', () => {
     const config = strykerConfig(resolve('example-karma.conf.js'));
     new KarmaConfigEditor().edit(config);
@@ -44,7 +25,6 @@ describe('KarmaConfigEditor', () => {
       files: [
       ],
       exclude: [
-        resolve('example-karma.conf.js')
       ],
       preprocessors: {
       },

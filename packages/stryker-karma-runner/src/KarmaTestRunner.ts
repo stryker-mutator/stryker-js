@@ -1,10 +1,11 @@
+import * as log4js from 'log4js';
 import { TestRunner, TestResult, TestStatus, RunStatus, RunResult, RunnerOptions, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
 import * as karma from 'karma';
-import * as log4js from 'log4js';
-import * as _ from 'lodash';
-import { EventEmitter } from 'events';
 import * as rawCoverageReporter from './RawCoverageReporter';
 import { KARMA_CONFIG } from './configKeys';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from './TestHooksMiddleware';
+import { touchSync } from './utils';
+import { setGlobalLogLevel } from 'log4js';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string };
@@ -37,12 +38,14 @@ const FORCED_OPTIONS = (() => {
   return Object.freeze(config);
 })();
 
-const DEFAULT_OPTIONS: Readonly<ConfigOptions> = Object.freeze({
-  browsers: ['PhantomJS'],
-  frameworks: ['jasmine'],
-});
+function defaultOptions(): Readonly<ConfigOptions> {
+  return Object.freeze({
+    browsers: ['PhantomJS'],
+    frameworks: ['jasmine'],
+  });
+}
 
-export default class KarmaTestRunner extends EventEmitter implements TestRunner {
+export default class KarmaTestRunner implements TestRunner {
 
   private log = log4js.getLogger(KarmaTestRunner.name);
   private server: karma.Server;
@@ -51,14 +54,16 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
   private currentErrorMessages: string[];
   private currentCoverageReport?: CoverageCollection | CoveragePerTestResult;
   private currentRunResult: karma.TestResults;
+  private readonly testHooksMiddleware = new TestHooksMiddleware();
 
   constructor(private options: RunnerOptions) {
-    super();
+    setGlobalLogLevel(options.strykerOptions.logLevel || 'info');
     let karmaConfig = this.configureTestRunner(options.strykerOptions[KARMA_CONFIG]);
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
     karmaConfig = this.configureProperties(karmaConfig);
+    karmaConfig = this.configureTestHooksMiddleware(karmaConfig);
 
-    this.log.info(`using config ${JSON.stringify(karmaConfig)}`);
+    this.log.debug(`using config ${JSON.stringify(karmaConfig, null, 2)}`);
     this.server = new karma.Server(karmaConfig, function (exitCode) {
       process.exit(exitCode);
     });
@@ -76,7 +81,8 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     return this.serverStartedPromise;
   }
 
-  run(): Promise<RunResult> {
+  run({ testHooks }: { testHooks?: string }): Promise<RunResult> {
+    this.testHooksMiddleware.currentTestHooks = testHooks || '';
     this.currentTestResults = [];
     this.currentErrorMessages = [];
     this.currentCoverageReport = undefined;
@@ -144,6 +150,25 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
     return karmaConfig;
   }
 
+  /**
+   * Configures the test hooks middleware. 
+   * It adds a non-existing file to the top `files` array. 
+   * Further more it configures a middleware that serves the file.
+   */
+  private configureTestHooksMiddleware(karmaConfig: ConfigOptions): ConfigOptions {
+    // Add test run middleware file
+    karmaConfig.files = karmaConfig.files || [];
+    karmaConfig.files.unshift({ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }); // Add a custom hooks file to provide hooks
+    const middleware: string[] = (karmaConfig as any).middleware || ((karmaConfig as any).middleware = []);
+    middleware.unshift(TestHooksMiddleware.name);
+    karmaConfig.plugins = karmaConfig.plugins || [];
+    karmaConfig.plugins.push({
+      [`middleware:${TestHooksMiddleware.name}`]: ['value', this.testHooksMiddleware.handler()]
+    });
+    touchSync(TEST_HOOKS_FILE_NAME); // Make sure it exists so karma doesn't log a warning
+    return karmaConfig;
+  }
+
   private configureCoverageIfEnabled(karmaConfig: ConfigOptions) {
     if (this.options.strykerOptions.coverageAnalysis !== 'off') {
       this.configureCoverageReporters(karmaConfig);
@@ -168,10 +193,7 @@ export default class KarmaTestRunner extends EventEmitter implements TestRunner 
 
   private configureTestRunner(overrides: ConfigOptions) {
     // Merge defaults with given
-    let karmaConfig = _.assign<ConfigOptions, ConfigOptions>(_.cloneDeep(DEFAULT_OPTIONS), overrides);
-
-    // Override files
-    karmaConfig.files = this.options.files.map(file => ({ pattern: file.name, included: file.included }));
+    let karmaConfig = Object.assign<ConfigOptions, ConfigOptions, ConfigOptions>({}, defaultOptions(), overrides);
 
     // Override port
     karmaConfig.port = this.options.port;

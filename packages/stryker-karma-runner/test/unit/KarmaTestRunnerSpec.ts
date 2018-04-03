@@ -5,6 +5,7 @@ import { RunnerOptions } from 'stryker-api/test_runner';
 import * as karma from 'karma';
 import * as sinon from 'sinon';
 import * as rawCoverageReporter from '../../src/RawCoverageReporter';
+import { TEST_HOOKS_FILE_NAME } from '../../src/TestHooksMiddleware';
 
 describe('KarmaTestRunner', () => {
 
@@ -14,9 +15,9 @@ describe('KarmaTestRunner', () => {
 
   beforeEach(() => {
     options = {
-      files: [],
       port: 0,
-      strykerOptions: {}
+      strykerOptions: {},
+      fileNames: []
     };
     sandbox = sinon.createSandbox();
     sandbox.stub(karma.stopper, 'stop');
@@ -70,8 +71,23 @@ describe('KarmaTestRunner', () => {
         sut = new KarmaTestRunner(options);
       });
 
-      it('should configure raw coverage reporter', () =>
-        expect(karma.Server).to.have.been.calledWithMatch(sinon.match({ reporters: ['rawCoverage'], plugins: ['karma-*', rawCoverageReporter] }), sinon.match.func));
+      it('should configure raw coverage reporter', () => {
+        expect(karma.Server).to.have.been.calledWithMatch(
+          sinon.match({
+            reporters: ['rawCoverage'],
+            plugins: ['karma-*', rawCoverageReporter, { ['middleware:TestHooksMiddleware']: ['value', sinon.match.func] }],
+            files: [
+              {
+                included: true,
+                nocache: true,
+                pattern: TEST_HOOKS_FILE_NAME,
+                served: false,
+                watched: false
+              }
+            ]
+          }),
+          sinon.match.func);
+      });
     });
 
     describe('and testFramework is supplied', () => {

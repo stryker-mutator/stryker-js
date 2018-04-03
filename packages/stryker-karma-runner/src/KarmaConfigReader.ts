@@ -40,13 +40,6 @@ export default class KarmaConfigReader {
     const configModule = requireModule(this.karmaConfigFile);
     const config: karma.ConfigOptions = new Config();
     configModule(config);
-
-    // Use native functionality of parsing the files, so we ensure that those are correctly resolved
-    const karmaOptions = this.parseNativeKarmaConfig();
-    if (karmaOptions && karmaOptions.files) {
-      config['files'] = karmaOptions.files;
-      config['exclude'] = karmaOptions.exclude;
-    }
     return config;
   }
 
