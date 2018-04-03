@@ -54,12 +54,12 @@ describe('Integration JestConfigEditor', () => {
       },
       moduleFileExtensions: [
         'web.js',
-        'mjs',
         'js',
         'json',
         'web.jsx',
         'jsx',
-        'node'
+        'node',
+        'mjs'
       ],
       rootDir: projectRoot,
       setupTestFrameworkScriptFile: undefined,
