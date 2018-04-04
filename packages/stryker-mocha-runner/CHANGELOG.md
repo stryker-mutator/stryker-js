@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.8...stryker-mocha-runner@0.11.0) (2018-04-04)
+
+
+### Features
+
+* **mocha-runner:** implement file discovery in mocha ([6ed7a0f](https://github.com/stryker-mutator/stryker/commit/6ed7a0f))
+
+
+
+
 <a name="0.10.8"></a>
 ## [0.10.8](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.7...stryker-mocha-runner@0.10.8) (2018-03-22)
 

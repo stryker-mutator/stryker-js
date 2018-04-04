@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.0"></a>
+# [0.15.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.14.0...stryker-api@0.15.0) (2018-04-04)
+
+
+### Features
+
+* **Detect files:** create `File` class ([1a89c10](https://github.com/stryker-mutator/stryker/commit/1a89c10))
+* **test runner:** add hooks file to test run api ([97be399](https://github.com/stryker-mutator/stryker/commit/97be399))
+* **Transpiler api:** change return type of `transpile` to a file array ([e713416](https://github.com/stryker-mutator/stryker/commit/e713416))
+
+
+### BREAKING CHANGES
+
+* **test runner:** * Promises return types should be `Promise<void>` instead
+of `Promise<any>` (typescript compiler error).
+* **Detect files:** Remove the `InputFileDescriptor`
+interface (breaking for typescript compiler)
+
+
+
+
 <a name="0.14.0"></a>
 # [0.14.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.13.1...stryker-api@0.14.0) (2018-03-22)
 

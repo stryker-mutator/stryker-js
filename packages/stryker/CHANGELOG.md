@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.21.0"></a>
+# [0.21.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.20.1...stryker@0.21.0) (2018-04-04)
+
+
+### Bug Fixes
+
+* **Progress reporter:** don't prevent stryker from closing ([21255aa](https://github.com/stryker-mutator/stryker/commit/21255aa))
+
+
+### Features
+
+* **identify-files:** use git to list files in `InputFileResolver` ([df6169a](https://github.com/stryker-mutator/stryker/commit/df6169a))
+
+
+### BREAKING CHANGES
+
+* **identify-files:** * The `InputFileDescriptor` syntax for files is no longer supported.
+* Test runner plugins should keep track of which files are included
+into a test run and in which order.
+* Transpiler plugins should keep track of which files are to be
+transpiled.
+
+
+
+
 <a name="0.20.1"></a>
 ## [0.20.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.20.0...stryker@0.20.1) (2018-03-22)
 

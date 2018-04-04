@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.0"></a>
+## [0.13.0](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.12.4...stryker-html-reporter@0.13.0) (2018-04-04)
+
+
+
+
+**Note:** Version bump only for package stryker-html-reporter
+
 <a name="0.12.4"></a>
 ## [0.12.4](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.12.3...stryker-html-reporter@0.12.4) (2018-03-22)
 

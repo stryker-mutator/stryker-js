@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.4...stryker-babel-transpiler@0.4.0) (2018-04-04)
+
+
+### Features
+
+* **Transpile files:** use babelrc to determine which files to transpile ([204b47f](https://github.com/stryker-mutator/stryker/commit/204b47f))
+
+
+
+
 <a name="0.3.4"></a>
 ## [0.3.4](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.3...stryker-babel-transpiler@0.3.4) (2018-03-22)
 

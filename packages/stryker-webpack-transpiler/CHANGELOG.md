@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.2.0...stryker-webpack-transpiler@0.3.0) (2018-04-04)
+
+
+### Features
+
+* **File api:** support new `File` api. ([d1ded2f](https://github.com/stryker-mutator/stryker/commit/d1ded2f))
+
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.1.7...stryker-webpack-transpiler@0.2.0) (2018-03-23)
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.4.3...stryker-javascript-mutator@0.5.0) (2018-04-04)
+
+
+### Features
+
+* **File api:** support new `File` format ([f8d5217](https://github.com/stryker-mutator/stryker/commit/f8d5217))
+
+
+
+
 <a name="0.4.3"></a>
 ## [0.4.3](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.4.2...stryker-javascript-mutator@0.4.3) (2018-03-22)
 

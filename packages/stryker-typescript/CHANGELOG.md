@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.9.4...stryker-typescript@0.10.0) (2018-04-04)
+
+
+### Features
+
+* **files:** use tsconfig to determine which files to transpile ([bc02c64](https://github.com/stryker-mutator/stryker/commit/bc02c64))
+
+
+### BREAKING CHANGES
+
+* **files:** If you want to override compiler options
+for Stryker, use the `tsconfig.options` key instead of `tsconfig`.
+
+
+
+
 <a name="0.9.4"></a>
 ## [0.9.4](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.9.3...stryker-typescript@0.9.4) (2018-03-22)
 

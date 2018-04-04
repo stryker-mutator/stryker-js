@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.9.0"></a>
+## [0.9.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.8.6...stryker-mocha-framework@0.9.0) (2018-04-04)
+
+
+
+
+**Note:** Version bump only for package stryker-mocha-framework
+
 <a name="0.8.6"></a>
 ## [0.8.6](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.8.5...stryker-mocha-framework@0.8.6) (2018-03-22)
 

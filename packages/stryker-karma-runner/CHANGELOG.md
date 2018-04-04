@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.0"></a>
+# [0.13.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.5...stryker-karma-runner@0.13.0) (2018-04-04)
+
+
+### Features
+
+* **karma-runner:** configure files with karma ([592c365](https://github.io/stryker-mutator/stryker/commit/592c365))
+
+
+### BREAKING CHANGES
+
+* **karma-runner:** If you used karma to configure your stryker files, that functionality
+has been removed. Please remove your `files` config property
+from stryker.conf.js entirely and let the new git integration
+do it's work.
+
+
+
+
 <a name="0.12.5"></a>
 ## [0.12.5](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.4...stryker-karma-runner@0.12.5) (2018-03-22)
 
