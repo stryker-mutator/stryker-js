@@ -2,10 +2,11 @@ import * as log4js from 'log4js';
 import { TestRunner, TestResult, TestStatus, RunStatus, RunResult, RunnerOptions, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
 import * as karma from 'karma';
 import * as rawCoverageReporter from './RawCoverageReporter';
-import { KARMA_CONFIG } from './configKeys';
+import { KARMA_CONFIG, KARMA_CONFIG_FILE } from './configKeys';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from './TestHooksMiddleware';
 import { touchSync } from './utils';
 import { setGlobalLogLevel } from 'log4js';
+import KarmaConfigReader from './KarmaConfigReader';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   coverageReporter?: { type: string, dir?: string, subdir?: string };
@@ -58,7 +59,8 @@ export default class KarmaTestRunner implements TestRunner {
 
   constructor(private options: RunnerOptions) {
     setGlobalLogLevel(options.strykerOptions.logLevel || 'info');
-    let karmaConfig = this.configureTestRunner(options.strykerOptions[KARMA_CONFIG]);
+    let karmaConfig = this.readConfig(options);
+    karmaConfig = this.configureTestRunner(karmaConfig);
     karmaConfig = this.configureCoverageIfEnabled(karmaConfig);
     karmaConfig = this.configureProperties(karmaConfig);
     karmaConfig = this.configureTestHooksMiddleware(karmaConfig);
@@ -75,6 +77,10 @@ export default class KarmaTestRunner implements TestRunner {
     this.listenToBrowserError();
 
     this.server.start();
+  }
+
+  private readConfig(options: RunnerOptions): ConfigOptions {
+    return Object.assign({}, new KarmaConfigReader(options.strykerOptions[KARMA_CONFIG_FILE]).read(), options.strykerOptions[KARMA_CONFIG]);
   }
 
   init(): Promise<void> {

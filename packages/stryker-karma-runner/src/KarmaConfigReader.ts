@@ -9,7 +9,7 @@ export default class KarmaConfigReader {
 
   private readonly log: log4js.Logger;
 
-  constructor(private karmaConfigFile: string) {
+  constructor(private karmaConfigFile: string | undefined) {
     if (this.karmaConfigFile) {
       this.karmaConfigFile = path.resolve(this.karmaConfigFile);
     }
@@ -21,7 +21,7 @@ export default class KarmaConfigReader {
       this.log.info('Importing config from "%s"', this.karmaConfigFile);
       try {
         this.validateConfig();
-        return this.readConfig();
+        return this.readConfig(this.karmaConfigFile);
       } catch (error) {
         this.log.error(`Could not read karma configuration from ${this.karmaConfigFile}.`, error);
       }
@@ -34,10 +34,10 @@ export default class KarmaConfigReader {
     this.parseNativeKarmaConfig();
   }
 
-  private readConfig(): karma.ConfigOptions {
+  private readConfig(karmaConfigFile: string): karma.ConfigOptions {
     // We cannot delegate config reading to karma's config reader, because we cannot serialize the result to child processes
     // It results in: TypeError: Serializing native function: bound configure
-    const configModule = requireModule(this.karmaConfigFile);
+    const configModule = requireModule(karmaConfigFile);
     const config: karma.ConfigOptions = new Config();
     configModule(config);
     return config;

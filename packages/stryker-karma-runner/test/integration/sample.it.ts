@@ -1,6 +1,5 @@
 import { TestStatus } from 'stryker-api/test_runner';
 import { Config } from 'stryker-api/config';
-import KarmaConfigEditor from '../../src/KarmaConfigEditor';
 import * as path from 'path';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expect } from 'chai';
@@ -11,7 +10,6 @@ describe('Sample project', function () {
   it('should be able to run karma', async () => {
     const options = new Config();
     options.karmaConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js');
-    new KarmaConfigEditor().edit(options);
     const runner = new KarmaTestRunner({ port: 9892, strykerOptions: options, fileNames: [] });
     await runner.init();
     const result = await runner.run({});
