@@ -24,7 +24,7 @@ describe('JestTestRunner', () => {
     strykerOptions.set({ jest: { config: { property: 'value' }}});
 
     jestTestRunner = new JestTestRunner({
-      files: [],
+      fileNames: [],
       port: 0,
       strykerOptions
     });
