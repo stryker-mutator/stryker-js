@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.14.0"></a>
+# [0.14.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.13.0...stryker-karma-runner@0.14.0) (2018-04-06)
+
+
+### Features
+
+* **Complex karma config:** allow complex karma config ([51263d3](https://github.io/stryker-mutator/stryker/commit/51263d3))
+
+
+
+
 <a name="0.13.0"></a>
 # [0.13.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.5...stryker-karma-runner@0.13.0) (2018-04-04)
 
