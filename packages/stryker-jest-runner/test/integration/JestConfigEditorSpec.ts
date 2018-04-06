@@ -109,6 +109,19 @@ describe('Integration JestConfigEditor', () => {
     });
   });
 
+  it('should load the default Jest configuration if there is no package.json config or jest.config.js', () => {
+    getProjectRootStub.returns(path.join(process.cwd(), 'testResources', 'exampleProjectWithDefaultJestConfig'));
+
+    jestConfigEditor.edit(config);
+
+    expect(config.jest.config).to.deep.equal({
+      bail: false,
+      collectCoverage: false,
+      testResultsProcessor: undefined,
+      verbose: false,
+    });
+  });
+
   it('should return with an error when an invalid project is specified', () => {
     const project = 'invalidProject';
     config.set({ jest: { project } });
