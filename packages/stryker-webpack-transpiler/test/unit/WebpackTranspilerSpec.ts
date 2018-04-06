@@ -75,10 +75,11 @@ describe('WebpackTranspiler', () => {
     expect(webpackCompilerStub.emit).calledOnce;
   });
 
-  it('should return a successResult with the bundled files on success', async () => {
+  it('should return all files (input and output) on success', async () => {
     webpackTranspiler = new WebpackTranspiler({ config, produceSourceMaps: false });
-    const transpiledFiles = await webpackTranspiler.transpile([]);
-    expect(transpiledFiles).to.deep.equal([exampleBundleFile]);
+    const input = new File('input.js', '');
+    const transpiledFiles = await webpackTranspiler.transpile([input]);
+    expect(transpiledFiles).to.deep.equal([input, exampleBundleFile]);
   });
 
   it('should return a error result when an error occurred', async () => {
