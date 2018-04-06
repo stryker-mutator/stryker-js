@@ -1,7 +1,9 @@
 <a name="0.6.0"></a>
 # [0.6.0](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.5.1...v0.6.0) (2018-04-06)
 
+### Features
 
+* **jest-config:** fallback to default Jest config if it's not overridden ([#42](https://github.com/stryker-mutator/stryker-jest-runner/issues/42)) ([72b542a](https://github.com/stryker-mutator/stryker-jest-runner/commit/72b542a))
 
 <a name="0.5.1"></a>
 ## [0.5.1](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.5.0...v0.5.1) (2018-03-02)
