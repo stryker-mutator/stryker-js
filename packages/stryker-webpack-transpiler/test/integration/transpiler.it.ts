@@ -10,10 +10,10 @@ describe('Webpack transpiler', function () {
   this.timeout(10000);
 
   let transpilerConfig: TranspilerOptions;
-  
+
   beforeEach(() => {
     transpilerConfig = { produceSourceMaps: false, config: new Config };
-    transpilerConfig.config.set({ webpack: {}});
+    transpilerConfig.config.set({ webpack: {} });
   });
 
   function readFiles(): File[] {
@@ -23,21 +23,21 @@ describe('Webpack transpiler', function () {
   }
 
   it('should be able to transpile the "gettingStarted" sample', async () => {
-    transpilerConfig.config.set({ webpack: { configFile: path.join(getProjectRoot('gettingStarted'), 'webpack.config.js') }});
+    transpilerConfig.config.set({ webpack: { configFile: path.join(getProjectRoot('gettingStarted'), 'webpack.config.js') } });
     const sut = new WebpackTranspiler(transpilerConfig);
     const files = readFiles();
 
     const transpiledFiles = await sut.transpile(files);
-    expect(transpiledFiles).lengthOf(1);
+    expect(transpiledFiles).lengthOf(3); // input + output
   });
 
   it('should be able to transpile "zeroConfig" sample without a Webpack config file', async () => {
-    transpilerConfig.config.set({ webpack: { context: getProjectRoot('zeroConfig') }});
+    transpilerConfig.config.set({ webpack: { context: getProjectRoot('zeroConfig') } });
     const sut = new WebpackTranspiler(transpilerConfig);
     const files = readFiles();
 
     const transpiledFiles = await sut.transpile(files);
-    expect(transpiledFiles).lengthOf(1);
+    expect(transpiledFiles).lengthOf(3); // input + output
   });
 });
 
