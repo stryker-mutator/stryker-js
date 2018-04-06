@@ -1,19 +1,15 @@
 module.exports = function(config) {
   config.set({
-    files: [
-      '!src/**/*.ts',
-
-      { pattern: 'src/**/*.ts', included: false, mutated: true },
-
-      // Exclude all .d.ts files
-      '!**/*.d.ts',
-
-      // Exclude interface and index file
-      '!./src/configLoaders/JestConfiguration.ts',
-      '!./src/index.ts',
-
-      '!./test/integration/**/*'
+    mutate: [
+      'src/**/*.ts',
+      '!src/index.ts'
     ],
+    mochaOptions: {
+      files: [
+        'test/helpers/**/*.js',
+        'test/unit/**/*.js'
+      ]
+    },
     testRunner: 'mocha',
     testFramework: 'mocha',
     mutator: 'typescript',

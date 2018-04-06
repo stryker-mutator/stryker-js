@@ -39,7 +39,7 @@ describe('Integration StrykerJestRunner', function () {
     jestConfigEditor = new JestConfigEditor();
 
     runOptions = {
-      files: [],
+      fileNames: [],
       port: 0,
       strykerOptions: new Config
     };
