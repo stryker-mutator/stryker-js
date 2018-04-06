@@ -13,10 +13,10 @@ export default class JestConfigEditor implements ConfigEditor {
     // If there is no Jest property on the Stryker config create it
     strykerConfig.jest = strykerConfig.jest || {};
 
-    // When no project is set set it to 'default'
+    // When no project is set, set it to 'default'
     strykerConfig.jest.project = strykerConfig.jest.project || DEFAULT_PROJECT_NAME;
 
-    // When no config property is set load the configuration with the project type
+    // When no config property is set, load the configuration with the project type
     strykerConfig.jest.config = strykerConfig.jest.config || this.getConfigLoader(strykerConfig.jest.project).loadConfig();
 
     // Override some of the config properties to optimise Jest for Stryker

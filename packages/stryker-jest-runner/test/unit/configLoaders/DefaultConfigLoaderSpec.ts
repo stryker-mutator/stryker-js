@@ -38,13 +38,6 @@ describe('DefaultJestConfigLoader', () => {
     });
   });
 
-  it('should return an error when no Jest configuration is present in neither jest.config.js or package.json', () => {
-    requireStub.throws(Error('ENOENT: no such file or directory, open jest.config.js'));
-    fsStub.readFileSync.returns('{ "name": "dummy", "version": "0.0.1", "description": "Dummy package.json without jest property"}');
-
-    expect(() => defaultConfigLoader.loadConfig()).to.throw(Error, 'Could not read Jest configuration, please provide a jest.config.js file or a jest config in your package.json');
-  });
-
   it('should fallback and load the Jest configuration from the package.json when jest.config.js is not present in the project', () => {
     requireStub.throws(Error('ENOENT: no such file or directory, open package.json'));
     const config = defaultConfigLoader.loadConfig();
@@ -53,6 +46,13 @@ describe('DefaultJestConfigLoader', () => {
     expect(config).to.deep.equal({
       exampleProperty: 'examplePackageJsonValue'
     });
+  });
+
+  it('should load the default Jest configuration if there is no package.json config or jest.config.js', () => {
+    requireStub.throws(Error('ENOENT: no such file or directory, open package.json'));
+    fsStub.readFileSync.returns('{ }'); // note, no `jest` key here!
+    const config = defaultConfigLoader.loadConfig();
+    expect(config).to.deep.equal({});
   });
 });
 

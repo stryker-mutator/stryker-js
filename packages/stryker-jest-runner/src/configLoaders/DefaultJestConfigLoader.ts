@@ -17,11 +17,7 @@ export default class DefaultJestConfigLoader implements JestConfigLoader {
   }
 
   public loadConfig(): JestConfiguration {
-    const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson();
-
-    if (!jestConfig) {
-      throw new Error('Could not read Jest configuration, please provide a jest.config.js file or a jest config in your package.json');
-    }
+    const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson() || {};
 
     return jestConfig;
   }
