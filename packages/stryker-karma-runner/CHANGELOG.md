@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.14.1"></a>
+## [0.14.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.14.0...stryker-karma-runner@0.14.1) (2018-04-06)
+
+
+### Bug Fixes
+
+* **Plugins:** don't override default karma plugins ('karma-*') ([#680](https://github.io/stryker-mutator/stryker/issues/680)) ([0c97842](https://github.io/stryker-mutator/stryker/commit/0c97842)), closes [#679](https://github.io/stryker-mutator/stryker/issues/679)
+
+
+
+
 <a name="0.14.0"></a>
 # [0.14.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.13.0...stryker-karma-runner@0.14.0) (2018-04-06)
 
