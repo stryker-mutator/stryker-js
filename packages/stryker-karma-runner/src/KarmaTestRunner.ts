@@ -167,18 +167,25 @@ export default class KarmaTestRunner implements TestRunner {
     karmaConfig.files.unshift({ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }); // Add a custom hooks file to provide hooks
     const middleware: string[] = (karmaConfig as any).middleware || ((karmaConfig as any).middleware = []);
     middleware.unshift(TestHooksMiddleware.name);
-    karmaConfig.plugins = karmaConfig.plugins || [];
-    karmaConfig.plugins.push({
-      [`middleware:${TestHooksMiddleware.name}`]: ['value', this.testHooksMiddleware.handler()]
-    });
+    this.addPlugin(karmaConfig, { [`middleware:${TestHooksMiddleware.name}`]: ['value', this.testHooksMiddleware.handler()] });
     touchSync(TEST_HOOKS_FILE_NAME); // Make sure it exists so karma doesn't log a warning
     return karmaConfig;
+  }
+
+  /**
+   * Adds the plugin to given karma configuration with respect to the karma default
+   * @param karmaConfig The karma configuration
+   * @param karmaPlugin The karma plugin to add
+   */
+  private addPlugin(karmaConfig: ConfigOptions, karmaPlugin: any) {
+    karmaConfig.plugins = karmaConfig.plugins || ['karma-*'];
+    karmaConfig.plugins.push(karmaPlugin);
   }
 
   private configureCoverageIfEnabled(karmaConfig: ConfigOptions) {
     if (this.options.strykerOptions.coverageAnalysis !== 'off') {
       this.configureCoverageReporters(karmaConfig);
-      this.configureCoveragePlugin(karmaConfig);
+      this.addPlugin(karmaConfig, rawCoverageReporter);
     }
     return karmaConfig;
   }
@@ -188,13 +195,6 @@ export default class KarmaTestRunner implements TestRunner {
       karmaConfig.reporters = [];
     }
     karmaConfig.reporters.push('rawCoverage');
-  }
-
-  private configureCoveragePlugin(karmaConfig: ConfigOptions) {
-    if (!karmaConfig.plugins) {
-      karmaConfig.plugins = ['karma-*'];
-    }
-    karmaConfig.plugins.push(rawCoverageReporter);
   }
 
   private configureTestRunner(overrides: ConfigOptions) {

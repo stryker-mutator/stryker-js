@@ -80,6 +80,45 @@ describe('KarmaTestRunner', () => {
       }));
     });
 
+    it('should configure TestHooksMiddleware', () => {
+      const karmaConfig: ConfigOptions = {
+        browserNoActivityTimeout: 100,
+        basePath: '../',
+        autoWatch: true,
+        singleRun: true,
+        detached: true,
+        plugins: []
+      };
+      options.strykerOptions.coverageAnalysis = 'off';
+      options.strykerOptions.karmaConfig = karmaConfig;
+      new KarmaTestRunner(options);
+      expect(karma.Server).to.have.been.calledWith(sinon.match({
+        plugins: [{
+          ['middleware:TestHooksMiddleware']: ['value', sinon.match.func]
+        }],
+        middleware: ['TestHooksMiddleware']
+      }));
+    });
+
+    it('should add "karma-*" as plugin if karma config did not already have a `plugins` section', () => {
+      const karmaConfig: ConfigOptions = {
+        browserNoActivityTimeout: 100,
+        basePath: '../',
+        autoWatch: true,
+        singleRun: true,
+        detached: true
+      };
+      options.strykerOptions.coverageAnalysis = 'off';
+      options.strykerOptions.karmaConfig = karmaConfig;
+      new KarmaTestRunner(options);
+      expect(karma.Server).to.have.been.calledWith(sinon.match({
+        plugins: ['karma-*', {
+          ['middleware:TestHooksMiddleware']: ['value', sinon.match.func]
+        }],
+        middleware: ['TestHooksMiddleware']
+      }));
+    });
+
     describe('and no testFramework is supplied', () => {
       beforeEach(() => sut = new KarmaTestRunner(options));
 
