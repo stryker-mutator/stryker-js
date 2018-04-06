@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.3.0...stryker-webpack-transpiler@0.3.1) (2018-04-06)
+
+
+### Bug Fixes
+
+* **Input files:** pass through all input files ([#682](https://github.com/stryker-mutator/stryker/issues/682)) ([742ad0a](https://github.com/stryker-mutator/stryker/commit/742ad0a))
+
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.2.0...stryker-webpack-transpiler@0.3.0) (2018-04-04)
 
