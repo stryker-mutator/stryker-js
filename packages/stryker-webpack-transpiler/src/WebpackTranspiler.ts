@@ -25,7 +25,8 @@ export default class WebpackTranspiler implements Transpiler {
     }
 
     this.webpackCompiler.writeFilesToFs(files);
-    return await this.webpackCompiler.emit();
+    const outputFiles = await this.webpackCompiler.emit();
+    return [...files, ...outputFiles];
   }
 
   private getStrykerWebpackConfig(strykerWebpackConfig?: Partial<StrykerWebpackConfig>): StrykerWebpackConfig {
