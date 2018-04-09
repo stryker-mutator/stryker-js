@@ -43,10 +43,10 @@ export default class DashboardReporter implements Reporter {
           });
         }
       } else {
-        this.log.info('Dashboard report is not send when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
+        this.log.info('Dashboard report is not sent when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
       }
     } else {
-      this.log.info('Dashboard report is not send when stryker didn\'t run on buildserver {TRAVIS=true}');
+      this.log.info('Dashboard report is not sent when stryker didn\'t run on buildserver {TRAVIS=true}');
     }
   }
 }
