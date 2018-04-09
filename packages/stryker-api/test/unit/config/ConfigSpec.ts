@@ -7,7 +7,7 @@ describe('Config', () => {
   const defaultThresholds = Object.freeze({ high: 80, low: 60, break: null });
 
   beforeEach(() => {
-    sut = new Config()
+    sut = new Config();
   });
 
   describe('defaults', () => {
