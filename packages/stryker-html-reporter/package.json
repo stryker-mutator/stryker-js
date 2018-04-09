@@ -50,7 +50,7 @@
   "devDependencies": {
     "@types/file-url": "^2.0.0",
     "@types/jsdom": "^11.0.2",
-    "bootstrap": "4.0.0-beta.2",
+    "bootstrap": "4.0.0",
     "highlight.js": "^9.4.0",
     "jquery": "^3.2.1",
     "jsdom": "^9.12.0",
