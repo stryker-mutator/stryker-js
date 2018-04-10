@@ -71,7 +71,7 @@ describe('DashboardReporter', () => {
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not send when stryker didn\'t run on buildserver {TRAVIS=true}');
+    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not sent when stryker didn\'t run on buildserver {TRAVIS=true}');
   });
 
   it('should log a info if it is a pull request', async () => {
@@ -84,7 +84,7 @@ describe('DashboardReporter', () => {
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not send when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
+    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not sent when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
   });
 
   it('should log a warning if the repository is unknown', async () => {

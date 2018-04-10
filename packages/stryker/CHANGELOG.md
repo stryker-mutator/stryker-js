@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.21.1"></a>
+## [0.21.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.21.0...stryker@0.21.1) (2018-04-09)
+
+
+### Bug Fixes
+
+* **Dashboard reporter:** fix typos ([047a370](https://github.com/stryker-mutator/stryker/commit/047a370))
+
+
+
+
 <a name="0.21.0"></a>
 # [0.21.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.20.1...stryker@0.21.0) (2018-04-04)
 
