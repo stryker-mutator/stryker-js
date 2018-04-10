@@ -14,6 +14,7 @@ module.exports = function (config) {
         'test/**/*.ts',
         '!test/**/*.d.ts'
       ],
+      symlinkNodeModules: false,
       mutate: ['src/**/*.ts'],
       coverageAnalysis: 'perTest',
       tsconfigFile: 'tsconfig.json',

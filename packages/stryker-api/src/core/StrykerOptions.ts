@@ -109,6 +109,12 @@ interface StrykerOptions {
   logLevel?: string;
 
   /**
+   * Indicates whether or not to symlink the node_modules folder inside the sandbox folder(s).
+   * Default: true
+   */
+  symlinkNodeModules?: boolean;
+
+  /**
    * Amount of additional time, in milliseconds, the mutation test is allowed to run
    */
   timeoutMs?: number;

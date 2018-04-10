@@ -201,7 +201,7 @@ All `TRAVIS` environment variables are set by Travis for each build. However, yo
 **Command line:** `[--files|-f] src/**/*.js,a.js,test/**/*.js`  
 **Config file:** `files: ['src/**/*.js', '!src/**/index.js', 'test/**/*.js']`  
 **Default value:** result of `git ls-files --others --exclude-standard --cached`  
-**Mandatory**: No  
+**Mandatory:** No  
 **Description:**  
 With `files` you can choose which files should be included in your test runner sandbox. 
 This is normally not needed as it defaults to all files not ignored by git. 
@@ -214,6 +214,25 @@ When using the command line, the list can only contain a comma separated list of
 When using the config file you can provide an array with `string`s
 
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
+
+#### Symlink node modules in the sandbox
+**Command line:** *none*  
+**Config file:** `symlinkNodeModules: true`  
+**Default value:** `true`  
+**Mandatory:** No  
+**Description:**  
+The `symlinkNodeModules` value indicates whether or not Stryker should create a [symbolic link](https://nodejs.org/api/fs.html#fs_fs_symlink_target_path_type_callback) 
+to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave 
+more like your would run the tests yourself in your project directory.
+Only disable this setting if you really know what you are doing.
+
+For example, [Jest](https://facebook.github.io/) expects any plugins to be located at "./node_modules/..."
+in the Sandbox directory. Another example can be running [karma](http://karma-runner.github.io/) tests where
+you specify files from the 'node_modules/angular/...'. Without symlinking the
+node_modules directory this would not be possible.
+
+Stryker will look for the node_modules directory to use in the current basePath (or current working directory) and 
+its parent directories.
 
 #### Plugins  
 **Command line:** `--plugins stryker-html-reporter,stryker-karma-runner`  
