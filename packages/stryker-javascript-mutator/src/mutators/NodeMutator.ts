@@ -1,4 +1,5 @@
 import { types } from 'babel-core';
+import { NodeWithParent } from '../helpers/ParentNode';
 
 /**
  * Represents a class which can mutate parts of an Abstract Syntax Tree.
@@ -19,5 +20,5 @@ export default interface NodeMutator {
    * @param copy A function to create a copy of an object.
    * @returns An array of mutated Nodes.
    */
-  mutate(node: types.Node, copy: <T extends types.Node> (obj: T, deep?: boolean) => T): void | types.Node[];
+  mutate(node: NodeWithParent, copy: <T extends types.Node> (obj: T, deep?: boolean) => T): void | types.Node[];
 }

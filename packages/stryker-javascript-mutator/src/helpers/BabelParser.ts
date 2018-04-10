@@ -2,11 +2,12 @@ import * as babel from 'babel-core';
 import * as babylon from 'babylon';
 import generate from 'babel-generator';
 import { NodePath } from 'babel-traverse';
+import { NodeWithParent } from './ParentNode';
 
 export default class BabelParser {
   static getAst(code: string): babel.types.File {
     let ast: babel.types.File;
-    
+
     const options: babylon.BabylonOptions = {
       sourceType: 'script',
       plugins: [
@@ -28,14 +29,15 @@ export default class BabelParser {
     return ast;
   }
 
-  static getNodes(ast: babel.types.File): babel.types.Node[] {
-    const nodes: babel.types.Node[] = [];
+  static getNodes(ast: babel.types.File): NodeWithParent[] {
+    const nodes: NodeWithParent[] = [];
 
     babel.traverse(ast, {
       enter(path: NodePath<babel.types.Node>) {
         const node = path.node;
+        (node as NodeWithParent).parent = path.parent;
         Object.freeze(node);
-        nodes.push(node);
+        nodes.push((node as NodeWithParent));
       }
     });
 
