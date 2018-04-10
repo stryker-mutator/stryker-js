@@ -98,7 +98,7 @@ export default class Sandbox {
             }
           });
       } else {
-        this.log.warn(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and it's parent directories`);
+        this.log.warn(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);
       }
     }
   }
