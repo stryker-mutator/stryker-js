@@ -5,12 +5,12 @@ import * as mkdirp from 'mkdirp';
 import { RunResult } from 'stryker-api/test_runner';
 import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
-import { wrapInClosure } from './utils/objectUtils';
+import { wrapInClosure, normalizeWhiteSpaces } from './utils/objectUtils';
 import TestRunnerDecorator from './isolated-runner/TestRunnerDecorator';
 import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import { TempFolder } from './utils/TempFolder';
-import { writeFile } from './utils/fileUtils';
+import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
 
@@ -34,6 +34,7 @@ export default class Sandbox {
 
   private async initialize(): Promise<void> {
     await this.fillSandbox();
+    await this.symlinkNodeModulesIfNeeded();
     return this.initializeTestRunner();
   }
 
@@ -78,6 +79,28 @@ export default class Sandbox {
     let copyPromises = this.files
       .map(file => this.fillFile(file));
     return Promise.all(copyPromises);
+  }
+
+  private async symlinkNodeModulesIfNeeded(): Promise<void> {
+    if (this.options.symlinkNodeModules) {
+      // TODO: Change with this.options.basePath when we have it
+      const basePath = process.cwd();
+      const nodeModules = await findNodeModules(basePath);
+      if (nodeModules) {
+        await symlinkJunction(nodeModules, path.join(this.workingFolder, 'node_modules'))
+          .catch((error: NodeJS.ErrnoException) => {
+            if (error.code === 'EEXIST') {
+              this.log.warn(normalizeWhiteSpaces(`Could not symlink "${nodeModules}" in sandbox directory, 
+              it is already created in the sandbox. Please remove the node_modules from your sandbox files. 
+              Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`));
+            } else {
+              this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
+            }
+          });
+      } else {
+        this.log.warn(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);
+      }
+    }
   }
 
   private fillFile(file: File): Promise<void> {

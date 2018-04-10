@@ -19,6 +19,7 @@ export default class Config implements StrykerOptions {
   mutator: string | MutatorDescriptor = 'es5';
   transpilers: string[] = [];
   maxConcurrentTestRunners: number = Infinity;
+  symlinkNodeModules: boolean = true;
   thresholds: MutationScoreThresholds = {
     high: 80,
     low: 60,

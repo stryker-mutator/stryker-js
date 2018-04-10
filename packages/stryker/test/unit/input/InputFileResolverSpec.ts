@@ -10,7 +10,7 @@ import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
 import currentLogMock from '../../helpers/log4jsMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { Mock, mock } from '../../helpers/producers';
+import { Mock, mock, createFileNotFoundError } from '../../helpers/producers';
 import { errorToString, normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
 
 const files = (...namesWithContent: [string, string][]): File[] =>
@@ -84,8 +84,7 @@ describe('InputFileResolver', () => {
     childProcessExecStub.resolves([Buffer.from(`
       deleted/file.js
     `)]);
-    const fileNotFoundError: NodeJS.ErrnoException = new Error('');
-    fileNotFoundError.code = 'ENOENT';
+    const fileNotFoundError = createFileNotFoundError();
     readFileStub.withArgs('deleted/file.js').rejects(fileNotFoundError);
     const result = await sut.resolve();
     expect(result.files).lengthOf(0);
@@ -266,5 +265,4 @@ describe('InputFileResolver', () => {
       expect(actual[index].textContent).eq(expected[index].textContent);
     }
   }
-
 });

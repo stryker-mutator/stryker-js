@@ -204,3 +204,18 @@ export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator')
 
 export const transpiledMutant = (fileName = 'file') =>
   new TranspiledMutant(testableMutant(fileName), transpileResult(), true);
+
+
+export function createFileNotFoundError(): NodeJS.ErrnoException {
+  return createErrnoException('ENOENT');
+}
+
+export function createFileAlreadyExistsError(): NodeJS.ErrnoException {
+  return createErrnoException('EEXIST');
+}
+
+function createErrnoException(errorCode: string) {
+  const fileNotFoundError: NodeJS.ErrnoException = new Error('');
+  fileNotFoundError.code = errorCode;
+  return fileNotFoundError;
+}
