@@ -34,10 +34,10 @@ export default class BabelParser {
 
     babel.traverse(ast, {
       enter(path: NodePath<babel.types.Node>) {
-        const node = path.node;
-        (node as NodeWithParent).parent = path.parent;
+        const node: NodeWithParent = path.node;
+        node.parent = path.parent;
         Object.freeze(node);
-        nodes.push((node as NodeWithParent));
+        nodes.push(node);
       }
     });
 
