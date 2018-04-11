@@ -55,7 +55,7 @@
     "jquery": "^3.2.1",
     "jsdom": "^9.12.0",
     "popper.js": "^1.12.5",
-    "stryker-api": "^0.15.0"
+    "stryker-api": ">=0.15.0 <0.17.0"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",

@@ -47,7 +47,7 @@
   "devDependencies": {
     "@types/babel-generator": "^6.25.1",
     "@types/babylon": "^6.16.2",
-    "stryker-api": "^0.15.0",
+    "stryker-api": ">=0.15.0 <0.17.0",
     "stryker-mutator-specification": "^0.2.2"
   },
   "peerDependencies": {
