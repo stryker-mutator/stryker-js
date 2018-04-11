@@ -52,5 +52,10 @@
   },
   "peerDependencies": {
     "stryker-api": "^0.15.0"
+  },
+  "initStrykerConfig": {
+    "mutate": [
+      "src/**/*.js"
+    ]
   }
 }
