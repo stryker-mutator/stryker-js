@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.6.1"></a>
+## [0.6.1](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.6.0...stryker-javascript-mutator@0.6.1) (2018-04-11)
+
+
+### Bug Fixes
+
+* **Mutate config:** Set default mutate pattern ([#692](https://github.com/stryker-mutator/stryker/issues/692)) ([bd597e7](https://github.com/stryker-mutator/stryker/commit/bd597e7))
+
+
+
+
 <a name="0.6.0"></a>
 # [0.6.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.5.0...stryker-javascript-mutator@0.6.0) (2018-04-11)
 
