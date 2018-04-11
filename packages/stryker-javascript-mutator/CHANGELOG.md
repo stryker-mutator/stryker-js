@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.5.0...stryker-javascript-mutator@0.6.0) (2018-04-11)
+
+
+### Bug Fixes
+
+* Support stryker-api 0.16.0 ([#691](https://github.com/stryker-mutator/stryker/issues/691)) ([b2b019d](https://github.com/stryker-mutator/stryker/commit/b2b019d))
+
+
+### Features
+
+* **Mutator:** Add StringLiteral mutator ([#690](https://github.com/stryker-mutator/stryker/issues/690)) ([4d15e02](https://github.com/stryker-mutator/stryker/commit/4d15e02)), closes [#685](https://github.com/stryker-mutator/stryker/issues/685)
+
+
+
+
 <a name="0.5.0"></a>
 # [0.5.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.4.3...stryker-javascript-mutator@0.5.0) (2018-04-04)
 
