@@ -42,7 +42,7 @@ describe('JavaScriptMutator', () => {
 
     const mutants = mutator.mutate(files);
 
-    expect(mutants.length).to.equal(4);
+    expect(mutants.length).to.equal(6);
     expect(mutants).to.deep.include({
       mutatorName: 'IfStatement',
       fileName: 'testFile.jsx',
@@ -95,7 +95,7 @@ describe('JavaScriptMutator', () => {
 
     const mutants = mutator.mutate(files);
 
-    expect(mutants.length).to.equal(4);
+    expect(mutants.length).to.equal(5);
     expect(mutants).to.deep.include({
       mutatorName: 'IfStatement',
       fileName: 'testFile.js',
