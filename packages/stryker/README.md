@@ -48,7 +48,7 @@ The following is an example `stryker.conf.js` file:
 module.exports = function(config){
   config.set({
     mutate: [
-      'src/**/*.js'
+      'src/**/*.js',
       '!src/index.js'
     ],
     testFramework: 'mocha',
