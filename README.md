@@ -22,7 +22,7 @@ For an introduction to mutation testing and Stryker's features, see [stryker-mut
 
 ## Getting started
 
-For the quickstart, see [quickstart](https://stryker-mutator.io/quickstart.html/).
+For the quickstart, see [quickstart](https://stryker-mutator.io/quickstart.html).
 
 ## Usage
 
