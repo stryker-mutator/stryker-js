@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.22.1"></a>
+## [0.22.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.22.0...stryker@0.22.1) (2018-04-13)
+
+
+### Bug Fixes
+
+* **Dependencies:** set correct stryker-api dependency ([#694](https://github.com/stryker-mutator/stryker/issues/694)) ([e333fd9](https://github.com/stryker-mutator/stryker/commit/e333fd9))
+
+
+
+
 <a name="0.22.0"></a>
 # [0.22.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.21.1...stryker@0.22.0) (2018-04-11)
 
