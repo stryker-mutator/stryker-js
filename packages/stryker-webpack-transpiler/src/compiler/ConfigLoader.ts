@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import { Configuration } from 'webpack';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
 import { getLogger, Logger } from 'log4js';
@@ -30,13 +31,13 @@ export default class ConfigLoader {
     return webpackConfig;
   }
 
-  private loaderWebpackConfigFromProjectRoot(configFileLocation: string) {
-    try {
-      return this.loader(path.resolve(configFileLocation));
-    } catch {
-      throw new Error(`Could not load webpack config at "${configFileLocation}", file not found.`);
-    }
+private loaderWebpackConfigFromProjectRoot(configFileLocation: string) {
+  if (!fs.existsSync(path.resolve(configFileLocation))) {
+    throw new Error(`Could not load webpack config at "${configFileLocation}", file not found.`);
   }
+
+  return this.loader(path.resolve(configFileLocation));
+}
 
   private configureSilent(webpackConfig: Configuration) {
     if (webpackConfig.plugins) {
