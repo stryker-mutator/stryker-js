@@ -1,6 +1,6 @@
-import { Mutator, Mutant, MutatorFactory } from 'stryker-api/mutant';
-import { File, TextFile, FileKind } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
+import { File } from 'stryker-api/core';
+import { Mutant, Mutator, MutatorFactory } from 'stryker-api/mutant';
 const compiler = require('vue-template-compiler');
 
 export default class VueMutator implements Mutator {
@@ -14,16 +14,12 @@ export default class VueMutator implements Mutator {
 
     inputFiles.forEach(file => {
       if (file.name.endsWith('.vue')) {
-        const script = compiler.parseComponent((file as TextFile).content).script;
+        const script = compiler.parseComponent(file.textContent).script;
         const mutator = this.getVueScriptMutator(script);
-        const vueFile: TextFile = {
-          name: file.name + '.js', /* TODO: Remove this once all mutators understand that vue files are OK to mutate */
-          included: file.included,
-          mutated: file.mutated,
-          transpiled: file.transpiled,
-          kind: FileKind.Text,
-          content: (file as TextFile).content.substring(script.start, script.end)
-        };
+        const vueFile = new File(
+          file.name + '.js', /* TODO: Remove this once all mutators understand that vue files are OK to mutate */
+          file.textContent.substring(script.start, script.end)
+        );
         const vueMutants = mutator.mutate([vueFile]);
         vueMutants.forEach(mutant => {
           mutant.fileName = file.name; /* TODO: Remove this once all mutators understand that vue files are OK to mutate */
