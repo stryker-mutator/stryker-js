@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.4.1"></a>
+## [0.4.1](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.4.0...stryker-babel-transpiler@0.4.1) (2018-04-11)
+
+
+### Bug Fixes
+
+* Support stryker-api 0.16.0 ([#691](https://github.com/stryker-mutator/stryker/issues/691)) ([b2b019d](https://github.com/stryker-mutator/stryker/commit/b2b019d))
+
+
+
+
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.4...stryker-babel-transpiler@0.4.0) (2018-04-04)
+
+
+### Features
+
+* **Transpile files:** use babelrc to determine which files to transpile ([204b47f](https://github.com/stryker-mutator/stryker/commit/204b47f))
+
+
+
+
+<a name="0.3.4"></a>
+## [0.3.4](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.3...stryker-babel-transpiler@0.3.4) (2018-03-22)
+
+
+### Bug Fixes
+
+* **peerDependency:** update stryker-api requirement to ^0.14.0 ([3ce04d4](https://github.com/stryker-mutator/stryker/commit/3ce04d4))
+
+
+
+
+<a name="0.3.3"></a>
+## [0.3.3](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.2...stryker-babel-transpiler@0.3.3) (2018-03-22)
+
+
+
+
+**Note:** Version bump only for package stryker-babel-transpiler
+
+<a name="0.3.2"></a>
+## [0.3.2](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.1...stryker-babel-transpiler@0.3.2) (2018-03-21)
+
+
+
+
+**Note:** Version bump only for package stryker-babel-transpiler
+
 <a name="0.3.1"></a>
 ## [0.3.1](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.3.0...stryker-babel-transpiler@0.3.1) (2018-02-07)
 

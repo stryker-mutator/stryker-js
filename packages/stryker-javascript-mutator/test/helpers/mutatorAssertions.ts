@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { TextFile, FileKind } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
 import JavaScriptMutator from '../../src/JavaScriptMutator';
@@ -16,14 +16,7 @@ export function verifySpecification(specification: (name: string, expectMutation
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
   const javaScriptMutator = new JavaScriptMutator(new Config(), [mutator]);
-  const sourceFile: TextFile = {
-    content: sourceText,
-    included: true,
-    mutated: true,
-    name: 'file.js',
-    transpiled: true,
-    kind: FileKind.Text
-  };
+  const sourceFile = new File('file.js', sourceText);
   const mutants = javaScriptMutator.mutate([sourceFile]);
   expect(mutants).lengthOf(expectedTexts.length);
   const actualMutantTexts = mutants.map(mutant => mutantToString(mutant, sourceText));

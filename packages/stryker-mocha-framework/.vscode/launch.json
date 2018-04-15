@@ -12,6 +12,10 @@
       "args": [
         "test/helpers/**/*.js",
         "test/unit/**/*.js"
+      ],
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
       ]
     },
     {
@@ -22,6 +26,10 @@
       "args": [
         "test/helpers/**/*.js",
         "test/integration/**/*.js"
+      ],
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
       ]
     }
   ]

@@ -3,7 +3,7 @@ import { RunOptions } from 'stryker-api/test_runner';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 
 export type AdapterMessage = RunMessage | StartMessage | EmptyAdapterMessage;
-export type WorkerMessage = ResultMessage | EmptyWorkerMessage;
+export type WorkerMessage = ResultMessage | EmptyWorkerMessage | InitDoneMessage;
 
 export interface ResultMessage {
   kind: 'result';
@@ -21,10 +21,15 @@ export interface StartMessage {
   runnerOptions: IsolatedRunnerOptions;
 }
 
+export interface InitDoneMessage {
+  kind: 'initDone';
+  errorMessage: string | null;
+}
+
 export interface EmptyAdapterMessage {
   kind: 'init' | 'dispose';
 }
 
 export interface EmptyWorkerMessage {
-  kind: 'initDone' | 'disposeDone';
+  kind: 'disposeDone';
 }

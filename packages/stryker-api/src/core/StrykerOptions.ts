@@ -1,5 +1,5 @@
-import InputFileDescriptor from './InputFileDescriptor';
 import MutationScoreThresholds from './MutationScoreThresholds';
+import MutatorDescriptor from './MutatorDescriptor';
 
 interface StrykerOptions {
   // this ensures that custom config for for example 'karma' can be added under the 'karma' key
@@ -19,7 +19,7 @@ interface StrykerOptions {
    * @example
    *     files: ['test/helpers/**\/*.js', 'test/unit/**\/*.js', { pattern: 'src/**\/*.js', included: false }],
    */
-  files?: Array<string | InputFileDescriptor>;
+  files?: string[];
 
   /**
    * A list of globbing expression used for selecting the files that should be mutated.
@@ -49,11 +49,18 @@ interface StrykerOptions {
   testRunner?: string;
 
   /**
-   * The name of the mutant generator to use to generate mutants based on your input file. 
+   * The mutant generator to use to generate mutants based on your input file.
    * This is often dependent on the language of your source files.
-   * For example: 'es5', 'typescript'
+   *
+   * This value can be either a string, or an object with 2 properties:
+   * * `string`: The name of the mutant generator to use. For example: 'javascript', 'typescript'
+   * * { name: 'name', excludedMutations: ['mutationType1', 'mutationType2'] }:
+   *    * The `name` property is mandatory and contains the name of the mutant generator to use.
+   *    * For example: 'javascript', 'typescript'
+   *    * The `excludedMutations` property is mandatory and contains the names of the specific mutation types to exclude from testing.
+   *    * The values must match the given names of the mutations. For example: 'BinaryExpression', 'BooleanSubstitution', etc.
    */
-  mutator?: string;
+  mutator?: string | MutatorDescriptor;
 
   /**
    * The names of the transpilers to use (in order). Default: [].
@@ -100,6 +107,12 @@ interface StrykerOptions {
    * The log4js log level. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
    */
   logLevel?: string;
+
+  /**
+   * Indicates whether or not to symlink the node_modules folder inside the sandbox folder(s).
+   * Default: true
+   */
+  symlinkNodeModules?: boolean;
 
   /**
    * Amount of additional time, in milliseconds, the mutation test is allowed to run

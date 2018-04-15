@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { getLogger } from 'log4js';
 import { RunResult, CoverageCollection, StatementMap, CoveragePerTestResult, CoverageResult } from 'stryker-api/test_runner';
-import { StrykerOptions, File, TextFile } from 'stryker-api/core';
+import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
@@ -31,8 +31,8 @@ export default class MutantTestMatcher {
   private readonly log = getLogger(MutantTestMatcher.name);
 
   constructor(
-    private mutants: Mutant[],
-    private files: File[],
+    private mutants: ReadonlyArray<Mutant>,
+    private filesToMutate: ReadonlyArray<File>,
     private initialRunResult: RunResult,
     private sourceMapper: SourceMapper,
     private coveragePerFile: CoverageMapsByFile,
@@ -56,7 +56,7 @@ export default class MutantTestMatcher {
       testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.Success));
     } else if (!this.initialRunResult.coverage) {
       this.log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
-      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.FailedButAlreadyReporter));
+      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.FailedButAlreadyReported));
     } else {
       testableMutants.forEach(testableMutant => this.enrichWithCoveredTests(testableMutant));
     }
@@ -118,7 +118,7 @@ export default class MutantTestMatcher {
   }
 
   private createTestableMutants(): TestableMutant[] {
-    const sourceFiles = this.files.filter(file => file.mutated).map(file => new SourceFile(file as TextFile));
+    const sourceFiles = this.filesToMutate.map(file => new SourceFile(file));
     return filterEmpty(this.mutants.map((mutant, index) => {
       const sourceFile = sourceFiles.find(file => file.name === mutant.fileName);
       if (sourceFile) {

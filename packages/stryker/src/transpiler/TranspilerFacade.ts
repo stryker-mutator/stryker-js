@@ -1,5 +1,6 @@
 import { File } from 'stryker-api/core';
-import { Transpiler, TranspileResult, TranspilerOptions, TranspilerFactory } from 'stryker-api/transpile';
+import { Transpiler, TranspilerOptions, TranspilerFactory } from 'stryker-api/transpile';
+import StrykerError from '../utils/StrykerError';
 
 class NamedTranspiler {
   constructor(public name: string, public transpiler: Transpiler) { }
@@ -9,40 +10,29 @@ export default class TranspilerFacade implements Transpiler {
 
   private innerTranspilers: NamedTranspiler[];
 
-  constructor(options: TranspilerOptions, additionalTranspiler?: { name: string, transpiler: Transpiler }) {
+  constructor(options: TranspilerOptions) {
     this.innerTranspilers = options.config.transpilers
       .map(transpilerName => new NamedTranspiler(transpilerName, TranspilerFactory.instance().create(transpilerName, options)));
-    if (additionalTranspiler) {
-      this.innerTranspilers.push(new NamedTranspiler(additionalTranspiler.name, additionalTranspiler.transpiler));
-    }
   }
 
-  public transpile(files: File[]): Promise<TranspileResult> {
-    return this.performTranspileChain(this.createPassThruTranspileResult(files));
+  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+    return this.performTranspileChain(files);
   }
 
   private async performTranspileChain(
-    currentResult: TranspileResult,
+    input: ReadonlyArray<File>,
     remainingChain: NamedTranspiler[] = this.innerTranspilers.slice()
-  ): Promise<TranspileResult> {
-    const next = remainingChain.shift();
-    if (next) {
-      const nextResult = await next.transpiler.transpile(currentResult.outputFiles);
-      if (nextResult.error) {
-        nextResult.error = `Execute ${next.name}: ${nextResult.error}`;
-        return nextResult;
-      } else {
-        return this.performTranspileChain(nextResult, remainingChain);
-      }
+  ): Promise<ReadonlyArray<File>> {
+    const current = remainingChain.shift();
+    if (current) {
+      const output = await current.transpiler.transpile(input)
+        .catch(error => {
+          throw new StrykerError(`An error occurred in transpiler "${current.name}"`, error);
+        });
+      return this.performTranspileChain(output, remainingChain);
     } else {
-      return currentResult;
+      return input;
     }
   }
 
-  private createPassThruTranspileResult(input: File[]): TranspileResult {
-    return {
-      error: null,
-      outputFiles: input
-    };
-  }
 }

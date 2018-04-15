@@ -2,5 +2,5 @@ import { File } from '../../core';
 import Mutant from './Mutant';
 
 export default interface Mutator {
-  mutate(inputFiles: File[]): Mutant[];
+  mutate(inputFiles: ReadonlyArray<File>): ReadonlyArray<Mutant>;
 }

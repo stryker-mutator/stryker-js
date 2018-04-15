@@ -1,12 +1,13 @@
 {
   "name": "stryker-webpack-transpiler",
-  "version": "0.1.4",
-  "description": "[preview] A plugin for Webpack-based projects using Stryker",
+  "version": "0.3.2",
+  "description": "A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
     "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
     "prebuild": "npm run clean",
     "build": "tsc",
+    "start": "tsc -w",
     "postbuild": "tslint -p tsconfig.json",
     "test": "if-node-version \">4\" nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 84 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
     "posttest": "if-node-version \">4\" npm run stryker",
@@ -40,12 +41,12 @@
     "@types/memory-fs": "^0.3.0",
     "@types/webpack": "^3.0.13",
     "raw-loader": "^0.5.1",
-    "stryker-api": "^0.13.0",
-    "webpack": "^3.7.1"
+    "stryker-api": "^0.16.0",
+    "webpack": "^4.2.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.13.0",
-    "webpack": ">= 2.0.0"
+    "stryker-api": ">=0.15.0 <0.17.0",
+    "webpack": ">=2.0.0"
   },
   "dependencies": {
     "enhanced-resolve": "^4.0.0-beta.4",

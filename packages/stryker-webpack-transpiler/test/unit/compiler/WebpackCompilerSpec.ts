@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { TextFile } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { createFakeWebpackConfig, createTextFile, createWebpackMock, Mock, createMockInstance, createStats, createChunk } from '../../helpers/producers';
 import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
 import InputFileSystem from '../../../src/fs/InputFileSystem';
@@ -63,11 +63,11 @@ describe('WebpackCompiler', () => {
       outputFileSystemMock.collectFiles.returns(expectedFiles);
       sortStub.returns(expectedFiles);
       const actualResult = await sut.emit();
-      
+
       expect(actualResult).eq(expectedFiles);
       expect(outputFileSystemMock.collectFiles).calledWith();
     });
-    
+
     it('should sort the files based on given chunks', async () => {
       const expectedFiles = [{ name: 'foobar' }];
       const expectedResult = ['1', '2', '3'];
@@ -109,7 +109,7 @@ describe('WebpackCompiler', () => {
     });
   });
 
-  function createFakeTextFileArray(): Array<TextFile> {
+  function createFakeTextFileArray(): File[] {
     return [
       createTextFile('path/to/awesome/directory/file1'),
       createTextFile('path/to/awesome/directory/file2'),

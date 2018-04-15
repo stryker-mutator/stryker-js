@@ -12,6 +12,11 @@ module.exports = function (config) {
     transpilers: [
       'typescript'
     ],
+    mochaOptions: {
+      files: [
+        'test/**/*.js'
+      ]
+    },
     port: 9264
   });
 };

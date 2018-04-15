@@ -9,8 +9,10 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
 
   onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
-    this.timer = new Timer();
-    this.intervalReference = setInterval(() => this.render(), 10000);
+    if (matchedMutants.length) {
+      this.timer = new Timer();
+      this.intervalReference = setInterval(() => this.render(), 10000);
+    }
   }
 
   onAllMutantsTested(): void {

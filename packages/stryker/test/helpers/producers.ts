@@ -1,11 +1,10 @@
 import { TestResult, TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { Mutant } from 'stryker-api/mutant';
-import { TranspileResult } from 'stryker-api/transpile';
 import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
-import { MutationScoreThresholds, File, Location, TextFile, BinaryFile, FileKind, WebFile, FileDescriptor } from 'stryker-api/core';
+import { MutationScoreThresholds, File, Location } from 'stryker-api/core';
 import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import TranspiledMutant from '../../src/TranspiledMutant';
@@ -13,14 +12,15 @@ import { Logger } from 'log4js';
 import { FileCoverageData } from 'istanbul-lib-coverage';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
+import TranspileResult from '../../src/transpiler/TranspileResult';
 
 export type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;
 };
 
-export function mock<T>(constructorFn: { new(...args: any[]): T; }): Mock<T>;
-export function mock<T>(constructorFn: any): Mock<T>;
-export function mock<T>(constructorFn: { new(...args: any[]): T; }): Mock<T> {
+export type Constructor<T> = Function & { prototype: T };
+
+export function mock<T>(constructorFn: Constructor<T>): Mock<T> {
   return sinon.createStubInstance(constructorFn) as Mock<T>;
 }
 
@@ -44,6 +44,11 @@ function factory<T>(defaults: T) {
 }
 
 /**
+ * A 1x1 png base64 encoded
+ */
+export const PNG_BASE64_ENCODED = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=';
+
+/**
  * Use this factory method to create deep test data
  * @param defaults 
  */
@@ -65,14 +70,6 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   status: MutantStatus.Killed,
   range: [0, 0]
 }));
-
-export const fileDescriptor = factory<FileDescriptor>({
-  name: 'fileName',
-  included: true,
-  mutated: true,
-  transpiled: true,
-  kind: FileKind.Text
-});
 
 export const mutant = factoryMethod<Mutant>(() => ({
   mutatorName: 'foobarMutator',
@@ -99,15 +96,6 @@ export const logger = (): Mock<Logger> => {
     fatal: sinon.stub()
   };
 };
-
-export const textFile = factory<TextFile>({
-  name: 'file.js',
-  content: '',
-  mutated: true,
-  included: true,
-  transpiled: true,
-  kind: FileKind.Text
-});
 
 export const mappedLocation = factoryMethod<MappedLocation>(() => ({
   fileName: 'file.js',
@@ -167,33 +155,6 @@ export const runResult = factoryMethod<RunResult>(() => ({
   status: RunStatus.Complete
 }));
 
-export const file = factory<File>({
-  name: 'file.js',
-  content: '',
-  mutated: true,
-  included: true,
-  transpiled: true,
-  kind: FileKind.Text
-});
-
-export const webFile = factory<WebFile>({
-  name: 'http://example.org',
-  mutated: false,
-  included: true,
-  transpiled: false,
-  kind: FileKind.Web
-});
-
-export const binaryFile = factory<BinaryFile>({
-  name: 'file.js',
-  content: Buffer.from(''),
-  mutated: true,
-  included: true,
-  transpiled: false,
-  kind: FileKind.Binary
-});
-
-
 export const mutationScoreThresholds = factory<MutationScoreThresholds>({
   high: 80,
   low: 60,
@@ -221,20 +182,40 @@ export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.to
   };
 }
 
+export function file() {
+  return new File('', '');
+}
+
 export const transpileResult = factoryMethod<TranspileResult>(() => ({
   error: null,
   outputFiles: [file(), file()]
 }));
 
-export const sourceFile = () => new SourceFile(textFile());
+export const sourceFile = () => new SourceFile(file());
 
-export const testableMutant = (fileName = 'file') => new TestableMutant('1337', mutant({
+export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator') => new TestableMutant('1337', mutant({
+  mutatorName,
   range: [12, 13],
   replacement: '-',
   fileName
 }), new SourceFile(
-  textFile({ name: fileName, content: 'const a = 4 + 5' })
+  new File(fileName, Buffer.from('const a = 4 + 5'))
 ));
 
 export const transpiledMutant = (fileName = 'file') =>
   new TranspiledMutant(testableMutant(fileName), transpileResult(), true);
+
+
+export function createFileNotFoundError(): NodeJS.ErrnoException {
+  return createErrnoException('ENOENT');
+}
+
+export function createFileAlreadyExistsError(): NodeJS.ErrnoException {
+  return createErrnoException('EEXIST');
+}
+
+function createErrnoException(errorCode: string) {
+  const fileNotFoundError: NodeJS.ErrnoException = new Error('');
+  fileNotFoundError.code = errorCode;
+  return fileNotFoundError;
+}

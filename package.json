@@ -7,7 +7,7 @@
     "@types/escodegen": "0.0.6",
     "@types/esprima": "^2.1.31",
     "@types/estree": "0.0.38",
-    "@types/execa": "^0.8.0",
+    "@types/execa": "^0.9.0",
     "@types/glob": "^5.0.29",
     "@types/istanbul": "^0.4.29",
     "@types/karma": "^1.7.2",
@@ -23,7 +23,7 @@
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^3.4.0",
-    "execa": "^0.9.0",
+    "execa": "^0.10.0",
     "glob": "^7.1.1",
     "if-node-version": "^1.1.1",
     "jasmine": "^2.8.0",
@@ -37,18 +37,16 @@
     "sinon-chai": "^3.0.0",
     "source-map-support": "^0.5.1",
     "tslint": "^5.9.1",
-    "typescript": "^2.7.1"
+    "typescript": "~2.7.1"
   },
   "scripts": {
     "clean": "lerna run prebuild",
     "postinstall": "lerna bootstrap && link-parent-bin",
-    "prebuild": "npm run clean-integration-test",
     "build": "lerna run build",
     "pretest": "npm run build",
     "test": "lerna run test",
     "posttest": "cd integrationTest && npm i && npm t && cd ..",
     "clean-integration-test": "node tasks/cleanIntegrationTest.js",
-    "start": "concurrently \"tsc -w -p integrationTest\" \"tsc -w -p packages/stryker\" \"tsc -w -p packages/stryker-api\" \"tsc -w -p packages/stryker-jasmine\" \"tsc -w -p packages/stryker-karma-runner\" \"tsc -w -p packages/stryker-mocha-runner\" \"tsc -w packages/stryker-mocha-framework\"",
     "test:stryker": "lerna run test --scope stryker",
     "test:stryker-api": "lerna run test --scope stryker",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"

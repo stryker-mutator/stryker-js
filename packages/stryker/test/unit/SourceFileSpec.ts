@@ -1,6 +1,6 @@
 import { expect } from 'chai';
+import { File } from 'stryker-api/core';
 import SourceFile from '../../src/SourceFile';
-import { textFile } from '../helpers/producers';
 
 
 const content = `
@@ -17,7 +17,7 @@ describe('SourceFile', () => {
   let sut: SourceFile;
 
   beforeEach(() => {
-    sut = new SourceFile(textFile({ content }));
+    sut = new SourceFile(new File('', content));
   });
 
   describe('getLocation', () => {
@@ -40,7 +40,7 @@ describe('SourceFile', () => {
     });
 
     it('should work for line 0', () => {
-      sut = new SourceFile(textFile({ content: '1234567' }));
+      sut = new SourceFile(new File('', '1234567'));
       expect(sut.getLocation([2, 4])).deep.eq({ start: { line: 0, column: 2 }, end: { line: 0, column: 4 }});
     });
   });

@@ -1,4 +1,4 @@
-import { TextFile, Range, Location, Position } from 'stryker-api/core';
+import { File, Range, Location, Position } from 'stryker-api/core';
 
 const enum CharacterCodes {
   maxAsciiCharacter = 0x7F,
@@ -30,7 +30,7 @@ export default class SourceFile {
 
   private lineStarts: number[];
 
-  constructor(public file: TextFile) {
+  constructor(public file: File) {
     this.lineStarts = this.computeLineStarts();
   }
 
@@ -38,8 +38,8 @@ export default class SourceFile {
     return this.file.name;
   }
 
-  get content() {
-    return this.file.content;
+  get content(): string {
+    return this.file.textContent;
   }
 
   getLocation(range: Range): Location {
@@ -99,12 +99,12 @@ export default class SourceFile {
     const result: number[] = [];
     let pos = 0;
     let lineStart = 0;
-    while (pos < this.file.content.length) {
-      const ch = this.file.content.charCodeAt(pos);
+    while (pos < this.file.textContent.length) {
+      const ch = this.file.textContent.charCodeAt(pos);
       pos++;
       switch (ch) {
         case CharacterCodes.carriageReturn:
-          if (this.file.content.charCodeAt(pos) === CharacterCodes.lineFeed) {
+          if (this.file.textContent.charCodeAt(pos) === CharacterCodes.lineFeed) {
             pos++;
           }
         // falls through

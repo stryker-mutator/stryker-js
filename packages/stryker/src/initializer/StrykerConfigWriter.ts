@@ -34,10 +34,6 @@ export default class StrykerConfigWriter {
     selectedReporters: PromptOption[],
     additionalPiecesOfConfig: Partial<StrykerOptions>[]): Promise<void> {
     const configObject: Partial<StrykerOptions> = {
-      files: [
-        { pattern: 'src/**/*.js', mutated: true, included: false },
-        'test/**/*.js'
-      ],
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',
       mutator: selectedMutator ? selectedMutator.name : '',
       transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : [],

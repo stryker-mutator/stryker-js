@@ -3,7 +3,7 @@ import ConfigLoader, * as configLoaderModule from '../../src/compiler/ConfigLoad
 import WebpackCompiler, * as webpackCompilerModule from '../../src/compiler/WebpackCompiler';
 import { createTextFile, Mock, createMockInstance, createStrykerWebpackConfig } from '../helpers/producers';
 import { Config } from 'stryker-api/config';
-import { TextFile } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { expect } from 'chai';
 import { Configuration } from 'webpack';
 import * as log4js from 'log4js';
@@ -16,7 +16,7 @@ describe('WebpackTranspiler', () => {
   let configLoaderStub: Mock<ConfigLoader>;
   let webpackCompilerStub: Mock<WebpackCompiler>;
 
-  let exampleBundleFile: TextFile = createTextFile('bundle.js');
+  let exampleBundleFile: File = createTextFile('bundle.js');
   let webpackConfig: Configuration;
 
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('WebpackTranspiler', () => {
     sandbox.stub(webpackCompilerModule, 'default').returns(webpackCompilerStub);
 
     config = new Config;
-    config.set({ webpack: {} });
+    config.set({ webpack: { context: '/path/to/project/root' } });
   });
 
   it('should only create the compiler once', async () => {
@@ -75,23 +75,17 @@ describe('WebpackTranspiler', () => {
     expect(webpackCompilerStub.emit).calledOnce;
   });
 
-  it('should return a successResult with the bundled files on success', async () => {
+  it('should return all files (input and output) on success', async () => {
     webpackTranspiler = new WebpackTranspiler({ config, produceSourceMaps: false });
-    const transpileResult = await webpackTranspiler.transpile([]);
-
-    expect(transpileResult.error).to.be.null;
-    expect(transpileResult.outputFiles).to.deep.equal([exampleBundleFile]);
+    const input = new File('input.js', '');
+    const transpiledFiles = await webpackTranspiler.transpile([input]);
+    expect(transpiledFiles).to.deep.equal([input, exampleBundleFile]);
   });
 
   it('should return a error result when an error occurred', async () => {
     webpackTranspiler = new WebpackTranspiler({ config, produceSourceMaps: false });
-    const fakeError = 'compiler could not compile input files';
-    webpackCompilerStub.emit.throwsException(Error(fakeError));
-
-    const transpileResult = await webpackTranspiler.transpile([]);
-
-    expect(transpileResult.outputFiles).to.be.an('array').that.is.empty;
-    expect(transpileResult.error).to.equal(`Error: ${fakeError}`);
+    const fakeError = new Error('compiler could not compile input files');
+    webpackCompilerStub.emit.throwsException(fakeError);
+    expect(webpackTranspiler.transpile([])).rejectedWith(fakeError);
   });
-
 });

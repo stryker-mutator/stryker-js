@@ -1,11 +1,12 @@
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
-import { StrykerOptions, File } from 'stryker-api/core';
+import { StrykerOptions, MutatorDescriptor } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
+import { Mutant } from 'stryker-api/mutant';
 import ReporterOrchestrator from './ReporterOrchestrator';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
-import InputFileResolver from './InputFileResolver';
+import InputFileResolver from './input/InputFileResolver';
 import ConfigReader from './ConfigReader';
 import PluginLoader from './PluginLoader';
 import ScoreResultCalculator from './ScoreResultCalculator';
@@ -18,7 +19,7 @@ import StrictReporter from './reporters/StrictReporter';
 import MutatorFacade from './MutatorFacade';
 import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
-import SourceMapper from './transpiler/SourceMapper';
+import InputFileCollection from './input/InputFileCollection';
 
 export default class Stryker {
 
@@ -49,40 +50,61 @@ export default class Stryker {
   async runMutationTest(): Promise<MutantResult[]> {
     this.timer.reset();
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
-    TempFolder.instance().initialize();
-    const initialTestRunProcess = this.createInitialTestRunProcess(inputFiles);
-    const initialTestRunResult = await initialTestRunProcess.run();
-    const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
-    if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
-      const mutationTestExecutor = this.createMutationTester(inputFiles);
-      const mutantResults = await mutationTestExecutor.run(testableMutants);
-      this.reportScore(mutantResults);
-      await this.wrapUpReporter();
-      await TempFolder.instance().clean();
-      await this.logDone();
-      return mutantResults;
-    } else {
-      return Promise.resolve([]);
+    if (inputFiles.files.length) {
+      TempFolder.instance().initialize();
+      const initialTestRunProcess = new InitialTestExecutor(this.config, inputFiles, this.testFramework, this.timer);
+      const initialTestRunResult = await initialTestRunProcess.run();
+      const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
+      if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
+        const mutationTestExecutor = new MutationTestExecutor(this.config, inputFiles.files, this.testFramework, this.reporter);
+        const mutantResults = await mutationTestExecutor.run(testableMutants);
+        this.reportScore(mutantResults);
+        await this.wrapUpReporter();
+        await TempFolder.instance().clean();
+        await this.logDone();
+        return mutantResults;
+      }
     }
+    return Promise.resolve([]);
   }
 
-  private mutate(inputFiles: File[], initialTestRunResult: InitialTestRunResult) {
+  private mutate(input: InputFileCollection, initialTestRunResult: InitialTestRunResult) {
     const mutator = new MutatorFacade(this.config);
-    const mutants = mutator.mutate(inputFiles);
-    if (mutants.length) {
-      this.log.info(`${mutants.length} Mutant(s) generated`);
-    } else {
-      this.log.info('It\'s a mutant-free world, nothing to test.');
-    }
+    const allMutants = mutator.mutate(input.filesToMutate);
+    const includedMutants = this.removeExcludedMutants(allMutants);
+    this.logMutantCount(includedMutants.length, allMutants.length);
     const mutantRunResultMatcher = new MutantTestMatcher(
-      mutants,
-      inputFiles,
+      includedMutants,
+      input.filesToMutate,
       initialTestRunResult.runResult,
-      SourceMapper.create(initialTestRunResult.transpiledFiles, this.config),
+      initialTestRunResult.sourceMapper,
       initialTestRunResult.coverageMaps,
       this.config,
       this.reporter);
     return mutantRunResultMatcher.matchWithMutants();
+  }
+
+  private logMutantCount(includedMutantCount: number, totalMutantCount: number) {
+    let mutantCountMessage;
+    if (includedMutantCount) {
+      mutantCountMessage = `${includedMutantCount} Mutant(s) generated`;
+    } else {
+      mutantCountMessage = `It\'s a mutant-free world, nothing to test.`;
+    }
+    const numberExcluded = totalMutantCount - includedMutantCount;
+    if (numberExcluded) {
+      mutantCountMessage += ` (${numberExcluded} Mutant(s) excluded)`;
+    }
+    this.log.info(mutantCountMessage);
+  }
+
+  private removeExcludedMutants(mutants: ReadonlyArray<Mutant>): ReadonlyArray<Mutant> {
+    if (typeof this.config.mutator === 'string') {
+      return mutants;
+    } else {
+      const mutatorDescriptor = this.config.mutator as MutatorDescriptor;
+      return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
+    }
   }
 
   private loadPlugins() {
@@ -107,7 +129,14 @@ export default class Stryker {
   }
 
   private freezeConfig() {
-    freezeRecursively(this.config);
+    // A config class instance is not serializable using surrial.
+    // This is a temporary work around
+    // See https://github.com/stryker-mutator/stryker/issues/365
+    const config: Config = {} as any;
+    for (let prop in this.config) {
+      config[prop] = this.config[prop];
+    }
+    this.config = freezeRecursively(config);
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Using config: ${JSON.stringify(this.config)}`);
     }
@@ -119,14 +148,6 @@ export default class Stryker {
 
   private setGlobalLogLevel() {
     log4js.setGlobalLogLevel(this.config.logLevel);
-  }
-
-  private createMutationTester(inputFiles: File[]) {
-    return new MutationTestExecutor(this.config, inputFiles, this.testFramework, this.reporter);
-  }
-
-  private createInitialTestRunProcess(inputFiles: File[]) {
-    return new InitialTestExecutor(this.config, inputFiles, this.testFramework, this.timer);
   }
 
   private reportScore(mutantResults: MutantResult[]) {

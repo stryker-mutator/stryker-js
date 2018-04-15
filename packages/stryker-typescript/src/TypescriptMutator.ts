@@ -3,7 +3,7 @@ import flatMap = require('lodash.flatmap');
 import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
-import { filterTypescriptFiles, parseFile, getTSConfig } from './helpers/tsHelpers';
+import { parseFile, getTSConfig } from './helpers/tsHelpers';
 import NodeMutator from './mutator/NodeMutator';
 import BinaryExpressionMutator from './mutator/BinaryExpressionMutator';
 import BooleanSubstitutionMutator from './mutator/BooleanSubstitutionMutator';
@@ -38,11 +38,9 @@ export default class TypescriptMutator {
   ]) { }
 
   mutate(inputFiles: File[]): Mutant[] {
-    const mutatedInputFiles = filterTypescriptFiles(inputFiles)
-      .filter(inputFile => inputFile.mutated);
-    const compilerOptions = getTSConfig(this.config);
-    const mutants = flatMap(mutatedInputFiles, inputFile => {
-      const sourceFile = parseFile(inputFile, compilerOptions && compilerOptions.target);
+    const tsConfig = getTSConfig(this.config);
+    const mutants = flatMap(inputFiles, inputFile => {
+      const sourceFile = parseFile(inputFile, tsConfig && tsConfig.options && tsConfig.options.target);
       return this.mutateForNode(sourceFile, sourceFile);
     });
     return mutants;

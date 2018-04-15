@@ -65,12 +65,7 @@ This package contains 3 plugins to support TypeScript
 
 ### TypescriptConfigEditor
 
-The `TypescriptConfigEditor` is a handy plugin that reads **your** tsconfig.json file and loads it into stryker.conf.js. It edits 2 config properties:
-
-1. `files` property
-It adds all your typescript files in the `files` property as `{ pattern: 'your/file.ts', mutated: false, transpiled: true, included: true }`;
-1. `tsconfig` property
-It will capture all your tsconfig settings to the `tsconfig` in stryker (this property is later used by the `TypescriptMutator` and the `TypescriptTranspiler`)
+The `TypescriptConfigEditor` is a handy plugin that reads **your** tsconfig.json file and loads it into stryker.conf.js. It will capture all your tsconfig settings to the `tsconfig` in stryker (this property is later used by the `TypescriptMutator` and the `TypescriptTranspiler`)
 
 Enable the config editor by pointing the `tsconfigFile` property to your tsconfig location:
 
@@ -89,7 +84,6 @@ noUnusedLocals: false
 noUnusedParameters: false
 ```
 
-
 ### TypescriptMutator
 
 The `TypescriptMutator` is a plugin to mutate typescript code. It builds a Typescript [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and mutates your code using different kind of mutators.
@@ -107,7 +101,9 @@ Configure the Typescript mutator in your stryker.conf.js file:
 
 ### TypescriptTranspiler
 
-The `TypescriptTranspiler` is a plugin to transpile typescript source code before running tests. Given Typescript input files it will use the `tsconfig` option in your stryker configuration (see **TypescriptConfigEditor**) to generate the javascript output. This is also used to transpile each mutant to javascript. Internally, it uses the same method as Typescript's watch mode (`tsc -w`), so it can transpile mutants very efficiently.
+The `TypescriptTranspiler` is a plugin to transpile typescript source code before running tests. If you're using a bundler you might want to configure that instead. 
+
+Given your Typescript configuration (see **TypescriptConfigEditor**) it generates the javascript output. This is also used to transpile each mutant to javascript. Internally, it uses the same method as Typescript's watch mode (`tsc -w`), so it can transpile mutants fairly efficiently.
 
 Configure the Typescript transpiler in your stryker.conf.js file:
 

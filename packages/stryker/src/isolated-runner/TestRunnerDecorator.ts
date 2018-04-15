@@ -1,11 +1,9 @@
-import { EventEmitter } from 'events';
 import { TestRunner, RunOptions, RunResult } from 'stryker-api/test_runner';
 
-export default class TestRunnerDecorator extends EventEmitter implements TestRunner {
+export default class TestRunnerDecorator implements TestRunner {
   protected innerRunner: TestRunner;
 
   constructor(private testRunnerProducer: () => TestRunner) {
-    super();
     this.createInnerRunner();
   }
 

@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.1"></a>
+## [0.10.1](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.10.0...stryker-typescript@0.10.1) (2018-04-11)
+
+
+### Bug Fixes
+
+* Support stryker-api 0.16.0 ([#691](https://github.com/stryker-mutator/stryker/issues/691)) ([b2b019d](https://github.com/stryker-mutator/stryker/commit/b2b019d))
+
+
+
+
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.9.4...stryker-typescript@0.10.0) (2018-04-04)
+
+
+### Features
+
+* **files:** use tsconfig to determine which files to transpile ([bc02c64](https://github.com/stryker-mutator/stryker/commit/bc02c64))
+
+
+### BREAKING CHANGES
+
+* **files:** If you want to override compiler options
+for Stryker, use the `tsconfig.options` key instead of `tsconfig`.
+
+
+
+
+<a name="0.9.4"></a>
+## [0.9.4](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.9.3...stryker-typescript@0.9.4) (2018-03-22)
+
+
+### Bug Fixes
+
+* **peerDependency:** update stryker-api requirement to ^0.14.0 ([3ce04d4](https://github.com/stryker-mutator/stryker/commit/3ce04d4))
+
+
+
+
+<a name="0.9.3"></a>
+## [0.9.3](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.9.2...stryker-typescript@0.9.3) (2018-03-22)
+
+
+
+
+**Note:** Version bump only for package stryker-typescript
+
+<a name="0.9.2"></a>
+## [0.9.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.9.1...stryker-typescript@0.9.2) (2018-03-21)
+
+
+
+
+**Note:** Version bump only for package stryker-typescript
+
 <a name="0.9.1"></a>
 ## [0.9.1](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.9.0...stryker-typescript@0.9.1) (2018-02-07)
 

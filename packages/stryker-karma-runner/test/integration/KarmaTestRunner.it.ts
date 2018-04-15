@@ -1,9 +1,24 @@
+import * as fs from 'fs';
 import { expect } from 'chai';
 import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import { FileKind, FileDescriptor } from 'stryker-api/core';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
+import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
+
+
+function wrapInClosure(codeFragment: string) {
+  return `
+    (function (window) {
+      ${codeFragment}
+    })((Function('return this'))());`;
+}
 
 describe('KarmaTestRunner', function () {
+
+  after(() => {
+    try {
+      fs.unlinkSync('__test_hooks_for_stryker__.js');
+    } catch { }
+  });
 
   let sut: KarmaTestRunner;
   this.timeout(10000);
@@ -17,26 +32,22 @@ describe('KarmaTestRunner', function () {
     actualFailedTests.forEach(failedTest => expect((failedTest.failureMessages as any)[0]).to.contain(expectedFailureMessages.shift() as any));
   };
 
-  function file(overrides?: Partial<FileDescriptor>): FileDescriptor {
-    return Object.assign({}, {
-      name: 'file.js',
-      transpiled: true,
-      included: true,
-      mutated: true,
-      kind: FileKind.Text
-    }, overrides);
-  }
-
   describe('when all tests succeed', () => {
     let testRunnerOptions: RunnerOptions;
 
     before(() => {
       testRunnerOptions = {
-        files: [
-          file({ name: 'testResources/sampleProject/src/Add.js', mutated: true }),
-          file({ name: 'testResources/sampleProject/test/AddSpec.js', mutated: false })],
         port: 9877,
-        strykerOptions: { logLevel: 'trace' }
+        strykerOptions: {
+          logLevel: 'trace',
+          karmaConfig: {
+            files: [
+              'testResources/sampleProject/src/Add.js',
+              'testResources/sampleProject/test/AddSpec.js'
+            ]
+          }
+        },
+        fileNames: []
       };
     });
 
@@ -48,7 +59,7 @@ describe('KarmaTestRunner', function () {
       });
 
       it('should report completed tests', () => {
-        return expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
+        return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
           expectToHaveSuccessfulTests(runResult, 5);
           expectToHaveFailedTests(runResult, []);
           expect(runResult.status).to.be.eq(RunStatus.Complete);
@@ -57,27 +68,48 @@ describe('KarmaTestRunner', function () {
       });
 
       it('should be able to run twice in quick succession',
-        () => expect(sut.run().then(() => sut.run())).to.eventually.have.property('status', RunStatus.Complete));
+        () => expect(sut.run({}).then(() => sut.run({}))).to.eventually.have.property('status', RunStatus.Complete));
+
+      it('should be able to filter tests', async () => {
+        const testHooks = wrapInClosure(new JasmineTestFramework().filter([
+          { id: 0, name: '' },
+          { id: 3, name: '' }
+        ]));
+        const result = await sut.run({ testHooks });
+        expect(result.tests.map(test => ({ name: test.name, status: test.status }))).deep.eq([
+          { name: 'Add should be able to add two numbers', status: TestStatus.Success },
+          { name: 'Add should be able 1 to a number', status: TestStatus.Skipped },
+          { name: 'Add should be able negate a number', status: TestStatus.Skipped },
+          { name: 'Add should be able to recognize a negative number', status: TestStatus.Success },
+          { name: 'Add should be able to recognize that 0 is not a negative number', status: TestStatus.Skipped }
+        ]);
+      });
+
     });
   });
 
   describe('when some tests fail', () => {
     before(() => {
       const testRunnerOptions = {
-        files: [
-          file({ name: 'testResources/sampleProject/src/Add.js', mutated: true }),
-          file({ name: 'testResources/sampleProject/test/AddSpec.js', mutated: false }),
-          file({ name: 'testResources/sampleProject/test/AddFailedSpec.js', mutated: false })
-        ],
         port: 9878,
-        strykerOptions: { logLevel: 'trace' }
+        strykerOptions: {
+          logLevel: 'trace',
+          karmaConfig: {
+            files: [
+              'testResources/sampleProject/src/Add.js',
+              'testResources/sampleProject/test/AddSpec.js',
+              'testResources/sampleProject/test/AddFailedSpec.js'
+            ]
+          }
+        },
+        fileNames: []
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
     });
 
     it('should report failed tests', () => {
-      return expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
+      return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
         expectToHaveSuccessfulTests(runResult, 5);
         expectToHaveFailedTests(runResult, ['Expected 7 to be 8.', 'Expected 3 to be 4.']);
         expect(runResult.status).to.be.eq(RunStatus.Complete);
@@ -90,43 +122,51 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       const testRunnerOptions = {
-        files: [
-          file({ name: 'testResources/sampleProject/src/Error.js', mutated: true }),
-          file({ name: 'testResources/sampleProject/test/AddSpec.js', mutated: true })
-        ],
         port: 9879,
-        strykerOptions: {}
+        strykerOptions: {
+          karmaConfig: {
+            files: [
+              'testResources/sampleProject/src/Error.js',
+              'testResources/sampleProject/test/AddSpec.js'
+            ]
+          }
+        },
+        fileNames: []
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
     });
 
     it('should report Error with the error message', async () => {
-      const runResult = await sut.run();
+      const runResult = await sut.run({});
       expectToHaveSuccessfulTests(runResult, 0);
       expectToHaveFailedTests(runResult, []);
       expect(runResult.status).to.be.eq(RunStatus.Error);
       expect((runResult.errorMessages as any).length).to.equal(1);
-      expect((runResult.errorMessages as any)[0]).include('ReferenceError: Can\'t find variable: someGlobalVariableThatIsNotDeclared\nat');
+      expect((runResult.errorMessages as any)[0]).include('ReferenceError: Can\'t find variable: someGlobalVariableThatIsNotDeclared');
     });
   });
 
   describe('when no error occurred and no test is performed', () => {
     before(() => {
       const testRunnerOptions = {
-        files: [
-          file({ name: 'testResources/sampleProject/src/Add.js' }),
-          file({ name: 'testResources/sampleProject/test/EmptySpec.js' })
-        ],
         port: 9880,
-        strykerOptions: {}
+        strykerOptions: {
+          karmaConfig: {
+            files: [
+              'testResources/sampleProject/src/Add.js',
+              'testResources/sampleProject/test/EmptySpec.js'
+            ]
+          }
+        },
+        fileNames: []
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
     });
 
     it('should report Complete without errors', () => {
-      return expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
+      return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
         expectToHaveSuccessfulTests(runResult, 0);
         expectToHaveFailedTests(runResult, []);
         expect(runResult.status).to.be.eq(RunStatus.Complete);
@@ -141,21 +181,25 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       const testRunnerOptions = {
-        files: [
-          file({ name: 'testResources/sampleProject/src/Add.js', mutated: true, included: true }),
-          file({ name: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true }),
-          file({ name: 'testResources/sampleProject/src/Error.js', mutated: false, included: false })
-        ],
         port: 9881,
-        strykerOptions: {}
+        strykerOptions: {
+          karmaConfig: {
+            files: [
+              { pattern: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
+              { pattern: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true },
+              { pattern: 'testResources/sampleProject/src/Error.js', mutated: false, included: false }
+            ]
+          }
+        },
+        fileNames: []
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
     });
 
     it('should report Complete without errors', () => {
-      return expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
-        expect(runResult.status).to.be.eq(RunStatus.Complete);
+      return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
+        expect(runResult.status, JSON.stringify(runResult.errorMessages)).to.be.eq(RunStatus.Complete);
         return true;
       });
     });
@@ -165,18 +209,23 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       const testRunnerOptions: RunnerOptions = {
-        files: [
-          file({ name: 'testResources/sampleProject/src-instrumented/Add.js', mutated: true }),
-          file({ name: 'testResources/sampleProject/test/AddSpec.js', mutated: false })
-        ],
         port: 9882,
-        strykerOptions: { coverageAnalysis: 'all' }
+        strykerOptions: {
+          coverageAnalysis: 'all',
+          karmaConfig: {
+            files: [
+              'testResources/sampleProject/src-instrumented/Add.js',
+              'testResources/sampleProject/test/AddSpec.js'
+            ]
+          }
+        },
+        fileNames: []
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
     });
 
-    it('should report coverage data', () => expect(sut.run()).to.eventually.satisfy((runResult: RunResult) => {
+    it('should report coverage data', () => expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
       expect(runResult.coverage).to.be.ok;
       expect(runResult.status).to.be.eq(RunStatus.Complete);
       const files = Object.keys(runResult.coverage || {});

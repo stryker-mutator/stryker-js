@@ -6,20 +6,25 @@ module.exports = function (config) {
   if (typescript) {
     config.set({
       files: [
-        { pattern: 'package.json', transpiled: false, included: false, mutated: false },
-        '!test/integration/**/*.ts',
-        '!src/**/*.ts',
-        { pattern: 'src/**/*.ts', included: false, mutated: true },
+        'node_modules/stryker-api/*.@(js|map)',
+        'node_modules/stryker-api/src/**/*.@(js|map)',
+        'package.json',
+        'src/**/*.ts',
         '!src/**/*.d.ts',
-        { pattern: 'node_modules/stryker-api/*.js', included: false, mutated: false, transpiled: false },
-        { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false, transpiled: false }
+        'test/**/*.ts',
+        '!test/**/*.d.ts'
       ],
+      symlinkNodeModules: false,
+      mutate: ['src/**/*.ts'],
       coverageAnalysis: 'perTest',
       tsconfigFile: 'tsconfig.json',
       mutator: 'typescript',
       transpilers: [
         'typescript'
-      ]
+      ],
+      mochaOptions: {
+        files: ['test/helpers/**/*.js', 'test/unit/**/*.js']
+      }
     })
   } else {
     config.set({

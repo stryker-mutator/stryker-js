@@ -15,7 +15,11 @@
         "${workspaceRoot}/test/helpers/**/*.js",
         "${workspaceRoot}/test/unit/**/*.js"
       ],
-      "internalConsoleOptions": "openOnSessionStart"
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ]
     },
     {
       "type": "node",
@@ -31,7 +35,11 @@
         "${workspaceRoot}/test/helpers/**/*.js",
         "${workspaceRoot}/test/integration/**/*.js"
       ],
-      "internalConsoleOptions": "openOnSessionStart"
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ]
     }
   ],
   "compounds": []

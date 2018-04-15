@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.1"></a>
+## [0.11.1](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.11.0...stryker-mocha-runner@0.11.1) (2018-04-11)
+
+
+### Bug Fixes
+
+* Support stryker-api 0.16.0 ([#691](https://github.com/stryker-mutator/stryker/issues/691)) ([b2b019d](https://github.com/stryker-mutator/stryker/commit/b2b019d))
+
+
+
+
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.8...stryker-mocha-runner@0.11.0) (2018-04-04)
+
+
+### Features
+
+* **mocha-runner:** implement file discovery in mocha ([6ed7a0f](https://github.com/stryker-mutator/stryker/commit/6ed7a0f))
+
+
+
+
+<a name="0.10.8"></a>
+## [0.10.8](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.7...stryker-mocha-runner@0.10.8) (2018-03-22)
+
+
+### Bug Fixes
+
+* **peerDependency:** update stryker-api requirement to ^0.14.0 ([3ce04d4](https://github.com/stryker-mutator/stryker/commit/3ce04d4))
+
+
+
+
+<a name="0.10.7"></a>
+## [0.10.7](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.6...stryker-mocha-runner@0.10.7) (2018-03-22)
+
+
+
+
+**Note:** Version bump only for package stryker-mocha-runner
+
+<a name="0.10.6"></a>
+## [0.10.6](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.5...stryker-mocha-runner@0.10.6) (2018-03-21)
+
+
+
+
+**Note:** Version bump only for package stryker-mocha-runner
+
 <a name="0.10.5"></a>
 ## [0.10.5](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.10.4...stryker-mocha-runner@0.10.5) (2018-02-07)
 

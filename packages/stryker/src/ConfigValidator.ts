@@ -1,5 +1,5 @@
 import { TestFramework } from 'stryker-api/test_framework';
-import { MutationScoreThresholds } from 'stryker-api/core';
+import { MutatorDescriptor, MutationScoreThresholds } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
 import { getLogger } from 'log4js';
 
@@ -14,11 +14,11 @@ export default class ConfigValidator {
   validate() {
     this.validateTestFramework();
     this.validateThresholds();
+    this.validateMutator();
     this.validateLogLevel();
     this.validateTimeout();
     this.validateIsNumber('port', this.strykerConfig.port);
     this.validateIsNumber('maxConcurrentTestRunners', this.strykerConfig.maxConcurrentTestRunners);
-    this.validateIsString('mutator', this.strykerConfig.mutator);
     this.validateIsStringArray('plugins', this.strykerConfig.plugins);
     this.validateIsStringArray('reporter', this.strykerConfig.reporter);
     this.validateIsStringArray('transpilers', this.strykerConfig.transpilers);
@@ -30,6 +30,17 @@ export default class ConfigValidator {
   private validateTestFramework() {
     if (this.strykerConfig.coverageAnalysis === 'perTest' && !this.testFramework) {
       this.invalidate('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
+    }
+  }
+
+  private validateMutator() {
+    const mutator = this.strykerConfig.mutator;
+    if (typeof mutator === 'object') {
+      const mutatorDescriptor = mutator as MutatorDescriptor;
+      this.validateIsString('mutator.name', mutatorDescriptor.name);
+      this.validateIsStringArray('mutator.excludedMutations', mutatorDescriptor.excludedMutations);
+    } else if (typeof mutator !== 'string') {
+      this.invalidate(`Value "${mutator}" is invalid for \`mutator\`. Expected either a string or an object`);
     }
   }
 

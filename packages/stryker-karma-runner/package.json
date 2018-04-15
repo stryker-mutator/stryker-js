@@ -1,11 +1,11 @@
 {
   "name": "stryker-karma-runner",
-  "version": "0.12.2",
+  "version": "0.14.3",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
     "start": "tsc -w",
-    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" .nyc_output reports coverage",
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" .nyc_output reports coverage __test_hooks_for_stryker__.js",
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
@@ -32,17 +32,17 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-karma-runner#readme",
   "peerDependencies": {
     "karma": "^0.13.0 || ~1.0.0 || ^1.1.1 || ^2.0.0",
-    "stryker-api": "^0.13.0"
+    "stryker-api": ">=0.15.0 <0.17.0"
   },
   "devDependencies": {
     "jasmine-core": "^2.4.1",
     "karma": "^2.0.0",
     "karma-jasmine": "^1.1.1",
     "karma-phantomjs-launcher": "^1.0.4",
-    "stryker-api": "^0.13.0"
+    "stryker-api": "^0.16.0",
+    "stryker-jasmine": "^0.8.2"
   },
   "dependencies": {
-    "lodash": "^4.13.1",
     "log4js": "^1.0.1",
     "tslib": "^1.6.1"
   },
@@ -52,7 +52,6 @@
     "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
   ],
   "initStrykerConfig": {
-    "karmaConfigFile": "karma.conf.js",
-    "files": []
+    "karmaConfigFile": "karma.conf.js"
   }
 }

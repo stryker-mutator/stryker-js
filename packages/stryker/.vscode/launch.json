@@ -15,8 +15,13 @@
         "${workspaceRoot}/test/helpers/**/*.js",
         "${workspaceRoot}/test/unit/**/*.js"
       ],
-      "internalConsoleOptions": "openOnSessionStart"
-    }, {
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ]
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Integration tests",
@@ -30,7 +35,11 @@
         "${workspaceRoot}/test/helpers/**/*.js",
         "${workspaceRoot}/test/integration/**/*.js"
       ],
-      "internalConsoleOptions": "openOnSessionStart"
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ]
     },
     {
       "name": "Run stryker example",
@@ -51,7 +60,11 @@
         "NODE_ENV": "development"
       },
       "console": "integratedTerminal",
-      "sourceMaps": true
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ]
     },
     {
       "name": "Run own dog food",
@@ -64,7 +77,7 @@
         "run",
         "stryker.conf.js"
       ],
-      "cwd": "${workspaceRoot}",
+      "cwd": "${workspaceRoot}/../../integrationTest/test/typescript-transpiling",
       "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
@@ -74,7 +87,10 @@
       },
       "console": "internalConsole",
       "sourceMaps": true,
-      "outDir": "${workspaceRoot}"
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ]
     },
     {
       "name": "Run stryker help",
@@ -98,7 +114,10 @@
       },
       "console": "internalConsole",
       "sourceMaps": true,
-      "outDir": "${workspaceRoot}"
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ]
     }
   ]
 }

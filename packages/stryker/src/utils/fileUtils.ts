@@ -3,7 +3,6 @@ import * as path from 'path';
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
-import { FileKind } from 'stryker-api/core';
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
@@ -35,23 +34,6 @@ export function importModule(moduleName: string) {
   require(moduleName);
 }
 
-export function isOnlineFile(path: string): boolean {
-  return path.indexOf('http://') === 0 || path.indexOf('https://') === 0;
-}
-
-const binaryExtensions = [
-  '.png',
-  '.jpeg',
-  '.jpg',
-  '.zip',
-  '.tar',
-  '.gif' // Still more to add
-];
-
-function isBinaryFile(name: string): boolean {
-  return binaryExtensions.indexOf(path.extname(name)) > -1;
-}
-
 /**
  * Writes data to a specified file.
  * @param fileName The path to the file.
@@ -66,12 +48,33 @@ export function writeFile(fileName: string, data: string | Buffer): Promise<void
   }
 }
 
-export function determineFileKind(fileName: string): FileKind {
-  if (isOnlineFile(fileName)) {
-    return FileKind.Web;
-  } if (isBinaryFile(fileName)) {
-    return FileKind.Binary;
+
+/**
+ * Creates a symlink at `from` that points to `to`
+ * @param to The thing you want to point to
+ * @param from The thing you want to point from
+ */
+export function symlinkJunction(to: string, from: string) {
+  return fs.symlink(to, from, 'junction');
+}
+
+/**
+ * Looks for the node_modules folder from basePath up to root. 
+ * returns the first occurrence of the node_modules, or null of none could be found.
+ * @param basePath starting point
+ */
+export async function findNodeModules(basePath: string): Promise<string | null> {
+  basePath = path.resolve(basePath);
+  const nodeModules = path.resolve(basePath, 'node_modules');
+  const exists = await fs.exists(nodeModules);
+  if (exists) {
+    return nodeModules;
   } else {
-    return FileKind.Text;
+    const parent = path.dirname(basePath);
+    if (parent === basePath) {
+      return null;
+    } else {
+      return findNodeModules(path.dirname(basePath));
+    }
   }
 }

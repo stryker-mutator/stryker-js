@@ -3,6 +3,93 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.14.3"></a>
+## [0.14.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.14.2...stryker-karma-runner@0.14.3) (2018-04-12)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
+<a name="0.14.2"></a>
+## [0.14.2](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.14.1...stryker-karma-runner@0.14.2) (2018-04-11)
+
+
+### Bug Fixes
+
+* Support stryker-api 0.16.0 ([#691](https://github.io/stryker-mutator/stryker/issues/691)) ([b2b019d](https://github.io/stryker-mutator/stryker/commit/b2b019d))
+
+
+
+
+<a name="0.14.1"></a>
+## [0.14.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.14.0...stryker-karma-runner@0.14.1) (2018-04-06)
+
+
+### Bug Fixes
+
+* **Plugins:** don't override default karma plugins ('karma-*') ([#680](https://github.io/stryker-mutator/stryker/issues/680)) ([0c97842](https://github.io/stryker-mutator/stryker/commit/0c97842)), closes [#679](https://github.io/stryker-mutator/stryker/issues/679)
+
+
+
+
+<a name="0.14.0"></a>
+# [0.14.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.13.0...stryker-karma-runner@0.14.0) (2018-04-06)
+
+
+### Features
+
+* **Complex karma config:** allow complex karma config ([51263d3](https://github.io/stryker-mutator/stryker/commit/51263d3))
+
+
+
+
+<a name="0.13.0"></a>
+# [0.13.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.5...stryker-karma-runner@0.13.0) (2018-04-04)
+
+
+### Features
+
+* **karma-runner:** configure files with karma ([592c365](https://github.io/stryker-mutator/stryker/commit/592c365))
+
+
+### BREAKING CHANGES
+
+* **karma-runner:** If you used karma to configure your stryker files, that functionality
+has been removed. Please remove your `files` config property
+from stryker.conf.js entirely and let the new git integration
+do it's work.
+
+
+
+
+<a name="0.12.5"></a>
+## [0.12.5](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.4...stryker-karma-runner@0.12.5) (2018-03-22)
+
+
+### Bug Fixes
+
+* **peerDependency:** update stryker-api requirement to ^0.14.0 ([3ce04d4](https://github.io/stryker-mutator/stryker/commit/3ce04d4))
+
+
+
+
+<a name="0.12.4"></a>
+## [0.12.4](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.3...stryker-karma-runner@0.12.4) (2018-03-22)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
+<a name="0.12.3"></a>
+## [0.12.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.2...stryker-karma-runner@0.12.3) (2018-03-21)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
 <a name="0.12.2"></a>
 ## [0.12.2](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.12.1...stryker-karma-runner@0.12.2) (2018-02-07)
 

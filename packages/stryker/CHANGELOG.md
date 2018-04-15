@@ -3,6 +3,94 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.22.1"></a>
+## [0.22.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.22.0...stryker@0.22.1) (2018-04-13)
+
+
+### Bug Fixes
+
+* **Dependencies:** set correct stryker-api dependency ([#694](https://github.com/stryker-mutator/stryker/issues/694)) ([e333fd9](https://github.com/stryker-mutator/stryker/commit/e333fd9))
+
+
+
+
+<a name="0.22.0"></a>
+# [0.22.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.21.1...stryker@0.22.0) (2018-04-11)
+
+
+### Features
+
+* **Sandbox isolation:** symbolic link node_modules in sandboxes ([#689](https://github.com/stryker-mutator/stryker/issues/689)) ([487ab7c](https://github.com/stryker-mutator/stryker/commit/487ab7c))
+
+
+
+
+<a name="0.21.1"></a>
+## [0.21.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.21.0...stryker@0.21.1) (2018-04-09)
+
+
+### Bug Fixes
+
+* **Dashboard reporter:** fix typos ([047a370](https://github.com/stryker-mutator/stryker/commit/047a370))
+
+
+
+
+<a name="0.21.0"></a>
+# [0.21.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.20.1...stryker@0.21.0) (2018-04-04)
+
+
+### Bug Fixes
+
+* **Progress reporter:** don't prevent stryker from closing ([21255aa](https://github.com/stryker-mutator/stryker/commit/21255aa))
+
+
+### Features
+
+* **identify-files:** use git to list files in `InputFileResolver` ([df6169a](https://github.com/stryker-mutator/stryker/commit/df6169a))
+
+
+### BREAKING CHANGES
+
+* **identify-files:** * The `InputFileDescriptor` syntax for files is no longer supported.
+* Test runner plugins should keep track of which files are included
+into a test run and in which order.
+* Transpiler plugins should keep track of which files are to be
+transpiled.
+
+
+
+
+<a name="0.20.1"></a>
+## [0.20.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.20.0...stryker@0.20.1) (2018-03-22)
+
+
+### Bug Fixes
+
+* **peerDependency:** update stryker-api requirement to ^0.14.0 ([3ce04d4](https://github.com/stryker-mutator/stryker/commit/3ce04d4))
+
+
+
+
+<a name="0.20.0"></a>
+# [0.20.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.4...stryker@0.20.0) (2018-03-22)
+
+
+### Features
+
+* **stryker:** add excludedMutations as a config option ([#13](https://github.com/stryker-mutator/stryker/issues/13)) ([#652](https://github.com/stryker-mutator/stryker/issues/652)) ([cc8a5f1](https://github.com/stryker-mutator/stryker/commit/cc8a5f1))
+
+
+
+
+<a name="0.19.4"></a>
+## [0.19.4](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.3...stryker@0.19.4) (2018-03-21)
+
+
+
+
+**Note:** Version bump only for package stryker
+
 <a name="0.19.3"></a>
 ## [0.19.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.19.2...stryker@0.19.3) (2018-02-14)
 

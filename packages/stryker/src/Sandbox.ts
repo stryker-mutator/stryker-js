@@ -3,14 +3,14 @@ import * as path from 'path';
 import { getLogger } from 'log4js';
 import * as mkdirp from 'mkdirp';
 import { RunResult } from 'stryker-api/test_runner';
-import { File, FileKind, FileDescriptor } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
-import { wrapInClosure } from './utils/objectUtils';
+import { wrapInClosure, normalizeWhiteSpaces } from './utils/objectUtils';
 import TestRunnerDecorator from './isolated-runner/TestRunnerDecorator';
 import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import { TempFolder } from './utils/TempFolder';
-import * as fileUtils from './utils/fileUtils';
+import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
 
@@ -25,27 +25,16 @@ export default class Sandbox {
   private fileMap: FileMap;
   private files: File[];
   private workingFolder: string;
-  private testHooksFile = path.resolve('___testHooksForStryker.js');
 
   private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null) {
     this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.files = files.slice(); // Create a copy
-    if (testFramework) {
-      this.testHooksFile = path.resolve('___testHooksForStryker.js');
-      this.files.unshift({
-        name: this.testHooksFile,
-        content: '',
-        mutated: false,
-        included: true,
-        transpiled: false,
-        kind: FileKind.Text
-      });
-    }
   }
 
   private async initialize(): Promise<void> {
     await this.fillSandbox();
+    await this.symlinkNodeModulesIfNeeded();
     return this.initializeTestRunner();
   }
 
@@ -55,8 +44,8 @@ export default class Sandbox {
     return sandbox.initialize().then(() => sandbox);
   }
 
-  public run(timeout: number): Promise<RunResult> {
-    return this.testRunner.run({ timeout });
+  public run(timeout: number, testHooks: string | undefined): Promise<RunResult> {
+    return this.testRunner.run({ timeout, testHooks });
   }
 
   public dispose(): Promise<void> {
@@ -68,32 +57,21 @@ export default class Sandbox {
     if (transpiledMutant.mutant.testSelectionResult === TestSelectionResult.Failed) {
       this.log.warn(`Failed find coverage data for this mutant, running all tests. This might have an impact on performance: ${transpiledMutant.mutant.toString()}`);
     }
-    await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)).concat(this.filterTests(transpiledMutant.mutant)));
-    const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant));
+    await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)));
+    const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant), this.getFilterTestsHooks(transpiledMutant.mutant));
     await this.reset(mutantFiles);
     return runResult;
   }
 
-  private reset(mutatedFiles: File[]) {
+  private reset(mutatedFiles: ReadonlyArray<File>) {
     const originalFiles = this.files.filter(originalFile => mutatedFiles.some(mutatedFile => mutatedFile.name === originalFile.name));
 
-    return Promise.all(originalFiles.map(file => {
-      if (file.kind !== FileKind.Web) {
-        return fileUtils.writeFile(this.fileMap[file.name], file.content);
-      } else {
-        return Promise.resolve();
-      }
-    }));
+    return Promise.all(originalFiles.map(file => writeFile(this.fileMap[file.name], file.content)));
   }
 
   private writeFileInSandbox(file: File): Promise<void> {
-    switch (file.kind) {
-      case FileKind.Web:
-        return Promise.resolve();
-      default:
-        const fileNameInSandbox = this.fileMap[file.name];
-        return fileUtils.writeFile(fileNameInSandbox, file.content);
-    }
+    const fileNameInSandbox = this.fileMap[file.name];
+    return writeFile(fileNameInSandbox, file.content);
   }
 
   private fillSandbox(): Promise<void[]> {
@@ -103,32 +81,40 @@ export default class Sandbox {
     return Promise.all(copyPromises);
   }
 
-  private fillFile(file: File): Promise<void> {
-    switch (file.kind) {
-      case FileKind.Web:
-        this.fileMap[file.name] = file.name;
-        return Promise.resolve();
-      default:
-        const cwd = process.cwd();
-        const relativePath = path.relative(cwd, file.name);
-        const folderName = path.join(this.workingFolder, path.dirname(relativePath));
-        mkdirp.sync(folderName);
-        const targetFile = path.join(folderName, path.basename(relativePath));
-        this.fileMap[file.name] = targetFile;
-        return fileUtils.writeFile(targetFile, file.content);
+  private async symlinkNodeModulesIfNeeded(): Promise<void> {
+    if (this.options.symlinkNodeModules) {
+      // TODO: Change with this.options.basePath when we have it
+      const basePath = process.cwd();
+      const nodeModules = await findNodeModules(basePath);
+      if (nodeModules) {
+        await symlinkJunction(nodeModules, path.join(this.workingFolder, 'node_modules'))
+          .catch((error: NodeJS.ErrnoException) => {
+            if (error.code === 'EEXIST') {
+              this.log.warn(normalizeWhiteSpaces(`Could not symlink "${nodeModules}" in sandbox directory, 
+              it is already created in the sandbox. Please remove the node_modules from your sandbox files. 
+              Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`));
+            } else {
+              this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
+            }
+          });
+      } else {
+        this.log.warn(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);
+      }
     }
   }
 
+  private fillFile(file: File): Promise<void> {
+    const relativePath = path.relative(process.cwd(), file.name);
+    const folderName = path.join(this.workingFolder, path.dirname(relativePath));
+    mkdirp.sync(folderName);
+    const targetFile = path.join(folderName, path.basename(relativePath));
+    this.fileMap[file.name] = targetFile;
+    return writeFile(targetFile, file.content);
+  }
+
   private initializeTestRunner(): void | Promise<any> {
-    const files: FileDescriptor[] = this.files.map(originalFile => ({
-      name: this.fileMap[originalFile.name],
-      mutated: originalFile.mutated,
-      included: originalFile.included,
-      kind: originalFile.kind,
-      transpiled: originalFile.transpiled
-    }));
     const settings: IsolatedRunnerOptions = {
-      files,
+      fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
       strykerOptions: this.options,
       port: this.options.port + this.index,
       sandboxWorkingFolder: this.workingFolder
@@ -143,12 +129,11 @@ export default class Sandbox {
     return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMs;
   }
 
-  private filterTests(mutant: TestableMutant) {
+  private getFilterTestsHooks(mutant: TestableMutant): string | undefined {
     if (this.testFramework) {
-      let fileContent = wrapInClosure(this.testFramework.filter(mutant.selectedTests));
-      return fileUtils.writeFile(this.fileMap[this.testHooksFile], fileContent);
+      return wrapInClosure(this.testFramework.filter(mutant.selectedTests));
     } else {
-      return Promise.resolve(void 0);
+      return undefined;
     }
   }
 }

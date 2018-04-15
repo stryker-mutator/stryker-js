@@ -1,8 +1,7 @@
 module.exports = function (config) {
   config.set({
-    files: [
-      { pattern: "src/*.js", mutated: true, included: false, transpiled: true },
-      'test/*.js'
+    mutate: [
+      'src/*.js'
     ],
     testFramework: 'mocha',
     testRunner: 'mocha',

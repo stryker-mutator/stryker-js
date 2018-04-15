@@ -2,16 +2,18 @@ import { expect } from 'chai';
 import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { Mock, mock, transpileResult, config, textFile, webFile, testableMutant } from '../../helpers/producers';
-import { TranspileResult } from 'stryker-api/transpile';
+import { Mock, mock, config, testableMutant, file } from '../../helpers/producers';
 import '../../helpers/globals';
 import TranspiledMutant from '../../../src/TranspiledMutant';
+import TranspileResult from '../../../src/transpiler/TranspileResult';
+import { File } from 'stryker-api/core';
+import { errorToString } from '../../../src/utils/objectUtils';
 
 describe('MutantTranspiler', () => {
   let sut: MutantTranspiler;
   let transpilerFacadeMock: Mock<TranspilerFacade>;
-  let transpileResultOne: TranspileResult;
-  let transpileResultTwo: TranspileResult;
+  let transpiledFilesOne: File[];
+  let transpiledFilesTwo: File[];
   let childProcessProxyMock: { proxy: Mock<TranspilerFacade>, dispose: sinon.SinonStub };
 
   beforeEach(() => {
@@ -19,11 +21,11 @@ describe('MutantTranspiler', () => {
     childProcessProxyMock = { proxy: transpilerFacadeMock, dispose: sandbox.stub() };
     sandbox.stub(ChildProcessProxy, 'create').returns(childProcessProxyMock);
     sandbox.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
-    transpileResultOne = transpileResult({ error: 'first result' });
-    transpileResultTwo = transpileResult({ error: 'second result' });
+    transpiledFilesOne = [new File('firstResult.js', 'first result')];
+    transpiledFilesTwo = [new File('secondResult.js', 'second result')];
     transpilerFacadeMock.transpile
-      .onFirstCall().resolves(transpileResultOne)
-      .onSecondCall().resolves(transpileResultTwo);
+      .onFirstCall().resolves(transpiledFilesOne)
+      .onSecondCall().resolves(transpiledFilesTwo);
   });
 
   describe('with a transpiler', () => {
@@ -42,11 +44,11 @@ describe('MutantTranspiler', () => {
     describe('initialize', () => {
 
       it('should transpile all files', () => {
-        const expectedFiles = [textFile(), webFile()];
+        const expectedFiles = [file()];
         sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }));
         const actualResult = sut.initialize(expectedFiles);
         expect(transpilerFacadeMock.transpile).calledWith(expectedFiles);
-        return expect(actualResult).eventually.eq(transpileResultOne);
+        return expect(actualResult).eventually.eq(transpiledFilesOne);
       });
     });
 
@@ -70,8 +72,27 @@ describe('MutantTranspiler', () => {
           .toArray()
           .toPromise();
         const expected: TranspiledMutant[] = [
-          { mutant: mutants[0], transpileResult: transpileResultOne, changedAnyTranspiledFiles: true },
-          { mutant: mutants[1], transpileResult: transpileResultTwo, changedAnyTranspiledFiles: true }
+          { mutant: mutants[0], transpileResult: { error: null, outputFiles: transpiledFilesOne }, changedAnyTranspiledFiles: true },
+          { mutant: mutants[1], transpileResult: { error: null, outputFiles: transpiledFilesTwo }, changedAnyTranspiledFiles: true }
+        ];
+        expect(actualResult).deep.eq(expected);
+      });
+
+      it('should report rejected transpile attempts as errors', async () => {
+        // Arrange
+        const error = new Error('expected transpile error');
+        transpilerFacadeMock.transpile.reset();
+        transpilerFacadeMock.transpile.rejects(error);
+        const mutant = testableMutant();
+
+        // Act
+        const actualResult = await sut.transpileMutants([mutant])
+          .toArray()
+          .toPromise();
+
+        // Assert
+        const expected: TranspiledMutant[] = [
+          { mutant, transpileResult: { error: errorToString(error), outputFiles: [] }, changedAnyTranspiledFiles: false },
         ];
         expect(actualResult).deep.eq(expected);
       });
@@ -79,9 +100,9 @@ describe('MutantTranspiler', () => {
       it('should set set the changedAnyTranspiledFiles boolean to false if transpiled output did not change', async () => {
         // Arrange
         transpilerFacadeMock.transpile.reset();
-        transpilerFacadeMock.transpile.resolves(transpileResultOne);
+        transpilerFacadeMock.transpile.resolves(transpiledFilesOne);
         const mutants = [testableMutant()];
-        const files = [textFile()];
+        const files = [file()];
         await sut.initialize(files);
 
         // Act
@@ -91,37 +112,41 @@ describe('MutantTranspiler', () => {
 
         // Assert
         const expected: TranspiledMutant[] = [
-          { mutant: mutants[0], transpileResult: transpileResultOne, changedAnyTranspiledFiles: false }
+          { mutant: mutants[0], transpileResult: { error: null, outputFiles: transpiledFilesOne }, changedAnyTranspiledFiles: false }
         ];
         expect(actual).deep.eq(expected);
       });
 
       it('should transpile mutants one by one in sequence', async () => {
         // Arrange
-        let resolveFirst: (transpileResult: TranspileResult) => void = () => { };
-        let resolveSecond: (transpileResult: TranspileResult) => void = () => { };
+        let resolveFirst: (files: ReadonlyArray<File>) => void = () => { };
+        let resolveSecond: (files: ReadonlyArray<File>) => void = () => { };
         transpilerFacadeMock.transpile.resetBehavior();
         transpilerFacadeMock.transpile
-          .onFirstCall().returns(new Promise<TranspileResult>(res => resolveFirst = res))
-          .onSecondCall().returns(new Promise<TranspileResult>(res => resolveSecond = res));
+          .onFirstCall().returns(new Promise<ReadonlyArray<File>>(res => resolveFirst = res))
+          .onSecondCall().returns(new Promise<ReadonlyArray<File>>(res => resolveSecond = res));
         const actualResults: TranspileResult[] = [];
 
         // Act
         sut.transpileMutants([testableMutant('one'), testableMutant('two')])
-          .subscribe(transpileResult => actualResults.push(transpileResult.transpileResult));
+          .subscribe(transpiledMutant => actualResults.push(transpiledMutant.transpileResult));
 
         // Assert: only first time called
         expect(transpilerFacadeMock.transpile).calledOnce;
         expect(actualResults).lengthOf(0);
-        resolveFirst(transpileResultOne);
+        resolveFirst(transpiledFilesOne);
         await nextTick();
         // Assert: second one is called, first one is received
         expect(transpilerFacadeMock.transpile).calledTwice;
         expect(actualResults).lengthOf(1);
-        resolveSecond(transpileResultTwo);
+        resolveSecond(transpiledFilesTwo);
         // Assert: all results are in
         await nextTick();
-        expect(actualResults).deep.eq([transpileResultOne, transpileResultTwo]);
+        const expectedResults: TranspileResult[] = [
+          { error: null, outputFiles: transpiledFilesOne },
+          { error: null, outputFiles: transpiledFilesTwo }
+        ];
+        expect(actualResults).deep.eq(expectedResults);
       });
       const nextTick = () => new Promise(res => {
         setTimeout(res, 0);
@@ -141,20 +166,19 @@ describe('MutantTranspiler', () => {
     });
 
     it('should transpile the files when initialized', async () => {
-      const expectedFiles = [textFile(), webFile()];
+      const expectedFiles = [file()];
       const actualFiles = await sut.initialize(expectedFiles);
       expect(transpilerFacadeMock.transpile).calledWith(expectedFiles);
-      expect(actualFiles).eq(transpileResultOne);
-      expect(actualFiles.error).eq('first result');
+      expect(actualFiles).eq(transpiledFilesOne);
     });
 
     it('should transpile the mutated files when transpileMutants is called', async () => {
       const actualMutants = [testableMutant('file1.ts'), testableMutant('file2.ts')];
       const actualResult = await sut.transpileMutants(actualMutants).toArray().toPromise();
       expect(actualResult).lengthOf(2);
-      expect(actualResult[0].transpileResult).eq(transpileResultOne);
+      expect(actualResult[0].transpileResult.outputFiles).eq(transpiledFilesOne);
       expect(actualResult[0].mutant).eq(actualMutants[0]);
-      expect(actualResult[1].transpileResult).eq(transpileResultTwo);
+      expect(actualResult[1].transpileResult.outputFiles).eq(transpiledFilesTwo);
       expect(actualResult[1].mutant).eq(actualMutants[1]);
     });
 

@@ -5,7 +5,7 @@ import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
 import { RunResult } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { expect } from 'chai';
-import InputFileResolver, * as inputFileResolver from '../../src/InputFileResolver';
+import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
 import ConfigReader, * as configReader from '../../src/ConfigReader';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import ReporterOrchestrator, * as reporterOrchestrator from '../../src/ReporterOrchestrator';
@@ -18,10 +18,11 @@ import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/S
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
 import { TempFolder } from '../../src/utils/TempFolder';
 import currentLogMock from '../helpers/log4jsMock';
-import { mock, Mock, testFramework as testFrameworkMock, textFile, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
+import { mock, Mock, testFramework as testFrameworkMock, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import TestableMutant from '../../src/TestableMutant';
 import '../helpers/globals';
+import InputFileCollection from '../../src/input/InputFileCollection';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
@@ -117,61 +118,77 @@ describe('Stryker', function () {
 
   describe('runMutationTest()', () => {
 
-    let inputFiles: File[];
+    let inputFiles: InputFileCollection;
     let initialRunResult: RunResult;
     let transpiledFiles: File[];
     let mutants: TestableMutant[];
     let mutantResults: MutantResult[];
 
     beforeEach(() => {
-      mutants = [testableMutant()];
+      mutants = [
+        testableMutant('file1', 'fooMutator'),
+        testableMutant('file2', 'barMutator'),
+        testableMutant('file3', 'bazMutator')
+      ];
       mutantResults = [mutantResult()];
       mutantRunResultMatcherMock.matchWithMutants.returns(mutants);
       mutatorMock.mutate.returns(mutants);
       mutationTestExecutorMock.run.resolves(mutantResults);
-      inputFiles = [textFile({ name: 'input.ts ' })];
-      transpiledFiles = [textFile({ name: 'output.js' })];
+      inputFiles = new InputFileCollection([new File('input.ts', '')], ['input.ts']);
+      transpiledFiles = [new File('output.js', '')];
       inputFileResolverMock.resolve.resolves(inputFiles);
       initialRunResult = runResult();
       initialTestExecutorMock.run.resolves({ runResult: initialRunResult, transpiledFiles });
-      sut = new Stryker({});
     });
 
-    it('should reject when input file globbing results in a rejection', async () => {
-      const expectedError = Error('expected error');
-      inputFileResolverMock.resolve.rejects(expectedError);
-      await expect(sut.runMutationTest()).rejectedWith(expectedError);
-    });
+    describe('sad flow', () => {
 
-    it('should reject when initial test run rejects', async () => {
-      const expectedError = Error('expected error');
-      initialTestExecutorMock.run.rejects(expectedError);
-      await expect(sut.runMutationTest()).rejectedWith(expectedError);
-    });
+      beforeEach(() => {
+        sut = new Stryker({});
+      });
 
-    it('should reject when mutation tester rejects', async () => {
-      const expectedError = Error('expected error');
-      mutationTestExecutorMock.run.rejects(expectedError);
-      await expect(sut.runMutationTest()).rejectedWith(expectedError);
-    });
+      it('should reject when input file globbing results in a rejection', async () => {
+        const expectedError = Error('expected error');
+        inputFileResolverMock.resolve.rejects(expectedError);
+        await expect(sut.runMutationTest()).rejectedWith(expectedError);
+      });
 
-    it('should quit early if no tests were executed in initial test run', async () => {
-      while (initialRunResult.tests.pop());
-      const actualResults = await sut.runMutationTest();
-      expect(mutationTestExecutorMock.run).not.called;
-      expect(actualResults).lengthOf(0);
-    });
+      it('should reject when initial test run rejects', async () => {
+        const expectedError = Error('expected error');
+        initialTestExecutorMock.run.rejects(expectedError);
+        await expect(sut.runMutationTest()).rejectedWith(expectedError);
+      });
 
-    it('should log to have quit early if no mutants were generated', async () => {
-      while (mutants.pop()); // clear all mutants
-      await sut.runMutationTest();
-      expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
-      expect(mutationTestExecutorMock.run).not.called;
+      it('should reject when mutation tester rejects', async () => {
+        const expectedError = Error('expected error');
+        mutationTestExecutorMock.run.rejects(expectedError);
+        await expect(sut.runMutationTest()).rejectedWith(expectedError);
+      });
+
+      it('should quit early if no tests were executed in initial test run', async () => {
+        while (initialRunResult.tests.pop());
+        const actualResults = await sut.runMutationTest();
+        expect(mutationTestExecutorMock.run).not.called;
+        expect(actualResults).lengthOf(0);
+      });
+
+      it('should quit early if no mutants were generated', async () => {
+        while (mutants.pop()); // clear all mutants
+        await sut.runMutationTest();
+        expect(mutationTestExecutorMock.run).not.called;
+      });
+
+      it('should log the absence of mutants if no mutants were generated', async () => {
+        while (mutants.pop()); // clear all mutants
+        await sut.runMutationTest();
+        expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
+      });
     });
 
     describe('happy flow', () => {
 
       beforeEach(() => {
+        sut = new Stryker({});
         return sut.runMutationTest();
       });
 
@@ -201,16 +218,20 @@ describe('Stryker', function () {
         expect(initialTestExecutorMock.run).called;
       });
 
-      it('should create the mutant generator', () => {
+      it('should create the mutator', () => {
         expect(mutatorFacade.default).calledWithNew;
         expect(mutatorFacade.default).calledWith(strykerConfig);
-        expect(mutatorMock.mutate).calledWith(inputFiles);
+        expect(mutatorMock.mutate).calledWith(inputFiles.filesToMutate);
       });
 
       it('should create the mutation test executor', () => {
         expect(mutationTestExecutor.default).calledWithNew;
-        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles, testFramework, reporter);
+        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles.files, testFramework, reporter);
         expect(mutationTestExecutorMock.run).calledWith(mutants);
+      });
+
+      it('should log the number of mutants generated', () => {
+        expect(currentLogMock().info).to.have.been.calledWith('3 Mutant(s) generated');
       });
 
       it('should clean the stryker temp folder', () => {
@@ -219,6 +240,40 @@ describe('Stryker', function () {
 
       it('should let the reporters wrapUp any async tasks', () => {
         expect(reporter.wrapUp).to.have.been.called;
+      });
+    });
+
+    describe('with excluded mutants', () => {
+
+      it('should log the number of mutants generated and excluded', async () => {
+        strykerConfig.mutator = {
+          name: 'es5',
+          excludedMutations: ['fooMutator']
+        };
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(currentLogMock().info).to.have.been.calledWith('2 Mutant(s) generated (1 Mutant(s) excluded)');
+      });
+
+      it('should log the absence of mutants and the excluded number when all mutants are excluded', async () => {
+        strykerConfig.mutator = {
+          name: 'es5',
+          excludedMutations: ['fooMutator', 'barMutator', 'bazMutator']
+        };
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test. (3 Mutant(s) excluded)');
+      });
+
+      it('should filter out the excluded mutations', async () => {
+        strykerConfig.mutator = {
+          name: 'es5',
+          excludedMutations: ['barMutator', 'bazMutator']
+        };
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(mutantRunResultMatcher.default).calledWithNew;
+        expect(mutantRunResultMatcher.default).calledWith([mutants[0]]);
       });
     });
   });

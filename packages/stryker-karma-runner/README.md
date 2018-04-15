@@ -30,101 +30,57 @@ These are marked as `peerDependencies` of `stryker-karma-runner` so you get a wa
 
 ## Configuring
 
-You can either configure the karma test runner using the command line or by providing it in the `stryker.conf.js` file.
-This README describes how to use the `stryker.conf.js` config file.
-
-### Load the plugin
-
-In order to use the `stryker-karma-runner` it must me loaded in the stryker mutation testing framework via the stryker configuration. 
-The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all `node_modules` starting with `stryker-` will be loaded.
-
-If you do decide to choose specific modules, don't forget to add `'stryker-karma-runner'` to the list of plugins to load.
-
-### Use the test runner
-
-In order to use karma as the test runner, you simply specify it in your config file: `testRunner: 'karma'`
-
-### Karma config
-
-#### Automatic setup
-
-You can configure stryker to use *your very own* `karma.conf.js` file. 
+You can configure the `stryker-karma-runner` using the `stryker.conf.js` config file.
 
 ```javascript
 // Stryker.conf.js
 module.exports = function (config) {
     config.set({
+        // ...
         testRunner: 'karma',
-        testFramework: 'jasmine', // <-- add your testFramework here
+        // ...
+        karmaConfig: {
+            files: ['src/**/*.js'] // <-- override karma config here
+        },
         karmaConfigFile: 'karma.conf.js' // <-- add your karma.conf.js file here
-        mutate: [
-            'src/**/*.js' // <-- mark files for mutation here
-        ]
     });
 }
 ```
 
-This will configure three things for you:
+### `karmaConfigFile` [`string`]
 
-* Karma's `files` option will be used to configure the files in Stryker, you don't need to keep a list of files in sync in both `stryker.conf.js` and `karma.conf.js`.
-* Karma's `exclude` option will be used to ignore files in Stryker (using `!` to ignore them)
-* All remaining karma config options will be copied to the `karmaConfig` option in Stryker config. They will be picked up by the `stryker-karma-runner` during mutation testing.
-    * **Note**: Any manual setup you configure in the `karmaConfig` options will *not* be overwritten.
+Default: `undefined`
 
-#### Manual setup
+Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded. Options specified directly in your stryker.conf.js file will overrule options from karma's configuration file.
 
-**Note**: Using the manual setup will not read your `karma.conf.js` options. You'll probably need to *Override the karma config* (see next section)
+### `karmaConfig.files` [`(string | FilePattern)[]`]
 
-When Stryker uses the karma test runner, it uses these default karma config settings:
+Default: `[]`
 
+The files array determines which files are included in the browser and which files are watched and served by Karma. See [the files section on the karma website](http://karma-runner.github.io/2.0/config/files.html).
+
+### `karmaConfig.browsers` [`string[]`]
+
+Default: `['PhantomJS']`
+
+Configure the karma [Browsers configuration setting](http://karma-runner.github.io/2.0/config/browsers.html).
+
+### `karmaConfig.*` [`any`]
+
+Use other options to configure karma. See [the configuration section on the karma website](http://karma-runner.github.io/2.0/config/configuration-file.html)
+
+The browser's life cycle is determined by `stryker-karma-runner`. I.e. these settings cannot be overridden:
 
 ```javascript
 {
-  browsers: ['PhantomJS'], // *
-  frameworks: ['jasmine'], // *
   autoWatch: false,
   singleRun: false,
 }
-// * these settings can be overriden, see next paragraph
 ```
 
-For the first test run, stryker enables code coverage. If so, these additional settings are used:
+The `coverage` plugin will also be removed (not needed for mutation testing).
 
-```javascript
-  coverageReporter: {
-    type: 'in-memory' 
-  },
-  preprocessors: {
-    'src/file1.js': 'coverage', // for each file to be mutated
-    'src/file2.js': 'coverage'
-  },
-  plugins: ['karma-coverage'] // or left blank (by default, karma loads all plugins starting with karma-*
-```
-
-#### Override karma config
-
-You can override karma config by adding a `karmaConfig` property to your `stryker.conf.js` file.
-
-For example:
-
-```javascript
-karmaConfig: {
-    browsers: ['Chrome'],
-    frameworks: ['mocha']
-}
-```
-
-*Note*: Whichever testFramework you use should also be reflected in the `testFramework` property of stryker itself. For example: `testFramework: 'mocha'`  
-
-Not all karma config can be overriden, as Stryker requires specific functionality from the testRunner to do its magic. 
-
-The following Karma config options cannot be overridden:
-
-* `files`: The karma-runner will fill this based on the `files` and `mutate` configuration in the `stryker-conf.js` file (or your `karma.conf.js` file when using the *automatic setup*).
-* `coverageReporter`: For the initial test run, the `stryker-karma-runner` will use its own coverage reporter. For testing the mutants, however, it will be disabled.
-* `autoWatch`, `singleRun`: Stryker needs full control on when to run the karma tests
-
-### Full config example
+## Full config example
 
 ```javascript
 // stryker.conf.js
@@ -139,18 +95,14 @@ exports = function(config){
             autoWatch: false,
             singleRun: false
         },
+        coverageAnalysis: 'perTest',
         plugins: ['stryker-karma-runner'] // Or leave out the plugin list entirely to load all stryker-* plugins directly
         // ...
     });
 }
 ```
 
-## Usage
-
-Use Stryker as you normally would.
-See [https://stryker-mutator.io](https://stryker-mutator.io) for more info. 
-
-### Debugging
+## Debugging
 
 As Stryker runs karma in its own process, its logging output will be consumed by Stryker.
 

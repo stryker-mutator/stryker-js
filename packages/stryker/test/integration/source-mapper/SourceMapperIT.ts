@@ -1,7 +1,6 @@
 import * as fs from 'mz/fs';
 import * as path from 'path';
 import { File } from 'stryker-api/core';
-import { textFile } from '../../helpers/producers';
 import { TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
 import { expect } from 'chai';
 
@@ -12,15 +11,7 @@ function resolve(...filePart: string[]) {
 function readFiles(...files: string[]): Promise<File[]> {
   return Promise.all(files
     .map(relative => resolve(relative))
-    .map(fileName => fs.readFile(fileName, 'utf8').then(content => {
-      const isMapFile = path.extname(fileName) === '.map';
-      return textFile({
-        content,
-        name: fileName,
-        transpiled: !isMapFile,
-        mutated: !isMapFile
-      });
-    })));
+    .map(fileName => fs.readFile(fileName).then(content => new File(fileName, content))));
 }
 
 describe('Source mapper integration', () => {

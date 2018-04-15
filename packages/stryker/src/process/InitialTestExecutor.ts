@@ -2,13 +2,16 @@ import { EOL } from 'os';
 import { RunStatus, RunResult, TestResult, TestStatus } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import { Config } from 'stryker-api/config';
-import { TranspileResult, TranspilerOptions, Transpiler } from 'stryker-api/transpile';
+import { TranspilerOptions, Transpiler } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
 import TranspilerFacade from '../transpiler/TranspilerFacade';
 import { getLogger } from 'log4js';
 import Sandbox from '../Sandbox';
 import Timer from '../utils/Timer';
 import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
+import InputFileCollection from '../input/InputFileCollection';
+import SourceMapper from '../transpiler/SourceMapper';
+import { coveragePerTestHooks } from '../transpiler/coverageHooks';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
@@ -17,7 +20,7 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 
 export interface InitialTestRunResult {
   runResult: RunResult;
-  transpiledFiles: File[];
+  sourceMapper: SourceMapper;
   coverageMaps: CoverageMapsByFile;
 }
 
@@ -25,38 +28,53 @@ export default class InitialTestExecutor {
 
   private readonly log = getLogger(InitialTestExecutor.name);
 
-  constructor(private options: Config, private files: File[], private testFramework: TestFramework | null, private timer: Timer) {
+  constructor(private options: Config, private inputFiles: InputFileCollection, private testFramework: TestFramework | null, private timer: Timer) {
   }
 
   async run(): Promise<InitialTestRunResult> {
-    if (this.files.length > 0) {
-      this.log.info(`Starting initial test run. This may take a while.`);
-      const result = await this.initialRunInSandbox();
-      this.validateResult(result.runResult);
-      return result;
-    } else {
-      this.log.info(`No files have been found. Aborting initial test run.`);
-      return this.createDryRunResult();
-    }
+
+    this.log.info(`Starting initial test run. This may take a while.`);
+
+    // Before we can run the tests we transpile the input files. 
+    // Files that are not transpiled should pass through without transpiling
+    const transpiledFiles = await this.transpileInputFiles();
+
+    // Now that we have the transpiled files, we create a source mapper so 
+    // we can figure out which files we need to annotate for code coverage
+    const sourceMapper = SourceMapper.create(transpiledFiles, this.options);
+
+    // Annotate the transpiled files for code coverage. This allows the 
+    // test runner to report code coverage (if `coverageAnalysis` is enabled)
+    const { coverageMaps, instrumentedFiles } = await this.annotateForCodeCoverage(transpiledFiles, sourceMapper);
+    this.logTranspileResult(instrumentedFiles);
+
+    const runResult = await this.runInSandbox(instrumentedFiles);
+    this.validateResult(runResult);
+    return {
+      sourceMapper,
+      runResult,
+      coverageMaps
+    };
   }
 
-  private async initialRunInSandbox(): Promise<InitialTestRunResult> {
-    const coverageInstrumenterTranspiler = this.createCoverageInstrumenterTranspiler();
-    const transpilerFacade = this.createTranspilerFacade(coverageInstrumenterTranspiler);
-    const transpileResult = await transpilerFacade.transpile(this.files);
-    if (transpileResult.error) {
-      throw new Error(`Could not transpile input files: ${transpileResult.error}`);
-    } else {
-      this.logTranspileResult(transpileResult);
-      const sandbox = await Sandbox.create(this.options, 0, transpileResult.outputFiles, this.testFramework);
-      const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT);
-      await sandbox.dispose();
-      return {
-        runResult,
-        transpiledFiles: transpileResult.outputFiles,
-        coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps
-      };
-    }
+  private async runInSandbox(files: ReadonlyArray<File>): Promise<RunResult> {
+    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework);
+    const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT, this.getCollectCoverageHooksIfNeeded());
+    await sandbox.dispose();
+    return runResult;
+  }
+
+  private async transpileInputFiles(): Promise<ReadonlyArray<File>> {
+    const transpilerFacade = this.createTranspilerFacade();
+    return await transpilerFacade.transpile(this.inputFiles.files);
+  }
+
+  private async annotateForCodeCoverage(files: ReadonlyArray<File>, sourceMapper: SourceMapper)
+    : Promise<{ instrumentedFiles: ReadonlyArray<File>, coverageMaps: CoverageMapsByFile }> {
+    const filesToInstrument = this.inputFiles.filesToMutate.map(mutateFile => sourceMapper.transpiledFileNameFor(mutateFile.name));
+    const coverageInstrumenterTranspiler = new CoverageInstrumenterTranspiler(this.options, filesToInstrument);
+    const instrumentedFiles = await coverageInstrumenterTranspiler.transpile(files);
+    return { coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps, instrumentedFiles };
   }
 
   private validateResult(runResult: RunResult): void {
@@ -83,42 +101,36 @@ export default class InitialTestExecutor {
     throw new Error('Something went wrong in the initial test run');
   }
 
-  private createDryRunResult(): InitialTestRunResult {
-    return {
-      runResult: {
-        status: RunStatus.Complete,
-        tests: [],
-        errorMessages: []
-      },
-      transpiledFiles: [],
-      coverageMaps: Object.create(null)
-    };
-  }
-
   /**
    * Creates a facade for the transpile pipeline.
    * Also includes the coverage instrumenter transpiler,
    * which is used to instrument for code coverage when needed.
    */
-  private createTranspilerFacade(coverageInstrumenterTranspiler: CoverageInstrumenterTranspiler): Transpiler {
+  private createTranspilerFacade(): Transpiler {
     // Let the transpiler produce source maps only if coverage analysis is enabled
     const transpilerSettings: TranspilerOptions = {
       config: this.options,
       produceSourceMaps: this.options.coverageAnalysis !== 'off'
     };
-    return new TranspilerFacade(transpilerSettings, {
-      name: CoverageInstrumenterTranspiler.name,
-      transpiler: coverageInstrumenterTranspiler
-    });
+    return new TranspilerFacade(transpilerSettings);
   }
 
-  private createCoverageInstrumenterTranspiler() {
-    return new CoverageInstrumenterTranspiler({ produceSourceMaps: true, config: this.options }, this.testFramework);
+  private getCollectCoverageHooksIfNeeded(): string | undefined {
+    if (this.options.coverageAnalysis === 'perTest') {
+      if (this.testFramework) {
+        // Add piece of javascript to collect coverage per test results
+        this.log.debug(`Adding test hooks for coverageAnalysis "perTest".`);
+        return coveragePerTestHooks(this.testFramework);
+      } else {
+        this.log.warn('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
+      }
+    }
+    return undefined;
   }
 
-  private logTranspileResult(transpileResult: TranspileResult) {
+  private logTranspileResult(transpiledFiles: ReadonlyArray<File>) {
     if (this.options.transpilers.length && this.log.isDebugEnabled()) {
-      this.log.debug(`Transpiled files in order:${EOL}${transpileResult.outputFiles.map(f => `${f.name} (included: ${f.included})`).join(EOL)}`);
+      this.log.debug(`Transpiled files: ${JSON.stringify(transpiledFiles.map(f => `${f.name}`), null, 2)}`);
     }
   }
 

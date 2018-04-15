@@ -81,7 +81,11 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
           break;
         case 'initDone':
           if (this.currentTask.kind === 'init') {
-            this.currentTask.resolve(undefined);
+            if (message.errorMessage) {
+              this.currentTask.reject(message.errorMessage);
+            } else {
+              this.currentTask.resolve(undefined);
+            }
           } else {
             this.logReceivedUnexpectedMessageWarning(message);
           }
