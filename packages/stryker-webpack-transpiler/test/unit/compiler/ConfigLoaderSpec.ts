@@ -1,8 +1,11 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
 import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { Configuration, Compiler, Plugin } from 'webpack';
 import { createStrykerWebpackConfig } from '../../helpers/producers';
+
+
 
 class FooPlugin implements Plugin { foo = true; apply(compiler: Compiler): void { } }
 class ProgressPlugin implements Plugin { apply(compiler: Compiler): void { } }
@@ -11,14 +14,19 @@ class BarPlugin implements Plugin { bar = true; apply(compiler: Compiler): void 
 describe('ConfigLoader', () => {
   let sut: ConfigLoader;
   let requireStub: sinon.SinonStub;
+  let existsSyncStub: sinon.SinonStub;
 
   beforeEach(() => {
     requireStub = sandbox.stub();
+    existsSyncStub = sandbox.stub(fs, 'existsSync');
+
     sut = new ConfigLoader(requireStub);
   });
 
   it('should load webpack config from given location', () => {
     requireStub.returns('resolved');
+    existsSyncStub.returns(true);
+
     const result = sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js' }));
     expect(result).eq('resolved');
     expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));
@@ -30,7 +38,9 @@ describe('ConfigLoader', () => {
     const webpackConfig: Configuration = {
       plugins: [new FooPlugin(), new ProgressPlugin(), new BarPlugin(), bazPlugin]
     };
+
     requireStub.returns(webpackConfig);
+    existsSyncStub.returns(true);
 
     // Act
     const result = sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: true }));
@@ -47,14 +57,18 @@ describe('ConfigLoader', () => {
     const webpackConfig: Configuration = {
       plugins: [new ProgressPlugin(), new BarPlugin()]
     };
+
     requireStub.returns(webpackConfig);
+    existsSyncStub.returns(true);
+
     const result = sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: false }));
     expect(result.plugins).to.be.an('array').that.does.deep.include(new ProgressPlugin());
   });
 
   it('should return an object with the context property pointing to the projectRoot when webpack.config.js does not exist', () => {
     const contextPath: string = '/path/to/project/root';
-    requireStub.throws(Error('ENOENT: no such file or directory, open webpack.config.js'));
+    
+    existsSyncStub.returns(false);
 
     const result = sut.load(createStrykerWebpackConfig({ context: contextPath }));
 
@@ -63,7 +77,8 @@ describe('ConfigLoader', () => {
 
   it('should report an error when a non-existent webpack config file location is provided by the user', () => {
     const configFile = 'non-existent.webpack.config.js';
-    requireStub.throws(Error('ENOENT: no such file or directory, open webpack.config.js'));
+
+    existsSyncStub.returns(false);
 
     const loadFn = () => sut.load(createStrykerWebpackConfig({ configFile }));
 
