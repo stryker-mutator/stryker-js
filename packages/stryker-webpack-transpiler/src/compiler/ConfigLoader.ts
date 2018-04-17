@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { Configuration } from 'webpack';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
 import { getLogger, Logger } from 'log4js';
+import { NodeJsInputFileSystem } from 'enhanced-resolve';
 
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 
@@ -32,11 +33,13 @@ export default class ConfigLoader {
   }
 
 private loaderWebpackConfigFromProjectRoot(configFileLocation: string) {
-  if (!fs.existsSync(path.resolve(configFileLocation))) {
-    throw new Error(`Could not load webpack config at "${configFileLocation}", file not found.`);
+  const resolvedName = path.resolve(configFileLocation);
+
+  if (!fs.existsSync(resolvedName)) {
+    throw new Error(`Could not load webpack config at "${resolvedName}", file not found.`);
   }
 
-  return this.loader(path.resolve(configFileLocation));
+  return this.loader(resolvedName);
 }
 
   private configureSilent(webpackConfig: Configuration) {
