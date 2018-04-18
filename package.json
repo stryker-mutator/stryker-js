@@ -6,7 +6,7 @@
     "@types/chai-as-promised": "7.1.0",
     "@types/escodegen": "0.0.6",
     "@types/esprima": "^2.1.31",
-    "@types/estree": "0.0.38",
+    "@types/estree": "0.0.39",
     "@types/execa": "^0.9.0",
     "@types/glob": "^5.0.29",
     "@types/istanbul": "^0.4.29",
