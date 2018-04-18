@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import { Configuration } from 'webpack';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
 import { getLogger, Logger } from 'log4js';
-import { NodeJsInputFileSystem } from 'enhanced-resolve';
 
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 
