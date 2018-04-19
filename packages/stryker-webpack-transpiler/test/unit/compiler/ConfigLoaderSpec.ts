@@ -82,6 +82,6 @@ describe('ConfigLoader', () => {
 
     const loadFn = () => sut.load(createStrykerWebpackConfig({ configFile }));
 
-    expect(loadFn).to.throw(Error, `Could not load webpack config at "${configFile}", file not found.`);
+    expect(loadFn).to.throw(Error, `Could not load webpack config at "${path.resolve(configFile)}", file not found.`);
   });
 });
