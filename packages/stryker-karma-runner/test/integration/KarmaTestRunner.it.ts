@@ -23,14 +23,27 @@ describe('KarmaTestRunner', function () {
   let sut: KarmaTestRunner;
   this.timeout(10000);
 
-  let expectToHaveSuccessfulTests = (result: RunResult, n: number) => {
+  const expectToHaveSuccessfulTests = (result: RunResult, n: number) => {
     expect(result.tests.filter(t => t.status === TestStatus.Success)).to.have.length(n);
   };
-  let expectToHaveFailedTests = (result: RunResult, expectedFailureMessages: string[]) => {
+  const expectToHaveFailedTests = (result: RunResult, expectedFailureMessages: string[]) => {
     const actualFailedTests = result.tests.filter(t => t.status === TestStatus.Failed);
     expect(actualFailedTests).to.have.length(expectedFailureMessages.length);
-    actualFailedTests.forEach(failedTest => expect((failedTest.failureMessages as any)[0]).to.contain(expectedFailureMessages.shift() as any));
+    actualFailedTests.forEach(failedTest => {
+      const actualFailedMessage = failedTest.failureMessages ? failedTest.failureMessages[0].split('\n')[0] : '';
+      expect(actualFailedMessage).to.be.oneOf(expectedFailureMessages);
+    });
   };
+
+  const expectTestResults = (result: RunResult, expectedTestResults: { name: string, status: TestStatus }[]) => {
+    const actualTestResults = result.tests.map(test => ({ name: test.name, status: test.status }));
+    expect(actualTestResults).to.have.length(expectedTestResults.length);
+    expectedTestResults.forEach(expectedTestResult => {
+      const actualTestResult = actualTestResults.find(test => test.name === expectedTestResult.name);
+      expect(actualTestResult).deep.eq(expectedTestResult);
+    });
+  };
+
 
   describe('when all tests succeed', () => {
     let testRunnerOptions: RunnerOptions;
@@ -70,19 +83,20 @@ describe('KarmaTestRunner', function () {
       it('should be able to run twice in quick succession',
         () => expect(sut.run({}).then(() => sut.run({}))).to.eventually.have.property('status', RunStatus.Complete));
 
-      it('should be able to filter tests', async () => {
+      it.only('should be able to filter tests', async () => {
         const testHooks = wrapInClosure(new JasmineTestFramework().filter([
-          { id: 0, name: '' },
-          { id: 3, name: '' }
+          { id: 0, name: 'Add should be able 1 to a number' },
+          { id: 3, name: 'Add should be able negate a number' }
         ]));
         const result = await sut.run({ testHooks });
-        expect(result.tests.map(test => ({ name: test.name, status: test.status }))).deep.eq([
+        expectTestResults(result, [
           { name: 'Add should be able to add two numbers', status: TestStatus.Success },
           { name: 'Add should be able 1 to a number', status: TestStatus.Skipped },
           { name: 'Add should be able negate a number', status: TestStatus.Skipped },
           { name: 'Add should be able to recognize a negative number', status: TestStatus.Success },
           { name: 'Add should be able to recognize that 0 is not a negative number', status: TestStatus.Skipped }
         ]);
+        return new Promise((res) => {});
       });
 
     });
@@ -126,6 +140,7 @@ describe('KarmaTestRunner', function () {
         strykerOptions: {
           karmaConfig: {
             files: [
+              'testResources/sampleProject/src/Add.js',
               'testResources/sampleProject/src/Error.js',
               'testResources/sampleProject/test/AddSpec.js'
             ]
@@ -139,7 +154,7 @@ describe('KarmaTestRunner', function () {
 
     it('should report Error with the error message', async () => {
       const runResult = await sut.run({});
-      expectToHaveSuccessfulTests(runResult, 0);
+      expectToHaveSuccessfulTests(runResult, 5);
       expectToHaveFailedTests(runResult, []);
       expect(runResult.status).to.be.eq(RunStatus.Error);
       expect((runResult.errorMessages as any).length).to.equal(1);

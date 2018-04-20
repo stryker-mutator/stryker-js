@@ -19,6 +19,6 @@ describe('JasmineTestFramework', () => {
     it('should result in a specFilter of jasmine it\'s', () =>
       expect(sut.filter([{ id: 5, name: 'test five' }, { id: 8, name: 'test eight' }]))
         .to.contain('jasmine.getEnv().specFilter = function (spec)')
-        .and.to.contain('return [5,8].indexOf(currentTestId++) !== -1;'));
+        .and.to.contain('return ["test five","test eight"].indexOf(spec.getFullName()) !== -1;'));
   });
 });

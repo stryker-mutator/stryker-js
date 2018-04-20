@@ -35,10 +35,6 @@
     "stryker-api": ">=0.15.0 <0.17.0"
   },
   "devDependencies": {
-    "jasmine-core": "^2.4.1",
-    "karma": "^2.0.0",
-    "karma-jasmine": "^1.1.1",
-    "karma-phantomjs-launcher": "^1.0.4",
     "stryker-api": "^0.16.1",
     "stryker-jasmine": "^0.8.3"
   },
