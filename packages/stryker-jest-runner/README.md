@@ -45,11 +45,12 @@ The stryker-jest-runner also provides a couple of configurable options using the
 
 | option | description | default value |
 |----|----|----|
-| project (optional) | The project you are working on. Currently "react" and "default" are supported. When "react" is configured, "react-scripts" is used (for create-react-app projects). When "default" is configured, your "config" option is used. | default |
+| project (optional) | The type of project you are working on. Currently "react" and "default" are supported. When "react" is configured, "react-scripts" is used (for create-react-app projects). When "default" is configured, your "config" option is used. | default |
 | config (optional) | A custom jest configuration (you can also use `require` to load your config here) | undefined |
 
 **Note:** When neither of the options are specified it will use the jest configuration in your "package.json". \
-**Note:** the `project` option is ignored when the `config` option is specified.
+**Note:** the `project` option is ignored when the `config` option is specified. \
+**Note:** Stryker currently only works for CRA-projects that have not been _ejected_.
 
 The following is an example stryker.conf.js file:
 
