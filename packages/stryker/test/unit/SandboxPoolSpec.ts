@@ -114,5 +114,4 @@ function tick() {
     setTimeout(res, 0);
   });
 }
-});
 
