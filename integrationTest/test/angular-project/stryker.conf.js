@@ -36,7 +36,6 @@ module.exports = function (config) {
     maxConcurrentTestRunners: 1,
     webpack: {
       configFile: 'webpack-stryker.config.js'
-    },
-    logLevel: 'trace'
+    }
   });
 };
