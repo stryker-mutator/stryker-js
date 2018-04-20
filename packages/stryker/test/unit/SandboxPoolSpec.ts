@@ -7,6 +7,7 @@ import { TestFramework } from 'stryker-api/test_framework';
 import { Mock, mock, testFramework, file, config } from '../helpers/producers';
 import Sandbox from '../../src/Sandbox';
 import '../helpers/globals';
+import Task from '../../src/utils/Task';
 
 describe('SandboxPool', () => {
   let sut: SandboxPool;
@@ -15,6 +16,7 @@ describe('SandboxPool', () => {
   let options: Config;
   let expectedTestFramework: TestFramework;
   let expectedInputFiles: File[];
+  let createStub: sinon.SinonStub;
 
   beforeEach(() => {
     options = config();
@@ -25,7 +27,7 @@ describe('SandboxPool', () => {
     secondSandbox.dispose.resolves();
     const genericSandboxForAllSubsequentCallsToNewSandbox = mock<Sandbox>(Sandbox);
     genericSandboxForAllSubsequentCallsToNewSandbox.dispose.resolves();
-    global.sandbox.stub(Sandbox, 'create')
+    createStub = global.sandbox.stub(Sandbox, 'create')
       .resolves(genericSandboxForAllSubsequentCallsToNewSandbox)
       .onCall(0).resolves(firstSandbox)
       .onCall(1).resolves(secondSandbox);
@@ -68,14 +70,6 @@ describe('SandboxPool', () => {
       expect(Sandbox.create).to.have.callCount(1);
       expect(actual).lengthOf(1);
     });
-
-    // see https://github.com/stryker-mutator/stryker/issues/396
-    it('should dispose the newly created sandboxes if the sandbox pool is already disposed', async () => {
-      await sut.disposeAll();
-      const actualSandboxes = await sut.streamSandboxes().toArray().toPromise();
-      actualSandboxes.forEach(actual => expect(actual.dispose).called);
-      expect(actualSandboxes).to.have.length.greaterThan(0);
-    });
   });
   describe('dispose', () => {
     it('should have disposed all sandboxes', async () => {
@@ -90,6 +84,34 @@ describe('SandboxPool', () => {
       expect(firstSandbox.dispose).not.called;
       expect(secondSandbox.dispose).not.called;
     });
+
+    it('should not resolve when there are still sandboxes being created (issue #713)', async () => {
+      // Arrange
+      global.sandbox.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
+      const task = new Task<Sandbox>();
+      createStub.onCall(2).returns(task.promise); // promise is not yet resolved
+      const registeredSandboxes: Sandbox[] = [];
+      let disposeAllResolved = false;
+      await sut.streamSandboxes().flatMap(async sandbox => {
+        if (registeredSandboxes.push(sandbox) === 2) {
+          // Act: The last sandbox will take a while to resolve (it is not yet created)
+          const disposeAllPromise = sut.disposeAll().then(_ => disposeAllResolved = true);
+          await tick();
+
+          // Assert: dispose should not have resolved yet, because last sandbox is not created yet
+          expect(disposeAllResolved).not.ok;
+          task.resolve(mock(Sandbox) as any); // Make sure it finally is resolved
+          await disposeAllPromise;
+        }
+      }).toArray().toPromise();
+
+    });
   });
 });
+
+function tick() {
+  return new Promise(res => {
+    setTimeout(res, 0);
+  });
+}
 

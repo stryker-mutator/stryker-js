@@ -15,7 +15,7 @@ export function verifySpecification(specification: (name: string, expectMutation
 }
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
-  const tsFile = new File('file1.ts', sourceText);
+  const tsFile = new File('file1.tsx', sourceText);
   const sourceFile = parseFile(tsFile, undefined);
   const mutants = mutate(mutator, sourceFile, sourceFile);
   expect(mutants).lengthOf(expectedTexts.length);
@@ -28,7 +28,7 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
 }
 
 function format(code: string) {
-  const ast = parseFile(new File('file1.ts', code), undefined);
+  const ast = parseFile(new File('file1.tsx', code), undefined);
   return ts.createPrinter().printFile(ast);
 }
 
