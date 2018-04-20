@@ -1,0 +1,57 @@
+{
+	"folders": [
+		{
+			"path": "packages/stryker"
+		},
+		{
+			"path": "packages/grunt-stryker"
+		},
+		{
+			"path": "packages/stryker-api"
+		},
+		{
+			"path": "packages/stryker-babel-transpiler"
+		},
+		{
+			"path": "packages/stryker-html-reporter"
+		},
+		{
+			"path": "packages/stryker-jasmine"
+		},
+		{
+			"path": "packages/stryker-javascript-mutator/"
+		},
+		{
+			"path": "packages/stryker-karma-runner"
+		},
+		{
+			"path": "packages/stryker-mocha-framework"
+		},
+		{
+			"path": "packages/stryker-mocha-runner"
+		},
+		{
+			"path": "packages/stryker-mutator-specification"
+		},
+		{
+			"path": "packages/stryker-typescript"
+		},
+		{
+			"path": "packages/stryker-webpack-transpiler"
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"files.exclude": {
+			".git": true,
+			".tscache": true,
+			"**/*.js": {
+				"when": "$(basename).ts"
+			},
+			"**/*.d.ts": true,
+			"**/*.map": {
+				"when": "$(basename)"
+			}
+		}
+	}
+}
