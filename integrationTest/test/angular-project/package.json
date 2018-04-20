@@ -45,6 +45,8 @@
   "localDependencies": {
     "stryker": "../../../packages/stryker",
     "stryker-webpack-transpiler": "../../../packages/stryker-webpack-transpiler",
-    "stryker-html-reporter": "../../../packages/stryker-html-reporter"
+    "stryker-html-reporter": "../../../packages/stryker-html-reporter",
+    "stryker-karma-runner": "../../../packages/stryker-karma-runner",
+    "stryker-typescript": "../../../packages/stryker-typescript"
   }
 }
