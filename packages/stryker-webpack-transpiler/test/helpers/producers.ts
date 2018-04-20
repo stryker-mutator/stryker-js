@@ -1,7 +1,6 @@
 import { Configuration, Stats } from 'webpack';
 import { WebpackCompilerMock } from './mockInterfaces';
 import * as sinon from 'sinon';
-import { Chunk } from '../../src/compiler/FileSorter';
 import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
 import { File } from 'stryker-api/core';
 
@@ -32,23 +31,6 @@ export function createTextFile(name: string): File {
 function createFactory<T>(defaultFn: () => T): (overrides?: Partial<T>) => T {
   return overrides => Object.assign(defaultFn(), overrides);
 }
-
-export function createStats(chunks: Chunk[]) {
-  return {
-    hasErrors: () => false,
-    toJson() {
-      return {
-        chunks
-      };
-    }
-  };
-}
-
-export const createChunk = createFactory<Chunk>(() => ({
-  files: [],
-  id: '1',
-  parents: []
-}));
 
 export const createStrykerWebpackConfig = createFactory<StrykerWebpackConfig>(() => ({
   configFile: undefined,
