@@ -57,7 +57,7 @@ describe('InputFileResolver', () => {
     foo/bar/baz.ts
     `)]);
     const result = await sut.resolve();
-    expect(childProcessExecStub).calledWith('git ls-files --others --exclude-standard --cached',
+    expect(childProcessExecStub).calledWith('git ls-files --others --exclude-standard --cached --exclude .stryker-tmp',
       { maxBuffer: 10 * 1000 * 1024 });
     expect(result.files.map(file => file.name)).deep.eq([path.resolve('file1.js'), path.resolve('foo/bar/baz.ts')]);
   });
