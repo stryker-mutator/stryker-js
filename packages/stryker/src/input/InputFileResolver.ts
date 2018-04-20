@@ -48,7 +48,7 @@ export default class InputFileResolver {
   }
 
   private resolveFilesUsingGit(): Promise<string[]> {
-    return exec('git ls-files --others --exclude-standard --cached', { maxBuffer: 10 * 1000 * 1024 })
+    return exec('git ls-files --others --exclude-standard --cached --exclude .stryker-tmp', { maxBuffer: 10 * 1000 * 1024 })
       .then(([stdout]) => stdout.toString())
       .then(output => output.split('\n').map(fileName => fileName.trim()))
       .then(fileNames => fileNames.filter(fileName => fileName).map(fileName => path.resolve(fileName)))
