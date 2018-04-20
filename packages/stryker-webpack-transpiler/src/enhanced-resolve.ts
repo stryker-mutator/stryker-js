@@ -17,7 +17,7 @@ declare module 'enhanced-resolve' {
   export interface AbstractInputFileSystem {
     purge?(what?: string | string[]): void;
     readdir(path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void): void;
-    readdirSync?(path: string): string[];
+    readdirSync(path: string): string[];
     readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
     readFile(
       filename: string, options: {
@@ -31,15 +31,15 @@ declare module 'enhanced-resolve' {
       }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void
     ): void;
     readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
-    readFileSync?(filename: string): Buffer;
+    readFileSync(filename: string): Buffer;
     readJson?(path: string, callback: (err: NodeJS.ErrnoException, data: any) => void): void;
     readJsonSync?(path: string): any;
     readlink(path: string, callback: (err: NodeJS.ErrnoException, linkString: string) => void): void;
-    readlinkSync?(path: string): string;
+    readlinkSync(path: string): string;
     stat(path: string, callback: (err: NodeJS.ErrnoException, stats: Stats) => void): void;
-    statSync?(path: string): Stats;
+    statSync(path: string): Stats;
   }
-
+  
   export class NodeJsInputFileSystem implements AbstractInputFileSystem {
     readdir(path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void): void;
     readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
@@ -49,8 +49,12 @@ declare module 'enhanced-resolve' {
     readFile(filename: any, options: any, callback?: any): void;
     readlink(path: string, callback: (err: NodeJS.ErrnoException, linkString: string) => void): void;
     stat(path: string, callback: (err: NodeJS.ErrnoException, stats: Stats) => void): void;
+    statSync(path: string): Stats;
+    readlinkSync(path: string): string;
+    readFileSync(filename: string): Buffer;
+    readdirSync(path: string): string[];
   }
-
+  
   export class CachedInputFileSystem {
     fileSystem: AbstractInputFileSystem;
 
