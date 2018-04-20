@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.2"></a>
+## [0.10.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.10.1...stryker-typescript@0.10.2) (2018-04-20)
+
+
+### Bug Fixes
+
+* **String mutator:** do not mutate jsx attributes ([#711](https://github.com/stryker-mutator/stryker/issues/711)) ([6656621](https://github.com/stryker-mutator/stryker/commit/6656621)), closes [#701](https://github.com/stryker-mutator/stryker/issues/701)
+
+
+
+
 <a name="0.10.1"></a>
 ## [0.10.1](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.10.0...stryker-typescript@0.10.1) (2018-04-11)
 
