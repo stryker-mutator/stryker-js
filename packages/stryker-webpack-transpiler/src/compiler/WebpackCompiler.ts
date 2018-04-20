@@ -3,7 +3,6 @@ import { Compiler, Configuration } from 'webpack';
 import webpack from './Webpack';
 import InputFileSystem from '../fs/InputFileSystem';
 import OutputFileSystem from '../fs/OutputFileSystem';
-import FileSorter from './FileSorter';
 
 export default class WebpackCompiler {
   private _compiler: Compiler;
@@ -36,9 +35,8 @@ export default class WebpackCompiler {
   public emit(): Promise<File[]> {
     return this.compile().then(stats => {
       const outputFiles = this._outputFS.collectFiles();
-      const jsonStats = stats.toJson({ chunks: true });
       this._outputFS.purge();
-      return FileSorter.sort(outputFiles, jsonStats.chunks);
+      return outputFiles;
     });
   }
 
