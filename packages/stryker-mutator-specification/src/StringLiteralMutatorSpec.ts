@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-
 export default function StringLiteralMutatorSpec(name: string, expectMutation: ExpectMutation) {
 
   describe('StringLiteralMutator', () => {
@@ -46,6 +45,10 @@ export default function StringLiteralMutatorSpec(name: string, expectMutation: E
     it('should not mutate type declarations', () => {
       expectMutation('const a: "hello" = "hello";', 'const a: "hello" = "";');
       expectMutation('const a: Record<"id", number> = { id: 10 }');
+    });
+
+    it('should not mutate string JSX attributes', () => {
+      expectMutation('<Record class="row" />');
     });
   });
 }

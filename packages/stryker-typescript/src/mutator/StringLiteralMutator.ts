@@ -18,13 +18,14 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
       || node.kind === ts.SyntaxKind.FirstTemplateToken;
   }
 
-  private isInvalidParentNode(node: ts.Node): boolean {
-    return node.kind === ts.SyntaxKind.ImportDeclaration ||
-      node.kind === ts.SyntaxKind.LastTypeNode;
+  private isInvalidParent(parent: ts.Node): boolean {
+    return parent.kind === ts.SyntaxKind.ImportDeclaration ||
+      parent.kind === ts.SyntaxKind.LastTypeNode ||
+      parent.kind === ts.SyntaxKind.JsxAttribute;
   }
 
   protected identifyReplacements(str: AllStringLiterals, sourceFile: ts.SourceFile): NodeReplacement[] {
-    if (str.parent && this.isInvalidParentNode(str.parent)) {
+    if (str.parent && this.isInvalidParent(str.parent)) {
       return [];
     }
 
