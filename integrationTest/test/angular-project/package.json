@@ -9,7 +9,8 @@
     "test": "if-node-version \">=6\" stryker run",
     "posttest": "if-node-version \">=6\" mocha --require ts-node/register verify/*.ts",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "postinstall": "install-local"
   },
   "private": true,
   "dependencies": {
@@ -40,5 +41,10 @@
     "karma-chrome-launcher": "~2.2.0",
     "karma-jasmine": "~1.1.0",
     "typescript": "~2.5.3"
+  },
+  "localDependencies": {
+    "stryker": "../../../packages/stryker",
+    "stryker-webpack-transpiler": "../../../packages/stryker-webpack-transpiler",
+    "stryker-html-reporter": "../../../packages/stryker-html-reporter"
   }
 }
