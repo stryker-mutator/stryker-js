@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { EOL } from 'os';
 import { TestRunner, RunResult, TestResult, RunStatus } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
 import Jasmine = require('jasmine');
@@ -7,10 +8,10 @@ import { jasmineTestResultToStrykerTestResult } from './helpers';
 export default class JasmineTestRunner implements TestRunner {
 
   private jasmineConfigFile: string | undefined;
-  private fileNames: string[];
+  private fileNames: ReadonlyArray<string>;
   private Date: { new(): Date };
 
-  constructor({ fileNames, strykerOptions: { jasmineConfigFile } }: { fileNames: string[], strykerOptions: StrykerOptions }) {
+  constructor({ fileNames, strykerOptions: { jasmineConfigFile } }: { fileNames: ReadonlyArray<string>, strykerOptions: StrykerOptions }) {
     this.Date = Date;
     this.jasmineConfigFile = jasmineConfigFile;
     this.fileNames = fileNames;
@@ -21,12 +22,8 @@ export default class JasmineTestRunner implements TestRunner {
     const tests: TestResult[] = [];
     const jasmine = new Jasmine({ projectBaseDir: process.cwd() });
     let startTimeCurrentSpec = 0;
-    if (!this.jasmineConfigFile && fs.existsSync('spec/support/jasmine.json')) {
-      this.jasmineConfigFile = 'spec/support/jasmine.json';
-    }
-    if (this.jasmineConfigFile) {
-      jasmine.loadConfigFile(this.jasmineConfigFile);
-    }
+    // The `loadConfigFile` will fallback on the default
+    jasmine.loadConfigFile(this.jasmineConfigFile);
     jasmine.stopSpecOnExpectationFailure(true);
     jasmine.env.throwOnExpectationFailure(true);
     jasmine.exit = () => { };
@@ -52,7 +49,11 @@ export default class JasmineTestRunner implements TestRunner {
       };
       jasmine.addReporter(reporter);
       jasmine.execute();
-    });
+    }).catch(error => ({
+      tests: [],
+      status: RunStatus.Error,
+      errorMessages: ['An error occurred while loading your jasmine specs' + EOL + (error.stack || error.message || error.toString())]
+    }));
   }
 
   clearRequireCache() {

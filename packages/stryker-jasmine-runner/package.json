@@ -9,7 +9,13 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 100 --functions 100 --branches 100  mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 95 --functions 95 --branches 75  mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+  },
+  "nyc": {
+    "exclude": [
+      "test",
+      "testResources"
+    ]
   },
   "repository": {
     "type": "git",
