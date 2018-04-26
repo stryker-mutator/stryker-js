@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "taskName": "tsc-watch",
+      "label": "tsc-watch",
       "type": "shell",
       "command": "npm start",
       "problemMatcher": "$tsc-watch",

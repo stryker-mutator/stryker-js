@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.3.4"></a>
+## [0.3.4](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.3.3...stryker-webpack-transpiler@0.3.4) (2018-04-20)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
+<a name="0.3.3"></a>
+## [0.3.3](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.3.2...stryker-webpack-transpiler@0.3.3) (2018-04-20)
+
+
+### Bug Fixes
+
+* **Webpack transpiler:** Loader exception logging ([#700](https://github.com/stryker-mutator/stryker/issues/700)) ([c72f223](https://github.com/stryker-mutator/stryker/commit/c72f223))
+
+
+
+
 <a name="0.3.2"></a>
 ## [0.3.2](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.3.1...stryker-webpack-transpiler@0.3.2) (2018-04-11)
 

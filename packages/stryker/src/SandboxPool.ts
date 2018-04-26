@@ -9,8 +9,7 @@ import Sandbox from './Sandbox';
 export default class SandboxPool {
 
   private readonly log = getLogger(SandboxPool.name);
-  private readonly sandboxes: Sandbox[] = [];
-  private isDisposed: boolean = false;
+  private readonly sandboxes: Promise<Sandbox>[] = [];
 
   constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: ReadonlyArray<File>) {
   }
@@ -37,20 +36,11 @@ export default class SandboxPool {
   }
 
   private registerSandbox(promisedSandbox: Promise<Sandbox>): Promise<Sandbox> {
-    return promisedSandbox.then(sandbox => {
-      if (this.isDisposed) {
-        // This sandbox is too late for the party. Dispose it to prevent hanging child processes
-        // See issue #396
-        sandbox.dispose();
-      } else {
-        this.sandboxes.push(sandbox);
-      }
-      return sandbox;
-    });
+    this.sandboxes.push(promisedSandbox);
+    return promisedSandbox;
   }
 
   public disposeAll() {
-    this.isDisposed = true;
-    return Promise.all(this.sandboxes.map(sandbox => sandbox.dispose()));
+    return Promise.all(this.sandboxes.map(promisedSandbox => promisedSandbox.then(sandbox => sandbox.dispose())));
   }
 }

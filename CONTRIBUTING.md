@@ -4,22 +4,42 @@ This is the contribution guide for Stryker. Great to have you here! Here are a f
 
 ## Team members
 
-* Simon de Lang: First developer on Stryker. Started Stryker as part of his thesis at Info Support. [simondel](http://github.com/simondel) on github.
-* Nico Jansen: Second developer on Stryker. Originaly came up with the idea for the mutation testing framework as a thesis at Info Support. 
+* Simon de Lang: Stryker dev. Started Stryker as part of his thesis at Info Support. [simondel](http://github.com/simondel) on github.
+* Nico Jansen: Stryker dev. Originally came up with the idea for the mutation testing framework as a thesis at Info Support. 
 [nicojs](http://github.com/nicojs) on github or [@_nicojs](https://twitter.com/_nicojs) on twitter
+* Sander Koenders: Stryker dev. Creator of the stryker-webpack-plugin and stryker-jest-runner.
 
 ## Learn & listen
 
-Get in touch with us through twitter or via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker)
+Get in touch with us through twitter ([@_simondel](https://twitter.com/_simondel) and [@_nicojs](https://twitter.com/_nicojs)) or via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker).
 
 ## Runner Stryker locally
+
 We use [Lerna](https://lernajs.io/) to manage the packages in this repository. You don't have to install it globally. The packages themselves can be found in the [packages folder](https://github.com/stryker-mutator/stryker/tree/master/packages). npm commands such as `npm test` can be executed from the root of the project but executing them inside of a package folder is more time efficient. However, we suggest running `npm test` in the root of the project before a commit to ensure that everything still works. To get Stryker running locally, please follow these steps:
 
 1. Clone the repository
 1. Install dependencies using `npm install` in the root of the project
+1. Run `npm run build` in the root of the project once.
 1. Run `npm test` in the root of the project or in one of the package folders
 
+## VSCode environment configuration
+
+We've chosen to **check in in our vscode configuration**. This makes development unified amongst stryker developers. VSCode is an open source code editor maintained by Microsoft. For more info and the download link, please visit https://code.visualstudio.com/.
+
+After cloning this repo, open the workspace with `$ code workspace.code-workspace` (or open code and use file -> Open Workspace...).
+
+Some quick notes to help you get started:
+
+1. On the left side, you can see all stryker projects and plugins. Open files from there.
+1. Use `CTRL+B` (or `⌘+B` on OSX) to open up the *Run build task* menu. This can enable typescript compilation + watch for a plugin directory.
+1. Use `CTRL+Shift+D` (or `⌘⇧D` on OSX) to open up the *debug* pane. Here you can select a config to run. For example: select "Unit tests (stryker-api)" to run the unit tests for the `stryker-api` package. 
+  * You can run the tests with `CTRL+F5` (or `⌃F5` on OSX).
+  * You can debug the tests with `F5` (also `F5` on OSX). Setting breakpoints in your code and inspecting variables work as expected.
+
+Have fun!
+
 ## Running Stryker on Stryker
+
 We support mutation testing Stryker with Stryker! After you got Stryker working locally, you can follow these steps to mutation test Stryker:
 1. Navigate to the root of the project
 1. Build all Stryker packages: `npm run build`
