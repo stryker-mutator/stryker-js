@@ -40,7 +40,7 @@ export default class VueMutator implements Mutator {
     this.mutators = {};
     const factory = MutatorFactory.instance();
     factory.knownNames().forEach(name => {
-      if (name !== 'es5') {
+      if (name !== 'es5' && name !== 'vue') {
         this.mutators[name] = factory.create(name, this.config);
       }
     });
@@ -52,9 +52,11 @@ export default class VueMutator implements Mutator {
     switch (lang) {
       case undefined:
       case 'js':
+      case 'javascript':
         mutatorName = 'javascript';
         break;
       case 'ts':
+      case 'typescript':
         mutatorName = 'typescript';
         break;
       default:
@@ -63,15 +65,15 @@ export default class VueMutator implements Mutator {
 
     let mutator = this.mutators[mutatorName];
     if (mutator === undefined) {
-      throw new Error(`The '${mutatorName}' mutator is required to mutate a <script> block but it was not found.`);
+      throw new Error(`The '${mutatorName}' mutator is required to mutate a <script> block but it was not found. Please read the README of this package for information on configuration.`);
     }
     return mutator;
   }
 
-  getMutator(file: File): Mutator {
+  private getMutator(file: File): Mutator {
     let mutator = this.mutators['typescript'] || this.mutators['javascript'];
     if (mutator === undefined) {
-      throw new Error(`Unable to mutate file "${file.name}" because neither the typescript or the javascript mutator was installed.`);
+      throw new Error(`Unable to mutate file "${file.name}" because neither the typescript or the javascript mutator was installed. Please read the README of this package for information on configuration.`);
     }
     return mutator;
   }
