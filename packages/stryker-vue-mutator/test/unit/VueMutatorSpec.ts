@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import { Mutator, MutatorFactory } from 'stryker-api/mutant';
+import { Mutator, MutatorFactory, Mutant } from 'stryker-api/mutant';
 import VueMutator from '../../src/VueMutator';
 
 describe('VueMutator', () => {
@@ -277,5 +277,39 @@ describe('VueMutator', () => {
     const files = [vueFile];
 
     expect(() => sut.mutate(files)).throws(`Found unsupported language attribute 'lang="coffeescript"' on a <script> block.`);
+  });
+
+  it('should generate correct vue mutants', () => {
+    sandbox.stub(MutatorFactory.instance(), 'knownNames').returns(['javascript']);
+    const codeToMutate = `'hello!'`;
+    const script = `export default {
+      data () {
+        return {
+          message: ${codeToMutate};
+        }
+      }
+    }`;
+    const vueFile = new File('Component.vue',
+      `<template>
+      <span id="msg">{{ message }}</span>
+    </template>
+    <script>${script}</script>`);
+    const files = [vueFile];
+    const jsMutant: Mutant = {
+      mutatorName: 'StringLiteral',
+      fileName: `${vueFile.name}.js`,
+      range: [script.indexOf(codeToMutate), script.indexOf(codeToMutate) + codeToMutate.length],
+      replacement: ''
+    }
+    stubJavaScriptMutator.mutate.returns([jsMutant]);
+
+    const mutants = sut.mutate(files);
+    const generatedMutant = mutants[0];
+
+    expect(mutants.length).to.equal(1);
+    expect(generatedMutant.mutatorName).to.equal(jsMutant.mutatorName);
+    expect(generatedMutant.fileName).to.equal(vueFile.name);
+    expect(generatedMutant.range).to.deep.equal([vueFile.textContent.indexOf(codeToMutate), vueFile.textContent.indexOf(codeToMutate) + codeToMutate.length]);
+    expect(generatedMutant.replacement).to.equal(jsMutant.replacement);
   });
 });
