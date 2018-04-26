@@ -300,7 +300,7 @@ describe('VueMutator', () => {
       fileName: `${vueFile.name}.js`,
       range: [script.indexOf(codeToMutate), script.indexOf(codeToMutate) + codeToMutate.length],
       replacement: ''
-    }
+    };
     stubJavaScriptMutator.mutate.returns([jsMutant]);
 
     const mutants = sut.mutate(files);
