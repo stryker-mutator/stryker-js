@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import { EOL } from 'os';
 import { TestRunner, RunResult, TestResult, RunStatus } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
