@@ -25,7 +25,6 @@
     "concurrently": "^3.4.0",
     "execa": "^0.10.0",
     "glob": "^7.1.1",
-    "if-node-version": "^1.1.1",
     "jasmine": "^2.8.0",
     "lerna": "^2.0.0",
     "link-parent-bin": "^0.2.0",

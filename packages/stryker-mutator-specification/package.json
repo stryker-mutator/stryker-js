@@ -20,7 +20,7 @@
     "url": "https://github.com/stryker-mutator/stryker"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator#readme",
   "license": "Apache-2.0"
