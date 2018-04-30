@@ -11,12 +11,18 @@
     "postbuild": "tslint -p tsconfig.json",
     "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 80 mocha  \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
   },
+  "nyc": {
+    "exclude": [
+      "test",
+      "testResources"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "keywords": [
     "stryker",
@@ -38,7 +44,7 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-babel-transpiler#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "babel-core": "^6.26.0",
+    "babel-core": "6.26.0",
     "log4js": "^1.1.1",
     "minimatch": "^3.0.4"
   },

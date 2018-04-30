@@ -9,8 +9,8 @@
     "build": "tsc",
     "start": "tsc -w",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "if-node-version \">4\" nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 84 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
-    "posttest": "if-node-version \">4\" npm run stryker",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 84 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
+    "posttest": "npm run stryker",
     "stryker": "node ../stryker/bin/stryker run"
   },
   "repository": {
