@@ -21,7 +21,7 @@ export class ProjectLoader {
 
   private static normalize(content: Buffer) {
     // Remove carriage returns from the content buffer
-    return Buffer.from(content.filter(byte => byte !== CARRIAGE_RETURN).buffer);
+    return Buffer.from(content.filter(byte => byte !== CARRIAGE_RETURN) as any);
   }
 
   private static glob(basePath: string): Promise<string[]> {
