@@ -3,8 +3,6 @@ node_js:
 - node
 - '6'
 install: npm install
-before_install:
-- if [[ `npm -v` = 2* ]]; then npm i -g npm@3; fi
 sudo: required
 addons:
   chrome: stable
