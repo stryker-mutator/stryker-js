@@ -1,13 +1,14 @@
 import { expect } from 'chai';
-import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
-import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { Mock, mock, config, testableMutant, file } from '../../helpers/producers';
-import '../../helpers/globals';
-import TranspiledMutant from '../../../src/TranspiledMutant';
-import TranspileResult from '../../../src/transpiler/TranspileResult';
+import { toArray } from 'rxjs/operators';
 import { File } from 'stryker-api/core';
+import TranspiledMutant from '../../../src/TranspiledMutant';
+import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
+import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
+import TranspileResult from '../../../src/transpiler/TranspileResult';
+import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
 import { errorToString } from '../../../src/utils/objectUtils';
+import '../../helpers/globals';
+import { Mock, config, file, mock, testableMutant } from '../../helpers/producers';
 
 describe('MutantTranspiler', () => {
   let sut: MutantTranspiler;
@@ -69,7 +70,7 @@ describe('MutantTranspiler', () => {
       it('should transpile mutants', async () => {
         const mutants = [testableMutant(), testableMutant()];
         const actualResult = await sut.transpileMutants(mutants)
-          .toArray()
+          .pipe(toArray())
           .toPromise();
         const expected: TranspiledMutant[] = [
           { mutant: mutants[0], transpileResult: { error: null, outputFiles: transpiledFilesOne }, changedAnyTranspiledFiles: true },
@@ -87,7 +88,7 @@ describe('MutantTranspiler', () => {
 
         // Act
         const actualResult = await sut.transpileMutants([mutant])
-          .toArray()
+          .pipe(toArray())
           .toPromise();
 
         // Assert
@@ -107,7 +108,7 @@ describe('MutantTranspiler', () => {
 
         // Act
         const actual = await sut.transpileMutants(mutants)
-          .toArray()
+          .pipe(toArray())
           .toPromise();
 
         // Assert
@@ -174,7 +175,7 @@ describe('MutantTranspiler', () => {
 
     it('should transpile the mutated files when transpileMutants is called', async () => {
       const actualMutants = [testableMutant('file1.ts'), testableMutant('file2.ts')];
-      const actualResult = await sut.transpileMutants(actualMutants).toArray().toPromise();
+      const actualResult = await sut.transpileMutants(actualMutants).pipe(toArray()).toPromise();
       expect(actualResult).lengthOf(2);
       expect(actualResult[0].transpileResult.outputFiles).eq(transpiledFilesOne);
       expect(actualResult[0].mutant).eq(actualMutants[0]);
