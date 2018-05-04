@@ -32,6 +32,18 @@ describe('ConfigLoader', () => {
     expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));
   });
 
+  it('should call function with configFileArgs if webpack config file exports a function', () => {
+    const configFunctionStub = sandbox.stub();
+    configFunctionStub.returns('webpackconfig');
+    requireStub.returns(configFunctionStub);
+    existsSyncStub.returns(true);
+
+    const result = sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js', configFileArgs: [1, 2] }));
+    expect(result).eq('webpackconfig');
+    expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));
+    expect(configFunctionStub).calledWith(1, 2);
+  });
+
   it('should remove "ProgressPlugin" if silent is `true`', () => {
     // Arrange
     const bazPlugin = { baz: true, apply() { } };

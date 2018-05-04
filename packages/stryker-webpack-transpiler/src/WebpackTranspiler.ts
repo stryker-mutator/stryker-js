@@ -37,7 +37,7 @@ export default class WebpackTranspiler implements Transpiler {
 export interface StrykerWebpackConfig {
   configFile?: string;
   silent: boolean;
-
+  configFileArgs?: Array<any>;
   // TODO: Remove this when stryker implements projectRoot, see https://github.com/stryker-mutator/stryker/issues/650 */
   context?: string;
 }
