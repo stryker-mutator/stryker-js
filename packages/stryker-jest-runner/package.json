@@ -24,7 +24,7 @@
     "url": "https://github.com/stryker-mutator/stryker-jest-runner.git"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "keywords": [
     "stryker",
