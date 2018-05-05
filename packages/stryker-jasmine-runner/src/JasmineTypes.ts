@@ -35,15 +35,15 @@ declare namespace jasmine {
   }
 
   interface CustomReportExpectation {
-    matcherName: string;
+    // matcherName: string;
     message: string;
-    passed: boolean;
-    stack: string;
+    // passed: boolean;
+    // stack: string;
   }
 
   interface FailedExpectation extends CustomReportExpectation {
-    actual: string;
-    expected: string;
+    // actual: string;
+    // expected: string;
   }
 
   interface PassedExpectation extends CustomReportExpectation {
@@ -51,7 +51,7 @@ declare namespace jasmine {
   }
 
   interface CustomReporterResult {
-    description: string;
+    // description: string;
     failedExpectations?: FailedExpectation[];
     fullName: string;
     id: string;
@@ -62,10 +62,10 @@ declare namespace jasmine {
   interface CustomReporter {
     jasmineStarted?(suiteInfo: SuiteInfo): void;
     suiteStarted?(result: CustomReporterResult): void;
-    specStarted?(result: CustomReporterResult): void;
-    specDone?(result: CustomReporterResult): void;
+    specStarted(/*result: CustomReporterResult // not needed ;) */): void;
+    specDone(result: CustomReporterResult): void;
     suiteDone?(result: CustomReporterResult): void;
-    jasmineDone?(runDetails: RunDetails): void;
+    jasmineDone(/*runDetails: RunDetails // not needed ;) */): void;
   }
 
   interface Env {
