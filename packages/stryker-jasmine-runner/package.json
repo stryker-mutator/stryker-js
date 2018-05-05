@@ -41,5 +41,8 @@
     "stryker-api": "^0.16.1",
     "stryker-jasmine": "^0.8.4"
   },
+  "initStrykerConfig": {
+    "jasmineConfigFile": "spec/support/jasmine.json"
+  },
   "contributors": []
 }
