@@ -36,6 +36,7 @@
     "stryker-babel-transpiler": "../packages/stryker-babel-transpiler",
     "stryker-html-reporter": "../packages/stryker-html-reporter",
     "stryker-jasmine": "../packages/stryker-jasmine",
+    "stryker-jasmine-runner": "../packages/stryker-jasmine-runner",
     "stryker-javascript-mutator": "../packages/stryker-javascript-mutator",
     "stryker-karma-runner": "../packages/stryker-karma-runner",
     "stryker-mocha-framework": "../packages/stryker-mocha-framework",
