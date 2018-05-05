@@ -2,6 +2,14 @@ import * as path from 'path';
 import { expect } from 'chai';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { TestResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
+import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
+
+function wrapInClosure(codeFragment: string) {
+  return `
+    (function (window) {
+      ${codeFragment}
+    })((Function('return this'))());`;
+}
 
 describe('JasmineRunner integration', () => {
 
@@ -57,6 +65,54 @@ describe('JasmineRunner integration', () => {
       expect(secondRunResult.status).eq(RunStatus.Complete);
       expectTestResultsToEqual(secondRunResult.tests, expectedJasmineInitResults);
     });
+
+    it('should be able to filter tests', async () => {
+      // Arrange
+      const testFramework = new JasmineTestFramework();
+      const testHooks = wrapInClosure(testFramework.filter([{
+        name: expectedJasmineInitResults[1].name,
+        id: 1
+      }, {
+        name: expectedJasmineInitResults[3].name,
+        id: 3
+      }]));
+
+      // Act
+      const runResult = await sut.run({ testHooks });
+
+      // Assert
+      expect(runResult.status).eq(RunStatus.Complete);
+      expectTestsFiltered(runResult.tests, 1, 3);
+    });
+
+    it('should be able to filter tests in quick succession', async () => {
+      // Arrange 
+      const testFramework = new JasmineTestFramework();
+      const testHooks1 = wrapInClosure(testFramework.filter([{
+        name: expectedJasmineInitResults[1].name,
+        id: 1
+      }]));
+      const testHooks2 = wrapInClosure(testFramework.filter([{
+        name: expectedJasmineInitResults[2].name,
+        id: 2
+      }]));
+
+      // Act
+      const firstResult = await sut.run({ testHooks: testHooks1 });
+      const secondResult = await sut.run({ testHooks: testHooks2 });
+
+      // Assert
+      expectTestsFiltered(firstResult.tests, 1);
+      expectTestsFiltered(secondResult.tests, 2);
+    });
+
+    function expectTestsFiltered(actualTestResults: TestResult[], ...filteredTestIds: number[]) {
+      expectTestResultsToEqual(actualTestResults, expectedJasmineInitResults.map((testResult, id) => ({
+        name: testResult.name,
+        status: filteredTestIds.indexOf(id) >= 0 ? TestStatus.Success : TestStatus.Skipped,
+        failureMessages: testResult.failureMessages
+      })));
+    }
   });
 
   describe('using a jasmine-project with errors', () => {
@@ -70,7 +126,7 @@ describe('JasmineRunner integration', () => {
       });
     });
 
-    it('should be able to tell is the error', async () => {
+    it('should be able to tell the error', async () => {
       const result = await sut.run({});
       expect(result.status).eq(RunStatus.Error);
       expect(result.errorMessages).lengthOf(1);

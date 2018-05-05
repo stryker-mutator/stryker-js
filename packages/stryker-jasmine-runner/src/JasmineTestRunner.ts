@@ -2,7 +2,7 @@ import { EOL } from 'os';
 import { TestRunner, RunResult, TestResult, RunStatus } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
 import Jasmine = require('jasmine');
-import { jasmineTestResultToStrykerTestResult } from './helpers';
+import { jasmineTestResultToStrykerTestResult, evalGlobal } from './helpers';
 
 export default class JasmineTestRunner implements TestRunner {
 
@@ -16,7 +16,7 @@ export default class JasmineTestRunner implements TestRunner {
     this.fileNames = fileNames;
   }
 
-  run(options: {}): Promise<RunResult> {
+  run(options: { testHooks?: string }): Promise<RunResult> {
     this.clearRequireCache();
     const tests: TestResult[] = [];
     const jasmine = new Jasmine({ projectBaseDir: process.cwd() });
@@ -27,7 +27,11 @@ export default class JasmineTestRunner implements TestRunner {
     jasmine.env.throwOnExpectationFailure(true);
     jasmine.exit = () => { };
     jasmine.clearReporters();
+    jasmine.randomizeTests(false);
     const self = this;
+    if (options.testHooks) {
+      evalGlobal(options.testHooks);
+    }
     return new Promise<RunResult>(resolve => {
       const reporter: jasmine.CustomReporter = {
         specStarted() {

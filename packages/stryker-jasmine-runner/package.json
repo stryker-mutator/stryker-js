@@ -38,7 +38,8 @@
     "stryker-api": ">=0.15.0 <0.17.0"
   },
   "devDependencies": {
-    "stryker-api": "^0.16.1"
+    "stryker-api": "^0.16.1",
+    "stryker-jasmine": "^0.8.4"
   },
   "contributors": []
 }
