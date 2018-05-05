@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.9.2...stryker-mocha-framework@0.10.0) (2018-04-30)
+
+
+### Features
+
+* **node version:** drop node 4 support ([#724](https://github.com/stryker-mutator/stryker/issues/724)) ([a038931](https://github.com/stryker-mutator/stryker/commit/a038931))
+
+
+### BREAKING CHANGES
+
+* **node version:** Node 4 is no longer supported.
+
+
+
+
 <a name="0.9.2"></a>
 ## [0.9.2](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.9.1...stryker-mocha-framework@0.9.2) (2018-04-20)
 

@@ -2,16 +2,10 @@ language: node_js
 node_js:
 - node
 - '6'
-- '4'
 install: npm install
-before_install:
-- if [[ `npm -v` = 2* ]]; then npm i -g npm@3; fi
 sudo: required
-addons:
-  chrome: stable
 before_script:
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
+- npm ls
 after_success: ".travis/ci-release.jsh"
 env:
   global:
