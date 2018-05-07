@@ -4,8 +4,6 @@ node_js:
 - '6'
 install: npm install
 sudo: required
-before_script:
-- npm ls
 after_success: ".travis/ci-release.jsh"
 env:
   global:
