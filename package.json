@@ -33,7 +33,7 @@
     "nyc": "^11.7.1",
     "protractor": "^5.1.2",
     "rimraf": "^2.6.1",
-    "sinon": "^4.0.0",
+    "sinon": "^5.0.4",
     "sinon-chai": "^3.0.0",
     "source-map-support": "^0.5.5",
     "tslint": "^5.9.1",
