@@ -102,10 +102,36 @@ describe('InitialTestExecutor run', () => {
       expect(strykerSandboxMock.dispose).to.have.been.called;
     });
 
+    it('should calculate the overhead time milliseconds', async () => {
+      // Arrange
+      expectedRunResult.tests[0].timeSpentMs = 10;
+      expectedRunResult.tests.push(producers.testResult({ timeSpentMs: 2 }));
+      expectedRunResult.tests.push(producers.testResult({ timeSpentMs: 6 }));
+      timer.elapsedMs.returns(100);
+
+      // Act
+      const { overheadTimeMS } = await sut.run();
+
+      // Assert
+      expect(timer.mark).calledWith('Initial test run');
+      expect(timer.elapsedMs).calledWith('Initial test run');
+      expect(timer.mark).calledBefore(timer.elapsedMs);
+      expect(overheadTimeMS).eq(82);
+    });
+
+    it('should never calculate a negative overhead time', async () => {
+      expectedRunResult.tests[0].timeSpentMs = 10;
+      timer.elapsedMs.returns(9);
+      const { overheadTimeMS } = await sut.run();
+      expect(overheadTimeMS).eq(0);
+    });
+
     it('should pass through the result', async () => {
       const coverageData = coverageMaps();
       coverageInstrumenterTranspilerMock.fileCoverageMaps = { someFile: coverageData } as any;
+      timer.elapsedMs.returns(42);
       const expectedResult: InitialTestRunResult = {
+        overheadTimeMS: 42 - expectedRunResult.tests[0].timeSpentMs,
         runResult: expectedRunResult,
         sourceMapper: sourceMapperMock,
         coverageMaps: {
@@ -133,8 +159,11 @@ describe('InitialTestExecutor run', () => {
 
     it('should have logged the amount of tests ran', async () => {
       expectedRunResult.tests.push(producers.testResult());
+      timer.humanReadableElapsed.returns('2 seconds');
+      timer.elapsedMs.returns(50);
       await sut.run();
-      expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s.', 2);
+      expect(log.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
+        2, '2 seconds', 20, 30);
     });
 
     it('should log when there were no tests', async () => {

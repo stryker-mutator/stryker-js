@@ -26,7 +26,7 @@ export default class Sandbox {
   private files: File[];
   private workingFolder: string;
 
-  private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null) {
+  private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private timeOverheadMS: number) {
     this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.files = files.slice(); // Create a copy
@@ -38,9 +38,9 @@ export default class Sandbox {
     return this.initializeTestRunner();
   }
 
-  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null)
+  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number)
     : Promise<Sandbox> {
-    const sandbox = new Sandbox(options, index, files, testFramework);
+    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS);
     return sandbox.initialize().then(() => sandbox);
   }
 
@@ -126,7 +126,7 @@ export default class Sandbox {
 
   private calculateTimeout(mutant: TestableMutant) {
     const baseTimeout = mutant.timeSpentScopedTests;
-    return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMs;
+    return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMs + this.timeOverheadMS;
   }
 
   private getFilterTestsHooks(mutant: TestableMutant): string | undefined {

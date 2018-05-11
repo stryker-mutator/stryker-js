@@ -12,7 +12,7 @@ export default class SandboxPool {
   private readonly log = getLogger(SandboxPool.name);
   private readonly sandboxes: Promise<Sandbox>[] = [];
 
-  constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: ReadonlyArray<File>) {
+  constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: ReadonlyArray<File>, private overheadTimeMS: number) {
   }
 
   public streamSandboxes(): Observable<Sandbox> {
@@ -32,7 +32,7 @@ export default class SandboxPool {
     this.log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
 
     const sandboxes = range(0, numConcurrentRunners)
-      .pipe(flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework))));
+      .pipe(flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS))));
     return sandboxes;
   }
 

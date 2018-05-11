@@ -17,11 +17,19 @@ import { coveragePerTestHooks } from '../transpiler/coverageHooks';
 // For example: angular-bootstrap takes up to 45 seconds.
 // Lets take 5 minutes just to be sure
 const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
+const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 
 export interface InitialTestRunResult {
   runResult: RunResult;
+  overheadTimeMS: number;
   sourceMapper: SourceMapper;
   coverageMaps: CoverageMapsByFile;
+}
+
+interface Timing {
+  gross: number;
+  net: number;
+  overhead: number;
 }
 
 export default class InitialTestExecutor {
@@ -48,20 +56,24 @@ export default class InitialTestExecutor {
     const { coverageMaps, instrumentedFiles } = await this.annotateForCodeCoverage(transpiledFiles, sourceMapper);
     this.logTranspileResult(instrumentedFiles);
 
-    const runResult = await this.runInSandbox(instrumentedFiles);
-    this.validateResult(runResult);
+    const { runResult, grossTimeMS } = await this.runInSandbox(instrumentedFiles);
+    const timing = this.calculateTiming(grossTimeMS, runResult.tests);
+    this.validateResult(runResult, timing);
     return {
+      overheadTimeMS: timing.overhead,
       sourceMapper,
       runResult,
       coverageMaps
     };
   }
 
-  private async runInSandbox(files: ReadonlyArray<File>): Promise<RunResult> {
-    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework);
+  private async runInSandbox(files: ReadonlyArray<File>): Promise<{ runResult: RunResult, grossTimeMS: number }> {
+    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0);
+    this.timer.mark(INITIAL_TEST_RUN_MARKER);
     const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT, this.getCollectCoverageHooksIfNeeded());
+    const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     await sandbox.dispose();
-    return runResult;
+    return { runResult, grossTimeMS };
   }
 
   private async transpileInputFiles(): Promise<ReadonlyArray<File>> {
@@ -77,7 +89,7 @@ export default class InitialTestExecutor {
     return { coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps, instrumentedFiles };
   }
 
-  private validateResult(runResult: RunResult): void {
+  private validateResult(runResult: RunResult, timing: Timing): void {
     switch (runResult.status) {
       case RunStatus.Complete:
         let failedTests = this.filterOutFailedTests(runResult);
@@ -88,7 +100,7 @@ export default class InitialTestExecutor {
           this.log.warn('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
           return;
         } else {
-          this.logInitialTestRunSucceeded(runResult.tests);
+          this.logInitialTestRunSucceeded(runResult.tests, timing);
           return;
         }
       case RunStatus.Error:
@@ -99,6 +111,16 @@ export default class InitialTestExecutor {
         break;
     }
     throw new Error('Something went wrong in the initial test run');
+  }
+
+  private calculateTiming(grossTimeMS: number, tests: ReadonlyArray<TestResult>): Timing {
+    const netTimeMS = tests.reduce((total, test) => total + test.timeSpentMs, 0);
+    const overheadTimeMS = grossTimeMS - netTimeMS;
+    return {
+      overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS,
+      gross: grossTimeMS,
+      net: netTimeMS
+    };
   }
 
   /**
@@ -138,8 +160,9 @@ export default class InitialTestExecutor {
     return runResult.tests.filter(testResult => testResult.status === TestStatus.Failed);
   }
 
-  private logInitialTestRunSucceeded(tests: TestResult[]) {
-    this.log.info('Initial test run succeeded. Ran %s tests in %s.', tests.length, this.timer.humanReadableElapsed());
+  private logInitialTestRunSucceeded(tests: TestResult[], timing: Timing) {
+    this.log.info('Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
+      tests.length, this.timer.humanReadableElapsed(), timing.net, timing.overhead);
   }
 
   private logFailedTestsInInitialRun(failedTests: TestResult[]): void {

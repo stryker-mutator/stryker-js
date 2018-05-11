@@ -1,13 +1,17 @@
 
 export default class Timer {
   private start: Date;
+  private markers: {
+    [name: string]: Date;
+  };
 
-  constructor() {
+  constructor(private now = () => new Date()) {
     this.reset();
   }
 
   reset() {
-    this.start = new Date();
+    this.markers = Object.create(null);
+    this.start = this.now();
   }
 
   humanReadableElapsed() {
@@ -16,8 +20,20 @@ export default class Timer {
   }
 
   elapsedSeconds() {
-    const elapsedMs = new Date().getTime() - this.start.getTime();
+    const elapsedMs = this.elapsedMs();
     return Math.floor(elapsedMs / 1000);
+  }
+
+  elapsedMs(sinceMarker?: string) {
+    if (sinceMarker && this.markers[sinceMarker]) {
+      return this.now().getTime() - this.markers[sinceMarker].getTime();
+    } else {
+      return this.now().getTime() - this.start.getTime();
+    }
+  }
+
+  mark(name: string) {
+    this.markers[name] = this.now();
   }
 
   private static humanReadableElapsedSeconds(elapsedSeconds: number) {

@@ -34,7 +34,7 @@ describe('SandboxPool', () => {
       .onCall(1).resolves(secondSandbox);
 
     expectedInputFiles = [file()];
-    sut = new SandboxPool(options, expectedTestFramework, expectedInputFiles);
+    sut = new SandboxPool(options, expectedTestFramework, expectedInputFiles, 42);
   });
 
   describe('streamSandboxes', () => {
@@ -42,7 +42,7 @@ describe('SandboxPool', () => {
       options.maxConcurrentTestRunners = 1;
       await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(Sandbox.create).to.have.callCount(1);
-      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework);
+      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework, 42);
     });
 
     it('should use cpuCount when maxConcurrentTestRunners is set too high', async () => {
@@ -51,7 +51,7 @@ describe('SandboxPool', () => {
       const actual = await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(actual).lengthOf(3);
       expect(Sandbox.create).to.have.callCount(3);
-      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework);
+      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework, 42);
     });
 
     it('should use the cpuCount when maxConcurrentTestRunners is <= 0', async () => {
@@ -60,7 +60,7 @@ describe('SandboxPool', () => {
       const actual = await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(Sandbox.create).to.have.callCount(3);
       expect(actual).lengthOf(3);
-      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework);
+      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework, 42);
     });
 
     it('should use the cpuCount - 1 when a transpiler is configured', async () => {
