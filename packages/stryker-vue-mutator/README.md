@@ -7,3 +7,57 @@
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
 # Stryker Vue mutator
+
+A mutator that supports JavaScript for [Stryker](https://stryker-mutator.io), the mutation testing framework for JavaScript and friends.
+
+This plugin cannot work on its own as it requires additional mutators to function.
+
+## Quickstart
+
+First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
+
+Next, install this package:
+
+```bash
+npm install --save-dev stryker-vue-mutator
+```
+
+Now open up your stryker.conf.js file and add the following components:
+
+```javascript
+mutator: 'vue',
+```
+
+Finally, [install the additional required plugin](#additional-required-plugin) and then run stryker:
+```bash
+$ stryker run
+```
+
+## Additional required plugin
+
+The `Vue Mutator` is not capable of mutating code. It is only capable of parsing Vue code in such a way that it's understood by other mutators. This means that the `Vue Mutator` will require an additional stryker plugin to work.
+
+If you write TypeScript code please install this package:
+```bash
+npm install --save-dev stryker-typescript
+```
+
+If you write JavaScript code please install this package:
+```bash
+npm install --save-dev stryker-javascript-mutator
+```
+
+These plugins need no additional configuration to work with the `Vue Mutator`. Please leave the config setting in your stryker.conf.js file at `mutator: 'vue',`.
+
+## Peer dependencies
+
+You should make sure you have the correct versions of this plugin's dependencies installed:
+
+* `vue-template-compiler`
+* `stryker-api`
+
+For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker-vue-mutator/package.json).
+
+These are marked as `peerDependencies` so you get a warning during installation when the correct versions are not installed.
+
+The `vue-template-compiler` module should have the same version as your Vue project version, which is why we can't pin it down.
