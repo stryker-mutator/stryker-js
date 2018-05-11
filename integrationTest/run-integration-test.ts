@@ -27,7 +27,10 @@ function execNpm(command: string, testDir: string) {
 }
 
 function runTest(testDir: string) {
-  return execNpm('i', testDir).then(() => {
+  return execNpm('i', testDir).catch(() => {
+    console.log(`Failed to install in ${testDir}, trying once more`);
+    return execNpm('i', testDir);
+  }).then(() => {
     console.log(`\u2714 ${testDir} installed`);
     return execNpm('test', testDir).then(() => {
       console.log(`\u2714 ${testDir} tested (${++testsRan}/${dirs.length})`);

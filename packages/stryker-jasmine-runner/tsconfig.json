@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noImplicitThis": true
+  },
+  "exclude": [
+    "node_modules",
+    "testResources",
+    "**/*.d.ts",
+    "*.d.ts"
+  ]
+}
