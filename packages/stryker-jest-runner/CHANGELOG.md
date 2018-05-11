@@ -1,3 +1,21 @@
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.6.0...v0.7.0) (2018-05-11)
+
+
+### Features
+
+* **node version:** drop node 4 support, as Stryker did. ([#47](https://github.com/stryker-mutator/stryker-jest-runner/issues/47)) ([017139d](https://github.com/stryker-mutator/stryker-jest-runner/commit/017139d))
+* **stryker-api:** add stryker-api 0.15 support ([#45](https://github.com/stryker-mutator/stryker-jest-runner/issues/45)) ([94b22ab](https://github.com/stryker-mutator/stryker-jest-runner/commit/94b22ab))
+* **typescript:** Add support for create-react-app using Typescript ([#48](https://github.com/stryker-mutator/stryker-jest-runner/issues/48)) ([e7c313d](https://github.com/stryker-mutator/stryker-jest-runner/commit/e7c313d))
+
+
+### BREAKING CHANGES
+
+* **typescript:** Require Jest 22.x or higher. Support for 20.x and 21.x is dropped.
+* **node version:** Node 4 is no longer supported.
+
+
+
 <a name="0.6.0"></a>
 # [0.6.0](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.5.1...v0.6.0) (2018-04-06)
 
