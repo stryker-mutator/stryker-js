@@ -1,6 +1,6 @@
 {
   "name": "stryker-mutator-specification",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "A package for maintaining common mutator specifications for Stryker - the JavaScript mutation testing framework",
   "scripts": {
     "start": "tsc -w",
@@ -20,7 +20,7 @@
     "url": "https://github.com/stryker-mutator/stryker"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator#readme",
   "license": "Apache-2.0"

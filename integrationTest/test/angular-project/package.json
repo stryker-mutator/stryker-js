@@ -6,8 +6,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod",
-    "test": "if-node-version \">=6\" stryker run",
-    "posttest": "if-node-version \">=6\" mocha --require ts-node/register verify/*.ts",
+    "test": "stryker run",
+    "posttest": "mocha --require ts-node/register verify/*.ts",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "install-local"
