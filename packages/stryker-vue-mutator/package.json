@@ -33,9 +33,6 @@
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-vue-mutator#readme",
   "license": "Apache-2.0",
-  "dependencies": {
-    "vue-template-compiler": "^2.5.15"
-  },
   "devDependencies": {
     "stryker-api": "^0.17.0",
     "stryker-javascript-mutator": "^0.7.0",
