@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "pretest": "rimraf \"reports\"",
-    "test": "if-node-version \">=6\" stryker run stryker.conf.js",
-    "posttest": "if-node-version \">=6\" mocha --require ts-node/register verify/*.ts"
+    "test": "stryker run stryker.conf.js",
+    "posttest": "mocha --require ts-node/register verify/*.ts"
   },
   "author": "",
   "license": "ISC"
