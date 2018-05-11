@@ -10,7 +10,7 @@
     "lint": "tslint -c tslint.json \"src/**/*[^.d$].ts\" \"test/**/*[^.d$].ts\"",
     "pretest": "npm run build",
     "test": "npm run mocha && npm run stryker",
-    "mocha": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/integration/**/*.js\" \"test/unit/**/*.js\"",
+    "mocha": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
     "stryker": "stryker run",
     "preversion": "npm test",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
@@ -47,18 +47,20 @@
   "homepage": "https://github.com/stryker-mutator/stryker-jest-runner#readme",
   "devDependencies": {
     "@types/chai": "^4.0.4",
+    "@types/log4js": "0.0.32",
     "@types/mocha": "^2.2.43",
     "@types/node": "^8.5.1",
     "@types/semver": "^5.4.0",
     "@types/sinon": "^2.3.6",
     "chai": "^4.1.2",
     "conventional-changelog-cli": "^1.3.9",
-    "jest": "^20.0.4",
+    "jest": "^22.0.0",
     "mocha": "^5.0.0",
     "nyc": "^11.2.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "^1.0.17",
+    "react-scripts-ts": "^2.15.1",
     "rimraf": "^2.6.2",
     "sinon": "^4.0.1",
     "stryker": "^0.21.0",
@@ -76,6 +78,7 @@
     "jest": "^20.0.0"
   },
   "dependencies": {
+    "log4js": "^1.1.1",
     "semver": "^5.4.1"
   }
 }

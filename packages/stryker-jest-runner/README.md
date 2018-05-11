@@ -23,6 +23,7 @@ For the minimum supported versions, see the peerDependencies section in package.
 
 ## Configuration
 
+### Configuring Stryker
 Make sure you set the `testRunner` option to "jest" and set `coverageAnalysis` to "off" in your Stryker configuration.
 
 ```javascript
@@ -32,7 +33,8 @@ Make sure you set the `testRunner` option to "jest" and set `coverageAnalysis` t
 }
 ```
 
-The stryker-jest-runner also provides a couple of configurable options using the `jest` property in your stryker config:
+### Configuring Jest
+The stryker-jest-runner also provides a couple of configurable options using the `jest` property in your Stryker config:
 
 ```javascript
 {
@@ -43,14 +45,16 @@ The stryker-jest-runner also provides a couple of configurable options using the
 }
 ```
 
-| option | description | default value |
-|----|----|----|
-| project (optional) | The type of project you are working on. Currently "react" and "default" are supported. When "react" is configured, "react-scripts" is used (for create-react-app projects). When "default" is configured, your "config" option is used. | default |
-| config (optional) | A custom jest configuration (you can also use `require` to load your config here) | undefined |
+| option | description | default value | alternative values |
+|----|----|----|---|
+| project (optional) | The type of project you are working on. | `default` | `default` uses the `config` option (see below)|
+| | | | `react` when you are using [create-react-app](https://github.com/facebook/create-react-app) |
+| | | | `react-ts` when you are using [create-react-app-typescript](https://github.com/wmonk/create-react-app-typescript) |
+| config (optional) | A custom Jest configuration object. You could also use `require` to load it here) | undefined | |
 
-**Note:** When neither of the options are specified it will use the jest configuration in your "package.json". \
-**Note:** the `project` option is ignored when the `config` option is specified. \
-**Note:** Stryker currently only works for CRA-projects that have not been _ejected_.
+**Note:** When neither of the options are specified it will use the Jest configuration in your "package.json". \
+**Note:** the `project` option is ignored when the `config` option is specified.
+**Note:** Stryker currently only works for CRA-projects that have not been [_ejected_](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#npm-run-eject).
 
 The following is an example stryker.conf.js file:
 

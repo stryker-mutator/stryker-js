@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
 import ReactScriptsJestConfigLoader from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
-import * as createReactJestConfig from '../../../src/utils/createReactJestConfig';
+import * as helper from '../../../src/utils/createReactJestConfig';
 
 const fakeRequire: any = {
   resolve: () => { }
@@ -20,7 +20,7 @@ describe('ReactScriptsJestConfigLoader', () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
-    createReactJestConfigStub = sandbox.stub(createReactJestConfig, 'default');
+    createReactJestConfigStub = sandbox.stub(helper, 'createReactJestConfig');
     createReactJestConfigStub.callsFake((resolve: any, projectRoot: string, eject: boolean) => ({
       relativePath: resolve('test'),
       projectRoot,
