@@ -51,5 +51,9 @@
     "test:stryker": "lerna run test --scope stryker",
     "test:stryker-api": "lerna run test --scope stryker",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
+  },
+  "engines": {
+    "node": ">=6",
+    "npm": ">=5"
   }
 }
