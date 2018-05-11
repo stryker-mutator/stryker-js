@@ -48,4 +48,4 @@ module.exports = function (config) {
 Default: `undefined`
 
 Specify your [jasmine configuration file](https://jasmine.github.io/setup/nodejs.html#configuration) to be loaded. 
-Leaving this blank will result in the jasmine defaults, which are undocumented.
+Leaving this blank will result in the jasmine defaults, which are undocumented (see [source code here](https://github.com/jasmine/jasmine-npm/blob/master/lib/jasmine.js#L10-L38)).

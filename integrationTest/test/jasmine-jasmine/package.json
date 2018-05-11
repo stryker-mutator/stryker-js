@@ -10,5 +10,5 @@
     "posttest": "mocha --require ts-node/register verify/*.ts"
   },
   "author": "",
-  "license": "ISC"
+  "license": "Apache-2.0"
 }

@@ -16,7 +16,7 @@ describe('JasmineTestRunner', () => {
   let jasmineStub: SinonStubbedInstance<Jasmine>;
   let evalGlobalStub: sinon.SinonStub;
   let sut: JasmineTestRunner;
-  let fileNames: ReadonlyArray<string>;
+  let fileNames: string[];
   let clock: sinon.SinonFakeTimers;
 
   beforeEach(() => {
@@ -27,9 +27,9 @@ describe('JasmineTestRunner', () => {
     };
     evalGlobalStub = sandbox.stub(helpers, 'evalGlobal');
     sandbox.stub(helpers, 'Jasmine').returns(jasmineStub);
-    fileNames = Object.freeze(['foo.js', 'bar.js']);
+    fileNames = ['foo.js', 'bar.js'];
     clock = sandbox.useFakeTimers();
-    sut = new JasmineTestRunner({ fileNames, strykerOptions: { jasmineConfigFile: 'jasmineConfFile' } });
+    sut = new JasmineTestRunner({ fileNames, port: 80, strykerOptions: { jasmineConfigFile: 'jasmineConfFile' } });
   });
 
   afterEach(() => {
@@ -39,7 +39,7 @@ describe('JasmineTestRunner', () => {
   });
 
   it('should configure jasmine on run', async () => {
-    await actEmptyRun();
+    await actRunWithoutTests();
     expect(jasmineStub.execute).called;
     expect(helpers.Jasmine).calledWithNew;
     expect(helpers.Jasmine).calledWith({ projectBaseDir: process.cwd() });
@@ -54,12 +54,13 @@ describe('JasmineTestRunner', () => {
   it('should clear require cache on run', async () => {
     require.cache['foo.js'] = 'foo';
     require.cache['bar.js'] = 'bar';
-    await actEmptyRun();
+    await actRunWithoutTests();
     expect(require.cache['foo.js']).not.ok;
     expect(require.cache['bar.js']).not.ok;
   });
 
   it('should report completed specs', async () => {
+    // Arrange
     function addReporter(rep: jasmine.CustomReporter) {
       rep.specDone({ id: 'spec0', fullName: 'foo spec', status: 'success' });
       rep.specDone({ id: 'spec1', fullName: 'bar spec', status: 'failure', failedExpectations: [{ message: 'bar failed' }] });
@@ -69,7 +70,11 @@ describe('JasmineTestRunner', () => {
       rep.jasmineDone();
     }
     jasmineStub.addReporter.callsFake(addReporter);
+
+    // Act
     const result = await sut.run({});
+
+    // Assert
     expect(result.status).eq(RunStatus.Complete);
     expectTestResultsToEqual(result.tests, [
       { name: 'foo spec', status: TestStatus.Success, failureMessages: undefined },
@@ -110,11 +115,11 @@ describe('JasmineTestRunner', () => {
 
   it('should evaluate testHooks in global context', async () => {
     const hooks = 'foobar';
-    await actEmptyRun(hooks);
+    await actRunWithoutTests(hooks);
     expect(evalGlobalStub).calledWith(hooks);
   });
 
-  function actEmptyRun(testHooks?: string) {
+  function actRunWithoutTests(testHooks?: string) {
     function addReporter(rep: jasmine.CustomReporter) {
       rep.jasmineDone();
     }

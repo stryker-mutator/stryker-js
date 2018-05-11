@@ -1,6 +1,5 @@
 import { EOL } from 'os';
-import { TestRunner, RunResult, TestResult, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
+import { TestRunner, RunResult, TestResult, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
 import { Jasmine, toStrykerTestResult, evalGlobal } from './helpers';
 
 export default class JasmineTestRunner implements TestRunner {
@@ -9,9 +8,9 @@ export default class JasmineTestRunner implements TestRunner {
   private fileNames: ReadonlyArray<string>;
   private Date: { new(): Date } = Date; // take Date prototype now we still can (user might choose to mock it away)
 
-  constructor({ fileNames, strykerOptions: { jasmineConfigFile } }: { fileNames: ReadonlyArray<string>, strykerOptions: StrykerOptions }) {
-    this.jasmineConfigFile = jasmineConfigFile;
-    this.fileNames = fileNames;
+  constructor(runnerOptions: RunnerOptions) {
+    this.jasmineConfigFile = runnerOptions.strykerOptions.jasmineConfigFile;
+    this.fileNames = runnerOptions.fileNames;
   }
 
   run(options: { testHooks?: string }): Promise<RunResult> {

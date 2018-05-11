@@ -17,6 +17,9 @@
       "testResources"
     ]
   },
+  "engines": {
+    "node": ">=6"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/stryker-mutator/stryker.git"

@@ -51,7 +51,9 @@ describe('JasmineRunner integration', () => {
           path.resolve('lib', 'jasmine_examples', 'Song.js'),
           path.resolve('spec', 'helpers', 'jasmine_examples', 'SpecHelper.js'),
           path.resolve('spec', 'jasmine_examples', 'PlayerSpec.js')
-        ], strykerOptions: { jasmineConfigFile: 'spec/support/jasmine.json' }
+        ],
+        port: 80,
+        strykerOptions: { jasmineConfigFile: 'spec/support/jasmine.json' }
       });
     });
     it('should run the specs', async () => {
@@ -123,7 +125,7 @@ describe('JasmineRunner integration', () => {
       sut = new JasmineTestRunner({
         fileNames: [path.resolve('lib', 'error.js'),
         path.resolve('spec', 'errorSpec.js')
-        ], strykerOptions: {}
+        ], port: 80, strykerOptions: {}
       });
     });
 
@@ -142,9 +144,10 @@ describe('JasmineRunner integration', () => {
     beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/test-failures'));
       sut = new JasmineTestRunner({
-        fileNames: [path.resolve('lib', 'foo.js'),
-        path.resolve('spec', 'fooSpec.js')
-        ], strykerOptions: {}
+        fileNames: [
+          path.resolve('lib', 'foo.js'),
+          path.resolve('spec', 'fooSpec.js')
+        ], port: 80, strykerOptions: {}
       });
     });
 
