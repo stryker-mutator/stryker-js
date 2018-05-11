@@ -17,7 +17,6 @@ packages/*/src/**/*.js
 packages/*/test/**/*.js
 packages/*/src/**/*.d.ts
 packages/*/test/**/*.d.ts
-packages/**/package-lock.json
 .idea
 *.iml
 *.tmp.txt
