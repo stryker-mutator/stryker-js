@@ -35,7 +35,7 @@ $ stryker run
 
 ## Additional required plugin
 
-The `Vue Mutator` is not capable of mutating code. It is only capable of parsing Vue code in such a way that it's understood by other mutators. This means that the `Vue Mutator` will require an additional stryker plugin to work.
+The `Vue Mutator` is not capable of mutating code. It is only capable of parsing Vue code in such a way that it's understood by other mutators. This means that the `Vue Mutator` will require an additional stryker plugin to work. All files that you want to mutate will be passed to the underlying mutator.
 
 If you write TypeScript code please install this package:
 ```bash
