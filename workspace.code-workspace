@@ -37,6 +37,9 @@
 			"path": "packages/stryker-typescript"
 		},
 		{
+			"path": "packages/stryker-vue-mutator"
+		},
+		{
 			"path": "packages/stryker-webpack-transpiler"
 		},
 		{
