@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.23.0"></a>
+# [0.23.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.22.4...stryker@0.23.0) (2018-04-30)
+
+
+### Features
+
+* **node version:** drop node 4 support ([#724](https://github.com/stryker-mutator/stryker/issues/724)) ([a038931](https://github.com/stryker-mutator/stryker/commit/a038931))
+
+
+### BREAKING CHANGES
+
+* **node version:** Node 4 is no longer supported.
+
+
+
+
+<a name="0.22.4"></a>
+## [0.22.4](https://github.com/stryker-mutator/stryker/compare/stryker@0.22.3...stryker@0.22.4) (2018-04-20)
+
+
+### Bug Fixes
+
+* **Sandbox:** make sure .stryker-tmp does not appear in the sandbox ([#716](https://github.com/stryker-mutator/stryker/issues/716)) ([48acc2c](https://github.com/stryker-mutator/stryker/commit/48acc2c)), closes [#698](https://github.com/stryker-mutator/stryker/issues/698)
+
+
+
+
+<a name="0.22.3"></a>
+## [0.22.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.22.2...stryker@0.22.3) (2018-04-20)
+
+
+### Bug Fixes
+
+* **Sandbox pool:** remove race condition ([#714](https://github.com/stryker-mutator/stryker/issues/714)) ([a3606d8](https://github.com/stryker-mutator/stryker/commit/a3606d8)), closes [#713](https://github.com/stryker-mutator/stryker/issues/713)
+
+
+
+
 <a name="0.22.2"></a>
 ## [0.22.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.22.1...stryker@0.22.2) (2018-04-20)
 

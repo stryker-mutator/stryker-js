@@ -1,20 +1,20 @@
 import { expect } from 'chai';
-import { Observable } from 'rxjs';
 import * as _ from 'lodash';
+import { empty, of } from 'rxjs';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
+import { MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
 import Sandbox from '../../../src/Sandbox';
-import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import MutantTestExecutor from '../../../src/process/MutationTestExecutor';
-import TranspiledMutant from '../../../src/TranspiledMutant';
-import { MutantStatus } from 'stryker-api/report';
-import MutantTranspiler, * as mutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import SandboxPool, * as sandboxPool from '../../../src/SandboxPool';
-import { transpiledMutant, testResult, Mock, mock, config, testFramework, testableMutant, mutantResult, file } from '../../helpers/producers';
-import '../../helpers/globals';
 import TestableMutant from '../../../src/TestableMutant';
+import TranspiledMutant from '../../../src/TranspiledMutant';
+import MutantTestExecutor from '../../../src/process/MutationTestExecutor';
+import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
+import MutantTranspiler, * as mutantTranspiler from '../../../src/transpiler/MutantTranspiler';
+import '../../helpers/globals';
+import { Mock, config, file, mock, mutantResult, testFramework, testResult, testableMutant, transpiledMutant } from '../../helpers/producers';
 
 const createTranspiledMutants = (...n: number[]) => {
   return n.map(n => {
@@ -60,8 +60,8 @@ describe('MutationTestExecutor', () => {
       sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter);
       const sandbox = mock<Sandbox>(Sandbox);
       sandbox.runMutant.resolves(mutantResult());
-      sandboxPoolMock.streamSandboxes.returns(Observable.of(sandbox));
-      mutantTranspilerMock.transpileMutants.returns(Observable.empty());
+      sandboxPoolMock.streamSandboxes.returns(of(sandbox));
+      mutantTranspilerMock.transpileMutants.returns(empty());
       await sut.run(mutants);
     });
 
@@ -94,8 +94,8 @@ describe('MutationTestExecutor', () => {
 
       firstSandbox = mock(Sandbox);
       secondSandbox = mock(Sandbox);
-      mutantTranspilerMock.transpileMutants.returns(Observable.of(...transpiledMutants));
-      sandboxPoolMock.streamSandboxes.returns(Observable.of(firstSandbox, secondSandbox));
+      mutantTranspilerMock.transpileMutants.returns(of(...transpiledMutants));
+      sandboxPoolMock.streamSandboxes.returns(of(firstSandbox, secondSandbox));
 
       sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter);
 

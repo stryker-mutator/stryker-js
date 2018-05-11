@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.3.4...stryker-webpack-transpiler@0.4.0) (2018-04-30)
+
+
+### Features
+
+* **node version:** drop node 4 support ([#724](https://github.com/stryker-mutator/stryker/issues/724)) ([a038931](https://github.com/stryker-mutator/stryker/commit/a038931))
+
+
+### BREAKING CHANGES
+
+* **node version:** Node 4 is no longer supported.
+
+
+
+
+<a name="0.3.4"></a>
+## [0.3.4](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.3.3...stryker-webpack-transpiler@0.3.4) (2018-04-20)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
 <a name="0.3.3"></a>
 ## [0.3.3](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.3.2...stryker-webpack-transpiler@0.3.3) (2018-04-20)
 

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.0"></a>
+# [0.15.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.14.4...stryker-karma-runner@0.15.0) (2018-04-30)
+
+
+### Features
+
+* **node version:** drop node 4 support ([#724](https://github.io/stryker-mutator/stryker/issues/724)) ([a038931](https://github.io/stryker-mutator/stryker/commit/a038931))
+
+
+### BREAKING CHANGES
+
+* **node version:** Node 4 is no longer supported.
+
+
+
+
 <a name="0.14.4"></a>
 ## [0.14.4](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.14.3...stryker-karma-runner@0.14.4) (2018-04-20)
 

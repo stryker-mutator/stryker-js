@@ -1,6 +1,7 @@
-import * as os from 'os';
 import { getLogger } from 'log4js';
-import { Observable } from 'rxjs';
+import * as os from 'os';
+import { Observable, range } from 'rxjs';
+import { flatMap } from 'rxjs/operators';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
@@ -30,8 +31,8 @@ export default class SandboxPool {
     }
     this.log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
 
-    const sandboxes = Observable.range(0, numConcurrentRunners)
-      .flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework)));
+    const sandboxes = range(0, numConcurrentRunners)
+      .pipe(flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework))));
     return sandboxes;
   }
 
