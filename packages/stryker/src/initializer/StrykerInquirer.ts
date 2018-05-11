@@ -9,7 +9,7 @@ export interface PromptResult {
 export class StrykerInquirer {
 
   public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
-    const answers = await inquirer.prompt({
+    const answers: any = await inquirer.prompt({
       type: 'list',
       name: 'testRunner',
       message: 'Which test runner do you want to use?',
@@ -20,7 +20,7 @@ export class StrykerInquirer {
   }
 
   public async promptTestFrameworks(options: PromptOption[]): Promise<PromptOption> {
-    const answers = await inquirer.prompt({
+    const answers: any = await inquirer.prompt({
       type: 'list',
       name: 'testFramework',
       message: 'Which test framework do you want to use?',
@@ -30,7 +30,7 @@ export class StrykerInquirer {
   }
 
   public async promptMutator(options: PromptOption[]): Promise<PromptOption> {
-    const answers = await inquirer.prompt({
+    const answers: any = await inquirer.prompt({
       type: 'list',
       name: 'mutator',
       message: 'What kind of code do you want to mutate?',
@@ -40,7 +40,7 @@ export class StrykerInquirer {
   }
 
   public async promptTranspilers(options: PromptOption[]): Promise<PromptOption[]> {
-    const answers = await inquirer.prompt({
+    const answers: any = await inquirer.prompt({
       type: 'checkbox',
       name: 'transpilers',
       message: '[optional] What kind transformations should be applied to your code?',
@@ -50,7 +50,7 @@ export class StrykerInquirer {
   }
 
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {
-    const answers = await inquirer.prompt({
+    const answers: any = await inquirer.prompt({
       type: 'checkbox',
       name: 'reporters',
       message: 'Which reporter(s) do you want to use?',

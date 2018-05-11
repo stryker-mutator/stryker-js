@@ -58,7 +58,7 @@
     "escodegen": "^1.8.0",
     "esprima": "^2.7.0",
     "glob": "^7.0.3",
-    "inquirer": "^3.0.6",
+    "inquirer": "^5.2.0",
     "istanbul-lib-instrument": "^1.9.2",
     "lodash": "^4.17.4",
     "log4js": "^1.1.0",
@@ -74,8 +74,7 @@
     "typed-rest-client": "^1.0.7"
   },
   "devDependencies": {
-    "@types/commander": "^2.9.0",
-    "@types/inquirer": "0.0.35",
+    "@types/inquirer": "0.0.41",
     "@types/istanbul-lib-instrument": "^1.7.0",
     "@types/prettier": "^1.6.0",
     "@types/progress": "^2.0.1",
