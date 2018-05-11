@@ -1,5 +1,13 @@
-export default function createReactJestConfig(resolve: Function, projectRoot: string, ejected: boolean, loader?: NodeRequire): string {
+const resolveCreateJestConfig = (path: string, loader?: NodeRequire): Function => {
   loader = loader || /* istanbul ignore next */ require;
 
-  return loader('react-scripts/scripts/utils/createJestConfig')(resolve, projectRoot, ejected);
+  return loader(path);
+};
+
+export function createReactJestConfig(resolve: Function, projectRoot: string, ejected: boolean, loader?: NodeRequire): string {
+  return resolveCreateJestConfig('react-scripts/scripts/utils/createJestConfig', loader)(resolve, projectRoot, ejected);
+}
+
+export function createReactTsJestConfig(resolve: Function, projectRoot: string, ejected: boolean, loader?: NodeRequire): string {
+  return resolveCreateJestConfig('react-scripts-ts/scripts/utils/createJestConfig', loader)(resolve, projectRoot, ejected);
 }

@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as path from 'path';
 
-describe('Integration JestConfigEditor', () => {
+describe('Integration test for Jest ConfigEditor', () => {
   let jestConfigEditor: JestConfigEditor;
   let sandbox: sinon.SinonSandbox;
   let getProjectRootStub: sinon.SinonStub;
@@ -25,7 +25,7 @@ describe('Integration JestConfigEditor', () => {
 
   afterEach(() => sandbox.restore());
 
-  it('should create a jest configuration for a react project', () => {
+  it('should create a Jest configuration for a React project', () => {
     config.set({ jest: { project: 'react' } });
 
     jestConfigEditor.edit(config);
@@ -73,7 +73,65 @@ describe('Integration JestConfigEditor', () => {
     expect(config.jest.config).to.deep.equal(expectedResult);
   });
 
-  it('should load the jest configuration from the jest.config.js', () => {
+  it('should create a Jest configuration for a React + TypeScript project', () => {
+    config.set({ jest: { project: 'react-ts' } });
+
+    jestConfigEditor.edit(config);
+
+    const expectedResult = {
+      collectCoverageFrom: [
+        'src/**/*.{js,jsx,ts,tsx}'
+      ],
+      globals: {
+        'ts-jest': {
+          tsConfigFile: path.join(projectRoot, 'testResources', 'reactTsProject', 'tsconfig.test.json'),
+        },
+      },
+      setupFiles: [path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'polyfills.js')],
+      testMatch: [
+        '<rootDir>/src/**/__tests__/**/*.(j|t)s?(x)',
+        '<rootDir>/src/**/?(*.)(spec|test).(j|t)s?(x)'
+      ],
+      testEnvironment: 'jsdom',
+      testURL: 'http://localhost',
+      transform: {
+        '^.+\\.(js|jsx|mjs)$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'babelTransform.js'),
+        '^.+\\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'cssTransform.js'),
+        '^(?!.*\\.(js|jsx|mjs|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'fileTransform.js'),
+        '^.+\\.tsx?$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'typescriptTransform.js'),
+      },
+      transformIgnorePatterns: [
+        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|ts|tsx)$'
+      ],
+      moduleNameMapper: {
+        '^react-native$': 'react-native-web'
+      },
+      moduleFileExtensions: [
+        'web.ts',
+        'ts',
+        'web.tsx',
+        'tsx',
+        'web.js',
+        'js',
+        'web.jsx',
+        'jsx',
+        'json',
+        'node',
+        'mjs'
+      ],
+      rootDir: projectRoot,
+      setupTestFrameworkScriptFile: undefined,
+      testResultsProcessor: undefined,
+      collectCoverage: false,
+      verbose: false,
+      bail: false
+    };
+
+    // Parse the json back to an object in order to match
+    expect(config.jest.config).to.deep.equal(expectedResult);
+  });
+
+  it('should load the Jest configuration from the jest.config.js', () => {
     getProjectRootStub.returns(path.join(process.cwd(), 'testResources', 'exampleProjectWithExplicitJestConfig'));
 
     jestConfigEditor.edit(config);
@@ -91,7 +149,7 @@ describe('Integration JestConfigEditor', () => {
     });
   });
 
-  it('should load the jest configuration from the package.json', () => {
+  it('should load the Jest configuration from the package.json', () => {
     getProjectRootStub.returns(path.join(process.cwd(), 'testResources', 'exampleProject'));
 
     jestConfigEditor.edit(config);

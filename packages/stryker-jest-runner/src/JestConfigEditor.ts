@@ -3,6 +3,7 @@ import { Config, ConfigEditor } from 'stryker-api/config';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
 import DefaultJestConfigLoader from './configLoaders/DefaultJestConfigLoader';
 import ReactScriptsJestConfigLoader from './configLoaders/ReactScriptsJestConfigLoader';
+import ReactScriptsTSJestConfigLoader from './configLoaders/ReactScriptsTSJestConfigLoader';
 import JestConfiguration from './configLoaders/JestConfiguration';
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 
@@ -29,10 +30,13 @@ export default class JestConfigEditor implements ConfigEditor {
     switch (project.toLowerCase()) {
       case DEFAULT_PROJECT_NAME:
         configLoader = new DefaultJestConfigLoader(process.cwd(), fs);
-      break;
+        break;
       case 'react':
         configLoader = new ReactScriptsJestConfigLoader(process.cwd());
-      break;
+        break;
+      case 'react-ts':
+        configLoader = new ReactScriptsTSJestConfigLoader(process.cwd());
+        break;
       default:
         throw new Error(`No configLoader available for ${project}`);
     }

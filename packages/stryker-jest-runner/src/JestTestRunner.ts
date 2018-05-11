@@ -1,8 +1,10 @@
+import { getLogger } from 'log4js';
 import { RunnerOptions, RunResult, TestRunner, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
 import { EventEmitter } from 'events';
 import JestTestAdapterFactory from './jestTestAdapters/JestTestAdapterFactory';
 
 export default class JestTestRunner extends EventEmitter implements TestRunner {
+  private log = getLogger(JestTestRunner.name);
   private jestConfig: any;
   private projectRoot: string;
 
@@ -10,6 +12,7 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
     super();
 
     this.projectRoot = process.cwd();
+    this.log.debug(`Project root is ${this.projectRoot}`);
 
     this.jestConfig = options.strykerOptions.jest.config;
     this.jestConfig.rootDir = this.projectRoot;

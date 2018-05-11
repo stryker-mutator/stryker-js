@@ -1,18 +1,23 @@
-import JestConfigEditor from '../../src/JestConfigEditor';
 import { Config } from 'stryker-api/config';
 import { RunnerOptions, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import JestTestRunner from '../../src/JestTestRunner';
 import * as path from 'path';
 
-// Get the project root, we will be stub process.cwd later on
+// It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
+const paths = require('react-scripts-ts/config/paths');
+paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsconfig.test.json');
+
+import JestConfigEditor from '../../src/JestConfigEditor';
+import JestTestRunner from '../../src/JestTestRunner';
+
+// Get the actual project root, since we will stub process.cwd later on
 const jestProjectRoot = process.cwd();
 
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
 
-describe('Integration StrykerJestRunner', function () {
+describe('Integration test for Strykers Jest runner', function () {
   // Set timeout for integration tests to 10 seconds for travis
   this.timeout(10000);
 
@@ -47,7 +52,7 @@ describe('Integration StrykerJestRunner', function () {
 
   afterEach(() => sandbox.restore());
 
-  it('should run tests on the example react project', async () => {
+  it('should run tests on the example React project', async () => {
     processCwdStub.returns(getProjectRoot('reactProject'));
     runOptions.strykerOptions.set({ jest: { project: 'react' } });
 
@@ -57,6 +62,25 @@ describe('Integration StrykerJestRunner', function () {
 
     const result = await jestTestRunner.run();
 
+    expect(result.status).to.equal(RunStatus.Complete);
+    expect(result).to.have.property('tests');
+    expect(result.tests).to.be.an('array').that.is.not.empty;
+    expect(result.tests[0].name).to.equal('renders without crashing');
+    expect(result.tests[0].status).to.equal(TestStatus.Success);
+    expect(result.tests[0].timeSpentMs).to.be.above(-1);
+    expect(result.tests[0].failureMessages).to.be.an('array').that.is.empty;
+    expect(result.status).to.equal(RunStatus.Complete);
+  });
+
+  it('should run tests on the example React + TypeScript project', async () => {
+    processCwdStub.returns(getProjectRoot('reactTsProject'));
+    runOptions.strykerOptions.set({ jest: { project: 'react-ts' } });
+    jestConfigEditor.edit(runOptions.strykerOptions as Config);
+
+    const jestTestRunner = new JestTestRunner(runOptions);
+    const result = await jestTestRunner.run();
+
+    expect(result.status).to.equal(RunStatus.Complete);
     expect(result).to.have.property('tests');
     expect(result.tests).to.be.an('array').that.is.not.empty;
     expect(result.tests[0].name).to.equal('renders without crashing');
