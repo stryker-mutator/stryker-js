@@ -21,7 +21,8 @@ export function wrapInClosure(codeFragment: string) {
     })((Function('return this'))());`;
 }
 
-describe('Integration with stryker-mocha-framework', () => {
+describe('Integration with stryker-mocha-framework', function () {
+  this.timeout(10000);
   let testFramework: MochaTestFramework;
 
   beforeEach(() => {
@@ -54,7 +55,7 @@ describe('Integration with stryker-mocha-framework', () => {
   function actRun(testHooks: string | undefined): Promise<{ result: RunResult, stdout: string }> {
     return new Promise<{ result: RunResult, stdout: string }>((resolve, reject) => {
       const sutProxy = fork(require.resolve('./MochaTestFrameworkIntegrationTestWorker'), [AUTO_START_ARGUMENT], {
-        execArgv: [], 
+        execArgv: [],
         silent: true
       });
       let stdout: string = '';

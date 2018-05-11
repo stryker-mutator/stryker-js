@@ -3,9 +3,8 @@
 module.exports = function (config) {
   config.set({
     files: [
-      __dirname + '/src/Add.js',
-      __dirname + '/test/AddSpec.js',
-      'f.js'
+      __dirname + '/src/*.js',
+      __dirname + '/test/*.js'
     ],
     exclude: [
       __dirname + '/src/Error.js',
@@ -16,15 +15,8 @@ module.exports = function (config) {
     frameworks: [
       'jasmine'
     ],
-    client: {
-      jasmine: {
-        random: false,
-        stopOnFailure: true,
-        failFast: true
-      }
-    },
     browsers: [
-      'Chrome'
+      'PhantomJS'
     ]
   });
 }

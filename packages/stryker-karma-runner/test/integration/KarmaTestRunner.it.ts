@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
+import { expectTestResults } from '../helpers/assertions';
 
 
 function wrapInClosure(codeFragment: string) {
@@ -34,16 +35,6 @@ describe('KarmaTestRunner', function () {
       expect(actualFailedMessage).to.be.oneOf(expectedFailureMessages);
     });
   };
-
-  const expectTestResults = (result: RunResult, expectedTestResults: { name: string, status: TestStatus }[]) => {
-    const actualTestResults = result.tests.map(test => ({ name: test.name, status: test.status }));
-    expect(actualTestResults).to.have.length(expectedTestResults.length);
-    expectedTestResults.forEach(expectedTestResult => {
-      const actualTestResult = actualTestResults.find(test => test.name === expectedTestResult.name);
-      expect(actualTestResult).deep.eq(expectedTestResult);
-    });
-  };
-
 
   describe('when all tests succeed', () => {
     let testRunnerOptions: RunnerOptions;
@@ -83,10 +74,10 @@ describe('KarmaTestRunner', function () {
       it('should be able to run twice in quick succession',
         () => expect(sut.run({}).then(() => sut.run({}))).to.eventually.have.property('status', RunStatus.Complete));
 
-      it.only('should be able to filter tests', async () => {
+      it('should be able to filter tests', async () => {
         const testHooks = wrapInClosure(new JasmineTestFramework().filter([
-          { id: 0, name: 'Add should be able 1 to a number' },
-          { id: 3, name: 'Add should be able negate a number' }
+          { id: 0, name: 'Add should be able to add two numbers' },
+          { id: 3, name: 'Add should be able to recognize a negative number' }
         ]));
         const result = await sut.run({ testHooks });
         expectTestResults(result, [
@@ -96,9 +87,7 @@ describe('KarmaTestRunner', function () {
           { name: 'Add should be able to recognize a negative number', status: TestStatus.Success },
           { name: 'Add should be able to recognize that 0 is not a negative number', status: TestStatus.Skipped }
         ]);
-        return new Promise((res) => {});
       });
-
     });
   });
 
@@ -154,7 +143,7 @@ describe('KarmaTestRunner', function () {
 
     it('should report Error with the error message', async () => {
       const runResult = await sut.run({});
-      expectToHaveSuccessfulTests(runResult, 5);
+      expectToHaveSuccessfulTests(runResult, 0);
       expectToHaveFailedTests(runResult, []);
       expect(runResult.status).to.be.eq(RunStatus.Error);
       expect((runResult.errorMessages as any).length).to.equal(1);
