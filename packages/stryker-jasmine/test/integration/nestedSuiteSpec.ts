@@ -28,8 +28,8 @@ describe('Selecting tests with nested suites', function () {
     sut = new JasmineTestFramework();
     testSelections = [
       { id: 0, name: 'outer test 1' },
-      { id: 1, name: 'outer test 2' },
-      { id: 2, name: 'outer inner test 3' }
+      { id: 1, name: 'outer inner test 2' },
+      { id: 2, name: 'outer test 3' }
     ];
   });
 
@@ -47,8 +47,8 @@ describe('Selecting tests with nested suites', function () {
     const result = execJasmine(selectTestFile, nestedSuiteFile);
     expect(result).lengthOf(3);
     expect(result[0].status).eq('passed');
-    expect(result[1].status).eq('disabled');
-    expect(result[2].status).eq('disabled');
+    expect(result[1].status).eq('excluded');
+    expect(result[2].status).eq('excluded');
     expect(result[0].fullName).eq('outer test 1');
   });
 
@@ -56,9 +56,9 @@ describe('Selecting tests with nested suites', function () {
     filter([1]);
     const result = execJasmine(selectTestFile, nestedSuiteFile);
     expect(result).lengthOf(3);
-    expect(result[0].status).eq('disabled');
+    expect(result[0].status).eq('excluded');
     expect(result[1].status).eq('passed');
-    expect(result[2].status).eq('disabled');
+    expect(result[2].status).eq('excluded');
     expect(result[1].fullName).eq('outer inner test 2');
   });
 
@@ -66,8 +66,8 @@ describe('Selecting tests with nested suites', function () {
     filter([2]);
     const result = execJasmine(selectTestFile, nestedSuiteFile);
     expect(result).lengthOf(3);
-    expect(result[0].status).eq('disabled');
-    expect(result[1].status).eq('disabled');
+    expect(result[0].status).eq('excluded');
+    expect(result[1].status).eq('excluded');
     expect(result[2].status).eq('passed');
     expect(result[2].fullName).eq('outer test 3');
   });
@@ -77,7 +77,7 @@ describe('Selecting tests with nested suites', function () {
     const result = execJasmine(selectTestFile, nestedSuiteFile);
     expect(result).lengthOf(3);
     expect(result[0].status).eq('passed');
-    expect(result[1].status).eq('disabled');
+    expect(result[1].status).eq('excluded');
     expect(result[2].status).eq('passed');
     expect(result[0].fullName).eq('outer test 1');
     expect(result[2].fullName).eq('outer test 3');
@@ -90,7 +90,7 @@ describe('Selecting tests with nested suites', function () {
   }
 
   function execJasmine(...files: string[]): JasmineTest[] {
-    const execResult = execa.sync('jasmine', [jsonReporterFile, ...files]);
+    const execResult = execa.sync('jasmine', ['--random=false', jsonReporterFile, ...files]);
     return JSON.parse(execResult.stdout);
   }
 });
