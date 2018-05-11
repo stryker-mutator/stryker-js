@@ -8,7 +8,7 @@
 
 # Stryker Vue mutator
 
-A mutator that supports JavaScript for [Stryker](https://stryker-mutator.io), the mutation testing framework for JavaScript and friends.
+A mutator that supports mutating Vue code for [Stryker](https://stryker-mutator.io), the mutation testing framework for JavaScript and friends.
 
 This plugin cannot work on its own as it requires additional mutators to function.
 
@@ -35,7 +35,9 @@ $ stryker run
 
 ## Additional required plugin
 
-The `Vue Mutator` is not capable of mutating code. It is only capable of parsing Vue code in such a way that it's understood by other mutators. This means that the `Vue Mutator` will require an additional stryker plugin to work. All files that you want to mutate will be passed to the underlying mutator.
+The `Vue Mutator` is not capable of mutating code. It is only capable of parsing Vue code in such a way that it's understood by other mutators. This means that the `Vue Mutator` will require an additional stryker plugin to work. 
+
+All files that you want to mutate will be passed to the underlying mutator. With the correct configuration, this plugin supports mutating single-file components with a `.vue` extension as well as regular code in `.js`, `.jsx`, `.ts` and `.tsx` files.
 
 If you write TypeScript code please install this package:
 ```bash
