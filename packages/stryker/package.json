@@ -74,8 +74,7 @@
     "typed-rest-client": "^1.0.7"
   },
   "devDependencies": {
-    "@types/commander": "^2.9.0",
-    "@types/inquirer": "0.0.35",
+    "@types/inquirer": "0.0.41",
     "@types/istanbul-lib-instrument": "^1.7.0",
     "@types/prettier": "^1.6.0",
     "@types/progress": "^2.0.1",
