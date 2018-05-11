@@ -200,12 +200,12 @@ All `TRAVIS` environment variables are set by Travis for each build. However, yo
 #### Files in the sandbox
 **Command line:** `[--files|-f] src/**/*.js,a.js,test/**/*.js`  
 **Config file:** `files: ['src/**/*.js', '!src/**/index.js', 'test/**/*.js']`  
-**Default value:** result of `git ls-files --others --exclude-standard --cached`  
+**Default value:** result of `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`  
 **Mandatory:** No  
 **Description:**  
 With `files` you can choose which files should be included in your test runner sandbox. 
 This is normally not needed as it defaults to all files not ignored by git. 
-Try it out yourself with this command: `git ls-files --others --exclude-standard --cached`.
+Try it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.
 
 If you do need to override `files` (for example: when your project does not live in a git repository),
 you can override the files here.

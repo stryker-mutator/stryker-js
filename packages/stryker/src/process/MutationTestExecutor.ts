@@ -1,15 +1,16 @@
-import Sandbox from '../Sandbox';
-import { Observable, Observer } from 'rxjs';
-import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import { MutantResult, MutantStatus } from 'stryker-api/report';
+import { Observable, Observer, merge, zip } from 'rxjs';
+import { flatMap, map, tap, toArray } from 'rxjs/operators';
 import { Config } from 'stryker-api/config';
-import { TestFramework } from 'stryker-api/test_framework';
 import { File } from 'stryker-api/core';
+import { MutantResult, MutantStatus } from 'stryker-api/report';
+import { TestFramework } from 'stryker-api/test_framework';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import Sandbox from '../Sandbox';
+import SandboxPool from '../SandboxPool';
+import TestableMutant from '../TestableMutant';
 import TranspiledMutant from '../TranspiledMutant';
 import StrictReporter from '../reporters/StrictReporter';
-import TestableMutant from '../TestableMutant';
 import MutantTranspiler from '../transpiler/MutantTranspiler';
-import SandboxPool from '../SandboxPool';
 
 export default class MutationTestExecutor {
 
@@ -43,16 +44,16 @@ export default class MutationTestExecutor {
       }
     }
 
-    return transpiledMutants
-      .zip(recycled.merge(sandboxes), createTuple)
-      .map(earlyResult)
-      .flatMap(runInSandbox)
-      .do(recycle)
-      .map(({ result }) => result)
-      .do(reportResult(this.reporter))
-      .toArray()
-      .do(completeRecycle)
-      .do(reportAll(this.reporter))
+    return zip(transpiledMutants, merge(recycled, sandboxes), createTuple)
+      .pipe(
+        map(earlyResult),
+        flatMap(runInSandbox),
+        tap(recycle),
+        map(({ result }) => result),
+        tap(reportResult(this.reporter)),
+        toArray(),
+        tap(completeRecycle),
+        tap(reportAll(this.reporter)))
       .toPromise(Promise);
   }
 }

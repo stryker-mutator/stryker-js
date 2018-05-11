@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { Configuration } from 'webpack';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
 import { getLogger, Logger } from 'log4js';
+import { isFunction } from 'lodash';
 
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 
@@ -20,6 +21,9 @@ export default class ConfigLoader {
 
     if (config.configFile) {
       webpackConfig = this.loaderWebpackConfigFromProjectRoot(config.configFile);
+      if (isFunction(webpackConfig)) {
+        webpackConfig = webpackConfig.apply(null, config.configFileArgs);
+      }
       if (config.silent) {
         this.configureSilent(webpackConfig);
       }
