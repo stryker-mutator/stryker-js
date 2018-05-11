@@ -8,7 +8,7 @@ export default class VueMutator implements Mutator {
   private mutators: { [name: string]: Mutator; };
 
   constructor(config: Config) {
-    this.mutators = generateMutators();
+    this.mutators = generateMutators(config);
   }
 
   mutate(inputFiles: File[]): Mutant[] {

@@ -270,6 +270,7 @@ describe('VueMutator', () => {
   });
 
   it('should throw an error when a Vue script block has an unknown lang attribute', () => {
+    sandbox.stub(MutatorHelpers, 'generateMutators').returns({});
     const script = `export default {
       data () {
         return {
