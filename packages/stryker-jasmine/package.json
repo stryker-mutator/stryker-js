@@ -20,9 +20,10 @@
     "jasmine",
     "stryker-plugin",
     "stryker-test-framework",
-    "stryker-karma-runner"
+    "stryker-karma-runner",
+    "stryker-jasmine-runner"
   ],
-  "author": "nicojs",
+  "author": "Nico Jansen",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
