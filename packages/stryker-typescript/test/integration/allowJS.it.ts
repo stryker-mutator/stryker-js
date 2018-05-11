@@ -29,7 +29,7 @@ describe('AllowJS integration', function () {
     setGlobalLogLevel('trace');
   });
   
-  it.only('should be able to transpile source code', async () => {
+  it('should be able to transpile source code', async () => {
     const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: false });
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).to.eq(2);
