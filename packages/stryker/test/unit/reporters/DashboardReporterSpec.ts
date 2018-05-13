@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import DashboardReporter from '../../../src/reporters/DashboardReporter';
 import * as environmentVariables from '../../../src/utils/objectUtils';
+import * as ciProvider from '../../../src/reporters/ci/Provider';
 import StrykerDashboardClient, { StrykerDashboardReport } from '../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { scoreResult, mock, Mock } from '../../helpers/producers';
 import { Logger } from 'log4js';
@@ -13,31 +14,40 @@ describe('DashboardReporter', () => {
   let log: Mock<Logger>;
   let dashboardClientMock: Mock<StrykerDashboardClient>;
   let getEnvironmentVariables: sinon.SinonStub;
+  let determineCiProvider: sinon.SinonStub;
 
   beforeEach(() => {
     log = currentLogMock();
     dashboardClientMock = mock(StrykerDashboardClient);
     getEnvironmentVariables = sandbox.stub(environmentVariables, 'getEnvironmentVariable');
+    determineCiProvider = sandbox.stub(ciProvider, 'determineCiProvider');
   });
 
   function setupEnvironmentVariables(env?: {
-    travis?: boolean
-    pullRequest?: string;
+    ci?: boolean
+    pullRequest?: boolean;
     repository?: string;
     branch?: string;
     apiKey?: string;
   }) {
-    const { travis, pullRequest, repository, branch, apiKey } = Object.assign({
-      travis: true,
-      pullRequest: 'false',
+    const { ci, pullRequest, repository, branch, apiKey } = Object.assign({
+      ci: true,
+      pullRequest: false,
       repository: 'stryker-mutator/stryker',
       branch: 'master',
       apiKey: '12345'
     }, env);
-    getEnvironmentVariables.withArgs('TRAVIS').returns(travis);
-    getEnvironmentVariables.withArgs('TRAVIS_PULL_REQUEST').returns(pullRequest);
-    getEnvironmentVariables.withArgs('TRAVIS_REPO_SLUG').returns(repository);
-    getEnvironmentVariables.withArgs('TRAVIS_BRANCH').returns(branch);
+    
+    if (ci) {
+      determineCiProvider.returns({
+        isPullRequest: () => pullRequest,
+        determineBranch: () => branch,
+        determineRepository: () => repository,
+      });
+    } else {
+      determineCiProvider.returns(undefined);
+    }
+
     getEnvironmentVariables.withArgs('STRYKER_DASHBOARD_API_KEY').returns(apiKey);
   }
 
@@ -61,9 +71,9 @@ describe('DashboardReporter', () => {
     expect(log.warn).to.have.not.been.called;
   });
 
-  it('should log a info if it is not a travis build', async () => {
+  it('should log an info if it is not part of a CI build', async () => {
     // Arrange
-    setupEnvironmentVariables({ travis: undefined });
+    setupEnvironmentVariables({ ci: undefined });
     sut = new DashboardReporter(dashboardClientMock as any);
 
     // Act
@@ -71,12 +81,12 @@ describe('DashboardReporter', () => {
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not sent when stryker didn\'t run on buildserver {TRAVIS=true}');
+    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not sent when not running on a buildserver');
   });
 
-  it('should log a info if it is a pull request', async () => {
+  it('should log an info if it is a pull request', async () => {
     // Arrange
-    setupEnvironmentVariables({ pullRequest: '1' });
+    setupEnvironmentVariables({ pullRequest: true });
     sut = new DashboardReporter(dashboardClientMock as any);
 
     // Act
@@ -84,38 +94,10 @@ describe('DashboardReporter', () => {
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not sent when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
+    expect(log.info).to.have.been.calledWithMatch('Dashboard report is not sent when building a pull request');
   });
 
-  it('should log a warning if the repository is unknown', async () => {
-    // Arrange
-    setupEnvironmentVariables({ repository: undefined });
-    sut = new DashboardReporter(dashboardClientMock as any);
-
-    // Act
-    sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
-
-    // Assert
-    expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(log.warn).to.have.been.calledWithMatch('Missing environment variable TRAVIS_REPO_SLUG');
-  });
-
-  it('should log a warning if the branch is unknown', async () => {
-    // Arrange
-    setupEnvironmentVariables({ branch: undefined });
-    sut = new DashboardReporter(dashboardClientMock as any);
-
-    // Act
-    sut.onScoreCalculated(scoreResult({
-      mutationScore: 79.10
-    }));
-
-    // Assert
-    expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(log.warn).to.have.been.calledWithMatch('Missing environment variable TRAVIS_BRANCH');
-  });
-
-  it('should log a warning if the stryker api key is unknown', async () => {
+  it('should log a warning if the Stryker API key is unknown', async () => {
     // Arrange
     setupEnvironmentVariables({ apiKey: undefined });
     sut = new DashboardReporter(dashboardClientMock as any);
