@@ -30,4 +30,14 @@ describe('determineCiProvider()', () => {
       expect(result).to.be.not.undefined;
     });
   });
+
+  describe('When CIRCLECI is \'true\'', () => {
+    it('should provide a CI Provider implementation', () => {
+      getEnvironmentVariables.withArgs('CIRCLECI').returns(true);
+
+      const result = determineCiProvider();
+  
+      expect(result).to.be.not.undefined;
+    });
+  });
 });

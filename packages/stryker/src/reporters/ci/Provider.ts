@@ -1,3 +1,4 @@
+import CircleProvider from './CircleProvider';
 import TravisProvider from './TravisProvider';
 
 import { getEnvironmentVariable } from '../../utils/objectUtils';
@@ -23,6 +24,9 @@ export function determineCiProvider()  {
   // https://docs.travis-ci.com/user/environment-variables/#Default-Environment-Variables
   if (getEnvironmentVariable('HAS_JOSH_K_SEAL_OF_APPROVAL')) {
     return new TravisProvider();
+  } else if (getEnvironmentVariable('CIRCLECI')) {
+    return new CircleProvider();
+
   }
 
   return undefined;
