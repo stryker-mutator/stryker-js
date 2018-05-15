@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as log4js from 'log4js';
+import * as log4js from 'stryker-api/logging';
 import * as ts from 'typescript';
 import { expect } from 'chai';
 import { SinonStub, match } from 'sinon';

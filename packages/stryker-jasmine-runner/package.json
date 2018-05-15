@@ -47,5 +47,6 @@
   "initStrykerConfig": {
     "jasmineConfigFile": "spec/support/jasmine.json"
   },
-  "contributors": []
+  "contributors": [],
+  "dependencies": {}
 }

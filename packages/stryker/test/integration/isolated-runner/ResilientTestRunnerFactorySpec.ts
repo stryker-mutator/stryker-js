@@ -1,11 +1,11 @@
 import * as path from 'path';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
 import { RunResult, RunStatus } from 'stryker-api/test_runner';
 import ResilientTestRunnerFactory from '../../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorator';
-import currentLogMock from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
 function sleep(ms: number) {

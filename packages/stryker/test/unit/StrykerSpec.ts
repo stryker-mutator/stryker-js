@@ -17,12 +17,13 @@ import ConfigValidator, * as configValidator from '../../src/ConfigValidator';
 import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
 import { TempFolder } from '../../src/utils/TempFolder';
-import currentLogMock from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/logMock';
 import { mock, Mock, testFramework as testFrameworkMock, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import TestableMutant from '../../src/TestableMutant';
 import '../helpers/globals';
 import InputFileCollection from '../../src/input/InputFileCollection';
+import LogConfigurator from '../../src/utils/LogConfigurator';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
@@ -47,6 +48,7 @@ describe('Stryker', function () {
   let reporter: Mock<BroadcastReporter>;
   let tempFolderMock: Mock<TempFolder>;
   let scoreResultCalculator: ScoreResultCalculator;
+  let logConfiguratorForMasterStub: sinon.SinonStub;
 
   beforeEach(() => {
     strykerConfig = config();
@@ -58,6 +60,7 @@ describe('Stryker', function () {
     const reporterOrchestratorMock = mock(ReporterOrchestrator);
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
     mutatorMock = mock(MutatorFacade);
+    logConfiguratorForMasterStub = sandbox.stub(LogConfigurator, 'forMaster');
     inputFileResolverMock = mock(InputFileResolver);
     reporterOrchestratorMock.createBroadcastReporter.returns(reporter);
     testFramework = testFrameworkMock();
@@ -92,6 +95,10 @@ describe('Stryker', function () {
 
     it('should use the config editor to override config', () => {
       expect(sut.config.testRunner).to.be.eq('fakeTestRunner');
+    });
+
+    it('should configure logging for master', () => {
+      expect(logConfiguratorForMasterStub).calledThrice;
     });
 
     it('should freeze the config', () => {

@@ -1,9 +1,10 @@
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import * as fs from 'mz/fs';
-import * as log4js from 'log4js';
+import * as log4js from 'stryker-api/logging';
 import * as path from 'path';
 import * as _ from 'lodash';
+import StrykerError from './utils/StrykerError';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +
@@ -25,8 +26,7 @@ export default class ConfigReader {
     try {
       configModule(config);
     } catch (e) {
-      this.log.fatal('Error in config file!\n', e);
-      process.exit(1);
+      throw new StrykerError('Error in config file!', e);
     }
 
     // merge the config from config file and cliOptions (precedence)

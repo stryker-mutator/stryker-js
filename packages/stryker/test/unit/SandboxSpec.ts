@@ -1,4 +1,4 @@
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
 import * as sinon from 'sinon';
@@ -17,7 +17,7 @@ import SourceFile from '../../src/SourceFile';
 import '../helpers/globals';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import * as fileUtils from '../../src/utils/fileUtils';
-import currentLogMock from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/logMock';
 import TestRunnerDecorator from '../../src/isolated-runner/TestRunnerDecorator';
 
 describe('Sandbox', () => {

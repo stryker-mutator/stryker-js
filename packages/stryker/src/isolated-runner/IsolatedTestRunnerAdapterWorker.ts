@@ -1,15 +1,18 @@
 import { AdapterMessage, RunMessage, StartMessage, WorkerMessage, InitDoneMessage } from './MessageProtocol';
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'stryker-api/logging';
 import { deserialize, errorToString } from '../utils/objectUtils';
+import LogConfigurator from '../utils/LogConfigurator';
 
 class IsolatedTestRunnerAdapterWorker {
 
-  private readonly log = getLogger(IsolatedTestRunnerAdapterWorker.name);
+  private readonly log: Logger;
   private underlyingTestRunner: TestRunner;
 
   constructor() {
+    LogConfigurator.forWorker();
+    this.log = getLogger(IsolatedTestRunnerAdapterWorker.name);
     this.handlePromiseRejections();
     this.listenToMessages();
   }
@@ -86,6 +89,7 @@ class IsolatedTestRunnerAdapterWorker {
     if (this.underlyingTestRunner.dispose) {
       await this.underlyingTestRunner.dispose();
     }
+    await LogConfigurator.shutdown();
     this.sendDisposeDone();
   }
 

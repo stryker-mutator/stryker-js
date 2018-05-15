@@ -1,5 +1,4 @@
 import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
-import * as log4js from 'log4js';
 import { expect } from 'chai';
 import { Mock, mock } from '../helpers/producers';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
@@ -24,13 +23,6 @@ describe('TypescriptTranspiler', () => {
     transpileFilterMock.isIncluded = sandbox.stub();
     sandbox.stub(TranspileFilter, 'create').returns(transpileFilterMock);
     sandbox.stub(transpilingLanguageService, 'default').returns(languageService);
-    sandbox.stub(log4js, 'setGlobalLogLevel');
-  });
-
-  it('set global log level', () => {
-    config.logLevel = 'foobar';
-    sut = new TypescriptTranspiler({ config, produceSourceMaps: true });
-    expect(log4js.setGlobalLogLevel).calledWith('foobar');
   });
 
   describe('transpile', () => {

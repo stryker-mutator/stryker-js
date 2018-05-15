@@ -1,3 +1,4 @@
+import { getLogger, Logger } from 'stryker-api/logging';
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
 import { StrykerOptions, MutatorDescriptor } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
@@ -13,13 +14,13 @@ import ScoreResultCalculator from './ScoreResultCalculator';
 import ConfigValidator from './ConfigValidator';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
 import { TempFolder } from './utils/TempFolder';
-import * as log4js from 'log4js';
 import Timer from './utils/Timer';
 import StrictReporter from './reporters/StrictReporter';
 import MutatorFacade from './MutatorFacade';
 import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
 import InputFileCollection from './input/InputFileCollection';
+import LogConfigurator from './utils/LogConfigurator';
 
 export default class Stryker {
 
@@ -27,7 +28,7 @@ export default class Stryker {
   private timer = new Timer();
   private reporter: StrictReporter;
   private testFramework: TestFramework | null;
-  private readonly log = log4js.getLogger(Stryker.name);
+  private readonly log: Logger;
 
   /**
    * The Stryker mutation tester.
@@ -35,12 +36,14 @@ export default class Stryker {
    * @param {Object} [options] - Optional options.
    */
   constructor(options: StrykerOptions) {
+    LogConfigurator.forMaster(options.logLevel);
+    this.log = getLogger(Stryker.name);
     let configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
-    this.setGlobalLogLevel(); // logLevel could be changed
+    LogConfigurator.forMaster(this.config.logLevel); // logLevel could be changed
     this.loadPlugins();
     this.applyConfigEditors();
-    this.setGlobalLogLevel(); // logLevel could be changed
+    LogConfigurator.forMaster(this.config.logLevel); // logLevel could be changed
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
@@ -144,10 +147,6 @@ export default class Stryker {
 
   private logDone() {
     this.log.info('Done in %s.', this.timer.humanReadableElapsed());
-  }
-
-  private setGlobalLogLevel() {
-    log4js.setGlobalLogLevel(this.config.logLevel);
   }
 
   private reportScore(mutantResults: MutantResult[]) {

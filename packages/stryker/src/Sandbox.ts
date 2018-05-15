@@ -1,6 +1,6 @@
 import { Config } from 'stryker-api/config';
 import * as path from 'path';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import * as mkdirp from 'mkdirp';
 import { RunResult } from 'stryker-api/test_runner';
 import { File } from 'stryker-api/core';

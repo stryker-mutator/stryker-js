@@ -16,15 +16,15 @@ const noopLogger: Logger = {
   fatal(): void { }
 };
 
-let implementation: LoggerFactoryMethod = () => noopLogger;
+let logImplementation: LoggerFactoryMethod = () => noopLogger;
 
 export default class LoggerFactory {
 
   static setLogImplementation(implementation: LoggerFactoryMethod) {
-    this.getLogger = implementation;
+    logImplementation = implementation;
   }
 
   static getLogger: LoggerFactoryMethod = (categoryName?: string) => {
-    return implementation(categoryName);
+    return logImplementation(categoryName);
   }
 }

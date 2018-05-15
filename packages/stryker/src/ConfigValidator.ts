@@ -1,7 +1,8 @@
 import { TestFramework } from 'stryker-api/test_framework';
 import { MutatorDescriptor, MutationScoreThresholds } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
+import StrykerError from './utils/StrykerError';
 
 export default class ConfigValidator {
 
@@ -101,7 +102,7 @@ export default class ConfigValidator {
 
   private crashIfNeeded() {
     if (!this.isValid) {
-      process.exit(1);
+      throw new StrykerError('Stryker could not recover from this configuration error, see fatal log message(s) above.');
     }
   }
 

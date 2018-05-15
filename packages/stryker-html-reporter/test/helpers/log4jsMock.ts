@@ -1,4 +1,4 @@
-import * as log4js from 'log4js';
+import * as log4js from 'stryker-api/logging';
 import * as sinon from 'sinon';
 
 let logger = {

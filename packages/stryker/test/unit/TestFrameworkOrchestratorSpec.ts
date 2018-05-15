@@ -1,10 +1,10 @@
 import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import { expect } from 'chai';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
 import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
-import currentLogMock from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/logMock';
 import { Mock } from '../helpers/producers';
 
 describe('TestFrameworkOrchestrator', () => {

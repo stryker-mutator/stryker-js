@@ -1,5 +1,5 @@
 import * as sinon from 'sinon';
-import * as log4js from 'log4js';
+import * as log4js from 'stryker-api/logging';
 
 beforeEach(() => {
   global.sandbox = sinon.sandbox.create();

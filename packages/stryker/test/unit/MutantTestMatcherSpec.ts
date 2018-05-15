@@ -1,4 +1,4 @@
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { Mutant } from 'stryker-api/mutant';
 import { TestSelection } from 'stryker-api/test_framework';
 import { expect } from 'chai';
@@ -6,7 +6,7 @@ import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollection, Cover
 import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
-import currentLogMock from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/logMock';
 import { testResult, mutant, Mock, mock } from '../helpers/producers';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';

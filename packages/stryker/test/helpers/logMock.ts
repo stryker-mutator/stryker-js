@@ -1,11 +1,11 @@
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 import { logger, Mock } from './producers';
 
-let log: Mock<log4js.Logger>;
+let log: Mock<logging.Logger>;
 
 beforeEach(() => {
   log = logger();
-  sandbox.stub(log4js, 'getLogger').returns(log);
+  sandbox.stub(logging, 'getLogger').returns(log);
 });
 
 export default function currentLogMock() {

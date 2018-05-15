@@ -1,4 +1,4 @@
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { errorToString } from '../../utils/objectUtils';
 

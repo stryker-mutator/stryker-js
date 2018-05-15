@@ -1,4 +1,4 @@
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 import * as path from 'path';
 import * as karma from 'karma';
 import { requireModule } from './utils';
@@ -7,13 +7,13 @@ const karmaConfigReaderLocation = 'karma/lib/config';
 
 export default class KarmaConfigReader {
 
-  private readonly log: log4js.Logger;
+  private readonly log: logging.Logger;
 
   constructor(private karmaConfigFile: string | undefined) {
     if (this.karmaConfigFile) {
       this.karmaConfigFile = path.resolve(this.karmaConfigFile);
     }
-    this.log = log4js.getLogger('KarmaConfigReader');
+    this.log = logging.getLogger('KarmaConfigReader');
   }
 
   read(): karma.ConfigOptions | null {
@@ -60,9 +60,9 @@ export default class KarmaConfigReader {
 
 class Config implements karma.ConfigOptions {
   [key: string]: any
-  
+
   autoWatch: boolean = false;
-  
+
   readonly LOG_DISABLE = 'OFF';
   readonly LOG_ERROR = 'ERROR';
   readonly LOG_WARN = 'WARN';

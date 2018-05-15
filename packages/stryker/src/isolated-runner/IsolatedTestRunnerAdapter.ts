@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import * as _ from 'lodash';
 import { fork, ChildProcess } from 'child_process';
 import { TestRunner, RunResult, RunOptions } from 'stryker-api/test_runner';

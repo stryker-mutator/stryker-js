@@ -1,6 +1,6 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import * as log4js from 'log4js';
+import * as log4js from 'stryker-api/logging';
 const cfg: { parseConfig: sinon.SinonStub } = require('karma/lib/config');
 import KarmaConfigReader from '../../src/KarmaConfigReader';
 import LoggerStub from '../helpers/LoggerStub';

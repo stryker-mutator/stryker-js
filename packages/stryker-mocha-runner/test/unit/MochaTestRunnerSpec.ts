@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { EventEmitter } from 'events';
 import * as Mocha from 'mocha';
-import * as log4js from 'log4js';
+import * as log4js from 'stryker-api/logging';
 import { expect } from 'chai';
 import { RunOptions } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';

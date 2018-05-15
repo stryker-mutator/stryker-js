@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as _ from 'lodash';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { MutationScoreThresholds } from 'stryker-api/core';
 import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';

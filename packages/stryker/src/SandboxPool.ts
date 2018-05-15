@@ -1,4 +1,4 @@
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import * as os from 'os';
 import { Observable, range } from 'rxjs';
 import { flatMap } from 'rxjs/operators';

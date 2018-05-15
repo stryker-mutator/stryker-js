@@ -1,4 +1,4 @@
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 import fileUrl = require('file-url');
 import * as path from 'path';
 import { Config } from 'stryker-api/config';
@@ -7,7 +7,7 @@ import * as util from './util';
 import * as templates from './templates';
 import Breadcrumb from './Breadcrumb';
 
-const log = log4js.getLogger('HtmlReporter');
+const log = logging.getLogger('HtmlReporter');
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
@@ -20,7 +20,6 @@ export default class HtmlReporter implements Reporter {
   private scoreResult: ScoreResult;
 
   constructor(private options: Config) {
-    log4js.setGlobalLogLevel(options.logLevel || 'info');
   }
 
   onAllSourceFilesRead(files: SourceFile[]) {

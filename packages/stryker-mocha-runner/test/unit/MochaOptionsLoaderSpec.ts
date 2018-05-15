@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { Config } from 'stryker-api/config';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
-import * as log4js from 'log4js';
+import * as log4js from 'stryker-api/logging';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
 import { logger, Mock } from '../helpers/mockHelpers';
 

@@ -1,16 +1,18 @@
 export enum WorkerMessageKind {
   'Init',
-  'Work'
+  'Work',
+  'Dispose'
 }
 
 export enum ParentMessageKind {
   'Initialized',
   'Result',
-  'Rejection'
+  'Rejection',
+  'DisposeCompleted'
 }
 
-export type WorkerMessage = InitMessage | WorkMessage;
-export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized} | RejectionResult;
+export type WorkerMessage = InitMessage | WorkMessage | { kind: WorkerMessageKind.Dispose };
+export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized | ParentMessageKind.DisposeCompleted } | RejectionResult;
 
 // Make this an unlikely command line argument 
 // (prevents incidental start of child process)

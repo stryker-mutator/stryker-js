@@ -2,7 +2,7 @@ import * as child from 'child_process';
 import { StrykerInquirer } from './StrykerInquirer';
 import NpmClient from './NpmClient';
 import PromptOption from './PromptOption';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
 

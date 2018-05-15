@@ -1,6 +1,6 @@
 import { EOL } from 'os';
 import { expect } from 'chai';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { default as StrykerSandbox } from '../../../src/Sandbox';
 import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
 import { File } from 'stryker-api/core';
@@ -11,7 +11,7 @@ import CoverageInstrumenterTranspiler, * as coverageInstrumenterTranspiler from 
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
 import { TranspilerOptions } from 'stryker-api/transpile';
 import { RunStatus, RunResult, TestStatus } from 'stryker-api/test_runner';
-import currentLogMock from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/logMock';
 import Timer from '../../../src/utils/Timer';
 import { Mock, coverageMaps } from '../../helpers/producers';
 import InputFileCollection from '../../../src/input/InputFileCollection';

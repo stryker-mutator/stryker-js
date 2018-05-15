@@ -1,5 +1,5 @@
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import * as log4js from 'log4js';
+import * as log4js from 'stryker-api/logging';
 import Timer from './Timer';
 
 const log = log4js.getLogger('StrykerMochaReporter');

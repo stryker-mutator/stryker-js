@@ -1,7 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
 import * as ts from 'typescript';
-import { getLogger, setGlobalLogLevel } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { ConfigEditor, Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY } from './helpers/keys';
 import * as fs from 'fs';
@@ -20,7 +20,6 @@ export default class TypescriptConfigEditor implements ConfigEditor {
   private log = getLogger(TypescriptConfigEditor.name);
 
   edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
-    setGlobalLogLevel(strykerConfig.logLevel);
     this.loadTSConfig(strykerConfig, host);
   }
 

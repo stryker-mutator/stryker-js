@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Configuration } from 'webpack';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
-import { getLogger, Logger } from 'log4js';
+import { getLogger, Logger } from 'stryker-api/logging';
 import { isFunction } from 'lodash';
 
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';

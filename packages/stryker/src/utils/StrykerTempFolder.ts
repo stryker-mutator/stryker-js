@@ -1,7 +1,7 @@
 import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { deleteDir } from './fileUtils';
 
 let baseTempFolder = path.join(process.cwd(), '.stryker-tmp');

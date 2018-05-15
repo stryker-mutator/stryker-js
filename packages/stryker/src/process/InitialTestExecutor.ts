@@ -5,7 +5,7 @@ import { Config } from 'stryker-api/config';
 import { TranspilerOptions, Transpiler } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
 import TranspilerFacade from '../transpiler/TranspilerFacade';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import Sandbox from '../Sandbox';
 import Timer from '../utils/Timer';
 import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
