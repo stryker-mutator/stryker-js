@@ -26,9 +26,18 @@ export interface InitialTestRunResult {
   coverageMaps: CoverageMapsByFile;
 }
 
+/**
+ * A small object that keeps the timing variables of a test run.
+ */
 interface Timing {
-  gross: number;
+  /**
+   * The time that the test runner was actually executing tests in milliseconds.
+   */
   net: number;
+  /**
+   * the time that was spend not executing tests in milliseconds. 
+   * So the time it took to start the test runner and to report the result.
+   */
   overhead: number;
 }
 
@@ -113,12 +122,18 @@ export default class InitialTestExecutor {
     throw new Error('Something went wrong in the initial test run');
   }
 
+  /**
+   * Calculates the timing variables for the test run.
+   * grossTime = NetTime + overheadTime
+   * 
+   * The overhead time is used to calculate exact timeout values during mutation testing.
+   * See timeoutMs setting in README for more information on this calculation
+   */
   private calculateTiming(grossTimeMS: number, tests: ReadonlyArray<TestResult>): Timing {
     const netTimeMS = tests.reduce((total, test) => total + test.timeSpentMs, 0);
     const overheadTimeMS = grossTimeMS - netTimeMS;
     return {
       overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS,
-      gross: grossTimeMS,
       net: netTimeMS
     };
   }
