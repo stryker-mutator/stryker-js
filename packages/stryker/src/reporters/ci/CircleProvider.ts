@@ -1,8 +1,8 @@
-import { CiProvider } from './Provider';
+import { CIProvider } from './Provider';
 
 import { getEnvironmentVariable } from '../../utils/objectUtils';
 
-class CircleProvider implements CiProvider {
+class CircleProvider implements CIProvider {
   isPullRequest = () => getEnvironmentVariable('CIRCLE_PULL_REQUEST') !== undefined;
 
   determineBranch = () => getEnvironmentVariable('CIRCLE_BRANCH') || '(unknown)';
