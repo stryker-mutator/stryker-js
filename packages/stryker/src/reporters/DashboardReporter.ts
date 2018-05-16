@@ -1,11 +1,13 @@
 import {Reporter, ScoreResult} from 'stryker-api/report';
 import DashboardReporterClient from './dashboard-reporter/DashboardReporterClient';
 import {getEnvironmentVariable} from '../utils/objectUtils';
+import { determineCIProvider } from './ci/Provider';
 import { getLogger } from 'log4js';
 import { StrykerOptions } from 'stryker-api/core';
 
 export default class DashboardReporter implements Reporter {
   private readonly log = getLogger(DashboardReporter.name);
+  private readonly ciProvider = determineCIProvider();
 
   constructor(
     setting: StrykerOptions,
@@ -24,14 +26,13 @@ export default class DashboardReporter implements Reporter {
 
   async onScoreCalculated(ScoreResult: ScoreResult) {
     const mutationScore = ScoreResult.mutationScore;
-    const travisBuild = getEnvironmentVariable('TRAVIS');
 
-    if (travisBuild) {
-      const pullRequest = getEnvironmentVariable('TRAVIS_PULL_REQUEST');
+    if (this.ciProvider !== undefined) {
+      const isPullRequest = this.ciProvider.isPullRequest();
 
-      if (pullRequest === 'false') {
-        const repository = this.readEnvironmentVariable('TRAVIS_REPO_SLUG');
-        const branch = this.readEnvironmentVariable('TRAVIS_BRANCH');
+      if (!isPullRequest) {
+        const repository = this.ciProvider.determineRepository();
+        const branch = this.ciProvider.determineBranch();
         const apiKey = this.readEnvironmentVariable('STRYKER_DASHBOARD_API_KEY');
 
         if (repository && branch && apiKey) {
@@ -43,10 +44,10 @@ export default class DashboardReporter implements Reporter {
           });
         }
       } else {
-        this.log.info('Dashboard report is not sent when build is for a pull request {TRAVIS_PULL_REQUEST=<number>}');
+        this.log.info('Dashboard report is not sent when building a pull request');
       }
     } else {
-      this.log.info('Dashboard report is not sent when stryker didn\'t run on buildserver {TRAVIS=true}');
+      this.log.info('Dashboard report is not sent when not running on a buildserver');
     }
   }
 }
