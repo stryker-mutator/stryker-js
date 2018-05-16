@@ -186,16 +186,15 @@ for an up-to-date list of supported reporter plugins and a description on each r
 
 The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
 
-The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The only build server supported at the moment is travis (please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing). The reporter uses these environment settings:
+The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The reporter currently detects [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/). Please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing. On all these environments, it will ignore builds of pull requests. The reporter uses one environment settings:
 
-| Environment variable | Description           | Example value |
+| Environment variable | Description | Example value |
 | ------------- | ------------- | ----- |
-| TRAVIS | Make sure we're running on the build server | TRUE |
-| TRAVIS\_PULL\_REQUEST | All PR builds are ignored by default | false |
-| TRAVIS\_BRANCH | The branch to be sent along with the report | master |
-| STRYKER\_DASHBOARD\_API\_KEY | Your api key (generated for this repository on https://dashboard.stryker-mutator.io) | `52248872-2edc-4102-a43a-bcfca7a9ca99` |
+| STRYKER\_DASHBOARD\_API\_KEY | Your API key (generated at https://dashboard.stryker-mutator.io) | `52248872-2edc-4102-a43a-bcfca7a9ca99` |
 
-All `TRAVIS` environment variables are set by Travis for each build. However, you will need to pass the `STRYKER\_DASHBOARD\_API\_KEY` environment variable yourself. You can create one for your repository by logging in on [the stryker dashboard](https://dashboard.stryker-mutator.io). We strongly recommend you use [encrypted environment variables](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables).
+You will need to pass the `STRYKER_DASHBOARD_API_KEY` environment variable yourself. You can create one for your repository by logging in on [the Stryker dashboard](https://dashboard.stryker-mutator.io). We strongly recommend you use encrypted environment variables:
+* [Travis documentation](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables)
+* [CircleCI documentation](https://circleci.com/security/#secrets_section)
   
 #### Files in the sandbox
 **Command line:** `[--files|-f] src/**/*.js,a.js,test/**/*.js`  
