@@ -7,8 +7,6 @@ import TravisProvider from '../../../../src/reporters/ci/TravisProvider';
 describe('Travis Provider', () => {
   let getEnvironmentVariables: sinon.SinonStub;
 
-  const travisProvider = new TravisProvider();
-
   beforeEach(() => {
     getEnvironmentVariables = sandbox.stub(environmentVariables, 'getEnvironmentVariable');
   });
@@ -16,6 +14,7 @@ describe('Travis Provider', () => {
   describe('isPullRequest()', () => {
     it('should return false when not building a pull request', () => {
       getEnvironmentVariables.withArgs('TRAVIS_PULL_REQUEST').returns('false');
+      const travisProvider = new TravisProvider();
   
       const result = travisProvider.isPullRequest();
   
@@ -24,6 +23,7 @@ describe('Travis Provider', () => {
 
     it('should return true when building a pull request', () => {
       getEnvironmentVariables.withArgs('TRAVIS_PULL_REQUEST').returns('42');
+      const travisProvider = new TravisProvider();
   
       const result = travisProvider.isPullRequest();
   
@@ -34,6 +34,7 @@ describe('Travis Provider', () => {
   describe('determineBranch()', () => {
     it('should return the appropriate value', () => {
       getEnvironmentVariables.withArgs('TRAVIS_BRANCH').returns('master');
+      const travisProvider = new TravisProvider();
   
       const result = travisProvider.determineBranch();
   
@@ -42,6 +43,7 @@ describe('Travis Provider', () => {
 
     it('should return a fall-back value', () => {
       getEnvironmentVariables.withArgs('TRAVIS_BRANCH').returns('');
+      const travisProvider = new TravisProvider();
   
       const result = travisProvider.determineBranch();
   
@@ -52,6 +54,7 @@ describe('Travis Provider', () => {
   describe('determineRepository()', () => {
     it('should return the appropriate value', () => {
       getEnvironmentVariables.withArgs('TRAVIS_REPO_SLUG').returns('stryker/stryker');
+      const travisProvider = new TravisProvider();
   
       const result = travisProvider.determineRepository();
   
@@ -60,6 +63,7 @@ describe('Travis Provider', () => {
     
     it('should return a fall-back value', () => {
       getEnvironmentVariables.withArgs('TRAVIS_REPO_SLUG').returns('');
+      const travisProvider = new TravisProvider();
   
       const result = travisProvider.determineRepository();
   

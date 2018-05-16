@@ -7,7 +7,7 @@ import CircleProvider from '../../../../src/reporters/ci/CircleProvider';
 describe('CircleCI Provider', () => {
   let getEnvironmentVariables: sinon.SinonStub;
 
-  const circleProvider = new CircleProvider();
+  
 
   beforeEach(() => {
     getEnvironmentVariables = sandbox.stub(environmentVariables, 'getEnvironmentVariable');
@@ -16,6 +16,7 @@ describe('CircleCI Provider', () => {
   describe('isPullRequest()', () => {
     it('should return false when not building a pull request', () => {
       getEnvironmentVariables.withArgs('CIRCLE_PULL_REQUEST').returns(undefined);
+      const circleProvider = new CircleProvider();
   
       const result = circleProvider.isPullRequest();
   
@@ -27,6 +28,7 @@ describe('CircleCI Provider', () => {
       // If there was more than one PR, it will contain one 'em (picked randomly).
       // Either way, it will be populated.
       getEnvironmentVariables.withArgs('CIRCLE_PULL_REQUEST').returns('https://github.com/stryker-mutator/stryker/pull/42');
+      const circleProvider = new CircleProvider();
   
       const result = circleProvider.isPullRequest();
   
@@ -37,6 +39,7 @@ describe('CircleCI Provider', () => {
   describe('determineBranch()', () => {
     it('should return the appropriate value', () => {
       getEnvironmentVariables.withArgs('CIRCLE_BRANCH').returns('master');
+      const circleProvider = new CircleProvider();
   
       const result = circleProvider.determineBranch();
   
@@ -45,6 +48,7 @@ describe('CircleCI Provider', () => {
 
     it('should return a fall-back value', () => {
       getEnvironmentVariables.withArgs('CIRCLE_BRANCH').returns('');
+      const circleProvider = new CircleProvider();
   
       const result = circleProvider.determineBranch();
   
@@ -56,6 +60,7 @@ describe('CircleCI Provider', () => {
     it('should return the appropriate value', () => {
       getEnvironmentVariables.withArgs('CIRCLE_PROJECT_USERNAME').returns('stryker');
       getEnvironmentVariables.withArgs('CIRCLE_PROJECT_REPONAME').returns('stryker');
+      const circleProvider = new CircleProvider();
   
       const result = circleProvider.determineRepository();
   
@@ -65,6 +70,7 @@ describe('CircleCI Provider', () => {
     it('should return a fall-back value', () => {
       getEnvironmentVariables.withArgs('CIRCLE_PROJECT_USERNAME').returns('');
       getEnvironmentVariables.withArgs('CIRCLE_PROJECT_REPONAME').returns('');
+      const circleProvider = new CircleProvider();
   
       const result = circleProvider.determineRepository();
   
