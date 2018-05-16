@@ -7,8 +7,6 @@ import CircleProvider from '../../../../src/reporters/ci/CircleProvider';
 describe('CircleCI Provider', () => {
   let getEnvironmentVariables: sinon.SinonStub;
 
-  
-
   beforeEach(() => {
     getEnvironmentVariables = sandbox.stub(environmentVariables, 'getEnvironmentVariable');
   });

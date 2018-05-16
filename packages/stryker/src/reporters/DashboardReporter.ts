@@ -1,13 +1,13 @@
 import {Reporter, ScoreResult} from 'stryker-api/report';
 import DashboardReporterClient from './dashboard-reporter/DashboardReporterClient';
 import {getEnvironmentVariable} from '../utils/objectUtils';
-import { determineCiProvider } from './ci/Provider';
+import { determineCIProvider } from './ci/Provider';
 import { getLogger } from 'log4js';
 import { StrykerOptions } from 'stryker-api/core';
 
 export default class DashboardReporter implements Reporter {
   private readonly log = getLogger(DashboardReporter.name);
-  private readonly ciProvider = determineCiProvider();
+  private readonly ciProvider = determineCIProvider();
 
   constructor(
     setting: StrykerOptions,
