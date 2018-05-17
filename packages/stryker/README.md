@@ -186,7 +186,7 @@ for an up-to-date list of supported reporter plugins and a description on each r
 
 The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
 
-The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The reporter currently detects [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/). Please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing. On all these environments, it will ignore builds of pull requests. The reporter uses one environment settings:
+The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The reporter currently detects [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/). Please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing. On all these environments, it will ignore builds of pull requests. Apart from buildserver-specific environment variables, the reporter uses one environment variable:
 
 | Environment variable | Description | Example value |
 | ------------- | ------------- | ----- |
