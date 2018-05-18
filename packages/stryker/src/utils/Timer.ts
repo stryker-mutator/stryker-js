@@ -1,11 +1,13 @@
 
 export default class Timer {
+  private now: Function;
   private start: Date;
   private markers: {
     [name: string]: Date;
   };
 
-  constructor(private now = () => new Date()) {
+  constructor(now = () => new Date()) {
+    this.now = now;
     this.reset();
   }
 
