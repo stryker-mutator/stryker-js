@@ -16,11 +16,11 @@ export default class ConfigLoader {
     this.log = getLogger(ConfigLoader.name);
   }
 
-  public load(config: StrykerWebpackConfig): Configuration {
+  public async load(config: StrykerWebpackConfig): Promise<Configuration> {
     let webpackConfig: Configuration;
 
     if (config.configFile) {
-      webpackConfig = this.loaderWebpackConfigFromProjectRoot(config.configFile);
+      webpackConfig = await this.loaderWebpackConfigFromProjectRoot(config.configFile);
       if (isFunction(webpackConfig)) {
         webpackConfig = webpackConfig.apply(null, config.configFileArgs);
       }

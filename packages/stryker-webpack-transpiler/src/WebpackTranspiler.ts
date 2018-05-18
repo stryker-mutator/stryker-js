@@ -21,7 +21,8 @@ export default class WebpackTranspiler implements Transpiler {
   public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
     if (!this.webpackCompiler) {
       // Initialize the webpack compiler with the current directory (process.cwd)
-      this.webpackCompiler = new WebpackCompiler(new ConfigLoader().load(this.config));
+      const config = await new ConfigLoader().load(this.config);
+      this.webpackCompiler = new WebpackCompiler(config);
     }
 
     this.webpackCompiler.writeFilesToFs(files);

@@ -44,7 +44,7 @@ describe('ConfigLoader', () => {
     expect(configFunctionStub).calledWith(1, 2);
   });
 
-  it('should remove "ProgressPlugin" if silent is `true`', () => {
+  it('should remove "ProgressPlugin" if silent is `true`', async () => {
     // Arrange
     const bazPlugin = { baz: true, apply() { } };
     const webpackConfig: Configuration = {
@@ -55,9 +55,7 @@ describe('ConfigLoader', () => {
     existsSyncStub.returns(true);
 
     // Act
-    const result = sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: true }));
-
-    console.log(result.plugins);
+    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: true }));
 
     // Assert
     expect(result.plugins).to.be.an('array').that.does.not.deep.include(new ProgressPlugin());
@@ -65,7 +63,7 @@ describe('ConfigLoader', () => {
     expect(logMock.debug).calledWith('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', 'ProgressPlugin');
   });
 
-  it('should not remove "ProgressPlugin" if silent is `false`', () => {
+  it('should not remove "ProgressPlugin" if silent is `false`', async () => {
     const webpackConfig: Configuration = {
       plugins: [new ProgressPlugin(), new BarPlugin()]
     };
@@ -73,13 +71,13 @@ describe('ConfigLoader', () => {
     requireStub.returns(webpackConfig);
     existsSyncStub.returns(true);
 
-    const result = sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: false }));
+    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: false }));
     expect(result.plugins).to.be.an('array').that.does.deep.include(new ProgressPlugin());
   });
 
   it('should return an object with the context property pointing to the projectRoot when webpack.config.js does not exist', () => {
     const contextPath: string = '/path/to/project/root';
-    
+
     existsSyncStub.returns(false);
 
     const result = sut.load(createStrykerWebpackConfig({ context: contextPath }));
