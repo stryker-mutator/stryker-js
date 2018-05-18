@@ -20,7 +20,7 @@ export default class ConfigLoader {
     let webpackConfig: Configuration;
 
     if (config.configFile) {
-      webpackConfig = await this.loaderWebpackConfigFromProjectRoot(config.configFile);
+      webpackConfig = await this.loadWebpackConfigFromProjectRoot(config.configFile);
       if (isFunction(webpackConfig)) {
         webpackConfig = webpackConfig.apply(null, config.configFileArgs);
       }
@@ -35,7 +35,7 @@ export default class ConfigLoader {
     return webpackConfig;
   }
 
-private loaderWebpackConfigFromProjectRoot(configFileLocation: string) {
+private loadWebpackConfigFromProjectRoot(configFileLocation: string) {
   const resolvedName = path.resolve(configFileLocation);
 
   if (!fs.existsSync(resolvedName)) {

@@ -91,7 +91,7 @@ describe('ConfigLoader', () => {
     try {
       await sut.load(createStrykerWebpackConfig({ configFile }));
 
-      assert(false);
+      expect.fail('WebpackConfigLoader should throw an error');
     } catch (e) {
       expect(e.message).to.equal(`Could not load webpack config at "${path.resolve(configFile)}", file not found.`);
     }
@@ -105,5 +105,15 @@ describe('ConfigLoader', () => {
     await sut.load(createStrykerWebpackConfig({ context: contextPath }));
 
     assert(logMock.debug.calledWith('Webpack config "%s" not found, trying Webpack 4 zero config'));
+  });
+
+  it('should be able to load a webpack configuration asynchonously via a promise', async () => {
+    requireStub.returns(Promise.resolve('resolved'));
+    existsSyncStub.returns(true);
+
+    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js' }));
+
+    expect(result).eq('resolved');
+    expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));
   });
 });
