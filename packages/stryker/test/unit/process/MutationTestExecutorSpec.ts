@@ -57,7 +57,7 @@ describe('MutationTestExecutor', () => {
   describe('run', () => {
 
     beforeEach(async () => {
-      sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter);
+      sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter, 42);
       const sandbox = mock<Sandbox>(Sandbox);
       sandbox.runMutant.resolves(mutantResult());
       sandboxPoolMock.streamSandboxes.returns(of(sandbox));
@@ -70,7 +70,7 @@ describe('MutationTestExecutor', () => {
       expect(mutantTranspiler.default).calledWithNew;
     });
     it('should create the sandbox pool', () => {
-      expect(sandboxPool.default).calledWith(expectedConfig, testFrameworkMock, initialTranspiledFiles);
+      expect(sandboxPool.default).calledWith(expectedConfig, testFrameworkMock, initialTranspiledFiles, 42);
       expect(sandboxPool.default).calledWithNew;
     });
 
@@ -97,7 +97,7 @@ describe('MutationTestExecutor', () => {
       mutantTranspilerMock.transpileMutants.returns(of(...transpiledMutants));
       sandboxPoolMock.streamSandboxes.returns(of(firstSandbox, secondSandbox));
 
-      sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter);
+      sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter, 42);
 
       // The uncovered, transpile error and changedAnyTranspiledFiles = false should not be ran in a sandbox
       // Mock first sandbox to return first success, then failed

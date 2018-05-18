@@ -14,13 +14,18 @@ import MutantTranspiler from '../transpiler/MutantTranspiler';
 
 export default class MutationTestExecutor {
 
-  constructor(private config: Config, private inputFiles: ReadonlyArray<File>, private testFramework: TestFramework | null, private reporter: StrictReporter) {
+  constructor(
+    private config: Config,
+    private inputFiles: ReadonlyArray<File>,
+    private testFramework: TestFramework | null,
+    private reporter: StrictReporter,
+    private overheadTimeMS: number) {
   }
 
   async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
     const mutantTranspiler = new MutantTranspiler(this.config);
     const transpiledFiles = await mutantTranspiler.initialize(this.inputFiles);
-    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles);
+    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles, this.overheadTimeMS);
     const result = await this.runInsideSandboxes(
       sandboxPool.streamSandboxes(),
       mutantTranspiler.transpileMutants(allMutants));

@@ -10,6 +10,8 @@ import Task from '../../src/utils/Task';
 import '../helpers/globals';
 import { Mock, config, file, mock, testFramework } from '../helpers/producers';
 
+const OVERHEAD_TIME_MS = 42;
+
 describe('SandboxPool', () => {
   let sut: SandboxPool;
   let firstSandbox: Mock<Sandbox>;
@@ -34,7 +36,7 @@ describe('SandboxPool', () => {
       .onCall(1).resolves(secondSandbox);
 
     expectedInputFiles = [file()];
-    sut = new SandboxPool(options, expectedTestFramework, expectedInputFiles);
+    sut = new SandboxPool(options, expectedTestFramework, expectedInputFiles, OVERHEAD_TIME_MS);
   });
 
   describe('streamSandboxes', () => {
@@ -42,7 +44,7 @@ describe('SandboxPool', () => {
       options.maxConcurrentTestRunners = 1;
       await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(Sandbox.create).to.have.callCount(1);
-      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework);
+      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework, OVERHEAD_TIME_MS);
     });
 
     it('should use cpuCount when maxConcurrentTestRunners is set too high', async () => {
@@ -51,7 +53,7 @@ describe('SandboxPool', () => {
       const actual = await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(actual).lengthOf(3);
       expect(Sandbox.create).to.have.callCount(3);
-      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework);
+      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework, OVERHEAD_TIME_MS);
     });
 
     it('should use the cpuCount when maxConcurrentTestRunners is <= 0', async () => {
@@ -60,7 +62,7 @@ describe('SandboxPool', () => {
       const actual = await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(Sandbox.create).to.have.callCount(3);
       expect(actual).lengthOf(3);
-      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework);
+      expect(Sandbox.create).calledWith(options, 0, expectedInputFiles, expectedTestFramework, OVERHEAD_TIME_MS);
     });
 
     it('should use the cpuCount - 1 when a transpiler is configured', async () => {
@@ -105,7 +107,6 @@ describe('SandboxPool', () => {
           await disposeAllPromise;
         }
       }), toArray()).toPromise();
-
     });
   });
 });
