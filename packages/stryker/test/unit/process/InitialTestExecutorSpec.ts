@@ -104,6 +104,7 @@ describe('InitialTestExecutor run', () => {
 
     it('should calculate the overhead time milliseconds', async () => {
       // Arrange
+      const expectedOverHeadTimeMs = 82;
       expectedRunResult.tests[0].timeSpentMs = 10;
       expectedRunResult.tests.push(producers.testResult({ timeSpentMs: 2 }));
       expectedRunResult.tests.push(producers.testResult({ timeSpentMs: 6 }));
@@ -116,7 +117,7 @@ describe('InitialTestExecutor run', () => {
       expect(timer.mark).calledWith('Initial test run');
       expect(timer.elapsedMs).calledWith('Initial test run');
       expect(timer.mark).calledBefore(timer.elapsedMs);
-      expect(overheadTimeMS).eq(82);
+      expect(overheadTimeMS).eq(expectedOverHeadTimeMs);
     });
 
     it('should never calculate a negative overhead time', async () => {
