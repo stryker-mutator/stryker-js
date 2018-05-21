@@ -6,7 +6,7 @@ const exec = (command) => execSync(command, { stdio: [0, 1, 2] });
 const releaseRequirements = {
     pullRequest: 'false',
     branch: 'release',
-    nodeVersion: '10'
+    nodeVersion: 'node'
 };
 
 console.log(`Running on branch ${process.env.TRAVIS_BRANCH}, version ${process.env.TRAVIS_NODE_VERSION}, pull request: ${process.env.TRAVIS_PULL_REQUEST}`);
