@@ -11,6 +11,8 @@ describe('Timer', () => {
     sut = new Timer();
   });
 
+  afterEach(() => clock.restore());
+
   const arrangeActAssert = (elapsedMs: number, expectedTimeLabel: string) => {
     describe(`after ${expectedTimeLabel}`, () => {
       beforeEach(() => clock.tick(elapsedMs));
@@ -26,5 +28,23 @@ describe('Timer', () => {
   arrangeActAssert(121999, '2 minutes 1 second');
   arrangeActAssert(61000, '1 minute 1 second');
 
-  afterEach(() => clock.restore());
+  describe('mark and elapsedMS', () => {
+    it('should result in expected elapsedMS', () => {
+      clock.tick(10);
+      sut.mark('foo');
+      clock.tick(10);
+      sut.mark('bar');
+      clock.tick(10);
+      expect(sut.elapsedMs('foo')).eq(20);
+      expect(sut.elapsedMs('bar')).eq(10);
+    });
+
+    it('should give total elapsed if elapsed is requested without a valid mark', () => {
+      clock.tick(10);
+      sut.mark('foo');
+      clock.tick(10);
+      expect(sut.elapsedMs('bar')).eq(20);
+    });
+  });
+
 });
