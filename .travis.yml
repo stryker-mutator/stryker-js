@@ -6,8 +6,6 @@ install: npm install
 before_install:
 - if [[ `npm -v` = 3* ]]; then npm i -g npm@5; fi
 sudo: required
-before_script:
-- npm ls
 after_success: ".travis/ci-release.jsh"
 env:
   global:
