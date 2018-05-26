@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.24.0"></a>
+# [0.24.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.23.0...stryker@0.24.0) (2018-05-21)
+
+
+### Features
+
+* **Dashboard reporter:** add support for CircleCI ([a58afff](https://github.com/stryker-mutator/stryker/commit/a58afff))
+
+
+
+
 <a name="0.23.0"></a>
 # [0.23.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.22.4...stryker@0.23.0) (2018-04-30)
 

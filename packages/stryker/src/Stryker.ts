@@ -59,7 +59,8 @@ export default class Stryker {
       const initialTestRunResult = await initialTestRunProcess.run();
       const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
       if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
-        const mutationTestExecutor = new MutationTestExecutor(this.config, inputFiles.files, this.testFramework, this.reporter);
+        const mutationTestExecutor = new MutationTestExecutor(this.config, inputFiles.files, this.testFramework, this.reporter,
+          initialTestRunResult.overheadTimeMS);
         const mutantResults = await mutationTestExecutor.run(testableMutants);
         this.reportScore(mutantResults);
         await this.wrapUpReporter();

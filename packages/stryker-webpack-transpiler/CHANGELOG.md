@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.4.0...stryker-webpack-transpiler@0.5.0) (2018-05-21)
+
+
+### Features
+
+* **webpack:** Add support for config files exporting a function ([#736](https://github.com/stryker-mutator/stryker/issues/736)) ([978bcf2](https://github.com/stryker-mutator/stryker/commit/978bcf2))
+* **webpack config:** support webpack config as promised ([#771](https://github.com/stryker-mutator/stryker/issues/771)) ([a60fca0](https://github.com/stryker-mutator/stryker/commit/a60fca0))
+
+
+
+
 <a name="0.4.0"></a>
 # [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.3.4...stryker-webpack-transpiler@0.4.0) (2018-04-30)
 
