@@ -1,30 +1,31 @@
 import MutationScoreThresholds from './MutationScoreThresholds';
 import MutatorDescriptor from './MutatorDescriptor';
+import LogLevel from './LogLevel';
 
 interface StrykerOptions {
-  // this ensures that custom config for for example 'karma' can be added under the 'karma' key
+  // this ensures that plugins can load custom config.
   [customConfig: string]: any;
-
-  /**
-   * The files array determines which files are in scope for mutation testing.
-   * These include library files, test files and files to mutate, but should NOT include test framework files (for example jasmine).
-   * Each element can be either a string or an object with 2 properties
-   * * `string`: A globbing expression used for selecting the files needed to run the tests.
-   * * { pattern: 'pattern', included: true, mutated: false, transpiled: true }: 
-   *    * The `pattern` property is mandatory and contains the globbing expression used for selecting the files
-   *    * The `included` property is optional and determines whether or not this file should be loaded initially by the test-runner (default: true)
-   *    * The `mutated` property is optional and determines whether or not this file should be targeted for mutations (default: false)
-   *    * The `transpiled` property is optional and determines whether or not this file should be transpiled by a transpiler (see `transpilers` config option) (default: true)
-   * 
-   * @example
-   *     files: ['test/helpers/**\/*.js', 'test/unit/**\/*.js', { pattern: 'src/**\/*.js', included: false }],
-   */
-  files?: string[];
 
   /**
    * A list of globbing expression used for selecting the files that should be mutated.
    */
   mutate?: string[];
+
+  /**
+   * With `files` you can choose which files should be included in your test runner sandbox. 
+   * This is normally not needed as it defaults to all files not ignored by git. 
+   * Try it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.
+   * 
+   * If you do need to override `files` (for example: when your project does not live in a git repository),
+   * you can override the files here.
+   * 
+   * When using the command line, the list can only contain a comma separated list of globbing expressions.  
+   * When using the config file you can provide an array with `string`s
+   * 
+   * You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
+   * 
+   */
+  files?: string[];
 
   /**
    * Specify the maximum number of concurrent test runners. Useful if you don't want to use
@@ -104,9 +105,15 @@ interface StrykerOptions {
   reporter?: string | string[];
 
   /**
-   * The log4js log level. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"
+   * The log level for logging to a file. If defined, stryker will output a log file called "stryker.log".
+   * Default: undefined
    */
-  logLevel?: string;
+  fileLogLevel?: LogLevel;
+
+  /**
+   * The log level for logging to the console. Default: "info".
+   */
+  logLevel?: LogLevel;
 
   /**
    * Indicates whether or not to symlink the node_modules folder inside the sandbox folder(s).
