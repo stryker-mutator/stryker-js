@@ -50,5 +50,10 @@ export default function StringLiteralMutatorSpec(name: string, expectMutation: E
     it('should not mutate string JSX attributes', () => {
       expectMutation('<Record class="row" />');
     });
+
+    it('should not mutate directive prologues', () => {
+      expectMutation('"use strict";"use asm";');
+      expectMutation('function a() {"use strict";"use asm";}');
+    });
   });
 }
