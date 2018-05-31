@@ -1,6 +1,6 @@
 {
   "name": "stryker-babel-transpiler",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -56,7 +56,7 @@
     "babel-plugin-transform-es2015-spread": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
     "glob": "^7.1.2",
-    "stryker-api": "^0.17.1"
+    "stryker-api": "^0.17.2"
   },
   "peerDependencies": {
     "babel-core": "^6.26.0",
