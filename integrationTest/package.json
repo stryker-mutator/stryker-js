@@ -22,7 +22,7 @@
     "mocha": "^5.2.0",
     "mz": "^2.6.0",
     "ts-node": "^6.0.5",
-    "typescript": "^2.4.2",
+    "typescript": "^2.8.4",
     "webpack": "^4.10.2"
   },
   "scripts": {
