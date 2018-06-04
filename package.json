@@ -14,7 +14,7 @@
     "@types/lodash": "^4.14.109",
     "@types/log4js": "0.0.32",
     "@types/mkdirp": "^0.5.2",
-    "@types/mocha": "^2.2.44",
+    "@types/mocha": "^5.2.1",
     "@types/mz": "0.0.32",
     "@types/node": "^8.10.10",
     "@types/rimraf": "2.0.2",
