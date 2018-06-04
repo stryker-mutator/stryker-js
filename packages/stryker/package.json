@@ -58,7 +58,7 @@
     "escodegen": "^1.8.0",
     "esprima": "^2.7.0",
     "glob": "^7.0.3",
-    "inquirer": "^5.2.0",
+    "inquirer": "^6.0.0",
     "istanbul-lib-instrument": "^1.9.2",
     "lodash": "^4.17.4",
     "log4js": "^1.1.0",
