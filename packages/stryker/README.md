@@ -186,16 +186,15 @@ for an up-to-date list of supported reporter plugins and a description on each r
 
 The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
 
-The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The only build server supported at the moment is travis (please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing). The reporter uses these environment settings:
+The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The reporter currently detects [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/). Please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing. On all these environments, it will ignore builds of pull requests. Apart from buildserver-specific environment variables, the reporter uses one environment variable:
 
-| Environment variable | Description           | Example value |
+| Environment variable | Description | Example value |
 | ------------- | ------------- | ----- |
-| TRAVIS | Make sure we're running on the build server | TRUE |
-| TRAVIS\_PULL\_REQUEST | All PR builds are ignored by default | false |
-| TRAVIS\_BRANCH | The branch to be sent along with the report | master |
-| STRYKER\_DASHBOARD\_API\_KEY | Your api key (generated for this repository on https://dashboard.stryker-mutator.io) | `52248872-2edc-4102-a43a-bcfca7a9ca99` |
+| STRYKER\_DASHBOARD\_API\_KEY | Your API key (generated at https://dashboard.stryker-mutator.io) | `52248872-2edc-4102-a43a-bcfca7a9ca99` |
 
-All `TRAVIS` environment variables are set by Travis for each build. However, you will need to pass the `STRYKER\_DASHBOARD\_API\_KEY` environment variable yourself. You can create one for your repository by logging in on [the stryker dashboard](https://dashboard.stryker-mutator.io). We strongly recommend you use [encrypted environment variables](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables).
+You will need to pass the `STRYKER_DASHBOARD_API_KEY` environment variable yourself. You can create one for your repository by logging in on [the Stryker dashboard](https://dashboard.stryker-mutator.io). We strongly recommend you use encrypted environment variables:
+* [Travis documentation](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables)
+* [CircleCI documentation](https://circleci.com/security/#secrets_section)
   
 #### Files in the sandbox
 **Command line:** `[--files|-f] src/**/*.js,a.js,test/**/*.js`  
@@ -263,15 +262,17 @@ If the test runner decides to use the port it should be available for use.
 **Mandatory**: no  
 **Description:**  
 When Stryker is mutating code, it cannot determine indefinitely whether or not a code mutation results in an infinite loop (see [Halting problem](https://en.wikipedia.org/wiki/Halting_problem)).
-In order to battle infinite loops, a test run gets killed after a certain period. This period is configurable with two settings: `timeoutMs` and `timeoutFactor`. 
+In order to battle infinite loops, a test run gets killed after a certain period of time. This period is configurable with two settings: `timeoutMs` and `timeoutFactor`. 
 To calculate the actual timeout in milliseconds the, following formula is used:
 
 ```
-timeoutForTestRunMs = timeOfTheInitialTestRunMs * timeoutFactor + timeoutMs
+timeoutForTestRunMs = netTimeMs * timeoutFactor + timeoutMs + overheadMs
 ``` 
 
+Both `netTimeMs` and `overheadMs` are calculated during the initial test run. They are logged on `info` level. For example when `overheadMs` is 92 and `netTimeMs` is 5: `Initial test run succeeded. Ran 6 tests in 4 seconds (net 5 ms, overhead 92 ms).`
+
 With `timeoutFactor` you can configure the allowed deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops.
-`timeoutMs` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.  
+`timeoutMs` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.
 
 #### Timeout factor  
 **Command line:** `--timeoutFactor 1.5`  

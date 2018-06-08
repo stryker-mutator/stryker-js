@@ -21,7 +21,8 @@ export default class WebpackTranspiler implements Transpiler {
   public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
     if (!this.webpackCompiler) {
       // Initialize the webpack compiler with the current directory (process.cwd)
-      this.webpackCompiler = new WebpackCompiler(new ConfigLoader().load(this.config));
+      const config = await new ConfigLoader().load(this.config);
+      this.webpackCompiler = new WebpackCompiler(config);
     }
 
     this.webpackCompiler.writeFilesToFs(files);
@@ -37,7 +38,7 @@ export default class WebpackTranspiler implements Transpiler {
 export interface StrykerWebpackConfig {
   configFile?: string;
   silent: boolean;
-
+  configFileArgs?: Array<any>;
   // TODO: Remove this when stryker implements projectRoot, see https://github.com/stryker-mutator/stryker/issues/650 */
   context?: string;
 }

@@ -1,6 +1,6 @@
 {
   "name": "stryker-typescript",
-  "version": "0.11.0",
+  "version": "0.11.2",
   "description": "A plugin for TypeScript-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 90 --functions 100 --branches 90 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -45,8 +45,8 @@
   "devDependencies": {
     "@types/lodash.flatmap": "^4.5.3",
     "@types/semver": "^5.4.0",
-    "stryker-api": "^0.17.0",
-    "stryker-mutator-specification": "^0.3.0",
+    "stryker-api": "^0.17.2",
+    "stryker-mutator-specification": "^0.3.1",
     "surrial": "^0.1.3"
   },
   "peerDependencies": {

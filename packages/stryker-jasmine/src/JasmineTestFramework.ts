@@ -32,11 +32,10 @@ export default class JasmineTestFramework implements TestFramework {
   }
 
   filter(testSelections: TestSelection[]): string {
-    const ids = testSelections.map(selection => selection.id);
+    const names = testSelections.map(selection => selection.name);
     return `    
-      var currentTestId = 0;
       jasmine.getEnv().specFilter = function (spec) {
-          return ${JSON.stringify(ids)}.indexOf(currentTestId++) !== -1;
+          return ${JSON.stringify(names)}.indexOf(spec.getFullName()) !== -1;
       }`;
   }
 }

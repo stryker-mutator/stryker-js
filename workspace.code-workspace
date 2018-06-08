@@ -19,6 +19,9 @@
 			"path": "packages/stryker-jasmine"
 		},
 		{
+			"path": "packages/stryker-jasmine-runner"
+		},
+		{
 			"path": "packages/stryker-javascript-mutator/"
 		},
 		{

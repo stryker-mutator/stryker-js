@@ -21,7 +21,8 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
   private isInvalidParent(parent: ts.Node): boolean {
     return parent.kind === ts.SyntaxKind.ImportDeclaration ||
       parent.kind === ts.SyntaxKind.LastTypeNode ||
-      parent.kind === ts.SyntaxKind.JsxAttribute;
+      parent.kind === ts.SyntaxKind.JsxAttribute ||
+      parent.kind === ts.SyntaxKind.ExpressionStatement;
   }
 
   protected identifyReplacements(str: AllStringLiterals, sourceFile: ts.SourceFile): NodeReplacement[] {
