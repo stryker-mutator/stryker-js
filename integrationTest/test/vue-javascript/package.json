@@ -8,7 +8,9 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
-    "test": "npm run unit",
+    "pretest": "rimraf \"reports\" \"verify/*.js\" \"verify/*.map\" && tsc -p .",
+    "test": "stryker run stryker.conf.js",
+    "posttest": "mocha verify/*.js",
     "lint": "eslint --ext .js,.vue src test/unit",
     "build": "node build/build.js"
   },
