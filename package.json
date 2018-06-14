@@ -19,7 +19,7 @@
     "@types/node": "^6.0.113",
     "@types/rimraf": "2.0.2",
     "@types/sinon": "^4.0.0",
-    "@types/sinon-chai": "^2.7.32",
+    "@types/sinon-chai": "^3.2.0",
     "browserify": "^16.2.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
