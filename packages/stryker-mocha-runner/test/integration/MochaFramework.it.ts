@@ -61,7 +61,7 @@ describe('Integration with stryker-mocha-framework', function () {
       let stdout: string = '';
       sutProxy.stdout.on('data', chunk => stdout += chunk.toString());
       const message: RunMessage = { kind: 'run', testHooks };
-      sutProxy.send(message, error => {
+      sutProxy.send(message, (error: Error) => {
         if (error) {
           reject(error);
           sutProxy.kill('SIGKILL');
