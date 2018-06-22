@@ -22,10 +22,11 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
     return parent.kind === ts.SyntaxKind.ImportDeclaration ||
       parent.kind === ts.SyntaxKind.LastTypeNode ||
       parent.kind === ts.SyntaxKind.JsxAttribute ||
-      parent.kind === ts.SyntaxKind.ExpressionStatement;
+      parent.kind === ts.SyntaxKind.ExpressionStatement ||
+      parent.kind === ts.SyntaxKind.LiteralType;
   }
 
-  protected identifyReplacements(str: AllStringLiterals, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(str: AllStringLiterals, sourceFile: ts.SourceFile): NodeReplacement[] {  
     if (str.parent && this.isInvalidParent(str.parent)) {
       return [];
     }
@@ -44,5 +45,4 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
       return [{ node: str, replacement: '""' }];
     }
   }
-
 }
