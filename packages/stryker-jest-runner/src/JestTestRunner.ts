@@ -7,11 +7,18 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
   private log = getLogger(JestTestRunner.name);
   private jestConfig: any;
   private projectRoot: string;
+  private processEnvRef: NodeJS.ProcessEnv;
 
-  public constructor(options: RunnerOptions) {
+  public constructor(options: RunnerOptions, processEnvRef?: NodeJS.ProcessEnv) {
     super();
 
-    this.projectRoot = process.cwd();
+    // Make sure process can be mocked by tests by passing it in the constructor
+    this.processEnvRef = processEnvRef || /* istanbul ignore next */ process.env;
+
+    // basePath will be used in future releases of Stryker as a way to define the project root
+    // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
+    // https://github.com/stryker-mutator/stryker/issues/650
+    this.projectRoot = options.strykerOptions.basePath || process.cwd();
     this.log.debug(`Project root is ${this.projectRoot}`);
 
     this.jestConfig = options.strykerOptions.jest.config;
@@ -19,6 +26,8 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
   }
 
   public async run(): Promise<RunResult> {
+    this.setNodeEnv();
+
     const jestTestRunner = JestTestAdapterFactory.getJestTestAdapter();
 
     const { results } = await jestTestRunner.run(this.jestConfig, process.cwd());
@@ -31,6 +40,14 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
       status: (results.numRuntimeErrorTestSuites > 0) ? RunStatus.Error : RunStatus.Complete,
       errorMessages
     };
+  }
+
+  private setNodeEnv() {
+    // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here
+    // https://github.com/facebook/jest/blob/master/packages/jest-cli/bin/jest.js#L12-L14
+    if (!this.processEnvRef.NODE_ENV) {
+      this.processEnvRef.NODE_ENV = 'test';
+    }
   }
 
   private processTestResults(suiteResults: Array<any>): Array<TestResult> {

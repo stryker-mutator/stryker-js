@@ -5,29 +5,41 @@ import * as fakeResults from '../helpers/testResultProducer';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
+import * as log4js from 'log4js';
 
 describe('JestTestRunner', () => {
+  const basePath = '/path/to/project/root';
+
   let sandbox: sinon.SinonSandbox;
   let jestTestAdapterFactoryStub: sinon.SinonStub;
   let runJestStub: sinon.SinonStub;
+  let debugLoggerStub: sinon.SinonStub;
 
   let strykerOptions: Config;
   let jestTestRunner: JestTestRunner;
+  let processEnvMock: NodeJS.ProcessEnv;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
     runJestStub = sinon.stub();
-    runJestStub.resolves({ results: { testResults: [] }});
+    runJestStub.resolves({ results: { testResults: [] } });
+
+    debugLoggerStub = sandbox.stub();
+    sandbox.stub(log4js, 'getLogger').returns({ debug: debugLoggerStub });
 
     strykerOptions = new Config;
-    strykerOptions.set({ jest: { config: { property: 'value' }}});
+    strykerOptions.set({ jest: { config: { property: 'value' } }, basePath });
+
+    processEnvMock = {
+      NODE_ENV: undefined
+    };
 
     jestTestRunner = new JestTestRunner({
       fileNames: [],
       port: 0,
       strykerOptions
-    });
+    }, processEnvMock);
 
     jestTestAdapterFactoryStub = sandbox.stub(JestTestAdapterFactory, 'getJestTestAdapter');
     jestTestAdapterFactoryStub.returns({
@@ -36,6 +48,10 @@ describe('JestTestRunner', () => {
   });
 
   afterEach(() => sandbox.restore());
+
+  it('should log the project root when constructing the JestTestRunner', () => {
+    assert(debugLoggerStub.calledWith(`Project root is ${basePath}`));
+  });
 
   it('should call jestTestAdapterFactory "getJestTestAdapter" method to obtain a testRunner', async () => {
     await jestTestRunner.run();
@@ -104,7 +120,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should return an error result when a runtime error occurs', async () => {
-    runJestStub.resolves({ results: { testResults: [], numRuntimeErrorTestSuites: 1 }});
+    runJestStub.resolves({ results: { testResults: [], numRuntimeErrorTestSuites: 1 } });
 
     const result = await jestTestRunner.run();
 
@@ -113,5 +129,19 @@ describe('JestTestRunner', () => {
       tests: [],
       errorMessages: []
     });
+  });
+
+  it('should set process.env.NODE_ENV to \'test\' when process.env.NODE_ENV is null', async () => {
+    await jestTestRunner.run();
+
+    expect(processEnvMock.NODE_ENV).to.equal('test');
+  });
+
+  it('should keep the value set in process.env.NODE_ENV if not null', async () => {
+    processEnvMock.NODE_ENV = 'stryker';
+
+    await jestTestRunner.run();
+
+    expect(processEnvMock.NODE_ENV).to.equal('stryker');
   });
 });

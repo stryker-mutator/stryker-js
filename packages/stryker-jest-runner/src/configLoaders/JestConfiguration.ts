@@ -1,19 +1,5 @@
 // Grabbed from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/jest/index.d.ts
 
-export type Path = string;
-export type Glob = string;
-export type ConfigGlobals = object;
-
-// flow's Maybe type https://flow.org/en/docs/types/primitives/#toc-maybe-types
-export type Maybe<T> = void | null | undefined | T; // tslint:disable-line:void-return
-
-export interface HasteConfig {
-  defaultPlatform?: Maybe<string>;
-  hasteImplModulePath?: string;
-  platforms?: string[];
-  providesModuleNodeModules: string[];
-}
-
 export default interface JestConfiguration {
   automock: boolean;
   browser: boolean;
@@ -63,3 +49,17 @@ export default interface JestConfiguration {
   testResultsProcessor?: string;
   verbose: boolean;
 }
+
+interface HasteConfig {
+  defaultPlatform?: Maybe<string>;
+  hasteImplModulePath?: string;
+  platforms?: string[];
+  providesModuleNodeModules: string[];
+}
+
+type Path = string;
+type Glob = string;
+type ConfigGlobals = object;
+
+// flow's Maybe type https://flow.org/en/docs/types/primitives/#toc-maybe-types
+type Maybe<T> = void | null | undefined | T; // tslint:disable-line:void-return
