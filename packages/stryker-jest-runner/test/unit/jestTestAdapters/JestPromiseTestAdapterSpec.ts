@@ -1,17 +1,19 @@
 import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
 import * as sinon from 'sinon';
 import { expect, assert } from 'chai';
+import * as log4js from 'log4js';
 
 const loader: any = {
   require: () => { }
 };
 
 describe('JestPromiseTestAdapter', () => {
+  let jestPromiseTestAdapter: JestPromiseTestAdapter;
+
   let sandbox: sinon.SinonSandbox;
   let runCLIStub: sinon.SinonStub;
   let requireStub: sinon.SinonStub;
-
-  let jestPromiseTestAdapter: JestPromiseTestAdapter;
+  let traceLoggerStub: sinon.SinonStub;
 
   const projectRoot = '/path/to/project';
   const jestConfig: any = { rootDir: projectRoot };
@@ -29,6 +31,9 @@ describe('JestPromiseTestAdapter', () => {
     requireStub.returns({
       runCLI: runCLIStub
     });
+
+    traceLoggerStub = sinon.stub();
+    sandbox.stub(log4js, 'getLogger').returns({ trace: traceLoggerStub });
 
     jestPromiseTestAdapter = new JestPromiseTestAdapter(loader.require);
   });
@@ -66,5 +71,14 @@ describe('JestPromiseTestAdapter', () => {
         silent: true
       }
     });
+  });
+
+  it('should trace log a message when jest is invoked', async () => {
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+
+    const expectedResult: any = JSON.parse(JSON.stringify(jestConfig));
+    expectedResult.reporters = [];
+
+    assert(traceLoggerStub.calledWithMatch(/Invoking Jest with config\s.*/));
   });
 });

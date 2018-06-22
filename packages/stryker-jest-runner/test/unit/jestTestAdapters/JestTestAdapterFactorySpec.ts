@@ -9,8 +9,10 @@ const loader: any = {
 
 describe('JestTestAdapterFactory', () => {
   let sandbox: sinon.SinonSandbox;
+
   let jestPromiseTestAdapterStub: TestAdapterStub;
   let requireStub: sinon.SinonStub;
+  let debugLoggerStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -20,6 +22,8 @@ describe('JestTestAdapterFactory', () => {
     sandbox.stub(jestPromiseTestAdapter, 'default').returns(jestPromiseTestAdapterStub);
 
     requireStub = sandbox.stub(loader, 'require');
+
+    debugLoggerStub = (JestTestAdapterFactory as any).log.debug = sinon.stub();
   });
 
   afterEach(() => sandbox.restore());
@@ -44,6 +48,18 @@ describe('JestTestAdapterFactory', () => {
     requireStub.returns({ version: '21.0.0' });
 
     expect(() => JestTestAdapterFactory.getJestTestAdapter(loader.require)).to.throw(Error, 'You need Jest version >= 22.0.0 to use Stryker');
+  });
+
+  it('should log a debug message when a Jest verion below 22.0.0 is used', () => {
+    requireStub.returns({ version: '21.0.0' });
+
+    try {
+      JestTestAdapterFactory.getJestTestAdapter(loader.require);
+
+      assert(false, 'We should never reach this part of the script');
+    } catch {
+      assert(debugLoggerStub.calledWith('Detected Jest below 22.0.0'));
+    }   
   });
 });
 
