@@ -51,13 +51,13 @@ export default class ChildProcessProxy<T> {
   }
 
   private initProxy() {
-    Object.keys(this.constructorFunction.prototype).forEach((methodName: keyof T) => {
-      this.proxyMethod(methodName);
+    Object.keys(this.constructorFunction.prototype).forEach(methodName => {
+      this.proxyMethod(methodName as keyof T);
     });
   }
 
-  private proxyMethod(methodName: keyof T) {
-    this.proxy[methodName] = (...args: any[]) => {
+  private proxyMethod(methodName: any) {
+    this.proxy[(methodName as keyof T)] = (...args: any[]) => {
       const workerTask = new Task<any>();
       this.initTask.promise.then(() => {
         const correlationId = this.workerTasks.push(workerTask) - 1;
