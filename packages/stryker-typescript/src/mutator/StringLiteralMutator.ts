@@ -41,26 +41,22 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
       return [];
     }
 
-    if (this.isEmptyString(str)) {
+    if (this.isEmpty(str)) {
       return [{ node: str, replacement: '"Stryker was here!"' }];
     } else {
       return [{ node: str, replacement: '""' }];
     }
   }
 
-  private isEmptyString(str: AllStringLiterals) {
-    // Check for empty strings first.
-    if (str.kind === ts.SyntaxKind.StringLiteral && str.text === '') {
-      return true;
+  private isEmpty(str: AllStringLiterals) { 
+    function isEmptyString() {
+      return str.kind === ts.SyntaxKind.StringLiteral && str.text === '';
+    }
+  
+    function isEmptyTemplate() {
+      return (str.kind === ts.SyntaxKind.FirstTemplateToken && (str as ts.NoSubstitutionTemplateLiteral).text === '');
     }
 
-    // Only check for the Token form of template literals. It's impossible to have a TemplateExpression
-    // that is empty as it's only used when there is a value embedded. I haven't found a case where the
-    // cast fails but the worst that can happen is it is undefined and we fall through to the wrong statement.
-    if ((str.kind === ts.SyntaxKind.FirstTemplateToken && (str as ts.Node & { text: string }).text === '')) {
-      return true;
-    }
-
-    return false;
+    return isEmptyString() || isEmptyTemplate();
   }
 }
