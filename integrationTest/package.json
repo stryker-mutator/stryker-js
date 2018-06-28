@@ -23,7 +23,7 @@
     "mz": "^2.6.0",
     "ts-node": "^7.0.0",
     "typescript": "^2.8.4",
-    "webpack": "^4.12.1"
+    "webpack": "^4.12.2"
   },
   "scripts": {
     "postinstall": "install-local && link-parent-bin -c test --link-local-dependencies true",
