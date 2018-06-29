@@ -2,8 +2,7 @@ module.exports = function(config) {
   config.set({
     mutate: [
       'src/**/*.ts',
-      '!src/index.ts',
-      '!src/configLoaders/JestConfiguration.ts'
+      '!src/index.ts'
     ],
     mochaOptions: {
       files: [

@@ -3,6 +3,7 @@
 **/*.js
 **/*.js.map
 **/*.d.ts
+!types/**/*.d.ts
 
 !testResources/**/*.js
 !stryker.conf.js

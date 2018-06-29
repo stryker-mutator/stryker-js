@@ -5,7 +5,7 @@ import JestConfigEditor from '../../src/JestConfigEditor';
 import DefaultJestConfigLoader, * as defaultJestConfigLoader from '../../src/configLoaders/DefaultJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../src/configLoaders/ReactScriptsTSJestConfigLoader';
-import JestConfiguration from '../../src/configLoaders/JestConfiguration';
+import { Configuration } from 'jest';
 
 describe('JestConfigEditor', () => {
   let jestConfigEditor: JestConfigEditor;
@@ -27,7 +27,7 @@ describe('JestConfigEditor', () => {
     sandbox.stub(reactScriptsJestConfigLoader, 'default').returns(reactScriptsJestConfigLoaderStub);
     sandbox.stub(reactScriptsTSJestConfigLoader, 'default').returns(reactScriptsTSJestConfigLoaderStub);
 
-    const defaultOptions: Partial<JestConfiguration> = { collectCoverage : true, verbose: true, bail: false, testResultsProcessor: 'someResultProcessor' };
+    const defaultOptions: Partial<Configuration> = { collectCoverage : true, verbose: true, bail: false, testResultsProcessor: 'someResultProcessor' };
     defaultConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsTSJestConfigLoaderStub.loadConfig.returns(defaultOptions);
