@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "typeRoots": [
+      "node_modules/@types", 
+      "./types"
+    ],
     "module": "commonjs",
     "target": "es5",
     "noImplicitAny": true,

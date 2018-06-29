@@ -1,23 +1,16 @@
-import { getLogger } from 'log4js';
-
 import JestTestAdapter from './JestTestAdapter';
+import { getLogger } from 'log4js';
+import { Configuration, runCLI, RunResult } from 'jest';
 
 export default class JestPromiseTestAdapter implements JestTestAdapter {
   private log = getLogger(JestPromiseTestAdapter.name);
-  private testRunner: any;
 
-  public constructor(loader?: NodeRequire) {
-    loader = loader || /* istanbul ignore next */ require;
-
-    this.testRunner = loader('jest');
-  }
-
-  public run(jestConfig: any, projectRoot: string): Promise<any> {
+  public run(jestConfig: Configuration, projectRoot: string): Promise<RunResult> {
     jestConfig.reporters = [];
     const config = JSON.stringify(jestConfig);
     this.log.trace(`Invoking Jest with config ${config}`);
 
-    return this.testRunner.runCLI({
+    return runCLI({
       config: config,
       runInBand: true,
       silent: true

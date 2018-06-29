@@ -1,4 +1,4 @@
-import JestConfiguration from './JestConfiguration';
+import { Configuration } from 'jest';
 
 /**
  * The Configloader interface is used to load different kinds of configurations for Jest.
@@ -14,5 +14,5 @@ export default interface JestConfigLoader {
    *
    * @return {JestConfiguration} an object containing the Jest configuration.
    */
-  loadConfig(): JestConfiguration;
+  loadConfig(): Configuration;
 }
