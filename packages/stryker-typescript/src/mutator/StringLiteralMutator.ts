@@ -10,39 +10,53 @@ export type AllStringLiterals =
   | ts.Token<ts.SyntaxKind.FirstTemplateToken>;
 
 export default class StringLiteralMutator extends NodeMutator<AllStringLiterals> {
-  name = 'StringLiteral';
+  public name = 'StringLiteral';
 
-  guard(node: ts.Node): node is AllStringLiterals {
-    return node.kind === ts.SyntaxKind.StringLiteral
-      || node.kind === ts.SyntaxKind.TemplateExpression
-      || node.kind === ts.SyntaxKind.FirstTemplateToken;
+  public guard(node: ts.Node): node is AllStringLiterals {
+    switch (node.kind) {
+      case ts.SyntaxKind.StringLiteral:
+      case ts.SyntaxKind.TemplateExpression:
+      case ts.SyntaxKind.FirstTemplateToken:
+        return true;
+      default:
+        return false;
+    }
   }
 
   private isInvalidParent(parent: ts.Node): boolean {
-    return parent.kind === ts.SyntaxKind.ImportDeclaration ||
-      parent.kind === ts.SyntaxKind.LastTypeNode ||
-      parent.kind === ts.SyntaxKind.JsxAttribute ||
-      parent.kind === ts.SyntaxKind.ExpressionStatement;
+    switch (parent.kind) {
+      case ts.SyntaxKind.ImportDeclaration:
+      case ts.SyntaxKind.LastTypeNode:
+      case ts.SyntaxKind.JsxAttribute:
+      case ts.SyntaxKind.ExpressionStatement:
+      case ts.SyntaxKind.LiteralType:
+        return true;
+      default:
+        return false;
+    }
   }
 
-  protected identifyReplacements(str: AllStringLiterals, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(str: AllStringLiterals): NodeReplacement[] {
     if (str.parent && this.isInvalidParent(str.parent)) {
       return [];
     }
 
-    if (
-      // Check for empty strings first.
-      (str.kind === ts.SyntaxKind.StringLiteral && str.text === '')
-      // Only check for the Token form of template literals. It's impossible to have a TemplateExpression
-      // that is empty as it's only used when there is a value embedded. I haven't found a case where the
-      // cast fails but the worst that can happen is it is undefined and we fall through to the wrong statement.
-      || (str.kind === ts.SyntaxKind.FirstTemplateToken && (str as ts.Node & { text: string }).text === '')
-    ) {
+    if (this.isEmpty(str)) {
       return [{ node: str, replacement: '"Stryker was here!"' }];
-    }
-    else {
+    } else {
       return [{ node: str, replacement: '""' }];
     }
   }
 
+  private isEmpty(str: AllStringLiterals) { 
+    function isEmptyString() {
+      return str.kind === ts.SyntaxKind.StringLiteral && str.text === '';
+    }
+  
+    function isEmptyTemplate() {
+      return (str.kind === ts.SyntaxKind.FirstTemplateToken && (str as ts.NoSubstitutionTemplateLiteral).text === '');
+    }
+
+    return isEmptyString() || isEmptyTemplate();
+  }
 }
