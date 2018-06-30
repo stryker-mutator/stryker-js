@@ -3,10 +3,11 @@ import { getLogger } from 'log4js';
 import * as _ from 'lodash';
 import { fork, ChildProcess } from 'child_process';
 import { TestRunner, RunResult, RunOptions } from 'stryker-api/test_runner';
-import { serialize } from '../utils/objectUtils';
+import { serialize, kill } from '../utils/objectUtils';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 import Task from '../utils/Task';
+
 const MAX_WAIT_FOR_DISPOSE = 2000;
 
 class InitTask extends Task<void> {
@@ -19,6 +20,7 @@ class RunTask extends Task<RunResult> {
   readonly kind = 'run';
 }
 type WorkerTask = InitTask | DisposeTask | RunTask;
+
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
@@ -137,7 +139,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.currentTask = new DisposeTask(MAX_WAIT_FOR_DISPOSE);
     this.sendDisposeCommand();
     return this.currentTask.promise
-      .then(() => this.workerProcess.kill());
+      .then(() => kill(this.workerProcess.pid));
   }
 
   private sendRunCommand(options: RunOptions) {
