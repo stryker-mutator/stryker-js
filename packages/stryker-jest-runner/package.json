@@ -80,5 +80,8 @@
   "dependencies": {
     "log4js": "^1.1.1",
     "semver": "^5.4.1"
+  },
+  "initStrykerConfig": {
+    "coverageAnalysis": "off"
   }
 }
