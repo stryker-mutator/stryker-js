@@ -65,6 +65,6 @@ export default class StrykerConfigWriter {
         config.set(
           ${JSON.stringify(configObject, null, 2)}
         );
-      }`);
+      }`, { parser: 'babylon' });
   }
 }

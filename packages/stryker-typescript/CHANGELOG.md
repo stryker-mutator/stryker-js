@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.11.2"></a>
+## [0.11.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.11.1...stryker-typescript@0.11.2) (2018-05-31)
+
+
+### Bug Fixes
+
+* **String mutator:** do not mutate prologue directives ([#829](https://github.com/stryker-mutator/stryker/issues/829)) ([6e80251](https://github.com/stryker-mutator/stryker/commit/6e80251))
+
+
+
+
 <a name="0.11.1"></a>
 ## [0.11.1](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.11.0...stryker-typescript@0.11.1) (2018-05-21)
 
