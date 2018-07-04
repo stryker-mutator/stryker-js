@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.3"></a>
+## [0.15.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.15.2...stryker-karma-runner@0.15.3) (2018-07-04)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
 <a name="0.15.2"></a>
 ## [0.15.2](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.15.1...stryker-karma-runner@0.15.2) (2018-05-31)
 
