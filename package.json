@@ -10,7 +10,7 @@
     "@types/execa": "^0.9.0",
     "@types/glob": "^5.0.29",
     "@types/istanbul": "^0.4.29",
-    "@types/karma": "^1.7.2",
+    "@types/karma": "^1.7.4",
     "@types/lodash": "^4.14.110",
     "@types/log4js": "0.0.32",
     "@types/mkdirp": "^0.5.2",
