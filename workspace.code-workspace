@@ -25,6 +25,9 @@
 			"path": "packages/stryker-javascript-mutator/"
 		},
 		{
+			"path": "packages/stryker-jest-runner"
+		},
+		{
 			"path": "packages/stryker-karma-runner"
 		},
 		{

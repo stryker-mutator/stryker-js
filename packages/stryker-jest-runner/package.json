@@ -4,20 +4,12 @@
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
-    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" .nyc_output reports .stryker-tmp",
+    "start": "tsc -w",
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" .nyc_output reports coverage",
     "prebuild": "npm run clean",
-    "build": "tsc && npm run lint",
-    "lint": "tslint -c tslint.json \"src/**/*[^.d$].ts\" \"test/**/*[^.d$].ts\"",
-    "pretest": "npm run build",
-    "test": "npm run mocha && npm run stryker",
-    "mocha": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 65 mocha \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "stryker run",
-    "preversion": "npm test",
-    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
-    "postversion": "npm publish && git push && git push --tags",
-    "release:patch": "npm version patch -m \"chore(release): %s\"",
-    "release:minor": "npm version minor -m \"chore(release): %s\"",
-    "release:major": "npm version major -m \"chore(release): %s\""
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\" --exit"
   },
   "repository": {
     "type": "git",
@@ -38,7 +30,8 @@
     "mshogren <m_shogren@yahoo.com>",
     "Nico Jansen <jansennico@gmail.com>",
     "Simon de Lang <simondelang@gmail.com>",
-    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
+    "Sander koenders <sanderkoenders@gmail.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
@@ -46,35 +39,17 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker-jest-runner#readme",
   "devDependencies": {
-    "@types/chai": "^4.0.4",
     "@types/log4js": "0.0.32",
-    "@types/mocha": "^2.2.43",
-    "@types/node": "^6.0.113",
     "@types/semver": "^5.4.0",
-    "@types/sinon": "^2.3.6",
-    "chai": "^4.1.2",
-    "conventional-changelog-cli": "^1.3.9",
     "jest": "^22.0.0",
-    "mocha": "^5.0.0",
-    "nyc": "^11.2.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "^1.0.17",
     "react-scripts-ts": "^2.15.1",
-    "rimraf": "^2.6.2",
-    "sinon": "^4.0.1",
-    "stryker": "^0.21.0",
-    "stryker-api": "^0.15.0",
-    "stryker-html-reporter": "^0.13.0",
-    "stryker-mocha-framework": "^0.9.0",
-    "stryker-mocha-runner": "^0.11.0",
-    "stryker-typescript": "^0.10.0",
-    "tslib": "^1.8.1",
-    "tslint": "^5.8.0",
-    "typescript": "^2.5.0"
+    "stryker-api": "^0.17.3"
   },
   "peerDependencies": {
-    "stryker-api": "0.13 - 0.15",
+    "stryker-api": ">=0.13.0 <0.18.0",
     "jest": "^20.0.0"
   },
   "dependencies": {

@@ -1,29 +1,6 @@
 {
-  "compilerOptions": {
-    "typeRoots": [
-      "node_modules/@types", 
-      "./types"
-    ],
-    "module": "commonjs",
-    "target": "es5",
-    "noImplicitAny": true,
-    "moduleResolution": "node",
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowJs": false,
-    "importHelpers": true,
-    "noUnusedLocals": true,
-    "noImplicitReturns": true,
-    "strict": true,
-    "lib": [
-      "es5",
-      "es2015.promise",
-      "es2015.core"
-    ]
-  },
+  "extends": "../../tsconfig.json",
   "exclude": [
-    "testResources/"
+      "testResources/",
   ]
 }
