@@ -1,0 +1,21 @@
+{
+  "name": "react-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "install-local",
+    "test": "stryker run",
+    "posttest": "mocha --require ts-node/register verify/*.ts"
+  },
+  "devDependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "^1.1.4",
+    "jest": "^23.3.0"
+  },
+  "localDependencies": {
+    "stryker": "../../../packages/stryker",
+    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
+    "stryker-jest-runner": "../../../packages/stryker-jest-runner"
+  }
+}

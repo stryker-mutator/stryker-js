@@ -52,26 +52,6 @@ describe('Integration test for Strykers Jest runner', function () {
 
   afterEach(() => sandbox.restore());
 
-  it('should run tests on the example React project', async () => {
-    processCwdStub.returns(getProjectRoot('reactProject'));
-    runOptions.strykerOptions.set({ jest: { project: 'react' } });
-
-    jestConfigEditor.edit(runOptions.strykerOptions as Config);
-
-    const jestTestRunner = new JestTestRunner(runOptions);
-
-    const result = await jestTestRunner.run();
-
-    expect(result.status).to.equal(RunStatus.Complete);
-    expect(result).to.have.property('tests');
-    expect(result.tests).to.be.an('array').that.is.not.empty;
-    expect(result.tests[0].name).to.equal('renders without crashing');
-    expect(result.tests[0].status).to.equal(TestStatus.Success);
-    expect(result.tests[0].timeSpentMs).to.be.above(-1);
-    expect(result.tests[0].failureMessages).to.be.an('array').that.is.empty;
-    expect(result.status).to.equal(RunStatus.Complete);
-  });
-
   it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));
     runOptions.strykerOptions.set({ jest: { project: 'react-ts' } });

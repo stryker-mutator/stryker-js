@@ -5,7 +5,7 @@
 
 # Stryker Karma Runner
 
-A plugin to use the karma test runner in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework
+A plugin to use the karma test runner (or [@angular/cli](https://www.npmjs.com/package/@angular/cli)'s `ng test`) in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework
 
 ## Install
 
@@ -15,18 +15,11 @@ Install stryker-karma-runner locally within your project folder, like so:
 npm i --save-dev stryker-karma-runner
 ```
 
-## Peer dependencies
+## Bring your own test runner
 
 The `stryker-karma-runner` is a plugin for `stryker` to enable `karma` as a test runner. 
-As such, you should make sure you have the correct versions of its dependencies installed:
-
-* `karma`
-* `stryker-api`
-
-For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker-karma-runner/package.json).
-
-These are marked as `peerDependencies` of `stryker-karma-runner` so you get a warning during installation when the correct versions are not installed.
-*Note*: Karma itself also requires some plugins to work.  
+However, it does *not* come packaged with it's own version of `karma`, instead it 
+uses *your very own karma* version. It can also work with `@angular/cli`, see [Configuring](#configuring)
 
 ## Configuring
 
@@ -39,64 +32,72 @@ module.exports = function (config) {
         // ...
         testRunner: 'karma',
         // ...
-        karmaConfig: {
-            files: ['src/**/*.js'] // <-- override karma config here
-        },
-        karmaConfigFile: 'karma.conf.js' // <-- add your karma.conf.js file here
+        karma: {
+            project: 'custom', // or 'angular-cli'
+            configFile: 'path/to/karma.conf.js' // default `undefined`
+            config: { // default `undefined`
+                browsers: ['ChromeHeadless'] // override config settings
+            }
+        }
     });
 }
 ```
 
-### `karmaConfigFile` [`string`]
+### `karma.project` [`"custom"` | `"angular-cli"`]
+
+Default: `"custom"`
+
+Specify which kind of project you're using. This determines which command is used to start karma
+
+* **`"custom"`**: configure stryker-karma-runner to use `karma start`.
+* **`"angular-cli"`**: configure stryker-karma-runner to use `ng test` (see [configuring for angular-cli](#configure-angular-cli)).
+
+### `karma.configFile` [`string`]
 
 Default: `undefined`
 
-Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded. Options specified directly in your stryker.conf.js file will overrule options from karma's configuration file.
+Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded. 
+Options specified directly in your stryker.conf.js file using `karma.config` will overrule options in your karma.conf.js file.
 
-### `karmaConfig.files` [`(string | FilePattern)[]`]
+### `karma.config` [`any`]
 
-Default: `[]`
+Default: `undefined`
 
-The files array determines which files are included in the browser and which files are watched and served by Karma. See [the files section on the karma website](http://karma-runner.github.io/2.0/config/files.html).
+Specify [karma configuration options](http://karma-runner.github.io/2.0/config/configuration-file.html) directly.
+Options specified here will overrule any options in your karma.conf.js file.
 
-### `karmaConfig.browsers` [`string[]`]
-
-Default: `['PhantomJS']`
-
-Configure the karma [Browsers configuration setting](http://karma-runner.github.io/2.0/config/browsers.html).
-
-### `karmaConfig.*` [`any`]
-
-Use other options to configure karma. See [the configuration section on the karma website](http://karma-runner.github.io/2.0/config/configuration-file.html)
+## Non overridable options
 
 The browser's life cycle is determined by `stryker-karma-runner`. I.e. these settings cannot be overridden:
 
 ```javascript
 {
+  browserNoActivityTimeout: 1000000,
   autoWatch: false,
   singleRun: false,
+  detached: false
 }
 ```
 
 The `coverage` plugin will also be removed (not needed for mutation testing).
 
-## Full config example
+## Configure angular cli
+
+**Note:** this requires v6.0.8 or higher of the [@angular/cli](https://www.npmjs.com/package/@angular/cli)
+
+This is an example for a configuration of stryker using the angular cli:
 
 ```javascript
 // stryker.conf.js
 exports = function(config){
     config.set({
         // ...
-        testRunner: 'karma',
-        testFramework: 'jasmine',
-        karmaConfig: { // these are the defaults
-            browsers: ['PhantomJS'],
-            frameworks: ['jasmine'],
-            autoWatch: false,
-            singleRun: false
-        },
-        coverageAnalysis: 'perTest',
-        plugins: ['stryker-karma-runner'] // Or leave out the plugin list entirely to load all stryker-* plugins directly
+        karma: {
+            project: 'angular-cli',
+            karma: {
+                configFile: 'src/karma.conf.js'
+            }
+        }
         // ...
     });
 }
