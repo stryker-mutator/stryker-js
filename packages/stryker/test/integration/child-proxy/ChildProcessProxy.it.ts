@@ -61,7 +61,7 @@ describe('ChildProcessProxy', () => {
   it('should not log on trace if LogLevel.Debug is allowed as min log level', async () => {
     const firstLogEventTask = new Task<log4js.LoggingEvent>();
     loggingServer.event$.subscribe(firstLogEventTask.resolve.bind(firstLogEventTask));
-    sut.proxy.trace('foo')
+    sut.proxy.trace('foo');
     sut.proxy.debug('bar');
     const log = await firstLogEventTask.promise;
     expect(log.categoryName).eq(Echo.name);

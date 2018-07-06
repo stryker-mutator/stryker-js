@@ -6,7 +6,7 @@ import * as log4js from 'log4js';
  * @param a one log level
  * @param b other log level
  */
-export function minLevel(a: LogLevel, b: LogLevel){
+export function minLevel(a: LogLevel, b: LogLevel) {
   if (getLevel(b).isGreaterThanOrEqualTo(getLevel(a))) {
     return a;
   } else {
@@ -16,5 +16,5 @@ export function minLevel(a: LogLevel, b: LogLevel){
 
 function getLevel(level: LogLevel): log4js.Level {
   // Needs an any cast here, wrongly typed, see https://github.com/log4js-node/log4js-node/pull/745
-  return (log4js.levels as any).getLevel(level); 
+  return (log4js.levels as any).getLevel(level);
 }
