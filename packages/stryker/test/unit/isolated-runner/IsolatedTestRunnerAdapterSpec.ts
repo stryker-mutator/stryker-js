@@ -8,17 +8,19 @@ import { RunResult, RunStatus } from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import { WorkerMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
-import { serialize } from '../../../src/utils/objectUtils';
+import * as objectUtils from '../../../src/utils/objectUtils';
 import { LogLevel } from 'stryker-api/core';
 
 describe('IsolatedTestRunnerAdapter', () => {
   let sut: IsolatedTestRunnerAdapter;
   let sinonSandbox: sinon.SinonSandbox;
   let clock: sinon.SinonFakeTimers;
+  let killStub: sinon.SinonStub;
   let fakeChildProcess: {
     kill: sinon.SinonStub;
     send: sinon.SinonStub;
     on: sinon.SinonStub;
+    pid: number;
   };
   let runnerOptions: IsolatedRunnerOptions;
 
@@ -34,8 +36,10 @@ describe('IsolatedTestRunnerAdapter', () => {
     fakeChildProcess = {
       kill: sinon.stub(),
       send: sinon.stub(),
-      on: sinon.stub()
+      on: sinon.stub(),
+      pid: 42
     };
+    killStub = sinonSandbox.stub(objectUtils, 'kill');
     sinonSandbox.stub(child_process, 'fork').returns(fakeChildProcess);
     clock = sinon.useFakeTimers();
   });
@@ -67,7 +71,7 @@ describe('IsolatedTestRunnerAdapter', () => {
       it('should call "init" on child process', () => {
         arrangeAct();
         const expectedMessage: EmptyAdapterMessage = { kind: 'init' };
-        expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
+        expect(fakeChildProcess.send).to.have.been.calledWith(objectUtils.serialize(expectedMessage));
       });
 
 
@@ -98,7 +102,7 @@ describe('IsolatedTestRunnerAdapter', () => {
           kind: 'run',
           runOptions
         };
-        expect(fakeChildProcess.send).to.have.been.calledWith(serialize(expectedMessage));
+        expect(fakeChildProcess.send).to.have.been.calledWith(objectUtils.serialize(expectedMessage));
       });
 
       it('should proxy run response', () => {
@@ -123,7 +127,7 @@ describe('IsolatedTestRunnerAdapter', () => {
 
       it('should send `dispose` to worker process', () => {
         sut.dispose();
-        return expect(fakeChildProcess.send).to.have.been.calledWith(serialize({ kind: 'dispose' }));
+        return expect(fakeChildProcess.send).to.have.been.calledWith(objectUtils.serialize({ kind: 'dispose' }));
       });
 
       describe('and child process responds to dispose', () => {
@@ -134,8 +138,7 @@ describe('IsolatedTestRunnerAdapter', () => {
         });
 
         it('should kill the child process', () => {
-          expect(fakeChildProcess.kill).to.not.have.been.calledWith('SIGKILL');
-          expect(fakeChildProcess.kill).to.have.been.called;
+          expect(killStub).to.have.been.calledWith(42);
         });
       });
 
@@ -149,8 +152,7 @@ describe('IsolatedTestRunnerAdapter', () => {
         });
 
         it('should kill the child process', () => {
-          expect(fakeChildProcess.kill).to.not.have.been.calledWith('SIGKILL');
-          expect(fakeChildProcess.kill).to.have.been.called;
+          expect(killStub).to.have.been.calledWith(42);
         });
       });
     });

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.24.2"></a>
+## [0.24.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.24.1...stryker@0.24.2) (2018-07-04)
+
+
+### Bug Fixes
+
+* **stryker:** kill entire test process tree ([#927](https://github.com/stryker-mutator/stryker/issues/927)) ([71af3e3](https://github.com/stryker-mutator/stryker/commit/71af3e3))
+
+
+
+
 <a name="0.24.1"></a>
 ## [0.24.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.24.0...stryker@0.24.1) (2018-05-31)
 

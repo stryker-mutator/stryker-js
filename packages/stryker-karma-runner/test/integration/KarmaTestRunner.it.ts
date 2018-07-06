@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import { expect } from 'chai';
 import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { LogLevel } from 'stryker-api/core';
@@ -15,12 +14,6 @@ function wrapInClosure(codeFragment: string) {
 }
 
 describe('KarmaTestRunner', function () {
-
-  after(() => {
-    try {
-      fs.unlinkSync('__test_hooks_for_stryker__.js');
-    } catch { }
-  });
 
   let sut: KarmaTestRunner;
   this.timeout(10000);
@@ -44,12 +37,14 @@ describe('KarmaTestRunner', function () {
       testRunnerOptions = {
         port: 9877,
         strykerOptions: {
-          logLevel: LogLevel.Trace,
-          karmaConfig: {
-            files: [
-              'testResources/sampleProject/src/Add.js',
-              'testResources/sampleProject/test/AddSpec.js'
-            ]
+          logLevel: 'trace',
+          karma: {
+            config: {
+              files: [
+                'testResources/sampleProject/src/Add.js',
+                'testResources/sampleProject/test/AddSpec.js'
+              ]
+            }
           }
         },
         fileNames: []
@@ -97,13 +92,15 @@ describe('KarmaTestRunner', function () {
       const testRunnerOptions = {
         port: 9878,
         strykerOptions: {
-          logLevel: LogLevel.Trace,
-          karmaConfig: {
-            files: [
-              'testResources/sampleProject/src/Add.js',
-              'testResources/sampleProject/test/AddSpec.js',
-              'testResources/sampleProject/test/AddFailedSpec.js'
-            ]
+          logLevel: 'trace',
+          karma: {
+            config: {
+              files: [
+                'testResources/sampleProject/src/Add.js',
+                'testResources/sampleProject/test/AddSpec.js',
+                'testResources/sampleProject/test/AddFailedSpec.js'
+              ]
+            }
           }
         },
         fileNames: []
@@ -128,12 +125,14 @@ describe('KarmaTestRunner', function () {
       const testRunnerOptions = {
         port: 9879,
         strykerOptions: {
-          karmaConfig: {
-            files: [
-              'testResources/sampleProject/src/Add.js',
-              'testResources/sampleProject/src/Error.js',
-              'testResources/sampleProject/test/AddSpec.js'
-            ]
+          karma: {
+            config: {
+              files: [
+                'testResources/sampleProject/src/Add.js',
+                'testResources/sampleProject/src/Error.js',
+                'testResources/sampleProject/test/AddSpec.js'
+              ]
+            }
           }
         },
         fileNames: []
@@ -157,11 +156,13 @@ describe('KarmaTestRunner', function () {
       const testRunnerOptions = {
         port: 9880,
         strykerOptions: {
-          karmaConfig: {
-            files: [
-              'testResources/sampleProject/src/Add.js',
-              'testResources/sampleProject/test/EmptySpec.js'
-            ]
+          karma: {
+            config: {
+              files: [
+                'testResources/sampleProject/src/Add.js',
+                'testResources/sampleProject/test/EmptySpec.js'
+              ]
+            }
           }
         },
         fileNames: []
@@ -188,12 +189,14 @@ describe('KarmaTestRunner', function () {
       const testRunnerOptions = {
         port: 9881,
         strykerOptions: {
-          karmaConfig: {
-            files: [
-              { pattern: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
-              { pattern: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true },
-              { pattern: 'testResources/sampleProject/src/Error.js', mutated: false, included: false }
-            ]
+          karma: {
+            config: {
+              files: [
+                { pattern: 'testResources/sampleProject/src/Add.js', mutated: true, included: true },
+                { pattern: 'testResources/sampleProject/test/AddSpec.js', mutated: false, included: true },
+                { pattern: 'testResources/sampleProject/src/Error.js', mutated: false, included: false }
+              ]
+            }
           }
         },
         fileNames: []
@@ -217,11 +220,13 @@ describe('KarmaTestRunner', function () {
         port: 9882,
         strykerOptions: {
           coverageAnalysis: 'all',
-          karmaConfig: {
-            files: [
-              'testResources/sampleProject/src-instrumented/Add.js',
-              'testResources/sampleProject/test/AddSpec.js'
-            ]
+          karma: {
+            config: {
+              files: [
+                'testResources/sampleProject/src-instrumented/Add.js',
+                'testResources/sampleProject/test/AddSpec.js'
+              ]
+            }
           }
         },
         fileNames: []
