@@ -3,7 +3,7 @@ import { LoggerFactory } from 'stryker-api/logging';
 import { LogLevel } from 'stryker-api/core';
 import { minLevel } from './logUtils';
 import LoggingClientContext from './LoggingClientContext';
-import * as getPort from 'get-port';
+import { getPort } from '../utils/netUtils';
 
 const PREFERRED_LOG_SERVER_PORT = 5000;
 
