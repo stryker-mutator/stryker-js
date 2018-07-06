@@ -15,7 +15,7 @@ module.exports = function (config) {
         '!test/**/*.d.ts'
       ],
       symlinkNodeModules: false,
-      mutate: ['src/**/*.ts'],
+      mutate: ['src/Stryker.ts'],
       coverageAnalysis: 'perTest',
       tsconfigFile: 'tsconfig.json',
       mutator: 'typescript',

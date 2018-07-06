@@ -3,16 +3,14 @@ import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api
 import PluginLoader from '../PluginLoader';
 import { getLogger, Logger } from 'stryker-api/logging';
 import { deserialize, errorToString } from '../utils/objectUtils';
-import LogConfigurator from '../utils/LogConfigurator';
+import LogConfigurator from '../logging/LogConfigurator';
 
 class IsolatedTestRunnerAdapterWorker {
 
-  private readonly log: Logger;
+  private log: Logger;
   private underlyingTestRunner: TestRunner;
 
   constructor() {
-    LogConfigurator.forWorker();
-    this.log = getLogger(IsolatedTestRunnerAdapterWorker.name);
     this.handlePromiseRejections();
     this.listenToMessages();
   }
@@ -61,6 +59,8 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   start(message: StartMessage) {
+    LogConfigurator.forWorker(message.runnerOptions.loggingContext);
+    this.log = getLogger(IsolatedTestRunnerAdapterWorker.name);
     this.loadPlugins(message.runnerOptions.strykerOptions.plugins || []);
     this.log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
     process.chdir(message.runnerOptions.sandboxWorkingFolder);

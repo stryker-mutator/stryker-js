@@ -5,7 +5,11 @@ import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, WorkMessag
 import PluginLoader, * as pluginLoader from '../../../src/PluginLoader';
 import { Mock, mock } from '../../helpers/producers';
 import HelloClass from './HelloClass';
-import LogConfigurator from '../../../src/utils/LogConfigurator';
+import LogConfigurator from '../../../src/logging/LogConfigurator';
+import { LogLevel } from 'stryker-api/core';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 
 describe('ChildProcessProxyWorker', () => {
 
@@ -51,7 +55,7 @@ describe('ChildProcessProxyWorker', () => {
       sut = new ChildProcessProxyWorker();
       initMessage = {
         kind: WorkerMessageKind.Init,
-        logLevel: 'FooLevel',
+        loggingContext: LOGGING_CONTEXT,
         constructorArgs: ['FooBarName'],
         plugins: ['fooPlugin', 'barPlugin'],
         requirePath: require.resolve('./HelloClass')
@@ -87,7 +91,7 @@ describe('ChildProcessProxyWorker', () => {
 
     it('should set global log level', () => {
       processOnStub.callArgWith(1, serialize(initMessage));
-      expect(logConfiguratorForWorkerStub).called;
+      expect(logConfiguratorForWorkerStub).calledWith(LOGGING_CONTEXT);
     });
 
     it('should load plugins', () => {

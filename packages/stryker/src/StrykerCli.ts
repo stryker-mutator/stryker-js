@@ -1,9 +1,9 @@
 import * as program from 'commander';
-import { CONFIG_SYNTAX_HELP } from './ConfigReader';
+import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import Stryker from './Stryker';
 import StrykerInitializer from './initializer/StrykerInitializer';
 import { getLogger } from 'stryker-api/logging';
-import LogConfigurator from './utils/LogConfigurator';
+import LogConfigurator from './logging/LogConfigurator';
 
 export default class StrykerCli {
 
@@ -45,7 +45,8 @@ export default class StrykerCli {
       .option('--timeoutMs <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
       .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
-      .option('--logLevel <level>', 'Set the log4js log level. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
+      .option('--logLevel <level>', 'Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
+      .option('--fileLogLevel <level>', 'Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "off"')
       .parse(this.argv);
 
     LogConfigurator.forMaster(program['logLevel']);

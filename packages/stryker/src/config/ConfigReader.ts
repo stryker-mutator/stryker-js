@@ -4,7 +4,7 @@ import * as fs from 'mz/fs';
 import * as log4js from 'stryker-api/logging';
 import * as path from 'path';
 import * as _ from 'lodash';
-import StrykerError from './utils/StrykerError';
+import StrykerError from '../utils/StrykerError';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +

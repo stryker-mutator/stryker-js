@@ -8,10 +8,10 @@ import ReporterOrchestrator from './ReporterOrchestrator';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './input/InputFileResolver';
-import ConfigReader from './ConfigReader';
+import ConfigReader from './config/ConfigReader';
 import PluginLoader from './PluginLoader';
 import ScoreResultCalculator from './ScoreResultCalculator';
-import ConfigValidator from './ConfigValidator';
+import ConfigValidator from './config/ConfigValidator';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
 import { TempFolder } from './utils/TempFolder';
 import Timer from './utils/Timer';
@@ -20,7 +20,7 @@ import MutatorFacade from './MutatorFacade';
 import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
 import InputFileCollection from './input/InputFileCollection';
-import LogConfigurator from './utils/LogConfigurator';
+import LogConfigurator from './logging/LogConfigurator';
 
 export default class Stryker {
 
@@ -36,14 +36,14 @@ export default class Stryker {
    * @param {Object} [options] - Optional options.
    */
   constructor(options: StrykerOptions) {
-    LogConfigurator.forMaster(options.logLevel);
+    LogConfigurator.forMaster(options.logLevel, options.fileLogLevel);
     this.log = getLogger(Stryker.name);
     let configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
-    LogConfigurator.forMaster(this.config.logLevel); // logLevel could be changed
+    LogConfigurator.forMaster(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
     this.loadPlugins();
     this.applyConfigEditors();
-    LogConfigurator.forMaster(this.config.logLevel); // logLevel could be changed
+    LogConfigurator.forMaster(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
@@ -51,16 +51,17 @@ export default class Stryker {
   }
 
   async runMutationTest(): Promise<MutantResult[]> {
+    const loggingContext = await LogConfigurator.forServer(this.config.logLevel, this.config.fileLogLevel);
     this.timer.reset();
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
     if (inputFiles.files.length) {
       TempFolder.instance().initialize();
-      const initialTestRunProcess = new InitialTestExecutor(this.config, inputFiles, this.testFramework, this.timer);
+      const initialTestRunProcess = new InitialTestExecutor(this.config, inputFiles, this.testFramework, this.timer, loggingContext);
       const initialTestRunResult = await initialTestRunProcess.run();
       const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
       if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
         const mutationTestExecutor = new MutationTestExecutor(this.config, inputFiles.files, this.testFramework, this.reporter,
-          initialTestRunResult.overheadTimeMS);
+          initialTestRunResult.overheadTimeMS, loggingContext);
         const mutantResults = await mutationTestExecutor.run(testableMutants);
         this.reportScore(mutantResults);
         await this.wrapUpReporter();

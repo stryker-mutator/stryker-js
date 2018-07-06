@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Logger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
-import ConfigValidator from './../../src/ConfigValidator';
-import currentLogMock from '../helpers/logMock';
-import { testFramework, Mock } from '../helpers/producers';
+import ConfigValidator from '../../../src/config/ConfigValidator';
+import currentLogMock from '../../helpers/logMock';
+import { testFramework, Mock } from '../../helpers/producers';
 
 describe('ConfigValidator', () => {
 
@@ -73,10 +73,10 @@ describe('ConfigValidator', () => {
   });
 
   it('should be invalid with invalid logLevel', () => {
-    config.logLevel = 'thisTestPasses';
+    config.logLevel = 'thisTestPasses' as any;
     sut = new ConfigValidator(config, testFramework());
     actValidationError();
-    expect(log.fatal).calledWith('Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "all", "off"');
+    expect(log.fatal).calledWith('Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "off"');
   });
 
   it('should be invalid with nonnumeric timeoutMs', () => {

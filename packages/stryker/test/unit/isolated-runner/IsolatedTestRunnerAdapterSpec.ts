@@ -9,6 +9,8 @@ import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTest
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import { WorkerMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
+import { LogLevel } from 'stryker-api/core';
+import LogConfigurator from '../../../src/logging/LogConfigurator';
 
 describe('IsolatedTestRunnerAdapter', () => {
   let sut: IsolatedTestRunnerAdapter;
@@ -26,7 +28,8 @@ describe('IsolatedTestRunnerAdapter', () => {
       fileNames: [],
       port: 42,
       sandboxWorkingFolder: 'a working directory',
-      strykerOptions: {}
+      strykerOptions: {},
+      loggingContext: { port: 4200, level: LogLevel.Fatal }
     };
     sinonSandbox = sinon.createSandbox();
     fakeChildProcess = {

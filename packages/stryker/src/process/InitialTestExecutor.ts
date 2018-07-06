@@ -12,6 +12,7 @@ import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpile
 import InputFileCollection from '../input/InputFileCollection';
 import SourceMapper from '../transpiler/SourceMapper';
 import { coveragePerTestHooks } from '../transpiler/coverageHooks';
+import LoggingClientContext from '../logging/LoggingClientContext';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
@@ -45,7 +46,7 @@ export default class InitialTestExecutor {
 
   private readonly log = getLogger(InitialTestExecutor.name);
 
-  constructor(private options: Config, private inputFiles: InputFileCollection, private testFramework: TestFramework | null, private timer: Timer) {
+  constructor(private options: Config, private inputFiles: InputFileCollection, private testFramework: TestFramework | null, private timer: Timer, private loggingContext: LoggingClientContext) {
   }
 
   async run(): Promise<InitialTestRunResult> {
@@ -77,7 +78,7 @@ export default class InitialTestExecutor {
   }
 
   private async runInSandbox(files: ReadonlyArray<File>): Promise<{ runResult: RunResult, grossTimeMS: number }> {
-    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0);
+    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0, this.loggingContext);
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT, this.getCollectCoverageHooksIfNeeded());
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);

@@ -1,19 +1,20 @@
-import Stryker from '../../src/Stryker';
-import { File } from 'stryker-api/core';
+import * as sinon from 'sinon';
 import { MutantResult } from 'stryker-api/report';
-import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
+import { File, LogLevel } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
+import Stryker from '../../src/Stryker';
+import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
 import { expect } from 'chai';
 import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
-import ConfigReader, * as configReader from '../../src/ConfigReader';
+import ConfigReader, * as configReader from '../../src/config/ConfigReader';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import ReporterOrchestrator, * as reporterOrchestrator from '../../src/ReporterOrchestrator';
 import MutatorFacade, * as mutatorFacade from '../../src/MutatorFacade';
 import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
 import InitialTestExecutor, * as initialTestExecutor from '../../src/process/InitialTestExecutor';
 import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/MutationTestExecutor';
-import ConfigValidator, * as configValidator from '../../src/ConfigValidator';
+import ConfigValidator, * as configValidator from '../../src/config/ConfigValidator';
 import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
 import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
 import { TempFolder } from '../../src/utils/TempFolder';
@@ -23,7 +24,8 @@ import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import TestableMutant from '../../src/TestableMutant';
 import '../helpers/globals';
 import InputFileCollection from '../../src/input/InputFileCollection';
-import LogConfigurator from '../../src/utils/LogConfigurator';
+import LogConfigurator from '../../src/logging/LogConfigurator';
+import LoggingClientContext from '../../src/logging/LoggingClientContext';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
@@ -31,6 +33,11 @@ class FakeConfigEditor implements ConfigEditor {
     config.testRunner = 'fakeTestRunner';
   }
 }
+
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+  port: 4200,
+  level: LogLevel.Debug
+});
 
 describe('Stryker', function () {
   let sut: Stryker;
@@ -49,6 +56,7 @@ describe('Stryker', function () {
   let tempFolderMock: Mock<TempFolder>;
   let scoreResultCalculator: ScoreResultCalculator;
   let logConfiguratorForMasterStub: sinon.SinonStub;
+  let logConfiguratorForServerStub: sinon.SinonStub;
 
   beforeEach(() => {
     strykerConfig = config();
@@ -61,6 +69,8 @@ describe('Stryker', function () {
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
     mutatorMock = mock(MutatorFacade);
     logConfiguratorForMasterStub = sandbox.stub(LogConfigurator, 'forMaster');
+    logConfiguratorForServerStub = sandbox.stub(LogConfigurator, 'forServer');
+    logConfiguratorForServerStub.resolves(LOGGING_CONTEXT);
     inputFileResolverMock = mock(InputFileResolver);
     reporterOrchestratorMock.createBroadcastReporter.returns(reporter);
     testFramework = testFrameworkMock();
@@ -154,6 +164,12 @@ describe('Stryker', function () {
         sut = new Stryker({});
       });
 
+      it('should reject when logging server rejects', async () => {
+        const expectedError = Error('expected error');
+        logConfiguratorForServerStub.rejects(expectedError);
+        await expect(sut.runMutationTest()).rejectedWith(expectedError);
+      });
+
       it('should reject when input file globbing results in a rejection', async () => {
         const expectedError = Error('expected error');
         inputFileResolverMock.resolve.rejects(expectedError);
@@ -199,6 +215,10 @@ describe('Stryker', function () {
         return sut.runMutationTest();
       });
 
+      it('should configure the logging server', () => {
+        expect(logConfiguratorForServerStub).calledWith(strykerConfig.logLevel, strykerConfig.fileLogLevel);
+      });
+
       it('should report mutant score', () => {
         expect(reporter.onScoreCalculated).to.have.been.called;
       });
@@ -219,9 +239,9 @@ describe('Stryker', function () {
         expect(inputFileResolverMock.resolve).called;
       });
 
-      it('should create the InitialTestRunner', () => {
+      it('should create the InitialTestExecutor', () => {
         expect(initialTestExecutor.default).calledWithNew;
-        expect(initialTestExecutor.default).calledWith(strykerConfig, inputFiles);
+        expect(initialTestExecutor.default).calledWith(strykerConfig, inputFiles, testFramework, sinon.match.any, LOGGING_CONTEXT);
         expect(initialTestExecutorMock.run).called;
       });
 
@@ -233,7 +253,7 @@ describe('Stryker', function () {
 
       it('should create the mutation test executor', () => {
         expect(mutationTestExecutor.default).calledWithNew;
-        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles.files, testFramework, reporter);
+        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles.files, testFramework, reporter, undefined, LOGGING_CONTEXT);
         expect(mutationTestExecutorMock.run).calledWith(mutants);
       });
 

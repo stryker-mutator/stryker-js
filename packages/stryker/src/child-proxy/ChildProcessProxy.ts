@@ -1,9 +1,10 @@
 import { fork, ChildProcess } from 'child_process';
 import { File } from 'stryker-api/core';
+import { getLogger } from 'stryker-api/logging';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
 import { serialize, deserialize } from '../utils/objectUtils';
 import Task from '../utils/Task';
-import { getLogger } from 'stryker-api/logging';
+import LoggingClientContext from '../logging/LoggingClientContext';
 
 export type ChildProxy<T> = {
   [K in keyof T]: (...args: any[]) => Promise<any>;
@@ -18,12 +19,12 @@ export default class ChildProcessProxy<T> {
   private workerTasks: Task<any>[] = [];
   private log = getLogger(ChildProcessProxy.name);
 
-  private constructor(requirePath: string, logLevel: string, plugins: string[], private constructorFunction: { new(...params: any[]): T }, constructorParams: any[]) {
+  private constructor(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], private constructorFunction: { new(...params: any[]): T }, constructorParams: any[]) {
     this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: false, execArgv: [] });
     this.initTask = new Task();
     this.send({
       kind: WorkerMessageKind.Init,
-      logLevel,
+      loggingContext,
       plugins,
       requirePath,
       constructorArgs: constructorParams
@@ -35,16 +36,16 @@ export default class ChildProcessProxy<T> {
   /**
   * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
   */
-  static create<T, P1>(requirePath: string, logLevel: string, plugins: string[], constructorFunction: { new(arg: P1): T }, arg: P1): ChildProcessProxy<T>;
+  static create<T, P1>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], constructorFunction: { new(arg: P1): T }, arg: P1): ChildProcessProxy<T>;
   /**
   * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
   */
-  static create<T, P1, P2>(requirePath: string, logLevel: string, plugins: string[], constructorFunction: { new(arg: P1, arg2: P2): T }, arg1: P1, arg2: P2): ChildProcessProxy<T>;
+  static create<T, P1, P2>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], constructorFunction: { new(arg: P1, arg2: P2): T }, arg1: P1, arg2: P2): ChildProcessProxy<T>;
   /**
   * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
   */
-  static create<T>(requirePath: string, logLevel: string, plugins: string[], constructorFunction: { new(...params: any[]): T }, ...constructorArgs: any[]) {
-    return new ChildProcessProxy(requirePath, logLevel, plugins, constructorFunction, constructorArgs);
+  static create<T>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], constructorFunction: { new(...params: any[]): T }, ...constructorArgs: any[]) {
+    return new ChildProcessProxy(requirePath, loggingContext, plugins, constructorFunction, constructorArgs);
   }
 
   private send(message: WorkerMessage) {

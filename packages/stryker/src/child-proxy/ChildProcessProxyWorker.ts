@@ -3,17 +3,15 @@ import { File } from 'stryker-api/core';
 import { serialize, deserialize, errorToString } from '../utils/objectUtils';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
 import PluginLoader from '../PluginLoader';
-import LogConfigurator from '../utils/LogConfigurator';
+import LogConfigurator from '../logging/LogConfigurator';
 
 export default class ChildProcessProxyWorker {
 
-  private readonly log: Logger;
+  private log: Logger;
 
   realSubject: any;
 
   constructor() {
-    LogConfigurator.forWorker();
-    this.log = getLogger(ChildProcessProxyWorker.name);
     this.listenToParent();
   }
 
@@ -29,6 +27,8 @@ export default class ChildProcessProxyWorker {
       const message = deserialize<WorkerMessage>(serializedMessage, [File]);
       switch (message.kind) {
         case WorkerMessageKind.Init:
+          LogConfigurator.forWorker(message.loggingContext);
+          this.log = getLogger(ChildProcessProxyWorker.name);
           new PluginLoader(message.plugins).load();
           const RealSubjectClass = require(message.requirePath).default;
           this.realSubject = new RealSubjectClass(...message.constructorArgs);

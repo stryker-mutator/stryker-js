@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as log4js from 'stryker-api/logging';
-import ConfigReader from '../../../src/ConfigReader';
+import ConfigReader from '../../../src/config/ConfigReader';
 import { Config } from 'stryker-api/config';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';

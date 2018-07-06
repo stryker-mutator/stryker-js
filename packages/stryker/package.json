@@ -57,6 +57,7 @@
     "commander": "^2.12.2",
     "escodegen": "^1.8.0",
     "esprima": "^2.7.0",
+    "get-port": "^3.2.0",
     "glob": "^7.0.3",
     "inquirer": "^6.0.0",
     "istanbul-lib-instrument": "^1.9.2",
@@ -74,6 +75,7 @@
     "typed-rest-client": "^1.0.7"
   },
   "devDependencies": {
+    "@types/get-port": "^3.2.0",
     "@types/inquirer": "0.0.41",
     "@types/istanbul-lib-instrument": "^1.7.0",
     "@types/prettier": "^1.6.0",

@@ -1,3 +1,5 @@
+import LoggingClientContext from '../logging/LoggingClientContext';
+
 export enum WorkerMessageKind {
   'Init',
   'Work',
@@ -20,7 +22,7 @@ export const autoStart = 'childProcessAutoStart12937129s7d';
 
 export interface InitMessage {
   kind: WorkerMessageKind.Init;
-  logLevel: string;
+  loggingContext: LoggingClientContext;
   plugins: string[];
   requirePath: string;
   constructorArgs: any[];

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { Logger } from 'stryker-api/logging';
 import { default as StrykerSandbox } from '../../../src/Sandbox';
 import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
-import { File } from 'stryker-api/core';
+import { File, LogLevel } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
 import * as producers from '../../helpers/producers';
 import { TestFramework } from 'stryker-api/test_framework';
@@ -17,8 +17,14 @@ import { Mock, coverageMaps } from '../../helpers/producers';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import * as coverageHooks from '../../../src/transpiler/coverageHooks';
 import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 
 const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+  port: 4200,
+  level: LogLevel.Fatal
+});
+
 describe('InitialTestExecutor run', () => {
 
   let log: Mock<Logger>;
@@ -67,7 +73,7 @@ describe('InitialTestExecutor run', () => {
 
     beforeEach(() => {
       inputFiles = new InputFileCollection([new File('mutate.js', ''), new File('mutate.spec.js', '')], ['mutate.js']);
-      sut = new InitialTestExecutor(options, inputFiles, testFrameworkMock, timer as any);
+      sut = new InitialTestExecutor(options, inputFiles, testFrameworkMock, timer as any, LOGGING_CONTEXT);
     });
 
     it('should create a sandbox with correct arguments', async () => {
@@ -194,7 +200,7 @@ describe('InitialTestExecutor run', () => {
     });
 
     it('should result log a warning if coverage analysis is "perTest" and there is no testFramework', async () => {
-      sut = new InitialTestExecutor(options, inputFiles, /* test framework */ null, timer as any);
+      sut = new InitialTestExecutor(options, inputFiles, /* test framework */ null, timer as any, LOGGING_CONTEXT);
       sandbox.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
       await sut.run();
       expect(log.warn).calledWith('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');

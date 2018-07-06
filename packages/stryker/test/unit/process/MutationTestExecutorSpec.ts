@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as _ from 'lodash';
 import { empty, of } from 'rxjs';
 import { Config } from 'stryker-api/config';
-import { File } from 'stryker-api/core';
+import { File, LogLevel } from 'stryker-api/core';
 import { MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
@@ -15,6 +15,7 @@ import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import MutantTranspiler, * as mutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import '../../helpers/globals';
 import { Mock, config, file, mock, mutantResult, testFramework, testResult, testableMutant, transpiledMutant } from '../../helpers/producers';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 
 const createTranspiledMutants = (...n: number[]) => {
   return n.map(n => {
@@ -25,6 +26,12 @@ const createTranspiledMutants = (...n: number[]) => {
     return mutant;
   });
 };
+
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+  port: 4200,
+  level: LogLevel.Fatal
+});
+
 
 describe('MutationTestExecutor', () => {
 
@@ -57,7 +64,7 @@ describe('MutationTestExecutor', () => {
   describe('run', () => {
 
     beforeEach(async () => {
-      sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter, 42);
+      sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter, 42, LOGGING_CONTEXT);
       const sandbox = mock<Sandbox>(Sandbox);
       sandbox.runMutant.resolves(mutantResult());
       sandboxPoolMock.streamSandboxes.returns(of(sandbox));
@@ -97,7 +104,7 @@ describe('MutationTestExecutor', () => {
       mutantTranspilerMock.transpileMutants.returns(of(...transpiledMutants));
       sandboxPoolMock.streamSandboxes.returns(of(firstSandbox, secondSandbox));
 
-      sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter, 42);
+      sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter, 42, LOGGING_CONTEXT);
 
       // The uncovered, transpile error and changedAnyTranspiledFiles = false should not be ran in a sandbox
       // Mock first sandbox to return first success, then failed

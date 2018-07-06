@@ -13,6 +13,7 @@ import { TempFolder } from './utils/TempFolder';
 import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
+import LoggingClientContext from './logging/LoggingClientContext';
 
 interface FileMap {
   [sourceFile: string]: string;
@@ -26,7 +27,7 @@ export default class Sandbox {
   private files: File[];
   private workingFolder: string;
 
-  private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private timeOverheadMS: number) {
+  private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private timeOverheadMS: number, private loggingContext: LoggingClientContext) {
     this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingFolder);
     this.files = files.slice(); // Create a copy
@@ -38,9 +39,9 @@ export default class Sandbox {
     return this.initializeTestRunner();
   }
 
-  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number)
+  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
     : Promise<Sandbox> {
-    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS);
+    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext);
     return sandbox.initialize().then(() => sandbox);
   }
 
@@ -117,7 +118,8 @@ export default class Sandbox {
       fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
       strykerOptions: this.options,
       port: this.options.port + this.index,
-      sandboxWorkingFolder: this.workingFolder
+      sandboxWorkingFolder: this.workingFolder,
+      loggingContext: this.loggingContext
     };
     this.log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
     this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings);
