@@ -1,6 +1,6 @@
 import { LoggingEvent } from 'log4js';
 
-interface RuntimeAppender {
+export interface RuntimeAppender {
   (loggingEvent: LoggingEvent): void;
 }
 
@@ -13,7 +13,7 @@ export class MultiAppender {
   }
 }
 
-export function configure(config: { appenders: string[] }, layouts: any, findAppender: (name: string) => RuntimeAppender ) {
+export function configure(config: { appenders: string[] }, _: any, findAppender: (name: string) => RuntimeAppender ): RuntimeAppender {
   const multiAppender = new MultiAppender(config.appenders.map(name => findAppender(name)));
   return multiAppender.append.bind(multiAppender);
 }

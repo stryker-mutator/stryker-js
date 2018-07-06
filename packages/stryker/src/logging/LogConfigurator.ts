@@ -101,7 +101,7 @@ export default class LogConfigurator {
       const context: LoggingClientContext = {
         port: loggerPort,
         level: defaultLogLevel
-      }
+      };
       return context;
     });
   }
