@@ -5,7 +5,7 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
-    "pretest": "rimraf \"reports\" \"verify/*.map\" && tsc -p .",
+    "pretest": "rimraf \"reports\" \"verify/*.map\" \"stryker.log\"",
     "test": "stryker run",
     "posttest": "mocha --require ts-node/register verify/*.ts"
   },
