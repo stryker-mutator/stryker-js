@@ -16,6 +16,17 @@ enum AppenderName {
   Server = 'server'
 }
 
+const layouts: { color: log4js.PatternLayout, noColor: log4js.PatternLayout } = {
+  color: {
+    type: 'pattern',
+    pattern: '%[%r (%z) %p %c%] %m'
+  },
+  noColor: {
+    type: 'pattern',
+    pattern: '%r (%z) %p %c %m'
+  }
+}
+
 interface AppendersConfiguration {
   [name: string]: log4js.Appender;
 }
@@ -24,21 +35,17 @@ const LOG_FILE_NAME = 'stryker.log';
 export default class LogConfigurator {
 
   private static createMasterAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): AppendersConfiguration {
-    const layout: log4js.PatternLayout = {
-      type: 'pattern',
-      pattern: '%[%r (%z) %p %c%] %m'
-    };
 
     const multiAppender = { type: require.resolve('./MultiAppender'), appenders: ['filteredConsole'] };
     let allAppenders: AppendersConfiguration = {
-      [AppenderName.Console]: { type: 'stdout', layout },
+      [AppenderName.Console]: { type: 'stdout', layout: layouts.color },
       [AppenderName.FilteredConsole]: { type: 'logLevelFilter', appender: 'console', level: consoleLogLevel },
       [AppenderName.All]: multiAppender,
     };
 
     // only add file if it is needed. Otherwise log4js will create the file directly, pretty annoying.
     if (fileLogLevel.toUpperCase() !== LogLevel.Off.toUpperCase()) {
-      const fileAppender: log4js.FileAppender = { type: 'file', filename: LOG_FILE_NAME, layout };
+      const fileAppender: log4js.FileAppender = { type: 'file', filename: LOG_FILE_NAME, layout: layouts.noColor };
       const filteredFileAppender: log4js.LogLevelFilterAppender = { type: 'logLevelFilter', appender: 'file', level: fileLogLevel };
 
       // Don't simply add the appenders, instead actually make sure they are ordinal "before" the others.
