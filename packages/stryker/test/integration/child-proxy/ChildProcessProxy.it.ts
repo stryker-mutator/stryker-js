@@ -2,11 +2,10 @@ import { expect } from 'chai';
 import Echo from './Echo';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import { File, LogLevel } from 'stryker-api/core';
-import * as net from 'net';
 import * as log4js from 'log4js';
-import { Observable, Subscriber } from 'rxjs';
 import * as getPort from 'get-port';
 import Task from '../../../src/utils/Task';
+import LoggingServer from '../../helpers/LoggingServer';
 
 describe('ChildProcessProxy', () => {
 
@@ -73,45 +72,4 @@ describe('ChildProcessProxy', () => {
 function toLogLevel(level: log4js.Level) {
   const levelName = (level as any).levelStr.toLowerCase();
   return [LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Off, LogLevel.Trace, LogLevel.Warning].find(level => level === levelName);
-}
-
-class LoggingServer {
-
-  private readonly server: net.Server;
-  private subscribers: Subscriber<log4js.LoggingEvent>[] = [];
-  public readonly event$: Observable<log4js.LoggingEvent>;
-
-  constructor(private port: number) {
-    this.server = net.createServer(socket => {
-      socket.on('data', data => {
-        const str = data.toString();
-        try {
-          const json = JSON.parse(str);
-          this.subscribers.map(sub => sub.next(json));
-        } catch {
-          // IDLE. Log4js also sends "__LOG4JS__" to signal an event end. Ignore those.
-        }
-      });
-    });
-    this.server.listen(this.port);
-
-    this.event$ = new Observable<log4js.LoggingEvent>(subscriber => {
-      this.subscribers.push(subscriber);
-      this.server.on('close', () => {
-        subscriber.complete();
-      });
-    });
-  }
-
-  dispose(): Promise<void> {
-    return new Promise((res, rej) => {
-      this.server.close((err: Error) => {
-        if (err) {
-          rej(err);
-        } else {
-          res();
-        }
-      });
-    });
-  }
 }

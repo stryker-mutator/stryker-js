@@ -7,6 +7,7 @@ import { serialize, kill } from '../utils/objectUtils';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
 import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 import Task from '../utils/Task';
+import StrykerError from '../utils/StrykerError';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
 
@@ -109,7 +110,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
       if (code !== 0 && code !== null) {
         this.log.error(`Child process exited with non-zero exit code ${code}. Last 10 message from the child process were: \r\n${this.lastMessagesQueue.map(msg => `\t${msg}`).join('\r\n')}`);
         if (this.currentTask) {
-          this.currentTask.reject(`Test runner child process exited with non-zero exit code ${code}`);
+          this.currentTask.reject(new StrykerError(`Test runner child process exited with non-zero exit code ${code}`));
         }
       }
     });

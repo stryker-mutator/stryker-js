@@ -1,39 +1,36 @@
-import { EventEmitter } from 'events';
-import { RunResult, RunStatus, RunOptions, RunnerOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
+import { RunResult, RunStatus, RunnerOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
 import { isRegExp } from 'util';
 
-class CoverageReportingTestRunner extends EventEmitter implements TestRunner {
-  run(options: RunOptions) {
+class CoverageReportingTestRunner implements TestRunner {
+  run() {
     (global as any).__coverage__ = 'overridden';
     return Promise.resolve({ status: RunStatus.Complete, tests: [], coverage: <any>'realCoverage' });
   }
 }
 
-class TimeBombTestRunner extends EventEmitter implements TestRunner {
+class TimeBombTestRunner implements TestRunner {
   constructor() {
-    super();
     // Setting a time bomb after 100 ms
     setTimeout(() => process.exit(), 100);
   }
-  run(options: RunOptions) {
+  run() {
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
 
-class DirectResolvedTestRunner extends EventEmitter implements TestRunner {
-  run(options: RunOptions) {
+class DirectResolvedTestRunner implements TestRunner {
+  run() {
     (global as any).__coverage__ = 'coverageObject';
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
 
-class DiscoverRegexTestRunner extends EventEmitter implements TestRunner {
+class DiscoverRegexTestRunner implements TestRunner {
 
   constructor(private runnerOptions: RunnerOptions) {
-    super();
   }
 
-  run(options: RunOptions): Promise<RunResult> {
+  run(): Promise<RunResult> {
     if (isRegExp(this.runnerOptions.strykerOptions['someRegex'])) {
       return Promise.resolve({ status: RunStatus.Complete, tests: [] });
     } else {
@@ -43,9 +40,9 @@ class DiscoverRegexTestRunner extends EventEmitter implements TestRunner {
 }
 
 
-class ErroredTestRunner extends EventEmitter implements TestRunner {
+class ErroredTestRunner implements TestRunner {
 
-  run(options: RunOptions) {
+  run() {
     let expectedError: any = null;
     try {
       throw new SyntaxError('This is invalid syntax!');
@@ -62,18 +59,18 @@ class RejectInitRunner implements TestRunner {
     return Promise.reject(new Error('Init was rejected'));
   }
 
-  run(options: RunOptions): Promise<RunResult> {
+  run(): Promise<RunResult> {
     throw new Error();
   }
 }
 
-class NeverResolvedTestRunner extends EventEmitter implements TestRunner {
-  run(options: RunOptions) {
-    return new Promise<RunResult>(res => { });
+class NeverResolvedTestRunner implements TestRunner {
+  run() {
+    return new Promise<RunResult>(() => { });
   }
 }
 
-class SlowInitAndDisposeTestRunner extends EventEmitter implements TestRunner {
+class SlowInitAndDisposeTestRunner implements TestRunner {
 
   inInit: boolean;
 
@@ -87,7 +84,7 @@ class SlowInitAndDisposeTestRunner extends EventEmitter implements TestRunner {
     });
   }
 
-  run(options: RunOptions) {
+  run() {
     if (this.inInit) {
       throw new Error('Test should fail! Not yet initialized!');
     }
@@ -98,11 +95,11 @@ class SlowInitAndDisposeTestRunner extends EventEmitter implements TestRunner {
     return this.init();
   }
 }
-class VerifyWorkingFolderTestRunner extends EventEmitter implements TestRunner {
+class VerifyWorkingFolderTestRunner implements TestRunner {
 
   runResult: RunResult = { status: RunStatus.Complete, tests: [] };
 
-  run(options: RunOptions) {
+  run() {
     if (process.cwd().toLowerCase() === __dirname.toLowerCase()) {
       return Promise.resolve(this.runResult);
     } else {
@@ -111,14 +108,14 @@ class VerifyWorkingFolderTestRunner extends EventEmitter implements TestRunner {
   }
 }
 
-class AsyncronousPromiseRejectionHandlerTestRunner extends EventEmitter implements TestRunner {
+class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
   promise: Promise<void>;
 
   init() {
     this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
   }
 
-  run(options: RunOptions) {
+  run() {
     this.promise.catch(() => { });
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }

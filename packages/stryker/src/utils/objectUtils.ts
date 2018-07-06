@@ -86,12 +86,18 @@ export function normalizeWhiteSpaces(str: string) {
 
 export function kill(pid: number): Promise<void> {
   return new Promise((res, rej) => {
-    treeKill(pid, 'SIGKILL', err => {
-      if (err) {
+    treeKill(pid, 'SIGKILL', (err: { code?: number } & Error) => {
+      if (err && !canIgnore(err.code)) {
         rej(err);
       } else {
         res();
       }
     });
+    
+    function canIgnore(code: number | undefined) {
+      // https://docs.microsoft.com/en-us/windows/desktop/Debug/system-error-codes--0-499-
+      // these error codes mean the program is _already_ closed.
+      return code === 255 || code === 128;
+    }
   });
 }

@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
+import * as getPort from 'get-port';
 import { RunResult, RunStatus } from 'stryker-api/test_runner';
 import ResilientTestRunnerFactory from '../../../src/isolated-runner/ResilientTestRunnerFactory';
 import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
@@ -8,6 +9,7 @@ import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorato
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 import { LogLevel } from 'stryker-api/core';
+import LoggingServer from '../../helpers/LoggingServer';
 
 function sleep(ms: number) {
   return new Promise(res => {
@@ -20,22 +22,36 @@ describe('ResilientTestRunnerFactory', function () {
   this.timeout(15000);
   let log: Mock<Logger>;
   let sut: TestRunnerDecorator;
-  let options: IsolatedRunnerOptions = {
-    strykerOptions: {
-      plugins: ['../../test/integration/isolated-runner/AdditionalTestRunners'],
-      testRunner: 'karma',
-      testFramework: 'jasmine',
-      port: 0,
-      'someRegex': /someRegex/
-    },
-    port: 0,
-    fileNames: [],
-    sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner'),
-    loggingContext: { port: 4200, level: LogLevel.Fatal }
-  };
+  let options: IsolatedRunnerOptions;
 
   beforeEach(() => {
     log = currentLogMock();
+  });
+
+  let loggingServer: LoggingServer;
+  
+  before(async () => {
+    // Make sure there is a logging server listening
+    const port = await getPort();
+    loggingServer = new LoggingServer(port);
+
+    options = {
+      strykerOptions: {
+        plugins: ['../../test/integration/isolated-runner/AdditionalTestRunners'],
+        testRunner: 'karma',
+        testFramework: 'jasmine',
+        port: 0,
+        'someRegex': /someRegex/
+      },
+      port: 0,
+      fileNames: [],
+      sandboxWorkingFolder: path.resolve('./test/integration/isolated-runner'),
+      loggingContext: { port, level: LogLevel.Fatal }
+    };
+  });
+
+  after(() => {
+    return loggingServer.dispose();
   });
 
   describe('when sending a regex in the options', () => {

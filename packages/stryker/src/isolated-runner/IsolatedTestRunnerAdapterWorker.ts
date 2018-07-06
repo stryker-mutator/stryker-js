@@ -29,7 +29,8 @@ class IsolatedTestRunnerAdapterWorker {
           this.init();
           break;
         case 'dispose':
-          this.dispose();
+          const sendDisposeDone = this.sendDisposeDone.bind(this);
+          this.dispose().then(sendDisposeDone, sendDisposeDone);
           break;
         default:
           this.logReceivedMessageWarning(message);
@@ -86,11 +87,13 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   async dispose() {
-    if (this.underlyingTestRunner.dispose) {
-      await this.underlyingTestRunner.dispose();
+    try {
+      if (this.underlyingTestRunner.dispose) {
+        await this.underlyingTestRunner.dispose();
+      }
+    } finally {
+      await LogConfigurator.shutdown();
     }
-    await LogConfigurator.shutdown();
-    this.sendDisposeDone();
   }
 
   sendDisposeDone() {

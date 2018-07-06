@@ -30,6 +30,4 @@ export default class TestRunnerDecorator implements TestRunner {
       return Promise.resolve();
     }
   }
-
-
 }
