@@ -10,7 +10,6 @@ import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOp
 import { WorkerMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
 import { LogLevel } from 'stryker-api/core';
-import LogConfigurator from '../../../src/logging/LogConfigurator';
 
 describe('IsolatedTestRunnerAdapter', () => {
   let sut: IsolatedTestRunnerAdapter;
