@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { expect } from 'chai';
 import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { LogLevel } from 'stryker-api/core';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
 import { expectTestResults } from '../helpers/assertions';
@@ -43,7 +44,7 @@ describe('KarmaTestRunner', function () {
       testRunnerOptions = {
         port: 9877,
         strykerOptions: {
-          logLevel: 'trace',
+          logLevel: LogLevel.Trace,
           karmaConfig: {
             files: [
               'testResources/sampleProject/src/Add.js',
@@ -96,7 +97,7 @@ describe('KarmaTestRunner', function () {
       const testRunnerOptions = {
         port: 9878,
         strykerOptions: {
-          logLevel: 'trace',
+          logLevel: LogLevel.Trace,
           karmaConfig: {
             files: [
               'testResources/sampleProject/src/Add.js',

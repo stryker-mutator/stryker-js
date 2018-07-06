@@ -1,4 +1,4 @@
-import { StrykerOptions, MutatorDescriptor, MutationScoreThresholds } from '../../core';
+import { LogLevel, StrykerOptions, MutatorDescriptor, MutationScoreThresholds } from '../../core';
 
 export default class Config implements StrykerOptions {
 
@@ -7,7 +7,8 @@ export default class Config implements StrykerOptions {
   files: string[];
   mutate: string[];
 
-  logLevel = 'info';
+  logLevel: LogLevel = LogLevel.Information;
+  fileLogLevel: LogLevel = LogLevel.Off;
   timeoutMs = 5000;
   timeoutFactor = 1.5;
   plugins: string[] = ['stryker-*'];

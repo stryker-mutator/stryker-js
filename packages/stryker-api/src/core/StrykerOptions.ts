@@ -106,7 +106,7 @@ interface StrykerOptions {
 
   /**
    * The log level for logging to a file. If defined, stryker will output a log file called "stryker.log".
-   * Default: undefined
+   * Default: "off"
    */
   fileLogLevel?: LogLevel;
 
