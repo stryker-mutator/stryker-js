@@ -5,7 +5,7 @@ import LogConfigurator from '../../../src/logging/LogConfigurator';
 import * as netUtils from '../../../src/utils/netUtils';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 
-describe.only('LogConfigurator', () => {
+describe('LogConfigurator', () => {
 
   const sut = LogConfigurator;
   let getPortStub: sinon.SinonStub;
