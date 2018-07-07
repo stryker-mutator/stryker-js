@@ -8,12 +8,12 @@ import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 describe('LogConfigurator', () => {
 
   const sut = LogConfigurator;
-  let getPortStub: sinon.SinonStub;
+  let getFreePortStub: sinon.SinonStub;
   let log4jsConfigure: sinon.SinonStub;
   let log4jsShutdown: sinon.SinonStub;
 
   beforeEach(() => {
-    getPortStub = sandbox.stub(netUtils, 'getPort');
+    getFreePortStub = sandbox.stub(netUtils, 'getFreePort');
     log4jsConfigure = sandbox.stub(log4js, 'configure');
     log4jsShutdown = sandbox.stub(log4js, 'shutdown');
   });
@@ -38,7 +38,7 @@ describe('LogConfigurator', () => {
     it('should configure console, file and server', async () => {
       // Arrange
       const expectedLoggingContext: LoggingClientContext = { port: 42, level: LogLevel.Error };
-      getPortStub.resolves(expectedLoggingContext.port);
+      getFreePortStub.resolves(expectedLoggingContext.port);
       const expectedConfig = createMasterConfig(LogLevel.Error, LogLevel.Fatal, LogLevel.Error);
       const serverAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'master', loggerPort: 42, appender: 'all' };
       expectedConfig.appenders.server = serverAppender;
@@ -48,9 +48,10 @@ describe('LogConfigurator', () => {
 
       // Assert
       expect(log4jsConfigure).calledWith(expectedConfig);
-      expect(getPortStub).calledWith({ port: 5000 });
+      expect(getFreePortStub).called;
       expect(actualLoggingContext).deep.eq(expectedLoggingContext);
     });
+
   });
 
   describe('forWorker', () => {

@@ -3,9 +3,7 @@ import { LoggerFactory } from 'stryker-api/logging';
 import { LogLevel } from 'stryker-api/core';
 import { minLevel } from './logUtils';
 import LoggingClientContext from './LoggingClientContext';
-import { getPort } from '../utils/netUtils';
-
-const PREFERRED_LOG_SERVER_PORT = 5000;
+import { getFreePort } from '../utils/netUtils';
 
 enum AppenderName {
   File = 'file',
@@ -92,45 +90,25 @@ export default class LogConfigurator {
    * @param fileLogLevel the file log level
    * @returns the context
    */
-  static forServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): Promise<LoggingClientContext> {
+  static async forServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): Promise<LoggingClientContext> {
     this.setImplementation();
-
-    const configureServerLogging = (loggerPort: number): LogLevel => {
-      const appenders = this.createMasterAppenders(consoleLogLevel, fileLogLevel);
-      const multiProcessAppender: log4js.MultiprocessAppender = {
-        type: 'multiprocess',
-        mode: 'master',
-        appender: AppenderName.All,
-        loggerPort
-      };
-      appenders[AppenderName.Server] = multiProcessAppender;
-      const defaultLogLevel = minLevel(consoleLogLevel, fileLogLevel);
-      log4js.configure(this.createLog4jsConfig(defaultLogLevel, appenders));
-      return defaultLogLevel;
+    const loggerPort = await getFreePort();
+    const appenders = this.createMasterAppenders(consoleLogLevel, fileLogLevel);
+    const multiProcessAppender: log4js.MultiprocessAppender = {
+      type: 'multiprocess',
+      mode: 'master',
+      appender: AppenderName.All,
+      loggerPort
     };
+    appenders[AppenderName.Server] = multiProcessAppender;
+    const defaultLogLevel = minLevel(consoleLogLevel, fileLogLevel);
+    log4js.configure(this.createLog4jsConfig(defaultLogLevel, appenders));
 
-    /**
-    * Tries to configure the log4js server.
-    * Because of race conditions, this can fail.
-    * In case of failure, retry a few times
-    * @param triesLeft the number of retries to get a free server port
-    */
-    const tryForServer = (triesLeft = 10): Promise<LoggingClientContext> => {
-      const attempt = getPort({ port: PREFERRED_LOG_SERVER_PORT }).then(loggerPort => {
-        const defaultLogLevel = configureServerLogging(loggerPort);
-        const context: LoggingClientContext = {
-          port: loggerPort,
-          level: defaultLogLevel
-        };
-        return context;
-      });
-      if (triesLeft > 0) {
-        return attempt.catch(() => tryForServer(triesLeft - 1));
-      } else {
-        return attempt;
-      }
+    const context: LoggingClientContext = {
+      port: loggerPort,
+      level: defaultLogLevel
     };
-    return tryForServer();
+    return context;
   }
 
 
