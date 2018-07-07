@@ -92,9 +92,10 @@ export default class LogConfigurator {
    * @param fileLogLevel the file log level
    * @returns the context
    */
-  static forServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): PromiseLike<LoggingClientContext> {
+  static forServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): Promise<LoggingClientContext> {
     this.setImplementation();
-    return getPort({ port: PREFERRED_LOG_SERVER_PORT }).then(loggerPort => {
+
+    const configureServerLogging = (loggerPort: number): LogLevel => {
       const appenders = this.createMasterAppenders(consoleLogLevel, fileLogLevel);
       const multiProcessAppender: log4js.MultiprocessAppender = {
         type: 'multiprocess',
@@ -105,13 +106,33 @@ export default class LogConfigurator {
       appenders[AppenderName.Server] = multiProcessAppender;
       const defaultLogLevel = minLevel(consoleLogLevel, fileLogLevel);
       log4js.configure(this.createLog4jsConfig(defaultLogLevel, appenders));
-      const context: LoggingClientContext = {
-        port: loggerPort,
-        level: defaultLogLevel
-      };
-      return context;
-    });
+      return defaultLogLevel;
+    };
+
+    /**
+    * Tries to configure the log4js server.
+    * Because of race conditions, this can fail.
+    * In case of failure, retry a few times
+    * @param triesLeft the number of retries to get a free server port
+    */
+    const tryForServer = (triesLeft = 10): Promise<LoggingClientContext> => {
+      const attempt = getPort({ port: PREFERRED_LOG_SERVER_PORT }).then(loggerPort => {
+        const defaultLogLevel = configureServerLogging(loggerPort);
+        const context: LoggingClientContext = {
+          port: loggerPort,
+          level: defaultLogLevel
+        };
+        return context;
+      });
+      if (triesLeft > 0) {
+        return attempt.catch(() => tryForServer(triesLeft - 1));
+      } else {
+        return attempt;
+      }
+    };
+    return tryForServer();
   }
+
 
   /**
    * Configures the logging for a worker process. Sends all logging to the master process.
