@@ -25,7 +25,7 @@ const layouts: { color: log4js.PatternLayout, noColor: log4js.PatternLayout } = 
     type: 'pattern',
     pattern: '%r (%z) %p %c %m'
   }
-}
+};
 
 interface AppendersConfiguration {
   [name: string]: log4js.Appender;

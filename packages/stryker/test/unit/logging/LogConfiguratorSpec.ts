@@ -85,7 +85,7 @@ describe('LogConfigurator', () => {
     const notColoredLayout: log4js.PatternLayout  = {
       type: 'pattern',
       pattern: '%r (%z) %p %c %m'
-    }
+    };
     return {
       appenders: {
         console: { type: 'stdout', layout: coloredLayout },
