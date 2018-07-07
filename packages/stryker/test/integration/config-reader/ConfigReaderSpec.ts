@@ -6,7 +6,9 @@ import { Config } from 'stryker-api/config';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
-describe('ConfigReader', () => {
+describe('ConfigReader', function() {
+  this.timeout(15000);
+  
   let sut: ConfigReader;
   let log: Mock<logging.Logger>;
 

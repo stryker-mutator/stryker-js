@@ -7,8 +7,9 @@ import * as getPort from 'get-port';
 import Task from '../../../src/utils/Task';
 import LoggingServer from '../../helpers/LoggingServer';
 
-describe('ChildProcessProxy', () => {
+describe('ChildProcessProxy', function () {
 
+  this.timeout(15000);
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
 

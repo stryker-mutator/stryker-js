@@ -2,7 +2,9 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
-describe('fileUtils', () => {
+describe('fileUtils', function () {
+  
+  this.timeout(15000);
 
   let sandbox: sinon.SinonSandbox;
 
