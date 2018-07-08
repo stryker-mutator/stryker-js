@@ -59,4 +59,14 @@ export class StrykerInquirer {
     });
     return options.filter(option => (answers['reporters'] as string[]).some(reporterName => option.name === reporterName));
   }
+
+  public async promptPackageManager(options: PromptOption[]): Promise<PromptOption> {
+    const answers = await inquirer.prompt({
+      type: 'list',
+      name: 'packageManager',
+      message: 'Which package manager do you want to use?',
+      choices: options.map(_ => _.name),
+    });
+    return options.filter(_ => _.name === answers['packageManager'])[0];
+  }
 }
