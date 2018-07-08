@@ -48,12 +48,12 @@ export default class ChildProcessProxy<T> {
   }
 
   private initProxy() {
-    Object.keys(this.constructorFunction.prototype).forEach((methodName: keyof T) => {
+    Object.keys(this.constructorFunction.prototype).forEach((methodName: string & keyof T) => {
       this.proxyMethod(methodName);
     });
   }
 
-  private proxyMethod(methodName: keyof T) {
+  private proxyMethod(methodName: string & keyof T) {
     this.proxy[methodName] = (...args: any[]) => {
       const workerTask = new Task<any>();
       this.initTask.promise.then(() => {
