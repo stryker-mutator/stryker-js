@@ -71,11 +71,18 @@ describe('StrykerInitializer', () => {
       fsWriteFile.resolves({});
     });
 
-    it('should prompt for test runner, test framework, mutator, transpilers and reporters', async () => {
+    it('should prompt for test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
       inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', mutator: 'typescript', transpilers: ['webpack'], reporters: ['dimension', 'mars'] });
       await sut.initialize();
-      expect(inquirerPrompt).to.have.been.callCount(5);
-      const [promptTestRunner, promptTestFramework, promptMutator, promptTranspilers, promptReporters]: inquirer.Question[] = [inquirerPrompt.getCall(0).args[0], inquirerPrompt.getCall(1).args[0], inquirerPrompt.getCall(2).args[0], inquirerPrompt.getCall(3).args[0], inquirerPrompt.getCall(4).args[0]];
+      expect(inquirerPrompt).to.have.been.callCount(6);
+      const [promptTestRunner, promptTestFramework, promptMutator, promptTranspilers, promptReporters, promptPackageManagers]: inquirer.Question[] = [
+        inquirerPrompt.getCall(0).args[0],
+        inquirerPrompt.getCall(1).args[0],
+        inquirerPrompt.getCall(2).args[0],
+        inquirerPrompt.getCall(3).args[0],
+        inquirerPrompt.getCall(4).args[0],
+        inquirerPrompt.getCall(5).args[0]
+      ];
       expect(promptTestRunner.type).to.eq('list');
       expect(promptTestRunner.name).to.eq('testRunner');
       expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost']);
@@ -87,6 +94,8 @@ describe('StrykerInitializer', () => {
       expect(promptTranspilers.choices).to.deep.eq(['typescript', 'webpack']);
       expect(promptReporters.type).to.eq('checkbox');
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress', 'dashboard']);
+      expect(promptPackageManagers.type).to.eq('checkbox');
+      expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
     });
 
     it('should configure coverageAnalysis: "all" when the user did not select a testFramework', async () => {
