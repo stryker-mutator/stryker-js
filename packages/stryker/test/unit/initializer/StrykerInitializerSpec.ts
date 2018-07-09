@@ -62,8 +62,8 @@ describe('StrykerInitializer', () => {
         'stryker-ghost-runner': null,
         'stryker-awesome-framework': null,
         'stryker-hyper-framework': null,
-        'stryker-typescript' : null,
-        'stryker-javascript' : null,
+        'stryker-typescript': null,
+        'stryker-javascript': null,
         'stryker-dimension-reporter': null,
         'stryker-mars-reporter': null,
         'stryker-webpack': null
@@ -72,7 +72,7 @@ describe('StrykerInitializer', () => {
     });
 
     it('should prompt for test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
-      inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', mutator: 'typescript', transpilers: ['webpack'], reporters: ['dimension', 'mars'] });
+      inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', mutator: 'typescript', transpilers: ['webpack'], reporters: ['dimension', 'mars'], packageManager: 'yarn' });
       await sut.initialize();
       expect(inquirerPrompt).to.have.been.callCount(6);
       const [promptTestRunner, promptTestFramework, promptMutator, promptTranspilers, promptReporters, promptPackageManagers]: inquirer.Question[] = [
@@ -94,7 +94,7 @@ describe('StrykerInitializer', () => {
       expect(promptTranspilers.choices).to.deep.eq(['typescript', 'webpack']);
       expect(promptReporters.type).to.eq('checkbox');
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress', 'dashboard']);
-      expect(promptPackageManagers.type).to.eq('checkbox');
+      expect(promptPackageManagers.type).to.eq('list');
       expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
     });
 
@@ -262,7 +262,7 @@ describe('StrykerInitializer', () => {
       restClientPackageGet.rejects();
 
       await sut.initialize();
-      
+
       expect(log.warn).to.have.been.calledWith('Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually');
       expect(fs.writeFile).to.have.been.called;
     });
