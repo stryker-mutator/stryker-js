@@ -42,6 +42,7 @@ export default class StrykerInitializer {
       selectedMutator,
       selectedTranspilers,
       selectedReporters,
+      selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies));
     this.installNpmDependencies(npmDependencies, selectedPackageManager);
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');

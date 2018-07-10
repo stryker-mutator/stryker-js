@@ -66,6 +66,7 @@ export class StrykerInquirer {
       name: 'packageManager',
       message: 'Which package manager do you want to use?',
       choices: options.map(_ => _.name),
+      default: ['npm']
     });
     return options.filter(_ => _.name === answers['packageManager'])[0];
   }
