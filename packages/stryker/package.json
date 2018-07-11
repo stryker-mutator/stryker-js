@@ -77,6 +77,7 @@
   "devDependencies": {
     "@types/inquirer": "0.0.41",
     "@types/istanbul-lib-instrument": "~1.7.0",
+    "@types/node": "^6.0.114",
     "@types/prettier": "~1.6.0",
     "@types/progress": "~2.0.1",
     "stryker-api": "~0.17.3"
