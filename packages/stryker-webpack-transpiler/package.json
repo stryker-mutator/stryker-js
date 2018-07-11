@@ -38,21 +38,21 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-webpack-transpiler#readme",
   "devDependencies": {
-    "@types/memory-fs": "^0.3.0",
-    "@types/webpack": "^4.1.6",
-    "raw-loader": "^0.5.1",
-    "stryker-api": "^0.17.3",
-    "webpack": "^4.2.0"
+    "@types/memory-fs": "~0.3.0",
+    "@types/webpack": "~4.1.6",
+    "raw-loader": "~0.5.1",
+    "stryker-api": "~0.17.3",
+    "webpack": "~4.2.0"
   },
   "peerDependencies": {
     "stryker-api": ">=0.15.0 <0.18.0",
     "webpack": ">=2.0.0"
   },
   "dependencies": {
-    "enhanced-resolve": "^4.0.0-beta.4",
-    "lodash": "^4.17.4",
-    "log4js": "^1.1.0",
-    "memory-fs": "^0.4.1"
+    "enhanced-resolve": "~4.0.0-beta.4",
+    "lodash": "~4.17.4",
+    "log4js": "~1.1.1",
+    "memory-fs": "~0.4.1"
   },
   "initStrykerConfig": {
     "webpack": {
