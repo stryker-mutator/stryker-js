@@ -69,9 +69,18 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false
     };
 
-    // Parse the json back to an object in order to match
-    expect(config.jest.config).to.deep.equal(expectedResult);
+    assertJestConfig(expectedResult, config.jest.config);
   });
+
+  function assertJestConfig(expected: any, actual: any) {
+    Object.keys(expected).forEach(key => {
+      if (Array.isArray(expected[key])) {
+        expected[key].sort();
+        actual[key].sort();
+      }
+      expect(expected[key]).deep.eq(actual[key]);
+    });
+  }
 
   it('should create a Jest configuration for a React + TypeScript project', () => {
     config.set({ jest: { project: 'react-ts' } });
@@ -127,8 +136,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false
     };
 
-    // Parse the json back to an object in order to match
-    expect(config.jest.config).to.deep.equal(expectedResult);
+    assertJestConfig(expectedResult, config.jest.config);
   });
 
   it('should load the Jest configuration from the jest.config.js', () => {
