@@ -61,7 +61,7 @@
     "inquirer": "^6.0.0",
     "istanbul-lib-instrument": "^1.9.2",
     "lodash": "^4.17.4",
-    "log4js": "^1.1.0",
+    "log4js": "^2.10.0",
     "mkdirp": "^0.5.1",
     "mz": "^2.6.0",
     "prettier": "^1.6.1",
