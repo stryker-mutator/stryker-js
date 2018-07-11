@@ -93,6 +93,7 @@ describe('Integration test for Strykers Jest runner', function () {
 
   it.only('should be able to retrieve code coverage results', async () => {
     processCwdStub.returns(getProjectRoot('exampleInstrumentedProject'));
+    runOptions.strykerOptions.coverageAnalysis = 'all';
     jestConfigEditor.edit(runOptions.strykerOptions as Config);
     const sut = new JestTestRunner(runOptions);
     const result = await sut.run();

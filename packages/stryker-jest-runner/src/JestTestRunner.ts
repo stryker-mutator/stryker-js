@@ -45,6 +45,8 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
     };
   }
 
+
+
   private setNodeEnv() {
     // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here
     // https://github.com/facebook/jest/blob/master/packages/jest-cli/bin/jest.js#L12-L14
