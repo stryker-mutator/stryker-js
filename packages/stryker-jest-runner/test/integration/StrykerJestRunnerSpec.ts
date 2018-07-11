@@ -91,6 +91,14 @@ describe('Integration test for Strykers Jest runner', function () {
     expect(result.status).to.equal(RunStatus.Complete);
   });
 
+  it.only('should be able to retrieve code coverage results', async () => {
+    processCwdStub.returns(getProjectRoot('exampleInstrumentedProject'));
+    jestConfigEditor.edit(runOptions.strykerOptions as Config);
+    const sut = new JestTestRunner(runOptions);
+    const result = await sut.run();
+    expect(result.coverage).ok;
+  });
+
   it('should run tests on the example custom project using jest.config.js', async () => {
     processCwdStub.returns(getProjectRoot('exampleProjectWithExplicitJestConfig'));
 

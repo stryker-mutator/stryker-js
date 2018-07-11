@@ -35,10 +35,13 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
     // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
     const errorMessages = results.testResults.map((testSuite: jest.TestResult) => testSuite.failureMessage).filter(errorMessage => (errorMessage)) as Array<string>;
 
+    // There *should* be a global "__coverage__" variable here, unfortunately it was cleaned by jest
+    const coverage = (global as any).__coverage__;
     return {
       tests: this.processTestResults(results.testResults),
       status: (results.numRuntimeErrorTestSuites > 0) ? RunStatus.Error : RunStatus.Complete,
-      errorMessages
+      errorMessages,
+      coverage
     };
   }
 
