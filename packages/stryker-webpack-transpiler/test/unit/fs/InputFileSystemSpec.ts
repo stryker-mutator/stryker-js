@@ -2,12 +2,12 @@ import { expect } from 'chai';
 import MemoryFS, * as memoryFSModule from '../../../src/fs/MemoryFS';
 import InputFileSystem from '../../../src/fs/InputFileSystem';
 import { Mock, createMockInstance } from '../../helpers/producers';
-import { AbstractInputFileSystem, CachedInputFileSystem } from 'enhanced-resolve';
+import { CachedInputFileSystem } from 'enhanced-resolve';
 
 describe('InputFileSystem', () => {
   let sut: InputFileSystem;
   let memoryFSMock: Mock<MemoryFS>;
-  let innerFSMock: Mock<AbstractInputFileSystem>;
+  let innerFSMock: Mock<CachedInputFileSystem>;
 
   beforeEach(() => {
     memoryFSMock = createMockInstance(MemoryFS);

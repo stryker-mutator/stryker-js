@@ -78,7 +78,7 @@ Please report a bug report on our [issues page](https://github.com/stryker-mutat
    This can be an example project, code snippit, etc
 4. Include the expected behaviour.
 5. Include actual behaviour.
-6. Add more details if required (i.e. which browser, which test runner, which versions, etc)
+6. Add more details if required (e.g. which browser, which test runner, which versions, etc)
 
 # Community 
 Do you want to help? Great! These are a few things you can do:
@@ -86,4 +86,4 @@ Do you want to help? Great! These are a few things you can do:
 * Evangelize mutation testing  
   Mutation testing is still relatively new, especially in JavaScript. Please help us get the word out there!  
   Share your stories in blog posts an on social media. Please inform us about it! 
-* Did you use Stryker? Your feedback is very valuable to us. Good and bad! Please contact us and let us know what you think
+* Did you use Stryker? Your feedback is very valuable to us. Good and bad! Please contact us and let us know what you think!

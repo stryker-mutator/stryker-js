@@ -38,9 +38,9 @@
     "node": ">=6"
   },
   "dependencies": {
-    "tslib": "^1.6.0"
+    "tslib": "~1.9.3"
   },
   "devDependencies": {
-    "surrial": "^0.1.1"
+    "surrial": "~0.1.1"
   }
 }

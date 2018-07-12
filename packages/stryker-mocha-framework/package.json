@@ -36,10 +36,10 @@
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-framework#readme",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": { },
   "devDependencies": {
-    "stryker-api": "^0.17.3",
-    "tslib": "^1.5.0"
+    "stryker-api": "~0.17.3",
+    "tslib": "~1.9.3"
   },
   "peerDependencies": {
     "mocha": ">= 2.3.3 < 6",

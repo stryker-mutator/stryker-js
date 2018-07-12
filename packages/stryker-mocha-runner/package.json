@@ -35,13 +35,13 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-runner#readme",
   "dependencies": {
-    "multimatch": "^2.1.0",
-    "tslib": "^1.5.0"
+    "multimatch": "~2.1.0",
+    "tslib": "~1.9.3"
   },
   "devDependencies": {
-    "@types/multimatch": "^2.1.2",
-    "stryker-api": "^0.17.3",
-    "stryker-mocha-framework": "^0.10.3"
+    "@types/multimatch": "~2.1.2",
+    "stryker-api": "~0.17.3",
+    "stryker-mocha-framework": "~0.10.3"
   },
   "peerDependencies": {
     "mocha": ">= 2.3.3 < 6",
