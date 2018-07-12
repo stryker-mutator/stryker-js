@@ -32,12 +32,14 @@ export default class StrykerConfigWriter {
     selectedMutator: null | PromptOption,
     selectedTranspilers: null | PromptOption[],
     selectedReporters: PromptOption[],
+    selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Partial<StrykerOptions>[]): Promise<void> {
     const configObject: Partial<StrykerOptions> = {
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',
       mutator: selectedMutator ? selectedMutator.name : '',
       transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : [],
-      reporter: selectedReporters.map(rep => rep.name)
+      reporter: selectedReporters.map(rep => rep.name),
+      packageManager: selectedPackageManager.name
     };
 
     this.configureTestFramework(configObject, selectedTestFramework);
