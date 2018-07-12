@@ -18,14 +18,14 @@ describe('LogConfigurator', () => {
     log4jsShutdown = sandbox.stub(log4js, 'shutdown');
   });
 
-  describe('forMaster', () => {
+  describe('configureMainProcess', () => {
     it('should configure console and file', () => {
-      sut.forMaster(LogLevel.Information, LogLevel.Trace);
+      sut.configureMainProcess(LogLevel.Information, LogLevel.Trace);
       expect(log4jsConfigure).calledWith(createMasterConfig(LogLevel.Information, LogLevel.Trace, LogLevel.Trace));
     });
 
     it('should not configure file if it is "off"', () => {
-      sut.forMaster(LogLevel.Information, LogLevel.Off);
+      sut.configureMainProcess(LogLevel.Information, LogLevel.Off);
       const masterConfig = createMasterConfig(LogLevel.Information, LogLevel.Off, LogLevel.Information);
       delete masterConfig.appenders.file;
       delete masterConfig.appenders.filteredFile;
@@ -34,7 +34,7 @@ describe('LogConfigurator', () => {
     });
   });
 
-  describe('forServer', () => {
+  describe('configureLoggingServer', () => {
     it('should configure console, file and server', async () => {
       // Arrange
       const expectedLoggingContext: LoggingClientContext = { port: 42, level: LogLevel.Error };
@@ -44,7 +44,7 @@ describe('LogConfigurator', () => {
       expectedConfig.appenders.server = serverAppender;
 
       // Act
-      const actualLoggingContext = await sut.forServer(LogLevel.Error, LogLevel.Fatal);
+      const actualLoggingContext = await sut.configureLoggingServer(LogLevel.Error, LogLevel.Fatal);
 
       // Assert
       expect(log4jsConfigure).calledWith(expectedConfig);
@@ -54,9 +54,9 @@ describe('LogConfigurator', () => {
 
   });
 
-  describe('forWorker', () => {
+  describe('configureChildProcess', () => {
     it('should configure the logging client', () => {
-      sut.forWorker({ port: 42, level: LogLevel.Information });
+      sut.configureChildProcess({ port: 42, level: LogLevel.Information });
       const multiProcessAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'worker', loggerPort: 42 };
       const expectedConfig: log4js.Configuration = {
         appenders: {

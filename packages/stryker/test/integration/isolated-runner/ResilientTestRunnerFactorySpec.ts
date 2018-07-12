@@ -67,7 +67,7 @@ describe('ResilientTestRunnerFactory', function () {
     before(() => sut = ResilientTestRunnerFactory.create('coverage-reporting', options));
 
     it('should not be overridden by the worker',
-      () => expect(sut.run({ timeout: 3000 })).to.eventually.have.property('coverage', 'realCoverage'));
+      () => expect(sut.run({ timeout: 4000 })).to.eventually.have.property('coverage', 'realCoverage'));
 
     after(() => sut.dispose());
   });

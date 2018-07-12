@@ -1,11 +1,10 @@
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import * as log4js from 'stryker-api/logging';
+import { getLogger } from 'stryker-api/logging';
 import Timer from './Timer';
 
-const log = log4js.getLogger('StrykerMochaReporter');
-
 export default class StrykerMochaReporter {
-
+  
+  private readonly log = getLogger(StrykerMochaReporter.name);
   public runResult: RunResult;
   private timer = new Timer();
   private passedCount = 0;
@@ -26,7 +25,7 @@ export default class StrykerMochaReporter {
         tests: [],
         errorMessages: []
       };
-      log.debug('Starting Mocha test run');
+      this.log.debug('Starting Mocha test run');
     });
 
     this.runner.on('pass', (test: any) => {
@@ -37,7 +36,7 @@ export default class StrykerMochaReporter {
       });
       this.passedCount++;
       this.timer.reset();
-      log.debug(`Test passed: ${test.fullTitle()}`);
+      this.log.debug(`Test passed: ${test.fullTitle()}`);
     });
 
     this.runner.on('fail', (test: any, err: any) => {
@@ -51,12 +50,12 @@ export default class StrykerMochaReporter {
         this.runResult.errorMessages = [];
       }
       this.runResult.errorMessages.push(err.message);
-      log.debug(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
+      this.log.debug(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
     });
 
     this.runner.on('end', () => {
       this.runResult.status = RunStatus.Complete;
-      log.debug(`Mocha test run completed: ${this.passedCount}/${this.runResult.tests.length} passed`);
+      this.log.debug(`Mocha test run completed: ${this.passedCount}/${this.runResult.tests.length} passed`);
     });
   }
 }

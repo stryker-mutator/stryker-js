@@ -3,7 +3,7 @@ import * as path from 'path';
 import { requireModule } from '../utils';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
 import StrykerReporter from '../StrykerReporter';
-import { getLogger, Logger } from 'log4js';
+import { getLogger, Logger } from 'stryker-api/logging';
 
 function setDefaultOptions(config: Config) {
   config.set({

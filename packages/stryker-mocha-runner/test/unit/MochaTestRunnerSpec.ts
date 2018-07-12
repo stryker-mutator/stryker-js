@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { EventEmitter } from 'events';
 import * as Mocha from 'mocha';
-import * as log4js from 'stryker-api/logging';
+import * as logging from 'stryker-api/logging';
 import { expect } from 'chai';
 import { RunOptions } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
@@ -17,7 +17,7 @@ describe('MochaTestRunner', () => {
   let sut: MochaTestRunner;
   let requireStub: sinon.SinonStub;
   let multimatchStub: sinon.SinonStub;
-  let log: Mock<log4js.Logger>;
+  let log: Mock<logging.Logger>;
 
   beforeEach(() => {
     MochaStub = sandbox.stub(LibWrapper, 'Mocha');
@@ -28,7 +28,7 @@ describe('MochaTestRunner', () => {
     mocha.suite = mock(EventEmitter);
     MochaStub.returns(mocha);
     log = logger();
-    sandbox.stub(log4js, 'getLogger').returns(log);
+    sandbox.stub(logging, 'getLogger').returns(log);
   });
 
   afterEach(() => {

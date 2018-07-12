@@ -323,7 +323,7 @@ It is not allowed to only supply one value of the values (it's all or nothing). 
  *Note*: Test runners are run as child processes of the Stryker Node process. All output (stdout) of the `testRunner` is logged as `trace`.  
  Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
 
-#### Log level  
+#### File log level  
 **Command line:** `--fileLogLevel info`    
 **Config file:** `fileLogLevel: 'info'`
 **Default value:** `off`  

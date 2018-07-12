@@ -5,7 +5,7 @@ import * as fakeResults from '../helpers/testResultProducer';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';
@@ -26,7 +26,7 @@ describe('JestTestRunner', () => {
     runJestStub.resolves({ results: { testResults: [] } });
 
     debugLoggerStub = sandbox.stub();
-    sandbox.stub(log4js, 'getLogger').returns({ debug: debugLoggerStub });
+    sandbox.stub(logging, 'getLogger').returns({ debug: debugLoggerStub });
 
     strykerOptions = new Config;
     strykerOptions.set({ jest: { config: { property: 'value' } }, basePath });

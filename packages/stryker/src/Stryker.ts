@@ -36,14 +36,14 @@ export default class Stryker {
    * @param {Object} [options] - Optional options.
    */
   constructor(options: StrykerOptions) {
-    LogConfigurator.forMaster(options.logLevel, options.fileLogLevel);
+    LogConfigurator.configureMainProcess(options.logLevel, options.fileLogLevel);
     this.log = getLogger(Stryker.name);
     let configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
-    LogConfigurator.forMaster(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
+    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
     this.loadPlugins();
     this.applyConfigEditors();
-    LogConfigurator.forMaster(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
+    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
@@ -51,7 +51,7 @@ export default class Stryker {
   }
 
   async runMutationTest(): Promise<MutantResult[]> {
-    const loggingContext = await LogConfigurator.forServer(this.config.logLevel, this.config.fileLogLevel);
+    const loggingContext = await LogConfigurator.configureLoggingServer(this.config.logLevel, this.config.fileLogLevel);
     this.timer.reset();
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
     if (inputFiles.files.length) {

@@ -16,7 +16,7 @@ describe('ChildProcessProxyWorker', () => {
   let processOnStub: sinon.SinonStub;
   let processSendStub: sinon.SinonStub;
   let processListenersStub: sinon.SinonStub;
-  let logConfiguratorForWorkerStub: sinon.SinonStub;
+  let configureChildProcessStub: sinon.SinonStub;
   let processRemoveListenerStub: sinon.SinonStub;
   let pluginLoaderMock: Mock<PluginLoader>;
   let originalProcessSend: undefined | NodeJS.MessageListener;
@@ -32,7 +32,7 @@ describe('ChildProcessProxyWorker', () => {
     // process.send is normally undefined
     originalProcessSend = process.send;
     process.send = processSendStub;
-    logConfiguratorForWorkerStub = sandbox.stub(LogConfigurator, 'forWorker');
+    configureChildProcessStub = sandbox.stub(LogConfigurator, 'configureChildProcess');
     pluginLoaderMock = mock(PluginLoader);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
   });
@@ -91,7 +91,7 @@ describe('ChildProcessProxyWorker', () => {
 
     it('should set global log level', () => {
       processOnStub.callArgWith(1, serialize(initMessage));
-      expect(logConfiguratorForWorkerStub).calledWith(LOGGING_CONTEXT);
+      expect(configureChildProcessStub).calledWith(LOGGING_CONTEXT);
     });
 
     it('should load plugins', () => {

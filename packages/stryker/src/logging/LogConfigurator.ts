@@ -32,9 +32,11 @@ interface AppendersConfiguration {
 const LOG_FILE_NAME = 'stryker.log';
 export default class LogConfigurator {
 
-  private static createMasterAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): AppendersConfiguration {
+  private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): AppendersConfiguration {
 
+    // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
     const multiAppender = { type: require.resolve('./MultiAppender'), appenders: ['filteredConsole'] };
+
     let allAppenders: AppendersConfiguration = {
       [AppenderName.Console]: { type: 'stdout', layout: layouts.color },
       [AppenderName.FilteredConsole]: { type: 'logLevelFilter', appender: 'console', level: consoleLogLevel },
@@ -72,28 +74,31 @@ export default class LogConfigurator {
   }
 
   /**
-   * Configure logging for the master process. Either call this method or `forWorker` before any `getLogger` calls.
+   * Configure logging for the master process. Either call this method or `configureChildProcess` before any `getLogger` calls.
    * @param consoleLogLevel The log level to configure for the console
    * @param fileLogLevel The log level to configure for the "stryker.log" file
    */
-  static forMaster(consoleLogLevel: LogLevel = LogLevel.Information, fileLogLevel: LogLevel = LogLevel.Off) {
+  static configureMainProcess(consoleLogLevel: LogLevel = LogLevel.Information, fileLogLevel: LogLevel = LogLevel.Off) {
     this.setImplementation();
-    const appenders = this.createMasterAppenders(consoleLogLevel, fileLogLevel);
+    const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel);
     log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));
   }
 
   /**
    * Configure the logging for the server. Includes the master configuration.
-   * This method can only be called ONCE, as it starts the log4js server to listen for log events.
-   * It returns the logging client context that should be used to doe the `forWorker` calls.
+   * This method should only be called ONCE, as it starts the log4js server to listen for log events.
+   * It returns the logging client context that should be used to configure the child processes.
+   *
    * @param consoleLogLevel the console log level
    * @param fileLogLevel the file log level
    * @returns the context
    */
-  static async forServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): Promise<LoggingClientContext> {
+  static async configureLoggingServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): Promise<LoggingClientContext> {
     this.setImplementation();
     const loggerPort = await getFreePort();
-    const appenders = this.createMasterAppenders(consoleLogLevel, fileLogLevel);
+
+    // Include the appenders for the main Stryker process, as log4js has only one single `configure` method.
+    const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel);
     const multiProcessAppender: log4js.MultiprocessAppender = {
       type: 'multiprocess',
       mode: 'master',
@@ -114,10 +119,10 @@ export default class LogConfigurator {
 
   /**
    * Configures the logging for a worker process. Sends all logging to the master process.
-   * Either call this method or `forMaster` before any `getLogger` calls.
+   * Either call this method or `configureMainProcess` before any `getLogger` calls.
    * @param context the logging client context used to configure the logging client
    */
-  static forWorker(context: LoggingClientContext) {
+  static configureChildProcess(context: LoggingClientContext) {
     this.setImplementation();
     const clientAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'worker', loggerPort: context.port };
     const appenders: AppendersConfiguration = { [AppenderName.All]: clientAppender };

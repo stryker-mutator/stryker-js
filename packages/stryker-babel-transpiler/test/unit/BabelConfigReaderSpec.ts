@@ -2,7 +2,7 @@ import BabelConfigReader from '../../src/BabelConfigReader';
 import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
 import * as fs from 'fs';
-import * as log4js from 'stryker-api/logging';
+import * as logging from 'stryker-api/logging';
 import * as sinon from 'sinon';
 import * as path from 'path';
 
@@ -24,7 +24,7 @@ describe('BabelConfigReader', () => {
       debug: sandbox.stub()
     };
 
-    sandbox.stub(log4js, 'getLogger').returns(logStub);
+    sandbox.stub(logging, 'getLogger').returns(logStub);
   });
 
   afterEach(() => {

@@ -1,4 +1,4 @@
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 
 import JestTestAdapter from './JestTestAdapter';
 import JestPromiseAdapter from './JestPromiseTestAdapter';

@@ -1,7 +1,7 @@
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import * as fs from 'mz/fs';
-import * as log4js from 'stryker-api/logging';
+import { getLogger } from 'stryker-api/logging';
 import * as path from 'path';
 import * as _ from 'lodash';
 import StrykerError from '../utils/StrykerError';
@@ -16,7 +16,7 @@ const DEFAULT_CONFIG_FILE = 'stryker.conf.js';
 
 export default class ConfigReader {
 
-  private readonly log = log4js.getLogger(ConfigReader.name);
+  private readonly log = getLogger(ConfigReader.name);
 
   constructor(private cliOptions: StrykerOptions) { }
 

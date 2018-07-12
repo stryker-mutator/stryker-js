@@ -60,7 +60,7 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   start(message: StartMessage) {
-    LogConfigurator.forWorker(message.runnerOptions.loggingContext);
+    LogConfigurator.configureChildProcess(message.runnerOptions.loggingContext);
     this.log = getLogger(IsolatedTestRunnerAdapterWorker.name);
     this.loadPlugins(message.runnerOptions.strykerOptions.plugins || []);
     this.log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);

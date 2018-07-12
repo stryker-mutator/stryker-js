@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { Config } from 'stryker-api/config';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
-import * as log4js from 'stryker-api/logging';
+import * as logging from 'stryker-api/logging';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
 import { logger, Mock } from '../helpers/mockHelpers';
 
@@ -12,11 +12,11 @@ describe('MochaOptionsLoader', () => {
   let readFileStub: sinon.SinonStub;
   let config: Config;
   let sut: MochaOptionsLoader;
-  let log: Mock<log4js.Logger>;
+  let log: Mock<logging.Logger>;
 
   beforeEach(() => {
     log = logger();
-    sandbox.stub(log4js, 'getLogger').returns(log);
+    sandbox.stub(logging, 'getLogger').returns(log);
     readFileStub = sandbox.stub(fs, 'readFileSync');
     sut = new MochaOptionsLoader();
     config = new Config();

@@ -55,8 +55,8 @@ describe('Stryker', function () {
   let reporter: Mock<BroadcastReporter>;
   let tempFolderMock: Mock<TempFolder>;
   let scoreResultCalculator: ScoreResultCalculator;
-  let logConfiguratorForMasterStub: sinon.SinonStub;
-  let logConfiguratorForServerStub: sinon.SinonStub;
+  let configureMainProcessStub: sinon.SinonStub;
+  let configureLoggingServerStub: sinon.SinonStub;
 
   beforeEach(() => {
     strykerConfig = config();
@@ -68,9 +68,9 @@ describe('Stryker', function () {
     const reporterOrchestratorMock = mock(ReporterOrchestrator);
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
     mutatorMock = mock(MutatorFacade);
-    logConfiguratorForMasterStub = sandbox.stub(LogConfigurator, 'forMaster');
-    logConfiguratorForServerStub = sandbox.stub(LogConfigurator, 'forServer');
-    logConfiguratorForServerStub.resolves(LOGGING_CONTEXT);
+    configureMainProcessStub = sandbox.stub(LogConfigurator, 'configureMainProcess');
+    configureLoggingServerStub = sandbox.stub(LogConfigurator, 'configureLoggingServer');
+    configureLoggingServerStub.resolves(LOGGING_CONTEXT);
     inputFileResolverMock = mock(InputFileResolver);
     reporterOrchestratorMock.createBroadcastReporter.returns(reporter);
     testFramework = testFrameworkMock();
@@ -108,7 +108,7 @@ describe('Stryker', function () {
     });
 
     it('should configure logging for master', () => {
-      expect(logConfiguratorForMasterStub).calledThrice;
+      expect(configureMainProcessStub).calledThrice;
     });
 
     it('should freeze the config', () => {
@@ -166,7 +166,7 @@ describe('Stryker', function () {
 
       it('should reject when logging server rejects', async () => {
         const expectedError = Error('expected error');
-        logConfiguratorForServerStub.rejects(expectedError);
+        configureLoggingServerStub.rejects(expectedError);
         await expect(sut.runMutationTest()).rejectedWith(expectedError);
       });
 
@@ -216,7 +216,7 @@ describe('Stryker', function () {
       });
 
       it('should configure the logging server', () => {
-        expect(logConfiguratorForServerStub).calledWith(strykerConfig.logLevel, strykerConfig.fileLogLevel);
+        expect(configureLoggingServerStub).calledWith(strykerConfig.logLevel, strykerConfig.fileLogLevel);
       });
 
       it('should report mutant score', () => {

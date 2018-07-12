@@ -27,7 +27,7 @@ export default class ChildProcessProxyWorker {
       const message = deserialize<WorkerMessage>(serializedMessage, [File]);
       switch (message.kind) {
         case WorkerMessageKind.Init:
-          LogConfigurator.forWorker(message.loggingContext);
+          LogConfigurator.configureChildProcess(message.loggingContext);
           this.log = getLogger(ChildProcessProxyWorker.name);
           new PluginLoader(message.plugins).load();
           const RealSubjectClass = require(message.requirePath).default;

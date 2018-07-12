@@ -49,7 +49,7 @@ export default class StrykerCli {
       .option('--fileLogLevel <level>', 'Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "off"')
       .parse(this.argv);
 
-    LogConfigurator.forMaster(program['logLevel']);
+    LogConfigurator.configureMainProcess(program['logLevel']);
     const log = getLogger(StrykerCli.name);
     // Cleanup commander state
     delete program['options'];

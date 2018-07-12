@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as log4js from 'stryker-api/logging';
+import * as logging from 'stryker-api/logging';
 import * as ts from 'typescript';
 import { expect } from 'chai';
 import { SinonStub, match } from 'sinon';
@@ -27,7 +27,7 @@ describe('TypescriptConfigEditor edit', () => {
       info: sandbox.stub(),
       error: sandbox.stub()
     };
-    sandbox.stub(log4js, 'getLogger').returns(loggerStub);
+    sandbox.stub(logging, 'getLogger').returns(loggerStub);
     config = new Config();
     sut = new TypescriptConfigEditor();
   });

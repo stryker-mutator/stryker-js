@@ -1,4 +1,4 @@
-import * as logging from 'stryker-api/logging';
+import { getLogger } from 'stryker-api/logging';
 import fileUrl = require('file-url');
 import * as path from 'path';
 import { Config } from 'stryker-api/config';
@@ -7,12 +7,11 @@ import * as util from './util';
 import * as templates from './templates';
 import Breadcrumb from './Breadcrumb';
 
-const log = logging.getLogger('HtmlReporter');
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class HtmlReporter implements Reporter {
-
+  private log = getLogger(HtmlReporter.name);
   private _baseDir: string;
   private mainPromise: Promise<void>;
   private mutantResults: MutantResult[];
@@ -43,7 +42,7 @@ export default class HtmlReporter implements Reporter {
     return this.cleanBaseFolder()
       .then(() => this.writeCommonResources())
       .then(() => this.writeReportDirectory())
-      .then(location => log.info(`Your report can be found at: ${fileUrl(location)}`));
+      .then(location => this.log.info(`Your report can be found at: ${fileUrl(location)}`));
   }
 
   private writeCommonResources() {
@@ -106,9 +105,9 @@ export default class HtmlReporter implements Reporter {
     if (!this._baseDir) {
       if (this.options['htmlReporter'] && this.options['htmlReporter']['baseDir']) {
         this._baseDir = this.options['htmlReporter']['baseDir'];
-        log.debug(`Using configured output folder ${this._baseDir}`);
+        this.log.debug(`Using configured output folder ${this._baseDir}`);
       } else {
-        log.debug(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
+        this.log.debug(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
         this._baseDir = DEFAULT_BASE_FOLDER;
       }
     }
