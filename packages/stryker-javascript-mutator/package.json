@@ -37,18 +37,18 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-javascript-mutator#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "babel-core": "^6.26.0",
-    "babel-generator": "^6.26.0",
-    "babylon": "^6.18.0",
-    "lodash": "^4.17.4",
-    "log4js": "^1.1.1",
-    "tslib": "^1.8.0"
+    "babel-core": "~6.26.0",
+    "babel-generator": "~6.26.0",
+    "babylon": "~6.18.0",
+    "lodash": "~4.17.4",
+    "log4js": "~1.1.1",
+    "tslib": "~1.9.3"
   },
   "devDependencies": {
-    "@types/babel-generator": "^6.25.1",
-    "@types/babylon": "^6.16.2",
-    "stryker-api": "^0.17.3",
-    "stryker-mutator-specification": "^0.3.1"
+    "@types/babel-generator": "~6.25.1",
+    "@types/babylon": "~6.16.2",
+    "stryker-api": "~0.17.3",
+    "stryker-mutator-specification": "~0.3.1"
   },
   "peerDependencies": {
     "stryker-api": ">=0.15.0 <0.18.0"
