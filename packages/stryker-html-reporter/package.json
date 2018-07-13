@@ -51,7 +51,7 @@
     "@types/file-url": "~2.0.0",
     "@types/jsdom": "~11.0.2",
     "@types/node": "~6.0.113",
-    "bootstrap": "4.1.1",
+    "bootstrap": "4.1.2",
     "highlight.js": "~9.12.0",
     "jquery": "~3.2.1",
     "jsdom": "~11.11.0",
