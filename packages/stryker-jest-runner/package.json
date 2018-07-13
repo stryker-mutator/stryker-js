@@ -45,7 +45,7 @@
     "react": "~16.2.0",
     "react-dom": "~16.2.0",
     "react-scripts": "~1.1.4",
-    "react-scripts-ts": "~2.15.1",
+    "react-scripts-ts": "~2.16.0",
     "stryker-api": "~0.17.3"
   },
   "peerDependencies": {
