@@ -11,7 +11,7 @@
     "grunt": "~1.0.3",
     "grunt-contrib-clean": "~1.1.0",
     "grunt-contrib-jshint": "~1.1.0",
-    "install-local": "~0.5.0",
+    "install-local": "~0.6.0",
     "jasmine-core": "~3.1.0",
     "karma": "~2.0.4",
     "karma-chai": "~0.1.0",
