@@ -55,7 +55,7 @@
   "dependencies": {
     "chalk": "~2.3.0",
     "commander": "~2.12.2",
-    "escodegen": "~1.8.0",
+    "escodegen": "~1.10.0",
     "esprima": "~2.7.0",
     "glob": "~7.0.3",
     "inquirer": "~6.0.0",
