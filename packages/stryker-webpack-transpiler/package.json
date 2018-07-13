@@ -51,7 +51,7 @@
   "dependencies": {
     "enhanced-resolve": "~4.0.0-beta.4",
     "lodash": "~4.17.4",
-    "log4js": "~1.1.1",
+    "log4js": "~2.11.0",
     "memory-fs": "~0.4.1"
   },
   "initStrykerConfig": {
