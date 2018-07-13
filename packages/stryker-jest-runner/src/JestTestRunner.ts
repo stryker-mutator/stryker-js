@@ -36,7 +36,7 @@ export default class JestTestRunner extends EventEmitter implements TestRunner {
     const errorMessages = results.testResults.map((testSuite: jest.TestResult) => testSuite.failureMessage).filter(errorMessage => (errorMessage)) as Array<string>;
 
     // There *should* be a global "__coverage__" variable here, unfortunately it was cleaned by jest
-    const coverage = (global as any).__coverage__;
+    const coverage = results.testResults.map((testSuite: jest.TestResult) => testSuite.coverage) as any;
     return {
       tests: this.processTestResults(results.testResults),
       status: (results.numRuntimeErrorTestSuites > 0) ? RunStatus.Error : RunStatus.Complete,

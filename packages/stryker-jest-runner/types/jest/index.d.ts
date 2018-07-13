@@ -34,6 +34,7 @@ declare namespace Jest {
 
   // Taken from https://goo.gl/nAzQ4J, removed all stuff that we are not using
   interface TestResult {
+    coverage?: RawCoverage;
     failureMessage: Maybe<string>;
     testResults: Array<AssertionResult>;
   }
@@ -44,6 +45,23 @@ declare namespace Jest {
     failureMessages: string[];
     fullName: string;
     status: Status;
+  }
+
+
+  interface RawFileCoverage {
+    path: string;
+    s: {[statementId: number]: number};
+    b: {[branchId: number]: number};
+    f: {[functionId: number]: number};
+    l: {[lineId: number]: number};
+    fnMap: {[functionId: number]: any};
+    statementMap: {[statementId: number]: any};
+    branchMap: {[branchId: number]: any};
+    inputSourceMap?: object;
+  }
+
+  interface RawCoverage {
+    [filePath: string]: RawFileCoverage;
   }
 
   // 
