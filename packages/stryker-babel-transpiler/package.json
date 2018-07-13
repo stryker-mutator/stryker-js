@@ -45,7 +45,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "babel-core": "6.26.3",
-    "log4js": "~1.1.1",
+    "log4js": "~2.11.0",
     "minimatch": "~3.0.4"
   },
   "devDependencies": {
