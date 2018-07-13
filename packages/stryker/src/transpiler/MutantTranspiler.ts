@@ -4,7 +4,7 @@ import TranspilerFacade from './TranspilerFacade';
 import TestableMutant from '../TestableMutant';
 import { File } from 'stryker-api/core';
 import SourceFile from '../SourceFile';
-import ChildProcessProxy, { ChildProxy } from '../child-proxy/ChildProcessProxy';
+import ChildProcessProxy, { Promisified } from '../child-proxy/ChildProcessProxy';
 import { TranspilerOptions } from 'stryker-api/transpile';
 import TranspiledMutant from '../TranspiledMutant';
 import TranspileResult from './TranspileResult';
@@ -14,7 +14,7 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 export default class MutantTranspiler {
 
   private transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
-  private proxy: ChildProxy<TranspilerFacade>;
+  private proxy: Promisified<TranspilerFacade>;
   private currentMutatedFile: SourceFile;
   private unMutatedFiles: ReadonlyArray<File>;
 

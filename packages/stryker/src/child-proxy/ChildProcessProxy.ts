@@ -6,12 +6,18 @@ import { serialize, deserialize } from '../utils/objectUtils';
 import Task from '../utils/Task';
 import LoggingClientContext from '../logging/LoggingClientContext';
 
-export type ChildProxy<T> = {
-  [K in keyof T]: (...args: any[]) => Promise<any>;
+type MethodPromised = { (...args: any[]): Promise<any> };
+
+export type Promisified<T> = {
+  [K in keyof T]: T[K] extends MethodPromised ? T[K] : (...args: any[]) => Promise<any>;
 };
 
+// Missing features:
+// 1. CWD    this.log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
+// 2. Error handling
+
 export default class ChildProcessProxy<T> {
-  readonly proxy: ChildProxy<T> = {} as ChildProxy<T>;
+  readonly proxy: Promisified<T> = {} as Promisified<T>;
 
   private worker: ChildProcess;
   private initTask: Task;
