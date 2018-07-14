@@ -53,17 +53,18 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "chalk": "~2.3.0",
+    "chalk": "~2.4.1",
     "commander": "~2.12.2",
     "escodegen": "~1.8.0",
     "esprima": "~2.7.0",
-    "glob": "~7.0.3",
+    "get-port": "~3.2.0",
+    "glob": "~7.1.2",
     "inquirer": "~6.0.0",
-    "istanbul-lib-instrument": "~1.9.2",
+    "istanbul-lib-instrument": "~1.10.1",
     "lodash": "~4.17.4",
     "log4js": "~2.11.0",
     "mkdirp": "~0.5.1",
-    "mz": "~2.6.0",
+    "mz": "~2.7.0",
     "prettier": "~1.6.1",
     "progress": "~2.0.0",
     "rimraf": "~2.6.1",
@@ -75,11 +76,11 @@
     "typed-rest-client": "~1.0.7"
   },
   "devDependencies": {
-    "@types/get-port": "^3.2.0",
-    "@types/inquirer": "0.0.41",
+    "@types/get-port": "~3.2.0",
+    "@types/inquirer": "~0.0.42",
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/node": "^6.0.114",
-    "@types/prettier": "~1.6.0",
+    "@types/prettier": "~1.13.1",
     "@types/progress": "~2.0.1",
     "stryker-api": "~0.17.3"
   },

@@ -6,6 +6,11 @@ import { getLogger } from 'stryker-api/logging';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
 
+const enum PackageManager {
+  Npm = 'npm',
+  Yarn = 'yarn',
+}
+
 export default class StrykerInitializer {
 
   private readonly log = getLogger(StrykerInitializer.name);
@@ -26,6 +31,7 @@ export default class StrykerInitializer {
     const selectedMutator = await this.selectMutator();
     const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
+    const selectedPackageManager = await this.selectPackageManager();
     const npmDependencies = this.getSelectedNpmDependencies(
       [selectedTestRunner, selectedTestFramework, selectedMutator]
         .concat(selectedTranspilers)
@@ -36,8 +42,9 @@ export default class StrykerInitializer {
       selectedMutator,
       selectedTranspilers,
       selectedReporters,
+      selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies));
-    this.installNpmDependencies(npmDependencies);
+    this.installNpmDependencies(npmDependencies, selectedPackageManager);
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
@@ -127,6 +134,19 @@ export default class StrykerInitializer {
     }
   }
 
+  private async selectPackageManager(): Promise<PromptOption> {
+    return this.inquirer.promptPackageManager([
+      {
+        name: PackageManager.Npm,
+        npm: null,
+      },
+      {
+        name: PackageManager.Yarn,
+        npm: null,
+      }
+    ]);
+  }
+
   private getSelectedNpmDependencies(selectedOptions: (PromptOption | null)[]) {
     return filterEmpty(filterEmpty(selectedOptions)
       .map(option => option.npm));
@@ -136,16 +156,20 @@ export default class StrykerInitializer {
   * Install the npm packages
   * @function
   */
-  private installNpmDependencies(dependencies: string[]): void {
-    if (dependencies.length > 0) {
-      this.out('Installing NPM dependencies...');
-      const cmd = `npm i --save-dev stryker-api ${dependencies.join(' ')}`;
-      this.out(cmd);
-      try {
-        child.execSync(cmd, { stdio: [0, 1, 2] });
-      } catch (_) {
-        this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
-      }
+  private installNpmDependencies(dependencies: string[], selectedOption: PromptOption): void {
+    if (dependencies.length === 0) {
+      return;
+    }
+
+    this.out('Installing NPM dependencies...');
+    const cmd = selectedOption.name === PackageManager.Npm
+      ? `npm i --save-dev stryker-api ${dependencies.join(' ')}`
+      : `yarn add stryker-api ${dependencies.join(' ')} --dev`;
+    this.out(cmd);
+    try {
+      child.execSync(cmd, { stdio: [0, 1, 2] });
+    } catch (_) {
+      this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
     }
   }
 
