@@ -38,7 +38,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "lodash.flatmap": "~4.5.0",
-    "log4js": "~1.1.1",
+    "log4js": "~3.0.0",
     "semver": "~5.5.0",
     "tslib": "~1.9.3"
   },
