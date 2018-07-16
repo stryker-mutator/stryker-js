@@ -38,7 +38,7 @@
   "dependencies": {
     "file-url": "~2.0.0",
     "lodash": "~4.17.10",
-    "log4js": "~1.1.1",
+    "log4js": "~3.0.0",
     "mkdirp": "~0.5.1",
     "mz": "~2.7.0",
     "rimraf": "~2.6.1",
