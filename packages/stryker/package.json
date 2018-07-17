@@ -79,7 +79,7 @@
     "@types/get-port": "~3.2.0",
     "@types/inquirer": "~0.0.42",
     "@types/istanbul-lib-instrument": "~1.7.0",
-    "@types/node": "^6.0.114",
+    "@types/node": "^8.10.21",
     "@types/prettier": "~1.13.1",
     "@types/progress": "~2.0.1",
     "stryker-api": "~0.17.3"
