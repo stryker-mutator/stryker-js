@@ -60,11 +60,11 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   start(message: StartMessage) {
-    LogConfigurator.configureChildProcess(message.runnerOptions.loggingContext);
+    LogConfigurator.configureChildProcess(message.loggingContext);
     this.log = getLogger(IsolatedTestRunnerAdapterWorker.name);
     this.loadPlugins(message.runnerOptions.strykerOptions.plugins || []);
-    this.log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
-    process.chdir(message.runnerOptions.sandboxWorkingFolder);
+    this.log.debug(`Changing current working directory for this process to ${message.sandboxWorkingDirectory}`);
+    process.chdir(message.sandboxWorkingDirectory);
     this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
   }
 

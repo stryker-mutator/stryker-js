@@ -1,6 +1,6 @@
-import { RunResult } from 'stryker-api/test_runner';
+import { RunResult, RunnerOptions } from 'stryker-api/test_runner';
 import { RunOptions } from 'stryker-api/test_runner';
-import IsolatedRunnerOptions from './IsolatedRunnerOptions';
+import LoggingClientContext from '../logging/LoggingClientContext';
 
 export type AdapterMessage = RunMessage | StartMessage | EmptyAdapterMessage;
 export type WorkerMessage = ResultMessage | EmptyWorkerMessage | InitDoneMessage;
@@ -18,7 +18,9 @@ export interface RunMessage {
 export interface StartMessage {
   kind: 'start';
   runnerName: string;
-  runnerOptions: IsolatedRunnerOptions;
+  runnerOptions: RunnerOptions;
+  sandboxWorkingDirectory: string;
+  loggingContext: LoggingClientContext;
 }
 
 export interface InitDoneMessage {

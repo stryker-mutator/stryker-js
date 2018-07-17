@@ -2,12 +2,12 @@ import { EventEmitter } from 'events';
 import { getLogger } from 'stryker-api/logging';
 import * as _ from 'lodash';
 import { fork, ChildProcess } from 'child_process';
-import { TestRunner, RunResult, RunOptions } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunOptions, RunnerOptions } from 'stryker-api/test_runner';
 import { serialize, kill } from '../utils/objectUtils';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
-import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 import Task from '../utils/Task';
 import StrykerError from '../utils/StrykerError';
+import LoggingClientContext from '../logging/LoggingClientContext';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
 
@@ -34,7 +34,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   private currentTask: WorkerTask;
   private lastMessagesQueue: string[] = [];
 
-  constructor(private realTestRunnerName: string, private options: IsolatedRunnerOptions) {
+  constructor(private realTestRunnerName: string, private options: RunnerOptions, private sandboxWorkingDirectory: string, private loggingContext: LoggingClientContext) {
     super();
     this.startWorker();
   }
@@ -164,7 +164,9 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.send({
       kind: 'start',
       runnerName: this.realTestRunnerName,
-      runnerOptions: this.options
+      runnerOptions: this.options,
+      sandboxWorkingDirectory: this.sandboxWorkingDirectory,
+      loggingContext: this.loggingContext
     });
   }
 
