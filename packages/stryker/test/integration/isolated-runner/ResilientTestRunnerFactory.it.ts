@@ -69,7 +69,7 @@ describe('ResilientTestRunnerFactory integration', function () {
   });
 
   it('should pass along the coverage result from the test runner behind', async () => {
-    sut = arrangeSut('coverage-reporting')
+    sut = arrangeSut('coverage-reporting');
     const result = await actRun();
     expect(result.coverage).eq('realCoverage');
   });
