@@ -41,14 +41,14 @@
   "devDependencies": {
     "@types/semver": "~5.5.0",
     "jest": "~22.0.0",
-    "react": "~16.2.0",
+    "react": "~16.4.1",
     "react-dom": "~16.2.0",
-    "react-scripts": "~1.0.17",
-    "react-scripts-ts": "~2.15.1",
+    "react-scripts": "~1.1.4",
+    "react-scripts-ts": "~2.16.0",
     "stryker-api": "~0.17.3"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.13.0 <0.18.0",
+    "stryker-api": "^0.18.0",
     "jest": "^20.0.0"
   },
   "dependencies": {

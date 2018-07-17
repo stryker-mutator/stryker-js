@@ -2,13 +2,12 @@ import { Config } from 'stryker-api/config';
 import * as path from 'path';
 import { getLogger } from 'stryker-api/logging';
 import * as mkdirp from 'mkdirp';
-import { RunResult } from 'stryker-api/test_runner';
+import { RunResult, RunnerOptions } from 'stryker-api/test_runner';
 import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure, normalizeWhiteSpaces } from './utils/objectUtils';
 import TestRunnerDecorator from './isolated-runner/TestRunnerDecorator';
 import ResilientTestRunnerFactory from './isolated-runner/ResilientTestRunnerFactory';
-import IsolatedRunnerOptions from './isolated-runner/IsolatedRunnerOptions';
 import { TempFolder } from './utils/TempFolder';
 import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
@@ -25,11 +24,11 @@ export default class Sandbox {
   private testRunner: TestRunnerDecorator;
   private fileMap: FileMap;
   private files: File[];
-  private workingFolder: string;
+  private workingDirectory: string;
 
   private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private timeOverheadMS: number, private loggingContext: LoggingClientContext) {
-    this.workingFolder = TempFolder.instance().createRandomFolder('sandbox');
-    this.log.debug('Creating a sandbox for files in %s', this.workingFolder);
+    this.workingDirectory = TempFolder.instance().createRandomFolder('sandbox');
+    this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
     this.files = files.slice(); // Create a copy
   }
 
@@ -88,7 +87,7 @@ export default class Sandbox {
       const basePath = process.cwd();
       const nodeModules = await findNodeModules(basePath);
       if (nodeModules) {
-        await symlinkJunction(nodeModules, path.join(this.workingFolder, 'node_modules'))
+        await symlinkJunction(nodeModules, path.join(this.workingDirectory, 'node_modules'))
           .catch((error: NodeJS.ErrnoException) => {
             if (error.code === 'EEXIST') {
               this.log.warn(normalizeWhiteSpaces(`Could not symlink "${nodeModules}" in sandbox directory, 
@@ -106,7 +105,7 @@ export default class Sandbox {
 
   private fillFile(file: File): Promise<void> {
     const relativePath = path.relative(process.cwd(), file.name);
-    const folderName = path.join(this.workingFolder, path.dirname(relativePath));
+    const folderName = path.join(this.workingDirectory, path.dirname(relativePath));
     mkdirp.sync(folderName);
     const targetFile = path.join(folderName, path.basename(relativePath));
     this.fileMap[file.name] = targetFile;
@@ -114,15 +113,13 @@ export default class Sandbox {
   }
 
   private initializeTestRunner(): void | Promise<any> {
-    const settings: IsolatedRunnerOptions = {
+    const settings: RunnerOptions = {
       fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
       strykerOptions: this.options,
-      port: this.options.port + this.index,
-      sandboxWorkingFolder: this.workingFolder,
-      loggingContext: this.loggingContext
+      port: this.options.port + this.index
     };
     this.log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
-    this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings);
+    this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings, this.workingDirectory, this.loggingContext);
     return this.testRunner.init();
   }
 

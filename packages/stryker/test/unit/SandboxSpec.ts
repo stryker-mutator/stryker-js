@@ -10,7 +10,6 @@ import { wrapInClosure, normalizeWhiteSpaces } from '../../src/utils/objectUtils
 import Sandbox from '../../src/Sandbox';
 import { TempFolder } from '../../src/utils/TempFolder';
 import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
-import IsolatedRunnerOptions from '../../src/isolated-runner/IsolatedRunnerOptions';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import { mutant as createMutant, testResult, Mock, createFileAlreadyExistsError } from '../helpers/producers';
 import SourceFile from '../../src/SourceFile';
@@ -20,6 +19,7 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import currentLogMock from '../helpers/logMock';
 import TestRunnerDecorator from '../../src/isolated-runner/TestRunnerDecorator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import { RunnerOptions } from 'stryker-api/test_runner';
 
 const OVERHEAD_TIME_MS = 0;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -35,7 +35,7 @@ describe('Sandbox', () => {
   let testFrameworkStub: any;
   let expectedFileToMutate: File;
   let notMutatedFile: File;
-  let sandboxFolder: string;
+  let sandboxDirectory: string;
   let expectedTargetFileToMutate: string;
   let expectedTestFrameworkHooksFile: string;
   let writeFileStub: sinon.SinonStub;
@@ -51,14 +51,14 @@ describe('Sandbox', () => {
     };
     expectedFileToMutate = new File(path.resolve('file1'), 'original code');
     notMutatedFile = new File(path.resolve('file2'), 'to be mutated');
-    sandboxFolder = path.resolve('random-folder-3');
-    expectedTargetFileToMutate = path.join(sandboxFolder, 'file1');
-    expectedTestFrameworkHooksFile = path.join(sandboxFolder, '___testHooksForStryker.js');
+    sandboxDirectory = path.resolve('random-folder-3');
+    expectedTargetFileToMutate = path.join(sandboxDirectory, 'file1');
+    expectedTestFrameworkHooksFile = path.join(sandboxDirectory, '___testHooksForStryker.js');
     files = [
       expectedFileToMutate,
       notMutatedFile,
     ];
-    sandbox.stub(TempFolder.instance(), 'createRandomFolder').returns(sandboxFolder);
+    sandbox.stub(TempFolder.instance(), 'createRandomFolder').returns(sandboxDirectory);
     writeFileStub = sandbox.stub(fileUtils, 'writeFile');
     symlinkJunctionStub = sandbox.stub(fileUtils, 'symlinkJunction');
     findNodeModulesStub = sandbox.stub(fileUtils, 'findNodeModules');
@@ -76,24 +76,22 @@ describe('Sandbox', () => {
     it('should copy input files when created', async () => {
       await Sandbox.create(options, SANDBOX_INDEX, files, null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
       expect(fileUtils.writeFile).calledWith(expectedTargetFileToMutate, files[0].content);
-      expect(fileUtils.writeFile).calledWith(path.join(sandboxFolder, 'file2'), files[1].content);
+      expect(fileUtils.writeFile).calledWith(path.join(sandboxDirectory, 'file2'), files[1].content);
     });
 
     it('should copy a local file when created', async () => {
       await Sandbox.create(options, SANDBOX_INDEX, [new File('localFile.js', 'foobar')], null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
-      expect(fileUtils.writeFile).calledWith(path.join(sandboxFolder, 'localFile.js'), Buffer.from('foobar'));
+      expect(fileUtils.writeFile).calledWith(path.join(sandboxDirectory, 'localFile.js'), Buffer.from('foobar'));
     });
 
     it('should have created the isolated test runner', async () => {
       await Sandbox.create(options, SANDBOX_INDEX, files, null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
-      const expectedSettings: IsolatedRunnerOptions = {
+      const expectedSettings: RunnerOptions = {
         port: 46,
         strykerOptions: options,
-        sandboxWorkingFolder: sandboxFolder,
-        fileNames: [path.resolve('random-folder-3', 'file1'), path.resolve('random-folder-3', 'file2')],
-        loggingContext: LOGGING_CONTEXT
+        fileNames: [path.resolve('random-folder-3', 'file1'), path.resolve('random-folder-3', 'file2')]
       };
-      expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings);
+      expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings, sandboxDirectory, LOGGING_CONTEXT);
     });
 
     it('should have created a sandbox folder', async () => {
@@ -104,7 +102,7 @@ describe('Sandbox', () => {
     it('should symlink node modules in sandbox directory if exists', async () => {
       await Sandbox.create(options, SANDBOX_INDEX, files, testFrameworkStub, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
       expect(findNodeModulesStub).calledWith(process.cwd());
-      expect(symlinkJunctionStub).calledWith('node_modules', path.join(sandboxFolder, 'node_modules'));
+      expect(symlinkJunctionStub).calledWith('node_modules', path.join(sandboxDirectory, 'node_modules'));
     });
 
     it('should not symlink node modules in sandbox directory if no node_modules exist', async () => {
