@@ -1,17 +1,14 @@
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { RunnerOptions, RunResult, TestRunner, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
-import { EventEmitter } from 'events';
 import * as jest from 'jest';
 import JestTestAdapterFactory from './jestTestAdapters/JestTestAdapterFactory';
 
-export default class JestTestRunner extends EventEmitter implements TestRunner {
+export default class JestTestRunner implements TestRunner {
   private log = getLogger(JestTestRunner.name);
   private jestConfig: jest.Configuration;
   private processEnvRef: NodeJS.ProcessEnv;
 
   public constructor(options: RunnerOptions, processEnvRef?: NodeJS.ProcessEnv) {
-    super();
-
     // Make sure process can be mocked by tests by passing it in the constructor
     this.processEnvRef = processEnvRef || /* istanbul ignore next */ process.env;
 

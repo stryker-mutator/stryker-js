@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
-import currentLogMock from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/logMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { ALL_REPORTER_EVENTS, Mock } from '../../helpers/producers';
 

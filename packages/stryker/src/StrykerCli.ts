@@ -1,13 +1,12 @@
 import * as program from 'commander';
-import { CONFIG_SYNTAX_HELP } from './ConfigReader';
+import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import Stryker from './Stryker';
 import StrykerInitializer from './initializer/StrykerInitializer';
-import { getLogger, setGlobalLogLevel } from 'log4js';
-
+import { getLogger } from 'stryker-api/logging';
+import LogConfigurator from './logging/LogConfigurator';
 
 export default class StrykerCli {
 
-  private readonly log = getLogger(StrykerCli.name);
   private command: string = '';
   private strykerConfig: string | null = null;
 
@@ -23,7 +22,7 @@ export default class StrykerCli {
       .usage('<command> [options] [stryker.conf.js]')
       .description(`Possible commands:
         run: Run mutation testing
-        init: Initalize Stryker for your project
+        init: Initialize Stryker for your project
 
     Optional location to the stryker.conf.js file as last argument. That file should export a function which accepts a "config" object\n${CONFIG_SYNTAX_HELP}`)
       .arguments('<command> [stryker.conf.js]')
@@ -46,11 +45,12 @@ export default class StrykerCli {
       .option('--timeoutMs <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
       .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
-      .option('--logLevel <level>', 'Set the log4js log level. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
+      .option('--logLevel <level>', 'Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
+      .option('--fileLogLevel <level>', 'Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "off"')
       .parse(this.argv);
 
-    setGlobalLogLevel(program['logLevel'] || 'info');
-
+    LogConfigurator.configureMainProcess(program['logLevel']);
+    const log = getLogger(StrykerCli.name);
     // Cleanup commander state
     delete program['options'];
     delete program['rawArgs'];
@@ -68,10 +68,6 @@ export default class StrykerCli {
       program['configFile'] = this.strykerConfig;
     }
 
-    if (program['logLevel']) {
-      setGlobalLogLevel(program['logLevel']);
-    }
-
     const commands: { [cmd: string]: () => Promise<any> } = {
       init: () => new StrykerInitializer().initialize(),
       run: () => new Stryker(program).runMutationTest()
@@ -79,12 +75,12 @@ export default class StrykerCli {
 
     if (Object.keys(commands).indexOf(this.command) >= 0) {
       commands[this.command]().catch(err => {
-        this.log.error(`an error occurred`, err);
+        log.error(`an error occurred`, err);
         process.exitCode = 1;
         process.kill(process.pid, 'SIGINT');
       });
     } else {
-      this.log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
+      log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
     }
   }
 }

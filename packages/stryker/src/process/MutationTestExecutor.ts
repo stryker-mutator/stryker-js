@@ -11,6 +11,7 @@ import TestableMutant from '../TestableMutant';
 import TranspiledMutant from '../TranspiledMutant';
 import StrictReporter from '../reporters/StrictReporter';
 import MutantTranspiler from '../transpiler/MutantTranspiler';
+import LoggingClientContext from '../logging/LoggingClientContext';
 
 export default class MutationTestExecutor {
 
@@ -19,13 +20,14 @@ export default class MutationTestExecutor {
     private inputFiles: ReadonlyArray<File>,
     private testFramework: TestFramework | null,
     private reporter: StrictReporter,
-    private overheadTimeMS: number) {
+    private overheadTimeMS: number,
+    private loggingContext: LoggingClientContext) {
   }
 
   async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
-    const mutantTranspiler = new MutantTranspiler(this.config);
+    const mutantTranspiler = new MutantTranspiler(this.config, this.loggingContext);
     const transpiledFiles = await mutantTranspiler.initialize(this.inputFiles);
-    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles, this.overheadTimeMS);
+    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles, this.overheadTimeMS, this.loggingContext);
     const result = await this.runInsideSandboxes(
       sandboxPool.streamSandboxes(),
       mutantTranspiler.transpileMutants(allMutants));

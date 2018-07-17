@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 import sut = require('../../../src/starters/stryker-karma.conf');
 import { Config, ConfigOptions } from 'karma';
 import { expect } from 'chai';
@@ -17,7 +17,7 @@ describe('stryker-karma.conf.js', () => {
   beforeEach(() => {
     config = new KarmaConfigMock();
     logMock = new LoggerStub();
-    sandbox.stub(log4js, 'getLogger').returns(logMock);
+    sandbox.stub(logging, 'getLogger').returns(logMock);
     requireModuleStub = sandbox.stub(utils, 'requireModule');
   });
 
@@ -27,7 +27,7 @@ describe('stryker-karma.conf.js', () => {
 
   it('should create the correct logger', () => {
     sut(config);
-    expect(log4js.getLogger).calledWith('stryker-karma.conf.js');
+    expect(logging.getLogger).calledWith('stryker-karma.conf.js');
   });
 
   it('should set default options', () => {

@@ -1,9 +1,8 @@
-import * as log4js from 'log4js';
 import { TestRunner, TestResult, RunStatus, RunResult, RunnerOptions, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
+import { getLogger } from 'stryker-api/logging';
 import * as karma from 'karma';
 import StrykerKarmaSetup, { DEPRECATED_KARMA_CONFIG, DEPRECATED_KARMA_CONFIG_FILE, KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
 import TestHooksMiddleware from './TestHooksMiddleware';
-import { setGlobalLogLevel } from 'log4js';
 import StrykerReporter from './StrykerReporter';
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
 import ProjectStarter from './starters/ProjectStarter';
@@ -13,7 +12,7 @@ export interface ConfigOptions extends karma.ConfigOptions {
 }
 
 export default class KarmaTestRunner implements TestRunner {
-  private log = log4js.getLogger(KarmaTestRunner.name);
+  private log = getLogger(KarmaTestRunner.name);
   private currentTestResults: TestResult[];
   private currentErrorMessages: string[];
   private currentCoverageReport?: CoverageCollection | CoveragePerTestResult;
@@ -24,7 +23,6 @@ export default class KarmaTestRunner implements TestRunner {
   constructor(private options: RunnerOptions) {
     const setup = this.loadSetup(options);
     this.starter = new ProjectStarter(setup.project);
-    setGlobalLogLevel(options.strykerOptions.logLevel || 'info');
     this.setGlobals(setup, options.port);
     this.cleanRun();
     this.listenToRunComplete();

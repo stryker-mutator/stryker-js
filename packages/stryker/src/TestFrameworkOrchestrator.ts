@@ -1,6 +1,6 @@
 import { TestFrameworkFactory, TestFramework } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 
 export default class TestFrameworkOrchestrator {
   private readonly log = getLogger(TestFrameworkOrchestrator.name);

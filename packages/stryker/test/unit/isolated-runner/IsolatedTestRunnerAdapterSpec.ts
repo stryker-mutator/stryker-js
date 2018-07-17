@@ -4,12 +4,11 @@ import * as child_process from 'child_process';
 import * as _ from 'lodash';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { RunResult, RunStatus } from 'stryker-api/test_runner';
+import { RunResult, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
 import IsolatedTestRunnerAdapter from '../../../src/isolated-runner/IsolatedTestRunnerAdapter';
-import IsolatedRunnerOptions from '../../../src/isolated-runner/IsolatedRunnerOptions';
 import { WorkerMessage, RunMessage, ResultMessage } from '../../../src/isolated-runner/MessageProtocol';
 import * as objectUtils from '../../../src/utils/objectUtils';
-
+import { LogLevel } from 'stryker-api/core';
 
 describe('IsolatedTestRunnerAdapter', () => {
   let sut: IsolatedTestRunnerAdapter;
@@ -22,13 +21,12 @@ describe('IsolatedTestRunnerAdapter', () => {
     on: sinon.SinonStub;
     pid: number;
   };
-  let runnerOptions: IsolatedRunnerOptions;
+  let runnerOptions: RunnerOptions;
 
   beforeEach(() => {
     runnerOptions = {
       fileNames: [],
       port: 42,
-      sandboxWorkingFolder: 'a working directory',
       strykerOptions: {}
     };
     sinonSandbox = sinon.createSandbox();
@@ -46,7 +44,7 @@ describe('IsolatedTestRunnerAdapter', () => {
   describe('when constructed', () => {
 
     beforeEach(() => {
-      sut = new IsolatedTestRunnerAdapter('realRunner', runnerOptions);
+      sut = new IsolatedTestRunnerAdapter('realRunner', runnerOptions, 'a working directory', { port: 4200, level: LogLevel.Fatal });
     });
 
     it('should spawn a child process', () => {

@@ -2,7 +2,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Config } from 'stryker-api/config';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
-import { setGlobalLogLevel } from 'log4js';
 import { File } from 'stryker-api/core';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
@@ -15,7 +14,6 @@ describe('AllowJS integration', function () {
   let inputFiles: File[];
 
   beforeEach(() => {
-    setGlobalLogLevel('error');
     const configEditor = new TypescriptConfigEditor();
     config = new Config();
     config.set({
@@ -23,10 +21,6 @@ describe('AllowJS integration', function () {
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
-  });
-
-  afterEach(() => {
-    setGlobalLogLevel('trace');
   });
   
   it('should be able to transpile source code', async () => {

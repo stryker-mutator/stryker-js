@@ -1,12 +1,13 @@
 import { AdapterMessage, RunMessage, StartMessage, WorkerMessage, InitDoneMessage } from './MessageProtocol';
 import { TestRunner, RunStatus, TestRunnerFactory, RunResult } from 'stryker-api/test_runner';
 import PluginLoader from '../PluginLoader';
-import { getLogger } from 'log4js';
+import { getLogger, Logger } from 'stryker-api/logging';
 import { deserialize, errorToString } from '../utils/objectUtils';
+import LogConfigurator from '../logging/LogConfigurator';
 
 class IsolatedTestRunnerAdapterWorker {
 
-  private readonly log = getLogger(IsolatedTestRunnerAdapterWorker.name);
+  private log: Logger;
   private underlyingTestRunner: TestRunner;
 
   constructor() {
@@ -28,7 +29,8 @@ class IsolatedTestRunnerAdapterWorker {
           this.init();
           break;
         case 'dispose':
-          this.dispose();
+          const sendDisposeDone = this.sendDisposeDone.bind(this);
+          this.dispose().then(sendDisposeDone, sendDisposeDone);
           break;
         default:
           this.logReceivedMessageWarning(message);
@@ -58,9 +60,11 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   start(message: StartMessage) {
+    LogConfigurator.configureChildProcess(message.loggingContext);
+    this.log = getLogger(IsolatedTestRunnerAdapterWorker.name);
     this.loadPlugins(message.runnerOptions.strykerOptions.plugins || []);
-    this.log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
-    process.chdir(message.runnerOptions.sandboxWorkingFolder);
+    this.log.debug(`Changing current working directory for this process to ${message.sandboxWorkingDirectory}`);
+    process.chdir(message.sandboxWorkingDirectory);
     this.underlyingTestRunner = TestRunnerFactory.instance().create(message.runnerName, message.runnerOptions);
   }
 
@@ -83,10 +87,13 @@ class IsolatedTestRunnerAdapterWorker {
   }
 
   async dispose() {
-    if (this.underlyingTestRunner.dispose) {
-      await this.underlyingTestRunner.dispose();
+    try {
+      if (this.underlyingTestRunner.dispose) {
+        await this.underlyingTestRunner.dispose();
+      }
+    } finally {
+      await LogConfigurator.shutdown();
     }
-    this.sendDisposeDone();
   }
 
   sendDisposeDone() {

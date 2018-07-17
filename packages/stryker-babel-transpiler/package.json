@@ -45,7 +45,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "babel-core": "6.26.3",
-    "log4js": "~1.1.1",
     "minimatch": "~3.0.4"
   },
   "devDependencies": {
@@ -60,7 +59,7 @@
   },
   "peerDependencies": {
     "babel-core": "^6.26.0",
-    "stryker-api": ">=0.15.0 <0.18.0"
+    "stryker-api": "^0.18.0"
   },
   "initStrykerConfig": {
     "babelrcFile": ".babelrc",

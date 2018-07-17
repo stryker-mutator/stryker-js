@@ -2,15 +2,20 @@ import { expect } from 'chai';
 import * as os from 'os';
 import { flatMap, toArray } from 'rxjs/operators';
 import { Config } from 'stryker-api/config';
-import { File } from 'stryker-api/core';
+import { File, LogLevel } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import Sandbox from '../../src/Sandbox';
 import SandboxPool from '../../src/SandboxPool';
 import Task from '../../src/utils/Task';
 import '../helpers/globals';
 import { Mock, config, file, mock, testFramework } from '../helpers/producers';
+import LoggingClientContext from '../../src/logging/LoggingClientContext';
 
 const OVERHEAD_TIME_MS = 42;
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+  port: 4200,
+  level: LogLevel.Fatal
+});
 
 describe('SandboxPool', () => {
   let sut: SandboxPool;
@@ -36,7 +41,7 @@ describe('SandboxPool', () => {
       .onCall(1).resolves(secondSandbox);
 
     expectedInputFiles = [file()];
-    sut = new SandboxPool(options, expectedTestFramework, expectedInputFiles, OVERHEAD_TIME_MS);
+    sut = new SandboxPool(options, expectedTestFramework, expectedInputFiles, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
   });
 
   describe('streamSandboxes', () => {

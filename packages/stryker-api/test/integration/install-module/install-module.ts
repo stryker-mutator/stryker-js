@@ -8,10 +8,20 @@ describe('we have a module using stryker', function () {
 
   const modulePath = path.resolve(__dirname, '../../../testResources/module');
 
-  const execInModule = (command: string) => {
-    console.log(`Exec '${command}' in ${modulePath}`);
-    return exec(command, { cwd: modulePath });
-  };
+  function execInModule (command: string): Promise<[string, string]> {
+    return new Promise((res, rej) => {
+      console.log(`Exec '${command}' in ${modulePath}`);
+      exec(command, { cwd: modulePath }, (error, stdout, stderr) => {
+        if (error) {
+          console.log(stdout);
+          console.error(stderr);
+          rej(error);
+        } else {
+          res([stdout, stderr]);
+        }
+      });
+    });
+  }
 
   describe('after installing Stryker', () => {
 

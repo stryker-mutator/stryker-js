@@ -1,4 +1,4 @@
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 import * as sinon from 'sinon';
 
 let logger = {
@@ -16,7 +16,7 @@ let logger = {
   fatal: sinon.stub()
 };
 
-sinon.stub(log4js, 'getLogger').returns(logger);
+sinon.stub(logging, 'getLogger').returns(logger);
 
 beforeEach(() => {
   logger.trace.reset();

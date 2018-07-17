@@ -1,12 +1,12 @@
 import * as child from 'child_process';
 import * as fs from 'mz/fs';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
-import currentLogMock from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
 describe('StrykerInitializer', () => {

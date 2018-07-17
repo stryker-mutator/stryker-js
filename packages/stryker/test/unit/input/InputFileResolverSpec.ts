@@ -2,13 +2,13 @@ import * as path from 'path';
 import { expect } from 'chai';
 import * as fs from 'mz/fs';
 import * as childProcess from 'mz/child_process';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { SourceFile } from 'stryker-api/report';
 import InputFileResolver from '../../../src/input/InputFileResolver';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import currentLogMock from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/logMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { Mock, mock, createFileNotFoundError } from '../../helpers/producers';
 import { errorToString, normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
@@ -32,8 +32,8 @@ describe('InputFileResolver', () => {
     reporter = mock(BroadcastReporter);
     globStub = sandbox.stub(fileUtils, 'glob');
     readFileStub = sandbox.stub(fs, 'readFile')
-      .withArgs(sinon.match.string).resolves(new Buffer(0)) // fallback
-      .withArgs(sinon.match.string).resolves(new Buffer(0)) // fallback
+      .withArgs(sinon.match.string).resolves(Buffer.from('')) // fallback
+      .withArgs(sinon.match.string).resolves(Buffer.from('')) // fallback
       .withArgs(sinon.match('file1')).resolves(Buffer.from('file 1 content'))
       .withArgs(sinon.match('file2')).resolves(Buffer.from('file 2 content'))
       .withArgs(sinon.match('file3')).resolves(Buffer.from('file 3 content'))

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { StrykerOptions } from 'stryker-api/core';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
 
 export default class MochaOptionsLoader {

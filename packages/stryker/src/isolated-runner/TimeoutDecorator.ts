@@ -2,7 +2,7 @@ import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { isPromise } from '../utils/objectUtils';
 import Task from '../utils/Task';
 import TestRunnerDecorator from './TestRunnerDecorator';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 
 const MAX_WAIT_FOR_DISPOSE = 2500;
 

@@ -5,7 +5,6 @@ import * as path from 'path';
 import BabelConfigReader from './BabelConfigReader';
 import { CONFIG_KEY_FILE } from './helpers/keys';
 import { toJSFileName } from './helpers/helpers';
-import { setGlobalLogLevel } from 'log4js';
 
 const KNOWN_EXTENSIONS = Object.freeze([
   '.es6',
@@ -21,7 +20,6 @@ class BabelTranspiler implements Transpiler {
   private projectRoot: string;
 
   public constructor(options: TranspilerOptions) {
-    setGlobalLogLevel(options.config.logLevel);
     this.babelOptions = new BabelConfigReader().readConfig(options.config);
     this.projectRoot = this.determineProjectRoot(options);
     if (options.produceSourceMaps) {

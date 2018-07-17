@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
-import logger from '../helpers/log4jsMock';
+import logger from '../helpers/loggingMock';
 import EventPlayer from '../helpers/EventPlayer';
 import fileUrl = require('file-url');
 import HtmlReporter from '../../src/HtmlReporter';

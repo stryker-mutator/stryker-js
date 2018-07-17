@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { expect } from 'chai';
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 import * as karma from 'karma';
 import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
@@ -28,7 +28,7 @@ describe('KarmaTestRunner', () => {
     projectStarterMock = sandbox.createStubInstance(ProjectStarter);
     logMock = new LoggerStub();
     sandbox.stub(projectStarterModule, 'default').returns(projectStarterMock);
-    sandbox.stub(log4js, 'getLogger').returns(logMock);
+    sandbox.stub(logging, 'getLogger').returns(logMock);
     sandbox.stub(StrykerReporter, 'instance').value(reporterMock);
     setGlobalsStub = sandbox.stub(strykerKarmaConf, 'setGlobals');
     karmaRunStub = sandbox.stub(karma.runner, 'run');

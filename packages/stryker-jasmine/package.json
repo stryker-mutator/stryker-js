@@ -31,10 +31,11 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-jasmine#readme",
   "peerDependencies": {
     "jasmine-core": ">=2",
-    "stryker-api": ">=0.15.0 <0.18.0"
+    "stryker-api": "^0.18.0"
   },
   "devDependencies": {
     "stryker-api": "~0.17.3"
   },
-  "contributors": []
+  "contributors": [],
+  "dependencies": {}
 }

@@ -1,12 +1,13 @@
-import { setGlobalLogLevel, getLogger } from 'log4js';
+import { getLogger, Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { serialize, deserialize, errorToString } from '../utils/objectUtils';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
 import PluginLoader from '../PluginLoader';
+import LogConfigurator from '../logging/LogConfigurator';
 
 export default class ChildProcessProxyWorker {
 
-  private log = getLogger(ChildProcessProxyWorker.name);
+  private log: Logger;
 
   realSubject: any;
 
@@ -26,7 +27,8 @@ export default class ChildProcessProxyWorker {
       const message = deserialize<WorkerMessage>(serializedMessage, [File]);
       switch (message.kind) {
         case WorkerMessageKind.Init:
-          setGlobalLogLevel(message.logLevel);
+          LogConfigurator.configureChildProcess(message.loggingContext);
+          this.log = getLogger(ChildProcessProxyWorker.name);
           new PluginLoader(message.plugins).load();
           const RealSubjectClass = require(message.requirePath).default;
           this.realSubject = new RealSubjectClass(...message.constructorArgs);
@@ -49,6 +51,14 @@ export default class ChildProcessProxyWorker {
               });
             });
           this.removeAnyAdditionalMessageListeners(handler);
+          break;
+        case WorkerMessageKind.Dispose:
+          const sendCompleted = () => {
+            this.send({ kind: ParentMessageKind.DisposeCompleted });
+          };
+          LogConfigurator.shutdown()
+            .then(sendCompleted)
+            .catch(sendCompleted);
           break;
       }
     };

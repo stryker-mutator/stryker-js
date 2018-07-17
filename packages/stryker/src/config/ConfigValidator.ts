@@ -1,7 +1,8 @@
 import { TestFramework } from 'stryker-api/test_framework';
-import { MutatorDescriptor, MutationScoreThresholds } from 'stryker-api/core';
+import { MutatorDescriptor, MutationScoreThresholds, LogLevel } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
+import StrykerError from '../utils/StrykerError';
 
 export default class ConfigValidator {
 
@@ -15,7 +16,8 @@ export default class ConfigValidator {
     this.validateTestFramework();
     this.validateThresholds();
     this.validateMutator();
-    this.validateLogLevel();
+    this.validateLogLevel('logLevel');
+    this.validateLogLevel('fileLogLevel');
     this.validateTimeout();
     this.validateIsNumber('port', this.strykerConfig.port);
     this.validateIsNumber('maxConcurrentTestRunners', this.strykerConfig.maxConcurrentTestRunners);
@@ -68,9 +70,9 @@ export default class ConfigValidator {
     }
   }
 
-  private validateLogLevel() {
-    const logLevel = this.strykerConfig.logLevel;
-    const VALID_LOG_LEVEL_VALUES = ['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'all', 'off'];
+  private validateLogLevel(logProperty: 'logLevel' | 'fileLogLevel') {
+    const logLevel = this.strykerConfig[logProperty];
+    const VALID_LOG_LEVEL_VALUES = [LogLevel.Fatal, LogLevel.Error, LogLevel.Warning, LogLevel.Information, LogLevel.Debug, LogLevel.Trace, LogLevel.Off];
     if (VALID_LOG_LEVEL_VALUES.indexOf(logLevel) < 0) {
       this.invalidate(`Value "${logLevel}" is invalid for \`logLevel\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`);
     }
@@ -101,7 +103,7 @@ export default class ConfigValidator {
 
   private crashIfNeeded() {
     if (!this.isValid) {
-      process.exit(1);
+      throw new StrykerError('Stryker could not recover from this configuration error, see fatal log message(s) above.');
     }
   }
 

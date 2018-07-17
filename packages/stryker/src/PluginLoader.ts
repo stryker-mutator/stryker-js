@@ -1,6 +1,6 @@
 import * as fs from 'mz/fs';
 import * as path from 'path';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import * as _ from 'lodash';
 import { importModule } from './utils/fileUtils';
 

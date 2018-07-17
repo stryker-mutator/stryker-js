@@ -1,5 +1,5 @@
 import * as sinon from 'sinon';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { RunnerOptions } from 'stryker-api/test_runner';
 
 export type Mock<T> = {
@@ -13,8 +13,6 @@ export function mock<T>(constructorFn: { new(...args: any[]): T; }): Mock<T> {
 
 export function logger(): Mock<Logger> {
   return {
-    setLevel: sinon.stub(),
-    isLevelEnabled: sinon.stub(),
     trace: sinon.stub(),
     isTraceEnabled: sinon.stub(),
     debug: sinon.stub(),

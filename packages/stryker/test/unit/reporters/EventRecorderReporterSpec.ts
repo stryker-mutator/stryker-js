@@ -4,7 +4,7 @@ import * as fs from 'mz/fs';
 import { Reporter } from 'stryker-api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import currentLogMock from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/logMock';
 import StrictReporter from '../../../src/reporters/StrictReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
 

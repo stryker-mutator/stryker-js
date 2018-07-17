@@ -9,7 +9,7 @@
     "prebuild": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" .nyc_output reports coverage",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\"",
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
     "stryker": "node bin/stryker run"
   },
   "repository": {
@@ -57,11 +57,12 @@
     "commander": "~2.16.0",
     "escodegen": "~1.8.0",
     "esprima": "~2.7.0",
+    "get-port": "~3.2.0",
     "glob": "~7.1.2",
     "inquirer": "~6.0.0",
     "istanbul-lib-instrument": "~1.10.1",
     "lodash": "~4.17.4",
-    "log4js": "~1.1.1",
+    "log4js": "~3.0.0",
     "mkdirp": "~0.5.1",
     "mz": "~2.7.0",
     "prettier": "~1.13.7",
@@ -75,7 +76,8 @@
     "typed-rest-client": "~1.0.7"
   },
   "devDependencies": {
-    "@types/inquirer": "0.0.42",
+    "@types/get-port": "~3.2.0",
+    "@types/inquirer": "~0.0.42",
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/node": "^6.0.114",
     "@types/prettier": "~1.13.1",
@@ -83,6 +85,6 @@
     "stryker-api": "~0.17.3"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.15.0 <0.18.0"
+    "stryker-api": "^0.18.0"
   }
 }

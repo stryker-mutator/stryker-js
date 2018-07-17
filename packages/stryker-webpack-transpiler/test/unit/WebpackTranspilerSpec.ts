@@ -6,7 +6,6 @@ import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { expect } from 'chai';
 import { Configuration } from 'webpack';
-import * as log4js from 'log4js';
 
 describe('WebpackTranspiler', () => {
   let webpackTranspiler: WebpackTranspiler;
@@ -27,7 +26,6 @@ describe('WebpackTranspiler', () => {
     configLoaderStub = createMockInstance(ConfigLoader);
     configLoaderStub.load.returns(webpackConfig); 
 
-    sandbox.stub(log4js, 'setGlobalLogLevel');
     sandbox.stub(configLoaderModule, 'default').returns(configLoaderStub);
     sandbox.stub(webpackCompilerModule, 'default').returns(webpackCompilerStub);
 
@@ -46,12 +44,6 @@ describe('WebpackTranspiler', () => {
     expect(webpackCompilerModule.default).calledWithNew;
     expect(configLoaderStub.load).calledOnce;
     expect(configLoaderStub.load).calledWith(createStrykerWebpackConfig());
-  });
-
-  it('should set global log level when compiler is called', () => {
-    config.logLevel = 'foobar level';
-    new WebpackTranspiler({ config, produceSourceMaps: false });
-    expect(log4js.setGlobalLogLevel).calledWith('foobar level');
   });
 
   it('should throw an error if `produceSourceMaps` is `true`', () => {

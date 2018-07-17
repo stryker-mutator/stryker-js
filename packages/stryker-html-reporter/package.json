@@ -38,14 +38,13 @@
   "dependencies": {
     "file-url": "~2.0.0",
     "lodash": "~4.17.10",
-    "log4js": "~1.1.1",
     "mkdirp": "~0.5.1",
     "mz": "~2.7.0",
     "rimraf": "~2.6.1",
     "typed-html": "~0.6.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.15.0 <0.18.0"
+    "stryker-api": "^0.18.0"
   },
   "devDependencies": {
     "@types/file-url": "~2.0.0",

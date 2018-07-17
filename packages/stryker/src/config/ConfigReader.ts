@@ -1,9 +1,10 @@
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import * as fs from 'mz/fs';
-import * as log4js from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import * as path from 'path';
 import * as _ from 'lodash';
+import StrykerError from '../utils/StrykerError';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +
@@ -15,7 +16,7 @@ const DEFAULT_CONFIG_FILE = 'stryker.conf.js';
 
 export default class ConfigReader {
 
-  private readonly log = log4js.getLogger(ConfigReader.name);
+  private readonly log = getLogger(ConfigReader.name);
 
   constructor(private cliOptions: StrykerOptions) { }
 
@@ -25,8 +26,7 @@ export default class ConfigReader {
     try {
       configModule(config);
     } catch (e) {
-      this.log.fatal('Error in config file!\n', e);
-      process.exit(1);
+      throw new StrykerError('Error in config file!', e);
     }
 
     // merge the config from config file and cliOptions (precedence)
@@ -51,26 +51,24 @@ export default class ConfigReader {
 
     if (this.cliOptions.configFile) {
       this.log.debug(`Loading config ${this.cliOptions.configFile}`);
+      const configFileName = path.resolve(this.cliOptions.configFile);
       try {
-        configModule = require(`${process.cwd()}/${this.cliOptions.configFile}`);
+        configModule = require(configFileName);
       } catch (e) {
         if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(this.cliOptions.configFile) !== -1) {
-          this.log.fatal(`File ${process.cwd()}/${this.cliOptions.configFile} does not exist!`);
-          this.log.fatal(e);
+          throw new StrykerError(`File ${configFileName} does not exist!`, e);
         } else {
-          this.log.fatal('Invalid config file!\n  ' + e.stack);
+          this.log.info('Stryker can help you setup a `stryker.conf` file for your project.');
+          this.log.info('Please execute `stryker init` in your project\'s root directory.');
+          throw new StrykerError('Invalid config file', e);
         }
-        this.log.info('Stryker can help you setup a `stryker.conf` file for your project.');
-        this.log.info('Please execute `stryker init` in your project\'s root directory.');
-        process.exit(1);
       }
       if (!_.isFunction(configModule)) {
         this.log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
-        process.exit(1);
+        throw new StrykerError('Config file must export a function!');
       }
     }
 
     return configModule;
   }
-
 }

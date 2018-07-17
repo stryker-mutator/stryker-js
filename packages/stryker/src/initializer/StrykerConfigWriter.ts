@@ -1,6 +1,6 @@
 import * as fs from 'mz/fs';
 import * as _ from 'lodash';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
 import PromptOption from './PromptOption';
 import { format } from 'prettier';

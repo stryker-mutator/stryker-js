@@ -1,7 +1,7 @@
 import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
 import * as sinon from 'sinon';
 import { expect, assert } from 'chai';
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 import * as jest from 'jest';
 
 describe('JestPromiseTestAdapter', () => {
@@ -24,7 +24,7 @@ describe('JestPromiseTestAdapter', () => {
     }));
 
     traceLoggerStub = sinon.stub();
-    sandbox.stub(log4js, 'getLogger').returns({ trace: traceLoggerStub });
+    sandbox.stub(logging, 'getLogger').returns({ trace: traceLoggerStub });
 
     jestPromiseTestAdapter = new JestPromiseTestAdapter();
   });

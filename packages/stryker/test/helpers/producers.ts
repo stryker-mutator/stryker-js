@@ -1,6 +1,7 @@
 import { TestResult, TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
+import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
@@ -8,7 +9,6 @@ import { MutationScoreThresholds, File, Location } from 'stryker-api/core';
 import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import TranspiledMutant from '../../src/TranspiledMutant';
-import { Logger } from 'log4js';
 import { FileCoverageData } from 'istanbul-lib-coverage';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
@@ -80,8 +80,6 @@ export const mutant = factoryMethod<Mutant>(() => ({
 
 export const logger = (): Mock<Logger> => {
   return {
-    setLevel: sinon.stub(),
-    isLevelEnabled: sinon.stub(),
     isTraceEnabled: sinon.stub(),
     isDebugEnabled: sinon.stub(),
     isInfoEnabled: sinon.stub(),

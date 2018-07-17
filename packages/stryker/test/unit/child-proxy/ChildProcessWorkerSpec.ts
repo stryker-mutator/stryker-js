@@ -2,17 +2,21 @@ import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyW
 import { expect } from 'chai';
 import { serialize } from '../../../src/utils/objectUtils';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, WorkMessage, ParentMessageKind } from '../../../src/child-proxy/messageProtocol';
-import * as log4js from 'log4js';
 import PluginLoader, * as pluginLoader from '../../../src/PluginLoader';
 import { Mock, mock } from '../../helpers/producers';
 import HelloClass from './HelloClass';
+import LogConfigurator from '../../../src/logging/LogConfigurator';
+import { LogLevel } from 'stryker-api/core';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 
 describe('ChildProcessProxyWorker', () => {
 
   let processOnStub: sinon.SinonStub;
   let processSendStub: sinon.SinonStub;
   let processListenersStub: sinon.SinonStub;
-  let setGlobalLogLevelStub: sinon.SinonStub;
+  let configureChildProcessStub: sinon.SinonStub;
   let processRemoveListenerStub: sinon.SinonStub;
   let pluginLoaderMock: Mock<PluginLoader>;
   let originalProcessSend: undefined | NodeJS.MessageListener;
@@ -28,7 +32,7 @@ describe('ChildProcessProxyWorker', () => {
     // process.send is normally undefined
     originalProcessSend = process.send;
     process.send = processSendStub;
-    setGlobalLogLevelStub = sandbox.stub(log4js, 'setGlobalLogLevel');
+    configureChildProcessStub = sandbox.stub(LogConfigurator, 'configureChildProcess');
     pluginLoaderMock = mock(PluginLoader);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
   });
@@ -51,7 +55,7 @@ describe('ChildProcessProxyWorker', () => {
       sut = new ChildProcessProxyWorker();
       initMessage = {
         kind: WorkerMessageKind.Init,
-        logLevel: 'FooLevel',
+        loggingContext: LOGGING_CONTEXT,
         constructorArgs: ['FooBarName'],
         plugins: ['fooPlugin', 'barPlugin'],
         requirePath: require.resolve('./HelloClass')
@@ -87,7 +91,7 @@ describe('ChildProcessProxyWorker', () => {
 
     it('should set global log level', () => {
       processOnStub.callArgWith(1, serialize(initMessage));
-      expect(setGlobalLogLevelStub).calledWith('FooLevel');
+      expect(configureChildProcessStub).calledWith(LOGGING_CONTEXT);
     });
 
     it('should load plugins', () => {

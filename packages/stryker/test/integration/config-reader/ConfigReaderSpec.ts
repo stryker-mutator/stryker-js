@@ -1,22 +1,24 @@
+import * as path from 'path';
 import { expect } from 'chai';
-import * as log4js from 'log4js';
-import ConfigReader from '../../../src/ConfigReader';
+import * as logging from 'stryker-api/logging';
+import ConfigReader from '../../../src/config/ConfigReader';
 import { Config } from 'stryker-api/config';
-import currentLogMock from '../../helpers/log4jsMock';
+import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
-describe('ConfigReader', () => {
+describe('ConfigReader', function() {
+  this.timeout(15000);
+  
   let sut: ConfigReader;
-  let log: Mock<log4js.Logger>;
+  let log: Mock<logging.Logger>;
 
   beforeEach(() => {
     log = currentLogMock();
-    sandbox.stub(process, 'exit');
   });
 
   it('should create a logger with the correct name', () => {
     sut = new ConfigReader({});
-    expect(log4js.getLogger).to.have.been.calledWith('ConfigReader');
+    expect(logging.getLogger).to.have.been.calledWith('ConfigReader');
   });
 
   describe('readConfig()', () => {
@@ -87,27 +89,22 @@ describe('ConfigReader', () => {
 
     describe('with non-existing config file', () => {
       beforeEach(() => {
-        sut = new ConfigReader({ configFile: '/did/you/know/that/this/file/does/not/exists/questionmark' });
-        result = sut.readConfig();
+        sut = new ConfigReader({ configFile: 'no-file.js' });
       });
 
-      it('should report a fatal error', () => {
-        expect(log.fatal).to.have.been.calledWith(`File ${process.cwd()}//did/you/know/that/this/file/does/not/exists/questionmark does not exist!`);
-      });
-
-      it('should exit with 1', () => {
-        expect(process.exit).to.have.been.calledWith(1);
+      it('should throw an error', () => {
+        expect(() => sut.readConfig()).throws(`File ${path.resolve('no-file.js')} does not exist!`);
       });
     });
 
-    describe('with an existing file, but not a module', () => {
+    describe('with an existing file, but not a function', () => {
 
       beforeEach(() => {
         sut = new ConfigReader({ configFile: 'testResources/config-reader/invalid.conf.js' });
-        result = sut.readConfig();
       });
 
       it('should report a fatal error', () => {
+        expect(() => sut.readConfig()).throws();
         expect(log.fatal).to.have.been.calledWith(`Config file must export a function!
   module.exports = function(config) {
     config.set({
@@ -116,8 +113,8 @@ describe('ConfigReader', () => {
   };`);
       });
 
-      it('should exit with 1', () => {
-        expect(process.exit).to.have.been.calledWith(1);
+      it('should throw an error', () => {
+        expect(() => sut.readConfig()).throws('Config file must export a function');
       });
     });
 
@@ -125,11 +122,10 @@ describe('ConfigReader', () => {
 
       beforeEach(() => {
         sut = new ConfigReader({ configFile: 'testResources/config-reader/syntax-error.conf.js' });
-        result = sut.readConfig();
       });
 
-      it('should report a fatal error', () => {
-        expect(log.fatal).to.have.been.calledWithMatch(/Invalid config file!.*/);
+      it('should throw an error', () => {
+        expect(() => sut.readConfig()).throws('Invalid config file. Inner error: SyntaxError: Unexpected identifier');
       });
     });
   });

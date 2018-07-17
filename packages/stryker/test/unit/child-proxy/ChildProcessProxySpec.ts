@@ -4,7 +4,13 @@ import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import { autoStart, InitMessage, WorkerMessageKind, ParentMessage, WorkerMessage, ParentMessageKind } from '../../../src/child-proxy/messageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
 import HelloClass from './HelloClass';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { LogLevel } from 'stryker-api/core';
 
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+  port: 4200,
+  level: LogLevel.Fatal
+});
 
 describe('ChildProcessProxy', () => {
 
@@ -27,28 +33,28 @@ describe('ChildProcessProxy', () => {
   describe('create', () => {
 
     it('should create child process', () => {
-      ChildProcessProxy.create('foobar', 'FATAL', ['examplePlugin', 'secondExamplePlugin'], HelloClass, 'something');
+      ChildProcessProxy.create('foobar', LOGGING_CONTEXT, ['examplePlugin', 'secondExamplePlugin'], HelloClass, 'something');
       expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/ChildProcessProxyWorker'), [autoStart], { silent: false, execArgv: [] });
     });
 
     it('should send init message to child process', () => {
       const expectedMessage: InitMessage = {
         kind: WorkerMessageKind.Init,
-        logLevel: 'FATAL ;)',
+        loggingContext: LOGGING_CONTEXT,
         plugins: ['examplePlugin', 'secondExamplePlugin'],
         requirePath: 'foobar',
         constructorArgs: ['something']
       };
 
       // Act
-      ChildProcessProxy.create('foobar', 'FATAL ;)', ['examplePlugin', 'secondExamplePlugin'], HelloClass, 'something');
+      ChildProcessProxy.create('foobar', LOGGING_CONTEXT, ['examplePlugin', 'secondExamplePlugin'], HelloClass, 'something');
 
       // Assert
       expect(childProcessMock.send).calledWith(serialize(expectedMessage));
     });
 
     it('should listen to worker process', () => {
-      ChildProcessProxy.create('foobar', '', [], HelloClass, '');
+      ChildProcessProxy.create('foobar', LOGGING_CONTEXT, [], HelloClass, '');
       expect(childProcessMock.on).calledWith('message');
     });
   });
@@ -56,7 +62,7 @@ describe('ChildProcessProxy', () => {
   describe('when calling methods', () => {
 
     beforeEach(() => {
-      sut = ChildProcessProxy.create('', '', [], HelloClass, '');
+      sut = ChildProcessProxy.create('', LOGGING_CONTEXT, [], HelloClass, '');
       const initDoneResult: ParentMessage = { kind: ParentMessageKind.Initialized };
       const msg = serialize(initDoneResult);
       childProcessMock.on.callArgWith(1, [msg]);

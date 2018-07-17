@@ -1,6 +1,7 @@
 node_modules
 lerna-debug.log
 npm-debug.log
+stryker.log
 
 coverage
 reports

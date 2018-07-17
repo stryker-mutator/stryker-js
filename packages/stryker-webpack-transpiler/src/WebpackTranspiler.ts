@@ -2,7 +2,6 @@ import { TranspilerOptions, Transpiler } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
 import WebpackCompiler from './compiler/WebpackCompiler';
 import ConfigLoader from './compiler/ConfigLoader';
-import { setGlobalLogLevel } from 'log4js';
 
 const DEFAULT_STRYKER_WEBPACK_CONFIG = Object.freeze({ configFile: undefined, silent: true, context: process.cwd() });
 
@@ -11,7 +10,6 @@ export default class WebpackTranspiler implements Transpiler {
   private webpackCompiler: WebpackCompiler;
 
   public constructor(options: TranspilerOptions) {
-    setGlobalLogLevel(options.config.logLevel);
     if (options.produceSourceMaps) {
       throw new Error(`Invalid \`coverageAnalysis\` "${options.config.coverageAnalysis}" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off".`);
     }

@@ -1,4 +1,4 @@
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { SinonStub } from 'sinon';
 
 export default class LogMock implements Mock<Logger> {

@@ -36,7 +36,6 @@ describe('KarmaTestRunner', function () {
       testRunnerOptions = {
         port: 9877,
         strykerOptions: {
-          logLevel: 'trace',
           karma: {
             config: {
               files: [
@@ -88,10 +87,9 @@ describe('KarmaTestRunner', function () {
 
   describe('when some tests fail', () => {
     before(() => {
-      const testRunnerOptions = {
+      const testRunnerOptions: RunnerOptions = {
         port: 9878,
         strykerOptions: {
-          logLevel: 'trace',
           karma: {
             config: {
               files: [
@@ -101,7 +99,7 @@ describe('KarmaTestRunner', function () {
               ]
             }
           }
-        },
+        },        
         fileNames: []
       };
       sut = new KarmaTestRunner(testRunnerOptions);

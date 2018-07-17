@@ -1,12 +1,13 @@
 import { EventEmitter } from 'events';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import * as _ from 'lodash';
 import { fork, ChildProcess } from 'child_process';
-import { TestRunner, RunResult, RunOptions } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunOptions, RunnerOptions } from 'stryker-api/test_runner';
 import { serialize, kill } from '../utils/objectUtils';
 import { AdapterMessage, WorkerMessage } from './MessageProtocol';
-import IsolatedRunnerOptions from './IsolatedRunnerOptions';
 import Task from '../utils/Task';
+import StrykerError from '../utils/StrykerError';
+import LoggingClientContext from '../logging/LoggingClientContext';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
 
@@ -33,7 +34,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
   private currentTask: WorkerTask;
   private lastMessagesQueue: string[] = [];
 
-  constructor(private realTestRunnerName: string, private options: IsolatedRunnerOptions) {
+  constructor(private realTestRunnerName: string, private options: RunnerOptions, private sandboxWorkingDirectory: string, private loggingContext: LoggingClientContext) {
     super();
     this.startWorker();
   }
@@ -109,7 +110,7 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
       if (code !== 0 && code !== null) {
         this.log.error(`Child process exited with non-zero exit code ${code}. Last 10 message from the child process were: \r\n${this.lastMessagesQueue.map(msg => `\t${msg}`).join('\r\n')}`);
         if (this.currentTask) {
-          this.currentTask.reject(`Test runner child process exited with non-zero exit code ${code}`);
+          this.currentTask.reject(new StrykerError(`Test runner child process exited with non-zero exit code ${code}`));
         }
       }
     });
@@ -163,7 +164,9 @@ export default class TestRunnerChildProcessAdapter extends EventEmitter implemen
     this.send({
       kind: 'start',
       runnerName: this.realTestRunnerName,
-      runnerOptions: this.options
+      runnerOptions: this.options,
+      sandboxWorkingDirectory: this.sandboxWorkingDirectory,
+      loggingContext: this.loggingContext
     });
   }
 

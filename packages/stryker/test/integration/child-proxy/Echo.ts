@@ -1,8 +1,12 @@
 import { File } from 'stryker-api/core';
+import { getLogger } from 'stryker-api/logging';
 
 export default class Echo {
 
+  private logger = getLogger(Echo.name);
+
   constructor(private name: string) {
+
   }
 
   say(value: string) {
@@ -23,6 +27,14 @@ export default class Echo {
 
   readFile() {
     return new File('foobar.txt', 'hello foobar');
+  }
+
+  debug(message: string) {
+    this.logger.debug(message);
+  }
+
+  trace(message: string) {
+    this.logger.trace(message);
   }
 
   reject(error: string) {
