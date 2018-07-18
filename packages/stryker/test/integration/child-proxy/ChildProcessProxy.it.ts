@@ -7,7 +7,7 @@ import * as getPort from 'get-port';
 import Task from '../../../src/utils/Task';
 import LoggingServer from '../../helpers/LoggingServer';
 
-describe('ChildProcessProxy', function () {
+describe.only('ChildProcessProxy', function () {
 
   this.timeout(15000);
   let sut: ChildProcessProxy<Echo>;
@@ -47,6 +47,10 @@ describe('ChildProcessProxy', function () {
 
   it('should be able to receive a promise rejection', () => {
     return expect(sut.proxy.reject('Foobar error')).rejectedWith('Foobar error');
+  });
+  
+  it.only('should be able to receive public properties as promised', () => { 
+    return expect(sut.proxy.name()).eventually.eq('Echo');
   });
 
   it('should be able to log on debug when LogLevel.Debug is allowed', async () => {

@@ -9,8 +9,11 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 type MethodPromised = { (...args: any[]): Promise<any> };
 
 export type Promisified<T> = {
-  [K in keyof T]: T[K] extends MethodPromised ? T[K] : (...args: any[]) => Promise<any>;
+  [K in keyof T]: T[K] extends MethodPromised ? T[K] : T[K] extends Function ? MethodPromised : () => Promise<T[K]>;
 };
+
+
+
 
 // Missing features:
 // 1. CWD    this.log.debug(`Changing current working directory for this process to ${message.runnerOptions.sandboxWorkingFolder}`);
@@ -60,24 +63,24 @@ export default class ChildProcessProxy<T> {
 
   private initProxy() {
     Object.keys(this.constructorFunction.prototype).forEach(methodName => {
-      this.proxyMethod(methodName as keyof T);
+      this.proxyMethod(methodName);
     });
   }
 
-  private proxyMethod(methodName: any) {
-    this.proxy[(methodName as keyof T)] = (...args: any[]) => {
+  private proxyMethod(methodName: string) {
+    this.proxy[methodName as keyof T] = ((...args: any[]) => {
       const workerTask = new Task<any>();
       this.initTask.promise.then(() => {
         const correlationId = this.workerTasks.push(workerTask) - 1;
         this.send({
-          kind: WorkerMessageKind.Work,
+          kind: WorkerMessageKind.Call,
           correlationId,
           methodName,
           args
         });
       });
       return workerTask.promise;
-    };
+    }) as any;
   }
 
   private listenToWorkerMessages() {

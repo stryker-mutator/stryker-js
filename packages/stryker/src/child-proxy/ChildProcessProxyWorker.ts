@@ -1,7 +1,7 @@
 import { getLogger, Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { serialize, deserialize, errorToString } from '../utils/objectUtils';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
+import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind, CallMessage } from './messageProtocol';
 import PluginLoader from '../PluginLoader';
 import LogConfigurator from '../logging/LogConfigurator';
 
@@ -35,8 +35,8 @@ export default class ChildProcessProxyWorker {
           this.send({ kind: ParentMessageKind.Initialized });
           this.removeAnyAdditionalMessageListeners(handler);
           break;
-        case WorkerMessageKind.Work:
-          new Promise(resolve => resolve(this.realSubject[message.methodName](...message.args)))
+        case WorkerMessageKind.Call:
+          new Promise(resolve => resolve(this.doCall(message)))
             .then(result => {
               this.send({
                 kind: ParentMessageKind.Result,
@@ -63,6 +63,11 @@ export default class ChildProcessProxyWorker {
       }
     };
     process.on('message', handler);
+  }
+
+  private doCall(message: CallMessage): {} | PromiseLike<{}> | undefined {
+    if( this.realSubject[message.methodName])
+    return this.realSubject[message.methodName](...message.args);
   }
 
   /**

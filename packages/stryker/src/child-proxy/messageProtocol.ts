@@ -2,7 +2,7 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 
 export enum WorkerMessageKind {
   'Init',
-  'Work',
+  'Call',
   'Dispose'
 }
 
@@ -13,7 +13,7 @@ export enum ParentMessageKind {
   'DisposeCompleted'
 }
 
-export type WorkerMessage = InitMessage | WorkMessage | { kind: WorkerMessageKind.Dispose };
+export type WorkerMessage = InitMessage | CallMessage | { kind: WorkerMessageKind.Dispose };
 export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized | ParentMessageKind.DisposeCompleted } | RejectionResult;
 
 // Make this an unlikely command line argument 
@@ -40,9 +40,9 @@ export interface RejectionResult {
   error: string;
 }
 
-export interface WorkMessage {
+export interface CallMessage {
   correlationId: number;
-  kind: WorkerMessageKind.Work;
+  kind: WorkerMessageKind.Call;
   args: any[];
   methodName: string;
 }

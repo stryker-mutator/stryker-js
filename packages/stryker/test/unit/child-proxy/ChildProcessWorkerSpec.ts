@@ -1,7 +1,7 @@
 import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyWorker';
 import { expect } from 'chai';
 import { serialize } from '../../../src/utils/objectUtils';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, WorkMessage, ParentMessageKind } from '../../../src/child-proxy/messageProtocol';
+import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, CallMessage, ParentMessageKind } from '../../../src/child-proxy/messageProtocol';
 import PluginLoader, * as pluginLoader from '../../../src/PluginLoader';
 import { Mock, mock } from '../../helpers/producers';
 import HelloClass from './HelloClass';
@@ -103,7 +103,7 @@ describe('ChildProcessProxyWorker', () => {
 
     describe('on worker message', () => {
 
-      async function actAndAssert(workerMessage: WorkMessage, expectedResult: WorkResult) {
+      async function actAndAssert(workerMessage: CallMessage, expectedResult: WorkResult) {
         // Act
         processOnStub.callArgWith(1, serialize(initMessage));
         processOnStub.callArgWith(1, serialize(workerMessage));
@@ -112,7 +112,7 @@ describe('ChildProcessProxyWorker', () => {
         expect(processSendStub).calledWith(serialize(expectedResult));
       }
 
-      async function actAndAssertRejection(workerMessage: WorkMessage, expectedError: string) {
+      async function actAndAssertRejection(workerMessage: CallMessage, expectedError: string) {
         // Act
         processOnStub.callArgWith(1, serialize(initMessage));
         processOnStub.callArgWith(1, serialize(workerMessage));
@@ -126,7 +126,7 @@ describe('ChildProcessProxyWorker', () => {
       it('should send the result', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Work,
+          kind: WorkerMessageKind.Call,
           correlationId: 32,
           args: [],
           methodName: 'sayHello'
@@ -143,7 +143,7 @@ describe('ChildProcessProxyWorker', () => {
       it('should send a rejection', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Work,
+          kind: WorkerMessageKind.Call,
           correlationId: 32,
           args: [],
           methodName: 'reject'
@@ -154,7 +154,7 @@ describe('ChildProcessProxyWorker', () => {
       it('should send a thrown synchronous error as rejection', async () => { 
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Work,
+          kind: WorkerMessageKind.Call,
           correlationId: 32,
           args: ['foo bar'],
           methodName: 'throw'
@@ -165,7 +165,7 @@ describe('ChildProcessProxyWorker', () => {
       it('should use correct arguments', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Work,
+          kind: WorkerMessageKind.Call,
           correlationId: 32,
           args: ['foo', 'bar', 'chair'],
           methodName: 'say'
@@ -182,7 +182,7 @@ describe('ChildProcessProxyWorker', () => {
       it('should work with promises from real class', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Work,
+          kind: WorkerMessageKind.Call,
           correlationId: 32,
           args: [],
           methodName: 'sayDelayed'

@@ -5,7 +5,7 @@ export default class Echo {
 
   private logger = getLogger(Echo.name);
 
-  constructor(private name: string) {
+  constructor(public name: string) {
 
   }
 

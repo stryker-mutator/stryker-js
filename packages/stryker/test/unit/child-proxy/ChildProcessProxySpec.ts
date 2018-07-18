@@ -76,7 +76,7 @@ describe('ChildProcessProxy', () => {
         result: 'ack'
       };
       const expectedWorkerMessage: WorkerMessage = {
-        kind: WorkerMessageKind.Work,
+        kind: WorkerMessageKind.Call,
         correlationId: 0,
         methodName: 'sayHello',
         args: ['echo']
