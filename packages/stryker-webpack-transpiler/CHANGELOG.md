@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.5.2...stryker-webpack-transpiler@0.6.0) (2018-07-20)
+
+
+### Bug Fixes
+
+* **Dependencies:** Pin all deps on minor version ([#974](https://github.com/stryker-mutator/stryker/issues/974)) ([f0a7e5a](https://github.com/stryker-mutator/stryker/commit/f0a7e5a)), closes [#954](https://github.com/stryker-mutator/stryker/issues/954) [#967](https://github.com/stryker-mutator/stryker/issues/967)
+
+
+### Features
+
+* **logging:** Allow log to a file ([#954](https://github.com/stryker-mutator/stryker/issues/954)) ([c2f6b82](https://github.com/stryker-mutator/stryker/commit/c2f6b82)), closes [#748](https://github.com/stryker-mutator/stryker/issues/748)
+
+
+
+
 <a name="0.5.2"></a>
 ## [0.5.2](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.5.1...stryker-webpack-transpiler@0.5.2) (2018-07-04)
 
