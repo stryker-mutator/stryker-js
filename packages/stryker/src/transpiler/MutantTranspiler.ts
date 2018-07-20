@@ -30,6 +30,7 @@ export default class MutantTranspiler {
         require.resolve('./TranspilerFacade'),
         loggingContext,
         config.plugins,
+        process.cwd(),
         TranspilerFacade,
         transpilerOptions
       );

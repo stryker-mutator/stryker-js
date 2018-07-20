@@ -29,6 +29,10 @@ export default class Echo {
     return new File('foobar.txt', 'hello foobar');
   }
 
+  cwd() {
+    return process.cwd();
+  }
+
   debug(message: string) {
     this.logger.debug(message);
   }

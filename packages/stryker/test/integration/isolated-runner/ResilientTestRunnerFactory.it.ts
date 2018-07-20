@@ -153,8 +153,11 @@ describe('ResilientTestRunnerFactory integration', function () {
     alreadyDisposed = true;
     await loggingServer.dispose();
     const actualLogEvents = await logEvents;
-    expect(actualLogEvents.find(logEvent =>
-      log4js.levels.DEBUG.isEqualTo(logEvent.level) && logEvent.data.toString().indexOf('UnhandledPromiseRejectionWarning: Unhandled promise rejection') > -1)).ok;
+    expect(
+      actualLogEvents.find(logEvent =>
+        log4js.levels.DEBUG.isEqualTo(logEvent.level)
+        && logEvent.data.toString().indexOf('UnhandledPromiseRejectionWarning: Unhandled promise rejection') > -1)
+    ).ok;
   });
 });
 

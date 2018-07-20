@@ -44,6 +44,7 @@ describe('MutantTranspiler', () => {
         require.resolve('../../../src/transpiler/TranspilerFacade'),
         LOGGING_CONTEXT,
         ['plugin1'],
+        process.cwd(),
         TranspilerFacade,
         { config: expectedConfig, produceSourceMaps: false }
       );

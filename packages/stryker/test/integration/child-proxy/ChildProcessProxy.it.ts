@@ -1,22 +1,25 @@
+import * as path from 'path';
+import * as getPort from 'get-port';
+import * as log4js from 'log4js';
 import { expect } from 'chai';
 import Echo from './Echo';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import { File, LogLevel } from 'stryker-api/core';
-import * as log4js from 'log4js';
-import * as getPort from 'get-port';
 import Task from '../../../src/utils/Task';
 import LoggingServer from '../../helpers/LoggingServer';
 
-describe.only('ChildProcessProxy', function () {
+describe('ChildProcessProxy', function () {
 
   this.timeout(15000);
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
+  const echoName = 'The Echo Server';
+  const workingDir = '..';
 
   beforeEach(async () => {
     const port = await getPort();
     loggingServer = new LoggingServer(port);
-    sut = ChildProcessProxy.create(require.resolve('./Echo'), { port, level: LogLevel.Debug }, [], Echo, 'World');
+    sut = ChildProcessProxy.create(require.resolve('./Echo'), { port, level: LogLevel.Debug }, [], workingDir, Echo, echoName);
   });
 
   afterEach(async () => {
@@ -26,12 +29,17 @@ describe.only('ChildProcessProxy', function () {
 
   it('should be able to get direct result', async () => {
     const actual = await sut.proxy.say('hello');
-    expect(actual).eq('World: hello');
+    expect(actual).eq(`${echoName}: hello`);
   });
 
   it('should be able to get delayed result', async () => {
     const actual = await sut.proxy.sayDelayed('hello', 2);
-    expect(actual).eq('World: hello (2 ms)');
+    expect(actual).eq(`${echoName}: hello (2 ms)`);
+  });
+
+  it('should set the current working directory', async () => {
+    const actual = await sut.proxy.cwd();
+    expect(actual).eq(path.resolve(workingDir));
   });
 
   it('should be able to receive files', async () => {
@@ -49,8 +57,8 @@ describe.only('ChildProcessProxy', function () {
     return expect(sut.proxy.reject('Foobar error')).rejectedWith('Foobar error');
   });
   
-  it.only('should be able to receive public properties as promised', () => { 
-    return expect(sut.proxy.name()).eventually.eq('Echo');
+  it('should be able to receive public properties as promised', () => { 
+    return expect(sut.proxy.name()).eventually.eq(echoName);
   });
 
   it('should be able to log on debug when LogLevel.Debug is allowed', async () => {

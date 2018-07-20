@@ -13,7 +13,7 @@ export enum ParentMessageKind {
   'DisposeCompleted'
 }
 
-export type WorkerMessage = InitMessage | CallMessage | { kind: WorkerMessageKind.Dispose };
+export type WorkerMessage = InitMessage | CallMessage | DisposeMessage;
 export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized | ParentMessageKind.DisposeCompleted } | RejectionResult;
 
 // Make this an unlikely command line argument 
@@ -24,9 +24,12 @@ export interface InitMessage {
   kind: WorkerMessageKind.Init;
   loggingContext: LoggingClientContext;
   plugins: string[];
+  workingDirectory: string;
   requirePath: string;
   constructorArgs: any[];
 }
+
+export interface DisposeMessage { kind: WorkerMessageKind.Dispose; }
 
 export interface WorkResult {
   kind: ParentMessageKind.Result;
