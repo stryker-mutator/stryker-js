@@ -63,25 +63,25 @@ describe('ResilientTestRunnerFactory integration', function () {
   }
 
   it('should be able to receive a regex', async () => {
-    sut = arrangeSut('discover-regex');
+    arrangeSut('discover-regex');
     const result = await actRun();
     expect(result.status).eq(RunStatus.Complete);
   });
 
   it('should pass along the coverage result from the test runner behind', async () => {
-    sut = arrangeSut('coverage-reporting');
+    arrangeSut('coverage-reporting');
     const result = await actRun();
     expect(result.coverage).eq('realCoverage');
   });
 
   it('should pass along the run result', async () => {
-    sut = arrangeSut('direct-resolved');
+    arrangeSut('direct-resolved');
     const result = await actRun();
     expect(result.status).eq(RunStatus.Complete);
   });
 
   it('should try to report coverage from the global scope, even when the test runner behind does not', async () => {
-    sut = arrangeSut('direct-resolved');
+    arrangeSut('direct-resolved');
     const result = await actRun();
     expect(result.coverage).eq('coverageObject');
   });
@@ -118,7 +118,7 @@ describe('ResilientTestRunnerFactory integration', function () {
   });
 
   it('should be able to run twice in quick succession', async () => {
-    sut = arrangeSut('direct-resolved');
+    arrangeSut('direct-resolved');
     await actRun();
     const result = await actRun();
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Complete]);
@@ -130,14 +130,14 @@ describe('ResilientTestRunnerFactory integration', function () {
   });
 
   it('should change the current working directory to the sandbox directory', async () => {
-    sut = arrangeSut('verify-working-folder');
+    arrangeSut('verify-working-folder');
     const result = await actRun();
     expect(result.errorMessages).undefined;
   });
 
   it('should be able to recover from any crash', async () => {
     // time-bomb will crash after 100 ms
-    sut = arrangeSut('time-bomb');
+    arrangeSut('time-bomb');
     await sleep(101);
     const result = await actRun();
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Complete]);
