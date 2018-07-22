@@ -22,7 +22,7 @@ class ChildProcessMock extends EventEmitter {
   send = sandbox.stub();
   stderr = new EventEmitter();
   stdout = new EventEmitter();
-  pid = 4648
+  pid = 4648;
 }
 
 describe('ChildProcessProxy', () => {
@@ -34,8 +34,8 @@ describe('ChildProcessProxy', () => {
   let logMock: Mock<Logger>;
 
   beforeEach(() => {
-    forkStub = sandbox.stub(childProcess, 'fork');
     childProcessMock = new ChildProcessMock();
+    forkStub = sandbox.stub(childProcess, 'fork');
     killStub = sandbox.stub(objectUtils, 'kill');
     forkStub.returns(childProcessMock);
     logMock = currentLogMock();
@@ -95,17 +95,17 @@ describe('ChildProcessProxy', () => {
       sut = createSut();
     });
 
-    it('should log stdout and stderr on debug', () => {
+    it('should log stdout and stderr on warning', () => {
       childProcessMock.stderr.emit('data', 'foo');
       childProcessMock.stdout.emit('data', 'bar');
       actExit(23, 'SIGTERM');
-      expect(logMock.debug).calledWith(`Child process exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was: ${os.EOL
+      expect(logMock.warn).calledWith(`Child process exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was: ${os.EOL
         }\tfoo${os.EOL}\tbar`);
     });
 
     it('should log that no stdout was available', () => {
       actExit(23, 'SIGTERM');
-      expect(logMock.debug).calledWith('Child process exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.');
+      expect(logMock.warn).calledWith('Child process exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.');
     });
 
     it('should reject any outstanding worker promises with the error', () => {

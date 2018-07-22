@@ -17,6 +17,9 @@ export default class LoggingServer {
         const loggingEvents: log4js.LoggingEvent[] = logEventStrings.map(logEventString => JSON.parse(logEventString));
         loggingEvents.forEach(event => this.subscriber && this.subscriber.next(event));
       });
+      socket.on('error', () => {
+        // Idle
+      });
     });
     this.server.listen(this.port);
 

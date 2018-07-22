@@ -2,29 +2,40 @@ import * as path from 'path';
 import * as getPort from 'get-port';
 import * as log4js from 'log4js';
 import { expect } from 'chai';
+import { File, LogLevel } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
 import Echo from './Echo';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import { File, LogLevel } from 'stryker-api/core';
 import Task from '../../../src/utils/Task';
 import LoggingServer from '../../helpers/LoggingServer';
+import { filter } from 'rxjs/operators';
+import { Mock } from '../../helpers/producers';
+import currentLogMock from '../../helpers/logMock';
+import { sleep } from '../../helpers/utils';
 
 describe('ChildProcessProxy', function () {
 
   this.timeout(15000);
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
+  let log: Mock<Logger>;
   const echoName = 'The Echo Server';
   const workingDir = '..';
 
   beforeEach(async () => {
     const port = await getPort();
+    log = currentLogMock();
     loggingServer = new LoggingServer(port);
     sut = ChildProcessProxy.create(require.resolve('./Echo'), { port, level: LogLevel.Debug }, [], workingDir, Echo, echoName);
   });
 
   afterEach(async () => {
-    await sut.dispose();
-    await loggingServer.dispose();
+    try {
+      await sut.dispose();
+      await loggingServer.dispose();
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   it('should be able to get direct result', async () => {
@@ -53,32 +64,57 @@ describe('ChildProcessProxy', function () {
     expect(actual.name).eq('foobar.txt');
   });
 
-  it('should be able to receive a promise rejection', () => {
-    return expect(sut.proxy.reject('Foobar error')).rejectedWith('Foobar error');
+  it('should be able to receive a promise rejection', async () => {
+    await expect(sut.proxy.reject('Foobar error')).rejectedWith('Foobar error');
   });
-  
-  it('should be able to receive public properties as promised', () => { 
+
+  it('should be able to receive public properties as promised', () => {
     return expect(sut.proxy.name()).eventually.eq(echoName);
   });
 
   it('should be able to log on debug when LogLevel.Debug is allowed', async () => {
-    const firstLogEventTask = new Task<log4js.LoggingEvent>();
-    loggingServer.event$.subscribe(firstLogEventTask.resolve.bind(firstLogEventTask));
+    const logEventTask = new Task<log4js.LoggingEvent>();
+    loggingServer.event$.pipe(
+      filter(event => event.categoryName === Echo.name)
+    ).subscribe(logEventTask.resolve.bind(logEventTask));
     sut.proxy.debug('test message');
-    const log = await firstLogEventTask.promise;
+    const log = await logEventTask.promise;
     expect(log.categoryName).eq(Echo.name);
     expect(log.data).deep.eq(['test message']);
   });
 
   it('should not log on trace if LogLevel.Debug is allowed as min log level', async () => {
-    const firstLogEventTask = new Task<log4js.LoggingEvent>();
-    loggingServer.event$.subscribe(firstLogEventTask.resolve.bind(firstLogEventTask));
+    const logEventTask = new Task<log4js.LoggingEvent>();
+    loggingServer.event$.pipe(
+      filter(event => event.categoryName === Echo.name)
+    ).subscribe(logEventTask.resolve.bind(logEventTask));
     sut.proxy.trace('foo');
     sut.proxy.debug('bar');
-    const log = await firstLogEventTask.promise;
+    const log = await logEventTask.promise;
     expect(log.categoryName).eq(Echo.name);
     expect(log.data).deep.eq(['bar']);
     expect(toLogLevel(log.level)).eq(LogLevel.Debug);
+  });
+
+  it('should reject when the child process exits', () => {
+    return expect(sut.proxy.exit(42)).rejectedWith('Child process exited unexpectedly (code 42)');
+  });
+
+  it('should log stdout and stderr on warning when a child process crashed', async () => {
+    sut.proxy.stdout('stdout message');
+    sut.proxy.stderr('stderr message');
+    // Give nodejs the chance to flush the stdout and stderr buffers
+    await sleep(10);
+    await expect(sut.proxy.exit(12)).rejected;
+    const call = log.warn.getCall(0);
+    expect(call.args[0]).includes('Child process exited unexpectedly with exit code 12 (without signal). Last part of stdout and stderr was:');
+    expect(call.args[0]).includes('stdout message');
+    expect(call.args[0]).includes('stderr message');
+  });
+
+  it('should immediately reject any subsequent calls when the child process exits', async () => {
+    await expect(sut.proxy.exit(1)).rejected;
+    await expect(sut.proxy.say()).rejectedWith('Child process exited unexpectedly (code 1)');
   });
 });
 

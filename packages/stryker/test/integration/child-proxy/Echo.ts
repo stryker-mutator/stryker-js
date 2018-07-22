@@ -25,6 +25,11 @@ export default class Echo {
     return file.textContent;
   }
 
+  exit(code: number) {
+    process.exit(code);
+    return new Promise(res => {/*never resolve*/ });
+  }
+
   readFile() {
     return new File('foobar.txt', 'hello foobar');
   }
@@ -43,5 +48,13 @@ export default class Echo {
 
   reject(error: string) {
     return Promise.reject(new Error(error));
+  }
+
+  stdout(...args: string[]) {
+    args.forEach(arg => console.log(arg));
+  }
+
+  stderr(...args: string[]) {
+    args.forEach(arg => console.error(arg));
   }
 }

@@ -76,7 +76,7 @@ export default class ChildProcessProxy<T> {
           return undefined;
         }
       }
-    })
+    });
   }
 
   private forward(methodName: string) {
@@ -129,14 +129,14 @@ export default class ChildProcessProxy<T> {
   private listenToStdoutAndStderr() {
     const traceEnabled = this.log.isTraceEnabled();
     const handleData = (data: Buffer) => {
-      const msg = data.toString();
-      this.lastMessagesQueue.push(msg);
+      const messages = data.toString().split('\n').filter(Boolean);
+      this.lastMessagesQueue.push(...messages);
       if (this.lastMessagesQueue.length > 10) {
         this.lastMessagesQueue.shift();
       }
 
       if (traceEnabled) {
-        this.log.trace(msg);
+        messages.forEach(message => this.log.trace(message));
       }
     };
 
@@ -150,12 +150,12 @@ export default class ChildProcessProxy<T> {
   }
 
   private handleUnexpectedExit(code: number | null, signal: string) {
-    this.log.debug(`Child process exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr(this.lastMessagesQueue)}`);
+    this.isDisposed = true;
+    this.log.warn(`Child process exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr(this.lastMessagesQueue)}`);
     this.currentError = new StrykerError(`Child process exited unexpectedly (code ${code})`);
     this.workerTasks
       .filter(task => !task.isResolved)
       .forEach(task => task.reject(this.currentError));
-    this.isDisposed = true;
 
     function stdoutAndStderr(messages: string[]) {
       if (messages.length) {

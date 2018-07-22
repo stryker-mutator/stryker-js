@@ -13,7 +13,9 @@ export default class ChildProcessProxyWorker {
   realSubject: any;
 
   constructor() {
-    this.listenToParent();
+    // Make sure to bind the methods in order to ensure the `this` pointer
+    this.handleMessage = this.handleMessage.bind(this);
+    process.on('message', this.handleMessage);
   }
 
   private send(value: ParentMessage) {
@@ -22,54 +24,50 @@ export default class ChildProcessProxyWorker {
     }
   }
 
-  private listenToParent() {
-
-    const handler = (serializedMessage: string) => {
-      const message = deserialize<WorkerMessage>(serializedMessage, [File]);
-      switch (message.kind) {
-        case WorkerMessageKind.Init:
-          LogConfigurator.configureChildProcess(message.loggingContext);
-          this.log = getLogger(ChildProcessProxyWorker.name);
-          this.handlePromiseRejections();
-          new PluginLoader(message.plugins).load();
-          const RealSubjectClass = require(message.requirePath).default;
-          const workingDir = path.resolve(message.workingDirectory);
-          if (process.cwd() !== workingDir) {
-            this.log.debug(`Changing current working directory for this process to ${workingDir}`);
-            process.chdir(workingDir);
-          }
-          this.realSubject = new RealSubjectClass(...message.constructorArgs);
-          this.send({ kind: ParentMessageKind.Initialized });
-          this.removeAnyAdditionalMessageListeners(handler);
-          break;
-        case WorkerMessageKind.Call:
-          new Promise(resolve => resolve(this.doCall(message)))
-            .then(result => {
-              this.send({
-                kind: ParentMessageKind.Result,
-                correlationId: message.correlationId,
-                result
-              });
-            }).catch(error => {
-              this.send({
-                kind: ParentMessageKind.Rejection,
-                error: errorToString(error),
-                correlationId: message.correlationId
-              });
+  private handleMessage(serializedMessage: string) {
+    const message = deserialize<WorkerMessage>(serializedMessage, [File]);
+    switch (message.kind) {
+      case WorkerMessageKind.Init:
+        LogConfigurator.configureChildProcess(message.loggingContext);
+        this.log = getLogger(ChildProcessProxyWorker.name);
+        this.handlePromiseRejections();
+        new PluginLoader(message.plugins).load();
+        const RealSubjectClass = require(message.requirePath).default;
+        const workingDir = path.resolve(message.workingDirectory);
+        if (process.cwd() !== workingDir) {
+          this.log.debug(`Changing current working directory for this process to ${workingDir}`);
+          process.chdir(workingDir);
+        }
+        this.realSubject = new RealSubjectClass(...message.constructorArgs);
+        this.send({ kind: ParentMessageKind.Initialized });
+        this.removeAnyAdditionalMessageListeners(this.handleMessage);
+        break;
+      case WorkerMessageKind.Call:
+        new Promise(resolve => resolve(this.doCall(message)))
+          .then(result => {
+            this.send({
+              kind: ParentMessageKind.Result,
+              correlationId: message.correlationId,
+              result
             });
-          this.removeAnyAdditionalMessageListeners(handler);
-          break;
-        case WorkerMessageKind.Dispose:
-          const sendCompleted = () => {
-            this.send({ kind: ParentMessageKind.DisposeCompleted });
-          };
-          LogConfigurator.shutdown()
-            .then(sendCompleted)
-            .catch(sendCompleted);
-          break;
-      }
-    };
-    process.on('message', handler);
+          }).catch(error => {
+            this.send({
+              kind: ParentMessageKind.Rejection,
+              error: errorToString(error),
+              correlationId: message.correlationId
+            });
+          });
+        this.removeAnyAdditionalMessageListeners(this.handleMessage);
+        break;
+      case WorkerMessageKind.Dispose:
+        const sendCompleted = () => {
+          this.send({ kind: ParentMessageKind.DisposeCompleted });
+        };
+        LogConfigurator.shutdown()
+          .then(sendCompleted)
+          .catch(sendCompleted);
+        break;
+    }
   }
 
   private doCall(message: CallMessage): {} | PromiseLike<{}> | undefined {
