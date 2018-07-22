@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { RunStatus } from 'stryker-api/test_runner';
-import TimeoutDecorator from '../../../src/isolated-runner/TimeoutDecorator';
+import TimeoutDecorator from '../../../src/test-runner/TimeoutDecorator';
 import { isPromise } from '../../../src/utils/objectUtils';
 import TestRunnerMock from '../../helpers/TestRunnerMock';
 

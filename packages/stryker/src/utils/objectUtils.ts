@@ -101,3 +101,9 @@ export function kill(pid: number): Promise<void> {
     }
   });
 }
+
+export function sleep(ms: number) {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+}

@@ -11,7 +11,7 @@ import LoggingServer from '../../helpers/LoggingServer';
 import { filter } from 'rxjs/operators';
 import { Mock } from '../../helpers/producers';
 import currentLogMock from '../../helpers/logMock';
-import { sleep } from '../../helpers/utils';
+import { sleep } from '../../../src/utils/objectUtils';
 
 describe('ChildProcessProxy', function () {
 
@@ -107,7 +107,7 @@ describe('ChildProcessProxy', function () {
     await sleep(10);
     await expect(sut.proxy.exit(12)).rejected;
     const call = log.warn.getCall(0);
-    expect(call.args[0]).includes('Child process exited unexpectedly with exit code 12 (without signal). Last part of stdout and stderr was:');
+    expect(call.args[0]).matches(/Child process \[pid \d+\] exited unexpectedly with exit code 12 \(without signal\)\. Last part of stdout and stderr was/g);
     expect(call.args[0]).includes('stdout message');
     expect(call.args[0]).includes('stderr message');
   });

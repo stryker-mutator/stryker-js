@@ -1,9 +1,10 @@
 import { expect } from 'chai';
 import { RunResult, RunStatus } from 'stryker-api/test_runner';
-import RetryDecorator from '../../../src/isolated-runner/RetryDecorator';
+import RetryDecorator from '../../../src/test-runner/RetryDecorator';
 import TestRunnerMock from '../../helpers/TestRunnerMock';
 import { errorToString } from '../../../src/utils/objectUtils';
-import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorator';
+import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
+import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 
 describe('RetryDecorator', () => {
   let sut: RetryDecorator;
@@ -14,11 +15,7 @@ describe('RetryDecorator', () => {
   let availableTestRunners: TestRunnerMock[];
   const options = { timeout: 2 };
   const expectedResult = 'something';
-  const brokenPipeError: NodeJS.ErrnoException = {
-    name: '',
-    code: 'EPIPE',
-    message: 'Intended error for testing'
-  };
+  const crashedError = new ChildProcessCrashedError(null);
 
   beforeEach(() => {
     testRunner1 = new TestRunnerMock();
@@ -42,7 +39,7 @@ describe('RetryDecorator', () => {
     });
 
     it('should swallow rejections when inner process crashed', () => {
-      testRunner1.dispose.rejects(brokenPipeError);
+      testRunner1.dispose.rejects(crashedError);
       return expect(sut.dispose()).to.eventually.not.be.ok;
     });
 
@@ -66,20 +63,20 @@ describe('RetryDecorator', () => {
     });
 
     it('should retry on a new test runner if a crash related reject appears', () => {
-      testRunner1.run.rejects(brokenPipeError);
+      testRunner1.run.rejects(crashedError);
       testRunner2.run.resolves(expectedResult);
       return expect(sut.run(options)).to.eventually.eq(expectedResult);
     });
 
     it('should retry at most 3 times before rejecting', () => {
-      testRunner1.run.rejects(brokenPipeError);
-      testRunner2.run.rejects(brokenPipeError);
-      testRunner3.run.rejects(brokenPipeError);
-      testRunner4.run.rejects(brokenPipeError);
+      testRunner1.run.rejects(crashedError);
+      testRunner2.run.rejects(crashedError);
+      testRunner3.run.rejects(crashedError);
+      testRunner4.run.rejects(crashedError);
       return sut.run(options).then((runResult: RunResult) => {
         expect(runResult.status).to.be.eq(RunStatus.Error);
         expect(runResult.errorMessages).to.be.deep.eq(['Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: '
-          + errorToString(brokenPipeError)]);
+          + errorToString(crashedError)]);
         expect(availableTestRunners).to.have.lengthOf(0);
       });
     });

@@ -3,16 +3,20 @@ import { fork, ChildProcess } from 'child_process';
 import { File } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
-import { serialize, deserialize, kill } from '../utils/objectUtils';
+import { serialize, deserialize, kill, isErrnoException } from '../utils/objectUtils';
 import Task from '../utils/Task';
 import LoggingClientContext from '../logging/LoggingClientContext';
 import StrykerError from '../utils/StrykerError';
+import ChildProcessCrashedError from './ChildProcessCrashedError';
 
 type MethodPromised = { (...args: any[]): Promise<any> };
 
 export type Promisified<T> = {
   [K in keyof T]: T[K] extends MethodPromised ? T[K] : T[K] extends Function ? MethodPromised : () => Promise<T[K]>;
 };
+
+const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
+const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 
 export default class ChildProcessProxy<T> {
   readonly proxy: Promisified<T>;
@@ -41,7 +45,9 @@ export default class ChildProcessProxy<T> {
     this.listenToStdoutAndStderr();
     // This is important! Be sure to bind to `this`
     this.handleUnexpectedExit = this.handleUnexpectedExit.bind(this);
+    this.handleError = this.handleError.bind(this);
     this.worker.on('exit', this.handleUnexpectedExit);
+    this.worker.on('error', this.handleError);
     this.proxy = this.initProxy();
   }
 
@@ -149,13 +155,17 @@ export default class ChildProcessProxy<T> {
     }
   }
 
-  private handleUnexpectedExit(code: number | null, signal: string) {
-    this.isDisposed = true;
-    this.log.warn(`Child process exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr(this.lastMessagesQueue)}`);
-    this.currentError = new StrykerError(`Child process exited unexpectedly (code ${code})`);
+  private reportError(error: Error) {
     this.workerTasks
       .filter(task => !task.isResolved)
-      .forEach(task => task.reject(this.currentError));
+      .forEach(task => task.reject(error));
+  }
+
+  private handleUnexpectedExit(code: number | null, signal: string) {
+    this.isDisposed = true;
+    this.log.warn(`Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr(this.lastMessagesQueue)}`);
+    this.currentError = new ChildProcessCrashedError(code);
+    this.reportError(this.currentError);
 
     function stdoutAndStderr(messages: string[]) {
       if (messages.length) {
@@ -165,6 +175,19 @@ export default class ChildProcessProxy<T> {
         return 'Stdout and stderr were empty.';
       }
     }
+  }
+
+  private handleError(error: Error) {
+    if (this.innerProcessIsCrashed(error)) {
+      this.log.warn(`Child process [pid ${this.worker.pid}] has crashed. See other warning messages for more info.`, error);
+      this.reportError(new ChildProcessCrashedError(null, error));
+    } else {
+      this.reportError(error);
+    }
+  }
+
+  private innerProcessIsCrashed(error: any) {
+    return isErrnoException(error) && (error.code === BROKEN_PIPE_ERROR_CODE || error.code === IPC_CHANNEL_CLOSED_ERROR_CODE);
   }
 
   public dispose(): Promise<void> {

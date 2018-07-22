@@ -39,7 +39,6 @@ class DiscoverRegexTestRunner implements TestRunner {
   }
 }
 
-
 class ErroredTestRunner implements TestRunner {
 
   run() {

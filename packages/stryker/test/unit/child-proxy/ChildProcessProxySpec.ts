@@ -99,13 +99,13 @@ describe('ChildProcessProxy', () => {
       childProcessMock.stderr.emit('data', 'foo');
       childProcessMock.stdout.emit('data', 'bar');
       actExit(23, 'SIGTERM');
-      expect(logMock.warn).calledWith(`Child process exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was: ${os.EOL
+      expect(logMock.warn).calledWithMatch(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was: ${os.EOL
         }\tfoo${os.EOL}\tbar`);
     });
 
     it('should log that no stdout was available', () => {
       actExit(23, 'SIGTERM');
-      expect(logMock.warn).calledWith('Child process exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.');
+      expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.`);
     });
 
     it('should reject any outstanding worker promises with the error', () => {

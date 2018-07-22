@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import TestRunnerDecorator from '../../../src/isolated-runner/TestRunnerDecorator';
+import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import TestRunnerMock from '../../helpers/TestRunnerMock';
 
 describe('TestRunnerDecorator', () => {

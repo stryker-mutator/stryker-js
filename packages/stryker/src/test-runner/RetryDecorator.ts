@@ -1,9 +1,9 @@
 import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
-import { isErrnoException, errorToString } from '../utils/objectUtils';
+import { errorToString } from '../utils/objectUtils';
 import TestRunnerDecorator from './TestRunnerDecorator';
 import Task from '../utils/Task';
+import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
 
-const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
 
 /**
@@ -30,7 +30,7 @@ export default class RetryDecorator extends TestRunnerDecorator {
   }
 
   private innerProcessIsCrashed(error: any) {
-    return isErrnoException(error) && error.code === BROKEN_PIPE_ERROR_CODE;
+    return error instanceof ChildProcessCrashedError;
   }
 
   private tryRun(options: RunOptions, retriesLeft = 2, lastError?: any) {
