@@ -83,7 +83,7 @@ The `coverage` plugin will also be removed (not needed for mutation testing).
 
 ## Configure angular cli
 
-**Note:** this requires v6.0.8 or higher of the [@angular/cli](https://www.npmjs.com/package/@angular/cli)
+**Note:** this requires v6.1.0-rc0 or higher of the [@angular/cli](https://www.npmjs.com/package/@angular/cli)
 
 This is an example for a configuration of stryker using the angular cli:
 

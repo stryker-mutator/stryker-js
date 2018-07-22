@@ -1,3 +1,54 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="1.0.0"></a>
+# 1.0.0 (2018-07-20)
+
+
+### Bug Fixes
+
+* **bail:** disable bail ([#36](https://github.com/stryker-mutator/stryker/issues/36)) ([d29e349](https://github.com/stryker-mutator/stryker/commit/d29e349))
+* **configuration:** Allow more test file names ([0a7fff9](https://github.com/stryker-mutator/stryker/commit/0a7fff9))
+* **configuration:** Remove test regex filter ([df7dc04](https://github.com/stryker-mutator/stryker/commit/df7dc04)), closes [#11](https://github.com/stryker-mutator/stryker/issues/11)
+* **configuration:** Remove unnecessary options ([fc2799d](https://github.com/stryker-mutator/stryker/commit/fc2799d)), closes [facebook/jest#2776](https://github.com/facebook/jest/issues/2776)
+* **configuration:** Revert removal of testPathDirs ([7dea8dd](https://github.com/stryker-mutator/stryker/commit/7dea8dd))
+* **Dependencies:** Pin all deps on minor version ([#974](https://github.com/stryker-mutator/stryker/issues/974)) ([f0a7e5a](https://github.com/stryker-mutator/stryker/commit/f0a7e5a)), closes [#954](https://github.com/stryker-mutator/stryker/issues/954) [#967](https://github.com/stryker-mutator/stryker/issues/967)
+* **deps:** update stryker-api dep to 0.12.0 ([1831d98](https://github.com/stryker-mutator/stryker/commit/1831d98))
+* **package.json:** update stryker-api version ([b3ac9bc](https://github.com/stryker-mutator/stryker/commit/b3ac9bc))
+* **README:** Fix Travis Badge pointing to the wrong repo ([bfbb754](https://github.com/stryker-mutator/stryker/commit/bfbb754))
+* **roots option:** Add roots option for jest v19 ([370d540](https://github.com/stryker-mutator/stryker/commit/370d540))
+* **stryker init:** turn coverage analysis "off" ([#55](https://github.com/stryker-mutator/stryker/issues/55)) ([13e0697](https://github.com/stryker-mutator/stryker/commit/13e0697))
+* **test:** Fix accidentally modified test ([d199206](https://github.com/stryker-mutator/stryker/commit/d199206))
+
+
+### Chores
+
+* Upgrade to stryker-api 0.5 ([5c5d412](https://github.com/stryker-mutator/stryker/commit/5c5d412))
+
+
+### Features
+
+* **basic-runner:** Implementation of a basic Jest-runner ([#4](https://github.com/stryker-mutator/stryker/issues/4)) ([44a831a](https://github.com/stryker-mutator/stryker/commit/44a831a))
+* **es2015-promise:** Remove dep to es6-promise ([28453a4](https://github.com/stryker-mutator/stryker/commit/28453a4))
+* **jest-config:** override jest config ([#34](https://github.com/stryker-mutator/stryker/issues/34)) ([e783c80](https://github.com/stryker-mutator/stryker/commit/e783c80))
+* **Jest-runner:** support jest configuration ([#25](https://github.com/stryker-mutator/stryker/issues/25)) ([4f83e87](https://github.com/stryker-mutator/stryker/commit/4f83e87))
+* **logging:** Allow log to a file ([#954](https://github.com/stryker-mutator/stryker/issues/954)) ([c2f6b82](https://github.com/stryker-mutator/stryker/commit/c2f6b82)), closes [#748](https://github.com/stryker-mutator/stryker/issues/748)
+* **node version:** drop node 4 support, as Stryker did. ([#47](https://github.com/stryker-mutator/stryker/issues/47)) ([e939d25](https://github.com/stryker-mutator/stryker/commit/e939d25))
+* **stryker-api:** add stryker-api 0.15 support ([#45](https://github.com/stryker-mutator/stryker/issues/45)) ([d51d7ba](https://github.com/stryker-mutator/stryker/commit/d51d7ba))
+* **typescript:** Add support for create-react-app using Typescript ([#48](https://github.com/stryker-mutator/stryker/issues/48)) ([7cc9b86](https://github.com/stryker-mutator/stryker/commit/7cc9b86))
+
+
+### BREAKING CHANGES
+
+* **typescript:** Require Jest 22.x or higher. Support for 20.x and 21.x is dropped.
+* **node version:** Node 4 is no longer supported.
+* Upgrade to stryker-api 0.5
+
+
+
+
 <a name="0.7.0"></a>
 # [0.7.0](https://github.com/stryker-mutator/stryker-jest-runner/compare/v0.6.0...v0.7.0) (2018-05-11)
 
@@ -176,5 +227,3 @@
 * feat(basic-runner): Implementation of a basic Jest-runner  (#4) ([960c59d](https://github.com/stryker-mutator/stryker-jest-runner/commit/960c59d))
 * feat(es2015-promise): Remove dep to es6-promise ([7f8424a](https://github.com/stryker-mutator/stryker-jest-runner/commit/7f8424a))
 * fix(README): Fix Travis Badge pointing to the wrong repo ([9177447](https://github.com/stryker-mutator/stryker-jest-runner/commit/9177447))
-
-

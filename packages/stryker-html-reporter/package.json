@@ -1,6 +1,6 @@
 {
   "name": "stryker-html-reporter",
-  "version": "0.14.3",
+  "version": "0.15.0",
   "description": "An html reporter for the JavaScript mutation testing framework Stryker",
   "main": "src/index.js",
   "typings": "src/index.d.ts",
@@ -55,7 +55,7 @@
     "jquery": "~3.3.1",
     "jsdom": "~11.11.0",
     "popper.js": "~1.14.3",
-    "stryker-api": "~0.17.3"
+    "stryker-api": "^0.18.0"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",
