@@ -60,26 +60,22 @@ describe('RetryDecorator', () => {
       return expect(result).to.eventually.eq(expectedResult);
     });
 
-    it('should pass through non-crash related rejects', () => {
+    it('should retry on a new test runner if a reject appears', () => {
       testRunner1.run.rejects(new Error('Error'));
-      return expect(sut.run(options)).to.be.rejectedWith('Error');
-    });
-
-    it('should retry on a new test runner if a crash related reject appears', () => {
-      testRunner1.run.rejects(brokenPipeError);
       testRunner2.run.resolves(expectedResult);
       return expect(sut.run(options)).to.eventually.eq(expectedResult);
     });
 
-    it('should retry at most 3 times before rejecting', () => {
-      testRunner1.run.rejects(brokenPipeError);
-      testRunner2.run.rejects(brokenPipeError);
-      testRunner3.run.rejects(brokenPipeError);
-      testRunner4.run.rejects(brokenPipeError);
+    it('should retry at most 1 times before rejecting', () => {
+      const finalError = new Error('Error');
+
+      testRunner1.run.rejects(new Error('Error'));
+      testRunner2.run.rejects(finalError);
+
       return sut.run(options).then((runResult: RunResult) => {
         expect(runResult.status).to.be.eq(RunStatus.Error);
         expect(runResult.errorMessages).to.be.deep.eq(['Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: '
-          + errorToString(brokenPipeError)]);
+        + errorToString(finalError)]);
         expect(availableTestRunners).to.have.lengthOf(0);
       });
     });
