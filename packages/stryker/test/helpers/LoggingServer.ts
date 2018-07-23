@@ -18,7 +18,8 @@ export default class LoggingServer {
         loggingEvents.forEach(event => this.subscriber && this.subscriber.next(event));
       });
       socket.on('error', () => {
-        // Idle
+        // A client connection was killed unexpectedly. 
+        // This happens during integration tests, this is safe to ignore (log4js does that as well)
       });
     });
     this.server.listen(this.port);
