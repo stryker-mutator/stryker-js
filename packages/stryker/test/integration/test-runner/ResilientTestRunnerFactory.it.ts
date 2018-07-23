@@ -53,9 +53,9 @@ describe('ResilientTestRunnerFactory integration', function () {
     sut = ResilientTestRunnerFactory.create(name, options, sandboxWorkingDirectory, loggingContext);
   }
 
-  async function arrangeSut(name: string): Promise<void> {
+  function arrangeSut(name: string): Promise<void> {
     createSut(name);
-    await sut.init();
+    return sut.init();
   }
 
   function actRun(timeout = 4000) {

@@ -33,24 +33,18 @@ export default class RetryDecorator extends TestRunnerDecorator {
     return error instanceof ChildProcessCrashedError;
   }
 
-  private tryRun(options: RunOptions, retriesLeft = 2, lastError?: any) {
-    if (retriesLeft > 0) {
-      this.innerRunner.run(options).then(result =>
-        this.currentRunTask.resolve(result),
-        rejectReason => {
-          if (this.innerProcessIsCrashed(rejectReason)) {
-            this.recover().then(
-              () => this.tryRun(options, retriesLeft - 1, rejectReason),
-              reason => this.currentRunTask.reject(reason));
-          } else {
-            // Oops... not intended to catch this one
-            this.currentRunTask.reject(rejectReason);
-          }
-        });
+  private async tryRun(options: RunOptions, attemptsLeft = 2, lastError?: any) {
+    if (attemptsLeft > 0) {
+      try {
+        let result = await this.innerRunner.run(options);
+        this.currentRunTask.resolve(result);
+      } catch (error) {
+        await this.recover();
+        await this.tryRun(options, attemptsLeft - 1, error);
+      }
     } else {
-      this.recover().then(
-        () => this.currentRunTask.resolve({ status: RunStatus.Error, errorMessages: [ERROR_MESSAGE + errorToString(lastError)], tests: [] }),
-        (reason) => this.currentRunTask.reject(reason));
+      await this.recover();
+      this.currentRunTask.resolve({ status: RunStatus.Error, errorMessages: [ERROR_MESSAGE + errorToString(lastError)], tests: [] });
     }
   }
 

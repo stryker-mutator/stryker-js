@@ -10,8 +10,6 @@ describe('RetryDecorator', () => {
   let sut: RetryDecorator;
   let testRunner1: TestRunnerMock;
   let testRunner2: TestRunnerMock;
-  let testRunner3: TestRunnerMock;
-  let testRunner4: TestRunnerMock;
   let availableTestRunners: TestRunnerMock[];
   const options = { timeout: 2 };
   const expectedResult = 'something';
@@ -20,10 +18,8 @@ describe('RetryDecorator', () => {
   beforeEach(() => {
     testRunner1 = new TestRunnerMock();
     testRunner2 = new TestRunnerMock();
-    testRunner3 = new TestRunnerMock();
-    testRunner4 = new TestRunnerMock();
-    availableTestRunners = [testRunner1, testRunner2, testRunner3, testRunner4];
-    sut = new RetryDecorator(() => <any>availableTestRunners.shift());
+    availableTestRunners = [testRunner1, testRunner2];
+    sut = new RetryDecorator(() => availableTestRunners.shift() || new TestRunnerMock());
   });
 
   describe('init', () => {
@@ -57,9 +53,10 @@ describe('RetryDecorator', () => {
       return expect(result).to.eventually.eq(expectedResult);
     });
 
-    it('should pass through non-crash related rejects', () => {
+    it('should retry on a new test runner if a run is rejected', () => {
       testRunner1.run.rejects(new Error('Error'));
-      return expect(sut.run(options)).to.be.rejectedWith('Error');
+      testRunner2.run.resolves(expectedResult);
+      return expect(sut.run(options)).to.eventually.eq(expectedResult);
     });
 
     it('should retry on a new test runner if a crash related reject appears', () => {
@@ -68,15 +65,16 @@ describe('RetryDecorator', () => {
       return expect(sut.run(options)).to.eventually.eq(expectedResult);
     });
 
-    it('should retry at most 3 times before rejecting', () => {
-      testRunner1.run.rejects(crashedError);
-      testRunner2.run.rejects(crashedError);
-      testRunner3.run.rejects(crashedError);
-      testRunner4.run.rejects(crashedError);
+    it('should retry at most 1 times before rejecting', () => {
+      const finalError = new Error('Error');
+
+      testRunner1.run.rejects(new Error('Error'));
+      testRunner2.run.rejects(finalError);
+
       return sut.run(options).then((runResult: RunResult) => {
         expect(runResult.status).to.be.eq(RunStatus.Error);
         expect(runResult.errorMessages).to.be.deep.eq(['Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: '
-          + errorToString(crashedError)]);
+          + errorToString(finalError)]);
         expect(availableTestRunners).to.have.lengthOf(0);
       });
     });
