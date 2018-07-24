@@ -32,8 +32,10 @@ describe('ChildProcessProxy', () => {
   let childProcessMock: ChildProcessMock;
   let killStub: sinon.SinonStub;
   let logMock: Mock<Logger>;
+  let clock: sinon.SinonFakeTimers;
 
   beforeEach(() => {
+    clock = sandbox.useFakeTimers();
     childProcessMock = new ChildProcessMock();
     forkStub = sandbox.stub(childProcess, 'fork');
     killStub = sandbox.stub(objectUtils, 'kill');
@@ -148,7 +150,7 @@ describe('ChildProcessProxy', () => {
 
       // Act
       const delayedEcho = sut.proxy.sayHello('echo');
-      await tick();
+      clock.tick(0);
       receiveMessage(workerResponse);
       const result: string = await delayedEcho;
 
@@ -189,6 +191,13 @@ describe('ChildProcessProxy', () => {
       expect(childProcessMock.send).calledOnce; // init
     });
 
+    it('should only wait for max 2 seconds before going ahead and killing the child process anyway', async() => {
+      const disposePromise = sut.dispose();
+      clock.tick(2000);
+      await disposePromise;
+      expect(killStub).called;
+    });
+
     async function actDispose() {
       const disposePromise = sut.dispose();
       receiveMessage({ kind: ParentMessageKind.DisposeCompleted });
@@ -201,10 +210,6 @@ describe('ChildProcessProxy', () => {
     childProcessMock.emit('message', serialize(workerResponse));
   }
 });
-
-function tick() {
-  return new Promise(res => setTimeout(res, 0));
-}
 
 function createSut(overrides: {
   requirePath?: string;

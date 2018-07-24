@@ -17,6 +17,7 @@ export type Promisified<T> = {
 
 const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
+const TIMEOUT_FOR_DISPOSE = 2000;
 
 export default class ChildProcessProxy<T> {
   readonly proxy: Promisified<T>;
@@ -33,6 +34,7 @@ export default class ChildProcessProxy<T> {
   private constructor(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, constructorParams: any[]) {
     this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
     this.initTask = new Task();
+    this.log.debug('Starting %s in a child process', requirePath);
     this.send({
       kind: WorkerMessageKind.Init,
       loggingContext,
@@ -163,8 +165,8 @@ export default class ChildProcessProxy<T> {
 
   private handleUnexpectedExit(code: number | null, signal: string) {
     this.isDisposed = true;
-    this.log.warn(`Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr(this.lastMessagesQueue)}`);
     this.currentError = new ChildProcessCrashedError(code);
+    this.log.warn(`Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr(this.lastMessagesQueue)}`, this.currentError);
     this.reportError(this.currentError);
 
     function stdoutAndStderr(messages: string[]) {
@@ -195,12 +197,14 @@ export default class ChildProcessProxy<T> {
     if (this.isDisposed) {
       return Promise.resolve();
     } else {
-      this.disposeTask = new Task();
-      this.send({ kind: WorkerMessageKind.Dispose });
+      this.log.debug('Disposing of worker process %s', this.worker.pid);
       const killWorker = () => {
+        this.log.debug('Kill %s', this.worker.pid);
         kill(this.worker.pid);
         this.isDisposed = true;
       };
+      this.disposeTask = new Task(TIMEOUT_FOR_DISPOSE);
+      this.send({ kind: WorkerMessageKind.Dispose });
       return this.disposeTask.promise
         .then(killWorker)
         .catch(killWorker);
