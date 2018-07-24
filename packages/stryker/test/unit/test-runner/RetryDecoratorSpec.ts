@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { RunResult, RunStatus } from 'stryker-api/test_runner';
+import { RunStatus } from 'stryker-api/test_runner';
 import RetryDecorator from '../../../src/test-runner/RetryDecorator';
 import TestRunnerMock from '../../helpers/TestRunnerMock';
 import { errorToString } from '../../../src/utils/objectUtils';
@@ -22,27 +22,12 @@ describe('RetryDecorator', () => {
     sut = new RetryDecorator(() => availableTestRunners.shift() || new TestRunnerMock());
   });
 
-  describe('init', () => {
-    it('should not be overridden', () => {
-      expect(sut.init).to.be.eq(TestRunnerDecorator.prototype.init);
-    });
+  it('should not override `init`', () => {
+    expect(sut.init).to.be.eq(TestRunnerDecorator.prototype.init);
   });
 
-  describe('dispose', () => {
-    it('should pass through when resolved', () => {
-      testRunner1.dispose.resolves(null);
-      return expect(sut.dispose()).to.eventually.eq(null);
-    });
-
-    it('should swallow rejections when inner process crashed', () => {
-      testRunner1.dispose.rejects(crashedError);
-      return expect(sut.dispose()).to.eventually.not.be.ok;
-    });
-
-    it('should pass through non-crash related rejections', () => {
-      testRunner1.dispose.rejects(new Error('someError'));
-      return expect(sut.dispose()).to.be.rejectedWith('someError');
-    });
+  it('should not override `dispose`', () => {
+    expect(sut.dispose).to.be.eq(TestRunnerDecorator.prototype.dispose);
   });
 
   describe('run', () => {
@@ -65,18 +50,24 @@ describe('RetryDecorator', () => {
       return expect(sut.run(options)).to.eventually.eq(expectedResult);
     });
 
-    it('should retry at most 1 times before rejecting', () => {
-      const finalError = new Error('Error');
+    it('should dispose a test runner when it rejected, before creating a new one', async () => {
+      testRunner1.run.rejects(crashedError);
+      testRunner2.run.resolves(expectedResult);
+      await sut.run(options);
+      expect(testRunner1.dispose).calledBefore(testRunner2.init);
+    });
 
-      testRunner1.run.rejects(new Error('Error'));
+    it('should retry at most 1 times before rejecting', async () => {
+      const finalError = new Error('foo');
+
+      testRunner1.run.rejects(new Error('bar'));
       testRunner2.run.rejects(finalError);
 
-      return sut.run(options).then((runResult: RunResult) => {
-        expect(runResult.status).to.be.eq(RunStatus.Error);
-        expect(runResult.errorMessages).to.be.deep.eq(['Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: '
-          + errorToString(finalError)]);
-        expect(availableTestRunners).to.have.lengthOf(0);
-      });
+      const runResult = await sut.run(options);
+      expect(runResult.status).to.be.eq(RunStatus.Error);
+      expect(runResult.errorMessages).to.be.deep.eq(['Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: '
+        + errorToString(finalError)]);
+      expect(availableTestRunners).to.have.lengthOf(0);
     });
   });
 });
