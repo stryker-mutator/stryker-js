@@ -9,6 +9,7 @@ import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import ChildProcessTestRunnerWorker from '../../../src/test-runner/ChildProcessTestRunnerWorker';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import Task from '../../../src/utils/Task';
+import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
   let sut: ChildProcessTestRunnerDecorator;
@@ -65,20 +66,30 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     expect(childProcessProxyMock.proxy.run).calledWith(runOptions);
   });
 
-  it('should dispose the test runner first on `dispose`', async () => {
-    childProcessProxyMock.proxy.dispose.resolves();
-    await sut.dispose();
-    expect(childProcessProxyMock.proxy.dispose)
-      .calledBefore(childProcessProxyMock.dispose);
-  });
+  describe('dispose', () => {
 
-  it('should only wait 2 seconds for the test runner to be disposed', async () => {
-    const testRunnerDisposeTask = new Task();
-    childProcessProxyMock.proxy.dispose.returns(testRunnerDisposeTask.promise);
-    const disposePromise = sut.dispose();
-    clock.tick(2001);
-    await disposePromise;
-    expect(childProcessProxyMock.dispose).called;
-    testRunnerDisposeTask.resolve(undefined);
+    it('should dispose the test runner before disposing the child process itself on `dispose`', async () => {
+      childProcessProxyMock.proxy.dispose.resolves();
+      await sut.dispose();
+      expect(childProcessProxyMock.proxy.dispose)
+        .calledBefore(childProcessProxyMock.dispose);
+    });
+
+    it('should not reject when the child process is down', async () => {
+      childProcessProxyMock.proxy.dispose.rejects(new ChildProcessCrashedError(1));
+      await sut.dispose();
+      expect(childProcessProxyMock.dispose).called;
+    });
+
+    it('should only wait 2 seconds for the test runner to be disposed', async () => {
+      const testRunnerDisposeTask = new Task();
+      childProcessProxyMock.proxy.dispose.returns(testRunnerDisposeTask.promise);
+      const disposePromise = sut.dispose();
+      clock.tick(2001);
+      await disposePromise;
+      expect(childProcessProxyMock.dispose).called;
+      testRunnerDisposeTask.resolve(undefined);
+    });
+
   });
 });

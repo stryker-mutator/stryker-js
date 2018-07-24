@@ -3,6 +3,7 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
 import ChildProcessTestRunnerWorker from './ChildProcessTestRunnerWorker';
 import { sleep } from '../utils/objectUtils';
+import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
 
@@ -35,10 +36,15 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
   }
 
   async dispose(): Promise<void> {
-    
+
     await Promise.race([
       // First let the inner test runner dispose
-      this.worker.proxy.dispose(),
+      this.worker.proxy.dispose().catch(error => {
+        // It's OK if the child process is already down. 
+        if (!(error instanceof ChildProcessCrashedError)) {
+          throw error;
+        }
+      }),
 
       // ... but don't wait forever on that
       sleep(MAX_WAIT_FOR_DISPOSE)
