@@ -58,14 +58,6 @@ describe('TimeoutDecorator', () => {
 
   describe('dispose', () => {
     itShouldProxyRequestsForMethod('dispose');
-
-    it('should wait no longer then 2500 ms', () => {
-      testRunner1.dispose.returns(new Promise(res => { }));
-      const disposePromise = sut.dispose();
-      clock.tick(2500);
-      const p = expect(disposePromise).to.eventually.be.eq(undefined);
-      return p;
-    });
   });
 
   describe('run', () => {

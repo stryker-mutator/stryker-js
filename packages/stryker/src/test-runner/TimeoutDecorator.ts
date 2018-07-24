@@ -1,10 +1,9 @@
 import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
-import { isPromise } from '../utils/objectUtils';
-import Task from '../utils/Task';
 import TestRunnerDecorator from './TestRunnerDecorator';
 import { getLogger } from 'stryker-api/logging';
+import { sleep } from '../utils/objectUtils';
 
-const MAX_WAIT_FOR_DISPOSE = 2500;
+const TIMEOUT_EXPIRED = 'timeout_expired';
 
 /**
  * Wraps a test runner and implements the timeout functionality.
@@ -13,30 +12,21 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
 
   private readonly log = getLogger(TimeoutDecorator.name);
 
-  run(options: RunOptions): Promise<RunResult> {
+  async run(options: RunOptions): Promise<RunResult> {
     this.log.debug('Starting timeout timer (%s ms) for a test run', options.timeout);
-    const runTask = new Task<RunResult>(options.timeout, () => this.handleTimeout());
-    runTask.chainTo(super.run(options));
-    return runTask.promise;
-  }
-
-  dispose(): Promise<any> {
-    return this.proxy(() => super.dispose(), MAX_WAIT_FOR_DISPOSE);
-  }
-
-  private proxy(action?: () => Promise<void> | void, timeoutMs?: number): Promise<void> {
-    if (action) {
-      const maybePromise = action();
-      if (isPromise(maybePromise)) {
-        const task = new Task<void>(timeoutMs);
-        task.chainTo(maybePromise);
-        return task.promise;
-      }
+    const result = await Promise.race([super.run(options), timeout()]);
+    if (result === TIMEOUT_EXPIRED) {
+      return this.handleTimeout();
+    } else {
+      return result;
     }
-    return Promise.resolve();
+    function timeout() {
+      return sleep(options.timeout).then<'timeout_expired'>(() => TIMEOUT_EXPIRED);
+    }
   }
 
   private handleTimeout(): Promise<RunResult> {
+    this.log.debug('Timeout expired, restarting the ')
     return this.dispose()
       .then(() => this.createInnerRunner())
       .then(() => this.init())
