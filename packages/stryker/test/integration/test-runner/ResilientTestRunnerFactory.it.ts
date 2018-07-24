@@ -130,13 +130,20 @@ describe('ResilientTestRunnerFactory integration', function () {
     expect(result.errorMessages).undefined;
   });
 
-  it('should be able to recover from a crash', async () => {
-    // time-bomb will crash after 100 ms
+  it('should be able to recover from an async crash', async () => {
+    // time-bomb will crash after 500 ms
     await arrangeSut('time-bomb');
-    await sleep(101);
+    await sleep(550);
     const result = await actRun();
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Complete]);
     expect(result.errorMessages).undefined;
+  });
+  
+  it('should report if a crash happens twice', async () => {
+    await arrangeSut('proximity-mine');
+    const result = await actRun();
+    expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Error]);
+    expect(result.errorMessages).property('0').contains('Test runner crashed');
   });
 
   it('should handle asynchronously handled promise rejections from the underlying test runner', async () => {

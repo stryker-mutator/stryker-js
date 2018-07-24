@@ -11,9 +11,16 @@ class CoverageReportingTestRunner implements TestRunner {
 class TimeBombTestRunner implements TestRunner {
   constructor() {
     // Setting a time bomb after 100 ms
-    setTimeout(() => process.exit(), 100);
+    setTimeout(() => process.exit(), 500);
   }
   run() {
+    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
+  }
+}
+
+class ProximityMineTestRunner implements TestRunner {
+  run() {
+    process.exit(42);
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
@@ -128,5 +135,6 @@ TestRunnerFactory.instance().register('discover-regex', DiscoverRegexTestRunner)
 TestRunnerFactory.instance().register('direct-resolved', DirectResolvedTestRunner);
 TestRunnerFactory.instance().register('coverage-reporting', CoverageReportingTestRunner);
 TestRunnerFactory.instance().register('time-bomb', TimeBombTestRunner);
+TestRunnerFactory.instance().register('proximity-mine', ProximityMineTestRunner);
 TestRunnerFactory.instance().register('async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner);
 TestRunnerFactory.instance().register('reject-init', RejectInitRunner);
