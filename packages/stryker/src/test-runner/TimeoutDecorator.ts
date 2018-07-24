@@ -26,7 +26,7 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
   }
 
   private handleTimeout(): Promise<RunResult> {
-    this.log.debug('Timeout expired, restarting the ')
+    this.log.debug('Timeout expired, restarting the process and reporting timeout');
     return this.dispose()
       .then(() => this.createInnerRunner())
       .then(() => this.init())
