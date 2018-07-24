@@ -6,7 +6,7 @@ import { File, LogLevel } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import Echo from './Echo';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import Task from '../../../src/utils/Task';
+import { Task } from '../../../src/utils/Task';
 import LoggingServer from '../../helpers/LoggingServer';
 import { filter } from 'rxjs/operators';
 import { Mock } from '../../helpers/producers';

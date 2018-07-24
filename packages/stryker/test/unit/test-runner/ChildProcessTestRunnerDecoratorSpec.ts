@@ -8,7 +8,7 @@ import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import ChildProcessTestRunnerWorker from '../../../src/test-runner/ChildProcessTestRunnerWorker';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
-import Task from '../../../src/utils/Task';
+import { Task } from '../../../src/utils/Task';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {

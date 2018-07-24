@@ -6,7 +6,7 @@ import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import TranspileResult from '../../../src/transpiler/TranspileResult';
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { errorToString } from '../../../src/utils/objectUtils';
+import { errorToString, sleep } from '../../../src/utils/objectUtils';
 import '../../helpers/globals';
 import { Mock, config, file, mock, testableMutant } from '../../helpers/producers';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
@@ -157,9 +157,7 @@ describe('MutantTranspiler', () => {
         ];
         expect(actualResults).deep.eq(expectedResults);
       });
-      const nextTick = () => new Promise(res => {
-        setTimeout(res, 0);
-      });
+      const nextTick = () => sleep(0);
     });
   });
 

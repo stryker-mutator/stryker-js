@@ -102,7 +102,7 @@ export function kill(pid: number): Promise<void> {
   });
 }
 
-export function sleep(ms: number) {
+export function sleep(ms: number): Promise<void> {
   return new Promise(res => {
     setTimeout(res, ms);
   });

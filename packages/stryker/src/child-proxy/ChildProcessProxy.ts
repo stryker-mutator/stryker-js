@@ -4,7 +4,7 @@ import { File } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
 import { serialize, deserialize, kill, isErrnoException } from '../utils/objectUtils';
-import Task from '../utils/Task';
+import { Task, ExpirableTask } from '../utils/Task';
 import LoggingClientContext from '../logging/LoggingClientContext';
 import StrykerError from '../utils/StrykerError';
 import ChildProcessCrashedError from './ChildProcessCrashedError';
@@ -24,7 +24,7 @@ export default class ChildProcessProxy<T> {
 
   private worker: ChildProcess;
   private initTask: Task;
-  private disposeTask: Task<void> | undefined;
+  private disposeTask: ExpirableTask<void> | undefined;
   private currentError: StrykerError | undefined;
   private workerTasks: Task<any>[] = [];
   private log = getLogger(ChildProcessProxy.name);
@@ -203,7 +203,7 @@ export default class ChildProcessProxy<T> {
         kill(this.worker.pid);
         this.isDisposed = true;
       };
-      this.disposeTask = new Task(TIMEOUT_FOR_DISPOSE);
+      this.disposeTask = new ExpirableTask(TIMEOUT_FOR_DISPOSE);
       this.send({ kind: WorkerMessageKind.Dispose });
       return this.disposeTask.promise
         .then(killWorker)
