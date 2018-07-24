@@ -3,7 +3,7 @@ import { getLogger } from 'stryker-api/logging';
 import Timer from './Timer';
 
 export default class StrykerMochaReporter {
-  
+
   private readonly log = getLogger(StrykerMochaReporter.name);
   public runResult: RunResult;
   private timer = new Timer();
@@ -36,7 +36,9 @@ export default class StrykerMochaReporter {
       });
       this.passedCount++;
       this.timer.reset();
-      this.log.debug(`Test passed: ${test.fullTitle()}`);
+      if (this.log.isTraceEnabled()) {
+        this.log.trace(`Test passed: ${test.fullTitle()}`);
+      }
     });
 
     this.runner.on('fail', (test: any, err: any) => {
@@ -50,12 +52,14 @@ export default class StrykerMochaReporter {
         this.runResult.errorMessages = [];
       }
       this.runResult.errorMessages.push(err.message);
-      this.log.debug(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
+      if (this.log.isTraceEnabled()) {
+        this.log.trace(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
+      }
     });
 
     this.runner.on('end', () => {
       this.runResult.status = RunStatus.Complete;
-      this.log.debug(`Mocha test run completed: ${this.passedCount}/${this.runResult.tests.length} passed`);
+      this.log.debug('Mocha test run completed: %s/%s passed', this.passedCount, this.runResult.tests.length);
     });
   }
 }
