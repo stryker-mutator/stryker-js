@@ -57,7 +57,7 @@
     "commander": "~2.16.0",
     "escodegen": "~1.8.0",
     "esprima": "~2.7.0",
-    "get-port": "~3.2.0",
+    "get-port": "~4.0.0",
     "glob": "~7.1.2",
     "inquirer": "~6.0.0",
     "istanbul-lib-instrument": "~1.10.1",
