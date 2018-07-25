@@ -140,9 +140,7 @@ describe('KarmaTestRunner', function () {
 
     it('should report Error with the error message', async () => {
       const runResult = await sut.run({});
-      expectToHaveSuccessfulTests(runResult, 0);
-      expectToHaveFailedTests(runResult, []);
-      expect(runResult.status).to.be.eq(RunStatus.Error);
+      expect(RunStatus[runResult.status]).to.be.eq(RunStatus[RunStatus.Error]);
       expect((runResult.errorMessages as any).length).to.equal(1);
       expect((runResult.errorMessages as any)[0]).include('ReferenceError: Can\'t find variable: someGlobalVariableThatIsNotDeclared');
     });

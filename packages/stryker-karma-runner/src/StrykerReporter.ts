@@ -19,7 +19,7 @@ export interface KarmaSpec {
 export default class StrykerReporter extends EventEmitter implements karma.Reporter {
 
   adapters: any[] = [];
-  
+
   private constructor() {
     super();
   }
