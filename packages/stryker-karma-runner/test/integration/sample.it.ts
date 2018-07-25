@@ -5,7 +5,7 @@ import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
 
 describe('Sample project', function () {
-  this.timeout(20000);
+  this.timeout(30000);
 
   it('should be able to run karma', async () => {
     const options = new Config();
