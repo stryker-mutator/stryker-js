@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
 import { Logger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
 import ConfigValidator from '../../../src/config/ConfigValidator';
@@ -9,7 +8,6 @@ import { testFramework, Mock } from '../../helpers/producers';
 describe('ConfigValidator', () => {
 
   let config: Config;
-  let sandbox: sinon.SinonSandbox;
   let sut: ConfigValidator;
   let log: Mock<Logger>;
 
@@ -20,11 +18,6 @@ describe('ConfigValidator', () => {
   beforeEach(() => {
     log = currentLogMock();
     config = new Config();
-    sandbox = sinon.createSandbox();
-  });
-
-  afterEach(() => {
-    sandbox.restore();
   });
 
   it('should validate with default config', () => {

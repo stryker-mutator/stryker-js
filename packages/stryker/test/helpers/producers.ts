@@ -2,7 +2,6 @@ import { TestResult, TestStatus, RunResult, RunStatus } from 'stryker-api/test_r
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
 import { Logger } from 'stryker-api/logging';
-import * as sinon from 'sinon';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
 import { MutationScoreThresholds, File, Location } from 'stryker-api/core';
@@ -21,7 +20,7 @@ export type Mock<T> = {
 export type Constructor<T> = Function & { prototype: T };
 
 export function mock<T>(constructorFn: Constructor<T>): Mock<T> {
-  return sinon.createStubInstance(constructorFn) as Mock<T>;
+  return sandbox.createStubInstance(constructorFn) as Mock<T>;
 }
 
 function isPrimitive(value: any) {
@@ -80,18 +79,18 @@ export const mutant = factoryMethod<Mutant>(() => ({
 
 export const logger = (): Mock<Logger> => {
   return {
-    isTraceEnabled: sinon.stub(),
-    isDebugEnabled: sinon.stub(),
-    isInfoEnabled: sinon.stub(),
-    isWarnEnabled: sinon.stub(),
-    isErrorEnabled: sinon.stub(),
-    isFatalEnabled: sinon.stub(),
-    trace: sinon.stub(),
-    debug: sinon.stub(),
-    info: sinon.stub(),
-    warn: sinon.stub(),
-    error: sinon.stub(),
-    fatal: sinon.stub()
+    isTraceEnabled: sandbox.stub(),
+    isDebugEnabled: sandbox.stub(),
+    isInfoEnabled: sandbox.stub(),
+    isWarnEnabled: sandbox.stub(),
+    isErrorEnabled: sandbox.stub(),
+    isFatalEnabled: sandbox.stub(),
+    trace: sandbox.stub(),
+    debug: sandbox.stub(),
+    info: sandbox.stub(),
+    warn: sandbox.stub(),
+    error: sandbox.stub(),
+    fatal: sandbox.stub()
   };
 };
 
