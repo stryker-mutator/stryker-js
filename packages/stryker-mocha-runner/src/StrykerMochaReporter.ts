@@ -36,9 +36,6 @@ export default class StrykerMochaReporter {
       });
       this.passedCount++;
       this.timer.reset();
-      if (this.log.isTraceEnabled()) {
-        this.log.trace(`Test passed: ${test.fullTitle()}`);
-      }
     });
 
     this.runner.on('fail', (test: any, err: any) => {
