@@ -1,7 +1,7 @@
 import * as child from 'child_process';
 import * as fs from 'mz/fs';
-import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
+import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
@@ -12,7 +12,6 @@ import { Mock } from '../../helpers/producers';
 describe('StrykerInitializer', () => {
   let log: Mock<Logger>;
   let sut: StrykerInitializer;
-  let sandbox: sinon.SinonSandbox;
   let inquirerPrompt: sinon.SinonStub;
   let childExecSync: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStub;
@@ -23,7 +22,6 @@ describe('StrykerInitializer', () => {
 
   beforeEach(() => {
     log = currentLogMock();
-    sandbox = sinon.createSandbox();
     out = sandbox.stub();
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
