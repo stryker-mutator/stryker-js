@@ -5,19 +5,25 @@ import TestRunnerMock from '../../helpers/TestRunnerMock';
 import { errorToString } from '../../../src/utils/objectUtils';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
+import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
+import { Logger } from 'stryker-api/logging';
+import { Mock } from '../../helpers/producers';
+import currentLogMock from '../../helpers/logMock';
 
 describe('RetryDecorator', () => {
   let sut: RetryDecorator;
   let testRunner1: TestRunnerMock;
   let testRunner2: TestRunnerMock;
   let availableTestRunners: TestRunnerMock[];
+  let logMock: Mock<Logger>;
   const options = { timeout: 2 };
   const expectedResult = 'something';
-  const crashedError = new ChildProcessCrashedError(null);
+  const crashedError = new ChildProcessCrashedError(42);
 
   beforeEach(() => {
     testRunner1 = new TestRunnerMock();
     testRunner2 = new TestRunnerMock();
+    logMock = currentLogMock();
     availableTestRunners = [testRunner1, testRunner2];
     sut = new RetryDecorator(() => availableTestRunners.shift() || new TestRunnerMock());
   });
@@ -44,10 +50,17 @@ describe('RetryDecorator', () => {
       return expect(sut.run(options)).to.eventually.eq(expectedResult);
     });
 
-    it('should retry on a new test runner if a crash related reject appears', () => {
+    it('should retry if a `ChildProcessCrashedError` occurred reject appears', () => {
       testRunner1.run.rejects(crashedError);
       testRunner2.run.resolves(expectedResult);
       return expect(sut.run(options)).to.eventually.eq(expectedResult);
+    });
+
+    it('should log and retry when an `OutOfMemoryError` occurred.', async () => {
+      testRunner1.run.rejects(new OutOfMemoryError(123, 123));
+      testRunner2.run.resolves(expectedResult);
+      await expect(sut.run(options)).to.eventually.eq(expectedResult);
+      expect(logMock.info).calledWith('Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don\'t worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.', 123);
     });
 
     it('should dispose a test runner when it rejected, before creating a new one', async () => {

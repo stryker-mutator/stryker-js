@@ -3,11 +3,11 @@ import { fork, ChildProcess } from 'child_process';
 import { File } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
-import { serialize, deserialize, kill, isErrnoException } from '../utils/objectUtils';
+import { serialize, deserialize, kill, isErrnoException, padLeft } from '../utils/objectUtils';
 import { Task, ExpirableTask } from '../utils/Task';
 import LoggingClientContext from '../logging/LoggingClientContext';
-import StrykerError from '../utils/StrykerError';
 import ChildProcessCrashedError from './ChildProcessCrashedError';
+import OutOfMemoryError from './OutOfMemoryError';
 
 type MethodPromised = { (...args: any[]): Promise<any> };
 
@@ -25,10 +25,10 @@ export default class ChildProcessProxy<T> {
   private worker: ChildProcess;
   private initTask: Task;
   private disposeTask: ExpirableTask<void> | undefined;
-  private currentError: StrykerError | undefined;
+  private currentError: ChildProcessCrashedError | undefined;
   private workerTasks: Task<any>[] = [];
   private log = getLogger(ChildProcessProxy.name);
-  private lastMessagesQueue: string[] = [];
+  private recentMessagesQueue: string[] = [];
   private isDisposed = false;
 
   private constructor(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, constructorParams: any[]) {
@@ -137,14 +137,14 @@ export default class ChildProcessProxy<T> {
   private listenToStdoutAndStderr() {
     const traceEnabled = this.log.isTraceEnabled();
     const handleData = (data: Buffer) => {
-      const messages = data.toString().split('\n').filter(Boolean);
-      this.lastMessagesQueue.push(...messages);
-      if (this.lastMessagesQueue.length > 10) {
-        this.lastMessagesQueue.shift();
+      const message = data.toString();
+      this.recentMessagesQueue.push(message);
+      if (this.recentMessagesQueue.length > 10) {
+        this.recentMessagesQueue.shift();
       }
 
       if (traceEnabled) {
-        messages.forEach(message => this.log.trace(message));
+        this.log.trace(message);
       }
     };
 
@@ -163,16 +163,28 @@ export default class ChildProcessProxy<T> {
       .forEach(task => task.reject(error));
   }
 
-  private handleUnexpectedExit(code: number | null, signal: string) {
+  private handleUnexpectedExit(code: number, signal: string) {
     this.isDisposed = true;
-    this.currentError = new ChildProcessCrashedError(code);
-    this.log.warn(`Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr(this.lastMessagesQueue)}`, this.currentError);
+    const output = this.recentMessagesQueue.join(os.EOL);
+
+    if (processOutOfMemory()) {
+      this.currentError = new OutOfMemoryError(this.worker.pid, code);
+      this.log.warn(`Child process [pid ${this.currentError.pid}] ran out of memory. Stdout and stderr are logged on debug level.`);
+      this.log.debug(stdoutAndStderr());
+    } else {
+      this.currentError = new ChildProcessCrashedError(this.worker.pid, code);
+      this.log.warn(`Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr()}`, this.currentError);
+    }
+
     this.reportError(this.currentError);
 
-    function stdoutAndStderr(messages: string[]) {
-      if (messages.length) {
-        return `Last part of stdout and stderr was: ${os.EOL}${
-          messages.map(msg => `\t${msg}`).join(os.EOL)}`;
+    function processOutOfMemory() {
+      return output.indexOf('JavaScript heap out of memory') >= 0;
+    }
+
+    function stdoutAndStderr() {
+      if (output.length) {
+        return `Last part of stdout and stderr was: ${os.EOL}${padLeft(output)}`;
       } else {
         return 'Stdout and stderr were empty.';
       }
@@ -182,7 +194,7 @@ export default class ChildProcessProxy<T> {
   private handleError(error: Error) {
     if (this.innerProcessIsCrashed(error)) {
       this.log.warn(`Child process [pid ${this.worker.pid}] has crashed. See other warning messages for more info.`, error);
-      this.reportError(new ChildProcessCrashedError(null, error));
+      this.reportError(new ChildProcessCrashedError(this.worker.pid, undefined, undefined, error));
     } else {
       this.reportError(error);
     }

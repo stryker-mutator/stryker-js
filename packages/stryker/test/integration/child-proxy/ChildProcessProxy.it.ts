@@ -12,6 +12,7 @@ import { filter } from 'rxjs/operators';
 import { Mock } from '../../helpers/producers';
 import currentLogMock from '../../helpers/logMock';
 import { sleep } from '../../../src/utils/objectUtils';
+import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
 
 describe('ChildProcessProxy', function () {
 
@@ -115,6 +116,10 @@ describe('ChildProcessProxy', function () {
   it('should immediately reject any subsequent calls when the child process exits', async () => {
     await expect(sut.proxy.exit(1)).rejected;
     await expect(sut.proxy.say()).rejectedWith('Child process exited unexpectedly (code 1)');
+  });
+
+  it('should throw an OutOfMemoryError if the process went out-of-memory', async () => {
+    await expect(sut.proxy.memoryLeak()).rejectedWith(OutOfMemoryError);
   });
 });
 

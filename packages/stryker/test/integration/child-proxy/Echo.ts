@@ -57,4 +57,11 @@ export default class Echo {
   stderr(...args: string[]) {
     args.forEach(arg => console.error(arg));
   }
+
+  memoryLeak() {
+    const arr: number[] = [];
+    while (true) {
+      arr.push(1);
+    }
+  }
 }
