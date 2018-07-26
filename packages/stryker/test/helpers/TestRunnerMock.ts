@@ -1,7 +1,5 @@
-import * as sinon from 'sinon';
-
 export default class TestRunnerMock {
-  init = sinon.stub();
-  run = sinon.stub();
-  dispose = sinon.stub();
+  init: sinon.SinonStub = sandbox.stub();
+  run: sinon.SinonStub = sandbox.stub();
+  dispose: sinon.SinonStub = sandbox.stub();
 }

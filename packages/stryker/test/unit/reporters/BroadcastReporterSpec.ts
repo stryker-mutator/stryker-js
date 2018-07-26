@@ -1,4 +1,3 @@
-import * as sinon from 'sinon';
 import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
 import currentLogMock from '../../helpers/logMock';
@@ -80,7 +79,7 @@ describe('BroadcastReporter', () => {
 
   function mockReporter() {
     let reporter: any = {};
-    ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sinon.stub());
+    ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sandbox.stub());
     return reporter;
   }
 
