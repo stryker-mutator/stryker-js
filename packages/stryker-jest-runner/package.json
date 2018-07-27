@@ -40,7 +40,7 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-jest-runner#readme",
   "devDependencies": {
     "@types/semver": "~5.5.0",
-    "jest": "~22.0.0",
+    "jest": "~23.4.1",
     "react": "~16.4.1",
     "react-dom": "~16.2.0",
     "react-scripts": "~1.1.4",
