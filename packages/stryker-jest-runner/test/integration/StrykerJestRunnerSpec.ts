@@ -19,7 +19,7 @@ process.env.BABEL_ENV = 'test';
 
 describe('Integration test for Strykers Jest runner', function () {
   // Set timeout for integration tests to 10 seconds for travis
-  this.timeout(10000);
+  this.timeout(30000);
 
   let jestConfigEditor: JestConfigEditor;
   let runOptions: RunnerOptions;
