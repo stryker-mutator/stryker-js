@@ -153,6 +153,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       testResultsProcessor: undefined,
       collectCoverage: false,
       verbose: false,
+      testURL: 'http://localhost',
       bail: false
     });
   });
@@ -170,6 +171,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       testRunner: 'jest-jasmine2',
       testResultsProcessor: undefined,
       collectCoverage: false,
+      testURL: 'http://localhost',
       verbose: false,
       bail: false
     });
