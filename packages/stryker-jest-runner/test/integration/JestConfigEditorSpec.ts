@@ -171,7 +171,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       testRunner: 'jest-jasmine2',
       testResultsProcessor: undefined,
       collectCoverage: false,
-      testURL: "http://localhost",
+      testURL: 'http://localhost',
       verbose: false,
       bail: false
     });
