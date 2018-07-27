@@ -6,5 +6,6 @@ module.exports = {
   testResultsProcessor: "my-awesome-testResultProcessor",
   collectCoverage: true,
   verbose: true,
+  testURL: "http://localhost",
   bail: false
 }

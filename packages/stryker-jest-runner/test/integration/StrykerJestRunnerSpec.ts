@@ -78,6 +78,7 @@ describe('Integration test for Strykers Jest runner', function () {
 
     const result = await jestTestRunner.run();
 
+    expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
     expect(result).to.have.property('tests');
     expect(result.tests).to.be.an('array').with.length(testNames.length);
 
@@ -99,6 +100,7 @@ describe('Integration test for Strykers Jest runner', function () {
 
     const result = await jestTestRunner.run();
 
+    expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
     expect(result).to.have.property('tests');
     expect(result.tests).to.be.an('array').with.length(testNames.length);
 
