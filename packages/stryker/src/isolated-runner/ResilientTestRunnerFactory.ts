@@ -9,7 +9,7 @@ import CommandTestRunner from '../test-runner/CommandTestRunner';
 
 export default {
   create(testRunnerName: string, settings: RunnerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext): TestRunnerDecorator {
-    if (testRunnerName === 'command') {
+    if (CommandTestRunner.is(testRunnerName)) {
       return new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandboxWorkingDirectory, settings)));
     } else {
       return new RetryDecorator(() =>

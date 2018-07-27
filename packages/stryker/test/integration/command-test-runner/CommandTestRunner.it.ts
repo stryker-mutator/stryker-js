@@ -4,7 +4,7 @@ import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runn
 import { Config } from 'stryker-api/config';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
 
-describe('CommandTestRunner integration', function () {
+describe(`${CommandTestRunner.name} integration`, function () {
 
   this.timeout(15000);
   const workingDir = path.resolve(__dirname, '..', '..', '..', 'testResources', 'command-runner');

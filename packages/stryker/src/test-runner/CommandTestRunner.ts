@@ -15,7 +15,20 @@ export interface CommandRunnerSettings {
  * The command can be configured, but defaults to `npm test`.
  */
 export default class CommandTestRunner implements TestRunner {
+  
+  /**
+   * "command"
+   */
+  static runnerName = CommandTestRunner.name.replace('TestRunner', '').toLowerCase();
 
+  /**
+   * Determines whether a given name is "command" (ignore case)
+   * @param name Maybe "command", maybe not
+   */
+  static is(name: string): boolean {
+    return this.runnerName === name.toLowerCase();
+  }
+        
   private readonly settings: CommandRunnerSettings;
 
   constructor(private workingDir: string, options: RunnerOptions) {
