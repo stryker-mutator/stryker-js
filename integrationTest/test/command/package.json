@@ -1,0 +1,15 @@
+{
+  "name": "test-module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf \"reports\" \"stryker.log\"",
+    "test": "stryker run stryker.conf.js",
+    "mocha": "mocha",
+    "posttest": "mocha --require ts-node/register verify/*.ts"
+  },
+  "author": "",
+  "license": "ISC"
+}

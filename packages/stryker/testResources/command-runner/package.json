@@ -1,0 +1,6 @@
+{
+    "scripts": {
+        "test": "node ok.js",
+        "fail": "node nok.js"
+    }
+}
