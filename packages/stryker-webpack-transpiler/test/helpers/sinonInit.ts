@@ -2,7 +2,7 @@ import * as sinon from 'sinon';
 import * as logging from 'stryker-api/logging';
 
 beforeEach(() => {
-  global.sandbox = sinon.sandbox.create();
+  global.sandbox = sinon.createSandbox();
   global.logMock = {
     debug: sandbox.stub(),
     info: sandbox.stub(),

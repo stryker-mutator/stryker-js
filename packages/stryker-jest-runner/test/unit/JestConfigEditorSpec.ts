@@ -17,7 +17,7 @@ describe('JestConfigEditor', () => {
   let config: Config;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     defaultConfigLoaderStub = sinon.createStubInstance(DefaultJestConfigLoader);
     reactScriptsJestConfigLoaderStub = sinon.createStubInstance(ReactScriptsJestConfigLoader);
