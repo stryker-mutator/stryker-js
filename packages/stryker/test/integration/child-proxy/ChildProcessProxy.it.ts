@@ -102,8 +102,8 @@ describe('ChildProcessProxy', function () {
   });
 
   it('should log stdout and stderr on warning when a child process crashed', async () => {
-    sut.proxy.stdout('stdout message');
-    sut.proxy.stderr('stderr message');
+    await sut.proxy.stdout('stdout message');
+    await sut.proxy.stderr('stderr message');
     // Give nodejs the chance to flush the stdout and stderr buffers
     await sleep(10);
     await expect(sut.proxy.exit(12)).rejected;
