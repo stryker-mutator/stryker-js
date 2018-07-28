@@ -101,13 +101,26 @@ describe('ChildProcessProxy', () => {
       childProcessMock.stderr.emit('data', 'foo');
       childProcessMock.stdout.emit('data', 'bar');
       actExit(23, 'SIGTERM');
-      expect(logMock.warn).calledWithMatch(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was: ${os.EOL
+      expect(logMock.warn).calledWithMatch(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL
         }\tfoo${os.EOL}\tbar`);
     });
 
-    it('should log that no stdout was available', () => {
+    it('should log that no stdout was available when stdout and stderr are empty', () => {
       actExit(23, 'SIGTERM');
       expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.`);
+    });
+
+    it('should only log the last 20 messages from stdout and stderr', () => {
+      const maxNumberOfMessages = 20;
+      let expectedMessageLog = '';
+      for (let i = 0; i < maxNumberOfMessages + 1; i++) {
+        if (i > 0) {
+          expectedMessageLog += `${os.EOL}\t${i}`;
+        }
+        childProcessMock.stdout.emit('data', i);
+      }
+      actExit(24);
+      expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 24 (SIGINT). Last part of stdout and stderr was:${expectedMessageLog}`);
     });
 
     it('should reject any outstanding worker promises with the error', () => {
@@ -116,7 +129,7 @@ describe('ChildProcessProxy', () => {
       actExit(646);
       return expect(actualPromise).rejectedWith(expectedError);
     });
-    
+
     it('should reject any new calls immediately', () => {
       actExit(646);
       return expect(sut.proxy.say('')).rejected;
@@ -191,7 +204,7 @@ describe('ChildProcessProxy', () => {
       expect(childProcessMock.send).calledOnce; // init
     });
 
-    it('should only wait for max 2 seconds before going ahead and killing the child process anyway', async() => {
+    it('should only wait for max 2 seconds before going ahead and killing the child process anyway', async () => {
       const disposePromise = sut.dispose();
       clock.tick(2000);
       await disposePromise;

@@ -18,6 +18,7 @@ export type Promisified<T> = {
 const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
+const MESSAGE_QUEUE_SIZE = 20;
 
 export default class ChildProcessProxy<T> {
   readonly proxy: Promisified<T>;
@@ -139,7 +140,7 @@ export default class ChildProcessProxy<T> {
     const handleData = (data: Buffer) => {
       const message = data.toString();
       this.recentMessagesQueue.push(message);
-      if (this.recentMessagesQueue.length > 10) {
+      if (this.recentMessagesQueue.length > MESSAGE_QUEUE_SIZE) {
         this.recentMessagesQueue.shift();
       }
 
@@ -184,7 +185,7 @@ export default class ChildProcessProxy<T> {
 
     function stdoutAndStderr() {
       if (output.length) {
-        return `Last part of stdout and stderr was: ${os.EOL}${padLeft(output)}`;
+        return `Last part of stdout and stderr was:${os.EOL}${padLeft(output)}`;
       } else {
         return 'Stdout and stderr were empty.';
       }
