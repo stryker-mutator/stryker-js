@@ -18,7 +18,7 @@ describe('ReactScriptsJestConfigLoader', () => {
   let reactScriptsPackagePath = './node_modules/react-scripts/package.json';
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     createReactJestConfigStub = sandbox.stub(helper, 'createReactJestConfig');
     createReactJestConfigStub.callsFake((resolve: any, projectRoot: string, eject: boolean) => ({
