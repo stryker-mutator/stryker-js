@@ -48,7 +48,7 @@
     "stryker-api": "^0.18.0"
   },
   "peerDependencies": {
-    "jest": "^20.0.0",
+    "jest": ">= 22.0.0",
     "stryker-api": "^0.18.0"
   },
   "dependencies": {
