@@ -15,11 +15,11 @@ export interface CommandRunnerSettings {
  * The command can be configured, but defaults to `npm test`.
  */
 export default class CommandTestRunner implements TestRunner {
-  
+
   /**
    * "command"
    */
-  static runnerName = CommandTestRunner.name.replace('TestRunner', '').toLowerCase();
+  static readonly runnerName = CommandTestRunner.name.replace('TestRunner', '').toLowerCase();
 
   /**
    * Determines whether a given name is "command" (ignore case)
@@ -28,8 +28,10 @@ export default class CommandTestRunner implements TestRunner {
   static is(name: string): boolean {
     return this.runnerName === name.toLowerCase();
   }
-        
+
   private readonly settings: CommandRunnerSettings;
+
+  private timeoutHandler: undefined | (() => Promise<void>);
 
   constructor(private workingDir: string, options: RunnerOptions) {
     this.settings = Object.assign({
@@ -43,15 +45,13 @@ export default class CommandTestRunner implements TestRunner {
       const output: (string | Buffer)[] = [];
       const childProcess = exec(this.settings.command, { cwd: this.workingDir });
       childProcess.on('error', error => {
-        removeAllListeners();
         kill(childProcess.pid)
-          .then(() => res(errorResult(error)))
+          .then(() => handleResolve(errorResult(error)))
           .catch(rej);
       });
       childProcess.on('exit', code => {
         const result = completeResult(code, timer);
-        removeAllListeners();
-        res(result);
+        handleResolve(result);
       });
       childProcess.stdout.on('data', chunk => {
         output.push(chunk);
@@ -59,6 +59,17 @@ export default class CommandTestRunner implements TestRunner {
       childProcess.stderr.on('data', chunk => {
         output.push(chunk);
       });
+
+      this.timeoutHandler = async () => {
+        handleResolve({ status: RunStatus.Timeout, tests: [] });
+        await kill(childProcess.pid);
+      };
+
+      const handleResolve = (runResult: RunResult) => {
+        removeAllListeners();
+        this.timeoutHandler = undefined;
+        res(runResult);
+      };
 
       function removeAllListeners() {
         childProcess.stderr.removeAllListeners();
@@ -98,5 +109,11 @@ export default class CommandTestRunner implements TestRunner {
         }
       }
     });
+
+  }
+  async dispose(): Promise<void> {
+    if (this.timeoutHandler) {
+      await this.timeoutHandler();
+    }
   }
 }

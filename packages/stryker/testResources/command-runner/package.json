@@ -1,6 +1,7 @@
 {
     "scripts": {
         "test": "node ok.js",
-        "fail": "node nok.js"
+        "fail": "node nok.js",
+        "wait": "node wait.js"
     }
 }
