@@ -33,7 +33,7 @@ export default class ChildProcessTestRunnerWorker implements TestRunner {
     const result = await this.underlyingTestRunner.run(options);
     // If the test runner didn't report on coverage, let's try to do it ourselves.
     if (!result.coverage) {
-      result.coverage = (Function('return this'))().__coverage__;
+      result.coverage = (global as any).__coverage__;
     }
     if (result.errorMessages) {
       // errorMessages should be a string[]
