@@ -16,7 +16,7 @@ describe('DefaultJestConfigLoader', () => {
   let sandbox: sinon.SinonSandbox;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     fsStub.readFileSync = sandbox.stub(fs, 'readFileSync');
     requireStub = sandbox.stub(fakeRequire, 'require');

@@ -16,7 +16,7 @@ describe('BabelConfigReader', () => {
   };
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     logStub = {
       trace: sandbox.stub(),
       info: sandbox.stub(),
