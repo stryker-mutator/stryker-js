@@ -136,7 +136,6 @@ export default class ChildProcessProxy<T> {
   }
 
   private listenToStdoutAndStderr() {
-    const traceEnabled = this.log.isTraceEnabled();
     const handleData = (data: Buffer) => {
       const message = data.toString();
       this.recentMessagesQueue.push(message);
@@ -144,7 +143,7 @@ export default class ChildProcessProxy<T> {
         this.recentMessagesQueue.shift();
       }
 
-      if (traceEnabled) {
+      if (this.log.isTraceEnabled()) {
         this.log.trace(message);
       }
     };
