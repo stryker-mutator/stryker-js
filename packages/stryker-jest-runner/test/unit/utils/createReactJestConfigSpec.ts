@@ -10,7 +10,7 @@ describe('createReactJestConfig', () => {
   };
   
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     loaderStub = sandbox.stub(loader, 'require');
     loaderStub.returns((resolve: Function, projectRoot: string, ejected: boolean) => {
@@ -39,7 +39,7 @@ describe('createReactTsJestConfig', () => {
   };
   
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     loaderStub = sandbox.stub(loader, 'require');
     loaderStub.returns((resolve: Function, projectRoot: string, ejected: boolean) => {
