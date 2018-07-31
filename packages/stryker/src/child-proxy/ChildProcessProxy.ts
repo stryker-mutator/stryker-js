@@ -164,7 +164,7 @@ export default class ChildProcessProxy<T> {
 
   private reportError(error: Error) {
     this.workerTasks
-      .filter(task => !task.isResolved)
+      .filter(task => !task.isCompleted)
       .forEach(task => task.reject(error));
   }
 
@@ -177,8 +177,8 @@ export default class ChildProcessProxy<T> {
       this.log.warn(`Child process [pid ${this.currentError.pid}] ran out of memory. Stdout and stderr are logged on debug level.`);
       this.log.debug(stdoutAndStderr());
     } else {
-      this.currentError = new ChildProcessCrashedError(this.worker.pid, code);
-      this.log.warn(`Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr()}`, this.currentError);
+      this.currentError = new ChildProcessCrashedError(this.worker.pid, `Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr()}`, code, signal);
+      this.log.warn(this.currentError.message, this.currentError);
     }
 
     this.reportError(this.currentError);
@@ -199,7 +199,7 @@ export default class ChildProcessProxy<T> {
   private handleError(error: Error) {
     if (this.innerProcessIsCrashed(error)) {
       this.log.warn(`Child process [pid ${this.worker.pid}] has crashed. See other warning messages for more info.`, error);
-      this.reportError(new ChildProcessCrashedError(this.worker.pid, undefined, undefined, error));
+      this.reportError(new ChildProcessCrashedError(this.worker.pid, `Child process [pid ${this.worker.pid}] has crashed`, undefined, undefined, error));
     } else {
       this.reportError(error);
     }

@@ -18,7 +18,7 @@ describe('RetryDecorator', () => {
   let logMock: Mock<Logger>;
   const options = { timeout: 2 };
   const expectedResult = 'something';
-  const crashedError = new ChildProcessCrashedError(42);
+  const crashedError = new ChildProcessCrashedError(42, '');
 
   beforeEach(() => {
     testRunner1 = new TestRunnerMock();

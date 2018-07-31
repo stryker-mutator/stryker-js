@@ -13,6 +13,7 @@ import { Mock } from '../../helpers/producers';
 import currentLogMock from '../../helpers/logMock';
 import { sleep } from '../../../src/utils/objectUtils';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
+import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 
 describe('ChildProcessProxy', function () {
 
@@ -98,7 +99,7 @@ describe('ChildProcessProxy', function () {
   });
 
   it('should reject when the child process exits', () => {
-    return expect(sut.proxy.exit(42)).rejectedWith('Child process exited unexpectedly (code 42)');
+    return expect(sut.proxy.exit(42)).rejectedWith(ChildProcessCrashedError);
   });
 
   it('should log stdout and stderr on warning when a child process crashed', async () => {
@@ -115,7 +116,7 @@ describe('ChildProcessProxy', function () {
 
   it('should immediately reject any subsequent calls when the child process exits', async () => {
     await expect(sut.proxy.exit(1)).rejected;
-    await expect(sut.proxy.say('something')).rejectedWith('Child process exited unexpectedly (code 1)');
+    await expect(sut.proxy.say('something')).rejectedWith(ChildProcessCrashedError);
   });
 
   it('should throw an OutOfMemoryError if the process went out-of-memory', async () => {

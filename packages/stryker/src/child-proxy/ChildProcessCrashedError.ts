@@ -3,8 +3,9 @@ import StrykerError from '../utils/StrykerError';
 export default class ChildProcessCrashedError extends StrykerError {
   constructor(
     public readonly pid: number,
+    message: string,
     public readonly exitCode?: number,
-    message = `Child process exited unexpectedly (code ${exitCode === null ? 'unknown' : exitCode})`,
+    public readonly signal?: string,
     innerError?: Error) {
     super(message, innerError);
     Error.captureStackTrace(this, ChildProcessCrashedError);

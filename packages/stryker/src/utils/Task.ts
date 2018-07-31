@@ -8,7 +8,7 @@ export class Task<T = void> {
   protected _promise: Promise<T>;
   private resolveFn: (value?: T | PromiseLike<T>) => void;
   private rejectFn: (reason: any) => void;
-  private _isResolved = false;
+  private _isCompleted = false;
 
   constructor() {
     this._promise = new Promise<T>((resolve, reject) => {
@@ -21,17 +21,17 @@ export class Task<T = void> {
     return this._promise;
   }
 
-  get isResolved() {
-    return this._isResolved;
+  get isCompleted() {
+    return this._isCompleted;
   }
 
   resolve(result: undefined | T | PromiseLike<T>) {
-    this._isResolved = true;
+    this._isCompleted = true;
     this.resolveFn(result);
   }
 
   reject(reason: any) {
-    this._isResolved = true;
+    this._isCompleted = true;
     this.rejectFn(reason);
   }
 }

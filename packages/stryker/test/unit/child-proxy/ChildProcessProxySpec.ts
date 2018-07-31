@@ -124,7 +124,7 @@ describe('ChildProcessProxy', () => {
     });
 
     it('should reject any outstanding worker promises with the error', () => {
-      const expectedError = 'Child process exited unexpectedly (code 646)';
+      const expectedError = 'Child process [pid 4648] exited unexpectedly with exit code 646 (SIGINT).';
       const actualPromise = sut.proxy.say('test');
       actExit(646);
       return expect(actualPromise).rejectedWith(expectedError);

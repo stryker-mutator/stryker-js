@@ -76,7 +76,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     });
 
     it('should not reject when the child process is down', async () => {
-      childProcessProxyMock.proxy.dispose.rejects(new ChildProcessCrashedError(1, 1));
+      childProcessProxyMock.proxy.dispose.rejects(new ChildProcessCrashedError(1, '1'));
       await sut.dispose();
       expect(childProcessProxyMock.dispose).called;
     });
