@@ -8,6 +8,7 @@ import { Task, ExpirableTask } from '../utils/Task';
 import LoggingClientContext from '../logging/LoggingClientContext';
 import ChildProcessCrashedError from './ChildProcessCrashedError';
 import OutOfMemoryError from './OutOfMemoryError';
+import StringBuilder from '../utils/StringBuilder';
 
 interface Func<TS extends any[], R> {
   (...args: TS): R;
@@ -23,7 +24,6 @@ export type Promisified<T> = {
 const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
-const MESSAGE_QUEUE_SIZE = 20;
 
 export default class ChildProcessProxy<T> {
   readonly proxy: Promisified<T>;
@@ -34,7 +34,7 @@ export default class ChildProcessProxy<T> {
   private currentError: ChildProcessCrashedError | undefined;
   private workerTasks: Task<any>[] = [];
   private log = getLogger(ChildProcessProxy.name);
-  private recentMessagesQueue: string[] = [];
+  private stdoutAndStderrBuilder = new StringBuilder();
   private isDisposed = false;
 
   private constructor(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, constructorParams: any[]) {
@@ -141,15 +141,11 @@ export default class ChildProcessProxy<T> {
   }
 
   private listenToStdoutAndStderr() {
-    const handleData = (data: Buffer) => {
-      const message = data.toString();
-      this.recentMessagesQueue.push(message);
-      if (this.recentMessagesQueue.length > MESSAGE_QUEUE_SIZE) {
-        this.recentMessagesQueue.shift();
-      }
-
+    const handleData = (data: Buffer | string) => {
+      const output = data.toString();
+      this.stdoutAndStderrBuilder.append(output);
       if (this.log.isTraceEnabled()) {
-        this.log.trace(message);
+        this.log.trace(output);
       }
     };
 
@@ -170,7 +166,7 @@ export default class ChildProcessProxy<T> {
 
   private handleUnexpectedExit(code: number, signal: string) {
     this.isDisposed = true;
-    const output = this.recentMessagesQueue.join(os.EOL);
+    const output = this.stdoutAndStderrBuilder.toString();
 
     if (processOutOfMemory()) {
       this.currentError = new OutOfMemoryError(this.worker.pid, code);

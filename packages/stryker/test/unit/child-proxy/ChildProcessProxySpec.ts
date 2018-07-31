@@ -110,19 +110,6 @@ describe('ChildProcessProxy', () => {
       expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.`);
     });
 
-    it('should only log the last 20 messages from stdout and stderr', () => {
-      const maxNumberOfMessages = 20;
-      let expectedMessageLog = '';
-      for (let i = 0; i < maxNumberOfMessages + 1; i++) {
-        if (i > 0) {
-          expectedMessageLog += `${os.EOL}\t${i}`;
-        }
-        childProcessMock.stdout.emit('data', i);
-      }
-      actExit(24);
-      expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 24 (SIGINT). Last part of stdout and stderr was:${expectedMessageLog}`);
-    });
-
     it('should reject any outstanding worker promises with the error', () => {
       const expectedError = 'Child process [pid 4648] exited unexpectedly with exit code 646 (SIGINT).';
       const actualPromise = sut.proxy.say('test');
