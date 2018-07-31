@@ -115,7 +115,7 @@ describe('ChildProcessProxy', function () {
 
   it('should immediately reject any subsequent calls when the child process exits', async () => {
     await expect(sut.proxy.exit(1)).rejected;
-    await expect(sut.proxy.say()).rejectedWith('Child process exited unexpectedly (code 1)');
+    await expect(sut.proxy.say('something')).rejectedWith('Child process exited unexpectedly (code 1)');
   });
 
   it('should throw an OutOfMemoryError if the process went out-of-memory', async () => {

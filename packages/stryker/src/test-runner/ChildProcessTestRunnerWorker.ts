@@ -12,23 +12,18 @@ export default class ChildProcessTestRunnerWorker implements TestRunner {
     this.underlyingTestRunner = TestRunnerFactory.instance().create(realTestRunnerName, options);
   }
 
-  init(): Promise<void> | void {
+  async init(): Promise<void> {
     if (this.underlyingTestRunner.init) {
-      return this.underlyingTestRunner.init();
-    } else {
-      return;
+      await this.underlyingTestRunner.init();
     }
   }
 
-  dispose() {
+  async dispose() {
     if (this.underlyingTestRunner.dispose) {
-      return this.underlyingTestRunner.dispose();
-    } else {
-      return;
+      await this.underlyingTestRunner.dispose();
     }
   }
-
-
+  
   async run(options: RunOptions) {
     const result = await this.underlyingTestRunner.run(options);
     // If the test runner didn't report on coverage, let's try to do it ourselves.

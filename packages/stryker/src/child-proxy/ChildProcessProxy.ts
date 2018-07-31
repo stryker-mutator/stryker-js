@@ -9,10 +9,15 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 import ChildProcessCrashedError from './ChildProcessCrashedError';
 import OutOfMemoryError from './OutOfMemoryError';
 
-type MethodPromised = { (...args: any[]): Promise<any> };
+interface Func<TS extends any[], R> {
+  (...args: TS): R;
+}
+interface PromisifiedFunc<TS extends any[], R> {
+  (...args: TS): Promise<R>;
+}
 
 export type Promisified<T> = {
-  [K in keyof T]: T[K] extends MethodPromised ? T[K] : T[K] extends Function ? MethodPromised : () => Promise<T[K]>;
+  [K in keyof T]: T[K] extends PromisifiedFunc<any, any> ? T[K] : T[K] extends Func<infer TS, infer R> ? PromisifiedFunc<TS, R> : () => Promise<T[K]>;
 };
 
 const BROKEN_PIPE_ERROR_CODE = 'EPIPE';

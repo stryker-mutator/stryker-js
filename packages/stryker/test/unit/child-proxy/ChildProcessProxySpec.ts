@@ -89,6 +89,7 @@ describe('ChildProcessProxy', () => {
     it('should listen for exit calls', () => {
       createSut();
       expect(childProcessMock.listeners('exit')).lengthOf(1);
+      sut.proxy.sum
     });
   });
 
@@ -157,12 +158,12 @@ describe('ChildProcessProxy', () => {
       const expectedWorkerMessage: WorkerMessage = {
         kind: WorkerMessageKind.Call,
         correlationId: 0,
-        methodName: 'sayHello',
+        methodName: 'say',
         args: ['echo']
       };
 
       // Act
-      const delayedEcho = sut.proxy.sayHello('echo');
+      const delayedEcho = sut.proxy.say('echo');
       clock.tick(0);
       receiveMessage(workerResponse);
       const result: string = await delayedEcho;
