@@ -89,7 +89,6 @@ describe('ChildProcessProxy', () => {
     it('should listen for exit calls', () => {
       createSut();
       expect(childProcessMock.listeners('exit')).lengthOf(1);
-      sut.proxy.sum
     });
   });
 
