@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { EOL } from 'os';
 import StringBuilder from '../../../src/utils/StringBuilder';
 
-describe.only(StringBuilder.name, () => {
+describe(StringBuilder.name, () => {
 
   it('should append strings with new lines when `toString()` is called', () => {
     const sut = new StringBuilder();
