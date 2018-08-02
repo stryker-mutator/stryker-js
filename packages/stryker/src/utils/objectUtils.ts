@@ -93,11 +93,21 @@ export function kill(pid: number): Promise<void> {
         res();
       }
     });
-    
+
     function canIgnore(code: number | undefined) {
       // https://docs.microsoft.com/en-us/windows/desktop/Debug/system-error-codes--0-499-
       // these error codes mean the program is _already_ closed.
       return code === 255 || code === 128;
     }
   });
+}
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+}
+
+export function padLeft(input: string): string {
+  return input.split('\n').map(str => '\t' + str).join('\n');
 }

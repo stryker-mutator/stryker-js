@@ -5,7 +5,7 @@ export default class Echo {
 
   private logger = getLogger(Echo.name);
 
-  constructor(private name: string) {
+  constructor(public name: string) {
 
   }
 
@@ -25,8 +25,17 @@ export default class Echo {
     return file.textContent;
   }
 
+  exit(code: number) {
+    process.exit(code);
+    return new Promise(res => {/*never resolve*/ });
+  }
+
   readFile() {
     return new File('foobar.txt', 'hello foobar');
+  }
+
+  cwd() {
+    return process.cwd();
   }
 
   debug(message: string) {
@@ -39,5 +48,20 @@ export default class Echo {
 
   reject(error: string) {
     return Promise.reject(new Error(error));
+  }
+
+  stdout(...args: string[]) {
+    args.forEach(arg => console.log(arg));
+  }
+
+  stderr(...args: string[]) {
+    args.forEach(arg => console.error(arg));
+  }
+
+  memoryLeak() {
+    const arr: number[] = [];
+    while (true) {
+      arr.push(1);
+    }
   }
 }

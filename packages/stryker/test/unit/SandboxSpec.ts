@@ -9,7 +9,7 @@ import { File, LogLevel } from 'stryker-api/core';
 import { wrapInClosure, normalizeWhiteSpaces } from '../../src/utils/objectUtils';
 import Sandbox from '../../src/Sandbox';
 import { TempFolder } from '../../src/utils/TempFolder';
-import ResilientTestRunnerFactory from '../../src/isolated-runner/ResilientTestRunnerFactory';
+import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunnerFactory';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import { mutant as createMutant, testResult, Mock, createFileAlreadyExistsError } from '../helpers/producers';
 import SourceFile from '../../src/SourceFile';
@@ -17,7 +17,7 @@ import '../helpers/globals';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import * as fileUtils from '../../src/utils/fileUtils';
 import currentLogMock from '../helpers/logMock';
-import TestRunnerDecorator from '../../src/isolated-runner/TestRunnerDecorator';
+import TestRunnerDecorator from '../../src/test-runner/TestRunnerDecorator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import { RunnerOptions } from 'stryker-api/test_runner';
 
