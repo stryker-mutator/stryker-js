@@ -16,7 +16,9 @@ interface Func<TS extends any[], R> {
 interface PromisifiedFunc<TS extends any[], R> {
   (...args: TS): Promise<R>;
 }
-
+interface Constructor<T, TS extends any[]> {
+  new (...args: TS): T;
+}
 export type Promisified<T> = {
   [K in keyof T]: T[K] extends PromisifiedFunc<any, any> ? T[K] : T[K] extends Func<infer TS, infer R> ? PromisifiedFunc<TS, R> : () => Promise<T[K]>;
 };
@@ -40,7 +42,7 @@ export default class ChildProcessProxy<T> {
   private constructor(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, constructorParams: any[]) {
     this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
     this.initTask = new Task();
-    this.log.debug('Starting %s in a child process', requirePath);
+    this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
     this.send({
       kind: WorkerMessageKind.Init,
       loggingContext,
@@ -62,15 +64,8 @@ export default class ChildProcessProxy<T> {
   /**
   * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
   */
-  static create<T, P1>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, constructorFunction: { new(arg: P1): T }, arg: P1): ChildProcessProxy<T>;
-  /**
-  * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
-  */
-  static create<T, P1, P2>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, constructorFunction: { new(arg: P1, arg2: P2): T }, arg1: P1, arg2: P2): ChildProcessProxy<T>;
-  /**
-  * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
-  */
-  static create<T>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, _: { new(...params: any[]): T }, ...constructorArgs: any[]) {
+  static create<T, TS extends any[]>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, _:  Constructor<T, TS>, ...constructorArgs: TS):
+    ChildProcessProxy<T> {
     return new ChildProcessProxy(requirePath, loggingContext, plugins, workingDirectory, constructorArgs);
   }
 
