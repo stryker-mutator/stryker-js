@@ -1,59 +1,48 @@
+import { sleep } from './objectUtils';
 
 /**
  * Wraps a promise in a Task api for convenience.
  */
-export default class Task<T = void> {
+export class Task<T = void> {
 
-  private _promise: Promise<T>;
+  protected _promise: Promise<T>;
   private resolveFn: (value?: T | PromiseLike<T>) => void;
   private rejectFn: (reason: any) => void;
-  private _isResolved = false;
-  private timeout: NodeJS.Timer;
+  private _isCompleted = false;
 
-  constructor(timeoutMs?: number, private timeoutHandler?: () => PromiseLike<T>) {
+  constructor() {
     this._promise = new Promise<T>((resolve, reject) => {
       this.resolveFn = resolve;
       this.rejectFn = reject;
     });
-    if (timeoutMs) {
-      this.timeout = setTimeout(() => this.handleTimeout(), timeoutMs);
-    }
-  }
-
-  get isResolved() {
-    return this._isResolved;
   }
 
   get promise() {
     return this._promise;
   }
 
-  handleTimeout() {
-    if (this.timeoutHandler) {
-      this.timeoutHandler().then(val => this.resolve(val));
-    } else {
-      this.resolve(undefined);
-    }
-  }
-
-  chainTo(promise: Promise<T>) {
-    promise.then(value => this.resolve(value), reason => this.reject(reason));
+  get isCompleted() {
+    return this._isCompleted;
   }
 
   resolve(result: undefined | T | PromiseLike<T>) {
-    this.resolveTimeout();
+    this._isCompleted = true;
     this.resolveFn(result);
   }
 
   reject(reason: any) {
-    this.resolveTimeout();
+    this._isCompleted = true;
     this.rejectFn(reason);
   }
+}
 
-  private resolveTimeout() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-    this._isResolved = true;
+/**
+ * A task that can expire after the given time.
+ * If that happens, the inner promise is resolved
+ */
+export class ExpirableTask<T = void> extends Task<T | void> {
+  constructor(timeoutMS: number) {
+    super();
+    this._promise = Promise.race([this._promise, sleep(timeoutMS)]);
   }
 }
