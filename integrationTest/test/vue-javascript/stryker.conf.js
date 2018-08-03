@@ -9,6 +9,7 @@ module.exports = function (config) {
     port: 9264,
     karmaConfig: {
       files: ['src/**/*', 'test/**/*']
-    }
+    },
+    coverageAnalysis: 'off'
   });
 };
