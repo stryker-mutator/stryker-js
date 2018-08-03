@@ -2,7 +2,7 @@ import { TestRunner, RunResult, RunOptions, RunnerOptions } from 'stryker-api/te
 import LoggingClientContext from '../logging/LoggingClientContext';
 import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
 import ChildProcessTestRunnerWorker from './ChildProcessTestRunnerWorker';
-import { sleep } from '../utils/objectUtils';
+import { timeout } from '../utils/objectUtils';
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
@@ -37,7 +37,7 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
 
   async dispose(): Promise<void> {
 
-    await Promise.race([
+    await timeout(
       // First let the inner test runner dispose
       this.worker.proxy.dispose().catch(error => {
         // It's OK if the child process is already down. 
@@ -47,8 +47,8 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
       }),
 
       // ... but don't wait forever on that
-      sleep(MAX_WAIT_FOR_DISPOSE)
-    ]);
+      MAX_WAIT_FOR_DISPOSE
+    );
 
     // After that, dispose the child process itself
     await this.worker.dispose();

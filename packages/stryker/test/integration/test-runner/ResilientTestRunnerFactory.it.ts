@@ -9,7 +9,7 @@ import { LogLevel } from 'stryker-api/core';
 import LoggingServer from '../../helpers/LoggingServer';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { toArray } from 'rxjs/operators';
-import { sleep } from '../../../src/utils/objectUtils';
+import { sleep } from '../../helpers/testUtils';
 
 describe('ResilientTestRunnerFactory integration', function () {
 

@@ -1,4 +1,4 @@
-import { sleep } from './objectUtils';
+import { timeout, TimeoutExpired } from './objectUtils';
 
 /**
  * Wraps a promise in a Task api for convenience.
@@ -25,7 +25,7 @@ export class Task<T = void> {
     return this._isCompleted;
   }
 
-  resolve(result: undefined | T | PromiseLike<T>) {
+  resolve(result: T | PromiseLike<T>) {
     this._isCompleted = true;
     this.resolveFn(result);
   }
@@ -40,9 +40,11 @@ export class Task<T = void> {
  * A task that can expire after the given time.
  * If that happens, the inner promise is resolved
  */
-export class ExpirableTask<T = void> extends Task<T | void> {
+export class ExpirableTask<T = void> extends Task<T | TimeoutExpired> {
   constructor(timeoutMS: number) {
     super();
-    this._promise = Promise.race([this._promise, sleep(timeoutMS)]);
+    this._promise = timeout(this._promise, timeoutMS).then(val => {
+      return val;
+    });
   }
 }
