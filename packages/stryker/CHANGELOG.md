@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.26.1"></a>
+## [0.26.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.26.0...stryker@0.26.1) (2018-08-03)
+
+
+### Bug Fixes
+
+* **stryker:** Clear timeouts so stryker exits correctly ([#1063](https://github.com/stryker-mutator/stryker/issues/1063)) ([2058382](https://github.com/stryker-mutator/stryker/commit/2058382))
+
+
+
+
 <a name="0.26.0"></a>
 # [0.26.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.25.1...stryker@0.26.0) (2018-08-03)
 
