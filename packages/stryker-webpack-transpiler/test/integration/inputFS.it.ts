@@ -18,7 +18,7 @@ describe('InputFileSystem integration', () => {
   it('should be able to list all physical directories', done => {
     const tempFile = testResourcePath('inputFileSystem', 'dir1', 'tempFile');
     sut.writeFileSync(tempFile, 'some content');
-    sut.readdir(testResourcePath('inputFileSystem'), (err, dirs) => {
+    (sut.readdir as (path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void) => void)(testResourcePath('inputFileSystem'), (err, dirs) => {
       if (err) {
         done(err);
       } else if (!dirs) {

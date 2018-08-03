@@ -1,7 +1,7 @@
 module.exports = function (config) {
   config.set({
     mutate: [
-      'src/**/*.ts',
+      'src/WebpackTranspiler.ts',
       '!src/**/*.d.ts',
       '!src/enhanced-resolve.ts',
       '!src/index.ts'
@@ -12,6 +12,7 @@ module.exports = function (config) {
     transpilers: ["typescript"],
     reporter: ["clear-text", "progress", "html"],
     tsconfigFile: "tsconfig.json",
+    maxConcurrentTestRunners: 4,
     coverageAnalysis: "off",
     logLevel: "info",
     thresholds: {
