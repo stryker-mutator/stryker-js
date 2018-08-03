@@ -5,6 +5,7 @@
   "author": "Simon de Lang <simondelang@gmail.com>",
   "private": true,
   "scripts": {
+    "postinstall": "install-local",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
@@ -81,6 +82,12 @@
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.9.1",
     "webpack-merge": "^4.1.0"
+  },
+  "localDependencies": {
+    "stryker": "../../../packages/stryker",
+    "stryker-karma-runner": "../../../packages/stryker-karma-runner",
+    "stryker-vue-mutator": "../../../packages/stryker-vue-mutator",
+    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator"
   },
   "engines": {
     "node": ">= 6.0.0",
