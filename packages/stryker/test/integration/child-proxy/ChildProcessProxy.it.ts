@@ -11,7 +11,7 @@ import LoggingServer from '../../helpers/LoggingServer';
 import { filter } from 'rxjs/operators';
 import { Mock } from '../../helpers/producers';
 import currentLogMock from '../../helpers/logMock';
-import { sleep } from '../../../src/utils/objectUtils';
+import { sleep } from '../../helpers/testUtils';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 

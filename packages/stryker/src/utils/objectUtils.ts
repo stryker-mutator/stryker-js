@@ -102,10 +102,21 @@ export function kill(pid: number): Promise<void> {
   });
 }
 
-export function sleep(ms: number): Promise<void> {
-  return new Promise(res => {
-    setTimeout(res, ms);
+export type TimeoutExpired = 'TIMEOUT_EXPIRED';
+export const TIMEOUT_EXPIRED: TimeoutExpired = 'TIMEOUT_EXPIRED';
+export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | TimeoutExpired> {
+  const sleep = new Promise<T | TimeoutExpired>((res, rej) => {
+    const timer = setTimeout(() => res(TIMEOUT_EXPIRED), ms);
+    promise.then(result => {
+      clearTimeout(timer);
+      res(result);
+    }).catch(error => {
+      clearTimeout(timer);
+      rej(error);
+    });
   });
+
+  return sleep;
 }
 
 export function padLeft(input: string): string {

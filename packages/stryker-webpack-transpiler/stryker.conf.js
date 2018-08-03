@@ -1,7 +1,7 @@
 module.exports = function (config) {
   config.set({
     mutate: [
-      'src/**/*.ts',
+      'src/WebpackTranspiler.ts',
       '!src/**/*.d.ts',
       '!src/enhanced-resolve.ts',
       '!src/index.ts'
