@@ -11,6 +11,8 @@ import TestableMutant from '../TestableMutant';
 import TranspiledMutant from '../TranspiledMutant';
 import StrictReporter from '../reporters/StrictReporter';
 import MutantTranspiler from '../transpiler/MutantTranspiler';
+import LoggingClientContext from '../logging/LoggingClientContext';
+import { getLogger, Logger } from 'stryker-api/logging';
 
 export default class MutationTestExecutor {
 
@@ -19,13 +21,14 @@ export default class MutationTestExecutor {
     private inputFiles: ReadonlyArray<File>,
     private testFramework: TestFramework | null,
     private reporter: StrictReporter,
-    private overheadTimeMS: number) {
+    private overheadTimeMS: number,
+    private loggingContext: LoggingClientContext) {
   }
 
   async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
-    const mutantTranspiler = new MutantTranspiler(this.config);
+    const mutantTranspiler = new MutantTranspiler(this.config, this.loggingContext);
     const transpiledFiles = await mutantTranspiler.initialize(this.inputFiles);
-    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles, this.overheadTimeMS);
+    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles, this.overheadTimeMS, this.loggingContext);
     const result = await this.runInsideSandboxes(
       sandboxPool.streamSandboxes(),
       mutantTranspiler.transpileMutants(allMutants));
@@ -80,11 +83,12 @@ function earlyResult([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]): 
 }
 
 function runInSandbox([transpiledMutant, sandbox, earlyResult]: [TranspiledMutant, Sandbox, MutantResult | null]): Promise<{ sandbox: Sandbox, result: MutantResult }> {
+  const log = getLogger(MutationTestExecutor.name);
   if (earlyResult) {
     return Promise.resolve({ sandbox, result: earlyResult });
   } else {
     return sandbox.runMutant(transpiledMutant)
-      .then(runResult => ({ sandbox, result: collectMutantResult(transpiledMutant.mutant, runResult) }));
+      .then(runResult => ({ sandbox, result: collectMutantResult(transpiledMutant.mutant, runResult, log) }));
   }
 }
 
@@ -92,32 +96,31 @@ function createTuple<T1, T2>(a: T1, b: T2): [T1, T2] {
   return [a, b];
 }
 
-function collectMutantResult(mutant: TestableMutant, runResult: RunResult) {
-  let status: MutantStatus = MutantStatus.NoCoverage;
-  let testNames: string[];
-  if (runResult) {
-    switch (runResult.status) {
-      case RunStatus.Timeout:
-        status = MutantStatus.TimedOut;
-        break;
-      case RunStatus.Error:
-        status = MutantStatus.RuntimeError;
-        break;
-      case RunStatus.Complete:
-        if (runResult.tests.some(t => t.status === TestStatus.Failed)) {
-          status = MutantStatus.Killed;
-        } else {
-          status = MutantStatus.Survived;
-        }
-        break;
-    }
-    testNames = runResult.tests
-      .filter(t => t.status !== TestStatus.Skipped)
-      .map(t => t.name);
-  } else {
-    testNames = [];
+function collectMutantResult(mutant: TestableMutant, runResult: RunResult, log: Logger) {
+  const status: MutantStatus = mutantState(runResult);
+  const testNames = runResult.tests
+    .filter(t => t.status !== TestStatus.Skipped)
+    .map(t => t.name);
+  if (log.isDebugEnabled() && status === MutantStatus.RuntimeError) {
+    const error = runResult.errorMessages ? runResult.errorMessages.toString() : '(undefined)';
+    log.debug('A runtime error occurred: %s during execution of mutant: %s', error, mutant.toString());
   }
   return mutant.result(status, testNames);
+}
+
+function mutantState(runResult: RunResult): MutantStatus {
+  switch (runResult.status) {
+    case RunStatus.Timeout:
+      return MutantStatus.TimedOut;
+    case RunStatus.Error:
+      return MutantStatus.RuntimeError;
+    case RunStatus.Complete:
+      if (runResult.tests.some(t => t.status === TestStatus.Failed)) {
+        return MutantStatus.Killed;
+      } else {
+        return MutantStatus.Survived;
+      }
+  }
 }
 
 function reportResult(reporter: StrictReporter) {

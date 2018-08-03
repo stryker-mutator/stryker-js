@@ -1,4 +1,4 @@
-import { StrykerOptions, Factory, File,  Position, Location, Range } from 'stryker-api/core';
+import { StrykerOptions, Factory, File,  Position, Location, Range, LogLevel } from 'stryker-api/core';
 
 const options: StrykerOptions = {};
 const optionsAllArgs: StrykerOptions = {
@@ -8,7 +8,7 @@ const optionsAllArgs: StrykerOptions = {
   testFramework: 'string',
   testRunner: 'string',
   reporter: 'string',
-  logLevel: 'string',
+  logLevel: LogLevel.Fatal,
   timeoutMs: 1,
   timeoutFactor: 2,
   plugins: ['string'],

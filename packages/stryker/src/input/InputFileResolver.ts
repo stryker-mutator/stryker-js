@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'mz/fs';
 import { exec } from 'mz/child_process';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { glob } from '../utils/fileUtils';
 import StrictReporter from '../reporters/StrictReporter';

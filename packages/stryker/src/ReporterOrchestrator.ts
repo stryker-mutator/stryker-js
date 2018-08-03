@@ -8,7 +8,7 @@ import EventRecorderReporter from './reporters/EventRecorderReporter';
 import BroadcastReporter, { NamedReporter } from './reporters/BroadcastReporter';
 import DashboardReporter from './reporters/DashboardReporter';
 import StrictReporter from './reporters/StrictReporter';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 
 function registerDefaultReporters() {
   ReporterFactory.instance().register('progress-append-only', ProgressAppendOnlyReporter);

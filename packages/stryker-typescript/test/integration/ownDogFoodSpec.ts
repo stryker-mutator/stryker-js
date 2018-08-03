@@ -5,7 +5,6 @@ import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
-import { setGlobalLogLevel } from 'log4js';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 
 describe('stryker-typescript', function () {
@@ -15,7 +14,6 @@ describe('stryker-typescript', function () {
   let inputFiles: File[];
 
   beforeEach(() => {
-    setGlobalLogLevel('error');
     const configEditor = new TypescriptConfigEditor();
     config = new Config();
     config.set({
@@ -23,10 +21,6 @@ describe('stryker-typescript', function () {
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
-  });
-
-  afterEach(() => {
-    setGlobalLogLevel('trace');
   });
 
   it('should be able to transpile itself', async () => {

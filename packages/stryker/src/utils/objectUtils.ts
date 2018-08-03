@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import treeKill = require('tree-kill');
 export { serialize, deserialize } from 'surrial';
 
 export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
@@ -81,4 +82,32 @@ export function base64Decode(base64EncodedString: string) {
  */
 export function normalizeWhiteSpaces(str: string) {
   return str.replace(/\s+/g, ' ').trim();
+}
+
+export function kill(pid: number): Promise<void> {
+  return new Promise((res, rej) => {
+    treeKill(pid, 'SIGKILL', (err: { code?: number } & Error) => {
+      if (err && !canIgnore(err.code)) {
+        rej(err);
+      } else {
+        res();
+      }
+    });
+
+    function canIgnore(code: number | undefined) {
+      // https://docs.microsoft.com/en-us/windows/desktop/Debug/system-error-codes--0-499-
+      // these error codes mean the program is _already_ closed.
+      return code === 255 || code === 128;
+    }
+  });
+}
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+}
+
+export function padLeft(input: string): string {
+  return input.split('\n').map(str => '\t' + str).join('\n');
 }

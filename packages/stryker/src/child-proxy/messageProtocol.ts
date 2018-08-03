@@ -1,16 +1,20 @@
+import LoggingClientContext from '../logging/LoggingClientContext';
+
 export enum WorkerMessageKind {
   'Init',
-  'Work'
+  'Call',
+  'Dispose'
 }
 
 export enum ParentMessageKind {
   'Initialized',
   'Result',
-  'Rejection'
+  'Rejection',
+  'DisposeCompleted'
 }
 
-export type WorkerMessage = InitMessage | WorkMessage;
-export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized} | RejectionResult;
+export type WorkerMessage = InitMessage | CallMessage | DisposeMessage;
+export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized | ParentMessageKind.DisposeCompleted } | RejectionResult;
 
 // Make this an unlikely command line argument 
 // (prevents incidental start of child process)
@@ -18,11 +22,14 @@ export const autoStart = 'childProcessAutoStart12937129s7d';
 
 export interface InitMessage {
   kind: WorkerMessageKind.Init;
-  logLevel: string;
+  loggingContext: LoggingClientContext;
   plugins: string[];
+  workingDirectory: string;
   requirePath: string;
   constructorArgs: any[];
 }
+
+export interface DisposeMessage { kind: WorkerMessageKind.Dispose; }
 
 export interface WorkResult {
   kind: ParentMessageKind.Result;
@@ -36,9 +43,9 @@ export interface RejectionResult {
   error: string;
 }
 
-export interface WorkMessage {
+export interface CallMessage {
   correlationId: number;
-  kind: WorkerMessageKind.Work;
+  kind: WorkerMessageKind.Call;
   args: any[];
   methodName: string;
 }

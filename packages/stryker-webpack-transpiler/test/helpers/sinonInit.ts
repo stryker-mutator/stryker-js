@@ -1,15 +1,15 @@
 import * as sinon from 'sinon';
-import * as log4js from 'log4js';
+import * as logging from 'stryker-api/logging';
 
 beforeEach(() => {
-  global.sandbox = sinon.sandbox.create();
+  global.sandbox = sinon.createSandbox();
   global.logMock = {
     debug: sandbox.stub(),
     info: sandbox.stub(),
     warn: sandbox.stub(),
     error: sandbox.stub()
   };
-  sandbox.stub(log4js, 'getLogger').returns(global.logMock);
+  sandbox.stub(logging, 'getLogger').returns(global.logMock);
 });
 
 afterEach(() => {

@@ -1,4 +1,4 @@
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import * as path from 'path';
 import * as fs from 'mz/fs';
 import { StrykerOptions } from 'stryker-api/core';

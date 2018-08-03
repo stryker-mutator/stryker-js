@@ -1,4 +1,4 @@
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import * as os from 'os';
 import { Observable, range } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
@@ -6,13 +6,14 @@ import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import Sandbox from './Sandbox';
+import LoggingClientContext from './logging/LoggingClientContext';
 
 export default class SandboxPool {
 
   private readonly log = getLogger(SandboxPool.name);
   private readonly sandboxes: Promise<Sandbox>[] = [];
 
-  constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: ReadonlyArray<File>, private overheadTimeMS: number) {
+  constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: ReadonlyArray<File>, private overheadTimeMS: number, private loggingContext: LoggingClientContext) {
   }
 
   public streamSandboxes(): Observable<Sandbox> {
@@ -32,7 +33,7 @@ export default class SandboxPool {
     this.log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
 
     const sandboxes = range(0, numConcurrentRunners)
-      .pipe(flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS))));
+      .pipe(flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext))));
     return sandboxes;
   }
 

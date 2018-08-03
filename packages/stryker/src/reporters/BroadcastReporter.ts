@@ -1,5 +1,5 @@
 import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from 'stryker-api/report';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
 

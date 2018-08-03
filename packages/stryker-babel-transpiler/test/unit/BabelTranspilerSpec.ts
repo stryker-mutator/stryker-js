@@ -20,7 +20,7 @@ describe('BabelTranspiler', () => {
   beforeEach(() => {
     babelOptions = { someBabel: 'config' };
     babelConfigReaderMock = mock(BabelConfigReader);
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
     sandbox.stub(babelConfigReaderModule, 'default').returns(babelConfigReaderMock);
     transformStub = sandbox.stub(babel, 'transform');
     config = new Config();

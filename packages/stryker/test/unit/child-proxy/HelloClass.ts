@@ -11,6 +11,10 @@ export default class HelloClass {
     return `hello ${things.join(' and ')}`;
   }
 
+  sum(a: number, b: number) {
+    return a + b;
+  }
+
   reject() {
     return Promise.reject(new Error('Rejected'));
   }

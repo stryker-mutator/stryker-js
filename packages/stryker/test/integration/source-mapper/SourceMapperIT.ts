@@ -14,8 +14,9 @@ function readFiles(...files: string[]): Promise<File[]> {
     .map(fileName => fs.readFile(fileName).then(content => new File(fileName, content))));
 }
 
-describe('Source mapper integration', () => {
+describe('Source mapper integration', function () {
 
+  this.timeout(15000);
   let sut: TranspiledSourceMapper;
 
   describe('with external source maps', () => {

@@ -1,6 +1,6 @@
 {
   "name": "stryker-api",
-  "version": "0.17.2",
+  "version": "0.18.0",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "scripts": {
     "start": "tsc -w",
@@ -38,9 +38,9 @@
     "node": ">=6"
   },
   "dependencies": {
-    "tslib": "^1.6.0"
+    "tslib": "~1.9.3"
   },
   "devDependencies": {
-    "surrial": "^0.1.1"
+    "surrial": "~0.1.1"
   }
 }

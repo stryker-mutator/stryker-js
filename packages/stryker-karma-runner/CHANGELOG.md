@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.16.1"></a>
+## [0.16.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.16.0...stryker-karma-runner@0.16.1) (2018-07-23)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
+<a name="0.16.0"></a>
+# [0.16.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.15.3...stryker-karma-runner@0.16.0) (2018-07-20)
+
+
+### Bug Fixes
+
+* **Dependencies:** Pin all deps on minor version ([#974](https://github.io/stryker-mutator/stryker/issues/974)) ([f0a7e5a](https://github.io/stryker-mutator/stryker/commit/f0a7e5a)), closes [#954](https://github.io/stryker-mutator/stryker/issues/954) [#967](https://github.io/stryker-mutator/stryker/issues/967)
+
+
+### Features
+
+* **karma-runner:** add angular-cli support ([818fbed](https://github.io/stryker-mutator/stryker/commit/818fbed))
+* **logging:** Allow log to a file ([#954](https://github.io/stryker-mutator/stryker/issues/954)) ([c2f6b82](https://github.io/stryker-mutator/stryker/commit/c2f6b82)), closes [#748](https://github.io/stryker-mutator/stryker/issues/748)
+
+
+
+
+<a name="0.15.3"></a>
+## [0.15.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.15.2...stryker-karma-runner@0.15.3) (2018-07-04)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
 <a name="0.15.2"></a>
 ## [0.15.2](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.15.1...stryker-karma-runner@0.15.2) (2018-05-31)
 

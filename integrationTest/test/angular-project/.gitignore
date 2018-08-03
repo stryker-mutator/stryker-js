@@ -2,7 +2,6 @@
 
 # compiled output
 /dist
-/dist-server
 /tmp
 /out-tsc
 
@@ -35,10 +34,8 @@ yarn-error.log
 testem.log
 /typings
 
-# e2e
-/e2e/*.js
-/e2e/*.map
-
 # System Files
 .DS_Store
 Thumbs.db
+
+!package-lock.json

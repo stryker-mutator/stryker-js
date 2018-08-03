@@ -318,6 +318,15 @@ It is not allowed to only supply one value of the values (it's all or nothing). 
 **Default value:** `info`  
 **Mandatory**: no 
 **Description:**  
- Set the `log4js` log level that Stryker uses (default is `info`). Possible values: `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` and `off`.  
+ Set the log level that Stryker uses to write to the console. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
+
  *Note*: Test runners are run as child processes of the Stryker Node process. All output (stdout) of the `testRunner` is logged as `trace`.  
  Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
+
+#### File log level  
+**Command line:** `--fileLogLevel info`    
+**Config file:** `fileLogLevel: 'info'`
+**Default value:** `off`  
+**Mandatory**: no 
+**Description:**  
+ Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`

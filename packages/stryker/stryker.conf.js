@@ -11,7 +11,8 @@ module.exports = function (config) {
         'package.json',
         'src/**/*.ts',
         '!src/**/*.d.ts',
-        'test/**/*.ts',
+        'test/helpers/**/*.ts',
+        'test/unit/**/*.ts',
         '!test/**/*.d.ts'
       ],
       symlinkNodeModules: false,
@@ -44,12 +45,13 @@ module.exports = function (config) {
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporter: ['progress', 'html', 'clear-text', 'event-recorder', 'dashboard'],
-    maxConcurrentTestRunners: 5,
+    maxConcurrentTestRunners: 4,
     thresholds: {
       high: 80,
       low: 60,
       break: null
     },
+    fileLogLevel: 'trace',
     logLevel: 'info',
     plugins: [
       require.resolve('../stryker-mocha-runner/src/index'),

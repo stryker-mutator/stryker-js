@@ -4,6 +4,17 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Karma with angular",
+      "program": "${workspaceFolder}/run-angular.js",
+      "cwd": "C:\\z\\github\\nicojs\\angular-stryker-example",
+      "outFiles": [
+        "${workspaceRoot}/src/**/*.js",
+        "${workspaceRoot}/run-angular.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Unit tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [

@@ -1,6 +1,7 @@
 node_modules
 lerna-debug.log
 npm-debug.log
+stryker.log
 
 coverage
 reports
@@ -21,3 +22,4 @@ packages/*/test/**/*.d.ts
 *.iml
 *.tmp.txt
 .nyc_output
+package-lock.json

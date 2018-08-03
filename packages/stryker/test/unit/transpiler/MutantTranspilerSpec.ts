@@ -1,14 +1,20 @@
 import { expect } from 'chai';
 import { toArray } from 'rxjs/operators';
-import { File } from 'stryker-api/core';
+import { File, LogLevel } from 'stryker-api/core';
 import TranspiledMutant from '../../../src/TranspiledMutant';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import TranspileResult from '../../../src/transpiler/TranspileResult';
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { errorToString } from '../../../src/utils/objectUtils';
+import { errorToString, sleep } from '../../../src/utils/objectUtils';
 import '../../helpers/globals';
 import { Mock, config, file, mock, testableMutant } from '../../helpers/producers';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+  port: 4200,
+  level: LogLevel.Fatal
+});
 
 describe('MutantTranspiler', () => {
   let sut: MutantTranspiler;
@@ -32,21 +38,23 @@ describe('MutantTranspiler', () => {
   describe('with a transpiler', () => {
 
     it('should construct use the ChildProcessProxy to spawn a new MutantTranspiler in a separated process', () => {
-      const expectedConfig = config({ transpilers: ['transpiler'], plugins: ['plugin1'], logLevel: 'someLogLevel' });
-      sut = new MutantTranspiler(expectedConfig);
+      const expectedConfig = config({ transpilers: ['transpiler'], plugins: ['plugin1'] });
+      sut = new MutantTranspiler(expectedConfig, LOGGING_CONTEXT);
       expect(ChildProcessProxy.create).calledWith(
         require.resolve('../../../src/transpiler/TranspilerFacade'),
-        'someLogLevel',
+        LOGGING_CONTEXT,
         ['plugin1'],
+        process.cwd(),
         TranspilerFacade,
-        { config: expectedConfig, produceSourceMaps: false });
+        { config: expectedConfig, produceSourceMaps: false }
+      );
     });
 
     describe('initialize', () => {
 
       it('should transpile all files', () => {
         const expectedFiles = [file()];
-        sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }));
+        sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }), LOGGING_CONTEXT);
         const actualResult = sut.initialize(expectedFiles);
         expect(transpilerFacadeMock.transpile).calledWith(expectedFiles);
         return expect(actualResult).eventually.eq(transpiledFilesOne);
@@ -55,7 +63,7 @@ describe('MutantTranspiler', () => {
 
     describe('dispose', () => {
       it('should dispose the child process', () => {
-        sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }));
+        sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }), LOGGING_CONTEXT);
         sut.dispose();
         expect(childProcessProxyMock.dispose).called;
       });
@@ -64,7 +72,7 @@ describe('MutantTranspiler', () => {
     describe('transpileMutants', () => {
 
       beforeEach(() => {
-        sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }));
+        sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }), LOGGING_CONTEXT);
       });
 
       it('should transpile mutants', async () => {
@@ -149,16 +157,14 @@ describe('MutantTranspiler', () => {
         ];
         expect(actualResults).deep.eq(expectedResults);
       });
-      const nextTick = () => new Promise(res => {
-        setTimeout(res, 0);
-      });
+      const nextTick = () => sleep(0);
     });
   });
 
   describe('without a transpiler', () => {
 
     beforeEach(() => {
-      sut = new MutantTranspiler(config());
+      sut = new MutantTranspiler(config(), LOGGING_CONTEXT);
 
     });
 

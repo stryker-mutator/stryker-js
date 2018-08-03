@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import { RunResult, CoverageCollection, StatementMap, CoveragePerTestResult, CoverageResult } from 'stryker-api/test_runner';
 import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';

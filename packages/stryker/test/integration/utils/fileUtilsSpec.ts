@@ -1,16 +1,9 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
-describe('fileUtils', () => {
-
-  let sandbox: sinon.SinonSandbox;
-
-  beforeEach(() => {
-    sandbox = sinon.createSandbox();
-  });
-
-  afterEach(() => sandbox.restore());
+describe('fileUtils', function () {
+  
+  this.timeout(15000);
 
   describe('glob', () => {
     it('should resolve files', () => 

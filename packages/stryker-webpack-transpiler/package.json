@@ -1,6 +1,6 @@
 {
   "name": "stryker-webpack-transpiler",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -38,21 +38,20 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-webpack-transpiler#readme",
   "devDependencies": {
-    "@types/memory-fs": "^0.3.0",
-    "@types/webpack": "^4.1.6",
-    "raw-loader": "^0.5.1",
-    "stryker-api": "^0.17.2",
-    "webpack": "^4.2.0"
+    "@types/memory-fs": "~0.3.0",
+    "@types/webpack": "~4.1.6",
+    "raw-loader": "~0.5.1",
+    "stryker-api": "^0.18.0",
+    "webpack": "~4.16.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.15.0 <0.18.0",
+    "stryker-api": "^0.18.0",
     "webpack": ">=2.0.0"
   },
   "dependencies": {
-    "enhanced-resolve": "^4.0.0-beta.4",
-    "lodash": "^4.17.4",
-    "log4js": "^1.1.0",
-    "memory-fs": "^0.4.1"
+    "enhanced-resolve": "~4.1.0",
+    "lodash": "~4.17.4",
+    "memory-fs": "~0.4.1"
   },
   "initStrykerConfig": {
     "webpack": {

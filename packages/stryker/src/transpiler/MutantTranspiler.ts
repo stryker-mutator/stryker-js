@@ -4,16 +4,17 @@ import TranspilerFacade from './TranspilerFacade';
 import TestableMutant from '../TestableMutant';
 import { File } from 'stryker-api/core';
 import SourceFile from '../SourceFile';
-import ChildProcessProxy, { ChildProxy } from '../child-proxy/ChildProcessProxy';
+import ChildProcessProxy, { Promisified } from '../child-proxy/ChildProcessProxy';
 import { TranspilerOptions } from 'stryker-api/transpile';
 import TranspiledMutant from '../TranspiledMutant';
 import TranspileResult from './TranspileResult';
 import { errorToString } from '../utils/objectUtils';
+import LoggingClientContext from '../logging/LoggingClientContext';
 
 export default class MutantTranspiler {
 
   private transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
-  private proxy: ChildProxy<TranspilerFacade>;
+  private proxy: Promisified<TranspilerFacade>;
   private currentMutatedFile: SourceFile;
   private unMutatedFiles: ReadonlyArray<File>;
 
@@ -22,13 +23,14 @@ export default class MutantTranspiler {
    * Otherwise will just forward input as output in same process.
    * @param config The Stryker config
    */
-  constructor(config: Config) {
+  constructor(config: Config, loggingContext: LoggingClientContext) {
     const transpilerOptions: TranspilerOptions = { config, produceSourceMaps: false };
     if (config.transpilers.length) {
       this.transpilerChildProcess = ChildProcessProxy.create(
         require.resolve('./TranspilerFacade'),
-        config.logLevel,
+        loggingContext,
         config.plugins,
+        process.cwd(),
         TranspilerFacade,
         transpilerOptions
       );

@@ -1,5 +1,5 @@
 import { File } from 'stryker-api/core';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { normalizeWhiteSpaces } from '../utils/objectUtils';
 
 export default class InputFileCollection {

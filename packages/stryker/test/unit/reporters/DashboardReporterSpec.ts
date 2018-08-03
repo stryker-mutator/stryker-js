@@ -5,8 +5,8 @@ import * as environmentVariables from '../../../src/utils/objectUtils';
 import * as ciProvider from '../../../src/reporters/ci/Provider';
 import StrykerDashboardClient, { StrykerDashboardReport } from '../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { scoreResult, mock, Mock } from '../../helpers/producers';
-import { Logger } from 'log4js';
-import currentLogMock from '../../helpers/log4jsMock';
+import { Logger } from 'stryker-api/logging';
+import currentLogMock from '../../helpers/logMock';
 import { Config } from 'stryker-api/config';
 
 describe('DashboardReporter', () => {

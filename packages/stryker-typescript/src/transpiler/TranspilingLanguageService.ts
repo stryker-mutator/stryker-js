@@ -2,7 +2,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as ts from 'typescript';
-import { getLogger } from 'log4js';
+import { getLogger } from 'stryker-api/logging';
 import flatMap = require('lodash.flatmap');
 import ScriptFile from './ScriptFile';
 import { normalizeFileFromTypescript, isJavaScriptFile, isMapFile, normalizeFileForTypescript } from '../helpers/tsHelpers';

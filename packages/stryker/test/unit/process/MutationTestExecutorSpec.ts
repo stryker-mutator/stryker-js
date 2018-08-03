@@ -2,10 +2,11 @@ import { expect } from 'chai';
 import * as _ from 'lodash';
 import { empty, of } from 'rxjs';
 import { Config } from 'stryker-api/config';
-import { File } from 'stryker-api/core';
+import { File, LogLevel } from 'stryker-api/core';
 import { MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { Logger } from 'stryker-api/logging';
 import Sandbox from '../../../src/Sandbox';
 import SandboxPool, * as sandboxPool from '../../../src/SandboxPool';
 import TestableMutant from '../../../src/TestableMutant';
@@ -14,7 +15,9 @@ import MutantTestExecutor from '../../../src/process/MutationTestExecutor';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import MutantTranspiler, * as mutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import '../../helpers/globals';
-import { Mock, config, file, mock, mutantResult, testFramework, testResult, testableMutant, transpiledMutant } from '../../helpers/producers';
+import { Mock, config, file, mock, mutantResult, testFramework, testResult, testableMutant, transpiledMutant, runResult } from '../../helpers/producers';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import currentLogMock from '../../helpers/logMock';
 
 const createTranspiledMutants = (...n: number[]) => {
   return n.map(n => {
@@ -25,6 +28,12 @@ const createTranspiledMutants = (...n: number[]) => {
     return mutant;
   });
 };
+
+const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+  port: 4200,
+  level: LogLevel.Fatal
+});
+
 
 describe('MutationTestExecutor', () => {
 
@@ -38,8 +47,10 @@ describe('MutationTestExecutor', () => {
   let sut: MutantTestExecutor;
   let mutants: TestableMutant[];
   let initialTranspiledFiles: File[];
+  let logMock: Mock<Logger>;
 
   beforeEach(() => {
+    logMock = currentLogMock();
     sandboxPoolMock = mock(SandboxPool);
     mutantTranspilerMock = mock(MutantTranspiler);
     initialTranspiledFiles = [file(), file()];
@@ -57,7 +68,7 @@ describe('MutationTestExecutor', () => {
   describe('run', () => {
 
     beforeEach(async () => {
-      sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter, 42);
+      sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter, 42, LOGGING_CONTEXT);
       const sandbox = mock<Sandbox>(Sandbox);
       sandbox.runMutant.resolves(mutantResult());
       sandboxPoolMock.streamSandboxes.returns(of(sandbox));
@@ -97,7 +108,7 @@ describe('MutationTestExecutor', () => {
       mutantTranspilerMock.transpileMutants.returns(of(...transpiledMutants));
       sandboxPoolMock.streamSandboxes.returns(of(firstSandbox, secondSandbox));
 
-      sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter, 42);
+      sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter, 42, LOGGING_CONTEXT);
 
       // The uncovered, transpile error and changedAnyTranspiledFiles = false should not be ran in a sandbox
       // Mock first sandbox to return first success, then failed
@@ -108,7 +119,11 @@ describe('MutationTestExecutor', () => {
       // Mock second sandbox to return first timeout, then error
       secondSandbox.runMutant
         .withArgs(transpiledMutants[3]).resolves({ status: RunStatus.Timeout, tests: [{ name: 'test3', status: TestStatus.Skipped }] })
-        .withArgs(transpiledMutants[5]).resolves({ status: RunStatus.Error, tests: [{ name: 'test4', status: TestStatus.Skipped }] });
+        .withArgs(transpiledMutants[5]).resolves(runResult({
+          status: RunStatus.Error,
+          tests: [testResult({ name: 'test4', status: TestStatus.Skipped })],
+          errorMessages: ['foo', 'bar']
+        }));
     });
 
     it('should have ran 2 mutants on the first and second sandbox', async () => {
@@ -145,6 +160,13 @@ describe('MutationTestExecutor', () => {
       expect(actualResultsSorted[4].status).to.be.eq(MutantStatus.Killed);
       expect(actualResultsSorted[5].status).to.be.eq(MutantStatus.RuntimeError);
       expect(actualResultsSorted[6].status).to.be.eq(MutantStatus.Survived);
+    });
+
+    it('should log error results on debug', async () => {
+      logMock.isDebugEnabled.returns(true);
+      await sut.run(mutants);
+      expect(logMock.debug).calledWith('A runtime error occurred: %s during execution of mutant: %s',
+        ['foo', 'bar'].toString(), transpiledMutants[5].mutant.toString());
     });
   });
 });

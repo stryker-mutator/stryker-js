@@ -1,12 +1,12 @@
 import * as path from 'path';
-import { Logger } from 'log4js';
+import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { MutantStatus, ScoreResult } from 'stryker-api/report';
 import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import * as objectUtils from '../../src/utils/objectUtils';
 import { mutantResult, scoreResult, mutationScoreThresholds, Mock } from '../helpers/producers';
-import currentLogMock from '../helpers/log4jsMock';
+import currentLogMock from '../helpers/logMock';
 
 describe('ScoreResult', () => {
   let log: Mock<Logger>;

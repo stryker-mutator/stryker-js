@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Logger, getLogger } from 'log4js';
+import { Logger, getLogger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { Mutator, Mutant } from 'stryker-api/mutant';
