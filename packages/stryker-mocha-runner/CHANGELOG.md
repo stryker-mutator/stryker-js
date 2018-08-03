@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.1"></a>
+## [0.13.1](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.13.0...stryker-mocha-runner@0.13.1) (2018-08-03)
+
+
+### Bug Fixes
+
+* **mocha-runner:** Don't log individual successful tests ([#1042](https://github.com/stryker-mutator/stryker/issues/1042)) ([6732ccf](https://github.com/stryker-mutator/stryker/commit/6732ccf))
+
+
+
+
 <a name="0.13.0"></a>
 # [0.13.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.12.3...stryker-mocha-runner@0.13.0) (2018-07-20)
 
