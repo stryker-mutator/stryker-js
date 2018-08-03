@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.0.0...stryker-jest-runner@1.0.1) (2018-08-03)
+
+
+### Bug Fixes
+
+* **jest-runner:** Update peer dependency on Jest ([7e30994](https://github.com/stryker-mutator/stryker/commit/7e30994))
+
+
+
+
 <a name="1.0.0"></a>
 # 1.0.0 (2018-07-20)
 
