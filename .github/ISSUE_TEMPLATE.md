@@ -32,9 +32,25 @@ module.exports = function(config){
 +-- stryker-api@x.x.x
 ```
 
+<!-- Please also add the test runner you are using. Examples:-->
+
+```
++-- mocha@x.x.x
++-- jest@x.x.x
++-- karma@x.x.x
++-- angular-cli@x.x.x
++-- react-scripts@x.x.x
+```
+
 ### Your Environment
+
 | software         | version(s)
 | ---------------- | -------  
 | node             | 
 | npm              | 
 | Operating System | 
+
+### Add stryker.log
+
+<!-- Please add your stryker.log file. This file can be generated using `stryker run --fileLogLevel trace`. You can drag and drop it here. -->
+<!-- Your source code is never logged to this file, however file names are logged. Feel free to obfuscate those log messages if you think it is a problem -->
