@@ -34,13 +34,13 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-vue-mutator#readme",
   "license": "Apache-2.0",
   "devDependencies": {
-    "stryker-api": "^0.17.0",
-    "stryker-javascript-mutator": "^0.7.0",
-    "stryker-typescript": "^0.11.0",
+    "stryker-api": "^0.18.0",
+    "stryker-javascript-mutator": "^0.8.0",
+    "stryker-typescript": "^0.12.0",
     "vue-template-compiler": "^2.0.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.17.0",
+    "stryker-api": "^0.18.0",
     "vue-template-compiler": "^2.0.0"
   }
 }

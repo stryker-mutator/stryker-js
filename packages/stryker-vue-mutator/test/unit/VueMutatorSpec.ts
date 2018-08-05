@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { Mutant, Mutator } from 'stryker-api/mutant';
-import VueMutator from '../../src/VueMutator';
 import * as MutatorHelpers from '../../src/helpers/MutatorHelpers';
+import VueMutator from '../../src/VueMutator';
 
 describe('VueMutator', () => {
   let config: Config;

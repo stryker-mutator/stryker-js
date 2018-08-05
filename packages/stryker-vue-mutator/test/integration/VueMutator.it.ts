@@ -1,8 +1,8 @@
-import { MutatorFactory } from 'stryker-api/mutant';
-import VueMutator from '../../src/VueMutator';
+import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import { expect } from 'chai';
+import { MutatorFactory } from 'stryker-api/mutant';
+import VueMutator from '../../src/VueMutator';
 require('../../src/index');
 require('stryker-javascript-mutator');
 require('stryker-typescript');
