@@ -38,13 +38,10 @@ export class Task<T = void> {
 
 /**
  * A task that can expire after the given time.
- * If that happens, the inner promise is resolved
  */
-export class ExpirableTask<T = void> extends Task<T | TimeoutExpired> {
+export class ExpirableTask<T = void> extends Task<T | typeof TimeoutExpired> {
   constructor(timeoutMS: number) {
     super();
-    this._promise = timeout(this._promise, timeoutMS).then(val => {
-      return val;
-    });
+    this._promise = timeout(this._promise, timeoutMS);
   }
 }

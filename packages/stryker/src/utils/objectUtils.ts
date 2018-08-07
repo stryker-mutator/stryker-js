@@ -102,11 +102,10 @@ export function kill(pid: number): Promise<void> {
   });
 }
 
-export type TimeoutExpired = 'TIMEOUT_EXPIRED';
-export const TIMEOUT_EXPIRED: TimeoutExpired = 'TIMEOUT_EXPIRED';
-export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | TimeoutExpired> {
-  const sleep = new Promise<T | TimeoutExpired>((res, rej) => {
-    const timer = setTimeout(() => res(TIMEOUT_EXPIRED), ms);
+export const TimeoutExpired: unique symbol = Symbol('TimeoutExpired');
+export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof TimeoutExpired> {
+  const sleep = new Promise<T | typeof TimeoutExpired>((res, rej) => {
+    const timer = setTimeout(() => res(TimeoutExpired), ms);
     promise.then(result => {
       clearTimeout(timer);
       res(result);
@@ -115,7 +114,6 @@ export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | Timeout
       rej(error);
     });
   });
-
   return sleep;
 }
 
