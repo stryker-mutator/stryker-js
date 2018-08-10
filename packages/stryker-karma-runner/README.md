@@ -21,6 +21,8 @@ The `stryker-karma-runner` is a plugin for `stryker` to enable `karma` as a test
 However, it does *not* come packaged with it's own version of `karma`, instead it 
 uses *your very own karma* version. It can also work with `@angular/cli`, see [Configuring](#configuring)
 
+**Note:** karma v2.0.3 has a [known issue](https://github.com/karma-runner/karma/issues/3057) which makes it impossible to use it with Stryker. please upgrade to 2.0.4 or higher.
+
 ## Configuring
 
 You can configure the `stryker-karma-runner` using the `stryker.conf.js` config file.
