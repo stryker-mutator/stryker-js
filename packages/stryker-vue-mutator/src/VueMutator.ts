@@ -1,18 +1,20 @@
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { Mutant, Mutator } from 'stryker-api/mutant';
-import { generateMutators } from './helpers/MutatorHelpers';
+import { discoverMutators } from './helpers/MutatorHelpers';
 const compiler = require('vue-template-compiler');
 
 export default class VueMutator implements Mutator {
-  private mutators: { [name: string]: Mutator; };
+  private readonly mutators: { [name: string]: Mutator; };
+  private readonly javascriptMutatorName = 'javascript';
+  private readonly typescriptMutatorName = 'typescript';
 
   constructor(config: Config) {
-    this.mutators = generateMutators(config);
+    this.mutators = discoverMutators(config);
   }
 
   mutate(inputFiles: File[]): Mutant[] {
-    let mutants: Mutant[] = [];
+    const mutants: Mutant[] = [];
 
     inputFiles.forEach(file => {
       if (file.name.endsWith('.vue')) {
@@ -28,10 +30,10 @@ export default class VueMutator implements Mutator {
           mutant.range[0] += script.start;
           mutant.range[1] += script.start;
         });
-        mutants = mutants.concat(vueMutants);
+        mutants.push(...vueMutants);
       } else {
         const mutator = this.getMutator(file);
-        mutants = mutants.concat(mutator.mutate([file]));
+        mutants.push(...mutator.mutate([file]));
       }
     });
 
@@ -46,12 +48,12 @@ export default class VueMutator implements Mutator {
       case undefined:
       case 'js':
       case 'javascript':
-        mutatorName = 'javascript';
+        mutatorName = this.javascriptMutatorName;
         extension = '.js';
         break;
       case 'ts':
       case 'typescript':
-        mutatorName = 'typescript';
+        mutatorName = this.typescriptMutatorName;
         extension = '.ts';
         break;
       default:
@@ -66,7 +68,7 @@ export default class VueMutator implements Mutator {
   }
 
   private getMutator(file: File): Mutator {
-    const mutator = this.mutators['typescript'] || this.mutators['javascript'];
+    const mutator = this.mutators[this.typescriptMutatorName] || this.mutators[this.javascriptMutatorName];
     if (mutator === undefined) {
       throw new Error(`Unable to mutate file "${file.name}" because neither the typescript or the javascript mutator was installed. Please read the README of this package for information on configuration.`);
     }

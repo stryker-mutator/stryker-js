@@ -1,7 +1,7 @@
 import { Mutator, MutatorFactory } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
 
-const generateMutators = (config: Config): { [name: string]: Mutator; } => {
+const discoverMutators = (config: Config): { [name: string]: Mutator; } => {
   const mutators: { [name: string]: Mutator; } = {};
   const factory = MutatorFactory.instance();
   factory.knownNames().forEach(name => {
@@ -12,4 +12,4 @@ const generateMutators = (config: Config): { [name: string]: Mutator; } => {
   return mutators;
 };
 
-export { generateMutators };
+export { discoverMutators };

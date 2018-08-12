@@ -4,21 +4,30 @@ import { File } from 'stryker-api/core';
 import { Mutant, Mutator } from 'stryker-api/mutant';
 import * as MutatorHelpers from '../../src/helpers/MutatorHelpers';
 import VueMutator from '../../src/VueMutator';
+import { SinonStubbedInstance } from 'sinon';
 
 describe('VueMutator', () => {
   let config: Config;
+  let stubJavaScriptMutator: SinonStubbedInstance<Mutator>;
+  let stubTypeScriptMutator: SinonStubbedInstance<Mutator>;
 
   beforeEach(() => {
     config = new Config();
+    stubJavaScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
+    stubJavaScriptMutator.mutate.returns([]);
+    stubTypeScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
+    stubTypeScriptMutator.mutate.returns([]);
   });
 
-  afterEach(() => {
-    sandbox.restore();
-  });
+  const setMutators = (mutators: { [name: string]: Mutator }) => sandbox.stub(MutatorHelpers, 'discoverMutators').returns(mutators);
+  const activateNoMutators = () => setMutators({});
+  const activateJavaScriptMutator = () => setMutators({ 'javascript': stubJavaScriptMutator });
+  const activateTypeScriptMutator = () => setMutators({ 'typescript': stubTypeScriptMutator });
+  const activateJavaScriptAndTypeScriptMutators = () => setMutators({ 'javascript': stubJavaScriptMutator, 'typescript': stubTypeScriptMutator });
 
   describe('with JavaScript', () => {
     it('should throw an error if no JavaScript mutator is installed', () => {
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({});
+      activateNoMutators();
       const vueFile = new File('Component.vue',
         `<template>
           <span id="msg">{{ message }}</span>
@@ -40,7 +49,7 @@ describe('VueMutator', () => {
     });
 
     it('should throw an error when the first file is not a Vue file and no mutators are installed', () => {
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({});
+      activateNoMutators();
       const vueFile = new File('Component.vue',
         `<template>
           <span id="msg">{{ message }}</span>
@@ -63,9 +72,7 @@ describe('VueMutator', () => {
     });
 
     it('should pass Vue script blocks to the JavaScript mutator', () => {
-      const stubJavaScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      stubJavaScriptMutator.mutate.returns([]);
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'javascript': stubJavaScriptMutator });
+      activateJavaScriptMutator();
       const script = `export default {
         data () {
           return {
@@ -87,9 +94,7 @@ describe('VueMutator', () => {
     });
 
     it('should pass Vue script blocks with lang="js" to the JavaScript mutator', () => {
-      const stubJavaScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      stubJavaScriptMutator.mutate.returns([]);
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'javascript': stubJavaScriptMutator });
+      activateJavaScriptMutator();
       const script = `export default {
         data () {
           return {
@@ -111,9 +116,7 @@ describe('VueMutator', () => {
     });
 
     it('should pass Vue script blocks with lang="javascript" to the JavaScript mutator', () => {
-      const stubJavaScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      stubJavaScriptMutator.mutate.returns([]);
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'javascript': stubJavaScriptMutator });
+      activateJavaScriptMutator();
       const script = `export default {
         data () {
           return {
@@ -135,9 +138,7 @@ describe('VueMutator', () => {
     });
 
     it('should pass regular files to the TypeScript mutator, even if the JavaScript mutator is installed', () => {
-      const stubJavaScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      const stubTypeScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'javascript': stubJavaScriptMutator, 'typescript': stubTypeScriptMutator });
+      activateJavaScriptAndTypeScriptMutators();
       const jsFile = new File('index.js', 'var name = "MyApp";');
       const files = [jsFile];
       const sut = new VueMutator(config);
@@ -149,8 +150,7 @@ describe('VueMutator', () => {
     });
 
     it('should pass regular files to the JavaScript mutator', () => {
-      const stubJavaScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'javascript': stubJavaScriptMutator });
+      activateJavaScriptMutator();
       const jsFile = new File('index.js', 'var name = "MyApp";');
       const files = [jsFile];
       const sut = new VueMutator(config);
@@ -163,7 +163,7 @@ describe('VueMutator', () => {
 
   describe('with TypeScript', () => {
     it('should throw an error if no TypeScript mutator is installed', () => {
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({});
+      activateNoMutators();
       const vueFile = new File('Component.vue',
         `<template>
           <span id="msg">{{ message }}</span>
@@ -185,7 +185,7 @@ describe('VueMutator', () => {
     });
 
     it('should throw an error when the first file is not a Vue file and no mutators are installed', () => {
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({});
+      activateNoMutators();
       const vueFile = new File('Component.vue',
         `<template>
           <span id="msg">{{ message }}</span>
@@ -208,9 +208,7 @@ describe('VueMutator', () => {
     });
 
     it('should pass Vue script blocks with lang="ts" to the TypeScript mutator', () => {
-      const stubTypeScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      stubTypeScriptMutator.mutate.returns([]);
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'typescript': stubTypeScriptMutator });
+      activateTypeScriptMutator();
       const script = `export default {
         data () {
           return {
@@ -232,9 +230,7 @@ describe('VueMutator', () => {
     });
 
     it('should pass Vue script blocks with lang="typescript" to the TypeScript mutator', () => {
-      const stubTypeScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      stubTypeScriptMutator.mutate.returns([]);
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'typescript': stubTypeScriptMutator });
+      activateTypeScriptMutator();
       const script = `export default {
         data () {
           return {
@@ -257,8 +253,7 @@ describe('VueMutator', () => {
 
 
     it('should pass regular files to the TypeScript mutator', () => {
-      const stubTypeScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-      sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'typescript': stubTypeScriptMutator });
+      activateTypeScriptMutator();
       const jsFile = new File('index.js', 'var name = "MyApp";');
       const files = [jsFile];
       const sut = new VueMutator(config);
@@ -270,7 +265,7 @@ describe('VueMutator', () => {
   });
 
   it('should throw an error when a Vue script block has an unknown lang attribute', () => {
-    sandbox.stub(MutatorHelpers, 'generateMutators').returns({});
+    activateNoMutators();
     const script = `export default {
       data () {
         return {
@@ -290,8 +285,7 @@ describe('VueMutator', () => {
   });
 
   it('should generate correct vue mutants', () => {
-    const stubJavaScriptMutator = sandbox.createStubInstance<Mutator>(VueMutator);
-    sandbox.stub(MutatorHelpers, 'generateMutators').returns({ 'javascript': stubJavaScriptMutator });
+    activateJavaScriptMutator();
     const codeToMutate = `'hello!'`;
     const script = `export default {
       data () {

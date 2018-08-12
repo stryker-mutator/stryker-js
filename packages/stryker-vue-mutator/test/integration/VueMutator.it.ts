@@ -3,9 +3,9 @@ import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { MutatorFactory } from 'stryker-api/mutant';
 import VueMutator from '../../src/VueMutator';
-require('../../src/index');
-require('stryker-javascript-mutator');
-require('stryker-typescript');
+import '../../src/index';
+import 'stryker-javascript-mutator';
+import 'stryker-typescript';
 
 describe('VueMutator', () => {
   describe('JavaScript project', () => {
