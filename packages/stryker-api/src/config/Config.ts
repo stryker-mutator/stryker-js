@@ -9,7 +9,7 @@ export default class Config implements StrykerOptions {
 
   logLevel: LogLevel = LogLevel.Information;
   fileLogLevel: LogLevel = LogLevel.Off;
-  timeoutMs = 5000;
+  timeoutMS = 5000;
   timeoutFactor = 1.5;
   plugins: string[] = ['stryker-*'];
   port = 9234;

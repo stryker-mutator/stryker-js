@@ -9,7 +9,7 @@ const optionsAllArgs: StrykerOptions = {
   testRunner: 'string',
   reporter: 'string',
   logLevel: LogLevel.Fatal,
-  timeoutMs: 1,
+  timeoutMS: 1,
   timeoutFactor: 2,
   plugins: ['string'],
   thresholds: {

@@ -125,7 +125,7 @@ export default class Sandbox {
 
   private calculateTimeout(mutant: TestableMutant) {
     const baseTimeout = mutant.timeSpentScopedTests;
-    return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMs + this.timeOverheadMS;
+    return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMS + this.timeOverheadMS;
   }
 
   private getFilterTestsHooks(mutant: TestableMutant): string | undefined {

@@ -124,7 +124,7 @@ interface StrykerOptions {
   /**
    * Amount of additional time, in milliseconds, the mutation test is allowed to run
    */
-  timeoutMs?: number;
+  timeoutMS?: number;
 
   /**
    * The factor is applied on top of the other timeouts when during mutation testing

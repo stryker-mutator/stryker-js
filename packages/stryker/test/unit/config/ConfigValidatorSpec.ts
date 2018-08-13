@@ -72,11 +72,11 @@ describe('ConfigValidator', () => {
     expect(log.fatal).calledWith('Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "off"');
   });
 
-  it('should be invalid with nonnumeric timeoutMs', () => {
-    let brokenConfig = breakConfig(config, 'timeoutMs', 'break');
+  it('should be invalid with nonnumeric timeoutMS', () => {
+    let brokenConfig = breakConfig(config, 'timeoutMS', 'break');
     sut = new ConfigValidator(brokenConfig, testFramework());
     actValidationError();
-    expect(log.fatal).calledWith('Value "break" is invalid for `timeoutMs`. Expected a number');
+    expect(log.fatal).calledWith('Value "break" is invalid for `timeoutMS`. Expected a number');
   });
 
   it('should be invalid with nonnumeric timeoutFactor', () => {
