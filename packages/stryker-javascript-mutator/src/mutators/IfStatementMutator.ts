@@ -8,8 +8,6 @@ import NodeGenerator from '../helpers/NodeGenerator';
 export default class IfStatementMutator implements NodeMutator {
   name = 'IfStatement';
 
-  constructor() { }
-
   mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
     if (types.isIfStatement(node)) {
       return [

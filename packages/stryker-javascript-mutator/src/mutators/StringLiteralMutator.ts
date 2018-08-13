@@ -9,7 +9,7 @@ export default class StringLiteralMutator implements NodeMutator {
     const nodes: types.Node[] = [];
 
     if (types.isTemplateLiteral(node)) {
-      let mutatedNode: types.StringLiteral = {
+      const mutatedNode: types.StringLiteral = {
         type: 'StringLiteral',
         start: node.start,
         end: node.end,
@@ -24,7 +24,7 @@ export default class StringLiteralMutator implements NodeMutator {
       nodes.push(mutatedNode);
     } else if ((!node.parent || (!types.isImportDeclaration(node.parent) && !types.isJSXAttribute(node.parent)))
       && types.isStringLiteral(node)) {
-      let mutatedNode = copy(node);
+        const mutatedNode = copy(node);
       mutatedNode.value = mutatedNode.value.length === 0 ? 'Stryker was here!' : '';
       nodes.push(mutatedNode);
     }

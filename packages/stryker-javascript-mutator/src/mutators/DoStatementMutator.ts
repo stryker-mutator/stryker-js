@@ -8,11 +8,9 @@ import NodeGenerator from '../helpers/NodeGenerator';
 export default class DoStatementMutator implements NodeMutator {
   name = 'DoStatement';
 
-  constructor() { }
-
   mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
     if (types.isDoWhileStatement(node)) {
-        return [NodeGenerator.createBooleanLiteralNode(node.test, false)];
+      return [NodeGenerator.createBooleanLiteralNode(node.test, false)];
     }
   }
 }
