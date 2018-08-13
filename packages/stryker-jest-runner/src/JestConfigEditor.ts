@@ -24,10 +24,10 @@ export default class JestConfigEditor implements ConfigEditor {
     strykerConfig.jest.config = this.overrideProperties(strykerConfig.jest.config);
   }
 
-  private getConfigLoader(project: string): JestConfigLoader {
+  private getConfigLoader(projectType: string): JestConfigLoader {
     let configLoader: JestConfigLoader;
 
-    switch (project.toLowerCase()) {
+    switch (projectType.toLowerCase()) {
       case DEFAULT_PROJECT_NAME:
         configLoader = new DefaultJestConfigLoader(process.cwd(), fs);
         break;
@@ -38,7 +38,7 @@ export default class JestConfigEditor implements ConfigEditor {
         configLoader = new ReactScriptsTSJestConfigLoader(process.cwd());
         break;
       default:
-        throw new Error(`No configLoader available for ${project}`);
+        throw new Error(`No configLoader available for ${projectType}`);
     }
 
     return configLoader;

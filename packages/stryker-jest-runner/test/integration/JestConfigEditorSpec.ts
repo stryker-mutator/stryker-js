@@ -190,7 +190,7 @@ describe('Integration test for Jest ConfigEditor', () => {
     });
   });
 
-  it('should return with an error when an invalid project is specified', () => {
+  it('should return with an error when an invalid projectType is specified', () => {
     const projectType = 'invalidProject';
     config.set({ jest: { projectType } });
 
