@@ -79,7 +79,11 @@ export default class ConfigValidator {
   }
 
   private validateTimeout() {
-    this.validateIsNumber('timeoutMS', this.strykerConfig.timeoutMS);
+    if (this.strykerConfig.timeoutMs !== undefined) {
+      this.invalidate('[Deprecation warning] use timeoutMS instead of timeoutMs');
+    } else {
+      this.validateIsNumber('timeoutMS', this.strykerConfig.timeoutMS);
+    }
     this.validateIsNumber('timeoutFactor', this.strykerConfig.timeoutFactor);
   }
 
