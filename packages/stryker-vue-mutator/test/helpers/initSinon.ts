@@ -5,7 +5,7 @@ import * as sinonChai from 'sinon-chai';
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 beforeEach(() => {
-  global.sandbox = sinon.sandbox.create();
+  global.sandbox = sinon.createSandbox();
 });
 afterEach(() => {
   global.sandbox.restore();

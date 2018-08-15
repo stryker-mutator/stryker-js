@@ -42,8 +42,10 @@ describe('VueMutator', () => {
       const sut = new VueMutator(new Config());
 
       const mutants = sut.mutate(files);
-
-      expect(mutants.length).to.equal(8);
+      
+      expect(mutants.filter(m => m.mutatorName === 'StringLiteral').length).to.equal(2);
+      expect(mutants.filter(m => m.mutatorName === 'Block').length).to.equal(3);
+      expect(mutants.filter(m => m.mutatorName === 'BinaryExpression').length).to.equal(3);
     });
   });
 
@@ -80,8 +82,10 @@ describe('VueMutator', () => {
       const sut = new VueMutator(new Config());
 
       const mutants = sut.mutate(files);
-
-      expect(mutants.length).to.equal(7);
+      
+      expect(mutants.filter(m => m.mutatorName === 'StringLiteral').length).to.equal(1);
+      expect(mutants.filter(m => m.mutatorName === 'Block').length).to.equal(3);
+      expect(mutants.filter(m => m.mutatorName === 'BinaryExpression').length).to.equal(3);
     });
   });
 });
