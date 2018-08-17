@@ -22,7 +22,7 @@ export default class ConfigValidator {
     this.validateIsNumber('port', this.strykerConfig.port);
     this.validateIsNumber('maxConcurrentTestRunners', this.strykerConfig.maxConcurrentTestRunners);
     this.validateIsStringArray('plugins', this.strykerConfig.plugins);
-    this.validateIsStringArray('reporter', this.strykerConfig.reporter);
+    this.validateIsStringArray('reporters', this.strykerConfig.reporters);
     this.validateIsStringArray('transpilers', this.strykerConfig.transpilers);
     this.validateCoverageAnalysis();
     this.validateCoverageAnalysisWithRespectToTranspilers();

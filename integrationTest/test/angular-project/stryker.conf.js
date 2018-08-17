@@ -16,7 +16,7 @@ module.exports = function (config) {
         browsers: ['ChromeHeadless']
       }
     },
-    reporter: ['event-recorder'],
+    reporters: ['event-recorder'],
     coverageAnalysis: 'off',
     maxConcurrentTestRunners: 1
   });

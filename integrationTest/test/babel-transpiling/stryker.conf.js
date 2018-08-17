@@ -11,7 +11,7 @@ module.exports = function (config) {
       'babel'
     ],
     babelrcFile: '.babelrc',
-    reporter: ['clear-text', 'html', 'event-recorder'],
+    reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
     logLevel: 'info'
   });

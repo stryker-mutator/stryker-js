@@ -44,7 +44,7 @@ module.exports = function (config) {
   config.set({
     testFramework: 'mocha',
     testRunner: 'mocha',
-    reporter: ['progress', 'html', 'clear-text', 'event-recorder', 'dashboard'],
+    reporters: ['progress', 'html', 'clear-text', 'event-recorder', 'dashboard'],
     maxConcurrentTestRunners: 4,
     thresholds: {
       high: 80,

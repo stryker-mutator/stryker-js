@@ -3,7 +3,7 @@ module.exports = function (config) {
     mutate: ['src/*.js'],
     testFramework: 'mocha',
     testRunner: 'mocha',
-    reporter: ['clear-text', 'html', 'event-recorder'],
+    reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
     port: 9264,
     mochaOptions: {

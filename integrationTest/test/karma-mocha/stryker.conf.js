@@ -4,7 +4,7 @@ module.exports = function (config) {
     mutator: 'javascript',
     testFramework: 'mocha',
     testRunner: 'karma',
-    reporter: ['clear-text', 'html'],
+    reporters: ['clear-text', 'html'],
     karmaConfig: {
       frameworks: ['mocha', 'chai'],
       files: ['src/*.js', 'test/*.js']

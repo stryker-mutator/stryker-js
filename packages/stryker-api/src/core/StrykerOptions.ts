@@ -1,6 +1,6 @@
+import LogLevel from './LogLevel';
 import MutationScoreThresholds from './MutationScoreThresholds';
 import MutatorDescriptor from './MutatorDescriptor';
-import LogLevel from './LogLevel';
 
 interface StrykerOptions {
   // this ensures that plugins can load custom config.
@@ -98,11 +98,15 @@ interface StrykerOptions {
   coverageAnalysis?: 'perTest' | 'all' | 'off';
 
   /**
-   * The name (or names) of the reporter to use
-   * Possible values: 'clear-text', 'progress'. 
-   * Load more plugins to be able to use more plugins 
+   * DEPRECATED PROPERTY. Please use the `reporters` property
    */
   reporter?: string | string[];
+  /**
+   * The names of the reporters to use
+   * Possible values: 'clear-text', 'progress'. 
+   * Load more plugins to be able to use more reporters 
+   */
+  reporters?: string[];
 
   /**
    * The log level for logging to a file. If defined, stryker will output a log file called "stryker.log".

@@ -10,7 +10,7 @@ module.exports = function (config) {
     testFramework: "mocha",
     mutator: "typescript",
     transpilers: ["typescript"],
-    reporter: ["clear-text", "progress", "html"],
+    reporters: ["clear-text", "progress", "html"],
     tsconfigFile: "tsconfig.json",
     coverageAnalysis: "off",
     logLevel: "info",

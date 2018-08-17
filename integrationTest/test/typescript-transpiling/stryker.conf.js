@@ -5,7 +5,7 @@ module.exports = function (config) {
     testFramework: 'mocha',
     testRunner: 'mocha',
     coverageAnalysis: 'off',
-    reporter: ['clear-text', 'html', 'event-recorder'],
+    reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
     mutator: 'typescript',
     logLevel: 'info',

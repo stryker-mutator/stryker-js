@@ -14,7 +14,7 @@ module.exports = function(config) {
     testFramework: 'mocha',
     mutator: 'typescript',
     transpilers: ['typescript'],
-    reporter: ['clear-text', 'progress', 'html', 'dashboard'],
+    reporters: ['clear-text', 'progress', 'html', 'dashboard'],
     tsconfigFile: 'tsconfig.json',
     coverageAnalysis: 'perTest',
     logLevel: 'info'

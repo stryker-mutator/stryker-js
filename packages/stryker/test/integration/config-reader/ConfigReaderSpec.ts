@@ -1,14 +1,14 @@
-import * as path from 'path';
 import { expect } from 'chai';
+import * as path from 'path';
+import { Config } from 'stryker-api/config';
 import * as logging from 'stryker-api/logging';
 import ConfigReader from '../../../src/config/ConfigReader';
-import { Config } from 'stryker-api/config';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
-describe('ConfigReader', function() {
+describe('ConfigReader', function () {
   this.timeout(15000);
-  
+
   let sut: ConfigReader;
   let log: Mock<logging.Logger>;
 
@@ -33,37 +33,40 @@ describe('ConfigReader', function() {
       it('should only use supplied config', () => {
         expect(result['some']).to.be.eq('option');
         expect(result['someOther']).to.be.eq(2);
+        expect(log.warn).not.called;
       });
     });
 
     describe('without config file or CLI options', () => {
-        describe('with a stryker.conf.js in the CWD', () => {
-          it('should parse the config', () => {
-            let mockCwd = process.cwd() + '/testResources/config-reader';
-            sandbox.stub(process, 'cwd').returns(mockCwd);
-            sut = new ConfigReader({});
+      describe('with a stryker.conf.js in the CWD', () => {
+        it('should parse the config', () => {
+          let mockCwd = process.cwd() + '/testResources/config-reader';
+          sandbox.stub(process, 'cwd').returns(mockCwd);
+          sut = new ConfigReader({});
 
-            result = sut.readConfig();
+          result = sut.readConfig();
 
-            expect(result['valid']).to.be.eq('config');
-            expect(result['should']).to.be.eq('be');
-            expect(result['read']).to.be.eq(true);
-          });
-        });
-
-        describe('without a stryker.conf.js in the CWD', () => {
-          it('should return default config', () => {
-            let mockCwd = process.cwd() + '/testResources/config-reader/no-config';
-            sandbox.stub(process, 'cwd').returns(mockCwd);
-
-            sut = new ConfigReader({});
-
-            result = sut.readConfig(); 
-
-            expect(result).to.deep.equal(new Config());
-          });
+          expect(result['valid']).to.be.eq('config');
+          expect(result['should']).to.be.eq('be');
+          expect(result['read']).to.be.eq(true);
+          expect(log.warn).not.called;
         });
       });
+
+      describe('without a stryker.conf.js in the CWD', () => {
+        it('should return default config', () => {
+          let mockCwd = process.cwd() + '/testResources/config-reader/no-config';
+          sandbox.stub(process, 'cwd').returns(mockCwd);
+
+          sut = new ConfigReader({});
+
+          result = sut.readConfig();
+
+          expect(result).to.deep.equal(new Config());
+          expect(log.warn).not.called;
+        });
+      });
+    });
 
     describe('with config file', () => {
       it('should read config file', () => {
@@ -74,6 +77,7 @@ describe('ConfigReader', function() {
         expect(result['valid']).to.be.eq('config');
         expect(result['should']).to.be.eq('be');
         expect(result['read']).to.be.eq(true);
+        expect(log.warn).not.called;
       });
 
       describe('with CLI options', () => {
@@ -83,6 +87,7 @@ describe('ConfigReader', function() {
           result = sut.readConfig();
 
           expect(result['read']).to.be.eq(false);
+          expect(log.warn).not.called;
         });
       });
     });
@@ -126,6 +131,28 @@ describe('ConfigReader', function() {
 
       it('should throw an error', () => {
         expect(() => sut.readConfig()).throws('Invalid config file. Inner error: SyntaxError: Unexpected identifier');
+      });
+    });
+
+    describe('with deprecated reporter property', () => {
+      it('should log a warning when a single reporter is specified', () => {
+        const reporterName = 'html';
+        sut = new ConfigReader({ reporter: reporterName });
+
+        const result = sut.readConfig();
+
+        expect(result.reporters).to.deep.eq([reporterName]);
+        expect(log.warn).calledWithExactly(`DEPRECATED: please change the config setting 'reporter: "${reporterName}"' into 'reporters: ["${reporterName}"]'`);
+      });
+
+      it('should log a warning when multiple reporters are specified', () => {
+        const configuredReporters = ['html', 'progress'];
+        sut = new ConfigReader({ reporter: configuredReporters });
+
+        const result = sut.readConfig();
+
+        expect(result.reporters).to.deep.eq(configuredReporters);
+        expect(log.warn).calledWithExactly(`DEPRECATED: please change the config setting 'reporter: ${JSON.stringify(configuredReporters)}' into 'reporters: ${JSON.stringify(configuredReporters)}'`);
       });
     });
   });
