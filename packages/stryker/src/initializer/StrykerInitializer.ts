@@ -5,6 +5,7 @@ import PromptOption from './PromptOption';
 import { getLogger } from 'stryker-api/logging';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
+import CommandTestRunner from '../test-runner/CommandTestRunner';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -27,7 +28,8 @@ export default class StrykerInitializer {
     configWriter.guardForExistingConfig();
     this.patchProxies();
     const selectedTestRunner = await this.selectTestRunner();
-    const selectedTestFramework = selectedTestRunner ? await this.selectTestFramework(selectedTestRunner) : null;
+    const selectedTestFramework = selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name) 
+      ? await this.selectTestFramework(selectedTestRunner) : null;
     const selectedMutator = await this.selectMutator();
     const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
