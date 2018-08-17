@@ -67,6 +67,7 @@ export default class Stryker {
         await this.wrapUpReporter();
         await TempFolder.instance().clean();
         await this.logDone();
+        await LogConfigurator.shutdown();
         return mutantResults;
       }
     }

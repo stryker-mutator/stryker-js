@@ -6,10 +6,11 @@ import { File, LogLevel } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import Sandbox from '../../src/Sandbox';
 import SandboxPool from '../../src/SandboxPool';
-import Task from '../../src/utils/Task';
+import { Task } from '../../src/utils/Task';
 import '../helpers/globals';
 import { Mock, config, file, mock, testFramework } from '../helpers/producers';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import { sleep } from '../helpers/testUtils';
 
 const OVERHEAD_TIME_MS = 42;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -117,8 +118,6 @@ describe('SandboxPool', () => {
 });
 
 function tick() {
-  return new Promise(res => {
-    setTimeout(res, 0);
-  });
+  return sleep(0);
 }
 

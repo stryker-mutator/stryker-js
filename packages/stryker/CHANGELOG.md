@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.26.2"></a>
+## [0.26.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.26.1...stryker@0.26.2) (2018-08-16)
+
+
+
+
+**Note:** Version bump only for package stryker
+
+<a name="0.26.1"></a>
+## [0.26.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.26.0...stryker@0.26.1) (2018-08-03)
+
+
+### Bug Fixes
+
+* **stryker:** Clear timeouts so stryker exits correctly ([#1063](https://github.com/stryker-mutator/stryker/issues/1063)) ([2058382](https://github.com/stryker-mutator/stryker/commit/2058382))
+
+
+
+
+<a name="0.26.0"></a>
+# [0.26.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.25.1...stryker@0.26.0) (2018-08-03)
+
+
+### Features
+
+* **child process:** Make all child processes silent ([#1039](https://github.com/stryker-mutator/stryker/issues/1039)) ([80b044a](https://github.com/stryker-mutator/stryker/commit/80b044a)), closes [#1038](https://github.com/stryker-mutator/stryker/issues/1038) [#976](https://github.com/stryker-mutator/stryker/issues/976)
+
+
+
+
 <a name="0.25.1"></a>
 ## [0.25.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.25.0...stryker@0.25.1) (2018-07-23)
 

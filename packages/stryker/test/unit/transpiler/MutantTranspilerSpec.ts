@@ -10,6 +10,7 @@ import { errorToString } from '../../../src/utils/objectUtils';
 import '../../helpers/globals';
 import { Mock, config, file, mock, testableMutant } from '../../helpers/producers';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { sleep } from '../../helpers/testUtils';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   port: 4200,
@@ -44,6 +45,7 @@ describe('MutantTranspiler', () => {
         require.resolve('../../../src/transpiler/TranspilerFacade'),
         LOGGING_CONTEXT,
         ['plugin1'],
+        process.cwd(),
         TranspilerFacade,
         { config: expectedConfig, produceSourceMaps: false }
       );
@@ -156,9 +158,7 @@ describe('MutantTranspiler', () => {
         ];
         expect(actualResults).deep.eq(expectedResults);
       });
-      const nextTick = () => new Promise(res => {
-        setTimeout(res, 0);
-      });
+      const nextTick = sleep;
     });
   });
 
