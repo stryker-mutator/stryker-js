@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.3"></a>
+## [0.15.3](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.15.2...stryker-html-reporter@0.15.3) (2018-08-17)
+
+
+### Bug Fixes
+
+* **dependencies:** support stryker-api 0.19.0 ([#1087](https://github.com/stryker-mutator/stryker/issues/1087)) ([44ce923](https://github.com/stryker-mutator/stryker/commit/44ce923))
+
+
+
+
 <a name="0.15.2"></a>
 ## [0.15.2](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.15.1...stryker-html-reporter@0.15.2) (2018-08-17)
 

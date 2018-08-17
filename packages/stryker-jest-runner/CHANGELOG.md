@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.0.3...stryker-jest-runner@1.0.4) (2018-08-17)
+
+
+### Bug Fixes
+
+* **dependencies:** support stryker-api 0.19.0 ([#1087](https://github.com/stryker-mutator/stryker/issues/1087)) ([44ce923](https://github.com/stryker-mutator/stryker/commit/44ce923))
+
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.0.2...stryker-jest-runner@1.0.3) (2018-08-17)
 
