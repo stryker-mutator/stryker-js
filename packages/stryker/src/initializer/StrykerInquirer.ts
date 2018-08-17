@@ -1,5 +1,6 @@
 import * as inquirer from 'inquirer';
 import PromptOption from './PromptOption';
+import CommandTestRunner from '../test-runner/CommandTestRunner';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];
@@ -9,14 +10,17 @@ export interface PromptResult {
 export class StrykerInquirer {
 
   public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
+    const choices: inquirer.ChoiceType[] = options.map(_ => _.name);
+    choices.push(new inquirer.Separator());
+    choices.push(CommandTestRunner.runnerName);
     const answers = await inquirer.prompt<{ testRunner: string }>({
       type: 'list',
       name: 'testRunner',
-      message: 'Which test runner do you want to use?',
-      choices: options.map(_ => _.name),
+      message: 'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
+      choices,
       default: 'Mocha'
     });
-    return options.filter(_ => _.name === answers.testRunner)[0] || { name: 'mocha', npm: 'stryker-mocha-runner' };
+    return options.filter(_ => _.name === answers.testRunner)[0] || { name: CommandTestRunner.runnerName };
   }
 
   public async promptTestFrameworks(options: PromptOption[]): Promise<PromptOption> {

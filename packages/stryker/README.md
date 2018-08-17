@@ -54,8 +54,7 @@ module.exports = function(config){
     testFramework: 'mocha',
     testRunner: 'mocha',
     reporters: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
-    coverageAnalysis: 'perTest',
-    plugins: ['stryker-mocha-runner', 'stryker-html-reporter']
+    coverageAnalysis: 'perTest'
   });
 }
 ```
@@ -101,11 +100,15 @@ This is optional, as you can choose to not mutate any files at all and perform a
 #### Test runner  
 **Command line:** `--testRunner karma`  
 **Config file:** `testRunner: 'karma'`  
-**Default value:** *none*  
-**Mandatory**: yes  
+**Default value:** `'command'`  
+**Mandatory**: No  
 **Description:**  
-With `testRunner` you specify the test runner to run your tests. This option is required.  
-Make sure the test runner plugin for Stryker is installed. E.g. we need the `stryker-karma-runner` to use `karma` as a test runner. 
+With `testRunner` you specify the test runner that Stryker uses to run your tests. The default value is `command`. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the `commandRunner: { command: 'npm run mocha' }`. It uses `npm test` as the command by default. 
+
+The command test runner can be made to work in any use case, but comes with a performance
+penalty, as Stryker cannot do any optimizations and just runs all tests for all mutants. 
+If possible, you should try to use one of the test runner plugins that hook into your test runner of choice. 
+For example: install and use the `stryker-karma-runner` to use `karma` as a test runner. 
 See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-date list of supported test runners and plugins.
 
 #### Test framework  

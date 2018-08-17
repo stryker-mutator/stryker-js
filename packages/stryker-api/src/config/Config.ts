@@ -16,7 +16,7 @@ export default class Config implements StrykerOptions {
   reporter = [];
   reporters: string[] = ['progress', 'clear-text'];
   coverageAnalysis: 'perTest' | 'all' | 'off' = 'perTest';
-  testRunner: string;
+  testRunner: string = 'command';
   testFramework: string;
   mutator: string | MutatorDescriptor = 'es5';
   transpilers: string[] = [];

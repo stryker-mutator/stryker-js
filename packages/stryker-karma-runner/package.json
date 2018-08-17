@@ -1,6 +1,6 @@
 {
   "name": "stryker-karma-runner",
-  "version": "0.16.2",
+  "version": "0.16.5",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -31,17 +31,17 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-karma-runner#readme",
   "peerDependencies": {
-    "stryker-api": "^0.18.0"
+    "stryker-api": ">=0.18.0 <0.20.0"
   },
   "devDependencies": {
     "@types/express": "~4.16.0",
     "@types/semver": "~5.5.0",
-    "jasmine-core": "~3.1.0",
+    "jasmine-core": "~3.2.0",
     "karma": "~2.0.5",
     "karma-jasmine": "~1.1.2",
     "karma-phantomjs-launcher": "~1.0.4",
-    "stryker-api": "^0.18.0",
-    "stryker-jasmine": "^0.9.0"
+    "stryker-api": "^0.19.0",
+    "stryker-jasmine": "^0.9.2"
   },
   "dependencies": {
     "semver": "~5.5.0",

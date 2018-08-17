@@ -70,7 +70,14 @@ describe('StrykerInitializer', () => {
     });
 
     it('should prompt for test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
-      inquirerPrompt.resolves({ testFramework: 'awesome', testRunner: 'awesome', mutator: 'typescript', transpilers: ['webpack'], reporters: ['dimension', 'mars'], packageManager: 'yarn' });
+      arrangeAnswers({
+        testFramework: 'awesome',
+        testRunner: 'awesome',
+        mutator: 'typescript',
+        transpilers: ['webpack'],
+        reporters: ['dimension', 'mars'],
+        packageManager: 'yarn'
+      });
       await sut.initialize();
       expect(inquirerPrompt).to.have.been.callCount(6);
       const [promptTestRunner, promptTestFramework, promptMutator, promptTranspilers, promptReporters, promptPackageManagers]: inquirer.Question[] = [
@@ -83,7 +90,7 @@ describe('StrykerInitializer', () => {
       ];
       expect(promptTestRunner.type).to.eq('list');
       expect(promptTestRunner.name).to.eq('testRunner');
-      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost']);
+      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', new inquirer.Separator(), 'command']);
       expect(promptTestFramework.type).to.eq('list');
       expect(promptTestFramework.choices).to.deep.eq(['awesome', 'None/other']);
       expect(promptMutator.type).to.eq('list');
@@ -94,6 +101,12 @@ describe('StrykerInitializer', () => {
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
       expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
+    });
+
+    it('should not prompt for testFramework if test runner is "command"', async () => {
+      arrangeAnswers({ testRunner: 'command' });
+      await sut.initialize();
+      expect(inquirer.prompt).not.calledWithMatch(sinon.match({ name: 'testFramework' }));
     });
 
     it('should configure coverageAnalysis: "all" when the user did not select a testFramework', async () => {
@@ -403,4 +416,28 @@ describe('StrykerInitializer', () => {
       });
     });
   };
+
+
+  interface StrykerInitAnswers {
+    testFramework: string;
+    testRunner: string;
+    mutator: string;
+    transpilers: string[];
+    reporters: string[];
+    packageManager: string;
+  }
+
+  function arrangeAnswers(answerOverrides?: Partial<StrykerInitAnswers>) {
+    const answers: StrykerInitAnswers = Object.assign({
+      testFramework: 'awesome',
+      testRunner: 'awesome',
+      mutator: 'typescript',
+      transpilers: ['webpack'],
+      reporters: ['dimension', 'mars'],
+      packageManager: 'yarn'
+    }, answerOverrides);
+    inquirerPrompt.resolves(answers);
+  }
+
 });
+

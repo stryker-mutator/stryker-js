@@ -44,6 +44,7 @@
     "stryker-mocha-framework": "../packages/stryker-mocha-framework",
     "stryker-mocha-runner": "../packages/stryker-mocha-runner",
     "stryker-typescript": "../packages/stryker-typescript",
+    "stryker-vue-mutator": "../packages/stryker-vue-mutator",
     "stryker-webpack-transpiler": "../packages/stryker-webpack-transpiler"
   }
 }

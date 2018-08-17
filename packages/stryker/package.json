@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.26.1",
+  "version": "0.27.1",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -54,12 +54,12 @@
   },
   "dependencies": {
     "chalk": "~2.4.1",
-    "commander": "~2.16.0",
+    "commander": "~2.17.1",
     "escodegen": "~1.8.0",
     "esprima": "~2.7.0",
     "get-port": "~4.0.0",
     "glob": "~7.1.2",
-    "inquirer": "~6.0.0",
+    "inquirer": "~6.1.0",
     "istanbul-lib-instrument": "~1.10.1",
     "lodash": "~4.17.4",
     "log4js": "~3.0.0",
@@ -82,9 +82,9 @@
     "@types/node": "^6.0.114",
     "@types/prettier": "~1.13.1",
     "@types/progress": "~2.0.1",
-    "stryker-api": "^0.18.0"
+    "stryker-api": "^0.19.0"
   },
   "peerDependencies": {
-    "stryker-api": "^0.18.0"
+    "stryker-api": ">=0.18.0 <0.20.0"
   }
 }
