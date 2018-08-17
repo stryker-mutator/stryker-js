@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.0.2...stryker-jest-runner@1.0.3) (2018-08-17)
+
+
+
+
+**Note:** Version bump only for package stryker-jest-runner
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.0.1...stryker-jest-runner@1.0.2) (2018-08-16)
 

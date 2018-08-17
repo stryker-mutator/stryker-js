@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.19.0"></a>
+# [0.19.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.18.0...stryker-api@0.19.0) (2018-08-17)
+
+
+### Features
+
+* **Command test runner:** Add command test runner ([#1047](https://github.com/stryker-mutator/stryker/issues/1047)) ([ee919fb](https://github.com/stryker-mutator/stryker/commit/ee919fb)), closes [#768](https://github.com/stryker-mutator/stryker/issues/768)
+
+
+
+
 <a name="0.18.0"></a>
 # [0.18.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.17.3...stryker-api@0.18.0) (2018-07-20)
 
