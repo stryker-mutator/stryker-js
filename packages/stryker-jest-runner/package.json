@@ -49,7 +49,7 @@
   },
   "peerDependencies": {
     "jest": ">= 22.0.0",
-    "stryker-api": ">=0.18.0 <0.20.0"
+    "stryker-api": ">=0.18.0 <0.21.0"
   },
   "dependencies": {
     "semver": "~5.5.0"

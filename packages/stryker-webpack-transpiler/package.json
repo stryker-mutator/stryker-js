@@ -45,7 +45,7 @@
     "webpack": "~4.16.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.20.0",
+    "stryker-api": ">=0.18.0 <0.21.0",
     "webpack": ">=2.0.0"
   },
   "dependencies": {
