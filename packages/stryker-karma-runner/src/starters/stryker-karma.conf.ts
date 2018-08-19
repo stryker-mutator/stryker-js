@@ -15,7 +15,7 @@ function setDefaultOptions(config: Config) {
 function setUserKarmaConfigFile(config: Config, log: Logger) {
   if (globalSettings.karmaConfigFile && typeof globalSettings.karmaConfigFile === 'string') {
     const configFileName = path.resolve(globalSettings.karmaConfigFile);
-    log.info('Importing config from "%s"', configFileName);
+    log.debug('Importing config from "%s"', configFileName);
     try {
       const userConfig = requireModule(configFileName);
       userConfig(config);
