@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.28.0"></a>
+# [0.28.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.27.1...stryker@0.28.0) (2018-08-19)
+
+
+### Features
+
+* **stryker config:** rename config setting `reporter` to `reporters` ([#1088](https://github.com/stryker-mutator/stryker/issues/1088)) ([584218a](https://github.com/stryker-mutator/stryker/commit/584218a)), closes [#793](https://github.com/stryker-mutator/stryker/issues/793)
+
+
+
+
 <a name="0.27.1"></a>
 ## [0.27.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.27.0...stryker@0.27.1) (2018-08-17)
 

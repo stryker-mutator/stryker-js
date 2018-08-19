@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.14.0"></a>
+# [0.14.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.13.3...stryker-mocha-runner@0.14.0) (2018-08-19)
+
+
+### Features
+
+* **stryker config:** rename config setting `reporter` to `reporters` ([#1088](https://github.com/stryker-mutator/stryker/issues/1088)) ([584218a](https://github.com/stryker-mutator/stryker/commit/584218a)), closes [#793](https://github.com/stryker-mutator/stryker/issues/793)
+
+
+
+
 <a name="0.13.3"></a>
 ## [0.13.3](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.13.2...stryker-mocha-runner@0.13.3) (2018-08-17)
 
