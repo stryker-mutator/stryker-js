@@ -39,7 +39,7 @@ export default class StrykerCli {
       .option('--testRunner <name>', `The name of the test runner you want to use`)
       .option('--mutator <name>', `The name of the mutant generator you want to use`)
       .option('--transpilers <listOfTranspilers>', 'A comma separated list of transpilers to use.', this.list)
-      .option('--reporter <name>', 'A comma separated list of the names of the reporter(s) you want to use', this.list)
+      .option('--reporters <name>', 'A comma separated list of the names of the reporter(s) you want to use', this.list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', this.list)
       .option('--port <n>', 'A free port for the test runner to use (if it needs to). Any additional test runners will be spawned using n+1, n+2, etc', parseInt)
       .option('--timeoutMs <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)

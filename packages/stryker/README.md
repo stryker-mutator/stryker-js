@@ -53,7 +53,7 @@ module.exports = function(config){
     ],
     testFramework: 'mocha',
     testRunner: 'mocha',
-    reporter: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
+    reporters: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
     coverageAnalysis: 'perTest'
   });
 }
@@ -176,14 +176,14 @@ When using the config file, you can provide either a string representing the mut
 With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.  
 
 #### Reporters  
-**Command line:** `--reporter clear-text,progress,dots,dashboard`  
-**Config file:** `reporter: ['clear-text', 'progress', 'dots', 'dashboard']`     
+**Command line:** `--reporters clear-text,progress,dots,dashboard`  
+**Config file:** `reporters: ['clear-text', 'progress', 'dots', 'dashboard']`     
 **Default value:** `['clear-text', 'progress']`  
 **Mandatory**: no  
 **Description:**  
-With `reporter` you can set a reporter or group of reporters for stryker to use.
+With `reporters` you can set the reporters for stryker to use.
 These reporters can be used out of the box: `clear-text`, `progress`, `dots`, `dashboard` and `event-recorder`.
-By default `clear-text` and `progress` are active if no reporter is configured.
+By default `clear-text` and `progress` are active if no reporters are configured.
 You can load additional plugins to get more reporters. See [stryker-mutator.io](https://stryker-mutator.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
 

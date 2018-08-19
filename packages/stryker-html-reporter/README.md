@@ -34,7 +34,7 @@ If you do descide to choose specific modules, don't forget to add `'stryker-html
 
 ### Use the reporter
 
-In order to use the reporter, you must add `'html'` as single reporter or add it to the list. For example: `reporter: 'html'` or `reporter: ['html', 'progress']`.
+In order to use the reporter, you must add `'html'` to the reporters. For example: `reporters: ['html', 'progress']`.
 
 ### Options
 
@@ -51,7 +51,7 @@ Configure the base directory to write the html report to.
 exports = function(config){
     config.set({
         // ...
-        reporter: 'html', // or ['html', 'progress'] to configure multiple reporters at once
+        reporters: ['html'], // You may also want to specify other reporters
         htmlReporter: {
             baseDir: 'reports/mutation/html' // this is the default
         },

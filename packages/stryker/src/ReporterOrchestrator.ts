@@ -1,14 +1,14 @@
 import { StrykerOptions } from 'stryker-api/core';
+import { getLogger } from 'stryker-api/logging';
 import { ReporterFactory } from 'stryker-api/report';
+import BroadcastReporter, { NamedReporter } from './reporters/BroadcastReporter';
 import ClearTextReporter from './reporters/ClearTextReporter';
-import ProgressReporter from './reporters/ProgressReporter';
-import ProgressAppendOnlyReporter from './reporters/ProgressAppendOnlyReporter';
+import DashboardReporter from './reporters/DashboardReporter';
 import DotsReporter from './reporters/DotsReporter';
 import EventRecorderReporter from './reporters/EventRecorderReporter';
-import BroadcastReporter, { NamedReporter } from './reporters/BroadcastReporter';
-import DashboardReporter from './reporters/DashboardReporter';
+import ProgressAppendOnlyReporter from './reporters/ProgressAppendOnlyReporter';
+import ProgressReporter from './reporters/ProgressReporter';
 import StrictReporter from './reporters/StrictReporter';
-import { getLogger } from 'stryker-api/logging';
 
 function registerDefaultReporters() {
   ReporterFactory.instance().register('progress-append-only', ProgressAppendOnlyReporter);
@@ -28,15 +28,11 @@ export default class ReporterOrchestrator {
 
   public createBroadcastReporter(): StrictReporter {
     let reporters: NamedReporter[] = [];
-    let reporterOption = this.options.reporter;
+    const reporterOption = this.options.reporters;
     if (reporterOption) {
-      if (Array.isArray(reporterOption)) {
         reporterOption.forEach(reporterName => reporters.push(this.createReporter(reporterName)));
-      } else {
-        reporters.push(this.createReporter(reporterOption));
-      }
     } else {
-      this.log.warn(`No reporter configured. Please configure one or more reporters in the (for example: reporter: 'progress')`);
+      this.log.warn(`No reporter configured. Please configure one or more reporters in the (for example: reporters: ['progress'])`);
       this.logPossibleReporters();
     }
     return new BroadcastReporter(reporters);

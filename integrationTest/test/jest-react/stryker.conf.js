@@ -3,7 +3,7 @@ module.exports = function(config) {
     testRunner: "jest",
     mutator: "javascript",
     transpilers: [],
-    reporter: ["event-recorder"],
+    reporters: ["event-recorder"],
     coverageAnalysis: "off",
     mutate: ["src/**/*.js", "!src/**/*.test.js"],
     maxConcurrentTestRunners: 1,

@@ -1,9 +1,9 @@
+import * as _ from 'lodash';
+import * as fs from 'mz/fs';
+import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
-import * as fs from 'mz/fs';
 import { getLogger } from 'stryker-api/logging';
-import * as path from 'path';
-import * as _ from 'lodash';
 import StrykerError from '../utils/StrykerError';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
@@ -31,6 +31,16 @@ export default class ConfigReader {
 
     // merge the config from config file and cliOptions (precedence)
     config.set(this.cliOptions);
+
+    if (config.reporter.length) {
+      if (Array.isArray(config.reporter)) {
+        config.reporters = config.reporter;
+      } else {
+        config.reporters = [config.reporter];
+      }
+      this.log.warn(`DEPRECATED: please change the config setting 'reporter: ${JSON.stringify(config.reporter)}' into 'reporters: ${JSON.stringify(config.reporters)}'`);
+    }
+
     return config;
   }
 

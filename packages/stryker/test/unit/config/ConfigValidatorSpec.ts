@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { Logger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
+import { Logger } from 'stryker-api/logging';
 import ConfigValidator from '../../../src/config/ConfigValidator';
 import currentLogMock from '../../helpers/logMock';
-import { testFramework, Mock } from '../../helpers/producers';
+import { Mock, testFramework } from '../../helpers/producers';
 
 describe('ConfigValidator', () => {
 
@@ -153,22 +153,22 @@ describe('ConfigValidator', () => {
     });
   });
 
-  describe('reporter', () => {
-    it('should be invalid with non-array reporter', () => {
-      let brokenConfig = breakConfig(config, 'reporter', 'stryker-typescript');
+  describe('reporters', () => {
+    it('should be invalid with non-array reporters', () => {
+      let brokenConfig = breakConfig(config, 'reporters', 'stryker-typescript');
       sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
-      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `reporter`. Expected an array');
+      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `reporters`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
-      let brokenConfig = breakConfig(config, 'reporter', [
+      let brokenConfig = breakConfig(config, 'reporters', [
         'stryker-jest',
         0
       ]);
       sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
-      expect(log.fatal).calledWith('Value "0" is an invalid element of `reporter`. Expected a string');
+      expect(log.fatal).calledWith('Value "0" is an invalid element of `reporters`. Expected a string');
     });
   });
 

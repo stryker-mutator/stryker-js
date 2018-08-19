@@ -8,6 +8,7 @@ const optionsAllArgs: StrykerOptions = {
   testFramework: 'string',
   testRunner: 'string',
   reporter: 'string',
+  repoters: ['reporter'],
   logLevel: LogLevel.Fatal,
   timeoutMs: 1,
   timeoutFactor: 2,

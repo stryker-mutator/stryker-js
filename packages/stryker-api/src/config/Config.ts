@@ -1,4 +1,4 @@
-import { LogLevel, StrykerOptions, MutatorDescriptor, MutationScoreThresholds } from '../../core';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions } from '../../core';
 
 export default class Config implements StrykerOptions {
 
@@ -13,7 +13,8 @@ export default class Config implements StrykerOptions {
   timeoutFactor = 1.5;
   plugins: string[] = ['stryker-*'];
   port = 9234;
-  reporter = ['progress', 'clear-text'];
+  reporter = [];
+  reporters: string[] = ['progress', 'clear-text'];
   coverageAnalysis: 'perTest' | 'all' | 'off' = 'perTest';
   testRunner: string = 'command';
   testFramework: string;

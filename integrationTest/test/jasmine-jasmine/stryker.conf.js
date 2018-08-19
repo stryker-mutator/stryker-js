@@ -6,7 +6,7 @@ module.exports = function (config) {
     coverageAnalysis: 'perTest',
     testFramework: 'jasmine',
     testRunner: 'jasmine',
-    reporter: ['clear-text', 'event-recorder'],
+    reporters: ['clear-text', 'event-recorder'],
     maxConcurrentTestRunners: 1,
     jasmineConfigFile: 'spec/support/jasmine.json',
     fileLogLevel: LogLevel.Debug
