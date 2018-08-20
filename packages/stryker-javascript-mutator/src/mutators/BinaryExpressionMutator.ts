@@ -31,7 +31,7 @@ export default class BinaryExpressionMutator implements NodeMutator {
         }
 
         return mutatedOperators.map<types.Node>(mutatedOperator => {
-          let mutatedNode = clone(node);
+          const mutatedNode = clone(node);
           mutatedNode.operator = mutatedOperator as any;
           return mutatedNode;
         });

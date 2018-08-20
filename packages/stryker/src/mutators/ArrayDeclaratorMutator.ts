@@ -8,8 +8,6 @@ import { IdentifiedNode } from './IdentifiedNode';
 export default class ArrayDeclaratorMutator implements NodeMutator {
   name = 'ArrayDeclarator';
 
-  constructor() { }
-
   applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): void | IdentifiedNode {
     if ((node.type === Syntax.CallExpression || node.type === Syntax.NewExpression) && node.callee.type === Syntax.Identifier && node.callee.name === 'Array' && node.arguments.length > 0) {
       let mutatedNode = copy(node);

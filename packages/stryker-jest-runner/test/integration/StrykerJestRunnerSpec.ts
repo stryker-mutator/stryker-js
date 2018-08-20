@@ -54,7 +54,7 @@ describe('Integration test for Strykers Jest runner', function () {
 
   it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));
-    runOptions.strykerOptions.set({ jest: { project: 'react-ts' } });
+    runOptions.strykerOptions.set({ jest: { projectType: 'react-ts' } });
     jestConfigEditor.edit(runOptions.strykerOptions as Config);
 
     const jestTestRunner = new JestTestRunner(runOptions);

@@ -11,7 +11,7 @@ module.exports = function (config) {
     port: 9336,
     karma: {
       configFile: 'src/karma.conf.js',
-      project: 'angular-cli',
+      projectType: 'angular-cli',
       config: {
         browsers: ['ChromeHeadless']
       }

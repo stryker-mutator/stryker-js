@@ -9,7 +9,7 @@ export default class BooleanSubstitutionMutator implements NodeMutator {
 
     // true -> false or false -> true
     if (types.isBooleanLiteral(node)) {
-      let mutatedNode = copy(node);
+      const mutatedNode = copy(node);
       mutatedNode.value = !mutatedNode.value;
       nodes.push(mutatedNode);
     }

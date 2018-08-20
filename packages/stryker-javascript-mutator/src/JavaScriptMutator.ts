@@ -28,7 +28,7 @@ export default class JavaScriptMutator implements Mutator {
 
       BabelParser.getNodes(ast).forEach(node => {
         this.mutators.forEach(mutator => {
-          let mutatedNodes = mutator.mutate(node, copy);
+          const mutatedNodes = mutator.mutate(node, copy);
 
           if (mutatedNodes) {
             const newMutants = this.generateMutants(mutatedNodes, baseAst, file, mutator.name);

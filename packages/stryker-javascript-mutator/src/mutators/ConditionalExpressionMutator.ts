@@ -8,14 +8,12 @@ import NodeGenerator from '../helpers/NodeGenerator';
 export default class ConditionalExpressionMutator implements NodeMutator {
   name = 'ConditionalExpression';
 
-  constructor() { }
-
   mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
     if (types.isConditionalExpression(node)) {
-        return [
-          NodeGenerator.createBooleanLiteralNode(node.test, false),
-          NodeGenerator.createBooleanLiteralNode(node.test, true)
-        ];
+      return [
+        NodeGenerator.createBooleanLiteralNode(node.test, false),
+        NodeGenerator.createBooleanLiteralNode(node.test, true)
+      ];
     }
   }
 }

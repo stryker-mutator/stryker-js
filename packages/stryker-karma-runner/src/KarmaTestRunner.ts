@@ -22,7 +22,7 @@ export default class KarmaTestRunner implements TestRunner {
 
   constructor(private options: RunnerOptions) {
     const setup = this.loadSetup(options);
-    this.starter = new ProjectStarter(setup.project);
+    this.starter = new ProjectStarter(setup.projectType);
     this.setGlobals(setup, options.port);
     this.cleanRun();
     this.listenToRunComplete();
@@ -54,7 +54,7 @@ export default class KarmaTestRunner implements TestRunner {
 
   private loadSetup(settings: RunnerOptions): StrykerKarmaSetup {
     const defaultKarmaConfig: StrykerKarmaSetup = {
-      project: 'custom'
+      projectType: 'custom'
     };
     const strykerKarmaSetup: StrykerKarmaSetup = Object.assign(defaultKarmaConfig, settings.strykerOptions[KARMA_CONFIG_KEY]);
 
