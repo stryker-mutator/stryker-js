@@ -79,7 +79,7 @@ export default class ConfigValidator {
   }
 
   private validateTimeout() {
-    this.validateIsNumber('timeoutMs', this.strykerConfig.timeoutMs);
+    this.validateIsNumber('timeoutMS', this.strykerConfig.timeoutMS);
     this.validateIsNumber('timeoutFactor', this.strykerConfig.timeoutFactor);
   }
 

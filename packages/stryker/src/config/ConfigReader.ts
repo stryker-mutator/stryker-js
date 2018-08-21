@@ -41,6 +41,11 @@ export default class ConfigReader {
       this.log.warn(`DEPRECATED: please change the config setting 'reporter: ${JSON.stringify(config.reporter)}' into 'reporters: ${JSON.stringify(config.reporters)}'`);
     }
 
+    if (config.timeoutMs) {
+      config.timeoutMS = config.timeoutMs;
+      this.log.warn(`DEPRECATED: please change the config setting 'timeoutMs: ${JSON.stringify(config.timeoutMs)}' into 'timeoutMS: ${JSON.stringify(config.timeoutMS)}'`);
+    }
+
     return config;
   }
 
