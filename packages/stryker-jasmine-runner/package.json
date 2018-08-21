@@ -38,7 +38,7 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-jasmine-runner#readme",
   "peerDependencies": {
     "jasmine": ">=2",
-    "stryker-api": ">=0.18.0 <0.21.0"
+    "stryker-api": ">=0.18.0 <0.22.0"
   },
   "devDependencies": {
     "stryker-api": "^0.20.0",

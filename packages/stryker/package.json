@@ -85,6 +85,6 @@
     "stryker-api": "^0.20.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.21.0"
+    "stryker-api": ">=0.18.0 <0.22.0"
   }
 }
