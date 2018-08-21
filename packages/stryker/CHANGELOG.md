@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.29.0"></a>
+# [0.29.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.28.0...stryker@0.29.0) (2018-08-21)
+
+
+### Features
+
+* **stryker config:** rename config setting `timeoutMs` to `timeoutMS` ([#1099](https://github.com/stryker-mutator/stryker/issues/1099)) ([3ded998](https://github.com/stryker-mutator/stryker/commit/3ded998)), closes [#860](https://github.com/stryker-mutator/stryker/issues/860)
+
+
+
+
 <a name="0.28.0"></a>
 # [0.28.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.27.1...stryker@0.28.0) (2018-08-19)
 
