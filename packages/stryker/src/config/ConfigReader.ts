@@ -43,7 +43,7 @@ export default class ConfigReader {
 
     if (config.timeoutMs) {
       config.timeoutMS = config.timeoutMs;
-      this.log.warn(`DEPRECATED: please change the config setting 'timeoutMs: ${JSON.stringify(config.timeoutMs)}' into 'timeoutMS: ${JSON.stringify(config.timeoutMS)}'`);
+      this.log.warn(`DEPRECATED: please change the config setting 'timeoutMs: ${config.timeoutMs}' into 'timeoutMS: ${config.timeoutMS}'`);
     }
 
     return config;
