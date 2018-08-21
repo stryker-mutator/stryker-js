@@ -128,7 +128,7 @@ export default class InitialTestExecutor {
    * grossTime = NetTime + overheadTime
    * 
    * The overhead time is used to calculate exact timeout values during mutation testing.
-   * See timeoutMs setting in README for more information on this calculation
+   * See timeoutMS setting in README for more information on this calculation
    */
   private calculateTiming(grossTimeMS: number, tests: ReadonlyArray<TestResult>): Timing {
     const netTimeMS = tests.reduce((total, test) => total + test.timeSpentMs, 0);

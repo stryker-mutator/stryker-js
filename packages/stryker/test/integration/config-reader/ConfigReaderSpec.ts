@@ -154,6 +154,16 @@ describe('ConfigReader', function () {
         expect(result.reporters).to.deep.eq(configuredReporters);
         expect(log.warn).calledWithExactly(`DEPRECATED: please change the config setting 'reporter: ${JSON.stringify(configuredReporters)}' into 'reporters: ${JSON.stringify(configuredReporters)}'`);
       });
+
+      it('should log a warning when timeoutMs is specified', () => {
+        const timeoutMs = 30000;
+        sut = new ConfigReader({ timeoutMs: timeoutMs });
+
+        const result = sut.readConfig();
+
+        expect(result.timeoutMS).to.deep.eq(timeoutMs);
+        expect(log.warn).calledWithExactly(`DEPRECATED: please change the config setting 'timeoutMs: ${timeoutMs}' into 'timeoutMS: ${timeoutMs}'`);
+      });
     });
   });
 });

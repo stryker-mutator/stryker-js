@@ -1,4 +1,4 @@
-import { StrykerOptions, Factory, File,  Position, Location, Range, LogLevel } from 'stryker-api/core';
+import { StrykerOptions, File, Position, Location, Range, LogLevel } from 'stryker-api/core';
 
 const options: StrykerOptions = {};
 const optionsAllArgs: StrykerOptions = {
@@ -10,7 +10,7 @@ const optionsAllArgs: StrykerOptions = {
   reporter: 'string',
   repoters: ['reporter'],
   logLevel: LogLevel.Fatal,
-  timeoutMs: 1,
+  timeoutMS: 1,
   timeoutFactor: 2,
   plugins: ['string'],
   thresholds: {

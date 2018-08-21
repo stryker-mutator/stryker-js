@@ -259,23 +259,23 @@ For example, when you set to use port 9234 and Stryker decides to start four tes
 If the test runner decides to use the port it should be available for use.
 
 #### Global timeout in milliseconds  
-**Command line:** `--timeoutMs 5000`  
-**Config file:** `timeoutMs: 5000`  
+**Command line:** `--timeoutMS 5000`  
+**Config file:** `timeoutMS: 5000`  
 **Default value:** `5000`  
 **Mandatory**: no  
 **Description:**  
 When Stryker is mutating code, it cannot determine indefinitely whether or not a code mutation results in an infinite loop (see [Halting problem](https://en.wikipedia.org/wiki/Halting_problem)).
-In order to battle infinite loops, a test run gets killed after a certain period of time. This period is configurable with two settings: `timeoutMs` and `timeoutFactor`. 
+In order to battle infinite loops, a test run gets killed after a certain period of time. This period is configurable with two settings: `timeoutMS` and `timeoutFactor`. 
 To calculate the actual timeout in milliseconds the, following formula is used:
 
 ```
-timeoutForTestRunMs = netTimeMs * timeoutFactor + timeoutMs + overheadMs
+timeoutForTestRunMs = netTimeMs * timeoutFactor + timeoutMS + overheadMs
 ``` 
 
 Both `netTimeMs` and `overheadMs` are calculated during the initial test run. They are logged on `info` level. For example when `overheadMs` is 92 and `netTimeMs` is 5: `Initial test run succeeded. Ran 6 tests in 4 seconds (net 5 ms, overhead 92 ms).`
 
 With `timeoutFactor` you can configure the allowed deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops.
-`timeoutMs` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.
+`timeoutMS` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.
 
 #### Timeout factor  
 **Command line:** `--timeoutFactor 1.5`  

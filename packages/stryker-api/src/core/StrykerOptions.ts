@@ -126,9 +126,13 @@ interface StrykerOptions {
   symlinkNodeModules?: boolean;
 
   /**
-   * Amount of additional time, in milliseconds, the mutation test is allowed to run
+   * DEPRECATED PROPERTY. Please use the `timeoutMS` property
    */
   timeoutMs?: number;
+  /**
+   * Amount of additional time, in milliseconds, the mutation test is allowed to run
+   */
+  timeoutMS?: number;
 
   /**
    * The factor is applied on top of the other timeouts when during mutation testing
