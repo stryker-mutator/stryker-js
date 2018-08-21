@@ -162,7 +162,7 @@ describe('ConfigReader', function () {
         const result = sut.readConfig();
 
         expect(result.timeoutMS).to.deep.eq(timeoutMs);
-        expect(log.warn).calledWithExactly(`DEPRECATED: please change the config setting 'timeoutMs: "${timeoutMs}"' into 'timeoutMS: ["${timeoutMs}"]'`);
+        expect(log.warn).calledWithExactly(`DEPRECATED: please change the config setting 'timeoutMs: ${timeoutMs}' into 'timeoutMS: ${timeoutMs}'`);
       });
     });
   });
