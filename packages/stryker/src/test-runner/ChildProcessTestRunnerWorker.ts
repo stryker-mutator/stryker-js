@@ -1,30 +1,27 @@
 import { TestRunner, TestRunnerFactory, RunnerOptions, RunOptions } from 'stryker-api/test_runner';
 import { errorToString } from '../utils/objectUtils';
 
-/**
- * 
- */
 export default class ChildProcessTestRunnerWorker implements TestRunner {
 
-  private underlyingTestRunner: TestRunner;
+  private readonly underlyingTestRunner: TestRunner;
 
   constructor(realTestRunnerName: string, options: RunnerOptions) {
     this.underlyingTestRunner = TestRunnerFactory.instance().create(realTestRunnerName, options);
   }
 
-  async init(): Promise<void> {
+  public async init(): Promise<void> {
     if (this.underlyingTestRunner.init) {
       await this.underlyingTestRunner.init();
     }
   }
 
-  async dispose() {
+  public async dispose() {
     if (this.underlyingTestRunner.dispose) {
       await this.underlyingTestRunner.dispose();
     }
   }
-  
-  async run(options: RunOptions) {
+
+  public async run(options: RunOptions) {
     const result = await this.underlyingTestRunner.run(options);
     // If the test runner didn't report on coverage, let's try to do it ourselves.
     if (!result.coverage) {

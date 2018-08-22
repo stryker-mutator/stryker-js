@@ -46,5 +46,4 @@ describe('Timer', () => {
       expect(sut.elapsedMs('bar')).eq(20);
     });
   });
-
 });

@@ -16,8 +16,8 @@ const KNOWN_EXTENSIONS = Object.freeze([
 ]);
 
 class BabelTranspiler implements Transpiler {
-  private babelOptions: babel.TransformOptions;
-  private projectRoot: string;
+  private readonly babelOptions: babel.TransformOptions;
+  private readonly projectRoot: string;
 
   public constructor(options: TranspilerOptions) {
     this.babelOptions = new BabelConfigReader().readConfig(options.config);

@@ -36,7 +36,7 @@ interface Timing {
    */
   net: number;
   /**
-   * the time that was spend not executing tests in milliseconds. 
+   * the time that was spend not executing tests in milliseconds.
    * So the time it took to start the test runner and to report the result.
    */
   overhead: number;
@@ -46,22 +46,22 @@ export default class InitialTestExecutor {
 
   private readonly log = getLogger(InitialTestExecutor.name);
 
-  constructor(private options: Config, private inputFiles: InputFileCollection, private testFramework: TestFramework | null, private timer: Timer, private loggingContext: LoggingClientContext) {
+  constructor(private readonly options: Config, private readonly inputFiles: InputFileCollection, private readonly testFramework: TestFramework | null, private readonly timer: Timer, private readonly loggingContext: LoggingClientContext) {
   }
 
-  async run(): Promise<InitialTestRunResult> {
+  public async run(): Promise<InitialTestRunResult> {
 
     this.log.info(`Starting initial test run. This may take a while.`);
 
-    // Before we can run the tests we transpile the input files. 
+    // Before we can run the tests we transpile the input files.
     // Files that are not transpiled should pass through without transpiling
     const transpiledFiles = await this.transpileInputFiles();
 
-    // Now that we have the transpiled files, we create a source mapper so 
+    // Now that we have the transpiled files, we create a source mapper so
     // we can figure out which files we need to annotate for code coverage
     const sourceMapper = SourceMapper.create(transpiledFiles, this.options);
 
-    // Annotate the transpiled files for code coverage. This allows the 
+    // Annotate the transpiled files for code coverage. This allows the
     // test runner to report code coverage (if `coverageAnalysis` is enabled)
     const { coverageMaps, instrumentedFiles } = await this.annotateForCodeCoverage(transpiledFiles, sourceMapper);
     this.logTranspileResult(instrumentedFiles);
@@ -70,10 +70,10 @@ export default class InitialTestExecutor {
     const timing = this.calculateTiming(grossTimeMS, runResult.tests);
     this.validateResult(runResult, timing);
     return {
+      coverageMaps,
       overheadTimeMS: timing.overhead,
-      sourceMapper,
       runResult,
-      coverageMaps
+      sourceMapper
     };
   }
 
@@ -88,7 +88,7 @@ export default class InitialTestExecutor {
 
   private async transpileInputFiles(): Promise<ReadonlyArray<File>> {
     const transpilerFacade = this.createTranspilerFacade();
-    return await transpilerFacade.transpile(this.inputFiles.files);
+    return transpilerFacade.transpile(this.inputFiles.files);
   }
 
   private async annotateForCodeCoverage(files: ReadonlyArray<File>, sourceMapper: SourceMapper)
@@ -102,11 +102,12 @@ export default class InitialTestExecutor {
   private validateResult(runResult: RunResult, timing: Timing): void {
     switch (runResult.status) {
       case RunStatus.Complete:
-        let failedTests = this.filterOutFailedTests(runResult);
+        const failedTests = this.filterOutFailedTests(runResult);
         if (failedTests.length) {
           this.logFailedTestsInInitialRun(failedTests);
           throw new Error('There were failed tests in the initial test run.');
-        } if (runResult.tests.length === 0) {
+        }
+        if (runResult.tests.length === 0) {
           this.log.warn('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
           return;
         } else {
@@ -126,7 +127,7 @@ export default class InitialTestExecutor {
   /**
    * Calculates the timing variables for the test run.
    * grossTime = NetTime + overheadTime
-   * 
+   *
    * The overhead time is used to calculate exact timeout values during mutation testing.
    * See timeoutMS setting in README for more information on this calculation
    */
@@ -134,8 +135,8 @@ export default class InitialTestExecutor {
     const netTimeMS = tests.reduce((total, test) => total + test.timeSpentMs, 0);
     const overheadTimeMS = grossTimeMS - netTimeMS;
     return {
-      overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS,
-      net: netTimeMS
+      net: netTimeMS,
+      overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS
     };
   }
 

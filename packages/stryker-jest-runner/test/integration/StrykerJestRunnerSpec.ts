@@ -17,7 +17,7 @@ const jestProjectRoot = process.cwd();
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
 
-describe('Integration test for Strykers Jest runner', function () {
+describe('Integration test for Strykers Jest runner', function() {
   // Set timeout for integration tests to 10 seconds for travis
   this.timeout(30000);
 
@@ -46,7 +46,7 @@ describe('Integration test for Strykers Jest runner', function () {
     runOptions = {
       fileNames: [],
       port: 0,
-      strykerOptions: new Config
+      strykerOptions: new Config()
     };
   });
 
@@ -82,7 +82,7 @@ describe('Integration test for Strykers Jest runner', function () {
     expect(result).to.have.property('tests');
     expect(result.tests).to.be.an('array').with.length(testNames.length);
 
-    for (let test of result.tests) {
+    for (const test of result.tests) {
       expect(testNames).to.include(test.name);
       expect(test.status).to.equal(TestStatus.Success);
       expect(test.timeSpentMs).to.be.above(-1);
@@ -104,7 +104,7 @@ describe('Integration test for Strykers Jest runner', function () {
     expect(result).to.have.property('tests');
     expect(result.tests).to.be.an('array').with.length(testNames.length);
 
-    for (let test of result.tests) {
+    for (const test of result.tests) {
       expect(testNames).to.include(test.name);
       expect(test.status).to.equal(TestStatus.Success);
       expect(test.timeSpentMs).to.be.above(-1);

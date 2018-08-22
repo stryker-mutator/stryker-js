@@ -1,11 +1,10 @@
-
-/** 
+/**
  * Represents a file within Stryker. Could be a strictly in-memory file.
-*/
+ */
 export default class File {
 
   private _textContent: string | undefined;
-  private _content: Buffer;
+  private readonly _content: Buffer;
 
   /**
    * Creates a new File to be used within Stryker.

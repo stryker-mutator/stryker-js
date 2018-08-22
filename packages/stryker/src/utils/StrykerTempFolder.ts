@@ -4,8 +4,8 @@ import * as mkdirp from 'mkdirp';
 import { getLogger } from 'stryker-api/logging';
 import { deleteDir } from './fileUtils';
 
-let baseTempFolder = path.join(process.cwd(), '.stryker-tmp');
-let tempFolder = path.join(baseTempFolder, random().toString());
+const baseTempFolder = path.join(process.cwd(), '.stryker-tmp');
+const tempFolder = path.join(baseTempFolder, random().toString());
 mkdirp.sync(baseTempFolder);
 mkdirp.sync(tempFolder);
 
@@ -15,7 +15,7 @@ mkdirp.sync(tempFolder);
  * @returns The path to the folder.
  */
 function createRandomFolder(prefix: string): string {
-  let dir = tempFolder + path.sep + prefix + random();
+  const dir = tempFolder + path.sep + prefix + random();
   mkdirp.sync(dir);
   return dir;
 }
@@ -68,7 +68,7 @@ function clean() {
 }
 
 export default {
+  clean,
   createRandomFolder,
-  writeFile,
-  clean
+  writeFile
 };

@@ -10,7 +10,7 @@ export default class ChildProcessProxyWorker {
 
   private log: Logger;
 
-  realSubject: any;
+  public realSubject: any;
 
   constructor() {
     // Make sure to bind the methods in order to ensure the `this` pointer
@@ -46,15 +46,15 @@ export default class ChildProcessProxyWorker {
         new Promise(resolve => resolve(this.doCall(message)))
           .then(result => {
             this.send({
-              kind: ParentMessageKind.Result,
               correlationId: message.correlationId,
+              kind: ParentMessageKind.Result,
               result
             });
           }).catch(error => {
             this.send({
-              kind: ParentMessageKind.Rejection,
+              correlationId: message.correlationId,
               error: errorToString(error),
-              correlationId: message.correlationId
+              kind: ParentMessageKind.Rejection
             });
           });
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
@@ -104,7 +104,7 @@ export default class ChildProcessProxyWorker {
       const unhandledPromiseId = unhandledRejections.push(promise);
       this.log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
     });
-    process.on('rejectionHandled', (promise) => {
+    process.on('rejectionHandled', promise => {
       const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;
       this.log.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
     });

@@ -1,19 +1,19 @@
 import * as logging from 'stryker-api/logging';
 import * as sinon from 'sinon';
 
-let logger = {
-  isTraceEnabled: sinon.stub(),
-  trace: sinon.stub(),
-  isDebugEnabled: sinon.stub(),
+const logger = {
   debug: sinon.stub(),
-  isInfoEnabled: sinon.stub(),
-  info: sinon.stub(),
-  isWarnEnabled: sinon.stub(),
-  warn: sinon.stub(),
-  isErrorEnabled: sinon.stub(),
   error: sinon.stub(),
+  fatal: sinon.stub(),
+  info: sinon.stub(),
+  isDebugEnabled: sinon.stub(),
+  isErrorEnabled: sinon.stub(),
   isFatalEnabled: sinon.stub(),
-  fatal: sinon.stub()
+  isInfoEnabled: sinon.stub(),
+  isTraceEnabled: sinon.stub(),
+  isWarnEnabled: sinon.stub(),
+  trace: sinon.stub(),
+  warn: sinon.stub()
 };
 
 sinon.stub(logging, 'getLogger').returns(logger);

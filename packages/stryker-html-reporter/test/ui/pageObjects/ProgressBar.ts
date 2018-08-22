@@ -1,14 +1,14 @@
 import { ElementFinder, by } from 'protractor';
 
 export default class ProgressBar {
-  constructor(private host: ElementFinder) {
+  constructor(private readonly host: ElementFinder) {
   }
 
-  private progressBar = this.host.element(by.css('.progress-bar'));
+  private readonly progressBar = this.host.element(by.css('.progress-bar'));
 
-  percentageText = () => this.progressBar.getText();
-  barSize = () => this.progressBar.getSize();
-  totalSize = () => this.host.getSize();
-  relativeBarWidth = () => this.totalSize().then(totalSize => this.barSize()
+  public percentageText = () => this.progressBar.getText();
+  public barSize = () => this.progressBar.getSize();
+  public totalSize = () => this.host.getSize();
+  public relativeBarWidth = () => this.totalSize().then(totalSize => this.barSize()
     .then(barSize => Math.floor((barSize.width / totalSize.width) * 100)))
 }

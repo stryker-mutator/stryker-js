@@ -4,11 +4,11 @@ import { getLogger } from 'stryker-api/logging';
 
 export default class TestFrameworkOrchestrator {
   private readonly log = getLogger(TestFrameworkOrchestrator.name);
-  
-  constructor(private options: StrykerOptions) {
+
+  constructor(private readonly options: StrykerOptions) {
   }
 
-  determineTestFramework(): TestFramework | null {
+  public determineTestFramework(): TestFramework | null {
     if (this.options.coverageAnalysis !== 'perTest') {
       this.log.debug('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', this.options.coverageAnalysis);
       return null;

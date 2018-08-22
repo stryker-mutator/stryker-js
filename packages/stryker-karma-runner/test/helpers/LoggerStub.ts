@@ -1,11 +1,11 @@
 import * as sinon from 'sinon';
 
 export default class LoggerStub {
-  error: sinon.SinonStub;
-  warn: sinon.SinonStub;
-  info: sinon.SinonStub;
-  debug: sinon.SinonStub;
-  
+  public error: sinon.SinonStub;
+  public warn: sinon.SinonStub;
+  public info: sinon.SinonStub;
+  public debug: sinon.SinonStub;
+
   constructor() {
     this.error = sinon.stub();
     this.warn = sinon.stub();

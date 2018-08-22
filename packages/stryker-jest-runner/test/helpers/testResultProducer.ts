@@ -14,10 +14,13 @@ export function createFailResult() {
     testResults: [
       {
         console: null,
+        coverage: undefined,
         failureMessage: 'test failed - App.test.js',
         numFailingTests: 2,
         numPassingTests: 0,
         numPendingTests: 0,
+        skipped: false,
+        sourceMaps: {},
         testFilePath: 'App.test.js',
         testResults: [
           {
@@ -44,19 +47,19 @@ export function createFailResult() {
             status: 'failed',
             title: 'renders without crashing'
           }
-        ],
-        coverage: undefined,
-        sourceMaps: {},
-        skipped: false
+        ]
       },
       {
         console: null,
+        coverage: undefined,
         failureMessage: null,
         numFailingTests: 0,
         numPassingTests: 1,
         numPendingTests: 0,
         perfStats: [Object],
+        skipped: false,
         snapshot: [Object],
+        sourceMaps: {},
         testFilePath: 'App.test.js',
         testResults: [
           {
@@ -68,10 +71,7 @@ export function createFailResult() {
             status: 'passed',
             title: 'renders without crashing'
           }
-        ],
-        coverage: undefined,
-        sourceMaps: {},
-        skipped: false
+        ]
       }
     ],
     wasInterrupted: false
@@ -94,12 +94,15 @@ export function createSuccessResult() {
     testResults: [
       {
         console: null,
+        coverage: undefined,
         failureMessage: null,
         numFailingTests: 0,
         numPassingTests: 1,
         numPendingTests: 0,
         perfStats: [Object],
+        skipped: false,
         snapshot: [Object],
+        sourceMaps: {},
         testFilePath: 'App.test.js',
         testResults: [
           {
@@ -111,10 +114,7 @@ export function createSuccessResult() {
             status: 'passed',
             title: 'renders without crashing'
           }
-        ],
-        coverage: undefined,
-        sourceMaps: {},
-        skipped: false
+        ]
       }
     ],
     wasInterrupted: false

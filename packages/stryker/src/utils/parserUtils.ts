@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as esprima from 'esprima';
 import * as estree from 'estree';
 import { Identified, IdentifiedNode } from '../mutators/IdentifiedNode';
-const escodegen = require('escodegen');
+import * as escodegen from 'escodegen';
 
 /**
  * Utility class for parsing and generating code.
@@ -32,10 +32,10 @@ export function parse(code: string): estree.Program {
 }
 
 /**
-   * Parses a Node to generate code.
-   * @param The Node which has to be transformed into code.
-   * @returns The generated code.
-   */
+ * Parses a Node to generate code.
+ * @param The Node which has to be transformed into code.
+ * @returns The generated code.
+ */
 export function generate(node: estree.Node): string {
   return escodegen.generate(node);
 }
@@ -48,8 +48,6 @@ export function identified<T extends estree.Node>(n: T) {
   return n as T & Identified;
 }
 
-
-
 /**
  * Represents an object responsible to identify estree nodes (estree.Node).
  * Labels all nodes with a `nodeID` recursively.
@@ -58,7 +56,7 @@ export class NodeIdentifier {
 
   private identifiedNodes: Readonly<IdentifiedNode>[] = [];
 
-  identifyAndFreeze(program: estree.Program): Readonly<IdentifiedNode>[] {
+  public identifyAndFreeze(program: estree.Program): Readonly<IdentifiedNode>[] {
     this.identifiedNodes = [];
     this.identifyAndFreezeRecursively(program);
     return this.identifiedNodes;

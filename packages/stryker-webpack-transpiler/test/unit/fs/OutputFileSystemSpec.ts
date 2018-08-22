@@ -53,7 +53,7 @@ describe('OutputFileSystem', () => {
     });
   });
 
-  function actions(...actions: Array<'mkdir' | 'rmdir'>) {
+  function actions(...actions: ('mkdir' | 'rmdir')[]) {
     return actions;
   }
 

@@ -21,9 +21,9 @@ describe('VueMutator', () => {
 
   const setMutators = (mutators: { [name: string]: Mutator }) => sandbox.stub(MutatorHelpers, 'discoverMutators').returns(mutators);
   const activateNoMutators = () => setMutators({});
-  const activateJavaScriptMutator = () => setMutators({ 'javascript': stubJavaScriptMutator });
-  const activateTypeScriptMutator = () => setMutators({ 'typescript': stubTypeScriptMutator });
-  const activateJavaScriptAndTypeScriptMutators = () => setMutators({ 'javascript': stubJavaScriptMutator, 'typescript': stubTypeScriptMutator });
+  const activateJavaScriptMutator = () => setMutators({ javascript: stubJavaScriptMutator });
+  const activateTypeScriptMutator = () => setMutators({ typescript: stubTypeScriptMutator });
+  const activateJavaScriptAndTypeScriptMutators = () => setMutators({ javascript: stubJavaScriptMutator, typescript: stubTypeScriptMutator });
 
   describe('with JavaScript', () => {
     it('should throw an error if no JavaScript mutator is installed', () => {
@@ -251,7 +251,6 @@ describe('VueMutator', () => {
       expect(stubTypeScriptMutator.mutate).calledWith([new File(`${vueFile.name}.ts`, script)]);
     });
 
-
     it('should pass regular files to the TypeScript mutator', () => {
       activateTypeScriptMutator();
       const jsFile = new File('index.js', 'var name = "MyApp";');
@@ -301,8 +300,8 @@ describe('VueMutator', () => {
     <script>${script}</script>`);
     const files = [vueFile];
     const jsMutant: Mutant = {
-      mutatorName: 'StringLiteral',
       fileName: `${vueFile.name}.js`,
+      mutatorName: 'StringLiteral',
       range: [script.indexOf(codeToMutate), script.indexOf(codeToMutate) + codeToMutate.length],
       replacement: ''
     };

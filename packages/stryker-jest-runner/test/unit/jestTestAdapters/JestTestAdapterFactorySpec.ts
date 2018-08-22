@@ -59,7 +59,7 @@ describe('JestTestAdapterFactory', () => {
       assert(false, 'We should never reach this part of the script');
     } catch {
       assert(debugLoggerStub.calledWith('Detected Jest below 22.0.0'));
-    }   
+    }
   });
 });
 

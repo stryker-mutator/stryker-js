@@ -4,18 +4,18 @@ import { RunStatus } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import { runnerOptions } from '../helpers/mockHelpers';
 
-describe('QUnit sample', function () {
+describe('QUnit sample', function() {
   this.timeout(10000);
 
   it('should work when configured with "qunit" ui', async () => {
     const mochaOptions = {
+      files: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
       require: [],
-      ui: 'qunit',
-      files: [resolve('./testResources/qunit-sample/MyMathSpec.js')]
+      ui: 'qunit'
     };
     const sut = new MochaTestRunner(runnerOptions({
-      strykerOptions: { mochaOptions },
-      fileNames: mochaOptions.files
+      fileNames: mochaOptions.files,
+      strykerOptions: { mochaOptions }
     }));
     await sut.init();
     const actualResult = await sut.run({});
@@ -31,6 +31,10 @@ describe('QUnit sample', function () {
 
   it('should not run tests when not configured with "qunit" ui', async () => {
     const sut = new MochaTestRunner({
+      fileNames: [
+        resolve('./testResources/qunit-sample/MyMathSpec.js'),
+        resolve('./testResources/qunit-sample/MyMath.js')
+      ],
       port: 0,
       strykerOptions: {
         mochaOptions: {
@@ -38,11 +42,7 @@ describe('QUnit sample', function () {
             resolve('./testResources/qunit-sample/MyMathSpec.js')
           ]
         }
-      },
-      fileNames: [
-        resolve('./testResources/qunit-sample/MyMathSpec.js'),
-        resolve('./testResources/qunit-sample/MyMath.js')
-      ]
+      }
     });
     await sut.init();
     const actualResult = await sut.run({});

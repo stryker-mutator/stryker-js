@@ -8,10 +8,10 @@ export interface NodeReplacement {
 }
 
 export default abstract class NodeMutator<T extends ts.Node = ts.Node> {
-  abstract name: string;
-  abstract guard(node: ts.Node): node is T;
+  public abstract name: string;
+  public abstract guard(node: ts.Node): node is T;
 
-  mutate(node: T, sourceFile: ts.SourceFile): Mutant[] {
+  public mutate(node: T, sourceFile: ts.SourceFile): Mutant[] {
     return this.identifyReplacements(node, sourceFile)
       .map(replacement => this.createMutant(replacement.node, replacement.replacement, sourceFile));
   }
@@ -20,10 +20,10 @@ export default abstract class NodeMutator<T extends ts.Node = ts.Node> {
 
   private createMutant(original: ts.Node, replacement: string, sourceFile: ts.SourceFile): Mutant {
     return {
-      mutatorName: this.name,
-      replacement,
       fileName: sourceFile.fileName.replace(/\//g, path.sep),
-      range: [original.getStart(sourceFile), original.getEnd()]
+      mutatorName: this.name,
+      range: [original.getStart(sourceFile), original.getEnd()],
+      replacement
     };
   }
-}  
+}

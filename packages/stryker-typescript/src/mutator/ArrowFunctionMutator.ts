@@ -2,9 +2,9 @@ import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class ArrowFunctionMutator extends NodeMutator<ts.ArrowFunction> {
-  name = 'ArrowFunction';
+  public name = 'ArrowFunction';
 
-  guard(node: ts.Node): node is ts.ArrowFunction {
+  public guard(node: ts.Node): node is ts.ArrowFunction {
     return node.kind === ts.SyntaxKind.ArrowFunction;
   }
 

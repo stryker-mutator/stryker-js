@@ -15,27 +15,27 @@ describe('BinaryOperatorMutator', () => {
       type: 'Identifier',
     } as estree.Node & Identified;
     validNode = {
-      nodeID: 23,
-      type: 'BinaryExpression',
-      operator: '+',
-      left: <estree.SimpleLiteral>{
+      left: {
         nodeID: -1,
+        raw: '6',
         type: 'Literal',
-        value: typeof 6,
-        raw: '6'
-      },
+        value: typeof 6
+      } as estree.SimpleLiteral,
+      nodeID: 23,
+      operator: '+',
       right: {
         nodeID: -2,
+        raw: '7',
         type: 'Literal',
-        value: typeof 7,
-        raw: '7'
-      }
+        value: typeof 7
+      },
+      type: 'BinaryExpression'
     } as estree.BinaryExpression & Identified;
   });
 
   describe('should mutate', () => {
     it('a valid Node', () => {
-      let mutatedNodes = mutator.applyMutations(validNode, _.cloneDeep);
+      const mutatedNodes = mutator.applyMutations(validNode, _.cloneDeep);
 
       expect(mutatedNodes).to.have.lengthOf(1);
     });
@@ -43,7 +43,7 @@ describe('BinaryOperatorMutator', () => {
 
   describe('should not mutate', () => {
     it('an invalid Node', () => {
-      let mutatedNodes = mutator.applyMutations(invalidNode, _.cloneDeep);
+      const mutatedNodes = mutator.applyMutations(invalidNode, _.cloneDeep);
 
       expect(mutatedNodes).to.have.lengthOf(0);
     });

@@ -64,11 +64,11 @@ describe('JestConfigEditor', () => {
   it('should override verbose, collectcoverage, testResultsProcessor and bail on all loaded configs', () => {
     jestConfigEditor.edit(config);
 
-    expect(config.jest.config).to.deep.equal({ 
-      testResultsProcessor: undefined,
+    expect(config.jest.config).to.deep.equal({
+      bail: false,
       collectCoverage: false,
-      verbose: false,
-      bail: false
+      testResultsProcessor: undefined,
+      verbose: false
     });
   });
 

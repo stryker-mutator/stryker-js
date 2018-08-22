@@ -12,18 +12,18 @@ import { normalizeWhiteSpaces, filterEmpty, isErrnoException } from '../utils/ob
 
 function toReportSourceFile(file: File): SourceFile {
   return {
-    path: file.name,
-    content: file.textContent
+    content: file.textContent,
+    path: file.name
   };
 }
 
 export default class InputFileResolver {
 
   private readonly log = getLogger(InputFileResolver.name);
-  private fileResolver: PatternResolver | undefined;
-  private mutateResolver: PatternResolver;
+  private readonly fileResolver: PatternResolver | undefined;
+  private readonly mutateResolver: PatternResolver;
 
-  constructor(mutate: string[], files: string[] | undefined, private reporter: StrictReporter) {
+  constructor(mutate: string[], files: string[] | undefined, private readonly reporter: StrictReporter) {
     this.mutateResolver = PatternResolver.parse(mutate || []);
     if (files) {
       this.fileResolver = PatternResolver.parse(files);
@@ -87,7 +87,7 @@ export default class InputFileResolver {
 }
 
 class PatternResolver {
-  static normalize(inputFileExpressions: (string | { pattern: string })[]): string[] {
+  private static normalize(inputFileExpressions: (string | { pattern: string })[]): string[] {
     const inputFileDescriptorObjects: { pattern: string }[] = [];
     const globExpressions = inputFileExpressions.map(expression => {
       if (typeof expression === 'string') {
@@ -99,23 +99,23 @@ class PatternResolver {
     });
     if (inputFileDescriptorObjects.length) {
       new PatternResolver('').log.warn(normalizeWhiteSpaces(`
-      DEPRECATED: Using the \`InputFileDescriptor\` syntax to 
-      select files is no longer supported. We'll assume: ${JSON.stringify(inputFileDescriptorObjects)} can be migrated 
+      DEPRECATED: Using the \`InputFileDescriptor\` syntax to
+      select files is no longer supported. We'll assume: ${JSON.stringify(inputFileDescriptorObjects)} can be migrated
       to ${JSON.stringify(inputFileDescriptorObjects.map(_ => _.pattern))} for this mutation run.
       Please move any files to mutate into the \`mutate\` array (top level stryker option).
       You can fix this warning in 2 ways:
-      1) If your project is under git version control, you can remove the "files" patterns all together. 
+      1) If your project is under git version control, you can remove the "files" patterns all together.
       Stryker can figure it out for you.
-      2) If your project is not under git version control or you need ignored files in your sandbox, you can replace the 
+      2) If your project is not under git version control or you need ignored files in your sandbox, you can replace the
       \`InputFileDescriptor\` syntax with strings (as done for this test run).`));
     }
     return globExpressions;
   }
   private readonly log = getLogger(InputFileResolver.name);
   private ignore = false;
-  private globExpression: string;
+  private readonly globExpression: string;
 
-  constructor(globExpression: string, private previous?: PatternResolver) {
+  constructor(globExpression: string, private readonly previous?: PatternResolver) {
     this.ignore = globExpression.indexOf('!') === 0;
     if (this.ignore) {
       this.globExpression = globExpression.substring(1);
@@ -124,7 +124,7 @@ class PatternResolver {
     }
   }
 
-  async resolve(): Promise<string[]> {
+ public async resolve(): Promise<string[]> {
     // When the first expression starts with an '!', we skip that one
     if (this.ignore && !this.previous) {
       return Promise.resolve([]);
@@ -150,13 +150,13 @@ class PatternResolver {
     }
   }
 
-  static empty(): PatternResolver {
+  private static empty(): PatternResolver {
     const emptyResolver = new PatternResolver('');
     emptyResolver.ignore = true;
     return emptyResolver;
   }
 
-  static parse(inputFileExpressions: string[]): PatternResolver {
+  public static parse(inputFileExpressions: string[]): PatternResolver {
     const expressions = this.normalize(inputFileExpressions);
     let current = PatternResolver.empty();
     let expression = expressions.shift();
@@ -168,15 +168,14 @@ class PatternResolver {
   }
 
   private async resolveGlobbingExpression(pattern: string): Promise<string[]> {
-    let files = await glob(pattern);
+    const files = await glob(pattern);
     if (files.length === 0) {
       this.reportEmptyGlobbingExpression(pattern);
     }
-    return files.map((f) => path.resolve(f));
+    return files.map(f => path.resolve(f));
   }
 
   private reportEmptyGlobbingExpression(expression: string) {
     this.log.warn(`Globbing expression "${expression}" did not result in any files.`);
   }
-
 }

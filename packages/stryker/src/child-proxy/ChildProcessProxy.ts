@@ -10,12 +10,10 @@ import ChildProcessCrashedError from './ChildProcessCrashedError';
 import OutOfMemoryError from './OutOfMemoryError';
 import StringBuilder from '../utils/StringBuilder';
 
-interface Func<TS extends any[], R> {
-  (...args: TS): R;
-}
-interface PromisifiedFunc<TS extends any[], R> {
-  (...args: TS): Promise<R>;
-}
+type Func<TS extends any[], R> = (...args: TS) => R;
+
+type PromisifiedFunc<TS extends any[], R> = (...args: TS) => Promise<R>;
+
 interface Constructor<T, TS extends any[]> {
   new (...args: TS): T;
 }
@@ -28,15 +26,15 @@ const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
 
 export default class ChildProcessProxy<T> {
-  readonly proxy: Promisified<T>;
+  public readonly proxy: Promisified<T>;
 
-  private worker: ChildProcess;
-  private initTask: Task;
+  private readonly worker: ChildProcess;
+  private readonly initTask: Task;
   private disposeTask: ExpirableTask<void> | undefined;
   private currentError: ChildProcessCrashedError | undefined;
-  private workerTasks: Task<any>[] = [];
-  private log = getLogger(ChildProcessProxy.name);
-  private stdoutAndStderrBuilder = new StringBuilder();
+  private readonly workerTasks: Task<any>[] = [];
+  private readonly log = getLogger(ChildProcessProxy.name);
+  private readonly stdoutAndStderrBuilder = new StringBuilder();
   private isDisposed = false;
 
   private constructor(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, constructorParams: any[]) {
@@ -44,11 +42,11 @@ export default class ChildProcessProxy<T> {
     this.initTask = new Task();
     this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
     this.send({
+      constructorArgs: constructorParams,
       kind: WorkerMessageKind.Init,
       loggingContext,
       plugins,
       requirePath,
-      constructorArgs: constructorParams,
       workingDirectory
     });
     this.listenForMessages();
@@ -62,9 +60,9 @@ export default class ChildProcessProxy<T> {
   }
 
   /**
-  * Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
-  */
-  static create<T, TS extends any[]>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, _:  Constructor<T, TS>, ...constructorArgs: TS):
+   * @description Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
+   */
+  public static create<T, TS extends any[]>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, _:  Constructor<T, TS>, ...constructorArgs: TS):
     ChildProcessProxy<T> {
     return new ChildProcessProxy(requirePath, loggingContext, plugins, workingDirectory, constructorArgs);
   }
@@ -97,10 +95,10 @@ export default class ChildProcessProxy<T> {
         const correlationId = this.workerTasks.push(workerTask) - 1;
         this.initTask.promise.then(() => {
           this.send({
-            kind: WorkerMessageKind.Call,
+            args,
             correlationId,
-            methodName,
-            args
+            kind: WorkerMessageKind.Call,
+            methodName
           });
         });
         return workerTask.promise;

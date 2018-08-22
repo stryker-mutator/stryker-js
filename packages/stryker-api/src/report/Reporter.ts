@@ -10,13 +10,13 @@ interface Reporter {
 
   /**
    * Called when a source file was loaded
-   * @param file The immutable source file 
+   * @param file The immutable source file
    */
   onSourceFileRead?(file: SourceFile): void;
 
   /**
    * Called when all source files were loaded
-   * @param files The immutable source files 
+   * @param files The immutable source files
    */
   onAllSourceFilesRead?(files: SourceFile[]): void;
 

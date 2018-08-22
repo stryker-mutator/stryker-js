@@ -8,7 +8,8 @@ describe('BroadcastReporter', () => {
 
   let log: Mock<Logger>;
   let sut: any;
-  let reporter: any, reporter2: any;
+  let reporter: any;
+  let reporter2: any;
 
   beforeEach(() => {
     log = currentLogMock();
@@ -17,13 +18,16 @@ describe('BroadcastReporter', () => {
     sut = new BroadcastReporter([{ name: 'rep1', reporter }, { name: 'rep2', reporter: reporter2 }]);
   });
 
-
   it('should forward all events', () => {
     actArrangeAssertAllEvents();
   });
 
   describe('when "wrapUp" returns promises', () => {
-    let wrapUpResolveFn: Function, wrapUpResolveFn2: Function, wrapUpRejectFn: Function, result: void | Promise<any>, isResolved: boolean;
+    let wrapUpResolveFn: Function;
+    let wrapUpResolveFn2: Function;
+    let wrapUpRejectFn: Function;
+    let result: void | Promise<any>;
+    let isResolved: boolean;
 
     beforeEach(() => {
       isResolved = false;
@@ -31,7 +35,7 @@ describe('BroadcastReporter', () => {
         wrapUpResolveFn = resolve;
         wrapUpRejectFn = reject;
       }));
-      reporter2.wrapUp.returns(new Promise<any>((resolve) => wrapUpResolveFn2 = resolve));
+      reporter2.wrapUp.returns(new Promise<any>(resolve => wrapUpResolveFn2 = resolve));
       result = sut.wrapUp().then(() => isResolved = true);
     });
 
@@ -76,9 +80,8 @@ describe('BroadcastReporter', () => {
 
   });
 
-
   function mockReporter() {
-    let reporter: any = {};
+    const reporter: any = {};
     ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sandbox.stub());
     return reporter;
   }

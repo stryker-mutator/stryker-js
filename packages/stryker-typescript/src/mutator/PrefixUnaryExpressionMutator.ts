@@ -12,9 +12,9 @@ const replaceTokens = {
 };
 
 export default class PrefixUnaryExpressionMutator extends NodeMutator<ts.PrefixUnaryExpression> {
-  name = 'PrefixUnaryExpression';
+  public name = 'PrefixUnaryExpression';
 
-  guard(node: ts.Node): node is ts.PrefixUnaryExpression {
+  public guard(node: ts.Node): node is ts.PrefixUnaryExpression {
     return node.kind === ts.SyntaxKind.PrefixUnaryExpression;
   }
 

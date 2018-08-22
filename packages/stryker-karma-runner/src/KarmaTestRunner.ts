@@ -12,7 +12,7 @@ export interface ConfigOptions extends karma.ConfigOptions {
 }
 
 export default class KarmaTestRunner implements TestRunner {
-  private log = getLogger(KarmaTestRunner.name);
+  private readonly log = getLogger(KarmaTestRunner.name);
   private currentTestResults: TestResult[];
   private currentErrorMessages: string[];
   private currentCoverageReport?: CoverageCollection | CoveragePerTestResult;
@@ -20,7 +20,7 @@ export default class KarmaTestRunner implements TestRunner {
   private readonly testHooksMiddleware = TestHooksMiddleware.instance;
   private readonly starter: ProjectStarter;
 
-  constructor(private options: RunnerOptions) {
+  constructor(private readonly options: RunnerOptions) {
     const setup = this.loadSetup(options);
     this.starter = new ProjectStarter(setup.projectType);
     this.setGlobals(setup, options.port);
@@ -31,7 +31,7 @@ export default class KarmaTestRunner implements TestRunner {
     this.listenToError();
   }
 
-  init(): Promise<void> {
+  public init(): Promise<void> {
     return new Promise((res, rej) => {
       StrykerReporter.instance.once('browsers_ready', res);
       this.starter.start()
@@ -40,7 +40,7 @@ export default class KarmaTestRunner implements TestRunner {
     });
   }
 
-  async run({ testHooks }: { testHooks?: string }): Promise<RunResult> {
+  public async run({ testHooks }: { testHooks?: string }): Promise<RunResult> {
     this.testHooksMiddleware.currentTestHooks = testHooks || '';
     if (this.currentRunStatus !== RunStatus.Error) {
       // Only run when there was no compile error
@@ -71,9 +71,9 @@ export default class KarmaTestRunner implements TestRunner {
 
   private setGlobals(setup: StrykerKarmaSetup, port: number) {
     strykerKarmaConf.setGlobals({
-      port,
       karmaConfig: setup.config,
-      karmaConfigFile: setup.configFile
+      karmaConfigFile: setup.configFile,
+      port
     });
   }
 
@@ -117,7 +117,7 @@ export default class KarmaTestRunner implements TestRunner {
 
   private runServer() {
     return new Promise<void>(resolve => {
-      karma.runner.run({ port: this.options.port }, (exitCode) => {
+      karma.runner.run({ port: this.options.port }, exitCode => {
         this.log.debug('karma run done with ', exitCode);
         resolve();
       });
@@ -126,15 +126,15 @@ export default class KarmaTestRunner implements TestRunner {
 
   private collectRunResult(): RunResult {
     return {
-      tests: this.currentTestResults,
-      status: this.determineRunState(),
       coverage: this.currentCoverageReport,
-      errorMessages: this.currentErrorMessages
+      errorMessages: this.currentErrorMessages,
+      status: this.determineRunState(),
+      tests: this.currentTestResults
     };
   }
 
   private determineRunState() {
-    // Karma will report an Error if no tests had executed. 
+    // Karma will report an Error if no tests had executed.
     // This is not an "error" in Stryker terms
     if (this.currentRunStatus === RunStatus.Error &&
       !this.currentErrorMessages.length &&

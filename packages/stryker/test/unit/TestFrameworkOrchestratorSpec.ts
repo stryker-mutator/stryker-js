@@ -32,7 +32,7 @@ describe('TestFrameworkOrchestrator', () => {
   };
 
   const itShouldLogCoverageAnalysisOffOnDebug = () => {
-    it('should log on debug that coverageAnalysis was "off"', () => 
+    it('should log on debug that coverageAnalysis was "off"', () =>
       expect(log.debug).to.have.been.calledWith('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', 'off'));
   };
 

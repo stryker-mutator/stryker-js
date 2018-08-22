@@ -17,9 +17,9 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
 
 export default class TypescriptConfigEditor implements ConfigEditor {
 
-  private log = getLogger(TypescriptConfigEditor.name);
+  private readonly log = getLogger(TypescriptConfigEditor.name);
 
-  edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
+  public edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
     this.loadTSConfig(strykerConfig, host);
   }
 
@@ -41,7 +41,6 @@ export default class TypescriptConfigEditor implements ConfigEditor {
     tsConfig.fileNames = tsConfig.fileNames.map(normalizeFileFromTypescript);
     return tsConfig;
   }
-
 
   private readTypescriptConfig(tsconfigFileName: string, host: ts.ParseConfigHost) {
     const configFileBase = normalizeFileForTypescript(path.dirname(tsconfigFileName));
@@ -67,8 +66,8 @@ export default class TypescriptConfigEditor implements ConfigEditor {
 
     function diagnosticsHost(configFileBase: string): ts.FormatDiagnosticsHost {
       return {
+        getCanonicalFileName: fileName => path.resolve(fileName),
         getCurrentDirectory: () => configFileBase,
-        getCanonicalFileName: (fileName) => path.resolve(fileName),
         getNewLine: () => os.EOL
       };
     }

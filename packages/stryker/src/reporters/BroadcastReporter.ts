@@ -11,15 +11,15 @@ export interface NamedReporter {
 export default class BroadcastReporter implements StrictReporter {
 
   private readonly log = getLogger(BroadcastReporter.name);
-  constructor(private reporters: NamedReporter[]) {
+  constructor(private readonly reporters: NamedReporter[]) {
   }
 
-  private broadcast(methodName: keyof Reporter, eventArgs: any = undefined): Promise<any> | void {
-    let allPromises: Promise<any>[] = [];
+  private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<any> | void {
+    const allPromises: Promise<any>[] = [];
     this.reporters.forEach(namedReporter => {
       if (typeof namedReporter.reporter[methodName] === 'function') {
         try {
-          let maybePromise = (namedReporter.reporter[methodName] as any)(eventArgs);
+          const maybePromise = (namedReporter.reporter[methodName] as any)(eventArgs);
           if (isPromise(maybePromise)) {
             allPromises.push(maybePromise.catch(error => {
               this.handleError(error, methodName, namedReporter.name);
@@ -35,32 +35,32 @@ export default class BroadcastReporter implements StrictReporter {
     }
   }
 
-  onSourceFileRead(file: SourceFile): void {
+  public onSourceFileRead(file: SourceFile): void {
     this.broadcast('onSourceFileRead', file);
   }
 
-  onAllSourceFilesRead(files: SourceFile[]): void {
+  public onAllSourceFilesRead(files: SourceFile[]): void {
     this.broadcast('onAllSourceFilesRead', files);
   }
 
-  onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
+  public onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
     this.broadcast('onAllMutantsMatchedWithTests', results);
   }
 
-  onMutantTested(result: MutantResult): void {
+  public onMutantTested(result: MutantResult): void {
     this.broadcast('onMutantTested', result);
   }
 
-  onAllMutantsTested(results: MutantResult[]): void {
+  public onAllMutantsTested(results: MutantResult[]): void {
     this.broadcast('onAllMutantsTested', results);
   }
 
-  onScoreCalculated(score: ScoreResult): void {
+  public onScoreCalculated(score: ScoreResult): void {
     this.broadcast('onScoreCalculated', score);
   }
 
-  wrapUp(): void | Promise<void> {
-    return this.broadcast('wrapUp');
+  public wrapUp(): void | Promise<void> {
+    return this.broadcast('wrapUp', undefined);
   }
 
   private handleError(error: any, methodName: string, reporterName: string) {

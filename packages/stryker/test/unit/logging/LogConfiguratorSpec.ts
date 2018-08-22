@@ -80,20 +80,20 @@ describe('LogConfigurator', () => {
 
   function createMasterConfig(consoleLevel: LogLevel, fileLevel: LogLevel, defaultLevel: LogLevel): log4js.Configuration {
     const coloredLayout: log4js.PatternLayout = {
-      type: 'pattern',
-      pattern: '%[%r (%z) %p %c%] %m'
+      pattern: '%[%r (%z) %p %c%] %m',
+      type: 'pattern'
     };
     const notColoredLayout: log4js.PatternLayout  = {
-      type: 'pattern',
-      pattern: '%r (%z) %p %c %m'
+      pattern: '%r (%z) %p %c %m',
+      type: 'pattern'
     };
     return {
       appenders: {
+        all: { type: require.resolve('../../../src/logging/MultiAppender'), appenders: ['filteredConsole', 'filteredFile'] },
         console: { type: 'stdout', layout: coloredLayout },
         file: { type: 'file', layout: notColoredLayout, filename: 'stryker.log' },
         filteredConsole: { type: 'logLevelFilter', appender: 'console', level: consoleLevel },
-        filteredFile: { type: 'logLevelFilter', appender: 'file', level: fileLevel },
-        all: { type: require.resolve('../../../src/logging/MultiAppender'), appenders: ['filteredConsole', 'filteredFile'] }
+        filteredFile: { type: 'logLevelFilter', appender: 'file', level: fileLevel }
       },
       categories: {
         default: { level: defaultLevel, appenders: ['all'] }

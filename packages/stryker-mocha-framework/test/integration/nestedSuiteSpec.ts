@@ -19,7 +19,7 @@ interface MochaTest {
 }
 
 // See https://github.com/stryker-mutator/stryker/issues/249
-describe('Selecting tests with nested suites', function () {
+describe('Selecting tests with nested suites', function() {
 
   this.timeout(10000);
   let sut: MochaTestFramework;

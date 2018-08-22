@@ -51,4 +51,3 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     return path.join(...paths);
   }
 }
-

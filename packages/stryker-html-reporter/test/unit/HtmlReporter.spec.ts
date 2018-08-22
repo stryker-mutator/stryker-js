@@ -47,10 +47,11 @@ describe('HtmlReporter', () => {
       sut.onAllSourceFilesRead([sourceFile({ path: normalize('src/a.js') }), sourceFile({ path: normalize('src/b.js') })]);
       sut.onAllMutantsTested([mutantResult({ sourceFilePath: normalize('src/a.js') }), mutantResult({ sourceFilePath: normalize('src/b.js') })]);
       sut.onScoreCalculated(scoreResult({
-        name: 'src', childResults: [
+        childResults: [
           scoreResult({ name: normalize('a.js'), path: normalize('src/a.js'), representsFile: true }),
           scoreResult({ name: normalize('b.js'), path: normalize('src/b.js'), representsFile: true }),
-        ]
+        ],
+        name: 'src'
       }));
       await sut.wrapUp();
       expect(writeFileStub).calledWithMatch(
@@ -71,15 +72,16 @@ describe('HtmlReporter', () => {
       ]);
       sut.onAllMutantsTested([]);
       sut.onScoreCalculated(scoreResult({
-        name: '', childResults: [
+        childResults: [
           scoreResult({
-            name: normalize('a/b'),
             childResults: [
               scoreResult({ representsFile: true, name: 'c.js', path: normalize('a/b/c.js') }),
               scoreResult({ representsFile: true, name: 'd.js', path: normalize('a/b/d.js') })
-            ]
+            ],
+            name: normalize('a/b')
           })
-        ]
+        ],
+        name: ''
       }));
       await sut.wrapUp();
       expect(writeFileStub).calledWith(
@@ -92,13 +94,13 @@ describe('HtmlReporter', () => {
       sut.onAllSourceFilesRead([]);
       sut.onAllMutantsTested([]);
       sut.onScoreCalculated(scoreResult({
-        name: 'src',
         childResults: [
           scoreResult({ name: normalize('b.js'), representsFile: true })
-        ]
+        ],
+        name: 'src'
       }));
       await sut.wrapUp();
-      expect(writeFileStub).calledWith(normalize('reports/mutation/html/b.js.html'), 
+      expect(writeFileStub).calledWith(normalize('reports/mutation/html/b.js.html'),
         sinon.match('The source code itself was not reported at the `stryker-html-reporter`. Please report this issue at https://github.com/stryker-mutator/stryker/issues'));
     });
   });

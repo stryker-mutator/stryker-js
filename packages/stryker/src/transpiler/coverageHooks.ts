@@ -3,7 +3,7 @@ import { TestFramework } from 'stryker-api/test_framework';
 
 export const COVERAGE_CURRENT_TEST_VARIABLE_NAME = '__strykerCoverageCurrentTest__';
 
-const cloneFunctionFragment = `    
+const cloneFunctionFragment = `
 function clone(source) {
     var result = source;
     if (Array.isArray(source)) {

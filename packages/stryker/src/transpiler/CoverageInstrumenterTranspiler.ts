@@ -16,10 +16,10 @@ export interface CoverageMapsByFile {
 
 export default class CoverageInstrumenterTranspiler implements Transpiler {
 
-  private instrumenter: Instrumenter;
+  private readonly instrumenter: Instrumenter;
   public fileCoverageMaps: CoverageMapsByFile = Object.create(null);
 
-  constructor(private settings: StrykerOptions, private filesToInstrument: ReadonlyArray<string>) {
+  constructor(private readonly settings: StrykerOptions, private readonly filesToInstrument: ReadonlyArray<string>) {
     this.instrumenter = createInstrumenter({ coverageVariable: this.coverageVariable, preserveComments: true });
   }
 
@@ -28,8 +28,8 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
   }
 
   /**
-   * Coverage variable *must* have the name '__coverage__'. Only that variable 
-   * is reported back to the TestRunner process when using one of the karma 
+   * Coverage variable *must* have the name '__coverage__'. Only that variable
+   * is reported back to the TestRunner process when using one of the karma
    * test framework adapters (karma-jasmine, karma-mocha, ...).
    *
    * However, when coverageAnalysis is 'perTest' we don't choose that variable name right away,
@@ -88,8 +88,8 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
 
   private retrieveCoverageMaps(input: FileCoverageData): CoverageMaps {
     const output: CoverageMaps = {
-      statementMap: input.statementMap,
-      fnMap: {}
+      fnMap: {},
+      statementMap: input.statementMap
     };
     Object.keys(input.fnMap).forEach(key => output.fnMap[key] = input.fnMap[key].loc);
     return output;

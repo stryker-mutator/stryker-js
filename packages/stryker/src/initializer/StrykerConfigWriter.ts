@@ -13,7 +13,7 @@ export default class StrykerConfigWriter {
   constructor(private out: (output: string) => void) {
   }
 
-  guardForExistingConfig() {
+  public guardForExistingConfig() {
     if (fs.existsSync(STRYKER_CONFIG_FILE)) {
       const msg =
         'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
@@ -23,9 +23,9 @@ export default class StrykerConfigWriter {
   }
 
   /**
-  * Create stryker.conf.js based on the chosen framework and test runner
-  * @function
-  */
+   * Create stryker.conf.js based on the chosen framework and test runner
+   * @function
+   */
   public async write(
     selectedTestRunner: null | PromptOption,
     selectedTestFramework: null | PromptOption,
@@ -35,11 +35,11 @@ export default class StrykerConfigWriter {
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Partial<StrykerOptions>[]): Promise<void> {
     const configObject: Partial<StrykerOptions> = {
-      testRunner: selectedTestRunner ? selectedTestRunner.name : '',
       mutator: selectedMutator ? selectedMutator.name : '',
-      transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : [],
+      packageManager: selectedPackageManager.name,
       reporters: selectedReporters.map(rep => rep.name),
-      packageManager: selectedPackageManager.name
+      testRunner: selectedTestRunner ? selectedTestRunner.name : '',
+      transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : []
     };
 
     this.configureTestFramework(configObject, selectedTestFramework);

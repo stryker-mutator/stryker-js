@@ -14,11 +14,11 @@ export enum TestSelectionResult {
 
 export default class TestableMutant {
 
-  private _selectedTests: TestSelection[] = [];
+  private readonly _selectedTests: TestSelection[] = [];
   public specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
   private _location: Location;
-  testSelectionResult = TestSelectionResult.Success;
+  public testSelectionResult = TestSelectionResult.Success;
 
   get selectedTests(): TestSelection[] {
     return this._selectedTests;
@@ -85,8 +85,8 @@ export default class TestableMutant {
   }
 
   private getMutationLineIndexes() {
-    let startIndexLines = this.mutant.range[0],
-      endIndexLines = this.mutant.range[1];
+    let startIndexLines = this.mutant.range[0];
+    let endIndexLines = this.mutant.range[1];
     while (startIndexLines > 0 && !isLineBreak(this.originalCode.charCodeAt(startIndexLines - 1))) {
       startIndexLines--;
     }
@@ -99,20 +99,19 @@ export default class TestableMutant {
   public result(status: MutantStatus, testsRan: string[]): MutantResult {
     return freezeRecursively({
       id: this.id,
-      sourceFilePath: this.fileName,
-      mutatorName: this.mutatorName,
-      status,
-      replacement: this.replacement,
-      originalLines: this.originalLines,
-      mutatedLines: this.mutatedLines,
-      testsRan,
       location: this.location,
-      range: this.range
+      mutatedLines: this.mutatedLines,
+      mutatorName: this.mutatorName,
+      originalLines: this.originalLines,
+      range: this.range,
+      replacement: this.replacement,
+      sourceFilePath: this.fileName,
+      status,
+      testsRan
     });
   }
 
-  toString() {
+  public toString() {
     return `${this.mutant.mutatorName}: (${this.replacement}) file://${this.fileName}:${this.location.start.line + 1}:${this.location.start.column}`;
   }
-
 }

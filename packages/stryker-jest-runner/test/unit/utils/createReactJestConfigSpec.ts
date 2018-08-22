@@ -5,10 +5,10 @@ import * as sinon from 'sinon';
 describe('createReactJestConfig', () => {
   let loaderStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
-  let loader: any = {
+  const loader: any = {
     require: () => {}
   };
-  
+
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
@@ -34,10 +34,10 @@ describe('createReactJestConfig', () => {
 describe('createReactTsJestConfig', () => {
   let loaderStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
-  let loader: any = {
+  const loader: any = {
     require: () => {}
   };
-  
+
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 

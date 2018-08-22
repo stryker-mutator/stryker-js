@@ -5,7 +5,7 @@ import * as sut from '../../../src/starters/angularStarter';
 describe('angularStarter', () => {
   let requireModuleStub: sinon.SinonStub;
   let cliStub: sinon.SinonStub;
-  
+
   beforeEach(() => {
     cliStub = sandbox.stub();
     requireModuleStub = sandbox.stub(utils, 'requireModule');
@@ -36,5 +36,5 @@ describe('angularStarter', () => {
       outputStream: process.stdout
     });
   });
-  
+
 });

@@ -1,35 +1,35 @@
 import {
   CoverageCollection, CoverageResult, CoverageCollectionPerTest, CoverageData,
-  StatementMap, TestResult, TestRunner, RunnerOptions,
+  StatementMap, TestRunner, RunnerOptions,
   RunResult, RunOptions, TestRunnerFactory,
   TestStatus, RunStatus
 } from 'stryker-api/test_runner';
 
 class MyTestRunner implements TestRunner {
 
-  run(options: RunOptions) {
+  public run(options: RunOptions) {
     const coverage: CoverageCollection | CoverageCollectionPerTest = {
       'a/file': {
+        f: {},
         s: {
-          '23': 32
-        },
-        f: {}
+          23: 32
+        }
       }
     };
     return new Promise<RunResult>(r => r({
-      tests: [{
-        status: TestStatus.Failed,
-        name: '',
-        failureMessages: [''],
-        timeSpentMs: 23
-      }],
+      coverage,
       status: RunStatus.Complete,
-      coverage
+      tests: [{
+        failureMessages: [''],
+        name: '',
+        status: TestStatus.Failed,
+        timeSpentMs: 23
+      }]
     }));
   }
 }
 
-let runnerOptions: RunnerOptions = {
+const runnerOptions: RunnerOptions = {
   fileNames: [
     'foobar.js',
     'foobar.spec.js'
@@ -38,23 +38,23 @@ let runnerOptions: RunnerOptions = {
   strykerOptions: null
 };
 
-let runOptions: RunOptions = {
+const runOptions: RunOptions = {
   testHooks: 'test hooks',
   timeout: 42
 };
 
 TestRunnerFactory.instance().register('MyTestRunner', MyTestRunner);
-let myTestRunner = TestRunnerFactory.instance().create('MyTestRunner', runnerOptions);
+const myTestRunner = TestRunnerFactory.instance().create('MyTestRunner', runnerOptions);
 if (!(myTestRunner instanceof MyTestRunner)) {
   throw Error('Something wrong with myTestRunner');
 }
 
 console.log(TestRunnerFactory.instance().knownNames());
-let coverageData: CoverageData = {};
-let statementMap: StatementMap = {};
+const coverageData: CoverageData = {};
+const statementMap: StatementMap = {};
 statementMap['23'] = { start: { line: 23, column: 23 }, end: { line: 42, column: 42 } };
 coverageData['32'] = 24;
-let coverageResult: CoverageResult = {
-  s: coverageData,
-  f: coverageData
+const coverageResult: CoverageResult = {
+  f: coverageData,
+  s: coverageData
 };

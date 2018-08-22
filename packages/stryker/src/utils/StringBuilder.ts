@@ -4,10 +4,10 @@ const DEFAULT_MAX_SIZE = 2048;
 
 export default class StringBuilder {
   private currentLength = 0;
-  private strings: string[] = [];
+  private readonly strings: string[] = [];
   private readonly maxSize = DEFAULT_MAX_SIZE;
 
-  append(str: string) {
+  public append(str: string) {
     this.strings.push(str);
     this.currentLength += str.length;
     while (this.currentLength > this.maxSize && this.strings.length > 1) {
@@ -16,7 +16,7 @@ export default class StringBuilder {
     }
   }
 
-  toString() {
+  public toString() {
     return this.strings.join(os.EOL);
   }
 }

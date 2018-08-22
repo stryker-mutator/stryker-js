@@ -5,11 +5,10 @@ import { NodePath } from 'babel-traverse';
 import { NodeWithParent } from './ParentNode';
 
 export default class BabelParser {
-  static getAst(code: string): babel.types.File {
+  public static getAst(code: string): babel.types.File {
     let ast: babel.types.File;
 
     const options: babylon.BabylonOptions = {
-      sourceType: 'script',
       plugins: [
         'jsx',
         'flow',
@@ -17,7 +16,8 @@ export default class BabelParser {
         'classProperties',
         'asyncGenerators',
         'dynamicImport'
-      ]
+      ],
+      sourceType: 'script'
     };
 
     try {
@@ -29,7 +29,7 @@ export default class BabelParser {
     return ast;
   }
 
-  static getNodes(ast: babel.types.File): NodeWithParent[] {
+  public static getNodes(ast: babel.types.File): NodeWithParent[] {
     const nodes: NodeWithParent[] = [];
 
     babel.traverse(ast, {
@@ -44,12 +44,12 @@ export default class BabelParser {
     return nodes;
   }
 
-  static generateCode(ast: babel.types.File, node: babel.Node) {
+  public static generateCode(ast: babel.types.File, node: babel.Node) {
     ast.program.body = [node as any];
     return generate(ast).code;
   }
 
-  static removeUseStrict(ast: babel.types.File) {
+  public static removeUseStrict(ast: babel.types.File) {
     if (ast.program.directives) {
       const directives = ast.program.directives;
       directives.forEach((directive, index) => {

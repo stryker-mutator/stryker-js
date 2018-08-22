@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import { File } from 'stryker-api/core';
 import SourceFile from '../../src/SourceFile';
 
-
 const content = `
 2
 3

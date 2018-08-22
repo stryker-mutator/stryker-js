@@ -20,10 +20,10 @@ describe('ScoreResult', () => {
   describe('calculate', () => {
     const extractNumbers = (actual: ScoreResult) => ({
       killed: actual.killed,
+      noCoverage: actual.noCoverage,
       runtimeErrors: actual.runtimeErrors,
-      transpileErrors: actual.transpileErrors,
       survived: actual.survived,
-      noCoverage: actual.noCoverage
+      transpileErrors: actual.transpileErrors
     });
 
     it('should count results of a single file', () => {
@@ -177,21 +177,21 @@ describe('ScoreResult', () => {
     it('should not set exit code = 1 if `threshold.break` is not configured', () => {
        sut.determineExitCode(scoreResult({ mutationScore: 0 }), mutationScoreThresholds({ break: null }));
 
-      expect(setExitCodeStub).not.called;
-      expect(log.debug).calledWith('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
+       expect(setExitCodeStub).not.called;
+       expect(log.debug).calledWith('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
     });
 
     it('should not set exit code = 1 if `threshold.break` === score', () => {
        sut.determineExitCode(scoreResult({ mutationScore: 10.000001 }), mutationScoreThresholds({ break: 10.000001 }));
-      expect(setExitCodeStub).not.called;
-      expect(log.info).calledWith('Final mutation score of 10.00 is greater than or equal to break threshold 10.000001');
+       expect(setExitCodeStub).not.called;
+       expect(log.info).calledWith('Final mutation score of 10.00 is greater than or equal to break threshold 10.000001');
     });
 
     it('should set exit code = 1 if `threshold.break` > score', () => {
        sut.determineExitCode(scoreResult({ mutationScore: 56.6 }), mutationScoreThresholds({ break: 56.7 }));
-      expect(setExitCodeStub).calledWith(1);
-      expect(log.error).calledWith('Final mutation score 56.60 under breaking threshold 56.7, setting exit code to 1 (failure).');
-      expect(log.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
+       expect(setExitCodeStub).calledWith(1);
+       expect(log.error).calledWith('Final mutation score 56.60 under breaking threshold 56.7, setting exit code to 1 (failure).');
+       expect(log.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
     });
   });
 });

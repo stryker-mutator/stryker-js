@@ -6,7 +6,6 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 import { RunnerOptions } from 'stryker-api/test_runner';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
 
-
 export default {
   create(testRunnerName: string, settings: RunnerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext): TestRunnerDecorator {
     if (CommandTestRunner.is(testRunnerName)) {

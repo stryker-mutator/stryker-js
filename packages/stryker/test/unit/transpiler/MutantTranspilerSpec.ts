@@ -13,8 +13,8 @@ import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { sleep } from '../../helpers/testUtils';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  port: 4200,
-  level: LogLevel.Fatal
+  level: LogLevel.Fatal,
+  port: 4200
 });
 
 describe('MutantTranspiler', () => {

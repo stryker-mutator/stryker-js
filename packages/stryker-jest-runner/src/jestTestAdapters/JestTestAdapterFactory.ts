@@ -5,7 +5,7 @@ import JestPromiseAdapter from './JestPromiseTestAdapter';
 import * as semver from 'semver';
 
 export default class JestTestAdapterFactory {
-  private static log = getLogger(JestTestAdapterFactory.name);
+  private static readonly log = getLogger(JestTestAdapterFactory.name);
 
   public static getJestTestAdapter(loader?: NodeRequire): JestTestAdapter {
     const jestVersion = this.getJestVersion(loader || /* istanbul ignore next */ require);

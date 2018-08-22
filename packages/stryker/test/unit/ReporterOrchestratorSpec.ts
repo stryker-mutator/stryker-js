@@ -47,14 +47,14 @@ describe('ReporterOrchestrator', () => {
   });
 
   function captureTTY() {
-    isTTY = (process.stdout as any)['isTTY'];
+    isTTY = (process.stdout as any).isTTY;
   }
 
   function restoreTTY() {
-    (process.stdout as any)['isTTY'] = isTTY;
+    (process.stdout as any).isTTY = isTTY;
   }
 
   function setTTY(val: boolean) {
-    (process.stdout as any)['isTTY'] = val;
+    (process.stdout as any).isTTY = val;
   }
 });

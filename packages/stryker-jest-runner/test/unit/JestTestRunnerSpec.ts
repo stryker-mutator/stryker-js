@@ -28,7 +28,7 @@ describe('JestTestRunner', () => {
     debugLoggerStub = sandbox.stub();
     sandbox.stub(logging, 'getLogger').returns({ debug: debugLoggerStub });
 
-    strykerOptions = new Config;
+    strykerOptions = new Config();
     strykerOptions.set({ jest: { config: { property: 'value' } }, basePath });
 
     processEnvMock = {
@@ -71,16 +71,16 @@ describe('JestTestRunner', () => {
     const result = await jestTestRunner.run();
 
     expect(result).to.deep.equal({
+      errorMessages: [],
       status: RunStatus.Complete,
       tests: [
         {
+          failureMessages: [],
           name: 'App renders without crashing',
           status: TestStatus.Success,
-          timeSpentMs: 23,
-          failureMessages: []
+          timeSpentMs: 23
         }
-      ],
-      errorMessages: []
+      ]
     });
   });
 
@@ -90,32 +90,32 @@ describe('JestTestRunner', () => {
     const result = await jestTestRunner.run();
 
     expect(result).to.deep.equal({
+      errorMessages: ['test failed - App.test.js'],
       status: RunStatus.Complete,
       tests: [{
-        name: 'App render renders without crashing',
-        status: TestStatus.Failed,
-        timeSpentMs: 2,
         failureMessages: [
           'Fail message 1',
           'Fail message 2'
-        ]
-      },
-      {
+        ],
         name: 'App render renders without crashing',
         status: TestStatus.Failed,
-        timeSpentMs: 0,
+        timeSpentMs: 2
+      },
+      {
         failureMessages: [
           'Fail message 3',
           'Fail message 4'
-        ]
+        ],
+        name: 'App render renders without crashing',
+        status: TestStatus.Failed,
+        timeSpentMs: 0
       },
       {
+        failureMessages: [],
         name: 'App renders without crashing',
         status: TestStatus.Success,
-        timeSpentMs: 23,
-        failureMessages: []
-      }],
-      errorMessages: ['test failed - App.test.js']
+        timeSpentMs: 23
+      }]
     });
   });
 
@@ -125,9 +125,9 @@ describe('JestTestRunner', () => {
     const result = await jestTestRunner.run();
 
     expect(result).to.deep.equal({
+      errorMessages: [],
       status: RunStatus.Error,
-      tests: [],
-      errorMessages: []
+      tests: []
     });
   });
 
