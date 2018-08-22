@@ -26,7 +26,7 @@ describe('Integration test for Jest ConfigEditor', () => {
   afterEach(() => sandbox.restore());
 
   it('should create a Jest configuration for a React project', () => {
-    config.set({ jest: { project: 'react' } });
+    config.set({ jest: { projectType: 'react' } });
 
     jestConfigEditor.edit(config);
 
@@ -83,7 +83,7 @@ describe('Integration test for Jest ConfigEditor', () => {
   }
 
   it('should create a Jest configuration for a React + TypeScript project', () => {
-    config.set({ jest: { project: 'react-ts' } });
+    config.set({ jest: { projectType: 'react-ts' } });
 
     jestConfigEditor.edit(config);
 
@@ -144,7 +144,7 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.jest.project).to.equal('default');
+    expect(config.jest.projectType).to.equal('default');
     expect(config.jest.config).to.deep.equal({
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
       testEnvironment: 'jest-environment-jsdom',
@@ -163,7 +163,7 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.jest.project).to.equal('default');
+    expect(config.jest.projectType).to.equal('default');
     expect(config.jest.config).to.deep.equal({
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
       testEnvironment: 'jest-environment-jsdom',
@@ -190,10 +190,10 @@ describe('Integration test for Jest ConfigEditor', () => {
     });
   });
 
-  it('should return with an error when an invalid project is specified', () => {
-    const project = 'invalidProject';
-    config.set({ jest: { project } });
+  it('should return with an error when an invalid projectType is specified', () => {
+    const projectType = 'invalidProject';
+    config.set({ jest: { projectType } });
 
-    expect(() => jestConfigEditor.edit(config)).to.throw(Error, `No configLoader available for ${project}`);
+    expect(() => jestConfigEditor.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
 });

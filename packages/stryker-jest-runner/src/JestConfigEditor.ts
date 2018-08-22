@@ -14,20 +14,20 @@ export default class JestConfigEditor implements ConfigEditor {
     // If there is no Jest property on the Stryker config create it
     strykerConfig.jest = strykerConfig.jest || {};
 
-    // When no project is set, set it to 'default'
-    strykerConfig.jest.project = strykerConfig.jest.project || DEFAULT_PROJECT_NAME;
+    // When no projectType is set, set it to 'default'
+    strykerConfig.jest.projectType = strykerConfig.jest.projectType || DEFAULT_PROJECT_NAME;
 
     // When no config property is set, load the configuration with the project type
-    strykerConfig.jest.config = strykerConfig.jest.config || this.getConfigLoader(strykerConfig.jest.project).loadConfig();
+    strykerConfig.jest.config = strykerConfig.jest.config || this.getConfigLoader(strykerConfig.jest.projectType).loadConfig();
 
     // Override some of the config properties to optimise Jest for Stryker
     strykerConfig.jest.config = this.overrideProperties(strykerConfig.jest.config);
   }
 
-  private getConfigLoader(project: string): JestConfigLoader {
+  private getConfigLoader(projectType: string): JestConfigLoader {
     let configLoader: JestConfigLoader;
 
-    switch (project.toLowerCase()) {
+    switch (projectType.toLowerCase()) {
       case DEFAULT_PROJECT_NAME:
         configLoader = new DefaultJestConfigLoader(process.cwd(), fs);
         break;
@@ -38,7 +38,7 @@ export default class JestConfigEditor implements ConfigEditor {
         configLoader = new ReactScriptsTSJestConfigLoader(process.cwd());
         break;
       default:
-        throw new Error(`No configLoader available for ${project}`);
+        throw new Error(`No configLoader available for ${projectType}`);
     }
 
     return configLoader;

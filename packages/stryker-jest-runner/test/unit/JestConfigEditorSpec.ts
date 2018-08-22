@@ -38,23 +38,23 @@ describe('JestConfigEditor', () => {
 
   afterEach(() => sandbox.restore());
 
-  it('should call the defaultConfigLoader loadConfig method when no project is defined', () => {
+  it('should call the defaultConfigLoader loadConfig method when no projectType is defined', () => {
     jestConfigEditor.edit(config);
 
-    expect(config.jest.project).to.equal('default');
+    expect(config.jest.projectType).to.equal('default');
     assert(defaultConfigLoaderStub.loadConfig.calledOnce, 'DefaultConfigLoader loadConfig not called');
   });
 
-  it('should call the ReactScriptsJestConfigLoader loadConfig method when \'react\' is defined as project', () => {
-    config.set({ jest: { project: 'react' } });
+  it('should call the ReactScriptsJestConfigLoader loadConfig method when \'react\' is defined as projectType', () => {
+    config.set({ jest: { projectType: 'react' } });
 
     jestConfigEditor.edit(config);
 
     assert(reactScriptsJestConfigLoaderStub.loadConfig.calledOnce, 'ReactScriptsJestConfigLoader loadConfig not called');
   });
 
-  it('should call the ReactScriptsTSJestConfigLoader loadConfig method when \'react-ts\' is defined as project', () => {
-    config.set({ jest: { project: 'react-ts' } });
+  it('should call the ReactScriptsTSJestConfigLoader loadConfig method when \'react-ts\' is defined as projectType', () => {
+    config.set({ jest: { projectType: 'react-ts' } });
 
     jestConfigEditor.edit(config);
 
@@ -72,11 +72,11 @@ describe('JestConfigEditor', () => {
     });
   });
 
-  it('should return an error when an invalid project is defined', () => {
-    const project = 'invalidProject';
-    config.set({ jest: { project } });
+  it('should return an error when an invalid projectType is defined', () => {
+    const projectType = 'invalidProject';
+    config.set({ jest: { projectType } });
 
-    expect(() => jestConfigEditor.edit(config)).to.throw(Error, `No configLoader available for ${project}`);
+    expect(() => jestConfigEditor.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
 });
 
