@@ -29,7 +29,6 @@ declare namespace jasmine {
     order: Order;
   }
 
-
   interface SuiteInfo {
     totalSpecsDefined: number;
   }
@@ -77,35 +76,35 @@ declare module 'jasmine' {
 
   class Jasmine {
     constructor(options: any);
-    addReporter(reporter: jasmine.CustomReporter): void;
-    addSpecFile(filePath: string): void;
-    addSpecFiles(files: string[]): void;
-    clearReporters(): void;
-    configureDefaultReporter(options: any, ...args: any[]): void;
-    env: jasmine.Env;
-    execute(files?: string[], filterString?: string): any;
-    exit: (code: number) => void;
-    exitCodeCompletion(passed: any): void;
-    loadConfig(config: any): void;
-    loadConfigFile(configFilePath: any): void;
-    loadHelpers(): void;
-    loadSpecs(): void;
-    onComplete(onCompleteCallback: (passed: boolean) => void): void;
-    randomizeTests(value?: any): boolean;
-    seed(value: any): void;
-    showColors(value: any): void;
-    stopSpecOnExpectationFailure(value: boolean): void;
-    stopOnSpecFailure(value: boolean): void;
-    static ConsoleReporter(): any;
-    reportersCount: number;
-    completionReporter: jasmine.CustomReporter;
-    reporter: jasmine.CustomReporter;
-    coreVersion(): string;
-    showingColors: boolean;
-    projectBaseDir: string;
-    printDeprecation(): void;
-    specFiles: string[];
-    helperFiles: string[];
+    public addReporter(reporter: jasmine.CustomReporter): void;
+    public addSpecFile(filePath: string): void;
+    public addSpecFiles(files: string[]): void;
+    public clearReporters(): void;
+    public configureDefaultReporter(options: any, ...args: any[]): void;
+    public env: jasmine.Env;
+    public execute(files?: string[], filterString?: string): any;
+    public exit: (code: number) => void;
+    public exitCodeCompletion(passed: any): void;
+    public loadConfig(config: any): void;
+    public loadConfigFile(configFilePath: any): void;
+    public loadHelpers(): void;
+    public loadSpecs(): void;
+    public onComplete(onCompleteCallback: (passed: boolean) => void): void;
+    public randomizeTests(value?: any): boolean;
+    public seed(value: any): void;
+    public showColors(value: any): void;
+    public stopSpecOnExpectationFailure(value: boolean): void;
+    public stopOnSpecFailure(value: boolean): void;
+    public static ConsoleReporter(): any;
+    public reportersCount: number;
+    public completionReporter: jasmine.CustomReporter;
+    public reporter: jasmine.CustomReporter;
+    public coreVersion(): string;
+    public showingColors: boolean;
+    public projectBaseDir: string;
+    public printDeprecation(): void;
+    public specFiles: string[];
+    public helperFiles: string[];
   }
   export = Jasmine;
 }

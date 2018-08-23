@@ -20,11 +20,11 @@ let logImplementation: LoggerFactoryMethod = () => noopLogger;
 
 export default class LoggerFactory {
 
-  static setLogImplementation(implementation: LoggerFactoryMethod) {
+  public static setLogImplementation(implementation: LoggerFactoryMethod) {
     logImplementation = implementation;
   }
 
-  static getLogger: LoggerFactoryMethod = (categoryName?: string) => {
+  public static getLogger: LoggerFactoryMethod = (categoryName?: string) => {
     return logImplementation(categoryName);
   }
 }

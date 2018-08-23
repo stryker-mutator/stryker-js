@@ -10,9 +10,9 @@ function resolveSampleProject(relativeFileName: string) {
 describe('Read TS Config file integration', () => {
   it('should discover files like TS does', () => {
     const config = new Config();
-    config['tsconfigFile'] = resolveSampleProject('tsconfig.json');
+    config.tsconfigFile = resolveSampleProject('tsconfig.json');
     new TypescriptConfigEditor().edit(config);
-    const actual = config['tsconfig'];
+    const actual = config.tsconfig;
     expect(actual.fileNames.map(path.normalize)).deep.eq([
       resolveSampleProject('math.ts'),
       resolveSampleProject('useMath.ts')

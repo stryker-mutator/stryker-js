@@ -3,9 +3,9 @@ import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class BooleanSubstitutionMutator extends NodeMutator<ts.BooleanLiteral> {
 
-  name: string = 'BooleanSubstitution';
+  public name: string = 'BooleanSubstitution';
 
-  guard(node: ts.Node): node is ts.BooleanLiteral {
+  public guard(node: ts.Node): node is ts.BooleanLiteral {
     return node.kind === ts.SyntaxKind.FalseKeyword || node.kind === ts.SyntaxKind.TrueKeyword;
   }
 

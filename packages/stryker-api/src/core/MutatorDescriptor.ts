@@ -1,7 +1,6 @@
-
 interface MutatorDescriptor {
   name: string;
-  excludedMutations: Array<string>;
+  excludedMutations: string[];
 }
 
 export default MutatorDescriptor;

@@ -22,7 +22,7 @@ describe('KarmaTestRunner', () => {
 
   beforeEach(() => {
     settings = {
-      port: 42, fileNames: ['foo.js', 'bar.js'], strykerOptions: {}
+      fileNames: ['foo.js', 'bar.js'], port: 42, strykerOptions: {}
     };
     reporterMock = new EventEmitter();
     projectStarterMock = sandbox.createStubInstance(ProjectStarter);
@@ -42,17 +42,17 @@ describe('KarmaTestRunner', () => {
 
   it('should setup karma from stryker options', () => {
     const expectedSetup: StrykerKarmaSetup = {
-      project: 'angular-cli',
       config: {
         basePath: 'foo/bar'
       },
-      configFile: 'baz.conf.js'
+      configFile: 'baz.conf.js',
+      projectType: 'angular-cli'
     };
-    settings.strykerOptions['karma'] = expectedSetup;
+    settings.strykerOptions.karma = expectedSetup;
     new KarmaTestRunner(settings);
     expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedSetup.config, karmaConfigFile: expectedSetup.configFile });
     expect(logMock.warn).not.called;
-    expect(projectStarterModule.default).calledWith(expectedSetup.project);
+    expect(projectStarterModule.default).calledWith(expectedSetup.projectType);
   });
 
   it('should load deprecated karma options', () => {

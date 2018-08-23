@@ -11,30 +11,30 @@ const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class HtmlReporter implements Reporter {
-  private log = getLogger(HtmlReporter.name);
+  private readonly log = getLogger(HtmlReporter.name);
   private _baseDir: string;
   private mainPromise: Promise<void>;
   private mutantResults: MutantResult[];
   private files: SourceFile[];
   private scoreResult: ScoreResult;
 
-  constructor(private options: Config) {
+  constructor(private readonly options: Config) {
   }
 
-  onAllSourceFilesRead(files: SourceFile[]) {
+  public onAllSourceFilesRead(files: SourceFile[]) {
     this.files = files;
   }
 
-  onAllMutantsTested(results: MutantResult[]) {
+  public onAllMutantsTested(results: MutantResult[]) {
     this.mutantResults = results;
   }
 
-  onScoreCalculated(score: ScoreResult) {
+  public onScoreCalculated(score: ScoreResult) {
     this.scoreResult = score;
     this.mainPromise = this.generateReport();
   }
 
-  wrapUp() {
+  public wrapUp() {
     return this.mainPromise;
   }
 
@@ -103,8 +103,8 @@ export default class HtmlReporter implements Reporter {
 
   private get baseDir() {
     if (!this._baseDir) {
-      if (this.options['htmlReporter'] && this.options['htmlReporter']['baseDir']) {
-        this._baseDir = this.options['htmlReporter']['baseDir'];
+      if (this.options.htmlReporter && this.options.htmlReporter.baseDir) {
+        this._baseDir = this.options.htmlReporter.baseDir;
         this.log.debug(`Using configured output folder ${this._baseDir}`);
       } else {
         this.log.debug(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);

@@ -7,6 +7,5 @@ import Logger from './Logger';
  * @param   {String} [categoryName] name of category to log to.
  * @returns {Logger} instance of logger for the category
  */
-export default interface LoggerFactoryMethod {
-    (categoryName?: string): Logger;
-}
+type LoggerFactoryMethod = (categoryName?: string) => Logger;
+export default LoggerFactoryMethod;

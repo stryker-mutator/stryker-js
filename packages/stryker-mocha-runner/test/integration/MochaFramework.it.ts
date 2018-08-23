@@ -6,12 +6,12 @@ import { fork } from 'child_process';
 import { AUTO_START_ARGUMENT, RunMessage } from './MochaTestFrameworkIntegrationTestWorker';
 
 const test0: Readonly<TestSelection> = Object.freeze({
-  name: 'MyMath should be able to add two numbers',
   id: 0,
+  name: 'MyMath should be able to add two numbers'
 });
 const test3: Readonly<TestSelection> = Object.freeze({
-  name: 'MyMath should be able to recognize a negative number',
   id: 3,
+  name: 'MyMath should be able to recognize a negative number'
 });
 
 export function wrapInClosure(codeFragment: string) {
@@ -21,7 +21,7 @@ export function wrapInClosure(codeFragment: string) {
     })((Function('return this'))());`;
 }
 
-describe('Integration with stryker-mocha-framework', function () {
+describe('Integration with stryker-mocha-framework', function() {
   this.timeout(10000);
   let testFramework: MochaTestFramework;
 

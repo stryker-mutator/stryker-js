@@ -124,4 +124,3 @@ describe('File report page "Add.js.html"', () => {
     });
   });
 });
-

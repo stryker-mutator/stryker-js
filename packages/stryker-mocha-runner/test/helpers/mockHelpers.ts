@@ -6,32 +6,31 @@ export type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;
 };
 
-
 export function mock<T>(constructorFn: { new(...args: any[]): T; }): Mock<T> {
   return sinon.createStubInstance(constructorFn) as Mock<T>;
 }
 
 export function logger(): Mock<Logger> {
   return {
-    trace: sinon.stub(),
-    isTraceEnabled: sinon.stub(),
     debug: sinon.stub(),
-    isDebugEnabled: sinon.stub(),
-    info: sinon.stub(),
-    isInfoEnabled: sinon.stub(),
-    warn: sinon.stub(),
-    isWarnEnabled: sinon.stub(),
     error: sinon.stub(),
-    isErrorEnabled: sinon.stub(),
     fatal: sinon.stub(),
+    info: sinon.stub(),
+    isDebugEnabled: sinon.stub(),
+    isErrorEnabled: sinon.stub(),
     isFatalEnabled: sinon.stub(),
+    isInfoEnabled: sinon.stub(),
+    isTraceEnabled: sinon.stub(),
+    isWarnEnabled: sinon.stub(),
+    trace: sinon.stub(),
+    warn: sinon.stub()
   };
 }
 
 export const runnerOptions = factory<RunnerOptions>(() => ({
+  fileNames: ['src/math.js', 'test/mathSpec.js'],
   port: 0,
-  strykerOptions: { mochaOptions: {} },
-  fileNames: ['src/math.js', 'test/mathSpec.js']
+  strykerOptions: { mochaOptions: {} }
 }));
 
 function factory<T>(defaults: () => T): (overrides?: Partial<T>) => T {

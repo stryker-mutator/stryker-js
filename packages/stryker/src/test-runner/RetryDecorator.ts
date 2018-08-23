@@ -11,9 +11,9 @@ const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without an
  */
 export default class RetryDecorator extends TestRunnerDecorator {
 
-  log = getLogger(RetryDecorator.name);
+  private readonly log = getLogger(RetryDecorator.name);
 
-  async run(options: RunOptions, attemptsLeft = 2, lastError?: Error): Promise<RunResult> {
+  public async run(options: RunOptions, attemptsLeft = 2, lastError?: Error): Promise<RunResult> {
     if (attemptsLeft > 0) {
       try {
         return await this.innerRunner.run(options);

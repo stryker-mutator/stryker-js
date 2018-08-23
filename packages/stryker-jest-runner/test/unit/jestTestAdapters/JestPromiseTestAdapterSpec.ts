@@ -18,9 +18,9 @@ describe('JestPromiseTestAdapter', () => {
     sandbox = sinon.createSandbox();
 
     runCLIStub = sandbox.stub(jest, 'runCLI');
-    runCLIStub.callsFake((config: Object, projectRootArray: Array<string>) => Promise.resolve({
-      result: 'testResult',
-      config: config
+    runCLIStub.callsFake((config: object, projectRootArray: string[]) => Promise.resolve({
+      config,
+      result: 'testResult'
     }));
 
     traceLoggerStub = sinon.stub();
@@ -51,12 +51,12 @@ describe('JestPromiseTestAdapter', () => {
     const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot);
 
     expect(result).to.deep.equal({
-      result: 'testResult',
       config: {
         config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
         runInBand: true,
         silent: true
-      }
+      },
+      result: 'testResult'
     });
   });
 

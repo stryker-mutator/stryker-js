@@ -4,15 +4,14 @@ import * as mkdirp from 'mkdirp';
 import { getLogger } from 'stryker-api/logging';
 import { deleteDir } from './fileUtils';
 
-
 export class TempFolder {
   private readonly log = getLogger(TempFolder.name);
-  baseTempFolder: string;
-  tempFolder: string;
-  
+  public baseTempFolder: string;
+  public tempFolder: string;
+
   private constructor() { }
 
-  initialize(tempDirName = '.stryker-tmp') {
+  public initialize(tempDirName = '.stryker-tmp') {
     this.baseTempFolder = path.join(process.cwd(), tempDirName);
     this.tempFolder = path.join(this.baseTempFolder, this.random().toString());
     mkdirp.sync(this.baseTempFolder);
@@ -24,11 +23,11 @@ export class TempFolder {
    * @param prefix The prefix.
    * @returns The path to the folder.
    */
-  createRandomFolder(prefix: string): string {
+  public createRandomFolder(prefix: string): string {
     if (!this.baseTempFolder) {
       throw new Error('initialize() was not called!');
     }
-    let dir = this.baseTempFolder + path.sep + prefix + this.random();
+    const dir = this.baseTempFolder + path.sep + prefix + this.random();
     mkdirp.sync(dir);
     return dir;
   }
@@ -40,7 +39,7 @@ export class TempFolder {
    * @param instrumenter An optional additional instrumenter to stream the file through
    * @returns A promise to eventually copy the file.
    */
-  copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
+  public copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       let readStream: NodeJS.ReadableStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
       const writeStream = fs.createWriteStream(toFilename);
@@ -57,7 +56,7 @@ export class TempFolder {
   /**
    * Deletes the Stryker-temp folder
    */
-  clean() {
+  public clean() {
     if (!this.baseTempFolder) {
       throw new Error('initialize() was not called!');
     }
@@ -70,12 +69,12 @@ export class TempFolder {
    * Creates a random integer number.
    * @returns A random integer.
    */
-  random(): number {
+  public random(): number {
     return Math.ceil(Math.random() * 10000000);
   }
 
   private static _instance: TempFolder;
-  static instance() {
+  public static instance() {
     if (!this._instance) {
       this._instance = new TempFolder();
     }

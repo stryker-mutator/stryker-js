@@ -21,7 +21,7 @@ import StringLiteralMutator from './mutator/StringLiteralMutator';
 
 export default class TypescriptMutator {
 
-  constructor(private config: Config, public mutators: NodeMutator[] = [
+  constructor(private readonly config: Config, public mutators: NodeMutator[] = [
     new BinaryExpressionMutator(),
     new BooleanSubstitutionMutator(),
     new ArrayLiteralMutator(),
@@ -37,7 +37,7 @@ export default class TypescriptMutator {
     new StringLiteralMutator(),
   ]) { }
 
-  mutate(inputFiles: File[]): Mutant[] {
+  public mutate(inputFiles: File[]): Mutant[] {
     const tsConfig = getTSConfig(this.config);
     const mutants = flatMap(inputFiles, inputFile => {
       const sourceFile = parseFile(inputFile, tsConfig && tsConfig.options && tsConfig.options.target);

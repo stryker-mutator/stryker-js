@@ -4,8 +4,8 @@ import * as path from 'path';
 import { Configuration } from 'jest';
 
 export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
-  private loader: NodeRequire;
-  private projectRoot: string;
+  private readonly loader: NodeRequire;
+  private readonly projectRoot: string;
 
   public constructor(projectRoot: string, loader?: NodeRequire) {
     this.loader = loader || /* istanbul ignore next */ require;
@@ -18,7 +18,7 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
 
     // Create the React configuration for Jest
     const jestConfiguration = this.createJestConfig(reactScriptsLocation);
-    
+
     // Set test environment to jsdom (otherwise Jest won't run)
     jestConfiguration.testEnvironment = 'jsdom';
 

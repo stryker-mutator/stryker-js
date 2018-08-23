@@ -1,13 +1,8 @@
 import { Stats } from 'enhanced-resolve';
 
+export type EmptyCallback = (err?: NodeJS.ErrnoException | null) => void;
 
-export interface EmptyCallback {
-  (err?: NodeJS.ErrnoException | null): void;
-}
-
-export interface Callback<T> {
-  (err: NodeJS.ErrnoException | null | undefined, arg?: T): void;
-}
+export type Callback<T> = (err: NodeJS.ErrnoException | null | undefined, arg?: T) => void;
 
 export declare namespace webpack {
 

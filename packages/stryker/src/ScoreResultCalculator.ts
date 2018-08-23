@@ -10,12 +10,12 @@ const defaultScoreIfNoValidMutants = 100;
 export default class ScoreResultCalculator {
   private readonly log = getLogger(ScoreResultCalculator.name);
 
-  calculate(results: MutantResult[]): ScoreResult {
+  public calculate(results: MutantResult[]): ScoreResult {
     const scoreResult = this.calculateScoreResult(results, '');
     return this.wrapIfSingleFileScoreResult(scoreResult);
   }
 
-  determineExitCode(score: ScoreResult, thresholds: MutationScoreThresholds | undefined) {
+  public determineExitCode(score: ScoreResult, thresholds: MutationScoreThresholds | undefined) {
     const breaking = thresholds && thresholds.break;
     const formattedScore = score.mutationScore.toFixed(2);
     if (typeof breaking === 'number') {
@@ -34,9 +34,10 @@ export default class ScoreResultCalculator {
   private wrapIfSingleFileScoreResult(scoreResult: ScoreResult): ScoreResult {
     if (scoreResult.representsFile) {
       return this.copy(scoreResult, {
-        name: path.dirname(scoreResult.name), childResults: [
+        childResults: [
           this.copy(scoreResult, { name: path.basename(scoreResult.name) })
-        ]
+        ],
+        name: path.dirname(scoreResult.name)
       });
     } else {
       return scoreResult;
@@ -57,9 +58,9 @@ export default class ScoreResultCalculator {
     const name = this.determineCommonBasePath(results, basePath);
     const childResults = this.calculateChildScores(results, name, basePath);
     return {
+      childResults,
       name,
       path: path.join(basePath, name),
-      childResults,
       representsFile: childResults.length === 0 && results.length > 0
     };
   }
@@ -124,19 +125,19 @@ export default class ScoreResultCalculator {
     const mutationScoreBasedOnCoveredCode = totalValid > 0 ? totalDetected / totalCovered * 100 || 0 : defaultScoreIfNoValidMutants;
     return {
       killed,
-      survived,
+      mutationScore,
+      mutationScoreBasedOnCoveredCode,
       noCoverage,
       runtimeErrors,
-      transpileErrors,
+      survived,
       timedOut,
-      totalDetected,
-      totalUndetected,
       totalCovered,
-      totalValid,
+      totalDetected,
       totalInvalid,
       totalMutants,
-      mutationScore,
-      mutationScoreBasedOnCoveredCode
+      totalUndetected,
+      totalValid,
+      transpileErrors
     };
   }
 }

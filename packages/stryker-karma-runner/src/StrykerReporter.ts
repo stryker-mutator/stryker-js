@@ -14,11 +14,11 @@ export interface KarmaSpec {
 
 /**
  * This is a singleton implementation of a KarmaReporter.
- * It is loaded by 
+ * It is loaded by
  */
 export default class StrykerReporter extends EventEmitter implements karma.Reporter {
 
-  adapters: any[] = [];
+  public adapters: any[] = [];
 
   private constructor() {
     super();
@@ -32,7 +32,7 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     return this._instance;
   }
 
-  onSpecComplete(browser: any, spec: KarmaSpec) {
+  public onSpecComplete(browser: any, spec: KarmaSpec) {
     const name = spec.suite.reduce((name, suite) => name + suite + ' ', '') + spec.description;
     let status = TestStatus.Failed;
     if (spec.skipped) {
@@ -41,27 +41,27 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
       status = TestStatus.Success;
     }
     const testResult: TestResult = {
+      failureMessages: spec.log,
       name,
       status,
-      timeSpentMs: spec.time,
-      failureMessages: spec.log
+      timeSpentMs: spec.time
     };
     this.emit('test_result', testResult);
   }
 
-  onRunComplete(runResult: karma.TestResults) {
+  public onRunComplete(runResult: karma.TestResults) {
     this.emit('run_complete', this.collectRunState(runResult));
   }
 
-  onBrowserComplete(browser: any, result: { coverage: CoverageCollection | CoverageCollectionPerTest }) {
+  public onBrowserComplete(browser: any, result: { coverage: CoverageCollection | CoverageCollectionPerTest }) {
     this.emit('coverage_report', result.coverage);
   }
 
-  onBrowsersReady() {
+  public onBrowsersReady() {
     this.emit('browsers_ready');
   }
 
-  onBrowserError(browser: any, error: any) {
+  public onBrowserError(browser: any, error: any) {
     // Karma 2.0 has different error messages
     if (error.message) {
       this.emit('browser_error', error.message);
@@ -70,7 +70,7 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     }
   }
 
-  onCompileError(errors: string[]) {
+  public onCompileError(errors: string[]) {
     // This is called from angular cli logic
     // https://github.com/angular/angular-cli/blob/012672161087a05ae5ecffbed5d1ee307ce1e0ad/packages/angular_devkit/build_angular/src/angular-cli-files/plugins/karma.ts#L96
     this.emit('compile_error', errors);

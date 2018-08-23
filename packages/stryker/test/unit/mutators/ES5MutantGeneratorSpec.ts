@@ -44,9 +44,9 @@ describe('ES5Mutator', () => {
   describe('should be able to handle a Mutator that returns', () => {
 
     class StubMutator implements NodeMutator {
-      name: 'stub';
-      applyMutations(node: IdentifiedNode, copy: (obj: any, deep?: boolean) => any): IdentifiedNode[] {
-        let nodes: IdentifiedNode[] = [];
+      public name: 'stub';
+      public applyMutations(node: IdentifiedNode, copy: (obj: any, deep?: boolean) => any): IdentifiedNode[] {
+        const nodes: IdentifiedNode[] = [];
         if (node.type === Syntax.BinaryExpression) {
           // eg: '1 * 2': push child node
           nodes.push((node as estree.BinaryExpression).left as estree.Expression & Identified);

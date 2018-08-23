@@ -4,9 +4,7 @@ import * as producers from '../../helpers/producers';
 import Breadcrumb from '../../../src/Breadcrumb';
 import * as htmlHelpers from '../../helpers/htmlHelpers';
 
-
 describe('sourceFile template', () => {
-
 
     it('should sort mutant table on range location', () => {
         const mutants = [

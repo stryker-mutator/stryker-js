@@ -9,15 +9,15 @@ export default class ClearTextReporter implements Reporter {
 
   private readonly log = getLogger(ClearTextReporter.name);
 
-  constructor(private options: Config) { }
+  constructor(private readonly options: Config) { }
 
-  private out: NodeJS.WritableStream = process.stdout;
+  private readonly out: NodeJS.WritableStream = process.stdout;
 
   private writeLine(output?: string) {
     this.out.write(`${output || ''}${os.EOL}`);
   }
 
-  onAllMutantsTested(mutantResults: MutantResult[]): void {
+  public onAllMutantsTested(mutantResults: MutantResult[]): void {
     this.writeLine();
     let totalTests = 0;
 
@@ -77,7 +77,7 @@ export default class ClearTextReporter implements Reporter {
   }
 
   private logExecutedTests(result: MutantResult, logImplementation: (input: string) => void) {
-    const clearTextReporterConfig = this.options['clearTextReporter'];
+    const clearTextReporterConfig = this.options.clearTextReporter;
 
     if (result.testsRan && result.testsRan.length > 0) {
       let testsToLog = 3;
@@ -102,9 +102,7 @@ export default class ClearTextReporter implements Reporter {
     }
   }
 
-  onScoreCalculated(score: ScoreResult) {
+  public onScoreCalculated(score: ScoreResult) {
     this.writeLine(new ClearTextScoreTable(score, this.options.thresholds).draw());
   }
 }
-
-

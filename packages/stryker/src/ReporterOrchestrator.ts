@@ -23,11 +23,10 @@ registerDefaultReporters();
 export default class ReporterOrchestrator {
 
   private readonly log = getLogger(ReporterOrchestrator.name);
-  constructor(private options: StrykerOptions) {
-  }
+  constructor(private readonly options: StrykerOptions) { }
 
   public createBroadcastReporter(): StrictReporter {
-    let reporters: NamedReporter[] = [];
+    const reporters: NamedReporter[] = [];
     const reporterOption = this.options.reporters;
     if (reporterOption) {
         reporterOption.forEach(reporterName => reporters.push(this.createReporter(reporterName)));
@@ -57,5 +56,4 @@ export default class ReporterOrchestrator {
     });
     this.log.warn(`Possible reporters: ${possibleReportersCsv}`);
   }
-
 }

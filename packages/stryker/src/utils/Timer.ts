@@ -1,6 +1,5 @@
-
 export default class Timer {
-  private now: Function;
+  private readonly now: () => Date;
   private start: Date;
   private markers: {
     [name: string]: Date;
@@ -11,22 +10,22 @@ export default class Timer {
     this.reset();
   }
 
-  reset() {
+  public reset() {
     this.markers = Object.create(null);
     this.start = this.now();
   }
 
-  humanReadableElapsed() {
+  public humanReadableElapsed() {
     const elapsedSeconds = this.elapsedSeconds();
     return Timer.humanReadableElapsedMinutes(elapsedSeconds) + Timer.humanReadableElapsedSeconds(elapsedSeconds);
   }
 
-  elapsedSeconds() {
+  public elapsedSeconds() {
     const elapsedMs = this.elapsedMs();
     return Math.floor(elapsedMs / 1000);
   }
 
-  elapsedMs(sinceMarker?: string) {
+  public elapsedMs(sinceMarker?: string) {
     if (sinceMarker && this.markers[sinceMarker]) {
       return this.now().getTime() - this.markers[sinceMarker].getTime();
     } else {
@@ -34,7 +33,7 @@ export default class Timer {
     }
   }
 
-  mark(name: string) {
+  public mark(name: string) {
     this.markers[name] = this.now();
   }
 

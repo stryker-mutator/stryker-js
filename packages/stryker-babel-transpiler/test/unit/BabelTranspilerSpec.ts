@@ -33,7 +33,6 @@ describe('BabelTranspiler', () => {
 
   afterEach(() => sandbox.restore());
 
-
   describe('constructor', () => {
 
     function arrangeHappyFlow(transformResult: babel.BabelFileResult & { ignored?: boolean } = { code: 'code' }) {

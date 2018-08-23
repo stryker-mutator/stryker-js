@@ -17,15 +17,15 @@ import { getLogger, Logger } from 'stryker-api/logging';
 export default class MutationTestExecutor {
 
   constructor(
-    private config: Config,
-    private inputFiles: ReadonlyArray<File>,
-    private testFramework: TestFramework | null,
-    private reporter: StrictReporter,
-    private overheadTimeMS: number,
-    private loggingContext: LoggingClientContext) {
+    private readonly config: Config,
+    private readonly inputFiles: ReadonlyArray<File>,
+    private readonly testFramework: TestFramework | null,
+    private readonly reporter: StrictReporter,
+    private readonly overheadTimeMS: number,
+    private readonly loggingContext: LoggingClientContext) {
   }
 
-  async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
+  public async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
     const mutantTranspiler = new MutantTranspiler(this.config, this.loggingContext);
     const transpiledFiles = await mutantTranspiler.initialize(this.inputFiles);
     const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles, this.overheadTimeMS, this.loggingContext);

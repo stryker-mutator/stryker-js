@@ -21,8 +21,8 @@ import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 
 const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  port: 4200,
-  level: LogLevel.Fatal
+  level: LogLevel.Fatal,
+  port: 4200
 });
 
 describe('InitialTestExecutor run', () => {
@@ -85,8 +85,8 @@ describe('InitialTestExecutor run', () => {
       options.coverageAnalysis = 'all';
       await sut.run();
       const expectedTranspilerOptions: TranspilerOptions = {
-        produceSourceMaps: true,
-        config: options
+        config: options,
+        produceSourceMaps: true
       };
       expect(transpilerFacade.default).calledWithNew;
       expect(transpilerFacade.default).calledWith(expectedTranspilerOptions);
@@ -96,8 +96,8 @@ describe('InitialTestExecutor run', () => {
       options.coverageAnalysis = 'off';
       await sut.run();
       const expectedTranspilerOptions: TranspilerOptions = {
-        produceSourceMaps: false,
-        config: options
+        config: options,
+        produceSourceMaps: false
       };
       expect(transpilerFacade.default).calledWith(expectedTranspilerOptions);
     });
@@ -138,12 +138,12 @@ describe('InitialTestExecutor run', () => {
       coverageInstrumenterTranspilerMock.fileCoverageMaps = { someFile: coverageData } as any;
       timer.elapsedMs.returns(42);
       const expectedResult: InitialTestRunResult = {
-        overheadTimeMS: 42 - expectedRunResult.tests[0].timeSpentMs,
-        runResult: expectedRunResult,
-        sourceMapper: sourceMapperMock,
         coverageMaps: {
           someFile: coverageData
-        }
+        },
+        overheadTimeMS: 42 - expectedRunResult.tests[0].timeSpentMs,
+        runResult: expectedRunResult,
+        sourceMapper: sourceMapperMock
       };
       const actualRunResult = await sut.run();
       expect(actualRunResult).deep.eq(expectedResult);
@@ -259,4 +259,3 @@ describe('InitialTestExecutor run', () => {
     });
   });
 });
-

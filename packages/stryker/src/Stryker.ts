@@ -24,10 +24,10 @@ import LogConfigurator from './logging/LogConfigurator';
 
 export default class Stryker {
 
-  config: Config;
-  private timer = new Timer();
-  private reporter: StrictReporter;
-  private testFramework: TestFramework | null;
+  public config: Config;
+  private readonly timer = new Timer();
+  private readonly reporter: StrictReporter;
+  private readonly testFramework: TestFramework | null;
   private readonly log: Logger;
 
   /**
@@ -38,7 +38,7 @@ export default class Stryker {
   constructor(options: StrykerOptions) {
     LogConfigurator.configureMainProcess(options.logLevel, options.fileLogLevel);
     this.log = getLogger(Stryker.name);
-    let configReader = new ConfigReader(options);
+    const configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
     LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
     this.loadPlugins();
@@ -50,7 +50,7 @@ export default class Stryker {
     new ConfigValidator(this.config, this.testFramework).validate();
   }
 
-  async runMutationTest(): Promise<MutantResult[]> {
+  public async runMutationTest(): Promise<MutantResult[]> {
     const loggingContext = await LogConfigurator.configureLoggingServer(this.config.logLevel, this.config.fileLogLevel);
     this.timer.reset();
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
@@ -120,7 +120,7 @@ export default class Stryker {
   }
 
   private wrapUpReporter(): Promise<void> {
-    let maybePromise = this.reporter.wrapUp();
+    const maybePromise = this.reporter.wrapUp();
     if (isPromise(maybePromise)) {
       return maybePromise;
     } else {
@@ -139,7 +139,7 @@ export default class Stryker {
     // This is a temporary work around
     // See https://github.com/stryker-mutator/stryker/issues/365
     const config: Config = {} as any;
-    for (let prop in this.config) {
+    for (const prop in this.config) {
       config[prop] = this.config[prop];
     }
     this.config = freezeRecursively(config);

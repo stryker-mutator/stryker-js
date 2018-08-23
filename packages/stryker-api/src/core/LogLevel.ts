@@ -1,4 +1,3 @@
-
 enum LogLevel {
   Off = 'off',
   Fatal = 'fatal',

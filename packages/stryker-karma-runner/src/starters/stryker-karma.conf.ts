@@ -32,14 +32,14 @@ function setUserKarmaConfigFile(config: Config, log: Logger) {
  */
 function setLifeCycleOptions(config: Config) {
   config.set({
-    // Override browserNoActivityTimeout. Default value 10000 might not enough to send perTest coverage results
-    browserNoActivityTimeout: 1000000,
     // No auto watch, stryker will inform us when we need to test
     autoWatch: false,
-    // Don't stop after first run
-    singleRun: false,
+    // Override browserNoActivityTimeout. Default value 10000 might not enough to send perTest coverage results
+    browserNoActivityTimeout: 1000000,
     // Never detach, always run in this same process (is already a separate process)
-    detached: false
+    detached: false,
+    // Don't stop after first run
+    singleRun: false
   });
 }
 
@@ -71,10 +71,9 @@ function addPlugin(karmaConfig: ConfigOptions, karmaPlugin: any) {
   karmaConfig.plugins.push(karmaPlugin);
 }
 
-
 /**
- * Configures the test hooks middleware. 
- * It adds a non-existing file to the top `files` array. 
+ * Configures the test hooks middleware.
+ * It adds a non-existing file to the top `files` array.
  * Further more it configures a middleware that serves the file.
  */
 function configureTestHooksMiddleware(config: Config) {
@@ -116,7 +115,7 @@ export = Object.assign((config: Config) => {
      * Provide global settings for next configuration
      * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
      * (not counting environment variables)
-    */
+     */
     setGlobals(globals: { port?: number; karmaConfig?: ConfigOptions; karmaConfigFile?: string; }) {
       globalSettings.port = globals.port;
       globalSettings.karmaConfig = globals.karmaConfig;

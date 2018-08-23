@@ -44,7 +44,7 @@ describe('BabelParser', () => {
       BabelParser.removeUseStrict(ast);
 
       const result = BabelParser.generateCode(ast, ast.program.body[0]);
-      
+
       expect(result).to.equal('var a = 1 + 2;');
     });
 
@@ -53,7 +53,7 @@ describe('BabelParser', () => {
       BabelParser.removeUseStrict(ast);
 
       const result = BabelParser.generateCode(ast, ast.program.body[0]);
-      
+
       expect(result).to.equal('var a = 1 + 2 /* Comment */;');
     });
   });

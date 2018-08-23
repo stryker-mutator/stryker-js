@@ -10,8 +10,8 @@ const fakeRequire: any = {
 
 describe('DefaultJestConfigLoader', () => {
   let defaultConfigLoader: DefaultJestConfigLoader;
-  let projectRoot: string = '/path/to/project/root';
-  let fsStub: FsStub = {};
+  const projectRoot: string = '/path/to/project/root';
+  const fsStub: FsStub = {};
   let requireStub: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
 

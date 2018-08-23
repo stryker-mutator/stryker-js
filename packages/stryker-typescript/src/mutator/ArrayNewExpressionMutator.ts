@@ -2,8 +2,8 @@ import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class ArrayNewExpressionMutator extends NodeMutator<ts.NewExpression> {
-  name = 'ArrayNewExpression';
-  guard(node: ts.Node): node is ts.NewExpression {
+  public name = 'ArrayNewExpression';
+  public guard(node: ts.Node): node is ts.NewExpression {
     return node.kind === ts.SyntaxKind.NewExpression;
   }
 
@@ -18,5 +18,4 @@ export default class ArrayNewExpressionMutator extends NodeMutator<ts.NewExpress
       return [];
     }
   }
-
 }

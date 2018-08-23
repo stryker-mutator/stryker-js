@@ -16,28 +16,28 @@ export interface EmitOutput {
 }
 
 export default class TranspilingLanguageService {
-  private languageService: ts.LanguageService;
+  private readonly languageService: ts.LanguageService;
 
-  private compilerOptions: ts.CompilerOptions;
+  private readonly compilerOptions: ts.CompilerOptions;
   private readonly files: ts.MapLike<ScriptFile> = Object.create(null);
-  private logger = getLogger(TranspilingLanguageService.name);
+  private readonly logger = getLogger(TranspilingLanguageService.name);
   private readonly diagnosticsFormatter: ts.FormatDiagnosticsHost;
 
-  constructor(compilerOptions: Readonly<ts.CompilerOptions>, rootFiles: ReadonlyArray<File>, private projectDirectory: string, private produceSourceMaps: boolean) {
+  constructor(compilerOptions: Readonly<ts.CompilerOptions>, rootFiles: ReadonlyArray<File>, private readonly projectDirectory: string, private readonly produceSourceMaps: boolean) {
     this.compilerOptions = this.adaptCompilerOptions(compilerOptions);
     rootFiles.forEach(file => this.files[file.name] = new ScriptFile(file.name, file.textContent));
     const host = this.createLanguageServiceHost();
     this.languageService = ts.createLanguageService(host);
     this.diagnosticsFormatter = {
-      getCurrentDirectory: () => projectDirectory,
       getCanonicalFileName: fileName => fileName,
+      getCurrentDirectory: () => projectDirectory,
       getNewLine: () => os.EOL
     };
   }
 
   /**
    * Adapts compiler options to emit sourceMap files and disable other options for performance reasons
-   * 
+   *
    * @param source The unchanged compiler options
    */
   private adaptCompilerOptions(source: ts.CompilerOptions) {
@@ -52,12 +52,12 @@ export default class TranspilingLanguageService {
    * Replaces the content of the given text files
    * @param mutantCandidate The mutant used to replace the original source
    */
-  replace(replacements: ReadonlyArray<File>) {
+  public replace(replacements: ReadonlyArray<File>) {
     replacements.forEach(replacement =>
       this.files[replacement.name].replace(replacement.textContent));
   }
 
-  getSemanticDiagnostics(files: ReadonlyArray<File>) {
+  public getSemanticDiagnostics(files: ReadonlyArray<File>) {
     const fileNames = files.map(file => file.name);
     const errors = flatMap(fileNames, fileName => this.languageService.getSemanticDiagnostics(normalizeFileForTypescript(fileName)));
     return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
@@ -69,7 +69,7 @@ export default class TranspilingLanguageService {
    * @return  Map<TextFile> Returns a map of source file names with their output files.
    *          If all output files are bundled together, only returns the output file once using the first file as key
    */
-  emit(fileName: string): EmitOutput {
+  public emit(fileName: string): EmitOutput {
     const emittedFiles = this.languageService.getEmitOutput(fileName).outputFiles;
     const jsFile = emittedFiles.find(isJavaScriptFile);
     const mapFile = emittedFiles.find(isMapFile);
@@ -86,23 +86,23 @@ export default class TranspilingLanguageService {
 
   private createLanguageServiceHost(): ts.LanguageServiceHost {
     return {
+      directoryExists: ts.sys.directoryExists,
+      fileExists: ts.sys.fileExists,
       getCompilationSettings: () => this.compilerOptions,
+      getCurrentDirectory: () => path.resolve(this.projectDirectory),
+      getDefaultLibFileName: ts.getDefaultLibFileName,
+      getDirectories: ts.sys.getDirectories,
       getScriptFileNames: () => Object.keys(this.files),
-      getScriptVersion: (fileName) => {
-        this.pullFileIntoMemoryIfNeeded(fileName);
-        return this.files[fileName] && this.files[fileName].version.toString();
-      },
-      getScriptSnapshot: (fileName) => {
+      getScriptSnapshot: fileName => {
         this.pullFileIntoMemoryIfNeeded(fileName);
         return this.files[fileName] && ts.ScriptSnapshot.fromString(this.files[fileName].content);
       },
-      getCurrentDirectory: () => path.resolve(this.projectDirectory),
-      getDefaultLibFileName: ts.getDefaultLibFileName,
-      fileExists: ts.sys.fileExists,
-      readFile: ts.sys.readFile,
+      getScriptVersion: fileName => {
+        this.pullFileIntoMemoryIfNeeded(fileName);
+        return this.files[fileName] && this.files[fileName].version.toString();
+      },
       readDirectory: ts.sys.readDirectory,
-      getDirectories: ts.sys.getDirectories,
-      directoryExists: ts.sys.directoryExists
+      readFile: ts.sys.readFile
     };
   }
 

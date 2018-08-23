@@ -1,13 +1,13 @@
 import { ElementFinder, by } from 'protractor';
 
 export default class Breadcrumb {
-  constructor(private host: ElementFinder) { }
+  constructor(private readonly host: ElementFinder) { }
 
-  items() {
+  public items() {
     return this.host.$$('li').map(item => (item as ElementFinder).getText());
   }
 
-  navigate(to: string) {
+  public navigate(to: string) {
     return this.host.element(by.linkText(to)).click();
   }
 }

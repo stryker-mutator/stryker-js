@@ -15,7 +15,7 @@ describe('WebpackTranspiler', () => {
   let configLoaderStub: Mock<ConfigLoader>;
   let webpackCompilerStub: Mock<WebpackCompiler>;
 
-  let exampleBundleFile: File = createTextFile('bundle.js');
+  const exampleBundleFile: File = createTextFile('bundle.js');
   let webpackConfig: Configuration;
 
   beforeEach(() => {
@@ -24,12 +24,12 @@ describe('WebpackTranspiler', () => {
 
     webpackConfig = { entry: './main.js' };
     configLoaderStub = createMockInstance(ConfigLoader);
-    configLoaderStub.load.returns(webpackConfig); 
+    configLoaderStub.load.returns(webpackConfig);
 
     sandbox.stub(configLoaderModule, 'default').returns(configLoaderStub);
     sandbox.stub(webpackCompilerModule, 'default').returns(webpackCompilerStub);
 
-    config = new Config;
+    config = new Config();
     config.set({ webpack: { context: '/path/to/project/root' } });
   });
 

@@ -105,8 +105,8 @@ describe('TypescriptTranspiler', () => {
       ];
       const allOutput = new File('allOutput.js', 'single output');
       const emitResult: EmitOutput = {
-        singleResult: true,
-        outputFiles: [allOutput]
+        outputFiles: [allOutput],
+        singleResult: true
       };
       languageService.emit.returns(emitResult);
       arrangeIncludedFiles([input[1], input[3]]);
@@ -139,8 +139,8 @@ describe('TypescriptTranspiler', () => {
 
   function multiResult(file: File): EmitOutput {
     return {
-      singleResult: false,
-      outputFiles: [file]
+      outputFiles: [file],
+      singleResult: false
     };
   }
 

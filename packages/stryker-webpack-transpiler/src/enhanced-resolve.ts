@@ -1,18 +1,16 @@
 
 declare module 'enhanced-resolve' {
   export interface Stats {
-    isFile: () => boolean;
-    isDirectory: () => boolean;
-    isBlockDevice: () => boolean;
-    isCharacterDevice: () => boolean;
-    isSymbolicLink: () => boolean;
-    isFIFO: () => boolean;
-    isSocket: () => boolean;
+    isFile(): boolean;
+    isDirectory(): boolean;
+    isBlockDevice(): boolean;
+    isCharacterDevice(): boolean;
+    isSymbolicLink(): boolean;
+    isFIFO(): boolean;
+    isSocket(): boolean;
   }
 
-  interface Callback<T> {
-    (err: NodeJS.ErrnoException | null | undefined, arg?: T): void;
-  }
+  type Callback<T> = (err: NodeJS.ErrnoException | null | undefined, arg?: T) => void;
 
   export interface AbstractInputFileSystem {
     purge?(what?: string | string[]): void;
@@ -20,15 +18,19 @@ declare module 'enhanced-resolve' {
     readdirSync(path: string): string[];
     readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
     readFile(
-      filename: string, options: {
+      filename: string,
+      options: {
         encoding: string;
         flag?: string;
-      }, callback: (err: NodeJS.ErrnoException, data: string) => void
+      },
+      callback: (err: NodeJS.ErrnoException, data: string) => void
     ): void;
     readFile(
-      filename: string, options: {
+      filename: string,
+      options: {
         flag?: string;
-      }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void
+      },
+      callback: (err: NodeJS.ErrnoException, data: Buffer) => void
     ): void;
     readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     readFileSync(filename: string): Buffer;
@@ -39,47 +41,47 @@ declare module 'enhanced-resolve' {
     stat(path: string, callback: (err: NodeJS.ErrnoException, stats: Stats) => void): void;
     statSync(path: string): Stats;
   }
-  
+
   export class NodeJsInputFileSystem implements AbstractInputFileSystem {
-    readdir(path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void): void;
-    readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
-    readFile(filename: string, options: { encoding: string; flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
-    readFile(filename: string, options: { flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
-    readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
-    readFile(filename: any, options: any, callback?: any): void;
-    readlink(path: string, callback: (err: NodeJS.ErrnoException, linkString: string) => void): void;
-    stat(path: string, callback: (err: NodeJS.ErrnoException, stats: Stats) => void): void;
-    statSync(path: string): Stats;
-    readlinkSync(path: string): string;
-    readFileSync(filename: string): Buffer;
-    readdirSync(path: string): string[];
+    public readdir(path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void): void;
+    public readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
+    public readFile(filename: string, options: { encoding: string; flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
+    public readFile(filename: string, options: { flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
+    public readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
+    public readFile(filename: any, options: any, callback?: any): void;
+    public readlink(path: string, callback: (err: NodeJS.ErrnoException, linkString: string) => void): void;
+    public stat(path: string, callback: (err: NodeJS.ErrnoException, stats: Stats) => void): void;
+    public statSync(path: string): Stats;
+    public readlinkSync(path: string): string;
+    public readFileSync(filename: string): Buffer;
+    public readdirSync(path: string): string[];
   }
-  
+
   export class CachedInputFileSystem {
-    fileSystem: AbstractInputFileSystem;
+    public fileSystem: AbstractInputFileSystem;
 
     constructor(fileSystem: AbstractInputFileSystem, duration: number);
 
-    stat(path: string, callback: Callback<Stats>): void;
+    public stat(path: string, callback: Callback<Stats>): void;
 
-    readdir(path: string, callback: Callback<string[]>): void;
+    public readdir(path: string, callback: Callback<string[]>): void;
 
-    readFile(path: string, callback: Callback<Buffer>): void;
+    public readFile(path: string, callback: Callback<Buffer>): void;
 
-    readJson(path: string, callback: Callback<any>): void;
+    public readJson(path: string, callback: Callback<any>): void;
 
-    readlink(path: string, callback: Callback<string>): void;
+    public readlink(path: string, callback: Callback<string>): void;
 
-    statSync(path: string | Buffer): Stats;
+    public statSync(path: string | Buffer): Stats;
 
-    readdirSync(path: string): string[];
+    public readdirSync(path: string): string[];
 
-    readFileSync(filename: string, options?: string): Buffer;
+    public readFileSync(filename: string, options?: string): Buffer;
 
-    readlinkSync(path: string | Buffer): string;
+    public readlinkSync(path: string | Buffer): string;
 
-    readJsonSync(path: string): any;
+    public readJsonSync(path: string): any;
 
-    purge(what?: string | string[]): void;
+    public purge(what?: string | string[]): void;
   }
 }

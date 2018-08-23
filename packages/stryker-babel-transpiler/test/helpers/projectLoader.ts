@@ -12,7 +12,7 @@ export class ProjectLoader {
       .then(files => files.sort((a, b) => a.name.localeCompare(b.name)));
   }
 
-  private static load(basePath: string): Promise<Array<File>> {
+  private static load(basePath: string): Promise<File[]> {
     return this.glob(basePath)
       .then(fileNames => fileNames.map(fileName => path.join(basePath, fileName)))
       .then(fileNames => Promise.all(fileNames.map(fileName =>
@@ -34,4 +34,3 @@ export class ProjectLoader {
     }));
   }
 }
-

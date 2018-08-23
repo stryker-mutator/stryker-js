@@ -12,9 +12,9 @@ export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, ti
     failureMessages = specResult.failedExpectations.map(failedExpectation => failedExpectation.message);
   }
   return {
+    failureMessages,
     name: specResult.fullName,
     status,
-    failureMessages,
     timeSpentMs
   };
 }

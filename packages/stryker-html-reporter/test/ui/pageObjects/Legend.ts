@@ -3,10 +3,10 @@ import { MutantStatus } from 'stryker-api/report';
 import Checkbox from './Checkbox';
 
 export default class Legend {
-  constructor(private host: ElementFinder) {
+  constructor(private readonly host: ElementFinder) {
   }
 
-  displayButton(mutantState: MutantStatus): Checkbox {
+  public displayButton(mutantState: MutantStatus): Checkbox {
     return new Checkbox(this.host.$(`input[value="${mutantState}"]`));
   }
 }

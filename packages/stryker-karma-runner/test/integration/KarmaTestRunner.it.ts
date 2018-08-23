@@ -4,7 +4,6 @@ import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
 import { expectTestResults } from '../helpers/assertions';
 
-
 function wrapInClosure(codeFragment: string) {
   return `
     (function (window) {
@@ -12,7 +11,7 @@ function wrapInClosure(codeFragment: string) {
     })((Function('return this'))());`;
 }
 
-describe('KarmaTestRunner', function () {
+describe('KarmaTestRunner', function() {
 
   let sut: KarmaTestRunner;
   this.timeout(30000);
@@ -34,6 +33,7 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       testRunnerOptions = {
+        fileNames: [],
         port: 9877,
         strykerOptions: {
           karma: {
@@ -44,8 +44,7 @@ describe('KarmaTestRunner', function () {
               ]
             }
           }
-        },
-        fileNames: []
+        }
       };
     });
 
@@ -88,6 +87,7 @@ describe('KarmaTestRunner', function () {
   describe('when some tests fail', () => {
     before(() => {
       const testRunnerOptions: RunnerOptions = {
+        fileNames: [],
         port: 9878,
         strykerOptions: {
           karma: {
@@ -99,8 +99,7 @@ describe('KarmaTestRunner', function () {
               ]
             }
           }
-        },        
-        fileNames: []
+        }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
@@ -120,6 +119,7 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       const testRunnerOptions = {
+        fileNames: [],
         port: 9879,
         strykerOptions: {
           karma: {
@@ -131,8 +131,7 @@ describe('KarmaTestRunner', function () {
               ]
             }
           }
-        },
-        fileNames: []
+        }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
@@ -149,6 +148,7 @@ describe('KarmaTestRunner', function () {
   describe('when no error occurred and no test is performed', () => {
     before(() => {
       const testRunnerOptions = {
+        fileNames: [],
         port: 9880,
         strykerOptions: {
           karma: {
@@ -159,8 +159,7 @@ describe('KarmaTestRunner', function () {
               ]
             }
           }
-        },
-        fileNames: []
+        }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
@@ -182,6 +181,7 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       const testRunnerOptions = {
+        fileNames: [],
         port: 9881,
         strykerOptions: {
           karma: {
@@ -193,8 +193,7 @@ describe('KarmaTestRunner', function () {
               ]
             }
           }
-        },
-        fileNames: []
+        }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
@@ -212,6 +211,7 @@ describe('KarmaTestRunner', function () {
 
     before(() => {
       const testRunnerOptions: RunnerOptions = {
+        fileNames: [],
         port: 9882,
         strykerOptions: {
           coverageAnalysis: 'all',
@@ -223,8 +223,7 @@ describe('KarmaTestRunner', function () {
               ]
             }
           }
-        },
-        fileNames: []
+        }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();

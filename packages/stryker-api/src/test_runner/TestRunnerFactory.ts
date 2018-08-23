@@ -17,18 +17,18 @@ namespace TestRunnerFactory {
      * @param name The name of the TestRunner the user tried to use.
      * @returns The name of the package the user may want to install (if it exists).
      */
-    importSuggestion(name: string) {
+    public importSuggestion(name: string) {
       return `stryker-${name}-runner`;
     }
   }
 
-  let testRunnerFactoryInstance = new TestRunnerFactory();
+  const testRunnerFactoryInstance = new TestRunnerFactory();
 
   /**
    * Returns the current instance of the TestRunnerFactory.
    */
   export function instance() {
-    return <Factory<RunnerOptions, TestRunner>>testRunnerFactoryInstance;
+    return testRunnerFactoryInstance as Factory<RunnerOptions, TestRunner>;
   }
 }
 

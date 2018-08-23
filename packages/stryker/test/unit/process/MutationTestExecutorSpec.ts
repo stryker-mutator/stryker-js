@@ -30,10 +30,9 @@ const createTranspiledMutants = (...n: number[]) => {
 };
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  port: 4200,
-  level: LogLevel.Fatal
+  level: LogLevel.Fatal,
+  port: 4200
 });
-
 
 describe('MutationTestExecutor', () => {
 
@@ -120,9 +119,9 @@ describe('MutationTestExecutor', () => {
       secondSandbox.runMutant
         .withArgs(transpiledMutants[3]).resolves({ status: RunStatus.Timeout, tests: [{ name: 'test3', status: TestStatus.Skipped }] })
         .withArgs(transpiledMutants[5]).resolves(runResult({
+          errorMessages: ['foo', 'bar'],
           status: RunStatus.Error,
-          tests: [testResult({ name: 'test4', status: TestStatus.Skipped })],
-          errorMessages: ['foo', 'bar']
+          tests: [testResult({ name: 'test4', status: TestStatus.Skipped })]
         }));
     });
 

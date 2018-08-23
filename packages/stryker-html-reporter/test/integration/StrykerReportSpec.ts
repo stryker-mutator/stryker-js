@@ -6,7 +6,7 @@ import { readDirectoryTree } from '../helpers/fsHelpers';
 
 const REPORT_DIR = 'reports/mutation/stryker';
 
-describe('Html report of stryker', function () {
+describe('Html report of stryker', function() {
   let sut: any;
   this.timeout(20000);
 
@@ -37,25 +37,8 @@ describe('Html report of stryker', function () {
       'stryker-cli.js.html': 'stryker-cli.js.html',
       'TestFrameworkOrchestrator.js.html': 'TestFrameworkOrchestrator.js.html',
       'strykerResources': {
-        'popper.js': {
-          'dist': {
-            'umd': {
-              'popper.min.js': 'popper.min.js'
-            }
-          }
-        },
-        'highlightjs': {
-          'styles': {
-            'default.css': 'default.css'
-          }
-        },
-        'jquery': {
-          'dist': {
-            'jquery.slim.min.js': 'jquery.slim.min.js'
-          }
-        },
         'bootstrap': {
-          'css': {
+          css: {
             'bootstrap-grid.css': 'bootstrap-grid.css',
             'bootstrap-grid.min.css': 'bootstrap-grid.min.css',
             'bootstrap-reboot.css': 'bootstrap-reboot.css',
@@ -63,11 +46,28 @@ describe('Html report of stryker', function () {
             'bootstrap.css': 'bootstrap.css',
             'bootstrap.min.css': 'bootstrap.min.css'
           },
-          'js': {
+          js: {
             'bootstrap.bundle.js': 'bootstrap.bundle.js',
             'bootstrap.bundle.min.js': 'bootstrap.bundle.min.js',
             'bootstrap.js': 'bootstrap.js',
             'bootstrap.min.js': 'bootstrap.min.js'
+          }
+        },
+        'highlightjs': {
+          styles: {
+            'default.css': 'default.css'
+          }
+        },
+        'jquery': {
+          dist: {
+            'jquery.slim.min.js': 'jquery.slim.min.js'
+          }
+        },
+        'popper.js': {
+          dist: {
+            umd: {
+              'popper.min.js': 'popper.min.js'
+            }
           }
         },
         'stryker-80x80.png': 'stryker-80x80.png',

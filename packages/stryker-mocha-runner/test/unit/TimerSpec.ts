@@ -10,13 +10,11 @@ describe('Timer', () => {
 
   describe('when global Date object is mocked', () => {
     let clock: sinon.SinonFakeTimers;
-    beforeEach(() => 
-      clock = sinon.useFakeTimers());
+    beforeEach(() => clock = sinon.useFakeTimers());
 
-    afterEach(() => 
-      clock.restore());
+    afterEach(() => clock.restore());
 
-    it('should work even when global Date object is mocked', () => 
+    it('should work even when global Date object is mocked', () =>
       expect(sut.elapsedMs()).to.be.greaterThan(-1));
 
   });

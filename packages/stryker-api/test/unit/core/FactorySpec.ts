@@ -7,7 +7,7 @@ describe('Factory', () => {
   }
 
   class TestItem {
-    constructor(private s: { settings: string }) { }
+    constructor(private readonly s: { settings: string }) { }
 
     get someInstance() {
       return this.s.settings;
@@ -15,7 +15,7 @@ describe('Factory', () => {
   }
 
   describe('when creating a sub-class', () => {
-    let sut = new TestFactory('test');
+    const sut = new TestFactory('test');
 
     it('should have empty known names', () => {
       expect(sut.knownNames()).to.be.empty;

@@ -13,7 +13,7 @@ export default class SandboxPool {
   private readonly log = getLogger(SandboxPool.name);
   private readonly sandboxes: Promise<Sandbox>[] = [];
 
-  constructor(private options: Config, private testFramework: TestFramework | null, private initialFiles: ReadonlyArray<File>, private overheadTimeMS: number, private loggingContext: LoggingClientContext) {
+  constructor(private readonly options: Config, private readonly testFramework: TestFramework | null, private readonly initialFiles: ReadonlyArray<File>, private readonly overheadTimeMS: number, private readonly loggingContext: LoggingClientContext) {
   }
 
   public streamSandboxes(): Observable<Sandbox> {

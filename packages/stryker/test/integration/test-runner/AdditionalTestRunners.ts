@@ -2,9 +2,9 @@ import { RunResult, RunStatus, RunnerOptions, TestRunner, TestRunnerFactory } fr
 import { isRegExp } from 'util';
 
 class CoverageReportingTestRunner implements TestRunner {
-  run() {
+  public run() {
     (global as any).__coverage__ = 'overridden';
-    return Promise.resolve({ status: RunStatus.Complete, tests: [], coverage: <any>'realCoverage' });
+    return Promise.resolve({ status: RunStatus.Complete, tests: [], coverage: 'realCoverage' as any });
   }
 }
 
@@ -13,20 +13,20 @@ class TimeBombTestRunner implements TestRunner {
     // Setting a time bomb after 100 ms
     setTimeout(() => process.exit(), 500);
   }
-  run() {
+  public run() {
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
 
 class ProximityMineTestRunner implements TestRunner {
-  run() {
+  public run() {
     process.exit(42);
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
 
 class DirectResolvedTestRunner implements TestRunner {
-  run() {
+  public run() {
     (global as any).__coverage__ = 'coverageObject';
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
@@ -34,11 +34,11 @@ class DirectResolvedTestRunner implements TestRunner {
 
 class DiscoverRegexTestRunner implements TestRunner {
 
-  constructor(private runnerOptions: RunnerOptions) {
+  constructor(private readonly runnerOptions: RunnerOptions) {
   }
 
-  run(): Promise<RunResult> {
-    if (isRegExp(this.runnerOptions.strykerOptions['someRegex'])) {
+  public run(): Promise<RunResult> {
+    if (isRegExp(this.runnerOptions.strykerOptions.someRegex)) {
       return Promise.resolve({ status: RunStatus.Complete, tests: [] });
     } else {
       return Promise.resolve({ status: RunStatus.Error, tests: [], errorMessages: ['No regex found in runnerOptions.strykerOptions.someRegex'] });
@@ -48,7 +48,7 @@ class DiscoverRegexTestRunner implements TestRunner {
 
 class ErroredTestRunner implements TestRunner {
 
-  run() {
+  public run() {
     let expectedError: any = null;
     try {
       throw new SyntaxError('This is invalid syntax!');
@@ -61,26 +61,26 @@ class ErroredTestRunner implements TestRunner {
 
 class RejectInitRunner implements TestRunner {
 
-  init() {
+  public init() {
     return Promise.reject(new Error('Init was rejected'));
   }
 
-  run(): Promise<RunResult> {
+  public run(): Promise<RunResult> {
     throw new Error();
   }
 }
 
 class NeverResolvedTestRunner implements TestRunner {
-  run() {
+  public run() {
     return new Promise<RunResult>(() => { });
   }
 }
 
 class SlowInitAndDisposeTestRunner implements TestRunner {
 
-  inInit: boolean;
+  public inInit: boolean;
 
-  init() {
+  public init() {
     return new Promise<void>(resolve => {
       this.inInit = true;
       setTimeout(() => {
@@ -90,22 +90,22 @@ class SlowInitAndDisposeTestRunner implements TestRunner {
     });
   }
 
-  run() {
+  public run() {
     if (this.inInit) {
       throw new Error('Test should fail! Not yet initialized!');
     }
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 
-  dispose() {
+  public dispose() {
     return this.init();
   }
 }
 class VerifyWorkingFolderTestRunner implements TestRunner {
 
-  runResult: RunResult = { status: RunStatus.Complete, tests: [] };
+  public runResult: RunResult = { status: RunStatus.Complete, tests: [] };
 
-  run() {
+  public run() {
     if (process.cwd().toLowerCase() === __dirname.toLowerCase()) {
       return Promise.resolve(this.runResult);
     } else {
@@ -115,13 +115,13 @@ class VerifyWorkingFolderTestRunner implements TestRunner {
 }
 
 class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
-  promise: Promise<void>;
+  public promise: Promise<void>;
 
-  init() {
+  public init() {
     this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
   }
 
-  run() {
+  public run() {
     this.promise.catch(() => { });
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
