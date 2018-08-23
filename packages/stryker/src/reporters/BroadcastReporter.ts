@@ -63,7 +63,7 @@ export default class BroadcastReporter implements StrictReporter {
     return this.broadcast('wrapUp', undefined);
   }
 
-  private handleError(error: any, methodName: string, reporterName: string) {
+  private handleError(error: Error, methodName: string, reporterName: string) {
     this.log.error(`An error occurred during '${methodName}' on reporter '${reporterName}'. Error is: ${error}`);
   }
 

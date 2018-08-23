@@ -47,7 +47,7 @@ function writeFile(fileName: string, data: string | Buffer, instrumenter: NodeJS
 
 function writeToStream(data: string | Buffer, stream: NodeJS.WritableStream): Promise<void> {
   return new Promise((res, rej) => {
-    stream.end(data as string, (err: any) => {
+    stream.end(data as string, (err: Error) => {
       if (err) {
         rej(err);
       } else {

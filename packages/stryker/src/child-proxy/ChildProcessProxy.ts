@@ -194,7 +194,7 @@ export default class ChildProcessProxy<T> {
     }
   }
 
-  private innerProcessIsCrashed(error: any) {
+  private innerProcessIsCrashed(error: Error) {
     return isErrnoException(error) && (error.code === BROKEN_PIPE_ERROR_CODE || error.code === IPC_CHANNEL_CLOSED_ERROR_CODE);
   }
 

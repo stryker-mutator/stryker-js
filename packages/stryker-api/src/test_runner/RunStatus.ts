@@ -1,4 +1,3 @@
-
 enum RunStatus {
   /**
    * Indicates that a test run is completed with failed or succeeded tests

@@ -1,4 +1,3 @@
-
 export default class Timer {
   private readonly now: () => Date;
   private start: Date;
