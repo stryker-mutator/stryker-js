@@ -6,8 +6,12 @@ export const KARMA_CONFIG_KEY = 'karma';
 
 export type ProjectKind = 'custom' | 'angular-cli';
 
+export interface NgTestArguments {
+  [key: string]: string | undefined;
+}
+
 export interface NgConfigOptions {
-  testArguments?: string[];
+  testArguments?: NgTestArguments;
 }
 
 export default interface StrykerKarmaSetup {
