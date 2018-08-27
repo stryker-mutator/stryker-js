@@ -13,14 +13,10 @@ import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspile
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
 
-export type Mock<T> = {
-  [P in keyof T]: sinon.SinonStub;
-};
+export type Mock<T> = sinon.SinonStubbedInstance<T>;
 
-export type Constructor<T> = Function & { prototype: T };
-
-export function mock<T>(constructorFn: Constructor<T>): Mock<T> {
-  return sandbox.createStubInstance(constructorFn) as Mock<T>;
+export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
+  return sandbox.createStubInstance(constructorFn);
 }
 
 function isPrimitive(value: any) {
