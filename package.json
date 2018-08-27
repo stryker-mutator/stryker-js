@@ -22,7 +22,7 @@
     "browserify": "^16.2.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
-    "concurrently": "^3.6.0",
+    "concurrently": "^4.0.1",
     "execa": "^0.10.0",
     "glob": "^7.1.1",
     "jasmine": "^3.1.0",
