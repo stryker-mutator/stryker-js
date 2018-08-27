@@ -5,10 +5,10 @@ export type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;
 };
 
-export type Constructor<T> = Function & { prototype: T };
+export type Constructor<T> = { new(...args: any[]): T };
 
-export function mock<T>(constructorFn: Constructor<T>): Mock<T> {
-  return sinon.createStubInstance(constructorFn) as Mock<T>;
+export function mock<T>(constructorFn: Constructor<T>): sinon.SinonStubbedInstance<T> {
+  return sinon.createStubInstance<T>(constructorFn);
 }
 
 export const logger = (): Mock<Logger> => {

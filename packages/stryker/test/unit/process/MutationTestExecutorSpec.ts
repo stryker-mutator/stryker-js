@@ -69,7 +69,7 @@ describe('MutationTestExecutor', () => {
 
     beforeEach(async () => {
       sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter, 42, LOGGING_CONTEXT);
-      const sandbox = mock<Sandbox>(Sandbox);
+      const sandbox = mock<Sandbox>(Sandbox as any);
       sandbox.runMutant.resolves(mutantResult());
       sandboxPoolMock.streamSandboxes.returns(of(sandbox));
       mutantTranspilerMock.transpileMutants.returns(empty());
@@ -103,8 +103,8 @@ describe('MutationTestExecutor', () => {
       transpiledMutants[1].transpileResult.error = 'Error! Cannot negate a string (or something)';
       transpiledMutants[6].changedAnyTranspiledFiles = false;
 
-      firstSandbox = mock(Sandbox);
-      secondSandbox = mock(Sandbox);
+      firstSandbox = mock(Sandbox as any);
+      secondSandbox = mock(Sandbox as any);
       mutantTranspilerMock.transpileMutants.returns(of(...transpiledMutants));
       sandboxPoolMock.streamSandboxes.returns(of(firstSandbox, secondSandbox));
 
