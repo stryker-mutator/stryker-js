@@ -23,7 +23,7 @@
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^4.0.1",
-    "execa": "^0.10.0",
+    "execa": "^1.0.0",
     "glob": "^7.1.1",
     "jasmine": "^3.1.0",
     "jasmine-core": "^3.1.0",
