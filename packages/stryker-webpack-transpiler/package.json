@@ -38,8 +38,9 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-webpack-transpiler#readme",
   "devDependencies": {
+    "@types/enhanced-resolve": "^3.0.6",
     "@types/memory-fs": "~0.3.0",
-    "@types/webpack": "~4.1.6",
+    "@types/webpack": "~4.4.9",
     "raw-loader": "~0.5.1",
     "stryker-api": "^0.21.0",
     "webpack": "~4.17.1"

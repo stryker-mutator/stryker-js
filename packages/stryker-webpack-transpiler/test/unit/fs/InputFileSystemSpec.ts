@@ -13,7 +13,7 @@ describe('InputFileSystem', () => {
     memoryFSMock = createMockInstance(MemoryFS);
     innerFSMock = createMockInstance(CachedInputFileSystem);
     sandbox.stub(memoryFSModule, 'default').returns(memoryFSMock);
-    sut = new InputFileSystem(innerFSMock);
+    sut = new InputFileSystem(innerFSMock as any);
   });
 
   describe('writeFileSync', () => {
@@ -44,7 +44,7 @@ describe('InputFileSystem', () => {
 
     it('should forward to fs if memory FS resulted in an error', done => {
       memoryFSMock.stat.callsArgOnWith(1, sut, new Error('foobar'));
-      innerFSMock.stat.callsArgWith(1, null, 'the stats');
+      (innerFSMock.stat as any).callsArgWith(1, null, 'the stats');
       sut.stat('foobar', (error, stats) => {
         expect(error).not.ok;
         expect(stats).eq('the stats');
@@ -55,7 +55,7 @@ describe('InputFileSystem', () => {
     it('should forward fs errors if file did not exist', done => {
       // Arrange
       const expectedError = new Error('File not exists');
-      innerFSMock.stat.callsArgWith(1, expectedError);
+      (innerFSMock.stat as any).callsArgWith(1, expectedError);
       memoryFSMock.stat.callsArgOnWith(1, sut, new Error('foobar'));
 
       // Act
@@ -82,7 +82,7 @@ describe('InputFileSystem', () => {
 
     it('should forward to real FS if memory-fs gave an error', done => {
       memoryFSMock.readFile.callsArgOnWith(1, sut,  new Error('foobar'));
-      innerFSMock.readFile.callsArgWith(1, undefined, 'the content');
+      (innerFSMock.readFile as any).callsArgWith(1, undefined, 'the content');
       sut.readFile('foobar', (error: Error, content: string) => {
         expect(content).eq('the content');
         expect(innerFSMock.readFile).calledWith('foobar');
@@ -93,7 +93,7 @@ describe('InputFileSystem', () => {
     it('should forward fs errors if file did not exist', done => {
       // Arrange
       const expectedError = new Error('File not exists');
-      innerFSMock.readFile.callsArgWith(1, expectedError);
+      (innerFSMock.readFile as any).callsArgWith(1, expectedError);
       memoryFSMock.readFile.callsArgOnWith(1, sut, new Error('foobar'));
 
       // Act
@@ -116,7 +116,7 @@ describe('InputFileSystem', () => {
     });
     it('should forward to real FS if memory-fs gave an error', () => {
       memoryFSMock.statSync.throws(new Error('foobar'));
-      innerFSMock.statSync.returns('foobar stats');
+      (innerFSMock.statSync as any).returns('foobar stats');
       const actual = sut.statSync('path');
       expect(actual).eq('foobar stats');
       expect(innerFSMock.statSync).calledWith('path');
@@ -134,7 +134,7 @@ describe('InputFileSystem', () => {
     it('should forward to real FS if memory-fs gave an error', () => {
       const error = new Error('foobar');
       memoryFSMock.readFileSync.throws(error);
-      innerFSMock.readFileSync.returns('foobar file');
+      (innerFSMock.readFileSync as any).returns('foobar file');
       const actual = sut.readFileSync('path');
       expect(actual).eq('foobar file');
       expect(innerFSMock.readFileSync).calledWith('path');

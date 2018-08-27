@@ -1,8 +1,8 @@
 import MemoryFS from './MemoryFS';
-import { webpack, Callback } from '../types';
+import * as webpack from 'webpack';
 import * as fs from 'fs';
 import { dirname } from 'path';
-import { CachedInputFileSystem, NodeJsInputFileSystem, Stats } from 'enhanced-resolve';
+import { CachedInputFileSystem, NodeJsInputFileSystem } from 'enhanced-resolve';
 
 // Cache duration is same as webpack has
 // => https://github.com/webpack/webpack/blob/efc576c8b744e7a015ab26f1f46932ba3ca7d4f1/lib/node/NodeEnvironmentPlugin.js#L14
@@ -25,10 +25,10 @@ export default class InputFileSystem extends CachedInputFileSystem implements we
     this.memoryFS.writeFileSync(name, content);
   }
 
-  public stat(path: string, callback: Callback<fs.Stats>): void {
+  public stat(path: string, callback: (err: Error, stats: any) => void): void {
     this.memoryFS.stat(path, (err: Error, stats: any) => {
       if (err) {
-        super.stat(path, callback);
+        (super.stat as any)(path, callback);
       }
       else {
         callback(err, stats);
@@ -40,7 +40,7 @@ export default class InputFileSystem extends CachedInputFileSystem implements we
     const originalCallback = args[args.length - 1];
     const newCallback = (error: NodeJS.ErrnoException, content: any) => {
       if (error) {
-        super.readFile.apply(this, args);
+        (super.readFile as (path: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void) => void).apply(this, args);
       } else {
         originalCallback(error, content);
       }
@@ -50,19 +50,26 @@ export default class InputFileSystem extends CachedInputFileSystem implements we
     this.memoryFS.readFile.apply(this.memoryFS, memoryFSArgs);
   }
 
-  public readFileSync(path: string, encoding?: string) {
+  public readFileSync(path: string, encoding?: any) {
     try {
       return this.memoryFS.readFileSync(path, encoding);
     } catch (err) {
-      return super.readFileSync(path, encoding);
+      return (super.readFileSync as (filename: string, options?: { flag?: string; }) => Buffer)(path, encoding);
     }
   }
 
-  public statSync(path: string): Stats {
+  public statSync(path: string): fs.Stats {
     try {
-      return this.memoryFS.statSync(path);
+      return this.memoryFS.statSync(path) as any;
     } catch (err) {
-      return super.statSync(path);
+      return (super.statSync as (path: string | Buffer) => fs.Stats)(path);
     }
+  }
+
+  readlink(path: string, callback: (err: Error, linkString: string) => void) {
+    return (super.readlink as (path: string, callback: (err: Error, linkString: string) => void) => void)(path, callback);
+  }
+  readlinkSync(path: string): string {
+    return (super.readlinkSync as (path: string) => string)(path);
   }
 }

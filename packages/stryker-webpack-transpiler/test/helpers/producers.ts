@@ -1,6 +1,5 @@
 import { Configuration, Stats } from 'webpack';
 import { WebpackCompilerMock } from './mockInterfaces';
-import * as sinon from 'sinon';
 import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
 import { File } from 'stryker-api/core';
 
@@ -11,7 +10,7 @@ export type Mock<T> = {
 export type Constructor<T> = { new(...args: any[]): T };
 
 export function createMockInstance<T>(type: Constructor<T>) {
-  return sinon.createStubInstance(type) as Mock<T>;
+  return sandbox.createStubInstance(type) as Mock<T>;
 }
 
 export function createFakeWebpackConfig(): Configuration {

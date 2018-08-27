@@ -17,6 +17,7 @@ export default class WebpackCompiler {
     const compiler = webpack(webpackConfig);
     // Setting filesystem to provided fs so compilation can be done in memory
     (compiler as any).inputFileSystem = this._inputFS;
+    compiler.inputFileSystem = this._inputFS;
     compiler.outputFileSystem = this._outputFS;
     (compiler as any).resolvers.normal.fileSystem = this._inputFS;
     (compiler as any).resolvers.context.fileSystem = this._inputFS;
