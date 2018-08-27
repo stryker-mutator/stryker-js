@@ -17,7 +17,7 @@
     "@types/mz": "0.0.32",
     "@types/node": "^6.0.114",
     "@types/rimraf": "2.0.2",
-    "@types/sinon": "^4.0.0",
+    "@types/sinon": "^5.0.1",
     "@types/sinon-chai": "^3.2.0",
     "browserify": "^16.2.0",
     "chai": "^4.1.1",
