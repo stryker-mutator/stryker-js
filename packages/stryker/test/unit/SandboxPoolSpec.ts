@@ -30,11 +30,11 @@ describe('SandboxPool', () => {
   beforeEach(() => {
     options = config();
     expectedTestFramework = testFramework();
-    firstSandbox = mock(Sandbox);
+    firstSandbox = mock(Sandbox as any);
     firstSandbox.dispose.resolves();
-    secondSandbox = mock(Sandbox);
+    secondSandbox = mock(Sandbox as any);
     secondSandbox.dispose.resolves();
-    const genericSandboxForAllSubsequentCallsToNewSandbox = mock<Sandbox>(Sandbox);
+    const genericSandboxForAllSubsequentCallsToNewSandbox = mock<Sandbox>(Sandbox as any);
     genericSandboxForAllSubsequentCallsToNewSandbox.dispose.resolves();
     createStub = global.sandbox.stub(Sandbox, 'create')
       .resolves(genericSandboxForAllSubsequentCallsToNewSandbox)
@@ -109,7 +109,7 @@ describe('SandboxPool', () => {
 
           // Assert: dispose should not have resolved yet, because last sandbox is not created yet
           expect(disposeAllResolved).not.ok;
-          task.resolve(mock(Sandbox) as any); // Make sure it finally is resolved
+          task.resolve(mock(Sandbox as any) as any); // Make sure it finally is resolved
           await disposeAllPromise;
         }
       }), toArray()).toPromise();
