@@ -67,6 +67,27 @@ describe('KarmaTestRunner', () => {
     expect(logMock.warn).calledWith('[deprecated]: config option karmaConfig is renamed to karma.config');
   });
 
+  it('should load deprecated karma options', () => {
+    const config = {
+      config: {
+        basePath: 'foo/bar'
+      },
+      configFile: 'baz.conf.js',
+      project: 'angular-cli'
+    };
+    const expectedSetup: StrykerKarmaSetup = {
+      config: {
+        basePath: 'foo/bar'
+      },
+      configFile: 'baz.conf.js',
+      projectType: 'angular-cli'
+    };
+    settings.strykerOptions.karma = config;
+    new KarmaTestRunner(settings);
+    expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedSetup.config, karmaConfigFile: expectedSetup.configFile });
+    expect(logMock.warn).calledWith('DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.');
+  });
+
   describe('init', () => {
     let sut: KarmaTestRunner;
 

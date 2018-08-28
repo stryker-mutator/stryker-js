@@ -22,6 +22,10 @@ export default class KarmaTestRunner implements TestRunner {
 
   constructor(private readonly options: RunnerOptions) {
     const setup = this.loadSetup(options);
+    if (setup.project !== undefined) {
+      setup.projectType = setup.project;
+      this.log.warn('DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.');
+    }
     this.starter = new ProjectStarter(setup.projectType);
     this.setGlobals(setup, options.port);
     this.cleanRun();
