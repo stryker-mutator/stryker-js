@@ -6,24 +6,19 @@ import * as path from 'path';
 
 describe('Integration test for Jest ConfigEditor', () => {
   let jestConfigEditor: JestConfigEditor;
-  let sandbox: sinon.SinonSandbox;
   let getProjectRootStub: sinon.SinonStub;
 
   const projectRoot: string = process.cwd();
   let config: Config;
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
-    getProjectRootStub = sandbox.stub(process, 'cwd');
+    getProjectRootStub = sinon.stub(process, 'cwd');
     getProjectRootStub.returns(projectRoot);
 
     jestConfigEditor = new JestConfigEditor();
 
     config = new Config();
   });
-
-  afterEach(() => sandbox.restore());
 
   it('should create a Jest configuration for a React project', () => {
     config.set({ jest: { projectType: 'react' } });
@@ -144,7 +139,7 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.jest.projectType).to.equal('default');
+    expect(config.jest.projectType).to.equal('custom');
     expect(config.jest.config).to.deep.equal({
       bail: false,
       collectCoverage: false,
@@ -163,7 +158,7 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.jest.projectType).to.equal('default');
+    expect(config.jest.projectType).to.equal('custom');
     expect(config.jest.config).to.deep.equal({
       bail: false,
       collectCoverage: false,

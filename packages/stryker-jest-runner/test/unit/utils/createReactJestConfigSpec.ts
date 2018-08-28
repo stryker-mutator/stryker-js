@@ -4,21 +4,16 @@ import * as sinon from 'sinon';
 
 describe('createReactJestConfig', () => {
   let loaderStub: sinon.SinonStub;
-  let sandbox: sinon.SinonSandbox;
   let loader: any = {
     require: () => {}
   };
   
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
-    loaderStub = sandbox.stub(loader, 'require');
-    loaderStub.returns((resolve: Function, projectRoot: string, ejected: boolean) => {
+    loaderStub = sinon.stub(loader, 'require');
+    loaderStub.returns(() => {
       return 'jestConfig';
     });
   });
-
-  afterEach(() => sandbox.restore());
 
   it('should call the loader with the react jest config generator', () => {
     createReactJestConfig(() => {}, '/path/to/project', false, loader.require);
@@ -33,21 +28,16 @@ describe('createReactJestConfig', () => {
 
 describe('createReactTsJestConfig', () => {
   let loaderStub: sinon.SinonStub;
-  let sandbox: sinon.SinonSandbox;
   let loader: any = {
     require: () => {}
   };
   
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
-    loaderStub = sandbox.stub(loader, 'require');
+    loaderStub = sinon.stub(loader, 'require');
     loaderStub.returns((resolve: Function, projectRoot: string, ejected: boolean) => {
       return 'jestConfig';
     });
   });
-
-  afterEach(() => sandbox.restore());
 
   it('should call the loader with the react jest config generator', () => {
     createReactTsJestConfig(() => {}, '/path/to/project', false, loader.require);

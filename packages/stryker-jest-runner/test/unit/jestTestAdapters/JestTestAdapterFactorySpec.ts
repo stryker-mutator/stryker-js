@@ -8,25 +8,16 @@ const loader: any = {
 };
 
 describe('JestTestAdapterFactory', () => {
-  let sandbox: sinon.SinonSandbox;
-
   let jestPromiseTestAdapterStub: TestAdapterStub;
   let requireStub: sinon.SinonStub;
   let debugLoggerStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
     jestPromiseTestAdapterStub = sinon.createStubInstance(JestPromiseTestAdapter);
-
-    sandbox.stub(jestPromiseTestAdapter, 'default').returns(jestPromiseTestAdapterStub);
-
-    requireStub = sandbox.stub(loader, 'require');
-
+    sinon.stub(jestPromiseTestAdapter, 'default').returns(jestPromiseTestAdapterStub);
+    requireStub = sinon.stub(loader, 'require');
     debugLoggerStub = (JestTestAdapterFactory as any).log.debug = sinon.stub();
   });
-
-  afterEach(() => sandbox.restore());
 
   it('should return a Promise-based adapter when the Jest version is higher or equal to 22.0.0', () => {
     requireStub.returns({ version: '22.0.0' });

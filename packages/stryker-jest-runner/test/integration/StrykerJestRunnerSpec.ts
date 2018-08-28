@@ -24,7 +24,6 @@ describe('Integration test for Strykers Jest runner', function() {
   let jestConfigEditor: JestConfigEditor;
   let runOptions: RunnerOptions;
   let processCwdStub: sinon.SinonStub;
-  let sandbox: sinon.SinonSandbox;
 
   // Names of the tests in the example projects
   const testNames = [
@@ -37,9 +36,7 @@ describe('Integration test for Strykers Jest runner', function() {
   ];
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
-    processCwdStub = sandbox.stub(process, 'cwd');
+    processCwdStub = sinon.stub(process, 'cwd');
 
     jestConfigEditor = new JestConfigEditor();
 
@@ -49,8 +46,6 @@ describe('Integration test for Strykers Jest runner', function() {
       strykerOptions: new Config()
     };
   });
-
-  afterEach(() => sandbox.restore());
 
   it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));

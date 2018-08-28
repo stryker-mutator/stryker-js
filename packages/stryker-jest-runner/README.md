@@ -39,7 +39,7 @@ The stryker-jest-runner also provides a couple of configurable options using the
 ```javascript
 {
     jest: {
-        projectType: 'default',
+        projectType: 'custom',
         config: require('path/to/your/custom/jestConfig.js')
     }
 }
