@@ -10,8 +10,8 @@ const fakeRequire: any = {
 
 describe(`${CustomJestConfigLoader.name} integration`, () => {
   let sut: CustomJestConfigLoader;
-  let projectRoot: string = '/path/to/project/root';
-  let fsStub: FsStub = {};
+  const projectRoot: string = '/path/to/project/root';
+  const fsStub: FsStub = {};
   let requireStub: sinon.SinonStub;
 
   beforeEach(() => {

@@ -52,18 +52,18 @@ describe('StrykerInitializer', () => {
       stubTranspilers('stryker-typescript', 'stryker-webpack');
       stubReporters('stryker-dimension-reporter', 'stryker-mars-reporter');
       stubPackageClient({
+        'stryker-awesome-framework': null,
         'stryker-awesome-runner': null,
+        'stryker-dimension-reporter': null,
+        'stryker-ghost-runner': null,
+        'stryker-hyper-framework': null,
         'stryker-hyper-runner': {
           files: [],
           someOtherSetting: 'enabled'
         },
-        'stryker-ghost-runner': null,
-        'stryker-awesome-framework': null,
-        'stryker-hyper-framework': null,
-        'stryker-typescript': null,
         'stryker-javascript': null,
-        'stryker-dimension-reporter': null,
         'stryker-mars-reporter': null,
+        'stryker-typescript': null,
         'stryker-webpack': null
       });
       fsWriteFile.resolves({});
@@ -71,12 +71,12 @@ describe('StrykerInitializer', () => {
 
     it('should prompt for test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
       arrangeAnswers({
+        mutator: 'typescript',
+        packageManager: 'yarn',
+        reporters: ['dimension', 'mars'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        mutator: 'typescript',
-        transpilers: ['webpack'],
-        reporters: ['dimension', 'mars'],
-        packageManager: 'yarn'
+        transpilers: ['webpack']
       });
       await sut.initialize();
       expect(inquirerPrompt).to.have.been.callCount(6);
@@ -111,11 +111,11 @@ describe('StrykerInitializer', () => {
 
     it('should configure coverageAnalysis: "all" when the user did not select a testFramework', async () => {
       inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: ['dimension', 'mars'],
         testFramework: 'None/other',
         testRunner: 'awesome',
-        transpilers: ['webpack'],
-        reporters: ['dimension', 'mars'],
-        packageManager: 'npm',
+        transpilers: ['webpack']
       });
       await sut.initialize();
       expect(inquirerPrompt).to.have.been.callCount(6);
@@ -125,12 +125,12 @@ describe('StrykerInitializer', () => {
 
     it('should install any additional dependencies', async () => {
       inquirerPrompt.resolves({
+        mutator: 'typescript',
+        packageManager: 'npm',
+        reporters: ['dimension', 'mars'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        mutator: 'typescript',
-        transpilers: ['webpack'],
-        reporters: ['dimension', 'mars'],
-        packageManager: 'npm'
+        transpilers: ['webpack']
       });
       await sut.initialize();
       expect(out).to.have.been.calledWith('Installing NPM dependencies...');
@@ -140,12 +140,12 @@ describe('StrykerInitializer', () => {
 
     it('should configure testFramework, testRunner, mutator, transpilers, reporters, and packageManager', async () => {
       inquirerPrompt.resolves({
+        mutator: 'typescript',
+        packageManager: 'npm',
+        reporters: ['dimension', 'mars', 'progress'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        mutator: 'typescript',
-        transpilers: ['webpack'],
-        reporters: ['dimension', 'mars', 'progress'],
-        packageManager: 'npm'
+        transpilers: ['webpack']
       });
       await sut.initialize();
       expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('testRunner: "awesome"')
@@ -159,11 +159,11 @@ describe('StrykerInitializer', () => {
 
     it('should configure the additional settings from the plugins', async () => {
       inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
         testFramework: 'hyper',
         testRunner: 'hyper',
-        transpilers: ['webpack'],
-        reporters: [],
-        packageManager: 'npm'
+        transpilers: ['webpack']
       });
       await sut.initialize();
       expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('someOtherSetting: "enabled"'));
@@ -173,10 +173,10 @@ describe('StrykerInitializer', () => {
     describe('but no testFramework can be found that supports the testRunner', () => {
 
       beforeEach(() => inquirerPrompt.resolves({
-        testRunner: 'ghost',
-        transpilers: ['webpack'],
+        packageManager: 'npm',
         reporters: ['dimension', 'mars'],
-        packageManager: 'npm'
+        testRunner: 'ghost',
+        transpilers: ['webpack']
       }));
 
       it('should not prompt for test framework', async () => {
@@ -198,10 +198,10 @@ describe('StrykerInitializer', () => {
       const expectedError = new Error('something');
       fsWriteFile.rejects(expectedError);
       inquirerPrompt.resolves({
-        testRunner: 'ghost',
-        transpilers: ['webpack'],
+        packageManager: 'npm',
         reporters: [],
-        packageManager: 'npm'
+        testRunner: 'ghost',
+        transpilers: ['webpack']
       });
 
       return expect(sut.initialize()).to.eventually.be.rejectedWith(expectedError);
@@ -210,10 +210,10 @@ describe('StrykerInitializer', () => {
     it('should recover when install fails', async () => {
       childExecSync.throws('error');
       inquirerPrompt.resolves({
-        testRunner: 'ghost',
-        transpilers: ['webpack'],
+        packageManager: 'npm',
         reporters: [],
-        packageManager: 'npm'
+        testRunner: 'ghost',
+        transpilers: ['webpack']
       });
       stubTranspilers('webpack');
       stubPackageClient({ 'stryker-webpack': null });
@@ -234,9 +234,9 @@ describe('StrykerInitializer', () => {
       stubReporters();
       stubPackageClient({ 'stryker-javascript': null, 'stryker-webpack': null });
       inquirerPrompt.resolves({
+        packageManager: 'npm',
         reporters: ['clear-text'],
-        transpilers: ['webpack'],
-        packageManager: 'npm'
+        transpilers: ['webpack']
       });
 
       await sut.initialize();
@@ -250,10 +250,10 @@ describe('StrykerInitializer', () => {
       stubTestRunners('stryker-awesome-runner');
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
       inquirerPrompt.resolves({
-        testRunner: 'awesome',
+        packageManager: 'npm',
         reporters: ['clear-text'],
-        transpilers: ['webpack'],
-        packageManager: 'npm'
+        testRunner: 'awesome',
+        transpilers: ['webpack']
       });
       stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
@@ -274,10 +274,10 @@ describe('StrykerInitializer', () => {
       stubTranspilers('stryker-webpack');
       stubReporters();
       inquirerPrompt.resolves({
-        testRunner: 'awesome',
+        packageManager: 'npm',
         reporters: ['clear-text'],
-        transpilers: ['webpack'],
-        packageManager: 'npm'
+        testRunner: 'awesome',
+        transpilers: ['webpack']
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-webpack': null });
 
@@ -295,9 +295,9 @@ describe('StrykerInitializer', () => {
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-transpiler').rejects();
       stubReporters();
       inquirerPrompt.resolves({
-        testRunner: 'awesome',
+        packageManager: 'npm',
         reporters: ['clear-text'],
-        packageManager: 'npm'
+        testRunner: 'awesome'
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null });
 
@@ -315,10 +315,10 @@ describe('StrykerInitializer', () => {
       stubTranspilers('stryker-webpack');
       restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-reporter').rejects();
       inquirerPrompt.resolves({
-        testRunner: 'awesome',
+        packageManager: 'npm',
         reporters: ['clear-text'],
-        transpilers: ['webpack'],
-        packageManager: 'npm'
+        testRunner: 'awesome',
+        transpilers: ['webpack']
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null, 'stryker-webpack': null });
 
@@ -335,10 +335,10 @@ describe('StrykerInitializer', () => {
       stubTranspilers('webpack');
       stubReporters();
       inquirerPrompt.resolves({
-        testRunner: 'awesome',
+        packageManager: 'npm',
         reporters: ['clear-text'],
-        transpilers: ['webpack'],
-        packageManager: 'npm'
+        testRunner: 'awesome',
+        transpilers: ['webpack']
       });
       restClientPackageGet.rejects();
 
@@ -359,46 +359,46 @@ describe('StrykerInitializer', () => {
 
   const stubTestRunners = (...testRunners: string[]) => {
     restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').resolves({
-      statusCode: 200,
       result: {
         results: testRunners.map(testRunner => ({ package: { name: testRunner } }))
-      }
+      },
+      statusCode: 200
     });
   };
 
   const stubTestFrameworks = (...testFrameworks: { name: string; keywords: string[]; }[]) => {
     restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').resolves({
-      statusCode: 200,
       result: {
         results: testFrameworks.map(testFramework => ({ package: testFramework }))
-      }
+      },
+      statusCode: 200
     });
   };
 
   const stubMutators = (...mutators: string[]) => {
     restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-mutator').resolves({
-      statusCode: 200,
       result: {
         results: mutators.map(mutator => ({ package: { name: mutator } }))
-      }
+      },
+      statusCode: 200
     });
   };
 
   const stubTranspilers = (...transpilers: string[]) => {
     restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-transpiler').resolves({
-      statusCode: 200,
       result: {
         results: transpilers.map(transpiler => ({ package: { name: transpiler } }))
-      }
+      },
+      statusCode: 200
     });
   };
 
   const stubReporters = (...reporters: string[]) => {
     restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-reporter').resolves({
-      statusCode: 200,
       result: {
         results: reporters.map(reporter => ({ package: { name: reporter } }))
-      }
+      },
+      statusCode: 200
     });
   };
   const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: object | null; }) => {
@@ -411,12 +411,11 @@ describe('StrykerInitializer', () => {
         pkgConfig.initStrykerConfig = cfg;
       }
       restClientPackageGet.withArgs(`/${packageName}/latest`).resolves({
-        statusCode: 200,
-        result: pkgConfig
+        result: pkgConfig,
+        statusCode: 200
       });
     });
   };
-
 
   interface StrykerInitAnswers {
     testFramework: string;
@@ -429,15 +428,13 @@ describe('StrykerInitializer', () => {
 
   function arrangeAnswers(answerOverrides?: Partial<StrykerInitAnswers>) {
     const answers: StrykerInitAnswers = Object.assign({
+      mutator: 'typescript',
+      packageManager: 'yarn',
+      reporters: ['dimension', 'mars'],
       testFramework: 'awesome',
       testRunner: 'awesome',
-      mutator: 'typescript',
-      transpilers: ['webpack'],
-      reporters: ['dimension', 'mars'],
-      packageManager: 'yarn'
+      transpilers: ['webpack']
     }, answerOverrides);
     inquirerPrompt.resolves(answers);
   }
-
 });
-

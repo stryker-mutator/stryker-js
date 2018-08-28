@@ -18,10 +18,10 @@ describe('BabelConfigReader', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     logStub = {
-      trace: sandbox.stub(),
-      info: sandbox.stub(),
+      debug: sandbox.stub(),
       error: sandbox.stub(),
-      debug: sandbox.stub()
+      info: sandbox.stub(),
+      trace: sandbox.stub()
     };
 
     sandbox.stub(logging, 'getLogger').returns(logStub);
@@ -57,7 +57,7 @@ describe('BabelConfigReader', () => {
     });
 
     it('should log the path to the babelrc file', () => {
-      
+
       const editor = new BabelConfigReader();
       const config = new Config();
       config.set({ babelrcFile: '.babelrc' });
@@ -66,7 +66,7 @@ describe('BabelConfigReader', () => {
 
       expect(logStub.info).calledWith(`Reading .babelrc file from path "${path.resolve(config.babelrcFile)}"`);
     });
-    
+
     it('should log the babel config if read from an babelrc file', () => {
       const editor = new BabelConfigReader();
       const config = new Config();

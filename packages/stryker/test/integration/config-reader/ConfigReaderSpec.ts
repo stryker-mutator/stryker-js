@@ -6,7 +6,7 @@ import ConfigReader from '../../../src/config/ConfigReader';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
-describe('ConfigReader', function () {
+describe('ConfigReader', function() {
   this.timeout(15000);
 
   let sut: ConfigReader;
@@ -31,8 +31,8 @@ describe('ConfigReader', function () {
       });
 
       it('should only use supplied config', () => {
-        expect(result['some']).to.be.eq('option');
-        expect(result['someOther']).to.be.eq(2);
+        expect(result.some).to.be.eq('option');
+        expect(result.someOther).to.be.eq(2);
         expect(log.warn).not.called;
       });
     });
@@ -40,22 +40,22 @@ describe('ConfigReader', function () {
     describe('without config file or CLI options', () => {
       describe('with a stryker.conf.js in the CWD', () => {
         it('should parse the config', () => {
-          let mockCwd = process.cwd() + '/testResources/config-reader';
+          const mockCwd = process.cwd() + '/testResources/config-reader';
           sandbox.stub(process, 'cwd').returns(mockCwd);
           sut = new ConfigReader({});
 
           result = sut.readConfig();
 
-          expect(result['valid']).to.be.eq('config');
-          expect(result['should']).to.be.eq('be');
-          expect(result['read']).to.be.eq(true);
+          expect(result.valid).to.be.eq('config');
+          expect(result.should).to.be.eq('be');
+          expect(result.read).to.be.eq(true);
           expect(log.warn).not.called;
         });
       });
 
       describe('without a stryker.conf.js in the CWD', () => {
         it('should return default config', () => {
-          let mockCwd = process.cwd() + '/testResources/config-reader/no-config';
+          const mockCwd = process.cwd() + '/testResources/config-reader/no-config';
           sandbox.stub(process, 'cwd').returns(mockCwd);
 
           sut = new ConfigReader({});
@@ -74,9 +74,9 @@ describe('ConfigReader', function () {
 
         result = sut.readConfig();
 
-        expect(result['valid']).to.be.eq('config');
-        expect(result['should']).to.be.eq('be');
-        expect(result['read']).to.be.eq(true);
+        expect(result.valid).to.be.eq('config');
+        expect(result.should).to.be.eq('be');
+        expect(result.read).to.be.eq(true);
         expect(log.warn).not.called;
       });
 
@@ -86,7 +86,7 @@ describe('ConfigReader', function () {
 
           result = sut.readConfig();
 
-          expect(result['read']).to.be.eq(false);
+          expect(result.read).to.be.eq(false);
           expect(log.warn).not.called;
         });
       });
@@ -157,7 +157,7 @@ describe('ConfigReader', function () {
 
       it('should log a warning when timeoutMs is specified', () => {
         const timeoutMs = 30000;
-        sut = new ConfigReader({ timeoutMs: timeoutMs });
+        sut = new ConfigReader({ timeoutMs });
 
         const result = sut.readConfig();
 

@@ -6,7 +6,7 @@ import RemoveConditionalsMutator from '../../../src/mutators/RemoveConditionalsM
 import { NodeIdentifier, parse, identified } from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
 
-let expect = chai.expect;
+const expect = chai.expect;
 
 describe('RemoveConditionalsMutator', () => {
   let sut: RemoveConditionalsMutator;
@@ -19,7 +19,7 @@ describe('RemoveConditionalsMutator', () => {
 
   beforeEach(() => {
     sut = new RemoveConditionalsMutator();
-    let code =
+    const code =
       `var price = 99.95;
     if(price > 25){
       console.log("Too expensive");
@@ -64,7 +64,7 @@ describe('RemoveConditionalsMutator', () => {
     it('when given a do-while loop', () => {
       const mutatedNodes = actMutator(doWhileLoop);
 
-      const testValue = (<estree.Literal>mutatedNodes[0]).value;
+      const testValue = (mutatedNodes[0] as estree.Literal).value;
       expect(testValue).to.be.false;
       expect(mutatedNodes[0].nodeID).to.not.eq(doWhileLoop.nodeID);
       expect(mutatedNodes[0].nodeID).to.eq(identified(doWhileLoop.test).nodeID);
@@ -73,16 +73,16 @@ describe('RemoveConditionalsMutator', () => {
     it('when given a while loop', () => {
       const mutatedNodes = actMutator(whileLoop);
 
-      const testValue = (<estree.Literal>mutatedNodes[0]).value;
+      const testValue = (mutatedNodes[0] as estree.Literal).value;
       expect(testValue).to.be.false;
       expect(mutatedNodes[0].nodeID).to.not.eq(whileLoop.nodeID);
       expect(mutatedNodes[0].nodeID).to.eq(identified(whileLoop.test).nodeID);
     });
 
     it('when given a for loop', () => {
-      let mutatedNodes = actMutator(forLoop);
+      const mutatedNodes = actMutator(forLoop);
 
-      let testValue = (<estree.Literal>mutatedNodes[0]).value;
+      const testValue = (mutatedNodes[0] as estree.Literal).value;
       expect(testValue).to.be.false;
       expect(mutatedNodes[0].nodeID).to.not.eq(forLoop.nodeID);
       if (forLoop.test) {
@@ -106,19 +106,19 @@ describe('RemoveConditionalsMutator', () => {
 
   describe('should generate a single mutant', () => {
     it('when given a do-while loop', () => {
-      let mutatedNodes = actMutator(doWhileLoop);
+      const mutatedNodes = actMutator(doWhileLoop);
 
       expect(mutatedNodes).to.have.lengthOf(1);
     });
 
     it('when given a while loop', () => {
-      let mutatedNodes = actMutator(whileLoop);
+      const mutatedNodes = actMutator(whileLoop);
 
       expect(mutatedNodes).to.have.lengthOf(1);
     });
 
     it('when given a for loop', () => {
-      let mutatedNodes = actMutator(forLoop);
+      const mutatedNodes = actMutator(forLoop);
 
       expect(mutatedNodes).to.have.lengthOf(1);
     });
@@ -126,7 +126,7 @@ describe('RemoveConditionalsMutator', () => {
 
   describe('should generate multiple mutants', () => {
     it('when given an if-statement', () => {
-      let mutatedNodes = actMutator(ifStatement) as [estree.SimpleLiteral & Identified];
+      const mutatedNodes = actMutator(ifStatement) as [estree.SimpleLiteral & Identified];
 
       expect(mutatedNodes).to.have.length(2);
       expect(mutatedNodes[0].nodeID).not.to.eq(ifStatement.nodeID);
@@ -138,7 +138,7 @@ describe('RemoveConditionalsMutator', () => {
     });
 
     it('when given a ternary-statement', () => {
-      let mutatedNodes = actMutator(ternaryExpression) as [estree.SimpleLiteral & Identified];
+      const mutatedNodes = actMutator(ternaryExpression) as [estree.SimpleLiteral & Identified];
 
       expect(mutatedNodes).to.have.length(2);
       expect(mutatedNodes[0].nodeID).not.to.eq(ternaryExpression.nodeID);
@@ -152,7 +152,7 @@ describe('RemoveConditionalsMutator', () => {
 
   describe('should not crash', () => {
     it('when given an for-loop', () => {
-      let mutatedNodes = actMutator(infiniteForLoop);
+      const mutatedNodes = actMutator(infiniteForLoop);
 
       expect(mutatedNodes).to.have.length(1);
       expect(mutatedNodes[0].nodeID).eq(infiniteForLoop.nodeID);

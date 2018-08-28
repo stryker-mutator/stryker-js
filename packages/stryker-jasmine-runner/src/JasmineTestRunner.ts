@@ -4,16 +4,16 @@ import { Jasmine, toStrykerTestResult, evalGlobal } from './helpers';
 
 export default class JasmineTestRunner implements TestRunner {
 
-  private jasmineConfigFile: string | undefined;
-  private fileNames: ReadonlyArray<string>;
-  private Date: { new(): Date } = Date; // take Date prototype now we still can (user might choose to mock it away)
+  private readonly jasmineConfigFile: string | undefined;
+  private readonly fileNames: ReadonlyArray<string>;
+  private readonly Date: { new(): Date } = Date; // take Date prototype now we still can (user might choose to mock it away)
 
   constructor(runnerOptions: RunnerOptions) {
     this.jasmineConfigFile = runnerOptions.strykerOptions.jasmineConfigFile;
     this.fileNames = runnerOptions.fileNames;
   }
 
-  run(options: { testHooks?: string }): Promise<RunResult> {
+  public run(options: { testHooks?: string }): Promise<RunResult> {
     this.clearRequireCache();
     const tests: TestResult[] = [];
     let startTimeCurrentSpec = 0;
@@ -43,10 +43,10 @@ export default class JasmineTestRunner implements TestRunner {
       jasmine.addReporter(reporter);
       jasmine.execute();
     }).catch(error => ({
-      tests: [],
+      errorMessages: ['An error occurred while loading your jasmine specs' + EOL + (error.stack || error.message || error.toString())],
       status: RunStatus.Error,
-      errorMessages: ['An error occurred while loading your jasmine specs' + EOL + (error.stack || error.message || error.toString())]
-    }));
+      tests: []
+     }));
   }
 
   private createJasmineRunner() {
@@ -61,7 +61,7 @@ export default class JasmineTestRunner implements TestRunner {
     return jasmine;
   }
 
-  clearRequireCache() {
+  public clearRequireCache() {
     this.fileNames.forEach(fileName => {
       delete require.cache[fileName];
     });

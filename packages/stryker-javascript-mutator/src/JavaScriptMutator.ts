@@ -13,10 +13,9 @@ function defaultMutators(): NodeMutator[] {
 }
 
 export default class JavaScriptMutator implements Mutator {
-  private log = getLogger(JavaScriptMutator.name);
+  private readonly log = getLogger(JavaScriptMutator.name);
 
-  constructor(config: Config, private mutators: NodeMutator[] = defaultMutators()) {
-  }
+  constructor(config: Config, private readonly mutators: NodeMutator[] = defaultMutators()) { }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
@@ -28,7 +27,7 @@ export default class JavaScriptMutator implements Mutator {
 
       BabelParser.getNodes(ast).forEach(node => {
         this.mutators.forEach(mutator => {
-          let mutatedNodes = mutator.mutate(node, copy);
+          const mutatedNodes = mutator.mutate(node, copy);
 
           if (mutatedNodes) {
             const newMutants = this.generateMutants(mutatedNodes, baseAst, file, mutator.name);
@@ -50,8 +49,8 @@ export default class JavaScriptMutator implements Mutator {
         const range: [number, number] = [node.start, node.end];
 
         const mutant = {
-          mutatorName,
           fileName: file.name,
+          mutatorName,
           range,
           replacement
         };

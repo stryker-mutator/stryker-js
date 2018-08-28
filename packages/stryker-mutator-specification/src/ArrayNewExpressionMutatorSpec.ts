@@ -4,7 +4,7 @@ import ExpectMutation from './ExpectMutation';
 export default function ArrayNewExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
 
   describe('ArrayNewExpressionMutator', () => {
-   
+
     it('should have name "ArrayNewExpression"', () => {
       expect(name).eq('ArrayNewExpression');
     });

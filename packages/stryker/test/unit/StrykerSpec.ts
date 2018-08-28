@@ -29,17 +29,17 @@ import LoggingClientContext from '../../src/logging/LoggingClientContext';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
-  edit(config: Config) {
+  public edit(config: Config) {
     config.testRunner = 'fakeTestRunner';
   }
 }
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  port: 4200,
-  level: LogLevel.Debug
+  level: LogLevel.Debug,
+  port: 4200
 });
 
-describe('Stryker', function () {
+describe('Stryker', () => {
   let sut: Stryker;
   let testFramework: TestFramework;
   let inputFileResolverMock: Mock<InputFileResolver>;
@@ -274,8 +274,8 @@ describe('Stryker', function () {
 
       it('should log the number of mutants generated and excluded', async () => {
         strykerConfig.mutator = {
-          name: 'es5',
-          excludedMutations: ['fooMutator']
+          excludedMutations: ['fooMutator'],
+          name: 'es5'
         };
         sut = new Stryker({});
         await sut.runMutationTest();
@@ -284,8 +284,8 @@ describe('Stryker', function () {
 
       it('should log the absence of mutants and the excluded number when all mutants are excluded', async () => {
         strykerConfig.mutator = {
-          name: 'es5',
-          excludedMutations: ['fooMutator', 'barMutator', 'bazMutator']
+          excludedMutations: ['fooMutator', 'barMutator', 'bazMutator'],
+          name: 'es5'
         };
         sut = new Stryker({});
         await sut.runMutationTest();
@@ -294,8 +294,8 @@ describe('Stryker', function () {
 
       it('should filter out the excluded mutations', async () => {
         strykerConfig.mutator = {
-          name: 'es5',
-          excludedMutations: ['barMutator', 'bazMutator']
+          excludedMutations: ['barMutator', 'bazMutator'],
+          name: 'es5'
         };
         sut = new Stryker({});
         await sut.runMutationTest();

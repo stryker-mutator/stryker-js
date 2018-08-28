@@ -37,11 +37,11 @@ export default abstract class SourceMapper {
    * Calculated a transpiled location for a given original location
    * @param originalLocation The original location to be converted to a transpiled location
    */
-  abstract transpiledLocationFor(originalLocation: MappedLocation): MappedLocation;
+  public abstract transpiledLocationFor(originalLocation: MappedLocation): MappedLocation;
 
-  abstract transpiledFileNameFor(originalFileName: string): string;
+  public abstract transpiledFileNameFor(originalFileName: string): string;
 
-  static create(transpiledFiles: ReadonlyArray<File>, config: Config): SourceMapper {
+  public static create(transpiledFiles: ReadonlyArray<File>, config: Config): SourceMapper {
     if (config.transpilers.length && config.coverageAnalysis !== 'off') {
       return new TranspiledSourceMapper(transpiledFiles);
     } else {
@@ -53,16 +53,16 @@ export default abstract class SourceMapper {
 export class TranspiledSourceMapper extends SourceMapper {
 
   private sourceMaps: SourceMapBySource;
-  private log = getLogger(SourceMapper.name);
+  private readonly log = getLogger(SourceMapper.name);
 
-  constructor(private transpiledFiles: ReadonlyArray<File>) {
+  constructor(private readonly transpiledFiles: ReadonlyArray<File>) {
     super();
   }
 
   /**
    * @inheritDoc
    */
-  transpiledFileNameFor(originalFileName: string) {
+  public transpiledFileNameFor(originalFileName: string) {
     const sourceMap = this.getSourceMap(originalFileName);
     return sourceMap.transpiledFile.name;
   }
@@ -70,7 +70,7 @@ export class TranspiledSourceMapper extends SourceMapper {
   /**
    * @inheritdoc
    */
-  transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
+  public transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
     const sourceMap = this.getSourceMap(originalLocation.fileName);
     const relativeSource = this.getRelativeSource(sourceMap, originalLocation);
     const start = sourceMap.generatedPositionFor(originalLocation.location.start, relativeSource);
@@ -78,8 +78,8 @@ export class TranspiledSourceMapper extends SourceMapper {
     return {
       fileName: sourceMap.transpiledFile.name,
       location: {
-        start,
-        end
+        end,
+        start
       }
     };
   }
@@ -143,7 +143,7 @@ export class TranspiledSourceMapper extends SourceMapper {
   /**
    * Gets the source map file from a url.
    * @param sourceMapUrl The source map url. Can be a data url (data:application/json;base64,ABC...), or an actual file url
-   * @param transpiledFile The transpiled file for which the data url is 
+   * @param transpiledFile The transpiled file for which the data url is
    */
   private getSourceMapFileFromUrl(sourceMapUrl: string, transpiledFile: File): File {
     const sourceMapFile = this.isInlineUrl(sourceMapUrl) ?
@@ -156,7 +156,7 @@ export class TranspiledSourceMapper extends SourceMapper {
   }
 
   /**
-   * Gets the source map from a data url 
+   * Gets the source map from a data url
    */
   private getInlineSourceMap(sourceMapUrl: string, transpiledFile: File): File {
     const supportedDataPrefix = 'data:application/json;base64,';
@@ -202,31 +202,29 @@ export class TranspiledSourceMapper extends SourceMapper {
   }
 }
 
-
 export class PassThroughSourceMapper extends SourceMapper {
 
   /**
    * @inheritdoc
    */
-  transpiledFileNameFor(originalFileName: string): string {
+  public transpiledFileNameFor(originalFileName: string): string {
     return originalFileName;
   }
 
   /**
    * @inheritdoc
    */
-  transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
+  public transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
     return originalLocation;
   }
 }
 
-
 class SourceMap {
-  private sourceMap: SourceMapConsumer;
+  private readonly sourceMap: SourceMapConsumer;
   constructor(public transpiledFile: File, public sourceMapFileName: string, rawSourceMap: RawSourceMap) {
     this.sourceMap = new SourceMapConsumer(rawSourceMap);
   }
-  generatedPositionFor(originalPosition: Position, relativeSource: string): Position {
+  public generatedPositionFor(originalPosition: Position, relativeSource: string): Position {
     const transpiledPosition = this.sourceMap.generatedPositionFor({
       bias: SourceMapConsumer.LEAST_UPPER_BOUND,
       column: originalPosition.column,
@@ -234,12 +232,10 @@ class SourceMap {
       source: relativeSource
     });
     return {
-      line: transpiledPosition.line - 1,  // Stryker works 0-based
-      column: transpiledPosition.column
+      column: transpiledPosition.column,
+      line: transpiledPosition.line - 1  // Stryker works 0-based
     };
   }
-
-
 }
 
 interface SourceMapBySource {

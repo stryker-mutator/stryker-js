@@ -6,7 +6,7 @@ import ConfigLoader from './compiler/ConfigLoader';
 const DEFAULT_STRYKER_WEBPACK_CONFIG = Object.freeze({ configFile: undefined, silent: true, context: process.cwd() });
 
 export default class WebpackTranspiler implements Transpiler {
-  private config: StrykerWebpackConfig;
+  private readonly config: StrykerWebpackConfig;
   private webpackCompiler: WebpackCompiler;
 
   public constructor(options: TranspilerOptions) {
@@ -36,7 +36,7 @@ export default class WebpackTranspiler implements Transpiler {
 export interface StrykerWebpackConfig {
   configFile?: string;
   silent: boolean;
-  configFileArgs?: Array<any>;
+  configFileArgs?: any[];
   // TODO: Remove this when stryker implements projectRoot, see https://github.com/stryker-mutator/stryker/issues/650 */
   context?: string;
 }

@@ -29,6 +29,4 @@ describe('Verify stryker has ran correctly', () => {
       ]);
     });
   });
-
-
 });

@@ -10,18 +10,18 @@ beforeEach(() => {
 
 function createLogger(): sinon.SinonStubbedInstance<logging.Logger> {
   return {
-    isTraceEnabled: sinon.stub(),
+    debug: sinon.stub(),
+    error: sinon.stub(),
+    fatal: sinon.stub(),
+    info: sinon.stub(),
     isDebugEnabled: sinon.stub(),
-    isInfoEnabled: sinon.stub(),
-    isWarnEnabled: sinon.stub(),
     isErrorEnabled: sinon.stub(),
     isFatalEnabled: sinon.stub(),
+    isInfoEnabled: sinon.stub(),
+    isTraceEnabled: sinon.stub(),
+    isWarnEnabled: sinon.stub(),
     trace: sinon.stub(),
-    debug: sinon.stub(),
-    info: sinon.stub(),
-    warn: sinon.stub(),
-    error: sinon.stub(),
-    fatal: sinon.stub()
+    warn: sinon.stub()
   };
 }
 

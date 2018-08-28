@@ -95,10 +95,10 @@ describe('JasmineTestRunner', () => {
     jasmineStub.addReporter.callsFake(addReporter);
     const result = await sut.run({});
     const expectedTestResult: TestResult = {
+      failureMessages: undefined,
       name: 'foobar spec',
       status: TestStatus.Success,
-      timeSpentMs: 10,
-      failureMessages: undefined
+      timeSpentMs: 10
     };
     expect(result.tests).deep.eq([expectedTestResult]);
   });

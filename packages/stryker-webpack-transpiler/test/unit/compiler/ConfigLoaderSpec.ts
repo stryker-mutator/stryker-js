@@ -5,9 +5,9 @@ import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { Configuration, Compiler, Plugin } from 'webpack';
 import { createStrykerWebpackConfig } from '../../helpers/producers';
 
-class FooPlugin implements Plugin { foo = true; apply(compiler: Compiler): void { } }
-class ProgressPlugin implements Plugin { apply(compiler: Compiler): void { } }
-class BarPlugin implements Plugin { bar = true; apply(compiler: Compiler): void { } }
+class FooPlugin implements Plugin { public foo = true; public apply(compiler: Compiler): void { } }
+class ProgressPlugin implements Plugin { public apply(compiler: Compiler): void { } }
+class BarPlugin implements Plugin { public bar = true; public apply(compiler: Compiler): void { } }
 
 describe('ConfigLoader', () => {
   let sut: ConfigLoader;

@@ -18,9 +18,9 @@ export default class ConfigReader {
 
   private readonly log = getLogger(ConfigReader.name);
 
-  constructor(private cliOptions: StrykerOptions) { }
+  constructor(private readonly cliOptions: StrykerOptions) { }
 
-  readConfig() {
+  public readConfig() {
     const configModule = this.loadConfigModule();
     const config = new Config();
     try {
@@ -51,7 +51,7 @@ export default class ConfigReader {
 
   private loadConfigModule(): Function {
     // Dummy module to be returned if no config file is loaded.
-    let configModule: Function = function () { };
+    let configModule: Function = () => {};
 
     if (!this.cliOptions.configFile) {
       try {

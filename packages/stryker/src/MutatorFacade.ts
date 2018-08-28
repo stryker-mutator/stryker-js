@@ -7,10 +7,10 @@ MutatorFactory.instance().register('es5', ES5Mutator);
 
 export default class MutatorFacade implements Mutator {
 
-  constructor(private config: Config) {
+  constructor(private readonly config: Config) {
   }
 
-  mutate(inputFiles: ReadonlyArray<File>): ReadonlyArray<Mutant> {
+  public mutate(inputFiles: ReadonlyArray<File>): ReadonlyArray<Mutant> {
     return MutatorFactory.instance()
       .create(this.getMutatorName(this.config.mutator), this.config)
       .mutate(inputFiles);

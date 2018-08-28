@@ -1,5 +1,5 @@
 export default class TestRunnerMock {
-  init: sinon.SinonStub = sandbox.stub();
-  run: sinon.SinonStub = sandbox.stub();
-  dispose: sinon.SinonStub = sandbox.stub();
+  public init: sinon.SinonStub = sandbox.stub();
+  public run: sinon.SinonStub = sandbox.stub();
+  public dispose: sinon.SinonStub = sandbox.stub();
 }

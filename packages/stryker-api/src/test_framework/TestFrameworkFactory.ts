@@ -11,13 +11,13 @@ namespace TestFrameworkFactory {
       super('test framework');
     }
   }
-  let TestFrameworkFactoryInstance = new TestFrameworkFactory();
+  const TestFrameworkFactoryInstance = new TestFrameworkFactory();
 
   /**
    * Returns the current instance of the TestFrameworkFactory.
    */
   export function instance() {
-    return <Factory<TestFrameworkSettings, TestFramework>>TestFrameworkFactoryInstance;
+    return TestFrameworkFactoryInstance as Factory<TestFrameworkSettings, TestFramework>;
   }
 }
 

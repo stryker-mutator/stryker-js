@@ -62,9 +62,9 @@ describe('ChildProcessProxyWorker', () => {
     beforeEach(() => {
       sut = new ChildProcessProxyWorker();
       initMessage = {
+        constructorArgs: ['FooBarName'],
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
-        constructorArgs: ['FooBarName'],
         plugins: ['fooPlugin', 'barPlugin'],
         requirePath: require.resolve('./HelloClass'),
         workingDirectory: workingDir
@@ -123,14 +123,14 @@ describe('ChildProcessProxyWorker', () => {
       expect(pluginLoader.default).calledWith(['fooPlugin', 'barPlugin']);
       expect(pluginLoaderMock.load).called;
     });
-    
+
     it('should handle unhandledRejection events', () => {
       processOnMessage(initMessage);
       const error = new Error('foobar');
       processOnStub.withArgs('unhandledRejection').callArgWith(1, error);
       expect(logMock.debug).calledWith(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): ${error}`);
     });
-    
+
     it('should handle rejectionHandled events', () => {
       processOnMessage(initMessage);
       processOnStub.withArgs('rejectionHandled').callArgWith(1);
@@ -162,14 +162,14 @@ describe('ChildProcessProxyWorker', () => {
       it('should send the result', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Call,
-          correlationId: 32,
           args: [],
+          correlationId: 32,
+          kind: WorkerMessageKind.Call,
           methodName: 'sayHello'
         };
         const expectedResult: WorkResult = {
-          kind: ParentMessageKind.Result,
           correlationId: 32,
+          kind: ParentMessageKind.Result,
           result: 'hello from FooBarName'
         };
 
@@ -179,9 +179,9 @@ describe('ChildProcessProxyWorker', () => {
       it('should send a rejection', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Call,
-          correlationId: 32,
           args: [],
+          correlationId: 32,
+          kind: WorkerMessageKind.Call,
           methodName: 'reject'
         };
         await actAndAssertRejection(workerMessage, 'Rejected');
@@ -190,9 +190,9 @@ describe('ChildProcessProxyWorker', () => {
       it('should send a thrown synchronous error as rejection', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Call,
-          correlationId: 32,
           args: ['foo bar'],
+          correlationId: 32,
+          kind: WorkerMessageKind.Call,
           methodName: 'throw'
         };
         await actAndAssertRejection(workerMessage, 'foo bar');
@@ -201,14 +201,14 @@ describe('ChildProcessProxyWorker', () => {
       it('should use correct arguments', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Call,
-          correlationId: 32,
           args: ['foo', 'bar', 'chair'],
+          correlationId: 32,
+          kind: WorkerMessageKind.Call,
           methodName: 'say'
         };
         const expectedResult: WorkResult = {
-          kind: ParentMessageKind.Result,
           correlationId: 32,
+          kind: ParentMessageKind.Result,
           result: 'hello foo and bar and chair'
         };
 
@@ -218,14 +218,14 @@ describe('ChildProcessProxyWorker', () => {
       it('should work with promises from real class', async () => {
         // Arrange
         const workerMessage: WorkerMessage = {
-          kind: WorkerMessageKind.Call,
-          correlationId: 32,
           args: [],
+          correlationId: 32,
+          kind: WorkerMessageKind.Call,
           methodName: 'sayDelayed'
         };
         const expectedResult: WorkResult = {
-          kind: ParentMessageKind.Result,
           correlationId: 32,
+          kind: ParentMessageKind.Result,
           result: 'delayed hello from FooBarName'
         };
 
@@ -240,9 +240,8 @@ describe('ChildProcessProxyWorker', () => {
       .withArgs('message')
       .callArgWith(1, [serialize(message)]);
   }
-  
-});
 
+});
 
 function tick() {
   return new Promise(res => setTimeout(res, 0));

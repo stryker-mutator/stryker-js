@@ -185,15 +185,15 @@ describe('InputFileResolver', () => {
       const inputFileDescriptors = JSON.stringify([patternFile1, patternFile3]);
       const patternNames = JSON.stringify([patternFile1.pattern, patternFile3.pattern]);
       expect(log.warn).calledWith(normalizeWhiteSpaces(`
-      DEPRECATED: Using the \`InputFileDescriptor\` syntax to 
-      select files is no longer supported. We'll assume: ${inputFileDescriptors} can be migrated 
-      to ${patternNames} for this mutation run. Please move any files to mutate into the \`mutate\` 
+      DEPRECATED: Using the \`InputFileDescriptor\` syntax to
+      select files is no longer supported. We'll assume: ${inputFileDescriptors} can be migrated
+      to ${patternNames} for this mutation run. Please move any files to mutate into the \`mutate\`
       array (top level stryker option).
-      
+
       You can fix this warning in 2 ways:
-      1) If your project is under git version control, you can remove the "files" patterns all together. 
+      1) If your project is under git version control, you can remove the "files" patterns all together.
       Stryker can figure it out for you.
-      2) If your project is not under git version control or you need ignored files in your sandbox, you can replace the 
+      2) If your project is not under git version control or you need ignored files in your sandbox, you can replace the
       \`InputFileDescriptor\` syntax with strings (as done for this test run).`));
     });
 
@@ -260,7 +260,7 @@ describe('InputFileResolver', () => {
 
   function assertFilesEqual(actual: ReadonlyArray<File>, expected: ReadonlyArray<File>) {
     expect(actual).lengthOf(expected.length);
-    for (let index in actual) {
+    for (const index in actual) {
       expect(actual[index].name).eq(expected[index].name);
       expect(actual[index].textContent).eq(expected[index].textContent);
     }

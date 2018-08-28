@@ -11,12 +11,12 @@ abstract class ProgressKeeper implements Reporter {
 
   private mutantIdsWithoutCoverage: string[];
 
-  onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
+  public onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
     this.mutantIdsWithoutCoverage = matchedMutants.filter(m => m.scopedTestIds.length === 0).map(m => m.id);
     this.progress.total = matchedMutants.length - this.mutantIdsWithoutCoverage.length;
   }
 
-  onMutantTested(result: MutantResult): void {
+  public onMutantTested(result: MutantResult): void {
     if (!this.mutantIdsWithoutCoverage.some(id => result.id === id)) {
       this.progress.tested++;
     }

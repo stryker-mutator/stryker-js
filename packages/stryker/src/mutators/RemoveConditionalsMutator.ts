@@ -9,19 +9,19 @@ type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree
  * Represents a mutator which can remove the conditional clause from statements.
  */
 export default class RemoveConditionalsMutator implements NodeMutator {
-  name = 'RemoveConditionals';
-  private types: string[] = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement, Syntax.ConditionalExpression];
+  public name = 'RemoveConditionals';
+  private readonly types: string[] = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement, Syntax.ConditionalExpression];
 
   constructor() { }
 
-  applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] | void {
+  public applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] | void {
     if (this.canMutate(node)) {
-      let nodes: IdentifiedNode[] = [];
+      const nodes: IdentifiedNode[] = [];
 
       if (node.test) {
         nodes.push(this.booleanLiteralNode((node.test as IdentifiedNode).nodeID, false));
       } else {
-        let mutatedNode = copy(node);
+        const mutatedNode = copy(node);
         mutatedNode.test = this.booleanLiteralNode(-1, false);
         nodes.push(mutatedNode);
       }
@@ -35,10 +35,10 @@ export default class RemoveConditionalsMutator implements NodeMutator {
 
   private booleanLiteralNode(nodeID: number, value: boolean): estree.SimpleLiteral & Identified {
     return {
-      nodeID: nodeID,
+      nodeID,
+      raw: value.toString(),
       type: Syntax.Literal,
-      value: value,
-      raw: value.toString()
+      value
     };
   }
 

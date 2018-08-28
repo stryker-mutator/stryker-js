@@ -16,7 +16,7 @@ export enum ParentMessageKind {
 export type WorkerMessage = InitMessage | CallMessage | DisposeMessage;
 export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized | ParentMessageKind.DisposeCompleted } | RejectionResult;
 
-// Make this an unlikely command line argument 
+// Make this an unlikely command line argument
 // (prevents incidental start of child process)
 export const autoStart = 'childProcessAutoStart12937129s7d';
 

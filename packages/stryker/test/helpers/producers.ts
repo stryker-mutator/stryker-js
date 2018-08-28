@@ -25,10 +25,10 @@ function isPrimitive(value: any) {
 
 /**
  * Use this factory to create flat test data
- * @param defaults 
+ * @param defaults
  */
 function factory<T>(defaults: T) {
-  for (let key in defaults) {
+  for (const key in defaults) {
     const value = defaults[key];
     if (!isPrimitive(value)) {
       throw Error(`Cannot create factory, as value for '${key}' is not a primitive type (use \`factoryMethod\` instead)`);
@@ -45,7 +45,7 @@ export const PNG_BASE64_ENCODED = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeA
 
 /**
  * Use this factory method to create deep test data
- * @param defaults 
+ * @param defaults
  */
 function factoryMethod<T>(defaultsFactory: () => T) {
   return (overrides?: Partial<T>) => Object.assign({}, defaultsFactory(), overrides);
@@ -59,34 +59,34 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   mutatedLines: '',
   mutatorName: '',
   originalLines: '',
+  range: [0, 0],
   replacement: '',
   sourceFilePath: '',
-  testsRan: [''],
   status: MutantStatus.Killed,
-  range: [0, 0]
+  testsRan: ['']
 }));
 
 export const mutant = factoryMethod<Mutant>(() => ({
-  mutatorName: 'foobarMutator',
   fileName: 'file',
+  mutatorName: 'foobarMutator',
   range: [0, 0],
   replacement: 'replacement'
 }));
 
 export const logger = (): Mock<Logger> => {
   return {
-    isTraceEnabled: sandbox.stub(),
+    debug: sandbox.stub(),
+    error: sandbox.stub(),
+    fatal: sandbox.stub(),
+    info: sandbox.stub(),
     isDebugEnabled: sandbox.stub(),
-    isInfoEnabled: sandbox.stub(),
-    isWarnEnabled: sandbox.stub(),
     isErrorEnabled: sandbox.stub(),
     isFatalEnabled: sandbox.stub(),
+    isInfoEnabled: sandbox.stub(),
+    isTraceEnabled: sandbox.stub(),
+    isWarnEnabled: sandbox.stub(),
     trace: sandbox.stub(),
-    debug: sandbox.stub(),
-    info: sandbox.stub(),
-    warn: sandbox.stub(),
-    error: sandbox.stub(),
-    fatal: sandbox.stub()
+    warn: sandbox.stub()
   };
 };
 
@@ -96,18 +96,18 @@ export const mappedLocation = factoryMethod<MappedLocation>(() => ({
 }));
 
 export const coverageMaps = factoryMethod<CoverageMaps>(() => ({
-  statementMap: {},
-  fnMap: {}
+  fnMap: {},
+  statementMap: {}
 }));
 
 export const fileCoverageData = factoryMethod<FileCoverageData>(() => ({
-  path: '',
-  statementMap: {},
   b: {},
   branchMap: {},
   f: {},
   fnMap: {},
-  s: {}
+  path: '',
+  s: {},
+  statementMap: {}
 }));
 
 export const testFramework = factory<TestFramework>({
@@ -117,24 +117,24 @@ export const testFramework = factory<TestFramework>({
 });
 
 export const scoreResult = factoryMethod<ScoreResult>(() => ({
-  name: 'name',
-  path: 'path',
   childResults: [],
-  representsFile: true,
   killed: 0,
-  timedOut: 0,
+  mutationScore: 0,
+  mutationScoreBasedOnCoveredCode: 0,
+  name: 'name',
+  noCoverage: 0,
+  path: 'path',
+  representsFile: true,
+  runtimeErrors: 0,
   survived: 0,
+  timedOut: 0,
   totalCovered: 0,
-  totalMutants: 0,
   totalDetected: 0,
   totalInvalid: 0,
-  totalValid: 0,
+  totalMutants: 0,
   totalUndetected: 0,
-  runtimeErrors: 0,
-  transpileErrors: 0,
-  noCoverage: 0,
-  mutationScore: 0,
-  mutationScoreBasedOnCoveredCode: 0
+  totalValid: 0,
+  transpileErrors: 0
 }));
 
 export const testResult = factory<TestResult>({
@@ -144,34 +144,33 @@ export const testResult = factory<TestResult>({
 });
 
 export const runResult = factoryMethod<RunResult>(() => ({
-  tests: [testResult()],
-  status: RunStatus.Complete
+  status: RunStatus.Complete,
+  tests: [testResult()]
 }));
 
 export const mutationScoreThresholds = factory<MutationScoreThresholds>({
+  break: null,
   high: 80,
-  low: 60,
-  break: null
+  low: 60
 });
 
 export const config = factoryMethod<Config>(() => new Config());
 
-export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
+export const ALL_REPORTER_EVENTS: (keyof Reporter)[] =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
 
-
 export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
-  let scopedTestIds: number[] = [];
+  const scopedTestIds: number[] = [];
   for (let i = 0; i < numberOfTests; i++) {
     scopedTestIds.push(1);
   }
   return {
+    fileName: '',
     id: mutantId,
     mutatorName: '',
-    scopedTestIds: scopedTestIds,
-    timeSpentScopedTests: 0,
-    fileName: '',
-    replacement: ''
+    replacement: '',
+    scopedTestIds,
+    timeSpentScopedTests: 0
   };
 }
 
@@ -187,17 +186,16 @@ export const transpileResult = factoryMethod<TranspileResult>(() => ({
 export const sourceFile = () => new SourceFile(file());
 
 export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator') => new TestableMutant('1337', mutant({
+  fileName,
   mutatorName,
   range: [12, 13],
-  replacement: '-',
-  fileName
+  replacement: '-'
 }), new SourceFile(
   new File(fileName, Buffer.from('const a = 4 + 5'))
 ));
 
 export const transpiledMutant = (fileName = 'file') =>
   new TranspiledMutant(testableMutant(fileName), transpileResult(), true);
-
 
 export function createFileNotFoundError(): NodeJS.ErrnoException {
   return createErrnoException('ENOENT');

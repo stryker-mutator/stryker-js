@@ -13,7 +13,7 @@ export default class VueMutator implements Mutator {
     this.mutators = discoverMutators(config);
   }
 
-  mutate(inputFiles: File[]): Mutant[] {
+  public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
 
     inputFiles.forEach(file => {

@@ -1,13 +1,13 @@
 import { ElementFinder } from 'protractor';
 
 export default class Checkbox {
-  constructor(private host: ElementFinder) { }
+  constructor(private readonly host: ElementFinder) { }
 
-  isChecked() {
+  public isChecked() {
     return this.host.getAttribute('checked').then(val => !!val);
   }
 
-  click() {
+  public click() {
     return this.host.click();
   }
 }

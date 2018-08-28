@@ -6,9 +6,9 @@ import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
 
 export default class MochaOptionsLoader {
 
-  private log = getLogger(MochaOptionsLoader.name);
+  private readonly log = getLogger(MochaOptionsLoader.name);
 
-  load(config: StrykerOptions): MochaRunnerOptions {
+  public load(config: StrykerOptions): MochaRunnerOptions {
     const mochaOptions = Object.assign({}, config[mochaOptionsKey]) as MochaRunnerOptions;
     if (mochaOptions && mochaOptions.opts) {
       const optsFileName = path.resolve(mochaOptions.opts);
@@ -59,7 +59,7 @@ export default class MochaOptionsLoader {
 
   private parseNextInt(args: string[]): number | undefined {
     if (args.length > 1) {
-      return Number.parseInt(args[1]);
+      return parseInt(args[1], 10);
     } else {
       return undefined;
     }

@@ -8,8 +8,8 @@ import TypescriptMutator from '../../src/TypescriptMutator';
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
 
 class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
-  name = 'FunctionDeclarationForTest';
-  guard(node: ts.Node): node is ts.FunctionDeclaration {
+  public name = 'FunctionDeclarationForTest';
+  public guard(node: ts.Node): node is ts.FunctionDeclaration {
     return node.kind === ts.SyntaxKind.FunctionDeclaration;
   }
   protected identifyReplacements(node: ts.FunctionDeclaration): NodeReplacement[] {
@@ -21,8 +21,8 @@ class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
 }
 
 class SourceFileMutator extends NodeMutator<ts.SourceFile> {
-  name = 'SourceFileForTest';
-  guard(node: ts.Node): node is ts.SourceFile {
+  public name = 'SourceFileForTest';
+  public guard(node: ts.Node): node is ts.SourceFile {
     return node.kind === ts.SyntaxKind.SourceFile;
   }
   protected identifyReplacements(node: ts.SourceFile): NodeReplacement[] {

@@ -10,7 +10,7 @@ export default class StrykerCli {
   private command: string = '';
   private strykerConfig: string | null = null;
 
-  constructor(private argv: string[]) { }
+  constructor(private readonly argv: string[]) { }
 
   private list(val: string) {
     return val.split(',');
@@ -49,23 +49,23 @@ export default class StrykerCli {
       .option('--fileLogLevel <level>', 'Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "off"')
       .parse(this.argv);
 
-    LogConfigurator.configureMainProcess(program['logLevel']);
+    LogConfigurator.configureMainProcess(program.logLevel);
     const log = getLogger(StrykerCli.name);
     // Cleanup commander state
-    delete program['options'];
-    delete program['rawArgs'];
+    delete program.options;
+    delete program.rawArgs;
     delete program.args;
     delete program.Command;
     delete program.Option;
-    delete program['commands'];
-    for (let i in program) {
+    delete program.commands;
+    for (const i in program) {
       if (i.charAt(0) === '_') {
         delete program[i];
       }
     }
 
     if (this.strykerConfig) {
-      program['configFile'] = this.strykerConfig;
+      program.configFile = this.strykerConfig;
     }
 
     const commands: { [cmd: string]: () => Promise<any> } = {

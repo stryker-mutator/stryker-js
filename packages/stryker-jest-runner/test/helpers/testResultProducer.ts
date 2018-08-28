@@ -1,23 +1,26 @@
 export function createFailResult() {
   return {
-    numFailedTestSuites: 1,
     numFailedTests: 2,
-    numPassedTestSuites: 0,
+    numFailedTestSuites: 1,
     numPassedTests: 0,
-    numPendingTestSuites: 0,
+    numPassedTestSuites: 0,
     numPendingTests: 0,
+    numPendingTestSuites: 0,
     numRuntimeErrorTestSuites: 0,
-    numTotalTestSuites: 1,
     numTotalTests: 2,
+    numTotalTestSuites: 1,
     startTime: 1513852010583,
     success: false,
     testResults: [
       {
         console: null,
+        coverage: undefined,
         failureMessage: 'test failed - App.test.js',
         numFailingTests: 2,
         numPassingTests: 0,
         numPendingTests: 0,
+        skipped: false,
+        sourceMaps: {},
         testFilePath: 'App.test.js',
         testResults: [
           {
@@ -44,19 +47,19 @@ export function createFailResult() {
             status: 'failed',
             title: 'renders without crashing'
           }
-        ],
-        coverage: undefined,
-        sourceMaps: {},
-        skipped: false
+        ]
       },
       {
         console: null,
+        coverage: undefined,
         failureMessage: null,
         numFailingTests: 0,
         numPassingTests: 1,
         numPendingTests: 0,
         perfStats: [Object],
+        skipped: false,
         snapshot: [Object],
+        sourceMaps: {},
         testFilePath: 'App.test.js',
         testResults: [
           {
@@ -68,10 +71,7 @@ export function createFailResult() {
             status: 'passed',
             title: 'renders without crashing'
           }
-        ],
-        coverage: undefined,
-        sourceMaps: {},
-        skipped: false
+        ]
       }
     ],
     wasInterrupted: false
@@ -80,26 +80,29 @@ export function createFailResult() {
 
 export function createSuccessResult() {
   return {
-    numFailedTestSuites: 0,
     numFailedTests: 0,
-    numPassedTestSuites: 1,
+    numFailedTestSuites: 0,
     numPassedTests: 1,
-    numPendingTestSuites: 0,
+    numPassedTestSuites: 1,
     numPendingTests: 0,
+    numPendingTestSuites: 0,
     numRuntimeErrorTestSuites: 0,
-    numTotalTestSuites: 1,
     numTotalTests: 1,
+    numTotalTestSuites: 1,
     startTime: 1513857548132,
     success: true,
     testResults: [
       {
         console: null,
+        coverage: undefined,
         failureMessage: null,
         numFailingTests: 0,
         numPassingTests: 1,
         numPendingTests: 0,
         perfStats: [Object],
+        skipped: false,
         snapshot: [Object],
+        sourceMaps: {},
         testFilePath: 'App.test.js',
         testResults: [
           {
@@ -111,10 +114,7 @@ export function createSuccessResult() {
             status: 'passed',
             title: 'renders without crashing'
           }
-        ],
-        coverage: undefined,
-        sourceMaps: {},
-        skipped: false
+        ]
       }
     ],
     wasInterrupted: false

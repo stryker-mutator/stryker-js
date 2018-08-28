@@ -14,9 +14,9 @@ describe('determineCiProvider()', () => {
   describe('Without CI environment', () => {
     it('should not select a CI Provider', () => {
       getEnvironmentVariables.withArgs('HAS_JOSH_K_SEAL_OF_APPROVAL').returns('');
-  
+
       const result = determineCIProvider();
-  
+
       expect(result).to.be.undefined;
     });
   });
@@ -26,7 +26,7 @@ describe('determineCiProvider()', () => {
       getEnvironmentVariables.withArgs('HAS_JOSH_K_SEAL_OF_APPROVAL').returns(true);
 
       const result = determineCIProvider();
-  
+
       expect(result).to.be.not.undefined;
     });
   });
@@ -36,7 +36,7 @@ describe('determineCiProvider()', () => {
       getEnvironmentVariables.withArgs('CIRCLECI').returns(true);
 
       const result = determineCIProvider();
-  
+
       expect(result).to.be.not.undefined;
     });
   });

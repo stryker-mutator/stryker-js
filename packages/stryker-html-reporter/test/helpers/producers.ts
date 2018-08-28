@@ -2,11 +2,11 @@ import { SourceFile, MutantResult, MutantStatus, ScoreResult } from 'stryker-api
 import { MutationScoreThresholds } from 'stryker-api/core';
 
 export const sourceFile = factory<SourceFile>(() => ({
-  path: 'src/test.js',
   content: `
     function answer(){
       return 42;
-    }`
+    }`,
+  path: 'src/test.js'
 }));
 
 export const thresholds = factory<MutationScoreThresholds>(() => ({
@@ -19,48 +19,48 @@ export const mutantResult = factory<MutantResult>(() => {
   const range: [number, number] = [24, 38];
   return {
     id: '1',
-    sourceFilePath: 'src/test.js',
+    location: {
+      end: {
+        column: 5,
+        line: 4
+      },
+      start: {
+        column: 22,
+        line: 2
+      }
+    },
+    mutatedLines: '{}',
     mutatorName: 'Math',
-    status: MutantStatus.Killed,
-    replacement: '{}',
     originalLines: `{
       return 42;
     }`,
-    mutatedLines: '{}',
-    testsRan: ['should return 42'],
-    location: {
-      start: {
-        line: 2,
-        column: 22
-      },
-      end: {
-        line: 4,
-        column: 5
-      }
-    },
-    range
+    range,
+    replacement: '{}',
+    sourceFilePath: 'src/test.js',
+    status: MutantStatus.Killed,
+    testsRan: ['should return 42']
   };
 });
 
 export const scoreResult = factory<ScoreResult>(() => ({
-  name: 'src',
-  path: 'src',
-  representsFile: false,
   childResults: [],
   killed: 1,
-  timedOut: 2,
-  survived: 3,
+  mutationScore: 10.6666666667,
+  mutationScoreBasedOnCoveredCode: 11.23232323223,
+  name: 'src',
   noCoverage: 4,
+  path: 'src',
+  representsFile: false,
   runtimeErrors: 5,
-  transpileErrors: 6,
+  survived: 3,
+  timedOut: 2,
+  totalCovered: 12,
   totalDetected: 7,
-  totalUndetected: 8,
-  totalValid: 9,
   totalInvalid: 10,
   totalMutants: 11,
-  totalCovered: 12,
-  mutationScore: 10.6666666667,
-  mutationScoreBasedOnCoveredCode: 11.23232323223
+  totalUndetected: 8,
+  totalValid: 9,
+  transpileErrors: 6
 }));
 
 function factory<T>(defaults: () => T) {

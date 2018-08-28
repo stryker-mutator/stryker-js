@@ -1,4 +1,3 @@
-
 interface LogMock {
    debug: sinon.SinonStub;
    info: sinon.SinonStub;

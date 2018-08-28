@@ -3,7 +3,7 @@ import { getLogger } from 'stryker-api/logging';
 import { Configuration, runCLI, RunResult } from 'jest';
 
 export default class JestPromiseTestAdapter implements JestTestAdapter {
-  private log = getLogger(JestPromiseTestAdapter.name);
+  private readonly log = getLogger(JestPromiseTestAdapter.name);
 
   public run(jestConfig: Configuration, projectRoot: string): Promise<RunResult> {
     jestConfig.reporters = [];
@@ -11,7 +11,7 @@ export default class JestPromiseTestAdapter implements JestTestAdapter {
     this.log.trace(`Invoking Jest with config ${config}`);
 
     return runCLI({
-      config: config,
+      config,
       runInBand: true,
       silent: true
     }, [projectRoot]);

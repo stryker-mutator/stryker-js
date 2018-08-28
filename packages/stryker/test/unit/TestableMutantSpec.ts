@@ -36,7 +36,7 @@ describe('TestableMutant', () => {
     innerMutant.range = [1, 2];
     expect(sut.location).deep.eq({ start: { line: 0, column: 1 }, end: { line: 0, column: 2 } });
   });
-  
+
   it('should return original code with mutant replacement when `mutatedCode` is requested', () => {
     const innerFile = new File('', 'some content');
     const sut = new TestableMutant('3', innerMutant, new SourceFile(innerFile));
@@ -44,7 +44,7 @@ describe('TestableMutant', () => {
     innerMutant.replacement = ' mutated! ';
     expect(sut.mutatedCode).eq('some mutated! content');
   });
-  
+
   it('should be able to retrieve original lines and mutated lines', () => {
     const innerFile = new File('', 'line 1\nline 2\nline 3\nline 4');
     const sut = new TestableMutant('3', innerMutant, new SourceFile(innerFile));

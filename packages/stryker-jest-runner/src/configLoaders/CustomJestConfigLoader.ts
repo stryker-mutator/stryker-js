@@ -31,6 +31,6 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
   private readConfigFromPackageJson() {
     try {
       return JSON.parse(this._fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8')).jest;
-    } catch { /* Don't return anything (implicitly return undefined) */ } 
+    } catch { /* Don't return anything (implicitly return undefined) */ }
   }
 }

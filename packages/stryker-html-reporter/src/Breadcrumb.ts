@@ -1,5 +1,3 @@
-
-
 export default class Breadcrumb {
 
   private constructor(public title: string, public addedDepth: number, public previousItem?: Breadcrumb) {
