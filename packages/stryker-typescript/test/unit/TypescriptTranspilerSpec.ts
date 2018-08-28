@@ -18,9 +18,10 @@ describe('TypescriptTranspiler', () => {
   beforeEach(() => {
     config = new Config();
     languageService = mock(TranspilingLanguageService);
-    transpileFilterMock = mock(TranspileFilter);
-    // Add the isIncluded method as it is absent from the abstract class
-    transpileFilterMock.isIncluded = sandbox.stub();
+    transpileFilterMock = {
+      // Cannot use `mock<T>` as it is an abstract class
+      isIncluded: sandbox.stub()
+    };
     sandbox.stub(TranspileFilter, 'create').returns(transpileFilterMock);
     sandbox.stub(transpilingLanguageService, 'default').returns(languageService);
   });

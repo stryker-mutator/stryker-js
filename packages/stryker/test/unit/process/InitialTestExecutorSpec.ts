@@ -42,7 +42,7 @@ describe('InitialTestExecutor run', () => {
 
   beforeEach(() => {
     log = currentLogMock();
-    strykerSandboxMock = producers.mock(StrykerSandbox);
+    strykerSandboxMock = producers.mock(StrykerSandbox as any);
     transpilerFacadeMock = producers.mock(TranspilerFacade);
     coverageInstrumenterTranspilerMock = producers.mock(CoverageInstrumenterTranspiler);
     sandbox.stub(StrykerSandbox, 'create').resolves(strykerSandboxMock);

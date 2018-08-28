@@ -88,7 +88,7 @@ describe('Stryker', function () {
     sandbox.stub(configReader, 'default').returns(configReaderMock);
     sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
     sandbox.stub(inputFileResolver, 'default').returns(inputFileResolverMock);
-    tempFolderMock = mock(TempFolder);
+    tempFolderMock = mock(TempFolder as any);
     sandbox.stub(TempFolder, 'instance').returns(tempFolderMock);
     tempFolderMock.clean.resolves();
     scoreResultCalculator = new ScoreResultCalculator();

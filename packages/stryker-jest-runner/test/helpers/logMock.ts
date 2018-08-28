@@ -1,17 +1,14 @@
+import * as logging from 'stryker-api/logging';
 import * as sinon from 'sinon';
-import { Logger } from 'stryker-api/logging';
 
-export type Mock<T> = {
-  [P in keyof T]: sinon.SinonStub;
-};
+let log: sinon.SinonStubbedInstance<logging.Logger>;
 
-export type Constructor<T> = { new(...args: any[]): T };
+beforeEach(() => {
+  log = createLogger();
+  sinon.stub(logging, 'getLogger').returns(log);
+});
 
-export function mock<T>(constructorFn: Constructor<T>): sinon.SinonStubbedInstance<T> {
-  return sinon.createStubInstance<T>(constructorFn);
-}
-
-export const logger = (): Mock<Logger> => {
+function createLogger(): sinon.SinonStubbedInstance<logging.Logger> {
   return {
     isTraceEnabled: sinon.stub(),
     isDebugEnabled: sinon.stub(),
@@ -26,4 +23,8 @@ export const logger = (): Mock<Logger> => {
     error: sinon.stub(),
     fatal: sinon.stub()
   };
-};
+}
+
+export default function currentLogMock() {
+  return log;
+}

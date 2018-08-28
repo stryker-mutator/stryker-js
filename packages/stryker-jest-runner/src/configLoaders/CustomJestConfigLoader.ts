@@ -5,7 +5,7 @@ import { Configuration } from 'jest';
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root
  */
-export default class DefaultJestConfigLoader implements JestConfigLoader {
+export default class CustomJestConfigLoader implements JestConfigLoader {
   private _fs: any;
   private _projectRoot: string;
   private _loader: NodeRequire;
