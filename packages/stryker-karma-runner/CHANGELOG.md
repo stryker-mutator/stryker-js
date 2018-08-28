@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.18.0"></a>
+# [0.18.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.17.1...stryker-karma-runner@0.18.0) (2018-08-28)
+
+
+### Bug Fixes
+
+* **karma-conf:** log importing the Karma config using debug instead of info ([#1089](https://github.io/stryker-mutator/stryker/issues/1089)) ([bca5dbd](https://github.io/stryker-mutator/stryker/commit/bca5dbd))
+
+
+### Features
+
+* **config:** rename config setting `project` to `projectType` and 'default' to 'custom' ([#1107](https://github.io/stryker-mutator/stryker/issues/1107)) ([4f4a9aa](https://github.io/stryker-mutator/stryker/commit/4f4a9aa))
+
+
+
+
 <a name="0.17.1"></a>
 ## [0.17.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.17.0...stryker-karma-runner@0.17.1) (2018-08-21)
 

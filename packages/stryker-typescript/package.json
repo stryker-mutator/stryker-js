@@ -1,6 +1,6 @@
 {
   "name": "stryker-typescript",
-  "version": "0.13.1",
+  "version": "0.13.2",
   "description": "A plugin for TypeScript-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {

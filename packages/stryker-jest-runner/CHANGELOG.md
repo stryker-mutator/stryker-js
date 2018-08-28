@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.1.1...stryker-jest-runner@1.2.0) (2018-08-28)
+
+
+### Features
+
+* **config:** rename config setting `project` to `projectType` and 'default' to 'custom' ([#1107](https://github.com/stryker-mutator/stryker/issues/1107)) ([4f4a9aa](https://github.com/stryker-mutator/stryker/commit/4f4a9aa))
+
+
+
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.1.0...stryker-jest-runner@1.1.1) (2018-08-21)
 
