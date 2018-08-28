@@ -5,28 +5,20 @@ import * as fakeResults from '../helpers/testResultProducer';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
-import * as logging from 'stryker-api/logging';
+import currentLogMock from '../helpers/logMock';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';
 
-  let sandbox: sinon.SinonSandbox;
   let jestTestAdapterFactoryStub: sinon.SinonStub;
   let runJestStub: sinon.SinonStub;
-  let debugLoggerStub: sinon.SinonStub;
-
   let strykerOptions: Config;
   let jestTestRunner: JestTestRunner;
   let processEnvMock: NodeJS.ProcessEnv;
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
     runJestStub = sinon.stub();
     runJestStub.resolves({ results: { testResults: [] } });
-
-    debugLoggerStub = sandbox.stub();
-    sandbox.stub(logging, 'getLogger').returns({ debug: debugLoggerStub });
 
     strykerOptions = new Config;
     strykerOptions.set({ jest: { config: { property: 'value' } }, basePath });
@@ -41,16 +33,14 @@ describe('JestTestRunner', () => {
       strykerOptions
     }, processEnvMock);
 
-    jestTestAdapterFactoryStub = sandbox.stub(JestTestAdapterFactory, 'getJestTestAdapter');
+    jestTestAdapterFactoryStub = sinon.stub(JestTestAdapterFactory, 'getJestTestAdapter');
     jestTestAdapterFactoryStub.returns({
       run: runJestStub
     });
   });
 
-  afterEach(() => sandbox.restore());
-
   it('should log the project root when constructing the JestTestRunner', () => {
-    assert(debugLoggerStub.calledWith(`Project root is ${basePath}`));
+    assert(currentLogMock().debug.calledWith(`Project root is ${basePath}`));
   });
 
   it('should call jestTestAdapterFactory "getJestTestAdapter" method to obtain a testRunner', async () => {

@@ -54,7 +54,7 @@
   ],
   "initStrykerConfig": {
     "karma": {
-      "project": "custom",
+      "projectType": "custom",
       "configFile": "karma.conf.js",
       "config": {}
     }

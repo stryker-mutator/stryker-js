@@ -7,7 +7,9 @@ export const KARMA_CONFIG_KEY = 'karma';
 export type ProjectKind = 'custom' | 'angular-cli';
 
 export default interface StrykerKarmaSetup {
-  project: ProjectKind;
+  // Deprecrated
+  project?: ProjectKind;
+  projectType: ProjectKind;
   configFile?: string;
   config?: karma.ConfigOptions;
 }

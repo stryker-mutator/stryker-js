@@ -17,14 +17,13 @@ const jestProjectRoot = process.cwd();
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
 
-describe('Integration test for Strykers Jest runner', function () {
+describe('Integration test for Strykers Jest runner', function() {
   // Set timeout for integration tests to 10 seconds for travis
   this.timeout(30000);
 
   let jestConfigEditor: JestConfigEditor;
   let runOptions: RunnerOptions;
   let processCwdStub: sinon.SinonStub;
-  let sandbox: sinon.SinonSandbox;
 
   // Names of the tests in the example projects
   const testNames = [
@@ -37,24 +36,20 @@ describe('Integration test for Strykers Jest runner', function () {
   ];
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
-    processCwdStub = sandbox.stub(process, 'cwd');
+    processCwdStub = sinon.stub(process, 'cwd');
 
     jestConfigEditor = new JestConfigEditor();
 
     runOptions = {
       fileNames: [],
       port: 0,
-      strykerOptions: new Config
+      strykerOptions: new Config()
     };
   });
 
-  afterEach(() => sandbox.restore());
-
   it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));
-    runOptions.strykerOptions.set({ jest: { project: 'react-ts' } });
+    runOptions.strykerOptions.set({ jest: { projectType: 'react-ts' } });
     jestConfigEditor.edit(runOptions.strykerOptions as Config);
 
     const jestTestRunner = new JestTestRunner(runOptions);
@@ -82,7 +77,7 @@ describe('Integration test for Strykers Jest runner', function () {
     expect(result).to.have.property('tests');
     expect(result.tests).to.be.an('array').with.length(testNames.length);
 
-    for (let test of result.tests) {
+    for (const test of result.tests) {
       expect(testNames).to.include(test.name);
       expect(test.status).to.equal(TestStatus.Success);
       expect(test.timeSpentMs).to.be.above(-1);
@@ -104,7 +99,7 @@ describe('Integration test for Strykers Jest runner', function () {
     expect(result).to.have.property('tests');
     expect(result.tests).to.be.an('array').with.length(testNames.length);
 
-    for (let test of result.tests) {
+    for (const test of result.tests) {
       expect(testNames).to.include(test.name);
       expect(test.status).to.equal(TestStatus.Success);
       expect(test.timeSpentMs).to.be.above(-1);

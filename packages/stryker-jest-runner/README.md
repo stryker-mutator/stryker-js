@@ -39,7 +39,7 @@ The stryker-jest-runner also provides a couple of configurable options using the
 ```javascript
 {
     jest: {
-        project: 'default',
+        projectType: 'custom',
         config: require('path/to/your/custom/jestConfig.js')
     }
 }
@@ -47,13 +47,13 @@ The stryker-jest-runner also provides a couple of configurable options using the
 
 | option | description | default value | alternative values |
 |----|----|----|---|
-| project (optional) | The type of project you are working on. | `default` | `default` uses the `config` option (see below)|
+| projectType (optional) | The type of project you are working on. | `default` | `default` uses the `config` option (see below)|
 | | | | `react` when you are using [create-react-app](https://github.com/facebook/create-react-app) |
 | | | | `react-ts` when you are using [create-react-app-typescript](https://github.com/wmonk/create-react-app-typescript) |
 | config (optional) | A custom Jest configuration object. You could also use `require` to load it here) | undefined | |
 
 **Note:** When neither of the options are specified it will use the Jest configuration in your "package.json". \
-**Note:** the `project` option is ignored when the `config` option is specified.
+**Note:** the `projectType` option is ignored when the `config` option is specified.
 **Note:** Stryker currently only works for CRA-projects that have not been [_ejected_](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#npm-run-eject).
 
 The following is an example stryker.conf.js file:

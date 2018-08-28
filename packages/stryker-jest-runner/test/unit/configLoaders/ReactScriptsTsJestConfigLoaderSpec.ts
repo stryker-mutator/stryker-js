@@ -10,7 +10,6 @@ const fakeRequire: any = {
 
 describe('ReactScriptsTsJestConfigLoader', () => {
   let reactConfigLoader: ReactScriptsTSJestConfigLoader;
-  let sandbox: sinon.SinonSandbox;
   let requireResolveStub: sinon.SinonStub;
   let createReactJestConfigStub: sinon.SinonStub;
 
@@ -18,22 +17,18 @@ describe('ReactScriptsTsJestConfigLoader', () => {
   let reactScriptsTsPackagePath = './node_modules/react-scripts-ts/package.json';
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
-    createReactJestConfigStub = sandbox.stub(helper, 'createReactTsJestConfig');
+    createReactJestConfigStub = sinon.stub(helper, 'createReactTsJestConfig');
     createReactJestConfigStub.callsFake((resolve: any, projectRoot: string, eject: boolean) => ({
       relativePath: resolve('test'),
       projectRoot,
       eject
     }));
 
-    requireResolveStub = sandbox.stub(fakeRequire, 'resolve');
+    requireResolveStub = sinon.stub(fakeRequire, 'resolve');
     requireResolveStub.returns(reactScriptsTsPackagePath);
 
     reactConfigLoader = new ReactScriptsTSJestConfigLoader(projectRoot, fakeRequire);
   });
-
-  afterEach(() => sandbox.restore());
 
   it('should load the configuration via the createJestConfig method provided by react-scripts-ts', () => {
     reactConfigLoader.loadConfig();

@@ -35,7 +35,7 @@ module.exports = function (config) {
         testRunner: 'karma',
         // ...
         karma: {
-            project: 'custom', // or 'angular-cli'
+            projectType: 'custom', // or 'angular-cli'
             configFile: 'path/to/karma.conf.js' // default `undefined`
             config: { // default `undefined`
                 browsers: ['ChromeHeadless'] // override config settings
@@ -45,7 +45,7 @@ module.exports = function (config) {
 }
 ```
 
-### `karma.project` [`"custom"` | `"angular-cli"`]
+### `karma.projectType` [`"custom"` | `"angular-cli"`]
 
 Default: `"custom"`
 
@@ -95,7 +95,7 @@ exports = function(config){
     config.set({
         // ...
         karma: {
-            project: 'angular-cli',
+            projectType: 'angular-cli',
             karma: {
                 configFile: 'src/karma.conf.js'
             }
