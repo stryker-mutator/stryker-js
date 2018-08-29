@@ -36,7 +36,7 @@ describe('BabelParser', () => {
 
       const result = BabelParser.generateCode(ast, ast.program.body[0]);
 
-      expect(result).to.equal('"use strict";\nvar a = 1 + 2;');
+      expect(result).to.equal('"use strict";\n\nvar a = 1 + 2;');
     });
 
     it('should work without "use strict"', () => {
@@ -54,7 +54,7 @@ describe('BabelParser', () => {
 
       const result = BabelParser.generateCode(ast, ast.program.body[0]);
       
-      expect(result).to.equal('var a = 1 + 2 /* Comment */;');
+      expect(result).to.equal('var a = 1 + 2\n/* Comment */\n;');
     });
   });
 

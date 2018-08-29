@@ -1,4 +1,4 @@
-import * as babel from 'babel-core';
+import * as types from '@babel/types';
 import { getLogger } from 'stryker-api/logging';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import { File } from 'stryker-api/core';
@@ -32,7 +32,7 @@ export default class JavaScriptMutator implements Mutator {
 
           if (mutatedNodes) {
             const newMutants = this.generateMutants(mutatedNodes, baseAst, file, mutator.name);
-            newMutants.forEach(mutant => mutants.push(mutant));
+            mutants.push(...newMutants);
           }
         });
       });
@@ -41,12 +41,12 @@ export default class JavaScriptMutator implements Mutator {
     return mutants;
   }
 
-  private generateMutants(nodes: babel.types.Node[], ast: babel.types.File, file: File, mutatorName: string) {
+  private generateMutants(nodes: types.Node[], ast: types.File, file: File, mutatorName: string) {
     const mutants: Mutant[] = [];
 
     nodes.forEach(node => {
       const replacement = BabelParser.generateCode(ast, node);
-      if (replacement) {
+      if (replacement && node.start !== null && node.end !== null) {
         const range: [number, number] = [node.start, node.end];
 
         const mutant = {

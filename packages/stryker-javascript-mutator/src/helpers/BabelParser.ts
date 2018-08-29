@@ -1,15 +1,13 @@
-import * as babel from 'babel-core';
-import * as babylon from 'babylon';
-import generate from 'babel-generator';
-import { NodePath } from 'babel-traverse';
+import * as types from '@babel/types';
+import { parse, ParseOptions } from '@babel/parser';
+import traverse, { NodePath } from '@babel/traverse';
+import generate from '@babel/generator';
 import { NodeWithParent } from './ParentNode';
 
 export default class BabelParser {
-  static getAst(code: string): babel.types.File {
-    let ast: babel.types.File;
-
-    const options: babylon.BabylonOptions = {
-      sourceType: 'script',
+  static getAst(code: string): types.File {
+    const options: ParseOptions = {
+      sourceType: 'unambiguous',
       plugins: [
         'jsx',
         'flow',
@@ -20,36 +18,31 @@ export default class BabelParser {
       ]
     };
 
-    try {
-      ast = babylon.parse(code, options);
-    } catch {
-      options.sourceType = 'module';
-      ast = babylon.parse(code, options);
-    }
-    return ast;
+    return parse(code, options);
   }
 
-  static getNodes(ast: babel.types.File): NodeWithParent[] {
+  static getNodes(ast: types.File): NodeWithParent[] {
     const nodes: NodeWithParent[] = [];
 
-    babel.traverse(ast, {
-      enter(path: NodePath<babel.types.Node>) {
+    traverse(ast, {
+      enter(path: NodePath<types.Node>) {
         const node: NodeWithParent = path.node;
-        node.parent = path.parent;
+        node.parent = path.parent as any;
         Object.freeze(node);
         nodes.push(node);
-      }
+      },
+      
     });
 
     return nodes;
   }
 
-  static generateCode(ast: babel.types.File, node: babel.Node) {
+  static generateCode(ast: types.File, node: types.Node) {
     ast.program.body = [node as any];
     return generate(ast).code;
   }
 
-  static removeUseStrict(ast: babel.types.File) {
+  static removeUseStrict(ast: types.File) {
     if (ast.program.directives) {
       const directives = ast.program.directives;
       directives.forEach((directive, index) => {

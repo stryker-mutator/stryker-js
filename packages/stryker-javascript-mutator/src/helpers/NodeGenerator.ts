@@ -1,4 +1,4 @@
-import { types } from 'babel-core';
+import * as types from '@babel/types';
 
 export default class NodeGenerator {
   static createBooleanLiteralNode(originalNode: types.Node, value: boolean): types.BooleanLiteral {
@@ -7,7 +7,10 @@ export default class NodeGenerator {
       end: originalNode.end,
       loc: originalNode.loc,
       type: 'BooleanLiteral',
-      value: value
+      value: value,
+      leadingComments: originalNode.leadingComments,
+      innerComments: originalNode.innerComments,
+      trailingComments: originalNode.trailingComments
     };
   }
 }

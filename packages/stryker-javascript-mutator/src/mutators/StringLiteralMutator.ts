@@ -1,4 +1,4 @@
-import { types } from 'babel-core';
+import * as types from '@babel/types';
 import NodeMutator from './NodeMutator';
 import { NodeWithParent } from '../helpers/ParentNode';
 
@@ -14,7 +14,10 @@ export default class StringLiteralMutator implements NodeMutator {
         start: node.start,
         end: node.end,
         loc: node.loc,
-        value: ''
+        value: '',
+        leadingComments: node.leadingComments,
+        trailingComments: node.trailingComments,
+        innerComments: node.innerComments
       };
 
       if (node.quasis.length === 1 && node.quasis[0].value.raw.length === 0) {
