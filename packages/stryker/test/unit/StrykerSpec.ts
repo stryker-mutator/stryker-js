@@ -57,6 +57,7 @@ describe('Stryker', function () {
   let scoreResultCalculator: ScoreResultCalculator;
   let configureMainProcessStub: sinon.SinonStub;
   let configureLoggingServerStub: sinon.SinonStub;
+  let shutdownLoggingStub: sinon.SinonStub;
 
   beforeEach(() => {
     strykerConfig = config();
@@ -70,6 +71,7 @@ describe('Stryker', function () {
     mutatorMock = mock(MutatorFacade);
     configureMainProcessStub = sandbox.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sandbox.stub(LogConfigurator, 'configureLoggingServer');
+    shutdownLoggingStub = sandbox.stub(LogConfigurator, 'shutdown');
     configureLoggingServerStub.resolves(LOGGING_CONTEXT);
     inputFileResolverMock = mock(InputFileResolver);
     reporterOrchestratorMock.createBroadcastReporter.returns(reporter);
@@ -267,6 +269,10 @@ describe('Stryker', function () {
 
       it('should let the reporters wrapUp any async tasks', () => {
         expect(reporter.wrapUp).to.have.been.called;
+      });
+
+      it('should shutdown the log4js server', () => {
+        expect(shutdownLoggingStub).called;
       });
     });
 
