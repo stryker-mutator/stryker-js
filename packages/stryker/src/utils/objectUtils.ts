@@ -13,7 +13,7 @@ export function freezeRecursively<T extends { [prop: string]: any }>(target: T):
 }
 
 export function isPromise(input: any): input is Promise<any> {
-  return input && typeof input['then'] === 'function';
+  return input && typeof input.then === 'function';
 }
 
 export function filterEmpty<T>(input: (T | null | void)[]) {

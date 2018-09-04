@@ -10,7 +10,7 @@ const CACHE_DURATION = 60000;
 
 export default class InputFileSystem extends CachedInputFileSystem implements webpack.InputFileSystem {
 
-  private memoryFS = new MemoryFS();
+  private readonly memoryFS = new MemoryFS();
 
   constructor(innerFS = new NodeJsInputFileSystem()) {
     super(innerFS, CACHE_DURATION);

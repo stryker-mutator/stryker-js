@@ -51,12 +51,13 @@ We support mutation testing Stryker with Stryker! After you got Stryker working 
 New features are welcome! Either as requests or proposals. 
 
 1. Please create an issue first or let us know via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker)
-2. Create a fork on your github account.
-3. When writing your code, please conform to the existing coding style.
-   See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig) and the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines)
-4. Please create or edit unit tests or integration tests.
-5. Run the tests using `npm test`
-6. When creating commits, please conform to [the angular commit message style](https://docs.google.com/document/d/1rk04jEuGfk9kYzfqCuOlPTSJw3hEDZJTBN5E5f1SALo/edit).
+1. Create a fork on your github account.
+1. When writing your code, please conform to the existing coding style.
+   See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
+    * You can automatically fix a lot of lint issues using `npm run lint-fix`
+1. Please create or edit unit tests or integration tests.
+1. Run the tests using `npm test`
+1. When creating commits, please conform to [the angular commit message style](https://docs.google.com/document/d/1rk04jEuGfk9kYzfqCuOlPTSJw3hEDZJTBN5E5f1SALo/edit).
    Namely in the form `<type>(<scope>): <subject>\n\n[body]`
    * Type: feat, fix, docs, style, refactor, test, chore.
    * Scope can the the file or group of files (not a strict right or wrong)

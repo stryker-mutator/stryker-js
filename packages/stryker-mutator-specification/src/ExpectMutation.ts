@@ -1,3 +1,3 @@
-export default interface ExpectMutation {
-  (originalCode: string, ...expectedMutations: string[]): void;
-}
+type ExpectMutation = (originalCode: string, ...expectedMutations: string[]) => void;
+
+export default ExpectMutation;

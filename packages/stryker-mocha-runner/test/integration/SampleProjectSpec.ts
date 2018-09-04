@@ -19,7 +19,7 @@ function resolve(fileName: string) {
   return path.resolve(__dirname, '..', '..', fileName);
 }
 
-describe('Running a sample project', function () {
+describe('Running a sample project', function() {
 
   let sut: MochaTestRunner;
   this.timeout(10000);
@@ -32,11 +32,11 @@ describe('Running a sample project', function () {
         resolve('./testResources/sampleProject/MyMathSpec.js')
       ];
       const testRunnerOptions: RunnerOptions = {
+        fileNames: files,
+        port: 1234,
         strykerOptions: {
           mochaOptions: { files }
-        },
-        port: 1234,
-        fileNames: files
+        }
       };
       sut = new MochaTestRunner(testRunnerOptions);
       return sut.init();
@@ -68,9 +68,9 @@ describe('Running a sample project', function () {
         files
       };
       const options: RunnerOptions = {
-        strykerOptions: { mochaOptions },
         fileNames: files,
-        port: 1234
+        port: 1234,
+        strykerOptions: { mochaOptions }
       };
       sut = new MochaTestRunner(options);
       return sut.init();
@@ -86,18 +86,18 @@ describe('Running a sample project', function () {
 
     before(() => {
       sut = new MochaTestRunner({
+        fileNames: [
+          resolve('testResources/sampleProject/MyMath.js'),
+          resolve('testResources/sampleProject/MyMathFailedSpec.js')
+        ],
+        port: 1234,
         strykerOptions: {
           mochaOptions: {
             files: [
               resolve('testResources/sampleProject/MyMath.js'),
               resolve('testResources/sampleProject/MyMathFailedSpec.js')],
           }
-        },
-        port: 1234,
-        fileNames: [
-          resolve('testResources/sampleProject/MyMath.js'),
-          resolve('testResources/sampleProject/MyMathFailedSpec.js')
-        ]
+        }
       });
       return sut.init();
     });
@@ -113,11 +113,11 @@ describe('Running a sample project', function () {
     beforeEach(() => {
       const files = [resolve('./testResources/sampleProject/MyMath.js')];
       const testRunnerOptions = {
+        fileNames: files,
+        port: 1234,
         strykerOptions: {
           mochaOptions: { files }
-        },
-        port: 1234,
-        fileNames: files
+        }
       };
       sut = new MochaTestRunner(testRunnerOptions);
       return sut.init();

@@ -3,9 +3,9 @@ import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class DoStatementMutator extends NodeMutator<ts.DoStatement> {
 
-  name = 'DoStatement';
+  public name = 'DoStatement';
 
-  guard(node: ts.Node): node is ts.DoStatement {
+  public guard(node: ts.Node): node is ts.DoStatement {
     return node.kind === ts.SyntaxKind.DoStatement;
   }
 

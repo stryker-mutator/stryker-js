@@ -15,7 +15,7 @@ interface JasmineTest {
   status: string;
 }
 
-describe('Selecting tests with nested suites', function () {
+describe('Selecting tests with nested suites', function() {
 
   this.timeout(10000);
   let sut: JasmineTestFramework;

@@ -2,9 +2,9 @@ import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class IfStatementMutator extends NodeMutator<ts.IfStatement> {
-  name = 'IfStatement';
+  public name = 'IfStatement';
 
-  guard(node: ts.Node): node is ts.IfStatement {
+  public guard(node: ts.Node): node is ts.IfStatement {
     return node.kind === ts.SyntaxKind.IfStatement;
   }
 

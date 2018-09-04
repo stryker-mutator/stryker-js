@@ -11,7 +11,7 @@ describe('BooleanSubstitutionMutator', () => {
   beforeEach(() => {
     sut = new BooleanSubstitutionMutator();
   });
-  
+
   it('should mutate when supplied a expression with !', () => {
     // Arrange
     const program = parse(`!a.a()`);
@@ -69,6 +69,5 @@ describe('BooleanSubstitutionMutator', () => {
     // Assert
     expect(result).to.have.lengthOf(0);
   });
-
 
 });

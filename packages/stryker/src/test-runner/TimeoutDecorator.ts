@@ -10,7 +10,7 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
 
   private readonly log = getLogger(TimeoutDecorator.name);
 
-  async run(options: RunOptions): Promise<RunResult> {
+  public async run(options: RunOptions): Promise<RunResult> {
     this.log.debug('Starting timeout timer (%s ms) for a test run', options.timeout);
     const result = await timeout(super.run(options), options.timeout);
     if (result === TimeoutExpired) {

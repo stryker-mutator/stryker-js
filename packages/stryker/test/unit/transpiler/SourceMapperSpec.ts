@@ -27,8 +27,8 @@ describe('SourceMapper', () => {
     // Define it here by hand
     sourceMapConsumerMock.generatedPositionFor = sandbox.stub();
     sourceMapConsumerMock.generatedPositionFor.returns({
-      line: 1,
-      column: 2
+      column: 2,
+      line: 1
     });
     sandbox.stub(sourceMapModule, 'SourceMapConsumer').returns(sourceMapConsumerMock);
 

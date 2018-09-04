@@ -7,7 +7,7 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
   private intervalReference: NodeJS.Timer;
   private timer: Timer;
 
-  onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
+  public onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
     if (matchedMutants.length) {
       this.timer = new Timer();
@@ -15,7 +15,7 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
     }
   }
 
-  onAllMutantsTested(): void {
+  public onAllMutantsTested(): void {
     clearInterval(this.intervalReference);
   }
 

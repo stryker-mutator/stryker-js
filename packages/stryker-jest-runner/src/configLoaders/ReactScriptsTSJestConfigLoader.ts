@@ -4,8 +4,8 @@ import * as path from 'path';
 import { Configuration } from 'jest';
 
 export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader {
-  private loader: NodeRequire;
-  private projectRoot: string;
+  private readonly loader: NodeRequire;
+  private readonly projectRoot: string;
 
   public constructor(projectRoot: string, loader?: NodeRequire) {
     this.loader = loader || /* istanbul ignore next */ require;

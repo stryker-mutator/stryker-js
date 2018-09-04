@@ -4,9 +4,9 @@ import { File } from 'stryker-api/core';
 
 class MyTranspiler implements Transpiler {
 
-  constructor(private transpilerOptions: TranspilerOptions) { }
+  constructor(private readonly transpilerOptions: TranspilerOptions) { }
 
-  transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
     return Promise.resolve([new File('foo/bar.js', 'bar content')]);
   }
 }

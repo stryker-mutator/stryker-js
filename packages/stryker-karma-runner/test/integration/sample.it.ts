@@ -4,7 +4,7 @@ import * as path from 'path';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
 
-describe('Sample project', function () {
+describe('Sample project', function() {
   this.timeout(30000);
 
   it('should be able to run karma', async () => {

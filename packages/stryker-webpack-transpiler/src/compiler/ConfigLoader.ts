@@ -8,8 +8,8 @@ import { isFunction } from 'lodash';
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 
 export default class ConfigLoader {
-  private log: Logger;
-  private loader: NodeRequireFunction;
+  private readonly log: Logger;
+  private readonly loader: NodeRequireFunction;
 
   public constructor(loader?: NodeRequireFunction) {
     this.loader = loader || require;

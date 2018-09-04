@@ -25,8 +25,8 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
   beforeEach(() => {
     clock = sandbox.useFakeTimers();
     childProcessProxyMock = {
-      proxy: mock(TestRunnerDecorator),
-      dispose: sandbox.stub()
+      dispose: sandbox.stub(),
+      proxy: mock(TestRunnerDecorator)
     };
     childProcessProxyCreateStub = sandbox.stub(ChildProcessProxy, 'create');
     childProcessProxyCreateStub.returns(childProcessProxyMock);

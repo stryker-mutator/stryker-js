@@ -9,10 +9,9 @@ export default class ConfigValidator {
   private isValid = true;
   private readonly log = getLogger(ConfigValidator.name);
 
-  constructor(private strykerConfig: Config, private testFramework: TestFramework | null) {
-  }
+  constructor(private readonly strykerConfig: Config, private readonly testFramework: TestFramework | null) { }
 
-  validate() {
+  public validate() {
     this.validateTestFramework();
     this.validateThresholds();
     this.validateMutator();

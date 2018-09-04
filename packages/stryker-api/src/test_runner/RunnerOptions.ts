@@ -21,4 +21,4 @@ interface RunnerOptions {
   strykerOptions: StrykerOptions;
 }
 
-export default RunnerOptions; 
+export default RunnerOptions;

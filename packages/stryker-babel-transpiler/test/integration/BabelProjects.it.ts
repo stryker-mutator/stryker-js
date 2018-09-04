@@ -5,12 +5,11 @@ import { ProjectLoader } from '../helpers/projectLoader';
 import BabelTranspiler from '../../src/BabelTranspiler';
 import { expect } from 'chai';
 
-
 function describeIntegrationTest(projectName: string) {
 
   const projectDir = path.resolve(__dirname, '..', '..', 'testResources', projectName);
-  let projectFiles: Array<File> = [];
-  let resultFiles: Array<File> = [];
+  let projectFiles: File[] = [];
+  let resultFiles: File[] = [];
   let babelTranspiler: BabelTranspiler;
   let config: Config;
 
@@ -34,7 +33,7 @@ function describeIntegrationTest(projectName: string) {
 
   function expectFilesEqual(actual: ReadonlyArray<File>, expected: ReadonlyArray<File>) {
     expect(actual).lengthOf(expected.length);
-    for (let i in expected) {
+    for (const i in expected) {
       expect(actual[i].name).deep.eq(expected[i].name);
       expect(actual[i].textContent, expected[i].name).deep.eq(expected[i].textContent);
       expect(actual[i].content, expected[i].name).deep.eq(expected[i].content);

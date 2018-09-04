@@ -70,11 +70,11 @@ describe('DotsReporter', () => {
       mutatedLines: '',
       mutatorName: '',
       originalLines: '',
+      range: [0, 0],
       replacement: '',
       sourceFilePath: '',
-      testsRan: [''],
-      status: status,
-      range: [0, 0]
+      status,
+      testsRan: ['']
     });
   }
 

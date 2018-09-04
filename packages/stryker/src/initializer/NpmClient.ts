@@ -44,16 +44,16 @@ export default class NpmClient {
   private readonly log = getLogger(NpmClient.name);
 
   constructor(
-    private searchClient = new RestClient('npmSearch', BASE_NPM_SEARCH),
-    private packageClient = new RestClient('npm', BASE_NPM_PACKAGE)) {
+    private readonly searchClient = new RestClient('npmSearch', BASE_NPM_SEARCH),
+    private readonly packageClient = new RestClient('npm', BASE_NPM_PACKAGE)) {
   }
 
-  getTestRunnerOptions(): Promise<PromptOption[]> {
+  public getTestRunnerOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:stryker-test-runner')
       .then(mapSearchResultToPromptOption);
   }
 
-  getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
+  public getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:stryker-test-framework')
       .then(searchResult => {
         if (testRunnerFilter) {
@@ -64,22 +64,22 @@ export default class NpmClient {
       .then(mapSearchResultToPromptOption);
   }
 
-  getMutatorOptions(): Promise<PromptOption[]> {
+  public getMutatorOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:stryker-mutator')
     .then(mapSearchResultToPromptOption);
   }
 
-  getTranspilerOptions(): Promise<PromptOption[]> {
+  public getTranspilerOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:stryker-transpiler')
     .then(mapSearchResultToPromptOption);
   }
 
-  getTestReporterOptions(): Promise<PromptOption[]> {
+  public getTestReporterOptions(): Promise<PromptOption[]> {
     return this.search(`/v2/search?q=keywords:stryker-reporter`)
       .then(mapSearchResultToPromptOption);
   }
 
-  getAdditionalConfig(packageName: string): Promise<object> {
+  public getAdditionalConfig(packageName: string): Promise<object> {
     return this.packageClient.get<NpmPackage>(`/${packageName}/latest`)
       .then(handleResult(`${BASE_NPM_PACKAGE}/${packageName}`))
       .then(pkg => pkg.initStrykerConfig || {})
@@ -97,8 +97,8 @@ export default class NpmClient {
       .catch(err => {
         this.log.error(`Unable to reach ${BASE_NPM_SEARCH} (for query ${query}). Please check your internet connection.`, errorToString(err));
         const result: NpmSearchResult = {
-          total: 0,
-          results: []
+          results: [],
+          total: 0
         };
         return result;
       });

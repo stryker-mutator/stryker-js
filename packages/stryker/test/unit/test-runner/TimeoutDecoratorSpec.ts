@@ -20,7 +20,7 @@ describe('TimeoutDecorator', () => {
     testRunner2 = new TestRunnerMock();
     availableTestRunners = [testRunner1, testRunner2];
     sut = new TimeoutDecorator(() => {
-      return <any>availableTestRunners.shift();
+      return availableTestRunners.shift() as any;
     });
   });
 

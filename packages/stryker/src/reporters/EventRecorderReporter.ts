@@ -11,19 +11,19 @@ const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 export default class EventRecorderReporter implements StrictReporter {
 
   private readonly log = getLogger(EventRecorderReporter.name);
-  private allWork: Promise<any>[] = [];
-  private createBaseFolderTask: Promise<any>;
+  private readonly allWork: Promise<any>[] = [];
+  private readonly createBaseFolderTask: Promise<any>;
   private _baseFolder: string;
   private index = 0;
 
-  constructor(private options: StrykerOptions) {
+  constructor(private readonly options: StrykerOptions) {
     this.createBaseFolderTask = cleanFolder(this.baseFolder);
   }
 
   private get baseFolder() {
     if (!this._baseFolder) {
-      if (this.options['eventReporter'] && this.options['eventReporter']['baseDir']) {
-        this._baseFolder = this.options['eventReporter']['baseDir'];
+      if (this.options.eventReporter && this.options.eventReporter.baseDir) {
+        this._baseFolder = this.options.eventReporter.baseDir;
         this.log.debug(`Using configured output folder ${this._baseFolder}`);
       } else {
         this.log.debug(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
@@ -34,7 +34,7 @@ export default class EventRecorderReporter implements StrictReporter {
   }
 
   private writeToFile(methodName: keyof Reporter, data: any) {
-    let filename = path.join(this.baseFolder, `${this.format(this.index++)}-${methodName}.json`);
+    const filename = path.join(this.baseFolder, `${this.format(this.index++)}-${methodName}.json`);
     this.log.debug(`Writing event ${methodName} to file ${filename}`);
     return fs.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
   }
@@ -49,35 +49,35 @@ export default class EventRecorderReporter implements StrictReporter {
     return str;
   }
 
-  work(eventName: keyof Reporter, data: any) {
+  private work(eventName: keyof Reporter, data: any) {
     this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(eventName, data)));
   }
 
-  onSourceFileRead(file: SourceFile): void {
+  public onSourceFileRead(file: SourceFile): void {
     this.work('onSourceFileRead', file);
   }
 
-  onAllSourceFilesRead(files: SourceFile[]): void {
+  public onAllSourceFilesRead(files: SourceFile[]): void {
     this.work('onAllSourceFilesRead', files);
   }
 
-  onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
+  public onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
     this.work('onAllMutantsMatchedWithTests', results);
   }
 
-  onMutantTested(result: MutantResult): void {
+  public onMutantTested(result: MutantResult): void {
     this.work('onMutantTested', result);
   }
 
-  onScoreCalculated(score: ScoreResult): void {
+  public onScoreCalculated(score: ScoreResult): void {
     this.work('onScoreCalculated', score);
   }
 
-  onAllMutantsTested(results: MutantResult[]): void {
+  public onAllMutantsTested(results: MutantResult[]): void {
     this.work('onAllMutantsTested', results);
   }
 
-  async wrapUp(): Promise<any> {
+  public async wrapUp(): Promise<any> {
     await this.createBaseFolderTask;
     return Promise.all(this.allWork);
   }

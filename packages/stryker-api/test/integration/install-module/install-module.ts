@@ -2,13 +2,13 @@ import { expect } from 'chai';
 import { exec } from 'mz/child_process';
 import * as path from 'path';
 
-describe('we have a module using stryker', function () {
+describe('we have a module using stryker', function() {
 
   this.timeout(100000);
 
   const modulePath = path.resolve(__dirname, '../../../testResources/module');
 
-  function execInModule (command: string): Promise<[string, string]> {
+  function execInModule(command: string): Promise<[string, string]> {
     return new Promise((res, rej) => {
       console.log(`Exec '${command}' in ${modulePath}`);
       exec(command, { cwd: modulePath }, (error, stdout, stderr) => {

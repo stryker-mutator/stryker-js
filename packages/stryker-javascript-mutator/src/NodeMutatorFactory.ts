@@ -16,7 +16,7 @@ namespace NodeMutatorFactory {
    * Returns the current instance of the MutatorFactory.
    */
   export function instance() {
-    return <Factory<void, NodeMutator>>nodeMutatorFactoryInstance;
+    return nodeMutatorFactoryInstance as Factory<void, NodeMutator>;
   }
 }
 

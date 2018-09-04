@@ -47,10 +47,9 @@ export function guardTypescriptVersion() {
   }
 }
 
-
 const printer = ts.createPrinter({
-  removeComments: false,
-  newLine: os.EOL === '\r\n' ? ts.NewLineKind.CarriageReturnLineFeed : ts.NewLineKind.LineFeed
+  newLine: os.EOL === '\r\n' ? ts.NewLineKind.CarriageReturnLineFeed : ts.NewLineKind.LineFeed,
+  removeComments: false
 });
 
 export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): string {
@@ -58,7 +57,7 @@ export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): str
 }
 
 function tsExtensions() {
-  // Since ts 2.5 the ts.Extension enum is a string-based enum 
+  // Since ts 2.5 the ts.Extension enum is a string-based enum
   if (semver.satisfies(ts.version, '>=2.5')) {
     return Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
   } else {

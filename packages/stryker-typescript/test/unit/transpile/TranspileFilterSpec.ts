@@ -8,12 +8,12 @@ describe('TranspileFilter', () => {
   describe('create', () => {
     it('should result in the default filter tsconfig is undefined', () => {
       const config = new Config();
-      config['tsconfig'] = undefined;
+      config.tsconfig = undefined;
       expect(TranspileFilter.create(config)).instanceof(DefaultFilter);
     });
     it('should result in the tsconfig filter if tsconfig is present with files', () => {
       const config = new Config();
-      config['tsconfig'] = { fileNames: [] };
+      config.tsconfig = { fileNames: [] };
       expect(TranspileFilter.create(config)).instanceof(TSConfigFilter);
     });
   });

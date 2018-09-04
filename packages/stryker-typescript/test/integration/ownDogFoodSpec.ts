@@ -7,7 +7,7 @@ import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 
-describe('stryker-typescript', function () {
+describe('stryker-typescript', function() {
   this.timeout(20000);
 
   let config: Config;
@@ -34,9 +34,9 @@ describe('stryker-typescript', function () {
     inputFiles[0] = new File(inputFiles[0].name, inputFiles[0].textContent + 'function foo(bar) { return bar; } ');
     return expect(transpiler.transpile(inputFiles)).rejectedWith('error TS7006: Parameter \'bar\' implicitly has an \'any\' type');
   });
-  
+
   it('should not result in an error if a variable is declared as any and noImplicitAny = false', async () => {
-    config['tsconfig'].noImplicitAny = false;
+    config.tsconfig.noImplicitAny = false;
     inputFiles[0] = new File(inputFiles[0].name, inputFiles[0].textContent + 'const shouldResultInError = 3');
     const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
     const outputFiles = await transpiler.transpile(inputFiles);

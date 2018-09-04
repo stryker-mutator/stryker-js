@@ -19,7 +19,7 @@ export default class ES5Mutator implements Mutator {
 
   private readonly log: Logger;
 
-  constructor(_?: Config, private mutators: NodeMutator[] = [
+  constructor(_?: Config, private readonly mutators: NodeMutator[] = [
     new BinaryOperatorMutator(),
     new BlockStatementMutator(),
     new LogicalOperatorMutator(),
@@ -33,8 +33,7 @@ export default class ES5Mutator implements Mutator {
     this.log.warn(`DEPRECATED: The es5 mutator is deprecated and will be removed in the future. Please upgrade to the stryker-javascript-mutator (npm install --save-dev stryker-javascript-mutator) and set "mutator: 'javascript'" in your stryker.conf.js! If you have a plugins array in your stryker.conf.js, be sure to add 'stryker-javascript-mutator'.`);
   }
 
-
-  mutate(files: File[]): Mutant[] {
+  public mutate(files: File[]): Mutant[] {
     return _.flatMap(files, file => this.mutateForFile(file));
   }
 

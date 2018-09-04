@@ -1,17 +1,16 @@
 import {Config, ConfigEditor, ConfigEditorFactory} from 'stryker-api/config';
 
-let config: Config = new Config();
+const config: Config = new Config();
 
 class MyConfigEditor {
-  constructor() {
-  }
+  constructor() { }
 
-  edit(config: Config) {
-    config.set({ 'myConfig': true });
+  public edit(config: Config) {
+    config.set({ myConfig: true });
   }
 }
 
 ConfigEditorFactory.instance().register('myConfigEditor', MyConfigEditor);
-let myConfigEditor = ConfigEditorFactory.instance().create('myConfigEditor', undefined);
+const myConfigEditor = ConfigEditorFactory.instance().create('myConfigEditor', undefined);
 myConfigEditor.edit(config);
 console.log(config);

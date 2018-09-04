@@ -16,7 +16,7 @@ describe('index', () => {
 
     sandbox.stub(TestFrameworkFactory, 'instance').returns(testFrameworkFactoryMock);
 
-    // Not import the `index` file es6 style, because we need to 
+    // Not import the `index` file es6 style, because we need to
     // make sure it is re-imported every time.
     const indexPath = path.resolve('./src/index.js');
     delete require.cache[indexPath];

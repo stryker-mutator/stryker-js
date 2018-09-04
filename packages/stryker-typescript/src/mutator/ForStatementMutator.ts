@@ -4,9 +4,9 @@ import { printNode } from '../helpers/tsHelpers';
 
 export default class ForStatementMutator extends NodeMutator<ts.ForStatement> {
 
-  name = 'ForStatement';
+  public name = 'ForStatement';
 
-  guard(node: ts.Node): node is ts.ForStatement {
+  public guard(node: ts.Node): node is ts.ForStatement {
     return node.kind === ts.SyntaxKind.ForStatement;
   }
 

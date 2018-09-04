@@ -64,10 +64,10 @@ describe('stryker-karma.conf.js', () => {
     config.set({ browserNoActivityTimeout: 1, autoWatch: true, singleRun: true, detached: true });
     sut(config);
     expect(config).deep.include({
-      browserNoActivityTimeout: 1000000,
       autoWatch: false,
-      singleRun: false,
-      detached: false
+      browserNoActivityTimeout: 1000000,
+      detached: false,
+      singleRun: false
     });
   });
 
@@ -122,16 +122,16 @@ describe('stryker-karma.conf.js', () => {
 });
 
 class KarmaConfigMock implements Config {
-  set(config: ConfigOptions) {
-    for (let prop in config) {
+  public set(config: ConfigOptions) {
+    for (const prop in config) {
       if (prop !== 'set') {
         (this as any)[prop] = (config as any)[prop];
       }
     }
   }
-  LOG_DISABLE = 'off';
-  LOG_ERROR = 'error';
-  LOG_WARN = 'warn';
-  LOG_INFO = 'info';
-  LOG_DEBUG = 'debug';
+  public LOG_DISABLE = 'off';
+  public LOG_ERROR = 'error';
+  public LOG_WARN = 'warn';
+  public LOG_INFO = 'info';
+  public LOG_DEBUG = 'debug';
 }

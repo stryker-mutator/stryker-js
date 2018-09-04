@@ -4,10 +4,10 @@ import * as sinon from 'sinon';
 
 describe('createReactJestConfig', () => {
   let loaderStub: sinon.SinonStub;
-  let loader: any = {
+  const loader: any = {
     require: () => {}
   };
-  
+
   beforeEach(() => {
     loaderStub = sinon.stub(loader, 'require');
     loaderStub.returns(() => {
@@ -28,10 +28,10 @@ describe('createReactJestConfig', () => {
 
 describe('createReactTsJestConfig', () => {
   let loaderStub: sinon.SinonStub;
-  let loader: any = {
+  const loader: any = {
     require: () => {}
   };
-  
+
   beforeEach(() => {
     loaderStub = sinon.stub(loader, 'require');
     loaderStub.returns((resolve: Function, projectRoot: string, ejected: boolean) => {
