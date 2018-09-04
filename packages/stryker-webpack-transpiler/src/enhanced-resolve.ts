@@ -16,15 +16,10 @@ declare module 'enhanced-resolve' {
     purge?(what?: string | string[]): void;
     readdir(path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void): void;
     readdirSync(path: string): string[];
-    readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
     readFile(
       filename: string,
-      options: {
-        encoding: string;
-        flag?: string;
-      },
-      callback: (err: NodeJS.ErrnoException, data: string) => void
-    ): void;
+      encoding: string | { encoding: string; flag?: string; },
+      callback: (err: NodeJS.ErrnoException, data: string) => void): void;
     readFile(
       filename: string,
       options: {
@@ -44,8 +39,7 @@ declare module 'enhanced-resolve' {
 
   export class NodeJsInputFileSystem implements AbstractInputFileSystem {
     public readdir(path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void): void;
-    public readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
-    public readFile(filename: string, options: { encoding: string; flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
+    public readFile(filename: string, encoding: string | { encoding: string; flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
     public readFile(filename: string, options: { flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     public readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     public readFile(filename: any, options: any, callback?: any): void;

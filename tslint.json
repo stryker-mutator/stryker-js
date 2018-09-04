@@ -94,7 +94,7 @@
         "variable-declaration": "nospace"
       }
     ],
-    "unified-signatures": false,
+    "unified-signatures": true,
     "variable-name": [
       true,
       "ban-keywords"
