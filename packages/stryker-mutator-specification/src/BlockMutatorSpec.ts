@@ -28,5 +28,17 @@ export default function BlockMutatorSpec(name: string, expectMutation: ExpectMut
       expectMutation('const b = () => 4;');
     });
 
+    // switch/case tests
+    it('should not mutate the body of an switch statement, as not a block', () => {
+      expectMutation('switch (v) { case 42: a = "spam"; break; }');
+    });
+
+    it('should not mutate the body of a case statement if not defined as a block', () => {
+      expectMutation('switch (v) { case 42: a = "spam"; break; }');
+    });
+
+    it('should mutate the body of a case statement if defined as a block', () => {
+      expectMutation('switch (v) { case 42: { a = "spam"; break; } }', 'switch (v) { case 42: {} }');
+    });
   });
 }
