@@ -1,5 +1,5 @@
-import StringLiteralMutator from '../../../src/mutators/StringLiteralMutator';
+import SwitchStatementMutator from '../../../src/mutators/SwitchStatementMutator';
 import { verifySpecification } from '../../helpers/mutatorAssertions';
 import { SwitchStatementMutatorSpec } from 'stryker-mutator-specification/src/index';
 
-verifySpecification(SwitchStatementMutatorSpec, StringLiteralMutator);
+verifySpecification(SwitchStatementMutatorSpec, SwitchStatementMutator);
