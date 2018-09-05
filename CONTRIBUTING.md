@@ -19,7 +19,6 @@ We use [Lerna](https://lernajs.io/) to manage the packages in this repository. Y
 
 1. Clone the repository
 1. Install dependencies using `npm install` in the root of the project
-1. Run `npm run build` in the root of the project once.
 1. Run `npm test` in the root of the project or in one of the package folders
 
 ## VSCode environment configuration
@@ -54,6 +53,7 @@ New features are welcome! Either as requests or proposals.
 1. Create a fork on your github account.
 1. When writing your code, please conform to the existing coding style.
    See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
+    * You can check if there are lint issues using `npm run lint-info`. Output will be in root folder in `tslint.log` file.
     * You can automatically fix a lot of lint issues using `npm run lint-fix`
 1. Please create or edit unit tests or integration tests.
 1. Run the tests using `npm test`
