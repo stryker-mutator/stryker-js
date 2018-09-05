@@ -2,7 +2,6 @@ import { types } from 'babel-core';
 import { partition } from 'lodash';
 
 import NodeMutator from './NodeMutator';
-import NodeGenerator from '../helpers/NodeGenerator';
 
 /**
  * Returns true if a switch case statement is the default one
