@@ -10,13 +10,13 @@ import { NodeArray } from 'typescript';
  *
  * e.g. [0, 1, 2] -> [[1, 2], [0, 2], [0, 1]]
  */
-function sequentialSplices<T extends ts.Node>(collection: NodeArray<T>): T[][] {
-  return collection.map(function (_, i) {
-    return collection.filter(function (_, j) {
+const sequentialSplices = <T extends ts.Node>(collection: NodeArray<T>): T[][] => {
+  return collection.map((_, i) => {
+    return collection.filter((_, j) => {
       return i !== j;
-    })
-  })
-}
+    });
+  });
+};
 
 export default class SwitchStatementMutator extends NodeMutator<ts.CaseBlock> {
   public name = 'SwitchStatement';
@@ -29,10 +29,10 @@ export default class SwitchStatementMutator extends NodeMutator<ts.CaseBlock> {
     // Generate possible case arrays
     const caseSplices = sequentialSplices(node.clauses);
     // Map into new CaseBlocks
-    const replacements = caseSplices.map(function (caseSplice) {
+    const replacements = caseSplices.map(caseSplice => {
       const replacement = printNode(ts.createCaseBlock(caseSplice), sourceFile);
       return { node, replacement };
-    })
+    });
     return replacements;
   }
 }

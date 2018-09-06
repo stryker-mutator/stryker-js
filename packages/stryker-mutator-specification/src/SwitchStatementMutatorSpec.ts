@@ -16,7 +16,7 @@ export default function SwitchStatementMutatorSpec(
         'switch (v) {case 1: a = "qux";break;default: a = "spam";}',
         'switch (v) {case 0: a = "foo";default: a = "spam";}',
         'switch (v) {case 0: a = "foo";case 1: a = "qux";break;}'
-      )
+      );
     });
-  })
+  });
 }
