@@ -19,7 +19,7 @@ We use [Lerna](https://lernajs.io/) to manage the packages in this repository. Y
 
 1. Clone the repository
 1. Install dependencies using `npm install` in the root of the project
-1. Run `npm test` in the root of the project or in one of the package folders
+1. Run `npm test` in the root of the project or in one of the package folders (note: `before` running `npm run test:stryker` and `npm run test:stryker-api` you have to run `npm run build`)
 
 ## VSCode environment configuration
 
@@ -42,7 +42,7 @@ Have fun!
 We support mutation testing Stryker with Stryker! After you got Stryker working locally, you can follow these steps to mutation test Stryker:
 1. Navigate to the root of the project
 1. Build all Stryker packages: `npm run build`
-1. Navigate to `packages/stryker` 
+1. Navigate to `packages/stryker`
 1. Run `node bin/stryker run`
 
 ## Adding new features
