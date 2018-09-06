@@ -1,14 +1,21 @@
 import * as ts from 'typescript';
-import { partition } from 'lodash';
 
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 import { printNode } from '../helpers/tsHelpers';
+import { NodeArray } from 'typescript';
 
 /**
- * Returns true if a switch case statement is the default one
+ * Given an array of length n, return an array length n of arrays length n-1
+ * where each item has been removed in sequence
+ *
+ * e.g. [0, 1, 2] -> [[1, 2], [0, 2], [0, 1]]
  */
-function isDefaultClause(clause: ts.CaseOrDefaultClause): clause is ts.DefaultClause {
-  return clause.kind === ts.SyntaxKind.DefaultClause;
+function sequentialSplices<T extends ts.Node>(collection: NodeArray<T>): T[][] {
+  return collection.map(function (_, i) {
+    return collection.filter(function (_, j) {
+      return i !== j;
+    })
+  })
 }
 
 export default class SwitchStatementMutator extends NodeMutator<ts.CaseBlock> {
@@ -19,13 +26,13 @@ export default class SwitchStatementMutator extends NodeMutator<ts.CaseBlock> {
   }
 
   protected identifyReplacements(node: ts.CaseBlock, sourceFile: ts.SourceFile): NodeReplacement[] {
-    const replacements = [];
-    const [defaultClauses, nonDefaultClauses] = partition(node.clauses, isDefaultClause);
-    if (nonDefaultClauses.length > 0) {
-      const replacement = printNode(ts.createCaseBlock(defaultClauses), sourceFile);
-      replacements.push({ node, replacement });
-    }
+    // Generate possible case arrays
+    const caseSplices = sequentialSplices(node.clauses);
+    // Map into new CaseBlocks
+    const replacements = caseSplices.map(function (caseSplice) {
+      const replacement = printNode(ts.createCaseBlock(caseSplice), sourceFile);
+      return { node, replacement };
+    })
     return replacements;
   }
-
 }
