@@ -10,22 +10,13 @@ export default function SwitchStatementMutatorSpec(
       expect(name).eq('SwitchStatement');
     });
 
-    it('should remove non-default case', () => {
-      expectMutation(
-        'switch (v) {case 42: a = "spam"; break;}',
-        'switch (v) {}'
-      );
-    });
-
-    it('should not remove default case', () => {
-      expectMutation('switch (v) {default: a = "spam";}');
-    });
-
-    it('should handle mixed cases appropriately', () => {
+    it('should remove all cases one at a time', () => {
       expectMutation(
         'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default: a = "spam";}',
-        'switch (v) {default: a = "spam";}'
-      );
+        'switch (v) {case 1: a = "qux";break;default: a = "spam";}',
+        'switch (v) {case 0: a = "foo";default: a = "spam";}',
+        'switch (v) {case 0: a = "foo";case 1: a = "qux";break;}'
+      )
     });
-  });
+  })
 }
