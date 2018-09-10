@@ -58,7 +58,7 @@
     "stryker-api": "^0.21.0"
   },
   "peerDependencies": {
-    "babel-core": "^6.26.0",
+    "babel-core": "^6.26.0" || ^7.0.0-bridge.0",
     "stryker-api": ">=0.18.0 <0.22.0"
   },
   "initStrykerConfig": {
