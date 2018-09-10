@@ -107,7 +107,7 @@ export default class ConfigValidator {
   }
 
   private validateIsNumber(fieldName: keyof Config, value: any) {
-    if (typeof value !== 'number') {
+    if (typeof value !== 'number' || isNaN(value)) {
       this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected a number`);
     }
   }

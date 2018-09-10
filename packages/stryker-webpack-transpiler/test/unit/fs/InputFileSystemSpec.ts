@@ -72,7 +72,7 @@ describe('InputFileSystem', () => {
 
     it('should forward readFile to memory FS', done => {
       memoryFSMock.readFile.callsArgOnWith(2, sut, undefined, 'foobar');
-      sut.readFile('path', {}, (error: any, value: string) => {
+      sut.readFile('path', {}, (error: Error, value: string) => {
         expect(value).eq('foobar');
         expect(memoryFSMock.readFile).calledWith('path');
         expect(innerFSMock.readFile).not.called;

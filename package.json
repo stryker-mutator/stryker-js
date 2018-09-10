@@ -37,7 +37,7 @@
     "sinon-chai": "^3.2.0",
     "source-map-support": "^0.5.6",
     "tslint": "^5.11.0",
-    "typescript": "~3.0.1"
+    "typescript": "^3.0.3"
   },
   "scripts": {
     "lint-info": "tslint --out tslint.log --project ./",

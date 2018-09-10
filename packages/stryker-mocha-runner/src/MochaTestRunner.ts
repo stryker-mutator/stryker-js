@@ -89,7 +89,7 @@ export default class MochaTestRunner implements TestRunner {
     });
   }
 
-  private addTestHooks(mocha: Mocha, testHooks: string | undefined): any {
+  private addTestHooks(mocha: Mocha, testHooks: string | undefined): void {
     if (testHooks) {
       const suite = (mocha as any).suite;
       suite.emit('pre-require', global, '', mocha);

@@ -112,7 +112,7 @@ export default class Sandbox {
     return writeFile(targetFile, file.content);
   }
 
-  private initializeTestRunner(): void | Promise<any> {
+  private initializeTestRunner(): Promise<void> {
     const settings: RunnerOptions = {
       fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
       port: this.options.port + this.index,

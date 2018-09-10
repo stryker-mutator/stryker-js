@@ -133,7 +133,7 @@ describe('JasmineRunner integration', () => {
       const result = await sut.run({});
       expect(result.status).eq(RunStatus.Error);
       expect(result.errorMessages).lengthOf(1);
-      const actualError: string = (result.errorMessages as any)[0];
+      const actualError: string = (result.errorMessages as string[])[0];
       expect(actualError)
         .matches(/^An error occurred while loading your jasmine specs.*/)
         .matches(/.*SyntaxError: Unexpected identifier.*/);

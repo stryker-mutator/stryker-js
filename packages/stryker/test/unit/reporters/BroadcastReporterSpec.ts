@@ -26,16 +26,16 @@ describe('BroadcastReporter', () => {
     let wrapUpResolveFn: Function;
     let wrapUpResolveFn2: Function;
     let wrapUpRejectFn: Function;
-    let result: void | Promise<any>;
+    let result: Promise<void>;
     let isResolved: boolean;
 
     beforeEach(() => {
       isResolved = false;
-      reporter.wrapUp.returns(new Promise<any>((resolve, reject) => {
+      reporter.wrapUp.returns(new Promise<void>((resolve, reject) => {
         wrapUpResolveFn = resolve;
         wrapUpRejectFn = reject;
       }));
-      reporter2.wrapUp.returns(new Promise<any>(resolve => wrapUpResolveFn2 = resolve));
+      reporter2.wrapUp.returns(new Promise<void>(resolve => wrapUpResolveFn2 = resolve));
       result = sut.wrapUp().then(() => isResolved = true);
     });
 

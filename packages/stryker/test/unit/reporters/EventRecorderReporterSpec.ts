@@ -44,13 +44,13 @@ describe('EventRecorderReporter', () => {
       const arrangeActAssertEvent = (eventName: keyof Reporter) => {
         describe(`${eventName} event`, () => {
 
-          let writeFileRejection: any;
+          let writeFileRejection: undefined | Error;
           const expected: any = { some: 'eventData' };
 
           const arrange = () => beforeEach(() => {
             writeFileRejection = undefined;
             (sut[eventName] as any)(expected);
-            return (sut.wrapUp() as Promise<any>).then(() => void 0, error => writeFileRejection = error);
+            return (sut.wrapUp() as Promise<void>).then(() => void 0, error => writeFileRejection = error);
           });
 
           describe('when writeFile results in a rejection', () => {

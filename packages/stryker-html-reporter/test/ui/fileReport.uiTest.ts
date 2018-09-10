@@ -10,7 +10,7 @@ describe('File report page "Add.js.html"', () => {
 
   let page: FileReportPage;
 
-  const forAllMutantSelections = (fn: (mutantSelection: MutantSelection) => any) => {
+  const forAllMutantSelections = (fn: (mutantSelection: MutantSelection) => void) => {
     for (let i = 0; i < 6; i++) {
       fn(page.mutantSelection(i));
     }
