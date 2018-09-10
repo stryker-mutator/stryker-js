@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "chalk": "~2.4.1",
-    "commander": "~2.17.1",
+    "commander": "~2.18.0",
     "escodegen": "~1.8.0",
     "esprima": "~2.7.0",
     "get-port": "~4.0.0",
