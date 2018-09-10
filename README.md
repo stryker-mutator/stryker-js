@@ -5,7 +5,7 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
 
 ![Stryker](stryker-80x80.png)
-
+test
 # Stryker
 
 *Professor X: For someone who hates mutants... you certainly keep some strange company.*  
