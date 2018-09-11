@@ -19,11 +19,11 @@ const sequentialSplices = <T>(collection: T[]): T[][] => {
 /**
  * Represents a mutator which can remove individual clauses from switch statements.
  */
-export default class SwitchStatementMutator implements NodeMutator {
-  public name = 'SwitchStatement';
+export default class SwitchCaseMutator implements NodeMutator {
+  public name = 'SwitchCase';
 
   public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
-    if (types.isSwitchStatement(node)) {
+    if (types.isSwitchCase(node)) {
       // Generate possible case arrays
       const caseSplices = sequentialSplices(node.cases);
       // Map onto cloned nodes

@@ -18,8 +18,8 @@ const sequentialSplices = <T extends ts.Node>(collection: NodeArray<T>): T[][] =
   });
 };
 
-export default class SwitchStatementMutator extends NodeMutator<ts.CaseBlock> {
-  public name = 'SwitchStatement';
+export default class SwitchCaseMutator extends NodeMutator<ts.CaseBlock> {
+  public name = 'SwitchCase';
 
   public guard(node: ts.Node): node is ts.CaseBlock {
     return node.kind === ts.SyntaxKind.CaseBlock;

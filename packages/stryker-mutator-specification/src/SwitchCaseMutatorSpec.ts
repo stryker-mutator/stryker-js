@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function SwitchStatementMutatorSpec(
+export default function SwitchCaseMutatorSpec(
   name: string,
   expectMutation: ExpectMutation
 ) {
-  describe('SwitchStatementMutator', () => {
-    it('should have name "SwitchStatement"', () => {
-      expect(name).eq('SwitchStatement');
+  describe('SwitchCaseMutator', () => {
+    it('should have name "SwitchCase"', () => {
+      expect(name).eq('SwitchCase');
     });
 
     it('should remove all cases one at a time', () => {

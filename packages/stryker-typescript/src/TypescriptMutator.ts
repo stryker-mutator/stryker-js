@@ -18,7 +18,7 @@ import ConditionalExpressionMutator from './mutator/ConditionalExpressionMutator
 import PrefixUnaryExpressionMutator from './mutator/PrefixUnaryExpressionMutator';
 import ArrowFunctionMutator from './mutator/ArrowFunctionMutator';
 import StringLiteralMutator from './mutator/StringLiteralMutator';
-import SwitchStatementMutator from './mutator/SwitchStatementMutator';
+import SwitchCaseMutator from './mutator/SwitchCaseMutator';
 
 export default class TypescriptMutator {
 
@@ -36,7 +36,7 @@ export default class TypescriptMutator {
     new ConditionalExpressionMutator(),
     new PrefixUnaryExpressionMutator(),
     new StringLiteralMutator(),
-    new SwitchStatementMutator(),
+    new SwitchCaseMutator(),
   ]) { }
 
   public mutate(inputFiles: File[]): Mutant[] {
