@@ -2,37 +2,26 @@ import * as ts from 'typescript';
 
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 import { printNode } from '../helpers/tsHelpers';
-import { NodeArray } from 'typescript';
 
 /**
- * Given an array of length n, return an array length n of arrays length n-1
- * where each item has been removed in sequence
- *
- * e.g. [0, 1, 2] -> [[1, 2], [0, 2], [0, 1]]
+ * Type guard for seperating default clause from case clauses.
  */
-const sequentialSplices = <T extends ts.Node>(collection: NodeArray<T>): T[][] => {
-  return collection.map((_, i) => {
-    return collection.filter((_, j) => {
-      return i !== j;
-    });
-  });
-};
+function isDefaultClause(node: ts.CaseOrDefaultClause): node is ts.DefaultClause {
+  return node.kind === ts.SyntaxKind.DefaultClause;
+}
 
-export default class SwitchCaseMutator extends NodeMutator<ts.CaseBlock> {
+export default class SwitchCaseMutator extends NodeMutator<ts.CaseOrDefaultClause> {
   public name = 'SwitchCase';
 
-  public guard(node: ts.Node): node is ts.CaseBlock {
-    return node.kind === ts.SyntaxKind.CaseBlock;
+  public guard(node: ts.Node): node is ts.CaseOrDefaultClause {
+    return node.kind === ts.SyntaxKind.CaseClause || node.kind === ts.SyntaxKind.DefaultClause;
   }
 
-  protected identifyReplacements(node: ts.CaseBlock, sourceFile: ts.SourceFile): NodeReplacement[] {
-    // Generate possible case arrays
-    const caseSplices = sequentialSplices(node.clauses);
-    // Map into new CaseBlocks
-    const replacements = caseSplices.map(caseSplice => {
-      const replacement = printNode(ts.createCaseBlock(caseSplice), sourceFile);
-      return { node, replacement };
-    });
-    return replacements;
+  protected identifyReplacements(node: ts.CaseOrDefaultClause, sourceFile: ts.SourceFile): NodeReplacement[] {
+    const clause = isDefaultClause(node)
+      ? ts.createDefaultClause([])
+      : ts.createCaseClause(node.expression, []);
+    const replacement = printNode(clause, sourceFile);
+    return [{ node, replacement }];
   }
 }

@@ -11,7 +11,7 @@ import IfStatementMutator from './IfStatementMutator';
 import PostfixUnaryExpressionMutator from './PostfixUnaryExpressionMutator';
 import PrefixUnaryExpressionMutator from './PrefixUnaryExpressionMutator';
 import StringLiteralMutator from './StringLiteralMutator';
-import SwitchStatementMutator from './SwitchStatementMutator';
+import SwitchCaseMutator from './SwitchCaseMutator';
 import WhileStatementMutator from './WhileStatementMutator';
 
 const factory = NodeMutatorFactory.instance();
@@ -27,5 +27,5 @@ factory.register(IfStatementMutator.name, IfStatementMutator);
 factory.register(PostfixUnaryExpressionMutator.name, PostfixUnaryExpressionMutator);
 factory.register(PrefixUnaryExpressionMutator.name, PrefixUnaryExpressionMutator);
 factory.register(StringLiteralMutator.name, StringLiteralMutator);
-factory.register(SwitchStatementMutator.name, SwitchStatementMutator);
+factory.register(SwitchCaseMutator.name, SwitchCaseMutator);
 factory.register(WhileStatementMutator.name, WhileStatementMutator);
