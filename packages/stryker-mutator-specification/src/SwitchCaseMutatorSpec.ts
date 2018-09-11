@@ -13,9 +13,9 @@ export default function SwitchCaseMutatorSpec(
     it('should remove all cases one at a time', () => {
       expectMutation(
         'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default: a = "spam";}',
-        'switch (v) {case 1: a = "qux";break;default: a = "spam";}',
-        'switch (v) {case 0: a = "foo";default: a = "spam";}',
-        'switch (v) {case 0: a = "foo";case 1: a = "qux";break;}'
+        'switch (v) {case 0: case 1: a = "qux"; break; default: a = "spam";}',
+        'switch (v) {case 0: a = "foo"; case 1: default: a = "spam";}',
+        'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default:}'
       );
     });
   });
