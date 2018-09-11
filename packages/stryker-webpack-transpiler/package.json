@@ -42,7 +42,7 @@
     "@types/webpack": "~4.1.6",
     "raw-loader": "~0.5.1",
     "stryker-api": "^0.21.0",
-    "webpack": "~4.17.1"
+    "webpack": "~4.18.0"
   },
   "peerDependencies": {
     "stryker-api": ">=0.18.0 <0.22.0",
