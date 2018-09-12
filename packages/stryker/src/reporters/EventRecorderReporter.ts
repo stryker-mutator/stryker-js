@@ -11,7 +11,7 @@ const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 export default class EventRecorderReporter implements StrictReporter {
 
   private readonly log = getLogger(EventRecorderReporter.name);
-  private readonly allWork: Promise<any>[] = [];
+  private readonly allWork: Promise<void>[] = [];
   private readonly createBaseFolderTask: Promise<any>;
   private _baseFolder: string;
   private index = 0;

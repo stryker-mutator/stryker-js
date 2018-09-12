@@ -79,6 +79,13 @@ describe('ConfigValidator', () => {
     expect(log.fatal).calledWith('Value "break" is invalid for `timeoutMS`. Expected a number');
   });
 
+  it('should be invalid with nonnumeric timeoutMS (NaN)', () => {
+    const brokenConfig = breakConfig(config, 'timeoutMS', NaN);
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    actValidationError();
+    expect(log.fatal).calledWith('Value "NaN" is invalid for `timeoutMS`. Expected a number');
+  });
+
   it('should be invalid with nonnumeric timeoutFactor', () => {
     const brokenConfig = breakConfig(config, 'timeoutFactor', 'break');
     sut = new ConfigValidator(brokenConfig, testFramework());

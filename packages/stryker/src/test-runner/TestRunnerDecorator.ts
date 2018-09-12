@@ -7,7 +7,7 @@ export default class TestRunnerDecorator implements TestRunner {
     this.createInnerRunner();
   }
 
-  public init(): Promise<any> {
+  public init(): Promise<void> {
     if (this.innerRunner.init) {
       return this.innerRunner.init() || Promise.resolve();
     } else {

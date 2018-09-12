@@ -32,7 +32,7 @@ export default class ChildProcessProxy<T> {
   private readonly initTask: Task;
   private disposeTask: ExpirableTask<void> | undefined;
   private currentError: ChildProcessCrashedError | undefined;
-  private readonly workerTasks: Task<any>[] = [];
+  private readonly workerTasks: Task<void>[] = [];
   private readonly log = getLogger(ChildProcessProxy.name);
   private readonly stdoutAndStderrBuilder = new StringBuilder();
   private isDisposed = false;
@@ -91,7 +91,7 @@ export default class ChildProcessProxy<T> {
       if (this.currentError) {
         return Promise.reject(this.currentError);
       } else {
-        const workerTask = new Task<any>();
+        const workerTask = new Task<void>();
         const correlationId = this.workerTasks.push(workerTask) - 1;
         this.initTask.promise.then(() => {
           this.send({

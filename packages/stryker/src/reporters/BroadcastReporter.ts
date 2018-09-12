@@ -15,7 +15,7 @@ export default class BroadcastReporter implements StrictReporter {
   }
 
   private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<any> | void {
-    const allPromises: Promise<any>[] = [];
+    const allPromises: Promise<void>[] = [];
     this.reporters.forEach(namedReporter => {
       if (typeof namedReporter.reporter[methodName] === 'function') {
         try {
