@@ -9,5 +9,6 @@ export { default as DoStatementMutatorSpec } from './DoStatementMutatorSpec';
 export { default as ForStatementMutatorSpec } from './ForStatementMutatorSpec';
 export { default as IfStatementMutatorSpec } from './IfStatementMutatorSpec';
 export { default as PrefixUnaryExpressionMutatorSpec } from './PrefixUnaryExpressionMutatorSpec';
-export { default as WhileStatementMutatorSpec } from './WhileStatementMutatorSpec';
 export { default as StringLiteralMutatorSpec } from './StringLiteralMutatorSpec';
+export { default as SwitchCaseMutatorSpec } from './SwitchCaseMutatorSpec';
+export { default as WhileStatementMutatorSpec } from './WhileStatementMutatorSpec';
