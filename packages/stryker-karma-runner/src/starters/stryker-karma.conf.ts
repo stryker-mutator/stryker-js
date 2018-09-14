@@ -15,13 +15,17 @@ function setDefaultOptions(config: Config) {
 function setUserKarmaConfigFile(config: Config, log: Logger) {
   if (globalSettings.karmaConfigFile && typeof globalSettings.karmaConfigFile === 'string') {
     const configFileName = path.resolve(globalSettings.karmaConfigFile);
-    log.debug('Importing config from "%s"', configFileName);
     try {
       const userConfig = requireModule(configFileName);
+      log.debug('Importing config from "%s"', configFileName);
       userConfig(config);
       config.configFile = configFileName; // override config to ensure karma is as user-like as possible
     } catch (error) {
-      log.error(`Could not read karma configuration from ${globalSettings.karmaConfigFile}.`, error);
+      if (error.code === 'MODULE_NOT_FOUND') {
+        log.error(`Unable to find karma config at "${globalSettings.karmaConfigFile}". Please check your stryker config.`);
+      } else {
+        log.error(`Could not read karma configuration from ${globalSettings.karmaConfigFile}.`, error);
+      }
     }
   }
 }
