@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.29.1",
+  "version": "0.29.2",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -82,7 +82,7 @@
     "@types/node": "^6.0.114",
     "@types/prettier": "~1.13.1",
     "@types/progress": "~2.0.1",
-    "stryker-api": "^0.21.0"
+    "stryker-api": "^0.21.1"
   },
   "peerDependencies": {
     "stryker-api": ">=0.18.0 <0.22.0"
