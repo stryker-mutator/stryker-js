@@ -18,10 +18,15 @@ export default class SwitchCaseMutator extends NodeMutator<ts.CaseOrDefaultClaus
   }
 
   protected identifyReplacements(node: ts.CaseOrDefaultClause, sourceFile: ts.SourceFile): NodeReplacement[] {
-    const clause = isDefaultClause(node)
-      ? ts.createDefaultClause([])
-      : ts.createCaseClause(node.expression, []);
-    const replacement = printNode(clause, sourceFile);
-    return [{ node, replacement }];
+    // if not a fallthrough case
+    if (node.statements.length > 0) {
+      const clause = isDefaultClause(node)
+        ? ts.createDefaultClause([])
+        : ts.createCaseClause(node.expression, []);
+      const replacement = printNode(clause, sourceFile);
+      return [{ node, replacement }];
+    } else {
+      return [];
+    }
   }
 }

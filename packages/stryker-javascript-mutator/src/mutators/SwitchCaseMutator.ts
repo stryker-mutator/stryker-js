@@ -10,9 +10,12 @@ export default class SwitchCaseMutator implements NodeMutator {
 
   public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
     if (types.isSwitchCase(node)) {
-      const mutatedNode = copy(node);
-      mutatedNode.consequent = [];
-      return [mutatedNode];
+      // if not a fallthrough case
+      if (node.consequent.length > 0) {
+        const mutatedNode = copy(node);
+        mutatedNode.consequent = [];
+        return [mutatedNode];
+      }
     }
   }
 }
