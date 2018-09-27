@@ -18,5 +18,13 @@ export default function SwitchCaseMutatorSpec(
         'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default:}'
       );
     });
+
+    it('should not mutate empty cases (0 consequent statements)', () => {
+      expectMutation(
+        'switch (v) {case 0: case 1: break; default: a = "spam";}',
+        'switch (v) {case 0: case 1: default: a = "spam";}',
+        'switch (v) {case 0: case 1: break; default:}'
+      );
+    });
   });
 }
