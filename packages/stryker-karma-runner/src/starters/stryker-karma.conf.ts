@@ -21,7 +21,11 @@ function setUserKarmaConfigFile(config: Config, log: Logger) {
       userConfig(config);
       config.configFile = configFileName; // override config to ensure karma is as user-like as possible
     } catch (error) {
-      log.error(`Could not read karma configuration from ${globalSettings.karmaConfigFile}.`, error);
+      if (error.code === 'MODULE_NOT_FOUND') {
+        log.error(`Unable to find karma config at "${globalSettings.karmaConfigFile}" (tried to load from ${configFileName}). Please check your stryker config. You might need to make sure the file is included in the sandbox directory.`);
+      } else {
+        log.error(`Could not read karma configuration from ${globalSettings.karmaConfigFile}.`, error);
+      }
     }
   }
 }

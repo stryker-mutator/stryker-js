@@ -126,7 +126,7 @@ describe('RemoveConditionalsMutator', () => {
 
   describe('should generate multiple mutants', () => {
     it('when given an if-statement', () => {
-      const mutatedNodes = actMutator(ifStatement) as [estree.SimpleLiteral & Identified];
+      const mutatedNodes = actMutator(ifStatement) as (estree.SimpleLiteral & Identified)[];
 
       expect(mutatedNodes).to.have.length(2);
       expect(mutatedNodes[0].nodeID).not.to.eq(ifStatement.nodeID);
@@ -138,7 +138,7 @@ describe('RemoveConditionalsMutator', () => {
     });
 
     it('when given a ternary-statement', () => {
-      const mutatedNodes = actMutator(ternaryExpression) as [estree.SimpleLiteral & Identified];
+      const mutatedNodes = actMutator(ternaryExpression) as (estree.SimpleLiteral & Identified)[];
 
       expect(mutatedNodes).to.have.length(2);
       expect(mutatedNodes[0].nodeID).not.to.eq(ternaryExpression.nodeID);

@@ -54,6 +54,22 @@ describe('stryker-karma.conf.js', () => {
     expect(requireModuleStub).calledWith(path.resolve('foobar.conf.js'));
   });
 
+  it('should log an error if the karma config file could not be found', () => {
+    // Arrange
+    const actualError = new Error('Module not found') as NodeJS.ErrnoException;
+    actualError.code = 'MODULE_NOT_FOUND';
+    requireModuleStub.throws(actualError);
+    const expectedKarmaConfigFile = 'foobar.conf.js';
+    sut.setGlobals({ karmaConfigFile: expectedKarmaConfigFile });
+
+    // Act
+    sut(config);
+
+    // Assert
+    expect(logMock.error).calledWithMatch(`Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`);
+    expect(requireModuleStub).calledWith(path.resolve(expectedKarmaConfigFile));
+  });
+
   it('should set user configuration from custom karma config', () => {
     sut.setGlobals({ karmaConfig: { basePath: 'foobar' } });
     sut(config);
