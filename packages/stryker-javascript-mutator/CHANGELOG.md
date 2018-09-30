@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.1"></a>
+## [0.10.1](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.10.0...stryker-javascript-mutator@0.10.1) (2018-09-30)
+
+
+### Bug Fixes
+
+* **mutator:** Fix empty case statement unkillable mutant ([#1159](https://github.com/stryker-mutator/stryker/issues/1159)) ([e080acb](https://github.com/stryker-mutator/stryker/commit/e080acb))
+
+
+
+
 <a name="0.10.0"></a>
 # [0.10.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.9.1...stryker-javascript-mutator@0.10.0) (2018-09-14)
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.29.3"></a>
+## [0.29.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.2...stryker@0.29.3) (2018-09-30)
+
+
+### Bug Fixes
+
+* **karma-runner:** improve error message ([#1145](https://github.com/stryker-mutator/stryker/issues/1145)) ([2e56d38](https://github.com/stryker-mutator/stryker/commit/2e56d38))
+
+
+
+
 <a name="0.29.2"></a>
 ## [0.29.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.1...stryker@0.29.2) (2018-09-14)
 

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.7.4"></a>
+## [0.7.4](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.3...stryker-webpack-transpiler@0.7.4) (2018-09-30)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
 <a name="0.7.3"></a>
 ## [0.7.3](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.2...stryker-webpack-transpiler@0.7.3) (2018-09-14)
 
