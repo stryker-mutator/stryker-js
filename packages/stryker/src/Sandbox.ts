@@ -53,7 +53,7 @@ export default class Sandbox {
       // and throw an error if it never does (e.g. karma server hang)
       // https://github.com/stryker-mutator/stryker/issues/621
       setTimeout(() => reject(new Error('Sandbox creation timed out')), SANDBOX_CREATE_TIMEOUT);
-    })
+    });
   }
 
   public run(timeout: number, testHooks: string | undefined): Promise<RunResult> {
