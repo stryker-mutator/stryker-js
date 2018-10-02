@@ -98,12 +98,20 @@ export default class ScoreResultCalculator {
     const uniqueFileDirectories = uniqueFiles.map(file => file.substr(basePath.length).split(path.sep));
 
     if (uniqueFileDirectories.length) {
-      return uniqueFileDirectories
-        .reduce((previousDirectories, currentDirectories) => previousDirectories.filter((token, index) => currentDirectories[index] === token))
-        .join(path.sep);
+      return uniqueFileDirectories.reduce(this.filterDirectories).join(path.sep);
     } else {
       return '';
     }
+  }
+
+  private filterDirectories(previousDirectories: string[], currentDirectories: string[]) {
+    for (let i = 0; i < previousDirectories.length; i++) {
+      if (previousDirectories[i] !== currentDirectories[i]) {
+        return previousDirectories.splice(0, i);
+      }
+    }
+
+    return previousDirectories;
   }
 
   private countNumbers(mutantResults: MutantResult[]) {

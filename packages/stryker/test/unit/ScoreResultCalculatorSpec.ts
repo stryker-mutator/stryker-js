@@ -159,6 +159,17 @@ describe('ScoreResult', () => {
       expect(actual.childResults[0].name).to.eq('dir1/one');
       expect(actual.childResults[1].name).to.eq('dir2/two');
     });
+
+    it('should be able to handle the same file name in two different directories', () => {
+      const actual = sut.calculate([
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'x.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'c', 'x.js') })
+      ]);
+
+      expect(actual.name).to.eq('a');
+      expect(actual.childResults[0].name).to.equal(path.join('b', 'x.js'));
+      expect(actual.childResults[1].name).to.equal(path.join('c', 'x.js'));
+    });
   });
 
   describe('determineExitCode', () => {
