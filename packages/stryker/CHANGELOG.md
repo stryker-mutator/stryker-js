@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.29.4"></a>
+## [0.29.4](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.3...stryker@0.29.4) (2018-10-02)
+
+
+### Bug Fixes
+
+* **ScoreResultCalculator:** fix faulty filenames in stryker score result ([#1165](https://github.com/stryker-mutator/stryker/issues/1165)) ([2555f49](https://github.com/stryker-mutator/stryker/commit/2555f49)), closes [#1140](https://github.com/stryker-mutator/stryker/issues/1140)
+
+
+
+
 <a name="0.29.3"></a>
 ## [0.29.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.2...stryker@0.29.3) (2018-09-30)
 
