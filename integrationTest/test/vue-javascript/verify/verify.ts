@@ -4,7 +4,7 @@ import * as path from 'path';
 import { ScoreResult } from 'stryker-api/report';
 
 describe('After running stryker on VueJS project', () => {
-  it('should report 20% mutation score', async () => {
+  it('should report 25% mutation score', async () => {
     const eventsDir = path.resolve(__dirname, '..', 'reports', 'mutation', 'events');
     const allReportFiles = await fs.readdir(eventsDir);
     const scoreResultReportFile = allReportFiles.find(file => !!file.match(/.*onScoreCalculated.*/));
