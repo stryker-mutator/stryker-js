@@ -29,7 +29,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       collectCoverageFrom: [
-        'src/**/*.{js,jsx,mjs}'
+        'src/**/*.{js,jsx}'
       ],
       moduleFileExtensions: [
         'web.js',
@@ -37,29 +37,30 @@ describe('Integration test for Jest ConfigEditor', () => {
         'json',
         'web.jsx',
         'jsx',
-        'node',
-        'mjs'
+        'node'
       ],
       moduleNameMapper: {
+        '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
         '^react-native$': 'react-native-web'
       },
       rootDir: projectRoot,
-      setupFiles: [path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'polyfills.js')],
+      setupFiles: [path.join(projectRoot, 'node_modules', 'react-app-polyfill', 'jsdom.js')],
       setupTestFrameworkScriptFile: undefined,
       testEnvironment: 'jsdom',
       testMatch: [
-        '<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}',
-        '<rootDir>/src/**/?(*.)(spec|test).{js,jsx,mjs}'
+        '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
+        '<rootDir>/src/**/?(*.)(spec|test).{js,jsx}'
       ],
       testResultsProcessor: undefined,
       testURL: 'http://localhost',
       transform: {
-        '^(?!.*\\.(js|jsx|mjs|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
-        '^.+\\.(js|jsx|mjs)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
+        '^(?!.*\\.(js|jsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
+        '^.+\\.(js|jsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
         '^.+\\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js'),
       },
       transformIgnorePatterns: [
-        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$'
+        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$',
+        '^.+\\.module\\.(css|sass|scss)$'
       ],
       verbose: false
     };
