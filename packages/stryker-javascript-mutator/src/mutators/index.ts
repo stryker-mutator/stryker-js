@@ -8,6 +8,7 @@ import ConditionalExpressionMutator from './ConditionalExpressionMutator';
 import DoStatementMutator from './DoStatementMutator';
 import ForStatementMutator from './ForStatementMutator';
 import IfStatementMutator from './IfStatementMutator';
+import ObjectMutator from './ObjectMutator';
 import PostfixUnaryExpressionMutator from './PostfixUnaryExpressionMutator';
 import PrefixUnaryExpressionMutator from './PrefixUnaryExpressionMutator';
 import StringLiteralMutator from './StringLiteralMutator';
@@ -24,6 +25,7 @@ factory.register(ConditionalExpressionMutator.name, ConditionalExpressionMutator
 factory.register(DoStatementMutator.name, DoStatementMutator);
 factory.register(ForStatementMutator.name, ForStatementMutator);
 factory.register(IfStatementMutator.name, IfStatementMutator);
+factory.register(ObjectMutator.name, ObjectMutator);
 factory.register(PostfixUnaryExpressionMutator.name, PostfixUnaryExpressionMutator);
 factory.register(PrefixUnaryExpressionMutator.name, PrefixUnaryExpressionMutator);
 factory.register(StringLiteralMutator.name, StringLiteralMutator);
