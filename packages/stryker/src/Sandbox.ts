@@ -14,6 +14,11 @@ import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
 import LoggingClientContext from './logging/LoggingClientContext';
 
+// The initial sandbox creation should not take long at all.
+// A long hang here could indicate testrunner hidden error logs
+// 30 seconds
+const SANDBOX_CREATE_TIMEOUT = 30 * 1000;
+
 interface FileMap {
   [sourceFile: string]: string;
 }
@@ -41,7 +46,14 @@ export default class Sandbox {
   public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
     : Promise<Sandbox> {
     const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext);
-    return sandbox.initialize().then(() => sandbox);
+    return new Promise((resolve, reject) => {
+      // Wait for our sandbox to set up
+      sandbox.initialize().then(() => resolve(sandbox));
+
+      // and throw an error if it never does (e.g. karma server hang)
+      // https://github.com/stryker-mutator/stryker/issues/621
+      setTimeout(() => reject(new Error('Sandbox creation timed out')), SANDBOX_CREATE_TIMEOUT);
+    })
   }
 
   public run(timeout: number, testHooks: string | undefined): Promise<RunResult> {
