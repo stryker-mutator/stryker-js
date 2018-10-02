@@ -67,16 +67,6 @@ describe('Integration test for Jest ConfigEditor', () => {
     assertJestConfig(expectedResult, config.jest.config);
   });
 
-  function assertJestConfig(expected: any, actual: any) {
-    Object.keys(expected).forEach(key => {
-      if (Array.isArray(expected[key])) {
-        expected[key].sort();
-        actual[key].sort();
-      }
-      expect(expected[key]).deep.eq(actual[key]);
-    });
-  }
-
   it('should create a Jest configuration for a React + TypeScript project', () => {
     config.set({ jest: { projectType: 'react-ts' } });
 
@@ -191,4 +181,14 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     expect(() => jestConfigEditor.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
+
+  function assertJestConfig(expected: any, actual: any) {
+    Object.keys(expected).forEach(key => {
+      if (Array.isArray(expected[key])) {
+        expected[key].sort();
+        actual[key].sort();
+      }
+      expect(actual[key]).deep.eq(expected[key]);
+    });
+  }
 });
