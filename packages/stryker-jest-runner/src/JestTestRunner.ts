@@ -55,12 +55,23 @@ export default class JestTestRunner implements TestRunner {
         testResults.push({
           failureMessages: testResult.failureMessages,
           name: testResult.fullName,
-          status: (testResult.status === 'passed') ? TestStatus.Success : TestStatus.Failed,
+          status: this.determineTestResultStatus(testResult.status),
           timeSpentMs: testResult.duration ? testResult.duration : 0
         });
       }
     }
 
     return testResults;
+  }
+
+  private determineTestResultStatus(status: string) {
+    switch (status) {
+      case 'passed':
+        return TestStatus.Success;
+      case 'pending':
+        return TestStatus.Skipped;
+      default:
+        return TestStatus.Failed;
+    }
   }
 }
