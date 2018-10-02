@@ -74,6 +74,25 @@ describe('JestTestRunner', () => {
     });
   });
 
+  it('should call the jestTestRunner run method and return a skipped runResult', async () => {
+    runJestStub.resolves({ results: fakeResults.createPendingResult() });
+
+    const result = await jestTestRunner.run();
+
+    expect(result).to.deep.equal({
+      errorMessages: [],
+      status: RunStatus.Complete,
+      tests: [
+        {
+          failureMessages: [],
+          name: 'App renders without crashing',
+          status: TestStatus.Skipped,
+          timeSpentMs: 0
+        }
+      ]
+    });
+  });
+
   it('should call the jestTestRunner run method and return a negative runResult', async () => {
     runJestStub.resolves({ results: fakeResults.createFailResult() });
 
