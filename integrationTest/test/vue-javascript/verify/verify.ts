@@ -11,9 +11,9 @@ describe('After running stryker on VueJS project', () => {
     expect(scoreResultReportFile).ok;
     const scoreResultContent = await fs.readFile(path.resolve(eventsDir, scoreResultReportFile || ''), 'utf8');
     const scoreResult = JSON.parse(scoreResultContent) as ScoreResult;
-    expect(scoreResult.killed).eq(2);
-    expect(scoreResult.survived).eq(8);
+    expect(scoreResult.killed).eq(4);
+    expect(scoreResult.survived).eq(12);
 
-    expect(scoreResult.mutationScore).to.equal(20);
+    expect(scoreResult.mutationScore).to.equal(25);
   });
 });
