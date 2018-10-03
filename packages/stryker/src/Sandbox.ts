@@ -5,7 +5,7 @@ import * as mkdirp from 'mkdirp';
 import { RunResult, RunnerOptions } from 'stryker-api/test_runner';
 import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
-import { wrapInClosure, normalizeWhiteSpaces } from './utils/objectUtils';
+import { wrapInClosure, normalizeWhiteSpaces, timeout, unwrapTimeout } from './utils/objectUtils';
 import TestRunnerDecorator from './test-runner/TestRunnerDecorator';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
 import { TempFolder } from './utils/TempFolder';
@@ -46,14 +46,13 @@ export default class Sandbox {
   public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
     : Promise<Sandbox> {
     const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext);
-    return new Promise((resolve, reject) => {
-      // Wait for our sandbox to set up
-      sandbox.initialize().then(() => resolve(sandbox));
-
-      // and throw an error if it never does (e.g. karma server hang)
-      // https://github.com/stryker-mutator/stryker/issues/621
-      setTimeout(() => reject(new Error('Sandbox creation timed out')), SANDBOX_CREATE_TIMEOUT);
-    });
+    // throw an error if our sandbox is never set up (e.g. karma server hang)
+    // https://github.com/stryker-mutator/stryker/issues/621
+    return timeout<Sandbox>(
+      sandbox.initialize().then(() => sandbox),
+      SANDBOX_CREATE_TIMEOUT
+    )
+      .then(result => unwrapTimeout(result, 'Sandbox creation timed out'));
   }
 
   public run(timeout: number, testHooks: string | undefined): Promise<RunResult> {

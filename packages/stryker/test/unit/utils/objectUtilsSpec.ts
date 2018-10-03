@@ -31,4 +31,18 @@ describe('objectUtils', () => {
       expect(setTimeoutStub).calledWith(match.func, delay);
     });
   });
+
+  describe('unwrapTimeout', () => {
+    it('should return the result if timeout did not expire', async () => {
+      const result: string | typeof sut.TimeoutExpired = 'timeout did not expire';
+      const actual = sut.unwrapTimeout(result, 'This error should not be thrown');
+      expect(actual).eq('timeout did not expire');
+    });
+
+    it('should throw an error if timeout expired', async () => {
+      const result: string | typeof sut.TimeoutExpired = sut.TimeoutExpired;
+      const actual = () => sut.unwrapTimeout(result, 'This error should be thrown');
+      expect(actual).to.throw(Error, 'This error should be thrown');
+    });
+  });
 });

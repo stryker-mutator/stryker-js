@@ -117,6 +117,25 @@ export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof 
   return sleep;
 }
 
+export function isTimeoutExpired<T>(result: T | typeof TimeoutExpired): result is typeof TimeoutExpired {
+  return result === TimeoutExpired;
+}
+
+/**
+ * Unwrap a potentially TimeoutExpired result into a definite result.
+ * If the timeout did expire, throw an error with the given message.
+ *
+ * @param result The return of `timeout`
+ * @param msg An error message to throw if the timeout expired
+ */
+export function unwrapTimeout<T>(result: T | typeof TimeoutExpired, msg: string): T {
+  if (isTimeoutExpired(result)) {
+    throw new Error(msg);
+  } else {
+    return result;
+  }
+}
+
 export function padLeft(input: string): string {
   return input.split('\n').map(str => '\t' + str).join('\n');
 }
