@@ -1,6 +1,23 @@
 import Config from './Config';
 
+/**
+ * Represents a ConfigEditor plugin
+ *
+ * ConfigEditors can change the content of the stryker runtime configuration
+ * ConfigEditors are implemented as a chain of ConfigEditors, the result of
+ * any previous ConfigEditor can be passed thru to the next. Please not that
+ * editing of the configuration object is done by reference.
+ *
+ */
 interface ConfigEditor {
+  /**
+   * Extending classes only need to implement the edit method, this method
+   * receives a writable config object that can be editted in any way.
+   * Please be aware that editting is done via object reference. Therefore
+   * the return type is void.
+   *
+   * @param config: The stryker configuration object
+   */
   edit(config: Config): void;
 }
 
