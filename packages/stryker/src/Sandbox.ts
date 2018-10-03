@@ -16,8 +16,8 @@ import LoggingClientContext from './logging/LoggingClientContext';
 
 // The initial sandbox creation should not take long at all.
 // A long hang here could indicate testrunner hidden error logs
-// 30 seconds
-const SANDBOX_CREATE_TIMEOUT = 30 * 1000;
+// 60 seconds
+const SANDBOX_CREATE_TIMEOUT = 60 * 1000;
 
 interface FileMap {
   [sourceFile: string]: string;
