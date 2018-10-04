@@ -14,6 +14,14 @@ export default function ObjectLiteralMutatorSpec(
       expectMutation('const o = { foo: "bar" }', 'const o = {}');
     });
 
+    it('should empty an object declaration of all properties', () => {
+      expectMutation('const o = { foo: "bar", baz: "qux" }', 'const o = {}');
+    });
+
+    it('should empty string object keys', () => {
+      expectMutation('const o = { ["foo"]: "bar" }', 'const o = {}');
+    });
+
     it('shoud not mutate empty object declarations', () => {
       expectMutation('const o = {}');
     });
