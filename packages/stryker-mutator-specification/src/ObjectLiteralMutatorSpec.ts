@@ -6,8 +6,8 @@ export default function ObjectLiteralMutatorSpec(
   expectMutation: ExpectMutation
 ) {
   describe('ObjectLiteralMutator', () => {
-    it('should have name "Object"', () => {
-      expect(name).eq('Object');
+    it('should have name "ObjectLiteral"', () => {
+      expect(name).eq('ObjectLiteral');
     });
 
     it('should empty an object declaration', () => {
