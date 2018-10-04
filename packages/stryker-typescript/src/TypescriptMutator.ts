@@ -11,7 +11,7 @@ import ArrayLiteralMutator from './mutator/ArrayLiteralMutator';
 import ArrayNewExpressionMutator from './mutator/ArrayNewExpressionMutator';
 import BlockMutator from './mutator/BlockMutator';
 import IfStatementMutator from './mutator/IfStatementMutator';
-import ObjectMutator from './mutator/ObjectMutator';
+import ObjectLiteralMutator from './mutator/ObjectLiteralMutator';
 import WhileStatementMutator from './mutator/WhileStatementMutator';
 import ForStatementMutator from './mutator/ForStatementMutator';
 import DoStatementMutator from './mutator/DoStatementMutator';
@@ -31,7 +31,7 @@ export default class TypescriptMutator {
     new BlockMutator(),
     new ArrowFunctionMutator(),
     new IfStatementMutator(),
-    new ObjectMutator(),
+    new ObjectLiteralMutator(),
     new WhileStatementMutator(),
     new ForStatementMutator(),
     new DoStatementMutator(),

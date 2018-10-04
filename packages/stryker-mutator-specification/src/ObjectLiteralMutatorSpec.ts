@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function ObjectMutatorSpec(
+export default function ObjectLiteralMutatorSpec(
   name: string,
   expectMutation: ExpectMutation
 ) {
-  describe('ObjectMutator', () => {
+  describe('ObjectLiteralMutator', () => {
     it('should have name "Object"', () => {
       expect(name).eq('Object');
     });

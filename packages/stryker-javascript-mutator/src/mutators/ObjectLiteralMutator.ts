@@ -4,7 +4,7 @@ import NodeMutator from './NodeMutator';
 /**
  * Represents a mutator which can remove the content of a Object.
  */
-export default class ObjectMutator implements NodeMutator {
+export default class ObjectLiteralMutator implements NodeMutator {
   public name = 'Object';
 
   public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[] {

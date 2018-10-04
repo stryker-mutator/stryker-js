@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
-export default class ObjectMutator extends NodeMutator<ts.ObjectLiteralExpression> {
+export default class ObjectLiteralMutator extends NodeMutator<ts.ObjectLiteralExpression> {
   public name = 'Object';
 
   public guard(node: ts.Node): node is ts.ObjectLiteralExpression {
