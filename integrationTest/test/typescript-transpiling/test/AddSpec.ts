@@ -13,35 +13,35 @@ describe('Add', () => {
   });
 
   it('should be able 1 to a number', () => {
-    const number = 2;
+    const num = 2;
     const expected = 3;
 
-    const actual = addOne(number);
+    const actual = addOne(num);
 
     expect(actual).to.be.equal(expected);
   });
 
   it('should be able negate a number', () => {
-    const number = 2;
+    const num = 2;
     const expected = -2;
 
-    const actual = negate(number);
+    const actual = negate(num);
 
     expect(actual).to.be.equal(expected);
   });
 
   it('should be able to recognize a negative number', () => {
-    const number = -2;
+    const num = -2;
 
-    const isNegative = isNegativeNumber(number);
+    const isNegative = isNegativeNumber(num);
 
     expect(isNegative).to.be.true;
   });
 
   it('should be able to recognize that 0 is not a negative number', () => {
-    const number = 0;
+    const num = 0;
 
-    const isNegative = isNegativeNumber(number);
+    const isNegative = isNegativeNumber(num);
 
     expect(isNegative).to.be.false;
   });

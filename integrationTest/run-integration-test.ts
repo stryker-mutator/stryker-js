@@ -37,4 +37,3 @@ function runTest(testDir: string) {
     });
   });
 }
-

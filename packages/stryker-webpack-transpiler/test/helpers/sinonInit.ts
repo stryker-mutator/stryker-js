@@ -5,9 +5,9 @@ beforeEach(() => {
   global.sandbox = sinon.createSandbox();
   global.logMock = {
     debug: sandbox.stub(),
+    error: sandbox.stub(),
     info: sandbox.stub(),
-    warn: sandbox.stub(),
-    error: sandbox.stub()
+    warn: sandbox.stub()
   };
   sandbox.stub(logging, 'getLogger').returns(global.logMock);
 });

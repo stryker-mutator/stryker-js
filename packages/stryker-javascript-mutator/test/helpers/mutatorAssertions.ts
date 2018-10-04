@@ -25,8 +25,8 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
 
 /**
  * Place the mutant in the sourceText and remove all new-line tokens and excess whitespace in the mutant replacement
- * @param mutant 
- * @param sourceText 
+ * @param mutant
+ * @param sourceText
  */
 function mutantToString(mutant: Mutant, sourceText: string) {
   return sourceText.substr(0, mutant.range[0]) +

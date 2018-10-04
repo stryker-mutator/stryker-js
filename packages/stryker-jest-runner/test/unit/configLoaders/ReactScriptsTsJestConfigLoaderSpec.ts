@@ -13,15 +13,15 @@ describe('ReactScriptsTsJestConfigLoader', () => {
   let requireResolveStub: sinon.SinonStub;
   let createReactJestConfigStub: sinon.SinonStub;
 
-  let projectRoot = '/path/to/project';
-  let reactScriptsTsPackagePath = './node_modules/react-scripts-ts/package.json';
+  const projectRoot = '/path/to/project';
+  const reactScriptsTsPackagePath = './node_modules/react-scripts-ts/package.json';
 
   beforeEach(() => {
     createReactJestConfigStub = sinon.stub(helper, 'createReactTsJestConfig');
     createReactJestConfigStub.callsFake((resolve: any, projectRoot: string, eject: boolean) => ({
-      relativePath: resolve('test'),
+      eject,
       projectRoot,
-      eject
+      relativePath: resolve('test')
     }));
 
     requireResolveStub = sinon.stub(fakeRequire, 'resolve');
@@ -40,9 +40,9 @@ describe('ReactScriptsTsJestConfigLoader', () => {
     const config = reactConfigLoader.loadConfig();
 
     expect(config).to.deep.equal({
-      relativePath: path.join('node_modules', 'react-scripts-ts', 'test'),
-      projectRoot: '/path/to/project',
       eject: false,
+      projectRoot: '/path/to/project',
+      relativePath: path.join('node_modules', 'react-scripts-ts', 'test'),
       testEnvironment: 'jsdom'
     });
   });

@@ -20,7 +20,7 @@ export default class TypescriptTranspiler implements Transpiler {
     this.filter = TranspileFilter.create(this.config);
   }
 
-  transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
     const typescriptFiles = this.filterIsIncluded(files);
     if (this.languageService) {
       this.languageService.replace(typescriptFiles);

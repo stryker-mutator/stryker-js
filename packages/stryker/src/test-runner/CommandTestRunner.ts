@@ -19,13 +19,13 @@ export default class CommandTestRunner implements TestRunner {
   /**
    * "command"
    */
-  static readonly runnerName = CommandTestRunner.name.replace('TestRunner', '').toLowerCase();
+  public static readonly runnerName = CommandTestRunner.name.replace('TestRunner', '').toLowerCase();
 
   /**
    * Determines whether a given name is "command" (ignore case)
    * @param name Maybe "command", maybe not
    */
-  static is(name: string): boolean {
+  public static is(name: string): boolean {
     return this.runnerName === name.toLowerCase();
   }
 
@@ -33,13 +33,13 @@ export default class CommandTestRunner implements TestRunner {
 
   private timeoutHandler: undefined | (() => Promise<void>);
 
-  constructor(private workingDir: string, options: RunnerOptions) {
+  constructor(private readonly workingDir: string, options: RunnerOptions) {
     this.settings = Object.assign({
       command: 'npm test'
     }, options.strykerOptions.commandRunner);
   }
 
-  run(): Promise<RunResult> {
+  public run(): Promise<RunResult> {
     return new Promise((res, rej) => {
       const timer = new Timer();
       const output: (string | Buffer)[] = [];
@@ -100,10 +100,10 @@ export default class CommandTestRunner implements TestRunner {
           return {
             status: RunStatus.Complete,
             tests: [{
+              failureMessages: [output.map(buf => buf.toString()).join(os.EOL)],
               name: 'All tests',
               status: TestStatus.Failed,
-              timeSpentMs: duration,
-              failureMessages: [output.map(buf => buf.toString()).join(os.EOL)]
+              timeSpentMs: duration
             }]
           };
         }
@@ -111,7 +111,7 @@ export default class CommandTestRunner implements TestRunner {
     });
 
   }
-  async dispose(): Promise<void> {
+  public async dispose(): Promise<void> {
     if (this.timeoutHandler) {
       await this.timeoutHandler();
     }

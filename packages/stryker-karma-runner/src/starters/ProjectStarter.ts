@@ -3,8 +3,8 @@ import * as angularStarter from './angularStarter';
 import * as karmaStarter from './karmaStarter';
 
 export default class ProjectStarter {
-  constructor(private kind: ProjectKind) { }
-  start() {
+  constructor(private readonly kind: ProjectKind) { }
+  public start() {
     if (this.kind === 'angular-cli') {
       return angularStarter.start();
     } else {

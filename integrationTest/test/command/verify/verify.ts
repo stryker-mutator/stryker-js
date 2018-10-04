@@ -15,6 +15,6 @@ describe('After running stryker with the command test runner', () => {
     const strykerLog = await fs.readFile('./stryker.log', 'utf8');
     expect(strykerLog).contains('INFO InitialTestExecutor Initial test run succeeded. Ran 1 test');
     expect(strykerLog).matches(/Stryker Done in \d+/);
-    expect(strykerLog).not.contains('ERROR'); 
+    expect(strykerLog).not.contains('ERROR');
   });
 });

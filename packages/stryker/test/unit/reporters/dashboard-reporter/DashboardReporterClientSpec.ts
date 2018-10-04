@@ -15,9 +15,9 @@ describe('DashboardReporterClient', () => {
 
   const dashboardReport: StrykerDashboardReport = {
     apiKey: '1',
-    repositorySlug: 'github.com/stryker-mutator/stryker',
     branch: 'master',
-    mutationScore: 65.1
+    mutationScore: 65.1,
+    repositorySlug: 'github.com/stryker-mutator/stryker'
   };
 
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('DashboardReporterClient', () => {
 
   it('report mutations score to dashboard server', async () => {
       // Arrange
-      dashboardClient.post.resolves({ 
+      dashboardClient.post.resolves({
         message: {
           statusCode: 201
         }
@@ -50,7 +50,7 @@ describe('DashboardReporterClient', () => {
 
   it('when the server returns a invalid status code an error will be logged  ', async () => {
     // Arrange
-    dashboardClient.post.resolves({ 
+    dashboardClient.post.resolves({
       message: {
         statusCode: 500
       }

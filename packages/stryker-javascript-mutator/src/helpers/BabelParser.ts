@@ -5,7 +5,7 @@ import generate from '@babel/generator';
 import { NodeWithParent } from './ParentNode';
 
 export default class BabelParser {
-  static getAst(code: string): types.File {
+  public static getAst(code: string): types.File {
     const options: ParseOptions = {
       sourceType: 'unambiguous',
       plugins: [
@@ -15,13 +15,14 @@ export default class BabelParser {
         'classProperties',
         'asyncGenerators',
         'dynamicImport'
-      ]
+      ],
+      sourceType: 'script'
     };
 
     return parse(code, options);
   }
 
-  static getNodes(ast: types.File): NodeWithParent[] {
+  public static getNodes(ast: types.File): NodeWithParent[] {
     const nodes: NodeWithParent[] = [];
 
     traverse(ast, {
@@ -37,12 +38,12 @@ export default class BabelParser {
     return nodes;
   }
 
-  static generateCode(ast: types.File, node: types.Node) {
+  public static generateCode(ast: types.File, node: types.Node) {
     ast.program.body = [node as any];
     return generate(ast).code;
   }
 
-  static removeUseStrict(ast: types.File) {
+  public static removeUseStrict(ast: types.File) {
     if (ast.program.directives) {
       const directives = ast.program.directives;
       directives.forEach((directive, index) => {

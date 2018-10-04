@@ -22,8 +22,8 @@ export function copyFolder(fromPath: string, to: string): Promise<void> {
 
 function copyFile(fromFilename: string, toFilename: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    let readStream = fs.createReadStream(fromFilename);
-    let writeStream = fs.createWriteStream(toFilename);
+    const readStream = fs.createReadStream(fromFilename);
+    const writeStream = fs.createWriteStream(toFilename);
     readStream.on('error', reject);
     writeStream.on('error', reject);
     readStream.pipe(writeStream);
@@ -62,7 +62,7 @@ export function writeFile(fileName: string, content: string) {
 
 export function countPathSep(fileName: string) {
   let count = 0;
-  for (let ch of fileName) {
+  for (const ch of fileName) {
     if (ch === path.sep) {
       count++;
     }

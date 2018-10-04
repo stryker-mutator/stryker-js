@@ -11,9 +11,9 @@ const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 export default class MochaTestRunner implements TestRunner {
 
   private testFileNames: string[];
-  private allFileNames: string[];
-  private log = getLogger(MochaTestRunner.name);
-  private mochaRunnerOptions: MochaRunnerOptions;
+  private readonly allFileNames: string[];
+  private readonly log = getLogger(MochaTestRunner.name);
+  private readonly mochaRunnerOptions: MochaRunnerOptions;
 
   constructor(runnerOptions: RunnerOptions) {
     this.mochaRunnerOptions = runnerOptions.strykerOptions[mochaOptionsKey];
@@ -21,7 +21,7 @@ export default class MochaTestRunner implements TestRunner {
     this.additionalRequires();
   }
 
-  init(): void {
+  public init(): void {
     const globPatterns = this.mochaFileGlobPatterns();
     const globPatternsAbsolute = globPatterns.map(glob => path.resolve(glob));
     this.testFileNames = LibWrapper.multimatch(this.allFileNames, globPatternsAbsolute);
@@ -41,7 +41,7 @@ export default class MochaTestRunner implements TestRunner {
     }
   }
 
-  run({ testHooks }: { testHooks?: string }): Promise<RunResult> {
+  public run({ testHooks }: { testHooks?: string }): Promise<RunResult> {
     return new Promise<RunResult>((resolve, reject) => {
       try {
         this.purgeFiles();
@@ -59,17 +59,17 @@ export default class MochaTestRunner implements TestRunner {
               const errorMsg = 'The StrykerMochaReporter was not instantiated properly. Could not retrieve the RunResult.';
               this.log.error(errorMsg);
               resolve({
-                tests: [],
                 errorMessages: [errorMsg],
-                status: RunStatus.Error
+                status: RunStatus.Error,
+                tests: []
               });
             }
           });
         } catch (error) {
           resolve({
+            errorMessages: [error],
             status: RunStatus.Error,
-            tests: [],
-            errorMessages: [error]
+            tests: []
           });
         }
       } catch (error) {
@@ -89,7 +89,7 @@ export default class MochaTestRunner implements TestRunner {
     });
   }
 
-  private addTestHooks(mocha: Mocha, testHooks: string | undefined): any {
+  private addTestHooks(mocha: Mocha, testHooks: string | undefined): void {
     if (testHooks) {
       const suite = (mocha as any).suite;
       suite.emit('pre-require', global, '', mocha);

@@ -2,23 +2,23 @@ import { StrykerOptions, File, Position, Location, Range, LogLevel } from 'stryk
 
 const options: StrykerOptions = {};
 const optionsAllArgs: StrykerOptions = {
-  files: ['some'],
-  mutate: ['some'],
   configFile: 'string',
-  testFramework: 'string',
-  testRunner: 'string',
+  files: ['some'],
+  logLevel: LogLevel.Fatal,
+  mutate: ['some'],
+  plugins: ['string'],
+  port: 3,
   reporter: 'string',
   repoters: ['reporter'],
-  logLevel: LogLevel.Fatal,
-  timeoutMS: 1,
-  timeoutFactor: 2,
-  plugins: ['string'],
+  testFramework: 'string',
+  testRunner: 'string',
   thresholds: {
+    break: 60,
     high: 80,
-    low: 70,
-    break: 60
+    low: 70
   },
-  port: 3,
+  timeoutFactor: 2,
+  timeoutMS: 1
 };
 
 const textFile: File = new File('foo/bar.js', Buffer.from('foobar'));

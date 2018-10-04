@@ -17,7 +17,7 @@ namespace MutatorFactory {
    * Returns the current instance of the MutatorFactory.
    */
   export function instance() {
-    return <Factory<Config, Mutator>>mutatorFactoryInstance;
+    return mutatorFactoryInstance as Factory<Config, Mutator>;
   }
 }
 

@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.18.3"></a>
+## [0.18.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.2...stryker-karma-runner@0.18.3) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
+<a name="0.18.2"></a>
+## [0.18.2](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.1...stryker-karma-runner@0.18.2) (2018-09-30)
+
+
+### Bug Fixes
+
+* **karma-runner:** improve error message ([#1145](https://github.io/stryker-mutator/stryker/issues/1145)) ([2e56d38](https://github.io/stryker-mutator/stryker/commit/2e56d38))
+
+
+
+
+<a name="0.18.1"></a>
+## [0.18.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.0...stryker-karma-runner@0.18.1) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
 <a name="0.18.0"></a>
 # [0.18.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.17.1...stryker-karma-runner@0.18.0) (2018-08-28)
 

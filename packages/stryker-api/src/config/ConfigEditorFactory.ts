@@ -13,13 +13,13 @@ namespace ConfigEditorFactory {
     }
   }
 
-  let configEditorFactory = new ConfigEditorFactory();
+  const configEditorFactory = new ConfigEditorFactory();
 
   /**
    * Returns the current instance of the ConfigEditorFactory.
    */
   export function instance() {
-    return <Factory<void, ConfigEditor>>configEditorFactory;
+    return configEditorFactory as Factory<void, ConfigEditor>;
   }
 }
 

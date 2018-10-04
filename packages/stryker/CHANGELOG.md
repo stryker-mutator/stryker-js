@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.29.5"></a>
+## [0.29.5](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.4...stryker@0.29.5) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker
+
+<a name="0.29.4"></a>
+## [0.29.4](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.3...stryker@0.29.4) (2018-10-02)
+
+
+### Bug Fixes
+
+* **ScoreResultCalculator:** fix faulty filenames in stryker score result ([#1165](https://github.com/stryker-mutator/stryker/issues/1165)) ([2555f49](https://github.com/stryker-mutator/stryker/commit/2555f49)), closes [#1140](https://github.com/stryker-mutator/stryker/issues/1140)
+
+
+
+
+<a name="0.29.3"></a>
+## [0.29.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.2...stryker@0.29.3) (2018-09-30)
+
+
+### Bug Fixes
+
+* **karma-runner:** improve error message ([#1145](https://github.com/stryker-mutator/stryker/issues/1145)) ([2e56d38](https://github.com/stryker-mutator/stryker/commit/2e56d38))
+
+
+
+
+<a name="0.29.2"></a>
+## [0.29.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.1...stryker@0.29.2) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker
+
 <a name="0.29.1"></a>
 ## [0.29.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.0...stryker@0.29.1) (2018-08-28)
 

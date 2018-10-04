@@ -13,13 +13,13 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 
 export default class MutantTranspiler {
 
-  private transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
-  private proxy: Promisified<TranspilerFacade>;
+  private readonly transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
+  private readonly proxy: Promisified<TranspilerFacade>;
   private currentMutatedFile: SourceFile;
   private unMutatedFiles: ReadonlyArray<File>;
 
   /**
-   * Creates the mutant transpiler in a child process if one is defined. 
+   * Creates the mutant transpiler in a child process if one is defined.
    * Otherwise will just forward input as output in same process.
    * @param config The Stryker config
    */
@@ -40,14 +40,14 @@ export default class MutantTranspiler {
     }
   }
 
-  initialize(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+  public initialize(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
     return this.proxy.transpile(files).then((transpiledFiles: ReadonlyArray<File>) => {
       this.unMutatedFiles = transpiledFiles;
       return transpiledFiles;
     });
   }
 
-  transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
+  public transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
     const mutants = allMutants.slice();
     return new Observable<TranspiledMutant>(observer => {
       const nextMutant = () => {
@@ -65,7 +65,7 @@ export default class MutantTranspiler {
     });
   }
 
-  dispose() {
+  public dispose() {
     if (this.transpilerChildProcess) {
       this.transpilerChildProcess.dispose();
     }

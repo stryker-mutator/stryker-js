@@ -18,10 +18,11 @@ import ConditionalExpressionMutator from './mutator/ConditionalExpressionMutator
 import PrefixUnaryExpressionMutator from './mutator/PrefixUnaryExpressionMutator';
 import ArrowFunctionMutator from './mutator/ArrowFunctionMutator';
 import StringLiteralMutator from './mutator/StringLiteralMutator';
+import SwitchCaseMutator from './mutator/SwitchCaseMutator';
 
 export default class TypescriptMutator {
 
-  constructor(private config: Config, public mutators: NodeMutator[] = [
+  constructor(private readonly config: Config, public mutators: NodeMutator[] = [
     new BinaryExpressionMutator(),
     new BooleanSubstitutionMutator(),
     new ArrayLiteralMutator(),
@@ -35,9 +36,10 @@ export default class TypescriptMutator {
     new ConditionalExpressionMutator(),
     new PrefixUnaryExpressionMutator(),
     new StringLiteralMutator(),
+    new SwitchCaseMutator(),
   ]) { }
 
-  mutate(inputFiles: File[]): Mutant[] {
+  public mutate(inputFiles: File[]): Mutant[] {
     const tsConfig = getTSConfig(this.config);
     const mutants = flatMap(inputFiles, inputFile => {
       const sourceFile = parseFile(inputFile, tsConfig && tsConfig.options && tsConfig.options.target);

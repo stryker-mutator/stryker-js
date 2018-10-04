@@ -41,16 +41,16 @@ describe('EventRecorderReporter', () => {
         expect(fileUtils.cleanFolder).to.have.been.calledWith('reports/mutation/events');
       });
 
-      let arrangeActAssertEvent = (eventName: keyof Reporter) => {
+      const arrangeActAssertEvent = (eventName: keyof Reporter) => {
         describe(`${eventName} event`, () => {
 
-          let writeFileRejection: any;
+          let writeFileRejection: undefined | Error;
           const expected: any = { some: 'eventData' };
 
-          let arrange = () => beforeEach(() => {
+          const arrange = () => beforeEach(() => {
             writeFileRejection = undefined;
             (sut[eventName] as any)(expected);
-            return (<Promise<any>>sut.wrapUp()).then(() => void 0, (error) => writeFileRejection = error);
+            return (sut.wrapUp() as Promise<void>).then(() => void 0, error => writeFileRejection = error);
           });
 
           describe('when writeFile results in a rejection', () => {

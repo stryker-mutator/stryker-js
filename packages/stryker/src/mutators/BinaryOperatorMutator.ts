@@ -4,35 +4,35 @@ import NodeMutator from './NodeMutator';
 import { IdentifiedNode } from './IdentifiedNode';
 
 export default class BinaryOperatorMutator implements NodeMutator {
-  name = 'BinaryOperator';
-  private type = Syntax.BinaryExpression;
-  private operators: { [targetedOperator: string]: estree.BinaryOperator | estree.BinaryOperator[] } = {
+  public name = 'BinaryOperator';
+  private readonly type = Syntax.BinaryExpression;
+  private readonly operators: { [targetedOperator: string]: estree.BinaryOperator | estree.BinaryOperator[] } = {
+    '!=': '==',
+    '!==': '===',
+    '%': '*',
+    '*': '/',
     '+': '-',
     '-': '+',
-    '*': '/',
     '/': '*',
-    '%': '*',
     '<': ['<=', '>='],
     '<=': ['<', '>'],
-    '>': ['>=', '<='],
-    '>=': ['>', '<'],
     '==': '!=',
-    '!=': '==',
     '===': '!==',
-    '!==': '==='
+    '>': ['>=', '<='],
+    '>=': ['>', '<']
   };
 
-  applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] {
-    let nodes: IdentifiedNode[] = [];
+  public applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] {
+    const nodes: IdentifiedNode[] = [];
 
     if (node.type === this.type && this.operators[node.operator]) {
-      let binaryNode = node;
+      const binaryNode = node;
       let mutatedOperators = this.operators[node.operator];
       if (typeof mutatedOperators === 'string') {
         mutatedOperators = [mutatedOperators];
       }
       mutatedOperators.forEach(operator => {
-        let mutatedNode = copy(binaryNode);
+        const mutatedNode = copy(binaryNode);
         mutatedNode.operator = operator;
         nodes.push(mutatedNode);
       });

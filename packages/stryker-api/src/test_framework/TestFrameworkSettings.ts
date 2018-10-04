@@ -1,4 +1,4 @@
-import {StrykerOptions} from '../../core';
+import { StrykerOptions } from '../../core';
 
 /**
  * Represents an settings object for a TestFramework.

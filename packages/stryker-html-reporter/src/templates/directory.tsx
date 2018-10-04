@@ -6,9 +6,9 @@ import { layout } from './layout';
 import Breadcrumb from '../Breadcrumb';
 
 export function directory(scoreResult: ScoreResult, breadcrumb: Breadcrumb, thresholds: MutationScoreThresholds) {
-    return layout(breadcrumb, <div class="col-lg-12">
-        <div class="row">
-            <div class="totals col-sm-11">
+    return layout(breadcrumb, <div class='col-lg-12'>
+        <div class='row'>
+            <div class='totals col-sm-11'>
                 {resultTable(scoreResult, breadcrumb.title, thresholds)}
             </div>
         </div>

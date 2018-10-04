@@ -8,7 +8,7 @@ class NamedTranspiler {
 
 export default class TranspilerFacade implements Transpiler {
 
-  private innerTranspilers: NamedTranspiler[];
+  private readonly innerTranspilers: NamedTranspiler[];
 
   constructor(options: TranspilerOptions) {
     this.innerTranspilers = options.config.transpilers
@@ -34,5 +34,4 @@ export default class TranspilerFacade implements Transpiler {
       return input;
     }
   }
-
 }

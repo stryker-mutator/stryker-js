@@ -8,7 +8,8 @@ import fileUrl = require('file-url');
 import HtmlReporter from '../../src/HtmlReporter';
 
 describe('HtmlReporter with example math project', () => {
-  let sut: HtmlReporter, baseDir = 'reports/mutation/math';
+  let sut: HtmlReporter;
+  const baseDir = 'reports/mutation/math';
 
   beforeEach(() => {
     const config = new Config();
@@ -46,7 +47,6 @@ describe('HtmlReporter with example math project', () => {
     });
   });
 });
-
 
 function expectFileExists(file: string, expected: boolean) {
   try {

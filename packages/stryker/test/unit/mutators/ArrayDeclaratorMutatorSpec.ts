@@ -9,7 +9,7 @@ describe('ArrayDeclaratorMutator', () => {
   let sut: ArrayDeclaratorMutator;
 
   beforeEach(() => sut = new ArrayDeclaratorMutator());
-  
+
   const getVariableDeclaration = (program: estree.Program) => (program.body[0] as estree.VariableDeclaration);
 
   const getArrayExpression = (program: estree.Program) => {
@@ -26,7 +26,7 @@ describe('ArrayDeclaratorMutator', () => {
     const variableDeclaration = getVariableDeclaration(program);
     return (variableDeclaration.declarations[0].init as estree.NewExpression & Identified);
   };
-  
+
   it('should mutate when supplied with an array expression', () => {
     // Arrange
     const program = parser.parse(`var array = [1,2,3];`);

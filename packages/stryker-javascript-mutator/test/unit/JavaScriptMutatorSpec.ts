@@ -14,8 +14,8 @@ describe('JavaScriptMutator', () => {
 
     expect(mutants.length).to.equal(1);
     expect(mutants[0]).to.deep.equal({
-      mutatorName: 'BinaryExpression',
       fileName: files[0].name,
+      mutatorName: 'BinaryExpression',
       range: [22, 27],
       replacement: '1 - 2'
     });
@@ -44,8 +44,8 @@ describe('JavaScriptMutator', () => {
 
     expect(mutants.length).to.equal(6);
     expect(mutants).to.deep.include({
-      mutatorName: 'IfStatement',
       fileName: 'testFile.jsx',
+      mutatorName: 'IfStatement',
       range: [197, 202],
       replacement: 'true'
     });
@@ -73,23 +73,23 @@ describe('JavaScriptMutator', () => {
     const files: File[] = [new File('testFile.js', `
           // @flow
           import React from 'react'
-          
+
           function getMessage(message: string) {
             if(message) {
               return message;
             }
-          
+
             return 'Hello!!';
           }
-          
+
           const App = ({ if: message }: Props) => (<div>
             <h1>{ getMessage(message) }</h1>
           </div>)
-          
+
           type Props = {
             message: string
           }
-          
+
           export default App
         `)];
 
@@ -97,9 +97,9 @@ describe('JavaScriptMutator', () => {
 
     expect(mutants.length).to.equal(5);
     expect(mutants).to.deep.include({
-      mutatorName: 'IfStatement',
       fileName: 'testFile.js',
-      range: [131, 138],
+      mutatorName: 'IfStatement',
+      range: [121, 128],
       replacement: 'false'
     });
   });

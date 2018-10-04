@@ -54,6 +54,22 @@ describe('stryker-karma.conf.js', () => {
     expect(requireModuleStub).calledWith(path.resolve('foobar.conf.js'));
   });
 
+  it('should log an error if the karma config file could not be found', () => {
+    // Arrange
+    const actualError = new Error('Module not found') as NodeJS.ErrnoException;
+    actualError.code = 'MODULE_NOT_FOUND';
+    requireModuleStub.throws(actualError);
+    const expectedKarmaConfigFile = 'foobar.conf.js';
+    sut.setGlobals({ karmaConfigFile: expectedKarmaConfigFile });
+
+    // Act
+    sut(config);
+
+    // Assert
+    expect(logMock.error).calledWithMatch(`Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`);
+    expect(requireModuleStub).calledWith(path.resolve(expectedKarmaConfigFile));
+  });
+
   it('should set user configuration from custom karma config', () => {
     sut.setGlobals({ karmaConfig: { basePath: 'foobar' } });
     sut(config);
@@ -64,10 +80,10 @@ describe('stryker-karma.conf.js', () => {
     config.set({ browserNoActivityTimeout: 1, autoWatch: true, singleRun: true, detached: true });
     sut(config);
     expect(config).deep.include({
-      browserNoActivityTimeout: 1000000,
       autoWatch: false,
-      singleRun: false,
-      detached: false
+      browserNoActivityTimeout: 1000000,
+      detached: false,
+      singleRun: false
     });
   });
 
@@ -122,16 +138,16 @@ describe('stryker-karma.conf.js', () => {
 });
 
 class KarmaConfigMock implements Config {
-  set(config: ConfigOptions) {
-    for (let prop in config) {
+  public set(config: ConfigOptions) {
+    for (const prop in config) {
       if (prop !== 'set') {
         (this as any)[prop] = (config as any)[prop];
       }
     }
   }
-  LOG_DISABLE = 'off';
-  LOG_ERROR = 'error';
-  LOG_WARN = 'warn';
-  LOG_INFO = 'info';
-  LOG_DEBUG = 'debug';
+  public LOG_DISABLE = 'off';
+  public LOG_ERROR = 'error';
+  public LOG_WARN = 'warn';
+  public LOG_INFO = 'info';
+  public LOG_DEBUG = 'debug';
 }

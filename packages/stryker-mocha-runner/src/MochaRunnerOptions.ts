@@ -1,5 +1,3 @@
-
-
 export const mochaOptionsKey = 'mochaOptions';
 
 export default interface MochaRunnerOptions {

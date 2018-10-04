@@ -2,9 +2,9 @@ import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class ConditionalExpressionMutator extends NodeMutator<ts.ConditionalExpression> {
-  name = 'ConditionalExpression';
+  public name = 'ConditionalExpression';
 
-  guard(node: ts.Node): node is ts.ConditionalExpression {
+  public guard(node: ts.Node): node is ts.ConditionalExpression {
     return node.kind === ts.SyntaxKind.ConditionalExpression;
   }
 

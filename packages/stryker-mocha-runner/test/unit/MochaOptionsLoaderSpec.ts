@@ -28,7 +28,7 @@ describe('MochaOptionsLoader', () => {
 
   it('should load a mocha.opts file if specified', () => {
     readFileStub.returns('');
-    config['mochaOptions'] = {
+    config.mochaOptions = {
       opts: 'some/mocha.opts/file'
     };
     sut.load(config);
@@ -47,7 +47,7 @@ describe('MochaOptionsLoader', () => {
     --require  src/test/support/setup
     -r babel-require
     `);
-    config['mochaOptions'] = { opts: '.' };
+    config.mochaOptions = { opts: '.' };
     const options = sut.load(config);
     expect(options).deep.include({
       require: [
@@ -60,7 +60,7 @@ describe('MochaOptionsLoader', () => {
   function itShouldLoadProperty(property: string, value: string, expectedConfig: Partial<MochaRunnerOptions>) {
     it(`should load '${property} if specified`, () => {
       readFileStub.returns(`${property} ${value}`);
-      config['mochaOptions'] = { opts: 'path/to/opts/file' };
+      config.mochaOptions = { opts: 'path/to/opts/file' };
       expect(sut.load(config)).deep.include(expectedConfig);
     });
   }
@@ -79,20 +79,20 @@ describe('MochaOptionsLoader', () => {
       -A
       -r babel-register
     `);
-    config['mochaOptions'] = {
-      opts: 'path/to/opts/file',
-      ui: 'exports',
-      timeout: 4000,
+    config.mochaOptions = {
       asyncOnly: false,
-      require: ['ts-node/register']
+      opts: 'path/to/opts/file',
+      require: ['ts-node/register'],
+      timeout: 4000,
+      ui: 'exports'
     };
     const options = sut.load(config);
     expect(options).deep.equal({
-      opts: 'path/to/opts/file',
-      ui: 'exports',
-      timeout: 4000,
       asyncOnly: false,
-      require: ['ts-node/register']
+      opts: 'path/to/opts/file',
+      require: ['ts-node/register'],
+      timeout: 4000,
+      ui: 'exports'
     });
   });
 
@@ -101,7 +101,7 @@ describe('MochaOptionsLoader', () => {
     --reporter dot
     --ignore-leaks
     `);
-    config['mochaOptions'] = {
+    config.mochaOptions = {
       opts: 'some/mocha.opts/file',
     };
     const options = sut.load(config);
@@ -115,7 +115,7 @@ describe('MochaOptionsLoader', () => {
     --timeout
     --ui
     `);
-    config['mochaOptions'] = {
+    config.mochaOptions = {
       opts: 'some/mocha.opts/file',
     };
     const options = sut.load(config);

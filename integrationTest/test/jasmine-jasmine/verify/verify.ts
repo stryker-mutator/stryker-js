@@ -15,6 +15,6 @@ describe('After running stryker with test runner jasmine, test framework jasmine
     expect(strykerLog).contains('INFO InputFileResolver Found 2 of 10 file(s) to be mutated');
     expect(strykerLog).matches(/Stryker Done in \d+/);
     // TODO, we now have an error because of a memory leak: https://github.com/jasmine/jasmine-npm/issues/134
-    // expect(strykerLog).not.contains('ERROR'); 
+    // expect(strykerLog).not.contains('ERROR');
   });
 });

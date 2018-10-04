@@ -14,7 +14,7 @@ describe('VueMutator', () => {
       const vueCode = `<template>
       <span id="msg">{{ message }}</span>
       </template>
-      
+
       <script>
       export default {
         data () {
@@ -27,7 +27,7 @@ describe('VueMutator', () => {
         }
       }
       </script>
-      
+
       <msg>
       #app {
       text-align: center;
@@ -42,7 +42,7 @@ describe('VueMutator', () => {
       const sut = new VueMutator(new Config());
 
       const mutants = sut.mutate(files);
-      
+
       expect(mutants.filter(m => m.mutatorName === 'StringLiteral').length).to.equal(2);
       expect(mutants.filter(m => m.mutatorName === 'Block').length).to.equal(3);
       expect(mutants.filter(m => m.mutatorName === 'BinaryExpression').length).to.equal(3);
@@ -55,7 +55,7 @@ describe('VueMutator', () => {
       const vueCode = `<template>
       <span id="msg">{{ message }}</span>
       </template>
-      
+
       <script lang="ts">
       export default {
         data () {
@@ -68,7 +68,7 @@ describe('VueMutator', () => {
         }
       }
       </script>
-      
+
       <msg>
       #app {
       text-align: center;
@@ -82,7 +82,7 @@ describe('VueMutator', () => {
       const sut = new VueMutator(new Config());
 
       const mutants = sut.mutate(files);
-      
+
       expect(mutants.filter(m => m.mutatorName === 'StringLiteral').length).to.equal(1);
       expect(mutants.filter(m => m.mutatorName === 'Block').length).to.equal(3);
       expect(mutants.filter(m => m.mutatorName === 'BinaryExpression').length).to.equal(3);

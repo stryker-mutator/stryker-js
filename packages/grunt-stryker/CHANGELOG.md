@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.9"></a>
+## [0.13.9](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.13.8...grunt-stryker@0.13.9) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package grunt-stryker
+
+<a name="0.13.8"></a>
+## [0.13.8](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.13.7...grunt-stryker@0.13.8) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package grunt-stryker
+
 <a name="0.13.7"></a>
 ## [0.13.7](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.13.6...grunt-stryker@0.13.7) (2018-08-21)
 

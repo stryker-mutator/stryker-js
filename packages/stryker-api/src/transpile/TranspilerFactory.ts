@@ -11,7 +11,7 @@ namespace TranspilerFactory {
   const mutatorFactoryInstance = new TranspilerFactory();
 
   export function instance() {
-    return <Factory<TranspilerOptions, Transpiler>>mutatorFactoryInstance;
+    return mutatorFactoryInstance as Factory<TranspilerOptions, Transpiler>;
   }
 }
 

@@ -1,25 +1,25 @@
 export default class HelloClass {
   constructor(public name: string) { }
-  sayHello() {
+  public sayHello() {
     return `hello from ${this.name}`;
   }
-  sayDelayed() {
+  public sayDelayed() {
     return new Promise(res => res(`delayed hello from ${this.name}`));
   }
 
-  say(...things: string[]) {
+  public say(...things: string[]) {
     return `hello ${things.join(' and ')}`;
   }
 
-  sum(a: number, b: number) {
+  public sum(a: number, b: number) {
     return a + b;
   }
 
-  reject() {
+  public reject() {
     return Promise.reject(new Error('Rejected'));
   }
 
-  throw(message: string) {
+  public throw(message: string) {
     throw new Error(message);
   }
 }

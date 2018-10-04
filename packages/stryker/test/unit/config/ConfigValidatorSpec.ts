@@ -73,14 +73,21 @@ describe('ConfigValidator', () => {
   });
 
   it('should be invalid with nonnumeric timeoutMS', () => {
-    let brokenConfig = breakConfig(config, 'timeoutMS', 'break');
+    const brokenConfig = breakConfig(config, 'timeoutMS', 'break');
     sut = new ConfigValidator(brokenConfig, testFramework());
     actValidationError();
     expect(log.fatal).calledWith('Value "break" is invalid for `timeoutMS`. Expected a number');
   });
 
+  it('should be invalid with nonnumeric timeoutMS (NaN)', () => {
+    const brokenConfig = breakConfig(config, 'timeoutMS', NaN);
+    sut = new ConfigValidator(brokenConfig, testFramework());
+    actValidationError();
+    expect(log.fatal).calledWith('Value "NaN" is invalid for `timeoutMS`. Expected a number');
+  });
+
   it('should be invalid with nonnumeric timeoutFactor', () => {
-    let brokenConfig = breakConfig(config, 'timeoutFactor', 'break');
+    const brokenConfig = breakConfig(config, 'timeoutFactor', 'break');
     sut = new ConfigValidator(brokenConfig, testFramework());
     actValidationError();
     expect(log.fatal).calledWith('Value "break" is invalid for `timeoutFactor`. Expected a number');
@@ -88,14 +95,14 @@ describe('ConfigValidator', () => {
 
   describe('plugins', () => {
     it('should be invalid with non-array plugins', () => {
-      let brokenConfig = breakConfig(config, 'plugins', 'stryker-typescript');
+      const brokenConfig = breakConfig(config, 'plugins', 'stryker-typescript');
       sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
       expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `plugins`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
-      let brokenConfig = breakConfig(config, 'plugins', ['stryker-jest', 0]);
+      const brokenConfig = breakConfig(config, 'plugins', ['stryker-jest', 0]);
       sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
       expect(log.fatal).calledWith('Value "0" is an invalid element of `plugins`. Expected a string');
@@ -104,7 +111,7 @@ describe('ConfigValidator', () => {
 
   describe('mutator', () => {
     it('should be invalid with non-string mutator', () => {
-      let brokenConfig = breakConfig(config, 'mutator', 0);
+      const brokenConfig = breakConfig(config, 'mutator', 0);
       sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
       expect(log.fatal).calledWith('Value "0" is invalid for `mutator`. Expected either a string or an object');
@@ -112,9 +119,9 @@ describe('ConfigValidator', () => {
 
     describe('as an object', () => {
       it('should be valid with string mutator name and string array excluded mutations', () => {
-        let validConfig = breakConfig(config, 'mutator', {
-          name: 'es5',
-          excludedMutations: ['BooleanSubstitution']
+        const validConfig = breakConfig(config, 'mutator', {
+          excludedMutations: ['BooleanSubstitution'],
+          name: 'es5'
         });
         sut = new ConfigValidator(validConfig, testFramework());
         sut.validate();
@@ -122,9 +129,9 @@ describe('ConfigValidator', () => {
       });
 
       it('should be invalid with non-string mutator name', () => {
-        let brokenConfig = breakConfig(config, 'mutator', {
-          name: 0,
-          excludedMutations: []
+        const brokenConfig = breakConfig(config, 'mutator', {
+          excludedMutations: [],
+          name: 0
         });
         sut = new ConfigValidator(brokenConfig, testFramework());
         actValidationError();
@@ -132,9 +139,9 @@ describe('ConfigValidator', () => {
       });
 
       it('should be invalid with non-array excluded mutations', () => {
-        let brokenConfig = breakConfig(config, 'mutator', {
-          name: 'es5',
-          excludedMutations: 'BooleanSubstitution'
+        const brokenConfig = breakConfig(config, 'mutator', {
+          excludedMutations: 'BooleanSubstitution',
+          name: 'es5'
         });
         sut = new ConfigValidator(brokenConfig, testFramework());
         actValidationError();
@@ -142,9 +149,9 @@ describe('ConfigValidator', () => {
       });
 
       it('should be invalid with non-string excluded mutation array elements', () => {
-        let brokenConfig = breakConfig(config, 'mutator', {
-          name: 'es5',
-          excludedMutations: ['BooleanSubstitution', 0]
+        const brokenConfig = breakConfig(config, 'mutator', {
+          excludedMutations: ['BooleanSubstitution', 0],
+          name: 'es5'
         });
         sut = new ConfigValidator(brokenConfig, testFramework());
         actValidationError();
@@ -155,14 +162,14 @@ describe('ConfigValidator', () => {
 
   describe('reporters', () => {
     it('should be invalid with non-array reporters', () => {
-      let brokenConfig = breakConfig(config, 'reporters', 'stryker-typescript');
+      const brokenConfig = breakConfig(config, 'reporters', 'stryker-typescript');
       sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
       expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `reporters`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
-      let brokenConfig = breakConfig(config, 'reporters', [
+      const brokenConfig = breakConfig(config, 'reporters', [
         'stryker-jest',
         0
       ]);
@@ -174,14 +181,14 @@ describe('ConfigValidator', () => {
 
   describe('transpilers', () => {
     it('should be invalid with non-array transpilers', () => {
-      let brokenConfig = breakConfig(config, 'transpilers', 'stryker-typescript');
+      const brokenConfig = breakConfig(config, 'transpilers', 'stryker-typescript');
       sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
       expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `transpilers`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
-      let brokenConfig = breakConfig(config, 'transpilers', [
+      const brokenConfig = breakConfig(config, 'transpilers', [
         'stryker-jest',
         0
       ]);
@@ -192,7 +199,7 @@ describe('ConfigValidator', () => {
   });
 
   it('should be invalid with invalid coverageAnalysis', () => {
-    let brokenConfig = breakConfig(config, 'coverageAnalysis', 'invalid');
+    const brokenConfig = breakConfig(config, 'coverageAnalysis', 'invalid');
     sut = new ConfigValidator(brokenConfig, testFramework());
     actValidationError();
     expect(log.fatal).calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the following: "perTest", "all", "off"');

@@ -14,7 +14,7 @@ function readFiles(...files: string[]): Promise<File[]> {
     .map(fileName => fs.readFile(fileName).then(content => new File(fileName, content))));
 }
 
-describe('Source mapper integration', function () {
+describe('Source mapper integration', function() {
 
   this.timeout(15000);
   let sut: TranspiledSourceMapper;
@@ -31,15 +31,15 @@ describe('Source mapper integration', function () {
       const actual = sut.transpiledLocationFor({
         fileName: resolve('external-source-maps', 'ts', 'src', 'math.ts'),
         location: {
-          start: { line: 7, column: 8 },
-          end: { line: 7, column: 42 }
+          end: { line: 7, column: 42 },
+          start: { line: 7, column: 8 }
         }
       });
       expect(actual).deep.eq({
         fileName: resolve('external-source-maps', 'js', 'math.js'),
         location: {
-          start: { line: 15, column: 10 },
-          end: { line: 16, column: 0 }
+          end: { line: 16, column: 0 },
+          start: { line: 15, column: 10 }
         }
       });
     });
@@ -54,20 +54,17 @@ describe('Source mapper integration', function () {
       const actual = sut.transpiledLocationFor({
         fileName: resolve('inline-source-maps', 'ts', 'src', 'math.ts'),
         location: {
-          start: { line: 7, column: 8 },
-          end: { line: 7, column: 42 }
+          end: { line: 7, column: 42 },
+          start: { line: 7, column: 8 }
         }
       });
       expect(actual).deep.eq({
         fileName: resolve('inline-source-maps', 'js', 'math.js'),
         location: {
-          start: { line: 15, column: 10 },
-          end: { line: 16, column: 0 }
+          end: { line: 16, column: 0 },
+          start: { line: 15, column: 10 }
         }
       });
     });
   });
-
-
 });
-

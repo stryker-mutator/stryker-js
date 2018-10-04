@@ -22,24 +22,24 @@ describe('ClearTextReporter', () => {
     it('should report the clear text table with correct values', () => {
       sut = new ClearTextReporter(config({ coverageAnalysis: 'all' }));
       sut.onScoreCalculated(scoreResult({
-        name: 'root',
-        killed: 1,
-        timedOut: 2,
-        survived: 3,
-        noCoverage: 4,
-        transpileErrors: 5,
-        runtimeErrors: 6,
-        mutationScore: 80,
         childResults: [scoreResult({
-          name: 'child1',
-          mutationScore: 60,
           childResults: [
             scoreResult({
-              name: 'some/test/for/a/deep/file.js',
-              mutationScore: 59.99
+              mutationScore: 59.99,
+              name: 'some/test/for/a/deep/file.js'
             })
-          ]
-        })]
+          ],
+          mutationScore: 60,
+          name: 'child1'
+        })],
+        killed: 1,
+        mutationScore: 80,
+        name: 'root',
+        noCoverage: 4,
+        runtimeErrors: 6,
+        survived: 3,
+        timedOut: 2,
+        transpileErrors: 5
       }));
       const serializedTable: string = stdoutStub.getCall(0).args[0];
       const rows = serializedTable.split(os.EOL);
@@ -69,13 +69,14 @@ describe('ClearTextReporter', () => {
     it('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
       sut = new ClearTextReporter(config({ coverageAnalysis: 'all', thresholds: mutationScoreThresholds({ high: 60, low: 50 }) }));
       sut.onScoreCalculated(scoreResult({
-        mutationScore: 60.01, childResults: [
+        childResults: [
           scoreResult({ mutationScore: 60 }),
           scoreResult({ mutationScore: 59.99 }),
           scoreResult({ mutationScore: 50.01 }),
           scoreResult({ mutationScore: 50 }),
           scoreResult({ mutationScore: 49.99 })
-        ]
+        ],
+        mutationScore: 60.01
       }));
       const serializedTable: string = stdoutStub.getCall(0).args[0];
       expect(serializedTable).contains(chalk.red('   49.99 '));
@@ -89,10 +90,11 @@ describe('ClearTextReporter', () => {
     it('should color score in red and green if low equals high thresholds', () => {
       sut = new ClearTextReporter(config({ coverageAnalysis: 'all', thresholds: mutationScoreThresholds({ high: 50, low: 50 }) }));
       sut.onScoreCalculated(scoreResult({
-        mutationScore: 50.01, childResults: [
+        childResults: [
           scoreResult({ mutationScore: 50 }),
           scoreResult({ mutationScore: 49.99 })
-        ]
+        ],
+        mutationScore: 50.01
       }));
       const serializedTable: string = stdoutStub.getCall(0).args[0];
       expect(serializedTable).contains(chalk.red('   49.99 '));
@@ -229,14 +231,14 @@ describe('ClearTextReporter', () => {
     return status.map(status => {
       const result: MutantResult = mutantResult({
         location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
-        range: [0, 0],
         mutatedLines: 'mutated line',
         mutatorName: 'Math',
         originalLines: 'original line',
+        range: [0, 0],
         replacement: '',
         sourceFilePath: '',
-        testsRan: ['a test', 'a second test', 'a third test'],
-        status: status
+        status,
+        testsRan: ['a test', 'a second test', 'a third test']
       });
       return result;
     });
