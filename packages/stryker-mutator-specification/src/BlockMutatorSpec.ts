@@ -41,5 +41,10 @@ export default function BlockMutatorSpec(
         'switch (v) { case 42: {} }'
       );
     });
+
+    // object tests
+    it('should not mutate an object declaration, as not a block', () => {
+      expectMutation('const o = { foo: "bar" }');
+    });
   });
 }
