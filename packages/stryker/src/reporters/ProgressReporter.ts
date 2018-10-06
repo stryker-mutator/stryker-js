@@ -8,7 +8,7 @@ export default class ProgressBarReporter extends ProgressKeeper {
   public onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
     const progressBarContent =
-      `Mutation testing  [:bar] :percent (ETC :etas) :tested/:total tested (:survived survived)`;
+      `Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)`;
 
     this.progressBar = new ProgressBar(progressBarContent, {
       complete: '=',
