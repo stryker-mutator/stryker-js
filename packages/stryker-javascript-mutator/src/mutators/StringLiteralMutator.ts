@@ -1,4 +1,4 @@
-import { types } from 'babel-core';
+import * as types from '@babel/types';
 import NodeMutator from './NodeMutator';
 import { NodeWithParent } from '../helpers/ParentNode';
 
@@ -11,8 +11,11 @@ export default class StringLiteralMutator implements NodeMutator {
     if (types.isTemplateLiteral(node)) {
       const mutatedNode: types.StringLiteral = {
         end: node.end,
+        innerComments: node.innerComments,
+        leadingComments: node.leadingComments,
         loc: node.loc,
         start: node.start,
+        trailingComments: node.trailingComments,
         type: 'StringLiteral',
         value: ''
       };

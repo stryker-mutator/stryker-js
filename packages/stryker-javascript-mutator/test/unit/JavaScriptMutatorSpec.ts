@@ -114,7 +114,7 @@ describe('JavaScriptMutator', () => {
             };
           }
 
-          class ClassProperties { b = 1; }
+          class ClassProperties { b = 1n; }
 
           async function* asyncGenerators(i) {
             yield i;

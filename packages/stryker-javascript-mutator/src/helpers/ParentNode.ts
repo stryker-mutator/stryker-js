@@ -1,4 +1,4 @@
-import { types } from 'babel-core';
+import * as types from '@babel/types';
 export default interface NodeParent {
   parent?: types.Node;
 }
