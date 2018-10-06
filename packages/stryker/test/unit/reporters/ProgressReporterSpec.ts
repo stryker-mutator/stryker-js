@@ -6,18 +6,25 @@ import * as progressBarModule from '../../../src/reporters/ProgressBar';
 import { matchedMutant, mutantResult, Mock, mock } from '../../helpers/producers';
 import ProgressBar = require('progress');
 
+const SECOND = 1000;
+const TEN_SECONDS = SECOND * 10;
+const HUNDRED_SECONDS = SECOND * 100;
+const TEN_THOUSAND_SECONDS = SECOND * 10000;
+
 describe('ProgressReporter', () => {
 
   let sut: ProgressReporter;
   let sandbox: sinon.SinonSandbox;
   let matchedMutants: MatchedMutant[];
   let progressBar: Mock<ProgressBar>;
-  const progressBarContent: string =
-    `Mutation testing  [:bar] :percent (ETC :etas) :tested/:total tested (:survived survived)`;
+  const progressBarContent: string = `Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)`;
 
   beforeEach(() => {
-    sut = new ProgressReporter();
     sandbox = sinon.createSandbox();
+    sandbox.useFakeTimers();
+
+    sut = new ProgressReporter();
+
     progressBar = mock(ProgressBar);
     sandbox.stub(progressBarModule, 'default').returns(progressBar);
   });
@@ -76,6 +83,36 @@ describe('ProgressReporter', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.Survived }));
       progressBarTickTokens = { total: 3, tested: 1, survived: 1 };
       expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
+    });
+  });
+
+  describe('ProgressBar estimate time', () => {
+    beforeEach(() => {
+      sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1)]);
+    });
+
+    it('should show to an estimate of "10s" in the progressBar after ten seconds and 1 mutants tested', () => {
+      sandbox.clock.tick(TEN_SECONDS);
+
+      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+
+      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '10s' });
+    });
+
+    it('should show to an estimate of "1m, 40s" in the progressBar after hundred seconds and 1 mutants tested', () => {
+      sandbox.clock.tick(HUNDRED_SECONDS);
+
+      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+
+      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '1m, 40s' });
+    });
+
+    it('should show to an estimate of "2h, 46m, 40s" in the progressBar after ten thousand seconds and 1 mutants tested', () => {
+      sandbox.clock.tick(TEN_THOUSAND_SECONDS);
+
+      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+
+      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '2h, 46m, 40s' });
     });
   });
 });
