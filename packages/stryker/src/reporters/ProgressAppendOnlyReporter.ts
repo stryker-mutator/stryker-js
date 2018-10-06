@@ -17,8 +17,12 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
   }
 
   private render() {
-    process.stdout.write(`Mutation testing ${this.progress.percentDone} (ETC ${this.progress.etc}) ` +
+    process.stdout.write(`Mutation testing ${this.getPercentDone()} (ETC ${this.getEtc()}) ` +
       `${this.progress.tested}/${this.progress.total} tested (${this.progress.survived} survived)` +
       os.EOL);
+  }
+
+  private getPercentDone() {
+    return Math.floor(this.progress.tested / this.progress.total * 100) + '%';
   }
 }
