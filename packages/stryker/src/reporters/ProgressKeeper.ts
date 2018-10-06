@@ -5,8 +5,6 @@ import Timer from '../utils/Timer';
 abstract class ProgressKeeper implements Reporter {
   private timer: Timer;
   protected progress = {
-    etc: 'n/a',
-    percentDone: '0%',
     survived: 0,
     tested: 0,
     total: 0,
@@ -27,16 +25,9 @@ abstract class ProgressKeeper implements Reporter {
     if (result.status === MutantStatus.Survived) {
       this.progress.survived++;
     }
-
-    this.progress.etc = this.getTimeLeft();
-    this.progress.percentDone = this.getPercentDone();
   }
 
-  private getPercentDone() {
-    return Math.floor(this.progress.tested / this.progress.total * 100) + '%';
-  }
-
-  private getTimeLeft() {
+  protected getEtc() {
     const timeLeft = Math.floor(this.timer.elapsedSeconds() / this.progress.tested * (this.progress.total - this.progress.tested));
 
     if (isFinite(timeLeft)) {
