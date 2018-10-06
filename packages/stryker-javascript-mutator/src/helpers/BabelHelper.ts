@@ -14,6 +14,7 @@ export default class BabelHelper {
     return {
       plugins: [
         'asyncGenerators',
+        'bigInt',
         'classProperties',
         'dynamicImport',
         'flow',
