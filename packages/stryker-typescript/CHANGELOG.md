@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.0"></a>
+# [0.15.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.14.2...stryker-typescript@0.15.0) (2018-10-06)
+
+
+### Features
+
+* **mutator:** Object literal mutator ([#1169](https://github.com/stryker-mutator/stryker/issues/1169)) ([43d9a3a](https://github.com/stryker-mutator/stryker/commit/43d9a3a))
+
+
+
+
 <a name="0.14.2"></a>
 ## [0.14.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.14.1...stryker-typescript@0.14.2) (2018-10-03)
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/stryker-mutator/stryker/compare/stryker-mutator-specification@0.5.1...stryker-mutator-specification@0.6.0) (2018-10-06)
+
+
+### Features
+
+* **mutator:** Object literal mutator ([#1169](https://github.com/stryker-mutator/stryker/issues/1169)) ([43d9a3a](https://github.com/stryker-mutator/stryker/commit/43d9a3a))
+
+
+
+
 <a name="0.5.1"></a>
 ## [0.5.1](https://github.com/stryker-mutator/stryker/compare/stryker-mutator-specification@0.5.0...stryker-mutator-specification@0.5.1) (2018-09-30)
 
