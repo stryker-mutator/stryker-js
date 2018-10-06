@@ -4,13 +4,13 @@ export default class NodeGenerator {
   public static createBooleanLiteralNode(originalNode: types.Node, value: boolean): types.BooleanLiteral {
     return {
       end: originalNode.end,
+      innerComments: originalNode.innerComments,
+      leadingComments: originalNode.leadingComments,
       loc: originalNode.loc,
       start: originalNode.start,
+      trailingComments: originalNode.trailingComments,
       type: 'BooleanLiteral',
-      value: value,
-      leadingComments: originalNode.leadingComments,
-      innerComments: originalNode.innerComments,
-      trailingComments: originalNode.trailingComments
+      value
     };
   }
 }

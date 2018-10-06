@@ -3,10 +3,10 @@ import { getLogger } from 'stryker-api/logging';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import { File } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
-import BabelParser from './helpers/BabelParser';
 import copy from './helpers/copy';
 import NodeMutatorFactory from './NodeMutatorFactory';
 import NodeMutator from './mutators/NodeMutator';
+import BabelHelper from './helpers/BabelHelper';
 
 function defaultMutators(): NodeMutator[] {
   return NodeMutatorFactory.instance().knownNames().map(name => NodeMutatorFactory.instance().create(name, undefined));
@@ -15,22 +15,20 @@ function defaultMutators(): NodeMutator[] {
 export default class JavaScriptMutator implements Mutator {
   private readonly log = getLogger(JavaScriptMutator.name);
 
-  constructor(config: Config, private readonly mutators: NodeMutator[] = defaultMutators()) { }
+  constructor(_: Config, private readonly mutators: NodeMutator[] = defaultMutators()) { }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
 
     inputFiles.forEach(file => {
-      const ast = BabelParser.getAst(file.textContent);
-      const baseAst = copy(ast, true);
-      BabelParser.removeUseStrict(baseAst);
+      const ast = BabelHelper.parse(file.textContent);
 
-      BabelParser.getNodes(ast).forEach(node => {
+      BabelHelper.getNodes(ast).forEach(node => {
         this.mutators.forEach(mutator => {
           const mutatedNodes = mutator.mutate(node, copy);
 
           if (mutatedNodes) {
-            const newMutants = this.generateMutants(mutatedNodes, baseAst, file, mutator.name);
+            const newMutants = this.generateMutants(mutatedNodes, mutator.name, file.name);
             mutants.push(...newMutants);
           }
         });
@@ -40,25 +38,22 @@ export default class JavaScriptMutator implements Mutator {
     return mutants;
   }
 
-  private generateMutants(nodes: types.Node[], ast: types.File, file: File, mutatorName: string) {
+  private generateMutants(mutatedNodes: types.Node[], mutatorName: string, fileName: string): Mutant[] {
     const mutants: Mutant[] = [];
-
-    nodes.forEach(node => {
-      const replacement = BabelParser.generateCode(ast, node);
-      if (replacement && node.start !== null && node.end !== null) {
+    mutatedNodes.forEach(node => {
+      const replacement = BabelHelper.generateCode(node);
+      if (node.start !== null && node.end !== null) {
         const range: [number, number] = [node.start, node.end];
-
-        const mutant = {
-          fileName: file.name,
+        const mutant: Mutant = {
+          fileName,
           mutatorName,
           range,
           replacement
         };
-        this.log.trace(`Generated mutant for mutator ${mutatorName} in file ${file.name} with replacement code "${replacement}"`);
+        this.log.trace(`Generated mutant for mutator ${mutatorName} in file ${fileName} with replacement code "${replacement}"`);
         mutants.push(mutant);
       }
     });
-
     return mutants;
   }
 }

@@ -11,13 +11,13 @@ export default class StringLiteralMutator implements NodeMutator {
     if (types.isTemplateLiteral(node)) {
       const mutatedNode: types.StringLiteral = {
         end: node.end,
-        loc: node.loc,
-        value: '',
-        leadingComments: node.leadingComments,
-        trailingComments: node.trailingComments,
         innerComments: node.innerComments,
+        leadingComments: node.leadingComments,
+        loc: node.loc,
         start: node.start,
-        type: 'StringLiteral'
+        trailingComments: node.trailingComments,
+        type: 'StringLiteral',
+        value: ''
       };
 
       if (node.quasis.length === 1 && node.quasis[0].value.raw.length === 0) {
