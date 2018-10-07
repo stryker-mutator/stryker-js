@@ -39,7 +39,8 @@ $ stryker run
 ## Peer dependencies
 The `stryker-babel-transpiler` plugin requires the following packages to be installed in order to work: 
 * `stryker-api`
-* `babel-core`
+* `babel-core` (When using babel 6)
+* 'babel-core@^7.0.0-bridge.0' (When using babel 7)
 
 For the current versions, see the `peerDependencies` section in the package.json file.
 
