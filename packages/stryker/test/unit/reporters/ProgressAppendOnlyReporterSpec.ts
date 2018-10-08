@@ -18,7 +18,7 @@ describe('ProgressAppendOnlyReporter', () => {
     sut = new ProgressAppendOnlyReporter();
     sandbox = sinon.createSandbox();
     sandbox.useFakeTimers();
-    sandbox.spy(process.stdout, 'write');
+    sandbox.stub(process.stdout, 'write');
   });
 
   afterEach(() => sandbox.restore());
