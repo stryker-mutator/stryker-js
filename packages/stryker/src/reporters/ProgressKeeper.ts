@@ -35,9 +35,9 @@ abstract class ProgressKeeper implements Reporter {
       const minutes = Math.floor((timeLeft / 60) - (hours * 60));
       const seconds = Math.floor(timeLeft - (hours * 3600) - (minutes * 60));
 
-      let output = (hours !== 0) ? `${hours}h, ` : '';
-      output += (minutes !== 0) ? `${minutes}m, ` : '';
-      output += (seconds !== 0) ? `${seconds}s` : 0;
+      let output = (hours > 0) ? `${hours}h, ` : '';
+      output += (minutes > 0) ? `${minutes}m, ` : '';
+      output += (seconds > 0) ? `${seconds}s` : 0;
 
       return output;
     } else {
