@@ -23,7 +23,7 @@ export default class ProgressBarReporter extends ProgressKeeper {
     const ticksBefore = this.progress.tested;
     super.onMutantTested(result);
 
-    const progressBarContent = Object.assign(this.progress, { etc: this.getEtc() });
+    const progressBarContent = { ...this.progress, etc: this.getEtc() };
 
     if (ticksBefore < this.progress.tested) {
       this.tick(progressBarContent);
