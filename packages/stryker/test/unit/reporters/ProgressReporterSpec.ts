@@ -10,6 +10,7 @@ const SECOND = 1000;
 const TEN_SECONDS = SECOND * 10;
 const HUNDRED_SECONDS = SECOND * 100;
 const TEN_THOUSAND_SECONDS = SECOND * 10000;
+const ONE_HOUR = SECOND * 3600;
 
 describe('ProgressReporter', () => {
 
@@ -113,6 +114,14 @@ describe('ProgressReporter', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
       expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '2h, 46m, 40s' });
+    });
+
+    it('should show to an estimate of "1h, 0m, 0s" in the progressBar after an hour and 1 mutants tested', () => {
+      sandbox.clock.tick(ONE_HOUR);
+
+      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+
+      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '1h, 0m, 0s' });
     });
   });
 });
