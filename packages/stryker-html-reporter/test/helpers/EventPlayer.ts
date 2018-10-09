@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Reporter } from 'stryker-api/report';
-import * as fs from 'mz/fs';
+import { fsAsPromised } from 'stryker-utils';
 
 const eventName = (filename: string) =>
   filename.substring(filename.indexOf('-') + 1, filename.indexOf('.'));
@@ -9,9 +9,9 @@ export default class EventPlayer {
   constructor(private readonly fromDirectory: string) { }
 
   public replay(target: Reporter) {
-    const files = fs.readdirSync(this.fromDirectory).sort();
+    const files = fsAsPromised.readdirSync(this.fromDirectory).sort();
     return Promise.all(files.map(
-      filename => fs.readFile(path.join(this.fromDirectory, filename), 'utf8').then(content => ({
+      filename => fsAsPromised.readFile(path.join(this.fromDirectory, filename), 'utf8').then(content => ({
         content: JSON.parse(this.replacePathSeparator(content)),
         name: eventName(filename)
       }))

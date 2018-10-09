@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { fs } from 'mz';
+import * as fs from 'fs';
 
 type File = string | Directory;
 

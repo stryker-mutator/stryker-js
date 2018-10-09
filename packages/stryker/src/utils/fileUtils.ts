@@ -1,8 +1,8 @@
-import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
+import { fsAsPromised } from 'stryker-utils';
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
@@ -18,7 +18,7 @@ export function deleteDir(dirToDelete: string): Promise<void> {
 
 export async function cleanFolder(folderName: string) {
   try {
-    await fs.lstat(folderName);
+    await fsAsPromised.lstat(folderName);
     await deleteDir(folderName);
     return mkdirp.sync(folderName);
   } catch (e) {
@@ -42,9 +42,9 @@ export function importModule(moduleName: string) {
  */
 export function writeFile(fileName: string, data: string | Buffer): Promise<void> {
   if (Buffer.isBuffer(data)) {
-    return fs.writeFile(fileName, data);
+    return fsAsPromised.writeFile(fileName, data);
   } else {
-    return fs.writeFile(fileName, data, 'utf8');
+    return fsAsPromised.writeFile(fileName, data, 'utf8');
   }
 }
 
@@ -54,7 +54,7 @@ export function writeFile(fileName: string, data: string | Buffer): Promise<void
  * @param from The thing you want to point from
  */
 export function symlinkJunction(to: string, from: string) {
-  return fs.symlink(to, from, 'junction');
+  return fsAsPromised.symlink(to, from, 'junction');
 }
 
 /**
@@ -65,7 +65,7 @@ export function symlinkJunction(to: string, from: string) {
 export async function findNodeModules(basePath: string): Promise<string | null> {
   basePath = path.resolve(basePath);
   const nodeModules = path.resolve(basePath, 'node_modules');
-  const exists = await fs.exists(nodeModules);
+  const exists = await fsAsPromised.exists(nodeModules);
   if (exists) {
     return nodeModules;
   } else {

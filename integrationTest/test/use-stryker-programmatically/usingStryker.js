@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var stryker_1 = require("stryker");
 new stryker_1.default({
-    testRunner: 'mocha',
-    mutate: [],
     coverageAnalysis: 'off',
-    files: []
+    files: [],
+    mutate: [],
+    testRunner: 'mocha'
 }).runMutationTest().then(function () { return console.log('done'); });

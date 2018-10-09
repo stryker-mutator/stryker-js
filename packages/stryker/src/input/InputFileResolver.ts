@@ -1,6 +1,6 @@
 import * as path from 'path';
-import * as fs from 'mz/fs';
-import { exec } from 'mz/child_process';
+import { fsAsPromised } from 'stryker-utils';
+import { childProcessAsPromised } from 'stryker-utils';
 import { getLogger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { glob } from '../utils/fileUtils';
@@ -48,8 +48,8 @@ export default class InputFileResolver {
   }
 
   private resolveFilesUsingGit(): Promise<string[]> {
-    return exec('git ls-files --others --exclude-standard --cached --exclude .stryker-tmp', { maxBuffer: 10 * 1000 * 1024 })
-      .then(([stdout]) => stdout.toString())
+    return childProcessAsPromised.exec('git ls-files --others --exclude-standard --cached --exclude .stryker-tmp', { maxBuffer: 10 * 1000 * 1024 })
+      .then(({stdout}) => stdout.toString())
       .then(output => output.split('\n').map(fileName => fileName.trim()))
       .then(fileNames => fileNames.filter(fileName => fileName).map(fileName => path.resolve(fileName)))
       .catch(error => {
@@ -71,7 +71,7 @@ export default class InputFileResolver {
   }
 
   private readFile(fileName: string): Promise<File | null> {
-    return fs.readFile(fileName).then(content => new File(fileName, content))
+    return fsAsPromised.readFile(fileName).then(content => new File(fileName, content))
       .then(file => {
         this.reportSourceFilesRead(file);
         return file;

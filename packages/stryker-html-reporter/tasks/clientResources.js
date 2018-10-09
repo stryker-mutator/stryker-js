@@ -1,7 +1,7 @@
 const path = require('path');
 const glob = require('glob');
 const mkdirp = require('mkdirp');
-const fs = require('mz/fs');
+const fs = require('fs');
 const rimraf = require('rimraf');
 
 const callbackAsPromised = (res, rej) => (err, result) => {

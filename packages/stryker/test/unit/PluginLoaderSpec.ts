@@ -1,5 +1,4 @@
 import * as path from 'path';
-import * as fs from 'mz/fs';
 import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
@@ -7,6 +6,7 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import PluginLoader from '../../src/PluginLoader';
 import currentLogMock from '../helpers/logMock';
 import { Mock } from '../helpers/producers';
+import { fsAsPromised } from 'stryker-utils';
 
 describe('PluginLoader', () => {
 
@@ -20,7 +20,7 @@ describe('PluginLoader', () => {
     log = currentLogMock();
     sandbox = sinon.createSandbox();
     importModuleStub = sandbox.stub(fileUtils, 'importModule');
-    pluginDirectoryReadMock = sandbox.stub(fs, 'readdirSync');
+    pluginDirectoryReadMock = sandbox.stub(fsAsPromised, 'readdirSync');
   });
 
   describe('without wildcards', () => {

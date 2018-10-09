@@ -1,0 +1,29 @@
+{
+  "name": "stryker-utils",
+  "version": "0.0.0",
+  "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
+  "main": "src/index.js",
+  "typings": "src/index.d.ts",
+  "scripts": {
+    "start": "tsc -w",
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
+    "postbuild": "tslint -p tsconfig.json",
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 95 --branches 75 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stryker-mutator/stryker.git"
+  },
+  "keywords": [
+    "stryker",
+    "utils"
+  ],
+  "author": "Nico Jansen <jansennico@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-utils#readme"
+}

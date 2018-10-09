@@ -85,9 +85,10 @@
   },
   "localDependencies": {
     "stryker": "../../../packages/stryker",
+    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
     "stryker-karma-runner": "../../../packages/stryker-karma-runner",
     "stryker-vue-mutator": "../../../packages/stryker-vue-mutator",
-    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator"
+    "stryker-utils": "../../../packages/stryker-utils"
   },
   "engines": {
     "node": ">= 6.0.0",
