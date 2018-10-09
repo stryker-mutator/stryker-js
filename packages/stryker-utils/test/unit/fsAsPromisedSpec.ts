@@ -4,10 +4,10 @@ import { fsAsPromised, promisify } from '../../src';
 
 describe('fsAsPromised', () => {
 
+  describePromisifiedFunction('access');
   describePromisifiedFunction('lstat');
   describePromisifiedFunction('symlink');
   describePromisifiedFunction('readFile');
-  describePromisifiedFunction('exists');
   describePromisifiedFunction('writeFile');
   describePromisifiedFunction('stat');
   describePromisifiedFunction('readdir');
@@ -27,7 +27,7 @@ describe('fsAsPromised', () => {
   function describePromisifiedFunction(fnToTest: keyof typeof fs & keyof typeof fsAsPromised) {
     it(`should expose promisified ${fnToTest}`, () => {
       // It's difficult to test this any other way. At least this way, we know it is promisified.
-      expect(fsAsPromised[fnToTest].toString()).eq(promisify(fs[fnToTest]).toString());
+      expect(fsAsPromised[fnToTest].toString()).eq(promisify(fs[fnToTest] as any).toString());
     });
   }
 });

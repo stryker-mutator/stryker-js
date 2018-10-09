@@ -5,12 +5,12 @@ import * as fileUtils from '../../../src/utils/fileUtils';
 
 describe('fileUtils', () => {
 
-  let existsStub: sinon.SinonStub;
+  let accessStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox.stub(fsAsPromised, 'writeFile');
     sandbox.stub(fsAsPromised, 'symlink');
-    existsStub = sandbox.stub(fsAsPromised, 'exists');
+    accessStub = sandbox.stub(fsAsPromised, 'access');
   });
 
   describe('writeFile', () => {
@@ -29,7 +29,7 @@ describe('fileUtils', () => {
 
   describe('findNodeModules', () => {
     it('should return node_modules located in `basePath`', async () => {
-      existsStub.resolves(true);
+      accessStub.resolves();
       const basePath = path.resolve('a', 'b', 'c');
       const expectedNodeModules = path.join(basePath, 'node_modules');
       const actual = await fileUtils.findNodeModules(basePath);
@@ -39,15 +39,15 @@ describe('fileUtils', () => {
     it('should return node_modules located in parent directory of `basePath` if it didn\'t exist in base path', async () => {
       const basePath = path.resolve('a', 'b', 'c');
       const expectedNodeModules = path.resolve('a', 'node_modules');
-      existsStub.resolves(false) // default
-        .withArgs(expectedNodeModules).resolves(true);
+      accessStub.rejects('does not exist') // default
+        .withArgs(expectedNodeModules).resolves();
       const actual = await fileUtils.findNodeModules(basePath);
       expect(actual).eq(expectedNodeModules);
     });
 
     it('should return null if no node_modules exist in basePath or parent directories', async () => {
       const basePath = path.resolve('a', 'b', 'c');
-      existsStub.resolves(false);
+      accessStub.rejects('does not exist');
       const actual = await fileUtils.findNodeModules(basePath);
       expect(actual).null;
     });
