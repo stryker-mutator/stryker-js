@@ -49,8 +49,6 @@
     "test": "lerna run test",
     "posttest": "cd integrationTest && npm i && npm t && cd ..",
     "clean-integration-test": "node tasks/cleanIntegrationTest.js",
-    "test:stryker": "lerna run test --scope stryker",
-    "test:stryker-api": "lerna run test --scope stryker",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
   },
   "engines": {
