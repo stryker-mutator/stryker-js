@@ -6,7 +6,7 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import PluginLoader from '../../src/PluginLoader';
 import currentLogMock from '../helpers/logMock';
 import { Mock } from '../helpers/producers';
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 describe('PluginLoader', () => {
 

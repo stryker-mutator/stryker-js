@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
 import PromptOption from './PromptOption';

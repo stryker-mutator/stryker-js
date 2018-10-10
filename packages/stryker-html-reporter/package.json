@@ -41,7 +41,7 @@
     "mkdirp": "~0.5.1",
     "mz": "~2.7.0",
     "rimraf": "~2.6.1",
-    "stryker-utils": "~0.0.0",
+    "@stryker-mutator/util": "~0.0.0",
     "typed-html": "~0.6.0"
   },
   "peerDependencies": {

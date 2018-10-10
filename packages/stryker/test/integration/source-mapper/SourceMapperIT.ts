@@ -2,7 +2,7 @@ import * as path from 'path';
 import { File } from 'stryker-api/core';
 import { TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
 import { expect } from 'chai';
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 function resolve(...filePart: string[]) {
   return path.resolve(__dirname, '..', '..', '..', 'testResources', 'source-mapper', ...filePart);

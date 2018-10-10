@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { TempFolder } from '../../../src/utils/TempFolder';
 import * as fileUtils from '../../../src/utils/fileUtils';
 

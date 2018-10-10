@@ -5,6 +5,6 @@
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
-# Stryker Utils
+# Stryker Util
 
 Utility functions for Stryker plugins and/or core packages.

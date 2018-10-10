@@ -69,7 +69,7 @@
     "rimraf": "~2.6.1",
     "rxjs": "~6.3.0",
     "source-map": "~0.6.1",
-    "stryker-utils": "^0.0.0",
+    "@stryker-mutator/util": "^0.0.0",
     "surrial": "~0.1.3",
     "tree-kill": "~1.2.0",
     "tslib": "~1.9.3",

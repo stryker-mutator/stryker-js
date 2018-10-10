@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Reporter } from 'stryker-api/report';
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 const eventName = (filename: string) =>
   filename.substring(filename.indexOf('-') + 1, filename.indexOf('.'));

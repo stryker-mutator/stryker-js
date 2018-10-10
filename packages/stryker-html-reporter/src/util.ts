@@ -1,4 +1,4 @@
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';

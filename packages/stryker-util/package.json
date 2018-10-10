@@ -1,5 +1,5 @@
 {
-  "name": "stryker-utils",
+  "name": "@stryker-mutator/util",
   "version": "0.0.0",
   "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
@@ -25,5 +25,5 @@
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-utils#readme"
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/@stryker-mutator/util#readme"
 }

@@ -88,7 +88,7 @@
     "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
     "stryker-karma-runner": "../../../packages/stryker-karma-runner",
     "stryker-vue-mutator": "../../../packages/stryker-vue-mutator",
-    "stryker-utils": "../../../packages/stryker-utils"
+    "@stryker-mutator/util": "../../../packages/@stryker-mutator/util"
   },
   "engines": {
     "node": ">= 6.0.0",

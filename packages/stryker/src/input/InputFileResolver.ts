@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { fsAsPromised } from 'stryker-utils';
-import { childProcessAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
+import { childProcessAsPromised } from '@stryker-mutator/util';
 import { getLogger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { glob } from '../utils/fileUtils';

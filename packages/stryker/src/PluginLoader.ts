@@ -2,7 +2,7 @@ import * as path from 'path';
 import { getLogger } from 'stryker-api/logging';
 import * as _ from 'lodash';
 import { importModule } from './utils/fileUtils';
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 

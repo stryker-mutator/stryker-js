@@ -6,7 +6,7 @@ import * as fileUtils from '../../../src/utils/fileUtils';
 import currentLogMock from '../../helpers/logMock';
 import StrictReporter from '../../../src/reporters/StrictReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 describe('EventRecorderReporter', () => {
 

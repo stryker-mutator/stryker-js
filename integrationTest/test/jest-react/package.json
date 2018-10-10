@@ -17,6 +17,6 @@
     "stryker": "../../../packages/stryker",
     "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
     "stryker-jest-runner": "../../../packages/stryker-jest-runner",
-    "stryker-utils": "../../../packages/stryker-utils"
+    "@stryker-mutator/util": "../../../packages/@stryker-mutator/util"
   }
 }

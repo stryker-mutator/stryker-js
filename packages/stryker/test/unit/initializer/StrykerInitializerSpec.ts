@@ -1,7 +1,7 @@
 import * as child from 'child_process';
 import * as sinon from 'sinon';
 import { Logger } from 'stryker-api/logging';
-import { fsAsPromised } from 'stryker-utils';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';

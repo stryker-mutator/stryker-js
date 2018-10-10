@@ -49,7 +49,7 @@
 			"path": "packages/stryker-webpack-transpiler"
 		},
 		{
-			"path": "packages/stryker-utils"
+			"path": "packages/stryker-util"
 		},
 		{
 			"path": "integrationTest"
