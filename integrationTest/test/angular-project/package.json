@@ -51,6 +51,6 @@
     "stryker": "../../../packages/stryker",
     "stryker-karma-runner": "../../../packages/stryker-karma-runner",
     "stryker-typescript": "../../../packages/stryker-typescript",
-    "@stryker-mutator/util": "../../../packages/@stryker-mutator/util"
+    "@stryker-mutator/util": "../../../packages/stryker-util"
   }
 }

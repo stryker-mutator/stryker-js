@@ -42,7 +42,7 @@
     "stryker-karma-runner": "../packages/stryker-karma-runner",
     "stryker-mocha-framework": "../packages/stryker-mocha-framework",
     "stryker-mocha-runner": "../packages/stryker-mocha-runner",
-    "@stryker-mutator/util": "../packages/@stryker-mutator/util",
+    "@stryker-mutator/util": "../packages/stryker-util",
     "stryker-typescript": "../packages/stryker-typescript",
     "stryker-vue-mutator": "../packages/stryker-vue-mutator",
     "stryker-webpack-transpiler": "../packages/stryker-webpack-transpiler"
