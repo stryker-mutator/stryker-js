@@ -9,7 +9,7 @@ describe('angularStarter', () => {
   beforeEach(() => {
     cliStub = sandbox.stub();
     requireModuleStub = sandbox.stub(utils, 'requireModule');
-    requireModuleStub.withArgs('@angular/cli/lib/cli').returns(cliStub);
+    requireModuleStub.withArgs('@angular/cli').returns(cliStub);
   });
 
   it('should throw an error if angular cli version < 6.1.0', async () => {
