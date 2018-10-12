@@ -65,7 +65,7 @@ export function symlinkJunction(to: string, from: string) {
 export async function findNodeModules(basePath: string): Promise<string | null> {
   basePath = path.resolve(basePath);
   const nodeModules = path.resolve(basePath, 'node_modules');
-  if (await exists(nodeModules)) {
+  if (await fsAsPromised.exists(nodeModules)) {
     return nodeModules;
   } else {
     const parent = path.dirname(basePath);
@@ -75,10 +75,4 @@ export async function findNodeModules(basePath: string): Promise<string | null> 
       return findNodeModules(path.dirname(basePath));
     }
   }
-}
-
-function exists(fileName: string): Promise<boolean> {
-  return fsAsPromised.access(fileName, fsAsPromised.constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
 }

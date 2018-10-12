@@ -1,5 +1,6 @@
-import * as util from 'util';
 import { exec } from 'child_process';
+import { exists } from 'fs';
+import * as util from 'util';
 
 /**
  * This file contains an implementation of util.promisify (available on node >= 8)
@@ -18,7 +19,11 @@ export function innerPromisify(original: any) {
   return function fn(...args: any[]) {
     return new Promise((resolve, reject) => {
       original.call(this, ...args, (err: Error, ...values: any[]) => {
-        if (err) {
+        if (original === exists) {
+          // the exists callback is NOT consistent with NodeJS callbacks: https://nodejs.org/api/fs.html#fs_fs_exists_path_callback
+          // First argument is the result instead of an error
+          resolve(err);
+        } else if (err) {
           reject(err);
         } else {
           // Make an exception for child_process.exec, this is also done by node 8+'s implementation

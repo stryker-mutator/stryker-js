@@ -7,11 +7,9 @@ import promisify from './promisify';
  */
 
 export default {
-  access: promisify(fs.access),
-  constants: fs.constants,
   createReadStream: fs.createReadStream,
   createWriteStream: fs.createWriteStream,
-  // Don't promisify exists! It is deprecated and doesn't work on node6 (no error in callback function)
+  exists: promisify(fs.exists),
   existsSync: fs.existsSync,
   lstat: promisify(fs.lstat),
   readdir: promisify(fs.readdir),

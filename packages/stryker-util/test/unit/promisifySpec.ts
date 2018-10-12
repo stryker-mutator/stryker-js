@@ -2,6 +2,7 @@ import promisify, { innerPromisify } from '../../src/promisify';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { exec } from 'child_process';
+import { exists } from 'fs';
 
 describe('promisify', () => {
   describePromisify(promisify);
@@ -49,5 +50,11 @@ function describePromisify(promisifyImplementation: any) {
     const execAsPromised = promisifyImplementation(exec);
     const result = await execAsPromised('node -p \'"foo"\'');
     expect(result.stdout.trim()).eq('foo');
+  });
+
+  it('should resolve fs.exists with first argument being result instead of an error', async () => {
+    const existsAsPromised = promisifyImplementation(exists);
+    const result = await existsAsPromised(__filename);
+    expect(result).eq(true);
   });
 }
