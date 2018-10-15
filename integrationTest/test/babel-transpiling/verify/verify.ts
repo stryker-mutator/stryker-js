@@ -1,9 +1,9 @@
 import * as chai from 'chai';
-import * as fs from 'mz/fs';
+import { fsAsPromised } from '@stryker-mutator/util';
 import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const expectFileExists = (path: string) => expect(fs.exists(path), `File ${path} does not exist`).to.eventually.eq(true);
+const expectFileExists = (path: string) => expect(fsAsPromised.exists(path), `File ${path} does not exist`).to.eventually.eq(true);
 
 describe('Verify stryker has ran correctly', () => {
 

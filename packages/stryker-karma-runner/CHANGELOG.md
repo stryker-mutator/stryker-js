@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.20.0"></a>
+# [0.20.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.3...stryker-karma-runner@0.20.0) (2018-10-15)
+
+
+### Bug Fixes
+
+* **version:** Version bump for failed release ([8cf9e87](https://github.io/stryker-mutator/stryker/commit/8cf9e87))
+
+
+### Features
+
+* **karma-runner:** Support angular public api ([#1179](https://github.io/stryker-mutator/stryker/issues/1179)) ([b067a7f](https://github.io/stryker-mutator/stryker/commit/b067a7f))
+
+
+
+
 <a name="0.18.3"></a>
 ## [0.18.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.2...stryker-karma-runner@0.18.3) (2018-10-03)
 

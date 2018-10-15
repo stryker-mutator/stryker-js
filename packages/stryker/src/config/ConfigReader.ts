@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as fs from 'mz/fs';
+import fs = require('fs');
 import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';

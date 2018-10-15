@@ -1,6 +1,6 @@
 {
   "name": "stryker-api",
-  "version": "0.21.2",
+  "version": "0.21.4",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "scripts": {
     "start": "tsc -w",

@@ -11,7 +11,11 @@ This is the contribution guide for Stryker. Great to have you here! Here are a f
 
 ## Learn & listen
 
-Get in touch with us through twitter ([@_simondel](https://twitter.com/_simondel) and [@_nicojs](https://twitter.com/_nicojs)) or via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker).
+Get in touch with us through twitter or via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker).
+
+* [@stryker_mutator](https://twitter.com/stryker_mutator)
+* [@_simondel](https://twitter.com/_simondel)
+* [@_nicojs](https://twitter.com/_nicojs)
 
 ## Runner Stryker locally
 
@@ -19,8 +23,9 @@ We use [Lerna](https://lernajs.io/) to manage the packages in this repository. Y
 
 1. Clone the repository
 1. Install dependencies using `npm install` in the root of the project
-1. Run `npm run build` in the root of the project once.
-1. Run `npm test` in the root of the project or in one of the package folders
+1. Run `npm run build` in the root of the project once. You can also run `npm test` in the root, as that will trigger a build as well.
+1. Running `npm test` in one of the package folders also works. Just remember that those will _not_ trigger a build. So you'll have to run `npm run build` before that
+   if you want code changes to be tested.
 
 ## VSCode environment configuration
 
@@ -31,7 +36,7 @@ After cloning this repo, open the workspace with `$ code workspace.code-workspac
 Some quick notes to help you get started:
 
 1. On the left side, you can see all stryker projects and plugins. Open files from there.
-1. Use `CTRL+B` (or `⌘+B` on OSX) to open up the *Run build task* menu. This can enable typescript compilation + watch for a plugin directory.
+1. Use `CTRL+B` (or `⌘+B` on OSX) to open up the *Run build task* menu. This can enable typescript watch for a plugin directory.
 1. Use `CTRL+Shift+D` (or `⌘⇧D` on OSX) to open up the *debug* pane. Here you can select a config to run. For example: select "Unit tests (stryker-api)" to run the unit tests for the `stryker-api` package. 
   * You can run the tests with `CTRL+F5` (or `⌃F5` on OSX).
   * You can debug the tests with `F5` (also `F5` on OSX). Setting breakpoints in your code and inspecting variables work as expected.
@@ -54,6 +59,7 @@ New features are welcome! Either as requests or proposals.
 1. Create a fork on your github account.
 1. When writing your code, please conform to the existing coding style.
    See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
+    * You can check if there are lint issues using `npm run lint-info`. Output will be in root folder in `tslint.log` file. 
     * You can automatically fix a lot of lint issues using `npm run lint-fix`
 1. Please create or edit unit tests or integration tests.
 1. Run the tests using `npm test`

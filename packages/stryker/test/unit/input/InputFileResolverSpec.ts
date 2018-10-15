@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { expect } from 'chai';
-import * as fs from 'mz/fs';
-import * as childProcess from 'mz/child_process';
+import { childProcessAsPromised } from '@stryker-mutator/util';
 import { Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { SourceFile } from 'stryker-api/report';
@@ -12,6 +11,7 @@ import currentLogMock from '../../helpers/logMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { Mock, mock, createFileNotFoundError } from '../../helpers/producers';
 import { errorToString, normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 const files = (...namesWithContent: [string, string][]): File[] =>
   namesWithContent.map((nameAndContent): File => new File(
@@ -31,7 +31,7 @@ describe('InputFileResolver', () => {
     log = currentLogMock();
     reporter = mock(BroadcastReporter);
     globStub = sandbox.stub(fileUtils, 'glob');
-    readFileStub = sandbox.stub(fs, 'readFile')
+    readFileStub = sandbox.stub(fsAsPromised, 'readFile')
       .withArgs(sinon.match.string).resolves(Buffer.from('')) // fallback
       .withArgs(sinon.match.string).resolves(Buffer.from('')) // fallback
       .withArgs(sinon.match('file1')).resolves(Buffer.from('file 1 content'))
@@ -47,15 +47,17 @@ describe('InputFileResolver', () => {
     globStub.withArgs('file3').resolves(['/file3.js']);
     globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
     globStub.resolves([]); // default
-    childProcessExecStub = sandbox.stub(childProcess, 'exec');
+    childProcessExecStub = sandbox.stub(childProcessAsPromised, 'exec');
   });
 
   it('should use git to identify files if files array is missing', async () => {
     sut = new InputFileResolver([], undefined, reporter);
-    childProcessExecStub.resolves([Buffer.from(`
+    childProcessExecStub.resolves({
+      stdout: Buffer.from(`
     file1.js
     foo/bar/baz.ts
-    `)]);
+    `)
+    });
     const result = await sut.resolve();
     expect(childProcessExecStub).calledWith('git ls-files --others --exclude-standard --cached --exclude .stryker-tmp',
       { maxBuffer: 10 * 1000 * 1024 });
@@ -81,9 +83,11 @@ describe('InputFileResolver', () => {
 
   it('should be able to handled deleted files reported by `git ls-files`', async () => {
     sut = new InputFileResolver([], undefined, reporter);
-    childProcessExecStub.resolves([Buffer.from(`
+    childProcessExecStub.resolves({
+      stdout: Buffer.from(`
       deleted/file.js
-    `)]);
+    `)
+    });
     const fileNotFoundError = createFileNotFoundError();
     readFileStub.withArgs('deleted/file.js').rejects(fileNotFoundError);
     const result = await sut.resolve();

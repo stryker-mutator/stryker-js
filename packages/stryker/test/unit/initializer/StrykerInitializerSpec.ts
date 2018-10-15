@@ -1,7 +1,7 @@
 import * as child from 'child_process';
-import * as fs from 'mz/fs';
 import * as sinon from 'sinon';
 import { Logger } from 'stryker-api/logging';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
@@ -25,8 +25,8 @@ describe('StrykerInitializer', () => {
     out = sandbox.stub();
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
-    fsWriteFile = sandbox.stub(fs, 'writeFile');
-    fsExistsSync = sandbox.stub(fs, 'existsSync');
+    fsWriteFile = sandbox.stub(fsAsPromised, 'writeFile');
+    fsExistsSync = sandbox.stub(fsAsPromised, 'existsSync');
     restClientSearchGet = sandbox.stub();
     restClientPackageGet = sandbox.stub();
     sandbox.stub(restClient, 'RestClient')
@@ -120,7 +120,7 @@ describe('StrykerInitializer', () => {
       await sut.initialize();
       expect(inquirerPrompt).to.have.been.callCount(6);
       expect(out).to.have.been.calledWith('OK, downgrading coverageAnalysis to "all"');
-      expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('coverageAnalysis: "all"'));
+      expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('coverageAnalysis: "all"'));
     });
 
     it('should install any additional dependencies', async () => {
@@ -148,7 +148,7 @@ describe('StrykerInitializer', () => {
         transpilers: ['webpack']
       });
       await sut.initialize();
-      expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('testRunner: "awesome"')
+      expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('testRunner: "awesome"')
         .and(sinon.match('testFramework: "awesome"'))
         .and(sinon.match('packageManager: "npm"'))
         .and(sinon.match('coverageAnalysis: "perTest"'))
@@ -166,8 +166,8 @@ describe('StrykerInitializer', () => {
         transpilers: ['webpack']
       });
       await sut.initialize();
-      expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('someOtherSetting: "enabled"'));
-      expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('files: []'));
+      expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('someOtherSetting: "enabled"'));
+      expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('files: []'));
     });
 
     describe('but no testFramework can be found that supports the testRunner', () => {
@@ -190,7 +190,7 @@ describe('StrykerInitializer', () => {
         await sut.initialize();
 
         expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with ghost, downgrading coverageAnalysis to "all"');
-        expect(fs.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('coverageAnalysis: "all"'));
+        expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('coverageAnalysis: "all"'));
       });
     });
 
@@ -221,7 +221,7 @@ describe('StrykerInitializer', () => {
       await sut.initialize();
 
       expect(out).to.have.been.calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker-api stryker-ghost-runner"');
-      expect(fs.writeFile).to.have.been.called;
+      expect(fsAsPromised.writeFile).to.have.been.called;
     });
   });
 
@@ -243,7 +243,7 @@ describe('StrykerInitializer', () => {
 
       expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-runner). Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
-      expect(fs.writeFile).to.have.been.called;
+      expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
     it('should log error and continue when fetching test frameworks', async () => {
@@ -264,7 +264,7 @@ describe('StrykerInitializer', () => {
 
       expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-framework). Please check your internet connection.');
       expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with awesome, downgrading coverageAnalysis to "all"');
-      expect(fs.writeFile).to.have.been.called;
+      expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
     it('should log error and continue when fetching mutators', async () => {
@@ -285,7 +285,7 @@ describe('StrykerInitializer', () => {
 
       expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-mutator). Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to select a mutator. You will need to configure it manually.');
-      expect(fs.writeFile).to.have.been.called;
+      expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
     it('should log error and continue when fetching transpilers', async () => {
@@ -305,7 +305,7 @@ describe('StrykerInitializer', () => {
 
       expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-transpiler). Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to select transpilers. You will need to configure it manually, if you want to use any.');
-      expect(fs.writeFile).to.have.been.called;
+      expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
     it('should log error and continue when fetching stryker reporters', async () => {
@@ -325,7 +325,7 @@ describe('StrykerInitializer', () => {
       await sut.initialize();
 
       expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-reporter). Please check your internet connection.');
-      expect(fs.writeFile).to.have.been.called;
+      expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
     it('should log warning and continue when fetching custom config', async () => {
@@ -345,7 +345,7 @@ describe('StrykerInitializer', () => {
       await sut.initialize();
 
       expect(log.warn).to.have.been.calledWith('Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually');
-      expect(fs.writeFile).to.have.been.called;
+      expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
   });

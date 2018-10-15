@@ -49,6 +49,9 @@
 			"path": "packages/stryker-webpack-transpiler"
 		},
 		{
+			"path": "packages/stryker-util"
+		},
+		{
 			"path": "integrationTest"
 		}
 	],

@@ -10,12 +10,10 @@
     "@types/execa": "^0.9.0",
     "@types/glob": "^7.1.0",
     "@types/istanbul": "^0.4.29",
-    "@types/karma": "^1.7.4",
+    "@types/karma": "^3.0.0",
     "@types/lodash": "^4.14.110",
     "@types/mkdirp": "^0.5.2",
     "@types/mocha": "^2.2.44",
-    "@types/mz": "0.0.32",
-    "@types/node": "^6.0.114",
     "@types/rimraf": "2.0.2",
     "@types/sinon": "^5.0.1",
     "@types/sinon-chai": "^3.2.0",
@@ -49,12 +47,13 @@
     "test": "lerna run test",
     "posttest": "cd integrationTest && npm i && npm t && cd ..",
     "clean-integration-test": "node tasks/cleanIntegrationTest.js",
-    "test:stryker": "lerna run test --scope stryker",
-    "test:stryker-api": "lerna run test --scope stryker",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
   },
   "engines": {
     "node": ">=6",
     "npm": ">=5"
+  },
+  "dependencies": {
+    "@types/node": "^10.11.5"
   }
 }

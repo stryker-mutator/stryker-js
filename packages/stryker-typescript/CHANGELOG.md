@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.2"></a>
+## [0.15.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.15.0...stryker-typescript@0.15.2) (2018-10-15)
+
+
+### Bug Fixes
+
+* **any-promise:** Don't register a promise implementation ([#1180](https://github.com/stryker-mutator/stryker/issues/1180)) ([1d3e2f6](https://github.com/stryker-mutator/stryker/commit/1d3e2f6))
+* **version:** Version bump for failed release ([8cf9e87](https://github.com/stryker-mutator/stryker/commit/8cf9e87))
+
+
+
+
 <a name="0.15.0"></a>
 # [0.15.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.14.2...stryker-typescript@0.15.0) (2018-10-06)
 

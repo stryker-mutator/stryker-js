@@ -1,5 +1,5 @@
-import * as fs from 'mz/fs';
 import * as _ from 'lodash';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
 import PromptOption from './PromptOption';
@@ -14,7 +14,7 @@ export default class StrykerConfigWriter {
   }
 
   public guardForExistingConfig() {
-    if (fs.existsSync(STRYKER_CONFIG_FILE)) {
+    if (fsAsPromised.existsSync(STRYKER_CONFIG_FILE)) {
       const msg =
         'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
       this.log.error(msg);
@@ -26,7 +26,7 @@ export default class StrykerConfigWriter {
    * Create stryker.conf.js based on the chosen framework and test runner
    * @function
    */
-  public async write(
+  public write(
     selectedTestRunner: null | PromptOption,
     selectedTestFramework: null | PromptOption,
     selectedMutator: null | PromptOption,
@@ -58,7 +58,7 @@ export default class StrykerConfigWriter {
 
   private writeStrykerConfig(configObject: Partial<StrykerOptions>) {
     this.out('Writing stryker.conf.js...');
-    return fs.writeFile(STRYKER_CONFIG_FILE, this.wrapInModule(configObject));
+    return fsAsPromised.writeFile(STRYKER_CONFIG_FILE, this.wrapInModule(configObject));
   }
 
   private wrapInModule(configObject: Partial<StrykerOptions>) {

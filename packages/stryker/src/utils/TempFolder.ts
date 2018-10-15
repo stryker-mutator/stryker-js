@@ -1,4 +1,4 @@
-import * as fs from 'mz/fs';
+import { fsAsPromised } from '@stryker-mutator/util';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import { getLogger } from 'stryker-api/logging';
@@ -41,8 +41,8 @@ export class TempFolder {
    */
   public copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      let readStream: NodeJS.ReadableStream = fs.createReadStream(fromFilename, { encoding: 'utf8' });
-      const writeStream = fs.createWriteStream(toFilename);
+      let readStream: NodeJS.ReadableStream = fsAsPromised.createReadStream(fromFilename, { encoding: 'utf8' });
+      const writeStream = fsAsPromised.createWriteStream(toFilename);
       readStream.on('error', reject);
       writeStream.on('error', reject);
       if (instrumenter) {
