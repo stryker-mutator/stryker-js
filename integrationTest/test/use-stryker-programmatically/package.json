@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "pretest": "tsc -p .",
-    "test": "node usingStryker.js"
+    "test": "node --require ts-node/register usingStryker.ts"
   }
 }

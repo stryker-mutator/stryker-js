@@ -4,7 +4,7 @@ import { Config } from 'stryker-api/config';
 import EventPlayer from '../helpers/EventPlayer';
 import HtmlReporter from '../../src/HtmlReporter';
 import { readDirectoryTree } from '../helpers/fsHelpers';
-import { fs } from 'mz';
+import * as fs from 'fs';
 
 const REPORT_DIR = 'reports/mutation/singleFileInFolder';
 

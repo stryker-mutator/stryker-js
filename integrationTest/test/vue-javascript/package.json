@@ -9,9 +9,9 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
-    "pretest": "rimraf \"reports\" \"verify/*.js\" \"verify/*.map\" && tsc -p .",
+    "pretest": "rimraf \"reports\"",
     "test": "stryker run stryker.conf.js",
-    "posttest": "mocha verify/*.js",
+    "posttest": "mocha --require ts-node/register verify/*.ts",
     "lint": "eslint --ext .js,.vue src test/unit",
     "build": "node build/build.js"
   },
@@ -85,9 +85,10 @@
   },
   "localDependencies": {
     "stryker": "../../../packages/stryker",
+    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
     "stryker-karma-runner": "../../../packages/stryker-karma-runner",
     "stryker-vue-mutator": "../../../packages/stryker-vue-mutator",
-    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator"
+    "@stryker-mutator/util": "../../../packages/stryker-util"
   },
   "engines": {
     "node": ">= 6.0.0",

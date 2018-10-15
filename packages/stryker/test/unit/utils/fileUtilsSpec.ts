@@ -1,29 +1,29 @@
-import { expect } from 'chai';
-import * as fileUtils from '../../../src/utils/fileUtils';
-import * as fs from 'mz/fs';
 import * as path from 'path';
+import { expect } from 'chai';
+import { fsAsPromised } from '@stryker-mutator/util';
+import * as fileUtils from '../../../src/utils/fileUtils';
 
 describe('fileUtils', () => {
 
   let existsStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox.stub(fs, 'writeFile');
-    sandbox.stub(fs, 'symlink');
-    existsStub = sandbox.stub(fs, 'exists');
+    sandbox.stub(fsAsPromised, 'writeFile');
+    sandbox.stub(fsAsPromised, 'symlink');
+    existsStub = sandbox.stub(fsAsPromised, 'exists');
   });
 
   describe('writeFile', () => {
     it('should call fs.writeFile', () => {
       fileUtils.writeFile('filename', 'data');
-      expect(fs.writeFile).calledWith('filename', 'data', 'utf8');
+      expect(fsAsPromised.writeFile).calledWith('filename', 'data', 'utf8');
     });
   });
 
   describe('symlinkJunction', () => {
     it('should call fs.symlink', async () => {
       await fileUtils.symlinkJunction('a', 'b');
-      expect(fs.symlink).calledWith('a', 'b', 'junction');
+      expect(fsAsPromised.symlink).calledWith('a', 'b', 'junction');
     });
   });
 

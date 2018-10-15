@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as fs from 'mz/fs';
+import * as fs from 'fs';
 import { expect } from 'chai';
 import * as ts from 'typescript';
 import { Config } from 'stryker-api/config';
