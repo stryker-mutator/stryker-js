@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.7.6"></a>
+## [0.7.6](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.7.4...stryker-babel-transpiler@0.7.6) (2018-10-15)
+
+
+### Bug Fixes
+
+* **any-promise:** Don't register a promise implementation ([#1180](https://github.com/stryker-mutator/stryker/issues/1180)) ([1d3e2f6](https://github.com/stryker-mutator/stryker/commit/1d3e2f6))
+* **peer-deps:** add ^7.0.0-bridge.0 to babel-core range ([#1132](https://github.com/stryker-mutator/stryker/issues/1132)) ([b784cd3](https://github.com/stryker-mutator/stryker/commit/b784cd3))
+* **version:** Version bump for failed release ([8cf9e87](https://github.com/stryker-mutator/stryker/commit/8cf9e87))
+
+
+
+
 <a name="0.7.4"></a>
 ## [0.7.4](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.7.3...stryker-babel-transpiler@0.7.4) (2018-10-03)
 

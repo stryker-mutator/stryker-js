@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.30.0"></a>
+# [0.30.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.5...stryker@0.30.0) (2018-10-15)
+
+
+### Bug Fixes
+
+* **any-promise:** Don't register a promise implementation ([#1180](https://github.com/stryker-mutator/stryker/issues/1180)) ([1d3e2f6](https://github.com/stryker-mutator/stryker/commit/1d3e2f6))
+
+
+### Features
+
+* **ProgressReporter:** Format estimated time of completion (ETC) ([#1176](https://github.com/stryker-mutator/stryker/issues/1176)) ([4e76b46](https://github.com/stryker-mutator/stryker/commit/4e76b46))
+
+
+
+
 <a name="0.29.5"></a>
 ## [0.29.5](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.4...stryker@0.29.5) (2018-10-03)
 

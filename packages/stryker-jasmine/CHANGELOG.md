@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.5"></a>
+## [0.10.5](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.3...stryker-jasmine@0.10.5) (2018-10-15)
+
+
+### Bug Fixes
+
+* **version:** Version bump for failed release ([8cf9e87](https://github.com/stryker-mutator/stryker/commit/8cf9e87))
+
+
+
+
 <a name="0.10.3"></a>
 ## [0.10.3](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.2...stryker-jasmine@0.10.3) (2018-10-03)
 
