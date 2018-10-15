@@ -20,6 +20,9 @@
     "stryker",
     "utils"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "Apache-2.0",
   "bugs": {
