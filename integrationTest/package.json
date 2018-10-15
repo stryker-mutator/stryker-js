@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "devDependencies": {
-    "@types/mz": "0.0.32",
     "babel-cli": "~6.26.0",
     "babel-preset-env": "~1.7.0",
     "chai": "~4.1.2",
@@ -21,7 +20,6 @@
     "link-parent-bin": "~0.2.0",
     "load-grunt-tasks": "~4.0.0",
     "mocha": "~5.2.0",
-    "mz": "~2.7.0",
     "ts-node": "~7.0.0",
     "typescript": "~2.9.2",
     "webpack": "~4.16.0"
