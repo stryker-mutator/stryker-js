@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { getLogger } from 'stryker-api/logging';
 import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { Config } from 'stryker-api/config';
+import { Position } from 'stryker-api/core';
 import ClearTextScoreTable from './ClearTextScoreTable';
 import * as os from 'os';
 
@@ -60,7 +61,8 @@ export default class ClearTextReporter implements Reporter {
   }
 
   private logMutantResult(result: MutantResult, logImplementation: (input: string) => void): void {
-    logImplementation(result.sourceFilePath + ':' + result.location.start.line + ':' + result.location.start.column);
+    logImplementation(this.colorSourceFileAndLocation(result.sourceFilePath, result.location.start));
+
     logImplementation('Mutator: ' + result.mutatorName);
     result.originalLines.split('\n').forEach(line => {
       logImplementation(chalk.red('-   ' + line));
@@ -76,12 +78,30 @@ export default class ClearTextReporter implements Reporter {
     }
   }
 
-  private logExecutedTests(result: MutantResult, logImplementation: (input: string) => void) {
+  private colorSourceFileAndLocation(sourceFilePath: string, position: Position): string {
     const clearTextReporterConfig = this.options.clearTextReporter;
+
+    if (clearTextReporterConfig && clearTextReporterConfig.allowColor !== false) {
+      return sourceFilePath + ':' + position.line + ':' + position.column;
+    }
+
+    return [
+      chalk.cyan(sourceFilePath),
+      chalk.yellow(`${position.line}`),
+      chalk.yellow(`${position.column}`),
+    ].join(':');
+  }
+
+  private logExecutedTests(result: MutantResult, logImplementation: (input: string) => void) {
+    const clearTextReporterConfig = this.options.clearTextReporter || {};
+
+    if (!clearTextReporterConfig.logTests) {
+      return;
+    }
 
     if (result.testsRan && result.testsRan.length > 0) {
       let testsToLog = 3;
-      if (clearTextReporterConfig && typeof clearTextReporterConfig.maxTestsToLog === 'number') {
+      if (typeof clearTextReporterConfig.maxTestsToLog === 'number') {
         testsToLog = clearTextReporterConfig.maxTestsToLog;
       }
 
