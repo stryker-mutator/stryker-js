@@ -24,15 +24,9 @@ export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
  * @param value
  */
 function isPrimitive(value: any): boolean {
-  const type: string = typeof value;
-  if (
-    ['string', 'undefined', 'symbol', 'boolean'].indexOf(type) > -1
-    || (type === 'number' && !isNaN(value)
-    || value === null)
-    ) {
-    return true;
-  }
-  return false;
+  return ['string', 'undefined', 'symbol', 'boolean'].indexOf(typeof value) > -1
+    || (typeof value === 'number' && !isNaN(value)
+    || value === null);
 }
 
 /**
