@@ -15,8 +15,8 @@ describe('Verify stryker has ran correctly', () => {
       expectFileExists('reports/mutation/html/index.html'),
     ]);
   });
-  it('should contain the correct mutation score', () => {
-    const indexContent = fs.readFileSync('reports/mutation/html/index.html', 'utf8');
+  it('should contain the correct mutation score', async () => {
+    const indexContent = await fsAsPromised.readFile('reports/mutation/html/index.html', 'utf8');
     expectMutationScore('33.33', 'danger', indexContent);
   });
 });
