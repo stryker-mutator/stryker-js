@@ -1,6 +1,6 @@
 {
   "name": "stryker-babel-transpiler",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {

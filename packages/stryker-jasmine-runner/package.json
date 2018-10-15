@@ -1,6 +1,6 @@
 {
   "name": "stryker-jasmine-runner",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A plugin to use the Jasmine (NodeJS) test runner in Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
   "scripts": {
