@@ -19,8 +19,14 @@ export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
   return sandbox.createStubInstance(constructorFn);
 }
 
-function isPrimitive(value: any) {
-  return value !== 'object' && !Array.isArray(value);
+/**
+ * @description Checks if variable is a primitive
+ * @param value
+ */
+function isPrimitive(value: any): boolean {
+  return ['string', 'undefined', 'symbol', 'boolean'].indexOf(typeof value) > -1
+    || (typeof value === 'number' && !isNaN(value)
+    || value === null);
 }
 
 /**
@@ -110,11 +116,11 @@ export const fileCoverageData = factoryMethod<FileCoverageData>(() => ({
   statementMap: {}
 }));
 
-export const testFramework = factory<TestFramework>({
+export const testFramework = factoryMethod<TestFramework>(() => ({
   beforeEach(codeFragment: string) { return `beforeEach(){ ${codeFragment}}`; },
   afterEach(codeFragment: string) { return `afterEach(){ ${codeFragment}}`; },
   filter(selections: TestSelection[]) { return `filter: ${selections}`; }
-});
+}));
 
 export const scoreResult = factoryMethod<ScoreResult>(() => ({
   childResults: [],
