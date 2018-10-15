@@ -7,6 +7,14 @@ import { MutantStatus, MutantResult } from 'stryker-api/report';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
 import { scoreResult, mutationScoreThresholds, config, mutantResult } from '../../helpers/producers';
 
+const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: Number) => {
+  return [
+    chalk.cyan(sourceFilePath),
+    chalk.yellow(`${line}`),
+    chalk.yellow(`${column}`),
+  ].join(':');
+};
+
 describe('ClearTextReporter', () => {
   let sut: ClearTextReporter;
   let sandbox: sinon.SinonSandbox;
@@ -145,7 +153,7 @@ describe('ClearTextReporter', () => {
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('sourceFile.ts:2:3'));
+        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match(colorizeFileAndPosition('sourceFile.ts', 2, 3)));
       });
 
       it('should not log source file names with colored text when clearTextReporter is false', () => {
@@ -153,11 +161,7 @@ describe('ClearTextReporter', () => {
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match([
-          chalk.cyan('sourceFile.ts'),
-          chalk.yellow('2'),
-          chalk.yellow('3'),
-        ].join(':')));
+        expect(process.stdout.write).to.have.been.calledWithMatch(colorizeFileAndPosition('sourceFile.ts', 2, 3));
       });
 
       it('should not log individual ran tests when logTests is not true', () => {
