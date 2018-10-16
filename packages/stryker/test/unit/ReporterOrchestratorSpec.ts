@@ -3,16 +3,21 @@ import * as sinon from 'sinon';
 import { ReporterFactory } from 'stryker-api/report';
 import ReporterOrchestrator from '../../src/ReporterOrchestrator';
 import * as broadcastReporter from '../../src/reporters/BroadcastReporter';
+import { Mock } from '../helpers/producers';
+import currentLogMock from '../helpers/logMock';
+import { Logger } from 'stryker-api/logging';
 
 describe('ReporterOrchestrator', () => {
   let sandbox: sinon.SinonSandbox;
   let sut: ReporterOrchestrator;
   let isTTY: boolean;
   let broadcastReporterMock: sinon.SinonStub;
+  let log: Mock<Logger>;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     broadcastReporterMock = sandbox.stub(broadcastReporter, 'default');
+    log = currentLogMock();
     captureTTY();
   });
 
@@ -43,6 +48,13 @@ describe('ReporterOrchestrator', () => {
       sut.createBroadcastReporter();
       expect(broadcastReporterMock).to.have.been.calledWith(sinon.match(
         (reporters: broadcastReporter.NamedReporter[]) => reporters[0].name === 'progress' && reporters[1].name === 'progress-append-only'));
+    });
+
+    it('should warn if there is no reporter', () => {
+      setTTY(true);
+      sut = new ReporterOrchestrator({ reporters: [] });
+      sut.createBroadcastReporter();
+      expect(log.warn).to.have.been.calledTwice;
     });
   });
 
