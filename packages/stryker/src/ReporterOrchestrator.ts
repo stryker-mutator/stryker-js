@@ -28,8 +28,8 @@ export default class ReporterOrchestrator {
   public createBroadcastReporter(): StrictReporter {
     const reporters: NamedReporter[] = [];
     const reporterOption = this.options.reporters;
-    if (reporterOption) {
-        reporterOption.forEach(reporterName => reporters.push(this.createReporter(reporterName)));
+    if (reporterOption && reporterOption.length) {
+      reporterOption.forEach(reporterName => reporters.push(this.createReporter(reporterName)));
     } else {
       this.log.warn(`No reporter configured. Please configure one or more reporters in the (for example: reporters: ['progress'])`);
       this.logPossibleReporters();
