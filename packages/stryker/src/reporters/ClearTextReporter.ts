@@ -26,39 +26,40 @@ export default class ClearTextReporter implements Reporter {
     const logDebugFn = (input: string) => this.log.debug(input);
     const writeLineFn = (input: string) => this.writeLine(input);
 
-    mutantResults.forEach(result => {
+    mutantResults.forEach((result, index) => {
       if (result.testsRan) {
         totalTests += result.testsRan.length;
       }
       switch (result.status) {
         case MutantStatus.Killed:
           this.log.debug(chalk.bold.green('Mutant killed!'));
-          this.logMutantResult(result, logDebugFn);
+          this.logMutantResult(result, index, logDebugFn);
           break;
         case MutantStatus.TimedOut:
           this.log.debug(chalk.bold.yellow('Mutant timed out!'));
-          this.logMutantResult(result, logDebugFn);
+          this.logMutantResult(result, index, logDebugFn);
           break;
         case MutantStatus.RuntimeError:
           this.log.debug(chalk.bold.yellow('Mutant caused a runtime error!'));
-          this.logMutantResult(result, logDebugFn);
+          this.logMutantResult(result, index, logDebugFn);
           break;
         case MutantStatus.TranspileError:
           this.log.debug(chalk.bold.yellow('Mutant caused a transpile error!'));
-          this.logMutantResult(result, logDebugFn);
+          this.logMutantResult(result, index, logDebugFn);
           break;
         case MutantStatus.Survived:
-          this.logMutantResult(result, writeLineFn);
+          this.logMutantResult(result, index, writeLineFn);
           break;
         case MutantStatus.NoCoverage:
-          this.logMutantResult(result, writeLineFn);
+          this.logMutantResult(result, index, writeLineFn);
           break;
       }
     });
     this.writeLine(`Ran ${(totalTests / mutantResults.length).toFixed(2)} tests per mutant on average.`);
   }
 
-  private logMutantResult(result: MutantResult, logImplementation: (input: string) => void): void {
+  private logMutantResult(result: MutantResult, index: number, logImplementation: (input: string) => void): void {
+    logImplementation(`${index}. [${MutantStatus[result.status]}] ${result.mutatorName}`);
     logImplementation(this.colorSourceFileAndLocation(result.sourceFilePath, result.location.start));
 
     result.originalLines.split('\n').forEach(line => {
