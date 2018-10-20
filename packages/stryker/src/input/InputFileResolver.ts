@@ -76,8 +76,8 @@ export default class InputFileResolver {
         this.reportSourceFilesRead(file);
         return file;
       }).catch(error => {
-        if (isErrnoException(error) && error.code === 'ENOENT') {
-          return null; // file is deleted. This can be a valid result of the git command
+        if (isErrnoException(error) && error.code === 'ENOENT' || error.code === 'EISDIR') {
+          return null; // file is deleted or a directory. This can be a valid result of the git command
         } else {
           // Rethrow
           throw error;
