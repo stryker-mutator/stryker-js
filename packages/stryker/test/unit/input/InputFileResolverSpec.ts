@@ -9,7 +9,7 @@ import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
 import currentLogMock from '../../helpers/logMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { Mock, mock, createFileNotFoundError } from '../../helpers/producers';
+import { Mock, mock, createFileNotFoundError, createIsDirError } from '../../helpers/producers';
 import { errorToString, normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
 import { fsAsPromised } from '@stryker-mutator/util';
 
@@ -81,7 +81,7 @@ describe('InputFileResolver', () => {
     expect(log.warn).calledWith(sinon.match('or specify the \`files\` property in your stryker config'));
   });
 
-  it('should be able to handled deleted files reported by `git ls-files`', async () => {
+  it('should be able to handle deleted files reported by `git ls-files`', async () => {
     sut = new InputFileResolver([], undefined, reporter);
     childProcessExecStub.resolves({
       stdout: Buffer.from(`
@@ -90,6 +90,19 @@ describe('InputFileResolver', () => {
     });
     const fileNotFoundError = createFileNotFoundError();
     readFileStub.withArgs('deleted/file.js').rejects(fileNotFoundError);
+    const result = await sut.resolve();
+    expect(result.files).lengthOf(0);
+  });
+
+  it('should be able to handle directories reported by `git ls-files` (submodules)', async () => {
+    sut = new InputFileResolver([], undefined, reporter);
+    childProcessExecStub.resolves({
+      stdout: Buffer.from(`
+      submoduleDir
+    `)
+    });
+    const fileIsDirError = createIsDirError();
+    readFileStub.withArgs('submoduleDir').rejects(fileIsDirError);
     const result = await sut.resolve();
     expect(result.files).lengthOf(0);
   });

@@ -211,6 +211,10 @@ export function createFileAlreadyExistsError(): NodeJS.ErrnoException {
   return createErrnoException('EEXIST');
 }
 
+export function createIsDirError(): NodeJS.ErrnoException {
+  return createErrnoException('EISDIR');
+}
+
 function createErrnoException(errorCode: string) {
   const fileNotFoundError: NodeJS.ErrnoException = new Error('');
   fileNotFoundError.code = errorCode;
