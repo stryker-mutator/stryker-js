@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.30.1"></a>
+## [0.30.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.30.0...stryker@0.30.1) (2018-10-25)
+
+
+### Bug Fixes
+
+* **file resolving:** ignore dirs from git submodules ([#1195](https://github.com/stryker-mutator/stryker/issues/1195)) ([7806083](https://github.com/stryker-mutator/stryker/commit/7806083))
+
+
+
+
 <a name="0.30.0"></a>
 # [0.30.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.5...stryker@0.30.0) (2018-10-15)
 
