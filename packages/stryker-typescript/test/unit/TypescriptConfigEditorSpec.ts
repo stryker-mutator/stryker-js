@@ -102,7 +102,7 @@ describe('TypescriptConfigEditor edit', () => {
   function parseConfigHost(overrides?: Partial<ts.ParseConfigHost>): ts.ParseConfigHost {
     const defaults: ts.ParseConfigHost = {
       fileExists: _ => true,
-      readDirectory: dir => ['file1.ts', 'file2.ts'],
+      readDirectory: _ => ['file1.ts', 'file2.ts'],
       readFile: _ => '',
       useCaseSensitiveFileNames: true
     };

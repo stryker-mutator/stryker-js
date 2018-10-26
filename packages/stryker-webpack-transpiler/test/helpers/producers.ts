@@ -1,4 +1,4 @@
-import { Configuration, Stats } from 'webpack';
+import { Configuration } from 'webpack';
 import { WebpackCompilerMock } from './mockInterfaces';
 import * as sinon from 'sinon';
 import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
@@ -44,6 +44,6 @@ export function createWebpackMock(): WebpackCompilerMock {
       context: { fileSystem: {} },
       normal: { fileSystem: {} }
     },
-    run: (callback: (err: Error, stats: Stats) => void) => { }
+    run: () => { }
   };
 }

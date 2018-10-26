@@ -10,7 +10,7 @@ export default class DashboardReporter implements Reporter {
   private readonly ciProvider = determineCIProvider();
 
   constructor(
-    setting: StrykerOptions,
+    _setting: StrykerOptions,
     private readonly dashboardReporterClient: DashboardReporterClient = new DashboardReporterClient()
   ) { }
 

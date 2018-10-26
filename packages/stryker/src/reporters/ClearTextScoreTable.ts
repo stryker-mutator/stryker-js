@@ -50,7 +50,7 @@ class Column {
     return this.pad(this.header);
   }
 
-  protected color(score: ScoreResult) {
+  protected color(_score: ScoreResult) {
     return (input: string) => input;
   }
 }

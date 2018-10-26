@@ -8,7 +8,7 @@ export default class WhileStatementMutator extends NodeMutator<ts.WhileStatement
     return node.kind === ts.SyntaxKind.WhileStatement;
   }
 
-  protected identifyReplacements(node: ts.WhileStatement, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(node: ts.WhileStatement): NodeReplacement[] {
     return [{ node: node.expression, replacement: 'false' }];
   }
 }

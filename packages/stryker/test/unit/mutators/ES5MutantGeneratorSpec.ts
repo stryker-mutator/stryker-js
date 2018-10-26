@@ -45,7 +45,7 @@ describe('ES5Mutator', () => {
 
     class StubMutator implements NodeMutator {
       public name: 'stub';
-      public applyMutations(node: IdentifiedNode, copy: (obj: any, deep?: boolean) => any): IdentifiedNode[] {
+      public applyMutations(node: IdentifiedNode): IdentifiedNode[] {
         const nodes: IdentifiedNode[] = [];
         if (node.type === Syntax.BinaryExpression) {
           // eg: '1 * 2': push child node
