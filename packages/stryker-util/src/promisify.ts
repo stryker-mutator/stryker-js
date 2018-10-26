@@ -18,6 +18,7 @@ function promisify(original: any) {
 export function innerPromisify(original: any) {
   return function fn(...args: any[]) {
     return new Promise((resolve, reject) => {
+      // @ts-ignore
       original.call(this, ...args, (err: Error, ...values: any[]) => {
         if (original === exists) {
           // the exists callback is NOT consistent with NodeJS callbacks: https://nodejs.org/api/fs.html#fs_fs_exists_path_callback
