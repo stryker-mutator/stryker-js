@@ -11,6 +11,7 @@
         "allowJs": false,
         "importHelpers": true,
         "noUnusedLocals": true,
+        "alwaysStrict": true,
         "noImplicitReturns": true,
         "strictNullChecks": true,
         "lib": [
