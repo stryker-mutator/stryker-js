@@ -10,7 +10,7 @@ export default class IfStatementMutator implements NodeMutator {
 
   constructor() { }
 
-  public mutate(node: types.Node, _copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
+  public mutate(node: types.Node): types.Node[] | void {
     if (types.isIfStatement(node)) {
       return [
         NodeGenerator.createBooleanLiteralNode(node.test, false),
