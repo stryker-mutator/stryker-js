@@ -15,9 +15,6 @@
     "noImplicitReturns": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "noImplicitThis": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedParameters": true,
     "lib": [
       "es5",
       "es2015.promise",

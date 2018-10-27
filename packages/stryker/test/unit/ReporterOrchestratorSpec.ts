@@ -7,6 +7,7 @@ import { Mock } from '../helpers/producers';
 import currentLogMock from '../helpers/logMock';
 import { Logger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
+
 describe('ReporterOrchestrator', () => {
   let sandbox: sinon.SinonSandbox;
   let sut: ReporterOrchestrator;
@@ -52,6 +53,7 @@ describe('ReporterOrchestrator', () => {
       const config = new Config();
       config.set({ reporters: ['progress', 'progress-append-only'] });
       sut = new ReporterOrchestrator(config);
+      sut.createBroadcastReporter();
       expect(broadcastReporterMock).to.have.been.calledWith(
         sinon.match(
           (reporters: broadcastReporter.NamedReporter[]) =>
@@ -66,6 +68,7 @@ describe('ReporterOrchestrator', () => {
       const config = new Config();
       config.set({ reporters: [] });
       sut = new ReporterOrchestrator(config);
+      sut.createBroadcastReporter();
       expect(log.warn).to.have.been.calledTwice;
     });
   });
