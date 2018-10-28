@@ -16,9 +16,8 @@ function promisify(original: any) {
 
 // This function is exported so that it can be tested on node >= 8
 export function innerPromisify(original: any) {
-  return function fn(...args: any[]) {
+  return function fn(this: unknown, ...args: any[]) {
     return new Promise((resolve, reject) => {
-      // @ts-ignore
       original.call(this, ...args, (err: Error, ...values: any[]) => {
         if (original === exists) {
           // the exists callback is NOT consistent with NodeJS callbacks: https://nodejs.org/api/fs.html#fs_fs_exists_path_callback
