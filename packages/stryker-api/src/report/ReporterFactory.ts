@@ -1,5 +1,6 @@
-import {Factory, StrykerOptions} from '../../core';
+import { Factory, StrykerOptions } from '../../core';
 import Reporter from './Reporter';
+import Config from '../config/Config';
 
 namespace ReporterFactory {
 
@@ -27,7 +28,7 @@ namespace ReporterFactory {
    * Returns the current instance of the TestRunnerFactory.
    */
   export function instance() {
-    return reporterFactoryInstance as Factory<StrykerOptions, Reporter>;
+    return reporterFactoryInstance as Factory<Config, Reporter>;
   }
 }
 

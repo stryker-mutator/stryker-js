@@ -1,4 +1,3 @@
-import { StrykerOptions } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
 import { ReporterFactory } from 'stryker-api/report';
 import BroadcastReporter, { NamedReporter } from './reporters/BroadcastReporter';
@@ -9,6 +8,7 @@ import EventRecorderReporter from './reporters/EventRecorderReporter';
 import ProgressAppendOnlyReporter from './reporters/ProgressAppendOnlyReporter';
 import ProgressReporter from './reporters/ProgressReporter';
 import StrictReporter from './reporters/StrictReporter';
+import { Config } from 'stryker-api/config';
 
 function registerDefaultReporters() {
   ReporterFactory.instance().register('progress-append-only', ProgressAppendOnlyReporter);
@@ -23,7 +23,7 @@ registerDefaultReporters();
 export default class ReporterOrchestrator {
 
   private readonly log = getLogger(ReporterOrchestrator.name);
-  constructor(private readonly options: StrykerOptions) { }
+  constructor(private readonly options: Config) { }
 
   public createBroadcastReporter(): StrictReporter {
     const reporters: NamedReporter[] = [];

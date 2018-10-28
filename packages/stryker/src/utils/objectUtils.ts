@@ -86,7 +86,7 @@ export function normalizeWhiteSpaces(str: string) {
 
 export function kill(pid: number): Promise<void> {
   return new Promise((res, rej) => {
-    treeKill(pid, 'SIGKILL', (err: { code?: number } & Error) => {
+    treeKill(pid, 'SIGKILL', (err?: { code?: number } & Error) => {
       if (err && !canIgnore(err.code)) {
         rej(err);
       } else {

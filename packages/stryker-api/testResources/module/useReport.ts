@@ -1,4 +1,5 @@
 import { Reporter, MutantResult, MutantStatus, ReporterFactory, SourceFile, MatchedMutant } from 'stryker-api/report';
+import { Config } from 'stryker-api/config';
 
 class EmptyReporter { }
 
@@ -16,8 +17,8 @@ class AllReporter implements Reporter {
 ReporterFactory.instance().register('empty', EmptyReporter);
 ReporterFactory.instance().register('all', AllReporter);
 console.log(ReporterFactory.instance().knownNames());
-const emptyReporter = ReporterFactory.instance().create('empty', {});
-const allReporter = ReporterFactory.instance().create('all', {});
+const emptyReporter = ReporterFactory.instance().create('empty', new Config());
+const allReporter = ReporterFactory.instance().create('all', new Config());
 if (!(emptyReporter instanceof EmptyReporter)) {
   throw Error('Something wrong with empty reporter');
 }

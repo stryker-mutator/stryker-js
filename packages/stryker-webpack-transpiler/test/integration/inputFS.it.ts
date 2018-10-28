@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
 import InputFileSystem from '../../src/fs/InputFileSystem';
@@ -36,7 +35,7 @@ describe('InputFileSystem integration', () => {
 
     it('should be able to stat a dir', done => {
       testResourcePath('inputFileSystem', 'dir1', 'tempFile');
-      sut.stat(testResourcePath('inputFileSystem', 'dir2'), (err, stats: fs.Stats) => {
+      sut.stat(testResourcePath('inputFileSystem', 'dir2'), (err, stats: any) => {
         if (err) {
           done(err);
         } else {

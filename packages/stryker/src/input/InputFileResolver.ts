@@ -49,10 +49,10 @@ export default class InputFileResolver {
 
   private resolveFilesUsingGit(): Promise<string[]> {
     return childProcessAsPromised.exec('git ls-files --others --exclude-standard --cached --exclude .stryker-tmp', { maxBuffer: 10 * 1000 * 1024 })
-      .then(({stdout}) => stdout.toString())
-      .then(output => output.split('\n').map(fileName => fileName.trim()))
-      .then(fileNames => fileNames.filter(fileName => fileName).map(fileName => path.resolve(fileName)))
-      .catch(error => {
+      .then(({ stdout }: { stdout: string }) => stdout.toString())
+      .then((output: string) => output.split('\n').map(fileName => fileName.trim()))
+      .then((fileNames: string[]) => fileNames.filter(fileName => fileName).map(fileName => path.resolve(fileName)))
+      .catch((error: Error) => {
         throw new StrykerError(`Cannot determine input files. Either specify a \`files\` array in your stryker configuration, or make sure "${process.cwd()}" is located inside a git repository`, error);
       });
   }
@@ -71,11 +71,11 @@ export default class InputFileResolver {
   }
 
   private readFile(fileName: string): Promise<File | null> {
-    return fsAsPromised.readFile(fileName).then(content => new File(fileName, content))
-      .then(file => {
+    return fsAsPromised.readFile(fileName).then((content: Buffer) => new File(fileName, content))
+      .then((file: File) => {
         this.reportSourceFilesRead(file);
         return file;
-      }).catch(error => {
+      }).catch((error: NodeJS.ErrnoException) => {
         if (isErrnoException(error) && error.code === 'ENOENT' || error.code === 'EISDIR') {
           return null; // file is deleted or a directory. This can be a valid result of the git command
         } else {

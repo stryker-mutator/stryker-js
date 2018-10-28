@@ -1,27 +1,30 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
-        "noImplicitAny": true,
-        "moduleResolution": "node",
-        "rootDir": ".",
-        "sourceMap": true,
-        "declaration": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowJs": false,
-        "importHelpers": true,
-        "noUnusedLocals": true,
-        "alwaysStrict": true,
-        "noImplicitReturns": true,
-        "strictNullChecks": true,
-        "noUnusedParameters": true,
-        "lib": [
-          "es5",
-          "es2015.promise",
-          "es2015.core",
-          "es2015.symbol",
-          "es2015.symbol.wellknown",
-          "es2015.proxy"
-        ]
-    }
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "moduleResolution": "node",
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": false,
+    "alwaysStrict": true,
+    "importHelpers": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "noUnusedParameters": true,
+    "lib": [
+      "es5",
+      "es2015.promise",
+      "es2015.core",
+      "es2015.symbol",
+      "es2015.symbol.wellknown",
+      "es2015.proxy"
+    ]
+  }
 }

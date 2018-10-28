@@ -107,7 +107,9 @@ export default class SourceFile {
           if (this.file.textContent.charCodeAt(pos) === CharacterCodes.lineFeed) {
             pos++;
           }
-        // falls through
+          result.push(lineStart);
+          lineStart = pos;
+          break;
         case CharacterCodes.lineFeed:
           result.push(lineStart);
           lineStart = pos;
