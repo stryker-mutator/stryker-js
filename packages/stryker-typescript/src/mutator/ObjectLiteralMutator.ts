@@ -8,7 +8,7 @@ export default class ObjectLiteralMutator extends NodeMutator<ts.ObjectLiteralEx
     return node.kind === ts.SyntaxKind.ObjectLiteralExpression;
   }
 
-  protected identifyReplacements(o: ts.ObjectLiteralExpression, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(o: ts.ObjectLiteralExpression): NodeReplacement[] {
     if (o.properties.length > 0) {
       return [{ node: o, replacement: '{}' }];
     } else {

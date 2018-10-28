@@ -8,7 +8,7 @@ export default class IfStatementMutator extends NodeMutator<ts.IfStatement> {
     return node.kind === ts.SyntaxKind.IfStatement;
   }
 
-  protected identifyReplacements(ifStatement: ts.IfStatement, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(ifStatement: ts.IfStatement): NodeReplacement[] {
     return [
       { node: ifStatement.expression, replacement: 'true' },
       { node: ifStatement.expression, replacement: 'false' }

@@ -8,7 +8,7 @@ export default class BlockMutator extends NodeMutator<ts.Block> {
     return node.kind === ts.SyntaxKind.Block;
   }
 
-  protected identifyReplacements(block: ts.Block, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(block: ts.Block): NodeReplacement[] {
     if (block.statements.length) {
       return [{ node: block, replacement: '{}' }];
     } else {
