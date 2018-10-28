@@ -7,6 +7,14 @@ import { MutantStatus, MutantResult } from 'stryker-api/report';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
 import { scoreResult, mutationScoreThresholds, config, mutantResult } from '../../helpers/producers';
 
+const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: Number) => {
+  return [
+    chalk.cyan(sourceFilePath),
+    chalk.yellow(`${line}`),
+    chalk.yellow(`${column}`),
+  ].join(':');
+};
+
 describe('ClearTextReporter', () => {
   let sut: ClearTextReporter;
   let sandbox: sinon.SinonSandbox;
@@ -104,7 +112,7 @@ describe('ClearTextReporter', () => {
   });
 
   describe('when coverageAnalysis is "all"', () => {
-    beforeEach(() => sut = new ClearTextReporter(config({ coverageAnalysis: 'all' })));
+    beforeEach(() => sut = new ClearTextReporter(config({ coverageAnalysis: 'all', clearTextReporter: { logTests: true } })));
 
     describe('onAllMutantsTested() all mutants except error', () => {
 
@@ -123,7 +131,7 @@ describe('ClearTextReporter', () => {
       });
 
       it('should report on the survived mutant', () => {
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Mutator: Math'));
+        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('1. [Survived] Math'));
         expect(process.stdout.write).to.have.been.calledWith(chalk.red('-   original line') + os.EOL);
         expect(process.stdout.write).to.have.been.calledWith(chalk.green('+   mutated line') + os.EOL);
       });
@@ -138,12 +146,42 @@ describe('ClearTextReporter', () => {
 
   describe('when coverageAnalysis: "perTest"', () => {
 
-    beforeEach(() => sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest' })));
-
     describe('onAllMutantsTested()', () => {
 
-      it('should log individual ran tests', () => {
+      it('should log source file names with colored text when clearTextReporter is not false', () => {
+        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest'}));
+
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
+        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match(colorizeFileAndPosition('sourceFile.ts', 1, 2)));
+      });
+
+      it('should not log source file names with colored text when clearTextReporter is false', () => {
+        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest'}));
+
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
+        expect(process.stdout.write).to.have.been.calledWithMatch(colorizeFileAndPosition('sourceFile.ts', 1, 2));
+      });
+
+      it('should not log individual ran tests when logTests is not true', () => {
+        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest'}));
+
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
+        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Tests ran: '));
+        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a test'));
+        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a second test'));
+        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a third test'));
+        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
+
+      });
+
+      it('should log individual ran tests when logTests is true', () => {
+        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true } }));
+
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
         expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Tests ran: '));
         expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a test'));
         expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a second test'));
@@ -151,9 +189,9 @@ describe('ClearTextReporter', () => {
         expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
       });
 
-      describe('with less tests that may be logged', () => {
-        it('should log less tests', () => {
-          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 1 } }));
+      describe('with fewer tests that may be logged', () => {
+        it('should log fewer tests', () => {
+          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true, maxTestsToLog: 1 } }));
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -166,7 +204,7 @@ describe('ClearTextReporter', () => {
 
       describe('with more tests that may be logged', () => {
         it('should log all tests', () => {
-          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 10 } }));
+          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true, maxTestsToLog: 10 } }));
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -180,7 +218,7 @@ describe('ClearTextReporter', () => {
 
       describe('with the default amount of tests that may be logged', () => {
         it('should log all tests', () => {
-          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 3 } }));
+          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true, maxTestsToLog: 3 } }));
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -194,7 +232,7 @@ describe('ClearTextReporter', () => {
 
       describe('with no tests that may be logged', () => {
         it('should not log a test', () => {
-          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { maxTestsToLog: 0 } }));
+          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true, maxTestsToLog: 0 } }));
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -236,7 +274,7 @@ describe('ClearTextReporter', () => {
         originalLines: 'original line',
         range: [0, 0],
         replacement: '',
-        sourceFilePath: '',
+        sourceFilePath: 'sourceFile.ts',
         status,
         testsRan: ['a test', 'a second test', 'a third test']
       });
