@@ -50,7 +50,7 @@ export default class MochaTestRunner implements TestRunner {
         this.addTestHooks(mocha, testHooks);
         this.addFiles(mocha);
         try {
-          mocha.run((failures: number) => {
+          mocha.run(() => {
             const reporter = StrykerMochaReporter.CurrentInstance;
             if (reporter) {
               const result: RunResult = reporter.runResult;

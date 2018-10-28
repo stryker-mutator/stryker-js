@@ -13,7 +13,7 @@ describe('JestPromiseTestAdapter', () => {
 
   beforeEach(() => {
     runCLIStub = sinon.stub(jest, 'runCLI');
-    runCLIStub.callsFake((config: object, projectRootArray: string[]) => Promise.resolve({
+    runCLIStub.callsFake((config: object) => Promise.resolve({
       config,
       result: 'testResult'
     }));

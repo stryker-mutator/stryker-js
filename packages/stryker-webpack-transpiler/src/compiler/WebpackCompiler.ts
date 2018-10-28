@@ -33,7 +33,7 @@ export default class WebpackCompiler {
   }
 
   public emit(): Promise<File[]> {
-    return this.compile().then(stats => {
+    return this.compile().then(() => {
       const outputFiles = this._outputFS.collectFiles();
       this._outputFS.purge();
       return outputFiles;

@@ -205,7 +205,7 @@ export default class MutantTestMatcher {
     }
   }
 
-  private isCoveragePerTestResult(coverage: CoverageCollection | CoveragePerTestResult | undefined): coverage is CoveragePerTestResult {
+  private isCoveragePerTestResult(_coverage: CoverageCollection | CoveragePerTestResult | undefined): _coverage is CoveragePerTestResult {
     return this.options.coverageAnalysis === 'perTest';
   }
 }

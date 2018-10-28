@@ -25,7 +25,7 @@ export default class Echo {
 
   public exit(code: number) {
     process.exit(code);
-    return new Promise(res => {/*never resolve*/ });
+    return new Promise(() => {/*never resolve*/ });
   }
 
   public readFile() {

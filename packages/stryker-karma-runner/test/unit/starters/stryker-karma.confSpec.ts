@@ -117,7 +117,7 @@ describe('stryker-karma.conf.js', () => {
 
   it('should set basePath to location of karma.conf.js', () => {
     sut.setGlobals({ karmaConfigFile: '../foobar.conf.js' });
-    requireModuleStub.returns((config: Config) => { /* noop */ });
+    requireModuleStub.returns(() => { /* noop */ });
     sut(config);
     expect(config).deep.include({
       basePath: path.resolve('../'),
