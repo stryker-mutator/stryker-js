@@ -99,6 +99,10 @@ export default class SourceFile {
     const result: number[] = [];
     let pos = 0;
     let lineStart = 0;
+    const markLineStart = () => {
+      result.push(lineStart);
+      lineStart = pos;
+    };
     while (pos < this.file.textContent.length) {
       const ch = this.file.textContent.charCodeAt(pos);
       pos++;
@@ -107,15 +111,14 @@ export default class SourceFile {
           if (this.file.textContent.charCodeAt(pos) === CharacterCodes.lineFeed) {
             pos++;
           }
-        // falls through
+          markLineStart();
+          break;
         case CharacterCodes.lineFeed:
-          result.push(lineStart);
-          lineStart = pos;
+          markLineStart();
           break;
         default:
           if (ch > CharacterCodes.maxAsciiCharacter && isLineBreak(ch)) {
-            result.push(lineStart);
-            lineStart = pos;
+            markLineStart();
           }
           break;
       }
