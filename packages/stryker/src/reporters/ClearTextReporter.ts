@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { getLogger } from 'stryker-api/logging';
 import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { Config } from 'stryker-api/config';
+import { Position } from 'stryker-api/core';
 import ClearTextScoreTable from './ClearTextScoreTable';
 import * as os from 'os';
 
@@ -25,43 +26,42 @@ export default class ClearTextReporter implements Reporter {
     const logDebugFn = (input: string) => this.log.debug(input);
     const writeLineFn = (input: string) => this.writeLine(input);
 
-    mutantResults.forEach(result => {
+    mutantResults.forEach((result, index) => {
       if (result.testsRan) {
         totalTests += result.testsRan.length;
       }
       switch (result.status) {
         case MutantStatus.Killed:
           this.log.debug(chalk.bold.green('Mutant killed!'));
-          this.logMutantResult(result, logDebugFn);
+          this.logMutantResult(result, index, logDebugFn);
           break;
         case MutantStatus.TimedOut:
           this.log.debug(chalk.bold.yellow('Mutant timed out!'));
-          this.logMutantResult(result, logDebugFn);
+          this.logMutantResult(result, index, logDebugFn);
           break;
         case MutantStatus.RuntimeError:
           this.log.debug(chalk.bold.yellow('Mutant caused a runtime error!'));
-          this.logMutantResult(result, logDebugFn);
+          this.logMutantResult(result, index, logDebugFn);
           break;
         case MutantStatus.TranspileError:
           this.log.debug(chalk.bold.yellow('Mutant caused a transpile error!'));
-          this.logMutantResult(result, logDebugFn);
+          this.logMutantResult(result, index, logDebugFn);
           break;
         case MutantStatus.Survived:
-          this.writeLine(chalk.bold.red('Mutant survived!'));
-          this.logMutantResult(result, writeLineFn);
+          this.logMutantResult(result, index, writeLineFn);
           break;
         case MutantStatus.NoCoverage:
-          this.writeLine(chalk.bold.yellow('Mutant survived! (no coverage)'));
-          this.logMutantResult(result, writeLineFn);
+          this.logMutantResult(result, index, writeLineFn);
           break;
       }
     });
     this.writeLine(`Ran ${(totalTests / mutantResults.length).toFixed(2)} tests per mutant on average.`);
   }
 
-  private logMutantResult(result: MutantResult, logImplementation: (input: string) => void): void {
-    logImplementation(result.sourceFilePath + ':' + result.location.start.line + ':' + result.location.start.column);
-    logImplementation('Mutator: ' + result.mutatorName);
+  private logMutantResult(result: MutantResult, index: number, logImplementation: (input: string) => void): void {
+    logImplementation(`${index}. [${MutantStatus[result.status]}] ${result.mutatorName}`);
+    logImplementation(this.colorSourceFileAndLocation(result.sourceFilePath, result.location.start));
+
     result.originalLines.split('\n').forEach(line => {
       logImplementation(chalk.red('-   ' + line));
     });
@@ -76,12 +76,30 @@ export default class ClearTextReporter implements Reporter {
     }
   }
 
-  private logExecutedTests(result: MutantResult, logImplementation: (input: string) => void) {
+  private colorSourceFileAndLocation(sourceFilePath: string, position: Position): string {
     const clearTextReporterConfig = this.options.clearTextReporter;
+
+    if (clearTextReporterConfig && clearTextReporterConfig.allowColor !== false) {
+      return sourceFilePath + ':' + position.line + ':' + position.column;
+    }
+
+    return [
+      chalk.cyan(sourceFilePath),
+      chalk.yellow(`${position.line}`),
+      chalk.yellow(`${position.column}`),
+    ].join(':');
+  }
+
+  private logExecutedTests(result: MutantResult, logImplementation: (input: string) => void) {
+    const clearTextReporterConfig = this.options.clearTextReporter || {};
+
+    if (!clearTextReporterConfig.logTests) {
+      return;
+    }
 
     if (result.testsRan && result.testsRan.length > 0) {
       let testsToLog = 3;
-      if (clearTextReporterConfig && typeof clearTextReporterConfig.maxTestsToLog === 'number') {
+      if (typeof clearTextReporterConfig.maxTestsToLog === 'number') {
         testsToLog = clearTextReporterConfig.maxTestsToLog;
       }
 

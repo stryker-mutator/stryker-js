@@ -33,7 +33,7 @@ describe('WebpackCompiler', () => {
       const textFiles = createFakeTextFileArray();
       sut.writeFilesToFs(textFiles);
 
-      textFiles.forEach((textFile, index) => {
+      textFiles.forEach(textFile => {
         expect(inputFileSystemMock.writeFileSync).calledWith(textFile.name);
       });
     });

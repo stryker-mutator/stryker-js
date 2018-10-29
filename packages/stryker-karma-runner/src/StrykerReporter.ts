@@ -32,7 +32,7 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     return this._instance;
   }
 
-  public onSpecComplete(browser: any, spec: KarmaSpec) {
+  public onSpecComplete(_browser: any, spec: KarmaSpec) {
     const name = spec.suite.reduce((name, suite) => name + suite + ' ', '') + spec.description;
     let status = TestStatus.Failed;
     if (spec.skipped) {
@@ -53,7 +53,7 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     this.emit('run_complete', this.collectRunState(runResult));
   }
 
-  public onBrowserComplete(browser: any, result: { coverage: CoverageCollection | CoverageCollectionPerTest }) {
+  public onBrowserComplete(_browser: any, result: { coverage: CoverageCollection | CoverageCollectionPerTest }) {
     this.emit('coverage_report', result.coverage);
   }
 
@@ -61,7 +61,7 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     this.emit('browsers_ready');
   }
 
-  public onBrowserError(browser: any, error: any) {
+  public onBrowserError(_browser: any, error: any) {
     // Karma 2.0 has different error messages
     if (error.message) {
       this.emit('browser_error', error.message);

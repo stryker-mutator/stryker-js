@@ -95,15 +95,15 @@ describe('TypescriptConfigEditor edit', () => {
   it('should log errors on failure during load of extending file', () => {
     readFileSyncStub.returns(`{ "extends": "./parent.tsconfig.json" }`);
     config[CONFIG_KEY] = 'tsconfig.json';
-    sut.edit(config, parseConfigHost({ readFile: _ => `invalid json` }));
+    sut.edit(config, parseConfigHost({ readFile: () => `invalid json` }));
     expect(loggerStub.error).calledWithMatch(match('error TS1005: \'{\' expected.'));
   });
 
   function parseConfigHost(overrides?: Partial<ts.ParseConfigHost>): ts.ParseConfigHost {
     const defaults: ts.ParseConfigHost = {
-      fileExists: _ => true,
-      readDirectory: dir => ['file1.ts', 'file2.ts'],
-      readFile: _ => '',
+      fileExists: () => true,
+      readDirectory: () => ['file1.ts', 'file2.ts'],
+      readFile: () => '',
       useCaseSensitiveFileNames: true
     };
     return Object.assign({}, defaults, overrides);

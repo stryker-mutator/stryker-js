@@ -34,9 +34,7 @@ describe('createReactTsJestConfig', () => {
 
   beforeEach(() => {
     loaderStub = sinon.stub(loader, 'require');
-    loaderStub.returns((resolve: Function, projectRoot: string, ejected: boolean) => {
-      return 'jestConfig';
-    });
+    loaderStub.returns(() => 'jestConfig');
   });
 
   it('should call the loader with the react jest config generator', () => {

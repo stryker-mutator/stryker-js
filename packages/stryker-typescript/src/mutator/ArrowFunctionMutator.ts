@@ -8,7 +8,7 @@ export default class ArrowFunctionMutator extends NodeMutator<ts.ArrowFunction> 
     return node.kind === ts.SyntaxKind.ArrowFunction;
   }
 
-  protected identifyReplacements(fn: ts.ArrowFunction, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(fn: ts.ArrowFunction): NodeReplacement[] {
     if (fn.body.kind === ts.SyntaxKind.Block) {
       // This case is already handled by the BlockMutator.
       return [];

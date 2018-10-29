@@ -130,7 +130,7 @@ function annotateCode(sourceFile: SourceFile, numberedMutants: NumberedMutant[])
                 </a>
                 + <span class='badge badge-info stryker-mutant-replacement' hidden='hidden' data-mutant={m.index}>{escapeHtml(m.mutant.replacement)}</span>);
             const originalCodeStartAnnotations = mutantsStarting.map(m => `<span class="stryker-original-code" data-mutant="${m.index}">`);
-            const originalCodeEndAnnotations = mutantsEnding.map(m => '</span>');
+            const originalCodeEndAnnotations = mutantsEnding.map(() => '</span>');
 
             return `${backgroundColorEndAnnotation}${originalCodeEndAnnotations.join('')}${mutantsAnnotations.join('')}${originalCodeStartAnnotations.join('')}${backgroundColorAnnotation}${escapeHtml(char)}`;
         } catch (err) {
