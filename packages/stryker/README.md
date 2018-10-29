@@ -187,7 +187,10 @@ By default `clear-text` and `progress` are active if no reporters are configured
 You can load additional plugins to get more reporters. See [stryker-mutator.io](https://stryker-mutator.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
 
-The `clear-text` reporter supports an additional config option to show more tests that were executed to kill a mutant. The config for your config file is: `clearTextReporter: { maxTestsToLog: 3 },`
+The `clear-text` reporter supports three additional config options:
+* `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.
+* `logTests` to log the names of unit tests that were run to allow mutants. By default, only the first three are logged. The config for your config file is: `clearTextReporter: { logTests: true },`
+* `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
 
 The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The reporter currently detects [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/). Please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing. On all these environments, it will ignore builds of pull requests. Apart from buildserver-specific environment variables, the reporter uses one environment variable:
 
