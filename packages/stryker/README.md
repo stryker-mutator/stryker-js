@@ -172,13 +172,12 @@ Default: `[]`
 
 With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.  
 
-### Reporters  
+### `reporters` [`string[]`] 
 
 Default: `['clear-text', 'progress']`  
 Command line: `--reporters clear-text,progress,dots,dashboard`  
 Config file: `reporters: ['clear-text', 'progress', 'dots', 'dashboard']`     
  
-  
 With `reporters` you can set the reporters for stryker to use.
 These reporters can be used out of the box: `clear-text`, `progress`, `dots`, `dashboard` and `event-recorder`.
 By default `clear-text` and `progress` are active if no reporters are configured.
