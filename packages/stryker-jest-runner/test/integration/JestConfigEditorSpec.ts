@@ -29,7 +29,8 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       collectCoverageFrom: [
-        'src/**/*.{js,jsx}'
+        '!src/**/*.d.ts',
+        'src/**/*.{js,jsx,ts,tsx}'
       ],
       moduleFileExtensions: [
         'web.js',
