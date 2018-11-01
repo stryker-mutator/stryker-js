@@ -33,12 +33,16 @@ describe('Integration test for Jest ConfigEditor', () => {
         'src/**/*.{js,jsx,ts,tsx}'
       ],
       moduleFileExtensions: [
-        'web.js',
         'js',
         'json',
-        'web.jsx',
         'jsx',
-        'node'
+        'node',
+        'ts',
+        'tsx',
+        'web.js',
+        'web.jsx',
+        'web.ts',
+        'web.tsx'
       ],
       moduleNameMapper: {
         '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
