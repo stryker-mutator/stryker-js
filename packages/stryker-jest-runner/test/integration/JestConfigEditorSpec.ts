@@ -29,15 +29,20 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       collectCoverageFrom: [
-        'src/**/*.{js,jsx}'
+        '!src/**/*.d.ts',
+        'src/**/*.{js,jsx,ts,tsx}'
       ],
       moduleFileExtensions: [
-        'web.js',
         'js',
         'json',
-        'web.jsx',
         'jsx',
-        'node'
+        'node',
+        'ts',
+        'tsx',
+        'web.js',
+        'web.jsx',
+        'web.ts',
+        'web.tsx'
       ],
       moduleNameMapper: {
         '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
@@ -48,18 +53,18 @@ describe('Integration test for Jest ConfigEditor', () => {
       setupTestFrameworkScriptFile: undefined,
       testEnvironment: 'jsdom',
       testMatch: [
-        '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
-        '<rootDir>/src/**/?(*.)(spec|test).{js,jsx}'
+        '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+        '<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}'
       ],
       testResultsProcessor: undefined,
       testURL: 'http://localhost',
       transform: {
-        '^(?!.*\\.(js|jsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
-        '^.+\\.(js|jsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
+        '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
+        '^.+\\.(js|jsx|ts|tsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
         '^.+\\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js'),
       },
       transformIgnorePatterns: [
-        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$',
+        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
         '^.+\\.module\\.(css|sass|scss)$'
       ],
       verbose: false
