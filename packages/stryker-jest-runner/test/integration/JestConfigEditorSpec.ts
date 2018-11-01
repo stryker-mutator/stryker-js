@@ -59,12 +59,12 @@ describe('Integration test for Jest ConfigEditor', () => {
       testResultsProcessor: undefined,
       testURL: 'http://localhost',
       transform: {
-        '^(?!.*\\.(js|jsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
-        '^.+\\.(js|jsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
+        '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
+        '^.+\\.(js|jsx|ts|tsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
         '^.+\\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js'),
       },
       transformIgnorePatterns: [
-        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$',
+        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
         '^.+\\.module\\.(css|sass|scss)$'
       ],
       verbose: false
