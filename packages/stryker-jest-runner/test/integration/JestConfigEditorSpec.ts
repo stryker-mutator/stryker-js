@@ -82,6 +82,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       collectCoverageFrom: [
+        '!**/*.d.ts',
         'src/**/*.{js,jsx,ts,tsx}'
       ],
       globals: {
