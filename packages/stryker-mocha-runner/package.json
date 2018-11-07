@@ -1,6 +1,6 @@
 {
   "name": "stryker-mocha-runner",
-  "version": "0.14.5",
+  "version": "0.14.6",
   "description": "A plugin to use the mocha test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {

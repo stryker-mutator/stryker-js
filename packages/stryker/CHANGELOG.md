@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.31.0"></a>
+# [0.31.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.30.1...stryker@0.31.0) (2018-11-07)
+
+
+### Features
+
+* **clear text reporter:** Prettify the clear-text report ([#1185](https://github.com/stryker-mutator/stryker/issues/1185)) ([a49829b](https://github.com/stryker-mutator/stryker/commit/a49829b))
+
+
+
+
 <a name="0.30.1"></a>
 ## [0.30.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.30.0...stryker@0.30.1) (2018-10-25)
 

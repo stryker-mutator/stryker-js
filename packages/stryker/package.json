@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.30.1",
+  "version": "0.31.0",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -53,7 +53,7 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@stryker-mutator/util": "^0.0.1",
+    "@stryker-mutator/util": "^0.0.2",
     "chalk": "~2.4.1",
     "commander": "~2.19.0",
     "escodegen": "~1.8.0",
