@@ -208,6 +208,18 @@ describe('Stryker', () => {
         await sut.runMutationTest();
         expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
       });
+
+      it('should log the remark to run again with logLevel trace if no tests were executed in initial test run', async () => {
+        while (initialRunResult.tests.pop());
+        await sut.runMutationTest();
+        expect(currentLogMock().info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+      });
+
+      it('should log the remark to run again with logLevel trace if no mutants were generated', async () => {
+        while (mutants.pop()); // clear all mutants
+        await sut.runMutationTest();
+        expect(currentLogMock().info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+      });
     });
 
     describe('happy flow', () => {
