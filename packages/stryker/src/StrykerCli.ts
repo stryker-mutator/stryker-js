@@ -76,6 +76,9 @@ export default class StrykerCli {
     if (Object.keys(commands).indexOf(this.command) >= 0) {
       commands[this.command]().catch(err => {
         log.error(`an error occurred`, err);
+        if (!log.isTraceEnabled()) {
+          log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+        }
         process.exitCode = 1;
         process.kill(process.pid, 'SIGINT');
       });

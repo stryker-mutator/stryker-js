@@ -69,6 +69,8 @@ export default class Stryker {
         await this.logDone();
         await LogConfigurator.shutdown();
         return mutantResults;
+      } else {
+        this.logRemark();
       }
     }
     return Promise.resolve([]);
@@ -150,6 +152,12 @@ export default class Stryker {
 
   private logDone() {
     this.log.info('Done in %s.', this.timer.humanReadableElapsed());
+  }
+
+  private logRemark() {
+    if (!this.log.isTraceEnabled()) {
+      this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+    }
   }
 
   private reportScore(mutantResults: MutantResult[]) {
