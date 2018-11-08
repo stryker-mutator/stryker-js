@@ -8,7 +8,7 @@ export default class JestPromiseTestAdapter implements JestTestAdapter {
   public run(jestConfig: Configuration, projectRoot: string, fileName?: string): Promise<RunResult> {
     jestConfig.reporters = [];
     const config = JSON.stringify(jestConfig);
-    this.log.trace(`Invoking jest with ${config}`);
+    this.log.trace(`Invoking Jest with config ${config}`);
     if (fileName) {
       this.log.trace(`Only running tests related to ${fileName}`);
     }
