@@ -9,7 +9,6 @@ export default class JestPromiseTestAdapter implements JestTestAdapter {
     jestConfig.reporters = [];
     const config = JSON.stringify(jestConfig);
     this.log.trace(`Invoking jest with ${config}`);
-    
     if (fileName) {
       this.log.trace(`Only running tests related to ${fileName}`);
     }
@@ -19,7 +18,7 @@ export default class JestPromiseTestAdapter implements JestTestAdapter {
       ...(fileName && { findRelatedTests: true }),
       config,
       runInBand: true,
-      silent: true,
+      silent: true
     }, [projectRoot]);
   }
 }
