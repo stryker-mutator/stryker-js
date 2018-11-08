@@ -1,9 +1,7 @@
 import { expect } from 'chai';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
-describe('fileUtils', function() {
-
-  this.timeout(15000);
+describe('fileUtils', () => {
 
   describe('glob', () => {
     it('should resolve files', () =>

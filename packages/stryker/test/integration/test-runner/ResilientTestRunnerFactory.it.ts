@@ -11,9 +11,7 @@ import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { toArray } from 'rxjs/operators';
 import { sleep } from '../../helpers/testUtils';
 
-describe('ResilientTestRunnerFactory integration', function() {
-
-  this.timeout(15000);
+describe('ResilientTestRunnerFactory integration', () => {
 
   let sut: TestRunnerDecorator;
   let options: RunnerOptions;
