@@ -44,8 +44,8 @@ export default class Sandbox {
     return sandbox.initialize().then(() => sandbox);
   }
 
-  public run(timeout: number, testHooks: string | undefined): Promise<RunResult> {
-    return this.testRunner.run({ timeout, testHooks });
+  public run(timeout: number, testHooks: string | undefined, mutant?: TestableMutant): Promise<RunResult> {
+    return this.testRunner.run({ timeout, testHooks, ...(mutant && { fileName: this.fileMap[mutant.fileName]}) });
   }
 
   public dispose(): Promise<void> {
@@ -58,7 +58,7 @@ export default class Sandbox {
       this.log.warn(`Failed find coverage data for this mutant, running all tests. This might have an impact on performance: ${transpiledMutant.mutant.toString()}`);
     }
     await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)));
-    const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant), this.getFilterTestsHooks(transpiledMutant.mutant));
+    const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant), this.getFilterTestsHooks(transpiledMutant.mutant), transpiledMutant.mutant);
     await this.reset(mutantFiles);
     return runResult;
   }
