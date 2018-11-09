@@ -5,17 +5,16 @@ import { Configuration, runCLI, RunResult } from 'jest';
 export default class JestPromiseTestAdapter implements JestTestAdapter {
   private readonly log = getLogger(JestPromiseTestAdapter.name);
 
-  public run(jestConfig: Configuration, projectRoot: string, fileName?: string): Promise<RunResult> {
+  public run(jestConfig: Configuration, projectRoot: string, mutatedFileName?: string): Promise<RunResult> {
     jestConfig.reporters = [];
     const config = JSON.stringify(jestConfig);
     this.log.trace(`Invoking Jest with config ${config}`);
-    if (fileName) {
-      this.log.trace(`Only running tests related to ${fileName}`);
+    if (mutatedFileName) {
+      this.log.trace(`Only running tests related to ${mutatedFileName}`);
     }
 
     return runCLI({
-      ...(fileName && { _: [fileName]}),
-      ...(fileName && { findRelatedTests: true }),
+      ...(mutatedFileName && { _: [mutatedFileName], findRelatedTests: true}),
       config,
       runInBand: true,
       silent: true

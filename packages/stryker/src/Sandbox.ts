@@ -45,7 +45,7 @@ export default class Sandbox {
   }
 
   public run(timeout: number, testHooks: string | undefined, mutant?: TestableMutant): Promise<RunResult> {
-    return this.testRunner.run({ timeout, testHooks, ...(mutant && { fileName: this.fileMap[mutant.fileName]}) });
+    return this.testRunner.run({ timeout, testHooks, ...(mutant && { mutatedFileName: this.fileMap[mutant.fileName]}) });
   }
 
   public dispose(): Promise<void> {

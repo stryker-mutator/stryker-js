@@ -13,7 +13,7 @@ interface RunOptions {
    */
   testHooks?: string;
 
-  fileName?: string;
+  mutatedFileName?: string;
 }
 
 export default RunOptions;
