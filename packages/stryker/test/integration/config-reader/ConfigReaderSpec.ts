@@ -6,8 +6,7 @@ import ConfigReader from '../../../src/config/ConfigReader';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
-describe('ConfigReader', function() {
-  this.timeout(15000);
+describe('ConfigReader', () => {
 
   let sut: ConfigReader;
   let log: Mock<logging.Logger>;

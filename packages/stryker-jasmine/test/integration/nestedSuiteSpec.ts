@@ -15,9 +15,8 @@ interface JasmineTest {
   status: string;
 }
 
-describe('Selecting tests with nested suites', function() {
+describe('Selecting tests with nested suites', () => {
 
-  this.timeout(10000);
   let sut: JasmineTestFramework;
   let testSelections: TestSelection[];
   const jsonReporterFile = path.resolve(__dirname, '..', '..', 'testResources', 'json-reporter.js');

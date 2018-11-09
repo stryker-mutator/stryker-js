@@ -7,8 +7,7 @@ import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { expect } from 'chai';
 
-describe('AllowJS integration', function() {
-  this.timeout(10000);
+describe('AllowJS integration', () => {
 
   let config: Config;
   let inputFiles: File[];

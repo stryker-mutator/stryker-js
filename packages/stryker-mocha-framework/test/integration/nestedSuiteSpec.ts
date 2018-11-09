@@ -19,9 +19,8 @@ interface MochaTest {
 }
 
 // See https://github.com/stryker-mutator/stryker/issues/249
-describe('Selecting tests with nested suites', function() {
+describe('Selecting tests with nested suites', () => {
 
-  this.timeout(10000);
   let sut: MochaTestFramework;
   const nestedSuiteFile = path.resolve(__dirname, '..', '..', 'testResources', 'nested-suite.js');
   const selectTestFile = path.join(__dirname, '..', '..', 'testResources', '__filterSpecs.js');

@@ -21,8 +21,8 @@ export function wrapInClosure(codeFragment: string) {
     })((Function('return this'))());`;
 }
 
-describe('Integration with stryker-mocha-framework', function() {
-  this.timeout(10000);
+describe('Integration with stryker-mocha-framework', () => {
+
   let testFramework: MochaTestFramework;
 
   beforeEach(() => {

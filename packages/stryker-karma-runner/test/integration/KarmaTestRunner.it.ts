@@ -11,10 +11,9 @@ function wrapInClosure(codeFragment: string) {
     })((Function('return this'))());`;
 }
 
-describe('KarmaTestRunner', function() {
+describe('KarmaTestRunner', () => {
 
   let sut: KarmaTestRunner;
-  this.timeout(30000);
 
   const expectToHaveSuccessfulTests = (result: RunResult, n: number) => {
     expect(result.tests.filter(t => t.status === TestStatus.Success)).to.have.length(n);
