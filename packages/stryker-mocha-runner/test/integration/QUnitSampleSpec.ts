@@ -4,8 +4,7 @@ import { RunStatus } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import { runnerOptions } from '../helpers/mockHelpers';
 
-describe('QUnit sample', function() {
-  this.timeout(10000);
+describe('QUnit sample', () => {
 
   it('should work when configured with "qunit" ui', async () => {
     const mochaOptions = {
