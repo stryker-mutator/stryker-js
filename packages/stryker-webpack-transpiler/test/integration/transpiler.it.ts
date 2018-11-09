@@ -6,8 +6,7 @@ import { expect } from 'chai';
 import { File } from 'stryker-api/core';
 import { TranspilerOptions } from 'stryker-api/transpile';
 
-describe('Webpack transpiler', function() {
-  this.timeout(10000);
+describe('Webpack transpiler', () => {
 
   let transpilerConfig: TranspilerOptions;
 
