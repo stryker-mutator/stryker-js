@@ -10,7 +10,8 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 90 --functions 100 --branches 90 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 90 --functions 100 --branches 90 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
