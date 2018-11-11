@@ -90,8 +90,8 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 ### `mutate` [`string[]`]
 
 Default: *none*  
-Command line: `[--mutate|-m] src/**/*.js,a.js`
-Config file: `mutate: ['src/**/*.js', 'a.js']`
+Command line: `[--mutate|-m] src/**/*.js,a.js`  
+Config file: `mutate: ['src/**/*.js', 'a.js']` 
   
 With `mutate` you configure the subset of files to use for mutation testing. 
 Generally speaking, these should be your own source files.  
@@ -150,10 +150,10 @@ In addition to requiring your test runner to be able to report the code coverage
  Currently, `stryker-mocha-runner` as well as `stryker-karma-runner` support this. However, `stryker-karma-runner` support is limited to using it with `Jasmine` as the test framework 
  (`Mocha` is not yet supported).
 
-### `mutator` [`object`]
+### `mutator` [`object` | `string`]
 Default: `es5`  
 Command line: `--mutator es5`  
-Config file:  `mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
+Config file:  `mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] } | mutator: typescript`  
 
 With `mutator` you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.  
 The mutator plugin name defaults to `es5` if not specified. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.  
@@ -171,6 +171,7 @@ When using the config file, you can provide either a string representing the mut
 Default: `[]`
 
 With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.  
+
 
 ### `reporters` [`string[]`] 
 
@@ -262,7 +263,7 @@ With `port` you specify the first port to pass on to the test runner to use. Any
 For example, when you set to use port 9234 and Stryker decides to start four test runner processes, ports 9234, 9235, 9236 and 9237 will be passed to the test runner.  
 If the test runner decides to use the port it should be available for use.
 
-### `timeoutMS` [`number`], `timeoutFactor` [`number`]
+### `timeoutMS` [`number`]
 
 Default: `5000`  
 Command line: `--timeoutMS 5000`  
@@ -290,12 +291,11 @@ Config file: `timeoutFactor: 1.5`
  
 See [Timeout in milliseconds](#Timeout-in-milliseconds).
 
-### Number of maximum concurrent test runners  
+### `maxConcurrentTestRunners` [`number`] 
 
-Default: number of CPU cores
+Default: `(number of CPU Cores)`  
 Command line: `--maxConcurrentTestRunners 3`  
-Config file: `maxConcurrentTestRunners: 3`  
- 
+Config file: `maxConcurrentTestRunners: 3`   
   
 Specifies the maximum number of concurrent test runners to spawn.  
 Mutation testing is time consuming. By default Stryker tries to make the most of your CPU, by spawning as many test runners as you have CPU cores.  
@@ -309,8 +309,9 @@ Reasons you might want to lower this setting:
 
 ### `thresholds` [`object`]
 
-Default: `{ high: 80, low: 60, break: null }`  
-Config file: `thresholds: { high: 80, low: 60, break: null }`  
+Default: `{ high: 80, low: 60, break: null }`   
+Command line: `*none*`  
+Config file: `thresholds: { high: 80, low: 60, break: null }` 
  
 Description  
 Specify the thresholds for mutation score. 
