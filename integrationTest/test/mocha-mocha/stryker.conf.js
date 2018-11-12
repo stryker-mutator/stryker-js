@@ -7,7 +7,8 @@ module.exports = function (config) {
     maxConcurrentTestRunners: 2,
     port: 9264,
     mochaOptions: {
-      files: ['test/*.js']
+      files: ['test/*.js'],
+      opts: 'test/mocha.opts',
     },
   });
 };
