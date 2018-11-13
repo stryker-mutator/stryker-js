@@ -87,22 +87,22 @@ This is the same globbing format you might know from [Grunt](https://github.com/
 
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
-#### Files to mutate
-**Command line:** `[--mutate|-m] src/**/*.js,a.js`
-**Config file:** `mutate: ['src/**/*.js', 'a.js']`  
-**Default value:** *none*  
-**Mandatory**: No  
-**Description:**  
+### `mutate` [`string[]`]
+
+Default: *none*  
+Command line: `[--mutate|-m] src/**/*.js,a.js`  
+Config file: `mutate: ['src/**/*.js', 'a.js']` 
+  
 With `mutate` you configure the subset of files to use for mutation testing. 
 Generally speaking, these should be your own source files.  
 This is optional, as you can choose to not mutate any files at all and perform a dry-run (running only your tests without mutating). 
 
-#### Test runner  
-**Command line:** `--testRunner karma`  
-**Config file:** `testRunner: 'karma'`  
-**Default value:** `'command'`  
-**Mandatory**: No  
-**Description:**  
+### `testRunner` [`string`]
+
+Default: `'command'`  
+Command line: `--testRunner karma`  
+Config file: `testRunner: 'karma'`  
+
 With `testRunner` you specify the test runner that Stryker uses to run your tests. The default value is `command`. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the `commandRunner: { command: 'npm run mocha' }`. It uses `npm test` as the command by default. 
 
 The command test runner can be made to work in any use case, but comes with a performance
@@ -111,24 +111,23 @@ If possible, you should try to use one of the test runner plugins that hook into
 For example: install and use the `stryker-karma-runner` to use `karma` as a test runner. 
 See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-date list of supported test runners and plugins.
 
-#### Test framework  
-**Command line:** `--testFramework jasmine`  
-**Config file:** `testFramework: 'jasmine'`  
-**Default value:** *none*  
-**Mandatory**: No  
-**Description:**  
+### `testFramework` [`string`] 
+Default: *none*  
+Command line: `--testFramework jasmine`  
+Config file: `testFramework: 'jasmine'`  
+
 Configure which test framework you are using. 
 This option is not mandatory, as Stryker is test framework agnostic (it doesn't care what framework you use), 
 However, it is required when `coverageAnalysis` is set to `'perTest'`, because Stryker needs to hook into the test framework in order to measure code coverage results per test and filter tests to run.
 
 Make sure the a plugin is installed for your chosen test framework. E.g. install `stryker-mocha-framework` to use `'mocha'` as a test framework.
 
-#### Type of coverage analysis  
-**Full notation:** `--coverageAnalysis perTest`  
-**Config file key:** `coverageAnalysis: 'perTest'`  
-**Default value:** `perTest`  
-**Mandatory**: no  
-**Description:**  
+### `coverageAnalysis` [`string`]
+
+Default: `perTest`  
+Full notation: `--coverageAnalysis perTest`  
+Config file key: `coverageAnalysis: 'perTest'`   
+  
 With `coverageAnalysis` you specify which coverage analysis strategy you want to use.
 
 Stryker can analyse code coverage results. This can potentially speed up mutation testing a lot, as only the tests covering a 
@@ -151,12 +150,11 @@ In addition to requiring your test runner to be able to report the code coverage
  Currently, `stryker-mocha-runner` as well as `stryker-karma-runner` support this. However, `stryker-karma-runner` support is limited to using it with `Jasmine` as the test framework 
  (`Mocha` is not yet supported).
 
-#### Mutator 
-**Command line:** `--mutator es5`  
-**Config file:** `mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
-**Default value:** `es5`  
-**Mandatory**: no  
-**Description:**  
+### `mutator` [`object` | `string`]
+Default: `es5`  
+Command line: `--mutator es5`  
+Config file:  `mutator: 'es5' | mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
+
 With `mutator` you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.  
 The mutator plugin name defaults to `es5` if not specified. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.  
 The full list of mutation types varies slightly between mutators (for example, the `es5` mutator will not use the same mutation types as the `typescript` mutator). Mutation type names are case-sensitive, and can be found either in the source code or in a generated Stryker report.  
@@ -168,19 +166,19 @@ When using the config file, you can provide either a string representing the mut
    * The `name` property is mandatory and contains the name of the mutator plugin to use.  
    * The `excludedMutations` property is mandatory and contains the types of mutations to exclude from the test run.  
 
-#### Transpilers  
-**Config file:** `transpilers: '['typescript']'`  
-**Default value:** `[ ]`  
-**Mandatory**: no  
-**Description:**  
+###  `transpilers` [`string[]`]
+
+Default: `[]`
+
 With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.  
 
-#### Reporters  
-**Command line:** `--reporters clear-text,progress,dots,dashboard`  
-**Config file:** `reporters: ['clear-text', 'progress', 'dots', 'dashboard']`     
-**Default value:** `['clear-text', 'progress']`  
-**Mandatory**: no  
-**Description:**  
+
+### `reporters` [`string[]`] 
+
+Default: `['clear-text', 'progress']`  
+Command line: `--reporters clear-text,progress,dots,dashboard`  
+Config file: `reporters: ['clear-text', 'progress', 'dots', 'dashboard']`     
+ 
 With `reporters` you can set the reporters for stryker to use.
 These reporters can be used out of the box: `clear-text`, `progress`, `dots`, `dashboard` and `event-recorder`.
 By default `clear-text` and `progress` are active if no reporters are configured.
@@ -202,12 +200,13 @@ You will need to pass the `STRYKER_DASHBOARD_API_KEY` environment variable yours
 * [Travis documentation](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables)
 * [CircleCI documentation](https://circleci.com/security/#secrets_section)
   
-#### Files in the sandbox
-**Command line:** `[--files|-f] src/**/*.js,a.js,test/**/*.js`  
-**Config file:** `files: ['src/**/*.js', '!src/**/index.js', 'test/**/*.js']`  
-**Default value:** result of `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`  
-**Mandatory:** No  
-**Description:**  
+### `files` [`string[]`]
+
+Default: result of `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`  
+Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`  
+Config file: `files: ['src/**/*.js', '!src/**/index.js', 'test/**/*.js']`  
+ 
+  
 With `files` you can choose which files should be included in your test runner sandbox. 
 This is normally not needed as it defaults to all files not ignored by git. 
 Try it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.
@@ -220,12 +219,13 @@ When using the config file you can provide an array with `string`s
 
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
-#### Symlink node modules in the sandbox
-**Command line:** *none*  
-**Config file:** `symlinkNodeModules: true`  
-**Default value:** `true`  
-**Mandatory:** No  
-**Description:**  
+### `symlinkNodeModules` [`boolean`]
+
+Default: `true`  
+Command line: *none*  
+Config file: `symlinkNodeModules: true`  
+ 
+  
 The `symlinkNodeModules` value indicates whether or not Stryker should create a [symbolic link](https://nodejs.org/api/fs.html#fs_fs_symlink_target_path_type_callback) 
 to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave 
 more like your would run the tests yourself in your project directory.
@@ -239,34 +239,37 @@ node_modules directory this would not be possible.
 Stryker will look for the node_modules directory to use in the current basePath (or current working directory) and 
 its parent directories.
 
-#### Plugins  
-**Command line:** `--plugins stryker-html-reporter,stryker-karma-runner`  
-**Config file:** `plugins: ['stryker-html-reporter', 'stryker-karma-runner']`  
-**Default value:** `['stryker-*']`  
-**Mandatory**: no  
-**Description:**  
+### `plugins` [`string[]`]  
+
+Default: `['stryker-*']`  
+Command line: `--plugins stryker-html-reporter,stryker-karma-runner`  
+Config file: `plugins: ['stryker-html-reporter', 'stryker-karma-runner']`  
+ 
+  
 With `plugins` you can add additional Node modules for Stryker to load (or `require`).
 By default, all `node_modules` starting with `stryker-` will be loaded, so you would normally not need to specify this option.
 These modules should be installed right next to stryker. For a current list of plugins,
 you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or 
 [stryker-mutator.io](https://stryker-mutator.io).
 
-#### Start of port range for test runners
-**Command line:** `--port 9234`  
-**Config file:** `port: 9234`    
-**Default value:** `9234`  
-**Mandatory**: no  
-**Description:**  
+### `port` [`number`]
+
+Default: `9234`  
+Command line: `--port 9234`  
+Config file: `port: 9234`    
+ 
+  
 With `port` you specify the first port to pass on to the test runner to use. Any additional test runners will be spawned using ports n+1, n+2, etc.
 For example, when you set to use port 9234 and Stryker decides to start four test runner processes, ports 9234, 9235, 9236 and 9237 will be passed to the test runner.  
 If the test runner decides to use the port it should be available for use.
 
-#### Global timeout in milliseconds  
-**Command line:** `--timeoutMS 5000`  
-**Config file:** `timeoutMS: 5000`  
-**Default value:** `5000`  
-**Mandatory**: no  
-**Description:**  
+### `timeoutMS` [`number`]
+
+Default: `5000`  
+Command line: `--timeoutMS 5000`  
+Config file: `timeoutMS: 5000`  
+ 
+  
 When Stryker is mutating code, it cannot determine indefinitely whether or not a code mutation results in an infinite loop (see [Halting problem](https://en.wikipedia.org/wiki/Halting_problem)).
 In order to battle infinite loops, a test run gets killed after a certain period of time. This period is configurable with two settings: `timeoutMS` and `timeoutFactor`. 
 To calculate the actual timeout in milliseconds the, following formula is used:
@@ -280,20 +283,20 @@ Both `netTimeMs` and `overheadMs` are calculated during the initial test run. Th
 With `timeoutFactor` you can configure the allowed deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops.
 `timeoutMS` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.
 
-#### Timeout factor  
-**Command line:** `--timeoutFactor 1.5`  
-**Config file:** `timeoutFactor: 1.5`  
-**Default value:** `1.5`  
-**Mandatory**: no  
-**Description:**  
+### `timeoutFactor` [`number`]
+
+Default: `1.5`  
+Command line: `--timeoutFactor 1.5`  
+Config file: `timeoutFactor: 1.5`  
+ 
 See [Timeout in milliseconds](#Timeout-in-milliseconds).
 
-#### Number of maximum concurrent test runners  
-**Command line:** `--maxConcurrentTestRunners 3`  
-**Config file:** `maxConcurrentTestRunners: 3`  
-**Default value:** number of CPU cores
-**Mandatory**: no  
-**Description:**  
+### `maxConcurrentTestRunners` [`number`] 
+
+Default: `(number of CPU Cores)`  
+Command line: `--maxConcurrentTestRunners 3`  
+Config file: `maxConcurrentTestRunners: 3`   
+  
 Specifies the maximum number of concurrent test runners to spawn.  
 Mutation testing is time consuming. By default Stryker tries to make the most of your CPU, by spawning as many test runners as you have CPU cores.  
 This setting allows you to override this default behavior.
@@ -304,11 +307,13 @@ Reasons you might want to lower this setting:
 * You're running on a shared server and/or
 * Your hard disk cannot handle the I/O of all test runners
 
-#### Thresholds for mutation score  
-**Config file:** `thresholds: { high: 80, low: 60, break: null }`  
-**Default value:** `{ high: 80, low: 60, break: null }`  
-**Mandatory**: no  
-**Description**  
+### `thresholds` [`object`]
+
+Default: `{ high: 80, low: 60, break: null }`   
+Command line: *none*  
+Config file: `thresholds: { high: 80, low: 60, break: null }` 
+ 
+Description  
 Specify the thresholds for mutation score. 
 
 * `mutation score >= high`: Awesome! Reporters should color this green and happy.
@@ -318,21 +323,22 @@ Specify the thresholds for mutation score.
 
 It is not allowed to only supply one value of the values (it's all or nothing). However, `high` and `low` values can be the same, making sure colors are either red or green. Set `break` to `null` (default) to never let your build fail.
 
-#### Log level  
-**Command line:** `--logLevel info`    
-**Config file:** `logLevel: 'info'`
-**Default value:** `info`  
-**Mandatory**: no 
-**Description:**  
+### `logLevel` [`string`] 
+
+Default: `info`  
+Command line: `--logLevel info`    
+Config file: `logLevel: 'info'`
+
+  
  Set the log level that Stryker uses to write to the console. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
 
  *Note*: Test runners are run as child processes of the Stryker Node process. All output (stdout) of the `testRunner` is logged as `trace`.  
  Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
 
-#### File log level  
-**Command line:** `--fileLogLevel info`    
-**Config file:** `fileLogLevel: 'info'`
-**Default value:** `off`  
-**Mandatory**: no 
-**Description:**  
+### `fileLogLevel` [`string`] 
+
+Default: `off`  
+Command line: `--fileLogLevel info`    
+Config file: `fileLogLevel: 'info'`
+  
  Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
