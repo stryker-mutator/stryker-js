@@ -116,11 +116,11 @@ export default class MochaTestRunner implements TestRunner {
 
   private additionalRequires() {
     if (this.mochaRunnerOptions.require) {
-      const stuffToRequire = this.mochaRunnerOptions.require
-        .map(theModule => {
-          return theModule.startsWith('.') ? path.resolve(theModule) : theModule;
+      const modulesToRequire = this.mochaRunnerOptions.require
+        .map(module => {
+          return module.startsWith('.') ? path.resolve(module) : module;
         });
-      stuffToRequire.forEach(LibWrapper.require);
+      modulesToRequire.forEach(LibWrapper.require);
     }
   }
 }

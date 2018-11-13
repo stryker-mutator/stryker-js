@@ -38,15 +38,15 @@ describe('MochaOptionsLoader', () => {
     expect(fs.readFileSync).calledWith(path.resolve('some/mocha.opts/file'));
   });
 
-  it('should throw an error if specified mocha.opts file doesn\'t exist', () => {
+  it('should log an error if specified mocha.opts file doesn\'t exist', () => {
     readFileStub.returns('');
     existsFileStub.returns(false);
     config.mochaOptions = {
       opts: 'some/mocha.opts/file'
     };
 
-    const loadFn = () => sut.load(config);
-    expect(loadFn).throws(`Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`);
+    sut.load(config);
+    expect(log.error).calledWith(`Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`);
   });
 
   it('should load default mocha.opts file if not specified', () => {

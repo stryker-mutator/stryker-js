@@ -13,7 +13,7 @@ export default class MochaOptionsLoader {
     const mochaOptions = Object.assign({}, config[mochaOptionsKey]) as MochaRunnerOptions;
     let optsFileName = path.resolve(this.DEFAULT_MOCHA_OPTS);
 
-    if (mochaOptions && mochaOptions.opts) {
+    if (mochaOptions.opts) {
       optsFileName = path.resolve(mochaOptions.opts);
     }
 
@@ -21,10 +21,8 @@ export default class MochaOptionsLoader {
       this.log.info(`Loading mochaOpts from "${optsFileName}"`);
       const options = fs.readFileSync(optsFileName, 'utf8');
       return Object.assign(this.parseOptsFile(options), mochaOptions);
-    }
-
-    if (mochaOptions && mochaOptions.opts) {
-      throw new Error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
+    } else if (mochaOptions.opts) {
+      this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
     } else {
       this.log.debug('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', mochaOptionsKey);
     }
