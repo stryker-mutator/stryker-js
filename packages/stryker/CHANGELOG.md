@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.32.0"></a>
+# [0.32.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.31.0...stryker@0.32.0) (2018-11-13)
+
+
+### Features
+
+* **error debugging:** add remark to run again with loglevel trace ([#1231](https://github.com/stryker-mutator/stryker/issues/1231)) ([c9e3d97](https://github.com/stryker-mutator/stryker/commit/c9e3d97)), closes [#1205](https://github.com/stryker-mutator/stryker/issues/1205)
+
+
+
+
 <a name="0.31.0"></a>
 # [0.31.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.30.1...stryker@0.31.0) (2018-11-07)
 

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.2.10"></a>
+## [0.2.10](https://github.com/stryker-mutator/stryker/compare/stryker-vue-mutator@0.2.9...stryker-vue-mutator@0.2.10) (2018-11-13)
+
+
+
+
+**Note:** Version bump only for package stryker-vue-mutator
+
 <a name="0.2.9"></a>
 ## [0.2.9](https://github.com/stryker-mutator/stryker/compare/stryker-vue-mutator@0.2.8...stryker-vue-mutator@0.2.9) (2018-11-07)
 

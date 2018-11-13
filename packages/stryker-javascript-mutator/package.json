@@ -1,6 +1,6 @@
 {
   "name": "stryker-javascript-mutator",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "description": "A plugin for javascript projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -49,7 +49,7 @@
     "@types/babel__generator": "^7.0.0",
     "@types/babel__parser": "^7.0.0",
     "@types/babel__traverse": "^7.0.0",
-    "stryker-api": "^0.21.4",
+    "stryker-api": "^0.21.5",
     "stryker-mutator-specification": "^0.6.0"
   },
   "peerDependencies": {

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.15.4"></a>
+## [0.15.4](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.15.3...stryker-typescript@0.15.4) (2018-11-13)
+
+
+
+
+**Note:** Version bump only for package stryker-typescript
+
 <a name="0.15.3"></a>
 ## [0.15.3](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.15.2...stryker-typescript@0.15.3) (2018-11-07)
 
