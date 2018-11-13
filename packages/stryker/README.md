@@ -153,7 +153,7 @@ In addition to requiring your test runner to be able to report the code coverage
 ### `mutator` [`object` | `string`]
 Default: `es5`  
 Command line: `--mutator es5`  
-Config file:  `mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] } | mutator: typescript`  
+Config file:  `mutator: 'es5' | mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
 
 With `mutator` you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.  
 The mutator plugin name defaults to `es5` if not specified. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.  
@@ -310,7 +310,7 @@ Reasons you might want to lower this setting:
 ### `thresholds` [`object`]
 
 Default: `{ high: 80, low: 60, break: null }`   
-Command line: `*none*`  
+Command line: *none*  
 Config file: `thresholds: { high: 80, low: 60, break: null }` 
  
 Description  
