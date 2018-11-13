@@ -10,6 +10,7 @@ import { logger, Mock } from '../helpers/mockHelpers';
 describe('MochaOptionsLoader', () => {
 
   let readFileStub: sinon.SinonStub;
+  let existsFileStub: sinon.SinonStub;
   let config: Config;
   let sut: MochaOptionsLoader;
   let log: Mock<logging.Logger>;
@@ -18,6 +19,7 @@ describe('MochaOptionsLoader', () => {
     log = logger();
     sandbox.stub(logging, 'getLogger').returns(log);
     readFileStub = sandbox.stub(fs, 'readFileSync');
+    existsFileStub = sandbox.stub(fs, 'existsSync').returns(true);
     sut = new MochaOptionsLoader();
     config = new Config();
   });
@@ -36,10 +38,29 @@ describe('MochaOptionsLoader', () => {
     expect(fs.readFileSync).calledWith(path.resolve('some/mocha.opts/file'));
   });
 
-  it('should not load a mocha.opts file if not specified', () => {
+  it('should log an error if specified mocha.opts file doesn\'t exist', () => {
+    readFileStub.returns('');
+    existsFileStub.returns(false);
+    config.mochaOptions = {
+      opts: 'some/mocha.opts/file'
+    };
+
+    sut.load(config);
+    expect(log.error).calledWith(`Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`);
+  });
+
+  it('should load default mocha.opts file if not specified', () => {
+    readFileStub.returns('');
+    sut.load(config);
+    expect(log.info).calledWith(`Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`);
+    expect(fs.readFileSync).calledWith(path.resolve('test/mocha.opts'));
+  });
+
+  it('should not load default mocha.opts file if not found', () => {
+    existsFileStub.returns(false);
     const options = sut.load(config);
     expect(options).deep.eq({});
-    expect(log.debug).calledWith('No mocha opts file specified, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
+    expect(log.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
   });
 
   it('should load `--require` and `-r` properties if specified in mocha.opts file', () => {

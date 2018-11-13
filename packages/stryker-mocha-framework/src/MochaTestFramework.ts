@@ -17,6 +17,7 @@ export default class MochaTestFramework implements TestFramework {
   public filter(testSelections: TestSelection[]) {
     const selectedTestNames = testSelections.map(selection => selection.name);
     return `var Mocha = window.Mocha || require('mocha');
+      var describe = Mocha.describe;
       var selectedTestNames = ${JSON.stringify(selectedTestNames)};
       if (window.____mochaAddTest) {
         Mocha.Suite.prototype.addTest = window.____mochaAddTest;
