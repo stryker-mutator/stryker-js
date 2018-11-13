@@ -22,13 +22,13 @@ describe('JestPromiseTestAdapter', () => {
   });
 
   it('should set reporters to an empty array', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot, true);
 
     expect(jestConfig.reporters).to.be.an('array').that.is.empty;
   });
 
   it('should call the runCLI method with the correct projectRoot', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot, true);
 
     assert(runCLIStub.calledWith({
       config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
@@ -38,7 +38,7 @@ describe('JestPromiseTestAdapter', () => {
   });
 
   it('should call the runCLI method and return the test result', async () => {
-    const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+    const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot, true);
 
     expect(result).to.deep.equal({
       config: {
@@ -51,7 +51,7 @@ describe('JestPromiseTestAdapter', () => {
   });
 
   it('should trace log a message when jest is invoked', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot, true);
 
     const expectedResult: any = JSON.parse(JSON.stringify(jestConfig));
     expectedResult.reporters = [];

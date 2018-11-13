@@ -7,6 +7,7 @@ export default class JestTestRunner implements TestRunner {
   private readonly log = getLogger(JestTestRunner.name);
   private readonly jestConfig: jest.Configuration;
   private readonly processEnvRef: NodeJS.ProcessEnv;
+  private readonly enableFindRelatedTests: boolean;
 
   public constructor(options: RunnerOptions, processEnvRef?: NodeJS.ProcessEnv) {
     // Make sure process can be mocked by tests by passing it in the constructor
@@ -14,6 +15,12 @@ export default class JestTestRunner implements TestRunner {
 
     // Get jest configuration from stryker options and assign it to jestConfig
     this.jestConfig = options.strykerOptions.jest.config;
+
+    // Get enableFindRelatedTests from stryker jest options or default to true
+    this.enableFindRelatedTests = options.strykerOptions.jest.enableFindRelatedTests;
+    if (this.enableFindRelatedTests === undefined) {
+      this.enableFindRelatedTests = true;
+    }
 
     // basePath will be used in future releases of Stryker as a way to define the project root
     // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
@@ -27,7 +34,7 @@ export default class JestTestRunner implements TestRunner {
 
     const jestTestRunner = JestTestAdapterFactory.getJestTestAdapter();
 
-    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd(), options && options.mutatedFileName);
+    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd(), this.enableFindRelatedTests, options && options.mutatedFileName);
 
     // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
     const errorMessages = results.testResults.map((testSuite: jest.TestResult) => testSuite.failureMessage).filter(errorMessage => (errorMessage)) as string[];
