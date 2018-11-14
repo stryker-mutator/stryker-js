@@ -29,6 +29,7 @@ export default class KarmaTestRunner implements TestRunner {
     this.starter = new ProjectStarter(setup.projectType);
     this.setGlobals(setup, options.port);
     this.cleanRun();
+    this.listenToServerStart();
     this.listenToRunComplete();
     this.listenToSpecComplete();
     this.listenToCoverage();
@@ -94,6 +95,12 @@ export default class KarmaTestRunner implements TestRunner {
   private listenToSpecComplete() {
     StrykerReporter.instance.on('test_result', (testResult: TestResult) => {
       this.currentTestResults.push(testResult);
+    });
+  }
+
+  private listenToServerStart() {
+    StrykerReporter.instance.on('server_start', (port: number) => {
+      this.options.port = port;
     });
   }
 

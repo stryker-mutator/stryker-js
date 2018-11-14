@@ -98,6 +98,16 @@ describe('StrykerReporter', () => {
     });
   });
 
+  describe('onListening', () => {
+    it('should emit "server_start" with port', () => {
+      const port = 1924;
+      const events = listenTo('server_start');
+      sut.onListening(port);
+      expect(events()).lengthOf(1);
+      expect(events()[0]).eq(port);
+    });
+  });
+
   describe('onBrowserComplete', () => {
     it('should emit "coverage_report"', () => {
       const events = listenTo('coverage_report');
