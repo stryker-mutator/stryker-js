@@ -39,7 +39,7 @@
     "@types/semver": "~5.5.0",
     "jasmine-core": "~3.3.0",
     "karma": "~3.1.1",
-    "karma-jasmine": "~1.1.2",
+    "karma-jasmine": "~2.0.0",
     "karma-phantomjs-launcher": "~1.0.4",
     "stryker-api": "^0.21.5",
     "stryker-jasmine": "^0.10.6"
