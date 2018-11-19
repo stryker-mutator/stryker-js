@@ -81,7 +81,7 @@
     "@types/inquirer": "~0.0.42",
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/node": "~10.11.4",
-    "@types/prettier": "~1.13.1",
+    "@types/prettier": "~1.15.1",
     "@types/progress": "~2.0.1",
     "stryker-api": "^0.21.5"
   },
