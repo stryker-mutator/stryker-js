@@ -238,4 +238,33 @@ describe('KarmaTestRunner', () => {
       return true;
     }));
   });
+
+  describe('when specified port is not available', () => {
+
+    before(() => {
+      const testRunnerOptions: RunnerOptions = {
+        fileNames: [],
+        port: 9882,
+        strykerOptions: {
+          karma: {
+            config: {
+              files: [
+                'testResources/sampleProject/src-instrumented/Add.js',
+                'testResources/sampleProject/test/AddSpec.js'
+              ]
+            }
+          }
+        }
+      };
+      sut = new KarmaTestRunner(testRunnerOptions);
+      return sut.init();
+    });
+
+    it('should choose different port automatically and report Complete without errors', () => {
+      return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
+        expect(runResult.status, JSON.stringify(runResult.errorMessages)).to.be.eq(RunStatus.Complete);
+        return true;
+      });
+    });
+  });
 });
