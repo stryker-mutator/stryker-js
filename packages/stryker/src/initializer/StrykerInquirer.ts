@@ -1,6 +1,7 @@
 import * as inquirer from 'inquirer';
 import PromptOption from './PromptOption';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
+import PresetOption from './PresetOption';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];
@@ -8,6 +9,19 @@ export interface PromptResult {
 }
 
 export class StrykerInquirer {
+
+  public async promptPresets(options: PresetOption[]): Promise<PresetOption> {
+    const choices: inquirer.ChoiceType[] = options.map(_ => _.name);
+    choices.push(new inquirer.Separator());
+    choices.push('none');
+    const answers = await inquirer.prompt<{ preset: string }>({
+      choices,
+      message: 'Are you using one of these frameworks? Then select a preset configuration.',
+      name: 'preset',
+      type: 'list'
+    });
+    return options.filter(_ => _.name === answers.preset)[0];
+  }
 
   public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
     const choices: inquirer.ChoiceType[] = options.map(_ => _.name);

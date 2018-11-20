@@ -3,6 +3,7 @@ import { fsAsPromised } from '@stryker-mutator/util';
 import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
 import PromptOption from './PromptOption';
+import PresetOption from './PresetOption';
 import { format } from 'prettier';
 
 const STRYKER_CONFIG_FILE = 'stryker.conf.js';
@@ -47,6 +48,11 @@ export default class StrykerConfigWriter {
     return this.writeStrykerConfig(configObject);
   }
 
+  public async writePreset(preset: PresetOption) {
+    const stream = await fsAsPromised.readFile(`presets/${preset.file}`);
+    return this.writeStrykerConfigRaw(stream.toString());
+  }
+
   private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {
     if (selectedTestFramework) {
       configObject.testFramework = selectedTestFramework.name;
@@ -56,9 +62,13 @@ export default class StrykerConfigWriter {
     }
   }
 
-  private writeStrykerConfig(configObject: Partial<StrykerOptions>) {
+  private writeStrykerConfigRaw(rawString: string) {
     this.out('Writing stryker.conf.js...');
-    return fsAsPromised.writeFile(STRYKER_CONFIG_FILE, this.wrapInModule(configObject));
+    return fsAsPromised.writeFile(STRYKER_CONFIG_FILE, rawString);
+  }
+
+  private writeStrykerConfig(configObject: Partial<StrykerOptions>) {
+    return this.writeStrykerConfigRaw(this.wrapInModule(configObject));
   }
 
   private wrapInModule(configObject: Partial<StrykerOptions>) {

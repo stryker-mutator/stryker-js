@@ -6,6 +6,8 @@ import { getLogger } from 'stryker-api/logging';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
+import { fsAsPromised } from '@stryker-mutator/util';
+import PresetOption from './PresetOption';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -27,26 +29,32 @@ export default class StrykerInitializer {
     const configWriter = new StrykerConfigWriter(this.out);
     configWriter.guardForExistingConfig();
     this.patchProxies();
-    const selectedTestRunner = await this.selectTestRunner();
-    const selectedTestFramework = selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name)
-      ? await this.selectTestFramework(selectedTestRunner) : null;
-    const selectedMutator = await this.selectMutator();
-    const selectedTranspilers = await this.selectTranspilers();
-    const selectedReporters = await this.selectReporters();
-    const selectedPackageManager = await this.selectPackageManager();
-    const npmDependencies = this.getSelectedNpmDependencies(
-      [selectedTestRunner, selectedTestFramework, selectedMutator]
-        .concat(selectedTranspilers)
-        .concat(selectedReporters)
-    );
-    await configWriter.write(selectedTestRunner,
-      selectedTestFramework,
-      selectedMutator,
-      selectedTranspilers,
-      selectedReporters,
-      selectedPackageManager,
-      await this.fetchAdditionalConfig(npmDependencies));
-    this.installNpmDependencies(npmDependencies, selectedPackageManager);
+    const selectedPreset = await this.selectPreset();
+    if (selectedPreset) {
+      await configWriter.writePreset(selectedPreset);
+    }
+    else {
+      const selectedTestRunner = await this.selectTestRunner();
+      const selectedTestFramework = selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name)
+        ? await this.selectTestFramework(selectedTestRunner) : null;
+      const selectedMutator = await this.selectMutator();
+      const selectedTranspilers = await this.selectTranspilers();
+      const selectedReporters = await this.selectReporters();
+      const selectedPackageManager = await this.selectPackageManager();
+      const npmDependencies = this.getSelectedNpmDependencies(
+        [selectedTestRunner, selectedTestFramework, selectedMutator]
+          .concat(selectedTranspilers)
+          .concat(selectedReporters)
+      );
+      await configWriter.write(selectedTestRunner,
+        selectedTestFramework,
+        selectedMutator,
+        selectedTranspilers,
+        selectedReporters,
+        selectedPackageManager,
+        await this.fetchAdditionalConfig(npmDependencies));
+      this.installNpmDependencies(npmDependencies, selectedPackageManager);
+    }
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
@@ -63,6 +71,22 @@ export default class StrykerInitializer {
     };
     copyEnvVariable('http_proxy', 'HTTP_PROXY');
     copyEnvVariable('https_proxy', 'HTTPS_PROXY');
+  }
+
+  private async selectPreset(): Promise<PresetOption | null> {
+    if (fsAsPromised.existsSync('presets')) {
+      const files: string[] = await fsAsPromised.readdir('presets');
+      if (files.length) {
+        const presetOptions: PresetOption[] = files.map(file => ({ name: file.split('.')[0], file}));
+        this.log.debug(`Found presets runners: ${JSON.stringify(presetOptions)}`);
+        return this.inquirer.promptPresets(presetOptions);
+      } else {
+        this.log.debug('The presets folder is empty. Reverting to custom configuration.');
+      }
+    } else {
+      this.log.debug('No presets folder defined. Reverting to custom configuration.');
+    }
+    return null;
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {

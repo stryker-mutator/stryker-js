@@ -14,6 +14,8 @@ describe('StrykerInitializer', () => {
   let sut: StrykerInitializer;
   let inquirerPrompt: sinon.SinonStub;
   let childExecSync: sinon.SinonStub;
+  let fsReaddir: sinon.SinonStub;
+  let fsReadFile: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStub;
   let fsExistsSync: sinon.SinonStub;
   let restClientPackageGet: sinon.SinonStub;
@@ -25,6 +27,8 @@ describe('StrykerInitializer', () => {
     out = sandbox.stub();
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
+    fsReaddir = sandbox.stub(fsAsPromised, 'readdir');
+    fsReadFile = sandbox.stub(fsAsPromised, 'readFile');
     fsWriteFile = sandbox.stub(fsAsPromised, 'writeFile');
     fsExistsSync = sandbox.stub(fsAsPromised, 'existsSync');
     restClientSearchGet = sandbox.stub();
@@ -67,9 +71,11 @@ describe('StrykerInitializer', () => {
         'stryker-webpack': null
       });
       fsWriteFile.resolves({});
+      fsExistsSync.withArgs('presets').resolves(true);
+      fsReaddir.withArgs('presets').resolves(['awesome-preset.conf.txt']);
     });
 
-    it('should prompt for test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
+    it('should prompt for preset, test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
       arrangeAnswers({
         mutator: 'typescript',
         packageManager: 'yarn',
@@ -79,15 +85,19 @@ describe('StrykerInitializer', () => {
         transpilers: ['webpack']
       });
       await sut.initialize();
-      expect(inquirerPrompt).to.have.been.callCount(6);
-      const [promptTestRunner, promptTestFramework, promptMutator, promptTranspilers, promptReporters, promptPackageManagers]: inquirer.Question[] = [
+      expect(inquirerPrompt).to.have.been.callCount(7);
+      const [promptPreset, promptTestRunner, promptTestFramework, promptMutator, promptTranspilers, promptReporters, promptPackageManagers]: inquirer.Question[] = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
         inquirerPrompt.getCall(3).args[0],
         inquirerPrompt.getCall(4).args[0],
-        inquirerPrompt.getCall(5).args[0]
+        inquirerPrompt.getCall(5).args[0],
+        inquirerPrompt.getCall(6).args[0],
       ];
+      expect(promptPreset.type).to.eq('list');
+      expect(promptPreset.name).to.eq('preset');
+      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'none']);
       expect(promptTestRunner.type).to.eq('list');
       expect(promptTestRunner.name).to.eq('testRunner');
       expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', new inquirer.Separator(), 'command']);
@@ -101,6 +111,27 @@ describe('StrykerInitializer', () => {
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
       expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
+    });
+
+    it('should immediately complete when a preset is chosen', async () => {
+      fsReadFile.withArgs(`presets/awesome-preset.conf.txt`).resolves('');
+      inquirerPrompt.resolves({
+        preset: 'awesome-preset'
+      });
+      await sut.initialize();
+      expect(inquirerPrompt).to.have.been.callCount(1);
+      expect(out).to.have.been.calledWith('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
+      expect(out).to.have.been.calledWith('Let\'s kill some mutants with this command: `stryker run`');
+    });
+
+    it('should correctly load a preset', async () => {
+      const fileData = 'config-data';
+      fsReadFile.withArgs(`presets/awesome-preset.conf.txt`).resolves(fileData);
+      inquirerPrompt.resolves({
+        preset: 'awesome-preset'
+      });
+      await sut.initialize();
+      expect(fsWriteFile).to.have.been.calledOnceWith('stryker.conf.js', fileData);
     });
 
     it('should not prompt for testFramework if test runner is "command"', async () => {
@@ -118,7 +149,7 @@ describe('StrykerInitializer', () => {
         transpilers: ['webpack']
       });
       await sut.initialize();
-      expect(inquirerPrompt).to.have.been.callCount(6);
+      expect(inquirerPrompt).to.have.been.callCount(7);
       expect(out).to.have.been.calledWith('OK, downgrading coverageAnalysis to "all"');
       expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('coverageAnalysis: "all"'));
     });
@@ -182,7 +213,7 @@ describe('StrykerInitializer', () => {
       it('should not prompt for test framework', async () => {
         await sut.initialize();
 
-        expect(inquirerPrompt).to.have.been.callCount(5);
+        expect(inquirerPrompt).to.have.been.callCount(6);
         expect(inquirerPrompt).not.calledWithMatch(sinon.match({ name: 'testFramework' }));
       });
 
@@ -228,22 +259,22 @@ describe('StrykerInitializer', () => {
   describe('initialize() when no internet', () => {
 
     it('should log error and continue when fetching test runners', async () => {
-      restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
-      stubMutators('stryker-javascript');
-      stubTranspilers('stryker-webpack');
-      stubReporters();
-      stubPackageClient({ 'stryker-javascript': null, 'stryker-webpack': null });
-      inquirerPrompt.resolves({
-        packageManager: 'npm',
-        reporters: ['clear-text'],
-        transpilers: ['webpack']
-      });
+        restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
+        stubMutators('stryker-javascript');
+        stubTranspilers('stryker-webpack');
+        stubReporters();
+        stubPackageClient({ 'stryker-javascript': null, 'stryker-webpack': null });
+        inquirerPrompt.resolves({
+          packageManager: 'npm',
+          reporters: ['clear-text'],
+          transpilers: ['webpack']
+        });
 
-      await sut.initialize();
+        await sut.initialize();
 
-      expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-runner). Please check your internet connection.');
-      expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
-      expect(fsAsPromised.writeFile).to.have.been.called;
+        expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-runner). Please check your internet connection.');
+        expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
+        expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
     it('should log error and continue when fetching test frameworks', async () => {
@@ -418,6 +449,7 @@ describe('StrykerInitializer', () => {
   };
 
   interface StrykerInitAnswers {
+    preset: string | null;
     testFramework: string;
     testRunner: string;
     mutator: string;
@@ -430,6 +462,7 @@ describe('StrykerInitializer', () => {
     const answers: StrykerInitAnswers = Object.assign({
       mutator: 'typescript',
       packageManager: 'yarn',
+      preset: null,
       reporters: ['dimension', 'mars'],
       testFramework: 'awesome',
       testRunner: 'awesome',
