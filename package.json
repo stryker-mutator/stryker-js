@@ -15,7 +15,7 @@
     "@types/mkdirp": "^0.5.2",
     "@types/mocha": "^2.2.44",
     "@types/rimraf": "2.0.2",
-    "@types/sinon": "5.0.5",
+    "@types/sinon": "5.0.6",
     "@types/sinon-chai": "^3.2.0",
     "browserify": "^16.2.0",
     "chai": "^4.1.1",
