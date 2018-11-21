@@ -13,8 +13,21 @@
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js",
-        "${workspaceRoot}/../../node_modules/web-component-tester/**/*.js"
+        "${workspaceRoot}/src/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "wct-index",
+      "program": "${workspaceRoot}/src/index.js",
+      "env": {
+        "LAUNCHPAD_BROWSERS": "chrome"
+      },
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
       ]
     }
   ]

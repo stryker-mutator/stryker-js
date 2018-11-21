@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <!-- <script src="/components/webcomponentsjs/webcomponents-lite.js"></script>  -->
   <script src="/components/web-component-tester/browser.js"></script> 
-  <link rel="import" href="../src/awesome-element.html">
+  <script src="../src/awesome-element.js"></script>
 </head>
 <body>
   <awesome-element id="fixture"></awesome-element>
   <script>
     suite('<awesome-element>', function() {
-      test('is awesomest', function() {
-        assert.isTrue(document.getElementById('fixture').awesomest);
+      test('is awesome', function() {
+        assert.isTrue(document.getElementById('fixture').isAwesome);
       });
     });
   </script> 
