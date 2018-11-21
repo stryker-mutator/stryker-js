@@ -49,10 +49,16 @@
 			"path": "packages/stryker-webpack-transpiler"
 		},
 		{
+			"path": "packages/stryker-wct-runner"
+		},
+		{
 			"path": "packages/stryker-util"
 		},
 		{
 			"path": "integrationTest"
+		},
+		{
+			"path": "node_modules"
 		}
 	],
 	"settings": {
