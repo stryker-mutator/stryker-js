@@ -29,7 +29,7 @@ describe('LogConfigurator', () => {
       const masterConfig = createMasterConfig(LogLevel.Information, LogLevel.Off, LogLevel.Information);
       delete masterConfig.appenders.file;
       delete masterConfig.appenders.filteredFile;
-      (masterConfig.appenders.all as any).appenders = ['filteredConsole'];
+      (masterConfig.appenders.all as any).appenders = ['filteredConsoleLevel'];
       expect(log4jsConfigure).calledWith(masterConfig);
     });
   });
@@ -89,10 +89,11 @@ describe('LogConfigurator', () => {
     };
     return {
       appenders: {
-        all: { type: require.resolve('../../../src/logging/MultiAppender'), appenders: ['filteredConsole', 'filteredFile'] },
+        all: { type: require.resolve('../../../src/logging/MultiAppender'), appenders: ['filteredConsoleLevel', 'filteredFile'] },
         console: { type: 'stdout', layout: coloredLayout },
         file: { type: 'file', layout: notColoredLayout, filename: 'stryker.log' },
-        filteredConsole: { type: 'logLevelFilter', appender: 'console', level: consoleLevel },
+        filteredConsoleCategory: {type: 'categoryFilter', appender: 'console', exclude: 'log4js' },
+        filteredConsoleLevel: { type: 'logLevelFilter', appender: 'filteredConsoleCategory', level: consoleLevel },
         filteredFile: { type: 'logLevelFilter', appender: 'file', level: fileLevel }
       },
       categories: {

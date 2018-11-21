@@ -9,7 +9,8 @@ enum AppenderName {
   File = 'file',
   FilteredFile = 'filteredFile',
   Console = 'console',
-  FilteredConsole = 'filteredConsole',
+  FilteredConsoleLevel = 'filteredConsoleLevel',
+  FilteredConsoleCategory = 'filteredConsoleCategory',
   All = 'all',
   Server = 'server'
 }
@@ -35,11 +36,13 @@ export default class LogConfigurator {
   private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel): AppendersConfiguration {
 
     // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
-    const multiAppender = { type: require.resolve('./MultiAppender'), appenders: ['filteredConsole'] };
+    const multiAppender = { type: require.resolve('./MultiAppender'), appenders: [AppenderName.FilteredConsoleLevel] };
 
     let allAppenders: AppendersConfiguration = {
       [AppenderName.Console]: { type: 'stdout', layout: layouts.color },
-      [AppenderName.FilteredConsole]: { type: 'logLevelFilter', appender: 'console', level: consoleLogLevel },
+      // Exclude messages like: "ERROR log4js A worker log process hung up unexpectedly" #1245
+      [AppenderName.FilteredConsoleCategory]: {type: 'categoryFilter', appender: AppenderName.Console, exclude: 'log4js' },
+      [AppenderName.FilteredConsoleLevel]: { type: 'logLevelFilter', appender: AppenderName.FilteredConsoleCategory, level: consoleLogLevel },
       [AppenderName.All]: multiAppender,
     };
 
