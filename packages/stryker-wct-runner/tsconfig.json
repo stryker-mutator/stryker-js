@@ -1,9 +1,17 @@
 {
-    "extends": "../../tsconfig.json",
-    "exclude": [
-        "node_modules",
-        "src/**/*.d.ts",
-        "test/**/*.d.ts",
-        "testResources"
-    ]
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl" : "./",
+    "paths": {
+      "web-component-tester/*": [
+        "./typings/web-component-tester/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "src/**/*.d.ts",
+    "test/**/*.d.ts",
+    "testResources"
+  ]
 }
