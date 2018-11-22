@@ -1,6 +1,8 @@
+import StrykerPreset from './presets/StrykerPreset';
+
 interface PresetOption {
   name: string;
-  file: string;
+  create(): StrykerPreset;
 }
 
 export default PresetOption;

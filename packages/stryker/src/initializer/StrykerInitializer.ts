@@ -6,8 +6,8 @@ import { getLogger } from 'stryker-api/logging';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
-import { fsAsPromised } from '@stryker-mutator/util';
 import PresetOption from './PresetOption';
+import StrykerPresets from './StrykerPresets';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -19,7 +19,7 @@ export default class StrykerInitializer {
   private readonly log = getLogger(StrykerInitializer.name);
   private readonly inquirer = new StrykerInquirer();
 
-  constructor(private readonly out = console.log, private readonly client: NpmClient = new NpmClient()) { }
+  constructor(private readonly out = console.log, private readonly client: NpmClient = new NpmClient(), private readonly strykerPresets: PresetOption[] = StrykerPresets) { }
 
   /**
    * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
@@ -31,7 +31,11 @@ export default class StrykerInitializer {
     this.patchProxies();
     const selectedPreset = await this.selectPreset();
     if (selectedPreset) {
-      await configWriter.writePreset(selectedPreset);
+      const selectedPresetInstance = selectedPreset.create();
+      await selectedPresetInstance.prompt();
+      const selectedPackageManager = await this.selectPackageManager();
+      await configWriter.writePreset(selectedPresetInstance);
+      this.installNpmDependencies(selectedPresetInstance.dependencies, selectedPackageManager);
     }
     else {
       const selectedTestRunner = await this.selectTestRunner();
@@ -74,19 +78,14 @@ export default class StrykerInitializer {
   }
 
   private async selectPreset(): Promise<PresetOption | null> {
-    if (fsAsPromised.existsSync('presets')) {
-      const files: string[] = await fsAsPromised.readdir('presets');
-      if (files.length) {
-        const presetOptions: PresetOption[] = files.map(file => ({ name: file.split('.')[0], file}));
-        this.log.debug(`Found presets runners: ${JSON.stringify(presetOptions)}`);
-        return this.inquirer.promptPresets(presetOptions);
-      } else {
-        this.log.debug('The presets folder is empty. Reverting to custom configuration.');
-      }
+    const presetOptions: PresetOption[] = this.strykerPresets;
+    if (presetOptions.length) {
+      this.log.debug(`Found presets: ${JSON.stringify(presetOptions)}`);
+      return this.inquirer.promptPresets(presetOptions);
     } else {
-      this.log.debug('No presets folder defined. Reverting to custom configuration.');
+      this.log.debug('No presets have been configured, reverting to custom configuration');
+      return null;
     }
-    return null;
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {

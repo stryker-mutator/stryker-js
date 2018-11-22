@@ -8,27 +8,31 @@ import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
+import PresetOption from '../../../src/initializer/PresetOption';
+import NpmClient from '../../../src/initializer/NpmClient';
+import { StrykerPresetMock } from '../../helpers/StrykerPresetMock';
+import { format } from 'prettier';
 
 describe('StrykerInitializer', () => {
   let log: Mock<Logger>;
   let sut: StrykerInitializer;
   let inquirerPrompt: sinon.SinonStub;
   let childExecSync: sinon.SinonStub;
-  let fsReaddir: sinon.SinonStub;
-  let fsReadFile: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStub;
   let fsExistsSync: sinon.SinonStub;
   let restClientPackageGet: sinon.SinonStub;
   let restClientSearchGet: sinon.SinonStub;
   let out: sinon.SinonStub;
+  let presets: PresetOption[];
+  let presetMock: StrykerPresetMock;
 
   beforeEach(() => {
     log = currentLogMock();
     out = sandbox.stub();
+    presets = [];
+    presetMock = new StrykerPresetMock();
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
-    fsReaddir = sandbox.stub(fsAsPromised, 'readdir');
-    fsReadFile = sandbox.stub(fsAsPromised, 'readFile');
     fsWriteFile = sandbox.stub(fsAsPromised, 'writeFile');
     fsExistsSync = sandbox.stub(fsAsPromised, 'existsSync');
     restClientSearchGet = sandbox.stub();
@@ -40,7 +44,7 @@ describe('StrykerInitializer', () => {
       .withArgs('npm').returns({
         get: restClientPackageGet
       });
-    sut = new StrykerInitializer(out);
+    sut = new StrykerInitializer(out, new NpmClient(), presets);
   });
 
   afterEach(() => {
@@ -71,8 +75,7 @@ describe('StrykerInitializer', () => {
         'stryker-webpack': null
       });
       fsWriteFile.resolves({});
-      fsExistsSync.withArgs('presets').resolves(true);
-      fsReaddir.withArgs('presets').resolves(['awesome-preset.conf.txt']);
+      presets.push({name: 'awesome-preset', create() { return presetMock; }});
     });
 
     it('should prompt for preset, test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
@@ -113,25 +116,75 @@ describe('StrykerInitializer', () => {
       expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
     });
 
-    it('should immediately complete when a preset is chosen', async () => {
-      fsReadFile.withArgs(`presets/awesome-preset.conf.txt`).resolves('');
+    it('should immediately complete when a preset and package manager is chosen', async () => {
       inquirerPrompt.resolves({
+        packageManager: 'npm',
         preset: 'awesome-preset'
       });
       await sut.initialize();
-      expect(inquirerPrompt).to.have.been.callCount(1);
+      expect(inquirerPrompt).to.have.been.callCount(2);
       expect(out).to.have.been.calledWith('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
       expect(out).to.have.been.calledWith('Let\'s kill some mutants with this command: `stryker run`');
     });
 
-    it('should correctly load a preset', async () => {
-      const fileData = 'config-data';
-      fsReadFile.withArgs(`presets/awesome-preset.conf.txt`).resolves(fileData);
+    it('should correctly load the stryker configuration file', async () => {
+      presetMock.conf = `{
+        'awesome-conf': 'awesome',
+      }`;
+      const expectedOutput = format(`
+        module.exports = function(config){
+          config.set(
+            ${presetMock.conf}
+          );
+        }`, { parser: 'babylon' });
       inquirerPrompt.resolves({
+        packageManager: 'npm',
         preset: 'awesome-preset'
       });
       await sut.initialize();
-      expect(fsWriteFile).to.have.been.calledOnceWith('stryker.conf.js', fileData);
+      expect(fsWriteFile).to.have.been.calledWith('stryker.conf.js', expectedOutput);
+    });
+
+    it('should correctly load dependencies from the preset', async () => {
+      presetMock.dependencies = ['my-awesome-dependency', 'another-awesome-dependency'];
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        preset: 'awesome-preset'
+      });
+      await sut.initialize();
+      expect(fsWriteFile).to.have.been.calledOnce;
+      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker-api my-awesome-dependency another-awesome-dependency', { stdio: [0, 1, 2] });
+    });
+
+    it('should correctly prompt for additional preset-specific options', async () => {
+      presetMock.prompt = async () => {
+        await inquirer.prompt<{ awesome: string }>({
+          choices: ['yes', 'no'],
+          message: 'Are you awesome',
+          name: 'awesome',
+          type: 'list'
+        });
+      };
+      inquirerPrompt.resolves({
+        awesome: 'yes',
+        packageManager: 'npm',
+        preset: 'awesome-preset'
+      });
+      await sut.initialize();
+      expect(inquirerPrompt).to.have.been.callCount(3);
+      const [promptPreset, promptAwesome, promptPackageManager]: inquirer.Question[] = [
+        inquirerPrompt.getCall(0).args[0],
+        inquirerPrompt.getCall(1).args[0],
+        inquirerPrompt.getCall(2).args[0]
+      ];
+      expect(promptPreset.type).to.eq('list');
+      expect(promptPreset.name).to.eq('preset');
+      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'none']);
+      expect(promptAwesome.type).to.eq('list');
+      expect(promptAwesome.name).to.eq('awesome');
+      expect(promptAwesome.choices).to.deep.eq(['yes', 'no']);
+      expect(promptPackageManager.type).to.eq('list');
+      expect(promptPackageManager.choices).to.deep.eq(['npm', 'yarn']);
     });
 
     it('should not prompt for testFramework if test runner is "command"', async () => {
