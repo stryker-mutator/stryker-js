@@ -28,6 +28,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@types/socket.io": "^2.1.0",
     "stryker-api": "^0.21.5"
   },
   "peerDependencies": {
