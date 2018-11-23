@@ -346,7 +346,7 @@ Config file: `fileLogLevel: 'info'`
  ### `allowConsoleColors` [`boolean`] 
 
 Default: `true`  
-Command line: *none*  
+Command line: `--allowConsoleColors true`
 Config file: `allowConsoleColors: true`
   
  The `allowConsoleColors` value indicates whether or not Stryker should use colors in console.
