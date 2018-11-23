@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "suites": ["packages/stryker-wct-runner/testResources/htmlTestSuite/test"],
+  "suites": ["packages/stryker-wct-runner/testResources/garbage/test"],
   "plugins": {
     "local": {
       "browsers": ["chrome"],
@@ -8,5 +8,5 @@
     }
   },
   "npm": true,
-  "root": "../../../.."
+  "root": "../../../../.."
 }

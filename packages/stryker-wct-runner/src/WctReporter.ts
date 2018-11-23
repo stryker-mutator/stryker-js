@@ -3,7 +3,6 @@ import { BrowserDef } from 'web-component-tester/runner/browserrunner';
 import { TestEndData, CompletedState } from 'web-component-tester/runner/clireporter';
 import { TestResult, TestStatus } from 'stryker-api/test_runner';
 
-
 export default class WctReporter {
 
   public results: TestResult[] = [];
