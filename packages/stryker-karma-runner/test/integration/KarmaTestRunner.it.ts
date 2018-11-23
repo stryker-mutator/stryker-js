@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import * as http from 'http';
 import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
@@ -241,10 +242,15 @@ describe('KarmaTestRunner', () => {
 
   describe('when specified port is not available', () => {
 
+    const dummyServer = http.createServer();
+
     before(() => {
+      const port = 9883;
+      dummyServer.listen(port);
+
       const testRunnerOptions: RunnerOptions = {
         fileNames: [],
-        port: 9882,
+        port,
         strykerOptions: {
           karma: {
             config: {
@@ -258,6 +264,10 @@ describe('KarmaTestRunner', () => {
       };
       sut = new KarmaTestRunner(testRunnerOptions);
       return sut.init();
+    });
+
+    after(() => {
+      dummyServer.close();
     });
 
     it('should choose different port automatically and report Complete without errors', () => {
