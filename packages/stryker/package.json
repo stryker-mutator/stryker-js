@@ -82,11 +82,7 @@
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/node": "~10.11.4",
     "@types/prettier": "~1.13.1",
-    "@types/progress": "~2.0.1",
-    "stryker-api": "^0.21.5",
-    "stryker-html-reporter": "^0.16.7",
-    "stryker-karma-runner": "^0.20.2",
-    "stryker-typescript": "^0.15.4"
+    "@types/progress": "~2.0.1"
   },
   "peerDependencies": {
     "stryker-api": ">=0.18.0 <0.22.0"
