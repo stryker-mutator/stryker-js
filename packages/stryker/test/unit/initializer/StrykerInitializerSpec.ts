@@ -10,8 +10,9 @@ import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 import PresetOption from '../../../src/initializer/PresetOption';
 import NpmClient from '../../../src/initializer/NpmClient';
-import { StrykerPresetMock } from '../../helpers/StrykerPresetMock';
 import { format } from 'prettier';
+import { StrykerPresetConfig } from '../../../src/initializer/presets/StrykerConf';
+import StrykerPreset from '../../../src/initializer/presets/StrykerPreset';
 
 describe('StrykerInitializer', () => {
   let log: Mock<Logger>;
@@ -128,13 +129,13 @@ describe('StrykerInitializer', () => {
     });
 
     it('should correctly load the stryker configuration file', async () => {
-      presetMock.conf = `{
+      presetMock.config = `{
         'awesome-conf': 'awesome',
       }`;
       const expectedOutput = format(`
         module.exports = function(config){
           config.set(
-            ${presetMock.conf}
+            ${presetMock.config}
           );
         }`, { parser: 'babylon' });
       inquirerPrompt.resolves({
@@ -157,13 +158,14 @@ describe('StrykerInitializer', () => {
     });
 
     it('should correctly prompt for additional preset-specific options', async () => {
-      presetMock.prompt = async () => {
+      presetMock.createConfig = async () => {
         await inquirer.prompt<{ awesome: string }>({
           choices: ['yes', 'no'],
           message: 'Are you awesome',
           name: 'awesome',
           type: 'list'
         });
+        return new StrykerPresetConfig(presetMock.config, presetMock.dependencies);
       };
       inquirerPrompt.resolves({
         awesome: 'yes',
@@ -524,3 +526,11 @@ describe('StrykerInitializer', () => {
     inquirerPrompt.resolves(answers);
   }
 });
+
+class StrykerPresetMock extends StrykerPreset {
+  public dependencies: string[] = [];
+  public config: string = '';
+  public async createConfig() {
+      return new StrykerPresetConfig(this.config, this.dependencies);
+  }
+}

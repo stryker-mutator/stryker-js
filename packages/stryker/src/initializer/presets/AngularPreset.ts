@@ -1,13 +1,18 @@
 import StrykerPreset from './StrykerPreset';
+import { StrykerPresetConfig } from './StrykerConf';
 
+/**
+ * More information can be found in the Stryker handbook:
+ * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/angular.md#angular
+ */
 export class AngularPreset extends StrykerPreset {
-    public dependencies = [
+    private readonly dependencies = [
         'stryker',
         'stryker-karma-runner',
         'stryker-typescript',
         'stryker-html-reporter'
     ];
-    public conf = `{
+    private readonly config = `{
         mutate: [
           'src/**/*.ts',
           '!src/**/*.spec.ts',
@@ -27,4 +32,7 @@ export class AngularPreset extends StrykerPreset {
         // maxConcurrentTestRunners: 2, // Recommended to use about half of your available cores when running stryker with angular.
         coverageAnalysis: 'off'
     }`;
+    public async createConfig(): Promise<StrykerPresetConfig> {
+      return new StrykerPresetConfig(this.config, this.dependencies);
+    }
 }

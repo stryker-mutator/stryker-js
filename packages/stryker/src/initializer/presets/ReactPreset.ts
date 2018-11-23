@@ -1,16 +1,20 @@
 import StrykerPreset from './StrykerPreset';
 import inquirer = require('inquirer');
+import { StrykerPresetConfig } from './StrykerConf';
 
+/**
+ * More information can be found in the Stryker handbook:
+ * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/react.md#react
+ */
 export class ReactPreset extends StrykerPreset {
 
-    public dependencies = [
+    private readonly generalDependencies = [
       'stryker',
       'stryker-jest-runner',
       'stryker-html-reporter'
     ];
-    public conf: string;
 
-    private readonly tsxDependencies = ['stryker-typescript', ...this.dependencies];
+    private readonly tsxDependencies = ['stryker-typescript', ...this.generalDependencies];
     private readonly tsxConf = `{
       mutate: ['src/**/*.ts?(x)', '!src/**/*@(.test|.spec|Spec).ts?(x)'],
       mutator: 'typescript',
@@ -22,7 +26,7 @@ export class ReactPreset extends StrykerPreset {
       }
     }`;
 
-    private readonly jsxDependencies = ['stryker-javascript-mutator', ...this.dependencies];
+    private readonly jsxDependencies = ['stryker-javascript-mutator', ...this.generalDependencies];
     private readonly jsxConf = `{
       mutate: ['src/**/*.js?(x)', '!src/**/*@(.test|.spec|Spec).js?(x)'],
       mutator: 'javascript',
@@ -34,7 +38,7 @@ export class ReactPreset extends StrykerPreset {
       }
     }`;
 
-    public async prompt(): Promise<void> {
+    public async createConfig(): Promise<StrykerPresetConfig> {
       const choices: inquirer.ChoiceType[] = ['JSX', 'TSX'];
       const answers = await inquirer.prompt<{ choice: string }>({
         choices,
@@ -42,15 +46,13 @@ export class ReactPreset extends StrykerPreset {
         name: 'choice',
         type: 'list'
       });
-      this.load(answers.choice);
+      return this.load(answers.choice);
     }
-    private load(choice: string) {
+    private load(choice: string): StrykerPresetConfig {
       if (choice === 'JSX') {
-        this.dependencies = this.jsxDependencies;
-        this.conf = this.jsxConf;
+        return new StrykerPresetConfig(this.jsxConf, this.jsxDependencies);
       } else if (choice === 'TSX') {
-        this.dependencies = this.tsxDependencies;
-        this.conf = this.tsxConf;
+        return new StrykerPresetConfig(this.tsxConf, this.tsxDependencies);
       } else {
         throw new Error(`Invalid project type ${choice}`);
       }

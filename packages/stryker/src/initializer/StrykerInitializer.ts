@@ -31,33 +31,10 @@ export default class StrykerInitializer {
     this.patchProxies();
     const selectedPreset = await this.selectPreset();
     if (selectedPreset) {
-      const selectedPresetInstance = selectedPreset.create();
-      await selectedPresetInstance.prompt();
-      const selectedPackageManager = await this.selectPackageManager();
-      await configWriter.writePreset(selectedPresetInstance);
-      this.installNpmDependencies(selectedPresetInstance.dependencies, selectedPackageManager);
+      await this.initiatePreset(configWriter, selectedPreset);
     }
     else {
-      const selectedTestRunner = await this.selectTestRunner();
-      const selectedTestFramework = selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name)
-        ? await this.selectTestFramework(selectedTestRunner) : null;
-      const selectedMutator = await this.selectMutator();
-      const selectedTranspilers = await this.selectTranspilers();
-      const selectedReporters = await this.selectReporters();
-      const selectedPackageManager = await this.selectPackageManager();
-      const npmDependencies = this.getSelectedNpmDependencies(
-        [selectedTestRunner, selectedTestFramework, selectedMutator]
-          .concat(selectedTranspilers)
-          .concat(selectedReporters)
-      );
-      await configWriter.write(selectedTestRunner,
-        selectedTestFramework,
-        selectedMutator,
-        selectedTranspilers,
-        selectedReporters,
-        selectedPackageManager,
-        await this.fetchAdditionalConfig(npmDependencies));
-      this.installNpmDependencies(npmDependencies, selectedPackageManager);
+      await this.initiateCustom(configWriter);
     }
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');
@@ -86,6 +63,37 @@ export default class StrykerInitializer {
       this.log.debug('No presets have been configured, reverting to custom configuration');
       return null;
     }
+  }
+
+  private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: PresetOption) {
+    const selectedPresetInstance = selectedPreset.create();
+    const presetConfig = await selectedPresetInstance.createConfig();
+    const selectedPackageManager = await this.selectPackageManager();
+    await configWriter.writePreset(presetConfig);
+    this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
+  }
+
+  private async initiateCustom(configWriter: StrykerConfigWriter) {
+    const selectedTestRunner = await this.selectTestRunner();
+    const selectedTestFramework = selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name)
+      ? await this.selectTestFramework(selectedTestRunner) : null;
+    const selectedMutator = await this.selectMutator();
+    const selectedTranspilers = await this.selectTranspilers();
+    const selectedReporters = await this.selectReporters();
+    const selectedPackageManager = await this.selectPackageManager();
+    const npmDependencies = this.getSelectedNpmDependencies(
+      [selectedTestRunner, selectedTestFramework, selectedMutator]
+        .concat(selectedTranspilers)
+        .concat(selectedReporters)
+    );
+    await configWriter.write(selectedTestRunner,
+      selectedTestFramework,
+      selectedMutator,
+      selectedTranspilers,
+      selectedReporters,
+      selectedPackageManager,
+      await this.fetchAdditionalConfig(npmDependencies));
+    this.installNpmDependencies(npmDependencies, selectedPackageManager);
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {

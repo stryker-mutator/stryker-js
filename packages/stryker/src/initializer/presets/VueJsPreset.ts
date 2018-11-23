@@ -1,13 +1,17 @@
 import StrykerPreset from './StrykerPreset';
 import inquirer = require('inquirer');
+import { StrykerPresetConfig } from './StrykerConf';
 
+/**
+ * More information can be found in the Stryker handbook:
+ * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/vuejs.md#vuejs
+ */
 export class VueJsPreset extends StrykerPreset {
-    public dependencies = [
+    private readonly generalDependencies = [
       'stryker',
       'stryker-vue-mutator',
       'stryker-html-reporter'
     ];
-    public conf: string;
 
     private readonly jestDependency = 'stryker-jest-runner';
     private readonly jestConf = `{
@@ -36,7 +40,7 @@ export class VueJsPreset extends StrykerPreset {
       coverageAnalysis: 'off'
     }`;
 
-    public async prompt(): Promise<void> {
+    public async createConfig(): Promise<StrykerPresetConfig> {
       const testRunnerChoices: inquirer.ChoiceType[] = ['karma', 'jest'];
       const testRunnerAnswers = await inquirer.prompt<{ testrunner: string }>({
         choices: testRunnerChoices,
@@ -51,29 +55,48 @@ export class VueJsPreset extends StrykerPreset {
         name: 'script',
         type: 'list'
       });
-      this.loadTestRunner(testRunnerAnswers.testrunner);
-      this.loadScript(scriptAnswers.script);
+      const chosenTestRunner = testRunnerAnswers.testrunner;
+      const chosenScript = scriptAnswers.script;
+      return new StrykerPresetConfig(
+        this.getConfigString(chosenTestRunner),
+        this.createDependencies(chosenTestRunner, chosenScript)
+      );
     }
 
-    private loadTestRunner(testrunner: string) {
+    private getConfigString(testrunner: string) {
       if (testrunner === 'karma') {
-        this.dependencies.push(this.karmaDependency);
-        this.conf = this.karmaConf;
+        return this.karmaConf;
       } else if (testrunner === 'jest') {
-        this.dependencies.push(this.jestDependency);
-        this.conf = this.jestConf;
+        return this.jestConf;
       } else {
         throw new Error(`Invalid test runner chosen: ${testrunner}`);
       }
     }
 
-    private loadScript(script: string) {
+    private createDependencies(testrunner: string, script: string): string[] {
+      const dependencies = this.generalDependencies;
+      dependencies.push(this.getTestRunnerDependency(testrunner));
+      dependencies.push(this.getScriptDependency(script));
+      return dependencies;
+    }
+
+    private getScriptDependency(script: string): string {
       if (script === 'typescript') {
-        this.dependencies.push('stryker-typescript');
+        return 'stryker-typescript';
       } else if (script === 'javascript') {
-        this.dependencies.push('stryker-javascript-mutator');
+        return 'stryker-javascript-mutator';
       } else {
         throw new Error(`Invalid script chosen: ${script}`);
+      }
+    }
+
+    private getTestRunnerDependency(testrunner: string): string {
+      if (testrunner === 'karma') {
+        return this.karmaDependency;
+      } else if (testrunner === 'jest') {
+        return this.jestDependency;
+      } else {
+        throw new Error(`Invalid test runner chosen: ${testrunner}`);
       }
     }
 }

@@ -1,9 +1,6 @@
-abstract class StrykerPreset {
-  public abstract dependencies: string[];
-  public abstract conf: string;
-  public async prompt(): Promise<void> {
-    return;
-  }
-}
+import { StrykerPresetConfig } from './StrykerConf';
 
+abstract class StrykerPreset {
+  public abstract async createConfig(): Promise<StrykerPresetConfig>;
+}
 export default StrykerPreset;
