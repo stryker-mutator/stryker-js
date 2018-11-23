@@ -6,6 +6,7 @@ import { StrykerPresetConfig } from './StrykerConf';
  * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/angular.md#angular
  */
 export class AngularPreset extends StrykerPreset {
+    public readonly name: string = 'angular';
     private readonly dependencies = [
         'stryker',
         'stryker-karma-runner',

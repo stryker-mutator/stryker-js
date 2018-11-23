@@ -7,6 +7,7 @@ import { StrykerPresetConfig } from './StrykerConf';
  * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/vuejs.md#vuejs
  */
 export class VueJsPreset extends StrykerPreset {
+    public readonly name: string = 'vueJs';
     private readonly generalDependencies = [
       'stryker',
       'stryker-vue-mutator',

@@ -8,7 +8,6 @@ import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
-import PresetOption from '../../../src/initializer/PresetOption';
 import NpmClient from '../../../src/initializer/NpmClient';
 import { format } from 'prettier';
 import { StrykerPresetConfig } from '../../../src/initializer/presets/StrykerConf';
@@ -24,7 +23,7 @@ describe('StrykerInitializer', () => {
   let restClientPackageGet: sinon.SinonStub;
   let restClientSearchGet: sinon.SinonStub;
   let out: sinon.SinonStub;
-  let presets: PresetOption[];
+  let presets: StrykerPreset[];
   let presetMock: StrykerPresetMock;
 
   beforeEach(() => {
@@ -76,7 +75,7 @@ describe('StrykerInitializer', () => {
         'stryker-webpack': null
       });
       fsWriteFile.resolves({});
-      presets.push({name: 'awesome-preset', create() { return presetMock; }});
+      presets.push(presetMock);
     });
 
     it('should prompt for preset, test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
@@ -528,6 +527,7 @@ describe('StrykerInitializer', () => {
 });
 
 class StrykerPresetMock extends StrykerPreset {
+  public name: string = 'awesome-preset';
   public dependencies: string[] = [];
   public config: string = '';
   public async createConfig() {

@@ -6,8 +6,8 @@ import { getLogger } from 'stryker-api/logging';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
-import PresetOption from './PresetOption';
 import StrykerPresets from './StrykerPresets';
+import StrykerPreset from './presets/StrykerPreset';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -19,7 +19,7 @@ export default class StrykerInitializer {
   private readonly log = getLogger(StrykerInitializer.name);
   private readonly inquirer = new StrykerInquirer();
 
-  constructor(private readonly out = console.log, private readonly client: NpmClient = new NpmClient(), private readonly strykerPresets: PresetOption[] = StrykerPresets) { }
+  constructor(private readonly out = console.log, private readonly client: NpmClient = new NpmClient(), private readonly strykerPresets: StrykerPreset[] = StrykerPresets) { }
 
   /**
    * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
@@ -54,8 +54,8 @@ export default class StrykerInitializer {
     copyEnvVariable('https_proxy', 'HTTPS_PROXY');
   }
 
-  private async selectPreset(): Promise<PresetOption | null> {
-    const presetOptions: PresetOption[] = this.strykerPresets;
+  private async selectPreset(): Promise<StrykerPreset | null> {
+    const presetOptions: StrykerPreset[] = this.strykerPresets;
     if (presetOptions.length) {
       this.log.debug(`Found presets: ${JSON.stringify(presetOptions)}`);
       return this.inquirer.promptPresets(presetOptions);
@@ -65,9 +65,8 @@ export default class StrykerInitializer {
     }
   }
 
-  private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: PresetOption) {
-    const selectedPresetInstance = selectedPreset.create();
-    const presetConfig = await selectedPresetInstance.createConfig();
+  private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: StrykerPreset) {
+    const presetConfig = await selectedPreset.createConfig();
     const selectedPackageManager = await this.selectPackageManager();
     await configWriter.writePreset(presetConfig);
     this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);

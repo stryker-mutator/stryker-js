@@ -7,7 +7,7 @@ import { StrykerPresetConfig } from './StrykerConf';
  * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/react.md#react
  */
 export class ReactPreset extends StrykerPreset {
-
+    public readonly name: string = 'react';
     private readonly generalDependencies = [
       'stryker',
       'stryker-jest-runner',

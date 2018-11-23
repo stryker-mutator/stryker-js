@@ -1,7 +1,7 @@
 import * as inquirer from 'inquirer';
 import PromptOption from './PromptOption';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
-import PresetOption from './PresetOption';
+import StrykerPreset from './presets/StrykerPreset';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];
@@ -10,7 +10,7 @@ export interface PromptResult {
 
 export class StrykerInquirer {
 
-  public async promptPresets(options: PresetOption[]): Promise<PresetOption> {
+  public async promptPresets(options: StrykerPreset[]): Promise<StrykerPreset> {
     const choices: inquirer.ChoiceType[] = options.map(_ => _.name);
     choices.push(new inquirer.Separator());
     choices.push('none');
