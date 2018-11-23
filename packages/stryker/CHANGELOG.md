@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.32.1"></a>
+## [0.32.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.32.0...stryker@0.32.1) (2018-11-21)
+
+
+### Bug Fixes
+
+* **log4js:** Don't log log4js category to console ([#1246](https://github.com/stryker-mutator/stryker/issues/1246)) ([479d999](https://github.com/stryker-mutator/stryker/commit/479d999))
+
+
+
+
 <a name="0.32.0"></a>
 # [0.32.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.31.0...stryker@0.32.0) (2018-11-13)
 
