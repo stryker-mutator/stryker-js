@@ -32,7 +32,7 @@
       "env": {
         "LAUNCHPAD_BROWSERS": "chrome"
       },
-      "cwd": "${workspaceFolder}/testResources/jsTestSuite/test",
+      "cwd": "${workspaceFolder}/testResources/htmlTestSuite",
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",

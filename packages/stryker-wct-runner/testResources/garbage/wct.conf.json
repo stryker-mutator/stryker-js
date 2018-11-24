@@ -4,7 +4,11 @@
   "plugins": {
     "local": {
       "browsers": ["chrome"],
-      "skipSeleniumInstall": true
+      "skipSeleniumInstall": true,
+      "browserOptions": {
+        "chrome": ["window-size=1920,1080", "headless", "disable-gpu"],
+        "firefox": ["--headless"]
+      }
     }
   },
   "npm": true,

@@ -11,7 +11,7 @@
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
     "test": "cross-env LAUNCHPAD_BROWSERS=chrome nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 95 --branches 50 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 15000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 60000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
