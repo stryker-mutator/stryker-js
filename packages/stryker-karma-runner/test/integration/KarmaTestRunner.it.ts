@@ -241,7 +241,7 @@ describe('KarmaTestRunner', () => {
     }));
   });
 
-  describe.only('when specified port is not available', () => {
+  describe('when specified port is not available', () => {
 
     let dummyServer: DummyServer;
 
