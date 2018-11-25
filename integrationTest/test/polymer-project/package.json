@@ -37,6 +37,9 @@
     "test": "cross-env LAUNCHPAD_BROWSERS=chrome stryker run",
     "posttest": "mocha --require ts-node/register verify/*.ts"
   },
+  "engines": {
+    "node": ">=8"
+  },
   "version": "3.0.1",
   "main": "paper-button.js",
   "author": "The Polymer Authors",
