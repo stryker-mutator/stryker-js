@@ -19,6 +19,10 @@ export default class KarmaTestRunner implements TestRunner {
   private currentRunStatus: RunStatus;
   private readonly testHooksMiddleware = TestHooksMiddleware.instance;
   private readonly starter: ProjectStarter;
+  
+  public get port() {
+    return this.options.port;
+  }
 
   constructor(private readonly options: RunnerOptions) {
     const setup = this.loadSetup(options);
