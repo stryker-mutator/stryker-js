@@ -40,5 +40,10 @@
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/@stryker-mutator/wct-runner#readme"
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-wct-runner#readme",
+  "initStrykerConfig": {
+    "timeoutMS": 10000,
+    "maxConcurrentTestRunners": 4,
+    "coverageAnalysis": "off"
+  }
 }
