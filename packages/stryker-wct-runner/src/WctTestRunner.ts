@@ -3,6 +3,7 @@ import { Context } from 'web-component-tester/runner/context';
 import * as steps from 'web-component-tester/runner/steps';
 import { StrykerOptions } from 'stryker-api/core';
 import WctReporter from './WctReporter';
+import WctLogger from './WctLogger';
 
 export default class WctTestRunner implements TestRunner {
 
@@ -11,6 +12,7 @@ export default class WctTestRunner implements TestRunner {
 
   constructor(runnerOptions: { strykerOptions: StrykerOptions }) {
     this.context = new Context(runnerOptions.strykerOptions.wct);
+    new WctLogger(this.context);
     this.reporter = new WctReporter(this.context);
     this.ignoreFailedTests = this.ignoreFailedTests.bind(this);
   }
