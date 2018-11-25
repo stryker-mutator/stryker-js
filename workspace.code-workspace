@@ -58,7 +58,8 @@
 			"path": "integrationTest"
 		},
 		{
-			"path": "."
+			"path": ".",
+			"name": "stryker-parent"
 		}
 	],
 	"settings": {
