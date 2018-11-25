@@ -2,6 +2,7 @@ import * as path from 'path';
 import WctTestRunner from '../../src/WctTestRunner';
 import { expect } from 'chai';
 import { RunResult, TestStatus, RunStatus, TestResult } from 'stryker-api/test_runner';
+import * as strykerLog from 'stryker-api/logging';
 
 type TimelessRunResult = {
   [K in keyof RunResult]: RunResult[K] extends TestResult[] ? TimelessTestResult[] : RunResult[K];
@@ -15,6 +16,21 @@ describe('WctTestRunner integration', () => {
   // In order to test it properly, we need to grab it before- and reset it after each test.
   let cwd: string;
   const root = path.resolve(__dirname, '..', '..', '..', '..');
+
+  strykerLog.LoggerFactory.setLogImplementation(category => ({
+    debug: console.log.bind(console, category, 'DEBUG'),
+    error: console.log.bind(console, category, 'ERROR'),
+    fatal: console.log.bind(console, category, 'FATAL'),
+    info: console.log.bind(console, category, 'INFO'),
+    isDebugEnabled: () => true,
+    isErrorEnabled: () => true,
+    isFatalEnabled: () => true,
+    isInfoEnabled: () => true,
+    isTraceEnabled: () => true,
+    isWarnEnabled: () => true,
+    trace: console.log.bind(console, category, 'TRACE'),
+    warn: console.log.bind(console, category, 'WARNING'),
+  }));
 
   beforeEach(() => {
     cwd = process.cwd();
