@@ -45,9 +45,9 @@
     "lint-fix": "tslint --fix --project ./",
     "clean": "lerna run prebuild",
     "postinstall": "lerna bootstrap && link-parent-bin",
-    "build": "lerna run build",
+    "build": "lerna run build --scope stryker-wct-runner --scope stryker-api",
     "pretest": "npm run build",
-    "test": "lerna run test",
+    "test": "lerna run test --scope stryker-wct-runner --stream",
     "posttest": "cd integrationTest && npm i && npm t && cd ..",
     "clean-integration-test": "node tasks/cleanIntegrationTest.js",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
