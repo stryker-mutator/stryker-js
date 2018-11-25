@@ -58,7 +58,7 @@
 			"path": "integrationTest"
 		},
 		{
-			"path": "node_modules"
+			"path": "."
 		}
 	],
 	"settings": {
