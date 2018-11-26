@@ -10,7 +10,7 @@ export default class WctReporter {
   public results: TestResult[] = [];
   private before = new Date();
 
-  constructor(private emitter: EventEmitter) {
+  constructor(private readonly emitter: EventEmitter) {
     emitter.on(
       TEST_START_EVENT, this.testStart
     );
@@ -23,11 +23,12 @@ export default class WctReporter {
     this.emitter.off(TEST_END_EVENT, this.testEnd);
   }
 
-  private testStart = () => {
+  // Both testStart and testEnd are properties here, rather than methods. This is deliberate to allow for `this` pointer to work
+  private readonly testStart = () => {
     this.before = new Date();
   }
 
-  private testEnd = (_browser: BrowserDef, result: TestEndData) => {
+  private readonly testEnd = (_browser: BrowserDef, result: TestEndData) => {
     this.results.push({
       failureMessages: this.toFailureMessages(result.error),
       name: this.testNamePartsToString(result.test),

@@ -5,7 +5,7 @@ import WctReporter from '../../src/WctReporter';
 import { TestEndData } from 'web-component-tester/runner/clireporter';
 import { TestResult, TestStatus } from 'stryker-api/test_runner';
 
-describe('WctReporter', () => {
+describe(WctReporter.name, () => {
 
   let context: EventEmitter;
   let sut: WctReporter;

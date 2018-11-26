@@ -16,9 +16,8 @@ const logger = {
   warn: sinon.stub()
 };
 
-sinon.stub(logging, 'getLogger').returns(logger);
-
 beforeEach(() => {
+  sinon.stub(logging, 'getLogger').returns(logger);
   logger.trace.reset();
   logger.debug.reset();
   logger.info.reset();
