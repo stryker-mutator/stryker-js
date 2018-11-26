@@ -2,6 +2,7 @@ import * as path from 'path';
 import WctTestRunner from '../../src/WctTestRunner';
 import { expect } from 'chai';
 import { RunResult, TestStatus, RunStatus, TestResult } from 'stryker-api/test_runner';
+import { StrykerOptions } from 'stryker-api/core';
 
 type TimelessRunResult = {
   [K in keyof RunResult]: RunResult[K] extends TestResult[] ? TimelessTestResult[] : RunResult[K];
@@ -14,6 +15,7 @@ describe('WctTestRunner integration', () => {
   // The "root" wct configuration option is always loaded from the current directory.
   // In order to test it properly, we need to grab it before- and reset it after each test.
   let cwd: string;
+  let settings: { strykerOptions: StrykerOptions };
   const root = path.resolve(__dirname, '..', '..', '..', '..');
 
   const expectedHtmlSuiteResult: TimelessRunResult = {
@@ -21,13 +23,14 @@ describe('WctTestRunner integration', () => {
     tests: [
       { name: '<awesome-element> is awesome', status: TestStatus.Success, failureMessages: undefined },
       { name: '<failing-element> is failing', status: TestStatus.Failed, failureMessages: ['expected true to be false\n  Context.<anonymous> at failing-tests.html:10'] },
-      { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing\n  HTMLElement.throw at /components/stryker-parent/packages/stryker-wct-runner/testResources/htmlTestSuite/src/failing-element.js:11\n       Context.test at failing-tests.html:13']}
+      { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing\n  HTMLElement.throw at /components/stryker-parent/packages/stryker-wct-runner/testResources/htmlTestSuite/src/failing-element.js:11\n       Context.test at failing-tests.html:13'] }
     ]
   };
   // To enable console logging: LoggerFactory.setLogImplementation(consoleLoggerFactory);
 
   beforeEach(() => {
     cwd = process.cwd();
+    settings = { strykerOptions: { coverageAnalysis: 'off' } };
   });
 
   afterEach(() => {
@@ -37,14 +40,11 @@ describe('WctTestRunner integration', () => {
   it('should run in an html suite with root configuration option', async () => {
     // Arrange
     const wctConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'htmlTestSuite', 'wct.conf.json');
-    const sut = new WctTestRunner({
-      strykerOptions: {
-        wct: {
-          configFile: wctConfigFile,
-          root
-        }
-      }
-    });
+    settings.strykerOptions.wct = {
+      configFile: wctConfigFile,
+      root
+    };
+    const sut = new WctTestRunner(settings);
 
     // Act
     await sut.init();
@@ -57,7 +57,7 @@ describe('WctTestRunner integration', () => {
   it('should be able to run twice in quick succession (with cwd)', async () => {
     // Arrange
     process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'htmlTestSuite'));
-    const sut = new WctTestRunner({ strykerOptions: {} });
+    const sut = new WctTestRunner(settings);
 
     // Act
     await sut.init();
@@ -71,14 +71,11 @@ describe('WctTestRunner integration', () => {
   it('should run in a js suite', async () => {
     // Arrange
     const wctConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'jsTestSuite', 'wct.conf.json');
-    const sut = new WctTestRunner({
-      strykerOptions: {
-        wct: {
-          configFile: wctConfigFile,
-          root
-        }
-      }
-    });
+    settings.strykerOptions.wct = {
+      configFile: wctConfigFile,
+      root
+    };
+    const sut = new WctTestRunner(settings);
     const expectedResult: TimelessRunResult = {
       status: RunStatus.Complete,
       tests: [{ name: 'AwesomeLib is awesome', status: TestStatus.Success, failureMessages: undefined }]
@@ -95,14 +92,11 @@ describe('WctTestRunner integration', () => {
   it('should fail with ~~error~~ _failed_ if a suite is garbage', async () => {
     // Arrange
     const wctConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'garbage', 'wct.conf.json');
-    const sut = new WctTestRunner({
-      strykerOptions: {
-        wct: {
-          configFile: wctConfigFile,
-          root
-        }
-      }
-    });
+    settings.strykerOptions.wct = {
+      configFile: wctConfigFile,
+      root
+    };
+    const sut = new WctTestRunner(settings);
     const expectedResult: TimelessRunResult = {
       status: RunStatus.Complete, // We want to actually expect an error here, but wct doesn't let is.
       tests: [{ name: '', status: TestStatus.Failed, failureMessages: ['Random error\n  <unknown> at /components/stryker-parent/packages/stryker-wct-runner/testResources/garbage/test/gargbage-tests.js:1'] }]
