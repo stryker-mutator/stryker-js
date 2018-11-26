@@ -12,12 +12,33 @@
         "--timeout",
         "999999",
         "--colors",
+        "--exit",
         "${workspaceFolder}/test/helpers/**/*.js",
         "${workspaceFolder}/test/integration/**/*.js"
       ],
       "env": {
         "LAUNCHPAD_BROWSERS": "chrome"
       },
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Unit test",
+      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
+      "args": [
+        "-u",
+        "tdd",
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceFolder}/test/helpers/**/*.js",
+        "${workspaceFolder}/test/unit/**/*.js"
+      ],
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"

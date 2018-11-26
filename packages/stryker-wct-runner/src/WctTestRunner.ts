@@ -1,6 +1,6 @@
 import { TestRunner, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { Context } from 'web-component-tester/runner/context';
-import * as steps from 'web-component-tester/runner/steps';
+import { steps } from 'web-component-tester';
 import { StrykerOptions } from 'stryker-api/core';
 import WctReporter from './WctReporter';
 import WctLogger from './WctLogger';
@@ -14,7 +14,6 @@ export default class WctTestRunner implements TestRunner {
     this.context = new Context(runnerOptions.strykerOptions.wct);
     new WctLogger(this.context);
     this.reporter = new WctReporter(this.context);
-    this.ignoreFailedTests = this.ignoreFailedTests.bind(this);
   }
 
   public async init(): Promise<void> {
@@ -33,7 +32,7 @@ export default class WctTestRunner implements TestRunner {
     };
   }
 
-  private async ignoreFailedTests(error: Error) {
+  private ignoreFailedTests = (error: Error) => {
     if (!error.message.match(/\d+ failed tests?/)) {
       throw error;
     }

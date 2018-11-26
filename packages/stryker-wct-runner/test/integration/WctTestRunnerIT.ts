@@ -16,6 +16,14 @@ describe('WctTestRunner integration', () => {
   let cwd: string;
   const root = path.resolve(__dirname, '..', '..', '..', '..');
 
+  const expectedHtmlSuiteResult: TimelessRunResult = {
+    status: RunStatus.Complete,
+    tests: [
+      { name: '<awesome-element> is awesome', status: TestStatus.Success, failureMessages: undefined },
+      { name: '<failing-element> is failing', status: TestStatus.Failed, failureMessages: ['expected true to be false\n  Context.<anonymous> at failing-tests.html:10'] },
+      { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing\n  HTMLElement.throw at /components/stryker-parent/packages/stryker-wct-runner/testResources/htmlTestSuite/src/failing-element.js:11\n       Context.test at failing-tests.html:13']}
+    ]
+  };
   // To enable console logging: LoggerFactory.setLogImplementation(consoleLoggerFactory);
 
   beforeEach(() => {
@@ -37,35 +45,19 @@ describe('WctTestRunner integration', () => {
         }
       }
     });
-    const expectedResult: TimelessRunResult = {
-      status: RunStatus.Complete,
-      tests: [
-        { name: '<awesome-element> is awesome', status: TestStatus.Success },
-        { name: '<failing-element> is failing', status: TestStatus.Failed },
-        { name: '<failing-element> is throwing', status: TestStatus.Failed }
-      ]
-    };
 
     // Act
     await sut.init();
     const result = await sut.run();
 
     // Assert
-    assertRunResult(expectedResult, result);
+    assertRunResult(expectedHtmlSuiteResult, result);
   });
 
-  it('should be able to run twice in quick succession with with changed cwd', async () => {
+  it('should be able to run twice in quick succession (with cwd)', async () => {
     // Arrange
     process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'htmlTestSuite'));
     const sut = new WctTestRunner({ strykerOptions: {} });
-    const expectedResult: TimelessRunResult = {
-      status: RunStatus.Complete,
-      tests: [
-        { name: '<awesome-element> is awesome', status: TestStatus.Success },
-        { name: '<failing-element> is failing', status: TestStatus.Failed },
-        { name: '<failing-element> is throwing', status: TestStatus.Failed }
-      ]
-    };
 
     // Act
     await sut.init();
@@ -73,7 +65,7 @@ describe('WctTestRunner integration', () => {
     const result = await sut.run();
 
     // Assert
-    assertRunResult(expectedResult, result);
+    assertRunResult(expectedHtmlSuiteResult, result);
   });
 
   it('should run in a js suite', async () => {
@@ -89,7 +81,7 @@ describe('WctTestRunner integration', () => {
     });
     const expectedResult: TimelessRunResult = {
       status: RunStatus.Complete,
-      tests: [{ name: 'AwesomeLib is awesome', status: TestStatus.Success }]
+      tests: [{ name: 'AwesomeLib is awesome', status: TestStatus.Success, failureMessages: undefined }]
     };
 
     // Act
@@ -113,7 +105,7 @@ describe('WctTestRunner integration', () => {
     });
     const expectedResult: TimelessRunResult = {
       status: RunStatus.Complete, // We want to actually expect an error here, but wct doesn't let is.
-      tests: [{ name: '', status: TestStatus.Failed }]
+      tests: [{ name: '', status: TestStatus.Failed, failureMessages: ['Random error\n  <unknown> at /components/stryker-parent/packages/stryker-wct-runner/testResources/garbage/test/gargbage-tests.js:1'] }]
     };
 
     // Act
