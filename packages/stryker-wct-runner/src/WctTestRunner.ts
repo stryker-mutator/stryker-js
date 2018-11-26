@@ -12,6 +12,9 @@ export default class WctTestRunner implements TestRunner {
   private readonly logger: WctLogger;
 
   constructor(runnerOptions: { strykerOptions: StrykerOptions }) {
+    if (runnerOptions.strykerOptions.coverageAnalysis !== 'off') {
+      throw new Error(`Coverage analysis "${runnerOptions.strykerOptions.coverageAnalysis}" is not (yet) supported by the WCT test runner plugin. Please set \`coverageAnalysis: "off"\` in your stryker.conf.js file.`);
+    }
     this.context = new Context(runnerOptions.strykerOptions.wct);
     this.logger = new WctLogger(this.context, this.context.options.verbose || false);
     this.reporter = new WctReporter(this.context);
