@@ -3,29 +3,56 @@ import { BrowserDef } from 'web-component-tester/runner/browserrunner';
 import { TestEndData, CompletedState } from 'web-component-tester/runner/clireporter';
 import { TestResult, TestStatus } from 'stryker-api/test_runner';
 
-export default class WctReporter {
+const TEST_START_EVENT = 'test-start';
+const TEST_END_EVENT = 'test-end';
 
+export default class WctReporter {
   public results: TestResult[] = [];
   private before = new Date();
 
-  constructor(emitter: EventEmitter) {
+  constructor(private emitter: EventEmitter) {
     emitter.on(
-      'test-start', () => {
-        this.before = new Date();
-      }
+      TEST_START_EVENT, this.testStart
     );
     emitter.on(
-      'test-end', (_browser: BrowserDef, result: TestEndData) => {
-        this.addTestResult(result);
-      });
+      TEST_END_EVENT, this.testEnd);
   }
 
-  private addTestResult(result: TestEndData) {
+  public dispose() {
+    this.emitter.off(TEST_START_EVENT, this.testStart);
+    this.emitter.off(TEST_END_EVENT, this.testEnd);
+  }
+
+  private testStart = () => {
+    this.before = new Date();
+  }
+
+  private testEnd = (_browser: BrowserDef, result: TestEndData) => {
     this.results.push({
+      failureMessages: this.toFailureMessages(result.error),
       name: this.testNamePartsToString(result.test),
       status: this.toTestResultStatus(result.state),
-      timeSpentMs: new Date().getTime() - this.before.getTime()
+      timeSpentMs: new Date().getTime() - this.before.getTime(),
     });
+  }
+
+  private toFailureMessages(error: any): string[] | undefined {
+    switch (typeof error) {
+      case 'undefined': return undefined;
+      case 'string': return [error];
+      case 'object':
+        if (error) {
+          if (error.stack) {
+            return [error.stack];
+          } else {
+            return [JSON.stringify(error)];
+          }
+        } else {
+          return undefined;
+        }
+      default:
+        return error;
+    }
   }
 
   private testNamePartsToString(testNameParts: string[]): string {
