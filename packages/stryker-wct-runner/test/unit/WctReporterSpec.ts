@@ -64,11 +64,29 @@ describe(WctReporter.name, () => {
       });
   });
 
+  it('should report a failing test with error as number', () => {
+    actAssertReportTest({ duration: 2, error: 42, state: 'failing', test: ['fooSpec.js', 'true should be false'] }, 40, {
+        failureMessages: ['42'],
+        name: 'true should be false',
+        status: TestStatus.Failed,
+        timeSpentMs: 40,
+      });
+  });
+
   it('should report a failing test with error as string', () => {
     actAssertReportTest({ duration: 2, error: 'fooError', state: 'failing', test: ['fooSpec.js', 'true should be false'] }, 40, {
         failureMessages: ['fooError'],
         name: 'true should be false',
         status: TestStatus.Failed,
+        timeSpentMs: 40,
+      });
+  });
+
+  it('should report a skipped test', () => {
+    actAssertReportTest({ duration: 2, error: undefined, state: 'pending', test: ['fooSpec.js', 'true should be false'] }, 40, {
+        failureMessages: undefined,
+        name: 'true should be false',
+        status: TestStatus.Skipped,
         timeSpentMs: 40,
       });
   });

@@ -9,10 +9,11 @@ export default class WctTestRunner implements TestRunner {
 
   private readonly reporter: WctReporter;
   private readonly context: Context;
+  private readonly logger: WctLogger;
 
   constructor(runnerOptions: { strykerOptions: StrykerOptions }) {
     this.context = new Context(runnerOptions.strykerOptions.wct);
-    new WctLogger(this.context, this.context.options.verbose || false);
+    this.logger = new WctLogger(this.context, this.context.options.verbose || false);
     this.reporter = new WctReporter(this.context);
   }
 
@@ -25,11 +26,24 @@ export default class WctTestRunner implements TestRunner {
 
   public async run(): Promise<RunResult> {
     this.reporter.results = [];
-    await steps.runTests(this.context).catch(WctTestRunner.ignoreFailedTests);
-    return {
-      status: RunStatus.Complete,
-      tests: this.reporter.results
-    };
+    try {
+      await steps.runTests(this.context).catch(WctTestRunner.ignoreFailedTests);
+      return {
+        status: RunStatus.Complete,
+        tests: this.reporter.results
+      };
+    } catch (error) {
+      return {
+        errorMessages: [error.stack],
+        status: RunStatus.Error,
+        tests: []
+      };
+    }
+  }
+
+  public dispose() {
+    this.reporter.dispose();
+    this.logger.dispose();
   }
 
   private static ignoreFailedTests(error: Error) {

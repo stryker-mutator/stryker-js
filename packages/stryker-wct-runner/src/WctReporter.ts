@@ -52,7 +52,7 @@ export default class WctReporter {
           return undefined;
         }
       default:
-        return error;
+        return [error.toString()];
     }
   }
 
