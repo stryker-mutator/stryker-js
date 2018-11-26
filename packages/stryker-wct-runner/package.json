@@ -10,7 +10,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "cross-env LAUNCHPAD_BROWSERS=chrome nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 95 --branches 50 npm run mocha",
+    "test": "cross-env LAUNCHPAD_BROWSERS=chrome nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 95 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && if-node-version \">=8\" mocha --timeout 60000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
