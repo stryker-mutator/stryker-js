@@ -19,8 +19,8 @@ export default class WctReporter {
   }
 
   public dispose() {
-    this.emitter.off(TEST_START_EVENT, this.testStart);
-    this.emitter.off(TEST_END_EVENT, this.testEnd);
+    this.emitter.removeListener(TEST_START_EVENT, this.testStart);
+    this.emitter.removeListener(TEST_END_EVENT, this.testEnd);
   }
 
   // Both testStart and testEnd are properties here, rather than methods. This is deliberate to allow for `this` pointer to work
