@@ -342,3 +342,11 @@ Command line: `--fileLogLevel info`
 Config file: `fileLogLevel: 'info'`
   
  Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
+
+ ### `allowConsoleColors` [`boolean`] 
+
+Default: `true`  
+Command line: `--allowConsoleColors true`
+Config file: `allowConsoleColors: true`
+  
+ The `allowConsoleColors` value indicates whether or not Stryker should use colors in console.

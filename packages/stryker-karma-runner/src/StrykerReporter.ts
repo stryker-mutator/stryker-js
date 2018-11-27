@@ -32,6 +32,10 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     return this._instance;
   }
 
+  public onListening(port: number) {
+    this.emit('server_start', port);
+  }
+
   public onSpecComplete(_browser: any, spec: KarmaSpec) {
     const name = spec.suite.reduce((name, suite) => name + suite + ' ', '') + spec.description;
     let status = TestStatus.Failed;

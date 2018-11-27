@@ -148,6 +148,12 @@ describe('KarmaTestRunner', () => {
       expect(TestHooksMiddleware.instance.currentTestHooks).eq('foobar');
     });
 
+    it('should update port when karma chooses a different port', async () => {
+      reporterMock.emit('server_start', 1984);
+      await sut.run({});
+      expect(karmaRunStub).calledWith({ port: 1984 });
+    });
+
     it('should add a test result when the on reporter raises the "test_result" event', async () => {
       const expected = testResult();
       reporterMock.emit('test_result', expected);
