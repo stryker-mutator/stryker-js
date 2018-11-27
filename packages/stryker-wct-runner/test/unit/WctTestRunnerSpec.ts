@@ -37,12 +37,13 @@ describe(WctTestRunner.name, () => {
     sinon.stub(wctModule, 'steps').value(stepsMock);
   });
 
-  it('should create a context using wct options', () => {
-    const wctOptions = { foo: 'bar' };
+  it('should create a context using wct options, with `persistent = false`', () => {
+    const wctOptions = { foo: 'bar', persistent: true };
+    const expectedWctOptions = { foo: 'bar', persistent: false };
     options.strykerOptions.wct = wctOptions;
     new WctTestRunner(options);
     expect(contextModule.Context).calledWithNew;
-    expect(contextModule.Context).calledWith(wctOptions);
+    expect(contextModule.Context).calledWith(expectedWctOptions);
   });
 
   it('should create a reporter', () => {

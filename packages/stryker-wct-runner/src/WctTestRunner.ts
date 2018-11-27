@@ -6,6 +6,9 @@ import WctReporter from './WctReporter';
 import WctLogger from './WctLogger';
 import { getLogger } from 'stryker-api/logging';
 const WCT_PACKAGE = 'web-component-tester';
+const FORCED_WCT_OPTIONS = Object.freeze({
+  persistent: false
+});
 
 export default class WctTestRunner implements TestRunner {
 
@@ -19,7 +22,7 @@ export default class WctTestRunner implements TestRunner {
       throw new Error(`Coverage analysis "${runnerOptions.strykerOptions.coverageAnalysis}" is not (yet) supported by the WCT test runner plugin. Please set \`coverageAnalysis: "off"\` in your stryker.conf.js file.`);
     }
     this.log.debug('Running wct version %s from %s', require(`${WCT_PACKAGE}/package.json`).version, require.resolve(WCT_PACKAGE));
-    this.context = new Context(runnerOptions.strykerOptions.wct);
+    this.context = new Context(Object.assign({}, runnerOptions.strykerOptions.wct, FORCED_WCT_OPTIONS));
     if (this.log.isDebugEnabled()) {
       this.log.debug(`WCT options: %s`, JSON.stringify(this.context.options));
     }

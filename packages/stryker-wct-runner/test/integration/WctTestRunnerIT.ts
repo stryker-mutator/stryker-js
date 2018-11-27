@@ -42,6 +42,7 @@ describe('WctTestRunner integration', () => {
     const wctConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'htmlTestSuite', 'wct.conf.json');
     settings.strykerOptions.wct = {
       configFile: wctConfigFile,
+      persistent: true, // should be forced to false
       root
     };
     const sut = new WctTestRunner(settings);
