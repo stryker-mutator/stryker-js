@@ -4,7 +4,7 @@ import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
 import PromptOption from './PromptOption';
 import { format } from 'prettier';
-import { StrykerPresetConfig } from './presets/StrykerConf';
+import PresetConfiguration from './presets/PresetConfiguration';
 
 const STRYKER_CONFIG_FILE = 'stryker.conf.js';
 
@@ -52,8 +52,9 @@ export default class StrykerConfigWriter {
    * Create stryker.conf.js based on the chosen preset
    * @function
    */
-  public async writePreset(presetConfig: StrykerPresetConfig) {
-    return this.writeStrykerConfigRaw(presetConfig.config);
+  public async writePreset(presetConfig: PresetConfiguration) {
+    return this.writeStrykerConfigRaw(presetConfig.config, `// This config was generated using a preset.
+    // Please see the handbook for more information: ${presetConfig.handbookUrl}`);
   }
 
   private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {
@@ -65,12 +66,12 @@ export default class StrykerConfigWriter {
     }
   }
 
-  private writeStrykerConfigRaw(rawString: string) {
+  private writeStrykerConfigRaw(rawConfig: string, rawHeader = '') {
     this.out('Writing stryker.conf.js...');
-    const formattedConf = format(`
+    const formattedConf = format(`${rawHeader}
       module.exports = function(config){
         config.set(
-          ${rawString}
+          ${rawConfig}
         );
       }`, { parser: 'babylon' });
     return fsAsPromised.writeFile(STRYKER_CONFIG_FILE, formattedConf);

@@ -1,13 +1,15 @@
-import StrykerPreset from './StrykerPreset';
+import Preset from './Preset';
 import inquirer = require('inquirer');
-import { StrykerPresetConfig } from './StrykerConf';
+import PresetConfiguration from './PresetConfiguration';
+
+const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/vuejs.md#vuejs';
 
 /**
  * More information can be found in the Stryker handbook:
  * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/vuejs.md#vuejs
  */
-export class VueJsPreset extends StrykerPreset {
-    public readonly name: string = 'vueJs';
+export class VueJsPreset implements Preset {
+    public readonly name = 'vueJs';
     private readonly generalDependencies = [
       'stryker',
       'stryker-vue-mutator',
@@ -41,42 +43,43 @@ export class VueJsPreset extends StrykerPreset {
       coverageAnalysis: 'off'
     }`;
 
-    public async createConfig(): Promise<StrykerPresetConfig> {
+    public async createConfig(): Promise<PresetConfiguration> {
       const testRunnerChoices: inquirer.ChoiceType[] = ['karma', 'jest'];
-      const testRunnerAnswers = await inquirer.prompt<{ testrunner: string }>({
+      const testRunnerAnswers = await inquirer.prompt<{ testRunner: string }>({
         choices: testRunnerChoices,
         message: 'Which test runner do you want to use?',
-        name: 'testrunner',
+        name: 'testRunner',
         type: 'list'
       });
       const scriptChoices: inquirer.ChoiceType[] = ['typescript', 'javascript'];
       const scriptAnswers = await inquirer.prompt<{ script: string }>({
         choices: scriptChoices,
-        message: 'What script does your project use?',
+        message: 'Which language does your project use?',
         name: 'script',
         type: 'list'
       });
-      const chosenTestRunner = testRunnerAnswers.testrunner;
+      const chosenTestRunner = testRunnerAnswers.testRunner;
       const chosenScript = scriptAnswers.script;
-      return new StrykerPresetConfig(
-        this.getConfigString(chosenTestRunner),
-        this.createDependencies(chosenTestRunner, chosenScript)
-      );
+      return {
+        config: this.getConfigString(chosenTestRunner),
+        dependencies: this.createDependencies(chosenTestRunner, chosenScript),
+        handbookUrl
+      };
     }
 
-    private getConfigString(testrunner: string) {
-      if (testrunner === 'karma') {
+    private getConfigString(testRunner: string) {
+      if (testRunner === 'karma') {
         return this.karmaConf;
-      } else if (testrunner === 'jest') {
+      } else if (testRunner === 'jest') {
         return this.jestConf;
       } else {
-        throw new Error(`Invalid test runner chosen: ${testrunner}`);
+        throw new Error(`Invalid test runner chosen: ${testRunner}`);
       }
     }
 
-    private createDependencies(testrunner: string, script: string): string[] {
+    private createDependencies(testRunner: string, script: string): string[] {
       const dependencies = this.generalDependencies;
-      dependencies.push(this.getTestRunnerDependency(testrunner));
+      dependencies.push(this.getTestRunnerDependency(testRunner));
       dependencies.push(this.getScriptDependency(script));
       return dependencies;
     }
@@ -91,13 +94,13 @@ export class VueJsPreset extends StrykerPreset {
       }
     }
 
-    private getTestRunnerDependency(testrunner: string): string {
-      if (testrunner === 'karma') {
+    private getTestRunnerDependency(testRunner: string): string {
+      if (testRunner === 'karma') {
         return this.karmaDependency;
-      } else if (testrunner === 'jest') {
+      } else if (testRunner === 'jest') {
         return this.jestDependency;
       } else {
-        throw new Error(`Invalid test runner chosen: ${testrunner}`);
+        throw new Error(`Invalid test runner chosen: ${testRunner}`);
       }
     }
 }

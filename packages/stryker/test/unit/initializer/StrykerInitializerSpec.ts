@@ -10,8 +10,8 @@ import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 import NpmClient from '../../../src/initializer/NpmClient';
 import { format } from 'prettier';
-import { StrykerPresetConfig } from '../../../src/initializer/presets/StrykerConf';
-import StrykerPreset from '../../../src/initializer/presets/StrykerPreset';
+import PresetConfiguration from '../../../src/initializer/presets/PresetConfiguration';
+import Preset from '../../../src/initializer/presets/Preset';
 
 describe('StrykerInitializer', () => {
   let log: Mock<Logger>;
@@ -23,14 +23,17 @@ describe('StrykerInitializer', () => {
   let restClientPackageGet: sinon.SinonStub;
   let restClientSearchGet: sinon.SinonStub;
   let out: sinon.SinonStub;
-  let presets: StrykerPreset[];
-  let presetMock: StrykerPresetMock;
+  let presets: Preset[];
+  let presetMock: Mock<Preset>;
 
   beforeEach(() => {
     log = currentLogMock();
     out = sandbox.stub();
     presets = [];
-    presetMock = new StrykerPresetMock();
+    presetMock = {
+      createConfig: sandbox.stub(),
+      name: 'awesome-preset'
+    };
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
     fsWriteFile = sandbox.stub(fsAsPromised, 'writeFile');
@@ -100,7 +103,7 @@ describe('StrykerInitializer', () => {
       ];
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
-      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'none']);
+      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
       expect(promptTestRunner.type).to.eq('list');
       expect(promptTestRunner.name).to.eq('testRunner');
       expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', new inquirer.Separator(), 'command']);
@@ -121,6 +124,7 @@ describe('StrykerInitializer', () => {
         packageManager: 'npm',
         preset: 'awesome-preset'
       });
+      resolvePresetConfig();
       await sut.initialize();
       expect(inquirerPrompt).to.have.been.callCount(2);
       expect(out).to.have.been.calledWith('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
@@ -128,13 +132,20 @@ describe('StrykerInitializer', () => {
     });
 
     it('should correctly load the stryker configuration file', async () => {
-      presetMock.config = `{
+      const config = `{
         'awesome-conf': 'awesome',
       }`;
+      const handbookUrl = 'https://awesome-preset.org';
+      resolvePresetConfig({
+        config,
+        handbookUrl
+      });
       const expectedOutput = format(`
+        // This config was generated using a preset.
+        // Please see the handbook for more information: ${handbookUrl}
         module.exports = function(config){
           config.set(
-            ${presetMock.config}
+            ${config}
           );
         }`, { parser: 'babylon' });
       inquirerPrompt.resolves({
@@ -146,7 +157,7 @@ describe('StrykerInitializer', () => {
     });
 
     it('should correctly load dependencies from the preset', async () => {
-      presetMock.dependencies = ['my-awesome-dependency', 'another-awesome-dependency'];
+      resolvePresetConfig({ dependencies: ['my-awesome-dependency', 'another-awesome-dependency'] });
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset'
@@ -156,34 +167,21 @@ describe('StrykerInitializer', () => {
       expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker-api my-awesome-dependency another-awesome-dependency', { stdio: [0, 1, 2] });
     });
 
-    it('should correctly prompt for additional preset-specific options', async () => {
-      presetMock.createConfig = async () => {
-        await inquirer.prompt<{ awesome: string }>({
-          choices: ['yes', 'no'],
-          message: 'Are you awesome',
-          name: 'awesome',
-          type: 'list'
-        });
-        return new StrykerPresetConfig(presetMock.config, presetMock.dependencies);
-      };
+    it('should correctly load configuration from a preset', async () => {
+      resolvePresetConfig();
       inquirerPrompt.resolves({
-        awesome: 'yes',
         packageManager: 'npm',
         preset: 'awesome-preset'
       });
       await sut.initialize();
-      expect(inquirerPrompt).to.have.been.callCount(3);
-      const [promptPreset, promptAwesome, promptPackageManager]: inquirer.Question[] = [
+      expect(inquirerPrompt).to.have.been.callCount(2);
+      const [promptPreset, promptPackageManager]: inquirer.Question[] = [
         inquirerPrompt.getCall(0).args[0],
-        inquirerPrompt.getCall(1).args[0],
-        inquirerPrompt.getCall(2).args[0]
+        inquirerPrompt.getCall(1).args[0]
       ];
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
-      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'none']);
-      expect(promptAwesome.type).to.eq('list');
-      expect(promptAwesome.name).to.eq('awesome');
-      expect(promptAwesome.choices).to.deep.eq(['yes', 'no']);
+      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
       expect(promptPackageManager.type).to.eq('list');
       expect(promptPackageManager.choices).to.deep.eq(['npm', 'yarn']);
     });
@@ -313,22 +311,22 @@ describe('StrykerInitializer', () => {
   describe('initialize() when no internet', () => {
 
     it('should log error and continue when fetching test runners', async () => {
-        restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
-        stubMutators('stryker-javascript');
-        stubTranspilers('stryker-webpack');
-        stubReporters();
-        stubPackageClient({ 'stryker-javascript': null, 'stryker-webpack': null });
-        inquirerPrompt.resolves({
-          packageManager: 'npm',
-          reporters: ['clear-text'],
-          transpilers: ['webpack']
-        });
+      restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
+      stubMutators('stryker-javascript');
+      stubTranspilers('stryker-webpack');
+      stubReporters();
+      stubPackageClient({ 'stryker-javascript': null, 'stryker-webpack': null });
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: ['clear-text'],
+        transpilers: ['webpack']
+      });
 
-        await sut.initialize();
+      await sut.initialize();
 
-        expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-runner). Please check your internet connection.');
-        expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
-        expect(fsAsPromised.writeFile).to.have.been.called;
+      expect(log.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-runner). Please check your internet connection.');
+      expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
+      expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
     it('should log error and continue when fetching test frameworks', async () => {
@@ -524,13 +522,13 @@ describe('StrykerInitializer', () => {
     }, answerOverrides);
     inquirerPrompt.resolves(answers);
   }
-});
 
-class StrykerPresetMock extends StrykerPreset {
-  public name: string = 'awesome-preset';
-  public dependencies: string[] = [];
-  public config: string = '';
-  public async createConfig() {
-      return new StrykerPresetConfig(this.config, this.dependencies);
+  function resolvePresetConfig(presetConfigOverrides?: Partial<PresetConfiguration>) {
+    const presetConfig: PresetConfiguration = {
+      config: '',
+      dependencies: [],
+      handbookUrl: ''
+    };
+    presetMock.createConfig.resolves(Object.assign({}, presetConfig, presetConfigOverrides));
   }
-}
+});
