@@ -14,11 +14,11 @@ describe('Presets', () => {
     let angularPreset: AngularPreset;
 
     beforeEach(() => {
-        angularPreset = new AngularPreset();
+      angularPreset = new AngularPreset();
     });
 
     it('should have the name "angular-cli"', () => {
-        expect(angularPreset.name).to.eq('angular-cli');
+      expect(angularPreset.name).to.eq('angular-cli');
     });
 
     it('should mutate typescript', async () => {
@@ -40,7 +40,7 @@ describe('Presets', () => {
     });
 
     it('should have the name "react"', () => {
-        expect(reactPreset.name).to.eq('react');
+      expect(reactPreset.name).to.eq('react');
     });
 
     it('should mutate typescript when TSX is chosen', async () => {
@@ -88,7 +88,7 @@ describe('Presets', () => {
     });
 
     it('should have the name "vueJs"', () => {
-        expect(vueJsPreset.name).to.eq('vueJs');
+      expect(vueJsPreset.name).to.eq('vueJs');
     });
 
     it('should use the vue mutator', async () => {
