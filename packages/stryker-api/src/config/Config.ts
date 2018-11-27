@@ -5,7 +5,12 @@ export default class Config implements StrykerOptions {
   [customConfig: string]: any;
 
   public files: string[];
-  public mutate: string[];
+  public mutate: string[] = [
+    '{src,lib}/**/*.js?(x)',
+    '!{src,lib}/**/__tests__/**/*.js?(x)',
+    '!{src,lib}/**/?(*.)+(spec|test).js?(x)',
+    '!{src,lib}/**/*+(Spec|Test).js?(x)'
+  ];
 
   public logLevel: LogLevel = LogLevel.Information;
   public fileLogLevel: LogLevel = LogLevel.Off;
@@ -15,7 +20,7 @@ export default class Config implements StrykerOptions {
   public port = 9234;
   public reporter = [];
   public reporters: string[] = ['progress', 'clear-text'];
-  public coverageAnalysis: 'perTest' | 'all' | 'off' = 'perTest';
+  public coverageAnalysis: 'perTest' | 'all' | 'off' = 'off';
   public testRunner: string = 'command';
   public testFramework: string;
   public mutator: string | MutatorDescriptor = 'es5';
