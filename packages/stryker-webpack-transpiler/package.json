@@ -11,7 +11,6 @@
     "postbuild": "tslint -p tsconfig.json",
     "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 84 --branches 65 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "posttest": "npm run stryker",
     "stryker": "node ../stryker/bin/stryker run"
   },
   "repository": {
