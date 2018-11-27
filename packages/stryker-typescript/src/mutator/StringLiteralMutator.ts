@@ -26,6 +26,9 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
   private isInvalidParent(parent: ts.Node): boolean {
     switch (parent.kind) {
       case ts.SyntaxKind.ImportDeclaration:
+      case ts.SyntaxKind.ExportDeclaration:
+      case ts.SyntaxKind.ModuleDeclaration:
+      case ts.SyntaxKind.ExternalModuleReference:
       case ts.SyntaxKind.LastTypeNode:
       case ts.SyntaxKind.JsxAttribute:
       case ts.SyntaxKind.ExpressionStatement:
