@@ -22,6 +22,12 @@ export default class JestTestRunner implements TestRunner {
       this.enableFindRelatedTests = true;
     }
 
+    if (this.enableFindRelatedTests) {
+      this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
+    } else {
+      this.log.debug('Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.');
+    }
+
     // basePath will be used in future releases of Stryker as a way to define the project root
     // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
     // https://github.com/stryker-mutator/stryker/issues/650
@@ -34,7 +40,7 @@ export default class JestTestRunner implements TestRunner {
 
     const jestTestRunner = JestTestAdapterFactory.getJestTestAdapter();
 
-    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd(), this.enableFindRelatedTests, options && options.mutatedFileName);
+    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd(), this.enableFindRelatedTests && options ? options.mutatedFileName : undefined);
 
     // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
     const errorMessages = results.testResults.map((testSuite: jest.TestResult) => testSuite.failureMessage).filter(errorMessage => (errorMessage)) as string[];

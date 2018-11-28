@@ -9,6 +9,7 @@ describe('JestPromiseTestAdapter', () => {
   let runCLIStub: sinon.SinonStub;
 
   const projectRoot = '/path/to/project';
+  const fileNameUnderTest = '/path/to/file';
   const jestConfig: any = { rootDir: projectRoot };
 
   beforeEach(() => {
@@ -22,13 +23,13 @@ describe('JestPromiseTestAdapter', () => {
   });
 
   it('should set reporters to an empty array', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot, true);
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
 
     expect(jestConfig.reporters).to.be.an('array').that.is.empty;
   });
 
   it('should call the runCLI method with the correct projectRoot', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot, true);
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
 
     assert(runCLIStub.calledWith({
       config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
@@ -37,8 +38,20 @@ describe('JestPromiseTestAdapter', () => {
     }, [projectRoot]));
   });
 
+  it('should call the runCLI method with the --findRelatedTests flag', async () => {
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot, fileNameUnderTest);
+
+    assert(runCLIStub.calledWith({
+      _: [fileNameUnderTest],
+      config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+      findRelatedTests: true,
+      runInBand: true,
+      silent: true
+    }, [projectRoot]));
+  });
+
   it('should call the runCLI method and return the test result', async () => {
-    const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot, true);
+    const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot);
 
     expect(result).to.deep.equal({
       config: {
@@ -50,8 +63,23 @@ describe('JestPromiseTestAdapter', () => {
     });
   });
 
+  it('should call the runCLI method and return the test result when run with --findRelatedTests flag', async () => {
+    const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot, fileNameUnderTest);
+
+    expect(result).to.deep.equal({
+      config: {
+        _: [fileNameUnderTest],
+        config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+        findRelatedTests: true,
+        runInBand: true,
+        silent: true
+      },
+      result: 'testResult'
+    });
+  });
+
   it('should trace log a message when jest is invoked', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot, true);
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
 
     const expectedResult: any = JSON.parse(JSON.stringify(jestConfig));
     expectedResult.reporters = [];
