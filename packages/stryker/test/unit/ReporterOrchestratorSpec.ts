@@ -6,6 +6,7 @@ import * as broadcastReporter from '../../src/reporters/BroadcastReporter';
 import { Mock } from '../helpers/producers';
 import currentLogMock from '../helpers/logMock';
 import { Logger } from 'stryker-api/logging';
+import { Config } from 'stryker-api/config';
 
 describe('ReporterOrchestrator', () => {
   let sandbox: sinon.SinonSandbox;
@@ -31,28 +32,42 @@ describe('ReporterOrchestrator', () => {
   });
 
   describe('createBroadcastReporter()', () => {
-
     // https://github.com/stryker-mutator/stryker/issues/212
     it('should create "progress-append-only" instead of "progress" reporter if process.stdout is not a tty', () => {
       setTTY(false);
-      sut = new ReporterOrchestrator({ reporters: ['progress'] });
+      const config = new Config();
+      config.set({ reporters: ['progress'] });
+      sut = new ReporterOrchestrator(config);
       sut.createBroadcastReporter();
       expect(broadcastReporterMock).to.have.been.calledWithNew;
-      expect(broadcastReporterMock).to.have.been.calledWith(sinon.match(
-        (reporters: broadcastReporter.NamedReporter[]) => reporters[0].name === 'progress-append-only'));
+      expect(broadcastReporterMock).to.have.been.calledWith(
+        sinon.match(
+          (reporters: broadcastReporter.NamedReporter[]) =>
+            reporters[0].name === 'progress-append-only'
+        )
+      );
     });
 
     it('should create the correct reporters', () => {
       setTTY(true);
-      sut = new ReporterOrchestrator({ reporters: ['progress', 'progress-append-only'] });
+      const config = new Config();
+      config.set({ reporters: ['progress', 'progress-append-only'] });
+      sut = new ReporterOrchestrator(config);
       sut.createBroadcastReporter();
-      expect(broadcastReporterMock).to.have.been.calledWith(sinon.match(
-        (reporters: broadcastReporter.NamedReporter[]) => reporters[0].name === 'progress' && reporters[1].name === 'progress-append-only'));
+      expect(broadcastReporterMock).to.have.been.calledWith(
+        sinon.match(
+          (reporters: broadcastReporter.NamedReporter[]) =>
+            reporters[0].name === 'progress' &&
+            reporters[1].name === 'progress-append-only'
+        )
+      );
     });
 
     it('should warn if there is no reporter', () => {
       setTTY(true);
-      sut = new ReporterOrchestrator({ reporters: [] });
+      const config = new Config();
+      config.set({ reporters: [] });
+      sut = new ReporterOrchestrator(config);
       sut.createBroadcastReporter();
       expect(log.warn).to.have.been.calledTwice;
     });

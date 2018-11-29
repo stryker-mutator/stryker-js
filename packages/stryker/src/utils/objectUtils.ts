@@ -2,7 +2,9 @@ import * as _ from 'lodash';
 import treeKill = require('tree-kill');
 export { serialize, deserialize } from 'surrial';
 
-export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
+export function freezeRecursively<T extends { [prop: string]: any }>(
+  target: T
+): T {
   Object.freeze(target);
   Object.keys(target).forEach(key => {
     if (_.isObject(target[key])) {
@@ -27,11 +29,9 @@ export function isErrnoException(error: Error): error is NodeJS.ErrnoException {
 export function errorToString(error: any) {
   if (!error) {
     return '';
-  }
-  else if (isErrnoException(error)) {
+  } else if (isErrnoException(error)) {
     return `${error.name}: ${error.code} (${error.syscall}) ${error.stack}`;
-  }
-  else if (error instanceof Error) {
+  } else if (error instanceof Error) {
     const message = `${error.name}: ${error.message}`;
     if (error.stack) {
       return `${message}\n${error.stack.toString()}`;
@@ -61,7 +61,9 @@ export function wrapInClosure(codeFragment: string) {
 /**
  * A wrapper around `process.env` (for testability)
  */
-export function getEnvironmentVariable(nameEnvironmentVariable: string): string | undefined {
+export function getEnvironmentVariable(
+  nameEnvironmentVariable: string
+): string | undefined {
   return process.env[nameEnvironmentVariable];
 }
 
@@ -86,7 +88,7 @@ export function normalizeWhiteSpaces(str: string) {
 
 export function kill(pid: number): Promise<void> {
   return new Promise((res, rej) => {
-    treeKill(pid, 'SIGKILL', (err: { code?: number } & Error) => {
+    treeKill(pid, 'SIGKILL', (err?: { code?: number } & Error) => {
       if (err && !canIgnore(err.code)) {
         rej(err);
       } else {
@@ -103,20 +105,28 @@ export function kill(pid: number): Promise<void> {
 }
 
 export const TimeoutExpired: unique symbol = Symbol('TimeoutExpired');
-export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof TimeoutExpired> {
+export function timeout<T>(
+  promise: Promise<T>,
+  ms: number
+): Promise<T | typeof TimeoutExpired> {
   const sleep = new Promise<T | typeof TimeoutExpired>((res, rej) => {
     const timer = setTimeout(() => res(TimeoutExpired), ms);
-    promise.then(result => {
-      clearTimeout(timer);
-      res(result);
-    }).catch(error => {
-      clearTimeout(timer);
-      rej(error);
-    });
+    promise
+      .then(result => {
+        clearTimeout(timer);
+        res(result);
+      })
+      .catch(error => {
+        clearTimeout(timer);
+        rej(error);
+      });
   });
   return sleep;
 }
 
 export function padLeft(input: string): string {
-  return input.split('\n').map(str => '\t' + str).join('\n');
+  return input
+    .split('\n')
+    .map(str => '\t' + str)
+    .join('\n');
 }

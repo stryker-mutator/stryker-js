@@ -171,7 +171,7 @@ function getContextClassForStatus(status: MutantStatus) {
 /**
  * A `map` function, as in [1, 2].map(i => i+1), but for a string
  */
-function mapString<T>(source: string, fn: (char: string, index?: number) => T): T[] {
+function mapString<T>(source: string, fn: (char: string, index: number) => T): T[] {
     const results: T[] = [];
     for (let i = 0; i < source.length; i++) {
         results.push(fn(source[i], i));
