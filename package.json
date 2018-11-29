@@ -37,6 +37,9 @@
     "tslint": "^5.11.0",
     "typescript": "^3.0.3"
   },
+  "prettier": {
+    "singleQuote": true
+  },
   "scripts": {
     "lint-info": "tslint --out tslint.log --project ./",
     "lint-fix": "tslint --fix --project ./",
