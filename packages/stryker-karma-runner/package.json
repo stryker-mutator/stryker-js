@@ -1,6 +1,6 @@
 {
   "name": "stryker-karma-runner",
-  "version": "0.20.0",
+  "version": "0.20.3",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\" --exit"
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 30000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\" --exit"
   },
   "repository": {
     "type": "git",
@@ -34,14 +35,15 @@
     "stryker-api": ">=0.18.0 <0.22.0"
   },
   "devDependencies": {
+    "@stryker-mutator/util": "0.0.3",
     "@types/express": "~4.16.0",
     "@types/semver": "~5.5.0",
     "jasmine-core": "~3.3.0",
     "karma": "~3.1.1",
-    "karma-jasmine": "~1.1.2",
+    "karma-jasmine": "~2.0.0",
     "karma-phantomjs-launcher": "~1.0.4",
-    "stryker-api": "^0.21.4",
-    "stryker-jasmine": "^0.10.5"
+    "stryker-api": "^0.21.5",
+    "stryker-jasmine": "^0.10.6"
   },
   "dependencies": {
     "semver": "~5.6.0",

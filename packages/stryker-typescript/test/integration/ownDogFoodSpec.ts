@@ -7,8 +7,7 @@ import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 
-describe('stryker-typescript', function() {
-  this.timeout(20000);
+describe('stryker-typescript', () => {
 
   let config: Config;
   let inputFiles: File[];

@@ -9,8 +9,7 @@ import TypescriptMutator from '../../src/TypescriptMutator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 
-describe('Sample integration', function() {
-  this.timeout(10000);
+describe('Sample integration', () => {
 
   let config: Config;
   let inputFiles: File[];

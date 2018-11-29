@@ -1,6 +1,6 @@
 {
   "name": "stryker-html-reporter",
-  "version": "0.16.5",
+  "version": "0.16.7",
   "description": "An html reporter for the JavaScript mutation testing framework Stryker",
   "main": "src/index.js",
   "typings": "src/index.d.ts",
@@ -11,7 +11,8 @@
     "browserify-client-resources": "browserify src/resources/stryker.js -o resources/stryker.js",
     "postbuild": "tslint -p tsconfig.json",
     "start": "tsc -w -p .",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 95 --functions 95 --branches 90 mocha \"test/helpers/*.js\" \"test/unit/*.js\" \"test/integration/*.js\""
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 95 --functions 95 --branches 90 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -36,7 +37,7 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-html-reporter#readme",
   "dependencies": {
-    "@stryker-mutator/util": "^0.0.1",
+    "@stryker-mutator/util": "^0.0.3",
     "file-url": "~2.0.0",
     "lodash": "~4.17.10",
     "mkdirp": "~0.5.1",
@@ -56,7 +57,7 @@
     "jquery": "~3.3.1",
     "jsdom": "~13.0.0",
     "popper.js": "~1.14.3",
-    "stryker-api": "^0.21.4"
+    "stryker-api": "^0.21.5"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",

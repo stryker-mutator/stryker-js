@@ -98,6 +98,15 @@ describe('MochaTestRunner', () => {
     expect(requireStub).calledWith('babel-register');
   });
 
+  it('should pass and resolve relative require options when constructed', () => {
+    const mochaOptions: MochaRunnerOptions = { require: ['./setup.js', 'babel-register'] };
+    new MochaTestRunner(runnerOptions({ strykerOptions: { mochaOptions } }));
+    const resolvedRequire = path.resolve('./setup.js');
+    expect(requireStub).calledTwice;
+    expect(requireStub).calledWith(resolvedRequire);
+    expect(requireStub).calledWith('babel-register');
+  });
+
   it('should evaluate additional testHooks if required (in global mocha context)', async () => {
     multimatchStub.returns(['']);
     sut = new MochaTestRunner(runnerOptions());

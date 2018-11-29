@@ -19,10 +19,9 @@ function resolve(fileName: string) {
   return path.resolve(__dirname, '..', '..', fileName);
 }
 
-describe('Running a sample project', function() {
+describe('Running a sample project', () => {
 
   let sut: MochaTestRunner;
-  this.timeout(10000);
 
   describe('when tests pass', () => {
 

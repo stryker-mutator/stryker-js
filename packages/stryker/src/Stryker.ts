@@ -36,14 +36,14 @@ export default class Stryker {
    * @param {Object} [options] - Optional options.
    */
   constructor(options: StrykerOptions) {
-    LogConfigurator.configureMainProcess(options.logLevel, options.fileLogLevel);
+    LogConfigurator.configureMainProcess(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
     this.log = getLogger(Stryker.name);
     const configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
-    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
+    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
     this.loadPlugins();
     this.applyConfigEditors();
-    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel); // logLevel could be changed
+    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
     this.freezeConfig();
     this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
@@ -51,7 +51,7 @@ export default class Stryker {
   }
 
   public async runMutationTest(): Promise<MutantResult[]> {
-    const loggingContext = await LogConfigurator.configureLoggingServer(this.config.logLevel, this.config.fileLogLevel);
+    const loggingContext = await LogConfigurator.configureLoggingServer(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors);
     this.timer.reset();
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
     if (inputFiles.files.length) {
@@ -69,6 +69,8 @@ export default class Stryker {
         await this.logDone();
         await LogConfigurator.shutdown();
         return mutantResults;
+      } else {
+        this.logRemark();
       }
     }
     return Promise.resolve([]);
@@ -150,6 +152,12 @@ export default class Stryker {
 
   private logDone() {
     this.log.info('Done in %s.', this.timer.humanReadableElapsed());
+  }
+
+  private logRemark() {
+    if (!this.log.isTraceEnabled()) {
+      this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+    }
   }
 
   private reportScore(mutantResults: MutantResult[]) {

@@ -1,6 +1,6 @@
 {
   "name": "stryker-javascript-mutator",
-  "version": "0.11.2",
+  "version": "0.11.5",
   "description": "A plugin for javascript projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 60 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" "
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 60 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -46,9 +47,8 @@
   "devDependencies": {
     "@babel/types": "~7.1.2",
     "@types/babel__generator": "^7.0.0",
-    "@types/babel__parser": "^7.0.0",
     "@types/babel__traverse": "^7.0.0",
-    "stryker-api": "^0.21.4",
+    "stryker-api": "^0.21.5",
     "stryker-mutator-specification": "^0.6.0"
   },
   "peerDependencies": {

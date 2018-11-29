@@ -42,6 +42,11 @@ export default function StringLiteralMutatorSpec(name: string, expectMutation: E
       expectMutation('import "foo";');
     });
 
+    it('should not mutate export statements', () => {
+      expectMutation('export * from "./foo";');
+      expectMutation('export { foo as boo } from "./foo";');
+    });
+
     it('should not mutate type declarations', () => {
       expectMutation('const a: "hello" = "hello";', 'const a: "hello" = "";');
       expectMutation('const a: Record<"id", number> = { id: 10 }');

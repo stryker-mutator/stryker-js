@@ -10,12 +10,20 @@ export default class ClearTextReporter implements Reporter {
 
   private readonly log = getLogger(ClearTextReporter.name);
 
-  constructor(private readonly options: Config) { }
+  constructor(private readonly options: Config) {
+    this.configConsoleColor();
+  }
 
   private readonly out: NodeJS.WritableStream = process.stdout;
 
   private writeLine(output?: string) {
     this.out.write(`${output || ''}${os.EOL}`);
+  }
+
+  private configConsoleColor() {
+    if (!this.options.allowConsoleColors) {
+      chalk.level = 0; // All colors disabled
+    }
   }
 
   public onAllMutantsTested(mutantResults: MutantResult[]): void {

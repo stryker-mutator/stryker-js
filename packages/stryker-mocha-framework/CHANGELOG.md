@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.0"></a>
+# [0.13.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.12.5...stryker-mocha-framework@0.13.0) (2018-11-13)
+
+
+### Features
+
+* **mocha-runner:** use default mocha.opts file, support relative imports ([#1237](https://github.com/stryker-mutator/stryker/issues/1237)) ([2711c2b](https://github.com/stryker-mutator/stryker/commit/2711c2b)), closes [#1046](https://github.com/stryker-mutator/stryker/issues/1046)
+
+
+
+
 <a name="0.12.5"></a>
 ## [0.12.5](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.12.3...stryker-mocha-framework@0.12.5) (2018-10-15)
 

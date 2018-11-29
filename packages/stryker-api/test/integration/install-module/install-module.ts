@@ -2,9 +2,7 @@ import { expect } from 'chai';
 import { exec } from 'child_process';
 import * as path from 'path';
 
-describe('we have a module using stryker', function() {
-
-  this.timeout(100000);
+describe('we have a module using stryker', () => {
 
   const modulePath = path.resolve(__dirname, '../../../testResources/module');
 

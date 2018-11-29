@@ -17,9 +17,8 @@ const jestProjectRoot = process.cwd();
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
 
-describe('Integration test for Strykers Jest runner', function() {
+describe('Integration test for Strykers Jest runner', () => {
   // Set timeout for integration tests to 10 seconds for travis
-  this.timeout(30000);
 
   let jestConfigEditor: JestConfigEditor;
   let runnerOptions: RunnerOptions;

@@ -6,9 +6,8 @@ import { readDirectoryTree } from '../helpers/fsHelpers';
 
 const REPORT_DIR = 'reports/mutation/stryker';
 
-describe('Html report of stryker', function() {
+describe('Html report of stryker', () => {
   let sut: HtmlReporter;
-  this.timeout(20000);
 
   beforeEach(() => {
     const config = new Config();

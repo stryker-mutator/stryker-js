@@ -7,8 +7,8 @@ import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 
-describe('Use header file integration', function() {
-  this.timeout(10000);
+describe('Use header file integration', () => {
+
   let config: Config;
   let inputFiles: File[];
 

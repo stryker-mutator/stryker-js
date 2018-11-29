@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.21.5"></a>
+## [0.21.5](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.21.4...stryker-api@0.21.5) (2018-11-13)
+
+
+### Bug Fixes
+
+* **missing mutator plugin:** set the correct plugin name when the specified mutator cannot be found ([#1234](https://github.com/stryker-mutator/stryker/issues/1234)) ([c2465ec](https://github.com/stryker-mutator/stryker/commit/c2465ec)), closes [#1161](https://github.com/stryker-mutator/stryker/issues/1161)
+
+
+
+
 <a name="0.21.4"></a>
 ## [0.21.4](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.21.2...stryker-api@0.21.4) (2018-10-15)
 
