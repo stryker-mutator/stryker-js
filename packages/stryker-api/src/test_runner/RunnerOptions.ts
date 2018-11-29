@@ -16,6 +16,18 @@ interface RunnerOptions {
   port: number;
 
   /**
+   * Represents test runner config file
+   */
+  configFile?: string | null;
+
+  /**
+   *  custom settings for test runner go here
+   */
+  config?: {
+    [customConfig: string]: any;
+  };
+
+  /**
    * The underlying strykerOptions
    */
   strykerOptions: StrykerOptions;
