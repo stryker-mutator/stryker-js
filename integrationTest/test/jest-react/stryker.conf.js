@@ -5,8 +5,9 @@ module.exports = function (config) {
     transpilers: [],
     reporters: ["event-recorder"],
     coverageAnalysis: "off",
-    mutate: ["src/**/*.js", "!src/**/*.test.js"],
-    maxConcurrentTestRunners: 1,
+    fileLogLevel: "trace",
+    mutate: ["src/{Alert,Badge,Breadcrumb}.js"],
+    maxConcurrentTestRunners: 2,
     jest: {
       projectType: 'react'
     }
