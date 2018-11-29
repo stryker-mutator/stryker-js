@@ -1,6 +1,7 @@
 import LogLevel from './LogLevel';
 import MutationScoreThresholds from './MutationScoreThresholds';
 import MutatorDescriptor from './MutatorDescriptor';
+import TestRunnerDescriptor from './TestRunnerDescriptor';
 
 interface StrykerOptions {
   // this ensures that plugins can load custom config.
@@ -47,7 +48,7 @@ interface StrykerOptions {
   /**
    * The name of the test runner to use (default is the same name as the testFramework)
    */
-  testRunner?: string;
+  testRunner?: Partial<TestRunnerDescriptor>;
 
   /**
    * The mutant generator to use to generate mutants based on your input file.

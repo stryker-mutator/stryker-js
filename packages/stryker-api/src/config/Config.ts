@@ -1,4 +1,4 @@
-import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions } from '../../core';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, TestRunnerDescriptor } from '../../core';
 
 export default class Config implements StrykerOptions {
 
@@ -16,7 +16,10 @@ export default class Config implements StrykerOptions {
   public reporter = [];
   public reporters: string[] = ['progress', 'clear-text'];
   public coverageAnalysis: 'perTest' | 'all' | 'off' = 'perTest';
-  public testRunner: string = 'command';
+  public testRunner: TestRunnerDescriptor = {
+    name: 'command',
+    settings: {}
+  };
   public testFramework: string;
   public mutator: string | MutatorDescriptor = 'es5';
   public transpilers: string[] = [];
