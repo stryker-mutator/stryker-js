@@ -30,7 +30,7 @@ import LoggingClientContext from '../../src/logging/LoggingClientContext';
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
   public edit(config: Config) {
-    config.testRunner = 'fakeTestRunner';
+    config.testFramework = 'fakeTestFramework';
   }
 }
 
@@ -106,7 +106,7 @@ describe('Stryker', () => {
     });
 
     it('should use the config editor to override config', () => {
-      expect(sut.config.testRunner).to.be.eq('fakeTestRunner');
+      expect(sut.config.testFramework).to.be.eq('fakeTestFramework');
     });
 
     it('should configure logging for master', () => {

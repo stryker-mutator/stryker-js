@@ -34,7 +34,9 @@ describe('ResilientTestRunnerFactory integration', () => {
         port: 0,
         someRegex: /someRegex/,
         testFramework: 'jasmine',
-        testRunner: 'karma'
+        testRunner: {
+          name: 'karma'
+        }
       }
     };
     alreadyDisposed = false;

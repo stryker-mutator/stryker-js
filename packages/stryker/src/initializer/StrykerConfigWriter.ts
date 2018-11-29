@@ -39,7 +39,7 @@ export default class StrykerConfigWriter {
       mutator: selectedMutator ? selectedMutator.name : '',
       packageManager: selectedPackageManager.name,
       reporters: selectedReporters.map(rep => rep.name),
-      testRunner: selectedTestRunner ? selectedTestRunner.name : '',
+      testRunner: selectedTestRunner ? { name: selectedTestRunner.name } : { name: '' },
       transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : []
     };
 

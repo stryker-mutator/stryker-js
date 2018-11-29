@@ -44,7 +44,7 @@ describe('Sandbox', () => {
   let log: Mock<Logger>;
 
   beforeEach(() => {
-    options = { port: 43, timeoutFactor: 23, timeoutMS: 1000, testRunner: 'sandboxUnitTestRunner', symlinkNodeModules: true } as any;
+    options = { port: 43, timeoutFactor: 23, timeoutMS: 1000, testRunner: { name: 'sandboxUnitTestRunner' }, symlinkNodeModules: true } as any;
     testRunner = { init: sandbox.stub(), run: sandbox.stub().resolves(), dispose: sandbox.stub() };
     testFrameworkStub = {
       filter: sandbox.stub()
@@ -90,7 +90,7 @@ describe('Sandbox', () => {
         port: 46,
         strykerOptions: options
       };
-      expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings, sandboxDirectory, LOGGING_CONTEXT);
+      expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner.name, expectedSettings, sandboxDirectory, LOGGING_CONTEXT);
     });
 
     it('should have created a sandbox folder', async () => {

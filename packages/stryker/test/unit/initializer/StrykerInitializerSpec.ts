@@ -231,7 +231,8 @@ describe('StrykerInitializer', () => {
         transpilers: ['webpack']
       });
       await sut.initialize();
-      expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('testRunner: "awesome"')
+      expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('testRunner: {')
+        .and(sinon.match('name: "awesome"')) // testRunner name
         .and(sinon.match('testFramework: "awesome"'))
         .and(sinon.match('packageManager: "npm"'))
         .and(sinon.match('coverageAnalysis: "perTest"'))
