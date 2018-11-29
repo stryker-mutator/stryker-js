@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.2.13"></a>
+## [0.2.13](https://github.com/stryker-mutator/stryker/compare/stryker-vue-mutator@0.2.12...stryker-vue-mutator@0.2.13) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
 <a name="0.2.12"></a>
 ## [0.2.12](https://github.com/stryker-mutator/stryker/compare/stryker-vue-mutator@0.2.11...stryker-vue-mutator@0.2.12) (2018-11-29)
 

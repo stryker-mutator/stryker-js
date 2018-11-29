@@ -1,6 +1,6 @@
 {
   "name": "stryker-jest-runner",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
