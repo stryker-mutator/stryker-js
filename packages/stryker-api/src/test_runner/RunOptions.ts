@@ -12,6 +12,8 @@ interface RunOptions {
    * It should be loaded right after the test framework but right before any tests can run.
    */
   testHooks?: string;
+
+  mutatedFileName?: string;
 }
 
 export default RunOptions;
