@@ -1,5 +1,5 @@
 import { Config } from 'stryker-api/config';
-import { RunnerOptions, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { RunnerOptions, RunStatus, TestStatus, RunOptions } from 'stryker-api/test_runner';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as path from 'path';
@@ -22,8 +22,10 @@ describe('Integration test for Strykers Jest runner', function() {
   this.timeout(30000);
 
   let jestConfigEditor: JestConfigEditor;
-  let runOptions: RunnerOptions;
+  let runnerOptions: RunnerOptions;
   let processCwdStub: sinon.SinonStub;
+
+  const runOptions: RunOptions = { timeout: 0 };
 
   // Names of the tests in the example projects
   const testNames = [
@@ -40,7 +42,7 @@ describe('Integration test for Strykers Jest runner', function() {
 
     jestConfigEditor = new JestConfigEditor();
 
-    runOptions = {
+    runnerOptions = {
       fileNames: [],
       port: 0,
       strykerOptions: new Config()
@@ -49,11 +51,11 @@ describe('Integration test for Strykers Jest runner', function() {
 
   it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));
-    runOptions.strykerOptions.set({ jest: { projectType: 'react-ts' } });
-    jestConfigEditor.edit(runOptions.strykerOptions as Config);
+    runnerOptions.strykerOptions.set({ jest: { projectType: 'react-ts' } });
+    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
 
-    const jestTestRunner = new JestTestRunner(runOptions);
-    const result = await jestTestRunner.run();
+    const jestTestRunner = new JestTestRunner(runnerOptions);
+    const result = await jestTestRunner.run(runOptions);
 
     expect(result.status).to.equal(RunStatus.Complete);
     expect(result).to.have.property('tests');
@@ -68,10 +70,10 @@ describe('Integration test for Strykers Jest runner', function() {
   it('should run tests on the example custom project using package.json', async () => {
     processCwdStub.returns(getProjectRoot('exampleProject'));
 
-    jestConfigEditor.edit(runOptions.strykerOptions as Config);
-    const jestTestRunner = new JestTestRunner(runOptions);
+    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
+    const jestTestRunner = new JestTestRunner(runnerOptions);
 
-    const result = await jestTestRunner.run();
+    const result = await jestTestRunner.run(runOptions);
 
     expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
     expect(result).to.have.property('tests');
@@ -90,10 +92,10 @@ describe('Integration test for Strykers Jest runner', function() {
   it('should run tests on the example custom project using jest.config.js', async () => {
     processCwdStub.returns(getProjectRoot('exampleProjectWithExplicitJestConfig'));
 
-    jestConfigEditor.edit(runOptions.strykerOptions as Config);
-    const jestTestRunner = new JestTestRunner(runOptions);
+    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
+    const jestTestRunner = new JestTestRunner(runnerOptions);
 
-    const result = await jestTestRunner.run();
+    const result = await jestTestRunner.run(runOptions);
 
     expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
     expect(result).to.have.property('tests');

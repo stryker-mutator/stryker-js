@@ -35,12 +35,12 @@ export default class JestTestRunner implements TestRunner {
     this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 
-  public async run(options?: RunOptions): Promise<RunResult> {
+  public async run(options: RunOptions): Promise<RunResult> {
     this.setNodeEnv();
 
     const jestTestRunner = JestTestAdapterFactory.getJestTestAdapter();
 
-    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd(), this.enableFindRelatedTests && options ? options.mutatedFileName : undefined);
+    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd(), this.enableFindRelatedTests ? options.mutatedFileName : undefined);
 
     // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
     const errorMessages = results.testResults.map((testSuite: jest.TestResult) => testSuite.failureMessage).filter(errorMessage => (errorMessage)) as string[];
