@@ -119,6 +119,8 @@ export default class Sandbox {
     }, this.options.testRunner);
 
     const settings: RunnerOptions = {
+      config: testRunner.settings.config,
+      configFile: testRunner.settings.configFile,
       fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
       port: this.options.port + this.index,
       strykerOptions: this.options,

@@ -44,7 +44,16 @@ describe('Sandbox', () => {
   let log: Mock<Logger>;
 
   beforeEach(() => {
-    options = { port: 43, timeoutFactor: 23, timeoutMS: 1000, testRunner: { name: 'sandboxUnitTestRunner' }, symlinkNodeModules: true } as any;
+    options = {
+      port: 43,
+      symlinkNodeModules: true,
+      testRunner: {
+        name: 'sandboxUnitTestRunner',
+        settings: { config: {}, configFile: 'sampleConfig' }
+      },
+      timeoutFactor: 23,
+      timeoutMS: 1000,
+    } as any;
     testRunner = { init: sandbox.stub(), run: sandbox.stub().resolves(), dispose: sandbox.stub() };
     testFrameworkStub = {
       filter: sandbox.stub()
@@ -86,6 +95,8 @@ describe('Sandbox', () => {
     it('should have created the isolated test runner', async () => {
       await Sandbox.create(options, SANDBOX_INDEX, files, null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
       const expectedSettings: RunnerOptions = {
+        config: {},
+        configFile: 'sampleConfig',
         fileNames: [path.resolve('random-folder-3', 'file1'), path.resolve('random-folder-3', 'file2')],
         port: 46,
         strykerOptions: options

@@ -50,9 +50,11 @@ describe(`${CommandTestRunner.name} integration`, () => {
     const strykerOptions = new Config();
     if (settings) {
       strykerOptions.set({
-        commandRunner: settings
+        testRunner: {
+          settings: { config: settings }
+        }
       });
     }
-    return new CommandTestRunner(workingDir, { strykerOptions, port: 23, fileNames: [] });
+    return new CommandTestRunner(workingDir, { strykerOptions, port: 23, fileNames: [], config: settings });
   }
 });
