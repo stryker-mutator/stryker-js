@@ -30,7 +30,7 @@ export default class InputFileSystem extends CachedInputFileSystem
   }
 
   public stat(path: string, callback: Callback<fs.Stats>): void {
-    this.memoryFS.stat(path, (err: Error | null, stats: any) => {
+    this.memoryFS.stat(path, (err?: Error | null, stats?: any) => {
       if (err) {
         super.stat(path, callback as Callback<Stats>);
       } else {
