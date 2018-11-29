@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.12.0"></a>
+# [0.12.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.11.5...stryker-javascript-mutator@0.12.0) (2018-11-29)
+
+
+### Bug Fixes
+
+* **String literal mutator:** Don't mutate export declarations ([c764ccd](https://github.com/stryker-mutator/stryker/commit/c764ccd))
+
+
+### Features
+
+* **Conditional expression mutator:** Mutate conditional operators ([#1253](https://github.com/stryker-mutator/stryker/issues/1253)) ([be4c990](https://github.com/stryker-mutator/stryker/commit/be4c990))
+
+
+
+
 <a name="0.11.5"></a>
 ## [0.11.5](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.11.4...stryker-javascript-mutator@0.11.5) (2018-11-21)
 

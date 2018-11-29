@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.21.0"></a>
+# [0.21.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.20.3...stryker-karma-runner@0.21.0) (2018-11-29)
+
+
+### Features
+
+* **karma-runner:** Support automatic port selection ([#1239](https://github.io/stryker-mutator/stryker/issues/1239)) ([949333a](https://github.io/stryker-mutator/stryker/commit/949333a))
+
+
+
+
 <a name="0.20.3"></a>
 ## [0.20.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.20.2...stryker-karma-runner@0.20.3) (2018-11-21)
 
