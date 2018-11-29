@@ -1,26 +1,8 @@
-interface TestRunnerSettings {
-
-  /**
-   * Represents test runner config file
-   */
-  configFile?: string;
-
-  /**
-   *  custom settings for test runner go here
-   */
-  config?: {
-    [customConfig: string]: any;
-  };
-
-  /**
-   * Represents project type for test runner
-   */
-  projectType?: string;
-}
+import TestRunnerSettings from './TestRunnerSettings';
 
 interface TestRunnerDescriptor {
   name: string;
-  settings: TestRunnerSettings;
+  settings?: TestRunnerSettings;
 }
 
 export default TestRunnerDescriptor;

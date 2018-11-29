@@ -8,3 +8,4 @@ export { default as MutatorDescriptor } from './src/core/MutatorDescriptor';
 export { default as MutationScoreThresholds } from './src/core/MutationScoreThresholds';
 export { default as LogLevel } from './src/core/LogLevel';
 export { default as TestRunnerDescriptor } from './src/core/TestRunnerDescriptor';
+export { default as TestRunnerSettings } from './src/core/TestRunnerSettings';

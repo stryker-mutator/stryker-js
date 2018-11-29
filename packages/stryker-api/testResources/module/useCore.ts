@@ -12,7 +12,8 @@ const optionsAllArgs: StrykerOptions = {
   repoters: ['reporter'],
   testFramework: 'string',
   testRunner: {
-    name: 'string'
+    name: 'string',
+    settings: {}
   },
   thresholds: {
     break: 60,

@@ -28,8 +28,8 @@ describe('Config', () => {
     });
 
     it('should override testRunner when assigned', () => {
-      sut.set({ testRunner: { name: 'fakeTestRunner' } });
-      expect(sut.testRunner).deep.eq({ name: 'fakeTestRunner' });
+      sut.set({ testRunner: { name: 'fakeTestRunner', settings: {} } });
+      expect(sut.testRunner).deep.eq({ name: 'fakeTestRunner', settings: {} });
     });
 
     it('should never clear thresholds', () => {

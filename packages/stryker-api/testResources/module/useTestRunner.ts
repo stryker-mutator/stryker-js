@@ -35,7 +35,7 @@ const runnerOptions: RunnerOptions = {
     'foobar.spec.js'
   ],
   port: 1,
-  strykerOptions: null
+  settings: {}
 };
 
 const runOptions: RunOptions = {

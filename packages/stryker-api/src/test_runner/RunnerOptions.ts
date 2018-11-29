@@ -1,4 +1,4 @@
-import { StrykerOptions } from '../../core';
+import { TestRunnerSettings } from '../../core';
 
 /**
  * Represents an options object to configure a TestRunner.
@@ -16,26 +16,9 @@ interface RunnerOptions {
   port: number;
 
   /**
-   * Represents test runner config file
+   * Represents test runner settings
    */
-  configFile?: string;
-
-  /**
-   *  custom settings for test runner go here
-   */
-  config?: {
-    [customConfig: string]: any;
-  };
-
-  /**
-   * Represents project type for test runner
-   */
-  projectType?: string;
-
-  /**
-   * The underlying strykerOptions
-   */
-  strykerOptions: StrykerOptions;
+  settings: TestRunnerSettings;
 }
 
 export default RunnerOptions;

@@ -48,7 +48,7 @@ interface StrykerOptions {
   /**
    * The name of the test runner to use (default is the same name as the testFramework)
    */
-  testRunner?: Partial<TestRunnerDescriptor>;
+  testRunner?: TestRunnerDescriptor;
 
   /**
    * The mutant generator to use to generate mutants based on your input file.
