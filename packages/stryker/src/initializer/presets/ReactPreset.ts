@@ -16,12 +16,14 @@ export class ReactPreset implements Preset {
     'stryker-html-reporter'
   ];
 
-  private readonly sharedConfig = `testRunner: 'jest',
-    reporters: ['progress', 'clear-text', 'html'],
+  private readonly sharedConfig = `reporters: ['progress', 'clear-text', 'html'],
     coverageAnalysis: 'off',
-    jest: {
-      projectType: 'react'
-    }
+    testRunner: {
+      name: 'jest',
+      settings: {
+        projectType: 'react'
+      }
+    },
   `;
 
   private readonly tsxDependencies = ['stryker-typescript', ...this.generalDependencies];

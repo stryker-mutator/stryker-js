@@ -21,12 +21,14 @@ export class AngularPreset implements Preset {
           '!src/environments/*.ts'
         ],
         mutator: 'typescript',
-        testRunner: 'karma',
-        karma: {
-          configFile: 'src/karma.conf.js',
-          projectType: 'angular-cli',
-          config: {
-            browsers: ['ChromeHeadless']
+        testRunner: {
+          name: 'karma',
+          settings: {
+            projectType: 'angular-cli',
+            configFile: 'src/karma.conf.js',
+            config: {
+              browsers: ['ChromeHeadless']
+            }
           }
         },
         reporters: ['progress', 'clear-text', 'html'],

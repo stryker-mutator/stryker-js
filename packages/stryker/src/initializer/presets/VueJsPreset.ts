@@ -20,9 +20,11 @@ export class VueJsPreset implements Preset {
   private readonly jestConf = `{
       mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
       mutator: 'vue',
-      testRunner: 'jest',
-      jest: {
-        // config: require('path/to/your/custom/jestConfig.js')
+      testRunner: {
+        name: 'jest',
+        // settings: {
+        //  configFile: 'path/to/your/custom/jestConfig.js',
+        // }
       },
       reporter: ['progress', 'clear-text', 'html'],
       coverageAnalysis: 'off'
@@ -32,11 +34,13 @@ export class VueJsPreset implements Preset {
   private readonly karmaConf = `{
       mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
       mutator: 'vue',
-      testRunner: 'karma',
-      karma: {
-        configFile: 'test/unit/karma.conf.js',
-        config: {
-          browsers: ['ChromeHeadless']
+      testRunner: {
+        name: 'karma',
+        settings: {
+          configFile: 'test/unit/karma.conf.js',
+          config: {
+            browsers: ['ChromeHeadless']
+          }
         }
       },
       reporter: ['progress', 'clear-text', 'html'],

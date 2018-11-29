@@ -18,7 +18,7 @@ interface RunnerOptions {
   /**
    * Represents test runner config file
    */
-  configFile?: string | null;
+  configFile?: string;
 
   /**
    *  custom settings for test runner go here
@@ -26,6 +26,11 @@ interface RunnerOptions {
   config?: {
     [customConfig: string]: any;
   };
+
+  /**
+   * Represents project type for test runner
+   */
+  projectType?: string;
 
   /**
    * The underlying strykerOptions
