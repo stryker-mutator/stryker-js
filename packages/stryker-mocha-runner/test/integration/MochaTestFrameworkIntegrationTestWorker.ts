@@ -16,18 +16,17 @@ export default class MochaTestFrameworkIntegrationTestWorker {
 
   constructor() {
     this.sut = new MochaTestRunner({
+      config: {
+        files: [
+          path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
+        ]
+      },
       fileNames: [
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMath.js'),
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
       ],
       port: 0,
-      strykerOptions: {
-        mochaOptions: {
-          files: [
-            path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
-          ]
-        }
-      }
+      strykerOptions: {}
     });
     this.listenForParentProcess();
     try {

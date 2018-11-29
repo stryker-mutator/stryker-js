@@ -10,18 +10,20 @@ export default class MochaOptionsLoader {
   private readonly DEFAULT_MOCHA_OPTS = 'test/mocha.opts';
 
   public load(config: StrykerOptions): MochaRunnerOptions {
-    const mochaOptions = Object.assign({}, config[mochaOptionsKey]) as MochaRunnerOptions;
+    const testRunnerSettings = Object.assign({}, config.testRunner && config.testRunner.settings);
+
+    const mochaOptions = Object.assign({}, testRunnerSettings.config) as MochaRunnerOptions;
     let optsFileName = path.resolve(this.DEFAULT_MOCHA_OPTS);
 
-    if (mochaOptions.opts) {
-      optsFileName = path.resolve(mochaOptions.opts);
+    if (testRunnerSettings.configFile) {
+      optsFileName = path.resolve(testRunnerSettings.configFile);
     }
 
     if (fs.existsSync(optsFileName)) {
       this.log.info(`Loading mochaOpts from "${optsFileName}"`);
       const options = fs.readFileSync(optsFileName, 'utf8');
       return Object.assign(this.parseOptsFile(options), mochaOptions);
-    } else if (mochaOptions.opts) {
+    } else if (testRunnerSettings.configFile) {
       this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
     } else {
       this.log.debug('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', mochaOptionsKey);

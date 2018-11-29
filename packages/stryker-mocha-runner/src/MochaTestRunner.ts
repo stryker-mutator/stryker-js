@@ -16,7 +16,7 @@ export default class MochaTestRunner implements TestRunner {
   private readonly mochaRunnerOptions: MochaRunnerOptions;
 
   constructor(runnerOptions: RunnerOptions) {
-    this.mochaRunnerOptions = runnerOptions.strykerOptions[mochaOptionsKey];
+    this.mochaRunnerOptions = runnerOptions.config ? runnerOptions.config as MochaRunnerOptions : {};
     this.allFileNames = runnerOptions.fileNames;
     this.additionalRequires();
   }

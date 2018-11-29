@@ -30,8 +30,8 @@ describe('MochaOptionsLoader', () => {
 
   it('should load a mocha.opts file if specified', () => {
     readFileStub.returns('');
-    config.mochaOptions = {
-      opts: 'some/mocha.opts/file'
+    config.testRunner.settings = {
+      configFile: 'some/mocha.opts/file'
     };
     sut.load(config);
     expect(log.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
@@ -41,8 +41,8 @@ describe('MochaOptionsLoader', () => {
   it('should log an error if specified mocha.opts file doesn\'t exist', () => {
     readFileStub.returns('');
     existsFileStub.returns(false);
-    config.mochaOptions = {
-      opts: 'some/mocha.opts/file'
+    config.testRunner.settings = {
+      configFile: 'some/mocha.opts/file'
     };
 
     sut.load(config);
@@ -60,7 +60,7 @@ describe('MochaOptionsLoader', () => {
     existsFileStub.returns(false);
     const options = sut.load(config);
     expect(options).deep.eq({});
-    expect(log.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
+    expect(log.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'testRunner.settings.config');
   });
 
   it('should load `--require` and `-r` properties if specified in mocha.opts file', () => {
@@ -68,7 +68,9 @@ describe('MochaOptionsLoader', () => {
     --require  src/test/support/setup
     -r babel-require
     `);
-    config.mochaOptions = { opts: '.' };
+    config.testRunner.settings = {
+      configFile: '.'
+    };
     const options = sut.load(config);
     expect(options).deep.include({
       require: [
@@ -81,7 +83,9 @@ describe('MochaOptionsLoader', () => {
   function itShouldLoadProperty(property: string, value: string, expectedConfig: Partial<MochaRunnerOptions>) {
     it(`should load '${property} if specified`, () => {
       readFileStub.returns(`${property} ${value}`);
-      config.mochaOptions = { opts: 'path/to/opts/file' };
+      config.testRunner.settings = {
+        configFile: 'path/to/opts/file'
+      };
       expect(sut.load(config)).deep.include(expectedConfig);
     });
   }
@@ -100,17 +104,18 @@ describe('MochaOptionsLoader', () => {
       -A
       -r babel-register
     `);
-    config.mochaOptions = {
-      asyncOnly: false,
-      opts: 'path/to/opts/file',
-      require: ['ts-node/register'],
-      timeout: 4000,
-      ui: 'exports'
+    config.testRunner.settings = {
+      config: {
+        asyncOnly: false,
+        require: ['ts-node/register'],
+        timeout: 4000,
+        ui: 'exports'
+      },
+      configFile: 'path/to/opts/file'
     };
     const options = sut.load(config);
     expect(options).deep.equal({
       asyncOnly: false,
-      opts: 'path/to/opts/file',
       require: ['ts-node/register'],
       timeout: 4000,
       ui: 'exports'
@@ -122,11 +127,11 @@ describe('MochaOptionsLoader', () => {
     --reporter dot
     --ignore-leaks
     `);
-    config.mochaOptions = {
-      opts: 'some/mocha.opts/file',
+    config.testRunner.settings = {
+      configFile: 'some/mocha.opts/file'
     };
     const options = sut.load(config);
-    expect(options).deep.eq({ opts: 'some/mocha.opts/file' });
+    expect(options).deep.eq({});
     expect(log.debug).calledWith('Ignoring option "--reporter" as it is not supported.');
     expect(log.debug).calledWith('Ignoring option "--ignore-leaks" as it is not supported.');
   });
@@ -136,10 +141,10 @@ describe('MochaOptionsLoader', () => {
     --timeout
     --ui
     `);
-    config.mochaOptions = {
-      opts: 'some/mocha.opts/file',
+    config.testRunner.settings = {
+      configFile: 'some/mocha.opts/file'
     };
     const options = sut.load(config);
-    expect(options).deep.eq({ opts: 'some/mocha.opts/file', timeout: undefined, ui: undefined });
+    expect(options).deep.eq({ timeout: undefined, ui: undefined });
   });
 });

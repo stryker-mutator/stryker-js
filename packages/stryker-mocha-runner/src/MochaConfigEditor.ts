@@ -1,9 +1,10 @@
 import { ConfigEditor, Config } from 'stryker-api/config';
-import { mochaOptionsKey } from './MochaRunnerOptions';
 import MochaOptionsLoader from './MochaOptionsLoader';
 
 export default class MochaConfigEditor implements ConfigEditor {
   public edit(config: Config): void {
-    config[mochaOptionsKey] = new MochaOptionsLoader().load(config);
+    if (config.testRunner.settings) {
+      config.testRunner.settings.config = new MochaOptionsLoader().load(config);
+    }
   }
 }
