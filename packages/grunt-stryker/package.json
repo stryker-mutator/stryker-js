@@ -30,7 +30,7 @@
   },
   "main": "Gruntfile.js",
   "devDependencies": {
-    "stryker-api": "^0.23.0"
+    "stryker-api": "^0.22.0"
   },
   "peerDependencies": {
     "grunt": ">=0.4.5",
