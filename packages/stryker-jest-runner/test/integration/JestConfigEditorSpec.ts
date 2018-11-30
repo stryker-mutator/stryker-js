@@ -1,5 +1,6 @@
 import JestConfigEditor from '../../src/JestConfigEditor';
 import { Config } from 'stryker-api/config';
+import { TestRunnerSettings } from 'stryker-api/core';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as path from 'path';
@@ -70,7 +71,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       verbose: false
     };
 
-    assertJestConfig(expectedResult, config.testRunner.settings && config.testRunner.settings.config);
+    assertJestConfig(expectedResult, getTestRunnerSettings(config).config);
   });
 
   it('should create a Jest configuration for a React + TypeScript project', () => {
@@ -128,7 +129,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       verbose: false
     };
 
-    assertJestConfig(expectedResult, config.testRunner.settings && config.testRunner.settings.config);
+    assertJestConfig(expectedResult, getTestRunnerSettings(config).config);
   });
 
   it('should load the Jest configuration from the jest.config.js', () => {
@@ -136,8 +137,8 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.testRunner.settings && config.testRunner.settings.projectType).to.equal('custom');
-    expect(config.testRunner.settings && config.testRunner.settings.config).to.deep.equal({
+    expect(getTestRunnerSettings(config).projectType).to.equal('custom');
+    expect(getTestRunnerSettings(config).config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
@@ -155,8 +156,8 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.testRunner.settings && config.testRunner.settings.projectType).to.equal('custom');
-    expect(config.testRunner.settings && config.testRunner.settings.config).to.deep.equal({
+    expect(getTestRunnerSettings(config).projectType).to.equal('custom');
+    expect(getTestRunnerSettings(config).config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
@@ -174,7 +175,7 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.testRunner.settings && config.testRunner.settings.config).to.deep.equal({
+    expect(getTestRunnerSettings(config).config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       testResultsProcessor: undefined,
@@ -198,4 +199,6 @@ describe('Integration test for Jest ConfigEditor', () => {
       expect(actual[key]).deep.eq(expected[key]);
     });
   }
+
+  const getTestRunnerSettings = (config: Config): TestRunnerSettings => config.testRunner.settings || {};
 });

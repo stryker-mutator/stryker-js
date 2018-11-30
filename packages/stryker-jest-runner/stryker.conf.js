@@ -4,13 +4,17 @@ module.exports = function(config) {
       'src/**/*.ts',
       '!src/index.ts'
     ],
-    mochaOptions: {
-      files: [
-        'test/helpers/**/*.js',
-        'test/unit/**/*.js'
-      ]
+    testRunner: {
+      name: 'mocha',
+      settings: {
+        config: {
+          files: [
+            'test/helpers/**/*.js',
+            'test/unit/**/*.js'
+          ]
+        }
+      }
     },
-    testRunner: 'mocha',
     testFramework: 'mocha',
     mutator: 'typescript',
     transpilers: ['typescript'],

@@ -28,7 +28,9 @@ Make sure you set the `testRunner` option to "jest" and set `coverageAnalysis` t
 
 ```javascript
 {
-    testRunner: 'jest'
+    testRunner: {
+        name: 'jest'
+    },
     coverageAnalysis: 'off'
 }
 ```
@@ -38,11 +40,14 @@ The stryker-jest-runner also provides a couple of configurable options using the
 
 ```javascript
 {
-    jest: {
-        projectType: 'custom',
-        config: require('path/to/your/custom/jestConfig.js'),
-        enableFindRelatedTests: true,
-    }
+    testRunner: {
+        name: 'jest',
+        settings: {
+            projectType: 'custom',
+            config: require('path/to/your/custom/jestConfig.js'),
+            enableFindRelatedTests: true,
+        }
+    },
 }
 ```
 
@@ -63,7 +68,9 @@ The following is an example stryker.conf.js file:
 ```javascript
 module.exports = function(config) {
   config.set({
-    testRunner: "jest",
+    testRunner: {
+        name: 'jest'
+    },
     mutator: "javascript",
     coverageAnalysis: "off",
     mutate: ["src/**/*.js"]

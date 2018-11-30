@@ -1,4 +1,5 @@
 import { Config } from 'stryker-api/config';
+import { TestRunnerSettings } from 'stryker-api/core';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
 import JestConfigEditor from '../../src/JestConfigEditor';
@@ -36,7 +37,7 @@ describe('JestConfigEditor', () => {
   it('should call the defaultConfigLoader loadConfig method when no projectType is defined', () => {
     sut.edit(config);
 
-    expect(config.testRunner.settings && config.testRunner.settings.projectType).eq('custom');
+    expect(getTestRunnerSettings(config).projectType).eq('custom');
     assert(customConfigLoaderStub.loadConfig.calledOnce, 'CustomConfigLoader loadConfig not called');
   });
 
@@ -59,7 +60,7 @@ describe('JestConfigEditor', () => {
   it('should override verbose, collectCoverage, testResultsProcessor and bail on all loaded configs', () => {
     sut.edit(config);
 
-    expect(config.testRunner.settings && config.testRunner.settings.config).to.deep.equal({
+    expect(getTestRunnerSettings(config).config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       testResultsProcessor: undefined,
@@ -74,21 +75,31 @@ describe('JestConfigEditor', () => {
     expect(() => sut.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
 
+  it('should warn when using deprecated `jest` property', () => {
+    const projectType = 'custom';
+    config.set({ jest: { projectType } });
+    sut.edit(config);
+    expect(currentLogMock().warn).calledWith('DEPRECATED: `jest` is renamed to `testRunner.settings`. Please change it in your stryker configuration.');
+    expect(getTestRunnerSettings(config).projectType).eq(projectType);
+  });
+
   it('should warn when using deprecated `project` property', () => {
     const projectType = 'custom';
     config.set({ testRunner: { name: 'jest', settings: { project: projectType } } });
     sut.edit(config);
-    expect(currentLogMock().warn).calledWith('DEPRECATED: `jest.project` is renamed to `jest.projectType`. Please change it in your stryker configuration.');
-    expect(config.testRunner.settings && config.testRunner.settings.projectType).eq(projectType);
+    expect(currentLogMock().warn).calledWith('DEPRECATED: `settings.project` is renamed to `settings.projectType`. Please change it in your stryker configuration.');
+    expect(getTestRunnerSettings(config).projectType).eq(projectType);
   });
 
   it('should warn when using deprecated "default" project type', () => {
     const projectType = 'default';
     config.set({ testRunner: { name: 'jest', settings: { projectType } } });
     sut.edit(config);
-    expect(currentLogMock().warn).calledWith('DEPRECATED: The \'default\' `jest.projectType` is renamed to \'custom\'. Please rename it in your stryker configuration.');
-    expect(config.testRunner.settings && config.testRunner.settings.projectType).eq('custom');
+    expect(currentLogMock().warn).calledWith('DEPRECATED: The \'default\' `settings.projectType` is renamed to \'custom\'. Please rename it in your stryker configuration.');
+    expect(getTestRunnerSettings(config).projectType).eq('custom');
   });
+
+  const getTestRunnerSettings = (config: Config): TestRunnerSettings => config.testRunner.settings || {};
 });
 
 interface ConfigLoaderStub {

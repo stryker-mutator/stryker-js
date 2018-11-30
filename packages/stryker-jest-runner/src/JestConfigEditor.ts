@@ -17,17 +17,21 @@ export default class JestConfigEditor implements ConfigEditor {
   public log = getLogger(JestConfigEditor.name);
 
   public edit(strykerConfig: Config): void {
-    const settings: TestRunnerSettings = strykerConfig.testRunner.settings || {};
+    if (strykerConfig.jest) {
+      this.log.warn('DEPRECATED: `jest` is renamed to `testRunner.settings`. Please change it in your stryker configuration.');
+    }
+
+    const settings: TestRunnerSettings = strykerConfig.testRunner.settings || strykerConfig.jest || {};
 
     if (settings.project) {
-      this.log.warn('DEPRECATED: `jest.project` is renamed to `jest.projectType`. Please change it in your stryker configuration.');
+      this.log.warn('DEPRECATED: `settings.project` is renamed to `settings.projectType`. Please change it in your stryker configuration.');
     }
 
     // When no projectType is set, set it to the default
     settings.projectType = settings.projectType || settings.project || DEFAULT_PROJECT_NAME;
 
     if (settings.projectType && settings.projectType.toLowerCase() === DEFAULT_PROJECT_NAME_DEPRECATED) {
-      this.log.warn(`DEPRECATED: The '${DEFAULT_PROJECT_NAME_DEPRECATED}' \`jest.projectType\` is renamed to '${DEFAULT_PROJECT_NAME}'. Please rename it in your stryker configuration.`);
+      this.log.warn(`DEPRECATED: The '${DEFAULT_PROJECT_NAME_DEPRECATED}' \`settings.projectType\` is renamed to '${DEFAULT_PROJECT_NAME}'. Please rename it in your stryker configuration.`);
       settings.projectType = DEFAULT_PROJECT_NAME;
     }
 
