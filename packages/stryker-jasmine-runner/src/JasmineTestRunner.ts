@@ -9,7 +9,7 @@ export default class JasmineTestRunner implements TestRunner {
   private readonly Date: { new(): Date } = Date; // take Date prototype now we still can (user might choose to mock it away)
 
   constructor(runnerOptions: RunnerOptions) {
-    this.jasmineConfigFile = runnerOptions.strykerOptions.jasmineConfigFile;
+    this.jasmineConfigFile = runnerOptions.settings.configFile;
     this.fileNames = runnerOptions.fileNames;
   }
 

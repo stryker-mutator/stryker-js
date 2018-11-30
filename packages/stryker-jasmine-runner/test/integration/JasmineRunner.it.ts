@@ -53,7 +53,7 @@ describe('JasmineRunner integration', () => {
           path.resolve('spec', 'jasmine_examples', 'PlayerSpec.js')
         ],
         port: 80,
-        strykerOptions: { jasmineConfigFile: 'spec/support/jasmine.json' }
+        settings: { configFile: 'spec/support/jasmine.json' }
       });
     });
     it('should run the specs', async () => {
@@ -125,7 +125,7 @@ describe('JasmineRunner integration', () => {
       sut = new JasmineTestRunner({
         fileNames: [path.resolve('lib', 'error.js'),
         path.resolve('spec', 'errorSpec.js')
-        ], port: 80, strykerOptions: {}
+        ], port: 80, settings: {}
       });
     });
 
@@ -147,7 +147,7 @@ describe('JasmineRunner integration', () => {
         fileNames: [
           path.resolve('lib', 'foo.js'),
           path.resolve('spec', 'fooSpec.js')
-        ], port: 80, strykerOptions: {}
+        ], port: 80, settings: {}
       });
     });
 

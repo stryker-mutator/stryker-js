@@ -36,14 +36,18 @@ module.exports = function (config) {
         coverageAnalysis: 'perTest', 
         // not required, but will allow you to use coverageAnalysis "perTest". Note: This requires `stryker-jasmine` to also be installed.
         testFramework: 'jasmine', 
-        testRunner: 'jasmine',
-        jasmineConfigFile: 'spec/support/jasmine.json'
+        testRunner: {
+            name: 'jasmine',
+            settings: {
+                configFile: 'spec/support/jasmine.json' 
+            }
+        }
         // ...
     });
 }
 ```
 
-### `jasmineConfigFile` [`string`]
+### `settings.configFile` [`string`]
 
 Default: `undefined`
 
