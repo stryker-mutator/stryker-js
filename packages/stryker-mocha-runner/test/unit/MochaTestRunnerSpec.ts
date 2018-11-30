@@ -41,7 +41,7 @@ describe('MochaTestRunner', () => {
   it('should add all mocha test files on run()', async () => {
     multimatchStub.returns(['foo.js', 'bar.js', 'foo2.js']);
     sut = new MochaTestRunner(runnerOptions({
-      config: {}
+      settings: { config: {} }
     }));
     await sut.init();
     await actRun();
@@ -77,7 +77,7 @@ describe('MochaTestRunner', () => {
       timeout: 2000,
       ui: 'assert'
     };
-    sut = new MochaTestRunner(runnerOptions({ config: mochaOptions }));
+    sut = new MochaTestRunner(runnerOptions({ settings: { config: mochaOptions } }));
     await sut.init();
 
     // Act
@@ -91,7 +91,7 @@ describe('MochaTestRunner', () => {
 
   it('should pass require additional require options when constructed', () => {
     const mochaOptions: MochaRunnerOptions = { require: ['ts-node', 'babel-register'] };
-    new MochaTestRunner(runnerOptions({ config: mochaOptions }));
+    new MochaTestRunner(runnerOptions({ settings: { config: mochaOptions }}));
     expect(requireStub).calledTwice;
     expect(requireStub).calledWith('ts-node');
     expect(requireStub).calledWith('babel-register');
@@ -99,7 +99,7 @@ describe('MochaTestRunner', () => {
 
   it('should pass and resolve relative require options when constructed', () => {
     const mochaOptions: MochaRunnerOptions = { require: ['./setup.js', 'babel-register'] };
-    new MochaTestRunner(runnerOptions({ config: mochaOptions }));
+    new MochaTestRunner(runnerOptions({ settings: { config: mochaOptions }}));
     const resolvedRequire = path.resolve('./setup.js');
     expect(requireStub).calledTwice;
     expect(requireStub).calledWith(resolvedRequire);
@@ -162,8 +162,8 @@ describe('MochaTestRunner', () => {
     const expectedFiles = ['foo.js', 'bar.js'];
     multimatchStub.returns(['foo.js']);
     sut = new MochaTestRunner(runnerOptions({
-      config: { files: relativeGlobPatterns },
-      fileNames: expectedFiles
+      fileNames: expectedFiles,
+      settings: { config: { files: relativeGlobPatterns }}
     }));
     sut.init();
     expect(multimatchStub).calledWith(expectedFiles, expectedGlobPatterns);

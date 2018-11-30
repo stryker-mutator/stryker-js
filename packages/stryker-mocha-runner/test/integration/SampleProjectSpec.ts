@@ -31,10 +31,9 @@ describe('Running a sample project', () => {
         resolve('./testResources/sampleProject/MyMathSpec.js')
       ];
       const testRunnerOptions: RunnerOptions = {
-        config: { files },
         fileNames: files,
         port: 1234,
-        strykerOptions: {}
+        settings: { config: { files } }
       };
       sut = new MochaTestRunner(testRunnerOptions);
       return sut.init();
@@ -66,10 +65,9 @@ describe('Running a sample project', () => {
         files
       };
       const options: RunnerOptions = {
-        config: mochaOptions,
         fileNames: files,
         port: 1234,
-        strykerOptions: {}
+        settings: { config: mochaOptions },
       };
       sut = new MochaTestRunner(options);
       return sut.init();
@@ -85,17 +83,18 @@ describe('Running a sample project', () => {
 
     before(() => {
       sut = new MochaTestRunner({
-        config: {
-          files: [
-            resolve('testResources/sampleProject/MyMath.js'),
-            resolve('testResources/sampleProject/MyMathFailedSpec.js')],
-        },
         fileNames: [
           resolve('testResources/sampleProject/MyMath.js'),
           resolve('testResources/sampleProject/MyMathFailedSpec.js')
         ],
         port: 1234,
-        strykerOptions: {}
+        settings: {
+          config: {
+            files: [
+              resolve('testResources/sampleProject/MyMath.js'),
+              resolve('testResources/sampleProject/MyMathFailedSpec.js')],
+          },
+        }
       });
       return sut.init();
     });
@@ -111,10 +110,9 @@ describe('Running a sample project', () => {
     beforeEach(() => {
       const files = [resolve('./testResources/sampleProject/MyMath.js')];
       const testRunnerOptions = {
-        config: { files },
         fileNames: files,
         port: 1234,
-        strykerOptions: {}
+        settings: { config: { files } }
       };
       sut = new MochaTestRunner(testRunnerOptions);
       return sut.init();

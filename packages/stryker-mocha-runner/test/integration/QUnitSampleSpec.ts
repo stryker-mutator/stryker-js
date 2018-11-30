@@ -13,8 +13,8 @@ describe('QUnit sample', () => {
       ui: 'qunit'
     };
     const sut = new MochaTestRunner(runnerOptions({
-      config: mochaOptions,
       fileNames: mochaOptions.files,
+      settings: { config: mochaOptions },
     }));
     await sut.init();
     const actualResult = await sut.run({});
@@ -30,17 +30,18 @@ describe('QUnit sample', () => {
 
   it('should not run tests when not configured with "qunit" ui', async () => {
     const sut = new MochaTestRunner({
-      config: {
-        files: [
-          resolve('./testResources/qunit-sample/MyMathSpec.js')
-        ]
-      },
       fileNames: [
         resolve('./testResources/qunit-sample/MyMathSpec.js'),
         resolve('./testResources/qunit-sample/MyMath.js')
       ],
       port: 0,
-      strykerOptions: {}
+      settings: {
+        config: {
+          files: [
+            resolve('./testResources/qunit-sample/MyMathSpec.js')
+          ]
+        },
+      }
     });
     await sut.init();
     const actualResult = await sut.run({});
