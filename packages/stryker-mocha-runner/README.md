@@ -33,30 +33,27 @@ You can configure the mocha test runner in the `stryker.conf.js` file.
 module.exports = function (config) {
     config.set({
         // ...
-        testRunner: 'mocha',
-        // ...
-        mochaOptions: {
-            // Optional mocha options
-            files: [ 'test/**/*.js' ]
-            opts: 'path/to/mocha.opts',
-            ui: 'bdd',
-            timeout: 3000,
-            require: [ /*'babel-register' */],
-            asyncOnly: false
+        testRunner: {
+            name: 'mocha',
+            settings: {
+                configFile: 'path/to/mocha.opts', 
+                config: {
+                    // Optional mocha options
+                    files: [ 'test/**/*.js' ],
+                    ui: 'bdd',
+                    timeout: 3000,
+                    require: [ /*'babel-register' */],
+                    asyncOnly: false
+                }
+            }
         }
+        // ...
     });
 }
 ```
 
-### `mochaOptions.files` [`string` or `string[]`]
 
-Default: `'test/**/*.js'`
-
-Choose which files to include. This is comparable to [mocha's test directory](https://mochajs.org/#the-test-directory) although there is no support for `--recursive`.
-
-If you want to load all files recursively: use a globbing expression (`'test/**/*.js'`). If you want to decide on the order of files, use multiple globbing expressions. For example: use `['test/helpers/**/*.js', 'test/unit/**/*.js']` if you want to make sure your helpers are loaded before your unit tests.
-
-### `mochaOptions.opts` [`string`]
+### `settings.configFile` [`string`]
 
 Default: `'test/mocha.opts'`
 
@@ -64,25 +61,33 @@ Specify a ['mocha.opts' file](https://mochajs.org/#mochaopts) to be loaded. Opti
 
 The only supported mocha options are used: `--ui`, `--require`, `--async-only`, `--timeout` (or their short form counterparts). Others are ignored by the stryker-mocha-runner.
 
-### `mochaOptions.ui` [`string`]
+### `settings.config.files` [`string` or `string[]`]
+
+Default: `'test/**/*.js'`
+
+Choose which files to include. This is comparable to [mocha's test directory](https://mochajs.org/#the-test-directory) although there is no support for `--recursive`.
+
+If you want to load all files recursively: use a globbing expression (`'test/**/*.js'`). If you want to decide on the order of files, use multiple globbing expressions. For example: use `['test/helpers/**/*.js', 'test/unit/**/*.js']` if you want to make sure your helpers are loaded before your unit tests.
+
+### `settings.config.ui` [`string`]
 
 Default: `undefined`
 
 Set the name of your [mocha ui](https://mochajs.org/#-u---ui-name)
 
-### `mochaOptions.require` [`string[]`]
+### `settings.config.require` [`string[]`]
 
 Default: `[]`
 
 Set mocha's [`require` option](https://mochajs.org/#-r---require-module-name)
 
-### `mochaOptions.asyncOnly` [`boolean`]
+### `settings.config.asyncOnly` [`boolean`]
 
 Default: `false`
 
 Set mocha's [`asyncOnly` option](https://mochajs.org/#usage)
 
-### `mochaOptions.timeout` [`number`]
+### `settings.config.timeout` [`number`]
 
 Default: `undefined`
 

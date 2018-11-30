@@ -1,8 +1,9 @@
-export const mochaOptionsKey_deprecated = 'mochaOptions';
+export const mochaOptionsKeyDeprecated = 'mochaOptions';
 export const mochaOptionsKey = 'testRunner.settings.config';
 
 export default interface MochaRunnerOptions {
   require?: string[];
+  // deprecated
   opts?: string;
   timeout?: number;
   asyncOnly?: boolean;

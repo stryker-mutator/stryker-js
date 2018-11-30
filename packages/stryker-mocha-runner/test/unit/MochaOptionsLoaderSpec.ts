@@ -147,4 +147,32 @@ describe('MochaOptionsLoader', () => {
     const options = sut.load(config);
     expect(options).deep.eq({ timeout: undefined, ui: undefined });
   });
+
+  it('should warn when using deprecated `mochaOptions` property', () => {
+    readFileStub.returns('');
+    const expectedConfig = {
+        asyncOnly: false,
+        require: ['ts-node/register'],
+        timeout: 4000,
+        ui: 'exports'
+    };
+    config.set({ mochaOptions: expectedConfig });
+    const options = sut.load(config);
+    expect(log.warn).calledWith('DEPRECATED: "mochaOptions" is renamed to "testRunner.settings.config". Please change it in your stryker configuration.');
+    expect(options).deep.eq(expectedConfig);
+  });
+
+  it('should warn when using deprecated `opts` property', () => {
+    readFileStub.returns(`
+    -t 2000
+    `);
+    const mochaConfig = {
+      opts: 'some/mocha.opts/file'
+    };
+    config.set({ testRunner: { name: 'jest', settings: { config: mochaConfig } } });
+    const options = sut.load(config);
+    expect(log.warn).calledWith('DEPRECATED: "testRunner.settings.config.opts" is renamed to "testRunner.settings.configFile". Please change it in your stryker configuration.');
+    expect(options).deep.eq({ opts: 'some/mocha.opts/file', timeout: 2000 });
+  });
+
 });

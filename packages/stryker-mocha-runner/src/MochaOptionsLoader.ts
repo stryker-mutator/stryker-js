@@ -1,18 +1,28 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { StrykerOptions } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
-import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
+import MochaRunnerOptions, { mochaOptionsKey, mochaOptionsKeyDeprecated } from './MochaRunnerOptions';
+import { Config } from 'stryker-api/config';
 
 export default class MochaOptionsLoader {
 
   private readonly log = getLogger(MochaOptionsLoader.name);
   private readonly DEFAULT_MOCHA_OPTS = 'test/mocha.opts';
 
-  public load(config: StrykerOptions): MochaRunnerOptions {
-    const testRunnerSettings = Object.assign({}, config.testRunner && config.testRunner.settings);
+  public load(config: Config): MochaRunnerOptions {
+    const testRunnerSettings = config.testRunner.settings || {};
+
+    if (config[mochaOptionsKeyDeprecated]) {
+      this.log.warn(`DEPRECATED: "${mochaOptionsKeyDeprecated}" is renamed to "testRunner.settings.config". Please change it in your stryker configuration.`);
+      testRunnerSettings.config = config[mochaOptionsKeyDeprecated];
+    }
 
     const mochaOptions = Object.assign({}, testRunnerSettings.config) as MochaRunnerOptions;
+    if (mochaOptions.opts) {
+      this.log.warn(`DEPRECATED: "testRunner.settings.config.opts" is renamed to "testRunner.settings.configFile". Please change it in your stryker configuration.`);
+      testRunnerSettings.configFile = mochaOptions.opts;
+    }
+
     let optsFileName = path.resolve(this.DEFAULT_MOCHA_OPTS);
 
     if (testRunnerSettings.configFile) {
