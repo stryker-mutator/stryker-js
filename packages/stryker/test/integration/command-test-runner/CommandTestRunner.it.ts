@@ -1,9 +1,9 @@
 import * as path from 'path';
 import { expect } from 'chai';
 import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
-import { Config } from 'stryker-api/config';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
 import * as objectUtils from '../../../src/utils/objectUtils';
+import { TestRunnerSettings } from 'stryker-api/core';
 
 describe(`${CommandTestRunner.name} integration`, () => {
 
@@ -47,14 +47,12 @@ describe(`${CommandTestRunner.name} integration`, () => {
   });
 
   function createSut(settings?: CommandRunnerSettings) {
-    const strykerOptions = new Config();
+    let testRunnerSettings: TestRunnerSettings = {};
     if (settings) {
-      strykerOptions.set({
-        testRunner: {
-          settings: { config: settings }
-        }
-      });
+      testRunnerSettings = {
+        config: settings
+      };
     }
-    return new CommandTestRunner(workingDir, { strykerOptions, port: 23, fileNames: [], config: settings });
+    return new CommandTestRunner(workingDir, { port: 23, fileNames: [], settings: testRunnerSettings });
   }
 });

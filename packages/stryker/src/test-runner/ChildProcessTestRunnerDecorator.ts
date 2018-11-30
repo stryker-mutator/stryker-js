@@ -18,12 +18,13 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
   constructor(
     realTestRunnerName: string,
     options: RunnerOptions,
+    plugins: string[],
     sandboxWorkingDirectory: string,
     loggingContext: LoggingClientContext) {
     this.worker = ChildProcessProxy.create(
       require.resolve('./ChildProcessTestRunnerWorker.js'),
       loggingContext,
-      options.strykerOptions.plugins || [],
+      plugins || [],
       sandboxWorkingDirectory,
       ChildProcessTestRunnerWorker, realTestRunnerName, options);
   }

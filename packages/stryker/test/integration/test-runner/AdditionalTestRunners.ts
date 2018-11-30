@@ -38,7 +38,7 @@ class DiscoverRegexTestRunner implements TestRunner {
   }
 
   public run(): Promise<RunResult> {
-    if (isRegExp(this.runnerOptions.strykerOptions.someRegex)) {
+    if (isRegExp(this.runnerOptions.settings.someRegex)) {
       return Promise.resolve({ status: RunStatus.Complete, tests: [] });
     } else {
       return Promise.resolve({ status: RunStatus.Error, tests: [], errorMessages: ['No regex found in runnerOptions.strykerOptions.someRegex'] });

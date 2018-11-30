@@ -119,14 +119,12 @@ export default class Sandbox {
     }, this.options.testRunner);
 
     const settings: RunnerOptions = {
-      config: testRunner.settings.config,
-      configFile: testRunner.settings.configFile,
       fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
       port: this.options.port + this.index,
-      strykerOptions: this.options,
+      settings: testRunner.settings
     };
     this.log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
-    this.testRunner = ResilientTestRunnerFactory.create(testRunner.name, settings, this.workingDirectory, this.loggingContext);
+    this.testRunner = ResilientTestRunnerFactory.create(testRunner.name, settings, this.options.plugins, this.workingDirectory, this.loggingContext);
     return this.testRunner.init();
   }
 

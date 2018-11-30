@@ -36,7 +36,7 @@ export default class CommandTestRunner implements TestRunner {
   constructor(private readonly workingDir: string, options: RunnerOptions) {
     this.settings = Object.assign({
       command: 'npm test'
-    }, options.config);
+    }, options.settings.config);
   }
 
   public run(): Promise<RunResult> {

@@ -95,13 +95,11 @@ describe('Sandbox', () => {
     it('should have created the isolated test runner', async () => {
       await Sandbox.create(options, SANDBOX_INDEX, files, null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
       const expectedSettings: RunnerOptions = {
-        config: {},
-        configFile: 'sampleConfig',
         fileNames: [path.resolve('random-folder-3', 'file1'), path.resolve('random-folder-3', 'file2')],
         port: 46,
-        strykerOptions: options
+        settings: { config: {}, configFile: 'sampleConfig' }
       };
-      expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner.name, expectedSettings, sandboxDirectory, LOGGING_CONTEXT);
+      expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner.name, expectedSettings, options.plugins, sandboxDirectory, LOGGING_CONTEXT);
     });
 
     it('should have created a sandbox folder', async () => {
