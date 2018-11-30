@@ -21,7 +21,7 @@ describe('Integration test for Jest ConfigEditor', () => {
   });
 
   it('should create a Jest configuration for a React project', () => {
-    config.set({ jest: { projectType: 'react' } });
+    config.set({ testRunner: { name: 'jest', settings: { projectType: 'react' } } });
 
     jestConfigEditor.edit(config);
 
@@ -70,11 +70,11 @@ describe('Integration test for Jest ConfigEditor', () => {
       verbose: false
     };
 
-    assertJestConfig(expectedResult, config.jest.config);
+    assertJestConfig(expectedResult, config.testRunner.settings && config.testRunner.settings.config);
   });
 
   it('should create a Jest configuration for a React + TypeScript project', () => {
-    config.set({ jest: { projectType: 'react-ts' } });
+    config.set({ testRunner: { name: 'jest', settings: { projectType: 'react-ts' } } });
 
     jestConfigEditor.edit(config);
 
@@ -128,7 +128,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       verbose: false
     };
 
-    assertJestConfig(expectedResult, config.jest.config);
+    assertJestConfig(expectedResult, config.testRunner.settings && config.testRunner.settings.config);
   });
 
   it('should load the Jest configuration from the jest.config.js', () => {
@@ -136,8 +136,8 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.jest.projectType).to.equal('custom');
-    expect(config.jest.config).to.deep.equal({
+    expect(config.testRunner.settings && config.testRunner.settings.projectType).to.equal('custom');
+    expect(config.testRunner.settings && config.testRunner.settings.config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
@@ -155,8 +155,8 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.jest.projectType).to.equal('custom');
-    expect(config.jest.config).to.deep.equal({
+    expect(config.testRunner.settings && config.testRunner.settings.projectType).to.equal('custom');
+    expect(config.testRunner.settings && config.testRunner.settings.config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
@@ -174,7 +174,7 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     jestConfigEditor.edit(config);
 
-    expect(config.jest.config).to.deep.equal({
+    expect(config.testRunner.settings && config.testRunner.settings.config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       testResultsProcessor: undefined,
@@ -184,7 +184,7 @@ describe('Integration test for Jest ConfigEditor', () => {
 
   it('should return with an error when an invalid projectType is specified', () => {
     const projectType = 'invalidProject';
-    config.set({ jest: { projectType } });
+    config.set({ testRunner: { name: 'jest', settings: { projectType } } });
 
     expect(() => jestConfigEditor.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
   });

@@ -36,12 +36,12 @@ describe('JestConfigEditor', () => {
   it('should call the defaultConfigLoader loadConfig method when no projectType is defined', () => {
     sut.edit(config);
 
-    expect(config.jest.projectType).eq('custom');
+    expect(config.testRunner.settings && config.testRunner.settings.projectType).eq('custom');
     assert(customConfigLoaderStub.loadConfig.calledOnce, 'CustomConfigLoader loadConfig not called');
   });
 
   it('should call the ReactScriptsJestConfigLoader loadConfig method when \'react\' is defined as projectType', () => {
-    config.set({ jest: { projectType: 'react' } });
+    config.set({ testRunner: { name: 'jest', settings: { projectType: 'react' } } });
 
     sut.edit(config);
 
@@ -49,7 +49,7 @@ describe('JestConfigEditor', () => {
   });
 
   it('should call the ReactScriptsTSJestConfigLoader loadConfig method when \'react-ts\' is defined as projectType', () => {
-    config.set({ jest: { projectType: 'react-ts' } });
+    config.set({ testRunner: { name: 'jest', settings: { projectType: 'react-ts' } } });
 
     sut.edit(config);
 
@@ -59,7 +59,7 @@ describe('JestConfigEditor', () => {
   it('should override verbose, collectCoverage, testResultsProcessor and bail on all loaded configs', () => {
     sut.edit(config);
 
-    expect(config.jest.config).to.deep.equal({
+    expect(config.testRunner.settings && config.testRunner.settings.config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       testResultsProcessor: undefined,
@@ -69,24 +69,25 @@ describe('JestConfigEditor', () => {
 
   it('should throw an error when an invalid projectType is defined', () => {
     const projectType = 'invalidProject';
-    config.set({ jest: { projectType } });
+    config.set({ testRunner: { name: 'jest', settings: { projectType } } });
 
     expect(() => sut.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
 
   it('should warn when using deprecated `project` property', () => {
     const projectType = 'custom';
-    config.jest = { project: projectType };
+    config.set({ testRunner: { name: 'jest', settings: { project: projectType } } });
     sut.edit(config);
     expect(currentLogMock().warn).calledWith('DEPRECATED: `jest.project` is renamed to `jest.projectType`. Please change it in your stryker configuration.');
-    expect(config.jest.projectType).eq(projectType);
+    expect(config.testRunner.settings && config.testRunner.settings.projectType).eq(projectType);
   });
 
   it('should warn when using deprecated "default" project type', () => {
-    config.jest = { projectType: 'default' };
+    const projectType = 'default';
+    config.set({ testRunner: { name: 'jest', settings: { projectType } } });
     sut.edit(config);
     expect(currentLogMock().warn).calledWith('DEPRECATED: The \'default\' `jest.projectType` is renamed to \'custom\'. Please rename it in your stryker configuration.');
-    expect(config.jest.projectType).eq('custom');
+    expect(config.testRunner.settings && config.testRunner.settings.projectType).eq('custom');
   });
 });
 

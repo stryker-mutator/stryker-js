@@ -1,6 +1,5 @@
 import JestTestAdapterFactory from '../../src/jestTestAdapters/JestTestAdapterFactory';
 import JestTestRunner from '../../src/JestTestRunner';
-import { Config } from 'stryker-api/config';
 import * as fakeResults from '../helpers/testResultProducer';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
@@ -13,16 +12,12 @@ describe('JestTestRunner', () => {
 
   let jestTestAdapterFactoryStub: sinon.SinonStub;
   let runJestStub: sinon.SinonStub;
-  let strykerOptions: Config;
   let jestTestRunner: JestTestRunner;
   let processEnvMock: NodeJS.ProcessEnv;
 
   beforeEach(() => {
     runJestStub = sinon.stub();
     runJestStub.resolves({ results: { testResults: [] } });
-
-    strykerOptions = new Config();
-    strykerOptions.set({ jest: { config: { property: 'value' } }, basePath });
 
     processEnvMock = {
       NODE_ENV: undefined
@@ -31,7 +26,7 @@ describe('JestTestRunner', () => {
     jestTestRunner = new JestTestRunner({
       fileNames: [],
       port: 0,
-      strykerOptions
+      settings: { config: { property: 'value' }, basePath}
     }, processEnvMock);
 
     jestTestAdapterFactoryStub = sinon.stub(JestTestAdapterFactory, 'getJestTestAdapter');

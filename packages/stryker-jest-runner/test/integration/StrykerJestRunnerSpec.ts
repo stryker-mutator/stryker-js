@@ -10,6 +10,7 @@ paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsco
 
 import JestConfigEditor from '../../src/JestConfigEditor';
 import JestTestRunner from '../../src/JestTestRunner';
+import { TestRunnerSettings } from 'stryker-api/core';
 
 // Get the actual project root, since we will stub process.cwd later on
 const jestProjectRoot = process.cwd();
@@ -23,6 +24,7 @@ describe('Integration test for Strykers Jest runner', () => {
   let jestConfigEditor: JestConfigEditor;
   let runnerOptions: RunnerOptions;
   let processCwdStub: sinon.SinonStub;
+  let strykerOptions: Config;
 
   const runOptions: RunOptions = { timeout: 0 };
 
@@ -40,18 +42,21 @@ describe('Integration test for Strykers Jest runner', () => {
     processCwdStub = sinon.stub(process, 'cwd');
 
     jestConfigEditor = new JestConfigEditor();
+    strykerOptions = new Config();
 
     runnerOptions = {
       fileNames: [],
       port: 0,
-      strykerOptions: new Config()
+      settings: {}
     };
   });
 
   it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));
-    runnerOptions.strykerOptions.set({ jest: { projectType: 'react-ts' } });
-    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
+    strykerOptions.set({ testRunner: { name: 'jest', settings: { projectType: 'react-ts' } } });
+    jestConfigEditor.edit(strykerOptions);
+
+    runnerOptions.settings = strykerOptions.testRunner.settings as TestRunnerSettings;
 
     const jestTestRunner = new JestTestRunner(runnerOptions);
     const result = await jestTestRunner.run(runOptions);
@@ -69,7 +74,7 @@ describe('Integration test for Strykers Jest runner', () => {
   it('should run tests on the example custom project using package.json', async () => {
     processCwdStub.returns(getProjectRoot('exampleProject'));
 
-    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
+    jestConfigEditor.edit(strykerOptions);
     const jestTestRunner = new JestTestRunner(runnerOptions);
 
     const result = await jestTestRunner.run(runOptions);
@@ -91,7 +96,7 @@ describe('Integration test for Strykers Jest runner', () => {
   it('should run tests on the example custom project using jest.config.js', async () => {
     processCwdStub.returns(getProjectRoot('exampleProjectWithExplicitJestConfig'));
 
-    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
+    jestConfigEditor.edit(strykerOptions);
     const jestTestRunner = new JestTestRunner(runnerOptions);
 
     const result = await jestTestRunner.run(runOptions);
