@@ -1,5 +1,4 @@
 import { TestStatus } from 'stryker-api/test_runner';
-import { Config } from 'stryker-api/config';
 import * as path from 'path';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
@@ -7,9 +6,9 @@ import { expectTestResults } from '../helpers/assertions';
 describe('Sample project', () => {
 
   it('should be able to run karma', async () => {
-    const options = new Config();
-    options.karmaConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js');
-    const runner = new KarmaTestRunner({ port: 9898, strykerOptions: options, fileNames: [] });
+    const options = { configFile: '' };
+    options.configFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js');
+    const runner = new KarmaTestRunner({ port: 9898, settings: options, fileNames: [] });
     await runner.init();
     const result = await runner.run({});
     expectTestResults(result, [

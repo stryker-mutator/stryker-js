@@ -14,15 +14,15 @@ import TestHooksMiddleware from '../../src/TestHooksMiddleware';
 describe('KarmaTestRunner', () => {
 
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
-  let settings: RunnerOptions;
+  let options: RunnerOptions;
   let setGlobalsStub: sinon.SinonStub;
   let logMock: LoggerStub;
   let reporterMock: EventEmitter;
   let karmaRunStub: sinon.SinonStub;
 
   beforeEach(() => {
-    settings = {
-      fileNames: ['foo.js', 'bar.js'], port: 42, strykerOptions: {}
+    options = {
+      fileNames: ['foo.js', 'bar.js'], port: 42, settings: {}
     };
     reporterMock = new EventEmitter();
     projectStarterMock = sandbox.createStubInstance(ProjectStarter);
@@ -36,7 +36,7 @@ describe('KarmaTestRunner', () => {
   });
 
   it('should load default setup', () => {
-    new KarmaTestRunner(settings);
+    new KarmaTestRunner(options);
     expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: undefined, karmaConfigFile: undefined });
   });
 
@@ -48,8 +48,8 @@ describe('KarmaTestRunner', () => {
       configFile: 'baz.conf.js',
       projectType: 'angular-cli'
     };
-    settings.strykerOptions.karma = expectedSetup;
-    new KarmaTestRunner(settings);
+    options.settings = expectedSetup;
+    new KarmaTestRunner(options);
     expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedSetup.config, karmaConfigFile: expectedSetup.configFile });
     expect(logMock.warn).not.called;
     expect(projectStarterModule.default).calledWith(expectedSetup.projectType);
@@ -58,9 +58,9 @@ describe('KarmaTestRunner', () => {
   it('should load deprecated karma options', () => {
     const expectedKarmaConfig = { basePath: 'foobar' };
     const expectedKarmaConfigFile = 'karmaConfigFile';
-    settings.strykerOptions[DEPRECATED_KARMA_CONFIG] = expectedKarmaConfig;
-    settings.strykerOptions[DEPRECATED_KARMA_CONFIG_FILE] = expectedKarmaConfigFile;
-    new KarmaTestRunner(settings);
+    options.settings[DEPRECATED_KARMA_CONFIG] = expectedKarmaConfig;
+    options.settings[DEPRECATED_KARMA_CONFIG_FILE] = expectedKarmaConfigFile;
+    new KarmaTestRunner(options);
     expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedKarmaConfig, karmaConfigFile: expectedKarmaConfigFile });
     expect(logMock.warn).calledTwice;
     expect(logMock.warn).calledWith('[deprecated]: config option karmaConfigFile is renamed to karma.configFile');
@@ -82,8 +82,8 @@ describe('KarmaTestRunner', () => {
       configFile: 'baz.conf.js',
       projectType: 'angular-cli'
     };
-    settings.strykerOptions.karma = config;
-    new KarmaTestRunner(settings);
+    options.settings = config;
+    new KarmaTestRunner(options);
     expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedSetup.config, karmaConfigFile: expectedSetup.configFile });
     expect(logMock.warn).calledWith('DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.');
   });
@@ -92,7 +92,7 @@ describe('KarmaTestRunner', () => {
     let sut: KarmaTestRunner;
 
     beforeEach(() => {
-      sut = new KarmaTestRunner(settings);
+      sut = new KarmaTestRunner(options);
     });
 
     it('should start karma', async () => {
@@ -114,13 +114,13 @@ describe('KarmaTestRunner', () => {
     let sut: KarmaTestRunner;
 
     beforeEach(() => {
-      sut = new KarmaTestRunner(settings);
+      sut = new KarmaTestRunner(options);
       karmaRunStub.callsArgOn(1, 0);
     });
 
     it('should execute "karma run"', async () => {
       await sut.run({});
-      expect(karmaRunStub).calledWith({ port: settings.port });
+      expect(karmaRunStub).calledWith({ port: options.port });
     });
 
     it('should not execute "karma run" when results are already clear', async () => {

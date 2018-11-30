@@ -61,16 +61,16 @@ export default class KarmaTestRunner implements TestRunner {
     return runResult;
   }
 
-  private loadSetup(settings: RunnerOptions): StrykerKarmaSetup {
+  private loadSetup(runnerOptions: RunnerOptions): StrykerKarmaSetup {
     const defaultKarmaConfig: StrykerKarmaSetup = {
       projectType: 'custom'
     };
-    const strykerKarmaSetup: StrykerKarmaSetup = Object.assign(defaultKarmaConfig, settings.strykerOptions[KARMA_CONFIG_KEY]);
+    const strykerKarmaSetup: StrykerKarmaSetup = Object.assign(defaultKarmaConfig, runnerOptions.settings);
 
     const loadDeprecatedOption = (configKey: keyof StrykerKarmaSetup, deprecatedConfigOption: string) => {
-      if (!strykerKarmaSetup[configKey] && settings.strykerOptions[deprecatedConfigOption]) {
+      if (!strykerKarmaSetup[configKey] && runnerOptions.settings[deprecatedConfigOption]) {
         this.log.warn(`[deprecated]: config option ${deprecatedConfigOption} is renamed to ${KARMA_CONFIG_KEY}.${configKey}`);
-        strykerKarmaSetup[configKey] = settings.strykerOptions[deprecatedConfigOption];
+        strykerKarmaSetup[configKey] = runnerOptions.settings[deprecatedConfigOption];
       }
     };
     loadDeprecatedOption('configFile', DEPRECATED_KARMA_CONFIG_FILE);
