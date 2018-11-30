@@ -47,6 +47,7 @@ describe('WebpackTranspiler', () => {
   });
 
   it('should throw an error if `produceSourceMaps` is `true`', () => {
+    config.coverageAnalysis = 'perTest';
     expect(() => new WebpackTranspiler({ config, produceSourceMaps: true })).throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off"');
   });
 
