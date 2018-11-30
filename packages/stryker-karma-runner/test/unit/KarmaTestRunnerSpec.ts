@@ -7,7 +7,7 @@ import ProjectStarter, * as projectStarterModule from '../../src/starters/Projec
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { RunnerOptions, TestResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import LoggerStub from '../helpers/LoggerStub';
-import StrykerKarmaSetup, { DEPRECATED_KARMA_CONFIG, DEPRECATED_KARMA_CONFIG_FILE } from '../../src/StrykerKarmaSetup';
+import StrykerKarmaSetup from '../../src/StrykerKarmaSetup';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
 
@@ -56,18 +56,6 @@ describe('KarmaTestRunner', () => {
   });
 
   it('should load deprecated karma options', () => {
-    const expectedKarmaConfig = { basePath: 'foobar' };
-    const expectedKarmaConfigFile = 'karmaConfigFile';
-    options.settings[DEPRECATED_KARMA_CONFIG] = expectedKarmaConfig;
-    options.settings[DEPRECATED_KARMA_CONFIG_FILE] = expectedKarmaConfigFile;
-    new KarmaTestRunner(options);
-    expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedKarmaConfig, karmaConfigFile: expectedKarmaConfigFile });
-    expect(logMock.warn).calledTwice;
-    expect(logMock.warn).calledWith('[deprecated]: config option karmaConfigFile is renamed to karma.configFile');
-    expect(logMock.warn).calledWith('[deprecated]: config option karmaConfig is renamed to karma.config');
-  });
-
-  it('should load deprecated karma options', () => {
     const config = {
       config: {
         basePath: 'foo/bar'
@@ -85,7 +73,7 @@ describe('KarmaTestRunner', () => {
     options.settings = config;
     new KarmaTestRunner(options);
     expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedSetup.config, karmaConfigFile: expectedSetup.configFile });
-    expect(logMock.warn).calledWith('DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.');
+    expect(logMock.warn).calledWith('DEPRECATED: `settings.project` is renamed to `settings.projectType`. Please change it in your stryker configuration.');
   });
 
   describe('init', () => {

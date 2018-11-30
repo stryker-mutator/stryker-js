@@ -32,20 +32,22 @@ You can configure the `stryker-karma-runner` using the `stryker.conf.js` config 
 module.exports = function (config) {
     config.set({
         // ...
-        testRunner: 'karma',
-        // ...
-        karma: {
-            projectType: 'custom', // or 'angular-cli'
-            configFile: 'path/to/karma.conf.js' // default `undefined`
-            config: { // default `undefined`
-                browsers: ['ChromeHeadless'] // override config settings
+        testRunner: {
+            name: 'karma',
+            settings: {
+                projectType: 'custom', // or 'angular-cli'
+                configFile: 'path/to/karma.conf.js' // default `undefined`
+                config: { // default `undefined`
+                    browsers: ['ChromeHeadless'] // override config settings
+                }
             }
         }
+        // ...
     });
 }
 ```
 
-### `karma.projectType` [`"custom"` | `"angular-cli"`]
+### `settings.projectType` [`"custom"` | `"angular-cli"`]
 
 Default: `"custom"`
 
@@ -54,14 +56,14 @@ Specify which kind of project you're using. This determines which command is use
 * **`"custom"`**: configure stryker-karma-runner to use `karma start`.
 * **`"angular-cli"`**: configure stryker-karma-runner to use `ng test` (see [configuring for angular-cli](#configure-angular-cli)).
 
-### `karma.configFile` [`string`]
+### `settings.configFile` [`string`]
 
 Default: `undefined`
 
 Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded. 
 Options specified directly in your stryker.conf.js file using `karma.config` will overrule options in your karma.conf.js file.
 
-### `karma.config` [`any`]
+### `settings.config` [`any`]
 
 Default: `undefined`
 
@@ -94,9 +96,10 @@ This is an example for a configuration of stryker using the angular cli:
 exports = function(config){
     config.set({
         // ...
-        karma: {
-            projectType: 'angular-cli',
-            karma: {
+        testRunner: {
+            name: 'karma',
+            settings: {
+                projectType: 'angular-cli',
                 configFile: 'src/karma.conf.js'
             }
         }
