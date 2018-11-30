@@ -44,6 +44,7 @@ describe('SourceMapper', () => {
     });
     it('should create a Transpiled source mapper when a transpiler was configured', () => {
       config.transpilers = ['a transpiler'];
+      config.coverageAnalysis = 'perTest';
       expect(SourceMapper.create([], config)).instanceOf(TranspiledSourceMapper);
     });
   });
