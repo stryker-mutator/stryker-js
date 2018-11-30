@@ -1,13 +1,20 @@
-import { Reporter, MutantResult, MutantStatus, ReporterFactory, SourceFile, MatchedMutant } from 'stryker-api/report';
-
-class EmptyReporter { }
+import {
+  Reporter,
+  MutantResult,
+  MutantStatus,
+  ReporterFactory,
+  SourceFile,
+  MatchedMutant
+} from 'stryker-api/report';
+import { Config } from 'stryker-api/config';
+class EmptyReporter {}
 
 class AllReporter implements Reporter {
-  public onSourceFileRead(file: SourceFile) { }
-  public onAllSourceFilesRead(files: SourceFile[]) { }
-  public onMutantTested(result: MutantResult) { }
-  public onAllMutantsTested(results: MutantResult[]) { }
-  public onAllMutantsMatchedWithTests(mutants: ReadonlyArray<MatchedMutant>) { }
+  public onSourceFileRead(file: SourceFile) {}
+  public onAllSourceFilesRead(files: SourceFile[]) {}
+  public onMutantTested(result: MutantResult) {}
+  public onAllMutantsTested(results: MutantResult[]) {}
+  public onAllMutantsMatchedWithTests(mutants: ReadonlyArray<MatchedMutant>) {}
   public wrapUp() {
     return new Promise<void>(r => r());
   }
@@ -16,8 +23,8 @@ class AllReporter implements Reporter {
 ReporterFactory.instance().register('empty', EmptyReporter);
 ReporterFactory.instance().register('all', AllReporter);
 console.log(ReporterFactory.instance().knownNames());
-const emptyReporter = ReporterFactory.instance().create('empty', {});
-const allReporter = ReporterFactory.instance().create('all', {});
+const emptyReporter = ReporterFactory.instance().create('empty', new Config());
+const allReporter = ReporterFactory.instance().create('all', new Config());
 if (!(emptyReporter instanceof EmptyReporter)) {
   throw Error('Something wrong with empty reporter');
 }
@@ -39,8 +46,12 @@ const result: MutantResult = {
 };
 allReporter.onMutantTested(result);
 console.log(result);
-console.log(`Mutant status runtime error: ${MutantStatus[MutantStatus.RuntimeError]}`);
-console.log(`Mutant status transpile error: ${MutantStatus[MutantStatus.TranspileError]}`);
+console.log(
+  `Mutant status runtime error: ${MutantStatus[MutantStatus.RuntimeError]}`
+);
+console.log(
+  `Mutant status transpile error: ${MutantStatus[MutantStatus.TranspileError]}`
+);
 
 const matchedMutant: MatchedMutant = {
   fileName: 'string',

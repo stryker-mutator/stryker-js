@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/stryker-mutator/stryker/compare/stryker-mutator-specification@0.6.0...stryker-mutator-specification@0.7.0) (2018-11-29)
+
+
+### Bug Fixes
+
+* **String literal mutator:** Don't mutate export declarations ([c764ccd](https://github.com/stryker-mutator/stryker/commit/c764ccd))
+
+
+### Features
+
+* **Conditional expression mutator:** Mutate conditional operators ([#1253](https://github.com/stryker-mutator/stryker/issues/1253)) ([be4c990](https://github.com/stryker-mutator/stryker/commit/be4c990))
+
+
+
+
 <a name="0.6.0"></a>
 # [0.6.0](https://github.com/stryker-mutator/stryker/compare/stryker-mutator-specification@0.5.1...stryker-mutator-specification@0.6.0) (2018-10-06)
 

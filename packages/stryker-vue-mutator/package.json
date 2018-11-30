@@ -1,6 +1,6 @@
 {
   "name": "stryker-vue-mutator",
-  "version": "0.2.11",
+  "version": "0.2.13",
   "description": "A plugin for VueJS projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -35,13 +35,13 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-vue-mutator#readme",
   "license": "Apache-2.0",
   "devDependencies": {
-    "stryker-api": "^0.21.5",
-    "stryker-javascript-mutator": "^0.11.5",
-    "stryker-typescript": "^0.15.4",
+    "stryker-api": "^0.22.0",
+    "stryker-javascript-mutator": "^0.12.1",
+    "stryker-typescript": "^0.16.1",
     "vue-template-compiler": "^2.0.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.22.0",
+    "stryker-api": ">=0.18.0 <0.23.0",
     "vue-template-compiler": "^2.0.0"
   }
 }

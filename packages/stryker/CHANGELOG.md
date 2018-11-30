@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.33.1"></a>
+## [0.33.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.33.0...stryker@0.33.1) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.33.0"></a>
+# [0.33.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.32.1...stryker@0.33.0) (2018-11-29)
+
+
+### Bug Fixes
+
+* **JestTestRunner:** run jest with --findRelatedTests ([#1235](https://github.com/stryker-mutator/stryker/issues/1235)) ([5e0790e](https://github.com/stryker-mutator/stryker/commit/5e0790e))
+
+
+### Features
+
+* **console-colors:** Add a global config option to enable/disable colors in console ([#1251](https://github.com/stryker-mutator/stryker/issues/1251)) ([19b1d64](https://github.com/stryker-mutator/stryker/commit/19b1d64))
+* **Stryker CLI 'init':** Support for preset configuration during 'stryker init' ([#1248](https://github.com/stryker-mutator/stryker/issues/1248)) ([5673e6b](https://github.com/stryker-mutator/stryker/commit/5673e6b))
+
+
+
+
 <a name="0.32.1"></a>
 ## [0.32.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.32.0...stryker@0.32.1) (2018-11-21)
 

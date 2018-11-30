@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="1.2.9"></a>
+## [1.2.9](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.2.8...stryker-jest-runner@1.2.9) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="1.2.8"></a>
+## [1.2.8](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.2.7...stryker-jest-runner@1.2.8) (2018-11-29)
+
+
+### Bug Fixes
+
+* **JestTestRunner:** run jest with --findRelatedTests ([#1235](https://github.com/stryker-mutator/stryker/issues/1235)) ([5e0790e](https://github.com/stryker-mutator/stryker/commit/5e0790e))
+
+
+
+
 <a name="1.2.7"></a>
 ## [1.2.7](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.2.6...stryker-jest-runner@1.2.7) (2018-11-13)
 

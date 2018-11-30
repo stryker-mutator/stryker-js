@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.2.8"></a>
+## [0.2.8](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine-runner@0.2.7...stryker-jasmine-runner@0.2.8) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.2.7"></a>
+## [0.2.7](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine-runner@0.2.6...stryker-jasmine-runner@0.2.7) (2018-11-29)
+
+
+
+
+**Note:** Version bump only for package stryker-jasmine-runner
+
 <a name="0.2.6"></a>
 ## [0.2.6](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine-runner@0.2.5...stryker-jasmine-runner@0.2.6) (2018-11-13)
 
