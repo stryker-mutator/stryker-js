@@ -13,6 +13,7 @@ import {
   filterEmpty,
   isErrnoException
 } from '../utils/objectUtils';
+import { Config } from 'stryker-api/config';
 
 function toReportSourceFile(file: File): SourceFile {
   return {
@@ -21,26 +22,28 @@ function toReportSourceFile(file: File): SourceFile {
   };
 }
 
+const IGNORE_PATTERN_CHARACTER = '!';
+
 export default class InputFileResolver {
   private readonly log = getLogger(InputFileResolver.name);
-  private readonly fileResolver: PatternResolver | undefined;
-  private readonly mutateResolver: PatternResolver;
+  private readonly mutatePatterns: ReadonlyArray<string>;
+  private readonly filePatterns: ReadonlyArray<string> | undefined;
 
   constructor(
     mutate: string[],
     files: string[] | undefined,
     private readonly reporter: StrictReporter
   ) {
-    this.mutateResolver = PatternResolver.parse(mutate || []);
+    this.mutatePatterns = this.normalize(mutate || []);
     if (files) {
-      this.fileResolver = PatternResolver.parse(files);
+      this.filePatterns = this.normalize(files);
     }
   }
 
   public async resolve(): Promise<InputFileCollection> {
     const [inputFileNames, mutateFiles] = await Promise.all([
       this.resolveInputFiles(),
-      this.mutateResolver.resolve()
+      this.resolveMutateFiles()
     ]);
     const files: File[] = await this.readFiles(inputFileNames);
     const inputFileCollection = new InputFileCollection(files, mutateFiles);
@@ -50,34 +53,77 @@ export default class InputFileResolver {
   }
 
   private resolveInputFiles() {
-    if (this.fileResolver) {
-      return this.fileResolver.resolve();
+    if (this.filePatterns) {
+      return this.expand(this.filePatterns);
     } else {
       return this.resolveFilesUsingGit();
     }
   }
 
-  private resolveFilesUsingGit(): Promise<string[]> {
-    return childProcessAsPromised
-      .exec(
+  private resolveMutateFiles() {
+    return this.expand(this.mutatePatterns, !shallowEquals(this.mutatePatterns, new Config().mutate));
+
+    function shallowEquals<T>(arr1: ReadonlyArray<T>, arr2: ReadonlyArray<T>): boolean {
+      if (arr1.length !== arr2.length) {
+        return false;
+      } else {
+        for (let i = 0; i < arr1.length; i++) {
+          if (arr1[i] !== arr2[i]) {
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+  }
+
+  /**
+   * Takes a list of globbing patterns and expands them into files.
+   * If a patterns starts with a `!`, it negates the pattern.
+   * @param patterns The patterns to expand into files
+   */
+  private async expand(patterns: ReadonlyArray<string>, logAboutUselessPatterns = true): Promise<string[]> {
+    const fileSet = new Set<string>();
+    for (const pattern of patterns) {
+      if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
+        const files = await this.expandPattern(pattern.substr(1), logAboutUselessPatterns);
+        files.forEach(fileName => fileSet.delete(fileName));
+      } else {
+        const files = await this.expandPattern(pattern, logAboutUselessPatterns);
+        files.forEach(fileName => fileSet.add(fileName));
+      }
+    }
+    return Array.from(fileSet);
+  }
+
+  private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
+    const fileNames = (await glob(globbingExpression)).map(relativeFile => path.resolve(relativeFile));
+    if (!fileNames.length && logAboutUselessPatterns) {
+      this.log.warn(
+        `Globbing expression "${globbingExpression}" did not result in any files.`
+      );
+    }
+    return fileNames;
+  }
+
+  private async resolveFilesUsingGit(): Promise<string[]> {
+    try {
+      const { stdout } = await childProcessAsPromised.exec(
         'git ls-files --others --exclude-standard --cached --exclude .stryker-tmp',
         { maxBuffer: 10 * 1000 * 1024 }
-      )
-      .then(({ stdout }: { stdout: string }) => stdout.toString())
-      .then((output: string) =>
-        output.split('\n').map(fileName => fileName.trim())
-      )
-      .then((fileNames: string[]) =>
-        fileNames
-          .filter(fileName => fileName)
-          .map(fileName => path.resolve(fileName))
-      )
-      .catch((error: Error) => {
-        throw new StrykerError(
-          `Cannot determine input files. Either specify a \`files\` array in your stryker configuration, or make sure "${process.cwd()}" is located inside a git repository`,
-          error
-        );
-      });
+      );
+      const fileNames = stdout.toString()
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line)
+        .map(relativeFileName => path.resolve(relativeFileName));
+      return fileNames;
+    } catch (error) {
+      throw new StrykerError(
+        `Cannot determine input files. Either specify a \`files\` array in your stryker configuration, or make sure "${process.cwd()}" is located inside a git repository`,
+        error
+      );
+    }
   }
 
   private reportAllSourceFilesRead(allFiles: File[]) {
@@ -92,6 +138,39 @@ export default class InputFileResolver {
     return Promise.all(files.map(fileName => this.readFile(fileName))).then(
       filterEmpty
     );
+  }
+
+  private normalize(
+    inputFileExpressions: (string | { pattern: string })[]
+  ): string[] {
+    const inputFileDescriptorObjects: { pattern: string }[] = [];
+    const globExpressions = inputFileExpressions.map(expression => {
+      if (typeof expression === 'string') {
+        return expression;
+      } else {
+        inputFileDescriptorObjects.push(expression);
+        return expression.pattern;
+      }
+    });
+    if (inputFileDescriptorObjects.length) {
+      this.log.warn(
+        normalizeWhiteSpaces(`
+      DEPRECATED: Using the \`InputFileDescriptor\` syntax to
+      select files is no longer supported. We'll assume: ${JSON.stringify(
+          inputFileDescriptorObjects
+        )} can be migrated
+      to ${JSON.stringify(
+          inputFileDescriptorObjects.map(_ => _.pattern)
+        )} for this mutation run.
+      Please move any files to mutate into the \`mutate\` array (top level stryker option).
+      You can fix this warning in 2 ways:
+      1) If your project is under git version control, you can remove the "files" patterns all together.
+      Stryker can figure it out for you.
+      2) If your project is not under git version control or you need ignored files in your sandbox, you can replace the
+      \`InputFileDescriptor\` syntax with strings (as done for this test run).`)
+      );
+    }
+    return globExpressions;
   }
 
   private readFile(fileName: string): Promise<File | null> {
@@ -113,121 +192,5 @@ export default class InputFileResolver {
           throw error;
         }
       });
-  }
-}
-
-class PatternResolver {
-  private static normalize(
-    inputFileExpressions: (string | { pattern: string })[]
-  ): string[] {
-    const inputFileDescriptorObjects: { pattern: string }[] = [];
-    const globExpressions = inputFileExpressions.map(expression => {
-      if (typeof expression === 'string') {
-        return expression;
-      } else {
-        inputFileDescriptorObjects.push(expression);
-        return expression.pattern;
-      }
-    });
-    if (inputFileDescriptorObjects.length) {
-      new PatternResolver('').log.warn(
-        normalizeWhiteSpaces(`
-      DEPRECATED: Using the \`InputFileDescriptor\` syntax to
-      select files is no longer supported. We'll assume: ${JSON.stringify(
-        inputFileDescriptorObjects
-      )} can be migrated
-      to ${JSON.stringify(
-        inputFileDescriptorObjects.map(_ => _.pattern)
-      )} for this mutation run.
-      Please move any files to mutate into the \`mutate\` array (top level stryker option).
-      You can fix this warning in 2 ways:
-      1) If your project is under git version control, you can remove the "files" patterns all together.
-      Stryker can figure it out for you.
-      2) If your project is not under git version control or you need ignored files in your sandbox, you can replace the
-      \`InputFileDescriptor\` syntax with strings (as done for this test run).`)
-      );
-    }
-    return globExpressions;
-  }
-  private readonly log = getLogger(InputFileResolver.name);
-  private ignore = false;
-  private readonly globExpression: string;
-
-  constructor(
-    globExpression: string,
-    private readonly previous?: PatternResolver
-  ) {
-    this.ignore = globExpression.indexOf('!') === 0;
-    if (this.ignore) {
-      this.globExpression = globExpression.substring(1);
-    } else {
-      this.globExpression = globExpression;
-    }
-  }
-
-  public async resolve(): Promise<string[]> {
-    // When the first expression starts with an '!', we skip that one
-    if (this.ignore && !this.previous) {
-      return Promise.resolve([]);
-    } else {
-      // Start the globbing task for the current descriptor
-      const globbingTask = this.resolveGlobbingExpression(this.globExpression);
-
-      // If there is a previous globbing expression, resolve that one as well
-      if (this.previous) {
-        const results = await Promise.all([
-          this.previous.resolve(),
-          globbingTask
-        ]);
-        const previousFiles = results[0];
-        const currentFiles = results[1];
-        // If this expression started with a '!', exclude current files
-        if (this.ignore) {
-          return previousFiles.filter(previousFile =>
-            currentFiles.every(currentFile => previousFile !== currentFile)
-          );
-        } else {
-          // Only add files which were not already added
-          return previousFiles.concat(
-            currentFiles.filter(
-              currentFile => !previousFiles.some(file => file === currentFile)
-            )
-          );
-        }
-      } else {
-        return globbingTask;
-      }
-    }
-  }
-
-  private static empty(): PatternResolver {
-    const emptyResolver = new PatternResolver('');
-    emptyResolver.ignore = true;
-    return emptyResolver;
-  }
-
-  public static parse(inputFileExpressions: string[]): PatternResolver {
-    const expressions = this.normalize(inputFileExpressions);
-    let current = PatternResolver.empty();
-    let expression = expressions.shift();
-    while (expression) {
-      current = new PatternResolver(expression, current);
-      expression = expressions.shift();
-    }
-    return current;
-  }
-
-  private async resolveGlobbingExpression(pattern: string): Promise<string[]> {
-    const files = await glob(pattern);
-    if (files.length === 0) {
-      this.reportEmptyGlobbingExpression(pattern);
-    }
-    return files.map(f => path.resolve(f));
-  }
-
-  private reportEmptyGlobbingExpression(expression: string) {
-    this.log.warn(
-      `Globbing expression "${expression}" did not result in any files.`
-    );
   }
 }

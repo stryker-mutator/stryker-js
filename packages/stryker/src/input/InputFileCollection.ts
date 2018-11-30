@@ -14,13 +14,14 @@ export default class InputFileCollection {
   public logFiles(log: Logger) {
     if (!this.files.length) {
       log.warn(normalizeWhiteSpaces(`
-        No files selected. Please make sure you either run stryker a git repository context (and don't specify \`files\` in your stryker.conf.js file),
-        or specify the \`files\` property in your stryker config.`));
+        No files selected. Please make sure you either (1) run Stryker a git repository context
+        or (2) specify the \`files\` property in your Stryker configuration (\`--files via command line\`).`));
     } else {
       if (this.filesToMutate.length) {
         log.info(`Found ${this.filesToMutate.length} of ${this.files.length} file(s) to be mutated.`);
       } else {
-        log.warn(`No files marked to be mutated, stryker will perform a dry-run without actually mutating anything.`);
+        log.warn(normalizeWhiteSpaces(`No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.
+        You can configure the \`mutate\` property in your stryker.conf.js file (or use \`--mutate\` via command line).`));
       }
       if (log.isDebugEnabled) {
         log.debug(`All input files: ${JSON.stringify(this.files.map(file => file.name), null, 2)}`);
