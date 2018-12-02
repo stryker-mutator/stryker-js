@@ -6,16 +6,18 @@ module.exports = function (config) {
       '!src/test.ts',
       '!src/environments/*.ts'
     ],
-    testRunner: 'karma',
-    mutator: 'typescript',
-    port: 9336,
-    karma: {
-      configFile: 'src/karma.conf.js',
-      projectType: 'angular-cli',
-      config: {
-        browsers: ['ChromeHeadless']
+    testRunner: {
+      name: 'karma',
+      settings: {
+        configFile: 'src/karma.conf.js',
+        projectType: 'angular-cli',
+        config: {
+          browsers: ['ChromeHeadless']
+        }
       }
     },
+    mutator: 'typescript',
+    port: 9336,
     reporters: ['event-recorder'],
     coverageAnalysis: 'off',
     maxConcurrentTestRunners: 1

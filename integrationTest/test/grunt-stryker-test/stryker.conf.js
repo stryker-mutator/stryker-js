@@ -3,11 +3,15 @@ module.exports = function (config) {
     mutate: [
       'sampleProject/src/**'
     ],
-    karmaConfig: {
-      files: ['sampleProject/**']
-    },
     testFramework: 'jasmine',
-    testRunner: 'karma',
+    testRunner: {
+      name: 'karma',
+      settings: {
+        config: {
+          files: ['sampleProject/**']
+        }
+      }
+    },
     logLevel: 'info',
     maxConcurrentTestRunners: 2,
     port: 9234

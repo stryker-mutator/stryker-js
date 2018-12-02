@@ -5,13 +5,17 @@ module.exports = function (config) {
       'webpack'
     ],
     testFramework: 'jasmine',
-    testRunner: 'karma',
+    testRunner: {
+      name: 'karma',
+      settings: {
+        config: {
+          files: ['dist/main.js', 'test/*.js']
+        }
+      }
+    },
     reporters: ['clear-text', 'html'],
     maxConcurrentTestRunners: 2,
     port: 9274,
-    karmaConfig: {
-      files: ['dist/main.js', 'test/*.js']
-    },
     coverageAnalysis: 'off',
     mutator: 'javascript'
   });

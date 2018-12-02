@@ -5,10 +5,14 @@ module.exports = function (config) {
     mutator: 'javascript',
     coverageAnalysis: 'perTest',
     testFramework: 'jasmine',
-    testRunner: 'jasmine',
+    testRunner: {
+      name: 'jasmine',
+      settings: {
+        configFile: 'spec/support/jasmine.json',
+      }
+    },
     reporters: ['clear-text', 'event-recorder'],
     maxConcurrentTestRunners: 1,
-    jasmineConfigFile: 'spec/support/jasmine.json',
     fileLogLevel: LogLevel.Debug
   });
 };

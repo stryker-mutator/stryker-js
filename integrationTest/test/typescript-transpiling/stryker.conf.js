@@ -3,7 +3,14 @@ module.exports = function (config) {
     tsconfigFile: 'tsconfig.json',
     mutate: ['src/*.ts'],
     testFramework: 'mocha',
-    testRunner: 'mocha',
+    testRunner: {
+      name: 'mocha',
+      settings: {
+        config: {
+          files: ['test/**/*.js']
+        }
+      }
+    },
     coverageAnalysis: 'off',
     reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
@@ -12,11 +19,6 @@ module.exports = function (config) {
     transpilers: [
       'typescript'
     ],
-    mochaOptions: {
-      files: [
-        'test/**/*.js'
-      ]
-    },
     port: 9264
   });
 };

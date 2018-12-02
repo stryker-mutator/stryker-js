@@ -4,7 +4,9 @@ module.exports = function (config) {
       'src/*.js'
     ],
     testFramework: 'mocha',
-    testRunner: 'mocha',
+    testRunner: {
+      name: 'mocha',
+    },
     coverageAnalysis: 'off',
     mutator: 'javascript',
     transpilers: [
