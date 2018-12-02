@@ -125,9 +125,7 @@ describe(CommandTestRunner.name, () => {
   function createSut(settings?: CommandRunnerSettings, workingDir = 'workingDir') {
     let testRunnerSettings: TestRunnerSettings = {};
     if (settings) {
-      testRunnerSettings = {
-        config: settings
-      };
+      testRunnerSettings = settings;
     }
     return new CommandTestRunner(workingDir, { port: 23, fileNames: [], settings: testRunnerSettings });
   }

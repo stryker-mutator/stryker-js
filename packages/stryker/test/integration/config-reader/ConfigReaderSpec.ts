@@ -133,7 +133,7 @@ describe('ConfigReader', () => {
       });
     });
 
-    describe('with deprecated reporter property', () => {
+    describe('with deprecated property', () => {
       it('should log a warning when a single reporter is specified', () => {
         const reporterName = 'html';
         sut = new ConfigReader({ reporter: reporterName });
@@ -162,6 +162,16 @@ describe('ConfigReader', () => {
 
         expect(result.timeoutMS).to.deep.eq(timeoutMs);
         expect(log.warn).calledWithExactly(`DEPRECATED: please change the config setting 'timeoutMs: ${timeoutMs}' into 'timeoutMS: ${timeoutMs}'`);
+      });
+
+      it('should log a warning when test runner is specified', () => {
+        const testRunnerName = 'fakeTestRunner';
+        sut = new ConfigReader({ testRunner: testRunnerName });
+
+        const result = sut.readConfig();
+
+        expect(result.testRunner).to.deep.eq({ name: testRunnerName, settings: {} });
+        expect(log.warn).calledWithExactly(`DEPRECATED: please change the config setting 'testRunner: ${testRunnerName}' into 'testRunner: ${JSON.stringify({ name: testRunnerName, settings: {} })}'`);
       });
     });
   });

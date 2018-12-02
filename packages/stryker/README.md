@@ -97,13 +97,13 @@ With `mutate` you configure the subset of files to use for mutation testing.
 Generally speaking, these should be your own source files.  
 This is optional, as you can choose to not mutate any files at all and perform a dry-run (running only your tests without mutating). 
 
-### `testRunner` [`string`]
+### `testRunner` [`object`]
 
-Default: `'command'`  
+Default: `testRunner: { name: 'command', settings: {}}`  
 Command line: `--testRunner karma`  
-Config file: `testRunner: 'karma'`  
+Config file: `testRunner: { name: 'karma', settings: {}}`  
 
-With `testRunner` you specify the test runner that Stryker uses to run your tests. The default value is `command`. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the `commandRunner: { command: 'npm run mocha' }`. It uses `npm test` as the command by default. 
+With `testRunner` you specify the test runner that Stryker uses to run your tests. The default value is `command`. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the `testRunner: { name: 'command', settings: { command: 'npm run mocha' } }`. It uses `npm test` as the command by default. 
 
 The command test runner can be made to work in any use case, but comes with a performance
 penalty, as Stryker cannot do any optimizations and just runs all tests for all mutants. 

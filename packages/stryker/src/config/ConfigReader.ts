@@ -32,6 +32,14 @@ export default class ConfigReader {
     // merge the config from config file and cliOptions (precedence)
     config.set(this.cliOptions);
 
+    if (typeof config.testRunner === 'string') {
+      config.testRunner = {
+        name: config.testRunner,
+        settings: {}
+      };
+      this.log.warn(`DEPRECATED: please change the config setting 'testRunner: ${config.testRunner.name}' into 'testRunner: ${JSON.stringify(config.testRunner)}'`);
+    }
+
     if (config.reporter.length) {
       if (Array.isArray(config.reporter)) {
         config.reporters = config.reporter;
