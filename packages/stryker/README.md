@@ -52,7 +52,9 @@ module.exports = function(config){
       '!src/index.js'
     ],
     testFramework: 'mocha',
-    testRunner: 'mocha',
+    testRunner: {
+      name: 'mocha',
+    },
     reporters: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
     coverageAnalysis: 'perTest'
   });
@@ -99,7 +101,7 @@ This is optional, as you can choose to not mutate any files at all and perform a
 
 ### `testRunner` [`object`]
 
-Default: `testRunner: { name: 'command', settings: {}}`  
+Default: `testRunner: { name: 'command', settings: {} }`  
 Command line: `--testRunner karma`  
 Config file: `testRunner: { name: 'karma', settings: { configFile: 'path/to/karma.conf.js' } }`  
 
