@@ -101,7 +101,7 @@ This is optional, as you can choose to not mutate any files at all and perform a
 
 Default: `testRunner: { name: 'command', settings: {}}`  
 Command line: `--testRunner karma`  
-Config file: `testRunner: { name: 'karma', settings: {}}`  
+Config file: `testRunner: { name: 'karma', settings: { configFile: 'path/to/karma.conf.js' } }`  
 
 With `testRunner` you specify the test runner that Stryker uses to run your tests. The default value is `command`. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the `testRunner: { name: 'command', settings: { command: 'npm run mocha' } }`. It uses `npm test` as the command by default. 
 
