@@ -14,15 +14,15 @@ import { Mock } from '../../helpers/producers';
 import currentLogMock from '../../helpers/logMock';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  port: 4200,
-  level: LogLevel.Fatal
+  level: LogLevel.Fatal,
+  port: 4200
 });
 
 class ChildProcessMock extends EventEmitter {
-  send = sandbox.stub();
-  stderr = new EventEmitter();
-  stdout = new EventEmitter();
-  pid = 4648;
+  public send = sandbox.stub();
+  public stderr = new EventEmitter();
+  public stdout = new EventEmitter();
+  public pid = 4648;
 }
 
 describe('ChildProcessProxy', () => {
@@ -58,11 +58,11 @@ describe('ChildProcessProxy', () => {
 
     it('should send init message to child process', () => {
       const expectedMessage: InitMessage = {
+        constructorArgs: ['something'],
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
         plugins: ['examplePlugin', 'secondExamplePlugin'],
         requirePath: 'foobar',
-        constructorArgs: ['something'],
         workingDirectory: 'workingDirectory'
       };
 
@@ -71,8 +71,8 @@ describe('ChildProcessProxy', () => {
         arg: expectedMessage.constructorArgs[0],
         loggingContext: LOGGING_CONTEXT,
         plugins: expectedMessage.plugins,
-        workingDir: expectedMessage.workingDirectory,
-        requirePath: expectedMessage.requirePath
+        requirePath: expectedMessage.requirePath,
+        workingDir: expectedMessage.workingDirectory
       });
       ChildProcessProxy.create(expectedMessage.requirePath, LOGGING_CONTEXT, expectedMessage.plugins,
         expectedMessage.workingDirectory, HelloClass, expectedMessage.constructorArgs[0]);
@@ -137,15 +137,15 @@ describe('ChildProcessProxy', () => {
     it('should proxy the message', async () => {
       // Arrange
       const workerResponse: ParentMessage = {
-        kind: ParentMessageKind.Result,
         correlationId: 0,
+        kind: ParentMessageKind.Result,
         result: 'ack'
       };
       const expectedWorkerMessage: WorkerMessage = {
-        kind: WorkerMessageKind.Call,
+        args: ['echo'],
         correlationId: 0,
-        methodName: 'say',
-        args: ['echo']
+        kind: WorkerMessageKind.Call,
+        methodName: 'say'
       };
 
       // Act

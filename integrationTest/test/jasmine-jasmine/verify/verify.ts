@@ -1,4 +1,4 @@
-import * as fs from 'mz/fs';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import { readScoreResult } from '../../../helpers';
 
@@ -11,10 +11,10 @@ describe('After running stryker with test runner jasmine, test framework jasmine
   });
 
   it('should write to a log file', async () => {
-    const strykerLog = await fs.readFile('./stryker.log', 'utf8');
+    const strykerLog = await fsAsPromised.readFile('./stryker.log', 'utf8');
     expect(strykerLog).contains('INFO InputFileResolver Found 2 of 10 file(s) to be mutated');
     expect(strykerLog).matches(/Stryker Done in \d+/);
     // TODO, we now have an error because of a memory leak: https://github.com/jasmine/jasmine-npm/issues/134
-    // expect(strykerLog).not.contains('ERROR'); 
+    // expect(strykerLog).not.contains('ERROR');
   });
 });

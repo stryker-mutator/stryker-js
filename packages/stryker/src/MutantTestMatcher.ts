@@ -31,13 +31,13 @@ export default class MutantTestMatcher {
   private readonly log = getLogger(MutantTestMatcher.name);
 
   constructor(
-    private mutants: ReadonlyArray<Mutant>,
-    private filesToMutate: ReadonlyArray<File>,
-    private initialRunResult: RunResult,
-    private sourceMapper: SourceMapper,
-    private coveragePerFile: CoverageMapsByFile,
-    private options: StrykerOptions,
-    private reporter: StrictReporter) {
+    private readonly mutants: ReadonlyArray<Mutant>,
+    private readonly filesToMutate: ReadonlyArray<File>,
+    private readonly initialRunResult: RunResult,
+    private readonly sourceMapper: SourceMapper,
+    private readonly coveragePerFile: CoverageMapsByFile,
+    private readonly options: StrykerOptions,
+    private readonly reporter: StrictReporter) {
   }
 
   private get baseline(): CoverageCollection | null {
@@ -48,7 +48,7 @@ export default class MutantTestMatcher {
     }
   }
 
-  matchWithMutants(): TestableMutant[] {
+  public matchWithMutants(): TestableMutant[] {
 
     const testableMutants = this.createTestableMutants();
 
@@ -64,7 +64,7 @@ export default class MutantTestMatcher {
     return testableMutants;
   }
 
-  enrichWithCoveredTests(testableMutant: TestableMutant) {
+  public enrichWithCoveredTests(testableMutant: TestableMutant) {
     const transpiledLocation = this.sourceMapper.transpiledLocationFor({
       fileName: testableMutant.mutant.fileName,
       location: testableMutant.location
@@ -130,7 +130,6 @@ export default class MutantTestMatcher {
     }));
   }
 
-
   /**
    * Map the Mutant object on the MatchMutant Object.
    * @param testableMutant The mutant.
@@ -138,12 +137,12 @@ export default class MutantTestMatcher {
    */
   private mapMutantOnMatchedMutant(testableMutant: TestableMutant): MatchedMutant {
     const matchedMutant = _.cloneDeep({
+      fileName: testableMutant.mutant.fileName,
       id: testableMutant.id,
       mutatorName: testableMutant.mutant.mutatorName,
+      replacement: testableMutant.mutant.replacement,
       scopedTestIds: testableMutant.selectedTests.map(testSelection => testSelection.id),
       timeSpentScopedTests: testableMutant.timeSpentScopedTests,
-      fileName: testableMutant.mutant.fileName,
-      replacement: testableMutant.mutant.replacement
     });
     return Object.freeze(matchedMutant);
   }
@@ -152,15 +151,15 @@ export default class MutantTestMatcher {
     const statementIndex = this.findMatchingStatementInMap(location, fileCoverage.statementMap);
     if (statementIndex) {
       return {
-        kind: StatementIndexKind.statement,
-        index: statementIndex
+        index: statementIndex,
+        kind: StatementIndexKind.statement
       };
     } else {
       const functionIndex = this.findMatchingStatementInMap(location, fileCoverage.fnMap);
       if (functionIndex) {
         return {
-          kind: StatementIndexKind.function,
-          index: functionIndex
+          index: functionIndex,
+          kind: StatementIndexKind.function
         };
       } else {
         return null;
@@ -206,7 +205,7 @@ export default class MutantTestMatcher {
     }
   }
 
-  private isCoveragePerTestResult(coverage: CoverageCollection | CoveragePerTestResult | undefined): coverage is CoveragePerTestResult {
+  private isCoveragePerTestResult(_coverage: CoverageCollection | CoveragePerTestResult | undefined): _coverage is CoveragePerTestResult {
     return this.options.coverageAnalysis === 'perTest';
   }
 }

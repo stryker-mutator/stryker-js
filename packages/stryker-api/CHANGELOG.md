@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.22.0"></a>
+# [0.22.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.21.5...stryker-api@0.22.0) (2018-11-29)
+
+
+### Bug Fixes
+
+* **JestTestRunner:** run jest with --findRelatedTests ([#1235](https://github.com/stryker-mutator/stryker/issues/1235)) ([5e0790e](https://github.com/stryker-mutator/stryker/commit/5e0790e))
+
+
+### Features
+
+* **console-colors:** Add a global config option to enable/disable colors in console ([#1251](https://github.com/stryker-mutator/stryker/issues/1251)) ([19b1d64](https://github.com/stryker-mutator/stryker/commit/19b1d64))
+
+
+
+
+<a name="0.21.5"></a>
+## [0.21.5](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.21.4...stryker-api@0.21.5) (2018-11-13)
+
+
+### Bug Fixes
+
+* **missing mutator plugin:** set the correct plugin name when the specified mutator cannot be found ([#1234](https://github.com/stryker-mutator/stryker/issues/1234)) ([c2465ec](https://github.com/stryker-mutator/stryker/commit/c2465ec)), closes [#1161](https://github.com/stryker-mutator/stryker/issues/1161)
+
+
+
+
+<a name="0.21.4"></a>
+## [0.21.4](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.21.2...stryker-api@0.21.4) (2018-10-15)
+
+
+### Bug Fixes
+
+* **any-promise:** Don't register a promise implementation ([#1180](https://github.com/stryker-mutator/stryker/issues/1180)) ([1d3e2f6](https://github.com/stryker-mutator/stryker/commit/1d3e2f6))
+* **version:** Version bump for failed release ([8cf9e87](https://github.com/stryker-mutator/stryker/commit/8cf9e87))
+
+
+
+
+<a name="0.21.2"></a>
+## [0.21.2](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.21.1...stryker-api@0.21.2) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-api
+
+<a name="0.21.1"></a>
+## [0.21.1](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.21.0...stryker-api@0.21.1) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker-api
+
 <a name="0.21.0"></a>
 # [0.21.0](https://github.com/stryker-mutator/stryker/compare/stryker-api@0.20.0...stryker-api@0.21.0) (2018-08-21)
 

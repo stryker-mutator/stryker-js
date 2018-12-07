@@ -3,6 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.10.8"></a>
+## [0.10.8](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.7...stryker-jasmine@0.10.8) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.10.7"></a>
+## [0.10.7](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.6...stryker-jasmine@0.10.7) (2018-11-29)
+
+
+
+
+**Note:** Version bump only for package stryker-jasmine
+
+<a name="0.10.6"></a>
+## [0.10.6](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.5...stryker-jasmine@0.10.6) (2018-11-13)
+
+
+
+
+**Note:** Version bump only for package stryker-jasmine
+
+<a name="0.10.5"></a>
+## [0.10.5](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.3...stryker-jasmine@0.10.5) (2018-10-15)
+
+
+### Bug Fixes
+
+* **version:** Version bump for failed release ([8cf9e87](https://github.com/stryker-mutator/stryker/commit/8cf9e87))
+
+
+
+
+<a name="0.10.3"></a>
+## [0.10.3](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.2...stryker-jasmine@0.10.3) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-jasmine
+
+<a name="0.10.2"></a>
+## [0.10.2](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.1...stryker-jasmine@0.10.2) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker-jasmine
+
 <a name="0.10.1"></a>
 ## [0.10.1](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.0...stryker-jasmine@0.10.1) (2018-08-21)
 

@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
-import * as fs from 'mz/fs';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { TempFolder } from '../../../src/utils/TempFolder';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
@@ -16,7 +16,7 @@ describe('TempFolder', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(mkdirp, 'sync');
-    sandbox.stub(fs, 'writeFile');
+    sandbox.stub(fsAsPromised, 'writeFile');
     deleteDirStub = sandbox.stub(fileUtils, 'deleteDir');
     cwdStub = sandbox.stub(process, 'cwd');
     cwdStub.returns(mockCwd);

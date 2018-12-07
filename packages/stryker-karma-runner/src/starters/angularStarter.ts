@@ -14,7 +14,7 @@ export async function start(ngConfig?: NgConfigOptions): Promise<void> {
   if (!version || semver.lt(version, MIN_ANGULAR_CLI_VERSION)) {
     throw new Error(`Your @angular/cli version (${version}) is not supported. Please install ${MIN_ANGULAR_CLI_VERSION} or higher`);
   }
-  let cli = requireModule('@angular/cli/lib/cli');
+  let cli = requireModule('@angular/cli');
   if ('default' in cli) {
     cli = cli.default;
   }

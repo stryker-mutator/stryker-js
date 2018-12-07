@@ -23,8 +23,8 @@ import { RunnerOptions } from 'stryker-api/test_runner';
 
 const OVERHEAD_TIME_MS = 0;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  port: 4200,
-  level: LogLevel.Fatal
+  level: LogLevel.Fatal,
+  port: 4200
 });
 const SANDBOX_INDEX = 3;
 
@@ -70,7 +70,6 @@ describe('Sandbox', () => {
     log = currentLogMock();
   });
 
-
   describe('create()', () => {
 
     it('should copy input files when created', async () => {
@@ -87,9 +86,9 @@ describe('Sandbox', () => {
     it('should have created the isolated test runner', async () => {
       await Sandbox.create(options, SANDBOX_INDEX, files, null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
       const expectedSettings: RunnerOptions = {
+        fileNames: [path.resolve('random-folder-3', 'file1'), path.resolve('random-folder-3', 'file2')],
         port: 46,
-        strykerOptions: options,
-        fileNames: [path.resolve('random-folder-3', 'file1'), path.resolve('random-folder-3', 'file2')]
+        strykerOptions: options
       };
       expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings, sandboxDirectory, LOGGING_CONTEXT);
     });
@@ -118,8 +117,8 @@ describe('Sandbox', () => {
       symlinkJunctionStub.rejects(createFileAlreadyExistsError());
       await Sandbox.create(options, SANDBOX_INDEX, files, testFrameworkStub, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
       expect(log.warn).calledWithMatch(normalizeWhiteSpaces(
-        `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox. 
-        Please remove the node_modules from your sandbox files. Alternatively, set \`symlinkNodeModules\` 
+        `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox.
+        Please remove the node_modules from your sandbox files. Alternatively, set \`symlinkNodeModules\`
         to \`false\` to disable this warning.`));
     });
 
@@ -145,8 +144,19 @@ describe('Sandbox', () => {
       const sut = await Sandbox.create(options, SANDBOX_INDEX, files, null, 0, LOGGING_CONTEXT);
       await sut.run(231313, 'hooks');
       expect(testRunner.run).to.have.been.calledWith({
+        mutatedFileName: undefined,
+        testHooks: 'hooks',
         timeout: 231313,
-        testHooks: 'hooks'
+      });
+    });
+
+    it('should run the testRunner with mutatedFileName', async () => {
+      const sut = await Sandbox.create(options, SANDBOX_INDEX, files, null, 0, LOGGING_CONTEXT);
+      await sut.run(231313, 'hooks', 'path/to/file');
+      expect(testRunner.run).to.have.been.calledWith({
+        mutatedFileName: 'path/to/file',
+        testHooks: 'hooks',
+        timeout: 231313,
       });
     });
   });
@@ -197,21 +207,25 @@ describe('Sandbox', () => {
       expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.selectedTests);
     });
 
-    it('should provide the filter code as testHooks and correct timeout', async () => {
+    it('should provide the filter code as testHooks, correct timeout and mutatedFileName', async () => {
       options.timeoutMS = 1000;
       const overheadTimeMS = 42;
       const totalTimeSpend = 12;
       const sut = await Sandbox.create(options, SANDBOX_INDEX, files, testFrameworkStub, overheadTimeMS, LOGGING_CONTEXT);
       await sut.runMutant(transpiledMutant);
-      const expectedRunOptions = { testHooks: wrapInClosure(testFilterCodeFragment), timeout: totalTimeSpend * options.timeoutFactor + options.timeoutMS + overheadTimeMS };
+      const expectedRunOptions = {
+        mutatedFileName: path.resolve('random-folder-3', 'file1'),
+        testHooks: wrapInClosure(testFilterCodeFragment),
+        timeout: totalTimeSpend * options.timeoutFactor + options.timeoutMS + overheadTimeMS
+      };
       expect(testRunner.run).calledWith(expectedRunOptions);
     });
 
     it('should have reset the source file', async () => {
       const sut = await Sandbox.create(options, SANDBOX_INDEX, files, null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
       await sut.runMutant(transpiledMutant);
-      let timesCalled = writeFileStub.getCalls().length - 1;
-      let lastCall = writeFileStub.getCall(timesCalled);
+      const timesCalled = writeFileStub.getCalls().length - 1;
+      const lastCall = writeFileStub.getCall(timesCalled);
       expect(lastCall.args).to.deep.equal([expectedTargetFileToMutate, Buffer.from('original code')]);
     });
 

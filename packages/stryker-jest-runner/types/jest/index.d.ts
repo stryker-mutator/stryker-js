@@ -8,6 +8,8 @@ declare namespace Jest {
     config: string;
     runInBand: boolean;
     silent: boolean;
+    findRelatedTests?: boolean;
+    _?: string[];
   }
 
   // Taken from https://goo.gl/qHifyP, removed all stuff that we are not using
@@ -18,7 +20,7 @@ declare namespace Jest {
     collectCoverage: boolean;
     verbose: boolean;
     testResultsProcessor: Maybe<string>;
-    testEnvironment: string
+    testEnvironment: string;
   }
 
   interface RunResult {

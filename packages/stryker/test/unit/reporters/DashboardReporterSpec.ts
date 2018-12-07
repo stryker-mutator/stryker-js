@@ -31,18 +31,18 @@ describe('DashboardReporter', () => {
     apiKey?: string;
   }) {
     const { ci, pullRequest, repository, branch, apiKey } = Object.assign({
+      apiKey: '12345',
+      branch: 'master',
       ci: true,
       pullRequest: false,
-      repository: 'stryker-mutator/stryker',
-      branch: 'master',
-      apiKey: '12345'
+      repository: 'stryker-mutator/stryker'
     }, env);
-    
+
     if (ci) {
       determineCiProvider.returns({
-        isPullRequest: () => pullRequest,
         determineBranch: () => branch,
         determineRepository: () => repository,
+        isPullRequest: () => pullRequest
       });
     } else {
       determineCiProvider.returns(undefined);
@@ -54,7 +54,7 @@ describe('DashboardReporter', () => {
   it('should report mutation score to report server', async () => {
     // Arrange
     setupEnvironmentVariables();
-    sut = new DashboardReporter(new Config, dashboardClientMock as any);
+    sut = new DashboardReporter(new Config(), dashboardClientMock as any);
 
     // Act
     sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
@@ -62,9 +62,9 @@ describe('DashboardReporter', () => {
     // Assert
     const report: StrykerDashboardReport = {
       apiKey: '12345',
-      repositorySlug: 'github.com/stryker-mutator/stryker',
       branch: 'master',
-      mutationScore: 79.10
+      mutationScore: 79.10,
+      repositorySlug: 'github.com/stryker-mutator/stryker'
     };
 
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.been.calledWith(report);

@@ -33,10 +33,9 @@ describe('BabelTranspiler', () => {
 
   afterEach(() => sandbox.restore());
 
-
   describe('constructor', () => {
 
-    function arrangeHappyFlow(transformResult: babel.BabelFileResult & { ignored?: boolean } = { code: 'code' }) {
+    function arrangeHappyFlow() {
       babelConfigReaderMock.readConfig.returns(babelOptions);
       sut = new BabelTranspiler({ config, produceSourceMaps: false });
     }

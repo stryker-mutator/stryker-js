@@ -3,14 +3,14 @@ import { normalizeFileFromTypescript, isTypescriptFile, getTSConfig } from '../h
 
 /**
  * Represents a transpile filter. This is the component that decides on which files needs to be transpiled.
- * 
+ *
  * It is implemented using the composite pattern.
  * If there is a tsConfig, that will be used. If not, a default is used (transpile all TS-like files)
  */
 export default abstract class TranspileFilter {
   public abstract isIncluded(fileName: string): boolean;
 
-  static create(config: Config): TranspileFilter {
+  public static create(config: Config): TranspileFilter {
     const parsedCommandLine = getTSConfig(config);
     if (parsedCommandLine) {
       return new TSConfigFilter(parsedCommandLine);

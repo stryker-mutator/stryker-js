@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as fs from 'mz/fs';
+import * as fs from 'fs';
 import { expect } from 'chai';
 import * as ts from 'typescript';
 import { Config } from 'stryker-api/config';
@@ -8,8 +8,8 @@ import TypescriptMutator from '../../src/TypescriptMutator';
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
 
 class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
-  name = 'FunctionDeclarationForTest';
-  guard(node: ts.Node): node is ts.FunctionDeclaration {
+  public name = 'FunctionDeclarationForTest';
+  public guard(node: ts.Node): node is ts.FunctionDeclaration {
     return node.kind === ts.SyntaxKind.FunctionDeclaration;
   }
   protected identifyReplacements(node: ts.FunctionDeclaration): NodeReplacement[] {
@@ -21,8 +21,8 @@ class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
 }
 
 class SourceFileMutator extends NodeMutator<ts.SourceFile> {
-  name = 'SourceFileForTest';
-  guard(node: ts.Node): node is ts.SourceFile {
+  public name = 'SourceFileForTest';
+  public guard(node: ts.Node): node is ts.SourceFile {
     return node.kind === ts.SyntaxKind.SourceFile;
   }
   protected identifyReplacements(node: ts.SourceFile): NodeReplacement[] {

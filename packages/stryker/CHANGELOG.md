@@ -3,6 +3,132 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.33.1"></a>
+## [0.33.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.33.0...stryker@0.33.1) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.33.0"></a>
+# [0.33.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.32.1...stryker@0.33.0) (2018-11-29)
+
+
+### Bug Fixes
+
+* **JestTestRunner:** run jest with --findRelatedTests ([#1235](https://github.com/stryker-mutator/stryker/issues/1235)) ([5e0790e](https://github.com/stryker-mutator/stryker/commit/5e0790e))
+
+
+### Features
+
+* **console-colors:** Add a global config option to enable/disable colors in console ([#1251](https://github.com/stryker-mutator/stryker/issues/1251)) ([19b1d64](https://github.com/stryker-mutator/stryker/commit/19b1d64))
+* **Stryker CLI 'init':** Support for preset configuration during 'stryker init' ([#1248](https://github.com/stryker-mutator/stryker/issues/1248)) ([5673e6b](https://github.com/stryker-mutator/stryker/commit/5673e6b))
+
+
+
+
+<a name="0.32.1"></a>
+## [0.32.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.32.0...stryker@0.32.1) (2018-11-21)
+
+
+### Bug Fixes
+
+* **log4js:** Don't log log4js category to console ([#1246](https://github.com/stryker-mutator/stryker/issues/1246)) ([479d999](https://github.com/stryker-mutator/stryker/commit/479d999))
+
+
+
+
+<a name="0.32.0"></a>
+# [0.32.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.31.0...stryker@0.32.0) (2018-11-13)
+
+
+### Features
+
+* **error debugging:** add remark to run again with loglevel trace ([#1231](https://github.com/stryker-mutator/stryker/issues/1231)) ([c9e3d97](https://github.com/stryker-mutator/stryker/commit/c9e3d97)), closes [#1205](https://github.com/stryker-mutator/stryker/issues/1205)
+
+
+
+
+<a name="0.31.0"></a>
+# [0.31.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.30.1...stryker@0.31.0) (2018-11-07)
+
+
+### Features
+
+* **clear text reporter:** Prettify the clear-text report ([#1185](https://github.com/stryker-mutator/stryker/issues/1185)) ([a49829b](https://github.com/stryker-mutator/stryker/commit/a49829b))
+
+
+
+
+<a name="0.30.1"></a>
+## [0.30.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.30.0...stryker@0.30.1) (2018-10-25)
+
+
+### Bug Fixes
+
+* **file resolving:** ignore dirs from git submodules ([#1195](https://github.com/stryker-mutator/stryker/issues/1195)) ([7806083](https://github.com/stryker-mutator/stryker/commit/7806083))
+
+
+
+
+<a name="0.30.0"></a>
+# [0.30.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.5...stryker@0.30.0) (2018-10-15)
+
+
+### Bug Fixes
+
+* **any-promise:** Don't register a promise implementation ([#1180](https://github.com/stryker-mutator/stryker/issues/1180)) ([1d3e2f6](https://github.com/stryker-mutator/stryker/commit/1d3e2f6))
+
+
+### Features
+
+* **ProgressReporter:** Format estimated time of completion (ETC) ([#1176](https://github.com/stryker-mutator/stryker/issues/1176)) ([4e76b46](https://github.com/stryker-mutator/stryker/commit/4e76b46))
+
+
+
+
+<a name="0.29.5"></a>
+## [0.29.5](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.4...stryker@0.29.5) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker
+
+<a name="0.29.4"></a>
+## [0.29.4](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.3...stryker@0.29.4) (2018-10-02)
+
+
+### Bug Fixes
+
+* **ScoreResultCalculator:** fix faulty filenames in stryker score result ([#1165](https://github.com/stryker-mutator/stryker/issues/1165)) ([2555f49](https://github.com/stryker-mutator/stryker/commit/2555f49)), closes [#1140](https://github.com/stryker-mutator/stryker/issues/1140)
+
+
+
+
+<a name="0.29.3"></a>
+## [0.29.3](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.2...stryker@0.29.3) (2018-09-30)
+
+
+### Bug Fixes
+
+* **karma-runner:** improve error message ([#1145](https://github.com/stryker-mutator/stryker/issues/1145)) ([2e56d38](https://github.com/stryker-mutator/stryker/commit/2e56d38))
+
+
+
+
+<a name="0.29.2"></a>
+## [0.29.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.1...stryker@0.29.2) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker
+
 <a name="0.29.1"></a>
 ## [0.29.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.29.0...stryker@0.29.1) (2018-08-28)
 

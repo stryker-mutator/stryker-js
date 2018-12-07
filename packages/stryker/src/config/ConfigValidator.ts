@@ -9,10 +9,9 @@ export default class ConfigValidator {
   private isValid = true;
   private readonly log = getLogger(ConfigValidator.name);
 
-  constructor(private strykerConfig: Config, private testFramework: TestFramework | null) {
-  }
+  constructor(private readonly strykerConfig: Config, private readonly testFramework: TestFramework | null) { }
 
-  validate() {
+  public validate() {
     this.validateTestFramework();
     this.validateThresholds();
     this.validateMutator();
@@ -108,7 +107,7 @@ export default class ConfigValidator {
   }
 
   private validateIsNumber(fieldName: keyof Config, value: any) {
-    if (typeof value !== 'number') {
+    if (typeof value !== 'number' || isNaN(value)) {
       this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected a number`);
     }
   }

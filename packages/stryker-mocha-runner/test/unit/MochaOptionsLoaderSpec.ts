@@ -10,6 +10,7 @@ import { logger, Mock } from '../helpers/mockHelpers';
 describe('MochaOptionsLoader', () => {
 
   let readFileStub: sinon.SinonStub;
+  let existsFileStub: sinon.SinonStub;
   let config: Config;
   let sut: MochaOptionsLoader;
   let log: Mock<logging.Logger>;
@@ -18,6 +19,7 @@ describe('MochaOptionsLoader', () => {
     log = logger();
     sandbox.stub(logging, 'getLogger').returns(log);
     readFileStub = sandbox.stub(fs, 'readFileSync');
+    existsFileStub = sandbox.stub(fs, 'existsSync').returns(true);
     sut = new MochaOptionsLoader();
     config = new Config();
   });
@@ -28,7 +30,7 @@ describe('MochaOptionsLoader', () => {
 
   it('should load a mocha.opts file if specified', () => {
     readFileStub.returns('');
-    config['mochaOptions'] = {
+    config.mochaOptions = {
       opts: 'some/mocha.opts/file'
     };
     sut.load(config);
@@ -36,10 +38,29 @@ describe('MochaOptionsLoader', () => {
     expect(fs.readFileSync).calledWith(path.resolve('some/mocha.opts/file'));
   });
 
-  it('should not load a mocha.opts file if not specified', () => {
+  it('should log an error if specified mocha.opts file doesn\'t exist', () => {
+    readFileStub.returns('');
+    existsFileStub.returns(false);
+    config.mochaOptions = {
+      opts: 'some/mocha.opts/file'
+    };
+
+    sut.load(config);
+    expect(log.error).calledWith(`Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`);
+  });
+
+  it('should load default mocha.opts file if not specified', () => {
+    readFileStub.returns('');
+    sut.load(config);
+    expect(log.info).calledWith(`Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`);
+    expect(fs.readFileSync).calledWith(path.resolve('test/mocha.opts'));
+  });
+
+  it('should not load default mocha.opts file if not found', () => {
+    existsFileStub.returns(false);
     const options = sut.load(config);
     expect(options).deep.eq({});
-    expect(log.debug).calledWith('No mocha opts file specified, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
+    expect(log.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
   });
 
   it('should load `--require` and `-r` properties if specified in mocha.opts file', () => {
@@ -47,7 +68,7 @@ describe('MochaOptionsLoader', () => {
     --require  src/test/support/setup
     -r babel-require
     `);
-    config['mochaOptions'] = { opts: '.' };
+    config.mochaOptions = { opts: '.' };
     const options = sut.load(config);
     expect(options).deep.include({
       require: [
@@ -60,7 +81,7 @@ describe('MochaOptionsLoader', () => {
   function itShouldLoadProperty(property: string, value: string, expectedConfig: Partial<MochaRunnerOptions>) {
     it(`should load '${property} if specified`, () => {
       readFileStub.returns(`${property} ${value}`);
-      config['mochaOptions'] = { opts: 'path/to/opts/file' };
+      config.mochaOptions = { opts: 'path/to/opts/file' };
       expect(sut.load(config)).deep.include(expectedConfig);
     });
   }
@@ -79,20 +100,20 @@ describe('MochaOptionsLoader', () => {
       -A
       -r babel-register
     `);
-    config['mochaOptions'] = {
-      opts: 'path/to/opts/file',
-      ui: 'exports',
-      timeout: 4000,
+    config.mochaOptions = {
       asyncOnly: false,
-      require: ['ts-node/register']
+      opts: 'path/to/opts/file',
+      require: ['ts-node/register'],
+      timeout: 4000,
+      ui: 'exports'
     };
     const options = sut.load(config);
     expect(options).deep.equal({
-      opts: 'path/to/opts/file',
-      ui: 'exports',
-      timeout: 4000,
       asyncOnly: false,
-      require: ['ts-node/register']
+      opts: 'path/to/opts/file',
+      require: ['ts-node/register'],
+      timeout: 4000,
+      ui: 'exports'
     });
   });
 
@@ -101,7 +122,7 @@ describe('MochaOptionsLoader', () => {
     --reporter dot
     --ignore-leaks
     `);
-    config['mochaOptions'] = {
+    config.mochaOptions = {
       opts: 'some/mocha.opts/file',
     };
     const options = sut.load(config);
@@ -115,7 +136,7 @@ describe('MochaOptionsLoader', () => {
     --timeout
     --ui
     `);
-    config['mochaOptions'] = {
+    config.mochaOptions = {
       opts: 'some/mocha.opts/file',
     };
     const options = sut.load(config);

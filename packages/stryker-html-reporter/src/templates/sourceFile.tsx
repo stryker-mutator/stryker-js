@@ -17,18 +17,18 @@ export function sourceFile(result: ScoreResult, sourceFile: SourceFile | undefin
         .sortBy(mutants, m => m.range[0])
         .map((mutant, index) => ({ mutant, index }));
     return layout(breadcrumb,
-        <div class="col-lg-12">
-            <div class="row">
-                <div class="col-sm-11">
+        <div class='col-lg-12'>
+            <div class='row'>
+                <div class='col-sm-11'>
                     {resultTable(result, result.name, thresholds)}
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-7">
+            <div class='row'>
+                <div class='col-lg-7'>
                     {legend(mutants)}
                     {code(sourceFile, numberedMutants)}
                 </div>
-                <div class="col-lg-5">
+                <div class='col-lg-5'>
                     {mutantTable(numberedMutants, sourceFile ? sourceFile.content : '')}
                 </div>
             </div>
@@ -39,9 +39,9 @@ function legend(mutants: MutantResult[]) {
     function displayCheckbox(state: MutantStatus, isChecked: boolean) {
         const filtered = mutants.filter(mutant => mutant.status === state);
         if (filtered.length) {
-            return <div class="form-check form-check-inline">
-                <label class="form-check-label">
-                    <input class="form-check-input stryker-display" checked={isChecked} value={state.toString()} type="checkbox"></input>
+            return <div class='form-check form-check-inline'>
+                <label class='form-check-label'>
+                    <input class='form-check-input stryker-display' checked={isChecked} value={state.toString()} type='checkbox'></input>
                     {MutantStatus[state]} {`(${filtered.length})`}
                 </label>
             </div>;
@@ -50,15 +50,15 @@ function legend(mutants: MutantResult[]) {
         }
     }
 
-    return <div class="row legend">
-        <form class="col-md-12" novalidate="novalidate">
+    return <div class='row legend'>
+        <form class='col-md-12' novalidate='novalidate'>
             {displayCheckbox(MutantStatus.NoCoverage, true)}
             {displayCheckbox(MutantStatus.Survived, true)}
             {displayCheckbox(MutantStatus.Killed, false)}
             {displayCheckbox(MutantStatus.TimedOut, false)}
             {displayCheckbox(MutantStatus.RuntimeError, false)}
             {displayCheckbox(MutantStatus.TranspileError, false)}
-            <a href="#" class="stryker-collapse-expand-all">Expand all</a>
+            <a href='#' class='stryker-collapse-expand-all'>Expand all</a>
         </form>
     </div>;
 }
@@ -74,9 +74,9 @@ function code(sourceFile: SourceFile | undefined, mutants: NumberedMutant[]) {
 function annotateCode(sourceFile: SourceFile, numberedMutants: NumberedMutant[]) {
     const currentCursorMutantStatuses = {
         killed: 0,
+        noCoverage: 0,
         survived: 0,
-        timeout: 0,
-        noCoverage: 0
+        timeout: 0
     };
     const maxIndex = sourceFile.content.length - 1;
 
@@ -119,8 +119,8 @@ function annotateCode(sourceFile: SourceFile, numberedMutants: NumberedMutant[])
         const backgroundColorEndAnnotation = ((mutantsStarting.length || mutantsEnding.length) && index > 0) || index === maxIndex ? '</span>' : '';
         try {
             const mutantsAnnotations = mutantsStarting.map(m =>
-                <a href="#" class="stryker-mutant-button"
-                    tabindex="0"
+                <a href='#' class='stryker-mutant-button'
+                    tabindex='0'
                     title={m.mutant.mutatorName}
                     data-content={getMutantContent(m.mutant)}
                     data-mutant-status-annotation={getContextClassForStatus(m.mutant.status)}
@@ -128,18 +128,17 @@ function annotateCode(sourceFile: SourceFile, numberedMutants: NumberedMutant[])
                     data-mutant={m.index}>
                     <span class={`badge badge-${getContextClassForStatus(m.mutant.status)}`}>{m.index}</span>
                 </a>
-                + <span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant={m.index}>{escapeHtml(m.mutant.replacement)}</span>);
+                + <span class='badge badge-info stryker-mutant-replacement' hidden='hidden' data-mutant={m.index}>{escapeHtml(m.mutant.replacement)}</span>);
             const originalCodeStartAnnotations = mutantsStarting.map(m => `<span class="stryker-original-code" data-mutant="${m.index}">`);
-            const originalCodeEndAnnotations = mutantsEnding.map(m => '</span>');
+            const originalCodeEndAnnotations = mutantsEnding.map(() => '</span>');
 
             return `${backgroundColorEndAnnotation}${originalCodeEndAnnotations.join('')}${mutantsAnnotations.join('')}${originalCodeStartAnnotations.join('')}${backgroundColorAnnotation}${escapeHtml(char)}`;
         } catch (err) {
             console.log(err);
         }
     };
-    return <pre><code class="lang-javascript">{mapString(sourceFile.content, annotate).join('')}</code></pre>;
+    return <pre><code class='lang-javascript'>{mapString(sourceFile.content, annotate).join('')}</code></pre>;
 }
-
 
 function escapeHtml(unsafe: string) {
     return unsafe
@@ -149,7 +148,6 @@ function escapeHtml(unsafe: string) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
 }
-
 
 function getMutantContent(mutant: MutantResult) {
     return `status: ${MutantStatus[mutant.status]}`;
@@ -170,16 +168,13 @@ function getContextClassForStatus(status: MutantStatus) {
     }
 }
 
-
 /**
- * A `map` function, as in [1, 2].map(i => i+1), but for a string 
+ * A `map` function, as in [1, 2].map(i => i+1), but for a string
  */
-function mapString<T>(source: string, fn: (char: string, index?: number) => T): T[] {
-    let results: T[] = [];
+function mapString<T>(source: string, fn: (char: string, index: number) => T): T[] {
+    const results: T[] = [];
     for (let i = 0; i < source.length; i++) {
         results.push(fn(source[i], i));
     }
     return results;
 }
-
-

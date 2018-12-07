@@ -4,7 +4,7 @@ import { NumberedMutant } from './sourceFile';
 
 export function mutantTable(mutants: NumberedMutant[], sourceCode: string) {
 
-    return <table class="table table-sm table-hover mutant-table">
+    return <table class='table table-sm table-hover mutant-table'>
         <thead>
             <tr>
                 <th>#</th>

@@ -29,15 +29,15 @@ describe('StrykerReporter', () => {
     it('should emit "test_result"', () => {
       sut.onSpecComplete(undefined, karmaSpec({
         description: '3',
+        success: true,
         suite: ['1', '2'],
-        time: 64,
-        success: true
+        time: 64
       }));
       const expectedTestResult: TestResult = {
+        failureMessages: [],
         name: '1 2 3',
         status: TestStatus.Success,
-        timeSpentMs: 64,
-        failureMessages: []
+        timeSpentMs: 64
       };
       expect(events()).lengthOf(1);
       expect(events()[0]).deep.eq(expectedTestResult);
@@ -98,6 +98,16 @@ describe('StrykerReporter', () => {
     });
   });
 
+  describe('onListening', () => {
+    it('should emit "server_start" with port', () => {
+      const port = 1924;
+      const events = listenTo('server_start');
+      sut.onListening(port);
+      expect(events()).lengthOf(1);
+      expect(events()[0]).eq(port);
+    });
+  });
+
   describe('onBrowserComplete', () => {
     it('should emit "coverage_report"', () => {
       const events = listenTo('coverage_report');
@@ -139,7 +149,7 @@ describe('StrykerReporter', () => {
   });
 
   function listenTo(eventName: string) {
-    let events: any[] = [];
+    const events: any[] = [];
     sut.on(eventName, (event: any) => events.push(event));
     return () => events;
   }
@@ -148,11 +158,11 @@ describe('StrykerReporter', () => {
     return Object.assign({
       description: 'baz',
       id: '1',
+      log: [],
       skipped: false,
       success: true,
-      time: 42,
       suite: ['foo', 'bar'],
-      log: []
+      time: 42
     }, overrides);
   }
 

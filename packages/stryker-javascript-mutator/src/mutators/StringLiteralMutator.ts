@@ -1,19 +1,22 @@
-import { types } from 'babel-core';
+import * as types from '@babel/types';
 import NodeMutator from './NodeMutator';
 import { NodeWithParent } from '../helpers/ParentNode';
 
 export default class StringLiteralMutator implements NodeMutator {
-  name = 'StringLiteral';
+  public name = 'StringLiteral';
 
-  mutate(node: NodeWithParent, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
+  public mutate(node: NodeWithParent, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
     const nodes: types.Node[] = [];
 
     if (types.isTemplateLiteral(node)) {
-      let mutatedNode: types.StringLiteral = {
-        type: 'StringLiteral',
-        start: node.start,
+      const mutatedNode: types.StringLiteral = {
         end: node.end,
+        innerComments: node.innerComments,
+        leadingComments: node.leadingComments,
         loc: node.loc,
+        start: node.start,
+        trailingComments: node.trailingComments,
+        type: 'StringLiteral',
         value: ''
       };
 
@@ -22,9 +25,9 @@ export default class StringLiteralMutator implements NodeMutator {
       }
 
       nodes.push(mutatedNode);
-    } else if ((!node.parent || (!types.isImportDeclaration(node.parent) && !types.isJSXAttribute(node.parent)))
+    } else if ((!node.parent || (!types.isImportDeclaration(node.parent) && !types.isExportDeclaration(node.parent) && !types.isJSXAttribute(node.parent)))
       && types.isStringLiteral(node)) {
-      let mutatedNode = copy(node);
+      const mutatedNode = copy(node);
       mutatedNode.value = mutatedNode.value.length === 0 ? 'Stryker was here!' : '';
       nodes.push(mutatedNode);
     }

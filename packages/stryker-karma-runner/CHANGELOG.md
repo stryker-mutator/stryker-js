@@ -3,6 +3,95 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.21.1"></a>
+## [0.21.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.21.0...stryker-karma-runner@0.21.1) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.io/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.21.0"></a>
+# [0.21.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.20.3...stryker-karma-runner@0.21.0) (2018-11-29)
+
+
+### Features
+
+* **karma-runner:** Support automatic port selection ([#1239](https://github.io/stryker-mutator/stryker/issues/1239)) ([949333a](https://github.io/stryker-mutator/stryker/commit/949333a))
+
+
+
+
+<a name="0.20.3"></a>
+## [0.20.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.20.2...stryker-karma-runner@0.20.3) (2018-11-21)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
+<a name="0.20.2"></a>
+## [0.20.2](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.20.1...stryker-karma-runner@0.20.2) (2018-11-13)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
+<a name="0.20.1"></a>
+## [0.20.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.20.0...stryker-karma-runner@0.20.1) (2018-11-07)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
+<a name="0.20.0"></a>
+# [0.20.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.3...stryker-karma-runner@0.20.0) (2018-10-15)
+
+
+### Bug Fixes
+
+* **version:** Version bump for failed release ([8cf9e87](https://github.io/stryker-mutator/stryker/commit/8cf9e87))
+
+
+### Features
+
+* **karma-runner:** Support angular public api ([#1179](https://github.io/stryker-mutator/stryker/issues/1179)) ([b067a7f](https://github.io/stryker-mutator/stryker/commit/b067a7f))
+
+
+
+
+<a name="0.18.3"></a>
+## [0.18.3](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.2...stryker-karma-runner@0.18.3) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
+<a name="0.18.2"></a>
+## [0.18.2](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.1...stryker-karma-runner@0.18.2) (2018-09-30)
+
+
+### Bug Fixes
+
+* **karma-runner:** improve error message ([#1145](https://github.io/stryker-mutator/stryker/issues/1145)) ([2e56d38](https://github.io/stryker-mutator/stryker/commit/2e56d38))
+
+
+
+
+<a name="0.18.1"></a>
+## [0.18.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.18.0...stryker-karma-runner@0.18.1) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker-karma-runner
+
 <a name="0.18.0"></a>
 # [0.18.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.17.1...stryker-karma-runner@0.18.0) (2018-08-28)
 

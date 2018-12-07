@@ -10,12 +10,12 @@ export default class DashboardReporter implements Reporter {
   private readonly ciProvider = determineCIProvider();
 
   constructor(
-    setting: StrykerOptions,
-    private dashboardReporterClient: DashboardReporterClient = new DashboardReporterClient()
+    _setting: StrykerOptions,
+    private readonly dashboardReporterClient: DashboardReporterClient = new DashboardReporterClient()
   ) { }
 
   private readEnvironmentVariable(name: string) {
-    let environmentVariable = getEnvironmentVariable(name);
+    const environmentVariable = getEnvironmentVariable(name);
     if (environmentVariable) {
       return environmentVariable;
     } else {
@@ -24,7 +24,7 @@ export default class DashboardReporter implements Reporter {
     }
   }
 
-  async onScoreCalculated(ScoreResult: ScoreResult) {
+  public async onScoreCalculated(ScoreResult: ScoreResult) {
     const mutationScore = ScoreResult.mutationScore;
 
     if (this.ciProvider !== undefined) {
@@ -38,9 +38,9 @@ export default class DashboardReporter implements Reporter {
         if (repository && branch && apiKey) {
           await this.dashboardReporterClient.postStrykerDashboardReport({
             apiKey,
-            repositorySlug: 'github.com/' + repository,
             branch,
-            mutationScore
+            mutationScore,
+            repositorySlug: 'github.com/' + repository
           });
         }
       } else {

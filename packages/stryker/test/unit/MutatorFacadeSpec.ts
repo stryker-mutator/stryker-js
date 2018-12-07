@@ -29,8 +29,8 @@ describe('MutatorFacade', () => {
     it('should create the configured mutant generator with an object mutator', () => {
       const config = new Config();
       config.mutator = {
-        name: 'javascript',
-        excludedMutations: []
+        excludedMutations: [],
+        name: 'javascript'
       };
       const sut = new MutatorFacade(config);
       const inputFiles = [file()];

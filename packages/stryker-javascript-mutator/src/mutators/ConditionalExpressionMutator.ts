@@ -1,21 +1,55 @@
-import { types } from 'babel-core';
+import * as types from '@babel/types';
 import NodeMutator from './NodeMutator';
 import NodeGenerator from '../helpers/NodeGenerator';
+import { NodeWithParent } from '../helpers/ParentNode';
 
 /**
  * Represents a mutator which can remove the conditional clause from statements.
  */
 export default class ConditionalExpressionMutator implements NodeMutator {
-  name = 'ConditionalExpression';
+  private readonly validOperators: string[] = [
+    '!=',
+    '!==',
+    '&&',
+    '<',
+    '<=',
+    '==',
+    '===',
+    '>',
+    '>=',
+    '||',
+  ];
 
-  constructor() { }
+  public name = 'ConditionalExpression';
 
-  mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] | void {
-    if (types.isConditionalExpression(node)) {
-        return [
-          NodeGenerator.createBooleanLiteralNode(node.test, false),
-          NodeGenerator.createBooleanLiteralNode(node.test, true)
-        ];
+  constructor() {}
+
+  private hasValidParent(node: NodeWithParent): boolean {
+    return (
+      !node.parent ||
+      !(
+        types.isForStatement(node.parent) ||
+        types.isWhileStatement(node.parent) ||
+        types.isIfStatement(node.parent) ||
+        types.isDoWhileStatement(node.parent)
+      )
+    );
+  }
+
+  private isValidOperator(operator: string): boolean {
+    return this.validOperators.indexOf(operator) !== -1;
+  }
+
+  public mutate(node: types.Node): types.Node[] | void {
+    if (
+      (types.isBinaryExpression(node) || types.isLogicalExpression(node)) &&
+      this.hasValidParent(node) &&
+      this.isValidOperator(node.operator)
+    ) {
+      return [
+        NodeGenerator.createBooleanLiteralNode(node, false),
+        NodeGenerator.createBooleanLiteralNode(node, true),
+      ];
     }
   }
 }

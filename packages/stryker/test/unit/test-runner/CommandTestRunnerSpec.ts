@@ -73,9 +73,9 @@ describe(CommandTestRunner.name, () => {
       childProcessMock.emit('error', expectedError);
       const result = await resultPromise;
       const expectedResult: RunResult = {
+        errorMessages: [objectUtils.errorToString(expectedError)],
         status: RunStatus.Error,
-        tests: [],
-        errorMessages: [objectUtils.errorToString(expectedError)]
+        tests: []
       };
       expect(result).deep.eq(expectedResult);
     });
@@ -99,7 +99,7 @@ describe(CommandTestRunner.name, () => {
       expect(killStub).calledWith(childProcessMock.pid);
     });
 
-    it('should resolve running processes in a timeout', async() => {
+    it('should resolve running processes in a timeout', async () => {
       const sut = createSut();
       const resultPromise = sut.run();
       await sut.dispose();

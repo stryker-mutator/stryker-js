@@ -1,11 +1,11 @@
-declare const sandbox: sinon.SinonSandbox; 
-declare const logMock: LogMock; 
-namespace NodeJS {                         
-  export interface Global {                
-    sandbox: sinon.SinonSandbox;           
+declare const sandbox: sinon.SinonSandbox;
+declare const logMock: LogMock;
+namespace NodeJS {
+  export interface Global {
+    sandbox: sinon.SinonSandbox;
     logMock: LogMock;
-  }                                        
-}                                          
+  }
+}
 
 type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;

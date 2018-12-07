@@ -1,12 +1,13 @@
 import { getLogger } from 'stryker-api/logging';
-import { RunnerOptions, RunResult, TestRunner, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
+import { RunnerOptions, RunResult, TestRunner, RunStatus, TestResult, TestStatus, RunOptions } from 'stryker-api/test_runner';
 import * as jest from 'jest';
 import JestTestAdapterFactory from './jestTestAdapters/JestTestAdapterFactory';
 
 export default class JestTestRunner implements TestRunner {
-  private log = getLogger(JestTestRunner.name);
-  private jestConfig: jest.Configuration;
-  private processEnvRef: NodeJS.ProcessEnv;
+  private readonly log = getLogger(JestTestRunner.name);
+  private readonly jestConfig: jest.Configuration;
+  private readonly processEnvRef: NodeJS.ProcessEnv;
+  private readonly enableFindRelatedTests: boolean;
 
   public constructor(options: RunnerOptions, processEnvRef?: NodeJS.ProcessEnv) {
     // Make sure process can be mocked by tests by passing it in the constructor
@@ -15,6 +16,18 @@ export default class JestTestRunner implements TestRunner {
     // Get jest configuration from stryker options and assign it to jestConfig
     this.jestConfig = options.strykerOptions.jest.config;
 
+    // Get enableFindRelatedTests from stryker jest options or default to true
+    this.enableFindRelatedTests = options.strykerOptions.jest.enableFindRelatedTests;
+    if (this.enableFindRelatedTests === undefined) {
+      this.enableFindRelatedTests = true;
+    }
+
+    if (this.enableFindRelatedTests) {
+      this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
+    } else {
+      this.log.debug('Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.');
+    }
+
     // basePath will be used in future releases of Stryker as a way to define the project root
     // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
     // https://github.com/stryker-mutator/stryker/issues/650
@@ -22,20 +35,20 @@ export default class JestTestRunner implements TestRunner {
     this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 
-  public async run(): Promise<RunResult> {
+  public async run(options: RunOptions): Promise<RunResult> {
     this.setNodeEnv();
 
     const jestTestRunner = JestTestAdapterFactory.getJestTestAdapter();
 
-    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd());
+    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd(), this.enableFindRelatedTests ? options.mutatedFileName : undefined);
 
     // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
-    const errorMessages = results.testResults.map((testSuite: jest.TestResult) => testSuite.failureMessage).filter(errorMessage => (errorMessage)) as Array<string>;
+    const errorMessages = results.testResults.map((testSuite: jest.TestResult) => testSuite.failureMessage).filter(errorMessage => (errorMessage)) as string[];
 
     return {
-      tests: this.processTestResults(results.testResults),
+      errorMessages,
       status: (results.numRuntimeErrorTestSuites > 0) ? RunStatus.Error : RunStatus.Complete,
-      errorMessages
+      tests: this.processTestResults(results.testResults)
     };
   }
 
@@ -47,20 +60,31 @@ export default class JestTestRunner implements TestRunner {
     }
   }
 
-  private processTestResults(suiteResults: Array<jest.TestResult>): Array<TestResult> {
-    const testResults: Array<TestResult> = [];
+  private processTestResults(suiteResults: jest.TestResult[]): TestResult[] {
+    const testResults: TestResult[] = [];
 
-    for (let suiteResult of suiteResults) {
-      for (let testResult of suiteResult.testResults) {
+    for (const suiteResult of suiteResults) {
+      for (const testResult of suiteResult.testResults) {
         testResults.push({
+          failureMessages: testResult.failureMessages,
           name: testResult.fullName,
-          status: (testResult.status === 'passed') ? TestStatus.Success : TestStatus.Failed,
-          timeSpentMs: testResult.duration ? testResult.duration : 0,
-          failureMessages: testResult.failureMessages
+          status: this.determineTestResultStatus(testResult.status),
+          timeSpentMs: testResult.duration ? testResult.duration : 0
         });
       }
     }
 
     return testResults;
+  }
+
+  private determineTestResultStatus(status: string) {
+    switch (status) {
+      case 'passed':
+        return TestStatus.Success;
+      case 'pending':
+        return TestStatus.Skipped;
+      default:
+        return TestStatus.Failed;
+    }
   }
 }

@@ -72,9 +72,9 @@ describe('MochaTestRunner', () => {
     // Arrange
     multimatchStub.returns(['foo.js', 'bar.js', 'foo2.js']);
     const mochaOptions: MochaRunnerOptions = {
-      require: [],
       asyncOnly: true,
       opts: 'opts',
+      require: [],
       timeout: 2000,
       ui: 'assert'
     };
@@ -95,6 +95,15 @@ describe('MochaTestRunner', () => {
     new MochaTestRunner(runnerOptions({ strykerOptions: { mochaOptions } }));
     expect(requireStub).calledTwice;
     expect(requireStub).calledWith('ts-node');
+    expect(requireStub).calledWith('babel-register');
+  });
+
+  it('should pass and resolve relative require options when constructed', () => {
+    const mochaOptions: MochaRunnerOptions = { require: ['./setup.js', 'babel-register'] };
+    new MochaTestRunner(runnerOptions({ strykerOptions: { mochaOptions } }));
+    const resolvedRequire = path.resolve('./setup.js');
+    expect(requireStub).calledTwice;
+    expect(requireStub).calledWith(resolvedRequire);
     expect(requireStub).calledWith('babel-register');
   });
 
@@ -138,7 +147,7 @@ describe('MochaTestRunner', () => {
     // Act
     sut = new MochaTestRunner(runnerOptions({ fileNames: files }));
     const actFn = () => sut.init();
-    
+
     // Assert
     expect(actFn).throws(`[MochaTestRunner] No files discovered (tried pattern(s) ${relativeGlobbing
     }). Please specify the files (glob patterns) containing your tests in mochaOptions.files in your stryker.conf.js file.`);
@@ -154,12 +163,11 @@ describe('MochaTestRunner', () => {
     const expectedFiles = ['foo.js', 'bar.js'];
     multimatchStub.returns(['foo.js']);
     sut = new MochaTestRunner(runnerOptions({
-      strykerOptions: { mochaOptions: { files: relativeGlobPatterns } },
-      fileNames: expectedFiles
+      fileNames: expectedFiles,
+      strykerOptions: { mochaOptions: { files: relativeGlobPatterns } }
     }));
     sut.init();
     expect(multimatchStub).calledWith(expectedFiles, expectedGlobPatterns);
   }
-  
-});
 
+});

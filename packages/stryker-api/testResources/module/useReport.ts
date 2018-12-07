@@ -1,20 +1,21 @@
-import { Reporter, MutantResult, MutantStatus, ReporterFactory, SourceFile, MatchedMutant } from 'stryker-api/report';
-
-class EmptyReporter {
-}
+import {
+  Reporter,
+  MutantResult,
+  MutantStatus,
+  ReporterFactory,
+  SourceFile,
+  MatchedMutant
+} from 'stryker-api/report';
+import { Config } from 'stryker-api/config';
+class EmptyReporter {}
 
 class AllReporter implements Reporter {
-  onSourceFileRead(file: SourceFile) {
-  }
-  onAllSourceFilesRead(files: SourceFile[]) {
-  }
-  onMutantTested(result: MutantResult) {
-  }
-  onAllMutantsTested(results: MutantResult[]) {
-  }
-  onAllMutantsMatchedWithTests(mutants: ReadonlyArray<MatchedMutant>) {
-  }
-  wrapUp() {
+  public onSourceFileRead(file: SourceFile) {}
+  public onAllSourceFilesRead(files: SourceFile[]) {}
+  public onMutantTested(result: MutantResult) {}
+  public onAllMutantsTested(results: MutantResult[]) {}
+  public onAllMutantsMatchedWithTests(mutants: ReadonlyArray<MatchedMutant>) {}
+  public wrapUp() {
     return new Promise<void>(r => r());
   }
 }
@@ -22,8 +23,8 @@ class AllReporter implements Reporter {
 ReporterFactory.instance().register('empty', EmptyReporter);
 ReporterFactory.instance().register('all', AllReporter);
 console.log(ReporterFactory.instance().knownNames());
-let emptyReporter = ReporterFactory.instance().create('empty', {});
-let allReporter = ReporterFactory.instance().create('all', {});
+const emptyReporter = ReporterFactory.instance().create('empty', new Config());
+const allReporter = ReporterFactory.instance().create('all', new Config());
 if (!(emptyReporter instanceof EmptyReporter)) {
   throw Error('Something wrong with empty reporter');
 }
@@ -31,30 +32,34 @@ if (!(allReporter instanceof AllReporter)) {
   throw Error('Something wrong with all reporter');
 }
 
-let result: MutantResult = {
+const result: MutantResult = {
   id: '13',
-  sourceFilePath: 'string',
-  mutatorName: 'string',
-  status: MutantStatus.TimedOut,
-  replacement: 'string',
-  originalLines: 'string',
-  mutatedLines: 'string',
-  testsRan: [''],
   location: null,
-  range: [1, 2]
+  mutatedLines: 'string',
+  mutatorName: 'string',
+  originalLines: 'string',
+  range: [1, 2],
+  replacement: 'string',
+  sourceFilePath: 'string',
+  status: MutantStatus.TimedOut,
+  testsRan: ['']
 };
 allReporter.onMutantTested(result);
 console.log(result);
-console.log(`Mutant status runtime error: ${MutantStatus[MutantStatus.RuntimeError]}`);
-console.log(`Mutant status transpile error: ${MutantStatus[MutantStatus.TranspileError]}`);
+console.log(
+  `Mutant status runtime error: ${MutantStatus[MutantStatus.RuntimeError]}`
+);
+console.log(
+  `Mutant status transpile error: ${MutantStatus[MutantStatus.TranspileError]}`
+);
 
 const matchedMutant: MatchedMutant = {
+  fileName: 'string',
   id: '13',
   mutatorName: '',
+  replacement: 'string',
   scopedTestIds: [52],
-  timeSpentScopedTests: 52,
-  fileName: 'string',
-  replacement: 'string'
+  timeSpentScopedTests: 52
 };
 
 allReporter.onAllMutantsMatchedWithTests([Object.freeze(matchedMutant)]);

@@ -22,25 +22,25 @@ describe('JasmineRunner integration', () => {
   describe('using the jasmine-init project', () => {
 
     const expectedJasmineInitResults = Object.freeze([Object.freeze({
+      failureMessages: undefined,
       name: 'Player should be able to play a Song',
-      status: TestStatus.Success,
-      failureMessages: undefined
+      status: TestStatus.Success
     }), Object.freeze({
+      failureMessages: undefined,
       name: 'Player when song has been paused should indicate that the song is currently paused',
-      status: TestStatus.Success,
-      failureMessages: undefined
+      status: TestStatus.Success
     }), Object.freeze({
+      failureMessages: undefined,
       name: 'Player when song has been paused should be possible to resume',
-      status: TestStatus.Success,
-      failureMessages: undefined
+      status: TestStatus.Success
     }), Object.freeze({
+      failureMessages: undefined,
       name: 'Player tells the current song if the user has made it a favorite',
-      status: TestStatus.Success,
-      failureMessages: undefined
+      status: TestStatus.Success
     }), Object.freeze({
+      failureMessages: undefined,
       name: 'Player #resume should throw an exception if song is already playing',
-      status: TestStatus.Success,
-      failureMessages: undefined
+      status: TestStatus.Success
     })]);
 
     beforeEach(() => {
@@ -73,11 +73,11 @@ describe('JasmineRunner integration', () => {
       // Arrange
       const testFramework = new JasmineTestFramework();
       const testHooks = wrapInClosure(testFramework.filter([{
-        name: expectedJasmineInitResults[1].name,
-        id: 1
+        id: 1,
+        name: expectedJasmineInitResults[1].name
       }, {
-        name: expectedJasmineInitResults[3].name,
-        id: 3
+        id: 3,
+        name: expectedJasmineInitResults[3].name
       }]));
 
       // Act
@@ -89,15 +89,15 @@ describe('JasmineRunner integration', () => {
     });
 
     it('should be able to filter tests in quick succession', async () => {
-      // Arrange 
+      // Arrange
       const testFramework = new JasmineTestFramework();
       const testHooks1 = wrapInClosure(testFramework.filter([{
-        name: expectedJasmineInitResults[1].name,
-        id: 1
+        id: 1,
+        name: expectedJasmineInitResults[1].name
       }]));
       const testHooks2 = wrapInClosure(testFramework.filter([{
-        name: expectedJasmineInitResults[2].name,
-        id: 2
+        id: 2,
+        name: expectedJasmineInitResults[2].name
       }]));
 
       // Act
@@ -111,9 +111,9 @@ describe('JasmineRunner integration', () => {
 
     function expectTestsFiltered(actualTestResults: TestResult[], ...filteredTestIds: number[]) {
       expectTestResultsToEqual(actualTestResults, expectedJasmineInitResults.map((testResult, id) => ({
+        failureMessages: testResult.failureMessages,
         name: testResult.name,
-        status: filteredTestIds.indexOf(id) >= 0 ? TestStatus.Success : TestStatus.Skipped,
-        failureMessages: testResult.failureMessages
+        status: filteredTestIds.indexOf(id) >= 0 ? TestStatus.Success : TestStatus.Skipped
       })));
     }
   });
@@ -133,7 +133,7 @@ describe('JasmineRunner integration', () => {
       const result = await sut.run({});
       expect(result.status).eq(RunStatus.Error);
       expect(result.errorMessages).lengthOf(1);
-      const actualError: string = (result.errorMessages as any)[0];
+      const actualError: string = (result.errorMessages as string[])[0];
       expect(actualError)
         .matches(/^An error occurred while loading your jasmine specs.*/)
         .matches(/.*SyntaxError: Unexpected identifier.*/);
@@ -155,9 +155,9 @@ describe('JasmineRunner integration', () => {
       const result = await sut.run({});
       expect(result.status).eq(RunStatus.Complete);
       expectTestResultsToEqual(result.tests, [{
+        failureMessages: ['Expected \'bar\' to be \'baz\'.'],
         name: 'foo should be baz',
-        status: TestStatus.Failed,
-        failureMessages: ['Expected \'bar\' to be \'baz\'.']
+        status: TestStatus.Failed
       }]);
     });
   });

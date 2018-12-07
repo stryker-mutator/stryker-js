@@ -29,17 +29,17 @@ import LoggingClientContext from '../../src/logging/LoggingClientContext';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
-  edit(config: Config) {
+  public edit(config: Config) {
     config.testRunner = 'fakeTestRunner';
   }
 }
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  port: 4200,
-  level: LogLevel.Debug
+  level: LogLevel.Debug,
+  port: 4200
 });
 
-describe('Stryker', function () {
+describe('Stryker', () => {
   let sut: Stryker;
   let testFramework: TestFramework;
   let inputFileResolverMock: Mock<InputFileResolver>;
@@ -57,6 +57,7 @@ describe('Stryker', function () {
   let scoreResultCalculator: ScoreResultCalculator;
   let configureMainProcessStub: sinon.SinonStub;
   let configureLoggingServerStub: sinon.SinonStub;
+  let shutdownLoggingStub: sinon.SinonStub;
 
   beforeEach(() => {
     strykerConfig = config();
@@ -70,6 +71,7 @@ describe('Stryker', function () {
     mutatorMock = mock(MutatorFacade);
     configureMainProcessStub = sandbox.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sandbox.stub(LogConfigurator, 'configureLoggingServer');
+    shutdownLoggingStub = sandbox.stub(LogConfigurator, 'shutdown');
     configureLoggingServerStub.resolves(LOGGING_CONTEXT);
     inputFileResolverMock = mock(InputFileResolver);
     reporterOrchestratorMock.createBroadcastReporter.returns(reporter);
@@ -206,6 +208,18 @@ describe('Stryker', function () {
         await sut.runMutationTest();
         expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
       });
+
+      it('should log the remark to run again with logLevel trace if no tests were executed in initial test run', async () => {
+        while (initialRunResult.tests.pop());
+        await sut.runMutationTest();
+        expect(currentLogMock().info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+      });
+
+      it('should log the remark to run again with logLevel trace if no mutants were generated', async () => {
+        while (mutants.pop()); // clear all mutants
+        await sut.runMutationTest();
+        expect(currentLogMock().info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+      });
     });
 
     describe('happy flow', () => {
@@ -268,14 +282,18 @@ describe('Stryker', function () {
       it('should let the reporters wrapUp any async tasks', () => {
         expect(reporter.wrapUp).to.have.been.called;
       });
+
+      it('should shutdown the log4js server', () => {
+        expect(shutdownLoggingStub).called;
+      });
     });
 
     describe('with excluded mutants', () => {
 
       it('should log the number of mutants generated and excluded', async () => {
         strykerConfig.mutator = {
-          name: 'es5',
-          excludedMutations: ['fooMutator']
+          excludedMutations: ['fooMutator'],
+          name: 'es5'
         };
         sut = new Stryker({});
         await sut.runMutationTest();
@@ -284,8 +302,8 @@ describe('Stryker', function () {
 
       it('should log the absence of mutants and the excluded number when all mutants are excluded', async () => {
         strykerConfig.mutator = {
-          name: 'es5',
-          excludedMutations: ['fooMutator', 'barMutator', 'bazMutator']
+          excludedMutations: ['fooMutator', 'barMutator', 'bazMutator'],
+          name: 'es5'
         };
         sut = new Stryker({});
         await sut.runMutationTest();
@@ -294,8 +312,8 @@ describe('Stryker', function () {
 
       it('should filter out the excluded mutations', async () => {
         strykerConfig.mutator = {
-          name: 'es5',
-          excludedMutations: ['barMutator', 'bazMutator']
+          excludedMutations: ['barMutator', 'bazMutator'],
+          name: 'es5'
         };
         sut = new Stryker({});
         await sut.runMutationTest();

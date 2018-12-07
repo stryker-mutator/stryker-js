@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import * as os from 'os';
 
 export default class DotsReporter implements Reporter {
-  onMutantTested(result: MutantResult) {
+  public onMutantTested(result: MutantResult) {
     let toLog: string;
     switch (result.status) {
       case MutantStatus.Killed:
@@ -25,7 +25,7 @@ export default class DotsReporter implements Reporter {
     process.stdout.write(toLog);
   }
 
-  onAllMutantsTested(): void {
+  public onAllMutantsTested(): void {
     process.stdout.write(os.EOL);
   }
 }

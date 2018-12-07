@@ -1,19 +1,30 @@
-import * as fs from 'mz/fs';
 import { expect } from 'chai';
-import * as path from 'path';
-import { ScoreResult } from 'stryker-api/report';
+import { readScoreResult } from '../../../helpers';
 
-describe('After running stryker on angular project', () => {
-  it('should report 50% mutation score', async () => {
-    const eventsDir = path.resolve(__dirname, '..', 'reports', 'mutation', 'events');
-    const allReportFiles = await fs.readdir(eventsDir);
-    const scoreResultReportFile = allReportFiles.find(file => !!file.match(/.*onScoreCalculated.*/));
-    expect(scoreResultReportFile).ok;
-    const scoreResultContent = await fs.readFile(path.resolve(eventsDir, scoreResultReportFile || ''), 'utf8');
-    const scoreResult = JSON.parse(scoreResultContent) as ScoreResult;
-    expect(scoreResult.killed).eq(1);
-    expect(scoreResult.survived).eq(1);
-
-    expect(scoreResult.mutationScore).greaterThan(49).and.lessThan(51);
+describe('After running stryker on jest-react project', () => {
+  it('should report expected scores', async () => {
+    const actualResult = await readScoreResult();
+    expect(actualResult.childResults).lengthOf(3);
+    expect({
+      killed: actualResult.killed,
+      mutationScore: parseFloat(actualResult.mutationScore.toFixed(2)),
+      noCoverage: actualResult.noCoverage,
+      survived: actualResult.survived,
+      timedOut: actualResult.timedOut,
+      totalMutants: actualResult.totalMutants
+    }).deep.eq({
+      killed: 34,
+      mutationScore: 64.15,
+      noCoverage: 0,
+      survived: 19,
+      timedOut: 0,
+      totalMutants: 53,
+    });
+    /*
+    ---------------|---------|----------|-----------|------------|----------|---------|
+    File           | % score | # killed | # timeout | # survived | # no cov | # error |
+    ---------------|---------|----------|-----------|------------|----------|---------|
+    All files      |   64.15 |       34 |         0 |         19 |        0 |       0 |
+    ---------------|---------|----------|-----------|------------|----------|---------|*/
   });
 });

@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import * as fs from 'mz/fs';
 import { Reporter } from 'stryker-api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
 import currentLogMock from '../../helpers/logMock';
 import StrictReporter from '../../../src/reporters/StrictReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 describe('EventRecorderReporter', () => {
 
@@ -18,7 +18,7 @@ describe('EventRecorderReporter', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     cleanFolderStub = sandbox.stub(fileUtils, 'cleanFolder');
-    writeFileStub = sandbox.stub(fs, 'writeFile');
+    writeFileStub = sandbox.stub(fsAsPromised, 'writeFile');
   });
 
   afterEach(() => {
@@ -41,16 +41,16 @@ describe('EventRecorderReporter', () => {
         expect(fileUtils.cleanFolder).to.have.been.calledWith('reports/mutation/events');
       });
 
-      let arrangeActAssertEvent = (eventName: keyof Reporter) => {
+      const arrangeActAssertEvent = (eventName: keyof Reporter) => {
         describe(`${eventName} event`, () => {
 
-          let writeFileRejection: any;
+          let writeFileRejection: undefined | Error;
           const expected: any = { some: 'eventData' };
 
-          let arrange = () => beforeEach(() => {
+          const arrange = () => beforeEach(() => {
             writeFileRejection = undefined;
             (sut[eventName] as any)(expected);
-            return (<Promise<any>>sut.wrapUp()).then(() => void 0, (error) => writeFileRejection = error);
+            return (sut.wrapUp() as Promise<void>).then(() => void 0, error => writeFileRejection = error);
           });
 
           describe('when writeFile results in a rejection', () => {
@@ -63,7 +63,7 @@ describe('EventRecorderReporter', () => {
 
           describe('when writeFile is successful', () => {
             arrange();
-            it('should writeFile', () => expect(fs.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
+            it('should writeFile', () => expect(fsAsPromised.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
           });
         });
       };

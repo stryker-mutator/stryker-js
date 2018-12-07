@@ -3,13 +3,13 @@ import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class DoStatementMutator extends NodeMutator<ts.DoStatement> {
 
-  name = 'DoStatement';
+  public name = 'DoStatement';
 
-  guard(node: ts.Node): node is ts.DoStatement {
+  public guard(node: ts.Node): node is ts.DoStatement {
     return node.kind === ts.SyntaxKind.DoStatement;
   }
 
-  protected identifyReplacements(node: ts.DoStatement, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(node: ts.DoStatement): NodeReplacement[] {
     return [{ node: node.expression, replacement: 'false' }];
   }
 

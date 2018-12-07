@@ -23,10 +23,10 @@ export default class Sandbox {
   private readonly log = getLogger(Sandbox.name);
   private testRunner: TestRunnerDecorator;
   private fileMap: FileMap;
-  private files: File[];
-  private workingDirectory: string;
+  private readonly files: File[];
+  private readonly workingDirectory: string;
 
-  private constructor(private options: Config, private index: number, files: ReadonlyArray<File>, private testFramework: TestFramework | null, private timeOverheadMS: number, private loggingContext: LoggingClientContext) {
+  private constructor(private readonly options: Config, private readonly index: number, files: ReadonlyArray<File>, private readonly testFramework: TestFramework | null, private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
     this.workingDirectory = TempFolder.instance().createRandomFolder('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
     this.files = files.slice(); // Create a copy
@@ -44,8 +44,8 @@ export default class Sandbox {
     return sandbox.initialize().then(() => sandbox);
   }
 
-  public run(timeout: number, testHooks: string | undefined): Promise<RunResult> {
-    return this.testRunner.run({ timeout, testHooks });
+  public run(timeout: number, testHooks: string | undefined, mutatedFileName?: string): Promise<RunResult> {
+    return this.testRunner.run({ timeout, testHooks, mutatedFileName });
   }
 
   public dispose(): Promise<void> {
@@ -58,7 +58,7 @@ export default class Sandbox {
       this.log.warn(`Failed find coverage data for this mutant, running all tests. This might have an impact on performance: ${transpiledMutant.mutant.toString()}`);
     }
     await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)));
-    const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant), this.getFilterTestsHooks(transpiledMutant.mutant));
+    const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant), this.getFilterTestsHooks(transpiledMutant.mutant), this.fileMap[transpiledMutant.mutant.fileName]);
     await this.reset(mutantFiles);
     return runResult;
   }
@@ -76,7 +76,7 @@ export default class Sandbox {
 
   private fillSandbox(): Promise<void[]> {
     this.fileMap = Object.create(null);
-    let copyPromises = this.files
+    const copyPromises = this.files
       .map(file => this.fillFile(file));
     return Promise.all(copyPromises);
   }
@@ -90,8 +90,8 @@ export default class Sandbox {
         await symlinkJunction(nodeModules, path.join(this.workingDirectory, 'node_modules'))
           .catch((error: NodeJS.ErrnoException) => {
             if (error.code === 'EEXIST') {
-              this.log.warn(normalizeWhiteSpaces(`Could not symlink "${nodeModules}" in sandbox directory, 
-              it is already created in the sandbox. Please remove the node_modules from your sandbox files. 
+              this.log.warn(normalizeWhiteSpaces(`Could not symlink "${nodeModules}" in sandbox directory,
+              it is already created in the sandbox. Please remove the node_modules from your sandbox files.
               Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`));
             } else {
               this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
@@ -112,11 +112,11 @@ export default class Sandbox {
     return writeFile(targetFile, file.content);
   }
 
-  private initializeTestRunner(): void | Promise<any> {
+  private initializeTestRunner(): Promise<void> {
     const settings: RunnerOptions = {
       fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
+      port: this.options.port + this.index,
       strykerOptions: this.options,
-      port: this.options.port + this.index
     };
     this.log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
     this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings, this.workingDirectory, this.loggingContext);

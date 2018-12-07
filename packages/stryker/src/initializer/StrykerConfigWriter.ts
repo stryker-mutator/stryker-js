@@ -1,20 +1,21 @@
-import * as fs from 'mz/fs';
 import * as _ from 'lodash';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
 import PromptOption from './PromptOption';
 import { format } from 'prettier';
+import PresetConfiguration from './presets/PresetConfiguration';
 
 const STRYKER_CONFIG_FILE = 'stryker.conf.js';
 
 export default class StrykerConfigWriter {
 
   private readonly log = getLogger(StrykerConfigWriter.name);
-  constructor(private out: (output: string) => void) {
+  constructor(private readonly out: (output: string) => void) {
   }
 
-  guardForExistingConfig() {
-    if (fs.existsSync(STRYKER_CONFIG_FILE)) {
+  public guardForExistingConfig() {
+    if (fsAsPromised.existsSync(STRYKER_CONFIG_FILE)) {
       const msg =
         'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
       this.log.error(msg);
@@ -23,10 +24,10 @@ export default class StrykerConfigWriter {
   }
 
   /**
-  * Create stryker.conf.js based on the chosen framework and test runner
-  * @function
-  */
-  public async write(
+   * Create stryker.conf.js based on the chosen framework and test runner
+   * @function
+   */
+  public write(
     selectedTestRunner: null | PromptOption,
     selectedTestFramework: null | PromptOption,
     selectedMutator: null | PromptOption,
@@ -35,16 +36,25 @@ export default class StrykerConfigWriter {
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Partial<StrykerOptions>[]): Promise<void> {
     const configObject: Partial<StrykerOptions> = {
-      testRunner: selectedTestRunner ? selectedTestRunner.name : '',
       mutator: selectedMutator ? selectedMutator.name : '',
-      transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : [],
+      packageManager: selectedPackageManager.name,
       reporters: selectedReporters.map(rep => rep.name),
-      packageManager: selectedPackageManager.name
+      testRunner: selectedTestRunner ? selectedTestRunner.name : '',
+      transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : []
     };
 
     this.configureTestFramework(configObject, selectedTestFramework);
     _.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject);
+  }
+
+  /**
+   * Create stryker.conf.js based on the chosen preset
+   * @function
+   */
+  public async writePreset(presetConfig: PresetConfiguration) {
+    return this.writeStrykerConfigRaw(presetConfig.config, `// This config was generated using a preset.
+    // Please see the handbook for more information: ${presetConfig.handbookUrl}`);
   }
 
   private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {
@@ -56,17 +66,22 @@ export default class StrykerConfigWriter {
     }
   }
 
-  private writeStrykerConfig(configObject: Partial<StrykerOptions>) {
+  private writeStrykerConfigRaw(rawConfig: string, rawHeader = '') {
     this.out('Writing stryker.conf.js...');
-    return fs.writeFile(STRYKER_CONFIG_FILE, this.wrapInModule(configObject));
-  }
-
-  private wrapInModule(configObject: Partial<StrykerOptions>) {
-    return format(`
+    const formattedConf = format(`${rawHeader}
       module.exports = function(config){
         config.set(
-          ${JSON.stringify(configObject, null, 2)}
+          ${rawConfig}
         );
       }`, { parser: 'babylon' });
+    return fsAsPromised.writeFile(STRYKER_CONFIG_FILE, formattedConf);
+  }
+
+  private writeStrykerConfig(configObject: Partial<StrykerOptions>) {
+    return this.writeStrykerConfigRaw(this.wrapInModule(configObject));
+  }
+
+  private wrapInModule(configObject: Partial<StrykerOptions>): string {
+    return JSON.stringify(configObject, null, 2);
   }
 }

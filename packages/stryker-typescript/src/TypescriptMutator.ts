@@ -11,6 +11,7 @@ import ArrayLiteralMutator from './mutator/ArrayLiteralMutator';
 import ArrayNewExpressionMutator from './mutator/ArrayNewExpressionMutator';
 import BlockMutator from './mutator/BlockMutator';
 import IfStatementMutator from './mutator/IfStatementMutator';
+import ObjectLiteralMutator from './mutator/ObjectLiteralMutator';
 import WhileStatementMutator from './mutator/WhileStatementMutator';
 import ForStatementMutator from './mutator/ForStatementMutator';
 import DoStatementMutator from './mutator/DoStatementMutator';
@@ -18,10 +19,11 @@ import ConditionalExpressionMutator from './mutator/ConditionalExpressionMutator
 import PrefixUnaryExpressionMutator from './mutator/PrefixUnaryExpressionMutator';
 import ArrowFunctionMutator from './mutator/ArrowFunctionMutator';
 import StringLiteralMutator from './mutator/StringLiteralMutator';
+import SwitchCaseMutator from './mutator/SwitchCaseMutator';
 
 export default class TypescriptMutator {
 
-  constructor(private config: Config, public mutators: NodeMutator[] = [
+  constructor(private readonly config: Config, public mutators: NodeMutator[] = [
     new BinaryExpressionMutator(),
     new BooleanSubstitutionMutator(),
     new ArrayLiteralMutator(),
@@ -29,15 +31,17 @@ export default class TypescriptMutator {
     new BlockMutator(),
     new ArrowFunctionMutator(),
     new IfStatementMutator(),
+    new ObjectLiteralMutator(),
     new WhileStatementMutator(),
     new ForStatementMutator(),
     new DoStatementMutator(),
     new ConditionalExpressionMutator(),
     new PrefixUnaryExpressionMutator(),
     new StringLiteralMutator(),
+    new SwitchCaseMutator(),
   ]) { }
 
-  mutate(inputFiles: File[]): Mutant[] {
+  public mutate(inputFiles: File[]): Mutant[] {
     const tsConfig = getTSConfig(this.config);
     const mutants = flatMap(inputFiles, inputFile => {
       const sourceFile = parseFile(inputFile, tsConfig && tsConfig.options && tsConfig.options.target);

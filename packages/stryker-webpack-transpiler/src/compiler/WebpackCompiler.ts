@@ -5,11 +5,11 @@ import InputFileSystem from '../fs/InputFileSystem';
 import OutputFileSystem from '../fs/OutputFileSystem';
 
 export default class WebpackCompiler {
-  private _compiler: Compiler;
+  private readonly _compiler: Compiler;
 
   public constructor(webpackConfig: Configuration,
-    private _inputFS = new InputFileSystem(),
-    private _outputFS = new OutputFileSystem()) {
+                     private readonly _inputFS = new InputFileSystem(),
+                     private readonly _outputFS = new OutputFileSystem()) {
     this._compiler = this.createCompiler(webpackConfig);
   }
 
@@ -33,7 +33,7 @@ export default class WebpackCompiler {
   }
 
   public emit(): Promise<File[]> {
-    return this.compile().then(stats => {
+    return this.compile().then(() => {
       const outputFiles = this._outputFS.collectFiles();
       this._outputFS.purge();
       return outputFiles;

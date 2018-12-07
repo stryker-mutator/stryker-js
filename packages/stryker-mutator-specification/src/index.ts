@@ -1,4 +1,3 @@
-
 export { default as ArrayLiteralMutatorSpec } from './ArrayLiteralMutatorSpec';
 export { default as ArrayNewExpressionMutatorSpec } from './ArrayNewExpressionMutatorSpec';
 export { default as ArrowFunctionMutatorSpec } from './ArrowFunctionMutatorSpec';
@@ -9,6 +8,8 @@ export { default as ConditionalExpressionMutatorSpec } from './ConditionalExpres
 export { default as DoStatementMutatorSpec } from './DoStatementMutatorSpec';
 export { default as ForStatementMutatorSpec } from './ForStatementMutatorSpec';
 export { default as IfStatementMutatorSpec } from './IfStatementMutatorSpec';
+export { default as ObjectLiteralMutatorSpec } from './ObjectLiteralMutatorSpec';
 export { default as PrefixUnaryExpressionMutatorSpec } from './PrefixUnaryExpressionMutatorSpec';
-export { default as WhileStatementMutatorSpec } from './WhileStatementMutatorSpec';
 export { default as StringLiteralMutatorSpec } from './StringLiteralMutatorSpec';
+export { default as SwitchCaseMutatorSpec } from './SwitchCaseMutatorSpec';
+export { default as WhileStatementMutatorSpec } from './WhileStatementMutatorSpec';

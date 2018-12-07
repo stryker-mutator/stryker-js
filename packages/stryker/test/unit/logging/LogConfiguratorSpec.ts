@@ -19,32 +19,59 @@ describe('LogConfigurator', () => {
   });
 
   describe('configureMainProcess', () => {
-    it('should configure console and file', () => {
-      sut.configureMainProcess(LogLevel.Information, LogLevel.Trace);
-      expect(log4jsConfigure).calledWith(createMasterConfig(LogLevel.Information, LogLevel.Trace, LogLevel.Trace));
+    it('should configure console, file and console color', () => {
+      const allowConsoleColors = true;
+      sut.configureMainProcess(LogLevel.Information, LogLevel.Trace, allowConsoleColors);
+      expect(log4jsConfigure).calledWith(createMasterConfig(LogLevel.Information, LogLevel.Trace, LogLevel.Trace, allowConsoleColors));
+    });
+
+    it('should configure no colored console layout if `allowConsoleColors` is `false`', () => {
+      const allowConsoleColors = false;
+      sut.configureMainProcess(LogLevel.Information, LogLevel.Trace, allowConsoleColors);
+      expect(log4jsConfigure).calledWith(createMasterConfig(LogLevel.Information, LogLevel.Trace, LogLevel.Trace, allowConsoleColors));
     });
 
     it('should not configure file if it is "off"', () => {
-      sut.configureMainProcess(LogLevel.Information, LogLevel.Off);
-      const masterConfig = createMasterConfig(LogLevel.Information, LogLevel.Off, LogLevel.Information);
+      const allowConsoleColors = true;
+      sut.configureMainProcess(LogLevel.Information, LogLevel.Off, allowConsoleColors);
+      const masterConfig = createMasterConfig(LogLevel.Information, LogLevel.Off, LogLevel.Information, allowConsoleColors);
       delete masterConfig.appenders.file;
       delete masterConfig.appenders.filteredFile;
-      (masterConfig.appenders.all as any).appenders = ['filteredConsole'];
+      (masterConfig.appenders.all as any).appenders = ['filteredConsoleLevel'];
       expect(log4jsConfigure).calledWith(masterConfig);
     });
   });
 
   describe('configureLoggingServer', () => {
-    it('should configure console, file and server', async () => {
+    it('should configure console, file, server and console color', async () => {
       // Arrange
+      const allowConsoleColors = true;
       const expectedLoggingContext: LoggingClientContext = { port: 42, level: LogLevel.Error };
       getFreePortStub.resolves(expectedLoggingContext.port);
-      const expectedConfig = createMasterConfig(LogLevel.Error, LogLevel.Fatal, LogLevel.Error);
+      const expectedConfig = createMasterConfig(LogLevel.Error, LogLevel.Fatal, LogLevel.Error, allowConsoleColors);
       const serverAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'master', loggerPort: 42, appender: 'all' };
       expectedConfig.appenders.server = serverAppender;
 
       // Act
-      const actualLoggingContext = await sut.configureLoggingServer(LogLevel.Error, LogLevel.Fatal);
+      const actualLoggingContext = await sut.configureLoggingServer(LogLevel.Error, LogLevel.Fatal, allowConsoleColors);
+
+      // Assert
+      expect(log4jsConfigure).calledWith(expectedConfig);
+      expect(getFreePortStub).called;
+      expect(actualLoggingContext).deep.eq(expectedLoggingContext);
+    });
+
+    it('should configure no colored console layout if `allowConsoleColors` is `false`', async () => {
+      // Arrange
+      const allowConsoleColors = false;
+      const expectedLoggingContext: LoggingClientContext = { port: 42, level: LogLevel.Error };
+      getFreePortStub.resolves(expectedLoggingContext.port);
+      const expectedConfig = createMasterConfig(LogLevel.Error, LogLevel.Fatal, LogLevel.Error, allowConsoleColors);
+      const serverAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'master', loggerPort: 42, appender: 'all' };
+      expectedConfig.appenders.server = serverAppender;
+
+      // Act
+      const actualLoggingContext = await sut.configureLoggingServer(LogLevel.Error, LogLevel.Fatal, allowConsoleColors);
 
       // Assert
       expect(log4jsConfigure).calledWith(expectedConfig);
@@ -78,22 +105,25 @@ describe('LogConfigurator', () => {
     });
   });
 
-  function createMasterConfig(consoleLevel: LogLevel, fileLevel: LogLevel, defaultLevel: LogLevel): log4js.Configuration {
+  function createMasterConfig(consoleLevel: LogLevel, fileLevel: LogLevel, defaultLevel: LogLevel, allowConsoleColors: boolean): log4js.Configuration {
     const coloredLayout: log4js.PatternLayout = {
-      type: 'pattern',
-      pattern: '%[%r (%z) %p %c%] %m'
+      pattern: '%[%r (%z) %p %c%] %m',
+      type: 'pattern'
     };
     const notColoredLayout: log4js.PatternLayout  = {
-      type: 'pattern',
-      pattern: '%r (%z) %p %c %m'
+      pattern: '%r (%z) %p %c %m',
+      type: 'pattern'
     };
+
+    const consoleLayout = allowConsoleColors ? coloredLayout : notColoredLayout;
     return {
       appenders: {
-        console: { type: 'stdout', layout: coloredLayout },
+        all: { type: require.resolve('../../../src/logging/MultiAppender'), appenders: ['filteredConsoleLevel', 'filteredFile'] },
+        console: { type: 'stdout', layout: consoleLayout },
         file: { type: 'file', layout: notColoredLayout, filename: 'stryker.log' },
-        filteredConsole: { type: 'logLevelFilter', appender: 'console', level: consoleLevel },
-        filteredFile: { type: 'logLevelFilter', appender: 'file', level: fileLevel },
-        all: { type: require.resolve('../../../src/logging/MultiAppender'), appenders: ['filteredConsole', 'filteredFile'] }
+        filteredConsoleCategory: {type: 'categoryFilter', appender: 'console', exclude: 'log4js' },
+        filteredConsoleLevel: { type: 'logLevelFilter', appender: 'filteredConsoleCategory', level: consoleLevel },
+        filteredFile: { type: 'logLevelFilter', appender: 'file', level: fileLevel }
       },
       categories: {
         default: { level: defaultLevel, appenders: ['all'] }

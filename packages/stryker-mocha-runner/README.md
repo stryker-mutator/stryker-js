@@ -58,7 +58,7 @@ If you want to load all files recursively: use a globbing expression (`'test/**/
 
 ### `mochaOptions.opts` [`string`]
 
-Default: `undefined`
+Default: `'test/mocha.opts'`
 
 Specify a ['mocha.opts' file](https://mochajs.org/#mochaopts) to be loaded. Options specified directly in your stryker.conf.js file will overrule options from the 'mocha.opts' file.
 

@@ -11,11 +11,11 @@ describe('layout', () => {
 
   it('should print breadcrumb', () => {
     const actual = layout(Breadcrumb.start.add('title1', 2).add('title2', 1).add('current', 0), 'foobar');
-    expect(removeNewLines(actual)).contains(removeNewLines(<ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="../../../index.html">All files</a></li>
-      <li class="breadcrumb-item"><a href="../index.html">title1</a></li>
-      <li class="breadcrumb-item"><a href="index.html">title2</a></li>
-      <li class="breadcrumb-item active">current</li>
+    expect(removeNewLines(actual)).contains(removeNewLines(<ol class='breadcrumb'>
+      <li class='breadcrumb-item'><a href='../../../index.html'>All files</a></li>
+      <li class='breadcrumb-item'><a href='../index.html'>title1</a></li>
+      <li class='breadcrumb-item'><a href='index.html'>title2</a></li>
+      <li class='breadcrumb-item active'>current</li>
     </ol>));
   });
 

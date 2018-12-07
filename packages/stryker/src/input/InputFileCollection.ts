@@ -11,7 +11,7 @@ export default class InputFileCollection {
     this.filesToMutate = files.filter(file => mutateGlobResult.some(name => name === file.name));
   }
 
-  logFiles(log: Logger) {
+  public logFiles(log: Logger) {
     if (!this.files.length) {
       log.warn(normalizeWhiteSpaces(`
         No files selected. Please make sure you either run stryker a git repository context (and don't specify \`files\` in your stryker.conf.js file),

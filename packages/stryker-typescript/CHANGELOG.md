@@ -3,6 +3,102 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.16.1"></a>
+## [0.16.1](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.16.0...stryker-typescript@0.16.1) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.16.0"></a>
+# [0.16.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.15.4...stryker-typescript@0.16.0) (2018-11-29)
+
+
+### Bug Fixes
+
+* **String literal mutator:** Don't mutate export declarations ([c764ccd](https://github.com/stryker-mutator/stryker/commit/c764ccd))
+
+
+### Features
+
+* **Conditional expression mutator:** Mutate conditional operators ([#1253](https://github.com/stryker-mutator/stryker/issues/1253)) ([be4c990](https://github.com/stryker-mutator/stryker/commit/be4c990))
+
+
+
+
+<a name="0.15.4"></a>
+## [0.15.4](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.15.3...stryker-typescript@0.15.4) (2018-11-13)
+
+
+
+
+**Note:** Version bump only for package stryker-typescript
+
+<a name="0.15.3"></a>
+## [0.15.3](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.15.2...stryker-typescript@0.15.3) (2018-11-07)
+
+
+
+
+**Note:** Version bump only for package stryker-typescript
+
+<a name="0.15.2"></a>
+## [0.15.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.15.0...stryker-typescript@0.15.2) (2018-10-15)
+
+
+### Bug Fixes
+
+* **any-promise:** Don't register a promise implementation ([#1180](https://github.com/stryker-mutator/stryker/issues/1180)) ([1d3e2f6](https://github.com/stryker-mutator/stryker/commit/1d3e2f6))
+* **version:** Version bump for failed release ([8cf9e87](https://github.com/stryker-mutator/stryker/commit/8cf9e87))
+
+
+
+
+<a name="0.15.0"></a>
+# [0.15.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.14.2...stryker-typescript@0.15.0) (2018-10-06)
+
+
+### Features
+
+* **mutator:** Object literal mutator ([#1169](https://github.com/stryker-mutator/stryker/issues/1169)) ([43d9a3a](https://github.com/stryker-mutator/stryker/commit/43d9a3a))
+
+
+
+
+<a name="0.14.2"></a>
+## [0.14.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.14.1...stryker-typescript@0.14.2) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-typescript
+
+<a name="0.14.1"></a>
+## [0.14.1](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.14.0...stryker-typescript@0.14.1) (2018-09-30)
+
+
+### Bug Fixes
+
+* **mutator:** Fix empty case statement unkillable mutant ([#1159](https://github.com/stryker-mutator/stryker/issues/1159)) ([e080acb](https://github.com/stryker-mutator/stryker/commit/e080acb))
+
+
+
+
+<a name="0.14.0"></a>
+# [0.14.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.13.2...stryker-typescript@0.14.0) (2018-09-14)
+
+
+### Features
+
+* **mutator:** add SwitchCase statement mutator ([#1127](https://github.com/stryker-mutator/stryker/issues/1127)) ([cec6a39](https://github.com/stryker-mutator/stryker/commit/cec6a39))
+
+
+
+
 <a name="0.13.2"></a>
 ## [0.13.2](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.13.1...stryker-typescript@0.13.2) (2018-08-28)
 

@@ -29,53 +29,49 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       collectCoverageFrom: [
-        'src/**/*.{js,jsx,mjs}'
+        '!src/**/*.d.ts',
+        'src/**/*.{js,jsx,ts,tsx}'
       ],
       moduleFileExtensions: [
-        'web.js',
         'js',
         'json',
-        'web.jsx',
         'jsx',
         'node',
-        'mjs'
+        'ts',
+        'tsx',
+        'web.js',
+        'web.jsx',
+        'web.ts',
+        'web.tsx'
       ],
       moduleNameMapper: {
+        '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
         '^react-native$': 'react-native-web'
       },
       rootDir: projectRoot,
-      setupFiles: [path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'polyfills.js')],
+      setupFiles: [path.join(projectRoot, 'node_modules', 'react-app-polyfill', 'jsdom.js')],
       setupTestFrameworkScriptFile: undefined,
       testEnvironment: 'jsdom',
       testMatch: [
-        '<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}',
-        '<rootDir>/src/**/?(*.)(spec|test).{js,jsx,mjs}'
+        '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+        '<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}'
       ],
       testResultsProcessor: undefined,
       testURL: 'http://localhost',
       transform: {
-        '^(?!.*\\.(js|jsx|mjs|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
-        '^.+\\.(js|jsx|mjs)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
+        '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
+        '^.+\\.(js|jsx|ts|tsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
         '^.+\\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js'),
       },
       transformIgnorePatterns: [
-        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$'
+        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
+        '^.+\\.module\\.(css|sass|scss)$'
       ],
       verbose: false
     };
 
     assertJestConfig(expectedResult, config.jest.config);
   });
-
-  function assertJestConfig(expected: any, actual: any) {
-    Object.keys(expected).forEach(key => {
-      if (Array.isArray(expected[key])) {
-        expected[key].sort();
-        actual[key].sort();
-      }
-      expect(expected[key]).deep.eq(actual[key]);
-    });
-  }
 
   it('should create a Jest configuration for a React + TypeScript project', () => {
     config.set({ jest: { projectType: 'react-ts' } });
@@ -86,6 +82,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       collectCoverageFrom: [
+        '!**/*.d.ts',
         'src/**/*.{js,jsx,ts,tsx}'
       ],
       globals: {
@@ -191,4 +188,14 @@ describe('Integration test for Jest ConfigEditor', () => {
 
     expect(() => jestConfigEditor.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
+
+  function assertJestConfig(expected: any, actual: any) {
+    Object.keys(expected).forEach(key => {
+      if (Array.isArray(expected[key])) {
+        expected[key].sort();
+        actual[key].sort();
+      }
+      expect(actual[key]).deep.eq(expected[key]);
+    });
+  }
 });

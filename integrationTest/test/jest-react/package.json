@@ -1,21 +1,93 @@
 {
-  "name": "react-app",
-  "version": "0.1.0",
-  "private": true,
+  "name": "reactstrap-sample",
+  "version": "6.5.0",
+  "description": "React Bootstrap 4 components",
+  "main": "dist/reactstrap.cjs.js",
+  "jsnext:main": "dist/reactstrap.es.js",
+  "module": "dist/reactstrap.es.js",
+  "jsdelivr": "dist/reactstrap.min.js",
+  "unpkg": "dist/reactstrap.min.js",
+  "cdn": "dist/reactstrap.min.js",
+  "esnext": "src",
+  "sideEffects": false,
   "scripts": {
-    "postinstall": "install-local",
+    "report-coverage": "coveralls < ./coverage/lcov.info",
+    "test-original": "cross-env BABEL_ENV=test react-scripts test --env=jsdom",
     "test": "stryker run",
-    "posttest": "mocha --require ts-node/register verify/*.ts"
+    "posttest": "mocha --require ts-node/register verify/*.ts",
+    "cover": "npm test -- --coverage",
+    "start": "cross-env BABEL_ENV=webpack webpack-dev-server --config ./webpack.dev.config.js --watch",
+    "build-docs": "cross-env BABEL_ENV=webpack WEBPACK_BUILD=production webpack --config ./webpack.dev.config.js --progress --colors",
+    "build": "rollup -c",
+    "prebuild": "cross-env BABEL_ENV=lib-dir babel src --out-dir lib --ignore src/__tests__/",
+    "postinstall": "install-local",
+    "postbuild": "node ./scripts/postbuild.js",
+    "create-release": "npm run cover && sh ./scripts/release",
+    "publish-release": "npm run cover && sh ./scripts/publish",
+    "lint": "eslint src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/reactstrap/reactstrap.git"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "lib",
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "reactstrap",
+    "bootstrap",
+    "react",
+    "component",
+    "components",
+    "react-component",
+    "ui"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reactstrap/reactstrap/issues"
+  },
+  "homepage": "https://github.com/reactstrap/reactstrap#readme",
+  "dependencies": {
+    "classnames": "^2.2.3",
+    "lodash.isfunction": "^3.0.9",
+    "lodash.isobject": "^3.0.2",
+    "lodash.tonumber": "^4.0.3",
+    "prop-types": "^15.5.8",
+    "react-lifecycles-compat": "^3.0.4",
+    "react-popper": "^0.10.4",
+    "react-transition-group": "^2.3.1"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "devDependencies": {
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-preset-react": "^6.11.1",
+    "babel-preset-react-app": "^0.2.1",
+    "cross-env": "^2.0.0",
+    "jest": "^23.3.0",
+    "ejs": "^2.5.9",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-helmet": "^5.0.3",
+    "react-prism": "^4.3.2",
+    "react-router": "^3.2.1",
     "react-scripts": "^1.1.4",
-    "jest": "^23.3.0"
+    "react-test-renderer": "^16.3.2"
   },
   "localDependencies": {
     "stryker": "../../../packages/stryker",
     "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
-    "stryker-jest-runner": "../../../packages/stryker-jest-runner"
+    "stryker-jest-runner": "../../../packages/stryker-jest-runner",
+    "@stryker-mutator/util": "../../../packages/stryker-util"
   }
 }

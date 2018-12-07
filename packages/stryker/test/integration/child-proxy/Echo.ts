@@ -3,17 +3,15 @@ import { getLogger } from 'stryker-api/logging';
 
 export default class Echo {
 
-  private logger = getLogger(Echo.name);
+  private readonly logger = getLogger(Echo.name);
 
-  constructor(public name: string) {
+  constructor(public name: string) { }
 
-  }
-
-  say(value: string) {
+  public say(value: string) {
     return `${this.name}: ${value}`;
   }
 
-  sayDelayed(value: string, delay: number) {
+  public sayDelayed(value: string, delay: number) {
     return new Promise<string>(res => {
       setTimeout(() => {
         res(this.say(`${value} (${delay} ms)`));
@@ -21,44 +19,44 @@ export default class Echo {
     });
   }
 
-  echoFile(file: File) {
+  public echoFile(file: File) {
     return file.textContent;
   }
 
-  exit(code: number) {
+  public exit(code: number) {
     process.exit(code);
-    return new Promise(res => {/*never resolve*/ });
+    return new Promise(() => {/*never resolve*/ });
   }
 
-  readFile() {
+  public readFile() {
     return new File('foobar.txt', 'hello foobar');
   }
 
-  cwd() {
+  public cwd() {
     return process.cwd();
   }
 
-  debug(message: string) {
+  public debug(message: string) {
     this.logger.debug(message);
   }
 
-  trace(message: string) {
+  public trace(message: string) {
     this.logger.trace(message);
   }
 
-  reject(error: string) {
+  public reject(error: string) {
     return Promise.reject(new Error(error));
   }
 
-  stdout(...args: string[]) {
+  public stdout(...args: string[]) {
     args.forEach(arg => console.log(arg));
   }
 
-  stderr(...args: string[]) {
+  public stderr(...args: string[]) {
     args.forEach(arg => console.error(arg));
   }
 
-  memoryLeak() {
+  public memoryLeak() {
     const arr: number[] = [];
     while (true) {
       arr.push(1);

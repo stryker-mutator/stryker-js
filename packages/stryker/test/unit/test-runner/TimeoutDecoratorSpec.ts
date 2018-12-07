@@ -20,7 +20,7 @@ describe('TimeoutDecorator', () => {
     testRunner2 = new TestRunnerMock();
     availableTestRunners = [testRunner1, testRunner2];
     sut = new TimeoutDecorator(() => {
-      return <any>availableTestRunners.shift();
+      return availableTestRunners.shift() as any;
     });
   });
 
@@ -73,7 +73,7 @@ describe('TimeoutDecorator', () => {
     });
 
     it('should handle timeouts', () => {
-      testRunner1.run.returns(new Promise<string>(res => { }));
+      testRunner1.run.returns(new Promise<string>(() => { }));
       const runPromise = sut.run({ timeout: 20 });
       clock.tick(20);
       return expect(runPromise.then(result => {

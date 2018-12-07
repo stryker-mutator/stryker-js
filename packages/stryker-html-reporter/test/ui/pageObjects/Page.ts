@@ -7,7 +7,7 @@ export default abstract class Page {
     return new Breadcrumb($('.breadcrumb'));
   }
 
-  title() {
+  public title() {
     return $('h1').getText();
   }
 }

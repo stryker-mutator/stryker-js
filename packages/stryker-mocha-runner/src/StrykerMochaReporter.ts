@@ -6,12 +6,12 @@ export default class StrykerMochaReporter {
 
   private readonly log = getLogger(StrykerMochaReporter.name);
   public runResult: RunResult;
-  private timer = new Timer();
+  private readonly timer = new Timer();
   private passedCount = 0;
 
-  static CurrentInstance: StrykerMochaReporter | undefined;
+  public static CurrentInstance: StrykerMochaReporter | undefined;
 
-  constructor(private runner: NodeJS.EventEmitter) {
+  constructor(private readonly runner: NodeJS.EventEmitter) {
     this.registerEvents();
     StrykerMochaReporter.CurrentInstance = this;
   }
@@ -21,17 +21,17 @@ export default class StrykerMochaReporter {
       this.passedCount = 0;
       this.timer.reset();
       this.runResult = {
+        errorMessages: [],
         status: RunStatus.Error,
-        tests: [],
-        errorMessages: []
+        tests: []
       };
       this.log.debug('Starting Mocha test run');
     });
 
     this.runner.on('pass', (test: any) => {
       this.runResult.tests.push({
-        status: TestStatus.Success,
         name: test.fullTitle(),
+        status: TestStatus.Success,
         timeSpentMs: this.timer.elapsedMs()
       });
       this.passedCount++;
@@ -40,10 +40,10 @@ export default class StrykerMochaReporter {
 
     this.runner.on('fail', (test: any, err: any) => {
       this.runResult.tests.push({
-        status: TestStatus.Failed,
+        failureMessages: [err.message],
         name: test.fullTitle(),
-        timeSpentMs: this.timer.elapsedMs(),
-        failureMessages: [err.message]
+        status: TestStatus.Failed,
+        timeSpentMs: this.timer.elapsedMs()
       });
       if (!this.runResult.errorMessages) {
         this.runResult.errorMessages = [];

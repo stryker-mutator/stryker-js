@@ -1,12 +1,12 @@
-import {Factory, StrykerOptions} from '../../core';
+import { Factory } from '../../core';
 import Reporter from './Reporter';
+import { Config } from '../../config';
 
 namespace ReporterFactory {
-
   /**
    * Represents a Factory for Reporters.
    */
-  class ReporterFactory extends Factory<StrykerOptions, Reporter> {
+  class ReporterFactory extends Factory<Config, Reporter> {
     constructor() {
       super('reporter');
     }
@@ -16,18 +16,18 @@ namespace ReporterFactory {
      * @param name The name of the Reporter the user tried to use.
      * @returns The name of the package the user may want to install (if it exists).
      */
-    importSuggestion(name: string) {
+    public importSuggestion(name: string) {
       return `stryker-${name}-reporter`;
     }
   }
 
-  let reporterFactoryInstance = new ReporterFactory();
+  const reporterFactoryInstance = new ReporterFactory();
 
   /**
    * Returns the current instance of the TestRunnerFactory.
    */
   export function instance() {
-    return <Factory<StrykerOptions, Reporter>>reporterFactoryInstance;
+    return reporterFactoryInstance as Factory<Config, Reporter>;
   }
 }
 

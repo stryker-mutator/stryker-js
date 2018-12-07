@@ -14,8 +14,8 @@ import { sleep } from '../helpers/testUtils';
 
 const OVERHEAD_TIME_MS = 42;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  port: 4200,
-  level: LogLevel.Fatal
+  level: LogLevel.Fatal,
+  port: 4200
 });
 
 describe('SandboxPool', () => {
@@ -120,4 +120,3 @@ describe('SandboxPool', () => {
 function tick() {
   return sleep(0);
 }
-

@@ -1,6 +1,6 @@
 {
   "name": "stryker-jest-runner",
-  "version": "1.2.0",
+  "version": "1.2.9",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 80 --functions 80 --branches 75 mocha \"test/**/*.js\" --exit"
+    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 30000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\" --exit"
   },
   "repository": {
     "type": "git",
@@ -40,19 +41,19 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-jest-runner#readme",
   "devDependencies": {
     "@types/semver": "~5.5.0",
-    "jest": "~23.5.0",
-    "react": "~16.4.1",
-    "react-dom": "~16.4.2",
-    "react-scripts": "~1.1.4",
-    "react-scripts-ts": "~2.17.0",
-    "stryker-api": "^0.21.0"
+    "jest": "~23.6.0",
+    "react": "~16.6.0",
+    "react-dom": "~16.6.0",
+    "react-scripts": "~2.1.0",
+    "react-scripts-ts": "~3.1.0",
+    "stryker-api": "^0.22.0"
   },
   "peerDependencies": {
     "jest": ">= 22.0.0",
-    "stryker-api": ">=0.18.0 <0.22.0"
+    "stryker-api": ">=0.18.0 <0.23.0"
   },
   "dependencies": {
-    "semver": "~5.5.0"
+    "semver": "~5.6.0"
   },
   "initStrykerConfig": {
     "coverageAnalysis": "off"

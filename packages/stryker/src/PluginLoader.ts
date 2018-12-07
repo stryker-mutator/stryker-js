@@ -1,22 +1,22 @@
-import * as fs from 'mz/fs';
 import * as path from 'path';
 import { getLogger } from 'stryker-api/logging';
 import * as _ from 'lodash';
 import { importModule } from './utils/fileUtils';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 
 export default class PluginLoader {
   private readonly log = getLogger(PluginLoader.name);
-  constructor(private plugins: string[]) { }
+  constructor(private readonly plugins: string[]) { }
 
   public load() {
     this.getModules().forEach(moduleName => this.requirePlugin(moduleName));
   }
 
   private getModules() {
-    let modules: string[] = [];
-    this.plugins.forEach((pluginExpression) => {
+    const modules: string[] = [];
+    this.plugins.forEach(pluginExpression => {
       if (_.isString(pluginExpression)) {
         if (pluginExpression.indexOf('*') !== -1) {
 
@@ -26,7 +26,7 @@ export default class PluginLoader {
           const regexp = new RegExp('^' + pluginExpression.replace('*', '.*'));
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
-          let plugins = fs.readdirSync(pluginDirectory)
+          const plugins = fsAsPromised.readdirSync(pluginDirectory)
             .filter(pluginName => IGNORED_PACKAGES.indexOf(pluginName) === -1 && regexp.test(pluginName))
             .map(pluginName => pluginDirectory + '/' + pluginName);
           if (plugins.length === 0) {

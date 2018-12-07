@@ -12,10 +12,14 @@ export interface RunMessage {
 }
 
 export default class MochaTestFrameworkIntegrationTestWorker {
-  private sut: MochaTestRunner;
+  private readonly sut: MochaTestRunner;
 
   constructor() {
     this.sut = new MochaTestRunner({
+      fileNames: [
+        path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMath.js'),
+        path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
+      ],
       port: 0,
       strykerOptions: {
         mochaOptions: {
@@ -23,11 +27,7 @@ export default class MochaTestFrameworkIntegrationTestWorker {
             path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
           ]
         }
-      },
-      fileNames: [
-        path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMath.js'),
-        path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
-      ]
+      }
     });
     this.listenForParentProcess();
     try {
@@ -37,7 +37,7 @@ export default class MochaTestFrameworkIntegrationTestWorker {
     }
   }
 
-  listenForParentProcess() {
+  public listenForParentProcess() {
     process.on('message', (message: ChildMessage) => {
       this.sut.run({ testHooks: message.testHooks })
         .then(result => this.send(result))
@@ -45,12 +45,12 @@ export default class MochaTestFrameworkIntegrationTestWorker {
     });
   }
 
-  send(result: RunResult) {
+  public send(result: RunResult) {
     if (process.send) {
       process.send(result);
     }
   }
-  sendError(error: Error) {
+  public sendError(error: Error) {
     if (process.send) {
       process.send({ name: error.name, message: error.message, stack: error.stack });
     }

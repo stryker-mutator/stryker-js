@@ -10,7 +10,7 @@ export default class StrykerCli {
   private command: string = '';
   private strykerConfig: string | null = null;
 
-  constructor(private argv: string[]) { }
+  constructor(private readonly argv: string[]) { }
 
   private list(val: string) {
     return val.split(',');
@@ -47,25 +47,32 @@ export default class StrykerCli {
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
       .option('--logLevel <level>', 'Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
       .option('--fileLogLevel <level>', 'Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "off"')
+      .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean, true)
       .parse(this.argv);
 
-    LogConfigurator.configureMainProcess(program['logLevel']);
+    function parseBoolean(val: string) {
+      console.log('bool: ', val);
+      const v = val.toLocaleLowerCase() ;
+      return v !== 'false' && v !== '0';
+    }
+
+    LogConfigurator.configureMainProcess(program.logLevel);
     const log = getLogger(StrykerCli.name);
     // Cleanup commander state
-    delete program['options'];
-    delete program['rawArgs'];
+    delete program.options;
+    delete program.rawArgs;
     delete program.args;
     delete program.Command;
     delete program.Option;
-    delete program['commands'];
-    for (let i in program) {
+    delete program.commands;
+    for (const i in program) {
       if (i.charAt(0) === '_') {
         delete program[i];
       }
     }
 
     if (this.strykerConfig) {
-      program['configFile'] = this.strykerConfig;
+      program.configFile = this.strykerConfig;
     }
 
     const commands: { [cmd: string]: () => Promise<any> } = {
@@ -76,6 +83,9 @@ export default class StrykerCli {
     if (Object.keys(commands).indexOf(this.command) >= 0) {
       commands[this.command]().catch(err => {
         log.error(`an error occurred`, err);
+        if (!log.isTraceEnabled()) {
+          log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+        }
         process.exitCode = 1;
         process.kill(process.pid, 'SIGINT');
       });

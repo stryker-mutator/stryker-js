@@ -35,7 +35,7 @@ describe('InputFileSystem', () => {
 
     it('should forward to memory fs', done => {
       memoryFSMock.stat.callsArgWith(1, undefined, 'foobar');
-      sut.stat('arg1', (error, value) => {
+      sut.stat('arg1', (_error, value) => {
         expect(value).eq('foobar');
         expect(innerFSMock.stat).not.called;
         done();
@@ -59,7 +59,7 @@ describe('InputFileSystem', () => {
       memoryFSMock.stat.callsArgOnWith(1, sut, new Error('foobar'));
 
       // Act
-      sut.stat('foo/bar/not/exits', (err, stats) => {
+      sut.stat('foo/bar/not/exits', err => {
 
         // Assert
         expect(err).eq(expectedError);
@@ -72,7 +72,7 @@ describe('InputFileSystem', () => {
 
     it('should forward readFile to memory FS', done => {
       memoryFSMock.readFile.callsArgOnWith(2, sut, undefined, 'foobar');
-      sut.readFile('path', {}, (error: any, value: string) => {
+      sut.readFile('path', {}, (_error: Error, value: string) => {
         expect(value).eq('foobar');
         expect(memoryFSMock.readFile).calledWith('path');
         expect(innerFSMock.readFile).not.called;
@@ -83,7 +83,7 @@ describe('InputFileSystem', () => {
     it('should forward to real FS if memory-fs gave an error', done => {
       memoryFSMock.readFile.callsArgOnWith(1, sut,  new Error('foobar'));
       innerFSMock.readFile.callsArgWith(1, undefined, 'the content');
-      sut.readFile('foobar', (error: Error, content: string) => {
+      sut.readFile('foobar', (_error: Error, content: string) => {
         expect(content).eq('the content');
         expect(innerFSMock.readFile).calledWith('foobar');
         done();
@@ -97,7 +97,7 @@ describe('InputFileSystem', () => {
       memoryFSMock.readFile.callsArgOnWith(1, sut, new Error('foobar'));
 
       // Act
-      sut.readFile('foo/bar/not/exits', (error: Error, content: string) => {
+      sut.readFile('foo/bar/not/exits', (error: Error) => {
 
         // Assert
         expect(error).eq(expectedError);

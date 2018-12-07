@@ -9,8 +9,7 @@ import TypescriptMutator from '../../src/TypescriptMutator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 
-describe('Sample integration', function () {
-  this.timeout(10000);
+describe('Sample integration', () => {
 
   let config: Config;
   let inputFiles: File[];
@@ -60,7 +59,7 @@ describe('Sample integration', function () {
     const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpression');
     const correctResult = await transpiler.transpile([mutateFile(mathDotTS, firstBinaryMutant)]);
     await expect(transpiler.transpile([mutateFile(mathDotTS, stringSubtractMutant)]))
-      .rejectedWith('error TS2362: The left-hand side of an arithmetic operation must be of type \'any\', \'number\' or an enum type');
+      .rejectedWith('error TS2362: The left-hand side of an arithmetic operation must be of type \'any\', \'number\', \'bigint\' or an enum type.');
     expect(correctResult).lengthOf(1);
     expect(path.resolve(correctResult[0].name)).eq(path.resolve(path.dirname(mathDotTS.name), 'math.js'));
   });

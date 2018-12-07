@@ -6,13 +6,12 @@ import { expect } from 'chai';
 import { File } from 'stryker-api/core';
 import { TranspilerOptions } from 'stryker-api/transpile';
 
-describe('Webpack transpiler', function () {
-  this.timeout(10000);
+describe('Webpack transpiler', () => {
 
   let transpilerConfig: TranspilerOptions;
 
   beforeEach(() => {
-    transpilerConfig = { produceSourceMaps: false, config: new Config };
+    transpilerConfig = { produceSourceMaps: false, config: new Config() };
     transpilerConfig.config.set({ webpack: {} });
   });
 

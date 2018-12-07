@@ -3,6 +3,81 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.7.11"></a>
+## [0.7.11](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.10...stryker-webpack-transpiler@0.7.11) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.7.10"></a>
+## [0.7.10](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.9...stryker-webpack-transpiler@0.7.10) (2018-11-29)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
+<a name="0.7.9"></a>
+## [0.7.9](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.8...stryker-webpack-transpiler@0.7.9) (2018-11-13)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
+<a name="0.7.8"></a>
+## [0.7.8](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.7...stryker-webpack-transpiler@0.7.8) (2018-11-07)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
+<a name="0.7.7"></a>
+## [0.7.7](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.6...stryker-webpack-transpiler@0.7.7) (2018-10-25)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
+<a name="0.7.6"></a>
+## [0.7.6](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.5...stryker-webpack-transpiler@0.7.6) (2018-10-15)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
+<a name="0.7.5"></a>
+## [0.7.5](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.4...stryker-webpack-transpiler@0.7.5) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
+<a name="0.7.4"></a>
+## [0.7.4](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.3...stryker-webpack-transpiler@0.7.4) (2018-09-30)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
+<a name="0.7.3"></a>
+## [0.7.3](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.2...stryker-webpack-transpiler@0.7.3) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker-webpack-transpiler
+
 <a name="0.7.2"></a>
 ## [0.7.2](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.1...stryker-webpack-transpiler@0.7.2) (2018-08-28)
 

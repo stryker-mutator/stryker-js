@@ -1,5 +1,3 @@
-
-
 /**
  * Executes a piece of javascript code in global scope while passing the `require` function
  * @param body The JavaScript to execute

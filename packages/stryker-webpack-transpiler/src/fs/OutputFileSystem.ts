@@ -22,16 +22,16 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
       new File(fileName, this._files[fileName]));
   }
 
-  public mkdirp(dir: string, opts: any, cb?: Callback<string>): void {
+  public mkdirp(_dir: string, opts: any, cb?: Callback<string>): void {
     const callback: Callback<string> = cb || opts;
     callback(null);
   }
 
-  public rmdir(name: PathLike, callback: EmptyCallback): void {
+  public rmdir(_name: PathLike, callback: EmptyCallback): void {
     callback();
   }
 
-  public mkdir(name: PathLike, callback: EmptyCallback): void {
+  public mkdir(_name: PathLike, callback: EmptyCallback): void {
     callback();
   }
 
@@ -51,4 +51,3 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     return path.join(...paths);
   }
 }
-

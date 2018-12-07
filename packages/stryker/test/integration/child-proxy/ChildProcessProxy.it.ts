@@ -15,9 +15,8 @@ import { sleep } from '../../helpers/testUtils';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 
-describe('ChildProcessProxy', function () {
+describe('ChildProcessProxy', () => {
 
-  this.timeout(15000);
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
   let log: Mock<Logger>;

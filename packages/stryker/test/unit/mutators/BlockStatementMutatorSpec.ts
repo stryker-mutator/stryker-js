@@ -12,7 +12,7 @@ describe('BlockStatementMutator', () => {
 
   it('should mutate when supplied a block statement', () => {
     // Arrange
-    const program = parse(`function a () { 
+    const program = parse(`function a () {
       'use strict';
     }`);
     const useStrictBlockStatement = identified((program.body[0] as estree.FunctionDeclaration).body);
@@ -28,8 +28,8 @@ describe('BlockStatementMutator', () => {
 
   it('should not mutate an empty expression', () => {
     // Arrange
-    const program = parse(`function a () { 
-      
+    const program = parse(`function a () {
+
     }`);
     const emptyBlockStatement = identified((program.body[0] as estree.FunctionDeclaration).body);
 

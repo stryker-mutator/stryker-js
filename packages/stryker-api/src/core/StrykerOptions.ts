@@ -12,24 +12,24 @@ interface StrykerOptions {
   mutate?: string[];
 
   /**
-   * With `files` you can choose which files should be included in your test runner sandbox. 
-   * This is normally not needed as it defaults to all files not ignored by git. 
+   * With `files` you can choose which files should be included in your test runner sandbox.
+   * This is normally not needed as it defaults to all files not ignored by git.
    * Try it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.
-   * 
+   *
    * If you do need to override `files` (for example: when your project does not live in a git repository),
    * you can override the files here.
-   * 
-   * When using the command line, the list can only contain a comma separated list of globbing expressions.  
+   *
+   * When using the command line, the list can only contain a comma separated list of globbing expressions.
    * When using the config file you can provide an array with `string`s
-   * 
+   *
    * You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
-   * 
+   *
    */
   files?: string[];
 
   /**
    * Specify the maximum number of concurrent test runners. Useful if you don't want to use
-   * all the CPU cores of your machine. Default: infinity, Stryker will decide for you and tries to use 
+   * all the CPU cores of your machine. Default: infinity, Stryker will decide for you and tries to use
    * all CPUs in your machine optimally.
    */
   maxConcurrentTestRunners?: number;
@@ -67,17 +67,17 @@ interface StrykerOptions {
    * The names of the transpilers to use (in order). Default: [].
    * A transpiler in this context is a plugin that can transform input files (source code)
    * before testing.
-   * 
-   * Example use cases: 
+   *
+   * Example use cases:
    * * You need to transpile typescript before testing it in nodejs
    * * You want to bundle nodejs code before testing it in the browser.
-   * 
+   *
    * The order of your defined transpilers is important, as each transpiler
    * will be fead the output files of the previous transpiler. For example:
-   * 
+   *
    * foo.ts   ==> Typescript  ==> foo.js ==> Webpack ==> foobar.js
    * bar.ts   ==> Transpiler  ==> bar.js ==> Transpiler
-   * 
+   *
    * Transpilers should ignore files marked with `transpiled = false`. See `files` array.
    */
   transpilers?: string[];
@@ -90,10 +90,10 @@ interface StrykerOptions {
   /**
    * Indicates which coverage analysis strategy to use.
    * During mutation testing, stryker will try to only run the tests that cover a particular line of code.
-   * 
+   *
    * 'perTest' (default): Analyse coverage per test.
    * 'all': Analyse the coverage for the entire test suite.
-   * 'off': Don't use coverage analysis 
+   * 'off': Don't use coverage analysis
    */
   coverageAnalysis?: 'perTest' | 'all' | 'off';
 
@@ -103,8 +103,8 @@ interface StrykerOptions {
   reporter?: string | string[];
   /**
    * The names of the reporters to use
-   * Possible values: 'clear-text', 'progress'. 
-   * Load more plugins to be able to use more reporters 
+   * Possible values: 'clear-text', 'progress'.
+   * Load more plugins to be able to use more reporters
    */
   reporters?: string[];
 
@@ -145,10 +145,16 @@ interface StrykerOptions {
   plugins?: string[];
 
   /**
-   * The starting port to used for test frameworks that need to run a server (for example karma). 
+   * The starting port to used for test frameworks that need to run a server (for example karma).
    * If more test runners will run simultaneously, subsequent port numbers will be used (n+1, n+2, etc.)
    */
   port?: number;
+
+  /**
+   * Indicates whether or not to use colors in console.
+   * Default: true
+   */
+  allowConsoleColors?: boolean;
 }
 
 export default StrykerOptions;

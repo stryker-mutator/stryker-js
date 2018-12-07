@@ -3,6 +3,110 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.12.1"></a>
+## [0.12.1](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.12.0...stryker-javascript-mutator@0.12.1) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.12.0"></a>
+# [0.12.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.11.5...stryker-javascript-mutator@0.12.0) (2018-11-29)
+
+
+### Bug Fixes
+
+* **String literal mutator:** Don't mutate export declarations ([c764ccd](https://github.com/stryker-mutator/stryker/commit/c764ccd))
+
+
+### Features
+
+* **Conditional expression mutator:** Mutate conditional operators ([#1253](https://github.com/stryker-mutator/stryker/issues/1253)) ([be4c990](https://github.com/stryker-mutator/stryker/commit/be4c990))
+
+
+
+
+<a name="0.11.5"></a>
+## [0.11.5](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.11.4...stryker-javascript-mutator@0.11.5) (2018-11-21)
+
+
+
+
+**Note:** Version bump only for package stryker-javascript-mutator
+
+<a name="0.11.4"></a>
+## [0.11.4](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.11.3...stryker-javascript-mutator@0.11.4) (2018-11-13)
+
+
+
+
+**Note:** Version bump only for package stryker-javascript-mutator
+
+<a name="0.11.3"></a>
+## [0.11.3](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.11.2...stryker-javascript-mutator@0.11.3) (2018-11-07)
+
+
+
+
+**Note:** Version bump only for package stryker-javascript-mutator
+
+<a name="0.11.2"></a>
+## [0.11.2](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.11.0...stryker-javascript-mutator@0.11.2) (2018-10-15)
+
+
+### Bug Fixes
+
+* **version:** Version bump for failed release ([8cf9e87](https://github.com/stryker-mutator/stryker/commit/8cf9e87))
+
+
+
+
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.10.2...stryker-javascript-mutator@0.11.0) (2018-10-06)
+
+
+### Features
+
+* **babel:** upgrade babel 6 ~> 7 ([#1175](https://github.com/stryker-mutator/stryker/issues/1175)) ([1f650de](https://github.com/stryker-mutator/stryker/commit/1f650de)), closes [#1172](https://github.com/stryker-mutator/stryker/issues/1172)
+* **mutator:** Object literal mutator ([#1169](https://github.com/stryker-mutator/stryker/issues/1169)) ([43d9a3a](https://github.com/stryker-mutator/stryker/commit/43d9a3a))
+
+
+
+
+<a name="0.10.2"></a>
+## [0.10.2](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.10.1...stryker-javascript-mutator@0.10.2) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-javascript-mutator
+
+<a name="0.10.1"></a>
+## [0.10.1](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.10.0...stryker-javascript-mutator@0.10.1) (2018-09-30)
+
+
+### Bug Fixes
+
+* **mutator:** Fix empty case statement unkillable mutant ([#1159](https://github.com/stryker-mutator/stryker/issues/1159)) ([e080acb](https://github.com/stryker-mutator/stryker/commit/e080acb))
+
+
+
+
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.9.1...stryker-javascript-mutator@0.10.0) (2018-09-14)
+
+
+### Features
+
+* **mutator:** add SwitchCase statement mutator ([#1127](https://github.com/stryker-mutator/stryker/issues/1127)) ([cec6a39](https://github.com/stryker-mutator/stryker/commit/cec6a39))
+
+
+
+
 <a name="0.9.1"></a>
 ## [0.9.1](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.9.0...stryker-javascript-mutator@0.9.1) (2018-08-21)
 

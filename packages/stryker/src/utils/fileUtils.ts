@@ -1,8 +1,8 @@
-import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
+import { fsAsPromised } from '@stryker-mutator/util';
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
@@ -18,7 +18,7 @@ export function deleteDir(dirToDelete: string): Promise<void> {
 
 export async function cleanFolder(folderName: string) {
   try {
-    await fs.lstat(folderName);
+    await fsAsPromised.lstat(folderName);
     await deleteDir(folderName);
     return mkdirp.sync(folderName);
   } catch (e) {
@@ -42,12 +42,11 @@ export function importModule(moduleName: string) {
  */
 export function writeFile(fileName: string, data: string | Buffer): Promise<void> {
   if (Buffer.isBuffer(data)) {
-    return fs.writeFile(fileName, data);
+    return fsAsPromised.writeFile(fileName, data);
   } else {
-    return fs.writeFile(fileName, data, 'utf8');
+    return fsAsPromised.writeFile(fileName, data, 'utf8');
   }
 }
-
 
 /**
  * Creates a symlink at `from` that points to `to`
@@ -55,19 +54,18 @@ export function writeFile(fileName: string, data: string | Buffer): Promise<void
  * @param from The thing you want to point from
  */
 export function symlinkJunction(to: string, from: string) {
-  return fs.symlink(to, from, 'junction');
+  return fsAsPromised.symlink(to, from, 'junction');
 }
 
 /**
- * Looks for the node_modules folder from basePath up to root. 
+ * Looks for the node_modules folder from basePath up to root.
  * returns the first occurrence of the node_modules, or null of none could be found.
  * @param basePath starting point
  */
 export async function findNodeModules(basePath: string): Promise<string | null> {
   basePath = path.resolve(basePath);
   const nodeModules = path.resolve(basePath, 'node_modules');
-  const exists = await fs.exists(nodeModules);
-  if (exists) {
+  if (await fsAsPromised.exists(nodeModules)) {
     return nodeModules;
   } else {
     const parent = path.dirname(basePath);

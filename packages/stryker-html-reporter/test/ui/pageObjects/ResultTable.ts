@@ -3,19 +3,19 @@ import ResultTableRow from './ResultTableRow';
 
 export default class ResultTable {
 
-  constructor(private host: ElementFinder) {
+  constructor(private readonly host: ElementFinder) {
   }
 
-  head() {
+  public head() {
     return this.host.$$('thead th');
   }
 
-  async rows() {
+  public async rows() {
     const rows: ElementFinder[] = await this.host.$$('tbody tr');
     return rows.map(row => new ResultTableRow(row));
   }
 
-  async row(name: string) {
+  public async row(name: string) {
     const rows = await this.rows();
     const names = (await promise.all(rows.map(row => row.name()))).map(name => name.trim());
     const index = names.indexOf(name);

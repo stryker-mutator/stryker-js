@@ -3,6 +3,76 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.16.9"></a>
+## [0.16.9](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.8...stryker-html-reporter@0.16.9) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.16.8"></a>
+## [0.16.8](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.7...stryker-html-reporter@0.16.8) (2018-11-29)
+
+
+
+
+**Note:** Version bump only for package stryker-html-reporter
+
+<a name="0.16.7"></a>
+## [0.16.7](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.6...stryker-html-reporter@0.16.7) (2018-11-13)
+
+
+
+
+**Note:** Version bump only for package stryker-html-reporter
+
+<a name="0.16.6"></a>
+## [0.16.6](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.5...stryker-html-reporter@0.16.6) (2018-11-07)
+
+
+
+
+**Note:** Version bump only for package stryker-html-reporter
+
+<a name="0.16.5"></a>
+## [0.16.5](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.4...stryker-html-reporter@0.16.5) (2018-10-15)
+
+
+### Bug Fixes
+
+* **any-promise:** Don't register a promise implementation ([#1180](https://github.com/stryker-mutator/stryker/issues/1180)) ([1d3e2f6](https://github.com/stryker-mutator/stryker/commit/1d3e2f6))
+
+
+
+
+<a name="0.16.4"></a>
+## [0.16.4](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.3...stryker-html-reporter@0.16.4) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-html-reporter
+
+<a name="0.16.3"></a>
+## [0.16.3](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.2...stryker-html-reporter@0.16.3) (2018-09-30)
+
+
+
+
+**Note:** Version bump only for package stryker-html-reporter
+
+<a name="0.16.2"></a>
+## [0.16.2](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.1...stryker-html-reporter@0.16.2) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker-html-reporter
+
 <a name="0.16.1"></a>
 ## [0.16.1](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.0...stryker-html-reporter@0.16.1) (2018-08-21)
 

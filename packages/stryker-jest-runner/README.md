@@ -40,7 +40,8 @@ The stryker-jest-runner also provides a couple of configurable options using the
 {
     jest: {
         projectType: 'custom',
-        config: require('path/to/your/custom/jestConfig.js')
+        config: require('path/to/your/custom/jestConfig.js'),
+        enableFindRelatedTests: true,
     }
 }
 ```
@@ -51,6 +52,7 @@ The stryker-jest-runner also provides a couple of configurable options using the
 | | | | `react` when you are using [create-react-app](https://github.com/facebook/create-react-app) |
 | | | | `react-ts` when you are using [create-react-app-typescript](https://github.com/wmonk/create-react-app-typescript) |
 | config (optional) | A custom Jest configuration object. You could also use `require` to load it here) | undefined | |
+| enableFindRelatedTests (optional) | Whether to run jest with the `--findRelatedTests` flag. When `true`, Jest will only run tests related to the mutated file per test. (See [_--findRelatedTests_](https://jestjs.io/docs/en/cli.html#findrelatedtests-spaceseparatedlistofsourcefiles))  | true | false |
 
 **Note:** When neither of the options are specified it will use the Jest configuration in your "package.json". \
 **Note:** the `projectType` option is ignored when the `config` option is specified.

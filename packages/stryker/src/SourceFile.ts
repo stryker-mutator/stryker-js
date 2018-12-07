@@ -28,7 +28,7 @@ export function isLineBreak(ch: number): boolean {
 
 export default class SourceFile {
 
-  private lineStarts: number[];
+  private readonly lineStarts: number[];
 
   constructor(public file: File) {
     this.lineStarts = this.computeLineStarts();
@@ -42,14 +42,14 @@ export default class SourceFile {
     return this.file.textContent;
   }
 
-  getLocation(range: Range): Location {
+  public getLocation(range: Range): Location {
     return {
-      start: this.getPosition(range[0]),
-      end: this.getPosition(range[1])
+      end: this.getPosition(range[1]),
+      start: this.getPosition(range[0])
     };
   }
 
-  getPosition(pos: number): Position {
+  public getPosition(pos: number): Position {
     let lineNumber = this.binarySearch(pos);
     if (lineNumber < 0) {
       // If the actual position was not found,
@@ -62,18 +62,18 @@ export default class SourceFile {
       lineNumber = ~lineNumber - 1;
     }
     return {
-      line: lineNumber,
-      column: pos - this.lineStarts[lineNumber]
+      column: pos - this.lineStarts[lineNumber],
+      line: lineNumber
     };
   }
 
   /**
-     * Performs a binary search, finding the index at which 'value' occurs in 'array'.
-     * If no such index is found, returns the 2's-complement of first index at which
-     * number[index] exceeds number.
-     * @param array A sorted array whose first element must be no larger than number
-     * @param number The value to be searched for in the array.
-     */
+   * Performs a binary search, finding the index at which 'value' occurs in 'array'.
+   * If no such index is found, returns the 2's-complement of first index at which
+   * number[index] exceeds number.
+   * @param array A sorted array whose first element must be no larger than number
+   * @param number The value to be searched for in the array.
+   */
   private binarySearch(position: number, offset = 0): number {
     let low = offset;
     let high = this.lineStarts.length - 1;
@@ -95,10 +95,14 @@ export default class SourceFile {
 
     return ~low;
   }
-  computeLineStarts(): number[] {
+  private computeLineStarts(): number[] {
     const result: number[] = [];
     let pos = 0;
     let lineStart = 0;
+    const markLineStart = () => {
+      result.push(lineStart);
+      lineStart = pos;
+    };
     while (pos < this.file.textContent.length) {
       const ch = this.file.textContent.charCodeAt(pos);
       pos++;
@@ -107,15 +111,14 @@ export default class SourceFile {
           if (this.file.textContent.charCodeAt(pos) === CharacterCodes.lineFeed) {
             pos++;
           }
-        // falls through
+          markLineStart();
+          break;
         case CharacterCodes.lineFeed:
-          result.push(lineStart);
-          lineStart = pos;
+          markLineStart();
           break;
         default:
           if (ch > CharacterCodes.maxAsciiCharacter && isLineBreak(ch)) {
-            result.push(lineStart);
-            lineStart = pos;
+            markLineStart();
           }
           break;
       }

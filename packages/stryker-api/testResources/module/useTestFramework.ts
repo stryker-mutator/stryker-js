@@ -2,19 +2,17 @@ import { TestFramework, TestFrameworkFactory, TestSelection, TestFrameworkSettin
 
 class TestFramework1 implements TestFramework {
 
-  constructor(settings: TestFrameworkSettings) {
+  constructor(settings: TestFrameworkSettings) { }
 
-  }
-
-  beforeEach(codeFragment: string) {
+  public beforeEach(codeFragment: string) {
     return '';
   }
 
-  afterEach(codeFragment: string) {
+  public afterEach(codeFragment: string) {
     return '';
   }
 
-  filter(selections: TestSelection[]) {
+  public filter(selections: TestSelection[]) {
     return selections.map(selection => selection.id).toString();
   }
 }

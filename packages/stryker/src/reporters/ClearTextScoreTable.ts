@@ -6,9 +6,7 @@ import chalk from 'chalk';
 
 const FILES_ROOT_NAME = 'All files';
 
-interface TableCellValueFactory {
-  (row: ScoreResult, ancestorCount: number): string;
-}
+type TableCellValueFactory = (row: ScoreResult, ancestorCount: number) => string;
 
 const repeat = (char: string, nTimes: number) => new Array(nTimes > -1 ? nTimes + 1 : 0).join(char);
 const spaces = (n: number) => repeat(' ', n);
@@ -40,25 +38,25 @@ class Column {
     return `${spaces(this.width - input.length - 2)} ${input} `;
   }
 
-  drawLine(): string {
+  public drawLine(): string {
     return repeat('-', this.width);
   }
 
-  drawTableCell(score: ScoreResult, ancestorCount: number) {
+  public drawTableCell(score: ScoreResult, ancestorCount: number) {
     return this.color(score)(this.pad(this.valueFactory(score, ancestorCount)));
   }
 
-  drawHeader() {
+  public drawHeader() {
     return this.pad(this.header);
   }
 
-  protected color(score: ScoreResult) {
+  protected color(_score: ScoreResult) {
     return (input: string) => input;
   }
 }
 
 class MutationScoreColumn extends Column {
-  constructor(rows: ScoreResult, private thresholds: MutationScoreThresholds) {
+  constructor(rows: ScoreResult, private readonly thresholds: MutationScoreThresholds) {
     super('% score', row => row.mutationScore.toFixed(2), rows);
   }
   protected color(score: ScoreResult) {
@@ -86,9 +84,9 @@ class FileColumn extends Column {
  */
 export default class ClearTextScoreTable {
 
-  private columns: Column[];
+  private readonly columns: Column[];
 
-  constructor(private score: ScoreResult, thresholds: MutationScoreThresholds) {
+  constructor(private readonly score: ScoreResult, thresholds: MutationScoreThresholds) {
     this.columns = [
       new FileColumn(score),
       new MutationScoreColumn(score, thresholds),
@@ -120,7 +118,7 @@ export default class ClearTextScoreTable {
   /**
    * Returns a string with the score results drawn in a table.
    */
-  draw() {
+  public draw() {
     return [
       this.drawBorder(),
       this.drawHeader(),

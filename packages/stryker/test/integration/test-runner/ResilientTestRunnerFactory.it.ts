@@ -11,9 +11,7 @@ import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { toArray } from 'rxjs/operators';
 import { sleep } from '../../helpers/testUtils';
 
-describe('ResilientTestRunnerFactory integration', function () {
-
-  this.timeout(15000);
+describe('ResilientTestRunnerFactory integration', () => {
 
   let sut: TestRunnerDecorator;
   let options: RunnerOptions;
@@ -29,15 +27,15 @@ describe('ResilientTestRunnerFactory integration', function () {
     loggingServer = new LoggingServer(port);
     loggingContext = { port, level: LogLevel.Trace };
     options = {
+      fileNames: [],
+      port: 0,
       strykerOptions: {
         plugins: [require.resolve('./AdditionalTestRunners')],
-        testRunner: 'karma',
-        testFramework: 'jasmine',
         port: 0,
-        'someRegex': /someRegex/
-      },
-      port: 0,
-      fileNames: []
+        someRegex: /someRegex/,
+        testFramework: 'jasmine',
+        testRunner: 'karma'
+      }
     };
     alreadyDisposed = false;
   });
@@ -138,7 +136,7 @@ describe('ResilientTestRunnerFactory integration', function () {
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Complete]);
     expect(result.errorMessages).undefined;
   });
-  
+
   it('should report if a crash happens twice', async () => {
     await arrangeSut('proximity-mine');
     const result = await actRun();
@@ -161,5 +159,3 @@ describe('ResilientTestRunnerFactory integration', function () {
     ).ok;
   });
 });
-
-

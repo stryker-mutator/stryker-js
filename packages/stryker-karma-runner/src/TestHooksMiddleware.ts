@@ -21,12 +21,12 @@ export default class TestHooksMiddleware {
 
   public currentTestHooks: string = '';
 
-  handler: RequestHandler = (request, response, next) => {
+  public handler: RequestHandler = (request, response, next) => {
     const pathName = url.parse(request.url).pathname;
     if (pathName && path.normalize(pathName).endsWith(path.join('src', path.basename(TEST_HOOKS_FILE_NAME)))) {
       response.writeHead(200, {
-        'Content-Type': 'application/javascript',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache',
+        'Content-Type': 'application/javascript'
       });
       response.end(this.currentTestHooks);
     } else {
@@ -34,4 +34,3 @@ export default class TestHooksMiddleware {
     }
   }
 }
-

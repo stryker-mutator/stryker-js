@@ -1,6 +1,6 @@
 {
   "name": "stryker-mocha-framework",
-  "version": "0.12.1",
+  "version": "0.13.2",
   "description": "A plugin to use the mocha test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "postbuild": "tslint -p tsconfig.json",
-    "test": "nyc --include src/**/*.js --reporter=html --report-dir=reports/coverage --check-coverage --lines 100 --functions 100 --branches 100 mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+    "test": "nyc --include src/**/*.js --reporter=html --report-dir=reports/coverage --check-coverage --lines 100 --functions 100 --branches 100 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 10000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -37,11 +38,11 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-mocha-framework#readme",
   "license": "Apache-2.0",
   "devDependencies": {
-    "stryker-api": "^0.21.0",
+    "stryker-api": "^0.22.0",
     "tslib": "~1.9.3"
   },
   "peerDependencies": {
     "mocha": ">= 2.3.3 < 6",
-    "stryker-api": ">=0.18.0 <0.22.0"
+    "stryker-api": ">=0.18.0 <0.23.0"
   }
 }

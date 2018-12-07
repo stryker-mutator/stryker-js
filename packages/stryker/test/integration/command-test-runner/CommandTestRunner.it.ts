@@ -5,9 +5,8 @@ import { Config } from 'stryker-api/config';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
 import * as objectUtils from '../../../src/utils/objectUtils';
 
-describe(`${CommandTestRunner.name} integration`, function () {
+describe(`${CommandTestRunner.name} integration`, () => {
 
-  this.timeout(15000);
   const workingDir = path.resolve(__dirname, '..', '..', '..', 'testResources', 'command-runner');
 
   it('should report test as successful', async () => {

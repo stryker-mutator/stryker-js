@@ -3,6 +3,63 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.2"></a>
+## [0.13.2](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.13.1...stryker-mocha-framework@0.13.2) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.13.1"></a>
+## [0.13.1](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.13.0...stryker-mocha-framework@0.13.1) (2018-11-29)
+
+
+
+
+**Note:** Version bump only for package stryker-mocha-framework
+
+<a name="0.13.0"></a>
+# [0.13.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.12.5...stryker-mocha-framework@0.13.0) (2018-11-13)
+
+
+### Features
+
+* **mocha-runner:** use default mocha.opts file, support relative imports ([#1237](https://github.com/stryker-mutator/stryker/issues/1237)) ([2711c2b](https://github.com/stryker-mutator/stryker/commit/2711c2b)), closes [#1046](https://github.com/stryker-mutator/stryker/issues/1046)
+
+
+
+
+<a name="0.12.5"></a>
+## [0.12.5](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.12.3...stryker-mocha-framework@0.12.5) (2018-10-15)
+
+
+### Bug Fixes
+
+* **version:** Version bump for failed release ([8cf9e87](https://github.com/stryker-mutator/stryker/commit/8cf9e87))
+
+
+
+
+<a name="0.12.3"></a>
+## [0.12.3](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.12.2...stryker-mocha-framework@0.12.3) (2018-10-03)
+
+
+
+
+**Note:** Version bump only for package stryker-mocha-framework
+
+<a name="0.12.2"></a>
+## [0.12.2](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.12.1...stryker-mocha-framework@0.12.2) (2018-09-14)
+
+
+
+
+**Note:** Version bump only for package stryker-mocha-framework
+
 <a name="0.12.1"></a>
 ## [0.12.1](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.12.0...stryker-mocha-framework@0.12.1) (2018-08-21)
 

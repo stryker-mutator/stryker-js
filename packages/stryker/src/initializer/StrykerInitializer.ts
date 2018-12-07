@@ -6,6 +6,8 @@ import { getLogger } from 'stryker-api/logging';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
+import StrykerPresets from './StrykerPresets';
+import Preset from './presets/Preset';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -15,20 +17,64 @@ const enum PackageManager {
 export default class StrykerInitializer {
 
   private readonly log = getLogger(StrykerInitializer.name);
-  private inquirer = new StrykerInquirer();
+  private readonly inquirer = new StrykerInquirer();
 
-  constructor(private out = console.log, private client: NpmClient = new NpmClient()) { }
+  constructor(private readonly out = console.log, private readonly client: NpmClient = new NpmClient(), private readonly strykerPresets: Preset[] = StrykerPresets) { }
 
   /**
    * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
    * @function
    */
-  async initialize(): Promise<void> {
+  public async initialize(): Promise<void> {
     const configWriter = new StrykerConfigWriter(this.out);
     configWriter.guardForExistingConfig();
     this.patchProxies();
+    const selectedPreset = await this.selectPreset();
+    if (selectedPreset) {
+      await this.initiatePreset(configWriter, selectedPreset);
+    }
+    else {
+      await this.initiateCustom(configWriter);
+    }
+    this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
+    this.out('Let\'s kill some mutants with this command: `stryker run`');
+  }
+
+  /**
+   * The typed rest client works only with the specific HTTP_PROXY and HTTPS_PROXY env settings.
+   * Let's make sure they are available.
+   */
+  private patchProxies() {
+    const copyEnvVariable = (from: string, to: string) => {
+      if (process.env[from] && !process.env[to]) {
+        process.env[to] = process.env[from];
+      }
+    };
+    copyEnvVariable('http_proxy', 'HTTP_PROXY');
+    copyEnvVariable('https_proxy', 'HTTPS_PROXY');
+  }
+
+  private async selectPreset(): Promise<Preset | undefined> {
+    const presetOptions: Preset[] = this.strykerPresets;
+    if (presetOptions.length) {
+      this.log.debug(`Found presets: ${JSON.stringify(presetOptions)}`);
+      return this.inquirer.promptPresets(presetOptions);
+    } else {
+      this.log.debug('No presets have been configured, reverting to custom configuration');
+      return undefined;
+    }
+  }
+
+  private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: Preset) {
+    const presetConfig = await selectedPreset.createConfig();
+    await configWriter.writePreset(presetConfig);
+    const selectedPackageManager = await this.selectPackageManager();
+    this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
+  }
+
+  private async initiateCustom(configWriter: StrykerConfigWriter) {
     const selectedTestRunner = await this.selectTestRunner();
-    const selectedTestFramework = selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name) 
+    const selectedTestFramework = selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name)
       ? await this.selectTestFramework(selectedTestRunner) : null;
     const selectedMutator = await this.selectMutator();
     const selectedTranspilers = await this.selectTranspilers();
@@ -47,29 +93,13 @@ export default class StrykerInitializer {
       selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies));
     this.installNpmDependencies(npmDependencies, selectedPackageManager);
-    this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
-    this.out('Let\'s kill some mutants with this command: `stryker run`');
-  }
-
-  /**
-  * The typed rest client works only with the specific HTTP_PROXY and HTTPS_PROXY env settings.
-  * Let's make sure they are available.
-  */
-  private patchProxies() {
-    const copyEnvVariable = (from: string, to: string) => {
-      if (process.env[from] && !process.env[to]) {
-        process.env[to] = process.env[from];
-      }
-    };
-    copyEnvVariable('http_proxy', 'HTTP_PROXY');
-    copyEnvVariable('https_proxy', 'HTTPS_PROXY');
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {
     const testRunnerOptions = await this.client.getTestRunnerOptions();
     if (testRunnerOptions.length) {
       this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
-      return await this.inquirer.promptTestRunners(testRunnerOptions);
+      return this.inquirer.promptTestRunners(testRunnerOptions);
     } else {
       this.out('Unable to select a test runner. You will need to configure it manually.');
       return null;
@@ -118,7 +148,7 @@ export default class StrykerInitializer {
     const mutatorOptions = await this.client.getMutatorOptions();
     if (mutatorOptions.length) {
       this.log.debug(`Found mutators: ${JSON.stringify(mutatorOptions)}`);
-      return await this.inquirer.promptMutator(mutatorOptions);
+      return this.inquirer.promptMutator(mutatorOptions);
     } else {
       this.out('Unable to select a mutator. You will need to configure it manually.');
       return null;
@@ -129,7 +159,7 @@ export default class StrykerInitializer {
     const options = await this.client.getTranspilerOptions();
     if (options.length) {
       this.log.debug(`Found transpilers: ${JSON.stringify(options)}`);
-      return await this.inquirer.promptTranspilers(options);
+      return this.inquirer.promptTranspilers(options);
     } else {
       this.out('Unable to select transpilers. You will need to configure it manually, if you want to use any.');
       return null;
@@ -155,9 +185,9 @@ export default class StrykerInitializer {
   }
 
   /**
-  * Install the npm packages
-  * @function
-  */
+   * Install the npm packages
+   * @function
+   */
   private installNpmDependencies(dependencies: string[], selectedOption: PromptOption): void {
     if (dependencies.length === 0) {
       return;
