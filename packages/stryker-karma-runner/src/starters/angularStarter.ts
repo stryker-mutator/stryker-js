@@ -28,7 +28,7 @@ export async function start(ngConfig?: NgConfigOptions): Promise<void> {
   if (ngConfig && ngConfig.testArguments) {
     const testArguments: NgTestArguments = ngConfig.testArguments;
     Object.keys(testArguments).forEach(key => {
-      const decamelizedKey = decamelize(key);
+      const decamelizedKey = decamelize(key, '-');
       if (
         'progress' !== key &&
         'karma-config' !== decamelizedKey &&
