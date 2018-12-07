@@ -52,7 +52,7 @@ describe('KarmaTestRunner', () => {
     new KarmaTestRunner(settings);
     expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedSetup.config, karmaConfigFile: expectedSetup.configFile });
     expect(logMock.warn).not.called;
-    expect(projectStarterModule.default).calledWith(expectedSetup.projectType);
+    expect(projectStarterModule.default).calledWith(expectedSetup);
   });
 
   it('should load deprecated karma options', () => {
