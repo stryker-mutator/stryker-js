@@ -5,14 +5,22 @@ import * as karma from 'karma';
 import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
-import { RunnerOptions, TestResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
+import {
+  RunnerOptions,
+  TestResult,
+  TestStatus,
+  RunStatus
+} from 'stryker-api/test_runner';
 import LoggerStub from '../helpers/LoggerStub';
-import StrykerKarmaSetup, { DEPRECATED_KARMA_CONFIG, DEPRECATED_KARMA_CONFIG_FILE } from '../../src/StrykerKarmaSetup';
+import StrykerKarmaSetup, {
+  DEPRECATED_KARMA_CONFIG,
+  DEPRECATED_KARMA_CONFIG_FILE,
+  NgConfigOptions
+} from '../../src/StrykerKarmaSetup';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
 
 describe('KarmaTestRunner', () => {
-
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
   let settings: RunnerOptions;
   let setGlobalsStub: sinon.SinonStub;
@@ -22,7 +30,9 @@ describe('KarmaTestRunner', () => {
 
   beforeEach(() => {
     settings = {
-      fileNames: ['foo.js', 'bar.js'], port: 42, strykerOptions: {}
+      fileNames: ['foo.js', 'bar.js'],
+      port: 42,
+      strykerOptions: {}
     };
     reporterMock = new EventEmitter();
     projectStarterMock = sandbox.createStubInstance(ProjectStarter);
@@ -37,7 +47,11 @@ describe('KarmaTestRunner', () => {
 
   it('should load default setup', () => {
     new KarmaTestRunner(settings);
-    expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: undefined, karmaConfigFile: undefined });
+    expect(setGlobalsStub).calledWith({
+      karmaConfig: undefined,
+      karmaConfigFile: undefined,
+      port: 42
+    });
   });
 
   it('should setup karma from stryker options', () => {
@@ -50,21 +64,76 @@ describe('KarmaTestRunner', () => {
     };
     settings.strykerOptions.karma = expectedSetup;
     new KarmaTestRunner(settings);
-    expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedSetup.config, karmaConfigFile: expectedSetup.configFile });
+    expect(setGlobalsStub).calledWith({
+      karmaConfig: expectedSetup.config,
+      karmaConfigFile: expectedSetup.configFile,
+      port: 42
+    });
     expect(logMock.warn).not.called;
     expect(projectStarterModule.default).calledWith(expectedSetup);
+  });
+  it('should run ng test with parameters from stryker options', () => {
+    const ngConfig: NgConfigOptions = {};
+    ngConfig.testArguments = {
+      project: '@ns/mypackage'
+    };
+    const expectedSetup: StrykerKarmaSetup = {
+      config: {
+        basePath: 'foo/bar'
+      },
+      configFile: 'baz.conf.js',
+      ngConfig,
+      projectType: 'angular-cli'
+    };
+    settings.strykerOptions.karma = expectedSetup;
+    new KarmaTestRunner(settings);
+    expect(setGlobalsStub).calledWith({
+      karmaConfig: expectedSetup.config,
+      karmaConfigFile: expectedSetup.configFile,
+      port: 42,
+      project: ngConfig.testArguments.project
+    });
+    expect(logMock.warn).not.called;
+    expect(projectStarterModule.default).calledWith(expectedSetup);
+  });
+  it('should throw an error when ngOptions are prefixed', () => {
+    const ngConfig: NgConfigOptions = {};
+    ngConfig.testArguments = {
+      '--project': '@ns/mypackage'
+    };
+    const expectedSetup: StrykerKarmaSetup = {
+      config: {
+        basePath: 'foo/bar'
+      },
+      configFile: 'baz.conf.js',
+      ngConfig,
+      projectType: 'angular-cli'
+    };
+    settings.strykerOptions.karma = expectedSetup;
+    new KarmaTestRunner(settings);
+    expect(setGlobalsStub).Throw();
   });
 
   it('should load deprecated karma options', () => {
     const expectedKarmaConfig = { basePath: 'foobar' };
     const expectedKarmaConfigFile = 'karmaConfigFile';
     settings.strykerOptions[DEPRECATED_KARMA_CONFIG] = expectedKarmaConfig;
-    settings.strykerOptions[DEPRECATED_KARMA_CONFIG_FILE] = expectedKarmaConfigFile;
+    settings.strykerOptions[
+      DEPRECATED_KARMA_CONFIG_FILE
+    ] = expectedKarmaConfigFile;
     new KarmaTestRunner(settings);
-    expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedKarmaConfig, karmaConfigFile: expectedKarmaConfigFile });
+    expect(setGlobalsStub).calledWith({
+      karmaConfig: expectedKarmaConfig,
+      karmaConfigFile: expectedKarmaConfigFile,
+      port: 42
+    });
     expect(logMock.warn).calledTwice;
-    expect(logMock.warn).calledWith('[deprecated]: config option karmaConfigFile is renamed to karma.configFile');
-    expect(logMock.warn).calledWith('[deprecated]: config option karmaConfig is renamed to karma.config');
+    expect(logMock.warn).calledWith(
+      '[deprecated]: config option karmaConfigFile is renamed to karma.configFile'
+    );
+    expect(logMock.warn).calledWith(
+      '[deprecated]: config option karmaConfig is renamed to karma.config'
+    );
   });
 
   it('should load deprecated karma options', () => {
@@ -84,8 +153,14 @@ describe('KarmaTestRunner', () => {
     };
     settings.strykerOptions.karma = config;
     new KarmaTestRunner(settings);
-    expect(setGlobalsStub).calledWith({ port: 42, karmaConfig: expectedSetup.config, karmaConfigFile: expectedSetup.configFile });
-    expect(logMock.warn).calledWith('DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.');
+    expect(setGlobalsStub).calledWith({
+      karmaConfig: expectedSetup.config,
+      karmaConfigFile: expectedSetup.configFile,
+      port: 42
+    });
+    expect(logMock.warn).calledWith(
+      'DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.'
+    );
   });
 
   describe('init', () => {
@@ -210,10 +285,13 @@ describe('KarmaTestRunner', () => {
   });
 
   function testResult(overrides?: Partial<TestResult>): TestResult {
-    return Object.assign({
-      name: 'foobar',
-      status: TestStatus.Success,
-      timeSpentMs: 0
-    }, overrides);
+    return Object.assign(
+      {
+        name: 'foobar',
+        status: TestStatus.Success,
+        timeSpentMs: 0
+      },
+      overrides
+    );
   }
 });
