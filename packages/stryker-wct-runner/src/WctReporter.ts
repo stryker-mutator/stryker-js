@@ -10,14 +10,14 @@ export default class WctReporter {
   public results: TestResult[] = [];
   private before = new Date();
 
-  constructor(private readonly emitter: EventEmitter) {
-    emitter.on(TEST_START_EVENT, this.testStart);
-    emitter.on(TEST_END_EVENT, this.testEnd);
+  constructor(private readonly context: EventEmitter) {
+    context.on(TEST_START_EVENT, this.testStart);
+    context.on(TEST_END_EVENT, this.testEnd);
   }
 
   public dispose() {
-    this.emitter.removeListener(TEST_START_EVENT, this.testStart);
-    this.emitter.removeListener(TEST_END_EVENT, this.testEnd);
+    this.context.removeListener(TEST_START_EVENT, this.testStart);
+    this.context.removeListener(TEST_END_EVENT, this.testEnd);
   }
 
   // Both testStart and testEnd are properties here, rather than methods. This is deliberate to allow for `this` pointer to work
