@@ -54,6 +54,7 @@ export default class WctReporter {
   }
 
   private testNamePartsToString(testNameParts: string[]): string {
+    // First part is the file name
     return testNameParts.splice(1).join(' ').trim();
   }
 
