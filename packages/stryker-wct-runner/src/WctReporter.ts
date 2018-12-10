@@ -54,14 +54,7 @@ export default class WctReporter {
   }
 
   private testNamePartsToString(testNameParts: string[]): string {
-    return testNameParts.reduce((prev, current, index) => {
-      if (index === 0) {
-        // First part is the file name
-        return '';
-      } else {
-        return `${prev} ${current}`;
-      }
-    }, '').trim();
+    return testNameParts.splice(1).join(' ').trim();
   }
 
   private toTestResultStatus(state: CompletedState): TestStatus {
