@@ -11,6 +11,6 @@ module.exports = function(config) {
       npm: true
     },
     maxConcurrentTestRunners: 2,
-    timeoutMS: 10000
+    timeoutMS: 30000
   });
 };
