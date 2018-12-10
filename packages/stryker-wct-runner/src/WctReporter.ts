@@ -11,11 +11,8 @@ export default class WctReporter {
   private before = new Date();
 
   constructor(private readonly emitter: EventEmitter) {
-    emitter.on(
-      TEST_START_EVENT, this.testStart
-    );
-    emitter.on(
-      TEST_END_EVENT, this.testEnd);
+    emitter.on(TEST_START_EVENT, this.testStart);
+    emitter.on(TEST_END_EVENT, this.testEnd);
   }
 
   public dispose() {
