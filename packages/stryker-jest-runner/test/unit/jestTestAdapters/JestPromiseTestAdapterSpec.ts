@@ -9,6 +9,7 @@ describe('JestPromiseTestAdapter', () => {
   let runCLIStub: sinon.SinonStub;
 
   const projectRoot = '/path/to/project';
+  const fileNameUnderTest = '/path/to/file';
   const jestConfig: any = { rootDir: projectRoot };
 
   beforeEach(() => {
@@ -37,12 +38,39 @@ describe('JestPromiseTestAdapter', () => {
     }, [projectRoot]));
   });
 
+  it('should call the runCLI method with the --findRelatedTests flag', async () => {
+    await jestPromiseTestAdapter.run(jestConfig, projectRoot, fileNameUnderTest);
+
+    assert(runCLIStub.calledWith({
+      _: [fileNameUnderTest],
+      config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+      findRelatedTests: true,
+      runInBand: true,
+      silent: true
+    }, [projectRoot]));
+  });
+
   it('should call the runCLI method and return the test result', async () => {
     const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot);
 
     expect(result).to.deep.equal({
       config: {
         config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+        runInBand: true,
+        silent: true
+      },
+      result: 'testResult'
+    });
+  });
+
+  it('should call the runCLI method and return the test result when run with --findRelatedTests flag', async () => {
+    const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot, fileNameUnderTest);
+
+    expect(result).to.deep.equal({
+      config: {
+        _: [fileNameUnderTest],
+        config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+        findRelatedTests: true,
         runInBand: true,
         silent: true
       },

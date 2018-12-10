@@ -4,11 +4,12 @@ import { Config } from 'stryker-api/config';
 import * as fakeResults from '../helpers/testResultProducer';
 import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
-import { RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { RunStatus, TestStatus, RunOptions } from 'stryker-api/test_runner';
 import currentLogMock from '../helpers/logMock';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';
+  const runOptions: RunOptions = { timeout: 0 };
 
   let jestTestAdapterFactoryStub: sinon.SinonStub;
   let runJestStub: sinon.SinonStub;
@@ -44,13 +45,13 @@ describe('JestTestRunner', () => {
   });
 
   it('should call jestTestAdapterFactory "getJestTestAdapter" method to obtain a testRunner', async () => {
-    await jestTestRunner.run();
+    await jestTestRunner.run(runOptions);
 
     assert(jestTestAdapterFactoryStub.called);
   });
 
   it('should call the run function with the provided config and the projectRoot', async () => {
-    await jestTestRunner.run();
+    await jestTestRunner.run(runOptions);
 
     assert(runJestStub.called);
   });
@@ -58,7 +59,7 @@ describe('JestTestRunner', () => {
   it('should call the jestTestRunner run method and return a correct runResult', async () => {
     runJestStub.resolves({ results: fakeResults.createSuccessResult() });
 
-    const result = await jestTestRunner.run();
+    const result = await jestTestRunner.run(runOptions);
 
     expect(result).to.deep.equal({
       errorMessages: [],
@@ -77,7 +78,7 @@ describe('JestTestRunner', () => {
   it('should call the jestTestRunner run method and return a skipped runResult', async () => {
     runJestStub.resolves({ results: fakeResults.createPendingResult() });
 
-    const result = await jestTestRunner.run();
+    const result = await jestTestRunner.run(runOptions);
 
     expect(result).to.deep.equal({
       errorMessages: [],
@@ -96,7 +97,7 @@ describe('JestTestRunner', () => {
   it('should call the jestTestRunner run method and return a negative runResult', async () => {
     runJestStub.resolves({ results: fakeResults.createFailResult() });
 
-    const result = await jestTestRunner.run();
+    const result = await jestTestRunner.run(runOptions);
 
     expect(result).to.deep.equal({
       errorMessages: ['test failed - App.test.js'],
@@ -131,7 +132,7 @@ describe('JestTestRunner', () => {
   it('should return an error result when a runtime error occurs', async () => {
     runJestStub.resolves({ results: { testResults: [], numRuntimeErrorTestSuites: 1 } });
 
-    const result = await jestTestRunner.run();
+    const result = await jestTestRunner.run(runOptions);
 
     expect(result).to.deep.equal({
       errorMessages: [],
@@ -141,7 +142,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should set process.env.NODE_ENV to \'test\' when process.env.NODE_ENV is null', async () => {
-    await jestTestRunner.run();
+    await jestTestRunner.run(runOptions);
 
     expect(processEnvMock.NODE_ENV).to.equal('test');
   });
@@ -149,7 +150,7 @@ describe('JestTestRunner', () => {
   it('should keep the value set in process.env.NODE_ENV if not null', async () => {
     processEnvMock.NODE_ENV = 'stryker';
 
-    await jestTestRunner.run();
+    await jestTestRunner.run(runOptions);
 
     expect(processEnvMock.NODE_ENV).to.equal('stryker');
   });

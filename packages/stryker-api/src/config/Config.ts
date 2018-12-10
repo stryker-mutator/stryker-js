@@ -27,6 +27,7 @@ export default class Config implements StrykerOptions {
     high: 80,
     low: 60
   };
+  public allowConsoleColors: boolean = true;
 
   public set(newConfig: StrykerOptions) {
     if (newConfig) {

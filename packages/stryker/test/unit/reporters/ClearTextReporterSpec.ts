@@ -109,6 +109,23 @@ describe('ClearTextReporter', () => {
       expect(serializedTable).contains(chalk.green('   50.00 '));
       expect(serializedTable).contains(chalk.green('   50.01 '));
     });
+
+    it('should not color score if `allowConsoleColors` config is false', () => {
+      sut = new ClearTextReporter(config({ coverageAnalysis: 'all', thresholds: mutationScoreThresholds({ high: 60, low: 50 }), allowConsoleColors: false }));
+      sut.onScoreCalculated(scoreResult({
+        childResults: [
+          scoreResult({ mutationScore: 60 }),
+          scoreResult({ mutationScore: 50 }),
+          scoreResult({ mutationScore: 49.99 })
+        ],
+        mutationScore: 60.01
+      }));
+      const serializedTable: string = stdoutStub.getCall(0).args[0];
+      expect(serializedTable).contains('   49.99 ');
+      expect(serializedTable).contains('   50.00 ');
+      expect(serializedTable).contains('   60.00 ');
+      expect(serializedTable).contains('   60.01 ');
+    });
   });
 
   describe('when coverageAnalysis is "all"', () => {
@@ -154,6 +171,14 @@ describe('ClearTextReporter', () => {
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
         expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match(colorizeFileAndPosition('sourceFile.ts', 1, 2)));
+      });
+
+      it('should log source file names without colored text when clearTextReporter is not false and allowConsoleColors is false', () => {
+        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', allowConsoleColors: false}));
+
+        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
+
+        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match(`sourceFile.ts:1:2`));
       });
 
       it('should not log source file names with colored text when clearTextReporter is false', () => {

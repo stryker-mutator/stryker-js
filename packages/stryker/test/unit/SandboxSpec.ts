@@ -144,8 +144,19 @@ describe('Sandbox', () => {
       const sut = await Sandbox.create(options, SANDBOX_INDEX, files, null, 0, LOGGING_CONTEXT);
       await sut.run(231313, 'hooks');
       expect(testRunner.run).to.have.been.calledWith({
+        mutatedFileName: undefined,
         testHooks: 'hooks',
-        timeout: 231313
+        timeout: 231313,
+      });
+    });
+
+    it('should run the testRunner with mutatedFileName', async () => {
+      const sut = await Sandbox.create(options, SANDBOX_INDEX, files, null, 0, LOGGING_CONTEXT);
+      await sut.run(231313, 'hooks', 'path/to/file');
+      expect(testRunner.run).to.have.been.calledWith({
+        mutatedFileName: 'path/to/file',
+        testHooks: 'hooks',
+        timeout: 231313,
       });
     });
   });
@@ -196,13 +207,17 @@ describe('Sandbox', () => {
       expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.selectedTests);
     });
 
-    it('should provide the filter code as testHooks and correct timeout', async () => {
+    it('should provide the filter code as testHooks, correct timeout and mutatedFileName', async () => {
       options.timeoutMS = 1000;
       const overheadTimeMS = 42;
       const totalTimeSpend = 12;
       const sut = await Sandbox.create(options, SANDBOX_INDEX, files, testFrameworkStub, overheadTimeMS, LOGGING_CONTEXT);
       await sut.runMutant(transpiledMutant);
-      const expectedRunOptions = { testHooks: wrapInClosure(testFilterCodeFragment), timeout: totalTimeSpend * options.timeoutFactor + options.timeoutMS + overheadTimeMS };
+      const expectedRunOptions = {
+        mutatedFileName: path.resolve('random-folder-3', 'file1'),
+        testHooks: wrapInClosure(testFilterCodeFragment),
+        timeout: totalTimeSpend * options.timeoutFactor + options.timeoutMS + overheadTimeMS
+      };
       expect(testRunner.run).calledWith(expectedRunOptions);
     });
 

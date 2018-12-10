@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.7.10"></a>
+## [0.7.10](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.7.9...stryker-babel-transpiler@0.7.10) (2018-11-29)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
+<a name="0.7.9"></a>
+## [0.7.9](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.7.8...stryker-babel-transpiler@0.7.9) (2018-11-29)
+
+
+
+
+**Note:** Version bump only for package stryker-babel-transpiler
+
 <a name="0.7.8"></a>
 ## [0.7.8](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.7.7...stryker-babel-transpiler@0.7.8) (2018-11-13)
 

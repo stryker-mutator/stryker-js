@@ -1,6 +1,6 @@
 {
   "name": "stryker-webpack-transpiler",
-  "version": "0.7.9",
+  "version": "0.7.11",
   "description": "A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -11,7 +11,6 @@
     "postbuild": "tslint -p tsconfig.json",
     "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 84 --branches 65 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "posttest": "npm run stryker",
     "stryker": "node ../stryker/bin/stryker run"
   },
   "repository": {
@@ -42,11 +41,11 @@
     "@types/memory-fs": "~0.3.0",
     "@types/webpack": "~4.4.12",
     "raw-loader": "~0.5.1",
-    "stryker-api": "^0.21.5",
-    "webpack": "~4.25.1"
+    "stryker-api": "^0.22.0",
+    "webpack": "~4.27.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.22.0",
+    "stryker-api": ">=0.18.0 <0.23.0",
     "webpack": ">=2.0.0"
   },
   "dependencies": {

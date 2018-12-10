@@ -47,7 +47,14 @@ export default class StrykerCli {
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
       .option('--logLevel <level>', 'Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
       .option('--fileLogLevel <level>', 'Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "off"')
+      .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean, true)
       .parse(this.argv);
+
+    function parseBoolean(val: string) {
+      console.log('bool: ', val);
+      const v = val.toLocaleLowerCase() ;
+      return v !== 'false' && v !== '0';
+    }
 
     LogConfigurator.configureMainProcess(program.logLevel);
     const log = getLogger(StrykerCli.name);

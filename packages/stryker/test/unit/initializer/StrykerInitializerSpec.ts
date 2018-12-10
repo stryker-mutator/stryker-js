@@ -8,6 +8,10 @@ import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import * as restClient from 'typed-rest-client/RestClient';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
+import NpmClient from '../../../src/initializer/NpmClient';
+import { format } from 'prettier';
+import PresetConfiguration from '../../../src/initializer/presets/PresetConfiguration';
+import Preset from '../../../src/initializer/presets/Preset';
 
 describe('StrykerInitializer', () => {
   let log: Mock<Logger>;
@@ -19,10 +23,17 @@ describe('StrykerInitializer', () => {
   let restClientPackageGet: sinon.SinonStub;
   let restClientSearchGet: sinon.SinonStub;
   let out: sinon.SinonStub;
+  let presets: Preset[];
+  let presetMock: Mock<Preset>;
 
   beforeEach(() => {
     log = currentLogMock();
     out = sandbox.stub();
+    presets = [];
+    presetMock = {
+      createConfig: sandbox.stub(),
+      name: 'awesome-preset'
+    };
     inquirerPrompt = sandbox.stub(inquirer, 'prompt');
     childExecSync = sandbox.stub(child, 'execSync');
     fsWriteFile = sandbox.stub(fsAsPromised, 'writeFile');
@@ -36,7 +47,7 @@ describe('StrykerInitializer', () => {
       .withArgs('npm').returns({
         get: restClientPackageGet
       });
-    sut = new StrykerInitializer(out);
+    sut = new StrykerInitializer(out, new NpmClient(), presets);
   });
 
   afterEach(() => {
@@ -67,9 +78,10 @@ describe('StrykerInitializer', () => {
         'stryker-webpack': null
       });
       fsWriteFile.resolves({});
+      presets.push(presetMock);
     });
 
-    it('should prompt for test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
+    it('should prompt for preset, test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
       arrangeAnswers({
         mutator: 'typescript',
         packageManager: 'yarn',
@@ -79,15 +91,19 @@ describe('StrykerInitializer', () => {
         transpilers: ['webpack']
       });
       await sut.initialize();
-      expect(inquirerPrompt).to.have.been.callCount(6);
-      const [promptTestRunner, promptTestFramework, promptMutator, promptTranspilers, promptReporters, promptPackageManagers]: inquirer.Question[] = [
+      expect(inquirerPrompt).to.have.been.callCount(7);
+      const [promptPreset, promptTestRunner, promptTestFramework, promptMutator, promptTranspilers, promptReporters, promptPackageManagers]: inquirer.Question[] = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
         inquirerPrompt.getCall(3).args[0],
         inquirerPrompt.getCall(4).args[0],
-        inquirerPrompt.getCall(5).args[0]
+        inquirerPrompt.getCall(5).args[0],
+        inquirerPrompt.getCall(6).args[0],
       ];
+      expect(promptPreset.type).to.eq('list');
+      expect(promptPreset.name).to.eq('preset');
+      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
       expect(promptTestRunner.type).to.eq('list');
       expect(promptTestRunner.name).to.eq('testRunner');
       expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', new inquirer.Separator(), 'command']);
@@ -101,6 +117,73 @@ describe('StrykerInitializer', () => {
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
       expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
+    });
+
+    it('should immediately complete when a preset and package manager is chosen', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        preset: 'awesome-preset'
+      });
+      resolvePresetConfig();
+      await sut.initialize();
+      expect(inquirerPrompt).to.have.been.callCount(2);
+      expect(out).to.have.been.calledWith('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
+      expect(out).to.have.been.calledWith('Let\'s kill some mutants with this command: `stryker run`');
+    });
+
+    it('should correctly load the stryker configuration file', async () => {
+      const config = `{
+        'awesome-conf': 'awesome',
+      }`;
+      const handbookUrl = 'https://awesome-preset.org';
+      resolvePresetConfig({
+        config,
+        handbookUrl
+      });
+      const expectedOutput = format(`
+        // This config was generated using a preset.
+        // Please see the handbook for more information: ${handbookUrl}
+        module.exports = function(config){
+          config.set(
+            ${config}
+          );
+        }`, { parser: 'babylon' });
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        preset: 'awesome-preset'
+      });
+      await sut.initialize();
+      expect(fsWriteFile).to.have.been.calledWith('stryker.conf.js', expectedOutput);
+    });
+
+    it('should correctly load dependencies from the preset', async () => {
+      resolvePresetConfig({ dependencies: ['my-awesome-dependency', 'another-awesome-dependency'] });
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        preset: 'awesome-preset'
+      });
+      await sut.initialize();
+      expect(fsWriteFile).to.have.been.calledOnce;
+      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker-api my-awesome-dependency another-awesome-dependency', { stdio: [0, 1, 2] });
+    });
+
+    it('should correctly load configuration from a preset', async () => {
+      resolvePresetConfig();
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        preset: 'awesome-preset'
+      });
+      await sut.initialize();
+      expect(inquirerPrompt).to.have.been.callCount(2);
+      const [promptPreset, promptPackageManager]: inquirer.Question[] = [
+        inquirerPrompt.getCall(0).args[0],
+        inquirerPrompt.getCall(1).args[0]
+      ];
+      expect(promptPreset.type).to.eq('list');
+      expect(promptPreset.name).to.eq('preset');
+      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
+      expect(promptPackageManager.type).to.eq('list');
+      expect(promptPackageManager.choices).to.deep.eq(['npm', 'yarn']);
     });
 
     it('should not prompt for testFramework if test runner is "command"', async () => {
@@ -118,7 +201,7 @@ describe('StrykerInitializer', () => {
         transpilers: ['webpack']
       });
       await sut.initialize();
-      expect(inquirerPrompt).to.have.been.callCount(6);
+      expect(inquirerPrompt).to.have.been.callCount(7);
       expect(out).to.have.been.calledWith('OK, downgrading coverageAnalysis to "all"');
       expect(fsAsPromised.writeFile).to.have.been.calledWith('stryker.conf.js', sinon.match('coverageAnalysis: "all"'));
     });
@@ -182,7 +265,7 @@ describe('StrykerInitializer', () => {
       it('should not prompt for test framework', async () => {
         await sut.initialize();
 
-        expect(inquirerPrompt).to.have.been.callCount(5);
+        expect(inquirerPrompt).to.have.been.callCount(6);
         expect(inquirerPrompt).not.calledWithMatch(sinon.match({ name: 'testFramework' }));
       });
 
@@ -418,6 +501,7 @@ describe('StrykerInitializer', () => {
   };
 
   interface StrykerInitAnswers {
+    preset: string | null;
     testFramework: string;
     testRunner: string;
     mutator: string;
@@ -430,11 +514,21 @@ describe('StrykerInitializer', () => {
     const answers: StrykerInitAnswers = Object.assign({
       mutator: 'typescript',
       packageManager: 'yarn',
+      preset: null,
       reporters: ['dimension', 'mars'],
       testFramework: 'awesome',
       testRunner: 'awesome',
       transpilers: ['webpack']
     }, answerOverrides);
     inquirerPrompt.resolves(answers);
+  }
+
+  function resolvePresetConfig(presetConfigOverrides?: Partial<PresetConfiguration>) {
+    const presetConfig: PresetConfiguration = {
+      config: '',
+      dependencies: [],
+      handbookUrl: ''
+    };
+    presetMock.createConfig.resolves(Object.assign({}, presetConfig, presetConfigOverrides));
   }
 });

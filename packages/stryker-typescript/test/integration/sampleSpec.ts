@@ -59,7 +59,7 @@ describe('Sample integration', () => {
     const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpression');
     const correctResult = await transpiler.transpile([mutateFile(mathDotTS, firstBinaryMutant)]);
     await expect(transpiler.transpile([mutateFile(mathDotTS, stringSubtractMutant)]))
-      .rejectedWith('error TS2362: The left-hand side of an arithmetic operation must be of type \'any\', \'number\' or an enum type');
+      .rejectedWith('error TS2362: The left-hand side of an arithmetic operation must be of type \'any\', \'number\', \'bigint\' or an enum type.');
     expect(correctResult).lengthOf(1);
     expect(path.resolve(correctResult[0].name)).eq(path.resolve(path.dirname(mathDotTS.name), 'math.js'));
   });
