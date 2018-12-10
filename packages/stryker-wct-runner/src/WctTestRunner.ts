@@ -5,7 +5,6 @@ import { StrykerOptions } from 'stryker-api/core';
 import WctReporter from './WctReporter';
 import WctLogger from './WctLogger';
 import { getLogger } from 'stryker-api/logging';
-import { runInNewContext } from 'vm';
 const WCT_PACKAGE = 'web-component-tester';
 const FORCED_WCT_OPTIONS = Object.freeze({
   persistent: false
