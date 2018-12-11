@@ -1,0 +1,52 @@
+{
+  "description": "Material design button",
+  "keywords": [
+    "web-components",
+    "web-component",
+    "polymer",
+    "paper",
+    "button"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/PolymerElements/paper-button.git"
+  },
+  "homepage": "https://github.com/PolymerElements/paper-button",
+  "name": "@polymer/paper-button",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "@polymer/iron-demo-helpers": "^3.0.1",
+    "@polymer/iron-icon": "^3.0.0-pre.26",
+    "@polymer/iron-icons": "^3.0.0-pre.26",
+    "@polymer/iron-test-helpers": "^3.0.0-pre.26",
+    "@polymer/test-fixture": "^4.0.1",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "wct-browser-legacy": "^1.0.1",
+    "web-component-tester": "^6.9.0",
+    "webmat": "^0.2.0"
+  },
+  "localDependencies": {
+    "stryker": "../../../packages/stryker",
+    "stryker-wct-runner": "../../../packages/stryker-wct-runner",
+    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
+    "@stryker-mutator/util": "../../../packages/stryker-util"
+  },
+  "scripts": {
+    "prepare": "install-local",
+    "pretest": "rimraf \"reports\" \"stryker.log\"",
+    "test": "cross-env LAUNCHPAD_BROWSERS=chrome stryker run",
+    "posttest": "mocha --require ts-node/register verify/*.ts"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "version": "3.0.1",
+  "main": "paper-button.js",
+  "author": "The Polymer Authors",
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0",
+    "@polymer/iron-flex-layout": "^3.0.0-pre.26",
+    "@polymer/paper-behaviors": "^3.0.0-pre.27",
+    "@polymer/paper-styles": "^3.0.0-pre.26"
+  }
+}

@@ -1,4 +1,5 @@
 {
+  "name": "stryker-parent",
   "private": true,
   "devDependencies": {
     "@types/babel-core": "^6.25.5",
@@ -17,12 +18,15 @@
     "@types/rimraf": "2.0.2",
     "@types/sinon": "5.0.5",
     "@types/sinon-chai": "^3.2.0",
+    "acorn": "^6.0.4",
     "browserify": "^16.2.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^4.0.1",
+    "cross-env": "^5.2.0",
     "execa": "^1.0.0",
     "glob": "^7.1.1",
+    "if-node-version": "^1.1.1",
     "jasmine": "^3.1.0",
     "jasmine-core": "^3.1.0",
     "lerna": "^2.11.0",
@@ -47,7 +51,7 @@
     "postinstall": "lerna bootstrap && link-parent-bin",
     "build": "lerna run build",
     "pretest": "npm run build",
-    "test": "lerna run test",
+    "test": "lerna run test --stream",
     "posttest": "cd integrationTest && npm i && npm t && cd ..",
     "clean-integration-test": "node tasks/cleanIntegrationTest.js",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
@@ -57,6 +61,7 @@
     "npm": ">=5"
   },
   "dependencies": {
-    "@types/node": "^10.11.5"
+    "@types/node": "^10.11.5",
+    "web-component-tester": "^6.9.0"
   }
 }

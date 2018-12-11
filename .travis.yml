@@ -5,7 +5,9 @@ node_js:
 install: npm install
 before_install:
 - if [[ `npm -v` = 3* ]]; then npm i -g npm@5; fi
-sudo: required
+sudo: 'false'
+addons:
+  chrome: stable
 before_script:
 - npm ls
 after_success: ".travis/ci-release.jsh"

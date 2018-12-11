@@ -1,0 +1,64 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Integration test",
+      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
+      "args": [
+        "-u",
+        "tdd",
+        "--timeout",
+        "999999",
+        "--colors",
+        "--exit",
+        "${workspaceFolder}/test/helpers/**/*.js",
+        "${workspaceFolder}/test/integration/**/*.js"
+      ],
+      "env": {
+        "LAUNCHPAD_BROWSERS": "chrome"
+      },
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Unit test",
+      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
+      "args": [
+        "-u",
+        "tdd",
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceFolder}/test/helpers/**/*.js",
+        "${workspaceFolder}/test/unit/**/*.js"
+      ],
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "wct",
+      "program": "${workspaceRoot}/../../node_modules/web-component-tester/bin/wct",
+      "env": {
+        "LAUNCHPAD_BROWSERS": "chrome"
+      },
+      "cwd": "${workspaceFolder}/testResources/htmlTestSuite",
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+        "${workspaceRoot}/test/**/*.js",
+        "${workspaceRoot}/src/**/*.js"
+      ]
+    }
+  ]
+}
