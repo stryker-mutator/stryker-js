@@ -68,6 +68,25 @@ Default: `undefined`
 Specify [karma configuration options](http://karma-runner.github.io/2.0/config/configuration-file.html) directly.
 Options specified here will overrule any options in your karma.conf.js file.
 
+### `karma.ngConfig.testArguments` [`object`]
+
+Default: `undefined`
+
+Add [ng test arguments](https://github.com/angular/angular-cli/wiki/test#options). For example, specify an alternative project with:
+
+```js
+karma: {
+    projectType: 'angular-cli',
+    ngConfig: {
+        testArguments: {
+            project: 'my-lib'
+        }
+    }
+}
+```
+
+This will run ng test with `--project` argument: `ng test --project=my-lib`.
+
 ## Non overridable options
 
 The browser's life cycle is determined by `stryker-karma-runner`. I.e. these settings cannot be overridden:
@@ -98,6 +117,12 @@ exports = function(config){
             projectType: 'angular-cli',
             karma: {
                 configFile: 'src/karma.conf.js'
+            },
+            ngConfig: {
+                // Override ng arguments here
+                testArguments: {
+                    project: 'my-lib'
+                }
             }
         }
         // ...
