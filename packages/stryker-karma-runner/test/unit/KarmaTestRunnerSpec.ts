@@ -69,6 +69,7 @@ describe('KarmaTestRunner', () => {
       karmaConfigFile: expectedSetup.configFile,
       port: 42
     });
+
     expect(logMock.warn).not.called;
     expect(projectStarterModule.default).calledWith(expectedSetup);
   });
@@ -90,28 +91,10 @@ describe('KarmaTestRunner', () => {
     expect(setGlobalsStub).calledWith({
       karmaConfig: expectedSetup.config,
       karmaConfigFile: expectedSetup.configFile,
-      port: 42,
-      project: ngConfig.testArguments.project
+      port: 42
     });
     expect(logMock.warn).not.called;
     expect(projectStarterModule.default).calledWith(expectedSetup);
-  });
-  it('should throw an error when ngOptions are prefixed', () => {
-    const ngConfig: NgConfigOptions = {};
-    ngConfig.testArguments = {
-      '--project': '@ns/mypackage'
-    };
-    const expectedSetup: StrykerKarmaSetup = {
-      config: {
-        basePath: 'foo/bar'
-      },
-      configFile: 'baz.conf.js',
-      ngConfig,
-      projectType: 'angular-cli'
-    };
-    settings.strykerOptions.karma = expectedSetup;
-    new KarmaTestRunner(settings);
-    expect(setGlobalsStub).Throw();
   });
 
   it('should load deprecated karma options', () => {
