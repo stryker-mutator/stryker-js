@@ -13,15 +13,14 @@ describe('angularStarter', () => {
   });
 
   it('should throw an error if angular cli version < 6.1.0', async () => {
-    requireModuleStub
-      .withArgs('@angular/cli/package')
-      .returns({ version: '6.0.8' });
+    setAngularVersion('6.0.8');
     await expect(sut.start()).rejectedWith(
       'Your @angular/cli version (6.0.8) is not supported. Please install 6.1.0 or higher'
     );
   });
 
   it('should support version 6.1.0 and up inc release candidates', async () => {
+    cliStub.resolves();
     requireModuleStub
       .withArgs('@angular/cli/package')
       .onFirstCall()
@@ -36,9 +35,8 @@ describe('angularStarter', () => {
   });
 
   it('should execute the cli', async () => {
-    requireModuleStub
-      .withArgs('@angular/cli/package')
-      .returns({ version: '100' });
+    cliStub.resolves();
+    setAngularVersion();
     await sut.start();
     expect(cliStub).calledWith({
       cliArgs: [
@@ -53,16 +51,50 @@ describe('angularStarter', () => {
     });
   });
 
-  it('should throw an error when ngOptions are prefixed', async () => {
-    requireModuleStub
-      .withArgs('@angular/cli/package')
-      .returns({ version: '100' });
+  it('should reject if cliStub resolves with `1` (exit code)', async () => {
+    setAngularVersion();
+    cliStub.resolves(1);
+    await expect(sut.start()).rejectedWith('`ng test` command failed with exit code 1');
+  });
+
+  it('should forward ngOptions', async () => {
+    setAngularVersion();
+    cliStub.resolves();
+    await sut.start({
+      testArguments: {
+        baz: 'true',
+        foo: 'bar',
+        fooBar: 'baz'
+      }
+    });
+    expect(cliStub).calledWith({
+      cliArgs: [
+        'test',
+        '--progress=false',
+        `--karma-config=${require.resolve('../../../src/starters/stryker-karma.conf')}`,
+        '--baz=true',
+        '--foo=bar',
+        '--foo-bar=baz'
+      ],
+      inputStream: process.stdin,
+      outputStream: process.stdout
+    });
+  });
+
+  it('should reject when ngOptions are prefixed', async () => {
+    setAngularVersion();
     return expect(
       sut.start({
         testArguments: {
           '--project': '@ns/myproj'
         }
       })
-    ).to.be.rejected;
+    ).rejectedWith('Don\'t prefix arguments with dashes (\'-\'). Stryker will do this automatically. Problematic arguments are --project');
   });
+
+  function setAngularVersion(version = '100') {
+    requireModuleStub
+      .withArgs('@angular/cli/package')
+      .returns({ version });
+  }
 });

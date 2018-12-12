@@ -33,11 +33,16 @@ export async function start(ngConfig?: NgConfigOptions): Promise<void> {
       }
     });
   }
-  logger.debug('Starting Angular tests: ng', cliArgs.join(' '));
+  const actualCommand = `ng ${cliArgs.join(' ')}`;
+  logger.debug(`Starting Angular tests: ${actualCommand}`);
   return cli({
     cliArgs,
     inputStream: process.stdin,
     outputStream: process.stdout
+  }).then((exitCode: number) => {
+    if (exitCode > 0) {
+      throw new Error(`\`ng test\` command failed with exit code ${exitCode}. Please run with logLevel 'trace' to see the angular-cli console output (actual command was ${actualCommand})`);
+    }
   });
 }
 
