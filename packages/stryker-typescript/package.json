@@ -1,6 +1,6 @@
 {
   "name": "stryker-typescript",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "description": "A plugin for TypeScript-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -45,7 +45,7 @@
   "devDependencies": {
     "@types/lodash.flatmap": "~4.5.3",
     "@types/semver": "~5.5.0",
-    "stryker-api": "^0.22.0",
+    "stryker-api": "^0.22.1",
     "stryker-mutator-specification": "^0.7.0",
     "surrial": "~0.1.3"
   },
