@@ -92,6 +92,9 @@ describe('MochaOptionsLoader', () => {
   itShouldLoadProperty('--async-only', '', { asyncOnly: true });
   itShouldLoadProperty('--ui', 'qunit', { ui: 'qunit' });
   itShouldLoadProperty('-u', 'qunit', { ui: 'qunit' });
+  itShouldLoadProperty('-g', 'grepthis', { grep: /grepthis/ });
+  itShouldLoadProperty('--grep', '/grep(this|that)/', { grep: /grep(this|that)/ });
+  itShouldLoadProperty('--grep', 'grep(this|that)?', { grep: /grep(this|that)?/ });
 
   it('should not override additional properties', () => {
     readFileStub.returns(`
