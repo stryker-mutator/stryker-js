@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import execa = require('execa');
+import * as semver from 'semver';
 
 const testRootDir = path.resolve(__dirname, 'test');
 let testsRan = 0;
@@ -26,14 +27,27 @@ function execNpm(command: string, testDir: string) {
   });
 }
 
-function runTest(testDir: string) {
-  return execNpm('i', testDir).catch(() => {
-    console.log(`Failed to install in ${testDir}, trying once more`);
-    return execNpm('i', testDir);
-  }).then(() => {
+function satisfiesNodeVersion(testDir: string): boolean {
+  const pkg = require(path.resolve(testRootDir, testDir, 'package.json'));
+  const supportedNodeVersionRange = pkg.engines && pkg.engines.node;
+  if (supportedNodeVersionRange && !semver.satisfies(process.version, supportedNodeVersionRange)) {
+    console.log(`\u2610 ${testDir} skipped (node version ${process.version} did not satisfy ${supportedNodeVersionRange})`);
+    return false;
+  } else {
+    return true;
+  }
+}
+
+async function runTest(testDir: string) {
+  if (satisfiesNodeVersion(testDir)) {
+    try {
+      await execNpm('i', testDir);
+    } catch (error) {
+      console.log(`Failed to install in ${testDir}, trying once more`);
+      await execNpm('i', testDir);
+    }
     console.log(`\u2714 ${testDir} installed`);
-    return execNpm('test', testDir).then(() => {
-      console.log(`\u2714 ${testDir} tested (${++testsRan}/${dirs.length})`);
-    });
-  });
+    await execNpm('test', testDir);
+    console.log(`\u2714 ${testDir} tested (${++testsRan}/${dirs.length})`);
+  }
 }

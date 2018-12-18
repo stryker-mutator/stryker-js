@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.22.0"></a>
+# [0.22.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.21.1...stryker-karma-runner@0.22.0) (2018-12-12)
+
+
+### Features
+
+* **karma-runner:** Configurable ng test arguments ([#1273](https://github.io/stryker-mutator/stryker/issues/1273)) ([4af3101](https://github.io/stryker-mutator/stryker/commit/4af3101))
+
+
+
+
 <a name="0.21.1"></a>
 ## [0.21.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.21.0...stryker-karma-runner@0.21.1) (2018-11-29)
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.13.14"></a>
+## [0.13.14](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.13.13...grunt-stryker@0.13.14) (2018-12-12)
+
+
+### Bug Fixes
+
+* **stryker-api:** Update stryker-api peer dependency version ([677fc28](https://github.com/stryker-mutator/stryker/commit/677fc28))
+
+
+
+
 <a name="0.13.13"></a>
 ## [0.13.13](https://github.com/stryker-mutator/stryker/compare/grunt-stryker@0.13.12...grunt-stryker@0.13.13) (2018-11-29)
 
