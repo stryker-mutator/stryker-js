@@ -11,7 +11,7 @@ abstract class Factory<TSettings, T> {
    */
   constructor(private readonly factoryName: string) { }
 
-  private readonly classMap: { [name: string]: { new (settings: TSettings): T } } = Object.create(null);
+  private readonly classMap: { [name: string]: new (settings: TSettings) => T } = Object.create(null);
 
   /**
    * Retrieves the known names registered to this factory.
@@ -28,7 +28,7 @@ abstract class Factory<TSettings, T> {
    * @param name The name of the item.
    * @param constructor The constructor of the item.
    */
-  public register(name: string, constructor: { new (settings: TSettings): T }): void {
+  public register(name: string, constructor: new (settings: TSettings) => T ): void {
     this.classMap[name] = constructor;
   }
 

@@ -14,9 +14,8 @@ type Func<TS extends any[], R> = (...args: TS) => R;
 
 type PromisifiedFunc<TS extends any[], R> = (...args: TS) => Promise<R>;
 
-interface Constructor<T, TS extends any[]> {
-  new (...args: TS): T;
-}
+type Constructor<T, TS extends any[]> = new (...args: TS) => T;
+
 export type Promisified<T> = {
   [K in keyof T]: T[K] extends PromisifiedFunc<any, any> ? T[K] : T[K] extends Func<infer TS, infer R> ? PromisifiedFunc<TS, R> : () => Promise<T[K]>;
 };

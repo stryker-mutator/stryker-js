@@ -3,7 +3,7 @@ import { Logger } from 'stryker-api/logging';
 
 export type Mock<T> = { [P in keyof T]: sinon.SinonStub; };
 
-export interface Constructor<T> { new(...args: any[]): T; }
+export type Constructor<T> = new (...args: any[]) => T;
 
 export function mock<T>(constructorFn: Constructor<T>): sinon.SinonStubbedInstance<T> {
   return sinon.createStubInstance<T>(constructorFn);
