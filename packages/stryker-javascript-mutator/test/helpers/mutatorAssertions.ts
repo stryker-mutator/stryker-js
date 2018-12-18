@@ -6,9 +6,7 @@ import JavaScriptMutator from '../../src/JavaScriptMutator';
 import NodeMutator from '../../src/mutators/NodeMutator';
 import ExpectMutation from 'stryker-mutator-specification/src/ExpectMutation';
 
-export interface MutatorConstructor {
-  new(): NodeMutator;
-}
+type MutatorConstructor = new() => NodeMutator;
 
 export function verifySpecification(specification: (name: string, expectMutation: ExpectMutation) => void, MutatorClass: MutatorConstructor): void {
   specification(new MutatorClass().name, (actual: string, ...expected: string[]) => expectMutation(new MutatorClass(), actual, ...expected));

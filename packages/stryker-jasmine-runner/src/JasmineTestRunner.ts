@@ -6,7 +6,7 @@ export default class JasmineTestRunner implements TestRunner {
 
   private readonly jasmineConfigFile: string | undefined;
   private readonly fileNames: ReadonlyArray<string>;
-  private readonly Date: { new(): Date } = Date; // take Date prototype now we still can (user might choose to mock it away)
+  private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
 
   constructor(runnerOptions: RunnerOptions) {
     this.jasmineConfigFile = runnerOptions.strykerOptions.jasmineConfigFile;

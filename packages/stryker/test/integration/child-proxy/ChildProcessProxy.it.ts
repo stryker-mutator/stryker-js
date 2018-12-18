@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as getPort from 'get-port';
+import getPort = require('get-port');
 import * as log4js from 'log4js';
 import { expect } from 'chai';
 import { File, LogLevel } from 'stryker-api/core';
