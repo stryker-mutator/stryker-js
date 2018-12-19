@@ -14,35 +14,35 @@
 For an introduction to mutation testing and Stryker's features, see [stryker-mutator.io](https://stryker-mutator.io/).
 
 ## Getting started
-Stryker is a mutation testing framework for JavaScript. It allows you to test your tests by temporarily inserting bugs.
 
-To install Stryker, execute the command:
-```sh
-$ npm install stryker stryker-api --save-dev
+Please follow the [quickstart on the website](https://stryker-mutator.io/stryker/quickstart).
+
+For small js projects, you can try the following command:
+
+```
+npm install --save-dev stryker stryker-api
+# Only for small projects:
+npx stryker run
 ```
 
-***Note:*** *During installation you may run into errors caused by [node-gyp](https://github.com/nodejs/node-gyp). It is safe to ignore them.*
+It will run stryker with default values:
 
-To test if Stryker is installed correctly, execute the command:
-```sh
-$ node_modules/.bin/stryker --version
-```
-
-This should print the latest version of Stryker.
+* Uses `npm test` as your test command
+* Searches for files to mutate in the `lib` and `src` directories
 
 ## Usage
 
 ```sh
-$ node_modules/.bin/stryker <command> [options] [stryker.conf.js]
+$ npx stryker <command> [options] [stryker.conf.js]
 ```
 
 The main `command` for Stryker is `run`, which kicks off mutation testing.
 
-By default, we expect a `stryker.conf.js` file in the current working directory. This can be overridden by specifying a different file as the last parameter.
+Although Stryker can run without any configuration, it is recommended to configure it when you can, as it can greatly improve performance of the mutation testing process. By default, Stryker will look for a `stryker.conf.js` file in the current working directory (if it exists). This can be overridden by specifying a different file as the last parameter.
 
 Before your first run, we recommend you try the `init` command, which helps you to set up this `stryker.conf.js` file and install any missing packages needed for your specific configuration. We recommend you verify the contents of the configuration file after this initialization, to make sure everything is setup correctly. Of course, you can still make changes to it, before you run Stryker for the first time.
 
-The following is an example `stryker.conf.js` file:
+The following is an example `stryker.conf.js` file. It specifies running mocha tests with the mocha test runner.
 
 ```javascript
 module.exports = function(config){
@@ -53,7 +53,7 @@ module.exports = function(config){
     ],
     testFramework: 'mocha',
     testRunner: 'mocha',
-    reporters: ['progress', 'clear-text', 'dots', 'html', 'event-recorder'],
+    reporters: ['progress', 'clear-text', 'html'],
     coverageAnalysis: 'perTest'
   });
 }
@@ -89,7 +89,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 
 ### `mutate` [`string[]`]
 
-Default: *none*  
+Default: `['{src,lib}/**/*.js?(x)', '!{src,lib}/**/__tests__/**/*.js?(x)', '!{src,lib}/**/?(*.)+(spec|test).js?(x)', '!{src,lib}/**/*+(Spec|Test).js?(x)']`  
 Command line: `[--mutate|-m] src/**/*.js,a.js`  
 Config file: `mutate: ['src/**/*.js', 'a.js']` 
   
@@ -112,6 +112,7 @@ For example: install and use the `stryker-karma-runner` to use `karma` as a test
 See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-date list of supported test runners and plugins.
 
 ### `testFramework` [`string`] 
+
 Default: *none*  
 Command line: `--testFramework jasmine`  
 Config file: `testFramework: 'jasmine'`  
@@ -124,9 +125,9 @@ Make sure the a plugin is installed for your chosen test framework. E.g. install
 
 ### `coverageAnalysis` [`string`]
 
-Default: `perTest`  
-Full notation: `--coverageAnalysis perTest`  
-Config file key: `coverageAnalysis: 'perTest'`   
+Default: `off`  
+Command line: `--coverageAnalysis perTest`  
+Config file: `coverageAnalysis: 'perTest'`   
   
 With `coverageAnalysis` you specify which coverage analysis strategy you want to use.
 
@@ -153,7 +154,7 @@ In addition to requiring your test runner to be able to report the code coverage
 ### `mutator` [`object` | `string`]
 Default: `es5`  
 Command line: `--mutator es5`  
-Config file:  `mutator: 'es5' | mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
+Config file:  `mutator: 'es5'` or `mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
 
 With `mutator` you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.  
 The mutator plugin name defaults to `es5` if not specified. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.  
@@ -190,7 +191,7 @@ The `clear-text` reporter supports three additional config options:
 * `logTests` to log the names of unit tests that were run to allow mutants. By default, only the first three are logged. The config for your config file is: `clearTextReporter: { logTests: true },`
 * `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
 
-The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The reporter currently detects [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/). Please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing. On all these environments, it will ignore builds of pull requests. Apart from buildserver-specific environment variables, the reporter uses one environment variable:
+The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The reporter currently detects [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/). Please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing. On all these environments, it will ignore builds of pull requests. Apart from build server specific environment variables, the reporter uses one environment variable:
 
 | Environment variable | Description | Example value |
 | ------------- | ------------- | ----- |
@@ -206,7 +207,6 @@ Default: result of `git ls-files --others --exclude-standard --cached --exclude 
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`  
 Config file: `files: ['src/**/*.js', '!src/**/index.js', 'test/**/*.js']`  
  
-  
 With `files` you can choose which files should be included in your test runner sandbox. 
 This is normally not needed as it defaults to all files not ignored by git. 
 Try it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.
