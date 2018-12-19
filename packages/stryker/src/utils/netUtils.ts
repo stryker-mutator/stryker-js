@@ -1,4 +1,4 @@
-import * as getPortModule from 'get-port';
+import getPortModule = require('get-port');
 
 /**
  * A wrapper around `getPort` for testing purposes

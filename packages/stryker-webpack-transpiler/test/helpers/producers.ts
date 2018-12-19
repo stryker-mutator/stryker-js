@@ -6,7 +6,7 @@ import { File } from 'stryker-api/core';
 
 export type Mock<T> = { [K in keyof T]: sinon.SinonStub; };
 
-export interface Constructor<T> { new(...args: any[]): T; }
+export type Constructor<T> = new (...args: any[]) => T;
 
 export function createMockInstance<T>(type: Constructor<T>) {
   return sinon.createStubInstance(type) as Mock<T>;

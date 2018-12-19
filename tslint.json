@@ -16,6 +16,7 @@
     "completed-docs": false,
     "curly": [true, "ignore-same-line"],
     "forin": false,
+    "function-constructor": false,
     "interface-name": false,
     "indent": [
       true,
