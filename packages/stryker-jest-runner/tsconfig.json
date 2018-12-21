@@ -1,6 +1,14 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": "."
+  },
   "exclude": [
-      "testResources/",
+    "testResources/",
+  ],
+  "references": [
+    {
+      "path": "../stryker-api",
+    }
   ]
 }

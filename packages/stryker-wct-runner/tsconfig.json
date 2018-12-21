@@ -1,7 +1,8 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
-    "baseUrl" : "./",
+    "rootDir": ".",
+    "baseUrl": "./",
     "paths": {
       "web-component-tester/*": [
         "./typings/web-component-tester/*"
@@ -13,5 +14,10 @@
     "src/**/*.d.ts",
     "test/**/*.d.ts",
     "testResources"
+  ],
+  "references": [
+    {
+      "path": "../stryker-api"
+    }
   ]
 }

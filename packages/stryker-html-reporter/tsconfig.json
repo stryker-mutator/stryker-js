@@ -1,6 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
+    "rootDir": ".",
     "lib": [
       "dom",
       "es5",
@@ -9,7 +10,6 @@
       "es2015.symbol",
       "es2015.symbol.wellknown"
     ],
-    "declaration": false,
     "noImplicitReturns": false,
     "jsx": "react",
     "jsxFactory": "typedHtml.createElement"
@@ -19,5 +19,13 @@
     "src/**/*.d.ts",
     "test/**/*.d.ts",
     "testResources"
+  ],
+  "references": [
+    {
+      "path": "../stryker-api",
+    },
+    {
+      "path": "../stryker-util",
+    }
   ]
 }

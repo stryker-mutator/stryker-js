@@ -8,7 +8,8 @@ coverage
 reports
 .tscache
 .stryker-tmp
-*.js.map
+*.map
+
 integrationTest/module/*.js
 integrationTest/module/*.map
 integrationTest/module/*.d.ts

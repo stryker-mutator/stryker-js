@@ -1,9 +1,20 @@
 {
-    "extends": "../../tsconfig.json",
-    "exclude": [
-        "node_modules",
-        "src/**/*.d.ts",
-        "test/**/*.d.ts",
-        "testResources"
-    ]
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": "."
+  },
+  "exclude": [
+    "node_modules",
+    "src/**/*.d.ts",
+    "test/**/*.d.ts",
+    "testResources"
+  ],
+  "references": [
+    {
+      "path": "../stryker-api",
+    },
+    {
+      "path": "../stryker-mutator-specification"
+    }
+  ]
 }

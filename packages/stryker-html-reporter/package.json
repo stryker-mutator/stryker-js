@@ -43,7 +43,7 @@
     "mkdirp": "~0.5.1",
     "mz": "~2.7.0",
     "rimraf": "~2.6.1",
-    "typed-html": "~0.6.0"
+    "typed-html": "~0.6.3"
   },
   "peerDependencies": {
     "stryker-api": ">=0.18.0 <0.23.0"
