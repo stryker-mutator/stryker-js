@@ -1,31 +1,11 @@
 {
-  "extends": "../../tsconfig.settings.json",
-  "compilerOptions": {
-    "rootDir": ".",
-    "lib": [
-      "dom",
-      "es5",
-      "es2015.promise",
-      "es2015.core",
-      "es2015.symbol",
-      "es2015.symbol.wellknown"
-    ],
-    "noImplicitReturns": false,
-    "jsx": "react",
-    "jsxFactory": "typedHtml.createElement"
-  },
-  "exclude": [
-    "node_modules",
-    "src/**/*.d.ts",
-    "test/**/*.d.ts",
-    "testResources"
-  ],
+  "files": [],
   "references": [
     {
-      "path": "../stryker-api",
+      "path": "./tsconfig.src.json"
     },
     {
-      "path": "../stryker-util",
+      "path": "./tsconfig.test.json"
     }
   ]
 }

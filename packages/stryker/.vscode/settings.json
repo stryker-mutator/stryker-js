@@ -2,10 +2,10 @@
   "files.exclude": {
     ".git": true,
     ".tscache": true,
-    "**/*.js": {
+    "src/*.js": {
       "when": "$(basename).ts"
     },
-    "**/*.d.ts": true,
+    "{src,test}/*.d.ts": true,
     "**/*.map": {
       "when": "$(basename)"
     }

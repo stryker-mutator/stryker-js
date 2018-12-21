@@ -49,7 +49,7 @@
     "lint-fix": "tslint --fix --project ./",
     "clean": "lerna run prebuild",
     "postinstall": "lerna bootstrap && link-parent-bin",
-    "prebuild": "rimraf \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage}\"",
+    "prebuild": "rimraf \"packages/stryker-api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage}\"",
     "build": "tsc -b",
     "pretest": "npm run build",
     "test": "lerna run test --stream",
