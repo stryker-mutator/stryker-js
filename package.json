@@ -45,12 +45,13 @@
     "singleQuote": true
   },
   "scripts": {
-    "lint-info": "tslint --out tslint.log --project ./",
-    "lint-fix": "tslint --fix --project ./",
+    "lint-info": "tslint --out tslint.log --project tsconfig.lint.json",
+    "lint-fix": "tslint --fix --project tsconfig.lint.json",
     "clean": "rimraf \"packages/stryker-api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage}\"",
     "postinstall": "lerna bootstrap && link-parent-bin",
     "prebuild": "npm run clean",
     "build": "tsc -b && lerna run build",
+    "postbuild": "tslint -p tsconfig.lint.json",
     "pretest": "npm run build",
     "test": "lerna run test --stream",
     "posttest": "cd integrationTest && npm i && npm t && cd ..",
