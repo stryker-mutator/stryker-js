@@ -1,3 +1,4 @@
+import os = require('os');
 import * as path from 'path';
 import { expect } from 'chai';
 import { childProcessAsPromised } from '@stryker-mutator/util';
@@ -78,8 +79,8 @@ describe('InputFileResolver', () => {
   it('should log a warning if no files were resolved', async () => {
     sut = new InputFileResolver([], [], reporter);
     await sut.resolve();
-    expect(log.warn).calledWith(sinon.match('No files selected. Please make sure you either (1) run Stryker a git repository context')
-      .and(sinon.match('(2) specify the \`files\` property in your Stryker configuration')));
+    expect(log.warn).calledWith(sinon.match(`No files selected. Please make sure you either${os.EOL} (1) Run Stryker inside a Git repository`)
+      .and(sinon.match('(2) Specify the \`files\` property in your Stryker configuration')));
   });
 
   it('should be able to handle deleted files reported by `git ls-files`', async () => {

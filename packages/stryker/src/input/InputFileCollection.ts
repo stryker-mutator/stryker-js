@@ -1,6 +1,7 @@
 import { File } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import { normalizeWhiteSpaces } from '../utils/objectUtils';
+import os = require('os');
 
 export default class InputFileCollection {
   public readonly files: ReadonlyArray<File>;
@@ -13,9 +14,9 @@ export default class InputFileCollection {
 
   public logFiles(log: Logger) {
     if (!this.files.length) {
-      log.warn(normalizeWhiteSpaces(`
-        No files selected. Please make sure you either (1) run Stryker a git repository context
-        or (2) specify the \`files\` property in your Stryker configuration (\`--files via command line\`).`));
+      log.warn(`No files selected. Please make sure you either${os.EOL}` +
+       ` (1) Run Stryker inside a Git repository; or${os.EOL}` +
+       ` (2) Specify the \`files\` property in your Stryker configuration (\`--files via command line\`).`);
     } else {
       if (this.filesToMutate.length) {
         log.info(`Found ${this.filesToMutate.length} of ${this.files.length} file(s) to be mutated.`);
