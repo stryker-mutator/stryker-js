@@ -22,7 +22,7 @@
     "@polymer/test-fixture": "^4.0.1",
     "@webcomponents/webcomponentsjs": "^2.0.0",
     "wct-browser-legacy": "^1.0.1",
-    "web-component-tester": "^6.9.0",
+    "web-component-tester": "6.9.0",
     "webmat": "^0.2.0"
   },
   "localDependencies": {
