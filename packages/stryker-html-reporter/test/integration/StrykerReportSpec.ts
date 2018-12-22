@@ -118,8 +118,10 @@ describe('Html report of stryker', () => {
             }
           }
         },
-        'stryker-80x80.png': 'stryker-80x80.png',
-        'stryker.css': 'stryker.css',
+        'stryker': {
+          'stryker-80x80.png': 'stryker-80x80.png',
+          'stryker.css': 'stryker.css'
+        },
         'stryker.js': 'stryker.js'
       },
       'TestFrameworkOrchestrator.js.html': 'TestFrameworkOrchestrator.js.html',
