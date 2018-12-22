@@ -15,6 +15,7 @@
     "@types/lodash": "^4.14.110",
     "@types/mkdirp": "^0.5.2",
     "@types/mocha": "^2.2.44",
+    "@types/node": "^10.11.5",
     "@types/rimraf": "2.0.2",
     "@types/sinon": "5.0.5",
     "@types/sinon-chai": "^3.2.0",
@@ -39,7 +40,8 @@
     "sinon-chai": "^3.2.0",
     "source-map-support": "^0.5.6",
     "tslint": "~5.12.0",
-    "typescript": "^3.2.1"
+    "typescript": "^3.2.1",
+    "web-component-tester": "6.9.0"
   },
   "prettier": {
     "singleQuote": true
@@ -62,9 +64,5 @@
   "engines": {
     "node": ">=6",
     "npm": ">=5"
-  },
-  "dependencies": {
-    "@types/node": "^10.11.5",
-    "web-component-tester": "6.9.0"
   }
 }
