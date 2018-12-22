@@ -39,7 +39,7 @@ describe('HtmlReporter', () => {
       sut.onAllMutantsTested([]);
       sut.onScoreCalculated(scoreResult());
       await sut.wrapUp();
-      expect(copyFolderStub).calledWith(join(__dirname, '..', '..', 'src', 'resources', 'stryker'), normalize('reports/mutation/html/strykerResources'));
+      expect(copyFolderStub).calledWith(join(__dirname, '..', '..', 'srcResources', 'stryker'), normalize('reports/mutation/html/strykerResources'));
       expect(copyFolderStub).calledWith(join(__dirname, '..', '..', 'resources'), normalize('reports/mutation/html/strykerResources'));
     });
 

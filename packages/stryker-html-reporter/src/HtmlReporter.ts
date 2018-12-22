@@ -55,7 +55,7 @@ export default class HtmlReporter implements Reporter {
   }
 
   private copyStrykerResources() {
-    const resourcesDir = path.join(__dirname, 'resources', 'stryker');
+    const resourcesDir = path.join(__dirname, '..', 'srcResources', 'stryker');
     return util.copyFolder(resourcesDir, this.resourcesDir);
   }
 
