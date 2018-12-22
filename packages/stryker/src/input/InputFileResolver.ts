@@ -67,8 +67,9 @@ export default class InputFileResolver {
       if (arr1.length !== arr2.length) {
         return false;
       } else {
-        for (let i = 0; i < arr1.length; i++) {
-          if (arr1[i] !== arr2[i]) {
+        const iter = arr2.values();
+        for (const value of arr1) {
+          if (value !== iter.next().value) {
             return false;
           }
         }
@@ -115,12 +116,14 @@ export default class InputFileResolver {
       const fileNames = stdout.toString()
         .split('\n')
         .map(line => line.trim())
-        .filter(line => line)
+        .filter(line => line) // remove empty lines
         .map(relativeFileName => path.resolve(relativeFileName));
       return fileNames;
     } catch (error) {
-      throw new StrykerError(
-        `Cannot determine input files. Either specify a \`files\` array in your stryker configuration, or make sure "${process.cwd()}" is located inside a git repository`,
+      throw new StrykerError(normalizeWhiteSpaces(
+        `Cannot determine input files. Either specify a \`files\`
+        array in your stryker configuration, or make sure "${process.cwd()}"
+        is located inside a git repository`),
         error
       );
     }
@@ -156,13 +159,9 @@ export default class InputFileResolver {
       this.log.warn(
         normalizeWhiteSpaces(`
       DEPRECATED: Using the \`InputFileDescriptor\` syntax to
-      select files is no longer supported. We'll assume: ${JSON.stringify(
-          inputFileDescriptorObjects
-        )} can be migrated
-      to ${JSON.stringify(
-          inputFileDescriptorObjects.map(_ => _.pattern)
-        )} for this mutation run.
-      Please move any files to mutate into the \`mutate\` array (top level stryker option).
+      select files is no longer supported. We'll assume: ${JSON.stringify(inputFileDescriptorObjects)}
+       can be migrated to ${JSON.stringify(inputFileDescriptorObjects.map(_ => _.pattern))} for this
+        mutation run. Please move any files to mutate into the \`mutate\` array (top level stryker option).
       You can fix this warning in 2 ways:
       1) If your project is under git version control, you can remove the "files" patterns all together.
       Stryker can figure it out for you.
