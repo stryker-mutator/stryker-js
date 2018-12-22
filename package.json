@@ -47,10 +47,10 @@
   "scripts": {
     "lint-info": "tslint --out tslint.log --project ./",
     "lint-fix": "tslint --fix --project ./",
-    "clean": "lerna run prebuild",
+    "clean": "rimraf \"packages/stryker-api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage}\"",
     "postinstall": "lerna bootstrap && link-parent-bin",
-    "prebuild": "rimraf \"packages/stryker-api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage}\"",
-    "build": "tsc -b",
+    "prebuild": "npm run clean",
+    "build": "tsc -b && lerna run build",
     "pretest": "npm run build",
     "test": "lerna run test --stream",
     "posttest": "cd integrationTest && npm i && npm t && cd ..",
@@ -64,6 +64,6 @@
   },
   "dependencies": {
     "@types/node": "^10.11.5",
-    "web-component-tester": "^6.9.0"
+    "web-component-tester": "6.9.0"
   }
 }

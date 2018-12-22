@@ -4,10 +4,7 @@
   "description": "A package for maintaining common mutator specifications for Stryker - the JavaScript mutation testing framework",
   "scripts": {
     "start": "tsc -w",
-    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
-    "prebuild": "npm run clean",
-    "build": "tsc -p .",
-    "postbuild": "tslint -p tsconfig.json"
+    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports"
   },
   "keywords": [
     "stryker"
