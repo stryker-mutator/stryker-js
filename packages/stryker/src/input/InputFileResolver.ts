@@ -63,13 +63,12 @@ export default class InputFileResolver {
   private resolveMutateFiles() {
     return this.expand(this.mutatePatterns, !shallowEquals(this.mutatePatterns, new Config().mutate));
 
-    function shallowEquals<T>(arr1: ReadonlyArray<T>, arr2: ReadonlyArray<T>): boolean {
+    function shallowEquals(arr1: ReadonlyArray<string>, arr2: ReadonlyArray<string>): boolean {
       if (arr1.length !== arr2.length) {
         return false;
       } else {
-        const iter = arr2.values();
-        for (const value of arr1) {
-          if (value !== iter.next().value) {
+        for (let i = 0; i < arr1.length; i++) {
+          if (arr1[i] !== arr2[i]) {
             return false;
           }
         }
