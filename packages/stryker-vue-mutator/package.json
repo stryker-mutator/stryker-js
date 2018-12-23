@@ -41,7 +41,7 @@
     "vue-template-compiler": "^2.0.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.23.0",
+    "stryker-api": ">=0.18.0 <0.24.0",
     "vue-template-compiler": "^2.0.0"
   }
 }

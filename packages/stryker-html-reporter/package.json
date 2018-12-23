@@ -46,7 +46,7 @@
     "typed-html": "~0.6.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.23.0"
+    "stryker-api": ">=0.18.0 <0.24.0"
   },
   "devDependencies": {
     "@types/file-url": "~2.0.0",

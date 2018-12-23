@@ -52,7 +52,7 @@
     "stryker-mutator-specification": "^0.7.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.23.0"
+    "stryker-api": ">=0.18.0 <0.24.0"
   },
   "initStrykerConfig": {
     "mutate": [
