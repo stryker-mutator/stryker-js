@@ -28,7 +28,7 @@
     "stryker-api": "^0.21.5"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.22.0",
+    "stryker-api": ">=0.18.0 <0.24.0",
     "web-component-tester": "^6.9.0"
   },
   "author": "Nico Jansen <jansennico@gmail.com>",

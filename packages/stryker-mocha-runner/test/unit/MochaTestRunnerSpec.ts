@@ -73,6 +73,7 @@ describe('MochaTestRunner', () => {
     multimatchStub.returns(['foo.js', 'bar.js', 'foo2.js']);
     const mochaOptions: MochaRunnerOptions = {
       asyncOnly: true,
+      grep: /grepme/,
       opts: 'opts',
       require: [],
       timeout: 2000,
@@ -88,6 +89,7 @@ describe('MochaTestRunner', () => {
     expect(mocha.asyncOnly).calledWith(true);
     expect(mocha.timeout).calledWith(2000);
     expect(mocha.ui).calledWith('assert');
+    expect(mocha.grep).calledWith(/grepme/);
   });
 
   it('should pass require additional require options when constructed', () => {

@@ -39,15 +39,15 @@
   "devDependencies": {
     "@types/semver": "~5.5.0",
     "jest": "~23.6.0",
-    "react": "~16.6.0",
-    "react-dom": "~16.6.0",
+    "react": "~16.7.0",
+    "react-dom": "~16.7.0",
     "react-scripts": "~2.1.0",
     "react-scripts-ts": "~3.1.0",
     "stryker-api": "^0.22.1"
   },
   "peerDependencies": {
     "jest": ">= 22.0.0",
-    "stryker-api": ">=0.18.0 <0.23.0"
+    "stryker-api": ">=0.18.0 <0.24.0"
   },
   "dependencies": {
     "semver": "~5.6.0"

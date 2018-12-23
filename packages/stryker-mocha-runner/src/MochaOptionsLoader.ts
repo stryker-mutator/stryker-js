@@ -56,6 +56,14 @@ export default class MochaOptionsLoader {
           case '-u':
             mochaRunnerOptions.ui = this.parseNextString(args);
             break;
+          case '--grep':
+          case '-g':
+            let arg = `${this.parseNextString(args)}`;
+            if (arg.startsWith('/') && arg.endsWith('/')) {
+              arg = arg.substring(1, arg.length - 1);
+            }
+            mochaRunnerOptions.grep = new RegExp(arg);
+            break;
           default:
             this.log.debug(`Ignoring option "${args[0]}" as it is not supported.`);
             break;

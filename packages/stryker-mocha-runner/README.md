@@ -42,7 +42,8 @@ module.exports = function (config) {
             ui: 'bdd',
             timeout: 3000,
             require: [ /*'babel-register' */],
-            asyncOnly: false
+            asyncOnly: false,
+            grep: /.*/
         }
     });
 }
@@ -62,7 +63,13 @@ Default: `'test/mocha.opts'`
 
 Specify a ['mocha.opts' file](https://mochajs.org/#mochaopts) to be loaded. Options specified directly in your stryker.conf.js file will overrule options from the 'mocha.opts' file.
 
-The only supported mocha options are used: `--ui`, `--require`, `--async-only`, `--timeout` (or their short form counterparts). Others are ignored by the stryker-mocha-runner.
+The only supported mocha options are used: `--ui`, `--require`, `--async-only`, `--timeout`, `--grep` (or their short form counterparts). Others are ignored by the stryker-mocha-runner.
+
+### `mochaOptions.grep` [`RegExp`]
+
+Default: `undefined`
+
+Specify a mocha [`grep`](https://mochajs.org/#grep) command, to single out individual tests.
 
 ### `mochaOptions.ui` [`string`]
 

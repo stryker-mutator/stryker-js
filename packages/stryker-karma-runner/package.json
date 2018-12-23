@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-karma-runner#readme",
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.23.0"
+    "stryker-api": ">=0.18.0 <0.24.0"
   },
   "devDependencies": {
     "@stryker-mutator/util": "0.0.3",

@@ -194,12 +194,14 @@ describe('InitialTestExecutor run', () => {
     });
 
     it('should also add a collectCoveragePerTest file when coverage analysis is "perTest" and there is a testFramework', async () => {
+      options.coverageAnalysis = 'perTest';
       sandbox.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
       await sut.run();
       expect(strykerSandboxMock.run).calledWith(EXPECTED_INITIAL_TIMEOUT, 'test hook foobar');
     });
 
     it('should result log a warning if coverage analysis is "perTest" and there is no testFramework', async () => {
+      options.coverageAnalysis = 'perTest';
       sut = new InitialTestExecutor(options, inputFiles, /* test framework */ null, timer as any, LOGGING_CONTEXT);
       sandbox.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
       await sut.run();
