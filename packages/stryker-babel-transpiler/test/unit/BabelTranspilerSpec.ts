@@ -46,7 +46,8 @@ describe('BabelTranspiler', () => {
       expect(babelConfigReaderMock.readConfig).calledWith(config);
     });
 
-    it('should throw if `produceSourceMaps` was true', () => {
+    it('should throw if `produceSourceMaps` was true and coverage analysis is "perTest"', () => {
+      config.coverageAnalysis = 'perTest';
       expect(() => new BabelTranspiler({ produceSourceMaps: true, config })).throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".');
     });
   });

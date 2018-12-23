@@ -1,9 +1,11 @@
+import os = require('os');
 import * as path from 'path';
 import { expect } from 'chai';
 import { childProcessAsPromised } from '@stryker-mutator/util';
 import { Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { SourceFile } from 'stryker-api/report';
+import { Config } from 'stryker-api/config';
 import InputFileResolver from '../../../src/input/InputFileResolver';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
@@ -77,8 +79,8 @@ describe('InputFileResolver', () => {
   it('should log a warning if no files were resolved', async () => {
     sut = new InputFileResolver([], [], reporter);
     await sut.resolve();
-    expect(log.warn).calledWith(sinon.match('No files selected. Please make sure you either run stryker a git repository context'));
-    expect(log.warn).calledWith(sinon.match('or specify the \`files\` property in your stryker config'));
+    expect(log.warn).calledWith(sinon.match(`No files selected. Please make sure you either${os.EOL} (1) Run Stryker inside a Git repository`)
+      .and(sinon.match('(2) Specify the \`files\` property in your Stryker configuration')));
   });
 
   it('should be able to handle deleted files reported by `git ls-files`', async () => {
@@ -168,7 +170,7 @@ describe('InputFileResolver', () => {
 
     it('should warn about dry-run', async () => {
       await sut.resolve();
-      expect(log.warn).to.have.been.calledWith('No files marked to be mutated, stryker will perform a dry-run without actually mutating anything.');
+      expect(log.warn).calledWith(sinon.match('No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.'));
     });
   });
 
@@ -222,13 +224,20 @@ describe('InputFileResolver', () => {
   });
 
   describe('when a globbing expression does not result in a result', () => {
-    beforeEach(() => {
-      sut = new InputFileResolver(['file1'], ['file1', 'notExists'], reporter);
-    });
 
     it('should log a warning', async () => {
+      sut = new InputFileResolver(['file1'], ['file1', 'notExists'], reporter);
       await sut.resolve();
       expect(log.warn).to.have.been.calledWith('Globbing expression "notExists" did not result in any files.');
+    });
+
+    it('should not log a warning if the globbing expression was the default logging expression', async () => {
+      const config = new Config();
+      sut = new InputFileResolver(config.mutate, config.files, reporter);
+      childProcessExecStub.resolves({ stdout: Buffer.from(`src/foobar.js`) });
+      globStub.withArgs(config.mutate[0]).returns(['src/foobar.js']);
+      await sut.resolve();
+      expect(log.warn).not.called;
     });
   });
 
