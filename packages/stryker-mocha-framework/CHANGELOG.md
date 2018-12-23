@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.14.0"></a>
+# [0.14.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.13.3...stryker-mocha-framework@0.14.0) (2018-12-23)
+
+
+### Features
+
+* **stryker-api:** Support stryker-api 0.23 ([#1293](https://github.com/stryker-mutator/stryker/issues/1293)) ([10720ad](https://github.com/stryker-mutator/stryker/commit/10720ad))
+
+
+
+
 <a name="0.13.3"></a>
 ## [0.13.3](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-framework@0.13.2...stryker-mocha-framework@0.13.3) (2018-12-12)
 
