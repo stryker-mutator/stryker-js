@@ -7,4 +7,5 @@ export default interface MochaRunnerOptions {
   asyncOnly?: boolean;
   ui?: string;
   files?: string[] | string;
+  grep?: RegExp;
 }
