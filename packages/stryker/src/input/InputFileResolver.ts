@@ -64,6 +64,7 @@ export default class InputFileResolver {
     return this.expand(this.mutatePatterns, !shallowEquals(this.mutatePatterns, new Config().mutate));
 
     function shallowEquals(arr1: ReadonlyArray<string>, arr2: ReadonlyArray<string>): boolean {
+      if (!arr1 || !arr2) return false;
       if (arr1.length !== arr2.length) {
         return false;
       } else {
