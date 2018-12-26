@@ -1,6 +1,6 @@
 {
   "name": "stryker-webpack-transpiler",
-  "version": "0.7.12",
+  "version": "0.8.0",
   "description": "A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "@types/memory-fs": "~0.3.0",
     "@types/webpack": "~4.4.12",
     "raw-loader": "~1.0.0",
-    "stryker-api": "^0.22.1",
+    "stryker-api": "^0.23.0",
     "webpack": "~4.27.0"
   },
   "peerDependencies": {

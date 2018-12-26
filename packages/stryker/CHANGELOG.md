@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.34.0"></a>
+# [0.34.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.33.2...stryker@0.34.0) (2018-12-23)
+
+
+### Features
+
+* **stryker-api:** Support stryker-api 0.23 ([#1293](https://github.com/stryker-mutator/stryker/issues/1293)) ([10720ad](https://github.com/stryker-mutator/stryker/commit/10720ad))
+* **zero config:** Support mutation testing without any configuration ([#1264](https://github.com/stryker-mutator/stryker/issues/1264)) ([fe8f696](https://github.com/stryker-mutator/stryker/commit/fe8f696))
+
+
+
+
 <a name="0.33.2"></a>
 ## [0.33.2](https://github.com/stryker-mutator/stryker/compare/stryker@0.33.1...stryker@0.33.2) (2018-12-12)
 

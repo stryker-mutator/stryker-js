@@ -1,6 +1,6 @@
 {
   "name": "stryker-wct-runner",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A plugin to use web component tester as a test runner for Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
   "typings": "src/index.d.ts",
