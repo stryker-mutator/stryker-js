@@ -4,8 +4,8 @@ declare module 'karma' {
   interface Config extends karma.ConfigOptions { }
 
   interface ConfigOptions {
-    detached?: boolean;
     configFile?: string;
+    detached?: boolean;
   }
 
   interface Reporter {

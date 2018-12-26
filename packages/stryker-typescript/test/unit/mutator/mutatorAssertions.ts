@@ -1,10 +1,10 @@
+import { expect } from 'chai';
+import { File } from 'stryker-api/core';
+import { Mutant } from 'stryker-api/mutant';
+import ExpectMutation from 'stryker-mutator-specification/src/ExpectMutation';
 import * as ts from 'typescript';
 import { parseFile } from '../../../src/helpers/tsHelpers';
-import { expect } from 'chai';
-import { Mutant } from 'stryker-api/mutant';
 import NodeMutator from '../../../src/mutator/NodeMutator';
-import ExpectMutation from 'stryker-mutator-specification/src/ExpectMutation';
-import { File } from 'stryker-api/core';
 
 export type MutatorConstructor = new() => NodeMutator;
 
@@ -27,6 +27,7 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
 
 function format(code: string) {
   const ast = parseFile(new File('file1.tsx', code), undefined);
+
   return ts.createPrinter().printFile(ast);
 }
 
@@ -38,6 +39,7 @@ function mutate(mutator: NodeMutator, node: ts.Node, sourceFile: ts.SourceFile):
   node.forEachChild(child => {
     mutants.push(...mutate(mutator, child, sourceFile));
   });
+
   return mutants;
 }
 

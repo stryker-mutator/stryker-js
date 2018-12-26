@@ -10,7 +10,7 @@ const JEST_OVERRIDE_OPTIONS = Object.freeze({
     verbose: false,
 
     // Disable bail so the jest process does not quit with a non-zero exit code
-    bail: false,
+    bail: false
 });
 
 export default JEST_OVERRIDE_OPTIONS;

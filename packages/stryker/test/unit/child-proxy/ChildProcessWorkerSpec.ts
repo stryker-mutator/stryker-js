@@ -1,16 +1,16 @@
-import * as path from 'path';
-import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyWorker';
 import { expect } from 'chai';
-import { serialize } from '../../../src/utils/objectUtils';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, CallMessage, ParentMessageKind, InitMessage } from '../../../src/child-proxy/messageProtocol';
+import * as path from 'path';
+import { LogLevel } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
+import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyWorker';
+import { CallMessage, InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, WorkResult } from '../../../src/child-proxy/messageProtocol';
+import LogConfigurator from '../../../src/logging/LogConfigurator';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import PluginLoader, * as pluginLoader from '../../../src/PluginLoader';
+import { serialize } from '../../../src/utils/objectUtils';
+import currentLogMock from '../../helpers/logMock';
 import { Mock, mock } from '../../helpers/producers';
 import HelloClass from './HelloClass';
-import LogConfigurator from '../../../src/logging/LogConfigurator';
-import { LogLevel } from 'stryker-api/core';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
-import { Logger } from 'stryker-api/logging';
-import currentLogMock from '../../helpers/logMock';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 

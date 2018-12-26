@@ -1,6 +1,6 @@
+import { fsAsPromised } from '@stryker-mutator/util';
 import * as path from 'path';
 import { Reporter } from 'stryker-api/report';
-import { fsAsPromised } from '@stryker-mutator/util';
 
 const eventName = (filename: string) =>
   filename.substring(filename.indexOf('-') + 1, filename.indexOf('.'));
@@ -10,6 +10,7 @@ export default class EventPlayer {
 
   public replay(target: Reporter) {
     const files = fsAsPromised.readdirSync(this.fromDirectory).sort();
+
     return Promise.all(files.map(
       filename => fsAsPromised.readFile(path.join(this.fromDirectory, filename), 'utf8').then(content => ({
         content: JSON.parse(this.replacePathSeparator(content)),

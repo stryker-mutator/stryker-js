@@ -6,6 +6,6 @@ import * as multimatch from 'multimatch';
  */
 export default class LibWrapper {
   public static Mocha = Mocha;
-  public static require = require;
   public static multimatch = multimatch;
+  public static require = require;
 }

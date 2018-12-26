@@ -1,7 +1,7 @@
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
+import { Identified, IdentifiedNode } from './IdentifiedNode';
 import NodeMutator from './NodeMutator';
-import { IdentifiedNode, Identified } from './IdentifiedNode';
 
 type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree.ForStatement | estree.WhileStatement | estree.ConditionalExpression;
 
@@ -11,8 +11,6 @@ type ConditionExpression = estree.DoWhileStatement | estree.IfStatement | estree
 export default class RemoveConditionalsMutator implements NodeMutator {
   public name = 'RemoveConditionals';
   private readonly types: string[] = [Syntax.DoWhileStatement, Syntax.IfStatement, Syntax.ForStatement, Syntax.WhileStatement, Syntax.ConditionalExpression];
-
-  constructor() { }
 
   public applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] | void {
     if (this.canMutate(node)) {
@@ -29,6 +27,7 @@ export default class RemoveConditionalsMutator implements NodeMutator {
       if (node.type === Syntax.IfStatement || node.type === Syntax.ConditionalExpression) {
         nodes.push(this.booleanLiteralNode((node.test as IdentifiedNode).nodeID, true));
       }
+
       return nodes;
     }
   }

@@ -10,11 +10,6 @@ export default class ResultTable {
     return this.host.$$('thead th');
   }
 
-  public async rows() {
-    const rows: ElementFinder[] = await this.host.$$('tbody tr');
-    return rows.map(row => new ResultTableRow(row));
-  }
-
   public async row(name: string) {
     const rows = await this.rows();
     const names = (await promise.all(rows.map(row => row.name()))).map(name => name.trim());
@@ -24,6 +19,12 @@ export default class ResultTable {
     } else {
       return rows[index];
     }
+  }
+
+  public async rows() {
+    const rows: ElementFinder[] = await this.host.$$('tbody tr');
+
+    return rows.map(row => new ResultTableRow(row));
   }
 
 }

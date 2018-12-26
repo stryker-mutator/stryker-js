@@ -1,9 +1,9 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import { Config } from 'stryker-api/config';
-import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
+import * as fs from 'fs';
+import * as path from 'path';
+import { Config } from 'stryker-api/config';
 import * as logging from 'stryker-api/logging';
+import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
 import { logger, Mock } from '../helpers/mockHelpers';
 
@@ -126,7 +126,7 @@ describe('MochaOptionsLoader', () => {
     --ignore-leaks
     `);
     config.mochaOptions = {
-      opts: 'some/mocha.opts/file',
+      opts: 'some/mocha.opts/file'
     };
     const options = sut.load(config);
     expect(options).deep.eq({ opts: 'some/mocha.opts/file' });
@@ -140,7 +140,7 @@ describe('MochaOptionsLoader', () => {
     --ui
     `);
     config.mochaOptions = {
-      opts: 'some/mocha.opts/file',
+      opts: 'some/mocha.opts/file'
     };
     const options = sut.load(config);
     expect(options).deep.eq({ opts: 'some/mocha.opts/file', timeout: undefined, ui: undefined });

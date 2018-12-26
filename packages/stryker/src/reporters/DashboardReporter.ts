@@ -1,28 +1,18 @@
-import {Reporter, ScoreResult} from 'stryker-api/report';
-import DashboardReporterClient from './dashboard-reporter/DashboardReporterClient';
-import {getEnvironmentVariable} from '../utils/objectUtils';
-import { getLogger } from 'stryker-api/logging';
-import { determineCIProvider } from './ci/Provider';
 import { StrykerOptions } from 'stryker-api/core';
+import { getLogger } from 'stryker-api/logging';
+import { Reporter, ScoreResult } from 'stryker-api/report';
+import { getEnvironmentVariable } from '../utils/objectUtils';
+import { determineCIProvider } from './ci/Provider';
+import DashboardReporterClient from './dashboard-reporter/DashboardReporterClient';
 
 export default class DashboardReporter implements Reporter {
-  private readonly log = getLogger(DashboardReporter.name);
   private readonly ciProvider = determineCIProvider();
+  private readonly log = getLogger(DashboardReporter.name);
 
   constructor(
     _setting: StrykerOptions,
     private readonly dashboardReporterClient: DashboardReporterClient = new DashboardReporterClient()
   ) { }
-
-  private readEnvironmentVariable(name: string) {
-    const environmentVariable = getEnvironmentVariable(name);
-    if (environmentVariable) {
-      return environmentVariable;
-    } else {
-      this.log.warn(`Missing environment variable ${name}`);
-      return undefined;
-    }
-  }
 
   public async onScoreCalculated(ScoreResult: ScoreResult) {
     const mutationScore = ScoreResult.mutationScore;
@@ -48,6 +38,17 @@ export default class DashboardReporter implements Reporter {
       }
     } else {
       this.log.info('Dashboard report is not sent when not running on a buildserver');
+    }
+  }
+
+  private readEnvironmentVariable(name: string) {
+    const environmentVariable = getEnvironmentVariable(name);
+    if (environmentVariable) {
+      return environmentVariable;
+    } else {
+      this.log.warn(`Missing environment variable ${name}`);
+
+      return undefined;
     }
   }
 }

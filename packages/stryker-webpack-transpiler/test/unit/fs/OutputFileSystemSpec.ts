@@ -1,6 +1,6 @@
+import { expect } from 'chai';
 import * as path from 'path';
 import { File } from 'stryker-api/core';
-import { expect } from 'chai';
 import OutputFileSystem from '../../../src/fs/OutputFileSystem';
 
 describe('OutputFileSystem', () => {
@@ -53,7 +53,7 @@ describe('OutputFileSystem', () => {
     });
   });
 
-  function actions(...actions: ('mkdir' | 'rmdir')[]) {
+  function actions(...actions: Array<'mkdir' | 'rmdir'>) {
     return actions;
   }
 

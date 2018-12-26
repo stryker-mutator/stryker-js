@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import * as utils from '../../../src/utils';
 import * as sut from '../../../src/starters/angularStarter';
+import * as utils from '../../../src/utils';
 
 describe('angularStarter', () => {
   let requireModuleStub: sinon.SinonStub;
@@ -83,6 +83,7 @@ describe('angularStarter', () => {
 
   it('should reject when ngOptions are prefixed', async () => {
     setAngularVersion();
+
     return expect(
       sut.start({
         testArguments: {

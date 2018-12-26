@@ -1,8 +1,12 @@
-import {Reporter, MutantResult, MutantStatus} from 'stryker-api/report';
 import chalk from 'chalk';
 import * as os from 'os';
+import { MutantResult, MutantStatus, Reporter } from 'stryker-api/report';
 
 export default class DotsReporter implements Reporter {
+
+  public onAllMutantsTested(): void {
+    process.stdout.write(os.EOL);
+  }
   public onMutantTested(result: MutantResult) {
     let toLog: string;
     switch (result.status) {
@@ -20,12 +24,7 @@ export default class DotsReporter implements Reporter {
         break;
       default:
         toLog = '';
-        break;
     }
     process.stdout.write(toLog);
-  }
-
-  public onAllMutantsTested(): void {
-    process.stdout.write(os.EOL);
   }
 }

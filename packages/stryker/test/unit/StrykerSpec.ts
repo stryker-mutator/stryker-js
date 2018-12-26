@@ -1,34 +1,33 @@
-import * as sinon from 'sinon';
-import { MutantResult } from 'stryker-api/report';
-import { File, LogLevel } from 'stryker-api/core';
-import { RunResult } from 'stryker-api/test_runner';
-import { TestFramework } from 'stryker-api/test_framework';
-import Stryker from '../../src/Stryker';
-import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
 import { expect } from 'chai';
-import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
+import * as sinon from 'sinon';
+import { Config, ConfigEditor, ConfigEditorFactory } from 'stryker-api/config';
+import { File, LogLevel } from 'stryker-api/core';
+import { MutantResult } from 'stryker-api/report';
+import { TestFramework } from 'stryker-api/test_framework';
+import { RunResult } from 'stryker-api/test_runner';
 import ConfigReader, * as configReader from '../../src/config/ConfigReader';
-import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
-import ReporterOrchestrator, * as reporterOrchestrator from '../../src/ReporterOrchestrator';
-import MutatorFacade, * as mutatorFacade from '../../src/MutatorFacade';
-import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
-import InitialTestExecutor, * as initialTestExecutor from '../../src/process/InitialTestExecutor';
-import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/MutationTestExecutor';
 import ConfigValidator, * as configValidator from '../../src/config/ConfigValidator';
-import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
-import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
-import { TempFolder } from '../../src/utils/TempFolder';
-import currentLogMock from '../helpers/logMock';
-import { mock, Mock, testFramework as testFrameworkMock, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
-import BroadcastReporter from '../../src/reporters/BroadcastReporter';
-import TestableMutant from '../../src/TestableMutant';
-import '../helpers/globals';
 import InputFileCollection from '../../src/input/InputFileCollection';
+import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
 import LogConfigurator from '../../src/logging/LogConfigurator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
+import MutatorFacade, * as mutatorFacade from '../../src/MutatorFacade';
+import PluginLoader, * as pluginLoader from '../../src/PluginLoader';
+import InitialTestExecutor, * as initialTestExecutor from '../../src/process/InitialTestExecutor';
+import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/MutationTestExecutor';
+import ReporterOrchestrator, * as reporterOrchestrator from '../../src/ReporterOrchestrator';
+import BroadcastReporter from '../../src/reporters/BroadcastReporter';
+import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
+import Stryker from '../../src/Stryker';
+import TestableMutant from '../../src/TestableMutant';
+import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
+import { TempFolder } from '../../src/utils/TempFolder';
+import '../helpers/globals';
+import currentLogMock from '../helpers/logMock';
+import { config, mock, Mock, mutantResult, runResult, testableMutant, testFramework as testFrameworkMock } from '../helpers/producers';
 
 class FakeConfigEditor implements ConfigEditor {
-  constructor() { }
   public edit(config: Config) {
     config.testRunner = 'fakeTestRunner';
   }
@@ -191,32 +190,32 @@ describe('Stryker', () => {
       });
 
       it('should quit early if no tests were executed in initial test run', async () => {
-        while (initialRunResult.tests.pop());
+        while (initialRunResult.tests.pop()) { }
         const actualResults = await sut.runMutationTest();
         expect(mutationTestExecutorMock.run).not.called;
         expect(actualResults).lengthOf(0);
       });
 
       it('should quit early if no mutants were generated', async () => {
-        while (mutants.pop()); // clear all mutants
+        while (mutants.pop()) { } // clear all mutants
         await sut.runMutationTest();
         expect(mutationTestExecutorMock.run).not.called;
       });
 
       it('should log the absence of mutants if no mutants were generated', async () => {
-        while (mutants.pop()); // clear all mutants
+        while (mutants.pop()) { } // clear all mutants
         await sut.runMutationTest();
         expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
       });
 
       it('should log the remark to run again with logLevel trace if no tests were executed in initial test run', async () => {
-        while (initialRunResult.tests.pop());
+        while (initialRunResult.tests.pop()) { }
         await sut.runMutationTest();
         expect(currentLogMock().info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
       });
 
       it('should log the remark to run again with logLevel trace if no mutants were generated', async () => {
-        while (mutants.pop()); // clear all mutants
+        while (mutants.pop()) { } // clear all mutants
         await sut.runMutationTest();
         expect(currentLogMock().info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
       });
@@ -226,6 +225,7 @@ describe('Stryker', () => {
 
       beforeEach(() => {
         sut = new Stryker({});
+
         return sut.runMutationTest();
       });
 

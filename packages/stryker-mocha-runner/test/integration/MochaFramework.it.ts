@@ -1,8 +1,8 @@
-import { TestSelection } from 'stryker-api/test_framework';
-import MochaTestFramework from 'stryker-mocha-framework/src/MochaTestFramework';
 import { expect } from 'chai';
-import { RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import { fork } from 'child_process';
+import { TestSelection } from 'stryker-api/test_framework';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import MochaTestFramework from 'stryker-mocha-framework/src/MochaTestFramework';
 import { AUTO_START_ARGUMENT, RunMessage } from './MochaTestFrameworkIntegrationTestWorker';
 
 const test0: Readonly<TestSelection> = Object.freeze({
@@ -52,13 +52,13 @@ describe('Integration with stryker-mocha-framework', () => {
     expect(actualProcessOutput.stdout).includes('afterEach from hook');
   });
 
-  function actRun(testHooks: string | undefined): Promise<{ result: RunResult, stdout: string }> {
-    return new Promise<{ result: RunResult, stdout: string }>((resolve, reject) => {
+  function actRun(testHooks: string | undefined): Promise<{ result: RunResult; stdout: string }> {
+    return new Promise<{ result: RunResult; stdout: string }>((resolve, reject) => {
       const sutProxy = fork(require.resolve('./MochaTestFrameworkIntegrationTestWorker'), [AUTO_START_ARGUMENT], {
         execArgv: [],
         silent: true
       });
-      let stdout: string = '';
+      let stdout = '';
       sutProxy.stdout.on('data', chunk => stdout += chunk.toString());
       const message: RunMessage = { kind: 'run', testHooks };
       sutProxy.send(message, (error: Error) => {

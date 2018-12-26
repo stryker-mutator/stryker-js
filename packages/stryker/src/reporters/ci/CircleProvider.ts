@@ -3,7 +3,6 @@ import { CIProvider } from './Provider';
 import { getEnvironmentVariable } from '../../utils/objectUtils';
 
 class CircleProvider implements CIProvider {
-  public isPullRequest = () => getEnvironmentVariable('CIRCLE_PULL_REQUEST') !== undefined;
 
   public determineBranch = () => getEnvironmentVariable('CIRCLE_BRANCH') || '(unknown)';
 
@@ -16,6 +15,7 @@ class CircleProvider implements CIProvider {
       return '(unknown)';
     }
   }
+  public isPullRequest = () => getEnvironmentVariable('CIRCLE_PULL_REQUEST') !== undefined;
 }
 
 export default CircleProvider;

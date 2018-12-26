@@ -1,12 +1,12 @@
 import * as types from '@babel/types';
-import { getLogger } from 'stryker-api/logging';
-import { Mutator, Mutant } from 'stryker-api/mutant';
-import { File } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
-import copy from './helpers/copy';
-import NodeMutatorFactory from './NodeMutatorFactory';
-import NodeMutator from './mutators/NodeMutator';
+import { File } from 'stryker-api/core';
+import { getLogger } from 'stryker-api/logging';
+import { Mutant, Mutator } from 'stryker-api/mutant';
 import BabelHelper from './helpers/BabelHelper';
+import copy from './helpers/copy';
+import NodeMutator from './mutators/NodeMutator';
+import NodeMutatorFactory from './NodeMutatorFactory';
 
 function defaultMutators(): NodeMutator[] {
   return NodeMutatorFactory.instance().knownNames().map(name => NodeMutatorFactory.instance().create(name, undefined));
@@ -54,6 +54,7 @@ export default class JavaScriptMutator implements Mutator {
         mutants.push(mutant);
       }
     });
+
     return mutants;
   }
 }

@@ -1,8 +1,8 @@
-import * as path from 'path';
 import { expect } from 'chai';
-import JasmineTestRunner from '../../src/JasmineTestRunner';
-import { TestResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
+import * as path from 'path';
+import { RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
+import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 
 function wrapInClosure(codeFragment: string) {

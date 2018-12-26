@@ -1,9 +1,9 @@
+import { expect } from 'chai';
+import * as estree from 'estree';
 import { Identified } from '../../../src/mutators/IdentifiedNode';
 import UpdateOperatorMutator from '../../../src/mutators/UpdateOperatorMutator';
-import { expect } from 'chai';
-import * as parser from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
-import * as estree from 'estree';
+import * as parser from '../../../src/utils/parserUtils';
 
 describe('UpdateOperatorMutator', () => {
   let sut: UpdateOperatorMutator;

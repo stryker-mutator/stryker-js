@@ -1,5 +1,5 @@
-import * as path from 'path';
 import { expect } from 'chai';
+import * as path from 'path';
 import { browser } from 'protractor';
 import { MutantStatus } from 'stryker-api/report';
 import { baseDir } from './hooks';
@@ -18,6 +18,7 @@ describe('File report page "Add.js.html"', () => {
 
   const get = () => {
     const f = `file:///${path.resolve(baseDir, 'Add.js.html').replace(/\\/g, '/')}`;
+
     return browser.get(f);
   };
 

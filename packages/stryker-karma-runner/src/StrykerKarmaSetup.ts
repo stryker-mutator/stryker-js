@@ -15,10 +15,10 @@ export interface NgConfigOptions {
 }
 
 export default interface StrykerKarmaSetup {
+  config?: karma.ConfigOptions;
+  configFile?: string;
+  ngConfig?: NgConfigOptions;
   // Deprecrated
   project?: ProjectKind;
   projectType: ProjectKind;
-  configFile?: string;
-  config?: karma.ConfigOptions;
-  ngConfig?: NgConfigOptions;
 }

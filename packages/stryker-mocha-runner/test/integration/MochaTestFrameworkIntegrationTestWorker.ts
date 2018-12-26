@@ -1,6 +1,6 @@
-import MochaTestRunner from '../../src/MochaTestRunner';
 import * as path from 'path';
 import { RunResult } from 'stryker-api/test_runner';
+import MochaTestRunner from '../../src/MochaTestRunner';
 
 export const AUTO_START_ARGUMENT = '2e164669-acf1-461c-9c05-2be139614de2';
 

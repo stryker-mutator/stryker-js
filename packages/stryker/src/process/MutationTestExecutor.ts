@@ -1,18 +1,18 @@
-import { Observable, Observer, merge, zip } from 'rxjs';
+import { merge, Observable, Observer, zip } from 'rxjs';
 import { flatMap, map, tap, toArray } from 'rxjs/operators';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
+import { getLogger, Logger } from 'stryker-api/logging';
 import { MutantResult, MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import LoggingClientContext from '../logging/LoggingClientContext';
+import StrictReporter from '../reporters/StrictReporter';
 import Sandbox from '../Sandbox';
 import SandboxPool from '../SandboxPool';
 import TestableMutant from '../TestableMutant';
 import TranspiledMutant from '../TranspiledMutant';
-import StrictReporter from '../reporters/StrictReporter';
 import MutantTranspiler from '../transpiler/MutantTranspiler';
-import LoggingClientContext from '../logging/LoggingClientContext';
-import { getLogger, Logger } from 'stryker-api/logging';
 
 export default class MutationTestExecutor {
 
@@ -34,6 +34,7 @@ export default class MutationTestExecutor {
       mutantTranspiler.transpileMutants(allMutants));
     await sandboxPool.disposeAll();
     mutantTranspiler.dispose();
+
     return result;
   }
 
@@ -42,7 +43,7 @@ export default class MutationTestExecutor {
     const recycled = new Observable<Sandbox>(observer => {
       recycleObserver = observer;
     });
-    function recycle(sandbox: { sandbox: Sandbox, result: MutantResult }) {
+    function recycle(sandbox: { result: MutantResult; sandbox: Sandbox }) {
       return recycleObserver.next(sandbox.sandbox);
     }
 
@@ -69,12 +70,15 @@ export default class MutationTestExecutor {
 function earlyResult([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]): [TranspiledMutant, Sandbox, MutantResult | null] {
   if (transpiledMutant.transpileResult.error) {
     const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
+
     return [transpiledMutant, sandbox, result];
   } else if (!transpiledMutant.mutant.selectedTests.length) {
     const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
+
     return [transpiledMutant, sandbox, result];
   } else if (!transpiledMutant.changedAnyTranspiledFiles) {
     const result = transpiledMutant.mutant.result(MutantStatus.Survived, []);
+
     return [transpiledMutant, sandbox, result];
   } else {
     // No early result possible, need to run in the sandbox later
@@ -82,7 +86,7 @@ function earlyResult([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]): 
   }
 }
 
-function runInSandbox([transpiledMutant, sandbox, earlyResult]: [TranspiledMutant, Sandbox, MutantResult | null]): Promise<{ sandbox: Sandbox, result: MutantResult }> {
+function runInSandbox([transpiledMutant, sandbox, earlyResult]: [TranspiledMutant, Sandbox, MutantResult | null]): Promise<{ result: MutantResult; sandbox: Sandbox }> {
   const log = getLogger(MutationTestExecutor.name);
   if (earlyResult) {
     return Promise.resolve({ sandbox, result: earlyResult });
@@ -105,6 +109,7 @@ function collectMutantResult(mutant: TestableMutant, runResult: RunResult, log: 
     const error = runResult.errorMessages ? runResult.errorMessages.toString() : '(undefined)';
     log.debug('A runtime error occurred: %s during execution of mutant: %s', error, mutant.toString());
   }
+
   return mutant.result(status, testNames);
 }
 

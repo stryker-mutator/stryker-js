@@ -1,4 +1,4 @@
-import { ElementFinder, by } from 'protractor';
+import { by, ElementFinder } from 'protractor';
 
 export default class Breadcrumb {
   constructor(private readonly host: ElementFinder) { }

@@ -1,15 +1,15 @@
-import { TestStatus, TestResult, CoverageCollection, CoverageCollectionPerTest, RunStatus } from 'stryker-api/test_runner';
 import { EventEmitter } from 'events';
 import * as karma from 'karma';
+import { CoverageCollection, CoverageCollectionPerTest, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
 
 export interface KarmaSpec {
   description: string;
   id: string;
+  log: string[];
   skipped: boolean;
   success: boolean;
-  time: number;
   suite: string[];
-  log: string[];
+  time: number;
 }
 
 /**
@@ -17,6 +17,15 @@ export interface KarmaSpec {
  * It is loaded by
  */
 export default class StrykerReporter extends EventEmitter implements karma.Reporter {
+  public static get instance(): StrykerReporter {
+    if (!this._instance) {
+      this._instance = new StrykerReporter();
+    }
+
+    return this._instance;
+  }
+
+  private static _instance = new StrykerReporter();
 
   public adapters: any[] = [];
 
@@ -24,16 +33,35 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     super();
   }
 
-  private static _instance = new StrykerReporter();
-  static get instance(): StrykerReporter {
-    if (!this._instance) {
-      this._instance = new StrykerReporter();
+  public onBrowserComplete(_browser: any, result: { coverage: CoverageCollection | CoverageCollectionPerTest }) {
+    this.emit('coverage_report', result.coverage);
+  }
+
+  public onBrowserError(_browser: any, error: any) {
+    // Karma 2.0 has different error messages
+    if (error.message) {
+      this.emit('browser_error', error.message);
+    } else {
+      this.emit('browser_error', error.toString());
     }
-    return this._instance;
+  }
+
+  public onBrowsersReady() {
+    this.emit('browsers_ready');
+  }
+
+  public onCompileError(errors: string[]) {
+    // This is called from angular cli logic
+    // https://github.com/angular/angular-cli/blob/012672161087a05ae5ecffbed5d1ee307ce1e0ad/packages/angular_devkit/build_angular/src/angular-cli-files/plugins/karma.ts#L96
+    this.emit('compile_error', errors);
   }
 
   public onListening(port: number) {
     this.emit('server_start', port);
+  }
+
+  public onRunComplete(runResult: karma.TestResults) {
+    this.emit('run_complete', this.collectRunState(runResult));
   }
 
   public onSpecComplete(_browser: any, spec: KarmaSpec) {
@@ -51,33 +79,6 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
       timeSpentMs: spec.time
     };
     this.emit('test_result', testResult);
-  }
-
-  public onRunComplete(runResult: karma.TestResults) {
-    this.emit('run_complete', this.collectRunState(runResult));
-  }
-
-  public onBrowserComplete(_browser: any, result: { coverage: CoverageCollection | CoverageCollectionPerTest }) {
-    this.emit('coverage_report', result.coverage);
-  }
-
-  public onBrowsersReady() {
-    this.emit('browsers_ready');
-  }
-
-  public onBrowserError(_browser: any, error: any) {
-    // Karma 2.0 has different error messages
-    if (error.message) {
-      this.emit('browser_error', error.message);
-    } else {
-      this.emit('browser_error', error.toString());
-    }
-  }
-
-  public onCompileError(errors: string[]) {
-    // This is called from angular cli logic
-    // https://github.com/angular/angular-cli/blob/012672161087a05ae5ecffbed5d1ee307ce1e0ad/packages/angular_devkit/build_angular/src/angular-cli-files/plugins/karma.ts#L96
-    this.emit('compile_error', errors);
   }
 
   private collectRunState(runResult: karma.TestResults): RunStatus {

@@ -11,6 +11,7 @@ export default class BlockMutator implements NodeMutator {
     if (types.isBlockStatement(node) && node.body.length > 0) {
       const mutatedNode = copy(node);
       mutatedNode.body = [];
+
       return [mutatedNode];
     }
   }

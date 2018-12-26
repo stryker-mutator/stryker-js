@@ -1,5 +1,5 @@
-import * as sinon from 'sinon';
 import { expect } from 'chai';
+import * as sinon from 'sinon';
 import { RunStatus } from 'stryker-api/test_runner';
 import TimeoutDecorator from '../../../src/test-runner/TimeoutDecorator';
 import { isPromise } from '../../../src/utils/objectUtils';
@@ -38,12 +38,14 @@ describe('TimeoutDecorator', () => {
     it('should resolve when inner promise resolves', () => {
       testRunner1[methodName].resolves('str');
       const promise = action();
+
       return expect(promise).to.eventually.eq('str');
     });
 
     it('should reject when inner promise rejects', () => {
       testRunner1[methodName].rejects(new Error('some error'));
       const promise = action();
+
       return expect(promise).to.be.rejectedWith('some error');
     });
   }
@@ -69,6 +71,7 @@ describe('TimeoutDecorator', () => {
       const runPromise = sut.run({ timeout: 20 });
       clock.tick(19);
       resolve('expectedResult');
+
       return expect(runPromise).to.eventually.be.eq('expectedResult');
     });
 
@@ -76,10 +79,12 @@ describe('TimeoutDecorator', () => {
       testRunner1.run.returns(new Promise<string>(() => { }));
       const runPromise = sut.run({ timeout: 20 });
       clock.tick(20);
+
       return expect(runPromise.then(result => {
         expect(availableTestRunners).to.have.lengthOf(0);
         expect(testRunner1.dispose).to.have.been.called;
         expect(testRunner2.init).to.have.been.called;
+
         return result;
       })).to.eventually.be.deep.equal({ status: RunStatus.Timeout, tests: [] });
     });

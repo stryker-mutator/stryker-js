@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
-import CoverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
 import { File } from 'stryker-api/core';
+import CoverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
 
 describe('CoverageInstrumenterTranspiler', () => {
   let sut: CoverageInstrumenterTranspiler;
@@ -38,7 +38,7 @@ describe('CoverageInstrumenterTranspiler', () => {
 
     it('should preserve source map comments', async () => {
       const input = [
-        new File('mutate.js', 'function something() {} // # sourceMappingUrl="something.map.js"'),
+        new File('mutate.js', 'function something() {} // # sourceMappingUrl="something.map.js"')
       ];
       const outputFiles = await sut.transpile(input);
       const instrumentedContent = outputFiles[0].textContent;
@@ -59,6 +59,7 @@ describe('CoverageInstrumenterTranspiler', () => {
 
     it('should fill error message and not transpile input when the file contains a parse error', async () => {
       const invalidJavascriptFile = new File('mutate.js', 'function something {}');
+
       return expect(sut.transpile([invalidJavascriptFile])).rejectedWith('Could not instrument "mutate.js" for code coverage. Inner error: SyntaxError: Unexpected token');
     });
   });

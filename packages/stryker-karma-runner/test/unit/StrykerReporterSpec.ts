@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import StrykerReporter, { KarmaSpec } from '../../src/StrykerReporter';
-import { TestResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import { TestResults } from 'karma';
+import { RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
+import StrykerReporter, { KarmaSpec } from '../../src/StrykerReporter';
 
 describe('StrykerReporter', () => {
 
@@ -151,28 +151,31 @@ describe('StrykerReporter', () => {
   function listenTo(eventName: string) {
     const events: any[] = [];
     sut.on(eventName, (event: any) => events.push(event));
+
     return () => events;
   }
 
   function karmaSpec(overrides?: Partial<KarmaSpec>): KarmaSpec {
-    return Object.assign({
+    return {
       description: 'baz',
       id: '1',
       log: [],
       skipped: false,
       success: true,
       suite: ['foo', 'bar'],
-      time: 42
-    }, overrides);
+      time: 42,
+      ...overrides
+    };
   }
 
   function testResults(overrides?: Partial<TestResults>): TestResults {
-    return Object.assign({
+    return {
       disconnected: false,
       error: false,
       exitCode: 0,
       failed: 0,
-      success: 0
-    }, overrides);
+      success: 0,
+      ...overrides
+    };
   }
 });

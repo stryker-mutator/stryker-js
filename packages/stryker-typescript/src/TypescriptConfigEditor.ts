@@ -1,10 +1,10 @@
+import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as ts from 'typescript';
+import { Config, ConfigEditor } from 'stryker-api/config';
 import { getLogger } from 'stryker-api/logging';
-import { ConfigEditor, Config } from 'stryker-api/config';
-import { CONFIG_KEY_FILE, CONFIG_KEY } from './helpers/keys';
-import * as fs from 'fs';
+import * as ts from 'typescript';
+import { CONFIG_KEY, CONFIG_KEY_FILE } from './helpers/keys';
 import { normalizeFileForTypescript, normalizeFileFromTypescript } from './helpers/tsHelpers';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
@@ -37,8 +37,9 @@ export default class TypescriptConfigEditor implements ConfigEditor {
   }
 
   private overrideOptions(tsConfig: ts.ParsedCommandLine): ts.ParsedCommandLine {
-    tsConfig.options = Object.assign({}, tsConfig.options, COMPILER_OPTIONS_OVERRIDES);
+    tsConfig.options = {...tsConfig.options, ...COMPILER_OPTIONS_OVERRIDES};
     tsConfig.fileNames = tsConfig.fileNames.map(normalizeFileFromTypescript);
+
     return tsConfig;
   }
 
@@ -61,6 +62,7 @@ export default class TypescriptConfigEditor implements ConfigEditor {
         const error = ts.formatDiagnostics(tsconfig.errors, diagnosticsHost(configFileBase));
         this.log.error(`Error while loading tsconfig file '${tsconfigFileName}': ${error}`);
       }
+
       return tsconfig;
     }
 

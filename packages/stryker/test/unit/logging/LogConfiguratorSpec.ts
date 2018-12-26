@@ -1,9 +1,9 @@
-import * as log4js from 'log4js';
 import { expect } from 'chai';
+import * as log4js from 'log4js';
 import { LogLevel } from 'stryker-api/core';
 import LogConfigurator from '../../../src/logging/LogConfigurator';
-import * as netUtils from '../../../src/utils/netUtils';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import * as netUtils from '../../../src/utils/netUtils';
 
 describe('LogConfigurator', () => {
 
@@ -116,6 +116,7 @@ describe('LogConfigurator', () => {
     };
 
     const consoleLayout = allowConsoleColors ? coloredLayout : notColoredLayout;
+
     return {
       appenders: {
         all: { type: require.resolve('../../../src/logging/MultiAppender'), appenders: ['filteredConsoleLevel', 'filteredFile'] },

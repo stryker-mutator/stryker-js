@@ -1,14 +1,14 @@
 import { expect } from 'chai';
+import { Logger } from 'stryker-api/logging';
 import { RunStatus } from 'stryker-api/test_runner';
-import RetryDecorator from '../../../src/test-runner/RetryDecorator';
-import TestRunnerMock from '../../helpers/TestRunnerMock';
-import { errorToString } from '../../../src/utils/objectUtils';
-import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
-import { Logger } from 'stryker-api/logging';
-import { Mock } from '../../helpers/producers';
+import RetryDecorator from '../../../src/test-runner/RetryDecorator';
+import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
+import { errorToString } from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';
+import { Mock } from '../../helpers/producers';
+import TestRunnerMock from '../../helpers/TestRunnerMock';
 
 describe('RetryDecorator', () => {
   let sut: RetryDecorator;
@@ -41,18 +41,21 @@ describe('RetryDecorator', () => {
       testRunner1.run.resolves(expectedResult);
       const result = sut.run(options);
       expect(testRunner1.run).to.have.been.calledWith(options);
+
       return expect(result).to.eventually.eq(expectedResult);
     });
 
     it('should retry on a new test runner if a run is rejected', () => {
       testRunner1.run.rejects(new Error('Error'));
       testRunner2.run.resolves(expectedResult);
+
       return expect(sut.run(options)).to.eventually.eq(expectedResult);
     });
 
     it('should retry if a `ChildProcessCrashedError` occurred reject appears', () => {
       testRunner1.run.rejects(crashedError);
       testRunner2.run.resolves(expectedResult);
+
       return expect(sut.run(options)).to.eventually.eq(expectedResult);
     });
 

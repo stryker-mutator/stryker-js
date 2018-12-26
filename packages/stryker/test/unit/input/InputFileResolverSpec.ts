@@ -1,21 +1,21 @@
+import { fsAsPromised } from '@stryker-mutator/util';
+import { childProcessAsPromised } from '@stryker-mutator/util';
+import { expect } from 'chai';
 import os = require('os');
 import * as path from 'path';
-import { expect } from 'chai';
-import { childProcessAsPromised } from '@stryker-mutator/util';
-import { Logger } from 'stryker-api/logging';
-import { File } from 'stryker-api/core';
-import { SourceFile } from 'stryker-api/report';
-import { Config } from 'stryker-api/config';
-import InputFileResolver from '../../../src/input/InputFileResolver';
 import * as sinon from 'sinon';
-import * as fileUtils from '../../../src/utils/fileUtils';
-import currentLogMock from '../../helpers/logMock';
+import { Config } from 'stryker-api/config';
+import { File } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
+import { SourceFile } from 'stryker-api/report';
+import InputFileResolver from '../../../src/input/InputFileResolver';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { Mock, mock, createFileNotFoundError, createIsDirError } from '../../helpers/producers';
+import * as fileUtils from '../../../src/utils/fileUtils';
 import { errorToString, normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
-import { fsAsPromised } from '@stryker-mutator/util';
+import currentLogMock from '../../helpers/logMock';
+import { createFileNotFoundError, createIsDirError, Mock, mock } from '../../helpers/producers';
 
-const files = (...namesWithContent: [string, string][]): File[] =>
+const files = (...namesWithContent: Array<[string, string]>): File[] =>
   namesWithContent.map((nameAndContent): File => new File(
     path.resolve(nameAndContent[0]),
     Buffer.from(nameAndContent[1])
@@ -69,6 +69,7 @@ describe('InputFileResolver', () => {
   it('should reject if there is no `files` array and `git ls-files` command fails', () => {
     const expectedError = new Error('fatal: Not a git repository (or any of the parent directories): .git');
     childProcessExecStub.rejects(expectedError);
+
     return expect(new InputFileResolver([], undefined, reporter).resolve())
       .rejectedWith(`Cannot determine input files. Either specify a \`files\` array in your stryker configuration, or make sure "${process.cwd()
         }" is located inside a git repository. Inner error: ${
@@ -245,6 +246,7 @@ describe('InputFileResolver', () => {
     sut = new InputFileResolver(['file1'], ['fileError', 'fileError'], reporter);
     const expectedError = new Error('ERROR: something went wrong');
     globStub.withArgs('fileError').rejects(expectedError);
+
     return expect(sut.resolve()).rejectedWith(expectedError);
   });
 

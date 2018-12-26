@@ -1,8 +1,8 @@
-import { Configuration } from 'webpack';
-import { WebpackCompilerMock } from './mockInterfaces';
 import * as sinon from 'sinon';
-import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
 import { File } from 'stryker-api/core';
+import { Configuration } from 'webpack';
+import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
+import { WebpackCompilerMock } from './mockInterfaces';
 
 export type Mock<T> = { [K in keyof T]: sinon.SinonStub; };
 

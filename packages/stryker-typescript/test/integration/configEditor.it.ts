@@ -1,7 +1,7 @@
-import * as path from 'path';
 import { expect } from 'chai';
-import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
+import * as path from 'path';
 import { Config } from 'stryker-api/config';
+import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 
 function resolveSampleProject(relativeFileName: string) {
   return path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', relativeFileName);

@@ -1,7 +1,7 @@
-import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
-import * as sinon from 'sinon';
-import { expect, assert } from 'chai';
+import { assert, expect } from 'chai';
 import * as jest from 'jest';
+import * as sinon from 'sinon';
+import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
 import currentLogMock from '../../helpers/logMock';
 
 describe('JestPromiseTestAdapter', () => {

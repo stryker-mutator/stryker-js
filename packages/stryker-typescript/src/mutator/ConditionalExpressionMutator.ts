@@ -8,17 +8,15 @@ export default class ConditionalExpressionMutator extends NodeMutator<ts.BinaryE
     return node.kind === ts.SyntaxKind.BinaryExpression;
   }
 
-  private isInvalidParent(parent: ts.Node): boolean {
-    switch (parent.kind) {
-      case ts.SyntaxKind.IfStatement:
-      case ts.SyntaxKind.ForStatement:
-      case ts.SyntaxKind.WhileStatement:
-      case ts.SyntaxKind.DoStatement:
-      case ts.SyntaxKind.LiteralType:
-        return true;
-      default:
-        return false;
+  protected identifyReplacements(node: ts.BinaryExpression): NodeReplacement[] {
+    if ((node.parent && this.isInvalidParent(node.parent)) || this.isInvalidOperator(node.operatorToken)) {
+      return [];
     }
+
+    return [
+      { node, replacement: 'false' },
+      { node, replacement: 'true' }
+    ];
   }
 
   private isInvalidOperator(operatorToken: ts.BinaryOperatorToken): boolean {
@@ -34,15 +32,17 @@ export default class ConditionalExpressionMutator extends NodeMutator<ts.BinaryE
     }
   }
 
-  protected identifyReplacements(node: ts.BinaryExpression): NodeReplacement[] {
-    if ((node.parent && this.isInvalidParent(node.parent)) || this.isInvalidOperator(node.operatorToken)) {
-      return [];
+  private isInvalidParent(parent: ts.Node): boolean {
+    switch (parent.kind) {
+      case ts.SyntaxKind.IfStatement:
+      case ts.SyntaxKind.ForStatement:
+      case ts.SyntaxKind.WhileStatement:
+      case ts.SyntaxKind.DoStatement:
+      case ts.SyntaxKind.LiteralType:
+        return true;
+      default:
+        return false;
     }
-
-    return [
-      { node, replacement: 'false' },
-      { node, replacement: 'true' }
-    ];
   }
 
 }

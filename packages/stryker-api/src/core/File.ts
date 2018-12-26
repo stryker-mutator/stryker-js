@@ -3,8 +3,26 @@
  */
 export default class File {
 
-  private _textContent: string | undefined;
+  /**
+   * Gets the underlying content as buffer.
+   */
+  public get content(): Buffer {
+    return this._content;
+  }
+
+  /**
+   * Gets the underlying content as string using utf8 encoding.
+   */
+  public get textContent(): string {
+    if (!this._textContent) {
+      this._textContent = this.content.toString();
+    }
+
+    return this._textContent;
+  }
   private readonly _content: Buffer;
+
+  private _textContent: string | undefined;
 
   /**
    * Creates a new File to be used within Stryker.
@@ -18,22 +36,5 @@ export default class File {
     } else {
       this._content = content;
     }
-  }
-
-  /**
-   * Gets the underlying content as buffer.
-   */
-  get content(): Buffer {
-    return this._content;
-  }
-
-  /**
-   * Gets the underlying content as string using utf8 encoding.
-   */
-  get textContent(): string {
-    if (!this._textContent) {
-      this._textContent = this.content.toString();
-    }
-    return this._textContent;
   }
 }

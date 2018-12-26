@@ -1,10 +1,10 @@
+import { RunnerOptions } from 'stryker-api/test_runner';
+import LoggingClientContext from '../logging/LoggingClientContext';
+import CommandTestRunner from '../test-runner/CommandTestRunner';
 import ChildProcessTestRunnerDecorator from './ChildProcessTestRunnerDecorator';
-import TimeoutDecorator from './TimeoutDecorator';
 import RetryDecorator from './RetryDecorator';
 import TestRunnerDecorator from './TestRunnerDecorator';
-import LoggingClientContext from '../logging/LoggingClientContext';
-import { RunnerOptions } from 'stryker-api/test_runner';
-import CommandTestRunner from '../test-runner/CommandTestRunner';
+import TimeoutDecorator from './TimeoutDecorator';
 
 export default {
   create(testRunnerName: string, settings: RunnerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext): TestRunnerDecorator {

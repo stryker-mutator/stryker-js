@@ -19,5 +19,6 @@ export function isNegativeNumber(n: number) {
   if (n < 0) {
     isNegative = true;
   }
+
   return isNegative;
 }

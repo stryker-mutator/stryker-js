@@ -1,23 +1,23 @@
-import { EOL } from 'os';
 import { expect } from 'chai';
-import { Logger } from 'stryker-api/logging';
-import { default as StrykerSandbox } from '../../../src/Sandbox';
-import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
-import { File, LogLevel } from 'stryker-api/core';
+import { EOL } from 'os';
 import { Config } from 'stryker-api/config';
-import * as producers from '../../helpers/producers';
+import { File, LogLevel } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
 import { TestFramework } from 'stryker-api/test_framework';
-import CoverageInstrumenterTranspiler, * as coverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
-import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { TranspilerOptions } from 'stryker-api/transpile';
-import { RunStatus, RunResult, TestStatus } from 'stryker-api/test_runner';
-import currentLogMock from '../../helpers/logMock';
-import Timer from '../../../src/utils/Timer';
-import { Mock, coverageMaps } from '../../helpers/producers';
 import InputFileCollection from '../../../src/input/InputFileCollection';
-import * as coverageHooks from '../../../src/transpiler/coverageHooks';
-import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
+import { default as StrykerSandbox } from '../../../src/Sandbox';
+import * as coverageHooks from '../../../src/transpiler/coverageHooks';
+import CoverageInstrumenterTranspiler, * as coverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
+import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
+import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
+import Timer from '../../../src/utils/Timer';
+import currentLogMock from '../../helpers/logMock';
+import * as producers from '../../helpers/producers';
+import { coverageMaps, Mock } from '../../helpers/producers';
 
 const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -53,7 +53,7 @@ describe('InitialTestExecutor run', () => {
     testFrameworkMock = producers.testFramework();
     coverageAnnotatedFiles = [
       new File('cov-annotated-transpiled-file-1.js', ''),
-      new File('cov-annotated-transpiled-file-2.js', ''),
+      new File('cov-annotated-transpiled-file-2.js', '')
     ];
     transpiledFiles = [
       new File('transpiled-file-1.js', ''),
@@ -174,7 +174,7 @@ describe('InitialTestExecutor run', () => {
     });
 
     it('should log when there were no tests', async () => {
-      while (expectedRunResult.tests.pop());
+      while (expectedRunResult.tests.pop()) { }
       await sut.run();
       expect(log.warn).to.have.been.calledWith('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
     });

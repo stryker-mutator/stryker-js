@@ -1,14 +1,14 @@
-import { TestResult, TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
-import { Mutant } from 'stryker-api/mutant';
-import { Config } from 'stryker-api/config';
-import { Logger } from 'stryker-api/logging';
-import { TestFramework, TestSelection } from 'stryker-api/test_framework';
-import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
-import { MutationScoreThresholds, File, Location } from 'stryker-api/core';
-import TestableMutant from '../../src/TestableMutant';
-import SourceFile from '../../src/SourceFile';
-import TranspiledMutant from '../../src/TranspiledMutant';
 import { FileCoverageData } from 'istanbul-lib-coverage';
+import { Config } from 'stryker-api/config';
+import { File, Location, MutationScoreThresholds } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
+import { Mutant } from 'stryker-api/mutant';
+import { MatchedMutant, MutantResult, MutantStatus, Reporter, ScoreResult } from 'stryker-api/report';
+import { TestFramework, TestSelection } from 'stryker-api/test_framework';
+import { RunResult, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
+import SourceFile from '../../src/SourceFile';
+import TestableMutant from '../../src/TestableMutant';
+import TranspiledMutant from '../../src/TranspiledMutant';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
@@ -21,7 +21,6 @@ export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
 
 /**
  * @description Checks if variable is a primitive
- * @param value
  */
 function isPrimitive(value: any): boolean {
   return ['string', 'undefined', 'symbol', 'boolean'].indexOf(typeof value) > -1
@@ -31,7 +30,6 @@ function isPrimitive(value: any): boolean {
 
 /**
  * Use this factory to create flat test data
- * @param defaults
  */
 function factory<T>(defaults: T) {
   for (const key in defaults) {
@@ -41,7 +39,7 @@ function factory<T>(defaults: T) {
     }
   }
 
-  return (overrides?: Partial<T>) => Object.assign({}, defaults, overrides);
+  return (overrides?: Partial<T>) => ({...defaults, ...overrides});
 }
 
 /**
@@ -51,10 +49,9 @@ export const PNG_BASE64_ENCODED = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeA
 
 /**
  * Use this factory method to create deep test data
- * @param defaults
  */
 function factoryMethod<T>(defaultsFactory: () => T) {
-  return (overrides?: Partial<T>) => Object.assign({}, defaultsFactory(), overrides);
+  return (overrides?: Partial<T>) => ({...defaultsFactory(), ...overrides});
 }
 
 export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
@@ -162,7 +159,7 @@ export const mutationScoreThresholds = factory<MutationScoreThresholds>({
 
 export const config = factoryMethod<Config>(() => new Config());
 
-export const ALL_REPORTER_EVENTS: (keyof Reporter)[] =
+export const ALL_REPORTER_EVENTS: Array<keyof Reporter> =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
 
 export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
@@ -170,6 +167,7 @@ export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.to
   for (let i = 0; i < numberOfTests; i++) {
     scopedTestIds.push(1);
   }
+
   return {
     fileName: '',
     id: mutantId,
@@ -218,5 +216,6 @@ export function createIsDirError(): NodeJS.ErrnoException {
 function createErrnoException(errorCode: string) {
   const fileNotFoundError: NodeJS.ErrnoException = new Error('');
   fileNotFoundError.code = errorCode;
+
   return fileNotFoundError;
 }

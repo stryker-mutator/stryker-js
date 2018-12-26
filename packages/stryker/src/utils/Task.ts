@@ -5,10 +5,18 @@ import { timeout, TimeoutExpired } from './objectUtils';
  */
 export class Task<T = void> {
 
+  public get isCompleted() {
+    return this._isCompleted;
+  }
+
+  public get promise() {
+    return this._promise;
+  }
+
   protected _promise: Promise<T>;
-  private resolveFn: (value?: T | PromiseLike<T>) => void;
-  private rejectFn: (reason: any) => void;
   private _isCompleted = false;
+  private rejectFn: (reason: any) => void;
+  private resolveFn: (value?: T | PromiseLike<T>) => void;
 
   constructor() {
     this._promise = new Promise<T>((resolve, reject) => {
@@ -17,22 +25,14 @@ export class Task<T = void> {
     });
   }
 
-  get promise() {
-    return this._promise;
-  }
-
-  get isCompleted() {
-    return this._isCompleted;
+  public reject(reason: any) {
+    this._isCompleted = true;
+    this.rejectFn(reason);
   }
 
   public resolve(result: T | PromiseLike<T>) {
     this._isCompleted = true;
     this.resolveFn(result);
-  }
-
-  public reject(reason: any) {
-    this._isCompleted = true;
-    this.rejectFn(reason);
   }
 }
 

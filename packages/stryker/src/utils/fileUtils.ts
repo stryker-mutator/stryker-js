@@ -1,8 +1,8 @@
-import * as path from 'path';
+import { fsAsPromised } from '@stryker-mutator/util';
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
+import * as path from 'path';
 import * as rimraf from 'rimraf';
-import { fsAsPromised } from '@stryker-mutator/util';
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
@@ -20,9 +20,9 @@ export async function cleanFolder(folderName: string) {
   try {
     await fsAsPromised.lstat(folderName);
     await deleteDir(folderName);
+
     return mkdirp.sync(folderName);
   } catch (e) {
-
     return mkdirp.sync(folderName);
   }
 }

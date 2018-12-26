@@ -1,9 +1,9 @@
-import DotsReporter from '../../../src/reporters/DotsReporter';
-import * as sinon from 'sinon';
-import { MutantStatus, MutantResult } from 'stryker-api/report';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import * as os from 'os';
+import * as sinon from 'sinon';
+import { MutantResult, MutantStatus } from 'stryker-api/report';
+import DotsReporter from '../../../src/reporters/DotsReporter';
 import * as producers from '../../helpers/producers';
 
 describe('DotsReporter', () => {

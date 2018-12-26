@@ -1,6 +1,6 @@
-import {Factory} from '../../core';
-import TestRunner from './TestRunner';
+import { Factory } from '../../core';
 import RunnerOptions from './RunnerOptions';
+import TestRunner from './TestRunner';
 
 namespace TestRunnerFactory {
 

@@ -1,24 +1,14 @@
-import { getLogger } from 'stryker-api/logging';
+import { fsAsPromised } from '@stryker-mutator/util';
 import * as path from 'path';
 import { StrykerOptions } from 'stryker-api/core';
-import { SourceFile, MutantResult, MatchedMutant, Reporter, ScoreResult } from 'stryker-api/report';
+import { getLogger } from 'stryker-api/logging';
+import { MatchedMutant, MutantResult, Reporter, ScoreResult, SourceFile } from 'stryker-api/report';
 import { cleanFolder } from '../utils/fileUtils';
 import StrictReporter from './StrictReporter';
-import { fsAsPromised } from '@stryker-mutator/util';
 
 const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 
 export default class EventRecorderReporter implements StrictReporter {
-
-  private readonly log = getLogger(EventRecorderReporter.name);
-  private readonly allWork: Promise<void>[] = [];
-  private readonly createBaseFolderTask: Promise<any>;
-  private _baseFolder: string;
-  private index = 0;
-
-  constructor(private readonly options: StrykerOptions) {
-    this.createBaseFolderTask = cleanFolder(this.baseFolder);
-  }
 
   private get baseFolder() {
     if (!this._baseFolder) {
@@ -30,39 +20,30 @@ export default class EventRecorderReporter implements StrictReporter {
         this._baseFolder = DEFAULT_BASE_FOLDER;
       }
     }
+
     return this._baseFolder;
   }
+  private _baseFolder: string;
+  private readonly allWork: Array<Promise<void>> = [];
+  private readonly createBaseFolderTask: Promise<any>;
+  private index = 0;
 
-  private writeToFile(methodName: keyof Reporter, data: any) {
-    const filename = path.join(this.baseFolder, `${this.format(this.index++)}-${methodName}.json`);
-    this.log.debug(`Writing event ${methodName} to file ${filename}`);
-    return fsAsPromised.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
-  }
+  private readonly log = getLogger(EventRecorderReporter.name);
 
-  private format(input: number) {
-    let str = input.toString();
-    for (let i = 10000; i > 1; i = i / 10) {
-      if (i > input) {
-        str = '0' + str;
-      }
-    }
-    return str;
-  }
-
-  private work(eventName: keyof Reporter, data: any) {
-    this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(eventName, data)));
-  }
-
-  public onSourceFileRead(file: SourceFile): void {
-    this.work('onSourceFileRead', file);
-  }
-
-  public onAllSourceFilesRead(files: SourceFile[]): void {
-    this.work('onAllSourceFilesRead', files);
+  constructor(private readonly options: StrykerOptions) {
+    this.createBaseFolderTask = cleanFolder(this.baseFolder);
   }
 
   public onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
     this.work('onAllMutantsMatchedWithTests', results);
+  }
+
+  public onAllMutantsTested(results: MutantResult[]): void {
+    this.work('onAllMutantsTested', results);
+  }
+
+  public onAllSourceFilesRead(files: SourceFile[]): void {
+    this.work('onAllSourceFilesRead', files);
   }
 
   public onMutantTested(result: MutantResult): void {
@@ -73,12 +54,35 @@ export default class EventRecorderReporter implements StrictReporter {
     this.work('onScoreCalculated', score);
   }
 
-  public onAllMutantsTested(results: MutantResult[]): void {
-    this.work('onAllMutantsTested', results);
+  public onSourceFileRead(file: SourceFile): void {
+    this.work('onSourceFileRead', file);
   }
 
   public async wrapUp(): Promise<any> {
     await this.createBaseFolderTask;
+
     return Promise.all(this.allWork);
+  }
+
+  private format(input: number) {
+    let str = input.toString();
+    for (let i = 10000; i > 1; i = i / 10) {
+      if (i > input) {
+        str = '0' + str;
+      }
+    }
+
+    return str;
+  }
+
+  private work(eventName: keyof Reporter, data: any) {
+    this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(eventName, data)));
+  }
+
+  private writeToFile(methodName: keyof Reporter, data: any) {
+    const filename = path.join(this.baseFolder, `${this.format(this.index++)}-${methodName}.json`);
+    this.log.debug(`Writing event ${methodName} to file ${filename}`);
+
+    return fsAsPromised.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
   }
 }

@@ -1,16 +1,16 @@
 import * as path from 'path';
-import { getLogger, Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
-import { serialize, deserialize, errorToString } from '../utils/objectUtils';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind, CallMessage } from './messageProtocol';
-import PluginLoader from '../PluginLoader';
+import { getLogger, Logger } from 'stryker-api/logging';
 import LogConfigurator from '../logging/LogConfigurator';
+import PluginLoader from '../PluginLoader';
+import { deserialize, errorToString, serialize } from '../utils/objectUtils';
+import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';
 
 export default class ChildProcessProxyWorker {
 
-  private log: Logger;
-
   public realSubject: any;
+
+  private log: Logger;
 
   constructor() {
     // Make sure to bind the methods in order to ensure the `this` pointer
@@ -18,9 +18,11 @@ export default class ChildProcessProxyWorker {
     process.on('message', this.handleMessage);
   }
 
-  private send(value: ParentMessage) {
-    if (process.send) {
-      process.send(serialize(value));
+  private doCall(message: CallMessage): {} | PromiseLike<{}> | undefined {
+    if (typeof this.realSubject[message.methodName] === 'function') {
+      return this.realSubject[message.methodName](...message.args);
+    } else {
+      return this.realSubject[message.methodName];
     }
   }
 
@@ -66,16 +68,24 @@ export default class ChildProcessProxyWorker {
         LogConfigurator.shutdown()
           .then(sendCompleted)
           .catch(sendCompleted);
-        break;
     }
   }
 
-  private doCall(message: CallMessage): {} | PromiseLike<{}> | undefined {
-    if (typeof this.realSubject[message.methodName] === 'function') {
-      return this.realSubject[message.methodName](...message.args);
-    } else {
-      return this.realSubject[message.methodName];
-    }
+  /**
+   * During mutation testing, it's to be expected that promise rejections are not handled synchronously anymore (or not at all)
+   * Let's handle those events so future versions of node don't crash
+   * See issue 350: https://github.com/stryker-mutator/stryker/issues/350
+   */
+  private handlePromiseRejections() {
+    const unhandledRejections: Array<Promise<void>> = [];
+    process.on('unhandledRejection', (reason, promise) => {
+      const unhandledPromiseId = unhandledRejections.push(promise);
+      this.log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
+    });
+    process.on('rejectionHandled', promise => {
+      const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;
+      this.log.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
+    });
   }
 
   /**
@@ -93,21 +103,10 @@ export default class ChildProcessProxyWorker {
     });
   }
 
-  /**
-   * During mutation testing, it's to be expected that promise rejections are not handled synchronously anymore (or not at all)
-   * Let's handle those events so future versions of node don't crash
-   * See issue 350: https://github.com/stryker-mutator/stryker/issues/350
-   */
-  private handlePromiseRejections() {
-    const unhandledRejections: Promise<void>[] = [];
-    process.on('unhandledRejection', (reason, promise) => {
-      const unhandledPromiseId = unhandledRejections.push(promise);
-      this.log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
-    });
-    process.on('rejectionHandled', promise => {
-      const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;
-      this.log.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
-    });
+  private send(value: ParentMessage) {
+    if (process.send) {
+      process.send(serialize(value));
+    }
   }
 }
 

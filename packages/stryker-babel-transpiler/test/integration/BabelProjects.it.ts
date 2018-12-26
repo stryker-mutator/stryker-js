@@ -1,9 +1,9 @@
-import * as path from 'path';
-import { File } from 'stryker-api/core';
-import { Config } from 'stryker-api/config';
-import { ProjectLoader } from '../helpers/projectLoader';
-import BabelTranspiler from '../../src/BabelTranspiler';
 import { expect } from 'chai';
+import * as path from 'path';
+import { Config } from 'stryker-api/config';
+import { File } from 'stryker-api/core';
+import BabelTranspiler from '../../src/BabelTranspiler';
+import { ProjectLoader } from '../helpers/projectLoader';
 
 function describeIntegrationTest(projectName: string) {
 

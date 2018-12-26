@@ -1,16 +1,16 @@
 import * as _ from 'lodash';
+import { File, StrykerOptions } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
-import { RunResult, CoverageCollection, StatementMap, CoveragePerTestResult, CoverageResult } from 'stryker-api/test_runner';
-import { StrykerOptions, File } from 'stryker-api/core';
-import { MatchedMutant } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
-import TestableMutant, { TestSelectionResult } from './TestableMutant';
+import { MatchedMutant } from 'stryker-api/report';
+import { CoverageCollection, CoveragePerTestResult, CoverageResult, RunResult, StatementMap } from 'stryker-api/test_runner';
 import StrictReporter from './reporters/StrictReporter';
-import { CoverageMapsByFile, CoverageMaps } from './transpiler/CoverageInstrumenterTranspiler';
-import { filterEmpty } from './utils/objectUtils';
 import SourceFile from './SourceFile';
+import TestableMutant, { TestSelectionResult } from './TestableMutant';
+import { CoverageMaps, CoverageMapsByFile } from './transpiler/CoverageInstrumenterTranspiler';
 import SourceMapper from './transpiler/SourceMapper';
 import LocationHelper from './utils/LocationHelper';
+import { filterEmpty } from './utils/objectUtils';
 
 enum StatementIndexKind {
   function,
@@ -22,11 +22,19 @@ enum StatementIndexKind {
  * Either the function map, or statement map
  */
 interface StatementIndex {
-  kind: StatementIndexKind;
   index: string;
+  kind: StatementIndexKind;
 }
 
 export default class MutantTestMatcher {
+
+  private get baseline(): CoverageCollection | null {
+    if (this.isCoveragePerTestResult(this.initialRunResult.coverage)) {
+      return this.initialRunResult.coverage.baseline;
+    } else {
+      return null;
+    }
+  }
 
   private readonly log = getLogger(MutantTestMatcher.name);
 
@@ -38,30 +46,6 @@ export default class MutantTestMatcher {
     private readonly coveragePerFile: CoverageMapsByFile,
     private readonly options: StrykerOptions,
     private readonly reporter: StrictReporter) {
-  }
-
-  private get baseline(): CoverageCollection | null {
-    if (this.isCoveragePerTestResult(this.initialRunResult.coverage)) {
-      return this.initialRunResult.coverage.baseline;
-    } else {
-      return null;
-    }
-  }
-
-  public matchWithMutants(): TestableMutant[] {
-
-    const testableMutants = this.createTestableMutants();
-
-    if (this.options.coverageAnalysis === 'off') {
-      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.Success));
-    } else if (!this.initialRunResult.coverage) {
-      this.log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
-      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.FailedButAlreadyReported));
-    } else {
-      testableMutants.forEach(testableMutant => this.enrichWithCoveredTests(testableMutant));
-    }
-    this.reporter.onAllMutantsMatchedWithTests(Object.freeze(testableMutants.map(this.mapMutantOnMatchedMutant)));
-    return testableMutants;
   }
 
   public enrichWithCoveredTests(testableMutant: TestableMutant) {
@@ -90,61 +74,48 @@ export default class MutantTestMatcher {
     }
   }
 
-  private isCoveredByBaseline(fileName: string, statementIndex: StatementIndex): boolean {
-    if (this.baseline) {
-      const coverageResult = this.baseline[fileName];
-      return this.isCoveredByCoverageCollection(coverageResult, statementIndex);
-    } else {
-      return false;
-    }
-  }
+  public matchWithMutants(): TestableMutant[] {
 
-  private isCoveredByTest(testId: number, fileName: string, statementIndex: StatementIndex): boolean {
-    const coverageCollection = this.findCoverageCollectionForTest(testId);
-    const coveredFile = coverageCollection && coverageCollection[fileName];
-    return this.isCoveredByCoverageCollection(coveredFile, statementIndex);
-  }
+    const testableMutants = this.createTestableMutants();
 
-  private isCoveredByCoverageCollection(coveredFile: CoverageResult | null, statementIndex: StatementIndex): boolean {
-    if (coveredFile) {
-      if (statementIndex.kind === StatementIndexKind.statement) {
-        return coveredFile.s[statementIndex.index] > 0;
-      } else {
-        return coveredFile.f[statementIndex.index] > 0;
-      }
+    if (this.options.coverageAnalysis === 'off') {
+      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.Success));
+    } else if (!this.initialRunResult.coverage) {
+      this.log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
+      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.FailedButAlreadyReported));
     } else {
-      return false;
+      testableMutants.forEach(testableMutant => this.enrichWithCoveredTests(testableMutant));
     }
+    this.reporter.onAllMutantsMatchedWithTests(Object.freeze(testableMutants.map(this.mapMutantOnMatchedMutant)));
+
+    return testableMutants;
   }
 
   private createTestableMutants(): TestableMutant[] {
     const sourceFiles = this.filesToMutate.map(file => new SourceFile(file));
+
     return filterEmpty(this.mutants.map((mutant, index) => {
       const sourceFile = sourceFiles.find(file => file.name === mutant.fileName);
       if (sourceFile) {
         return new TestableMutant(index.toString(), mutant, sourceFile);
       } else {
         this.log.error(`Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${mutant.fileName}. List of source files: \n\t${sourceFiles.map(s => s.name).join('\n\t')}`);
+
         return null;
       }
     }));
   }
 
-  /**
-   * Map the Mutant object on the MatchMutant Object.
-   * @param testableMutant The mutant.
-   * @returns The MatchedMutant
-   */
-  private mapMutantOnMatchedMutant(testableMutant: TestableMutant): MatchedMutant {
-    const matchedMutant = _.cloneDeep({
-      fileName: testableMutant.mutant.fileName,
-      id: testableMutant.id,
-      mutatorName: testableMutant.mutant.mutatorName,
-      replacement: testableMutant.mutant.replacement,
-      scopedTestIds: testableMutant.selectedTests.map(testSelection => testSelection.id),
-      timeSpentScopedTests: testableMutant.timeSpentScopedTests,
-    });
-    return Object.freeze(matchedMutant);
+  private findCoverageCollectionForTest(testId: number): CoverageCollection | null {
+    if (this.initialRunResult.coverage) {
+      if (this.isCoveragePerTestResult(this.initialRunResult.coverage)) {
+        return this.initialRunResult.coverage.deviations[testId];
+      } else {
+        return this.initialRunResult.coverage;
+      }
+    }
+
+    return null;
   }
 
   private findMatchingStatement(location: LocationHelper, fileCoverage: CoverageMaps): StatementIndex | null {
@@ -161,9 +132,9 @@ export default class MutantTestMatcher {
           index: functionIndex,
           kind: StatementIndexKind.function
         };
-      } else {
-        return null;
       }
+
+      return null;
     }
   }
 
@@ -174,7 +145,7 @@ export default class MutantTestMatcher {
    * @returns The index of the smallest statement surrounding the location, or null if not found.
    */
   private findMatchingStatementInMap(needle: LocationHelper, haystack: StatementMap): string | null {
-    let smallestStatement: { index: string | null, location: LocationHelper } = {
+    let smallestStatement: { index: string | null; location: LocationHelper } = {
       index: null,
       location: LocationHelper.MAX_VALUE
     };
@@ -190,22 +161,58 @@ export default class MutantTestMatcher {
         }
       });
     }
-    return smallestStatement.index;
-  }
 
-  private findCoverageCollectionForTest(testId: number): CoverageCollection | null {
-    if (this.initialRunResult.coverage) {
-      if (this.isCoveragePerTestResult(this.initialRunResult.coverage)) {
-        return this.initialRunResult.coverage.deviations[testId];
-      } else {
-        return this.initialRunResult.coverage;
-      }
-    } else {
-      return null;
-    }
+    return smallestStatement.index;
   }
 
   private isCoveragePerTestResult(_coverage: CoverageCollection | CoveragePerTestResult | undefined): _coverage is CoveragePerTestResult {
     return this.options.coverageAnalysis === 'perTest';
+  }
+
+  private isCoveredByBaseline(fileName: string, statementIndex: StatementIndex): boolean {
+    if (this.baseline) {
+      const coverageResult = this.baseline[fileName];
+
+      return this.isCoveredByCoverageCollection(coverageResult, statementIndex);
+    } else {
+      return false;
+    }
+  }
+
+  private isCoveredByCoverageCollection(coveredFile: CoverageResult | null, statementIndex: StatementIndex): boolean {
+    if (coveredFile) {
+      if (statementIndex.kind === StatementIndexKind.statement) {
+        return coveredFile.s[statementIndex.index] > 0;
+      } else {
+        return coveredFile.f[statementIndex.index] > 0;
+      }
+    }
+
+    return false;
+  }
+
+  private isCoveredByTest(testId: number, fileName: string, statementIndex: StatementIndex): boolean {
+    const coverageCollection = this.findCoverageCollectionForTest(testId);
+    const coveredFile = coverageCollection && coverageCollection[fileName];
+
+    return this.isCoveredByCoverageCollection(coveredFile, statementIndex);
+  }
+
+  /**
+   * Map the Mutant object on the MatchMutant Object.
+   * @param testableMutant The mutant.
+   * @returns The MatchedMutant
+   */
+  private mapMutantOnMatchedMutant(testableMutant: TestableMutant): MatchedMutant {
+    const matchedMutant = _.cloneDeep({
+      fileName: testableMutant.mutant.fileName,
+      id: testableMutant.id,
+      mutatorName: testableMutant.mutant.mutatorName,
+      replacement: testableMutant.mutant.replacement,
+      scopedTestIds: testableMutant.selectedTests.map(testSelection => testSelection.id),
+      timeSpentScopedTests: testableMutant.timeSpentScopedTests
+    });
+
+    return Object.freeze(matchedMutant);
   }
 }

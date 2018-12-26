@@ -1,12 +1,12 @@
+import { expect } from 'chai';
+import { Config, ConfigOptions } from 'karma';
 import * as path from 'path';
 import * as logging from 'stryker-api/logging';
 import sut = require('../../../src/starters/stryker-karma.conf');
-import { Config, ConfigOptions } from 'karma';
-import { expect } from 'chai';
-import LoggerStub from '../../helpers/LoggerStub';
-import * as utils from '../../../src/utils';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/TestHooksMiddleware';
 import StrykerReporter from '../../../src/StrykerReporter';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/TestHooksMiddleware';
+import * as utils from '../../../src/utils';
+import LoggerStub from '../../helpers/LoggerStub';
 
 describe('stryker-karma.conf.js', () => {
 
@@ -138,6 +138,11 @@ describe('stryker-karma.conf.js', () => {
 });
 
 class KarmaConfigMock implements Config {
+  public LOG_DEBUG = 'debug';
+  public LOG_DISABLE = 'off';
+  public LOG_ERROR = 'error';
+  public LOG_INFO = 'info';
+  public LOG_WARN = 'warn';
   public set(config: ConfigOptions) {
     for (const prop in config) {
       if (prop !== 'set') {
@@ -145,9 +150,4 @@ class KarmaConfigMock implements Config {
       }
     }
   }
-  public LOG_DISABLE = 'off';
-  public LOG_ERROR = 'error';
-  public LOG_WARN = 'warn';
-  public LOG_INFO = 'info';
-  public LOG_DEBUG = 'debug';
 }

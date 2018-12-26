@@ -1,13 +1,13 @@
-import { getLogger } from 'stryker-api/logging';
-import { RunnerOptions, RunResult, TestRunner, RunStatus, TestResult, TestStatus, RunOptions } from 'stryker-api/test_runner';
 import * as jest from 'jest';
+import { getLogger } from 'stryker-api/logging';
+import { RunnerOptions, RunOptions, RunResult, RunStatus, TestResult, TestRunner, TestStatus } from 'stryker-api/test_runner';
 import JestTestAdapterFactory from './jestTestAdapters/JestTestAdapterFactory';
 
 export default class JestTestRunner implements TestRunner {
-  private readonly log = getLogger(JestTestRunner.name);
-  private readonly jestConfig: jest.Configuration;
-  private readonly processEnvRef: NodeJS.ProcessEnv;
   private readonly enableFindRelatedTests: boolean;
+  private readonly jestConfig: jest.Configuration;
+  private readonly log = getLogger(JestTestRunner.name);
+  private readonly processEnvRef: NodeJS.ProcessEnv;
 
   public constructor(options: RunnerOptions, processEnvRef?: NodeJS.ProcessEnv) {
     // Make sure process can be mocked by tests by passing it in the constructor
@@ -52,11 +52,14 @@ export default class JestTestRunner implements TestRunner {
     };
   }
 
-  private setNodeEnv() {
-    // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here
-    // https://github.com/facebook/jest/blob/master/packages/jest-cli/bin/jest.js#L12-L14
-    if (!this.processEnvRef.NODE_ENV) {
-      this.processEnvRef.NODE_ENV = 'test';
+  private determineTestResultStatus(status: string) {
+    switch (status) {
+      case 'passed':
+        return TestStatus.Success;
+      case 'pending':
+        return TestStatus.Skipped;
+      default:
+        return TestStatus.Failed;
     }
   }
 
@@ -77,14 +80,11 @@ export default class JestTestRunner implements TestRunner {
     return testResults;
   }
 
-  private determineTestResultStatus(status: string) {
-    switch (status) {
-      case 'passed':
-        return TestStatus.Success;
-      case 'pending':
-        return TestStatus.Skipped;
-      default:
-        return TestStatus.Failed;
+  private setNodeEnv() {
+    // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here
+    // https://github.com/facebook/jest/blob/master/packages/jest-cli/bin/jest.js#L12-L14
+    if (!this.processEnvRef.NODE_ENV) {
+      this.processEnvRef.NODE_ENV = 'test';
     }
   }
 }

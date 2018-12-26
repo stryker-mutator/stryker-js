@@ -1,6 +1,6 @@
 import { Config } from 'stryker-api/config';
-import { Transpiler, TranspilerFactory, TranspilerOptions } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
+import { Transpiler, TranspilerFactory, TranspilerOptions } from 'stryker-api/transpile';
 
 class MyTranspiler implements Transpiler {
 

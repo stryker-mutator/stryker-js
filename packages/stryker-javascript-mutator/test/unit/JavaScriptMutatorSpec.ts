@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { File } from 'stryker-api/core';
-import JavaScriptMutator from '../../src/JavaScriptMutator';
-import '../../src/index';
 import { Config } from 'stryker-api/config';
+import { File } from 'stryker-api/core';
+import '../../src/index';
+import JavaScriptMutator from '../../src/JavaScriptMutator';
 
 describe('JavaScriptMutator', () => {
 

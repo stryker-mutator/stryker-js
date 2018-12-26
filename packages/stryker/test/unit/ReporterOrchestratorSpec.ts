@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
+import { Logger } from 'stryker-api/logging';
 import { ReporterFactory } from 'stryker-api/report';
 import ReporterOrchestrator from '../../src/ReporterOrchestrator';
 import * as broadcastReporter from '../../src/reporters/BroadcastReporter';
-import { Mock } from '../helpers/producers';
 import currentLogMock from '../helpers/logMock';
-import { Logger } from 'stryker-api/logging';
-import { Config } from 'stryker-api/config';
+import { Mock } from '../helpers/producers';
 
 describe('ReporterOrchestrator', () => {
   let sandbox: sinon.SinonSandbox;

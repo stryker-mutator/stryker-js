@@ -1,7 +1,7 @@
-import * as sinon from 'sinon';
-import * as path from 'path';
-import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import { expect } from 'chai';
+import * as path from 'path';
+import * as sinon from 'sinon';
+import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import JasmineTestFramework from '../../src/JasmineTestFramework';
 
 describe('index', () => {

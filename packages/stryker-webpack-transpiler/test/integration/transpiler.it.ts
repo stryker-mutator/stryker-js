@@ -1,10 +1,10 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import WebpackTranspiler from '../../src/WebpackTranspiler';
-import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
+import * as fs from 'fs';
+import * as path from 'path';
+import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { TranspilerOptions } from 'stryker-api/transpile';
+import WebpackTranspiler from '../../src/WebpackTranspiler';
 
 describe('Webpack transpiler', () => {
 
@@ -18,6 +18,7 @@ describe('Webpack transpiler', () => {
   function readFiles(): File[] {
     const dir = path.resolve(__dirname, '..', '..', 'testResources', 'gettingStarted', 'src');
     const files = fs.readdirSync(dir);
+
     return files.map(fileName => new File(path.resolve(dir, fileName), fs.readFileSync(path.resolve(dir, fileName))));
   }
 

@@ -1,6 +1,6 @@
-import { TestStatus } from 'stryker-api/test_runner';
-import { Config } from 'stryker-api/config';
 import * as path from 'path';
+import { Config } from 'stryker-api/config';
+import { TestStatus } from 'stryker-api/test_runner';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
 

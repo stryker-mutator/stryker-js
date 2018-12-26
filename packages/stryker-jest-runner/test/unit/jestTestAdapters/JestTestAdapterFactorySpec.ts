@@ -1,7 +1,7 @@
-import JestTestAdapterFactory from '../../../src/jestTestAdapters/JestTestAdapterFactory';
-import JestPromiseTestAdapter, * as jestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
+import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
-import { expect, assert } from 'chai';
+import JestPromiseTestAdapter, * as jestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
+import JestTestAdapterFactory from '../../../src/jestTestAdapters/JestTestAdapterFactory';
 
 const loader: any = {
   require: () => {}

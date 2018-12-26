@@ -1,13 +1,13 @@
-import * as net from 'net';
 import * as log4js from 'log4js';
-import { Subscriber, Observable } from 'rxjs';
+import * as net from 'net';
+import { Observable, Subscriber } from 'rxjs';
 
 export default class LoggingServer {
+  public readonly event$: Observable<log4js.LoggingEvent>;
+  private disposed = false;
 
   private readonly server: net.Server;
   private subscriber: Subscriber<log4js.LoggingEvent> | undefined;
-  public readonly event$: Observable<log4js.LoggingEvent>;
-  private disposed = false;
 
   constructor(public readonly port: number) {
     this.server = net.createServer(socket => {
@@ -37,6 +37,7 @@ export default class LoggingServer {
       return Promise.resolve();
     } else {
       this.disposed = true;
+
       return new Promise((res, rej) => {
         this.server.close((err: Error) => {
           if (err) {

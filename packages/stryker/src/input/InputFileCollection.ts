@@ -1,7 +1,7 @@
+import os = require('os');
 import { File } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import { normalizeWhiteSpaces } from '../utils/objectUtils';
-import os = require('os');
 
 export default class InputFileCollection {
   public readonly files: ReadonlyArray<File>;

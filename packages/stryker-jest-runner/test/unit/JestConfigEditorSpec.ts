@@ -1,11 +1,11 @@
-import { Config } from 'stryker-api/config';
-import * as sinon from 'sinon';
 import { assert, expect } from 'chai';
-import JestConfigEditor from '../../src/JestConfigEditor';
+import { Configuration } from 'jest';
+import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../src/configLoaders/CustomJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../src/configLoaders/ReactScriptsTSJestConfigLoader';
-import { Configuration } from 'jest';
+import JestConfigEditor from '../../src/JestConfigEditor';
 import currentLogMock from '../helpers/logMock';
 
 describe('JestConfigEditor', () => {

@@ -1,13 +1,13 @@
-import { Transpiler } from 'stryker-api/transpile';
-import { createInstrumenter, Instrumenter } from 'istanbul-lib-instrument';
-import { StrykerOptions, File } from 'stryker-api/core';
 import { FileCoverageData, Range } from 'istanbul-lib-coverage';
-import { COVERAGE_CURRENT_TEST_VARIABLE_NAME } from './coverageHooks';
+import { createInstrumenter, Instrumenter } from 'istanbul-lib-instrument';
+import { File, StrykerOptions } from 'stryker-api/core';
+import { Transpiler } from 'stryker-api/transpile';
 import StrykerError from '../utils/StrykerError';
+import { COVERAGE_CURRENT_TEST_VARIABLE_NAME } from './coverageHooks';
 
 export interface CoverageMaps {
-  statementMap: { [key: string]: Range };
   fnMap: { [key: string]: Range };
+  statementMap: { [key: string]: Range };
 }
 
 export interface CoverageMapsByFile {
@@ -15,17 +15,6 @@ export interface CoverageMapsByFile {
 }
 
 export default class CoverageInstrumenterTranspiler implements Transpiler {
-
-  private readonly instrumenter: Instrumenter;
-  public fileCoverageMaps: CoverageMapsByFile = Object.create(null);
-
-  constructor(private readonly settings: StrykerOptions, private readonly filesToInstrument: ReadonlyArray<string>) {
-    this.instrumenter = createInstrumenter({ coverageVariable: this.coverageVariable, preserveComments: true });
-  }
-
-  public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
-    return files.map(file => this.instrumentFileIfNeeded(file));
-  }
 
   /**
    * Coverage variable *must* have the name '__coverage__'. Only that variable
@@ -42,6 +31,37 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
         return COVERAGE_CURRENT_TEST_VARIABLE_NAME;
       default:
         return '__coverage__';
+    }
+  }
+  public fileCoverageMaps: CoverageMapsByFile = Object.create(null);
+
+  private readonly instrumenter: Instrumenter;
+
+  constructor(private readonly settings: StrykerOptions, private readonly filesToInstrument: ReadonlyArray<string>) {
+    this.instrumenter = createInstrumenter({ coverageVariable: this.coverageVariable, preserveComments: true });
+  }
+
+  public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+    return files.map(file => this.instrumentFileIfNeeded(file));
+  }
+
+  private instrumentFile(sourceFile: File): File {
+    try {
+      const content = this.instrumenter.instrumentSync(sourceFile.textContent, sourceFile.name);
+      const fileCoverage = this.patchRanges(this.instrumenter.lastFileCoverage());
+      this.fileCoverageMaps[sourceFile.name] = this.retrieveCoverageMaps(fileCoverage);
+
+      return new File(sourceFile.name, Buffer.from(content));
+    } catch (error) {
+      throw new StrykerError(`Could not instrument "${sourceFile.name}" for code coverage`, error);
+    }
+  }
+
+  private instrumentFileIfNeeded(file: File) {
+    if (this.settings.coverageAnalysis !== 'off' && this.filesToInstrument.some(fileName => fileName === file.name)) {
+      return this.instrumentFile(file);
+    } else {
+      return file;
     }
   }
 
@@ -67,31 +87,13 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
     return fileCoverage;
   }
 
-  private instrumentFileIfNeeded(file: File) {
-    if (this.settings.coverageAnalysis !== 'off' && this.filesToInstrument.some(fileName => fileName === file.name)) {
-      return this.instrumentFile(file);
-    } else {
-      return file;
-    }
-  }
-
-  private instrumentFile(sourceFile: File): File {
-    try {
-      const content = this.instrumenter.instrumentSync(sourceFile.textContent, sourceFile.name);
-      const fileCoverage = this.patchRanges(this.instrumenter.lastFileCoverage());
-      this.fileCoverageMaps[sourceFile.name] = this.retrieveCoverageMaps(fileCoverage);
-      return new File(sourceFile.name, Buffer.from(content));
-    } catch (error) {
-      throw new StrykerError(`Could not instrument "${sourceFile.name}" for code coverage`, error);
-    }
-  }
-
   private retrieveCoverageMaps(input: FileCoverageData): CoverageMaps {
     const output: CoverageMaps = {
       fnMap: {},
       statementMap: input.statementMap
     };
     Object.keys(input.fnMap).forEach(key => output.fnMap[key] = input.fnMap[key].loc);
+
     return output;
   }
 }

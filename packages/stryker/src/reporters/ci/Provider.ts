@@ -7,12 +7,12 @@ import { getEnvironmentVariable } from '../../utils/objectUtils';
  * Represents an object that can provide information about a CI/CD provider.
  */
 export interface CIProvider {
-  /** Returns whether Stryker is running on a pull request. */
-  isPullRequest(): boolean;
   /** Returns the name of the Git branch of the project on which Stryker is running. */
   determineBranch(): string;
   /** Returns the name of the GitHub repository of the project on which Stryker is running. */
   determineRepository(): string;
+  /** Returns whether Stryker is running on a pull request. */
+  isPullRequest(): boolean;
 }
 
 /**

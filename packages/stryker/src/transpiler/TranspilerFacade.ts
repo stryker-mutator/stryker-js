@@ -1,5 +1,5 @@
 import { File } from 'stryker-api/core';
-import { Transpiler, TranspilerOptions, TranspilerFactory } from 'stryker-api/transpile';
+import { Transpiler, TranspilerFactory, TranspilerOptions } from 'stryker-api/transpile';
 import StrykerError from '../utils/StrykerError';
 
 class NamedTranspiler {
@@ -29,6 +29,7 @@ export default class TranspilerFacade implements Transpiler {
         .catch(error => {
           throw new StrykerError(`An error occurred in transpiler "${current.name}"`, error);
         });
+
       return this.performTranspileChain(output, remainingChain);
     } else {
       return input;

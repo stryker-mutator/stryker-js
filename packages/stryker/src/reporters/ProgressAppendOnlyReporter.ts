@@ -1,5 +1,5 @@
-import { MatchedMutant } from 'stryker-api/report';
 import * as os from 'os';
+import { MatchedMutant } from 'stryker-api/report';
 import ProgressKeeper from './ProgressKeeper';
 
 export default class ProgressAppendOnlyReporter extends ProgressKeeper {
@@ -16,13 +16,13 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
     clearInterval(this.intervalReference);
   }
 
+  private getPercentDone() {
+    return Math.floor(this.progress.tested / this.progress.total * 100) + '%';
+  }
+
   private render() {
     process.stdout.write(`Mutation testing ${this.getPercentDone()} (ETC ${this.getEtc()}) ` +
       `${this.progress.tested}/${this.progress.total} tested (${this.progress.survived} survived)` +
       os.EOL);
-  }
-
-  private getPercentDone() {
-    return Math.floor(this.progress.tested / this.progress.total * 100) + '%';
   }
 }

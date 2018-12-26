@@ -1,10 +1,10 @@
+import { promisify } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as http from 'http';
 import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
+import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
-import { promisify } from '@stryker-mutator/util';
 
 function wrapInClosure(codeFragment: string) {
   return `
@@ -53,6 +53,7 @@ describe('KarmaTestRunner', () => {
 
       before(() => {
         sut = new KarmaTestRunner(testRunnerOptions);
+
         return sut.init();
       });
 
@@ -61,6 +62,7 @@ describe('KarmaTestRunner', () => {
           expectToHaveSuccessfulTests(runResult, 5);
           expectToHaveFailedTests(runResult, []);
           expect(runResult.status).to.be.eq(RunStatus.Complete);
+
           return true;
         });
       });
@@ -103,6 +105,7 @@ describe('KarmaTestRunner', () => {
         }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
+
       return sut.init();
     });
 
@@ -111,6 +114,7 @@ describe('KarmaTestRunner', () => {
         expectToHaveSuccessfulTests(runResult, 5);
         expectToHaveFailedTests(runResult, ['Expected 7 to be 8.', 'Expected 3 to be 4.']);
         expect(runResult.status).to.be.eq(RunStatus.Complete);
+
         return true;
       });
     });
@@ -135,6 +139,7 @@ describe('KarmaTestRunner', () => {
         }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
+
       return sut.init();
     });
 
@@ -163,6 +168,7 @@ describe('KarmaTestRunner', () => {
         }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
+
       return sut.init();
     });
 
@@ -197,12 +203,14 @@ describe('KarmaTestRunner', () => {
         }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
+
       return sut.init();
     });
 
     it('should report Complete without errors', () => {
       return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
         expect(runResult.status, JSON.stringify(runResult.errorMessages)).to.be.eq(RunStatus.Complete);
+
         return true;
       });
     });
@@ -227,6 +235,7 @@ describe('KarmaTestRunner', () => {
         }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
+
       return sut.init();
     });
 
@@ -237,6 +246,7 @@ describe('KarmaTestRunner', () => {
       expect(files).to.have.length(1);
       const coverageResult = (runResult.coverage as CoverageCollection)[files[0]];
       expect(coverageResult.s).to.be.ok;
+
       return true;
     }));
   });
@@ -263,6 +273,7 @@ describe('KarmaTestRunner', () => {
         }
       };
       sut = new KarmaTestRunner(testRunnerOptions);
+
       return sut.init();
     });
 
@@ -281,13 +292,8 @@ describe('KarmaTestRunner', () => {
 });
 
 class DummyServer {
-  private readonly httpServer: http.Server;
 
-  private constructor() {
-    this.httpServer = http.createServer();
-  }
-
-  get port() {
+  public get port() {
     const address = this.httpServer.address();
     if (typeof address === 'string') {
       throw new Error(`Address "${address}" was unexpected: https://nodejs.org/dist/latest-v11.x/docs/api/net.html#net_server_address`);
@@ -299,14 +305,20 @@ class DummyServer {
   public static async create(): Promise<DummyServer> {
     const server = new DummyServer();
     await server.init();
+
     return server;
   }
+  private readonly httpServer: http.Server;
 
-  private async init(): Promise<void> {
-    await promisify(this.httpServer.listen.bind(this.httpServer))(0, '0.0.0.0');
+  private constructor() {
+    this.httpServer = http.createServer();
   }
 
   public dispose(): Promise<void> {
     return promisify(this.httpServer.close.bind(this.httpServer))();
+  }
+
+  private async init(): Promise<void> {
+    await promisify(this.httpServer.listen.bind(this.httpServer))(0, '0.0.0.0');
   }
 }

@@ -1,9 +1,9 @@
 import { Config, ConfigOptions } from 'karma';
 import * as path from 'path';
-import { requireModule } from '../utils';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
-import StrykerReporter from '../StrykerReporter';
 import { getLogger, Logger } from 'stryker-api/logging';
+import StrykerReporter from '../StrykerReporter';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
+import { requireModule } from '../utils';
 
 function setDefaultOptions(config: Config) {
   config.set({
@@ -99,9 +99,9 @@ function configureStrykerReporter(config: Config) {
 }
 
 const globalSettings: {
-  port?: number;
   karmaConfig?: ConfigOptions;
   karmaConfigFile?: string;
+  port?: number;
 } = {};
 
 export = Object.assign((config: Config) => {
@@ -120,7 +120,7 @@ export = Object.assign((config: Config) => {
    * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
    * (not counting environment variables)
    */
-  setGlobals(globals: { port?: number; karmaConfig?: ConfigOptions; karmaConfigFile?: string; }) {
+  setGlobals(globals: { karmaConfig?: ConfigOptions; karmaConfigFile?: string; port?: number }) {
     globalSettings.port = globals.port;
     globalSettings.karmaConfig = globals.karmaConfig;
     globalSettings.karmaConfigFile = globals.karmaConfigFile;

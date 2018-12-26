@@ -1,9 +1,9 @@
-import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import { expect } from 'chai';
-import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
-import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
+import { TestFrameworkFactory } from 'stryker-api/test_framework';
+import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import currentLogMock from '../helpers/logMock';
 import { Mock } from '../helpers/producers';
 

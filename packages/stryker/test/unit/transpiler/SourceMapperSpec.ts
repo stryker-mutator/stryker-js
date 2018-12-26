@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import * as sourceMapModule from 'source-map';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import SourceMapper, { PassThroughSourceMapper, TranspiledSourceMapper, MappedLocation, SourceMapError } from '../../../src/transpiler/SourceMapper';
-import { Mock, mock, config as configFactory, location as locationFactory, mappedLocation, PNG_BASE64_ENCODED } from '../../helpers/producers';
+import SourceMapper, { MappedLocation, PassThroughSourceMapper, SourceMapError, TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
+import { config as configFactory, location as locationFactory, mappedLocation, Mock, mock, PNG_BASE64_ENCODED } from '../../helpers/producers';
 
 const GREATEST_LOWER_BOUND = sourceMapModule.SourceMapConsumer.GREATEST_LOWER_BOUND;
 const LEAST_UPPER_BOUND = sourceMapModule.SourceMapConsumer.LEAST_UPPER_BOUND;

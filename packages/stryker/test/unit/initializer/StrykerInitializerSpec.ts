@@ -1,17 +1,17 @@
-import * as child from 'child_process';
-import * as sinon from 'sinon';
-import { Logger } from 'stryker-api/logging';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
+import * as child from 'child_process';
 import * as inquirer from 'inquirer';
-import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
+import { format } from 'prettier';
+import * as sinon from 'sinon';
+import { Logger } from 'stryker-api/logging';
 import * as restClient from 'typed-rest-client/RestClient';
+import NpmClient from '../../../src/initializer/NpmClient';
+import Preset from '../../../src/initializer/presets/Preset';
+import PresetConfiguration from '../../../src/initializer/presets/PresetConfiguration';
+import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
-import NpmClient from '../../../src/initializer/NpmClient';
-import { format } from 'prettier';
-import PresetConfiguration from '../../../src/initializer/presets/PresetConfiguration';
-import Preset from '../../../src/initializer/presets/Preset';
 
 describe('StrykerInitializer', () => {
   let log: Mock<Logger>;
@@ -99,7 +99,7 @@ describe('StrykerInitializer', () => {
         inquirerPrompt.getCall(3).args[0],
         inquirerPrompt.getCall(4).args[0],
         inquirerPrompt.getCall(5).args[0],
-        inquirerPrompt.getCall(6).args[0],
+        inquirerPrompt.getCall(6).args[0]
       ];
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
@@ -449,7 +449,7 @@ describe('StrykerInitializer', () => {
     });
   };
 
-  const stubTestFrameworks = (...testFrameworks: { name: string; keywords: string[]; }[]) => {
+  const stubTestFrameworks = (...testFrameworks: Array<{ keywords: string[]; name: string }>) => {
     restClientSearchGet.withArgs('/v2/search?q=keywords:stryker-test-framework').resolves({
       result: {
         results: testFrameworks.map(testFramework => ({ package: testFramework }))
@@ -484,9 +484,9 @@ describe('StrykerInitializer', () => {
       statusCode: 200
     });
   };
-  const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: object | null; }) => {
+  const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: object | null }) => {
     Object.keys(packageConfigPerPackage).forEach(packageName => {
-      const pkgConfig: { name: string; initStrykerConfig?: object; } = {
+      const pkgConfig: { initStrykerConfig?: object; name: string } = {
         name: packageName
       };
       const cfg = packageConfigPerPackage[packageName];
@@ -501,25 +501,24 @@ describe('StrykerInitializer', () => {
   };
 
   interface StrykerInitAnswers {
+    mutator: string;
+    packageManager: string;
     preset: string | null;
+    reporters: string[];
     testFramework: string;
     testRunner: string;
-    mutator: string;
     transpilers: string[];
-    reporters: string[];
-    packageManager: string;
   }
 
   function arrangeAnswers(answerOverrides?: Partial<StrykerInitAnswers>) {
-    const answers: StrykerInitAnswers = Object.assign({
+    const answers: StrykerInitAnswers = {
       mutator: 'typescript',
       packageManager: 'yarn',
       preset: null,
       reporters: ['dimension', 'mars'],
       testFramework: 'awesome',
       testRunner: 'awesome',
-      transpilers: ['webpack']
-    }, answerOverrides);
+      transpilers: ['webpack'], ...answerOverrides};
     inquirerPrompt.resolves(answers);
   }
 
@@ -529,6 +528,6 @@ describe('StrykerInitializer', () => {
       dependencies: [],
       handbookUrl: ''
     };
-    presetMock.createConfig.resolves(Object.assign({}, presetConfig, presetConfigOverrides));
+    presetMock.createConfig.resolves({...presetConfig, ...presetConfigOverrides});
   }
 });

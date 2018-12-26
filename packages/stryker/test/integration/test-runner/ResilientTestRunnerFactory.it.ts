@@ -1,14 +1,14 @@
-import * as path from 'path';
 import { expect } from 'chai';
 import getPort = require('get-port');
-import { RunStatus, RunnerOptions } from 'stryker-api/test_runner';
 import * as log4js from 'log4js';
+import * as path from 'path';
+import { toArray } from 'rxjs/operators';
+import { LogLevel } from 'stryker-api/core';
+import { RunnerOptions, RunStatus } from 'stryker-api/test_runner';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import ResilientTestRunnerFactory from '../../../src/test-runner/ResilientTestRunnerFactory';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
-import { LogLevel } from 'stryker-api/core';
 import LoggingServer from '../../helpers/LoggingServer';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
-import { toArray } from 'rxjs/operators';
 import { sleep } from '../../helpers/testUtils';
 
 describe('ResilientTestRunnerFactory integration', () => {
@@ -53,6 +53,7 @@ describe('ResilientTestRunnerFactory integration', () => {
 
   function arrangeSut(name: string): Promise<void> {
     createSut(name);
+
     return sut.init();
   }
 

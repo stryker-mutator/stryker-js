@@ -3,7 +3,7 @@ import Breadcrumb from './Breadcrumb';
 
 export default abstract class Page {
 
-  get breadcrumb() {
+  public get breadcrumb() {
     return new Breadcrumb($('.breadcrumb'));
   }
 

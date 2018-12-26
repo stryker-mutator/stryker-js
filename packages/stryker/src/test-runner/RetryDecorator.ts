@@ -1,8 +1,8 @@
-import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
-import TestRunnerDecorator from './TestRunnerDecorator';
-import { errorToString } from '../utils/objectUtils';
-import OutOfMemoryError from '../child-proxy/OutOfMemoryError';
 import { getLogger } from 'stryker-api/logging';
+import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
+import OutOfMemoryError from '../child-proxy/OutOfMemoryError';
+import { errorToString } from '../utils/objectUtils';
+import TestRunnerDecorator from './TestRunnerDecorator';
 
 const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
 
@@ -22,10 +22,12 @@ export default class RetryDecorator extends TestRunnerDecorator {
           this.log.info('Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don\'t worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.', error.pid);
         }
         await this.recover();
+
         return this.run(options, attemptsLeft - 1, error);
       }
     } else {
       await this.recover();
+
       return { status: RunStatus.Error, errorMessages: [ERROR_MESSAGE + errorToString(lastError)], tests: [] };
     }
   }
@@ -33,6 +35,7 @@ export default class RetryDecorator extends TestRunnerDecorator {
   private async recover(): Promise<void> {
     await this.dispose();
     this.createInnerRunner();
+
     return this.init();
   }
 }

@@ -1,8 +1,8 @@
+import { fsAsPromised } from '@stryker-mutator/util';
+import { expect } from 'chai';
 import * as path from 'path';
 import { File } from 'stryker-api/core';
 import { TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
-import { expect } from 'chai';
-import { fsAsPromised } from '@stryker-mutator/util';
 
 function resolve(...filePart: string[]) {
   return path.resolve(__dirname, '..', '..', '..', 'testResources', 'source-mapper', ...filePart);
@@ -10,7 +10,9 @@ function resolve(...filePart: string[]) {
 
 function readFiles(...files: string[]): Promise<File[]> {
   return Promise.all(files
+    /* tslint:disable no-unnecessary-callback-wrapper */
     .map(relative => resolve(relative))
+    /* tslint:enable no-unnecessary-callback-wrapper */
     .map(fileName => fsAsPromised.readFile(fileName).then(content => new File(fileName, content))));
 }
 

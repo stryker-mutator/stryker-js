@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import * as estree from 'estree';
-import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
 import BooleanSubstitutionMutator from '../../../src/mutators/BooleanSubstitutionMutator';
-import { parse, generate } from '../../../src/utils/parserUtils';
+import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
 import { copy } from '../../../src/utils/objectUtils';
+import { generate, parse } from '../../../src/utils/parserUtils';
 
 describe('BooleanSubstitutionMutator', () => {
   let sut: BooleanSubstitutionMutator;
@@ -60,7 +60,7 @@ describe('BooleanSubstitutionMutator', () => {
   it('should not mutate other nodes', () => {
     // Arrange
     const invalidNode: IdentifiedNode = {
-      type: 'Identifier',
+      type: 'Identifier'
     } as estree.Node & Identified;
 
     // Act

@@ -2,18 +2,20 @@ import * as sinon from 'sinon';
 import { Logger } from 'stryker-api/logging';
 
 export default class LoggerStub implements Logger {
-  public error: sinon.SinonStub;
-  public warn: sinon.SinonStub;
-  public info: sinon.SinonStub;
   public debug: sinon.SinonStub;
-  public trace: sinon.SinonStub;
+  public error: sinon.SinonStub;
   public fatal: sinon.SinonStub;
-  public isTraceEnabled: sinon.SinonStub;
+  public info: sinon.SinonStub;
+
   public isDebugEnabled: sinon.SinonStub;
-  public isInfoEnabled: sinon.SinonStub;
-  public isWarnEnabled: sinon.SinonStub;
   public isErrorEnabled: sinon.SinonStub;
   public isFatalEnabled: sinon.SinonStub;
+  public isInfoEnabled: sinon.SinonStub;
+  public isTraceEnabled: sinon.SinonStub;
+  public isWarnEnabled: sinon.SinonStub;
+
+  public trace: sinon.SinonStub;
+  public warn: sinon.SinonStub;
 
   constructor() {
     this.error = sinon.stub();

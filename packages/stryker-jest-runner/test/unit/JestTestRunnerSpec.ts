@@ -1,11 +1,11 @@
+import { assert, expect } from 'chai';
+import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
+import { RunOptions, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import JestTestAdapterFactory from '../../src/jestTestAdapters/JestTestAdapterFactory';
 import JestTestRunner from '../../src/JestTestRunner';
-import { Config } from 'stryker-api/config';
-import * as fakeResults from '../helpers/testResultProducer';
-import * as sinon from 'sinon';
-import { assert, expect } from 'chai';
-import { RunStatus, TestStatus, RunOptions } from 'stryker-api/test_runner';
 import currentLogMock from '../helpers/logMock';
+import * as fakeResults from '../helpers/testResultProducer';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';

@@ -4,8 +4,8 @@ const DEFAULT_MAX_SIZE = 2048;
 
 export default class StringBuilder {
   private currentLength = 0;
-  private readonly strings: string[] = [];
   private readonly maxSize = DEFAULT_MAX_SIZE;
+  private readonly strings: string[] = [];
 
   public append(str: string) {
     this.strings.push(str);

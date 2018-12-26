@@ -1,7 +1,7 @@
 import { PathLike } from 'fs';
 import * as path from 'path';
-import { webpack, EmptyCallback, Callback } from '../types';
 import { File } from 'stryker-api/core';
+import { Callback, EmptyCallback, webpack } from '../types';
 
 export default class OutputFileSystem implements webpack.OutputFileSystem {
 
@@ -13,13 +13,17 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     this.purge();
   }
 
-  public purge() {
-    this._files = Object.create(null);
-  }
-
   public collectFiles(): File[] {
     return Object.keys(this._files).map(fileName =>
       new File(fileName, this._files[fileName]));
+  }
+
+  public join(...paths: string[]): string {
+    return path.join(...paths);
+  }
+
+  public mkdir(_name: PathLike, callback: EmptyCallback): void {
+    callback();
   }
 
   public mkdirp(_dir: string, opts: any, cb?: Callback<string>): void {
@@ -27,11 +31,11 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     callback(null);
   }
 
-  public rmdir(_name: PathLike, callback: EmptyCallback): void {
-    callback();
+  public purge() {
+    this._files = Object.create(null);
   }
 
-  public mkdir(_name: PathLike, callback: EmptyCallback): void {
+  public rmdir(_name: PathLike, callback: EmptyCallback): void {
     callback();
   }
 
@@ -45,9 +49,5 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
     const callback: EmptyCallback = cb || options;
     this._files[path.resolve(name.toString())] = data;
     callback();
-  }
-
-  public join(...paths: string[]): string {
-    return path.join(...paths);
   }
 }

@@ -1,5 +1,5 @@
-import { File, MutatorDescriptor } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
+import { File, MutatorDescriptor } from 'stryker-api/core';
 import { Mutant, Mutator, MutatorFactory } from 'stryker-api/mutant';
 import ES5Mutator from './mutators/ES5Mutator';
 

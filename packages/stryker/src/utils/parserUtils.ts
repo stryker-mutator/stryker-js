@@ -1,25 +1,23 @@
-import * as _ from 'lodash';
+import * as escodegen from 'escodegen';
 import * as esprima from 'esprima';
 import * as estree from 'estree';
+import * as _ from 'lodash';
 import { Identified, IdentifiedNode } from '../mutators/IdentifiedNode';
-import * as escodegen from 'escodegen';
 
 /**
  * Utility class for parsing and generating code.
- * @constructor
  */
 const esprimaOptions = {
   comment: true,
   loc: true,
   range: true,
-  tokens: true,
+  tokens: true
 };
 
 /**
  * Parses code to generate an Abstract Syntax Tree.
- * @function
  * @param code - The code which has to be parsed.
- * @returns {Object} The generated Abstract Syntax Tree.
+ * @returns The generated Abstract Syntax Tree.
  */
 export function parse(code: string): estree.Program {
   if (code === undefined) {
@@ -54,12 +52,19 @@ export function identified<T extends estree.Node>(n: T) {
  */
 export class NodeIdentifier {
 
-  private identifiedNodes: Readonly<IdentifiedNode>[] = [];
+  private identifiedNodes: Array<Readonly<IdentifiedNode>> = [];
 
-  public identifyAndFreeze(program: estree.Program): Readonly<IdentifiedNode>[] {
+  public identifyAndFreeze(program: estree.Program): Array<Readonly<IdentifiedNode>> {
     this.identifiedNodes = [];
     this.identifyAndFreezeRecursively(program);
+
     return this.identifiedNodes;
+  }
+
+  private identify(node: estree.Node) {
+    const n = node as IdentifiedNode;
+    n.nodeID = this.identifiedNodes.length;
+    this.identifiedNodes.push(n);
   }
 
   private identifyAndFreezeRecursively(maybeNode: any) {
@@ -79,18 +84,13 @@ export class NodeIdentifier {
     }
   }
 
-  private isNode(maybeNode: any): estree.Node {
-    return !_.isArray(maybeNode) && _.isObject(maybeNode) && maybeNode.type;
-  }
-
   private isIdentified(node: estree.Node): node is IdentifiedNode {
     const n = node as IdentifiedNode;
+
     return _.isNumber(n.nodeID);
   }
 
-  private identify(node: estree.Node) {
-    const n = node as IdentifiedNode;
-    n.nodeID = this.identifiedNodes.length;
-    this.identifiedNodes.push(n);
+  private isNode(maybeNode: any): estree.Node {
+    return !_.isArray(maybeNode) && _.isObject(maybeNode) && maybeNode.type;
   }
 }

@@ -1,12 +1,12 @@
+import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Reporter } from 'stryker-api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
+import StrictReporter from '../../../src/reporters/StrictReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
 import currentLogMock from '../../helpers/logMock';
-import StrictReporter from '../../../src/reporters/StrictReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
-import { fsAsPromised } from '@stryker-mutator/util';
 
 describe('EventRecorderReporter', () => {
 
@@ -50,6 +50,7 @@ describe('EventRecorderReporter', () => {
           const arrange = () => beforeEach(() => {
             writeFileRejection = undefined;
             (sut[eventName] as any)(expected);
+
             return (sut.wrapUp() as Promise<void>).then(() => void 0, error => writeFileRejection = error);
           });
 

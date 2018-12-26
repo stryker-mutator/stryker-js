@@ -1,4 +1,4 @@
-import { File, Range, Location, Position } from 'stryker-api/core';
+import { File, Location, Position, Range } from 'stryker-api/core';
 
 const enum CharacterCodes {
   maxAsciiCharacter = 0x7F,
@@ -34,11 +34,11 @@ export default class SourceFile {
     this.lineStarts = this.computeLineStarts();
   }
 
-  get name() {
+  public get name() {
     return this.file.name;
   }
 
-  get content(): string {
+  public get content(): string {
     return this.file.textContent;
   }
 
@@ -61,6 +61,7 @@ export default class SourceFile {
       // Review 2's-complement if this is confusing.
       lineNumber = ~lineNumber - 1;
     }
+
     return {
       column: pos - this.lineStarts[lineNumber],
       line: lineNumber
@@ -84,11 +85,9 @@ export default class SourceFile {
 
       if (midValue === position) {
         return middle;
-      }
-      else if (midValue > position) {
+      } else if (midValue > position) {
         high = middle - 1;
-      }
-      else {
+      } else {
         low = middle + 1;
       }
     }
@@ -120,10 +119,10 @@ export default class SourceFile {
           if (ch > CharacterCodes.maxAsciiCharacter && isLineBreak(ch)) {
             markLineStart();
           }
-          break;
       }
     }
     result.push(lineStart);
+
     return result;
   }
 }

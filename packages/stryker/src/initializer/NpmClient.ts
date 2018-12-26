@@ -1,22 +1,22 @@
-import { RestClient, IRestResponse } from 'typed-rest-client/RestClient';
-import PromptOption from './PromptOption';
 import { getLogger } from 'stryker-api/logging';
+import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
 import { errorToString } from '../utils/objectUtils';
+import PromptOption from './PromptOption';
 
 interface NpmSearchPackageInfo {
   package: {
-    name: string;
     keywords: string[];
+    name: string;
   };
 }
 interface NpmSearchResult {
-  total: number;
   results: NpmSearchPackageInfo[];
+  total: number;
 }
 
 interface NpmPackage {
-  name: string;
   initStrykerConfig?: object;
+  name: string;
 }
 
 const BASE_NPM_SEARCH = 'https://api.npms.io';
@@ -48,9 +48,20 @@ export default class NpmClient {
     private readonly packageClient = new RestClient('npm', BASE_NPM_PACKAGE)) {
   }
 
-  public getTestRunnerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-test-runner')
-      .then(mapSearchResultToPromptOption);
+  public getAdditionalConfig(packageName: string): Promise<object> {
+    return this.packageClient.get<NpmPackage>(`/${packageName}/latest`)
+      .then(handleResult(`${BASE_NPM_PACKAGE}/${packageName}`))
+      .then(pkg => pkg.initStrykerConfig || {})
+      .catch(err => {
+        this.log.warn(`Could not fetch additional initialization config for dependency ${packageName}. You might need to configure it manually`, err);
+
+        return {};
+      });
+  }
+
+  public getMutatorOptions(): Promise<PromptOption[]> {
+    return this.search('/v2/search?q=keywords:stryker-mutator')
+    .then(mapSearchResultToPromptOption);
   }
 
   public getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
@@ -59,19 +70,10 @@ export default class NpmClient {
         if (testRunnerFilter) {
           searchResult.results = searchResult.results.filter(framework => framework.package.keywords.indexOf(testRunnerFilter) >= 0);
         }
+
         return searchResult;
       })
       .then(mapSearchResultToPromptOption);
-  }
-
-  public getMutatorOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-mutator')
-    .then(mapSearchResultToPromptOption);
-  }
-
-  public getTranspilerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-transpiler')
-    .then(mapSearchResultToPromptOption);
   }
 
   public getTestReporterOptions(): Promise<PromptOption[]> {
@@ -79,19 +81,20 @@ export default class NpmClient {
       .then(mapSearchResultToPromptOption);
   }
 
-  public getAdditionalConfig(packageName: string): Promise<object> {
-    return this.packageClient.get<NpmPackage>(`/${packageName}/latest`)
-      .then(handleResult(`${BASE_NPM_PACKAGE}/${packageName}`))
-      .then(pkg => pkg.initStrykerConfig || {})
-      .catch(err => {
-        this.log.warn(`Could not fetch additional initialization config for dependency ${packageName}. You might need to configure it manually`, err);
-        return {};
-      });
+  public getTestRunnerOptions(): Promise<PromptOption[]> {
+    return this.search('/v2/search?q=keywords:stryker-test-runner')
+      .then(mapSearchResultToPromptOption);
+  }
+
+  public getTranspilerOptions(): Promise<PromptOption[]> {
+    return this.search('/v2/search?q=keywords:stryker-transpiler')
+    .then(mapSearchResultToPromptOption);
   }
 
   private search(query: string): Promise<NpmSearchResult> {
     const call = BASE_NPM_SEARCH + query;
     this.log.debug(`Searching: ${call}`);
+
     return this.searchClient.get<NpmSearchResult>(query)
       .then(handleResult(call))
       .catch(err => {
@@ -100,6 +103,7 @@ export default class NpmClient {
           results: [],
           total: 0
         };
+
         return result;
       });
   }

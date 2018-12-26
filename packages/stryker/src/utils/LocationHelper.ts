@@ -19,6 +19,7 @@ export default class LocationHelper {
       (this.loc.start.line === maybeWrapper.start.line && this.loc.start.column >= maybeWrapper.start.column);
     const isBeforeEnd = this.loc.end.line < maybeWrapper.end.line ||
       (this.loc.end.line === maybeWrapper.end.line && this.loc.end.column <= maybeWrapper.end.column);
+
     return isAfterStart && isBeforeEnd;
   }
 
@@ -35,6 +36,7 @@ export default class LocationHelper {
     if (coversLessLines || coversLessColumns) {
       firstLocationHasSmallerArea = true;
     }
+
     return firstLocationHasSmallerArea;
   }
 }

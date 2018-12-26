@@ -1,6 +1,6 @@
+import { expect } from 'chai';
 import * as os from 'os';
 import * as sinon from 'sinon';
-import { expect } from 'chai';
 import { MutantStatus } from 'stryker-api/report';
 import ProgressAppendOnlyReporter from '../../../src/reporters/ProgressAppendOnlyReporter';
 import { matchedMutant, mutantResult } from '../../helpers/producers';

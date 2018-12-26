@@ -1,9 +1,9 @@
 import * as decamelize from 'decamelize';
-import * as semver from 'semver';
-import { requireModule } from '../utils';
-import { NgConfigOptions, NgTestArguments } from '../StrykerKarmaSetup';
-import { getLogger, Logger } from 'stryker-api/logging';
 import * as path from 'path';
+import * as semver from 'semver';
+import { getLogger, Logger } from 'stryker-api/logging';
+import { NgConfigOptions, NgTestArguments } from '../StrykerKarmaSetup';
+import { requireModule } from '../utils';
 
 const MIN_ANGULAR_CLI_VERSION = '6.1.0';
 
@@ -35,6 +35,7 @@ export async function start(ngConfig?: NgConfigOptions): Promise<void> {
   }
   const actualCommand = `ng ${cliArgs.join(' ')}`;
   logger.debug(`Starting Angular tests: ${actualCommand}`);
+
   return cli({
     cliArgs,
     inputStream: process.stdin,

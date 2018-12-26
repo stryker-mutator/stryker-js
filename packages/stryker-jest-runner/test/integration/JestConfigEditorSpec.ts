@@ -1,8 +1,8 @@
-import JestConfigEditor from '../../src/JestConfigEditor';
-import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
 import * as path from 'path';
+import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
+import JestConfigEditor from '../../src/JestConfigEditor';
 
 describe('Integration test for Jest ConfigEditor', () => {
   let jestConfigEditor: JestConfigEditor;
@@ -61,7 +61,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       transform: {
         '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
         '^.+\\.(js|jsx|ts|tsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
-        '^.+\\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js'),
+        '^.+\\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js')
       },
       transformIgnorePatterns: [
         '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
@@ -87,8 +87,8 @@ describe('Integration test for Jest ConfigEditor', () => {
       ],
       globals: {
         'ts-jest': {
-          tsConfigFile: path.join(projectRoot, 'testResources', 'reactTsProject', 'tsconfig.test.json'),
-        },
+          tsConfigFile: path.join(projectRoot, 'testResources', 'reactTsProject', 'tsconfig.test.json')
+        }
       },
       moduleFileExtensions: [
         'web.ts',
@@ -120,7 +120,7 @@ describe('Integration test for Jest ConfigEditor', () => {
         '^(?!.*\\.(js|jsx|mjs|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'fileTransform.js'),
         '^.+\\.(js|jsx|mjs)$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'babelTransform.js'),
         '^.+\\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'cssTransform.js'),
-        '^.+\\.tsx?$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'typescriptTransform.js'),
+        '^.+\\.tsx?$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'typescriptTransform.js')
       },
       transformIgnorePatterns: [
         '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|ts|tsx)$'
@@ -178,7 +178,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       testResultsProcessor: undefined,
-      verbose: false,
+      verbose: false
     });
   });
 

@@ -1,8 +1,8 @@
 import { Range } from '../../core';
 
 interface Mutant {
-  mutatorName: string;
   fileName: string;
+  mutatorName: string;
   range: Range;
   replacement: string;
 }

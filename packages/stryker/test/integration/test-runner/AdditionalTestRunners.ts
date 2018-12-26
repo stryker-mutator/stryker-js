@@ -1,9 +1,10 @@
-import { RunResult, RunStatus, RunnerOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
+import { RunnerOptions, RunResult, RunStatus, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
 import { isRegExp } from 'util';
 
 class CoverageReportingTestRunner implements TestRunner {
   public run() {
     (global as any).__coverage__ = 'overridden';
+
     return Promise.resolve({ status: RunStatus.Complete, tests: [], coverage: 'realCoverage' as any });
   }
 }
@@ -21,6 +22,7 @@ class TimeBombTestRunner implements TestRunner {
 class ProximityMineTestRunner implements TestRunner {
   public run() {
     process.exit(42);
+
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
@@ -28,6 +30,7 @@ class ProximityMineTestRunner implements TestRunner {
 class DirectResolvedTestRunner implements TestRunner {
   public run() {
     (global as any).__coverage__ = 'coverageObject';
+
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
@@ -55,6 +58,7 @@ class ErroredTestRunner implements TestRunner {
     } catch (error) {
       expectedError = error;
     }
+
     return Promise.resolve({ status: RunStatus.Error, errorMessages: [expectedError], tests: [] });
   }
 }
@@ -80,6 +84,10 @@ class SlowInitAndDisposeTestRunner implements TestRunner {
 
   public inInit: boolean;
 
+  public dispose() {
+    return this.init();
+  }
+
   public init() {
     return new Promise<void>(resolve => {
       this.inInit = true;
@@ -94,11 +102,8 @@ class SlowInitAndDisposeTestRunner implements TestRunner {
     if (this.inInit) {
       throw new Error('Test should fail! Not yet initialized!');
     }
-    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
-  }
 
-  public dispose() {
-    return this.init();
+    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }
 class VerifyWorkingFolderTestRunner implements TestRunner {
@@ -123,6 +128,7 @@ class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
 
   public run() {
     this.promise.catch(() => { });
+
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }

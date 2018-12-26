@@ -1,5 +1,5 @@
-import * as path from 'path';
 import { expect } from 'chai';
+import * as path from 'path';
 import { RunStatus } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import { runnerOptions } from '../helpers/mockHelpers';

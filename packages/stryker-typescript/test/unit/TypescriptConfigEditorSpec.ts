@@ -1,10 +1,10 @@
+import { expect } from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
+import { match, SinonStub } from 'sinon';
+import { Config } from 'stryker-api/config';
 import * as logging from 'stryker-api/logging';
 import * as ts from 'typescript';
-import { expect } from 'chai';
-import { SinonStub, match } from 'sinon';
-import { Config } from 'stryker-api/config';
 import TypescriptConfigEditor from './../../src/TypescriptConfigEditor';
 
 const CONFIG_KEY = 'tsconfigFile';
@@ -14,8 +14,8 @@ describe('TypescriptConfigEditor edit', () => {
   let readFileSyncStub: SinonStub;
   let loggerStub: {
     debug: SinonStub;
-    info: SinonStub;
     error: SinonStub;
+    info: SinonStub;
   };
   let config: Config;
   let sut: TypescriptConfigEditor;
@@ -106,6 +106,7 @@ describe('TypescriptConfigEditor edit', () => {
       readFile: () => '',
       useCaseSensitiveFileNames: true
     };
-    return Object.assign({}, defaults, overrides);
+
+    return {...defaults, ...overrides};
   }
 });

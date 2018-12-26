@@ -1,14 +1,12 @@
-import { TestFramework, TestFrameworkFactory, TestSelection, TestFrameworkSettings } from 'stryker-api/test_framework';
+import { TestFramework, TestFrameworkFactory, TestFrameworkSettings, TestSelection } from 'stryker-api/test_framework';
 
 class TestFramework1 implements TestFramework {
 
-  constructor(settings: TestFrameworkSettings) { }
-
-  public beforeEach(codeFragment: string) {
+  public afterEach(codeFragment: string) {
     return '';
   }
 
-  public afterEach(codeFragment: string) {
+  public beforeEach(codeFragment: string) {
     return '';
   }
 

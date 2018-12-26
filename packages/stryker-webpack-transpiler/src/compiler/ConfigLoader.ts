@@ -1,15 +1,15 @@
-import * as path from 'path';
 import * as fs from 'fs';
+import { isFunction } from 'lodash';
+import * as path from 'path';
+import { getLogger, Logger } from 'stryker-api/logging';
 import { Configuration } from 'webpack';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
-import { getLogger, Logger } from 'stryker-api/logging';
-import { isFunction } from 'lodash';
 
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 
 export default class ConfigLoader {
-  private readonly log: Logger;
   private readonly loader: NodeRequireFunction;
+  private readonly log: Logger;
 
   public constructor(loader?: NodeRequireFunction) {
     this.loader = loader || require;
@@ -35,6 +35,20 @@ export default class ConfigLoader {
     return webpackConfig;
   }
 
+  private configureSilent(webpackConfig: Configuration) {
+    if (webpackConfig.plugins) {
+      webpackConfig.plugins = webpackConfig.plugins.filter(plugin => {
+        if (plugin.constructor && plugin.constructor.name === PROGRESS_PLUGIN_NAME) {
+          this.log.debug('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', PROGRESS_PLUGIN_NAME);
+
+          return false;
+        }
+
+        return true;
+      });
+    }
+  }
+
 private loadWebpackConfigFromProjectRoot(configFileLocation: string) {
   const resolvedName = path.resolve(configFileLocation);
 
@@ -44,17 +58,4 @@ private loadWebpackConfigFromProjectRoot(configFileLocation: string) {
 
   return this.loader(resolvedName);
 }
-
-  private configureSilent(webpackConfig: Configuration) {
-    if (webpackConfig.plugins) {
-      webpackConfig.plugins = webpackConfig.plugins.filter(plugin => {
-        if (plugin.constructor && plugin.constructor.name === PROGRESS_PLUGIN_NAME) {
-          this.log.debug('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', PROGRESS_PLUGIN_NAME);
-          return false;
-        } else {
-          return true;
-        }
-      });
-    }
-  }
 }

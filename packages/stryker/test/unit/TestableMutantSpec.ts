@@ -1,9 +1,9 @@
 import { expect } from 'chai';
+import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
+import SourceFile from '../../src/SourceFile';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import { mutant, runResult, testResult } from './../helpers/producers';
-import SourceFile from '../../src/SourceFile';
-import { File } from 'stryker-api/core';
 
 describe('TestableMutant', () => {
 

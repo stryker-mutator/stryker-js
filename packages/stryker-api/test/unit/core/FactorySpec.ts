@@ -1,5 +1,5 @@
-import { Factory } from '../../../core';
 import { expect } from 'chai';
+import { Factory } from '../../../core';
 
 describe('Factory', () => {
 
@@ -9,7 +9,7 @@ describe('Factory', () => {
   class TestItem {
     constructor(private readonly s: { settings: string }) { }
 
-    get someInstance() {
+    public get someInstance() {
       return this.s.settings;
     }
   }

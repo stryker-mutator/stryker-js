@@ -13,6 +13,7 @@ describe('Html report of stryker', () => {
     const config = new Config();
     config.set({ htmlReporter: { baseDir: REPORT_DIR } });
     sut = new HtmlReporter(config);
+
     return new EventPlayer('testResources/strykerEvents')
       .replay(sut)
       .then(() => sut.wrapUp());

@@ -1,11 +1,10 @@
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
-import NodeMutator from './NodeMutator';
 import { IdentifiedNode } from './IdentifiedNode';
+import NodeMutator from './NodeMutator';
 
 export default class BinaryOperatorMutator implements NodeMutator {
   public name = 'BinaryOperator';
-  private readonly type = Syntax.BinaryExpression;
   private readonly operators: { [targetedOperator: string]: estree.BinaryOperator | estree.BinaryOperator[] } = {
     '!=': '==',
     '!==': '===',
@@ -21,6 +20,7 @@ export default class BinaryOperatorMutator implements NodeMutator {
     '>': ['>=', '<='],
     '>=': ['>', '<']
   };
+  private readonly type = Syntax.BinaryExpression;
 
   public applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] {
     const nodes: IdentifiedNode[] = [];
@@ -37,6 +37,7 @@ export default class BinaryOperatorMutator implements NodeMutator {
         nodes.push(mutatedNode);
       });
     }
+
     return nodes;
   }
 }

@@ -1,17 +1,17 @@
 import flatMap = require('lodash.flatmap');
-import * as ts from 'typescript';
 import { Config } from 'stryker-api/config';
-import { Transpiler, TranspilerOptions } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
-import { getTSConfig, getProjectDirectory, guardTypescriptVersion, isHeaderFile } from './helpers/tsHelpers';
-import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
+import { Transpiler, TranspilerOptions } from 'stryker-api/transpile';
+import * as ts from 'typescript';
+import { getProjectDirectory, getTSConfig, guardTypescriptVersion, isHeaderFile } from './helpers/tsHelpers';
 import TranspileFilter from './transpiler/TranspileFilter';
+import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 
 export default class TypescriptTranspiler implements Transpiler {
-  private languageService: TranspilingLanguageService;
   private readonly config: Config;
-  private readonly produceSourceMaps: boolean;
   private readonly filter: TranspileFilter;
+  private languageService: TranspilingLanguageService;
+  private readonly produceSourceMaps: boolean;
 
   constructor(options: TranspilerOptions) {
     guardTypescriptVersion();
@@ -32,23 +32,26 @@ export default class TypescriptTranspiler implements Transpiler {
       return Promise.reject(new Error(error));
     } else {
       const resultFiles: File[] = this.transpileFiles(files);
+
       return Promise.resolve(resultFiles);
     }
+  }
+
+  private createLanguageService(typescriptFiles: ReadonlyArray<File>) {
+    const tsConfig = getTSConfig(this.config);
+    const compilerOptions: ts.CompilerOptions = (tsConfig && tsConfig.options) || {};
+
+    return new TranspilingLanguageService(
+      compilerOptions, typescriptFiles, getProjectDirectory(this.config), this.produceSourceMaps);
   }
 
   private filterIsIncluded(files: ReadonlyArray<File>): ReadonlyArray<File> {
     return files.filter(file => this.filter.isIncluded(file.name));
   }
 
-  private createLanguageService(typescriptFiles: ReadonlyArray<File>) {
-    const tsConfig = getTSConfig(this.config);
-    const compilerOptions: ts.CompilerOptions = (tsConfig && tsConfig.options) || {};
-    return new TranspilingLanguageService(
-      compilerOptions, typescriptFiles, getProjectDirectory(this.config), this.produceSourceMaps);
-  }
-
   private transpileFiles(files: ReadonlyArray<File>) {
     let isSingleOutput = false;
+
     // Keep original order of the files using a flatmap.
     return flatMap(files, file => {
       if (!isHeaderFile(file.name) && this.filter.isIncluded(file.name)) {
@@ -58,6 +61,7 @@ export default class TypescriptTranspiler implements Transpiler {
         } else {
           const emitOutput = this.languageService.emit(file.name);
           isSingleOutput = emitOutput.singleResult;
+
           return emitOutput.outputFiles;
         }
       } else {

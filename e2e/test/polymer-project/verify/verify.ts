@@ -23,7 +23,7 @@ describe('After running stryker on polymer-project', () => {
       noCoverage: 0,
       survived: 2,
       timedOut: 1,
-      totalMutants: 17,
+      totalMutants: 17
     });
   });
 });

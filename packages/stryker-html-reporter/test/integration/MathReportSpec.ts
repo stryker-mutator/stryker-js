@@ -1,11 +1,11 @@
+import { expect } from 'chai';
+import fileUrl = require('file-url');
 import * as fs from 'fs';
 import * as path from 'path';
-import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
-import logger from '../helpers/loggingMock';
-import EventPlayer from '../helpers/EventPlayer';
-import fileUrl = require('file-url');
 import HtmlReporter from '../../src/HtmlReporter';
+import EventPlayer from '../helpers/EventPlayer';
+import logger from '../helpers/loggingMock';
 
 describe('HtmlReporter with example math project', () => {
   let sut: HtmlReporter;
@@ -15,6 +15,7 @@ describe('HtmlReporter with example math project', () => {
     const config = new Config();
     config.set({ htmlReporter: { baseDir } });
     sut = new HtmlReporter(config);
+
     return new EventPlayer(path.join('testResources', 'mathEvents'))
       .replay(sut)
       .then(() => sut.wrapUp());
@@ -37,6 +38,7 @@ describe('HtmlReporter with example math project', () => {
       sut = new HtmlReporter(config);
       sut.onAllSourceFilesRead([]);
       sut.onAllMutantsTested([]);
+
       return sut.wrapUp();
     });
 

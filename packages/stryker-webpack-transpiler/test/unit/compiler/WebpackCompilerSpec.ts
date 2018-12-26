@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import { File } from 'stryker-api/core';
-import { createFakeWebpackConfig, createTextFile, createWebpackMock, Mock, createMockInstance } from '../../helpers/producers';
-import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
+import { Configuration } from 'webpack';
+import * as webpack from '../../../src/compiler/Webpack';
+import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
 import InputFileSystem from '../../../src/fs/InputFileSystem';
 import OutputFileSystem from '../../../src/fs/OutputFileSystem';
-import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
-import * as webpack from '../../../src/compiler/Webpack';
-import { Configuration } from 'webpack';
+import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
+import { createFakeWebpackConfig, createMockInstance, createTextFile, createWebpackMock, Mock } from '../../helpers/producers';
 
 describe('WebpackCompiler', () => {
   let sut: WebpackCompiler;
@@ -63,7 +63,7 @@ describe('WebpackCompiler', () => {
     });
 
     it('should return an error when the webpack compiler fails to compile', async () => {
-      const fakeError: string = 'fakeError';
+      const fakeError = 'fakeError';
       webpackRunStub.callsArgWith(0, new Error(fakeError));
 
       try {
@@ -77,7 +77,7 @@ describe('WebpackCompiler', () => {
     });
 
     it('should return a string representation of the error when the compiler has errors', async () => {
-      const fakeError: string = 'fakeError';
+      const fakeError = 'fakeError';
       webpackRunStub.callsArgWith(0, null, {
         hasErrors: () => true,
         toString: () => fakeError

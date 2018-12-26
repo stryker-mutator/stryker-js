@@ -1,6 +1,6 @@
+import execa = require('execa');
 import * as fs from 'fs';
 import * as path from 'path';
-import execa = require('execa');
 import * as semver from 'semver';
 
 const testRootDir = path.resolve(__dirname, 'test');
@@ -19,6 +19,7 @@ function execNpm(command: string, testDir: string) {
   let stdout = '';
   testProcess.stderr.on('data', chunk => stderr += chunk.toString());
   testProcess.stdout.on('data', chunk => stdout += chunk.toString());
+
   return testProcess.catch(error => {
     console.log(`X ${testDir}`);
     console.log(stdout);
@@ -32,10 +33,11 @@ function satisfiesNodeVersion(testDir: string): boolean {
   const supportedNodeVersionRange = pkg.engines && pkg.engines.node;
   if (supportedNodeVersionRange && !semver.satisfies(process.version, supportedNodeVersionRange)) {
     console.log(`\u2610 ${testDir} skipped (node version ${process.version} did not satisfy ${supportedNodeVersionRange})`);
+
     return false;
-  } else {
-    return true;
   }
+
+  return true;
 }
 
 async function runTest(testDir: string) {

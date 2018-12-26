@@ -1,7 +1,7 @@
-import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
-import currentLogMock from '../../helpers/logMock';
+import { Logger } from 'stryker-api/logging';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
+import currentLogMock from '../../helpers/logMock';
 import { ALL_REPORTER_EVENTS, Mock } from '../../helpers/producers';
 
 describe('BroadcastReporter', () => {
@@ -43,6 +43,7 @@ describe('BroadcastReporter', () => {
       expect(isResolved).to.be.eq(false);
       wrapUpResolveFn();
       wrapUpResolveFn2();
+
       return result;
     });
 
@@ -50,6 +51,7 @@ describe('BroadcastReporter', () => {
       beforeEach(() => {
         wrapUpRejectFn('some error');
         wrapUpResolveFn2();
+
         return result;
       });
 
@@ -83,6 +85,7 @@ describe('BroadcastReporter', () => {
   function mockReporter() {
     const reporter: any = {};
     ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sandbox.stub());
+
     return reporter;
   }
 

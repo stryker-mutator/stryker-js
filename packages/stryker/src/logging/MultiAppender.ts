@@ -19,7 +19,8 @@ export class MultiAppender {
  * @param _ The layouts provided by log4js
  * @param findAppender A method to locate other appenders
  */
-export function configure(config: { appenders: string[] }, _: any, findAppender: (name: string) => RuntimeAppender ): RuntimeAppender {
-  const multiAppender = new MultiAppender(config.appenders.map(name => findAppender(name)));
+export function configure(config: { appenders: string[] }, _: any, findAppender: (name: string) => RuntimeAppender): RuntimeAppender {
+  const multiAppender = new MultiAppender(config.appenders.map(findAppender));
+
   return multiAppender.append.bind(multiAppender);
 }

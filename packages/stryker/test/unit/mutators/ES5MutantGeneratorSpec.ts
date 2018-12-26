@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
+import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
 import ES5Mutator from '../../../src/mutators/ES5Mutator';
-import NodeMutator from '../../../src/mutators/NodeMutator';
 import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
-import { File } from 'stryker-api/core';
+import NodeMutator from '../../../src/mutators/NodeMutator';
 
 describe('ES5Mutator', () => {
   let sut: ES5Mutator;
@@ -54,6 +54,7 @@ describe('ES5Mutator', () => {
           // eg: 'if(true);': push original node
           nodes.push(node);
         }
+
         return nodes;
       }
     }

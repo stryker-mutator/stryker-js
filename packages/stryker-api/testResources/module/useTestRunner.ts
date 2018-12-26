@@ -1,8 +1,8 @@
 import {
-  CoverageCollection, CoverageResult, CoverageCollectionPerTest, CoverageData,
-  StatementMap, TestRunner, RunnerOptions,
-  RunResult, RunOptions, TestRunnerFactory,
-  TestStatus, RunStatus
+  CoverageCollection, CoverageCollectionPerTest, CoverageData, CoverageResult,
+  RunnerOptions, RunOptions, RunResult,
+  RunStatus, StatementMap, TestRunner,
+  TestRunnerFactory, TestStatus
 } from 'stryker-api/test_runner';
 
 class MyTestRunner implements TestRunner {
@@ -16,6 +16,7 @@ class MyTestRunner implements TestRunner {
         }
       }
     };
+
     return new Promise<RunResult>(r => r({
       coverage,
       status: RunStatus.Complete,

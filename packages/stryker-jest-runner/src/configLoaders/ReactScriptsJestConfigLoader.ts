@@ -1,7 +1,7 @@
-import JestConfigLoader from './JestConfigLoader';
-import { createReactJestConfig } from '../utils/createReactJestConfig';
-import * as path from 'path';
 import { Configuration } from 'jest';
+import * as path from 'path';
+import { createReactJestConfig } from '../utils/createReactJestConfig';
+import JestConfigLoader from './JestConfigLoader';
 
 export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
   private readonly loader: NodeRequire;

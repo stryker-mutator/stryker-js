@@ -1,9 +1,9 @@
+import { expect } from 'chai';
 import * as path from 'path';
-import { baseDir } from './hooks';
 import { browser } from 'protractor';
+import { baseDir } from './hooks';
 import DirectoryReportPage from './pageObjects/DirectoryReportPage';
 import FileReportPage from './pageObjects/FileReportPage';
-import { expect } from 'chai';
 
 describe('Navigation', () => {
 
@@ -12,6 +12,7 @@ describe('Navigation', () => {
 
   const get = (page: string) => {
     const f = `file:///${path.resolve(baseDir, page).replace(/\\/g, '/')}`;
+
     return browser.get(f);
   };
 

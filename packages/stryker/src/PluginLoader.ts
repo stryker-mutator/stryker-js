@@ -1,8 +1,8 @@
+import { fsAsPromised } from '@stryker-mutator/util';
+import * as _ from 'lodash';
 import * as path from 'path';
 import { getLogger } from 'stryker-api/logging';
-import * as _ from 'lodash';
 import { importModule } from './utils/fileUtils';
-import { fsAsPromised } from '@stryker-mutator/util';
 
 const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 
@@ -36,6 +36,7 @@ export default class PluginLoader {
             .map(plugin => path.basename(plugin))
             .map(plugin => {
               this.log.debug('Loading plugins %s (matched with expression %s)', plugin, pluginExpression);
+
               return plugin;
             })
             .forEach(p => modules.push(p));

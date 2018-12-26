@@ -1,6 +1,6 @@
 import * as types from '@babel/types';
-import NodeMutator from './NodeMutator';
 import { NodeWithParent } from '../helpers/ParentNode';
+import NodeMutator from './NodeMutator';
 
 /**
  * Represents a mutator which can remove the content of a switch case clause.
@@ -14,6 +14,7 @@ export default class SwitchCaseMutator implements NodeMutator {
       if (node.consequent.length > 0) {
         const mutatedNode = copy(node);
         mutatedNode.consequent = [];
+
         return [mutatedNode];
       }
     }

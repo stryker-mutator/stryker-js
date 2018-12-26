@@ -1,6 +1,6 @@
-import * as path from 'path';
-import { expect } from 'chai';
 import { fsAsPromised } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import * as path from 'path';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
 describe('fileUtils', () => {

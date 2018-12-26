@@ -1,16 +1,22 @@
 import { EOL } from 'os';
-import { TestRunner, RunResult, TestResult, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
-import { Jasmine, toStrykerTestResult, evalGlobal } from './helpers';
+import { RunnerOptions, RunResult, RunStatus, TestResult, TestRunner } from 'stryker-api/test_runner';
+import { evalGlobal, Jasmine, toStrykerTestResult } from './helpers';
 
 export default class JasmineTestRunner implements TestRunner {
+  private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
+  private readonly fileNames: ReadonlyArray<string>;
 
   private readonly jasmineConfigFile: string | undefined;
-  private readonly fileNames: ReadonlyArray<string>;
-  private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
 
   constructor(runnerOptions: RunnerOptions) {
     this.jasmineConfigFile = runnerOptions.strykerOptions.jasmineConfigFile;
     this.fileNames = runnerOptions.fileNames;
+  }
+
+  public clearRequireCache() {
+    this.fileNames.forEach(fileName => {
+      delete require.cache[fileName];
+    });
   }
 
   public run(options: { testHooks?: string }): Promise<RunResult> {
@@ -22,6 +28,7 @@ export default class JasmineTestRunner implements TestRunner {
     if (options.testHooks) {
       evalGlobal(options.testHooks);
     }
+
     return new Promise<RunResult>(resolve => {
       const reporter: jasmine.CustomReporter = {
         specStarted() {
@@ -58,12 +65,7 @@ export default class JasmineTestRunner implements TestRunner {
     jasmine.exit = () => { };
     jasmine.clearReporters();
     jasmine.randomizeTests(false);
-    return jasmine;
-  }
 
-  public clearRequireCache() {
-    this.fileNames.forEach(fileName => {
-      delete require.cache[fileName];
-    });
+    return jasmine;
   }
 }

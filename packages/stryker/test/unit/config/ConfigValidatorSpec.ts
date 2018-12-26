@@ -12,7 +12,7 @@ describe('ConfigValidator', () => {
   let log: Mock<Logger>;
 
   function breakConfig(oldConfig: Config, key: keyof Config, value: any): any {
-    return Object.assign({}, oldConfig, { [key]: value });
+    return {...oldConfig,  [key]: value};
   }
 
   beforeEach(() => {

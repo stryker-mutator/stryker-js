@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import * as tsHelpers from '../../../src/helpers/tsHelpers';
 import * as semver from 'semver';
-import * as ts from 'typescript';
 import { File } from 'stryker-api/core';
+import * as ts from 'typescript';
+import * as tsHelpers from '../../../src/helpers/tsHelpers';
 
 describe('tsHelpers', () => {
   let satisfiesStub: sinon.SinonStub;

@@ -13,6 +13,7 @@ export default class PostfixUnaryExpressionMutator implements NodeMutator {
     if (types.isUpdateExpression(node) && !node.prefix && this.operators[node.operator]) {
       const mutatedNode = copy(node);
       mutatedNode.operator = this.operators[node.operator] as any;
+
       return [mutatedNode];
     }
   }

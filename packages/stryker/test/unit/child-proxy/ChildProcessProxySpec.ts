@@ -1,17 +1,17 @@
-import * as os from 'os';
 import { expect } from 'chai';
 import * as childProcess from 'child_process';
-import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import { autoStart, InitMessage, WorkerMessageKind, ParentMessage, WorkerMessage, ParentMessageKind, DisposeMessage } from '../../../src/child-proxy/messageProtocol';
-import { serialize } from '../../../src/utils/objectUtils';
-import HelloClass from './HelloClass';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
-import { LogLevel } from 'stryker-api/core';
-import * as objectUtils from '../../../src/utils/objectUtils';
 import { EventEmitter } from 'events';
+import * as os from 'os';
+import { LogLevel } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
-import { Mock } from '../../helpers/producers';
+import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
+import { autoStart, DisposeMessage, InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from '../../../src/child-proxy/messageProtocol';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import * as objectUtils from '../../../src/utils/objectUtils';
+import { serialize } from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';
+import { Mock } from '../../helpers/producers';
+import HelloClass from './HelloClass';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
@@ -19,10 +19,10 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
 });
 
 class ChildProcessMock extends EventEmitter {
+  public pid = 4648;
   public send = sandbox.stub();
   public stderr = new EventEmitter();
   public stdout = new EventEmitter();
-  public pid = 4648;
 }
 
 describe('ChildProcessProxy', () => {
@@ -114,11 +114,13 @@ describe('ChildProcessProxy', () => {
       const expectedError = 'Child process [pid 4648] exited unexpectedly with exit code 646 (SIGINT).';
       const actualPromise = sut.proxy.say('test');
       actExit(646);
+
       return expect(actualPromise).rejectedWith(expectedError);
     });
 
     it('should reject any new calls immediately', () => {
       actExit(646);
+
       return expect(sut.proxy.say('')).rejected;
     });
 
@@ -212,11 +214,11 @@ describe('ChildProcessProxy', () => {
 });
 
 function createSut(overrides: {
-  requirePath?: string;
+  arg?: string;
   loggingContext?: LoggingClientContext;
   plugins?: string[];
+  requirePath?: string;
   workingDir?: string;
-  arg?: string;
 } = {}): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
     overrides.requirePath || 'foobar',

@@ -1,9 +1,9 @@
 import * as chai from 'chai';
-import MochaTestRunner from '../../src/MochaTestRunner';
-import { TestResult, RunResult, TestStatus, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
+import { RunnerOptions, RunResult, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
+import MochaTestRunner from '../../src/MochaTestRunner';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -38,6 +38,7 @@ describe('Running a sample project', () => {
         }
       };
       sut = new MochaTestRunner(testRunnerOptions);
+
       return sut.init();
     });
 
@@ -61,7 +62,7 @@ describe('Running a sample project', () => {
     beforeEach(() => {
       const files = [
         resolve('testResources/sampleProject/MyMath.js'),
-        resolve('testResources/sampleProject/MyMathSpec.js'),
+        resolve('testResources/sampleProject/MyMathSpec.js')
       ];
       const mochaOptions: MochaRunnerOptions = {
         files
@@ -72,6 +73,7 @@ describe('Running a sample project', () => {
         strykerOptions: { mochaOptions }
       };
       sut = new MochaTestRunner(options);
+
       return sut.init();
     });
 
@@ -94,10 +96,11 @@ describe('Running a sample project', () => {
           mochaOptions: {
             files: [
               resolve('testResources/sampleProject/MyMath.js'),
-              resolve('testResources/sampleProject/MyMathFailedSpec.js')],
+              resolve('testResources/sampleProject/MyMathFailedSpec.js')]
           }
         }
       });
+
       return sut.init();
     });
 
@@ -119,6 +122,7 @@ describe('Running a sample project', () => {
         }
       };
       sut = new MochaTestRunner(testRunnerOptions);
+
       return sut.init();
     });
 

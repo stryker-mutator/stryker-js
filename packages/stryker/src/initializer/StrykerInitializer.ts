@@ -1,29 +1,28 @@
 import * as child from 'child_process';
-import { StrykerInquirer } from './StrykerInquirer';
-import NpmClient from './NpmClient';
-import PromptOption from './PromptOption';
 import { getLogger } from 'stryker-api/logging';
-import { filterEmpty } from '../utils/objectUtils';
-import StrykerConfigWriter from './StrykerConfigWriter';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
-import StrykerPresets from './StrykerPresets';
+import { filterEmpty } from '../utils/objectUtils';
+import NpmClient from './NpmClient';
 import Preset from './presets/Preset';
+import PromptOption from './PromptOption';
+import StrykerConfigWriter from './StrykerConfigWriter';
+import { StrykerInquirer } from './StrykerInquirer';
+import StrykerPresets from './StrykerPresets';
 
 const enum PackageManager {
   Npm = 'npm',
-  Yarn = 'yarn',
+  Yarn = 'yarn'
 }
 
 export default class StrykerInitializer {
+  private readonly inquirer = new StrykerInquirer();
 
   private readonly log = getLogger(StrykerInitializer.name);
-  private readonly inquirer = new StrykerInquirer();
 
   constructor(private readonly out = console.log, private readonly client: NpmClient = new NpmClient(), private readonly strykerPresets: Preset[] = StrykerPresets) { }
 
   /**
    * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
-   * @function
    */
   public async initialize(): Promise<void> {
     const configWriter = new StrykerConfigWriter(this.out);
@@ -32,44 +31,21 @@ export default class StrykerInitializer {
     const selectedPreset = await this.selectPreset();
     if (selectedPreset) {
       await this.initiatePreset(configWriter, selectedPreset);
-    }
-    else {
+    } else {
       await this.initiateCustom(configWriter);
     }
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');
   }
 
-  /**
-   * The typed rest client works only with the specific HTTP_PROXY and HTTPS_PROXY env settings.
-   * Let's make sure they are available.
-   */
-  private patchProxies() {
-    const copyEnvVariable = (from: string, to: string) => {
-      if (process.env[from] && !process.env[to]) {
-        process.env[to] = process.env[from];
-      }
-    };
-    copyEnvVariable('http_proxy', 'HTTP_PROXY');
-    copyEnvVariable('https_proxy', 'HTTPS_PROXY');
+  private async fetchAdditionalConfig(dependencies: string[]): Promise<object[]> {
+    return filterEmpty(await Promise.all(dependencies.map(dep =>
+      this.client.getAdditionalConfig(dep))));
   }
 
-  private async selectPreset(): Promise<Preset | undefined> {
-    const presetOptions: Preset[] = this.strykerPresets;
-    if (presetOptions.length) {
-      this.log.debug(`Found presets: ${JSON.stringify(presetOptions)}`);
-      return this.inquirer.promptPresets(presetOptions);
-    } else {
-      this.log.debug('No presets have been configured, reverting to custom configuration');
-      return undefined;
-    }
-  }
-
-  private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: Preset) {
-    const presetConfig = await selectedPreset.createConfig();
-    await configWriter.writePreset(presetConfig);
-    const selectedPackageManager = await this.selectPackageManager();
-    this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
+  private getSelectedNpmDependencies(selectedOptions: Array<PromptOption | null>) {
+    return filterEmpty(filterEmpty(selectedOptions)
+      .map(option => option.npm));
   }
 
   private async initiateCustom(configWriter: StrykerConfigWriter) {
@@ -95,14 +71,83 @@ export default class StrykerInitializer {
     this.installNpmDependencies(npmDependencies, selectedPackageManager);
   }
 
-  private async selectTestRunner(): Promise<PromptOption | null> {
-    const testRunnerOptions = await this.client.getTestRunnerOptions();
-    if (testRunnerOptions.length) {
-      this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
-      return this.inquirer.promptTestRunners(testRunnerOptions);
+  private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: Preset) {
+    const presetConfig = await selectedPreset.createConfig();
+    await configWriter.writePreset(presetConfig);
+    const selectedPackageManager = await this.selectPackageManager();
+    this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
+  }
+
+  /**
+   * Install the npm packages
+   */
+  private installNpmDependencies(dependencies: string[], selectedOption: PromptOption): void {
+    if (dependencies.length === 0) {
+      return;
+    }
+
+    this.out('Installing NPM dependencies...');
+    const cmd = selectedOption.name === PackageManager.Npm
+      ? `npm i --save-dev stryker-api ${dependencies.join(' ')}`
+      : `yarn add stryker-api ${dependencies.join(' ')} --dev`;
+    this.out(cmd);
+    try {
+      child.execSync(cmd, { stdio: [0, 1, 2] });
+    } catch (_) {
+      this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
+    }
+  }
+
+  /**
+   * The typed rest client works only with the specific HTTP_PROXY and HTTPS_PROXY env settings.
+   * Let's make sure they are available.
+   */
+  private patchProxies() {
+    const copyEnvVariable = (from: string, to: string) => {
+      if (process.env[from] && !process.env[to]) {
+        process.env[to] = process.env[from];
+      }
+    };
+    copyEnvVariable('http_proxy', 'HTTP_PROXY');
+    copyEnvVariable('https_proxy', 'HTTPS_PROXY');
+  }
+
+  private async selectMutator(): Promise<PromptOption | null> {
+    const mutatorOptions = await this.client.getMutatorOptions();
+    if (mutatorOptions.length) {
+      this.log.debug(`Found mutators: ${JSON.stringify(mutatorOptions)}`);
+
+      return this.inquirer.promptMutator(mutatorOptions);
     } else {
-      this.out('Unable to select a test runner. You will need to configure it manually.');
+      this.out('Unable to select a mutator. You will need to configure it manually.');
+
       return null;
+    }
+  }
+
+  private async selectPackageManager(): Promise<PromptOption> {
+    return this.inquirer.promptPackageManager([
+      {
+        name: PackageManager.Npm,
+        npm: null
+      },
+      {
+        name: PackageManager.Yarn,
+        npm: null
+      }
+    ]);
+  }
+
+  private async selectPreset(): Promise<Preset | undefined> {
+    const presetOptions: Preset[] = this.strykerPresets;
+    if (presetOptions.length) {
+      this.log.debug(`Found presets: ${JSON.stringify(presetOptions)}`);
+
+      return this.inquirer.promptPresets(presetOptions);
+    } else {
+      this.log.debug('No presets have been configured, reverting to custom configuration');
+
+      return undefined;
     }
   }
 
@@ -120,6 +165,7 @@ export default class StrykerInitializer {
         npm: null
       }
     );
+
     return this.inquirer.promptReporters(reporterOptions);
   }
 
@@ -141,16 +187,19 @@ export default class StrykerInitializer {
     } else {
       this.out(`No stryker test framework plugin found that is compatible with ${testRunnerOption.name}, downgrading coverageAnalysis to "all"`);
     }
+
     return selectedTestFramework;
   }
 
-  private async selectMutator(): Promise<PromptOption | null> {
-    const mutatorOptions = await this.client.getMutatorOptions();
-    if (mutatorOptions.length) {
-      this.log.debug(`Found mutators: ${JSON.stringify(mutatorOptions)}`);
-      return this.inquirer.promptMutator(mutatorOptions);
+  private async selectTestRunner(): Promise<PromptOption | null> {
+    const testRunnerOptions = await this.client.getTestRunnerOptions();
+    if (testRunnerOptions.length) {
+      this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
+
+      return this.inquirer.promptTestRunners(testRunnerOptions);
     } else {
-      this.out('Unable to select a mutator. You will need to configure it manually.');
+      this.out('Unable to select a test runner. You will need to configure it manually.');
+
       return null;
     }
   }
@@ -159,54 +208,12 @@ export default class StrykerInitializer {
     const options = await this.client.getTranspilerOptions();
     if (options.length) {
       this.log.debug(`Found transpilers: ${JSON.stringify(options)}`);
+
       return this.inquirer.promptTranspilers(options);
     } else {
       this.out('Unable to select transpilers. You will need to configure it manually, if you want to use any.');
+
       return null;
     }
-  }
-
-  private async selectPackageManager(): Promise<PromptOption> {
-    return this.inquirer.promptPackageManager([
-      {
-        name: PackageManager.Npm,
-        npm: null,
-      },
-      {
-        name: PackageManager.Yarn,
-        npm: null,
-      }
-    ]);
-  }
-
-  private getSelectedNpmDependencies(selectedOptions: (PromptOption | null)[]) {
-    return filterEmpty(filterEmpty(selectedOptions)
-      .map(option => option.npm));
-  }
-
-  /**
-   * Install the npm packages
-   * @function
-   */
-  private installNpmDependencies(dependencies: string[], selectedOption: PromptOption): void {
-    if (dependencies.length === 0) {
-      return;
-    }
-
-    this.out('Installing NPM dependencies...');
-    const cmd = selectedOption.name === PackageManager.Npm
-      ? `npm i --save-dev stryker-api ${dependencies.join(' ')}`
-      : `yarn add stryker-api ${dependencies.join(' ')} --dev`;
-    this.out(cmd);
-    try {
-      child.execSync(cmd, { stdio: [0, 1, 2] });
-    } catch (_) {
-      this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
-    }
-  }
-
-  private async fetchAdditionalConfig(dependencies: string[]): Promise<object[]> {
-    return filterEmpty(await Promise.all(dependencies.map(dep =>
-      this.client.getAdditionalConfig(dep))));
   }
 }

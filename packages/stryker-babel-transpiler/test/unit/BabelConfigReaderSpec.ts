@@ -1,18 +1,18 @@
-import BabelConfigReader from '../../src/BabelConfigReader';
-import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
 import * as fs from 'fs';
-import * as logging from 'stryker-api/logging';
-import * as sinon from 'sinon';
 import * as path from 'path';
+import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
+import * as logging from 'stryker-api/logging';
+import BabelConfigReader from '../../src/BabelConfigReader';
 
 describe('BabelConfigReader', () => {
   let sandbox: sinon.SinonSandbox;
   let logStub: {
-    trace: sinon.SinonStub,
-    info: sinon.SinonStub,
-    error: sinon.SinonStub,
-    debug: sinon.SinonStub
+    debug: sinon.SinonStub;
+    error: sinon.SinonStub;
+    info: sinon.SinonStub;
+    trace: sinon.SinonStub;
   };
 
   beforeEach(() => {

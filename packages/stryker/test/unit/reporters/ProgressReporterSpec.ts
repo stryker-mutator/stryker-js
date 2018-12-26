@@ -1,10 +1,10 @@
-import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { MutantStatus, MatchedMutant } from 'stryker-api/report';
-import ProgressReporter from '../../../src/reporters/ProgressReporter';
-import * as progressBarModule from '../../../src/reporters/ProgressBar';
-import { matchedMutant, mutantResult, Mock, mock } from '../../helpers/producers';
 import ProgressBar = require('progress');
+import * as sinon from 'sinon';
+import { MatchedMutant, MutantStatus } from 'stryker-api/report';
+import * as progressBarModule from '../../../src/reporters/ProgressBar';
+import ProgressReporter from '../../../src/reporters/ProgressReporter';
+import { matchedMutant, Mock, mock, mutantResult } from '../../helpers/producers';
 
 const SECOND = 1000;
 const TEN_SECONDS = SECOND * 10;
@@ -18,7 +18,7 @@ describe('ProgressReporter', () => {
   let sandbox: sinon.SinonSandbox;
   let matchedMutants: MatchedMutant[];
   let progressBar: Mock<ProgressBar>;
-  const progressBarContent: string = `Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)`;
+  const progressBarContent = `Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)`;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();

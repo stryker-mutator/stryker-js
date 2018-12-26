@@ -1,10 +1,11 @@
-import { TestRunner, RunResult, RunStatus } from 'stryker-api/test_runner';
-import { Context } from 'web-component-tester/runner/context';
-import { steps } from 'web-component-tester';
 import { StrykerOptions } from 'stryker-api/core';
-import WctReporter from './WctReporter';
-import WctLogger from './WctLogger';
 import { getLogger } from 'stryker-api/logging';
+import { RunResult, RunStatus, TestRunner } from 'stryker-api/test_runner';
+import { steps } from 'web-component-tester';
+import { Context } from 'web-component-tester/runner/context';
+import WctLogger from './WctLogger';
+import WctReporter from './WctReporter';
+
 const WCT_PACKAGE = 'web-component-tester';
 const FORCED_WCT_OPTIONS = Object.freeze({
   persistent: false
@@ -12,10 +13,16 @@ const FORCED_WCT_OPTIONS = Object.freeze({
 
 export default class WctTestRunner implements TestRunner {
 
-  private readonly reporter: WctReporter;
+  private static ignoreFailedTests(error: Error) {
+    if (!error.message.match(/\d+ failed tests?/)) {
+      throw error;
+    }
+  }
   private readonly context: Context;
-  private readonly logger: WctLogger;
   private readonly log = getLogger(WctTestRunner.name);
+  private readonly logger: WctLogger;
+
+  private readonly reporter: WctReporter;
 
   constructor(runnerOptions: { strykerOptions: StrykerOptions }) {
     if (runnerOptions.strykerOptions.coverageAnalysis !== 'off') {
@@ -27,12 +34,9 @@ export default class WctTestRunner implements TestRunner {
     this.reporter = new WctReporter(this.context);
   }
 
-  private loadContext(runnerOptions: { strykerOptions: StrykerOptions }) {
-    const context = new Context(Object.assign({}, runnerOptions.strykerOptions.wct, FORCED_WCT_OPTIONS));
-    if (this.log.isDebugEnabled()) {
-      this.log.debug(`WCT options: %s`, JSON.stringify(this.context.options));
-    }
-    return context;
+  public dispose() {
+    this.reporter.dispose();
+    this.logger.dispose();
   }
 
   public async init(): Promise<void> {
@@ -46,6 +50,7 @@ export default class WctTestRunner implements TestRunner {
     this.reporter.results = [];
     try {
       await steps.runTests(this.context).catch(WctTestRunner.ignoreFailedTests);
+
       return {
         status: RunStatus.Complete,
         tests: this.reporter.results
@@ -59,14 +64,12 @@ export default class WctTestRunner implements TestRunner {
     }
   }
 
-  public dispose() {
-    this.reporter.dispose();
-    this.logger.dispose();
-  }
-
-  private static ignoreFailedTests(error: Error) {
-    if (!error.message.match(/\d+ failed tests?/)) {
-      throw error;
+  private loadContext(runnerOptions: { strykerOptions: StrykerOptions }) {
+    const context = new Context({...runnerOptions.strykerOptions.wct, ...FORCED_WCT_OPTIONS});
+    if (this.log.isDebugEnabled()) {
+      this.log.debug(`WCT options: %s`, JSON.stringify(this.context.options));
     }
+
+    return context;
   }
 }

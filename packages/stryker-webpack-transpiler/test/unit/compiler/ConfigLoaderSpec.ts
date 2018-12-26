@@ -1,8 +1,8 @@
+import { assert, expect } from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
-import { expect, assert } from 'chai';
-import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { Configuration, Plugin } from 'webpack';
+import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { createStrykerWebpackConfig } from '../../helpers/producers';
 
 class FooPlugin implements Plugin { public foo = true; public apply() { } }
@@ -74,7 +74,7 @@ describe('ConfigLoader', () => {
   });
 
   it('should return an object with the context property pointing to the projectRoot when webpack.config.js does not exist', async () => {
-    const contextPath: string = '/path/to/project/root';
+    const contextPath = '/path/to/project/root';
 
     existsSyncStub.returns(false);
 
@@ -98,7 +98,7 @@ describe('ConfigLoader', () => {
   });
 
   it('should log a debug message when the Webpack configuration is not found and it\'s trying webpack 4 zero config instead', async () => {
-    const contextPath: string = '/path/to/project/root';
+    const contextPath = '/path/to/project/root';
 
     existsSyncStub.returns(false);
 

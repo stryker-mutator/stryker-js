@@ -1,8 +1,8 @@
-import * as path from 'path';
 import { expect } from 'chai';
-import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
+import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
+import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
 import * as objectUtils from '../../../src/utils/objectUtils';
 
 describe(`${CommandTestRunner.name} integration`, () => {
@@ -53,6 +53,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
         commandRunner: settings
       });
     }
+
     return new CommandTestRunner(workingDir, { strykerOptions, port: 23, fileNames: [] });
   }
 });

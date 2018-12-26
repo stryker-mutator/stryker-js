@@ -1,21 +1,21 @@
-import * as path from 'path';
-import * as execa from 'execa';
 import { expect } from 'chai';
+import * as execa from 'execa';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as rimraf from 'rimraf';
 import { TestSelection } from 'stryker-api/test_framework';
 import MochaTestFramework from '../../src/MochaTestFramework';
-import * as fs from 'fs';
-import * as rimraf from 'rimraf';
 
 interface MochaTestRunResult {
-  tests: MochaTest[];
-  pending: MochaTest[];
   failure: MochaTest[];
   passes: MochaTest[];
+  pending: MochaTest[];
+  tests: MochaTest[];
 }
 
 interface MochaTest {
-  title: string;
   fullTitle: string;
+  title: string;
 }
 
 // See https://github.com/stryker-mutator/stryker/issues/249
@@ -84,6 +84,7 @@ describe('Selecting tests with nested suites', () => {
 
   function execMocha(...files: string[]) {
     const execResult = execa.sync('mocha', ['--reporter', 'json', ...files]);
+
     return JSON.parse(execResult.stdout) as MochaTestRunResult;
   }
 });

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { layout } from '../../../src/templates/layout';
-import Breadcrumb from '../../../src/Breadcrumb';
 import * as typedHtml from 'typed-html';
+import Breadcrumb from '../../../src/Breadcrumb';
+import { layout } from '../../../src/templates/layout';
 
 function removeNewLines(source: string) {
   return source.replace(/\n|\r/g, '');

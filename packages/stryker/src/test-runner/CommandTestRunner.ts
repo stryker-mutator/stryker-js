@@ -1,6 +1,6 @@
-import * as os from 'os';
-import { TestRunner, RunResult, RunStatus, TestStatus, RunnerOptions } from 'stryker-api/test_runner';
 import { exec } from 'child_process';
+import * as os from 'os';
+import { RunnerOptions, RunResult, RunStatus, TestRunner, TestStatus } from 'stryker-api/test_runner';
 import { errorToString, kill } from '../utils/objectUtils';
 import Timer from '../utils/Timer';
 
@@ -34,15 +34,19 @@ export default class CommandTestRunner implements TestRunner {
   private timeoutHandler: undefined | (() => Promise<void>);
 
   constructor(private readonly workingDir: string, options: RunnerOptions) {
-    this.settings = Object.assign({
-      command: 'npm test'
-    }, options.strykerOptions.commandRunner);
+    this.settings = {
+      command: 'npm test', ...options.strykerOptions.commandRunner};
+  }
+  public async dispose(): Promise<void> {
+    if (this.timeoutHandler) {
+      await this.timeoutHandler();
+    }
   }
 
   public run(): Promise<RunResult> {
     return new Promise((res, rej) => {
       const timer = new Timer();
-      const output: (string | Buffer)[] = [];
+      const output: Array<string | Buffer> = [];
       const childProcess = exec(this.settings.command, { cwd: this.workingDir });
       childProcess.on('error', error => {
         kill(childProcess.pid)
@@ -110,10 +114,5 @@ export default class CommandTestRunner implements TestRunner {
       }
     });
 
-  }
-  public async dispose(): Promise<void> {
-    if (this.timeoutHandler) {
-      await this.timeoutHandler();
-    }
   }
 }

@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
-import TranspilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { Transpiler, TranspilerFactory } from 'stryker-api/transpile';
-import { mock, Mock } from '../../helpers/producers';
 import { File } from 'stryker-api/core';
+import { Transpiler, TranspilerFactory } from 'stryker-api/transpile';
+import TranspilerFacade from '../../../src/transpiler/TranspilerFacade';
+import { mock, Mock } from '../../helpers/producers';
 
 describe('TranspilerFacade', () => {
   let createStub: sinon.SinonStub;

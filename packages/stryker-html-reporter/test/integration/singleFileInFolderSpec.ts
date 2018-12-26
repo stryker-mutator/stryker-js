@@ -1,10 +1,10 @@
-import * as path from 'path';
 import { expect } from 'chai';
-import { Config } from 'stryker-api/config';
-import EventPlayer from '../helpers/EventPlayer';
-import HtmlReporter from '../../src/HtmlReporter';
-import { readDirectoryTree } from '../helpers/fsHelpers';
 import * as fs from 'fs';
+import * as path from 'path';
+import { Config } from 'stryker-api/config';
+import HtmlReporter from '../../src/HtmlReporter';
+import EventPlayer from '../helpers/EventPlayer';
+import { readDirectoryTree } from '../helpers/fsHelpers';
 
 const REPORT_DIR = 'reports/mutation/singleFileInFolder';
 
@@ -15,6 +15,7 @@ describe('HtmlReporter single file in a folder', () => {
     const config = new Config();
     config.set({ htmlReporter: { baseDir: REPORT_DIR } });
     sut = new HtmlReporter(config);
+
     return new EventPlayer(path.join('testResources', 'singleFileInFolder'))
       .replay(sut)
       .then(() => sut.wrapUp());
@@ -24,7 +25,7 @@ describe('HtmlReporter single file in a folder', () => {
     const dir = readDirectoryTree(REPORT_DIR);
     expect(dir).to.be.deep.include({
       'Array.js.html': 'Array.js.html',
-      'index.html': 'index.html',
+      'index.html': 'index.html'
     });
     expect(dir.math).deep.eq({
       'Add.js.html': 'Add.js.html'

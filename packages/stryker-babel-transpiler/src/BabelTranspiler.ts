@@ -1,10 +1,10 @@
-import { Transpiler, TranspilerOptions } from 'stryker-api/transpile';
-import { File } from 'stryker-api/core';
 import * as babel from 'babel-core';
 import * as path from 'path';
+import { File } from 'stryker-api/core';
+import { Transpiler, TranspilerOptions } from 'stryker-api/transpile';
 import BabelConfigReader from './BabelConfigReader';
-import { CONFIG_KEY_FILE } from './helpers/keys';
 import { toJSFileName } from './helpers/helpers';
+import { CONFIG_KEY_FILE } from './helpers/keys';
 
 const KNOWN_EXTENSIONS = Object.freeze([
   '.es6',
@@ -31,23 +31,21 @@ class BabelTranspiler implements Transpiler {
     return new Promise<ReadonlyArray<File>>(res => res(files.map(file => this.transpileFileIfNeeded(file))));
   }
 
-  private transpileFileIfNeeded(file: File): File {
-    if (KNOWN_EXTENSIONS.some(ext => ext === path.extname(file.name))) {
-      try {
-        return this.transpileFile(file);
-      } catch (error) {
-        throw new Error(`Error while transpiling "${file.name}": ${error.stack || error.message}`);
-      }
+  private determineProjectRoot(options: TranspilerOptions): string {
+    const configFile = options.config[CONFIG_KEY_FILE];
+    if (configFile) {
+      return path.dirname(configFile);
     } else {
-      return file; // pass through
+      return process.cwd();
     }
   }
 
   private transpileFile(file: File) {
-    const options = Object.assign({}, this.babelOptions, {
+    const options = {
+      ...this.babelOptions,
       filename: file.name,
       filenameRelative: path.relative(this.projectRoot, file.name)
-    });
+    };
     const result = babel.transform(file.textContent, options);
     if ((result as any).ignored) {
       // Ignored will be true if the file was not transpiled (because it was ignored)
@@ -61,12 +59,15 @@ class BabelTranspiler implements Transpiler {
     }
   }
 
-  private determineProjectRoot(options: TranspilerOptions): string {
-    const configFile = options.config[CONFIG_KEY_FILE];
-    if (configFile) {
-      return path.dirname(configFile);
+  private transpileFileIfNeeded(file: File): File {
+    if (KNOWN_EXTENSIONS.some(ext => ext === path.extname(file.name))) {
+      try {
+        return this.transpileFile(file);
+      } catch (error) {
+        throw new Error(`Error while transpiling "${file.name}": ${error.stack || error.message}`);
+      }
     } else {
-      return process.cwd();
+      return file; // pass through
     }
   }
 }

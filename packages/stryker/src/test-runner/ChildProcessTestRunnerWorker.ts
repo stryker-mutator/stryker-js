@@ -1,4 +1,4 @@
-import { TestRunner, TestRunnerFactory, RunnerOptions, RunOptions } from 'stryker-api/test_runner';
+import { RunnerOptions, RunOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
 import { errorToString } from '../utils/objectUtils';
 
 export default class ChildProcessTestRunnerWorker implements TestRunner {
@@ -9,15 +9,15 @@ export default class ChildProcessTestRunnerWorker implements TestRunner {
     this.underlyingTestRunner = TestRunnerFactory.instance().create(realTestRunnerName, options);
   }
 
-  public async init(): Promise<void> {
-    if (this.underlyingTestRunner.init) {
-      await this.underlyingTestRunner.init();
-    }
-  }
-
   public async dispose() {
     if (this.underlyingTestRunner.dispose) {
       await this.underlyingTestRunner.dispose();
+    }
+  }
+
+  public async init(): Promise<void> {
+    if (this.underlyingTestRunner.init) {
+      await this.underlyingTestRunner.init();
     }
   }
 
@@ -33,6 +33,7 @@ export default class ChildProcessTestRunnerWorker implements TestRunner {
       // https://github.com/stryker-mutator/stryker/issues/141
       result.errorMessages = result.errorMessages.map(errorToString);
     }
+
     return result;
   }
 }

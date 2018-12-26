@@ -1,11 +1,11 @@
-import * as path from 'path';
-import * as fs from 'fs';
 import { expect } from 'chai';
-import * as ts from 'typescript';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import TypescriptMutator from '../../src/TypescriptMutator';
+import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
+import TypescriptMutator from '../../src/TypescriptMutator';
 
 class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
   public name = 'FunctionDeclarationForTest';

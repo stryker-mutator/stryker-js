@@ -11,5 +11,6 @@ export function selectAll(htmlFragment: string, selector: string): HTMLElement[]
   for (let i = 0; i < items.length; i++) {
     elements.push(items.item(i) as HTMLElement);
   }
+
   return elements;
 }

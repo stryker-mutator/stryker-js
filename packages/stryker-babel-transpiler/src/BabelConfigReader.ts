@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Config } from 'stryker-api/config';
-import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
 import { getLogger } from 'stryker-api/logging';
+import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
 
 export default class BabelConfigReader {
   private readonly log = getLogger(BabelConfigReader.name);
@@ -10,6 +10,7 @@ export default class BabelConfigReader {
   public readConfig(config: Config): babel.TransformOptions {
     const babelConfig: babel.TransformOptions = config[CONFIG_KEY_OPTIONS] || this.getConfigFile(config) || {};
     this.log.debug(`babel config is: ${JSON.stringify(babelConfig, null, 2)}`);
+
     return babelConfig;
   }
 
@@ -20,6 +21,7 @@ export default class BabelConfigReader {
       if (fs.existsSync(babelrcPath)) {
         try {
           const config: babel.TransformOptions = JSON.parse(fs.readFileSync(babelrcPath, 'utf8'));
+
           return config;
         } catch (error) {
           this.log.error(`Error while reading .babelrc file: ${error}`);
@@ -30,6 +32,7 @@ export default class BabelConfigReader {
     } else {
       this.log.info(`No .babelrc file configured. Please set the "${CONFIG_KEY_FILE}" property in your config.`);
     }
+
     return null;
   }
 }

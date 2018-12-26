@@ -1,13 +1,13 @@
 
 declare module 'enhanced-resolve' {
   export interface Stats {
-    isFile(): boolean;
-    isDirectory(): boolean;
     isBlockDevice(): boolean;
     isCharacterDevice(): boolean;
-    isSymbolicLink(): boolean;
+    isDirectory(): boolean;
     isFIFO(): boolean;
+    isFile(): boolean;
     isSocket(): boolean;
+    isSymbolicLink(): boolean;
   }
 
   type Callback<T> = (err: NodeJS.ErrnoException | null | undefined, arg?: T) => void;
@@ -18,7 +18,7 @@ declare module 'enhanced-resolve' {
     readdirSync(path: string): string[];
     readFile(
       filename: string,
-      encoding: string | { encoding: string; flag?: string; },
+      encoding: string | { encoding: string; flag?: string },
       callback: (err: NodeJS.ErrnoException, data: string) => void): void;
     readFile(
       filename: string,
@@ -39,16 +39,16 @@ declare module 'enhanced-resolve' {
 
   export class NodeJsInputFileSystem implements AbstractInputFileSystem {
     public readdir(path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void): void;
-    public readFile(filename: string, encoding: string | { encoding: string; flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
-    public readFile(filename: string, options: { flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
+    public readdirSync(path: string): string[];
+    public readFile(filename: string, encoding: string | { encoding: string; flag?: string | undefined }, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
+    public readFile(filename: string, options: { flag?: string | undefined }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     public readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     public readFile(filename: any, options: any, callback?: any): void;
+    public readFileSync(filename: string): Buffer;
     public readlink(path: string, callback: (err: NodeJS.ErrnoException, linkString: string) => void): void;
+    public readlinkSync(path: string): string;
     public stat(path: string, callback: (err: NodeJS.ErrnoException, stats: Stats) => void): void;
     public statSync(path: string): Stats;
-    public readlinkSync(path: string): string;
-    public readFileSync(filename: string): Buffer;
-    public readdirSync(path: string): string[];
   }
 
   export class CachedInputFileSystem {
@@ -56,26 +56,26 @@ declare module 'enhanced-resolve' {
 
     constructor(fileSystem: AbstractInputFileSystem, duration: number);
 
-    public stat(path: string, callback: Callback<Stats>): void;
+    public purge(what?: string | string[]): void;
 
     public readdir(path: string, callback: Callback<string[]>): void;
 
-    public readFile(path: string, callback: Callback<Buffer>): void;
-
-    public readJson(path: string, callback: Callback<any>): void;
-
-    public readlink(path: string, callback: Callback<string>): void;
-
-    public statSync(path: string | Buffer): Stats;
-
     public readdirSync(path: string): string[];
+
+    public readFile(path: string, callback: Callback<Buffer>): void;
 
     public readFileSync(filename: string, options?: string): Buffer;
 
-    public readlinkSync(path: string | Buffer): string;
+    public readJson(path: string, callback: Callback<any>): void;
 
     public readJsonSync(path: string): any;
 
-    public purge(what?: string | string[]): void;
+    public readlink(path: string, callback: Callback<string>): void;
+
+    public readlinkSync(path: string | Buffer): string;
+
+    public stat(path: string, callback: Callback<Stats>): void;
+
+    public statSync(path: string | Buffer): Stats;
   }
 }

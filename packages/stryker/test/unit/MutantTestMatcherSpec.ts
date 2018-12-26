@@ -1,18 +1,18 @@
+import { expect } from 'chai';
+import { File, StrykerOptions } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import { Mutant } from 'stryker-api/mutant';
-import { TestSelection } from 'stryker-api/test_framework';
-import { expect } from 'chai';
-import { RunResult, TestResult, RunStatus, TestStatus, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
-import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
+import { TestSelection } from 'stryker-api/test_framework';
+import { CoverageCollection, CoveragePerTestResult, RunResult, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
-import currentLogMock from '../helpers/logMock';
-import { testResult, mutant, Mock, mock } from '../helpers/producers';
-import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
-import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
+import SourceFile from '../../src/SourceFile';
+import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import { CoverageMapsByFile } from '../../src/transpiler/CoverageInstrumenterTranspiler';
-import { PassThroughSourceMapper, MappedLocation } from '../../src/transpiler/SourceMapper';
+import { MappedLocation, PassThroughSourceMapper } from '../../src/transpiler/SourceMapper';
+import currentLogMock from '../helpers/logMock';
+import { Mock, mock, mutant, testResult } from '../helpers/producers';
 
 describe('MutantTestMatcher', () => {
 
@@ -64,7 +64,7 @@ describe('MutantTestMatcher', () => {
             fileName: 'fileWithMutantOne',
             mutatorName: 'myMutator',
             range: [9, 9], // line 4:5 -> line 4:5
-            replacement: '>',
+            replacement: '>'
             // location: { start: { line: 4, column: 5 }, end: { line: 4, column: 5 } },
           };
 

@@ -1,3 +1,4 @@
+import { Config } from 'stryker-api/config';
 import { getLogger } from 'stryker-api/logging';
 import { ReporterFactory } from 'stryker-api/report';
 import BroadcastReporter, {
@@ -10,7 +11,6 @@ import EventRecorderReporter from './reporters/EventRecorderReporter';
 import ProgressAppendOnlyReporter from './reporters/ProgressAppendOnlyReporter';
 import ProgressReporter from './reporters/ProgressReporter';
 import StrictReporter from './reporters/StrictReporter';
-import { Config } from 'stryker-api/config';
 
 function registerDefaultReporters() {
   ReporterFactory.instance().register(
@@ -42,6 +42,7 @@ export default class ReporterOrchestrator {
       );
       this.logPossibleReporters();
     }
+
     return new BroadcastReporter(reporters);
   }
 
@@ -50,6 +51,7 @@ export default class ReporterOrchestrator {
       this.log.info(
         'Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter'
       );
+
       return {
         name: 'progress-append-only',
         reporter: ReporterFactory.instance().create(

@@ -1,8 +1,8 @@
 import { File } from 'stryker-api/core';
 import { Compiler, Configuration } from 'webpack';
-import webpack from './Webpack';
 import InputFileSystem from '../fs/InputFileSystem';
 import OutputFileSystem from '../fs/OutputFileSystem';
+import webpack from './Webpack';
 
 export default class WebpackCompiler {
   private readonly _compiler: Compiler;
@@ -13,31 +13,17 @@ export default class WebpackCompiler {
     this._compiler = this.createCompiler(webpackConfig);
   }
 
-  private createCompiler(webpackConfig: Configuration): Compiler {
-    const compiler = webpack(webpackConfig);
-    // Setting filesystem to provided fs so compilation can be done in memory
-    (compiler as any).inputFileSystem = this._inputFS;
-    compiler.outputFileSystem = this._outputFS;
-    (compiler as any).resolvers.normal.fileSystem = this._inputFS;
-    (compiler as any).resolvers.context.fileSystem = this._inputFS;
-
-    return compiler as Compiler;
-  }
-
-  public writeFilesToFs(files: ReadonlyArray<File>): void {
-    files.forEach(file => this.writeToFs(file));
-  }
-
-  private writeToFs(file: File): void {
-    this._inputFS.writeFileSync(file.name, file.content);
-  }
-
   public emit(): Promise<File[]> {
     return this.compile().then(() => {
       const outputFiles = this._outputFS.collectFiles();
       this._outputFS.purge();
+
       return outputFiles;
     });
+  }
+
+  public writeFilesToFs(files: ReadonlyArray<File>): void {
+    files.forEach(file => this.writeToFs(file));
   }
 
   private compile(): Promise<webpack.Stats> {
@@ -52,5 +38,20 @@ export default class WebpackCompiler {
         }
       });
     });
+  }
+
+  private createCompiler(webpackConfig: Configuration): Compiler {
+    const compiler = webpack(webpackConfig);
+    // Setting filesystem to provided fs so compilation can be done in memory
+    (compiler as any).inputFileSystem = this._inputFS;
+    compiler.outputFileSystem = this._outputFS;
+    (compiler as any).resolvers.normal.fileSystem = this._inputFS;
+    (compiler as any).resolvers.context.fileSystem = this._inputFS;
+
+    return compiler as Compiler;
+  }
+
+  private writeToFs(file: File): void {
+    this._inputFS.writeFileSync(file.name, file.content);
   }
 }

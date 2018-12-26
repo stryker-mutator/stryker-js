@@ -1,16 +1,16 @@
-import * as path from 'path';
-import * as execa from 'execa';
 import { expect } from 'chai';
+import * as execa from 'execa';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as rimraf from 'rimraf';
 import { TestSelection } from 'stryker-api/test_framework';
 import JasmineTestFramework from '../../src/JasmineTestFramework';
-import * as fs from 'fs';
-import * as rimraf from 'rimraf';
 
 interface JasmineTest {
-  id: string;
   description: string;
-  fullName: string;
   failedExpectations: any[];
+  fullName: string;
+  id: string;
   passedExpectations: any[];
   status: string;
 }
@@ -90,6 +90,7 @@ describe('Selecting tests with nested suites', () => {
 
   function execJasmine(...files: string[]): JasmineTest[] {
     const execResult = execa.sync('jasmine', ['--random=false', jsonReporterFile, ...files]);
+
     return JSON.parse(execResult.stdout);
   }
 });

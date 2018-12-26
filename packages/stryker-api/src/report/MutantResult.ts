@@ -1,17 +1,17 @@
+import { Location, Range } from '../../core';
 import MutantStatus from './MutantStatus';
-import {Location, Range} from '../../core';
 
 interface MutantResult {
   id: string;
-  sourceFilePath: string;
-  mutatorName: string;
-  status: MutantStatus;
-  replacement: string;
-  originalLines: string;
-  mutatedLines: string;
-  testsRan: string[];
   location: Location;
+  mutatedLines: string;
+  mutatorName: string;
+  originalLines: string;
   range: Range;
+  replacement: string;
+  sourceFilePath: string;
+  status: MutantStatus;
+  testsRan: string[];
 }
 
 export default MutantResult;

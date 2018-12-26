@@ -1,6 +1,6 @@
 interface SourceFile {
-  path: string;
   content: string;
+  path: string;
 }
 
 export default SourceFile;

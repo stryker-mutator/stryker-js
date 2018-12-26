@@ -1,8 +1,8 @@
-import CustomJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
-import * as sinon from 'sinon';
-import { expect, assert } from 'chai';
-import * as path from 'path';
+import { assert, expect } from 'chai';
 import * as fs from 'fs';
+import * as path from 'path';
+import * as sinon from 'sinon';
+import CustomJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
 
 const fakeRequire: any = {
   require: () => { }
@@ -10,7 +10,7 @@ const fakeRequire: any = {
 
 describe(CustomJestConfigLoader.name, () => {
   let defaultConfigLoader: CustomJestConfigLoader;
-  const projectRoot: string = '/path/to/project/root';
+  const projectRoot = '/path/to/project/root';
   const fsStub: FsStub = {};
   let requireStub: sinon.SinonStub;
 

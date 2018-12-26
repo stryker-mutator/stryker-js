@@ -18,7 +18,7 @@ describe('After running stryker on jest-react project', () => {
       noCoverage: 0,
       survived: 19,
       timedOut: 0,
-      totalMutants: 53,
+      totalMutants: 53
     });
     /*
     ---------------|---------|----------|-----------|------------|----------|---------|

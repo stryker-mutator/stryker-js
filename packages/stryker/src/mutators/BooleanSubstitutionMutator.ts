@@ -1,7 +1,7 @@
 import { Syntax } from 'esprima';
 import { Expression } from 'estree';
+import { Identified, IdentifiedNode } from './IdentifiedNode';
 import NodeMutator from './NodeMutator';
-import { IdentifiedNode, Identified } from './IdentifiedNode';
 
 export default class BooleanSubstitutionMutator implements NodeMutator {
   public name = 'BooleanSubstitution';
@@ -22,6 +22,7 @@ export default class BooleanSubstitutionMutator implements NodeMutator {
       mutatedNode.value = !mutatedNode.value;
       nodes.push(mutatedNode);
     }
+
     return nodes;
   }
 

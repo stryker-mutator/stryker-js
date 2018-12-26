@@ -21,7 +21,7 @@ const replaceTokens: ts.MapLike<string[]>  = {
 
 export default class BinaryExpressionMutator extends NodeMutator<ts.BinaryExpression> {
 
-  public name: string = 'BinaryExpression';
+  public name = 'BinaryExpression';
 
   public guard(node: ts.Node): node is ts.BinaryExpression {
     return node.kind === ts.SyntaxKind.BinaryExpression;

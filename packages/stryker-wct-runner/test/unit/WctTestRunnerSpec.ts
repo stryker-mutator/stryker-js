@@ -1,13 +1,13 @@
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { StrykerOptions } from 'stryker-api/core';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { steps } from 'web-component-tester';
 import * as wctModule from 'web-component-tester';
 import * as contextModule from 'web-component-tester/runner/context';
-import * as sinon from 'sinon';
-import WctTestRunner from '../../src/WctTestRunner';
 import WctLogger, * as wctLoggerModule from '../../src/WctLogger';
 import WctReporter, * as wctReporterModule from '../../src/WctReporter';
-import { expect } from 'chai';
-import { TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
+import WctTestRunner from '../../src/WctTestRunner';
 
 describe(WctTestRunner.name, () => {
 

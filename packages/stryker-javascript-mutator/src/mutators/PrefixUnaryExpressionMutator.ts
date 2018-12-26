@@ -18,10 +18,12 @@ export default class PrefixUnaryExpressionMutator implements NodeMutator {
       if (this.operators[node.operator].length > 0) {
         const mutatedNode = copy(node);
         mutatedNode.operator = this.operators[node.operator] as any;
+
         return [mutatedNode];
       } else {
         const mutatedNode = copy(node.argument);
         mutatedNode.start = node.start;
+
         return [mutatedNode];
       }
     }

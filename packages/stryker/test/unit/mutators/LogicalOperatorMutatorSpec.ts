@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import * as estree from 'estree';
 import { Identified } from '../../../src/mutators/IdentifiedNode';
 import LogicalOperatorMutator from '../../../src/mutators/LogicalOperatorMutator';
-import * as parser from '../../../src/utils/parserUtils';
 import { copy } from '../../../src/utils/objectUtils';
+import * as parser from '../../../src/utils/parserUtils';
 
 describe('LogicalOperatorMutator', () => {
   let sut: LogicalOperatorMutator;

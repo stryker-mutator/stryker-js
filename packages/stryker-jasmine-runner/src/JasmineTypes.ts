@@ -1,14 +1,14 @@
 declare namespace jasmine {
   interface Order {
-    new(options: { random: boolean, seed: string }): any;
     random: boolean;
     seed: string;
+    new(options: { random: boolean; seed: string }): any;
     sort<T>(items: T[]): T[];
   }
 
   interface Trace {
-    name: string;
     message: string;
+    name: string;
     stack: any;
   }
 
@@ -16,12 +16,12 @@ declare namespace jasmine {
     type: string;
   }
   interface ExpectationResult extends Result {
-    matcherName: string;
-    passed(): boolean;
-    expected: any;
     actual: any;
+    expected: any;
+    matcherName: string;
     message: string;
     trace: Trace;
+    passed(): boolean;
   }
 
   interface RunDetails {
@@ -59,12 +59,12 @@ declare namespace jasmine {
     status?: string;
   }
   interface CustomReporter {
-    jasmineStarted?(suiteInfo: SuiteInfo): void;
-    suiteStarted?(result: CustomReporterResult): void;
-    specStarted(/*result: CustomReporterResult // not needed ;) */): void;
-    specDone(result: CustomReporterResult): void;
-    suiteDone?(result: CustomReporterResult): void;
     jasmineDone(/*runDetails: RunDetails // not needed ;) */): void;
+    jasmineStarted?(suiteInfo: SuiteInfo): void;
+    specDone(result: CustomReporterResult): void;
+    specStarted(/*result: CustomReporterResult // not needed ;) */): void;
+    suiteDone?(result: CustomReporterResult): void;
+    suiteStarted?(result: CustomReporterResult): void;
   }
 
   interface Env {
@@ -75,36 +75,36 @@ declare namespace jasmine {
 declare module 'jasmine' {
 
   class Jasmine {
+    public static ConsoleReporter(): any;
+    public completionReporter: jasmine.CustomReporter;
+    public env: jasmine.Env;
+    public exit: (code: number) => void;
+    public helperFiles: string[];
+    public projectBaseDir: string;
+    public reporter: jasmine.CustomReporter;
+    public reportersCount: number;
+    public showingColors: boolean;
+    public specFiles: string[];
     constructor(options: any);
     public addReporter(reporter: jasmine.CustomReporter): void;
     public addSpecFile(filePath: string): void;
     public addSpecFiles(files: string[]): void;
     public clearReporters(): void;
     public configureDefaultReporter(options: any, ...args: any[]): void;
-    public env: jasmine.Env;
+    public coreVersion(): string;
     public execute(files?: string[], filterString?: string): any;
-    public exit: (code: number) => void;
     public exitCodeCompletion(passed: any): void;
     public loadConfig(config: any): void;
     public loadConfigFile(configFilePath: any): void;
     public loadHelpers(): void;
     public loadSpecs(): void;
     public onComplete(onCompleteCallback: (passed: boolean) => void): void;
+    public printDeprecation(): void;
     public randomizeTests(value?: any): boolean;
     public seed(value: any): void;
     public showColors(value: any): void;
-    public stopSpecOnExpectationFailure(value: boolean): void;
     public stopOnSpecFailure(value: boolean): void;
-    public static ConsoleReporter(): any;
-    public reportersCount: number;
-    public completionReporter: jasmine.CustomReporter;
-    public reporter: jasmine.CustomReporter;
-    public coreVersion(): string;
-    public showingColors: boolean;
-    public projectBaseDir: string;
-    public printDeprecation(): void;
-    public specFiles: string[];
-    public helperFiles: string[];
+    public stopSpecOnExpectationFailure(value: boolean): void;
   }
   export = Jasmine;
 }

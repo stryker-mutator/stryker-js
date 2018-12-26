@@ -1,4 +1,4 @@
-import { StrykerOptions, File, Position, Location, Range, LogLevel } from 'stryker-api/core';
+import { File, Location, LogLevel, Position, Range, StrykerOptions } from 'stryker-api/core';
 
 const options: StrykerOptions = {};
 const optionsAllArgs: StrykerOptions = {

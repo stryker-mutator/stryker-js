@@ -1,8 +1,8 @@
-import * as path from 'path';
 import { expect } from 'chai';
-import DirectoryReportPage from './pageObjects/DirectoryReportPage';
+import * as path from 'path';
 import { browser } from 'protractor';
 import { baseDir } from './hooks';
+import DirectoryReportPage from './pageObjects/DirectoryReportPage';
 
 describe('Directory results page', () => {
 
@@ -47,6 +47,7 @@ describe('Directory results page', () => {
 
     it('should show circle.js in the correct way', async () => {
       const circleRow = await page.resultTable().row('Circle.js');
+
       return Promise.all([
         expect(circleRow.progressBar().percentageText()).to.eventually.be.eq('33.33 %'),
         expect(circleRow.mutationScore()).to.eventually.be.eq('33.33'),

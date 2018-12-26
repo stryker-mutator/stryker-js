@@ -1,14 +1,14 @@
-import * as path from 'path';
+import { expect } from 'chai';
 import { EventEmitter } from 'events';
 import * as Mocha from 'mocha';
+import * as path from 'path';
 import * as logging from 'stryker-api/logging';
-import { expect } from 'chai';
 import { RunOptions } from 'stryker-api/test_runner';
-import MochaTestRunner from '../../src/MochaTestRunner';
 import LibWrapper from '../../src/LibWrapper';
-import * as utils from '../../src/utils';
-import { Mock, mock, logger, runnerOptions } from '../helpers/mockHelpers';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
+import MochaTestRunner from '../../src/MochaTestRunner';
+import * as utils from '../../src/utils';
+import { logger, Mock, mock, runnerOptions } from '../helpers/mockHelpers';
 
 describe('MochaTestRunner', () => {
 
@@ -158,6 +158,7 @@ describe('MochaTestRunner', () => {
 
   async function actRun(options: RunOptions = { timeout: 0 }) {
     mocha.run.callsArg(0);
+
     return sut.run(options);
   }
 

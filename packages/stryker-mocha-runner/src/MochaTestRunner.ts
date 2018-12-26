@@ -1,19 +1,19 @@
-import { getLogger } from 'stryker-api/logging';
 import * as path from 'path';
-import { TestRunner, RunResult, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
+import { getLogger } from 'stryker-api/logging';
+import { RunnerOptions, RunResult, RunStatus, TestRunner } from 'stryker-api/test_runner';
 import LibWrapper from './LibWrapper';
-import StrykerMochaReporter from './StrykerMochaReporter';
 import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
+import StrykerMochaReporter from './StrykerMochaReporter';
 import { evalGlobal } from './utils';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 
 export default class MochaTestRunner implements TestRunner {
-
-  private testFileNames: string[];
   private readonly allFileNames: string[];
   private readonly log = getLogger(MochaTestRunner.name);
   private readonly mochaRunnerOptions: MochaRunnerOptions;
+
+  private testFileNames: string[];
 
   constructor(runnerOptions: RunnerOptions) {
     this.mochaRunnerOptions = runnerOptions.strykerOptions[mochaOptionsKey];
@@ -30,14 +30,6 @@ export default class MochaTestRunner implements TestRunner {
     } else {
       this.log.debug(`Tried ${JSON.stringify(globPatternsAbsolute, null, 2)} on files: ${JSON.stringify(this.allFileNames, null, 2)}.`);
       throw new Error(`[${MochaTestRunner.name}] No files discovered (tried pattern(s) ${JSON.stringify(globPatterns, null, 2)}). Please specify the files (glob patterns) containing your tests in ${mochaOptionsKey}.files in your stryker.conf.js file.`);
-    }
-  }
-
-  private mochaFileGlobPatterns(): string[] {
-    if (typeof this.mochaRunnerOptions.files === 'string') {
-      return [this.mochaRunnerOptions.files];
-    } else {
-      return this.mochaRunnerOptions.files || [DEFAULT_TEST_PATTERN];
     }
   }
 
@@ -79,14 +71,20 @@ export default class MochaTestRunner implements TestRunner {
     });
   }
 
-  private purgeFiles() {
-    this.allFileNames.forEach(fileName => delete require.cache[fileName]);
-  }
-
   private addFiles(mocha: Mocha) {
     this.testFileNames.forEach(fileName => {
       mocha.addFile(fileName);
     });
+  }
+
+  private additionalRequires() {
+    if (this.mochaRunnerOptions.require) {
+      const modulesToRequire = this.mochaRunnerOptions.require
+        .map(module => {
+          return module.startsWith('.') ? path.resolve(module) : module;
+        });
+      modulesToRequire.forEach(LibWrapper.require);
+    }
   }
 
   private addTestHooks(mocha: Mocha, testHooks: string | undefined): void {
@@ -115,13 +113,15 @@ export default class MochaTestRunner implements TestRunner {
     }
   }
 
-  private additionalRequires() {
-    if (this.mochaRunnerOptions.require) {
-      const modulesToRequire = this.mochaRunnerOptions.require
-        .map(module => {
-          return module.startsWith('.') ? path.resolve(module) : module;
-        });
-      modulesToRequire.forEach(LibWrapper.require);
+  private mochaFileGlobPatterns(): string[] {
+    if (typeof this.mochaRunnerOptions.files === 'string') {
+      return [this.mochaRunnerOptions.files];
+    } else {
+      return this.mochaRunnerOptions.files || [DEFAULT_TEST_PATTERN];
     }
+  }
+
+  private purgeFiles() {
+    this.allFileNames.forEach(fileName => delete require.cache[fileName]);
   }
 }

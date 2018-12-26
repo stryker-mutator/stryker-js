@@ -1,9 +1,9 @@
 import * as path from 'path';
-import { SourceMapConsumer, RawSourceMap } from 'source-map';
-import { File, Location, Position } from 'stryker-api/core';
+import { RawSourceMap, SourceMapConsumer } from 'source-map';
 import { Config } from 'stryker-api/config';
-import { base64Decode } from '../utils/objectUtils';
+import { File, Location, Position } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
+import { base64Decode } from '../utils/objectUtils';
 import StrykerError from '../utils/StrykerError';
 
 const SOURCE_MAP_URL_REGEX = /\/\/\s*#\s*sourceMappingURL=(.*)/g;
@@ -33,13 +33,6 @@ export class SourceMapError extends StrykerError {
  * Use the `create` method to retrieve a specific `SourceMapper` implementation
  */
 export default abstract class SourceMapper {
-  /**
-   * Calculated a transpiled location for a given original location
-   * @param originalLocation The original location to be converted to a transpiled location
-   */
-  public abstract transpiledLocationFor(originalLocation: MappedLocation): MappedLocation;
-
-  public abstract transpiledFileNameFor(originalFileName: string): string;
 
   public static create(transpiledFiles: ReadonlyArray<File>, config: Config): SourceMapper {
     if (config.transpilers.length && config.coverageAnalysis !== 'off') {
@@ -48,12 +41,19 @@ export default abstract class SourceMapper {
       return new PassThroughSourceMapper();
     }
   }
+
+  public abstract transpiledFileNameFor(originalFileName: string): string;
+  /**
+   * Calculated a transpiled location for a given original location
+   * @param originalLocation The original location to be converted to a transpiled location
+   */
+  public abstract transpiledLocationFor(originalLocation: MappedLocation): MappedLocation;
 }
 
 export class TranspiledSourceMapper extends SourceMapper {
+  private readonly log = getLogger(SourceMapper.name);
 
   private sourceMaps: SourceMapBySource;
-  private readonly log = getLogger(SourceMapper.name);
 
   constructor(private readonly transpiledFiles: ReadonlyArray<File>) {
     super();
@@ -64,6 +64,7 @@ export class TranspiledSourceMapper extends SourceMapper {
    */
   public transpiledFileNameFor(originalFileName: string) {
     const sourceMap = this.getSourceMap(originalFileName);
+
     return sourceMap.transpiledFile.name;
   }
 
@@ -75,6 +76,7 @@ export class TranspiledSourceMapper extends SourceMapper {
     const relativeSource = this.getRelativeSource(sourceMap, originalLocation);
     const start = sourceMap.generatedPositionFor(originalLocation.location.start, relativeSource);
     const end = sourceMap.generatedPositionFor(originalLocation.location.end, relativeSource);
+
     return {
       fileName: sourceMap.transpiledFile.name,
       location: {
@@ -82,6 +84,61 @@ export class TranspiledSourceMapper extends SourceMapper {
         start
       }
     };
+  }
+
+  /**
+   * Creates all source maps for lazy loading purposes
+   */
+  private createSourceMaps(): SourceMapBySource {
+    const sourceMaps: SourceMapBySource = Object.create(null);
+    this.transpiledFiles.forEach(transpiledFile => {
+      const sourceMapFile = this.getSourceMapForFile(transpiledFile);
+      if (sourceMapFile) {
+        const rawSourceMap = this.getRawSourceMap(sourceMapFile);
+        const sourceMap = new SourceMap(transpiledFile, sourceMapFile.name, rawSourceMap);
+        rawSourceMap.sources.forEach(source => {
+          const sourceFileName = path.resolve(path.dirname(sourceMapFile.name), source);
+          sourceMaps[sourceFileName] = sourceMap;
+        });
+      }
+    });
+
+    return sourceMaps;
+  }
+
+  /**
+   * Gets the source map from a file
+   */
+  private getExternalSourceMap(sourceMapUrl: string, transpiledFile: File) {
+    const sourceMapFileName = path.resolve(path.dirname(transpiledFile.name), sourceMapUrl);
+    const sourceMapFile = this.transpiledFiles.find(file => path.resolve(file.name) === sourceMapFileName);
+    if (sourceMapFile) {
+      return sourceMapFile;
+    } else {
+      throw new SourceMapError(`Source map file "${sourceMapUrl}" (referenced by "${transpiledFile.name}") cannot be found in list of transpiled files`);
+    }
+  }
+
+  /**
+   * Gets the source map from a data url
+   */
+  private getInlineSourceMap(sourceMapUrl: string, transpiledFile: File): File {
+    const supportedDataPrefix = 'data:application/json;base64,';
+    if (sourceMapUrl.startsWith(supportedDataPrefix)) {
+      const content = base64Decode(sourceMapUrl.substr(supportedDataPrefix.length));
+
+      return new File(transpiledFile.name, content);
+    } else {
+      throw new SourceMapError(`Source map file for "${transpiledFile.name}" cannot be read. Data url "${sourceMapUrl.substr(0, sourceMapUrl.lastIndexOf(','))}" found, where "${supportedDataPrefix.substr(0, supportedDataPrefix.length - 1)}" was expected`);
+    }
+  }
+
+  private getRawSourceMap(sourceMapFile: File): RawSourceMap {
+    try {
+      return JSON.parse(sourceMapFile.textContent);
+    } catch (error) {
+      throw new SourceMapError(`Source map file "${sourceMapFile.name}" could not be parsed as json`, error);
+    }
   }
 
   private getRelativeSource(from: SourceMap, to: MappedLocation) {
@@ -105,30 +162,15 @@ export class TranspiledSourceMapper extends SourceMapper {
   }
 
   /**
-   * Creates all source maps for lazy loading purposes
+   * Gets the source map file from a url.
+   * @param sourceMapUrl The source map url. Can be a data url (data:application/json;base64,ABC...), or an actual file url
+   * @param transpiledFile The transpiled file for which the data url is
    */
-  private createSourceMaps(): SourceMapBySource {
-    const sourceMaps: SourceMapBySource = Object.create(null);
-    this.transpiledFiles.forEach(transpiledFile => {
-      const sourceMapFile = this.getSourceMapForFile(transpiledFile);
-      if (sourceMapFile) {
-        const rawSourceMap = this.getRawSourceMap(sourceMapFile);
-        const sourceMap = new SourceMap(transpiledFile, sourceMapFile.name, rawSourceMap);
-        rawSourceMap.sources.forEach(source => {
-          const sourceFileName = path.resolve(path.dirname(sourceMapFile.name), source);
-          sourceMaps[sourceFileName] = sourceMap;
-        });
-      }
-    });
-    return sourceMaps;
-  }
+  private getSourceMapFileFromUrl(sourceMapUrl: string, transpiledFile: File): File {
+    const sourceMapFile = this.isInlineUrl(sourceMapUrl) ?
+      this.getInlineSourceMap(sourceMapUrl, transpiledFile) : this.getExternalSourceMap(sourceMapUrl, transpiledFile);
 
-  private getRawSourceMap(sourceMapFile: File): RawSourceMap {
-    try {
-      return JSON.parse(sourceMapFile.textContent);
-    } catch (error) {
-      throw new SourceMapError(`Source map file "${sourceMapFile.name}" could not be parsed as json`, error);
-    }
+    return sourceMapFile;
   }
 
   private getSourceMapForFile(transpiledFile: File): File | null {
@@ -137,47 +179,6 @@ export class TranspiledSourceMapper extends SourceMapper {
       return this.getSourceMapFileFromUrl(sourceMappingUrl, transpiledFile);
     } else {
       return null;
-    }
-  }
-
-  /**
-   * Gets the source map file from a url.
-   * @param sourceMapUrl The source map url. Can be a data url (data:application/json;base64,ABC...), or an actual file url
-   * @param transpiledFile The transpiled file for which the data url is
-   */
-  private getSourceMapFileFromUrl(sourceMapUrl: string, transpiledFile: File): File {
-    const sourceMapFile = this.isInlineUrl(sourceMapUrl) ?
-      this.getInlineSourceMap(sourceMapUrl, transpiledFile) : this.getExternalSourceMap(sourceMapUrl, transpiledFile);
-    return sourceMapFile;
-  }
-
-  private isInlineUrl(sourceMapUrl: string) {
-    return sourceMapUrl.startsWith('data:');
-  }
-
-  /**
-   * Gets the source map from a data url
-   */
-  private getInlineSourceMap(sourceMapUrl: string, transpiledFile: File): File {
-    const supportedDataPrefix = 'data:application/json;base64,';
-    if (sourceMapUrl.startsWith(supportedDataPrefix)) {
-      const content = base64Decode(sourceMapUrl.substr(supportedDataPrefix.length));
-      return new File(transpiledFile.name, content);
-    } else {
-      throw new SourceMapError(`Source map file for "${transpiledFile.name}" cannot be read. Data url "${sourceMapUrl.substr(0, sourceMapUrl.lastIndexOf(','))}" found, where "${supportedDataPrefix.substr(0, supportedDataPrefix.length - 1)}" was expected`);
-    }
-  }
-
-  /**
-   * Gets the source map from a file
-   */
-  private getExternalSourceMap(sourceMapUrl: string, transpiledFile: File) {
-    const sourceMapFileName = path.resolve(path.dirname(transpiledFile.name), sourceMapUrl);
-    const sourceMapFile = this.transpiledFiles.find(file => path.resolve(file.name) === sourceMapFileName);
-    if (sourceMapFile) {
-      return sourceMapFile;
-    } else {
-      throw new SourceMapError(`Source map file "${sourceMapUrl}" (referenced by "${transpiledFile.name}") cannot be found in list of transpiled files`);
     }
   }
 
@@ -194,11 +195,17 @@ export class TranspiledSourceMapper extends SourceMapper {
     }
     if (lastMatch) {
       this.log.debug('Source map url found in transpiled file "%s"', transpiledFile.name);
+
       return lastMatch[1];
     } else {
       this.log.debug('No source map url found in transpiled file "%s"', transpiledFile.name);
+
       return null;
     }
+  }
+
+  private isInlineUrl(sourceMapUrl: string) {
+    return sourceMapUrl.startsWith('data:');
   }
 }
 
@@ -231,6 +238,7 @@ class SourceMap {
       line: originalPosition.line + 1, // SourceMapConsumer works 1-based
       source: relativeSource
     });
+
     return {
       column: transpiledPosition.column,
       line: transpiledPosition.line - 1  // Stryker works 0-based

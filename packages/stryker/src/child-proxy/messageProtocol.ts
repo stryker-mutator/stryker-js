@@ -21,31 +21,31 @@ export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized |
 export const autoStart = 'childProcessAutoStart12937129s7d';
 
 export interface InitMessage {
+  constructorArgs: any[];
   kind: WorkerMessageKind.Init;
   loggingContext: LoggingClientContext;
   plugins: string[];
-  workingDirectory: string;
   requirePath: string;
-  constructorArgs: any[];
+  workingDirectory: string;
 }
 
 export interface DisposeMessage { kind: WorkerMessageKind.Dispose; }
 
 export interface WorkResult {
-  kind: ParentMessageKind.Result;
   correlationId: number;
+  kind: ParentMessageKind.Result;
   result: any;
 }
 
 export interface RejectionResult {
-  kind: ParentMessageKind.Rejection;
   correlationId: number;
   error: string;
+  kind: ParentMessageKind.Rejection;
 }
 
 export interface CallMessage {
+  args: any[];
   correlationId: number;
   kind: WorkerMessageKind.Call;
-  args: any[];
   methodName: string;
 }

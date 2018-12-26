@@ -1,18 +1,18 @@
-import { Config } from 'stryker-api/config';
-import * as path from 'path';
-import { getLogger } from 'stryker-api/logging';
 import * as mkdirp from 'mkdirp';
-import { RunResult, RunnerOptions } from 'stryker-api/test_runner';
+import * as path from 'path';
+import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
+import { getLogger } from 'stryker-api/logging';
 import { TestFramework } from 'stryker-api/test_framework';
-import { wrapInClosure, normalizeWhiteSpaces } from './utils/objectUtils';
-import TestRunnerDecorator from './test-runner/TestRunnerDecorator';
+import { RunnerOptions, RunResult } from 'stryker-api/test_runner';
+import LoggingClientContext from './logging/LoggingClientContext';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
-import { TempFolder } from './utils/TempFolder';
-import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
+import TestRunnerDecorator from './test-runner/TestRunnerDecorator';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
-import LoggingClientContext from './logging/LoggingClientContext';
+import { findNodeModules, symlinkJunction, writeFile } from './utils/fileUtils';
+import { normalizeWhiteSpaces, wrapInClosure } from './utils/objectUtils';
+import { TempFolder } from './utils/TempFolder';
 
 interface FileMap {
   [sourceFile: string]: string;
@@ -20,10 +20,17 @@ interface FileMap {
 
 export default class Sandbox {
 
-  private readonly log = getLogger(Sandbox.name);
-  private testRunner: TestRunnerDecorator;
+  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
+    : Promise<Sandbox> {
+    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext);
+
+    return sandbox.initialize().then(() => sandbox);
+  }
   private fileMap: FileMap;
   private readonly files: File[];
+
+  private readonly log = getLogger(Sandbox.name);
+  private testRunner: TestRunnerDecorator;
   private readonly workingDirectory: string;
 
   private constructor(private readonly options: Config, private readonly index: number, files: ReadonlyArray<File>, private readonly testFramework: TestFramework | null, private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
@@ -32,24 +39,12 @@ export default class Sandbox {
     this.files = files.slice(); // Create a copy
   }
 
-  private async initialize(): Promise<void> {
-    await this.fillSandbox();
-    await this.symlinkNodeModulesIfNeeded();
-    return this.initializeTestRunner();
-  }
-
-  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
-    : Promise<Sandbox> {
-    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext);
-    return sandbox.initialize().then(() => sandbox);
+  public dispose(): Promise<void> {
+    return this.testRunner.dispose() || Promise.resolve();
   }
 
   public run(timeout: number, testHooks: string | undefined, mutatedFileName?: string): Promise<RunResult> {
     return this.testRunner.run({ timeout, testHooks, mutatedFileName });
-  }
-
-  public dispose(): Promise<void> {
-    return this.testRunner.dispose() || Promise.resolve();
   }
 
   public async runMutant(transpiledMutant: TranspiledMutant): Promise<RunResult> {
@@ -60,25 +55,65 @@ export default class Sandbox {
     await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)));
     const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant), this.getFilterTestsHooks(transpiledMutant.mutant), this.fileMap[transpiledMutant.mutant.fileName]);
     await this.reset(mutantFiles);
+
     return runResult;
   }
 
-  private reset(mutatedFiles: ReadonlyArray<File>) {
-    const originalFiles = this.files.filter(originalFile => mutatedFiles.some(mutatedFile => mutatedFile.name === originalFile.name));
+  private calculateTimeout(mutant: TestableMutant) {
+    const baseTimeout = mutant.timeSpentScopedTests;
 
-    return Promise.all(originalFiles.map(file => writeFile(this.fileMap[file.name], file.content)));
+    return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMS + this.timeOverheadMS;
   }
 
-  private writeFileInSandbox(file: File): Promise<void> {
-    const fileNameInSandbox = this.fileMap[file.name];
-    return writeFile(fileNameInSandbox, file.content);
+  private fillFile(file: File): Promise<void> {
+    const relativePath = path.relative(process.cwd(), file.name);
+    const folderName = path.join(this.workingDirectory, path.dirname(relativePath));
+    mkdirp.sync(folderName);
+    const targetFile = path.join(folderName, path.basename(relativePath));
+    this.fileMap[file.name] = targetFile;
+
+    return writeFile(targetFile, file.content);
   }
 
   private fillSandbox(): Promise<void[]> {
     this.fileMap = Object.create(null);
     const copyPromises = this.files
       .map(file => this.fillFile(file));
+
     return Promise.all(copyPromises);
+  }
+
+  private getFilterTestsHooks(mutant: TestableMutant): string | undefined {
+    if (this.testFramework) {
+      return wrapInClosure(this.testFramework.filter(mutant.selectedTests));
+    } else {
+      return undefined;
+    }
+  }
+
+  private async initialize(): Promise<void> {
+    await this.fillSandbox();
+    await this.symlinkNodeModulesIfNeeded();
+
+    return this.initializeTestRunner();
+  }
+
+  private initializeTestRunner(): Promise<void> {
+    const settings: RunnerOptions = {
+      fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
+      port: this.options.port + this.index,
+      strykerOptions: this.options
+    };
+    this.log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
+    this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings, this.workingDirectory, this.loggingContext);
+
+    return this.testRunner.init();
+  }
+
+  private reset(mutatedFiles: ReadonlyArray<File>) {
+    const originalFiles = this.files.filter(originalFile => mutatedFiles.some(mutatedFile => mutatedFile.name === originalFile.name));
+
+    return Promise.all(originalFiles.map(file => writeFile(this.fileMap[file.name], file.content)));
   }
 
   private async symlinkNodeModulesIfNeeded(): Promise<void> {
@@ -103,36 +138,9 @@ export default class Sandbox {
     }
   }
 
-  private fillFile(file: File): Promise<void> {
-    const relativePath = path.relative(process.cwd(), file.name);
-    const folderName = path.join(this.workingDirectory, path.dirname(relativePath));
-    mkdirp.sync(folderName);
-    const targetFile = path.join(folderName, path.basename(relativePath));
-    this.fileMap[file.name] = targetFile;
-    return writeFile(targetFile, file.content);
-  }
+  private writeFileInSandbox(file: File): Promise<void> {
+    const fileNameInSandbox = this.fileMap[file.name];
 
-  private initializeTestRunner(): Promise<void> {
-    const settings: RunnerOptions = {
-      fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
-      port: this.options.port + this.index,
-      strykerOptions: this.options,
-    };
-    this.log.debug(`Creating test runner %s using settings {port: %s}`, this.index, settings.port);
-    this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings, this.workingDirectory, this.loggingContext);
-    return this.testRunner.init();
-  }
-
-  private calculateTimeout(mutant: TestableMutant) {
-    const baseTimeout = mutant.timeSpentScopedTests;
-    return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMS + this.timeOverheadMS;
-  }
-
-  private getFilterTestsHooks(mutant: TestableMutant): string | undefined {
-    if (this.testFramework) {
-      return wrapInClosure(this.testFramework.filter(mutant.selectedTests));
-    } else {
-      return undefined;
-    }
+    return writeFile(fileNameInSandbox, file.content);
   }
 }

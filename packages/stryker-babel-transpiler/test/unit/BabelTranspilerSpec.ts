@@ -1,11 +1,11 @@
-import * as path from 'path';
-import BabelTranspiler from '../../src/BabelTranspiler';
-import { expect } from 'chai';
-import { File } from 'stryker-api/core';
-import { Config } from 'stryker-api/config';
-import * as sinon from 'sinon';
 import * as babel from 'babel-core';
+import { expect } from 'chai';
+import * as path from 'path';
+import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
+import { File } from 'stryker-api/core';
 import BabelConfigReader, * as babelConfigReaderModule from '../../src/BabelConfigReader';
+import BabelTranspiler from '../../src/BabelTranspiler';
 import { Mock, mock } from '../helpers/mock';
 
 describe('BabelTranspiler', () => {
@@ -103,6 +103,7 @@ describe('BabelTranspiler', () => {
 
     it('should report an error if transpiled code was undefined', async () => {
       arrangeHappyFlow({ code: undefined });
+
       return expect(sut.transpile([new File('f.js', '')])).rejectedWith('Could not transpile file "f.js". Babel transform function delivered \`undefined\`.');
     });
 
@@ -134,6 +135,7 @@ describe('BabelTranspiler', () => {
       const error = new Error('Syntax error');
       transformStub.throws(error);
       sut = new BabelTranspiler({ produceSourceMaps: false, config });
+
       return expect(sut.transpile([new File('picture.js', 'S�L!##���XLDDDDDDDD\K�')])).rejectedWith(`Error while transpiling "picture.js": ${error.stack}`);
     });
   });

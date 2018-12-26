@@ -1,11 +1,11 @@
-import WebpackTranspiler from '../../src/WebpackTranspiler';
-import ConfigLoader, * as configLoaderModule from '../../src/compiler/ConfigLoader';
-import WebpackCompiler, * as webpackCompilerModule from '../../src/compiler/WebpackCompiler';
-import { createTextFile, Mock, createMockInstance, createStrykerWebpackConfig } from '../helpers/producers';
+import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import { expect } from 'chai';
 import { Configuration } from 'webpack';
+import ConfigLoader, * as configLoaderModule from '../../src/compiler/ConfigLoader';
+import WebpackCompiler, * as webpackCompilerModule from '../../src/compiler/WebpackCompiler';
+import WebpackTranspiler from '../../src/WebpackTranspiler';
+import { createMockInstance, createStrykerWebpackConfig, createTextFile, Mock } from '../helpers/producers';
 
 describe('WebpackTranspiler', () => {
   let webpackTranspiler: WebpackTranspiler;

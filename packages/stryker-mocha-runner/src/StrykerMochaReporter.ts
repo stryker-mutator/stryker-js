@@ -1,15 +1,15 @@
-import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { getLogger } from 'stryker-api/logging';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import Timer from './Timer';
 
 export default class StrykerMochaReporter {
 
-  private readonly log = getLogger(StrykerMochaReporter.name);
-  public runResult: RunResult;
-  private readonly timer = new Timer();
-  private passedCount = 0;
-
   public static CurrentInstance: StrykerMochaReporter | undefined;
+  public runResult: RunResult;
+
+  private readonly log = getLogger(StrykerMochaReporter.name);
+  private passedCount = 0;
+  private readonly timer = new Timer();
 
   constructor(private readonly runner: NodeJS.EventEmitter) {
     this.registerEvents();

@@ -1,10 +1,10 @@
 import * as os from 'os';
-import { File } from 'stryker-api/core';
-import { CONFIG_KEY, CONFIG_KEY_FILE } from './keys';
-import { Config } from 'stryker-api/config';
-import * as ts from 'typescript';
 import * as path from 'path';
 import * as semver from 'semver';
+import { Config } from 'stryker-api/config';
+import { File } from 'stryker-api/core';
+import * as ts from 'typescript';
+import { CONFIG_KEY, CONFIG_KEY_FILE } from './keys';
 
 export function parseFile(file: File, target: ts.ScriptTarget | undefined) {
   return ts.createSourceFile(

@@ -1,5 +1,5 @@
-import LoggerFactoryMethod from './LoggerFactoryMethod';
 import Logger from './Logger';
+import LoggerFactoryMethod from './LoggerFactoryMethod';
 
 const noopLogger: Logger = {
   isTraceEnabled(): boolean { return false; },
@@ -20,11 +20,11 @@ let logImplementation: LoggerFactoryMethod = () => noopLogger;
 
 export default class LoggerFactory {
 
-  public static setLogImplementation(implementation: LoggerFactoryMethod) {
-    logImplementation = implementation;
-  }
-
   public static getLogger: LoggerFactoryMethod = (categoryName?: string) => {
     return logImplementation(categoryName);
+  }
+
+  public static setLogImplementation(implementation: LoggerFactoryMethod) {
+    logImplementation = implementation;
   }
 }

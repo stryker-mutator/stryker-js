@@ -1,29 +1,19 @@
 import chalk from 'chalk';
-import { getLogger } from 'stryker-api/logging';
-import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
+import * as os from 'os';
 import { Config } from 'stryker-api/config';
 import { Position } from 'stryker-api/core';
+import { getLogger } from 'stryker-api/logging';
+import { MutantResult, MutantStatus, Reporter, ScoreResult } from 'stryker-api/report';
 import ClearTextScoreTable from './ClearTextScoreTable';
-import * as os from 'os';
 
 export default class ClearTextReporter implements Reporter {
 
   private readonly log = getLogger(ClearTextReporter.name);
 
-  constructor(private readonly options: Config) {
-    this.configConsoleColor();
-  }
-
   private readonly out: NodeJS.WritableStream = process.stdout;
 
-  private writeLine(output?: string) {
-    this.out.write(`${output || ''}${os.EOL}`);
-  }
-
-  private configConsoleColor() {
-    if (!this.options.allowConsoleColors) {
-      chalk.level = 0; // All colors disabled
-    }
+  constructor(private readonly options: Config) {
+    this.configConsoleColor();
   }
 
   public onAllMutantsTested(mutantResults: MutantResult[]): void {
@@ -60,28 +50,13 @@ export default class ClearTextReporter implements Reporter {
           break;
         case MutantStatus.NoCoverage:
           this.logMutantResult(result, index, writeLineFn);
-          break;
       }
     });
     this.writeLine(`Ran ${(totalTests / mutantResults.length).toFixed(2)} tests per mutant on average.`);
   }
 
-  private logMutantResult(result: MutantResult, index: number, logImplementation: (input: string) => void): void {
-    logImplementation(`${index}. [${MutantStatus[result.status]}] ${result.mutatorName}`);
-    logImplementation(this.colorSourceFileAndLocation(result.sourceFilePath, result.location.start));
-
-    result.originalLines.split('\n').forEach(line => {
-      logImplementation(chalk.red('-   ' + line));
-    });
-    result.mutatedLines.split('\n').forEach(line => {
-      logImplementation(chalk.green('+   ' + line));
-    });
-    logImplementation('');
-    if (this.options.coverageAnalysis === 'perTest') {
-      this.logExecutedTests(result, logImplementation);
-    } else if (result.testsRan && result.testsRan.length > 0) {
-      logImplementation('Ran all tests for this mutant.');
-    }
+  public onScoreCalculated(score: ScoreResult) {
+    this.writeLine(new ClearTextScoreTable(score, this.options.thresholds).draw());
   }
 
   private colorSourceFileAndLocation(sourceFilePath: string, position: Position): string {
@@ -94,8 +69,14 @@ export default class ClearTextReporter implements Reporter {
     return [
       chalk.cyan(sourceFilePath),
       chalk.yellow(`${position.line}`),
-      chalk.yellow(`${position.column}`),
+      chalk.yellow(`${position.column}`)
     ].join(':');
+  }
+
+  private configConsoleColor() {
+    if (!this.options.allowConsoleColors) {
+      chalk.level = 0; // All colors disabled
+    }
   }
 
   private logExecutedTests(result: MutantResult, logImplementation: (input: string) => void) {
@@ -128,7 +109,25 @@ export default class ClearTextReporter implements Reporter {
     }
   }
 
-  public onScoreCalculated(score: ScoreResult) {
-    this.writeLine(new ClearTextScoreTable(score, this.options.thresholds).draw());
+  private logMutantResult(result: MutantResult, index: number, logImplementation: (input: string) => void): void {
+    logImplementation(`${index}. [${MutantStatus[result.status]}] ${result.mutatorName}`);
+    logImplementation(this.colorSourceFileAndLocation(result.sourceFilePath, result.location.start));
+
+    result.originalLines.split('\n').forEach(line => {
+      logImplementation(chalk.red('-   ' + line));
+    });
+    result.mutatedLines.split('\n').forEach(line => {
+      logImplementation(chalk.green('+   ' + line));
+    });
+    logImplementation('');
+    if (this.options.coverageAnalysis === 'perTest') {
+      this.logExecutedTests(result, logImplementation);
+    } else if (result.testsRan && result.testsRan.length > 0) {
+      logImplementation('Ran all tests for this mutant.');
+    }
+  }
+
+  private writeLine(output?: string) {
+    this.out.write(`${output || ''}${os.EOL}`);
   }
 }

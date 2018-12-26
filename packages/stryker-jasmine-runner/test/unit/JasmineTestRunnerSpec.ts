@@ -1,9 +1,9 @@
-import * as sinon from 'sinon';
 import { expect } from 'chai';
-import * as helpers from '../../src/helpers';
 import Jasmine = require('jasmine');
+import * as sinon from 'sinon';
+import { RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
+import * as helpers from '../../src/helpers';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
-import { TestResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 
 type SinonStubbedInstance<TType> = {
@@ -124,6 +124,7 @@ describe('JasmineTestRunner', () => {
       rep.jasmineDone();
     }
     jasmineStub.addReporter.callsFake(addReporter);
+
     return sut.run({ testHooks });
   }
 });

@@ -5,8 +5,8 @@ import { discoverMutators } from './helpers/MutatorHelpers';
 const compiler = require('vue-template-compiler');
 
 export default class VueMutator implements Mutator {
-  private readonly mutators: { [name: string]: Mutator; };
   private readonly javascriptMutatorName = 'javascript';
+  private readonly mutators: { [name: string]: Mutator };
   private readonly typescriptMutatorName = 'typescript';
 
   constructor(config: Config) {
@@ -40,7 +40,16 @@ export default class VueMutator implements Mutator {
     return mutants;
   }
 
-  private getVueScriptMutatorAndExtension(script: any): { mutator: Mutator, extension: string } {
+  private getMutator(file: File): Mutator {
+    const mutator = this.mutators[this.typescriptMutatorName] || this.mutators[this.javascriptMutatorName];
+    if (mutator === undefined) {
+      throw new Error(`Unable to mutate file "${file.name}" because neither the typescript or the javascript mutator was installed. Please read the README of this package for information on configuration.`);
+    }
+
+    return mutator;
+  }
+
+  private getVueScriptMutatorAndExtension(script: any): { extension: string; mutator: Mutator } {
     const lang: string | undefined = script.attrs.lang;
     let mutatorName: string;
     let extension: string;
@@ -64,14 +73,7 @@ export default class VueMutator implements Mutator {
     if (mutator === undefined) {
       throw new Error(`The '${mutatorName}' mutator is required to mutate a <script> block but it was not found. Please read the README of this package for information on configuration.`);
     }
-    return { mutator, extension };
-  }
 
-  private getMutator(file: File): Mutator {
-    const mutator = this.mutators[this.typescriptMutatorName] || this.mutators[this.javascriptMutatorName];
-    if (mutator === undefined) {
-      throw new Error(`Unable to mutate file "${file.name}" because neither the typescript or the javascript mutator was installed. Please read the README of this package for information on configuration.`);
-    }
-    return mutator;
+    return { mutator, extension };
   }
 }

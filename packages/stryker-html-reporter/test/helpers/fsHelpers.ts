@@ -1,5 +1,5 @@
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
 
 type File = string | Directory;
 
@@ -9,6 +9,7 @@ export interface Directory {
 
 export function readDirectoryTree(current: string): Directory {
   const dir: Directory = Object.create(null);
+
   return fs.readdirSync(current)
     .sort()
     .map(fileName => ({ fileName, stats: fs.statSync(path.join(current, fileName)) }))
@@ -18,6 +19,7 @@ export function readDirectoryTree(current: string): Directory {
       } else {
         dir[fileName] = fileName;
       }
+
       return dir;
     }, dir);
 }

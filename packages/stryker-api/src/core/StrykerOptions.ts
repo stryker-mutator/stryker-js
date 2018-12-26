@@ -7,9 +7,31 @@ interface StrykerOptions {
   [customConfig: string]: any;
 
   /**
-   * A list of globbing expression used for selecting the files that should be mutated.
+   * Indicates whether or not to use colors in console.
+   * Default: true
    */
-  mutate?: string[];
+  allowConsoleColors?: boolean;
+
+  /**
+   * A location to a config file. That file should export a function which accepts a "config" object which it uses to configure stryker
+   */
+  configFile?: string;
+
+  /**
+   * Indicates which coverage analysis strategy to use.
+   * During mutation testing, stryker will try to only run the tests that cover a particular line of code.
+   *
+   * 'perTest' (default): Analyse coverage per test.
+   * 'all': Analyse the coverage for the entire test suite.
+   * 'off': Don't use coverage analysis
+   */
+  coverageAnalysis?: 'perTest' | 'all' | 'off';
+
+  /**
+   * The log level for logging to a file. If defined, stryker will output a log file called "stryker.log".
+   * Default: "off"
+   */
+  fileLogLevel?: LogLevel;
 
   /**
    * With `files` you can choose which files should be included in your test runner sandbox.
@@ -28,6 +50,11 @@ interface StrykerOptions {
   files?: string[];
 
   /**
+   * The log level for logging to the console. Default: "info".
+   */
+  logLevel?: LogLevel;
+
+  /**
    * Specify the maximum number of concurrent test runners. Useful if you don't want to use
    * all the CPU cores of your machine. Default: infinity, Stryker will decide for you and tries to use
    * all CPUs in your machine optimally.
@@ -35,19 +62,9 @@ interface StrykerOptions {
   maxConcurrentTestRunners?: number;
 
   /**
-   * A location to a config file. That file should export a function which accepts a "config" object which it uses to configure stryker
+   * A list of globbing expression used for selecting the files that should be mutated.
    */
-  configFile?: string;
-
-  /**
-   * The name of the test framework to use
-   */
-  testFramework?: string;
-
-  /**
-   * The name of the test runner to use (default is the same name as the testFramework)
-   */
-  testRunner?: string;
+  mutate?: string[];
 
   /**
    * The mutant generator to use to generate mutants based on your input file.
@@ -62,6 +79,63 @@ interface StrykerOptions {
    *    * The values must match the given names of the mutations. For example: 'BinaryExpression', 'BooleanSubstitution', etc.
    */
   mutator?: string | MutatorDescriptor;
+
+  /**
+   * A list of plugins. These plugins will be imported ('required') by Stryker upon loading.
+   */
+  plugins?: string[];
+
+  /**
+   * The starting port to used for test frameworks that need to run a server (for example karma).
+   * If more test runners will run simultaneously, subsequent port numbers will be used (n+1, n+2, etc.)
+   */
+  port?: number;
+
+  /**
+   * DEPRECATED PROPERTY. Please use the `reporters` property
+   */
+  reporter?: string | string[];
+  /**
+   * The names of the reporters to use
+   * Possible values: 'clear-text', 'progress'.
+   * Load more plugins to be able to use more reporters
+   */
+  reporters?: string[];
+
+  /**
+   * Indicates whether or not to symlink the node_modules folder inside the sandbox folder(s).
+   * Default: true
+   */
+  symlinkNodeModules?: boolean;
+
+  /**
+   * The name of the test framework to use
+   */
+  testFramework?: string;
+
+  /**
+   * The name of the test runner to use (default is the same name as the testFramework)
+   */
+  testRunner?: string;
+
+  /**
+   * Thresholds for mutation score.
+   */
+  thresholds?: Partial<MutationScoreThresholds>;
+
+  /**
+   * The factor is applied on top of the other timeouts when during mutation testing
+   */
+  timeoutFactor?: number;
+
+  /**
+   * DEPRECATED PROPERTY. Please use the `timeoutMS` property
+   */
+  timeoutMs?: number;
+  /**
+   * Amount of additional time, in milliseconds, the mutation test is allowed to run
+   */
+  timeoutMS?: number;
 
   /**
    * The names of the transpilers to use (in order). Default: [].
@@ -81,80 +155,6 @@ interface StrykerOptions {
    * Transpilers should ignore files marked with `transpiled = false`. See `files` array.
    */
   transpilers?: string[];
-
-  /**
-   * Thresholds for mutation score.
-   */
-  thresholds?: Partial<MutationScoreThresholds>;
-
-  /**
-   * Indicates which coverage analysis strategy to use.
-   * During mutation testing, stryker will try to only run the tests that cover a particular line of code.
-   *
-   * 'perTest' (default): Analyse coverage per test.
-   * 'all': Analyse the coverage for the entire test suite.
-   * 'off': Don't use coverage analysis
-   */
-  coverageAnalysis?: 'perTest' | 'all' | 'off';
-
-  /**
-   * DEPRECATED PROPERTY. Please use the `reporters` property
-   */
-  reporter?: string | string[];
-  /**
-   * The names of the reporters to use
-   * Possible values: 'clear-text', 'progress'.
-   * Load more plugins to be able to use more reporters
-   */
-  reporters?: string[];
-
-  /**
-   * The log level for logging to a file. If defined, stryker will output a log file called "stryker.log".
-   * Default: "off"
-   */
-  fileLogLevel?: LogLevel;
-
-  /**
-   * The log level for logging to the console. Default: "info".
-   */
-  logLevel?: LogLevel;
-
-  /**
-   * Indicates whether or not to symlink the node_modules folder inside the sandbox folder(s).
-   * Default: true
-   */
-  symlinkNodeModules?: boolean;
-
-  /**
-   * DEPRECATED PROPERTY. Please use the `timeoutMS` property
-   */
-  timeoutMs?: number;
-  /**
-   * Amount of additional time, in milliseconds, the mutation test is allowed to run
-   */
-  timeoutMS?: number;
-
-  /**
-   * The factor is applied on top of the other timeouts when during mutation testing
-   */
-  timeoutFactor?: number;
-
-  /**
-   * A list of plugins. These plugins will be imported ('required') by Stryker upon loading.
-   */
-  plugins?: string[];
-
-  /**
-   * The starting port to used for test frameworks that need to run a server (for example karma).
-   * If more test runners will run simultaneously, subsequent port numbers will be used (n+1, n+2, etc.)
-   */
-  port?: number;
-
-  /**
-   * Indicates whether or not to use colors in console.
-   * Default: true
-   */
-  allowConsoleColors?: boolean;
 }
 
 export default StrykerOptions;

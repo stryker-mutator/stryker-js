@@ -1,5 +1,5 @@
-import { SourceFile, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { MutationScoreThresholds } from 'stryker-api/core';
+import { MutantResult, MutantStatus, ScoreResult, SourceFile } from 'stryker-api/report';
 
 export const sourceFile = factory<SourceFile>(() => ({
   content: `
@@ -17,6 +17,7 @@ export const thresholds = factory<MutationScoreThresholds>(() => ({
 
 export const mutantResult = factory<MutantResult>(() => {
   const range: [number, number] = [24, 38];
+
   return {
     id: '1',
     location: {
@@ -64,5 +65,5 @@ export const scoreResult = factory<ScoreResult>(() => ({
 }));
 
 function factory<T>(defaults: () => T) {
-  return (overrides?: Partial<T>): T => Object.assign({}, defaults(), overrides);
+  return (overrides?: Partial<T>): T => ({...defaults(), ...overrides});
 }

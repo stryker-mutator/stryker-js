@@ -1,12 +1,12 @@
-import * as os from 'os';
-import * as childProcess from 'child_process';
 import { expect } from 'chai';
-import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
-import ChildProcessMock from '../../helpers/ChildProcessMock';
-import * as objectUtils from '../../../src/utils/objectUtils';
+import * as childProcess from 'child_process';
+import * as os from 'os';
 import { Config } from 'stryker-api/config';
-import { RunStatus, TestStatus, RunResult } from 'stryker-api/test_runner';
+import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
+import * as objectUtils from '../../../src/utils/objectUtils';
 import Timer, * as timerModule from '../../../src/utils/Timer';
+import ChildProcessMock from '../../helpers/ChildProcessMock';
 import { Mock, mock } from '../../helpers/producers';
 
 describe(CommandTestRunner.name, () => {
@@ -119,6 +119,7 @@ describe(CommandTestRunner.name, () => {
     const resultPromise = sut.run();
     await tick();
     childProcessMock.emit('exit', exitCode);
+
     return resultPromise;
   }
 
@@ -129,6 +130,7 @@ describe(CommandTestRunner.name, () => {
         commandRunner: settings
       });
     }
+
     return new CommandTestRunner(workingDir, { strykerOptions, port: 23, fileNames: [] });
   }
 

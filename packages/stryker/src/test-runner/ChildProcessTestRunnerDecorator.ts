@@ -1,9 +1,9 @@
-import { TestRunner, RunResult, RunOptions, RunnerOptions } from 'stryker-api/test_runner';
-import LoggingClientContext from '../logging/LoggingClientContext';
-import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
-import ChildProcessTestRunnerWorker from './ChildProcessTestRunnerWorker';
-import { timeout } from '../utils/objectUtils';
+import { RunnerOptions, RunOptions, RunResult, TestRunner } from 'stryker-api/test_runner';
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
+import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
+import LoggingClientContext from '../logging/LoggingClientContext';
+import { timeout } from '../utils/objectUtils';
+import ChildProcessTestRunnerWorker from './ChildProcessTestRunnerWorker';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
 
@@ -28,14 +28,6 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
       ChildProcessTestRunnerWorker, realTestRunnerName, options);
   }
 
-  public init(): Promise<void> {
-    return this.worker.proxy.init();
-  }
-
-  public run(options: RunOptions): Promise<RunResult> {
-    return this.worker.proxy.run(options);
-  }
-
   public async dispose(): Promise<void> {
 
     await timeout(
@@ -53,5 +45,13 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
 
     // After that, dispose the child process itself
     await this.worker.dispose();
+  }
+
+  public init(): Promise<void> {
+    return this.worker.proxy.init();
+  }
+
+  public run(options: RunOptions): Promise<RunResult> {
+    return this.worker.proxy.run(options);
   }
 }

@@ -1,6 +1,7 @@
-import * as chai from 'chai';
 import { fsAsPromised } from '@stryker-mutator/util';
+import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 const expectFileExists = (path: string) => expect(fsAsPromised.exists(path), `File ${path} does not exist`).to.eventually.eq(true);
@@ -12,7 +13,7 @@ describe('Verify stryker has ran correctly', () => {
   it('should report in html files', () => {
     return Promise.all([
       expectFileExists('reports/mutation/html/index.js.html'),
-      expectFileExists('reports/mutation/html/index.html'),
+      expectFileExists('reports/mutation/html/index.html')
     ]);
   });
   it('should contain the correct mutation score', async () => {

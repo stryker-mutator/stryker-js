@@ -1,12 +1,12 @@
-import * as path from 'path';
-import { Logger } from 'stryker-api/logging';
-import * as sinon from 'sinon';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as fileUtils from '../../src/utils/fileUtils';
+import * as path from 'path';
+import * as sinon from 'sinon';
+import { Logger } from 'stryker-api/logging';
 import PluginLoader from '../../src/PluginLoader';
+import * as fileUtils from '../../src/utils/fileUtils';
 import currentLogMock from '../helpers/logMock';
 import { Mock } from '../helpers/producers';
-import { fsAsPromised } from '@stryker-mutator/util';
 
 describe('PluginLoader', () => {
 

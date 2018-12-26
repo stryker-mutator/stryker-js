@@ -1,7 +1,7 @@
-import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
-import TestRunnerDecorator from './TestRunnerDecorator';
 import { getLogger } from 'stryker-api/logging';
-import { TimeoutExpired, timeout } from '../utils/objectUtils';
+import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
+import { timeout, TimeoutExpired } from '../utils/objectUtils';
+import TestRunnerDecorator from './TestRunnerDecorator';
 
 /**
  * Wraps a test runner and implements the timeout functionality.
@@ -22,6 +22,7 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
 
   private handleTimeout(): Promise<RunResult> {
     this.log.debug('Timeout expired, restarting the process and reporting timeout');
+
     return this.dispose()
       .then(() => this.createInnerRunner())
       .then(() => this.init())

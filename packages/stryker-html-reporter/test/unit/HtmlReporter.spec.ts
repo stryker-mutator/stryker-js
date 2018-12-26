@@ -1,10 +1,10 @@
-import { normalize, join } from 'path';
 import { expect } from 'chai';
+import { join, normalize } from 'path';
 import * as sinon from 'sinon';
 import { Config } from 'stryker-api/config';
-import * as util from '../../src/util';
 import HtmlReporter from '../../src/HtmlReporter';
-import { sourceFile, mutantResult, scoreResult } from '../helpers/producers';
+import * as util from '../../src/util';
+import { mutantResult, scoreResult, sourceFile } from '../helpers/producers';
 
 describe('HtmlReporter', () => {
   let sandbox: sinon.SinonSandbox;
@@ -49,7 +49,7 @@ describe('HtmlReporter', () => {
       sut.onScoreCalculated(scoreResult({
         childResults: [
           scoreResult({ name: normalize('a.js'), path: normalize('src/a.js'), representsFile: true }),
-          scoreResult({ name: normalize('b.js'), path: normalize('src/b.js'), representsFile: true }),
+          scoreResult({ name: normalize('b.js'), path: normalize('src/b.js'), representsFile: true })
         ],
         name: 'src'
       }));
@@ -119,6 +119,7 @@ describe('HtmlReporter', () => {
       sut.onAllMutantsTested([]);
       sut.onAllSourceFilesRead([]);
       sut.onScoreCalculated(scoreResult({}));
+
       return expect(sut.wrapUp()).to.eventually.be.rejectedWith(error);
     });
   });
@@ -137,6 +138,7 @@ describe('HtmlReporter', () => {
       sut.onAllMutantsTested([]);
       sut.onAllSourceFilesRead([]);
       sut.onScoreCalculated(scoreResult({}));
+
       return expect(sut.wrapUp()).to.eventually.be.rejectedWith(error);
     });
   });
@@ -155,6 +157,7 @@ describe('HtmlReporter', () => {
       sut.onAllMutantsTested([]);
       sut.onAllSourceFilesRead([]);
       sut.onScoreCalculated(scoreResult({}));
+
       return expect(sut.wrapUp()).to.eventually.be.rejectedWith(error);
     });
   });
@@ -173,6 +176,7 @@ describe('HtmlReporter', () => {
       sut.onAllMutantsTested([]);
       sut.onAllSourceFilesRead([]);
       sut.onScoreCalculated(scoreResult({}));
+
       return expect(sut.wrapUp()).to.eventually.be.rejectedWith(error);
     });
   });

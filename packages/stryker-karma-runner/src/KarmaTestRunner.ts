@@ -1,28 +1,28 @@
-import { TestRunner, TestResult, RunStatus, RunResult, RunnerOptions, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
-import { getLogger } from 'stryker-api/logging';
 import * as karma from 'karma';
-import StrykerKarmaSetup, { DEPRECATED_KARMA_CONFIG, DEPRECATED_KARMA_CONFIG_FILE, KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
-import TestHooksMiddleware from './TestHooksMiddleware';
-import StrykerReporter from './StrykerReporter';
-import strykerKarmaConf = require('./starters/stryker-karma.conf');
+import { getLogger } from 'stryker-api/logging';
+import { CoverageCollection, CoveragePerTestResult, RunnerOptions, RunResult, RunStatus, TestResult, TestRunner } from 'stryker-api/test_runner';
 import ProjectStarter from './starters/ProjectStarter';
+import strykerKarmaConf = require('./starters/stryker-karma.conf');
+import StrykerKarmaSetup, { DEPRECATED_KARMA_CONFIG, DEPRECATED_KARMA_CONFIG_FILE, KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
+import StrykerReporter from './StrykerReporter';
+import TestHooksMiddleware from './TestHooksMiddleware';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
 }
 
 export default class KarmaTestRunner implements TestRunner {
-  private readonly log = getLogger(KarmaTestRunner.name);
-  private currentTestResults: TestResult[];
-  private currentErrorMessages: string[];
-  private currentCoverageReport?: CoverageCollection | CoveragePerTestResult;
-  private currentRunStatus: RunStatus;
-  private readonly testHooksMiddleware = TestHooksMiddleware.instance;
-  private readonly starter: ProjectStarter;
 
   public get port() {
     return this.options.port;
   }
+  private currentCoverageReport?: CoverageCollection | CoveragePerTestResult;
+  private currentErrorMessages: string[];
+  private currentRunStatus: RunStatus;
+  private currentTestResults: TestResult[];
+  private readonly log = getLogger(KarmaTestRunner.name);
+  private readonly starter: ProjectStarter;
+  private readonly testHooksMiddleware = TestHooksMiddleware.instance;
 
   constructor(private readonly options: RunnerOptions) {
     const setup = this.loadSetup(options);
@@ -58,32 +58,8 @@ export default class KarmaTestRunner implements TestRunner {
     }
     const runResult = this.collectRunResult();
     this.cleanRun();
+
     return runResult;
-  }
-
-  private loadSetup(settings: RunnerOptions): StrykerKarmaSetup {
-    const defaultKarmaConfig: StrykerKarmaSetup = {
-      projectType: 'custom'
-    };
-    const strykerKarmaSetup: StrykerKarmaSetup = Object.assign(defaultKarmaConfig, settings.strykerOptions[KARMA_CONFIG_KEY]);
-
-    const loadDeprecatedOption = (configKey: keyof StrykerKarmaSetup, deprecatedConfigOption: string) => {
-      if (!strykerKarmaSetup[configKey] && settings.strykerOptions[deprecatedConfigOption]) {
-        this.log.warn(`[deprecated]: config option ${deprecatedConfigOption} is renamed to ${KARMA_CONFIG_KEY}.${configKey}`);
-        strykerKarmaSetup[configKey] = settings.strykerOptions[deprecatedConfigOption];
-      }
-    };
-    loadDeprecatedOption('configFile', DEPRECATED_KARMA_CONFIG_FILE);
-    loadDeprecatedOption('config', DEPRECATED_KARMA_CONFIG);
-    return strykerKarmaSetup;
-  }
-
-  private setGlobals(setup: StrykerKarmaSetup, port: number) {
-    strykerKarmaConf.setGlobals({
-      karmaConfig: setup.config,
-      karmaConfigFile: setup.configFile,
-      port
-    });
   }
 
   private cleanRun() {
@@ -91,52 +67,6 @@ export default class KarmaTestRunner implements TestRunner {
     this.currentErrorMessages = [];
     this.currentCoverageReport = undefined;
     this.currentRunStatus = RunStatus.Complete;
-  }
-
-  // Don't use dispose() to stop karma (using karma.stopper.stop)
-  // It only works when in `detached` mode, as specified here: http://karma-runner.github.io/1.0/config/configuration-file.html
-
-  private listenToSpecComplete() {
-    StrykerReporter.instance.on('test_result', (testResult: TestResult) => {
-      this.currentTestResults.push(testResult);
-    });
-  }
-
-  private listenToServerStart() {
-    StrykerReporter.instance.on('server_start', (port: number) => {
-      this.options.port = port;
-    });
-  }
-
-  private listenToCoverage() {
-    StrykerReporter.instance.on('coverage_report', (coverageReport: CoverageCollection | CoveragePerTestResult) => {
-      this.currentCoverageReport = coverageReport;
-    });
-  }
-
-  private listenToRunComplete() {
-    StrykerReporter.instance.on('run_complete', (runStatus: RunStatus) => {
-      this.currentRunStatus = runStatus;
-    });
-  }
-
-  private listenToError() {
-    StrykerReporter.instance.on('browser_error', (error: string) => {
-      this.currentErrorMessages.push(error);
-    });
-    StrykerReporter.instance.on('compile_error', (errors: string[]) => {
-      errors.forEach(error => this.currentErrorMessages.push(error));
-      this.currentRunStatus = RunStatus.Error;
-    });
-  }
-
-  private runServer() {
-    return new Promise<void>(resolve => {
-      karma.runner.run({ port: this.options.port }, exitCode => {
-        this.log.debug('karma run done with ', exitCode);
-        resolve();
-      });
-    });
   }
 
   private collectRunResult(): RunResult {
@@ -161,5 +91,77 @@ export default class KarmaTestRunner implements TestRunner {
     } else {
       return this.currentRunStatus;
     }
+  }
+
+  private listenToCoverage() {
+    StrykerReporter.instance.on('coverage_report', (coverageReport: CoverageCollection | CoveragePerTestResult) => {
+      this.currentCoverageReport = coverageReport;
+    });
+  }
+
+  private listenToError() {
+    StrykerReporter.instance.on('browser_error', (error: string) => {
+      this.currentErrorMessages.push(error);
+    });
+    StrykerReporter.instance.on('compile_error', (errors: string[]) => {
+      errors.forEach(error => this.currentErrorMessages.push(error));
+      this.currentRunStatus = RunStatus.Error;
+    });
+  }
+
+  private listenToRunComplete() {
+    StrykerReporter.instance.on('run_complete', (runStatus: RunStatus) => {
+      this.currentRunStatus = runStatus;
+    });
+  }
+
+  private listenToServerStart() {
+    StrykerReporter.instance.on('server_start', (port: number) => {
+      this.options.port = port;
+    });
+  }
+
+  // Don't use dispose() to stop karma (using karma.stopper.stop)
+  // It only works when in `detached` mode, as specified here: http://karma-runner.github.io/1.0/config/configuration-file.html
+
+  private listenToSpecComplete() {
+    StrykerReporter.instance.on('test_result', (testResult: TestResult) => {
+      this.currentTestResults.push(testResult);
+    });
+  }
+
+  private loadSetup(settings: RunnerOptions): StrykerKarmaSetup {
+    const defaultKarmaConfig: StrykerKarmaSetup = {
+      projectType: 'custom'
+    };
+    const strykerKarmaSetup: StrykerKarmaSetup = {...defaultKarmaConfig, ...settings.strykerOptions[KARMA_CONFIG_KEY]};
+
+    const loadDeprecatedOption = (configKey: keyof StrykerKarmaSetup, deprecatedConfigOption: string) => {
+      if (!strykerKarmaSetup[configKey] && settings.strykerOptions[deprecatedConfigOption]) {
+        this.log.warn(`[deprecated]: config option ${deprecatedConfigOption} is renamed to ${KARMA_CONFIG_KEY}.${configKey}`);
+        strykerKarmaSetup[configKey] = settings.strykerOptions[deprecatedConfigOption];
+      }
+    };
+    loadDeprecatedOption('configFile', DEPRECATED_KARMA_CONFIG_FILE);
+    loadDeprecatedOption('config', DEPRECATED_KARMA_CONFIG);
+
+    return strykerKarmaSetup;
+  }
+
+  private runServer() {
+    return new Promise<void>(resolve => {
+      karma.runner.run({ port: this.options.port }, exitCode => {
+        this.log.debug('karma run done with ', exitCode);
+        resolve();
+      });
+    });
+  }
+
+  private setGlobals(setup: StrykerKarmaSetup, port: number) {
+    strykerKarmaConf.setGlobals({
+      karmaConfig: setup.config,
+      karmaConfigFile: setup.configFile,
+      port
+    });
   }
 }

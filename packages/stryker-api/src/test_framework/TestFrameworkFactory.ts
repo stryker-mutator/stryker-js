@@ -1,6 +1,6 @@
 import { Factory } from '../../core';
-import TestFrameworkSettings from './TestFrameworkSettings';
 import TestFramework from './TestFramework';
+import TestFrameworkSettings from './TestFrameworkSettings';
 
 namespace TestFrameworkFactory {
   /**

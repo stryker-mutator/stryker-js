@@ -1,35 +1,34 @@
 import { fsAsPromised } from '@stryker-mutator/util';
-import * as path from 'path';
 import * as mkdirp from 'mkdirp';
+import * as path from 'path';
 import { getLogger } from 'stryker-api/logging';
 import { deleteDir } from './fileUtils';
 
 export class TempFolder {
-  private readonly log = getLogger(TempFolder.name);
-  public baseTempFolder: string;
-  public tempFolder: string;
+  public static instance() {
+    if (!this._instance) {
+      this._instance = new TempFolder();
+    }
 
-  private constructor() { }
-
-  public initialize(tempDirName = '.stryker-tmp') {
-    this.baseTempFolder = path.join(process.cwd(), tempDirName);
-    this.tempFolder = path.join(this.baseTempFolder, this.random().toString());
-    mkdirp.sync(this.baseTempFolder);
-    mkdirp.sync(this.tempFolder);
+    return this._instance;
   }
 
+  private static _instance: TempFolder;
+  public baseTempFolder: string;
+  public tempFolder: string;
+  private readonly log = getLogger(TempFolder.name);
+
   /**
-   * Creates a new random folder with the specified prefix.
-   * @param prefix The prefix.
-   * @returns The path to the folder.
+   * Deletes the Stryker-temp folder
    */
-  public createRandomFolder(prefix: string): string {
+  public clean() {
     if (!this.baseTempFolder) {
       throw new Error('initialize() was not called!');
     }
-    const dir = this.baseTempFolder + path.sep + prefix + this.random();
-    mkdirp.sync(dir);
-    return dir;
+    this.log.debug(`Deleting stryker temp folder ${this.baseTempFolder}`);
+
+    return deleteDir(this.baseTempFolder)
+      .catch(() => this.log.info(`Failed to delete stryker temp folder ${this.baseTempFolder}`));
   }
 
   /**
@@ -49,20 +48,30 @@ export class TempFolder {
         readStream = readStream.pipe(instrumenter);
       }
       readStream.pipe(writeStream);
-      readStream.on('end', () => resolve());
+      readStream.on('end', resolve);
     });
   }
 
   /**
-   * Deletes the Stryker-temp folder
+   * Creates a new random folder with the specified prefix.
+   * @param prefix The prefix.
+   * @returns The path to the folder.
    */
-  public clean() {
+  public createRandomFolder(prefix: string): string {
     if (!this.baseTempFolder) {
       throw new Error('initialize() was not called!');
     }
-    this.log.debug(`Deleting stryker temp folder ${this.baseTempFolder}`);
-    return deleteDir(this.baseTempFolder)
-      .catch(() => this.log.info(`Failed to delete stryker temp folder ${this.baseTempFolder}`));
+    const dir = this.baseTempFolder + path.sep + prefix + this.random();
+    mkdirp.sync(dir);
+
+    return dir;
+  }
+
+  public initialize(tempDirName = '.stryker-tmp') {
+    this.baseTempFolder = path.join(process.cwd(), tempDirName);
+    this.tempFolder = path.join(this.baseTempFolder, this.random().toString());
+    mkdirp.sync(this.baseTempFolder);
+    mkdirp.sync(this.tempFolder);
   }
 
   /**
@@ -71,13 +80,5 @@ export class TempFolder {
    */
   public random(): number {
     return Math.ceil(Math.random() * 10000000);
-  }
-
-  private static _instance: TempFolder;
-  public static instance() {
-    if (!this._instance) {
-      this._instance = new TempFolder();
-    }
-    return this._instance;
   }
 }

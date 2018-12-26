@@ -1,12 +1,12 @@
-import * as path from 'path';
-import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
+import * as path from 'path';
 import * as sinon from 'sinon';
+import { Logger } from 'stryker-api/logging';
 import { MutantStatus, ScoreResult } from 'stryker-api/report';
 import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import * as objectUtils from '../../src/utils/objectUtils';
-import { mutantResult, scoreResult, mutationScoreThresholds, Mock } from '../helpers/producers';
 import currentLogMock from '../helpers/logMock';
+import { Mock, mutantResult, mutationScoreThresholds, scoreResult } from '../helpers/producers';
 
 describe('ScoreResult', () => {
   let log: Mock<Logger>;
@@ -35,7 +35,7 @@ describe('ScoreResult', () => {
         mutantResult({ status: MutantStatus.NoCoverage, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.Survived, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.Killed, sourceFilePath: fileName }),
-        mutantResult({ status: MutantStatus.TimedOut, sourceFilePath: fileName }),
+        mutantResult({ status: MutantStatus.TimedOut, sourceFilePath: fileName })
       ]);
       expect(actual.name).to.eq('base');
       function assertNumbers(actual: ScoreResult) {
@@ -103,7 +103,7 @@ describe('ScoreResult', () => {
           mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'e.js'), status: MutantStatus.Killed }),
           mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'f.js'), status: MutantStatus.Survived }),
           mutantResult({ sourceFilePath: path.join('a', 'b', 'g.js'), status: MutantStatus.NoCoverage }),
-          mutantResult({ sourceFilePath: path.join('a', 'b', 'h.js'), status: MutantStatus.RuntimeError }),
+          mutantResult({ sourceFilePath: path.join('a', 'b', 'h.js'), status: MutantStatus.RuntimeError })
         ]);
       expect(actual.name).to.eq(path.join('a', 'b'));
       expect(extractNumbers(actual)).to.deep.eq({ killed: 1, survived: 1, noCoverage: 1, runtimeErrors: 1, transpileErrors: 0 });

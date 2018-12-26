@@ -4,9 +4,9 @@ import { errorToString } from '../../utils/objectUtils';
 
 export interface StrykerDashboardReport {
   apiKey: string;
-  repositorySlug: string;
   branch: string;
   mutationScore: number;
+  repositorySlug: string;
 }
 
 const URL_STRYKER_DASHBOARD_REPORTER = 'https://dashboard.stryker-mutator.io/api/reports';
@@ -23,6 +23,7 @@ export default class DashboardReporterClient {
     this.log.info(`Posting report to ${URL_STRYKER_DASHBOARD_REPORTER}`);
     const reportString = JSON.stringify(report);
     this.log.debug('Posting data %s', reportString);
+
     return this.dashboardReporterClient.post(URL_STRYKER_DASHBOARD_REPORTER, reportString,
     {
       ['Content-Type']: 'application/json'

@@ -1,16 +1,16 @@
-import { MatchedMutant, Reporter, MutantResult } from 'stryker-api/report';
+import { MatchedMutant, MutantResult, Reporter } from 'stryker-api/report';
 import { MutantStatus } from 'stryker-api/report';
 import Timer from '../utils/Timer';
 
 abstract class ProgressKeeper implements Reporter {
-  private timer: Timer;
   protected progress = {
     survived: 0,
     tested: 0,
-    total: 0,
+    total: 0
   };
 
   private mutantIdsWithoutCoverage: string[];
+  private timer: Timer;
 
   public onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
     this.timer = new Timer();

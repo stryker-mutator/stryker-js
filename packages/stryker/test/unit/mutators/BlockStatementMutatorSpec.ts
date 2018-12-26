@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import * as estree from 'estree';
-import { Identified } from '../../../src/mutators/IdentifiedNode';
 import BlockStatementMutator from '../../../src/mutators/BlockStatementMutator';
-import { parse, identified } from '../../../src/utils/parserUtils';
+import { Identified } from '../../../src/mutators/IdentifiedNode';
 import { copy } from '../../../src/utils/objectUtils';
+import { identified, parse } from '../../../src/utils/parserUtils';
 
 describe('BlockStatementMutator', () => {
   let sut: BlockStatementMutator;

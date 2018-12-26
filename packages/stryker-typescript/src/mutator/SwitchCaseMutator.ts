@@ -1,7 +1,6 @@
 import * as ts from 'typescript';
-
-import NodeMutator, { NodeReplacement } from './NodeMutator';
 import { printNode } from '../helpers/tsHelpers';
+import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 /**
  * Type guard for seperating default clause from case clauses.
@@ -24,6 +23,7 @@ export default class SwitchCaseMutator extends NodeMutator<ts.CaseOrDefaultClaus
         ? ts.createDefaultClause([])
         : ts.createCaseClause(node.expression, []);
       const replacement = printNode(clause, sourceFile);
+
       return [{ node, replacement }];
     } else {
       return [];

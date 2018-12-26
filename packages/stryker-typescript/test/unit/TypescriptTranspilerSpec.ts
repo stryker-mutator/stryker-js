@@ -1,12 +1,12 @@
-import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
 import { expect } from 'chai';
-import { Mock, mock } from '../helpers/producers';
-import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
 import { serialize } from 'surrial';
 import TranspileFilter from '../../src/transpiler/TranspileFilter';
+import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
+import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
+import TypescriptTranspiler from '../../src/TypescriptTranspiler';
+import { Mock, mock } from '../helpers/producers';
 
 describe('TypescriptTranspiler', () => {
 
@@ -59,7 +59,7 @@ describe('TypescriptTranspiler', () => {
       const input = [
         new File('file1.js', ''),
         new File('file2.ts', ''),
-        new File('file4.ts', ''),
+        new File('file4.ts', '')
       ];
       arrangeIncludedFiles(input.slice(1));
       languageService.emit
@@ -81,7 +81,7 @@ describe('TypescriptTranspiler', () => {
       // Arrange
       const input = [
         new File('file1.ts', ''),
-        new File('file2.d.ts', ''),
+        new File('file2.d.ts', '')
       ];
       arrangeIncludedFiles();
       languageService.emit.returns(multiResult(new File('file1.js', '')));
@@ -130,6 +130,7 @@ describe('TypescriptTranspiler', () => {
       languageService.getSemanticDiagnostics.returns('foobar');
       arrangeIncludedFiles();
       const input = [new File('file1.ts', 'file1'), new File('file2.ts', 'file2')];
+
       return expect(sut.transpile(input)).rejectedWith('foobar');
     });
   });

@@ -1,20 +1,16 @@
 import * as program from 'commander';
-import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
-import Stryker from './Stryker';
-import StrykerInitializer from './initializer/StrykerInitializer';
 import { getLogger } from 'stryker-api/logging';
+import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
+import StrykerInitializer from './initializer/StrykerInitializer';
 import LogConfigurator from './logging/LogConfigurator';
+import Stryker from './Stryker';
 
 export default class StrykerCli {
 
-  private command: string = '';
+  private command = '';
   private strykerConfig: string | null = null;
 
   constructor(private readonly argv: string[]) { }
-
-  private list(val: string) {
-    return val.split(',');
-  }
 
   public run() {
     program
@@ -53,6 +49,7 @@ export default class StrykerCli {
     function parseBoolean(val: string) {
       console.log('bool: ', val);
       const v = val.toLocaleLowerCase() ;
+
       return v !== 'false' && v !== '0';
     }
 
@@ -92,5 +89,9 @@ export default class StrykerCli {
     } else {
       log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
     }
+  }
+
+  private list(val: string) {
+    return val.split(',');
   }
 }

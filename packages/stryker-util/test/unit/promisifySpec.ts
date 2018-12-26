@@ -1,8 +1,8 @@
-import promisify, { innerPromisify } from '../../src/promisify';
-import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { exec } from 'child_process';
 import { exists } from 'fs';
+import * as sinon from 'sinon';
+import promisify, { innerPromisify } from '../../src/promisify';
 
 describe('promisify', () => {
   describePromisify(promisify);

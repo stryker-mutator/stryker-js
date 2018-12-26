@@ -2,20 +2,21 @@ import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 
 export default class MochaTestFramework implements TestFramework {
 
-  public beforeEach(codeFragment: string): string {
-    return `beforeEach(function() {
-      ${codeFragment}
-    });`;
-  }
-
   public afterEach(codeFragment: string): string {
     return `afterEach(function() {
       ${codeFragment}
     });`;
   }
 
+  public beforeEach(codeFragment: string): string {
+    return `beforeEach(function() {
+      ${codeFragment}
+    });`;
+  }
+
   public filter(testSelections: TestSelection[]) {
     const selectedTestNames = testSelections.map(selection => selection.name);
+
     return `var Mocha = window.Mocha || require('mocha');
       var describe = Mocha.describe;
       var selectedTestNames = ${JSON.stringify(selectedTestNames)};

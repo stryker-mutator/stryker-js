@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { MutatorFactory } from 'stryker-api/mutant';
-import VueMutator from '../../src/VueMutator';
-import '../../src/index';
 import 'stryker-javascript-mutator';
 import 'stryker-typescript';
+import '../../src/index';
+import VueMutator from '../../src/VueMutator';
 
 describe('VueMutator', () => {
   describe('JavaScript project', () => {

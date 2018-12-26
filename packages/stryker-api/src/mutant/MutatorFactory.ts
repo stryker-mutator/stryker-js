@@ -1,6 +1,6 @@
-import Mutator from './Mutator';
-import { Factory } from '../../core';
 import { Config } from '../../config';
+import { Factory } from '../../core';
+import Mutator from './Mutator';
 
 namespace MutatorFactory {
   /**
@@ -20,6 +20,7 @@ namespace MutatorFactory {
       if (name === 'typescript') {
         return `stryker-${name}`;
       }
+
       return `stryker-${name}-mutator`;
     }
   }

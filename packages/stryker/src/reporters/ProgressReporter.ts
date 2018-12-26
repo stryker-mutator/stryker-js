@@ -1,6 +1,6 @@
 import { MatchedMutant, MutantResult } from 'stryker-api/report';
-import ProgressKeeper from './ProgressKeeper';
 import ProgressBar from './ProgressBar';
+import ProgressKeeper from './ProgressKeeper';
 
 export default class ProgressBarReporter extends ProgressKeeper {
   private progressBar: ProgressBar;
@@ -32,11 +32,11 @@ export default class ProgressBarReporter extends ProgressKeeper {
     }
   }
 
-  private tick(tickObj: object): void {
-    this.progressBar.tick(tickObj);
-  }
-
   private render(renderObj: object): void {
     this.progressBar.render(renderObj);
+  }
+
+  private tick(tickObj: object): void {
+    this.progressBar.tick(tickObj);
   }
 }

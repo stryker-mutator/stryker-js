@@ -1,15 +1,16 @@
-import TestResult from './TestResult';
-import RunStatus from './RunStatus';
 import { CoverageCollection, CoveragePerTestResult } from './Coverage';
+import RunStatus from './RunStatus';
+import TestResult from './TestResult';
 
 /**
  * Represents the result of a test run.
  */
 interface RunResult {
+
   /**
-   * The individual test results.
+   * Optional: the code coverage result of the run.
    */
-  tests: TestResult[];
+  coverage?: CoverageCollection | CoveragePerTestResult;
 
   /**
    * If `state` is `error`, this collection should contain the error messages
@@ -20,11 +21,10 @@ interface RunResult {
    * The status of the run
    */
   status: RunStatus;
-
   /**
-   * Optional: the code coverage result of the run.
+   * The individual test results.
    */
-  coverage?: CoverageCollection | CoveragePerTestResult;
+  tests: TestResult[];
 }
 
 export default RunResult;

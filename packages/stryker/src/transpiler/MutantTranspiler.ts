@@ -1,21 +1,21 @@
 import { Observable } from 'rxjs';
 import { Config } from 'stryker-api/config';
-import TranspilerFacade from './TranspilerFacade';
-import TestableMutant from '../TestableMutant';
 import { File } from 'stryker-api/core';
-import SourceFile from '../SourceFile';
-import ChildProcessProxy, { Promisified } from '../child-proxy/ChildProcessProxy';
 import { TranspilerOptions } from 'stryker-api/transpile';
-import TranspiledMutant from '../TranspiledMutant';
-import TranspileResult from './TranspileResult';
-import { errorToString } from '../utils/objectUtils';
+import ChildProcessProxy, { Promisified } from '../child-proxy/ChildProcessProxy';
 import LoggingClientContext from '../logging/LoggingClientContext';
+import SourceFile from '../SourceFile';
+import TestableMutant from '../TestableMutant';
+import TranspiledMutant from '../TranspiledMutant';
+import { errorToString } from '../utils/objectUtils';
+import TranspileResult from './TranspileResult';
+import TranspilerFacade from './TranspilerFacade';
 
 export default class MutantTranspiler {
+  private currentMutatedFile: SourceFile;
+  private readonly proxy: Promisified<TranspilerFacade>;
 
   private readonly transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
-  private readonly proxy: Promisified<TranspilerFacade>;
-  private currentMutatedFile: SourceFile;
   private unMutatedFiles: ReadonlyArray<File>;
 
   /**
@@ -40,15 +40,23 @@ export default class MutantTranspiler {
     }
   }
 
+  public dispose() {
+    if (this.transpilerChildProcess) {
+      this.transpilerChildProcess.dispose();
+    }
+  }
+
   public initialize(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
     return this.proxy.transpile(files).then((transpiledFiles: ReadonlyArray<File>) => {
       this.unMutatedFiles = transpiledFiles;
+
       return transpiledFiles;
     });
   }
 
   public transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
     const mutants = allMutants.slice();
+
     return new Observable<TranspiledMutant>(observer => {
       const nextMutant = () => {
         const mutant = mutants.shift();
@@ -65,22 +73,17 @@ export default class MutantTranspiler {
     });
   }
 
-  public dispose() {
-    if (this.transpilerChildProcess) {
-      this.transpilerChildProcess.dispose();
-    }
-  }
-
   private createTranspiledMutant(mutant: TestableMutant, transpileResult: TranspileResult, unMutatedFiles: ReadonlyArray<File>) {
     return new TranspiledMutant(mutant, transpileResult, someFilesChanged());
 
     function someFilesChanged(): boolean {
-      return transpileResult.outputFiles.some(file => fileChanged(file));
+      return transpileResult.outputFiles.some(fileChanged);
     }
 
     function fileChanged(file: File) {
       if (unMutatedFiles) {
         const unMutatedFile = unMutatedFiles.find(f => f.name === file.name);
+
         return !unMutatedFile || unMutatedFile.textContent !== file.textContent;
       } else {
         return true;
@@ -96,6 +99,7 @@ export default class MutantTranspiler {
     this.currentMutatedFile = mutant.sourceFile;
     const mutatedFile = new File(mutant.fileName, Buffer.from(mutant.mutatedCode));
     filesToTranspile.push(mutatedFile);
+
     return this.proxy.transpile(filesToTranspile)
       .then((transpiledFiles: ReadonlyArray<File>) => ({ outputFiles: transpiledFiles, error: null }))
       .catch(error => ({ outputFiles: [], error: errorToString(error) }));

@@ -1,17 +1,17 @@
-import * as os from 'os';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
 import chalk from 'chalk';
 import * as _ from 'lodash';
-import { MutantStatus, MutantResult } from 'stryker-api/report';
+import * as os from 'os';
+import * as sinon from 'sinon';
+import { MutantResult, MutantStatus } from 'stryker-api/report';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
-import { scoreResult, mutationScoreThresholds, config, mutantResult } from '../../helpers/producers';
+import { config, mutantResult, mutationScoreThresholds, scoreResult } from '../../helpers/producers';
 
-const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: Number) => {
+const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: number) => {
   return [
     chalk.cyan(sourceFilePath),
     chalk.yellow(`${line}`),
-    chalk.yellow(`${column}`),
+    chalk.yellow(`${column}`)
   ].join(':');
 };
 
@@ -303,6 +303,7 @@ describe('ClearTextReporter', () => {
         status,
         testsRan: ['a test', 'a second test', 'a third test']
       });
+
       return result;
     });
   }

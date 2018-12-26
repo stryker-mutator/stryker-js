@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import DashboardReporter from '../../../src/reporters/DashboardReporter';
-import * as environmentVariables from '../../../src/utils/objectUtils';
+import { Config } from 'stryker-api/config';
+import { Logger } from 'stryker-api/logging';
 import * as ciProvider from '../../../src/reporters/ci/Provider';
 import StrykerDashboardClient, { StrykerDashboardReport } from '../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import { scoreResult, mock, Mock } from '../../helpers/producers';
-import { Logger } from 'stryker-api/logging';
+import DashboardReporter from '../../../src/reporters/DashboardReporter';
+import * as environmentVariables from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';
-import { Config } from 'stryker-api/config';
+import { mock, Mock, scoreResult } from '../../helpers/producers';
 
 describe('DashboardReporter', () => {
   let sut: DashboardReporter;
@@ -24,19 +24,20 @@ describe('DashboardReporter', () => {
   });
 
   function setupEnvironmentVariables(env?: {
-    ci?: boolean
+    apiKey?: string;
+    branch?: string;
+    ci?: boolean;
     pullRequest?: boolean;
     repository?: string;
-    branch?: string;
-    apiKey?: string;
   }) {
-    const { ci, pullRequest, repository, branch, apiKey } = Object.assign({
+    const { ci, pullRequest, repository, branch, apiKey } = {
       apiKey: '12345',
       branch: 'master',
       ci: true,
       pullRequest: false,
-      repository: 'stryker-mutator/stryker'
-    }, env);
+      repository: 'stryker-mutator/stryker',
+      ...env
+    };
 
     if (ci) {
       determineCiProvider.returns({

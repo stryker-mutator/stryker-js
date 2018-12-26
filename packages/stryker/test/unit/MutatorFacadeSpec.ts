@@ -1,8 +1,8 @@
 import { expect } from 'chai';
+import { Config } from 'stryker-api/config';
 import { Mutator, MutatorFactory } from 'stryker-api/mutant';
 import MutatorFacade from '../../src/MutatorFacade';
-import { Config } from 'stryker-api/config';
-import { Mock, file } from '../helpers/producers';
+import { file, Mock } from '../helpers/producers';
 
 describe('MutatorFacade', () => {
 

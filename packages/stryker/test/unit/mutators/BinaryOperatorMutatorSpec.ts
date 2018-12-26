@@ -12,7 +12,7 @@ describe('BinaryOperatorMutator', () => {
   beforeEach(() => {
     mutator = new BinaryOperatorMutator();
     invalidNode = {
-      type: 'Identifier',
+      type: 'Identifier'
     } as estree.Node & Identified;
     validNode = {
       left: {

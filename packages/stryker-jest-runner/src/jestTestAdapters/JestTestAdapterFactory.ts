@@ -1,11 +1,9 @@
-import { getLogger } from 'stryker-api/logging';
-
-import JestTestAdapter from './JestTestAdapter';
-import JestPromiseAdapter from './JestPromiseTestAdapter';
 import * as semver from 'semver';
+import { getLogger } from 'stryker-api/logging';
+import JestPromiseAdapter from './JestPromiseTestAdapter';
+import JestTestAdapter from './JestTestAdapter';
 
 export default class JestTestAdapterFactory {
-  private static readonly log = getLogger(JestTestAdapterFactory.name);
 
   public static getJestTestAdapter(loader?: NodeRequire): JestTestAdapter {
     const jestVersion = this.getJestVersion(loader || /* istanbul ignore next */ require);
@@ -17,6 +15,7 @@ export default class JestTestAdapterFactory {
       return new JestPromiseAdapter();
     }
   }
+  private static readonly log = getLogger(JestTestAdapterFactory.name);
 
   private static getJestVersion(loader: NodeRequire): string {
     const packageJson = loader('jest/package.json');

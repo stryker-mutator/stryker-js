@@ -1,19 +1,19 @@
 import * as _ from 'lodash';
-import { Logger, getLogger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import { Mutator, Mutant } from 'stryker-api/mutant';
-import * as parserUtils from '../utils/parserUtils';
+import { getLogger, Logger } from 'stryker-api/logging';
+import { Mutant, Mutator } from 'stryker-api/mutant';
 import { copy } from '../utils/objectUtils';
-import NodeMutator from './NodeMutator';
+import * as parserUtils from '../utils/parserUtils';
+import ArrayDeclaratorMutator from './ArrayDeclaratorMutator';
 import BinaryOperatorMutator from './BinaryOperatorMutator';
 import BlockStatementMutator from './BlockStatementMutator';
+import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
 import LogicalOperatorMutator from './LogicalOperatorMutator';
+import NodeMutator from './NodeMutator';
 import RemoveConditionalsMutator from './RemoveConditionalsMutator';
 import UnaryOperatorMutator from './UnaryOperatorMutator';
 import UpdateOperatorMutator from './UpdateOperatorMutator';
-import ArrayDeclaratorMutator from './ArrayDeclaratorMutator';
-import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
 
 export default class ES5Mutator implements Mutator {
 
@@ -40,6 +40,7 @@ export default class ES5Mutator implements Mutator {
   private mutateForFile(file: File): Mutant[] {
     const abstractSyntaxTree = parserUtils.parse(file.textContent);
     const nodes = new parserUtils.NodeIdentifier().identifyAndFreeze(abstractSyntaxTree);
+
     return this.mutateForNodes(file, nodes);
   }
 
@@ -47,6 +48,7 @@ export default class ES5Mutator implements Mutator {
     return _.flatMap(nodes, astNode => {
       if (astNode.type) {
         Object.freeze(astNode);
+
         return _.flatMap(this.mutators, mutator => {
           try {
             let mutatedNodes = mutator.applyMutations(astNode, copy);
@@ -57,10 +59,12 @@ export default class ES5Mutator implements Mutator {
               if (mutatedNodes.length > 0) {
                 this.log.debug(`The mutator '${mutator.name}' mutated ${mutatedNodes.length} node${mutatedNodes.length > 1 ? 's' : ''} between (Ln ${astNode.loc.start.line}, Col ${astNode.loc.start.column}) and (Ln ${astNode.loc.end.line}, Col ${astNode.loc.end.column}) in file ${file.name}`);
               }
+
               return mutatedNodes.map(mutatedNode => {
                 const replacement = parserUtils.generate(mutatedNode);
                 const originalNode = nodes[mutatedNode.nodeID];
                 const mutant: Mutant = { mutatorName: mutator.name, fileName: file.name, replacement, range: originalNode.range };
+
                 return mutant;
               });
             } else {

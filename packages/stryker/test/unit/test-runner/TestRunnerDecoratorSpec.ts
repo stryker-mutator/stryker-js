@@ -15,11 +15,13 @@ describe('TestRunnerDecorator', () => {
     describe(methodName, () => {
       it('should pass through resolved results', () => {
         testRunner[methodName].resolves('some value');
+
         return expect((sut[methodName] as any)()).to.eventually.eq('some value');
       });
 
       it('should pass through rejected results', () => {
         testRunner[methodName].rejects(new Error('some error'));
+
         return expect((sut[methodName] as any)()).to.be.rejectedWith('some error');
       });
     });

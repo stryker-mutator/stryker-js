@@ -1,5 +1,5 @@
-import * as logging from 'stryker-api/logging';
 import * as sinon from 'sinon';
+import * as logging from 'stryker-api/logging';
 
 const logger = {
   debug: sinon.stub(),

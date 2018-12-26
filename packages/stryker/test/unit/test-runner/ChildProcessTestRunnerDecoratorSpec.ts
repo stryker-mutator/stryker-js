@@ -1,22 +1,22 @@
-import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { RunnerOptions, RunOptions } from 'stryker-api/test_runner';
+import * as sinon from 'sinon';
 import { LogLevel } from 'stryker-api/core';
-import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
-import { Mock, mock } from '../../helpers/producers';
+import { RunnerOptions, RunOptions } from 'stryker-api/test_runner';
+import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
 import ChildProcessTestRunnerWorker from '../../../src/test-runner/ChildProcessTestRunnerWorker';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import { Task } from '../../../src/utils/Task';
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
+import { Mock, mock } from '../../helpers/producers';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
   let sut: ChildProcessTestRunnerDecorator;
   let runnerOptions: RunnerOptions;
   let childProcessProxyMock: {
-    proxy: Mock<TestRunnerDecorator>;
     dispose: sinon.SinonStub;
+    proxy: Mock<TestRunnerDecorator>;
   };
   let childProcessProxyCreateStub: sinon.SinonStub;
   let loggingContext: LoggingClientContext;
@@ -54,6 +54,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
 
   it('should forward `init` calls', () => {
     childProcessProxyMock.proxy.init.resolves(42);
+
     return expect(sut.init()).eventually.eq(42);
   });
 

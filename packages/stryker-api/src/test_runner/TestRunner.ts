@@ -1,5 +1,5 @@
-import RunResult from './RunResult';
 import RunOptions from './RunOptions';
+import RunResult from './RunResult';
 
 /**
  * Represents a TestRunner which can execute tests, resulting in a RunResult.
@@ -35,6 +35,13 @@ import RunOptions from './RunOptions';
 interface TestRunner {
 
   /**
+   * Optional. When implemented, will be called before the test runner's process is killed.
+   * @returns A promise if stuff is destroyed asynchronously, the runners process will not end until the promise is resolved.
+   * Otherwise void
+   */
+  dispose?(): Promise<void> | void;
+
+  /**
    * Optional. When implemented, will be called before runs are done on this test runner.
    * @returns A promise if stuff is initialized asynchronously, runs will not start until the promise is resolved.
    * Otherwise void
@@ -47,13 +54,6 @@ interface TestRunner {
    * @returns A promise to eventually complete the test run and deliver a RunResult.
    */
   run(options: RunOptions): Promise<RunResult>;
-
-  /**
-   * Optional. When implemented, will be called before the test runner's process is killed.
-   * @returns A promise if stuff is destroyed asynchronously, the runners process will not end until the promise is resolved.
-   * Otherwise void
-   */
-  dispose?(): Promise<void> | void;
 }
 
 export default TestRunner;

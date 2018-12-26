@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import * as estree from 'estree';
-import { Identified } from '../../../src/mutators/IdentifiedNode';
 import ArrayDeclaratorMutator from '../../../src/mutators/ArrayDeclaratorMutator';
-import * as parser from '../../../src/utils/parserUtils';
+import { Identified } from '../../../src/mutators/IdentifiedNode';
 import { copy } from '../../../src/utils/objectUtils';
+import * as parser from '../../../src/utils/parserUtils';
 
 describe('ArrayDeclaratorMutator', () => {
   let sut: ArrayDeclaratorMutator;
@@ -14,16 +14,19 @@ describe('ArrayDeclaratorMutator', () => {
 
   const getArrayExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
+
     return (variableDeclaration.declarations[0].init as estree.ArrayExpression & Identified);
   };
 
   const getArrayCallExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
+
     return (variableDeclaration.declarations[0].init as estree.SimpleCallExpression & Identified);
   };
 
   const getArrayNewExpression = (program: estree.Program) => {
     const variableDeclaration = getVariableDeclaration(program);
+
     return (variableDeclaration.declarations[0].init as estree.NewExpression & Identified);
   };
 

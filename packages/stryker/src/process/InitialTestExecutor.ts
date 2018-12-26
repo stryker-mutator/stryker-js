@@ -1,18 +1,18 @@
 import { EOL } from 'os';
-import { RunStatus, RunResult, TestResult, TestStatus } from 'stryker-api/test_runner';
-import { TestFramework } from 'stryker-api/test_framework';
 import { Config } from 'stryker-api/config';
-import { TranspilerOptions, Transpiler } from 'stryker-api/transpile';
 import { File } from 'stryker-api/core';
-import TranspilerFacade from '../transpiler/TranspilerFacade';
 import { getLogger } from 'stryker-api/logging';
-import Sandbox from '../Sandbox';
-import Timer from '../utils/Timer';
-import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
+import { TestFramework } from 'stryker-api/test_framework';
+import { RunResult, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
+import { Transpiler, TranspilerOptions } from 'stryker-api/transpile';
 import InputFileCollection from '../input/InputFileCollection';
-import SourceMapper from '../transpiler/SourceMapper';
-import { coveragePerTestHooks } from '../transpiler/coverageHooks';
 import LoggingClientContext from '../logging/LoggingClientContext';
+import Sandbox from '../Sandbox';
+import { coveragePerTestHooks } from '../transpiler/coverageHooks';
+import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
+import SourceMapper from '../transpiler/SourceMapper';
+import TranspilerFacade from '../transpiler/TranspilerFacade';
+import Timer from '../utils/Timer';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
@@ -21,10 +21,10 @@ const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 
 export interface InitialTestRunResult {
-  runResult: RunResult;
-  overheadTimeMS: number;
-  sourceMapper: SourceMapper;
   coverageMaps: CoverageMapsByFile;
+  overheadTimeMS: number;
+  runResult: RunResult;
+  sourceMapper: SourceMapper;
 }
 
 /**
@@ -68,6 +68,7 @@ export default class InitialTestExecutor {
     const { runResult, grossTimeMS } = await this.runInSandbox(instrumentedFiles);
     const timing = this.calculateTiming(grossTimeMS, runResult.tests);
     this.validateResult(runResult, timing);
+
     return {
       coverageMaps,
       overheadTimeMS: timing.overhead,
@@ -76,51 +77,13 @@ export default class InitialTestExecutor {
     };
   }
 
-  private async runInSandbox(files: ReadonlyArray<File>): Promise<{ runResult: RunResult, grossTimeMS: number }> {
-    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0, this.loggingContext);
-    this.timer.mark(INITIAL_TEST_RUN_MARKER);
-    const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT, this.getCollectCoverageHooksIfNeeded());
-    const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
-    await sandbox.dispose();
-    return { runResult, grossTimeMS };
-  }
-
-  private async transpileInputFiles(): Promise<ReadonlyArray<File>> {
-    const transpilerFacade = this.createTranspilerFacade();
-    return transpilerFacade.transpile(this.inputFiles.files);
-  }
-
   private async annotateForCodeCoverage(files: ReadonlyArray<File>, sourceMapper: SourceMapper)
-    : Promise<{ instrumentedFiles: ReadonlyArray<File>, coverageMaps: CoverageMapsByFile }> {
+    : Promise<{ coverageMaps: CoverageMapsByFile; instrumentedFiles: ReadonlyArray<File> }> {
     const filesToInstrument = this.inputFiles.filesToMutate.map(mutateFile => sourceMapper.transpiledFileNameFor(mutateFile.name));
     const coverageInstrumenterTranspiler = new CoverageInstrumenterTranspiler(this.options, filesToInstrument);
     const instrumentedFiles = await coverageInstrumenterTranspiler.transpile(files);
-    return { coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps, instrumentedFiles };
-  }
 
-  private validateResult(runResult: RunResult, timing: Timing): void {
-    switch (runResult.status) {
-      case RunStatus.Complete:
-        const failedTests = this.filterOutFailedTests(runResult);
-        if (failedTests.length) {
-          this.logFailedTestsInInitialRun(failedTests);
-          throw new Error('There were failed tests in the initial test run.');
-        }
-        if (runResult.tests.length === 0) {
-          this.log.warn('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
-          return;
-        } else {
-          this.logInitialTestRunSucceeded(runResult.tests, timing);
-          return;
-        }
-      case RunStatus.Error:
-        this.logErrorsInInitialRun(runResult);
-        break;
-      case RunStatus.Timeout:
-        this.logTimeoutInitialRun(runResult);
-        break;
-    }
-    throw new Error('Something went wrong in the initial test run');
+    return { coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps, instrumentedFiles };
   }
 
   /**
@@ -133,6 +96,7 @@ export default class InitialTestExecutor {
   private calculateTiming(grossTimeMS: number, tests: ReadonlyArray<TestResult>): Timing {
     const netTimeMS = tests.reduce((total, test) => total + test.timeSpentMs, 0);
     const overheadTimeMS = grossTimeMS - netTimeMS;
+
     return {
       net: netTimeMS,
       overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS
@@ -150,7 +114,12 @@ export default class InitialTestExecutor {
       config: this.options,
       produceSourceMaps: this.options.coverageAnalysis !== 'off'
     };
+
     return new TranspilerFacade(transpilerSettings);
+  }
+
+  private filterOutFailedTests(runResult: RunResult) {
+    return runResult.tests.filter(testResult => testResult.status === TestStatus.Failed);
   }
 
   private getCollectCoverageHooksIfNeeded(): string | undefined {
@@ -158,27 +127,21 @@ export default class InitialTestExecutor {
       if (this.testFramework) {
         // Add piece of javascript to collect coverage per test results
         this.log.debug(`Adding test hooks for coverageAnalysis "perTest".`);
+
         return coveragePerTestHooks(this.testFramework);
       } else {
         this.log.warn('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
       }
     }
+
     return undefined;
   }
-
-  private logTranspileResult(transpiledFiles: ReadonlyArray<File>) {
-    if (this.options.transpilers.length && this.log.isDebugEnabled()) {
-      this.log.debug(`Transpiled files: ${JSON.stringify(transpiledFiles.map(f => `${f.name}`), null, 2)}`);
+  private logErrorsInInitialRun(runResult: RunResult) {
+    let message = 'One or more tests resulted in an error:';
+    if (runResult.errorMessages && runResult.errorMessages.length) {
+      runResult.errorMessages.forEach(error => message += `${EOL}\t${error}`);
     }
-  }
-
-  private filterOutFailedTests(runResult: RunResult) {
-    return runResult.tests.filter(testResult => testResult.status === TestStatus.Failed);
-  }
-
-  private logInitialTestRunSucceeded(tests: TestResult[], timing: Timing) {
-    this.log.info('Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
-      tests.length, this.timer.humanReadableElapsed(), timing.net, timing.overhead);
+    this.log.error(message);
   }
 
   private logFailedTestsInInitialRun(failedTests: TestResult[]): void {
@@ -191,17 +154,63 @@ export default class InitialTestExecutor {
     });
     this.log.error(message);
   }
-  private logErrorsInInitialRun(runResult: RunResult) {
-    let message = 'One or more tests resulted in an error:';
-    if (runResult.errorMessages && runResult.errorMessages.length) {
-      runResult.errorMessages.forEach(error => message += `${EOL}\t${error}`);
-    }
-    this.log.error(message);
+
+  private logInitialTestRunSucceeded(tests: TestResult[], timing: Timing) {
+    this.log.info('Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
+      tests.length, this.timer.humanReadableElapsed(), timing.net, timing.overhead);
   }
 
   private logTimeoutInitialRun(runResult: RunResult) {
     let message = 'Initial test run timed out! Ran following tests before timeout:';
     runResult.tests.forEach(test => message += `${EOL}\t${test.name} (${TestStatus[test.status]})`);
     this.log.error(message);
+  }
+
+  private logTranspileResult(transpiledFiles: ReadonlyArray<File>) {
+    if (this.options.transpilers.length && this.log.isDebugEnabled()) {
+      this.log.debug(`Transpiled files: ${JSON.stringify(transpiledFiles.map(f => `${f.name}`), null, 2)}`);
+    }
+  }
+
+  private async runInSandbox(files: ReadonlyArray<File>): Promise<{ grossTimeMS: number; runResult: RunResult }> {
+    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0, this.loggingContext);
+    this.timer.mark(INITIAL_TEST_RUN_MARKER);
+    const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT, this.getCollectCoverageHooksIfNeeded());
+    const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
+    await sandbox.dispose();
+
+    return { runResult, grossTimeMS };
+  }
+
+  private async transpileInputFiles(): Promise<ReadonlyArray<File>> {
+    const transpilerFacade = this.createTranspilerFacade();
+
+    return transpilerFacade.transpile(this.inputFiles.files);
+  }
+
+  private validateResult(runResult: RunResult, timing: Timing): void {
+    switch (runResult.status) {
+      case RunStatus.Complete:
+        const failedTests = this.filterOutFailedTests(runResult);
+        if (failedTests.length) {
+          this.logFailedTestsInInitialRun(failedTests);
+          throw new Error('There were failed tests in the initial test run.');
+        }
+        if (runResult.tests.length === 0) {
+          this.log.warn('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
+
+          return;
+        } else {
+          this.logInitialTestRunSucceeded(runResult.tests, timing);
+
+          return;
+        }
+      case RunStatus.Error:
+        this.logErrorsInInitialRun(runResult);
+        break;
+      case RunStatus.Timeout:
+        this.logTimeoutInitialRun(runResult);
+    }
+    throw new Error('Something went wrong in the initial test run');
   }
 }

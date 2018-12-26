@@ -1,11 +1,11 @@
-import * as path from 'path';
-import * as fs from 'fs';
 import { expect } from 'chai';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
+import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
-import { CONFIG_KEY } from '../../src/helpers/keys';
 
 describe('Use header file integration', () => {
 
@@ -16,7 +16,7 @@ describe('Use header file integration', () => {
     const configEditor = new TypescriptConfigEditor();
     config = new Config();
     config.set({
-      tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'useHeaderFile', 'tsconfig.json'),
+      tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'useHeaderFile', 'tsconfig.json')
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));

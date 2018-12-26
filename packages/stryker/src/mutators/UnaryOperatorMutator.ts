@@ -1,15 +1,15 @@
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
-import NodeMutator from './NodeMutator';
 import { IdentifiedNode } from './IdentifiedNode';
+import NodeMutator from './NodeMutator';
 
 export default class UnaryOperatorMutator implements NodeMutator {
   public name = 'UnaryOperator';
-  private readonly type = Syntax.UnaryExpression;
   private readonly operators: { [targetedOperator: string]: estree.UnaryOperator } = {
     '+': '-',
     '-': '+'
   };
+  private readonly type = Syntax.UnaryExpression;
 
   public applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] {
     const nodes: IdentifiedNode[] = [];

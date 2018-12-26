@@ -1,8 +1,8 @@
-import { Config } from 'stryker-api/config';
-import { RunnerOptions, RunStatus, TestStatus, RunOptions } from 'stryker-api/test_runner';
-import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as path from 'path';
+import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
+import { RunnerOptions, RunOptions, RunStatus, TestStatus } from 'stryker-api/test_runner';
 
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
 const paths = require('react-scripts-ts/config/paths');

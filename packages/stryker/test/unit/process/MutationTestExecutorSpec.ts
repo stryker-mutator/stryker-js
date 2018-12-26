@@ -3,21 +3,21 @@ import * as _ from 'lodash';
 import { empty, of } from 'rxjs';
 import { Config } from 'stryker-api/config';
 import { File, LogLevel } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
 import { MutantStatus } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
-import { Logger } from 'stryker-api/logging';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import MutantTestExecutor from '../../../src/process/MutationTestExecutor';
+import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import Sandbox from '../../../src/Sandbox';
 import SandboxPool, * as sandboxPool from '../../../src/SandboxPool';
 import TestableMutant from '../../../src/TestableMutant';
 import TranspiledMutant from '../../../src/TranspiledMutant';
-import MutantTestExecutor from '../../../src/process/MutationTestExecutor';
-import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import MutantTranspiler, * as mutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import '../../helpers/globals';
-import { Mock, config, file, mock, mutantResult, testFramework, testResult, testableMutant, transpiledMutant, runResult } from '../../helpers/producers';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import currentLogMock from '../../helpers/logMock';
+import { config, file, Mock, mock, mutantResult, runResult, testableMutant, testFramework, testResult, transpiledMutant } from '../../helpers/producers';
 
 const createTranspiledMutants = (...n: number[]) => {
   return n.map(n => {
@@ -25,6 +25,7 @@ const createTranspiledMutants = (...n: number[]) => {
     if (n) {
       mutant.mutant.selectTest(testResult(), n);
     }
+
     return mutant;
   });
 };

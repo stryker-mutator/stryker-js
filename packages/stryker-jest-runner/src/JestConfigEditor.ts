@@ -1,12 +1,12 @@
 import * as fs from 'fs';
+import { Configuration } from 'jest';
 import { Config, ConfigEditor } from 'stryker-api/config';
-import JestConfigLoader from './configLoaders/JestConfigLoader';
+import { getLogger } from 'stryker-api/logging';
 import CustomJestConfigLoader from './configLoaders/CustomJestConfigLoader';
+import JestConfigLoader from './configLoaders/JestConfigLoader';
 import ReactScriptsJestConfigLoader from './configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader from './configLoaders/ReactScriptsTSJestConfigLoader';
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
-import { Configuration } from 'jest';
-import { getLogger } from 'stryker-api/logging';
 
 const DEFAULT_PROJECT_NAME = 'custom';
 const DEFAULT_PROJECT_NAME_DEPRECATED = 'default';
@@ -52,6 +52,6 @@ export default class JestConfigEditor implements ConfigEditor {
   }
 
   private overrideProperties(config: Configuration) {
-    return Object.assign(config, JEST_OVERRIDE_OPTIONS);
+    return {...config, ...JEST_OVERRIDE_OPTIONS};
   }
 }

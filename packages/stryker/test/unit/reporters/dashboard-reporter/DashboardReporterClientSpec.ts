@@ -1,9 +1,9 @@
-import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import { HttpClient } from 'typed-rest-client/HttpClient';
-import { Mock, mock } from '../../../helpers/producers';
 import { expect } from 'chai';
 import { Logger } from 'stryker-api/logging';
+import { HttpClient } from 'typed-rest-client/HttpClient';
+import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import currentLogMock from '../../../helpers/logMock';
+import { Mock, mock } from '../../../helpers/producers';
 
 describe('DashboardReporterClient', () => {
 

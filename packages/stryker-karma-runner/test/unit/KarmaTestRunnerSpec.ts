@@ -1,17 +1,16 @@
-import { EventEmitter } from 'events';
 import { expect } from 'chai';
-import * as logging from 'stryker-api/logging';
+import { EventEmitter } from 'events';
 import * as karma from 'karma';
-import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
-import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
-import KarmaTestRunner from '../../src/KarmaTestRunner';
+import * as logging from 'stryker-api/logging';
 import {
   RunnerOptions,
+  RunStatus,
   TestResult,
-  TestStatus,
-  RunStatus
+  TestStatus
 } from 'stryker-api/test_runner';
-import LoggerStub from '../helpers/LoggerStub';
+import KarmaTestRunner from '../../src/KarmaTestRunner';
+import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
+import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import StrykerKarmaSetup, {
   DEPRECATED_KARMA_CONFIG,
   DEPRECATED_KARMA_CONFIG_FILE,
@@ -19,6 +18,7 @@ import StrykerKarmaSetup, {
 } from '../../src/StrykerKarmaSetup';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
+import LoggerStub from '../helpers/LoggerStub';
 
 describe('KarmaTestRunner', () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
@@ -268,13 +268,11 @@ describe('KarmaTestRunner', () => {
   });
 
   function testResult(overrides?: Partial<TestResult>): TestResult {
-    return Object.assign(
-      {
+    return {
         name: 'foobar',
         status: TestStatus.Success,
-        timeSpentMs: 0
-      },
-      overrides
-    );
+        timeSpentMs: 0,
+      ...overrides
+    };
   }
 });

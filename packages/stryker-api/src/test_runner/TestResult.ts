@@ -5,6 +5,10 @@ import TestStatus from './TestStatus';
  */
 interface TestResult {
   /**
+   * Optional: messages in case of status: Failed
+   */
+  failureMessages?: string[];
+  /**
    * The full human readable name of the test
    */
   name: string;
@@ -16,10 +20,6 @@ interface TestResult {
    * The time it took to run the test
    */
   timeSpentMs: number;
-  /**
-   * Optional: messages in case of status: Failed
-   */
-  failureMessages?: string[];
 }
 
 export default TestResult;

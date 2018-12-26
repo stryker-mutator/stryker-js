@@ -1,9 +1,8 @@
-import {Config, ConfigEditor, ConfigEditorFactory} from 'stryker-api/config';
+import { Config, ConfigEditor, ConfigEditorFactory } from 'stryker-api/config';
 
 const config: Config = new Config();
 
 class MyConfigEditor {
-  constructor() { }
 
   public edit(config: Config) {
     config.set({ myConfig: true });

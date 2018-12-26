@@ -11,6 +11,7 @@ export default class ObjectLiteralMutator implements NodeMutator {
     if (types.isObjectExpression(node) && node.properties.length > 0) {
       const mutatedNode = copy(node);
       mutatedNode.properties = [];
+
       return [mutatedNode];
     }
   }

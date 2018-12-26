@@ -1,7 +1,7 @@
-import { TestFramework } from 'stryker-api/test_framework';
-import { MutatorDescriptor, MutationScoreThresholds, LogLevel } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
+import { TestFramework } from 'stryker-api/test_framework';
 import StrykerError from '../utils/StrykerError';
 
 export default class ConfigValidator {
@@ -28,58 +28,19 @@ export default class ConfigValidator {
     this.crashIfNeeded();
   }
 
-  private validateTestFramework() {
-    if (this.strykerConfig.coverageAnalysis === 'perTest' && !this.testFramework) {
-      this.invalidate('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
+  private crashIfNeeded() {
+    if (!this.isValid) {
+      throw new StrykerError('Stryker could not recover from this configuration error, see fatal log message(s) above.');
     }
   }
 
-  private validateMutator() {
-    const mutator = this.strykerConfig.mutator;
-    if (typeof mutator === 'object') {
-      const mutatorDescriptor = mutator as MutatorDescriptor;
-      this.validateIsString('mutator.name', mutatorDescriptor.name);
-      this.validateIsStringArray('mutator.excludedMutations', mutatorDescriptor.excludedMutations);
-    } else if (typeof mutator !== 'string') {
-      this.invalidate(`Value "${mutator}" is invalid for \`mutator\`. Expected either a string or an object`);
-    }
+  private invalidate(message: string) {
+    this.log.fatal(message);
+    this.isValid = false;
   }
 
-  private validateThresholds() {
-    const thresholds = this.strykerConfig.thresholds;
-    this.validateThresholdsValueExists('high', thresholds.high);
-    this.validateThresholdsValueExists('low', thresholds.low);
-    this.validateThresholdValue('high', thresholds.high);
-    this.validateThresholdValue('low', thresholds.low);
-    this.validateThresholdValue('break', thresholds.break);
-    if (thresholds.high < thresholds.low) {
-      this.invalidate(`\`thresholds.high\` is lower than \`thresholds.low\` (${thresholds.high} < ${thresholds.low})`);
-    }
-  }
-
-  private validateThresholdValue(name: keyof MutationScoreThresholds, value: number | null) {
-    if (typeof value === 'number' && (value < 0 || value > 100)) {
-      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
-    }
-  }
-
-  private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: number | undefined) {
-    if (typeof value !== 'number') {
-      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
-    }
-  }
-
-  private validateLogLevel(logProperty: 'logLevel' | 'fileLogLevel') {
-    const logLevel = this.strykerConfig[logProperty];
-    const VALID_LOG_LEVEL_VALUES = [LogLevel.Fatal, LogLevel.Error, LogLevel.Warning, LogLevel.Information, LogLevel.Debug, LogLevel.Trace, LogLevel.Off];
-    if (VALID_LOG_LEVEL_VALUES.indexOf(logLevel) < 0) {
-      this.invalidate(`Value "${logLevel}" is invalid for \`logLevel\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`);
-    }
-  }
-
-  private validateTimeout() {
-    this.validateIsNumber('timeoutMS', this.strykerConfig.timeoutMS);
-    this.validateIsNumber('timeoutFactor', this.strykerConfig.timeoutFactor);
+  private joinQuotedList(arr: string[]) {
+    return arr.map(v => `"${v}"`).join(', ');
   }
 
   private validateCoverageAnalysis() {
@@ -97,12 +58,6 @@ export default class ConfigValidator {
       this.invalidate(`Value "${this.strykerConfig.coverageAnalysis}" for \`coverageAnalysis\` is invalid with multiple transpilers (configured transpilers: ${
         this.strykerConfig.transpilers.join(', ')
         }). Please report this to the Stryker team if you whish this feature to be implemented`);
-    }
-  }
-
-  private crashIfNeeded() {
-    if (!this.isValid) {
-      throw new StrykerError('Stryker could not recover from this configuration error, see fatal log message(s) above.');
     }
   }
 
@@ -130,12 +85,57 @@ export default class ConfigValidator {
     }
   }
 
-  private invalidate(message: string) {
-    this.log.fatal(message);
-    this.isValid = false;
+  private validateLogLevel(logProperty: 'logLevel' | 'fileLogLevel') {
+    const logLevel = this.strykerConfig[logProperty];
+    const VALID_LOG_LEVEL_VALUES = [LogLevel.Fatal, LogLevel.Error, LogLevel.Warning, LogLevel.Information, LogLevel.Debug, LogLevel.Trace, LogLevel.Off];
+    if (VALID_LOG_LEVEL_VALUES.indexOf(logLevel) < 0) {
+      this.invalidate(`Value "${logLevel}" is invalid for \`logLevel\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`);
+    }
   }
 
-  private joinQuotedList(arr: string[]) {
-    return arr.map(v => `"${v}"`).join(', ');
+  private validateMutator() {
+    const mutator = this.strykerConfig.mutator;
+    if (typeof mutator === 'object') {
+      const mutatorDescriptor = mutator as MutatorDescriptor;
+      this.validateIsString('mutator.name', mutatorDescriptor.name);
+      this.validateIsStringArray('mutator.excludedMutations', mutatorDescriptor.excludedMutations);
+    } else if (typeof mutator !== 'string') {
+      this.invalidate(`Value "${mutator}" is invalid for \`mutator\`. Expected either a string or an object`);
+    }
+  }
+
+  private validateTestFramework() {
+    if (this.strykerConfig.coverageAnalysis === 'perTest' && !this.testFramework) {
+      this.invalidate('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
+    }
+  }
+
+  private validateThresholds() {
+    const thresholds = this.strykerConfig.thresholds;
+    this.validateThresholdsValueExists('high', thresholds.high);
+    this.validateThresholdsValueExists('low', thresholds.low);
+    this.validateThresholdValue('high', thresholds.high);
+    this.validateThresholdValue('low', thresholds.low);
+    this.validateThresholdValue('break', thresholds.break);
+    if (thresholds.high < thresholds.low) {
+      this.invalidate(`\`thresholds.high\` is lower than \`thresholds.low\` (${thresholds.high} < ${thresholds.low})`);
+    }
+  }
+
+  private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: number | undefined) {
+    if (typeof value !== 'number') {
+      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
+    }
+  }
+
+  private validateThresholdValue(name: keyof MutationScoreThresholds, value: number | null) {
+    if (typeof value === 'number' && (value < 0 || value > 100)) {
+      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
+    }
+  }
+
+  private validateTimeout() {
+    this.validateIsNumber('timeoutMS', this.strykerConfig.timeoutMS);
+    this.validateIsNumber('timeoutFactor', this.strykerConfig.timeoutFactor);
   }
 }

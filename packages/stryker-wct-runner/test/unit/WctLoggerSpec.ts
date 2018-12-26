@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import WctLogger from '../../src/WctLogger';
 import { EventEmitter } from 'events';
+import WctLogger from '../../src/WctLogger';
 import logger from '../helpers/loggingMock';
 
 describe(WctLogger.name, () => {

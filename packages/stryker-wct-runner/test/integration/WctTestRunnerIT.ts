@@ -1,8 +1,8 @@
-import * as path from 'path';
-import WctTestRunner from '../../src/WctTestRunner';
 import { expect } from 'chai';
-import { RunResult, TestStatus, RunStatus, TestResult } from 'stryker-api/test_runner';
+import * as path from 'path';
 import { StrykerOptions } from 'stryker-api/core';
+import { RunResult, RunStatus, TestResult, TestStatus } from 'stryker-api/test_runner';
+import WctTestRunner from '../../src/WctTestRunner';
 
 type TimelessRunResult = {
   [K in keyof RunResult]: RunResult[K] extends TestResult[] ? TimelessTestResult[] : RunResult[K];

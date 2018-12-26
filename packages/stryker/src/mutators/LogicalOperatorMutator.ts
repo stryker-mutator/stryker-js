@@ -1,15 +1,15 @@
 import { Syntax } from 'esprima';
 import * as estree from 'estree';
-import NodeMutator from './NodeMutator';
 import { IdentifiedNode } from './IdentifiedNode';
+import NodeMutator from './NodeMutator';
 
 export default class LogicalOperatorMutator implements NodeMutator {
   public name = 'LogicalOperator';
-  private readonly type = Syntax.LogicalExpression;
   private readonly operators: { [targetedOperator: string]: estree.LogicalOperator } = {
     '&&': '||',
     '||': '&&'
   };
+  private readonly type = Syntax.LogicalExpression;
 
   public applyMutations(node: IdentifiedNode, copy: <T extends IdentifiedNode> (obj: T, deep?: boolean) => T): IdentifiedNode[] {
     const nodes: IdentifiedNode[] = [];

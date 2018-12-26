@@ -1,11 +1,11 @@
-import * as path from 'path';
+import { expect } from 'chai';
 import * as fs from 'fs';
+import * as path from 'path';
 import { Config } from 'stryker-api/config';
-import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import { File } from 'stryker-api/core';
 import { CONFIG_KEY } from '../../src/helpers/keys';
+import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
-import { expect } from 'chai';
 
 describe('AllowJS integration', () => {
 
@@ -16,7 +16,7 @@ describe('AllowJS integration', () => {
     const configEditor = new TypescriptConfigEditor();
     config = new Config();
     config.set({
-      tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'allowJS', 'tsconfig.json'),
+      tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'allowJS', 'tsconfig.json')
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));

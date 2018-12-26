@@ -1,5 +1,5 @@
 import { Config } from 'stryker-api/config';
-import { normalizeFileFromTypescript, isTypescriptFile, getTSConfig } from '../helpers/tsHelpers';
+import { getTSConfig, isTypescriptFile, normalizeFileFromTypescript } from '../helpers/tsHelpers';
 
 /**
  * Represents a transpile filter. This is the component that decides on which files needs to be transpiled.
@@ -8,7 +8,6 @@ import { normalizeFileFromTypescript, isTypescriptFile, getTSConfig } from '../h
  * If there is a tsConfig, that will be used. If not, a default is used (transpile all TS-like files)
  */
 export default abstract class TranspileFilter {
-  public abstract isIncluded(fileName: string): boolean;
 
   public static create(config: Config): TranspileFilter {
     const parsedCommandLine = getTSConfig(config);
@@ -18,6 +17,7 @@ export default abstract class TranspileFilter {
       return new DefaultFilter();
     }
   }
+  public abstract isIncluded(fileName: string): boolean;
 }
 
 /**

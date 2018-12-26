@@ -4,12 +4,12 @@ import { flatMap, toArray } from 'rxjs/operators';
 import { Config } from 'stryker-api/config';
 import { File, LogLevel } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
+import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import Sandbox from '../../src/Sandbox';
 import SandboxPool from '../../src/SandboxPool';
 import { Task } from '../../src/utils/Task';
 import '../helpers/globals';
-import { Mock, config, file, mock, testFramework } from '../helpers/producers';
-import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import { config, file, Mock, mock, testFramework } from '../helpers/producers';
 import { sleep } from '../helpers/testUtils';
 
 const OVERHEAD_TIME_MS = 42;

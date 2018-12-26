@@ -7,6 +7,39 @@ export default class Echo {
 
   constructor(public name: string) { }
 
+  public cwd() {
+    return process.cwd();
+  }
+
+  public debug(message: string) {
+    this.logger.debug(message);
+  }
+
+  public echoFile(file: File) {
+    return file.textContent;
+  }
+
+  public exit(code: number) {
+    process.exit(code);
+
+    return new Promise(() => {/*never resolve*/ });
+  }
+
+  public memoryLeak() {
+    const arr: number[] = [];
+    while (true) {
+      arr.push(1);
+    }
+  }
+
+  public readFile() {
+    return new File('foobar.txt', 'hello foobar');
+  }
+
+  public reject(error: string) {
+    return Promise.reject(new Error(error));
+  }
+
   public say(value: string) {
     return `${this.name}: ${value}`;
   }
@@ -19,47 +52,15 @@ export default class Echo {
     });
   }
 
-  public echoFile(file: File) {
-    return file.textContent;
-  }
-
-  public exit(code: number) {
-    process.exit(code);
-    return new Promise(() => {/*never resolve*/ });
-  }
-
-  public readFile() {
-    return new File('foobar.txt', 'hello foobar');
-  }
-
-  public cwd() {
-    return process.cwd();
-  }
-
-  public debug(message: string) {
-    this.logger.debug(message);
-  }
-
-  public trace(message: string) {
-    this.logger.trace(message);
-  }
-
-  public reject(error: string) {
-    return Promise.reject(new Error(error));
+  public stderr(...args: string[]) {
+    args.forEach(arg => console.error(arg));
   }
 
   public stdout(...args: string[]) {
     args.forEach(arg => console.log(arg));
   }
 
-  public stderr(...args: string[]) {
-    args.forEach(arg => console.error(arg));
-  }
-
-  public memoryLeak() {
-    const arr: number[] = [];
-    while (true) {
-      arr.push(1);
-    }
+  public trace(message: string) {
+    this.logger.trace(message);
   }
 }

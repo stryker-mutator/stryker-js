@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import MemoryFS, * as memoryFSModule from '../../../src/fs/MemoryFS';
-import InputFileSystem from '../../../src/fs/InputFileSystem';
-import { Mock, createMockInstance } from '../../helpers/producers';
 import { CachedInputFileSystem } from 'enhanced-resolve';
+import InputFileSystem from '../../../src/fs/InputFileSystem';
+import MemoryFS, * as memoryFSModule from '../../../src/fs/MemoryFS';
+import { createMockInstance, Mock } from '../../helpers/producers';
 
 describe('InputFileSystem', () => {
   let sut: InputFileSystem;

@@ -1,5 +1,5 @@
-import { LogLevel } from 'stryker-api/core';
 import * as log4js from 'log4js';
+import { LogLevel } from 'stryker-api/core';
 
 /**
  * Determines the minimal log level (where trace < off)

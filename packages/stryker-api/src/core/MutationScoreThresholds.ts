@@ -7,9 +7,9 @@
  *  mutation score >= high => score is in awesome zone, display in green.
  */
 interface MutationScoreThresholds {
+  break: number | null;
   high: number;
   low: number;
-  break: number | null;
 }
 
 export default MutationScoreThresholds;

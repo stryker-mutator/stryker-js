@@ -1,9 +1,9 @@
 import * as log4js from 'log4js';
-import { LoggerFactory } from 'stryker-api/logging';
 import { LogLevel } from 'stryker-api/core';
-import { minLevel } from './logUtils';
-import LoggingClientContext from './LoggingClientContext';
+import { LoggerFactory } from 'stryker-api/logging';
 import { getFreePort } from '../utils/netUtils';
+import LoggingClientContext from './LoggingClientContext';
+import { minLevel } from './logUtils';
 
 enum AppenderName {
   File = 'file',
@@ -15,7 +15,7 @@ enum AppenderName {
   Server = 'server'
 }
 
-const layouts: { color: log4js.PatternLayout, noColor: log4js.PatternLayout } = {
+const layouts: { color: log4js.PatternLayout; noColor: log4js.PatternLayout } = {
   color: {
     pattern: '%[%r (%z) %p %c%] %m',
     type: 'pattern'
@@ -33,60 +33,16 @@ interface AppendersConfiguration {
 const LOG_FILE_NAME = 'stryker.log';
 export default class LogConfigurator {
 
-  private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): AppendersConfiguration {
-
-    // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
-    const multiAppender = { type: require.resolve('./MultiAppender'), appenders: [AppenderName.FilteredConsoleLevel] };
-
-    const consoleLayout = allowConsoleColors ? layouts.color : layouts.noColor;
-
-    let allAppenders: AppendersConfiguration = {
-      [AppenderName.Console]: { type: 'stdout', layout: consoleLayout },
-      // Exclude messages like: "ERROR log4js A worker log process hung up unexpectedly" #1245
-      [AppenderName.FilteredConsoleCategory]: {type: 'categoryFilter', appender: AppenderName.Console, exclude: 'log4js' },
-      [AppenderName.FilteredConsoleLevel]: { type: 'logLevelFilter', appender: AppenderName.FilteredConsoleCategory, level: consoleLogLevel },
-      [AppenderName.All]: multiAppender,
-    };
-
-    // only add file if it is needed. Otherwise log4js will create the file directly, pretty annoying.
-    if (fileLogLevel.toUpperCase() !== LogLevel.Off.toUpperCase()) {
-      const fileAppender: log4js.FileAppender = { type: 'file', filename: LOG_FILE_NAME, layout: layouts.noColor };
-      const filteredFileAppender: log4js.LogLevelFilterAppender = { type: 'logLevelFilter', appender: 'file', level: fileLogLevel };
-
-      // Don't simply add the appenders, instead actually make sure they are ordinal "before" the others.
-      // See https://github.com/log4js-node/log4js-node/issues/746
-      allAppenders = Object.assign({ [AppenderName.File]: fileAppender, [AppenderName.FilteredFile]: filteredFileAppender }, allAppenders);
-
-      multiAppender.appenders.push(AppenderName.FilteredFile);
-    }
-
-    return allAppenders;
-  }
-
-  private static createLog4jsConfig(defaultLogLevel: LogLevel, appenders: AppendersConfiguration): log4js.Configuration {
-    return {
-      appenders,
-      categories: {
-        default: {
-          appenders: [AppenderName.All], level: defaultLogLevel
-        }
-      }
-    };
-  }
-
-  private static setImplementation(): void {
-    LoggerFactory.setLogImplementation(log4js.getLogger);
-  }
-
   /**
-   * Configure logging for the master process. Either call this method or `configureChildProcess` before any `getLogger` calls.
-   * @param consoleLogLevel The log level to configure for the console
-   * @param fileLogLevel The log level to configure for the "stryker.log" file
+   * Configures the logging for a worker process. Sends all logging to the master process.
+   * Either call this method or `configureMainProcess` before any `getLogger` calls.
+   * @param context the logging client context used to configure the logging client
    */
-  public static configureMainProcess(consoleLogLevel: LogLevel = LogLevel.Information, fileLogLevel: LogLevel = LogLevel.Off, allowConsoleColors: boolean = true) {
+  public static configureChildProcess(context: LoggingClientContext) {
     this.setImplementation();
-    const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);
-    log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));
+    const clientAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'worker', loggerPort: context.port };
+    const appenders: AppendersConfiguration = { [AppenderName.All]: clientAppender };
+    log4js.configure(this.createLog4jsConfig(context.level, appenders));
   }
 
   /**
@@ -118,19 +74,19 @@ export default class LogConfigurator {
       level: defaultLogLevel,
       port: loggerPort
     };
+
     return context;
   }
 
   /**
-   * Configures the logging for a worker process. Sends all logging to the master process.
-   * Either call this method or `configureMainProcess` before any `getLogger` calls.
-   * @param context the logging client context used to configure the logging client
+   * Configure logging for the master process. Either call this method or `configureChildProcess` before any `getLogger` calls.
+   * @param consoleLogLevel The log level to configure for the console
+   * @param fileLogLevel The log level to configure for the "stryker.log" file
    */
-  public static configureChildProcess(context: LoggingClientContext) {
+  public static configureMainProcess(consoleLogLevel: LogLevel = LogLevel.Information, fileLogLevel: LogLevel = LogLevel.Off, allowConsoleColors = true) {
     this.setImplementation();
-    const clientAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'worker', loggerPort: context.port };
-    const appenders: AppendersConfiguration = { [AppenderName.All]: clientAppender };
-    log4js.configure(this.createLog4jsConfig(context.level, appenders));
+    const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);
+    log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));
   }
 
   public static shutdown(): Promise<void> {
@@ -143,5 +99,50 @@ export default class LogConfigurator {
         }
       });
     });
+  }
+
+  private static createLog4jsConfig(defaultLogLevel: LogLevel, appenders: AppendersConfiguration): log4js.Configuration {
+    return {
+      appenders,
+      categories: {
+        default: {
+          appenders: [AppenderName.All], level: defaultLogLevel
+        }
+      }
+    };
+  }
+
+  private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): AppendersConfiguration {
+
+    // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
+    const multiAppender = { type: require.resolve('./MultiAppender'), appenders: [AppenderName.FilteredConsoleLevel] };
+
+    const consoleLayout = allowConsoleColors ? layouts.color : layouts.noColor;
+
+    let allAppenders: AppendersConfiguration = {
+      [AppenderName.Console]: { type: 'stdout', layout: consoleLayout },
+      // Exclude messages like: "ERROR log4js A worker log process hung up unexpectedly" #1245
+      [AppenderName.FilteredConsoleCategory]: {type: 'categoryFilter', appender: AppenderName.Console, exclude: 'log4js' },
+      [AppenderName.FilteredConsoleLevel]: { type: 'logLevelFilter', appender: AppenderName.FilteredConsoleCategory, level: consoleLogLevel },
+      [AppenderName.All]: multiAppender
+    };
+
+    // only add file if it is needed. Otherwise log4js will create the file directly, pretty annoying.
+    if (fileLogLevel.toUpperCase() !== LogLevel.Off.toUpperCase()) {
+      const fileAppender: log4js.FileAppender = { type: 'file', filename: LOG_FILE_NAME, layout: layouts.noColor };
+      const filteredFileAppender: log4js.LogLevelFilterAppender = { type: 'logLevelFilter', appender: 'file', level: fileLogLevel };
+
+      // Don't simply add the appenders, instead actually make sure they are ordinal "before" the others.
+      // See https://github.com/log4js-node/log4js-node/issues/746
+      allAppenders = { [AppenderName.File]: fileAppender, [AppenderName.FilteredFile]: filteredFileAppender, ...allAppenders};
+
+      multiAppender.appenders.push(AppenderName.FilteredFile);
+    }
+
+    return allAppenders;
+  }
+
+  private static setImplementation(): void {
+    LoggerFactory.setLogImplementation(log4js.getLogger);
   }
 }

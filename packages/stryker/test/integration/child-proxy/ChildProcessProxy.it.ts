@@ -1,19 +1,19 @@
-import * as path from 'path';
+import { expect } from 'chai';
 import getPort = require('get-port');
 import * as log4js from 'log4js';
-import { expect } from 'chai';
+import * as path from 'path';
+import { filter } from 'rxjs/operators';
 import { File, LogLevel } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
-import Echo from './Echo';
+import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
+import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
 import { Task } from '../../../src/utils/Task';
 import LoggingServer from '../../helpers/LoggingServer';
-import { filter } from 'rxjs/operators';
-import { Mock } from '../../helpers/producers';
 import currentLogMock from '../../helpers/logMock';
+import { Mock } from '../../helpers/producers';
 import { sleep } from '../../helpers/testUtils';
-import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
+import Echo from './Echo';
 
 describe('ChildProcessProxy', () => {
 
@@ -125,5 +125,6 @@ describe('ChildProcessProxy', () => {
 
 function toLogLevel(level: log4js.Level) {
   const levelName = (level as any).levelStr.toLowerCase();
+
   return [LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Off, LogLevel.Trace, LogLevel.Warning].find(level => level === levelName);
 }

@@ -1,16 +1,16 @@
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
 import { StrykerOptions } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
 import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
 
 export default class MochaOptionsLoader {
-
-  private readonly log = getLogger(MochaOptionsLoader.name);
   private readonly DEFAULT_MOCHA_OPTS = 'test/mocha.opts';
 
+  private readonly log = getLogger(MochaOptionsLoader.name);
+
   public load(config: StrykerOptions): MochaRunnerOptions {
-    const mochaOptions = Object.assign({}, config[mochaOptionsKey]) as MochaRunnerOptions;
+    const mochaOptions = {...config[mochaOptionsKey]} as MochaRunnerOptions;
     let optsFileName = path.resolve(this.DEFAULT_MOCHA_OPTS);
 
     if (mochaOptions.opts) {
@@ -20,13 +20,31 @@ export default class MochaOptionsLoader {
     if (fs.existsSync(optsFileName)) {
       this.log.info(`Loading mochaOpts from "${optsFileName}"`);
       const options = fs.readFileSync(optsFileName, 'utf8');
+
       return Object.assign(this.parseOptsFile(options), mochaOptions);
     } else if (mochaOptions.opts) {
       this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
     } else {
       this.log.debug('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', mochaOptionsKey);
     }
+
     return mochaOptions;
+  }
+
+  private parseNextInt(args: string[]): number | undefined {
+    if (args.length > 1) {
+      return parseInt(args[1], 10);
+    } else {
+      return undefined;
+    }
+  }
+
+  private parseNextString(args: string[]): string | undefined {
+    if (args.length > 1) {
+      return args[1];
+    } else {
+      return undefined;
+    }
   }
 
   private parseOptsFile(optsFileContent: string): MochaRunnerOptions {
@@ -66,26 +84,10 @@ export default class MochaOptionsLoader {
             break;
           default:
             this.log.debug(`Ignoring option "${args[0]}" as it is not supported.`);
-            break;
         }
       }
     });
+
     return mochaRunnerOptions;
-  }
-
-  private parseNextInt(args: string[]): number | undefined {
-    if (args.length > 1) {
-      return parseInt(args[1], 10);
-    } else {
-      return undefined;
-    }
-  }
-
-  private parseNextString(args: string[]): string | undefined {
-    if (args.length > 1) {
-      return args[1];
-    } else {
-      return undefined;
-    }
   }
 }

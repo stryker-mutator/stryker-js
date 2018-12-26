@@ -1,15 +1,15 @@
 import { expect } from 'chai';
 import { toArray } from 'rxjs/operators';
 import { File, LogLevel } from 'stryker-api/core';
-import TranspiledMutant from '../../../src/TranspiledMutant';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import TranspiledMutant from '../../../src/TranspiledMutant';
 import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import TranspileResult from '../../../src/transpiler/TranspileResult';
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
 import { errorToString } from '../../../src/utils/objectUtils';
 import '../../helpers/globals';
-import { Mock, config, file, mock, testableMutant } from '../../helpers/producers';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { config, file, Mock, mock, testableMutant } from '../../helpers/producers';
 import { sleep } from '../../helpers/testUtils';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -22,7 +22,7 @@ describe('MutantTranspiler', () => {
   let transpilerFacadeMock: Mock<TranspilerFacade>;
   let transpiledFilesOne: File[];
   let transpiledFilesTwo: File[];
-  let childProcessProxyMock: { proxy: Mock<TranspilerFacade>, dispose: sinon.SinonStub };
+  let childProcessProxyMock: { dispose: sinon.SinonStub; proxy: Mock<TranspilerFacade> };
 
   beforeEach(() => {
     transpilerFacadeMock = mock(TranspilerFacade);
@@ -58,6 +58,7 @@ describe('MutantTranspiler', () => {
         sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }), LOGGING_CONTEXT);
         const actualResult = sut.initialize(expectedFiles);
         expect(transpilerFacadeMock.transpile).calledWith(expectedFiles);
+
         return expect(actualResult).eventually.eq(transpiledFilesOne);
       });
     });
@@ -102,7 +103,7 @@ describe('MutantTranspiler', () => {
 
         // Assert
         const expected: TranspiledMutant[] = [
-          { mutant, transpileResult: { error: errorToString(error), outputFiles: [] }, changedAnyTranspiledFiles: false },
+          { mutant, transpileResult: { error: errorToString(error), outputFiles: [] }, changedAnyTranspiledFiles: false }
         ];
         expect(actualResult).deep.eq(expected);
       });

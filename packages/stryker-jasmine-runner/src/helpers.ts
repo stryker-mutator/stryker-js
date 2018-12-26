@@ -1,5 +1,5 @@
-import { TestResult, TestStatus } from 'stryker-api/test_runner';
 import JasmineConstructor = require('jasmine');
+import { TestResult, TestStatus } from 'stryker-api/test_runner';
 
 export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, timeSpentMs: number): TestResult {
   let status = TestStatus.Failed;
@@ -11,6 +11,7 @@ export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, ti
   } else {
     failureMessages = specResult.failedExpectations.map(failedExpectation => failedExpectation.message);
   }
+
   return {
     failureMessages,
     name: specResult.fullName,

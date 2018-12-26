@@ -1,25 +1,25 @@
+import { expect } from 'chai';
+import * as mkdirp from 'mkdirp';
+import * as path from 'path';
+import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
+import { File, LogLevel } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import { Mutant } from 'stryker-api/mutant';
-import { Config } from 'stryker-api/config';
-import * as sinon from 'sinon';
-import * as path from 'path';
-import * as mkdirp from 'mkdirp';
-import { expect } from 'chai';
-import { File, LogLevel } from 'stryker-api/core';
-import { wrapInClosure, normalizeWhiteSpaces } from '../../src/utils/objectUtils';
+import { RunnerOptions } from 'stryker-api/test_runner';
+import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import Sandbox from '../../src/Sandbox';
-import { TempFolder } from '../../src/utils/TempFolder';
-import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunnerFactory';
-import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
-import { mutant as createMutant, testResult, Mock, createFileAlreadyExistsError } from '../helpers/producers';
 import SourceFile from '../../src/SourceFile';
-import '../helpers/globals';
+import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunnerFactory';
+import TestRunnerDecorator from '../../src/test-runner/TestRunnerDecorator';
+import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import * as fileUtils from '../../src/utils/fileUtils';
+import { normalizeWhiteSpaces, wrapInClosure } from '../../src/utils/objectUtils';
+import { TempFolder } from '../../src/utils/TempFolder';
+import '../helpers/globals';
 import currentLogMock from '../helpers/logMock';
-import TestRunnerDecorator from '../../src/test-runner/TestRunnerDecorator';
-import LoggingClientContext from '../../src/logging/LoggingClientContext';
-import { RunnerOptions } from 'stryker-api/test_runner';
+import { createFileAlreadyExistsError, Mock, mutant as createMutant, testResult } from '../helpers/producers';
 
 const OVERHEAD_TIME_MS = 0;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -56,7 +56,7 @@ describe('Sandbox', () => {
     expectedTestFrameworkHooksFile = path.join(sandboxDirectory, '___testHooksForStryker.js');
     files = [
       expectedFileToMutate,
-      notMutatedFile,
+      notMutatedFile
     ];
     sandbox.stub(TempFolder.instance(), 'createRandomFolder').returns(sandboxDirectory);
     writeFileStub = sandbox.stub(fileUtils, 'writeFile');
@@ -146,7 +146,7 @@ describe('Sandbox', () => {
       expect(testRunner.run).to.have.been.calledWith({
         mutatedFileName: undefined,
         testHooks: 'hooks',
-        timeout: 231313,
+        timeout: 231313
       });
     });
 
@@ -156,7 +156,7 @@ describe('Sandbox', () => {
       expect(testRunner.run).to.have.been.calledWith({
         mutatedFileName: 'path/to/file',
         testHooks: 'hooks',
-        timeout: 231313,
+        timeout: 231313
       });
     });
   });

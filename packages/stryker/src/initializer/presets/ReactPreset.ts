@@ -1,5 +1,5 @@
-import Preset from './Preset';
 import inquirer = require('inquirer');
+import Preset from './Preset';
 import PresetConfiguration from './PresetConfiguration';
 
 const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/react.md#react';
@@ -15,6 +15,13 @@ export class ReactPreset implements Preset {
     'stryker-jest-runner',
     'stryker-html-reporter'
   ];
+  private readonly jsxConf = `{
+      mutate: ['src/**/*.js?(x)', '!src/**/*@(.test|.spec|Spec).js?(x)'],
+      mutator: 'javascript',
+      ${this.sharedConfig}
+    }`;
+
+  private readonly jsxDependencies = ['stryker-javascript-mutator', ...this.generalDependencies];
 
   private readonly sharedConfig = `testRunner: 'jest',
     reporters: ['progress', 'clear-text', 'html'],
@@ -23,20 +30,13 @@ export class ReactPreset implements Preset {
       projectType: 'react'
     }
   `;
-
-  private readonly tsxDependencies = ['stryker-typescript', ...this.generalDependencies];
   private readonly tsxConf = `{
       mutate: ['src/**/*.ts?(x)', '!src/**/*@(.test|.spec|Spec).ts?(x)'],
       mutator: 'typescript',
       ${this.sharedConfig}
     }`;
 
-  private readonly jsxDependencies = ['stryker-javascript-mutator', ...this.generalDependencies];
-  private readonly jsxConf = `{
-      mutate: ['src/**/*.js?(x)', '!src/**/*@(.test|.spec|Spec).js?(x)'],
-      mutator: 'javascript',
-      ${this.sharedConfig}
-    }`;
+  private readonly tsxDependencies = ['stryker-typescript', ...this.generalDependencies];
 
   public async createConfig(): Promise<PresetConfiguration> {
     const choices: inquirer.ChoiceType[] = ['JSX', 'TSX'];
@@ -46,6 +46,7 @@ export class ReactPreset implements Preset {
       name: 'choice',
       type: 'list'
     });
+
     return this.load(answers.choice);
   }
   private load(choice: string): PresetConfiguration {

@@ -1,10 +1,10 @@
 import { expect } from 'chai';
+import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
-import { Config } from 'stryker-api/config';
+import ExpectMutation from 'stryker-mutator-specification/src/ExpectMutation';
 import JavaScriptMutator from '../../src/JavaScriptMutator';
 import NodeMutator from '../../src/mutators/NodeMutator';
-import ExpectMutation from 'stryker-mutator-specification/src/ExpectMutation';
 
 type MutatorConstructor = new() => NodeMutator;
 
@@ -23,8 +23,6 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
 
 /**
  * Place the mutant in the sourceText and remove all new-line tokens and excess whitespace in the mutant replacement
- * @param mutant
- * @param sourceText
  */
 function mutantToString(mutant: Mutant, sourceText: string) {
   return sourceText.substr(0, mutant.range[0]) +

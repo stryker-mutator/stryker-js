@@ -1,4 +1,4 @@
-import {Factory} from '../../core';
+import { Factory } from '../../core';
 import ConfigEditor from './ConfigEditor';
 
 namespace ConfigEditorFactory {

@@ -1,6 +1,6 @@
+import { Config } from '../../config';
 import { Factory } from '../../core';
 import Reporter from './Reporter';
-import { Config } from '../../config';
 
 namespace ReporterFactory {
   /**

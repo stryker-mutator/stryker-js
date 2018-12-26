@@ -1,9 +1,9 @@
-import { EventEmitter } from 'events';
 import { expect } from 'chai';
+import { EventEmitter } from 'events';
 import * as sinon from 'sinon';
-import WctReporter from '../../src/WctReporter';
-import { TestEndData } from 'web-component-tester/runner/clireporter';
 import { TestResult, TestStatus } from 'stryker-api/test_runner';
+import { TestEndData } from 'web-component-tester/runner/clireporter';
+import WctReporter from '../../src/WctReporter';
 
 describe(WctReporter.name, () => {
 
@@ -42,7 +42,7 @@ describe(WctReporter.name, () => {
         failureMessages: ['fooError'],
         name: 'true should be false',
         status: TestStatus.Failed,
-        timeSpentMs: 40,
+        timeSpentMs: 40
       });
   });
 
@@ -51,7 +51,7 @@ describe(WctReporter.name, () => {
         failureMessages: ['fooError'],
         name: 'true should be false',
         status: TestStatus.Failed,
-        timeSpentMs: 40,
+        timeSpentMs: 40
       });
   });
 
@@ -60,7 +60,7 @@ describe(WctReporter.name, () => {
         failureMessages: ['{"a":"fooError"}'],
         name: 'true should be false',
         status: TestStatus.Failed,
-        timeSpentMs: 40,
+        timeSpentMs: 40
       });
   });
 
@@ -69,7 +69,7 @@ describe(WctReporter.name, () => {
         failureMessages: ['42'],
         name: 'true should be false',
         status: TestStatus.Failed,
-        timeSpentMs: 40,
+        timeSpentMs: 40
       });
   });
 
@@ -78,7 +78,7 @@ describe(WctReporter.name, () => {
         failureMessages: ['fooError'],
         name: 'true should be false',
         status: TestStatus.Failed,
-        timeSpentMs: 40,
+        timeSpentMs: 40
       });
   });
 
@@ -87,7 +87,7 @@ describe(WctReporter.name, () => {
         failureMessages: undefined,
         name: 'true should be false',
         status: TestStatus.Skipped,
-        timeSpentMs: 40,
+        timeSpentMs: 40
       });
   });
 

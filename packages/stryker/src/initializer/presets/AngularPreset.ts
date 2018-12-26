@@ -1,18 +1,11 @@
+import * as os from 'os';
 import Preset from './Preset';
 import PresetConfiguration from './PresetConfiguration';
-import * as os from 'os';
 
 const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/angular.md#angular';
 
 export class AngularPreset implements Preset {
   public readonly name = 'angular-cli';
-  // Please keep config in sync with handbook
-  private readonly dependencies = [
-    'stryker',
-    'stryker-karma-runner',
-    'stryker-typescript',
-    'stryker-html-reporter'
-  ];
   private readonly config = `{
         mutate: [
           'src/**/*.ts',
@@ -33,6 +26,13 @@ export class AngularPreset implements Preset {
         maxConcurrentTestRunners: ${Math.floor(os.cpus().length / 2)}, // Recommended to use about half of your available cores when running stryker with angular.
         coverageAnalysis: 'off'
     }`;
+  // Please keep config in sync with handbook
+  private readonly dependencies = [
+    'stryker',
+    'stryker-karma-runner',
+    'stryker-typescript',
+    'stryker-html-reporter'
+  ];
   public async createConfig(): Promise<PresetConfiguration> {
     return { config: this.config, handbookUrl, dependencies: this.dependencies };
   }

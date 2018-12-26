@@ -1,8 +1,8 @@
+import chalk from 'chalk';
+import * as _ from 'lodash';
+import * as os from 'os';
 import { MutationScoreThresholds } from 'stryker-api/core';
 import { ScoreResult } from 'stryker-api/report';
-import * as os from 'os';
-import * as _ from 'lodash';
-import chalk from 'chalk';
 
 const FILES_ROOT_NAME = 'All files';
 
@@ -23,19 +23,8 @@ class Column {
     this.width = this.pad(dots(maxContentSize)).length;
   }
 
-  protected determineValueSize(row: ScoreResult = this.rows, ancestorCount: number = 0): number {
-    const valueWidths = row.childResults.map(child => this.determineValueSize(child, ancestorCount + 1));
-    valueWidths.push(this.header.length);
-    valueWidths.push(this.valueFactory(row, ancestorCount).length);
-    return Math.max(...valueWidths);
-  }
-
-  /**
-   * Adds padding (spaces) to the front and end of a value
-   * @param input The string input
-   */
-  protected pad(input: string): string {
-    return `${spaces(this.width - input.length - 2)} ${input} `;
+  public drawHeader() {
+    return this.pad(this.header);
   }
 
   public drawLine(): string {
@@ -46,12 +35,24 @@ class Column {
     return this.color(score)(this.pad(this.valueFactory(score, ancestorCount)));
   }
 
-  public drawHeader() {
-    return this.pad(this.header);
-  }
-
   protected color(_score: ScoreResult) {
     return (input: string) => input;
+  }
+
+  protected determineValueSize(row: ScoreResult = this.rows, ancestorCount = 0): number {
+    const valueWidths = row.childResults.map(child => this.determineValueSize(child, ancestorCount + 1));
+    valueWidths.push(this.header.length);
+    valueWidths.push(this.valueFactory(row, ancestorCount).length);
+
+    return Math.max(...valueWidths);
+  }
+
+  /**
+   * Adds padding (spaces) to the front and end of a value
+   * @param input The string input
+   */
+  protected pad(input: string): string {
+    return `${spaces(this.width - input.length - 2)} ${input} `;
   }
 }
 
@@ -98,6 +99,19 @@ export default class ClearTextScoreTable {
     ];
   }
 
+  /**
+   * Returns a string with the score results drawn in a table.
+   */
+  public draw() {
+    return [
+      this.drawBorder(),
+      this.drawHeader(),
+      this.drawBorder(),
+      this.drawValues().join(os.EOL),
+      this.drawBorder()
+    ].join(os.EOL);
+  }
+
   private drawBorder() {
     return this.drawRow(column => column.drawLine());
   }
@@ -113,18 +127,5 @@ export default class ClearTextScoreTable {
   private drawValues(current = this.score, ancestorCount = 0): string[] {
     return [this.drawRow(c => c.drawTableCell(current, ancestorCount))]
       .concat(_.flatMap(current.childResults, child => this.drawValues(child, ancestorCount + 1)));
-  }
-
-  /**
-   * Returns a string with the score results drawn in a table.
-   */
-  public draw() {
-    return [
-      this.drawBorder(),
-      this.drawHeader(),
-      this.drawBorder(),
-      this.drawValues().join(os.EOL),
-      this.drawBorder()
-    ].join(os.EOL);
   }
 }

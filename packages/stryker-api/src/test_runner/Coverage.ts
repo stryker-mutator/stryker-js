@@ -37,13 +37,13 @@ export interface CoverageCollection {
  */
 export interface CoverageResult {
   /**
-   * Hash of statement counts, where keys are statement IDs.
-   */
-  s: CoverageData;
-  /**
    * Hash of function counts, where keys are statement IDs.
    */
   f: CoverageData;
+  /**
+   * Hash of statement counts, where keys are statement IDs.
+   */
+  s: CoverageData;
 }
 
 /**

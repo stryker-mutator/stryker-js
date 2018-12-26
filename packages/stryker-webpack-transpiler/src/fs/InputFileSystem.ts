@@ -1,12 +1,12 @@
-import MemoryFS from './MemoryFS';
-import { webpack, Callback } from '../types';
-import * as fs from 'fs';
-import { dirname } from 'path';
 import {
   CachedInputFileSystem,
   NodeJsInputFileSystem,
   Stats
 } from 'enhanced-resolve';
+import * as fs from 'fs';
+import { dirname } from 'path';
+import { Callback, webpack } from '../types';
+import MemoryFS from './MemoryFS';
 
 // Cache duration is same as webpack has
 // => https://github.com/webpack/webpack/blob/efc576c8b744e7a015ab26f1f46932ba3ca7d4f1/lib/node/NodeEnvironmentPlugin.js#L14
@@ -18,25 +18,6 @@ export default class InputFileSystem extends CachedInputFileSystem
 
   constructor(innerFS = new NodeJsInputFileSystem()) {
     super(innerFS, CACHE_DURATION);
-  }
-
-  public writeFileSync(name: string, content: string | Buffer) {
-    this.memoryFS.mkdirpSync(dirname(name));
-    if (content === '') {
-      // The in-memory fs doesn't like empty strings.
-      content = ' ';
-    }
-    this.memoryFS.writeFileSync(name, content);
-  }
-
-  public stat(path: string, callback: Callback<fs.Stats>): void {
-    this.memoryFS.stat(path, (err?: Error | null, stats?: any) => {
-      if (err) {
-        super.stat(path, callback as Callback<Stats>);
-      } else {
-        callback(err, stats);
-      }
-    });
   }
 
   public readFile(...args: any[]) {
@@ -61,11 +42,30 @@ export default class InputFileSystem extends CachedInputFileSystem
     }
   }
 
+  public stat(path: string, callback: Callback<fs.Stats>): void {
+    this.memoryFS.stat(path, (err?: Error | null, stats?: any) => {
+      if (err) {
+        super.stat(path, callback as Callback<Stats>);
+      } else {
+        callback(err, stats);
+      }
+    });
+  }
+
   public statSync(path: string): Stats {
     try {
       return this.memoryFS.statSync(path);
     } catch (err) {
       return super.statSync(path);
     }
+  }
+
+  public writeFileSync(name: string, content: string | Buffer) {
+    this.memoryFS.mkdirpSync(dirname(name));
+    if (content === '') {
+      // The in-memory fs doesn't like empty strings.
+      content = ' ';
+    }
+    this.memoryFS.writeFileSync(name, content);
   }
 }

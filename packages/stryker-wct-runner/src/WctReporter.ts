@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
-import { BrowserDef } from 'web-component-tester/runner/browserrunner';
-import { TestEndData, CompletedState } from 'web-component-tester/runner/clireporter';
 import { TestResult, TestStatus } from 'stryker-api/test_runner';
+import { BrowserDef } from 'web-component-tester/runner/browserrunner';
+import { CompletedState, TestEndData } from 'web-component-tester/runner/clireporter';
 
 const TEST_START_EVENT = 'test-start';
 const TEST_END_EVENT = 'test-end';
@@ -20,18 +20,23 @@ export default class WctReporter {
     this.context.removeListener(TEST_END_EVENT, this.testEnd);
   }
 
-  // Both testStart and testEnd are properties here, rather than methods. This is deliberate to allow for `this` pointer to work
-  private readonly testStart = () => {
-    this.before = new Date();
-  }
-
   private readonly testEnd = (_browser: BrowserDef, result: TestEndData) => {
     this.results.push({
       failureMessages: this.toFailureMessages(result.error),
       name: this.testNamePartsToString(result.test),
       status: this.toTestResultStatus(result.state),
-      timeSpentMs: new Date().getTime() - this.before.getTime(),
+      timeSpentMs: new Date().getTime() - this.before.getTime()
     });
+  }
+
+  private testNamePartsToString(testNameParts: string[]): string {
+    // First part is the file name
+    return testNameParts.splice(1).join(' ').trim();
+  }
+
+  // Both testStart and testEnd are properties here, rather than methods. This is deliberate to allow for `this` pointer to work
+  private readonly testStart = () => {
+    this.before = new Date();
   }
 
   private toFailureMessages(error: any): string[] | undefined {
@@ -51,11 +56,6 @@ export default class WctReporter {
       default:
         return [error.toString()];
     }
-  }
-
-  private testNamePartsToString(testNameParts: string[]): string {
-    // First part is the file name
-    return testNameParts.splice(1).join(' ').trim();
   }
 
   private toTestResultStatus(state: CompletedState): TestStatus {

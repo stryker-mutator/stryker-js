@@ -1,7 +1,7 @@
-import * as path from 'path';
 import * as _ from 'lodash';
-import { getLogger } from 'stryker-api/logging';
+import * as path from 'path';
 import { MutationScoreThresholds } from 'stryker-api/core';
+import { getLogger } from 'stryker-api/logging';
 import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
 
@@ -12,6 +12,7 @@ export default class ScoreResultCalculator {
 
   public calculate(results: MutantResult[]): ScoreResult {
     const scoreResult = this.calculateScoreResult(results, '');
+
     return this.wrapIfSingleFileScoreResult(scoreResult);
   }
 
@@ -31,38 +32,28 @@ export default class ScoreResultCalculator {
     }
   }
 
-  private wrapIfSingleFileScoreResult(scoreResult: ScoreResult): ScoreResult {
-    if (scoreResult.representsFile) {
-      return this.copy(scoreResult, {
-        childResults: [
-          this.copy(scoreResult, { name: path.basename(scoreResult.name) })
-        ],
-        name: path.dirname(scoreResult.name)
-      });
+  private calculateChildScores(results: MutantResult[], parentName: string, basePath: string) {
+    const childrenBasePath = parentName.length ? path.join(basePath, parentName) + path.sep : '';
+    const resultsGroupedByFiles = _.groupBy(results, result => result.sourceFilePath.substr(childrenBasePath.length));
+    const uniqueFiles = Object.keys(resultsGroupedByFiles);
+
+    if (uniqueFiles.length > 1) {
+      const filesGroupedByDirectory = _.groupBy(uniqueFiles, file => file.split(path.sep)[0]);
+
+      return Object.keys(filesGroupedByDirectory)
+
+        .map(directory => this.calculateScoreResult(_.flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath))
+        .sort(this.compareScoreResults);
     } else {
-      return scoreResult;
+      return [];
     }
   }
 
   private calculateScoreResult(results: MutantResult[], basePath: string): ScoreResult {
     const numbers = this.countNumbers(results);
     const facts = this.determineFacts(basePath, results);
+
     return freezeRecursively(_.assign(numbers, facts));
-  }
-
-  private copy(defaults: ScoreResult, overrides: Partial<ScoreResult>): ScoreResult {
-    return Object.assign({}, defaults, overrides);
-  }
-
-  private determineFacts(basePath: string, results: MutantResult[]) {
-    const name = this.determineCommonBasePath(results, basePath);
-    const childResults = this.calculateChildScores(results, name, basePath);
-    return {
-      childResults,
-      name,
-      path: path.join(basePath, name),
-      representsFile: childResults.length === 0 && results.length > 0
-    };
   }
 
   private compareScoreResults(a: ScoreResult, b: ScoreResult) {
@@ -74,44 +65,12 @@ export default class ScoreResultCalculator {
         return `0${scoreResult.name}`;
       }
     };
+
     return sortValue(a).localeCompare(sortValue(b));
   }
 
-  private calculateChildScores(results: MutantResult[], parentName: string, basePath: string) {
-    const childrenBasePath = parentName.length ? path.join(basePath, parentName) + path.sep : '';
-    const resultsGroupedByFiles = _.groupBy(results, result => result.sourceFilePath.substr(childrenBasePath.length));
-    const uniqueFiles = Object.keys(resultsGroupedByFiles);
-
-    if (uniqueFiles.length > 1) {
-      const filesGroupedByDirectory = _.groupBy(uniqueFiles, file => file.split(path.sep)[0]);
-      return Object.keys(filesGroupedByDirectory)
-
-        .map(directory => this.calculateScoreResult(_.flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath))
-        .sort(this.compareScoreResults);
-    } else {
-      return [];
-    }
-  }
-
-  private determineCommonBasePath(results: MutantResult[], basePath: string) {
-    const uniqueFiles = _.uniq(results.map(result => result.sourceFilePath));
-    const uniqueFileDirectories = uniqueFiles.map(file => file.substr(basePath.length).split(path.sep));
-
-    if (uniqueFileDirectories.length) {
-      return uniqueFileDirectories.reduce(this.filterDirectories).join(path.sep);
-    } else {
-      return '';
-    }
-  }
-
-  private filterDirectories(previousDirectories: string[], currentDirectories: string[]) {
-    for (let i = 0; i < previousDirectories.length; i++) {
-      if (previousDirectories[i] !== currentDirectories[i]) {
-        return previousDirectories.splice(0, i);
-      }
-    }
-
-    return previousDirectories;
+  private copy(defaults: ScoreResult, overrides: Partial<ScoreResult>): ScoreResult {
+    return {...defaults, ...overrides};
   }
 
   private countNumbers(mutantResults: MutantResult[]) {
@@ -131,6 +90,7 @@ export default class ScoreResultCalculator {
     const totalMutants = totalValid + totalInvalid;
     const mutationScore = totalValid > 0 ? totalDetected / totalValid * 100 : defaultScoreIfNoValidMutants;
     const mutationScoreBasedOnCoveredCode = totalValid > 0 ? totalDetected / totalCovered * 100 || 0 : defaultScoreIfNoValidMutants;
+
     return {
       killed,
       mutationScore,
@@ -147,5 +107,51 @@ export default class ScoreResultCalculator {
       totalValid,
       transpileErrors
     };
+  }
+
+  private determineCommonBasePath(results: MutantResult[], basePath: string) {
+    const uniqueFiles = _.uniq(results.map(result => result.sourceFilePath));
+    const uniqueFileDirectories = uniqueFiles.map(file => file.substr(basePath.length).split(path.sep));
+
+    if (uniqueFileDirectories.length) {
+      return uniqueFileDirectories.reduce(this.filterDirectories).join(path.sep);
+    } else {
+      return '';
+    }
+  }
+
+  private determineFacts(basePath: string, results: MutantResult[]) {
+    const name = this.determineCommonBasePath(results, basePath);
+    const childResults = this.calculateChildScores(results, name, basePath);
+
+    return {
+      childResults,
+      name,
+      path: path.join(basePath, name),
+      representsFile: childResults.length === 0 && results.length > 0
+    };
+  }
+
+  private filterDirectories(previousDirectories: string[], currentDirectories: string[]) {
+    for (let i = 0; i < previousDirectories.length; i++) {
+      if (previousDirectories[i] !== currentDirectories[i]) {
+        return previousDirectories.splice(0, i);
+      }
+    }
+
+    return previousDirectories;
+  }
+
+  private wrapIfSingleFileScoreResult(scoreResult: ScoreResult): ScoreResult {
+    if (scoreResult.representsFile) {
+      return this.copy(scoreResult, {
+        childResults: [
+          this.copy(scoreResult, { name: path.basename(scoreResult.name) })
+        ],
+        name: path.dirname(scoreResult.name)
+      });
+    } else {
+      return scoreResult;
+    }
   }
 }

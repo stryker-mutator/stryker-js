@@ -1,20 +1,20 @@
+import { Config } from 'stryker-api/config';
 import {
-  Reporter,
+  MatchedMutant,
   MutantResult,
   MutantStatus,
+  Reporter,
   ReporterFactory,
-  SourceFile,
-  MatchedMutant
+  SourceFile
 } from 'stryker-api/report';
-import { Config } from 'stryker-api/config';
 class EmptyReporter {}
 
 class AllReporter implements Reporter {
-  public onSourceFileRead(file: SourceFile) {}
+  public onAllMutantsMatchedWithTests(mutants: ReadonlyArray<MatchedMutant>) {}
+  public onAllMutantsTested(results: MutantResult[]) {}
   public onAllSourceFilesRead(files: SourceFile[]) {}
   public onMutantTested(result: MutantResult) {}
-  public onAllMutantsTested(results: MutantResult[]) {}
-  public onAllMutantsMatchedWithTests(mutants: ReadonlyArray<MatchedMutant>) {}
+  public onSourceFileRead(file: SourceFile) {}
   public wrapUp() {
     return new Promise<void>(r => r());
   }

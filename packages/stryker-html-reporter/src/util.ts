@@ -1,14 +1,13 @@
 import { fsAsPromised } from '@stryker-mutator/util';
-import * as path from 'path';
 import * as mkdirp from 'mkdirp';
+import * as path from 'path';
 import * as rimraf from 'rimraf';
 
 async function copyFolderOrFile(fromPath: string, toPath: string): Promise<void> {
   const stats = await fsAsPromised.stat(fromPath);
   if (stats.isDirectory()) {
     return copyFolder(fromPath, toPath);
-  }
-  else {
+  } else {
     return copyFile(fromPath, toPath);
   }
 }
@@ -27,7 +26,7 @@ function copyFile(fromFilename: string, toFilename: string): Promise<void> {
     readStream.on('error', reject);
     writeStream.on('error', reject);
     readStream.pipe(writeStream);
-    readStream.on('end', () => resolve());
+    readStream.on('end', resolve);
   });
 }
 
@@ -67,5 +66,6 @@ export function countPathSep(fileName: string) {
       count++;
     }
   }
+
   return count;
 }

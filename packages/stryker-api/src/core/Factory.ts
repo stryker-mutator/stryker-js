@@ -5,32 +5,13 @@
  */
 abstract class Factory<TSettings, T> {
 
+  private readonly classMap: { [name: string]: new (settings: TSettings) => T } = Object.create(null);
+
   /**
    * Creates a new Factory.
    * @param factoryName The name of the Factory.
    */
   constructor(private readonly factoryName: string) { }
-
-  private readonly classMap: { [name: string]: new (settings: TSettings) => T } = Object.create(null);
-
-  /**
-   * Retrieves the known names registered to this factory.
-   * @returns A list of sorted items which are registered.
-   */
-  public knownNames(): string[] {
-    const keys = Object.keys(this.classMap);
-    keys.sort();
-    return keys;
-  }
-
-  /**
-   * Registers a constructor function to this factory.
-   * @param name The name of the item.
-   * @param constructor The constructor of the item.
-   */
-  public register(name: string, constructor: new (settings: TSettings) => T ): void {
-    this.classMap[name] = constructor;
-  }
 
   /**
    * Creates a new instance of a registered item.
@@ -47,8 +28,28 @@ abstract class Factory<TSettings, T> {
     }
   }
 
+  /**
+   * Retrieves the known names registered to this factory.
+   * @returns A list of sorted items which are registered.
+   */
+  public knownNames(): string[] {
+    const keys = Object.keys(this.classMap);
+    keys.sort();
+
+    return keys;
+  }
+
+  /**
+   * Registers a constructor function to this factory.
+   * @param name The name of the item.
+   * @param constructor The constructor of the item.
+   */
+  public register(name: string, constructor: new (settings: TSettings) => T): void {
+    this.classMap[name] = constructor;
+  }
+
   protected importSuggestion(name: string): string {
-    return 'stryker-' + name;
+    return `stryker-${name}`;
   }
 }
 
