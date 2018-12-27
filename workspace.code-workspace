@@ -78,6 +78,8 @@
 			"**/*.map": {
 				"when": "$(basename)"
 			}
-		}
+		},
+		"tslint.enable": true,
+		"tslint.autoFixOnSave": true
 	}
 }

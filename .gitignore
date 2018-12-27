@@ -10,12 +10,12 @@ reports
 .stryker-tmp
 *.map
 
-integrationTest/module/*.js
-integrationTest/module/*.map
-integrationTest/module/*.d.ts
-integrationTest/*.js
-integrationTest/*.map
-integrationTest/*.d.ts
+e2e/module/*.js
+e2e/module/*.map
+e2e/module/*.d.ts
+e2e/*.js
+e2e/*.map
+e2e/*.d.ts
 packages/*/src/**/*.js
 packages/*/test/**/*.js
 packages/*/src/**/*.d.ts

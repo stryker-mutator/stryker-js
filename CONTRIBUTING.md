@@ -19,7 +19,12 @@ Get in touch with us through twitter or via the [Stryker gitter](https://gitter.
 
 ## Code style
 
-Please adher to our [editorconfig](https://editorconfig.org) rules. The easiest way to do that is by installing the editorconfig plugin in your code editor of choice. For VSCode, use the [editorconfig vscode extension](https://github.com/editorconfig/editorconfig-vscode#editorconfig-for-visual-studio-code)
+Please adhere to our [editorconfig](https://editorconfig.org) and [tslint](https://palantir.github.io/tslint/) rules. If you're using vscode, please install the following extensions:
+
+* The [editorconfig extension](https://github.com/editorconfig/editorconfig-vscode#editorconfig-for-visual-studio-code)
+* The [tslint extension](https://github.com/Microsoft/vscode-tslint)
+
+We configured the tslint extension to run on save in or [vscode workspace](#vscode-environment-configuration).
 
 ## Runner Stryker locally
 
