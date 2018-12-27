@@ -3,15 +3,15 @@
   "extends": "tslint:all",
   "rules": {
     "align": false,
-    "array-type": false, // remove
+    "array-type": [true, "array"],
     "arrow-parens": [true, "ban-single-arg-parens"],
     "arrow-return-shorthand": [true],
     "await-promise": false,
     "ban-types": false, // [true, ["String"], ["Number"], ["Boolean"]],
     "binary-expression-operand-order": false,
-    "comment-format": false,
+    "comment-format": [true, "check-space"],
     "completed-docs": false,
-    "curly": false, // remove
+    "curly": [true, "ignore-same-line"], // remove
     "cyclomatic-complexity": [true, 30],
     "deprecation": false, // remove
     "file-name-casing": false,
@@ -57,7 +57,7 @@
     "no-this-assignment": false,
     "no-unbound-method": false,
     "no-unnecessary-callback-wrapper": false, // remove (there is one exception)
-    "no-unnecessary-class": false, // remove
+    "no-unnecessary-class": [true, "allow-constructor-only", "allow-empty-class", "allow-static-only"], // remove
     "no-unnecessary-type-assertion": false, // remove
     "no-unnecessary-qualifier": false, // remove
     "no-unsafe-any": false,
@@ -67,7 +67,7 @@
     "no-void-expression": false,
     "number-literal-format": false,
     "object-literal-sort-keys": [true, "ignore-case"],
-    "one-line": false, // remove
+    "one-line": [true, "check-open-brace", "check-whitespace"], // remove
     "only-arrow-functions": [true, "allow-named-functions"],
     "ordered-imports": false, // remove
     "prefer-conditional-expression": false,
@@ -88,10 +88,19 @@
     }], */
     "type-literal-delimiter": false, // remove
     "typedef": false,
-    "typedef-whitespace": false, // remove
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      }
+    ], // remove
     "unnecessary-constructor": false, // remove
     "use-default-type-parameter": false,
-    "whitespace": false, // remove
-    "variable-name": false
+    "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"], // remove
+    "variable-name": [true, "ban-keywords"]
   }
 }
