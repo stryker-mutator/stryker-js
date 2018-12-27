@@ -44,7 +44,7 @@ describe('Sandbox', () => {
   let log: Mock<Logger>;
 
   beforeEach(() => {
-    options = { port: 43, timeoutFactor: 23, timeoutMS: 1000, testRunner: 'sandboxUnitTestRunner', symlinkNodeModules: true } as any;
+    options = { timeoutFactor: 23, timeoutMS: 1000, testRunner: 'sandboxUnitTestRunner', symlinkNodeModules: true } as any;
     testRunner = { init: sandbox.stub(), run: sandbox.stub().resolves(), dispose: sandbox.stub() };
     testFrameworkStub = {
       filter: sandbox.stub()

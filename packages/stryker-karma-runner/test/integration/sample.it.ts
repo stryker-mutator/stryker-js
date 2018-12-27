@@ -9,7 +9,7 @@ describe('Sample project', () => {
   it('should be able to run karma', async () => {
     const options = new Config();
     options.karmaConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js');
-    const runner = new KarmaTestRunner({ port: 9898, strykerOptions: options, fileNames: [] });
+    const runner = new KarmaTestRunner({ strykerOptions: options, fileNames: [] });
     await runner.init();
     const result = await runner.run({});
     expectTestResults(result, [
