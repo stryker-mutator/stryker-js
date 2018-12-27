@@ -1,10 +1,8 @@
 import { expect } from 'chai';
-import * as http from 'http';
 import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
 import { expectTestResults } from '../helpers/assertions';
-import { promisify } from '@stryker-mutator/util';
 
 function wrapInClosure(codeFragment: string) {
   return `
@@ -35,7 +33,6 @@ describe('KarmaTestRunner', () => {
     before(() => {
       testRunnerOptions = {
         fileNames: [],
-        port: 9877,
         strykerOptions: {
           karma: {
             config: {
@@ -89,7 +86,6 @@ describe('KarmaTestRunner', () => {
     before(() => {
       const testRunnerOptions: RunnerOptions = {
         fileNames: [],
-        port: 9878,
         strykerOptions: {
           karma: {
             config: {
@@ -121,7 +117,6 @@ describe('KarmaTestRunner', () => {
     before(() => {
       const testRunnerOptions = {
         fileNames: [],
-        port: 9879,
         strykerOptions: {
           karma: {
             config: {
@@ -150,7 +145,6 @@ describe('KarmaTestRunner', () => {
     before(() => {
       const testRunnerOptions = {
         fileNames: [],
-        port: 9880,
         strykerOptions: {
           karma: {
             config: {
@@ -183,7 +177,6 @@ describe('KarmaTestRunner', () => {
     before(() => {
       const testRunnerOptions = {
         fileNames: [],
-        port: 9881,
         strykerOptions: {
           karma: {
             config: {
@@ -213,7 +206,6 @@ describe('KarmaTestRunner', () => {
     before(() => {
       const testRunnerOptions: RunnerOptions = {
         fileNames: [],
-        port: 9882,
         strykerOptions: {
           coverageAnalysis: 'all',
           karma: {
@@ -241,72 +233,4 @@ describe('KarmaTestRunner', () => {
     }));
   });
 
-  describe('when specified port is not available', () => {
-
-    let dummyServer: DummyServer;
-
-    before(async () => {
-      dummyServer = await DummyServer.create();
-
-      const testRunnerOptions: RunnerOptions = {
-        fileNames: [],
-        port: dummyServer.port,
-        strykerOptions: {
-          karma: {
-            config: {
-              files: [
-                'testResources/sampleProject/src-instrumented/Add.js',
-                'testResources/sampleProject/test/AddSpec.js'
-              ]
-            }
-          }
-        }
-      };
-      sut = new KarmaTestRunner(testRunnerOptions);
-      return sut.init();
-    });
-
-    after(async () => {
-      if (dummyServer) {
-        await dummyServer.dispose();
-      }
-    });
-
-    it('should choose different port automatically and report Complete without errors', async () => {
-      const actualResult = await sut.run({});
-      expect(sut.port).not.eq(dummyServer.port);
-      expect(actualResult.status, JSON.stringify(actualResult.errorMessages)).eq(RunStatus.Complete);
-    });
-  });
 });
-
-class DummyServer {
-  private readonly httpServer: http.Server;
-
-  private constructor() {
-    this.httpServer = http.createServer();
-  }
-
-  get port() {
-    const address = this.httpServer.address();
-    if (typeof address === 'string') {
-      throw new Error(`Address "${address}" was unexpected: https://nodejs.org/dist/latest-v11.x/docs/api/net.html#net_server_address`);
-    } else {
-      return address.port;
-    }
-  }
-
-  public static async create(): Promise<DummyServer> {
-    const server = new DummyServer();
-    await server.init();
-    return server;
-  }
-
-  private async init(): Promise<void> {
-    await promisify(this.httpServer.listen.bind(this.httpServer))(0, '0.0.0.0');
-  }
-
-  public dispose(): Promise<void> {
-    return promisify(this.httpServer.close.bind(this.httpServer))();
-  }
-}
