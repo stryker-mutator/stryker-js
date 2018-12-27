@@ -34,7 +34,6 @@ describe('QUnit sample', () => {
         resolve('./testResources/qunit-sample/MyMathSpec.js'),
         resolve('./testResources/qunit-sample/MyMath.js')
       ],
-      port: 0,
       strykerOptions: {
         mochaOptions: {
           files: [

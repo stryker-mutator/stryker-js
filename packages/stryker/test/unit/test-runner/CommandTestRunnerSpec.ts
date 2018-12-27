@@ -129,7 +129,7 @@ describe(CommandTestRunner.name, () => {
         commandRunner: settings
       });
     }
-    return new CommandTestRunner(workingDir, { strykerOptions, port: 23, fileNames: [] });
+    return new CommandTestRunner(workingDir, { strykerOptions, fileNames: [] });
   }
 
   function tick(): Promise<void> {

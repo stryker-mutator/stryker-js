@@ -87,7 +87,6 @@ describe('Sandbox', () => {
       await Sandbox.create(options, SANDBOX_INDEX, files, null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
       const expectedSettings: RunnerOptions = {
         fileNames: [path.resolve('random-folder-3', 'file1'), path.resolve('random-folder-3', 'file2')],
-        port: 46,
         strykerOptions: options
       };
       expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings, sandboxDirectory, LOGGING_CONTEXT);

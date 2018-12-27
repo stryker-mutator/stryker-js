@@ -53,6 +53,6 @@ describe(`${CommandTestRunner.name} integration`, () => {
         commandRunner: settings
       });
     }
-    return new CommandTestRunner(workingDir, { strykerOptions, port: 23, fileNames: [] });
+    return new CommandTestRunner(workingDir, { strykerOptions, fileNames: [] });
   }
 });
