@@ -46,16 +46,7 @@ export default class HtmlReporter implements Reporter {
   }
 
   private writeCommonResources() {
-    return Promise.all([this.copyStrykerResources(), this.copyBootstrapAndHighlightResources()]);
-  }
-
-  private copyBootstrapAndHighlightResources() {
     const resourcesDir = path.join(__dirname, '..', 'resources');
-    return util.copyFolder(resourcesDir, this.resourcesDir);
-  }
-
-  private copyStrykerResources() {
-    const resourcesDir = path.join(__dirname, 'resources', 'stryker');
     return util.copyFolder(resourcesDir, this.resourcesDir);
   }
 

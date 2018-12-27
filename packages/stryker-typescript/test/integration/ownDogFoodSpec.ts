@@ -16,7 +16,7 @@ describe('stryker-typescript', () => {
     const configEditor = new TypescriptConfigEditor();
     config = new Config();
     config.set({
-      tsconfigFile: path.resolve(__dirname, '..', '..', 'tsconfig.json'),
+      tsconfigFile: path.resolve(__dirname, '..', '..', 'tsconfig.src.json'),
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));

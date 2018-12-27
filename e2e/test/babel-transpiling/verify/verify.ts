@@ -20,9 +20,9 @@ describe('Verify stryker has ran correctly', () => {
 
     it('should copy over the resources', () => {
       return Promise.all([
-        expectFileExists('reports/mutation/html/strykerResources/stryker.css'),
+        expectFileExists('reports/mutation/html/strykerResources/stryker/stryker.css'),
         expectFileExists('reports/mutation/html/strykerResources/stryker.js'),
-        expectFileExists('reports/mutation/html/strykerResources/stryker-80x80.png'),
+        expectFileExists('reports/mutation/html/strykerResources/stryker/stryker-80x80.png'),
         expectFileExists('reports/mutation/html/strykerResources/bootstrap/css/bootstrap.min.css'),
         expectFileExists('reports/mutation/html/strykerResources/bootstrap/js/bootstrap.min.js'),
         expectFileExists('reports/mutation/html/strykerResources/highlightjs/styles/default.css')

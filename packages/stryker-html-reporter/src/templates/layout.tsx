@@ -29,11 +29,11 @@ export function layout(breadcrumb: Breadcrumb, content: string) {
             <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'></meta>
             <link rel='stylesheet' href={`${urlPrefix}bootstrap/css/bootstrap.min.css`}></link>
             <link rel='stylesheet' href={`${urlPrefix}highlightjs/styles/default.css`}></link>
-            <link rel='stylesheet' href={`${urlPrefix}stryker.css`}></link>
+            <link rel='stylesheet' href={`${urlPrefix}stryker/stryker.css`}></link>
         </head>
 
         <body>
-            <img class='stryker-image' alt='Stryker' src={`${urlPrefix}stryker-80x80.png`}></img>
+            <img class='stryker-image' alt='Stryker' src={`${urlPrefix}stryker/stryker-80x80.png`}></img>
 
             <div class='container-fluid'>
                 <div class='row'>

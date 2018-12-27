@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": [
+      "karma",
+      "mocha"
+    ]
+  },
+  "include": [
+    "test",
+    "typings"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.src.json"
+    }
+  ]
+}
