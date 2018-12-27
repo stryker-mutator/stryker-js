@@ -202,12 +202,6 @@ describe('KarmaTestRunner', () => {
       expect(actualResult.tests).deep.eq([expected]);
     });
 
-    it('should update port when karma chooses a different port', async () => {
-      reporterMock.emit('server_start', 1984);
-      await sut.run({});
-      expect(karmaRunStub).calledWith({ port: 1984 });
-    });
-
     it('should add coverage report when the reporter raises the "coverage_report" event', async () => {
       const expectedCoverageReport = { some: 'coverage' };
       reporterMock.emit('coverage_report', expectedCoverageReport);
