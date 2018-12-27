@@ -17,7 +17,6 @@ export default class Config implements StrykerOptions {
   public timeoutMS = 5000;
   public timeoutFactor = 1.5;
   public plugins: string[] = ['stryker-*'];
-  public port = 9234;
   public reporter = [];
   public reporters: string[] = ['progress', 'clear-text'];
   public coverageAnalysis: 'perTest' | 'all' | 'off' = 'off';

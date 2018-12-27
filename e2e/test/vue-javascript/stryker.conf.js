@@ -6,7 +6,6 @@ module.exports = function (config) {
     testRunner: 'karma',
     reporter: ['clear-text', 'event-recorder'],
     maxConcurrentTestRunners: 2,
-    port: 9264,
     karma: {
       configFile: 'test/unit/karma.conf.js'
     },

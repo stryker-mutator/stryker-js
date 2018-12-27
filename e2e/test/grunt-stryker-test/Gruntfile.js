@@ -19,8 +19,7 @@ module.exports = function (grunt) {
           testFramework: 'jasmine',
           testRunner: 'karma',
           logLevel: 'info',
-          maxConcurrentTestRunners: 2,
-          port: 9244
+          maxConcurrentTestRunners: 2
         },
       },
       withConfigFile: {

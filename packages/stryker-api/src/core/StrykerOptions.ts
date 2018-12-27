@@ -145,12 +145,6 @@ interface StrykerOptions {
   plugins?: string[];
 
   /**
-   * The starting port to used for test frameworks that need to run a server (for example karma).
-   * If more test runners will run simultaneously, subsequent port numbers will be used (n+1, n+2, etc.)
-   */
-  port?: number;
-
-  /**
    * Indicates whether or not to use colors in console.
    * Default: true
    */

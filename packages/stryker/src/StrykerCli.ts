@@ -41,7 +41,6 @@ export default class StrykerCli {
       .option('--transpilers <listOfTranspilers>', 'A comma separated list of transpilers to use.', this.list)
       .option('--reporters <name>', 'A comma separated list of the names of the reporter(s) you want to use', this.list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', this.list)
-      .option('--port <n>', 'A free port for the test runner to use (if it needs to). Any additional test runners will be spawned using n+1, n+2, etc', parseInt)
       .option('--timeoutMS <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
       .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)

@@ -8,7 +8,6 @@ module.exports = function (config) {
     testRunner: 'karma',
     reporters: ['clear-text', 'html'],
     maxConcurrentTestRunners: 2,
-    port: 9274,
     karmaConfig: {
       files: ['dist/main.js', 'test/*.js']
     },

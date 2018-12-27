@@ -9,7 +9,6 @@ module.exports = function (config) {
     testFramework: 'jasmine',
     testRunner: 'karma',
     logLevel: 'info',
-    maxConcurrentTestRunners: 2,
-    port: 9234
+    maxConcurrentTestRunners: 2
   });
 }

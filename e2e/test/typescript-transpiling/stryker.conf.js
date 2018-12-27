@@ -16,7 +16,6 @@ module.exports = function (config) {
       files: [
         'test/**/*.js'
       ]
-    },
-    port: 9264
+    }
   });
 };

@@ -18,7 +18,6 @@ export default class ConfigValidator {
     this.validateLogLevel('logLevel');
     this.validateLogLevel('fileLogLevel');
     this.validateTimeout();
-    this.validateIsNumber('port', this.strykerConfig.port);
     this.validateIsNumber('maxConcurrentTestRunners', this.strykerConfig.maxConcurrentTestRunners);
     this.validateIsStringArray('plugins', this.strykerConfig.plugins);
     this.validateIsStringArray('reporters', this.strykerConfig.reporters);
