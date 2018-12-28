@@ -1,0 +1,17 @@
+{
+    "extends": "../../tsconfig.settings.json",
+    "compilerOptions": {
+      "rootDir": "."
+    },
+    "include": [
+        "src",
+        "config.ts",
+        "core.ts",
+        "logging.ts",
+        "mutant.ts",
+        "report.ts",
+        "test_framework.ts",
+        "test_runner.ts",
+        "transpile.ts"
+    ]
+}

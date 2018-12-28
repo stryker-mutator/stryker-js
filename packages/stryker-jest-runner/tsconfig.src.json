@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": "."
+  },
+  "include": [
+    "src",
+    "typings"
+  ],
+  "references": [
+    {
+      "path": "../stryker-api/tsconfig.src.json",
+    }
+  ]
+}

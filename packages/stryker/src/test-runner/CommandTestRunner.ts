@@ -85,7 +85,7 @@ export default class CommandTestRunner implements TestRunner {
         };
       }
 
-      function completeResult(exitCode: number, timer: Timer): RunResult {
+      function completeResult(exitCode: number | null, timer: Timer): RunResult {
         const duration = timer.elapsedMs();
         if (exitCode === 0) {
           return {

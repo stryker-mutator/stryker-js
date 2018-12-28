@@ -6,9 +6,6 @@
   "scripts": {
     "start": "tsc -w",
     "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
-    "prebuild": "npm run clean",
-    "build": "tsc -p .",
-    "postbuild": "tslint -p tsconfig.json",
     "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 85 --functions 90 --branches 80 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 100000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },

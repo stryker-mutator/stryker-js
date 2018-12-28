@@ -19,7 +19,12 @@ Get in touch with us through twitter or via the [Stryker gitter](https://gitter.
 
 ## Code style
 
-Please adher to our [editorconfig](https://editorconfig.org) rules. The easiest way to do that is by installing the editorconfig plugin in your code editor of choice. For VSCode, use the [editorconfig vscode extension](https://github.com/editorconfig/editorconfig-vscode#editorconfig-for-visual-studio-code)
+Please adhere to our [editorconfig](https://editorconfig.org) and [tslint](https://palantir.github.io/tslint/) rules. If you're using vscode, please install the following extensions:
+
+* The [editorconfig extension](https://github.com/editorconfig/editorconfig-vscode#editorconfig-for-visual-studio-code)
+* The [tslint extension](https://github.com/Microsoft/vscode-tslint)
+
+We configured the tslint extension to run on save in or [vscode workspace](#vscode-environment-configuration).
 
 ## Runner Stryker locally
 
@@ -28,8 +33,9 @@ We use [Lerna](https://lernajs.io/) to manage the packages in this repository. Y
 1. Clone the repository
 1. Install dependencies using `npm install` in the root of the project
 1. Run `npm run build` in the root of the project once. You can also run `npm test` in the root, as that will trigger a build as well.
-1. Running `npm test` in one of the package folders also works. Just remember that those will _not_ trigger a build. So you'll have to run `npm run build` before that
-   if you want code changes to be tested.
+1. Use `npm start` to run the TypeScript compiler in watch mode. Any changes you make to TypeScript files will automatically compile.
+1. Running `npm test` in one of the package folders also works. Just remember that those will _not_ trigger a build. So you'll have 
+to run `npm start` or `npm run build` before that if you want code changes to be tested.
 
 ## VSCode environment configuration
 
@@ -40,10 +46,10 @@ After cloning this repo, open the workspace with `$ code workspace.code-workspac
 Some quick notes to help you get started:
 
 1. On the left side, you can see all stryker projects and plugins. Open files from there.
-1. Use `CTRL+B` (or `⌘+B` on OSX) to open up the *Run build task* menu. This can enable typescript watch for a plugin directory.
+1. Use `CTRL+B` (or `⌘+B` on OSX) to open up the *Run build task* menu. This runs `npm start`, compiling any changes you make in the background.
 1. Use `CTRL+Shift+D` (or `⌘⇧D` on OSX) to open up the *debug* pane. Here you can select a config to run. For example: select "Unit tests (stryker-api)" to run the unit tests for the `stryker-api` package. 
   * You can run the tests with `CTRL+F5` (or `⌃F5` on OSX).
-  * You can debug the tests with `F5` (also `F5` on OSX). Setting breakpoints in your code and inspecting variables work as expected.
+  * You can debug the tests with `F5` (also `F5` on OSX). Setting breakpoints in your code and inspecting variables all work as expected.
 
 Have fun!
 

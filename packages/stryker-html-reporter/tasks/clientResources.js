@@ -18,9 +18,9 @@ const globAsPromised = (expression, options) => new Promise((res, rej) => glob(e
 const mkdirpAsPromised = location => new Promise((res, rej) => mkdirp(location, callbackAsPromised(res, rej)));
 const copyAsPromised = (from, to) => mkdirpAsPromised(path.dirname(to))
   .then(() => new Promise((res, rej) => {
-    const readStream = fs.createReadStream(from, { encoding: 'utf8' });
+    const readStream = fs.createReadStream(from);
     readStream.on('error', rej);
-    var writeStream = fs.createWriteStream(to, { encoding: 'utf8' });
+    var writeStream = fs.createWriteStream(to);
     writeStream.on('error', rej);
     readStream.pipe(writeStream);
     writeStream.on('finish', res);
@@ -36,3 +36,4 @@ copyAll('node_modules/jquery', 'resources/jquery', 'dist/jquery.slim.min.js');
 copyAll('node_modules/tooltip.js', 'resources/tooltip.js', 'dist/umd/tooltip.min.js');
 copyAll('node_modules/popper.js', 'resources/popper.js', 'dist/umd/popper.min.js');
 copyAll('node_modules/highlight.js', 'resources/highlightjs', 'styles/default.css');
+copyAll('srcResources/stryker', 'resources/stryker', '*.*');
