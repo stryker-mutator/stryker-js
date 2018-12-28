@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es5",
+      "es2015.promise",
+      "es2015.core",
+      "es2015.symbol",
+      "es2015.symbol.wellknown"
+    ],
+    "noImplicitReturns": false,
+    "jsx": "react",
+    "jsxFactory": "typedHtml.createElement"
+  }
+}

@@ -47,14 +47,17 @@
     "singleQuote": true
   },
   "scripts": {
-    "lint-info": "tslint --out tslint.log --project ./",
-    "lint-fix": "tslint --fix --project ./",
-    "clean": "lerna run prebuild",
+    "lint-info": "tslint --out tslint.log --project tsconfig.lint.json",
+    "lint-fix": "tslint --fix --project tsconfig.lint.json",
+    "clean": "rimraf \"packages/stryker-api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage}\"",
     "postinstall": "lerna bootstrap && link-parent-bin",
-    "build": "lerna run build",
+    "prebuild": "npm run clean",
+    "build": "tsc -b && lerna run build",
+    "postbuild": "tslint -p tsconfig.lint.json",
     "pretest": "npm run build",
     "test": "lerna run test --stream",
     "posttest": "cd e2e && npm i && npm t && cd ..",
+    "start": "tsc -b -w",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
   },
   "engines": {

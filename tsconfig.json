@@ -1,29 +1,22 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
-    "noImplicitAny": true,
-    "moduleResolution": "node",
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowJs": false,
-    "importHelpers": true,
-    "noUnusedLocals": true,
-    "alwaysStrict": true,
-    "noImplicitReturns": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "lib": [
-      "es5",
-      "es2015.promise",
-      "es2015.core",
-      "es2015.collection",
-      "es2015.iterable",
-      "es2015.symbol",
-      "es2015.symbol.wellknown",
-      "es2015.proxy"
-    ]
-  }
+  "files": [],
+  "references": [
+    { "path": "packages/stryker-api" },
+    { "path": "packages/stryker-util" },
+    { "path": "packages/stryker" },
+    { "path": "packages/stryker-babel-transpiler" },
+    { "path": "packages/stryker-html-reporter" },
+    { "path": "packages/stryker-jasmine" },
+    { "path": "packages/stryker-jasmine-runner" },
+    { "path": "packages/stryker-javascript-mutator" },
+    { "path": "packages/stryker-jest-runner" },
+    { "path": "packages/stryker-karma-runner" },
+    { "path": "packages/stryker-mocha-framework" },
+    { "path": "packages/stryker-mocha-runner" },
+    { "path": "packages/stryker-mutator-specification" },
+    { "path": "packages/stryker-typescript" },
+    { "path": "packages/stryker-vue-mutator" },
+    { "path": "packages/stryker-wct-runner" },
+    { "path": "packages/stryker-webpack-transpiler" }
+  ]
 }
