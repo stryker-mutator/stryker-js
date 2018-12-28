@@ -19,6 +19,7 @@ export default class KarmaTestRunner implements TestRunner {
   private currentRunStatus: RunStatus;
   private readonly testHooksMiddleware = TestHooksMiddleware.instance;
   private readonly starter: ProjectStarter;
+  public port: undefined | number;
 
   constructor(options: RunnerOptions) {
     const setup = this.loadSetup(options);
@@ -98,7 +99,10 @@ export default class KarmaTestRunner implements TestRunner {
   }
 
   private listenToServerStart() {
-    StrykerReporter.instance.on('server_start', () => {});
+    StrykerReporter.instance.on('server_start', (port: number) => {
+      this.port = port;
+    });
+    StrykerReporter.instance.on('server_start', () => { });
   }
 
   private listenToCoverage() {
@@ -125,7 +129,7 @@ export default class KarmaTestRunner implements TestRunner {
 
   private runServer() {
     return new Promise<void>(resolve => {
-      karma.runner.run({}, exitCode => {
+      karma.runner.run({ port: this.port }, exitCode => {
         this.log.debug('karma run done with ', exitCode);
         resolve();
       });
