@@ -10,7 +10,6 @@ module.exports = function (config) {
       files: ['src/*.js', 'test/*.js']
     },
     maxConcurrentTestRunners: 2,
-    coverageAnalysis: 'perTest',
-    port: 9264
+    coverageAnalysis: 'perTest'
   });
 };

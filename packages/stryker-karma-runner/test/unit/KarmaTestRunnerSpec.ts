@@ -31,7 +31,6 @@ describe('KarmaTestRunner', () => {
   beforeEach(() => {
     settings = {
       fileNames: ['foo.js', 'bar.js'],
-      port: 42,
       strykerOptions: {}
     };
     reporterMock = new EventEmitter();
@@ -49,8 +48,7 @@ describe('KarmaTestRunner', () => {
     new KarmaTestRunner(settings);
     expect(setGlobalsStub).calledWith({
       karmaConfig: undefined,
-      karmaConfigFile: undefined,
-      port: 42
+      karmaConfigFile: undefined
     });
   });
 
@@ -66,8 +64,7 @@ describe('KarmaTestRunner', () => {
     new KarmaTestRunner(settings);
     expect(setGlobalsStub).calledWith({
       karmaConfig: expectedSetup.config,
-      karmaConfigFile: expectedSetup.configFile,
-      port: 42
+      karmaConfigFile: expectedSetup.configFile
     });
 
     expect(logMock.warn).not.called;
@@ -90,8 +87,7 @@ describe('KarmaTestRunner', () => {
     new KarmaTestRunner(settings);
     expect(setGlobalsStub).calledWith({
       karmaConfig: expectedSetup.config,
-      karmaConfigFile: expectedSetup.configFile,
-      port: 42
+      karmaConfigFile: expectedSetup.configFile
     });
     expect(logMock.warn).not.called;
     expect(projectStarterModule.default).calledWith(expectedSetup);
@@ -107,8 +103,7 @@ describe('KarmaTestRunner', () => {
     new KarmaTestRunner(settings);
     expect(setGlobalsStub).calledWith({
       karmaConfig: expectedKarmaConfig,
-      karmaConfigFile: expectedKarmaConfigFile,
-      port: 42
+      karmaConfigFile: expectedKarmaConfigFile
     });
     expect(logMock.warn).calledTwice;
     expect(logMock.warn).calledWith(
@@ -138,8 +133,7 @@ describe('KarmaTestRunner', () => {
     new KarmaTestRunner(settings);
     expect(setGlobalsStub).calledWith({
       karmaConfig: expectedSetup.config,
-      karmaConfigFile: expectedSetup.configFile,
-      port: 42
+      karmaConfigFile: expectedSetup.configFile
     });
     expect(logMock.warn).calledWith(
       'DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.'
@@ -176,11 +170,6 @@ describe('KarmaTestRunner', () => {
       karmaRunStub.callsArgOn(1, 0);
     });
 
-    it('should execute "karma run"', async () => {
-      await sut.run({});
-      expect(karmaRunStub).calledWith({ port: settings.port });
-    });
-
     it('should not execute "karma run" when results are already clear', async () => {
       reporterMock.emit('compile_error', ['foobar']);
       await sut.run({});
@@ -204,12 +193,6 @@ describe('KarmaTestRunner', () => {
     it('should set testHooks middleware when testHooks are provided', async () => {
       await sut.run({ testHooks: 'foobar' });
       expect(TestHooksMiddleware.instance.currentTestHooks).eq('foobar');
-    });
-
-    it('should update port when karma chooses a different port', async () => {
-      reporterMock.emit('server_start', 1984);
-      await sut.run({});
-      expect(karmaRunStub).calledWith({ port: 1984 });
     });
 
     it('should add a test result when the on reporter raises the "test_result" event', async () => {

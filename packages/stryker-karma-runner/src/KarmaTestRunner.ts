@@ -19,19 +19,16 @@ export default class KarmaTestRunner implements TestRunner {
   private currentRunStatus: RunStatus;
   private readonly testHooksMiddleware = TestHooksMiddleware.instance;
   private readonly starter: ProjectStarter;
+  public port: undefined | number;
 
-  public get port() {
-    return this.options.port;
-  }
-
-  constructor(private readonly options: RunnerOptions) {
+  constructor(options: RunnerOptions) {
     const setup = this.loadSetup(options);
     if (setup.project !== undefined) {
       setup.projectType = setup.project;
       this.log.warn('DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.');
     }
     this.starter = new ProjectStarter(setup);
-    this.setGlobals(setup, options.port);
+    this.setGlobals(setup);
     this.cleanRun();
     this.listenToServerStart();
     this.listenToRunComplete();
@@ -78,11 +75,10 @@ export default class KarmaTestRunner implements TestRunner {
     return strykerKarmaSetup;
   }
 
-  private setGlobals(setup: StrykerKarmaSetup, port: number) {
+  private setGlobals(setup: StrykerKarmaSetup) {
     strykerKarmaConf.setGlobals({
       karmaConfig: setup.config,
-      karmaConfigFile: setup.configFile,
-      port
+      karmaConfigFile: setup.configFile
     });
   }
 
@@ -104,8 +100,9 @@ export default class KarmaTestRunner implements TestRunner {
 
   private listenToServerStart() {
     StrykerReporter.instance.on('server_start', (port: number) => {
-      this.options.port = port;
+      this.port = port;
     });
+    StrykerReporter.instance.on('server_start', () => { });
   }
 
   private listenToCoverage() {
@@ -132,7 +129,7 @@ export default class KarmaTestRunner implements TestRunner {
 
   private runServer() {
     return new Promise<void>(resolve => {
-      karma.runner.run({ port: this.options.port }, exitCode => {
+      karma.runner.run({ port: this.port }, exitCode => {
         this.log.debug('karma run done with ', exitCode);
         resolve();
       });

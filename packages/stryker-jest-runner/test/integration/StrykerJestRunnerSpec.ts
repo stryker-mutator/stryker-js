@@ -43,7 +43,6 @@ describe('Integration test for Strykers Jest runner', () => {
 
     runnerOptions = {
       fileNames: [],
-      port: 0,
       strykerOptions: new Config()
     };
   });

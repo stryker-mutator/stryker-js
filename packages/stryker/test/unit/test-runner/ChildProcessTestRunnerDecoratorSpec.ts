@@ -32,7 +32,6 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     childProcessProxyCreateStub.returns(childProcessProxyMock);
     runnerOptions = {
       fileNames: [],
-      port: 42,
       strykerOptions: {
         plugins: ['foo-plugin', 'bar-plugin']
       }

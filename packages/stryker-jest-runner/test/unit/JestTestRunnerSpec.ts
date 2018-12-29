@@ -30,7 +30,6 @@ describe('JestTestRunner', () => {
 
     jestTestRunner = new JestTestRunner({
       fileNames: [],
-      port: 0,
       strykerOptions
     }, processEnvMock);
 

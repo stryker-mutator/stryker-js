@@ -47,12 +47,6 @@ function setLifeCycleOptions(config: Config) {
   });
 }
 
-function setPort(config: Config) {
-  config.set({
-    port: globalSettings.port
-  });
-}
-
 function setUserKarmaConfig(config: Config) {
   if (globalSettings.karmaConfig) {
     config.set(globalSettings.karmaConfig);
@@ -99,7 +93,6 @@ function configureStrykerReporter(config: Config) {
 }
 
 const globalSettings: {
-  port?: number;
   karmaConfig?: ConfigOptions;
   karmaConfigFile?: string;
 } = {};
@@ -111,7 +104,6 @@ export = Object.assign((config: Config) => {
   setUserKarmaConfig(config);
   setBasePath(config);
   setLifeCycleOptions(config);
-  setPort(config);
   configureTestHooksMiddleware(config);
   configureStrykerReporter(config);
 }, {
@@ -120,8 +112,7 @@ export = Object.assign((config: Config) => {
    * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
    * (not counting environment variables)
    */
-  setGlobals(globals: { port?: number; karmaConfig?: ConfigOptions; karmaConfigFile?: string; }) {
-    globalSettings.port = globals.port;
+  setGlobals(globals: { karmaConfig?: ConfigOptions; karmaConfigFile?: string; }) {
     globalSettings.karmaConfig = globals.karmaConfig;
     globalSettings.karmaConfigFile = globals.karmaConfigFile;
   }

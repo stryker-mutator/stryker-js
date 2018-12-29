@@ -145,8 +145,8 @@ interface StrykerOptions {
   plugins?: string[];
 
   /**
-   * The starting port to used for test frameworks that need to run a server (for example karma).
-   * If more test runners will run simultaneously, subsequent port numbers will be used (n+1, n+2, etc.)
+   * DEPRECATED
+   * @deprecated Test runners are expected to manage their own port selection. I.E. Please use karma.config.port
    */
   port?: number;
 

@@ -32,7 +32,6 @@ describe('Running a sample project', () => {
       ];
       const testRunnerOptions: RunnerOptions = {
         fileNames: files,
-        port: 1234,
         strykerOptions: {
           mochaOptions: { files }
         }
@@ -68,7 +67,6 @@ describe('Running a sample project', () => {
       };
       const options: RunnerOptions = {
         fileNames: files,
-        port: 1234,
         strykerOptions: { mochaOptions }
       };
       sut = new MochaTestRunner(options);
@@ -89,7 +87,6 @@ describe('Running a sample project', () => {
           resolve('testResources/sampleProject/MyMath.js'),
           resolve('testResources/sampleProject/MyMathFailedSpec.js')
         ],
-        port: 1234,
         strykerOptions: {
           mochaOptions: {
             files: [
@@ -113,7 +110,6 @@ describe('Running a sample project', () => {
       const files = [resolve('./testResources/sampleProject/MyMath.js')];
       const testRunnerOptions = {
         fileNames: files,
-        port: 1234,
         strykerOptions: {
           mochaOptions: { files }
         }

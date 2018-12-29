@@ -20,7 +20,6 @@ export default class MochaTestFrameworkIntegrationTestWorker {
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMath.js'),
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
       ],
-      port: 0,
       strykerOptions: {
         mochaOptions: {
           files: [

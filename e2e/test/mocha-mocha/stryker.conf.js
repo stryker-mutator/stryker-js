@@ -5,7 +5,6 @@ module.exports = function (config) {
     testRunner: 'mocha',
     reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
-    port: 9264,
     mochaOptions: {
       files: ['test/*.js']
     },
