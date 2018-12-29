@@ -5,8 +5,11 @@ module.exports = function (config) {
     testRunner: 'karma',
     reporters: ['clear-text', 'html'],
     maxConcurrentTestRunners: 2,
-    karmaConfig: {
-      files: ['src/*.js', 'test/*.js']
-    }
+    karma: {
+      config: {
+        files: ['src/*.js', 'test/*.js']
+      }
+    },
+    mutator: 'javascript'
   });
 };

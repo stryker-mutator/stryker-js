@@ -1,8 +1,9 @@
 import { TestFramework } from 'stryker-api/test_framework';
-import { MutatorDescriptor, MutationScoreThresholds, LogLevel } from 'stryker-api/core';
+import { MutatorDescriptor, MutationScoreThresholds, LogLevel, StrykerOptions } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
 import { getLogger } from 'stryker-api/logging';
 import StrykerError from '../utils/StrykerError';
+import { normalizeWhiteSpaces } from '../utils/objectUtils';
 
 export default class ConfigValidator {
 
@@ -18,6 +19,7 @@ export default class ConfigValidator {
     this.validateLogLevel('logLevel');
     this.validateLogLevel('fileLogLevel');
     this.validateTimeout();
+    this.validatePort();
     this.validateIsNumber('maxConcurrentTestRunners', this.strykerConfig.maxConcurrentTestRunners);
     this.validateIsStringArray('plugins', this.strykerConfig.plugins);
     this.validateIsStringArray('reporters', this.strykerConfig.reporters);
@@ -53,6 +55,15 @@ export default class ConfigValidator {
     this.validateThresholdValue('break', thresholds.break);
     if (thresholds.high < thresholds.low) {
       this.invalidate(`\`thresholds.high\` is lower than \`thresholds.low\` (${thresholds.high} < ${thresholds.low})`);
+    }
+  }
+
+  public validatePort() {
+    if (this.strykerConfig.port) {
+      this.validateIsNumber('port', this.strykerConfig.port);
+      this.deprecate('port', normalizeWhiteSpaces(
+        `Test runners are expected to manage their own port selection.
+      I.e. please use karma.config.port, or leave it out entirely to let the test runner itself decide.`));
     }
   }
 
@@ -132,6 +143,10 @@ export default class ConfigValidator {
   private invalidate(message: string) {
     this.log.fatal(message);
     this.isValid = false;
+  }
+
+  private deprecate(deprecatedOption: keyof StrykerOptions, message: string) {
+    this.log.warn(`Stryker option "${deprecatedOption}" is deprecated. ${message}`);
   }
 
   private joinQuotedList(arr: string[]) {
