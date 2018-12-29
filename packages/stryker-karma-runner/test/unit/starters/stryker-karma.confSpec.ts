@@ -87,12 +87,6 @@ describe('stryker-karma.conf.js', () => {
     });
   });
 
-  it('should set the port', () => {
-    sut.setGlobals({ port: 1337 });
-    sut(config);
-    expect(config).include({ port: 1337 });
-  });
-
   it('should configure the tests hooks middleware', () => {
     sut(config);
     expect(config).deep.include({

@@ -28,10 +28,8 @@ describe('ResilientTestRunnerFactory integration', () => {
     loggingContext = { port, level: LogLevel.Trace };
     options = {
       fileNames: [],
-      port: 0,
       strykerOptions: {
         plugins: [require.resolve('./AdditionalTestRunners')],
-        port: 0,
         someRegex: /someRegex/,
         testFramework: 'jasmine',
         testRunner: 'karma'

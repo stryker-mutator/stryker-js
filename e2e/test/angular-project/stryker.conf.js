@@ -8,7 +8,6 @@ module.exports = function (config) {
     ],
     testRunner: 'karma',
     mutator: 'typescript',
-    port: 9336,
     karma: {
       configFile: 'src/karma.conf.js',
       projectType: 'angular-cli',

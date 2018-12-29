@@ -11,11 +11,6 @@ interface RunnerOptions {
   fileNames: string[];
 
   /**
-   * Represents a free port which the test runner can choose to use
-   */
-  port: number;
-
-  /**
    * The underlying strykerOptions
    */
   strykerOptions: StrykerOptions;

@@ -29,7 +29,6 @@ export function logger(): Mock<Logger> {
 
 export const runnerOptions = factory<RunnerOptions>(() => ({
   fileNames: ['src/math.js', 'test/mathSpec.js'],
-  port: 0,
   strykerOptions: { mochaOptions: {} }
 }));
 

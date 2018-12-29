@@ -254,14 +254,7 @@ you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or
 
 ### `port` [`number`]
 
-Default: `9234`  
-Command line: `--port 9234`  
-Config file: `port: 9234`    
- 
-  
-With `port` you specify the first port to pass on to the test runner to use. Any additional test runners will be spawned using ports n+1, n+2, etc.
-For example, when you set to use port 9234 and Stryker decides to start four test runner processes, ports 9234, 9235, 9236 and 9237 will be passed to the test runner.  
-If the test runner decides to use the port it should be available for use.
+Removed. With this setting you could configure the port used by the karma test runner. It can now be configured directly with karma: { config: { port: 7654 } } (but shouldn't be needed as karma supports its own port selection)
 
 ### `timeoutMS` [`number`]
 

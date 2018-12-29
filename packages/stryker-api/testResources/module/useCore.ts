@@ -7,7 +7,6 @@ const optionsAllArgs: StrykerOptions = {
   logLevel: LogLevel.Fatal,
   mutate: ['some'],
   plugins: ['string'],
-  port: 3,
   reporter: 'string',
   repoters: ['reporter'],
   testFramework: 'string',
