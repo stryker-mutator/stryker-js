@@ -28,7 +28,6 @@ describe('ProgressReporter', () => {
     sinon.stub(progressBarModule, 'default').returns(progressBar);
   });
 
-
   describe('onAllMutantsMatchedWithTests()', () => {
     describe('when there are 3 MatchedMutants that all contain Tests', () => {
       beforeEach(() => {

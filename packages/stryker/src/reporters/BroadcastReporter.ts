@@ -1,5 +1,5 @@
 import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from 'stryker-api/report';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
 import { keys, PluginResolver, PluginKind, Inject } from 'stryker-api/di';
@@ -7,14 +7,40 @@ import { StrykerOptions } from 'stryker-api/core';
 
 export default class BroadcastReporter implements StrictReporter {
 
-  public static readonly inject = keys('options', 'pluginResolver', 'inject');
-  private readonly log = getLogger(BroadcastReporter.name);
-  private readonly reporters: {
+  public static readonly inject = keys('options', 'pluginResolver', 'inject', 'logger');
+  public readonly reporters: {
     [name: string]: Reporter;
   };
-  constructor(private readonly options: StrykerOptions, pluginResolver: PluginResolver, inject: Inject) {
+  constructor(
+    private readonly options: StrykerOptions,
+    private readonly pluginResolver: PluginResolver,
+    private readonly inject: Inject,
+    private readonly log: Logger) {
     this.reporters = {};
-    this.options.reporters.forEach(reporterName => this.reporters[reporterName] = inject(pluginResolver.resolve(PluginKind.Reporter, reporterName)));
+    this.options.reporters.forEach(reporterName => this.createReporter(reporterName));
+    this.logAboutReporters();
+  }
+
+  private createReporter(reporterName: string): void {
+    if (reporterName === 'progress' && !process.stdout.isTTY) {
+      this.log.info(
+        'Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter'
+      );
+      reporterName = 'progress-append-only';
+    }
+    const plugin = this.pluginResolver.resolve(PluginKind.Reporter, reporterName);
+    this.reporters[reporterName] = this.inject(plugin);
+  }
+
+  private logAboutReporters(): void {
+    const reporterNames = Object.keys(this.reporters);
+    if (reporterNames.length) {
+      if (this.log.isDebugEnabled()) {
+        this.log.debug(`Broadcasting to reporters ${JSON.stringify(reporterNames)}`);
+      }
+    } else {
+      this.log.warn('No reporter configured. Please configure one or more reporters in the (for example: reporters: [\'progress\'])');
+    }
   }
 
   private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<any> | void {
@@ -64,8 +90,8 @@ export default class BroadcastReporter implements StrictReporter {
     this.broadcast('onScoreCalculated', score);
   }
 
-  public wrapUp(): void | Promise<void> {
-    return this.broadcast('wrapUp', undefined);
+  public async wrapUp(): Promise<void> {
+    await this.broadcast('wrapUp', undefined);
   }
 
   private handleError(error: Error, methodName: string, reporterName: string) {
