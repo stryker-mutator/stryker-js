@@ -8,6 +8,7 @@ import { Config } from 'stryker-api/config';
 import { RunStatus, TestStatus, RunResult } from 'stryker-api/test_runner';
 import Timer, * as timerModule from '../../../src/utils/Timer';
 import { Mock, mock } from '../../helpers/producers';
+import * as sinon from 'sinon';
 
 describe(CommandTestRunner.name, () => {
 
@@ -17,10 +18,10 @@ describe(CommandTestRunner.name, () => {
 
   beforeEach(() => {
     childProcessMock = new ChildProcessMock(42);
-    sandbox.stub(childProcess, 'exec').returns(childProcessMock);
-    killStub = sandbox.stub(objectUtils, 'kill');
+    sinon.stub(childProcess, 'exec').returns(childProcessMock);
+    killStub = sinon.stub(objectUtils, 'kill');
     timerMock = mock(Timer);
-    sandbox.stub(timerModule, 'default').returns(timerMock);
+    sinon.stub(timerModule, 'default').returns(timerMock);
   });
 
   describe('run', () => {

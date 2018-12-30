@@ -2,10 +2,10 @@ import * as path from 'path';
 import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import * as fileUtils from '../../src/utils/fileUtils';
-import PluginLoader from '../../src/PluginLoader';
-import currentLogMock from '../helpers/logMock';
-import { Mock } from '../helpers/producers';
+import * as fileUtils from '../../../src/utils/fileUtils';
+import PluginLoader from '../../../src/di/PluginLoader';
+import currentLogMock from '../../helpers/logMock';
+import { Mock } from '../../helpers/producers';
 import { fsAsPromised } from '@stryker-mutator/util';
 
 describe('PluginLoader', () => {
@@ -19,8 +19,8 @@ describe('PluginLoader', () => {
   beforeEach(() => {
     log = currentLogMock();
     sandbox = sinon.createSandbox();
-    importModuleStub = sandbox.stub(fileUtils, 'importModule');
-    pluginDirectoryReadMock = sandbox.stub(fsAsPromised, 'readdirSync');
+    importModuleStub = sinon.stub(fileUtils, 'importModule');
+    pluginDirectoryReadMock = sinon.stub(fsAsPromised, 'readdirSync');
   });
 
   describe('without wildcards', () => {

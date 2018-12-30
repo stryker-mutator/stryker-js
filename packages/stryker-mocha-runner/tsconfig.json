@@ -1,20 +1,11 @@
 {
-  "extends": "../../tsconfig.settings.json",
-  "compilerOptions": {
-    "rootDir": "."
-  },
-  "exclude": [
-    "node_modules",
-    "src/**/*.d.ts",
-    "test/**/*.d.ts",
-    "testResources"
-  ],
+  "files": [],
   "references": [
     {
-      "path": "../stryker-api/tsconfig.src.json"
+      "path": "./tsconfig.src.json"
     },
     {
-      "path": "../stryker-mocha-framework/tsconfig.src.json"
+      "path": "./tsconfig.test.json"
     }
   ]
 }

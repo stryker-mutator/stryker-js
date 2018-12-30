@@ -4,6 +4,7 @@ import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import SourceMapper, { PassThroughSourceMapper, TranspiledSourceMapper, MappedLocation, SourceMapError } from '../../../src/transpiler/SourceMapper';
 import { Mock, mock, config as configFactory, location as locationFactory, mappedLocation, PNG_BASE64_ENCODED } from '../../helpers/producers';
+import * as sinon from 'sinon';
 
 const GREATEST_LOWER_BOUND = sourceMapModule.SourceMapConsumer.GREATEST_LOWER_BOUND;
 const LEAST_UPPER_BOUND = sourceMapModule.SourceMapConsumer.LEAST_UPPER_BOUND;
@@ -25,12 +26,12 @@ describe('SourceMapper', () => {
 
     // For some reason, `generatedPositionFor` is not defined on the `SourceMapConsumer` prototype
     // Define it here by hand
-    sourceMapConsumerMock.generatedPositionFor = sandbox.stub();
+    sourceMapConsumerMock.generatedPositionFor = sinon.stub();
     sourceMapConsumerMock.generatedPositionFor.returns({
       column: 2,
       line: 1
     });
-    sandbox.stub(sourceMapModule, 'SourceMapConsumer').returns(sourceMapConsumerMock);
+    sinon.stub(sourceMapModule, 'SourceMapConsumer').returns(sourceMapConsumerMock);
 
     // Restore the static values, removed by the stub
     sourceMapModule.SourceMapConsumer.LEAST_UPPER_BOUND = LEAST_UPPER_BOUND;

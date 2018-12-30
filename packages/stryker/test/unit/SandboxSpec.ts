@@ -13,7 +13,6 @@ import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunne
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import { mutant as createMutant, testResult, Mock, createFileAlreadyExistsError } from '../helpers/producers';
 import SourceFile from '../../src/SourceFile';
-import '../helpers/globals';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import * as fileUtils from '../../src/utils/fileUtils';
 import currentLogMock from '../helpers/logMock';
@@ -45,9 +44,9 @@ describe('Sandbox', () => {
 
   beforeEach(() => {
     options = { timeoutFactor: 23, timeoutMS: 1000, testRunner: 'sandboxUnitTestRunner', symlinkNodeModules: true } as any;
-    testRunner = { init: sandbox.stub(), run: sandbox.stub().resolves(), dispose: sandbox.stub() };
+    testRunner = { init: sinon.stub(), run: sinon.stub().resolves(), dispose: sinon.stub() };
     testFrameworkStub = {
-      filter: sandbox.stub()
+      filter: sinon.stub()
     };
     expectedFileToMutate = new File(path.resolve('file1'), 'original code');
     notMutatedFile = new File(path.resolve('file2'), 'to be mutated');
@@ -58,15 +57,15 @@ describe('Sandbox', () => {
       expectedFileToMutate,
       notMutatedFile,
     ];
-    sandbox.stub(TempFolder.instance(), 'createRandomFolder').returns(sandboxDirectory);
-    writeFileStub = sandbox.stub(fileUtils, 'writeFile');
-    symlinkJunctionStub = sandbox.stub(fileUtils, 'symlinkJunction');
-    findNodeModulesStub = sandbox.stub(fileUtils, 'findNodeModules');
+    sinon.stub(TempFolder.instance(), 'createRandomFolder').returns(sandboxDirectory);
+    writeFileStub = sinon.stub(fileUtils, 'writeFile');
+    symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
+    findNodeModulesStub = sinon.stub(fileUtils, 'findNodeModules');
     symlinkJunctionStub.resolves();
     findNodeModulesStub.resolves('node_modules');
     writeFileStub.resolves();
-    sandbox.stub(mkdirp, 'sync').returns('');
-    sandbox.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
+    sinon.stub(mkdirp, 'sync').returns('');
+    sinon.stub(ResilientTestRunnerFactory, 'create').returns(testRunner);
     log = currentLogMock();
   });
 

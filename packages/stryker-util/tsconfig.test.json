@@ -11,7 +11,10 @@
   ],
   "references": [
     {
-      "path": "tsconfig.src.json"
+      "path": "tsconfig.src.json",
+    },
+    {
+      "path": "../stryker-test-helpers/tsconfig.src.json"
     }
   ]
 }

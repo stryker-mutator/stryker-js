@@ -24,8 +24,9 @@ describe('Config', () => {
     });
 
     it('should override thresholds when assigned', () => {
-      sut.set({ thresholds: {} });
-      expect(sut.thresholds).deep.eq({});
+      const thresholds = Object.freeze({ break: 20, low: 30, high: 40 });
+      sut.set({ thresholds });
+      expect(sut.thresholds).deep.eq(thresholds);
     });
 
     it('should never clear thresholds', () => {

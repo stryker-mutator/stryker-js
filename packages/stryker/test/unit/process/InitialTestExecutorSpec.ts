@@ -18,6 +18,7 @@ import InputFileCollection from '../../../src/input/InputFileCollection';
 import * as coverageHooks from '../../../src/transpiler/coverageHooks';
 import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import * as sinon from 'sinon';
 
 const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -45,11 +46,11 @@ describe('InitialTestExecutor run', () => {
     strykerSandboxMock = producers.mock(StrykerSandbox as any);
     transpilerFacadeMock = producers.mock(TranspilerFacade);
     coverageInstrumenterTranspilerMock = producers.mock(CoverageInstrumenterTranspiler);
-    sandbox.stub(StrykerSandbox, 'create').resolves(strykerSandboxMock);
-    sandbox.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
-    sandbox.stub(coverageInstrumenterTranspiler, 'default').returns(coverageInstrumenterTranspilerMock);
+    sinon.stub(StrykerSandbox, 'create').resolves(strykerSandboxMock);
+    sinon.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
+    sinon.stub(coverageInstrumenterTranspiler, 'default').returns(coverageInstrumenterTranspilerMock);
     sourceMapperMock = producers.mock(PassThroughSourceMapper);
-    sandbox.stub(SourceMapper, 'create').returns(sourceMapperMock);
+    sinon.stub(SourceMapper, 'create').returns(sourceMapperMock);
     testFrameworkMock = producers.testFramework();
     coverageAnnotatedFiles = [
       new File('cov-annotated-transpiled-file-1.js', ''),
@@ -195,7 +196,7 @@ describe('InitialTestExecutor run', () => {
 
     it('should also add a collectCoveragePerTest file when coverage analysis is "perTest" and there is a testFramework', async () => {
       options.coverageAnalysis = 'perTest';
-      sandbox.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
+      sinon.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
       await sut.run();
       expect(strykerSandboxMock.run).calledWith(EXPECTED_INITIAL_TIMEOUT, 'test hook foobar');
     });
@@ -203,7 +204,7 @@ describe('InitialTestExecutor run', () => {
     it('should result log a warning if coverage analysis is "perTest" and there is no testFramework', async () => {
       options.coverageAnalysis = 'perTest';
       sut = new InitialTestExecutor(options, inputFiles, /* test framework */ null, timer as any, LOGGING_CONTEXT);
-      sandbox.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
+      sinon.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
       await sut.run();
       expect(log.warn).calledWith('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
     });

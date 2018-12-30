@@ -28,19 +28,19 @@ describe('StrykerInitializer', () => {
 
   beforeEach(() => {
     log = currentLogMock();
-    out = sandbox.stub();
+    out = sinon.stub();
     presets = [];
     presetMock = {
-      createConfig: sandbox.stub(),
+      createConfig: sinon.stub(),
       name: 'awesome-preset'
     };
-    inquirerPrompt = sandbox.stub(inquirer, 'prompt');
-    childExecSync = sandbox.stub(child, 'execSync');
-    fsWriteFile = sandbox.stub(fsAsPromised, 'writeFile');
-    fsExistsSync = sandbox.stub(fsAsPromised, 'existsSync');
-    restClientSearchGet = sandbox.stub();
-    restClientPackageGet = sandbox.stub();
-    sandbox.stub(restClient, 'RestClient')
+    inquirerPrompt = sinon.stub(inquirer, 'prompt');
+    childExecSync = sinon.stub(child, 'execSync');
+    fsWriteFile = sinon.stub(fsAsPromised, 'writeFile');
+    fsExistsSync = sinon.stub(fsAsPromised, 'existsSync');
+    restClientSearchGet = sinon.stub();
+    restClientPackageGet = sinon.stub();
+    sinon.stub(restClient, 'RestClient')
       .withArgs('npmSearch').returns({
         get: restClientSearchGet
       })
@@ -51,7 +51,7 @@ describe('StrykerInitializer', () => {
   });
 
   afterEach(() => {
-    sandbox.restore();
+    sinon.restore();
   });
 
   describe('initialize()', () => {

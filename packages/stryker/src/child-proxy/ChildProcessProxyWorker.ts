@@ -3,7 +3,7 @@ import { getLogger, Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { serialize, deserialize, errorToString } from '../utils/objectUtils';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind, CallMessage } from './messageProtocol';
-import PluginLoader from '../PluginLoader';
+import PluginLoader from '../di/PluginLoader';
 import LogConfigurator from '../logging/LogConfigurator';
 
 export default class ChildProcessProxyWorker {

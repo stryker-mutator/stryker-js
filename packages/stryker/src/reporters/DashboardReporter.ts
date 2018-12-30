@@ -4,8 +4,13 @@ import {getEnvironmentVariable} from '../utils/objectUtils';
 import { getLogger } from 'stryker-api/logging';
 import { determineCIProvider } from './ci/Provider';
 import { StrykerOptions } from 'stryker-api/core';
+import { keys, PluginKind } from 'stryker-api/di';
 
 export default class DashboardReporter implements Reporter {
+  public static readonly inject = keys('options');
+  public static readonly pluginName = 'dashboard';
+  public static readonly kind = PluginKind.Reporter;
+
   private readonly log = getLogger(DashboardReporter.name);
   private readonly ciProvider = determineCIProvider();
 

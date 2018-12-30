@@ -18,7 +18,7 @@ export default class ConfigReader {
 
   private readonly log = getLogger(ConfigReader.name);
 
-  constructor(private readonly cliOptions: StrykerOptions) { }
+  constructor(private readonly cliOptions: Partial<StrykerOptions>) { }
 
   public readConfig() {
     const configModule = this.loadConfigModule();

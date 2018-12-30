@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import { Logger, getLogger } from 'stryker-api/logging';
-import { Config } from 'stryker-api/config';
-import { File } from 'stryker-api/core';
+import { File, StrykerOptions } from 'stryker-api/core';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import * as parserUtils from '../utils/parserUtils';
 import { copy } from '../utils/objectUtils';
@@ -19,7 +18,7 @@ export default class ES5Mutator implements Mutator {
 
   private readonly log: Logger;
 
-  constructor(_?: Config, private readonly mutators: NodeMutator[] = [
+  constructor(_?: StrykerOptions, private readonly mutators: NodeMutator[] = [
     new BinaryOperatorMutator(),
     new BlockStatementMutator(),
     new LogicalOperatorMutator(),

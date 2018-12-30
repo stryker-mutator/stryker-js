@@ -32,8 +32,8 @@ describe('InputFileResolver', () => {
   beforeEach(() => {
     log = currentLogMock();
     reporter = mock(BroadcastReporter);
-    globStub = sandbox.stub(fileUtils, 'glob');
-    readFileStub = sandbox.stub(fsAsPromised, 'readFile')
+    globStub = sinon.stub(fileUtils, 'glob');
+    readFileStub = sinon.stub(fsAsPromised, 'readFile')
       .withArgs(sinon.match.string).resolves(Buffer.from('')) // fallback
       .withArgs(sinon.match.string).resolves(Buffer.from('')) // fallback
       .withArgs(sinon.match('file1')).resolves(Buffer.from('file 1 content'))
@@ -49,7 +49,7 @@ describe('InputFileResolver', () => {
     globStub.withArgs('file3').resolves(['/file3.js']);
     globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
     globStub.resolves([]); // default
-    childProcessExecStub = sandbox.stub(childProcessAsPromised, 'exec');
+    childProcessExecStub = sinon.stub(childProcessAsPromised, 'exec');
   });
 
   it('should use git to identify files if files array is missing', async () => {

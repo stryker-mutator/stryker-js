@@ -15,24 +15,19 @@ const ONE_HOUR = SECOND * 3600;
 describe('ProgressReporter', () => {
 
   let sut: ProgressReporter;
-  let sandbox: sinon.SinonSandbox;
   let matchedMutants: MatchedMutant[];
   let progressBar: Mock<ProgressBar>;
-  const progressBarContent: string = `Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)`;
+  const progressBarContent = `Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)`;
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-    sandbox.useFakeTimers();
+    sinon.useFakeTimers();
 
     sut = new ProgressReporter();
 
     progressBar = mock(ProgressBar);
-    sandbox.stub(progressBarModule, 'default').returns(progressBar);
+    sinon.stub(progressBarModule, 'default').returns(progressBar);
   });
 
-  afterEach(() => {
-    sandbox.restore();
-  });
 
   describe('onAllMutantsMatchedWithTests()', () => {
     describe('when there are 3 MatchedMutants that all contain Tests', () => {
@@ -93,7 +88,7 @@ describe('ProgressReporter', () => {
     });
 
     it('should show to an estimate of "10s" in the progressBar after ten seconds and 1 mutants tested', () => {
-      sandbox.clock.tick(TEN_SECONDS);
+      sinon.clock.tick(TEN_SECONDS);
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
@@ -101,7 +96,7 @@ describe('ProgressReporter', () => {
     });
 
     it('should show to an estimate of "1m, 40s" in the progressBar after hundred seconds and 1 mutants tested', () => {
-      sandbox.clock.tick(HUNDRED_SECONDS);
+      sinon.clock.tick(HUNDRED_SECONDS);
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
@@ -109,7 +104,7 @@ describe('ProgressReporter', () => {
     });
 
     it('should show to an estimate of "2h, 46m, 40s" in the progressBar after ten thousand seconds and 1 mutants tested', () => {
-      sandbox.clock.tick(TEN_THOUSAND_SECONDS);
+      sinon.clock.tick(TEN_THOUSAND_SECONDS);
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
@@ -117,7 +112,7 @@ describe('ProgressReporter', () => {
     });
 
     it('should show to an estimate of "1h, 0m, 0s" in the progressBar after an hour and 1 mutants tested', () => {
-      sandbox.clock.tick(ONE_HOUR);
+      sinon.clock.tick(ONE_HOUR);
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 

@@ -8,7 +8,7 @@ describe('determineCiProvider()', () => {
   let getEnvironmentVariables: sinon.SinonStub;
 
   beforeEach(() => {
-    getEnvironmentVariables = sandbox.stub(environmentVariables, 'getEnvironmentVariable');
+    getEnvironmentVariables = sinon.stub(environmentVariables, 'getEnvironmentVariable');
   });
 
   describe('Without CI environment', () => {

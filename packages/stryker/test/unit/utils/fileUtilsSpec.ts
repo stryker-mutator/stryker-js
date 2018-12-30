@@ -2,15 +2,16 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { fsAsPromised } from '@stryker-mutator/util';
 import * as fileUtils from '../../../src/utils/fileUtils';
+import * as sinon from 'sinon';
 
 describe('fileUtils', () => {
 
   let existsStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox.stub(fsAsPromised, 'writeFile');
-    sandbox.stub(fsAsPromised, 'symlink');
-    existsStub = sandbox.stub(fsAsPromised, 'exists');
+    sinon.stub(fsAsPromised, 'writeFile');
+    sinon.stub(fsAsPromised, 'symlink');
+    existsStub = sinon.stub(fsAsPromised, 'exists');
   });
 
   describe('writeFile', () => {

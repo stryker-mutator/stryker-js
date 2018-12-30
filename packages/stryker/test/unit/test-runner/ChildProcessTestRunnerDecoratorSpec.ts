@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { RunnerOptions, RunOptions } from 'stryker-api/test_runner';
 import { LogLevel } from 'stryker-api/core';
 import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
-import { Mock, mock } from '../../helpers/producers';
+import { Mock, mock, strykerOptions } from '../../helpers/producers';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import ChildProcessTestRunnerWorker from '../../../src/test-runner/ChildProcessTestRunnerWorker';
@@ -23,18 +23,18 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
   let clock: sinon.SinonFakeTimers;
 
   beforeEach(() => {
-    clock = sandbox.useFakeTimers();
+    clock = sinon.useFakeTimers();
     childProcessProxyMock = {
-      dispose: sandbox.stub(),
+      dispose: sinon.stub(),
       proxy: mock(TestRunnerDecorator)
     };
-    childProcessProxyCreateStub = sandbox.stub(ChildProcessProxy, 'create');
+    childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     childProcessProxyCreateStub.returns(childProcessProxyMock);
     runnerOptions = {
       fileNames: [],
-      strykerOptions: {
+      strykerOptions: strykerOptions({
         plugins: ['foo-plugin', 'bar-plugin']
-      }
+      })
     };
     loggingContext = { port: 4200, level: LogLevel.Fatal };
     sut = new ChildProcessTestRunnerDecorator('realRunner', runnerOptions, 'a working directory', loggingContext);

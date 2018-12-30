@@ -34,7 +34,7 @@ export default class Config implements StrykerOptions {
   };
   public allowConsoleColors: boolean = true;
 
-  public set(newConfig: StrykerOptions) {
+  public set(newConfig: Partial<StrykerOptions>) {
     if (newConfig) {
       Object.keys(newConfig).forEach(key => {
         if (typeof newConfig[key] !== 'undefined') {

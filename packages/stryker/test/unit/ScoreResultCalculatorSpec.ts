@@ -178,7 +178,7 @@ describe('ScoreResult', () => {
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
-      setExitCodeStub = sandbox.stub(objectUtils, 'setExitCode');
+      setExitCodeStub = sinon.stub(objectUtils, 'setExitCode');
     });
 
     afterEach(() => {

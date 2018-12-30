@@ -7,10 +7,10 @@ import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import TranspileResult from '../../../src/transpiler/TranspileResult';
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
 import { errorToString } from '../../../src/utils/objectUtils';
-import '../../helpers/globals';
 import { Mock, config, file, mock, testableMutant } from '../../helpers/producers';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { sleep } from '../../helpers/testUtils';
+import * as sinon from 'sinon';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
@@ -26,9 +26,9 @@ describe('MutantTranspiler', () => {
 
   beforeEach(() => {
     transpilerFacadeMock = mock(TranspilerFacade);
-    childProcessProxyMock = { proxy: transpilerFacadeMock, dispose: sandbox.stub() };
-    sandbox.stub(ChildProcessProxy, 'create').returns(childProcessProxyMock);
-    sandbox.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
+    childProcessProxyMock = { proxy: transpilerFacadeMock, dispose: sinon.stub() };
+    sinon.stub(ChildProcessProxy, 'create').returns(childProcessProxyMock);
+    sinon.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
     transpiledFilesOne = [new File('firstResult.js', 'first result')];
     transpiledFilesTwo = [new File('secondResult.js', 'second result')];
     transpilerFacadeMock.transpile

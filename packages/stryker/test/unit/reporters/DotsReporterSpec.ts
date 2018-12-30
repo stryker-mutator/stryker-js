@@ -14,7 +14,7 @@ describe('DotsReporter', () => {
   beforeEach(() => {
     sut = new DotsReporter();
     sandbox = sinon.createSandbox();
-    sandbox.stub(process.stdout, 'write');
+    sinon.stub(process.stdout, 'write');
   });
 
   describe('onMutantTested()', () => {

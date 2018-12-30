@@ -12,6 +12,7 @@
         "report.ts",
         "test_framework.ts",
         "test_runner.ts",
-        "transpile.ts"
+        "transpile.ts",
+        "di.ts"
     ]
 }

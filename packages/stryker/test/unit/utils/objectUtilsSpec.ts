@@ -2,6 +2,7 @@ import * as sut from '../../../src/utils/objectUtils';
 import { expect } from 'chai';
 import { match } from 'sinon';
 import { Task } from '../../../src/utils/Task';
+import * as sinon from 'sinon';
 
 describe('objectUtils', () => {
   describe('timeout', () => {
@@ -15,8 +16,8 @@ describe('objectUtils', () => {
     it('should remove any nodejs timers when promise resolves', async () => {
       // Arrange
       const expectedTimer = 234;
-      const setTimeoutStub = sandbox.stub(global, 'setTimeout');
-      const clearTimeoutStub = sandbox.stub(global, 'clearTimeout');
+      const setTimeoutStub = sinon.stub(global, 'setTimeout');
+      const clearTimeoutStub = sinon.stub(global, 'clearTimeout');
       setTimeoutStub.returns(expectedTimer);
       const expectedResult = 'expectedResult';
       const p = Promise.resolve(expectedResult);

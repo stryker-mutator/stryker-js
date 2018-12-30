@@ -51,11 +51,11 @@ module.exports = function (config) {
      fileLogLevel: 'trace',	
      logLevel: 'info',	
      plugins: [	
-       require.resolve('../stryker-mocha-runner/src/index'),	
-       require.resolve('../stryker-mocha-framework/src/index'),	
+      //  require.resolve('../stryker-mocha-runner/src/index'),	
+      //  require.resolve('../stryker-mocha-framework/src/index'),	
        require.resolve('../stryker-html-reporter/src/index'),	
-       require.resolve('../stryker-typescript/src/index'),	
-       require.resolve('../stryker-javascript-mutator/src/index')	
+      //  require.resolve('../stryker-typescript/src/index'),	
+      //  require.resolve('../stryker-javascript-mutator/src/index')	
      ]	
    });	
  };

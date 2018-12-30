@@ -1,9 +1,9 @@
-import InjectableKey from './InjectableKey';
+import InjectableKey from './InjectorKey';
 import ContainerValues from './ContainerValues';
 
-interface Injectable<T, TS extends InjectableKey[]> {
-  new(...args: ContainerValues<TS>): T;
-  inject: TS;
+interface Injectable<T, TArgKeys extends InjectableKey[]> {
+  new(...args: ContainerValues<TArgKeys>): T;
+  readonly inject: TArgKeys;
 }
 
 export default Injectable;

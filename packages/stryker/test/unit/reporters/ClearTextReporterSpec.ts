@@ -22,7 +22,7 @@ describe('ClearTextReporter', () => {
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
-    stdoutStub = sandbox.stub(process.stdout, 'write');
+    stdoutStub = sinon.stub(process.stdout, 'write');
   });
 
   describe('onScoreCalculated', () => {

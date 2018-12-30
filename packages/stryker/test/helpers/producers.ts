@@ -4,7 +4,7 @@ import { Config } from 'stryker-api/config';
 import { Logger } from 'stryker-api/logging';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
-import { MutationScoreThresholds, File, Location } from 'stryker-api/core';
+import { MutationScoreThresholds, File, Location, StrykerOptions, LogLevel } from 'stryker-api/core';
 import TestableMutant from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import TranspiledMutant from '../../src/TranspiledMutant';
@@ -12,11 +12,12 @@ import { FileCoverageData } from 'istanbul-lib-coverage';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
+import * as sinon from 'sinon';
 
 export type Mock<T> = sinon.SinonStubbedInstance<T>;
 
 export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
-  return sandbox.createStubInstance(constructorFn);
+  return sinon.createStubInstance(constructorFn);
 }
 
 /**
@@ -26,7 +27,7 @@ export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
 function isPrimitive(value: any): boolean {
   return ['string', 'undefined', 'symbol', 'boolean'].indexOf(typeof value) > -1
     || (typeof value === 'number' && !isNaN(value)
-    || value === null);
+      || value === null);
 }
 
 /**
@@ -81,18 +82,18 @@ export const mutant = factoryMethod<Mutant>(() => ({
 
 export const logger = (): Mock<Logger> => {
   return {
-    debug: sandbox.stub(),
-    error: sandbox.stub(),
-    fatal: sandbox.stub(),
-    info: sandbox.stub(),
-    isDebugEnabled: sandbox.stub(),
-    isErrorEnabled: sandbox.stub(),
-    isFatalEnabled: sandbox.stub(),
-    isInfoEnabled: sandbox.stub(),
-    isTraceEnabled: sandbox.stub(),
-    isWarnEnabled: sandbox.stub(),
-    trace: sandbox.stub(),
-    warn: sandbox.stub()
+    debug: sinon.stub(),
+    error: sinon.stub(),
+    fatal: sinon.stub(),
+    info: sinon.stub(),
+    isDebugEnabled: sinon.stub(),
+    isErrorEnabled: sinon.stub(),
+    isFatalEnabled: sinon.stub(),
+    isInfoEnabled: sinon.stub(),
+    isTraceEnabled: sinon.stub(),
+    isWarnEnabled: sinon.stub(),
+    trace: sinon.stub(),
+    warn: sinon.stub()
   };
 };
 
@@ -159,6 +160,28 @@ export const mutationScoreThresholds = factory<MutationScoreThresholds>({
   high: 80,
   low: 60
 });
+
+export const strykerOptions = factoryMethod<StrykerOptions>(() => ({
+  allowConsoleColors: true,
+  coverageAnalysis: 'off',
+  fileLogLevel: LogLevel.Off,
+  logLevel: LogLevel.Information,
+  maxConcurrentTestRunners: Infinity,
+  mutate: ['src/**/*.js'],
+  mutator: 'javascript',
+  plugins: [],
+  reporters: [],
+  symlinkNodeModules: true,
+  testRunner: 'command',
+  thresholds: {
+    break: 20,
+    high: 80,
+    low: 30
+  },
+  timeoutFactor: 1.5,
+  timeoutMS: 5000,
+  transpilers: []
+}));
 
 export const config = factoryMethod<Config>(() => new Config());
 

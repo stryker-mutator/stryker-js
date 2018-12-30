@@ -14,10 +14,10 @@ import TranspiledMutant from '../../../src/TranspiledMutant';
 import MutantTestExecutor from '../../../src/process/MutationTestExecutor';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import MutantTranspiler, * as mutantTranspiler from '../../../src/transpiler/MutantTranspiler';
-import '../../helpers/globals';
 import { Mock, config, file, mock, mutantResult, testFramework, testResult, testableMutant, transpiledMutant, runResult } from '../../helpers/producers';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import currentLogMock from '../../helpers/logMock';
+import * as sinon from 'sinon';
 
 const createTranspiledMutants = (...n: number[]) => {
   return n.map(n => {
@@ -56,8 +56,8 @@ describe('MutationTestExecutor', () => {
     mutantTranspilerMock.initialize.resolves(initialTranspiledFiles);
     sandboxPoolMock.disposeAll.resolves();
     testFrameworkMock = testFramework();
-    sandbox.stub(sandboxPool, 'default').returns(sandboxPoolMock);
-    sandbox.stub(mutantTranspiler, 'default').returns(mutantTranspilerMock);
+    sinon.stub(sandboxPool, 'default').returns(sandboxPoolMock);
+    sinon.stub(mutantTranspiler, 'default').returns(mutantTranspilerMock);
     reporter = mock(BroadcastReporter);
     inputFiles = [new File('input.ts', '')];
     expectedConfig = config();

@@ -5,7 +5,7 @@ import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter'
 import * as fileUtils from '../../../src/utils/fileUtils';
 import currentLogMock from '../../helpers/logMock';
 import StrictReporter from '../../../src/reporters/StrictReporter';
-import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
+import { ALL_REPORTER_EVENTS, strykerOptions } from '../../helpers/producers';
 import { fsAsPromised } from '@stryker-mutator/util';
 
 describe('EventRecorderReporter', () => {
@@ -17,8 +17,8 @@ describe('EventRecorderReporter', () => {
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
-    cleanFolderStub = sandbox.stub(fileUtils, 'cleanFolder');
-    writeFileStub = sandbox.stub(fsAsPromised, 'writeFile');
+    cleanFolderStub = sinon.stub(fileUtils, 'cleanFolder');
+    writeFileStub = sinon.stub(fsAsPromised, 'writeFile');
   });
 
   afterEach(() => {
@@ -30,7 +30,7 @@ describe('EventRecorderReporter', () => {
     describe('and cleanFolder resolves correctly', () => {
       beforeEach(() => {
         cleanFolderStub.returns(Promise.resolve());
-        sut = new EventRecorderReporter({});
+        sut = new EventRecorderReporter(strykerOptions());
       });
 
       it('should log about the default baseFolder', () => {
@@ -76,7 +76,7 @@ describe('EventRecorderReporter', () => {
       beforeEach(() => {
         expectedError = new Error('Some error 1');
         cleanFolderStub.rejects(expectedError);
-        sut = new EventRecorderReporter({});
+        sut = new EventRecorderReporter(strykerOptions());
       });
 
       it('should reject when `wrapUp()` is called', () => {

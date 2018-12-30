@@ -7,12 +7,13 @@ import { StrykerOptions, File } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
 import MutantTestMatcher from '../../src/MutantTestMatcher';
 import currentLogMock from '../helpers/logMock';
-import { testResult, mutant, Mock, mock } from '../helpers/producers';
+import { testResult, mutant, Mock, mock, strykerOptions } from '../helpers/producers';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import SourceFile from '../../src/SourceFile';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import { CoverageMapsByFile } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { PassThroughSourceMapper, MappedLocation } from '../../src/transpiler/SourceMapper';
+import * as sinon from 'sinon';
 
 describe('MutantTestMatcher', () => {
 
@@ -21,7 +22,7 @@ describe('MutantTestMatcher', () => {
   let mutants: Mutant[];
   let runResult: RunResult;
   let fileCoverageDictionary: CoverageMapsByFile;
-  let strykerOptions: StrykerOptions;
+  let options: StrykerOptions;
   let reporter: Mock<BroadcastReporter>;
   let filesToMutate: ReadonlyArray<File>;
   let sourceMapper: PassThroughSourceMapper;
@@ -31,25 +32,25 @@ describe('MutantTestMatcher', () => {
     mutants = [];
     fileCoverageDictionary = Object.create(null);
     runResult = { tests: [], status: RunStatus.Complete };
-    strykerOptions = {};
+    options = strykerOptions();
     reporter = mock(BroadcastReporter);
     filesToMutate = [new File('fileWithMutantOne', '\n\n\n\n12345'), new File('fileWithMutantTwo', '\n\n\n\n\n\n\n\n\n\n')];
     sourceMapper = new PassThroughSourceMapper();
-    sandbox.spy(sourceMapper, 'transpiledLocationFor');
+    sinon.spy(sourceMapper, 'transpiledLocationFor');
     sut = new MutantTestMatcher(
       mutants,
       filesToMutate,
       runResult,
       sourceMapper,
       fileCoverageDictionary,
-      strykerOptions,
+      options,
       reporter);
   });
 
   describe('with coverageAnalysis: "perTest"', () => {
 
     beforeEach(() => {
-      strykerOptions.coverageAnalysis = 'perTest';
+      options.coverageAnalysis = 'perTest';
     });
 
     describe('matchWithMutants()', () => {
@@ -345,7 +346,7 @@ describe('MutantTestMatcher', () => {
 
   describe('with coverageAnalysis: "all"', () => {
 
-    beforeEach(() => strykerOptions.coverageAnalysis = 'all');
+    beforeEach(() => options.coverageAnalysis = 'all');
 
     it('should match all mutants to all tests and log a warning when there is no coverage data', () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
@@ -416,7 +417,7 @@ describe('MutantTestMatcher', () => {
 
   describe('with coverageAnalysis: "off"', () => {
 
-    beforeEach(() => strykerOptions.coverageAnalysis = 'off');
+    beforeEach(() => options.coverageAnalysis = 'off');
 
     it('should match all mutants to all tests', () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));

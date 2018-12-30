@@ -3,7 +3,7 @@ import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyW
 import { expect } from 'chai';
 import { serialize } from '../../../src/utils/objectUtils';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, CallMessage, ParentMessageKind, InitMessage } from '../../../src/child-proxy/messageProtocol';
-import PluginLoader, * as pluginLoader from '../../../src/PluginLoader';
+import PluginLoader, * as pluginLoader from '../../../src/di/PluginLoader';
 import { Mock, mock } from '../../helpers/producers';
 import HelloClass from './HelloClass';
 import LogConfigurator from '../../../src/logging/LogConfigurator';
@@ -11,6 +11,7 @@ import { LogLevel } from 'stryker-api/core';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { Logger } from 'stryker-api/logging';
 import currentLogMock from '../../helpers/logMock';
+import * as sinon from 'sinon';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 
@@ -31,18 +32,18 @@ describe('ChildProcessProxyWorker', () => {
   beforeEach(() => {
     processes = [];
     logMock = currentLogMock();
-    processOnStub = sandbox.stub(process, 'on');
-    processListenersStub = sandbox.stub(process, 'listeners');
+    processOnStub = sinon.stub(process, 'on');
+    processListenersStub = sinon.stub(process, 'listeners');
     processListenersStub.returns(processes);
-    processRemoveListenerStub = sandbox.stub(process, 'removeListener');
-    processSendStub = sandbox.stub();
+    processRemoveListenerStub = sinon.stub(process, 'removeListener');
+    processSendStub = sinon.stub();
     // process.send is normally undefined
     originalProcessSend = process.send;
     process.send = processSendStub;
-    processChdirStub = sandbox.stub(process, 'chdir');
-    configureChildProcessStub = sandbox.stub(LogConfigurator, 'configureChildProcess');
+    processChdirStub = sinon.stub(process, 'chdir');
+    configureChildProcessStub = sinon.stub(LogConfigurator, 'configureChildProcess');
     pluginLoaderMock = mock(PluginLoader);
-    sandbox.stub(pluginLoader, 'default').returns(pluginLoaderMock);
+    sinon.stub(pluginLoader, 'default').returns(pluginLoaderMock);
   });
 
   afterEach(() => {

@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": [
+      "mocha"
+    ]
+  },
+  "include": [
+    "test"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.src.json"
+    },
+    {
+      "path": "../stryker-test-helpers/tsconfig.src.json"
+    }
+  ]
+}

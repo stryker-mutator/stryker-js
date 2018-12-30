@@ -19,8 +19,8 @@ describe('DashboardReporter', () => {
   beforeEach(() => {
     log = currentLogMock();
     dashboardClientMock = mock(StrykerDashboardClient);
-    getEnvironmentVariables = sandbox.stub(environmentVariables, 'getEnvironmentVariable');
-    determineCiProvider = sandbox.stub(ciProvider, 'determineCIProvider');
+    getEnvironmentVariables = sinon.stub(environmentVariables, 'getEnvironmentVariable');
+    determineCiProvider = sinon.stub(ciProvider, 'determineCIProvider');
   });
 
   function setupEnvironmentVariables(env?: {

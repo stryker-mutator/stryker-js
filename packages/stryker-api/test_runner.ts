@@ -7,3 +7,4 @@ export { default as RunResult } from './src/test_runner/RunResult';
 export { default as RunOptions } from './src/test_runner/RunOptions';
 export { default as RunStatus } from './src/test_runner/RunStatus';
 export { default as TestRunnerFactory } from './src/test_runner/TestRunnerFactory';
+export { default as TestRunnerPlugin } from './src/test_runner/TestRunnerPlugin';

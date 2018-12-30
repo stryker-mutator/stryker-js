@@ -6,6 +6,7 @@ import ES5Mutator from '../../../src/mutators/ES5Mutator';
 import NodeMutator from '../../../src/mutators/NodeMutator';
 import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
 import { File } from 'stryker-api/core';
+import * as sinon from 'sinon';
 
 describe('ES5Mutator', () => {
   let sut: ES5Mutator;
@@ -15,7 +16,7 @@ describe('ES5Mutator', () => {
   });
 
   afterEach(() => {
-    sandbox.restore();
+    sinon.restore();
   });
 
   describe('with single input file with a one possible mutation', () => {

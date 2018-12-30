@@ -5,10 +5,14 @@ import { SourceFile, MutantResult, MatchedMutant, Reporter, ScoreResult } from '
 import { cleanFolder } from '../utils/fileUtils';
 import StrictReporter from './StrictReporter';
 import { fsAsPromised } from '@stryker-mutator/util';
+import { PluginKind, keys } from 'stryker-api/di';
 
 const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 
 export default class EventRecorderReporter implements StrictReporter {
+  public static readonly inject = keys('options');
+  public static readonly pluginName = 'event-recorder';
+  public static readonly kind = PluginKind.Reporter;
 
   private readonly log = getLogger(EventRecorderReporter.name);
   private readonly allWork: Promise<void>[] = [];

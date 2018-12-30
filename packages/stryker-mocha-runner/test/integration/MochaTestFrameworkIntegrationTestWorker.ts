@@ -1,6 +1,7 @@
 import MochaTestRunner from '../../src/MochaTestRunner';
 import * as path from 'path';
 import { RunResult } from 'stryker-api/test_runner';
+import { factory } from '../../../stryker-test-helpers/src';
 
 export const AUTO_START_ARGUMENT = '2e164669-acf1-461c-9c05-2be139614de2';
 
@@ -20,13 +21,13 @@ export default class MochaTestFrameworkIntegrationTestWorker {
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMath.js'),
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
       ],
-      strykerOptions: {
+      strykerOptions: factory.strykerOptions({
         mochaOptions: {
           files: [
             path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
           ]
         }
-      }
+      })
     });
     this.listenForParentProcess();
     try {

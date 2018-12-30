@@ -9,6 +9,7 @@ import LibWrapper from '../../src/LibWrapper';
 import * as utils from '../../src/utils';
 import { Mock, mock, logger, runnerOptions } from '../helpers/mockHelpers';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
+import { factory } from '../../../stryker-test-helpers/src';
 
 describe('MochaTestRunner', () => {
 
@@ -41,7 +42,7 @@ describe('MochaTestRunner', () => {
   it('should should add all mocha test files on run()', async () => {
     multimatchStub.returns(['foo.js', 'bar.js', 'foo2.js']);
     sut = new MochaTestRunner(runnerOptions({
-      strykerOptions: { mochaOptions: {} }
+      strykerOptions: factory.strykerOptions({ mochaOptions: {} })
     }));
     await sut.init();
     await actRun();
@@ -79,7 +80,7 @@ describe('MochaTestRunner', () => {
       timeout: 2000,
       ui: 'assert'
     };
-    sut = new MochaTestRunner(runnerOptions({ strykerOptions: { mochaOptions } }));
+    sut = new MochaTestRunner(runnerOptions({ strykerOptions: factory.strykerOptions({ mochaOptions }) }));
     await sut.init();
 
     // Act
@@ -94,7 +95,7 @@ describe('MochaTestRunner', () => {
 
   it('should pass require additional require options when constructed', () => {
     const mochaOptions: MochaRunnerOptions = { require: ['ts-node', 'babel-register'] };
-    new MochaTestRunner(runnerOptions({ strykerOptions: { mochaOptions } }));
+    new MochaTestRunner(runnerOptions({ strykerOptions: factory.strykerOptions({ mochaOptions }) }));
     expect(requireStub).calledTwice;
     expect(requireStub).calledWith('ts-node');
     expect(requireStub).calledWith('babel-register');
@@ -102,7 +103,7 @@ describe('MochaTestRunner', () => {
 
   it('should pass and resolve relative require options when constructed', () => {
     const mochaOptions: MochaRunnerOptions = { require: ['./setup.js', 'babel-register'] };
-    new MochaTestRunner(runnerOptions({ strykerOptions: { mochaOptions } }));
+    new MochaTestRunner(runnerOptions({ strykerOptions: factory.strykerOptions({ mochaOptions }) }));
     const resolvedRequire = path.resolve('./setup.js');
     expect(requireStub).calledTwice;
     expect(requireStub).calledWith(resolvedRequire);
@@ -166,7 +167,7 @@ describe('MochaTestRunner', () => {
     multimatchStub.returns(['foo.js']);
     sut = new MochaTestRunner(runnerOptions({
       fileNames: expectedFiles,
-      strykerOptions: { mochaOptions: { files: relativeGlobPatterns } }
+      strykerOptions: factory.strykerOptions({ mochaOptions: { files: relativeGlobPatterns } })
     }));
     sut.init();
     expect(multimatchStub).calledWith(expectedFiles, expectedGlobPatterns);

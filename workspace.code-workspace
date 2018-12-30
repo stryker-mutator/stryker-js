@@ -55,6 +55,9 @@
 			"path": "packages/stryker-util"
 		},
 		{
+			"path": "packages/stryker-test-helpers"
+		},
+		{
 			"path": "e2e"
 		},
 		{

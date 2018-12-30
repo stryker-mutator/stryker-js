@@ -4,6 +4,7 @@ import { TestResult, RunResult, TestStatus, RunStatus, RunnerOptions } from 'str
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
+import { factory } from '../../../stryker-test-helpers/src';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -32,9 +33,9 @@ describe('Running a sample project', () => {
       ];
       const testRunnerOptions: RunnerOptions = {
         fileNames: files,
-        strykerOptions: {
+        strykerOptions: factory.strykerOptions({
           mochaOptions: { files }
-        }
+        })
       };
       sut = new MochaTestRunner(testRunnerOptions);
       return sut.init();
@@ -67,7 +68,7 @@ describe('Running a sample project', () => {
       };
       const options: RunnerOptions = {
         fileNames: files,
-        strykerOptions: { mochaOptions }
+        strykerOptions: factory.strykerOptions({ mochaOptions })
       };
       sut = new MochaTestRunner(options);
       return sut.init();
@@ -87,13 +88,13 @@ describe('Running a sample project', () => {
           resolve('testResources/sampleProject/MyMath.js'),
           resolve('testResources/sampleProject/MyMathFailedSpec.js')
         ],
-        strykerOptions: {
+        strykerOptions: factory.strykerOptions({
           mochaOptions: {
             files: [
               resolve('testResources/sampleProject/MyMath.js'),
               resolve('testResources/sampleProject/MyMathFailedSpec.js')],
           }
-        }
+        })
       });
       return sut.init();
     });
@@ -110,9 +111,9 @@ describe('Running a sample project', () => {
       const files = [resolve('./testResources/sampleProject/MyMath.js')];
       const testRunnerOptions = {
         fileNames: files,
-        strykerOptions: {
+        strykerOptions: factory.strykerOptions({
           mochaOptions: { files }
-        }
+        })
       };
       sut = new MochaTestRunner(testRunnerOptions);
       return sut.init();

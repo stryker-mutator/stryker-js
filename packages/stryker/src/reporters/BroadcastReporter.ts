@@ -2,33 +2,38 @@ import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from '
 import { getLogger } from 'stryker-api/logging';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
-
-export interface NamedReporter {
-  name: string;
-  reporter: Reporter;
-}
+import { keys, PluginResolver, PluginKind, Inject } from 'stryker-api/di';
+import { StrykerOptions } from 'stryker-api/core';
 
 export default class BroadcastReporter implements StrictReporter {
 
+  public static readonly inject = keys('options', 'pluginResolver', 'inject');
   private readonly log = getLogger(BroadcastReporter.name);
-  constructor(private readonly reporters: NamedReporter[]) {
+  private readonly reporters: {
+    [name: string]: Reporter;
+  };
+  constructor(private readonly options: StrykerOptions, pluginResolver: PluginResolver, inject: Inject) {
+    this.reporters = {};
+    this.options.reporters.forEach(reporterName => this.reporters[reporterName] = inject(pluginResolver.resolve(PluginKind.Reporter, reporterName)));
   }
 
   private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<any> | void {
     const allPromises: Promise<void>[] = [];
-    this.reporters.forEach(namedReporter => {
-      if (typeof namedReporter.reporter[methodName] === 'function') {
+    Object.keys(this.reporters).forEach(reporterName => {
+      const reporter = this.reporters[reporterName];
+      if (typeof reporter[methodName] === 'function') {
         try {
-          const maybePromise = (namedReporter.reporter[methodName] as any)(eventArgs);
+          const maybePromise = (reporter[methodName] as any)(eventArgs);
           if (isPromise(maybePromise)) {
             allPromises.push(maybePromise.catch(error => {
-              this.handleError(error, methodName, namedReporter.name);
+              this.handleError(error, methodName, reporterName);
             }));
           }
         } catch (error) {
-          this.handleError(error, methodName, namedReporter.name);
+          this.handleError(error, methodName, reporterName);
         }
       }
+
     });
     if (allPromises.length) {
       return Promise.all(allPromises);
