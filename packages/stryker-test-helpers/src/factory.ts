@@ -42,7 +42,7 @@ export const mutant = factoryMethod<Mutant>(() => ({
   replacement: 'replacement'
 }));
 
-export const logger = (): sinon.SinonStubbedInstance<Logger> => {
+export function logger(): sinon.SinonStubbedInstance<Logger> {
   return {
     debug: sinon.stub(),
     error: sinon.stub(),
@@ -57,7 +57,7 @@ export const logger = (): sinon.SinonStubbedInstance<Logger> => {
     trace: sinon.stub(),
     warn: sinon.stub()
   };
-};
+}
 
 export const testFramework = factoryMethod<TestFramework>(() => ({
   beforeEach(codeFragment: string) { return `beforeEach(){ ${codeFragment}}`; },

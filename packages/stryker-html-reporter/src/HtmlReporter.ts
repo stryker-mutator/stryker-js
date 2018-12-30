@@ -1,4 +1,4 @@
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import fileUrl = require('file-url');
 import * as path from 'path';
 import { Reporter, MutantResult, SourceFile, ScoreResult } from 'stryker-api/report';
@@ -12,17 +12,16 @@ const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class HtmlReporter implements Reporter {
-  private readonly log = getLogger(HtmlReporter.name);
   private _baseDir: string;
   private mainPromise: Promise<void>;
   private mutantResults: MutantResult[];
   private files: SourceFile[];
   private scoreResult: ScoreResult;
 
-  constructor(private readonly options: StrykerOptions) {
+  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {
   }
 
-  public static readonly inject = keys('options');
+  public static readonly inject = keys('options', 'logger');
   public static readonly kind = PluginKind.Reporter;
   public static readonly pluginName = 'html';
 

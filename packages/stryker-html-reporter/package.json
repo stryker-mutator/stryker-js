@@ -47,6 +47,7 @@
     "stryker-api": ">=0.18.0 <0.24.0"
   },
   "devDependencies": {
+    "@stryker-mutator/test-helpers": "0.0.0",
     "@types/file-url": "~2.0.0",
     "@types/jsdom": "~12.2.0",
     "@types/node": "^10.11.5",
