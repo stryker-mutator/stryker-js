@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import * as util from '../../src/util';
 import HtmlReporter from '../../src/HtmlReporter';
 import { sourceFile, mutantResult, scoreResult } from '../helpers/producers';
-import { factory } from '@stryker-mutator/test-helpers';
+import { TestInjector } from '@stryker-mutator/test-helpers';
 
 describe('HtmlReporter', () => {
   let copyFolderStub: sinon.SinonStub;
@@ -18,7 +18,7 @@ describe('HtmlReporter', () => {
     writeFileStub = sinon.stub(util, 'writeFile');
     deleteDirStub = sinon.stub(util, 'deleteDir');
     mkdirStub = sinon.stub(util, 'mkdir');
-    sut = new HtmlReporter(factory.strykerOptions(), factory.logger());
+    sut = TestInjector.inject(HtmlReporter);
   });
 
   describe('when in happy flow', () => {

@@ -1,37 +1,24 @@
-import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
-import currentLogMock from '../../helpers/logMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { ALL_REPORTER_EVENTS, Mock, strykerOptions } from '../../helpers/producers';
-import { StrykerOptions } from 'stryker-api/core';
-import { PluginResolver, PluginKind, StrykerPlugin } from 'stryker-api/di';
+import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
+import { PluginKind, StrykerPlugin } from 'stryker-api/di';
 import * as sinon from 'sinon';
 import ProgressAppendOnlyReporter from '../../../src/reporters/ProgressAppendOnlyReporter';
 import ProgressReporter from '../../../src/reporters/ProgressReporter';
+import { TestInjector } from '@stryker-mutator/test-helpers';
 
-describe('BroadcastReporter', () => {
+describe.only('BroadcastReporter', () => {
 
-  let log: Mock<Logger>;
   let sut: BroadcastReporter;
   let rep1: any;
   let rep2: any;
   let isTTY: boolean;
-  let options: StrykerOptions;
-  let pluginResolver: sinon.SinonStubbedInstance<PluginResolver>;
-  let inject: sinon.SinonStub;
 
   beforeEach(() => {
-    log = currentLogMock();
     rep1 = mockReporter('rep1');
     rep2 = mockReporter('rep2');
-    inject = sinon.stub();
     captureTTY();
-    options = strykerOptions({
-      reporters: ['rep1', 'rep2']
-    });
-    pluginResolver = {
-      resolve: sinon.stub()
-    };
+    TestInjector.options.reporters = ['rep1', 'rep2'];
     const rep1Plugin: StrykerPlugin<any, any> = class {
       public static readonly pluginName = 'rep1';
       public static readonly inject: [] = [];
@@ -42,12 +29,12 @@ describe('BroadcastReporter', () => {
       public static readonly inject: [] = [];
       public static readonly kind = PluginKind.Reporter;
     };
-    pluginResolver.resolve
+    TestInjector.pluginResolver.resolve
       .withArgs(PluginKind.Reporter, rep1Plugin.pluginName).returns(rep1Plugin)
       .withArgs(PluginKind.Reporter, rep2Plugin.pluginName).returns(rep2Plugin);
-    inject
-      .withArgs(rep1Plugin).returns(rep1)
-      .withArgs(rep2Plugin).returns(rep2);
+    TestInjector
+      .stub(rep1Plugin, rep1)
+      .stub(rep2Plugin, rep2);
   });
 
   afterEach(() => {
@@ -59,10 +46,9 @@ describe('BroadcastReporter', () => {
       // Arrange
       setTTY(false);
       const expectedReporter = mockReporter('progress-append-only');
-      options.reporters = ['progress'];
-      pluginResolver.resolve.withArgs(PluginKind.Reporter, 'progress-append-only')
-        .returns(ProgressAppendOnlyReporter);
-      inject.withArgs(ProgressAppendOnlyReporter).returns(expectedReporter);
+      TestInjector.options.reporters = ['progress'];
+      TestInjector.pluginResolver.resolve.withArgs(PluginKind.Reporter, 'progress-append-only').returns(ProgressAppendOnlyReporter);
+      TestInjector.stub(ProgressAppendOnlyReporter, expectedReporter);
 
       // Act
       sut = createSut();
@@ -75,10 +61,9 @@ describe('BroadcastReporter', () => {
       // Arrange
       setTTY(true);
       const expectedReporter = mockReporter('progress');
-      options.reporters = ['progress', 'rep2'];
-      pluginResolver.resolve.withArgs(PluginKind.Reporter, 'progress')
-        .returns(ProgressReporter);
-      inject.withArgs(ProgressReporter).returns(expectedReporter);
+      TestInjector.options.reporters = ['progress', 'rep2'];
+      TestInjector.pluginResolver.resolve.withArgs(PluginKind.Reporter, 'progress').returns(ProgressReporter);
+      TestInjector.stub(ProgressReporter, expectedReporter);
 
       // Act
       sut = createSut();
@@ -91,9 +76,9 @@ describe('BroadcastReporter', () => {
     });
 
     it('should warn if there is no reporter', () => {
-      options.reporters = [];
+      TestInjector.options.reporters = [];
       sut = createSut();
-      expect(log.warn).calledWith(sinon.match('No reporter configured'));
+      expect(TestInjector.logger.warn).calledWith(sinon.match('No reporter configured'));
     });
   });
 
@@ -140,7 +125,7 @@ describe('BroadcastReporter', () => {
         it('should not result in a rejection', () => result);
 
         it('should log the error', () => {
-          expect(log.error).calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'. Error is: some error`);
+          expect(TestInjector.logger.error).calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'. Error is: some error`);
         });
       });
     });
@@ -158,7 +143,7 @@ describe('BroadcastReporter', () => {
       it('should log each error', () => {
         ALL_REPORTER_EVENTS.forEach(eventName => {
           (sut as any)[eventName]();
-          expect(log.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'. Error is: some error`);
+          expect(TestInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'. Error is: some error`);
         });
       });
 
@@ -167,7 +152,7 @@ describe('BroadcastReporter', () => {
   });
 
   function createSut() {
-    return new BroadcastReporter(options, pluginResolver, inject, log);
+    return TestInjector.inject(BroadcastReporter);
   }
 
   function mockReporter(name: string) {

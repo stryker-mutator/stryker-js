@@ -74,6 +74,7 @@
     "typed-rest-client": "~1.0.7"
   },
   "devDependencies": {
+    "@stryker-mutator/test-helpers": "0.0.0",
     "@types/get-port": "~4.0.0",
     "@types/inquirer": "~0.0.42",
     "@types/istanbul-lib-instrument": "~1.7.0",

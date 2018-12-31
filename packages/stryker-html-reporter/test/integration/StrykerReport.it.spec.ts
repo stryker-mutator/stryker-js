@@ -1,9 +1,8 @@
 import { expect } from 'chai';
-import { Config } from 'stryker-api/config';
 import HtmlReporter from '../../src/HtmlReporter';
 import EventPlayer from '../helpers/EventPlayer';
 import { readDirectoryTree } from '../helpers/fsHelpers';
-import { factory } from '@stryker-mutator/test-helpers';
+import { TestInjector } from '@stryker-mutator/test-helpers';
 
 const REPORT_DIR = 'reports/mutation/stryker';
 
@@ -11,9 +10,8 @@ describe('Html report of stryker', () => {
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    const config = new Config();
-    config.set({ htmlReporter: { baseDir: REPORT_DIR } });
-    sut = new HtmlReporter(config, factory.logger());
+    TestInjector.options.htmlReporter = { baseDir: REPORT_DIR };
+    sut = TestInjector.inject(HtmlReporter);
     return new EventPlayer('testResources/strykerEvents')
       .replay(sut)
       .then(() => sut.wrapUp());

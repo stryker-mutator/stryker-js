@@ -1,2 +1,3 @@
 import * as factory from './factory';
-export { factory };
+import TestInjector from './TestInjector';
+export { factory, TestInjector };
