@@ -1,6 +1,6 @@
 import ConfigEditor from './ConfigEditor';
-import { InjectorKey, StrykerPlugin, PluginKind } from '../../di';
+import { InjectionToken, StrykerPlugin, PluginKind } from '../../di';
 
-export default interface ConfigEditorPlugin<TS extends InjectorKey[]> extends StrykerPlugin<ConfigEditor, TS> {
+export default interface ConfigEditorPlugin<TS extends InjectionToken[]> extends StrykerPlugin<ConfigEditor, TS> {
   readonly kind: PluginKind.ConfigEditor;
 }

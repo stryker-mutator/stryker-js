@@ -3,7 +3,7 @@ import { getLogger } from 'stryker-api/logging';
 import * as _ from 'lodash';
 import { importModule } from '../utils/fileUtils';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { StrykerPlugin, PluginKind, keys, InjectorKey, ContainerValues, PluginResolver } from 'stryker-api/di';
+import { StrykerPlugin, PluginKind, tokens as tokens, InjectionToken, PluginResolver, CorrespondingTypes } from 'stryker-api/di';
 import { ConfigEditorFactory } from 'stryker-api/config';
 import { Factory } from 'stryker-api/core';
 import { ReporterFactory } from 'stryker-api/report';
@@ -29,11 +29,11 @@ export default class PluginLoader implements PluginResolver {
     this.loadDeprecatedPlugins();
   }
 
-  public resolve(kind: PluginKind, name: string): StrykerPlugin<unknown, InjectorKey[]> {
+  public resolve(kind: PluginKind, name: string): StrykerPlugin<unknown, InjectionToken[]> {
     return this.getPlugin(kind, name);
   }
 
-  public getPlugin(kind: PluginKind, name: string): StrykerPlugin<unknown, InjectorKey[]> {
+  public getPlugin(kind: PluginKind, name: string): StrykerPlugin<unknown, InjectionToken[]> {
     const plugins = this.pluginsByKind.get(kind);
     if (plugins) {
       const plugin = plugins.find(plugin => plugin.pluginName.toLowerCase() === name.toLowerCase());
@@ -49,23 +49,23 @@ export default class PluginLoader implements PluginResolver {
 
   private loadDeprecatedPlugins() {
     this.loadDeprecatedPluginsFor(PluginKind.ConfigEditor, ConfigEditorFactory.instance(), [], () => undefined);
-    this.loadDeprecatedPluginsFor(PluginKind.Reporter, ReporterFactory.instance(), keys('config'), ([config]) => config);
-    this.loadDeprecatedPluginsFor(PluginKind.TestFramework, TestFrameworkFactory.instance(), keys('options'), args => ({ options: args[0] }));
-    this.loadDeprecatedPluginsFor(PluginKind.Transpiler, TranspilerFactory.instance(), keys('config', 'produceSourceMaps'),
+    this.loadDeprecatedPluginsFor(PluginKind.Reporter, ReporterFactory.instance(), tokens('config'), ([config]) => config);
+    this.loadDeprecatedPluginsFor(PluginKind.TestFramework, TestFrameworkFactory.instance(), tokens('options'), args => ({ options: args[0] }));
+    this.loadDeprecatedPluginsFor(PluginKind.Transpiler, TranspilerFactory.instance(), tokens('config', 'produceSourceMaps'),
       ([config, produceSourceMaps]) => ({ config, produceSourceMaps }));
-    this.loadDeprecatedPluginsFor(PluginKind.Mutator, MutatorFactory.instance(), keys('config'), ([config]) => config);
-    this.loadDeprecatedPluginsFor(PluginKind.TestRunner, TestRunnerFactory.instance(), keys('options', 'sandboxFileNames'),
+    this.loadDeprecatedPluginsFor(PluginKind.Mutator, MutatorFactory.instance(), tokens('config'), ([config]) => config);
+    this.loadDeprecatedPluginsFor(PluginKind.TestRunner, TestRunnerFactory.instance(), tokens('options', 'sandboxFileNames'),
       ([strykerOptions, fileNames]) => ({ strykerOptions, fileNames }));
   }
 
-  private loadDeprecatedPluginsFor<TSettings, TS extends InjectorKey[]>(
+  private loadDeprecatedPluginsFor<TSettings, TS extends InjectionToken[]>(
     kind: PluginKind,
     factory: Factory<TSettings, object>,
-    injectionKeys: TS,
-    settingsFactory: (args: ContainerValues<TS>) => TSettings): void {
+    injectionTokens: TS,
+    settingsFactory: (args: CorrespondingTypes<TS>) => TSettings): void {
     factory.knownNames().forEach(name => {
       class ProxyPlugin {
-        constructor(...args: ContainerValues<TS>) {
+        constructor(...args: CorrespondingTypes<TS>) {
           const realPlugin = factory.create(name, settingsFactory(args));
           for (const i in realPlugin) {
             const method = (realPlugin as any)[i];
@@ -76,7 +76,7 @@ export default class PluginLoader implements PluginResolver {
         }
         public static pluginName = name;
         public static kind = kind;
-        public static inject = injectionKeys;
+        public static inject = injectionTokens;
       }
       this.loadPlugin(ProxyPlugin);
     });
@@ -135,7 +135,7 @@ export default class PluginLoader implements PluginResolver {
     }
   }
 
-  private loadPlugin<TS extends InjectorKey[]>(plugin: StrykerPlugin<unknown, TS>) {
+  private loadPlugin<TS extends InjectionToken[]>(plugin: StrykerPlugin<unknown, TS>) {
     let plugins = this.pluginsByKind.get(plugin.kind);
     if (!plugins) {
       plugins = [];

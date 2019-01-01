@@ -1,8 +1,8 @@
 import Injectable from './Injectable';
-import InjectorKey from './InjectorKey';
+import InjectionToken from './InjectionToken';
 import PluginKind from './PluginKind';
 
-export default interface StrykerPlugin<T, TArgKeys extends InjectorKey[]> extends Injectable<T, TArgKeys> {
+export default interface StrykerPlugin<T, TArgKeys extends InjectionToken[]> extends Injectable<T, TArgKeys> {
   readonly pluginName: string;
   readonly kind: PluginKind;
 }

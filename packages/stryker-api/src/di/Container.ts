@@ -9,7 +9,7 @@ export default interface Container {
   logger: Logger;
   options: StrykerOptions;
   produceSourceMaps: boolean;
-  sandboxFileNames: string[];
+  sandboxFileNames: ReadonlyArray<string>;
   pluginResolver: PluginResolver;
   inject: Inject;
   /**

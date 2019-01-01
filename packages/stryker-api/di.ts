@@ -1,10 +1,12 @@
-export { default as ContainerValues } from './src/di/ContainerValues';
 export { default as Injectable } from './src/di/Injectable';
-export { default as InjectorKey } from './src/di/InjectorKey';
+export { default as InjectionToken } from './src/di/InjectionToken';
 export { default as Container } from './src/di/Container';
-export { default as keys } from './src/di/keys';
+export { default as tokens } from './src/di/tokens';
+export { default as token } from './src/di/token';
 export { default as plugins } from './src/di/plugins';
 export { default as StrykerPlugin } from './src/di/StrykerPlugin';
 export { default as PluginKind } from './src/di/PluginKind';
 export { default as PluginResolver } from './src/di/PluginResolver';
 export { default as Inject } from './src/di/Inject';
+export { default as CorrespondingType } from './src/di/CorrespondingType';
+export { default as CorrespondingTypes } from './src/di/CorrespondingTypes';

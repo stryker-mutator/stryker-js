@@ -1,11 +1,11 @@
 import { MatchedMutant, MutantResult } from 'stryker-api/report';
 import ProgressKeeper from './ProgressKeeper';
 import ProgressBar from './ProgressBar';
-import { keys, PluginKind } from 'stryker-api/di';
+import { tokens, PluginKind } from 'stryker-api/di';
 
 export default class ProgressBarReporter extends ProgressKeeper {
   private progressBar: ProgressBar;
-  public static readonly inject = keys();
+  public static readonly inject = tokens();
   public static readonly pluginName = 'progress';
   public static readonly kind = PluginKind.Reporter;
 

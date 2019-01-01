@@ -7,7 +7,7 @@ import ProgressAppendOnlyReporter from '../../../src/reporters/ProgressAppendOnl
 import ProgressReporter from '../../../src/reporters/ProgressReporter';
 import { TestInjector } from '@stryker-mutator/test-helpers';
 
-describe.only('BroadcastReporter', () => {
+describe('BroadcastReporter', () => {
 
   let sut: BroadcastReporter;
   let rep1: any;

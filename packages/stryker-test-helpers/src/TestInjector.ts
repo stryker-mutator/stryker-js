@@ -1,4 +1,4 @@
-import { Injectable, InjectorKey, PluginResolver } from 'stryker-api/di';
+import { Injectable, InjectionToken, PluginResolver } from 'stryker-api/di';
 import { StrykerOptions } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import { logger, strykerOptions } from './factory';
@@ -19,12 +19,12 @@ export default class TestInjector {
     this.replacements.clear();
   }
 
-  public static stub<T, TArgs extends InjectorKey[]>(Injectable: Injectable<T, TArgs>, replacement: T): typeof TestInjector {
+  public static stub<T, TArgs extends InjectionToken[]>(Injectable: Injectable<T, TArgs>, replacement: T): typeof TestInjector {
     this.replacements.set(Injectable, replacement);
     return this;
   }
 
-  public static inject<T, TArgs extends InjectorKey[]>(Injectable: Injectable<T, TArgs>): T {
+  public static inject<T, TArgs extends InjectionToken[]>(Injectable: Injectable<T, TArgs>): T {
     if (this.replacements.has(Injectable)) {
       return this.replacements.get(Injectable);
     } else {

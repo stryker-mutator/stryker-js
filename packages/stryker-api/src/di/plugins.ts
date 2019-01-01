@@ -1,4 +1,4 @@
-import { StrykerPlugin as P, InjectorKey as I } from '../../di';
+import { StrykerPlugin as P, InjectionToken as I } from '../../di';
 
 export default function plugins<T1, TArgs1 extends I[]>(plugin: P<T1, TArgs1>): [P<T1, TArgs1>];
 export default function plugins<T1, TArgs1 extends I[], T2, TArgs2 extends I[]>(plugin: P<T1, TArgs1>, plugin2: P<T2, TArgs2>): [P<T1, TArgs1>, P<T2, TArgs2>];

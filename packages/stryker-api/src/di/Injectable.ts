@@ -1,9 +1,9 @@
-import InjectableKey from './InjectorKey';
-import ContainerValues from './ContainerValues';
+import InjectionToken from './InjectionToken';
+import CorrespondingTypes from './CorrespondingTypes';
 
-interface Injectable<T, TArgKeys extends InjectableKey[]> {
-  new(...args: ContainerValues<TArgKeys>): T;
-  readonly inject: TArgKeys;
+interface Injectable<T, Tokens extends InjectionToken[]> {
+  new(...args: CorrespondingTypes<Tokens>): T;
+  readonly inject: Tokens;
 }
 
 export default Injectable;

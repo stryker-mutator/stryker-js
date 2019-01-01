@@ -1,15 +1,15 @@
-import { Injectable, InjectorKey, Container, PluginResolver } from 'stryker-api/di';
-import Providers, { ProviderKind, Provider } from './Providers';
+import { Injectable, InjectionToken, Container, PluginResolver, CorrespondingType } from 'stryker-api/di';
+import { Providers, Provider, FactoryProvider } from './Providers';
 import { getLogger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
 
 abstract class Injector {
-  public inject<T, TArgKeys extends InjectorKey[]>(Constructor: Injectable<T, TArgKeys>): T {
-    const args: any[] = Constructor.inject.map(key => this.resolve(key, Constructor));
-    return new Constructor(...args as any);
+  public inject<T, TArgKeys extends InjectionToken[]>(injectable: Injectable<T, TArgKeys>): T {
+    const args: any[] = injectable.inject.map(key => this.provide(key, injectable));
+    return new injectable(...args as any);
   }
 
-  public abstract resolve<T extends InjectorKey>(key: T, target: Function): Container[T];
+  public abstract provide<T extends InjectionToken>(key: T, target: Injectable<any, any>): CorrespondingType<T>;
 
   public createChildInjector(context: Partial<Providers>): Injector {
     return new ChildInjector(this, context);
@@ -19,11 +19,11 @@ abstract class Injector {
     return new RootInjector()
       .createChildInjector({
         // TODO: Remove `config` once old way of loading plugins is gone
-        config: { kind: ProviderKind.Value, value: options },
-        getLogger: { kind: ProviderKind.Value, value: getLogger },
-        logger: { kind: ProviderKind.Factory, factory: Constructor => getLogger(Constructor.name) },
-        options: { kind: ProviderKind.Value, value: options },
-        pluginResolver: { kind: ProviderKind.Value, value: pluginResolver }
+        config: { value: options },
+        getLogger: { value: getLogger },
+        logger: { factory: Constructor => getLogger(Constructor.name) },
+        options: { value: options },
+        pluginResolver: { value: pluginResolver }
       });
   }
 }
@@ -31,8 +31,8 @@ abstract class Injector {
 export default Injector;
 
 class RootInjector extends Injector {
-  public resolve<T extends InjectorKey>(key: T, target: Function): Container[T] {
-    throw new Error(`Cannot resolve ${key} to inject into ${target.name}.`);
+  public provide<T extends InjectionToken>(key: T, target: Injectable<any, any>): CorrespondingType<T> {
+    throw new Error(`Can not inject "${target.name}". No provider found for "${key}".`);
   }
 }
 
@@ -41,28 +41,30 @@ class ChildInjector extends Injector {
     super();
   }
 
-  public resolve<TKey extends InjectorKey>(key: TKey, target: Function): Container[TKey] {
-    if (key === 'inject') {
+  public provide<TToken extends InjectionToken>(token: TToken, target: Injectable<any, any>): CorrespondingType<TToken> {
+    if (token === 'inject') {
       return this.inject.bind(this);
+    } else if (typeof token === 'string') {
+      return this.provideStringToken(token as any, target);
     } else {
-
-      const resolver: Provider<Container[TKey]> | undefined = this.context[key];
-      if (resolver) {
-        switch (resolver.kind) {
-          case ProviderKind.Value:
-            return resolver.value;
-          case ProviderKind.Factory:
-            return resolver.factory(target);
-          default:
-            throw resolverUnsupportedError(resolver);
-        }
-      } else {
-        return this.parent.resolve(key, target);
-      }
+      return this.inject(token as any);
     }
   }
-}
 
-function resolverUnsupportedError(resolver: never) {
-  return new Error(`Resolver ${resolver} is not supported`);
+  private provideStringToken<T extends keyof Container>(token: T, target: Injectable<any, any>) {
+    const provider: Provider<CorrespondingType<T>> | undefined = this.context[token] as any;
+    if (provider) {
+      if (this.isFactoryProvider(provider)) {
+        return provider.factory(target);
+      } else {
+        return provider.value;
+      }
+    } else {
+      return this.parent.provide(token, target);
+    }
+  }
+
+  private isFactoryProvider(provider: Provider<unknown>): provider is FactoryProvider<unknown> {
+    return !!(provider as FactoryProvider<unknown>).factory;
+  }
 }

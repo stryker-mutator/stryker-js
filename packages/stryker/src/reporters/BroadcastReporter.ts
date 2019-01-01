@@ -2,12 +2,12 @@ import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from '
 import { Logger } from 'stryker-api/logging';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
-import { keys, PluginResolver, PluginKind, Inject } from 'stryker-api/di';
+import { tokens, PluginResolver, PluginKind, Inject } from 'stryker-api/di';
 import { StrykerOptions } from 'stryker-api/core';
 
 export default class BroadcastReporter implements StrictReporter {
 
-  public static readonly inject = keys('options', 'pluginResolver', 'inject', 'logger');
+  public static readonly inject = tokens('options', 'pluginResolver', 'inject', 'logger');
   public readonly reporters: {
     [name: string]: Reporter;
   };

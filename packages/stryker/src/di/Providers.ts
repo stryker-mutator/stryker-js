@@ -1,24 +1,15 @@
 import { Container } from 'stryker-api/di';
 
-type Providers = {
+export type Providers = {
   readonly [K in keyof Container]: Provider<Container[K]>;
 };
 
-export type Provider<T> = ValueProvider<T> | FactoryProvider<T>; '';
+export type Provider<T> = ValueProvider<T> | FactoryProvider<T>;
 
-export enum ProviderKind {
-  'Value',
-  'Factory'
-}
-
-interface ValueProvider<T> {
-  kind: ProviderKind.Value;
+export interface ValueProvider<T> {
   value: T;
 }
 
-interface FactoryProvider<T> {
-  kind: ProviderKind.Factory;
+export interface FactoryProvider<T> {
   factory(target: Function): T;
 }
-
-export default Providers;
