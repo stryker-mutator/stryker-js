@@ -12,16 +12,17 @@ const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class HtmlReporter implements Reporter {
-  private _baseDir: string;
-  private mainPromise: Promise<void>;
-  private mutantResults: MutantResult[];
-  private files: SourceFile[];
-  private scoreResult: ScoreResult;
+  private _baseDir!: string;
+  private mainPromise!: Promise<void>;
+  private mutantResults!: MutantResult[];
+  private files!: SourceFile[];
+  private scoreResult!: ScoreResult;
 
   constructor(private readonly options: StrykerOptions, private readonly log: Logger) {
   }
 
   public static readonly inject = tokens('options', 'logger');
+
   public static readonly kind = PluginKind.Reporter;
   public static readonly pluginName = 'html';
 
@@ -69,7 +70,7 @@ export default class HtmlReporter implements Reporter {
       if (child.representsFile) {
         return this.writeReportFile(child, currentDirectory, breadcrumb.add(child.name, util.countPathSep(child.name)));
       } else {
-        return this.writeReportDirectory(child, path.join(currentDirectory, child.name), breadcrumb.add(child.name,  util.countPathSep(child.name) + 1))
+        return this.writeReportDirectory(child, path.join(currentDirectory, child.name), breadcrumb.add(child.name, util.countPathSep(child.name) + 1))
           .then(_ => void 0);
       }
     }));
@@ -96,7 +97,7 @@ export default class HtmlReporter implements Reporter {
     return path.join(this.baseDir, RESOURCES_DIR_NAME);
   }
 
-  private get baseDir() {
+  private get baseDir(): string {
     if (!this._baseDir) {
       if (this.options.htmlReporter && this.options.htmlReporter.baseDir) {
         this._baseDir = this.options.htmlReporter.baseDir;
