@@ -85,8 +85,8 @@ export default class PluginLoader implements PluginResolver {
         if (pluginExpression.indexOf('*') !== -1) {
 
           // Plugin directory is the node_modules folder of the module that installed stryker
-          // So if current __dirname is './stryker/src' than the plugin directory should be 2 directories above
-          const pluginDirectory = path.resolve(__dirname, '..', '..');
+          // So if current __dirname is './stryker/src/di' so 3 directories above
+          const pluginDirectory = path.resolve(__dirname, '..', '..', '..');
           const regexp = new RegExp('^' + pluginExpression.replace('*', '.*'));
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);

@@ -70,7 +70,7 @@ describe('PluginLoader', () => {
       });
 
       it('should read from a `node_modules` folder', () => {
-        expect(pluginDirectoryReadMock).to.have.been.calledWith(path.normalize(__dirname + '/../../..'));
+        expect(pluginDirectoryReadMock).to.have.been.calledWith(path.resolve(__dirname, '..', '..', '..', '..'));
       });
 
       it('should load "stryker-jasmine" and "stryker-karma"', () => {
