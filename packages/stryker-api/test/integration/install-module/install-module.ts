@@ -37,7 +37,7 @@ describe('we have a module using stryker', () => {
           });
         });
       };
-      arrangeActAndAssertModule('core', ['files', 'some', 'file']);
+      arrangeActAndAssertModule('core', ['files', 'file']);
       arrangeActAndAssertModule('config', ['plugins: [ \'stryker-*\' ]']);
       arrangeActAndAssertModule('test_framework', ['framework-1']);
       arrangeActAndAssertModule('mutant', ['mutatorName: \'foo\'']);
