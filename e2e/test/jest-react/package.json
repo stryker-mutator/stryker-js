@@ -86,7 +86,6 @@
   },
   "localDependencies": {
     "stryker": "../../../packages/stryker",
-    "stryker-api": "../../../packages/stryker-api",
     "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
     "stryker-jest-runner": "../../../packages/stryker-jest-runner",
     "@stryker-mutator/util": "../../../packages/stryker-util",
