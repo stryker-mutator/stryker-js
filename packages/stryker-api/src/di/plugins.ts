@@ -1,11 +1,45 @@
-import { StrykerPlugin as P, InjectionToken as I } from '../../di';
+import { TestFrameworkPlugin } from '../../test_framework';
+import { TestRunnerPluginContext, TestRunnerPlugin } from '../../test_runner';
+import { ReporterPlugin } from '../../report';
+import { MutatorPlugin } from '../../mutant';
+import { TranspilerPlugin, TranspilerPluginContext } from '../../transpile';
+import { PluginContext, StrykerContext } from './Contexts';
+import { ConfigEditorPlugin } from '../../config';
+import { InjectionToken, InjectableClass } from 'typed-inject';
 
-export default function plugins<T1, TArgs1 extends I[]>(plugin: P<T1, TArgs1>): [P<T1, TArgs1>];
-export default function plugins<T1, TArgs1 extends I[], T2, TArgs2 extends I[]>(plugin: P<T1, TArgs1>, plugin2: P<T2, TArgs2>): [P<T1, TArgs1>, P<T2, TArgs2>];
-export default function plugins<T1, TArgs1 extends I[], T2, TArgs2 extends I[], T3, TArgs3 extends I[]>(plugin: P<T1, TArgs1>, plugin2: P<T2, TArgs2>, plugin3: P<T3, TArgs3>): [P<T1, TArgs1>, P<T2, TArgs2>, P<T3, TArgs3>];
-export default function plugins<T1, TArgs1 extends I[], T2, TArgs2 extends I[], T3, TArgs3 extends I[], T4, TArgs4 extends I[]>(plugin: P<T1, TArgs1>, plugin2: P<T2, TArgs2>, plugin3: P<T3, TArgs3>, plugin4: P<T4, TArgs4>): [P<T1, TArgs1>, P<T2, TArgs2>, P<T3, TArgs3>, P<T4, TArgs4>];
-export default function plugins<T1, TArgs1 extends I[], T2, TArgs2 extends I[], T3, TArgs3 extends I[], T4, TArgs4 extends I[], T5, TArgs5 extends I[]>(plugin: P<T1, TArgs1>, plugin2: P<T2, TArgs2>, plugin3: P<T3, TArgs3>, plugin4: P<T4, TArgs4>, plugin5: P<T5, TArgs5>): [P<T1, TArgs1>, P<T2, TArgs2>, P<T3, TArgs3>, P<T4, TArgs4>, P<T5, TArgs5>];
-export default function plugins<T1, TArgs1 extends I[], T2, TArgs2 extends I[], T3, TArgs3 extends I[], T4, TArgs4 extends I[], T5, TArgs5 extends I[], T6, TArgs6 extends I[]>(plugin: P<T1, TArgs1>, plugin2: P<T2, TArgs2>, plugin3: P<T3, TArgs3>, plugin4: P<T4, TArgs4>, plugin5: P<T5, TArgs5>, plugin6: P<T6, TArgs6>): [P<T1, TArgs1>, P<T2, TArgs2>, P<T3, TArgs3>, P<T4, TArgs4>, P<T5, TArgs5>, P<T6, TArgs6>];
-export default function plugins(...plugins: P<any, any>[]) {
-  return plugins;
+export interface StrykerPlugin<TContext, R, Tokens extends InjectionToken<TContext>[]> {
+  readonly name: string;
+  readonly kind: PluginKind;
+  readonly injectable: InjectableClass<TContext, R, Tokens>;
+}
+
+export enum PluginKind {
+  ConfigEditor = 'ConfigEditor',
+  TestRunner = 'TestRunner',
+  TestFramework = 'TestFramework',
+  Transpiler = 'Transpiler',
+  Mutator = 'Mutator',
+  Reporter = 'Reporter'
+}
+
+export interface Plugins {
+  [PluginKind.ConfigEditor]: ConfigEditorPlugin<InjectionToken<PluginContexts[PluginKind.ConfigEditor]>[]>;
+  [PluginKind.Mutator]: MutatorPlugin<InjectionToken<PluginContexts[PluginKind.Mutator]>[]>;
+  [PluginKind.Reporter]: ReporterPlugin<InjectionToken<PluginContexts[PluginKind.Reporter]>[]>;
+  [PluginKind.TestFramework]: TestFrameworkPlugin<InjectionToken<PluginContexts[PluginKind.TestFramework]>[]>;
+  [PluginKind.TestRunner]: TestRunnerPlugin<InjectionToken<PluginContexts[PluginKind.TestRunner]>[]>;
+  [PluginKind.Transpiler]: TranspilerPlugin<InjectionToken<PluginContexts[PluginKind.Transpiler]>[]>;
+}
+
+export interface PluginContexts {
+  [PluginKind.ConfigEditor]: StrykerContext;
+  [PluginKind.Mutator]: PluginContext;
+  [PluginKind.Reporter]: PluginContext;
+  [PluginKind.TestFramework]: PluginContext;
+  [PluginKind.TestRunner]: TestRunnerPluginContext;
+  [PluginKind.Transpiler]: TranspilerPluginContext;
+}
+
+export interface PluginResolver {
+  resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T];
 }

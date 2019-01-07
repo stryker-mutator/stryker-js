@@ -130,6 +130,12 @@ export const config = factoryMethod<Config>(() => new Config());
 export const ALL_REPORTER_EVENTS: (keyof Reporter)[] =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
 
+export function reporter(): sinon.SinonStubbedInstance<Required<Reporter>> {
+  const reporter = {} as any;
+  ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sinon.stub());
+  return reporter;
+}
+
 export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
   const scopedTestIds: number[] = [];
   for (let i = 0; i < numberOfTests; i++) {

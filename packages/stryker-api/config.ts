@@ -1,4 +1,4 @@
 export { default as Config } from './src/config/Config';
 export { default as ConfigEditor } from './src/config/ConfigEditor';
 export { default as ConfigEditorFactory } from './src/config/ConfigEditorFactory';
-export { default as ConfigEditorPlugin } from './src/config/ConfigEditorPlugin';
+export * from './src/config/ConfigEditorPlugin';

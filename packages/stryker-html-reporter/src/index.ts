@@ -1,4 +1,9 @@
 import HtmlReporter from './HtmlReporter';
-import { plugins } from 'stryker-api/di';
+import { PluginKind } from 'stryker-api/di';
+import { reporterPlugin } from 'stryker-api/report';
 
-export const strykerPlugins = plugins(HtmlReporter);
+export const strykerPlugins = [reporterPlugin({
+  injectable: HtmlReporter,
+  kind: PluginKind.Reporter,
+  name: 'html'
+})];

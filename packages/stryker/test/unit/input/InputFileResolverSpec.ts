@@ -1,7 +1,7 @@
 import os = require('os');
 import * as path from 'path';
 import { expect } from 'chai';
-import { childProcessAsPromised } from '@stryker-mutator/util';
+import { childProcessAsPromised, errorToString } from '@stryker-mutator/util';
 import { Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { SourceFile } from 'stryker-api/report';
@@ -12,7 +12,7 @@ import * as fileUtils from '../../../src/utils/fileUtils';
 import currentLogMock from '../../helpers/logMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { Mock, mock, createFileNotFoundError, createIsDirError } from '../../helpers/producers';
-import { errorToString, normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
+import { normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
 import { fsAsPromised } from '@stryker-mutator/util';
 
 const files = (...namesWithContent: [string, string][]): File[] =>

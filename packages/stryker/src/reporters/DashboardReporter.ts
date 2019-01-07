@@ -3,19 +3,15 @@ import DashboardReporterClient from './dashboard-reporter/DashboardReporterClien
 import {getEnvironmentVariable} from '../utils/objectUtils';
 import { getLogger } from 'stryker-api/logging';
 import { determineCIProvider } from './ci/Provider';
-import { StrykerOptions } from 'stryker-api/core';
-import { tokens, PluginKind } from 'stryker-api/di';
+import { tokens } from 'stryker-api/di';
 
 export default class DashboardReporter implements Reporter {
-  public static readonly inject = tokens('options');
-  public static readonly pluginName = 'dashboard';
-  public static readonly kind = PluginKind.Reporter;
+  public static readonly inject = tokens();
 
   private readonly log = getLogger(DashboardReporter.name);
   private readonly ciProvider = determineCIProvider();
 
   constructor(
-    _setting: StrykerOptions,
     private readonly dashboardReporterClient: DashboardReporterClient = new DashboardReporterClient()
   ) { }
 

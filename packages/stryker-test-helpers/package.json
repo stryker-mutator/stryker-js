@@ -19,6 +19,7 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/@stryker-mutator/test-helpers#readme",
   "license": "ISC",
   "devDependencies": {
-    "stryker-api": "^0.23.0"
+    "stryker-api": "^0.23.0",
+    "typed-inject": "0.0.0"
   }
 }

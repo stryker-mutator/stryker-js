@@ -1,6 +1,11 @@
 import Reporter from './Reporter';
-import { InjectionToken, StrykerPlugin, PluginKind } from '../../di';
+import { StrykerPlugin, PluginKind, PluginContext } from '../../di';
+import { InjectionToken } from 'typed-inject';
 
-export default interface ReporterPlugin<TS extends InjectionToken[]> extends StrykerPlugin<Reporter, TS> {
+export interface ReporterPlugin<Tokens extends InjectionToken<PluginContext>[]> extends StrykerPlugin<PluginContext, Reporter, Tokens> {
   readonly kind: PluginKind.Reporter;
+}
+
+export function reporterPlugin<Tokens extends InjectionToken<PluginContext>[]>(reporterPlugin: ReporterPlugin<Tokens>) {
+  return reporterPlugin;
 }

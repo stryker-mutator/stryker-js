@@ -1,50 +1,48 @@
-import { Injectable, InjectionToken, PluginResolver } from 'stryker-api/di';
+import { PluginResolver, PluginContext } from 'stryker-api/di';
 import { StrykerOptions } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
-import { logger, strykerOptions } from './factory';
+import * as factory from './factory';
 import * as sinon from 'sinon';
+import { rootInjector, Injector, Scope } from 'typed-inject';
+import { Config } from 'stryker-api/config';
 
-export default class TestInjector {
-  public static options: Partial<StrykerOptions> = {};
-  public static logger: sinon.SinonStubbedInstance<Logger>;
-  public static pluginResolver: sinon.SinonStubbedInstance<PluginResolver>;
-  public static replacements: Map<Injectable<any, any>, any> = new Map();
+class TestInjector {
 
-  public static reset() {
+  public providePluginResolver = (): PluginResolver => {
+    return this.pluginResolver;
+  }
+  public provideLogger = (): Logger => {
+    return this.logger;
+  }
+  public provideConfig = () => {
+    const config = new Config();
+    config.set(this.provideOptions());
+    return config;
+  }
+
+  public provideOptions = () => {
+    return factory.strykerOptions(this.options);
+  }
+
+  public pluginResolver: sinon.SinonStubbedInstance<PluginResolver>;
+  public options: Partial<StrykerOptions>;
+  public logger: sinon.SinonStubbedInstance<Logger>;
+  public injector: Injector<PluginContext> = rootInjector
+    .provideValue('getLogger', this.provideLogger)
+    .provideFactory('logger', this.provideLogger, Scope.Transient)
+    .provideFactory('options', this.provideOptions, Scope.Transient)
+    .provideFactory('config', this.provideConfig, Scope.Transient)
+    .provideFactory('pluginResolver', this.providePluginResolver, Scope.Transient);
+
+  public reset() {
     this.options = {};
-    this.logger = logger();
+    this.logger = factory.logger();
     this.pluginResolver = {
       resolve: sinon.stub()
     };
-    this.replacements.clear();
-  }
-
-  public static stub<T, TArgs extends InjectionToken[]>(Injectable: Injectable<T, TArgs>, replacement: T): typeof TestInjector {
-    this.replacements.set(Injectable, replacement);
-    return this;
-  }
-
-  public static inject<T, TArgs extends InjectionToken[]>(Injectable: Injectable<T, TArgs>): T {
-    if (this.replacements.has(Injectable)) {
-      return this.replacements.get(Injectable);
-    } else {
-      const args: any = Injectable.inject.map(key => {
-        switch (key) {
-          case 'options':
-            return strykerOptions(this.options);
-          case 'logger':
-            return this.logger;
-          case 'pluginResolver':
-            return this.pluginResolver;
-          case 'inject':
-            return this.inject.bind(this);
-          default:
-            throw new Error(`Injecting "${key}" is not (yet) supported by the ${TestInjector.name}`);
-        }
-      });
-      return new Injectable(...args);
-    }
   }
 }
 
-TestInjector.reset();
+const testInjector = new TestInjector();
+testInjector.reset();
+export default testInjector;

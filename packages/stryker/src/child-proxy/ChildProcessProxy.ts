@@ -3,10 +3,11 @@ import { fork, ChildProcess } from 'child_process';
 import { File } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
-import { serialize, deserialize, kill, isErrnoException, padLeft } from '../utils/objectUtils';
+import { serialize, deserialize, kill, padLeft } from '../utils/objectUtils';
 import { Task, ExpirableTask } from '../utils/Task';
 import LoggingClientContext from '../logging/LoggingClientContext';
 import ChildProcessCrashedError from './ChildProcessCrashedError';
+import { isErrnoException } from '@stryker-mutator/util';
 import OutOfMemoryError from './OutOfMemoryError';
 import StringBuilder from '../utils/StringBuilder';
 

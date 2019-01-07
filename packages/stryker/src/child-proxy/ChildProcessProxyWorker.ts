@@ -1,7 +1,8 @@
 import * as path from 'path';
 import { getLogger, Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
-import { serialize, deserialize, errorToString } from '../utils/objectUtils';
+import { serialize, deserialize } from '../utils/objectUtils';
+import { errorToString } from '@stryker-mutator/util';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind, CallMessage } from './messageProtocol';
 import PluginLoader from '../di/PluginLoader';
 import LogConfigurator from '../logging/LogConfigurator';

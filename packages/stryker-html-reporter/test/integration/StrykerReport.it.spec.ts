@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import HtmlReporter from '../../src/HtmlReporter';
 import EventPlayer from '../helpers/EventPlayer';
 import { readDirectoryTree } from '../helpers/fsHelpers';
-import { TestInjector } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 const REPORT_DIR = 'reports/mutation/stryker';
 
@@ -10,8 +10,8 @@ describe('Html report of stryker', () => {
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    TestInjector.options.htmlReporter = { baseDir: REPORT_DIR };
-    sut = TestInjector.inject(HtmlReporter);
+    testInjector.options.htmlReporter = { baseDir: REPORT_DIR };
+    sut = testInjector.injector.injectClass(HtmlReporter);
     return new EventPlayer('testResources/strykerEvents')
       .replay(sut)
       .then(() => sut.wrapUp());

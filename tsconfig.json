@@ -18,6 +18,7 @@
     { "path": "packages/stryker-vue-mutator" },
     { "path": "packages/stryker-wct-runner" },
     { "path": "packages/stryker-webpack-transpiler" },
-    { "path": "packages/stryker-test-helpers" }
+    { "path": "packages/stryker-test-helpers" },
+    { "path": "packages/typed-inject" }
   ]
 }

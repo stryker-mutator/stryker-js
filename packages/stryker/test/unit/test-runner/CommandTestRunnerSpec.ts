@@ -9,6 +9,7 @@ import { RunStatus, TestStatus, RunResult } from 'stryker-api/test_runner';
 import Timer, * as timerModule from '../../../src/utils/Timer';
 import { Mock, mock } from '../../helpers/producers';
 import * as sinon from 'sinon';
+import { errorToString } from '@stryker-mutator/util';
 
 describe(CommandTestRunner.name, () => {
 
@@ -74,7 +75,7 @@ describe(CommandTestRunner.name, () => {
       childProcessMock.emit('error', expectedError);
       const result = await resultPromise;
       const expectedResult: RunResult = {
-        errorMessages: [objectUtils.errorToString(expectedError)],
+        errorMessages: [errorToString(expectedError)],
         status: RunStatus.Error,
         tests: []
       };

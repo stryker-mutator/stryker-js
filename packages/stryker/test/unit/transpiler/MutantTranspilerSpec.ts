@@ -6,11 +6,11 @@ import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import TranspileResult from '../../../src/transpiler/TranspileResult';
 import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { errorToString } from '../../../src/utils/objectUtils';
 import { Mock, config, file, mock, testableMutant } from '../../helpers/producers';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { sleep } from '../../helpers/testUtils';
 import * as sinon from 'sinon';
+import { errorToString } from '@stryker-mutator/util';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,

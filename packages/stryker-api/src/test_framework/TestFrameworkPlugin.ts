@@ -1,6 +1,11 @@
-import { InjectionToken, StrykerPlugin, PluginKind } from '../../di';
 import TestFramework from './TestFramework';
+import { StrykerPlugin, PluginKind, PluginContext } from '../../di';
+import { InjectionToken } from 'typed-inject';
 
-export default interface TestFrameworkPlugin<TS extends InjectionToken[]> extends StrykerPlugin<TestFramework, TS> {
+export interface TestFrameworkPlugin<Tokens extends InjectionToken<PluginContext>[]> extends StrykerPlugin<PluginContext, TestFramework, Tokens> {
   readonly kind: PluginKind.TestFramework;
+}
+
+export function testFrameworkPlugin<Tokens extends InjectionToken<PluginContext>[]>(testFrameworkPlugin: TestFrameworkPlugin<Tokens>) {
+  return testFrameworkPlugin;
 }

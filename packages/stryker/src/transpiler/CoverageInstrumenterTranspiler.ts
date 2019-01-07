@@ -3,7 +3,7 @@ import { createInstrumenter, Instrumenter } from 'istanbul-lib-instrument';
 import { StrykerOptions, File } from 'stryker-api/core';
 import { FileCoverageData, Range } from 'istanbul-lib-coverage';
 import { COVERAGE_CURRENT_TEST_VARIABLE_NAME } from './coverageHooks';
-import StrykerError from '../utils/StrykerError';
+import { StrykerError } from '@stryker-mutator/util';
 
 export interface CoverageMaps {
   statementMap: { [key: string]: Range };

@@ -1,13 +1,11 @@
 import { MatchedMutant } from 'stryker-api/report';
 import * as os from 'os';
 import ProgressKeeper from './ProgressKeeper';
-import { tokens, PluginKind } from 'stryker-api/di';
+import { tokens } from 'stryker-api/di';
 
 export default class ProgressAppendOnlyReporter extends ProgressKeeper {
   private intervalReference: NodeJS.Timer;
   public static readonly inject = tokens();
-  public static readonly pluginName = 'progress-append-only';
-  public static readonly kind = PluginKind.Reporter;
 
   public onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);

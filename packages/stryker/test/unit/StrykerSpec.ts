@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
 import ConfigReader, * as configReader from '../../src/config/ConfigReader';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
-import Injector from '../../src/di/Injector';
+import * as typedInject from 'typed-inject';
 import MutatorFacade, * as mutatorFacade from '../../src/MutatorFacade';
 import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
 import InitialTestExecutor, * as initialTestExecutor from '../../src/process/InitialTestExecutor';
@@ -25,6 +25,7 @@ import TestableMutant from '../../src/TestableMutant';
 import InputFileCollection from '../../src/input/InputFileCollection';
 import LogConfigurator from '../../src/logging/LogConfigurator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import { PluginContext } from 'stryker-api/di';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
@@ -57,7 +58,7 @@ describe('Stryker', () => {
   let configureMainProcessStub: sinon.SinonStub;
   let configureLoggingServerStub: sinon.SinonStub;
   let shutdownLoggingStub: sinon.SinonStub;
-  let injectorMock: Mock<Injector>;
+  let injectorMock: Mock<typedInject.Injector<PluginContext>>;
 
   beforeEach(() => {
     strykerConfig = config();
@@ -67,7 +68,17 @@ describe('Stryker', () => {
     configReaderMock.readConfig.returns(strykerConfig);
     pluginLoaderMock = mock(PluginLoader);
 
-    injectorMock = mock(Injector);
+    injectorMock = {
+      injectClass: sinon.stub(),
+      injectFunction: sinon.stub(),
+      provideClass: sinon.stub(),
+      provideFactory: sinon.stub(),
+      provideValue: sinon.stub(),
+      resolve: sinon.stub()
+    };
+    injectorMock.provideClass.returnsThis();
+    injectorMock.provideFactory.returnsThis();
+    injectorMock.provideValue.returnsThis();
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
     mutatorMock = mock(MutatorFacade);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
@@ -75,7 +86,7 @@ describe('Stryker', () => {
     shutdownLoggingStub = sinon.stub(LogConfigurator, 'shutdown');
     configureLoggingServerStub.resolves(LOGGING_CONTEXT);
     inputFileResolverMock = mock(InputFileResolver);
-    injectorMock.inject.returns(reporter);
+    injectorMock.injectClass.returns(reporter);
     testFramework = testFrameworkMock();
     initialTestExecutorMock = mock(InitialTestExecutor);
     mutationTestExecutorMock = mock(MutationTestExecutor);
@@ -85,7 +96,7 @@ describe('Stryker', () => {
     sinon.stub(initialTestExecutor, 'default').returns(initialTestExecutorMock);
     sinon.stub(configValidator, 'default').returns(configValidatorMock);
     sinon.stub(testFrameworkOrchestrator, 'default').returns(testFrameworkOrchestratorMock);
-    sinon.stub(Injector, 'create').returns(injectorMock);
+    sinon.stub(typedInject, 'rootInjector').value(injectorMock);
     sinon.stub(mutatorFacade, 'default').returns(mutatorMock);
     sinon.stub(mutantRunResultMatcher, 'default').returns(mutantRunResultMatcherMock);
     sinon.stub(configReader, 'default').returns(configReaderMock);

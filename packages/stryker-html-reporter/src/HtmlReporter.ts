@@ -6,7 +6,7 @@ import * as util from './util';
 import * as templates from './templates';
 import Breadcrumb from './Breadcrumb';
 import { StrykerOptions } from 'stryker-api/core';
-import { tokens, PluginKind } from 'stryker-api/di';
+import { tokens } from 'stryker-api/di';
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
@@ -22,9 +22,6 @@ export default class HtmlReporter implements Reporter {
   }
 
   public static readonly inject = tokens('options', 'logger');
-
-  public static readonly kind = PluginKind.Reporter;
-  public static readonly pluginName = 'html';
 
   public onAllSourceFilesRead(files: SourceFile[]) {
     this.files = files;

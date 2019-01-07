@@ -4,7 +4,7 @@ import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
-import StrykerError from '../utils/StrykerError';
+import { StrykerError } from '@stryker-mutator/util';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +

@@ -1,6 +1,12 @@
 import Mutator from './Mutator';
-import { InjectionToken, StrykerPlugin, PluginKind } from '../../di';
+import { StrykerPlugin, PluginKind, PluginContext } from '../../di';
+import { InjectionToken } from 'typed-inject';
 
-export default interface MutatorPlugin<TS extends InjectionToken[]> extends StrykerPlugin<Mutator, TS> {
+export interface MutatorPlugin<Tokens extends InjectionToken<PluginContext>[]>
+  extends StrykerPlugin<PluginContext, Mutator, Tokens> {
   readonly kind: PluginKind.Mutator;
+}
+
+export function mutatorPlugin<Tokens extends InjectionToken<PluginContext>[]>(mutatorPlugin: MutatorPlugin<Tokens>) {
+  return mutatorPlugin;
 }

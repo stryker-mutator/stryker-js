@@ -5,5 +5,10 @@
   },
   "include": [
     "src"
+  ],
+  "references": [
+    {
+      "path": "../stryker-api/tsconfig.src.json"
+    }
   ]
 }

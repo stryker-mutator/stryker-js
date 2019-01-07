@@ -1,4 +1,4 @@
-import { errorToString } from './objectUtils';
+import { errorToString } from './errors';
 
 export default class StrykerError extends Error {
   constructor(message: string, readonly innerError?: Error) {

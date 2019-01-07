@@ -4,7 +4,7 @@ import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/r
 import { Position, StrykerOptions } from 'stryker-api/core';
 import ClearTextScoreTable from './ClearTextScoreTable';
 import * as os from 'os';
-import { tokens, PluginKind } from 'stryker-api/di';
+import { tokens } from 'stryker-api/di';
 
 export default class ClearTextReporter implements Reporter {
 
@@ -15,8 +15,6 @@ export default class ClearTextReporter implements Reporter {
   }
 
   public static readonly inject = tokens('options');
-  public static readonly pluginName = 'clear-text';
-  public static readonly kind = PluginKind.Reporter;
 
   private readonly out: NodeJS.WritableStream = process.stdout;
 

@@ -1,7 +1,7 @@
 import { RestClient, IRestResponse } from 'typed-rest-client/RestClient';
 import PromptOption from './PromptOption';
 import { getLogger } from 'stryker-api/logging';
-import { errorToString } from '../utils/objectUtils';
+import { errorToString } from '@stryker-mutator/util';
 
 interface NpmSearchPackageInfo {
   package: {

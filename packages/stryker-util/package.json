@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/@stryker-mutator/util#readme"
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/@stryker-mutator/util#readme",
+  "dependencies": {
+    "stryker-api": "^0.23.0"
+  }
 }

@@ -2,19 +2,21 @@ import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from '
 import { Logger } from 'stryker-api/logging';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
-import { tokens, PluginResolver, PluginKind, Inject } from 'stryker-api/di';
+import { tokens, PluginResolver, PluginKind, PluginContext, commonTokens } from 'stryker-api/di';
 import { StrykerOptions } from 'stryker-api/core';
+import { Injector, INJECTOR_TOKEN } from 'typed-inject';
 
 export default class BroadcastReporter implements StrictReporter {
 
-  public static readonly inject = tokens('options', 'pluginResolver', 'inject', 'logger');
+  public static readonly inject = tokens(commonTokens.options, commonTokens.pluginResolver, INJECTOR_TOKEN, commonTokens.logger);
+
   public readonly reporters: {
     [name: string]: Reporter;
   };
   constructor(
     private readonly options: StrykerOptions,
     private readonly pluginResolver: PluginResolver,
-    private readonly inject: Inject,
+    private readonly injector: Injector<PluginContext>,
     private readonly log: Logger) {
     this.reporters = {};
     this.options.reporters.forEach(reporterName => this.createReporter(reporterName));
@@ -29,7 +31,7 @@ export default class BroadcastReporter implements StrictReporter {
       reporterName = 'progress-append-only';
     }
     const plugin = this.pluginResolver.resolve(PluginKind.Reporter, reporterName);
-    this.reporters[reporterName] = this.inject(plugin);
+    this.reporters[reporterName] = this.injector.injectClass(plugin.injectable);
   }
 
   private logAboutReporters(): void {
