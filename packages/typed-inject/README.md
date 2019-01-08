@@ -32,7 +32,7 @@ _Note: this package uses advanced TypeScript features. Only TS 3.0 and above is 
 An example:
 
 ```ts
-import { rootInjector, tokens } from './src';
+import { rootInjector, tokens } from 'typed-inject';
 
 interface Logger {
     info(message: string): void;
@@ -72,7 +72,7 @@ Dependencies are resolved using the static `inject` property on their classes. T
 Expect compiler errors when you mess up the order of tokens or forget it completely.
 
 ```ts
-import { rootInjector, tokens } from './src';
+import { rootInjector, tokens } from 'typed-inject';
 
 // Same logger as before
 
@@ -95,6 +95,28 @@ const myService = appInjector.injectClass(MyService);
 ```
 
 The error messages are a bit cryptic at times, but it sure is better than running into them at runtime.
+
+## ✨ Magic tokens
+
+Any `Injector` instance can always inject the following tokens:
+
+| Token name | Token value | Description
+-----
+| `TARGET_TOKEN` | `'$target'` | The class or function in which the current values is injected, or `undefined` if resolved directly |  
+| `INJECTOR_TOKEN` | `'$injector'` | Injects the current injector |
+
+An example:
+
+```ts
+import { rootInjector, Injector, tokens, TARGET_TOKEN, INJECTOR_TOKEN } from 'typed-inject';
+
+class Foo {
+    constructor(injector: Injector<{}>, target: Function | undefined) {}
+    static inject = tokens(INJECTOR_TOKEN, TARGET_TOKEN);
+}
+
+const foo = rootInjector.inject(Foo);
+```
 
 ## 💭 Motivation
 
