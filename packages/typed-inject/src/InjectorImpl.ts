@@ -49,7 +49,8 @@ abstract class AbstractInjector<TContext> implements Injector<TContext>  {
   }
 
   private resolveParametersToInject<Tokens extends InjectionToken<TContext>[]>(injectable: Injectable<TContext, any, Tokens>, target?: Function): any[] {
-    return (injectable.inject || [] as InjectionToken<TContext>[]).map(key => this.resolve(key, target));
+    const tokens: InjectionToken<TContext>[] = (injectable as any).inject || [];
+    return tokens.map(key => this.resolve(key, target));
   }
 
   public provideValue<Token extends string, R>(token: Token, value: R): AbstractInjector<{ [k in Token]: R; } & TContext> {
