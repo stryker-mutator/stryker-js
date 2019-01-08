@@ -100,8 +100,8 @@ The error messages are a bit cryptic at times, but it sure is better than runnin
 
 Any `Injector` instance can always inject the following tokens:
 
-| Token name | Token value | Description
------
+| Token name | Token value | Description |
+| - | - | - | 
 | `TARGET_TOKEN` | `'$target'` | The class or function in which the current values is injected, or `undefined` if resolved directly |  
 | `INJECTOR_TOKEN` | `'$injector'` | Injects the current injector |
 
