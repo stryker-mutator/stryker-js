@@ -69,6 +69,12 @@ describe('InjectorImpl', () => {
       });
       expect(actual.foo).eq(42);
     });
+    it('should be able to provide a value from the parent injector', () => {
+      const sut = rootInjector
+        .provideValue('foo', 42)
+        .provideValue('bar', 'baz');
+      expect(sut.resolve('bar')).eq('baz');
+    });
   });
 
   describe('FactoryInjector', () => {
