@@ -2,18 +2,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
+import logger from '../helpers/loggingMock';
 import EventPlayer from '../helpers/EventPlayer';
 import fileUrl = require('file-url');
 import HtmlReporter from '../../src/HtmlReporter';
-import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('HtmlReporter with example math project', () => {
   let sut: HtmlReporter;
   const baseDir = 'reports/mutation/math';
 
   beforeEach(() => {
-    testInjector.options.htmlReporter = { baseDir };
-    sut = testInjector.injector.injectClass(HtmlReporter);
+    const config = new Config();
+    config.set({ htmlReporter: { baseDir } });
+    sut = new HtmlReporter(config);
     return new EventPlayer(path.join('testResources', 'mathEvents'))
       .replay(sut)
       .then(() => sut.wrapUp());
@@ -26,14 +27,14 @@ describe('HtmlReporter with example math project', () => {
   });
 
   it('should output a log message with a link to the HTML report', () => {
-    expect(testInjector.logger.info).to.have.been.calledWith(`Your report can be found at: ${fileUrl(baseDir + '/index.html')}`);
+    expect(logger.info).to.have.been.calledWith(`Your report can be found at: ${fileUrl(baseDir + '/index.html')}`);
   });
 
   describe('when initiated a second time with empty events', () => {
     beforeEach(() => {
       const config = new Config();
       config.set({ htmlReporter: { baseDir } });
-      sut = testInjector.injector.injectClass(HtmlReporter);
+      sut = new HtmlReporter(config);
       sut.onAllSourceFilesRead([]);
       sut.onAllMutantsTested([]);
       return sut.wrapUp();

@@ -1,27 +1,25 @@
-import { Logger } from 'stryker-api/logging';
+import { getLogger } from 'stryker-api/logging';
 import fileUrl = require('file-url');
 import * as path from 'path';
+import { Config } from 'stryker-api/config';
 import { Reporter, MutantResult, SourceFile, ScoreResult } from 'stryker-api/report';
 import * as util from './util';
 import * as templates from './templates';
 import Breadcrumb from './Breadcrumb';
-import { StrykerOptions } from 'stryker-api/core';
-import { commonTokens, tokens } from '@stryker-mutator/util';
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class HtmlReporter implements Reporter {
-  private _baseDir!: string;
-  private mainPromise!: Promise<void>;
-  private mutantResults!: MutantResult[];
-  private files!: SourceFile[];
-  private scoreResult!: ScoreResult;
+  private readonly log = getLogger(HtmlReporter.name);
+  private _baseDir: string;
+  private mainPromise: Promise<void>;
+  private mutantResults: MutantResult[];
+  private files: SourceFile[];
+  private scoreResult: ScoreResult;
 
-  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {
+  constructor(private readonly options: Config) {
   }
-
-  public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
   public onAllSourceFilesRead(files: SourceFile[]) {
     this.files = files;
@@ -67,7 +65,7 @@ export default class HtmlReporter implements Reporter {
       if (child.representsFile) {
         return this.writeReportFile(child, currentDirectory, breadcrumb.add(child.name, util.countPathSep(child.name)));
       } else {
-        return this.writeReportDirectory(child, path.join(currentDirectory, child.name), breadcrumb.add(child.name, util.countPathSep(child.name) + 1))
+        return this.writeReportDirectory(child, path.join(currentDirectory, child.name), breadcrumb.add(child.name,  util.countPathSep(child.name) + 1))
           .then(_ => void 0);
       }
     }));
@@ -94,7 +92,7 @@ export default class HtmlReporter implements Reporter {
     return path.join(this.baseDir, RESOURCES_DIR_NAME);
   }
 
-  private get baseDir(): string {
+  private get baseDir() {
     if (!this._baseDir) {
       if (this.options.htmlReporter && this.options.htmlReporter.baseDir) {
         this._baseDir = this.options.htmlReporter.baseDir;

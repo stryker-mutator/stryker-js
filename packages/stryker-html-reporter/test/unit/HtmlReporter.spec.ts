@@ -1,12 +1,13 @@
 import { normalize, join } from 'path';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { Config } from 'stryker-api/config';
 import * as util from '../../src/util';
 import HtmlReporter from '../../src/HtmlReporter';
 import { sourceFile, mutantResult, scoreResult } from '../helpers/producers';
-import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('HtmlReporter', () => {
+  let sandbox: sinon.SinonSandbox;
   let copyFolderStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
   let mkdirStub: sinon.SinonStub;
@@ -14,12 +15,15 @@ describe('HtmlReporter', () => {
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    copyFolderStub = sinon.stub(util, 'copyFolder');
-    writeFileStub = sinon.stub(util, 'writeFile');
-    deleteDirStub = sinon.stub(util, 'deleteDir');
-    mkdirStub = sinon.stub(util, 'mkdir');
-    sut = testInjector.injector.injectClass(HtmlReporter);
+    sandbox = sinon.createSandbox();
+    copyFolderStub = sandbox.stub(util, 'copyFolder');
+    writeFileStub = sandbox.stub(util, 'writeFile');
+    deleteDirStub = sandbox.stub(util, 'deleteDir');
+    mkdirStub = sandbox.stub(util, 'mkdir');
+    sut = new HtmlReporter(new Config());
   });
+
+  afterEach(() => sandbox.restore());
 
   describe('when in happy flow', () => {
 
