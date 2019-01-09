@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
-import { PluginKind, tokens } from 'stryker-api/di';
+import { PluginKind, ReporterPlugin } from 'stryker-api/plugin';
 import * as sinon from 'sinon';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { Reporter, ReporterPlugin } from 'stryker-api/report';
+import { Reporter } from 'stryker-api/report';
 
 describe('BroadcastReporter', () => {
 
@@ -49,7 +49,7 @@ describe('BroadcastReporter', () => {
 
       // Assert
       expect(sut.reporters).deep.eq({
-        progress:  progressReporterPlugin.reporterStub,
+        progress: progressReporterPlugin.reporterStub,
         rep2: rep2Plugin.reporterStub
       });
     });
@@ -134,7 +134,7 @@ describe('BroadcastReporter', () => {
     return testInjector.injector.injectClass(BroadcastReporter);
   }
 
-  type MockedReporterPlugin = ReporterPlugin<[]> & { reporterStub: sinon.SinonStubbedInstance<Required<Reporter>>} ;
+  type MockedReporterPlugin = ReporterPlugin<[]> & { reporterStub: sinon.SinonStubbedInstance<Required<Reporter>> };
 
   function mockReporterPlugin(name: string): MockedReporterPlugin {
     const reporterStub = factory.reporter();
@@ -144,7 +144,6 @@ describe('BroadcastReporter', () => {
         constructor() {
           return reporterStub;
         }
-        public static inject = tokens();
       },
       kind: PluginKind.Reporter,
       name,

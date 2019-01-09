@@ -1,10 +1,8 @@
 import {Reporter, MutantResult, MutantStatus} from 'stryker-api/report';
 import chalk from 'chalk';
 import * as os from 'os';
-import { tokens } from 'stryker-api/di';
 
 export default class DotsReporter implements Reporter {
-  public static readonly inject = tokens();
 
   public onMutantTested(result: MutantResult) {
     let toLog: string;

@@ -3,7 +3,7 @@ import DashboardReporterClient from './dashboard-reporter/DashboardReporterClien
 import {getEnvironmentVariable} from '../utils/objectUtils';
 import { getLogger } from 'stryker-api/logging';
 import { determineCIProvider } from './ci/Provider';
-import { tokens } from 'stryker-api/di';
+import { tokens } from 'typed-inject';
 
 export default class DashboardReporter implements Reporter {
   public static readonly inject = tokens();

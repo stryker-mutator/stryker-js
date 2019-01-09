@@ -1,11 +1,9 @@
 import { MatchedMutant, MutantResult } from 'stryker-api/report';
 import ProgressKeeper from './ProgressKeeper';
 import ProgressBar from './ProgressBar';
-import { tokens } from 'stryker-api/di';
 
 export default class ProgressBarReporter extends ProgressKeeper {
   private progressBar: ProgressBar;
-  public static readonly inject = tokens();
 
   public onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);

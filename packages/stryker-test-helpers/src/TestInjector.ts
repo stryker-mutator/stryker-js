@@ -1,4 +1,4 @@
-import { PluginResolver, PluginContext } from 'stryker-api/di';
+import { PluginResolver, PluginContext } from 'stryker-api/plugin';
 import { StrykerOptions } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import * as factory from './factory';

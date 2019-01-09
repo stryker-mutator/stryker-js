@@ -25,7 +25,7 @@ import TestableMutant from '../../src/TestableMutant';
 import InputFileCollection from '../../src/input/InputFileCollection';
 import LogConfigurator from '../../src/logging/LogConfigurator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
-import { PluginContext } from 'stryker-api/di';
+import { PluginContext } from 'stryker-api/plugin';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }

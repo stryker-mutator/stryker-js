@@ -2,9 +2,10 @@ import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from '
 import { Logger } from 'stryker-api/logging';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
-import { tokens, PluginResolver, PluginKind, PluginContext, commonTokens } from 'stryker-api/di';
+import { PluginResolver, PluginKind, PluginContext } from 'stryker-api/plugin';
 import { StrykerOptions } from 'stryker-api/core';
-import { Injector, INJECTOR_TOKEN } from 'typed-inject';
+import { Injector, INJECTOR_TOKEN, tokens } from 'typed-inject';
+import { commonTokens } from '@stryker-mutator/util';
 
 export default class BroadcastReporter implements StrictReporter {
 

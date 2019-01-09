@@ -4,7 +4,7 @@ import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/r
 import { Position, StrykerOptions } from 'stryker-api/core';
 import ClearTextScoreTable from './ClearTextScoreTable';
 import * as os from 'os';
-import { tokens } from 'stryker-api/di';
+import { tokens } from 'typed-inject';
 
 export default class ClearTextReporter implements Reporter {
 

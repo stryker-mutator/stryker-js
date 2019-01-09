@@ -4,8 +4,7 @@ import ProgressAppendOnlyReporter from './ProgressAppendOnlyReporter';
 import DotsReporter from './DotsReporter';
 import EventRecorderReporter from './EventRecorderReporter';
 import DashboardReporter from './DashboardReporter';
-import { reporterPlugin } from 'stryker-api/report';
-import { PluginKind } from 'stryker-api/di';
+import { PluginKind, reporterPlugin } from 'stryker-api/plugin';
 
 export const strykerPlugins = [
   reporterPlugin({ name: 'clear-text', kind: PluginKind.Reporter, injectable: ClearTextReporter }),

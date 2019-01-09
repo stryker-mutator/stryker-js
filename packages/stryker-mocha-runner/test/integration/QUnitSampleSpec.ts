@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { RunStatus } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import { runnerOptions } from '../helpers/mockHelpers';
-import { factory } from '../../../stryker-test-helpers/src';
+import { factory } from '@stryker-mutator/test-helpers';
 
 describe('QUnit sample', () => {
 
