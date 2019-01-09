@@ -67,7 +67,7 @@ export default class PluginLoader implements PluginResolver {
           const realPlugin = factory.create(name, settingsFactory(args));
           for (const i in realPlugin) {
             const method = (realPlugin as any)[i];
-            if (method === 'function') {
+            if (typeof method === 'function' && method  ) {
               (this as any)[i] = method.bind(realPlugin);
             }
           }
