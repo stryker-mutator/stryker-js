@@ -1,4 +1,6 @@
-import { ReporterFactory } from 'stryker-api/report';
 import HtmlReporter from './HtmlReporter';
+import { PluginKind, pluginClass } from 'stryker-api/plugin';
 
-ReporterFactory.instance().register('html', HtmlReporter);
+export const strykerPlugins = [
+  pluginClass(PluginKind.Reporter, 'html', HtmlReporter)
+];
