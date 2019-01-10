@@ -12,6 +12,9 @@
     },
     {
       "path": "../stryker-mutator-specification/tsconfig.src.json"
+    },
+    {
+      "path": "../stryker-util/tsconfig.src.json"
     }
   ]
 }

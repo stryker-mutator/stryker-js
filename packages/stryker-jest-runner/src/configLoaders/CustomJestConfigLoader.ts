@@ -9,7 +9,7 @@ import { Configuration } from 'jest';
 export default class CustomJestConfigLoader implements JestConfigLoader {
   private readonly _projectRoot: string;
 
-  constructor(projectRoot: string, private _loader: NodeRequireFunction = require) {
+  constructor(projectRoot: string, private readonly _loader: NodeRequireFunction = require) {
     this._projectRoot = projectRoot;
   }
 

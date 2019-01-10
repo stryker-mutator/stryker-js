@@ -6,6 +6,7 @@ import { File } from 'stryker-api/core';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('Use header file integration', () => {
 
@@ -13,7 +14,7 @@ describe('Use header file integration', () => {
   let inputFiles: File[];
 
   beforeEach(() => {
-    const configEditor = new TypescriptConfigEditor();
+    const configEditor = testInjector.injector.injectClass(TypescriptConfigEditor);
     config = new Config();
     config.set({
       tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'useHeaderFile', 'tsconfig.json'),

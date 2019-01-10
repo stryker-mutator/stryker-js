@@ -8,7 +8,7 @@ import { createPlugin } from '../di/createPlugin';
  * Class that applies all config editor plugins
  */
 export class ConfigEditorApplier implements ConfigEditor {
-  constructor(private pluginResolver: PluginResolver, private injector: Injector<StrykerContext>) { }
+  constructor(private readonly pluginResolver: PluginResolver, private readonly injector: Injector<StrykerContext>) { }
   public static inject = tokens(commonTokens.pluginResolver, INJECTOR_TOKEN);
 
   public edit(config: Config): void {

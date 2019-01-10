@@ -14,7 +14,7 @@ const DEFAULT_PROJECT_NAME_DEPRECATED = 'default';
 export default class JestConfigEditor implements ConfigEditor {
 
   public static inject = tokens(commonTokens.logger);
-  constructor(private log: Logger) { }
+  constructor(private readonly log: Logger) { }
 
   public edit(strykerConfig: Config): void {
     // If there is no Jest property on the Stryker config create it
