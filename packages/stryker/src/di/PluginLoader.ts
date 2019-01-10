@@ -45,6 +45,11 @@ export default class PluginLoader implements PluginResolver {
     }
   }
 
+  public resolveAll<T extends keyof Plugins>(kind: T): Plugins[T][] {
+    const plugins = this.pluginsByKind.get(kind);
+    return plugins || [] as any;
+  }
+
   private loadDeprecatedPlugins() {
     this.loadDeprecatedPluginsFor(PluginKind.ConfigEditor, ConfigEditorFactory.instance(), [], () => undefined);
     this.loadDeprecatedPluginsFor(PluginKind.Reporter, ReporterFactory.instance(), tokens('config'), ([config]) => config);

@@ -3,8 +3,8 @@ import { TestRunner } from '../../test_runner';
 import { Reporter } from '../../report';
 import { Mutator } from '../../mutant';
 import { Transpiler } from '../../transpile';
-import { PluginContexts } from './Contexts';
 import { ConfigEditor } from '../../config';
+import { PluginContexts } from './Contexts';
 import { InjectionToken, InjectableClass, InjectableFunction } from 'typed-inject';
 import { PluginKind } from './PluginKind';
 
@@ -55,4 +55,5 @@ export type Plugins = {
 
 export interface PluginResolver {
   resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T];
+  resolveAll<T extends keyof Plugins>(kind: T): Plugins[T][];
 }

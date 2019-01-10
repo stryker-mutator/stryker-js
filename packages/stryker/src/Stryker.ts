@@ -1,5 +1,5 @@
 import { getLogger } from 'stryker-api/logging';
-import { Config, ConfigEditorFactory } from 'stryker-api/config';
+import { Config } from 'stryker-api/config';
 import { StrykerOptions, MutatorDescriptor } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
@@ -24,6 +24,7 @@ import { PluginContext, PluginResolver } from 'stryker-api/plugin';
 import { Injector, rootInjector, Scope } from 'typed-inject';
 import { loggerFactory } from './di/loggerFactory';
 import { commonTokens } from '@stryker-mutator/util';
+import { ConfigEditorApplier } from './config/ConfigEditorApplier';
 
 export default class Stryker {
 
@@ -50,12 +51,13 @@ export default class Stryker {
     pluginLoader.load();
     // Log level may have changed
     LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
-    this.applyConfigEditors();
-    this.freezeConfig();
-    this.injector = rootInjector
+    const configEditorInjector = rootInjector
       .provideValue(commonTokens.getLogger, getLogger)
       .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
-      .provideValue(commonTokens.pluginResolver, pluginLoader as PluginResolver)
+      .provideValue(commonTokens.pluginResolver, pluginLoader as PluginResolver);
+    configEditorInjector.injectClass(ConfigEditorApplier).edit(this.config);
+    this.freezeConfig();
+    this.injector = configEditorInjector
       .provideValue(commonTokens.config, this.config)
       .provideValue(commonTokens.options, this.config as StrykerOptions);
     this.reporter = this.injector.injectClass(BroadcastReporter);
@@ -139,12 +141,6 @@ export default class Stryker {
     } else {
       return Promise.resolve();
     }
-  }
-
-  private applyConfigEditors() {
-    ConfigEditorFactory.instance().knownNames().forEach(configEditorName => {
-      ConfigEditorFactory.instance().create(configEditorName, undefined).edit(this.config);
-    });
   }
 
   private freezeConfig() {
