@@ -1,13 +1,16 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { StrykerOptions } from 'stryker-api/core';
-import { getLogger } from 'stryker-api/logging';
 import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
+import { tokens, commonTokens } from '@stryker-mutator/util';
+import { Logger } from 'stryker-api/logging';
 
 export default class MochaOptionsLoader {
 
-  private readonly log = getLogger(MochaOptionsLoader.name);
   private readonly DEFAULT_MOCHA_OPTS = 'test/mocha.opts';
+
+  public static inject = tokens(commonTokens.logger);
+  constructor(private readonly log: Logger) { }
 
   public load(config: StrykerOptions): MochaRunnerOptions {
     const mochaOptions = Object.assign({}, config[mochaOptionsKey]) as MochaRunnerOptions;
