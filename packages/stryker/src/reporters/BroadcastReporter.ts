@@ -6,6 +6,7 @@ import { PluginResolver, PluginKind, PluginContext } from 'stryker-api/plugin';
 import { StrykerOptions } from 'stryker-api/core';
 import { Injector, INJECTOR_TOKEN, tokens } from 'typed-inject';
 import { commonTokens } from '@stryker-mutator/util';
+import { createPlugin } from '../di/createPlugin';
 
 export default class BroadcastReporter implements StrictReporter {
 
@@ -32,7 +33,7 @@ export default class BroadcastReporter implements StrictReporter {
       reporterName = 'progress-append-only';
     }
     const plugin = this.pluginResolver.resolve(PluginKind.Reporter, reporterName);
-    this.reporters[reporterName] = this.injector.injectClass(plugin.injectable);
+    this.reporters[reporterName] = createPlugin(PluginKind.Reporter, plugin, this.injector);
   }
 
   private logAboutReporters(): void {

@@ -5,34 +5,53 @@ import { Mutator } from '../../mutant';
 import { Transpiler } from '../../transpile';
 import { PluginContexts } from './Contexts';
 import { ConfigEditor } from '../../config';
-import { InjectionToken, InjectableClass } from 'typed-inject';
+import { InjectionToken, InjectableClass, InjectableFunction } from 'typed-inject';
 import { PluginKind } from './PluginKind';
 
-export interface BasePlugin<TPlugin extends PluginKind, R, Tokens extends InjectionToken<PluginContexts[TPlugin]>[]> {
-  readonly kind: TPlugin;
+export type Plugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]> =
+  FactoryPlugin<TPluginKind, Tokens> | ClassPlugin<TPluginKind, Tokens>;
+
+export interface FactoryPlugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]> {
+  readonly kind: TPluginKind;
   readonly name: string;
-  readonly injectable: InjectableClass<PluginContexts[TPlugin], R, Tokens>;
+  readonly factory: InjectableFunction<PluginContexts[TPluginKind], PluginKinds[TPluginKind], Tokens>;
+}
+export interface ClassPlugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]> {
+  readonly kind: TPluginKind;
+  readonly name: string;
+  readonly injectableClass: InjectableClass<PluginContexts[TPluginKind], PluginKinds[TPluginKind], Tokens>;
 }
 
-export function reporterPlugin<Tokens extends InjectionToken<PluginContexts[PluginKind.Reporter]>[]>(p: ReporterPlugin<Tokens>) {
-  return p;
+export function pluginClass<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]>(kind: TPluginKind, name: string, injectableClass: InjectableClass<PluginContexts[TPluginKind], PluginKinds[TPluginKind], Tokens>):
+  ClassPlugin<TPluginKind, Tokens> {
+  return {
+    injectableClass,
+    kind,
+    name
+  };
 }
 
-export interface ReporterPlugin<Tokens extends InjectionToken<PluginContexts[PluginKind.Reporter]>[]> extends BasePlugin<PluginKind.Reporter, Reporter, Tokens> { }
-export interface ConfigEditorPlugin<Tokens extends InjectionToken<PluginContexts[PluginKind.ConfigEditor]>[]> extends BasePlugin<PluginKind.ConfigEditor, ConfigEditor, Tokens> { }
-export interface MutatorPlugin<Tokens extends InjectionToken<PluginContexts[PluginKind.Mutator]>[]> extends BasePlugin<PluginKind.Mutator, Mutator, Tokens> { }
-export interface TestFrameworkPlugin<Tokens extends InjectionToken<PluginContexts[PluginKind.TestFramework]>[]> extends BasePlugin<PluginKind.TestFramework, TestFramework, Tokens> { }
-export interface TestRunnerPlugin<Tokens extends InjectionToken<PluginContexts[PluginKind.TestRunner]>[]> extends BasePlugin<PluginKind.TestRunner, TestRunner, Tokens> { }
-export interface TranspilerPlugin<Tokens extends InjectionToken<PluginContexts[PluginKind.Transpiler]>[]> extends BasePlugin<PluginKind.Transpiler, Transpiler, Tokens> { }
-
-export interface Plugins {
-  [PluginKind.ConfigEditor]: ConfigEditorPlugin<InjectionToken<PluginContexts[PluginKind.ConfigEditor]>[]>;
-  [PluginKind.Mutator]: MutatorPlugin<InjectionToken<PluginContexts[PluginKind.Mutator]>[]>;
-  [PluginKind.Reporter]: ReporterPlugin<InjectionToken<PluginContexts[PluginKind.Reporter]>[]>;
-  [PluginKind.TestFramework]: TestFrameworkPlugin<InjectionToken<PluginContexts[PluginKind.TestFramework]>[]>;
-  [PluginKind.TestRunner]: TestRunnerPlugin<InjectionToken<PluginContexts[PluginKind.TestRunner]>[]>;
-  [PluginKind.Transpiler]: TranspilerPlugin<InjectionToken<PluginContexts[PluginKind.Transpiler]>[]>;
+export function pluginFactory<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]>(kind: TPluginKind, name: string, factory: InjectableFunction<PluginContexts[TPluginKind], PluginKinds[TPluginKind], Tokens>):
+  FactoryPlugin<TPluginKind, Tokens> {
+  return {
+    factory,
+    kind,
+    name
+  };
 }
+
+export interface PluginKinds {
+  [PluginKind.ConfigEditor]: ConfigEditor;
+  [PluginKind.Mutator]: Mutator;
+  [PluginKind.Reporter]: Reporter;
+  [PluginKind.TestFramework]: TestFramework;
+  [PluginKind.TestRunner]: TestRunner;
+  [PluginKind.Transpiler]: Transpiler;
+}
+
+export type Plugins = {
+  [TPluginKind in keyof PluginKinds]: Plugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>;
+};
 
 export interface PluginResolver {
   resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T];

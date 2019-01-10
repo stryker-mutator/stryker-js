@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { tokens, CorrespondingTypes, InjectionToken } from 'typed-inject';
 import { importModule } from '../utils/fileUtils';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { PluginKind, PluginResolver, Plugins, PluginContexts, BasePlugin } from 'stryker-api/plugin';
+import { Plugin, PluginKind, PluginResolver, Plugins, PluginContexts } from 'stryker-api/plugin';
 import { ConfigEditorFactory } from 'stryker-api/config';
 import { Factory } from 'stryker-api/core';
 import { ReporterFactory } from 'stryker-api/report';
@@ -16,12 +16,12 @@ import { MutatorFactory } from 'stryker-api/mutant';
 const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 
 interface PluginModule {
-  strykerPlugins: BasePlugin<any, any, any>[];
+  strykerPlugins: Plugin<any, any>[];
 }
 
 export default class PluginLoader implements PluginResolver {
   private readonly log = getLogger(PluginLoader.name);
-  private readonly pluginsByKind: Map<PluginKind, BasePlugin<any, any, any>[]> = new Map();
+  private readonly pluginsByKind: Map<PluginKind, Plugin<any, any>[]> = new Map();
 
   constructor(private readonly pluginDescriptors: string[]) { }
 
@@ -74,7 +74,7 @@ export default class PluginLoader implements PluginResolver {
         }
         public static inject = injectionTokens;
       }
-      this.loadPlugin({ kind, name, injectable: ProxyPlugin });
+      this.loadPlugin({ kind, name, injectableClass: ProxyPlugin });
     });
   }
 
@@ -131,7 +131,7 @@ export default class PluginLoader implements PluginResolver {
     }
   }
 
-  private loadPlugin(plugin: BasePlugin<any, any, any>) {
+  private loadPlugin(plugin: Plugin<any, any>) {
     let plugins = this.pluginsByKind.get(plugin.kind);
     if (!plugins) {
       plugins = [];

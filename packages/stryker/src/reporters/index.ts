@@ -4,13 +4,13 @@ import ProgressAppendOnlyReporter from './ProgressAppendOnlyReporter';
 import DotsReporter from './DotsReporter';
 import EventRecorderReporter from './EventRecorderReporter';
 import DashboardReporter from './DashboardReporter';
-import { PluginKind, reporterPlugin } from 'stryker-api/plugin';
+import { PluginKind, pluginClass } from 'stryker-api/plugin';
 
 export const strykerPlugins = [
-  reporterPlugin({ name: 'clear-text', kind: PluginKind.Reporter, injectable: ClearTextReporter }),
-  reporterPlugin({ name: 'progress', kind: PluginKind.Reporter, injectable: ProgressReporter }),
-  reporterPlugin({ name: 'progress-append-only', kind: PluginKind.Reporter, injectable: ProgressAppendOnlyReporter }),
-  reporterPlugin({ name: 'dots', kind: PluginKind.Reporter, injectable: DotsReporter }),
-  reporterPlugin({ name: 'event-recorder', kind: PluginKind.Reporter, injectable: EventRecorderReporter }),
-  reporterPlugin({ name: 'dashboard', kind: PluginKind.Reporter, injectable: DashboardReporter })
+  pluginClass(PluginKind.Reporter, 'clear-text', ClearTextReporter),
+  pluginClass(PluginKind.Reporter, 'progress', ProgressReporter),
+  pluginClass(PluginKind.Reporter, 'progress-append-only', ProgressAppendOnlyReporter),
+  pluginClass(PluginKind.Reporter, 'dots', DotsReporter),
+  pluginClass(PluginKind.Reporter, 'event-recorder', EventRecorderReporter),
+  pluginClass(PluginKind.Reporter, 'dashboard', DashboardReporter)
 ];

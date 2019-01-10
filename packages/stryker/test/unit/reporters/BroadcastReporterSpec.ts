@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
-import { PluginKind, ReporterPlugin } from 'stryker-api/plugin';
+import { PluginKind, FactoryPlugin } from 'stryker-api/plugin';
 import * as sinon from 'sinon';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { Reporter } from 'stryker-api/report';
@@ -35,7 +35,7 @@ describe('BroadcastReporter', () => {
       sut = createSut();
 
       // Assert
-      expect(sut.reporters).deep.eq({ 'progress-append-only': new expectedReporterPlugin.injectable() });
+      expect(sut.reporters).deep.eq({ 'progress-append-only': expectedReporterPlugin.reporterStub });
     });
 
     it('should create the correct reporters', () => {
@@ -134,16 +134,14 @@ describe('BroadcastReporter', () => {
     return testInjector.injector.injectClass(BroadcastReporter);
   }
 
-  type MockedReporterPlugin = ReporterPlugin<[]> & { reporterStub: sinon.SinonStubbedInstance<Required<Reporter>> };
+  type MockedReporterPlugin = FactoryPlugin<PluginKind.Reporter, []> & { reporterStub: sinon.SinonStubbedInstance<Required<Reporter>> };
 
   function mockReporterPlugin(name: string): MockedReporterPlugin {
     const reporterStub = factory.reporter();
     (reporterStub as any)[name] = name;
     const reporterPlugin: MockedReporterPlugin = {
-      injectable: class MockReporterPlugin {
-        constructor() {
-          return reporterStub;
-        }
+      factory() {
+        return reporterStub;
       },
       kind: PluginKind.Reporter,
       name,
