@@ -10,6 +10,7 @@ paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsco
 
 import JestConfigEditor from '../../src/JestConfigEditor';
 import JestTestRunner from '../../src/JestTestRunner';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 // Get the actual project root, since we will stub process.cwd later on
 const jestProjectRoot = process.cwd();
@@ -39,7 +40,7 @@ describe('Integration test for Strykers Jest runner', () => {
   beforeEach(() => {
     processCwdStub = sinon.stub(process, 'cwd');
 
-    jestConfigEditor = new JestConfigEditor();
+    jestConfigEditor = testInjector.injector.injectClass(JestConfigEditor);
 
     runnerOptions = {
       fileNames: [],

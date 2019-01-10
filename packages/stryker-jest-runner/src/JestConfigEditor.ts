@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import { Config, ConfigEditor } from 'stryker-api/config';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
 import CustomJestConfigLoader from './configLoaders/CustomJestConfigLoader';
@@ -6,14 +5,16 @@ import ReactScriptsJestConfigLoader from './configLoaders/ReactScriptsJestConfig
 import ReactScriptsTSJestConfigLoader from './configLoaders/ReactScriptsTSJestConfigLoader';
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 import { Configuration } from 'jest';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
+import { tokens, commonTokens } from '@stryker-mutator/util';
 
 const DEFAULT_PROJECT_NAME = 'custom';
 const DEFAULT_PROJECT_NAME_DEPRECATED = 'default';
 
 export default class JestConfigEditor implements ConfigEditor {
 
-  public log = getLogger(JestConfigEditor.name);
+  public static inject = tokens(commonTokens.logger);
+  constructor(private log: Logger) { }
 
   public edit(strykerConfig: Config): void {
     // If there is no Jest property on the Stryker config create it
@@ -41,7 +42,7 @@ export default class JestConfigEditor implements ConfigEditor {
   private getConfigLoader(projectType: string): JestConfigLoader {
     switch (projectType.toLowerCase()) {
       case DEFAULT_PROJECT_NAME:
-        return new CustomJestConfigLoader(process.cwd(), fs);
+        return new CustomJestConfigLoader(process.cwd());
       case 'react':
         return new ReactScriptsJestConfigLoader(process.cwd());
       case 'react-ts':

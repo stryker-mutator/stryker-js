@@ -1,6 +1,6 @@
 import { TestResult, TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { Mutant } from 'stryker-api/mutant';
-import { Config } from 'stryker-api/config';
+import { Config, ConfigEditor } from 'stryker-api/config';
 import { Logger } from 'stryker-api/logging';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
@@ -134,6 +134,12 @@ export function reporter(): sinon.SinonStubbedInstance<Required<Reporter>> {
   const reporter = {} as any;
   ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sinon.stub());
   return reporter;
+}
+
+export function configEditor(): sinon.SinonStubbedInstance<ConfigEditor> {
+  return {
+    edit: sinon.stub()
+  };
 }
 
 export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
