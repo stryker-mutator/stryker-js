@@ -12,12 +12,6 @@
     },
     {
       "path": "../stryker-mocha-framework/tsconfig.src.json"
-    },
-    {
-      "path": "../stryker-util/tsconfig.src.json"
-    },
-    {
-      "path": "../typed-inject/tsconfig.src.json"
     }
   ]
 }

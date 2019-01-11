@@ -1,7 +1,7 @@
 import { ConfigEditor, Config } from 'stryker-api/config';
 import { mochaOptionsKey } from './MochaRunnerOptions';
 import MochaOptionsLoader from './MochaOptionsLoader';
-import { tokens } from '@stryker-mutator/util';
+import { tokens } from 'stryker-api/plugin';
 
 export default class MochaConfigEditor implements ConfigEditor {
 

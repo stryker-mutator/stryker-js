@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { StrykerOptions } from 'stryker-api/core';
 import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
-import { tokens, commonTokens } from '@stryker-mutator/util';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 import { Logger } from 'stryker-api/logging';
 
 export default class MochaOptionsLoader {

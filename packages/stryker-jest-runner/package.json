@@ -51,7 +51,6 @@
     "stryker-api": ">=0.18.0 <0.24.0"
   },
   "dependencies": {
-    "@stryker-mutator/util": "^0.0.3",
     "semver": "~5.6.0",
     "typed-inject": "0.0.0"
   },

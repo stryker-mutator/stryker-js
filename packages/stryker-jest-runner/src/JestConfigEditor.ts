@@ -6,7 +6,7 @@ import ReactScriptsTSJestConfigLoader from './configLoaders/ReactScriptsTSJestCo
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 import { Configuration } from 'jest';
 import { Logger } from 'stryker-api/logging';
-import { tokens, commonTokens } from '@stryker-mutator/util';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 const DEFAULT_PROJECT_NAME = 'custom';
 const DEFAULT_PROJECT_NAME_DEPRECATED = 'default';

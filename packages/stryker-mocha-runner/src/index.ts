@@ -1,19 +1,19 @@
 import { TestRunnerFactory } from 'stryker-api/test_runner';
-import { pluginFactory, PluginKind, StrykerContext } from 'stryker-api/plugin';
+import { declareFactoryPlugin, PluginKind, BaseContext, tokens, commonTokens } from 'stryker-api/plugin';
 
 import MochaTestRunner from './MochaTestRunner';
 import MochaConfigEditor from './MochaConfigEditor';
-import { Injector, INJECTOR_TOKEN, tokens } from 'typed-inject';
 import MochaOptionsLoader from './MochaOptionsLoader';
+import { Injector } from 'typed-inject';
 
 TestRunnerFactory.instance().register('mocha', MochaTestRunner);
 
 export const strykerPlugins = [
-  pluginFactory(PluginKind.ConfigEditor, 'mocha-runner', mochaConfigEditorFactory)
+  declareFactoryPlugin(PluginKind.ConfigEditor, 'mocha-runner', mochaConfigEditorFactory)
 ];
 
-mochaConfigEditorFactory.inject = tokens(INJECTOR_TOKEN);
-function mochaConfigEditorFactory(injector: Injector<StrykerContext>): MochaConfigEditor {
+mochaConfigEditorFactory.inject = tokens(commonTokens.injector);
+function mochaConfigEditorFactory(injector: Injector<BaseContext>): MochaConfigEditor {
   return injector
     .provideClass('loader', MochaOptionsLoader)
     .injectClass(MochaConfigEditor);
