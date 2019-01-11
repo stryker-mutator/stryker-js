@@ -3,27 +3,28 @@ import { StrykerOptions } from '../../core';
 import { PluginResolver } from './Plugins';
 import { Config } from '../../config';
 import { PluginKind } from './PluginKind';
+import { commonTokens } from './tokens';
 
 export interface StrykerContext {
-  getLogger: LoggerFactoryMethod;
-  logger: Logger;
-  pluginResolver: PluginResolver;
+  [commonTokens.getLogger]: LoggerFactoryMethod;
+  [commonTokens.logger]: Logger;
+  [commonTokens.pluginResolver]: PluginResolver;
 }
 
 export interface TranspilerPluginContext extends PluginContext {
-  produceSourceMaps: boolean;
+  [commonTokens.produceSourceMaps]: boolean;
 }
 
 export interface TestRunnerPluginContext extends PluginContext {
-  sandboxFileNames: ReadonlyArray<string>;
+  [commonTokens.sandboxFileNames]: ReadonlyArray<string>;
 }
 
 export interface PluginContext extends StrykerContext {
-  options: StrykerOptions;
+  [commonTokens.options]: StrykerOptions;
   /**
    * @deprecated This is just here to migrate between old and new plugins. Don't use this! Use `options` instead
    */
-  config: Config;
+  [commonTokens.config]: Config;
 }
 
 export interface PluginContexts {
