@@ -8,21 +8,40 @@ import { ConfigEditor } from '../../config';
 import { InjectionToken, InjectableClass, InjectableFunction } from 'typed-inject';
 import { PluginKind } from './PluginKind';
 
+/**
+ * Represents a StrykerPlugin
+ */
 export type Plugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]> =
   FactoryPlugin<TPluginKind, Tokens> | ClassPlugin<TPluginKind, Tokens>;
 
+/**
+ * Represents a plugin that is created with a factory method
+ */
 export interface FactoryPlugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]> {
   readonly kind: TPluginKind;
   readonly name: string;
-  readonly factory: InjectableFunction<PluginContexts[TPluginKind], PluginKinds[TPluginKind], Tokens>;
+  /**
+   * The factory method used to create the plugin
+   */
+  readonly factory: InjectableFunction<PluginContexts[TPluginKind], PluginInterfaces[TPluginKind], Tokens>;
 }
+
+/**
+ * Represents a plugin that is created by instantiating a class.
+ */
 export interface ClassPlugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]> {
   readonly kind: TPluginKind;
   readonly name: string;
-  readonly injectableClass: InjectableClass<PluginContexts[TPluginKind], PluginKinds[TPluginKind], Tokens>;
+  readonly injectableClass: InjectableClass<PluginContexts[TPluginKind], PluginInterfaces[TPluginKind], Tokens>;
 }
 
-export function pluginClass<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]>(kind: TPluginKind, name: string, injectableClass: InjectableClass<PluginContexts[TPluginKind], PluginKinds[TPluginKind], Tokens>):
+/**
+ * Declare a class plugin. Use this method in order to type check the dependency graph of your plugin
+ * @param kind The plugin kind
+ * @param name The name of the plugin
+ * @param injectableClass The class to be instantiated for the plugin
+ */
+export function declareClassPlugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]>(kind: TPluginKind, name: string, injectableClass: InjectableClass<PluginContexts[TPluginKind], PluginInterfaces[TPluginKind], Tokens>):
   ClassPlugin<TPluginKind, Tokens> {
   return {
     injectableClass,
@@ -31,7 +50,13 @@ export function pluginClass<TPluginKind extends PluginKind, Tokens extends Injec
   };
 }
 
-export function pluginFactory<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]>(kind: TPluginKind, name: string, factory: InjectableFunction<PluginContexts[TPluginKind], PluginKinds[TPluginKind], Tokens>):
+/**
+ * Declare a factory plugin. Use this method in order to type check the dependency graph of your plugin,
+ * @param kind The plugin kind
+ * @param name The name of the plugin
+ * @param factory The factory used to instantiate the plugin
+ */
+export function declareFactoryPlugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]>(kind: TPluginKind, name: string, factory: InjectableFunction<PluginContexts[TPluginKind], PluginInterfaces[TPluginKind], Tokens>):
   FactoryPlugin<TPluginKind, Tokens> {
   return {
     factory,
@@ -40,7 +65,10 @@ export function pluginFactory<TPluginKind extends PluginKind, Tokens extends Inj
   };
 }
 
-export interface PluginKinds {
+/**
+ * Lookup type for plugin interfaces by kind.
+ */
+export interface PluginInterfaces {
   [PluginKind.ConfigEditor]: ConfigEditor;
   [PluginKind.Mutator]: Mutator;
   [PluginKind.Reporter]: Reporter;
@@ -49,10 +77,16 @@ export interface PluginKinds {
   [PluginKind.Transpiler]: Transpiler;
 }
 
+/**
+ * Lookup type for plugins by kind.
+ */
 export type Plugins = {
-  [TPluginKind in keyof PluginKinds]: Plugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>;
+  [TPluginKind in keyof PluginInterfaces]: Plugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>;
 };
 
+/**
+ * Plugin resolver responsible to load plugins
+ */
 export interface PluginResolver {
   resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T];
 }
