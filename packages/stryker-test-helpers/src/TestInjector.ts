@@ -1,4 +1,4 @@
-import { PluginResolver, PluginContext, commonTokens } from 'stryker-api/plugin';
+import { PluginResolver, OptionsContext, commonTokens } from 'stryker-api/plugin';
 import { StrykerOptions } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import * as factory from './factory';
@@ -27,7 +27,7 @@ class TestInjector {
   public pluginResolver: sinon.SinonStubbedInstance<PluginResolver>;
   public options: Partial<StrykerOptions>;
   public logger: sinon.SinonStubbedInstance<Logger>;
-  public injector: Injector<PluginContext> = rootInjector
+  public injector: Injector<OptionsContext> = rootInjector
     .provideValue(commonTokens.getLogger, this.provideLogger)
     .provideFactory(commonTokens.logger, this.provideLogger, Scope.Transient)
     .provideFactory(commonTokens.options, this.provideOptions, Scope.Transient)

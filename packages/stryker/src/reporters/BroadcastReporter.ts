@@ -2,7 +2,7 @@ import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from '
 import { Logger } from 'stryker-api/logging';
 import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
-import { commonTokens, PluginResolver, PluginKind, PluginContext } from 'stryker-api/plugin';
+import { commonTokens, PluginResolver, PluginKind, OptionsContext } from 'stryker-api/plugin';
 import { StrykerOptions } from 'stryker-api/core';
 import { Injector, INJECTOR_TOKEN, tokens } from 'typed-inject';
 import { createPlugin } from '../di/createPlugin';
@@ -17,7 +17,7 @@ export default class BroadcastReporter implements StrictReporter {
   constructor(
     private readonly options: StrykerOptions,
     private readonly pluginResolver: PluginResolver,
-    private readonly injector: Injector<PluginContext>,
+    private readonly injector: Injector<OptionsContext>,
     private readonly log: Logger) {
     this.reporters = {};
     this.options.reporters.forEach(reporterName => this.createReporter(reporterName));

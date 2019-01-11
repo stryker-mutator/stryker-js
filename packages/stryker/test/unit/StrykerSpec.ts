@@ -25,7 +25,7 @@ import TestableMutant from '../../src/TestableMutant';
 import InputFileCollection from '../../src/input/InputFileCollection';
 import LogConfigurator from '../../src/logging/LogConfigurator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
-import { PluginContext } from 'stryker-api/plugin';
+import { OptionsContext } from 'stryker-api/plugin';
 
 class FakeConfigEditor implements ConfigEditor {
   constructor() { }
@@ -58,7 +58,7 @@ describe('Stryker', () => {
   let configureMainProcessStub: sinon.SinonStub;
   let configureLoggingServerStub: sinon.SinonStub;
   let shutdownLoggingStub: sinon.SinonStub;
-  let injectorMock: Mock<typedInject.Injector<PluginContext>>;
+  let injectorMock: Mock<typedInject.Injector<OptionsContext>>;
 
   beforeEach(() => {
     strykerConfig = config();
