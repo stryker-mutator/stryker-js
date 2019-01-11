@@ -1,13 +1,10 @@
 import { TestFrameworkFactory, TestFramework } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
-import { commonTokens } from '@stryker-mutator/util';
-import { tokens } from 'typed-inject';
 
 export default class TestFrameworkOrchestrator {
   private readonly log = getLogger(TestFrameworkOrchestrator.name);
 
-  public static inject = tokens(commonTokens.options);
   constructor(private readonly options: StrykerOptions) { }
 
   public determineTestFramework(): TestFramework | null {

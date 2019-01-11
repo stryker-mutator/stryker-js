@@ -1,4 +1,4 @@
-import { PluginResolver, PluginContext } from 'stryker-api/plugin';
+import { PluginResolver, OptionsContext, commonTokens } from 'stryker-api/plugin';
 import { StrykerOptions } from 'stryker-api/core';
 import { Logger } from 'stryker-api/logging';
 import * as factory from './factory';
@@ -27,12 +27,12 @@ class TestInjector {
   public pluginResolver: sinon.SinonStubbedInstance<PluginResolver>;
   public options: Partial<StrykerOptions>;
   public logger: sinon.SinonStubbedInstance<Logger>;
-  public injector: Injector<PluginContext> = rootInjector
-    .provideValue('getLogger', this.provideLogger)
-    .provideFactory('logger', this.provideLogger, Scope.Transient)
-    .provideFactory('options', this.provideOptions, Scope.Transient)
-    .provideFactory('config', this.provideConfig, Scope.Transient)
-    .provideFactory('pluginResolver', this.providePluginResolver, Scope.Transient);
+  public injector: Injector<OptionsContext> = rootInjector
+    .provideValue(commonTokens.getLogger, this.provideLogger)
+    .provideFactory(commonTokens.logger, this.provideLogger, Scope.Transient)
+    .provideFactory(commonTokens.options, this.provideOptions, Scope.Transient)
+    .provideFactory(commonTokens.config, this.provideConfig, Scope.Transient)
+    .provideFactory(commonTokens.pluginResolver, this.providePluginResolver, Scope.Transient);
 
   public reset() {
     this.options = {};

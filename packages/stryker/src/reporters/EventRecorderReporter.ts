@@ -4,7 +4,8 @@ import { StrykerOptions } from 'stryker-api/core';
 import { SourceFile, MutantResult, MatchedMutant, Reporter, ScoreResult } from 'stryker-api/report';
 import { cleanFolder } from '../utils/fileUtils';
 import StrictReporter from './StrictReporter';
-import { fsAsPromised, commonTokens } from '@stryker-mutator/util';
+import { fsAsPromised } from '@stryker-mutator/util';
+import { commonTokens } from 'stryker-api/plugin';
 
 const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 
