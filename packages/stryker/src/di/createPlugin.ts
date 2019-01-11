@@ -1,8 +1,8 @@
-import { Plugin, PluginKind, PluginContexts, Plugins, PluginKinds, FactoryPlugin, ClassPlugin } from 'stryker-api/plugin';
+import { Plugin, PluginKind, PluginContexts, Plugins, PluginInterfaces, FactoryPlugin, ClassPlugin } from 'stryker-api/plugin';
 import { Injector, InjectionToken } from 'typed-inject';
 
 export function createPlugin<TPluginKind extends PluginKind>(kind: TPluginKind, plugin: Plugins[TPluginKind], injector: Injector<PluginContexts[TPluginKind]>):
-  PluginKinds[TPluginKind] {
+  PluginInterfaces[TPluginKind] {
   if (isFactoryPlugin(plugin)) {
     return injector.injectFunction(plugin.factory);
   } else if (isClassPlugin(plugin)) {

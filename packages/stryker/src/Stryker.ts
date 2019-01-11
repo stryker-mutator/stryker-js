@@ -20,7 +20,7 @@ import MutationTestExecutor from './process/MutationTestExecutor';
 import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
 import BroadcastReporter from './reporters/BroadcastReporter';
-import { commonTokens, PluginContext, PluginResolver } from 'stryker-api/plugin';
+import { commonTokens, OptionsContext, PluginResolver } from 'stryker-api/plugin';
 import { Injector, rootInjector, Scope } from 'typed-inject';
 import { loggerFactory } from './di/loggerFactory';
 
@@ -31,7 +31,7 @@ export default class Stryker {
   private readonly reporter: BroadcastReporter;
   private readonly testFramework: TestFramework | null;
   private readonly log = getLogger(Stryker.name);
-  private readonly injector: Injector<PluginContext>;
+  private readonly injector: Injector<OptionsContext>;
 
   /**
    * The Stryker mutation tester.
