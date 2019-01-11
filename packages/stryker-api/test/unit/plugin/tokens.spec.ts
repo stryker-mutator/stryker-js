@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { tokens, commonTokens } from '../../src';
+import { tokens, commonTokens } from '../../../plugin';
 
 describe('tokens', () => {
   it('should return input as array', () => {

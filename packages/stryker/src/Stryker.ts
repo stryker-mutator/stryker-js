@@ -20,10 +20,9 @@ import MutationTestExecutor from './process/MutationTestExecutor';
 import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
 import BroadcastReporter from './reporters/BroadcastReporter';
-import { PluginContext, PluginResolver } from 'stryker-api/plugin';
+import { commonTokens, PluginContext, PluginResolver } from 'stryker-api/plugin';
 import { Injector, rootInjector, Scope } from 'typed-inject';
 import { loggerFactory } from './di/loggerFactory';
-import { commonTokens } from '@stryker-mutator/util';
 
 export default class Stryker {
 
