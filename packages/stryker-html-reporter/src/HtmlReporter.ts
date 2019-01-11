@@ -6,7 +6,7 @@ import * as util from './util';
 import * as templates from './templates';
 import Breadcrumb from './Breadcrumb';
 import { StrykerOptions } from 'stryker-api/core';
-import { commonTokens, tokens } from '@stryker-mutator/util';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
