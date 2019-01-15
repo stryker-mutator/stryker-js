@@ -8,7 +8,7 @@ import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
 import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
 import ConfigReader, * as configReader from '../../src/config/ConfigReader';
-import TestFrameworkOrchestrator, * as testFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
+import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import * as typedInject from 'typed-inject';
 import MutatorFacade, * as mutatorFacade from '../../src/MutatorFacade';
 import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
@@ -77,14 +77,11 @@ describe('Stryker', () => {
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
     configEditorApplierMock = mock(ConfigEditorApplier);
     mutatorMock = mock(MutatorFacade);
-    injectorMock.injectClass
-      .withArgs(ConfigEditorApplier).returns(configEditorApplierMock);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     shutdownLoggingStub = sinon.stub(LogConfigurator, 'shutdown');
     configureLoggingServerStub.resolves(LOGGING_CONTEXT);
     inputFileResolverMock = mock(InputFileResolver);
-    injectorMock.injectClass.returns(reporter);
     testFramework = testFrameworkMock();
     initialTestExecutorMock = mock(InitialTestExecutor);
     mutationTestExecutorMock = mock(MutationTestExecutor);
@@ -93,7 +90,6 @@ describe('Stryker', () => {
     sinon.stub(mutationTestExecutor, 'default').returns(mutationTestExecutorMock);
     sinon.stub(initialTestExecutor, 'default').returns(initialTestExecutorMock);
     sinon.stub(configValidator, 'default').returns(configValidatorMock);
-    sinon.stub(testFrameworkOrchestrator, 'default').returns(testFrameworkOrchestratorMock);
     sinon.stub(typedInject, 'rootInjector').value(injectorMock);
     sinon.stub(mutatorFacade, 'default').returns(mutatorMock);
     sinon.stub(mutantRunResultMatcher, 'default').returns(mutantRunResultMatcherMock);
@@ -106,6 +102,10 @@ describe('Stryker', () => {
     scoreResultCalculator = new ScoreResultCalculator();
     sinon.stub(scoreResultCalculator, 'determineExitCode').returns(sinon.stub());
     sinon.stub(scoreResultCalculatorModule, 'default').returns(scoreResultCalculator);
+    injectorMock.injectClass
+      .withArgs(ConfigEditorApplier).returns(configEditorApplierMock)
+      .withArgs(BroadcastReporter).returns(reporter)
+      .withArgs(TestFrameworkOrchestrator).returns(testFrameworkOrchestratorMock);
   });
 
   describe('when constructed', () => {
@@ -132,8 +132,6 @@ describe('Stryker', () => {
     });
 
     it('should determine the testFramework', () => {
-      expect(testFrameworkOrchestrator.default).to.have.been.calledWithNew;
-      expect(testFrameworkOrchestrator.default).to.have.been.calledWith(strykerConfig);
       expect(testFrameworkOrchestratorMock.determineTestFramework).to.have.been.called;
     });
 
@@ -251,8 +249,6 @@ describe('Stryker', () => {
       });
 
       it('should determine the testFramework', () => {
-        expect(testFrameworkOrchestrator.default).calledWithNew;
-        expect(testFrameworkOrchestrator.default).calledWith(strykerConfig);
         expect(testFrameworkOrchestratorMock.determineTestFramework).to.have.been.called;
       });
 

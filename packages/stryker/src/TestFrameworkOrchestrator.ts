@@ -1,11 +1,22 @@
-import { TestFrameworkFactory, TestFramework } from 'stryker-api/test_framework';
+import { TestFramework } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
-import { getLogger } from 'stryker-api/logging';
+import { tokens, commonTokens, PluginResolver, OptionsContext, PluginKind } from 'stryker-api/plugin';
+import { Logger } from 'stryker-api/logging';
+import { Injector } from 'typed-inject';
+import { createPlugin } from './di/createPlugin';
 
 export default class TestFrameworkOrchestrator {
-  private readonly log = getLogger(TestFrameworkOrchestrator.name);
 
-  constructor(private readonly options: StrykerOptions) { }
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    commonTokens.pluginResolver,
+    commonTokens.injector);
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+    private readonly pluginResolver: PluginResolver,
+    private readonly injector: Injector<OptionsContext>) { }
 
   public determineTestFramework(): TestFramework | null {
     if (this.options.coverageAnalysis !== 'perTest') {
@@ -19,11 +30,11 @@ export default class TestFrameworkOrchestrator {
   private determineFrameworkWithCoverageAnalysis(): TestFramework | null {
     let testFramework: TestFramework | null = null;
     if (this.options.testFramework) {
-      if (this.testFrameworkExists(this.options.testFramework)) {
-        this.log.debug(`Using testFramework ${this.options.testFramework} based on \`testFramework\` setting`);
+      try {
         testFramework = this.createTestFramework(this.options.testFramework);
-      } else {
-        this.log.warn(`Could not find test framework \`${this.options.testFramework}\`. ${this.informAboutKnownTestFrameworks()}`);
+        this.log.debug(`Using testFramework ${this.options.testFramework} based on \`testFramework\` setting`);
+      } catch (error) {
+        this.log.warn(`Could not create test framework \`${this.options.testFramework}\``, error);
       }
     } else {
       this.log.warn('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.');
@@ -31,15 +42,8 @@ export default class TestFrameworkOrchestrator {
     return testFramework;
   }
 
-  private informAboutKnownTestFrameworks() {
-    return `Did you forget to load a plugin? Known test frameworks: ${JSON.stringify(TestFrameworkFactory.instance().knownNames())}.`;
-  }
-
   private createTestFramework(name: string) {
-    return TestFrameworkFactory.instance().create(name, { options: this.options });
+    const plugin = this.pluginResolver.resolve(PluginKind.TestFramework, name);
+    return createPlugin(PluginKind.TestFramework, plugin, this.injector);
   }
-  private testFrameworkExists(maybeFramework: string) {
-    return TestFrameworkFactory.instance().knownNames().indexOf(maybeFramework) > -1;
-  }
-
 }

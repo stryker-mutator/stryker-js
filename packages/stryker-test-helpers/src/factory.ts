@@ -59,11 +59,13 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export const testFramework = factoryMethod<TestFramework>(() => ({
-  beforeEach(codeFragment: string) { return `beforeEach(){ ${codeFragment}}`; },
-  afterEach(codeFragment: string) { return `afterEach(){ ${codeFragment}}`; },
-  filter(selections: TestSelection[]) { return `filter: ${selections}`; }
-}));
+export function testFramework(): TestFramework {
+  return {
+    beforeEach(codeFragment: string) { return `beforeEach(){ ${codeFragment}}`; },
+    afterEach(codeFragment: string) { return `afterEach(){ ${codeFragment}}`; },
+    filter(selections: TestSelection[]) { return `filter: ${selections}`; }
+  };
+}
 
 export const scoreResult = factoryMethod<ScoreResult>(() => ({
   childResults: [],
