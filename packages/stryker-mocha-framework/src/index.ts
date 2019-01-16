@@ -1,5 +1,7 @@
-import { TestFrameworkFactory } from 'stryker-api/test_framework';
 
 import MochaTestFramework from './MochaTestFramework';
+import { PluginKind, declareClassPlugin } from 'stryker-api/plugin';
 
-TestFrameworkFactory.instance().register('mocha', MochaTestFramework);
+export const strykerPlugins = [
+  declareClassPlugin(PluginKind.TestFramework, 'mocha', MochaTestFramework)
+];

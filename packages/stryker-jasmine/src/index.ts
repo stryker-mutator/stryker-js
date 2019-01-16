@@ -1,4 +1,6 @@
-import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import JasmineTestFramework from './JasmineTestFramework';
+import { declareClassPlugin, PluginKind } from 'stryker-api/plugin';
 
-TestFrameworkFactory.instance().register('jasmine', JasmineTestFramework);
+export const strykerPlugins = [
+  declareClassPlugin(PluginKind.TestFramework, 'jasmine', JasmineTestFramework)
+];
