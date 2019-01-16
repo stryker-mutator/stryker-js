@@ -17,6 +17,7 @@ module.exports = function (config) {
     },
     reporters: ['event-recorder'],
     coverageAnalysis: 'off',
-    maxConcurrentTestRunners: 1
+    maxConcurrentTestRunners: 1,
+    timeoutMS: 60000
   });
 };
