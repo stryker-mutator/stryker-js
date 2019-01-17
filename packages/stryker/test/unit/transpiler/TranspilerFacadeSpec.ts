@@ -1,23 +1,19 @@
 import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import TranspilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { Transpiler, TranspilerFactory } from 'stryker-api/transpile';
+import { Transpiler } from 'stryker-api/transpile';
 import { mock, Mock } from '../../helpers/producers';
 import { File } from 'stryker-api/core';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import * as sinon from 'sinon';
 
 describe('TranspilerFacade', () => {
-  let createStub: sinon.SinonStub;
   let sut: TranspilerFacade;
-
-  beforeEach(() => {
-    createStub = sinon.stub(TranspilerFactory.instance(), 'create');
-  });
 
   describe('when there are no transpilers', () => {
 
     beforeEach(() => {
-      sut = new TranspilerFacade({ config: new Config(), produceSourceMaps: true });
+      const sut = testInjector.injector.injectClass(TranspilerFacade);
     });
 
     it('should return input when `transpile` is called', async () => {

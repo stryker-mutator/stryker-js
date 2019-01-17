@@ -1,7 +1,7 @@
 import { getLogger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
 import { StrykerOptions, MutatorDescriptor } from 'stryker-api/core';
-import { MutantResult } from 'stryker-api/report';
+import { MutantResult, Reporter } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { Mutant } from 'stryker-api/mutant';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
@@ -21,9 +21,12 @@ import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
 import BroadcastReporter from './reporters/BroadcastReporter';
 import { commonTokens, OptionsContext, PluginResolver } from 'stryker-api/plugin';
+import * as coreTokens from './di/coreTokens';
 import { Injector, rootInjector, Scope } from 'typed-inject';
 import { loggerFactory } from './di/loggerFactory';
 import { ConfigEditorApplier } from './config/ConfigEditorApplier';
+import { testFrameworkFactory } from './di/testFrameworkFactory';
+import TranspilerFacade from './transpiler/TranspilerFacade';
 
 export default class Stryker {
 
@@ -32,7 +35,10 @@ export default class Stryker {
   private readonly reporter: BroadcastReporter;
   private readonly testFramework: TestFramework | null;
   private readonly log = getLogger(Stryker.name);
-  private readonly injector: Injector<OptionsContext>;
+  private readonly injector: Injector<OptionsContext & {
+    [coreTokens.testFramework]: TestFramework;
+    [coreTokens.reporter]: Required<Reporter>;
+  }>;
 
   /**
    * The Stryker mutation tester.
@@ -58,9 +64,10 @@ export default class Stryker {
     this.freezeConfig();
     this.injector = configEditorInjector
       .provideValue(commonTokens.config, this.config)
-      .provideValue(commonTokens.options, this.config as StrykerOptions);
-    this.reporter = this.injector.injectClass(BroadcastReporter);
-    this.testFramework = this.injector.injectClass(TestFrameworkOrchestrator).determineTestFramework();
+      .provideValue(commonTokens.options, this.config as StrykerOptions)
+      .provideClass(coreTokens.reporter, BroadcastReporter)
+      .provideFactory(coreTokens.testFramework, testFrameworkFactory);
+
     new ConfigValidator(this.config, this.testFramework).validate();
   }
 
@@ -70,7 +77,12 @@ export default class Stryker {
     const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
     if (inputFiles.files.length) {
       TempFolder.instance().initialize();
-      const initialTestRunProcess = new InitialTestExecutor(this.config, inputFiles, this.testFramework, this.timer, loggingContext);
+      const initialTestRunProcess = this.injector
+        .provideValue(coreTokens.inputFiles, inputFiles)
+        .provideValue(coreTokens.timer, this.timer)
+        .provideValue(coreTokens.loggingContext, loggingContext)
+        .provideClass(coreTokens.transpiler, TranspilerFacade)
+        .injectClass(InitialTestExecutor);
       const initialTestRunResult = await initialTestRunProcess.run();
       const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
       if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
