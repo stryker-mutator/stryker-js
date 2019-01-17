@@ -12,7 +12,7 @@ export default class BroadcastReporter implements StrictReporter {
 
   public static readonly inject = tokens(
     commonTokens.options,
-    coreTokens.reporterPluginCreator,
+    coreTokens.pluginCreator,
     commonTokens.logger);
 
   public readonly reporters: {

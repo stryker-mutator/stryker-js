@@ -56,13 +56,15 @@ export default class Stryker {
       .provideValue(commonTokens.getLogger, getLogger)
       .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
       .provideValue(commonTokens.pluginResolver, pluginLoader as PluginResolver);
-    configEditorInjector.injectClass(ConfigEditorApplier).edit(this.config);
+    configEditorInjector
+      .provideFactory(coreTokens.pluginCreator, PluginCreator.createFactory(PluginKind.ConfigEditor))
+      .injectClass(ConfigEditorApplier).edit(this.config);
     this.freezeConfig();
     this.injector = configEditorInjector
       .provideValue(commonTokens.config, this.config)
       .provideValue(commonTokens.options, this.config as StrykerOptions);
     this.reporter = this.injector
-      .provideFactory(coreTokens.reporterPluginCreator, PluginCreator.createFactory(PluginKind.Reporter))
+      .provideFactory(coreTokens.pluginCreator, PluginCreator.createFactory(PluginKind.Reporter))
       .injectClass(BroadcastReporter);
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
     new ConfigValidator(this.config, this.testFramework).validate();
