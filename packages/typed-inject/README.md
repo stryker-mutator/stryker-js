@@ -258,7 +258,7 @@ Comparable to `InjectableClass`, but for (non-constructor) functions.
 
 ## 🤝 Commendation
 
-This entire framework would not be possible without the awesome guys working on TypeScript. Guys like [Ryan](https://github.com/RyanCavanaugh), [Anders](https://github.com/ahejlsberg) and the rest of the team, a heart felled thanks! 💖
+This entire framework would not be possible without the awesome guys working on TypeScript. Guys like [Ryan](https://github.com/RyanCavanaugh), [Anders](https://github.com/ahejlsberg) and the rest of the team: a heartfelt thanks! 💖
 
 Inspiration for the API with static `inject` method comes from years long AngularJS development. Special thanks to the Angular team.
 
