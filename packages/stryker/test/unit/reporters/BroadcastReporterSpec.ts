@@ -1,23 +1,30 @@
 import { expect } from 'chai';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
-import { PluginKind, FactoryPlugin } from 'stryker-api/plugin';
+import { PluginKind } from 'stryker-api/plugin';
 import * as sinon from 'sinon';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { Reporter } from 'stryker-api/report';
+import { PluginCreator } from '../../../src/di/PluginCreator';
+import * as coreTokens from '../../../src/di/coreTokens';
 
 describe('BroadcastReporter', () => {
 
   let sut: BroadcastReporter;
-  let rep1Plugin: MockedReporterPlugin;
-  let rep2Plugin: MockedReporterPlugin;
+  let rep1: sinon.SinonStubbedInstance<Required<Reporter>>;
+  let rep2: sinon.SinonStubbedInstance<Required<Reporter>>;
   let isTTY: boolean;
+  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind.Reporter>>;
 
   beforeEach(() => {
     captureTTY();
     testInjector.options.reporters = ['rep1', 'rep2'];
-    rep1Plugin = mockReporterPlugin('rep1');
-    rep2Plugin = mockReporterPlugin('rep2');
+    rep1 = factory.reporter('rep1');
+    rep2 = factory.reporter('rep2');
+    pluginCreatorMock = sinon.createStubInstance(PluginCreator);
+    pluginCreatorMock.create
+      .withArgs('rep1').returns(rep1)
+      .withArgs('rep2').returns(rep2);
   });
 
   afterEach(() => {
@@ -28,29 +35,32 @@ describe('BroadcastReporter', () => {
     it('should create "progress-append-only" instead of "progress" reporter if process.stdout is not a tty', () => {
       // Arrange
       setTTY(false);
-      const expectedReporterPlugin = mockReporterPlugin('progress-append-only');
+      const expectedReporter = factory.reporter('progress-append-only');
       testInjector.options.reporters = ['progress'];
+      pluginCreatorMock.create.returns(expectedReporter);
 
       // Act
       sut = createSut();
 
       // Assert
-      expect(sut.reporters).deep.eq({ 'progress-append-only': expectedReporterPlugin.reporterStub });
+      expect(sut.reporters).deep.eq({ 'progress-append-only': expectedReporter });
+      expect(pluginCreatorMock.create).calledWith('progress-append-only');
     });
 
     it('should create the correct reporters', () => {
       // Arrange
       setTTY(true);
       testInjector.options.reporters = ['progress', 'rep2'];
-      const progressReporterPlugin = mockReporterPlugin('progress');
+      const progress = factory.reporter('progress');
+      pluginCreatorMock.create.withArgs('progress').returns(progress);
 
       // Act
       sut = createSut();
 
       // Assert
       expect(sut.reporters).deep.eq({
-        progress: progressReporterPlugin.reporterStub,
-        rep2: rep2Plugin.reporterStub
+        progress,
+        rep2
       });
     });
 
@@ -79,11 +89,11 @@ describe('BroadcastReporter', () => {
 
       beforeEach(() => {
         isResolved = false;
-        rep1Plugin.reporterStub.wrapUp.returns(new Promise<void>((resolve, reject) => {
+        rep1.wrapUp.returns(new Promise<void>((resolve, reject) => {
           wrapUpResolveFn = resolve;
           wrapUpRejectFn = reject;
         }));
-        rep2Plugin.reporterStub.wrapUp.returns(new Promise<void>(resolve => wrapUpResolveFn2 = resolve));
+        rep2.wrapUp.returns(new Promise<void>(resolve => wrapUpResolveFn2 = resolve));
         result = sut.wrapUp().then(() => void (isResolved = true));
       });
 
@@ -112,7 +122,7 @@ describe('BroadcastReporter', () => {
     describe('with one faulty reporter', () => {
 
       beforeEach(() => {
-        ALL_REPORTER_EVENTS.forEach(eventName => rep1Plugin.reporterStub[eventName].throws('some error'));
+        ALL_REPORTER_EVENTS.forEach(eventName => rep1[eventName].throws('some error'));
       });
 
       it('should still broadcast to other reporters', () => {
@@ -131,33 +141,17 @@ describe('BroadcastReporter', () => {
   });
 
   function createSut() {
-    return testInjector.injector.injectClass(BroadcastReporter);
-  }
-
-  type MockedReporterPlugin = FactoryPlugin<PluginKind.Reporter, []> & { reporterStub: sinon.SinonStubbedInstance<Required<Reporter>> };
-
-  function mockReporterPlugin(name: string): MockedReporterPlugin {
-    const reporterStub = factory.reporter();
-    (reporterStub as any)[name] = name;
-    const reporterPlugin: MockedReporterPlugin = {
-      factory() {
-        return reporterStub;
-      },
-      kind: PluginKind.Reporter,
-      name,
-      reporterStub
-    };
-    testInjector.pluginResolver.resolve
-      .withArgs(PluginKind.Reporter, reporterPlugin.name).returns(reporterPlugin);
-    return reporterPlugin;
+    return testInjector.injector
+      .provideValue(coreTokens.reporterPluginCreator, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
+      .injectClass(BroadcastReporter);
   }
 
   function actArrangeAssertAllEvents() {
     ALL_REPORTER_EVENTS.forEach(eventName => {
       const eventData = eventName === 'wrapUp' ? undefined : eventName;
       (sut as any)[eventName](eventName);
-      expect(rep1Plugin.reporterStub[eventName]).to.have.been.calledWith(eventData);
-      expect(rep2Plugin.reporterStub[eventName]).to.have.been.calledWith(eventData);
+      expect(rep1[eventName]).calledWith(eventData);
+      expect(rep2[eventName]).calledWith(eventData);
     });
   }
 
