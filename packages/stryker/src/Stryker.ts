@@ -20,10 +20,12 @@ import MutationTestExecutor from './process/MutationTestExecutor';
 import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
 import BroadcastReporter from './reporters/BroadcastReporter';
-import { commonTokens, OptionsContext, PluginResolver } from 'stryker-api/plugin';
+import { commonTokens, OptionsContext, PluginResolver, PluginKind } from 'stryker-api/plugin';
+import * as coreTokens from './di/coreTokens';
 import { Injector, rootInjector, Scope } from 'typed-inject';
 import { loggerFactory } from './di/loggerFactory';
 import { ConfigEditorApplier } from './config/ConfigEditorApplier';
+import { PluginCreator } from './di/PluginCreator';
 
 export default class Stryker {
 
@@ -54,13 +56,17 @@ export default class Stryker {
       .provideValue(commonTokens.getLogger, getLogger)
       .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
       .provideValue(commonTokens.pluginResolver, pluginLoader as PluginResolver);
-    configEditorInjector.injectClass(ConfigEditorApplier).edit(this.config);
+    configEditorInjector
+      .provideFactory(coreTokens.pluginCreator, PluginCreator.createFactory(PluginKind.ConfigEditor))
+      .injectClass(ConfigEditorApplier).edit(this.config);
     this.freezeConfig();
     this.injector = configEditorInjector
       .provideValue(commonTokens.config, this.config)
       .provideValue(commonTokens.options, this.config as StrykerOptions);
-    this.reporter = this.injector.injectClass(BroadcastReporter);
     this.testFramework = this.injector.injectClass(TestFrameworkOrchestrator).determineTestFramework();
+    this.reporter = this.injector
+      .provideFactory(coreTokens.pluginCreator, PluginCreator.createFactory(PluginKind.Reporter))
+      .injectClass(BroadcastReporter);
     new ConfigValidator(this.config, this.testFramework).validate();
   }
 
