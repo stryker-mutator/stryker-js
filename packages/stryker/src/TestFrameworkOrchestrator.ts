@@ -1,22 +1,20 @@
 import { TestFramework } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
-import { tokens, commonTokens, PluginResolver, OptionsContext, PluginKind } from 'stryker-api/plugin';
+import { tokens, commonTokens, PluginKind } from 'stryker-api/plugin';
 import { Logger } from 'stryker-api/logging';
-import { Injector } from 'typed-inject';
-import { createPlugin } from './di/createPlugin';
+import * as coreTokens from './di/coreTokens';
+import { PluginCreator } from './di/PluginCreator';
 
 export default class TestFrameworkOrchestrator {
 
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
-    commonTokens.pluginResolver,
-    commonTokens.injector);
+    coreTokens.pluginCreator);
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
-    private readonly pluginResolver: PluginResolver,
-    private readonly injector: Injector<OptionsContext>) { }
+    private readonly pluginCreator: PluginCreator<PluginKind.TestFramework>) { }
 
   public determineTestFramework(): TestFramework | null {
     if (this.options.coverageAnalysis !== 'perTest') {
@@ -31,7 +29,7 @@ export default class TestFrameworkOrchestrator {
     let testFramework: TestFramework | null = null;
     if (this.options.testFramework) {
       try {
-        testFramework = this.createTestFramework(this.options.testFramework);
+        testFramework = this.pluginCreator.create(this.options.testFramework);
         this.log.debug(`Using testFramework ${this.options.testFramework} based on \`testFramework\` setting`);
       } catch (error) {
         this.log.warn(`Could not create test framework \`${this.options.testFramework}\``, error);
@@ -42,8 +40,4 @@ export default class TestFrameworkOrchestrator {
     return testFramework;
   }
 
-  private createTestFramework(name: string) {
-    const plugin = this.pluginResolver.resolve(PluginKind.TestFramework, name);
-    return createPlugin(PluginKind.TestFramework, plugin, this.injector);
-  }
 }

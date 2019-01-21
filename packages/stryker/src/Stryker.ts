@@ -1,14 +1,11 @@
 import { getLogger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
 import { StrykerOptions, MutatorDescriptor } from 'stryker-api/core';
-import { MutantResult, Reporter } from 'stryker-api/report';
-import { TestFramework } from 'stryker-api/test_framework';
+import { MutantResult } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
-import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './input/InputFileResolver';
 import ConfigReader from './config/ConfigReader';
-import PluginLoader from './di/PluginLoader';
 import ScoreResultCalculator from './ScoreResultCalculator';
 import ConfigValidator from './config/ConfigValidator';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
@@ -20,25 +17,21 @@ import MutationTestExecutor from './process/MutationTestExecutor';
 import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
 import BroadcastReporter from './reporters/BroadcastReporter';
-import { commonTokens, OptionsContext, PluginResolver } from 'stryker-api/plugin';
-import * as coreTokens from './di/coreTokens';
-import { Injector, rootInjector, Scope } from 'typed-inject';
-import { loggerFactory } from './di/loggerFactory';
+import { coreTokens, CoreContext } from './di';
+import { Injector } from 'typed-inject';
 import { ConfigEditorApplier } from './config/ConfigEditorApplier';
-import { testFrameworkFactory } from './di/testFrameworkFactory';
-import TranspilerFacade from './transpiler/TranspilerFacade';
+import { TranspilerFacade } from './transpiler/TranspilerFacade';
+import { createCoreInjector } from './di';
+import { commonTokens, PluginKind } from 'stryker-api/plugin';
+import { PluginCreator } from './di/PluginCreator';
 
 export default class Stryker {
 
   public config: Config;
   private readonly timer = new Timer();
   private readonly reporter: BroadcastReporter;
-  private readonly testFramework: TestFramework | null;
   private readonly log = getLogger(Stryker.name);
-  private readonly injector: Injector<OptionsContext & {
-    [coreTokens.testFramework]: TestFramework;
-    [coreTokens.reporter]: Required<Reporter>;
-  }>;
+  private readonly injector: Injector<CoreContext>;
 
   /**
    * The Stryker mutation tester.
@@ -52,23 +45,12 @@ export default class Stryker {
     // Log level may have changed
     LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
     this.addDefaultPlugins();
-    const pluginLoader = new PluginLoader(this.config.plugins);
-    pluginLoader.load();
     // Log level may have changed
     LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
-    const configEditorInjector = rootInjector
-      .provideValue(commonTokens.getLogger, getLogger)
-      .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
-      .provideValue(commonTokens.pluginResolver, pluginLoader as PluginResolver);
-    configEditorInjector.injectClass(ConfigEditorApplier).edit(this.config);
+    this.injector = createCoreInjector(this.config);
+    this.injector.injectClass(ConfigEditorApplier).edit(this.config);
+    this.injector.injectClass(ConfigValidator).validate();
     this.freezeConfig();
-    this.injector = configEditorInjector
-      .provideValue(commonTokens.config, this.config)
-      .provideValue(commonTokens.options, this.config as StrykerOptions)
-      .provideClass(coreTokens.reporter, BroadcastReporter)
-      .provideFactory(coreTokens.testFramework, testFrameworkFactory);
-
-    new ConfigValidator(this.config, this.testFramework).validate();
   }
 
   public async runMutationTest(): Promise<MutantResult[]> {
@@ -81,13 +63,20 @@ export default class Stryker {
         .provideValue(coreTokens.inputFiles, inputFiles)
         .provideValue(coreTokens.timer, this.timer)
         .provideValue(coreTokens.loggingContext, loggingContext)
+        .provideValue(commonTokens.produceSourceMaps, this.config.coverageAnalysis !== 'off')
+        .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
         .provideClass(coreTokens.transpiler, TranspilerFacade)
         .injectClass(InitialTestExecutor);
       const initialTestRunResult = await initialTestRunProcess.run();
       const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
       if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
-        const mutationTestExecutor = new MutationTestExecutor(this.config, inputFiles.files, this.testFramework, this.reporter,
-          initialTestRunResult.overheadTimeMS, loggingContext);
+        const mutationTestExecutor = new MutationTestExecutor(
+          this.config,
+          inputFiles.files,
+          this.injector.resolve(coreTokens.testFramework),
+          this.injector.resolve(coreTokens.reporter),
+          initialTestRunResult.overheadTimeMS,
+          loggingContext);
         const mutantResults = await mutationTestExecutor.run(testableMutants);
         this.reportScore(mutantResults);
         await this.wrapUpReporter();

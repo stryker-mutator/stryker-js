@@ -1,18 +1,22 @@
 import { Config, ConfigEditor } from 'stryker-api/config';
-import { Injector, tokens, INJECTOR_TOKEN } from 'typed-inject';
-import { BaseContext, PluginResolver, PluginKind, commonTokens } from 'stryker-api/plugin';
-import { createPlugin } from '../di/createPlugin';
+import { tokens } from 'typed-inject';
+import { PluginResolver, PluginKind, commonTokens } from 'stryker-api/plugin';
+import { PluginCreator } from '../di/PluginCreator';
+import * as coreTokens from '../di/coreTokens';
 
 /**
  * Class that applies all config editor plugins
  */
 export class ConfigEditorApplier implements ConfigEditor {
-  constructor(private readonly pluginResolver: PluginResolver, private readonly injector: Injector<BaseContext>) { }
-  public static inject = tokens(commonTokens.pluginResolver, INJECTOR_TOKEN);
+
+  public static inject = tokens(commonTokens.pluginResolver, coreTokens.pluginCreator);
+
+  constructor(private readonly pluginResolver: PluginResolver,
+              private readonly pluginCreator: PluginCreator<PluginKind.ConfigEditor>) { }
 
   public edit(config: Config): void {
     this.pluginResolver.resolveAll(PluginKind.ConfigEditor).forEach(plugin => {
-      const configEditor = createPlugin(PluginKind.ConfigEditor, plugin, this.injector);
+      const configEditor = this.pluginCreator.create(plugin.name);
       configEditor.edit(config);
     });
   }

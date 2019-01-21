@@ -1,43 +1,34 @@
 import { ConfigEditorApplier } from '../../../src/config/ConfigEditorApplier';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PluginKind } from 'stryker-api/plugin';
-import { ConfigEditor } from 'stryker-api/config';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
+import * as coreTokens from '../../../src/di/coreTokens';
+import { PluginCreator } from '../../../src/di/PluginCreator';
 
 describe('ConfigEditorApplier', () => {
   let sut: ConfigEditorApplier;
+  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind.ConfigEditor>>;
 
   beforeEach(() => {
-    sut = testInjector.injector.injectClass(ConfigEditorApplier);
+    pluginCreatorMock = sinon.createStubInstance(PluginCreator);
+    sut = testInjector.injector
+      .provideValue(coreTokens.pluginCreator, pluginCreatorMock as unknown as PluginCreator<PluginKind.ConfigEditor>)
+      .injectClass(ConfigEditorApplier);
   });
 
   it('should apply all config editors', () => {
     const config = factory.config();
-    const fooConfigEditorPlugin = mockConfigEditorPlugin('foo-editor');
-    const barConfigEditorPlugin = mockConfigEditorPlugin('bar-editor');
-    testInjector.pluginResolver.resolveAll.returns([fooConfigEditorPlugin, barConfigEditorPlugin]);
+    const fooConfigEditor = factory.configEditor();
+    const barConfigEditor = factory.configEditor();
+    const configEditorPlugins = [{ name: 'fooConfigEditorPlugin' }, { name: 'barConfigEditorPlugin' }];
+    testInjector.pluginResolver.resolveAll.returns(configEditorPlugins);
+    pluginCreatorMock.create
+      .withArgs(configEditorPlugins[0].name).returns(fooConfigEditor)
+      .withArgs(configEditorPlugins[1].name).returns(barConfigEditor);
     sut.edit(config);
-    expect(fooConfigEditorPlugin.configEditorStub.edit).calledWith(config);
-    expect(barConfigEditorPlugin.configEditorStub.edit).calledWith(config);
+    expect(fooConfigEditor.edit).calledWith(config);
+    expect(barConfigEditor.edit).calledWith(config);
   });
-
-  interface MockedConfigEditorPlugin {
-    kind: PluginKind.ConfigEditor;
-    factory: sinon.SinonStub;
-    name: string;
-    configEditorStub: sinon.SinonStubbedInstance<ConfigEditor>;
-  }
-
-  function mockConfigEditorPlugin(name: string): MockedConfigEditorPlugin {
-    const configEditorPlugin: MockedConfigEditorPlugin = {
-      configEditorStub: factory.configEditor(),
-      factory: sinon.stub(),
-      kind: PluginKind.ConfigEditor,
-      name
-    };
-    configEditorPlugin.factory.returns(configEditorPlugin.configEditorStub);
-    return configEditorPlugin;
-  }
 
 });
