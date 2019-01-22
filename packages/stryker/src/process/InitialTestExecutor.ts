@@ -1,10 +1,9 @@
 import { EOL } from 'os';
 import { RunStatus, RunResult, TestResult, TestStatus } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
-import { TranspilerOptions, Transpiler } from 'stryker-api/transpile';
+import { Transpiler } from 'stryker-api/transpile';
 import { File, StrykerOptions } from 'stryker-api/core';
-import TranspilerFacade from '../transpiler/TranspilerFacade';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import Sandbox from '../Sandbox';
 import Timer from '../utils/Timer';
 import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
@@ -13,7 +12,7 @@ import SourceMapper from '../transpiler/SourceMapper';
 import { coveragePerTestHooks } from '../transpiler/coverageHooks';
 import LoggingClientContext from '../logging/LoggingClientContext';
 import { tokens, commonTokens } from 'stryker-api/plugin';
-import * as coreTokens from '../di/coreTokens';
+import { coreTokens } from '../di';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
@@ -45,10 +44,9 @@ interface Timing {
 
 export default class InitialTestExecutor {
 
-  private readonly log = getLogger(InitialTestExecutor.name);
-
   public static inject = tokens(
     commonTokens.options,
+    commonTokens.logger,
     coreTokens.inputFiles,
     coreTokens.testFramework,
     coreTokens.timer,
@@ -57,6 +55,7 @@ export default class InitialTestExecutor {
 
   constructor(
     private readonly options: StrykerOptions,
+    private readonly log: Logger,
     private readonly inputFiles: InputFileCollection,
     private readonly testFramework: TestFramework | null,
     private readonly timer: Timer,
@@ -65,7 +64,7 @@ export default class InitialTestExecutor {
 
   public async run(): Promise<InitialTestRunResult> {
 
-    this.log.info(`Starting initial test run. This may take a while.`);
+    this.log.info('Starting initial test run. This may take a while.');
 
     // Before we can run the tests we transpile the input files.
     // Files that are not transpiled should pass through without transpiling

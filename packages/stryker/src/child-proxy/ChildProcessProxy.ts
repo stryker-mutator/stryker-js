@@ -1,6 +1,6 @@
 import * as os from 'os';
 import { fork, ChildProcess } from 'child_process';
-import { File } from 'stryker-api/core';
+import { File, StrykerOptions } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
 import { serialize, deserialize, kill, padLeft } from '../utils/objectUtils';
@@ -10,12 +10,12 @@ import ChildProcessCrashedError from './ChildProcessCrashedError';
 import { isErrnoException } from '@stryker-mutator/util';
 import OutOfMemoryError from './OutOfMemoryError';
 import StringBuilder from '../utils/StringBuilder';
+import { InjectionToken, InjectableClass } from 'typed-inject';
+import { OptionsContext } from 'stryker-api/plugin';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
 type PromisifiedFunc<TS extends any[], R> = (...args: TS) => Promise<R>;
-
-type Constructor<T, TS extends any[]> = new (...args: TS) => T;
 
 export type Promisified<T> = {
   [K in keyof T]: T[K] extends PromisifiedFunc<any, any> ? T[K] : T[K] extends Func<infer TS, infer R> ? PromisifiedFunc<TS, R> : () => Promise<T[K]>;
@@ -37,15 +37,16 @@ export default class ChildProcessProxy<T> {
   private readonly stdoutAndStderrBuilder = new StringBuilder();
   private isDisposed = false;
 
-  private constructor(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, constructorParams: any[]) {
+  private constructor(requirePath: string, requireName: string, loggingContext: LoggingClientContext, options: StrykerOptions, additionalInjectableValues: unknown, workingDirectory: string) {
     this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
     this.initTask = new Task();
     this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
     this.send({
-      constructorArgs: constructorParams,
+      additionalInjectableValues,
       kind: WorkerMessageKind.Init,
       loggingContext,
-      plugins,
+      options,
+      requireName,
       requirePath,
       workingDirectory
     });
@@ -62,9 +63,15 @@ export default class ChildProcessProxy<T> {
   /**
    * @description Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
    */
-  public static create<T, TS extends any[]>(requirePath: string, loggingContext: LoggingClientContext, plugins: string[], workingDirectory: string, _:  Constructor<T, TS>, ...constructorArgs: TS):
-    ChildProcessProxy<T> {
-    return new ChildProcessProxy(requirePath, loggingContext, plugins, workingDirectory, constructorArgs);
+  public static create<TAdditionalContext, R, Tokens extends InjectionToken<OptionsContext & TAdditionalContext>[]>(
+    requirePath: string,
+    loggingContext: LoggingClientContext,
+    options: StrykerOptions,
+    additionalInjectableValues: TAdditionalContext,
+    workingDirectory: string,
+    InjectableClass: InjectableClass<TAdditionalContext & OptionsContext, R, Tokens>):
+    ChildProcessProxy<R> {
+    return new ChildProcessProxy(requirePath, InjectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
   }
 
   private send(message: WorkerMessage) {

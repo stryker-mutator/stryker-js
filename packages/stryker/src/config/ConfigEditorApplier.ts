@@ -2,14 +2,14 @@ import { Config, ConfigEditor } from 'stryker-api/config';
 import { tokens } from 'typed-inject';
 import { PluginResolver, PluginKind, commonTokens } from 'stryker-api/plugin';
 import { PluginCreator } from '../di/PluginCreator';
-import * as coreTokens from '../di/coreTokens';
+import { coreTokens } from '../di';
 
 /**
  * Class that applies all config editor plugins
  */
 export class ConfigEditorApplier implements ConfigEditor {
 
-  public static inject = tokens(commonTokens.pluginResolver, coreTokens.pluginCreator);
+  public static inject = tokens(commonTokens.pluginResolver, coreTokens.pluginCreatorConfigEditor);
 
   constructor(private readonly pluginResolver: PluginResolver,
               private readonly pluginCreator: PluginCreator<PluginKind.ConfigEditor>) { }

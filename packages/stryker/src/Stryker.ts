@@ -16,22 +16,22 @@ import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTest
 import MutationTestExecutor from './process/MutationTestExecutor';
 import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
-import BroadcastReporter from './reporters/BroadcastReporter';
-import { coreTokens, CoreContext } from './di';
 import { Injector } from 'typed-inject';
 import { ConfigEditorApplier } from './config/ConfigEditorApplier';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
-import { createCoreInjector } from './di';
+import { coreTokens, CoreContext, createCoreInjector, PluginCreator } from './di';
 import { commonTokens, PluginKind } from 'stryker-api/plugin';
-import { PluginCreator } from './di/PluginCreator';
 
 export default class Stryker {
 
   public config: Config;
   private readonly timer = new Timer();
-  private readonly reporter: BroadcastReporter;
   private readonly log = getLogger(Stryker.name);
   private readonly injector: Injector<CoreContext>;
+
+  private get reporter() {
+    return this.injector.resolve(coreTokens.reporter);
+  }
 
   /**
    * The Stryker mutation tester.
@@ -74,7 +74,7 @@ export default class Stryker {
           this.config,
           inputFiles.files,
           this.injector.resolve(coreTokens.testFramework),
-          this.injector.resolve(coreTokens.reporter),
+          this.reporter,
           initialTestRunResult.overheadTimeMS,
           loggingContext);
         const mutantResults = await mutationTestExecutor.run(testableMutants);

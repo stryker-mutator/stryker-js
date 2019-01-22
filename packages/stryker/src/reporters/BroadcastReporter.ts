@@ -5,14 +5,14 @@ import StrictReporter from './StrictReporter';
 import { commonTokens, PluginKind } from 'stryker-api/plugin';
 import { StrykerOptions } from 'stryker-api/core';
 import { tokens } from 'typed-inject';
-import * as coreTokens from '../di/coreTokens';
+import { coreTokens } from '../di';
 import { PluginCreator } from '../di/PluginCreator';
 
 export default class BroadcastReporter implements StrictReporter {
 
   public static readonly inject = tokens(
     commonTokens.options,
-    coreTokens.pluginCreator,
+    coreTokens.pluginCreatorReporter,
     commonTokens.logger);
 
   public readonly reporters: {
@@ -102,5 +102,4 @@ export default class BroadcastReporter implements StrictReporter {
   private handleError(error: Error, methodName: string, reporterName: string) {
     this.log.error(`An error occurred during '${methodName}' on reporter '${reporterName}'. Error is: ${error}`);
   }
-
 }

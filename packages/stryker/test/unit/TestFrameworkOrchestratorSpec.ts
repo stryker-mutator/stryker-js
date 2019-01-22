@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PluginKind } from 'stryker-api/plugin';
-import * as coreTokens from '../../src/di/coreTokens';
+import { coreTokens } from '../../src/di';
 import { PluginCreator } from '../../src/di/PluginCreator';
 
 describe('TestFrameworkOrchestrator', () => {
@@ -100,7 +100,7 @@ describe('TestFrameworkOrchestrator', () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(coreTokens.pluginCreator, pluginCreatorMock as unknown as PluginCreator<PluginKind.TestFramework>)
+      .provideValue(coreTokens.pluginCreatorTestFramework, pluginCreatorMock as unknown as PluginCreator<PluginKind.TestFramework>)
       .injectClass(TestFrameworkOrchestrator);
   }
 });

@@ -3,7 +3,7 @@ import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import PluginLoader from '../../../src/di/PluginLoader';
+import { PluginLoader } from '../../../src/di/PluginLoader';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 import { fsAsPromised } from '@stryker-mutator/util';

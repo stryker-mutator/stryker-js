@@ -2,7 +2,7 @@ import { TestFramework } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
 import { tokens, commonTokens, PluginKind } from 'stryker-api/plugin';
 import { Logger } from 'stryker-api/logging';
-import * as coreTokens from './di/coreTokens';
+import { coreTokens } from './di';
 import { PluginCreator } from './di/PluginCreator';
 
 export default class TestFrameworkOrchestrator {
@@ -10,7 +10,7 @@ export default class TestFrameworkOrchestrator {
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
-    coreTokens.pluginCreator);
+    coreTokens.pluginCreatorTestFramework);
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,

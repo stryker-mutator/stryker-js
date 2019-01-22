@@ -12,7 +12,6 @@ export default class InputFileCollection {
     this.filesToMutate = files.filter(file => mutateGlobResult.some(name => name === file.name));
   }
 
-
   public logFiles(log: Logger) {
     if (!this.files.length) {
       log.warn(`No files selected. Please make sure you either${os.EOL}` +

@@ -4,8 +4,9 @@ import { File } from 'stryker-api/core';
 import { serialize, deserialize } from '../utils/objectUtils';
 import { errorToString } from '@stryker-mutator/util';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind, CallMessage } from './messageProtocol';
-import PluginLoader from '../di/PluginLoader';
 import LogConfigurator from '../logging/LogConfigurator';
+import { createOptionsInjector } from '../di';
+import { Config } from 'stryker-api/config';
 
 export default class ChildProcessProxyWorker {
 
@@ -24,7 +25,6 @@ export default class ChildProcessProxyWorker {
       process.send(serialize(value));
     }
   }
-
   private handleMessage(serializedMessage: string) {
     const message = deserialize<WorkerMessage>(serializedMessage, [File]);
     switch (message.kind) {
@@ -32,14 +32,18 @@ export default class ChildProcessProxyWorker {
         LogConfigurator.configureChildProcess(message.loggingContext);
         this.log = getLogger(ChildProcessProxyWorker.name);
         this.handlePromiseRejections();
-        new PluginLoader(message.plugins).load();
-        const RealSubjectClass = require(message.requirePath).default;
+        let injector = createOptionsInjector(message.options as unknown as Config);
+        const locals = message.additionalInjectableValues as any;
+        for (const token of Object.keys(locals)) {
+          injector = injector.provideValue(token, locals[token]);
+        }
+        const RealSubjectClass = require(message.requirePath)[message.requireName];
         const workingDir = path.resolve(message.workingDirectory);
         if (process.cwd() !== workingDir) {
           this.log.debug(`Changing current working directory for this process to ${workingDir}`);
           process.chdir(workingDir);
         }
-        this.realSubject = new RealSubjectClass(...message.constructorArgs);
+        this.realSubject = injector.injectClass(RealSubjectClass);
         this.send({ kind: ParentMessageKind.Initialized });
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;

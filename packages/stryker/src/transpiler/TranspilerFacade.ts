@@ -1,29 +1,26 @@
 import { File, StrykerOptions } from 'stryker-api/core';
-import { Transpiler, TranspilerOptions, TranspilerFactory } from 'stryker-api/transpile';
+import { Transpiler } from 'stryker-api/transpile';
 import { StrykerError } from '@stryker-mutator/util';
-import { tokens, commonTokens, TranspilerPluginContext, PluginResolver, PluginKind } from 'stryker-api/plugin';
-import { Injector } from 'typed-inject';
-import { createPlugin } from '../di/createPlugin';
+import { tokens, commonTokens, PluginKind } from 'stryker-api/plugin';
+import { coreTokens, createCoreInjector } from '../di';
+import { PluginCreator } from '../di/PluginCreator';
+import { Config } from 'stryker-api/config';
 
 class NamedTranspiler {
   constructor(public name: string, public transpiler: Transpiler) { }
 }
 
-export default class TranspilerFacade implements Transpiler {
+export class TranspilerFacade implements Transpiler {
 
   private readonly innerTranspilers: NamedTranspiler[];
 
   public static inject = tokens(
     commonTokens.options,
-    commonTokens.injector,
-    commonTokens.pluginResolver);
+    coreTokens.pluginCreatorTranspiler);
 
-  constructor(options: StrykerOptions, injector: Injector<TranspilerPluginContext>, pluginResolver: PluginResolver) {
+  constructor(options: StrykerOptions, pluginCreator: PluginCreator<PluginKind.Transpiler>) {
     this.innerTranspilers = options.transpilers
-      .map(transpilerName => {
-        const transpiler = createPlugin(PluginKind.Transpiler, pluginResolver.resolve(PluginKind.Transpiler, transpilerName), injector);
-        return new NamedTranspiler(transpilerName, transpiler);
-      });
+      .map(transpilerName => new NamedTranspiler(transpilerName, pluginCreator.create(transpilerName)));
   }
 
   public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
@@ -45,4 +42,11 @@ export default class TranspilerFacade implements Transpiler {
       return input;
     }
   }
+}
+
+export function createTranspilerFacade(options: StrykerOptions, produceSourceMaps: boolean): Transpiler {
+  return createCoreInjector(options as unknown as Config)
+    .provideValue(commonTokens.produceSourceMaps, produceSourceMaps)
+    .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
+    .injectClass(TranspilerFacade);
 }

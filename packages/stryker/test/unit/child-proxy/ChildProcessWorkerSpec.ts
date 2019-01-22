@@ -3,15 +3,17 @@ import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyW
 import { expect } from 'chai';
 import { serialize } from '../../../src/utils/objectUtils';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, CallMessage, ParentMessageKind, InitMessage } from '../../../src/child-proxy/messageProtocol';
-import PluginLoader, * as pluginLoader from '../../../src/di/PluginLoader';
-import { Mock, mock } from '../../helpers/producers';
-import HelloClass from './HelloClass';
+import * as contextCreators from '../../../src/di/contextCreators';
+import { Mock } from '../../helpers/producers';
+import { HelloClass } from './HelloClass';
 import LogConfigurator from '../../../src/logging/LogConfigurator';
 import { LogLevel } from 'stryker-api/core';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { Logger } from 'stryker-api/logging';
 import currentLogMock from '../../helpers/logMock';
 import * as sinon from 'sinon';
+import { rootInjector } from 'typed-inject';
+import { factory } from '@stryker-mutator/test-helpers';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 
@@ -24,7 +26,6 @@ describe('ChildProcessProxyWorker', () => {
   let processRemoveListenerStub: sinon.SinonStub;
   let processChdirStub: sinon.SinonStub;
   let logMock: Mock<Logger>;
-  let pluginLoaderMock: Mock<PluginLoader>;
   let originalProcessSend: undefined | NodeJS.MessageListener;
   let processes: NodeJS.MessageListener[];
   const workingDir = 'working dir';
@@ -42,8 +43,7 @@ describe('ChildProcessProxyWorker', () => {
     process.send = processSendStub;
     processChdirStub = sinon.stub(process, 'chdir');
     configureChildProcessStub = sinon.stub(LogConfigurator, 'configureChildProcess');
-    pluginLoaderMock = mock(PluginLoader);
-    sinon.stub(pluginLoader, 'default').returns(pluginLoaderMock);
+    sinon.stub(contextCreators, 'createOptionsInjector').returns(rootInjector);
   });
 
   afterEach(() => {
@@ -62,11 +62,13 @@ describe('ChildProcessProxyWorker', () => {
 
     beforeEach(() => {
       sut = new ChildProcessProxyWorker();
+      const options = factory.strykerOptions();
       initMessage = {
-        constructorArgs: ['FooBarName'],
+        additionalInjectableValues: { name: 'FooBarName'},
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
-        plugins: ['fooPlugin', 'barPlugin'],
+        options,
+        requireName: HelloClass.name,
         requirePath: require.resolve('./HelloClass'),
         workingDirectory: workingDir
       };
@@ -116,13 +118,6 @@ describe('ChildProcessProxyWorker', () => {
     it('should set global log level', () => {
       processOnStub.callArgWith(1, serialize(initMessage));
       expect(configureChildProcessStub).calledWith(LOGGING_CONTEXT);
-    });
-
-    it('should load plugins', () => {
-      processOnMessage(initMessage);
-      expect(pluginLoader.default).calledWithNew;
-      expect(pluginLoader.default).calledWith(['fooPlugin', 'barPlugin']);
-      expect(pluginLoaderMock.load).called;
     });
 
     it('should handle unhandledRejection events', () => {

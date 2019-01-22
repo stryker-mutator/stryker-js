@@ -12,6 +12,7 @@ import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import { TestRunnerFactory } from 'stryker-api/test_runner';
 import { TranspilerFactory } from 'stryker-api/transpile';
 import { MutatorFactory } from 'stryker-api/mutant';
+import * as coreTokens from './coreTokens';
 
 const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
 
@@ -19,11 +20,12 @@ interface PluginModule {
   strykerPlugins: Plugin<any, any>[];
 }
 
-export default class PluginLoader implements PluginResolver {
+export class PluginLoader implements PluginResolver {
   private readonly log = getLogger(PluginLoader.name);
   private readonly pluginsByKind: Map<PluginKind, Plugin<any, any>[]> = new Map();
 
-  constructor(private readonly pluginDescriptors: string[]) { }
+  public static inject = tokens(coreTokens.pluginDescriptors);
+  constructor(private readonly pluginDescriptors: ReadonlyArray<string>) { }
 
   public load() {
     this.resolvePluginModules().forEach(moduleName => this.requirePlugin(moduleName));

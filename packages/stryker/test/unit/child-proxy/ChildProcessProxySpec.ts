@@ -4,15 +4,16 @@ import * as childProcess from 'child_process';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import { autoStart, InitMessage, WorkerMessageKind, ParentMessage, WorkerMessage, ParentMessageKind, DisposeMessage } from '../../../src/child-proxy/messageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
-import HelloClass from './HelloClass';
+import { HelloClass } from './HelloClass';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
-import { LogLevel } from 'stryker-api/core';
+import { LogLevel, StrykerOptions } from 'stryker-api/core';
 import * as objectUtils from '../../../src/utils/objectUtils';
 import { EventEmitter } from 'events';
 import { Logger } from 'stryker-api/logging';
 import { Mock } from '../../helpers/producers';
 import currentLogMock from '../../helpers/logMock';
 import * as sinon from 'sinon';
+import { factory } from '@stryker-mutator/test-helpers';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
@@ -59,24 +60,23 @@ describe('ChildProcessProxy', () => {
 
     it('should send init message to child process', () => {
       const expectedMessage: InitMessage = {
-        constructorArgs: ['something'],
+        additionalInjectableValues: { name: 'fooTest' },
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
-        plugins: ['examplePlugin', 'secondExamplePlugin'],
+        options: factory.strykerOptions(),
+        requireName: 'HelloClass',
         requirePath: 'foobar',
         workingDirectory: 'workingDirectory'
       };
 
       // Act
       createSut({
-        arg: expectedMessage.constructorArgs[0],
         loggingContext: LOGGING_CONTEXT,
-        plugins: expectedMessage.plugins,
+        name: (expectedMessage.additionalInjectableValues as { name: string }).name,
+        options:  expectedMessage.options,
         requirePath: expectedMessage.requirePath,
         workingDir: expectedMessage.workingDirectory
       });
-      ChildProcessProxy.create(expectedMessage.requirePath, LOGGING_CONTEXT, expectedMessage.plugins,
-        expectedMessage.workingDirectory, HelloClass, expectedMessage.constructorArgs[0]);
 
       // Assert
       expect(childProcessMock.send).calledWith(serialize(expectedMessage));
@@ -215,15 +215,15 @@ describe('ChildProcessProxy', () => {
 function createSut(overrides: {
   requirePath?: string;
   loggingContext?: LoggingClientContext;
-  plugins?: string[];
+  options?: Partial<StrykerOptions>;
   workingDir?: string;
-  arg?: string;
+  name?: string;
 } = {}): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
     overrides.requirePath || 'foobar',
     overrides.loggingContext || LOGGING_CONTEXT,
-    overrides.plugins || ['examplePlugin', 'secondExamplePlugin'],
+    factory.strykerOptions(overrides.options),
+    { name: overrides.name || 'someArg' },
     overrides.workingDir || 'workingDir',
-    HelloClass,
-    overrides.arg || 'someArg');
+    HelloClass);
 }

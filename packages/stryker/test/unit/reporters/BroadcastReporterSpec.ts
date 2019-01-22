@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { Reporter } from 'stryker-api/report';
 import { PluginCreator } from '../../../src/di/PluginCreator';
-import * as coreTokens from '../../../src/di/coreTokens';
+import { coreTokens } from '../../../src/di';
 
 describe('BroadcastReporter', () => {
 
@@ -142,7 +142,7 @@ describe('BroadcastReporter', () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(coreTokens.pluginCreator, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
+      .provideValue(coreTokens.pluginCreatorReporter, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
       .injectClass(BroadcastReporter);
   }
 
