@@ -33,7 +33,7 @@ describe('WctTestRunner integration', () => {
     settings = { strykerOptions: { coverageAnalysis: 'off' } };
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     process.chdir(cwd);
   });
 
@@ -50,7 +50,6 @@ describe('WctTestRunner integration', () => {
     // Act
     await sut.init();
     const result = await sut.run();
-    await sut.dispose();
 
     // Assert
     assertRunResult(expectedHtmlSuiteResult, result);
