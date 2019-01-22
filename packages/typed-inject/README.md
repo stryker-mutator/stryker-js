@@ -65,7 +65,7 @@ const myService = appInjector.injectClass(MyService);
 In this example: 
 
 * the `logger` is injected into a new instance of `HttpClient` by value.
-* The instance of `HttpClient` and the `logger` is injected into a new instance of `MyService`.
+* The instance of `HttpClient` and the `logger` are injected into a new instance of `MyService`.
 
 Dependencies are resolved using the static `inject` property on their classes. They must match the names given to the dependencies when configuring the injector with `provideXXX` methods. 
 
@@ -102,8 +102,8 @@ Any `Injector` instance can always inject the following tokens:
 
 | Token name | Token value | Description |
 | - | - | - | 
-| `TARGET_TOKEN` | `'$target'` | The class or function in which the current values is injected, or `undefined` if resolved directly |  
 | `INJECTOR_TOKEN` | `'$injector'` | Injects the current injector |
+| `TARGET_TOKEN` | `'$target'` | The class or function in which the current values is injected, or `undefined` if resolved directly |  
 
 An example:
 
@@ -164,7 +164,7 @@ class Foo {
     constructor(bar: number) { }
     static inject = tokens('bar');
 }
-const foo /*: Foo*/ injector.injectClass(Foo);
+const foo /*: Foo*/ = injector.injectClass(Foo);
 ```
 
 #### `injector.injectFunction(fn: InjectableFunction)`
