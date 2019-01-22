@@ -13,6 +13,7 @@ export default class BabelHelper {
   private static createOptions(): ParserOptions {
     return {
       plugins: [
+        'decorators-legacy',
         'asyncGenerators',
         'bigInt',
         'classProperties',
