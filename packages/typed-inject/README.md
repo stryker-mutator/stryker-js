@@ -177,7 +177,7 @@ function foo(bar: number) {
     return bar + 1;
 }
 foo.inject = tokens('bar');
-const baz /*: number*/ injector.injectFunction(Foo);
+const baz /*: number*/ = injector.injectFunction(Foo);
 ```
 
 #### `injector.resolve(token: Token): CorrespondingType<TContext, Token>`
