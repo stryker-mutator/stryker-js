@@ -130,8 +130,8 @@ export const config = factoryMethod<Config>(() => new Config());
 export const ALL_REPORTER_EVENTS: (keyof Reporter)[] =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
 
-export function reporter(): sinon.SinonStubbedInstance<Required<Reporter>> {
-  const reporter = {} as any;
+export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Required<Reporter>> {
+  const reporter = { name } as any;
   ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sinon.stub());
   return reporter;
 }
