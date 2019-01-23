@@ -9,7 +9,7 @@ import * as coreTokens from '../di/coreTokens';
  */
 export class ConfigEditorApplier implements ConfigEditor {
 
-  public static inject = tokens(commonTokens.pluginResolver, coreTokens.pluginCreator);
+  public static inject = tokens(commonTokens.pluginResolver, coreTokens.pluginCreatorConfigEditor);
 
   constructor(private readonly pluginResolver: PluginResolver,
               private readonly pluginCreator: PluginCreator<PluginKind.ConfigEditor>) { }
