@@ -1,10 +1,10 @@
 import * as path from 'path';
 import { expect } from 'chai';
-import { Config } from 'stryker-api/config';
 import EventPlayer from '../helpers/EventPlayer';
 import HtmlReporter from '../../src/HtmlReporter';
 import { readDirectoryTree } from '../helpers/fsHelpers';
 import * as fs from 'fs';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 const REPORT_DIR = 'reports/mutation/singleFileInFolder';
 
@@ -12,9 +12,8 @@ describe('HtmlReporter single file in a folder', () => {
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    const config = new Config();
-    config.set({ htmlReporter: { baseDir: REPORT_DIR } });
-    sut = new HtmlReporter(config);
+    testInjector.options.htmlReporter = { baseDir: REPORT_DIR };
+    sut = testInjector.injector.injectClass(HtmlReporter);
     return new EventPlayer(path.join('testResources', 'singleFileInFolder'))
       .replay(sut)
       .then(() => sut.wrapUp());

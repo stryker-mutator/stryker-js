@@ -9,7 +9,7 @@
 
 A tiny, 100% type safe dependency injection framework for TypeScript. You can inject classes, interfaces or primitives. If your project compiles, you know for sure your dependencies are resolved at runtime and have their declared types.
 
-_If you are new to 'Dependency Injection'/'In version of control', please read up on it [in this blog article about it](https://medium.com/@samueleresca/inversion-of-control-and-dependency-injection-in-typescript-3040d568aabe)_
+_If you are new to 'Dependency Injection'/'Inversion of control', please read up on it [in this blog article about it](https://medium.com/@samueleresca/inversion-of-control-and-dependency-injection-in-typescript-3040d568aabe)_
 
 ## 🗺️ Installation
 
@@ -64,8 +64,8 @@ const myService = appInjector.injectClass(MyService);
 
 In this example: 
 
-* the `logger` is injected into a new instance of `HttpClient` by value.
-* The instance of `HttpClient` and the `logger` is injected into a new instance of `MyService`.
+* The `logger` is injected into a new instance of `HttpClient` by value.
+* The instance of `HttpClient` and the `logger` are injected into a new instance of `MyService`.
 
 Dependencies are resolved using the static `inject` property on their classes. They must match the names given to the dependencies when configuring the injector with `provideXXX` methods. 
 
@@ -102,8 +102,8 @@ Any `Injector` instance can always inject the following tokens:
 
 | Token name | Token value | Description |
 | - | - | - | 
-| `TARGET_TOKEN` | `'$target'` | The class or function in which the current values is injected, or `undefined` if resolved directly |  
 | `INJECTOR_TOKEN` | `'$injector'` | Injects the current injector |
+| `TARGET_TOKEN` | `'$target'` | The class or function in which the current values is injected, or `undefined` if resolved directly |  
 
 An example:
 
@@ -164,7 +164,7 @@ class Foo {
     constructor(bar: number) { }
     static inject = tokens('bar');
 }
-const foo /*: Foo*/ injector.injectClass(Foo);
+const foo /*: Foo*/ = injector.injectClass(Foo);
 ```
 
 #### `injector.injectFunction(fn: InjectableFunction)`
@@ -177,7 +177,7 @@ function foo(bar: number) {
     return bar + 1;
 }
 foo.inject = tokens('bar');
-const baz /*: number*/ injector.injectFunction(Foo);
+const baz /*: number*/ = injector.injectFunction(Foo);
 ```
 
 #### `injector.resolve(token: Token): CorrespondingType<TContext, Token>`

@@ -1,10 +1,9 @@
 import { TestRunnerFactory } from 'stryker-api/test_runner';
-import { declareFactoryPlugin, PluginKind, BaseContext, tokens, commonTokens } from 'stryker-api/plugin';
+import { declareFactoryPlugin, PluginKind, BaseContext, tokens, commonTokens, Injector } from 'stryker-api/plugin';
 
 import MochaTestRunner from './MochaTestRunner';
 import MochaConfigEditor from './MochaConfigEditor';
 import MochaOptionsLoader from './MochaOptionsLoader';
-import { Injector } from 'typed-inject';
 
 TestRunnerFactory.instance().register('mocha', MochaTestRunner);
 

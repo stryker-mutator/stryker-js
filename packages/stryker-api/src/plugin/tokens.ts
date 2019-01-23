@@ -1,5 +1,9 @@
 
-function token<T extends string>(value: T): T {
+/**
+ * Define a string literal.
+ * @param value Token literal
+ */
+function stringLiteral<T extends string>(value: T): T {
   return value;
 }
 
@@ -13,14 +17,14 @@ export const commonTokens = Object.freeze({
   /**
    * @deprecated Use 'options' instead. This is just hear to support plugin migration
    */
-  config: token('config'),
-  getLogger: token('getLogger'),
+  config: stringLiteral('config'),
+  getLogger: stringLiteral('getLogger'),
   injector,
-  logger: token('logger'),
-  options: token('options'),
-  pluginResolver: token('pluginResolver'),
-  produceSourceMaps: token('produceSourceMaps'),
-  sandboxFileNames: token('sandboxFileNames'),
+  logger: stringLiteral('logger'),
+  options: stringLiteral('options'),
+  pluginResolver: stringLiteral('pluginResolver'),
+  produceSourceMaps: stringLiteral('produceSourceMaps'),
+  sandboxFileNames: stringLiteral('sandboxFileNames'),
   target
 });
 
