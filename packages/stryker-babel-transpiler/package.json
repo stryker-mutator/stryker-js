@@ -43,21 +43,21 @@
   "license": "Apache-2.0",
   "dependencies": {
     "babel-core": "6.26.3",
-    "minimatch": "~3.0.4"
+    "minimatch": "~3.0.4",
+    "stryker-api": "~0.23.0"
   },
   "devDependencies": {
+    "@stryker-mutator/test-helpers": "0.0.0",
     "@types/babel-core": "~6.25.3",
     "@types/glob": "~7.1.0",
     "@types/minimatch": "~3.0.3",
     "babel-cli": "~6.26.0",
     "babel-plugin-transform-es2015-spread": "~6.22.0",
     "babel-preset-es2015": "~6.24.1",
-    "glob": "~7.1.2",
-    "stryker-api": "^0.23.0"
+    "glob": "~7.1.2"
   },
   "peerDependencies": {
-    "babel-core": "^6.26.0 || ^7.0.0-bridge.0",
-    "stryker-api": ">=0.18.0 <0.24.0"
+    "babel-core": "^6.26.0 || ^7.0.0-bridge.0"
   },
   "initStrykerConfig": {
     "babelrcFile": ".babelrc",

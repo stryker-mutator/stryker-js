@@ -1,19 +1,19 @@
 import * as path from 'path';
 import BabelTranspiler from '../../src/BabelTranspiler';
 import { expect } from 'chai';
-import { File } from 'stryker-api/core';
-import { Config } from 'stryker-api/config';
+import { File, StrykerOptions } from 'stryker-api/core';
 import * as sinon from 'sinon';
 import * as babel from 'babel-core';
 import BabelConfigReader, * as babelConfigReaderModule from '../../src/BabelConfigReader';
 import { Mock, mock } from '../helpers/mock';
+import { factory } from '@stryker-mutator/test-helpers';
 
 describe('BabelTranspiler', () => {
   let sut: BabelTranspiler;
   let sandbox: sinon.SinonSandbox;
   let files: File[];
   let transformStub: sinon.SinonStub;
-  let config: Config;
+  let options: StrykerOptions;
   let babelConfigReaderMock: Mock<BabelConfigReader>;
   let babelOptions: any;
 
@@ -23,7 +23,7 @@ describe('BabelTranspiler', () => {
     sandbox = sinon.createSandbox();
     sandbox.stub(babelConfigReaderModule, 'default').returns(babelConfigReaderMock);
     transformStub = sandbox.stub(babel, 'transform');
-    config = new Config();
+    options = factory.strykerOptions();
     files = [
       new File(path.resolve('main.js'), 'const main = () => { sum(2); divide(2); }'),
       new File(path.resolve('sum.js'), 'const sum = (number) => number + number;'),
@@ -37,18 +37,18 @@ describe('BabelTranspiler', () => {
 
     function arrangeHappyFlow() {
       babelConfigReaderMock.readConfig.returns(babelOptions);
-      sut = new BabelTranspiler({ config, produceSourceMaps: false });
+      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
     }
 
     it('should read babel config using the BabelConfigReader', () => {
       arrangeHappyFlow();
       expect(babelConfigReaderModule.default).calledWithNew;
-      expect(babelConfigReaderMock.readConfig).calledWith(config);
+      expect(babelConfigReaderMock.readConfig).calledWith(options);
     });
 
     it('should throw if `produceSourceMaps` was true and coverage analysis is "perTest"', () => {
-      config.coverageAnalysis = 'perTest';
-      expect(() => new BabelTranspiler({ produceSourceMaps: true, config })).throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".');
+      options.coverageAnalysis = 'perTest';
+      expect(() => new BabelTranspiler(options, /*produceSourceMaps:*/ true)).throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".');
     });
   });
 
@@ -56,7 +56,7 @@ describe('BabelTranspiler', () => {
 
     function arrangeHappyFlow(transformResult: babel.BabelFileResult & { ignored?: boolean } = { code: 'code' }) {
       babelConfigReaderMock.readConfig.returns(babelOptions);
-      sut = new BabelTranspiler({ config, produceSourceMaps: false });
+      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
       transformStub.returns(transformResult);
     }
 
@@ -77,7 +77,7 @@ describe('BabelTranspiler', () => {
       babelOptions.filename = 'override';
       babelOptions.filenameRelative = 'override';
       arrangeHappyFlow();
-      sut = new BabelTranspiler({ config, produceSourceMaps: false });
+      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
       await sut.transpile([files[0]]);
       expect(transformStub).calledWith(files[0].textContent, {
         filename: files[0].name,
@@ -133,7 +133,7 @@ describe('BabelTranspiler', () => {
     it('should return with an error when the babel transform fails', async () => {
       const error = new Error('Syntax error');
       transformStub.throws(error);
-      sut = new BabelTranspiler({ produceSourceMaps: false, config });
+      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
       return expect(sut.transpile([new File('picture.js', 'S�L!##���XLDDDDDDDD\K�')])).rejectedWith(`Error while transpiling "picture.js": ${error.stack}`);
     });
   });
