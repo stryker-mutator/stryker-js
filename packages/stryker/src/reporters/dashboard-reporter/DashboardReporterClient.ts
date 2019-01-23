@@ -1,6 +1,6 @@
 import { getLogger } from 'stryker-api/logging';
 import { HttpClient } from 'typed-rest-client/HttpClient';
-import { errorToString } from '../../utils/objectUtils';
+import { errorToString } from '@stryker-mutator/util';
 
 export interface StrykerDashboardReport {
   apiKey: string;

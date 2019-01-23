@@ -3,6 +3,7 @@ import { Mutator, MutatorFactory } from 'stryker-api/mutant';
 import MutatorFacade from '../../src/MutatorFacade';
 import { Config } from 'stryker-api/config';
 import { Mock, file } from '../helpers/producers';
+import * as sinon from 'sinon';
 
 describe('MutatorFacade', () => {
 
@@ -10,10 +11,10 @@ describe('MutatorFacade', () => {
 
   beforeEach(() => {
     mutatorMock = {
-      mutate: sandbox.stub()
+      mutate: sinon.stub()
     };
     mutatorMock.mutate.returns(['mutant']);
-    sandbox.stub(MutatorFactory.instance(), 'create').returns(mutatorMock);
+    sinon.stub(MutatorFactory.instance(), 'create').returns(mutatorMock);
   });
 
   describe('mutate', () => {

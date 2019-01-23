@@ -1,5 +1,5 @@
 import { TestRunner, TestRunnerFactory, RunnerOptions, RunOptions } from 'stryker-api/test_runner';
-import { errorToString } from '../utils/objectUtils';
+import { errorToString } from '@stryker-mutator/util';
 
 export default class ChildProcessTestRunnerWorker implements TestRunner {
 

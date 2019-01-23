@@ -8,8 +8,8 @@ import ChildProcessProxy, { Promisified } from '../child-proxy/ChildProcessProxy
 import { TranspilerOptions } from 'stryker-api/transpile';
 import TranspiledMutant from '../TranspiledMutant';
 import TranspileResult from './TranspileResult';
-import { errorToString } from '../utils/objectUtils';
 import LoggingClientContext from '../logging/LoggingClientContext';
+import { errorToString } from '@stryker-mutator/util';
 
 export default class MutantTranspiler {
 

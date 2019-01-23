@@ -1,8 +1,9 @@
 import * as os from 'os';
 import { TestRunner, RunResult, RunStatus, TestStatus, RunnerOptions } from 'stryker-api/test_runner';
 import { exec } from 'child_process';
-import { errorToString, kill } from '../utils/objectUtils';
+import { kill } from '../utils/objectUtils';
 import Timer from '../utils/Timer';
+import { errorToString } from '@stryker-mutator/util';
 
 export interface CommandRunnerSettings {
   command: string;

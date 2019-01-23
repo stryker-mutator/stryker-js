@@ -9,7 +9,7 @@ interface StrykerOptions {
   /**
    * A list of globbing expression used for selecting the files that should be mutated.
    */
-  mutate?: string[];
+  mutate: string[];
 
   /**
    * With `files` you can choose which files should be included in your test runner sandbox.
@@ -32,7 +32,7 @@ interface StrykerOptions {
    * all the CPU cores of your machine. Default: infinity, Stryker will decide for you and tries to use
    * all CPUs in your machine optimally.
    */
-  maxConcurrentTestRunners?: number;
+  maxConcurrentTestRunners: number;
 
   /**
    * A location to a config file. That file should export a function which accepts a "config" object which it uses to configure stryker
@@ -45,9 +45,9 @@ interface StrykerOptions {
   testFramework?: string;
 
   /**
-   * The name of the test runner to use (default is the same name as the testFramework)
+   * The name of the test runner to use (default is 'command')
    */
-  testRunner?: string;
+  testRunner: string;
 
   /**
    * The mutant generator to use to generate mutants based on your input file.
@@ -61,7 +61,7 @@ interface StrykerOptions {
    *    * The `excludedMutations` property is mandatory and contains the names of the specific mutation types to exclude from testing.
    *    * The values must match the given names of the mutations. For example: 'BinaryExpression', 'BooleanSubstitution', etc.
    */
-  mutator?: string | MutatorDescriptor;
+  mutator: string | MutatorDescriptor;
 
   /**
    * The names of the transpilers to use (in order). Default: [].
@@ -80,12 +80,12 @@ interface StrykerOptions {
    *
    * Transpilers should ignore files marked with `transpiled = false`. See `files` array.
    */
-  transpilers?: string[];
+  transpilers: string[];
 
   /**
    * Thresholds for mutation score.
    */
-  thresholds?: Partial<MutationScoreThresholds>;
+  thresholds: MutationScoreThresholds;
 
   /**
    * Indicates which coverage analysis strategy to use.
@@ -95,7 +95,7 @@ interface StrykerOptions {
    * 'all': Analyse the coverage for the entire test suite.
    * 'off': Don't use coverage analysis
    */
-  coverageAnalysis?: 'perTest' | 'all' | 'off';
+  coverageAnalysis: 'perTest' | 'all' | 'off';
 
   /**
    * DEPRECATED PROPERTY. Please use the `reporters` property
@@ -106,24 +106,24 @@ interface StrykerOptions {
    * Possible values: 'clear-text', 'progress'.
    * Load more plugins to be able to use more reporters
    */
-  reporters?: string[];
+  reporters: string[];
 
   /**
    * The log level for logging to a file. If defined, stryker will output a log file called "stryker.log".
    * Default: "off"
    */
-  fileLogLevel?: LogLevel;
+  fileLogLevel: LogLevel;
 
   /**
    * The log level for logging to the console. Default: "info".
    */
-  logLevel?: LogLevel;
+  logLevel: LogLevel;
 
   /**
    * Indicates whether or not to symlink the node_modules folder inside the sandbox folder(s).
    * Default: true
    */
-  symlinkNodeModules?: boolean;
+  symlinkNodeModules: boolean;
 
   /**
    * DEPRECATED PROPERTY. Please use the `timeoutMS` property
@@ -132,17 +132,17 @@ interface StrykerOptions {
   /**
    * Amount of additional time, in milliseconds, the mutation test is allowed to run
    */
-  timeoutMS?: number;
+  timeoutMS: number;
 
   /**
    * The factor is applied on top of the other timeouts when during mutation testing
    */
-  timeoutFactor?: number;
+  timeoutFactor: number;
 
   /**
    * A list of plugins. These plugins will be imported ('required') by Stryker upon loading.
    */
-  plugins?: string[];
+  plugins: string[];
 
   /**
    * DEPRECATED
@@ -154,7 +154,7 @@ interface StrykerOptions {
    * Indicates whether or not to use colors in console.
    * Default: true
    */
-  allowConsoleColors?: boolean;
+  allowConsoleColors: boolean;
 }
 
 export default StrykerOptions;

@@ -15,12 +15,12 @@ describe('TempFolder', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(mkdirp, 'sync');
-    sandbox.stub(fsAsPromised, 'writeFile');
-    deleteDirStub = sandbox.stub(fileUtils, 'deleteDir');
-    cwdStub = sandbox.stub(process, 'cwd');
+    sinon.stub(mkdirp, 'sync');
+    sinon.stub(fsAsPromised, 'writeFile');
+    deleteDirStub = sinon.stub(fileUtils, 'deleteDir');
+    cwdStub = sinon.stub(process, 'cwd');
     cwdStub.returns(mockCwd);
-    randomStub = sandbox.stub(TempFolder.instance(), 'random');
+    randomStub = sinon.stub(TempFolder.instance(), 'random');
     randomStub.returns('rand');
 
     TempFolder.instance().baseTempFolder = '';

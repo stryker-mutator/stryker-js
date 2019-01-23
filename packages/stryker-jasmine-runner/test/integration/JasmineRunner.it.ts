@@ -4,6 +4,7 @@ import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { TestResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
 import { expectTestResultsToEqual } from '../helpers/assertions';
+import { factory } from '@stryker-mutator/test-helpers';
 
 function wrapInClosure(codeFragment: string) {
   return `
@@ -52,7 +53,7 @@ describe('JasmineRunner integration', () => {
           path.resolve('spec', 'helpers', 'jasmine_examples', 'SpecHelper.js'),
           path.resolve('spec', 'jasmine_examples', 'PlayerSpec.js')
         ],
-        strykerOptions: { jasmineConfigFile: 'spec/support/jasmine.json' }
+        strykerOptions: factory.strykerOptions({ jasmineConfigFile: 'spec/support/jasmine.json' })
       });
     });
     it('should run the specs', async () => {
@@ -124,7 +125,7 @@ describe('JasmineRunner integration', () => {
       sut = new JasmineTestRunner({
         fileNames: [path.resolve('lib', 'error.js'),
         path.resolve('spec', 'errorSpec.js')
-        ], strykerOptions: {}
+        ], strykerOptions: factory.strykerOptions()
       });
     });
 
@@ -146,7 +147,7 @@ describe('JasmineRunner integration', () => {
         fileNames: [
           path.resolve('lib', 'foo.js'),
           path.resolve('spec', 'fooSpec.js')
-        ], strykerOptions: {}
+        ], strykerOptions: factory.strykerOptions()
       });
     });
 

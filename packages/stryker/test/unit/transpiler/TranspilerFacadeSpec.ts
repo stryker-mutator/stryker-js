@@ -4,13 +4,14 @@ import TranspilerFacade from '../../../src/transpiler/TranspilerFacade';
 import { Transpiler, TranspilerFactory } from 'stryker-api/transpile';
 import { mock, Mock } from '../../helpers/producers';
 import { File } from 'stryker-api/core';
+import * as sinon from 'sinon';
 
 describe('TranspilerFacade', () => {
   let createStub: sinon.SinonStub;
   let sut: TranspilerFacade;
 
   beforeEach(() => {
-    createStub = sandbox.stub(TranspilerFactory.instance(), 'create');
+    createStub = sinon.stub(TranspilerFactory.instance(), 'create');
   });
 
   describe('when there are no transpilers', () => {

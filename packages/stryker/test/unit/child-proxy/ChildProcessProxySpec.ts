@@ -12,6 +12,7 @@ import { EventEmitter } from 'events';
 import { Logger } from 'stryker-api/logging';
 import { Mock } from '../../helpers/producers';
 import currentLogMock from '../../helpers/logMock';
+import * as sinon from 'sinon';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
@@ -19,7 +20,7 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
 });
 
 class ChildProcessMock extends EventEmitter {
-  public send = sandbox.stub();
+  public send = sinon.stub();
   public stderr = new EventEmitter();
   public stdout = new EventEmitter();
   public pid = 4648;
@@ -35,10 +36,10 @@ describe('ChildProcessProxy', () => {
   let clock: sinon.SinonFakeTimers;
 
   beforeEach(() => {
-    clock = sandbox.useFakeTimers();
+    clock = sinon.useFakeTimers();
     childProcessMock = new ChildProcessMock();
-    forkStub = sandbox.stub(childProcess, 'fork');
-    killStub = sandbox.stub(objectUtils, 'kill');
+    forkStub = sinon.stub(childProcess, 'fork');
+    killStub = sinon.stub(objectUtils, 'kill');
     forkStub.returns(childProcessMock);
     logMock = currentLogMock();
   });

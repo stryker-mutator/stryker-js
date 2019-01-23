@@ -4,6 +4,7 @@ import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runn
 import { Config } from 'stryker-api/config';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
 import * as objectUtils from '../../../src/utils/objectUtils';
+import * as sinon from 'sinon';
 
 describe(`${CommandTestRunner.name} integration`, () => {
 
@@ -33,7 +34,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
 
   it('should kill the child process and timeout the run result if dispose is called', async () => {
     // Arrange
-    const killSpy = sandbox.spy(objectUtils, 'kill');
+    const killSpy = sinon.spy(objectUtils, 'kill');
     const sut = createSut({ command: 'npm run wait' });
     const runPromise = sut.run();
 

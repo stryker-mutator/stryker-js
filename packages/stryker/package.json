@@ -71,10 +71,12 @@
     "source-map": "~0.6.1",
     "surrial": "~0.1.3",
     "tree-kill": "~1.2.0",
+    "typed-inject": "0.0.0",
     "tslib": "~1.9.3",
     "typed-rest-client": "~1.0.7"
   },
   "devDependencies": {
+    "@stryker-mutator/test-helpers": "0.0.0",
     "@types/get-port": "~4.0.0",
     "@types/inquirer": "~0.0.42",
     "@types/istanbul-lib-instrument": "~1.7.0",

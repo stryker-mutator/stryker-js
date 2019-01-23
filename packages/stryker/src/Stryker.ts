@@ -1,51 +1,67 @@
-import { getLogger, Logger } from 'stryker-api/logging';
+import { getLogger } from 'stryker-api/logging';
 import { Config, ConfigEditorFactory } from 'stryker-api/config';
 import { StrykerOptions, MutatorDescriptor } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { Mutant } from 'stryker-api/mutant';
-import ReporterOrchestrator from './ReporterOrchestrator';
 import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
 import MutantTestMatcher from './MutantTestMatcher';
 import InputFileResolver from './input/InputFileResolver';
 import ConfigReader from './config/ConfigReader';
-import PluginLoader from './PluginLoader';
+import PluginLoader from './di/PluginLoader';
 import ScoreResultCalculator from './ScoreResultCalculator';
 import ConfigValidator from './config/ConfigValidator';
 import { freezeRecursively, isPromise } from './utils/objectUtils';
 import { TempFolder } from './utils/TempFolder';
 import Timer from './utils/Timer';
-import StrictReporter from './reporters/StrictReporter';
 import MutatorFacade from './MutatorFacade';
 import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
 import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
+import BroadcastReporter from './reporters/BroadcastReporter';
+import { commonTokens, OptionsContext, PluginResolver, PluginKind } from 'stryker-api/plugin';
+import * as coreTokens from './di/coreTokens';
+import { Injector, rootInjector, Scope } from 'typed-inject';
+import { loggerFactory } from './di/loggerFactory';
+import { PluginCreator } from './di/PluginCreator';
 
 export default class Stryker {
 
   public config: Config;
   private readonly timer = new Timer();
-  private readonly reporter: StrictReporter;
+  private readonly reporter: BroadcastReporter;
   private readonly testFramework: TestFramework | null;
-  private readonly log: Logger;
+  private readonly log = getLogger(Stryker.name);
+  private readonly injector: Injector<OptionsContext>;
 
   /**
    * The Stryker mutation tester.
    * @constructor
    * @param {Object} [options] - Optional options.
    */
-  constructor(options: StrykerOptions) {
+  constructor(options: Partial<StrykerOptions>) {
     LogConfigurator.configureMainProcess(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
-    this.log = getLogger(Stryker.name);
     const configReader = new ConfigReader(options);
     this.config = configReader.readConfig();
+    // Log level may have changed
     LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
-    this.loadPlugins();
+    this.addDefaultPlugins();
+    const pluginLoader = new PluginLoader(this.config.plugins);
+    pluginLoader.load();
+    // Log level may have changed
+    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
     this.applyConfigEditors();
-    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
     this.freezeConfig();
-    this.reporter = new ReporterOrchestrator(this.config).createBroadcastReporter();
+    this.injector = rootInjector
+      .provideValue(commonTokens.getLogger, getLogger)
+      .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
+      .provideValue(commonTokens.pluginResolver, pluginLoader as PluginResolver)
+      .provideValue(commonTokens.config, this.config)
+      .provideValue(commonTokens.options, this.config as StrykerOptions);
+    this.reporter = this.injector
+      .provideFactory(coreTokens.reporterPluginCreator, PluginCreator.createFactory(PluginKind.Reporter))
+      .injectClass(BroadcastReporter);
     this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
     new ConfigValidator(this.config, this.testFramework).validate();
   }
@@ -114,13 +130,11 @@ export default class Stryker {
       return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
     }
   }
-
-  private loadPlugins() {
-    if (this.config.plugins) {
-      new PluginLoader(this.config.plugins).load();
-    }
+  public addDefaultPlugins(): void {
+    this.config.plugins.push(
+      require.resolve('./reporters')
+    );
   }
-
   private wrapUpReporter(): Promise<void> {
     const maybePromise = this.reporter.wrapUp();
     if (isPromise(maybePromise)) {

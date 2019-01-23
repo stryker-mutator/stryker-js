@@ -6,6 +6,7 @@ import { expectTestResults } from '../helpers/assertions';
 import http = require('http');
 import { promisify } from '@stryker-mutator/util';
 import { FilePattern } from 'karma';
+import { factory } from '@stryker-mutator/test-helpers';
 
 function wrapInClosure(codeFragment: string) {
   return `
@@ -17,7 +18,7 @@ function wrapInClosure(codeFragment: string) {
 function createRunnerOptions(files: ReadonlyArray<FilePattern | string>, coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'): RunnerOptions {
   return {
     fileNames: [],
-    strykerOptions: {
+    strykerOptions: factory.strykerOptions({
       coverageAnalysis,
       karma: {
         config: {
@@ -26,7 +27,7 @@ function createRunnerOptions(files: ReadonlyArray<FilePattern | string>, coverag
           reporters: []
         }
       }
-    }
+    })
   };
 }
 

@@ -19,6 +19,7 @@ import StrykerKarmaSetup, {
 } from '../../src/StrykerKarmaSetup';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
+import { factory } from '@stryker-mutator/test-helpers';
 
 describe('KarmaTestRunner', () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
@@ -31,7 +32,7 @@ describe('KarmaTestRunner', () => {
   beforeEach(() => {
     settings = {
       fileNames: ['foo.js', 'bar.js'],
-      strykerOptions: {}
+      strykerOptions: factory.strykerOptions()
     };
     reporterMock = new EventEmitter();
     projectStarterMock = sandbox.createStubInstance(ProjectStarter);

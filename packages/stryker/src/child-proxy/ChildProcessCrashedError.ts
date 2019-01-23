@@ -1,4 +1,4 @@
-import StrykerError from '../utils/StrykerError';
+import { StrykerError } from '@stryker-mutator/util';
 
 export default class ChildProcessCrashedError extends StrykerError {
   constructor(

@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { RunStatus } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import { runnerOptions } from '../helpers/mockHelpers';
+import { factory } from '@stryker-mutator/test-helpers';
 
 describe('QUnit sample', () => {
 
@@ -14,7 +15,7 @@ describe('QUnit sample', () => {
     };
     const sut = new MochaTestRunner(runnerOptions({
       fileNames: mochaOptions.files,
-      strykerOptions: { mochaOptions }
+      strykerOptions: factory.strykerOptions({ mochaOptions })
     }));
     await sut.init();
     const actualResult = await sut.run({});
@@ -34,13 +35,13 @@ describe('QUnit sample', () => {
         resolve('./testResources/qunit-sample/MyMathSpec.js'),
         resolve('./testResources/qunit-sample/MyMath.js')
       ],
-      strykerOptions: {
+      strykerOptions: factory.strykerOptions({
         mochaOptions: {
           files: [
             resolve('./testResources/qunit-sample/MyMathSpec.js')
           ]
         }
-      }
+      })
     });
     await sut.init();
     const actualResult = await sut.run({});

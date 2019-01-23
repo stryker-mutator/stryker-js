@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 import { TestFrameworkFactory } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
 import currentLogMock from '../helpers/logMock';
-import { Mock } from '../helpers/producers';
+import { Mock, strykerOptions } from '../helpers/producers';
 
 describe('TestFrameworkOrchestrator', () => {
 
@@ -41,10 +41,10 @@ describe('TestFrameworkOrchestrator', () => {
   };
 
   beforeEach(() => {
-    options = { coverageAnalysis: 'perTest' };
+    options = strykerOptions({ coverageAnalysis: 'perTest' });
     sandbox = sinon.createSandbox();
-    sandbox.stub(TestFrameworkFactory.instance(), 'create').returns(testFramework);
-    sandbox.stub(TestFrameworkFactory.instance(), 'knownNames').returns(['awesomeFramework', 'unusedTestFramework']);
+    sinon.stub(TestFrameworkFactory.instance(), 'create').returns(testFramework);
+    sinon.stub(TestFrameworkFactory.instance(), 'knownNames').returns(['awesomeFramework', 'unusedTestFramework']);
   });
 
   describe('when options contains a testFramework "awesomeFramework"', () => {

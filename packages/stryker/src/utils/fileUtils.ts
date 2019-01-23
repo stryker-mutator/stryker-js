@@ -30,8 +30,8 @@ export async function cleanFolder(folderName: string) {
 /**
  * Wrapper around the 'require' function (for testability)
  */
-export function importModule(moduleName: string) {
-  require(moduleName);
+export function importModule(moduleName: string): unknown {
+  return require(moduleName);
 }
 
 /**

@@ -1,6 +1,6 @@
 import { File } from 'stryker-api/core';
 import { Transpiler, TranspilerOptions, TranspilerFactory } from 'stryker-api/transpile';
-import StrykerError from '../utils/StrykerError';
+import { StrykerError } from '@stryker-mutator/util';
 
 class NamedTranspiler {
   constructor(public name: string, public transpiler: Transpiler) { }

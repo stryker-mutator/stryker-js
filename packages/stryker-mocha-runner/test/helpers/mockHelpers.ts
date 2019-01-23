@@ -1,6 +1,7 @@
 import * as sinon from 'sinon';
 import { Logger } from 'stryker-api/logging';
 import { RunnerOptions } from 'stryker-api/test_runner';
+import { factory } from '@stryker-mutator/test-helpers';
 
 export type Mock<T> = {
   [P in keyof T]: sinon.SinonStub;
@@ -27,12 +28,12 @@ export function logger(): Mock<Logger> {
   };
 }
 
-export const runnerOptions = factory<RunnerOptions>(() => ({
+export const runnerOptions = factoryMethod<RunnerOptions>(() => ({
   fileNames: ['src/math.js', 'test/mathSpec.js'],
-  strykerOptions: { mochaOptions: {} }
+  strykerOptions: factory.strykerOptions({ mochaOptions: {} })
 }));
 
-function factory<T>(defaults: () => T): (overrides?: Partial<T>) => T {
+function factoryMethod<T>(defaults: () => T): (overrides?: Partial<T>) => T {
   return (overrides?: Partial<T>): T => {
     return Object.assign(defaults(), overrides);
   };

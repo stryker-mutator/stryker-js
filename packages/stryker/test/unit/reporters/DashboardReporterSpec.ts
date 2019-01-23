@@ -7,7 +7,6 @@ import StrykerDashboardClient, { StrykerDashboardReport } from '../../../src/rep
 import { scoreResult, mock, Mock } from '../../helpers/producers';
 import { Logger } from 'stryker-api/logging';
 import currentLogMock from '../../helpers/logMock';
-import { Config } from 'stryker-api/config';
 
 describe('DashboardReporter', () => {
   let sut: DashboardReporter;
@@ -19,8 +18,8 @@ describe('DashboardReporter', () => {
   beforeEach(() => {
     log = currentLogMock();
     dashboardClientMock = mock(StrykerDashboardClient);
-    getEnvironmentVariables = sandbox.stub(environmentVariables, 'getEnvironmentVariable');
-    determineCiProvider = sandbox.stub(ciProvider, 'determineCIProvider');
+    getEnvironmentVariables = sinon.stub(environmentVariables, 'getEnvironmentVariable');
+    determineCiProvider = sinon.stub(ciProvider, 'determineCIProvider');
   });
 
   function setupEnvironmentVariables(env?: {
@@ -54,7 +53,7 @@ describe('DashboardReporter', () => {
   it('should report mutation score to report server', async () => {
     // Arrange
     setupEnvironmentVariables();
-    sut = new DashboardReporter(new Config(), dashboardClientMock as any);
+    sut = new DashboardReporter(dashboardClientMock as any);
 
     // Act
     sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));

@@ -5,6 +5,7 @@ import * as logging from 'stryker-api/logging';
 import ConfigReader from '../../../src/config/ConfigReader';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
+import * as sinon from 'sinon';
 
 describe('ConfigReader', () => {
 
@@ -40,7 +41,7 @@ describe('ConfigReader', () => {
       describe('with a stryker.conf.js in the CWD', () => {
         it('should parse the config', () => {
           const mockCwd = process.cwd() + '/testResources/config-reader';
-          sandbox.stub(process, 'cwd').returns(mockCwd);
+          sinon.stub(process, 'cwd').returns(mockCwd);
           sut = new ConfigReader({});
 
           result = sut.readConfig();
@@ -55,7 +56,7 @@ describe('ConfigReader', () => {
       describe('without a stryker.conf.js in the CWD', () => {
         it('should return default config', () => {
           const mockCwd = process.cwd() + '/testResources/config-reader/no-config';
-          sandbox.stub(process, 'cwd').returns(mockCwd);
+          sinon.stub(process, 'cwd').returns(mockCwd);
 
           sut = new ConfigReader({});
 

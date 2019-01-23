@@ -29,7 +29,8 @@
     "stryker": "../../../packages/stryker",
     "stryker-wct-runner": "../../../packages/stryker-wct-runner",
     "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
-    "@stryker-mutator/util": "../../../packages/stryker-util"
+    "@stryker-mutator/util": "../../../packages/stryker-util",
+    "typed-inject": "../../../packages/typed-inject"
   },
   "scripts": {
     "prepare": "install-local",

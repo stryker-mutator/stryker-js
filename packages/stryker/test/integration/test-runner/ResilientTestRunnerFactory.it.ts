@@ -10,6 +10,7 @@ import LoggingServer from '../../helpers/LoggingServer';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { toArray } from 'rxjs/operators';
 import { sleep } from '../../helpers/testUtils';
+import { strykerOptions } from '../../helpers/producers';
 
 describe('ResilientTestRunnerFactory integration', () => {
 
@@ -28,12 +29,12 @@ describe('ResilientTestRunnerFactory integration', () => {
     loggingContext = { port, level: LogLevel.Trace };
     options = {
       fileNames: [],
-      strykerOptions: {
+      strykerOptions: strykerOptions({
         plugins: [require.resolve('./AdditionalTestRunners')],
         someRegex: /someRegex/,
         testFramework: 'jasmine',
         testRunner: 'karma'
-      }
+      })
     };
     alreadyDisposed = false;
   });

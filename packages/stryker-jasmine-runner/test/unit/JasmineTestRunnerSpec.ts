@@ -5,6 +5,7 @@ import Jasmine = require('jasmine');
 import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { TestResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
+import { factory } from '@stryker-mutator/test-helpers';
 
 type SinonStubbedInstance<TType> = {
   [P in keyof TType]: TType[P] extends Function ? sinon.SinonStub : TType[P];
@@ -29,7 +30,7 @@ describe('JasmineTestRunner', () => {
     sandbox.stub(helpers, 'Jasmine').returns(jasmineStub);
     fileNames = ['foo.js', 'bar.js'];
     clock = sandbox.useFakeTimers();
-    sut = new JasmineTestRunner({ fileNames, strykerOptions: { jasmineConfigFile: 'jasmineConfFile' } });
+    sut = new JasmineTestRunner({ fileNames, strykerOptions: factory.strykerOptions({ jasmineConfigFile: 'jasmineConfFile' }) });
   });
 
   afterEach(() => {

@@ -1,18 +1,14 @@
 import * as path from 'path';
-import { fsAsPromised } from '@stryker-mutator/util';
+import { fsAsPromised, isErrnoException } from '@stryker-mutator/util';
 import { childProcessAsPromised } from '@stryker-mutator/util';
 import { getLogger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { glob } from '../utils/fileUtils';
 import StrictReporter from '../reporters/StrictReporter';
 import { SourceFile } from 'stryker-api/report';
-import StrykerError from '../utils/StrykerError';
+import { StrykerError } from '@stryker-mutator/util';
 import InputFileCollection from './InputFileCollection';
-import {
-  normalizeWhiteSpaces,
-  filterEmpty,
-  isErrnoException
-} from '../utils/objectUtils';
+import { normalizeWhiteSpaces, filterEmpty } from '../utils/objectUtils';
 import { Config } from 'stryker-api/config';
 
 function toReportSourceFile(file: File): SourceFile {

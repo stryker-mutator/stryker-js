@@ -4,6 +4,7 @@ import { LogLevel } from 'stryker-api/core';
 import LogConfigurator from '../../../src/logging/LogConfigurator';
 import * as netUtils from '../../../src/utils/netUtils';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import * as sinon from 'sinon';
 
 describe('LogConfigurator', () => {
 
@@ -13,9 +14,9 @@ describe('LogConfigurator', () => {
   let log4jsShutdown: sinon.SinonStub;
 
   beforeEach(() => {
-    getFreePortStub = sandbox.stub(netUtils, 'getFreePort');
-    log4jsConfigure = sandbox.stub(log4js, 'configure');
-    log4jsShutdown = sandbox.stub(log4js, 'shutdown');
+    getFreePortStub = sinon.stub(netUtils, 'getFreePort');
+    log4jsConfigure = sinon.stub(log4js, 'configure');
+    log4jsShutdown = sinon.stub(log4js, 'shutdown');
   });
 
   describe('configureMainProcess', () => {

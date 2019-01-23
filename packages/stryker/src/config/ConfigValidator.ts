@@ -2,15 +2,14 @@ import { TestFramework } from 'stryker-api/test_framework';
 import { MutatorDescriptor, MutationScoreThresholds, LogLevel, StrykerOptions } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
 import { getLogger } from 'stryker-api/logging';
-import StrykerError from '../utils/StrykerError';
+import { StrykerError } from '@stryker-mutator/util';
 import { normalizeWhiteSpaces } from '../utils/objectUtils';
 
 export default class ConfigValidator {
 
   private isValid = true;
   private readonly log = getLogger(ConfigValidator.name);
-
-  constructor(private readonly strykerConfig: Config, private readonly testFramework: TestFramework | null) { }
+  constructor(private readonly strykerConfig: StrykerOptions, private readonly testFramework: TestFramework | null) { }
 
   public validate() {
     this.validateTestFramework();

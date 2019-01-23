@@ -4,7 +4,7 @@ import { File, Location, Position } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
 import { base64Decode } from '../utils/objectUtils';
 import { getLogger } from 'stryker-api/logging';
-import StrykerError from '../utils/StrykerError';
+import { StrykerError } from '@stryker-mutator/util';
 
 const SOURCE_MAP_URL_REGEX = /\/\/\s*#\s*sourceMappingURL=(.*)/g;
 

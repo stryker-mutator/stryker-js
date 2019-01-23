@@ -1,97 +1,169 @@
-import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
-import currentLogMock from '../../helpers/logMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { ALL_REPORTER_EVENTS, Mock } from '../../helpers/producers';
+import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
+import { PluginKind } from 'stryker-api/plugin';
+import * as sinon from 'sinon';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { Reporter } from 'stryker-api/report';
+import { PluginCreator } from '../../../src/di/PluginCreator';
+import * as coreTokens from '../../../src/di/coreTokens';
 
 describe('BroadcastReporter', () => {
 
-  let log: Mock<Logger>;
-  let sut: any;
-  let reporter: any;
-  let reporter2: any;
+  let sut: BroadcastReporter;
+  let rep1: sinon.SinonStubbedInstance<Required<Reporter>>;
+  let rep2: sinon.SinonStubbedInstance<Required<Reporter>>;
+  let isTTY: boolean;
+  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind.Reporter>>;
 
   beforeEach(() => {
-    log = currentLogMock();
-    reporter = mockReporter();
-    reporter2 = mockReporter();
-    sut = new BroadcastReporter([{ name: 'rep1', reporter }, { name: 'rep2', reporter: reporter2 }]);
+    captureTTY();
+    testInjector.options.reporters = ['rep1', 'rep2'];
+    rep1 = factory.reporter('rep1');
+    rep2 = factory.reporter('rep2');
+    pluginCreatorMock = sinon.createStubInstance(PluginCreator);
+    pluginCreatorMock.create
+      .withArgs('rep1').returns(rep1)
+      .withArgs('rep2').returns(rep2);
   });
 
-  it('should forward all events', () => {
-    actArrangeAssertAllEvents();
+  afterEach(() => {
+    restoreTTY();
   });
 
-  describe('when "wrapUp" returns promises', () => {
-    let wrapUpResolveFn: Function;
-    let wrapUpResolveFn2: Function;
-    let wrapUpRejectFn: Function;
-    let result: Promise<void>;
-    let isResolved: boolean;
+  describe('when constructed', () => {
+    it('should create "progress-append-only" instead of "progress" reporter if process.stdout is not a tty', () => {
+      // Arrange
+      setTTY(false);
+      const expectedReporter = factory.reporter('progress-append-only');
+      testInjector.options.reporters = ['progress'];
+      pluginCreatorMock.create.returns(expectedReporter);
 
+      // Act
+      sut = createSut();
+
+      // Assert
+      expect(sut.reporters).deep.eq({ 'progress-append-only': expectedReporter });
+      expect(pluginCreatorMock.create).calledWith('progress-append-only');
+    });
+
+    it('should create the correct reporters', () => {
+      // Arrange
+      setTTY(true);
+      testInjector.options.reporters = ['progress', 'rep2'];
+      const progress = factory.reporter('progress');
+      pluginCreatorMock.create.withArgs('progress').returns(progress);
+
+      // Act
+      sut = createSut();
+
+      // Assert
+      expect(sut.reporters).deep.eq({
+        progress,
+        rep2
+      });
+    });
+
+    it('should warn if there is no reporter', () => {
+      testInjector.options.reporters = [];
+      sut = createSut();
+      expect(testInjector.logger.warn).calledWith(sinon.match('No reporter configured'));
+    });
+  });
+
+  describe('when created', () => {
     beforeEach(() => {
-      isResolved = false;
-      reporter.wrapUp.returns(new Promise<void>((resolve, reject) => {
-        wrapUpResolveFn = resolve;
-        wrapUpRejectFn = reject;
-      }));
-      reporter2.wrapUp.returns(new Promise<void>(resolve => wrapUpResolveFn2 = resolve));
-      result = sut.wrapUp().then(() => isResolved = true);
+      sut = createSut();
     });
 
-    it('should forward a combined promise', () => {
-      expect(isResolved).to.be.eq(false);
-      wrapUpResolveFn();
-      wrapUpResolveFn2();
-      return result;
+    it('should forward all events', () => {
+      actArrangeAssertAllEvents();
     });
 
-    describe('and one of the promises results in a rejection', () => {
+    describe('when "wrapUp" returns promises', () => {
+      let wrapUpResolveFn: Function;
+      let wrapUpResolveFn2: Function;
+      let wrapUpRejectFn: Function;
+      let result: Promise<void>;
+      let isResolved: boolean;
+
       beforeEach(() => {
-        wrapUpRejectFn('some error');
+        isResolved = false;
+        rep1.wrapUp.returns(new Promise<void>((resolve, reject) => {
+          wrapUpResolveFn = resolve;
+          wrapUpRejectFn = reject;
+        }));
+        rep2.wrapUp.returns(new Promise<void>(resolve => wrapUpResolveFn2 = resolve));
+        result = sut.wrapUp().then(() => void (isResolved = true));
+      });
+
+      it('should forward a combined promise', () => {
+        expect(isResolved).to.be.eq(false);
+        wrapUpResolveFn();
         wrapUpResolveFn2();
         return result;
       });
 
-      it('should not result in a rejection', () => result);
+      describe('and one of the promises results in a rejection', () => {
+        beforeEach(() => {
+          wrapUpRejectFn('some error');
+          wrapUpResolveFn2();
+          return result;
+        });
 
-      it('should log the error', () => {
-        expect(log.error).to.have.been.calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'. Error is: some error`);
-      });
-    });
-  });
+        it('should not result in a rejection', () => result);
 
-  describe('with one faulty reporter', () => {
-
-    beforeEach(() => {
-      ALL_REPORTER_EVENTS.forEach(eventName => reporter[eventName].throws('some error'));
-    });
-
-    it('should still broadcast to other reporters', () => {
-      actArrangeAssertAllEvents();
-    });
-
-    it('should log each error', () => {
-      ALL_REPORTER_EVENTS.forEach(eventName => {
-        sut[eventName]();
-        expect(log.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'. Error is: some error`);
+        it('should log the error', () => {
+          expect(testInjector.logger.error).calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'. Error is: some error`);
+        });
       });
     });
 
+    describe('with one faulty reporter', () => {
+
+      beforeEach(() => {
+        ALL_REPORTER_EVENTS.forEach(eventName => rep1[eventName].throws('some error'));
+      });
+
+      it('should still broadcast to other reporters', () => {
+        actArrangeAssertAllEvents();
+      });
+
+      it('should log each error', () => {
+        ALL_REPORTER_EVENTS.forEach(eventName => {
+          (sut as any)[eventName]();
+          expect(testInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'. Error is: some error`);
+        });
+      });
+
+    });
+
   });
 
-  function mockReporter() {
-    const reporter: any = {};
-    ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sandbox.stub());
-    return reporter;
+  function createSut() {
+    return testInjector.injector
+      .provideValue(coreTokens.reporterPluginCreator, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
+      .injectClass(BroadcastReporter);
   }
 
   function actArrangeAssertAllEvents() {
     ALL_REPORTER_EVENTS.forEach(eventName => {
       const eventData = eventName === 'wrapUp' ? undefined : eventName;
-      sut[eventName](eventName);
-      expect(reporter[eventName]).to.have.been.calledWith(eventData);
-      expect(reporter2[eventName]).to.have.been.calledWith(eventData);
+      (sut as any)[eventName](eventName);
+      expect(rep1[eventName]).calledWith(eventData);
+      expect(rep2[eventName]).calledWith(eventData);
     });
+  }
+
+  function captureTTY() {
+    isTTY = (process.stdout as any).isTTY;
+  }
+
+  function restoreTTY() {
+    (process.stdout as any).isTTY = isTTY;
+  }
+
+  function setTTY(val: boolean) {
+    (process.stdout as any).isTTY = val;
   }
 });

@@ -7,10 +7,10 @@ import { TestFramework } from 'stryker-api/test_framework';
 import Sandbox from '../../src/Sandbox';
 import SandboxPool from '../../src/SandboxPool';
 import { Task } from '../../src/utils/Task';
-import '../helpers/globals';
 import { Mock, config, file, mock, testFramework } from '../helpers/producers';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import { sleep } from '../helpers/testUtils';
+import * as sinon from 'sinon';
 
 const OVERHEAD_TIME_MS = 42;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -36,7 +36,7 @@ describe('SandboxPool', () => {
     secondSandbox.dispose.resolves();
     const genericSandboxForAllSubsequentCallsToNewSandbox = mock<Sandbox>(Sandbox as any);
     genericSandboxForAllSubsequentCallsToNewSandbox.dispose.resolves();
-    createStub = global.sandbox.stub(Sandbox, 'create')
+    createStub = sinon.stub(Sandbox, 'create')
       .resolves(genericSandboxForAllSubsequentCallsToNewSandbox)
       .onCall(0).resolves(firstSandbox)
       .onCall(1).resolves(secondSandbox);
@@ -54,7 +54,7 @@ describe('SandboxPool', () => {
     });
 
     it('should use cpuCount when maxConcurrentTestRunners is set too high', async () => {
-      global.sandbox.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
+      sinon.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
       options.maxConcurrentTestRunners = 100;
       const actual = await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(actual).lengthOf(3);
@@ -63,7 +63,7 @@ describe('SandboxPool', () => {
     });
 
     it('should use the cpuCount when maxConcurrentTestRunners is <= 0', async () => {
-      global.sandbox.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
+      sinon.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
       options.maxConcurrentTestRunners = 0;
       const actual = await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(Sandbox.create).to.have.callCount(3);
@@ -74,7 +74,7 @@ describe('SandboxPool', () => {
     it('should use the cpuCount - 1 when a transpiler is configured', async () => {
       options.transpilers = ['a transpiler'];
       options.maxConcurrentTestRunners = 2;
-      global.sandbox.stub(os, 'cpus').returns([1, 2]); // stub 2 cpus
+      sinon.stub(os, 'cpus').returns([1, 2]); // stub 2 cpus
       const actual = await sut.streamSandboxes().pipe(toArray()).toPromise();
       expect(Sandbox.create).to.have.callCount(1);
       expect(actual).lengthOf(1);
@@ -96,7 +96,7 @@ describe('SandboxPool', () => {
 
     it('should not resolve when there are still sandboxes being created (issue #713)', async () => {
       // Arrange
-      global.sandbox.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
+      sinon.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
       const task = new Task<Sandbox>();
       createStub.onCall(2).returns(task.promise); // promise is not yet resolved
       const registeredSandboxes: Sandbox[] = [];

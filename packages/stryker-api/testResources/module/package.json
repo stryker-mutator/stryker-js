@@ -19,9 +19,10 @@
   "license": "ISC",
   "devDependencies": {
     "install-local": "^0.4.0",
-    "typescript": "^2.2.2"
+    "typescript": "^3.2.2"
   },
   "localDependencies": {
-    "stryker-api": "../.."
+    "stryker-api": "../..",
+    "typed-inject": "../../../typed-inject"
   }
 }

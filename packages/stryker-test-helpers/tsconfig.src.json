@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": [
+      "node",
+      "mocha"
+    ]
+  },
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "../stryker-api/tsconfig.src.json"
+    },
+    {
+      "path": "../typed-inject/tsconfig.src.json"
+    }
+  ]
+}

@@ -1,18 +1,20 @@
 import chalk from 'chalk';
 import { getLogger } from 'stryker-api/logging';
 import { Reporter, MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
-import { Config } from 'stryker-api/config';
-import { Position } from 'stryker-api/core';
+import { Position, StrykerOptions } from 'stryker-api/core';
 import ClearTextScoreTable from './ClearTextScoreTable';
 import * as os from 'os';
+import { tokens } from 'typed-inject';
 
 export default class ClearTextReporter implements Reporter {
 
   private readonly log = getLogger(ClearTextReporter.name);
 
-  constructor(private readonly options: Config) {
+  constructor(private readonly options: StrykerOptions) {
     this.configConsoleColor();
   }
+
+  public static readonly inject = tokens('options');
 
   private readonly out: NodeJS.WritableStream = process.stdout;
 
