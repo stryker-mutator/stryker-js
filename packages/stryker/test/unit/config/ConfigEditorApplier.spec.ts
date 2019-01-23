@@ -13,7 +13,7 @@ describe('ConfigEditorApplier', () => {
   beforeEach(() => {
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     sut = testInjector.injector
-      .provideValue(coreTokens.pluginCreator, pluginCreatorMock as unknown as PluginCreator<PluginKind.ConfigEditor>)
+      .provideValue(coreTokens.pluginCreatorConfigEditor, pluginCreatorMock as unknown as PluginCreator<PluginKind.ConfigEditor>)
       .injectClass(ConfigEditorApplier);
   });
 
