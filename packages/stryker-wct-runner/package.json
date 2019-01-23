@@ -6,12 +6,8 @@
   "typings": "src/index.d.ts",
   "scripts": {
     "start": "tsc -w",
-    "test": "cross-env LAUNCHPAD_BROWSERS=chrome if-node-version \"~11.7\" npm run nyc:hack && if-node-version \"<=11.6\" npm run nyc:normal",
-    "nyc:hack": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 50 --functions 50 --branches 50 npm run mocha",
-    "nyc:normal": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 95 npm run mocha",
-    "mocha": "npm run mocha:unit && if-node-version \">=8\" npm run mocha:integration",
-    "mocha:unit": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\"",
-    "mocha:integration": "mocha --timeout 60000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+    "test": "cross-env LAUNCHPAD_BROWSERS=chrome nyc --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 95 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && if-node-version \">=8\" mocha --timeout 60000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
