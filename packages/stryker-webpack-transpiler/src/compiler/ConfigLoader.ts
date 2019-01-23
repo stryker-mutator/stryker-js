@@ -2,18 +2,16 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Configuration } from 'webpack';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
-import { getLogger, Logger } from 'stryker-api/logging';
 import { isFunction } from 'lodash';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { Logger } from 'stryker-api/logging';
+import { pluginTokens } from '../pluginTokens';
 
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 
 export default class ConfigLoader {
-  private readonly log: Logger;
-  private readonly loader: NodeRequireFunction;
-
-  public constructor(loader?: NodeRequireFunction) {
-    this.loader = loader || require;
-    this.log = getLogger(ConfigLoader.name);
+  public static inject = tokens(commonTokens.logger, pluginTokens.require);
+  public constructor(private readonly log: Logger, private readonly requireFn: NodeRequireFunction) {
   }
 
   public async load(config: StrykerWebpackConfig): Promise<Configuration> {
@@ -35,15 +33,15 @@ export default class ConfigLoader {
     return webpackConfig;
   }
 
-private loadWebpackConfigFromProjectRoot(configFileLocation: string) {
-  const resolvedName = path.resolve(configFileLocation);
+  private loadWebpackConfigFromProjectRoot(configFileLocation: string) {
+    const resolvedName = path.resolve(configFileLocation);
 
-  if (!fs.existsSync(resolvedName)) {
-    throw new Error(`Could not load webpack config at "${resolvedName}", file not found.`);
+    if (!fs.existsSync(resolvedName)) {
+      throw new Error(`Could not load webpack config at "${resolvedName}", file not found.`);
+    }
+
+    return this.requireFn(resolvedName);
   }
-
-  return this.loader(resolvedName);
-}
 
   private configureSilent(webpackConfig: Configuration) {
     if (webpackConfig.plugins) {

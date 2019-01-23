@@ -1,17 +1,7 @@
 import * as sinon from 'sinon';
-import * as logging from 'stryker-api/logging';
-
-beforeEach(() => {
-  global.sandbox = sinon.createSandbox();
-  global.logMock = {
-    debug: sandbox.stub(),
-    error: sandbox.stub(),
-    info: sandbox.stub(),
-    warn: sandbox.stub()
-  };
-  sandbox.stub(logging, 'getLogger').returns(global.logMock);
-});
+import { testInjector } from '../../../stryker-test-helpers/src';
 
 afterEach(() => {
-  global.sandbox.restore();
+  sinon.restore();
+  testInjector.reset();
 });
