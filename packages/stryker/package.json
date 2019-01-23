@@ -6,7 +6,8 @@
   "typings": "src/Stryker.d.ts",
   "scripts": {
     "start": "tsc -w",
-    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "test:original": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 15000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
     "stryker": "node bin/stryker run"
   },
@@ -63,7 +64,7 @@
     "lodash": "~4.17.4",
     "log4js": "~3.0.0",
     "mkdirp": "~0.5.1",
-    "prettier": "~1.15.2",
+    "prettier": "~1.16.1",
     "progress": "~2.0.0",
     "rimraf": "~2.6.1",
     "rxjs": "~6.3.0",

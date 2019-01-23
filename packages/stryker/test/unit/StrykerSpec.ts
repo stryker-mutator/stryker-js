@@ -78,13 +78,13 @@ describe('Stryker', () => {
     configEditorApplierMock = mock(ConfigEditorApplier);
     mutatorMock = mock(MutatorFacade);
     injectorMock.injectClass
-      .withArgs(ConfigEditorApplier).returns(configEditorApplierMock);
+      .withArgs(ConfigEditorApplier).returns(configEditorApplierMock)
+      .withArgs(BroadcastReporter).returns(reporter);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     shutdownLoggingStub = sinon.stub(LogConfigurator, 'shutdown');
     configureLoggingServerStub.resolves(LOGGING_CONTEXT);
     inputFileResolverMock = mock(InputFileResolver);
-    injectorMock.injectClass.returns(reporter);
     testFramework = testFrameworkMock();
     initialTestExecutorMock = mock(InitialTestExecutor);
     mutationTestExecutorMock = mock(MutationTestExecutor);

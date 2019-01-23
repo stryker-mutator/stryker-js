@@ -10,6 +10,8 @@
       "es2015.symbol.wellknown"
     ],
     "noImplicitReturns": false,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true,
     "jsx": "react",
     "jsxFactory": "typedHtml.createElement"
   }

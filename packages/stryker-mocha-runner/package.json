@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsc -w",
     "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" .nyc_output reports coverage",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --check-coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "test": "nyc --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 10000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
@@ -40,8 +40,7 @@
     "@stryker-mutator/test-helpers": "0.0.0",
     "@types/multimatch": "~2.1.2",
     "stryker-api": "^0.23.0",
-    "stryker-mocha-framework": "^0.14.0",
-    "typed-inject": "0.0.0"
+    "stryker-mocha-framework": "^0.14.0"
   },
   "peerDependencies": {
     "mocha": ">= 2.3.3 < 6",

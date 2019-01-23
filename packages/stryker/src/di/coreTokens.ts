@@ -1,2 +1,3 @@
 export const pluginKind = 'pluginKind';
-export const pluginCreator = 'pluginCreator';
+export const pluginCreatorConfigEditor = 'pluginCreatorConfigEditor';
+export const pluginCreatorReporter = 'pluginCreatorReporter';
