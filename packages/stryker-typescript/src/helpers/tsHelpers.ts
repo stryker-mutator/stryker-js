@@ -1,7 +1,6 @@
 import * as os from 'os';
-import { File } from 'stryker-api/core';
+import { File, StrykerOptions } from 'stryker-api/core';
 import { CONFIG_KEY, CONFIG_KEY_FILE } from './keys';
-import { Config } from 'stryker-api/config';
 import * as ts from 'typescript';
 import * as path from 'path';
 import * as semver from 'semver';
@@ -30,12 +29,12 @@ export function normalizeFileFromTypescript(fileName: string) {
   return path.normalize(fileName);
 }
 
-export function getTSConfig(config: Config): ts.ParsedCommandLine | undefined {
-  return config[CONFIG_KEY];
+export function getTSConfig(options: StrykerOptions): ts.ParsedCommandLine | undefined {
+  return options[CONFIG_KEY];
 }
 
-export function getProjectDirectory(config: Config) {
-  return path.dirname(config[CONFIG_KEY_FILE] || '.');
+export function getProjectDirectory(options: StrykerOptions) {
+  return path.dirname(options[CONFIG_KEY_FILE] || '.');
 }
 
 /**

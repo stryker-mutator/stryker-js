@@ -2,22 +2,21 @@ import TranspilingLanguageService, * as transpilingLanguageService from '../../s
 import { expect } from 'chai';
 import { Mock, mock } from '../helpers/producers';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
-import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
 import { serialize } from 'surrial';
 import TranspileFilter from '../../src/transpiler/TranspileFilter';
 import sinon = require('sinon');
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { commonTokens } from 'stryker-api/plugin';
 
 describe('TypescriptTranspiler', () => {
 
   let languageService: Mock<TranspilingLanguageService>;
   let sut: TypescriptTranspiler;
-  let config: Config;
   let transpileFilterMock: Mock<TranspileFilter>;
 
   beforeEach(() => {
-    config = new Config();
     languageService = mock(TranspilingLanguageService);
     transpileFilterMock = {
       // Cannot use `mock<T>` as it is an abstract class
@@ -31,7 +30,9 @@ describe('TypescriptTranspiler', () => {
 
     beforeEach(() => {
       languageService.getSemanticDiagnostics.returns([]); // no errors by default
-      sut = new TypescriptTranspiler({ config, produceSourceMaps: true });
+      sut = testInjector.injector
+        .provideValue(commonTokens.produceSourceMaps, true)
+        .injectClass(TypescriptTranspiler);
     });
 
     it('should transpile given files', async () => {

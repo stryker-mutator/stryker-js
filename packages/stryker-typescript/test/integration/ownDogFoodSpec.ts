@@ -24,13 +24,13 @@ describe('stryker-typescript', () => {
   });
 
   it('should be able to transpile itself', async () => {
-    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ true);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).greaterThan(10);
   });
 
   it('should result in an error if a variable is declared as any and noImplicitAny = true', async () => {
-    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ true);
     inputFiles[0] = new File(inputFiles[0].name, inputFiles[0].textContent + 'function foo(bar) { return bar; } ');
     return expect(transpiler.transpile(inputFiles)).rejectedWith('error TS7006: Parameter \'bar\' implicitly has an \'any\' type');
   });
@@ -38,7 +38,7 @@ describe('stryker-typescript', () => {
   it('should not result in an error if a variable is declared as any and noImplicitAny = false', async () => {
     config.tsconfig.noImplicitAny = false;
     inputFiles[0] = new File(inputFiles[0].name, inputFiles[0].textContent + 'const shouldResultInError = 3');
-    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ true);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles).lengthOf.greaterThan(0);
   });
