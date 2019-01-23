@@ -75,7 +75,7 @@ export default class ChildProcessProxy<T> {
   }
 
   private send(message: WorkerMessage) {
-    this.worker.send(serialize(message));
+    this.worker.send(serialize(message, [File]));
   }
 
   private initProxy(): Promisified<T> {

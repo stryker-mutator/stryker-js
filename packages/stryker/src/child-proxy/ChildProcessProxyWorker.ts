@@ -22,7 +22,8 @@ export default class ChildProcessProxyWorker {
 
   private send(value: ParentMessage) {
     if (process.send) {
-      process.send(serialize(value));
+      const str = serialize(value, [File]);
+      process.send(str);
     }
   }
   private handleMessage(serializedMessage: string) {

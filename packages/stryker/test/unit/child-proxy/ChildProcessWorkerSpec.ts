@@ -150,9 +150,9 @@ describe('ChildProcessProxyWorker', () => {
         processOnMessage(workerMessage);
         await tick();
         // Assert
-        expect(processSendStub).calledWithMatch(`"correlationId": ${workerMessage.correlationId.toString()}`);
-        expect(processSendStub).calledWithMatch(`"kind": ${ParentMessageKind.Rejection.toString()}`);
-        expect(processSendStub).calledWithMatch(`"error": "Error: ${expectedError}`);
+        expect(processSendStub).calledWithMatch(`"correlationId":${workerMessage.correlationId.toString()}`);
+        expect(processSendStub).calledWithMatch(`"kind":${ParentMessageKind.Rejection.toString()}`);
+        expect(processSendStub).calledWithMatch(`"error":"Error: ${expectedError}`);
       }
 
       it('should send the result', async () => {
