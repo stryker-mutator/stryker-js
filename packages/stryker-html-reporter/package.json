@@ -41,12 +41,11 @@
     "mkdirp": "~0.5.1",
     "mz": "~2.7.0",
     "rimraf": "~2.6.1",
+    "stryker-api": "~0.23.0",
     "typed-html": "~0.6.3"
   },
-  "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.24.0"
-  },
   "devDependencies": {
+    "@stryker-mutator/test-helpers": "0.0.0",
     "@types/file-url": "~2.0.0",
     "@types/jsdom": "~12.2.0",
     "@types/node": "^10.11.5",
@@ -54,8 +53,7 @@
     "highlight.js": "~9.13.0",
     "jquery": "~3.3.1",
     "jsdom": "~13.1.0",
-    "popper.js": "~1.14.3",
-    "stryker-api": "^0.23.0"
+    "popper.js": "~1.14.3"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",
