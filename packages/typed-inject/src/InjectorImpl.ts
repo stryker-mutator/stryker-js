@@ -30,18 +30,18 @@ const DEFAULT_SCOPE = Scope.Singleton;
 */
 
 abstract class AbstractInjector<TContext> implements Injector<TContext>  {
-  public injectClass<R, Tokens extends InjectionToken<TContext>[]>(Class: InjectableClass<TContext, R, Tokens>): R {
+  public injectClass<R, Tokens extends InjectionToken<TContext>[]>(Class: InjectableClass<TContext, R, Tokens>, providedIn?: Function): R {
     try {
-      const args: any[] = this.resolveParametersToInject(Class);
+      const args: any[] = this.resolveParametersToInject(Class, providedIn);
       return new Class(...args as any);
     } catch (error) {
       throw new Exception(`Could not inject "${Class.name}"`, error);
     }
   }
 
-  public injectFunction<R, Tokens extends InjectionToken<TContext>[]>(fn: InjectableFunction<TContext, R, Tokens>, target?: Function): R {
+  public injectFunction<R, Tokens extends InjectionToken<TContext>[]>(fn: InjectableFunction<TContext, R, Tokens>, providedIn?: Function): R {
     try {
-      const args: any[] = this.resolveParametersToInject(fn, target);
+      const args: any[] = this.resolveParametersToInject(fn, providedIn);
       return fn(...args as any);
     } catch (error) {
       throw new Exception(`Could not inject "${fn.name}"`, error);
@@ -50,7 +50,7 @@ abstract class AbstractInjector<TContext> implements Injector<TContext>  {
 
   private resolveParametersToInject<Tokens extends InjectionToken<TContext>[]>(injectable: Injectable<TContext, any, Tokens>, target?: Function): any[] {
     const tokens: InjectionToken<TContext>[] = (injectable as any).inject || [];
-    return tokens.map(key => this.resolve(key, target));
+    return tokens.map(key => this.resolve(key, injectable, target));
   }
 
   public provideValue<Token extends string, R>(token: Token, value: R): AbstractInjector<{ [k in Token]: R; } & TContext> {
@@ -66,14 +66,14 @@ abstract class AbstractInjector<TContext> implements Injector<TContext>  {
     return new FactoryInjector(this, token, scope, factory);
   }
 
-  public resolve<Token extends InjectionToken<TContext>>(token: Token, target?: Function): CorrespondingType<TContext, Token> {
+  public resolve<Token extends InjectionToken<TContext>>(token: Token, providedIn?: Function, target?: Function): CorrespondingType<TContext, Token> {
     switch (token) {
       case TARGET_TOKEN:
         return target as any;
       case INJECTOR_TOKEN:
         return this as any;
       default:
-        return this.resolveInternal(token);
+        return this.resolveInternal(token, providedIn);
     }
   }
 
@@ -154,8 +154,8 @@ class ClassInjector<TParentContext, R, Token extends string, Tokens extends Inje
               private readonly injectable: InjectableClass<TParentContext, R, Tokens>) {
     super(parent, token, scope);
   }
-  protected result(_target: Function): R {
-    return this.injectClass(this.injectable as any);
+  protected result(target: Function): R {
+    return this.injectClass(this.injectable as any, target);
   }
 }
 

@@ -2,9 +2,8 @@ import { File, StrykerOptions } from 'stryker-api/core';
 import { Transpiler } from 'stryker-api/transpile';
 import { StrykerError } from '@stryker-mutator/util';
 import { tokens, commonTokens, PluginKind } from 'stryker-api/plugin';
-import { coreTokens, createCoreInjector } from '../di';
+import { coreTokens } from '../di';
 import { PluginCreator } from '../di/PluginCreator';
-import { Config } from 'stryker-api/config';
 
 class NamedTranspiler {
   constructor(public name: string, public transpiler: Transpiler) { }
@@ -42,11 +41,4 @@ export class TranspilerFacade implements Transpiler {
       return input;
     }
   }
-}
-
-export function createTranspilerFacade(options: StrykerOptions, produceSourceMaps: boolean): Transpiler {
-  return createCoreInjector(options as unknown as Config)
-    .provideValue(commonTokens.produceSourceMaps, produceSourceMaps)
-    .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
-    .injectClass(TranspilerFacade);
 }

@@ -1,3 +1,7 @@
+export const cliOptions = 'cliOptions';
+export const configReader = 'configReader';
+export const configReadFromConfigFile = 'configReadFromConfigFile';
+export const configEditorApplier = 'configEditorApplier';
 export const inputFiles = 'inputFiles';
 export const testFramework = 'testFramework';
 export const timer = 'timer';

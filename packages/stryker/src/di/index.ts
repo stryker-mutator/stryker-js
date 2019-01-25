@@ -1,7 +1,6 @@
 import * as coreTokens from './coreTokens';
-export * from './contextCreators';
+export * from './buildMainInjector';
+export * from './buildChildProcessInjector';
 export * from './PluginCreator';
 export * from './PluginLoader';
-export {
-  coreTokens
-};
+export { coreTokens };

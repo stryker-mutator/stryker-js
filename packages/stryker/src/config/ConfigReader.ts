@@ -5,6 +5,8 @@ import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
 import { StrykerError } from '@stryker-mutator/util';
+import { coreTokens } from '../di';
+import { tokens } from 'stryker-api/plugin';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +
@@ -18,6 +20,7 @@ export default class ConfigReader {
 
   private readonly log = getLogger(ConfigReader.name);
 
+  public static inject = tokens(coreTokens.cliOptions);
   constructor(private readonly cliOptions: Partial<StrykerOptions>) { }
 
   public readConfig() {
@@ -51,7 +54,7 @@ export default class ConfigReader {
 
   private loadConfigModule(): Function {
     // Dummy module to be returned if no config file is loaded.
-    let configModule: Function = () => {};
+    let configModule: Function = () => { };
 
     if (!this.cliOptions.configFile) {
       try {

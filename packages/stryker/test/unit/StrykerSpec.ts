@@ -7,40 +7,35 @@ import { factory } from '@stryker-mutator/test-helpers';
 import Stryker from '../../src/Stryker';
 import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
-import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
-import ConfigReader, * as configReaderModule from '../../src/config/ConfigReader';
+import InputFileResolver from '../../src/input/InputFileResolver';
 import * as typedInject from 'typed-inject';
 import MutatorFacade, * as mutatorFacade from '../../src/MutatorFacade';
 import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
 import InitialTestExecutor from '../../src/process/InitialTestExecutor';
 import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/MutationTestExecutor';
-import ConfigValidator from '../../src/config/ConfigValidator';
 import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
 import { TempFolder } from '../../src/utils/TempFolder';
 import currentLogMock from '../helpers/logMock';
-import { mock, Mock, testFramework, config, runResult, testableMutant, mutantResult } from '../helpers/producers';
+import { mock, Mock, testFramework, runResult, testableMutant, mutantResult } from '../helpers/producers';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import TestableMutant from '../../src/TestableMutant';
 import InputFileCollection from '../../src/input/InputFileCollection';
 import LogConfigurator from '../../src/logging/LogConfigurator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import { commonTokens } from 'stryker-api/plugin';
-import { ConfigEditorApplier } from '../../src/config/ConfigEditorApplier';
 import { TranspilerFacade } from '../../src/transpiler/TranspilerFacade';
 import * as di from '../../src/di';
+import Timer from '../../src/utils/Timer';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
   port: 4200
 });
 
-describe('Stryker', () => {
+describe.only(Stryker.name, () => {
   let sut: Stryker;
   let testFrameworkMock: TestFramework;
   let inputFileResolverMock: Mock<InputFileResolver>;
-  let configEditorApplierMock: Mock<ConfigEditorApplier>;
-  let configValidatorMock: Mock<ConfigValidator>;
-  let configReaderMock: Mock<ConfigReader>;
   let initialTestExecutorMock: Mock<InitialTestExecutor>;
   let mutationTestExecutorMock: Mock<MutationTestExecutor>;
   let mutantRunResultMatcherMock: Mock<MutantRunResultMatcher>;
@@ -53,16 +48,13 @@ describe('Stryker', () => {
   let configureLoggingServerStub: sinon.SinonStub;
   let shutdownLoggingStub: sinon.SinonStub;
   let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector>;
+  let timerMock: sinon.SinonStubbedInstance<Timer>;
 
   beforeEach(() => {
-    strykerConfig = config();
+    strykerConfig = factory.config();
     reporterMock = mock(BroadcastReporter);
-    configValidatorMock = mock(ConfigValidator);
-    configReaderMock = mock(ConfigReader);
-    configReaderMock.readConfig.returns(strykerConfig);
     injectorMock = factory.injector();
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
-    configEditorApplierMock = mock(ConfigEditorApplier);
     mutatorMock = mock(MutatorFacade);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
@@ -72,24 +64,24 @@ describe('Stryker', () => {
     testFrameworkMock = testFramework();
     initialTestExecutorMock = mock(InitialTestExecutor);
     mutationTestExecutorMock = mock(MutationTestExecutor);
-    sinon.stub(di, 'createCoreInjector').returns(injectorMock);
+    timerMock = sinon.createStubInstance(Timer);
+    tempFolderMock = mock(TempFolder as any);
+    tempFolderMock.clean.resolves();
+    scoreResultCalculator = new ScoreResultCalculator();
+    sinon.stub(di, 'buildMainInjector').returns(injectorMock);
     sinon.stub(mutationTestExecutor, 'default').returns(mutationTestExecutorMock);
     sinon.stub(mutatorFacade, 'default').returns(mutatorMock);
     sinon.stub(mutantRunResultMatcher, 'default').returns(mutantRunResultMatcherMock);
-    sinon.stub(configReaderModule, 'default').returns(configReaderMock);
-    sinon.stub(inputFileResolver, 'default').returns(inputFileResolverMock);
-    tempFolderMock = mock(TempFolder as any);
     sinon.stub(TempFolder, 'instance').returns(tempFolderMock);
-    tempFolderMock.clean.resolves();
-    scoreResultCalculator = new ScoreResultCalculator();
     sinon.stub(scoreResultCalculator, 'determineExitCode').returns(sinon.stub());
     sinon.stub(scoreResultCalculatorModule, 'default').returns(scoreResultCalculator);
     injectorMock.injectClass
-      .withArgs(ConfigEditorApplier).returns(configEditorApplierMock)
       .withArgs(BroadcastReporter).returns(reporterMock)
       .withArgs(InitialTestExecutor).returns(initialTestExecutorMock)
-      .withArgs(ConfigValidator).returns(configValidatorMock);
+      .withArgs(InputFileResolver).returns(inputFileResolverMock);
     injectorMock.resolve
+      .withArgs(commonTokens.config).returns(strykerConfig)
+      .withArgs(di.coreTokens.timer).returns(timerMock)
       .withArgs(di.coreTokens.reporter).returns(reporterMock)
       .withArgs(di.coreTokens.testFramework).returns(testFrameworkMock);
   });
@@ -100,20 +92,8 @@ describe('Stryker', () => {
       sut = new Stryker({});
     });
 
-    it('should apply the config editors', () => {
-      expect(configEditorApplierMock.edit).calledWith(strykerConfig);
-    });
-
     it('should configure logging for master', () => {
-      expect(configureMainProcessStub).calledThrice;
-    });
-
-    it('should freeze the config', () => {
-      expect(Object.isFrozen(sut.config)).to.be.eq(true);
-    });
-
-    it('should validate the config', () => {
-      expect(configValidatorMock.validate).called;
+      expect(configureMainProcessStub).calledTwice;
     });
   });
 
@@ -227,8 +207,6 @@ describe('Stryker', () => {
       it('should create the InputFileResolver', async () => {
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(inputFileResolver.default).calledWithNew;
-        expect(inputFileResolver.default).calledWith(strykerConfig.mutate, strykerConfig.files, reporterMock);
         expect(inputFileResolverMock.resolve).called;
       });
 

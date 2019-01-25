@@ -12,7 +12,7 @@ export default class ConfigValidator {
   private isValid = true;
   private readonly log = getLogger(ConfigValidator.name);
   public static inject = tokens(commonTokens.options, coreTokens.testFramework);
-  constructor(private readonly strykerConfig: StrykerOptions, private readonly testFramework: TestFramework | null) { }
+  constructor(private readonly strykerConfig: Readonly<StrykerOptions>, private readonly testFramework: TestFramework | null) { }
 
   public validate() {
     this.validateTestFramework();

@@ -3,7 +3,6 @@ import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyW
 import { expect } from 'chai';
 import { serialize } from '../../../src/utils/objectUtils';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, WorkResult, CallMessage, ParentMessageKind, InitMessage } from '../../../src/child-proxy/messageProtocol';
-import * as contextCreators from '../../../src/di/contextCreators';
 import { Mock } from '../../helpers/producers';
 import { HelloClass } from './HelloClass';
 import LogConfigurator from '../../../src/logging/LogConfigurator';
@@ -14,6 +13,7 @@ import currentLogMock from '../../helpers/logMock';
 import * as sinon from 'sinon';
 import { rootInjector } from 'typed-inject';
 import { factory } from '@stryker-mutator/test-helpers';
+import * as di from '../../../src/di';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 
@@ -43,7 +43,7 @@ describe('ChildProcessProxyWorker', () => {
     process.send = processSendStub;
     processChdirStub = sinon.stub(process, 'chdir');
     configureChildProcessStub = sinon.stub(LogConfigurator, 'configureChildProcess');
-    sinon.stub(contextCreators, 'createOptionsInjector').returns(rootInjector);
+    sinon.stub(di, 'buildChildProcessInjector').returns(rootInjector);
   });
 
   afterEach(() => {

@@ -24,7 +24,7 @@ describe('InjectorImpl', () => {
       const actual = rootInjector.injectClass(Injectable);
 
       // Assert
-      expect(actual.target).eq(undefined);
+      expect(actual.target).undefined;
       expect(actual.injector).eq(rootInjector);
     });
 
@@ -44,9 +44,62 @@ describe('InjectorImpl', () => {
       const actualResult: { result: number } = rootInjector.injectFunction(injectable);
 
       // Assert
-      expect(actualTarget).eq(undefined);
+      expect(actualTarget).undefined;
       expect(actualInjector).eq(rootInjector);
       expect(actualResult).eq(expectedResult);
+    });
+
+    it('should be able to provide a target into a function', () => {
+      // Arrange
+      function fooFactory(target: undefined | Function) {
+        return `foo -> ${target && target.name}`;
+      }
+      fooFactory.inject = tokens(TARGET_TOKEN);
+      function barFactory(target: undefined | Function, fooName: string) {
+        return `${fooName} -> bar -> ${target && target.name}`;
+      }
+      barFactory.inject = tokens(TARGET_TOKEN, 'fooName');
+      class Foo {
+        constructor(public name: string) { }
+        public static inject = tokens('name');
+      }
+
+      // Act
+      const actualFoo = rootInjector
+        .provideFactory('fooName', fooFactory)
+        .provideFactory('name', barFactory)
+        .injectClass(Foo);
+
+      // Assert
+      expect(actualFoo.name).eq('foo -> barFactory -> bar -> Foo');
+    });
+
+    it('should be able to provide a target into a class', () => {
+      // Arrange
+      class Foo {
+        constructor(public target: undefined | Function) { }
+        public static inject = tokens(TARGET_TOKEN);
+      }
+      class Bar {
+        constructor(public target: undefined | Function, public foo: Foo) { }
+        public static inject = tokens(TARGET_TOKEN, 'foo');
+      }
+
+      class Baz {
+        constructor(public bar: Bar, public target: Function | undefined) { }
+        public static inject = tokens('bar', TARGET_TOKEN);
+      }
+
+      // Act
+      const actualBaz = rootInjector
+        .provideClass('foo', Foo)
+        .provideClass('bar', Bar)
+        .injectClass(Baz);
+
+      // Assert
+      expect(actualBaz.target).undefined;
+      expect(actualBaz.bar.target).eq(Baz);
+      expect(actualBaz.bar.foo.target).eq(Bar);
     });
 
     it('should throw when no provider was found', () => {
@@ -93,18 +146,17 @@ describe('InjectorImpl', () => {
       expect(actual.foobar).eq(expectedValue);
     });
 
-    it('should be able still provide parent injector values', () => {
-      function truth() {
-        return true;
+    it('should be able to provide parent injector values', () => {
+      function answer() {
+        return 42;
       }
-      truth.inject = tokens();
-      const factoryInjector = rootInjector.provideFactory('truth', truth);
+      const factoryInjector = rootInjector.provideFactory('answer', answer);
       const actual = factoryInjector.injectClass(class {
-        constructor(public injector: Injector<{ truth: boolean }>, public target: Function | undefined) { }
-        public static inject = tokens(INJECTOR_TOKEN, TARGET_TOKEN);
+        constructor(public injector: Injector<{ answer: number }>, public answer: number) { }
+        public static inject = tokens(INJECTOR_TOKEN, 'answer');
       });
       expect(actual.injector).eq(factoryInjector);
-      expect(actual.target).undefined;
+      expect(actual.answer).eq(42);
     });
 
     it('should cache the value if scope = Singleton', () => {

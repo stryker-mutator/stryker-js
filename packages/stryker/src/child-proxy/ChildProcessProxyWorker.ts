@@ -5,7 +5,7 @@ import { serialize, deserialize } from '../utils/objectUtils';
 import { errorToString } from '@stryker-mutator/util';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind, CallMessage } from './messageProtocol';
 import LogConfigurator from '../logging/LogConfigurator';
-import { createOptionsInjector } from '../di';
+import { buildChildProcessInjector } from '../di';
 import { Config } from 'stryker-api/config';
 
 export default class ChildProcessProxyWorker {
@@ -33,7 +33,7 @@ export default class ChildProcessProxyWorker {
         LogConfigurator.configureChildProcess(message.loggingContext);
         this.log = getLogger(ChildProcessProxyWorker.name);
         this.handlePromiseRejections();
-        let injector = createOptionsInjector(message.options as unknown as Config);
+        let injector = buildChildProcessInjector(message.options as unknown as Config);
         const locals = message.additionalInjectableValues as any;
         for (const token of Object.keys(locals)) {
           injector = injector.provideValue(token, locals[token]);
