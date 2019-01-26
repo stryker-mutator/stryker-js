@@ -15,7 +15,8 @@ env:
   - secure: EhfzUfITtwsAir3v0qlWYnmCl43tbEGwM9aBwz3sDYARW8vzlsN5o4uuCkpVoE8vRuCTc8Bwg2BvCWglt6HEZx0Vspp83JuiKhRnbIAQcHQWGqpTS76ml6H62kESOQoNEMMBCmi53w3t+N2f5epVugz4GGtx9SNpoLXLNK3q32WVEZY6uPsKzksdF/F878/c7ty+9DxFNd4/ja1rTMmhkLis4IoaWZsDteazCKLzL11KXwNjUzEOXEcUFSTh+cQs4iKxuAsZWPF9y0ks6Cd9mvvUwoAG3qvsLhCzqQMw7CeavKtw+GMG2v7w3ypzhoIBaB+9rjUagyidkkfFFxe3t/Gl/VnbDp9y4gfEqxCGMQeL+lIG9Msemb3T9GT3ibwAOmkYQ0HTWGyUsXAhpceo0U3Gb1GKTmqsC1gPFI+L0H/mv5mN4SVjF0myi6wgHJm1XKKa8//86O0GPJ81SiPgxes2WZYUEf80rjzdGPVMnkclKvtyTrlxsqsYvLFJ3c8dJbk9LAdvnDpNaJpRTZ6U9dqC6YSkIGJHn0jhIO7WXv5RZjS5QApJqDsl3vFQDoUU2ZK54wFV90CjPUfk4HedYpCJ91FbV0g5Gd6kRGDRp1jGOZfYYk4/Ie7LZ27RbNIKYaJTKzBZR8sPyyanP6/iY8vVLMv6q8GOLv10OLUdImA=
 jobs:
   include:
-    - stage: "Build & Test"
+    - stage: "Test"
+      name: "Lint & Unit Tests & Integration tests"
       script: npm run lint && npm run build && npm run test
     - stage: "End 2 end tests"
       script: npm run build && npm run e2e
