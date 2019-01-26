@@ -1,8 +1,7 @@
 language: node_js
+install: npm install
 node_js:
 - node
-- '6'
-install: npm install
 before_install:
 - if [[ `npm -v` = 3* ]]; then npm i -g npm@5; fi
 sudo: 'false'
@@ -18,5 +17,8 @@ jobs:
     - stage: "Test"
       name: "Lint & Unit Tests & Integration tests"
       script: npm run lint && npm run build && npm run test
+      node_js:
+      - node
+      - '6'
     - stage: "End 2 end tests"
       script: npm run build && npm run e2e
