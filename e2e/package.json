@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "devDependencies": {
+    "@types/mz": "0.0.32",
     "@types/node": "^10.12.18",
     "@types/semver": "^5.5.0",
     "babel-cli": "~6.26.0",

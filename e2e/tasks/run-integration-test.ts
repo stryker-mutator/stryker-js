@@ -1,13 +1,15 @@
-import { promises, statSync } from 'fs';
+import * as fs from 'mz/fs';
 import * as path from 'path';
 import * as execa from 'execa';
 import * as semver from 'semver';
+import * as os from 'os';
 import { from, Observable, Observer, zip } from 'rxjs';
 import { tap, toArray, flatMap } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
 class TicketProvider {
+  constructor(private concurrency: number) { }
   private observer: Observer<null>;
   public observable = new Observable<null>(observer => {
     this.observer = observer;
@@ -15,7 +17,6 @@ class TicketProvider {
       this.next();
     }
   });
-  constructor(private concurrency: number) { }
   public next() {
     this.observer.next(null);
   }
@@ -25,10 +26,10 @@ class TicketProvider {
 }
 
 async function runIntegrationTests() {
-  const dirs = await promises.readdir(testRootDir)
-    .then(dirs => dirs.filter(file => statSync(path.join(testRootDir, file)).isDirectory()));
+  const dirs = await fs.readdir(testRootDir)
+    .then(dirs => dirs.filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory()));
 
-  const ticket$ = new TicketProvider(4);
+  const ticket$ = new TicketProvider(os.cpus().length / 2);
   let testsRan = 0;
   const test$ = zip(from(dirs), ticket$.observable).pipe(
     flatMap(([dir]) => runTest(dir)),
