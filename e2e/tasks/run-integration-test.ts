@@ -29,7 +29,7 @@ async function runIntegrationTests() {
   const dirs = await fs.readdir(testRootDir)
     .then(dirs => dirs.filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory()));
 
-  const ticket$ = new TicketProvider(os.cpus().length / 2);
+  const ticket$ = new TicketProvider(os.cpus().length);
   let testsRan = 0;
   const test$ = zip(from(dirs), ticket$.observable).pipe(
     flatMap(([dir]) => runTest(dir)),
