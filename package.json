@@ -55,7 +55,7 @@
     "build": "tsc -b && lerna run build",
     "test": "npm run mocha",
     "mocha": "lerna run test --stream",
-    "e2e": "cd e2e && npm i && npm t && cd ..",
+    "e2e": "cd e2e && npm ci && npm t && cd ..",
     "start": "tsc -b -w",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
   },

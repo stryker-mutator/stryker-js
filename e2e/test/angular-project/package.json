@@ -2,7 +2,6 @@
   "name": "angular-project",
   "version": "0.0.0",
   "scripts": {
-    "postinstall": "install-local",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",

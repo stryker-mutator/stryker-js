@@ -3,12 +3,15 @@
     "compilerOptions": {
         "declaration": false,
         "importHelpers": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
         "rootDir": ".",
         "types": [
-          "mocha"
+          "mocha",
+          "node"
         ]
     },
     "include": [
-        "*.ts"
+        "*.ts", "tasks/run-integration-test.ts", "tasks/bootstrap-local-dependencies.ts"
     ]
 }
