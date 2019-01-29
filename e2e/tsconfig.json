@@ -10,6 +10,6 @@
         ]
     },
     "include": [
-        "*.ts", "tasks/run-integration-test.ts", "tasks/bootstrap-local-dependencies.ts"
+        "*.ts", "tasks/run-e2e-tests.ts", "tasks/bootstrap-local-dependencies.ts"
     ]
 }

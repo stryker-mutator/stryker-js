@@ -33,7 +33,7 @@
   "scripts": {
     "postinstall": "lerna bootstrap && npm run bootstrap-local-dependencies && link-parent-bin -c test --link-local-dependencies true",
     "bootstrap-local-dependencies": "ts-node tasks/bootstrap-local-dependencies",
-    "test": "ts-node tasks/run-integration-test.ts"
+    "test": "ts-node tasks/run-e2e-tests.ts"
   },
   "localDependencies": {
     "grunt-stryker": "../packages/grunt-stryker",
