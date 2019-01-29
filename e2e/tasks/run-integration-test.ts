@@ -3,41 +3,23 @@ import * as path from 'path';
 import * as execa from 'execa';
 import * as semver from 'semver';
 import * as os from 'os';
-import { from, Observable, Observer, zip } from 'rxjs';
-import { tap, toArray, flatMap } from 'rxjs/operators';
+import { from, defer } from 'rxjs';
+import { tap, toArray, mergeAll } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
-class TicketProvider {
-  constructor(private concurrency: number) { }
-  private observer: Observer<null>;
-  public observable = new Observable<null>(observer => {
-    this.observer = observer;
-    for (let i = 0; i < this.concurrency; i++) {
-      this.next();
-    }
-  });
-  public next() {
-    this.observer.next(null);
-  }
-  public complete() {
-    this.observer.complete();
-  }
-}
-
 async function runIntegrationTests() {
-  const dirs = await fs.readdir(testRootDir)
+  const testDirs = await fs.readdir(testRootDir)
     .then(dirs => dirs.filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory()));
+  const test$ = from(testDirs.map(dir => defer(() => runTest(dir))));
 
-  const ticket$ = new TicketProvider(os.cpus().length);
   let testsRan = 0;
-  const test$ = zip(from(dirs), ticket$.observable).pipe(
-    flatMap(([dir]) => runTest(dir)),
-    tap(testDir => console.log(`\u2714 ${testDir} tested (${++testsRan}/${dirs.length})`)),
-    tap(() => ticket$.next()),
+  const runTestsTask = test$.pipe(
+    mergeAll(os.cpus().length),
+    tap(testDir => console.log(`\u2714 ${testDir} tested (${++testsRan}/${testDirs.length})`)),
     toArray()
-  );
-  return test$.toPromise();
+  ).toPromise();
+  await runTestsTask;
 }
 
 runIntegrationTests()
