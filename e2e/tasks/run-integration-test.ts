@@ -4,29 +4,33 @@ import * as execa from 'execa';
 import * as semver from 'semver';
 import * as os from 'os';
 import { from, defer } from 'rxjs';
-import { tap, toArray, mergeAll } from 'rxjs/operators';
+import { tap, mergeAll, map, filter } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
-async function runIntegrationTests() {
-  const testDirs = await fs.readdir(testRootDir)
-    .then(dirs => dirs.filter(file => fs.statSync(path.join(testRootDir, file)).isDirectory()));
-  const test$ = from(testDirs.map(dir => defer(() => runTest(dir))));
+function runIntegrationTests() {
+  const testDirs = fs.readdirSync(testRootDir);
+
+  // Create test$, an observable of test runs
+  const test$ = from(testDirs).pipe(
+    filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()),
+    map(testDir => defer(() => runTest(testDir)))
+  );
 
   let testsRan = 0;
-  const runTestsTask = test$.pipe(
-    mergeAll(os.cpus().length),
+  return test$.pipe(
+    mergeAll(os.cpus().length), // use mergeAll to limit concurrent test runs
     tap(testDir => console.log(`\u2714 ${testDir} tested (${++testsRan}/${testDirs.length})`)),
-    toArray()
-  ).toPromise();
-  await runTestsTask;
+  );
 }
 
 runIntegrationTests()
-  .then(() => console.log('Done'))
-  .catch(err => {
-    console.error(err);
-    process.exit(1);
+  .subscribe({
+    complete: () => console.log('Done'),
+    error: err => {
+      console.error(err);
+      process.exit(1);
+    },
   });
 
 function execNpm(command: string, testDir: string) {
