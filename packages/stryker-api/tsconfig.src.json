@@ -15,9 +15,5 @@
     "transpile.ts",
     "plugin.ts"
   ],
-  "references": [
-    {
-      "path": "../typed-inject/tsconfig.src.json"
-    }
-  ]
+  "references": []
 }
