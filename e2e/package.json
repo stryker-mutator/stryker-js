@@ -50,7 +50,6 @@
     "@stryker-mutator/util": "../packages/stryker-util",
     "stryker-typescript": "../packages/stryker-typescript",
     "stryker-vue-mutator": "../packages/stryker-vue-mutator",
-    "stryker-webpack-transpiler": "../packages/stryker-webpack-transpiler",
-    "typed-inject": "../packages/typed-inject"
+    "stryker-webpack-transpiler": "../packages/stryker-webpack-transpiler"
   }
 }

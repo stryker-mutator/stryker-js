@@ -61,9 +61,6 @@
 			"path": "e2e"
 		},
 		{
-			"path": "packages/typed-inject"
-		},
-		{
 			"path": ".",
 			"name": "stryker-parent"
 		}

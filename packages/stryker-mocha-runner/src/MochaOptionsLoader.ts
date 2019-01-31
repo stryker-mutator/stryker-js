@@ -11,22 +11,36 @@ export default class MochaOptionsLoader {
 
   public load(config: StrykerOptions): MochaRunnerOptions {
     const mochaOptions = Object.assign({}, config[mochaOptionsKey]) as MochaRunnerOptions;
-    let optsFileName = path.resolve(this.DEFAULT_MOCHA_OPTS);
+    return Object.assign(this.loadMochaOptsFile(mochaOptions.opts), mochaOptions);
+  }
 
-    if (mochaOptions.opts) {
-      optsFileName = path.resolve(mochaOptions.opts);
+  private loadMochaOptsFile(opts: false | string | undefined): MochaRunnerOptions {
+    switch (typeof opts) {
+      case 'boolean':
+        this.log.debug('Not reading additional mochaOpts from a file');
+        return {};
+      case 'undefined':
+        const defaultMochaOptsFileName = path.resolve(this.DEFAULT_MOCHA_OPTS);
+        if (fs.existsSync(defaultMochaOptsFileName)) {
+          return this.readMochaOptsFile(defaultMochaOptsFileName);
+        } else {
+          this.log.debug('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', mochaOptionsKey);
+          return {};
+        }
+      case 'string':
+        const optsFileName = path.resolve(opts);
+        if (fs.existsSync(optsFileName)) {
+          return this.readMochaOptsFile(optsFileName);
+        } else {
+          this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
+          return {};
+        }
     }
+  }
 
-    if (fs.existsSync(optsFileName)) {
-      this.log.info(`Loading mochaOpts from "${optsFileName}"`);
-      const options = fs.readFileSync(optsFileName, 'utf8');
-      return Object.assign(this.parseOptsFile(options), mochaOptions);
-    } else if (mochaOptions.opts) {
-      this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
-    } else {
-      this.log.debug('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', mochaOptionsKey);
-    }
-    return mochaOptions;
+  private readMochaOptsFile(optsFileName: string) {
+    this.log.info(`Loading mochaOpts from "${optsFileName}"`);
+    return this.parseOptsFile(fs.readFileSync(optsFileName, 'utf8'));
   }
 
   private parseOptsFile(optsFileContent: string): MochaRunnerOptions {
