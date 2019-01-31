@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+  min-height: 100vh;
+  padding: 0;
+  background-color: white;
+  box-shadow: 0 0 30px -3px rgba(0,0,0,0.75);
+  max-width: 1200px;
+
+  header {
+    flex-grow: 0;
+    padding: 0;
+    margin: 0;
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+  main {
+    flex-grow: 1;
+    padding: 50px;
+  }
+}
