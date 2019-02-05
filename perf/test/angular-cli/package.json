@@ -58,6 +58,7 @@
     "stryker-api": "../../../packages/stryker-api",
     "stryker-html-reporter": "../../../packages/stryker-html-reporter",
     "stryker-karma-runner": "../../../packages/stryker-karma-runner",
-    "stryker-typescript": "../../../packages/stryker-typescript"
+    "stryker-typescript": "../../../packages/stryker-typescript",
+    "@stryker-mutator/util": "../../../packages/stryker-util"
   }
 }
