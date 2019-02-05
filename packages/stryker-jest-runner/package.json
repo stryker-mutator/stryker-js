@@ -31,12 +31,14 @@
 	},
 	"homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-jest-runner#readme",
 	"devDependencies": {
+    "@stryker-mutator/test-helpers": "0.0.0",
 		"@types/semver": "~5.5.0",
 		"jest": "~23.6.0",
 		"react": "~16.7.0",
 		"react-dom": "~16.7.0",
 		"react-scripts": "~2.1.0",
-		"react-scripts-ts": "~3.1.0"
+		"react-scripts-ts": "~3.1.0",
+    "stryker-api": "^0.23.0"
 	},
 	"peerDependencies": {
 		"jest": ">= 22.0.0",
