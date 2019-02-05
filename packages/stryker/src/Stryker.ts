@@ -63,10 +63,12 @@ export default class Stryker {
     this.injector = configEditorInjector
       .provideValue(commonTokens.config, this.config)
       .provideValue(commonTokens.options, this.config as StrykerOptions);
+    this.testFramework = this.injector
+      .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
+      .injectClass(TestFrameworkOrchestrator).determineTestFramework();
     this.reporter = this.injector
       .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
       .injectClass(BroadcastReporter);
-    this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
     new ConfigValidator(this.config, this.testFramework).validate();
   }
 

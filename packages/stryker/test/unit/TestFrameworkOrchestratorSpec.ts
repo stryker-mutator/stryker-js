@@ -1,89 +1,106 @@
 import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import { expect } from 'chai';
-import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
-import { TestFrameworkFactory } from 'stryker-api/test_framework';
-import { StrykerOptions } from 'stryker-api/core';
-import currentLogMock from '../helpers/logMock';
-import { Mock, strykerOptions } from '../helpers/producers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { PluginKind } from 'stryker-api/plugin';
+import * as coreTokens from '../../src/di/coreTokens';
+import { PluginCreator } from '../../src/di/PluginCreator';
 
 describe('TestFrameworkOrchestrator', () => {
 
-  const testFramework = 'the testFramework, \'duh';
-  let log: Mock<Logger>;
-  let sandbox: sinon.SinonSandbox;
   let sut: TestFrameworkOrchestrator;
-  let actualTestFramework: any;
-  let options: StrykerOptions;
+  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind.TestFramework>>;
 
-  const actBeforeEach = () => {
-    beforeEach(() => {
-      log = currentLogMock();
-      sut = new TestFrameworkOrchestrator(options);
-      actualTestFramework = sut.determineTestFramework();
-    });
-  };
+  beforeEach(() => {
+    pluginCreatorMock = sinon.createStubInstance(PluginCreator);
+  });
 
   const itShouldNotRetrieveATestFramework = () => {
     it('should not retrieve a testFramework', () => {
+      const actualTestFramework = sut.determineTestFramework();
       expect(actualTestFramework).to.be.eq(null);
-      expect(TestFrameworkFactory.instance().create).not.to.have.been.called;
+      expect(testInjector.pluginResolver.resolve).not.called;
     });
   };
 
   const itShouldLogCoverageAnalysisOffOnDebug = () => {
-    it('should log on debug that coverageAnalysis was "off"', () =>
-      expect(log.debug).to.have.been.calledWith('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', 'off'));
+    it('should log on debug that coverageAnalysis was "off"', () => {
+      sut.determineTestFramework();
+      expect(testInjector.logger.debug).calledWith('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', 'off');
+    });
   };
 
   const itShouldNotLogAWarningAboutTheMissingSetting = () => {
-    it('should not log a warning for the missing setting', () => expect(log.warn).not.to.have.been.called);
+    it('should not log a warning for the missing setting', () => {
+      sut.determineTestFramework();
+      expect(testInjector.logger.warn).not.called;
+    });
   };
 
   beforeEach(() => {
-    options = strykerOptions({ coverageAnalysis: 'perTest' });
-    sandbox = sinon.createSandbox();
-    sinon.stub(TestFrameworkFactory.instance(), 'create').returns(testFramework);
-    sinon.stub(TestFrameworkFactory.instance(), 'knownNames').returns(['awesomeFramework', 'unusedTestFramework']);
+    testInjector.options.coverageAnalysis = 'perTest';
   });
 
-  describe('when options contains a testFramework "awesomeFramework"', () => {
+  describe('when options contains a testFramework', () => {
 
     beforeEach(() => {
-      options.testFramework = 'awesomeFramework';
+      testInjector.options.testFramework = 'fooFramework';
     });
 
     describe('and coverageAnalysis is explicitly "off"', () => {
       beforeEach(() => {
-        options.coverageAnalysis = 'off';
+        testInjector.options.coverageAnalysis = 'off';
+        sut = createSut();
       });
-
-      actBeforeEach();
 
       itShouldNotRetrieveATestFramework();
       itShouldLogCoverageAnalysisOffOnDebug();
+    });
+
+    it('should retrieve the test framework if coverageAnalysis is not "off"', () => {
+      const expectedTestFramework = factory.testFramework();
+      pluginCreatorMock.create.returns(expectedTestFramework);
+      testInjector.options.coverageAnalysis = 'perTest';
+      testInjector.options.testFramework = 'foo';
+      sut = createSut();
+      const actualTestFramework = sut.determineTestFramework();
+      expect(actualTestFramework).eq(expectedTestFramework);
+      expect(pluginCreatorMock.create).calledWith('foo');
     });
 
   });
 
   describe('when options does not contain a testFramework', () => {
     describe('and coverageAnalysis is not "off"', () => {
-      actBeforeEach();
 
-      it('should log a warning for the missing setting', () => expect(log.warn).to.have.been.calledWith('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.'));
+      beforeEach(() => {
+        sut = createSut();
+      });
+
+      it('should log a warning for the missing setting', () => {
+        sut = createSut();
+        sut.determineTestFramework();
+        expect(testInjector.logger.warn)
+          .calledWith('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.');
+      });
 
       itShouldNotRetrieveATestFramework();
     });
     describe('and coverageAnalysis is `off`', () => {
 
-      beforeEach(() => options.coverageAnalysis = 'off');
-      actBeforeEach();
+      beforeEach(() => {
+        testInjector.options.coverageAnalysis = 'off';
+        sut = createSut();
+      });
       itShouldNotLogAWarningAboutTheMissingSetting();
       itShouldNotRetrieveATestFramework();
       itShouldLogCoverageAnalysisOffOnDebug();
     });
   });
-  afterEach(() => {
-    sandbox.restore();
-  });
+
+  function createSut() {
+    return testInjector.injector
+      .provideValue(coreTokens.pluginCreatorTestFramework, pluginCreatorMock as unknown as PluginCreator<PluginKind.TestFramework>)
+      .injectClass(TestFrameworkOrchestrator);
+  }
 });
