@@ -53,7 +53,7 @@ export default class MutantTranspiler {
     });
   }
 
-  public transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
+  public transpileMutants(allMutants: ReadonlyArray<TestableMutant>): Observable<TranspiledMutant> {
     const mutants = allMutants.slice();
     return new Observable<TranspiledMutant>(observer => {
       const nextMutant = () => {

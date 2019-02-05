@@ -26,7 +26,7 @@ export default class MutationTestExecutor {
     private readonly loggingContext: LoggingClientContext) {
   }
 
-  public async run(allMutants: TestableMutant[]): Promise<MutantResult[]> {
+  public async run(allMutants: ReadonlyArray<TestableMutant>): Promise<MutantResult[]> {
     const mutantTranspiler = new MutantTranspiler(this.config, this.loggingContext);
     const transpiledFiles = await mutantTranspiler.initialize(this.inputFiles);
     const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles, this.overheadTimeMS, this.loggingContext);

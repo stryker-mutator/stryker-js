@@ -9,8 +9,8 @@ import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
 import InputFileResolver from '../../src/input/InputFileResolver';
 import * as typedInject from 'typed-inject';
-import MutatorFacade, * as mutatorFacade from '../../src/MutatorFacade';
-import MutantRunResultMatcher, * as mutantRunResultMatcher from '../../src/MutantTestMatcher';
+import { MutatorFacade } from '../../src/mutants/MutatorFacade';
+import { MutantTestMatcher } from '../../src/mutants/MutantTestMatcher';
 import InitialTestExecutor from '../../src/process/InitialTestExecutor';
 import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/MutationTestExecutor';
 import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
@@ -38,7 +38,7 @@ describe(Stryker.name, () => {
   let inputFileResolverMock: Mock<InputFileResolver>;
   let initialTestExecutorMock: Mock<InitialTestExecutor>;
   let mutationTestExecutorMock: Mock<MutationTestExecutor>;
-  let mutantRunResultMatcherMock: Mock<MutantRunResultMatcher>;
+  let mutantTestMatcherMock: Mock<MutantTestMatcher>;
   let mutatorMock: Mock<MutatorFacade>;
   let strykerConfig: Config;
   let reporterMock: Mock<BroadcastReporter>;
@@ -54,7 +54,7 @@ describe(Stryker.name, () => {
     strykerConfig = factory.config();
     reporterMock = mock(BroadcastReporter);
     injectorMock = factory.injector();
-    mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
+    mutantTestMatcherMock = mock(MutantTestMatcher);
     mutatorMock = mock(MutatorFacade);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
@@ -70,15 +70,15 @@ describe(Stryker.name, () => {
     scoreResultCalculator = new ScoreResultCalculator();
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
     sinon.stub(mutationTestExecutor, 'default').returns(mutationTestExecutorMock);
-    sinon.stub(mutatorFacade, 'default').returns(mutatorMock);
-    sinon.stub(mutantRunResultMatcher, 'default').returns(mutantRunResultMatcherMock);
     sinon.stub(TempFolder, 'instance').returns(tempFolderMock);
     sinon.stub(scoreResultCalculator, 'determineExitCode').returns(sinon.stub());
     sinon.stub(scoreResultCalculatorModule, 'default').returns(scoreResultCalculator);
     injectorMock.injectClass
       .withArgs(BroadcastReporter).returns(reporterMock)
       .withArgs(InitialTestExecutor).returns(initialTestExecutorMock)
-      .withArgs(InputFileResolver).returns(inputFileResolverMock);
+      .withArgs(InputFileResolver).returns(inputFileResolverMock)
+      .withArgs(MutatorFacade).returns(mutatorMock)
+      .withArgs(MutantTestMatcher).returns(mutantTestMatcherMock);
     injectorMock.resolve
       .withArgs(commonTokens.config).returns(strykerConfig)
       .withArgs(di.coreTokens.timer).returns(timerMock)
@@ -112,7 +112,7 @@ describe(Stryker.name, () => {
         testableMutant('file3', 'bazMutator')
       ];
       mutantResults = [mutantResult()];
-      mutantRunResultMatcherMock.matchWithMutants.returns(mutants);
+      mutantTestMatcherMock.matchWithMutants.returns(mutants);
       mutatorMock.mutate.returns(mutants);
       mutationTestExecutorMock.run.resolves(mutantResults);
       inputFiles = new InputFileCollection([new File('input.ts', '')], ['input.ts']);
@@ -165,12 +165,6 @@ describe(Stryker.name, () => {
         expect(mutationTestExecutorMock.run).not.called;
       });
 
-      it('should log the absence of mutants if no mutants were generated', async () => {
-        while (mutants.pop()); // clear all mutants
-        await sut.runMutationTest();
-        expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test.');
-      });
-
       it('should log the remark to run again with logLevel trace if no tests were executed in initial test run', async () => {
         while (initialRunResult.tests.pop());
         await sut.runMutationTest();
@@ -220,8 +214,6 @@ describe(Stryker.name, () => {
       it('should create the mutator', async () => {
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(mutatorFacade.default).calledWithNew;
-        expect(mutatorFacade.default).calledWith(strykerConfig);
         expect(mutatorMock.mutate).calledWith(inputFiles.filesToMutate);
       });
 
@@ -231,12 +223,6 @@ describe(Stryker.name, () => {
         expect(mutationTestExecutor.default).calledWithNew;
         expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles.files, testFrameworkMock, reporterMock, undefined, LOGGING_CONTEXT);
         expect(mutationTestExecutorMock.run).calledWith(mutants);
-      });
-
-      it('should log the number of mutants generated', async () => {
-        sut = new Stryker({});
-        await sut.runMutationTest();
-        expect(currentLogMock().info).to.have.been.calledWith('3 Mutant(s) generated');
       });
 
       it('should clean the stryker temp folder', async () => {
@@ -271,40 +257,6 @@ describe(Stryker.name, () => {
         await sut.runMutationTest();
         expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, false);
         expect(injectorMock.provideClass).calledWith(di.coreTokens.transpiler, TranspilerFacade);
-      });
-    });
-
-    describe('with excluded mutants', () => {
-
-      it('should log the number of mutants generated and excluded', async () => {
-        strykerConfig.mutator = {
-          excludedMutations: ['fooMutator'],
-          name: 'es5'
-        };
-        sut = new Stryker({});
-        await sut.runMutationTest();
-        expect(currentLogMock().info).to.have.been.calledWith('2 Mutant(s) generated (1 Mutant(s) excluded)');
-      });
-
-      it('should log the absence of mutants and the excluded number when all mutants are excluded', async () => {
-        strykerConfig.mutator = {
-          excludedMutations: ['fooMutator', 'barMutator', 'bazMutator'],
-          name: 'es5'
-        };
-        sut = new Stryker({});
-        await sut.runMutationTest();
-        expect(currentLogMock().info).to.have.been.calledWith('It\'s a mutant-free world, nothing to test. (3 Mutant(s) excluded)');
-      });
-
-      it('should filter out the excluded mutations', async () => {
-        strykerConfig.mutator = {
-          excludedMutations: ['barMutator', 'bazMutator'],
-          name: 'es5'
-        };
-        sut = new Stryker({});
-        await sut.runMutationTest();
-        expect(mutantRunResultMatcher.default).calledWithNew;
-        expect(mutantRunResultMatcher.default).calledWith([mutants[0]]);
       });
     });
   });
