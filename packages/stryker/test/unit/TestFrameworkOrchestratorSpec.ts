@@ -100,7 +100,7 @@ describe('TestFrameworkOrchestrator', () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(coreTokens.pluginCreator, pluginCreatorMock as unknown as PluginCreator<PluginKind.TestFramework>)
+      .provideValue(coreTokens.pluginCreatorTestFramework, pluginCreatorMock as unknown as PluginCreator<PluginKind.TestFramework>)
       .injectClass(TestFrameworkOrchestrator);
   }
 });

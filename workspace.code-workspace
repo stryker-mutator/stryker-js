@@ -61,7 +61,7 @@
 			"path": "e2e"
 		},
 		{
-			"path": "packages/typed-inject"
+			"path": "perf"
 		},
 		{
 			"path": ".",

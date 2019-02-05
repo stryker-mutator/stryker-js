@@ -53,6 +53,15 @@ describe('MochaOptionsLoader', () => {
     expect(fs.readFileSync).calledWith(path.resolve('test/mocha.opts'));
   });
 
+  it('shouldn\'t load anything if mocha.opts = false', () => {
+    config.mochaOptions = {
+      opts: false
+    };
+    sut.load(config);
+    expect(fs.readFileSync).not.called;
+    expect(testInjector.logger.debug).calledWith('Not reading additional mochaOpts from a file');
+  });
+
   it('should not load default mocha.opts file if not found', () => {
     existsFileStub.returns(false);
     const options = sut.load(config);

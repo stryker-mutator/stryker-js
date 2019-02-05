@@ -167,5 +167,12 @@ describe('MutationTestExecutor', () => {
       expect(logMock.debug).calledWith('A runtime error occurred: %s during execution of mutant: %s',
         ['foo', 'bar'].toString(), transpiledMutants[5].mutant.toString());
     });
+
+    it('should log transpile error results on debug', async () => {
+      logMock.isDebugEnabled.returns(true);
+      await sut.run(mutants);
+      expect(logMock.debug).calledWith(`Transpile error occurred: "Error! Cannot negate a string (or something)" during transpiling of mutant ${
+        transpiledMutants[1].mutant.toString()}`);
+    });
   });
 });

@@ -10,7 +10,7 @@ export default class TestFrameworkOrchestrator {
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
-    coreTokens.pluginCreator);
+    coreTokens.pluginCreatorTestFramework);
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,

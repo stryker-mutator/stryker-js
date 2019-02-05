@@ -24,8 +24,8 @@ import { commonTokens, OptionsContext, PluginResolver, PluginKind } from 'stryke
 import * as coreTokens from './di/coreTokens';
 import { Injector, rootInjector, Scope } from 'typed-inject';
 import { loggerFactory } from './di/loggerFactory';
-import { ConfigEditorApplier } from './config/ConfigEditorApplier';
 import { PluginCreator } from './di/PluginCreator';
+import { ConfigEditorApplier } from './config/ConfigEditorApplier';
 
 export default class Stryker {
 
@@ -57,17 +57,17 @@ export default class Stryker {
       .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
       .provideValue(commonTokens.pluginResolver, pluginLoader as PluginResolver);
     configEditorInjector
-      .provideFactory(coreTokens.pluginCreator, PluginCreator.createFactory(PluginKind.ConfigEditor))
+      .provideFactory(coreTokens.pluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
       .injectClass(ConfigEditorApplier).edit(this.config);
     this.freezeConfig();
     this.injector = configEditorInjector
       .provideValue(commonTokens.config, this.config)
       .provideValue(commonTokens.options, this.config as StrykerOptions);
     this.testFramework = this.injector
-      .provideFactory(coreTokens.pluginCreator, PluginCreator.createFactory(PluginKind.TestFramework))
+      .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
       .injectClass(TestFrameworkOrchestrator).determineTestFramework();
     this.reporter = this.injector
-      .provideFactory(coreTokens.pluginCreator, PluginCreator.createFactory(PluginKind.Reporter))
+      .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
       .injectClass(BroadcastReporter);
     new ConfigValidator(this.config, this.testFramework).validate();
   }

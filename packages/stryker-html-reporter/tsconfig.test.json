@@ -3,7 +3,8 @@
   "compilerOptions": {
     "rootDir": ".",
     "types": [
-      "mocha"
+      "mocha",
+      "node"
     ]
   },
   "include": [
@@ -12,6 +13,9 @@
   "references": [
     {
       "path": "./tsconfig.src.json"
+    },
+    {
+      "path": "../stryker-test-helpers/tsconfig.src.json"
     }
   ]
 }

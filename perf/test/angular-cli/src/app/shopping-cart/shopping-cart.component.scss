@@ -1,0 +1,12 @@
+span.cart-count {
+  margin-left: 10px;
+  transition: all .5s;
+  animation-duration: 1s;
+  animation-iteration-count: 1;
+
+  @keyframes animateCart {
+    0%   {color: inherit; font-weight: inherit; font-size: 1rem;}
+    50%  {color: #28a745; font-weight: bold; font-size: 1.4rem;}
+    100% {color: inherit; font-weight: inherit; font-size: 1rem;}
+  }
+}
