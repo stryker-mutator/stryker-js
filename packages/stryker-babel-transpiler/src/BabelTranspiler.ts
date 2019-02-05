@@ -1,10 +1,11 @@
-import { Transpiler, TranspilerOptions } from 'stryker-api/transpile';
-import { File } from 'stryker-api/core';
+import { Transpiler } from 'stryker-api/transpile';
+import { File, StrykerOptions } from 'stryker-api/core';
 import * as babel from 'babel-core';
 import * as path from 'path';
 import BabelConfigReader from './BabelConfigReader';
 import { CONFIG_KEY_FILE } from './helpers/keys';
 import { toJSFileName } from './helpers/helpers';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 const KNOWN_EXTENSIONS = Object.freeze([
   '.es6',
@@ -19,11 +20,12 @@ class BabelTranspiler implements Transpiler {
   private readonly babelOptions: babel.TransformOptions;
   private readonly projectRoot: string;
 
-  public constructor(options: TranspilerOptions) {
-    this.babelOptions = new BabelConfigReader().readConfig(options.config);
+  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps);
+  public constructor(options: StrykerOptions, produceSourceMaps: boolean) {
+    this.babelOptions = new BabelConfigReader().readConfig(options);
     this.projectRoot = this.determineProjectRoot(options);
-    if (options.produceSourceMaps) {
-      throw new Error(`Invalid \`coverageAnalysis\` "${options.config.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`);
+    if (produceSourceMaps) {
+      throw new Error(`Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`);
     }
   }
 
@@ -61,8 +63,8 @@ class BabelTranspiler implements Transpiler {
     }
   }
 
-  private determineProjectRoot(options: TranspilerOptions): string {
-    const configFile = options.config[CONFIG_KEY_FILE];
+  private determineProjectRoot(options: StrykerOptions): string {
+    const configFile = options[CONFIG_KEY_FILE];
     if (configFile) {
       return path.dirname(configFile);
     } else {

@@ -1,21 +1,21 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
 import { getLogger } from 'stryker-api/logging';
+import { StrykerOptions } from 'stryker-api/core';
 
 export default class BabelConfigReader {
   private readonly log = getLogger(BabelConfigReader.name);
 
-  public readConfig(config: Config): babel.TransformOptions {
-    const babelConfig: babel.TransformOptions = config[CONFIG_KEY_OPTIONS] || this.getConfigFile(config) || {};
+  public readConfig(options: StrykerOptions): babel.TransformOptions {
+    const babelConfig: babel.TransformOptions = options[CONFIG_KEY_OPTIONS] || this.getConfigFile(options) || {};
     this.log.debug(`babel config is: ${JSON.stringify(babelConfig, null, 2)}`);
     return babelConfig;
   }
 
-  private getConfigFile(config: Config): babel.TransformOptions | null {
-    if (typeof config[CONFIG_KEY_FILE] === 'string') {
-      const babelrcPath = path.resolve(config[CONFIG_KEY_FILE]);
+  private getConfigFile(options: StrykerOptions): babel.TransformOptions | null {
+    if (typeof options[CONFIG_KEY_FILE] === 'string') {
+      const babelrcPath = path.resolve(options[CONFIG_KEY_FILE]);
       this.log.info(`Reading .babelrc file from path "${babelrcPath}"`);
       if (fs.existsSync(babelrcPath)) {
         try {

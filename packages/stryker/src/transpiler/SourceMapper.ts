@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { SourceMapConsumer, RawSourceMap } from 'source-map';
-import { File, Location, Position } from 'stryker-api/core';
-import { Config } from 'stryker-api/config';
+import { File, Location, Position, StrykerOptions } from 'stryker-api/core';
 import { base64Decode } from '../utils/objectUtils';
 import { getLogger } from 'stryker-api/logging';
 import { StrykerError } from '@stryker-mutator/util';
@@ -41,8 +40,8 @@ export default abstract class SourceMapper {
 
   public abstract transpiledFileNameFor(originalFileName: string): string;
 
-  public static create(transpiledFiles: ReadonlyArray<File>, config: Config): SourceMapper {
-    if (config.transpilers.length && config.coverageAnalysis !== 'off') {
+  public static create(transpiledFiles: ReadonlyArray<File>, options: StrykerOptions): SourceMapper {
+    if (options.transpilers.length && options.coverageAnalysis !== 'off') {
       return new TranspiledSourceMapper(transpiledFiles);
     } else {
       return new PassThroughSourceMapper();

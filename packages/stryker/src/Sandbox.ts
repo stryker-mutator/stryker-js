@@ -1,4 +1,4 @@
-import { Config } from 'stryker-api/config';
+import { StrykerOptions } from 'stryker-api/core';
 import * as path from 'path';
 import { getLogger } from 'stryker-api/logging';
 import * as mkdirp from 'mkdirp';
@@ -26,7 +26,7 @@ export default class Sandbox {
   private readonly files: File[];
   private readonly workingDirectory: string;
 
-  private constructor(private readonly options: Config, private readonly index: number, files: ReadonlyArray<File>, private readonly testFramework: TestFramework | null, private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
+  private constructor(private readonly options: StrykerOptions, private readonly index: number, files: ReadonlyArray<File>, private readonly testFramework: TestFramework | null, private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
     this.workingDirectory = TempFolder.instance().createRandomFolder('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
     this.files = files.slice(); // Create a copy
@@ -38,7 +38,7 @@ export default class Sandbox {
     return this.initializeTestRunner();
   }
 
-  public static create(options: Config, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
+  public static create(options: StrykerOptions, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
     : Promise<Sandbox> {
     const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext);
     return sandbox.initialize().then(() => sandbox);

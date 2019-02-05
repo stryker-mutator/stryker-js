@@ -5,12 +5,15 @@ import TranspiledMutant from '../../../src/TranspiledMutant';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
 import TranspileResult from '../../../src/transpiler/TranspileResult';
-import TranspilerFacade, * as transpilerFacade from '../../../src/transpiler/TranspilerFacade';
 import { Mock, config, file, mock, testableMutant } from '../../helpers/producers';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { sleep } from '../../helpers/testUtils';
 import * as sinon from 'sinon';
 import { errorToString } from '@stryker-mutator/util';
+import { Transpiler } from 'stryker-api/transpile';
+import { TranspilerFacade } from '../../../src/transpiler/TranspilerFacade';
+import { commonTokens } from 'stryker-api/plugin';
+import { ChildProcessTranspilerWorker } from '../../../src/transpiler/ChildProcessTranspilerWorker';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
@@ -19,16 +22,14 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
 
 describe('MutantTranspiler', () => {
   let sut: MutantTranspiler;
-  let transpilerFacadeMock: Mock<TranspilerFacade>;
   let transpiledFilesOne: File[];
   let transpiledFilesTwo: File[];
-  let childProcessProxyMock: { proxy: Mock<TranspilerFacade>, dispose: sinon.SinonStub };
+  let childProcessProxyMock: { proxy: Mock<Transpiler>, dispose: sinon.SinonStub };
 
   beforeEach(() => {
-    transpilerFacadeMock = mock(TranspilerFacade);
+    const transpilerFacadeMock = mock(TranspilerFacade);
     childProcessProxyMock = { proxy: transpilerFacadeMock, dispose: sinon.stub() };
     sinon.stub(ChildProcessProxy, 'create').returns(childProcessProxyMock);
-    sinon.stub(transpilerFacade, 'default').returns(transpilerFacadeMock);
     transpiledFilesOne = [new File('firstResult.js', 'first result')];
     transpiledFilesTwo = [new File('secondResult.js', 'second result')];
     transpilerFacadeMock.transpile
@@ -42,12 +43,12 @@ describe('MutantTranspiler', () => {
       const expectedConfig = config({ transpilers: ['transpiler'], plugins: ['plugin1'] });
       sut = new MutantTranspiler(expectedConfig, LOGGING_CONTEXT);
       expect(ChildProcessProxy.create).calledWith(
-        require.resolve('../../../src/transpiler/TranspilerFacade'),
+        require.resolve('../../../src/transpiler/ChildProcessTranspilerWorker'),
         LOGGING_CONTEXT,
-        ['plugin1'],
+        expectedConfig,
+        { [commonTokens.produceSourceMaps]: false },
         process.cwd(),
-        TranspilerFacade,
-        { config: expectedConfig, produceSourceMaps: false }
+        ChildProcessTranspilerWorker
       );
     });
 
@@ -57,7 +58,7 @@ describe('MutantTranspiler', () => {
         const expectedFiles = [file()];
         sut = new MutantTranspiler(config({ transpilers: ['transpiler'] }), LOGGING_CONTEXT);
         const actualResult = sut.initialize(expectedFiles);
-        expect(transpilerFacadeMock.transpile).calledWith(expectedFiles);
+        expect(childProcessProxyMock.proxy.transpile).calledWith(expectedFiles);
         return expect(actualResult).eventually.eq(transpiledFilesOne);
       });
     });
@@ -91,8 +92,8 @@ describe('MutantTranspiler', () => {
       it('should report rejected transpile attempts as errors', async () => {
         // Arrange
         const error = new Error('expected transpile error');
-        transpilerFacadeMock.transpile.reset();
-        transpilerFacadeMock.transpile.rejects(error);
+        childProcessProxyMock.proxy.transpile.reset();
+        childProcessProxyMock.proxy.transpile.rejects(error);
         const mutant = testableMutant();
 
         // Act
@@ -109,8 +110,8 @@ describe('MutantTranspiler', () => {
 
       it('should set set the changedAnyTranspiledFiles boolean to false if transpiled output did not change', async () => {
         // Arrange
-        transpilerFacadeMock.transpile.reset();
-        transpilerFacadeMock.transpile.resolves(transpiledFilesOne);
+        childProcessProxyMock.proxy.transpile.reset();
+        childProcessProxyMock.proxy.transpile.resolves(transpiledFilesOne);
         const mutants = [testableMutant()];
         const files = [file()];
         await sut.initialize(files);
@@ -131,8 +132,8 @@ describe('MutantTranspiler', () => {
         // Arrange
         let resolveFirst: (files: ReadonlyArray<File>) => void = () => { };
         let resolveSecond: (files: ReadonlyArray<File>) => void = () => { };
-        transpilerFacadeMock.transpile.resetBehavior();
-        transpilerFacadeMock.transpile
+        childProcessProxyMock.proxy.transpile.resetBehavior();
+        childProcessProxyMock.proxy.transpile
           .onFirstCall().returns(new Promise<ReadonlyArray<File>>(res => resolveFirst = res))
           .onSecondCall().returns(new Promise<ReadonlyArray<File>>(res => resolveSecond = res));
         const actualResults: TranspileResult[] = [];
@@ -142,12 +143,12 @@ describe('MutantTranspiler', () => {
           .subscribe(transpiledMutant => actualResults.push(transpiledMutant.transpileResult));
 
         // Assert: only first time called
-        expect(transpilerFacadeMock.transpile).calledOnce;
+        expect(childProcessProxyMock.proxy.transpile).calledOnce;
         expect(actualResults).lengthOf(0);
         resolveFirst(transpiledFilesOne);
         await nextTick();
         // Assert: second one is called, first one is received
-        expect(transpilerFacadeMock.transpile).calledTwice;
+        expect(childProcessProxyMock.proxy.transpile).calledTwice;
         expect(actualResults).lengthOf(1);
         resolveSecond(transpiledFilesTwo);
         // Assert: all results are in
@@ -166,7 +167,6 @@ describe('MutantTranspiler', () => {
 
     beforeEach(() => {
       sut = new MutantTranspiler(config(), LOGGING_CONTEXT);
-
     });
 
     it('should construct without a child process', () => {
@@ -176,17 +176,19 @@ describe('MutantTranspiler', () => {
     it('should transpile the files when initialized', async () => {
       const expectedFiles = [file()];
       const actualFiles = await sut.initialize(expectedFiles);
-      expect(transpilerFacadeMock.transpile).calledWith(expectedFiles);
-      expect(actualFiles).eq(transpiledFilesOne);
+      expect(actualFiles).eq(expectedFiles);
     });
 
     it('should transpile the mutated files when transpileMutants is called', async () => {
       const actualMutants = [testableMutant('file1.ts'), testableMutant('file2.ts')];
       const actualResult = await sut.transpileMutants(actualMutants).pipe(toArray()).toPromise();
       expect(actualResult).lengthOf(2);
-      expect(actualResult[0].transpileResult.outputFiles).eq(transpiledFilesOne);
+      expect(actualResult[0].transpileResult.outputFiles).lengthOf(1);
+      expect(actualResult[0].transpileResult.outputFiles[0].textContent).eq('const a = 4 - 5');
       expect(actualResult[0].mutant).eq(actualMutants[0]);
-      expect(actualResult[1].transpileResult.outputFiles).eq(transpiledFilesTwo);
+      expect(actualResult[1].transpileResult.outputFiles).lengthOf(2);
+      expect(actualResult[1].transpileResult.outputFiles[0].textContent).eq('const a = 4 + 5');
+      expect(actualResult[1].transpileResult.outputFiles[1].textContent).eq('const a = 4 - 5');
       expect(actualResult[1].mutant).eq(actualMutants[1]);
     });
 

@@ -14,6 +14,8 @@ import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { Mock, mock, createFileNotFoundError, createIsDirError } from '../../helpers/producers';
 import { normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
 import { fsAsPromised } from '@stryker-mutator/util';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { coreTokens } from '../../../src/di';
 
 const files = (...namesWithContent: [string, string][]): File[] =>
   namesWithContent.map((nameAndContent): File => new File(
@@ -25,13 +27,13 @@ describe('InputFileResolver', () => {
   let log: Mock<Logger>;
   let globStub: sinon.SinonStub;
   let sut: InputFileResolver;
-  let reporter: Mock<BroadcastReporter>;
+  let reporterMock: Mock<BroadcastReporter>;
   let childProcessExecStub: sinon.SinonStub;
   let readFileStub: sinon.SinonStub;
 
   beforeEach(() => {
     log = currentLogMock();
-    reporter = mock(BroadcastReporter);
+    reporterMock = mock(BroadcastReporter);
     globStub = sinon.stub(fileUtils, 'glob');
     readFileStub = sinon.stub(fsAsPromised, 'readFile')
       .withArgs(sinon.match.string).resolves(Buffer.from('')) // fallback
@@ -50,10 +52,11 @@ describe('InputFileResolver', () => {
     globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
     globStub.resolves([]); // default
     childProcessExecStub = sinon.stub(childProcessAsPromised, 'exec');
+    testInjector.options.mutate = [];
   });
 
   it('should use git to identify files if files array is missing', async () => {
-    sut = new InputFileResolver([], undefined, reporter);
+    sut = createSut();
     childProcessExecStub.resolves({
       stdout: Buffer.from(`
     file1.js
@@ -69,7 +72,7 @@ describe('InputFileResolver', () => {
   it('should reject if there is no `files` array and `git ls-files` command fails', () => {
     const expectedError = new Error('fatal: Not a git repository (or any of the parent directories): .git');
     childProcessExecStub.rejects(expectedError);
-    return expect(new InputFileResolver([], undefined, reporter).resolve())
+    return expect(createSut().resolve())
       .rejectedWith(`Cannot determine input files. Either specify a \`files\` array in your stryker configuration, or make sure "${process.cwd()
         }" is located inside a git repository. Inner error: ${
         errorToString(expectedError)
@@ -77,14 +80,15 @@ describe('InputFileResolver', () => {
   });
 
   it('should log a warning if no files were resolved', async () => {
-    sut = new InputFileResolver([], [], reporter);
+    testInjector.options.files = [];
+    sut = createSut();
     await sut.resolve();
     expect(log.warn).calledWith(sinon.match(`No files selected. Please make sure you either${os.EOL} (1) Run Stryker inside a Git repository`)
       .and(sinon.match('(2) Specify the \`files\` property in your Stryker configuration')));
   });
 
   it('should be able to handle deleted files reported by `git ls-files`', async () => {
-    sut = new InputFileResolver([], undefined, reporter);
+    sut = createSut();
     childProcessExecStub.resolves({
       stdout: Buffer.from(`
       deleted/file.js
@@ -97,7 +101,7 @@ describe('InputFileResolver', () => {
   });
 
   it('should be able to handle directories reported by `git ls-files` (submodules)', async () => {
-    sut = new InputFileResolver([], undefined, reporter);
+    sut = createSut();
     childProcessExecStub.resolves({
       stdout: Buffer.from(`
       submoduleDir
@@ -112,7 +116,9 @@ describe('InputFileResolver', () => {
   describe('with mutate file expressions', () => {
 
     it('should result in the expected mutate files', async () => {
-      sut = new InputFileResolver(['mute*'], ['file1', 'mute1', 'file2', 'mute2', 'file3'], reporter);
+      testInjector.options.mutate = ['mute*'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
       const result = await sut.resolve();
       expect(result.filesToMutate.map(_ => _.name)).to.deep.equal([
         path.resolve('/mute1.js'),
@@ -128,7 +134,9 @@ describe('InputFileResolver', () => {
     });
 
     it('should only report a mutate file when it is included in the resolved files', async () => {
-      sut = new InputFileResolver(['mute*'], ['file1', 'mute1', 'file2', /*'mute2'*/ 'file3'], reporter);
+      testInjector.options.mutate = ['mute*'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', /*'mute2'*/ 'file3'];
+      sut = createSut();
       const result = await sut.resolve();
       expect(result.filesToMutate.map(_ => _.name)).to.deep.equal([
         path.resolve('/mute1.js')
@@ -136,7 +144,9 @@ describe('InputFileResolver', () => {
     });
 
     it('should report OnAllSourceFilesRead', async () => {
-      sut = new InputFileResolver(['mute*'], ['file1', 'mute1', 'file2', 'mute2', 'file3'], reporter);
+      testInjector.options.mutate = ['mute*'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
       await sut.resolve();
       const expected: SourceFile[] = [
         { path: path.resolve('/file1.js'), content: 'file 1 content' },
@@ -145,11 +155,13 @@ describe('InputFileResolver', () => {
         { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
         { path: path.resolve('/file3.js'), content: 'file 3 content' }
       ];
-      expect(reporter.onAllSourceFilesRead).calledWith(expected);
+      expect(reporterMock.onAllSourceFilesRead).calledWith(expected);
     });
 
     it('should report OnSourceFileRead', async () => {
-      sut = new InputFileResolver(['mute*'], ['file1', 'mute1', 'file2', 'mute2', 'file3'], reporter);
+      testInjector.options.mutate = ['mute*'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
       await sut.resolve();
       const expected: SourceFile[] = [
         { path: path.resolve('/file1.js'), content: 'file 1 content' },
@@ -158,14 +170,15 @@ describe('InputFileResolver', () => {
         { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
         { path: path.resolve('/file3.js'), content: 'file 3 content' }
       ];
-      expected.forEach(sourceFile => expect(reporter.onSourceFileRead).calledWith(sourceFile));
+      expected.forEach(sourceFile => expect(reporterMock.onSourceFileRead).calledWith(sourceFile));
     });
   });
 
   describe('without mutate files', () => {
 
     beforeEach(() => {
-      sut = new InputFileResolver([], ['file1', 'mute1'], reporter);
+      testInjector.options.files = ['file1', 'mute1'];
+      sut = createSut();
     });
 
     it('should warn about dry-run', async () => {
@@ -176,7 +189,8 @@ describe('InputFileResolver', () => {
 
   describe('with file expressions that resolve in different order', () => {
     beforeEach(() => {
-      sut = new InputFileResolver([], ['fileWhichResolvesLast', 'fileWhichResolvesFirst'], reporter);
+      testInjector.options.files = ['fileWhichResolvesLast', 'fileWhichResolvesFirst'];
+      sut = createSut();
       globStub.withArgs('fileWhichResolvesLast').resolves(['file1']);
       globStub.withArgs('fileWhichResolvesFirst').resolves(['file2']);
     });
@@ -195,7 +209,8 @@ describe('InputFileResolver', () => {
       patternFile1 = { pattern: 'file1' };
       patternFile3 = { pattern: 'file3' };
 
-      sut = new InputFileResolver([], [patternFile1, 'file2', patternFile3], reporter);
+      testInjector.options.files = [patternFile1, 'file2', patternFile3];
+      sut = createSut();
     });
 
     it('it should log a warning', async () => {
@@ -226,14 +241,18 @@ describe('InputFileResolver', () => {
   describe('when a globbing expression does not result in a result', () => {
 
     it('should log a warning', async () => {
-      sut = new InputFileResolver(['file1'], ['file1', 'notExists'], reporter);
+      testInjector.options.files = ['file1', 'notExists'];
+      testInjector.options.mutate = ['file1'];
+      sut = createSut();
       await sut.resolve();
       expect(log.warn).to.have.been.calledWith('Globbing expression "notExists" did not result in any files.');
     });
 
     it('should not log a warning if the globbing expression was the default logging expression', async () => {
       const config = new Config();
-      sut = new InputFileResolver(config.mutate, config.files, reporter);
+      testInjector.options.files = config.files;
+      testInjector.options.mutate = config.mutate;
+      sut = createSut();
       childProcessExecStub.resolves({ stdout: Buffer.from(`src/foobar.js`) });
       globStub.withArgs(config.mutate[0]).returns(['src/foobar.js']);
       await sut.resolve();
@@ -242,7 +261,9 @@ describe('InputFileResolver', () => {
   });
 
   it('should reject when a globbing expression results in a reject', () => {
-    sut = new InputFileResolver(['file1'], ['fileError', 'fileError'], reporter);
+    testInjector.options.files = ['fileError', 'fileError'];
+    testInjector.options.mutate = ['file1'];
+    sut = createSut();
     const expectedError = new Error('ERROR: something went wrong');
     globStub.withArgs('fileError').rejects(expectedError);
     return expect(sut.resolve()).rejectedWith(expectedError);
@@ -251,17 +272,23 @@ describe('InputFileResolver', () => {
   describe('when excluding files with "!"', () => {
 
     it('should exclude the files that were previously included', async () => {
-      const result = await new InputFileResolver([], ['file2', 'file1', '!file2'], reporter).resolve();
+      testInjector.options.files = ['file2', 'file1', '!file2'];
+      const sut = createSut();
+      const result = await sut.resolve();
       assertFilesEqual(result.files, files(['/file1.js', 'file 1 content']));
     });
 
     it('should exclude the files that were previously with a wild card', async () => {
-      const result = await new InputFileResolver([], ['file*', '!file2'], reporter).resolve();
+      testInjector.options.files = ['file*', '!file2'];
+      const sut = createSut();
+      const result = await sut.resolve();
       assertFilesEqual(result.files, files(['/file1.js', 'file 1 content'], ['/file3.js', 'file 3 content']));
     });
 
     it('should not exclude files when the globbing expression results in an empty array', async () => {
-      const result = await new InputFileResolver([], ['file2', '!does/not/exist'], reporter).resolve();
+      testInjector.options.files = ['file2', '!does/not/exist'];
+      const sut = createSut();
+      const result = await sut.resolve();
       assertFilesEqual(result.files, files(['/file2.js', 'file 2 content']));
     });
   });
@@ -269,17 +296,20 @@ describe('InputFileResolver', () => {
   describe('when provided duplicate files', () => {
 
     it('should deduplicate files that occur more than once', async () => {
-      const result = await new InputFileResolver([], ['file2', 'file2'], reporter).resolve();
+      testInjector.options.files = ['file2', 'file2'];
+      const result = await createSut().resolve();
       assertFilesEqual(result.files, files(['/file2.js', 'file 2 content']));
     });
 
     it('should deduplicate files that previously occurred in a wildcard expression', async () => {
-      const result = await new InputFileResolver([], ['file*', 'file2'], reporter).resolve();
+      testInjector.options.files = ['file*', 'file2'];
+      const result = await createSut().resolve();
       assertFilesEqual(result.files, files(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content']));
     });
 
     it('should order files by expression order', async () => {
-      const result = await new InputFileResolver([], ['file2', 'file*'], reporter).resolve();
+      testInjector.options.files = ['file2', 'file*'];
+      const result = await createSut().resolve();
       assertFilesEqual(result.files, files(['/file2.js', 'file 2 content'], ['/file1.js', 'file 1 content'], ['/file3.js', 'file 3 content']));
     });
   });
@@ -290,5 +320,11 @@ describe('InputFileResolver', () => {
       expect(actual[index].name).eq(expected[index].name);
       expect(actual[index].textContent).eq(expected[index].textContent);
     }
+  }
+
+  function createSut() {
+    return testInjector.injector
+      .provideValue(coreTokens.reporter, reporterMock)
+      .injectClass(InputFileResolver);
   }
 });

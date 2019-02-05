@@ -1,7 +1,7 @@
 import { TestRunner, RunResult, RunOptions, RunnerOptions } from 'stryker-api/test_runner';
 import LoggingClientContext from '../logging/LoggingClientContext';
 import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
-import ChildProcessTestRunnerWorker from './ChildProcessTestRunnerWorker';
+import { ChildProcessTestRunnerWorker } from './ChildProcessTestRunnerWorker';
 import { timeout } from '../utils/objectUtils';
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
 
@@ -21,11 +21,12 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
     sandboxWorkingDirectory: string,
     loggingContext: LoggingClientContext) {
     this.worker = ChildProcessProxy.create(
-      require.resolve('./ChildProcessTestRunnerWorker.js'),
+      require.resolve(`./${ChildProcessTestRunnerWorker.name}`),
       loggingContext,
-      options.strykerOptions.plugins || [],
+      options.strykerOptions,
+      { realTestRunnerName, runnerOptions: options },
       sandboxWorkingDirectory,
-      ChildProcessTestRunnerWorker, realTestRunnerName, options);
+      ChildProcessTestRunnerWorker);
   }
 
   public init(): Promise<void> {

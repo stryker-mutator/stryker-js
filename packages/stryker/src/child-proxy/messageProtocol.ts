@@ -1,4 +1,5 @@
 import LoggingClientContext from '../logging/LoggingClientContext';
+import { StrykerOptions } from 'stryker-api/core';
 
 export enum WorkerMessageKind {
   'Init',
@@ -23,10 +24,11 @@ export const autoStart = 'childProcessAutoStart12937129s7d';
 export interface InitMessage {
   kind: WorkerMessageKind.Init;
   loggingContext: LoggingClientContext;
-  plugins: string[];
+  options: StrykerOptions;
   workingDirectory: string;
+  requireName: string;
   requirePath: string;
-  constructorArgs: any[];
+  additionalInjectableValues: unknown;
 }
 
 export interface DisposeMessage { kind: WorkerMessageKind.Dispose; }

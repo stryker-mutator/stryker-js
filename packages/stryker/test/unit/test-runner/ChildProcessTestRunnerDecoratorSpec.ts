@@ -6,7 +6,7 @@ import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProce
 import { Mock, mock, strykerOptions } from '../../helpers/producers';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
-import ChildProcessTestRunnerWorker from '../../../src/test-runner/ChildProcessTestRunnerWorker';
+import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/ChildProcessTestRunnerWorker';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import { Task } from '../../../src/utils/Task';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
@@ -44,10 +44,10 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     expect(childProcessProxyCreateStub).calledWith(
       require.resolve('../../../src/test-runner/ChildProcessTestRunnerWorker.js'),
       loggingContext,
-      ['foo-plugin', 'bar-plugin'],
+      runnerOptions.strykerOptions,
+      { [ChildProcessTestRunnerWorker.inject[0]]: 'realRunner', [ChildProcessTestRunnerWorker.inject[1]]: runnerOptions },
       'a working directory',
-      ChildProcessTestRunnerWorker,
-      'realRunner', runnerOptions
+      ChildProcessTestRunnerWorker
     );
   });
 

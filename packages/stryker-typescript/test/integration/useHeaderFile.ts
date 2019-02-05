@@ -24,7 +24,7 @@ describe('Use header file integration', () => {
   });
 
   it('should be able to transpile source code', async () => {
-    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: false });
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps:*/ false);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).to.eq(2);
   });

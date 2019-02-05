@@ -3,6 +3,7 @@ import MemoryFS, * as memoryFSModule from '../../../src/fs/MemoryFS';
 import InputFileSystem from '../../../src/fs/InputFileSystem';
 import { Mock, createMockInstance } from '../../helpers/producers';
 import { CachedInputFileSystem } from 'enhanced-resolve';
+import * as sinon from 'sinon';
 
 describe('InputFileSystem', () => {
   let sut: InputFileSystem;
@@ -12,7 +13,7 @@ describe('InputFileSystem', () => {
   beforeEach(() => {
     memoryFSMock = createMockInstance(MemoryFS);
     innerFSMock = createMockInstance(CachedInputFileSystem);
-    sandbox.stub(memoryFSModule, 'default').returns(memoryFSMock);
+    sinon.stub(memoryFSModule, 'default').returns(memoryFSMock);
     sut = new InputFileSystem(innerFSMock);
   });
 

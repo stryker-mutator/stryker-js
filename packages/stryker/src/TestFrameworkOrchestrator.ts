@@ -2,7 +2,7 @@ import { TestFramework } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
 import { tokens, commonTokens, PluginKind } from 'stryker-api/plugin';
 import { Logger } from 'stryker-api/logging';
-import * as coreTokens from './di/coreTokens';
+import { coreTokens } from './di';
 import { PluginCreator } from './di/PluginCreator';
 
 export default class TestFrameworkOrchestrator {

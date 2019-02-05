@@ -1,18 +1,25 @@
-import { File } from 'stryker-api/core';
-import { Transpiler, TranspilerOptions, TranspilerFactory } from 'stryker-api/transpile';
+import { File, StrykerOptions } from 'stryker-api/core';
+import { Transpiler } from 'stryker-api/transpile';
 import { StrykerError } from '@stryker-mutator/util';
+import { tokens, commonTokens, PluginKind } from 'stryker-api/plugin';
+import { coreTokens } from '../di';
+import { PluginCreator } from '../di/PluginCreator';
 
 class NamedTranspiler {
   constructor(public name: string, public transpiler: Transpiler) { }
 }
 
-export default class TranspilerFacade implements Transpiler {
+export class TranspilerFacade implements Transpiler {
 
   private readonly innerTranspilers: NamedTranspiler[];
 
-  constructor(options: TranspilerOptions) {
-    this.innerTranspilers = options.config.transpilers
-      .map(transpilerName => new NamedTranspiler(transpilerName, TranspilerFactory.instance().create(transpilerName, options)));
+  public static inject = tokens(
+    commonTokens.options,
+    coreTokens.pluginCreatorTranspiler);
+
+  constructor(options: StrykerOptions, pluginCreator: PluginCreator<PluginKind.Transpiler>) {
+    this.innerTranspilers = options.transpilers
+      .map(transpilerName => new NamedTranspiler(transpilerName, pluginCreator.create(transpilerName)));
   }
 
   public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {

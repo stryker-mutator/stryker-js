@@ -1,23 +1,20 @@
 import flatMap = require('lodash.flatmap');
 import * as ts from 'typescript';
-import { Config } from 'stryker-api/config';
-import { Transpiler, TranspilerOptions } from 'stryker-api/transpile';
-import { File } from 'stryker-api/core';
+import { Transpiler } from 'stryker-api/transpile';
+import { File, StrykerOptions } from 'stryker-api/core';
 import { getTSConfig, getProjectDirectory, guardTypescriptVersion, isHeaderFile } from './helpers/tsHelpers';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import TranspileFilter from './transpiler/TranspileFilter';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 export default class TypescriptTranspiler implements Transpiler {
   private languageService: TranspilingLanguageService;
-  private readonly config: Config;
-  private readonly produceSourceMaps: boolean;
   private readonly filter: TranspileFilter;
 
-  constructor(options: TranspilerOptions) {
+  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps);
+  constructor(private readonly options: StrykerOptions, private readonly produceSourceMaps: boolean) {
     guardTypescriptVersion();
-    this.config = options.config;
-    this.produceSourceMaps = options.produceSourceMaps;
-    this.filter = TranspileFilter.create(this.config);
+    this.filter = TranspileFilter.create(this.options);
   }
 
   public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
@@ -41,10 +38,10 @@ export default class TypescriptTranspiler implements Transpiler {
   }
 
   private createLanguageService(typescriptFiles: ReadonlyArray<File>) {
-    const tsConfig = getTSConfig(this.config);
+    const tsConfig = getTSConfig(this.options);
     const compilerOptions: ts.CompilerOptions = (tsConfig && tsConfig.options) || {};
     return new TranspilingLanguageService(
-      compilerOptions, typescriptFiles, getProjectDirectory(this.config), this.produceSourceMaps);
+      compilerOptions, typescriptFiles, getProjectDirectory(this.options), this.produceSourceMaps);
   }
 
   private transpileFiles(files: ReadonlyArray<File>) {

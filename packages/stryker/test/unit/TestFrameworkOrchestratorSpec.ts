@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PluginKind } from 'stryker-api/plugin';
-import * as coreTokens from '../../src/di/coreTokens';
+import { coreTokens } from '../../src/di';
 import { PluginCreator } from '../../src/di/PluginCreator';
 
 describe('TestFrameworkOrchestrator', () => {

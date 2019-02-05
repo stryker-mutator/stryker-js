@@ -2,7 +2,7 @@ import { Config, ConfigEditor } from 'stryker-api/config';
 import { tokens } from 'typed-inject';
 import { PluginResolver, PluginKind, commonTokens } from 'stryker-api/plugin';
 import { PluginCreator } from '../di/PluginCreator';
-import * as coreTokens from '../di/coreTokens';
+import { coreTokens } from '../di';
 
 /**
  * Class that applies all config editor plugins
