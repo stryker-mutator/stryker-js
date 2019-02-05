@@ -9,9 +9,6 @@
   "references": [
     {
       "path": "../stryker-api/tsconfig.src.json",
-    },
-    {
-      "path": "../stryker-mutator-specification/tsconfig.src.json"
     }
   ]
 }

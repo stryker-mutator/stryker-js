@@ -1,5 +1,5 @@
 import * as types from '@babel/types';
-import NodeMutator from './NodeMutator';
+import { NodeMutator } from './NodeMutator';
 
 export default class BinaryExpressionMutator implements NodeMutator {
   private readonly operators: { [targetedOperator: string]: string | string[] } = {

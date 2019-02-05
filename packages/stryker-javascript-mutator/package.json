@@ -39,21 +39,14 @@
     "@babel/parser": "~7.3.1",
     "@babel/traverse": "~7.2.2",
     "lodash": "~4.17.4",
+    "stryker-api": "^0.23.0",
     "tslib": "~1.9.3"
   },
   "devDependencies": {
     "@babel/types": "~7.3.0",
+    "@stryker-mutator/test-helpers": "^0.0.0",
     "@types/babel__generator": "^7.0.0",
     "@types/babel__traverse": "^7.0.0",
-    "stryker-api": "^0.23.0",
     "stryker-mutator-specification": "^0.7.0"
-  },
-  "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.24.0"
-  },
-  "initStrykerConfig": {
-    "mutate": [
-      "src/**/*.js"
-    ]
   }
 }

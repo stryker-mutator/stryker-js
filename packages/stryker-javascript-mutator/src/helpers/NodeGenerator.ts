@@ -1,6 +1,6 @@
 import * as types from '@babel/types';
 
-export default class NodeGenerator {
+export class NodeGenerator {
   public static createBooleanLiteralNode(originalNode: types.Node, value: boolean): types.BooleanLiteral {
     return {
       end: originalNode.end,
