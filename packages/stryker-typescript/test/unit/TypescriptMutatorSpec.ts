@@ -2,10 +2,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { expect } from 'chai';
 import * as ts from 'typescript';
-import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import TypescriptMutator from '../../src/TypescriptMutator';
+import { TypescriptMutator, MUTATORS_TOKEN, typescriptMutatorFactory } from '../../src/TypescriptMutator';
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
   public name = 'FunctionDeclarationForTest';
@@ -30,13 +30,17 @@ class SourceFileMutator extends NodeMutator<ts.SourceFile> {
   }
 }
 
+function createSut() {
+  return testInjector.injector
+    .provideValue(MUTATORS_TOKEN, [
+      new SourceFileMutator(),
+      new FunctionDeclarationMutator()
+    ])
+    .injectClass(TypescriptMutator);
+}
+
 describe('TypescriptMutator', () => {
   let sut: TypescriptMutator;
-  let config: Config;
-
-  beforeEach(() => {
-    config = new Config();
-  });
 
   it('should register all mutators by default', () => {
     // Arrange
@@ -44,11 +48,12 @@ describe('TypescriptMutator', () => {
       .readdirSync(path.resolve(__dirname, '..', '..', 'src', 'mutator'))
       .filter(mutatorFile => path.extname(mutatorFile) === '.ts'
         && !mutatorFile.endsWith('.d.ts')
-        && mutatorFile !== 'NodeMutator.ts')
+        && mutatorFile !== 'NodeMutator.ts'
+        && mutatorFile !== 'index.ts')
       .map(fileName => fileName.substr(0, fileName.length - 'Mutator.ts'.length));
 
     // Act
-    const actualMutators = new TypescriptMutator(config).mutators.map(m => m.name);
+    const actualMutators = testInjector.injector.injectFunction(typescriptMutatorFactory).mutators.map(m => m.name);
 
     // Assert
     expect(expectedMutatorNames).length.greaterThan(2); // sanity check
@@ -61,10 +66,7 @@ describe('TypescriptMutator', () => {
     let file2: File;
 
     beforeEach(() => {
-      sut = new TypescriptMutator(config, [
-        new FunctionDeclarationMutator(),
-        new SourceFileMutator()
-      ]);
+      sut = createSut();
       file1 = new File(
         'file1.ts',
         `function add(n...: number[]) {

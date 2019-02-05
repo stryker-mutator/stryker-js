@@ -1,6 +1,5 @@
 import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
 import { expect } from 'chai';
-import { Mock, mock } from '../helpers/producers';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { File } from 'stryker-api/core';
 import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
@@ -12,12 +11,12 @@ import { commonTokens } from 'stryker-api/plugin';
 
 describe('TypescriptTranspiler', () => {
 
-  let languageService: Mock<TranspilingLanguageService>;
+  let languageService: sinon.SinonStubbedInstance<TranspilingLanguageService>;
   let sut: TypescriptTranspiler;
-  let transpileFilterMock: Mock<TranspileFilter>;
+  let transpileFilterMock: sinon.SinonStubbedInstance<TranspileFilter>;
 
   beforeEach(() => {
-    languageService = mock(TranspilingLanguageService);
+    languageService = sinon.createStubInstance(TranspilingLanguageService);
     transpileFilterMock = {
       // Cannot use `mock<T>` as it is an abstract class
       isIncluded: sinon.stub()
