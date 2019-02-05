@@ -45,8 +45,7 @@
 		"stryker-api": ">=0.18.0 <0.24.0"
 	},
 	"dependencies": {
-		"semver": "~5.6.0",
-		"typed-inject": "0.0.0"
+		"semver": "~5.6.0"
 	},
 	"initStrykerConfig": {
 		"coverageAnalysis": "off"
