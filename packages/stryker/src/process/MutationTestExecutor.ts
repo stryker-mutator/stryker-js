@@ -12,9 +12,10 @@ import TranspiledMutant from '../TranspiledMutant';
 import StrictReporter from '../reporters/StrictReporter';
 import MutantTranspiler from '../transpiler/MutantTranspiler';
 import LoggingClientContext from '../logging/LoggingClientContext';
-import { getLogger, Logger } from 'stryker-api/logging';
+import { getLogger } from 'stryker-api/logging';
 
 export default class MutationTestExecutor {
+  private readonly log = getLogger(MutationTestExecutor.name);
 
   constructor(
     private readonly config: Config,
@@ -54,8 +55,8 @@ export default class MutationTestExecutor {
 
     return zip(transpiledMutants, merge(recycled, sandboxes), createTuple)
       .pipe(
-        map(earlyResult),
-        flatMap(runInSandbox),
+        map(this.earlyResult),
+        flatMap(this.runInSandbox),
         tap(recycle),
         map(({ result }) => result),
         tap(reportResult(this.reporter)),
@@ -64,48 +65,51 @@ export default class MutationTestExecutor {
         tap(reportAll(this.reporter)))
       .toPromise(Promise);
   }
-}
 
-function earlyResult([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]): [TranspiledMutant, Sandbox, MutantResult | null] {
-  if (transpiledMutant.transpileResult.error) {
-    const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
-    return [transpiledMutant, sandbox, result];
-  } else if (!transpiledMutant.mutant.selectedTests.length) {
-    const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
-    return [transpiledMutant, sandbox, result];
-  } else if (!transpiledMutant.changedAnyTranspiledFiles) {
-    const result = transpiledMutant.mutant.result(MutantStatus.Survived, []);
-    return [transpiledMutant, sandbox, result];
-  } else {
-    // No early result possible, need to run in the sandbox later
-    return [transpiledMutant, sandbox, null];
+  private readonly earlyResult = ([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]): [TranspiledMutant, Sandbox, MutantResult | null] => {
+    if (transpiledMutant.transpileResult.error) {
+      if (this.log.isDebugEnabled()) {
+        this.log.debug(`Transpile error occurred: "${transpiledMutant.transpileResult.error}" during transpiling of mutant ${transpiledMutant.mutant.toString()}`);
+      }
+      const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
+      return [transpiledMutant, sandbox, result];
+    } else if (!transpiledMutant.mutant.selectedTests.length) {
+      const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
+      return [transpiledMutant, sandbox, result];
+    } else if (!transpiledMutant.changedAnyTranspiledFiles) {
+      const result = transpiledMutant.mutant.result(MutantStatus.Survived, []);
+      return [transpiledMutant, sandbox, result];
+    } else {
+      // No early result possible, need to run in the sandbox later
+      return [transpiledMutant, sandbox, null];
+    }
   }
-}
 
-function runInSandbox([transpiledMutant, sandbox, earlyResult]: [TranspiledMutant, Sandbox, MutantResult | null]): Promise<{ sandbox: Sandbox, result: MutantResult }> {
-  const log = getLogger(MutationTestExecutor.name);
-  if (earlyResult) {
-    return Promise.resolve({ sandbox, result: earlyResult });
-  } else {
-    return sandbox.runMutant(transpiledMutant)
-      .then(runResult => ({ sandbox, result: collectMutantResult(transpiledMutant.mutant, runResult, log) }));
+  private readonly runInSandbox = ([transpiledMutant, sandbox, earlyResult]: [TranspiledMutant, Sandbox, MutantResult | null]):
+    Promise<{ sandbox: Sandbox, result: MutantResult }> => {
+    if (earlyResult) {
+      return Promise.resolve({ sandbox, result: earlyResult });
+    } else {
+      return sandbox.runMutant(transpiledMutant)
+        .then(runResult => ({ sandbox, result: this.collectMutantResult(transpiledMutant.mutant, runResult) }));
+    }
+  }
+
+  private readonly collectMutantResult = (mutant: TestableMutant, runResult: RunResult) => {
+    const status: MutantStatus = mutantState(runResult);
+    const testNames = runResult.tests
+      .filter(t => t.status !== TestStatus.Skipped)
+      .map(t => t.name);
+    if (this.log.isDebugEnabled() && status === MutantStatus.RuntimeError) {
+      const error = runResult.errorMessages ? runResult.errorMessages.toString() : '(undefined)';
+      this.log.debug('A runtime error occurred: %s during execution of mutant: %s', error, mutant.toString());
+    }
+    return mutant.result(status, testNames);
   }
 }
 
 function createTuple<T1, T2>(a: T1, b: T2): [T1, T2] {
   return [a, b];
-}
-
-function collectMutantResult(mutant: TestableMutant, runResult: RunResult, log: Logger) {
-  const status: MutantStatus = mutantState(runResult);
-  const testNames = runResult.tests
-    .filter(t => t.status !== TestStatus.Skipped)
-    .map(t => t.name);
-  if (log.isDebugEnabled() && status === MutantStatus.RuntimeError) {
-    const error = runResult.errorMessages ? runResult.errorMessages.toString() : '(undefined)';
-    log.debug('A runtime error occurred: %s during execution of mutant: %s', error, mutant.toString());
-  }
-  return mutant.result(status, testNames);
 }
 
 function mutantState(runResult: RunResult): MutantStatus {

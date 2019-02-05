@@ -22,7 +22,6 @@
     "typescript": "^3.2.2"
   },
   "localDependencies": {
-    "stryker-api": "../..",
-    "typed-inject": "../../../typed-inject"
+    "stryker-api": "../.."
   }
 }

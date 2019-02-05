@@ -13,9 +13,6 @@
     },
     {
       "path": "../stryker-util/tsconfig.src.json"
-    },
-    {
-      "path": "../typed-inject/tsconfig.src.json"
     }
   ]
 }

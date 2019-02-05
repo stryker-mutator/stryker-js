@@ -5,10 +5,11 @@
         "importHelpers": false,
         "rootDir": ".",
         "types": [
-          "mocha"
+          "mocha",
+          "node"
         ]
     },
     "include": [
-        "*.ts"
+        "*.ts", "tasks/run-e2e-tests.ts", "tasks/bootstrap-local-dependencies.ts"
     ]
 }
