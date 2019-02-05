@@ -49,7 +49,7 @@
     "singleQuote": true
   },
   "scripts": {
-    "postinstall": "lerna bootstrap && link-parent-bin",
+    "postinstall": "lerna bootstrap --no-ci && link-parent-bin",
     "lint-info": "tslint --out tslint.log --project tsconfig.lint.json",
     "lint-fix": "tslint --fix --project tsconfig.lint.json",
     "clean": "rimraf \"packages/stryker-api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage}\"",
