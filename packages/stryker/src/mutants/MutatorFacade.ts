@@ -1,11 +1,8 @@
 import { File, MutatorDescriptor, StrykerOptions } from 'stryker-api/core';
-import { Mutant, Mutator, MutatorFactory } from 'stryker-api/mutant';
-import ES5Mutator from '../mutators/ES5Mutator';
+import { Mutant, Mutator } from 'stryker-api/mutant';
 import { tokens, commonTokens, PluginKind } from 'stryker-api/plugin';
 import { PluginCreator, coreTokens } from '../di';
 import { Logger } from 'stryker-api/logging';
-
-MutatorFactory.instance().register('es5', ES5Mutator);
 
 export class MutatorFacade implements Mutator {
 

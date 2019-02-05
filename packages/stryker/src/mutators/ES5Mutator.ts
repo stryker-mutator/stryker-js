@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { Logger, getLogger } from 'stryker-api/logging';
-import { File, StrykerOptions } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
+import { File } from 'stryker-api/core';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import * as parserUtils from '../utils/parserUtils';
 import { copy } from '../utils/objectUtils';
@@ -13,22 +13,24 @@ import UnaryOperatorMutator from './UnaryOperatorMutator';
 import UpdateOperatorMutator from './UpdateOperatorMutator';
 import ArrayDeclaratorMutator from './ArrayDeclaratorMutator';
 import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
+import { tokens } from 'typed-inject';
+import { commonTokens } from 'stryker-api/plugin';
 
 export default class ES5Mutator implements Mutator {
 
-  private readonly log: Logger;
-
-  constructor(_?: StrykerOptions, private readonly mutators: NodeMutator[] = [
-    new BinaryOperatorMutator(),
-    new BlockStatementMutator(),
-    new LogicalOperatorMutator(),
-    new RemoveConditionalsMutator(),
-    new UnaryOperatorMutator(),
-    new UpdateOperatorMutator(),
-    new ArrayDeclaratorMutator(),
-    new BooleanSubstitutionMutator()
-  ]) {
-    this.log = getLogger(ES5Mutator.name);
+  public static inject = tokens(commonTokens.logger);
+  constructor(
+    private readonly log: Logger,
+    private readonly mutators: NodeMutator[] = [
+      new BinaryOperatorMutator(),
+      new BlockStatementMutator(),
+      new LogicalOperatorMutator(),
+      new RemoveConditionalsMutator(),
+      new UnaryOperatorMutator(),
+      new UpdateOperatorMutator(),
+      new ArrayDeclaratorMutator(),
+      new BooleanSubstitutionMutator()
+    ]) {
     this.log.warn(`DEPRECATED: The es5 mutator is deprecated and will be removed in the future. Please upgrade to the stryker-javascript-mutator (npm install --save-dev stryker-javascript-mutator) and set "mutator: 'javascript'" in your stryker.conf.js! If you have a plugins array in your stryker.conf.js, be sure to add 'stryker-javascript-mutator'.`);
   }
 

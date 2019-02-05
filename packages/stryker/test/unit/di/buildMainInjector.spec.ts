@@ -61,10 +61,10 @@ describe(buildMainInjector.name, () => {
       expect(actualOptions).eq(expectedConfig);
     });
 
-    it('should load reporter plugins', () => {
+    it('should load default plugins', () => {
       buildMainInjector({}).resolve(commonTokens.config);
       expect(di.PluginLoader).calledWithNew;
-      expect(di.PluginLoader).calledWith(['stryker-*', require.resolve('../../../src/reporters')]);
+      expect(di.PluginLoader).calledWith(['stryker-*', require.resolve('../../../src/reporters'), require.resolve('../../../src/mutators')]);
     });
 
     it('should load plugins', () => {
