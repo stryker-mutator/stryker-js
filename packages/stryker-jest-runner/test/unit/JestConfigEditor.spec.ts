@@ -8,7 +8,7 @@ import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from 
 import { Configuration } from 'jest';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-describe('JestConfigEditor', () => {
+describe.only('JestConfigEditor', () => {
   let sut: JestConfigEditor;
   let customConfigLoaderStub: ConfigLoaderStub;
   let reactScriptsJestConfigLoaderStub: ConfigLoaderStub;

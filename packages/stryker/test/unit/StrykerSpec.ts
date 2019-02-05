@@ -32,7 +32,7 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   port: 4200
 });
 
-describe.only(Stryker.name, () => {
+describe(Stryker.name, () => {
   let sut: Stryker;
   let testFrameworkMock: TestFramework;
   let inputFileResolverMock: Mock<InputFileResolver>;
@@ -55,6 +55,7 @@ describe.only(Stryker.name, () => {
     reporterMock = mock(BroadcastReporter);
     injectorMock = factory.injector();
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
+    configEditorApplierMock = mock(ConfigEditorApplier);
     mutatorMock = mock(MutatorFacade);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');

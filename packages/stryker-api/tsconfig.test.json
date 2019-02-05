@@ -3,7 +3,8 @@
   "compilerOptions": {
     "rootDir": ".",
     "types": [
-      "mocha"
+      "mocha",
+      "node"
     ]
   },
   "include": [
