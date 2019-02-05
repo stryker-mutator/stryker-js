@@ -3,6 +3,7 @@ import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as path from 'path';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('Integration test for Jest ConfigEditor', () => {
   let jestConfigEditor: JestConfigEditor;
@@ -15,7 +16,7 @@ describe('Integration test for Jest ConfigEditor', () => {
     getProjectRootStub = sinon.stub(process, 'cwd');
     getProjectRootStub.returns(projectRoot);
 
-    jestConfigEditor = new JestConfigEditor();
+    jestConfigEditor = testInjector.injector.injectClass(JestConfigEditor);
 
     config = new Config();
   });

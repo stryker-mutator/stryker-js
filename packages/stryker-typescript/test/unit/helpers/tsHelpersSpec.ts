@@ -3,12 +3,13 @@ import * as tsHelpers from '../../../src/helpers/tsHelpers';
 import * as semver from 'semver';
 import * as ts from 'typescript';
 import { File } from 'stryker-api/core';
+import sinon = require('sinon');
 
 describe('tsHelpers', () => {
   let satisfiesStub: sinon.SinonStub;
 
   beforeEach(() => {
-    satisfiesStub = sandbox.stub(semver, 'satisfies');
+    satisfiesStub = sinon.stub(semver, 'satisfies');
   });
 
   describe('guardTypescriptVersion', () => {

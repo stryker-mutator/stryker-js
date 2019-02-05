@@ -4,10 +4,6 @@ import { expect, assert } from 'chai';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const fakeRequire: any = {
-  require: () => { }
-};
-
 describe(`${CustomJestConfigLoader.name} integration`, () => {
   let sut: CustomJestConfigLoader;
   const projectRoot: string = '/path/to/project/root';
@@ -16,12 +12,12 @@ describe(`${CustomJestConfigLoader.name} integration`, () => {
 
   beforeEach(() => {
     fsStub.readFileSync = sinon.stub(fs, 'readFileSync');
-    requireStub = sinon.stub(fakeRequire, 'require');
+    requireStub = sinon.stub();
 
     fsStub.readFileSync.returns('{ "jest": { "exampleProperty": "examplePackageJsonValue" }}');
     requireStub.returns({ exampleProperty: 'exampleJestConfigValue' });
 
-    sut = new CustomJestConfigLoader(projectRoot, fs, fakeRequire.require);
+    sut = new CustomJestConfigLoader(projectRoot, requireStub);
   });
 
   it('should load the Jest configuration from the jest.config.js in the projectroot', () => {

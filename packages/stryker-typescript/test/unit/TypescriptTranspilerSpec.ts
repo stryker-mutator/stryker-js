@@ -7,6 +7,7 @@ import { File } from 'stryker-api/core';
 import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
 import { serialize } from 'surrial';
 import TranspileFilter from '../../src/transpiler/TranspileFilter';
+import sinon = require('sinon');
 
 describe('TypescriptTranspiler', () => {
 
@@ -20,10 +21,10 @@ describe('TypescriptTranspiler', () => {
     languageService = mock(TranspilingLanguageService);
     transpileFilterMock = {
       // Cannot use `mock<T>` as it is an abstract class
-      isIncluded: sandbox.stub()
+      isIncluded: sinon.stub()
     };
-    sandbox.stub(TranspileFilter, 'create').returns(transpileFilterMock);
-    sandbox.stub(transpilingLanguageService, 'default').returns(languageService);
+    sinon.stub(TranspileFilter, 'create').returns(transpileFilterMock);
+    sinon.stub(transpilingLanguageService, 'default').returns(languageService);
   });
 
   describe('transpile', () => {

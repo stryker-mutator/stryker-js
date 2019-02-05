@@ -6,6 +6,7 @@ import { File } from 'stryker-api/core';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { expect } from 'chai';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('AllowJS integration', () => {
 
@@ -13,7 +14,7 @@ describe('AllowJS integration', () => {
   let inputFiles: File[];
 
   beforeEach(() => {
-    const configEditor = new TypescriptConfigEditor();
+    const configEditor = testInjector.injector.injectClass(TypescriptConfigEditor);
     config = new Config();
     config.set({
       tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'allowJS', 'tsconfig.json'),

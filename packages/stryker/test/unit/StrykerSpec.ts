@@ -4,7 +4,7 @@ import { File, LogLevel } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
 import Stryker from '../../src/Stryker';
-import { Config, ConfigEditorFactory, ConfigEditor } from 'stryker-api/config';
+import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
 import InputFileResolver, * as inputFileResolver from '../../src/input/InputFileResolver';
 import ConfigReader, * as configReader from '../../src/config/ConfigReader';
@@ -26,13 +26,7 @@ import InputFileCollection from '../../src/input/InputFileCollection';
 import LogConfigurator from '../../src/logging/LogConfigurator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import { OptionsContext } from 'stryker-api/plugin';
-
-class FakeConfigEditor implements ConfigEditor {
-  constructor() { }
-  public edit(config: Config) {
-    config.testRunner = 'fakeTestRunner';
-  }
-}
+import { ConfigEditorApplier } from '../../src/config/ConfigEditorApplier';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
@@ -44,6 +38,7 @@ describe('Stryker', () => {
   let testFramework: TestFramework;
   let inputFileResolverMock: Mock<InputFileResolver>;
   let testFrameworkOrchestratorMock: Mock<TestFrameworkOrchestrator>;
+  let configEditorApplierMock: Mock<ConfigEditorApplier>;
   let configValidatorMock: Mock<ConfigValidator>;
   let configReaderMock: Mock<ConfigReader>;
   let initialTestExecutorMock: Mock<InitialTestExecutor>;
@@ -80,13 +75,16 @@ describe('Stryker', () => {
     injectorMock.provideFactory.returnsThis();
     injectorMock.provideValue.returnsThis();
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
+    configEditorApplierMock = mock(ConfigEditorApplier);
     mutatorMock = mock(MutatorFacade);
+    injectorMock.injectClass
+      .withArgs(ConfigEditorApplier).returns(configEditorApplierMock)
+      .withArgs(BroadcastReporter).returns(reporter);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     shutdownLoggingStub = sinon.stub(LogConfigurator, 'shutdown');
     configureLoggingServerStub.resolves(LOGGING_CONTEXT);
     inputFileResolverMock = mock(InputFileResolver);
-    injectorMock.injectClass.returns(reporter);
     testFramework = testFrameworkMock();
     initialTestExecutorMock = mock(InitialTestExecutor);
     mutationTestExecutorMock = mock(MutationTestExecutor);
@@ -112,13 +110,12 @@ describe('Stryker', () => {
 
   describe('when constructed', () => {
     beforeEach(() => {
-      ConfigEditorFactory.instance().register('FakeConfigEditor', FakeConfigEditor);
       strykerConfig.plugins = ['plugin1'];
       sut = new Stryker({});
     });
 
-    it('should use the config editor to override config', () => {
-      expect(sut.config.testRunner).to.be.eq('fakeTestRunner');
+    it('should apply the config editors', () => {
+      expect(configEditorApplierMock.edit).calledWith(strykerConfig);
     });
 
     it('should configure logging for master', () => {

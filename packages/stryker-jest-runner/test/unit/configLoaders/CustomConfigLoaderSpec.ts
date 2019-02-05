@@ -4,30 +4,26 @@ import { expect, assert } from 'chai';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const fakeRequire: any = {
-  require: () => { }
-};
-
 describe(CustomJestConfigLoader.name, () => {
   let defaultConfigLoader: CustomJestConfigLoader;
   const projectRoot: string = '/path/to/project/root';
-  const fsStub: FsStub = {};
+  let readFileSyncStub: sinon.SinonStub;
   let requireStub: sinon.SinonStub;
 
   beforeEach(() => {
-    fsStub.readFileSync = sinon.stub(fs, 'readFileSync');
-    requireStub = sinon.stub(fakeRequire, 'require');
+    readFileSyncStub = sinon.stub(fs, 'readFileSync');
+    requireStub = sinon.stub();
 
-    fsStub.readFileSync.returns('{ "jest": { "exampleProperty": "examplePackageJsonValue" }}');
+    readFileSyncStub.returns('{ "jest": { "exampleProperty": "examplePackageJsonValue" }}');
     requireStub.returns({ exampleProperty: 'exampleJestConfigValue' });
 
-    defaultConfigLoader = new CustomJestConfigLoader(projectRoot, fs, fakeRequire.require);
+    defaultConfigLoader = new CustomJestConfigLoader(projectRoot, requireStub);
   });
 
   it('should load the Jest configuration from the jest.config.js in the project root', () => {
     const config = defaultConfigLoader.loadConfig();
 
-    assert(requireStub.calledWith(path.join(projectRoot, 'jest.config.js')), `loader not called with ${projectRoot}/jest.config.js`);
+    expect(requireStub).calledWith(path.join(projectRoot, 'jest.config.js'));
     expect(config).to.deep.equal({
       exampleProperty: 'exampleJestConfigValue'
     });
@@ -37,7 +33,7 @@ describe(CustomJestConfigLoader.name, () => {
     requireStub.throws(Error('ENOENT: no such file or directory, open package.json'));
     const config = defaultConfigLoader.loadConfig();
 
-    assert(fsStub.readFileSync.calledWith(path.join(projectRoot, 'package.json'), 'utf8'), `readFileSync not called with ${projectRoot}/package.json`);
+    assert(readFileSyncStub.calledWith(path.join(projectRoot, 'package.json'), 'utf8'), `readFileSync not called with ${projectRoot}/package.json`);
     expect(config).to.deep.equal({
       exampleProperty: 'examplePackageJsonValue'
     });
@@ -45,12 +41,8 @@ describe(CustomJestConfigLoader.name, () => {
 
   it('should load the default Jest configuration if there is no package.json config or jest.config.js', () => {
     requireStub.throws(Error('ENOENT: no such file or directory, open package.json'));
-    fsStub.readFileSync.returns('{ }'); // note, no `jest` key here!
+    readFileSyncStub.returns('{ }'); // note, no `jest` key here!
     const config = defaultConfigLoader.loadConfig();
     expect(config).to.deep.equal({});
   });
 });
-
-interface FsStub {
-  [key: string]: sinon.SinonStub;
-}

@@ -10,6 +10,7 @@ import * as utils from '../../src/utils';
 import { Mock, mock, logger, runnerOptions } from '../helpers/mockHelpers';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
 import { factory } from '../../../stryker-test-helpers/src';
+import sinon = require('sinon');
 
 describe('MochaTestRunner', () => {
 
@@ -21,15 +22,15 @@ describe('MochaTestRunner', () => {
   let log: Mock<logging.Logger>;
 
   beforeEach(() => {
-    MochaStub = sandbox.stub(LibWrapper, 'Mocha');
-    requireStub = sandbox.stub(LibWrapper, 'require');
-    multimatchStub = sandbox.stub(LibWrapper, 'multimatch');
-    sandbox.stub(utils, 'evalGlobal');
+    MochaStub = sinon.stub(LibWrapper, 'Mocha');
+    requireStub = sinon.stub(LibWrapper, 'require');
+    multimatchStub = sinon.stub(LibWrapper, 'multimatch');
+    sinon.stub(utils, 'evalGlobal');
     mocha = mock(Mocha) as any;
     mocha.suite = mock(EventEmitter);
     MochaStub.returns(mocha);
     log = logger();
-    sandbox.stub(logging, 'getLogger').returns(log);
+    sinon.stub(logging, 'getLogger').returns(log);
   });
 
   afterEach(() => {
