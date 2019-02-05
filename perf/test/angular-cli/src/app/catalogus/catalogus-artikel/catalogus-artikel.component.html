@@ -1,0 +1,16 @@
+<div class="card artikel-card">
+  <img class="card-img-top"
+       src="{{'../assets/images/artikelen/'+ artikel.afbeeldingUrl}}"
+       onerror="this.src='../assets/images/artikelen/no_image_available_small.gif'"
+       alt="Card image cap">
+  <div class="card-body artikel-card-body">
+    <div class="artikel-info mb-3">
+      <h5 class="card-title">{{artikel.naam}}</h5>
+      <h6 class="card-subtitle mb-2 text-success">{{artikel.prijs | currency : "€"}}</h6>
+    </div>
+    <div>
+      <button class="btn btn-success" (click)="addToWinkelwagen(artikel)">In winkelwagen</button>
+      <br>
+    </div>
+  </div>
+</div>

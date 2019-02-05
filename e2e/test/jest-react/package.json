@@ -1,5 +1,5 @@
 {
-  "name": "reactstrap-sample",
+  "name": "jest-react",
   "version": "6.5.0",
   "description": "React Bootstrap 4 components",
   "main": "dist/reactstrap.cjs.js",
@@ -20,7 +20,6 @@
     "build-docs": "cross-env BABEL_ENV=webpack WEBPACK_BUILD=production webpack --config ./webpack.dev.config.js --progress --colors",
     "build": "rollup -c",
     "prebuild": "cross-env BABEL_ENV=lib-dir babel src --out-dir lib --ignore src/__tests__/",
-    "postinstall": "install-local",
     "postbuild": "node ./scripts/postbuild.js",
     "create-release": "npm run cover && sh ./scripts/release",
     "publish-release": "npm run cover && sh ./scripts/publish",

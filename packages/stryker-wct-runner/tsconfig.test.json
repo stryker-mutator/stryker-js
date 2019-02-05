@@ -9,7 +9,8 @@
       ]
     },
     "types": [
-      "mocha"
+      "mocha",
+      "node"
     ]
   },
   "include": [

@@ -1,5 +1,5 @@
 {
-  "name": "babel-test-module",
+  "name": "babel-transpiling",
   "version": "1.0.0",
   "private": true,
   "description": "A module to test stryker-babel with stryker-javascript-mutator",

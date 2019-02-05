@@ -28,25 +28,37 @@ We configured the tslint extension to run on save in or [vscode workspace](#vsco
 
 ## Runner Stryker locally
 
-We use [Lerna](https://lernajs.io/) to manage the packages in this repository. You don't have to install it globally. The packages themselves can be found in the [packages folder](https://github.com/stryker-mutator/stryker/tree/master/packages). npm commands such as `npm test` can be executed from the root of the project but executing them inside of a package folder is more time efficient. However, we suggest running `npm test` in the root of the project before a commit to ensure that everything still works. To get Stryker running locally, please follow these steps:
+We use [Lerna](https://lernajs.io/) to manage the packages in this repository. You don't have to install it globally. The packages themselves can be found in the [packages folder](https://github.com/stryker-mutator/stryker/tree/master/packages). Commands such as `npm test` can be executed from the root of the project but executing them inside of a package folder is more time efficient. However, we suggest running `npm test` in the root of the project before a commit to ensure that everything still works. To get Stryker running locally, please follow these steps:
 
 1. Clone the repository
 1. Install dependencies using `npm install` in the root of the project
-1. Run `npm run build` in the root of the project once. You can also run `npm test` in the root, as that will trigger a build as well.
+1. Run `npm run build` in the root of the project once.
 1. Use `npm start` to run the TypeScript compiler in watch mode. Any changes you make to TypeScript files will automatically compile.
-1. Running `npm test` in one of the package folders also works. Just remember that those will _not_ trigger a build. So you'll have 
-to run `npm start` or `npm run build` before that if you want code changes to be tested.
+
+After that, you're ready to go. If you're using [vscode, please setup that as well](#vscode-environment-configuration).
+
+Here are some common tasks to use. Just remember that they don't include compiling of the sources. So they all assume the latest code is compiled and ready to go:
+
+* Use `npm test` to run the unit tests. Using `npm test` in one of the package folders also works.
+* Use `npm run e2e` will install and execute the end to end tests (located in the e2e folder). These take a while.
+* Use `npm run perf` will install and execute the performance tests (located in the perf folder). These take a while.
 
 ## VSCode environment configuration
 
 We've chosen to **check in in our vscode configuration**. This makes development unified amongst stryker developers. VSCode is an open source code editor maintained by Microsoft. For more info and the download link, please visit https://code.visualstudio.com/.
+
+We recommend you to install the following plugins:
+
+* [editorconfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig), to adhere to our white spacing rules.
+* [tslint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin), to adhere to our tslint rules (as well as having auto fix-on-save)
+* [code spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), no particular reason, just prevent common typo's.
 
 After cloning this repo, open the workspace with `$ code workspace.code-workspace` (or open code and use file -> Open Workspace...).
 
 Some quick notes to help you get started:
 
 1. On the left side, you can see all stryker projects and plugins. Open files from there.
-1. Use `CTRL+B` (or `⌘+B` on OSX) to open up the *Run build task* menu. This runs `npm start`, compiling any changes you make in the background.
+1. Use `CTRL+B` (or `⌘+B` on OSX) to run the *build task*. This runs `npm start`, compiling any changes you make in the background.
 1. Use `CTRL+Shift+D` (or `⌘⇧D` on OSX) to open up the *debug* pane. Here you can select a config to run. For example: select "Unit tests (stryker-api)" to run the unit tests for the `stryker-api` package. 
   * You can run the tests with `CTRL+F5` (or `⌃F5` on OSX).
   * You can debug the tests with `F5` (also `F5` on OSX). Setting breakpoints in your code and inspecting variables all work as expected.

@@ -1,0 +1,30 @@
+footer {
+  flex-grow: 0;
+  padding: 50px;
+  color: white;
+  background-color: rgb(45,57,142);
+
+  address {
+    display: flex;
+    justify-content: space-between;
+    font-style: normal;
+    margin: 0;
+
+    p {
+      margin: 0;
+
+      a {
+        &:visited,
+        &:active,
+        &:link
+        {
+          color: inherit;
+          text-decoration: none;
+        }
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
