@@ -18,6 +18,7 @@ module.exports = function(config) {
         browsers: ["ChromeHeadless"]
       }
     },
+    timeoutMS: 60000,
     reporters: ["progress", "clear-text", "html"],
     maxConcurrentTestRunners: 2,
     coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
