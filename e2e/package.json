@@ -29,7 +29,7 @@
     "webpack": "~4.16.0"
   },
   "scripts": {
-    "postinstall": "node ../node_modules/lerna/bin/lerna bootstrap && npm run install-local-dependencies && link-parent-bin -c test --link-local-dependencies true",
+    "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies && link-parent-bin -c test --link-local-dependencies true",
     "install-local-dependencies": "ts-node tasks/install-local-dependencies",
     "test": "ts-node tasks/run-e2e-tests.ts"
   },
