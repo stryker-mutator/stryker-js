@@ -55,7 +55,6 @@ describe(Stryker.name, () => {
     reporterMock = mock(BroadcastReporter);
     injectorMock = factory.injector();
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
-    configEditorApplierMock = mock(ConfigEditorApplier);
     mutatorMock = mock(MutatorFacade);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');

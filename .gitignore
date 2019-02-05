@@ -9,6 +9,8 @@ reports
 .tscache
 .stryker-tmp
 *.map
+# Ignore heap dumps
+packages/report.*.json 
 
 e2e/module/*.js
 e2e/module/*.map
