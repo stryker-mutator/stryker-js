@@ -3,9 +3,11 @@ import { fs } from 'mz';
 import glob = require('glob');
 import path = require('path');
 
-function globAsPromised(pattern: string) {
+console.log('starting installation of local dependencies');
+
+function globAsPromised(pattern: string, options: glob.IOptions) {
   return new Promise<string[]>((res, rej) => {
-    glob(pattern, { cwd: path.resolve(__dirname, '..') }, (err, matches) => {
+    glob(pattern, options, (err, matches) => {
       if (err) {
         rej(err);
       } else {
@@ -19,8 +21,14 @@ interface Package {
   localDependencies?: { [name: string]: string };
 }
 
-async function bootstrapLocalDependencies() {
-  const files = await globAsPromised('{package.json,test/*/package.json}');
+/**
+ * Installs local dependencies in one go,
+ * reads package.json and test/* /package.json files and installs the local dependencies marked there
+ * @param directory the directory where the tests live
+ */
+export async function bootstrapLocalDependencies(directory: string) {
+  console.log('bootstrap ' + path.resolve(directory));
+  const files = await globAsPromised('{package.json,test/*/package.json}', { cwd: path.resolve(directory) });
   const packages = await Promise.all(files.map(fileName => fs.readFile(fileName, 'utf8')
     .then(content => ({ dir: path.dirname(fileName), content: JSON.parse(content) as Package }))));
   const sourcesByTarget: ListByPackage = {};
@@ -34,9 +42,3 @@ async function bootstrapLocalDependencies() {
   progress(localInstaller);
   await localInstaller.install();
 }
-
-bootstrapLocalDependencies()
-  .catch(err => {
-    console.error(err);
-    process.exitCode = 1;
-  });

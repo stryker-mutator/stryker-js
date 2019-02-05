@@ -20,7 +20,6 @@ module.exports = function(config) {
       }
     },
     reporters: ["progress", "clear-text", "html"],
-    maxConcurrentTestRunners: 2, // Recommended to use about half of your available cores when running stryker with angular.
     coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
     tsconfigFile: 'tsconfig.json', // Location of your tsconfig.json file
   });

@@ -54,10 +54,10 @@
     "typescript": "~3.2.4"
   },
   "localDependencies": {
-    "stryker": "../../packages/stryker",
-    "stryker-api": "../../packages/stryker-api",
-    "stryker-html-reporter": "../../packages/stryker-html-reporter",
-    "stryker-karma-runner": "../../packages/stryker-karma-runner",
-    "stryker-typescript": "../../packages/stryker-typescript"
+    "stryker": "../../../packages/stryker",
+    "stryker-api": "../../../packages/stryker-api",
+    "stryker-html-reporter": "../../../packages/stryker-html-reporter",
+    "stryker-karma-runner": "../../../packages/stryker-karma-runner",
+    "stryker-typescript": "../../../packages/stryker-typescript"
   }
 }

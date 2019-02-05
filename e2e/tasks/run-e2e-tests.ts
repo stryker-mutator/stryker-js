@@ -8,7 +8,7 @@ import { tap, mergeAll, map, filter } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
-function runIntegrationTests() {
+function runE2eTests() {
   const testDirs = fs.readdirSync(testRootDir);
 
   // Create test$, an observable of test runs
@@ -24,7 +24,7 @@ function runIntegrationTests() {
   );
 }
 
-runIntegrationTests()
+runE2eTests()
   .subscribe({
     complete: () => console.log('Done'),
     error: err => {
