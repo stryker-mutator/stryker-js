@@ -77,9 +77,6 @@ describe('Stryker', () => {
     mutantRunResultMatcherMock = mock(MutantRunResultMatcher);
     configEditorApplierMock = mock(ConfigEditorApplier);
     mutatorMock = mock(MutatorFacade);
-    injectorMock.injectClass
-      .withArgs(ConfigEditorApplier).returns(configEditorApplierMock)
-      .withArgs(BroadcastReporter).returns(reporter);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     shutdownLoggingStub = sinon.stub(LogConfigurator, 'shutdown');
@@ -105,6 +102,10 @@ describe('Stryker', () => {
     scoreResultCalculator = new ScoreResultCalculator();
     sinon.stub(scoreResultCalculator, 'determineExitCode').returns(sinon.stub());
     sinon.stub(scoreResultCalculatorModule, 'default').returns(scoreResultCalculator);
+    injectorMock.injectClass
+      .withArgs(ConfigEditorApplier).returns(configEditorApplierMock)
+      .withArgs(BroadcastReporter).returns(reporter)
+      .withArgs(TestFrameworkOrchestrator).returns(testFrameworkOrchestratorMock);
   });
 
   describe('when constructed', () => {
