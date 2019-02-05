@@ -15,10 +15,11 @@ runPerfTests()
 
 async function runPerfTests() {
   const testDirs = fs.readdirSync(testRootDir);
-
+  console.time('all tests');
   for (const testDir of testDirs) {
     await runTest(testDir);
   }
+  console.timeEnd('all tests');
 }
 
 async function runTest(testDir: string) {
@@ -27,12 +28,13 @@ async function runTest(testDir: string) {
     throttleTime(60000),
     tap(logMessage => console.timeLog(testDir, 'last log message: ', logMessage))
   ).toPromise();
+  console.timeLog(testDir);
   console.timeEnd(testDir);
 }
 
 function execNpm(args: string[], testDir: string): Observable<string> {
   const currentTestDir = path.resolve(testRootDir, testDir);
-  console.log(`Exec ${testDir} npm ${args}`);
+  console.log(`Exec ${testDir} npm ${args.join(' ')}`);
 
   return new Observable(observer => {
     const testProcess = execa('npm', args, { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
