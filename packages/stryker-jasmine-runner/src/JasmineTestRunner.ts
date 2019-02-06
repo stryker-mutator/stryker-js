@@ -1,16 +1,17 @@
 import { EOL } from 'os';
-import { TestRunner, RunResult, TestResult, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, TestResult, RunStatus } from 'stryker-api/test_runner';
 import { Jasmine, toStrykerTestResult, evalGlobal } from './helpers';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { StrykerOptions } from 'stryker-api/core';
 
 export default class JasmineTestRunner implements TestRunner {
 
   private readonly jasmineConfigFile: string | undefined;
-  private readonly fileNames: ReadonlyArray<string>;
   private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
 
-  constructor(runnerOptions: RunnerOptions) {
-    this.jasmineConfigFile = runnerOptions.strykerOptions.jasmineConfigFile;
-    this.fileNames = runnerOptions.fileNames;
+  public static inject = tokens(commonTokens.sandboxFileNames, commonTokens.options);
+  constructor(private readonly fileNames: ReadonlyArray<string>, options: StrykerOptions) {
+    this.jasmineConfigFile = options.jasmineConfigFile;
   }
 
   public run(options: { testHooks?: string }): Promise<RunResult> {
@@ -46,7 +47,7 @@ export default class JasmineTestRunner implements TestRunner {
       errorMessages: ['An error occurred while loading your jasmine specs' + EOL + (error.stack || error.message || error.toString())],
       status: RunStatus.Error,
       tests: []
-     }));
+    }));
   }
 
   private createJasmineRunner() {

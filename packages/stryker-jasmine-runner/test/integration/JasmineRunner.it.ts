@@ -46,15 +46,12 @@ describe('JasmineRunner integration', () => {
 
     beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init'));
-      sut = new JasmineTestRunner({
-        fileNames: [
+      sut = new JasmineTestRunner([
           path.resolve('lib', 'jasmine_examples', 'Player.js'),
           path.resolve('lib', 'jasmine_examples', 'Song.js'),
           path.resolve('spec', 'helpers', 'jasmine_examples', 'SpecHelper.js'),
           path.resolve('spec', 'jasmine_examples', 'PlayerSpec.js')
-        ],
-        strykerOptions: factory.strykerOptions({ jasmineConfigFile: 'spec/support/jasmine.json' })
-      });
+        ], factory.strykerOptions({ jasmineConfigFile: 'spec/support/jasmine.json' }));
     });
     it('should run the specs', async () => {
       const runResult = await sut.run({});
@@ -122,11 +119,7 @@ describe('JasmineRunner integration', () => {
 
     beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/errors'));
-      sut = new JasmineTestRunner({
-        fileNames: [path.resolve('lib', 'error.js'),
-        path.resolve('spec', 'errorSpec.js')
-        ], strykerOptions: factory.strykerOptions()
-      });
+      sut = new JasmineTestRunner([path.resolve('lib', 'error.js'), path.resolve('spec', 'errorSpec.js')], factory.strykerOptions());
     });
 
     it('should be able to tell the error', async () => {
@@ -143,12 +136,10 @@ describe('JasmineRunner integration', () => {
   describe('when it includes failed tests', () => {
     beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/test-failures'));
-      sut = new JasmineTestRunner({
-        fileNames: [
+      sut = new JasmineTestRunner([
           path.resolve('lib', 'foo.js'),
           path.resolve('spec', 'fooSpec.js')
-        ], strykerOptions: factory.strykerOptions()
-      });
+        ], factory.strykerOptions());
     });
 
     it('should complete with one test failure', async () => {

@@ -35,13 +35,14 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-jasmine-runner#readme",
   "peerDependencies": {
-    "jasmine": ">=2",
-    "stryker-api": ">=0.18.0 <0.24.0"
+    "jasmine": ">=2"
   },
   "devDependencies": {
-    "stryker-api": "^0.23.0",
     "stryker-jasmine": "^0.11.0",
     "@stryker-mutator/test-helpers": "0.0.0"
+  },
+  "dependencies": {
+    "stryker-api": "^0.23.0"
   },
   "initStrykerConfig": {
     "jasmineConfigFile": "spec/support/jasmine.json"
