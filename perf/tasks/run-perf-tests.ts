@@ -28,7 +28,6 @@ async function runTest(testDir: string) {
     throttleTime(60000),
     tap(logMessage => console.timeLog(testDir, 'last log message: ', logMessage))
   ).toPromise();
-  console.timeLog(testDir);
   console.timeEnd(testDir);
 }
 
@@ -41,8 +40,8 @@ function execNpm(args: string[], testDir: string): Observable<string> {
     let stderr = '';
     testProcess.stderr.on('data', chunk => stderr += chunk.toString());
     testProcess.stdout.on('data', chunk => observer.next(chunk.toString().trim()));
-    testProcess.catch(error => {
-      observer.error(error);
-    });
+    testProcess
+      .then(() => observer.complete())
+      .catch(error => observer.error(error));
   });
 }
