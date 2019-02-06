@@ -1,40 +1,40 @@
 import { Observable, Observer, merge, zip } from 'rxjs';
 import { flatMap, map, tap, toArray } from 'rxjs/operators';
-import { Config } from 'stryker-api/config';
-import { File } from 'stryker-api/core';
 import { MutantResult, MutantStatus } from 'stryker-api/report';
-import { TestFramework } from 'stryker-api/test_framework';
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import Sandbox from '../Sandbox';
-import SandboxPool from '../SandboxPool';
+import { SandboxPool } from '../SandboxPool';
 import TestableMutant from '../TestableMutant';
 import TranspiledMutant from '../TranspiledMutant';
 import StrictReporter from '../reporters/StrictReporter';
 import MutantTranspiler from '../transpiler/MutantTranspiler';
-import LoggingClientContext from '../logging/LoggingClientContext';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { coreTokens } from '../di';
+import InputFileCollection from '../input/InputFileCollection';
 
-export default class MutationTestExecutor {
-  private readonly log = getLogger(MutationTestExecutor.name);
-
+export class MutationTestExecutor {
+  public static inject = tokens(
+    commonTokens.logger,
+    coreTokens.inputFiles,
+    coreTokens.reporter,
+    coreTokens.mutantTranspiler,
+    coreTokens.sandboxPool);
   constructor(
-    private readonly config: Config,
-    private readonly inputFiles: ReadonlyArray<File>,
-    private readonly testFramework: TestFramework | null,
+    private readonly log: Logger,
+    private readonly input: InputFileCollection,
     private readonly reporter: StrictReporter,
-    private readonly overheadTimeMS: number,
-    private readonly loggingContext: LoggingClientContext) {
+    private readonly mutantTranspiler: MutantTranspiler,
+    private readonly sandboxPool: SandboxPool) {
   }
 
   public async run(allMutants: ReadonlyArray<TestableMutant>): Promise<MutantResult[]> {
-    const mutantTranspiler = new MutantTranspiler(this.config, this.loggingContext);
-    const transpiledFiles = await mutantTranspiler.initialize(this.inputFiles);
-    const sandboxPool = new SandboxPool(this.config, this.testFramework, transpiledFiles, this.overheadTimeMS, this.loggingContext);
+    const transpiledFiles = await this.mutantTranspiler.initialize(this.input.files);
     const result = await this.runInsideSandboxes(
-      sandboxPool.streamSandboxes(),
-      mutantTranspiler.transpileMutants(allMutants));
-    await sandboxPool.disposeAll();
-    mutantTranspiler.dispose();
+      this.sandboxPool.streamSandboxes(transpiledFiles),
+      this.mutantTranspiler.transpileMutants(allMutants));
+    await this.sandboxPool.disposeAll();
+    this.mutantTranspiler.dispose();
     return result;
   }
 

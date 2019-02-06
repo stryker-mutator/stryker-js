@@ -1,24 +1,27 @@
 import * as path from 'path';
-import * as logging from 'stryker-api/logging';
 import sut = require('../../../src/starters/stryker-karma.conf');
 import { Config, ConfigOptions } from 'karma';
 import { expect } from 'chai';
-import LoggerStub from '../../helpers/LoggerStub';
 import * as utils from '../../../src/utils';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/TestHooksMiddleware';
 import StrykerReporter from '../../../src/StrykerReporter';
+import * as sinon from 'sinon';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('stryker-karma.conf.js', () => {
 
-  let logMock: LoggerStub;
+  let getLogger: sinon.SinonStub;
   let requireModuleStub: sinon.SinonStub;
   let config: Config;
 
   beforeEach(() => {
     config = new KarmaConfigMock();
-    logMock = new LoggerStub();
-    sandbox.stub(logging, 'getLogger').returns(logMock);
-    requireModuleStub = sandbox.stub(utils, 'requireModule');
+    getLogger = sinon.stub();
+    getLogger.returns(testInjector.logger);
+    requireModuleStub = sinon.stub(utils, 'requireModule');
+    sut.setGlobals({
+      getLogger
+    });
   });
 
   afterEach(() => {
@@ -27,7 +30,7 @@ describe('stryker-karma.conf.js', () => {
 
   it('should create the correct logger', () => {
     sut(config);
-    expect(logging.getLogger).calledWith('stryker-karma.conf.js');
+    expect(getLogger).calledWith('stryker-karma.conf.js');
   });
 
   it('should set default options', () => {
@@ -60,13 +63,13 @@ describe('stryker-karma.conf.js', () => {
     actualError.code = 'MODULE_NOT_FOUND';
     requireModuleStub.throws(actualError);
     const expectedKarmaConfigFile = 'foobar.conf.js';
-    sut.setGlobals({ karmaConfigFile: expectedKarmaConfigFile });
+    sut.setGlobals({ getLogger, karmaConfigFile: expectedKarmaConfigFile });
 
     // Act
     sut(config);
 
     // Assert
-    expect(logMock.error).calledWithMatch(`Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`);
+    expect(testInjector.logger.error).calledWithMatch(`Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`);
     expect(requireModuleStub).calledWith(path.resolve(expectedKarmaConfigFile));
   });
 

@@ -1,10 +1,11 @@
 import * as chai from 'chai';
 import MochaTestRunner from '../../src/MochaTestRunner';
-import { TestResult, RunResult, TestStatus, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
+import { TestResult, RunResult, TestStatus, RunStatus } from 'stryker-api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
-import { factory } from '../../../stryker-test-helpers/src';
+import { testInjector } from '../../../stryker-test-helpers/src';
+import { commonTokens } from 'stryker-api/plugin';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -23,21 +24,23 @@ function resolve(fileName: string) {
 describe('Running a sample project', () => {
 
   let sut: MochaTestRunner;
+  let files: string[];
+
+  function createSut() {
+    return testInjector.injector
+      .provideValue(commonTokens.sandboxFileNames, files)
+      .injectClass(MochaTestRunner);
+  }
 
   describe('when tests pass', () => {
 
     beforeEach(() => {
-      const files = [
+      files = [
         resolve('./testResources/sampleProject/MyMath.js'),
         resolve('./testResources/sampleProject/MyMathSpec.js')
       ];
-      const testRunnerOptions: RunnerOptions = {
-        fileNames: files,
-        strykerOptions: factory.strykerOptions({
-          mochaOptions: { files }
-        })
-      };
-      sut = new MochaTestRunner(testRunnerOptions);
+      testInjector.options.mochaOptions = { files };
+      sut = createSut();
       return sut.init();
     });
 
@@ -59,18 +62,15 @@ describe('Running a sample project', () => {
 
   describe('with an error in an un-included input file', () => {
     beforeEach(() => {
-      const files = [
+      files = [
         resolve('testResources/sampleProject/MyMath.js'),
         resolve('testResources/sampleProject/MyMathSpec.js'),
       ];
       const mochaOptions: MochaRunnerOptions = {
         files
       };
-      const options: RunnerOptions = {
-        fileNames: files,
-        strykerOptions: factory.strykerOptions({ mochaOptions })
-      };
-      sut = new MochaTestRunner(options);
+      testInjector.options.mochaOptions = mochaOptions;
+      sut = createSut();
       return sut.init();
     });
 
@@ -83,19 +83,12 @@ describe('Running a sample project', () => {
   describe('with multiple failed tests', () => {
 
     before(() => {
-      sut = new MochaTestRunner({
-        fileNames: [
-          resolve('testResources/sampleProject/MyMath.js'),
-          resolve('testResources/sampleProject/MyMathFailedSpec.js')
-        ],
-        strykerOptions: factory.strykerOptions({
-          mochaOptions: {
-            files: [
-              resolve('testResources/sampleProject/MyMath.js'),
-              resolve('testResources/sampleProject/MyMathFailedSpec.js')],
-          }
-        })
-      });
+      files = [
+        resolve('testResources/sampleProject/MyMath.js'),
+        resolve('testResources/sampleProject/MyMathFailedSpec.js')
+      ];
+      testInjector.options.mochaOptions = { files };
+      sut = createSut();
       return sut.init();
     });
 
@@ -108,14 +101,9 @@ describe('Running a sample project', () => {
   describe('when no tests are executed', () => {
 
     beforeEach(() => {
-      const files = [resolve('./testResources/sampleProject/MyMath.js')];
-      const testRunnerOptions = {
-        fileNames: files,
-        strykerOptions: factory.strykerOptions({
-          mochaOptions: { files }
-        })
-      };
-      sut = new MochaTestRunner(testRunnerOptions);
+      files = [resolve('./testResources/sampleProject/MyMath.js')];
+      testInjector.options.mochaOptions = { files };
+      sut = createSut();
       return sut.init();
     });
 

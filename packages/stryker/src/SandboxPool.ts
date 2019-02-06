@@ -2,20 +2,30 @@ import { getLogger } from 'stryker-api/logging';
 import * as os from 'os';
 import { Observable, range } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { Config } from 'stryker-api/config';
-import { File } from 'stryker-api/core';
+import { File, StrykerOptions } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import Sandbox from './Sandbox';
 import LoggingClientContext from './logging/LoggingClientContext';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { coreTokens } from './di';
+import { InitialTestRunResult } from './process/InitialTestExecutor';
 
-export default class SandboxPool {
+export class SandboxPool {
 
   private readonly log = getLogger(SandboxPool.name);
   private readonly sandboxes: Promise<Sandbox>[] = [];
+  private readonly overheadTimeMS: number;
 
-  constructor(private readonly options: Config, private readonly testFramework: TestFramework | null, private readonly initialFiles: ReadonlyArray<File>, private readonly overheadTimeMS: number, private readonly loggingContext: LoggingClientContext) { }
+  public static inject = tokens(commonTokens.options, coreTokens.testFramework, coreTokens.initialRunResult, coreTokens.loggingContext);
+  constructor(
+    private readonly options: StrykerOptions,
+    private readonly testFramework: TestFramework | null,
+    initialRunResult: InitialTestRunResult,
+    private readonly loggingContext: LoggingClientContext) {
+      this.overheadTimeMS = initialRunResult.overheadTimeMS;
+    }
 
-  public streamSandboxes(): Observable<Sandbox> {
+  public streamSandboxes(initialFiles: ReadonlyArray<File>): Observable<Sandbox> {
     let numConcurrentRunners = os.cpus().length;
     if (this.options.transpilers.length) {
       // If transpilers are configured, one core is reserved for the compiler (for now)
@@ -32,7 +42,7 @@ export default class SandboxPool {
     this.log.info(`Creating ${numConcurrentRunners} test runners (based on ${numConcurrentRunnersSource})`);
 
     const sandboxes = range(0, numConcurrentRunners)
-      .pipe(flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext))));
+      .pipe(flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext))));
     return sandboxes;
   }
 

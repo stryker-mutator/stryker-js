@@ -37,7 +37,6 @@
     "@types/memory-fs": "~0.3.0",
     "@types/webpack": "~4.4.12",
     "raw-loader": "~1.0.0",
-    "stryker-api": "^0.23.0",
     "webpack": "~4.29.1"
   },
   "peerDependencies": {

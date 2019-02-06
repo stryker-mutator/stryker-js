@@ -1,9 +1,12 @@
 import JestTestAdapter from './JestTestAdapter';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import { Configuration, runCLI, RunResult } from 'jest';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 export default class JestPromiseTestAdapter implements JestTestAdapter {
-  private readonly log = getLogger(JestPromiseTestAdapter.name);
+
+  public static inject = tokens(commonTokens.logger);
+  constructor(private readonly log: Logger) {}
 
   public run(jestConfig: Configuration, projectRoot: string, fileNameUnderTest?: string): Promise<RunResult> {
     jestConfig.reporters = [];

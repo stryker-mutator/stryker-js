@@ -1,18 +1,19 @@
-import { TestRunner, TestResult, RunStatus, RunResult, RunnerOptions, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
-import { getLogger } from 'stryker-api/logging';
+import { TestRunner, TestResult, RunStatus, RunResult, CoverageCollection, CoveragePerTestResult } from 'stryker-api/test_runner';
+import { Logger, LoggerFactoryMethod } from 'stryker-api/logging';
 import * as karma from 'karma';
 import StrykerKarmaSetup, { DEPRECATED_KARMA_CONFIG, DEPRECATED_KARMA_CONFIG_FILE, KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
 import TestHooksMiddleware from './TestHooksMiddleware';
 import StrykerReporter from './StrykerReporter';
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
 import ProjectStarter from './starters/ProjectStarter';
+import { StrykerOptions } from 'stryker-api/core';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
 }
 
 export default class KarmaTestRunner implements TestRunner {
-  private readonly log = getLogger(KarmaTestRunner.name);
   private currentTestResults: TestResult[];
   private currentErrorMessages: string[];
   private currentCoverageReport?: CoverageCollection | CoveragePerTestResult;
@@ -21,14 +22,15 @@ export default class KarmaTestRunner implements TestRunner {
   private readonly starter: ProjectStarter;
   public port: undefined | number;
 
-  constructor(options: RunnerOptions) {
+  public static inject = tokens(commonTokens.logger, commonTokens.getLogger, commonTokens.options);
+  constructor(private readonly log: Logger, getLogger: LoggerFactoryMethod, options: StrykerOptions) {
     const setup = this.loadSetup(options);
     if (setup.project !== undefined) {
       setup.projectType = setup.project;
       this.log.warn('DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.');
     }
     this.starter = new ProjectStarter(setup);
-    this.setGlobals(setup);
+    this.setGlobals(setup, getLogger);
     this.cleanRun();
     this.listenToServerStart();
     this.listenToRunComplete();
@@ -58,16 +60,16 @@ export default class KarmaTestRunner implements TestRunner {
     return runResult;
   }
 
-  private loadSetup(settings: RunnerOptions): StrykerKarmaSetup {
+  private loadSetup(options: StrykerOptions): StrykerKarmaSetup {
     const defaultKarmaConfig: StrykerKarmaSetup = {
       projectType: 'custom'
     };
-    const strykerKarmaSetup: StrykerKarmaSetup = Object.assign(defaultKarmaConfig, settings.strykerOptions[KARMA_CONFIG_KEY]);
+    const strykerKarmaSetup: StrykerKarmaSetup = Object.assign(defaultKarmaConfig, options[KARMA_CONFIG_KEY]);
 
     const loadDeprecatedOption = (configKey: keyof StrykerKarmaSetup, deprecatedConfigOption: string) => {
-      if (!strykerKarmaSetup[configKey] && settings.strykerOptions[deprecatedConfigOption]) {
+      if (!strykerKarmaSetup[configKey] && options[deprecatedConfigOption]) {
         this.log.warn(`[deprecated]: config option ${deprecatedConfigOption} is renamed to ${KARMA_CONFIG_KEY}.${configKey}`);
-        strykerKarmaSetup[configKey] = settings.strykerOptions[deprecatedConfigOption];
+        strykerKarmaSetup[configKey] = options[deprecatedConfigOption];
       }
     };
     loadDeprecatedOption('configFile', DEPRECATED_KARMA_CONFIG_FILE);
@@ -75,8 +77,9 @@ export default class KarmaTestRunner implements TestRunner {
     return strykerKarmaSetup;
   }
 
-  private setGlobals(setup: StrykerKarmaSetup) {
+  private setGlobals(setup: StrykerKarmaSetup, getLogger: LoggerFactoryMethod) {
     strykerKarmaConf.setGlobals({
+      getLogger,
       karmaConfig: setup.config,
       karmaConfigFile: setup.configFile
     });

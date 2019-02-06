@@ -1,7 +1,8 @@
 import MochaTestRunner from '../../src/MochaTestRunner';
 import * as path from 'path';
 import { RunResult } from 'stryker-api/test_runner';
-import { factory } from '../../../stryker-test-helpers/src';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { commonTokens } from 'stryker-api/plugin';
 
 export const AUTO_START_ARGUMENT = '2e164669-acf1-461c-9c05-2be139614de2';
 
@@ -16,19 +17,18 @@ export default class MochaTestFrameworkIntegrationTestWorker {
   private readonly sut: MochaTestRunner;
 
   constructor() {
-    this.sut = new MochaTestRunner({
-      fileNames: [
+    testInjector.options.mochaOptions = {
+      files: [
+        path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
+      ]
+    };
+    this.sut = testInjector.injector
+      .provideValue(commonTokens.sandboxFileNames, [
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMath.js'),
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
-      ],
-      strykerOptions: factory.strykerOptions({
-        mochaOptions: {
-          files: [
-            path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
-          ]
-        }
-      })
-    });
+      ])
+      .injectClass(MochaTestRunner);
+
     this.listenForParentProcess();
     try {
       this.sut.init();

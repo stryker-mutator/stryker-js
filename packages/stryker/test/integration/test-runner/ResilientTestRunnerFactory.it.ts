@@ -1,11 +1,10 @@
 import * as path from 'path';
 import { expect } from 'chai';
 import getPort = require('get-port');
-import { RunStatus, RunnerOptions } from 'stryker-api/test_runner';
+import { RunStatus, TestRunner } from 'stryker-api/test_runner';
 import * as log4js from 'log4js';
 import ResilientTestRunnerFactory from '../../../src/test-runner/ResilientTestRunnerFactory';
-import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
-import { LogLevel } from 'stryker-api/core';
+import { LogLevel, StrykerOptions } from 'stryker-api/core';
 import LoggingServer from '../../helpers/LoggingServer';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { toArray } from 'rxjs/operators';
@@ -14,8 +13,8 @@ import { strykerOptions } from '../../helpers/producers';
 
 describe('ResilientTestRunnerFactory integration', () => {
 
-  let sut: TestRunnerDecorator;
-  let options: RunnerOptions;
+  let sut: Required<TestRunner>;
+  let options: StrykerOptions;
   const sandboxWorkingDirectory = path.resolve('./test/integration/test-runner');
   let loggingContext: LoggingClientContext;
 
@@ -27,15 +26,12 @@ describe('ResilientTestRunnerFactory integration', () => {
     const port = await getPort();
     loggingServer = new LoggingServer(port);
     loggingContext = { port, level: LogLevel.Trace };
-    options = {
-      fileNames: [],
-      strykerOptions: strykerOptions({
-        plugins: [require.resolve('./AdditionalTestRunners')],
-        someRegex: /someRegex/,
-        testFramework: 'jasmine',
-        testRunner: 'karma'
-      })
-    };
+    options = strykerOptions({
+      plugins: [require.resolve('./AdditionalTestRunners')],
+      someRegex: /someRegex/,
+      testFramework: 'jasmine',
+      testRunner: 'karma'
+    });
     alreadyDisposed = false;
   });
 
@@ -47,12 +43,13 @@ describe('ResilientTestRunnerFactory integration', () => {
   });
 
   function createSut(name: string) {
-    sut = ResilientTestRunnerFactory.create(name, options, sandboxWorkingDirectory, loggingContext);
+    options.testRunner = name;
+    sut = ResilientTestRunnerFactory.create(options, [], sandboxWorkingDirectory, loggingContext);
   }
 
-  function arrangeSut(name: string): Promise<void> {
+  async function arrangeSut(name: string): Promise<void> {
     createSut(name);
-    return sut.init();
+    await sut.init();
   }
 
   function actRun(timeout = 4000) {

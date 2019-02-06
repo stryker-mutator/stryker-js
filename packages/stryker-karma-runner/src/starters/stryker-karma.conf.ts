@@ -3,7 +3,7 @@ import * as path from 'path';
 import { requireModule } from '../utils';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
 import StrykerReporter from '../StrykerReporter';
-import { getLogger, Logger } from 'stryker-api/logging';
+import { Logger, LoggerFactoryMethod } from 'stryker-api/logging';
 
 function setDefaultOptions(config: Config) {
   config.set({
@@ -92,13 +92,33 @@ function configureStrykerReporter(config: Config) {
   config.reporters.push(StrykerReporter.name);
 }
 
+const noopLogger = {
+  isTraceEnabled() { return false; },
+  isDebugEnabled() { return false; },
+  isInfoEnabled() { return false; },
+  isWarnEnabled() { return false; },
+  isErrorEnabled() { return false; },
+  isFatalEnabled() { return false; },
+  trace() { },
+  debug() { },
+  info() { },
+  warn() { },
+  error() { },
+  fatal() { }
+};
+
 const globalSettings: {
   karmaConfig?: ConfigOptions;
   karmaConfigFile?: string;
-} = {};
+  getLogger: LoggerFactoryMethod;
+} = {
+  getLogger() {
+    return noopLogger;
+  }
+};
 
 export = Object.assign((config: Config) => {
-  const log = getLogger(path.basename(__filename));
+  const log = globalSettings.getLogger(path.basename(__filename));
   setDefaultOptions(config);
   setUserKarmaConfigFile(config, log);
   setUserKarmaConfig(config);
@@ -107,13 +127,14 @@ export = Object.assign((config: Config) => {
   configureTestHooksMiddleware(config);
   configureStrykerReporter(config);
 }, {
-  /**
-   * Provide global settings for next configuration
-   * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
-   * (not counting environment variables)
-   */
-  setGlobals(globals: { karmaConfig?: ConfigOptions; karmaConfigFile?: string; }) {
-    globalSettings.karmaConfig = globals.karmaConfig;
-    globalSettings.karmaConfigFile = globals.karmaConfigFile;
-  }
-});
+    /**
+     * Provide global settings for next configuration
+     * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
+     * (not counting environment variables)
+     */
+    setGlobals(globals: { karmaConfig?: ConfigOptions; karmaConfigFile?: string; getLogger?: LoggerFactoryMethod }) {
+      globalSettings.karmaConfig = globals.karmaConfig;
+      globalSettings.karmaConfigFile = globals.karmaConfigFile;
+      globalSettings.getLogger = globals.getLogger || (() => noopLogger);
+    }
+  });

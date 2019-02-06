@@ -12,7 +12,7 @@ import * as typedInject from 'typed-inject';
 import { MutatorFacade } from '../../src/mutants/MutatorFacade';
 import { MutantTestMatcher } from '../../src/mutants/MutantTestMatcher';
 import InitialTestExecutor from '../../src/process/InitialTestExecutor';
-import MutationTestExecutor, * as mutationTestExecutor from '../../src/process/MutationTestExecutor';
+import { MutationTestExecutor } from '../../src/process/MutationTestExecutor';
 import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
 import { TempFolder } from '../../src/utils/TempFolder';
 import currentLogMock from '../helpers/logMock';
@@ -69,7 +69,6 @@ describe(Stryker.name, () => {
     tempFolderMock.clean.resolves();
     scoreResultCalculator = new ScoreResultCalculator();
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
-    sinon.stub(mutationTestExecutor, 'default').returns(mutationTestExecutorMock);
     sinon.stub(TempFolder, 'instance').returns(tempFolderMock);
     sinon.stub(scoreResultCalculator, 'determineExitCode').returns(sinon.stub());
     sinon.stub(scoreResultCalculatorModule, 'default').returns(scoreResultCalculator);
@@ -78,7 +77,8 @@ describe(Stryker.name, () => {
       .withArgs(InitialTestExecutor).returns(initialTestExecutorMock)
       .withArgs(InputFileResolver).returns(inputFileResolverMock)
       .withArgs(MutatorFacade).returns(mutatorMock)
-      .withArgs(MutantTestMatcher).returns(mutantTestMatcherMock);
+      .withArgs(MutantTestMatcher).returns(mutantTestMatcherMock)
+      .withArgs(MutationTestExecutor).returns(mutationTestExecutorMock);
     injectorMock.resolve
       .withArgs(commonTokens.config).returns(strykerConfig)
       .withArgs(di.coreTokens.timer).returns(timerMock)
@@ -220,8 +220,6 @@ describe(Stryker.name, () => {
       it('should create the mutation test executor', async () => {
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(mutationTestExecutor.default).calledWithNew;
-        expect(mutationTestExecutor.default).calledWith(strykerConfig, inputFiles.files, testFrameworkMock, reporterMock, undefined, LOGGING_CONTEXT);
         expect(mutationTestExecutorMock.run).calledWith(mutants);
       });
 
