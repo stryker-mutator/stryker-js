@@ -6,6 +6,7 @@ module.exports = function (config) {
     reporter: ['clear-text', 'event-recorder'],
     mutator: 'javascript',
     maxConcurrentTestRunners: 2,
+    timeoutMS: 60000,
     commandRunner: {
       command: 'npm run mocha'
     },

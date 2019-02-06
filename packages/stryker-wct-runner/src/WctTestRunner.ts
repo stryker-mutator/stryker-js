@@ -10,6 +10,26 @@ const FORCED_WCT_OPTIONS = Object.freeze({
   persistent: false
 });
 
+export function isErrnoException(error: Error): error is NodeJS.ErrnoException {
+  return typeof (error as NodeJS.ErrnoException).code === 'string';
+}
+
+function errorToString(error: any) {
+  if (!error) {
+    return '';
+  } else if (isErrnoException(error)) {
+    return `${error.name}: ${error.code} (${error.syscall}) ${error.stack}`;
+  } else if (error instanceof Error) {
+    const message = `${error.name}: ${error.message}`;
+    if (error.stack) {
+      return `${message}\n${error.stack.toString()}`;
+    } else {
+      return message;
+    }
+  } else {
+    return error.toString();
+  }
+}
 export default class WctTestRunner implements TestRunner {
 
   private readonly reporter: WctReporter;
@@ -36,10 +56,15 @@ export default class WctTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
-    await steps.setupOverrides(this.context);
-    await steps.loadPlugins(this.context);
-    await steps.configure(this.context);
-    await steps.prepare(this.context);
+    try {
+      await steps.setupOverrides(this.context);
+      await steps.loadPlugins(this.context);
+      await steps.configure(this.context);
+      await steps.prepare(this.context);
+    } catch (error) {
+      console.error(errorToString(error));
+      throw error;
+    }
   }
 
   public async run(): Promise<RunResult> {

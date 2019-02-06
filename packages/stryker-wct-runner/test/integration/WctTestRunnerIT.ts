@@ -3,6 +3,8 @@ import WctTestRunner from '../../src/WctTestRunner';
 import { expect } from 'chai';
 import { RunResult, TestStatus, RunStatus, TestResult } from 'stryker-api/test_runner';
 import { StrykerOptions } from 'stryker-api/core';
+import { LoggerFactory } from 'stryker-api/logging';
+import consoleLoggerFactory from '../helpers/consoleLoggerFactory';
 
 type TimelessRunResult = {
   [K in keyof RunResult]: RunResult[K] extends TestResult[] ? TimelessTestResult[] : RunResult[K];
@@ -26,7 +28,7 @@ describe('WctTestRunner integration', () => {
       { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing\n  HTMLElement.throw at /components/stryker-parent/packages/stryker-wct-runner/testResources/htmlTestSuite/src/failing-element.js:11\n       Context.test at failing-tests.html:13'] }
     ]
   };
-  // To enable console logging: LoggerFactory.setLogImplementation(consoleLoggerFactory);
+  LoggerFactory.setLogImplementation(consoleLoggerFactory);
 
   beforeEach(() => {
     cwd = process.cwd();
