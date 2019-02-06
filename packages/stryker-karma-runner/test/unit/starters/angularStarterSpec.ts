@@ -1,14 +1,15 @@
 import { expect } from 'chai';
 import * as utils from '../../../src/utils';
 import * as sut from '../../../src/starters/angularStarter';
+import * as sinon from 'sinon';
 
 describe('angularStarter', () => {
   let requireModuleStub: sinon.SinonStub;
   let cliStub: sinon.SinonStub;
 
   beforeEach(() => {
-    cliStub = sandbox.stub();
-    requireModuleStub = sandbox.stub(utils, 'requireModule');
+    cliStub = sinon.stub();
+    requireModuleStub = sinon.stub(utils, 'requireModule');
     requireModuleStub.withArgs('@angular/cli').returns(cliStub);
   });
 

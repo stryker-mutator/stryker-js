@@ -1,9 +1,7 @@
 import * as sinon from 'sinon';
-
-beforeEach(() => {
-  global.sandbox = sinon.createSandbox();
-});
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 afterEach(() => {
-  global.sandbox.restore();
+  testInjector.reset();
+  sinon.restore();
 });

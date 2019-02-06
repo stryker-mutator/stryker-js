@@ -1,17 +1,15 @@
 import { EventEmitter } from 'events';
 import { expect } from 'chai';
-import * as logging from 'stryker-api/logging';
 import * as karma from 'karma';
+import * as sinon from 'sinon';
 import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import {
-  RunnerOptions,
   TestResult,
   TestStatus,
   RunStatus
 } from 'stryker-api/test_runner';
-import LoggerStub from '../helpers/LoggerStub';
 import StrykerKarmaSetup, {
   DEPRECATED_KARMA_CONFIG,
   DEPRECATED_KARMA_CONFIG_FILE,
@@ -19,35 +17,36 @@ import StrykerKarmaSetup, {
 } from '../../src/StrykerKarmaSetup';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
-import { factory } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { LoggerFactoryMethod } from 'stryker-api/logging';
+import { commonTokens } from 'stryker-api/plugin';
 
 describe('KarmaTestRunner', () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
-  let settings: RunnerOptions;
   let setGlobalsStub: sinon.SinonStub;
-  let logMock: LoggerStub;
   let reporterMock: EventEmitter;
   let karmaRunStub: sinon.SinonStub;
+  let getLogger: LoggerFactoryMethod;
 
   beforeEach(() => {
-    settings = {
-      fileNames: ['foo.js', 'bar.js'],
-      strykerOptions: factory.strykerOptions()
-    };
     reporterMock = new EventEmitter();
-    projectStarterMock = sandbox.createStubInstance(ProjectStarter);
-    logMock = new LoggerStub();
-    sandbox.stub(projectStarterModule, 'default').returns(projectStarterMock);
-    sandbox.stub(logging, 'getLogger').returns(logMock);
-    sandbox.stub(StrykerReporter, 'instance').value(reporterMock);
-    setGlobalsStub = sandbox.stub(strykerKarmaConf, 'setGlobals');
-    karmaRunStub = sandbox.stub(karma.runner, 'run');
-    sandbox.stub(TestHooksMiddleware, 'instance').value({});
+    projectStarterMock = sinon.createStubInstance(ProjectStarter);
+    sinon.stub(projectStarterModule, 'default').returns(projectStarterMock);
+    sinon.stub(StrykerReporter, 'instance').value(reporterMock);
+    setGlobalsStub = sinon.stub(strykerKarmaConf, 'setGlobals');
+    karmaRunStub = sinon.stub(karma.runner, 'run');
+    sinon.stub(TestHooksMiddleware, 'instance').value({});
+    getLogger = testInjector.injector.resolve(commonTokens.getLogger);
   });
 
+  function createSut() {
+    return testInjector.injector.injectClass(KarmaTestRunner);
+  }
+
   it('should load default setup', () => {
-    new KarmaTestRunner(settings);
+    createSut();
     expect(setGlobalsStub).calledWith({
+      getLogger,
       karmaConfig: undefined,
       karmaConfigFile: undefined
     });
@@ -61,14 +60,15 @@ describe('KarmaTestRunner', () => {
       configFile: 'baz.conf.js',
       projectType: 'angular-cli'
     };
-    settings.strykerOptions.karma = expectedSetup;
-    new KarmaTestRunner(settings);
+    testInjector.options.karma = expectedSetup;
+    createSut();
     expect(setGlobalsStub).calledWith({
+      getLogger,
       karmaConfig: expectedSetup.config,
       karmaConfigFile: expectedSetup.configFile
     });
 
-    expect(logMock.warn).not.called;
+    expect(testInjector.logger.warn).not.called;
     expect(projectStarterModule.default).calledWith(expectedSetup);
   });
   it('should run ng test with parameters from stryker options', () => {
@@ -84,33 +84,35 @@ describe('KarmaTestRunner', () => {
       ngConfig,
       projectType: 'angular-cli'
     };
-    settings.strykerOptions.karma = expectedSetup;
-    new KarmaTestRunner(settings);
+    testInjector.options.karma = expectedSetup;
+    createSut();
     expect(setGlobalsStub).calledWith({
+      getLogger,
       karmaConfig: expectedSetup.config,
       karmaConfigFile: expectedSetup.configFile
     });
-    expect(logMock.warn).not.called;
+    expect(testInjector.logger.warn).not.called;
     expect(projectStarterModule.default).calledWith(expectedSetup);
   });
 
   it('should load deprecated karma options', () => {
     const expectedKarmaConfig = { basePath: 'foobar' };
     const expectedKarmaConfigFile = 'karmaConfigFile';
-    settings.strykerOptions[DEPRECATED_KARMA_CONFIG] = expectedKarmaConfig;
-    settings.strykerOptions[
+    testInjector.options[DEPRECATED_KARMA_CONFIG] = expectedKarmaConfig;
+    testInjector.options[
       DEPRECATED_KARMA_CONFIG_FILE
     ] = expectedKarmaConfigFile;
-    new KarmaTestRunner(settings);
+    createSut();
     expect(setGlobalsStub).calledWith({
+      getLogger,
       karmaConfig: expectedKarmaConfig,
       karmaConfigFile: expectedKarmaConfigFile
     });
-    expect(logMock.warn).calledTwice;
-    expect(logMock.warn).calledWith(
+    expect(testInjector.logger.warn).calledTwice;
+    expect(testInjector.logger.warn).calledWith(
       '[deprecated]: config option karmaConfigFile is renamed to karma.configFile'
     );
-    expect(logMock.warn).calledWith(
+    expect(testInjector.logger.warn).calledWith(
       '[deprecated]: config option karmaConfig is renamed to karma.config'
     );
   });
@@ -130,13 +132,14 @@ describe('KarmaTestRunner', () => {
       configFile: 'baz.conf.js',
       projectType: 'angular-cli'
     };
-    settings.strykerOptions.karma = config;
-    new KarmaTestRunner(settings);
+    testInjector.options.karma = config;
+    createSut();
     expect(setGlobalsStub).calledWith({
+      getLogger,
       karmaConfig: expectedSetup.config,
       karmaConfigFile: expectedSetup.configFile
     });
-    expect(logMock.warn).calledWith(
+    expect(testInjector.logger.warn).calledWith(
       'DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.'
     );
   });
@@ -145,7 +148,7 @@ describe('KarmaTestRunner', () => {
     let sut: KarmaTestRunner;
 
     beforeEach(() => {
-      sut = new KarmaTestRunner(settings);
+      sut = createSut();
     });
 
     it('should start karma', async () => {
@@ -167,7 +170,7 @@ describe('KarmaTestRunner', () => {
     let sut: KarmaTestRunner;
 
     beforeEach(() => {
-      sut = new KarmaTestRunner(settings);
+      sut = createSut();
       karmaRunStub.callsArgOn(1, 0);
     });
 
