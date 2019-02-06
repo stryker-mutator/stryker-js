@@ -22,4 +22,4 @@ jobs:
       versionSpec: '10.x'
   - script: npm install
   - script: npm run build
-  - script: npm e2e
+  - script: npm run e2e
