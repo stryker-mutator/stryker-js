@@ -28,10 +28,9 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-jasmine#readme",
   "peerDependencies": {
-    "jasmine-core": ">=2",
-    "stryker-api": ">=0.18.0 <0.24.0"
+    "jasmine-core": ">=2"
   },
-  "devDependencies": {
+  "dependencies": {
     "stryker-api": "^0.23.0"
   },
   "contributors": []
