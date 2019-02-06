@@ -43,15 +43,14 @@
     "react": "~16.7.0",
     "react-dom": "~16.7.0",
     "react-scripts": "~2.1.0",
-    "react-scripts-ts": "~3.1.0",
-    "stryker-api": "^0.23.0"
+    "react-scripts-ts": "~3.1.0"
 	},
 	"peerDependencies": {
-		"jest": ">= 22.0.0",
-		"stryker-api": ">=0.18.0 <0.24.0"
+		"jest": ">= 22.0.0"
 	},
 	"dependencies": {
-		"semver": "~5.6.0"
+		"semver": "~5.6.0",
+    "stryker-api": "^0.23.0"
 	},
 	"initStrykerConfig": {
 		"coverageAnalysis": "off"

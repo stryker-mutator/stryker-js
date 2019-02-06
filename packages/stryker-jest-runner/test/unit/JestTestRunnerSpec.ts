@@ -1,62 +1,48 @@
-import JestTestAdapterFactory from '../../src/jestTestAdapters/JestTestAdapterFactory';
-import JestTestRunner from '../../src/JestTestRunner';
-import { Config } from 'stryker-api/config';
+import JestTestRunner, { PROCESS_ENV_TOKEN, JEST_TEST_ADAPTER_TOKEN } from '../../src/JestTestRunner';
 import * as fakeResults from '../helpers/testResultProducer';
 import * as sinon from 'sinon';
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import { RunStatus, TestStatus, RunOptions } from 'stryker-api/test_runner';
-import currentLogMock from '../helpers/logMock';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { JestTestAdapter } from '../../src/jestTestAdapters';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';
   const runOptions: RunOptions = { timeout: 0 };
 
-  let jestTestAdapterFactoryStub: sinon.SinonStub;
-  let runJestStub: sinon.SinonStub;
-  let strykerOptions: Config;
+  let jestTestAdapterMock: sinon.SinonStubbedInstance<JestTestAdapter>;
   let jestTestRunner: JestTestRunner;
   let processEnvMock: NodeJS.ProcessEnv;
 
   beforeEach(() => {
-    runJestStub = sinon.stub();
-    runJestStub.resolves({ results: { testResults: [] } });
+    jestTestAdapterMock = { run: sinon.stub() };
+    jestTestAdapterMock.run.resolves({ results: { testResults: [] } });
 
-    strykerOptions = new Config();
-    strykerOptions.set({ jest: { config: { property: 'value' } }, basePath });
+    testInjector.options.jest = { config: { property: 'value' } };
+    testInjector.options.basePath = basePath;
 
     processEnvMock = {
       NODE_ENV: undefined
     };
 
-    jestTestRunner = new JestTestRunner({
-      fileNames: [],
-      strykerOptions
-    }, processEnvMock);
-
-    jestTestAdapterFactoryStub = sinon.stub(JestTestAdapterFactory, 'getJestTestAdapter');
-    jestTestAdapterFactoryStub.returns({
-      run: runJestStub
-    });
+    jestTestRunner = testInjector.injector
+      .provideValue(PROCESS_ENV_TOKEN, processEnvMock)
+      .provideValue(JEST_TEST_ADAPTER_TOKEN, jestTestAdapterMock as unknown as JestTestAdapter)
+      .injectClass(JestTestRunner);
   });
 
   it('should log the project root when constructing the JestTestRunner', () => {
-    assert(currentLogMock().debug.calledWith(`Project root is ${basePath}`));
-  });
-
-  it('should call jestTestAdapterFactory "getJestTestAdapter" method to obtain a testRunner', async () => {
-    await jestTestRunner.run(runOptions);
-
-    assert(jestTestAdapterFactoryStub.called);
+    expect(testInjector.logger.debug).calledWith(`Project root is ${basePath}`);
   });
 
   it('should call the run function with the provided config and the projectRoot', async () => {
     await jestTestRunner.run(runOptions);
 
-    assert(runJestStub.called);
+    expect(jestTestAdapterMock.run).called;
   });
 
   it('should call the jestTestRunner run method and return a correct runResult', async () => {
-    runJestStub.resolves({ results: fakeResults.createSuccessResult() });
+    jestTestAdapterMock.run.resolves({ results: fakeResults.createSuccessResult() });
 
     const result = await jestTestRunner.run(runOptions);
 
@@ -75,7 +61,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should call the jestTestRunner run method and return a skipped runResult', async () => {
-    runJestStub.resolves({ results: fakeResults.createPendingResult() });
+    jestTestAdapterMock.run.resolves({ results: fakeResults.createPendingResult() });
 
     const result = await jestTestRunner.run(runOptions);
 
@@ -94,7 +80,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should call the jestTestRunner run method and return a negative runResult', async () => {
-    runJestStub.resolves({ results: fakeResults.createFailResult() });
+    jestTestAdapterMock.run.resolves({ results: fakeResults.createFailResult() });
 
     const result = await jestTestRunner.run(runOptions);
 
@@ -129,7 +115,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should return an error result when a runtime error occurs', async () => {
-    runJestStub.resolves({ results: { testResults: [], numRuntimeErrorTestSuites: 1 } });
+    jestTestAdapterMock.run.resolves({ results: { testResults: [], numRuntimeErrorTestSuites: 1 } });
 
     const result = await jestTestRunner.run(runOptions);
 

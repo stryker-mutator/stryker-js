@@ -1,23 +1,35 @@
-import { getLogger } from 'stryker-api/logging';
-import { RunnerOptions, RunResult, TestRunner, RunStatus, TestResult, TestStatus, RunOptions } from 'stryker-api/test_runner';
+import { Logger } from 'stryker-api/logging';
+import { RunResult, TestRunner, RunStatus, TestResult, TestStatus, RunOptions } from 'stryker-api/test_runner';
 import * as jest from 'jest';
-import JestTestAdapterFactory from './jestTestAdapters/JestTestAdapterFactory';
+import { jestTestAdapterFactory, JEST_VERSION_TOKEN } from './jestTestAdapters';
+import { tokens, commonTokens, Injector, OptionsContext } from 'stryker-api/plugin';
+import { StrykerOptions } from 'stryker-api/core';
+import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
+
+export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
+  return injector
+    .provideValue(PROCESS_ENV_TOKEN, process.env)
+    .provideValue(JEST_VERSION_TOKEN, require('jest/package.json').version as string)
+    .provideFactory(JEST_TEST_ADAPTER_TOKEN, jestTestAdapterFactory)
+    .injectClass(JestTestRunner);
+}
+jestTestRunnerFactory.inject = tokens(commonTokens.injector);
+
+export const PROCESS_ENV_TOKEN = 'PROCESS_ENV_TOKEN';
+export const JEST_TEST_ADAPTER_TOKEN = 'jestTestAdapter';
 
 export default class JestTestRunner implements TestRunner {
-  private readonly log = getLogger(JestTestRunner.name);
   private readonly jestConfig: jest.Configuration;
-  private readonly processEnvRef: NodeJS.ProcessEnv;
+
   private readonly enableFindRelatedTests: boolean;
 
-  public constructor(options: RunnerOptions, processEnvRef?: NodeJS.ProcessEnv) {
-    // Make sure process can be mocked by tests by passing it in the constructor
-    this.processEnvRef = processEnvRef || /* istanbul ignore next */ process.env;
-
+  public static inject = tokens(commonTokens.logger, commonTokens.options, PROCESS_ENV_TOKEN, JEST_TEST_ADAPTER_TOKEN);
+  public constructor(private readonly log: Logger, options: StrykerOptions, private readonly processEnvRef: NodeJS.ProcessEnv, private readonly jestTestAdapter: JestTestAdapter) {
     // Get jest configuration from stryker options and assign it to jestConfig
-    this.jestConfig = options.strykerOptions.jest.config;
+    this.jestConfig = options.jest.config;
 
     // Get enableFindRelatedTests from stryker jest options or default to true
-    this.enableFindRelatedTests = options.strykerOptions.jest.enableFindRelatedTests;
+    this.enableFindRelatedTests = options.jest.enableFindRelatedTests;
     if (this.enableFindRelatedTests === undefined) {
       this.enableFindRelatedTests = true;
     }
@@ -31,16 +43,13 @@ export default class JestTestRunner implements TestRunner {
     // basePath will be used in future releases of Stryker as a way to define the project root
     // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
     // https://github.com/stryker-mutator/stryker/issues/650
-    this.jestConfig.rootDir = options.strykerOptions.basePath || process.cwd();
+    this.jestConfig.rootDir = options.basePath || process.cwd();
     this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 
   public async run(options: RunOptions): Promise<RunResult> {
     this.setNodeEnv();
-
-    const jestTestRunner = JestTestAdapterFactory.getJestTestAdapter();
-
-    const { results } = await jestTestRunner.run(this.jestConfig, process.cwd(), this.enableFindRelatedTests ? options.mutatedFileName : undefined);
+    const { results } = await this.jestTestAdapter.run(this.jestConfig, process.cwd(), this.enableFindRelatedTests ? options.mutatedFileName : undefined);
 
     // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
     const errorMessages = results.testResults.map((testSuite: jest.TestResult) => testSuite.failureMessage).filter(errorMessage => (errorMessage)) as string[];

@@ -2,10 +2,10 @@ import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTes
 import * as sinon from 'sinon';
 import { expect, assert } from 'chai';
 import * as jest from 'jest';
-import currentLogMock from '../../helpers/logMock';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
-describe('JestPromiseTestAdapter', () => {
-  let jestPromiseTestAdapter: JestPromiseTestAdapter;
+describe(JestPromiseTestAdapter.name, () => {
+  let sut: JestPromiseTestAdapter;
   let runCLIStub: sinon.SinonStub;
 
   const projectRoot = '/path/to/project';
@@ -19,17 +19,17 @@ describe('JestPromiseTestAdapter', () => {
       result: 'testResult'
     }));
 
-    jestPromiseTestAdapter = new JestPromiseTestAdapter();
+    sut = testInjector.injector.injectClass(JestPromiseTestAdapter);
   });
 
   it('should set reporters to an empty array', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+    await sut.run(jestConfig, projectRoot);
 
     expect(jestConfig.reporters).to.be.an('array').that.is.empty;
   });
 
   it('should call the runCLI method with the correct projectRoot', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+    await sut.run(jestConfig, projectRoot);
 
     assert(runCLIStub.calledWith({
       config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
@@ -39,7 +39,7 @@ describe('JestPromiseTestAdapter', () => {
   });
 
   it('should call the runCLI method with the --findRelatedTests flag', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot, fileNameUnderTest);
+    await sut.run(jestConfig, projectRoot, fileNameUnderTest);
 
     assert(runCLIStub.calledWith({
       _: [fileNameUnderTest],
@@ -51,7 +51,7 @@ describe('JestPromiseTestAdapter', () => {
   });
 
   it('should call the runCLI method and return the test result', async () => {
-    const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+    const result = await sut.run(jestConfig, projectRoot);
 
     expect(result).to.deep.equal({
       config: {
@@ -64,7 +64,7 @@ describe('JestPromiseTestAdapter', () => {
   });
 
   it('should call the runCLI method and return the test result when run with --findRelatedTests flag', async () => {
-    const result = await jestPromiseTestAdapter.run(jestConfig, projectRoot, fileNameUnderTest);
+    const result = await sut.run(jestConfig, projectRoot, fileNameUnderTest);
 
     expect(result).to.deep.equal({
       config: {
@@ -79,11 +79,11 @@ describe('JestPromiseTestAdapter', () => {
   });
 
   it('should trace log a message when jest is invoked', async () => {
-    await jestPromiseTestAdapter.run(jestConfig, projectRoot);
+    await sut.run(jestConfig, projectRoot);
 
     const expectedResult: any = JSON.parse(JSON.stringify(jestConfig));
     expectedResult.reporters = [];
 
-    assert(currentLogMock().trace.calledWithMatch(/Invoking Jest with config\s.*/));
+    expect(testInjector.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/);
   });
 });

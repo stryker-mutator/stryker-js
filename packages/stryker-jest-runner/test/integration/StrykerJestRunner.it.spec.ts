@@ -1,5 +1,4 @@
-import { Config } from 'stryker-api/config';
-import { RunnerOptions, RunStatus, TestStatus, RunOptions } from 'stryker-api/test_runner';
+import { RunStatus, TestStatus, RunOptions } from 'stryker-api/test_runner';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as path from 'path';
@@ -9,8 +8,9 @@ const paths = require('react-scripts-ts/config/paths');
 paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsconfig.test.json');
 
 import JestConfigEditor from '../../src/JestConfigEditor';
-import JestTestRunner from '../../src/JestTestRunner';
+import { jestTestRunnerFactory } from '../../src/JestTestRunner';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { commonTokens } from 'stryker-api/plugin';
 
 // Get the actual project root, since we will stub process.cwd later on
 const jestProjectRoot = process.cwd();
@@ -20,9 +20,6 @@ process.env.BABEL_ENV = 'test';
 
 describe('Integration test for Strykers Jest runner', () => {
   // Set timeout for integration tests to 10 seconds for travis
-
-  let jestConfigEditor: JestConfigEditor;
-  let runnerOptions: RunnerOptions;
   let processCwdStub: sinon.SinonStub;
 
   const runOptions: RunOptions = { timeout: 0 };
@@ -39,21 +36,22 @@ describe('Integration test for Strykers Jest runner', () => {
 
   beforeEach(() => {
     processCwdStub = sinon.stub(process, 'cwd');
-
-    jestConfigEditor = testInjector.injector.injectClass(JestConfigEditor);
-
-    runnerOptions = {
-      fileNames: [],
-      strykerOptions: new Config()
-    };
   });
 
-  it('should run tests on the example React + TypeScript project', async () => {
-    processCwdStub.returns(getProjectRoot('reactTsProject'));
-    runnerOptions.strykerOptions.set({ jest: { projectType: 'react-ts' } });
-    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
+  function createSut() {
+    const jestConfigEditor = testInjector.injector.injectClass(JestConfigEditor);
+    const config = testInjector.injector.resolve(commonTokens.config);
+    jestConfigEditor.edit(config);
+    return testInjector.injector
+      .provideValue(commonTokens.options, config)
+      .injectFunction(jestTestRunnerFactory);
+  }
 
-    const jestTestRunner = new JestTestRunner(runnerOptions);
+  it.only('should run tests on the example React + TypeScript project', async () => {
+    processCwdStub.returns(getProjectRoot('reactTsProject'));
+    testInjector.options.jest = { projectType: 'react-ts' };
+
+    const jestTestRunner = createSut();
     const result = await jestTestRunner.run(runOptions);
 
     expect(result.status).to.equal(RunStatus.Complete);
@@ -68,9 +66,7 @@ describe('Integration test for Strykers Jest runner', () => {
 
   it('should run tests on the example custom project using package.json', async () => {
     processCwdStub.returns(getProjectRoot('exampleProject'));
-
-    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
-    const jestTestRunner = new JestTestRunner(runnerOptions);
+    const jestTestRunner = createSut();
 
     const result = await jestTestRunner.run(runOptions);
 
@@ -91,8 +87,7 @@ describe('Integration test for Strykers Jest runner', () => {
   it('should run tests on the example custom project using jest.config.js', async () => {
     processCwdStub.returns(getProjectRoot('exampleProjectWithExplicitJestConfig'));
 
-    jestConfigEditor.edit(runnerOptions.strykerOptions as Config);
-    const jestTestRunner = new JestTestRunner(runnerOptions);
+    const jestTestRunner = createSut();
 
     const result = await jestTestRunner.run(runOptions);
 
