@@ -11,6 +11,7 @@ module.exports = function(config) {
       npm: true
     },
     maxConcurrentTestRunners: 2,
-    timeoutMS: 30000
+    timeoutMS: 30000,
+    logLevel: 'trace'
   });
 };
