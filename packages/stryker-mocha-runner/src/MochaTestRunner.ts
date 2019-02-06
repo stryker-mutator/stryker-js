@@ -1,30 +1,30 @@
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import * as path from 'path';
-import { TestRunner, RunResult, RunStatus, RunnerOptions } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunStatus } from 'stryker-api/test_runner';
 import LibWrapper from './LibWrapper';
 import StrykerMochaReporter from './StrykerMochaReporter';
 import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
 import { evalGlobal } from './utils';
+import { StrykerOptions } from 'stryker-api/core';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 
 export default class MochaTestRunner implements TestRunner {
 
   private testFileNames: string[];
-  private readonly allFileNames: string[];
-  private readonly log = getLogger(MochaTestRunner.name);
   private readonly mochaRunnerOptions: MochaRunnerOptions;
 
-  constructor(runnerOptions: RunnerOptions) {
-    this.mochaRunnerOptions = runnerOptions.strykerOptions[mochaOptionsKey];
-    this.allFileNames = runnerOptions.fileNames;
+  public static inject = tokens(commonTokens.logger, commonTokens.sandboxFileNames, commonTokens.options);
+  constructor(private readonly log: Logger, private readonly allFileNames: ReadonlyArray<string>, options: StrykerOptions) {
+    this.mochaRunnerOptions = options[mochaOptionsKey];
     this.additionalRequires();
   }
 
   public init(): void {
     const globPatterns = this.mochaFileGlobPatterns();
     const globPatternsAbsolute = globPatterns.map(glob => path.resolve(glob));
-    this.testFileNames = LibWrapper.multimatch(this.allFileNames, globPatternsAbsolute);
+    this.testFileNames = LibWrapper.multimatch(this.allFileNames.slice(), globPatternsAbsolute);
     if (this.testFileNames.length) {
       this.log.debug(`Using files: ${JSON.stringify(this.testFileNames, null, 2)}`);
     } else {
@@ -118,9 +118,7 @@ export default class MochaTestRunner implements TestRunner {
   private additionalRequires() {
     if (this.mochaRunnerOptions.require) {
       const modulesToRequire = this.mochaRunnerOptions.require
-        .map(module => {
-          return module.startsWith('.') ? path.resolve(module) : module;
-        });
+        .map(moduleName => moduleName.startsWith('.') ? path.resolve(moduleName) : moduleName);
       modulesToRequire.forEach(LibWrapper.require);
     }
   }
