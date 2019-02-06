@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import { CoverageCollection, RunnerOptions, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
+import { CoverageCollection, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from 'stryker-jasmine/src/JasmineTestFramework';
 import { expectTestResults } from '../helpers/assertions';
 import http = require('http');
 import { promisify } from '@stryker-mutator/util';
 import { FilePattern } from 'karma';
-import { factory } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 function wrapInClosure(codeFragment: string) {
   return `
@@ -15,20 +15,19 @@ function wrapInClosure(codeFragment: string) {
     })((Function('return this'))());`;
 }
 
-function createRunnerOptions(files: ReadonlyArray<FilePattern | string>, coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'): RunnerOptions {
-  return {
-    fileNames: [],
-    strykerOptions: factory.strykerOptions({
-      coverageAnalysis,
-      karma: {
-        config: {
-          files,
-          logLevel: 'off',
-          reporters: []
-        }
-      }
-    })
+function setOptions(files: ReadonlyArray<FilePattern | string>, coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'): void {
+  testInjector.options.coverageAnalysis = coverageAnalysis;
+  testInjector.options.karma = {
+    config: {
+      files,
+      logLevel: 'off',
+      reporters: []
+    }
   };
+}
+
+function createSut() {
+  return testInjector.injector.injectClass(KarmaTestRunner);
 }
 
 describe('KarmaTestRunner', () => {
@@ -52,10 +51,11 @@ describe('KarmaTestRunner', () => {
     describe('with simple add function to test', () => {
 
       before(() => {
-        sut = new KarmaTestRunner(createRunnerOptions([
+        setOptions([
           'testResources/sampleProject/src/Add.js',
           'testResources/sampleProject/test/AddSpec.js'
-        ]));
+        ]);
+        sut = createSut();
         return sut.init();
       });
 
@@ -90,11 +90,12 @@ describe('KarmaTestRunner', () => {
 
   describe('when some tests fail', () => {
     before(() => {
-      sut = new KarmaTestRunner(createRunnerOptions([
+      setOptions([
         'testResources/sampleProject/src/Add.js',
         'testResources/sampleProject/test/AddSpec.js',
         'testResources/sampleProject/test/AddFailedSpec.js'
-      ]));
+      ]);
+      sut = createSut();
       return sut.init();
     });
 
@@ -111,11 +112,12 @@ describe('KarmaTestRunner', () => {
   describe('when an error occurs while running tests', () => {
 
     before(() => {
-      sut = new KarmaTestRunner(createRunnerOptions([
+      setOptions([
         'testResources/sampleProject/src/Add.js',
         'testResources/sampleProject/src/Error.js',
         'testResources/sampleProject/test/AddSpec.js'
-      ]));
+      ]);
+      sut = createSut();
       return sut.init();
     });
 
@@ -129,10 +131,11 @@ describe('KarmaTestRunner', () => {
 
   describe('when no error occurred and no test is performed', () => {
     before(() => {
-      sut = new KarmaTestRunner(createRunnerOptions([
+      setOptions([
         'testResources/sampleProject/src/Add.js',
         'testResources/sampleProject/test/EmptySpec.js'
-      ]));
+      ]);
+      sut = createSut();
       return sut.init();
     });
 
@@ -151,11 +154,12 @@ describe('KarmaTestRunner', () => {
   describe('when adding an error file with included: false', () => {
 
     before(() => {
-      sut = new KarmaTestRunner(createRunnerOptions([
+      setOptions([
         { pattern: 'testResources/sampleProject/src/Add.js', included: true },
         { pattern: 'testResources/sampleProject/test/AddSpec.js', included: true },
         { pattern: 'testResources/sampleProject/src/Error.js', included: false }
-      ]));
+      ]);
+      sut = createSut();
       return sut.init();
     });
 
@@ -170,10 +174,11 @@ describe('KarmaTestRunner', () => {
   describe('when coverage data is available', () => {
 
     before(() => {
-      sut = new KarmaTestRunner(createRunnerOptions([
+      setOptions([
         'testResources/sampleProject/src-instrumented/Add.js',
         'testResources/sampleProject/test/AddSpec.js'
-      ], 'all'));
+      ], 'all');
+      sut = createSut();
       return sut.init();
     });
 
@@ -193,10 +198,7 @@ describe('KarmaTestRunner', () => {
 
     before(async () => {
       dummyServer = await DummyServer.create();
-      sut = new KarmaTestRunner(createRunnerOptions([
-        'testResources/sampleProject/src-instrumented/Add.js',
-        'testResources/sampleProject/test/AddSpec.js'
-      ]));
+      sut = testInjector.injector.injectClass(KarmaTestRunner);
       return sut.init();
     });
 

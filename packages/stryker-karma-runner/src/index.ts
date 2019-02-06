@@ -1,4 +1,6 @@
-import { TestRunnerFactory } from 'stryker-api/test_runner';
 import KarmaTestRunner from './KarmaTestRunner';
+import { declareClassPlugin, PluginKind } from 'stryker-api/plugin';
 
-TestRunnerFactory.instance().register('karma', KarmaTestRunner);
+export const strykerPlugins = [
+  declareClassPlugin(PluginKind.TestRunner, 'karma', KarmaTestRunner)
+];

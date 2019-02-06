@@ -2,11 +2,10 @@ import { StrykerOptions } from 'stryker-api/core';
 import * as path from 'path';
 import { getLogger } from 'stryker-api/logging';
 import * as mkdirp from 'mkdirp';
-import { RunResult, RunnerOptions } from 'stryker-api/test_runner';
+import { RunResult, TestRunner } from 'stryker-api/test_runner';
 import { File } from 'stryker-api/core';
 import { TestFramework } from 'stryker-api/test_framework';
 import { wrapInClosure, normalizeWhiteSpaces } from './utils/objectUtils';
-import TestRunnerDecorator from './test-runner/TestRunnerDecorator';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
 import { TempFolder } from './utils/TempFolder';
 import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
@@ -21,7 +20,7 @@ interface FileMap {
 export default class Sandbox {
 
   private readonly log = getLogger(Sandbox.name);
-  private testRunner: TestRunnerDecorator;
+  private testRunner: Required<TestRunner>;
   private fileMap: FileMap;
   private readonly files: File[];
   private readonly workingDirectory: string;
@@ -112,14 +111,11 @@ export default class Sandbox {
     return writeFile(targetFile, file.content);
   }
 
-  private initializeTestRunner(): Promise<void> {
-    const settings: RunnerOptions = {
-      fileNames: Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]),
-      strykerOptions: this.options,
-    };
+  private async initializeTestRunner(): Promise<void> {
+    const fileNames = Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]);
     this.log.debug(`Creating test runner %s using settings {port: %s}`, this.index);
-    this.testRunner = ResilientTestRunnerFactory.create(settings.strykerOptions.testRunner || '', settings, this.workingDirectory, this.loggingContext);
-    return this.testRunner.init();
+    this.testRunner = ResilientTestRunnerFactory.create(this.options, fileNames, this.workingDirectory, this.loggingContext);
+    await this.testRunner.init();
   }
 
   private calculateTimeout(mutant: TestableMutant) {

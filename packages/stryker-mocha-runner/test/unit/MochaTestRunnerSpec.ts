@@ -1,25 +1,24 @@
 import * as path from 'path';
 import { EventEmitter } from 'events';
 import * as Mocha from 'mocha';
-import * as logging from 'stryker-api/logging';
 import { expect } from 'chai';
 import { RunOptions } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import LibWrapper from '../../src/LibWrapper';
 import * as utils from '../../src/utils';
-import { Mock, mock, logger, runnerOptions } from '../helpers/mockHelpers';
+import { Mock, mock } from '../helpers/mockHelpers';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
-import { factory } from '../../../stryker-test-helpers/src';
+import { testInjector } from '../../../stryker-test-helpers/src';
 import sinon = require('sinon');
+import { commonTokens } from 'stryker-api/plugin';
 
-describe('MochaTestRunner', () => {
+describe.only(MochaTestRunner.name, () => {
 
   let MochaStub: sinon.SinonStub;
   let mocha: Mock<Mocha> & { suite: Mock<EventEmitter> };
   let sut: MochaTestRunner;
   let requireStub: sinon.SinonStub;
   let multimatchStub: sinon.SinonStub;
-  let log: Mock<logging.Logger>;
 
   beforeEach(() => {
     MochaStub = sinon.stub(LibWrapper, 'Mocha');
@@ -29,8 +28,6 @@ describe('MochaTestRunner', () => {
     mocha = mock(Mocha) as any;
     mocha.suite = mock(EventEmitter);
     MochaStub.returns(mocha);
-    log = logger();
-    sinon.stub(logging, 'getLogger').returns(log);
   });
 
   afterEach(() => {
@@ -40,11 +37,16 @@ describe('MochaTestRunner', () => {
     delete require.cache['baz.js'];
   });
 
+  function createSut(mochaSettings: Partial<{ fileNames: ReadonlyArray<string>, mochaOptions: MochaRunnerOptions }>) {
+    testInjector.options.mochaOptions = mochaSettings.mochaOptions || {};
+    return testInjector.injector
+      .provideValue(commonTokens.sandboxFileNames, mochaSettings.fileNames || ['src/math.js', 'test/mathSpec.js'])
+      .injectClass(MochaTestRunner);
+  }
+
   it('should should add all mocha test files on run()', async () => {
     multimatchStub.returns(['foo.js', 'bar.js', 'foo2.js']);
-    sut = new MochaTestRunner(runnerOptions({
-      strykerOptions: factory.strykerOptions({ mochaOptions: {} })
-    }));
+    sut = createSut({});
     await sut.init();
     await actRun();
     expect(mocha.addFile).calledThrice;
@@ -81,7 +83,7 @@ describe('MochaTestRunner', () => {
       timeout: 2000,
       ui: 'assert'
     };
-    sut = new MochaTestRunner(runnerOptions({ strykerOptions: factory.strykerOptions({ mochaOptions }) }));
+    sut = createSut({ mochaOptions });
     await sut.init();
 
     // Act
@@ -96,7 +98,7 @@ describe('MochaTestRunner', () => {
 
   it('should pass require additional require options when constructed', () => {
     const mochaOptions: MochaRunnerOptions = { require: ['ts-node', 'babel-register'] };
-    new MochaTestRunner(runnerOptions({ strykerOptions: factory.strykerOptions({ mochaOptions }) }));
+    createSut({ mochaOptions });
     expect(requireStub).calledTwice;
     expect(requireStub).calledWith('ts-node');
     expect(requireStub).calledWith('babel-register');
@@ -104,7 +106,7 @@ describe('MochaTestRunner', () => {
 
   it('should pass and resolve relative require options when constructed', () => {
     const mochaOptions: MochaRunnerOptions = { require: ['./setup.js', 'babel-register'] };
-    new MochaTestRunner(runnerOptions({ strykerOptions: factory.strykerOptions({ mochaOptions }) }));
+    createSut({ mochaOptions });
     const resolvedRequire = path.resolve('./setup.js');
     expect(requireStub).calledTwice;
     expect(requireStub).calledWith(resolvedRequire);
@@ -113,7 +115,7 @@ describe('MochaTestRunner', () => {
 
   it('should evaluate additional testHooks if required (in global mocha context)', async () => {
     multimatchStub.returns(['']);
-    sut = new MochaTestRunner(runnerOptions());
+    sut = createSut({});
     await sut.init();
     await actRun({ timeout: 0, testHooks: 'foobar();' });
     expect(utils.evalGlobal).calledWith('foobar();');
@@ -124,7 +126,7 @@ describe('MochaTestRunner', () => {
 
   it('should purge cached sandbox files', async () => {
     // Arrange
-    sut = new MochaTestRunner(runnerOptions({ fileNames: ['foo.js', 'bar.js'] }));
+    sut = createSut({ fileNames: ['foo.js', 'bar.js'] });
     multimatchStub.returns(['foo.js']); // should still purge 'bar.js'
     sut.init();
     require.cache['foo.js'] = 'foo';
@@ -149,13 +151,13 @@ describe('MochaTestRunner', () => {
     const filesStringified = JSON.stringify(files, null, 2);
 
     // Act
-    sut = new MochaTestRunner(runnerOptions({ fileNames: files }));
+    sut = createSut({ fileNames: files });
     const actFn = () => sut.init();
 
     // Assert
     expect(actFn).throws(`[MochaTestRunner] No files discovered (tried pattern(s) ${relativeGlobbing
-    }). Please specify the files (glob patterns) containing your tests in mochaOptions.files in your stryker.conf.js file.`);
-    expect(log.debug).calledWith(`Tried ${absoluteGlobbing} on files: ${filesStringified}.`);
+      }). Please specify the files (glob patterns) containing your tests in mochaOptions.files in your stryker.conf.js file.`);
+    expect(testInjector.logger.debug).calledWith(`Tried ${absoluteGlobbing} on files: ${filesStringified}.`);
   });
 
   async function actRun(options: RunOptions = { timeout: 0 }) {
@@ -166,10 +168,7 @@ describe('MochaTestRunner', () => {
   function actAssertMatchedPatterns(relativeGlobPatterns: string | string[] | undefined, expectedGlobPatterns: string[]) {
     const expectedFiles = ['foo.js', 'bar.js'];
     multimatchStub.returns(['foo.js']);
-    sut = new MochaTestRunner(runnerOptions({
-      fileNames: expectedFiles,
-      strykerOptions: factory.strykerOptions({ mochaOptions: { files: relativeGlobPatterns } })
-    }));
+    sut = createSut({ fileNames: expectedFiles, mochaOptions: { files: relativeGlobPatterns } });
     sut.init();
     expect(multimatchStub).calledWith(expectedFiles, expectedGlobPatterns);
   }

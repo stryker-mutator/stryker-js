@@ -1,9 +1,10 @@
 import * as os from 'os';
-import { TestRunner, RunResult, RunStatus, TestStatus, RunnerOptions } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
 import { exec } from 'child_process';
 import { kill } from '../utils/objectUtils';
 import Timer from '../utils/Timer';
 import { errorToString } from '@stryker-mutator/util';
+import { StrykerOptions } from 'stryker-api/core';
 
 export interface CommandRunnerSettings {
   command: string;
@@ -34,10 +35,10 @@ export default class CommandTestRunner implements TestRunner {
 
   private timeoutHandler: undefined | (() => Promise<void>);
 
-  constructor(private readonly workingDir: string, options: RunnerOptions) {
+  constructor(private readonly workingDir: string, options: StrykerOptions) {
     this.settings = Object.assign({
       command: 'npm test'
-    }, options.strykerOptions.commandRunner);
+    }, options.commandRunner);
   }
 
   public run(): Promise<RunResult> {

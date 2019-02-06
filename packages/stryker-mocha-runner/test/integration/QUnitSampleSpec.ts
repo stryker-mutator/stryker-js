@@ -2,10 +2,21 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { RunStatus } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
-import { runnerOptions } from '../helpers/mockHelpers';
-import { factory } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { commonTokens } from 'stryker-api/plugin';
 
 describe('QUnit sample', () => {
+  let files: string[];
+
+  beforeEach(() => {
+    files = [];
+  });
+
+  function createSut() {
+    return testInjector.injector
+      .provideValue(commonTokens.sandboxFileNames, files)
+      .injectClass(MochaTestRunner);
+  }
 
   it('should work when configured with "qunit" ui', async () => {
     const mochaOptions = {
@@ -13,10 +24,9 @@ describe('QUnit sample', () => {
       require: [],
       ui: 'qunit'
     };
-    const sut = new MochaTestRunner(runnerOptions({
-      fileNames: mochaOptions.files,
-      strykerOptions: factory.strykerOptions({ mochaOptions })
-    }));
+    testInjector.options.mochaOptions = mochaOptions;
+    files = mochaOptions.files;
+    const sut = createSut();
     await sut.init();
     const actualResult = await sut.run({});
     expect(actualResult.status).eq(RunStatus.Complete);
@@ -30,19 +40,16 @@ describe('QUnit sample', () => {
   });
 
   it('should not run tests when not configured with "qunit" ui', async () => {
-    const sut = new MochaTestRunner({
-      fileNames: [
-        resolve('./testResources/qunit-sample/MyMathSpec.js'),
-        resolve('./testResources/qunit-sample/MyMath.js')
-      ],
-      strykerOptions: factory.strykerOptions({
-        mochaOptions: {
-          files: [
-            resolve('./testResources/qunit-sample/MyMathSpec.js')
-          ]
-        }
-      })
-    });
+    files = [
+      resolve('./testResources/qunit-sample/MyMathSpec.js'),
+      resolve('./testResources/qunit-sample/MyMath.js')
+    ];
+    testInjector.options.mochaOptions = {
+      files: [
+        resolve('./testResources/qunit-sample/MyMathSpec.js')
+      ]
+    };
+    const sut = createSut();
     await sut.init();
     const actualResult = await sut.run({});
     expect(actualResult.status).eq(RunStatus.Complete);

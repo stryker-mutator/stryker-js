@@ -18,7 +18,6 @@ import * as fileUtils from '../../src/utils/fileUtils';
 import currentLogMock from '../helpers/logMock';
 import TestRunnerDecorator from '../../src/test-runner/TestRunnerDecorator';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
-import { RunnerOptions } from 'stryker-api/test_runner';
 
 const OVERHEAD_TIME_MS = 0;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -84,11 +83,8 @@ describe('Sandbox', () => {
 
     it('should have created the isolated test runner', async () => {
       await Sandbox.create(options, SANDBOX_INDEX, files, null, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
-      const expectedSettings: RunnerOptions = {
-        fileNames: [path.resolve('random-folder-3', 'file1'), path.resolve('random-folder-3', 'file2')],
-        strykerOptions: options
-      };
-      expect(ResilientTestRunnerFactory.create).to.have.been.calledWith(options.testRunner, expectedSettings, sandboxDirectory, LOGGING_CONTEXT);
+      const expectedFileNames = files.map(file => path.resolve(sandboxDirectory, path.basename(file.name)));
+      expect(ResilientTestRunnerFactory.create).calledWith(options, expectedFileNames, sandboxDirectory, LOGGING_CONTEXT);
     });
 
     it('should have created a sandbox folder', async () => {

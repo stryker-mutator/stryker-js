@@ -1,15 +1,14 @@
 import { TestStatus } from 'stryker-api/test_runner';
-import { Config } from 'stryker-api/config';
 import * as path from 'path';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('Sample project', () => {
 
   it('should be able to run karma', async () => {
-    const options = new Config();
-    options.karmaConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js');
-    const runner = new KarmaTestRunner({ strykerOptions: options, fileNames: [] });
+    testInjector.options.karmaConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js');
+    const runner = testInjector.injector.injectClass(KarmaTestRunner);
     await runner.init();
     const result = await runner.run({});
     expectTestResults(result, [

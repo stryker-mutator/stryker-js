@@ -1,23 +1,20 @@
 import { expect } from 'chai';
 import * as _ from 'lodash';
 import { empty, of } from 'rxjs';
-import { Config } from 'stryker-api/config';
-import { File, LogLevel } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { MutantStatus } from 'stryker-api/report';
-import { TestFramework } from 'stryker-api/test_framework';
 import { RunStatus, TestStatus } from 'stryker-api/test_runner';
-import { Logger } from 'stryker-api/logging';
 import Sandbox from '../../../src/Sandbox';
-import SandboxPool, * as sandboxPool from '../../../src/SandboxPool';
+import { SandboxPool } from '../../../src/SandboxPool';
 import TestableMutant from '../../../src/TestableMutant';
 import TranspiledMutant from '../../../src/TranspiledMutant';
-import MutantTestExecutor from '../../../src/process/MutationTestExecutor';
+import { MutationTestExecutor } from '../../../src/process/MutationTestExecutor';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import MutantTranspiler, * as mutantTranspiler from '../../../src/transpiler/MutantTranspiler';
-import { Mock, config, file, mock, mutantResult, testFramework, testResult, testableMutant, transpiledMutant, runResult } from '../../helpers/producers';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
-import currentLogMock from '../../helpers/logMock';
-import * as sinon from 'sinon';
+import MutantTranspiler from '../../../src/transpiler/MutantTranspiler';
+import { Mock, file, mock, mutantResult, testResult, testableMutant, transpiledMutant, runResult } from '../../helpers/producers';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { coreTokens } from '../../../src/di';
+import InputFileCollection from '../../../src/input/InputFileCollection';
 
 const createTranspiledMutants = (...n: number[]) => {
   return n.map(n => {
@@ -29,45 +26,41 @@ const createTranspiledMutants = (...n: number[]) => {
   });
 };
 
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  level: LogLevel.Fatal,
-  port: 4200
-});
-
-describe('MutationTestExecutor', () => {
+describe(MutationTestExecutor.name, () => {
 
   let sandboxPoolMock: Mock<SandboxPool>;
   let mutantTranspilerMock: Mock<MutantTranspiler>;
-  let testFrameworkMock: TestFramework;
   let transpiledMutants: TranspiledMutant[];
-  let inputFiles: File[];
+  let inputFiles: InputFileCollection;
   let reporter: Mock<BroadcastReporter>;
-  let expectedConfig: Config;
-  let sut: MutantTestExecutor;
+  let sut: MutationTestExecutor;
   let mutants: TestableMutant[];
   let initialTranspiledFiles: File[];
-  let logMock: Mock<Logger>;
 
   beforeEach(() => {
-    logMock = currentLogMock();
     sandboxPoolMock = mock(SandboxPool);
     mutantTranspilerMock = mock(MutantTranspiler);
     initialTranspiledFiles = [file(), file()];
     mutantTranspilerMock.initialize.resolves(initialTranspiledFiles);
     sandboxPoolMock.disposeAll.resolves();
-    testFrameworkMock = testFramework();
-    sinon.stub(sandboxPool, 'default').returns(sandboxPoolMock);
-    sinon.stub(mutantTranspiler, 'default').returns(mutantTranspilerMock);
     reporter = mock(BroadcastReporter);
-    inputFiles = [new File('input.ts', '')];
-    expectedConfig = config();
+    inputFiles = new InputFileCollection([new File('input.ts', '')], []);
     mutants = [testableMutant()];
   });
+
+  function createSut(): MutationTestExecutor {
+    return testInjector.injector
+      .provideValue(coreTokens.sandboxPool, sandboxPoolMock as unknown as SandboxPool)
+      .provideValue(coreTokens.mutantTranspiler, mutantTranspilerMock as unknown as MutantTranspiler)
+      .provideValue(coreTokens.inputFiles, inputFiles)
+      .provideValue(coreTokens.reporter, reporter)
+      .injectClass(MutationTestExecutor);
+  }
 
   describe('run', () => {
 
     beforeEach(async () => {
-      sut = new MutantTestExecutor(expectedConfig, inputFiles, testFrameworkMock, reporter, 42, LOGGING_CONTEXT);
+      sut = createSut();
       const sandbox = mock<Sandbox>(Sandbox as any);
       sandbox.runMutant.resolves(mutantResult());
       sandboxPoolMock.streamSandboxes.returns(of(sandbox));
@@ -75,17 +68,8 @@ describe('MutationTestExecutor', () => {
       await sut.run(mutants);
     });
 
-    it('should create the mutant transpiler', () => {
-      expect(mutantTranspiler.default).calledWith(expectedConfig);
-      expect(mutantTranspiler.default).calledWithNew;
-    });
-    it('should create the sandbox pool', () => {
-      expect(sandboxPool.default).calledWith(expectedConfig, testFrameworkMock, initialTranspiledFiles, 42);
-      expect(sandboxPool.default).calledWithNew;
-    });
-
     it('should initialize the mutantTranspiler', () => {
-      expect(mutantTranspilerMock.initialize).calledWith(inputFiles);
+      expect(mutantTranspilerMock.initialize).calledWith(inputFiles.files);
     });
 
     it('should dispose all sandboxes afterwards', () => {
@@ -107,7 +91,7 @@ describe('MutationTestExecutor', () => {
       mutantTranspilerMock.transpileMutants.returns(of(...transpiledMutants));
       sandboxPoolMock.streamSandboxes.returns(of(firstSandbox, secondSandbox));
 
-      sut = new MutantTestExecutor(config(), inputFiles, testFrameworkMock, reporter, 42, LOGGING_CONTEXT);
+      sut = createSut();
 
       // The uncovered, transpile error and changedAnyTranspiledFiles = false should not be ran in a sandbox
       // Mock first sandbox to return first success, then failed
@@ -162,16 +146,16 @@ describe('MutationTestExecutor', () => {
     });
 
     it('should log error results on debug', async () => {
-      logMock.isDebugEnabled.returns(true);
+      testInjector.logger.isDebugEnabled.returns(true);
       await sut.run(mutants);
-      expect(logMock.debug).calledWith('A runtime error occurred: %s during execution of mutant: %s',
+      expect(testInjector.logger.debug).calledWith('A runtime error occurred: %s during execution of mutant: %s',
         ['foo', 'bar'].toString(), transpiledMutants[5].mutant.toString());
     });
 
     it('should log transpile error results on debug', async () => {
-      logMock.isDebugEnabled.returns(true);
+      testInjector.logger.isDebugEnabled.returns(true);
       await sut.run(mutants);
-      expect(logMock.debug).calledWith(`Transpile error occurred: "Error! Cannot negate a string (or something)" during transpiling of mutant ${
+      expect(testInjector.logger.debug).calledWith(`Transpile error occurred: "Error! Cannot negate a string (or something)" during transpiling of mutant ${
         transpiledMutants[1].mutant.toString()}`);
     });
   });

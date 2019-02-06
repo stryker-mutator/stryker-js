@@ -1,5 +1,6 @@
-import { TestRunnerFactory } from 'stryker-api/test_runner';
-
 import JasmineTestRunner from './JasmineTestRunner';
+import { declareClassPlugin, PluginKind } from 'stryker-api/plugin';
 
-TestRunnerFactory.instance().register('jasmine', JasmineTestRunner);
+export const strykerPlugins = [
+  declareClassPlugin(PluginKind.TestRunner, 'jasmine', JasmineTestRunner)
+];

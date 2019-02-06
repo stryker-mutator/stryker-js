@@ -9,12 +9,14 @@ import { isPromise } from './utils/objectUtils';
 import { TempFolder } from './utils/TempFolder';
 import { MutatorFacade } from './mutants/MutatorFacade';
 import InitialTestExecutor from './process/InitialTestExecutor';
-import MutationTestExecutor from './process/MutationTestExecutor';
+import { MutationTestExecutor } from './process/MutationTestExecutor';
 import LogConfigurator from './logging/LogConfigurator';
 import { Injector } from 'typed-inject';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
 import { coreTokens, MainContext, PluginCreator, buildMainInjector } from './di';
 import { commonTokens, PluginKind } from 'stryker-api/plugin';
+import MutantTranspiler from './transpiler/MutantTranspiler';
+import { SandboxPool } from './SandboxPool';
 
 export default class Stryker {
 
@@ -53,27 +55,24 @@ export default class Stryker {
     if (inputFiles.files.length) {
       TempFolder.instance().initialize();
       const inputFileInjector = this.injector
+        .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(coreTokens.inputFiles, inputFiles);
       const initialTestRunProcess = inputFileInjector
-        .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(commonTokens.produceSourceMaps, this.config.coverageAnalysis !== 'off')
         .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
         .provideClass(coreTokens.transpiler, TranspilerFacade)
         .injectClass(InitialTestExecutor);
       const initialRunResult = await initialTestRunProcess.run();
       const mutator = inputFileInjector.injectClass(MutatorFacade);
-      const testableMutants = await inputFileInjector
+      const mutationTestProcessInjector = inputFileInjector
         .provideValue(coreTokens.initialRunResult, initialRunResult)
+        .provideClass(coreTokens.mutantTranspiler, MutantTranspiler)
+        .provideClass(coreTokens.sandboxPool, SandboxPool);
+      const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
       if (initialRunResult.runResult.tests.length && testableMutants.length) {
-        const mutationTestExecutor = new MutationTestExecutor(
-          this.config,
-          inputFiles.files,
-          this.injector.resolve(coreTokens.testFramework),
-          this.reporter,
-          initialRunResult.overheadTimeMS,
-          loggingContext);
+        const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
         const mutantResults = await mutationTestExecutor.run(testableMutants);
         this.reportScore(mutantResults);
         await this.wrapUpReporter();

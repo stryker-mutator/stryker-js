@@ -30,7 +30,7 @@ describe('JasmineTestRunner', () => {
     sandbox.stub(helpers, 'Jasmine').returns(jasmineStub);
     fileNames = ['foo.js', 'bar.js'];
     clock = sandbox.useFakeTimers();
-    sut = new JasmineTestRunner({ fileNames, strykerOptions: factory.strykerOptions({ jasmineConfigFile: 'jasmineConfFile' }) });
+    sut = new JasmineTestRunner(fileNames, factory.strykerOptions({ jasmineConfigFile: 'jasmineConfFile' }));
   });
 
   afterEach(() => {
