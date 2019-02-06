@@ -23,12 +23,14 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "stryker-api": "^0.23.0"
+  },
   "devDependencies": {
     "@types/socket.io": "^2.1.0",
-    "stryker-api": "^0.21.5"
+    "@stryker-mutator/test-helpers": "0.0.0"
   },
   "peerDependencies": {
-    "stryker-api": ">=0.18.0 <0.24.0",
     "web-component-tester": "^6.9.0"
   },
   "author": "Nico Jansen <jansennico@gmail.com>",

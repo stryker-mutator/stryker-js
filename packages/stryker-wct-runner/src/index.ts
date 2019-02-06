@@ -1,4 +1,6 @@
-import { TestRunnerFactory } from 'stryker-api/test_runner';
 import WctTestRunner from './WctTestRunner';
+import { declareClassPlugin, PluginKind } from 'stryker-api/plugin';
 
-TestRunnerFactory.instance().register('wct', WctTestRunner);
+export const strykerPlugins = [
+  declareClassPlugin(PluginKind.TestRunner, 'wct', WctTestRunner)
+];

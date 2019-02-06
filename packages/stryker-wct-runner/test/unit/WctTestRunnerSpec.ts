@@ -7,7 +7,7 @@ import WctLogger, * as wctLoggerModule from '../../src/WctLogger';
 import WctReporter, * as wctReporterModule from '../../src/WctReporter';
 import { expect } from 'chai';
 import { TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
-import { StrykerOptions } from 'stryker-api/core';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe(WctTestRunner.name, () => {
 
@@ -15,7 +15,10 @@ describe(WctTestRunner.name, () => {
   let wctLoggerMock: sinon.SinonStubbedInstance<WctLogger>;
   let wctReporterMock: sinon.SinonStubbedInstance<WctReporter>;
   let stepsMock: sinon.SinonStubbedInstance<typeof steps>;
-  let options: { strykerOptions: StrykerOptions };
+
+  function createSut(): WctTestRunner {
+    return testInjector.injector.injectClass(WctTestRunner);
+  }
 
   beforeEach(() => {
     contextMock = sinon.createStubInstance(contextModule.Context);
@@ -27,7 +30,7 @@ describe(WctTestRunner.name, () => {
       runTests: sinon.stub(),
       setupOverrides: sinon.stub()
     };
-    options = { strykerOptions: { coverageAnalysis: 'off' } };
+    testInjector.options.coverageAnalysis = 'off';
     contextMock.options = {};
     wctLoggerMock = sinon.createStubInstance(WctLogger);
     wctReporterMock = sinon.createStubInstance(WctReporter);
@@ -40,34 +43,34 @@ describe(WctTestRunner.name, () => {
   it('should create a context using wct options, with `persistent = false`', () => {
     const wctOptions = { foo: 'bar', persistent: true };
     const expectedWctOptions = { foo: 'bar', persistent: false };
-    options.strykerOptions.wct = wctOptions;
-    new WctTestRunner(options);
+    testInjector.options.wct = wctOptions;
+    createSut();
     expect(contextModule.Context).calledWithNew;
     expect(contextModule.Context).calledWith(expectedWctOptions);
   });
 
   it('should create a reporter', () => {
-    new WctTestRunner(options);
+    createSut();
     expect(wctReporterModule.default).calledWithNew;
     expect(wctReporterModule.default).calledWith(contextMock);
   });
 
   it('should create a logger', () => {
     contextMock.options.verbose = true;
-    new WctTestRunner(options);
+    createSut();
     expect(wctLoggerModule.default).calledWithNew;
     expect(wctLoggerModule.default).calledWith(contextMock, true);
   });
 
   it('should throw when coverageAnalysis != "off"', () => {
-    options.strykerOptions.coverageAnalysis = 'all';
+    testInjector.options.coverageAnalysis = 'all';
     const expectedError = 'Coverage analysis "all" is not (yet) supported by the WCT test runner plugin. Please set `coverageAnalysis: "off"` in your stryker.conf.js file.';
-    expect(() => new WctTestRunner(options)).throws(expectedError);
+    expect(() => createSut()).throws(expectedError);
   });
 
   describe('init', () => {
     it('should run initialization steps', async () => {
-      const sut = new WctTestRunner(options);
+      const sut = createSut();
       await sut.init();
       expect(stepsMock.setupOverrides).calledBefore(stepsMock.loadPlugins);
       expect(stepsMock.loadPlugins).calledBefore(stepsMock.configure);
@@ -81,7 +84,7 @@ describe(WctTestRunner.name, () => {
 
   describe('dispose', () => {
     it('should run dispose the logger and reporter', () => {
-      const sut = new WctTestRunner(options);
+      const sut = createSut();
       sut.dispose();
       expect(wctLoggerMock.dispose).called;
       expect(wctReporterMock.dispose).called;
@@ -92,7 +95,7 @@ describe(WctTestRunner.name, () => {
 
     it('should run clear tests', async () => {
       stepsMock.runTests.resolves();
-      const sut = new WctTestRunner(options);
+      const sut = createSut();
       wctReporterMock.results = [{ name: 'foobar', status: TestStatus.Success, timeSpentMs: 4 }];
       const actual = await sut.run();
       const expectedRunResult: RunResult = { status: RunStatus.Complete, tests: [] };
@@ -101,7 +104,7 @@ describe(WctTestRunner.name, () => {
 
     it('should run tests', async () => {
       stepsMock.runTests.resolves();
-      const sut = new WctTestRunner(options);
+      const sut = createSut();
       const runPromise = sut.run();
       const expectedTests = wctReporterMock.results = [{ name: 'foobar', status: TestStatus.Success, timeSpentMs: 4 }];
       const actual = await runPromise;
@@ -111,7 +114,7 @@ describe(WctTestRunner.name, () => {
 
     it('should ignore errors from failed tests', async () => {
       stepsMock.runTests.rejects(new Error('23 failed tests'));
-      const sut = new WctTestRunner(options);
+      const sut = createSut();
       const runPromise = sut.run();
       const expectedTests = wctReporterMock.results = [{ name: 'foobar', status: TestStatus.Failed, timeSpentMs: 4 }];
       const actual = await runPromise;
@@ -122,7 +125,7 @@ describe(WctTestRunner.name, () => {
     it('should not ignore other errors', async () => {
       const expectedError = new Error('Foobar Error');
       stepsMock.runTests.rejects(expectedError);
-      const sut = new WctTestRunner(options);
+      const sut = createSut();
       const actualResult = await sut.run();
       expect(actualResult.status).eq(RunStatus.Error);
       expect(actualResult.errorMessages).deep.eq([expectedError.stack]);
