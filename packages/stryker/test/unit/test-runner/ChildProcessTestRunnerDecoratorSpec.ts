@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { RunnerOptions, RunOptions } from 'stryker-api/test_runner';
-import { LogLevel } from 'stryker-api/core';
+import { RunOptions } from 'stryker-api/test_runner';
+import { LogLevel, StrykerOptions } from 'stryker-api/core';
 import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
 import { Mock, mock, strykerOptions } from '../../helpers/producers';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
@@ -13,7 +13,7 @@ import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrash
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
   let sut: ChildProcessTestRunnerDecorator;
-  let runnerOptions: RunnerOptions;
+  let options: StrykerOptions;
   let childProcessProxyMock: {
     proxy: Mock<TestRunnerDecorator>;
     dispose: sinon.SinonStub;
@@ -30,22 +30,19 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     };
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     childProcessProxyCreateStub.returns(childProcessProxyMock);
-    runnerOptions = {
-      fileNames: [],
-      strykerOptions: strykerOptions({
-        plugins: ['foo-plugin', 'bar-plugin']
-      })
-    };
+    options = strykerOptions({
+      plugins: ['foo-plugin', 'bar-plugin']
+    });
     loggingContext = { port: 4200, level: LogLevel.Fatal };
-    sut = new ChildProcessTestRunnerDecorator('realRunner', runnerOptions, 'a working directory', loggingContext);
+    sut = new ChildProcessTestRunnerDecorator(options, [], 'a working directory', loggingContext);
   });
 
   it('should create the child process proxy', () => {
     expect(childProcessProxyCreateStub).calledWith(
       require.resolve('../../../src/test-runner/ChildProcessTestRunnerWorker.js'),
       loggingContext,
-      runnerOptions.strykerOptions,
-      { [ChildProcessTestRunnerWorker.inject[0]]: 'realRunner', [ChildProcessTestRunnerWorker.inject[1]]: runnerOptions },
+      options,
+      { sandboxFileNames: [] },
       'a working directory',
       ChildProcessTestRunnerWorker
     );

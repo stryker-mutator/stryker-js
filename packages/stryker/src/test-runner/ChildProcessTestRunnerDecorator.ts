@@ -1,30 +1,30 @@
-import { TestRunner, RunResult, RunOptions, RunnerOptions } from 'stryker-api/test_runner';
+import { TestRunner, RunResult, RunOptions } from 'stryker-api/test_runner';
 import LoggingClientContext from '../logging/LoggingClientContext';
 import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
 import { ChildProcessTestRunnerWorker } from './ChildProcessTestRunnerWorker';
 import { timeout } from '../utils/objectUtils';
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
+import { StrykerOptions } from 'stryker-api/core';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
- * Also implements timeout-mechanism (on timeout, restart the child runner and report timeout)
  */
 export default class ChildProcessTestRunnerDecorator implements TestRunner {
 
   private readonly worker: ChildProcessProxy<ChildProcessTestRunnerWorker>;
 
   constructor(
-    realTestRunnerName: string,
-    options: RunnerOptions,
+    options: StrykerOptions,
+    sandboxFileNames: ReadonlyArray<string>,
     sandboxWorkingDirectory: string,
     loggingContext: LoggingClientContext) {
     this.worker = ChildProcessProxy.create(
       require.resolve(`./${ChildProcessTestRunnerWorker.name}`),
       loggingContext,
-      options.strykerOptions,
-      { realTestRunnerName, runnerOptions: options },
+      options,
+      { sandboxFileNames },
       sandboxWorkingDirectory,
       ChildProcessTestRunnerWorker);
   }

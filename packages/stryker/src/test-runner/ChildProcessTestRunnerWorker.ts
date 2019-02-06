@@ -1,14 +1,19 @@
-import { TestRunner, TestRunnerFactory, RunnerOptions, RunOptions } from 'stryker-api/test_runner';
+import { TestRunner, RunOptions } from 'stryker-api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
-import { tokens, commonTokens, PluginResolver } from 'stryker-api/plugin';
+import { tokens, commonTokens, PluginKind, Injector, OptionsContext } from 'stryker-api/plugin';
+import { PluginCreator } from '../di';
+import { StrykerOptions } from 'stryker-api/core';
 
 export class ChildProcessTestRunnerWorker implements TestRunner {
 
   private readonly underlyingTestRunner: TestRunner;
 
-  public static inject = tokens('realTestRunnerName', 'runnerOptions', commonTokens.pluginResolver);
-  constructor(realTestRunnerName: string, options: RunnerOptions, _: PluginResolver) {
-    this.underlyingTestRunner = TestRunnerFactory.instance().create(realTestRunnerName, options);
+  public static inject = tokens(commonTokens.sandboxFileNames, commonTokens.options, commonTokens.injector);
+  constructor(sandboxFileNames: ReadonlyArray<string>, { testRunner }: StrykerOptions, injector: Injector<OptionsContext>) {
+    this.underlyingTestRunner = injector
+      .provideValue(commonTokens.sandboxFileNames, sandboxFileNames)
+      .injectFunction(PluginCreator.createFactory(PluginKind.TestRunner))
+      .create(testRunner);
   }
 
   public async init(): Promise<void> {

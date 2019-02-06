@@ -16,16 +16,15 @@ class TestInjector {
   }
   private readonly provideConfig = () => {
     const config = new Config();
-    config.set(this.provideOptions());
+    config.set(this.options);
     return config;
   }
-
   private readonly provideOptions = () => {
-    return factory.strykerOptions(this.options);
+    return this.options;
   }
 
   public pluginResolver: sinon.SinonStubbedInstance<PluginResolver>;
-  public options: Partial<StrykerOptions>;
+  public options: StrykerOptions;
   public logger: sinon.SinonStubbedInstance<Logger>;
   public injector: Injector<OptionsContext> = rootInjector
     .provideValue(commonTokens.getLogger, this.provideLogger)
@@ -35,7 +34,7 @@ class TestInjector {
     .provideFactory(commonTokens.pluginResolver, this.providePluginResolver, Scope.Transient);
 
   public reset() {
-    this.options = {};
+    this.options = factory.strykerOptions();
     this.logger = factory.logger();
     this.pluginResolver = {
       resolve: sinon.stub(),

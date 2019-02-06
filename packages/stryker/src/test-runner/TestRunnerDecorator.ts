@@ -1,6 +1,6 @@
 import { TestRunner, RunOptions, RunResult } from 'stryker-api/test_runner';
 
-export default class TestRunnerDecorator implements TestRunner {
+export default class TestRunnerDecorator implements Required<TestRunner> {
   protected innerRunner: TestRunner;
 
   constructor(private readonly testRunnerProducer: () => TestRunner) {
