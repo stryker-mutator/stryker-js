@@ -1,24 +1,20 @@
 import JestConfigLoader from './JestConfigLoader';
 import * as path from 'path';
+import fs = require('fs');
 import { Configuration } from 'jest';
 
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root
  */
 export default class CustomJestConfigLoader implements JestConfigLoader {
-  private readonly _fs: any;
   private readonly _projectRoot: string;
-  private readonly _loader: NodeRequire;
 
-  constructor(projectRoot: string, fs: any, loader?: NodeRequire) {
+  constructor(projectRoot: string, private readonly _loader: NodeRequireFunction = require) {
     this._projectRoot = projectRoot;
-    this._fs = fs;
-    this._loader = loader || /* istanbul ignore next */ require;
   }
 
   public loadConfig(): Configuration {
     const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson() || {};
-
     return jestConfig;
   }
 
@@ -30,7 +26,7 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
 
   private readConfigFromPackageJson() {
     try {
-      return JSON.parse(this._fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8')).jest;
+      return JSON.parse(fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8')).jest;
     } catch { /* Don't return anything (implicitly return undefined) */ }
   }
 }

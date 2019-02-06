@@ -1,11 +1,13 @@
 import { TestResult, TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { Mutant } from 'stryker-api/mutant';
-import { Config } from 'stryker-api/config';
+import { Config, ConfigEditor } from 'stryker-api/config';
 import { Logger } from 'stryker-api/logging';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
 import { MutationScoreThresholds, File, Location, StrykerOptions, LogLevel } from 'stryker-api/core';
 import * as sinon from 'sinon';
+import { Transpiler } from 'stryker-api/transpile';
+import { Injector } from 'typed-inject';
 
 /**
  * A 1x1 png base64 encoded
@@ -17,7 +19,7 @@ export const PNG_BASE64_ENCODED = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeA
  * @param defaults
  */
 function factoryMethod<T>(defaultsFactory: () => T) {
-  return (overrides?: Partial<T>) => Object.assign({}, defaultsFactory(), overrides);
+  return (overrides?: Partial<T>): T => Object.assign({}, defaultsFactory(), overrides);
 }
 
 export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
@@ -59,11 +61,13 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export const testFramework = factoryMethod<TestFramework>(() => ({
-  beforeEach(codeFragment: string) { return `beforeEach(){ ${codeFragment}}`; },
-  afterEach(codeFragment: string) { return `afterEach(){ ${codeFragment}}`; },
-  filter(selections: TestSelection[]) { return `filter: ${selections}`; }
-}));
+export function testFramework(): TestFramework {
+  return {
+    beforeEach(codeFragment: string) { return `beforeEach(){ ${codeFragment}}`; },
+    afterEach(codeFragment: string) { return `afterEach(){ ${codeFragment}}`; },
+    filter(selections: TestSelection[]) { return `filter: ${selections}`; }
+  };
+}
 
 export const scoreResult = factoryMethod<ScoreResult>(() => ({
   childResults: [],
@@ -136,6 +140,18 @@ export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Requi
   return reporter;
 }
 
+export function configEditor(): sinon.SinonStubbedInstance<ConfigEditor> {
+  return {
+    edit: sinon.stub()
+  };
+}
+
+export function transpiler(): sinon.SinonStubbedInstance<Transpiler> {
+  return {
+    transpile: sinon.stub()
+  };
+}
+
 export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
   const scopedTestIds: number[] = [];
   for (let i = 0; i < numberOfTests; i++) {
@@ -149,6 +165,21 @@ export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.to
     scopedTestIds,
     timeSpentScopedTests: 0
   };
+}
+
+export function injector(): sinon.SinonStubbedInstance<Injector> {
+  const injectorMock: sinon.SinonStubbedInstance<Injector> = {
+    injectClass: sinon.stub(),
+    injectFunction: sinon.stub(),
+    provideClass: sinon.stub(),
+    provideFactory: sinon.stub(),
+    provideValue: sinon.stub(),
+    resolve: sinon.stub()
+  };
+  injectorMock.provideClass.returnsThis();
+  injectorMock.provideFactory.returnsThis();
+  injectorMock.provideValue.returnsThis();
+  return injectorMock;
 }
 
 export function file() {

@@ -1,4 +1,6 @@
-import { TranspilerFactory } from 'stryker-api/transpile';
 import BabelTranspiler from './BabelTranspiler';
+import { declareClassPlugin, PluginKind } from 'stryker-api/plugin';
 
-TranspilerFactory.instance().register('babel', BabelTranspiler);
+export const strykerPlugins = [
+  declareClassPlugin(PluginKind.Transpiler, 'babel', BabelTranspiler)
+];

@@ -1,11 +1,12 @@
 import * as os from 'os';
 import * as path from 'path';
 import * as ts from 'typescript';
-import { getLogger } from 'stryker-api/logging';
 import { ConfigEditor, Config } from 'stryker-api/config';
 import { CONFIG_KEY_FILE, CONFIG_KEY } from './helpers/keys';
+import { Logger } from 'stryker-api/logging';
 import * as fs from 'fs';
 import { normalizeFileForTypescript, normalizeFileFromTypescript } from './helpers/tsHelpers';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker/issues/391 for more info
@@ -17,7 +18,8 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
 
 export default class TypescriptConfigEditor implements ConfigEditor {
 
-  private readonly log = getLogger(TypescriptConfigEditor.name);
+  public static inject = tokens(commonTokens.logger);
+  constructor(private readonly log: Logger) { }
 
   public edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
     this.loadTSConfig(strykerConfig, host);

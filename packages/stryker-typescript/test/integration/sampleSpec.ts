@@ -5,9 +5,10 @@ import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
-import TypescriptMutator from '../../src/TypescriptMutator';
+import { typescriptMutatorFactory } from '../../src/TypescriptMutator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('Sample integration', () => {
 
@@ -15,30 +16,31 @@ describe('Sample integration', () => {
   let inputFiles: File[];
 
   beforeEach(() => {
-    const configEditor = new TypescriptConfigEditor();
+    const configEditor = testInjector.injector.injectClass(TypescriptConfigEditor);
     config = new Config();
     config.set({
       tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'tsconfig.json'),
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
+    testInjector.options = config;
   });
 
   it('should be able to generate mutants', () => {
     // Generate mutants
-    const mutator = new TypescriptMutator(config);
+    const mutator = testInjector.injector.injectFunction(typescriptMutatorFactory);
     const mutants = mutator.mutate(inputFiles);
     expect(mutants.length).to.eq(5);
   });
 
   it('should be able to transpile source code', async () => {
-    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: false });
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).to.eq(2);
   });
 
   it('should be able to produce source maps', async () => {
-    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: true });
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ true);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles).lengthOf(4);
     const mapFiles = outputFiles.filter(file => file.name.endsWith('.map'));
@@ -51,9 +53,9 @@ describe('Sample integration', () => {
 
   it('should be able to transpile mutated code', async () => {
     // Transpile mutants
-    const mutator = new TypescriptMutator(config);
+    const mutator = testInjector.injector.injectFunction(typescriptMutatorFactory);
     const mutants = mutator.mutate(inputFiles);
-    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: false });
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false);
     transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
     const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpression');

@@ -1,11 +1,20 @@
-import { TestFrameworkFactory, TestFramework } from 'stryker-api/test_framework';
+import { TestFramework } from 'stryker-api/test_framework';
 import { StrykerOptions } from 'stryker-api/core';
-import { getLogger } from 'stryker-api/logging';
+import { tokens, commonTokens, PluginKind } from 'stryker-api/plugin';
+import { Logger } from 'stryker-api/logging';
+import { coreTokens } from './di';
+import { PluginCreator } from './di/PluginCreator';
 
 export default class TestFrameworkOrchestrator {
-  private readonly log = getLogger(TestFrameworkOrchestrator.name);
 
-  constructor(private readonly options: StrykerOptions) { }
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    coreTokens.pluginCreatorTestFramework);
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+    private readonly pluginCreator: PluginCreator<PluginKind.TestFramework>) { }
 
   public determineTestFramework(): TestFramework | null {
     if (this.options.coverageAnalysis !== 'perTest') {
@@ -19,27 +28,16 @@ export default class TestFrameworkOrchestrator {
   private determineFrameworkWithCoverageAnalysis(): TestFramework | null {
     let testFramework: TestFramework | null = null;
     if (this.options.testFramework) {
-      if (this.testFrameworkExists(this.options.testFramework)) {
+      try {
+        testFramework = this.pluginCreator.create(this.options.testFramework);
         this.log.debug(`Using testFramework ${this.options.testFramework} based on \`testFramework\` setting`);
-        testFramework = this.createTestFramework(this.options.testFramework);
-      } else {
-        this.log.warn(`Could not find test framework \`${this.options.testFramework}\`. ${this.informAboutKnownTestFrameworks()}`);
+      } catch (error) {
+        this.log.warn(`Could not create test framework \`${this.options.testFramework}\``, error);
       }
     } else {
       this.log.warn('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.');
     }
     return testFramework;
-  }
-
-  private informAboutKnownTestFrameworks() {
-    return `Did you forget to load a plugin? Known test frameworks: ${JSON.stringify(TestFrameworkFactory.instance().knownNames())}.`;
-  }
-
-  private createTestFramework(name: string) {
-    return TestFrameworkFactory.instance().create(name, { options: this.options });
-  }
-  private testFrameworkExists(maybeFramework: string) {
-    return TestFrameworkFactory.instance().knownNames().indexOf(maybeFramework) > -1;
   }
 
 }

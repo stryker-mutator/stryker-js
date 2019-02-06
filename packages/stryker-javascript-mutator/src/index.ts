@@ -1,5 +1,15 @@
-import { MutatorFactory } from 'stryker-api/mutant';
-import JavaScriptMutator from './JavaScriptMutator';
-require('./mutators');
+import { JavaScriptMutator } from './JavaScriptMutator';
+import { PluginKind, declareFactoryPlugin, commonTokens, tokens, Injector, OptionsContext } from 'stryker-api/plugin';
+import { NODE_MUTATORS_TOKEN } from './mutators/NodeMutator';
+import { nodeMutators } from './mutators';
 
-MutatorFactory.instance().register('javascript', JavaScriptMutator);
+export const strykerPlugins = [
+  declareFactoryPlugin(PluginKind.Mutator, 'javascript', javaScriptMutatorFactory)
+];
+
+function javaScriptMutatorFactory(injector: Injector<OptionsContext>): JavaScriptMutator {
+  return injector
+    .provideValue(NODE_MUTATORS_TOKEN, nodeMutators)
+    .injectClass(JavaScriptMutator);
+}
+javaScriptMutatorFactory.inject = tokens(commonTokens.injector);

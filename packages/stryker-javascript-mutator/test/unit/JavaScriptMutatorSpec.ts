@@ -1,13 +1,26 @@
 import { expect } from 'chai';
 import { File } from 'stryker-api/core';
-import JavaScriptMutator from '../../src/JavaScriptMutator';
-import '../../src/index';
-import { Config } from 'stryker-api/config';
+import { JavaScriptMutator } from '../../src/JavaScriptMutator';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { NodeMutator, NODE_MUTATORS_TOKEN } from '../../src/mutators/NodeMutator';
+import { nodeMutators } from '../../src/mutators';
 
 describe('JavaScriptMutator', () => {
 
+  let selectedMutators: ReadonlyArray<NodeMutator>;
+
+  beforeEach(() => {
+    selectedMutators = nodeMutators;
+  });
+
+  function createSut() {
+    return testInjector.injector
+      .provideValue(NODE_MUTATORS_TOKEN, selectedMutators)
+      .injectClass(JavaScriptMutator);
+  }
+
   it('should generate a correct mutant', () => {
-    const mutator = new JavaScriptMutator(new Config());
+    const mutator = createSut();
     const files: File[] = [new File('testFile.js', '"use strict"; var a = 1 + 2;')];
 
     const mutants = mutator.mutate(files);
@@ -22,7 +35,7 @@ describe('JavaScriptMutator', () => {
   });
 
   it('should generate mutant a correct mutant for jsx code', () => {
-    const mutator = new JavaScriptMutator(new Config());
+    const mutator = createSut();
     const files: File[] = [new File('testFile.jsx', `
           "use strict";
           import React from 'react'
@@ -52,7 +65,7 @@ describe('JavaScriptMutator', () => {
   });
 
   it('should not mutate unknown extensions', () => {
-    const mutator = new JavaScriptMutator(new Config());
+    const mutator = createSut();
     const files: File[] = [new File('testFile.html', `
       <html>
         <head>
@@ -69,7 +82,7 @@ describe('JavaScriptMutator', () => {
   });
 
   it('should generate mutants for flow code', () => {
-    const mutator = new JavaScriptMutator(new Config());
+    const mutator = createSut();
     const files: File[] = [new File('testFile.js', `
           // @flow
           import React from 'react'
@@ -105,7 +118,7 @@ describe('JavaScriptMutator', () => {
   });
 
   it('should generate mutants for js vnext code', () => {
-    const sut = new JavaScriptMutator(new Config());
+    const sut = createSut();
     const files: File[] = [new File('testFile.js', `
           function objectRestSpread(input) {
             return {
@@ -131,7 +144,7 @@ describe('JavaScriptMutator', () => {
   });
 
   it('should generate mutants for multiple files', () => {
-    const mutator = new JavaScriptMutator(new Config());
+    const mutator = createSut();
     const file: File = new File('testFile.js', '"use strict"; var a = 1 + 2;');
     const file2: File = new File('testFile2.js', '"use strict"; var a = 1 + 2;');
     const mutants = mutator.mutate([file, file2]);

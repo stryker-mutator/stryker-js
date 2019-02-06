@@ -1,10 +1,12 @@
 import { File } from 'stryker-api/core';
 import { getLogger } from 'stryker-api/logging';
+import { tokens } from 'stryker-api/plugin';
 
-export default class Echo {
+export class Echo {
 
   private readonly logger = getLogger(Echo.name);
 
+  public static inject = tokens('name');
   constructor(public name: string) { }
 
   public say(value: string) {

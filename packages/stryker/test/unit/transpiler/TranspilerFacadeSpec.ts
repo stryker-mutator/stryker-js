@@ -1,29 +1,29 @@
 import { expect } from 'chai';
-import { Config } from 'stryker-api/config';
-import TranspilerFacade from '../../../src/transpiler/TranspilerFacade';
-import { Transpiler, TranspilerFactory } from 'stryker-api/transpile';
+import { Transpiler } from 'stryker-api/transpile';
 import { mock, Mock } from '../../helpers/producers';
 import { File } from 'stryker-api/core';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { TranspilerFacade } from '../../../src/transpiler/TranspilerFacade';
 import * as sinon from 'sinon';
+import { PluginCreator } from '../../../src/di/PluginCreator';
+import { PluginKind } from 'stryker-api/plugin';
+import { coreTokens } from '../../../src/di';
 
 describe('TranspilerFacade', () => {
-  let createStub: sinon.SinonStub;
   let sut: TranspilerFacade;
-
-  beforeEach(() => {
-    createStub = sinon.stub(TranspilerFactory.instance(), 'create');
-  });
+  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind.Transpiler>>;
 
   describe('when there are no transpilers', () => {
 
     beforeEach(() => {
-      sut = new TranspilerFacade({ config: new Config(), produceSourceMaps: true });
+      pluginCreatorMock = sinon.createStubInstance(PluginCreator);
+      sut = createSut();
     });
 
     it('should return input when `transpile` is called', async () => {
       const input = [new File('input', '')];
       const outputFiles = await sut.transpile(input);
-      expect(createStub).not.called;
+      expect(pluginCreatorMock.create).not.called;
       expect(outputFiles).eq(input);
     });
   });
@@ -34,31 +34,27 @@ describe('TranspilerFacade', () => {
     let transpilerTwo: Mock<Transpiler>;
     let resultFilesOne: ReadonlyArray<File>;
     let resultFilesTwo: ReadonlyArray<File>;
-    let config: Config;
-
     beforeEach(() => {
-      config = new Config();
-      config.transpilers.push('transpiler-one', 'transpiler-two');
+      testInjector.options.transpilers = ['transpiler-one', 'transpiler-two'];
       transpilerOne = mock(TranspilerFacade);
       transpilerTwo = mock(TranspilerFacade);
       resultFilesOne = [new File('result-1', '')];
       resultFilesTwo = [new File('result-2', '')];
-      createStub
+      pluginCreatorMock.create
         .withArgs('transpiler-one').returns(transpilerOne)
         .withArgs('transpiler-two').returns(transpilerTwo);
       transpilerOne.transpile.resolves(resultFilesOne);
       transpilerTwo.transpile.resolves(resultFilesTwo);
+      sut = createSut();
     });
 
     it('should create two transpilers', () => {
-      sut = new TranspilerFacade({ config, produceSourceMaps: true });
-      expect(createStub).calledTwice;
-      expect(createStub).calledWith('transpiler-one');
-      expect(createStub).calledWith('transpiler-two');
+      expect(pluginCreatorMock.create).calledTwice;
+      expect(pluginCreatorMock.create).calledWith('transpiler-one');
+      expect(pluginCreatorMock.create).calledWith('transpiler-two');
     });
 
     it('should chain the transpilers when `transpile` is called', async () => {
-      sut = new TranspilerFacade({ config, produceSourceMaps: true });
       const input = [new File('input', '')];
       const outputFiles = await sut.transpile(input);
       expect(outputFiles).eq(resultFilesTwo);
@@ -71,7 +67,6 @@ describe('TranspilerFacade', () => {
       transpilerOne.transpile.reset();
       const expectedError = new Error('an error');
       transpilerOne.transpile.rejects(expectedError);
-      sut = new TranspilerFacade({ config, produceSourceMaps: true });
       const input = [new File('input', '')];
 
       // Act
@@ -86,4 +81,9 @@ describe('TranspilerFacade', () => {
     });
 
   });
+  function createSut() {
+    return testInjector.injector
+      .provideValue(coreTokens.pluginCreatorTranspiler, pluginCreatorMock as unknown as PluginCreator<PluginKind.Transpiler>)
+      .injectClass(TranspilerFacade);
+  }
 });

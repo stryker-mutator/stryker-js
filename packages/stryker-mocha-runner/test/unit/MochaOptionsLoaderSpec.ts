@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import { Config } from 'stryker-api/config';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
-import * as logging from 'stryker-api/logging';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
-import { logger, Mock } from '../helpers/mockHelpers';
+import sinon = require('sinon');
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('MochaOptionsLoader', () => {
 
@@ -13,19 +13,16 @@ describe('MochaOptionsLoader', () => {
   let existsFileStub: sinon.SinonStub;
   let config: Config;
   let sut: MochaOptionsLoader;
-  let log: Mock<logging.Logger>;
 
   beforeEach(() => {
-    log = logger();
-    sandbox.stub(logging, 'getLogger').returns(log);
-    readFileStub = sandbox.stub(fs, 'readFileSync');
-    existsFileStub = sandbox.stub(fs, 'existsSync').returns(true);
-    sut = new MochaOptionsLoader();
+    readFileStub = sinon.stub(fs, 'readFileSync');
+    existsFileStub = sinon.stub(fs, 'existsSync').returns(true);
+    sut = testInjector.injector.injectClass(MochaOptionsLoader);
     config = new Config();
   });
 
   afterEach(() => {
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('should load a mocha.opts file if specified', () => {
@@ -34,7 +31,7 @@ describe('MochaOptionsLoader', () => {
       opts: 'some/mocha.opts/file'
     };
     sut.load(config);
-    expect(log.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
+    expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
     expect(fs.readFileSync).calledWith(path.resolve('some/mocha.opts/file'));
   });
 
@@ -46,13 +43,13 @@ describe('MochaOptionsLoader', () => {
     };
 
     sut.load(config);
-    expect(log.error).calledWith(`Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`);
+    expect(testInjector.logger.error).calledWith(`Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`);
   });
 
   it('should load default mocha.opts file if not specified', () => {
     readFileStub.returns('');
     sut.load(config);
-    expect(log.info).calledWith(`Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`);
+    expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`);
     expect(fs.readFileSync).calledWith(path.resolve('test/mocha.opts'));
   });
 
@@ -62,14 +59,14 @@ describe('MochaOptionsLoader', () => {
     };
     sut.load(config);
     expect(fs.readFileSync).not.called;
-    expect(log.debug).calledWith('Not reading additional mochaOpts from a file');
+    expect(testInjector.logger.debug).calledWith('Not reading additional mochaOpts from a file');
   });
 
   it('should not load default mocha.opts file if not found', () => {
     existsFileStub.returns(false);
     const options = sut.load(config);
     expect(options).deep.eq({});
-    expect(log.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
+    expect(testInjector.logger.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
   });
 
   it('should load `--require` and `-r` properties if specified in mocha.opts file', () => {
@@ -139,8 +136,8 @@ describe('MochaOptionsLoader', () => {
     };
     const options = sut.load(config);
     expect(options).deep.eq({ opts: 'some/mocha.opts/file' });
-    expect(log.debug).calledWith('Ignoring option "--reporter" as it is not supported.');
-    expect(log.debug).calledWith('Ignoring option "--ignore-leaks" as it is not supported.');
+    expect(testInjector.logger.debug).calledWith('Ignoring option "--reporter" as it is not supported.');
+    expect(testInjector.logger.debug).calledWith('Ignoring option "--ignore-leaks" as it is not supported.');
   });
 
   it('should ignore invalid --ui and --timeout options', () => {

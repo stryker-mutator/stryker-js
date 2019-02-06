@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import { File } from 'stryker-api/core';
 import { Mutant } from 'stryker-api/mutant';
-import { Config } from 'stryker-api/config';
-import JavaScriptMutator from '../../src/JavaScriptMutator';
-import NodeMutator from '../../src/mutators/NodeMutator';
+import { JavaScriptMutator } from '../../src/JavaScriptMutator';
+import { NodeMutator } from '../../src/mutators/NodeMutator';
 import ExpectMutation from 'stryker-mutator-specification/src/ExpectMutation';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 type MutatorConstructor = new() => NodeMutator;
 
@@ -13,7 +13,7 @@ export function verifySpecification(specification: (name: string, expectMutation
 }
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
-  const javaScriptMutator = new JavaScriptMutator(new Config(), [mutator]);
+  const javaScriptMutator = new JavaScriptMutator(testInjector.logger, [mutator]);
   const sourceFile = new File('file.js', sourceText);
   const mutants = javaScriptMutator.mutate([sourceFile]);
   expect(mutants).lengthOf(expectedTexts.length);

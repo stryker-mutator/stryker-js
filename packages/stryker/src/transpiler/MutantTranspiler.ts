@@ -1,42 +1,48 @@
 import { Observable } from 'rxjs';
-import { Config } from 'stryker-api/config';
-import TranspilerFacade from './TranspilerFacade';
 import TestableMutant from '../TestableMutant';
-import { File } from 'stryker-api/core';
+import { File, StrykerOptions } from 'stryker-api/core';
 import SourceFile from '../SourceFile';
-import ChildProcessProxy, { Promisified } from '../child-proxy/ChildProcessProxy';
-import { TranspilerOptions } from 'stryker-api/transpile';
+import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
+import { Transpiler } from 'stryker-api/transpile';
 import TranspiledMutant from '../TranspiledMutant';
 import TranspileResult from './TranspileResult';
 import LoggingClientContext from '../logging/LoggingClientContext';
 import { errorToString } from '@stryker-mutator/util';
+import { ChildProcessTranspilerWorker } from './ChildProcessTranspilerWorker';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { coreTokens } from '../di';
 
 export default class MutantTranspiler {
 
-  private readonly transpilerChildProcess: ChildProcessProxy<TranspilerFacade> | undefined;
-  private readonly proxy: Promisified<TranspilerFacade>;
+  private readonly transpilerChildProcess: ChildProcessProxy<ChildProcessTranspilerWorker> | undefined;
+  private readonly proxy: Transpiler;
   private currentMutatedFile: SourceFile;
   private unMutatedFiles: ReadonlyArray<File>;
+
+  public static inject = tokens(commonTokens.options, coreTokens.loggingContext);
 
   /**
    * Creates the mutant transpiler in a child process if one is defined.
    * Otherwise will just forward input as output in same process.
    * @param config The Stryker config
    */
-  constructor(config: Config, loggingContext: LoggingClientContext) {
-    const transpilerOptions: TranspilerOptions = { config, produceSourceMaps: false };
-    if (config.transpilers.length) {
+  constructor(options: StrykerOptions, loggingContext: LoggingClientContext) {
+    if (options.transpilers.length) {
       this.transpilerChildProcess = ChildProcessProxy.create(
-        require.resolve('./TranspilerFacade'),
+        require.resolve(`./${ChildProcessTranspilerWorker.name}`),
         loggingContext,
-        config.plugins,
+        options,
+        { [commonTokens.produceSourceMaps]: false },
         process.cwd(),
-        TranspilerFacade,
-        transpilerOptions
+        ChildProcessTranspilerWorker
       );
       this.proxy = this.transpilerChildProcess.proxy;
     } else {
-      this.proxy = new TranspilerFacade(transpilerOptions);
+      this.proxy = {
+        transpile(input) {
+          return Promise.resolve(input);
+        }
+      };
     }
   }
 
@@ -47,7 +53,7 @@ export default class MutantTranspiler {
     });
   }
 
-  public transpileMutants(allMutants: TestableMutant[]): Observable<TranspiledMutant> {
+  public transpileMutants(allMutants: ReadonlyArray<TestableMutant>): Observable<TranspiledMutant> {
     const mutants = allMutants.slice();
     return new Observable<TranspiledMutant>(observer => {
       const nextMutant = () => {

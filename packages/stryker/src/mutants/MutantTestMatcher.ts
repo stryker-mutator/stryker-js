@@ -1,16 +1,19 @@
 import * as _ from 'lodash';
-import { getLogger } from 'stryker-api/logging';
-import { RunResult, CoverageCollection, StatementMap, CoveragePerTestResult, CoverageResult } from 'stryker-api/test_runner';
-import { StrykerOptions, File } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
+import { CoverageCollection, StatementMap, CoveragePerTestResult, CoverageResult } from 'stryker-api/test_runner';
+import { StrykerOptions } from 'stryker-api/core';
 import { MatchedMutant } from 'stryker-api/report';
 import { Mutant } from 'stryker-api/mutant';
-import TestableMutant, { TestSelectionResult } from './TestableMutant';
-import StrictReporter from './reporters/StrictReporter';
-import { CoverageMapsByFile, CoverageMaps } from './transpiler/CoverageInstrumenterTranspiler';
-import { filterEmpty } from './utils/objectUtils';
-import SourceFile from './SourceFile';
-import SourceMapper from './transpiler/SourceMapper';
-import LocationHelper from './utils/LocationHelper';
+import TestableMutant, { TestSelectionResult } from '../TestableMutant';
+import StrictReporter from '../reporters/StrictReporter';
+import { CoverageMaps } from '../transpiler/CoverageInstrumenterTranspiler';
+import { filterEmpty } from '../utils/objectUtils';
+import SourceFile from '../SourceFile';
+import LocationHelper from '../utils/LocationHelper';
+import { InitialTestRunResult } from '../process/InitialTestExecutor';
+import InputFileCollection from '../input/InputFileCollection';
+import { commonTokens, tokens } from 'stryker-api/plugin';
+import { coreTokens } from '../di';
 
 enum StatementIndexKind {
   function,
@@ -26,37 +29,34 @@ interface StatementIndex {
   index: string;
 }
 
-export default class MutantTestMatcher {
+export class MutantTestMatcher {
 
-  private readonly log = getLogger(MutantTestMatcher.name);
-
+  public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter, coreTokens.inputFiles, coreTokens.initialRunResult);
   constructor(
-    private readonly mutants: ReadonlyArray<Mutant>,
-    private readonly filesToMutate: ReadonlyArray<File>,
-    private readonly initialRunResult: RunResult,
-    private readonly sourceMapper: SourceMapper,
-    private readonly coveragePerFile: CoverageMapsByFile,
+    private readonly log: Logger,
     private readonly options: StrykerOptions,
-    private readonly reporter: StrictReporter) {
+    private readonly reporter: StrictReporter,
+    private readonly input: InputFileCollection,
+    private readonly initialRunResult: InitialTestRunResult) {
   }
 
   private get baseline(): CoverageCollection | null {
-    if (this.isCoveragePerTestResult(this.initialRunResult.coverage)) {
-      return this.initialRunResult.coverage.baseline;
+    if (this.isCoveragePerTestResult(this.initialRunResult.runResult.coverage)) {
+      return this.initialRunResult.runResult.coverage.baseline;
     } else {
       return null;
     }
   }
 
-  public matchWithMutants(): TestableMutant[] {
+  public matchWithMutants(mutants: ReadonlyArray<Mutant>): ReadonlyArray<TestableMutant> {
 
-    const testableMutants = this.createTestableMutants();
+    const testableMutants = this.createTestableMutants(mutants);
 
     if (this.options.coverageAnalysis === 'off') {
-      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.Success));
-    } else if (!this.initialRunResult.coverage) {
+      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Success));
+    } else if (!this.initialRunResult.runResult.coverage) {
       this.log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
-      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult, TestSelectionResult.FailedButAlreadyReported));
+      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.FailedButAlreadyReported));
     } else {
       testableMutants.forEach(testableMutant => this.enrichWithCoveredTests(testableMutant));
     }
@@ -65,17 +65,17 @@ export default class MutantTestMatcher {
   }
 
   public enrichWithCoveredTests(testableMutant: TestableMutant) {
-    const transpiledLocation = this.sourceMapper.transpiledLocationFor({
+    const transpiledLocation = this.initialRunResult.sourceMapper.transpiledLocationFor({
       fileName: testableMutant.mutant.fileName,
       location: testableMutant.location
     });
-    const fileCoverage = this.coveragePerFile[transpiledLocation.fileName];
+    const fileCoverage = this.initialRunResult.coverageMaps[transpiledLocation.fileName];
     const statementIndex = this.findMatchingStatement(new LocationHelper(transpiledLocation.location), fileCoverage);
     if (statementIndex) {
       if (this.isCoveredByBaseline(transpiledLocation.fileName, statementIndex)) {
-        testableMutant.selectAllTests(this.initialRunResult, TestSelectionResult.Success);
+        testableMutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Success);
       } else {
-        this.initialRunResult.tests.forEach((testResult, id) => {
+        this.initialRunResult.runResult.tests.forEach((testResult, id) => {
           if (this.isCoveredByTest(id, transpiledLocation.fileName, statementIndex)) {
             testableMutant.selectTest(testResult, id);
           }
@@ -86,7 +86,7 @@ export default class MutantTestMatcher {
       // This can happen when for example mutating a TypeScript interface
       // It should result in an early result during mutation testing
       // Lets delay error reporting for now
-      testableMutant.selectAllTests(this.initialRunResult, TestSelectionResult.Failed);
+      testableMutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Failed);
     }
   }
 
@@ -117,9 +117,9 @@ export default class MutantTestMatcher {
     }
   }
 
-  private createTestableMutants(): TestableMutant[] {
-    const sourceFiles = this.filesToMutate.map(file => new SourceFile(file));
-    return filterEmpty(this.mutants.map((mutant, index) => {
+  private createTestableMutants(mutants: ReadonlyArray<Mutant>): ReadonlyArray<TestableMutant> {
+    const sourceFiles = this.input.filesToMutate.map(file => new SourceFile(file));
+    return filterEmpty(mutants.map((mutant, index) => {
       const sourceFile = sourceFiles.find(file => file.name === mutant.fileName);
       if (sourceFile) {
         return new TestableMutant(index.toString(), mutant, sourceFile);
@@ -194,11 +194,11 @@ export default class MutantTestMatcher {
   }
 
   private findCoverageCollectionForTest(testId: number): CoverageCollection | null {
-    if (this.initialRunResult.coverage) {
-      if (this.isCoveragePerTestResult(this.initialRunResult.coverage)) {
-        return this.initialRunResult.coverage.deviations[testId];
+    if (this.initialRunResult.runResult.coverage) {
+      if (this.isCoveragePerTestResult(this.initialRunResult.runResult.coverage)) {
+        return this.initialRunResult.runResult.coverage.deviations[testId];
       } else {
-        return this.initialRunResult.coverage;
+        return this.initialRunResult.runResult.coverage;
       }
     } else {
       return null;

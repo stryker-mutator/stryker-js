@@ -2,3 +2,8 @@ export * from './src/plugin/Contexts';
 export * from './src/plugin/Plugins';
 export * from './src/plugin/PluginKind';
 export * from './src/plugin/tokens';
+export * from 'typed-inject/src/api/Injectable';
+export * from 'typed-inject/src/api/Injector';
+export * from 'typed-inject/src/api/InjectionToken';
+export * from 'typed-inject/src/api/CorrespondingType';
+export * from 'typed-inject/src/api/Scope';

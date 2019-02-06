@@ -29,9 +29,9 @@ export class PluginCreator<TPluginKind extends PluginKind> {
     return !!(plugin as ClassPlugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>).injectableClass;
   }
 
-  public static createFactory<TPluginKind extends PluginKind>(kind: TPluginKind)
-  : InjectableFunctionWithInject<PluginContexts[TPluginKind], PluginCreator<TPluginKind>, [typeof commonTokens.pluginResolver, typeof commonTokens.injector]> {
-    function factory(pluginResolver: PluginResolver, injector: Injector<PluginContexts[TPluginKind]>): PluginCreator<TPluginKind> {
+  public static createFactory<TPluginKind extends PluginKind, TContext extends PluginContexts[TPluginKind]>(kind: TPluginKind)
+  : InjectableFunctionWithInject<TContext, PluginCreator<TPluginKind>, [typeof commonTokens.pluginResolver, typeof commonTokens.injector]> {
+    function factory(pluginResolver: PluginResolver, injector: Injector<TContext>): PluginCreator<TPluginKind> {
       return new PluginCreator(kind, pluginResolver, injector);
     }
     factory.inject = tokens(commonTokens.pluginResolver, commonTokens.injector);

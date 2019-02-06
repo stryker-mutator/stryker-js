@@ -6,6 +6,7 @@ import { File } from 'stryker-api/core';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { expect } from 'chai';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('AllowJS integration', () => {
 
@@ -13,7 +14,7 @@ describe('AllowJS integration', () => {
   let inputFiles: File[];
 
   beforeEach(() => {
-    const configEditor = new TypescriptConfigEditor();
+    const configEditor = testInjector.injector.injectClass(TypescriptConfigEditor);
     config = new Config();
     config.set({
       tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'allowJS', 'tsconfig.json'),
@@ -23,7 +24,7 @@ describe('AllowJS integration', () => {
   });
 
   it('should be able to transpile source code', async () => {
-    const transpiler = new TypescriptTranspiler({ config, produceSourceMaps: false });
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).to.eq(2);
     expect(outputFiles.map(f => f.name)).deep.eq([

@@ -7,6 +7,7 @@ import OutputFileSystem from '../../../src/fs/OutputFileSystem';
 import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
 import * as webpack from '../../../src/compiler/Webpack';
 import { Configuration } from 'webpack';
+import * as sinon from 'sinon';
 
 describe('WebpackCompiler', () => {
   let sut: WebpackCompiler;
@@ -20,7 +21,7 @@ describe('WebpackCompiler', () => {
     outputFileSystemMock = createMockInstance(OutputFileSystem);
     webpackCompilerMock = createWebpackMock();
     fakeWebpackConfig = createFakeWebpackConfig();
-    sandbox.stub(webpack, 'default').returns(webpackCompilerMock);
+    sinon.stub(webpack, 'default').returns(webpackCompilerMock);
   });
 
   describe('writeFilesToFs', () => {
@@ -44,7 +45,7 @@ describe('WebpackCompiler', () => {
 
     beforeEach(() => {
       sut = new WebpackCompiler(fakeWebpackConfig, inputFileSystemMock as any, outputFileSystemMock as any);
-      webpackRunStub = sandbox.stub(webpackCompilerMock, 'run').callsArgWith(0, null, { hasErrors: () => false });
+      webpackRunStub = sinon.stub(webpackCompilerMock, 'run').callsArgWith(0, null, { hasErrors: () => false });
     });
 
     it('should call the run function on the webpack compiler', async () => {

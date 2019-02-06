@@ -1,4 +1,7 @@
-export default class HelloClass {
+import { tokens } from 'stryker-api/plugin';
+
+export class HelloClass {
+  public static inject = tokens('name');
   constructor(public name: string) { }
   public sayHello() {
     return `hello from ${this.name}`;

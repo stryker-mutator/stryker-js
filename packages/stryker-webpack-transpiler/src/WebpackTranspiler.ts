@@ -1,7 +1,9 @@
-import { TranspilerOptions, Transpiler } from 'stryker-api/transpile';
-import { File } from 'stryker-api/core';
+import { Transpiler } from 'stryker-api/transpile';
+import { File, StrykerOptions } from 'stryker-api/core';
 import WebpackCompiler from './compiler/WebpackCompiler';
 import ConfigLoader from './compiler/ConfigLoader';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { pluginTokens } from './pluginTokens';
 
 const DEFAULT_STRYKER_WEBPACK_CONFIG = Object.freeze({ configFile: undefined, silent: true, context: process.cwd() });
 
@@ -9,17 +11,18 @@ export default class WebpackTranspiler implements Transpiler {
   private readonly config: StrykerWebpackConfig;
   private webpackCompiler: WebpackCompiler;
 
-  public constructor(options: TranspilerOptions) {
-    if (options.produceSourceMaps) {
-      throw new Error(`Invalid \`coverageAnalysis\` "${options.config.coverageAnalysis}" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off".`);
+  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps, pluginTokens.configLoader);
+  public constructor(options: StrykerOptions, produceSourceMaps: boolean, private readonly configLoader: ConfigLoader) {
+    if (produceSourceMaps) {
+      throw new Error(`Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off".`);
     }
-    this.config = this.getStrykerWebpackConfig(options.config.webpack);
+    this.config = this.getStrykerWebpackConfig(options.webpack);
   }
 
   public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
     if (!this.webpackCompiler) {
       // Initialize the webpack compiler with the current directory (process.cwd)
-      const config = await new ConfigLoader().load(this.config);
+      const config = await this.configLoader.load(this.config);
       this.webpackCompiler = new WebpackCompiler(config);
     }
 

@@ -1,41 +1,31 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as logging from 'stryker-api/logging';
 import * as ts from 'typescript';
 import { expect } from 'chai';
 import { SinonStub, match } from 'sinon';
 import { Config } from 'stryker-api/config';
 import TypescriptConfigEditor from './../../src/TypescriptConfigEditor';
+import sinon = require('sinon');
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 const CONFIG_KEY = 'tsconfigFile';
 
 describe('TypescriptConfigEditor edit', () => {
 
   let readFileSyncStub: SinonStub;
-  let loggerStub: {
-    debug: SinonStub;
-    info: SinonStub;
-    error: SinonStub;
-  };
   let config: Config;
   let sut: TypescriptConfigEditor;
 
   beforeEach(() => {
-    readFileSyncStub = sandbox.stub(fs, 'readFileSync');
-    loggerStub = {
-      debug: sandbox.stub(),
-      error: sandbox.stub(),
-      info: sandbox.stub()
-    };
-    sandbox.stub(logging, 'getLogger').returns(loggerStub);
+    readFileSyncStub = sinon.stub(fs, 'readFileSync');
     config = new Config();
-    sut = new TypescriptConfigEditor();
+    sut = testInjector.injector.injectClass(TypescriptConfigEditor);
   });
 
   it('should not load any config if "tsconfigFile" is not specified', () => {
     sut.edit(config);
     expect(config[CONFIG_KEY]).undefined;
-    expect(loggerStub.debug).calledWith('No \'%s\' specified, not loading any config', CONFIG_KEY);
+    expect(testInjector.logger.debug).calledWith('No \'%s\' specified, not loading any config', CONFIG_KEY);
   });
 
   it('should load the given tsconfig file', () => {
@@ -96,7 +86,7 @@ describe('TypescriptConfigEditor edit', () => {
     readFileSyncStub.returns(`{ "extends": "./parent.tsconfig.json" }`);
     config[CONFIG_KEY] = 'tsconfig.json';
     sut.edit(config, parseConfigHost({ readFile: () => `invalid json` }));
-    expect(loggerStub.error).calledWithMatch(match('error TS1005: \'{\' expected.'));
+    expect(testInjector.logger.error).calledWithMatch(match('error TS1005: \'{\' expected.'));
   });
 
   function parseConfigHost(overrides?: Partial<ts.ParseConfigHost>): ts.ParseConfigHost {

@@ -6,7 +6,7 @@ import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../src/conf
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../src/configLoaders/ReactScriptsTSJestConfigLoader';
 import { Configuration } from 'jest';
-import currentLogMock from '../helpers/logMock';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('JestConfigEditor', () => {
   let sut: JestConfigEditor;
@@ -29,7 +29,7 @@ describe('JestConfigEditor', () => {
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsTSJestConfigLoaderStub.loadConfig.returns(defaultOptions);
 
-    sut = new JestConfigEditor();
+    sut = testInjector.injector.injectClass(JestConfigEditor);
     config = new Config();
   });
 
@@ -78,14 +78,14 @@ describe('JestConfigEditor', () => {
     const projectType = 'custom';
     config.jest = { project: projectType };
     sut.edit(config);
-    expect(currentLogMock().warn).calledWith('DEPRECATED: `jest.project` is renamed to `jest.projectType`. Please change it in your stryker configuration.');
+    expect(testInjector.logger.warn).calledWith('DEPRECATED: `jest.project` is renamed to `jest.projectType`. Please change it in your stryker configuration.');
     expect(config.jest.projectType).eq(projectType);
   });
 
   it('should warn when using deprecated "default" project type', () => {
     config.jest = { projectType: 'default' };
     sut.edit(config);
-    expect(currentLogMock().warn).calledWith('DEPRECATED: The \'default\' `jest.projectType` is renamed to \'custom\'. Please rename it in your stryker configuration.');
+    expect(testInjector.logger.warn).calledWith('DEPRECATED: The \'default\' `jest.projectType` is renamed to \'custom\'. Please rename it in your stryker configuration.');
     expect(config.jest.projectType).eq('custom');
   });
 });

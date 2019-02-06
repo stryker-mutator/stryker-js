@@ -1,11 +1,9 @@
 import { EOL } from 'os';
 import { RunStatus, RunResult, TestResult, TestStatus } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
-import { Config } from 'stryker-api/config';
-import { TranspilerOptions, Transpiler } from 'stryker-api/transpile';
-import { File } from 'stryker-api/core';
-import TranspilerFacade from '../transpiler/TranspilerFacade';
-import { getLogger } from 'stryker-api/logging';
+import { Transpiler } from 'stryker-api/transpile';
+import { File, StrykerOptions } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
 import Sandbox from '../Sandbox';
 import Timer from '../utils/Timer';
 import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
@@ -13,6 +11,8 @@ import InputFileCollection from '../input/InputFileCollection';
 import SourceMapper from '../transpiler/SourceMapper';
 import { coveragePerTestHooks } from '../transpiler/coverageHooks';
 import LoggingClientContext from '../logging/LoggingClientContext';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { coreTokens } from '../di';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
@@ -44,17 +44,31 @@ interface Timing {
 
 export default class InitialTestExecutor {
 
-  private readonly log = getLogger(InitialTestExecutor.name);
+  public static inject = tokens(
+    commonTokens.options,
+    commonTokens.logger,
+    coreTokens.inputFiles,
+    coreTokens.testFramework,
+    coreTokens.timer,
+    coreTokens.loggingContext,
+    coreTokens.transpiler);
 
-  constructor(private readonly options: Config, private readonly inputFiles: InputFileCollection, private readonly testFramework: TestFramework | null, private readonly timer: Timer, private readonly loggingContext: LoggingClientContext) { }
+  constructor(
+    private readonly options: StrykerOptions,
+    private readonly log: Logger,
+    private readonly inputFiles: InputFileCollection,
+    private readonly testFramework: TestFramework | null,
+    private readonly timer: Timer,
+    private readonly loggingContext: LoggingClientContext,
+    private readonly transpiler: Transpiler) { }
 
   public async run(): Promise<InitialTestRunResult> {
 
-    this.log.info(`Starting initial test run. This may take a while.`);
+    this.log.info('Starting initial test run. This may take a while.');
 
     // Before we can run the tests we transpile the input files.
     // Files that are not transpiled should pass through without transpiling
-    const transpiledFiles = await this.transpileInputFiles();
+    const transpiledFiles = await this.transpiler.transpile(this.inputFiles.files);
 
     // Now that we have the transpiled files, we create a source mapper so
     // we can figure out which files we need to annotate for code coverage
@@ -83,11 +97,6 @@ export default class InitialTestExecutor {
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     await sandbox.dispose();
     return { runResult, grossTimeMS };
-  }
-
-  private async transpileInputFiles(): Promise<ReadonlyArray<File>> {
-    const transpilerFacade = this.createTranspilerFacade();
-    return transpilerFacade.transpile(this.inputFiles.files);
   }
 
   private async annotateForCodeCoverage(files: ReadonlyArray<File>, sourceMapper: SourceMapper)
@@ -137,20 +146,6 @@ export default class InitialTestExecutor {
       net: netTimeMS,
       overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS
     };
-  }
-
-  /**
-   * Creates a facade for the transpile pipeline.
-   * Also includes the coverage instrumenter transpiler,
-   * which is used to instrument for code coverage when needed.
-   */
-  private createTranspilerFacade(): Transpiler {
-    // Let the transpiler produce source maps only if coverage analysis is enabled
-    const transpilerSettings: TranspilerOptions = {
-      config: this.options,
-      produceSourceMaps: this.options.coverageAnalysis !== 'off'
-    };
-    return new TranspilerFacade(transpilerSettings);
   }
 
   private getCollectCoverageHooksIfNeeded(): string | undefined {

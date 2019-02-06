@@ -1,17 +1,16 @@
-import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { Mutant, Mutator } from 'stryker-api/mutant';
-import { discoverMutators } from './helpers/MutatorHelpers';
+import { MUTATORS_TOKEN } from './helpers/MutatorHelpers';
+import { tokens } from 'stryker-api/plugin';
 const compiler = require('vue-template-compiler');
 
 export default class VueMutator implements Mutator {
-  private readonly mutators: { [name: string]: Mutator; };
   private readonly javascriptMutatorName = 'javascript';
   private readonly typescriptMutatorName = 'typescript';
 
-  constructor(config: Config) {
-    this.mutators = discoverMutators(config);
+  constructor(private readonly mutators: { [name: string]: Mutator; }) {
   }
+  public static inject = tokens(MUTATORS_TOKEN);
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];

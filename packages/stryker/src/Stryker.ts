@@ -1,83 +1,79 @@
 import { getLogger } from 'stryker-api/logging';
-import { Config, ConfigEditorFactory } from 'stryker-api/config';
-import { StrykerOptions, MutatorDescriptor } from 'stryker-api/core';
+import { Config } from 'stryker-api/config';
+import { StrykerOptions } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
-import { TestFramework } from 'stryker-api/test_framework';
-import { Mutant } from 'stryker-api/mutant';
-import TestFrameworkOrchestrator from './TestFrameworkOrchestrator';
-import MutantTestMatcher from './MutantTestMatcher';
+import { MutantTestMatcher } from './mutants/MutantTestMatcher';
 import InputFileResolver from './input/InputFileResolver';
-import ConfigReader from './config/ConfigReader';
-import PluginLoader from './di/PluginLoader';
 import ScoreResultCalculator from './ScoreResultCalculator';
-import ConfigValidator from './config/ConfigValidator';
-import { freezeRecursively, isPromise } from './utils/objectUtils';
+import { isPromise } from './utils/objectUtils';
 import { TempFolder } from './utils/TempFolder';
-import Timer from './utils/Timer';
-import MutatorFacade from './MutatorFacade';
-import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTestExecutor';
+import { MutatorFacade } from './mutants/MutatorFacade';
+import InitialTestExecutor from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
-import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
-import BroadcastReporter from './reporters/BroadcastReporter';
-import { commonTokens, OptionsContext, PluginResolver, PluginKind } from 'stryker-api/plugin';
-import * as coreTokens from './di/coreTokens';
-import { Injector, rootInjector, Scope } from 'typed-inject';
-import { loggerFactory } from './di/loggerFactory';
-import { PluginCreator } from './di/PluginCreator';
+import { Injector } from 'typed-inject';
+import { TranspilerFacade } from './transpiler/TranspilerFacade';
+import { coreTokens, MainContext, PluginCreator, buildMainInjector } from './di';
+import { commonTokens, PluginKind } from 'stryker-api/plugin';
 
 export default class Stryker {
 
-  public config: Config;
-  private readonly timer = new Timer();
-  private readonly reporter: BroadcastReporter;
-  private readonly testFramework: TestFramework | null;
   private readonly log = getLogger(Stryker.name);
-  private readonly injector: Injector<OptionsContext>;
+  private readonly injector: Injector<MainContext>;
+
+  private get reporter() {
+    return this.injector.resolve(coreTokens.reporter);
+  }
+
+  private get config(): Readonly<Config> {
+    return this.injector.resolve(commonTokens.config);
+  }
+
+  private get timer() {
+    return this.injector.resolve(coreTokens.timer);
+  }
 
   /**
    * The Stryker mutation tester.
    * @constructor
-   * @param {Object} [options] - Optional options.
+   * @param {Object} [cliOptions] - Optional options.
    */
-  constructor(options: Partial<StrykerOptions>) {
+  constructor(cliOptions: Partial<StrykerOptions>) {
+    LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
+    this.injector = buildMainInjector(cliOptions);
+    // Log level may have changed
+    const options = this.config;
     LogConfigurator.configureMainProcess(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
-    const configReader = new ConfigReader(options);
-    this.config = configReader.readConfig();
-    // Log level may have changed
-    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
-    this.addDefaultPlugins();
-    const pluginLoader = new PluginLoader(this.config.plugins);
-    pluginLoader.load();
-    // Log level may have changed
-    LogConfigurator.configureMainProcess(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors); // logLevel could be changed
-    this.applyConfigEditors();
-    this.freezeConfig();
-    this.injector = rootInjector
-      .provideValue(commonTokens.getLogger, getLogger)
-      .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
-      .provideValue(commonTokens.pluginResolver, pluginLoader as PluginResolver)
-      .provideValue(commonTokens.config, this.config)
-      .provideValue(commonTokens.options, this.config as StrykerOptions);
-    this.reporter = this.injector
-      .provideFactory(coreTokens.reporterPluginCreator, PluginCreator.createFactory(PluginKind.Reporter))
-      .injectClass(BroadcastReporter);
-    this.testFramework = new TestFrameworkOrchestrator(this.config).determineTestFramework();
-    new ConfigValidator(this.config, this.testFramework).validate();
   }
 
   public async runMutationTest(): Promise<MutantResult[]> {
     const loggingContext = await LogConfigurator.configureLoggingServer(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors);
     this.timer.reset();
-    const inputFiles = await new InputFileResolver(this.config.mutate, this.config.files, this.reporter).resolve();
+    const inputFiles = await this.injector.injectClass(InputFileResolver).resolve();
     if (inputFiles.files.length) {
       TempFolder.instance().initialize();
-      const initialTestRunProcess = new InitialTestExecutor(this.config, inputFiles, this.testFramework, this.timer, loggingContext);
-      const initialTestRunResult = await initialTestRunProcess.run();
-      const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
-      if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
-        const mutationTestExecutor = new MutationTestExecutor(this.config, inputFiles.files, this.testFramework, this.reporter,
-          initialTestRunResult.overheadTimeMS, loggingContext);
+      const inputFileInjector = this.injector
+        .provideValue(coreTokens.inputFiles, inputFiles);
+      const initialTestRunProcess = inputFileInjector
+        .provideValue(coreTokens.loggingContext, loggingContext)
+        .provideValue(commonTokens.produceSourceMaps, this.config.coverageAnalysis !== 'off')
+        .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
+        .provideClass(coreTokens.transpiler, TranspilerFacade)
+        .injectClass(InitialTestExecutor);
+      const initialRunResult = await initialTestRunProcess.run();
+      const mutator = inputFileInjector.injectClass(MutatorFacade);
+      const testableMutants = await inputFileInjector
+        .provideValue(coreTokens.initialRunResult, initialRunResult)
+        .injectClass(MutantTestMatcher)
+        .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
+      if (initialRunResult.runResult.tests.length && testableMutants.length) {
+        const mutationTestExecutor = new MutationTestExecutor(
+          this.config,
+          inputFiles.files,
+          this.injector.resolve(coreTokens.testFramework),
+          this.reporter,
+          initialRunResult.overheadTimeMS,
+          loggingContext);
         const mutantResults = await mutationTestExecutor.run(testableMutants);
         this.reportScore(mutantResults);
         await this.wrapUpReporter();
@@ -92,75 +88,26 @@ export default class Stryker {
     return Promise.resolve([]);
   }
 
-  private mutate(input: InputFileCollection, initialTestRunResult: InitialTestRunResult) {
-    const mutator = new MutatorFacade(this.config);
-    const allMutants = mutator.mutate(input.filesToMutate);
-    const includedMutants = this.removeExcludedMutants(allMutants);
-    this.logMutantCount(includedMutants.length, allMutants.length);
-    const mutantRunResultMatcher = new MutantTestMatcher(
-      includedMutants,
-      input.filesToMutate,
-      initialTestRunResult.runResult,
-      initialTestRunResult.sourceMapper,
-      initialTestRunResult.coverageMaps,
-      this.config,
-      this.reporter);
-    return mutantRunResultMatcher.matchWithMutants();
-  }
+  // private mutate(input: InputFileCollection, initialTestRunResult: InitialTestRunResult): TestableMutant[] {
+  //   const mutator = this.injector.injectClass(MutatorFacade);
+  //   const mutants = mutator.mutate(input.filesToMutate);
+  //   const mutantRunResultMatcher = new MutantTestMatcher(
+  //     mutants,
+  //     input.filesToMutate,
+  //     initialTestRunResult.runResult,
+  //     initialTestRunResult.sourceMapper,
+  //     initialTestRunResult.coverageMaps,
+  //     this.config,
+  //     this.reporter);
+  //   return mutantRunResultMatcher.matchWithMutants();
+  // }
 
-  private logMutantCount(includedMutantCount: number, totalMutantCount: number) {
-    let mutantCountMessage;
-    if (includedMutantCount) {
-      mutantCountMessage = `${includedMutantCount} Mutant(s) generated`;
-    } else {
-      mutantCountMessage = `It\'s a mutant-free world, nothing to test.`;
-    }
-    const numberExcluded = totalMutantCount - includedMutantCount;
-    if (numberExcluded) {
-      mutantCountMessage += ` (${numberExcluded} Mutant(s) excluded)`;
-    }
-    this.log.info(mutantCountMessage);
-  }
-
-  private removeExcludedMutants(mutants: ReadonlyArray<Mutant>): ReadonlyArray<Mutant> {
-    if (typeof this.config.mutator === 'string') {
-      return mutants;
-    } else {
-      const mutatorDescriptor = this.config.mutator as MutatorDescriptor;
-      return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
-    }
-  }
-  public addDefaultPlugins(): void {
-    this.config.plugins.push(
-      require.resolve('./reporters')
-    );
-  }
   private wrapUpReporter(): Promise<void> {
     const maybePromise = this.reporter.wrapUp();
     if (isPromise(maybePromise)) {
       return maybePromise;
     } else {
       return Promise.resolve();
-    }
-  }
-
-  private applyConfigEditors() {
-    ConfigEditorFactory.instance().knownNames().forEach(configEditorName => {
-      ConfigEditorFactory.instance().create(configEditorName, undefined).edit(this.config);
-    });
-  }
-
-  private freezeConfig() {
-    // A config class instance is not serializable using surrial.
-    // This is a temporary work around
-    // See https://github.com/stryker-mutator/stryker/issues/365
-    const config: Config = {} as any;
-    for (const prop in this.config) {
-      config[prop] = this.config[prop];
-    }
-    this.config = freezeRecursively(config);
-    if (this.log.isDebugEnabled()) {
-      this.log.debug(`Using config: ${JSON.stringify(this.config)}`);
     }
   }
 

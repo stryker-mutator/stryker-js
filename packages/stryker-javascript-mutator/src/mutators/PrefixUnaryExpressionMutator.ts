@@ -1,5 +1,5 @@
 import * as types from '@babel/types';
-import NodeMutator from './NodeMutator';
+import { NodeMutator } from './NodeMutator';
 
 export default class PrefixUnaryExpressionMutator implements NodeMutator {
   public name = 'PrefixUnaryExpression';

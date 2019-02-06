@@ -1,36 +1,37 @@
 import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
 import { expect } from 'chai';
-import { Mock, mock } from '../helpers/producers';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
-import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
 import { serialize } from 'surrial';
 import TranspileFilter from '../../src/transpiler/TranspileFilter';
+import sinon = require('sinon');
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { commonTokens } from 'stryker-api/plugin';
 
 describe('TypescriptTranspiler', () => {
 
-  let languageService: Mock<TranspilingLanguageService>;
+  let languageService: sinon.SinonStubbedInstance<TranspilingLanguageService>;
   let sut: TypescriptTranspiler;
-  let config: Config;
-  let transpileFilterMock: Mock<TranspileFilter>;
+  let transpileFilterMock: sinon.SinonStubbedInstance<TranspileFilter>;
 
   beforeEach(() => {
-    config = new Config();
-    languageService = mock(TranspilingLanguageService);
+    languageService = sinon.createStubInstance(TranspilingLanguageService);
     transpileFilterMock = {
       // Cannot use `mock<T>` as it is an abstract class
-      isIncluded: sandbox.stub()
+      isIncluded: sinon.stub()
     };
-    sandbox.stub(TranspileFilter, 'create').returns(transpileFilterMock);
-    sandbox.stub(transpilingLanguageService, 'default').returns(languageService);
+    sinon.stub(TranspileFilter, 'create').returns(transpileFilterMock);
+    sinon.stub(transpilingLanguageService, 'default').returns(languageService);
   });
 
   describe('transpile', () => {
 
     beforeEach(() => {
       languageService.getSemanticDiagnostics.returns([]); // no errors by default
-      sut = new TypescriptTranspiler({ config, produceSourceMaps: true });
+      sut = testInjector.injector
+        .provideValue(commonTokens.produceSourceMaps, true)
+        .injectClass(TypescriptTranspiler);
     });
 
     it('should transpile given files', async () => {

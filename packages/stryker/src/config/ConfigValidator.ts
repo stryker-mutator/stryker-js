@@ -4,12 +4,15 @@ import { Config } from 'stryker-api/config';
 import { getLogger } from 'stryker-api/logging';
 import { StrykerError } from '@stryker-mutator/util';
 import { normalizeWhiteSpaces } from '../utils/objectUtils';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { coreTokens } from '../di';
 
 export default class ConfigValidator {
 
   private isValid = true;
   private readonly log = getLogger(ConfigValidator.name);
-  constructor(private readonly strykerConfig: StrykerOptions, private readonly testFramework: TestFramework | null) { }
+  public static inject = tokens(commonTokens.options, coreTokens.testFramework);
+  constructor(private readonly strykerConfig: Readonly<StrykerOptions>, private readonly testFramework: TestFramework | null) { }
 
   public validate() {
     this.validateTestFramework();

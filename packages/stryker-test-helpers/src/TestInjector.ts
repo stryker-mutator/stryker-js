@@ -8,19 +8,19 @@ import { Config } from 'stryker-api/config';
 
 class TestInjector {
 
-  public providePluginResolver = (): PluginResolver => {
+  private readonly providePluginResolver = (): PluginResolver => {
     return this.pluginResolver;
   }
-  public provideLogger = (): Logger => {
+  private readonly provideLogger = (): Logger => {
     return this.logger;
   }
-  public provideConfig = () => {
+  private readonly provideConfig = () => {
     const config = new Config();
     config.set(this.provideOptions());
     return config;
   }
 
-  public provideOptions = () => {
+  private readonly provideOptions = () => {
     return factory.strykerOptions(this.options);
   }
 
@@ -38,7 +38,8 @@ class TestInjector {
     this.options = {};
     this.logger = factory.logger();
     this.pluginResolver = {
-      resolve: sinon.stub()
+      resolve: sinon.stub(),
+      resolveAll: sinon.stub()
     };
   }
 }
