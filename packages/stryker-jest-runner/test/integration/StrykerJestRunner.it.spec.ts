@@ -47,7 +47,7 @@ describe('Integration test for Strykers Jest runner', () => {
       .injectFunction(jestTestRunnerFactory);
   }
 
-  it.only('should run tests on the example React + TypeScript project', async () => {
+  it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));
     testInjector.options.jest = { projectType: 'react-ts' };
 
