@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsc -w",
     "test": "nyc --reporter=html --report-dir=reports/coverage --lines 85 --functions 90 --branches 60 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+    "mocha": "mocha --timeout 4000 \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",

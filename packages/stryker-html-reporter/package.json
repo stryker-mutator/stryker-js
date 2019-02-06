@@ -10,7 +10,7 @@
     "browserify-client-resources": "browserify srcResources/stryker.js -o resources/stryker.js",
     "start": "tsc -w -p .",
     "test": "nyc --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 90 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+    "mocha": "mocha --timeout 4000 \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
