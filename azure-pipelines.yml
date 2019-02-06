@@ -1,11 +1,10 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'vs2017-win2016'
-
 jobs:
 - job: BuildAndTest
+  pool:
+    vmImage: 'vs2017-win2016'
   steps:
   - task: NodeTool@0
     inputs:
@@ -16,7 +15,8 @@ jobs:
       npm run build
       npm test
 - job: RunE2E
-  dependsOn: InstallAndBuild
+  pool:
+    vmImage: 'vs2017-win2016'
   steps:
   - task: NodeTool@0
     inputs:
