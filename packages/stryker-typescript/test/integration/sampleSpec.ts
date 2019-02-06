@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
-import TypescriptMutator from '../../src/TypescriptMutator';
+import { typescriptMutatorFactory } from '../../src/TypescriptMutator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 import { testInjector } from '@stryker-mutator/test-helpers';
@@ -23,11 +23,12 @@ describe('Sample integration', () => {
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
+    testInjector.options = config;
   });
 
   it('should be able to generate mutants', () => {
     // Generate mutants
-    const mutator = new TypescriptMutator(config);
+    const mutator = testInjector.injector.injectFunction(typescriptMutatorFactory);
     const mutants = mutator.mutate(inputFiles);
     expect(mutants.length).to.eq(5);
   });
@@ -52,7 +53,7 @@ describe('Sample integration', () => {
 
   it('should be able to transpile mutated code', async () => {
     // Transpile mutants
-    const mutator = new TypescriptMutator(config);
+    const mutator = testInjector.injector.injectFunction(typescriptMutatorFactory);
     const mutants = mutator.mutate(inputFiles);
     const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false);
     transpiler.transpile(inputFiles);

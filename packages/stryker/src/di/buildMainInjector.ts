@@ -17,6 +17,7 @@ export interface MainContext extends OptionsContext {
   [coreTokens.testFramework]: TestFramework | null;
   [coreTokens.pluginCreatorReporter]: PluginCreator<PluginKind.Reporter>;
   [coreTokens.pluginCreatorConfigEditor]: PluginCreator<PluginKind.ConfigEditor>;
+  [coreTokens.pluginCreatorMutator]: PluginCreator<PluginKind.Mutator>;
   [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
   [coreTokens.timer]: Timer;
 }
@@ -36,6 +37,7 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(commonTokens.options, optionsFactory)
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
     .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
+    .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
     .provideClass(coreTokens.reporter, BroadcastReporter)
     .provideFactory(coreTokens.testFramework, testFrameworkFactory)
     .provideClass(coreTokens.timer, Timer);
@@ -43,7 +45,8 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
 
 function pluginDescriptorsFactory(config: Config): ReadonlyArray<string> {
   config.plugins.push(
-    require.resolve('../reporters')
+    require.resolve('../reporters'),
+    require.resolve('../mutators')
   );
   return config.plugins;
 }

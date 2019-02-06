@@ -13,6 +13,12 @@
   "references": [
     {
       "path": "./tsconfig.src.json"
+    },
+    {
+      "path": "../stryker-mutator-specification/tsconfig.src.json"
+    },
+    {
+      "path": "../stryker-test-helpers/tsconfig.src.json"
     }
   ]
 }

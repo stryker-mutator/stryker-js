@@ -1,17 +1,15 @@
 import { getLogger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
-import { StrykerOptions, MutatorDescriptor } from 'stryker-api/core';
+import { StrykerOptions } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
-import { Mutant } from 'stryker-api/mutant';
-import MutantTestMatcher from './MutantTestMatcher';
+import { MutantTestMatcher } from './mutants/MutantTestMatcher';
 import InputFileResolver from './input/InputFileResolver';
 import ScoreResultCalculator from './ScoreResultCalculator';
 import { isPromise } from './utils/objectUtils';
 import { TempFolder } from './utils/TempFolder';
-import MutatorFacade from './MutatorFacade';
-import InitialTestExecutor, { InitialTestRunResult } from './process/InitialTestExecutor';
+import { MutatorFacade } from './mutants/MutatorFacade';
+import InitialTestExecutor from './process/InitialTestExecutor';
 import MutationTestExecutor from './process/MutationTestExecutor';
-import InputFileCollection from './input/InputFileCollection';
 import LogConfigurator from './logging/LogConfigurator';
 import { Injector } from 'typed-inject';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
@@ -54,22 +52,27 @@ export default class Stryker {
     const inputFiles = await this.injector.injectClass(InputFileResolver).resolve();
     if (inputFiles.files.length) {
       TempFolder.instance().initialize();
-      const initialTestRunProcess = this.injector
-        .provideValue(coreTokens.inputFiles, inputFiles)
+      const inputFileInjector = this.injector
+        .provideValue(coreTokens.inputFiles, inputFiles);
+      const initialTestRunProcess = inputFileInjector
         .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(commonTokens.produceSourceMaps, this.config.coverageAnalysis !== 'off')
         .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
         .provideClass(coreTokens.transpiler, TranspilerFacade)
         .injectClass(InitialTestExecutor);
-      const initialTestRunResult = await initialTestRunProcess.run();
-      const testableMutants = await this.mutate(inputFiles, initialTestRunResult);
-      if (initialTestRunResult.runResult.tests.length && testableMutants.length) {
+      const initialRunResult = await initialTestRunProcess.run();
+      const mutator = inputFileInjector.injectClass(MutatorFacade);
+      const testableMutants = await inputFileInjector
+        .provideValue(coreTokens.initialRunResult, initialRunResult)
+        .injectClass(MutantTestMatcher)
+        .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
+      if (initialRunResult.runResult.tests.length && testableMutants.length) {
         const mutationTestExecutor = new MutationTestExecutor(
           this.config,
           inputFiles.files,
           this.injector.resolve(coreTokens.testFramework),
           this.reporter,
-          initialTestRunResult.overheadTimeMS,
+          initialRunResult.overheadTimeMS,
           loggingContext);
         const mutantResults = await mutationTestExecutor.run(testableMutants);
         this.reportScore(mutantResults);
@@ -85,44 +88,20 @@ export default class Stryker {
     return Promise.resolve([]);
   }
 
-  private mutate(input: InputFileCollection, initialTestRunResult: InitialTestRunResult) {
-    const mutator = new MutatorFacade(this.config);
-    const allMutants = mutator.mutate(input.filesToMutate);
-    const includedMutants = this.removeExcludedMutants(allMutants);
-    this.logMutantCount(includedMutants.length, allMutants.length);
-    const mutantRunResultMatcher = new MutantTestMatcher(
-      includedMutants,
-      input.filesToMutate,
-      initialTestRunResult.runResult,
-      initialTestRunResult.sourceMapper,
-      initialTestRunResult.coverageMaps,
-      this.config,
-      this.reporter);
-    return mutantRunResultMatcher.matchWithMutants();
-  }
+  // private mutate(input: InputFileCollection, initialTestRunResult: InitialTestRunResult): TestableMutant[] {
+  //   const mutator = this.injector.injectClass(MutatorFacade);
+  //   const mutants = mutator.mutate(input.filesToMutate);
+  //   const mutantRunResultMatcher = new MutantTestMatcher(
+  //     mutants,
+  //     input.filesToMutate,
+  //     initialTestRunResult.runResult,
+  //     initialTestRunResult.sourceMapper,
+  //     initialTestRunResult.coverageMaps,
+  //     this.config,
+  //     this.reporter);
+  //   return mutantRunResultMatcher.matchWithMutants();
+  // }
 
-  private logMutantCount(includedMutantCount: number, totalMutantCount: number) {
-    let mutantCountMessage;
-    if (includedMutantCount) {
-      mutantCountMessage = `${includedMutantCount} Mutant(s) generated`;
-    } else {
-      mutantCountMessage = `It\'s a mutant-free world, nothing to test.`;
-    }
-    const numberExcluded = totalMutantCount - includedMutantCount;
-    if (numberExcluded) {
-      mutantCountMessage += ` (${numberExcluded} Mutant(s) excluded)`;
-    }
-    this.log.info(mutantCountMessage);
-  }
-
-  private removeExcludedMutants(mutants: ReadonlyArray<Mutant>): ReadonlyArray<Mutant> {
-    if (typeof this.config.mutator === 'string') {
-      return mutants;
-    } else {
-      const mutatorDescriptor = this.config.mutator as MutatorDescriptor;
-      return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
-    }
-  }
   private wrapUpReporter(): Promise<void> {
     const maybePromise = this.reporter.wrapUp();
     if (isPromise(maybePromise)) {

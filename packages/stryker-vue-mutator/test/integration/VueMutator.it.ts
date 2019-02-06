@@ -1,16 +1,26 @@
 import { expect } from 'chai';
-import { Config } from 'stryker-api/config';
 import { File } from 'stryker-api/core';
-import { MutatorFactory } from 'stryker-api/mutant';
-import VueMutator from '../../src/VueMutator';
-import '../../src/index';
-import 'stryker-javascript-mutator';
-import 'stryker-typescript';
+import { strykerPlugins } from '../../src/index';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { PluginKind } from 'stryker-api/plugin';
+import { Mutator } from 'stryker-api/mutant';
+import { strykerPlugins as javascriptMutatorStrykerPlugins } from 'stryker-javascript-mutator';
+import { strykerPlugins as typescriptMutatorStrykerPlugins } from 'stryker-typescript';
+
+const javascriptMutatorPlugin = javascriptMutatorStrykerPlugins.find(plugin => plugin.kind === PluginKind.Mutator);
+const typescriptMutatorPlugin = typescriptMutatorStrykerPlugins.find(plugin => plugin.kind === PluginKind.Mutator);
 
 describe('VueMutator', () => {
+
+  function createSut(): Mutator {
+    return testInjector.injector
+      .injectFunction(strykerPlugins[0].factory);
+  }
+
   describe('JavaScript project', () => {
     it('should generate mutants', () => {
-      sandbox.stub(MutatorFactory.instance(), 'knownNames').returns(['javascript']);
+      testInjector.pluginResolver.resolveAll.returns([javascriptMutatorPlugin]);
+
       const vueCode = `<template>
       <span id="msg">{{ message }}</span>
       </template>
@@ -39,7 +49,7 @@ describe('VueMutator', () => {
         return user.age >= 18;
       }`;
       const files = [new File('AppComponent.vue', vueCode), new File('age.js', jsCode)];
-      const sut = new VueMutator(new Config());
+      const sut = createSut();
 
       const mutants = sut.mutate(files);
 
@@ -51,7 +61,7 @@ describe('VueMutator', () => {
 
   describe('TypeScript project', () => {
     it('should generate mutants', () => {
-      sandbox.stub(MutatorFactory.instance(), 'knownNames').returns(['typescript']);
+      testInjector.pluginResolver.resolveAll.returns([typescriptMutatorPlugin]);
       const vueCode = `<template>
       <span id="msg">{{ message }}</span>
       </template>
@@ -79,7 +89,7 @@ describe('VueMutator', () => {
         return user.age >= 18;
       }`;
       const files = [new File('AppComponent.vue', vueCode), new File('age.ts', jsCode)];
-      const sut = new VueMutator(new Config());
+      const sut = createSut();
 
       const mutants = sut.mutate(files);
 

@@ -1,21 +1,19 @@
 import * as types from '@babel/types';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import { Mutator, Mutant } from 'stryker-api/mutant';
 import { File } from 'stryker-api/core';
-import { Config } from 'stryker-api/config';
 import copy from './helpers/copy';
-import NodeMutatorFactory from './NodeMutatorFactory';
-import NodeMutator from './mutators/NodeMutator';
+import { NodeMutator, NODE_MUTATORS_TOKEN } from './mutators/NodeMutator';
 import BabelHelper from './helpers/BabelHelper';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
-function defaultMutators(): NodeMutator[] {
-  return NodeMutatorFactory.instance().knownNames().map(name => NodeMutatorFactory.instance().create(name, undefined));
-}
+export class JavaScriptMutator implements Mutator {
 
-export default class JavaScriptMutator implements Mutator {
-  private readonly log = getLogger(JavaScriptMutator.name);
-
-  constructor(_: Config, private readonly mutators: NodeMutator[] = defaultMutators()) { }
+  public static inject = tokens(commonTokens.logger, NODE_MUTATORS_TOKEN) ;
+  constructor(
+    private readonly log: Logger,
+    private readonly mutators: ReadonlyArray<NodeMutator>
+    ) { }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];

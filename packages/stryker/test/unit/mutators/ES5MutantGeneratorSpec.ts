@@ -7,12 +7,13 @@ import NodeMutator from '../../../src/mutators/NodeMutator';
 import { Identified, IdentifiedNode } from '../../../src/mutators/IdentifiedNode';
 import { File } from 'stryker-api/core';
 import * as sinon from 'sinon';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('ES5Mutator', () => {
   let sut: ES5Mutator;
 
   beforeEach(() => {
-    sut = new ES5Mutator();
+    sut = testInjector.injector.injectClass(ES5Mutator);
   });
 
   afterEach(() => {
@@ -60,7 +61,7 @@ describe('ES5Mutator', () => {
     }
 
     beforeEach(() => {
-      sut = new ES5Mutator(undefined, [new StubMutator()]);
+      sut = new ES5Mutator(testInjector.logger, [new StubMutator()]);
     });
 
     it('the same nodeID', () => {
