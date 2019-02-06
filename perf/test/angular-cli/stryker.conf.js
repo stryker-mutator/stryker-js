@@ -3,11 +3,10 @@
 module.exports = function(config) {
   config.set({
     mutate: [
-      "src/**/*.ts",
-      "!src/**/*.spec.ts",
-      "!src/test.ts",
-      "!src/environments/*.ts",
-      "!src/app/app.module.ts"
+      "src/app/catalogus/*.ts",
+      "src/app/shopping-cart/*.ts",
+      "src/app/services/*.ts",
+      "!src/**/*.spec.ts"
     ],
 
     mutator: "typescript",
@@ -19,7 +18,9 @@ module.exports = function(config) {
         browsers: ["ChromeHeadless"]
       }
     },
+    timeoutMS: 60000,
     reporters: ["progress", "clear-text", "html"],
+    maxConcurrentTestRunners: 2,
     coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
     tsconfigFile: 'tsconfig.json', // Location of your tsconfig.json file
   });
