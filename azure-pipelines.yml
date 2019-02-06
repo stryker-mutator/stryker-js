@@ -1,0 +1,27 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'vs2017-win2016'
+
+jobs:
+- job: BuildAndTest
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+  - script: |
+      npm install
+      npm run lint
+      npm run build
+      npm test
+- job: RunE2E
+  dependsOn: InstallAndBuild
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+  - script: |
+      npm install
+      npm run build
+      npm run e2e
