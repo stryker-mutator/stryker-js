@@ -68,7 +68,9 @@
     "glob": "~7.1.2"
   },
   "initStrykerConfig": {
-    "babelrcFile": ".babelrc",
+    "babel": {
+      "optionsFile": ".babelrc"
+    },
     "coverageAnalysis": "off"
   }
 }
