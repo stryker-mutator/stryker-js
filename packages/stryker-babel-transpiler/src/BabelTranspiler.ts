@@ -1,44 +1,39 @@
 import { Transpiler } from 'stryker-api/transpile';
 import { File, StrykerOptions } from 'stryker-api/core';
-import * as babel from 'babel-core';
+import * as babel from './helpers/babelWrapper';
 import * as path from 'path';
-import BabelConfigReader from './BabelConfigReader';
-import { CONFIG_KEY_FILE } from './helpers/keys';
+import { BabelConfigReader, StrykerBabelConfig } from './BabelConfigReader';
 import { toJSFileName } from './helpers/helpers';
 import { tokens, commonTokens } from 'stryker-api/plugin';
+import { StrykerError } from '@stryker-mutator/util';
 
-const KNOWN_EXTENSIONS = Object.freeze([
-  '.es6',
-  '.js',
-  '.es',
-  '.jsx'
-  // => TODO in Babel 7 this list gets even bigger (and is exported from @babel/core: https://github.com/babel/babel/blob/master/packages/babel-core/src/index.js#L41)
-  // Also: you can add custom extensions if your using the babel cli, maybe we should also support that use case
-]);
+const DEFAULT_EXTENSIONS: ReadonlyArray<string> = (babel as any).DEFAULT_EXTENSIONS;
 
-class BabelTranspiler implements Transpiler {
-  private readonly babelOptions: babel.TransformOptions;
+export class BabelTranspiler implements Transpiler {
+  private readonly babelConfig: StrykerBabelConfig;
   private readonly projectRoot: string;
+  private readonly extensions: ReadonlyArray<string>;
 
   public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps);
   public constructor(options: StrykerOptions, produceSourceMaps: boolean) {
-    this.babelOptions = new BabelConfigReader().readConfig(options);
-    this.projectRoot = this.determineProjectRoot(options);
     if (produceSourceMaps) {
       throw new Error(`Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`);
     }
+    this.babelConfig = new BabelConfigReader().readConfig(options);
+    this.projectRoot = this.determineProjectRoot();
+    this.extensions = [...DEFAULT_EXTENSIONS, ...this.babelConfig.extensions];
   }
 
-  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
-    return new Promise<ReadonlyArray<File>>(res => res(files.map(file => this.transpileFileIfNeeded(file))));
+  public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+    return files.map(file => this.transpileFileIfNeeded(file));
   }
 
   private transpileFileIfNeeded(file: File): File {
-    if (KNOWN_EXTENSIONS.some(ext => ext === path.extname(file.name))) {
+    if (this.extensions.some(ext => ext === path.extname(file.name))) {
       try {
         return this.transpileFile(file);
       } catch (error) {
-        throw new Error(`Error while transpiling "${file.name}": ${error.stack || error.message}`);
+        throw new StrykerError(`Error while transpiling "${file.name}"`, error);
       }
     } else {
       return file; // pass through
@@ -46,25 +41,25 @@ class BabelTranspiler implements Transpiler {
   }
 
   private transpileFile(file: File) {
-    const options = Object.assign({}, this.babelOptions, {
+    const relativeOptions: babel.TransformOptions = {
+      cwd: this.projectRoot,
       filename: file.name,
       filenameRelative: path.relative(this.projectRoot, file.name)
-    });
-    const result = babel.transform(file.textContent, options);
-    if ((result as any).ignored) {
-      // Ignored will be true if the file was not transpiled (because it was ignored)
-      // TODO: Babel 7 will change this (according to a conversation I had on Slack).
-      //  => it will return a `null` value in that case
+    };
+    const options: babel.TransformOptions = { ...this.babelConfig.options, ...relativeOptions };
+    const result: babel.BabelFileResult | null = babel.transformSync(file.textContent, options);
+    if (!result) {
+      // File is ignored by babel
       return file;
-    } else if (typeof result.code === 'undefined') {
+    } else if (result.code === undefined || result.code === null) {
       throw new Error(`Could not transpile file "${file.name}". Babel transform function delivered \`undefined\`.`);
     } else {
       return new File(toJSFileName(file.name), result.code);
     }
   }
 
-  private determineProjectRoot(options: StrykerOptions): string {
-    const configFile = options[CONFIG_KEY_FILE];
+  private determineProjectRoot(): string {
+    const configFile = this.babelConfig.optionsFile;
     if (configFile) {
       return path.dirname(configFile);
     } else {
@@ -72,5 +67,3 @@ class BabelTranspiler implements Transpiler {
     }
   }
 }
-
-export default BabelTranspiler;

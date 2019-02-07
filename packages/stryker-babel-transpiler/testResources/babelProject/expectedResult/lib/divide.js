@@ -1,3 +1,3 @@
-const divide = number => {
+export const divide = number => {
   return number / number;
 };

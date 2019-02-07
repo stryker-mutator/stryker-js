@@ -24,6 +24,5 @@ export async function expectScoreResult(expectedScoreResult: Partial<ScoreResult
   if (typeof actualSnippet.mutationScore === 'number') {
     actualSnippet.mutationScore = parseFloat(actualSnippet.mutationScore.toFixed(2));
   }
-
   expect(actualSnippet).deep.eq(expectedScoreResult);
 }

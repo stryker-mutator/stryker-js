@@ -1,3 +1,3 @@
-const sum = (number) => {
+export const sum = number => {
   return number + number;
 };

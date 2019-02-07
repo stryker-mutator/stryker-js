@@ -1,6 +1,5 @@
 { 
-    "presets": ["es2015"],
     "ignore": [
-        "excluded.es6"
+        "source/excluded.es6"
     ]
 }

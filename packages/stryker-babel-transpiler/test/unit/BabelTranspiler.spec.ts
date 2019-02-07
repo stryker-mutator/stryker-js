@@ -1,48 +1,50 @@
 import * as path from 'path';
-import BabelTranspiler from '../../src/BabelTranspiler';
+import { BabelTranspiler } from '../../src/BabelTranspiler';
 import { expect } from 'chai';
 import { File, StrykerOptions } from 'stryker-api/core';
 import * as sinon from 'sinon';
-import * as babel from 'babel-core';
-import BabelConfigReader, * as babelConfigReaderModule from '../../src/BabelConfigReader';
+import * as babel from '../../src/helpers/babelWrapper';
+import * as babelConfigReaderModule from '../../src/BabelConfigReader';
 import { Mock, mock } from '../helpers/mock';
 import { factory } from '@stryker-mutator/test-helpers';
 
-describe('BabelTranspiler', () => {
+describe(BabelTranspiler.name, () => {
   let sut: BabelTranspiler;
-  let sandbox: sinon.SinonSandbox;
   let files: File[];
   let transformStub: sinon.SinonStub;
   let options: StrykerOptions;
-  let babelConfigReaderMock: Mock<BabelConfigReader>;
-  let babelOptions: any;
+  let babelConfigReaderMock: Mock<babelConfigReaderModule.BabelConfigReader>;
+  let babelConfig: babelConfigReaderModule.StrykerBabelConfig;
 
   beforeEach(() => {
-    babelOptions = { someBabel: 'config' };
-    babelConfigReaderMock = mock(BabelConfigReader);
-    sandbox = sinon.createSandbox();
-    sandbox.stub(babelConfigReaderModule, 'default').returns(babelConfigReaderMock);
-    transformStub = sandbox.stub(babel, 'transform');
+    babelConfig = {
+      extensions: [],
+      options: {},
+      optionsFile: null
+    };
+    babelConfigReaderMock = mock(babelConfigReaderModule.BabelConfigReader);
+    sinon.stub(babelConfigReaderModule, 'BabelConfigReader').returns(babelConfigReaderMock);
+    transformStub = sinon.stub();
+    sinon.stub(babel, 'transformSync').value(transformStub);
     options = factory.strykerOptions();
     files = [
       new File(path.resolve('main.js'), 'const main = () => { sum(2); divide(2); }'),
       new File(path.resolve('sum.js'), 'const sum = (number) => number + number;'),
       new File(path.resolve('divide.js'), 'const divide = (number) => number / number;')
     ];
+    babelConfigReaderMock.readConfig.returns(babelConfig);
   });
-
-  afterEach(() => sandbox.restore());
 
   describe('constructor', () => {
 
     function arrangeHappyFlow() {
-      babelConfigReaderMock.readConfig.returns(babelOptions);
+      babelConfigReaderMock.readConfig.returns(babelConfig);
       sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
     }
 
     it('should read babel config using the BabelConfigReader', () => {
       arrangeHappyFlow();
-      expect(babelConfigReaderModule.default).calledWithNew;
+      expect(babelConfigReaderModule.BabelConfigReader).calledWithNew;
       expect(babelConfigReaderMock.readConfig).calledWith(options);
     });
 
@@ -54,8 +56,7 @@ describe('BabelTranspiler', () => {
 
   describe('transpile', () => {
 
-    function arrangeHappyFlow(transformResult: babel.BabelFileResult & { ignored?: boolean } = { code: 'code' }) {
-      babelConfigReaderMock.readConfig.returns(babelOptions);
+    function arrangeHappyFlow(transformResult: babel.BabelFileResult | null = { code: 'code' }) {
       sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
       transformStub.returns(transformResult);
     }
@@ -63,26 +64,44 @@ describe('BabelTranspiler', () => {
     it('should call the babel transform function for js files', async () => {
       arrangeHappyFlow();
       const actualResultFiles = await sut.transpile(files);
+      expect(transformStub).calledThrice;
       files.forEach(file => {
         expect(transformStub).calledWith(file.textContent, {
+          cwd: process.cwd(),
           filename: file.name,
-          filenameRelative: path.relative(process.cwd(), file.name),
-          someBabel: 'config'
+          filenameRelative: path.relative(process.cwd(), file.name)
         });
       });
       expect(actualResultFiles).deep.eq(files.map(file => new File(file.name, 'code')));
     });
 
+    it('should allow users to define babel options', async () => {
+      const plugins = [
+        'fooPlugin', 'barPlugin'
+      ];
+      babelConfig.options.plugins = plugins.slice();
+      arrangeHappyFlow();
+      await sut.transpile(files);
+      files.forEach(file => {
+        expect(transformStub).calledWith(file.textContent, {
+          cwd: process.cwd(),
+          filename: file.name,
+          filenameRelative: path.relative(process.cwd(), file.name),
+          plugins
+        });
+      });
+    });
+
     it('should not allow a user to override the file name', async () => {
-      babelOptions.filename = 'override';
-      babelOptions.filenameRelative = 'override';
+      babelConfig.options.filename = 'override';
+      babelConfig.options.filenameRelative = 'override';
       arrangeHappyFlow();
       sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
       await sut.transpile([files[0]]);
       expect(transformStub).calledWith(files[0].textContent, {
+        cwd: process.cwd(),
         filename: files[0].name,
-        filenameRelative: path.relative(process.cwd(), files[0].name),
-        someBabel: 'config'
+        filenameRelative: path.relative(process.cwd(), files[0].name)
       });
     });
 
@@ -95,7 +114,7 @@ describe('BabelTranspiler', () => {
     });
 
     it('should not transpile ignored files', async () => {
-      arrangeHappyFlow({ ignored: true });
+      arrangeHappyFlow(null);
       const inputFiles = [new File('file.es6', 'pass through')];
       const actualResultFiles = await sut.transpile(inputFiles);
       expect(actualResultFiles).deep.eq(inputFiles);
@@ -134,7 +153,8 @@ describe('BabelTranspiler', () => {
       const error = new Error('Syntax error');
       transformStub.throws(error);
       sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
-      return expect(sut.transpile([new File('picture.js', 'S�L!##���XLDDDDDDDD\K�')])).rejectedWith(`Error while transpiling "picture.js": ${error.stack}`);
+      return expect(sut.transpile([new File('picture.js', 'S�L!##���XLDDDDDDDD\K�')]))
+        .rejectedWith(`Error while transpiling "picture.js". Inner error: Error: Syntax error`);
     });
   });
 });

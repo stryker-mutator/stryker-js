@@ -10,7 +10,7 @@ module.exports = function (config) {
     transpilers: [
       'babel'
     ],
-    babelrcFile: '.babelrc',
+    timeoutMS: 60000,
     reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
     logLevel: 'info'
