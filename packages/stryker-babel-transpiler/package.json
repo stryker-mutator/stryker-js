@@ -42,7 +42,7 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-babel-transpiler#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stryker-mutator/util": "0.0.3",
+    "@stryker-mutator/util": "^0.1.0",
     "minimatch": "~3.0.4",
     "stryker-api": "^0.24.0"
   },
