@@ -1,24 +1,24 @@
 import * as path from 'path';
-import { File, StrykerOptions } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { ProjectLoader } from '../helpers/projectLoader';
-import { babelTranspilerFactory, BabelTranspiler } from '../../src/BabelTranspiler';
+import { BabelTranspiler, babelTranspilerFactory } from '../../src/BabelTranspiler';
 import { expect } from 'chai';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { CONFIG_KEY, StrykerBabelConfig } from '../../src/BabelConfigReader';
 import { commonTokens } from 'stryker-api/plugin';
 
-function describeIntegrationTest(projectName: string) {
+function describeIntegrationTest(projectName: string, babelConfig: Partial<StrykerBabelConfig> = {}) {
 
   const projectDir = path.resolve(__dirname, '..', '..', 'testResources', projectName);
+  babelConfig.optionsFile = path.join(projectDir, '.babelrc');
   let projectFiles: File[] = [];
   let resultFiles: File[] = [];
   let babelTranspiler: BabelTranspiler;
-  let options: StrykerOptions;
 
   beforeEach(async () => {
     projectFiles = await ProjectLoader.getFiles(path.join(projectDir, 'source'));
     resultFiles = await ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
-    options = factory.strykerOptions();
-    options.babelrcFile = path.join(projectDir, '.babelrc');
+    testInjector.options[CONFIG_KEY] = babelConfig;
     babelTranspiler = testInjector.injector
       .provideValue(commonTokens.produceSourceMaps, false)
       .injectFunction(babelTranspilerFactory);
@@ -50,8 +50,11 @@ describe('A babel project with the `only` option enabled', () => {
 describe('A babel project with a plugin', () => {
   describeIntegrationTest('babelPluginProject');
 });
-describe('A Babel project with preset', () => {
-  describeIntegrationTest('babelPresetProject');
+describe('A Babel project with typescript preset', () => {
+  describeIntegrationTest('babelTypescriptProject', { extensions: ['.ts'] });
+});
+describe('A Babel project with flow preset', () => {
+  describeIntegrationTest('babelFlowProject');
 });
 describe('A Babel project', () => {
   describeIntegrationTest('babelProject');

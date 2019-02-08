@@ -1,16 +1,29 @@
-import * as chai from 'chai';
+import { expect } from 'chai';
 import { fsAsPromised } from '@stryker-mutator/util';
-import * as chaiAsPromised from 'chai-as-promised';
-chai.use(chaiAsPromised);
-const expect = chai.expect;
-const expectFileExists = (path: string) => expect(fsAsPromised.exists(path), `File ${path} does not exist`).to.eventually.eq(true);
+import { expectScoreResult } from '../../../helpers';
+
+async function expectFileExists(path: string) {
+  expect(await fsAsPromised.exists(path), `File ${path} does not exist`).eq(true);
+}
 
 describe('Verify stryker has ran correctly', () => {
 
+  it('should report expected score', async () => {
+    // File       | % score | # killed | # timeout | # survived | # no cov | # error |
+    // All files  |   58.54 |       24 |         0 |         17 |        0 |       1 |
+    await expectScoreResult({
+      killed: 24,
+      mutationScore: 58.54,
+      runtimeErrors: 1,
+      survived: 17,
+      timedOut: 0
+    });
+  });
+
   describe('html reporter', () => {
 
-    it('should report in html files', () => {
-      return Promise.all([
+    it('should report in html files', async () => {
+      await Promise.all([
         expectFileExists('reports/mutation/html/Bank.js.html'),
         expectFileExists('reports/mutation/html/Casino.js.html'),
         expectFileExists('reports/mutation/html/User.js.html'),
@@ -18,8 +31,8 @@ describe('Verify stryker has ran correctly', () => {
       ]);
     });
 
-    it('should copy over the resources', () => {
-      return Promise.all([
+    it('should copy over the resources', async () => {
+      await Promise.all([
         expectFileExists('reports/mutation/html/strykerResources/stryker/stryker.css'),
         expectFileExists('reports/mutation/html/strykerResources/stryker.js'),
         expectFileExists('reports/mutation/html/strykerResources/stryker/stryker-80x80.png'),

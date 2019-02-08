@@ -2,11 +2,10 @@ import * as sinon from 'sinon';
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import { testInjector } from '@stryker-mutator/test-helpers';
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
-beforeEach(() => {
-  global.sandbox = sinon.createSandbox();
-});
 afterEach(() => {
-  global.sandbox.restore();
+  testInjector.reset();
+  sinon.restore();
 });

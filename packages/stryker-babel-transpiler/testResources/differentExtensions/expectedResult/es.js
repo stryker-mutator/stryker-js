@@ -1,11 +1,3 @@
-"use strict";
-
-function add() {
-  for (var _len = arguments.length, varArgs = Array(_len), _key = 0; _key < _len; _key++) {
-    varArgs[_key] = arguments[_key];
-  }
-
-  return varArgs.reduce(function (a, b) {
-    return a + b;
-  });
+function add(...varArgs) {
+  return varArgs.reduce((a, b) => a + b);
 }

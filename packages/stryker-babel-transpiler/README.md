@@ -10,6 +10,10 @@
 
 A plugin that adds support for [Babel](https://github.com/babel/babel) to [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework. 
 
+## Peer dependencies
+
+The `stryker-babel-transpiler` requires you to install babel 7. Install _at least_ the `@babel/core` package (version 7).
+
 ## Quickstart
 
 First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
@@ -17,31 +21,56 @@ First, install Stryker itself (you can follow the [quickstart on the website](ht
 Next, install this package:
 
 ```bash
-npm install --save-dev stryker-babel-transpiler
+npm install --save-dev stryker-babel-transpiler @babel/core
 ```
 
 Next, open up your `stryker.conf.js` file and add the following properties:
+
 ```javascript
-babelrcFile: '.babelrc', // Location of your .babelrc file
+babel: {
+    // Location of your .babelrc file, set to `null` to
+    optionsFile: '.babelrc', 
+    // Override options here:
+    options: {
+        // presets: ['@babel/env'],  
+        // plugins: ['transform-es2015-spread']
+    },
+     // Add extensions here
+    extensions: [/*'.ts'*/]
+}
 transpilers: [
-    'babel' // Specify that your code needs to be transpiled before tests can be run
+    'babel' // Enable the babel transpiler
 ],
-// If you don't have a .babelrc file you can specify the config directly (Not recommended!):
-// babelConfig: { "presets": ["env"],  "plugins": ["transform-object-rest-spread"] },
 ```
-if you initialize stryker using `stryker init`, the babelrcFile property will be added to your `stryker.conf.js` automatically.
+
+If you initialize stryker using `stryker init`, the babelrcFile property will be added to your `stryker.conf.js` automatically.
 
 Now give it a go: 
+
 ```bash
-$ stryker run
+$ npx stryker run
 ```
 
-## Peer dependencies
-The `stryker-babel-transpiler` plugin requires the following packages to be installed in order to work: 
-* `stryker-api`
-* `babel-core` (When using babel 6)
-* 'babel-core@^7.0.0-bridge.0' (When using babel 7)
+## Configuration  
 
-For the current versions, see the `peerDependencies` section in the package.json file.
+### `babel.optionsFile` [`string | null`] 
 
-These are marked as `peerDependencies` so you get a warning during installation when the correct versions are not installed.
+Default: `'.babelrc'`
+
+The location of your babelrc file. Set this value to `null` to disable loading of a babel config file.
+
+### `babel.options` [`TranspilerOptions`] 
+
+Default: `{}`
+
+Override babel options from your config file here. Please see [babel's documentation](https://babeljs.io/docs/en/options) to see what is available. 
+
+Some options are restricted to be set, because the stryker-babel-transpiler takes control of it. These options are: `filename`, `filenameRelative` and `cwd`.
+
+### `babel.extensions` [`string[]`]
+
+Default: `[]`
+
+Load additional extensions here. By default only these extensions get picked up by babel: `".js", ".jsx", ".es6", ".es", ".mjs"`.
+For example: if you want to enable typescript transpilation, set extensions to `["ts", "tsx"]`.
+
