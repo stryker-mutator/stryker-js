@@ -25,6 +25,7 @@ export default class LoggerFactory {
   }
 
   public static getLogger: LoggerFactoryMethod = (categoryName?: string) => {
+    process.emitWarning(`DEPRECATED call to \`getLogger('${categoryName}')\` is deprecated. Stryker plugins should use dependency injection to let loggers be injected`);
     return logImplementation(categoryName);
   }
 }

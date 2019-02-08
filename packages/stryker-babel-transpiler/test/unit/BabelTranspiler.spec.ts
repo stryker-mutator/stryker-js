@@ -4,17 +4,18 @@ import { expect } from 'chai';
 import { File, StrykerOptions } from 'stryker-api/core';
 import * as sinon from 'sinon';
 import * as babel from '../../src/helpers/babelWrapper';
-import * as babelConfigReaderModule from '../../src/BabelConfigReader';
 import { Mock, mock } from '../helpers/mock';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { BabelConfigReader, StrykerBabelConfig } from '../../src/BabelConfigReader';
+import { commonTokens } from 'stryker-api/plugin';
 
 describe(BabelTranspiler.name, () => {
   let sut: BabelTranspiler;
   let files: File[];
   let transformStub: sinon.SinonStub;
   let options: StrykerOptions;
-  let babelConfigReaderMock: Mock<babelConfigReaderModule.BabelConfigReader>;
-  let babelConfig: babelConfigReaderModule.StrykerBabelConfig;
+  let babelConfigReaderMock: Mock<BabelConfigReader>;
+  let babelConfig: StrykerBabelConfig;
 
   beforeEach(() => {
     babelConfig = {
@@ -22,8 +23,7 @@ describe(BabelTranspiler.name, () => {
       options: {},
       optionsFile: null
     };
-    babelConfigReaderMock = mock(babelConfigReaderModule.BabelConfigReader);
-    sinon.stub(babelConfigReaderModule, 'BabelConfigReader').returns(babelConfigReaderMock);
+    babelConfigReaderMock = mock(BabelConfigReader);
     transformStub = sinon.stub();
     sinon.stub(babel, 'transformSync').value(transformStub);
     options = factory.strykerOptions();
@@ -35,29 +35,35 @@ describe(BabelTranspiler.name, () => {
     babelConfigReaderMock.readConfig.returns(babelConfig);
   });
 
+  function createSut(produceSourceMaps = false) {
+    return testInjector.injector
+      .provideValue(commonTokens.produceSourceMaps, produceSourceMaps)
+      .provideValue('babelConfigReader', babelConfigReaderMock as unknown as BabelConfigReader)
+      .injectClass(BabelTranspiler);
+  }
+
   describe('constructor', () => {
 
     function arrangeHappyFlow() {
       babelConfigReaderMock.readConfig.returns(babelConfig);
-      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
+      sut = createSut();
     }
 
     it('should read babel config using the BabelConfigReader', () => {
       arrangeHappyFlow();
-      expect(babelConfigReaderModule.BabelConfigReader).calledWithNew;
       expect(babelConfigReaderMock.readConfig).calledWith(options);
     });
 
     it('should throw if `produceSourceMaps` was true and coverage analysis is "perTest"', () => {
       options.coverageAnalysis = 'perTest';
-      expect(() => new BabelTranspiler(options, /*produceSourceMaps:*/ true)).throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".');
+      expect(() => new BabelTranspiler(options, /*produceSourceMaps:*/ true, babelConfigReaderMock as unknown as BabelConfigReader)).throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".');
     });
   });
 
   describe('transpile', () => {
 
     function arrangeHappyFlow(transformResult: babel.BabelFileResult | null = { code: 'code' }) {
-      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
+      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false, babelConfigReaderMock as unknown as BabelConfigReader);
       transformStub.returns(transformResult);
     }
 
@@ -96,7 +102,7 @@ describe(BabelTranspiler.name, () => {
       babelConfig.options.filename = 'override';
       babelConfig.options.filenameRelative = 'override';
       arrangeHappyFlow();
-      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
+      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false, babelConfigReaderMock as unknown as BabelConfigReader);
       await sut.transpile([files[0]]);
       expect(transformStub).calledWith(files[0].textContent, {
         cwd: process.cwd(),
@@ -152,7 +158,7 @@ describe(BabelTranspiler.name, () => {
     it('should return with an error when the babel transform fails', async () => {
       const error = new Error('Syntax error');
       transformStub.throws(error);
-      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false);
+      sut = createSut();
       return expect(sut.transpile([new File('picture.js', 'S�L!##���XLDDDDDDDD\K�')]))
         .rejectedWith(`Error while transpiling "picture.js". Inner error: Error: Syntax error`);
     });

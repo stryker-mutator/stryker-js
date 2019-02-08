@@ -1,14 +1,17 @@
 import * as path from 'path';
 import * as _ from 'lodash';
-import { getLogger } from 'stryker-api/logging';
 import { MutationScoreThresholds } from 'stryker-api/core';
 import { MutantResult, MutantStatus, ScoreResult } from 'stryker-api/report';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
+import { Logger } from 'stryker-api/logging';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 const defaultScoreIfNoValidMutants = 100;
 
 export default class ScoreResultCalculator {
-  private readonly log = getLogger(ScoreResultCalculator.name);
+
+  public static inject = tokens(commonTokens.logger);
+  constructor(private readonly log: Logger) { }
 
   public calculate(results: MutantResult[]): ScoreResult {
     const scoreResult = this.calculateScoreResult(results, '');

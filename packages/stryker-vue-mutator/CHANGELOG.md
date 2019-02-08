@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-vue-mutator@0.3.0...stryker-vue-mutator@0.4.0) (2019-02-08)
+
+
+### Features
+
+* **mutators:** Remove side effects from mutator plugins ([#1352](https://github.com/stryker-mutator/stryker/issues/1352)) ([edaf401](https://github.com/stryker-mutator/stryker/commit/edaf401))
+
+
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/stryker-mutator/stryker/compare/stryker-vue-mutator@0.2.14...stryker-vue-mutator@0.3.0) (2018-12-23)
 

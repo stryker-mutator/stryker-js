@@ -2,11 +2,11 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as ts from 'typescript';
-import { getLogger } from 'stryker-api/logging';
 import flatMap = require('lodash.flatmap');
 import ScriptFile from './ScriptFile';
 import { normalizeFileFromTypescript, isJavaScriptFile, isMapFile, normalizeFileForTypescript } from '../helpers/tsHelpers';
 import { File } from 'stryker-api/core';
+import { Logger, LoggerFactoryMethod } from 'stryker-api/logging';
 
 const libRegex = /^lib\.(?:\w|\.)*\.?d\.ts$/;
 
@@ -17,17 +17,21 @@ export interface EmitOutput {
 
 export default class TranspilingLanguageService {
   private readonly languageService: ts.LanguageService;
-
+  private readonly logger: Logger;
   private readonly compilerOptions: ts.CompilerOptions;
   private readonly files: ts.MapLike<ScriptFile> = Object.create(null);
-  private readonly logger = getLogger(TranspilingLanguageService.name);
   private readonly diagnosticsFormatter: ts.FormatDiagnosticsHost;
 
-  constructor(compilerOptions: Readonly<ts.CompilerOptions>, rootFiles: ReadonlyArray<File>, private readonly projectDirectory: string, private readonly produceSourceMaps: boolean) {
+  constructor(compilerOptions: Readonly<ts.CompilerOptions>,
+              rootFiles: ReadonlyArray<File>,
+              private readonly projectDirectory: string,
+              private readonly produceSourceMaps: boolean,
+              getLogger: LoggerFactoryMethod) {
     this.compilerOptions = this.adaptCompilerOptions(compilerOptions);
     rootFiles.forEach(file => this.files[file.name] = new ScriptFile(file.name, file.textContent));
     const host = this.createLanguageServiceHost();
     this.languageService = ts.createLanguageService(host);
+    this.logger = getLogger(TranspilingLanguageService.name);
     this.diagnosticsFormatter = {
       getCanonicalFileName: fileName => fileName,
       getCurrentDirectory: () => projectDirectory,

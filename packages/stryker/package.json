@@ -1,6 +1,6 @@
 {
   "name": "stryker",
-  "version": "0.34.0",
+  "version": "0.35.0",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -52,7 +52,7 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@stryker-mutator/util": "^0.0.3",
+    "@stryker-mutator/util": "^0.1.0",
     "chalk": "~2.4.1",
     "commander": "~2.19.0",
     "escodegen": "~1.8.0",
@@ -70,19 +70,22 @@
     "rxjs": "~6.3.0",
     "source-map": "~0.6.1",
     "surrial": "^0.2.0",
-    "stryker-api": "^0.23.0",
     "tree-kill": "~1.2.0",
     "tslib": "~1.9.3",
     "typed-inject": "^0.2.0",
     "typed-rest-client": "~1.0.7"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "0.0.0",
+    "@stryker-mutator/test-helpers": "^0.1.0",
     "@types/get-port": "~4.0.0",
     "@types/inquirer": "~0.0.42",
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/node": "~10.11.4",
-    "@types/prettier": "~1.13.1",
-    "@types/progress": "~2.0.1"
+    "@types/prettier": "^1.15.2",
+    "@types/progress": "~2.0.1",
+    "stryker-api": "^0.24.0"
+  },
+  "peerDependencies": {
+    "stryker-api": "^0.24.0"
   }
 }

@@ -1,9 +1,8 @@
-import { getLogger } from 'stryker-api/logging';
 import { EventEmitter } from 'events';
+import { Logger } from 'stryker-api/logging';
 
 export default class WctLogger {
 
-  private readonly log = getLogger('web-component-tester');
   private readonly logProxy = {
     ['log:debug']: this.log.debug.bind(this.log),
     ['log:error']: this.log.error.bind(this.log),
@@ -11,7 +10,7 @@ export default class WctLogger {
     ['log:warn']: this.log.warn.bind(this.log)
   };
 
-  constructor(private readonly context: EventEmitter, verbose: boolean) {
+  constructor(private readonly context: EventEmitter, verbose: boolean, private readonly log: Logger) {
     if (verbose) {
       Object.keys(this.logProxy).forEach(logEvent => context.on(logEvent, (this.logProxy as any)[logEvent]));
     } else {

@@ -1,7 +1,7 @@
 import { TestFramework } from 'stryker-api/test_framework';
 import { MutatorDescriptor, MutationScoreThresholds, LogLevel, StrykerOptions } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import { StrykerError } from '@stryker-mutator/util';
 import { normalizeWhiteSpaces } from '../utils/objectUtils';
 import { tokens, commonTokens } from 'stryker-api/plugin';
@@ -10,9 +10,11 @@ import { coreTokens } from '../di';
 export default class ConfigValidator {
 
   private isValid = true;
-  private readonly log = getLogger(ConfigValidator.name);
-  public static inject = tokens(commonTokens.options, coreTokens.testFramework);
-  constructor(private readonly strykerConfig: Readonly<StrykerOptions>, private readonly testFramework: TestFramework | null) { }
+  public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.testFramework);
+  constructor(
+    private readonly log: Logger,
+    private readonly options: Readonly<StrykerOptions>,
+    private readonly testFramework: TestFramework | null) { }
 
   public validate() {
     this.validateTestFramework();
@@ -22,23 +24,23 @@ export default class ConfigValidator {
     this.validateLogLevel('fileLogLevel');
     this.validateTimeout();
     this.validatePort();
-    this.validateIsNumber('maxConcurrentTestRunners', this.strykerConfig.maxConcurrentTestRunners);
-    this.validateIsStringArray('plugins', this.strykerConfig.plugins);
-    this.validateIsStringArray('reporters', this.strykerConfig.reporters);
-    this.validateIsStringArray('transpilers', this.strykerConfig.transpilers);
+    this.validateIsNumber('maxConcurrentTestRunners', this.options.maxConcurrentTestRunners);
+    this.validateIsStringArray('plugins', this.options.plugins);
+    this.validateIsStringArray('reporters', this.options.reporters);
+    this.validateIsStringArray('transpilers', this.options.transpilers);
     this.validateCoverageAnalysis();
     this.validateCoverageAnalysisWithRespectToTranspilers();
     this.crashIfNeeded();
   }
 
   private validateTestFramework() {
-    if (this.strykerConfig.coverageAnalysis === 'perTest' && !this.testFramework) {
+    if (this.options.coverageAnalysis === 'perTest' && !this.testFramework) {
       this.invalidate('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
     }
   }
 
   private validateMutator() {
-    const mutator = this.strykerConfig.mutator;
+    const mutator = this.options.mutator;
     if (typeof mutator === 'object') {
       const mutatorDescriptor = mutator as MutatorDescriptor;
       this.validateIsString('mutator.name', mutatorDescriptor.name);
@@ -49,7 +51,7 @@ export default class ConfigValidator {
   }
 
   private validateThresholds() {
-    const thresholds = this.strykerConfig.thresholds;
+    const thresholds = this.options.thresholds;
     this.validateThresholdsValueExists('high', thresholds.high);
     this.validateThresholdsValueExists('low', thresholds.low);
     this.validateThresholdValue('high', thresholds.high);
@@ -61,8 +63,8 @@ export default class ConfigValidator {
   }
 
   public validatePort() {
-    if (this.strykerConfig.port) {
-      this.validateIsNumber('port', this.strykerConfig.port);
+    if (this.options.port) {
+      this.validateIsNumber('port', this.options.port);
       this.deprecate('port', normalizeWhiteSpaces(
         `Test runners are expected to manage their own port selection.
       I.e. please use karma.config.port, or leave it out entirely to let the test runner itself decide.`));
@@ -82,7 +84,7 @@ export default class ConfigValidator {
   }
 
   private validateLogLevel(logProperty: 'logLevel' | 'fileLogLevel') {
-    const logLevel = this.strykerConfig[logProperty];
+    const logLevel = this.options[logProperty];
     const VALID_LOG_LEVEL_VALUES = [LogLevel.Fatal, LogLevel.Error, LogLevel.Warning, LogLevel.Information, LogLevel.Debug, LogLevel.Trace, LogLevel.Off];
     if (VALID_LOG_LEVEL_VALUES.indexOf(logLevel) < 0) {
       this.invalidate(`Value "${logLevel}" is invalid for \`logLevel\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`);
@@ -90,24 +92,24 @@ export default class ConfigValidator {
   }
 
   private validateTimeout() {
-    this.validateIsNumber('timeoutMS', this.strykerConfig.timeoutMS);
-    this.validateIsNumber('timeoutFactor', this.strykerConfig.timeoutFactor);
+    this.validateIsNumber('timeoutMS', this.options.timeoutMS);
+    this.validateIsNumber('timeoutFactor', this.options.timeoutFactor);
   }
 
   private validateCoverageAnalysis() {
     const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
-    const coverageAnalysis = this.strykerConfig.coverageAnalysis;
+    const coverageAnalysis = this.options.coverageAnalysis;
     if (VALID_COVERAGE_ANALYSIS_VALUES.indexOf(coverageAnalysis) < 0) {
       this.invalidate(`Value "${coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the following: ${this.joinQuotedList(VALID_COVERAGE_ANALYSIS_VALUES)}`);
     }
   }
 
   private validateCoverageAnalysisWithRespectToTranspilers() {
-    if (Array.isArray(this.strykerConfig.transpilers) &&
-      this.strykerConfig.transpilers.length > 1 &&
-      this.strykerConfig.coverageAnalysis !== 'off') {
-      this.invalidate(`Value "${this.strykerConfig.coverageAnalysis}" for \`coverageAnalysis\` is invalid with multiple transpilers (configured transpilers: ${
-        this.strykerConfig.transpilers.join(', ')
+    if (Array.isArray(this.options.transpilers) &&
+      this.options.transpilers.length > 1 &&
+      this.options.coverageAnalysis !== 'off') {
+      this.invalidate(`Value "${this.options.coverageAnalysis}" for \`coverageAnalysis\` is invalid with multiple transpilers (configured transpilers: ${
+        this.options.transpilers.join(', ')
         }). Please report this to the Stryker team if you whish this feature to be implemented`);
     }
   }

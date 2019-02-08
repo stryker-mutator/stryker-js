@@ -4,7 +4,7 @@ import { Config, ConfigEditor } from 'stryker-api/config';
 import { Logger } from 'stryker-api/logging';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
-import { MutationScoreThresholds, File, Location, StrykerOptions, LogLevel } from 'stryker-api/core';
+import { MutationScoreThresholds, File, Location, StrykerOptions } from 'stryker-api/core';
 import * as sinon from 'sinon';
 import { Transpiler } from 'stryker-api/transpile';
 import { Injector } from 'typed-inject';
@@ -107,27 +107,7 @@ export const mutationScoreThresholds = factoryMethod<MutationScoreThresholds>(()
   low: 60
 }));
 
-export const strykerOptions = factoryMethod<StrykerOptions>(() => ({
-  allowConsoleColors: true,
-  coverageAnalysis: 'off',
-  fileLogLevel: LogLevel.Off,
-  logLevel: LogLevel.Information,
-  maxConcurrentTestRunners: Infinity,
-  mutate: ['src/**/*.js'],
-  mutator: 'javascript',
-  plugins: [],
-  reporters: [],
-  symlinkNodeModules: true,
-  testRunner: 'command',
-  thresholds: {
-    break: 20,
-    high: 80,
-    low: 30
-  },
-  timeoutFactor: 1.5,
-  timeoutMS: 5000,
-  transpilers: []
-}));
+export const strykerOptions = factoryMethod<StrykerOptions>(() => new Config());
 
 export const config = factoryMethod<Config>(() => new Config());
 

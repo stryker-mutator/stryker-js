@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { fsAsPromised, isErrnoException } from '@stryker-mutator/util';
 import { childProcessAsPromised } from '@stryker-mutator/util';
-import { getLogger } from 'stryker-api/logging';
 import { File, StrykerOptions } from 'stryker-api/core';
 import { glob } from '../utils/fileUtils';
 import StrictReporter from '../reporters/StrictReporter';
@@ -12,6 +11,7 @@ import { normalizeWhiteSpaces, filterEmpty } from '../utils/objectUtils';
 import { Config } from 'stryker-api/config';
 import { tokens, commonTokens } from 'stryker-api/plugin';
 import { coreTokens } from '../di';
+import { Logger } from 'stryker-api/logging';
 
 function toReportSourceFile(file: File): SourceFile {
   return {
@@ -23,12 +23,12 @@ function toReportSourceFile(file: File): SourceFile {
 const IGNORE_PATTERN_CHARACTER = '!';
 
 export default class InputFileResolver {
-  private readonly log = getLogger(InputFileResolver.name);
   private readonly mutatePatterns: ReadonlyArray<string>;
   private readonly filePatterns: ReadonlyArray<string> | undefined;
 
-  public static inject = tokens(commonTokens.options, coreTokens.reporter);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
   constructor(
+    private readonly log: Logger,
     { mutate, files }: StrykerOptions,
     private readonly reporter: StrictReporter
   ) {

@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 import * as babel from './helpers/babelWrapper';
 export interface StrykerBabelConfig {
   extensions: ReadonlyArray<string>;
@@ -23,7 +24,10 @@ const DEFAULT_BABEL_CONFIG: Readonly<StrykerBabelConfig> = Object.freeze({
 });
 
 export class BabelConfigReader {
-  private readonly log = getLogger(BabelConfigReader.name);
+
+  public static inject = tokens(commonTokens.logger);
+  constructor(private readonly log: Logger) {
+  }
 
   public readConfig(strykerOptions: StrykerOptions): StrykerBabelConfig {
     const babelConfig: StrykerBabelConfig = {

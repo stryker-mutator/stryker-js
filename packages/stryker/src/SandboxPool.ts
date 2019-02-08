@@ -1,4 +1,3 @@
-import { getLogger } from 'stryker-api/logging';
 import * as os from 'os';
 import { Observable, range } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
@@ -9,15 +8,16 @@ import LoggingClientContext from './logging/LoggingClientContext';
 import { tokens, commonTokens } from 'stryker-api/plugin';
 import { coreTokens } from './di';
 import { InitialTestRunResult } from './process/InitialTestExecutor';
+import { Logger } from 'stryker-api/logging';
 
 export class SandboxPool {
 
-  private readonly log = getLogger(SandboxPool.name);
   private readonly sandboxes: Promise<Sandbox>[] = [];
   private readonly overheadTimeMS: number;
 
-  public static inject = tokens(commonTokens.options, coreTokens.testFramework, coreTokens.initialRunResult, coreTokens.loggingContext);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.testFramework, coreTokens.initialRunResult, coreTokens.loggingContext);
   constructor(
+    private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly testFramework: TestFramework | null,
     initialRunResult: InitialTestRunResult,

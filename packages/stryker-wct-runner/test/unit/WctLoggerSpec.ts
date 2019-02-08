@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import WctLogger from '../../src/WctLogger';
 import { EventEmitter } from 'events';
-import logger from '../helpers/loggingMock';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe(WctLogger.name, () => {
   let context: EventEmitter;
@@ -20,21 +20,21 @@ describe(WctLogger.name, () => {
   });
 
   it('should not forward logging when verbose = false', () => {
-    sut = new WctLogger(context, false);
+    sut = new WctLogger(context, false, testInjector.logger);
     emitAllLogEvents();
-    expect(logger.debug).calledWith('Keeping wct quiet. To enable wct logging, set `wct.verbose` to `true` in your Stryker configuration file.');
-    expect(logger.info).not.called;
-    expect(logger.warn).not.called;
-    expect(logger.error).not.called;
+    expect(testInjector.logger.debug).calledWith('Keeping wct quiet. To enable wct logging, set `wct.verbose` to `true` in your Stryker configuration file.');
+    expect(testInjector.logger.info).not.called;
+    expect(testInjector.logger.warn).not.called;
+    expect(testInjector.logger.error).not.called;
   });
 
   it('should forward all logging when verbose = true', () => {
-    sut = new WctLogger(context, true);
+    sut = new WctLogger(context, true, testInjector.logger);
     emitAllLogEvents();
-    expect(logger.debug).calledWith('debug');
-    expect(logger.info).calledWith('info');
-    expect(logger.warn).calledWith('warn');
-    expect(logger.error).calledWith('error');
+    expect(testInjector.logger.debug).calledWith('debug');
+    expect(testInjector.logger.info).calledWith('info');
+    expect(testInjector.logger.warn).calledWith('warn');
+    expect(testInjector.logger.error).calledWith('error');
   });
 
   function emitAllLogEvents() {

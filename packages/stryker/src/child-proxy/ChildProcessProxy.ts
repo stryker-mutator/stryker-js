@@ -1,7 +1,7 @@
 import * as os from 'os';
 import { fork, ChildProcess } from 'child_process';
 import { File, StrykerOptions } from 'stryker-api/core';
-import { getLogger } from 'stryker-api/logging';
+import { getLogger } from 'log4js';
 import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
 import { serialize, deserialize, kill, padLeft } from '../utils/objectUtils';
 import { Task, ExpirableTask } from '../utils/Task';

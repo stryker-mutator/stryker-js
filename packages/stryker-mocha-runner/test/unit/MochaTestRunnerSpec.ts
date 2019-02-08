@@ -11,6 +11,7 @@ import MochaRunnerOptions from '../../src/MochaRunnerOptions';
 import { testInjector } from '../../../stryker-test-helpers/src';
 import sinon = require('sinon');
 import { commonTokens } from 'stryker-api/plugin';
+import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
 
 describe.only(MochaTestRunner.name, () => {
 
@@ -35,6 +36,7 @@ describe.only(MochaTestRunner.name, () => {
     delete require.cache['foo.js'];
     delete require.cache['bar.js'];
     delete require.cache['baz.js'];
+    delete StrykerMochaReporter.log;
   });
 
   function createSut(mochaSettings: Partial<{ fileNames: ReadonlyArray<string>, mochaOptions: MochaRunnerOptions }>) {
@@ -43,6 +45,11 @@ describe.only(MochaTestRunner.name, () => {
       .provideValue(commonTokens.sandboxFileNames, mochaSettings.fileNames || ['src/math.js', 'test/mathSpec.js'])
       .injectClass(MochaTestRunner);
   }
+
+  it('should set the static `log` property on StrykerMochaReporter', () => {
+    createSut({});
+    expect(StrykerMochaReporter.log).eq(testInjector.logger);
+  });
 
   it('should should add all mocha test files on run()', async () => {
     multimatchStub.returns(['foo.js', 'bar.js', 'foo2.js']);

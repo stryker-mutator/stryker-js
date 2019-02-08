@@ -1,6 +1,8 @@
-import { getLogger } from 'stryker-api/logging';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { errorToString } from '@stryker-mutator/util';
+import { Logger } from 'stryker-api/logging';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { dashboardReporterTokens } from './tokens';
 
 export interface StrykerDashboardReport {
   apiKey: string;
@@ -13,10 +15,10 @@ const URL_STRYKER_DASHBOARD_REPORTER = 'https://dashboard.stryker-mutator.io/api
 
 export default class DashboardReporterClient {
 
-  private readonly log = getLogger(DashboardReporterClient.name);
-
+  public static inject = tokens(commonTokens.logger, dashboardReporterTokens.httpClient);
   constructor(
-    private readonly dashboardReporterClient = new HttpClient('stryker-dashboard-reporter')) {
+    private readonly log: Logger,
+    private readonly dashboardReporterClient: HttpClient) {
   }
 
   public postStrykerDashboardReport(report: StrykerDashboardReport): Promise<void> {

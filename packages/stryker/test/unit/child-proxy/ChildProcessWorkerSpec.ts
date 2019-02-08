@@ -17,7 +17,7 @@ import * as di from '../../../src/di';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 
-describe('ChildProcessProxyWorker', () => {
+describe(ChildProcessProxyWorker.name, () => {
 
   let processOnStub: sinon.SinonStub;
   let processSendStub: sinon.SinonStub;

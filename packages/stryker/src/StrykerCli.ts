@@ -1,9 +1,9 @@
 import * as program from 'commander';
 import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import Stryker from './Stryker';
-import StrykerInitializer from './initializer/StrykerInitializer';
-import { getLogger } from 'stryker-api/logging';
+import { getLogger } from 'log4js';
 import LogConfigurator from './logging/LogConfigurator';
+import { initializerFactory } from './initializer';
 
 export default class StrykerCli {
 
@@ -51,7 +51,7 @@ export default class StrykerCli {
 
     function parseBoolean(val: string) {
       console.log('bool: ', val);
-      const v = val.toLocaleLowerCase() ;
+      const v = val.toLocaleLowerCase();
       return v !== 'false' && v !== '0';
     }
 
@@ -75,7 +75,7 @@ export default class StrykerCli {
     }
 
     const commands: { [cmd: string]: () => Promise<any> } = {
-      init: () => new StrykerInitializer().initialize(),
+      init: () => initializerFactory().initialize(),
       run: () => new Stryker(program).runMutationTest()
     };
 

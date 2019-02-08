@@ -3,10 +3,10 @@ import fs = require('fs');
 import * as path from 'path';
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
-import { getLogger } from 'stryker-api/logging';
 import { StrykerError } from '@stryker-mutator/util';
 import { coreTokens } from '../di';
-import { tokens } from 'stryker-api/plugin';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { Logger } from 'stryker-api/logging';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +
@@ -18,10 +18,8 @@ const DEFAULT_CONFIG_FILE = 'stryker.conf.js';
 
 export default class ConfigReader {
 
-  private readonly log = getLogger(ConfigReader.name);
-
-  public static inject = tokens(coreTokens.cliOptions);
-  constructor(private readonly cliOptions: Partial<StrykerOptions>) { }
+  public static inject = tokens(coreTokens.cliOptions, commonTokens.logger);
+  constructor(private readonly cliOptions: Partial<StrykerOptions>, private readonly log: Logger) { }
 
   public readConfig() {
     const configModule = this.loadConfigModule();

@@ -12,6 +12,7 @@ import ConfigReader, * as configReaderModule from '../../../src/config/ConfigRea
 import * as configModule from '../../../src/config';
 import { Reporter } from 'stryker-api/report';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
+import currentLogMock from '../../helpers/logMock';
 
 describe(buildMainInjector.name, () => {
 
@@ -64,7 +65,7 @@ describe(buildMainInjector.name, () => {
     it('should load default plugins', () => {
       buildMainInjector({}).resolve(commonTokens.config);
       expect(di.PluginLoader).calledWithNew;
-      expect(di.PluginLoader).calledWith(['stryker-*', require.resolve('../../../src/reporters'), require.resolve('../../../src/mutators')]);
+      expect(di.PluginLoader).calledWith(currentLogMock(), ['stryker-*', require.resolve('../../../src/reporters'), require.resolve('../../../src/mutators')]);
     });
 
     it('should load plugins', () => {

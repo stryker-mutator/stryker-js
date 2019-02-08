@@ -27,7 +27,7 @@ class ChildProcessMock extends EventEmitter {
   public pid = 4648;
 }
 
-describe('ChildProcessProxy', () => {
+describe(ChildProcessProxy.name, () => {
 
   let sut: ChildProcessProxy<HelloClass>;
   let forkStub: sinon.SinonStub;
