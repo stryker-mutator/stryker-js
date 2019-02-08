@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.9.0...stryker-babel-transpiler@0.10.0) (2019-02-08)
+
+
+### Features
+
+* **babel-transpiler:** Support babel 7 ([#1368](https://github.com/stryker-mutator/stryker/issues/1368)) ([2340d9f](https://github.com/stryker-mutator/stryker/commit/2340d9f))
+
+
+### BREAKING CHANGES
+
+* **babel-transpiler:** The `stryker-babel-transpiler` now only supports `@babel/core` 7 and higher. For babel 6 support, please use `stryker-babel-transpiler@0.9`
+* **babel-transpiler:** Use of `babelrcFile` config option is deprecated, please use `babel.configFile`.
+
+
+
+
+
+
 # [0.9.0](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.8.0...stryker-babel-transpiler@0.9.0) (2019-02-08)
 
 
