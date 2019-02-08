@@ -10,6 +10,10 @@
 
 A plugin that adds support for [Babel](https://github.com/babel/babel) to [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework. 
 
+## Peer dependencies
+
+The `stryker-babel-transpiler` requires you to install babel 7. Install _at least_ the `@babel/core` package (version 7).
+
 ## Quickstart
 
 First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
@@ -21,6 +25,7 @@ npm install --save-dev stryker-babel-transpiler @babel/core
 ```
 
 Next, open up your `stryker.conf.js` file and add the following properties:
+
 ```javascript
 babel: {
     // Location of your .babelrc file, set to `null` to
@@ -46,6 +51,26 @@ Now give it a go:
 $ npx stryker run
 ```
 
-## Peer dependencies
+## Configuration  
 
-The `stryker-babel-transpiler` requires you to install babel 7. Install _at least_ the `@babel/core` package (version 7).
+### `babel.optionsFile` [`string | null`] 
+
+Default: `'.babelrc'`
+
+The location of your babelrc file. Set this value to `null` to disable loading of a babel config file.
+
+### `babel.options` [`TranspilerOptions`] 
+
+Default: `{}`
+
+Override babel options from your config file here. Please see [babel's documentation](https://babeljs.io/docs/en/options) to see what is available. 
+
+Some options are restricted to be set, because the stryker-babel-transpiler takes control of it. These options are: `filename`, `filenameRelative` and `cwd`.
+
+### `babel.extensions` [`string[]`]
+
+Default: `[]`
+
+Load additional extensions here. By default only these extensions get picked up by babel: `".js", ".jsx", ".es6", ".es", ".mjs"`.
+For example: if you want to enable typescript transpilation, set extensions to `["ts", "tsx"]`.
+
