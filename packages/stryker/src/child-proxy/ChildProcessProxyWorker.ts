@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { getLogger, Logger } from 'stryker-api/logging';
+import { getLogger, Logger } from 'log4js';
 import { File } from 'stryker-api/core';
 import { serialize, deserialize } from '../utils/objectUtils';
 import { errorToString } from '@stryker-mutator/util';

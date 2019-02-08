@@ -1,9 +1,10 @@
 import * as path from 'path';
 import { File, StrykerOptions } from 'stryker-api/core';
 import { ProjectLoader } from '../helpers/projectLoader';
-import BabelTranspiler from '../../src/BabelTranspiler';
+import { babelTranspilerFactory, BabelTranspiler } from '../../src/BabelTranspiler';
 import { expect } from 'chai';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { commonTokens } from 'stryker-api/plugin';
 
 function describeIntegrationTest(projectName: string) {
 
@@ -18,7 +19,9 @@ function describeIntegrationTest(projectName: string) {
     resultFiles = await ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
     options = factory.strykerOptions();
     options.babelrcFile = path.join(projectDir, '.babelrc');
-    babelTranspiler = new BabelTranspiler(options, /*produceSourceMaps:*/ false );
+    babelTranspiler = testInjector.injector
+      .provideValue(commonTokens.produceSourceMaps, false)
+      .injectFunction(babelTranspilerFactory);
   });
 
   it('should be able to transpile the input files', async () => {

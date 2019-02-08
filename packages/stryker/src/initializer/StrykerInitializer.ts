@@ -2,12 +2,13 @@ import * as child from 'child_process';
 import { StrykerInquirer } from './StrykerInquirer';
 import NpmClient from './NpmClient';
 import PromptOption from './PromptOption';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import { filterEmpty } from '../utils/objectUtils';
 import StrykerConfigWriter from './StrykerConfigWriter';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
-import StrykerPresets from './StrykerPresets';
 import Preset from './presets/Preset';
+import { initializerTokens } from '.';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -16,25 +17,33 @@ const enum PackageManager {
 
 export default class StrykerInitializer {
 
-  private readonly log = getLogger(StrykerInitializer.name);
-  private readonly inquirer = new StrykerInquirer();
-
-  constructor(private readonly out = console.log, private readonly client: NpmClient = new NpmClient(), private readonly strykerPresets: Preset[] = StrykerPresets) { }
+  public static inject = tokens(
+    commonTokens.logger,
+    initializerTokens.out,
+    initializerTokens.npmClient,
+    initializerTokens.strykerPresets,
+    initializerTokens.configWriter,
+    initializerTokens.inquirer);
+  constructor(private readonly log: Logger,
+              private readonly out: typeof console.log,
+              private readonly client: NpmClient,
+              private readonly strykerPresets: Preset[],
+              private readonly configWriter: StrykerConfigWriter,
+              private readonly inquirer: StrykerInquirer) { }
 
   /**
    * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
    * @function
    */
   public async initialize(): Promise<void> {
-    const configWriter = new StrykerConfigWriter(this.out);
-    configWriter.guardForExistingConfig();
+    this.configWriter.guardForExistingConfig();
     this.patchProxies();
     const selectedPreset = await this.selectPreset();
     if (selectedPreset) {
-      await this.initiatePreset(configWriter, selectedPreset);
+      await this.initiatePreset(this.configWriter, selectedPreset);
     }
     else {
-      await this.initiateCustom(configWriter);
+      await this.initiateCustom(this.configWriter);
     }
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
     this.out('Let\'s kill some mutants with this command: `stryker run`');

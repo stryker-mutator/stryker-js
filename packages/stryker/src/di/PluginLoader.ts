@@ -1,10 +1,10 @@
 import * as path from 'path';
-import { getLogger } from 'stryker-api/logging';
+import { Logger } from 'stryker-api/logging';
 import * as _ from 'lodash';
 import { tokens, CorrespondingTypes, InjectionToken } from 'typed-inject';
 import { importModule } from '../utils/fileUtils';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { Plugin, PluginKind, PluginResolver, Plugins, PluginContexts } from 'stryker-api/plugin';
+import { Plugin, PluginKind, PluginResolver, Plugins, PluginContexts, commonTokens } from 'stryker-api/plugin';
 import { ConfigEditorFactory } from 'stryker-api/config';
 import { Factory } from 'stryker-api/core';
 import { ReporterFactory } from 'stryker-api/report';
@@ -21,11 +21,10 @@ interface PluginModule {
 }
 
 export class PluginLoader implements PluginResolver {
-  private readonly log = getLogger(PluginLoader.name);
   private readonly pluginsByKind: Map<PluginKind, Plugin<any, any>[]> = new Map();
 
-  public static inject = tokens(coreTokens.pluginDescriptors);
-  constructor(private readonly pluginDescriptors: ReadonlyArray<string>) { }
+  public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
+  constructor(private readonly log: Logger, private readonly pluginDescriptors: ReadonlyArray<string>) { }
 
   public load() {
     this.resolvePluginModules().forEach(moduleName => this.requirePlugin(moduleName));

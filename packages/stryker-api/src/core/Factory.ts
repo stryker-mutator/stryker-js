@@ -27,8 +27,10 @@ abstract class Factory<TSettings, T> {
    * Registers a constructor function to this factory.
    * @param name The name of the item.
    * @param constructor The constructor of the item.
+   * @deprecated use `declareClassPlugin` or `declareFactoryPlugin`. See https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/api/plugins.md
    */
   public register(name: string, constructor: new (settings: TSettings) => T ): void {
+    process.emitWarning(`DEPRECATED. The "${name}" ${this.factoryName} plugin is registered with the deprecated "Factory" api. You might need to update your plugins. If you are the plugin creator, please see https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/api/plugins.md`);
     this.classMap[name] = constructor;
   }
 

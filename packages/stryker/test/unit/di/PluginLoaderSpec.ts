@@ -1,31 +1,34 @@
 import * as path from 'path';
-import { Logger } from 'stryker-api/logging';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as fileUtils from '../../../src/utils/fileUtils';
 import { PluginLoader } from '../../../src/di/PluginLoader';
-import currentLogMock from '../../helpers/logMock';
-import { Mock } from '../../helpers/producers';
 import { fsAsPromised } from '@stryker-mutator/util';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { coreTokens } from '../../../src/di';
 
 describe('PluginLoader', () => {
 
-  let log: Mock<Logger>;
   let sut: PluginLoader;
   let sandbox: sinon.SinonSandbox;
   let importModuleStub: sinon.SinonStub;
   let pluginDirectoryReadMock: sinon.SinonStub;
 
   beforeEach(() => {
-    log = currentLogMock();
     sandbox = sinon.createSandbox();
     importModuleStub = sinon.stub(fileUtils, 'importModule');
     pluginDirectoryReadMock = sinon.stub(fsAsPromised, 'readdirSync');
   });
 
+  function createSut(pluginDescriptors: string[]) {
+    return testInjector.injector
+      .provideValue(coreTokens.pluginDescriptors, pluginDescriptors)
+      .injectClass(PluginLoader);
+  }
+
   describe('without wildcards', () => {
     beforeEach(() => {
-      sut = new PluginLoader(['a', 'b']);
+      sut = createSut(['a', 'b']);
     });
 
     describe('load()', () => {
@@ -48,8 +51,8 @@ describe('PluginLoader', () => {
         });
 
         it('should have logged warnings', () => {
-          expect(log.warn).to.have.been.calledWithMatch(/Cannot find plugin "%s"\./);
-          expect(log.warn).to.have.been.calledWithMatch(/Error during loading/);
+          expect(testInjector.logger.warn).to.have.been.calledWithMatch(/Cannot find plugin "%s"\./);
+          expect(testInjector.logger.warn).to.have.been.calledWithMatch(/Error during loading/);
         });
       });
 
@@ -59,7 +62,7 @@ describe('PluginLoader', () => {
   describe('with wildcard resolving to "stryker-cli", "stryker-jasmine" and "stryker-karma"', () => {
 
     beforeEach(() => {
-      sut = new PluginLoader(['stryker-*']);
+      sut = createSut(['stryker-*']);
       pluginDirectoryReadMock.returns(['stryker-cli', 'stryker-jasmine', 'stryker-karma']);
     });
 

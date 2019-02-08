@@ -1,7 +1,7 @@
 import { TestResult, TestStatus, RunResult, RunStatus } from 'stryker-api/test_runner';
 import { Mutant } from 'stryker-api/mutant';
 import { Config } from 'stryker-api/config';
-import { Logger } from 'stryker-api/logging';
+import { Logger } from 'log4js';
 import { TestFramework, TestSelection } from 'stryker-api/test_framework';
 import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from 'stryker-api/report';
 import { MutationScoreThresholds, File, Location, StrykerOptions, LogLevel } from 'stryker-api/core';
@@ -82,6 +82,9 @@ export const mutant = factoryMethod<Mutant>(() => ({
 
 export const logger = (): Mock<Logger> => {
   return {
+    _log: sinon.stub(),
+    addContext: sinon.stub(),
+    clearContext: sinon.stub(),
     debug: sinon.stub(),
     error: sinon.stub(),
     fatal: sinon.stub(),
@@ -90,8 +93,13 @@ export const logger = (): Mock<Logger> => {
     isErrorEnabled: sinon.stub(),
     isFatalEnabled: sinon.stub(),
     isInfoEnabled: sinon.stub(),
+    isLevelEnabled: sinon.stub(),
     isTraceEnabled: sinon.stub(),
     isWarnEnabled: sinon.stub(),
+    level: 'level',
+    log: sinon.stub(),
+    new: sinon.stub(),
+    removeContext: sinon.stub(),
     trace: sinon.stub(),
     warn: sinon.stub()
   };

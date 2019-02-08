@@ -1,11 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { CONFIG_KEY_FILE, CONFIG_KEY_OPTIONS } from './helpers/keys';
-import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
+import { Logger } from 'stryker-api/logging';
+import { tokens, commonTokens } from 'stryker-api/plugin';
 
 export default class BabelConfigReader {
-  private readonly log = getLogger(BabelConfigReader.name);
+
+  public static inject = tokens(commonTokens.logger);
+  constructor(private readonly log: Logger) { }
 
   public readConfig(options: StrykerOptions): babel.TransformOptions {
     const babelConfig: babel.TransformOptions = options[CONFIG_KEY_OPTIONS] || this.getConfigFile(options) || {};

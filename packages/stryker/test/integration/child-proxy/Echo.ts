@@ -1,5 +1,5 @@
 import { File } from 'stryker-api/core';
-import { getLogger } from 'stryker-api/logging';
+import { getLogger } from 'log4js';
 import { tokens } from 'stryker-api/plugin';
 
 export class Echo {

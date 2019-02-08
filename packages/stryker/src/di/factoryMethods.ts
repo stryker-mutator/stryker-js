@@ -1,10 +1,10 @@
 import { tokens, commonTokens, OptionsContext, Injector, PluginKind, PluginResolver } from 'stryker-api/plugin';
 import TestFrameworkOrchestrator from '../TestFrameworkOrchestrator';
 import { coreTokens, PluginCreator, PluginLoader } from '.';
-import { LoggerFactoryMethod } from 'stryker-api/logging';
+import { LoggerFactoryMethod, Logger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
 
-export function pluginResolverFactory(injector: Injector<{ [coreTokens.pluginDescriptors]: ReadonlyArray<string> }>): PluginResolver {
+export function pluginResolverFactory(injector: Injector<{ [commonTokens.logger]: Logger, [coreTokens.pluginDescriptors]: ReadonlyArray<string> }>): PluginResolver {
   const pluginLoader = injector.injectClass(PluginLoader);
   pluginLoader.load();
   return pluginLoader;

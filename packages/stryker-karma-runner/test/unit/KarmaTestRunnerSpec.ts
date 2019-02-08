@@ -69,7 +69,7 @@ describe('KarmaTestRunner', () => {
     });
 
     expect(testInjector.logger.warn).not.called;
-    expect(projectStarterModule.default).calledWith(expectedSetup);
+    expect(projectStarterModule.default).calledWith(sinon.match.func, expectedSetup);
   });
   it('should run ng test with parameters from stryker options', () => {
     const ngConfig: NgConfigOptions = {};
@@ -92,7 +92,7 @@ describe('KarmaTestRunner', () => {
       karmaConfigFile: expectedSetup.configFile
     });
     expect(testInjector.logger.warn).not.called;
-    expect(projectStarterModule.default).calledWith(expectedSetup);
+    expect(projectStarterModule.default).calledWith(sinon.match.func, expectedSetup);
   });
 
   it('should load deprecated karma options', () => {

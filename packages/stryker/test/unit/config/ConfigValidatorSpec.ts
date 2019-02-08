@@ -1,208 +1,193 @@
 import { expect } from 'chai';
-import { Config } from 'stryker-api/config';
-import { Logger } from 'stryker-api/logging';
 import ConfigValidator from '../../../src/config/ConfigValidator';
-import currentLogMock from '../../helpers/logMock';
-import { Mock, testFramework } from '../../helpers/producers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { coreTokens } from '../../../src/di';
+import { TestFramework } from 'stryker-api/test_framework';
+import { StrykerOptions } from 'stryker-api/core';
 
 describe('ConfigValidator', () => {
 
-  let config: Config;
   let sut: ConfigValidator;
-  let log: Mock<Logger>;
 
-  function breakConfig(oldConfig: Config, key: keyof Config, value: any): any {
-    return Object.assign({}, oldConfig, { [key]: value });
+  function breakConfig(key: keyof StrykerOptions, value: any): void {
+    testInjector.options[key] = value;
+  }
+
+  function createSut(testFramework: TestFramework | null = factory.testFramework()) {
+    return testInjector.injector
+      .provideValue(coreTokens.testFramework, testFramework)
+      .injectClass(ConfigValidator);
   }
 
   beforeEach(() => {
-    log = currentLogMock();
-    config = new Config();
+    sut = createSut();
   });
 
   it('should validate with default config', () => {
-    sut = new ConfigValidator(config, testFramework());
     sut.validate();
-    expect(log.fatal).not.called;
+    expect(testInjector.logger.fatal).not.called;
+    expect(testInjector.logger.error).not.called;
+    expect(testInjector.logger.warn).not.called;
   });
 
   it('should be invalid with coverageAnalysis "perTest" without a testFramework', () => {
-    config.coverageAnalysis = 'perTest';
-    sut = new ConfigValidator(config, null);
+    testInjector.options.coverageAnalysis = 'perTest';
+    sut = createSut(null);
     actValidationError();
-    expect(log.fatal).calledWith('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
+    expect(testInjector.logger.fatal).calledWith('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
   });
 
   describe('thresholds', () => {
 
     it('should be invalid with thresholds < 0 or > 100', () => {
-      config.thresholds.high = -1;
-      config.thresholds.low = 101;
-      sut = new ConfigValidator(config, testFramework());
+      testInjector.options.thresholds.high = -1;
+      testInjector.options.thresholds.low = 101;
       actValidationError();
-      expect(log.fatal).calledWith('`thresholds.high` is lower than `thresholds.low` (-1 < 101)');
-      expect(log.fatal).calledWith('Value "-1" is invalid for `thresholds.high`. Expected a number between 0 and 100');
-      expect(log.fatal).calledWith('Value "101" is invalid for `thresholds.low`. Expected a number between 0 and 100');
+      expect(testInjector.logger.fatal).calledWith('`thresholds.high` is lower than `thresholds.low` (-1 < 101)');
+      expect(testInjector.logger.fatal).calledWith('Value "-1" is invalid for `thresholds.high`. Expected a number between 0 and 100');
+      expect(testInjector.logger.fatal).calledWith('Value "101" is invalid for `thresholds.low`. Expected a number between 0 and 100');
     });
 
     it('should be invalid with thresholds.high null', () => {
-      (config.thresholds.high as any) = null;
-      config.thresholds.low = 101;
-      sut = new ConfigValidator(config, testFramework());
+      (testInjector.options.thresholds.high as any) = null;
+      testInjector.options.thresholds.low = 101;
       actValidationError();
-      expect(log.fatal).calledWith('Value "null" is invalid for `thresholds.high`. Expected a number between 0 and 100');
+      expect(testInjector.logger.fatal).calledWith('Value "null" is invalid for `thresholds.high`. Expected a number between 0 and 100');
     });
   });
 
   it('should be invalid with coverageAnalysis when 2 transpilers are specified (for now)', () => {
-    config.transpilers.push('a transpiler');
-    config.transpilers.push('a second transpiler');
-    config.coverageAnalysis = 'all';
-    sut = new ConfigValidator(config, testFramework());
+    testInjector.options.transpilers.push('a transpiler');
+    testInjector.options.transpilers.push('a second transpiler');
+    testInjector.options.coverageAnalysis = 'all';
     actValidationError();
-    expect(log.fatal).calledWith('Value "all" for `coverageAnalysis` is invalid with multiple transpilers' +
+    expect(testInjector.logger.fatal).calledWith('Value "all" for `coverageAnalysis` is invalid with multiple transpilers' +
       ' (configured transpilers: a transpiler, a second transpiler). Please report this to the Stryker team' +
       ' if you whish this feature to be implemented');
   });
 
   it('should be invalid with invalid logLevel', () => {
-    config.logLevel = 'thisTestPasses' as any;
-    sut = new ConfigValidator(config, testFramework());
+    testInjector.options.logLevel = 'thisTestPasses' as any;
     actValidationError();
-    expect(log.fatal).calledWith('Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "off"');
+    expect(testInjector.logger.fatal).calledWith('Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "off"');
   });
 
   it('should be invalid with nonnumeric timeoutMS', () => {
-    const brokenConfig = breakConfig(config, 'timeoutMS', 'break');
-    sut = new ConfigValidator(brokenConfig, testFramework());
+    breakConfig('timeoutMS', 'break');
     actValidationError();
-    expect(log.fatal).calledWith('Value "break" is invalid for `timeoutMS`. Expected a number');
+    expect(testInjector.logger.fatal).calledWith('Value "break" is invalid for `timeoutMS`. Expected a number');
   });
 
   it('should be invalid with nonnumeric timeoutMS (NaN)', () => {
-    const brokenConfig = breakConfig(config, 'timeoutMS', NaN);
-    sut = new ConfigValidator(brokenConfig, testFramework());
+    breakConfig('timeoutMS', NaN);
     actValidationError();
-    expect(log.fatal).calledWith('Value "NaN" is invalid for `timeoutMS`. Expected a number');
+    expect(testInjector.logger.fatal).calledWith('Value "NaN" is invalid for `timeoutMS`. Expected a number');
   });
 
   it('should be invalid with nonnumeric timeoutFactor', () => {
-    const brokenConfig = breakConfig(config, 'timeoutFactor', 'break');
-    sut = new ConfigValidator(brokenConfig, testFramework());
+    breakConfig('timeoutFactor', 'break');
     actValidationError();
-    expect(log.fatal).calledWith('Value "break" is invalid for `timeoutFactor`. Expected a number');
+    expect(testInjector.logger.fatal).calledWith('Value "break" is invalid for `timeoutFactor`. Expected a number');
   });
 
   describe('plugins', () => {
     it('should be invalid with non-array plugins', () => {
-      const brokenConfig = breakConfig(config, 'plugins', 'stryker-typescript');
-      sut = new ConfigValidator(brokenConfig, testFramework());
+      breakConfig('plugins', 'stryker-typescript');
       actValidationError();
-      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `plugins`. Expected an array');
+      expect(testInjector.logger.fatal).calledWith('Value "stryker-typescript" is invalid for `plugins`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
-      const brokenConfig = breakConfig(config, 'plugins', ['stryker-jest', 0]);
-      sut = new ConfigValidator(brokenConfig, testFramework());
+      breakConfig('plugins', ['stryker-jest', 0]);
       actValidationError();
-      expect(log.fatal).calledWith('Value "0" is an invalid element of `plugins`. Expected a string');
+      expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `plugins`. Expected a string');
     });
   });
 
   describe('mutator', () => {
     it('should be invalid with non-string mutator', () => {
-      const brokenConfig = breakConfig(config, 'mutator', 0);
-      sut = new ConfigValidator(brokenConfig, testFramework());
+      breakConfig('mutator', 0);
       actValidationError();
-      expect(log.fatal).calledWith('Value "0" is invalid for `mutator`. Expected either a string or an object');
+      expect(testInjector.logger.fatal).calledWith('Value "0" is invalid for `mutator`. Expected either a string or an object');
     });
 
     describe('as an object', () => {
       it('should be valid with string mutator name and string array excluded mutations', () => {
-        const validConfig = breakConfig(config, 'mutator', {
+        breakConfig('mutator', {
           excludedMutations: ['BooleanSubstitution'],
           name: 'es5'
         });
-        sut = new ConfigValidator(validConfig, testFramework());
         sut.validate();
-        expect(log.fatal).not.called;
+        expect(testInjector.logger.fatal).not.called;
       });
 
       it('should be invalid with non-string mutator name', () => {
-        const brokenConfig = breakConfig(config, 'mutator', {
+        breakConfig('mutator', {
           excludedMutations: [],
           name: 0
         });
-        sut = new ConfigValidator(brokenConfig, testFramework());
         actValidationError();
-        expect(log.fatal).calledWith('Value "0" is invalid for `mutator.name`. Expected a string');
+        expect(testInjector.logger.fatal).calledWith('Value "0" is invalid for `mutator.name`. Expected a string');
       });
 
       it('should be invalid with non-array excluded mutations', () => {
-        const brokenConfig = breakConfig(config, 'mutator', {
+        breakConfig('mutator', {
           excludedMutations: 'BooleanSubstitution',
           name: 'es5'
         });
-        sut = new ConfigValidator(brokenConfig, testFramework());
         actValidationError();
-        expect(log.fatal).calledWith('Value "BooleanSubstitution" is invalid for `mutator.excludedMutations`. Expected an array');
+        expect(testInjector.logger.fatal).calledWith('Value "BooleanSubstitution" is invalid for `mutator.excludedMutations`. Expected an array');
       });
 
       it('should be invalid with non-string excluded mutation array elements', () => {
-        const brokenConfig = breakConfig(config, 'mutator', {
+        breakConfig('mutator', {
           excludedMutations: ['BooleanSubstitution', 0],
           name: 'es5'
         });
-        sut = new ConfigValidator(brokenConfig, testFramework());
         actValidationError();
-        expect(log.fatal).calledWith('Value "0" is an invalid element of `mutator.excludedMutations`. Expected a string');
+        expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `mutator.excludedMutations`. Expected a string');
       });
     });
   });
 
   describe('reporters', () => {
     it('should be invalid with non-array reporters', () => {
-      const brokenConfig = breakConfig(config, 'reporters', 'stryker-typescript');
-      sut = new ConfigValidator(brokenConfig, testFramework());
+      breakConfig('reporters', 'stryker-typescript');
       actValidationError();
-      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `reporters`. Expected an array');
+      expect(testInjector.logger.fatal).calledWith('Value "stryker-typescript" is invalid for `reporters`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
-      const brokenConfig = breakConfig(config, 'reporters', [
+      breakConfig('reporters', [
         'stryker-jest',
         0
       ]);
-      sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
-      expect(log.fatal).calledWith('Value "0" is an invalid element of `reporters`. Expected a string');
+      expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `reporters`. Expected a string');
     });
   });
 
   describe('transpilers', () => {
     it('should be invalid with non-array transpilers', () => {
-      const brokenConfig = breakConfig(config, 'transpilers', 'stryker-typescript');
-      sut = new ConfigValidator(brokenConfig, testFramework());
+      breakConfig('transpilers', 'stryker-typescript');
       actValidationError();
-      expect(log.fatal).calledWith('Value "stryker-typescript" is invalid for `transpilers`. Expected an array');
+      expect(testInjector.logger.fatal).calledWith('Value "stryker-typescript" is invalid for `transpilers`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
-      const brokenConfig = breakConfig(config, 'transpilers', [
+      breakConfig('transpilers', [
         'stryker-jest',
         0
       ]);
-      sut = new ConfigValidator(brokenConfig, testFramework());
       actValidationError();
-      expect(log.fatal).calledWith('Value "0" is an invalid element of `transpilers`. Expected a string');
+      expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `transpilers`. Expected a string');
     });
   });
 
   it('should be invalid with invalid coverageAnalysis', () => {
-    const brokenConfig = breakConfig(config, 'coverageAnalysis', 'invalid');
-    sut = new ConfigValidator(brokenConfig, testFramework());
+    breakConfig('coverageAnalysis', 'invalid');
     actValidationError();
-    expect(log.fatal).calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the following: "perTest", "all", "off"');
+    expect(testInjector.logger.fatal).calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the following: "perTest", "all", "off"');
   });
 
   function actValidationError() {

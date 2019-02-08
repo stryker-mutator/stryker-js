@@ -1,6 +1,6 @@
 import { RunOptions, RunResult, RunStatus } from 'stryker-api/test_runner';
 import TestRunnerDecorator from './TestRunnerDecorator';
-import { getLogger } from 'stryker-api/logging';
+import { getLogger } from 'log4js';
 import { TimeoutExpired, timeout } from '../utils/objectUtils';
 
 /**

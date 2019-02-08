@@ -43,6 +43,5 @@ class TestInjector {
   }
 }
 
-const testInjector = new TestInjector();
+export const testInjector = new TestInjector();
 testInjector.reset();
-export default testInjector;

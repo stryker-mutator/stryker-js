@@ -1,4 +1,3 @@
-import { getLogger } from 'stryker-api/logging';
 import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
@@ -17,10 +16,11 @@ import { coreTokens, MainContext, PluginCreator, buildMainInjector } from './di'
 import { commonTokens, PluginKind } from 'stryker-api/plugin';
 import MutantTranspiler from './transpiler/MutantTranspiler';
 import { SandboxPool } from './SandboxPool';
+import { Logger } from 'stryker-api/logging';
 
 export default class Stryker {
 
-  private readonly log = getLogger(Stryker.name);
+  private readonly log: Logger;
   private readonly injector: Injector<MainContext>;
 
   private get reporter() {
@@ -43,6 +43,7 @@ export default class Stryker {
   constructor(cliOptions: Partial<StrykerOptions>) {
     LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
     this.injector = buildMainInjector(cliOptions);
+    this.log = this.injector.resolve(commonTokens.getLogger)(Stryker.name);
     // Log level may have changed
     const options = this.config;
     LogConfigurator.configureMainProcess(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
@@ -121,7 +122,7 @@ export default class Stryker {
   }
 
   private reportScore(mutantResults: MutantResult[]) {
-    const calculator = new ScoreResultCalculator();
+    const calculator = this.injector.injectClass(ScoreResultCalculator);
     const score = calculator.calculate(mutantResults);
     this.reporter.onScoreCalculated(score);
     calculator.determineExitCode(score, this.config.thresholds);
