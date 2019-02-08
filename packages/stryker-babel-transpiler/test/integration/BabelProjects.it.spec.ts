@@ -1,9 +1,9 @@
 import * as path from 'path';
-import { File, StrykerOptions } from 'stryker-api/core';
+import { File } from 'stryker-api/core';
 import { ProjectLoader } from '../helpers/projectLoader';
 import { BabelTranspiler, babelTranspilerFactory } from '../../src/BabelTranspiler';
 import { expect } from 'chai';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import { CONFIG_KEY, StrykerBabelConfig } from '../../src/BabelConfigReader';
 import { commonTokens } from 'stryker-api/plugin';
 
@@ -14,13 +14,11 @@ function describeIntegrationTest(projectName: string, babelConfig: Partial<Stryk
   let projectFiles: File[] = [];
   let resultFiles: File[] = [];
   let babelTranspiler: BabelTranspiler;
-  let options: StrykerOptions;
 
   beforeEach(async () => {
     projectFiles = await ProjectLoader.getFiles(path.join(projectDir, 'source'));
     resultFiles = await ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
-    options = factory.strykerOptions();
-    options[CONFIG_KEY] = babelConfig;
+    testInjector.options[CONFIG_KEY] = babelConfig;
     babelTranspiler = testInjector.injector
       .provideValue(commonTokens.produceSourceMaps, false)
       .injectFunction(babelTranspilerFactory);
