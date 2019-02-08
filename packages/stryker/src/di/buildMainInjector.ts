@@ -4,7 +4,7 @@ import { StrykerOptions } from 'stryker-api/core';
 import { Reporter } from 'stryker-api/report';
 import { TestFramework } from 'stryker-api/test_framework';
 import { rootInjector } from 'typed-inject';
-import { getLogger } from 'stryker-api/logging';
+import { getLogger } from 'log4js';
 import { loggerFactory, pluginResolverFactory, optionsFactory, testFrameworkFactory } from './factoryMethods';
 import { ConfigEditorApplier, configFactory, readConfig } from '../config';
 import BroadcastReporter from '../reporters/BroadcastReporter';

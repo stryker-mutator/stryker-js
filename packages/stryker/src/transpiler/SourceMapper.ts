@@ -2,7 +2,7 @@ import * as path from 'path';
 import { SourceMapConsumer, RawSourceMap } from 'source-map';
 import { File, Location, Position, StrykerOptions } from 'stryker-api/core';
 import { base64Decode } from '../utils/objectUtils';
-import { getLogger } from 'stryker-api/logging';
+import { getLogger } from 'log4js';
 import { StrykerError } from '@stryker-mutator/util';
 
 const SOURCE_MAP_URL_REGEX = /\/\/\s*#\s*sourceMappingURL=(.*)/g;

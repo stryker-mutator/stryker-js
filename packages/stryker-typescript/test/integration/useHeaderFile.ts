@@ -7,11 +7,13 @@ import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { CONFIG_KEY } from '../../src/helpers/keys';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { commonTokens } from 'stryker-api/plugin';
 
 describe('Use header file integration', () => {
 
   let config: Config;
   let inputFiles: File[];
+  let transpiler: TypescriptTranspiler;
 
   beforeEach(() => {
     const configEditor = testInjector.injector.injectClass(TypescriptConfigEditor);
@@ -21,10 +23,13 @@ describe('Use header file integration', () => {
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
+    transpiler = testInjector.injector
+      .provideValue(commonTokens.produceSourceMaps, false)
+      .provideValue(commonTokens.options, config)
+      .injectClass(TypescriptTranspiler);
   });
 
   it('should be able to transpile source code', async () => {
-    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps:*/ false);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).to.eq(2);
   });

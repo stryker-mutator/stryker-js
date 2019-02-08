@@ -3,26 +3,20 @@ import * as sinon from 'sinon';
 import { Reporter } from 'stryker-api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import currentLogMock from '../../helpers/logMock';
 import StrictReporter from '../../../src/reporters/StrictReporter';
-import { ALL_REPORTER_EVENTS, strykerOptions } from '../../helpers/producers';
+import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
 import { fsAsPromised } from '@stryker-mutator/util';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('EventRecorderReporter', () => {
 
   let sut: StrictReporter;
-  let sandbox: sinon.SinonSandbox;
   let cleanFolderStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
     cleanFolderStub = sinon.stub(fileUtils, 'cleanFolder');
     writeFileStub = sinon.stub(fsAsPromised, 'writeFile');
-  });
-
-  afterEach(() => {
-    sandbox.restore();
   });
 
   describe('when constructed with empty options', () => {
@@ -30,11 +24,11 @@ describe('EventRecorderReporter', () => {
     describe('and cleanFolder resolves correctly', () => {
       beforeEach(() => {
         cleanFolderStub.returns(Promise.resolve());
-        sut = new EventRecorderReporter(strykerOptions());
+        sut = testInjector.injector.injectClass(EventRecorderReporter);
       });
 
       it('should log about the default baseFolder', () => {
-        expect(currentLogMock().debug).to.have.been.calledWith(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events`);
+        expect(testInjector.logger.debug).to.have.been.calledWith(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events`);
       });
 
       it('should clean the baseFolder', () => {
@@ -76,7 +70,7 @@ describe('EventRecorderReporter', () => {
       beforeEach(() => {
         expectedError = new Error('Some error 1');
         cleanFolderStub.rejects(expectedError);
-        sut = new EventRecorderReporter(strykerOptions());
+        sut = testInjector.injector.injectClass(EventRecorderReporter);
       });
 
       it('should reject when `wrapUp()` is called', () => {

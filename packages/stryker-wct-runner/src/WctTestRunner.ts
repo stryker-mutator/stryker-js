@@ -24,7 +24,7 @@ export default class WctTestRunner implements TestRunner {
     }
     this.log.debug('Running wct version %s from %s', require(`${WCT_PACKAGE}/package.json`).version, require.resolve(WCT_PACKAGE));
     this.context = this.loadContext(options);
-    this.logger = new WctLogger(this.context, this.context.options.verbose || false);
+    this.logger = new WctLogger(this.context, this.context.options.verbose || false, this.log);
     this.reporter = new WctReporter(this.context);
   }
 

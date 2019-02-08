@@ -5,7 +5,8 @@ import chalk from 'chalk';
 import * as _ from 'lodash';
 import { MutantStatus, MutantResult } from 'stryker-api/report';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
-import { scoreResult, mutationScoreThresholds, config, mutantResult } from '../../helpers/producers';
+import { scoreResult, mutationScoreThresholds, mutantResult } from '../../helpers/producers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: Number) => {
   return [
@@ -15,20 +16,20 @@ const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: N
   ].join(':');
 };
 
-describe('ClearTextReporter', () => {
+describe(ClearTextReporter.name, () => {
   let sut: ClearTextReporter;
-  let sandbox: sinon.SinonSandbox;
   let stdoutStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
     stdoutStub = sinon.stub(process.stdout, 'write');
+    sut = testInjector.injector.injectClass(ClearTextReporter);
   });
 
   describe('onScoreCalculated', () => {
 
     it('should report the clear text table with correct values', () => {
-      sut = new ClearTextReporter(config({ coverageAnalysis: 'all' }));
+      testInjector.options.coverageAnalysis = 'all';
+      sut = testInjector.injector.injectClass(ClearTextReporter);
       sut.onScoreCalculated(scoreResult({
         childResults: [scoreResult({
           childResults: [
@@ -64,7 +65,7 @@ describe('ClearTextReporter', () => {
     });
 
     it('should grow columns widths based on value size', () => {
-      sut = new ClearTextReporter(config({ coverageAnalysis: 'all' }));
+      testInjector.options.coverageAnalysis = 'all';
       sut.onScoreCalculated(scoreResult({
         killed: 1000000000
       }));
@@ -75,7 +76,8 @@ describe('ClearTextReporter', () => {
     });
 
     it('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
-      sut = new ClearTextReporter(config({ coverageAnalysis: 'all', thresholds: mutationScoreThresholds({ high: 60, low: 50 }) }));
+      testInjector.options.coverageAnalysis = 'all';
+      testInjector.options.thresholds = mutationScoreThresholds({ high: 60, low: 50 });
       sut.onScoreCalculated(scoreResult({
         childResults: [
           scoreResult({ mutationScore: 60 }),
@@ -96,7 +98,9 @@ describe('ClearTextReporter', () => {
     });
 
     it('should color score in red and green if low equals high thresholds', () => {
-      sut = new ClearTextReporter(config({ coverageAnalysis: 'all', thresholds: mutationScoreThresholds({ high: 50, low: 50 }) }));
+      testInjector.options.coverageAnalysis = 'all';
+      testInjector.options.thresholds = mutationScoreThresholds({ high: 50, low: 50 });
+
       sut.onScoreCalculated(scoreResult({
         childResults: [
           scoreResult({ mutationScore: 50 }),
@@ -111,7 +115,10 @@ describe('ClearTextReporter', () => {
     });
 
     it('should not color score if `allowConsoleColors` config is false', () => {
-      sut = new ClearTextReporter(config({ coverageAnalysis: 'all', thresholds: mutationScoreThresholds({ high: 60, low: 50 }), allowConsoleColors: false }));
+      testInjector.options.coverageAnalysis = 'all';
+      testInjector.options.thresholds = mutationScoreThresholds({ high: 60, low: 50 });
+      testInjector.options.allowConsoleColors = false;
+
       sut.onScoreCalculated(scoreResult({
         childResults: [
           scoreResult({ mutationScore: 60 }),
@@ -129,7 +136,10 @@ describe('ClearTextReporter', () => {
   });
 
   describe('when coverageAnalysis is "all"', () => {
-    beforeEach(() => sut = new ClearTextReporter(config({ coverageAnalysis: 'all', clearTextReporter: { logTests: true } })));
+    beforeEach(() => {
+      testInjector.options.coverageAnalysis = 'all';
+      testInjector.options.clearTextReporter = { logTests: true };
+    });
 
     describe('onAllMutantsTested() all mutants except error', () => {
 
@@ -166,7 +176,7 @@ describe('ClearTextReporter', () => {
     describe('onAllMutantsTested()', () => {
 
       it('should log source file names with colored text when clearTextReporter is not false', () => {
-        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest'}));
+        testInjector.options.coverageAnalysis = 'perTest';
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -174,7 +184,10 @@ describe('ClearTextReporter', () => {
       });
 
       it('should log source file names without colored text when clearTextReporter is not false and allowConsoleColors is false', () => {
-        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', allowConsoleColors: false}));
+        testInjector.options.coverageAnalysis = 'perTest';
+        testInjector.options.allowConsoleColors = false;
+        // Recreate, color setting is set in constructor
+        sut = testInjector.injector.injectClass(ClearTextReporter);
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -182,7 +195,7 @@ describe('ClearTextReporter', () => {
       });
 
       it('should not log source file names with colored text when clearTextReporter is false', () => {
-        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest'}));
+        testInjector.options.coverageAnalysis = 'perTest';
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -190,7 +203,7 @@ describe('ClearTextReporter', () => {
       });
 
       it('should not log individual ran tests when logTests is not true', () => {
-        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest'}));
+        testInjector.options.coverageAnalysis = 'perTest';
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -203,7 +216,8 @@ describe('ClearTextReporter', () => {
       });
 
       it('should log individual ran tests when logTests is true', () => {
-        sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true } }));
+        testInjector.options.coverageAnalysis = 'perTest';
+        testInjector.options.clearTextReporter = { logTests: true };
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -216,7 +230,8 @@ describe('ClearTextReporter', () => {
 
       describe('with fewer tests that may be logged', () => {
         it('should log fewer tests', () => {
-          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true, maxTestsToLog: 1 } }));
+          testInjector.options.coverageAnalysis = 'perTest';
+          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 1 };
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -229,7 +244,8 @@ describe('ClearTextReporter', () => {
 
       describe('with more tests that may be logged', () => {
         it('should log all tests', () => {
-          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true, maxTestsToLog: 10 } }));
+          testInjector.options.coverageAnalysis = 'perTest';
+          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 10 };
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -243,7 +259,8 @@ describe('ClearTextReporter', () => {
 
       describe('with the default amount of tests that may be logged', () => {
         it('should log all tests', () => {
-          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true, maxTestsToLog: 3 } }));
+          testInjector.options.coverageAnalysis = 'perTest';
+          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 3 };
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -257,7 +274,8 @@ describe('ClearTextReporter', () => {
 
       describe('with no tests that may be logged', () => {
         it('should not log a test', () => {
-          sut = new ClearTextReporter(config({ coverageAnalysis: 'perTest', clearTextReporter: { logTests: true, maxTestsToLog: 0 } }));
+          testInjector.options.coverageAnalysis = 'perTest';
+          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 0 };
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -273,7 +291,7 @@ describe('ClearTextReporter', () => {
 
   describe('when coverageAnalysis: "off"', () => {
 
-    beforeEach(() => sut = new ClearTextReporter(config({ coverageAnalysis: 'off' })));
+    beforeEach(() => testInjector.options.coverageAnalysis = 'off');
 
     describe('onAllMutantsTested()', () => {
       beforeEach(() => {
@@ -307,5 +325,4 @@ describe('ClearTextReporter', () => {
     });
   }
 
-  afterEach(() => sandbox.restore());
 });

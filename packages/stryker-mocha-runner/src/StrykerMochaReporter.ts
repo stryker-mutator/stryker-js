@@ -1,19 +1,24 @@
 import { RunResult, RunStatus, TestStatus } from 'stryker-api/test_runner';
-import { getLogger } from 'stryker-api/logging';
 import Timer from './Timer';
+import { Logger } from 'stryker-api/logging';
 
-export default class StrykerMochaReporter {
+export class StrykerMochaReporter {
 
-  private readonly log = getLogger(StrykerMochaReporter.name);
+  /*
+   * The stryker logger instance injected into this plugin
+   * Needs to be set from 'the outside' because mocha doesn't really have a nice way of providing
+   * data to reporters...
+   */
+  public static log: Logger;
   public runResult: RunResult;
   private readonly timer = new Timer();
   private passedCount = 0;
 
-  public static CurrentInstance: StrykerMochaReporter | undefined;
+  public static currentInstance: StrykerMochaReporter | undefined;
 
   constructor(private readonly runner: NodeJS.EventEmitter) {
     this.registerEvents();
-    StrykerMochaReporter.CurrentInstance = this;
+    StrykerMochaReporter.currentInstance = this;
   }
 
   private registerEvents() {
@@ -25,7 +30,7 @@ export default class StrykerMochaReporter {
         status: RunStatus.Error,
         tests: []
       };
-      this.log.debug('Starting Mocha test run');
+      StrykerMochaReporter.log.debug('Starting Mocha test run');
     });
 
     this.runner.on('pass', (test: any) => {
@@ -49,14 +54,14 @@ export default class StrykerMochaReporter {
         this.runResult.errorMessages = [];
       }
       this.runResult.errorMessages.push(err.message);
-      if (this.log.isTraceEnabled()) {
-        this.log.trace(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
+      if (StrykerMochaReporter.log.isTraceEnabled()) {
+        StrykerMochaReporter.log.trace(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
       }
     });
 
     this.runner.on('end', () => {
       this.runResult.status = RunStatus.Complete;
-      this.log.debug('Mocha test run completed: %s/%s passed', this.passedCount, this.runResult.tests.length);
+      StrykerMochaReporter.log.debug('Mocha test run completed: %s/%s passed', this.passedCount, this.runResult.tests.length);
     });
   }
 }

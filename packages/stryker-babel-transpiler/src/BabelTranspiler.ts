@@ -5,7 +5,7 @@ import * as path from 'path';
 import BabelConfigReader from './BabelConfigReader';
 import { CONFIG_KEY_FILE } from './helpers/keys';
 import { toJSFileName } from './helpers/helpers';
-import { tokens, commonTokens } from 'stryker-api/plugin';
+import { tokens, commonTokens, Injector, TranspilerPluginContext } from 'stryker-api/plugin';
 
 const KNOWN_EXTENSIONS = Object.freeze([
   '.es6',
@@ -16,13 +16,20 @@ const KNOWN_EXTENSIONS = Object.freeze([
   // Also: you can add custom extensions if your using the babel cli, maybe we should also support that use case
 ]);
 
-class BabelTranspiler implements Transpiler {
+export function babelTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
+  return injector
+    .provideClass('babelConfigReader', BabelConfigReader)
+    .injectClass(BabelTranspiler);
+}
+babelTranspilerFactory.inject = tokens(commonTokens.injector);
+
+export class BabelTranspiler implements Transpiler {
   private readonly babelOptions: babel.TransformOptions;
   private readonly projectRoot: string;
 
-  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps);
-  public constructor(options: StrykerOptions, produceSourceMaps: boolean) {
-    this.babelOptions = new BabelConfigReader().readConfig(options);
+  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps, 'babelConfigReader');
+  public constructor(options: StrykerOptions, produceSourceMaps: boolean, babelConfigReader: BabelConfigReader) {
+    this.babelOptions = babelConfigReader.readConfig(options);
     this.projectRoot = this.determineProjectRoot(options);
     if (produceSourceMaps) {
       throw new Error(`Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`);
@@ -72,5 +79,3 @@ class BabelTranspiler implements Transpiler {
     }
   }
 }
-
-export default BabelTranspiler;

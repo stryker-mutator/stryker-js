@@ -1,20 +1,17 @@
 import * as path from 'path';
-import { Logger } from 'stryker-api/logging';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { MutantStatus, ScoreResult } from 'stryker-api/report';
 import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import * as objectUtils from '../../src/utils/objectUtils';
-import { mutantResult, scoreResult, mutationScoreThresholds, Mock } from '../helpers/producers';
-import currentLogMock from '../helpers/logMock';
+import { mutantResult, scoreResult, mutationScoreThresholds } from '../helpers/producers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
-describe('ScoreResult', () => {
-  let log: Mock<Logger>;
+describe(ScoreResultCalculator.name, () => {
   let sut: ScoreResultCalculator;
 
   beforeEach(() => {
-    log = currentLogMock();
-    sut = new ScoreResultCalculator();
+    sut = testInjector.injector.injectClass(ScoreResultCalculator);
   });
 
   describe('calculate', () => {
@@ -189,20 +186,20 @@ describe('ScoreResult', () => {
        sut.determineExitCode(scoreResult({ mutationScore: 0 }), mutationScoreThresholds({ break: null }));
 
        expect(setExitCodeStub).not.called;
-       expect(log.debug).calledWith('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
+       expect(testInjector.logger.debug).calledWith('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
     });
 
     it('should not set exit code = 1 if `threshold.break` === score', () => {
        sut.determineExitCode(scoreResult({ mutationScore: 10.000001 }), mutationScoreThresholds({ break: 10.000001 }));
        expect(setExitCodeStub).not.called;
-       expect(log.info).calledWith('Final mutation score of 10.00 is greater than or equal to break threshold 10.000001');
+       expect(testInjector.logger.info).calledWith('Final mutation score of 10.00 is greater than or equal to break threshold 10.000001');
     });
 
     it('should set exit code = 1 if `threshold.break` > score', () => {
        sut.determineExitCode(scoreResult({ mutationScore: 56.6 }), mutationScoreThresholds({ break: 56.7 }));
        expect(setExitCodeStub).calledWith(1);
-       expect(log.error).calledWith('Final mutation score 56.60 under breaking threshold 56.7, setting exit code to 1 (failure).');
-       expect(log.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
+       expect(testInjector.logger.error).calledWith('Final mutation score 56.60 under breaking threshold 56.7, setting exit code to 1 (failure).');
+       expect(testInjector.logger.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
     });
   });
 });

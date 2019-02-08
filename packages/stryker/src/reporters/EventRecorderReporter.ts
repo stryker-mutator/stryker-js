@@ -1,24 +1,23 @@
-import { getLogger } from 'stryker-api/logging';
 import * as path from 'path';
 import { StrykerOptions } from 'stryker-api/core';
 import { SourceFile, MutantResult, MatchedMutant, Reporter, ScoreResult } from 'stryker-api/report';
 import { cleanFolder } from '../utils/fileUtils';
 import StrictReporter from './StrictReporter';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { commonTokens } from 'stryker-api/plugin';
+import { commonTokens, tokens } from 'stryker-api/plugin';
+import { Logger } from 'stryker-api/logging';
 
 const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 
 export default class EventRecorderReporter implements StrictReporter {
-  public static readonly inject = [commonTokens.options];
+  public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
 
-  private readonly log = getLogger(EventRecorderReporter.name);
   private readonly allWork: Promise<void>[] = [];
   private readonly createBaseFolderTask: Promise<any>;
   private _baseFolder: string;
   private index = 0;
 
-  constructor(private readonly options: StrykerOptions) {
+  constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
     this.createBaseFolderTask = cleanFolder(this.baseFolder);
   }
 

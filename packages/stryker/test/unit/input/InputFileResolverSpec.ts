@@ -2,14 +2,12 @@ import os = require('os');
 import * as path from 'path';
 import { expect } from 'chai';
 import { childProcessAsPromised, errorToString } from '@stryker-mutator/util';
-import { Logger } from 'stryker-api/logging';
 import { File } from 'stryker-api/core';
 import { SourceFile } from 'stryker-api/report';
 import { Config } from 'stryker-api/config';
 import InputFileResolver from '../../../src/input/InputFileResolver';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import currentLogMock from '../../helpers/logMock';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { Mock, mock, createFileNotFoundError, createIsDirError } from '../../helpers/producers';
 import { normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
@@ -23,8 +21,7 @@ const files = (...namesWithContent: [string, string][]): File[] =>
     Buffer.from(nameAndContent[1])
   ));
 
-describe('InputFileResolver', () => {
-  let log: Mock<Logger>;
+describe(InputFileResolver.name, () => {
   let globStub: sinon.SinonStub;
   let sut: InputFileResolver;
   let reporterMock: Mock<BroadcastReporter>;
@@ -32,7 +29,6 @@ describe('InputFileResolver', () => {
   let readFileStub: sinon.SinonStub;
 
   beforeEach(() => {
-    log = currentLogMock();
     reporterMock = mock(BroadcastReporter);
     globStub = sinon.stub(fileUtils, 'glob');
     readFileStub = sinon.stub(fsAsPromised, 'readFile')
@@ -83,7 +79,7 @@ describe('InputFileResolver', () => {
     testInjector.options.files = [];
     sut = createSut();
     await sut.resolve();
-    expect(log.warn).calledWith(sinon.match(`No files selected. Please make sure you either${os.EOL} (1) Run Stryker inside a Git repository`)
+    expect(testInjector.logger.warn).calledWith(sinon.match(`No files selected. Please make sure you either${os.EOL} (1) Run Stryker inside a Git repository`)
       .and(sinon.match('(2) Specify the \`files\` property in your Stryker configuration')));
   });
 
@@ -183,7 +179,7 @@ describe('InputFileResolver', () => {
 
     it('should warn about dry-run', async () => {
       await sut.resolve();
-      expect(log.warn).calledWith(sinon.match('No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.'));
+      expect(testInjector.logger.warn).calledWith(sinon.match('No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.'));
     });
   });
 
@@ -218,7 +214,7 @@ describe('InputFileResolver', () => {
       await sut.resolve();
       const inputFileDescriptors = JSON.stringify([patternFile1, patternFile3]);
       const patternNames = JSON.stringify([patternFile1.pattern, patternFile3.pattern]);
-      expect(log.warn).calledWith(normalizeWhiteSpaces(`
+      expect(testInjector.logger.warn).calledWith(normalizeWhiteSpaces(`
       DEPRECATED: Using the \`InputFileDescriptor\` syntax to
       select files is no longer supported. We'll assume: ${inputFileDescriptors} can be migrated
       to ${patternNames} for this mutation run. Please move any files to mutate into the \`mutate\`
@@ -245,7 +241,7 @@ describe('InputFileResolver', () => {
       testInjector.options.mutate = ['file1'];
       sut = createSut();
       await sut.resolve();
-      expect(log.warn).to.have.been.calledWith('Globbing expression "notExists" did not result in any files.');
+      expect(testInjector.logger.warn).to.have.been.calledWith('Globbing expression "notExists" did not result in any files.');
     });
 
     it('should not log a warning if the globbing expression was the default logging expression', async () => {
@@ -256,7 +252,7 @@ describe('InputFileResolver', () => {
       childProcessExecStub.resolves({ stdout: Buffer.from(`src/foobar.js`) });
       globStub.withArgs(config.mutate[0]).returns(['src/foobar.js']);
       await sut.resolve();
-      expect(log.warn).not.called;
+      expect(testInjector.logger.warn).not.called;
     });
   });
 

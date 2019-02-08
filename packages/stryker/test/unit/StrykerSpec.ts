@@ -3,7 +3,7 @@ import { MutantResult } from 'stryker-api/report';
 import { File, LogLevel } from 'stryker-api/core';
 import { RunResult } from 'stryker-api/test_runner';
 import { TestFramework } from 'stryker-api/test_framework';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import Stryker from '../../src/Stryker';
 import { Config } from 'stryker-api/config';
 import { expect } from 'chai';
@@ -13,9 +13,8 @@ import { MutatorFacade } from '../../src/mutants/MutatorFacade';
 import { MutantTestMatcher } from '../../src/mutants/MutantTestMatcher';
 import InitialTestExecutor from '../../src/process/InitialTestExecutor';
 import { MutationTestExecutor } from '../../src/process/MutationTestExecutor';
-import ScoreResultCalculator, * as scoreResultCalculatorModule from '../../src/ScoreResultCalculator';
+import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import { TempFolder } from '../../src/utils/TempFolder';
-import currentLogMock from '../helpers/logMock';
 import { mock, Mock, testFramework, runResult, testableMutant, mutantResult } from '../helpers/producers';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import TestableMutant from '../../src/TestableMutant';
@@ -26,6 +25,7 @@ import { commonTokens } from 'stryker-api/plugin';
 import { TranspilerFacade } from '../../src/transpiler/TranspilerFacade';
 import * as di from '../../src/di';
 import Timer from '../../src/utils/Timer';
+import { Logger } from 'stryker-api/logging';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
@@ -49,9 +49,11 @@ describe(Stryker.name, () => {
   let shutdownLoggingStub: sinon.SinonStub;
   let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector>;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
+  let logMock: sinon.SinonStubbedInstance<Logger>;
 
   beforeEach(() => {
     strykerConfig = factory.config();
+    logMock = factory.logger();
     reporterMock = mock(BroadcastReporter);
     injectorMock = factory.injector();
     mutantTestMatcherMock = mock(MutantTestMatcher);
@@ -67,23 +69,24 @@ describe(Stryker.name, () => {
     timerMock = sinon.createStubInstance(Timer);
     tempFolderMock = mock(TempFolder as any);
     tempFolderMock.clean.resolves();
-    scoreResultCalculator = new ScoreResultCalculator();
+    scoreResultCalculator = new ScoreResultCalculator(testInjector.logger);
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
     sinon.stub(TempFolder, 'instance').returns(tempFolderMock);
     sinon.stub(scoreResultCalculator, 'determineExitCode').returns(sinon.stub());
-    sinon.stub(scoreResultCalculatorModule, 'default').returns(scoreResultCalculator);
     injectorMock.injectClass
       .withArgs(BroadcastReporter).returns(reporterMock)
       .withArgs(InitialTestExecutor).returns(initialTestExecutorMock)
       .withArgs(InputFileResolver).returns(inputFileResolverMock)
       .withArgs(MutatorFacade).returns(mutatorMock)
       .withArgs(MutantTestMatcher).returns(mutantTestMatcherMock)
-      .withArgs(MutationTestExecutor).returns(mutationTestExecutorMock);
+      .withArgs(MutationTestExecutor).returns(mutationTestExecutorMock)
+      .withArgs(ScoreResultCalculator).returns(scoreResultCalculator);
     injectorMock.resolve
       .withArgs(commonTokens.config).returns(strykerConfig)
       .withArgs(di.coreTokens.timer).returns(timerMock)
       .withArgs(di.coreTokens.reporter).returns(reporterMock)
-      .withArgs(di.coreTokens.testFramework).returns(testFrameworkMock);
+      .withArgs(di.coreTokens.testFramework).returns(testFrameworkMock)
+      .withArgs(commonTokens.getLogger).returns(() => logMock);
   });
 
   describe('when constructed', () => {
@@ -168,13 +171,13 @@ describe(Stryker.name, () => {
       it('should log the remark to run again with logLevel trace if no tests were executed in initial test run', async () => {
         while (initialRunResult.tests.pop());
         await sut.runMutationTest();
-        expect(currentLogMock().info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+        expect(logMock.info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
       });
 
       it('should log the remark to run again with logLevel trace if no mutants were generated', async () => {
         while (mutants.pop()); // clear all mutants
         await sut.runMutationTest();
-        expect(currentLogMock().info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+        expect(logMock.info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
       });
     });
 

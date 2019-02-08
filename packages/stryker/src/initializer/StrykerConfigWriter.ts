@@ -1,17 +1,21 @@
 import * as _ from 'lodash';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { getLogger } from 'stryker-api/logging';
 import { StrykerOptions } from 'stryker-api/core';
 import PromptOption from './PromptOption';
 import { format } from 'prettier';
 import PresetConfiguration from './presets/PresetConfiguration';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { initializerTokens } from '.';
+import { Logger } from 'stryker-api/logging';
 
 const STRYKER_CONFIG_FILE = 'stryker.conf.js';
 
 export default class StrykerConfigWriter {
 
-  private readonly log = getLogger(StrykerConfigWriter.name);
-  constructor(private readonly out: (output: string) => void) {
+  public static inject = tokens(commonTokens.logger, initializerTokens.out);
+  constructor(
+    private readonly log: Logger,
+    private readonly out: typeof console.log) {
   }
 
   public guardForExistingConfig() {
@@ -73,7 +77,7 @@ export default class StrykerConfigWriter {
         config.set(
           ${rawConfig}
         );
-      }`, { parser: 'babylon' });
+      }`, { parser: 'babel' as unknown as 'babylon' });
     return fsAsPromised.writeFile(STRYKER_CONFIG_FILE, formattedConf);
   }
 

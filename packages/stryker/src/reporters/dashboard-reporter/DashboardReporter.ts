@@ -1,18 +1,19 @@
-import {Reporter, ScoreResult} from 'stryker-api/report';
-import DashboardReporterClient from './dashboard-reporter/DashboardReporterClient';
-import {getEnvironmentVariable} from '../utils/objectUtils';
-import { getLogger } from 'stryker-api/logging';
-import { determineCIProvider } from './ci/Provider';
-import { tokens } from 'typed-inject';
+import { Reporter, ScoreResult } from 'stryker-api/report';
+import DashboardReporterClient from './DashboardReporterClient';
+import { getEnvironmentVariable } from '../../utils/objectUtils';
+import { Logger } from 'stryker-api/logging';
+import { determineCIProvider } from '../ci/Provider';
+import { commonTokens, tokens } from 'stryker-api/plugin';
+import { dashboardReporterTokens } from './tokens';
 
 export default class DashboardReporter implements Reporter {
-  public static readonly inject = tokens();
 
-  private readonly log = getLogger(DashboardReporter.name);
   private readonly ciProvider = determineCIProvider();
+  public static readonly inject = tokens(commonTokens.logger, dashboardReporterTokens.dashboardReporterClient);
 
   constructor(
-    private readonly dashboardReporterClient: DashboardReporterClient = new DashboardReporterClient()
+    private readonly log: Logger,
+    private readonly dashboardReporterClient: DashboardReporterClient
   ) { }
 
   private readEnvironmentVariable(name: string) {
@@ -48,7 +49,7 @@ export default class DashboardReporter implements Reporter {
         this.log.info('Dashboard report is not sent when building a pull request');
       }
     } else {
-      this.log.info('Dashboard report is not sent when not running on a buildserver');
+      this.log.info('Dashboard report is not sent when not running on a build server');
     }
   }
 }

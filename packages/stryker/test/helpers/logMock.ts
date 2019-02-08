@@ -1,4 +1,4 @@
-import * as logging from 'stryker-api/logging';
+import * as logging from 'log4js';
 import { logger, Mock } from './producers';
 import * as sinon from 'sinon';
 

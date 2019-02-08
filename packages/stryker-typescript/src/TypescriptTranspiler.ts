@@ -6,13 +6,16 @@ import { getTSConfig, getProjectDirectory, guardTypescriptVersion, isHeaderFile 
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 import TranspileFilter from './transpiler/TranspileFilter';
 import { tokens, commonTokens } from 'stryker-api/plugin';
+import { LoggerFactoryMethod } from 'stryker-api/logging';
 
 export default class TypescriptTranspiler implements Transpiler {
   private languageService: TranspilingLanguageService;
   private readonly filter: TranspileFilter;
 
-  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps);
-  constructor(private readonly options: StrykerOptions, private readonly produceSourceMaps: boolean) {
+  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps, commonTokens.getLogger);
+  constructor(private readonly options: StrykerOptions,
+              private readonly produceSourceMaps: boolean,
+              private readonly getLogger: LoggerFactoryMethod) {
     guardTypescriptVersion();
     this.filter = TranspileFilter.create(this.options);
   }
@@ -41,7 +44,7 @@ export default class TypescriptTranspiler implements Transpiler {
     const tsConfig = getTSConfig(this.options);
     const compilerOptions: ts.CompilerOptions = (tsConfig && tsConfig.options) || {};
     return new TranspilingLanguageService(
-      compilerOptions, typescriptFiles, getProjectDirectory(this.options), this.produceSourceMaps);
+      compilerOptions, typescriptFiles, getProjectDirectory(this.options), this.produceSourceMaps, this.getLogger);
   }
 
   private transpileFiles(files: ReadonlyArray<File>) {

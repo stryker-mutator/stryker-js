@@ -2,7 +2,7 @@ import { Logger } from 'stryker-api/logging';
 import * as path from 'path';
 import { TestRunner, RunResult, RunStatus } from 'stryker-api/test_runner';
 import LibWrapper from './LibWrapper';
-import StrykerMochaReporter from './StrykerMochaReporter';
+import { StrykerMochaReporter } from './StrykerMochaReporter';
 import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
 import { evalGlobal } from './utils';
 import { StrykerOptions } from 'stryker-api/core';
@@ -19,6 +19,7 @@ export default class MochaTestRunner implements TestRunner {
   constructor(private readonly log: Logger, private readonly allFileNames: ReadonlyArray<string>, options: StrykerOptions) {
     this.mochaRunnerOptions = options[mochaOptionsKey];
     this.additionalRequires();
+    StrykerMochaReporter.log = log;
   }
 
   public init(): void {
@@ -51,7 +52,7 @@ export default class MochaTestRunner implements TestRunner {
         this.addFiles(mocha);
         try {
           mocha.run(() => {
-            const reporter = StrykerMochaReporter.CurrentInstance;
+            const reporter = StrykerMochaReporter.currentInstance;
             if (reporter) {
               const result: RunResult = reporter.runResult;
               resolve(result);

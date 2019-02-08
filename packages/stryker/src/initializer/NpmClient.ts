@@ -1,7 +1,9 @@
 import { RestClient, IRestResponse } from 'typed-rest-client/RestClient';
 import PromptOption from './PromptOption';
-import { getLogger } from 'stryker-api/logging';
 import { errorToString } from '@stryker-mutator/util';
+import { tokens, commonTokens } from 'stryker-api/plugin';
+import { initializerTokens, BASE_NPM_SEARCH, BASE_NPM_PACKAGE } from '.';
+import { Logger } from 'stryker-api/logging';
 
 interface NpmSearchPackageInfo {
   package: {
@@ -18,9 +20,6 @@ interface NpmPackage {
   name: string;
   initStrykerConfig?: object;
 }
-
-const BASE_NPM_SEARCH = 'https://api.npms.io';
-const BASE_NPM_PACKAGE = 'https://registry.npmjs.org';
 
 const getName = (packageName: string) => {
   return packageName.split('-')[1];
@@ -41,11 +40,11 @@ const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
 
 export default class NpmClient {
 
-  private readonly log = getLogger(NpmClient.name);
-
+  public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpmSearch, initializerTokens.restClientNpm);
   constructor(
-    private readonly searchClient = new RestClient('npmSearch', BASE_NPM_SEARCH),
-    private readonly packageClient = new RestClient('npm', BASE_NPM_PACKAGE)) {
+    private readonly log: Logger,
+    private readonly searchClient: RestClient,
+    private readonly packageClient: RestClient) {
   }
 
   public getTestRunnerOptions(): Promise<PromptOption[]> {
@@ -66,12 +65,12 @@ export default class NpmClient {
 
   public getMutatorOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:stryker-mutator')
-    .then(mapSearchResultToPromptOption);
+      .then(mapSearchResultToPromptOption);
   }
 
   public getTranspilerOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:stryker-transpiler')
-    .then(mapSearchResultToPromptOption);
+      .then(mapSearchResultToPromptOption);
   }
 
   public getTestReporterOptions(): Promise<PromptOption[]> {

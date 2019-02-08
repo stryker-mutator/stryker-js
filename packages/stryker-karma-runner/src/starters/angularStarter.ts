@@ -2,12 +2,12 @@ import * as decamelize from 'decamelize';
 import * as semver from 'semver';
 import { requireModule } from '../utils';
 import { NgConfigOptions, NgTestArguments } from '../StrykerKarmaSetup';
-import { getLogger, Logger } from 'stryker-api/logging';
+import { Logger, LoggerFactoryMethod } from 'stryker-api/logging';
 import * as path from 'path';
 
 const MIN_ANGULAR_CLI_VERSION = '6.1.0';
 
-export async function start(ngConfig?: NgConfigOptions): Promise<void> {
+export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigOptions): Promise<void> {
   const logger: Logger = getLogger(path.basename(__filename));
   verifyAngularCliVersion();
 

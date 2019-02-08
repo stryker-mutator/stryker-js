@@ -34,13 +34,13 @@ describe('Sample integration', () => {
   });
 
   it('should be able to transpile source code', async () => {
-    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false);
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false, () => testInjector.logger);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).to.eq(2);
   });
 
   it('should be able to produce source maps', async () => {
-    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ true);
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ true, () => testInjector.logger);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles).lengthOf(4);
     const mapFiles = outputFiles.filter(file => file.name.endsWith('.map'));
@@ -55,7 +55,7 @@ describe('Sample integration', () => {
     // Transpile mutants
     const mutator = testInjector.injector.injectFunction(typescriptMutatorFactory);
     const mutants = mutator.mutate(inputFiles);
-    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false);
+    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false, () => testInjector.logger);
     transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
     const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpression');
