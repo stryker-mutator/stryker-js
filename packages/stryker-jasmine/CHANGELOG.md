@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.11.0...stryker-jasmine@0.12.0) (2019-02-08)
+
+
+### Features
+
+* **test-frameworks:** Remove side effects from all test-framework plugins  ([#1319](https://github.com/stryker-mutator/stryker/issues/1319)) ([a7160f4](https://github.com/stryker-mutator/stryker/commit/a7160f4))
+* **test-runner:** Use new plugin system to load TestRunner plugins ([#1361](https://github.com/stryker-mutator/stryker/issues/1361)) ([266247b](https://github.com/stryker-mutator/stryker/commit/266247b))
+
+
+
+
+
 <a name="0.11.0"></a>
 # [0.11.0](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.10.9...stryker-jasmine@0.11.0) (2018-12-23)
 

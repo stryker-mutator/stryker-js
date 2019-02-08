@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.17.0...stryker-typescript@0.18.0) (2019-02-08)
+
+
+### Features
+
+* **config-editors:** Remove side effects from all config editor plugins ([#1317](https://github.com/stryker-mutator/stryker/issues/1317)) ([1f61bed](https://github.com/stryker-mutator/stryker/commit/1f61bed))
+* **mutators:** Remove side effects from mutator plugins ([#1352](https://github.com/stryker-mutator/stryker/issues/1352)) ([edaf401](https://github.com/stryker-mutator/stryker/commit/edaf401))
+* **transpilers:** Remove side effects transpiler plugins ([#1351](https://github.com/stryker-mutator/stryker/issues/1351)) ([9a8b539](https://github.com/stryker-mutator/stryker/commit/9a8b539))
+
+
+
+
+
 <a name="0.17.0"></a>
 # [0.17.0](https://github.com/stryker-mutator/stryker/compare/stryker-typescript@0.16.2...stryker-typescript@0.17.0) (2018-12-23)
 

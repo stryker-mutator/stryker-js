@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.17.0...stryker-html-reporter@0.18.0) (2019-02-08)
+
+
+### Features
+
+* **html-reporter:** Remove side effects from html reporter ([#1314](https://github.com/stryker-mutator/stryker/issues/1314)) ([66d65f7](https://github.com/stryker-mutator/stryker/commit/66d65f7))
+
+
+
+
+
 <a name="0.17.0"></a>
 # [0.17.0](https://github.com/stryker-mutator/stryker/compare/stryker-html-reporter@0.16.10...stryker-html-reporter@0.17.0) (2018-12-23)
 

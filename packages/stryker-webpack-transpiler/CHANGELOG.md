@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.8.0...stryker-webpack-transpiler@0.9.0) (2019-02-08)
+
+
+### Features
+
+* **test-runner:** Use new plugin system to load TestRunner plugins ([#1361](https://github.com/stryker-mutator/stryker/issues/1361)) ([266247b](https://github.com/stryker-mutator/stryker/commit/266247b))
+* **transpilers:** Remove side effects transpiler plugins ([#1351](https://github.com/stryker-mutator/stryker/issues/1351)) ([9a8b539](https://github.com/stryker-mutator/stryker/commit/9a8b539))
+
+
+
+
+
 <a name="0.8.0"></a>
 # [0.8.0](https://github.com/stryker-mutator/stryker/compare/stryker-webpack-transpiler@0.7.12...stryker-webpack-transpiler@0.8.0) (2018-12-23)
 

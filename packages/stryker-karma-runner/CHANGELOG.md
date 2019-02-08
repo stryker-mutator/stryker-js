@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.24.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.23.0...stryker-karma-runner@0.24.0) (2019-02-08)
+
+
+### Features
+
+* **dependency injection:** Add dependency injection for plugins ([#1313](https://github.io/stryker-mutator/stryker/issues/1313)) ([f90cd56](https://github.io/stryker-mutator/stryker/commit/f90cd56)), closes [#667](https://github.io/stryker-mutator/stryker/issues/667)
+* **port:** Deprecate property 'port' ([#1309](https://github.io/stryker-mutator/stryker/issues/1309)) ([2539ee0](https://github.io/stryker-mutator/stryker/commit/2539ee0))
+* **test-runner:** Use new plugin system to load TestRunner plugins ([#1361](https://github.io/stryker-mutator/stryker/issues/1361)) ([266247b](https://github.io/stryker-mutator/stryker/commit/266247b))
+
+
+
+
+
 <a name="0.23.0"></a>
 # [0.23.0](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.22.0...stryker-karma-runner@0.23.0) (2018-12-23)
 

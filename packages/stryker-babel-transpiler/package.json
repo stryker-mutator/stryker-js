@@ -1,6 +1,6 @@
 {
   "name": "stryker-babel-transpiler",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -44,10 +44,10 @@
   "dependencies": {
     "babel-core": "6.26.3",
     "minimatch": "~3.0.4",
-    "stryker-api": "~0.23.0"
+    "stryker-api": "^0.24.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "0.0.0",
+    "@stryker-mutator/test-helpers": "^0.1.0",
     "@types/babel-core": "~6.25.3",
     "@types/glob": "~7.1.0",
     "@types/minimatch": "~3.0.3",

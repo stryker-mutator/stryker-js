@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine-runner@0.3.0...stryker-jasmine-runner@0.4.0) (2019-02-08)
+
+
+### Features
+
+* **dependency injection:** Add dependency injection for plugins ([#1313](https://github.com/stryker-mutator/stryker/issues/1313)) ([f90cd56](https://github.com/stryker-mutator/stryker/commit/f90cd56)), closes [#667](https://github.com/stryker-mutator/stryker/issues/667)
+* **port:** Deprecate property 'port' ([#1309](https://github.com/stryker-mutator/stryker/issues/1309)) ([2539ee0](https://github.com/stryker-mutator/stryker/commit/2539ee0))
+* **test-runner:** Use new plugin system to load TestRunner plugins ([#1361](https://github.com/stryker-mutator/stryker/issues/1361)) ([266247b](https://github.com/stryker-mutator/stryker/commit/266247b))
+
+
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine-runner@0.2.9...stryker-jasmine-runner@0.3.0) (2018-12-23)
 
