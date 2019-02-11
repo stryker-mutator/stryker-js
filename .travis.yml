@@ -28,6 +28,7 @@ branches:
   only:
   - master
   - release
+  - v1
 
 # Conditional stages: https://docs.travis-ci.com/user/conditional-builds-stages-jobs/
 stages:
