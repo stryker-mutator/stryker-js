@@ -44,16 +44,16 @@ export class MutationTestExecutor {
 
   private readonly mutationTest = async (transpiledMutant: TranspiledMutant): Promise<MutantResult> => {
 
-    const early = this.earlyResult(transpiledMutant);
-    if (early) {
-      return early;
+    const earlyResult = this.retrieveEarlyResult(transpiledMutant);
+    if (earlyResult) {
+      return earlyResult;
     } else {
       const runResult = await this.sandboxPool.run(transpiledMutant);
       return this.collectMutantResult(transpiledMutant.mutant, runResult);
     }
   }
 
-  private readonly earlyResult = (transpiledMutant: TranspiledMutant): MutantResult | null => {
+  private readonly retrieveEarlyResult = (transpiledMutant: TranspiledMutant): MutantResult | null => {
     if (transpiledMutant.transpileResult.error) {
       if (this.log.isDebugEnabled()) {
         this.log.debug(`Transpile error occurred: "${transpiledMutant.transpileResult.error}" during transpiling of mutant ${transpiledMutant.mutant.toString()}`);
