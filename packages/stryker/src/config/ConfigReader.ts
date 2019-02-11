@@ -33,15 +33,6 @@ export default class ConfigReader {
     // merge the config from config file and cliOptions (precedence)
     config.set(this.cliOptions);
 
-    if (config.reporter.length) {
-      if (Array.isArray(config.reporter)) {
-        config.reporters = config.reporter;
-      } else {
-        config.reporters = [config.reporter];
-      }
-      this.log.warn(`DEPRECATED: please change the config setting 'reporter: ${JSON.stringify(config.reporter)}' into 'reporters: ${JSON.stringify(config.reporters)}'`);
-    }
-
     return config;
   }
 

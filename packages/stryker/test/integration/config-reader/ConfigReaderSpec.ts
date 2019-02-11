@@ -129,27 +129,5 @@ describe(ConfigReader.name, () => {
         expect(() => sut.readConfig()).throws('Invalid config file. Inner error: SyntaxError: Unexpected identifier');
       });
     });
-
-    describe('with deprecated reporter property', () => {
-      it('should log a warning when a single reporter is specified', () => {
-        const reporterName = 'html';
-        sut = createSut({ reporter: reporterName });
-
-        const result = sut.readConfig();
-
-        expect(result.reporters).to.deep.eq([reporterName]);
-        expect(testInjector.logger.warn).calledWithExactly(`DEPRECATED: please change the config setting 'reporter: "${reporterName}"' into 'reporters: ["${reporterName}"]'`);
-      });
-
-      it('should log a warning when multiple reporters are specified', () => {
-        const configuredReporters = ['html', 'progress'];
-        sut = createSut({ reporter: configuredReporters });
-
-        const result = sut.readConfig();
-
-        expect(result.reporters).to.deep.eq(configuredReporters);
-        expect(testInjector.logger.warn).calledWithExactly(`DEPRECATED: please change the config setting 'reporter: ${JSON.stringify(configuredReporters)}' into 'reporters: ${JSON.stringify(configuredReporters)}'`);
-      });
-    });
   });
 });
