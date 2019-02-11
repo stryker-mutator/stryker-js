@@ -7,3 +7,4 @@ export * from 'typed-inject/src/api/Injector';
 export * from 'typed-inject/src/api/InjectionToken';
 export * from 'typed-inject/src/api/CorrespondingType';
 export * from 'typed-inject/src/api/Scope';
+export * from 'typed-inject/src/api/Disposable';

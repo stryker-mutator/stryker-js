@@ -22,13 +22,16 @@ export default class Sandbox {
   private readonly log = getLogger(Sandbox.name);
   private testRunner: Required<TestRunner>;
   private fileMap: FileMap;
-  private readonly files: File[];
   private readonly workingDirectory: string;
 
-  private constructor(private readonly options: StrykerOptions, private readonly index: number, files: ReadonlyArray<File>, private readonly testFramework: TestFramework | null, private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
+  private constructor(
+    private readonly options: StrykerOptions,
+    private readonly index: number,
+    private readonly files: ReadonlyArray<File>,
+    private readonly testFramework: TestFramework | null,
+    private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
     this.workingDirectory = TempFolder.instance().createRandomFolder('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
-    this.files = files.slice(); // Create a copy
   }
 
   private async initialize(): Promise<void> {

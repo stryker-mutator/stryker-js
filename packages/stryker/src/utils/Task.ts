@@ -25,12 +25,12 @@ export class Task<T = void> {
     return this._isCompleted;
   }
 
-  public resolve(result: T | PromiseLike<T>) {
+  public resolve = (result: T | PromiseLike<T>): void => {
     this._isCompleted = true;
     this.resolveFn(result);
   }
 
-  public reject(reason: any) {
+  public reject = (reason: any): void => {
     this._isCompleted = true;
     this.rejectFn(reason);
   }

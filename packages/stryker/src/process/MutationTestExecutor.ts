@@ -7,96 +7,73 @@ import { SandboxPool } from '../SandboxPool';
 import TestableMutant from '../TestableMutant';
 import TranspiledMutant from '../TranspiledMutant';
 import StrictReporter from '../reporters/StrictReporter';
-import MutantTranspiler from '../transpiler/MutantTranspiler';
+import { MutantTranspileScheduler } from '../transpiler/MutantTranspileScheduler';
 import { Logger } from 'stryker-api/logging';
 import { tokens, commonTokens } from 'stryker-api/plugin';
 import { coreTokens } from '../di';
-import InputFileCollection from '../input/InputFileCollection';
 
 export class MutationTestExecutor {
   public static inject = tokens(
     commonTokens.logger,
-    coreTokens.inputFiles,
     coreTokens.reporter,
-    coreTokens.mutantTranspiler,
+    coreTokens.mutantTranspileScheduler,
     coreTokens.sandboxPool);
   constructor(
     private readonly log: Logger,
-    private readonly input: InputFileCollection,
     private readonly reporter: StrictReporter,
-    private readonly mutantTranspiler: MutantTranspiler,
+    private readonly mutantTranspileScheduler: MutantTranspileScheduler,
     private readonly sandboxPool: SandboxPool) {
   }
 
   public async run(allMutants: ReadonlyArray<TestableMutant>): Promise<MutantResult[]> {
-    const transpiledFiles = await this.mutantTranspiler.initialize(this.input.files);
-    const result = await this.runInsideSandboxes(
-      this.sandboxPool.streamSandboxes(transpiledFiles),
-      this.mutantTranspiler.transpileMutants(allMutants));
+    const results = await this.mutantTranspileScheduler.scheduleTranspileMutants(allMutants).pipe(
+      // Test the mutant (either early result, or actually test it in a sandbox)
+      flatMap(this.mutationTest),
+      tap(this.reportResult),
+      // Signal the mutant transpiler that there is another slot open for transpiling
+      tap(this.mutantTranspileScheduler.scheduleNext),
+      toArray(),
+      tap(this.reportAll)
+    ).toPromise();
+
+    // TODO: Let typed inject dispose of sandbox pool
     await this.sandboxPool.disposeAll();
-    this.mutantTranspiler.dispose();
-    return result;
+    await this.mutantTranspileScheduler.dispose();
+    return results;
   }
 
-  private runInsideSandboxes(sandboxes: Observable<Sandbox>, transpiledMutants: Observable<TranspiledMutant>): Promise<MutantResult[]> {
-    let recycleObserver: Observer<Sandbox>;
-    const recycled = new Observable<Sandbox>(observer => {
-      recycleObserver = observer;
-    });
-    function recycle(sandbox: { sandbox: Sandbox, result: MutantResult }) {
-      return recycleObserver.next(sandbox.sandbox);
-    }
+  private readonly mutationTest = async (transpiledMutant: TranspiledMutant): Promise<MutantResult> => {
 
-    function completeRecycle() {
-      if (recycleObserver) {
-        recycleObserver.complete();
-      }
+    const early = this.earlyResult(transpiledMutant);
+    if (early) {
+      return early;
+    } else {
+      const runResult = await this.sandboxPool.run(transpiledMutant);
+      return this.collectMutantResult(transpiledMutant.mutant, runResult);
     }
-
-    return zip(transpiledMutants, merge(recycled, sandboxes), createTuple)
-      .pipe(
-        map(this.earlyResult),
-        flatMap(this.runInSandbox),
-        tap(recycle),
-        map(({ result }) => result),
-        tap(reportResult(this.reporter)),
-        toArray(),
-        tap(completeRecycle),
-        tap(reportAll(this.reporter)))
-      .toPromise(Promise);
   }
 
-  private readonly earlyResult = ([transpiledMutant, sandbox]: [TranspiledMutant, Sandbox]): [TranspiledMutant, Sandbox, MutantResult | null] => {
+  private readonly earlyResult = (transpiledMutant: TranspiledMutant): MutantResult | null => {
     if (transpiledMutant.transpileResult.error) {
       if (this.log.isDebugEnabled()) {
         this.log.debug(`Transpile error occurred: "${transpiledMutant.transpileResult.error}" during transpiling of mutant ${transpiledMutant.mutant.toString()}`);
       }
       const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
-      return [transpiledMutant, sandbox, result];
+      return result;
     } else if (!transpiledMutant.mutant.selectedTests.length) {
       const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
-      return [transpiledMutant, sandbox, result];
+      return result;
     } else if (!transpiledMutant.changedAnyTranspiledFiles) {
       const result = transpiledMutant.mutant.result(MutantStatus.Survived, []);
-      return [transpiledMutant, sandbox, result];
+      return result;
     } else {
       // No early result possible, need to run in the sandbox later
-      return [transpiledMutant, sandbox, null];
-    }
-  }
-
-  private readonly runInSandbox = ([transpiledMutant, sandbox, earlyResult]: [TranspiledMutant, Sandbox, MutantResult | null]):
-    Promise<{ sandbox: Sandbox, result: MutantResult }> => {
-    if (earlyResult) {
-      return Promise.resolve({ sandbox, result: earlyResult });
-    } else {
-      return sandbox.runMutant(transpiledMutant)
-        .then(runResult => ({ sandbox, result: this.collectMutantResult(transpiledMutant.mutant, runResult) }));
+      return null;
     }
   }
 
   private readonly collectMutantResult = (mutant: TestableMutant, runResult: RunResult) => {
-    const status: MutantStatus = mutantState(runResult);
+    const status: MutantStatus = this.determineMutantState(runResult);
     const testNames = runResult.tests
       .filter(t => t.status !== TestStatus.Skipped)
       .map(t => t.name);
@@ -106,35 +83,27 @@ export class MutationTestExecutor {
     }
     return mutant.result(status, testNames);
   }
-}
 
-function createTuple<T1, T2>(a: T1, b: T2): [T1, T2] {
-  return [a, b];
-}
-
-function mutantState(runResult: RunResult): MutantStatus {
-  switch (runResult.status) {
-    case RunStatus.Timeout:
-      return MutantStatus.TimedOut;
-    case RunStatus.Error:
-      return MutantStatus.RuntimeError;
-    case RunStatus.Complete:
-      if (runResult.tests.some(t => t.status === TestStatus.Failed)) {
-        return MutantStatus.Killed;
-      } else {
-        return MutantStatus.Survived;
-      }
+  private readonly determineMutantState = (runResult: RunResult): MutantStatus => {
+    switch (runResult.status) {
+      case RunStatus.Timeout:
+        return MutantStatus.TimedOut;
+      case RunStatus.Error:
+        return MutantStatus.RuntimeError;
+      case RunStatus.Complete:
+        if (runResult.tests.some(t => t.status === TestStatus.Failed)) {
+          return MutantStatus.Killed;
+        } else {
+          return MutantStatus.Survived;
+        }
+    }
   }
-}
 
-function reportResult(reporter: StrictReporter) {
-  return (mutantResult: MutantResult) => {
-    reporter.onMutantTested(mutantResult);
-  };
-}
+  private readonly reportResult = (mutantResult: MutantResult): void => {
+    this.reporter.onMutantTested(mutantResult);
+  }
 
-function reportAll(reporter: StrictReporter) {
-  return (mutantResults: MutantResult[]) => {
-    reporter.onAllMutantsTested(mutantResults);
-  };
+  private readonly reportAll = (mutantResults: MutantResult[]): void => {
+    this.reporter.onAllMutantsTested(mutantResults);
+  }
 }

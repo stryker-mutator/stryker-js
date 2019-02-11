@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "rootDir": ".",
+    "noUnusedLocals": false,
     "types": [] // Exclude global mocha functions for the sources
   },
   "include": [

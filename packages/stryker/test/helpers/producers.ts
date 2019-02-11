@@ -14,7 +14,11 @@ import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
 import * as sinon from 'sinon';
 
-export type Mock<T> = sinon.SinonStubbedInstance<T>;
+export type Mutable<T> = {
+  -readonly [K in keyof T]: T[K];
+};
+
+export type Mock<T> = Mutable<sinon.SinonStubbedInstance<T>>;
 
 export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
   return sinon.createStubInstance(constructorFn);
