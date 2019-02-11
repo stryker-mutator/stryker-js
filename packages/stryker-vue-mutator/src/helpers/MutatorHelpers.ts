@@ -8,7 +8,7 @@ export function mutatorsFactory(pluginResolver: PluginResolver, injector: Inject
   const mutators: { [name: string]: Mutator; } = {};
   const mutatorPlugins = pluginResolver.resolveAll(PluginKind.Mutator);
   mutatorPlugins.forEach(plugin => {
-    if (plugin.name !== 'es5' && plugin.name !== 'vue') {
+    if (plugin.name !== 'vue') {
       mutators[plugin.name] = createPlugin(injector, plugin);
     }
   });

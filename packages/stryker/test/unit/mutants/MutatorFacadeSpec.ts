@@ -57,7 +57,7 @@ describe('MutatorFacade', () => {
     ]);
       testInjector.options.mutator = {
         excludedMutations: ['foo'],
-        name: 'es5'
+        name: 'javascript'
       };
       createSut().mutate([]);
       expect(testInjector.logger.info).calledWith('2 Mutant(s) generated (1 Mutant(s) excluded)');
@@ -71,7 +71,7 @@ describe('MutatorFacade', () => {
       ]);
       testInjector.options.mutator = {
         excludedMutations: ['foo', 'bar', 'baz'],
-        name: 'es5'
+        name: 'javascript'
       };
       createSut().mutate([]);
       expect(testInjector.logger.info).calledWith('It\'s a mutant-free world, nothing to test. (3 Mutant(s) excluded)');
