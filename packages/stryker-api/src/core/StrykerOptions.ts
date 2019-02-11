@@ -96,11 +96,7 @@ interface StrykerOptions {
    * 'off': Don't use coverage analysis
    */
   coverageAnalysis: 'perTest' | 'all' | 'off';
-
-  /**
-   * DEPRECATED PROPERTY. Please use the `reporters` property
-   */
-  reporter?: string | string[];
+  
   /**
    * The names of the reporters to use
    * Possible values: 'clear-text', 'progress'.
