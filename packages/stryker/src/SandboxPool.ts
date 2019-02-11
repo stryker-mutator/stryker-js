@@ -17,7 +17,7 @@ const MAX_CONCURRENT_INITIALIZING_SANDBOXES = 2;
 
 export class SandboxPool {
 
-  private readonly allSandboxes: Sandbox[] = [];
+  private readonly allSandboxes: Promise<Sandbox>[] = [];
   private readonly overheadTimeMS: number;
   private readonly workerPool: Sandbox[] = [];
   private readonly backlog: { mutant: TranspiledMutant, task: Task<RunResult> }[] = [];
@@ -77,9 +77,8 @@ export class SandboxPool {
       const concurrency = this.determineConcurrency();
 
       range(0, concurrency).pipe(
-        flatMap(n => Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext),
-          MAX_CONCURRENT_INITIALIZING_SANDBOXES),
-        tap(this.registerSandbox)
+        flatMap(n => this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext)),
+          MAX_CONCURRENT_INITIALIZING_SANDBOXES)
       ).subscribe({
         error: error => {
           this.persistentError = error;
@@ -115,16 +114,18 @@ export class SandboxPool {
     return numConcurrentRunners;
   }
 
-  private readonly registerSandbox = (sandbox: Sandbox): void => {
+  private readonly registerSandbox = async (promisedSandbox: Promise<Sandbox>): Promise<Sandbox> => {
     if (this.isDisposed) {
-      sandbox.dispose(); // too late to the party, my friend
+      await promisedSandbox.then(sandbox => sandbox.dispose());
     } else {
-      this.allSandboxes.push(sandbox);
+      this.allSandboxes.push(promisedSandbox);
     }
+    return promisedSandbox;
   }
 
-  public disposeAll() {
+  public async disposeAll() {
     this.isDisposed = true;
-    return this.allSandboxes.map(sandbox => sandbox.dispose());
+    const sandboxes = await Promise.all(this.allSandboxes);
+    return Promise.all(sandboxes.map(sandbox => sandbox.dispose()));
   }
 }
