@@ -22,7 +22,7 @@ export default class Config implements StrykerOptions {
   public coverageAnalysis: 'perTest' | 'all' | 'off' = 'off';
   public testRunner: string = 'command';
   public testFramework: string;
-  public mutator: string | MutatorDescriptor = 'es5';
+  public mutator: string | MutatorDescriptor = 'javascript';
   public transpilers: string[] = [];
   public maxConcurrentTestRunners: number = Infinity;
   public symlinkNodeModules: boolean = true;

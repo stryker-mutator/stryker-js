@@ -45,8 +45,7 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
 
 function pluginDescriptorsFactory(config: Config): ReadonlyArray<string> {
   config.plugins.push(
-    require.resolve('../reporters'),
-    require.resolve('../mutators')
+    require.resolve('../reporters')
   );
   return config.plugins;
 }
