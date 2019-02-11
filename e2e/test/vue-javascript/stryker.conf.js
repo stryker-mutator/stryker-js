@@ -4,7 +4,7 @@ module.exports = function (config) {
     mutator: 'vue',
     testFramework: 'jasmine',
     testRunner: 'karma',
-    reporter: ['clear-text', 'event-recorder'],
+    reporters: ['clear-text', 'event-recorder'],
     maxConcurrentTestRunners: 2,
     karma: {
       configFile: 'test/unit/karma.conf.js'
