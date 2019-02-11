@@ -124,11 +124,6 @@ interface StrykerOptions {
    * Default: true
    */
   symlinkNodeModules: boolean;
-
-  /**
-   * DEPRECATED PROPERTY. Please use the `timeoutMS` property
-   */
-  timeoutMs?: number;
   /**
    * Amount of additional time, in milliseconds, the mutation test is allowed to run
    */
