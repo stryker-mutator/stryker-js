@@ -1,5 +1,7 @@
-import { RunResult, RunStatus, RunnerOptions, TestRunner, TestRunnerFactory } from 'stryker-api/test_runner';
+import { RunResult, RunStatus, TestRunner } from 'stryker-api/test_runner';
+import { declareClassPlugin, PluginKind, tokens, commonTokens } from 'stryker-api/plugin';
 import { isRegExp } from 'util';
+import { StrykerOptions } from 'stryker-api/core';
 
 class CoverageReportingTestRunner implements TestRunner {
   public run() {
@@ -34,11 +36,12 @@ class DirectResolvedTestRunner implements TestRunner {
 
 class DiscoverRegexTestRunner implements TestRunner {
 
-  constructor(private readonly runnerOptions: RunnerOptions) {
+  public static inject = tokens(commonTokens.options);
+  constructor(private readonly options: StrykerOptions) {
   }
 
   public run(): Promise<RunResult> {
-    if (isRegExp(this.runnerOptions.strykerOptions.someRegex)) {
+    if (isRegExp(this.options.someRegex)) {
       return Promise.resolve({ status: RunStatus.Complete, tests: [] });
     } else {
       return Promise.resolve({ status: RunStatus.Error, tests: [], errorMessages: ['No regex found in runnerOptions.strykerOptions.someRegex'] });
@@ -127,14 +130,16 @@ class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
   }
 }
 
-TestRunnerFactory.instance().register('verify-working-folder', VerifyWorkingFolderTestRunner);
-TestRunnerFactory.instance().register('slow-init-dispose', SlowInitAndDisposeTestRunner);
-TestRunnerFactory.instance().register('never-resolved', NeverResolvedTestRunner);
-TestRunnerFactory.instance().register('errored', ErroredTestRunner);
-TestRunnerFactory.instance().register('discover-regex', DiscoverRegexTestRunner);
-TestRunnerFactory.instance().register('direct-resolved', DirectResolvedTestRunner);
-TestRunnerFactory.instance().register('coverage-reporting', CoverageReportingTestRunner);
-TestRunnerFactory.instance().register('time-bomb', TimeBombTestRunner);
-TestRunnerFactory.instance().register('proximity-mine', ProximityMineTestRunner);
-TestRunnerFactory.instance().register('async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner);
-TestRunnerFactory.instance().register('reject-init', RejectInitRunner);
+export const strykerPlugins = [
+  declareClassPlugin(PluginKind.TestRunner, 'verify-working-folder', VerifyWorkingFolderTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'never-resolved', NeverResolvedTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'errored', ErroredTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'discover-regex', DiscoverRegexTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'direct-resolved', DirectResolvedTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'coverage-reporting', CoverageReportingTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner)
+];
