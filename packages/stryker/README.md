@@ -152,13 +152,13 @@ In addition to requiring your test runner to be able to report the code coverage
  (`Mocha` is not yet supported).
 
 ### `mutator` [`object` | `string`]
-Default: `es5`  
-Command line: `--mutator es5`  
-Config file:  `mutator: 'es5'` or `mutator: { name: 'es5', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
+Default: `javascript`  
+Command line: `--mutator javascript`  
+Config file:  `mutator: 'javascript'` or `mutator: { name: 'javascript', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
 
 With `mutator` you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.  
-The mutator plugin name defaults to `es5` if not specified. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.  
-The full list of mutation types varies slightly between mutators (for example, the `es5` mutator will not use the same mutation types as the `typescript` mutator). Mutation type names are case-sensitive, and can be found either in the source code or in a generated Stryker report.  
+The mutator plugin name defaults to `javascript` if not specified. Note: this requires you to have the `@stryker-mutator/stryker-javascript-mutator` plugin installed. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.  
+The full list of mutation types varies slightly between mutators (for example, the `javascript` mutator will not use the same mutation types as the `typescript` mutator). Mutation type names are case-sensitive, and can be found either in the source code or in a generated Stryker report.  
  
 When using the command line, only the mutator name as a string may be provided.  
 When using the config file, you can provide either a string representing the mutator name, or a `MutatorDescriptor` object, like so:  
