@@ -37,7 +37,7 @@ describe(SandboxPool.name, () => {
     genericSandboxForAllSubsequentCallsToNewSandbox.dispose.resolves();
     firstSandbox.runMutant.resolves(factory.runResult());
     genericSandboxForAllSubsequentCallsToNewSandbox.runMutant.resolves(factory.runResult());
-    secondSandbox.runMutant.rejects();
+    secondSandbox.runMutant.resolves(factory.runResult());
     createStub = sinon.stub(Sandbox, 'create')
       .resolves(genericSandboxForAllSubsequentCallsToNewSandbox)
       .onCall(0).resolves(firstSandbox)
