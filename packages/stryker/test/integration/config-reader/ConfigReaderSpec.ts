@@ -129,17 +129,5 @@ describe(ConfigReader.name, () => {
         expect(() => sut.readConfig()).throws('Invalid config file. Inner error: SyntaxError: Unexpected identifier');
       });
     });
-
-    describe('with deprecated timeoutMs property', () => {
-      it('should log a warning when timeoutMs is specified', () => {
-        const timeoutMs = 30000;
-        sut = createSut({ timeoutMs });
-
-        const result = sut.readConfig();
-
-        expect(result.timeoutMS).to.deep.eq(timeoutMs);
-        expect(testInjector.logger.warn).calledWithExactly(`DEPRECATED: please change the config setting 'timeoutMs: ${timeoutMs}' into 'timeoutMS: ${timeoutMs}'`);
-      });
-    });
   });
 });

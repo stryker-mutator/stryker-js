@@ -73,21 +73,6 @@ describe('JestConfigEditor', () => {
 
     expect(() => sut.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
-
-  it('should warn when using deprecated `project` property', () => {
-    const projectType = 'custom';
-    config.jest = { project: projectType };
-    sut.edit(config);
-    expect(testInjector.logger.warn).calledWith('DEPRECATED: `jest.project` is renamed to `jest.projectType`. Please change it in your stryker configuration.');
-    expect(config.jest.projectType).eq(projectType);
-  });
-
-  it('should warn when using deprecated "default" project type', () => {
-    config.jest = { projectType: 'default' };
-    sut.edit(config);
-    expect(testInjector.logger.warn).calledWith('DEPRECATED: The \'default\' `jest.projectType` is renamed to \'custom\'. Please rename it in your stryker configuration.');
-    expect(config.jest.projectType).eq('custom');
-  });
 });
 
 interface ConfigLoaderStub {

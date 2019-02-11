@@ -33,11 +33,6 @@ export default class ConfigReader {
     // merge the config from config file and cliOptions (precedence)
     config.set(this.cliOptions);
 
-    if (config.timeoutMs) {
-      config.timeoutMS = config.timeoutMs;
-      this.log.warn(`DEPRECATED: please change the config setting 'timeoutMs: ${config.timeoutMs}' into 'timeoutMS: ${config.timeoutMS}'`);
-    }
-
     return config;
   }
 
