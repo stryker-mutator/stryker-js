@@ -149,6 +149,7 @@ export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.to
 
 export function injector(): sinon.SinonStubbedInstance<Injector> {
   const injectorMock: sinon.SinonStubbedInstance<Injector> = {
+    dispose: sinon.stub(),
     injectClass: sinon.stub(),
     injectFunction: sinon.stub(),
     provideClass: sinon.stub(),
