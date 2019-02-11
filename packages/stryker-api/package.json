@@ -34,6 +34,6 @@
 	},
 	"devDependencies": {
 		"surrial": "~0.1.1",
-		"typed-inject": "^0.2.0"
+		"typed-inject": "^0.2.1"
 	}
 }
