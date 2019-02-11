@@ -96,7 +96,7 @@ interface StrykerOptions {
    * 'off': Don't use coverage analysis
    */
   coverageAnalysis: 'perTest' | 'all' | 'off';
-  
+
   /**
    * The names of the reporters to use
    * Possible values: 'clear-text', 'progress'.
