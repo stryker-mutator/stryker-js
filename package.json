@@ -31,7 +31,7 @@
     "jasmine": "^3.1.0",
     "jasmine-core": "^3.1.0",
     "lerna": "^3.10.7",
-    "link-parent-bin": "^0.2.0",
+    "link-parent-bin": "^0.3.0",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1",
     "protractor": "^5.1.2",
