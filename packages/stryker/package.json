@@ -73,7 +73,7 @@
     "tree-kill": "~1.2.0",
     "tslib": "~1.9.3",
     "typed-inject": "^0.2.0",
-    "typed-rest-client": "~1.0.7"
+    "typed-rest-client": "~1.1.2"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "^0.1.0",
