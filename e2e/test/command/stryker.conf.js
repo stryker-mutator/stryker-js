@@ -3,7 +3,7 @@ module.exports = function (config) {
     mutate: ['src/*.js'],
     testFramework: 'mocha',
     coverageAnalysis: 'off',
-    reporter: ['clear-text', 'event-recorder'],
+    reporters: ['clear-text', 'event-recorder'],
     mutator: 'javascript',
     maxConcurrentTestRunners: 2,
     commandRunner: {
