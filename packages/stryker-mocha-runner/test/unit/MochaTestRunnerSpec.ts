@@ -13,7 +13,7 @@ import sinon = require('sinon');
 import { commonTokens } from 'stryker-api/plugin';
 import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
 
-describe.only(MochaTestRunner.name, () => {
+describe(MochaTestRunner.name, () => {
 
   let MochaStub: sinon.SinonStub;
   let mocha: Mock<Mocha> & { suite: Mock<EventEmitter> };
