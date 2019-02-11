@@ -1,6 +1,5 @@
 module.exports = function (config) {	
-    var typescript = true;	
-   var es6 = true;	
+    var typescript = true;
     if (typescript) {	
      config.set({	
        files: [	
@@ -35,7 +34,7 @@ module.exports = function (config) {
          { pattern: 'node_modules/stryker-api/src/**/*.js', included: false, mutated: false }	
        ],	
        coverageAnalysis: 'perTest',	
-       mutator: es6 ? 'javascript' : 'es5'	
+       mutator: 'javascript'
      });	
    }	
     config.set({	

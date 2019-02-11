@@ -55,8 +55,6 @@
     "@stryker-mutator/util": "^0.1.0",
     "chalk": "~2.4.1",
     "commander": "~2.19.0",
-    "escodegen": "~1.8.0",
-    "esprima": "~2.7.0",
     "get-port": "~4.1.0",
     "glob": "~7.1.2",
     "inquirer": "~6.2.0",

@@ -115,7 +115,7 @@ describe('ConfigValidator', () => {
       it('should be valid with string mutator name and string array excluded mutations', () => {
         breakConfig('mutator', {
           excludedMutations: ['BooleanSubstitution'],
-          name: 'es5'
+          name: 'javascript'
         });
         sut.validate();
         expect(testInjector.logger.fatal).not.called;
@@ -133,7 +133,7 @@ describe('ConfigValidator', () => {
       it('should be invalid with non-array excluded mutations', () => {
         breakConfig('mutator', {
           excludedMutations: 'BooleanSubstitution',
-          name: 'es5'
+          name: 'javascript'
         });
         actValidationError();
         expect(testInjector.logger.fatal).calledWith('Value "BooleanSubstitution" is invalid for `mutator.excludedMutations`. Expected an array');
@@ -142,7 +142,7 @@ describe('ConfigValidator', () => {
       it('should be invalid with non-string excluded mutation array elements', () => {
         breakConfig('mutator', {
           excludedMutations: ['BooleanSubstitution', 0],
-          name: 'es5'
+          name: 'javascript'
         });
         actValidationError();
         expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `mutator.excludedMutations`. Expected a string');

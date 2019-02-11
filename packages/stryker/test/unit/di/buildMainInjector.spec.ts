@@ -65,7 +65,7 @@ describe(buildMainInjector.name, () => {
     it('should load default plugins', () => {
       buildMainInjector({}).resolve(commonTokens.config);
       expect(di.PluginLoader).calledWithNew;
-      expect(di.PluginLoader).calledWith(currentLogMock(), ['stryker-*', require.resolve('../../../src/reporters'), require.resolve('../../../src/mutators')]);
+      expect(di.PluginLoader).calledWith(currentLogMock(), ['stryker-*', require.resolve('../../../src/reporters')]);
     });
 
     it('should load plugins', () => {
