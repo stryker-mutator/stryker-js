@@ -24,7 +24,7 @@ export class VueJsPreset implements Preset {
       jest: {
         // config: require('path/to/your/custom/jestConfig.js')
       },
-      reporter: ['progress', 'clear-text', 'html'],
+      reporters: ['progress', 'clear-text', 'html'],
       coverageAnalysis: 'off'
     }`;
 
@@ -39,7 +39,7 @@ export class VueJsPreset implements Preset {
           browsers: ['ChromeHeadless']
         }
       },
-      reporter: ['progress', 'clear-text', 'html'],
+      reporters: ['progress', 'clear-text', 'html'],
       coverageAnalysis: 'off'
     }`;
 
