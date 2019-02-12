@@ -32,9 +32,9 @@ export default class InputFileResolver {
     { mutate, files }: StrykerOptions,
     private readonly reporter: StrictReporter
   ) {
-    this.mutatePatterns = this.normalize(mutate || []);
+    this.mutatePatterns = mutate || [];
     if (files) {
-      this.filePatterns = this.normalize(files);
+      this.filePatterns = files;
     }
   }
 
@@ -138,35 +138,6 @@ export default class InputFileResolver {
     return Promise.all(files.map(fileName => this.readFile(fileName))).then(
       filterEmpty
     );
-  }
-
-  private normalize(
-    inputFileExpressions: (string | { pattern: string })[]
-  ): string[] {
-    const inputFileDescriptorObjects: { pattern: string }[] = [];
-    const globExpressions = inputFileExpressions.map(expression => {
-      if (typeof expression === 'string') {
-        return expression;
-      } else {
-        inputFileDescriptorObjects.push(expression);
-        return expression.pattern;
-      }
-    });
-    if (inputFileDescriptorObjects.length) {
-      this.log.warn(
-        normalizeWhiteSpaces(`
-      DEPRECATED: Using the \`InputFileDescriptor\` syntax to
-      select files is no longer supported. We'll assume: ${JSON.stringify(inputFileDescriptorObjects)}
-       can be migrated to ${JSON.stringify(inputFileDescriptorObjects.map(_ => _.pattern))} for this
-        mutation run. Please move any files to mutate into the \`mutate\` array (top level stryker option).
-      You can fix this warning in 2 ways:
-      1) If your project is under git version control, you can remove the "files" patterns all together.
-      Stryker can figure it out for you.
-      2) If your project is not under git version control or you need ignored files in your sandbox, you can replace the
-      \`InputFileDescriptor\` syntax with strings (as done for this test run).`)
-      );
-    }
-    return globExpressions;
   }
 
   private readFile(fileName: string): Promise<File | null> {
