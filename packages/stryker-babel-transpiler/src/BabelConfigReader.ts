@@ -10,8 +10,6 @@ export interface StrykerBabelConfig {
   optionsFile: string | null;
 }
 
-export const DEPRECATED_CONFIG_KEY_FILE = 'babelrcFile';
-export const DEPRECATED_CONFIG_KEY_OPTIONS = 'babelConfig';
 export const CONFIG_KEY = 'babel';
 export const FILE_KEY: keyof StrykerBabelConfig = 'optionsFile';
 export const OPTIONS_KEY: keyof StrykerBabelConfig = 'options';
@@ -34,24 +32,12 @@ export class BabelConfigReader {
       ...DEFAULT_BABEL_CONFIG,
       ...strykerOptions[CONFIG_KEY]
     };
-    this.loadDeprecatedOptions(strykerOptions, babelConfig);
     babelConfig.options = {
       ...this.readBabelOptionsFromFile(babelConfig.optionsFile),
       ...babelConfig.options
     };
     this.log.debug(`Babel config is: ${JSON.stringify(babelConfig, null, 2)}`);
     return babelConfig;
-  }
-
-  private loadDeprecatedOptions(strykerOptions: StrykerOptions, babelConfig: StrykerBabelConfig) {
-    if (strykerOptions[DEPRECATED_CONFIG_KEY_OPTIONS]) {
-      babelConfig.options = strykerOptions[DEPRECATED_CONFIG_KEY_OPTIONS];
-      this.log.warn(`"${DEPRECATED_CONFIG_KEY_OPTIONS}" is deprecated, please use { ${CONFIG_KEY}: { ${OPTIONS_KEY}: ${JSON.stringify(babelConfig.options)} }`);
-    }
-    if (strykerOptions[DEPRECATED_CONFIG_KEY_FILE]) {
-      babelConfig.optionsFile = strykerOptions[DEPRECATED_CONFIG_KEY_FILE];
-      this.log.warn(`"${DEPRECATED_CONFIG_KEY_FILE}" is deprecated, please use { ${CONFIG_KEY}: { ${FILE_KEY}: '${babelConfig.optionsFile}' } }`);
-    }
   }
 
   private readBabelOptionsFromFile(relativeFileName: string | null): babel.TransformOptions {
