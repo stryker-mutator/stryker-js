@@ -70,7 +70,7 @@ Have fun!
 We support mutation testing Stryker with Stryker! After you got Stryker working locally, you can follow these steps to mutation test Stryker:
 1. Navigate to the root of the project
 1. Build all Stryker packages: `npm run build`
-1. Navigate to `packages/stryker` 
+1. Navigate to `packages/core` 
 1. Run `node bin/stryker run`
 
 ## Adding new features

@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker-karma-runner.svg)](https://www.npmjs.com/package/stryker-karma-runner)
-[![Node version](https://img.shields.io/node/v/stryker-karma-runner.svg)](https://img.shields.io/node/v/stryker-karma-runner.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/karma-runner.svg)](https://www.npmjs.com/package/@stryker-mutator/karma-runner)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/karma-runner.svg)](https://img.shields.io/node/v/@stryker-mutator/karma-runner.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Stryker Karma Runner
@@ -9,15 +9,15 @@ A plugin to use the karma test runner (or [@angular/cli](https://www.npmjs.com/p
 
 ## Install
 
-Install stryker-karma-runner locally within your project folder, like so:
+Install @stryker-mutator/karma-runner locally within your project folder, like so:
 
 ```bash
-npm i --save-dev stryker-karma-runner
+npm i --save-dev @stryker-mutator/karma-runner
 ```
 
 ## Bring your own test runner
 
-The `stryker-karma-runner` is a plugin for `stryker` to enable `karma` as a test runner. 
+The `@stryker-mutator/karma-runner` is a plugin for `stryker` to enable `karma` as a test runner. 
 However, it does *not* come packaged with it's own version of `karma`, instead it 
 uses *your very own karma* version. It can also work with `@angular/cli`, see [Configuring](#configuring)
 
@@ -25,7 +25,7 @@ uses *your very own karma* version. It can also work with `@angular/cli`, see [C
 
 ## Configuring
 
-You can configure the `stryker-karma-runner` using the `stryker.conf.js` config file.
+You can configure the `@stryker-mutator/karma-runner` using the `stryker.conf.js` config file.
 
 ```javascript
 // Stryker.conf.js
@@ -51,8 +51,8 @@ Default: `"custom"`
 
 Specify which kind of project you're using. This determines which command is used to start karma
 
-* **`"custom"`**: configure stryker-karma-runner to use `karma start`.
-* **`"angular-cli"`**: configure stryker-karma-runner to use `ng test` (see [configuring for angular-cli](#configure-angular-cli)).
+* **`"custom"`**: configure @stryker-mutator/karma-runner to use `karma start`.
+* **`"angular-cli"`**: configure @stryker-mutator/karma-runner to use `ng test` (see [configuring for angular-cli](#configure-angular-cli)).
 
 ### `karma.configFile` [`string`]
 
@@ -89,7 +89,7 @@ This will run ng test with `--project` argument: `ng test --project=my-lib`.
 
 ## Non overridable options
 
-The browser's life cycle is determined by `stryker-karma-runner`. I.e. these settings cannot be overridden:
+The browser's life cycle is determined by `@stryker-mutator/karma-runner`. I.e. these settings cannot be overridden:
 
 ```javascript
 {

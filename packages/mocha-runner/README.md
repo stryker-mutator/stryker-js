@@ -1,28 +1,26 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker-mocha-runner.svg)](https://www.npmjs.com/package/stryker-mocha-runner)
-[![Node version](https://img.shields.io/node/v/stryker-mocha-runner.svg)](https://img.shields.io/node/v/stryker-mocha-runner.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/mocha-runner.svg)](https://www.npmjs.com/package/@stryker-mutator/mocha-runner)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/mocha-runner.svg)](https://img.shields.io/node/v/@stryker-mutator/mocha-runner.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Stryker Mocha Runner
 A plugin to use Mocha in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework.
 
-**IMPORTANT:** Starting from `stryker-mocha-runner@0.4.0` the test framework has been moved to a separate module. Please also install `stryker-mocha-framework` if you've previously used this module.
-
 ## Install
 
-Install stryker-mocha-runner locally within your project folder, like so:
+Install @stryker-mutator/mocha-runner locally within your project folder, like so:
 
 ```bash
-npm i --save-dev stryker-mocha-runner
+npm i --save-dev @stryker-mutator/mocha-runner
 ```
 
 ## Peer dependencies
 
-The `stryker-mocha-runner` is a plugin for `stryker` to enable `mocha` as a test runner. 
+The `@stryker-mutator/mocha-runner` is a plugin for `stryker` to enable `mocha` as a test runner. 
 As such, you should make sure you have the correct versions of its dependencies installed:
 
 * `mocha`
-* `stryker-api`
+* `@stryker-mutator/core`
 
 ## Configuring
 
@@ -63,7 +61,7 @@ Default: `'test/mocha.opts'`
 
 Specify a ['mocha.opts' file](https://mochajs.org/#mochaopts) to be loaded. Options specified directly in your stryker.conf.js file will overrule options from the 'mocha.opts' file. Disable loading of an additional mocha.opts file with `false`.
 
-The only supported mocha options are used: `--ui`, `--require`, `--async-only`, `--timeout`, `--grep` (or their short form counterparts). Others are ignored by the stryker-mocha-runner.
+The only supported mocha options are used: `--ui`, `--require`, `--async-only`, `--timeout`, `--grep` (or their short form counterparts). Others are ignored by the @stryker-mutator/mocha-runner.
 
 ### `mochaOptions.grep` [`RegExp`]
 

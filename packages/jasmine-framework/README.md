@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker-jasmine.svg)](https://www.npmjs.com/package/stryker-jasmine)
-[![Node version](https://img.shields.io/node/v/stryker-jasmine.svg)](https://img.shields.io/node/v/stryker-jasmine.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/jasmine-framework.svg)](https://www.npmjs.com/package/@stryker-mutator/jasmine-framework)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/jasmine-framework.svg)](https://img.shields.io/node/v/@stryker-mutator/jasmine-framework.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
@@ -12,18 +12,18 @@ This plugin provides beforeEach, afterEach and filter hooks to Stryker, so you a
 
 ## Installation
 
-Install `stryker-jasmine` and `jasmine-core` into your project via npm:
+Install `@stryker-mutator/jasmine-framework` and `jasmine-core` into your project via npm:
 
 ```bash
-$ npm install stryker-jasmine jasmine-core --save-dev
+$ npm install @stryker-mutator/jasmine-framework jasmine-core --save-dev
 ```
 
-*Note: stryker-jasmine only works with jasmine-core >= v2*
+*Note: @stryker-mutator/jasmine-framework only works with jasmine-core >= v2*
 
-Since stryker-jasmine is a plugin for Stryker, you likely have it installed already, but in case you don't:
+Since @stryker-mutator/jasmine-framework is a plugin for Stryker, you likely have it installed already, but in case you don't:
 
 ```bash
-$ npm install stryker stryker-api --save-dev
+$ npm install @stryker-mutator/core --save-dev
 ```
 
 ## Configuration

@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker-wct-runner.svg)](https://www.npmjs.com/package/stryker-wct-runner)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/wct-runner.svg)](https://www.npmjs.com/package/@stryker-mutator/wct-runner)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
@@ -8,22 +8,22 @@
 
 ## Installation
 
-Install stryker-wct-runner locally within your project folder, like so:
+Install @stryker-mutator/wct-runner locally within your project folder, like so:
 
 ```bash
-npm i --save-dev stryker-wct-runner
+npm i --save-dev @stryker-mutator/wct-runner
 ```
 
 ## Peer dependencies
 
-The stryker-wct-runner is a plugin to enable the Web Component Tester (wct) as a test runner for Stryker. As such, you should make sure you have the correct versions of its dependencies installed:
+The @stryker-mutator/wct-runner is a plugin to enable the Web Component Tester (wct) as a test runner for Stryker. As such, you should make sure you have the correct versions of its dependencies installed:
 
 - web-component-tester
 - stryker-api
 
-For the minimum supported versions, see the [peerDependencies section in package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker-wct-runner/package.json#L34).
+For the minimum supported versions, see the [peerDependencies section in package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/wct-runner/package.json#L34).
 
-_Note for Polymer users_: if you're using a global installation of [polymer-cli](https://www.npmjs.com/package/polymer-cli) to run your tests, you will need to install [web-component-tester](https://www.npmjs.com/package/web-component-tester) locally, right next to the stryker-wct-runner package. The stryker-wct-runner will not be able to find your global installation of the polymer-cli. You can use this command: `npm i -D web-component-tester`.
+_Note for Polymer users_: if you're using a global installation of [polymer-cli](https://www.npmjs.com/package/polymer-cli) to run your tests, you will need to install [web-component-tester](https://www.npmjs.com/package/web-component-tester) locally, right next to the @stryker-mutator/wct-runner package. The @stryker-mutator/wct-runner will not be able to find your global installation of the polymer-cli. You can use this command: `npm i -D web-component-tester`.
 
 ## Configuration
 
@@ -34,7 +34,7 @@ Make sure you set the `testRunner` option to "wct" and set `coverageAnalysis` to
 ```javascript
 {
     testRunner: 'wct'
-    coverageAnalysis: 'off', // coverage analysis is not supported yet for the stryker-wct-runner.
+    coverageAnalysis: 'off', // coverage analysis is not supported yet for the @stryker-mutator/wct-runner.
     maxConcurrentTestRunners: 4, // A maximum of half your CPU's is recommended
     timeoutMS: 10000 // A higher timeout is recommended to allow for browser startup
 }
@@ -44,7 +44,7 @@ For more information on what these options mean, take a look at the [Stryker rea
 
 ### Configuring WCT
 
-The stryker-wct-runner will honor your regular wct configuration. This means that it will automatically load the wct.conf.json file from the current working directory as expected. You can change this to a different file using the `wct.configFile` property in your Stryker config:
+The @stryker-mutator/wct-runner will honor your regular wct configuration. This means that it will automatically load the wct.conf.json file from the current working directory as expected. You can change this to a different file using the `wct.configFile` property in your Stryker config:
 
 ```js
 // Override config file example
@@ -112,7 +112,7 @@ For more information about the available wct options, please see [wct's config.t
 
 ## Loading the plugin
 
-In order to use the `stryker-wct-runner` it must be loaded in the Stryker mutation testing framework via the Stryker configuration. The easiest way to achieve this, is not have a plugins section in your config file. That way, all node_modules starting with `stryker-` will be loaded.
+In order to use the `@stryker-mutator/wct-runner` it must be loaded in the Stryker mutation testing framework via the Stryker configuration. The easiest way to achieve this, is not have a plugins section in your config file. That way, all node_modules starting with `stryker-` will be loaded.
 
 ## Contributing
 

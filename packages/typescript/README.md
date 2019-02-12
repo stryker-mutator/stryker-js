@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker-typescript.svg)](https://www.npmjs.com/package/stryker-typescript)
-[![Node version](https://img.shields.io/node/v/stryker-typescript.svg)](https://img.shields.io/node/v/stryker-typescript.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/typescript.svg)](https://www.npmjs.com/package/@stryker-mutator/typescript)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/typescript.svg)](https://img.shields.io/node/v/@stryker-mutator/typescript.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
 
@@ -17,7 +17,7 @@ First, install Stryker itself (you can follow the [quickstart on the website](ht
 Next, install this package:
 
 ```bash
-npm install --save-dev stryker-typescript
+npm install --save-dev @stryker-mutator/typescript
 ```
 
 Now open up your stryker.conf.js file and add the following components:
@@ -39,21 +39,21 @@ $ stryker run
 
 ## Peer dependencies
 
-The `stryker-typescript` package is collection a plugins for `stryker` to enable `typescript` support. As such, you should make sure you have the correct versions of its dependencies installed:
+The `@stryker-mutator/typescript` package is collection a plugins for `stryker` to enable `typescript` support. As such, you should make sure you have the correct versions of its dependencies installed:
 
 * `typescript`
-* `stryker-api`
+* `@stryker-mutator/core`
 
-For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker-typescript/package.json).
+For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/typescript/package.json).
 
 These are marked as `peerDependencies` so you get a warning during installation when the correct versions are not installed.
 
 ## Load the plugins
 
-In order to use one of the `stryker-typescript`'s plugins it must be loaded into Stryker. 
+In order to use one of the `@stryker-mutator/typescript`'s plugins it must be loaded into Stryker. 
 The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all `node_modules` starting with `stryker-` will be loaded.
 
-If you do decide to choose specific modules, don't forget to add `'stryker-typescript'` to the list of plugins to load.
+If you do decide to choose specific modules, don't forget to add `'@stryker-mutator/typescript'` to the list of plugins to load.
 
 ## 3 Plugins
 
@@ -88,7 +88,7 @@ noUnusedParameters: false
 
 The `TypescriptMutator` is a plugin to mutate typescript code. It builds a Typescript [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and mutates your code using different kind of mutators.
 
-See [test code](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker-typescript/test/unit/mutator) to know which mutations are supported.
+See [test code](https://github.com/stryker-mutator/stryker/tree/master/packages/typescript/test/unit/mutator) to know which mutations are supported.
 
 Configure the Typescript mutator in your stryker.conf.js file:
 
