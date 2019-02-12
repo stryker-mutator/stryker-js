@@ -7,7 +7,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 describe('Sample project', () => {
 
   it('should be able to run karma', async () => {
-    testInjector.options.karmaConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js');
+    testInjector.options.karma = { configFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js') };
     const runner = testInjector.injector.injectClass(KarmaTestRunner);
     await runner.init();
     const result = await runner.run({});
