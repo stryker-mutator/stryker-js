@@ -3,7 +3,6 @@ import { MutatorDescriptor, MutationScoreThresholds, LogLevel, StrykerOptions } 
 import { Config } from 'stryker-api/config';
 import { Logger } from 'stryker-api/logging';
 import { StrykerError } from '@stryker-mutator/util';
-import { normalizeWhiteSpaces } from '../utils/objectUtils';
 import { tokens, commonTokens } from 'stryker-api/plugin';
 import { coreTokens } from '../di';
 
