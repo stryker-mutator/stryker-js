@@ -33,7 +33,7 @@
 		"tslib": "~1.9.3"
 	},
 	"devDependencies": {
-		"surrial": "~0.1.1",
-		"typed-inject": "^0.2.1"
+		"surrial": "~1.0.0",
+		"typed-inject": "~1.0.0"
 	}
 }

@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "install-local": "^0.4.0",
+    "install-local": "~1.0.0",
     "typescript": "^3.2.2"
   },
   "localDependencies": {

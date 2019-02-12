@@ -19,6 +19,6 @@
   "license": "ISC",
   "devDependencies": {
     "stryker-api": "^0.24.0",
-    "typed-inject": "^0.2.1"
+    "typed-inject": "~1.0.0"
   }
 }
