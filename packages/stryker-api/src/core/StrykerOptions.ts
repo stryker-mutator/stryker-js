@@ -136,12 +136,6 @@ interface StrykerOptions {
   plugins: string[];
 
   /**
-   * DEPRECATED
-   * @deprecated Test runners are expected to manage their own port selection. I.E. Please use karma.config.port
-   */
-  port?: number;
-
-  /**
    * Indicates whether or not to use colors in console.
    * Default: true
    */

@@ -23,7 +23,6 @@ export default class ConfigValidator {
     this.validateLogLevel('logLevel');
     this.validateLogLevel('fileLogLevel');
     this.validateTimeout();
-    this.validatePort();
     this.validateIsNumber('maxConcurrentTestRunners', this.options.maxConcurrentTestRunners);
     this.validateIsStringArray('plugins', this.options.plugins);
     this.validateIsStringArray('reporters', this.options.reporters);
@@ -59,15 +58,6 @@ export default class ConfigValidator {
     this.validateThresholdValue('break', thresholds.break);
     if (thresholds.high < thresholds.low) {
       this.invalidate(`\`thresholds.high\` is lower than \`thresholds.low\` (${thresholds.high} < ${thresholds.low})`);
-    }
-  }
-
-  public validatePort() {
-    if (this.options.port) {
-      this.validateIsNumber('port', this.options.port);
-      this.deprecate('port', normalizeWhiteSpaces(
-        `Test runners are expected to manage their own port selection.
-      I.e. please use karma.config.port, or leave it out entirely to let the test runner itself decide.`));
     }
   }
 
@@ -147,10 +137,6 @@ export default class ConfigValidator {
   private invalidate(message: string) {
     this.log.fatal(message);
     this.isValid = false;
-  }
-
-  private deprecate(deprecatedOption: keyof StrykerOptions, message: string) {
-    this.log.warn(`Stryker option "${deprecatedOption}" is deprecated. ${message}`);
   }
 
   private joinQuotedList(arr: string[]) {
