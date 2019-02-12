@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as typedHtml from 'typed-html';
-import { ScoreResult } from 'stryker-api/report';
-import { MutationScoreThresholds } from 'stryker-api/core';
+import { ScoreResult } from '@stryker-mutator/api/report';
+import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import UrlHelper from './UrlHelper';
 
 export function resultTable(model: ScoreResult, title: string, thresholds: MutationScoreThresholds) {

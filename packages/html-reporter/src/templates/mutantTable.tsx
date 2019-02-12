@@ -1,5 +1,5 @@
 import * as typedHtml from 'typed-html';
-import { MutantStatus } from 'stryker-api/report';
+import { MutantStatus } from '@stryker-mutator/api/report';
 import { NumberedMutant } from './sourceFile';
 
 export function mutantTable(mutants: NumberedMutant[], sourceCode: string) {

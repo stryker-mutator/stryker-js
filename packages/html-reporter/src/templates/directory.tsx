@@ -1,6 +1,6 @@
 import * as typedHtml from 'typed-html';
-import { ScoreResult } from 'stryker-api/report';
-import { MutationScoreThresholds } from 'stryker-api/core';
+import { ScoreResult } from '@stryker-mutator/api/report';
+import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { resultTable } from './resultTable';
 import { layout } from './layout';
 import Breadcrumb from '../Breadcrumb';
