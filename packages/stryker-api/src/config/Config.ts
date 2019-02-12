@@ -25,7 +25,6 @@ export default class Config implements StrykerOptions {
   public transpilers: string[] = [];
   public maxConcurrentTestRunners: number = Infinity;
   public symlinkNodeModules: boolean = true;
-  public port: number | undefined = undefined;
   public thresholds: MutationScoreThresholds = {
     break: null,
     high: 80,

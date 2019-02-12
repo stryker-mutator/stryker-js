@@ -10,7 +10,6 @@ import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { Mock, mock, createFileNotFoundError, createIsDirError } from '../../helpers/producers';
-import { normalizeWhiteSpaces } from '../../../src/utils/objectUtils';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { coreTokens } from '../../../src/di';
@@ -194,43 +193,6 @@ describe(InputFileResolver.name, () => {
     it('should retain original glob order', async () => {
       const result = await sut.resolve();
       expect(result.files.map(m => m.name.substr(m.name.length - 5))).to.deep.equal(['file1', 'file2']);
-    });
-  });
-
-  describe('with file expressions in the old `InputFileDescriptor` syntax', () => {
-    let patternFile1: any;
-    let patternFile3: any;
-
-    beforeEach(() => {
-      patternFile1 = { pattern: 'file1' };
-      patternFile3 = { pattern: 'file3' };
-
-      testInjector.options.files = [patternFile1, 'file2', patternFile3];
-      sut = createSut();
-    });
-
-    it('it should log a warning', async () => {
-
-      await sut.resolve();
-      const inputFileDescriptors = JSON.stringify([patternFile1, patternFile3]);
-      const patternNames = JSON.stringify([patternFile1.pattern, patternFile3.pattern]);
-      expect(testInjector.logger.warn).calledWith(normalizeWhiteSpaces(`
-      DEPRECATED: Using the \`InputFileDescriptor\` syntax to
-      select files is no longer supported. We'll assume: ${inputFileDescriptors} can be migrated
-      to ${patternNames} for this mutation run. Please move any files to mutate into the \`mutate\`
-      array (top level stryker option).
-
-      You can fix this warning in 2 ways:
-      1) If your project is under git version control, you can remove the "files" patterns all together.
-      Stryker can figure it out for you.
-      2) If your project is not under git version control or you need ignored files in your sandbox, you can replace the
-      \`InputFileDescriptor\` syntax with strings (as done for this test run).`));
-    });
-
-    it('should resolve the patterns as normal files', async () => {
-      const result = await sut.resolve();
-      const actualFileNames = result.files.map(m => m.name);
-      expect(actualFileNames).to.deep.equal(['/file1.js', '/file2.js', '/file3.js'].map(_ => path.resolve(_)));
     });
   });
 
