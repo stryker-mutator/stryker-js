@@ -6,7 +6,7 @@ import { TestFramework } from 'stryker-api/test_framework';
 import { rootInjector } from 'typed-inject';
 import { getLogger } from 'log4js';
 import { loggerFactory, pluginResolverFactory, optionsFactory, testFrameworkFactory } from './factoryMethods';
-import { ConfigEditorApplier, configFactory, readConfig } from '../config';
+import { ConfigEditorApplier, readConfig } from '../config';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { Config } from 'stryker-api/config';
 import ConfigReader from '../config/ConfigReader';
@@ -33,7 +33,6 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(commonTokens.pluginResolver, pluginResolverFactory)
     .provideFactory(coreTokens.pluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
     .provideClass(coreTokens.configEditorApplier, ConfigEditorApplier)
-    .provideFactory(commonTokens.config, configFactory)
     .provideFactory(commonTokens.options, optionsFactory)
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
     .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))

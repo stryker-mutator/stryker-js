@@ -4,7 +4,6 @@ import { Logger } from 'stryker-api/logging';
 import * as factory from './factory';
 import * as sinon from 'sinon';
 import { rootInjector, Injector, Scope } from 'typed-inject';
-import { Config } from 'stryker-api/config';
 
 class TestInjector {
 
@@ -13,11 +12,6 @@ class TestInjector {
   }
   private readonly provideLogger = (): Logger => {
     return this.logger;
-  }
-  private readonly provideConfig = () => {
-    const config = new Config();
-    config.set(this.options);
-    return config;
   }
   private readonly provideOptions = () => {
     return this.options;
@@ -30,7 +24,6 @@ class TestInjector {
     .provideValue(commonTokens.getLogger, this.provideLogger)
     .provideFactory(commonTokens.logger, this.provideLogger, Scope.Transient)
     .provideFactory(commonTokens.options, this.provideOptions, Scope.Transient)
-    .provideFactory(commonTokens.config, this.provideConfig, Scope.Transient)
     .provideFactory(commonTokens.pluginResolver, this.providePluginResolver, Scope.Transient);
 
   public reset() {

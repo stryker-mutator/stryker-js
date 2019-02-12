@@ -1,2 +1,2 @@
 export { ConfigEditorApplier } from './ConfigEditorApplier';
-export * from './configFactory';
+export * from './readConfig';

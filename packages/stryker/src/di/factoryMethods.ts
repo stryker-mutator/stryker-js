@@ -2,7 +2,10 @@ import { tokens, commonTokens, OptionsContext, Injector, PluginKind, PluginResol
 import TestFrameworkOrchestrator from '../TestFrameworkOrchestrator';
 import { coreTokens, PluginCreator, PluginLoader } from '.';
 import { LoggerFactoryMethod, Logger } from 'stryker-api/logging';
+import { StrykerOptions } from 'stryker-api/core';
 import { Config } from 'stryker-api/config';
+import { ConfigEditorApplier } from '../config';
+import { freezeRecursively } from '../utils/objectUtils';
 
 export function pluginResolverFactory(injector: Injector<{ [commonTokens.logger]: Logger, [coreTokens.pluginDescriptors]: ReadonlyArray<string> }>): PluginResolver {
   const pluginLoader = injector.injectClass(PluginLoader);
@@ -21,7 +24,8 @@ export function loggerFactory(getLogger: LoggerFactoryMethod, target: Function |
 }
 loggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
 
-export function optionsFactory(config: Config) {
-  return config;
+export function optionsFactory(config: Config, configEditorApplier: ConfigEditorApplier): StrykerOptions {
+  configEditorApplier.edit(config);
+  return freezeRecursively(config);
 }
-optionsFactory.inject = tokens(commonTokens.config);
+optionsFactory.inject = tokens(coreTokens.configReadFromConfigFile, coreTokens.configEditorApplier);
