@@ -16,7 +16,8 @@ import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens } from 'stryker-api/plugin';
-describe('ChildProcessProxy', () => {
+
+describe(ChildProcessProxy.name, () => {
 
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
