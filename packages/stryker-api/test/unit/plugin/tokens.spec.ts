@@ -16,7 +16,6 @@ describe('commonTokens', () => {
       expect(commonTokens[token]).eq(token);
     });
   }
-  itShouldProvideToken('config');
   itShouldProvideToken('options');
   itShouldProvideToken('logger');
   itShouldProvideToken('pluginResolver');

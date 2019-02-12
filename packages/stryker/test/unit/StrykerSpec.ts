@@ -85,7 +85,7 @@ describe(Stryker.name, () => {
       .withArgs(MutationTestExecutor).returns(mutationTestExecutorMock)
       .withArgs(ScoreResultCalculator).returns(scoreResultCalculator);
     injectorMock.resolve
-      .withArgs(commonTokens.config).returns(strykerConfig)
+      .withArgs(commonTokens.options).returns(strykerConfig)
       .withArgs(di.coreTokens.timer).returns(timerMock)
       .withArgs(di.coreTokens.reporter).returns(reporterMock)
       .withArgs(di.coreTokens.testFramework).returns(testFrameworkMock)

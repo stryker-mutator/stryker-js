@@ -51,43 +51,39 @@ describe(buildMainInjector.name, () => {
     return stub;
   }
 
-  describe('resolve config', () => {
+  describe('resolve options', () => {
 
     it('should supply readonly stryker options', () => {
-      const injector = buildMainInjector({});
-      const actualConfig = injector.resolve(commonTokens.config);
-      const actualOptions = injector.resolve(commonTokens.options);
-      expect(actualConfig).eq(expectedConfig);
-      expect(actualConfig).frozen;
-      expect(actualOptions).eq(expectedConfig);
+      const actualOptions = buildMainInjector({}).resolve(commonTokens.options);
+      expect(actualOptions).frozen;
     });
 
     it('should load default plugins', () => {
-      buildMainInjector({}).resolve(commonTokens.config);
+      buildMainInjector({}).resolve(commonTokens.options);
       expect(di.PluginLoader).calledWithNew;
       expect(di.PluginLoader).calledWith(currentLogMock(), ['stryker-*', require.resolve('../../../src/reporters')]);
     });
 
     it('should load plugins', () => {
-      buildMainInjector({}).resolve(commonTokens.config);
+      buildMainInjector({}).resolve(commonTokens.options);
       expect(pluginLoaderMock.load).called;
     });
 
     it('should apply config editors', () => {
-      buildMainInjector({}).resolve(commonTokens.config);
+      buildMainInjector({}).resolve(commonTokens.options);
       expect(configEditorApplierMock.edit).called;
     });
 
     it('should cache the config', () => {
       const injector = buildMainInjector({});
-      injector.resolve(commonTokens.config);
-      injector.resolve(commonTokens.config);
+      injector.resolve(commonTokens.options);
+      injector.resolve(commonTokens.options);
       expect(configReaderMock.readConfig).calledOnce;
     });
 
     it('should inject the `cliOptions` in the config reader', () => {
       const expectedCliOptions = { foo: 'bar' };
-      buildMainInjector(expectedCliOptions).resolve(commonTokens.config);
+      buildMainInjector(expectedCliOptions).resolve(commonTokens.options);
       expect(configReaderModule.default).calledWith(expectedCliOptions);
     });
   });
