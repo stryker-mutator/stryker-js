@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "suites": ["packages/stryker-wct-runner/testResources/jsTestSuite/test"],
+  "suites": ["packages/wct-runner/testResources/jsTestSuite/test"],
   "plugins": {
     "local": {
       "browsers": ["chrome"],
