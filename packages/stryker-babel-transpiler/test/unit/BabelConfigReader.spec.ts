@@ -1,4 +1,4 @@
-import { BabelConfigReader, StrykerBabelConfig, DEPRECATED_CONFIG_KEY_FILE, DEPRECATED_CONFIG_KEY_OPTIONS } from '../../src/BabelConfigReader';
+import { BabelConfigReader, StrykerBabelConfig } from '../../src/BabelConfigReader';
 import { expect } from 'chai';
 import * as fs from 'fs';
 import * as sinon from 'sinon';
@@ -75,34 +75,8 @@ describe(BabelConfigReader.name, () => {
     expect(result).deep.equal(expected);
   });
 
-  it('should load deprecated properties', () => {
-    // Arrange
-    const expectedBabelConfig: StrykerBabelConfig = {
-      extensions: [],
-      options: {
-        auxiliaryCommentAfter: 'bar',
-        auxiliaryCommentBefore: 'foo'
-      },
-      optionsFile: 'foo.babelrc'
-    };
-    const strykerOptions = factory.strykerOptions({
-      [DEPRECATED_CONFIG_KEY_FILE]: expectedBabelConfig.optionsFile,
-      [DEPRECATED_CONFIG_KEY_OPTIONS]: { auxiliaryCommentBefore: 'foo' }
-    });
-    arrangeBabelOptionsFile({ auxiliaryCommentAfter: 'bar' }, 'foo.babelrc');
-
-    // Act
-    const result = sut.readConfig(strykerOptions);
-
-    // Assert
-    expect(result).deep.eq(expectedBabelConfig);
-    expect(testInjector.logger.warn).calledWith(`"babelConfig" is deprecated, please use { babel: { options: {"auxiliaryCommentBefore":"foo"} }`);
-    expect(testInjector.logger.warn).calledWith(`"babelrcFile" is deprecated, please use { babel: { optionsFile: 'foo.babelrc' } }`);
-  });
-
   function arrangeBabelOptionsFile(babelOptions: babel.TransformOptions, fileName = '.babelrc') {
     sinon.stub(fs, 'existsSync').returns(true);
     sinon.stub(fs, 'readFileSync').withArgs(path.resolve(fileName), 'utf8').returns(JSON.stringify(babelOptions));
   }
-
 });
