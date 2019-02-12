@@ -55,7 +55,7 @@ exports = function(config){
         htmlReporter: {
             baseDir: 'reports/mutation/html' // this is the default
         },
-        plugins: ['@stryker-mutator/html-reporter'] // Or leave out the plugin list entirely to load all stryker-* plugins directly
+        plugins: ['@stryker-mutator/html-reporter'] // Or leave out the plugin list entirely to load all @stryker-mutator/* plugins directly
         // ...
     });
 }
