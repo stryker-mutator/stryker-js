@@ -14,10 +14,6 @@ const injector: import('typed-inject').InjectorToken = '$injector';
  * Common tokens used for dependency injection (see typed-inject readme for more information)
  */
 export const commonTokens = Object.freeze({
-  /**
-   * @deprecated Use 'options' instead. This is just hear to support plugin migration
-   */
-  config: stringLiteral('config'),
   getLogger: stringLiteral('getLogger'),
   injector,
   logger: stringLiteral('logger'),
