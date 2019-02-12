@@ -5,9 +5,11 @@ module.exports = function (config) {
     testFramework: 'mocha',
     testRunner: 'karma',
     reporters: ['clear-text', 'html'],
-    karmaConfig: {
-      frameworks: ['mocha', 'chai'],
-      files: ['src/*.js', 'test/*.js']
+    karma: {
+      config: {
+        frameworks: ['mocha', 'chai'],
+        files: ['src/*.js', 'test/*.js']
+      }
     },
     maxConcurrentTestRunners: 2,
     coverageAnalysis: 'perTest'

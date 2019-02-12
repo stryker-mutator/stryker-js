@@ -8,8 +8,10 @@ module.exports = function (config) {
     testRunner: 'karma',
     reporters: ['clear-text', 'html'],
     maxConcurrentTestRunners: 2,
-    karmaConfig: {
-      files: ['dist/main.js', 'test/*.js']
+    karma: {
+      config: {
+        files: ['dist/main.js', 'test/*.js']
+      }
     },
     coverageAnalysis: 'off',
     mutator: 'javascript'
