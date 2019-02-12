@@ -41,9 +41,9 @@
     "typescript": "~3.2.4"
   },
   "localDependencies": {
-    "stryker": "../../../packages/stryker",
-    "stryker-karma-runner": "../../../packages/stryker-karma-runner",
-    "stryker-typescript": "../../../packages/stryker-typescript",
-    "@stryker-mutator/util": "../../../packages/stryker-util"
+    "stryker": "../../../packages/core",
+    "stryker-karma-runner": "../../../packages/karma-runner",
+    "@stryker-mutator/typescript": "../../../packages/typescript",
+    "@stryker-mutator/util": "../../../packages/util"
   }
 }
