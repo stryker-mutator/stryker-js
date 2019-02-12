@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "lib": [
+      "es2015"
+    ],
+    "target": "es2015",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "src",
+    "typings"
+  ],
+  "references": [
+    {
+      "path": "../api/tsconfig.src.json"
+    }
+  ]
+}

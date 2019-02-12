@@ -1,7 +1,7 @@
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as path from 'path';
-import { ScoreResult } from 'stryker-api/report';
+import { ScoreResult } from '@stryker-mutator/api/report';
 
 describe('After running stryker on VueJS project', () => {
   it('should report 25% mutation score', async () => {
