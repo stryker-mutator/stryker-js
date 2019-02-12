@@ -6,7 +6,7 @@
   "scripts": {
     "test": "nyc --reporter=html --report-dir=reports/coverage --lines 85 --functions 84 --branches 65 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "node ../stryker/bin/stryker run"
+    "@stryker-mutator/core": "node ../stryker/bin/stryker run"
   },
   "repository": {
     "type": "git",
@@ -17,10 +17,10 @@
   },
   "keywords": [
     "stryker",
-    "stryker-plugin",
+    "stryker-mutator-plugin",
     "typescript",
     "webpack",
-    "stryker-transpiler"
+    "transpiler-plugin"
   ],
   "author": "Sander koenders <sanderkoenders@gmail.com>",
   "contributors": [

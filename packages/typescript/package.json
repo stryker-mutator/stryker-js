@@ -18,10 +18,10 @@
   },
   "keywords": [
     "stryker",
-    "stryker-plugin",
+    "stryker-mutator-plugin",
     "typescript",
-    "stryker-transpiler",
-    "stryker-mutator"
+    "transpiler-plugin",
+    "mutator-plugin"
   ],
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"

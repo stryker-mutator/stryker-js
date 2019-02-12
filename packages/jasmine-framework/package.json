@@ -16,10 +16,10 @@
   "keywords": [
     "stryker",
     "jasmine",
-    "stryker-plugin",
-    "stryker-test-framework",
-    "stryker-karma-runner",
-    "stryker-jasmine-runner"
+    "stryker-mutator-plugin",
+    "test-framework-plugin",
+    "@stryker-mutator/karma-runner",
+    "@stryker-mutator/jasmine-runner"
   ],
   "author": "Nico Jansen",
   "license": "Apache-2.0",

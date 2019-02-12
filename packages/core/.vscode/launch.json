@@ -25,11 +25,11 @@
       "type": "node",
       "request": "launch",
       "name": "e2e command runner",
-      "program": "${workspaceRoot}/../../e2e/node_modules/stryker/bin/stryker",
+      "program": "${workspaceRoot}/../../e2e/test/angular-project/node_modules/@stryker-mutator/core/bin/stryker",
       "args": [
         "run"
       ],
-      "cwd": "${workspaceFolder}/../../e2e/test/command",
+      "cwd": "${workspaceFolder}/../../e2e/test/angular-project",
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",

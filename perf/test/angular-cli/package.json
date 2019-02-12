@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "build.prod": "ng build --prod",
-    "stryker": "npx stryker run",
+    "@stryker-mutator/core": "npx stryker run",
     "test": "ng test",
     "test.ci": "ng test --no-progress --code-coverage --watch=false",
     "lint": "ng lint",
@@ -54,10 +54,10 @@
     "typescript": "~3.2.4"
   },
   "localDependencies": {
-    "stryker": "../../../packages/core",
+    "@stryker-mutator/core": "../../../packages/core",
     "@stryker-mutator/api": "../../../packages/api",
-    "stryker-html-reporter": "../../../packages/html-reporter",
-    "stryker-karma-runner": "../../../packages/karma-runner",
+    "@stryker-mutator/html-reporter": "../../../packages/html-reporter",
+    "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
     "@stryker-mutator/typescript": "../../../packages/typescript",
     "@stryker-mutator/util": "../../../packages/util"
   }

@@ -54,25 +54,27 @@ describe(StrykerInitializer.name, () => {
   describe('initialize()', () => {
 
     beforeEach(() => {
-      stubTestRunners('stryker-awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
-      stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] }, { name: 'stryker-hyper-framework', keywords: ['stryker-hyper-runner'] });
-      stubMutators('@stryker-mutator/typescript', 'stryker-javascript');
-      stubTranspilers('@stryker-mutator/typescript', 'stryker-webpack');
-      stubReporters('stryker-dimension-reporter', 'stryker-mars-reporter');
+      stubTestRunners('@stryker-mutator/awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
+      stubTestFrameworks(
+        { name: '@stryker-mutator/awesome-framework', keywords: ['@stryker-mutator/awesome-runner'] },
+        { name: 'stryker-hyper-framework', keywords: ['stryker-hyper-runner'] });
+      stubMutators('@stryker-mutator/typescript', '@stryker-mutator/javascript-mutator');
+      stubTranspilers('@stryker-mutator/typescript', '@stryker-mutator/webpack');
+      stubReporters('stryker-dimension-reporter', '@stryker-mutator/mars-reporter');
       stubPackageClient({
-        'stryker-awesome-framework': null,
-        'stryker-awesome-runner': null,
+        '@stryker-mutator/awesome-framework': null,
+        '@stryker-mutator/awesome-runner': null,
+        '@stryker-mutator/javascript-mutator': null,
+        '@stryker-mutator/mars-reporter': null,
+        '@stryker-mutator/typescript': null,
+        '@stryker-mutator/webpack': null,
         'stryker-dimension-reporter': null,
         'stryker-ghost-runner': null,
         'stryker-hyper-framework': null,
         'stryker-hyper-runner': {
           files: [],
           someOtherSetting: 'enabled'
-        },
-        'stryker-javascript': null,
-        'stryker-mars-reporter': null,
-        '@stryker-mutator/typescript': null,
-        'stryker-webpack': null
+        }
       });
       fsWriteFile.resolves({});
       presets.push(presetMock);
@@ -161,7 +163,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fsWriteFile).to.have.been.calledOnce;
-      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker-api my-awesome-dependency another-awesome-dependency', { stdio: [0, 1, 2] });
+      expect(childExecSync).to.have.been.calledWith('npm i --save-dev my-awesome-dependency another-awesome-dependency', { stdio: [0, 1, 2] });
     });
 
     it('should correctly load configuration from a preset', async () => {
@@ -214,7 +216,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(out).to.have.been.calledWith('Installing NPM dependencies...');
-      expect(childExecSync).to.have.been.calledWith('npm i --save-dev stryker-api stryker-awesome-runner stryker-awesome-framework stryker-typescript stryker-webpack stryker-dimension-reporter stryker-mars-reporter',
+      expect(childExecSync).to.have.been.calledWith('npm i --save-dev @stryker-mutator/awesome-runner @stryker-mutator/awesome-framework @stryker-mutator/typescript @stryker-mutator/webpack stryker-dimension-reporter @stryker-mutator/mars-reporter',
         { stdio: [0, 1, 2] });
     });
 
@@ -239,6 +241,7 @@ describe(StrykerInitializer.name, () => {
 
     it('should configure the additional settings from the plugins', async () => {
       inquirerPrompt.resolves({
+        mutator: 'javascript',
         packageManager: 'npm',
         reporters: [],
         testFramework: 'hyper',
@@ -295,12 +298,12 @@ describe(StrykerInitializer.name, () => {
         testRunner: 'ghost',
         transpilers: ['webpack']
       });
-      stubTranspilers('webpack');
-      stubPackageClient({ 'stryker-webpack': null });
+      stubTranspilers('@stryker-mutator/webpack-transpiler');
+      stubPackageClient({ '@stryker-mutator/webpack-transpiler': null });
 
       await sut.initialize();
 
-      expect(out).to.have.been.calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker-api stryker-ghost-runner"');
+      expect(out).to.have.been.calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker-ghost-runner @stryker-mutator/webpack-transpiler"');
       expect(fsAsPromised.writeFile).to.have.been.called;
     });
   });
@@ -308,7 +311,7 @@ describe(StrykerInitializer.name, () => {
   describe('initialize() when no internet', () => {
 
     it('should log error and continue when fetching test runners', async () => {
-      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-test-runner').rejects();
+      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+test-runner-plugin').rejects();
       stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
       stubReporters();
@@ -321,14 +324,14 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-runner). Please check your internet connection.');
+      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-mutator-plugin+test-runner-plugin). Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to select a test runner. You will need to configure it manually.');
       expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
     it('should log error and continue when fetching test frameworks', async () => {
       stubTestRunners('stryker-awesome-runner');
-      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-test-framework').rejects();
+      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+test-framework-plugin').rejects();
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: ['clear-text'],
@@ -342,7 +345,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-test-framework). Please check your internet connection.');
+      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-mutator-plugin+test-framework-plugin). Please check your internet connection.');
       expect(out).to.have.been.calledWith('No stryker test framework plugin found that is compatible with awesome, downgrading coverageAnalysis to "all"');
       expect(fsAsPromised.writeFile).to.have.been.called;
     });
@@ -350,7 +353,7 @@ describe(StrykerInitializer.name, () => {
     it('should log error and continue when fetching mutators', async () => {
       stubTestRunners('stryker-awesome-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] });
-      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator').rejects();
+      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+mutator-plugin').rejects();
       stubTranspilers('stryker-webpack');
       stubReporters();
       inquirerPrompt.resolves({
@@ -363,7 +366,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-mutator). Please check your internet connection.');
+      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-mutator-plugin+mutator-plugin). Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to select a mutator. You will need to configure it manually.');
       expect(fsAsPromised.writeFile).to.have.been.called;
     });
@@ -372,7 +375,7 @@ describe(StrykerInitializer.name, () => {
       stubTestRunners('stryker-awesome-runner');
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] });
       stubMutators('stryker-javascript');
-      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-transpiler').rejects();
+      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+transpiler-plugin').rejects();
       stubReporters();
       inquirerPrompt.resolves({
         packageManager: 'npm',
@@ -383,7 +386,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-transpiler). Please check your internet connection.');
+      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-mutator-plugin+transpiler-plugin). Please check your internet connection.');
       expect(out).to.have.been.calledWith('Unable to select transpilers. You will need to configure it manually, if you want to use any.');
       expect(fsAsPromised.writeFile).to.have.been.called;
     });
@@ -393,7 +396,7 @@ describe(StrykerInitializer.name, () => {
       stubTestFrameworks({ name: 'stryker-awesome-framework', keywords: ['stryker-awesome-runner'] });
       stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
-      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-reporter').rejects();
+      restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+reporter-plugin').rejects();
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: ['clear-text'],
@@ -404,7 +407,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-reporter). Please check your internet connection.');
+      expect(testInjector.logger.error).to.have.been.calledWith('Unable to reach https://api.npms.io (for query /v2/search?q=keywords:stryker-mutator-plugin+reporter-plugin). Please check your internet connection.');
       expect(fsAsPromised.writeFile).to.have.been.called;
     });
 
@@ -438,7 +441,7 @@ describe(StrykerInitializer.name, () => {
   });
 
   const stubTestRunners = (...testRunners: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-test-runner').resolves({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+test-runner-plugin').resolves({
       result: {
         results: testRunners.map(testRunner => ({ package: { name: testRunner } }))
       },
@@ -447,7 +450,7 @@ describe(StrykerInitializer.name, () => {
   };
 
   const stubTestFrameworks = (...testFrameworks: { name: string; keywords: string[]; }[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-test-framework').resolves({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+test-framework-plugin').resolves({
       result: {
         results: testFrameworks.map(testFramework => ({ package: testFramework }))
       },
@@ -456,7 +459,7 @@ describe(StrykerInitializer.name, () => {
   };
 
   const stubMutators = (...mutators: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator').resolves({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+mutator-plugin').resolves({
       result: {
         results: mutators.map(mutator => ({ package: { name: mutator } }))
       },
@@ -465,7 +468,7 @@ describe(StrykerInitializer.name, () => {
   };
 
   const stubTranspilers = (...transpilers: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-transpiler').resolves({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+transpiler-plugin').resolves({
       result: {
         results: transpilers.map(transpiler => ({ package: { name: transpiler } }))
       },
@@ -474,7 +477,7 @@ describe(StrykerInitializer.name, () => {
   };
 
   const stubReporters = (...reporters: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-reporter').resolves({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:stryker-mutator-plugin+reporter-plugin').resolves({
       result: {
         results: reporters.map(reporter => ({ package: { name: reporter } }))
       },

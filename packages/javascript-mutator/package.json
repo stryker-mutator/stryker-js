@@ -18,9 +18,9 @@
   },
   "keywords": [
     "stryker",
-    "stryker-plugin",
+    "stryker-mutator-plugin",
     "javascript",
-    "stryker-mutator"
+    "mutator-plugin"
   ],
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
