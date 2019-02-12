@@ -14,9 +14,10 @@ import { Injector } from 'typed-inject';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
 import { coreTokens, MainContext, PluginCreator, buildMainInjector } from './di';
 import { commonTokens, PluginKind } from 'stryker-api/plugin';
-import MutantTranspiler from './transpiler/MutantTranspiler';
+import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
 import { SandboxPool } from './SandboxPool';
 import { Logger } from 'stryker-api/logging';
+import { transpilerFactory } from './transpiler';
 
 export default class Stryker {
 
@@ -65,9 +66,15 @@ export default class Stryker {
         .injectClass(InitialTestExecutor);
       const initialRunResult = await initialTestRunProcess.run();
       const mutator = inputFileInjector.injectClass(MutatorFacade);
-      const mutationTestProcessInjector = inputFileInjector
+      const transpilerProvider = inputFileInjector
         .provideValue(coreTokens.initialRunResult, initialRunResult)
-        .provideClass(coreTokens.mutantTranspiler, MutantTranspiler)
+        .provideValue(commonTokens.produceSourceMaps, false)
+        .provideFactory(coreTokens.transpiler, transpilerFactory);
+      const transpiler = transpilerProvider.resolve(coreTokens.transpiler);
+      const transpiledFiles = await transpiler.transpile(inputFiles.files);
+      const mutationTestProcessInjector = transpilerProvider
+        .provideValue(coreTokens.transpiledFiles, transpiledFiles)
+        .provideClass(coreTokens.mutantTranspileScheduler, MutantTranspileScheduler)
         .provideClass(coreTokens.sandboxPool, SandboxPool);
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
@@ -87,20 +94,6 @@ export default class Stryker {
     }
     return Promise.resolve([]);
   }
-
-  // private mutate(input: InputFileCollection, initialTestRunResult: InitialTestRunResult): TestableMutant[] {
-  //   const mutator = this.injector.injectClass(MutatorFacade);
-  //   const mutants = mutator.mutate(input.filesToMutate);
-  //   const mutantRunResultMatcher = new MutantTestMatcher(
-  //     mutants,
-  //     input.filesToMutate,
-  //     initialTestRunResult.runResult,
-  //     initialTestRunResult.sourceMapper,
-  //     initialTestRunResult.coverageMaps,
-  //     this.config,
-  //     this.reporter);
-  //   return mutantRunResultMatcher.matchWithMutants();
-  // }
 
   private wrapUpReporter(): Promise<void> {
     const maybePromise = this.reporter.wrapUp();

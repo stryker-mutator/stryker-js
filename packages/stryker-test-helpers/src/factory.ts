@@ -155,7 +155,7 @@ export function injector(): sinon.SinonStubbedInstance<Injector> {
     provideClass: sinon.stub(),
     provideFactory: sinon.stub(),
     provideValue: sinon.stub(),
-    resolve: sinon.stub()
+    resolve: sinon.stub(),
   };
   injectorMock.provideClass.returnsThis();
   injectorMock.provideFactory.returnsThis();

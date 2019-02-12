@@ -26,6 +26,7 @@ import { TranspilerFacade } from '../../src/transpiler/TranspilerFacade';
 import * as di from '../../src/di';
 import Timer from '../../src/utils/Timer';
 import { Logger } from 'stryker-api/logging';
+import { Transpiler } from 'stryker-api/transpile';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
@@ -50,6 +51,7 @@ describe(Stryker.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector>;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let logMock: sinon.SinonStubbedInstance<Logger>;
+  let transpilerMock: sinon.SinonStubbedInstance<Transpiler>;
 
   beforeEach(() => {
     strykerConfig = factory.config();
@@ -66,6 +68,7 @@ describe(Stryker.name, () => {
     testFrameworkMock = testFramework();
     initialTestExecutorMock = mock(InitialTestExecutor);
     mutationTestExecutorMock = mock(MutationTestExecutor);
+    transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
     tempFolderMock = mock(TempFolder as any);
     tempFolderMock.clean.resolves();
@@ -86,7 +89,8 @@ describe(Stryker.name, () => {
       .withArgs(di.coreTokens.timer).returns(timerMock)
       .withArgs(di.coreTokens.reporter).returns(reporterMock)
       .withArgs(di.coreTokens.testFramework).returns(testFrameworkMock)
-      .withArgs(commonTokens.getLogger).returns(() => logMock);
+      .withArgs(commonTokens.getLogger).returns(() => logMock)
+      .withArgs(di.coreTokens.transpiler).returns(transpilerMock);
   });
 
   describe('when constructed', () => {
@@ -103,6 +107,7 @@ describe(Stryker.name, () => {
   describe('runMutationTest()', () => {
 
     let inputFiles: InputFileCollection;
+    let initialTranspiledFiles: File[];
     let initialRunResult: RunResult;
     let transpiledFiles: File[];
     let mutants: TestableMutant[];
@@ -119,8 +124,10 @@ describe(Stryker.name, () => {
       mutatorMock.mutate.returns(mutants);
       mutationTestExecutorMock.run.resolves(mutantResults);
       inputFiles = new InputFileCollection([new File('input.ts', '')], ['input.ts']);
+      initialTranspiledFiles = [new File('input.js', '')];
       transpiledFiles = [new File('output.js', '')];
       inputFileResolverMock.resolve.resolves(inputFiles);
+      transpilerMock.transpile.resolves(initialTranspiledFiles);
       initialRunResult = runResult();
       initialTestExecutorMock.run.resolves({ runResult: initialRunResult, transpiledFiles });
     });
@@ -218,6 +225,13 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(mutatorMock.mutate).calledWith(inputFiles.filesToMutate);
+      });
+
+      it('should transpile all files once before starting the mutation testing process', async () => {
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(transpilerMock.transpile).calledWith(inputFiles.files);
+        expect(injectorMock.provideValue).calledWith(di.coreTokens.transpiledFiles, initialTranspiledFiles);
       });
 
       it('should create the mutation test executor', async () => {
