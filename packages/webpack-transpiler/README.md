@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker-webpack-transpiler.svg)](https://www.npmjs.com/package/stryker-webpack-transpiler)
-[![Node version](https://img.shields.io/node/v/stryker-webpack-transpiler.svg)](https://img.shields.io/node/v/stryker-webpack-transpiler.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/webpack-transpiler.svg)](https://www.npmjs.com/package/@stryker-mutator/webpack-transpiler)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/webpack-transpiler.svg)](https://img.shields.io/node/v/@stryker-mutator/webpack-transpiler.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
 
@@ -15,7 +15,7 @@ First, install Stryker itself (you can follow the [quickstart on the website](ht
 Next, install this package:
 
 ```bash
-npm install --save-dev stryker-webpack-transpiler
+npm install --save-dev @stryker-mutator/webpack-transpiler
 ```
 
 Open up your `stryker.conf.js` file and add the following properties:
@@ -41,9 +41,9 @@ $ stryker run
 ```
 
 ## Peer dependencies
-The `stryker-webpack-transpiler` plugin requires the following packages to be installed in order to work:
+The `@stryker-mutator/webpack-transpiler` plugin requires the following packages to be installed in order to work:
  
-* `stryker-api`
+* `@stryker-mutator/core`
 * `webpack`
 
-For the current supported versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/feat/webpack-transpiler/packages/stryker-webpack-transpiler/package.json) file.
+For the current supported versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/tree/master/packages/webpack-transpiler/package.json) file.

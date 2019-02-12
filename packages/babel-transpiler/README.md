@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker-babel-transpiler.svg)](https://www.npmjs.com/package/stryker-babel-transpiler)
-[![Node version](https://img.shields.io/node/v/stryker-babel-transpiler.svg)](https://img.shields.io/node/v/stryker-babel-transpiler.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/babel-transpiler.svg)](https://www.npmjs.com/package/@stryker-mutator/babel-transpiler)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/babel-transpiler.svg)](https://img.shields.io/node/v/@stryker-mutator/babel-transpiler.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
 
@@ -12,7 +12,7 @@ A plugin that adds support for [Babel](https://github.com/babel/babel) to [Stryk
 
 ## Peer dependencies
 
-The `stryker-babel-transpiler` requires you to install babel 7. Install _at least_ the `@babel/core` package (version 7).
+The `@stryker-mutator/babel-transpiler` requires you to install babel 7. Install _at least_ the `@babel/core` package (version 7).
 
 ## Quickstart
 
@@ -21,7 +21,7 @@ First, install Stryker itself (you can follow the [quickstart on the website](ht
 Next, install this package:
 
 ```bash
-npm install --save-dev stryker-babel-transpiler @babel/core
+npm install --save-dev @stryker-mutator/babel-transpiler @babel/core
 ```
 
 Next, open up your `stryker.conf.js` file and add the following properties:
@@ -65,7 +65,7 @@ Default: `{}`
 
 Override babel options from your config file here. Please see [babel's documentation](https://babeljs.io/docs/en/options) to see what is available. 
 
-Some options are restricted to be set, because the stryker-babel-transpiler takes control of it. These options are: `filename`, `filenameRelative` and `cwd`.
+Some options are restricted to be set, because the @stryker-mutator/babel-transpiler takes control of it. These options are: `filename`, `filenameRelative` and `cwd`.
 
 ### `babel.extensions` [`string[]`]
 
