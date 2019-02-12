@@ -1,4 +1,3 @@
-const { LogLevel } = require('stryker-api/core');
 module.exports = function (config) {
   config.set({
     mutate: ['lib/**/*.js'],
@@ -9,6 +8,6 @@ module.exports = function (config) {
     reporters: ['clear-text', 'event-recorder'],
     maxConcurrentTestRunners: 1,
     jasmineConfigFile: 'spec/support/jasmine.json',
-    fileLogLevel: LogLevel.Debug
+    fileLogLevel: 'debug'
   });
 };
