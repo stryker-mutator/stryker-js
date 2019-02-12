@@ -1,5 +1,4 @@
 import * as log4js from 'log4js';
-import { LoggerFactory } from 'stryker-api/logging';
 import { LogLevel } from 'stryker-api/core';
 import { minLevel } from './logUtils';
 import LoggingClientContext from './LoggingClientContext';
@@ -74,17 +73,12 @@ export default class LogConfigurator {
     };
   }
 
-  private static setImplementation(): void {
-    LoggerFactory.setLogImplementation(log4js.getLogger);
-  }
-
   /**
    * Configure logging for the master process. Either call this method or `configureChildProcess` before any `getLogger` calls.
    * @param consoleLogLevel The log level to configure for the console
    * @param fileLogLevel The log level to configure for the "stryker.log" file
    */
   public static configureMainProcess(consoleLogLevel: LogLevel = LogLevel.Information, fileLogLevel: LogLevel = LogLevel.Off, allowConsoleColors: boolean = true) {
-    this.setImplementation();
     const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);
     log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));
   }
@@ -99,7 +93,6 @@ export default class LogConfigurator {
    * @returns the context
    */
   public static async configureLoggingServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): Promise<LoggingClientContext> {
-    this.setImplementation();
     const loggerPort = await getFreePort();
 
     // Include the appenders for the main Stryker process, as log4js has only one single `configure` method.
@@ -127,7 +120,6 @@ export default class LogConfigurator {
    * @param context the logging client context used to configure the logging client
    */
   public static configureChildProcess(context: LoggingClientContext) {
-    this.setImplementation();
     const clientAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'worker', loggerPort: context.port };
     const appenders: AppendersConfiguration = { [AppenderName.All]: clientAppender };
     log4js.configure(this.createLog4jsConfig(context.level, appenders));
