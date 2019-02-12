@@ -1,6 +1,7 @@
 import * as net from 'net';
 import * as log4js from 'log4js';
 import { Subscriber, Observable } from 'rxjs';
+import { parse } from 'flatted';
 
 export default class LoggingServer {
 
@@ -14,7 +15,7 @@ export default class LoggingServer {
       socket.on('data', data => {
         // Log4js also sends "__LOG4JS__" to signal an event end. Ignore those.
         const logEventStrings = data.toString().split('__LOG4JS__').filter(Boolean);
-        const loggingEvents: log4js.LoggingEvent[] = logEventStrings.map(logEventString => JSON.parse(logEventString));
+        const loggingEvents: log4js.LoggingEvent[] = logEventStrings.map(logEventString => parse(logEventString));
         loggingEvents.forEach(event => this.subscriber && this.subscriber.next(event));
       });
       socket.on('error', () => {

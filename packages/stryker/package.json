@@ -83,6 +83,7 @@
     "@types/node": "~10.11.4",
     "@types/prettier": "^1.15.2",
     "@types/progress": "~2.0.1",
+    "flatted": "^2.0.0",
     "stryker-api": "^0.24.0"
   },
   "peerDependencies": {
