@@ -18,9 +18,9 @@
   },
   "keywords": [
     "stryker",
-    "stryker-plugin",
+    "stryker-mutator-plugin",
     "mocha",
-    "stryker-test-runner"
+    "test-runner-plugin"
   ],
   "author": "Simon de Lang <simon.delang@infosupport.com>",
   "contributors": [

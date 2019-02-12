@@ -9,7 +9,7 @@ export class AngularPreset implements Preset {
   // Please keep config in sync with handbook
   private readonly dependencies = [
     'stryker',
-    'stryker-karma-runner',
+    '@stryker-mutator/karma-runner',
     '@stryker-mutator/typescript',
     'stryker-html-reporter'
   ];

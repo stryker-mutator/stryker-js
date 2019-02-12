@@ -18,11 +18,11 @@
   },
   "keywords": [
     "stryker",
-    "stryker-plugin",
+    "stryker-mutator-plugin",
     "mocha",
-    "stryker-test-framework",
+    "test-framework-plugin",
     "stryker-mocha-runner",
-    "stryker-karma-runner"
+    "@stryker-mutator/karma-runner"
   ],
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"

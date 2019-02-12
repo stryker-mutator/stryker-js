@@ -24,9 +24,9 @@
   },
   "keywords": [
     "stryker",
-    "stryker-plugin",
+    "stryker-mutator-plugin",
     "javascript",
-    "stryker-transpiler",
+    "transpiler-plugin",
     "babel"
   ],
   "bugs": {

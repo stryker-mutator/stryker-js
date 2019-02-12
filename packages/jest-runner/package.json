@@ -18,9 +18,9 @@
   },
   "keywords": [
     "stryker",
-    "stryker-plugin",
+    "stryker-mutator-plugin",
     "jest",
-    "stryker-test-runner"
+    "test-runner-plugin"
   ],
   "author": "Sander koenders <sanderkoenders@gmail.com>",
   "contributors": [

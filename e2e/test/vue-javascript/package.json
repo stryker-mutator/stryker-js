@@ -83,10 +83,11 @@
     "webpack-merge": "^4.1.0"
   },
   "localDependencies": {
-    "stryker": "../../../packages/core",
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
     "@stryker-mutator/javascript-mutator": "../../../packages/javascript-mutator",
-    "stryker-karma-runner": "../../../packages/karma-runner",
-    "stryker-vue-mutator": "../../../packages/vue-mutator",
+    "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
+    "@stryker-mutator/vue-mutator": "../../../packages/vue-mutator",
     "@stryker-mutator/util": "../../../packages/util"
   },
   "engines": {
