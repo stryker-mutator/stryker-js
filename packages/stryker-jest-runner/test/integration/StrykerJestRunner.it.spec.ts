@@ -38,9 +38,12 @@ describe('Integration test for Strykers Jest runner', () => {
     processCwdStub = sinon.stub(process, 'cwd');
   });
 
-  function createSut() {
+  function createSut(jestConfig?: any) {
     const jestConfigEditor = testInjector.injector.injectClass(JestConfigEditor);
     const config = factory.config();
+    if (jestConfig) {
+      config.jest = jestConfig;
+    }
     jestConfigEditor.edit(config);
     return testInjector.injector
       .provideValue(commonTokens.options, config)
@@ -49,9 +52,7 @@ describe('Integration test for Strykers Jest runner', () => {
 
   it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));
-    testInjector.options.jest = { projectType: 'react-ts' };
-
-    const jestTestRunner = createSut();
+    const jestTestRunner = createSut({ projectType: 'react-ts' });
     const result = await jestTestRunner.run(runOptions);
 
     expect(result.status).to.equal(RunStatus.Complete);
