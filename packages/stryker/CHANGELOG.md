@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.35.1](https://github.com/stryker-mutator/stryker/compare/stryker@0.35.0...stryker@0.35.1) (2019-02-12)
+
+
+### Bug Fixes
+
+* **mutants:** Prevent memory leak when transpiling mutants ([#1376](https://github.com/stryker-mutator/stryker/issues/1376)) ([45c2852](https://github.com/stryker-mutator/stryker/commit/45c2852)), closes [#920](https://github.com/stryker-mutator/stryker/issues/920)
+
+
+
+
+
 # [0.35.0](https://github.com/stryker-mutator/stryker/compare/stryker@0.34.0...stryker@0.35.0) (2019-02-08)
 
 

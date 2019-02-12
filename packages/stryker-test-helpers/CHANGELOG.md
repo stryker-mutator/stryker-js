@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/stryker-mutator/stryker/compare/@stryker-mutator/test-helpers@0.1.0...@stryker-mutator/test-helpers@0.1.1) (2019-02-12)
+
+
+### Bug Fixes
+
+* **mutants:** Prevent memory leak when transpiling mutants ([#1376](https://github.com/stryker-mutator/stryker/issues/1376)) ([45c2852](https://github.com/stryker-mutator/stryker/commit/45c2852)), closes [#920](https://github.com/stryker-mutator/stryker/issues/920)
+
+
+
+
+
 # 0.1.0 (2019-02-08)
 
 
