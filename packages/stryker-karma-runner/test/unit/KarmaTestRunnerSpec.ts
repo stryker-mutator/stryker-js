@@ -10,11 +10,7 @@ import {
   TestStatus,
   RunStatus
 } from 'stryker-api/test_runner';
-import StrykerKarmaSetup, {
-  DEPRECATED_KARMA_CONFIG,
-  DEPRECATED_KARMA_CONFIG_FILE,
-  NgConfigOptions
-} from '../../src/StrykerKarmaSetup';
+import StrykerKarmaSetup, { NgConfigOptions } from '../../src/StrykerKarmaSetup';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
 import { testInjector } from '@stryker-mutator/test-helpers';
@@ -93,55 +89,6 @@ describe('KarmaTestRunner', () => {
     });
     expect(testInjector.logger.warn).not.called;
     expect(projectStarterModule.default).calledWith(sinon.match.func, expectedSetup);
-  });
-
-  it('should load deprecated karma options', () => {
-    const expectedKarmaConfig = { basePath: 'foobar' };
-    const expectedKarmaConfigFile = 'karmaConfigFile';
-    testInjector.options[DEPRECATED_KARMA_CONFIG] = expectedKarmaConfig;
-    testInjector.options[
-      DEPRECATED_KARMA_CONFIG_FILE
-    ] = expectedKarmaConfigFile;
-    createSut();
-    expect(setGlobalsStub).calledWith({
-      getLogger,
-      karmaConfig: expectedKarmaConfig,
-      karmaConfigFile: expectedKarmaConfigFile
-    });
-    expect(testInjector.logger.warn).calledTwice;
-    expect(testInjector.logger.warn).calledWith(
-      '[deprecated]: config option karmaConfigFile is renamed to karma.configFile'
-    );
-    expect(testInjector.logger.warn).calledWith(
-      '[deprecated]: config option karmaConfig is renamed to karma.config'
-    );
-  });
-
-  it('should load deprecated karma options', () => {
-    const config = {
-      config: {
-        basePath: 'foo/bar'
-      },
-      configFile: 'baz.conf.js',
-      project: 'angular-cli'
-    };
-    const expectedSetup: StrykerKarmaSetup = {
-      config: {
-        basePath: 'foo/bar'
-      },
-      configFile: 'baz.conf.js',
-      projectType: 'angular-cli'
-    };
-    testInjector.options.karma = config;
-    createSut();
-    expect(setGlobalsStub).calledWith({
-      getLogger,
-      karmaConfig: expectedSetup.config,
-      karmaConfigFile: expectedSetup.configFile
-    });
-    expect(testInjector.logger.warn).calledWith(
-      'DEPRECATED: `karma.project` is renamed to `karma.projectType`. Please change it in your stryker configuration.'
-    );
   });
 
   describe('init', () => {
