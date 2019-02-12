@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import * as typedHtml from 'typed-html';
-import { MutationScoreThresholds } from 'stryker-api/core';
+import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { resultTable } from './resultTable';
 import { layout } from './layout';
-import { ScoreResult, SourceFile, MutantResult, MutantStatus } from 'stryker-api/report';
+import { ScoreResult, SourceFile, MutantResult, MutantStatus } from '@stryker-mutator/api/report';
 import Breadcrumb from '../Breadcrumb';
 import { mutantTable } from './mutantTable';
 
