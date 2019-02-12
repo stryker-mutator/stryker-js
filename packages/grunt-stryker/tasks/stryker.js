@@ -3,7 +3,7 @@
 module.exports = function (grunt) {
 
   grunt.registerMultiTask('stryker', 'The extendable JavaScript mutation testing framework.', function () {
-    var Stryker = require('stryker').default;
+    var Stryker = require('@stryker-mutator/core').default;
     var target = this.name + "." + this.target + ".";
     var filesProperty = target + 'files';
     var mutateProperty = target + 'mutate';

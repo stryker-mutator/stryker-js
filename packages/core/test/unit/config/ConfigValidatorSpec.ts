@@ -94,7 +94,7 @@ describe('ConfigValidator', () => {
     it('should be invalid with non-array plugins', () => {
       breakConfig('plugins', '@stryker-mutator/typescript');
       actValidationError();
-      expect(testInjector.logger.fatal).calledWith('Value "stryker-typescript" is invalid for `plugins`. Expected an array');
+      expect(testInjector.logger.fatal).calledWith('Value "@stryker-mutator/typescript" is invalid for `plugins`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
@@ -154,7 +154,7 @@ describe('ConfigValidator', () => {
     it('should be invalid with non-array reporters', () => {
       breakConfig('reporters', '@stryker-mutator/typescript');
       actValidationError();
-      expect(testInjector.logger.fatal).calledWith('Value "stryker-typescript" is invalid for `reporters`. Expected an array');
+      expect(testInjector.logger.fatal).calledWith('Value "@stryker-mutator/typescript" is invalid for `reporters`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {
@@ -171,7 +171,7 @@ describe('ConfigValidator', () => {
     it('should be invalid with non-array transpilers', () => {
       breakConfig('transpilers', '@stryker-mutator/typescript');
       actValidationError();
-      expect(testInjector.logger.fatal).calledWith('Value "stryker-typescript" is invalid for `transpilers`. Expected an array');
+      expect(testInjector.logger.fatal).calledWith('Value "@stryker-mutator/typescript" is invalid for `transpilers`. Expected an array');
     });
 
     it('should be invalid with non-string array elements', () => {

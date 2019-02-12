@@ -28,7 +28,7 @@ export class VueJsPreset implements Preset {
       coverageAnalysis: 'off'
     }`;
 
-  private readonly karmaDependency = 'stryker-karma-runner';
+  private readonly karmaDependency = '@stryker-mutator/karma-runner';
   private readonly karmaConf = `{
       mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
       mutator: 'vue',

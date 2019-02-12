@@ -204,8 +204,8 @@ export default class StrykerInitializer {
 
     this.out('Installing NPM dependencies...');
     const cmd = selectedOption.name === PackageManager.Npm
-      ? `npm i --save-dev stryker-api ${dependencies.join(' ')}`
-      : `yarn add stryker-api ${dependencies.join(' ')} --dev`;
+      ? `npm i --save-dev ${dependencies.join(' ')}`
+      : `yarn add ${dependencies.join(' ')} --dev`;
     this.out(cmd);
     try {
       child.execSync(cmd, { stdio: [0, 1, 2] });

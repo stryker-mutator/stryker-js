@@ -7,7 +7,7 @@ import { fsAsPromised } from '@stryker-mutator/util';
 import { Plugin, PluginKind, PluginResolver, Plugins, commonTokens } from '@stryker-mutator/api/plugin';
 import * as coreTokens from './coreTokens';
 
-const IGNORED_PACKAGES = ['stryker-cli', 'stryker-api'];
+const IGNORED_PACKAGES = ['core', 'api', 'util'];
 
 interface PluginModule {
   strykerPlugins: Plugin<any, any>[];
@@ -20,7 +20,9 @@ export class PluginLoader implements PluginResolver {
   constructor(private readonly log: Logger, private readonly pluginDescriptors: ReadonlyArray<string>) { }
 
   public load() {
-    this.resolvePluginModules().forEach(moduleName => this.requirePlugin(moduleName));
+    this.resolvePluginModules().forEach(moduleName => {
+      this.requirePlugin(moduleName);
+    });
   }
 
   public resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T] {
@@ -50,21 +52,20 @@ export class PluginLoader implements PluginResolver {
         if (pluginExpression.indexOf('*') !== -1) {
 
           // Plugin directory is the node_modules folder of the module that installed stryker
-          // So if current __dirname is './stryker/src/di' so 3 directories above
-          const pluginDirectory = path.resolve(__dirname, '..', '..', '..');
-          const regexp = new RegExp('^' + pluginExpression.replace('*', '.*'));
+          // So if current __dirname is './@stryker-mutator/core/src/di' so 4 directories above
+          const pluginDirectory = path.dirname(path.resolve(__dirname, '..', '..', '..', '..', pluginExpression));
+          const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
           const plugins = fsAsPromised.readdirSync(pluginDirectory)
             .filter(pluginName => IGNORED_PACKAGES.indexOf(pluginName) === -1 && regexp.test(pluginName))
-            .map(pluginName => pluginDirectory + '/' + pluginName);
+            .map(pluginName => path.resolve(pluginDirectory, pluginName));
           if (plugins.length === 0) {
             this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);
           }
           plugins
-            .map(plugin => path.basename(plugin))
             .map(plugin => {
-              this.log.debug('Loading plugins %s (matched with expression %s)', plugin, pluginExpression);
+              this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression);
               return plugin;
             })
             .forEach(p => modules.push(p));

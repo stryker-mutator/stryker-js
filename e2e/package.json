@@ -35,19 +35,19 @@
   },
   "localDependencies": {
     "grunt-stryker": "../packages/grunt-stryker",
-    "stryker": "../packages/core",
+    "@stryker-mutator/core": "../packages/core",
     "@stryker-mutator/api": "../packages/api",
-    "stryker-babel-transpiler": "../packages/babel-transpiler",
-    "stryker-html-reporter": "../packages/html-reporter",
-    "@stryker-mutator/jasmine-framework": "../packages/jasmine",
-    "@stryker-mutator/jasmine-framework-runner": "../packages/jasmine-runner",
+    "@stryker-mutator/babel-transpiler": "../packages/babel-transpiler",
+    "@stryker-mutator/html-reporter": "../packages/html-reporter",
+    "@stryker-mutator/jasmine-framework": "../packages/jasmine-framework",
+    "@stryker-mutator/jasmine-runner": "../packages/jasmine-runner",
     "@stryker-mutator/javascript-mutator": "../packages/javascript-mutator",
-    "stryker-karma-runner": "../packages/karma-runner",
-    "stryker-mocha-framework": "../packages/mocha-framework",
-    "stryker-mocha-runner": "../packages/mocha-runner",
+    "@stryker-mutator/karma-runner": "../packages/karma-runner",
+    "@stryker-mutator/mocha-framework": "../packages/mocha-framework",
+    "@stryker-mutator/mocha-runner": "../packages/mocha-runner",
     "@stryker-mutator/util": "../packages/util",
     "@stryker-mutator/typescript": "../packages/typescript",
-    "stryker-vue-mutator": "../packages/vue-mutator",
-    "stryker-webpack-transpiler": "../packages/webpack-transpiler"
+    "@stryker-mutator/vue-mutator": "../packages/vue-mutator",
+    "@stryker-mutator/webpack-transpiler": "../packages/webpack-transpiler"
   }
 }

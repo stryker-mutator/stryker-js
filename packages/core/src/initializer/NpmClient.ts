@@ -22,7 +22,9 @@ interface NpmPackage {
 }
 
 const getName = (packageName: string) => {
-  return packageName.split('-')[1];
+  return packageName.replace('@stryker-mutator/', '')
+    .replace('stryker-', '')
+    .split('-')[0];
 };
 
 const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOption[] => searchResults.results.map(result => ({
@@ -48,12 +50,12 @@ export default class NpmClient {
   }
 
   public getTestRunnerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-test-runner')
+    return this.search('/v2/search?q=keywords:stryker-mutator-plugin+test-runner-plugin')
       .then(mapSearchResultToPromptOption);
   }
 
   public getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-test-framework')
+    return this.search('/v2/search?q=keywords:stryker-mutator-plugin+test-framework-plugin')
       .then(searchResult => {
         if (testRunnerFilter) {
           searchResult.results = searchResult.results.filter(framework => framework.package.keywords.indexOf(testRunnerFilter) >= 0);
@@ -64,17 +66,17 @@ export default class NpmClient {
   }
 
   public getMutatorOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-mutator')
+    return this.search('/v2/search?q=keywords:stryker-mutator-plugin+mutator-plugin')
       .then(mapSearchResultToPromptOption);
   }
 
   public getTranspilerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-transpiler')
+    return this.search('/v2/search?q=keywords:stryker-mutator-plugin+transpiler-plugin')
       .then(mapSearchResultToPromptOption);
   }
 
   public getTestReporterOptions(): Promise<PromptOption[]> {
-    return this.search(`/v2/search?q=keywords:stryker-reporter`)
+    return this.search(`/v2/search?q=keywords:stryker-mutator-plugin+reporter-plugin`)
       .then(mapSearchResultToPromptOption);
   }
 

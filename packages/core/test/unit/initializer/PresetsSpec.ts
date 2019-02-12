@@ -97,13 +97,13 @@ describe('Presets', () => {
       expect(config.config).to.contain(`mutator: 'vue'`);
     });
 
-    it('should install stryker-karma-runner when karma is chosen', async () => {
+    it('should install @stryker-mutator/karma-runner when karma is chosen', async () => {
       inquirerPrompt.resolves({
         script: 'typescript',
         testRunner: 'karma'
       });
       const config = await vueJsPreset.createConfig();
-      expect(config.dependencies).to.include('stryker-karma-runner');
+      expect(config.dependencies).to.include('@stryker-mutator/karma-runner');
     });
 
     it('should install stryker-jest-runner when jest is chosen', async () => {

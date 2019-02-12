@@ -59,11 +59,11 @@ describe('PluginLoader', () => {
     });
   });
 
-  describe('with wildcard resolving to "stryker-cli", "@stryker-mutator/jasmine-framework" and "stryker-karma"', () => {
+  describe('with wildcard resolving to "util", "api", "core", "jasmine-framework" and "karma-runner"', () => {
 
     beforeEach(() => {
-      sut = createSut(['stryker-*']);
-      pluginDirectoryReadMock.returns(['stryker-cli', '@stryker-mutator/jasmine-framework', 'stryker-karma']);
+      sut = createSut(['@stryker-mutator/*']);
+      pluginDirectoryReadMock.returns(['util', 'api', 'core', 'jasmine-framework', 'karma-runner']);
     });
 
     describe('load()', () => {
@@ -73,13 +73,13 @@ describe('PluginLoader', () => {
       });
 
       it('should read from a `node_modules` folder', () => {
-        expect(pluginDirectoryReadMock).to.have.been.calledWith(path.resolve(__dirname, '..', '..', '..', '..'));
+        expect(pluginDirectoryReadMock).calledWith(path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator'));
       });
 
-      it('should load "@stryker-mutator/jasmine-framework" and "stryker-karma"', () => {
-        expect(fileUtils.importModule).to.have.been.calledWithMatch('@stryker-mutator/jasmine-framework');
-        expect(fileUtils.importModule).to.have.been.calledWithMatch('stryker-karma');
-        expect(fileUtils.importModule).to.not.have.been.calledWithMatch('stryker-cli');
+      it('should load "@stryker-mutator/jasmine-framework" and "@stryker-mutator/karma-runner"', () => {
+        expect(fileUtils.importModule).calledTwice;
+        expect(fileUtils.importModule).calledWithMatch(path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator', 'jasmine-framework'));
+        expect(fileUtils.importModule).calledWithMatch(path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator', 'karma-runner'));
       });
     });
 

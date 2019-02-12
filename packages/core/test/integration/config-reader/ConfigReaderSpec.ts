@@ -36,7 +36,7 @@ describe(ConfigReader.name, () => {
     describe('without config file or CLI options', () => {
       describe('with a stryker.conf.js in the CWD', () => {
         it('should parse the config', () => {
-          const mockCwd = process.cwd() + '/testResources/config-reader';
+          const mockCwd = path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader');
           sinon.stub(process, 'cwd').returns(mockCwd);
           sut = createSut({});
 
@@ -51,7 +51,7 @@ describe(ConfigReader.name, () => {
 
       describe('without a stryker.conf.js in the CWD', () => {
         it('should return default config', () => {
-          const mockCwd = process.cwd() + '/testResources/config-reader/no-config';
+          const mockCwd = path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', 'no-config');
           sinon.stub(process, 'cwd').returns(mockCwd);
 
           sut = createSut({});

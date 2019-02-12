@@ -18,9 +18,9 @@
   },
   "keywords": [
     "stryker",
-    "stryker-plugin",
+    "stryker-mutator-plugin",
     "karma",
-    "stryker-test-runner"
+    "test-runner-plugin"
   ],
   "author": "Nico Jansen <nicoj@infosupport.com>",
   "license": "Apache-2.0",
