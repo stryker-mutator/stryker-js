@@ -1,4 +1,4 @@
-import Stryker from 'stryker';
+import Stryker from '@stryker-mutator/core';
 
 new Stryker({
   coverageAnalysis: 'off',
