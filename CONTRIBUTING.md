@@ -22,7 +22,7 @@ Get in touch with us through twitter or via the [Stryker gitter](https://gitter.
 Please adhere to our [editorconfig](https://editorconfig.org) and [tslint](https://palantir.github.io/tslint/) rules. If you're using vscode, please install the following extensions:
 
 * The [editorconfig extension](https://github.com/editorconfig/editorconfig-vscode#editorconfig-for-visual-studio-code)
-* The [tslint extension](https://github.com/Microsoft/vscode-tslint)
+* The [tslint extension](https://github.com/Microsoft/vscode-tslint) (at least v1.0.0)
 
 We configured the tslint extension to run on save in or [vscode workspace](#vscode-environment-configuration).
 
