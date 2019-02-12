@@ -1,0 +1,24 @@
+{
+  "name": "@stryker-mutator/test-helpers",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A helper package for testing",
+  "main": "src/index.js",
+  "typings": "src/index.d.ts",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stryker-mutator/stryker.git"
+  },
+  "keywords": [],
+  "author": "Nico Jansen <jansennico@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/@stryker-mutator/test-helpers#readme",
+  "license": "ISC",
+  "devDependencies": {
+    "@stryker-mutator/api": "^0.24.0",
+    "typed-inject": "~1.0.0"
+  }
+}

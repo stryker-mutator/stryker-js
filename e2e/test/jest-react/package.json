@@ -84,9 +84,9 @@
     "react-test-renderer": "^16.3.2"
   },
   "localDependencies": {
-    "stryker": "../../../packages/stryker",
-    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
-    "stryker-jest-runner": "../../../packages/stryker-jest-runner",
-    "@stryker-mutator/util": "../../../packages/stryker-util"
+    "stryker": "../../../packages/core",
+    "@stryker-mutator/javascript-mutator": "../../../packages/javascript-mutator",
+    "stryker-jest-runner": "../../../packages/jest-runner",
+    "@stryker-mutator/util": "../../../packages/util"
   }
 }

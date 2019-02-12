@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import { ScoreResult } from 'stryker-api/report';
+import { ScoreResult } from '@stryker-mutator/api/report';
 
 export async function readScoreResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
   const allReportFiles = await fsAsPromised.readdir(eventResultDirectory);
