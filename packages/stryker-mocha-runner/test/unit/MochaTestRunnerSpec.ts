@@ -6,7 +6,6 @@ import { RunOptions } from 'stryker-api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import LibWrapper from '../../src/LibWrapper';
 import * as utils from '../../src/utils';
-import { Mock, mock } from '../helpers/mockHelpers';
 import MochaRunnerOptions from '../../src/MochaRunnerOptions';
 import { testInjector } from '../../../stryker-test-helpers/src';
 import sinon = require('sinon');
@@ -16,7 +15,7 @@ import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
 describe(MochaTestRunner.name, () => {
 
   let MochaStub: sinon.SinonStub;
-  let mocha: Mock<Mocha> & { suite: Mock<EventEmitter> };
+  let mocha: sinon.SinonStubbedInstance<Mocha> & { suite: sinon.SinonStubbedInstance<EventEmitter> };
   let sut: MochaTestRunner;
   let requireStub: sinon.SinonStub;
   let multimatchStub: sinon.SinonStub;
@@ -26,8 +25,8 @@ describe(MochaTestRunner.name, () => {
     requireStub = sinon.stub(LibWrapper, 'require');
     multimatchStub = sinon.stub(LibWrapper, 'multimatch');
     sinon.stub(utils, 'evalGlobal');
-    mocha = mock(Mocha) as any;
-    mocha.suite = mock(EventEmitter);
+    mocha = sinon.createStubInstance(Mocha) as any;
+    mocha.suite = sinon.createStubInstance(EventEmitter);
     MochaStub.returns(mocha);
   });
 
