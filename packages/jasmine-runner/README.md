@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker-jasmine-runner.svg)](https://www.npmjs.com/package/stryker-jasmine-runner)
-[![Node version](https://img.shields.io/node/v/stryker-jasmine-runner.svg)](https://img.shields.io/node/v/stryker-jasmine-runner.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/jasmine-runner.svg)](https://www.npmjs.com/package/@stryker-mutator/jasmine-runner)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/jasmine-runner.svg)](https://img.shields.io/node/v/@stryker-mutator/jasmine-runner.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Stryker Jasmine Runner
@@ -9,19 +9,19 @@ A plugin to use Jasmine **as a test runner for node** in [Stryker](https://stryk
 
 ## Install
 
-Install stryker-jasmine-runner locally within your project folder, like so:
+Install @stryker-mutator/jasmine-runner locally within your project folder, like so:
 
 ```bash
-npm i --save-dev stryker-jasmine-runner
+npm i --save-dev @stryker-mutator/jasmine-runner
 ```
 
 ## Peer dependencies
 
-The `stryker-jasmine-runner` is a plugin for `stryker` to enable `jasmine` as a test runner. 
+The `@stryker-mutator/jasmine-runner` is a plugin for `stryker` to enable `jasmine` as a test runner. 
 As such, you should make sure you have the correct versions of its dependencies installed:
 
 * `jasmine`
-* `stryker-api`
+* `@stryker-mutator/core`
 
 ## Configuring
 

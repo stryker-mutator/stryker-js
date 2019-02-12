@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/@stryker-mutator/test-helpers#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/test-helpers#readme",
   "license": "ISC",
   "devDependencies": {
     "@stryker-mutator/api": "^0.24.0",

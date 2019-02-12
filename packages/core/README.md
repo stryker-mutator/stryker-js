@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker.svg)](https://www.npmjs.com/package/stryker)
-[![Node version](https://img.shields.io/node/v/stryker.svg)](https://img.shields.io/node/v/stryker.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/core.svg)](https://www.npmjs.com/package/@stryker-mutator/core)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/core.svg)](https://img.shields.io/node/v/@stryker-mutator/core.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
 
@@ -241,13 +241,13 @@ its parent directories.
 
 ### `plugins` [`string[]`]  
 
-Default: `['stryker-*']`  
+Default: `['@stryker-mutator/*']`  
 Command line: `--plugins stryker-html-reporter,stryker-karma-runner`  
 Config file: `plugins: ['stryker-html-reporter', 'stryker-karma-runner']`  
  
   
 With `plugins` you can add additional Node modules for Stryker to load (or `require`).
-By default, all `node_modules` starting with `stryker-` will be loaded, so you would normally not need to specify this option.
+By default, all `node_modules` starting with `@stryker-mutator/*` will be loaded, so you would normally not need to specify this option.
 These modules should be installed right next to stryker. For a current list of plugins,
 you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or 
 [stryker-mutator.io](https://stryker-mutator.io).
