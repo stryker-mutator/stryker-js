@@ -1,4 +1,3 @@
-import { Config } from 'stryker-api/config';
 import { StrykerOptions } from 'stryker-api/core';
 import { MutantResult } from 'stryker-api/report';
 import { MutantTestMatcher } from './mutants/MutantTestMatcher';
@@ -28,8 +27,8 @@ export default class Stryker {
     return this.injector.resolve(coreTokens.reporter);
   }
 
-  private get config(): Readonly<Config> {
-    return this.injector.resolve(commonTokens.config);
+  private get options(): Readonly<StrykerOptions> {
+    return this.injector.resolve(commonTokens.options);
   }
 
   private get timer() {
@@ -46,12 +45,11 @@ export default class Stryker {
     this.injector = buildMainInjector(cliOptions);
     this.log = this.injector.resolve(commonTokens.getLogger)(Stryker.name);
     // Log level may have changed
-    const options = this.config;
-    LogConfigurator.configureMainProcess(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
+    LogConfigurator.configureMainProcess(this.options.logLevel, this.options.fileLogLevel, this.options.allowConsoleColors);
   }
 
   public async runMutationTest(): Promise<MutantResult[]> {
-    const loggingContext = await LogConfigurator.configureLoggingServer(this.config.logLevel, this.config.fileLogLevel, this.config.allowConsoleColors);
+    const loggingContext = await LogConfigurator.configureLoggingServer(this.options.logLevel, this.options.fileLogLevel, this.options.allowConsoleColors);
     this.timer.reset();
     const inputFiles = await this.injector.injectClass(InputFileResolver).resolve();
     if (inputFiles.files.length) {
@@ -60,7 +58,7 @@ export default class Stryker {
         .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(coreTokens.inputFiles, inputFiles);
       const initialTestRunProcess = inputFileInjector
-        .provideValue(commonTokens.produceSourceMaps, this.config.coverageAnalysis !== 'off')
+        .provideValue(commonTokens.produceSourceMaps, this.options.coverageAnalysis !== 'off')
         .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
         .provideClass(coreTokens.transpiler, TranspilerFacade)
         .injectClass(InitialTestExecutor);
@@ -118,6 +116,6 @@ export default class Stryker {
     const calculator = this.injector.injectClass(ScoreResultCalculator);
     const score = calculator.calculate(mutantResults);
     this.reporter.onScoreCalculated(score);
-    calculator.determineExitCode(score, this.config.thresholds);
+    calculator.determineExitCode(score, this.options.thresholds);
   }
 }

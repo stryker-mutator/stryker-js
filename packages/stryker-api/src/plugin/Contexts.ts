@@ -1,7 +1,6 @@
 import { LoggerFactoryMethod, Logger } from '../../logging';
 import { StrykerOptions } from '../../core';
 import { PluginResolver } from './Plugins';
-import { Config } from '../../config';
 import { PluginKind } from './PluginKind';
 import { commonTokens } from './tokens';
 
@@ -20,10 +19,6 @@ export interface BaseContext {
  */
 export interface OptionsContext extends BaseContext {
   [commonTokens.options]: StrykerOptions;
-  /**
-   * @deprecated This is just here to migrate between old and new plugins. Don't use this! Use `options` instead
-   */
-  [commonTokens.config]: Config;
 }
 
 /**
