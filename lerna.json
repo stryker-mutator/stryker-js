@@ -4,9 +4,9 @@
     "packages/*"
   ],
   "version": "0.0.0",
-  "command":{
-    "publish": {
-      "conventionalCommits": true
+  "command": {
+    "version": {
+      "allowBranch": "master"
     }
   }
 }
