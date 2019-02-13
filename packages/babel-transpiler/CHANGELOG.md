@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.10.1...@stryker-mutator/babel-transpiler@1.0.0) (2019-02-13)
+
+
+### Features
+
+* **babel config:** remove deprecated babelrcFile and babelConfig config keys ([#1387](https://github.com/stryker-mutator/stryker/issues/1387)) ([21b80af](https://github.com/stryker-mutator/stryker/commit/21b80af))
+* **rename:** rename `stryker-xxx-xxx` -> `[@stryker-mutator](https://github.com/stryker-mutator)/xxx-xxx` ([1bbd6ff](https://github.com/stryker-mutator/stryker/commit/1bbd6ff))
+
+
+### BREAKING CHANGES
+
+* **rename:** The core package and plugins have been renamed: stryker-babel-transpiler -> @stryker-mutator/babel-transpiler
+* **babel config:** Remove the `babelrcFile` and `babelConfig` config keys. Please use the `babel: { }` config key.
+
+
+
+
+
 ## [0.10.1](https://github.com/stryker-mutator/stryker/compare/stryker-babel-transpiler@0.10.0...stryker-babel-transpiler@0.10.1) (2019-02-12)
 
 **Note:** Version bump only for package stryker-babel-transpiler

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.12.1...@stryker-mutator/jasmine-framework@1.0.0) (2019-02-13)
+
+
+### Features
+
+* **rename:** rename `stryker-xxx-xxx` -> `[@stryker-mutator](https://github.com/stryker-mutator)/xxx-xxx` ([1bbd6ff](https://github.com/stryker-mutator/stryker/commit/1bbd6ff))
+
+
+### BREAKING CHANGES
+
+* **rename:** The core package and plugins have been renamed: stryker-jasmine -> @stryker-mutator/jasmine-framework
+
+
+
+
+
 ## [0.12.1](https://github.com/stryker-mutator/stryker/compare/stryker-jasmine@0.12.0...stryker-jasmine@0.12.1) (2019-02-12)
 
 **Note:** Version bump only for package stryker-jasmine

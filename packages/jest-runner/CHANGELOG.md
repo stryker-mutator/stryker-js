@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.4.1...@stryker-mutator/jest-runner@1.0.0) (2019-02-13)
+
+
+### Features
+
+* **config injection:** remove Config from the DI tokens ([#1389](https://github.com/stryker-mutator/stryker/issues/1389)) ([857e4a5](https://github.com/stryker-mutator/stryker/commit/857e4a5))
+* **jest project config:** remove deprecated project setting and 'default' project name ([#1375](https://github.com/stryker-mutator/stryker/issues/1375)) ([f0bd698](https://github.com/stryker-mutator/stryker/commit/f0bd698))
+* **rename:** rename `stryker-xxx-xxx` -> `[@stryker-mutator](https://github.com/stryker-mutator)/xxx-xxx` ([1bbd6ff](https://github.com/stryker-mutator/stryker/commit/1bbd6ff))
+
+
+### BREAKING CHANGES
+
+* **rename:** The core package and plugins have been renamed: stryker-jest-runner -> @stryker-mutator/jest-runner
+* **config injection:** Remove Config object from Dependency Injection (only relevant for plugin creators).
+
+
+
+
+
 ## [1.4.1](https://github.com/stryker-mutator/stryker/compare/stryker-jest-runner@1.4.0...stryker-jest-runner@1.4.1) (2019-02-12)
 
 **Note:** Version bump only for package stryker-jest-runner

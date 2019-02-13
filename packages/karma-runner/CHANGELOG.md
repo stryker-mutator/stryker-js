@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/stryker-mutator/stryker/compare/stryker-karma-runner@0.24.1...@stryker-mutator/karma-runner@1.0.0) (2019-02-13)
+
+
+### Features
+
+* **karma config:** remove karmaConfig, karmaConfigFile and project config keys ([#1388](https://github.com/stryker-mutator/stryker/issues/1388)) ([dc9be57](https://github.com/stryker-mutator/stryker/commit/dc9be57))
+* **rename:** rename `stryker-xxx-xxx` -> `[@stryker-mutator](https://github.com/stryker-mutator)/xxx-xxx` ([1bbd6ff](https://github.com/stryker-mutator/stryker/commit/1bbd6ff))
+
+
+### BREAKING CHANGES
+
+* **rename:** The core package and plugins have been renamed: stryker-karma-runner -> @stryker-mutator/karma-runner
+* **karma config:** Remove the `project` config key. Please use `projectType`. Remove the karmaConfig and karmaConfigKey config keys. Please use the `karma: { }` config key.
+
+
+
+
+
 ## [0.24.1](https://github.io/stryker-mutator/stryker/compare/stryker-karma-runner@0.24.0...stryker-karma-runner@0.24.1) (2019-02-12)
 
 **Note:** Version bump only for package stryker-karma-runner

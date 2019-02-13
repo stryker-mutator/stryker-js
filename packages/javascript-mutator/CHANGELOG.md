@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.14.1...@stryker-mutator/javascript-mutator@1.0.0) (2019-02-13)
+
+
+### Features
+
+* **getLogger:** remove getLogger and LoggerFactory from the API ([#1385](https://github.com/stryker-mutator/stryker/issues/1385)) ([cb14e67](https://github.com/stryker-mutator/stryker/commit/cb14e67))
+* **rename:** rename `stryker-xxx-xxx` -> `[@stryker-mutator](https://github.com/stryker-mutator)/xxx-xxx` ([1bbd6ff](https://github.com/stryker-mutator/stryker/commit/1bbd6ff))
+
+
+### BREAKING CHANGES
+
+* **rename:** The core package and plugins have been renamed: stryker-javascript-mutator -> @stryker-mutator/javascript-mutator
+* **getLogger:** Remove `getLogger` and `LoggerFactory` from the API. Please use dependency injection to inject a logger. See https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/api/plugins.md#plugins for more detail
+
+
+
+
+
 ## [0.14.1](https://github.com/stryker-mutator/stryker/compare/stryker-javascript-mutator@0.14.0...stryker-javascript-mutator@0.14.1) (2019-02-12)
 
 **Note:** Version bump only for package stryker-javascript-mutator
