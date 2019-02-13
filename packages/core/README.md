@@ -20,7 +20,7 @@ Please follow the [quickstart on the website](https://stryker-mutator.io/stryker
 For small js projects, you can try the following command:
 
 ```
-npm install --save-dev stryker stryker-api
+npm install --save-dev @stryker-mutator/stryker
 # Only for small projects:
 npx stryker run
 ```
