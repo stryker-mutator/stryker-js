@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/stryker-mutator/stryker/compare/stryker-vue-mutator@0.4.1...@stryker-mutator/vue-mutator@1.0.0) (2019-02-13)
+
+
+### Features
+
+* **ES5 support:** remove ES5 mutator ([#1370](https://github.com/stryker-mutator/stryker/issues/1370)) ([cb585b4](https://github.com/stryker-mutator/stryker/commit/cb585b4))
+* **rename:** rename `stryker-xxx-xxx` -> `[@stryker-mutator](https://github.com/stryker-mutator)/xxx-xxx` ([1bbd6ff](https://github.com/stryker-mutator/stryker/commit/1bbd6ff))
+
+
+### BREAKING CHANGES
+
+* **rename:** The core package and plugins have been renamed: stryker-vue-mutator -> @stryker-mutator/vue-mutator
+* **ES5 support:** Remove the ES5 mutator. The 'javascript' mutator is now the default mutator. Users without a mutator plugin should install `@stryker-mutator/javascript-mutator`.
+
+
+
+
+
 ## [0.4.1](https://github.com/stryker-mutator/stryker/compare/stryker-vue-mutator@0.4.0...stryker-vue-mutator@0.4.1) (2019-02-12)
 
 **Note:** Version bump only for package stryker-vue-mutator
