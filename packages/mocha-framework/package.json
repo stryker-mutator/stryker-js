@@ -18,10 +18,9 @@
   },
   "keywords": [
     "stryker",
-    "stryker-mutator-plugin",
     "mocha",
-    "test-framework-plugin",
-    "stryker-mocha-runner",
+    "@stryker-mutator/test-framework-plugin",
+    "@stryker-mutator/mocha-runner",
     "@stryker-mutator/karma-runner"
   ],
   "publishConfig": {

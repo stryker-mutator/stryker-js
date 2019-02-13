@@ -17,8 +17,7 @@
     "stryker",
     "web-component-tester",
     "wct",
-    "stryker-mutator-plugin",
-    "test-runner-plugin"
+    "@stryker-mutator/test-runner-plugin"
   ],
   "publishConfig": {
     "access": "public"

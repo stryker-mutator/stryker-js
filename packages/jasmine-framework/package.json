@@ -16,8 +16,7 @@
   "keywords": [
     "stryker",
     "jasmine",
-    "stryker-mutator-plugin",
-    "test-framework-plugin",
+    "@stryker-mutator/test-framework-plugin",
     "@stryker-mutator/karma-runner",
     "@stryker-mutator/jasmine-runner"
   ],
