@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.17.1...@stryker-mutator/mocha-runner@1.0.0) (2019-02-13)
+
+
+### Features
+
+* **factories:** remove deprecated factories ([#1381](https://github.com/stryker-mutator/stryker/issues/1381)) ([df2fcdf](https://github.com/stryker-mutator/stryker/commit/df2fcdf))
+* **rename:** rename `stryker-xxx-xxx` -> `[@stryker-mutator](https://github.com/stryker-mutator)/xxx-xxx` ([1bbd6ff](https://github.com/stryker-mutator/stryker/commit/1bbd6ff))
+
+
+### BREAKING CHANGES
+
+* **rename:** The core package and plugins have been renamed: stryker-mocha-runner -> @stryker-mutator/mocha-runner
+* **factories:** Remove the Factory (and children) from the stryker-api package. Use DI to ensure classes are created. For more information, see https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/api/plugins.md#dependency-injection
+
+
+
+
+
 ## [0.17.1](https://github.com/stryker-mutator/stryker/compare/stryker-mocha-runner@0.17.0...stryker-mocha-runner@0.17.1) (2019-02-12)
 
 **Note:** Version bump only for package stryker-mocha-runner

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0](https://github.com/stryker-mutator/stryker/compare/stryker-mutator-specification@0.7.1...@stryker-mutator/mutator-specification@1.0.0) (2019-02-13)
+
+
+### Features
+
+* **rename:** rename `stryker-xxx-xxx` -> `[@stryker-mutator](https://github.com/stryker-mutator)/xxx-xxx` ([1bbd6ff](https://github.com/stryker-mutator/stryker/commit/1bbd6ff))
+
+
+### BREAKING CHANGES
+
+* **rename:** The core package and plugins have been renamed: stryker-mutator-specification -> @stryker-mutator/mutator-specification
+
+
+
+
+
 ## [0.7.1](https://github.com/stryker-mutator/stryker/compare/stryker-mutator-specification@0.7.0...stryker-mutator-specification@0.7.1) (2019-02-08)
 
 **Note:** Version bump only for package stryker-mutator-specification
