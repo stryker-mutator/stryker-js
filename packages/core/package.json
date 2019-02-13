@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
