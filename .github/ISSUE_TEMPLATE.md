@@ -28,11 +28,11 @@ module.exports = function(config){
 <!-- Please list your stryker plugins + versions here (output of `npm ls | grep stryker`) -->
 
 ```
-+-- stryker@x.x.x
-+-- stryker-api@x.x.x
++-- @stryker-mutator/core@x.x.x
++-- @stryker-mutator/xxx-xxx@x.x.x
 ```
 
-<!-- Please also add the test runner you are using. Examples:-->
+<!-- Please also add the test runner you are using.  Examples:-->
 
 ```
 +-- mocha@x.x.x
@@ -41,6 +41,21 @@ module.exports = function(config){
 +-- angular-cli@x.x.x
 +-- react-scripts@x.x.x
 ```
+
+### Test runner environment
+
+<!-- Please add your test command here (probably the command you use in `npm test`) command -->
+
+```
+# Test command
+
+```
+
+<!-- Please add any config files that are used by your test runner. For example jest.config.js, karma.conf.js, angular.json, mocha.opts, ...  -->
+
+```json
+```
+
 
 ### Your Environment
 

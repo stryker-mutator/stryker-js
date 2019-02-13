@@ -64,7 +64,7 @@ These plugins need no additional configuration to work with the `Vue Mutator`. P
 You should make sure you have the correct versions of this plugin's dependencies installed:
 
 * `vue-template-compiler`
-* `stryker-api`
+* `@stryker-mutator/core`
 
 For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/vue-mutator/package.json).
 

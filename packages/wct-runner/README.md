@@ -19,7 +19,7 @@ npm i --save-dev @stryker-mutator/wct-runner
 The @stryker-mutator/wct-runner is a plugin to enable the Web Component Tester (wct) as a test runner for Stryker. As such, you should make sure you have the correct versions of its dependencies installed:
 
 - web-component-tester
-- stryker-api
+- @stryker-mutator/core
 
 For the minimum supported versions, see the [peerDependencies section in package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/wct-runner/package.json#L34).
 

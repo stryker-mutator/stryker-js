@@ -17,7 +17,7 @@ npm i --save-dev @stryker-mutator/jest-runner
 The @stryker-mutator/jest-runner is a plugin for Stryker to enable Jest as a test runner. As such, you should make sure you have the correct versions of its dependencies installed:
 
 - jest
-- stryker-api
+- @stryker-mutator/core
 
 For the minimum supported versions, see the peerDependencies section in package.json.
 
