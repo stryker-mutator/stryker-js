@@ -34,6 +34,6 @@
   },
   "peerDependencies": {
     "grunt": ">=0.4.5",
-    "@stryker-mutator/core": ">=0.21.0"
+    "@stryker-mutator/core": "^1.0.0"
   }
 }

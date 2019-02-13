@@ -52,6 +52,7 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
+    "@stryker-mutator/api": "^0.24.0",
     "@stryker-mutator/util": "^0.1.0",
     "chalk": "~2.4.1",
     "commander": "~2.19.0",
@@ -83,8 +84,5 @@
     "@types/progress": "~2.0.1",
     "flatted": "^2.0.0",
     "@stryker-mutator/api": "^0.24.1"
-  },
-  "peerDependencies": {
-    "@stryker-mutator/api": "^0.24.0"
   }
 }
