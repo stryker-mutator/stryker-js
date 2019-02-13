@@ -1,4 +1,4 @@
-import { PackageInfo } from "./PackageInfo";
+import { PackageInfo } from './PackageInfo';
 
 interface PromptOption {
   name: string;

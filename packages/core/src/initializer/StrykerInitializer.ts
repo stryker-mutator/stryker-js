@@ -26,11 +26,11 @@ export default class StrykerInitializer {
     initializerTokens.configWriter,
     initializerTokens.inquirer);
   constructor(private readonly log: Logger,
-    private readonly out: typeof console.log,
-    private readonly client: NpmClient,
-    private readonly strykerPresets: Preset[],
-    private readonly configWriter: StrykerConfigWriter,
-    private readonly inquirer: StrykerInquirer) { }
+              private readonly out: typeof console.log,
+              private readonly client: NpmClient,
+              private readonly strykerPresets: Preset[],
+              private readonly configWriter: StrykerConfigWriter,
+              private readonly inquirer: StrykerInquirer) { }
 
   /**
    * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
