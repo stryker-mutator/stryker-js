@@ -22,6 +22,9 @@
     "jest",
     "test-runner-plugin"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Sander koenders <sanderkoenders@gmail.com>",
   "contributors": [
     "Maarten Mulders <mthmulders@users.noreply.github.com>",

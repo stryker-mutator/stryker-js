@@ -26,6 +26,9 @@
     "js",
     "stryker"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Simon de Lang",
   "contributors": [
     "Simon de Lang <simondelang@gmail.com>",

@@ -9,6 +9,9 @@
   "keywords": [
     "stryker"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "src/index.js",
   "typings": "src/index.ts",
   "author": "Nico Jansen <jansennico@gmail.com>",

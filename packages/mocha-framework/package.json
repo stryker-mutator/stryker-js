@@ -24,6 +24,9 @@
     "stryker-mocha-runner",
     "@stryker-mutator/karma-runner"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },

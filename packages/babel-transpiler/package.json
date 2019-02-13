@@ -29,6 +29,9 @@
     "transpiler-plugin",
     "babel"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },

@@ -22,6 +22,9 @@
     "karma",
     "test-runner-plugin"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Nico Jansen <nicoj@infosupport.com>",
   "license": "Apache-2.0",
   "bugs": {

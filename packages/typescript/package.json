@@ -23,6 +23,9 @@
     "transpiler-plugin",
     "mutator-plugin"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },

@@ -22,6 +22,9 @@
     "webpack",
     "transpiler-plugin"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Sander koenders <sanderkoenders@gmail.com>",
   "contributors": [
     "Simon de Lang <simondelang@gmail.com>",

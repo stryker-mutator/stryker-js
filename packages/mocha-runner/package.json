@@ -22,6 +22,9 @@
     "mocha",
     "test-runner-plugin"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Simon de Lang <simon.delang@infosupport.com>",
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",

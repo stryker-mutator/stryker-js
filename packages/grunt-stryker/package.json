@@ -19,6 +19,9 @@
     "js",
     "stryker"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Simon de Lang",
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",

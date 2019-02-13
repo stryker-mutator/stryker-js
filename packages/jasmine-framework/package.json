@@ -21,6 +21,9 @@
     "@stryker-mutator/karma-runner",
     "@stryker-mutator/jasmine-runner"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Nico Jansen",
   "license": "Apache-2.0",
   "bugs": {

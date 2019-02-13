@@ -13,7 +13,10 @@
 		"test",
 		"js",
 		"stryker"
-	],
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
 	"contributors": [
 		"nicojs <jansennico@gmail.com>",
 		"Alex van Assem <avassem@gmail.com>",
