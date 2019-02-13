@@ -9,6 +9,7 @@ import CommandTestRunner from '../test-runner/CommandTestRunner';
 import Preset from './presets/Preset';
 import { initializerTokens } from '.';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { PackageInfo } from './PackageInfo';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -25,11 +26,11 @@ export default class StrykerInitializer {
     initializerTokens.configWriter,
     initializerTokens.inquirer);
   constructor(private readonly log: Logger,
-              private readonly out: typeof console.log,
-              private readonly client: NpmClient,
-              private readonly strykerPresets: Preset[],
-              private readonly configWriter: StrykerConfigWriter,
-              private readonly inquirer: StrykerInquirer) { }
+    private readonly out: typeof console.log,
+    private readonly client: NpmClient,
+    private readonly strykerPresets: Preset[],
+    private readonly configWriter: StrykerConfigWriter,
+    private readonly inquirer: StrykerInquirer) { }
 
   /**
    * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
@@ -101,7 +102,7 @@ export default class StrykerInitializer {
       selectedReporters,
       selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies));
-    this.installNpmDependencies(npmDependencies, selectedPackageManager);
+    this.installNpmDependencies(npmDependencies.map(pkg => pkg.name), selectedPackageManager);
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {
@@ -120,13 +121,13 @@ export default class StrykerInitializer {
     reporterOptions = await this.client.getTestReporterOptions();
     reporterOptions.push({
       name: 'clear-text',
-      npm: null
+      pkg: null
     }, {
         name: 'progress',
-        npm: null
+        pkg: null
       }, {
         name: 'dashboard',
-        npm: null
+        pkg: null
       }
     );
     return this.inquirer.promptReporters(reporterOptions);
@@ -134,12 +135,12 @@ export default class StrykerInitializer {
 
   private async selectTestFramework(testRunnerOption: PromptOption): Promise<null | PromptOption> {
     let selectedTestFramework: PromptOption | null = null;
-    const testFrameworkOptions = await this.client.getTestFrameworkOptions(testRunnerOption.npm);
+    const testFrameworkOptions = await this.client.getTestFrameworkOptions(testRunnerOption.pkg ? testRunnerOption.pkg.name : null);
     if (testFrameworkOptions.length) {
       this.log.debug(`Found test frameworks for ${testRunnerOption.name}: ${JSON.stringify(testFrameworkOptions)}`);
-      const none = {
+      const none: PromptOption = {
         name: 'None/other',
-        npm: null
+        pkg: null
       };
       testFrameworkOptions.push(none);
       selectedTestFramework = await this.inquirer.promptTestFrameworks(testFrameworkOptions);
@@ -179,18 +180,18 @@ export default class StrykerInitializer {
     return this.inquirer.promptPackageManager([
       {
         name: PackageManager.Npm,
-        npm: null,
+        pkg: null
       },
       {
         name: PackageManager.Yarn,
-        npm: null,
+        pkg: null
       }
     ]);
   }
 
-  private getSelectedNpmDependencies(selectedOptions: (PromptOption | null)[]) {
+  private getSelectedNpmDependencies(selectedOptions: (PromptOption | null)[]): PackageInfo[] {
     return filterEmpty(filterEmpty(selectedOptions)
-      .map(option => option.npm));
+      .map(option => option.pkg));
   }
 
   /**
@@ -202,10 +203,11 @@ export default class StrykerInitializer {
       return;
     }
 
+    const dependencyArg = dependencies.join(' ');
     this.out('Installing NPM dependencies...');
     const cmd = selectedOption.name === PackageManager.Npm
-      ? `npm i --save-dev ${dependencies.join(' ')}`
-      : `yarn add ${dependencies.join(' ')} --dev`;
+      ? `npm i --save-dev ${dependencyArg}`
+      : `yarn add ${dependencyArg} --dev`;
     this.out(cmd);
     try {
       child.execSync(cmd, { stdio: [0, 1, 2] });
@@ -214,8 +216,8 @@ export default class StrykerInitializer {
     }
   }
 
-  private async fetchAdditionalConfig(dependencies: string[]): Promise<object[]> {
-    return filterEmpty(await Promise.all(dependencies.map(dep =>
-      this.client.getAdditionalConfig(dep))));
+  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<object[]> {
+    return filterEmpty(await Promise.all(dependencies
+      .map(dep => this.client.getAdditionalConfig(dep))));
   }
 }

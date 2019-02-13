@@ -18,9 +18,8 @@
   },
   "keywords": [
     "stryker",
-    "stryker-mutator-plugin",
     "javascript",
-    "mutator-plugin"
+    "@stryker-mutator/mutator-plugin"
   ],
   "publishConfig": {
     "access": "public"

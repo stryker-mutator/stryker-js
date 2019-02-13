@@ -17,9 +17,8 @@
   },
   "keywords": [
     "stryker",
-    "stryker-mutator-plugin",
     "vuejs",
-    "mutator-plugin"
+    "@stryker-mutator/mutator-plugin"
   ],
   "publishConfig": {
     "access": "public"

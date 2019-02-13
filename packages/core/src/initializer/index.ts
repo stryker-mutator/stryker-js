@@ -10,8 +10,8 @@ import strykerPresets from './StrykerPresets';
 import StrykerConfigWriter from './StrykerConfigWriter';
 import { StrykerInquirer } from './StrykerInquirer';
 
-export const BASE_NPM_SEARCH = 'https://api.npms.io';
-export const BASE_NPM_PACKAGE = 'https://registry.npmjs.org';
+const BASE_NPM_SEARCH = 'https://api.npms.io';
+const BASE_NPM_PACKAGE = 'https://www.unpkg.com/';
 
 export function initializerFactory(): StrykerInitializer {
   return rootInjector

@@ -18,9 +18,8 @@
   },
   "keywords": [
     "stryker",
-    "stryker-mutator-plugin",
     "karma",
-    "test-runner-plugin"
+    "@stryker-mutator/test-runner-plugin"
   ],
   "publishConfig": {
     "access": "public"

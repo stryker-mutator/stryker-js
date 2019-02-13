@@ -2,18 +2,13 @@ import { RestClient, IRestResponse } from 'typed-rest-client/RestClient';
 import PromptOption from './PromptOption';
 import { errorToString } from '@stryker-mutator/util';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { initializerTokens, BASE_NPM_SEARCH, BASE_NPM_PACKAGE } from '.';
+import { initializerTokens } from '.';
 import { Logger } from '@stryker-mutator/api/logging';
+import { PackageInfo } from './PackageInfo';
 
-interface NpmSearchPackageInfo {
-  package: {
-    name: string;
-    keywords: string[];
-  };
-}
 interface NpmSearchResult {
   total: number;
-  results: NpmSearchPackageInfo[];
+  results: { package: PackageInfo }[];
 }
 
 interface NpmPackage {
@@ -29,14 +24,14 @@ const getName = (packageName: string) => {
 
 const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOption[] => searchResults.results.map(result => ({
   name: getName(result.package.name),
-  npm: result.package.name
+  pkg: result.package
 }));
 
 const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
   if (response.statusCode === 200 && response.result) {
     return response.result;
   } else {
-    throw new Error(`Query ${from} resulted in http status code: ${response.statusCode}.`);
+    throw new Error(`Path ${from} resulted in http status code: ${response.statusCode}.`);
   }
 };
 
@@ -50,12 +45,12 @@ export default class NpmClient {
   }
 
   public getTestRunnerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-mutator-plugin+test-runner-plugin')
+    return this.search('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin')
       .then(mapSearchResultToPromptOption);
   }
 
   public getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-mutator-plugin+test-framework-plugin')
+    return this.search('/v2/search?q=keywords:@stryker-mutator/test-framework-plugin')
       .then(searchResult => {
         if (testRunnerFilter) {
           searchResult.results = searchResult.results.filter(framework => framework.package.keywords.indexOf(testRunnerFilter) >= 0);
@@ -66,37 +61,37 @@ export default class NpmClient {
   }
 
   public getMutatorOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-mutator-plugin+mutator-plugin')
+    return this.search('/v2/search?q=keywords:@stryker-mutator/mutator-plugin')
       .then(mapSearchResultToPromptOption);
   }
 
   public getTranspilerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:stryker-mutator-plugin+transpiler-plugin')
+    return this.search('/v2/search?q=keywords:@stryker-mutator/transpiler-plugin')
       .then(mapSearchResultToPromptOption);
   }
 
   public getTestReporterOptions(): Promise<PromptOption[]> {
-    return this.search(`/v2/search?q=keywords:stryker-mutator-plugin+reporter-plugin`)
+    return this.search(`/v2/search?q=keywords:@stryker-mutator/reporter-plugin`)
       .then(mapSearchResultToPromptOption);
   }
 
-  public getAdditionalConfig(packageName: string): Promise<object> {
-    return this.packageClient.get<NpmPackage>(`/${packageName}/latest`)
-      .then(handleResult(`${BASE_NPM_PACKAGE}/${packageName}`))
+  public getAdditionalConfig(pkg: PackageInfo): Promise<object> {
+    const path = `/${pkg.name}@${pkg.version}/package.json`;
+    return this.packageClient.get<NpmPackage>(path)
+      .then(handleResult(path))
       .then(pkg => pkg.initStrykerConfig || {})
       .catch(err => {
-        this.log.warn(`Could not fetch additional initialization config for dependency ${packageName}. You might need to configure it manually`, err);
+        this.log.warn(`Could not fetch additional initialization config for dependency ${pkg.name}. You might need to configure it manually`, err);
         return {};
       });
   }
 
-  private search(query: string): Promise<NpmSearchResult> {
-    const call = BASE_NPM_SEARCH + query;
-    this.log.debug(`Searching: ${call}`);
-    return this.searchClient.get<NpmSearchResult>(query)
-      .then(handleResult(call))
+  private search(path: string): Promise<NpmSearchResult> {
+    this.log.debug(`Searching: ${path}`);
+    return this.searchClient.get<NpmSearchResult>(path)
+      .then(handleResult(path))
       .catch(err => {
-        this.log.error(`Unable to reach ${BASE_NPM_SEARCH} (for query ${query}). Please check your internet connection.`, errorToString(err));
+        this.log.error(`Unable to reach npms.io (for query ${path}). Please check your internet connection.`, errorToString(err));
         const result: NpmSearchResult = {
           results: [],
           total: 0

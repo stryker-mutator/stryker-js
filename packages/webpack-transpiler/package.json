@@ -17,10 +17,9 @@
   },
   "keywords": [
     "stryker",
-    "stryker-mutator-plugin",
     "typescript",
     "webpack",
-    "transpiler-plugin"
+    "@stryker-mutator/transpiler-plugin"
   ],
   "publishConfig": {
     "access": "public"
