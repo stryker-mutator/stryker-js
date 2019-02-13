@@ -29,7 +29,7 @@ module.exports = function(config){
 
 ```
 +-- @stryker-mutator/core@x.x.x
-+-- @stryker-mutator/api@x.x.x
++-- @stryker-mutator/xxx-xxx@x.x.x
 ```
 
 <!-- Please also add the test runner you are using.  Examples:-->
