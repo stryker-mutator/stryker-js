@@ -11,7 +11,7 @@ import StrykerConfigWriter from './StrykerConfigWriter';
 import { StrykerInquirer } from './StrykerInquirer';
 
 const BASE_NPM_SEARCH = 'https://api.npms.io';
-const BASE_NPM_PACKAGE = 'https://www.unpkg.com/';
+const BASE_NPM_PACKAGE = 'https://www.unpkg.com';
 
 export function initializerFactory(): StrykerInitializer {
   return rootInjector
