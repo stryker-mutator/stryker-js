@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsc -w",
     "clean": "rimraf \"src/**/+(*.d.ts|*.js|*.map)\" \"test/**/+(*.d.ts|*.js|*.map)\" .nyc_output reports",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --lines 100 --functions 100 --branches 85 npm run mocha",
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 100 --functions 100 --branches 85 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
   },
   "nyc": {
@@ -45,7 +45,8 @@
     "@stryker-mutator/test-helpers": "^1.0.1"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^1.0.1"
+    "@stryker-mutator/api": "^1.0.1",
+    "@stryker-mutator/util": "^1.0.0"
   },
   "initStrykerConfig": {
     "jasmineConfigFile": "spec/support/jasmine.json"

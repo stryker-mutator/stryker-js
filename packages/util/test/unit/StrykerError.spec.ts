@@ -14,4 +14,9 @@ describe('StrykerError', () => {
     const sut = new StrykerError('some message', innerError);
     expect(sut.message).eq(`some message. Inner error: ${errorToString(innerError)}`);
   });
+
+  it('should work without an inner error', () => {
+    const sut = new StrykerError('foo bar');
+    expect(sut.message).eq('foo bar');
+  });
 });
