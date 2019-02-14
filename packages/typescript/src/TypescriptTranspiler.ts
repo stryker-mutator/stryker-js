@@ -1,4 +1,3 @@
-import flatMap = require('lodash.flatmap');
 import * as ts from 'typescript';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
@@ -31,7 +30,7 @@ export default class TypescriptTranspiler implements Transpiler {
     if (error.length) {
       return Promise.reject(new Error(error));
     } else {
-      const resultFiles: File[] = this.transpileFiles(files);
+      const resultFiles = this.transpileFiles(files);
       return Promise.resolve(resultFiles);
     }
   }
@@ -47,23 +46,27 @@ export default class TypescriptTranspiler implements Transpiler {
       compilerOptions, typescriptFiles, getProjectDirectory(this.options), this.produceSourceMaps, this.getLogger);
   }
 
-  private transpileFiles(files: ReadonlyArray<File>) {
+  private transpileFiles(files: ReadonlyArray<File>): ReadonlyArray<File> {
     let isSingleOutput = false;
-    // Keep original order of the files using a flatmap.
-    return flatMap(files, file => {
-      if (!isHeaderFile(file.name) && this.filter.isIncluded(file.name)) {
-        // File is to be transpiled. Only emit if more output is expected.
-        if (isSingleOutput) {
-          return [];
-        } else {
-          const emitOutput = this.languageService.emit(file.name);
-          isSingleOutput = emitOutput.singleResult;
-          return emitOutput.outputFiles;
+    const fileDictionary: { [name: string]: File } = {};
+    files.forEach(file => fileDictionary[file.name] = file);
+    files.forEach(file => {
+      if (!isHeaderFile(file.name)) {
+        if (this.filter.isIncluded(file.name)) {
+
+          // File is to be transpiled. Only emit if more output is expected.
+          if (!isSingleOutput) {
+            const emitOutput = this.languageService.emit(file.name);
+            isSingleOutput = emitOutput.singleResult;
+            emitOutput.outputFiles.forEach(file => fileDictionary[file.name] = file);
+          }
+
+          // Remove original file
+          delete fileDictionary[file.name];
         }
-      } else {
-        // File is not an included typescript file
-        return [file];
       }
     });
+
+    return Object.keys(fileDictionary).map(name => fileDictionary[name]);
   }
 }
