@@ -252,10 +252,6 @@ These modules should be installed right next to stryker. For a current list of p
 you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or 
 [stryker-mutator.io](https://stryker-mutator.io).
 
-### `port` [`number`]
-
-Removed. With this setting you could configure the port used by the karma test runner. It can now be configured directly with karma: { config: { port: 7654 } } (but shouldn't be needed as karma supports its own port selection)
-
 ### `timeoutMS` [`number`]
 
 Default: `5000`  
