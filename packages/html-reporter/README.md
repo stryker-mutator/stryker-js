@@ -11,7 +11,7 @@ An HTML Reporter for the JavaScript mutation testing framework [Stryker](https:/
 
 Click on the image below to see a real-life example of a report generated from a test run on stryker itself!
 
-[![example](https://github.com/stryker-mutator/stryker/blob/html-docs/packages/html-reporter/example.png)](https://stryker-mutator.io/stryker-html-reporter)
+[![example](https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/html-reporter/example.png)](https://stryker-mutator.io/stryker-html-reporter)
 
 ## Install
 
