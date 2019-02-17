@@ -1,61 +1,61 @@
 {
 	"folders": [
 		{
-			"path": "packages/stryker"
+			"path": "packages/core"
 		},
 		{
 			"path": "packages/grunt-stryker"
 		},
 		{
-			"path": "packages/stryker-api"
+			"path": "packages/api"
 		},
 		{
-			"path": "packages/stryker-babel-transpiler"
+			"path": "packages/babel-transpiler"
 		},
 		{
-			"path": "packages/stryker-html-reporter"
+			"path": "packages/html-reporter"
 		},
 		{
-			"path": "packages/stryker-jasmine"
+			"path": "packages/jasmine-framework"
 		},
 		{
-			"path": "packages/stryker-jasmine-runner"
+			"path": "packages/jasmine-runner"
 		},
 		{
-			"path": "packages/stryker-javascript-mutator/"
+			"path": "packages/javascript-mutator"
 		},
 		{
-			"path": "packages/stryker-jest-runner"
+			"path": "packages/jest-runner"
 		},
 		{
-			"path": "packages/stryker-karma-runner"
+			"path": "packages/karma-runner"
 		},
 		{
-			"path": "packages/stryker-mocha-framework"
+			"path": "packages/mocha-framework"
 		},
 		{
-			"path": "packages/stryker-mocha-runner"
+			"path": "packages/mocha-runner"
 		},
 		{
-			"path": "packages/stryker-mutator-specification"
+			"path": "packages/mutator-specification"
 		},
 		{
-			"path": "packages/stryker-typescript"
+			"path": "packages/typescript"
 		},
 		{
-			"path": "packages/stryker-vue-mutator"
+			"path": "packages/vue-mutator"
 		},
 		{
-			"path": "packages/stryker-webpack-transpiler"
+			"path": "packages/webpack-transpiler"
 		},
 		{
-			"path": "packages/stryker-wct-runner"
+			"path": "packages/wct-runner"
 		},
 		{
-			"path": "packages/stryker-util"
+			"path": "packages/util"
 		},
 		{
-			"path": "packages/stryker-test-helpers"
+			"path": "packages/test-helpers"
 		},
 		{
 			"path": "e2e"
@@ -65,7 +65,7 @@
 		},
 		{
 			"path": ".",
-			"name": "stryker-parent"
+			"name": "parent"
 		}
 	],
 	"settings": {
@@ -74,7 +74,7 @@
 			".git": true,
 			".tscache": true,
 			"{src,test}/**/*.d.ts": true, //base mapping not possible: https://github.com/Microsoft/vscode/issues/40850
-			"*.d.ts": true, // needed to exclude d.ts files in stryker-api
+			"*.d.ts": true, // needed to exclude d.ts files in api
 			"**/*.js": {
 				"when": "$(basename).ts"
 			},
@@ -85,7 +85,8 @@
 				"when": "$(basename)"
 			}
 		},
-		"tslint.enable": true,
-		"tslint.autoFixOnSave": true
+		"editor.codeActionsOnSave": {
+			"source.fixAll.tslint": true
+		}
 	}
 }

@@ -1,0 +1,16 @@
+{
+  "verbose": true,
+  "suites": ["packages/wct-runner/testResources/jsTestSuite/test"],
+  "plugins": {
+    "local": {
+      "browsers": ["chrome"],
+      "skipSeleniumInstall": true,
+      "browserOptions": {
+        "chrome": ["window-size=1920,1080", "headless", "disable-gpu"],
+        "firefox": ["--headless"]
+      }
+    }
+  },
+  "npm": true,
+  "root": "../../../../.."
+}

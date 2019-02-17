@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": [
+      "mocha",
+      "node"
+    ]
+  },
+  "include": [
+    "test",
+    "typings"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.src.json"
+    },
+    {
+      "path": "../test-helpers/tsconfig.src.json"
+    },
+    {
+      "path": "../jasmine-framework/tsconfig.src.json",
+    }
+  ]
+}

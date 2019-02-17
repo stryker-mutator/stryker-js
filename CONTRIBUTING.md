@@ -22,7 +22,7 @@ Get in touch with us through twitter or via the [Stryker gitter](https://gitter.
 Please adhere to our [editorconfig](https://editorconfig.org) and [tslint](https://palantir.github.io/tslint/) rules. If you're using vscode, please install the following extensions:
 
 * The [editorconfig extension](https://github.com/editorconfig/editorconfig-vscode#editorconfig-for-visual-studio-code)
-* The [tslint extension](https://github.com/Microsoft/vscode-tslint)
+* The [tslint extension](https://github.com/Microsoft/vscode-tslint) (at least v1.0.0)
 
 We configured the tslint extension to run on save in or [vscode workspace](#vscode-environment-configuration).
 
@@ -70,7 +70,7 @@ Have fun!
 We support mutation testing Stryker with Stryker! After you got Stryker working locally, you can follow these steps to mutation test Stryker:
 1. Navigate to the root of the project
 1. Build all Stryker packages: `npm run build`
-1. Navigate to `packages/stryker` 
+1. Navigate to `packages/core` 
 1. Run `node bin/stryker run`
 
 ## Adding new features

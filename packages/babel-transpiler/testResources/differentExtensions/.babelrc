@@ -1,0 +1,5 @@
+{ 
+    "ignore": [
+        "source/excluded.es6"
+    ]
+}

@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
-[![NPM](https://img.shields.io/npm/dm/stryker.svg)](https://www.npmjs.com/package/stryker)
-[![Node version](https://img.shields.io/node/v/stryker.svg)](https://img.shields.io/node/v/stryker.svg)
+[![NPM](https://img.shields.io/npm/dm/@stryker-mutator/core.svg)](https://www.npmjs.com/package/@stryker-mutator/core)
+[![Node version](https://img.shields.io/node/v/@stryker-mutator/core.svg)](https://img.shields.io/node/v/@stryker-mutator/core.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
 
@@ -26,11 +26,11 @@ For the quickstart, see [quickstart](https://stryker-mutator.io/quickstart.html)
 
 ## Usage
 
-For details on the `stryker run` command and others, see [stryker's readme](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker#readme)
+For details on the `stryker run` command and others, see [stryker's readme](https://github.com/stryker-mutator/stryker/tree/master/packages/core#readme)
 
 ## Configuration  
 
-See the [stryker's package readme](https://github.com/stryker-mutator/stryker/blob/master/packages/stryker/README.md#configuration) for all config options.
+See the [stryker's package readme](https://github.com/stryker-mutator/stryker/blob/master/packages/core/README.md#configuration) for all config options.
 
 
 ## Supported mutators  

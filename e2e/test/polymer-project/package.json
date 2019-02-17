@@ -26,10 +26,11 @@
     "webmat": "^0.2.0"
   },
   "localDependencies": {
-    "stryker": "../../../packages/stryker",
-    "stryker-wct-runner": "../../../packages/stryker-wct-runner",
-    "stryker-javascript-mutator": "../../../packages/stryker-javascript-mutator",
-    "@stryker-mutator/util": "../../../packages/stryker-util"
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/wct-runner": "../../../packages/wct-runner",
+    "@stryker-mutator/javascript-mutator": "../../../packages/javascript-mutator",
+    "@stryker-mutator/util": "../../../packages/util"
   },
   "scripts": {
     "pretest": "rimraf \"reports\" \"stryker.log\"",

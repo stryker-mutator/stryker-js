@@ -1,0 +1,40 @@
+{
+  "name": "@stryker-mutator/jasmine-framework",
+  "version": "1.0.2",
+  "description": "A plugin to use the Jasmine test framework in Stryker, the JavaScript mutation testing framework",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "clean": "rimraf \"src/**/+(*.d.ts|*.js|*.map)\" \"test/**/+(*.d.ts|*.js|*.map)\" .nyc_output reports",
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 100 --functions 100 --branches 100  npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 10000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/stryker-mutator/stryker.git"
+  },
+  "keywords": [
+    "stryker",
+    "jasmine",
+    "@stryker-mutator/test-framework-plugin",
+    "@stryker-mutator/karma-runner",
+    "@stryker-mutator/jasmine-runner"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Nico Jansen",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/jasmine#readme",
+  "peerDependencies": {
+    "@stryker-mutator/core": "^1.0.0",
+    "jasmine-core": ">=2"
+  },
+  "dependencies": {
+    "@stryker-mutator/api": "^1.0.1"
+  },
+  "contributors": []
+}

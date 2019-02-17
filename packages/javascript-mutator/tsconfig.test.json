@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": [
+      "mocha",
+      "node"
+    ]
+  },
+  "include": [
+    "test"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.src.json"
+    },
+    {
+      "path": "../mutator-specification/tsconfig.src.json"
+    },
+    {
+      "path": "../test-helpers/tsconfig.src.json"
+    }
+  ]
+}
