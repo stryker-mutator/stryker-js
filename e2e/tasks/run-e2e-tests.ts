@@ -10,10 +10,12 @@ const testRootDir = path.resolve(__dirname, '..', 'test');
 
 function runE2eTests() {
   const testDirs = fs.readdirSync(testRootDir);
+  const excludedProject = process.env.E2E_EXCLUDE || '';
 
   // Create test$, an observable of test runs
   const test$ = from(testDirs).pipe(
     filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()),
+    filter(dir => dir !== excludedProject),
     map(testDir => defer(() => runTest(testDir)))
   );
 

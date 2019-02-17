@@ -20,7 +20,6 @@ jobs:
   - task: NodeTool@0
     inputs:
       versionSpec: '10.x'
-  - script: java -version
   - script: npm install
   - script: npm run build
-  - script: npm run e2e
+  - script: npm run e2e:windows
