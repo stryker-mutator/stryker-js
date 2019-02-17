@@ -58,6 +58,7 @@
     "test": "npm run mocha",
     "mocha": "lerna run test --scope stryker-wct-runner --stream",
     "e2e": "cd e2e && npm ci && npm t && cd ..",
+    "e2e:windows": "cd e2e && npm ci && npm run test:windows && cd ..",
     "perf": "cd perf && npm ci && npm t && cd ..",
     "start": "tsc -b -w",
     "lerna-publish": "lerna publish --conventional-commits --yes --git-remote gh-publish"
