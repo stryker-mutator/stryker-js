@@ -7,5 +7,6 @@ module.exports = {
   collectCoverage: true,
   verbose: true,
   testURL: "http://localhost",
-  bail: false
+  bail: false,
+  notify: true,
 }

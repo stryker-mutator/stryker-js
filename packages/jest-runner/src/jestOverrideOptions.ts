@@ -11,6 +11,10 @@ const JEST_OVERRIDE_OPTIONS = Object.freeze({
 
     // Disable bail so the jest process does not quit with a non-zero exit code
     bail: false,
+
+    // Disable notifications for test results, this will otherwise show a notification about
+    // the results each time Stryker runs the tests
+    notify: false
 });
 
 export default JEST_OVERRIDE_OPTIONS;

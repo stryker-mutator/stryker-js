@@ -49,6 +49,7 @@ describe('Integration test for Jest ConfigEditor', () => {
         '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
         '^react-native$': 'react-native-web'
       },
+      notify: false,
       rootDir: projectRoot,
       setupFiles: [path.join(projectRoot, 'node_modules', 'react-app-polyfill', 'jsdom.js')],
       setupTestFrameworkScriptFile: undefined,
@@ -107,6 +108,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       moduleNameMapper: {
         '^react-native$': 'react-native-web'
       },
+      notify: false,
       rootDir: projectRoot,
       setupFiles: [path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'polyfills.js')],
       setupTestFrameworkScriptFile: undefined,
@@ -142,6 +144,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
+      notify: false,
       testEnvironment: 'jest-environment-jsdom',
       testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$',
       testResultsProcessor: undefined,
@@ -161,6 +164,7 @@ describe('Integration test for Jest ConfigEditor', () => {
       bail: false,
       collectCoverage: false,
       moduleFileExtensions: ['js', 'json', 'jsx', 'node'],
+      notify: false,
       testEnvironment: 'jest-environment-jsdom',
       testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$',
       testResultsProcessor: undefined,
@@ -178,6 +182,7 @@ describe('Integration test for Jest ConfigEditor', () => {
     expect(config.jest.config).to.deep.equal({
       bail: false,
       collectCoverage: false,
+      notify: false,
       testResultsProcessor: undefined,
       verbose: false,
     });

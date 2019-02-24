@@ -56,12 +56,13 @@ describe('JestConfigEditor', () => {
     assert(reactScriptsTSJestConfigLoaderStub.loadConfig.calledOnce, 'ReactScriptsTSJestConfigLoader loadConfig not called');
   });
 
-  it('should override verbose, collectCoverage, testResultsProcessor and bail on all loaded configs', () => {
+  it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', () => {
     sut.edit(config);
 
     expect(config.jest.config).to.deep.equal({
       bail: false,
       collectCoverage: false,
+      notify: false,
       testResultsProcessor: undefined,
       verbose: false
     });
