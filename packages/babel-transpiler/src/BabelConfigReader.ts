@@ -8,6 +8,7 @@ export interface StrykerBabelConfig {
   extensions: ReadonlyArray<string>;
   options: babel.TransformOptions;
   optionsFile: string | null;
+  optionsApi?: Partial<babel.ConfigAPI>;
 }
 
 export const CONFIG_KEY = 'babel';
@@ -33,21 +34,27 @@ export class BabelConfigReader {
       ...strykerOptions[CONFIG_KEY]
     };
     babelConfig.options = {
-      ...this.readBabelOptionsFromFile(babelConfig.optionsFile),
+      ...this.readBabelOptionsFromFile(babelConfig.optionsFile, babelConfig.optionsApi),
       ...babelConfig.options
     };
     this.log.debug(`Babel config is: ${JSON.stringify(babelConfig, null, 2)}`);
     return babelConfig;
   }
 
-  private readBabelOptionsFromFile(relativeFileName: string | null): babel.TransformOptions {
+  private readBabelOptionsFromFile(relativeFileName: string | null, optionsApi?: Partial<babel.ConfigAPI>): babel.TransformOptions {
     if (relativeFileName) {
       const babelrcPath = path.resolve(relativeFileName);
       this.log.debug(`Reading .babelrc file from path "${babelrcPath}"`);
       if (fs.existsSync(babelrcPath)) {
         try {
-          const config: babel.TransformOptions = JSON.parse(fs.readFileSync(babelrcPath, 'utf8'));
-          return config;
+          if (path.basename(babelrcPath) === '.babelrc.js') {
+            return require(babelrcPath) as babel.TransformOptions;
+          }
+          if (path.basename(babelrcPath) === 'babel.config.js') {
+            const config: babel.ConfigFunction = require(babelrcPath);
+            return config(optionsApi as babel.ConfigAPI);
+          }
+          return JSON.parse(fs.readFileSync(babelrcPath, 'utf8')) as babel.TransformOptions;
         } catch (error) {
           this.log.error(`Error while reading "${babelrcPath}" file: ${error}`);
         }
