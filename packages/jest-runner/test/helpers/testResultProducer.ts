@@ -156,3 +156,58 @@ export const createPendingResult = () => ({
   ],
   wasInterrupted: false
 });
+
+export const createTodoResult = () => ({
+  numFailedTests: 0,
+  numFailedTestSuites: 0,
+  numPassedTests: 1,
+  numPassedTestSuites: 1,
+  numPendingTests: 0,
+  numPendingTestSuites: 0,
+  numRuntimeErrorTestSuites: 0,
+  numTodoTests: 1,
+  numTotalTests: 2,
+  numTotalTestSuites: 1,
+  startTime: 1551045971122,
+  success: true,
+  testResults: [
+    {
+      console: null,
+      coverage: undefined,
+      displayName: undefined,
+      failureMessage: null,
+      leaks: false,
+      numFailingTests: 0,
+      numPassingTests: 1,
+      numPendingTests: 0,
+      numTodoTests: 1,
+      perfStats: [Object],
+      skipped: false,
+      snapshot: [Object],
+      sourceMaps: {},
+      testResults: [
+        {
+          ancestorTitles: [ 'App' ],
+          duration: 4,
+          failureMessages: [],
+          fullName: 'App renders without crashing',
+          location: null,
+          numPassingAsserts: 0,
+          status: 'passed',
+          title: 'renders without crashing'
+        },
+        {
+          ancestorTitles: [ 'App' ],
+          duration: 0,
+          failureMessages: [],
+          fullName: 'App renders without crashing with children',
+          location: null,
+          numPassingAsserts: 0,
+          status: 'todo',
+          title: 'renders without crashing with children'
+        }
+      ],
+    }
+  ],
+  wasInterrupted: false
+});
