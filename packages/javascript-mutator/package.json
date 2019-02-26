@@ -39,7 +39,7 @@
   "dependencies": {
     "@babel/generator": "~7.3.2",
     "@babel/parser": "~7.3.1",
-    "@babel/traverse": "~7.2.2",
+    "@babel/traverse": "~7.3.4",
     "@stryker-mutator/api": "^1.0.1",
     "lodash": "~4.17.4",
     "tslib": "~1.9.3"
