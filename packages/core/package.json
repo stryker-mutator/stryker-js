@@ -1,13 +1,12 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
   "scripts": {
     "start": "tsc -w",
-    "test:original": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 15000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
     "@stryker-mutator/core": "node bin/stryker run"
   },
@@ -55,8 +54,8 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^1.0.1",
-    "@stryker-mutator/util": "^1.0.0",
+    "@stryker-mutator/api": "^1.0.3",
+    "@stryker-mutator/util": "^1.0.3",
     "chalk": "~2.4.1",
     "commander": "~2.19.0",
     "get-port": "~4.1.0",
@@ -79,7 +78,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/api": "^0.24.1",
-    "@stryker-mutator/test-helpers": "^1.0.1",
+    "@stryker-mutator/test-helpers": "^1.0.3",
     "@types/get-port": "~4.0.0",
     "@types/inquirer": "~0.0.42",
     "@types/istanbul-lib-instrument": "~1.7.0",

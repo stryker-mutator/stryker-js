@@ -92,6 +92,8 @@ export default class JestTestRunner implements TestRunner {
         return TestStatus.Success;
       case 'pending':
         return TestStatus.Skipped;
+      case 'todo':
+        return TestStatus.Skipped;
       default:
         return TestStatus.Failed;
     }

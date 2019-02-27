@@ -3,6 +3,7 @@ import { TestRunner, RunResult, TestResult, RunStatus } from '@stryker-mutator/a
 import { Jasmine, toStrykerTestResult, evalGlobal } from './helpers';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { errorToString } from '@stryker-mutator/util';
 
 export default class JasmineTestRunner implements TestRunner {
 
@@ -44,7 +45,7 @@ export default class JasmineTestRunner implements TestRunner {
       jasmine.addReporter(reporter);
       jasmine.execute();
     }).catch(error => ({
-      errorMessages: ['An error occurred while loading your jasmine specs' + EOL + (error.stack || error.message || error.toString())],
+      errorMessages: ['An error occurred while loading your jasmine specs' + EOL + errorToString(error)],
       status: RunStatus.Error,
       tests: []
     }));

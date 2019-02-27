@@ -1,12 +1,12 @@
 {
   "name": "@stryker-mutator/mocha-runner",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A plugin to use the mocha test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
     "start": "tsc -w",
     "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" .nyc_output reports coverage",
-    "test": "nyc --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 10000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
@@ -35,12 +35,12 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/mocha-runner#readme",
   "dependencies": {
-    "@stryker-mutator/api": "^1.0.1",
+    "@stryker-mutator/api": "^1.0.3",
     "multimatch": "~3.0.0",
     "tslib": "~1.9.3"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "^1.0.1",
+    "@stryker-mutator/test-helpers": "^1.0.3",
     "@types/multimatch": "~2.1.2",
     "stryker-mocha-framework": "^0.15.1"
   },

@@ -37,7 +37,7 @@
     "sinon": "^7.2.0",
     "sinon-chai": "^3.2.0",
     "source-map-support": "^0.5.6",
-    "tslint": "~5.12.0",
+    "tslint": "~5.13.0",
     "typescript": "^3.3.1",
     "web-component-tester": "6.9.2"
   },
@@ -56,7 +56,7 @@
     "e2e": "cd e2e && npm ci && npm t && cd ..",
     "perf": "cd perf && npm ci && npm t && cd ..",
     "start": "tsc -b -w",
-    "lerna-publish": "lerna version --conventional-commits --yes --git-remote gh-publish && lerna publish from-git --yes"
+    "lerna-publish": "lerna version --conventional-commits --yes --git-remote gh-publish --force-publish && lerna publish from-git --yes"
   },
   "engines": {
     "node": ">=6",

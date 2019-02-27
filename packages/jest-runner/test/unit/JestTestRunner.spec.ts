@@ -79,6 +79,31 @@ describe('JestTestRunner', () => {
     });
   });
 
+  it('should call the jestTestRunner run method and return a todo runResult', async () => {
+    jestTestAdapterMock.run.resolves({ results: fakeResults.createTodoResult() });
+
+    const result = await jestTestRunner.run(runOptions);
+
+    expect(result).to.deep.equal({
+      errorMessages: [],
+      status: RunStatus.Complete,
+      tests: [
+        {
+          failureMessages: [],
+          name: 'App renders without crashing',
+          status: TestStatus.Success,
+          timeSpentMs: 4
+        },
+        {
+          failureMessages: [],
+          name: 'App renders without crashing with children',
+          status: TestStatus.Skipped,
+          timeSpentMs: 0
+        }
+      ]
+    });
+  });
+
   it('should call the jestTestRunner run method and return a negative runResult', async () => {
     jestTestAdapterMock.run.resolves({ results: fakeResults.createFailResult() });
 
