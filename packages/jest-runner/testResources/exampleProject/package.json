@@ -12,6 +12,7 @@
     "testURL": "http://localhost",
     "collectCoverage": true,
     "verbose": true,
-    "bail": false
+    "bail": false,
+    "notify": true
   }
 }
