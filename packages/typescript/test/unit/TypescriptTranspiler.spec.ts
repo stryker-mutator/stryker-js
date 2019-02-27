@@ -9,7 +9,7 @@ import sinon = require('sinon');
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-describe('TypescriptTranspiler', () => {
+describe(TypescriptTranspiler.name, () => {
 
   let languageService: sinon.SinonStubbedInstance<TranspilingLanguageService>;
   let sut: TypescriptTranspiler;
@@ -96,35 +96,20 @@ describe('TypescriptTranspiler', () => {
       expect(languageService.emit).calledWith('file1.ts');
     });
 
-    it('should keep order if single output result file', async () => {
+    it('should remove duplicate files (issue 1318)', async () => {
       // Arrange
-      const input = [
-        new File('file1.ts', 'file1'),
-        new File('file2.ts', 'file2'),
-        new File('file3.bin', Buffer.from([1, 2, 3])),
-        new File('file4.ts', 'file4'),
-        new File('file5.ts', 'file5')
-      ];
-      const allOutput = new File('allOutput.js', 'single output');
-      const emitResult: EmitOutput = {
-        outputFiles: [allOutput],
-        singleResult: true
-      };
-      languageService.emit.returns(emitResult);
-      arrangeIncludedFiles([input[1], input[3]]);
+      const inputFile = new File('file1.ts', 'const foo: number = 42;');
+      const expectedOutputFile = new File('file1.js', 'const foo = 42;');
+      arrangeIncludedFiles([inputFile]);
+      const input = [inputFile, new File('file1.js', 'js content')];
+      languageService.emit.returns(multiResult(expectedOutputFile));
 
       // Act
       const outputFiles = await sut.transpile(input);
 
       // Assert
-      expectFilesEqual(outputFiles, [
-        new File('file1.ts', 'file1'),
-        allOutput,
-        new File('file3.bin', Buffer.from([1, 2, 3])),
-        new File('file5.ts', 'file5')
-      ]);
-      expect(languageService.emit).calledOnce;
-      expect(languageService.emit).calledWith('file2.ts');
+      expect(outputFiles).lengthOf(1);
+      expect(outputFiles[0]).eq(expectedOutputFile);
     });
 
     it('should reject errors when there are diagnostic messages', async () => {
@@ -136,7 +121,11 @@ describe('TypescriptTranspiler', () => {
   });
 
   function expectFilesEqual(actual: ReadonlyArray<File>, expected: ReadonlyArray<File>) {
-    expect(serialize(actual)).eq(serialize(expected));
+    expect(serialize(orderByName(actual))).eq(serialize(orderByName(expected)));
+  }
+
+  function orderByName(files: ReadonlyArray<File>) {
+    files.slice().sort((a, b) => a.name.localeCompare(b.name));
   }
 
   function multiResult(file: File): EmitOutput {
