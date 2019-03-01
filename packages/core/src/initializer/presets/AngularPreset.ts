@@ -8,10 +8,10 @@ export class AngularPreset implements Preset {
   public readonly name = 'angular-cli';
   // Please keep config in sync with handbook
   private readonly dependencies = [
-    'stryker',
+    '@stryker-mutator/core',
     '@stryker-mutator/karma-runner',
     '@stryker-mutator/typescript',
-    'stryker-html-reporter'
+    '@stryker-mutator/html-reporter'
   ];
   private readonly config = `{
         mutate: [

@@ -11,12 +11,12 @@ const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/ma
 export class VueJsPreset implements Preset {
   public readonly name = 'vueJs';
   private readonly generalDependencies = [
-    'stryker',
-    'stryker-vue-mutator',
-    'stryker-html-reporter'
+    '@stryker-mutator/core',
+    '@stryker-mutator/vue-mutator',
+    '@stryker-mutator/html-reporter'
   ];
 
-  private readonly jestDependency = 'stryker-jest-runner';
+  private readonly jestDependency = '@stryker-mutator/jest-runner';
   private readonly jestConf = `{
       mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
       mutator: 'vue',
