@@ -11,9 +11,9 @@ const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/ma
 export class ReactPreset implements Preset {
   public readonly name = 'react';
   private readonly generalDependencies = [
-    'stryker',
-    'stryker-jest-runner',
-    'stryker-html-reporter'
+    '@stryker-mutator/core',
+    '@stryker-mutator/jest-runner',
+    '@stryker-mutator/html-reporter'
   ];
 
   private readonly sharedConfig = `testRunner: 'jest',

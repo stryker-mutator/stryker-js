@@ -52,7 +52,7 @@ describe('Presets', () => {
       expect(config.config).to.contain(`mutator: 'typescript'`);
     });
 
-    it('should install stryker-typescript when TSX is chosen', async () => {
+    it('should install @stryker-mutator/typescript when TSX is chosen', async () => {
       inquirerPrompt.resolves({
         choice: 'TSX'
       });
@@ -68,7 +68,7 @@ describe('Presets', () => {
       expect(config.config).to.include(`mutator: 'javascript'`);
     });
 
-    it('should install stryker-javascript-mutator when JSX is chosen', async () => {
+    it('should install @stryker-mutator/javascript-mutator when JSX is chosen', async () => {
       inquirerPrompt.resolves({
         choice: 'JSX'
       });
@@ -106,16 +106,16 @@ describe('Presets', () => {
       expect(config.dependencies).to.include('@stryker-mutator/karma-runner');
     });
 
-    it('should install stryker-jest-runner when jest is chosen', async () => {
+    it('should install @stryker-mutator/jest-runner when jest is chosen', async () => {
       inquirerPrompt.resolves({
         script: 'typescript',
         testRunner: 'jest'
       });
       const config = await vueJsPreset.createConfig();
-      expect(config.dependencies).to.include('stryker-jest-runner');
+      expect(config.dependencies).to.include('@stryker-mutator/jest-runner');
     });
 
-    it('should install stryker-typescript when typescript is chosen', async () => {
+    it('should install @stryker-mutator/typescript when typescript is chosen', async () => {
       inquirerPrompt.resolves({
         script: 'typescript',
         testRunner: 'karma'
@@ -124,7 +124,7 @@ describe('Presets', () => {
       expect(config.dependencies).to.include('@stryker-mutator/typescript');
     });
 
-    it('should install stryker-javascript-mutator when javascript is chosen', async () => {
+    it('should install @stryker-mutator/javascript-mutator when javascript is chosen', async () => {
       inquirerPrompt.resolves({
         script: 'javascript',
         testRunner: 'karma'
