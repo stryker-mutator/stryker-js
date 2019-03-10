@@ -39,7 +39,7 @@ export default class LoggingServer {
     } else {
       this.disposed = true;
       return new Promise((res, rej) => {
-        this.server.close((err: Error) => {
+        this.server.close((err?: Error | undefined) => {
           if (err) {
             rej(err);
           } else {
