@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { expect } from 'chai';
-import getPort = require('get-port');
+import getPort from 'get-port';
 import { RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
 import * as log4js from 'log4js';
 import ResilientTestRunnerFactory from '../../../src/test-runner/ResilientTestRunnerFactory';
