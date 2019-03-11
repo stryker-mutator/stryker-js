@@ -1,4 +1,4 @@
-import * as decamelize from 'decamelize';
+import decamelize from 'decamelize';
 import * as semver from 'semver';
 import { requireModule } from '../utils';
 import { NgConfigOptions, NgTestArguments } from '../StrykerKarmaSetup';
