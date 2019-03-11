@@ -1,6 +1,6 @@
-import getPortModule = require('get-port');
+import getPort from 'get-port';
 
 /**
  * A wrapper around `getPort` for testing purposes
  */
-export const getFreePort = getPortModule;
+export const getFreePort = getPort;
