@@ -5,7 +5,8 @@ import * as mkdirp from 'mkdirp';
 import { RunResult, TestRunner, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { File } from '@stryker-mutator/api/core';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
-import { wrapInClosure, normalizeWhiteSpaces } from './utils/objectUtils';
+import { wrapInClosure } from './utils/objectUtils';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
 import { TempFolder } from './utils/TempFolder';
 import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
@@ -144,7 +145,7 @@ export default class Sandbox {
         await symlinkJunction(nodeModules, path.join(this.workingDirectory, 'node_modules'))
           .catch((error: NodeJS.ErrnoException) => {
             if (error.code === 'EEXIST') {
-              this.log.warn(normalizeWhiteSpaces(`Could not symlink "${nodeModules}" in sandbox directory,
+              this.log.warn(normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
               it is already created in the sandbox. Please remove the node_modules from your sandbox files.
               Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`));
             } else {

@@ -23,7 +23,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^1.1.0"
+    "@stryker-mutator/api": "^1.1.0",
+    "@stryker-mutator/util": "^1.1.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "^1.1.0",

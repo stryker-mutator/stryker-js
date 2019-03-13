@@ -3,6 +3,7 @@ import WctTestRunner from '../../src/WctTestRunner';
 import { expect } from 'chai';
 import { RunResult, TestStatus, RunStatus, TestResult } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 
 type TimelessRunResult = {
   [K in keyof RunResult]: RunResult[K] extends TestResult[] ? TimelessTestResult[] : RunResult[K];
@@ -25,8 +26,8 @@ describe('WctTestRunner integration', () => {
     status: RunStatus.Complete,
     tests: [
       { name: '<awesome-element> is awesome', status: TestStatus.Success, failureMessages: undefined },
-      { name: '<failing-element> is failing', status: TestStatus.Failed, failureMessages: ['expected true to be false\n  Context.<anonymous> at failing-tests.html:10'] },
-      { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing\n  HTMLElement.throw at /components/stryker-parent/packages/wct-runner/testResources/htmlTestSuite/src/failing-element.js:11\n       Context.test at failing-tests.html:13'] }
+      { name: '<failing-element> is failing', status: TestStatus.Failed, failureMessages: ['expected true to be false Context.<anonymous> at failing-tests.html:10'] },
+      { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing HTMLElement.throw at /components/stryker-parent/packages/wct-runner/testResources/htmlTestSuite/src/failing-element.js:11 Context.test at failing-tests.html:13'] }
     ]
   };
   // To enable console logging: LoggerFactory.setLogImplementation(consoleLoggerFactory);
@@ -103,7 +104,7 @@ describe('WctTestRunner integration', () => {
     const sut = createSut();
     const expectedResult: TimelessRunResult = {
       status: RunStatus.Complete, // We want to actually expect an error here, but wct doesn't let is.
-      tests: [{ name: '', status: TestStatus.Failed, failureMessages: ['Random error\n  <unknown> at /components/stryker-parent/packages/wct-runner/testResources/garbage/test/gargbage-tests.js:1'] }]
+      tests: [{ name: '', status: TestStatus.Failed, failureMessages: ['Random error <unknown> at /components/stryker-parent/packages/wct-runner/testResources/garbage/test/gargbage-tests.js:1'] }]
     };
 
     // Act
@@ -118,6 +119,9 @@ describe('WctTestRunner integration', () => {
     actual.tests.forEach(testResult => {
       expect(testResult.timeSpentMs).gte(0);
       delete testResult.timeSpentMs;
+      if (testResult.failureMessages) {
+        testResult.failureMessages = testResult.failureMessages.map(normalizeWhitespaces);
+      }
     });
     expect(actual).deep.eq(expected);
   }

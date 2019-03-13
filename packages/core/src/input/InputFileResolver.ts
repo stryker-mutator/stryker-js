@@ -7,9 +7,10 @@ import StrictReporter from '../reporters/StrictReporter';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { StrykerError } from '@stryker-mutator/util';
 import InputFileCollection from './InputFileCollection';
-import { normalizeWhiteSpaces, filterEmpty } from '../utils/objectUtils';
+import { filterEmpty } from '../utils/objectUtils';
 import { Config } from '@stryker-mutator/api/config';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { coreTokens } from '../di';
 import { Logger } from '@stryker-mutator/api/logging';
 
@@ -117,7 +118,7 @@ export default class InputFileResolver {
         .map(relativeFileName => path.resolve(relativeFileName));
       return fileNames;
     } catch (error) {
-      throw new StrykerError(normalizeWhiteSpaces(
+      throw new StrykerError(normalizeWhitespaces(
         `Cannot determine input files. Either specify a \`files\`
         array in your stryker configuration, or make sure "${process.cwd()}"
         is located inside a git repository`),
