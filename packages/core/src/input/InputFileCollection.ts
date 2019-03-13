@@ -1,6 +1,6 @@
 import { File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { normalizeWhiteSpaces } from '../utils/objectUtils';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 import os = require('os');
 
 export default class InputFileCollection {
@@ -21,7 +21,7 @@ export default class InputFileCollection {
       if (this.filesToMutate.length) {
         log.info(`Found ${this.filesToMutate.length} of ${this.files.length} file(s) to be mutated.`);
       } else {
-        log.warn(normalizeWhiteSpaces(`No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.
+        log.warn(normalizeWhitespaces(`No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.
         You can configure the \`mutate\` property in your stryker.conf.js file (or use \`--mutate\` via command line).`));
       }
       if (log.isDebugEnabled) {

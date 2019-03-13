@@ -6,7 +6,8 @@ import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import { expect } from 'chai';
 import { File, LogLevel } from '@stryker-mutator/api/core';
-import { wrapInClosure, normalizeWhiteSpaces } from '../../src/utils/objectUtils';
+import { wrapInClosure } from '../../src/utils/objectUtils';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 import Sandbox from '../../src/Sandbox';
 import { TempFolder } from '../../src/utils/TempFolder';
 import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunnerFactory';
@@ -131,7 +132,7 @@ describe(Sandbox.name, () => {
       findNodeModulesStub.resolves('node_modules');
       symlinkJunctionStub.rejects(createFileAlreadyExistsError());
       await createSut(testFrameworkStub);
-      expect(log.warn).calledWithMatch(normalizeWhiteSpaces(
+      expect(log.warn).calledWithMatch(normalizeWhitespaces(
         `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox.
         Please remove the node_modules from your sandbox files. Alternatively, set \`symlinkNodeModules\`
         to \`false\` to disable this warning.`));
@@ -142,7 +143,7 @@ describe(Sandbox.name, () => {
       const error = new Error('unknown');
       symlinkJunctionStub.rejects(error);
       await createSut(testFrameworkStub);
-      expect(log.warn).calledWithMatch(normalizeWhiteSpaces(
+      expect(log.warn).calledWithMatch(normalizeWhitespaces(
         `Unexpected error while trying to symlink "basePath/node_modules" in sandbox directory.`), error);
     });
 

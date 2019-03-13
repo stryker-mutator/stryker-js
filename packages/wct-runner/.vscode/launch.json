@@ -20,8 +20,8 @@
         "LAUNCHPAD_BROWSERS": "chrome"
       },
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceFolder}/test/**/*.js",
+        "${workspaceFolder}/src/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -40,8 +40,8 @@
         "${workspaceFolder}/test/unit/**/*.js"
       ],
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceFolder}/test/**/*.js",
+        "${workspaceFolder}/src/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -49,15 +49,15 @@
       "type": "node",
       "request": "launch",
       "name": "wct",
-      "program": "${workspaceRoot}/../../node_modules/web-component-tester/bin/wct",
+      "program": "${workspaceFolder}/../../node_modules/web-component-tester/bin/wct",
       "env": {
         "LAUNCHPAD_BROWSERS": "chrome"
       },
       "cwd": "${workspaceFolder}/testResources/htmlTestSuite",
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceFolder}/test/**/*.js",
+        "${workspaceFolder}/src/**/*.js"
       ]
     }
   ]
