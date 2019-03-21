@@ -1,7 +1,7 @@
 language: node_js
 install: npm install
 node_js:
-- '11.10'
+- 'node'
 - '6'
 before_install:
 - if [[ `npm -v` = 3* ]]; then npm i -g npm@5; fi
