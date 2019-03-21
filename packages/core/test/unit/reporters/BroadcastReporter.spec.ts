@@ -105,8 +105,10 @@ describe('BroadcastReporter', () => {
       });
 
       describe('and one of the promises results in a rejection', () => {
+        let actualError: Error;
         beforeEach(() => {
-          wrapUpRejectFn('some error');
+          actualError = new Error('some error');
+          wrapUpRejectFn(actualError);
           wrapUpResolveFn2();
           return result;
         });
@@ -114,15 +116,17 @@ describe('BroadcastReporter', () => {
         it('should not result in a rejection', () => result);
 
         it('should log the error', () => {
-          expect(testInjector.logger.error).calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'. Error is: some error`);
+          expect(testInjector.logger.error).calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'.`, actualError);
         });
       });
     });
 
     describe('with one faulty reporter', () => {
+      let actualError: Error;
 
       beforeEach(() => {
-        ALL_REPORTER_EVENTS.forEach(eventName => rep1[eventName].throws('some error'));
+        actualError = new Error('some error');
+        ALL_REPORTER_EVENTS.forEach(eventName => rep1[eventName].throws(actualError));
       });
 
       it('should still broadcast to other reporters', () => {
@@ -132,7 +136,7 @@ describe('BroadcastReporter', () => {
       it('should log each error', () => {
         ALL_REPORTER_EVENTS.forEach(eventName => {
           (sut as any)[eventName]();
-          expect(testInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'. Error is: some error`);
+          expect(testInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'.`, actualError);
         });
       });
 
