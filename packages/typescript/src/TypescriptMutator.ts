@@ -30,6 +30,10 @@ export class TypescriptMutator {
   }
 
   private mutateForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): Mutant[] {
+    if (shouldNodeBeSkipped(node)) {
+      return [];
+    }
+
     const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
     const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
     node.forEachChild(child => {
@@ -39,3 +43,7 @@ export class TypescriptMutator {
     return mutants;
   }
 }
+
+const shouldNodeBeSkipped = (node: ts.Node): boolean => {
+  return node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword);
+};

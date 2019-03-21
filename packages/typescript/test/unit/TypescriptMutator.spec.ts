@@ -90,5 +90,25 @@ describe('TypescriptMutator', () => {
       expect(mutants.filter(mutant => mutant.mutatorName === 'FunctionDeclarationForTest')).lengthOf(4);
     });
 
+    describe('declaration nodes', () => {
+      beforeEach(() => {
+        sut = createSut();
+        file1 = new File(
+          'file1.ts',
+          `declare function notMutated(a: number, b: number);
+          declare module "not-mutated" { }
+
+          function mutated(a: number) { }`);
+      });
+
+      it('should skip nodes with declare keywords', () => {
+        const mutants = sut.mutate([
+          file1,
+        ]);
+        expect(mutants.filter(mutant => mutant.mutatorName === 'SourceFileForTest')).lengthOf(1);
+        expect(mutants.filter(mutant => mutant.mutatorName !== 'SourceFileForTest')).lengthOf(2);
+      });
+    });
+
   });
 });
