@@ -38,7 +38,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@babel/generator": "~7.4.0",
-    "@babel/parser": "~7.3.1",
+    "@babel/parser": "~7.4.0",
     "@babel/traverse": "~7.4.0",
     "@stryker-mutator/api": "^1.1.1",
     "lodash": "~4.17.4",
