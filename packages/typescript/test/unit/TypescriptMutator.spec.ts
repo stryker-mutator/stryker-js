@@ -105,8 +105,11 @@ describe('TypescriptMutator', () => {
         const mutants = sut.mutate([
           file1,
         ]);
-        expect(mutants.filter(mutant => mutant.mutatorName === 'SourceFileForTest')).lengthOf(1);
-        expect(mutants.filter(mutant => mutant.mutatorName !== 'SourceFileForTest')).lengthOf(2);
+        expect(mutants.map(mutant => mutant.mutatorName)).to.deep.equal([
+          'SourceFileForTest',
+          'FunctionDeclarationForTest',
+          'FunctionDeclarationForTest'
+        ]);
       });
     });
 

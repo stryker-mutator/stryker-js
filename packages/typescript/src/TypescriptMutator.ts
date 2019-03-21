@@ -32,15 +32,15 @@ export class TypescriptMutator {
   private mutateForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): Mutant[] {
     if (shouldNodeBeSkipped(node)) {
       return [];
+    } else {
+      const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
+      const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
+      node.forEachChild(child => {
+        // It is important that forEachChild does not return a true, otherwise node visiting is halted!
+        mutants.push(... this.mutateForNode(child, sourceFile));
+      });
+      return mutants;
     }
-
-    const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
-    const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
-    node.forEachChild(child => {
-      // It is important that forEachChild does not return a true, otherwise node visiting is halted!
-      mutants.push(... this.mutateForNode(child, sourceFile));
-    });
-    return mutants;
   }
 }
 
