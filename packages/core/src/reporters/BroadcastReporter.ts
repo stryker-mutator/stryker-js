@@ -100,6 +100,6 @@ export default class BroadcastReporter implements StrictReporter {
   }
 
   private handleError(error: Error, methodName: string, reporterName: string) {
-    this.log.error(`An error occurred during '${methodName}' on reporter '${reporterName}'. Error is: ${error}`);
+    this.log.error(`An error occurred during '${methodName}' on reporter '${reporterName}'.`, error);
   }
 }
