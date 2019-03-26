@@ -90,5 +90,67 @@ describe('TypescriptMutator', () => {
       expect(mutants.filter(mutant => mutant.mutatorName === 'FunctionDeclarationForTest')).lengthOf(4);
     });
 
+    describe('declaration nodes', () => {
+      beforeEach(() => {
+        sut = createSut();
+      });
+
+      it('should not skip a node when it does not have a declare modifier', () => {
+        // Arrange
+        file1 = new File(
+          'file1.ts',
+          `function mutated(a: number, b: number);`);
+
+        // Act
+        const mutants = sut.mutate([
+          file1,
+        ]);
+
+        // Assert
+        expect(mutants).to.deep.equal([
+          {
+            fileName: 'file1.ts',
+            mutatorName: 'SourceFileForTest',
+            range: [0, 39],
+            replacement: '"stryker was here"'
+          },
+          {
+            fileName: 'file1.ts',
+            mutatorName: 'FunctionDeclarationForTest',
+            range: [0, 39],
+            replacement: '// Function declaration removed'
+          },
+          {
+            fileName: 'file1.ts',
+            mutatorName: 'FunctionDeclarationForTest',
+            range: [0, 39],
+            replacement: 'changedToOtherCall()'
+          }
+        ]);
+      });
+
+      it('should skip a node when it has a declare modifier', () => {
+        // Arrange
+        file1 = new File(
+          'file1.ts',
+          `declare function notMutated(a: number, b: number);`);
+
+        // Act
+        const mutants = sut.mutate([
+          file1,
+        ]);
+
+        // Assert
+        expect(mutants).to.deep.equal([
+          {
+            fileName: 'file1.ts',
+            mutatorName: 'SourceFileForTest',
+            range: [0, 50],
+            replacement: '"stryker was here"',
+          }
+        ]);
+      });
+    });
+
   });
 });
