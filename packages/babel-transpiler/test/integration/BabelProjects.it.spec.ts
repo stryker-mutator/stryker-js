@@ -6,11 +6,12 @@ import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { CONFIG_KEY, StrykerBabelConfig } from '../../src/BabelConfigReader';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { ConfigAPI } from '@babel/core';
 
 function describeIntegrationTest(projectName: string, babelConfig: Partial<StrykerBabelConfig> = {}) {
 
   const projectDir = path.resolve(__dirname, '..', '..', 'testResources', projectName);
-  babelConfig.optionsFile = path.join(projectDir, '.babelrc');
+  babelConfig.optionsFile = path.join(projectDir, babelConfig.optionsFile || '.babelrc');
   let projectFiles: File[] = [];
   let resultFiles: File[] = [];
   let babelTranspiler: BabelTranspiler;
@@ -64,4 +65,18 @@ describe('Project with binary files', () => {
 });
 describe('Different extensions', () => {
   describeIntegrationTest('differentExtensions');
+});
+describe('A Babel project with babel.config.js config file', () => {
+  const noop = () => {};
+  describeIntegrationTest('babelProjectWithBabelConfigJs', {
+    extensions: ['.ts'],
+    optionsApi: { cache: { forever: noop }} as ConfigAPI,
+    optionsFile: 'babel.config.js',
+  });
+});
+describe('A Babel project with .babelrc.js config file', () => {
+  describeIntegrationTest('babelProjectWithBabelRcJs', {
+    extensions: ['.ts'],
+    optionsFile: '.babelrc.js'
+  });
 });
