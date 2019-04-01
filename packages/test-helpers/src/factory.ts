@@ -112,7 +112,7 @@ export const strykerOptions = factoryMethod<StrykerOptions>(() => new Config());
 export const config = factoryMethod<Config>(() => new Config());
 
 export const ALL_REPORTER_EVENTS: (keyof Reporter)[] =
-  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
+  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onMutationTestReportReady', 'onScoreCalculated', 'wrapUp'];
 
 export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Required<Reporter>> {
   const reporter = { name } as any;

@@ -1,6 +1,5 @@
-import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult } from '@stryker-mutator/api/report';
+import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { Logger } from '@stryker-mutator/api/logging';
-import { isPromise } from '../utils/objectUtils';
 import StrictReporter from './StrictReporter';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
@@ -48,27 +47,17 @@ export default class BroadcastReporter implements StrictReporter {
     }
   }
 
-  private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<any> | void {
-    const allPromises: Promise<void>[] = [];
-    Object.keys(this.reporters).forEach(reporterName => {
+  private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<any> {
+    return Promise.all(Object.keys(this.reporters).map(async reporterName => {
       const reporter = this.reporters[reporterName];
       if (typeof reporter[methodName] === 'function') {
         try {
-          const maybePromise = (reporter[methodName] as any)(eventArgs);
-          if (isPromise(maybePromise)) {
-            allPromises.push(maybePromise.catch(error => {
-              this.handleError(error, methodName, reporterName);
-            }));
-          }
+          await (reporter[methodName] as any)(eventArgs);
         } catch (error) {
           this.handleError(error, methodName, reporterName);
         }
       }
-
-    });
-    if (allPromises.length) {
-      return Promise.all(allPromises);
-    }
+    }));
   }
 
   public onSourceFileRead(file: SourceFile): void {
@@ -89,6 +78,10 @@ export default class BroadcastReporter implements StrictReporter {
 
   public onAllMutantsTested(results: MutantResult[]): void {
     this.broadcast('onAllMutantsTested', results);
+  }
+
+  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
+    this.broadcast('onMutationTestReportReady', report);
   }
 
   public onScoreCalculated(score: ScoreResult): void {

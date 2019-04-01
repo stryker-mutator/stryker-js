@@ -198,7 +198,7 @@ export const strykerOptions = factoryMethod<StrykerOptions>(() => ({
 export const config = factoryMethod<Config>(() => new Config());
 
 export const ALL_REPORTER_EVENTS: (keyof Reporter)[] =
-  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onScoreCalculated', 'wrapUp'];
+  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onMutationTestReportReady', 'onScoreCalculated', 'wrapUp'];
 
 export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
   const scopedTestIds: number[] = [];
