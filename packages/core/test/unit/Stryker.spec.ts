@@ -27,6 +27,7 @@ import * as di from '../../src/di';
 import Timer from '../../src/utils/Timer';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Transpiler } from '@stryker-mutator/api/transpile';
+import { MutationTestReportCalculator } from '../../src/reporters/MutationTestReportCalculator';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
@@ -45,6 +46,7 @@ describe(Stryker.name, () => {
   let reporterMock: Mock<BroadcastReporter>;
   let tempFolderMock: Mock<TempFolder>;
   let scoreResultCalculator: ScoreResultCalculator;
+  let mutationTestReportCalculatorMock: Mock<MutationTestReportCalculator>;
   let configureMainProcessStub: sinon.SinonStub;
   let configureLoggingServerStub: sinon.SinonStub;
   let shutdownLoggingStub: sinon.SinonStub;
@@ -72,6 +74,7 @@ describe(Stryker.name, () => {
     timerMock = sinon.createStubInstance(Timer);
     tempFolderMock = mock(TempFolder as any);
     tempFolderMock.clean.resolves();
+    mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
     scoreResultCalculator = new ScoreResultCalculator(testInjector.logger);
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
     sinon.stub(TempFolder, 'instance').returns(tempFolderMock);
@@ -83,6 +86,7 @@ describe(Stryker.name, () => {
       .withArgs(MutatorFacade).returns(mutatorMock)
       .withArgs(MutantTestMatcher).returns(mutantTestMatcherMock)
       .withArgs(MutationTestExecutor).returns(mutationTestExecutorMock)
+      .withArgs(MutationTestReportCalculator).returns(mutationTestReportCalculatorMock)
       .withArgs(ScoreResultCalculator).returns(scoreResultCalculator);
     injectorMock.resolve
       .withArgs(commonTokens.options).returns(strykerConfig)
@@ -206,6 +210,12 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(scoreResultCalculator.determineExitCode).called;
+      });
+
+      it('should report mutation test report ready', async () => {
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(mutationTestReportCalculatorMock.report).called;
       });
 
       it('should create the InputFileResolver', async () => {

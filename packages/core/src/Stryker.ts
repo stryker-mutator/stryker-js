@@ -3,7 +3,6 @@ import { MutantResult } from '@stryker-mutator/api/report';
 import { MutantTestMatcher } from './mutants/MutantTestMatcher';
 import InputFileResolver from './input/InputFileResolver';
 import ScoreResultCalculator from './ScoreResultCalculator';
-import { isPromise } from './utils/objectUtils';
 import { TempFolder } from './utils/TempFolder';
 import { MutatorFacade } from './mutants/MutatorFacade';
 import InitialTestExecutor from './process/InitialTestExecutor';
@@ -17,6 +16,8 @@ import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler'
 import { SandboxPool } from './SandboxPool';
 import { Logger } from '@stryker-mutator/api/logging';
 import { transpilerFactory } from './transpiler';
+import { MutationTestReportCalculator } from './reporters/MutationTestReportCalculator';
+import InputFileCollection from './input/InputFileCollection';
 
 export default class Stryker {
 
@@ -80,8 +81,7 @@ export default class Stryker {
       if (initialRunResult.runResult.tests.length && testableMutants.length) {
         const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
         const mutantResults = await mutationTestExecutor.run(testableMutants);
-        this.reportScore(mutantResults);
-        await this.wrapUpReporter();
+        await this.reportScore(mutantResults, inputFileInjector);
         await TempFolder.instance().clean();
         await this.logDone();
         await LogConfigurator.shutdown();
@@ -91,15 +91,6 @@ export default class Stryker {
       }
     }
     return Promise.resolve([]);
-  }
-
-  private wrapUpReporter(): Promise<void> {
-    const maybePromise = this.reporter.wrapUp();
-    if (isPromise(maybePromise)) {
-      return maybePromise;
-    } else {
-      return Promise.resolve();
-    }
   }
 
   private logDone() {
@@ -112,10 +103,12 @@ export default class Stryker {
     }
   }
 
-  private reportScore(mutantResults: MutantResult[]) {
+  private async reportScore(mutantResults: MutantResult[], inputFileInjector: Injector<MainContext & { inputFiles: InputFileCollection }>) {
+    inputFileInjector.injectClass(MutationTestReportCalculator).report(mutantResults);
     const calculator = this.injector.injectClass(ScoreResultCalculator);
     const score = calculator.calculate(mutantResults);
     this.reporter.onScoreCalculated(score);
     calculator.determineExitCode(score, this.options.thresholds);
+    await this.reporter.wrapUp();
   }
 }

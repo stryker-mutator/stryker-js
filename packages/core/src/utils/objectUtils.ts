@@ -14,10 +14,6 @@ export function freezeRecursively<T extends { [prop: string]: any }>(
   return target;
 }
 
-export function isPromise(input: any): input is Promise<any> {
-  return input && typeof input.then === 'function';
-}
-
 export function filterEmpty<T>(input: (T | null | void)[]) {
   return input.filter(item => item !== undefined && item !== null) as T[];
 }

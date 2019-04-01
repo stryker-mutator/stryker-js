@@ -2,7 +2,6 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { RunStatus } from '@stryker-mutator/api/test_runner';
 import TimeoutDecorator from '../../../src/test-runner/TimeoutDecorator';
-import { isPromise } from '../../../src/utils/objectUtils';
 import TestRunnerMock from '../../helpers/TestRunnerMock';
 
 describe('TimeoutDecorator', () => {
@@ -32,7 +31,7 @@ describe('TimeoutDecorator', () => {
       testRunner1[methodName].resolves('str');
       const promise = action();
       expect(testRunner1[methodName]).to.have.been.called;
-      expect(isPromise(promise), `timeoutDecorator.${methodName} did not provide a promise`).to.be.true;
+      expect(promise && promise.then, `timeoutDecorator.${methodName} did not provide a promise`).ok;
     });
 
     it('should resolve when inner promise resolves', () => {
