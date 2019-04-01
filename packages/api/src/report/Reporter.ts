@@ -2,6 +2,7 @@ import ScoreResult from './ScoreResult';
 import SourceFile from './SourceFile';
 import MutantResult from './MutantResult';
 import MatchedMutant from './MatchedMutant';
+import { MutationTestResult } from 'mutation-testing-report-schema';
 
 /**
  * Represents a reporter which can report during or after a Stryker run
@@ -43,6 +44,13 @@ interface Reporter {
    * @param score The immutable structured score result (tree)
    */
   onScoreCalculated?(score: ScoreResult): void;
+
+  /**
+   * Called when mutation testing is done
+   * @param report the mutation test result that is valid according to the mutation-testing-report-schema (json schema)
+   * @see https://github.com/stryker-mutator/mutation-testing-elements/tree/master/packages/mutation-testing-report-schema#mutation-testing-elements-schema
+   */
+  onMutationTestReportReady?(report: MutationTestResult): void;
 
   /**
    * Called when stryker wants to quit
