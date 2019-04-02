@@ -3,7 +3,7 @@ module.exports = function (config) {
     mutate: ['src/*.js'],
     testFramework: 'jasmine',
     testRunner: 'karma',
-    reporters: ['clear-text', 'html'],
+    reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
     karma: {
       config: {

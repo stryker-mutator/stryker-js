@@ -5,11 +5,7 @@
   "main": "src/index.js",
   "typings": "src/index.d.ts",
   "scripts": {
-    "prebuild": "rimraf resources",
-    "build": "node tasks/clientResources.js && npm run browserify-client-resources",
-    "browserify-client-resources": "browserify srcResources/stryker.js -o resources/stryker.js",
-    "start": "tsc -w -p .",
-    "test": "nyc  --check-coverage --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 90 npm run mocha",
+    "test": "nyc --check-coverage --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 90 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
@@ -40,9 +36,8 @@
     "@stryker-mutator/api": "^1.1.1",
     "@stryker-mutator/util": "^1.1.1",
     "file-url": "~2.0.0",
-    "lodash": "~4.17.10",
     "mkdirp": "~0.5.1",
-    "mz": "~2.7.0",
+    "mutation-testing-elements": "^1.0.2",
     "rimraf": "~2.6.1",
     "typed-html": "~1.0.0"
   },
@@ -53,12 +48,7 @@
     "@stryker-mutator/test-helpers": "^1.1.1",
     "@types/file-url": "~2.0.0",
     "@types/jsdom": "~12.2.0",
-    "@types/node": "^10.11.5",
-    "bootstrap": "4.1.3",
-    "highlight.js": "~9.15.5",
-    "jquery": "~3.3.1",
-    "jsdom": "~14.0.0",
-    "popper.js": "~1.14.3"
+    "@types/node": "^10.11.5"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",

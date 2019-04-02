@@ -2,7 +2,6 @@
 !*.d.ts
 !bin/**
 !src/**
-!resources/**
 src/**/*.map
 src/**/*.ts
 !src/**/*.d.ts
