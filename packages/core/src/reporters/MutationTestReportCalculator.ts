@@ -14,7 +14,7 @@ export class MutationTestReportCalculator {
   constructor(
     private readonly reporter: Required<Reporter>,
     private readonly options: StrykerOptions,
-    private readonly files: InputFileCollection,
+    private readonly inputFiles: InputFileCollection,
     private readonly log: Logger
   ) { }
 
@@ -31,15 +31,15 @@ export class MutationTestReportCalculator {
   }
 
   private toFileResults(results: ReadonlyArray<MutantResult>): mutationTestReportSchema.FileResultDictionary {
-    const files: mutationTestReportSchema.FileResultDictionary = Object.create(null);
+    const resultDictionary: mutationTestReportSchema.FileResultDictionary = Object.create(null);
     results.forEach(mutantResult => {
-      const fileResult = files[mutantResult.sourceFilePath];
+      const fileResult = resultDictionary[mutantResult.sourceFilePath];
       if (fileResult) {
         fileResult.mutants.push(this.toMutantResult(mutantResult));
       } else {
-        const sourceFile = this.files.files.find(file => file.name === mutantResult.sourceFilePath);
+        const sourceFile = this.inputFiles.files.find(file => file.name === mutantResult.sourceFilePath);
         if (sourceFile) {
-          files[mutantResult.sourceFilePath] = {
+          resultDictionary[mutantResult.sourceFilePath] = {
             language: this.determineLanguage(sourceFile.name),
             mutants: [this.toMutantResult(mutantResult)],
             source: sourceFile.textContent
@@ -50,7 +50,7 @@ export class MutationTestReportCalculator {
         }
       }
     });
-    return files;
+    return resultDictionary;
   }
 
   public determineLanguage(name: string): string {
