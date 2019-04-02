@@ -1,174 +1,111 @@
-import { normalize, join } from 'path';
+import * as path from 'path';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as util from '../../src/util';
 import HtmlReporter from '../../src/HtmlReporter';
-import { sourceFile, mutantResult, scoreResult } from '../helpers/producers';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { mutationTestReportSchema } from '@stryker-mutator/api/report';
+import { mutationTestReportIndexFile } from '../../src/templates/mutationTestingReport';
 
-describe('HtmlReporter', () => {
-  let copyFolderStub: sinon.SinonStub;
+describe.only(HtmlReporter.name, () => {
+  let copyFileStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
   let mkdirStub: sinon.SinonStub;
   let deleteDirStub: sinon.SinonStub;
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    copyFolderStub = sinon.stub(util, 'copyFolder');
+    copyFileStub = sinon.stub(util, 'copyFile');
     writeFileStub = sinon.stub(util, 'writeFile');
     deleteDirStub = sinon.stub(util, 'deleteDir');
     mkdirStub = sinon.stub(util, 'mkdir');
     sut = testInjector.injector.injectClass(HtmlReporter);
   });
 
-  describe('when in happy flow', () => {
+  describe('onMutationTestReportReady', () => {
 
-    beforeEach(() => {
-      copyFolderStub.resolves();
-      writeFileStub.resolves();
-      deleteDirStub.resolves();
-      mkdirStub.resolves();
-    });
-
-    it('should copy common resources', async () => {
-      sut.onAllSourceFilesRead([]);
-      sut.onAllMutantsTested([]);
-      sut.onScoreCalculated(scoreResult());
+    it('should use configured base directory', async () => {
+      testInjector.options.htmlReporter = { baseDir: 'foo/bar' };
+      actReportReady();
       await sut.wrapUp();
-      expect(copyFolderStub).calledWith(join(__dirname, '..', '..', 'resources'), normalize('reports/mutation/html/strykerResources'));
+      expect(testInjector.logger.debug).calledWith('Using configured output folder foo/bar');
+      expect(deleteDirStub).calledWith('foo/bar');
     });
 
-    it('should write an html report', async () => {
-      sut.onAllSourceFilesRead([sourceFile({ path: normalize('src/a.js') }), sourceFile({ path: normalize('src/b.js') })]);
-      sut.onAllMutantsTested([mutantResult({ sourceFilePath: normalize('src/a.js') }), mutantResult({ sourceFilePath: normalize('src/b.js') })]);
-      sut.onScoreCalculated(scoreResult({
-        childResults: [
-          scoreResult({ name: normalize('a.js'), path: normalize('src/a.js'), representsFile: true }),
-          scoreResult({ name: normalize('b.js'), path: normalize('src/b.js'), representsFile: true }),
-        ],
-        name: 'src'
-      }));
+    it('should use default base directory when no override is configured', async () => {
+      const expectedBaseDir = path.normalize('reports/mutation/html');
+      actReportReady();
       await sut.wrapUp();
-      expect(writeFileStub).calledWithMatch(
-        sinon.match(normalize('reports/mutation/html/a.js.html')),
-        sinon.match('10.67%')
-          .and(sinon.match('<span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="0">{}</span>'))
-          .and(sinon.match('<link rel="stylesheet" href="strykerResources/bootstrap/css/bootstrap.min.css">')));
-      expect(writeFileStub).calledWithMatch(
-        sinon.match(normalize('reports/mutation/html/b.js.html')),
-        sinon.match('10.67%'));
+      expect(testInjector.logger.debug).calledWith(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${expectedBaseDir}`);
+      expect(deleteDirStub).calledWith(expectedBaseDir);
     });
 
-    it('should honor the relative path if child results skip a directory (issue #335)', async () => {
-      // see https://github.com/stryker-mutator/stryker/issues/335
-      sut.onAllSourceFilesRead([
-        sourceFile({ path: normalize('a/b/c.js') }),
-        sourceFile({ path: normalize('a/b/d.js') })
-      ]);
-      sut.onAllMutantsTested([]);
-      sut.onScoreCalculated(scoreResult({
-        childResults: [
-          scoreResult({
-            childResults: [
-              scoreResult({ representsFile: true, name: 'c.js', path: normalize('a/b/c.js') }),
-              scoreResult({ representsFile: true, name: 'd.js', path: normalize('a/b/d.js') })
-            ],
-            name: normalize('a/b')
-          })
-        ],
-        name: ''
-      }));
+    it('should clean the base directory', async () => {
+      actReportReady();
       await sut.wrapUp();
-      expect(writeFileStub).calledWith(
-        normalize('reports/mutation/html/a/b/c.js.html'),
-        sinon.match('<link rel="stylesheet" href="../../strykerResources/bootstrap/css/bootstrap.min.css">')
-          .and(sinon.match('<script src="../../strykerResources/stryker.js" defer="defer"></script>')));
+      expect(deleteDirStub).calledWith(path.normalize('reports/mutation/html'));
+      expect(mkdirStub).calledWith(path.normalize('reports/mutation/html'));
+      expect(deleteDirStub).calledBefore(mkdirStub);
     });
 
-    it('should not fail when input files are missing', async () => {
-      sut.onAllSourceFilesRead([]);
-      sut.onAllMutantsTested([]);
-      sut.onScoreCalculated(scoreResult({
-        childResults: [
-          scoreResult({ name: normalize('b.js'), representsFile: true })
-        ],
-        name: 'src'
-      }));
+    it('should copy the stryker image', async () => {
+      actReportReady();
       await sut.wrapUp();
-      expect(writeFileStub).calledWith(normalize('reports/mutation/html/b.js.html'),
-        sinon.match('The source code itself was not reported at the `stryker-html-reporter`. Please report this issue at https://github.com/stryker-mutator/stryker/issues'));
+      expect(copyFileStub).calledWith(path.resolve(__dirname, '..', '..', 'src', 'stryker-80x80.png'));
+    });
+
+    it('should write the index file', async () => {
+      const report: mutationTestReportSchema.MutationTestResult = {
+        files: {},
+        schemaVersion: '1.0',
+        thresholds: {
+          high: 80,
+          low: 60
+        }
+      };
+      sut.onMutationTestReportReady(report);
+      await sut.wrapUp();
+      expect(writeFileStub).calledWith(path.resolve('reports/mutation/html', 'index.html'), mutationTestReportIndexFile(report));
     });
   });
 
-  describe('when copy folder fails', () => {
-    const error = new Error('42');
+  describe('wrapUp', () => {
 
-    beforeEach(() => {
-      copyFolderStub.rejects(error);
-      writeFileStub.resolves();
-      deleteDirStub.resolves();
-      mkdirStub.resolves();
+    it('should resolve when everything is OK', () => {
+      actReportReady();
+      return expect(sut.wrapUp()).eventually.undefined;
     });
 
-    it('should reject with that error', () => {
-      sut.onAllMutantsTested([]);
-      sut.onAllSourceFilesRead([]);
-      sut.onScoreCalculated(scoreResult({}));
-      return expect(sut.wrapUp()).to.eventually.be.rejectedWith(error);
-    });
-  });
-
-  describe('when writeFile fails', () => {
-    const error = new Error('42');
-
-    beforeEach(() => {
-      copyFolderStub.resolves();
-      writeFileStub.rejects(error);
-      deleteDirStub.resolves();
-      mkdirStub.resolves();
+    it('should reject when "deleteDir" rejects', () => {
+      const expectedError = new Error('delete dir');
+      deleteDirStub.rejects(expectedError);
+      actReportReady();
+      return expect(sut.wrapUp()).rejectedWith(expectedError);
     });
 
-    it('should reject with that error', () => {
-      sut.onAllMutantsTested([]);
-      sut.onAllSourceFilesRead([]);
-      sut.onScoreCalculated(scoreResult({}));
-      return expect(sut.wrapUp()).to.eventually.be.rejectedWith(error);
-    });
-  });
-
-  describe('when deleteDir fails', () => {
-    const error = new Error('42');
-
-    beforeEach(() => {
-      copyFolderStub.resolves();
-      writeFileStub.resolves();
-      deleteDirStub.rejects(error);
-      mkdirStub.resolves();
+    it('should reject when "mkdir" rejects', () => {
+      const expectedError = new Error('mkdir');
+      mkdirStub.rejects(expectedError);
+      actReportReady();
+      return expect(sut.wrapUp()).rejectedWith(expectedError);
     });
 
-    it('should reject with that error', () => {
-      sut.onAllMutantsTested([]);
-      sut.onAllSourceFilesRead([]);
-      sut.onScoreCalculated(scoreResult({}));
-      return expect(sut.wrapUp()).to.eventually.be.rejectedWith(error);
+    it('should reject when "writeFile" rejects', () => {
+      const expectedError = new Error('writeFile');
+      writeFileStub.rejects(expectedError);
+      actReportReady();
+      return expect(sut.wrapUp()).rejectedWith(expectedError);
+    });
+
+    it('should reject when "copyFile" rejects', () => {
+      const expectedError = new Error('copyFile');
+      copyFileStub.rejects(expectedError);
+      actReportReady();
+      return expect(sut.wrapUp()).rejectedWith(expectedError);
     });
   });
 
-  describe('when mkdir fails', () => {
-    const error = new Error('42');
-
-    beforeEach(() => {
-      copyFolderStub.resolves();
-      writeFileStub.resolves();
-      deleteDirStub.resolves(error);
-      mkdirStub.rejects(error);
-    });
-
-    it('should reject with that error', () => {
-      sut.onAllMutantsTested([]);
-      sut.onAllSourceFilesRead([]);
-      sut.onScoreCalculated(scoreResult({}));
-      return expect(sut.wrapUp()).to.eventually.be.rejectedWith(error);
-    });
-  });
+  function actReportReady() {
+    sut.onMutationTestReportReady({ files: {}, schemaVersion: '', thresholds: { high: 0, low: 0 } });
+  }
 });

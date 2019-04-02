@@ -1,97 +1,41 @@
 import { Logger } from '@stryker-mutator/api/logging';
-import fileUrl = require('file-url');
 import * as path from 'path';
-import { Reporter, MutantResult, SourceFile, ScoreResult } from '@stryker-mutator/api/report';
+import { Reporter, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import * as util from './util';
-import * as templates from './templates';
-import Breadcrumb from './Breadcrumb';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { mutationTestReportIndexFile } from './templates/mutationTestingReport';
+import fileUrl = require('file-url');
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class HtmlReporter implements Reporter {
   private _baseDir!: string;
-  private mainPromise!: Promise<void>;
-  private mutantResults!: MutantResult[];
-  private files!: SourceFile[];
-  private scoreResult!: ScoreResult;
+  private mainPromise: Promise<void> | undefined;
 
   constructor(private readonly options: StrykerOptions, private readonly log: Logger) {
   }
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
-  public onAllSourceFilesRead(files: SourceFile[]) {
-    this.files = files;
-  }
-
-  public onAllMutantsTested(results: MutantResult[]) {
-    this.mutantResults = results;
-  }
-
-  public onScoreCalculated(score: ScoreResult) {
-    this.scoreResult = score;
-    this.mainPromise = this.generateReport();
+  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
+    this.mainPromise = this.generateReport(report);
   }
 
   public wrapUp() {
     return this.mainPromise;
   }
 
-  private generateReport() {
-    return this.cleanBaseFolder()
-      .then(() => this.writeCommonResources())
-      .then(() => this.writeReportDirectory())
-      .then(location => this.log.info(`Your report can be found at: ${fileUrl(location)}`));
-  }
-
-  private writeCommonResources() {
-    const resourcesDir = path.join(__dirname, '..', 'resources');
-    return util.copyFolder(resourcesDir, this.resourcesDir);
-  }
-
-  private writeReportDirectory(scoreResult = this.scoreResult, currentDirectory = this.baseDir, breadcrumb = Breadcrumb.start)
-    : Promise<string> {
-    const fileContent = templates.directory(scoreResult, breadcrumb, this.options.thresholds);
-    const location = path.join(currentDirectory, 'index.html');
-    return util.mkdir(currentDirectory)
-      .then(_ => util.writeFile(location, fileContent))
-      .then(_ => this.writeChildren(scoreResult, currentDirectory, breadcrumb))
-      .then(_ => location);
-  }
-
-  private writeChildren(scoreResult: ScoreResult, currentDirectory: string, breadcrumb: Breadcrumb) {
-    return Promise.all(scoreResult.childResults.map(child => {
-      if (child.representsFile) {
-        return this.writeReportFile(child, currentDirectory, breadcrumb.add(child.name, util.countPathSep(child.name)));
-      } else {
-        return this.writeReportDirectory(child, path.join(currentDirectory, child.name), breadcrumb.add(child.name, util.countPathSep(child.name) + 1))
-          .then(_ => void 0);
-      }
-    }));
-  }
-
-  private writeReportFile(scoreResult: ScoreResult, baseDir: string, breadcrumb: Breadcrumb) {
-    if (scoreResult.representsFile) {
-      const fileContent = templates.sourceFile(scoreResult, this.findFile(scoreResult.path), this.findMutants(scoreResult.path), breadcrumb, this.options.thresholds);
-      return util.writeFile(path.join(baseDir, `${scoreResult.name}.html`), fileContent);
-    } else {
-      return Promise.resolve(); // not a report file
-    }
-  }
-
-  private findFile(filePath: string) {
-    return this.files.find(file => file.path === filePath);
-  }
-
-  private findMutants(filePath: string) {
-    return this.mutantResults.filter(mutant => mutant.sourceFilePath === filePath);
-  }
-
-  private get resourcesDir() {
-    return path.join(this.baseDir, RESOURCES_DIR_NAME);
+  private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
+    const indexFileName = path.resolve(this.baseDir, 'index.html');
+    await this.cleanBaseFolder();
+    await Promise.all([
+      util.copyFile(require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'), path.resolve(this.baseDir, 'mutation-test-elements.js')),
+      util.copyFile(path.resolve(__dirname, 'stryker-80x80.png'), path.resolve(this.baseDir, 'stryker-80x80.png')),
+      util.writeFile(indexFileName, mutationTestReportIndexFile(report))
+    ]);
+    this.log.info(`Your report can be found at: ${fileUrl(indexFileName)}`);
   }
 
   private get baseDir(): string {
@@ -107,8 +51,9 @@ export default class HtmlReporter implements Reporter {
     return this._baseDir;
   }
 
-  private cleanBaseFolder(): Promise<void> {
-    return util.deleteDir(this.baseDir).then(() => util.mkdir(this.baseDir));
+  private async cleanBaseFolder(): Promise<void> {
+    await util.deleteDir(this.baseDir);
+    await util.mkdir(this.baseDir);
   }
 
 }
