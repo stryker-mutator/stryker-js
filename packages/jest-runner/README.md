@@ -48,7 +48,7 @@ The @stryker-mutator/jest-runner also provides a couple of configurable options 
 
 | option | description | default value | alternative values |
 |----|----|----|---|
-| projectType (optional) | The type of project you are working on. | `default` | `default` uses the `config` option (see below)|
+| projectType (optional) | The type of project you are working on. | `custom` | `custom` uses the `config` option (see below)|
 | | | | `react` when you are using [create-react-app](https://github.com/facebook/create-react-app) |
 | | | | `react-ts` when you are using [create-react-app-typescript](https://github.com/wmonk/create-react-app-typescript) |
 | config (optional) | A custom Jest configuration object. You could also use `require` to load it here) | undefined | |
