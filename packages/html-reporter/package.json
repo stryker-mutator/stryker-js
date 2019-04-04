@@ -38,8 +38,7 @@
     "file-url": "~2.0.0",
     "mkdirp": "~0.5.1",
     "mutation-testing-elements": "^1.0.2",
-    "rimraf": "~2.6.1",
-    "typed-html": "~1.0.0"
+    "rimraf": "~2.6.1"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^1.2.0"

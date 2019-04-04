@@ -5,9 +5,9 @@ import * as util from '../../src/util';
 import HtmlReporter from '../../src/HtmlReporter';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { mutationTestReportIndexFile } from '../../src/templates/mutationTestingReport';
+import { bindMutationTestReport } from '../../src/templates/bindMutationTestReport';
 
-describe.only(HtmlReporter.name, () => {
+describe(HtmlReporter.name, () => {
   let copyFileStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
   let mkdirStub: sinon.SinonStub;
@@ -48,13 +48,20 @@ describe.only(HtmlReporter.name, () => {
       expect(deleteDirStub).calledBefore(mkdirStub);
     });
 
-    it('should copy the stryker image', async () => {
+    it('should copy the template files', async () => {
       actReportReady();
       await sut.wrapUp();
-      expect(copyFileStub).calledWith(path.resolve(__dirname, '..', '..', 'src', 'stryker-80x80.png'));
+      expect(copyFileStub).calledWith(
+        path.resolve(__dirname, '..', '..', 'src', 'templates', 'stryker-80x80.png'),
+        path.resolve('reports', 'mutation', 'html', 'stryker-80x80.png')
+      );
+      expect(copyFileStub).calledWith(
+        path.resolve(__dirname, '..', '..', 'src', 'templates', 'index.html'),
+        path.resolve('reports', 'mutation', 'html', 'index.html')
+      );
     });
 
-    it('should write the index file', async () => {
+    it('should write the mutation report to disk', async () => {
       const report: mutationTestReportSchema.MutationTestResult = {
         files: {},
         schemaVersion: '1.0',
@@ -65,7 +72,10 @@ describe.only(HtmlReporter.name, () => {
       };
       sut.onMutationTestReportReady(report);
       await sut.wrapUp();
-      expect(writeFileStub).calledWith(path.resolve('reports/mutation/html', 'index.html'), mutationTestReportIndexFile(report));
+      expect(writeFileStub).calledWith(
+        path.resolve('reports', 'mutation', 'html', 'bind-mutation-test-report.js'),
+        bindMutationTestReport(report)
+      );
     });
   });
 
