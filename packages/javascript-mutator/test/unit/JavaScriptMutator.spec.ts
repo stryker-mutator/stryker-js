@@ -151,4 +151,17 @@ describe('JavaScriptMutator', () => {
 
     expect(mutants.length).to.equal(2);
   });
+
+  it('should generate mutants when file contains a decorator', () => {
+    const sut = createSut();
+    const files: File[] = [new File('testFile.js', `
+          @decorator()
+          export class Foo {
+            bar = 'bar';
+          };
+        `)];
+
+    const mutants = sut.mutate(files);
+    expect(mutants).lengthOf.above(0);
+  });
 });

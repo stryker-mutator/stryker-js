@@ -19,7 +19,8 @@ export default class BabelHelper {
         'dynamicImport',
         'flow',
         'jsx',
-        'objectRestSpread'
+        'objectRestSpread',
+        ['decorators', { decoratorsBeforeExport: true }] as any,
       ],
       sourceType: 'unambiguous'
     };
