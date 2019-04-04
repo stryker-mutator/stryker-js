@@ -15,10 +15,13 @@ describe('HtmlReporter with example math project', () => {
     await sut.wrapUp();
   });
 
-  it('should have created "index.html", "mutation-test-elements.js" and "stryker-80x80.png" file in the configured directory', () => {
+  it('should have created "index.html", "mutation-test-elements.js", "stryker-80x80.png" and "bind-mutation-test-report.js" file in the configured directory', () => {
     expectFileExists(`${baseDir}/index.html`, true);
     expectFileExists(`${baseDir}/stryker-80x80.png`, true);
     expectFileExists(`${baseDir}/mutation-test-elements.js`, true);
+    expectFileExists(`${baseDir}/bind-mutation-test-report.js`, true);
+    const bindMutationTestReportContent = fs.readFileSync(`${baseDir}/bind-mutation-test-report.js`, 'utf8');
+    expect(bindMutationTestReportContent).include(JSON.stringify(simpleReport));
   });
 });
 
