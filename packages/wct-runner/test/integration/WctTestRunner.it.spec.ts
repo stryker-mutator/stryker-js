@@ -4,6 +4,8 @@ import { expect } from 'chai';
 import { RunResult, TestStatus, RunStatus, TestResult } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
+import consoleLoggerFactory from '../helpers/consoleLoggerFactory';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 
 type TimelessRunResult = {
   [K in keyof RunResult]: RunResult[K] extends TestResult[] ? TimelessTestResult[] : RunResult[K];
@@ -19,7 +21,10 @@ describe('WctTestRunner integration', () => {
   const root = path.resolve(__dirname, '..', '..', '..', '..');
 
   function createSut(): WctTestRunner {
-    return testInjector.injector.injectClass(WctTestRunner);
+    return testInjector.injector
+      .provideValue(commonTokens.logger, consoleLoggerFactory(WctTestRunner.name))
+      .provideValue(commonTokens.getLogger, consoleLoggerFactory)
+      .injectClass(WctTestRunner);
   }
 
   const expectedHtmlSuiteResult: TimelessRunResult = {
@@ -30,7 +35,6 @@ describe('WctTestRunner integration', () => {
       { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing HTMLElement.throw at /components/stryker-parent/packages/wct-runner/testResources/htmlTestSuite/src/failing-element.js:11'] }
     ]
   };
-  // To enable console logging: LoggerFactory.setLogImplementation(consoleLoggerFactory);
 
   beforeEach(() => {
     cwd = process.cwd();

@@ -31,7 +31,7 @@ export default class WctTestRunner implements TestRunner {
   private loadContext(options: StrykerOptions) {
     const context = new Context(Object.assign({}, options.wct, FORCED_WCT_OPTIONS));
     if (this.log.isDebugEnabled()) {
-      this.log.debug(`WCT options: %s`, JSON.stringify(this.context.options));
+      this.log.debug(`WCT options: %s`, JSON.stringify(context.options));
     }
     return context;
   }
