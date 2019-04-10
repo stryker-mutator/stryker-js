@@ -18,8 +18,6 @@
       "name": "Unit tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
-        "-u",
-        "tdd",
         "--timeout",
         "999999",
         "--colors",
@@ -38,8 +36,6 @@
       "name": "Integration tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
-        "-u",
-        "tdd",
         "--timeout",
         "999999",
         "--colors",

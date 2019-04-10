@@ -16,7 +16,7 @@ describe('WctTestRunner integration', () => {
   // The "root" wct configuration option is always loaded from the current directory.
   // In order to test it properly, we need to grab it before- and reset it after each test.
   let cwd: string;
-  const root = path.resolve(__dirname, '..', '..', '..', '..');
+  const root = path.resolve(__dirname, '..', '..');
 
   function createSut(): WctTestRunner {
     return testInjector.injector.injectClass(WctTestRunner);
@@ -27,7 +27,7 @@ describe('WctTestRunner integration', () => {
     tests: [
       { name: '<awesome-element> is awesome', status: TestStatus.Success, failureMessages: undefined },
       { name: '<failing-element> is failing', status: TestStatus.Failed, failureMessages: ['expected true to be false'] },
-      { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing HTMLElement.throw at /components/stryker-parent/packages/wct-runner/testResources/htmlTestSuite/src/failing-element.js:11'] }
+      { name: '<failing-element> is throwing', status: TestStatus.Failed, failureMessages: ['This element is failing HTMLElement.throw at /components/@stryker-mutator/wct-runner/testResources/htmlTestSuite/src/failing-element.js:11'] }
     ]
   };
   // To enable console logging: LoggerFactory.setLogImplementation(consoleLoggerFactory);
@@ -104,7 +104,7 @@ describe('WctTestRunner integration', () => {
     const sut = createSut();
     const expectedResult: TimelessRunResult = {
       status: RunStatus.Complete, // We want to actually expect an error here, but wct doesn't let is.
-      tests: [{ name: '', status: TestStatus.Failed, failureMessages: ['Random error <unknown> at /components/stryker-parent/packages/wct-runner/testResources/garbage/test/gargbage-tests.js:1'] }]
+      tests: [{ name: '', status: TestStatus.Failed, failureMessages: ['Random error <unknown> at /components/@stryker-mutator/wct-runner/testResources/garbage/test/gargbage-tests.js:1'] }]
     };
 
     // Act

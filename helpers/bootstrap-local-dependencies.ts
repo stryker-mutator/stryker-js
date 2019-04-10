@@ -1,5 +1,5 @@
 import { ListByPackage, LocalInstaller, progress } from 'install-local';
-import { fs } from 'mz';
+import * as fs from 'fs';
 import glob = require('glob');
 import path = require('path');
 
@@ -17,6 +17,16 @@ function globAsPromised(pattern: string, options: glob.IOptions) {
   });
 }
 
+function readFile(fileName: string) {
+  return new Promise<string>((res, rej) => fs.readFile(fileName, 'utf8', (err, content) => {
+    if (err) {
+      rej(err);
+    } else {
+      res(content);
+    }
+  }));
+}
+
 interface Package {
   localDependencies?: { [name: string]: string };
 }
@@ -29,7 +39,7 @@ interface Package {
 export async function bootstrapLocalDependencies(directory: string) {
   console.log('bootstrap ' + path.resolve(directory));
   const files = await globAsPromised('{package.json,test/*/package.json}', { cwd: path.resolve(directory) });
-  const packages = await Promise.all(files.map(fileName => fs.readFile(fileName, 'utf8')
+  const packages = await Promise.all(files.map(fileName => readFile(fileName)
     .then(content => ({ dir: path.dirname(fileName), content: JSON.parse(content) as Package }))));
   const sourcesByTarget: ListByPackage = {};
   for (const pkg of packages) {

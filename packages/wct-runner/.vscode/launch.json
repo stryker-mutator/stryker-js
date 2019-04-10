@@ -7,8 +7,6 @@
       "name": "Integration test",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [
-        "-u",
-        "tdd",
         "--timeout",
         "999999",
         "--colors",
@@ -31,8 +29,6 @@
       "name": "Unit test",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [
-        "-u",
-        "tdd",
         "--timeout",
         "999999",
         "--colors",
