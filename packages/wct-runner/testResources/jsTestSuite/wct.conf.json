@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "suites": ["packages/wct-runner/testResources/jsTestSuite/test"],
+  "suites": ["testResources/jsTestSuite/test"],
   "plugins": {
     "local": {
       "browsers": ["chrome"],
@@ -12,5 +12,5 @@
     }
   },
   "npm": true,
-  "root": "../../../../.."
+  "root": "../../.."
 }

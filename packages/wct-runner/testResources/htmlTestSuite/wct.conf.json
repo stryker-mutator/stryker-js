@@ -1,7 +1,7 @@
 {
   "verbose": true,
   "suites": [
-    "packages/wct-runner/testResources/htmlTestSuite/test"
+    "testResources/htmlTestSuite/test"
   ],
   "plugins": {
     "local": {
@@ -16,5 +16,5 @@
     }
   },
   "npm": true,
-  "root": "../../../.."
+  "root": "../.."
 }
