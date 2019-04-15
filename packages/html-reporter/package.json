@@ -35,7 +35,7 @@
   "dependencies": {
     "@stryker-mutator/api": "^1.2.0",
     "@stryker-mutator/util": "^1.2.0",
-    "file-url": "~2.0.0",
+    "file-url": "~3.0.0",
     "mkdirp": "~0.5.1",
     "mutation-testing-elements": "^1.0.2",
     "rimraf": "~2.6.1"
