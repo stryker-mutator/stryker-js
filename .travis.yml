@@ -35,5 +35,4 @@ stages:
   - test
   - name: release
     if: branch = release AND fork = false
-  - name: "Performance test"
-    if: type = cron OR branch = fix-perf-tests # Only run in nightly build
+  - "Performance test"
