@@ -1,0 +1,10 @@
+{
+  "mocha": {
+    "async-only": true,
+    "extension": ["json"],
+    "slow": 75,
+    "timeout": 20,
+    "foo": "bar",
+    "ui": "tdd"
+  } 
+}
