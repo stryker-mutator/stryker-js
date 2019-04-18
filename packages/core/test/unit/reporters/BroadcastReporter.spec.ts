@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
+import { ALL_REPORTER_EVENTS, scoreResult } from '../../helpers/producers';
 import { PluginKind } from '@stryker-mutator/api/plugin';
 import * as sinon from 'sinon';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
@@ -139,9 +139,23 @@ describe('BroadcastReporter', () => {
           expect(testInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'.`, actualError);
         });
       });
-
     });
 
+    describe.only('with a deprecated reporter event', () => {
+      beforeEach(() => {
+        sut = createSut();
+      });
+
+      it('should log a warning for reporters that implement the onScoreCalculated event', () => {
+          rep1.onScoreCalculated.returns(() => {});
+          (rep2 as any).onScoreCalculated = undefined;
+
+          sut.onScoreCalculated(scoreResult());
+
+          expect(testInjector.logger.warn).to.have.been.calledWith(`DEPRECATED: The reporter 'rep1' uses 'onScoreCalculated' which is deprecated. Please use 'onMutationTestReportReady' and calculate the score as an alternative.`);
+          expect(testInjector.logger.warn).to.not.have.been.calledWithMatch('rep2');
+      });
+    });
   });
 
   function createSut() {
