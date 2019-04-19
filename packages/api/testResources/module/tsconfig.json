@@ -2,12 +2,11 @@
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "es2017",
     "noImplicitAny": true,
     "sourceMap": false,
     "lib": [
-      "es5",
-      "es2015.promise"
+      "es2017"
     ],
     "typeRoots": [
       "../../../../node_modules/@types"

@@ -2,8 +2,8 @@
   "compilerOptions": {
     "outDir": "build/dist",
     "module": "esnext",
-    "target": "es5",
-    "lib": ["es6", "dom"],
+    "target": "es2017",
+    "lib": ["es2017"],
     "sourceMap": true,
     "allowJs": true,
     "jsx": "react",
