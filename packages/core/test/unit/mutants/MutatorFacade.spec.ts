@@ -1,11 +1,12 @@
-import { expect } from 'chai';
 import { Mutator } from '@stryker-mutator/api/mutant';
-import { MutatorFacade } from '../../../src/mutants/MutatorFacade';
-import { Mock, file } from '../../helpers/producers';
-import * as sinon from 'sinon';
-import { PluginCreator, coreTokens } from '../../../src/di';
 import { PluginKind } from '@stryker-mutator/api/plugin';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { file } from '@stryker-mutator/test-helpers/src/factory';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { coreTokens, PluginCreator } from '../../../src/di';
+import { MutatorFacade } from '../../../src/mutants/MutatorFacade';
+import { Mock } from '../../helpers/producers';
 
 describe('MutatorFacade', () => {
 

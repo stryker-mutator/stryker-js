@@ -1,15 +1,16 @@
-import * as sinon from 'sinon';
-import { expect } from 'chai';
-import { RunOptions } from '@stryker-mutator/api/test_runner';
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
-import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
-import { Mock, mock, strykerOptions } from '../../helpers/producers';
+import { RunOptions } from '@stryker-mutator/api/test_runner';
+import { strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
 import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/ChildProcessTestRunnerWorker';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import { Task } from '../../../src/utils/Task';
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
+import { Mock, mock } from '../../helpers/producers';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
   let sut: ChildProcessTestRunnerDecorator;

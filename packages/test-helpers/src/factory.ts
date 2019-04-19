@@ -1,13 +1,14 @@
-import { TestResult, TestStatus, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import { Mutant } from '@stryker-mutator/api/mutant';
 import { Config, ConfigEditor } from '@stryker-mutator/api/config';
+import { File, Location, MutationScoreThresholds, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
+import { Mutant } from '@stryker-mutator/api/mutant';
+import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter, ScoreResult } from '@stryker-mutator/api/report';
 import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
-import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult, mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { MutationScoreThresholds, File, Location, StrykerOptions } from '@stryker-mutator/api/core';
-import * as sinon from 'sinon';
+import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { Transpiler } from '@stryker-mutator/api/transpile';
+import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
+import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 
 /**
  * A 1x1 png base64 encoded
@@ -55,6 +56,29 @@ export const mutant = factoryMethod<Mutant>(() => ({
   mutatorName: 'foobarMutator',
   range: [0, 0],
   replacement: 'replacement'
+}));
+
+export const metrics = factoryMethod<Metrics>(() => ({
+  compileErrors: 0,
+  killed: 0,
+  mutationScore: 0,
+  mutationScoreBasedOnCoveredCode: 0,
+  noCoverage: 0,
+  runtimeErrors: 0,
+  survived: 0,
+  timeout: 0,
+  totalCovered: 0,
+  totalDetected: 0,
+  totalInvalid: 0,
+  totalMutants: 0,
+  totalUndetected: 0,
+  totalValid: 0
+}));
+
+export const metricsResult = factoryMethod<MetricsResult>(() => ({
+  childResults: [],
+  metrics: metrics({}),
+  name: ''
 }));
 
 export function logger(): sinon.SinonStubbedInstance<Logger> {

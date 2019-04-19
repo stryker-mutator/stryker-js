@@ -12,7 +12,8 @@ import Sandbox from '../../src/Sandbox';
 import { TempFolder } from '../../src/utils/TempFolder';
 import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunnerFactory';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
-import { mutant as createMutant, testResult, Mock, createFileAlreadyExistsError } from '../helpers/producers';
+import { Mock } from '../helpers/producers';
+import { mutant as createMutant, testResult, fileAlreadyExistsError } from '@stryker-mutator/test-helpers/src/factory';
 import SourceFile from '../../src/SourceFile';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import * as fileUtils from '../../src/utils/fileUtils';
@@ -130,7 +131,7 @@ describe(Sandbox.name, () => {
 
     it('should log a warning if "node_modules" already exists in the working folder', async () => {
       findNodeModulesStub.resolves('node_modules');
-      symlinkJunctionStub.rejects(createFileAlreadyExistsError());
+      symlinkJunctionStub.rejects(fileAlreadyExistsError());
       await createSut(testFrameworkStub);
       expect(log.warn).calledWithMatch(normalizeWhitespaces(
         `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox.

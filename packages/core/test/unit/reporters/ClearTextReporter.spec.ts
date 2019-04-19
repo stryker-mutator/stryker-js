@@ -1,11 +1,11 @@
 import { MutantResult, MutantStatus, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { mutantResult, mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import * as os from 'os';
 import * as sinon from 'sinon';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
-import { mutantResult, mutationScoreThresholds } from '../../helpers/producers';
 
 const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: Number) => {
   return [

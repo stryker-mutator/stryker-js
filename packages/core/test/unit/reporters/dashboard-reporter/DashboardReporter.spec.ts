@@ -1,14 +1,14 @@
+import { mutationTestReportSchema } from '@stryker-mutator/api/report';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import * as environmentVariables from '../../../../src/utils/objectUtils';
 import * as ciProvider from '../../../../src/reporters/ci/Provider';
-import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import { mock, Mock, mutationScoreThresholds } from '../../../helpers/producers';
 import DashboardReporter from '../../../../src/reporters/dashboard-reporter/DashboardReporter';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { default as DashboardReporterClient, default as StrykerDashboardClient, StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
-import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import { mutationTestReportSchema } from '@stryker-mutator/api/report';
+import * as environmentVariables from '../../../../src/utils/objectUtils';
+import { mock, Mock } from '../../../helpers/producers';
 
 describe(DashboardReporter.name, () => {
   let sut: DashboardReporter;

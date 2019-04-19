@@ -1,12 +1,12 @@
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { metrics, metricsResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import * as _ from 'lodash';
 import { MetricsResult } from 'mutation-testing-metrics';
 import * as os from 'os';
 import ClearTextScoreTable from '../../../src/reporters/ClearTextScoreTable';
-import { metrics, metricsResult } from '../../helpers/producers';
 
 describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {

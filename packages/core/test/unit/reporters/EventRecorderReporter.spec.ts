@@ -1,12 +1,12 @@
+import { Reporter } from '@stryker-mutator/api/report';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { Reporter } from '@stryker-mutator/api/report';
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
-import * as fileUtils from '../../../src/utils/fileUtils';
 import StrictReporter from '../../../src/reporters/StrictReporter';
-import { ALL_REPORTER_EVENTS } from '../../helpers/producers';
-import { fsAsPromised } from '@stryker-mutator/util';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import * as fileUtils from '../../../src/utils/fileUtils';
 
 describe('EventRecorderReporter', () => {
 
