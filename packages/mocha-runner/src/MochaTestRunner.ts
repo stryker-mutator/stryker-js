@@ -56,11 +56,21 @@ export default class MochaTestRunner implements TestRunner {
     return fileNames;
   }
   private mochaFileGlobPatterns(): string[] {
-    if (typeof this.mochaOptions.files === 'string') {
-      return [this.mochaOptions.files];
-    } else {
-      return this.mochaOptions.files || [DEFAULT_TEST_PATTERN];
+    // Use both `spec` as `files`
+    const globPatterns: string[] = [];
+    if (this.mochaOptions.spec) {
+      globPatterns.push(...this.mochaOptions.spec);
     }
+
+    if (typeof this.mochaOptions.files === 'string') { // `files` if for backward compat
+      globPatterns.push(this.mochaOptions.files);
+    } else if (this.mochaOptions.files) {
+      globPatterns.push(...this.mochaOptions.files);
+    }
+    if (!globPatterns.length) {
+      globPatterns.push(DEFAULT_TEST_PATTERN);
+    }
+    return globPatterns;
   }
 
   public run({ testHooks }: { testHooks?: string }): Promise<RunResult> {

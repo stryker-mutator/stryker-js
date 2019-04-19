@@ -76,6 +76,20 @@ describe(MochaTestRunner.name, () => {
       expect(mocha.addFile).calledWith('bar.js');
     });
 
+    it('should support both `files` as `spec`', async () => {
+      multimatchStub.returns(['foo.js']);
+      sut = createSut({
+        fileNames: ['foo'],
+        mochaOptions: {
+          files: ['bar'],
+          spec: ['foo']
+        }
+      });
+      await sut.init();
+      await actRun();
+      expect(multimatchStub).calledWith(['foo'], [path.resolve('foo'), path.resolve('bar')]);
+    });
+
     it('should match given file names with configured mocha files as `array`', () => {
       const relativeGlobPatterns = ['*.js', 'baz.js'];
       const expectedGlobPatterns = relativeGlobPatterns.map(glob => path.resolve(glob));
