@@ -16,6 +16,8 @@ export function serializeArguments(mochaOptions: MochaOptions) {
     const value: any = (mochaOptions as any)[key];
     if (typeof value === 'string') {
       args.push(value);
+    } else if (Array.isArray(value)) {
+      args.push(value.join(','));
     }
   });
   return args;

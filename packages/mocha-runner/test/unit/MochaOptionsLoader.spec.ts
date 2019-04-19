@@ -39,10 +39,11 @@ describe(MochaOptionsLoader.name, () => {
     it('should call `loadOptions` with serialized arguments', () => {
       testInjector.options[mochaOptionsKey] = {
         ['no-baz']: true,
-        foo: 'bar'
+        foo: 'bar',
+        spec: ['helpers/*.js', 'test/*.js']
       };
       sut.load(testInjector.options);
-      expect(LibWrapper.loadOptions).calledWith(['--no-baz', '--foo', 'bar']);
+      expect(LibWrapper.loadOptions).calledWith(['--no-baz', '--foo', 'bar', '--spec', 'helpers/*.js,test/*.js']);
     });
 
     it('should filter out invalid options from the `loadOptions` result', () => {
