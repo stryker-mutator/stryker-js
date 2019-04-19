@@ -1,28 +1,28 @@
-import * as path from 'path';
+import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import { ScoreResult } from '@stryker-mutator/api/report';
+import * as path from 'path';
 
-export async function readScoreResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
+export async function readMutationTestResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
   const allReportFiles = await fsAsPromised.readdir(eventResultDirectory);
-  const scoreResultReportFile = allReportFiles.find(file => !!file.match(/.*onScoreCalculated.*/));
-  expect(scoreResultReportFile).ok;
-  const scoreResultContent = await fsAsPromised.readFile(path.resolve(eventResultDirectory, scoreResultReportFile || ''), 'utf8');
-  return JSON.parse(scoreResultContent) as ScoreResult;
+  const mutationTestReportFile = allReportFiles.find(file => !!file.match(/.*onMutationTestReportReady.*/));
+  expect(mutationTestReportFile).ok;
+  const mutationTestReportContent = await fsAsPromised.readFile(path.resolve(eventResultDirectory, mutationTestReportFile || ''), 'utf8');
+  return JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
 }
 
-type WritableScoreResult = {
-  -readonly [K in keyof ScoreResult]: ScoreResult[K];
+type WritableMutationTestResult = {
+  -readonly [K in keyof MutationTestResult]: MutationTestResult[K];
 };
 
-export async function expectScoreResult(expectedScoreResult: Partial<ScoreResult>) {
-  const actualScoreResult = await readScoreResult();
-  const actualSnippet: Partial<WritableScoreResult> = {};
-  for (const key in expectedScoreResult) {
-    actualSnippet[key as keyof ScoreResult] = actualScoreResult[key as keyof ScoreResult];
+export async function expectMutationTestResult(expectedMutationTestResult: Partial<MutationTestResult>) {
+  const actualMutationTestResult = await readMutationTestResult();
+  const actualSnippet: Partial<WritableMutationTestResult> = {};
+  for (const key in expectedMutationTestResult) {
+    actualSnippet[key as keyof MutationTestResult] = actualMutationTestResult[key as keyof MutationTestResult];
   }
-  if (typeof actualSnippet.mutationScore === 'number') {
+  if (typeof actualSnippet.metrics.mutationScore === 'number') {
     actualSnippet.mutationScore = parseFloat(actualSnippet.mutationScore.toFixed(2));
   }
-  expect(actualSnippet).deep.eq(expectedScoreResult);
+  expect(actualSnippet).deep.eq(expectedMutationTestResult);
 }

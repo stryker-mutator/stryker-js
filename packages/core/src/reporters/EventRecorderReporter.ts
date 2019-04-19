@@ -70,10 +70,6 @@ export default class EventRecorderReporter implements StrictReporter {
     this.work('onMutantTested', result);
   }
 
-  public onScoreCalculated(score: ScoreResult): void {
-    this.work('onScoreCalculated', score);
-  }
-
   public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
     this.work('onMutationTestReportReady', report);
   }
