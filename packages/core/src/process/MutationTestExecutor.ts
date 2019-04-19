@@ -28,9 +28,6 @@ export class MutationTestExecutor {
       tap(this.reportAll)
     ).toPromise();
 
-    // TODO: Let typed inject dispose of sandbox pool
-    await this.sandboxPool.disposeAll();
-    await this.mutantTranspileScheduler.dispose();
     return results;
   }
 

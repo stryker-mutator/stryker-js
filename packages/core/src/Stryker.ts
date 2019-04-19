@@ -78,16 +78,23 @@ export default class Stryker {
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
-      if (initialRunResult.runResult.tests.length && testableMutants.length) {
-        const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
-        const mutantResults = await mutationTestExecutor.run(testableMutants);
-        await this.reportScore(mutantResults, inputFileInjector);
-        await TempFolder.instance().clean();
-        await this.logDone();
+      try {
+        if (initialRunResult.runResult.tests.length && testableMutants.length) {
+          const mutationTestExecutor = mutationTestProcessInjector
+            .injectClass(MutationTestExecutor);
+          const mutantResults = await mutationTestExecutor.run(testableMutants);
+          await this.reportScore(mutantResults, inputFileInjector);
+          await TempFolder.instance().clean();
+          await this.logDone();
+          return mutantResults;
+        } else {
+          this.logRemark();
+        }
+      } finally {
+        // This methods calls `dispose` on all created instances
+        // Namely the `SandboxPool` and the `ChildProcessProxy` instances
+        mutationTestProcessInjector.dispose();
         await LogConfigurator.shutdown();
-        return mutantResults;
-      } else {
-        this.logRemark();
       }
     }
     return Promise.resolve([]);

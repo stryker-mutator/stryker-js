@@ -15,7 +15,7 @@ import { BehaviorSubject } from 'rxjs';
 
 const INITIAL_CONCURRENCY = 100;
 
-export class MutantTranspileScheduler {
+export class MutantTranspileScheduler implements Disposable {
 
   private currentMutatedFile: SourceFile;
   private readonly concurrencyTicket$ = new BehaviorSubject<number>(INITIAL_CONCURRENCY);
@@ -44,12 +44,10 @@ export class MutantTranspileScheduler {
   }
 
   /**
-   * Dispose all
+   * Dispose
    */
   public dispose() {
     this.concurrencyTicket$.complete();
-    // TODO: Let typed-inject dispose this one
-    this.transpiler.dispose();
   }
 
   private createTranspiledMutant(mutant: TestableMutant, transpileResult: TranspileResult) {
