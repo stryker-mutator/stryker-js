@@ -6,8 +6,13 @@ describe('After running stryker on jest-react project', () => {
       metrics: produceMetrics({
         killed: 34,
         mutationScore: 64.15,
+        mutationScoreBasedOnCoveredCode: 64.15,
         survived: 19,
-        totalMutants: 53
+        totalCovered: 53,
+        totalDetected: 34,
+        totalMutants: 53,
+        totalUndetected: 19,
+        totalValid: 53
       }),
     });
     /*

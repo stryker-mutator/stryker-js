@@ -24,8 +24,14 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
   for (const key in expectedMetricsResult) {
     actualSnippet[key as keyof MetricsResult] = actualMetricsResult[key as keyof MetricsResult];
   }
-  if (actualSnippet.metrics && typeof actualSnippet.metrics.mutationScore === 'number') {
-    actualSnippet.metrics.mutationScore = parseFloat(actualSnippet.metrics.mutationScore.toFixed(2));
+  if (actualSnippet.metrics) {
+    if (typeof actualSnippet.metrics.mutationScore === 'number') {
+      actualSnippet.metrics.mutationScore = parseFloat(actualSnippet.metrics.mutationScore.toFixed(2));
+    }
+    if (typeof actualSnippet.metrics.mutationScoreBasedOnCoveredCode === 'number') {
+      actualSnippet.metrics.mutationScoreBasedOnCoveredCode = parseFloat(actualSnippet.metrics.mutationScoreBasedOnCoveredCode.toFixed(2));
+    }
+
   }
   expect(actualSnippet).deep.eq(expectedMetricsResult);
 }

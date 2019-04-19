@@ -7,8 +7,15 @@ describe('After running stryker with test runner jasmine, test framework jasmine
     await expectMetricsResult({
       metrics: produceMetrics({
         killed: 12,
-        mutationScore: 85,
-        noCoverage: 1
+        mutationScore: 85.71,
+        mutationScoreBasedOnCoveredCode: 92.31,
+        noCoverage: 1,
+        survived: 1,
+        totalCovered: 13,
+        totalDetected: 12,
+        totalMutants: 14,
+        totalUndetected: 2,
+        totalValid: 14
       })
     });
   });

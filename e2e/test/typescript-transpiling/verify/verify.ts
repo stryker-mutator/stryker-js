@@ -7,7 +7,13 @@ describe('Verify stryker has ran correctly', () => {
       metrics: produceMetrics({
         killed: 18,
         mutationScore: 66.67,
-        survived: 9
+        mutationScoreBasedOnCoveredCode: 66.67,
+        survived: 9,
+        totalCovered: 27,
+        totalDetected: 18,
+        totalMutants: 27,
+        totalUndetected: 9,
+        totalValid: 27
       })
     });
   });
