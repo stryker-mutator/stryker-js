@@ -48,5 +48,8 @@
     "timeoutMS": 10000,
     "maxConcurrentTestRunners": 4,
     "coverageAnalysis": "off"
+  },
+  "engines": {
+    "node": ">=10"
   }
 }
