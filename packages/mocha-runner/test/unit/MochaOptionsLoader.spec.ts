@@ -7,6 +7,7 @@ import sinon = require('sinon');
 import { testInjector } from '@stryker-mutator/test-helpers';
 import LibWrapper from '../../src/LibWrapper';
 import { mochaOptionsKey } from '../../src/utils';
+import { MochaOptions } from '../../src/MochaOptions';
 
 describe(MochaOptionsLoader.name, () => {
 
@@ -31,17 +32,17 @@ describe(MochaOptionsLoader.name, () => {
     it('should log about mocha >= 6', () => {
       sut.load(testInjector.options);
       expect(testInjector.logger.debug).calledWith(
-        'Mocha > 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions && LibWrapper.loadOptions.name
+        'Mocha >= 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions && LibWrapper.loadOptions.name
       );
     });
 
     it('should call `loadOptions` with serialized arguments', () => {
       testInjector.options[mochaOptionsKey] = {
-        baz: true,
+        ['no-baz']: true,
         foo: 'bar'
       };
       sut.load(testInjector.options);
-      expect(LibWrapper.loadOptions).calledWith(['--baz', 'true', '--foo', 'bar']);
+      expect(LibWrapper.loadOptions).calledWith(['--no-baz', '--foo', 'bar']);
     });
 
     it('should filter out invalid options from the `loadOptions` result', () => {
@@ -58,6 +59,7 @@ describe(MochaOptionsLoader.name, () => {
       rawOptions.grep = 'quuz';
       rawOptions.exclude = 'corge';
       rawOptions.file = 'grault';
+      rawOptions.spec = ['test/**/*.js'];
 
       rawOptions.garply = 'waldo'; // this should be filtered out
       const result = sut.load(testInjector.options);
@@ -68,6 +70,7 @@ describe(MochaOptionsLoader.name, () => {
         grep: 'quuz',
         override: true,
         require: 'bar',
+        spec: ['test/**/*.js'],
         timeout: 'baz',
         ['async-only']: 'qux',
         ui: 'quux',

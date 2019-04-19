@@ -8,8 +8,7 @@
     ]
   },
   "include": [
-    "test",
-    "typings"
+    "test"
   ],
   "references": [
     {

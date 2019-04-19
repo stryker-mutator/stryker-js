@@ -4,8 +4,7 @@
     "rootDir": "."
   },
   "include": [
-    "src",
-    "typings"
+    "src"
   ],
   "references": [
     {

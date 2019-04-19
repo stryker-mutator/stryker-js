@@ -20,12 +20,12 @@ describe('QUnit sample', () => {
 
   it('should work when configured with "qunit" ui', async () => {
     const mochaOptions = {
-      files: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
+      spec: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
       require: [],
       ui: 'qunit'
     };
     testInjector.options.mochaOptions = mochaOptions;
-    files = mochaOptions.files;
+    files = mochaOptions.spec;
     const sut = createSut();
     await sut.init();
     const actualResult = await sut.run({});

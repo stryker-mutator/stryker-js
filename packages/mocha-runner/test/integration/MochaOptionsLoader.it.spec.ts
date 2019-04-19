@@ -3,6 +3,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
 import { mochaOptionsKey } from '../../src/utils';
+import { MochaOptions } from '../../src/MochaOptions';
 
 describe(`${MochaOptionsLoader.name} integration`, () => {
   let sut: MochaOptionsLoader;
@@ -69,7 +70,23 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       require: [
         '@babel/register'
       ],
+      spec: [
+        'test/**/*.spec.js'
+      ],
       timeout: 0,
+      ui: 'bdd'
+    });
+  });
+
+  it('should support loading from "mocha.opts" (including providing files)', () => {
+    const configFile = resolveMochaConfig('mocha.opts');
+    const actualConfig = actLoad({ opts: configFile });
+    expect(actualConfig).deep.eq({
+      ['async-only']: true,
+      extension: ['js'],
+      opts: configFile,
+      spec: ['/tests/**/*.js', '/foo/*.js'],
+      timeout: 2000,
       ui: 'bdd'
     });
   });

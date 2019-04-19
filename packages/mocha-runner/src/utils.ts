@@ -1,3 +1,5 @@
+import { MochaOptions } from './MochaOptions';
+
 /**
  * Executes a piece of javascript code in global scope while passing the `require` function
  * @param body The JavaScript to execute
@@ -11,7 +13,10 @@ export function serializeArguments(mochaOptions: MochaOptions) {
   const args: string[] = [];
   Object.keys(mochaOptions).forEach(key => {
     args.push(`--${key}`);
-    args.push((mochaOptions as any)[key].toString());
+    const value: any = (mochaOptions as any)[key];
+    if (typeof value === 'string') {
+      args.push(value);
+    }
   });
   return args;
 }
@@ -26,6 +31,7 @@ const SUPPORTED_MOCHA_OPTIONS = Object.freeze([
   'ui',
   'grep',
   'exclude',
+  'spec',
   'file'
 ]);
 
@@ -34,10 +40,21 @@ const SUPPORTED_MOCHA_OPTIONS = Object.freeze([
  * @param rawConfig The raw parsed mocha configuration
  */
 export function filterConfig(rawConfig: { [key: string]: any }): MochaOptions {
-  return Object.keys(rawConfig).reduce((options, nextValue) => {
-    if (SUPPORTED_MOCHA_OPTIONS.some(o => nextValue === o)) {
-      (options as any)[nextValue] = (rawConfig as any)[nextValue];
+  const options: MochaOptions = {};
+  Object.keys(rawConfig)
+    .filter(rawOption => SUPPORTED_MOCHA_OPTIONS.some(supportedOption => rawOption === supportedOption))
+    .forEach(option => (options as any)[option] = rawConfig[option]);
+
+  // Config file can also contain positional arguments. They are provided under the `_` key
+  // For example:
+  // When mocha.opts contains "--async-only test/**/*.js", then "test/**/*.js will be the positional argument
+  // We must provide it to mocha as "spec"
+  if (rawConfig._ && rawConfig._.length) {
+    if (!options.spec) {
+      options.spec = [];
     }
-    return options;
-  }, {} as MochaOptions);
+    const specs = options.spec;
+    rawConfig._.forEach((positionalArgument: string) => specs.push(positionalArgument));
+  }
+  return options;
 }

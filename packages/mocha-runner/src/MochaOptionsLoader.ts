@@ -5,6 +5,7 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { serializeArguments, filterConfig, mochaOptionsKey } from './utils';
 import LibWrapper from './LibWrapper';
+import { MochaOptions } from './MochaOptions';
 
 export default class MochaOptionsLoader {
 
@@ -20,7 +21,7 @@ export default class MochaOptionsLoader {
 
   private loadMochaOptions(overrides: MochaOptions) {
     if (LibWrapper.loadOptions) {
-      this.log.debug('Mocha > 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions.name);
+      this.log.debug('Mocha >= 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions.name);
       const args = serializeArguments(overrides);
       const rawConfig = LibWrapper.loadOptions(args) || {};
       if (this.log.isTraceEnabled()) {

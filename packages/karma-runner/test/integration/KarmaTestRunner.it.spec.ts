@@ -15,11 +15,11 @@ function wrapInClosure(codeFragment: string) {
     })((Function('return this'))());`;
 }
 
-function setOptions(files: ReadonlyArray<FilePattern | string>, coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'): void {
+function setOptions(spec: ReadonlyArray<FilePattern | string>, coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'): void {
   testInjector.options.coverageAnalysis = coverageAnalysis;
   testInjector.options.karma = {
     config: {
-      files,
+      spec,
       logLevel: 'off',
       reporters: []
     }
