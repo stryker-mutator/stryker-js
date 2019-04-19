@@ -3,17 +3,23 @@ import * as sinon from 'sinon';
 import * as environmentVariables from '../../../../src/utils/objectUtils';
 import * as ciProvider from '../../../../src/reporters/ci/Provider';
 import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import { scoreResult, mock, Mock } from '../../../helpers/producers';
+import { mock, Mock, mutationScoreThresholds } from '../../../helpers/producers';
 import DashboardReporter from '../../../../src/reporters/dashboard-reporter/DashboardReporter';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
+import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 
 describe(DashboardReporter.name, () => {
   let sut: DashboardReporter;
   let dashboardClientMock: Mock<StrykerDashboardClient>;
   let getEnvironmentVariables: sinon.SinonStub;
   let determineCiProvider: sinon.SinonStub;
+  const dummyReport: mutationTestReportSchema.MutationTestResult = {
+    files: {},
+    schemaVersion: '1.0',
+    thresholds: mutationScoreThresholds({})
+  };
 
   beforeEach(() => {
     dashboardClientMock = mock(StrykerDashboardClient);
@@ -57,13 +63,45 @@ describe(DashboardReporter.name, () => {
     setupEnvironmentVariables();
 
     // Act
-    sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
+    sut.onMutationTestReportReady({
+      files: {
+        'src/file.js': {
+          language: 'js',
+          mutants: [
+            {
+              id: '1',
+              location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+              mutatorName: 'Block',
+              replacement: '{}',
+              status: mutationTestReportSchema.MutantStatus.Killed
+            },
+            {
+              id: '1',
+              location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+              mutatorName: 'Block',
+              replacement: '{}',
+              status: mutationTestReportSchema.MutantStatus.Killed
+            },
+            {
+              id: '1',
+              location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+              mutatorName: 'Block',
+              replacement: '{}',
+              status: mutationTestReportSchema.MutantStatus.Survived
+            }
+          ],
+          source: 'console.log("hello world!")'
+        }
+      },
+      schemaVersion: '1.0',
+      thresholds: mutationScoreThresholds({})
+    });
 
     // Assert
     const report: StrykerDashboardReport = {
       apiKey: '12345',
       branch: 'master',
-      mutationScore: 79.10,
+      mutationScore: 66.66666666666666,
       repositorySlug: 'github.com/stryker-mutator/stryker'
     };
 
@@ -76,7 +114,7 @@ describe(DashboardReporter.name, () => {
     setupEnvironmentVariables({ ci: undefined });
 
     // Act
-    sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
+    sut.onMutationTestReportReady(dummyReport);
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
@@ -88,7 +126,7 @@ describe(DashboardReporter.name, () => {
     setupEnvironmentVariables({ pullRequest: true });
 
     // Act
-    sut.onScoreCalculated(scoreResult({ mutationScore: 79.10 }));
+    sut.onMutationTestReportReady(dummyReport);
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
@@ -100,9 +138,7 @@ describe(DashboardReporter.name, () => {
     setupEnvironmentVariables({ apiKey: undefined });
 
     // Act
-    sut.onScoreCalculated(scoreResult({
-      mutationScore: 79.10
-    }));
+    sut.onMutationTestReportReady(dummyReport);
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
