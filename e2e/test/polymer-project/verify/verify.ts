@@ -6,9 +6,14 @@ describe('After running stryker on polymer-project', () => {
       metrics: produceMetrics({
         killed: 14,
         mutationScore: 88.24,
+        mutationScoreBasedOnCoveredCode: 88.24,
         survived: 2,
         timeout: 1,
-        totalMutants: 17
+        totalCovered: 17,
+        totalDetected: 15,
+        totalMutants: 17,
+        totalUndetected: 2,
+        totalValid : 17
       })
     });
     /*
