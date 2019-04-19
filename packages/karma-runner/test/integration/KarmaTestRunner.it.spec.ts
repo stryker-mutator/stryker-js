@@ -19,9 +19,9 @@ function setOptions(spec: ReadonlyArray<FilePattern | string>, coverageAnalysis:
   testInjector.options.coverageAnalysis = coverageAnalysis;
   testInjector.options.karma = {
     config: {
-      spec,
       logLevel: 'off',
-      reporters: []
+      reporters: [],
+      spec
     }
   };
 }

@@ -20,8 +20,8 @@ describe('QUnit sample', () => {
 
   it('should work when configured with "qunit" ui', async () => {
     const mochaOptions = {
-      spec: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
       require: [],
+      spec: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
       ui: 'qunit'
     };
     testInjector.options.mochaOptions = mochaOptions;
