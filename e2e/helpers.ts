@@ -2,27 +2,50 @@ import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as path from 'path';
+import { calculateMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
 
 export async function readMutationTestResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
   const allReportFiles = await fsAsPromised.readdir(eventResultDirectory);
   const mutationTestReportFile = allReportFiles.find(file => !!file.match(/.*onMutationTestReportReady.*/));
   expect(mutationTestReportFile).ok;
   const mutationTestReportContent = await fsAsPromised.readFile(path.resolve(eventResultDirectory, mutationTestReportFile || ''), 'utf8');
-  return JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
+  const report = JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
+  const metricsResult = calculateMetrics(report.files);
+  return metricsResult;
 }
 
-type WritableMutationTestResult = {
-  -readonly [K in keyof MutationTestResult]: MutationTestResult[K];
+type WritableMetricsResult = {
+  -readonly [K in keyof MetricsResult]: MetricsResult[K];
 };
 
-export async function expectMutationTestResult(expectedMutationTestResult: Partial<MutationTestResult>) {
-  const actualMutationTestResult = await readMutationTestResult();
-  const actualSnippet: Partial<WritableMutationTestResult> = {};
-  for (const key in expectedMutationTestResult) {
-    actualSnippet[key as keyof MutationTestResult] = actualMutationTestResult[key as keyof MutationTestResult];
+export async function expectMetricsResult(expectedMetricsResult: Partial<MetricsResult>) {
+  const actualMetricsResult = await readMutationTestResult();
+  const actualSnippet: Partial<WritableMetricsResult> = {};
+  for (const key in expectedMetricsResult) {
+    actualSnippet[key as keyof MetricsResult] = actualMetricsResult[key as keyof MetricsResult];
   }
-  if (typeof actualSnippet.metrics.mutationScore === 'number') {
-    actualSnippet.mutationScore = parseFloat(actualSnippet.mutationScore.toFixed(2));
+  if (actualSnippet.metrics && typeof actualSnippet.metrics.mutationScore === 'number') {
+    actualSnippet.metrics.mutationScore = parseFloat(actualSnippet.metrics.mutationScore.toFixed(2));
   }
-  expect(actualSnippet).deep.eq(expectedMutationTestResult);
+  expect(actualSnippet).deep.eq(expectedMetricsResult);
+}
+
+export function produceMetrics(metrics: Partial<Metrics>): Metrics {
+  return {
+    compileErrors: 0,
+    killed: 0,
+    mutationScore: 0,
+    mutationScoreBasedOnCoveredCode: 0,
+    noCoverage: 0,
+    runtimeErrors: 0,
+    survived: 0,
+    timeout: 0,
+    totalCovered: 0,
+    totalDetected: 0,
+    totalInvalid: 0,
+    totalMutants: 0,
+    totalUndetected: 0,
+    totalValid: 0,
+    ...metrics
+  };
 }

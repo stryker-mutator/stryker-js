@@ -1,24 +1,14 @@
-import { expect } from 'chai';
-import { readScoreResult } from '../../../helpers';
+import { expectMetricsResult, produceMetrics } from '../../../helpers';
 
 describe('After running stryker on jest-react project', () => {
   it('should report expected scores', async () => {
-    const actualResult = await readScoreResult();
-    expect(actualResult.childResults).lengthOf(3);
-    expect({
-      killed: actualResult.killed,
-      mutationScore: parseFloat(actualResult.mutationScore.toFixed(2)),
-      noCoverage: actualResult.noCoverage,
-      survived: actualResult.survived,
-      timedOut: actualResult.timedOut,
-      totalMutants: actualResult.totalMutants
-    }).deep.eq({
-      killed: 34,
-      mutationScore: 64.15,
-      noCoverage: 0,
-      survived: 19,
-      timedOut: 0,
-      totalMutants: 53,
+    await expectMetricsResult({
+      metrics: produceMetrics({
+        killed: 34,
+        mutationScore: 64.15,
+        survived: 19,
+        totalMutants: 53
+      }),
     });
     /*
     ---------------|---------|----------|-----------|------------|----------|---------|
