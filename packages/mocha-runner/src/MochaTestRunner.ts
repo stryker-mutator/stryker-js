@@ -3,8 +3,7 @@ import * as path from 'path';
 import { TestRunner, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
 import LibWrapper from './LibWrapper';
 import { StrykerMochaReporter } from './StrykerMochaReporter';
-import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
-import { evalGlobal } from './utils';
+import { mochaOptionsKey, evalGlobal } from './utils';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
@@ -13,7 +12,7 @@ const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 export default class MochaTestRunner implements TestRunner {
 
   private testFileNames: string[];
-  private readonly mochaRunnerOptions: MochaRunnerOptions;
+  private readonly mochaRunnerOptions: MochaOptions;
 
   public static inject = tokens(commonTokens.logger, commonTokens.sandboxFileNames, commonTokens.options);
   constructor(private readonly log: Logger, private readonly allFileNames: ReadonlyArray<string>, options: StrykerOptions) {

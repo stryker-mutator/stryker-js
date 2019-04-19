@@ -6,7 +6,6 @@ import { RunOptions } from '@stryker-mutator/api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import LibWrapper from '../../src/LibWrapper';
 import * as utils from '../../src/utils';
-import MochaRunnerOptions from '../../src/MochaRunnerOptions';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
 import { commonTokens } from '@stryker-mutator/api/plugin';
@@ -38,7 +37,7 @@ describe(MochaTestRunner.name, () => {
     delete StrykerMochaReporter.log;
   });
 
-  function createSut(mochaSettings: Partial<{ fileNames: ReadonlyArray<string>, mochaOptions: MochaRunnerOptions }>) {
+  function createSut(mochaSettings: Partial<{ fileNames: ReadonlyArray<string>, mochaOptions: MochaOptions }>) {
     testInjector.options.mochaOptions = mochaSettings.mochaOptions || {};
     return testInjector.injector
       .provideValue(commonTokens.sandboxFileNames, mochaSettings.fileNames || ['src/math.js', 'test/mathSpec.js'])
@@ -81,7 +80,7 @@ describe(MochaTestRunner.name, () => {
   it('should pass along supported options to mocha', async () => {
     // Arrange
     multimatchStub.returns(['foo.js', 'bar.js', 'foo2.js']);
-    const mochaOptions: MochaRunnerOptions = {
+    const mochaOptions: MochaOptions = {
       asyncOnly: true,
       grep: /grepme/,
       opts: 'opts',
@@ -103,7 +102,7 @@ describe(MochaTestRunner.name, () => {
   });
 
   it('should pass require additional require options when constructed', () => {
-    const mochaOptions: MochaRunnerOptions = { require: ['ts-node', 'babel-register'] };
+    const mochaOptions: MochaOptions = { require: ['ts-node', 'babel-register'] };
     createSut({ mochaOptions });
     expect(requireStub).calledTwice;
     expect(requireStub).calledWith('ts-node');
@@ -111,7 +110,7 @@ describe(MochaTestRunner.name, () => {
   });
 
   it('should pass and resolve relative require options when constructed', () => {
-    const mochaOptions: MochaRunnerOptions = { require: ['./setup.js', 'babel-register'] };
+    const mochaOptions: MochaOptions = { require: ['./setup.js', 'babel-register'] };
     createSut({ mochaOptions });
     const resolvedRequire = path.resolve('./setup.js');
     expect(requireStub).calledTwice;

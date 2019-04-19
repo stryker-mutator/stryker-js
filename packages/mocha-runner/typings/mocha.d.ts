@@ -1,11 +1,13 @@
-export const mochaOptionsKey = 'mochaOptions';
 
-export default interface MochaRunnerOptions {
+declare interface MochaOptions {
   require?: string[];
   opts?: string;
+  config?: string;
+  package?: string;
   timeout?: number;
   asyncOnly?: boolean;
   ui?: string;
   files?: string[] | string;
   grep?: RegExp;
+  extension?: string[];
 }

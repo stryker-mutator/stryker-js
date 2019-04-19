@@ -1,5 +1,5 @@
 import { ConfigEditor, Config } from '@stryker-mutator/api/config';
-import { mochaOptionsKey } from './MochaRunnerOptions';
+import { mochaOptionsKey } from './utils';
 import MochaOptionsLoader from './MochaOptionsLoader';
 import { tokens } from '@stryker-mutator/api/plugin';
 

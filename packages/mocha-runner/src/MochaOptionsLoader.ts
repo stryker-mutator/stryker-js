@@ -1,9 +1,10 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import MochaRunnerOptions, { mochaOptionsKey } from './MochaRunnerOptions';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
+import { serializeArguments, filterConfig, mochaOptionsKey } from './utils';
+import LibWrapper from './LibWrapper';
 
 export default class MochaOptionsLoader {
 
@@ -12,12 +13,27 @@ export default class MochaOptionsLoader {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) { }
 
-  public load(config: StrykerOptions): MochaRunnerOptions {
-    const mochaOptions = Object.assign({}, config[mochaOptionsKey]) as MochaRunnerOptions;
-    return Object.assign(this.loadMochaOptsFile(mochaOptions.opts), mochaOptions);
+  public load(strykerOptions: StrykerOptions): MochaOptions {
+    const mochaOptions = { ...strykerOptions[mochaOptionsKey] } as MochaOptions;
+    return { ... this.loadMochaOptions(mochaOptions), ...mochaOptions };
   }
 
-  private loadMochaOptsFile(opts: false | string | undefined): MochaRunnerOptions {
+  private loadMochaOptions(overrides: MochaOptions) {
+    if (LibWrapper.loadOptions) {
+      this.log.debug('Mocha > 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions.name);
+      const args = serializeArguments(overrides);
+      const rawConfig = LibWrapper.loadOptions(args) || {};
+      if (this.log.isTraceEnabled()) {
+        this.log.trace(`Mocha: ${LibWrapper.loadOptions.name}([${args.map(arg => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+      }
+      return filterConfig(rawConfig);
+    } else {
+      this.log.debug('Mocha < 6 detected. Using custom logic to parse mocha options');
+      return this.loadMochaOptsFile(overrides.opts);
+    }
+  }
+
+  private loadMochaOptsFile(opts: false | string | undefined): MochaOptions {
     switch (typeof opts) {
       case 'boolean':
         this.log.debug('Not reading additional mochaOpts from a file');
@@ -46,9 +62,9 @@ export default class MochaOptionsLoader {
     return this.parseOptsFile(fs.readFileSync(optsFileName, 'utf8'));
   }
 
-  private parseOptsFile(optsFileContent: string): MochaRunnerOptions {
+  private parseOptsFile(optsFileContent: string): MochaOptions {
     const options = optsFileContent.split('\n').map(val => val.trim());
-    const mochaRunnerOptions: MochaRunnerOptions = Object.create(null);
+    const mochaRunnerOptions: MochaOptions = Object.create(null);
     options.forEach(option => {
       const args = option.split(' ').filter(Boolean);
       if (args[0]) {

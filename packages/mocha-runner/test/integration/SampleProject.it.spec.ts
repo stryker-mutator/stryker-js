@@ -3,7 +3,6 @@ import MochaTestRunner from '../../src/MochaTestRunner';
 import { TestResult, RunResult, TestStatus, RunStatus } from '@stryker-mutator/api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
-import MochaRunnerOptions from '../../src/MochaRunnerOptions';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 chai.use(chaiAsPromised);
@@ -66,7 +65,7 @@ describe('Running a sample project', () => {
         resolve('testResources/sampleProject/MyMath.js'),
         resolve('testResources/sampleProject/MyMathSpec.js'),
       ];
-      const mochaOptions: MochaRunnerOptions = {
+      const mochaOptions: MochaOptions = {
         files
       };
       testInjector.options.mochaOptions = mochaOptions;
