@@ -1,11 +1,12 @@
-import chalk from 'chalk';
-import { Reporter, MutantResult, MutantStatus, ScoreResult } from '@stryker-mutator/api/report';
 import { Position, StrykerOptions } from '@stryker-mutator/api/core';
-import ClearTextScoreTable from './ClearTextScoreTable';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import chalk from 'chalk';
+import { calculateMetrics } from 'mutation-testing-metrics';
 import * as os from 'os';
 import { tokens } from 'typed-inject';
-import { commonTokens } from '@stryker-mutator/api/plugin';
-import { Logger } from '@stryker-mutator/api/logging';
+import ClearTextScoreTable from './ClearTextScoreTable';
 
 export default class ClearTextReporter implements Reporter {
 
@@ -128,7 +129,8 @@ export default class ClearTextReporter implements Reporter {
     }
   }
 
-  public onScoreCalculated(score: ScoreResult) {
-    this.writeLine(new ClearTextScoreTable(score, this.options.thresholds).draw());
+  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
+    const metricsResult = calculateMetrics(report.files);
+    this.writeLine(new ClearTextScoreTable(metricsResult, this.options.thresholds).draw());
   }
 }

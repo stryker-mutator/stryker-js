@@ -3,7 +3,7 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { Config, ConfigEditor } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
-import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from '@stryker-mutator/api/report';
+import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { MutationScoreThresholds, File, Location, StrykerOptions } from '@stryker-mutator/api/core';
 import * as sinon from 'sinon';
 import { Transpiler } from '@stryker-mutator/api/transpile';
@@ -34,6 +34,19 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   replacement: '',
   sourceFilePath: '',
   status: MutantStatus.Killed,
+  testsRan: ['']
+}));
+
+export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestReportSchema.MutantResult>(() => ({
+  id: '256',
+  location: location(),
+  mutatedLines: '',
+  mutatorName: '',
+  originalLines: '',
+  range: [0, 0],
+  replacement: '',
+  sourceFilePath: '',
+  status: mutationTestReportSchema.MutantStatus.Killed,
   testsRan: ['']
 }));
 

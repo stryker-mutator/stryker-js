@@ -1,12 +1,11 @@
-import * as os from 'os';
-import { expect } from 'chai';
-import * as sinon from 'sinon';
-import chalk from 'chalk';
-import * as _ from 'lodash';
-import { MutantStatus, MutantResult } from '@stryker-mutator/api/report';
-import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
-import { scoreResult, mutationScoreThresholds, mutantResult } from '../../helpers/producers';
+import { MutantResult, MutantStatus, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import chalk from 'chalk';
+import * as os from 'os';
+import * as sinon from 'sinon';
+import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
+import { mutantResult, mutationScoreThresholds } from '../../helpers/producers';
 
 const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: Number) => {
   return [
@@ -25,113 +24,57 @@ describe(ClearTextReporter.name, () => {
     sut = testInjector.injector.injectClass(ClearTextReporter);
   });
 
-  describe('onScoreCalculated', () => {
+  describe('onMutationTestReportReady', () => {
 
     it('should report the clear text table with correct values', () => {
       testInjector.options.coverageAnalysis = 'all';
       sut = testInjector.injector.injectClass(ClearTextReporter);
-      sut.onScoreCalculated(scoreResult({
-        childResults: [scoreResult({
-          childResults: [
-            scoreResult({
-              mutationScore: 59.99,
-              name: 'some/test/for/a/deep/file.js'
-            })
-          ],
-          mutationScore: 60,
-          name: 'child1'
-        })],
-        killed: 1,
-        mutationScore: 80,
-        name: 'root',
-        noCoverage: 4,
-        runtimeErrors: 6,
-        survived: 3,
-        timedOut: 2,
-        transpileErrors: 5
-      }));
+
+      sut.onMutationTestReportReady({
+        files: {
+          'src/file.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: mutationTestReportSchema.MutantStatus.Killed
+              }
+            ],
+            source: 'console.log("hello world!")'
+          }
+        },
+        schemaVersion: '1.0',
+        thresholds: mutationScoreThresholds({})
+      });
+
       const serializedTable: string = stdoutStub.getCall(0).args[0];
       const rows = serializedTable.split(os.EOL);
       expect(rows).to.deep.eq([
-        '-------------------------------|---------|----------|-----------|------------|----------|---------|',
-        'File                           | % score | # killed | # timeout | # survived | # no cov | # error |',
-        '-------------------------------|---------|----------|-----------|------------|----------|---------|',
-        `All files                      |${chalk.green('   80.00 ')}|        1 |         2 |          3 |        4 |      11 |`,
-        ` child1                        |${chalk.yellow('   60.00 ')}|        0 |         0 |          0 |        0 |       0 |`,
-        `  some/test/for/a/deep/file.js |${chalk.red('   59.99 ')}|        0 |         0 |          0 |        0 |       0 |`,
-        '-------------------------------|---------|----------|-----------|------------|----------|---------|',
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        'File      | % score | # killed | # timeout | # survived | # no cov | # error |',
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
+        ` file.js  |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
+        '----------|---------|----------|-----------|------------|----------|---------|',
         ''
       ]);
     });
 
-    it('should grow columns widths based on value size', () => {
-      testInjector.options.coverageAnalysis = 'all';
-      sut.onScoreCalculated(scoreResult({
-        killed: 1000000000
-      }));
-      const serializedTable: string = stdoutStub.getCall(0).args[0];
-      const killedColumnValues = _.flatMap(serializedTable.split(os.EOL), row => row.split('|').filter((_, i) => i === 2));
-      killedColumnValues.forEach(val => expect(val).to.have.lengthOf(12));
-      expect(killedColumnValues[3]).to.eq(' 1000000000 ');
-    });
-
-    it('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
-      testInjector.options.coverageAnalysis = 'all';
-      testInjector.options.thresholds = mutationScoreThresholds({ high: 60, low: 50 });
-      sut.onScoreCalculated(scoreResult({
-        childResults: [
-          scoreResult({ mutationScore: 60 }),
-          scoreResult({ mutationScore: 59.99 }),
-          scoreResult({ mutationScore: 50.01 }),
-          scoreResult({ mutationScore: 50 }),
-          scoreResult({ mutationScore: 49.99 })
-        ],
-        mutationScore: 60.01
-      }));
-      const serializedTable: string = stdoutStub.getCall(0).args[0];
-      expect(serializedTable).contains(chalk.red('   49.99 '));
-      expect(serializedTable).contains(chalk.yellow('   50.00 '));
-      expect(serializedTable).contains(chalk.yellow('   50.01 '));
-      expect(serializedTable).contains(chalk.yellow('   59.99 '));
-      expect(serializedTable).contains(chalk.green('   60.00 '));
-      expect(serializedTable).contains(chalk.green('   60.01 '));
-    });
-
-    it('should color score in red and green if low equals high thresholds', () => {
-      testInjector.options.coverageAnalysis = 'all';
-      testInjector.options.thresholds = mutationScoreThresholds({ high: 50, low: 50 });
-
-      sut.onScoreCalculated(scoreResult({
-        childResults: [
-          scoreResult({ mutationScore: 50 }),
-          scoreResult({ mutationScore: 49.99 })
-        ],
-        mutationScore: 50.01
-      }));
-      const serializedTable: string = stdoutStub.getCall(0).args[0];
-      expect(serializedTable).contains(chalk.red('   49.99 '));
-      expect(serializedTable).contains(chalk.green('   50.00 '));
-      expect(serializedTable).contains(chalk.green('   50.01 '));
-    });
-
     it('should not color score if `allowConsoleColors` config is false', () => {
-      testInjector.options.coverageAnalysis = 'all';
-      testInjector.options.thresholds = mutationScoreThresholds({ high: 60, low: 50 });
       testInjector.options.allowConsoleColors = false;
+      chalk.level = 1;
 
-      sut.onScoreCalculated(scoreResult({
-        childResults: [
-          scoreResult({ mutationScore: 60 }),
-          scoreResult({ mutationScore: 50 }),
-          scoreResult({ mutationScore: 49.99 })
-        ],
-        mutationScore: 60.01
-      }));
-      const serializedTable: string = stdoutStub.getCall(0).args[0];
-      expect(serializedTable).contains('   49.99 ');
-      expect(serializedTable).contains('   50.00 ');
-      expect(serializedTable).contains('   60.00 ');
-      expect(serializedTable).contains('   60.01 ');
+      sut = testInjector.injector.injectClass(ClearTextReporter);
+      sut.onMutationTestReportReady({
+        files: {},
+        schemaVersion: '1.0',
+        thresholds: mutationScoreThresholds({})
+      });
+
+      expect(chalk.level).to.eq(0);
     });
   });
 

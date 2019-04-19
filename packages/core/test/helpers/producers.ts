@@ -1,18 +1,19 @@
-import { TestResult, TestStatus, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import { Mutant } from '@stryker-mutator/api/mutant';
 import { Config } from '@stryker-mutator/api/config';
-import { Logger } from 'log4js';
+import { File, Location, LogLevel, MutationScoreThresholds, StrykerOptions } from '@stryker-mutator/api/core';
+import { Mutant } from '@stryker-mutator/api/mutant';
+import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter, ScoreResult } from '@stryker-mutator/api/report';
 import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
-import { MutantStatus, MatchedMutant, MutantResult, Reporter, ScoreResult } from '@stryker-mutator/api/report';
-import { MutationScoreThresholds, File, Location, StrykerOptions, LogLevel } from '@stryker-mutator/api/core';
-import TestableMutant from '../../src/TestableMutant';
-import SourceFile from '../../src/SourceFile';
-import TranspiledMutant from '../../src/TranspiledMutant';
+import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { FileCoverageData } from 'istanbul-lib-coverage';
+import { Logger } from 'log4js';
+import * as sinon from 'sinon';
+import SourceFile from '../../src/SourceFile';
+import TestableMutant from '../../src/TestableMutant';
+import TranspiledMutant from '../../src/TranspiledMutant';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
-import * as sinon from 'sinon';
+import { MetricsResult, Metrics } from 'mutation-testing-metrics';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -154,6 +155,38 @@ export const scoreResult = factoryMethod<ScoreResult>(() => ({
   totalUndetected: 0,
   totalValid: 0,
   transpileErrors: 0
+}));
+
+export const metrics = factoryMethod<Metrics>(() => ({
+  compileErrors: 0,
+  killed: 0,
+  mutationScore: 0,
+  mutationScoreBasedOnCoveredCode: 0,
+  noCoverage: 0,
+  runtimeErrors: 0,
+  survived: 0,
+  timeout: 0,
+  totalCovered: 0,
+  totalDetected: 0,
+  totalInvalid: 0,
+  totalMutants: 0,
+  totalUndetected: 0,
+  totalValid: 0
+}));
+
+export const metricsResult = factoryMethod<MetricsResult>(() => ({
+  childResults: [],
+  metrics: metrics({}),
+  name: ''
+}));
+
+export const mutationTestResult = factoryMethod<mutationTestReportSchema.MutationTestResult>(() => ({
+  files: Object.create(null),
+  schemaVersion: '1.0',
+  thresholds: {
+    high: 0,
+    low: 0
+  }
 }));
 
 export const testResult = factory<TestResult>({
