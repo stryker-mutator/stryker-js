@@ -14,8 +14,8 @@ export default class MochaOptionsLoader {
   constructor(private readonly log: Logger) { }
 
   public load(strykerOptions: StrykerOptions): MochaOptions {
-    const mochaOptions = Object.assign({}, strykerOptions[mochaOptionsKey]) as MochaOptions;
-    return Object.assign(this.loadMochaOptions(mochaOptions), mochaOptions);
+    const mochaOptions = { ...strykerOptions[mochaOptionsKey] } as MochaOptions;
+    return { ... this.loadMochaOptions(mochaOptions), ...mochaOptions };
   }
 
   private loadMochaOptions(overrides: MochaOptions) {
