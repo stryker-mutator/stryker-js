@@ -36,5 +36,8 @@
   "dependencies": {
     "@stryker-mutator/api": "^1.2.0"
   },
-  "contributors": []
+  "contributors": [],
+  "engines": {
+    "node": ">=6"
+  }
 }
