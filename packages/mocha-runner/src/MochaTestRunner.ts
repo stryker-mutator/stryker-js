@@ -24,7 +24,7 @@ export default class MochaTestRunner implements TestRunner {
 
   public init(): void {
     if (LibWrapper.handleFiles) {
-      this.log.debug('Mocha >= 6 detected. Using mocha\'s `%s` to load files', LibWrapper.handleFiles.name);
+      this.log.debug('Mocha >= 6 detected. Using mocha\'s `handleFiles` to load files');
       this.testFileNames = this.mocha6DiscoverFiles(LibWrapper.handleFiles);
     } else {
       this.log.debug('Mocha < 6 detected. Using custom logic to discover files');

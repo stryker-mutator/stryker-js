@@ -145,7 +145,7 @@ describe(MochaTestRunner.name, () => {
     it('should log about mocha >= 6 detection', async () => {
       sut = createSut({});
       await sut.init();
-      expect(testInjector.logger.debug).calledWith('Mocha >= 6 detected. Using mocha\'s `%s` to load files', LibWrapper.handleFiles && LibWrapper.handleFiles.name);
+      expect(testInjector.logger.debug).calledWith('Mocha >= 6 detected. Using mocha\'s `handleFiles` to load files');
     });
 
     it('should mock away the `process.exit` method when calling the mocha function (unfortunate side effect)', async () => {

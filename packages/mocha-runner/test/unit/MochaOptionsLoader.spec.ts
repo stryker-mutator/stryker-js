@@ -69,6 +69,7 @@ describe(MochaOptionsLoader.name, () => {
         extension: 'foo',
         file: 'grault',
         grep: 'quuz',
+        opts: './test/mocha.opts',
         override: true,
         require: 'bar',
         spec: ['test/**/*.js'],
@@ -89,6 +90,11 @@ describe(MochaOptionsLoader.name, () => {
       expect(testInjector.logger.trace).calledWith(
         `Mocha: ${fnName}(['--foo','bar']) => {"baz":"qux"}`
       );
+    });
+
+    it('should respect mocha\'s defaults', () => {
+      const options = sut.load(testInjector.options);
+      expect(options).deep.eq(defaultMochaOptions());
     });
   });
 
@@ -132,7 +138,7 @@ describe(MochaOptionsLoader.name, () => {
       readFileStub.returns('');
       sut.load(config);
       expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`);
-      expect(fs.readFileSync).calledWith(path.resolve('test/mocha.opts'));
+      expect(fs.readFileSync).calledWith(path.resolve('./test/mocha.opts'));
     });
 
     it('shouldn\'t load anything if mocha.opts = false', () => {
@@ -147,7 +153,7 @@ describe(MochaOptionsLoader.name, () => {
     it('should not load default mocha.opts file if not found', () => {
       existsFileStub.returns(false);
       const options = sut.load(config);
-      expect(options).deep.eq({});
+      expect(options).deep.eq(defaultMochaOptions());
       expect(testInjector.logger.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
     });
 
@@ -184,7 +190,7 @@ describe(MochaOptionsLoader.name, () => {
     itShouldLoadProperty('--grep', '/grep(this|that)/', { grep: /grep(this|that)/ });
     itShouldLoadProperty('--grep', 'grep(this|that)?', { grep: /grep(this|that)?/ });
 
-    it('should not override additional properties', () => {
+    it('should not override additional properties (except for defaults)', () => {
       readFileStub.returns(`
         -u qunit
         -t 2000
@@ -201,8 +207,10 @@ describe(MochaOptionsLoader.name, () => {
       const options = sut.load(config);
       expect(options).deep.equal({
         asyncOnly: false,
+        extension: ['js'],
         opts: 'path/to/opts/file',
         require: ['ts-node/register'],
+        spec: ['test'],
         timeout: 4000,
         ui: 'exports'
       });
@@ -217,7 +225,8 @@ describe(MochaOptionsLoader.name, () => {
         opts: 'some/mocha.opts/file',
       };
       const options = sut.load(config);
-      expect(options).deep.eq({ opts: 'some/mocha.opts/file' });
+      expect(options).not.have.property('reporter');
+      expect(options).not.have.property('ignore-leaks');
       expect(testInjector.logger.debug).calledWith('Ignoring option "--reporter" as it is not supported.');
       expect(testInjector.logger.debug).calledWith('Ignoring option "--ignore-leaks" as it is not supported.');
     });
@@ -231,8 +240,26 @@ describe(MochaOptionsLoader.name, () => {
         opts: 'some/mocha.opts/file',
       };
       const options = sut.load(config);
-      expect(options).deep.eq({ opts: 'some/mocha.opts/file', timeout: undefined, ui: undefined });
+      expect(options).deep.eq({
+        extension: ['js'],
+        opts: 'some/mocha.opts/file',
+        spec: [
+          'test'
+        ],
+        timeout: undefined,
+        ui: undefined
+      });
     });
   });
+
+  function defaultMochaOptions()  {
+    return {
+      extension: ['js'],
+      opts: './test/mocha.opts',
+      spec: ['test'],
+      timeout: 2000,
+      ui: 'bdd'
+    };
+  }
 
 });

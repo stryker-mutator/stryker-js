@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import MochaOptionsLoader from '../../src/MochaOptionsLoader';
+import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
 import { mochaOptionsKey } from '../../src/utils';
 import { MochaOptions } from '../../src/MochaOptions';
@@ -21,6 +21,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     const configFile = resolveMochaConfig('.mocharc.js');
     const actualConfig = actLoad({ config: configFile });
     expect(actualConfig).deep.eq({
+      ...DEFAULT_MOCHA_OPTIONS,
       config: configFile,
       extension: ['js'],
       timeout: 2000,
@@ -32,6 +33,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     const configFile = resolveMochaConfig('.mocharc.json');
     const actualConfig = actLoad({ config: configFile });
     expect(actualConfig).deep.eq({
+      ...DEFAULT_MOCHA_OPTIONS,
       config: configFile,
       extension: ['json', 'js'],
       timeout: 2000,
@@ -43,6 +45,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     const configFile = resolveMochaConfig('.mocharc.jsonc');
     const actualConfig = actLoad({ config: configFile });
     expect(actualConfig).deep.eq({
+      ...DEFAULT_MOCHA_OPTIONS,
       config: configFile,
       extension: ['jsonc', 'js'],
       timeout: 2000,
@@ -54,6 +57,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     const configFile = resolveMochaConfig('.mocharc.yml');
     const actualConfig = actLoad({ config: configFile });
     expect(actualConfig).deep.eq({
+      ...DEFAULT_MOCHA_OPTIONS,
       ['async-only']: false,
       config: configFile,
       exclude: [
@@ -95,6 +99,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     const pkgFile = resolveMochaConfig('package.json');
     const actualConfig = actLoad({ package: pkgFile });
     expect(actualConfig).deep.eq({
+      ...DEFAULT_MOCHA_OPTIONS,
       ['async-only']: true,
       extension: ['json', 'js'],
       package: pkgFile,
@@ -107,6 +112,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     process.chdir(resolveMochaConfig('.'));
     const actualConfig = actLoad({});
     expect(actualConfig).deep.eq({
+      ...DEFAULT_MOCHA_OPTIONS,
       ['async-only']: true,
       extension: [
         'js',
@@ -125,6 +131,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       ['no-opts']: true
     });
     const expectedOptions = {
+      ...DEFAULT_MOCHA_OPTIONS,
       extension: ['js'],
       ['no-config']: true,
       ['no-opts']: true,
