@@ -1,3 +1,4 @@
+import './polyfills';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { MutantTestMatcher } from './mutants/MutantTestMatcher';

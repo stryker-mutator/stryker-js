@@ -1,21 +1,22 @@
+import { File, LogLevel } from '@stryker-mutator/api/core';
+import { MutantResult } from '@stryker-mutator/api/report';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
+import { RunStatus } from '@stryker-mutator/api/test_runner';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { file, testFramework } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as os from 'os';
-import { File, LogLevel } from '@stryker-mutator/api/core';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import Sandbox from '../../src/Sandbox';
-import { SandboxPool } from '../../src/SandboxPool';
-import { Task } from '../../src/utils/Task';
-import { Mock, file, mock, testFramework, transpiledMutant } from '../helpers/producers';
-import LoggingClientContext from '../../src/logging/LoggingClientContext';
-import * as sinon from 'sinon';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { coreTokens } from '../../src/di';
-import { InitialTestRunResult } from '../../src/process/InitialTestExecutor';
-import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { from } from 'rxjs';
 import { toArray } from 'rxjs/operators';
+import * as sinon from 'sinon';
+import { coreTokens } from '../../src/di';
+import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import { InitialTestRunResult } from '../../src/process/InitialTestExecutor';
+import Sandbox from '../../src/Sandbox';
+import { SandboxPool } from '../../src/SandboxPool';
 import TranspiledMutant from '../../src/TranspiledMutant';
-import { MutantResult } from '@stryker-mutator/api/report';
+import { Task } from '../../src/utils/Task';
+import { Mock, mock, transpiledMutant } from '../helpers/producers';
 
 const OVERHEAD_TIME_MS = 42;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
