@@ -28,3 +28,4 @@ packages/*/test/**/*.d.ts
 .nyc_output
 package-lock.json
 .DS_Store
+tsconfig.*.tsbuildinfo

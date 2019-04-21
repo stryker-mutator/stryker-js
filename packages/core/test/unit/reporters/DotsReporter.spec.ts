@@ -1,10 +1,10 @@
-import DotsReporter from '../../../src/reporters/DotsReporter';
-import * as sinon from 'sinon';
-import { MutantStatus, MutantResult } from '@stryker-mutator/api/report';
+import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import * as os from 'os';
-import * as producers from '../../helpers/producers';
+import * as sinon from 'sinon';
+import DotsReporter from '../../../src/reporters/DotsReporter';
 
 describe('DotsReporter', () => {
 
@@ -65,7 +65,7 @@ describe('DotsReporter', () => {
   });
 
   function mutantResult(status: MutantStatus): MutantResult {
-    return producers.mutantResult({
+    return factory.mutantResult({
       location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
       mutatedLines: '',
       mutatorName: '',

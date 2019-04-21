@@ -1,21 +1,22 @@
-import { Mutant } from '@stryker-mutator/api/mutant';
-import { TestSelection } from '@stryker-mutator/api/test_framework';
-import { expect } from 'chai';
-import { TestResult, RunStatus, TestStatus, CoverageCollection, CoveragePerTestResult } from '@stryker-mutator/api/test_runner';
 import { File } from '@stryker-mutator/api/core';
+import { Mutant } from '@stryker-mutator/api/mutant';
 import { MatchedMutant } from '@stryker-mutator/api/report';
-import { MutantTestMatcher } from '../../../src/mutants/MutantTestMatcher';
-import { testResult, mutant, Mock, mock } from '../../helpers/producers';
-import TestableMutant, { TestSelectionResult } from '../../../src/TestableMutant';
-import SourceFile from '../../../src/SourceFile';
-import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { CoverageMapsByFile } from '../../../src/transpiler/CoverageInstrumenterTranspiler';
-import { PassThroughSourceMapper, MappedLocation } from '../../../src/transpiler/SourceMapper';
-import * as sinon from 'sinon';
+import { TestSelection } from '@stryker-mutator/api/test_framework';
+import { CoverageCollection, CoveragePerTestResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { mutant, testResult } from '@stryker-mutator/test-helpers/src/factory';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
 import { coreTokens } from '../../../src/di';
-import { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
 import InputFileCollection from '../../../src/input/InputFileCollection';
+import { MutantTestMatcher } from '../../../src/mutants/MutantTestMatcher';
+import { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
+import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
+import SourceFile from '../../../src/SourceFile';
+import TestableMutant, { TestSelectionResult } from '../../../src/TestableMutant';
+import { CoverageMapsByFile } from '../../../src/transpiler/CoverageInstrumenterTranspiler';
+import { MappedLocation, PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
+import { Mock, mock } from '../../helpers/producers';
 
 describe(MutantTestMatcher.name, () => {
 

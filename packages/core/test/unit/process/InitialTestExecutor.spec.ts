@@ -15,7 +15,8 @@ import * as coverageHooks from '../../../src/transpiler/coverageHooks';
 import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import * as sinon from 'sinon';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { transpiler, testFramework, testResult, runResult } from '@stryker-mutator/test-helpers/src/factory';
 import { coreTokens } from '../../../src/di';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
@@ -52,13 +53,13 @@ describe('InitialTestExecutor run', () => {
   beforeEach(() => {
     timerMock = sinon.createStubInstance(Timer);
     strykerSandboxMock = producers.mock(Sandbox as any);
-    transpilerMock = factory.transpiler();
+    transpilerMock = transpiler();
     coverageInstrumenterTranspilerMock = producers.mock(CoverageInstrumenterTranspiler);
     sinon.stub(Sandbox, 'create').resolves(strykerSandboxMock);
     sinon.stub(coverageInstrumenterTranspiler, 'default').returns(coverageInstrumenterTranspilerMock);
     sourceMapperMock = producers.mock(PassThroughSourceMapper);
     sinon.stub(SourceMapper, 'create').returns(sourceMapperMock);
-    testFrameworkMock = producers.testFramework();
+    testFrameworkMock = testFramework();
     coverageAnnotatedFiles = [
       new File('cov-annotated-transpiled-file-1.js', ''),
       new File('cov-annotated-transpiled-file-2.js', ''),
@@ -69,7 +70,7 @@ describe('InitialTestExecutor run', () => {
     ];
     coverageInstrumenterTranspilerMock.transpile.returns(coverageAnnotatedFiles);
     transpilerMock.transpile.returns(transpiledFiles);
-    expectedRunResult = producers.runResult();
+    expectedRunResult = runResult();
     strykerSandboxMock.run.resolves(expectedRunResult);
   });
 
@@ -96,8 +97,8 @@ describe('InitialTestExecutor run', () => {
       // Arrange
       const expectedOverHeadTimeMs = 82;
       expectedRunResult.tests[0].timeSpentMs = 10;
-      expectedRunResult.tests.push(producers.testResult({ timeSpentMs: 2 }));
-      expectedRunResult.tests.push(producers.testResult({ timeSpentMs: 6 }));
+      expectedRunResult.tests.push(testResult({ timeSpentMs: 2 }));
+      expectedRunResult.tests.push(testResult({ timeSpentMs: 6 }));
       timerMock.elapsedMs.returns(100);
       sut = createSut();
 
@@ -153,7 +154,7 @@ describe('InitialTestExecutor run', () => {
     });
 
     it('should have logged the amount of tests ran', async () => {
-      expectedRunResult.tests.push(producers.testResult());
+      expectedRunResult.tests.push(testResult());
       timerMock.humanReadableElapsed.returns('2 seconds');
       timerMock.elapsedMs.returns(50);
       sut = createSut();
@@ -206,9 +207,9 @@ describe('InitialTestExecutor run', () => {
     describe('and run has test failures', () => {
       beforeEach(() => {
         expectedRunResult.tests = [
-          producers.testResult({ name: 'foobar test' }),
-          producers.testResult({ name: 'example test', status: TestStatus.Failed, failureMessages: ['expected error'] }),
-          producers.testResult({ name: '2nd example test', status: TestStatus.Failed })
+          testResult({ name: 'foobar test' }),
+          testResult({ name: 'example test', status: TestStatus.Failed, failureMessages: ['expected error'] }),
+          testResult({ name: '2nd example test', status: TestStatus.Failed })
         ];
       });
 
@@ -245,8 +246,8 @@ describe('InitialTestExecutor run', () => {
       beforeEach(() => {
         expectedRunResult.status = RunStatus.Timeout;
         expectedRunResult.tests = [
-          producers.testResult({ name: 'foobar test' }),
-          producers.testResult({ name: 'example test', status: TestStatus.Failed })];
+          testResult({ name: 'foobar test' }),
+          testResult({ name: 'example test', status: TestStatus.Failed })];
       });
 
       it('should have logged the timeout', async () => {
