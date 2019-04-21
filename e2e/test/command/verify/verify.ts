@@ -1,14 +1,22 @@
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as path from 'path';
-import { readScoreResult } from '../../../helpers';
+import { expectMetricsResult, produceMetrics } from '../../../helpers';
 
 describe('After running stryker with the command test runner', () => {
   it('should report 64% mutation score', async () => {
-    const scoreResult = await readScoreResult(path.resolve('reports', 'mutation', 'events'));
-    expect(scoreResult.killed).eq(16);
-    expect(scoreResult.noCoverage).eq(0);
-    expect(scoreResult.mutationScore).eq(64);
+    await expectMetricsResult({
+      metrics: produceMetrics({
+        killed: 16,
+        mutationScore: 64,
+        mutationScoreBasedOnCoveredCode: 64,
+        survived: 9,
+        totalCovered: 25,
+        totalDetected: 16,
+        totalMutants: 25,
+        totalUndetected: 9,
+        totalValid: 25
+      })
+    });
   });
 
   it('should write to a log file', async () => {

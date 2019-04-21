@@ -40,6 +40,7 @@ interface Reporter {
   onAllMutantsTested?(results: MutantResult[]): void;
 
   /**
+   * DEPRECATED: Please use onMutationTestReportReady and the mutation-testing-metrics npm package.
    * Called when the mutation score is calculated.
    * @param score The immutable structured score result (tree)
    */

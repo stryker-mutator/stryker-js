@@ -51,6 +51,10 @@ export default class BroadcastReporter implements StrictReporter {
     return Promise.all(Object.keys(this.reporters).map(async reporterName => {
       const reporter = this.reporters[reporterName];
       if (typeof reporter[methodName] === 'function') {
+        const deprecatedMethodName = 'onScoreCalculated';
+        if (methodName === deprecatedMethodName) {
+          this.log.warn(`DEPRECATED: The reporter '${reporterName}' uses '${deprecatedMethodName}' which is deprecated. Please use 'onMutationTestReportReady' and calculate the score as an alternative.`);
+        }
         try {
           await (reporter[methodName] as any)(eventArgs);
         } catch (error) {

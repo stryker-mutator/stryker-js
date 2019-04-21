@@ -1,10 +1,11 @@
-import { Reporter, ScoreResult } from '@stryker-mutator/api/report';
+import { Reporter, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import DashboardReporterClient from './DashboardReporterClient';
 import { getEnvironmentVariable } from '../../utils/objectUtils';
 import { Logger } from '@stryker-mutator/api/logging';
 import { determineCIProvider } from '../ci/Provider';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { dashboardReporterTokens } from './tokens';
+import { calculateMetrics } from 'mutation-testing-metrics';
 
 export default class DashboardReporter implements Reporter {
 
@@ -26,8 +27,9 @@ export default class DashboardReporter implements Reporter {
     }
   }
 
-  public async onScoreCalculated(ScoreResult: ScoreResult) {
-    const mutationScore = ScoreResult.mutationScore;
+  public async onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
+    const metricsResult = calculateMetrics(report.files);
+    const mutationScore = metricsResult.metrics.mutationScore;
 
     if (this.ciProvider !== undefined) {
       const isPullRequest = this.ciProvider.isPullRequest();

@@ -1,10 +1,11 @@
-import { expect } from 'chai';
-import * as sourceMapModule from 'source-map';
 import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
-import SourceMapper, { PassThroughSourceMapper, TranspiledSourceMapper, MappedLocation, SourceMapError } from '../../../src/transpiler/SourceMapper';
-import { Mock, mock, config as configFactory, location as locationFactory, mappedLocation, PNG_BASE64_ENCODED } from '../../helpers/producers';
+import { config as configFactory, location as locationFactory, PNG_BASE64_ENCODED } from '@stryker-mutator/test-helpers/src/factory';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
+import * as sourceMapModule from 'source-map';
+import SourceMapper, { MappedLocation, PassThroughSourceMapper, SourceMapError, TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
+import { mappedLocation, Mock, mock } from '../../helpers/producers';
 
 const GREATEST_LOWER_BOUND = sourceMapModule.SourceMapConsumer.GREATEST_LOWER_BOUND;
 const LEAST_UPPER_BOUND = sourceMapModule.SourceMapConsumer.LEAST_UPPER_BOUND;

@@ -1,15 +1,15 @@
-import * as path from 'path';
+import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
+import { RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
+import { strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import getPort from 'get-port';
-import { RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
 import * as log4js from 'log4js';
-import ResilientTestRunnerFactory from '../../../src/test-runner/ResilientTestRunnerFactory';
-import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
-import LoggingServer from '../../helpers/LoggingServer';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import * as path from 'path';
 import { toArray } from 'rxjs/operators';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import ResilientTestRunnerFactory from '../../../src/test-runner/ResilientTestRunnerFactory';
+import LoggingServer from '../../helpers/LoggingServer';
 import { sleep } from '../../helpers/testUtils';
-import { strykerOptions } from '../../helpers/producers';
 
 describe('ResilientTestRunnerFactory integration', () => {
 
