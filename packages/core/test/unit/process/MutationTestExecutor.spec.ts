@@ -56,16 +56,6 @@ describe(MutationTestExecutor.name, () => {
 
   describe('run', () => {
 
-    it('should dispose all sandboxes afterwards', async () => {
-      await sut.run(mutants);
-      expect(sandboxPoolMock.dispose).called;
-    });
-
-    it('should dispose the mutantTranspiler', async () => {
-      await sut.run(mutants);
-      expect(mutantTranspileSchedulerMock.dispose).called;
-    });
-
     it('should have ran the mutants in the sandbox pool', async () => {
       await sut.run(mutants);
       expect(mutantTranspileSchedulerMock.scheduleTranspileMutants).calledWith(mutants);

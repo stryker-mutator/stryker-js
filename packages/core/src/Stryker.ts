@@ -91,7 +91,7 @@ export default class Stryker {
           this.logRemark();
         }
       } finally {
-        // This methods calls `dispose` on all created instances
+        // `injector.dispose` calls `dispose` on all created instances
         // Namely the `SandboxPool` and the `ChildProcessProxy` instances
         mutationTestProcessInjector.dispose();
         await LogConfigurator.shutdown();
