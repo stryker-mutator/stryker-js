@@ -11,10 +11,11 @@ import { InitialTestRunResult } from './process/InitialTestExecutor';
 import { Logger } from '@stryker-mutator/api/logging';
 import TranspiledMutant from './TranspiledMutant';
 import { MutantResult } from '@stryker-mutator/api/report';
+import { Disposable } from 'typed-inject';
 
 const MAX_CONCURRENT_INITIALIZING_SANDBOXES = 2;
 
-export class SandboxPool {
+export class SandboxPool implements Disposable {
 
   private readonly allSandboxes: Promise<Sandbox>[] = [];
   private readonly overheadTimeMS: number;
@@ -84,11 +85,11 @@ export class SandboxPool {
   }
 
   private readonly registerSandbox = async (promisedSandbox: Promise<Sandbox>): Promise<Sandbox> => {
-      this.allSandboxes.push(promisedSandbox);
-      return promisedSandbox;
+    this.allSandboxes.push(promisedSandbox);
+    return promisedSandbox;
   }
 
-  public async disposeAll() {
+  public async dispose() {
     const sandboxes = await Promise.all(this.allSandboxes);
     return Promise.all(sandboxes.map(sandbox => sandbox.dispose()));
   }

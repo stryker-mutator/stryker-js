@@ -178,18 +178,18 @@ describe(SandboxPool.name, () => {
       await expect(actRunMutants()).rejectedWith(expectedError);
     });
   });
-  describe('disposeAll', () => {
+  describe('dispose', () => {
     it('should have disposed all sandboxes', async () => {
       sut = createSut();
       await actRunMutants();
-      await sut.disposeAll();
+      await sut.dispose();
       expect(firstSandbox.dispose).called;
       expect(secondSandbox.dispose).called;
     });
 
     it('should not do anything if no sandboxes were created', async () => {
       sut = createSut();
-      await sut.disposeAll();
+      await sut.dispose();
       expect(firstSandbox.dispose).not.called;
       expect(secondSandbox.dispose).not.called;
     });
@@ -211,7 +211,7 @@ describe(SandboxPool.name, () => {
       const runPromise = sut.runMutants(from(inputMutants)).toPromise();
       task.resolve(firstSandbox as unknown as Sandbox);
       await runPromise;
-      const disposePromise = sut.disposeAll();
+      const disposePromise = sut.dispose();
       task2.resolve(secondSandbox as unknown as Sandbox);
       await disposePromise;
       expect(secondSandbox.dispose).called;

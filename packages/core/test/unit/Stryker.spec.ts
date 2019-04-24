@@ -191,6 +191,11 @@ describe(Stryker.name, () => {
         await sut.runMutationTest();
         expect(logMock.info).to.have.been.calledWith('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
       });
+
+      it('should dispose the injector', async () => {
+        await sut.runMutationTest();
+        expect(injectorMock.dispose).called;
+      });
     });
 
     describe('happy flow', () => {
@@ -263,10 +268,17 @@ describe(Stryker.name, () => {
         expect(reporterMock.wrapUp).to.have.been.called;
       });
 
+      it('should dispose the injector', async () => {
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(injectorMock.dispose).called;
+      });
+
       it('should shutdown the log4js server', async () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(shutdownLoggingStub).called;
+        expect(shutdownLoggingStub).calledAfter(injectorMock.dispose);
       });
 
       it('should create the transpiler with produceSourceMaps = true when coverage analysis is enabled', async () => {
