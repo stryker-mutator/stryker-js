@@ -6,39 +6,71 @@ import { StrykerMochaReporter } from './StrykerMochaReporter';
 import { mochaOptionsKey, evalGlobal } from './utils';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { MochaOptions } from './MochaOptions';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 
 export default class MochaTestRunner implements TestRunner {
 
   private testFileNames: string[];
-  private readonly mochaRunnerOptions: MochaOptions;
+  private readonly mochaOptions: MochaOptions;
 
   public static inject = tokens(commonTokens.logger, commonTokens.sandboxFileNames, commonTokens.options);
   constructor(private readonly log: Logger, private readonly allFileNames: ReadonlyArray<string>, options: StrykerOptions) {
-    this.mochaRunnerOptions = options[mochaOptionsKey];
+    this.mochaOptions = options[mochaOptionsKey];
     this.additionalRequires();
     StrykerMochaReporter.log = log;
   }
 
   public init(): void {
+    if (LibWrapper.handleFiles) {
+      this.log.debug('Mocha >= 6 detected. Using mocha\'s `handleFiles` to load files');
+      this.testFileNames = this.mocha6DiscoverFiles(LibWrapper.handleFiles);
+    } else {
+      this.log.debug('Mocha < 6 detected. Using custom logic to discover files');
+      this.testFileNames = this.legacyDiscoverFiles();
+    }
+  }
+
+  private mocha6DiscoverFiles(handleFiles: (options: MochaOptions) => string[]): string[] {
+    const originalProcessExit = process.exit;
+    try {
+      // process.exit unfortunate side effect: https://github.com/mochajs/mocha/blob/07ea8763c663bdd3fe1f8446cdb62dae233f4916/lib/cli/run-helpers.js#L174
+      (process as any).exit = () => { };
+      return handleFiles(this.mochaOptions);
+    } finally {
+      process.exit = originalProcessExit;
+    }
+  }
+
+  private legacyDiscoverFiles(): string[] {
     const globPatterns = this.mochaFileGlobPatterns();
     const globPatternsAbsolute = globPatterns.map(glob => path.resolve(glob));
-    this.testFileNames = LibWrapper.multimatch(this.allFileNames.slice(), globPatternsAbsolute);
-    if (this.testFileNames.length) {
-      this.log.debug(`Using files: ${JSON.stringify(this.testFileNames, null, 2)}`);
+    const fileNames = LibWrapper.multimatch(this.allFileNames.slice(), globPatternsAbsolute);
+    if (fileNames.length) {
+      this.log.debug(`Using files: ${JSON.stringify(fileNames, null, 2)}`);
     } else {
       this.log.debug(`Tried ${JSON.stringify(globPatternsAbsolute, null, 2)} on files: ${JSON.stringify(this.allFileNames, null, 2)}.`);
       throw new Error(`[${MochaTestRunner.name}] No files discovered (tried pattern(s) ${JSON.stringify(globPatterns, null, 2)}). Please specify the files (glob patterns) containing your tests in ${mochaOptionsKey}.files in your stryker.conf.js file.`);
     }
+    return fileNames;
   }
-
   private mochaFileGlobPatterns(): string[] {
-    if (typeof this.mochaRunnerOptions.files === 'string') {
-      return [this.mochaRunnerOptions.files];
-    } else {
-      return this.mochaRunnerOptions.files || [DEFAULT_TEST_PATTERN];
+    // Use both `spec` as `files`
+    const globPatterns: string[] = [];
+    if (this.mochaOptions.spec) {
+      globPatterns.push(...this.mochaOptions.spec);
     }
+
+    if (typeof this.mochaOptions.files === 'string') { // `files` if for backward compat
+      globPatterns.push(this.mochaOptions.files);
+    } else if (this.mochaOptions.files) {
+      globPatterns.push(...this.mochaOptions.files);
+    }
+    if (!globPatterns.length) {
+      globPatterns.push(DEFAULT_TEST_PATTERN);
+    }
+    return globPatterns;
   }
 
   public run({ testHooks }: { testHooks?: string }): Promise<RunResult> {
@@ -99,7 +131,7 @@ export default class MochaTestRunner implements TestRunner {
   }
 
   private configure(mocha: Mocha) {
-    const options = this.mochaRunnerOptions;
+    const options = this.mochaOptions;
 
     function setIfDefined<T>(value: T | undefined, operation: (input: T) => void) {
       if (typeof value !== 'undefined') {
@@ -116,8 +148,8 @@ export default class MochaTestRunner implements TestRunner {
   }
 
   private additionalRequires() {
-    if (this.mochaRunnerOptions.require) {
-      const modulesToRequire = this.mochaRunnerOptions.require
+    if (this.mochaOptions.require) {
+      const modulesToRequire = this.mochaOptions.require
         .map(moduleName => moduleName.startsWith('.') ? path.resolve(moduleName) : moduleName);
       modulesToRequire.forEach(LibWrapper.require);
     }

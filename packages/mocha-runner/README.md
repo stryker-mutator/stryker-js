@@ -35,7 +35,7 @@ module.exports = function (config) {
         // ...
         mochaOptions: {
             // Optional mocha options
-            files: [ 'test/**/*.js' ]
+            spec: [ 'test/**/*.js' ]
             config: 'path/to/mocha/config/.mocharc.json',
             package: 'path/to/custom/package/package.json',
             opts: 'path/to/custom/mocha.opts',
@@ -54,7 +54,7 @@ So feel free to _leave out the mochaOptions entirely_ if you're using one of the
 
 Alternatively, use `['no-config']: true`, `['no-package']: true` or `['no-opts']: true` to ignore the default mocha config, default mocha package.json and default mocha opts locations respectively. 
 
-### `mochaOptions.files` [`string` or `string[]`]
+### `mochaOptions.spec` [`string` or `string[]`]
 
 Default: `'test/**/*.js'`
 

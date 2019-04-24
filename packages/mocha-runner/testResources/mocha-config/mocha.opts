@@ -1,0 +1,4 @@
+--async-only
+--blaat true
+--spec /foo/*.js
+/tests/**/*.js

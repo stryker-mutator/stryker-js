@@ -71,7 +71,7 @@
       "request": "attach",
       "name": "Attach to Port",
       "address": "localhost",
-      "port": 5858
+      "port": 9229
     }
   ]
 }

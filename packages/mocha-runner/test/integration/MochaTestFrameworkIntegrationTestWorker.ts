@@ -18,7 +18,7 @@ export default class MochaTestFrameworkIntegrationTestWorker {
 
   constructor() {
     testInjector.options.mochaOptions = {
-      files: [
+      spec: [
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
       ]
     };
