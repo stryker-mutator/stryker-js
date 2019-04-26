@@ -178,6 +178,7 @@ describe(SandboxPool.name, () => {
       await expect(actRunMutants()).rejectedWith(expectedError);
     });
   });
+
   describe('dispose', () => {
     it('should have disposed all sandboxes', async () => {
       sut = createSut();
@@ -215,6 +216,33 @@ describe(SandboxPool.name, () => {
       task2.resolve(secondSandbox as unknown as Sandbox);
       await disposePromise;
       expect(secondSandbox.dispose).called;
+    });
+
+    it('should halt creating of new sandboxes', async () => {
+      // Arrange
+      sut = createSut();
+      sinon.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
+      const task = new Task<Sandbox>();
+      const task2 = new Task<Sandbox>();
+      createStub.reset();
+      createStub
+        .onCall(0).returns(task.promise)
+        .onCall(1).returns(task2.promise)
+        .onCall(2).resolves(genericSandboxForAllSubsequentCallsToNewSandbox); // promise is not yet resolved
+      inputMutants.push(transpiledMutant(), transpiledMutant()); // 3 mutants
+
+      // Act
+      const runPromise = sut.runMutants(from(inputMutants))
+        .pipe(toArray())
+        .toPromise();
+      const disposePromise = sut.dispose();
+      task.resolve(firstSandbox as unknown as Sandbox);
+      task2.resolve(secondSandbox as unknown as Sandbox);
+      await disposePromise;
+      await runPromise;
+
+      // Assert
+      expect(createStub).calledTwice;
     });
   });
 });
