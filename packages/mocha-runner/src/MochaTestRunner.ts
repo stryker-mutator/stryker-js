@@ -27,6 +27,7 @@ export default class MochaTestRunner implements TestRunner {
       this.log.debug('Mocha >= 6 detected. Using mocha\'s `handleFiles` to load files');
       this.testFileNames = this.mocha6DiscoverFiles(LibWrapper.handleFiles);
     } else {
+      this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
       this.log.debug('Mocha < 6 detected. Using custom logic to discover files');
       this.testFileNames = this.legacyDiscoverFiles();
     }

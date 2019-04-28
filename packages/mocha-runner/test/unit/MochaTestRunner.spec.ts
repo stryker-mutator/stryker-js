@@ -65,6 +65,13 @@ describe(MochaTestRunner.name, () => {
       expect(testInjector.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to discover files');
     });
 
+    it('should log deprecated mocha version warning', async () => {
+      sut = createSut({});
+      multimatchStub.returns(['foo.js']);
+      await sut.init();
+      expect(testInjector.logger.warn).calledWith('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
+    });
+
     it('should add discovered test files on run() ', async () => {
       multimatchStub.returns(['foo.js', 'bar.js', 'foo2.js']);
       sut = createSut({});
