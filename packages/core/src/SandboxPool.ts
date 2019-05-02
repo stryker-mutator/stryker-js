@@ -99,6 +99,6 @@ export class SandboxPool implements Disposable {
   public async dispose() {
     this.isDisposed = true;
     const sandboxes = await Promise.all(this.allSandboxes);
-    return Promise.all(sandboxes.map(sandbox => sandbox.dispose()));
+    await Promise.all(sandboxes.map(sandbox => sandbox.dispose()));
   }
 }
