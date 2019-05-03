@@ -1,6 +1,7 @@
 import fs = require('fs');
 import { expect } from 'chai';
-import { fsAsPromised, promisify } from '../../src';
+import { fsAsPromised } from '../../src';
+import { promisify } from 'util';
 
 describe('fsAsPromised', () => {
 
