@@ -1,4 +1,4 @@
-import { promisify } from 'util'; 
+import { promisify } from 'util';
 import { expect } from 'chai';
 import { CoverageCollection, RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
