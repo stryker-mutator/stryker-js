@@ -1,10 +1,10 @@
+import { promisify } from 'util'; 
 import { expect } from 'chai';
 import { CoverageCollection, RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/JasmineTestFramework';
 import { expectTestResults } from '../helpers/assertions';
 import http = require('http');
-import { promisify } from '@stryker-mutator/util';
 import { FilePattern } from 'karma';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
