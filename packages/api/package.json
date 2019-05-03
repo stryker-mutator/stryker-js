@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/api#readme",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "dependencies": {
     "mutation-testing-report-schema": "^1.0.0",
