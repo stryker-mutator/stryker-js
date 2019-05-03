@@ -74,7 +74,7 @@
     "surrial": "~1.0.0",
     "tree-kill": "~1.2.0",
     "tslib": "~1.9.3",
-    "typed-inject": "~1.0.0",
+    "typed-inject": "~2.0.0",
     "typed-rest-client": "~1.2.0"
   },
   "devDependencies": {
