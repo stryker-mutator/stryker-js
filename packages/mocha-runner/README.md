@@ -35,7 +35,7 @@ module.exports = function (config) {
         // ...
         mochaOptions: {
             // Optional mocha options
-            spec: [ 'test/**/*.js' ]
+            spec: [ 'test/**/*.js' ],
             config: 'path/to/mocha/config/.mocharc.json',
             package: 'path/to/custom/package/package.json',
             opts: 'path/to/custom/mocha.opts',

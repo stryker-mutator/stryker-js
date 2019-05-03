@@ -56,7 +56,7 @@
     "lerna-publish": "lerna version --conventional-commits --yes --git-remote gh-publish --force-publish && lerna publish from-git --yes"
   },
   "engines": {
-    "node": ">=6",
+    "node": ">=8",
     "npm": ">=5"
   }
 }

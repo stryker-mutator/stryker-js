@@ -34,6 +34,7 @@ export default class MochaOptionsLoader {
       this.log.debug('Mocha >= 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions.name);
       return this.loadMocha6Options(overrides);
     } else {
+      this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
       this.log.debug('Mocha < 6 detected. Using custom logic to parse mocha options');
       return this.loadLegacyMochaOptsFile(overrides.opts);
     }
