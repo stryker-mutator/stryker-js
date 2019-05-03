@@ -1,11 +1,10 @@
 import * as fs from 'fs';
-import promisify from './promisify';
+import { promisify } from 'util';
 
 /**
  * This file contains an implementation of fs.promises
  * Note: Can be removed once we drop support for node 8 (and 9).
  */
-
 export default {
   createReadStream: fs.createReadStream,
   createWriteStream: fs.createWriteStream,
