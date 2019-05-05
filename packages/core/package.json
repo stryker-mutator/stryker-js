@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "1.2.0",
+  "version": "1.3.1",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "typings": "src/Stryker.d.ts",
@@ -15,7 +15,7 @@
     "url": "https://github.com/stryker-mutator/stryker"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "keywords": [
     "mutation testing",
@@ -54,8 +54,8 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^1.2.0",
-    "@stryker-mutator/util": "^1.2.0",
+    "@stryker-mutator/api": "^1.3.1",
+    "@stryker-mutator/util": "^1.3.1",
     "chalk": "~2.4.1",
     "commander": "~2.20.0",
     "get-port": "~4.2.0",
@@ -65,10 +65,11 @@
     "lodash": "~4.17.4",
     "log4js": "~4.1.0",
     "mkdirp": "~0.5.1",
+    "mutation-testing-metrics": "^1.0.7",
     "prettier": "~1.17.0",
     "progress": "~2.0.0",
     "rimraf": "~2.6.1",
-    "rxjs": "~6.3.0",
+    "rxjs": "~6.5.1",
     "source-map": "~0.6.1",
     "surrial": "~1.0.0",
     "tree-kill": "~1.2.0",
@@ -78,7 +79,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/api": "^0.24.1",
-    "@stryker-mutator/test-helpers": "^1.2.0",
+    "@stryker-mutator/test-helpers": "^1.3.1",
     "@types/inquirer": "~6.0.0",
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/node": "~10.11.4",

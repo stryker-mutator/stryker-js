@@ -5,6 +5,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { MochaOptions } from '../../src/MochaOptions';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -23,22 +24,22 @@ function resolve(fileName: string) {
 describe('Running a sample project', () => {
 
   let sut: MochaTestRunner;
-  let files: string[];
+  let spec: string[];
 
   function createSut() {
     return testInjector.injector
-      .provideValue(commonTokens.sandboxFileNames, files)
+      .provideValue(commonTokens.sandboxFileNames, spec)
       .injectClass(MochaTestRunner);
   }
 
   describe('when tests pass', () => {
 
     beforeEach(() => {
-      files = [
+      spec = [
         resolve('./testResources/sampleProject/MyMath.js'),
         resolve('./testResources/sampleProject/MyMathSpec.js')
       ];
-      testInjector.options.mochaOptions = { files };
+      testInjector.options.mochaOptions = { spec };
       sut = createSut();
       return sut.init();
     });
@@ -61,12 +62,12 @@ describe('Running a sample project', () => {
 
   describe('with an error in an un-included input file', () => {
     beforeEach(() => {
-      files = [
+      spec = [
         resolve('testResources/sampleProject/MyMath.js'),
         resolve('testResources/sampleProject/MyMathSpec.js'),
       ];
       const mochaOptions: MochaOptions = {
-        files
+        files: spec
       };
       testInjector.options.mochaOptions = mochaOptions;
       sut = createSut();
@@ -82,11 +83,11 @@ describe('Running a sample project', () => {
   describe('with multiple failed tests', () => {
 
     before(() => {
-      files = [
+      spec = [
         resolve('testResources/sampleProject/MyMath.js'),
         resolve('testResources/sampleProject/MyMathFailedSpec.js')
       ];
-      testInjector.options.mochaOptions = { files };
+      testInjector.options.mochaOptions = { spec };
       sut = createSut();
       return sut.init();
     });
@@ -100,8 +101,8 @@ describe('Running a sample project', () => {
   describe('when no tests are executed', () => {
 
     beforeEach(() => {
-      files = [resolve('./testResources/sampleProject/MyMath.js')];
-      testInjector.options.mochaOptions = { files };
+      spec = [resolve('./testResources/sampleProject/MyMath.js')];
+      testInjector.options.mochaOptions = { spec };
       sut = createSut();
       return sut.init();
     });

@@ -31,7 +31,7 @@ describe(MutationTestExecutor.name, () => {
     sandboxPoolMock = mock(SandboxPool);
     mutantTranspileSchedulerMock = mock(MutantTranspileScheduler);
     mutantTranspileSchedulerMock.scheduleNext = sinon.stub();
-    sandboxPoolMock.disposeAll.resolves();
+    sandboxPoolMock.dispose.resolves();
     reporter = mock(BroadcastReporter);
     inputFiles = new InputFileCollection([new File('input.ts', '')], []);
     mutants = [testableMutant()];
@@ -55,16 +55,6 @@ describe(MutationTestExecutor.name, () => {
   }
 
   describe('run', () => {
-
-    it('should dispose all sandboxes afterwards', async () => {
-      await sut.run(mutants);
-      expect(sandboxPoolMock.disposeAll).called;
-    });
-
-    it('should dispose the mutantTranspiler', async () => {
-      await sut.run(mutants);
-      expect(mutantTranspileSchedulerMock.dispose).called;
-    });
 
     it('should have ran the mutants in the sandbox pool', async () => {
       await sut.run(mutants);

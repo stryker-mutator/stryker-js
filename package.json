@@ -45,7 +45,7 @@
     "postinstall": "lerna bootstrap --no-ci && link-parent-bin",
     "lint-info": "tslint --out tslint.log --project tsconfig.lint.json",
     "lint-fix": "tslint --fix --project tsconfig.lint.json",
-    "clean": "rimraf \"packages/api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage}\"",
+    "clean": "rimraf \"packages/api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage,*.tsbuildinfo}\"",
     "lint": "tslint -p tsconfig.lint.json",
     "build": "tsc -b && lerna run build",
     "test": "npm run mocha",
@@ -56,7 +56,7 @@
     "lerna-publish": "lerna version --conventional-commits --yes --git-remote gh-publish --force-publish && lerna publish from-git --yes"
   },
   "engines": {
-    "node": ">=6",
+    "node": ">=8",
     "npm": ">=5"
   }
 }

@@ -1,4 +1,4 @@
-import * as fs from 'mz/fs';
+import fs = require('fs');
 import * as path from 'path';
 import * as execa from 'execa';
 import * as semver from 'semver';

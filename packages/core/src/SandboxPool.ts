@@ -1,6 +1,6 @@
 import * as os from 'os';
 import { range, Subject, Observable } from 'rxjs';
-import { flatMap, tap, zip, merge, map } from 'rxjs/operators';
+import { flatMap, tap, zip, merge, map, filter } from 'rxjs/operators';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import Sandbox from './Sandbox';
@@ -11,10 +11,11 @@ import { InitialTestRunResult } from './process/InitialTestExecutor';
 import { Logger } from '@stryker-mutator/api/logging';
 import TranspiledMutant from './TranspiledMutant';
 import { MutantResult } from '@stryker-mutator/api/report';
+import { Disposable } from 'typed-inject';
 
 const MAX_CONCURRENT_INITIALIZING_SANDBOXES = 2;
 
-export class SandboxPool {
+export class SandboxPool implements Disposable {
 
   private readonly allSandboxes: Promise<Sandbox>[] = [];
   private readonly overheadTimeMS: number;
@@ -59,9 +60,15 @@ export class SandboxPool {
     const concurrency = this.determineConcurrency();
 
     return range(0, concurrency).pipe(
-      flatMap(n => {
-        return this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext));
-      }, MAX_CONCURRENT_INITIALIZING_SANDBOXES)
+      flatMap(async n => {
+        if (this.isDisposed) {
+          return null;
+        } else {
+          return this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext));
+        }
+      }, MAX_CONCURRENT_INITIALIZING_SANDBOXES),
+      filter(sandboxOrNull => !!sandboxOrNull),
+      map(sandbox => sandbox as Sandbox)
     );
   }
 
@@ -84,11 +91,13 @@ export class SandboxPool {
   }
 
   private readonly registerSandbox = async (promisedSandbox: Promise<Sandbox>): Promise<Sandbox> => {
-      this.allSandboxes.push(promisedSandbox);
-      return promisedSandbox;
+    this.allSandboxes.push(promisedSandbox);
+    return promisedSandbox;
   }
 
-  public async disposeAll() {
+  private isDisposed = false;
+  public async dispose() {
+    this.isDisposed = true;
     const sandboxes = await Promise.all(this.allSandboxes);
     return Promise.all(sandboxes.map(sandbox => sandbox.dispose()));
   }

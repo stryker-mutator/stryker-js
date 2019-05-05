@@ -1,21 +1,22 @@
+import { File, LogLevel } from '@stryker-mutator/api/core';
+import { MutantResult } from '@stryker-mutator/api/report';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
+import { RunStatus } from '@stryker-mutator/api/test_runner';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { file, testFramework } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as os from 'os';
-import { File, LogLevel } from '@stryker-mutator/api/core';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import Sandbox from '../../src/Sandbox';
-import { SandboxPool } from '../../src/SandboxPool';
-import { Task } from '../../src/utils/Task';
-import { Mock, file, mock, testFramework, transpiledMutant } from '../helpers/producers';
-import LoggingClientContext from '../../src/logging/LoggingClientContext';
-import * as sinon from 'sinon';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { coreTokens } from '../../src/di';
-import { InitialTestRunResult } from '../../src/process/InitialTestExecutor';
-import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { from } from 'rxjs';
 import { toArray } from 'rxjs/operators';
+import * as sinon from 'sinon';
+import { coreTokens } from '../../src/di';
+import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import { InitialTestRunResult } from '../../src/process/InitialTestExecutor';
+import Sandbox from '../../src/Sandbox';
+import { SandboxPool } from '../../src/SandboxPool';
 import TranspiledMutant from '../../src/TranspiledMutant';
-import { MutantResult } from '@stryker-mutator/api/report';
+import { Task } from '../../src/utils/Task';
+import { Mock, mock, transpiledMutant } from '../helpers/producers';
 
 const OVERHEAD_TIME_MS = 42;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -177,18 +178,19 @@ describe(SandboxPool.name, () => {
       await expect(actRunMutants()).rejectedWith(expectedError);
     });
   });
-  describe('disposeAll', () => {
+
+  describe('dispose', () => {
     it('should have disposed all sandboxes', async () => {
       sut = createSut();
       await actRunMutants();
-      await sut.disposeAll();
+      await sut.dispose();
       expect(firstSandbox.dispose).called;
       expect(secondSandbox.dispose).called;
     });
 
     it('should not do anything if no sandboxes were created', async () => {
       sut = createSut();
-      await sut.disposeAll();
+      await sut.dispose();
       expect(firstSandbox.dispose).not.called;
       expect(secondSandbox.dispose).not.called;
     });
@@ -210,10 +212,37 @@ describe(SandboxPool.name, () => {
       const runPromise = sut.runMutants(from(inputMutants)).toPromise();
       task.resolve(firstSandbox as unknown as Sandbox);
       await runPromise;
-      const disposePromise = sut.disposeAll();
+      const disposePromise = sut.dispose();
       task2.resolve(secondSandbox as unknown as Sandbox);
       await disposePromise;
       expect(secondSandbox.dispose).called;
+    });
+
+    it('should halt creating of new sandboxes', async () => {
+      // Arrange
+      sut = createSut();
+      sinon.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
+      const task = new Task<Sandbox>();
+      const task2 = new Task<Sandbox>();
+      createStub.reset();
+      createStub
+        .onCall(0).returns(task.promise)
+        .onCall(1).returns(task2.promise)
+        .onCall(2).resolves(genericSandboxForAllSubsequentCallsToNewSandbox); // promise is not yet resolved
+      inputMutants.push(transpiledMutant(), transpiledMutant()); // 3 mutants
+
+      // Act
+      const runPromise = sut.runMutants(from(inputMutants))
+        .pipe(toArray())
+        .toPromise();
+      const disposePromise = sut.dispose();
+      task.resolve(firstSandbox as unknown as Sandbox);
+      task2.resolve(secondSandbox as unknown as Sandbox);
+      await disposePromise;
+      await runPromise;
+
+      // Assert
+      expect(createStub).calledTwice;
     });
   });
 });

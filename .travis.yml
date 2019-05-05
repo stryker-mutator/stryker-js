@@ -3,8 +3,6 @@ install: npm install
 node_js:
 - 'node'
 - '8'
-before_install:
-- if [[ `npm -v` = 3* ]]; then npm i -g npm@5; fi
 before_script:
 - npm ls
 sudo: 'false'

@@ -5,41 +5,62 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { serializeArguments, filterConfig, mochaOptionsKey } from './utils';
 import LibWrapper from './LibWrapper';
+import { MochaOptions } from './MochaOptions';
+
+/**
+ * Subset of defaults for mocha options
+ * @see https://github.com/mochajs/mocha/blob/master/lib/mocharc.json
+ */
+export const DEFAULT_MOCHA_OPTIONS = Object.freeze({
+  extension: ['js'],
+  opts: './test/mocha.opts',
+  spec: ['test'],
+  timeout: 2000,
+  ui: 'bdd'
+});
 
 export default class MochaOptionsLoader {
-
-  private readonly DEFAULT_MOCHA_OPTS = 'test/mocha.opts';
 
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) { }
 
   public load(strykerOptions: StrykerOptions): MochaOptions {
     const mochaOptions = { ...strykerOptions[mochaOptionsKey] } as MochaOptions;
-    return { ... this.loadMochaOptions(mochaOptions), ...mochaOptions };
+    return { ...DEFAULT_MOCHA_OPTIONS, ... this.loadMochaOptions(mochaOptions), ...mochaOptions };
   }
 
   private loadMochaOptions(overrides: MochaOptions) {
     if (LibWrapper.loadOptions) {
-      this.log.debug('Mocha > 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions.name);
-      const args = serializeArguments(overrides);
-      const rawConfig = LibWrapper.loadOptions(args) || {};
-      if (this.log.isTraceEnabled()) {
-        this.log.trace(`Mocha: ${LibWrapper.loadOptions.name}([${args.map(arg => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
-      }
-      return filterConfig(rawConfig);
+      this.log.debug('Mocha >= 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions.name);
+      return this.loadMocha6Options(overrides);
     } else {
+      this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
       this.log.debug('Mocha < 6 detected. Using custom logic to parse mocha options');
-      return this.loadMochaOptsFile(overrides.opts);
+      return this.loadLegacyMochaOptsFile(overrides.opts);
     }
   }
 
-  private loadMochaOptsFile(opts: false | string | undefined): MochaOptions {
+  private loadMocha6Options(overrides: MochaOptions) {
+    const args = serializeArguments(overrides);
+    const loadOptions = LibWrapper.loadOptions || (() => ({}));
+    const rawConfig = loadOptions(args) || {};
+    if (this.log.isTraceEnabled()) {
+      this.log.trace(`Mocha: ${loadOptions.name}([${args.map(arg => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+    }
+    const options = filterConfig(rawConfig);
+    if (this.log.isDebugEnabled()) {
+      this.log.debug(`Loaded options: ${JSON.stringify(options, null, 2)}`);
+    }
+    return options;
+  }
+
+  private loadLegacyMochaOptsFile(opts: false | string | undefined): MochaOptions {
     switch (typeof opts) {
       case 'boolean':
         this.log.debug('Not reading additional mochaOpts from a file');
         return {};
       case 'undefined':
-        const defaultMochaOptsFileName = path.resolve(this.DEFAULT_MOCHA_OPTS);
+        const defaultMochaOptsFileName = path.resolve(DEFAULT_MOCHA_OPTIONS.opts);
         if (fs.existsSync(defaultMochaOptsFileName)) {
           return this.readMochaOptsFile(defaultMochaOptsFileName);
         } else {
