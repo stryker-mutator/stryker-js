@@ -296,7 +296,7 @@ describe('VueMutator', () => {
     const result = sut.mutate(files);
 
     expect(result).to.be.empty;
-    expect(stubJavaScriptMutator.mutate).calledWith([vueFile]);
+    expect(stubJavaScriptMutator.mutate).not.calledWith([vueFile]);
   });
 
   it('should generate correct vue mutants', () => {
