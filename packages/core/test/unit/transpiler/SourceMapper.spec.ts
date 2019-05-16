@@ -73,7 +73,7 @@ describe('SourceMapper', () => {
       sut = new TranspiledSourceMapper(transpiledFiles);
     });
 
-    it('should create SourceMapConsumers for files when transpiledLocationFor is called', async () => {
+    it('should create SourceMapConsumer for a file when transpiledLocationFor is called', async () => {
       // Arrange
       const expectedMapFile1 = { sources: ['file1.ts'] };
       const expectedMapFile2 = { sources: ['file2.ts'] };
@@ -87,7 +87,6 @@ describe('SourceMapper', () => {
       // Assert
       expect(sourceMapModule.SourceMapConsumer).calledWithNew;
       expect(sourceMapModule.SourceMapConsumer).calledWith(expectedMapFile1);
-      expect(sourceMapModule.SourceMapConsumer).calledWith(expectedMapFile2);
     });
 
     it('should cache source maps for future use when `transpiledLocationFor` is called', async () => {
