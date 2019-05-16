@@ -58,7 +58,7 @@
     "@stryker-mutator/util": "^1.3.1",
     "chalk": "~2.4.1",
     "commander": "~2.20.0",
-    "get-port": "~4.2.0",
+    "get-port": "~5.0.0",
     "glob": "~7.1.2",
     "inquirer": "~6.3.1",
     "istanbul-lib-instrument": "~3.2.0",
