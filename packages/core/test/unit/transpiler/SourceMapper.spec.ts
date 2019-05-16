@@ -28,10 +28,10 @@ describe('SourceMapper', () => {
     // For some reason, `generatedPositionFor` is not defined on the `SourceMapConsumer` prototype
     // Define it here by hand
     sourceMapConsumerMock.generatedPositionFor = sinon.stub();
-    sourceMapConsumerMock.generatedPositionFor.returns({
+    sourceMapConsumerMock.generatedPositionFor.returns(Promise.resolve({
       column: 2,
       line: 1
-    });
+    }));
     sinon.stub(sourceMapModule, 'SourceMapConsumer').returns(sourceMapConsumerMock);
 
     // Restore the static values, removed by the stub
@@ -56,12 +56,12 @@ describe('SourceMapper', () => {
       sut = new PassThroughSourceMapper();
     });
 
-    it('should pass through the input on transpiledLocationFor', () => {
+    it('should pass through the input on transpiledLocationFor', async () => {
       const input: MappedLocation = {
         fileName: 'foo/bar.js',
         location: locationFactory()
       };
-      expect(sut.transpiledLocationFor(input)).eq(input);
+      expect(await sut.transpiledLocationFor(input)).eq(input);
     });
   });
 
@@ -73,7 +73,7 @@ describe('SourceMapper', () => {
       sut = new TranspiledSourceMapper(transpiledFiles);
     });
 
-    it('should create SourceMapConsumers for files when transpiledLocationFor is called', () => {
+    it('should create SourceMapConsumers for files when transpiledLocationFor is called', async () => {
       // Arrange
       const expectedMapFile1 = { sources: ['file1.ts'] };
       const expectedMapFile2 = { sources: ['file2.ts'] };
@@ -82,7 +82,7 @@ describe('SourceMapper', () => {
       transpiledFiles.push(new File('file2.js', `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile2))}`));
 
       // Act
-      sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }));
+      await sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }));
 
       // Assert
       expect(sourceMapModule.SourceMapConsumer).calledWithNew;
@@ -90,55 +90,59 @@ describe('SourceMapper', () => {
       expect(sourceMapModule.SourceMapConsumer).calledWith(expectedMapFile2);
     });
 
-    it('should cache source maps for future use when `transpiledLocationFor` is called', () => {
+    it('should cache source maps for future use when `transpiledLocationFor` is called', async () => {
       // Arrange
       const expectedMapFile1 = { sources: ['file1.ts'] };
       transpiledFiles.push(new File('file1.js', `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`));
 
       // Act
-      sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }));
-      sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }));
+      await sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }));
+      await sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }));
 
       // Assert
       expect(sourceMapModule.SourceMapConsumer).calledOnce;
     });
 
-    it('should throw an error when the requested source map could not be found', () => {
-      expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
-        .throws(SourceMapError, 'Source map not found for "foobar"' + ERROR_POSTFIX);
+    it('should throw an error when the requested source map could not be found', async () => {
+      await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' }))).to.be.rejectedWith(SourceMapError, 'Source map not found for "foobar"' + ERROR_POSTFIX);
     });
 
-    it('should throw an error if source map file is a binary file', () => {
+    it('should throw an error if source map file is a binary file', async () => {
       transpiledFiles.push(new File('file.js', '// # sourceMappingURL=file1.js.map'));
       transpiledFiles.push(new File('file1.js.map', Buffer.from(PNG_BASE64_ENCODED, 'base64')));
-      expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
-        .throws(SourceMapError, /^Source map file "file1.js.map" could not be parsed as json. Cannot analyse code coverage. Setting `coverageAnalysis: "off"` in your stryker.conf.js will prevent this error/);
+
+      await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
+        .to.be.rejectedWith(SourceMapError, /^Source map file "file1.js.map" could not be parsed as json. Cannot analyse code coverage. Setting `coverageAnalysis: "off"` in your stryker.conf.js will prevent this error/);
     });
 
-    it('should throw an error if source map data url is not supported', () => {
+    it('should throw an error if source map data url is not supported', async () => {
       const expectedMapFile1 = { sources: ['file1.ts'] };
       transpiledFiles.push(new File('file1.js', `// # sourceMappingURL=data:application/xml;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`));
-      expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
-        .throws(SourceMapError, `Source map file for "file1.js" cannot be read. Data url "data:application/xml;base64" found, where "data:application/json;base64" was expected${ERROR_POSTFIX}`);
+
+      await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
+        .to.be.rejectedWith(SourceMapError, `Source map file for "file1.js" cannot be read. Data url "data:application/xml;base64" found, where "data:application/json;base64" was expected${ERROR_POSTFIX}`);
     });
 
-    it('should throw an error if source map file cannot be found', () => {
+    it('should throw an error if source map file cannot be found', async () => {
       transpiledFiles.push(new File('file1.js', '// # sourceMappingURL=file1.js.map'));
-      expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
-        .throws(SourceMapError, `Source map file "file1.js.map" (referenced by "file1.js") cannot be found in list of transpiled files${ERROR_POSTFIX}`);
+
+      await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
+        .to.be.rejectedWith(SourceMapError, `Source map file "file1.js.map" (referenced by "file1.js") cannot be found in list of transpiled files${ERROR_POSTFIX}`);
     });
 
-    it('should throw an error if source map file url is not declared in a transpiled file', () => {
+    it('should throw an error if source map file url is not declared in a transpiled file', async () => {
       transpiledFiles.push(new File('file1.js', `// # sourceMapping%%%=file1.js.map`));
-      expect(() => sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
-        .throws(SourceMapError, `Source map not found for "foobar"${ERROR_POSTFIX}`);
+
+      await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' })))
+        .to.be.rejectedWith(SourceMapError, `Source map not found for "foobar"${ERROR_POSTFIX}`);
     });
 
-    it('should not throw an error if one of the files is a binary file', () => {
+    it('should not throw an error if one of the files is a binary file', async () => {
       const expectedMapFile1 = { sources: ['file1.ts'] };
       transpiledFiles.push(new File('file1.js', `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`));
       transpiledFiles.push(new File('foo.png', Buffer.from(PNG_BASE64_ENCODED, 'base64')));
-      expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }))).deep.eq({
+
+      await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }))).to.eventually.deep.eq({
         fileName: 'file1.js',
         location: {
           end: {
