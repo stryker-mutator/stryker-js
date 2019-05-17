@@ -61,7 +61,7 @@ describe(SandboxPool.name, () => {
       runResult: { tests: [], status: RunStatus.Complete },
       sourceMapper: {
         transpiledFileNameFor: n => n,
-        transpiledLocationFor: n => n
+        transpiledLocationFor: n => Promise.resolve(n)
       }
     };
 
