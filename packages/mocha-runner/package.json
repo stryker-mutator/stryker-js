@@ -45,7 +45,7 @@
     "stryker-mocha-framework": "^0.15.1"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^1.0.0",
+    "@stryker-mutator/core": "^2.0.0",
     "mocha": ">= 2.3.3 < 7"
   }
 }
