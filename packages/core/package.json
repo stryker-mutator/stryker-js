@@ -63,7 +63,7 @@
     "inquirer": "~6.3.1",
     "istanbul-lib-instrument": "~3.2.0",
     "lodash": "~4.17.4",
-    "log4js": "~4.1.0",
+    "log4js": "~4.2.0",
     "mkdirp": "~0.5.1",
     "mutation-testing-metrics": "^1.0.7",
     "prettier": "~1.17.0",
@@ -75,7 +75,7 @@
     "tree-kill": "~1.2.0",
     "tslib": "~1.9.3",
     "typed-inject": "~1.0.0",
-    "typed-rest-client": "~1.2.0"
+    "typed-rest-client": "~1.4.0"
   },
   "devDependencies": {
     "@stryker-mutator/api": "^0.24.1",

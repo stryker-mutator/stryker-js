@@ -284,6 +284,21 @@ describe('VueMutator', () => {
       expect(() => sut.mutate(files)).throws(`Found unsupported language attribute 'lang="coffeescript"' on a <script> block.`);
   });
 
+  it('should not mutate a .vue file without a <script> block', () => {
+    mutators = { javascript: stubJavaScriptMutator };
+    const vueFile = new File('Component.vue',
+      `<template>
+      <span id="msg">{{ message }}</span>
+    </template>`);
+    const files = [vueFile];
+    const sut = createSut();
+
+    const result = sut.mutate(files);
+
+    expect(result).to.be.empty;
+    expect(stubJavaScriptMutator.mutate).not.calledWith([vueFile]);
+  });
+
   it('should generate correct vue mutants', () => {
     mutators = { javascript: stubJavaScriptMutator };
 
