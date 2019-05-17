@@ -27,7 +27,7 @@ describe('Source mapper integration', () => {
     });
 
     it('it should be able to map to transpiled location', async () => {
-      const actual = sut.transpiledLocationFor({
+      const actual = await sut.transpiledLocationFor({
         fileName: resolve('external-source-maps', 'ts', 'src', 'math.ts'),
         location: {
           end: { line: 7, column: 42 },
@@ -50,7 +50,7 @@ describe('Source mapper integration', () => {
       sut = new TranspiledSourceMapper(files);
     });
     it('it should be able to map to transpiled location', async () => {
-      const actual = sut.transpiledLocationFor({
+      const actual = await sut.transpiledLocationFor({
         fileName: resolve('inline-source-maps', 'ts', 'src', 'math.ts'),
         location: {
           end: { line: 7, column: 42 },
