@@ -2,7 +2,7 @@ import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
 import { strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import getPort from 'get-port';
+import getPort = require('get-port');
 import * as log4js from 'log4js';
 import * as path from 'path';
 import { toArray } from 'rxjs/operators';
