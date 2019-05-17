@@ -1,8 +1,7 @@
 import * as _ from 'lodash';
-import { fsAsPromised } from '@stryker-mutator/util';
+import { fsAsPromised, childProcessAsPromised } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import PromptOption from './PromptOption';
-import { format } from 'prettier';
 import PresetConfiguration from './presets/PresetConfiguration';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { initializerTokens } from '.';
@@ -70,15 +69,21 @@ export default class StrykerConfigWriter {
     }
   }
 
-  private writeStrykerConfigRaw(rawConfig: string, rawHeader = '') {
-    this.out('Writing stryker.conf.js...');
-    const formattedConf = format(`${rawHeader}
+  private async writeStrykerConfigRaw(rawConfig: string, rawHeader = '') {
+    this.out('Writing & formatting stryker.conf.js...');
+    const formattedConf = `${rawHeader}
       module.exports = function(config){
         config.set(
           ${rawConfig}
         );
-      }`, { parser: 'babel' as unknown as 'babylon' });
-    return fsAsPromised.writeFile(STRYKER_CONFIG_FILE, formattedConf);
+      }`;
+    await fsAsPromised.writeFile(STRYKER_CONFIG_FILE, formattedConf);
+    try {
+      await childProcessAsPromised.exec(`npx prettier --write ${STRYKER_CONFIG_FILE}`);
+    } catch (error) {
+      this.log.debug('Prettier exited with error', error);
+      this.out('Unable to format stryker.conf.js file for you. This is not a big problem, but it might look a bit messy 🙈.');
+    }
   }
 
   private writeStrykerConfig(configObject: Partial<StrykerOptions>) {
