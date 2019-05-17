@@ -86,7 +86,8 @@ describe('SourceMapper', () => {
 
       // Assert
       expect(sourceMapModule.SourceMapConsumer).calledWithNew;
-      expect(sourceMapModule.SourceMapConsumer).not.calledWith(expectedMapFile1);
+      expect(sourceMapModule.SourceMapConsumer).calledWith(expectedMapFile1);
+      expect(sourceMapModule.SourceMapConsumer).not.calledWith(expectedMapFile2);
     });
 
     it('should cache source maps for future use when `transpiledLocationFor` is called', async () => {
