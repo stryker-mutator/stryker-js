@@ -45,7 +45,6 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "^1.3.1",
-    "@types/file-url": "~3.0.2",
     "@types/jsdom": "~12.2.0",
     "@types/node": "^10.11.5"
   },
