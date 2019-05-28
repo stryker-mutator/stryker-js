@@ -61,7 +61,7 @@
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
     "inquirer": "~6.3.1",
-    "istanbul-lib-instrument": "~3.2.0",
+    "istanbul-lib-instrument": "~3.3.0",
     "lodash": "~4.17.4",
     "log4js": "~4.2.0",
     "mkdirp": "~0.5.1",
