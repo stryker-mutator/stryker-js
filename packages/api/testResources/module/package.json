@@ -18,8 +18,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "install-local": "~1.0.0",
-    "typescript": "^3.2.2"
+    "install-local": "~1.0.0"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../.."

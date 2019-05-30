@@ -51,7 +51,7 @@
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^1.0.0",
-    "typescript": "^3.0.3"
+    "typescript": "^3.5.1"
   },
   "initStrykerConfig": {
     "tsconfigFile": "tsconfig.json",
