@@ -48,7 +48,7 @@ export class MutantTestMatcher {
     }
   }
 
-  public matchWithMutants(mutants: ReadonlyArray<Mutant>): ReadonlyArray<TestableMutant> {
+  public async matchWithMutants(mutants: ReadonlyArray<Mutant>): Promise<ReadonlyArray<TestableMutant>> {
 
     const testableMutants = this.createTestableMutants(mutants);
 
@@ -58,14 +58,14 @@ export class MutantTestMatcher {
       this.log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
       testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.FailedButAlreadyReported));
     } else {
-      testableMutants.forEach(testableMutant => this.enrichWithCoveredTests(testableMutant));
+      await Promise.all(testableMutants.map(testableMutant => this.enrichWithCoveredTests(testableMutant)));
     }
     this.reporter.onAllMutantsMatchedWithTests(Object.freeze(testableMutants.map(this.mapMutantOnMatchedMutant)));
     return testableMutants;
   }
 
-  public enrichWithCoveredTests(testableMutant: TestableMutant) {
-    const transpiledLocation = this.initialRunResult.sourceMapper.transpiledLocationFor({
+  public async enrichWithCoveredTests(testableMutant: TestableMutant) {
+    const transpiledLocation = await this.initialRunResult.sourceMapper.transpiledLocationFor({
       fileName: testableMutant.mutant.fileName,
       location: testableMutant.location
     });

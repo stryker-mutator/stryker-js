@@ -36,7 +36,7 @@ export default abstract class SourceMapper {
    * Calculated a transpiled location for a given original location
    * @param originalLocation The original location to be converted to a transpiled location
    */
-  public abstract transpiledLocationFor(originalLocation: MappedLocation): MappedLocation;
+  public abstract async transpiledLocationFor(originalLocation: MappedLocation): Promise<MappedLocation>;
 
   public abstract transpiledFileNameFor(originalFileName: string): string;
 
@@ -69,11 +69,11 @@ export class TranspiledSourceMapper extends SourceMapper {
   /**
    * @inheritdoc
    */
-  public transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
+  public async transpiledLocationFor(originalLocation: MappedLocation): Promise<MappedLocation> {
     const sourceMap = this.getSourceMap(originalLocation.fileName);
     const relativeSource = this.getRelativeSource(sourceMap, originalLocation);
-    const start = sourceMap.generatedPositionFor(originalLocation.location.start, relativeSource);
-    const end = sourceMap.generatedPositionFor(originalLocation.location.end, relativeSource);
+    const start = await sourceMap.generatedPositionFor(originalLocation.location.start, relativeSource);
+    const end = await sourceMap.generatedPositionFor(originalLocation.location.end, relativeSource);
     return {
       fileName: sourceMap.transpiledFile.name,
       location: {
@@ -213,27 +213,31 @@ export class PassThroughSourceMapper extends SourceMapper {
   /**
    * @inheritdoc
    */
-  public transpiledLocationFor(originalLocation: MappedLocation): MappedLocation {
-    return originalLocation;
+  public async transpiledLocationFor(originalLocation: MappedLocation): Promise<MappedLocation> {
+    return Promise.resolve(originalLocation);
   }
 }
 
 class SourceMap {
-  private readonly sourceMap: SourceMapConsumer;
-  constructor(public transpiledFile: File, public sourceMapFileName: string, rawSourceMap: RawSourceMap) {
-    this.sourceMap = new SourceMapConsumer(rawSourceMap);
+  private sourceMap: SourceMapConsumer | undefined;
+  constructor(public transpiledFile: File, public sourceMapFileName: string, private readonly rawSourceMap: RawSourceMap) {
   }
-  public generatedPositionFor(originalPosition: Position, relativeSource: string): Position {
-    const transpiledPosition = this.sourceMap.generatedPositionFor({
+  public async generatedPositionFor(originalPosition: Position, relativeSource: string): Promise<Position> {
+    if (!this.sourceMap) {
+      this.sourceMap = await new SourceMapConsumer(this.rawSourceMap);
+    }
+
+    const transpiledPosition = await this.sourceMap.generatedPositionFor({
       bias: SourceMapConsumer.LEAST_UPPER_BOUND,
       column: originalPosition.column,
       line: originalPosition.line + 1, // SourceMapConsumer works 1-based
       source: relativeSource
     });
-    return {
-      column: transpiledPosition.column,
-      line: transpiledPosition.line - 1  // Stryker works 0-based
-    };
+
+    return Promise.resolve({
+      column: transpiledPosition.column || 0,
+      line: (transpiledPosition.line || 1) - 1  // Stryker works 0-based
+    });
   }
 }
 

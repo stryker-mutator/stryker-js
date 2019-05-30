@@ -92,9 +92,11 @@ describe(MutantTestMatcher.name, () => {
 
         describe('without code coverage info', () => {
 
-          it('should add both tests to the mutants and report failure', () => {
-            const result = sut.matchWithMutants(mutants);
+          it('should add both tests to the mutants and report failure', async () => {
             const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
+
+            const result = await sut.matchWithMutants(mutants);
+
             expect(result[0].selectedTests).deep.eq(expectedTestSelection);
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
             expect(TestSelectionResult[result[0].testSelectionResult]).eq(TestSelectionResult[TestSelectionResult.FailedButAlreadyReported]);
@@ -102,8 +104,9 @@ describe(MutantTestMatcher.name, () => {
             expect(testInjector.logger.warn).calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'perTest');
           });
 
-          it('should have both mutants matched', () => {
-            const result = sut.matchWithMutants(mutants);
+          it('should have both mutants matched', async () => {
+            const result = await sut.matchWithMutants(mutants);
+
             const matchedMutants: MatchedMutant[] = [
               {
                 fileName: result[0].fileName,
@@ -122,6 +125,7 @@ describe(MutantTestMatcher.name, () => {
                 timeSpentScopedTests: result[1].timeSpentScopedTests
               }
             ];
+
             expect(reporter.onAllMutantsMatchedWithTests).calledWith(Object.freeze(matchedMutants));
           });
         });
@@ -188,8 +192,9 @@ describe(MutantTestMatcher.name, () => {
             };
           });
 
-          it('should not have added the run results to the mutants', () => {
-            const result = sut.matchWithMutants(mutants);
+          it('should not have added the run results to the mutants', async () => {
+            const result = await sut.matchWithMutants(mutants);
+
             expect(result[0].selectedTests).lengthOf(0);
             expect(result[1].selectedTests).lengthOf(0);
           });
@@ -226,12 +231,14 @@ describe(MutantTestMatcher.name, () => {
             sut = createSut();
           });
 
-          it('should have added the run results to the mutants', () => {
-            const result = sut.matchWithMutants(mutants);
+          it('should have added the run results to the mutants', async () => {
             const expectedTestSelectionFirstMutant: TestSelection[] = [
               { id: 0, name: 'test one' },
               { id: 1, name: 'test two' }
             ];
+
+            const result = await sut.matchWithMutants(mutants);
+
             const expectedTestSelectionSecondMutant: TestSelection[] = [{ id: 0, name: 'test one' }];
             expect(result[0].selectedTests).deep.eq(expectedTestSelectionFirstMutant);
             expect(result[1].selectedTests).deep.eq(expectedTestSelectionSecondMutant);
@@ -248,12 +255,14 @@ describe(MutantTestMatcher.name, () => {
             sut = createSut();
           });
 
-          it('should select all test in the test run but not report the error yet', () => {
-            const result = sut.matchWithMutants(mutants);
+          it('should select all test in the test run but not report the error yet', async () => {
             const expectedTestSelection: TestSelection[] = [
               { name: 'test one', id: 0 },
               { name: 'test two', id: 1 }
             ];
+
+            const result = await sut.matchWithMutants(mutants);
+
             expect(result[0].selectedTests).deep.eq(expectedTestSelection);
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
             expect(result[0].testSelectionResult).eq(TestSelectionResult.Failed);
@@ -278,9 +287,11 @@ describe(MutantTestMatcher.name, () => {
             sut = createSut();
           });
 
-          it('should have added the run results to the mutant', () => {
-            const result = sut.matchWithMutants(mutants);
+          it('should have added the run results to the mutant', async () => {
             const expectedTestSelection = [{ id: 0, name: 'test one' }];
+
+            const result = await sut.matchWithMutants(mutants);
+
             expect(result[0].selectedTests).deep.eq(expectedTestSelection);
           });
         });
@@ -309,9 +320,11 @@ describe(MutantTestMatcher.name, () => {
             sut = createSut();
           });
 
-          it('should add all test results to the mutant that is covered by the baseline', () => {
-            const result = sut.matchWithMutants(mutants);
+          it('should add all test results to the mutant that is covered by the baseline', async () => {
             const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
+
+            const result = await sut.matchWithMutants(mutants);
+
             expect(result[0].selectedTests).deep.eq(expectedTestSelection);
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
           });
@@ -320,7 +333,8 @@ describe(MutantTestMatcher.name, () => {
     });
 
     describe('should not result in regression', () => {
-      it('should match up mutant for issue #151 (https://github.com/stryker-mutator/stryker/issues/151)', () => {
+      it('should match up mutant for issue #151 (https://github.com/stryker-mutator/stryker/issues/151)', async () => {
+        // Arrange
         const sourceFile = new SourceFile(new File('', ''));
         sourceFile.getLocation = () => ({ start: { line: 13, column: 38 }, end: { line: 24, column: 5 } });
         const testableMutant = new TestableMutant('1', mutant({
@@ -338,7 +352,11 @@ describe(MutantTestMatcher.name, () => {
           timeSpentMs: 5
         });
         sut = createSut();
-        sut.enrichWithCoveredTests(testableMutant);
+
+        // Act
+        await sut.enrichWithCoveredTests(testableMutant);
+
+        // Assert
         expect(testableMutant.selectedTests).deep.eq([{
           id: 0,
           name: 'controllers SearchResultController should open a modal dialog with product details'
@@ -354,11 +372,13 @@ describe(MutantTestMatcher.name, () => {
       sut = createSut();
     });
 
-    it('should match all mutants to all tests and log a warning when there is no coverage data', () => {
+    it('should match all mutants to all tests and log a warning when there is no coverage data', async () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
       initialRunResult.runResult.tests.push(testResult(), testResult());
-      const result = sut.matchWithMutants(mutants);
       const expectedTestSelection: TestSelection[] = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
+
+      const result = await sut.matchWithMutants(mutants);
+
       expect(result[0].selectedTests).deep.eq(expectedTestSelection);
       expect(result[1].selectedTests).deep.eq(expectedTestSelection);
       expect(result[0].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
@@ -380,12 +400,12 @@ describe(MutantTestMatcher.name, () => {
         };
       });
 
-      it('should retrieves source mapped location', () => {
+      it('should retrieves source mapped location', async () => {
         // Arrange
         mutants.push(mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
 
         // Act
-        sut.matchWithMutants(mutants);
+        await sut.matchWithMutants(mutants);
 
         // Assert
         const expectedLocation: MappedLocation = {
@@ -398,13 +418,13 @@ describe(MutantTestMatcher.name, () => {
         expect(initialRunResult.sourceMapper.transpiledLocationFor).calledWith(expectedLocation);
       });
 
-      it('should match mutant to single test result', () => {
+      it('should match mutant to single test result', async () => {
         // Arrange
         mutants.push(mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
         initialRunResult.runResult.tests.push(testResult({ name: 'test 1' }), testResult({ name: 'test 2' }));
 
         // Act
-        const result = sut.matchWithMutants(mutants);
+        const result = await sut.matchWithMutants(mutants);
 
         // Assert
         const expectedTestSelection: TestSelection[] = [{
@@ -428,11 +448,13 @@ describe(MutantTestMatcher.name, () => {
       sut = createSut();
     });
 
-    it('should match all mutants to all tests', () => {
+    it('should match all mutants to all tests', async () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
       initialRunResult.runResult.tests.push(testResult(), testResult());
-      const result = sut.matchWithMutants(mutants);
       const expectedTestSelection = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
+
+      const result = await sut.matchWithMutants(mutants);
+
       expect(result[0].selectedTests).deep.eq(expectedTestSelection);
       expect(result[1].selectedTests).deep.eq(expectedTestSelection);
     });
