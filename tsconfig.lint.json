@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig.settings.json",
+  "extends": "./tsconfig.settings.json",
   // This file is a workaround for: https://github.com/palantir/tslint/issues/4137
   "include": [
     "packages/*/src",
