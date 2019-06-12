@@ -81,7 +81,7 @@
     "@stryker-mutator/test-helpers": "^2.0.0",
     "@types/inquirer": "~6.0.0",
     "@types/istanbul-lib-instrument": "~1.7.0",
-    "@types/node": "~10.11.4",
+    "@types/node": "~12.0.8",
     "@types/progress": "~2.0.1",
     "flatted": "^2.0.0"
   }
