@@ -16,7 +16,7 @@ jobs:
       script: npm run build && npm run e2e
     - stage: Performance test
       name: "npm run perf"
-      script: npm run build && npm run perf
+      script: npm run build && travis_wait 20 npm run perf
     - stage: release
       script: npm run build && ".travis/ci-release.jsh"
       env:
