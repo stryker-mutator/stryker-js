@@ -36,7 +36,7 @@ function execNpm(args: string[], testDir: string): Observable<string> {
   console.log(`Exec ${testDir} npm ${args.join(' ')}`);
 
   return new Observable(observer => {
-    const testProcess = execa('npm', args, { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
+    const testProcess = execa('npm', args, { timeout: 0, cwd: currentTestDir, stdio: 'pipe' });
     let stderr = '';
     testProcess.stderr.on('data', chunk => stderr += chunk.toString());
     testProcess.stdout.on('data', chunk => observer.next(chunk.toString().trim()));
