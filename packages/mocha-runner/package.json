@@ -37,7 +37,7 @@
   "dependencies": {
     "@stryker-mutator/api": "^2.0.0",
     "multimatch": "~4.0.0",
-    "tslib": "~1.9.3"
+    "tslib": "~1.10.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "^2.0.0",

@@ -42,7 +42,7 @@
     "@babel/traverse": "~7.4.0",
     "@stryker-mutator/api": "^2.0.0",
     "lodash": "~4.17.4",
-    "tslib": "~1.9.3"
+    "tslib": "~1.10.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^2.0.0"
