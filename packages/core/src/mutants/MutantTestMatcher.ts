@@ -15,9 +15,9 @@ import InputFileCollection from '../input/InputFileCollection';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 
-enum StatementIndexKind {
-  function,
-  statement
+const enum StatementIndexKind {
+  Function,
+  Statement
 }
 
 /**
@@ -107,7 +107,7 @@ export class MutantTestMatcher {
 
   private isCoveredByCoverageCollection(coveredFile: CoverageResult | null, statementIndex: StatementIndex): boolean {
     if (coveredFile) {
-      if (statementIndex.kind === StatementIndexKind.statement) {
+      if (statementIndex.kind === StatementIndexKind.Statement) {
         return coveredFile.s[statementIndex.index] > 0;
       } else {
         return coveredFile.f[statementIndex.index] > 0;
@@ -152,14 +152,14 @@ export class MutantTestMatcher {
     if (statementIndex) {
       return {
         index: statementIndex,
-        kind: StatementIndexKind.statement
+        kind: StatementIndexKind.Statement
       };
     } else {
       const functionIndex = this.findMatchingStatementInMap(location, fileCoverage.fnMap);
       if (functionIndex) {
         return {
           index: functionIndex,
-          kind: StatementIndexKind.function
+          kind: StatementIndexKind.Function
         };
       } else {
         return null;

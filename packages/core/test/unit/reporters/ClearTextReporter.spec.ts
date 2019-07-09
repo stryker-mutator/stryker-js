@@ -7,7 +7,7 @@ import * as os from 'os';
 import * as sinon from 'sinon';
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
 
-const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: Number) => {
+const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: number) => {
   return [
     chalk.cyan(sourceFilePath),
     chalk.yellow(`${line}`),

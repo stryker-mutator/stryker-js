@@ -1,11 +1,11 @@
 import { File, Range, Location, Position } from '@stryker-mutator/api/core';
 
 const enum CharacterCodes {
-  maxAsciiCharacter = 0x7F,
-  lineFeed = 0x0A,              // \n
-  carriageReturn = 0x0D,        // \r
-  lineSeparator = 0x2028,
-  paragraphSeparator = 0x2029
+  MaxAsciiCharacter = 0x7F,
+  LineFeed = 0x0A,              // \n
+  CarriageReturn = 0x0D,        // \r
+  LineSeparator = 0x2028,
+  ParagraphSeparator = 0x2029
 }
 
 export function isLineBreak(ch: number): boolean {
@@ -20,10 +20,10 @@ export function isLineBreak(ch: number): boolean {
   // Only the characters in Table 3 are treated as line terminators. Other new line or line
   // breaking characters are treated as white space but not as line terminators.
 
-  return ch === CharacterCodes.lineFeed ||
-    ch === CharacterCodes.carriageReturn ||
-    ch === CharacterCodes.lineSeparator ||
-    ch === CharacterCodes.paragraphSeparator;
+  return ch === CharacterCodes.LineFeed ||
+    ch === CharacterCodes.CarriageReturn ||
+    ch === CharacterCodes.LineSeparator ||
+    ch === CharacterCodes.ParagraphSeparator;
 }
 
 export default class SourceFile {
@@ -107,17 +107,17 @@ export default class SourceFile {
       const ch = this.file.textContent.charCodeAt(pos);
       pos++;
       switch (ch) {
-        case CharacterCodes.carriageReturn:
-          if (this.file.textContent.charCodeAt(pos) === CharacterCodes.lineFeed) {
+        case CharacterCodes.CarriageReturn:
+          if (this.file.textContent.charCodeAt(pos) === CharacterCodes.LineFeed) {
             pos++;
           }
           markLineStart();
           break;
-        case CharacterCodes.lineFeed:
+        case CharacterCodes.LineFeed:
           markLineStart();
           break;
         default:
-          if (ch > CharacterCodes.maxAsciiCharacter && isLineBreak(ch)) {
+          if (ch > CharacterCodes.MaxAsciiCharacter && isLineBreak(ch)) {
             markLineStart();
           }
           break;
