@@ -37,7 +37,7 @@
     "source-map-support": "^0.5.6",
     "tslint": "~5.18.0",
     "tslint-consistent-codestyle": "~1.15.1",
-    "typescript": "~3.4.1"
+    "typescript": "~3.5.3"
   },
   "prettier": {
     "singleQuote": true
