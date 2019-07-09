@@ -9,7 +9,7 @@
     "rootDir": ".",
     "sourceMap": true,
     "declaration": true,
-    "forceConsistentCasingInFileNames": false,
+    "forceConsistentCasingInFileNames": true,
     "allowJs": false,
     "importHelpers": true,
     "noUnusedLocals": true,

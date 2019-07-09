@@ -39,7 +39,7 @@ export class ReactPreset implements Preset {
     }`;
 
   public async createConfig(): Promise<PresetConfiguration> {
-    const choices: inquirer.ChoiceType[] = ['JSX', 'TSX'];
+    const choices: inquirer.ChoiceType<string>[] = ['JSX', 'TSX'];
     const answers = await inquirer.prompt<{ choice: string }>({
       choices,
       message: 'Is your project a JSX project or a TSX project?',

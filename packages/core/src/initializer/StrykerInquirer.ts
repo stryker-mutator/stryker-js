@@ -11,7 +11,7 @@ export interface PromptResult {
 export class StrykerInquirer {
 
   public async promptPresets(options: Preset[]): Promise<Preset | undefined> {
-    const choices: inquirer.ChoiceType[] = options.map(_ => _.name);
+    const choices: inquirer.ChoiceType<string>[] = options.map(_ => _.name);
     choices.push(new inquirer.Separator());
     choices.push('None/other');
     const answers = await inquirer.prompt<{ preset: string }>({
@@ -24,7 +24,7 @@ export class StrykerInquirer {
   }
 
   public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
-    const choices: inquirer.ChoiceType[] = options.map(_ => _.name);
+    const choices: inquirer.ChoiceType<string>[] = options.map(_ => _.name);
     choices.push(new inquirer.Separator());
     choices.push(CommandTestRunner.runnerName);
     const answers = await inquirer.prompt<{ testRunner: string }>({

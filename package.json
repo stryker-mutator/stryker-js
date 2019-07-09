@@ -43,6 +43,7 @@
     "singleQuote": true
   },
   "scripts": {
+    "all": "npm run clean && npm run lint && npm run build && npm run test && npm run e2e",
     "postinstall": "lerna bootstrap --no-ci && link-parent-bin",
     "lint-info": "tslint --out tslint.log --project tsconfig.lint.json",
     "lint-fix": "tslint --fix --project tsconfig.lint.json",
