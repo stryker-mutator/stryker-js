@@ -79,7 +79,7 @@
   "devDependencies": {
     "@stryker-mutator/api": "^0.24.1",
     "@stryker-mutator/test-helpers": "^2.0.0",
-    "@types/inquirer": "~6.0.0",
+    "@types/inquirer": "~6.0.2",
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/node": "~10.11.4",
     "@types/progress": "~2.0.1",

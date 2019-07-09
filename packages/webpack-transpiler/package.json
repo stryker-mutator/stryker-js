@@ -1,60 +1,53 @@
 {
-  "name": "@stryker-mutator/webpack-transpiler",
-  "version": "2.0.0",
-  "description": "A plugin for Webpack-based projects using Stryker",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 85 --functions 84 --branches 65 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "@stryker-mutator/core": "node ../stryker/bin/stryker run"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker"
-  },
-  "engines": {
-    "node": ">=8"
-  },
-  "keywords": [
-    "stryker",
-    "typescript",
-    "webpack",
-    "@stryker-mutator/transpiler-plugin"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "author": "Sander koenders <sanderkoenders@gmail.com>",
-  "contributors": [
-    "Simon de Lang <simondelang@gmail.com>",
-    "Nico Jansen <jansennico@gmail.com>"
-  ],
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
-  },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/webpack-transpiler#readme",
-  "devDependencies": {
-    "@stryker-mutator/test-helpers": "^2.0.0",
-    "@types/memory-fs": "~0.3.0",
-    "@types/webpack": "~4.4.12",
-    "raw-loader": "~3.0.0",
-    "webpack": "~4.34.0"
-  },
-  "peerDependencies": {
-    "@stryker-mutator/core": "^2.0.0",
-    "webpack": ">=2.0.0"
-  },
-  "dependencies": {
-    "@stryker-mutator/api": "^2.0.0",
-    "enhanced-resolve": "~4.1.0",
-    "lodash": "~4.17.4",
-    "memory-fs": "~0.4.1"
-  },
-  "initStrykerConfig": {
-    "webpack": {
-      "configFile": "webpack.config.js"
-    },
-    "coverageAnalysis": "off"
-  }
+	"name": "@stryker-mutator/webpack-transpiler",
+	"version": "2.0.0",
+	"description": "A plugin for Webpack-based projects using Stryker",
+	"main": "src/index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/stryker-mutator/stryker"
+	},
+	"engines": {
+		"node": ">=8"
+	},
+	"keywords": [
+		"stryker",
+		"typescript",
+		"webpack",
+		"@stryker-mutator/transpiler-plugin"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"author": "Sander koenders <sanderkoenders@gmail.com>",
+	"contributors": [
+		"Simon de Lang <simondelang@gmail.com>",
+		"Nico Jansen <jansennico@gmail.com>"
+	],
+	"license": "Apache-2.0",
+	"bugs": {
+		"url": "https://github.com/stryker-mutator/stryker/issues"
+	},
+	"homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/webpack-transpiler#readme",
+	"devDependencies": {
+		"@types/memory-fs": "~0.3.0",
+		"@types/webpack": "~4.4.12",
+		"raw-loader": "~3.0.0",
+		"webpack": "~4.34.0"
+	},
+	"peerDependencies": {
+		"@stryker-mutator/core": "^2.0.0",
+		"webpack": ">=2.0.0"
+	},
+	"dependencies": {
+		"enhanced-resolve": "~4.1.0",
+		"lodash": "~4.17.4",
+		"memory-fs": "~0.4.1"
+	},
+	"initStrykerConfig": {
+		"webpack": {
+			"configFile": "webpack.config.js"
+		},
+		"coverageAnalysis": "off"
+	}
 }

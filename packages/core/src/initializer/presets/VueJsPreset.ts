@@ -44,14 +44,14 @@ export class VueJsPreset implements Preset {
     }`;
 
   public async createConfig(): Promise<PresetConfiguration> {
-    const testRunnerChoices: inquirer.ChoiceType<string>[] = ['karma', 'jest'];
+    const testRunnerChoices: inquirer.ChoiceType[] = ['karma', 'jest'];
     const testRunnerAnswers = await inquirer.prompt<{ testRunner: string }>({
       choices: testRunnerChoices,
       message: 'Which test runner do you want to use?',
       name: 'testRunner',
       type: 'list'
     });
-    const scriptChoices: inquirer.ChoiceType<string>[] = ['typescript', 'javascript'];
+    const scriptChoices: inquirer.ChoiceType[] = ['typescript', 'javascript'];
     const scriptAnswers = await inquirer.prompt<{ script: string }>({
       choices: scriptChoices,
       message: 'Which language does your project use?',

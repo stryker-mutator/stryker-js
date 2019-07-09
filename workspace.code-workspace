@@ -69,7 +69,7 @@
 		}
 	],
 	"settings": {
-		"typescript.tsdk": "..\\..\\node_modules\\typescript\\lib",
+		"typescript.tsdk": "node_modules\\typescript\\lib",
 		"files.exclude": {
 			".git": true,
 			".tscache": true,

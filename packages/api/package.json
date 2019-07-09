@@ -1,43 +1,43 @@
 {
-  "name": "@stryker-mutator/api",
-  "version": "2.0.0",
-  "description": "The api for the extendable JavaScript mutation testing framework Stryker",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker"
-  },
-  "keywords": [
-    "mutation testing",
-    "mutation",
-    "testing",
-    "test",
-    "js",
-    "stryker"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "contributors": [
-    "nicojs <jansennico@gmail.com>",
-    "Alex van Assem <avassem@gmail.com>",
-    "Jeremy Nagel <jeremy.nagel@learnosity.com>",
-    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
-    "Simon de Lang <simondelang@gmail.com>"
-  ],
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
-  },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/api#readme",
-  "engines": {
-    "node": ">=8"
-  },
-  "dependencies": {
-    "mutation-testing-report-schema": "^1.0.0",
-    "tslib": "~1.10.0"
-  },
-  "devDependencies": {
-    "surrial": "~1.0.0",
-    "typed-inject": "~2.0.0"
-  }
+	"name": "@stryker-mutator/api",
+	"version": "2.0.0",
+	"description": "The api for the extendable JavaScript mutation testing framework Stryker",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/stryker-mutator/stryker"
+	},
+	"keywords": [
+		"mutation testing",
+		"mutation",
+		"testing",
+		"test",
+		"js",
+		"stryker"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"contributors": [
+		"nicojs <jansennico@gmail.com>",
+		"Alex van Assem <avassem@gmail.com>",
+		"Jeremy Nagel <jeremy.nagel@learnosity.com>",
+		"Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
+		"Simon de Lang <simondelang@gmail.com>"
+	],
+	"license": "Apache-2.0",
+	"bugs": {
+		"url": "https://github.com/stryker-mutator/stryker/issues"
+	},
+	"homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/api#readme",
+	"engines": {
+		"node": ">=8"
+	},
+	"dependencies": {
+		"mutation-testing-report-schema": "^1.0.0",
+		"tslib": "~1.10.0"
+	},
+	"devDependencies": {
+		"surrial": "~1.0.0",
+		"typed-inject": "~2.0.0"
+	}
 }
