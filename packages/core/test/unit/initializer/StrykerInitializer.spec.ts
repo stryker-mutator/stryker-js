@@ -100,7 +100,7 @@ describe(StrykerInitializer.name, () => {
         inquirerPrompt.getCall(3).args[0],
         inquirerPrompt.getCall(6).args[0],
       ];
-      const [promptTranspilers, promptReporters]: inquirer.ListQuestion<string>[] = [
+      const [promptTranspilers, promptReporters]: inquirer.CheckboxQuestion<string>[] = [
         inquirerPrompt.getCall(4).args[0],
         inquirerPrompt.getCall(5).args[0],
       ];
