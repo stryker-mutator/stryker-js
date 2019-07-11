@@ -1,4 +1,4 @@
-import * as os from 'os';
+import { EOL } from 'os';
 
 const DEFAULT_MAX_SIZE = 2048;
 
@@ -17,6 +17,12 @@ export default class StringBuilder {
   }
 
   public toString() {
-    return this.strings.join(os.EOL);
+    return this.strings.join('');
+  }
+
+  public static concat(...builders: StringBuilder[]): string {
+    return builders.map(b => b.toString())
+      .filter(Boolean)
+      .join(EOL);
   }
 }

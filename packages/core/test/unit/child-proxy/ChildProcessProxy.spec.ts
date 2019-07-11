@@ -87,44 +87,53 @@ describe(ChildProcessProxy.name, () => {
       expect(childProcessMock.listeners('message')).lengthOf(1);
     });
 
-    it('should listen for exit calls', () => {
+    it('should listen for close calls', () => {
       createSut();
-      expect(childProcessMock.listeners('exit')).lengthOf(1);
+      expect(childProcessMock.listeners('close')).lengthOf(1);
     });
   });
 
-  describe('on exit', () => {
+  describe('on close', () => {
     beforeEach(() => {
       sut = createSut();
     });
 
     it('should log stdout and stderr on warning', () => {
-      childProcessMock.stderr.emit('data', 'foo');
       childProcessMock.stdout.emit('data', 'bar');
-      actExit(23, 'SIGTERM');
+      childProcessMock.stderr.emit('data', 'foo');
+      actClose(23, 'SIGTERM');
       expect(logMock.warn).calledWithMatch(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL
         }\tfoo${os.EOL}\tbar`);
     });
 
     it('should log that no stdout was available when stdout and stderr are empty', () => {
-      actExit(23, 'SIGTERM');
+      actClose(23, 'SIGTERM');
       expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.`);
+    });
+
+    it('should log stdout and stderr in correct order', () => {
+      childProcessMock.stdout.emit('data', 'foo');
+      childProcessMock.stderr.emit('data', 'baz');
+      childProcessMock.stdout.emit('data', 'bar');
+      actClose(23, 'SIGTERM');
+      expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL
+      }\tbaz${os.EOL}\tfoobar`);
     });
 
     it('should reject any outstanding worker promises with the error', () => {
       const expectedError = 'Child process [pid 4648] exited unexpectedly with exit code 646 (SIGINT).';
       const actualPromise = sut.proxy.say('test');
-      actExit(646);
+      actClose(646);
       return expect(actualPromise).rejectedWith(expectedError);
     });
 
     it('should reject any new calls immediately', () => {
-      actExit(646);
+      actClose(646);
       return expect(sut.proxy.say('')).rejected;
     });
 
-    function actExit(code = 1, signal = 'SIGINT') {
-      childProcessMock.emit('exit', code, signal);
+    function actClose(code = 1, signal = 'SIGINT') {
+      childProcessMock.emit('close', code, signal);
     }
   });
 
@@ -186,7 +195,7 @@ describe(ChildProcessProxy.name, () => {
     });
 
     it('should not do anything if the process already exited', async () => {
-      childProcessMock.emit('exit', 1);
+      childProcessMock.emit('close', 1);
       await actDispose();
       expect(killStub).not.called;
       expect(childProcessMock.send).calledOnce; // init

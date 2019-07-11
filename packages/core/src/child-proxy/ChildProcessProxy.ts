@@ -34,7 +34,8 @@ export default class ChildProcessProxy<T> implements Disposable {
   private currentError: ChildProcessCrashedError | undefined;
   private readonly workerTasks: Task<void>[] = [];
   private readonly log = getLogger(ChildProcessProxy.name);
-  private readonly stdoutAndStderrBuilder = new StringBuilder();
+  private readonly stdoutBuilder = new StringBuilder();
+  private readonly stderrBuilder = new StringBuilder();
   private isDisposed = false;
 
   private constructor(requirePath: string, requireName: string, loggingContext: LoggingClientContext, options: StrykerOptions, additionalInjectableValues: unknown, workingDirectory: string) {
@@ -52,10 +53,8 @@ export default class ChildProcessProxy<T> implements Disposable {
     });
     this.listenForMessages();
     this.listenToStdoutAndStderr();
-    // This is important! Be sure to bind to `this`
-    this.handleUnexpectedExit = this.handleUnexpectedExit.bind(this);
-    this.handleError = this.handleError.bind(this);
-    this.worker.on('exit', this.handleUnexpectedExit);
+    // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker/issues/1634
+    this.worker.on('close', this.handleUnexpectedExit);
     this.worker.on('error', this.handleError);
     this.proxy = this.initProxy();
   }
@@ -141,20 +140,20 @@ export default class ChildProcessProxy<T> implements Disposable {
   }
 
   private listenToStdoutAndStderr() {
-    const handleData = (data: Buffer | string) => {
+    const handleData = (builder: StringBuilder) => (data: Buffer | string) => {
       const output = data.toString();
-      this.stdoutAndStderrBuilder.append(output);
+      builder.append(output);
       if (this.log.isTraceEnabled()) {
         this.log.trace(output);
       }
     };
 
     if (this.worker.stdout) {
-      this.worker.stdout.on('data', handleData);
+      this.worker.stdout.on('data', handleData(this.stdoutBuilder));
     }
 
     if (this.worker.stderr) {
-      this.worker.stderr.on('data', handleData);
+      this.worker.stderr.on('data', handleData(this.stderrBuilder));
     }
   }
 
@@ -164,9 +163,9 @@ export default class ChildProcessProxy<T> implements Disposable {
       .forEach(task => task.reject(error));
   }
 
-  private handleUnexpectedExit(code: number, signal: string) {
+  private readonly handleUnexpectedExit = (code: number, signal: string) => {
     this.isDisposed = true;
-    const output = this.stdoutAndStderrBuilder.toString();
+    const output = StringBuilder.concat(this.stderrBuilder, this.stdoutBuilder);
 
     if (processOutOfMemory()) {
       this.currentError = new OutOfMemoryError(this.worker.pid, code);
@@ -192,7 +191,7 @@ export default class ChildProcessProxy<T> implements Disposable {
     }
   }
 
-  private handleError(error: Error) {
+  private readonly handleError = (error: Error) => {
     if (this.innerProcessIsCrashed(error)) {
       this.log.warn(`Child process [pid ${this.worker.pid}] has crashed. See other warning messages for more info.`, error);
       this.reportError(new ChildProcessCrashedError(this.worker.pid, `Child process [pid ${this.worker.pid}] has crashed`, undefined, undefined, error));
