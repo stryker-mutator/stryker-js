@@ -208,6 +208,12 @@ describe(ChildProcessProxy.name, () => {
       expect(killStub).called;
     });
 
+    it('should remove "close" listener', async () => {
+      expect(childProcessMock.listenerCount('close')).eq(1);
+      await actDispose();
+      expect(childProcessMock.listenerCount('close')).eq(0);
+    });
+
     async function actDispose() {
       const disposePromise = sut.dispose();
       receiveMessage({ kind: ParentMessageKind.DisposeCompleted });
