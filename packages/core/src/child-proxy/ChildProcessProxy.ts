@@ -206,7 +206,7 @@ export default class ChildProcessProxy<T> implements Disposable {
 
   public async dispose(): Promise<void> {
     if (!this.isDisposed) {
-      this.worker.removeListener('exit', this.handleUnexpectedExit);
+      this.worker.removeListener('close', this.handleUnexpectedExit);
       this.isDisposed = true;
       this.log.debug('Disposing of worker process %s', this.worker.pid);
       this.disposeTask = new ExpirableTask(TIMEOUT_FOR_DISPOSE);
