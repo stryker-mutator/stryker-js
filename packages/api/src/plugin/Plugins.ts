@@ -11,8 +11,8 @@ import { PluginKind } from './PluginKind';
 /**
  * Represents a StrykerPlugin
  */
-export type Plugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]> =
-  FactoryPlugin<TPluginKind, Tokens> | ClassPlugin<TPluginKind, Tokens>;
+export type Plugin<TPluginKind extends PluginKind> =
+  FactoryPlugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]> | ClassPlugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>;
 
 /**
  * Represents a plugin that is created with a factory method
@@ -32,6 +32,10 @@ export interface FactoryPlugin<TPluginKind extends PluginKind, Tokens extends In
 export interface ClassPlugin<TPluginKind extends PluginKind, Tokens extends InjectionToken<PluginContexts[TPluginKind]>[]> {
   readonly kind: TPluginKind;
   readonly name: string;
+  /**
+   * The prototype function (class) used to create the plugin.
+   * Not called `class` here, because that is a keyword
+   */
   readonly injectableClass: InjectableClass<PluginContexts[TPluginKind], PluginInterfaces[TPluginKind], Tokens>;
 }
 
@@ -81,7 +85,7 @@ export interface PluginInterfaces {
  * Lookup type for plugins by kind.
  */
 export type Plugins = {
-  [TPluginKind in keyof PluginInterfaces]: Plugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>;
+  [TPluginKind in keyof PluginInterfaces]: Plugin<TPluginKind>;
 };
 
 /**

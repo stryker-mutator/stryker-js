@@ -25,7 +25,7 @@ export class MutantTranspileScheduler implements Disposable {
   /**
    * Creates a mutant transpiler
    */
-  constructor(private readonly transpiler: Transpiler & Disposable, private readonly unMutatedFiles: ReadonlyArray<File>) { }
+  constructor(private readonly transpiler: Transpiler, private readonly unMutatedFiles: ReadonlyArray<File>) { }
 
   public scheduleTranspileMutants(allMutants: ReadonlyArray<TestableMutant>): Observable<TranspiledMutant> {
     return from(allMutants).pipe(

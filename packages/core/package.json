@@ -73,13 +73,13 @@
     "surrial": "~1.0.0",
     "tree-kill": "~1.2.0",
     "tslib": "~1.10.0",
-    "typed-inject": "~1.0.0",
+    "typed-inject": "~2.0.0",
     "typed-rest-client": "~1.5.0"
   },
   "devDependencies": {
     "@stryker-mutator/api": "^0.24.1",
     "@stryker-mutator/test-helpers": "^2.0.1",
-    "@types/inquirer": "~6.0.0",
+    "@types/inquirer": "~6.0.2",
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/node": "~10.11.4",
     "@types/progress": "~2.0.1",

@@ -10,7 +10,7 @@ import ChildProcessCrashedError from './ChildProcessCrashedError';
 import { isErrnoException } from '@stryker-mutator/util';
 import OutOfMemoryError from './OutOfMemoryError';
 import StringBuilder from '../utils/StringBuilder';
-import { InjectionToken, InjectableClass } from 'typed-inject';
+import { InjectionToken, InjectableClass, Disposable } from 'typed-inject';
 import { OptionsContext } from '@stryker-mutator/api/plugin';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
@@ -25,7 +25,7 @@ const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
 
-export default class ChildProcessProxy<T> {
+export default class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
 
   private readonly worker: ChildProcess;
@@ -205,22 +205,19 @@ export default class ChildProcessProxy<T> {
     return isErrnoException(error) && (error.code === BROKEN_PIPE_ERROR_CODE || error.code === IPC_CHANNEL_CLOSED_ERROR_CODE);
   }
 
-  public dispose(): Promise<void> {
-    this.worker.removeListener('exit', this.handleUnexpectedExit);
-    if (this.isDisposed) {
-      return Promise.resolve();
-    } else {
+  public async dispose(): Promise<void> {
+    if (!this.isDisposed) {
+      this.worker.removeListener('exit', this.handleUnexpectedExit);
+      this.isDisposed = true;
       this.log.debug('Disposing of worker process %s', this.worker.pid);
-      const killWorker = () => {
-        this.log.debug('Kill %s', this.worker.pid);
-        kill(this.worker.pid);
-        this.isDisposed = true;
-      };
       this.disposeTask = new ExpirableTask(TIMEOUT_FOR_DISPOSE);
       this.send({ kind: WorkerMessageKind.Dispose });
-      return this.disposeTask.promise
-        .then(killWorker)
-        .catch(killWorker);
+      try {
+        await this.disposeTask.promise;
+      } finally {
+          this.log.debug('Kill %s', this.worker.pid);
+          await kill(this.worker.pid);
+      }
     }
   }
 
