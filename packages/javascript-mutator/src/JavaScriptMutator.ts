@@ -6,7 +6,6 @@ import copy from './helpers/copy';
 import { NodeMutator, NODE_MUTATORS_TOKEN } from './mutators/NodeMutator';
 import BabelHelper from './helpers/BabelHelper';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { ParserPlugin } from '@babel/parser';
 
 export class JavaScriptMutator implements Mutator {
 
@@ -16,11 +15,11 @@ export class JavaScriptMutator implements Mutator {
     private readonly mutators: ReadonlyArray<NodeMutator>
     ) { }
 
-  public mutate(inputFiles: File[], options?: ParserPlugin[]): Mutant[] {
+  public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
 
     inputFiles.forEach(file => {
-      const ast = BabelHelper.parse(file.textContent, options);
+      const ast = BabelHelper.parse(file.textContent);
 
       BabelHelper.getNodes(ast).forEach(node => {
         this.mutators.forEach(mutator => {

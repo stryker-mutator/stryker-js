@@ -3,15 +3,14 @@ import { parse, ParserOptions } from '@babel/parser';
 import traverse, { NodePath } from '@babel/traverse';
 import generate from '@babel/generator';
 import { NodeWithParent } from './ParentNode';
-import { ParserPlugin } from '@babel/parser';
 
 export default class BabelHelper {
 
-  public static parse(code: string, options?: ParserPlugin[]): types.File {
-    return parse(code, this.createOptions(options));
+  public static parse(code: string): types.File {
+    return parse(code, this.createOptions());
   }
 
-  private static createOptions(options: ParserPlugin[] = []): ParserOptions {
+  private static createOptions(): ParserOptions {
     return {
       plugins: [
         'asyncGenerators',
@@ -21,8 +20,7 @@ export default class BabelHelper {
         'flow',
         'jsx',
         'objectRestSpread',
-        ['decorators', { decoratorsBeforeExport: true }],
-        ...options
+        ['decorators', { decoratorsBeforeExport: true }] as any,
       ],
       sourceType: 'unambiguous'
     };
