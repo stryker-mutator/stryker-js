@@ -25,6 +25,9 @@ A clear and concise description of what you expected to happen.
 **Stryker configuration**
 Post your stryker configuration here.
 
+**Test runner configuration**
+Put your Jest / Karma / Jasmine / Mocha (...) configuration here.
+
 **Log files**
 If applicable, add the logs to help explain your problem.
 
