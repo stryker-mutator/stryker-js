@@ -1,25 +1,28 @@
 import * as types from '@babel/types';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutator, Mutant } from '@stryker-mutator/api/mutant';
-import { File } from '@stryker-mutator/api/core';
+import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
 import copy from './helpers/copy';
 import { NodeMutator, NODE_MUTATORS_TOKEN } from './mutators/NodeMutator';
 import BabelHelper from './helpers/BabelHelper';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { ParserPlugin } from '@babel/parser';
 
 export class JavaScriptMutator implements Mutator {
 
-  public static inject = tokens(commonTokens.logger, NODE_MUTATORS_TOKEN) ;
+  public static inject = tokens(commonTokens.logger, commonTokens.mutatorDescriptor, NODE_MUTATORS_TOKEN) ;
   constructor(
     private readonly log: Logger,
+    private readonly mutatorDescriptor: MutatorDescriptor,
     private readonly mutators: ReadonlyArray<NodeMutator>
-    ) { }
+  ) { }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
+    const babelPlugins = this.mutatorDescriptor.babelPlugins || [];
 
     inputFiles.forEach(file => {
-      const ast = BabelHelper.parse(file.textContent);
+      const ast = BabelHelper.parse(file.textContent, babelPlugins as ParserPlugin[]);
 
       BabelHelper.getNodes(ast).forEach(node => {
         this.mutators.forEach(mutator => {
