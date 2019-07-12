@@ -56,5 +56,5 @@ declare namespace Jest {
 }
 
 declare module "jest" {
-  export = Jest;
+  export default Jest;
 }

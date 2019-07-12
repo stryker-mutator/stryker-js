@@ -4,7 +4,7 @@ import CustomJestConfigLoader from './configLoaders/CustomJestConfigLoader';
 import ReactScriptsJestConfigLoader from './configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader from './configLoaders/ReactScriptsTSJestConfigLoader';
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
-import { Configuration } from 'jest';
+import jest from 'jest';
 
 const DEFAULT_PROJECT_NAME = 'custom';
 
@@ -37,7 +37,7 @@ export default class JestConfigEditor implements ConfigEditor {
     }
   }
 
-  private overrideProperties(config: Configuration) {
+  private overrideProperties(config: jest.Configuration) {
     return Object.assign(config, JEST_OVERRIDE_OPTIONS);
   }
 }

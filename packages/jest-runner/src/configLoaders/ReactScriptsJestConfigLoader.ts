@@ -1,7 +1,7 @@
 import JestConfigLoader from './JestConfigLoader';
 import { createReactJestConfig } from '../utils/createReactJestConfig';
-import * as path from 'path';
-import { Configuration } from 'jest';
+import path from 'path';
+import jest from 'jest';
 
 export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
   private readonly loader: NodeRequire;
@@ -12,7 +12,7 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
     this.projectRoot = projectRoot;
   }
 
-  public loadConfig(): Configuration {
+  public loadConfig(): jest.Configuration {
     // Get the location of react script, this is later used to generate the Jest configuration used for React projects.
     const reactScriptsLocation = path.join(this.loader.resolve('react-scripts/package.json'), '..');
 
@@ -25,7 +25,7 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
     return jestConfiguration;
   }
 
-  private createJestConfig(reactScriptsLocation: string): Configuration {
+  private createJestConfig(reactScriptsLocation: string): jest.Configuration {
     return createReactJestConfig(
       (relativePath: string): string => path.join(reactScriptsLocation, relativePath),
       this.projectRoot,

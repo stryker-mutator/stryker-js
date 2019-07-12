@@ -1,6 +1,6 @@
 import JestTestRunner, { PROCESS_ENV_TOKEN, JEST_TEST_ADAPTER_TOKEN } from '../../src/JestTestRunner';
 import * as fakeResults from '../helpers/testResultProducer';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { expect } from 'chai';
 import { RunStatus, TestStatus, RunOptions } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
