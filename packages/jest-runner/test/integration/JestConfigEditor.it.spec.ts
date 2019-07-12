@@ -56,10 +56,9 @@ describe('Integration test for Jest ConfigEditor', () => {
       testEnvironment: 'jsdom',
       testMatch: [
         '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-        '<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}'
+        '<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}'
       ],
       testResultsProcessor: undefined,
-      testURL: 'http://localhost',
       transform: {
         '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
         '^.+\\.(js|jsx|ts|tsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),

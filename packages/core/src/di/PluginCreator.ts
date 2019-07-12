@@ -20,11 +20,11 @@ export class PluginCreator<TPluginKind extends PluginKind> {
     }
   }
 
-  private isFactoryPlugin<TPluginKind extends PluginKind>(plugin: Plugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>):
+  private isFactoryPlugin(plugin: Plugin<PluginKind>):
     plugin is FactoryPlugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]> {
     return !!(plugin as FactoryPlugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>).factory;
   }
-  private isClassPlugin<TPluginKind extends PluginKind>(plugin: Plugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>):
+  private isClassPlugin(plugin: Plugin<PluginKind>):
     plugin is ClassPlugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]> {
     return !!(plugin as ClassPlugin<TPluginKind, InjectionToken<PluginContexts[TPluginKind]>[]>).injectableClass;
   }
