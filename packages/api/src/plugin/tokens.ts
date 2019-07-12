@@ -17,6 +17,7 @@ export const commonTokens = Object.freeze({
   getLogger: stringLiteral('getLogger'),
   injector,
   logger: stringLiteral('logger'),
+  mutatorDescriptor: stringLiteral('mutatorDescriptor'),
   options: stringLiteral('options'),
   pluginResolver: stringLiteral('pluginResolver'),
   produceSourceMaps: stringLiteral('produceSourceMaps'),

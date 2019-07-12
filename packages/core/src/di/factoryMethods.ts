@@ -2,7 +2,7 @@ import { tokens, commonTokens, OptionsContext, Injector, PluginKind, PluginResol
 import TestFrameworkOrchestrator from '../TestFrameworkOrchestrator';
 import { coreTokens, PluginCreator, PluginLoader } from '.';
 import { LoggerFactoryMethod, Logger } from '@stryker-mutator/api/logging';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Config } from '@stryker-mutator/api/config';
 import { ConfigEditorApplier } from '../config';
 import { freezeRecursively } from '../utils/objectUtils';
@@ -29,3 +29,16 @@ export function optionsFactory(config: Config, configEditorApplier: ConfigEditor
   return freezeRecursively(config);
 }
 optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, typeof coreTokens.configEditorApplier]>(coreTokens.configReadFromConfigFile, coreTokens.configEditorApplier);
+
+export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
+  if (typeof options.mutator === 'string') {
+    return {
+      babelPlugins: [],
+      excludedMutations: [],
+      name: options.mutator
+    };
+  }
+
+  return options.mutator;
+}
+mutatorDescriptorFactory.inject = tokens(commonTokens.options);
