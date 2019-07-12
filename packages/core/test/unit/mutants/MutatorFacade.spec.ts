@@ -35,6 +35,7 @@ describe('MutatorFacade', () => {
 
     it('should create the configured mutant generator with an object mutator', () => {
       testInjector.options.mutator = {
+        babelPlugins: [],
         excludedMutations: [],
         name: 'javascript'
       };
@@ -57,6 +58,7 @@ describe('MutatorFacade', () => {
         factory.mutant({ mutatorName: 'baz' })
     ]);
       testInjector.options.mutator = {
+        babelPlugins: [],
         excludedMutations: ['foo'],
         name: 'javascript'
       };
@@ -71,6 +73,7 @@ describe('MutatorFacade', () => {
         factory.mutant({ mutatorName: 'baz' })
       ]);
       testInjector.options.mutator = {
+        babelPlugins: [],
         excludedMutations: ['foo', 'bar', 'baz'],
         name: 'javascript'
       };

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { File } from '@stryker-mutator/api/core';
+import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { JavaScriptMutator } from '../../src/JavaScriptMutator';
 import { NodeMutator } from '../../src/mutators/NodeMutator';
@@ -13,7 +13,7 @@ export function verifySpecification(specification: (name: string, expectMutation
 }
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
-  const javaScriptMutator = new JavaScriptMutator(testInjector.logger, [mutator]);
+  const javaScriptMutator = new JavaScriptMutator(testInjector.logger, createMutatorDescriptor(), [mutator]);
   const sourceFile = new File('file.js', sourceText);
   const mutants = javaScriptMutator.mutate([sourceFile]);
   expect(mutants).lengthOf(expectedTexts.length);
@@ -29,5 +29,9 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
 function mutantToString(mutant: Mutant, sourceText: string) {
   return sourceText.substr(0, mutant.range[0]) +
   mutant.replacement.replace(/\s{2,}/g, ' ').replace(/\n/g, ' ') +
-    sourceText.substr(mutant.range[1]);
+  sourceText.substr(mutant.range[1]);
+}
+
+function createMutatorDescriptor(): MutatorDescriptor {
+  return { name: 'test', babelPlugins: [], excludedMutations: [] };
 }
