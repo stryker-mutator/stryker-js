@@ -5,7 +5,7 @@ import JestConfigEditor from '../../src/JestConfigEditor';
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../src/configLoaders/CustomJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../src/configLoaders/ReactScriptsTSJestConfigLoader';
-import { Configuration } from 'jest';
+import jest from 'jest';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe('JestConfigEditor', () => {
@@ -24,7 +24,7 @@ describe('JestConfigEditor', () => {
     sinon.stub(reactScriptsJestConfigLoader, 'default').returns(reactScriptsJestConfigLoaderStub);
     sinon.stub(reactScriptsTSJestConfigLoader, 'default').returns(reactScriptsTSJestConfigLoaderStub);
 
-    const defaultOptions: Partial<Configuration> = { collectCoverage: true, verbose: true, bail: false, testResultsProcessor: 'someResultProcessor' };
+    const defaultOptions: Partial<jest.Configuration> = { collectCoverage: true, verbose: true, bail: false, testResultsProcessor: 'someResultProcessor' };
     customConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsTSJestConfigLoaderStub.loadConfig.returns(defaultOptions);
