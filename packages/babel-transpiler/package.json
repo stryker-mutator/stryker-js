@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@babel/cli": "~7.4.3",
-    "@babel/core": "~7.4.0",
+    "@babel/core": "~7.5.4",
     "@babel/plugin-transform-typescript": "^7.3.2",
     "@babel/preset-env": "~7.5.4",
     "@babel/preset-flow": "^7.0.0",
