@@ -60,7 +60,7 @@
     "commander": "~2.20.0",
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
-    "inquirer": "~6.4.1",
+    "inquirer": "~6.5.0",
     "istanbul-lib-instrument": "~3.3.0",
     "lodash": "~4.17.4",
     "log4js": "~4.4.0",
