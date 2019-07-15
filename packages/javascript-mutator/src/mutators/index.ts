@@ -14,7 +14,7 @@ import StringLiteralMutator from './StringLiteralMutator';
 import SwitchCaseMutator from './SwitchCaseMutator';
 import WhileStatementMutator from './WhileStatementMutator';
 
-export const nodeMutators = Object.freeze([
+export const NODE_MUTATORS = Object.freeze([
   new ArrayLiteralMutator(),
   new ArrayNewExpressionMutator(),
   new BinaryExpressionMutator(),

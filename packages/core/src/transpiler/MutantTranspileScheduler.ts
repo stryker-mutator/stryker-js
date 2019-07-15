@@ -13,14 +13,14 @@ import { from } from 'rxjs';
 import { flatMap, zip } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 
-const INITIAL_CONCURRENCY = 100;
+const initialConcurrency = 100;
 
 export class MutantTranspileScheduler implements Disposable {
 
   private currentMutatedFile: SourceFile;
-  private readonly concurrencyTicket$ = new BehaviorSubject<number>(INITIAL_CONCURRENCY);
+  private readonly concurrencyTicket$ = new BehaviorSubject<number>(initialConcurrency);
 
-  public static inject = tokens(coreTokens.transpiler, coreTokens.transpiledFiles);
+  public static inject = tokens(coreTokens.Transpiler, coreTokens.TranspiledFiles);
 
   /**
    * Creates a mutant transpiler

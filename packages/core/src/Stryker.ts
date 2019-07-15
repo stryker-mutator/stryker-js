@@ -11,7 +11,7 @@ import LogConfigurator from './logging/LogConfigurator';
 import { Injector } from 'typed-inject';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
 import { coreTokens, MainContext, PluginCreator, buildMainInjector } from './di';
-import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS, PluginKind } from '@stryker-mutator/api/plugin';
 import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
 import { SandboxPool } from './SandboxPool';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -25,15 +25,15 @@ export default class Stryker {
   private readonly injector: Injector<MainContext>;
 
   private get reporter() {
-    return this.injector.resolve(coreTokens.reporter);
+    return this.injector.resolve(coreTokens.Reporter);
   }
 
   private get options(): Readonly<StrykerOptions> {
-    return this.injector.resolve(commonTokens.options);
+    return this.injector.resolve(COMMON_TOKENS.options);
   }
 
   private get timer() {
-    return this.injector.resolve(coreTokens.timer);
+    return this.injector.resolve(coreTokens.Timer);
   }
 
   /**
@@ -44,7 +44,7 @@ export default class Stryker {
   constructor(cliOptions: Partial<StrykerOptions>) {
     LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
     this.injector = buildMainInjector(cliOptions);
-    this.log = this.injector.resolve(commonTokens.getLogger)(Stryker.name);
+    this.log = this.injector.resolve(COMMON_TOKENS.getLogger)(Stryker.name);
     // Log level may have changed
     LogConfigurator.configureMainProcess(this.options.logLevel, this.options.fileLogLevel, this.options.allowConsoleColors);
   }
@@ -56,25 +56,25 @@ export default class Stryker {
     if (inputFiles.files.length) {
       TempFolder.instance().initialize();
       const inputFileInjector = this.injector
-        .provideValue(coreTokens.loggingContext, loggingContext)
-        .provideValue(coreTokens.inputFiles, inputFiles);
+        .provideValue(coreTokens.LoggingContext, loggingContext)
+        .provideValue(coreTokens.InputFiles, inputFiles);
       const initialTestRunProcess = inputFileInjector
-        .provideValue(commonTokens.produceSourceMaps, this.options.coverageAnalysis !== 'off')
-        .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
-        .provideClass(coreTokens.transpiler, TranspilerFacade)
+        .provideValue(COMMON_TOKENS.produceSourceMaps, this.options.coverageAnalysis !== 'off')
+        .provideFactory(coreTokens.PluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
+        .provideClass(coreTokens.Transpiler, TranspilerFacade)
         .injectClass(InitialTestExecutor);
       const initialRunResult = await initialTestRunProcess.run();
       const mutator = inputFileInjector.injectClass(MutatorFacade);
       const transpilerProvider = inputFileInjector
-        .provideValue(coreTokens.initialRunResult, initialRunResult)
-        .provideValue(commonTokens.produceSourceMaps, false)
-        .provideFactory(coreTokens.transpiler, transpilerFactory);
-      const transpiler = transpilerProvider.resolve(coreTokens.transpiler);
+        .provideValue(coreTokens.InitialRunResult, initialRunResult)
+        .provideValue(COMMON_TOKENS.produceSourceMaps, false)
+        .provideFactory(coreTokens.Transpiler, transpilerFactory);
+      const transpiler = transpilerProvider.resolve(coreTokens.Transpiler);
       const transpiledFiles = await transpiler.transpile(inputFiles.files);
       const mutationTestProcessInjector = transpilerProvider
-        .provideValue(coreTokens.transpiledFiles, transpiledFiles)
-        .provideClass(coreTokens.mutantTranspileScheduler, MutantTranspileScheduler)
-        .provideClass(coreTokens.sandboxPool, SandboxPool);
+        .provideValue(coreTokens.TranspiledFiles, transpiledFiles)
+        .provideClass(coreTokens.MutantTranspileScheduler, MutantTranspileScheduler)
+        .provideClass(coreTokens.SandboxPool, SandboxPool);
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));

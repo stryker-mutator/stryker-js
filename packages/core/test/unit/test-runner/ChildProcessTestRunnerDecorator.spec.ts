@@ -1,6 +1,6 @@
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { RunOptions } from '@stryker-mutator/api/test_runner';
-import { strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
+import { STRYKER_OPTIONS } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
@@ -31,7 +31,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     };
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     childProcessProxyCreateStub.returns(childProcessProxyMock);
-    options = strykerOptions({
+    options = STRYKER_OPTIONS({
       plugins: ['foo-plugin', 'bar-plugin']
     });
     loggingContext = { port: 4200, level: LogLevel.Fatal };

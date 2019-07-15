@@ -53,17 +53,17 @@ export const logger = (): Mock<Logger> => {
   };
 };
 
-export const mappedLocation = factoryMethod<MappedLocation>(() => ({
+export const MAPPED_LOCATION = factoryMethod<MappedLocation>(() => ({
   fileName: 'file.js',
-  location: factory.location()
+  location: factory.LOCATION()
 }));
 
-export const coverageMaps = factoryMethod<CoverageMaps>(() => ({
+export const COVERAGE_MAPS = factoryMethod<CoverageMaps>(() => ({
   fnMap: {},
   statementMap: {}
 }));
 
-export const fileCoverageData = factoryMethod<FileCoverageData>(() => ({
+export const FILE_COVERAGE_DATA = factoryMethod<FileCoverageData>(() => ({
   b: {},
   branchMap: {},
   f: {},
@@ -73,14 +73,14 @@ export const fileCoverageData = factoryMethod<FileCoverageData>(() => ({
   statementMap: {}
 }));
 
-export const transpileResult = factoryMethod<TranspileResult>(() => ({
+export const TRANSPILE_RESULT = factoryMethod<TranspileResult>(() => ({
   error: null,
   outputFiles: [factory.file(), factory.file()]
 }));
 
 export const sourceFile = () => new SourceFile(factory.file());
 
-export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator') => new TestableMutant('1337', factory.mutant({
+export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator') => new TestableMutant('1337', factory.MUTANT({
   fileName,
   mutatorName,
   range: [12, 13],
@@ -90,4 +90,4 @@ export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator')
 ));
 
 export const transpiledMutant = (fileName = 'file') =>
-  new TranspiledMutant(testableMutant(fileName), transpileResult(), true);
+  new TranspiledMutant(testableMutant(fileName), TRANSPILE_RESULT(), true);

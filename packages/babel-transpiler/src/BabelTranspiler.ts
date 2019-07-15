@@ -5,30 +5,30 @@ import * as path from 'path';
 import { BabelConfigReader, StrykerBabelConfig } from './BabelConfigReader';
 import { toJSFileName } from './helpers/helpers';
 import { StrykerError } from '@stryker-mutator/util';
-import { tokens, commonTokens, Injector, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS, Injector, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
 
-const DEFAULT_EXTENSIONS: ReadonlyArray<string> = (babel as any).DEFAULT_EXTENSIONS;
+const defaultExtensions: ReadonlyArray<string> = (babel as any).DEFAULT_EXTENSIONS;
 
 export function babelTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
   return injector
     .provideClass('babelConfigReader', BabelConfigReader)
     .injectClass(BabelTranspiler);
 }
-babelTranspilerFactory.inject = tokens(commonTokens.injector);
+babelTranspilerFactory.inject = tokens(COMMON_TOKENS.injector);
 
 export class BabelTranspiler implements Transpiler {
   private readonly babelConfig: StrykerBabelConfig;
   private readonly projectRoot: string;
   private readonly extensions: ReadonlyArray<string>;
 
-  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps, 'babelConfigReader');
+  public static inject = tokens(COMMON_TOKENS.options, COMMON_TOKENS.produceSourceMaps, 'babelConfigReader');
   public constructor(options: StrykerOptions, produceSourceMaps: boolean, babelConfigReader: BabelConfigReader) {
     if (produceSourceMaps) {
       throw new Error(`Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`);
     }
     this.babelConfig = babelConfigReader.readConfig(options);
     this.projectRoot = this.determineProjectRoot();
-    this.extensions = [...DEFAULT_EXTENSIONS, ...this.babelConfig.extensions];
+    this.extensions = [...defaultExtensions, ...this.babelConfig.extensions];
   }
 
   public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {

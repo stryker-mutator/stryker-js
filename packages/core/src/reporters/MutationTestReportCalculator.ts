@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { MutantResult, mutationTestReportSchema, Reporter, MutantStatus } from '@stryker-mutator/api/report';
 import { StrykerOptions, Location, Position } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 import { Logger } from '@stryker-mutator/api/logging';
 import InputFileCollection from '../input/InputFileCollection';
@@ -9,7 +9,7 @@ import { normalizeWhitespaces } from '@stryker-mutator/util';
 
 export class MutationTestReportCalculator {
 
-  public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger);
+  public static inject = tokens(coreTokens.Reporter, COMMON_TOKENS.options, coreTokens.InputFiles, COMMON_TOKENS.logger);
 
   constructor(
     private readonly reporter: Required<Reporter>,

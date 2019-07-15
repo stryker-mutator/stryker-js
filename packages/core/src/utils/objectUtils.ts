@@ -71,13 +71,13 @@ export function kill(pid: number): Promise<void> {
   });
 }
 
-export const TimeoutExpired: unique symbol = Symbol('TimeoutExpired');
+export const TIMEOUT_EXPIRED: unique symbol = Symbol('TimeoutExpired');
 export function timeout<T>(
   promise: Promise<T>,
   ms: number
-): Promise<T | typeof TimeoutExpired> {
-  const sleep = new Promise<T | typeof TimeoutExpired>((res, rej) => {
-    const timer = setTimeout(() => res(TimeoutExpired), ms);
+): Promise<T | typeof TIMEOUT_EXPIRED> {
+  const sleep = new Promise<T | typeof TIMEOUT_EXPIRED>((res, rej) => {
+    const timer = setTimeout(() => res(TIMEOUT_EXPIRED), ms);
     promise
       .then(result => {
         clearTimeout(timer);

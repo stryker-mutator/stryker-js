@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import * as fileUtils from '../../../src/utils/fileUtils';
 import { PluginLoader } from '../../../src/di/PluginLoader';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { coreTokens } from '../../../src/di';
 
 describe('PluginLoader', () => {
@@ -21,8 +21,8 @@ describe('PluginLoader', () => {
   });
 
   function createSut(pluginDescriptors: string[]) {
-    return testInjector.injector
-      .provideValue(coreTokens.pluginDescriptors, pluginDescriptors)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.PluginDescriptors, pluginDescriptors)
       .injectClass(PluginLoader);
   }
 
@@ -51,8 +51,8 @@ describe('PluginLoader', () => {
         });
 
         it('should have logged warnings', () => {
-          expect(testInjector.logger.warn).to.have.been.calledWithMatch(/Cannot find plugin "%s"\./);
-          expect(testInjector.logger.warn).to.have.been.calledWithMatch(/Error during loading/);
+          expect(TEST_INJECTOR.logger.warn).to.have.been.calledWithMatch(/Cannot find plugin "%s"\./);
+          expect(TEST_INJECTOR.logger.warn).to.have.been.calledWithMatch(/Error during loading/);
         });
       });
 

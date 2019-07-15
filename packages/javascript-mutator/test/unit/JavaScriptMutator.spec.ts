@@ -1,20 +1,20 @@
 import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
 import { JavaScriptMutator } from '../../src/JavaScriptMutator';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { NodeMutator, NODE_MUTATORS_TOKEN } from '../../src/mutators/NodeMutator';
-import { nodeMutators } from '../../src/mutators';
+import { NODE_MUTATORS } from '../../src/mutators';
 
 describe('JavaScriptMutator', () => {
 
   let selectedMutators: ReadonlyArray<NodeMutator>;
 
   beforeEach(() => {
-    selectedMutators = nodeMutators;
+    selectedMutators = NODE_MUTATORS;
   });
 
   function createSut() {
-    return testInjector.injector
+    return TEST_INJECTOR.injector
       .provideValue(NODE_MUTATORS_TOKEN, selectedMutators)
       .injectClass(JavaScriptMutator);
   }

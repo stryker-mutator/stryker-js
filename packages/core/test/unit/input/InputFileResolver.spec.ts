@@ -2,7 +2,7 @@ import os = require('os');
 import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { createIsDirError, fileNotFoundError } from '@stryker-mutator/test-helpers/src/factory';
 import { childProcessAsPromised, errorToString, fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -47,7 +47,7 @@ describe(InputFileResolver.name, () => {
     globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
     globStub.resolves([]); // default
     childProcessExecStub = sinon.stub(childProcessAsPromised, 'exec');
-    testInjector.options.mutate = [];
+    TEST_INJECTOR.options.mutate = [];
   });
 
   it('should use git to identify files if files array is missing', async () => {
@@ -75,10 +75,10 @@ describe(InputFileResolver.name, () => {
   });
 
   it('should log a warning if no files were resolved', async () => {
-    testInjector.options.files = [];
+    TEST_INJECTOR.options.files = [];
     sut = createSut();
     await sut.resolve();
-    expect(testInjector.logger.warn).calledWith(sinon.match(`No files selected. Please make sure you either${os.EOL} (1) Run Stryker inside a Git repository`)
+    expect(TEST_INJECTOR.logger.warn).calledWith(sinon.match(`No files selected. Please make sure you either${os.EOL} (1) Run Stryker inside a Git repository`)
       .and(sinon.match('(2) Specify the \`files\` property in your Stryker configuration')));
   });
 
@@ -111,11 +111,11 @@ describe(InputFileResolver.name, () => {
   describe('with mutate file expressions', () => {
 
     it('should result in the expected mutate files', async () => {
-      testInjector.options.mutate = ['mute*'];
-      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      TEST_INJECTOR.options.mutate = ['mute*'];
+      TEST_INJECTOR.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
       sut = createSut();
       const result = await sut.resolve();
-      expect(result.filesToMutate.map(_ => _.name)).to.deep.equal([
+      expect(result.filesToMutate.map(file => file.name)).to.deep.equal([
         path.resolve('/mute1.js'),
         path.resolve('/mute2.js')
       ]);
@@ -129,18 +129,18 @@ describe(InputFileResolver.name, () => {
     });
 
     it('should only report a mutate file when it is included in the resolved files', async () => {
-      testInjector.options.mutate = ['mute*'];
-      testInjector.options.files = ['file1', 'mute1', 'file2', /*'mute2'*/ 'file3'];
+      TEST_INJECTOR.options.mutate = ['mute*'];
+      TEST_INJECTOR.options.files = ['file1', 'mute1', 'file2', /*'mute2'*/ 'file3'];
       sut = createSut();
       const result = await sut.resolve();
-      expect(result.filesToMutate.map(_ => _.name)).to.deep.equal([
+      expect(result.filesToMutate.map(file => file.name)).to.deep.equal([
         path.resolve('/mute1.js')
       ]);
     });
 
     it('should report OnAllSourceFilesRead', async () => {
-      testInjector.options.mutate = ['mute*'];
-      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      TEST_INJECTOR.options.mutate = ['mute*'];
+      TEST_INJECTOR.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
       sut = createSut();
       await sut.resolve();
       const expected: SourceFile[] = [
@@ -154,8 +154,8 @@ describe(InputFileResolver.name, () => {
     });
 
     it('should report OnSourceFileRead', async () => {
-      testInjector.options.mutate = ['mute*'];
-      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      TEST_INJECTOR.options.mutate = ['mute*'];
+      TEST_INJECTOR.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
       sut = createSut();
       await sut.resolve();
       const expected: SourceFile[] = [
@@ -172,19 +172,19 @@ describe(InputFileResolver.name, () => {
   describe('without mutate files', () => {
 
     beforeEach(() => {
-      testInjector.options.files = ['file1', 'mute1'];
+      TEST_INJECTOR.options.files = ['file1', 'mute1'];
       sut = createSut();
     });
 
     it('should warn about dry-run', async () => {
       await sut.resolve();
-      expect(testInjector.logger.warn).calledWith(sinon.match('No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.'));
+      expect(TEST_INJECTOR.logger.warn).calledWith(sinon.match('No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.'));
     });
   });
 
   describe('with file expressions that resolve in different order', () => {
     beforeEach(() => {
-      testInjector.options.files = ['fileWhichResolvesLast', 'fileWhichResolvesFirst'];
+      TEST_INJECTOR.options.files = ['fileWhichResolvesLast', 'fileWhichResolvesFirst'];
       sut = createSut();
       globStub.withArgs('fileWhichResolvesLast').resolves(['file1']);
       globStub.withArgs('fileWhichResolvesFirst').resolves(['file2']);
@@ -199,28 +199,28 @@ describe(InputFileResolver.name, () => {
   describe('when a globbing expression does not result in a result', () => {
 
     it('should log a warning', async () => {
-      testInjector.options.files = ['file1', 'notExists'];
-      testInjector.options.mutate = ['file1'];
+      TEST_INJECTOR.options.files = ['file1', 'notExists'];
+      TEST_INJECTOR.options.mutate = ['file1'];
       sut = createSut();
       await sut.resolve();
-      expect(testInjector.logger.warn).to.have.been.calledWith('Globbing expression "notExists" did not result in any files.');
+      expect(TEST_INJECTOR.logger.warn).to.have.been.calledWith('Globbing expression "notExists" did not result in any files.');
     });
 
     it('should not log a warning if the globbing expression was the default logging expression', async () => {
       const config = new Config();
-      testInjector.options.files = config.files;
-      testInjector.options.mutate = config.mutate;
+      TEST_INJECTOR.options.files = config.files;
+      TEST_INJECTOR.options.mutate = config.mutate;
       sut = createSut();
       childProcessExecStub.resolves({ stdout: Buffer.from(`src/foobar.js`) });
       globStub.withArgs(config.mutate[0]).returns(['src/foobar.js']);
       await sut.resolve();
-      expect(testInjector.logger.warn).not.called;
+      expect(TEST_INJECTOR.logger.warn).not.called;
     });
   });
 
   it('should reject when a globbing expression results in a reject', () => {
-    testInjector.options.files = ['fileError', 'fileError'];
-    testInjector.options.mutate = ['file1'];
+    TEST_INJECTOR.options.files = ['fileError', 'fileError'];
+    TEST_INJECTOR.options.mutate = ['file1'];
     sut = createSut();
     const expectedError = new Error('ERROR: something went wrong');
     globStub.withArgs('fileError').rejects(expectedError);
@@ -230,21 +230,21 @@ describe(InputFileResolver.name, () => {
   describe('when excluding files with "!"', () => {
 
     it('should exclude the files that were previously included', async () => {
-      testInjector.options.files = ['file2', 'file1', '!file2'];
+      TEST_INJECTOR.options.files = ['file2', 'file1', '!file2'];
       const sut = createSut();
       const result = await sut.resolve();
       assertFilesEqual(result.files, files(['/file1.js', 'file 1 content']));
     });
 
     it('should exclude the files that were previously with a wild card', async () => {
-      testInjector.options.files = ['file*', '!file2'];
+      TEST_INJECTOR.options.files = ['file*', '!file2'];
       const sut = createSut();
       const result = await sut.resolve();
       assertFilesEqual(result.files, files(['/file1.js', 'file 1 content'], ['/file3.js', 'file 3 content']));
     });
 
     it('should not exclude files when the globbing expression results in an empty array', async () => {
-      testInjector.options.files = ['file2', '!does/not/exist'];
+      TEST_INJECTOR.options.files = ['file2', '!does/not/exist'];
       const sut = createSut();
       const result = await sut.resolve();
       assertFilesEqual(result.files, files(['/file2.js', 'file 2 content']));
@@ -254,19 +254,19 @@ describe(InputFileResolver.name, () => {
   describe('when provided duplicate files', () => {
 
     it('should deduplicate files that occur more than once', async () => {
-      testInjector.options.files = ['file2', 'file2'];
+      TEST_INJECTOR.options.files = ['file2', 'file2'];
       const result = await createSut().resolve();
       assertFilesEqual(result.files, files(['/file2.js', 'file 2 content']));
     });
 
     it('should deduplicate files that previously occurred in a wildcard expression', async () => {
-      testInjector.options.files = ['file*', 'file2'];
+      TEST_INJECTOR.options.files = ['file*', 'file2'];
       const result = await createSut().resolve();
       assertFilesEqual(result.files, files(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content']));
     });
 
     it('should order files by expression order', async () => {
-      testInjector.options.files = ['file2', 'file*'];
+      TEST_INJECTOR.options.files = ['file2', 'file*'];
       const result = await createSut().resolve();
       assertFilesEqual(result.files, files(['/file2.js', 'file 2 content'], ['/file1.js', 'file 1 content'], ['/file3.js', 'file 3 content']));
     });
@@ -281,8 +281,8 @@ describe(InputFileResolver.name, () => {
   }
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(coreTokens.reporter, reporterMock)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.Reporter, reporterMock)
       .injectClass(InputFileResolver);
   }
 });

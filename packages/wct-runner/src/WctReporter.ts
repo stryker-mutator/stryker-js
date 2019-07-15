@@ -3,21 +3,21 @@ import { BrowserDef } from 'web-component-tester/runner/browserrunner';
 import { TestEndData, CompletedState } from 'web-component-tester/runner/clireporter';
 import { TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 
-const TEST_START_EVENT = 'test-start';
-const TEST_END_EVENT = 'test-end';
+const testStartEvent = 'test-start';
+const testEndEvent = 'test-end';
 
 export default class WctReporter {
   public results: TestResult[] = [];
   private before = new Date();
 
   constructor(private readonly context: EventEmitter) {
-    context.on(TEST_START_EVENT, this.testStart);
-    context.on(TEST_END_EVENT, this.testEnd);
+    context.on(testStartEvent, this.testStart);
+    context.on(testEndEvent, this.testEnd);
   }
 
   public dispose() {
-    this.context.removeListener(TEST_START_EVENT, this.testStart);
-    this.context.removeListener(TEST_END_EVENT, this.testEnd);
+    this.context.removeListener(testStartEvent, this.testStart);
+    this.context.removeListener(testEndEvent, this.testEnd);
   }
 
   // Both testStart and testEnd are properties here, rather than methods. This is deliberate to allow for `this` pointer to work

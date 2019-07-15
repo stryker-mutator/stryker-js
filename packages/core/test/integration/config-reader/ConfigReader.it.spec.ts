@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Config } from '@stryker-mutator/api/config';
 import ConfigReader from '../../../src/config/ConfigReader';
 import * as sinon from 'sinon';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { coreTokens } from '../../../src/di';
 
@@ -12,8 +12,8 @@ describe(ConfigReader.name, () => {
   let sut: ConfigReader;
 
   function createSut(cliOptions: Partial<StrykerOptions>): ConfigReader {
-    return testInjector.injector
-      .provideValue(coreTokens.cliOptions, cliOptions)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.CliOptions, cliOptions)
       .injectClass(ConfigReader);
   }
 
@@ -29,7 +29,7 @@ describe(ConfigReader.name, () => {
       it('should only use supplied config', () => {
         expect(result.some).to.be.eq('option');
         expect(result.someOther).to.be.eq(2);
-        expect(testInjector.logger.warn).not.called;
+        expect(TEST_INJECTOR.logger.warn).not.called;
       });
     });
 
@@ -45,7 +45,7 @@ describe(ConfigReader.name, () => {
           expect(result.valid).to.be.eq('config');
           expect(result.should).to.be.eq('be');
           expect(result.read).to.be.eq(true);
-          expect(testInjector.logger.warn).not.called;
+          expect(TEST_INJECTOR.logger.warn).not.called;
         });
       });
 
@@ -59,7 +59,7 @@ describe(ConfigReader.name, () => {
           result = sut.readConfig();
 
           expect(result).to.deep.equal(new Config());
-          expect(testInjector.logger.warn).not.called;
+          expect(TEST_INJECTOR.logger.warn).not.called;
         });
       });
     });
@@ -73,7 +73,7 @@ describe(ConfigReader.name, () => {
         expect(result.valid).to.be.eq('config');
         expect(result.should).to.be.eq('be');
         expect(result.read).to.be.eq(true);
-        expect(testInjector.logger.warn).not.called;
+        expect(TEST_INJECTOR.logger.warn).not.called;
       });
 
       describe('with CLI options', () => {
@@ -83,7 +83,7 @@ describe(ConfigReader.name, () => {
           result = sut.readConfig();
 
           expect(result.read).to.be.eq(false);
-          expect(testInjector.logger.warn).not.called;
+          expect(TEST_INJECTOR.logger.warn).not.called;
         });
       });
     });
@@ -106,7 +106,7 @@ describe(ConfigReader.name, () => {
 
       it('should report a fatal error', () => {
         expect(() => sut.readConfig()).throws();
-        expect(testInjector.logger.fatal).to.have.been.calledWith(`Config file must export a function!
+        expect(TEST_INJECTOR.logger.fatal).to.have.been.calledWith(`Config file must export a function!
   module.exports = function(config) {
     config.set({
       // your config

@@ -1,7 +1,7 @@
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { StrykerError } from '@stryker-mutator/util';
-import { tokens, commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS, PluginKind } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 import { PluginCreator } from '../di/PluginCreator';
 
@@ -14,8 +14,8 @@ export class TranspilerFacade implements Transpiler {
   private readonly innerTranspilers: NamedTranspiler[];
 
   public static inject = tokens(
-    commonTokens.options,
-    coreTokens.pluginCreatorTranspiler);
+    COMMON_TOKENS.options,
+    coreTokens.PluginCreatorTranspiler);
 
   constructor(options: StrykerOptions, pluginCreator: PluginCreator<PluginKind.Transpiler>) {
     this.innerTranspilers = options.transpilers

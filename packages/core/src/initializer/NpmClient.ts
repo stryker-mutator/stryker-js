@@ -1,7 +1,7 @@
 import { RestClient, IRestResponse } from 'typed-rest-client/RestClient';
 import PromptOption from './PromptOption';
 import { errorToString } from '@stryker-mutator/util';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { initializerTokens } from '.';
 import { Logger } from '@stryker-mutator/api/logging';
 import { PackageInfo } from './PackageInfo';
@@ -37,7 +37,7 @@ const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
 
 export default class NpmClient {
 
-  public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpmSearch, initializerTokens.restClientNpm);
+  public static inject = tokens(COMMON_TOKENS.logger, initializerTokens.RestClientNpmSearch, initializerTokens.RestClientNpm);
   constructor(
     private readonly log: Logger,
     private readonly searchClient: RestClient,

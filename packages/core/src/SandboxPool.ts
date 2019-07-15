@@ -5,7 +5,7 @@ import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import Sandbox from './Sandbox';
 import LoggingClientContext from './logging/LoggingClientContext';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { coreTokens } from './di';
 import { InitialTestRunResult } from './process/InitialTestExecutor';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -13,7 +13,7 @@ import TranspiledMutant from './TranspiledMutant';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { Disposable } from 'typed-inject';
 
-const MAX_CONCURRENT_INITIALIZING_SANDBOXES = 2;
+const maxConcurrentInitializingSandBoxes = 2;
 
 export class SandboxPool implements Disposable {
 
@@ -21,12 +21,12 @@ export class SandboxPool implements Disposable {
   private readonly overheadTimeMS: number;
 
   public static inject = tokens(
-    commonTokens.logger,
-    commonTokens.options,
-    coreTokens.testFramework,
-    coreTokens.initialRunResult,
-    coreTokens.transpiledFiles,
-    coreTokens.loggingContext);
+    COMMON_TOKENS.logger,
+    COMMON_TOKENS.options,
+    coreTokens.TestFramework,
+    coreTokens.InitialRunResult,
+    coreTokens.TranspiledFiles,
+    coreTokens.LoggingContext);
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
@@ -66,7 +66,7 @@ export class SandboxPool implements Disposable {
         } else {
           return this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext));
         }
-      }, MAX_CONCURRENT_INITIALIZING_SANDBOXES),
+      }, maxConcurrentInitializingSandBoxes),
       filter(sandboxOrNull => !!sandboxOrNull),
       map(sandbox => sandbox as Sandbox)
     );

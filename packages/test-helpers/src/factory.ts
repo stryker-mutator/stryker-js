@@ -23,11 +23,11 @@ function factoryMethod<T>(defaultsFactory: () => T) {
   return (overrides?: Partial<T>): T => Object.assign({}, defaultsFactory(), overrides);
 }
 
-export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
+export const LOCATION = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
 
-export const mutantResult = factoryMethod<MutantResult>(() => ({
+export const MUTANT_RESULT = factoryMethod<MutantResult>(() => ({
   id: '256',
-  location: location(),
+  location: LOCATION(),
   mutatedLines: '',
   mutatorName: '',
   originalLines: '',
@@ -38,9 +38,9 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   testsRan: ['']
 }));
 
-export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestReportSchema.MutantResult>(() => ({
+export const MUTATION_TEST_REPORT_SCHEMA_MUTANT_RESULT = factoryMethod<mutationTestReportSchema.MutantResult>(() => ({
   id: '256',
-  location: location(),
+  location: LOCATION(),
   mutatedLines: '',
   mutatorName: '',
   originalLines: '',
@@ -51,14 +51,14 @@ export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestRe
   testsRan: ['']
 }));
 
-export const mutant = factoryMethod<Mutant>(() => ({
+export const MUTANT = factoryMethod<Mutant>(() => ({
   fileName: 'file',
   mutatorName: 'foobarMutator',
   range: [0, 0],
   replacement: 'replacement'
 }));
 
-export const metrics = factoryMethod<Metrics>(() => ({
+export const METRICS = factoryMethod<Metrics>(() => ({
   compileErrors: 0,
   killed: 0,
   mutationScore: 0,
@@ -75,9 +75,9 @@ export const metrics = factoryMethod<Metrics>(() => ({
   totalValid: 0
 }));
 
-export const metricsResult = factoryMethod<MetricsResult>(() => ({
+export const METRICS_RESULT = factoryMethod<MetricsResult>(() => ({
   childResults: [],
-  metrics: metrics({}),
+  metrics: METRICS({}),
   name: ''
 }));
 
@@ -106,7 +106,7 @@ export function testFramework(): TestFramework {
   };
 }
 
-export const scoreResult = factoryMethod<ScoreResult>(() => ({
+export const SCORE_RESULT = factoryMethod<ScoreResult>(() => ({
   childResults: [],
   killed: 0,
   mutationScore: 0,
@@ -127,26 +127,26 @@ export const scoreResult = factoryMethod<ScoreResult>(() => ({
   transpileErrors: 0
 }));
 
-export const testResult = factoryMethod<TestResult>(() => ({
+export const TEST_RESULT = factoryMethod<TestResult>(() => ({
   name: 'name',
   status: TestStatus.Success,
   timeSpentMs: 10
 }));
 
-export const runResult = factoryMethod<RunResult>(() => ({
+export const RUN_RESULT = factoryMethod<RunResult>(() => ({
   status: RunStatus.Complete,
-  tests: [testResult()]
+  tests: [TEST_RESULT()]
 }));
 
-export const mutationScoreThresholds = factoryMethod<MutationScoreThresholds>(() => ({
+export const MUTATION_SCORE_THRESHOLDS = factoryMethod<MutationScoreThresholds>(() => ({
   break: null,
   high: 80,
   low: 60
 }));
 
-export const strykerOptions = factoryMethod<StrykerOptions>(() => new Config());
+export const STRYKER_OPTIONS = factoryMethod<StrykerOptions>(() => new Config());
 
-export const config = factoryMethod<Config>(() => new Config());
+export const CONFIG = factoryMethod<Config>(() => new Config());
 
 export const ALL_REPORTER_EVENTS: (keyof Reporter)[] =
   ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onMutationTestReportReady', 'onScoreCalculated', 'wrapUp'];

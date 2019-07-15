@@ -11,7 +11,7 @@ export interface PromptResult {
 export class StrykerInquirer {
 
   public async promptPresets(options: Preset[]): Promise<Preset | undefined> {
-    const choices: inquirer.ChoiceType<string>[] = options.map(_ => _.name);
+    const choices: inquirer.ChoiceType<string>[] = options.map(preset => preset.name);
     choices.push(new inquirer.Separator());
     choices.push('None/other');
     const answers = await inquirer.prompt<{ preset: string }>({
@@ -20,11 +20,11 @@ export class StrykerInquirer {
       name: 'preset',
       type: 'list'
     });
-    return options.find(_ => _.name === answers.preset);
+    return options.find(preset => preset.name === answers.preset);
   }
 
   public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
-    const choices: inquirer.ChoiceType<string>[] = options.map(_ => _.name);
+    const choices: inquirer.ChoiceType<string>[] = options.map(promptOption => promptOption.name);
     choices.push(new inquirer.Separator());
     choices.push(CommandTestRunner.runnerName);
     const answers = await inquirer.prompt<{ testRunner: string }>({
@@ -34,32 +34,32 @@ export class StrykerInquirer {
       name: 'testRunner',
       type: 'list'
     });
-    return options.filter(_ => _.name === answers.testRunner)[0] || { name: CommandTestRunner.runnerName, pkg: null };
+    return options.filter(promptOption => promptOption.name === answers.testRunner)[0] || { name: CommandTestRunner.runnerName, pkg: null };
   }
 
   public async promptTestFrameworks(options: PromptOption[]): Promise<PromptOption> {
     const answers = await inquirer.prompt<{ testFramework: string }>({
-      choices: options.map(_ => _.name),
+      choices: options.map(promptOption => promptOption.name),
       message: 'Which test framework do you want to use?',
       name: 'testFramework',
       type: 'list'
     });
-    return options.filter(_ => _.name === answers.testFramework)[0];
+    return options.filter(promptOption => promptOption.name === answers.testFramework)[0];
   }
 
   public async promptMutator(options: PromptOption[]): Promise<PromptOption> {
     const answers = await inquirer.prompt<{ mutator: string }>({
-      choices: options.map(_ => _.name),
+      choices: options.map(promptOption => promptOption.name),
       message: 'What kind of code do you want to mutate?',
       name: 'mutator',
       type: 'list'
     });
-    return options.filter(_ => _.name === answers.mutator)[0];
+    return options.filter(promptOption => promptOption.name === answers.mutator)[0];
   }
 
   public async promptTranspilers(options: PromptOption[]): Promise<PromptOption[]> {
     const answers = await inquirer.prompt<{ transpilers: string[] }>({
-      choices: options.map(_ => _.name),
+      choices: options.map(promptOption => promptOption.name),
       message: '[optional] What kind transformations should be applied to your code?',
       name: 'transpilers',
       type: 'checkbox'
@@ -69,7 +69,7 @@ export class StrykerInquirer {
 
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {
     const answers = await inquirer.prompt<{ reporters: string[] }>({
-      choices: options.map(_ => _.name),
+      choices: options.map(promptOption => promptOption.name),
       default: ['clear-text', 'progress'],
       message: 'Which reporter(s) do you want to use?',
       name: 'reporters',
@@ -80,12 +80,12 @@ export class StrykerInquirer {
 
   public async promptPackageManager(options: PromptOption[]): Promise<PromptOption> {
     const answers = await inquirer.prompt<{ packageManager: string }>({
-      choices: options.map(_ => _.name),
+      choices: options.map(promptOption => promptOption.name),
       default: ['npm'],
       message: 'Which package manager do you want to use?',
       name: 'packageManager',
       type: 'list'
     });
-    return options.filter(_ => _.name === answers.packageManager)[0];
+    return options.filter(promptOption => promptOption.name === answers.packageManager)[0];
   }
 }

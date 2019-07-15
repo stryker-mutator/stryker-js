@@ -24,4 +24,4 @@ export function evalGlobal(body: string) {
   fn(require);
 }
 
-export const Jasmine = JasmineConstructor;
+export const JASMINE = JasmineConstructor;

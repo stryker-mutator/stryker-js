@@ -3,22 +3,22 @@ import { fsAsPromised, childProcessAsPromised } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import PromptOption from './PromptOption';
 import PresetConfiguration from './presets/PresetConfiguration';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { initializerTokens } from '.';
 import { Logger } from '@stryker-mutator/api/logging';
 
-const STRYKER_CONFIG_FILE = 'stryker.conf.js';
+const strykerConfigFile = 'stryker.conf.js';
 
 export default class StrykerConfigWriter {
 
-  public static inject = tokens(commonTokens.logger, initializerTokens.out);
+  public static inject = tokens(COMMON_TOKENS.logger, initializerTokens.Out);
   constructor(
     private readonly log: Logger,
     private readonly out: typeof console.log) {
   }
 
   public guardForExistingConfig() {
-    if (fsAsPromised.existsSync(STRYKER_CONFIG_FILE)) {
+    if (fsAsPromised.existsSync(strykerConfigFile)) {
       const msg =
         'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
       this.log.error(msg);
@@ -77,9 +77,9 @@ export default class StrykerConfigWriter {
           ${rawConfig}
         );
       }`;
-    await fsAsPromised.writeFile(STRYKER_CONFIG_FILE, formattedConf);
+    await fsAsPromised.writeFile(strykerConfigFile, formattedConf);
     try {
-      await childProcessAsPromised.exec(`npx prettier --write ${STRYKER_CONFIG_FILE}`);
+      await childProcessAsPromised.exec(`npx prettier --write ${strykerConfigFile}`);
     } catch (error) {
       this.log.debug('Prettier exited with error', error);
       this.out('Unable to format stryker.conf.js file for you. This is not a big problem, but it might look a bit messy 🙈.');

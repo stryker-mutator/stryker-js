@@ -1,6 +1,6 @@
 import { MutantResult, MutantStatus, mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { mutantResult, mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { MUTANT_RESULT, MUTATION_SCORE_THRESHOLDS } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import * as os from 'os';
@@ -21,14 +21,14 @@ describe(ClearTextReporter.name, () => {
 
   beforeEach(() => {
     stdoutStub = sinon.stub(process.stdout, 'write');
-    sut = testInjector.injector.injectClass(ClearTextReporter);
+    sut = TEST_INJECTOR.injector.injectClass(ClearTextReporter);
   });
 
   describe('onMutationTestReportReady', () => {
 
     it('should report the clear text table with correct values', () => {
-      testInjector.options.coverageAnalysis = 'all';
-      sut = testInjector.injector.injectClass(ClearTextReporter);
+      TEST_INJECTOR.options.coverageAnalysis = 'all';
+      sut = TEST_INJECTOR.injector.injectClass(ClearTextReporter);
 
       sut.onMutationTestReportReady({
         files: {
@@ -47,7 +47,7 @@ describe(ClearTextReporter.name, () => {
           }
         },
         schemaVersion: '1.0',
-        thresholds: mutationScoreThresholds({})
+        thresholds: MUTATION_SCORE_THRESHOLDS({})
       });
 
       const serializedTable: string = stdoutStub.getCall(0).args[0];
@@ -64,14 +64,14 @@ describe(ClearTextReporter.name, () => {
     });
 
     it('should not color score if `allowConsoleColors` config is false', () => {
-      testInjector.options.allowConsoleColors = false;
+      TEST_INJECTOR.options.allowConsoleColors = false;
       chalk.level = 1;
 
-      sut = testInjector.injector.injectClass(ClearTextReporter);
+      sut = TEST_INJECTOR.injector.injectClass(ClearTextReporter);
       sut.onMutationTestReportReady({
         files: {},
         schemaVersion: '1.0',
-        thresholds: mutationScoreThresholds({})
+        thresholds: MUTATION_SCORE_THRESHOLDS({})
       });
 
       expect(chalk.level).to.eq(0);
@@ -80,8 +80,8 @@ describe(ClearTextReporter.name, () => {
 
   describe('when coverageAnalysis is "all"', () => {
     beforeEach(() => {
-      testInjector.options.coverageAnalysis = 'all';
-      testInjector.options.clearTextReporter = { logTests: true };
+      TEST_INJECTOR.options.coverageAnalysis = 'all';
+      TEST_INJECTOR.options.clearTextReporter = { logTests: true };
     });
 
     describe('onAllMutantsTested() all mutants except error', () => {
@@ -119,7 +119,7 @@ describe(ClearTextReporter.name, () => {
     describe('onAllMutantsTested()', () => {
 
       it('should log source file names with colored text when clearTextReporter is not false', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
+        TEST_INJECTOR.options.coverageAnalysis = 'perTest';
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -127,10 +127,10 @@ describe(ClearTextReporter.name, () => {
       });
 
       it('should log source file names without colored text when clearTextReporter is not false and allowConsoleColors is false', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
-        testInjector.options.allowConsoleColors = false;
+        TEST_INJECTOR.options.coverageAnalysis = 'perTest';
+        TEST_INJECTOR.options.allowConsoleColors = false;
         // Recreate, color setting is set in constructor
-        sut = testInjector.injector.injectClass(ClearTextReporter);
+        sut = TEST_INJECTOR.injector.injectClass(ClearTextReporter);
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -138,7 +138,7 @@ describe(ClearTextReporter.name, () => {
       });
 
       it('should not log source file names with colored text when clearTextReporter is false', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
+        TEST_INJECTOR.options.coverageAnalysis = 'perTest';
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -146,7 +146,7 @@ describe(ClearTextReporter.name, () => {
       });
 
       it('should not log individual ran tests when logTests is not true', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
+        TEST_INJECTOR.options.coverageAnalysis = 'perTest';
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -159,8 +159,8 @@ describe(ClearTextReporter.name, () => {
       });
 
       it('should log individual ran tests when logTests is true', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
-        testInjector.options.clearTextReporter = { logTests: true };
+        TEST_INJECTOR.options.coverageAnalysis = 'perTest';
+        TEST_INJECTOR.options.clearTextReporter = { logTests: true };
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -173,8 +173,8 @@ describe(ClearTextReporter.name, () => {
 
       describe('with fewer tests that may be logged', () => {
         it('should log fewer tests', () => {
-          testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 1 };
+          TEST_INJECTOR.options.coverageAnalysis = 'perTest';
+          TEST_INJECTOR.options.clearTextReporter = { logTests: true, maxTestsToLog: 1 };
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -187,8 +187,8 @@ describe(ClearTextReporter.name, () => {
 
       describe('with more tests that may be logged', () => {
         it('should log all tests', () => {
-          testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 10 };
+          TEST_INJECTOR.options.coverageAnalysis = 'perTest';
+          TEST_INJECTOR.options.clearTextReporter = { logTests: true, maxTestsToLog: 10 };
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -202,8 +202,8 @@ describe(ClearTextReporter.name, () => {
 
       describe('with the default amount of tests that may be logged', () => {
         it('should log all tests', () => {
-          testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 3 };
+          TEST_INJECTOR.options.coverageAnalysis = 'perTest';
+          TEST_INJECTOR.options.clearTextReporter = { logTests: true, maxTestsToLog: 3 };
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -217,8 +217,8 @@ describe(ClearTextReporter.name, () => {
 
       describe('with no tests that may be logged', () => {
         it('should not log a test', () => {
-          testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 0 };
+          TEST_INJECTOR.options.coverageAnalysis = 'perTest';
+          TEST_INJECTOR.options.clearTextReporter = { logTests: true, maxTestsToLog: 0 };
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -234,7 +234,7 @@ describe(ClearTextReporter.name, () => {
 
   describe('when coverageAnalysis: "off"', () => {
 
-    beforeEach(() => testInjector.options.coverageAnalysis = 'off');
+    beforeEach(() => TEST_INJECTOR.options.coverageAnalysis = 'off');
 
     describe('onAllMutantsTested()', () => {
       beforeEach(() => {
@@ -253,7 +253,7 @@ describe(ClearTextReporter.name, () => {
 
   function mutantResults(...status: MutantStatus[]): MutantResult[] {
     return status.map(status => {
-      const result: MutantResult = mutantResult({
+      const result: MutantResult = MUTANT_RESULT({
         location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
         mutatedLines: 'mutated line',
         mutatorName: 'Math',

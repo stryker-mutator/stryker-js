@@ -6,7 +6,7 @@ import ReactScriptsTSJestConfigLoader from './configLoaders/ReactScriptsTSJestCo
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 import jest from 'jest';
 
-const DEFAULT_PROJECT_NAME = 'custom';
+const defaultProjectName = 'custom';
 
 export default class JestConfigEditor implements ConfigEditor {
 
@@ -15,7 +15,7 @@ export default class JestConfigEditor implements ConfigEditor {
     strykerConfig.jest = strykerConfig.jest || {};
 
     // When no projectType is set, set it to the default
-    strykerConfig.jest.projectType = strykerConfig.jest.projectType || strykerConfig.jest.project || DEFAULT_PROJECT_NAME;
+    strykerConfig.jest.projectType = strykerConfig.jest.projectType || strykerConfig.jest.project || defaultProjectName;
 
     // When no config property is set, load the configuration with the project type
     strykerConfig.jest.config = strykerConfig.jest.config || this.getConfigLoader(strykerConfig.jest.projectType).loadConfig();
@@ -26,7 +26,7 @@ export default class JestConfigEditor implements ConfigEditor {
 
   private getConfigLoader(projectType: string): JestConfigLoader {
     switch (projectType.toLowerCase()) {
-      case DEFAULT_PROJECT_NAME:
+      case defaultProjectName:
         return new CustomJestConfigLoader(process.cwd());
       case 'react':
         return new ReactScriptsJestConfigLoader(process.cwd());

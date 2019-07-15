@@ -15,11 +15,11 @@ export function copyFile(fromFilename: string, toFilename: string): Promise<void
   });
 }
 
-export const deleteDir = promisify(rimraf);
+export const DELETE_DIR = promisify(rimraf);
 
-export const mkdir = promisify(mkdirp);
+export const MK_DIR = promisify(mkdirp);
 
 export async function writeFile(fileName: string, content: string) {
-  await mkdir(path.dirname(fileName));
+  await MK_DIR(path.dirname(fileName));
   await fsAsPromised.writeFile(fileName, content, 'utf8');
 }

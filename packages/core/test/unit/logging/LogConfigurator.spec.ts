@@ -14,7 +14,7 @@ describe('LogConfigurator', () => {
   let log4jsShutdown: sinon.SinonStub;
 
   beforeEach(() => {
-    getFreePortStub = sinon.stub(netUtils, 'getFreePort');
+    getFreePortStub = sinon.stub(netUtils, 'GET_FREE_PORT');
     log4jsConfigure = sinon.stub(log4js, 'configure');
     log4jsShutdown = sinon.stub(log4js, 'shutdown');
   });

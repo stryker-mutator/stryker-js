@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR, factory } from '@stryker-mutator/test-helpers';
 import { coreTokens } from '../../../src/di';
 import { Reporter, mutationTestReportSchema, MutantResult, MutantStatus } from '@stryker-mutator/api/report';
 import InputFileCollection from '../../../src/input/InputFileCollection';
@@ -21,9 +21,9 @@ describe(MutationTestReportCalculator.name, () => {
       filesToMutate: [],
       logFiles: () => { }
     };
-    sut = testInjector.injector
-      .provideValue(coreTokens.reporter, reporterMock as Required<Reporter>)
-      .provideValue(coreTokens.inputFiles, inputFiles)
+    sut = TEST_INJECTOR.injector
+      .provideValue(coreTokens.Reporter, reporterMock as Required<Reporter>)
+      .provideValue(coreTokens.InputFiles, inputFiles)
       .injectClass(MutationTestReportCalculator);
   });
 
@@ -34,7 +34,7 @@ describe(MutationTestReportCalculator.name, () => {
 
   it('should copy thresholds', () => {
     const actualReport = actReport();
-    expect(actualReport.thresholds).eq(testInjector.options.thresholds);
+    expect(actualReport.thresholds).eq(TEST_INJECTOR.options.thresholds);
   });
 
   it('should set correct schema version', () => {
@@ -49,7 +49,7 @@ describe(MutationTestReportCalculator.name, () => {
     files.push(new File('baz.vue', 'baz content'));
     files.push(new File('qux.ts', 'qux content'));
     files.push(new File('corge.tsx', 'corge content'));
-    const inputMutants = files.map(file => factory.mutantResult({ sourceFilePath: file.name }));
+    const inputMutants = files.map(file => factory.MUTANT_RESULT({ sourceFilePath: file.name }));
 
     // Act
     const actualReport = actReport(inputMutants);
@@ -66,30 +66,30 @@ describe(MutationTestReportCalculator.name, () => {
   it('should correctly map basic MutantResult properties', () => {
     // Arrange
     const inputMutants = [
-      factory.mutantResult({
+      factory.MUTANT_RESULT({
         id: '1',
         mutatorName: 'Foo',
         replacement: 'foo replacement',
         sourceFilePath: 'foo.js',
         status: MutantStatus.Killed
       }),
-      factory.mutantResult({
+      factory.MUTANT_RESULT({
         sourceFilePath: 'bar.js',
         status: MutantStatus.NoCoverage
       }),
-      factory.mutantResult({
+      factory.MUTANT_RESULT({
         sourceFilePath: 'baz.js',
         status: MutantStatus.RuntimeError
       }),
-      factory.mutantResult({
+      factory.MUTANT_RESULT({
         sourceFilePath: 'qux.js',
         status: MutantStatus.Survived
       }),
-      factory.mutantResult({
+      factory.MUTANT_RESULT({
         sourceFilePath: '5.js',
         status: MutantStatus.TimedOut
       }),
-      factory.mutantResult({
+      factory.MUTANT_RESULT({
         sourceFilePath: '6.js',
         status: MutantStatus.TranspileError
       })
@@ -115,7 +115,7 @@ describe(MutationTestReportCalculator.name, () => {
   });
 
   it('should offset location correctly', () => {
-    const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
+    const inputMutants = [factory.MUTANT_RESULT({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
     files.push(...inputMutants.map(m => new File(m.sourceFilePath, '')));
     const actualReport = actReport(inputMutants);
     expect(actualReport.files[''].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
@@ -124,11 +124,11 @@ describe(MutationTestReportCalculator.name, () => {
   it('should group mutants by file name', () => {
     // Arrange
     const inputMutants = [
-      factory.mutantResult({
+      factory.MUTANT_RESULT({
         mutatorName: 'Foo',
         sourceFilePath: 'foo.js'
       }),
-      factory.mutantResult({
+      factory.MUTANT_RESULT({
         mutatorName: 'Bar',
         sourceFilePath: 'foo.js'
       })
@@ -144,10 +144,10 @@ describe(MutationTestReportCalculator.name, () => {
   });
 
   it('should log a warning if source file could not be found', () => {
-    const inputMutants = [factory.mutantResult({ sourceFilePath: 'not-found.js' })];
+    const inputMutants = [factory.MUTANT_RESULT({ sourceFilePath: 'not-found.js' })];
     const actualReport = actReport(inputMutants);
     expect(Object.keys(actualReport.files)).lengthOf(0);
-    expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
+    expect(TEST_INJECTOR.logger.warn).calledWithMatch('File "not-found.js" not found');
   });
 
   function actReport(input: ReadonlyArray<MutantResult> = []): mutationTestReportSchema.MutationTestResult {

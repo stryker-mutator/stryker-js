@@ -1,6 +1,6 @@
 import { File } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
-import { mutant, runResult, testResult } from '@stryker-mutator/test-helpers/src/factory';
+import { MUTANT, RUN_RESULT, TEST_RESULT } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import SourceFile from '../../src/SourceFile';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
@@ -10,7 +10,7 @@ describe('TestableMutant', () => {
   let innerMutant: Mutant;
 
   beforeEach(() => {
-    innerMutant = mutant();
+    innerMutant = MUTANT();
   });
 
   it('should pass properties from mutant and source code', () => {
@@ -25,7 +25,7 @@ describe('TestableMutant', () => {
 
   it('should reflect timeSpentScopedTests, scopedTestIds and TestSelectionResult', () => {
     const sut = new TestableMutant('3', innerMutant, new SourceFile(new File('foobar.js', 'alert("foobar")')));
-    sut.selectAllTests(runResult({ tests: [testResult({ name: 'spec1', timeSpentMs: 12 }), testResult({ name: 'spec2', timeSpentMs: 42 })] }), TestSelectionResult.FailedButAlreadyReported);
+    sut.selectAllTests(RUN_RESULT({ tests: [TEST_RESULT({ name: 'spec1', timeSpentMs: 12 }), TEST_RESULT({ name: 'spec2', timeSpentMs: 42 })] }), TestSelectionResult.FailedButAlreadyReported);
     expect(sut.timeSpentScopedTests).eq(54);
     expect(sut.selectedTests).deep.eq([{ id: 0, name: 'spec1' }, { id: 1, name: 'spec2' }]);
     expect(sut.testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReported);

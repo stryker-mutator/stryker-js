@@ -9,7 +9,7 @@ export function expectTestResultsToEqual(actualTestResults: TestResult[], expect
       expect({ name: actualTestResult.name, status: actualTestResult.status, failureMessages: actualTestResult.failureMessages })
         .deep.equal(expectedResult);
     } else {
-      expect.fail(undefined, undefined, `Could not find test result "${expectedResult.name}" in ${JSON.stringify(actualTestResults.map(_ => _.name))}`);
+      expect.fail(undefined, undefined, `Could not find test result "${expectedResult.name}" in ${JSON.stringify(actualTestResults.map(testResult => testResult.name))}`);
     }
   });
 }

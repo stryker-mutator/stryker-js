@@ -13,7 +13,7 @@ import { TempFolder } from '../../src/utils/TempFolder';
 import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunnerFactory';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import { Mock } from '../helpers/producers';
-import { mutant as createMutant, testResult, fileAlreadyExistsError } from '@stryker-mutator/test-helpers/src/factory';
+import { MUTANT as createMutant, TEST_RESULT, fileAlreadyExistsError } from '@stryker-mutator/test-helpers/src/factory';
 import SourceFile from '../../src/SourceFile';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import * as fileUtils from '../../src/utils/fileUtils';
@@ -24,12 +24,12 @@ import { MutantStatus } from '@stryker-mutator/api/report';
 import { RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 
-const OVERHEAD_TIME_MS = 0;
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+const overheadTimeMs = 0;
+const loggingContext: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
   port: 4200
 });
-const SANDBOX_INDEX = 3;
+const sandboxIndex = 3;
 
 describe(Sandbox.name, () => {
   let options: Config;
@@ -84,11 +84,11 @@ describe(Sandbox.name, () => {
   function createSut(overrides?: Partial<CreateArgs>) {
     const args: CreateArgs = {
       files: inputFiles,
-      overheadTimeMS: OVERHEAD_TIME_MS,
+      overheadTimeMS: overheadTimeMs,
       testFramework: null,
     };
     const { files, testFramework, overheadTimeMS } = {...args, ...overrides };
-    return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT);
+    return Sandbox.create(options, sandboxIndex, files, testFramework, overheadTimeMS, loggingContext);
   }
 
   describe('create()', () => {
@@ -107,7 +107,7 @@ describe(Sandbox.name, () => {
     it('should have created the isolated test runner', async () => {
       await createSut();
       const expectedFileNames = inputFiles.map(file => path.resolve(sandboxDirectory, path.basename(file.name)));
-      expect(ResilientTestRunnerFactory.create).calledWith(options, expectedFileNames, sandboxDirectory, LOGGING_CONTEXT);
+      expect(ResilientTestRunnerFactory.create).calledWith(options, expectedFileNames, sandboxDirectory, loggingContext);
     });
 
     it('should have created a sandbox folder', async () => {
@@ -190,8 +190,8 @@ describe(Sandbox.name, () => {
         '1',
         mutant,
         new SourceFile(new File('foobar.js', 'original code')));
-      testableMutant.selectTest(testResult({ timeSpentMs: 10 }), 1);
-      testableMutant.selectTest(testResult({ timeSpentMs: 2 }), 2);
+      testableMutant.selectTest(TEST_RESULT({ timeSpentMs: 10 }), 1);
+      testableMutant.selectTest(TEST_RESULT({ timeSpentMs: 2 }), 2);
       transpiledMutant = new TranspiledMutant(testableMutant, { outputFiles: [new File(expectedFileToMutate.name, 'mutated code')], error: null }, true);
       testFrameworkStub.filter.returns(testFilterCodeFragment);
     });

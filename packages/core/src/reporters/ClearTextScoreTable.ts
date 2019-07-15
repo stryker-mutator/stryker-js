@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import chalk from 'chalk';
 import { MetricsResult } from 'mutation-testing-metrics';
 
-const FILES_ROOT_NAME = 'All files';
+const filesRootName = 'All files';
 
 type TableCellValueFactory = (row: MetricsResult, ancestorCount: number) => string;
 
@@ -72,7 +72,7 @@ class MutationScoreColumn extends Column {
 
 class FileColumn extends Column {
   constructor(rows: MetricsResult) {
-    super('File', (row, ancestorCount) => spaces(ancestorCount) + (ancestorCount === 0 ? FILES_ROOT_NAME : row.name), rows);
+    super('File', (row, ancestorCount) => spaces(ancestorCount) + (ancestorCount === 0 ? filesRootName : row.name), rows);
   }
   protected pad(input: string): string {
     return `${input} ${spaces(this.width - input.length - 1)}`;

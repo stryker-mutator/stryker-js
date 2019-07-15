@@ -10,14 +10,14 @@ import {
 
 // Cache duration is same as webpack has
 // => https://github.com/webpack/webpack/blob/efc576c8b744e7a015ab26f1f46932ba3ca7d4f1/lib/node/NodeEnvironmentPlugin.js#L14
-const CACHE_DURATION = 60000;
+const cacheDuration = 60000;
 
 export default class InputFileSystem extends CachedInputFileSystem
   implements webpack.InputFileSystem {
   private readonly memoryFS = new MemoryFS();
 
   constructor(innerFS = new NodeJsInputFileSystem()) {
-    super(innerFS, CACHE_DURATION);
+    super(innerFS, cacheDuration);
   }
 
   public writeFileSync(name: string, content: string | Buffer) {

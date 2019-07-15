@@ -1,12 +1,12 @@
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { MUTATION_SCORE_THRESHOLDS } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as ciProvider from '../../../../src/reporters/ci/Provider';
 import DashboardReporter from '../../../../src/reporters/dashboard-reporter/DashboardReporter';
 import { default as DashboardReporterClient, default as StrykerDashboardClient, StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
+import { DASHBOARD_REPORTER_TOKENS } from '../../../../src/reporters/dashboard-reporter/tokens';
 import * as environmentVariables from '../../../../src/utils/objectUtils';
 import { mock, Mock } from '../../../helpers/producers';
 
@@ -18,7 +18,7 @@ describe(DashboardReporter.name, () => {
   const dummyReport: mutationTestReportSchema.MutationTestResult = {
     files: {},
     schemaVersion: '1.0',
-    thresholds: mutationScoreThresholds({})
+    thresholds: MUTATION_SCORE_THRESHOLDS({})
   };
 
   beforeEach(() => {
@@ -53,8 +53,8 @@ describe(DashboardReporter.name, () => {
     }
 
     getEnvironmentVariables.withArgs('STRYKER_DASHBOARD_API_KEY').returns(apiKey);
-    sut = testInjector.injector
-      .provideValue(dashboardReporterTokens.dashboardReporterClient, dashboardClientMock as unknown as DashboardReporterClient)
+    sut = TEST_INJECTOR.injector
+      .provideValue(DASHBOARD_REPORTER_TOKENS.dashboardReporterClient, dashboardClientMock as unknown as DashboardReporterClient)
       .injectClass(DashboardReporter);
   }
 
@@ -94,7 +94,7 @@ describe(DashboardReporter.name, () => {
         }
       },
       schemaVersion: '1.0',
-      thresholds: mutationScoreThresholds({})
+      thresholds: MUTATION_SCORE_THRESHOLDS({})
     });
 
     // Assert
@@ -106,7 +106,7 @@ describe(DashboardReporter.name, () => {
     };
 
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.been.calledWith(report);
-    expect(testInjector.logger.warn).to.have.not.been.called;
+    expect(TEST_INJECTOR.logger.warn).to.have.not.been.called;
   });
 
   it('should log an info if it is not part of a CI build', async () => {
@@ -118,7 +118,7 @@ describe(DashboardReporter.name, () => {
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(testInjector.logger.info).to.have.been.calledWithMatch('Dashboard report is not sent when not running on a build server');
+    expect(TEST_INJECTOR.logger.info).to.have.been.calledWithMatch('Dashboard report is not sent when not running on a build server');
   });
 
   it('should log an info if it is a pull request', async () => {
@@ -130,7 +130,7 @@ describe(DashboardReporter.name, () => {
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(testInjector.logger.info).to.have.been.calledWithMatch('Dashboard report is not sent when building a pull request');
+    expect(TEST_INJECTOR.logger.info).to.have.been.calledWithMatch('Dashboard report is not sent when building a pull request');
   });
 
   it('should log a warning if the Stryker API key is unknown', async () => {
@@ -142,6 +142,6 @@ describe(DashboardReporter.name, () => {
 
     // Assert
     expect(dashboardClientMock.postStrykerDashboardReport).to.have.not.been.called;
-    expect(testInjector.logger.warn).to.have.been.calledWithMatch('Missing environment variable STRYKER_DASHBOARD_API_KEY');
+    expect(TEST_INJECTOR.logger.warn).to.have.been.calledWithMatch('Missing environment variable STRYKER_DASHBOARD_API_KEY');
   });
 });

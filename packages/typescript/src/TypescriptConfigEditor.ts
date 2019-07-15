@@ -6,11 +6,11 @@ import { CONFIG_KEY_FILE, CONFIG_KEY } from './helpers/keys';
 import { Logger } from '@stryker-mutator/api/logging';
 import * as fs from 'fs';
 import { normalizeFileForTypescript, normalizeFileFromTypescript } from './helpers/tsHelpers';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker/issues/391 for more info
-const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
+const compilerOptionsOverrides: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
   allowUnreachableCode: true,
   noUnusedLocals: false,
   noUnusedParameters: false
@@ -18,7 +18,7 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
 
 export default class TypescriptConfigEditor implements ConfigEditor {
 
-  public static inject = tokens(commonTokens.logger);
+  public static inject = tokens(COMMON_TOKENS.logger);
   constructor(private readonly log: Logger) { }
 
   public edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
@@ -39,7 +39,7 @@ export default class TypescriptConfigEditor implements ConfigEditor {
   }
 
   private overrideOptions(tsConfig: ts.ParsedCommandLine): ts.ParsedCommandLine {
-    tsConfig.options = Object.assign({}, tsConfig.options, COMPILER_OPTIONS_OVERRIDES);
+    tsConfig.options = Object.assign({}, tsConfig.options, compilerOptionsOverrides);
     tsConfig.fileNames = tsConfig.fileNames.map(normalizeFileFromTypescript);
     return tsConfig;
   }

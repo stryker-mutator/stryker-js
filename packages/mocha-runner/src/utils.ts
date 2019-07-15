@@ -23,9 +23,9 @@ export function serializeArguments(mochaOptions: MochaOptions) {
   return args;
 }
 
-export const mochaOptionsKey = 'mochaOptions';
+export const MOCHA_OPTIONS_KEY = 'mochaOptions';
 
-const SUPPORTED_MOCHA_OPTIONS = Object.freeze([
+const supportedMochaOptions = Object.freeze([
   'extension',
   'require',
   'timeout',
@@ -44,7 +44,7 @@ const SUPPORTED_MOCHA_OPTIONS = Object.freeze([
 export function filterConfig(rawConfig: { [key: string]: any }): MochaOptions {
   const options: MochaOptions = {};
   Object.keys(rawConfig)
-    .filter(rawOption => SUPPORTED_MOCHA_OPTIONS.some(supportedOption => rawOption === supportedOption))
+    .filter(rawOption => supportedMochaOptions.some(supportedOption => rawOption === supportedOption))
     .forEach(option => (options as any)[option] = rawConfig[option]);
 
   // Config file can also contain positional arguments. They are provided under the `_` key

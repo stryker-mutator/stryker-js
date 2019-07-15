@@ -9,19 +9,19 @@ import CoverageInstrumenterTranspiler, * as coverageInstrumenterTranspiler from 
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { RunStatus, RunResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import Timer from '../../../src/utils/Timer';
-import { coverageMaps } from '../../helpers/producers';
+import { COVERAGE_MAPS } from '../../helpers/producers';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import * as coverageHooks from '../../../src/transpiler/coverageHooks';
 import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import * as sinon from 'sinon';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { transpiler, testFramework, testResult, runResult } from '@stryker-mutator/test-helpers/src/factory';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { transpiler, testFramework, TEST_RESULT, RUN_RESULT } from '@stryker-mutator/test-helpers/src/factory';
 import { coreTokens } from '../../../src/di';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 
-const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+const expectedInitialTimeout = 60 * 1000 * 5;
+const loggingContext: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
   port: 4200
 });
@@ -41,12 +41,12 @@ describe('InitialTestExecutor run', () => {
   let timerMock: sinon.SinonStubbedInstance<Timer>;
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(coreTokens.inputFiles, inputFiles)
-      .provideValue(coreTokens.loggingContext, LOGGING_CONTEXT)
-      .provideValue(coreTokens.testFramework, testFrameworkMock)
-      .provideValue(coreTokens.transpiler, transpilerMock as Transpiler)
-      .provideValue(coreTokens.timer, timerMock as unknown as Timer)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.InputFiles, inputFiles)
+      .provideValue(coreTokens.LoggingContext, loggingContext)
+      .provideValue(coreTokens.TestFramework, testFrameworkMock)
+      .provideValue(coreTokens.Transpiler, transpilerMock as Transpiler)
+      .provideValue(coreTokens.Timer, timerMock as unknown as Timer)
       .injectClass(InitialTestExecutor);
   }
 
@@ -70,7 +70,7 @@ describe('InitialTestExecutor run', () => {
     ];
     coverageInstrumenterTranspilerMock.transpile.returns(coverageAnnotatedFiles);
     transpilerMock.transpile.returns(transpiledFiles);
-    expectedRunResult = runResult();
+    expectedRunResult = RUN_RESULT();
     strykerSandboxMock.run.resolves(expectedRunResult);
   });
 
@@ -83,13 +83,13 @@ describe('InitialTestExecutor run', () => {
     it('should create a sandbox with correct arguments', async () => {
       sut = createSut();
       await sut.run();
-      expect(Sandbox.create).calledWith(testInjector.injector.resolve(commonTokens.options), 0, coverageAnnotatedFiles, testFrameworkMock);
+      expect(Sandbox.create).calledWith(TEST_INJECTOR.injector.resolve(COMMON_TOKENS.options), 0, coverageAnnotatedFiles, testFrameworkMock);
     });
 
     it('should initialize, run and dispose the sandbox', async () => {
       sut = createSut();
       await sut.run();
-      expect(strykerSandboxMock.run).to.have.been.calledWith(EXPECTED_INITIAL_TIMEOUT);
+      expect(strykerSandboxMock.run).to.have.been.calledWith(expectedInitialTimeout);
       expect(strykerSandboxMock.dispose).to.have.been.called;
     });
 
@@ -97,8 +97,8 @@ describe('InitialTestExecutor run', () => {
       // Arrange
       const expectedOverHeadTimeMs = 82;
       expectedRunResult.tests[0].timeSpentMs = 10;
-      expectedRunResult.tests.push(testResult({ timeSpentMs: 2 }));
-      expectedRunResult.tests.push(testResult({ timeSpentMs: 6 }));
+      expectedRunResult.tests.push(TEST_RESULT({ timeSpentMs: 2 }));
+      expectedRunResult.tests.push(TEST_RESULT({ timeSpentMs: 6 }));
       timerMock.elapsedMs.returns(100);
       sut = createSut();
 
@@ -121,7 +121,7 @@ describe('InitialTestExecutor run', () => {
     });
 
     it('should pass through the result', async () => {
-      const coverageData = coverageMaps();
+      const coverageData = COVERAGE_MAPS();
       coverageInstrumenterTranspilerMock.fileCoverageMaps = { someFile: coverageData } as any;
       timerMock.elapsedMs.returns(42);
       const expectedResult: InitialTestRunResult = {
@@ -138,28 +138,28 @@ describe('InitialTestExecutor run', () => {
     });
 
     it('should log the transpiled results if transpilers are specified', async () => {
-      testInjector.options.transpilers = ['a transpiler'];
-      testInjector.logger.isDebugEnabled.returns(true);
+      TEST_INJECTOR.options.transpilers = ['a transpiler'];
+      TEST_INJECTOR.logger.isDebugEnabled.returns(true);
       sut = createSut();
       await sut.run();
-      const actualLogMessage: string = testInjector.logger.debug.getCall(0).args[0];
-      const expectedLogMessage = `Transpiled files: ${JSON.stringify(coverageAnnotatedFiles.map(_ => _.name), null, 2)}`;
+      const actualLogMessage: string = TEST_INJECTOR.logger.debug.getCall(0).args[0];
+      const expectedLogMessage = `Transpiled files: ${JSON.stringify(coverageAnnotatedFiles.map(file => file.name), null, 2)}`;
       expect(actualLogMessage).eq(expectedLogMessage);
     });
 
     it('should not log the transpiled results if transpilers are not specified', async () => {
-      testInjector.logger.isDebugEnabled.returns(true);
+      TEST_INJECTOR.logger.isDebugEnabled.returns(true);
       await sut.run();
-      expect(testInjector.logger.debug).not.calledWithMatch('Transpiled files');
+      expect(TEST_INJECTOR.logger.debug).not.calledWithMatch('Transpiled files');
     });
 
     it('should have logged the amount of tests ran', async () => {
-      expectedRunResult.tests.push(testResult());
+      expectedRunResult.tests.push(TEST_RESULT());
       timerMock.humanReadableElapsed.returns('2 seconds');
       timerMock.elapsedMs.returns(50);
       sut = createSut();
       await sut.run();
-      expect(testInjector.logger.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
+      expect(TEST_INJECTOR.logger.info).to.have.been.calledWith('Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
         2, '2 seconds', 20, 30);
     });
 
@@ -167,7 +167,7 @@ describe('InitialTestExecutor run', () => {
       while (expectedRunResult.tests.pop());
       sut = createSut();
       await sut.run();
-      expect(testInjector.logger.warn).to.have.been.calledWith('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
+      expect(TEST_INJECTOR.logger.warn).to.have.been.calledWith('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
     });
 
     it('should pass through any rejections', async () => {
@@ -182,41 +182,41 @@ describe('InitialTestExecutor run', () => {
       sut = createSut();
       await sut.run();
       expect(coverageInstrumenterTranspiler.default).calledWithNew;
-      expect(coverageInstrumenterTranspiler.default).calledWith(testInjector.injector.resolve(commonTokens.options), ['mutate.min.js']);
+      expect(coverageInstrumenterTranspiler.default).calledWith(TEST_INJECTOR.injector.resolve(COMMON_TOKENS.options), ['mutate.min.js']);
       expect(sourceMapperMock.transpiledFileNameFor).calledWith('mutate.js');
     });
 
     it('should also add a collectCoveragePerTest file when coverage analysis is "perTest" and there is a testFramework', async () => {
-      testInjector.options.coverageAnalysis = 'perTest';
+      TEST_INJECTOR.options.coverageAnalysis = 'perTest';
       sinon.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
       sut = createSut();
       await sut.run();
-      expect(strykerSandboxMock.run).calledWith(EXPECTED_INITIAL_TIMEOUT, 'test hook foobar');
+      expect(strykerSandboxMock.run).calledWith(expectedInitialTimeout, 'test hook foobar');
     });
 
     it('should result log a warning if coverage analysis is "perTest" and there is no testFramework', async () => {
-      testInjector.options.coverageAnalysis = 'perTest';
+      TEST_INJECTOR.options.coverageAnalysis = 'perTest';
       testFrameworkMock = null;
       sut = createSut();
       sinon.stub(coverageHooks, 'coveragePerTestHooks').returns('test hook foobar');
       sut = createSut();
       await sut.run();
-      expect(testInjector.logger.warn).calledWith('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
+      expect(TEST_INJECTOR.logger.warn).calledWith('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
     });
 
     describe('and run has test failures', () => {
       beforeEach(() => {
         expectedRunResult.tests = [
-          testResult({ name: 'foobar test' }),
-          testResult({ name: 'example test', status: TestStatus.Failed, failureMessages: ['expected error'] }),
-          testResult({ name: '2nd example test', status: TestStatus.Failed })
+          TEST_RESULT({ name: 'foobar test' }),
+          TEST_RESULT({ name: 'example test', status: TestStatus.Failed, failureMessages: ['expected error'] }),
+          TEST_RESULT({ name: '2nd example test', status: TestStatus.Failed })
         ];
       });
 
       it('should have logged the errors', async () => {
         sut = createSut();
         await expect(sut.run()).rejected;
-        expect(testInjector.logger.error).calledWith(`One or more tests failed in the initial test run:${EOL}\texample test${EOL}\t\texpected error${EOL}\t2nd example test`);
+        expect(TEST_INJECTOR.logger.error).calledWith(`One or more tests failed in the initial test run:${EOL}\texample test${EOL}\t\texpected error${EOL}\t2nd example test`);
       });
       it('should reject with correct message', async () => {
         sut = createSut();
@@ -234,7 +234,7 @@ describe('InitialTestExecutor run', () => {
       it('should have logged the errors', async () => {
         sut = createSut();
         await expect(sut.run()).rejected;
-        expect(testInjector.logger.error).calledWith(`One or more tests resulted in an error:${EOL}\tfoobar${EOL}\texample`);
+        expect(TEST_INJECTOR.logger.error).calledWith(`One or more tests resulted in an error:${EOL}\tfoobar${EOL}\texample`);
       });
       it('should reject with correct message', async () => {
         sut = createSut();
@@ -246,14 +246,14 @@ describe('InitialTestExecutor run', () => {
       beforeEach(() => {
         expectedRunResult.status = RunStatus.Timeout;
         expectedRunResult.tests = [
-          testResult({ name: 'foobar test' }),
-          testResult({ name: 'example test', status: TestStatus.Failed })];
+          TEST_RESULT({ name: 'foobar test' }),
+          TEST_RESULT({ name: 'example test', status: TestStatus.Failed })];
       });
 
       it('should have logged the timeout', async () => {
         sut = createSut();
         await expect(sut.run()).rejected;
-        expect(testInjector.logger.error).calledWith(`Initial test run timed out! Ran following tests before timeout:${EOL}\tfoobar test (Success)${EOL}\texample test (Failed)`);
+        expect(TEST_INJECTOR.logger.error).calledWith(`Initial test run timed out! Ran following tests before timeout:${EOL}\tfoobar test (Success)${EOL}\texample test (Failed)`);
       });
 
       it('should reject with correct message', async () => {

@@ -4,17 +4,17 @@ import { SourceFile, MutantResult, MatchedMutant, Reporter, ScoreResult, mutatio
 import { cleanFolder } from '../utils/fileUtils';
 import StrictReporter from './StrictReporter';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
-const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
+const defaultBaseFolder = 'reports/mutation/events';
 
 export default class EventRecorderReporter implements StrictReporter {
-  public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
+  public static readonly inject = tokens(COMMON_TOKENS.logger, COMMON_TOKENS.options);
 
   private readonly allWork: Promise<void>[] = [];
   private readonly createBaseFolderTask: Promise<any>;
-  private _baseFolder: string;
+  private innerBaseFolder: string;
   private index = 0;
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
@@ -22,16 +22,16 @@ export default class EventRecorderReporter implements StrictReporter {
   }
 
   private get baseFolder() {
-    if (!this._baseFolder) {
+    if (!this.innerBaseFolder) {
       if (this.options.eventReporter && this.options.eventReporter.baseDir) {
-        this._baseFolder = this.options.eventReporter.baseDir;
-        this.log.debug(`Using configured output folder ${this._baseFolder}`);
+        this.innerBaseFolder = this.options.eventReporter.baseDir;
+        this.log.debug(`Using configured output folder ${this.innerBaseFolder}`);
       } else {
-        this.log.debug(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
-        this._baseFolder = DEFAULT_BASE_FOLDER;
+        this.log.debug(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${defaultBaseFolder}`);
+        this.innerBaseFolder = defaultBaseFolder;
       }
     }
-    return this._baseFolder;
+    return this.innerBaseFolder;
   }
 
   private writeToFile(methodName: keyof Reporter, data: any) {

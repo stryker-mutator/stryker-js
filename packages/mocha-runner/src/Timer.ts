@@ -1,5 +1,5 @@
 // A test can mock away the 'real' Date class. Capture it while we still can.
-const RealDate = Date;
+const realDate = Date;
 export default class Timer {
   private start: Date;
 
@@ -8,10 +8,10 @@ export default class Timer {
   }
 
   public reset() {
-    this.start = new RealDate();
+    this.start = new realDate();
   }
 
   public elapsedMs() {
-    return new RealDate().getTime() - this.start.getTime();
+    return new realDate().getTime() - this.start.getTime();
   }
 }

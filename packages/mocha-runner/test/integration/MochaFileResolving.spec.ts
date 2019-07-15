@@ -1,8 +1,8 @@
-import { testInjector } from '../../../test-helpers/src';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { TEST_INJECTOR } from '../../../test-helpers/src';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
-import { mochaOptionsKey } from '../../src/utils';
+import { MOCHA_OPTIONS_KEY } from '../../src/utils';
 import * as path from 'path';
 import { expect } from 'chai';
 
@@ -17,7 +17,7 @@ describe('Mocha 6 file resolving integration', () => {
   it('should resolve test files while respecting "files", "spec", "extension" and "exclude" properties', () => {
     const configLoader = createConfigLoader();
     process.chdir(resolveTestDir());
-    testInjector.options[mochaOptionsKey] = configLoader.load(testInjector.options);
+    TEST_INJECTOR.options[MOCHA_OPTIONS_KEY] = configLoader.load(TEST_INJECTOR.options);
     const testRunner = createTestRunner();
     testRunner.init();
     expect((testRunner as any).testFileNames).deep.eq([
@@ -29,13 +29,13 @@ describe('Mocha 6 file resolving integration', () => {
   });
 
   function createConfigLoader() {
-    return testInjector.injector
+    return TEST_INJECTOR.injector
       .injectClass(MochaOptionsLoader);
   }
 
   function createTestRunner() {
-    return testInjector.injector
-      .provideValue(commonTokens.sandboxFileNames, [])
+    return TEST_INJECTOR.injector
+      .provideValue(COMMON_TOKENS.sandboxFileNames, [])
       .injectClass(MochaTestRunner);
   }
 

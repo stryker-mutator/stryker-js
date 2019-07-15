@@ -1,6 +1,6 @@
 import { TestRunner, RunOptions } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
-import { tokens, commonTokens, PluginKind, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS, PluginKind, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
 import { PluginCreator } from '../di';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
@@ -8,10 +8,10 @@ export class ChildProcessTestRunnerWorker implements TestRunner {
 
   private readonly underlyingTestRunner: TestRunner;
 
-  public static inject = tokens(commonTokens.sandboxFileNames, commonTokens.options, commonTokens.injector);
+  public static inject = tokens(COMMON_TOKENS.sandboxFileNames, COMMON_TOKENS.options, COMMON_TOKENS.injector);
   constructor(sandboxFileNames: ReadonlyArray<string>, { testRunner }: StrykerOptions, injector: Injector<OptionsContext>) {
     this.underlyingTestRunner = injector
-      .provideValue(commonTokens.sandboxFileNames, sandboxFileNames)
+      .provideValue(COMMON_TOKENS.sandboxFileNames, sandboxFileNames)
       .injectFunction(PluginCreator.createFactory(PluginKind.TestRunner))
       .create(testRunner);
   }

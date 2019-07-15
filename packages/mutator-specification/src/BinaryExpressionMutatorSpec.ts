@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function BinaryExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
+export default function binaryExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
 
   describe('BinaryExpressionMutator', () => {
 

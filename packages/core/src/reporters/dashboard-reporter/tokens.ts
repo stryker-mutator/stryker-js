@@ -1,4 +1,4 @@
-export const dashboardReporterTokens = Object.freeze<{
+export const DASHBOARD_REPORTER_TOKENS = Object.freeze<{
   dashboardReporterClient: 'dashboardReporterClient',
   httpClient: 'httpClient'
 }>({

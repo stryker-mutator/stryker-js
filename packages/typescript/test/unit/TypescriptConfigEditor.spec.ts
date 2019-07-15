@@ -8,7 +8,7 @@ import TypescriptConfigEditor from './../../src/TypescriptConfigEditor';
 import sinon = require('sinon');
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-const CONFIG_KEY = 'tsconfigFile';
+const configKey = 'tsconfigFile';
 
 describe('TypescriptConfigEditor edit', () => {
 
@@ -24,12 +24,12 @@ describe('TypescriptConfigEditor edit', () => {
 
   it('should not load any config if "tsconfigFile" is not specified', () => {
     sut.edit(config);
-    expect(config[CONFIG_KEY]).undefined;
-    expect(testInjector.logger.debug).calledWith('No \'%s\' specified, not loading any config', CONFIG_KEY);
+    expect(config[configKey]).undefined;
+    expect(testInjector.logger.debug).calledWith('No \'%s\' specified, not loading any config', configKey);
   });
 
   it('should load the given tsconfig file', () => {
-    config[CONFIG_KEY] = 'tsconfig.json';
+    config[configKey] = 'tsconfig.json';
     readFileSyncStub.returns(`{
       "compilerOptions": {
         "module": "commonjs",
@@ -60,7 +60,7 @@ describe('TypescriptConfigEditor edit', () => {
   });
 
   it('should override quality options', () => {
-    config[CONFIG_KEY] = 'tsconfig.json';
+    config[configKey] = 'tsconfig.json';
     readFileSyncStub.returns(`{
       "compilerOptions": {
         "allowUnreachableCode": false,
@@ -78,13 +78,13 @@ describe('TypescriptConfigEditor edit', () => {
 
   it('should log errors on failure during load', () => {
     readFileSyncStub.returns(`invalid json`);
-    config[CONFIG_KEY] = 'tsconfig.json';
+    config[configKey] = 'tsconfig.json';
     expect(() => sut.edit(config)).throws('error TS1005: \'{\' expected.');
   });
 
   it('should log errors on failure during load of extending file', () => {
     readFileSyncStub.returns(`{ "extends": "./parent.tsconfig.json" }`);
-    config[CONFIG_KEY] = 'tsconfig.json';
+    config[configKey] = 'tsconfig.json';
     sut.edit(config, parseConfigHost({ readFile: () => `invalid json` }));
     expect(testInjector.logger.error).calledWithMatch(match('error TS1005: \'{\' expected.'));
   });

@@ -1,16 +1,16 @@
-import { PluginKind, Injector, TranspilerPluginContext, tokens, commonTokens, declareFactoryPlugin } from '@stryker-mutator/api/plugin';
+import { PluginKind, Injector, TranspilerPluginContext, tokens, COMMON_TOKENS, declareFactoryPlugin } from '@stryker-mutator/api/plugin';
 import WebpackTranspiler from './WebpackTranspiler';
 import ConfigLoader from './compiler/ConfigLoader';
-import { pluginTokens } from './pluginTokens';
+import { PLUGIN_TOKENS } from './pluginTokens';
 
-export const strykerPlugins = [
+export const STRYKER_PLUGINS = [
   declareFactoryPlugin(PluginKind.Transpiler, 'webpack', webpackTranspilerFactory)
 ];
 
 function webpackTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
   return injector
-    .provideValue(pluginTokens.require, require)
-    .provideClass(pluginTokens.configLoader, ConfigLoader)
+    .provideValue(PLUGIN_TOKENS.require, require)
+    .provideClass(PLUGIN_TOKENS.configLoader, ConfigLoader)
     .injectClass(WebpackTranspiler);
 }
-webpackTranspilerFactory.inject = tokens(commonTokens.injector);
+webpackTranspilerFactory.inject = tokens(COMMON_TOKENS.injector);

@@ -1,6 +1,6 @@
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
-import { strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
+import { STRYKER_OPTIONS } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import getPort = require('get-port');
 import * as log4js from 'log4js';
@@ -26,7 +26,7 @@ describe('ResilientTestRunnerFactory integration', () => {
     const port = await getPort();
     loggingServer = new LoggingServer(port);
     loggingContext = { port, level: LogLevel.Trace };
-    options = strykerOptions({
+    options = STRYKER_OPTIONS({
       plugins: [require.resolve('./AdditionalTestRunners')],
       someRegex: /someRegex/,
       testFramework: 'jasmine',

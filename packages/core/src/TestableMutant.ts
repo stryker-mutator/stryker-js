@@ -14,18 +14,18 @@ export enum TestSelectionResult {
 
 export default class TestableMutant {
 
-  private readonly _selectedTests: TestSelection[] = [];
+  private readonly innerSelectedTests: TestSelection[] = [];
   public specsRan: string[] = [];
-  private _timeSpentScopedTests = 0;
-  private _location: Location;
+  private innerTimeSpentScopedTests = 0;
+  private innerLocation: Location;
   public testSelectionResult = TestSelectionResult.Success;
 
   get selectedTests(): TestSelection[] {
-    return this._selectedTests;
+    return this.innerSelectedTests;
   }
 
   get timeSpentScopedTests() {
-    return this._timeSpentScopedTests;
+    return this.innerTimeSpentScopedTests;
   }
 
   get fileName() {
@@ -45,10 +45,10 @@ export default class TestableMutant {
   }
 
   get location() {
-    if (!this._location) {
-      this._location = this.sourceFile.getLocation(this.range);
+    if (!this.innerLocation) {
+      this.innerLocation = this.sourceFile.getLocation(this.range);
     }
-    return this._location;
+    return this.innerLocation;
   }
 
   get mutatedCode() {
@@ -67,8 +67,8 @@ export default class TestableMutant {
   }
 
   public selectTest(testResult: TestResult, index: number) {
-    this._selectedTests.push({ id: index, name: testResult.name });
-    this._timeSpentScopedTests += testResult.timeSpentMs;
+    this.innerSelectedTests.push({ id: index, name: testResult.name });
+    this.innerTimeSpentScopedTests += testResult.timeSpentMs;
   }
 
   constructor(public readonly id: string, public mutant: Mutant, public sourceFile: SourceFile) {

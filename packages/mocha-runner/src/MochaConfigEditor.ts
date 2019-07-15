@@ -1,5 +1,5 @@
 import { ConfigEditor, Config } from '@stryker-mutator/api/config';
-import { mochaOptionsKey } from './utils';
+import { MOCHA_OPTIONS_KEY } from './utils';
 import MochaOptionsLoader from './MochaOptionsLoader';
 import { tokens } from '@stryker-mutator/api/plugin';
 
@@ -9,6 +9,6 @@ export default class MochaConfigEditor implements ConfigEditor {
   constructor(private readonly loader: MochaOptionsLoader) {}
 
   public edit(config: Config): void {
-    config[mochaOptionsKey] = this.loader.load(config);
+    config[MOCHA_OPTIONS_KEY] = this.loader.load(config);
   }
 }

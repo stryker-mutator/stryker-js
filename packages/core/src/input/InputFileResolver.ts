@@ -9,7 +9,7 @@ import { StrykerError } from '@stryker-mutator/util';
 import InputFileCollection from './InputFileCollection';
 import { filterEmpty } from '../utils/objectUtils';
 import { Config } from '@stryker-mutator/api/config';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { coreTokens } from '../di';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -21,13 +21,13 @@ function toReportSourceFile(file: File): SourceFile {
   };
 }
 
-const IGNORE_PATTERN_CHARACTER = '!';
+const ignorePatternCharacter = '!';
 
 export default class InputFileResolver {
   private readonly mutatePatterns: ReadonlyArray<string>;
   private readonly filePatterns: ReadonlyArray<string> | undefined;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
+  public static inject = tokens(COMMON_TOKENS.logger, COMMON_TOKENS.options, coreTokens.Reporter);
   constructor(
     private readonly log: Logger,
     { mutate, files }: StrykerOptions,
@@ -84,7 +84,7 @@ export default class InputFileResolver {
   private async expand(patterns: ReadonlyArray<string>, logAboutUselessPatterns = true): Promise<string[]> {
     const fileSet = new Set<string>();
     for (const pattern of patterns) {
-      if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
+      if (pattern.startsWith(ignorePatternCharacter)) {
         const files = await this.expandPattern(pattern.substr(1), logAboutUselessPatterns);
         files.forEach(fileName => fileSet.delete(fileName));
       } else {

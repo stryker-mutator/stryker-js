@@ -5,11 +5,11 @@ import { File } from '@stryker-mutator/api/core';
 import copy from './helpers/copy';
 import { NodeMutator, NODE_MUTATORS_TOKEN } from './mutators/NodeMutator';
 import BabelHelper from './helpers/BabelHelper';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 
 export class JavaScriptMutator implements Mutator {
 
-  public static inject = tokens(commonTokens.logger, NODE_MUTATORS_TOKEN) ;
+  public static inject = tokens(COMMON_TOKENS.logger, NODE_MUTATORS_TOKEN) ;
   constructor(
     private readonly log: Logger,
     private readonly mutators: ReadonlyArray<NodeMutator>

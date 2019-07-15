@@ -3,7 +3,7 @@ import * as path from 'path';
 import { File } from '@stryker-mutator/api/core';
 import * as glob from 'glob';
 
-const CARRIAGE_RETURN = '\r'.charCodeAt(0);
+const carriageReturn = '\r'.charCodeAt(0);
 
 function readFile(fileName: string) {
   return new Promise<Buffer>((res, rej) => {
@@ -33,7 +33,7 @@ export class ProjectLoader {
 
   private static normalize(content: Buffer) {
     // Remove carriage returns from the content buffer
-    return Buffer.from(content.filter(byte => byte !== CARRIAGE_RETURN) as any);
+    return Buffer.from(content.filter(byte => byte !== carriageReturn) as any);
   }
 
   private static glob(basePath: string): Promise<string[]> {

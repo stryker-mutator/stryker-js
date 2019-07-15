@@ -13,7 +13,7 @@ const injector: import('typed-inject').InjectorToken = '$injector';
 /**
  * Common tokens used for dependency injection (see typed-inject readme for more information)
  */
-export const commonTokens = Object.freeze({
+export const COMMON_TOKENS = Object.freeze({
   getLogger: stringLiteral('getLogger'),
   injector,
   logger: stringLiteral('logger'),

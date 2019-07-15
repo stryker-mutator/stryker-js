@@ -1,5 +1,5 @@
 import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
-import { declareClassPlugin, PluginKind, tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { declareClassPlugin, PluginKind, tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { isRegExp } from 'util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
@@ -36,7 +36,7 @@ class DirectResolvedTestRunner implements TestRunner {
 
 class DiscoverRegexTestRunner implements TestRunner {
 
-  public static inject = tokens(commonTokens.options);
+  public static inject = tokens(COMMON_TOKENS.options);
   constructor(private readonly options: StrykerOptions) {
   }
 
@@ -130,7 +130,7 @@ class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
   }
 }
 
-export const strykerPlugins = [
+export const STRYKER_PLUGINS = [
   declareClassPlugin(PluginKind.TestRunner, 'verify-working-folder', VerifyWorkingFolderTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'never-resolved', NeverResolvedTestRunner),

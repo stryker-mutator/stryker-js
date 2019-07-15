@@ -4,13 +4,13 @@ import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { MutantResult, MutantStatus, ScoreResult } from '@stryker-mutator/api/report';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
 import { Logger } from '@stryker-mutator/api/logging';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 
 const defaultScoreIfNoValidMutants = 100;
 
 export default class ScoreResultCalculator {
 
-  public static inject = tokens(commonTokens.logger);
+  public static inject = tokens(COMMON_TOKENS.logger);
   constructor(private readonly log: Logger) { }
 
   public calculate(results: MutantResult[]): ScoreResult {
@@ -118,7 +118,7 @@ export default class ScoreResultCalculator {
   }
 
   private countNumbers(mutantResults: MutantResult[]) {
-    const count = (mutantResult: MutantStatus) => mutantResults.filter(_ => _.status === mutantResult).length;
+    const count = (mutantResult: MutantStatus) => mutantResults.filter(result => result.status === mutantResult).length;
 
     const killed = count(MutantStatus.Killed);
     const timedOut = count(MutantStatus.TimedOut);

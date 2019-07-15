@@ -2,15 +2,15 @@ import { LoggerFactoryMethod, Logger } from '../../logging';
 import { StrykerOptions } from '../../core';
 import { PluginResolver } from './Plugins';
 import { PluginKind } from './PluginKind';
-import { commonTokens } from './tokens';
+import { COMMON_TOKENS } from './tokens';
 
 /**
  * The basic dependency injection context within Stryker
  */
 export interface BaseContext {
-  [commonTokens.getLogger]: LoggerFactoryMethod;
-  [commonTokens.logger]: Logger;
-  [commonTokens.pluginResolver]: PluginResolver;
+  [COMMON_TOKENS.getLogger]: LoggerFactoryMethod;
+  [COMMON_TOKENS.logger]: Logger;
+  [COMMON_TOKENS.pluginResolver]: PluginResolver;
 }
 
 /**
@@ -18,21 +18,21 @@ export interface BaseContext {
  * Can inject basic stuff as well as the Stryker options
  */
 export interface OptionsContext extends BaseContext {
-  [commonTokens.options]: StrykerOptions;
+  [COMMON_TOKENS.options]: StrykerOptions;
 }
 
 /**
  * The dependency injection context for a `TranspilerPlugin`
  */
 export interface TranspilerPluginContext extends OptionsContext {
-  [commonTokens.produceSourceMaps]: boolean;
+  [COMMON_TOKENS.produceSourceMaps]: boolean;
 }
 
 /**
  * The dependency injection context for a `TestRunnerPlugin`
  */
 export interface TestRunnerPluginContext extends OptionsContext {
-  [commonTokens.sandboxFileNames]: ReadonlyArray<string>;
+  [COMMON_TOKENS.sandboxFileNames]: ReadonlyArray<string>;
 }
 
 /**

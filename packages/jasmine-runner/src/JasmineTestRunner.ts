@@ -1,16 +1,16 @@
 import { EOL } from 'os';
 import { TestRunner, RunResult, TestResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import { Jasmine, toStrykerTestResult, evalGlobal } from './helpers';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { JASMINE, toStrykerTestResult, evalGlobal } from './helpers';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { errorToString } from '@stryker-mutator/util';
 
 export default class JasmineTestRunner implements TestRunner {
 
   private readonly jasmineConfigFile: string | undefined;
-  private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
+  private readonly date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
 
-  public static inject = tokens(commonTokens.sandboxFileNames, commonTokens.options);
+  public static inject = tokens(COMMON_TOKENS.sandboxFileNames, COMMON_TOKENS.options);
   constructor(private readonly fileNames: ReadonlyArray<string>, options: StrykerOptions) {
     this.jasmineConfigFile = options.jasmineConfigFile;
   }
@@ -27,11 +27,11 @@ export default class JasmineTestRunner implements TestRunner {
     return new Promise<RunResult>(resolve => {
       const reporter: jasmine.CustomReporter = {
         specStarted() {
-          startTimeCurrentSpec = new self.Date().getTime();
+          startTimeCurrentSpec = new self.date().getTime();
         },
 
         specDone(result: jasmine.CustomReporterResult) {
-          tests.push(toStrykerTestResult(result, new self.Date().getTime() - startTimeCurrentSpec));
+          tests.push(toStrykerTestResult(result, new self.date().getTime() - startTimeCurrentSpec));
         },
 
         jasmineDone() {
@@ -52,7 +52,7 @@ export default class JasmineTestRunner implements TestRunner {
   }
 
   private createJasmineRunner() {
-    const jasmine = new Jasmine({ projectBaseDir: process.cwd() });
+    const jasmine = new JASMINE({ projectBaseDir: process.cwd() });
     // The `loadConfigFile` will fallback on the default
     jasmine.loadConfigFile(this.jasmineConfigFile);
     jasmine.stopSpecOnExpectationFailure(true);

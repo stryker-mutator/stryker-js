@@ -8,7 +8,7 @@ import StrykerConfigWriter from './StrykerConfigWriter';
 import CommandTestRunner from '../test-runner/CommandTestRunner';
 import Preset from './presets/Preset';
 import { initializerTokens } from '.';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { PackageInfo } from './PackageInfo';
 
 const enum PackageManager {
@@ -19,12 +19,12 @@ const enum PackageManager {
 export default class StrykerInitializer {
 
   public static inject = tokens(
-    commonTokens.logger,
-    initializerTokens.out,
-    initializerTokens.npmClient,
-    initializerTokens.strykerPresets,
-    initializerTokens.configWriter,
-    initializerTokens.inquirer);
+    COMMON_TOKENS.logger,
+    initializerTokens.Out,
+    initializerTokens.NpmClient,
+    initializerTokens.StrykerPresets,
+    initializerTokens.ConfigWriter,
+    initializerTokens.Inquirer);
   constructor(private readonly log: Logger,
               private readonly out: typeof console.log,
               private readonly client: NpmClient,

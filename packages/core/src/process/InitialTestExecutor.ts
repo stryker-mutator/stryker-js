@@ -11,14 +11,14 @@ import InputFileCollection from '../input/InputFileCollection';
 import SourceMapper from '../transpiler/SourceMapper';
 import { coveragePerTestHooks } from '../transpiler/coverageHooks';
 import LoggingClientContext from '../logging/LoggingClientContext';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.
 // Lets take 5 minutes just to be sure
-const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
-const INITIAL_TEST_RUN_MARKER = 'Initial test run';
+const initialRunTimeout = 60 * 1000 * 5;
+const initialTestRunMarker = 'Initial test run';
 
 export interface InitialTestRunResult {
   runResult: RunResult;
@@ -45,13 +45,13 @@ interface Timing {
 export default class InitialTestExecutor {
 
   public static inject = tokens(
-    commonTokens.options,
-    commonTokens.logger,
-    coreTokens.inputFiles,
-    coreTokens.testFramework,
-    coreTokens.timer,
-    coreTokens.loggingContext,
-    coreTokens.transpiler);
+    COMMON_TOKENS.options,
+    COMMON_TOKENS.logger,
+    coreTokens.InputFiles,
+    coreTokens.TestFramework,
+    coreTokens.Timer,
+    coreTokens.LoggingContext,
+    coreTokens.Transpiler);
 
   constructor(
     private readonly options: StrykerOptions,
@@ -92,9 +92,9 @@ export default class InitialTestExecutor {
 
   private async runInSandbox(files: ReadonlyArray<File>): Promise<{ runResult: RunResult, grossTimeMS: number }> {
     const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0, this.loggingContext);
-    this.timer.mark(INITIAL_TEST_RUN_MARKER);
-    const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT, this.getCollectCoverageHooksIfNeeded());
-    const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
+    this.timer.mark(initialTestRunMarker);
+    const runResult = await sandbox.run(initialRunTimeout, this.getCollectCoverageHooksIfNeeded());
+    const grossTimeMS = this.timer.elapsedMs(initialTestRunMarker);
     await sandbox.dispose();
     return { runResult, grossTimeMS };
   }

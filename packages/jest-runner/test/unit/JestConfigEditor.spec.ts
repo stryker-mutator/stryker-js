@@ -6,7 +6,7 @@ import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../src/conf
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../src/configLoaders/ReactScriptsTSJestConfigLoader';
 import jest from 'jest';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 
 describe('JestConfigEditor', () => {
   let sut: JestConfigEditor;
@@ -29,7 +29,7 @@ describe('JestConfigEditor', () => {
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsTSJestConfigLoaderStub.loadConfig.returns(defaultOptions);
 
-    sut = testInjector.injector.injectClass(JestConfigEditor);
+    sut = TEST_INJECTOR.injector.injectClass(JestConfigEditor);
     config = new Config();
   });
 

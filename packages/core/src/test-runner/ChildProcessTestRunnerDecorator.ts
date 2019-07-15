@@ -6,7 +6,7 @@ import { timeout } from '../utils/objectUtils';
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-const MAX_WAIT_FOR_DISPOSE = 2000;
+const maxWaitForDispose = 2000;
 
 /**
  * Runs the given test runner in a child process and forwards reports about test results
@@ -49,7 +49,7 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
       }),
 
       // ... but don't wait forever on that
-      MAX_WAIT_FOR_DISPOSE
+      maxWaitForDispose
     );
 
     // After that, dispose the child process itself

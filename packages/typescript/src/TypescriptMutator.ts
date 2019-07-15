@@ -4,20 +4,20 @@ import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { parseFile, getTSConfig } from './helpers/tsHelpers';
 import NodeMutator from './mutator/NodeMutator';
-import { commonTokens, tokens, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
-import { nodeMutators } from './mutator';
+import { COMMON_TOKENS, tokens, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
+import { NODE_MUTATORS } from './mutator';
 
 export function typescriptMutatorFactory(injector: Injector<OptionsContext>): TypescriptMutator {
   return injector
-    .provideValue(MUTATORS_TOKEN, nodeMutators)
+    .provideValue(MUTATORS_TOKEN, NODE_MUTATORS)
     .injectClass(TypescriptMutator);
 }
-typescriptMutatorFactory.inject = tokens(commonTokens.injector);
+typescriptMutatorFactory.inject = tokens(COMMON_TOKENS.injector);
 
 export const MUTATORS_TOKEN = 'mutators';
 export class TypescriptMutator {
 
-  public static inject = tokens(commonTokens.options, MUTATORS_TOKEN);
+  public static inject = tokens(COMMON_TOKENS.options, MUTATORS_TOKEN);
   constructor(private readonly options: StrykerOptions, public mutators: ReadonlyArray<NodeMutator>) { }
 
   public mutate(inputFiles: File[]): Mutant[] {

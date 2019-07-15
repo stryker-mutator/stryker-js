@@ -13,9 +13,9 @@ import {
 import StrykerKarmaSetup, { NgConfigOptions } from '../../src/StrykerKarmaSetup';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 
 describe('KarmaTestRunner', () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
@@ -32,11 +32,11 @@ describe('KarmaTestRunner', () => {
     setGlobalsStub = sinon.stub(strykerKarmaConf, 'setGlobals');
     karmaRunStub = sinon.stub(karma.runner, 'run');
     sinon.stub(TestHooksMiddleware, 'instance').value({});
-    getLogger = testInjector.injector.resolve(commonTokens.getLogger);
+    getLogger = TEST_INJECTOR.injector.resolve(COMMON_TOKENS.getLogger);
   });
 
   function createSut() {
-    return testInjector.injector.injectClass(KarmaTestRunner);
+    return TEST_INJECTOR.injector.injectClass(KarmaTestRunner);
   }
 
   it('should load default setup', () => {
@@ -56,7 +56,7 @@ describe('KarmaTestRunner', () => {
       configFile: 'baz.conf.js',
       projectType: 'angular-cli'
     };
-    testInjector.options.karma = expectedSetup;
+    TEST_INJECTOR.options.karma = expectedSetup;
     createSut();
     expect(setGlobalsStub).calledWith({
       getLogger,
@@ -64,7 +64,7 @@ describe('KarmaTestRunner', () => {
       karmaConfigFile: expectedSetup.configFile
     });
 
-    expect(testInjector.logger.warn).not.called;
+    expect(TEST_INJECTOR.logger.warn).not.called;
     expect(projectStarterModule.default).calledWith(sinon.match.func, expectedSetup);
   });
   it('should run ng test with parameters from stryker options', () => {
@@ -80,14 +80,14 @@ describe('KarmaTestRunner', () => {
       ngConfig,
       projectType: 'angular-cli'
     };
-    testInjector.options.karma = expectedSetup;
+    TEST_INJECTOR.options.karma = expectedSetup;
     createSut();
     expect(setGlobalsStub).calledWith({
       getLogger,
       karmaConfig: expectedSetup.config,
       karmaConfigFile: expectedSetup.configFile
     });
-    expect(testInjector.logger.warn).not.called;
+    expect(TEST_INJECTOR.logger.warn).not.called;
     expect(projectStarterModule.default).calledWith(sinon.match.func, expectedSetup);
   });
 

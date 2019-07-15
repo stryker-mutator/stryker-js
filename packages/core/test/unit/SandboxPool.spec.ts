@@ -2,7 +2,7 @@ import { File, LogLevel } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunStatus } from '@stryker-mutator/api/test_runner';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { factory, TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { file, testFramework } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as os from 'os';
@@ -18,8 +18,8 @@ import TranspiledMutant from '../../src/TranspiledMutant';
 import { Task } from '../../src/utils/Task';
 import { Mock, mock, transpiledMutant } from '../helpers/producers';
 
-const OVERHEAD_TIME_MS = 42;
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+const overheadTimeMs = 42;
+const loggingContext: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
   port: 4200
 });
@@ -42,9 +42,9 @@ describe(SandboxPool.name, () => {
     firstSandbox.dispose.resolves();
     secondSandbox.dispose.resolves();
     genericSandboxForAllSubsequentCallsToNewSandbox.dispose.resolves();
-    firstSandbox.runMutant.resolves(factory.runResult());
-    genericSandboxForAllSubsequentCallsToNewSandbox.runMutant.resolves(factory.runResult());
-    secondSandbox.runMutant.resolves(factory.runResult());
+    firstSandbox.runMutant.resolves(factory.RUN_RESULT());
+    genericSandboxForAllSubsequentCallsToNewSandbox.runMutant.resolves(factory.RUN_RESULT());
+    secondSandbox.runMutant.resolves(factory.RUN_RESULT());
     inputMutants = [transpiledMutant()];
     createStub = sinon.stub(Sandbox, 'create')
       .resolves(genericSandboxForAllSubsequentCallsToNewSandbox)
@@ -57,7 +57,7 @@ describe(SandboxPool.name, () => {
   function createSut(): SandboxPool {
     const initialRunResult: InitialTestRunResult = {
       coverageMaps: {},
-      overheadTimeMS: OVERHEAD_TIME_MS,
+      overheadTimeMS: overheadTimeMs,
       runResult: { tests: [], status: RunStatus.Complete },
       sourceMapper: {
         transpiledFileNameFor: n => n,
@@ -65,11 +65,11 @@ describe(SandboxPool.name, () => {
       }
     };
 
-    return testInjector.injector
-      .provideValue(coreTokens.testFramework, expectedTestFramework as unknown as TestFramework)
-      .provideValue(coreTokens.initialRunResult, initialRunResult)
-      .provideValue(coreTokens.loggingContext, LOGGING_CONTEXT)
-      .provideValue(coreTokens.transpiledFiles, initialTranspiledFiles)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.TestFramework, expectedTestFramework as unknown as TestFramework)
+      .provideValue(coreTokens.InitialRunResult, initialRunResult)
+      .provideValue(coreTokens.LoggingContext, loggingContext)
+      .provideValue(coreTokens.TranspiledFiles, initialTranspiledFiles)
       .injectClass(SandboxPool);
   }
   function actRunMutants() {
@@ -81,32 +81,32 @@ describe(SandboxPool.name, () => {
   describe('runMutants', () => {
 
     it('should use maxConcurrentTestRunners when set', async () => {
-      testInjector.options.maxConcurrentTestRunners = 1;
+      TEST_INJECTOR.options.maxConcurrentTestRunners = 1;
       sut = createSut();
       await actRunMutants();
       expect(Sandbox.create).to.have.callCount(1);
-      expect(Sandbox.create).calledWith(testInjector.options, 0, initialTranspiledFiles, expectedTestFramework, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
+      expect(Sandbox.create).calledWith(TEST_INJECTOR.options, 0, initialTranspiledFiles, expectedTestFramework, overheadTimeMs, loggingContext);
     });
 
     it('should use cpuCount when maxConcurrentTestRunners is set too high', async () => {
       sinon.stub(os, 'cpus').returns([1, 2, 3]); // stub 3 cpus
-      testInjector.options.maxConcurrentTestRunners = 100;
+      TEST_INJECTOR.options.maxConcurrentTestRunners = 100;
       inputMutants.push(transpiledMutant('file 2.js'));
       inputMutants.push(transpiledMutant('file 3.js'));
 
       sut = createSut();
       await actRunMutants();
       expect(Sandbox.create).to.have.callCount(3);
-      expect(Sandbox.create).calledWith(testInjector.options, 0, initialTranspiledFiles, expectedTestFramework, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
+      expect(Sandbox.create).calledWith(TEST_INJECTOR.options, 0, initialTranspiledFiles, expectedTestFramework, overheadTimeMs, loggingContext);
     });
 
     it('should use the cpuCount when maxConcurrentTestRunners is <= 0', async () => {
       sinon.stub(os, 'cpus').returns([1]); // stub 1 cpus
-      testInjector.options.maxConcurrentTestRunners = 0;
+      TEST_INJECTOR.options.maxConcurrentTestRunners = 0;
       sut = createSut();
       await actRunMutants();
       expect(Sandbox.create).to.have.callCount(1);
-      expect(Sandbox.create).calledWith(testInjector.options, 0, initialTranspiledFiles, expectedTestFramework, OVERHEAD_TIME_MS, LOGGING_CONTEXT);
+      expect(Sandbox.create).calledWith(TEST_INJECTOR.options, 0, initialTranspiledFiles, expectedTestFramework, overheadTimeMs, loggingContext);
     });
 
     it('should create 2 sandboxes at a time', async () => {
@@ -151,7 +151,7 @@ describe(SandboxPool.name, () => {
       createThirdSandboxTask.resolve(genericSandboxForAllSubsequentCallsToNewSandbox as unknown as Sandbox);
       await secondResultTask.promise;
       expect(createStub).callCount(3);
-      firstRunMutantTask.resolve(factory.mutantResult());
+      firstRunMutantTask.resolve(factory.MUTANT_RESULT());
 
       // Assert
       await runTask.promise;
@@ -162,8 +162,8 @@ describe(SandboxPool.name, () => {
     });
 
     it('should use the cpuCount - 1 when a transpiler is configured', async () => {
-      testInjector.options.transpilers = ['a transpiler'];
-      testInjector.options.maxConcurrentTestRunners = 2;
+      TEST_INJECTOR.options.transpilers = ['a transpiler'];
+      TEST_INJECTOR.options.maxConcurrentTestRunners = 2;
       sinon.stub(os, 'cpus').returns([1, 2]); // stub 2 cpus
       sut = createSut();
       await actRunMutants();

@@ -2,7 +2,7 @@ import * as log4js from 'log4js';
 import { LogLevel } from '@stryker-mutator/api/core';
 import { minLevel } from './logUtils';
 import LoggingClientContext from './LoggingClientContext';
-import { getFreePort } from '../utils/netUtils';
+import { GET_FREE_PORT } from '../utils/netUtils';
 
 const enum AppenderName {
   File = 'file',
@@ -29,7 +29,7 @@ interface AppendersConfiguration {
   [name: string]: log4js.Appender;
 }
 
-const LOG_FILE_NAME = 'stryker.log';
+const logFileName = 'stryker.log';
 export default class LogConfigurator {
 
   private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): AppendersConfiguration {
@@ -49,7 +49,7 @@ export default class LogConfigurator {
 
     // only add file if it is needed. Otherwise log4js will create the file directly, pretty annoying.
     if (fileLogLevel.toUpperCase() !== LogLevel.Off.toUpperCase()) {
-      const fileAppender: log4js.FileAppender = { type: 'file', filename: LOG_FILE_NAME, layout: layouts.noColor };
+      const fileAppender: log4js.FileAppender = { type: 'file', filename: logFileName, layout: layouts.noColor };
       const filteredFileAppender: log4js.LogLevelFilterAppender = { type: 'logLevelFilter', appender: 'file', level: fileLogLevel };
 
       // Don't simply add the appenders, instead actually make sure they are ordinal "before" the others.
@@ -93,7 +93,7 @@ export default class LogConfigurator {
    * @returns the context
    */
   public static async configureLoggingServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): Promise<LoggingClientContext> {
-    const loggerPort = await getFreePort();
+    const loggerPort = await GET_FREE_PORT();
 
     // Include the appenders for the main Stryker process, as log4js has only one single `configure` method.
     const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);

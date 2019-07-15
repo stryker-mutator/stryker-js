@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function ObjectLiteralMutatorSpec(
+export default function objectLiteralMutatorSpec(
   name: string,
   expectMutation: ExpectMutation
 ) {

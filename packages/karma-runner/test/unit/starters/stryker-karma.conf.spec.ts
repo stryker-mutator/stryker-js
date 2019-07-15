@@ -6,7 +6,7 @@ import * as utils from '../../../src/utils';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/TestHooksMiddleware';
 import StrykerReporter from '../../../src/StrykerReporter';
 import * as sinon from 'sinon';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 
 describe('stryker-karma.conf.js', () => {
 
@@ -17,7 +17,7 @@ describe('stryker-karma.conf.js', () => {
   beforeEach(() => {
     config = new KarmaConfigMock();
     getLogger = sinon.stub();
-    getLogger.returns(testInjector.logger);
+    getLogger.returns(TEST_INJECTOR.logger);
     requireModuleStub = sinon.stub(utils, 'requireModule');
     sut.setGlobals({
       getLogger
@@ -69,7 +69,7 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
 
     // Assert
-    expect(testInjector.logger.error).calledWithMatch(`Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`);
+    expect(TEST_INJECTOR.logger.error).calledWithMatch(`Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`);
     expect(requireModuleStub).calledWith(path.resolve(expectedKarmaConfigFile));
   });
 
@@ -142,6 +142,7 @@ class KarmaConfigMock implements Config {
       }
     }
   }
+  /* tslint:disable */
   public LOG_DISABLE = 'off';
   public LOG_ERROR = 'error';
   public LOG_WARN = 'warn';

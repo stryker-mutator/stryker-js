@@ -5,7 +5,7 @@ import { NgConfigOptions, NgTestArguments } from '../StrykerKarmaSetup';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import * as path from 'path';
 
-const MIN_ANGULAR_CLI_VERSION = '6.1.0';
+const minAngularCliVersion = '6.1.0';
 
 export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigOptions): Promise<void> {
   const logger: Logger = getLogger(path.basename(__filename));
@@ -48,9 +48,9 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
 
 function verifyAngularCliVersion() {
   const version = semver.coerce(requireModule('@angular/cli/package').version);
-  if (!version || semver.lt(version, MIN_ANGULAR_CLI_VERSION)) {
+  if (!version || semver.lt(version, minAngularCliVersion)) {
     throw new Error(
-      `Your @angular/cli version (${version}) is not supported. Please install ${MIN_ANGULAR_CLI_VERSION} or higher`
+      `Your @angular/cli version (${version}) is not supported. Please install ${minAngularCliVersion} or higher`
     );
   }
 }

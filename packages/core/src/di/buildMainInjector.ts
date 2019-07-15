@@ -1,5 +1,5 @@
 import { coreTokens, PluginCreator } from '.';
-import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
@@ -13,33 +13,33 @@ import ConfigReader from '../config/ConfigReader';
 import Timer from '../utils/Timer';
 
 export interface MainContext extends OptionsContext {
-  [coreTokens.reporter]: Required<Reporter>;
-  [coreTokens.testFramework]: TestFramework | null;
-  [coreTokens.pluginCreatorReporter]: PluginCreator<PluginKind.Reporter>;
-  [coreTokens.pluginCreatorConfigEditor]: PluginCreator<PluginKind.ConfigEditor>;
-  [coreTokens.pluginCreatorMutator]: PluginCreator<PluginKind.Mutator>;
-  [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
-  [coreTokens.timer]: Timer;
+  [coreTokens.Reporter]: Required<Reporter>;
+  [coreTokens.TestFramework]: TestFramework | null;
+  [coreTokens.PluginCreatorReporter]: PluginCreator<PluginKind.Reporter>;
+  [coreTokens.PluginCreatorConfigEditor]: PluginCreator<PluginKind.ConfigEditor>;
+  [coreTokens.PluginCreatorMutator]: PluginCreator<PluginKind.Mutator>;
+  [coreTokens.PluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
+  [coreTokens.Timer]: Timer;
 }
 
 export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector<MainContext> {
   return rootInjector
-    .provideValue(commonTokens.getLogger, getLogger)
-    .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
-    .provideValue(coreTokens.cliOptions, cliOptions)
-    .provideClass(coreTokens.configReader, ConfigReader)
-    .provideFactory(coreTokens.configReadFromConfigFile, readConfig)
-    .provideFactory(coreTokens.pluginDescriptors, pluginDescriptorsFactory)
-    .provideFactory(commonTokens.pluginResolver, pluginResolverFactory)
-    .provideFactory(coreTokens.pluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
-    .provideClass(coreTokens.configEditorApplier, ConfigEditorApplier)
-    .provideFactory(commonTokens.options, optionsFactory)
-    .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
-    .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
-    .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
-    .provideClass(coreTokens.reporter, BroadcastReporter)
-    .provideFactory(coreTokens.testFramework, testFrameworkFactory)
-    .provideClass(coreTokens.timer, Timer);
+    .provideValue(COMMON_TOKENS.getLogger, getLogger)
+    .provideFactory(COMMON_TOKENS.logger, loggerFactory, Scope.Transient)
+    .provideValue(coreTokens.CliOptions, cliOptions)
+    .provideClass(coreTokens.ConfigReader, ConfigReader)
+    .provideFactory(coreTokens.ConfigReadFromConfigFile, readConfig)
+    .provideFactory(coreTokens.PluginDescriptors, pluginDescriptorsFactory)
+    .provideFactory(COMMON_TOKENS.pluginResolver, pluginResolverFactory)
+    .provideFactory(coreTokens.PluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
+    .provideClass(coreTokens.ConfigEditorApplier, ConfigEditorApplier)
+    .provideFactory(COMMON_TOKENS.options, optionsFactory)
+    .provideFactory(coreTokens.PluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
+    .provideFactory(coreTokens.PluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
+    .provideFactory(coreTokens.PluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
+    .provideClass(coreTokens.Reporter, BroadcastReporter)
+    .provideFactory(coreTokens.TestFramework, testFrameworkFactory)
+    .provideClass(coreTokens.Timer, Timer);
 }
 
 function pluginDescriptorsFactory(config: Config): ReadonlyArray<string> {
@@ -48,4 +48,4 @@ function pluginDescriptorsFactory(config: Config): ReadonlyArray<string> {
   );
   return config.plugins;
 }
-pluginDescriptorsFactory.inject = tokens(coreTokens.configReadFromConfigFile);
+pluginDescriptorsFactory.inject = tokens(coreTokens.ConfigReadFromConfigFile);

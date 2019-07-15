@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function ConditionalExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
+export default function conditionalExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
 
   describe('ConditionalExpressionMutator', () => {
 

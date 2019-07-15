@@ -5,21 +5,21 @@ import InputFileSystem from '../fs/InputFileSystem';
 import OutputFileSystem from '../fs/OutputFileSystem';
 
 export default class WebpackCompiler {
-  private readonly _compiler: Compiler;
+  private readonly compiler: Compiler;
 
   public constructor(webpackConfig: Configuration,
-                     private readonly _inputFS = new InputFileSystem(),
-                     private readonly _outputFS = new OutputFileSystem()) {
-    this._compiler = this.createCompiler(webpackConfig);
+                     private readonly inputFS = new InputFileSystem(),
+                     private readonly outputFS = new OutputFileSystem()) {
+    this.compiler = this.createCompiler(webpackConfig);
   }
 
   private createCompiler(webpackConfig: Configuration): Compiler {
     const compiler = webpack(webpackConfig);
     // Setting filesystem to provided fs so compilation can be done in memory
-    (compiler as any).inputFileSystem = this._inputFS;
-    compiler.outputFileSystem = this._outputFS;
-    (compiler as any).resolvers.normal.fileSystem = this._inputFS;
-    (compiler as any).resolvers.context.fileSystem = this._inputFS;
+    (compiler as any).inputFileSystem = this.inputFS;
+    compiler.outputFileSystem = this.outputFS;
+    (compiler as any).resolvers.normal.fileSystem = this.inputFS;
+    (compiler as any).resolvers.context.fileSystem = this.inputFS;
 
     return compiler as Compiler;
   }
@@ -29,20 +29,20 @@ export default class WebpackCompiler {
   }
 
   private writeToFs(file: File): void {
-    this._inputFS.writeFileSync(file.name, file.content);
+    this.inputFS.writeFileSync(file.name, file.content);
   }
 
   public emit(): Promise<File[]> {
     return this.compile().then(() => {
-      const outputFiles = this._outputFS.collectFiles();
-      this._outputFS.purge();
+      const outputFiles = this.outputFS.collectFiles();
+      this.outputFS.purge();
       return outputFiles;
     });
   }
 
   private compile(): Promise<webpack.Stats> {
     return new Promise<webpack.Stats>((resolve, reject) => {
-      this._compiler.run((err, stats) => {
+      this.compiler.run((err, stats) => {
         if (err) {
           reject(err);
         } else if (stats.hasErrors()) {

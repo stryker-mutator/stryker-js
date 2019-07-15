@@ -11,12 +11,12 @@ export default class TestHooksMiddleware {
     this.handler = this.handler.bind(this);
   }
 
-  private static _instance: TestHooksMiddleware;
+  private static innerInstance: TestHooksMiddleware;
   static get instance(): TestHooksMiddleware {
-    if (!this._instance) {
-      this._instance = new TestHooksMiddleware();
+    if (!this.innerInstance) {
+      this.innerInstance = new TestHooksMiddleware();
     }
-    return this._instance;
+    return this.innerInstance;
   }
 
   public currentTestHooks: string = '';

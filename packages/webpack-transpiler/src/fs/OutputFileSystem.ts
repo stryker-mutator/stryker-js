@@ -5,7 +5,7 @@ import { File } from '@stryker-mutator/api/core';
 
 export default class OutputFileSystem implements webpack.OutputFileSystem {
 
-  private _files: {
+  private files: {
     [name: string]: string | Buffer;
   };
 
@@ -14,12 +14,12 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
   }
 
   public purge() {
-    this._files = Object.create(null);
+    this.files = Object.create(null);
   }
 
   public collectFiles(): File[] {
-    return Object.keys(this._files).map(fileName =>
-      new File(fileName, this._files[fileName]));
+    return Object.keys(this.files).map(fileName =>
+      new File(fileName, this.files[fileName]));
   }
 
   public mkdirp(_dir: string, opts: any, cb?: Callback<string>): void {
@@ -37,13 +37,13 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
 
   public unlink(name: PathLike, callback: EmptyCallback): void {
     const fullName = path.resolve(name.toString());
-    delete this._files[fullName];
+    delete this.files[fullName];
     callback();
   }
 
   public writeFile(name: PathLike | number, data: any, options: any, cb?: EmptyCallback): void {
     const callback: EmptyCallback = cb || options;
-    this._files[path.resolve(name.toString())] = data;
+    this.files[path.resolve(name.toString())] = data;
     callback();
   }
 

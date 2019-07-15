@@ -1,13 +1,13 @@
 import { jestTestAdapterFactory, JEST_VERSION_TOKEN, JestTestAdapter } from '../../../src/jestTestAdapters';
 import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
 import { expect } from 'chai';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 
 describe(jestTestAdapterFactory.name, () => {
   let jestVersion: string;
 
   function act(): JestTestAdapter {
-    return testInjector.injector
+    return TEST_INJECTOR.injector
       .provideValue(JEST_VERSION_TOKEN, jestVersion)
       .injectFunction(jestTestAdapterFactory);
   }
@@ -23,7 +23,7 @@ describe(jestTestAdapterFactory.name, () => {
     jestVersion = '21.0.0';
 
     expect(() => act()).to.throw(Error, 'You need Jest version >= 22.0.0 to use Stryker');
-    expect(testInjector.logger.debug).calledWith('Detected Jest below 22.0.0: %s', jestVersion);
+    expect(TEST_INJECTOR.logger.debug).calledWith('Detected Jest below 22.0.0: %s', jestVersion);
   });
 
 });

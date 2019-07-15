@@ -3,14 +3,14 @@ import DashboardReporterClient from './DashboardReporterClient';
 import { getEnvironmentVariable } from '../../utils/objectUtils';
 import { Logger } from '@stryker-mutator/api/logging';
 import { determineCIProvider } from '../ci/Provider';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { dashboardReporterTokens } from './tokens';
+import { COMMON_TOKENS, tokens } from '@stryker-mutator/api/plugin';
+import { DASHBOARD_REPORTER_TOKENS } from './tokens';
 import { calculateMetrics } from 'mutation-testing-metrics';
 
 export default class DashboardReporter implements Reporter {
 
   private readonly ciProvider = determineCIProvider();
-  public static readonly inject = tokens(commonTokens.logger, dashboardReporterTokens.dashboardReporterClient);
+  public static readonly inject = tokens(COMMON_TOKENS.logger, DASHBOARD_REPORTER_TOKENS.dashboardReporterClient);
 
   constructor(
     private readonly log: Logger,

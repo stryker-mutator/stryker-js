@@ -12,7 +12,7 @@ import SourceFile from '../SourceFile';
 import LocationHelper from '../utils/LocationHelper';
 import { InitialTestRunResult } from '../process/InitialTestExecutor';
 import InputFileCollection from '../input/InputFileCollection';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS, tokens } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 
 const enum StatementIndexKind {
@@ -31,7 +31,7 @@ interface StatementIndex {
 
 export class MutantTestMatcher {
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter, coreTokens.inputFiles, coreTokens.initialRunResult);
+  public static inject = tokens(COMMON_TOKENS.logger, COMMON_TOKENS.options, coreTokens.Reporter, coreTokens.InputFiles, coreTokens.InitialRunResult);
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
@@ -176,7 +176,7 @@ export class MutantTestMatcher {
   private findMatchingStatementInMap(needle: LocationHelper, haystack: StatementMap): string | null {
     let smallestStatement: { index: string | null, location: LocationHelper } = {
       index: null,
-      location: LocationHelper.MAX_VALUE
+      location: LocationHelper.maxValue
     };
     if (haystack) {
       Object.keys(haystack).forEach(statementId => {

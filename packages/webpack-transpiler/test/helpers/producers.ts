@@ -30,7 +30,7 @@ function createFactory<T>(defaultFn: () => T): (overrides?: Partial<T>) => T {
   return overrides => Object.assign(defaultFn(), overrides);
 }
 
-export const createStrykerWebpackConfig = createFactory<StrykerWebpackConfig>(() => ({
+export const CREATE_STRYKER_WEBPACK_CONFIG = createFactory<StrykerWebpackConfig>(() => ({
   configFile: undefined,
   context: '/path/to/project/root',
   silent: true

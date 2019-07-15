@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as util from '../../src/util';
 import HtmlReporter from '../../src/HtmlReporter';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { bindMutationTestReport } from '../../src/templates/bindMutationTestReport';
 
@@ -17,18 +17,18 @@ describe(HtmlReporter.name, () => {
   beforeEach(() => {
     copyFileStub = sinon.stub(util, 'copyFile');
     writeFileStub = sinon.stub(util, 'writeFile');
-    deleteDirStub = sinon.stub(util, 'deleteDir');
-    mkdirStub = sinon.stub(util, 'mkdir');
-    sut = testInjector.injector.injectClass(HtmlReporter);
+    deleteDirStub = sinon.stub(util, 'DELETE_DIR');
+    mkdirStub = sinon.stub(util, 'MK_DIR');
+    sut = TEST_INJECTOR.injector.injectClass(HtmlReporter);
   });
 
   describe('onMutationTestReportReady', () => {
 
     it('should use configured base directory', async () => {
-      testInjector.options.htmlReporter = { baseDir: 'foo/bar' };
+      TEST_INJECTOR.options.htmlReporter = { baseDir: 'foo/bar' };
       actReportReady();
       await sut.wrapUp();
-      expect(testInjector.logger.debug).calledWith('Using configured output folder foo/bar');
+      expect(TEST_INJECTOR.logger.debug).calledWith('Using configured output folder foo/bar');
       expect(deleteDirStub).calledWith('foo/bar');
     });
 
@@ -36,7 +36,7 @@ describe(HtmlReporter.name, () => {
       const expectedBaseDir = path.normalize('reports/mutation/html');
       actReportReady();
       await sut.wrapUp();
-      expect(testInjector.logger.debug).calledWith(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${expectedBaseDir}`);
+      expect(TEST_INJECTOR.logger.debug).calledWith(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${expectedBaseDir}`);
       expect(deleteDirStub).calledWith(expectedBaseDir);
     });
 

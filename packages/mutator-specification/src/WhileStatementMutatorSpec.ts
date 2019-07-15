@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function WhileStatementMutatorSpec(name: string, expectMutation: ExpectMutation) {
+export default function whileStatementMutatorSpec(name: string, expectMutation: ExpectMutation) {
 
   describe('WhileStatementMutator', () => {
 

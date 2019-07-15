@@ -1,7 +1,7 @@
 import JestTestAdapter from './JestTestAdapter';
 import JestPromiseAdapter from './JestPromiseTestAdapter';
 import semver from 'semver';
-import { Injector, BaseContext, tokens, commonTokens} from '@stryker-mutator/api/plugin';
+import { Injector, BaseContext, tokens, COMMON_TOKENS} from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
 export const JEST_VERSION_TOKEN = 'jestVersion';
@@ -15,7 +15,7 @@ export function jestTestAdapterFactory(log: Logger, jestVersion: string, injecto
   }
 }
 
-jestTestAdapterFactory.inject = tokens(commonTokens.logger, JEST_VERSION_TOKEN, commonTokens.injector);
+jestTestAdapterFactory.inject = tokens(COMMON_TOKENS.logger, JEST_VERSION_TOKEN, COMMON_TOKENS.injector);
 export {
   JestTestAdapter
 };

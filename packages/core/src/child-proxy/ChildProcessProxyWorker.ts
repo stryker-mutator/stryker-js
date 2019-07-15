@@ -3,7 +3,7 @@ import { getLogger, Logger } from 'log4js';
 import { File } from '@stryker-mutator/api/core';
 import { serialize, deserialize } from '../utils/objectUtils';
 import { errorToString } from '@stryker-mutator/util';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind, CallMessage } from './messageProtocol';
+import { WorkerMessage, WorkerMessageKind, ParentMessage, AUTO_START, ParentMessageKind, CallMessage } from './messageProtocol';
 import LogConfigurator from '../logging/LogConfigurator';
 import { buildChildProcessInjector } from '../di';
 import { Config } from '@stryker-mutator/api/config';
@@ -38,13 +38,13 @@ export default class ChildProcessProxyWorker {
         for (const token of Object.keys(locals)) {
           injector = injector.provideValue(token, locals[token]);
         }
-        const RealSubjectClass = require(message.requirePath)[message.requireName];
+        const realSubjectClass = require(message.requirePath)[message.requireName];
         const workingDir = path.resolve(message.workingDirectory);
         if (process.cwd() !== workingDir) {
           this.log.debug(`Changing current working directory for this process to ${workingDir}`);
           process.chdir(workingDir);
         }
-        this.realSubject = injector.injectClass(RealSubjectClass);
+        this.realSubject = injector.injectClass(realSubjectClass);
         this.send({ kind: ParentMessageKind.Initialized });
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
@@ -119,6 +119,6 @@ export default class ChildProcessProxyWorker {
 
 // Prevent side effects for merely requiring the file
 // Only actually start the child worker when it is requested
-if (process.argv.indexOf(autoStart) !== -1) {
+if (process.argv.indexOf(AUTO_START) !== -1) {
   new ChildProcessProxyWorker();
 }

@@ -4,10 +4,10 @@ import * as _ from 'lodash';
 import { tokens } from 'typed-inject';
 import { importModule } from '../utils/fileUtils';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { Plugin, PluginKind, PluginResolver, Plugins, commonTokens } from '@stryker-mutator/api/plugin';
-import * as coreTokens from './coreTokens';
+import { Plugin, PluginKind, PluginResolver, Plugins, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
+import coreTokens from './coreTokens';
 
-const IGNORED_PACKAGES = ['core', 'api', 'util'];
+const ignoredPackages = ['core', 'api', 'util'];
 
 interface PluginModule {
   strykerPlugins: Plugin<any>[];
@@ -16,7 +16,7 @@ interface PluginModule {
 export class PluginLoader implements PluginResolver {
   private readonly pluginsByKind: Map<PluginKind, Plugin<any>[]> = new Map();
 
-  public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
+  public static inject = tokens(COMMON_TOKENS.logger, coreTokens.PluginDescriptors);
   constructor(private readonly log: Logger, private readonly pluginDescriptors: ReadonlyArray<string>) { }
 
   public load() {
@@ -58,7 +58,7 @@ export class PluginLoader implements PluginResolver {
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
           const plugins = fsAsPromised.readdirSync(pluginDirectory)
-            .filter(pluginName => IGNORED_PACKAGES.indexOf(pluginName) === -1 && regexp.test(pluginName))
+            .filter(pluginName => ignoredPackages.indexOf(pluginName) === -1 && regexp.test(pluginName))
             .map(pluginName => path.resolve(pluginDirectory, pluginName));
           if (plugins.length === 0) {
             this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);

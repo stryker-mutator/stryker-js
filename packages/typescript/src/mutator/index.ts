@@ -15,7 +15,7 @@ import DoStatementMutator from './DoStatementMutator';
 import ConditionalExpressionMutator from './ConditionalExpressionMutator';
 import PrefixUnaryExpressionMutator from './PrefixUnaryExpressionMutator';
 
-export const nodeMutators: ReadonlyArray<NodeMutator> = [
+export const NODE_MUTATORS: ReadonlyArray<NodeMutator> = [
   new BinaryExpressionMutator(),
   new BooleanSubstitutionMutator(),
   new ArrayLiteralMutator(),

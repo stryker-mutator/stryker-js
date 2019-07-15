@@ -1,7 +1,7 @@
 import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR, factory } from '@stryker-mutator/test-helpers';
 import { PluginKind } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../../src/di';
 import { PluginCreator } from '../../src/di/PluginCreator';
@@ -19,37 +19,37 @@ describe('TestFrameworkOrchestrator', () => {
     it('should not retrieve a testFramework', () => {
       const actualTestFramework = sut.determineTestFramework();
       expect(actualTestFramework).to.be.eq(null);
-      expect(testInjector.pluginResolver.resolve).not.called;
+      expect(TEST_INJECTOR.pluginResolver.resolve).not.called;
     });
   };
 
   const itShouldLogCoverageAnalysisOffOnDebug = () => {
     it('should log on debug that coverageAnalysis was "off"', () => {
       sut.determineTestFramework();
-      expect(testInjector.logger.debug).calledWith('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', 'off');
+      expect(TEST_INJECTOR.logger.debug).calledWith('The `coverageAnalysis` setting is "%s", not hooking into the test framework to achieve performance benefits.', 'off');
     });
   };
 
   const itShouldNotLogAWarningAboutTheMissingSetting = () => {
     it('should not log a warning for the missing setting', () => {
       sut.determineTestFramework();
-      expect(testInjector.logger.warn).not.called;
+      expect(TEST_INJECTOR.logger.warn).not.called;
     });
   };
 
   beforeEach(() => {
-    testInjector.options.coverageAnalysis = 'perTest';
+    TEST_INJECTOR.options.coverageAnalysis = 'perTest';
   });
 
   describe('when options contains a testFramework', () => {
 
     beforeEach(() => {
-      testInjector.options.testFramework = 'fooFramework';
+      TEST_INJECTOR.options.testFramework = 'fooFramework';
     });
 
     describe('and coverageAnalysis is explicitly "off"', () => {
       beforeEach(() => {
-        testInjector.options.coverageAnalysis = 'off';
+        TEST_INJECTOR.options.coverageAnalysis = 'off';
         sut = createSut();
       });
 
@@ -60,8 +60,8 @@ describe('TestFrameworkOrchestrator', () => {
     it('should retrieve the test framework if coverageAnalysis is not "off"', () => {
       const expectedTestFramework = factory.testFramework();
       pluginCreatorMock.create.returns(expectedTestFramework);
-      testInjector.options.coverageAnalysis = 'perTest';
-      testInjector.options.testFramework = 'foo';
+      TEST_INJECTOR.options.coverageAnalysis = 'perTest';
+      TEST_INJECTOR.options.testFramework = 'foo';
       sut = createSut();
       const actualTestFramework = sut.determineTestFramework();
       expect(actualTestFramework).eq(expectedTestFramework);
@@ -80,7 +80,7 @@ describe('TestFrameworkOrchestrator', () => {
       it('should log a warning for the missing setting', () => {
         sut = createSut();
         sut.determineTestFramework();
-        expect(testInjector.logger.warn)
+        expect(TEST_INJECTOR.logger.warn)
           .calledWith('Missing config settings `testFramework`. Set `coverageAnalysis` option explicitly to "off" to ignore this warning.');
       });
 
@@ -89,7 +89,7 @@ describe('TestFrameworkOrchestrator', () => {
     describe('and coverageAnalysis is `off`', () => {
 
       beforeEach(() => {
-        testInjector.options.coverageAnalysis = 'off';
+        TEST_INJECTOR.options.coverageAnalysis = 'off';
         sut = createSut();
       });
       itShouldNotLogAWarningAboutTheMissingSetting();
@@ -99,8 +99,8 @@ describe('TestFrameworkOrchestrator', () => {
   });
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(coreTokens.pluginCreatorTestFramework, pluginCreatorMock as unknown as PluginCreator<PluginKind.TestFramework>)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.PluginCreatorTestFramework, pluginCreatorMock as unknown as PluginCreator<PluginKind.TestFramework>)
       .injectClass(TestFrameworkOrchestrator);
   }
 });

@@ -3,13 +3,13 @@ import { MutatorDescriptor, MutationScoreThresholds, LogLevel, StrykerOptions } 
 import { Config } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 import { StrykerError } from '@stryker-mutator/util';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 
 export default class ConfigValidator {
 
   private isValid = true;
-  public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.testFramework);
+  public static inject = tokens(COMMON_TOKENS.logger, COMMON_TOKENS.options, coreTokens.TestFramework);
   constructor(
     private readonly log: Logger,
     private readonly options: Readonly<StrykerOptions>,
@@ -74,9 +74,9 @@ export default class ConfigValidator {
 
   private validateLogLevel(logProperty: 'logLevel' | 'fileLogLevel') {
     const logLevel = this.options[logProperty];
-    const VALID_LOG_LEVEL_VALUES = [LogLevel.Fatal, LogLevel.Error, LogLevel.Warning, LogLevel.Information, LogLevel.Debug, LogLevel.Trace, LogLevel.Off];
-    if (VALID_LOG_LEVEL_VALUES.indexOf(logLevel) < 0) {
-      this.invalidate(`Value "${logLevel}" is invalid for \`logLevel\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`);
+    const validLogLevelValues = [LogLevel.Fatal, LogLevel.Error, LogLevel.Warning, LogLevel.Information, LogLevel.Debug, LogLevel.Trace, LogLevel.Off];
+    if (validLogLevelValues.indexOf(logLevel) < 0) {
+      this.invalidate(`Value "${logLevel}" is invalid for \`logLevel\`. Expected one of the following: ${this.joinQuotedList(validLogLevelValues)}`);
     }
   }
 
@@ -86,10 +86,10 @@ export default class ConfigValidator {
   }
 
   private validateCoverageAnalysis() {
-    const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
+    const validCoverageAnalysisValues = ['perTest', 'all', 'off'];
     const coverageAnalysis = this.options.coverageAnalysis;
-    if (VALID_COVERAGE_ANALYSIS_VALUES.indexOf(coverageAnalysis) < 0) {
-      this.invalidate(`Value "${coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the following: ${this.joinQuotedList(VALID_COVERAGE_ANALYSIS_VALUES)}`);
+    if (validCoverageAnalysisValues.indexOf(coverageAnalysis) < 0) {
+      this.invalidate(`Value "${coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the following: ${this.joinQuotedList(validCoverageAnalysisValues)}`);
     }
   }
 

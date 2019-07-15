@@ -6,7 +6,7 @@ import EventRecorderReporter from './EventRecorderReporter';
 import { PluginKind, declareClassPlugin, declareFactoryPlugin } from '@stryker-mutator/api/plugin';
 import { dashboardReporterFactory } from './dashboard-reporter';
 
-export const strykerPlugins = [
+export const STRYKER_PLUGINS = [
   declareClassPlugin(PluginKind.Reporter, 'clear-text', ClearTextReporter),
   declareClassPlugin(PluginKind.Reporter, 'progress', ProgressReporter),
   declareClassPlugin(PluginKind.Reporter, 'progress-append-only', ProgressAppendOnlyReporter),

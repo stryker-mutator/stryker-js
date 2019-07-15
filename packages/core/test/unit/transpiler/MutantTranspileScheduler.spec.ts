@@ -9,7 +9,7 @@ import TranspileResult from '../../../src/transpiler/TranspileResult';
 import { testableMutant } from '../../helpers/producers';
 import { errorToString } from '@stryker-mutator/util';
 import { Transpiler } from '@stryker-mutator/api/transpile';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { coreTokens } from '../../../src/di';
 import { sleep } from '../../helpers/testUtils';
 import { Disposable } from '@stryker-mutator/api/plugin';
@@ -29,9 +29,9 @@ describe(MutantTranspileScheduler.name, () => {
     };
     transpiledFilesOne = [new File('firstResult.js', 'first result')];
     transpiledFilesTwo = [new File('secondResult.js', 'second result')];
-    sut = testInjector.injector
-      .provideValue(coreTokens.transpiledFiles, initialTranspiledFiles)
-      .provideValue(coreTokens.transpiler, transpilerMock as unknown as Transpiler & Disposable)
+    sut = TEST_INJECTOR.injector
+      .provideValue(coreTokens.TranspiledFiles, initialTranspiledFiles)
+      .provideValue(coreTokens.Transpiler, transpilerMock as unknown as Transpiler & Disposable)
       .injectClass(MutantTranspileScheduler);
   });
 
@@ -121,10 +121,10 @@ describe(MutantTranspileScheduler.name, () => {
     expect(actualResults).deep.eq(expectedResults);
   });
 
-  const MAX_CONCURRENCY = 100;
-  it(`should transpile ${MAX_CONCURRENCY} mutants at a time and not transpile more until \`scheduleNext\` is called`, async () => {    // Arrange
+  const maxConcurrency = 100;
+  it(`should transpile ${maxConcurrency} mutants at a time and not transpile more until \`scheduleNext\` is called`, async () => {    // Arrange
     transpilerMock.transpile.resolves(initialTranspiledFiles);
-    const input = await range(0, MAX_CONCURRENCY + 1).pipe(
+    const input = await range(0, maxConcurrency + 1).pipe(
       map(i => testableMutant(i.toString())),
       toArray()
     ).toPromise();
@@ -133,10 +133,10 @@ describe(MutantTranspileScheduler.name, () => {
 
     // Act & assert
     await sleep();
-    expect(actualResult).lengthOf(MAX_CONCURRENCY);
+    expect(actualResult).lengthOf(maxConcurrency);
     sut.scheduleNext();
     await sleep();
-    expect(actualResult).lengthOf(MAX_CONCURRENCY + 1);
+    expect(actualResult).lengthOf(maxConcurrency + 1);
     subscription.unsubscribe();
   });
 });

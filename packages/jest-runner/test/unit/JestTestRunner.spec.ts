@@ -3,7 +3,7 @@ import * as fakeResults from '../helpers/testResultProducer';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { RunStatus, TestStatus, RunOptions } from '@stryker-mutator/api/test_runner';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { JestTestAdapter } from '../../src/jestTestAdapters';
 
 describe('JestTestRunner', () => {
@@ -18,21 +18,21 @@ describe('JestTestRunner', () => {
     jestTestAdapterMock = { run: sinon.stub() };
     jestTestAdapterMock.run.resolves({ results: { testResults: [] } });
 
-    testInjector.options.jest = { config: { property: 'value' } };
-    testInjector.options.basePath = basePath;
+    TEST_INJECTOR.options.jest = { config: { property: 'value' } };
+    TEST_INJECTOR.options.basePath = basePath;
 
     processEnvMock = {
       NODE_ENV: undefined
     };
 
-    jestTestRunner = testInjector.injector
+    jestTestRunner = TEST_INJECTOR.injector
       .provideValue(PROCESS_ENV_TOKEN, processEnvMock)
       .provideValue(JEST_TEST_ADAPTER_TOKEN, jestTestAdapterMock as unknown as JestTestAdapter)
       .injectClass(JestTestRunner);
   });
 
   it('should log the project root when constructing the JestTestRunner', () => {
-    expect(testInjector.logger.debug).calledWith(`Project root is ${basePath}`);
+    expect(TEST_INJECTOR.logger.debug).calledWith(`Project root is ${basePath}`);
   });
 
   it('should call the run function with the provided config and the projectRoot', async () => {

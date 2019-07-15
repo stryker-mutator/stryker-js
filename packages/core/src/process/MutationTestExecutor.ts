@@ -9,9 +9,9 @@ import { coreTokens } from '../di';
 
 export class MutationTestExecutor {
   public static inject = tokens(
-    coreTokens.reporter,
-    coreTokens.mutantTranspileScheduler,
-    coreTokens.sandboxPool);
+    coreTokens.Reporter,
+    coreTokens.MutantTranspileScheduler,
+    coreTokens.SandboxPool);
   constructor(
     private readonly reporter: StrictReporter,
     private readonly mutantTranspileScheduler: MutantTranspileScheduler,

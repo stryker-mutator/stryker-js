@@ -1,7 +1,7 @@
 import { Reporter, SourceFile, MutantResult, MatchedMutant, ScoreResult, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { Logger } from '@stryker-mutator/api/logging';
 import StrictReporter from './StrictReporter';
-import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS, PluginKind } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens } from 'typed-inject';
 import { coreTokens } from '../di';
@@ -10,9 +10,9 @@ import { PluginCreator } from '../di/PluginCreator';
 export default class BroadcastReporter implements StrictReporter {
 
   public static readonly inject = tokens(
-    commonTokens.options,
-    coreTokens.pluginCreatorReporter,
-    commonTokens.logger);
+    COMMON_TOKENS.options,
+    coreTokens.PluginCreatorReporter,
+    COMMON_TOKENS.logger);
 
   public readonly reporters: {
     [name: string]: Reporter;

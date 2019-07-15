@@ -1,11 +1,11 @@
 import JestTestAdapter from './JestTestAdapter';
 import { Logger } from '@stryker-mutator/api/logging';
 import jest from 'jest';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 
 export default class JestPromiseTestAdapter implements JestTestAdapter {
 
-  public static inject = tokens(commonTokens.logger);
+  public static inject = tokens(COMMON_TOKENS.logger);
   constructor(private readonly log: Logger) {}
 
   public run(jestConfig: jest.Configuration, projectRoot: string, fileNameUnderTest?: string): Promise<jest.RunResult> {

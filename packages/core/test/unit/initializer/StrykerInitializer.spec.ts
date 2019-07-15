@@ -9,7 +9,7 @@ import { Mock } from '../../helpers/producers';
 import NpmClient from '../../../src/initializer/NpmClient';
 import PresetConfiguration from '../../../src/initializer/presets/PresetConfiguration';
 import Preset from '../../../src/initializer/presets/Preset';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { initializerTokens } from '../../../src/initializer';
 import { StrykerInquirer } from '../../../src/initializer/StrykerInquirer';
 import StrykerConfigWriter from '../../../src/initializer/StrykerConfigWriter';
@@ -42,14 +42,14 @@ describe(StrykerInitializer.name, () => {
     fsExistsSync = sinon.stub(fsAsPromised, 'existsSync');
     restClientSearch = sinon.createStubInstance(RestClient);
     restClientPackage = sinon.createStubInstance(RestClient);
-    sut = testInjector.injector
-      .provideValue(initializerTokens.out, out as unknown as typeof console.log)
-      .provideValue(initializerTokens.restClientNpm, restClientPackage as unknown as RestClient)
-      .provideValue(initializerTokens.restClientNpmSearch, restClientSearch as unknown as RestClient)
-      .provideClass(initializerTokens.inquirer, StrykerInquirer)
-      .provideClass(initializerTokens.npmClient, NpmClient)
-      .provideValue(initializerTokens.strykerPresets, presets)
-      .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
+    sut = TEST_INJECTOR.injector
+      .provideValue(initializerTokens.Out, out as unknown as typeof console.log)
+      .provideValue(initializerTokens.RestClientNpm, restClientPackage as unknown as RestClient)
+      .provideValue(initializerTokens.RestClientNpmSearch, restClientSearch as unknown as RestClient)
+      .provideClass(initializerTokens.Inquirer, StrykerInquirer)
+      .provideClass(initializerTokens.NpmClient, NpmClient)
+      .provideValue(initializerTokens.StrykerPresets, presets)
+      .provideClass(initializerTokens.ConfigWriter, StrykerConfigWriter)
       .injectClass(StrykerInitializer);
   });
 
@@ -176,7 +176,7 @@ describe(StrykerInitializer.name, () => {
 
       // Assert
       expect(out).calledWith('Unable to format stryker.conf.js file for you. This is not a big problem, but it might look a bit messy 🙈.');
-      expect(testInjector.logger.debug).calledWith('Prettier exited with error', expectedError);
+      expect(TEST_INJECTOR.logger.debug).calledWith('Prettier exited with error', expectedError);
     });
 
     it('should correctly load dependencies from the preset', async () => {
@@ -350,7 +350,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-runner-plugin). Please check your internet connection.');
+      expect(TEST_INJECTOR.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-runner-plugin). Please check your internet connection.');
       expect(out).calledWith('Unable to select a test runner. You will need to configure it manually.');
       expect(fsAsPromised.writeFile).called;
     });
@@ -371,7 +371,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-framework-plugin). Please check your internet connection.');
+      expect(TEST_INJECTOR.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-framework-plugin). Please check your internet connection.');
       expect(out).calledWith('No stryker test framework plugin found that is compatible with awesome, downgrading coverageAnalysis to "all"');
       expect(fsAsPromised.writeFile).called;
     });
@@ -392,7 +392,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/mutator-plugin). Please check your internet connection.');
+      expect(TEST_INJECTOR.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/mutator-plugin). Please check your internet connection.');
       expect(out).calledWith('Unable to select a mutator. You will need to configure it manually.');
       expect(fsAsPromised.writeFile).called;
     });
@@ -412,7 +412,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/transpiler-plugin). Please check your internet connection.');
+      expect(TEST_INJECTOR.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/transpiler-plugin). Please check your internet connection.');
       expect(out).calledWith('Unable to select transpilers. You will need to configure it manually, if you want to use any.');
       expect(fsAsPromised.writeFile).called;
     });
@@ -433,7 +433,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/reporter-plugin). Please check your internet connection.');
+      expect(TEST_INJECTOR.logger.error).calledWith('Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/reporter-plugin). Please check your internet connection.');
       expect(fsAsPromised.writeFile).called;
     });
 
@@ -453,7 +453,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(testInjector.logger.warn).calledWith('Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually');
+      expect(TEST_INJECTOR.logger.warn).calledWith('Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually');
       expect(fsAsPromised.writeFile).called;
     });
 
@@ -463,7 +463,7 @@ describe(StrykerInitializer.name, () => {
     fsExistsSync.resolves(true);
 
     expect(sut.initialize()).to.be.rejected;
-    expect(testInjector.logger.error).calledWith('Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.');
+    expect(TEST_INJECTOR.logger.error).calledWith('Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.');
   });
 
   const stubTestRunners = (...testRunners: string[]) => {

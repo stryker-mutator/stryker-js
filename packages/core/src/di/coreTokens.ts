@@ -1,24 +1,28 @@
-export const cliOptions = 'cliOptions';
-export const configReader = 'configReader';
-export const configReadFromConfigFile = 'configReadFromConfigFile';
-export const configEditorApplier = 'configEditorApplier';
-export const inputFiles = 'inputFiles';
-export const initialRunResult = 'initialRunResult';
-export const transpiledFiles = 'transpiledFiles';
-export const mutantTranspileScheduler = 'mutantTranspileScheduler';
-export const sandboxPool = 'sandboxPool';
-export const testFramework = 'testFramework';
-export const timer = 'timer';
-export const timeOverheadMS = 'timeOverheadMS';
-export const loggingContext = 'loggingContext';
-export const transpiler = 'transpiler';
-export const sandboxIndex = 'sandboxIndex';
-export const reporter = 'reporter';
-export const pluginKind = 'pluginKind';
-export const pluginDescriptors = 'pluginDescriptors';
-export const pluginCreatorReporter = 'pluginCreatorReporter';
-export const pluginCreatorConfigEditor = 'pluginCreatorConfigEditor';
-export const pluginCreatorTranspiler = 'pluginCreatorTranspiler';
-export const pluginCreatorTestRunner = 'pluginCreatorTestRunner';
-export const pluginCreatorMutator = 'pluginCreatorMutator';
-export const pluginCreatorTestFramework = 'pluginCreatorTestFramework';
+enum Tokens {
+  CliOptions = 'cliOptions',
+  ConfigReader = 'configReader',
+  ConfigReadFromConfigFile = 'configReadFromConfigFile',
+  ConfigEditorApplier = 'configEditorApplier',
+  InputFiles = 'inputFiles',
+  InitialRunResult = 'initialRunResult',
+  LoggingContext = 'loggingContext',
+  MutantTranspileScheduler = 'mutantTranspileScheduler',
+  PluginKind = 'pluginKind',
+  PluginDescriptors = 'pluginDescriptors',
+  PluginCreatorReporter = 'pluginCreatorReporter',
+  PluginCreatorConfigEditor = 'pluginCreatorConfigEditor',
+  PluginCreatorTranspiler = 'pluginCreatorTranspiler',
+  PluginCreatorTestRunner = 'pluginCreatorTestRunner',
+  PluginCreatorMutator = 'pluginCreatorMutator',
+  PluginCreatorTestFramework = 'pluginCreatorTestFramework',
+  Reporter = 'reporter',
+  SandboxIndex = 'sandboxIndex',
+  SandboxPool = 'sandboxPool',
+  TestFramework = 'testFramework',
+  TimeOverheadMS = 'timeOverheadMS',
+  Timer = 'timer',
+  TranspiledFiles = 'transpiledFiles',
+  Transpiler = 'transpiler'
+}
+
+export default Tokens;

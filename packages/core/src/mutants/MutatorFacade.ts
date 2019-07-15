@@ -1,12 +1,12 @@
 import { File, MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
-import { tokens, commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS, PluginKind } from '@stryker-mutator/api/plugin';
 import { PluginCreator, coreTokens } from '../di';
 import { Logger } from '@stryker-mutator/api/logging';
 
 export class MutatorFacade implements Mutator {
 
-  public static inject = tokens(commonTokens.options, coreTokens.pluginCreatorMutator, commonTokens.logger);
+  public static inject = tokens(COMMON_TOKENS.options, coreTokens.PluginCreatorMutator, COMMON_TOKENS.logger);
   constructor(
     private readonly options: StrykerOptions,
     private readonly pluginCreator: PluginCreator<PluginKind.Mutator>,

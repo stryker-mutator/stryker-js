@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function StringLiteralMutatorSpec(name: string, expectMutation: ExpectMutation) {
+export default function stringLiteralMutatorSpec(name: string, expectMutation: ExpectMutation) {
 
   describe('StringLiteralMutator', () => {
 

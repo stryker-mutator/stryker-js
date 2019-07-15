@@ -2,7 +2,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { RunResult, TestRunner, RunStatus, TestResult, TestStatus, RunOptions } from '@stryker-mutator/api/test_runner';
 import jest from 'jest';
 import { jestTestAdapterFactory, JEST_VERSION_TOKEN } from './jestTestAdapters';
-import { tokens, commonTokens, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
 
@@ -13,7 +13,7 @@ export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
     .provideFactory(JEST_TEST_ADAPTER_TOKEN, jestTestAdapterFactory)
     .injectClass(JestTestRunner);
 }
-jestTestRunnerFactory.inject = tokens(commonTokens.injector);
+jestTestRunnerFactory.inject = tokens(COMMON_TOKENS.injector);
 
 export const PROCESS_ENV_TOKEN = 'PROCESS_ENV_TOKEN';
 export const JEST_TEST_ADAPTER_TOKEN = 'jestTestAdapter';
@@ -23,7 +23,7 @@ export default class JestTestRunner implements TestRunner {
 
   private readonly enableFindRelatedTests: boolean;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, PROCESS_ENV_TOKEN, JEST_TEST_ADAPTER_TOKEN);
+  public static inject = tokens(COMMON_TOKENS.logger, COMMON_TOKENS.options, PROCESS_ENV_TOKEN, JEST_TEST_ADAPTER_TOKEN);
   public constructor(private readonly log: Logger, options: StrykerOptions, private readonly processEnvRef: NodeJS.ProcessEnv, private readonly jestTestAdapter: JestTestAdapter) {
     // Get jest configuration from stryker options and assign it to jestConfig
     this.jestConfig = options.jest.config;

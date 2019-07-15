@@ -9,7 +9,7 @@ describe('objectUtils', () => {
     it('should timeout a promise after a set period', async () => {
       const task = new Task();
       const actual = await sut.timeout(task.promise, 0);
-      expect(actual).eq(sut.TimeoutExpired);
+      expect(actual).eq(sut.TIMEOUT_EXPIRED);
       task.resolve(undefined);
     });
 

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function BooleanSubstitutionMutatorSpec(name: string, expectMutation: ExpectMutation) {
+export default function booleanSubstitutionMutatorSpec(name: string, expectMutation: ExpectMutation) {
 
   describe('BooleanSubstitutionMutator', () => {
 

@@ -1,17 +1,17 @@
 import * as fs from 'fs';
 import { expect } from 'chai';
 import HtmlReporter from '../../src/HtmlReporter';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { simpleReport } from './simpleReport';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { SIMPLE_REPORT } from './simpleReport';
 
 describe('HtmlReporter with example math project', () => {
   let sut: HtmlReporter;
   const baseDir = 'reports/mutation/math';
 
   beforeEach(async () => {
-    testInjector.options.htmlReporter = { baseDir };
-    sut = testInjector.injector.injectClass(HtmlReporter);
-    sut.onMutationTestReportReady(simpleReport);
+    TEST_INJECTOR.options.htmlReporter = { baseDir };
+    sut = TEST_INJECTOR.injector.injectClass(HtmlReporter);
+    sut.onMutationTestReportReady(SIMPLE_REPORT);
     await sut.wrapUp();
   });
 
@@ -21,7 +21,7 @@ describe('HtmlReporter with example math project', () => {
     expectFileExists(`${baseDir}/mutation-test-elements.js`, true);
     expectFileExists(`${baseDir}/bind-mutation-test-report.js`, true);
     const bindMutationTestReportContent = fs.readFileSync(`${baseDir}/bind-mutation-test-report.js`, 'utf8');
-    expect(bindMutationTestReportContent).include(JSON.stringify(simpleReport));
+    expect(bindMutationTestReportContent).include(JSON.stringify(SIMPLE_REPORT));
   });
 });
 

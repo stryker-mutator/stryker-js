@@ -27,7 +27,7 @@ try {
  * Wraps Mocha class and require for testability
  */
 export default class LibWrapper {
-  public static Mocha = Mocha;
+  public static mocha = Mocha;
   public static require = require;
   public static multimatch = multimatch;
   public static loadOptions = loadOptions;

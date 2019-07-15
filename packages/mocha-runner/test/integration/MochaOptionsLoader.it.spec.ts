@@ -1,8 +1,8 @@
 import * as path from 'path';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
-import { mochaOptionsKey } from '../../src/utils';
+import { MOCHA_OPTIONS_KEY } from '../../src/utils';
 import { MochaOptions } from '../../src/MochaOptions';
 
 describe(`${MochaOptionsLoader.name} integration`, () => {
@@ -147,11 +147,11 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
   }
 
   function actLoad(mochaConfig: { [key: string]: any }): MochaOptions {
-    testInjector.options[mochaOptionsKey] = mochaConfig;
-    return sut.load(testInjector.options);
+    TEST_INJECTOR.options[MOCHA_OPTIONS_KEY] = mochaConfig;
+    return sut.load(TEST_INJECTOR.options);
   }
 
   function createSut() {
-    return testInjector.injector.injectClass(MochaOptionsLoader);
+    return TEST_INJECTOR.injector.injectClass(MochaOptionsLoader);
   }
 });

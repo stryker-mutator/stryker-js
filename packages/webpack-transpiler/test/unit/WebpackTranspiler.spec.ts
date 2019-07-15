@@ -1,12 +1,12 @@
 import WebpackTranspiler from '../../src/WebpackTranspiler';
 import ConfigLoader from '../../src/compiler/ConfigLoader';
 import WebpackCompiler, * as webpackCompilerModule from '../../src/compiler/WebpackCompiler';
-import { createTextFile, Mock, createMockInstance, createStrykerWebpackConfig } from '../helpers/producers';
+import { createTextFile, Mock, createMockInstance, CREATE_STRYKER_WEBPACK_CONFIG } from '../helpers/producers';
 import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import { Configuration } from 'webpack';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { TEST_INJECTOR, factory } from '@stryker-mutator/test-helpers';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import * as sinon from 'sinon';
 
 describe('WebpackTranspiler', () => {
@@ -29,7 +29,7 @@ describe('WebpackTranspiler', () => {
 
     sinon.stub(webpackCompilerModule, 'default').returns(webpackCompilerStub);
 
-    testInjector.options.webpack = { context: '/path/to/project/root' };
+    TEST_INJECTOR.options.webpack = { context: '/path/to/project/root' };
   });
 
   it('should only create the compiler once', async () => {
@@ -40,12 +40,12 @@ describe('WebpackTranspiler', () => {
     expect(webpackCompilerModule.default).calledOnce;
     expect(webpackCompilerModule.default).calledWithNew;
     expect(configLoaderStub.load).calledOnce;
-    expect(configLoaderStub.load).calledWith(createStrykerWebpackConfig());
+    expect(configLoaderStub.load).calledWith(CREATE_STRYKER_WEBPACK_CONFIG());
   });
 
   it('should throw an error if `produceSourceMaps` is `true`', () => {
-    testInjector.options.coverageAnalysis = 'perTest';
-    expect(() => new WebpackTranspiler(factory.strykerOptions({ coverageAnalysis: 'perTest' }), true, configLoaderStub as unknown as ConfigLoader))
+    TEST_INJECTOR.options.coverageAnalysis = 'perTest';
+    expect(() => new WebpackTranspiler(factory.STRYKER_OPTIONS({ coverageAnalysis: 'perTest' }), true, configLoaderStub as unknown as ConfigLoader))
       .throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off"');
   });
 
@@ -81,8 +81,8 @@ describe('WebpackTranspiler', () => {
   });
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(commonTokens.produceSourceMaps, false)
+    return TEST_INJECTOR.injector
+      .provideValue(COMMON_TOKENS.produceSourceMaps, false)
       .provideValue('configLoader', configLoaderStub as unknown as ConfigLoader)
       .injectClass(WebpackTranspiler);
   }

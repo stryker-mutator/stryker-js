@@ -1,7 +1,7 @@
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { ChildProcessTranspilerWorker } from './ChildProcessTranspilerWorker';
 import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS, tokens } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 import { StrykerOptions, File } from '@stryker-mutator/api/core';
 import LoggingClientContext from '../logging/LoggingClientContext';
@@ -12,9 +12,9 @@ export class ChildProcessTranspiler implements Transpiler, Disposable {
   private readonly childProcess: ChildProcessProxy<ChildProcessTranspilerWorker>;
 
   public static inject = tokens(
-    commonTokens.options,
-    coreTokens.loggingContext,
-    commonTokens.produceSourceMaps);
+    COMMON_TOKENS.options,
+    coreTokens.LoggingContext,
+    COMMON_TOKENS.produceSourceMaps);
 
   constructor(options: StrykerOptions,
               loggingContext: LoggingClientContext,
@@ -23,7 +23,7 @@ export class ChildProcessTranspiler implements Transpiler, Disposable {
       require.resolve(`./${ChildProcessTranspilerWorker.name}`),
       loggingContext,
       options,
-      { [commonTokens.produceSourceMaps]: produceSourceMaps },
+      { [COMMON_TOKENS.produceSourceMaps]: produceSourceMaps },
       process.cwd(),
       ChildProcessTranspilerWorker
     );

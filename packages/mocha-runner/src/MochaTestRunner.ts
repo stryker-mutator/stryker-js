@@ -3,21 +3,21 @@ import * as path from 'path';
 import { TestRunner, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
 import LibWrapper from './LibWrapper';
 import { StrykerMochaReporter } from './StrykerMochaReporter';
-import { mochaOptionsKey, evalGlobal } from './utils';
+import { MOCHA_OPTIONS_KEY, evalGlobal } from './utils';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { MochaOptions } from './MochaOptions';
 
-const DEFAULT_TEST_PATTERN = 'test/**/*.js';
+const defaultTestPattern = 'test/**/*.js';
 
 export default class MochaTestRunner implements TestRunner {
 
   private testFileNames: string[];
   private readonly mochaOptions: MochaOptions;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.sandboxFileNames, commonTokens.options);
+  public static inject = tokens(COMMON_TOKENS.logger, COMMON_TOKENS.sandboxFileNames, COMMON_TOKENS.options);
   constructor(private readonly log: Logger, private readonly allFileNames: ReadonlyArray<string>, options: StrykerOptions) {
-    this.mochaOptions = options[mochaOptionsKey];
+    this.mochaOptions = options[MOCHA_OPTIONS_KEY];
     this.additionalRequires();
     StrykerMochaReporter.log = log;
   }
@@ -51,7 +51,7 @@ export default class MochaTestRunner implements TestRunner {
       this.log.debug(`Using files: ${JSON.stringify(fileNames, null, 2)}`);
     } else {
       this.log.debug(`Tried ${JSON.stringify(globPatternsAbsolute, null, 2)} on files: ${JSON.stringify(this.allFileNames, null, 2)}.`);
-      throw new Error(`[${MochaTestRunner.name}] No files discovered (tried pattern(s) ${JSON.stringify(globPatterns, null, 2)}). Please specify the files (glob patterns) containing your tests in ${mochaOptionsKey}.files in your stryker.conf.js file.`);
+      throw new Error(`[${MochaTestRunner.name}] No files discovered (tried pattern(s) ${JSON.stringify(globPatterns, null, 2)}). Please specify the files (glob patterns) containing your tests in ${MOCHA_OPTIONS_KEY}.files in your stryker.conf.js file.`);
     }
     return fileNames;
   }
@@ -68,7 +68,7 @@ export default class MochaTestRunner implements TestRunner {
       globPatterns.push(...this.mochaOptions.files);
     }
     if (!globPatterns.length) {
-      globPatterns.push(DEFAULT_TEST_PATTERN);
+      globPatterns.push(defaultTestPattern);
     }
     return globPatterns;
   }
@@ -77,7 +77,7 @@ export default class MochaTestRunner implements TestRunner {
     return new Promise<RunResult>((resolve, reject) => {
       try {
         this.purgeFiles();
-        const mocha = new LibWrapper.Mocha({ reporter: StrykerMochaReporter as any, bail: true });
+        const mocha = new LibWrapper.mocha({ reporter: StrykerMochaReporter as any, bail: true });
         this.configure(mocha);
         this.addTestHooks(mocha, testHooks);
         this.addFiles(mocha);

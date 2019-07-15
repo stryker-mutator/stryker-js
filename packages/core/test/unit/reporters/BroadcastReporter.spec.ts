@@ -1,7 +1,7 @@
 import { PluginKind } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { ALL_REPORTER_EVENTS, scoreResult } from '@stryker-mutator/test-helpers/src/factory';
+import { factory, TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { ALL_REPORTER_EVENTS, SCORE_RESULT } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { coreTokens } from '../../../src/di';
@@ -18,7 +18,7 @@ describe('BroadcastReporter', () => {
 
   beforeEach(() => {
     captureTTY();
-    testInjector.options.reporters = ['rep1', 'rep2'];
+    TEST_INJECTOR.options.reporters = ['rep1', 'rep2'];
     rep1 = factory.reporter('rep1');
     rep2 = factory.reporter('rep2');
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
@@ -36,7 +36,7 @@ describe('BroadcastReporter', () => {
       // Arrange
       setTTY(false);
       const expectedReporter = factory.reporter('progress-append-only');
-      testInjector.options.reporters = ['progress'];
+      TEST_INJECTOR.options.reporters = ['progress'];
       pluginCreatorMock.create.returns(expectedReporter);
 
       // Act
@@ -50,7 +50,7 @@ describe('BroadcastReporter', () => {
     it('should create the correct reporters', () => {
       // Arrange
       setTTY(true);
-      testInjector.options.reporters = ['progress', 'rep2'];
+      TEST_INJECTOR.options.reporters = ['progress', 'rep2'];
       const progress = factory.reporter('progress');
       pluginCreatorMock.create.withArgs('progress').returns(progress);
 
@@ -65,9 +65,9 @@ describe('BroadcastReporter', () => {
     });
 
     it('should warn if there is no reporter', () => {
-      testInjector.options.reporters = [];
+      TEST_INJECTOR.options.reporters = [];
       sut = createSut();
-      expect(testInjector.logger.warn).calledWith(sinon.match('No reporter configured'));
+      expect(TEST_INJECTOR.logger.warn).calledWith(sinon.match('No reporter configured'));
     });
   });
 
@@ -116,7 +116,7 @@ describe('BroadcastReporter', () => {
         it('should not result in a rejection', () => result);
 
         it('should log the error', () => {
-          expect(testInjector.logger.error).calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'.`, actualError);
+          expect(TEST_INJECTOR.logger.error).calledWith(`An error occurred during 'wrapUp' on reporter 'rep1'.`, actualError);
         });
       });
     });
@@ -136,7 +136,7 @@ describe('BroadcastReporter', () => {
       it('should log each error', () => {
         ALL_REPORTER_EVENTS.forEach(eventName => {
           (sut as any)[eventName]();
-          expect(testInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'.`, actualError);
+          expect(TEST_INJECTOR.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'.`, actualError);
         });
       });
     });
@@ -150,17 +150,17 @@ describe('BroadcastReporter', () => {
         rep1.onScoreCalculated.returns(() => { });
         (rep2 as any).onScoreCalculated = undefined;
 
-        sut.onScoreCalculated(scoreResult());
+        sut.onScoreCalculated(SCORE_RESULT());
 
-        expect(testInjector.logger.warn).to.have.been.calledWith(`DEPRECATED: The reporter 'rep1' uses 'onScoreCalculated' which is deprecated. Please use 'onMutationTestReportReady' and calculate the score as an alternative.`);
-        expect(testInjector.logger.warn).to.not.have.been.calledWithMatch('rep2');
+        expect(TEST_INJECTOR.logger.warn).to.have.been.calledWith(`DEPRECATED: The reporter 'rep1' uses 'onScoreCalculated' which is deprecated. Please use 'onMutationTestReportReady' and calculate the score as an alternative.`);
+        expect(TEST_INJECTOR.logger.warn).to.not.have.been.calledWithMatch('rep2');
       });
     });
   });
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(coreTokens.pluginCreatorReporter, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.PluginCreatorReporter, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
       .injectClass(BroadcastReporter);
   }
 

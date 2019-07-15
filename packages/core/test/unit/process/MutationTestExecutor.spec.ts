@@ -10,7 +10,7 @@ import { MutationTestExecutor } from '../../../src/process/MutationTestExecutor'
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { MutantTranspileScheduler } from '../../../src/transpiler/MutantTranspileScheduler';
 import { Mock, mock, testableMutant, transpiledMutant } from '../../helpers/producers';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR, factory } from '@stryker-mutator/test-helpers';
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import { from, Observable } from 'rxjs';
@@ -37,8 +37,8 @@ describe(MutationTestExecutor.name, () => {
     mutants = [testableMutant()];
     transpiledMutants = of(transpiledMutant('foo.js'), transpiledMutant('bar.js'));
     mutantResults = [
-      factory.mutantResult({ status: MutantStatus.RuntimeError }),
-      factory.mutantResult({ status: MutantStatus.Survived })
+      factory.MUTANT_RESULT({ status: MutantStatus.RuntimeError }),
+      factory.MUTANT_RESULT({ status: MutantStatus.Survived })
     ];
     mutantTranspileSchedulerMock.scheduleTranspileMutants.returns(transpiledMutants);
     sandboxPoolMock.runMutants.returns(from(mutantResults));
@@ -46,11 +46,11 @@ describe(MutationTestExecutor.name, () => {
   });
 
   function createSut(): MutationTestExecutor {
-    return testInjector.injector
-      .provideValue(coreTokens.sandboxPool, sandboxPoolMock as unknown as SandboxPool)
-      .provideValue(coreTokens.mutantTranspileScheduler, mutantTranspileSchedulerMock as unknown as MutantTranspileScheduler)
-      .provideValue(coreTokens.inputFiles, inputFiles)
-      .provideValue(coreTokens.reporter, reporter)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.SandboxPool, sandboxPoolMock as unknown as SandboxPool)
+      .provideValue(coreTokens.MutantTranspileScheduler, mutantTranspileSchedulerMock as unknown as MutantTranspileScheduler)
+      .provideValue(coreTokens.InputFiles, inputFiles)
+      .provideValue(coreTokens.Reporter, reporter)
       .injectClass(MutationTestExecutor);
   }
 

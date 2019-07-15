@@ -4,9 +4,9 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { Configuration, Plugin } from 'webpack';
-import { createStrykerWebpackConfig } from '../../helpers/producers';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { pluginTokens } from '../../../src/pluginTokens';
+import { CREATE_STRYKER_WEBPACK_CONFIG } from '../../helpers/producers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { PLUGIN_TOKENS } from '../../../src/pluginTokens';
 
 class FooPlugin implements Plugin { public foo = true; public apply() { } }
 class ProgressPlugin implements Plugin { public apply() { } }
@@ -21,8 +21,8 @@ describe('ConfigLoader', () => {
     requireStub = sinon.stub();
     existsSyncStub = sinon.stub(fs, 'existsSync');
 
-    sut = testInjector.injector
-      .provideValue(pluginTokens.require, requireStub)
+    sut = TEST_INJECTOR.injector
+      .provideValue(PLUGIN_TOKENS.require, requireStub)
       .injectClass(ConfigLoader);
   });
 
@@ -30,7 +30,7 @@ describe('ConfigLoader', () => {
     requireStub.returns('resolved');
     existsSyncStub.returns(true);
 
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js' }));
+    const result = await sut.load(CREATE_STRYKER_WEBPACK_CONFIG({ configFile: 'webpack.foo.config.js' }));
     expect(result).eq('resolved');
     expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));
   });
@@ -41,7 +41,7 @@ describe('ConfigLoader', () => {
     requireStub.returns(configFunctionStub);
     existsSyncStub.returns(true);
 
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js', configFileArgs: [1, 2] }));
+    const result = await sut.load(CREATE_STRYKER_WEBPACK_CONFIG({ configFile: 'webpack.foo.config.js', configFileArgs: [1, 2] }));
     expect(result).eq('webpackconfig');
     expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));
     expect(configFunctionStub).calledWith(1, 2);
@@ -58,12 +58,12 @@ describe('ConfigLoader', () => {
     existsSyncStub.returns(true);
 
     // Act
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: true }));
+    const result = await sut.load(CREATE_STRYKER_WEBPACK_CONFIG({ configFile: 'webpack.config.js', silent: true }));
 
     // Assert
     expect(result.plugins).to.be.an('array').that.does.not.deep.include(new ProgressPlugin());
     expect(result.plugins).to.be.an('array').that.deep.equals([new FooPlugin(), new BarPlugin(), bazPlugin]);
-    expect(testInjector.logger.debug).calledWith('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', 'ProgressPlugin');
+    expect(TEST_INJECTOR.logger.debug).calledWith('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', 'ProgressPlugin');
   });
 
   it('should not remove "ProgressPlugin" if silent is `false`', async () => {
@@ -74,7 +74,7 @@ describe('ConfigLoader', () => {
     requireStub.returns(webpackConfig);
     existsSyncStub.returns(true);
 
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: false }));
+    const result = await sut.load(CREATE_STRYKER_WEBPACK_CONFIG({ configFile: 'webpack.config.js', silent: false }));
     expect(result.plugins).to.be.an('array').that.does.deep.include(new ProgressPlugin());
   });
 
@@ -83,7 +83,7 @@ describe('ConfigLoader', () => {
 
     existsSyncStub.returns(false);
 
-    const result = await sut.load(createStrykerWebpackConfig({ context: contextPath }));
+    const result = await sut.load(CREATE_STRYKER_WEBPACK_CONFIG({ context: contextPath }));
 
     expect(result).to.deep.equal({ context: contextPath });
   });
@@ -93,7 +93,7 @@ describe('ConfigLoader', () => {
 
     existsSyncStub.returns(false);
 
-    return expect(sut.load(createStrykerWebpackConfig({ configFile })))
+    return expect(sut.load(CREATE_STRYKER_WEBPACK_CONFIG({ configFile })))
       .rejectedWith(`Could not load webpack config at "${path.resolve(configFile)}", file not found.`);
   });
 
@@ -102,16 +102,16 @@ describe('ConfigLoader', () => {
 
     existsSyncStub.returns(false);
 
-    await sut.load(createStrykerWebpackConfig({ context: contextPath }));
+    await sut.load(CREATE_STRYKER_WEBPACK_CONFIG({ context: contextPath }));
 
-    expect(testInjector.logger.debug).calledWith('Webpack config "%s" not found, trying Webpack 4 zero config');
+    expect(TEST_INJECTOR.logger.debug).calledWith('Webpack config "%s" not found, trying Webpack 4 zero config');
   });
 
   it('should be able to load a webpack configuration asynchonously via a promise', async () => {
     requireStub.returns(Promise.resolve('resolved'));
     existsSyncStub.returns(true);
 
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js' }));
+    const result = await sut.load(CREATE_STRYKER_WEBPACK_CONFIG({ configFile: 'webpack.foo.config.js' }));
 
     expect(result).eq('resolved');
     expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));

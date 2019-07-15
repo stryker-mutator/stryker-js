@@ -1,4 +1,4 @@
-import { Plugin, PluginKind, PluginContexts, PluginInterfaces, FactoryPlugin, ClassPlugin, PluginResolver, tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { Plugin, PluginKind, PluginContexts, PluginInterfaces, FactoryPlugin, ClassPlugin, PluginResolver, tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { Injector, InjectionToken, InjectableFunctionWithInject } from 'typed-inject';
 
 export class PluginCreator<TPluginKind extends PluginKind> {
@@ -30,11 +30,11 @@ export class PluginCreator<TPluginKind extends PluginKind> {
   }
 
   public static createFactory<TPluginKind extends PluginKind, TContext extends PluginContexts[TPluginKind]>(kind: TPluginKind)
-  : InjectableFunctionWithInject<TContext, PluginCreator<TPluginKind>, [typeof commonTokens.pluginResolver, typeof commonTokens.injector]> {
+  : InjectableFunctionWithInject<TContext, PluginCreator<TPluginKind>, [typeof COMMON_TOKENS.pluginResolver, typeof COMMON_TOKENS.injector]> {
     function factory(pluginResolver: PluginResolver, injector: Injector<TContext>): PluginCreator<TPluginKind> {
       return new PluginCreator(kind, pluginResolver, injector);
     }
-    factory.inject = tokens(commonTokens.pluginResolver, commonTokens.injector);
+    factory.inject = tokens(COMMON_TOKENS.pluginResolver, COMMON_TOKENS.injector);
     return factory;
   }
 }

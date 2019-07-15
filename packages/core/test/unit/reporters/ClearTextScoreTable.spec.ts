@@ -1,6 +1,6 @@
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { metrics, metricsResult } from '@stryker-mutator/test-helpers/src/factory';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { METRICS, METRICS_RESULT } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import * as _ from 'lodash';
@@ -16,14 +16,14 @@ describe(ClearTextScoreTable.name, () => {
           childResults: [
             {
               childResults: [],
-              metrics: metrics({ mutationScore: 59.99 }),
+              metrics: METRICS({ mutationScore: 59.99 }),
               name: 'some/test/for/a/deep/file.js'
             }
           ],
-          metrics: metrics({ mutationScore: 60 }),
+          metrics: METRICS({ mutationScore: 60 }),
           name: 'child1'
         }],
-        metrics: metrics({
+        metrics: METRICS({
           compileErrors: 7,
           killed: 1,
           mutationScore: 80,
@@ -34,7 +34,7 @@ describe(ClearTextScoreTable.name, () => {
         }),
         name: 'root'
       };
-      const sut = new ClearTextScoreTable(metricsResult, testInjector.options.thresholds);
+      const sut = new ClearTextScoreTable(metricsResult, TEST_INJECTOR.options.thresholds);
 
       const table = sut.draw();
       const rows = table.split(os.EOL);
@@ -53,12 +53,12 @@ describe(ClearTextScoreTable.name, () => {
     it('should grow columns widths based on value size', () => {
       const metricsResult: MetricsResult = {
         childResults: [],
-        metrics: metrics({
+        metrics: METRICS({
           killed: 1000000000
         }),
         name: 'root'
       };
-      const sut = new ClearTextScoreTable(metricsResult, testInjector.options.thresholds);
+      const sut = new ClearTextScoreTable(metricsResult, TEST_INJECTOR.options.thresholds);
 
       const table = sut.draw();
       const rows = table.split(os.EOL);
@@ -70,15 +70,15 @@ describe(ClearTextScoreTable.name, () => {
 
     it('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
       const thresholds: MutationScoreThresholds = { high: 60, low: 50, break: 0 };
-      const input: MetricsResult = metricsResult({
+      const input: MetricsResult = METRICS_RESULT({
         childResults: [
-          metricsResult({ metrics: metrics({ mutationScore: 60.00 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 59.99 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 50.01 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 50.00 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 49.99 }) })
+          METRICS_RESULT({ metrics: METRICS({ mutationScore: 60.00 }) }),
+          METRICS_RESULT({ metrics: METRICS({ mutationScore: 59.99 }) }),
+          METRICS_RESULT({ metrics: METRICS({ mutationScore: 50.01 }) }),
+          METRICS_RESULT({ metrics: METRICS({ mutationScore: 50.00 }) }),
+          METRICS_RESULT({ metrics: METRICS({ mutationScore: 49.99 }) })
         ],
-        metrics: metrics({ mutationScore: 60.01 })
+        metrics: METRICS({ mutationScore: 60.01 })
       });
       const sut = new ClearTextScoreTable(input, thresholds);
 
@@ -94,12 +94,12 @@ describe(ClearTextScoreTable.name, () => {
 
     it('should color score in red and green if low equals high thresholds', () => {
       const thresholds: MutationScoreThresholds = { high: 50, low: 50, break: 0 };
-      const input: MetricsResult = metricsResult({
+      const input: MetricsResult = METRICS_RESULT({
         childResults: [
-          metricsResult({ metrics: metrics({ mutationScore: 50.00 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 49.99 }) })
+          METRICS_RESULT({ metrics: METRICS({ mutationScore: 50.00 }) }),
+          METRICS_RESULT({ metrics: METRICS({ mutationScore: 49.99 }) })
         ],
-        metrics: metrics({ mutationScore: 50.01 })
+        metrics: METRICS({ mutationScore: 50.01 })
       });
       const sut = new ClearTextScoreTable(input, thresholds);
 

@@ -3,14 +3,14 @@ import * as fs from 'fs';
 import { Configuration } from 'webpack';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
 import { isFunction } from 'lodash';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { pluginTokens } from '../pluginTokens';
+import { PLUGIN_TOKENS } from '../pluginTokens';
 
-const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
+const progressPluginName = 'ProgressPlugin';
 
 export default class ConfigLoader {
-  public static inject = tokens(commonTokens.logger, pluginTokens.require);
+  public static inject = tokens(COMMON_TOKENS.logger, PLUGIN_TOKENS.require);
   public constructor(private readonly log: Logger, private readonly requireFn: NodeRequireFunction) {
   }
 
@@ -46,8 +46,8 @@ export default class ConfigLoader {
   private configureSilent(webpackConfig: Configuration) {
     if (webpackConfig.plugins) {
       webpackConfig.plugins = webpackConfig.plugins.filter(plugin => {
-        if (plugin.constructor && plugin.constructor.name === PROGRESS_PLUGIN_NAME) {
-          this.log.debug('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', PROGRESS_PLUGIN_NAME);
+        if (plugin.constructor && plugin.constructor.name === progressPluginName) {
+          this.log.debug('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', progressPluginName);
           return false;
         } else {
           return true;

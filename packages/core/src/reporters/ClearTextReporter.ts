@@ -1,6 +1,6 @@
 import { Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import chalk from 'chalk';
 import { calculateMetrics } from 'mutation-testing-metrics';
@@ -10,7 +10,7 @@ import ClearTextScoreTable from './ClearTextScoreTable';
 
 export default class ClearTextReporter implements Reporter {
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options);
+  public static inject = tokens(COMMON_TOKENS.logger, COMMON_TOKENS.options);
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
     this.configConsoleColor();
   }

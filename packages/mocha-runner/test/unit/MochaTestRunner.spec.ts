@@ -6,28 +6,28 @@ import { RunOptions } from '@stryker-mutator/api/test_runner';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import LibWrapper from '../../src/LibWrapper';
 import * as utils from '../../src/utils';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
 import { MochaOptions } from '../../src/MochaOptions';
 
 describe(MochaTestRunner.name, () => {
 
-  let MochaStub: sinon.SinonStub;
+  let mochaStub: sinon.SinonStub;
   let mocha: sinon.SinonStubbedInstance<Mocha> & { suite: sinon.SinonStubbedInstance<EventEmitter> };
   let sut: MochaTestRunner;
   let requireStub: sinon.SinonStub;
   let handleFilesStub: sinon.SinonStub;
 
   beforeEach(() => {
-    MochaStub = sinon.stub(LibWrapper, 'Mocha');
+    mochaStub = sinon.stub(LibWrapper, 'mocha');
     requireStub = sinon.stub(LibWrapper, 'require');
     handleFilesStub = sinon.stub(LibWrapper, 'handleFiles');
     sinon.stub(utils, 'evalGlobal');
     mocha = sinon.createStubInstance(Mocha) as any;
     mocha.suite = sinon.createStubInstance(EventEmitter);
-    MochaStub.returns(mocha);
+    mochaStub.returns(mocha);
   });
 
   afterEach(() => {
@@ -39,15 +39,15 @@ describe(MochaTestRunner.name, () => {
   });
 
   function createSut(mochaSettings: Partial<{ fileNames: ReadonlyArray<string>, mochaOptions: MochaOptions }>) {
-    testInjector.options.mochaOptions = mochaSettings.mochaOptions || {};
-    return testInjector.injector
-      .provideValue(commonTokens.sandboxFileNames, mochaSettings.fileNames || ['src/math.js', 'test/mathSpec.js'])
+    TEST_INJECTOR.options.mochaOptions = mochaSettings.mochaOptions || {};
+    return TEST_INJECTOR.injector
+      .provideValue(COMMON_TOKENS.sandboxFileNames, mochaSettings.fileNames || ['src/math.js', 'test/mathSpec.js'])
       .injectClass(MochaTestRunner);
   }
 
   it('should set the static `log` property on StrykerMochaReporter', () => {
     createSut({});
-    expect(StrykerMochaReporter.log).eq(testInjector.logger);
+    expect(StrykerMochaReporter.log).eq(TEST_INJECTOR.logger);
   });
 
   describe('when mocha version < 6', () => {
@@ -62,7 +62,7 @@ describe(MochaTestRunner.name, () => {
       sut = createSut({});
       multimatchStub.returns(['foo.js']);
       await sut.init();
-      expect(testInjector.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to discover files');
+      expect(TEST_INJECTOR.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to discover files');
     });
 
     it('should add discovered test files on run() ', async () => {
@@ -122,7 +122,7 @@ describe(MochaTestRunner.name, () => {
       // Assert
       expect(actFn).throws(`[MochaTestRunner] No files discovered (tried pattern(s) ${relativeGlobbing
         }). Please specify the files (glob patterns) containing your tests in mochaOptions.files in your stryker.conf.js file.`);
-      expect(testInjector.logger.debug).calledWith(`Tried ${absoluteGlobbing} on files: ${filesStringified}.`);
+      expect(TEST_INJECTOR.logger.debug).calledWith(`Tried ${absoluteGlobbing} on files: ${filesStringified}.`);
     });
 
     function actAssertMatchedPatterns(relativeGlobPatterns: string | string[] | undefined, expectedGlobPatterns: string[]) {
@@ -145,7 +145,7 @@ describe(MochaTestRunner.name, () => {
     it('should log about mocha >= 6 detection', async () => {
       sut = createSut({});
       await sut.init();
-      expect(testInjector.logger.debug).calledWith('Mocha >= 6 detected. Using mocha\'s `handleFiles` to load files');
+      expect(TEST_INJECTOR.logger.debug).calledWith('Mocha >= 6 detected. Using mocha\'s `handleFiles` to load files');
     });
 
     it('should mock away the `process.exit` method when calling the mocha function (unfortunate side effect)', async () => {

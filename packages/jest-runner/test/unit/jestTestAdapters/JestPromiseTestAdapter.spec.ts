@@ -2,7 +2,7 @@ import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTes
 import sinon from 'sinon';
 import { expect, assert } from 'chai';
 import jest from 'jest';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 
 describe(JestPromiseTestAdapter.name, () => {
   let sut: JestPromiseTestAdapter;
@@ -19,7 +19,7 @@ describe(JestPromiseTestAdapter.name, () => {
       result: 'testResult'
     }));
 
-    sut = testInjector.injector.injectClass(JestPromiseTestAdapter);
+    sut = TEST_INJECTOR.injector.injectClass(JestPromiseTestAdapter);
   });
 
   it('should set reporters to an empty array', async () => {
@@ -84,6 +84,6 @@ describe(JestPromiseTestAdapter.name, () => {
     const expectedResult: any = JSON.parse(JSON.stringify(jestConfig));
     expectedResult.reporters = [];
 
-    expect(testInjector.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/);
+    expect(TEST_INJECTOR.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/);
   });
 });

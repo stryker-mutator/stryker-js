@@ -73,11 +73,11 @@ export class TempFolder {
     return Math.ceil(Math.random() * 10000000);
   }
 
-  private static _instance: TempFolder;
+  private static innerInstance: TempFolder;
   public static instance() {
-    if (!this._instance) {
-      this._instance = new TempFolder();
+    if (!this.innerInstance) {
+      this.innerInstance = new TempFolder();
     }
-    return this._instance;
+    return this.innerInstance;
   }
 }

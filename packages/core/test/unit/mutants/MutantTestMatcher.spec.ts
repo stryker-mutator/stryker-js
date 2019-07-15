@@ -3,8 +3,8 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { MatchedMutant } from '@stryker-mutator/api/report';
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { CoverageCollection, CoveragePerTestResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { mutant, testResult } from '@stryker-mutator/test-helpers/src/factory';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { MUTANT, TEST_RESULT } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { coreTokens } from '../../../src/di';
@@ -47,7 +47,7 @@ describe(MutantTestMatcher.name, () => {
   describe('with coverageAnalysis: "perTest"', () => {
 
     beforeEach(() => {
-      testInjector.options.coverageAnalysis = 'perTest';
+      TEST_INJECTOR.options.coverageAnalysis = 'perTest';
       sut = createSut();
     });
 
@@ -101,7 +101,7 @@ describe(MutantTestMatcher.name, () => {
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
             expect(TestSelectionResult[result[0].testSelectionResult]).eq(TestSelectionResult[TestSelectionResult.FailedButAlreadyReported]);
             expect(TestSelectionResult[result[1].testSelectionResult]).eq(TestSelectionResult[TestSelectionResult.FailedButAlreadyReported]);
-            expect(testInjector.logger.warn).calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'perTest');
+            expect(TEST_INJECTOR.logger.warn).calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'perTest');
           });
 
           it('should have both mutants matched', async () => {
@@ -267,7 +267,7 @@ describe(MutantTestMatcher.name, () => {
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
             expect(result[0].testSelectionResult).eq(TestSelectionResult.Failed);
             expect(result[1].testSelectionResult).eq(TestSelectionResult.Failed);
-            expect(testInjector.logger.warn).not.called;
+            expect(TEST_INJECTOR.logger.warn).not.called;
           });
         });
 
@@ -337,7 +337,7 @@ describe(MutantTestMatcher.name, () => {
         // Arrange
         const sourceFile = new SourceFile(new File('', ''));
         sourceFile.getLocation = () => ({ start: { line: 13, column: 38 }, end: { line: 24, column: 5 } });
-        const testableMutant = new TestableMutant('1', mutant({
+        const testableMutant = new TestableMutant('1', MUTANT({
           fileName: 'juice-shop\\app\\js\\controllers\\SearchResultController.js'
         }), sourceFile);
 
@@ -368,13 +368,13 @@ describe(MutantTestMatcher.name, () => {
   describe('with coverageAnalysis: "all"', () => {
 
     beforeEach(() => {
-      testInjector.options.coverageAnalysis = 'all';
+      TEST_INJECTOR.options.coverageAnalysis = 'all';
       sut = createSut();
     });
 
     it('should match all mutants to all tests and log a warning when there is no coverage data', async () => {
-      mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
-      initialRunResult.runResult.tests.push(testResult(), testResult());
+      mutants.push(MUTANT({ fileName: 'fileWithMutantOne' }), MUTANT({ fileName: 'fileWithMutantTwo' }));
+      initialRunResult.runResult.tests.push(TEST_RESULT(), TEST_RESULT());
       const expectedTestSelection: TestSelection[] = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
 
       const result = await sut.matchWithMutants(mutants);
@@ -383,7 +383,7 @@ describe(MutantTestMatcher.name, () => {
       expect(result[1].selectedTests).deep.eq(expectedTestSelection);
       expect(result[0].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
       expect(result[1].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
-      expect(testInjector.logger.warn).to.have.been.calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'all');
+      expect(TEST_INJECTOR.logger.warn).to.have.been.calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'all');
     });
 
     describe('when there is coverage data', () => {
@@ -402,7 +402,7 @@ describe(MutantTestMatcher.name, () => {
 
       it('should retrieves source mapped location', async () => {
         // Arrange
-        mutants.push(mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
+        mutants.push(MUTANT({ fileName: 'fileWithMutantOne', range: [4, 5] }));
 
         // Act
         await sut.matchWithMutants(mutants);
@@ -420,8 +420,8 @@ describe(MutantTestMatcher.name, () => {
 
       it('should match mutant to single test result', async () => {
         // Arrange
-        mutants.push(mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
-        initialRunResult.runResult.tests.push(testResult({ name: 'test 1' }), testResult({ name: 'test 2' }));
+        mutants.push(MUTANT({ fileName: 'fileWithMutantOne', range: [4, 5] }));
+        initialRunResult.runResult.tests.push(TEST_RESULT({ name: 'test 1' }), TEST_RESULT({ name: 'test 2' }));
 
         // Act
         const result = await sut.matchWithMutants(mutants);
@@ -444,13 +444,13 @@ describe(MutantTestMatcher.name, () => {
   describe('with coverageAnalysis: "off"', () => {
 
     beforeEach(() => {
-      testInjector.options.coverageAnalysis = 'off';
+      TEST_INJECTOR.options.coverageAnalysis = 'off';
       sut = createSut();
     });
 
     it('should match all mutants to all tests', async () => {
-      mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
-      initialRunResult.runResult.tests.push(testResult(), testResult());
+      mutants.push(MUTANT({ fileName: 'fileWithMutantOne' }), MUTANT({ fileName: 'fileWithMutantTwo' }));
+      initialRunResult.runResult.tests.push(TEST_RESULT(), TEST_RESULT());
       const expectedTestSelection = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
 
       const result = await sut.matchWithMutants(mutants);
@@ -461,10 +461,10 @@ describe(MutantTestMatcher.name, () => {
   });
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(coreTokens.inputFiles, input)
-      .provideValue(coreTokens.initialRunResult, initialRunResult)
-      .provideValue(coreTokens.reporter, reporter)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.InputFiles, input)
+      .provideValue(coreTokens.InitialRunResult, initialRunResult)
+      .provideValue(coreTokens.Reporter, reporter)
       .injectClass(MutantTestMatcher);
   }
 });

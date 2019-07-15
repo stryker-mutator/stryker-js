@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
-import { strykerPlugins } from '../../src/index';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { STRYKER_PLUGINS } from '../../src/index';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { PluginKind } from '@stryker-mutator/api/plugin';
 import { Mutator } from '@stryker-mutator/api/mutant';
-import { strykerPlugins as javascriptMutatorStrykerPlugins } from '@stryker-mutator/javascript-mutator';
-import { strykerPlugins as typescriptMutatorStrykerPlugins } from '@stryker-mutator/typescript';
+import { STRYKER_PLUGINS as javascriptMutatorStrykerPlugins } from '@stryker-mutator/javascript-mutator';
+import { STRYKER_PLUGINS as typescriptMutatorStrykerPlugins } from '@stryker-mutator/typescript';
 
 const javascriptMutatorPlugin = javascriptMutatorStrykerPlugins.find(plugin => plugin.kind === PluginKind.Mutator);
 const typescriptMutatorPlugin = typescriptMutatorStrykerPlugins.find(plugin => plugin.kind === PluginKind.Mutator);
@@ -13,13 +13,13 @@ const typescriptMutatorPlugin = typescriptMutatorStrykerPlugins.find(plugin => p
 describe('VueMutator', () => {
 
   function createSut(): Mutator {
-    return testInjector.injector
-      .injectFunction(strykerPlugins[0].factory);
+    return TEST_INJECTOR.injector
+      .injectFunction(STRYKER_PLUGINS[0].factory);
   }
 
   describe('JavaScript project', () => {
     it('should generate mutants', () => {
-      testInjector.pluginResolver.resolveAll.returns([javascriptMutatorPlugin]);
+      TEST_INJECTOR.pluginResolver.resolveAll.returns([javascriptMutatorPlugin]);
 
       const vueCode = `<template>
       <span id="msg">{{ message }}</span>
@@ -61,7 +61,7 @@ describe('VueMutator', () => {
 
   describe('TypeScript project', () => {
     it('should generate mutants', () => {
-      testInjector.pluginResolver.resolveAll.returns([typescriptMutatorPlugin]);
+      TEST_INJECTOR.pluginResolver.resolveAll.returns([typescriptMutatorPlugin]);
       const vueCode = `<template>
       <span id="msg">{{ message }}</span>
       </template>

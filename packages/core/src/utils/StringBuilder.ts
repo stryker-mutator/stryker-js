@@ -1,11 +1,11 @@
 import { EOL } from 'os';
 
-const DEFAULT_MAX_SIZE = 2048;
+const defaultMaxSize = 2048;
 
 export default class StringBuilder {
   private currentLength = 0;
   private readonly strings: string[] = [];
-  private readonly maxSize = DEFAULT_MAX_SIZE;
+  private readonly maxSize = defaultMaxSize;
 
   public append(str: string) {
     this.strings.push(str);

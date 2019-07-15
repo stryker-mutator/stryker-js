@@ -27,10 +27,10 @@ describe('JasmineTestRunner', () => {
       throwOnExpectationFailure: sandbox.stub()
     };
     evalGlobalStub = sandbox.stub(helpers, 'evalGlobal');
-    sandbox.stub(helpers, 'Jasmine').returns(jasmineStub);
+    sandbox.stub(helpers, 'JASMINE').returns(jasmineStub);
     fileNames = ['foo.js', 'bar.js'];
     clock = sandbox.useFakeTimers();
-    sut = new JasmineTestRunner(fileNames, factory.strykerOptions({ jasmineConfigFile: 'jasmineConfFile' }));
+    sut = new JasmineTestRunner(fileNames, factory.STRYKER_OPTIONS({ jasmineConfigFile: 'jasmineConfFile' }));
   });
 
   afterEach(() => {
@@ -42,8 +42,8 @@ describe('JasmineTestRunner', () => {
   it('should configure jasmine on run', async () => {
     await actRunWithoutTests();
     expect(jasmineStub.execute).called;
-    expect(helpers.Jasmine).calledWithNew;
-    expect(helpers.Jasmine).calledWith({ projectBaseDir: process.cwd() });
+    expect(helpers.JASMINE).calledWithNew;
+    expect(helpers.JASMINE).calledWith({ projectBaseDir: process.cwd() });
     expect(jasmineStub.loadConfigFile).calledWith('jasmineConfFile');
     expect(jasmineStub.stopSpecOnExpectationFailure).calledWith(true);
     expect(jasmineStub.env.throwOnExpectationFailure).calledWith(true);

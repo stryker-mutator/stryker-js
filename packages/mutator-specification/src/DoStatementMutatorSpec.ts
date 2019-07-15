@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function DoStatementMutatorSpec(name: string, expectMutation: ExpectMutation) {
+export default function doStatementMutatorSpec(name: string, expectMutation: ExpectMutation) {
 
   describe('DoStatementMutator', () => {
 

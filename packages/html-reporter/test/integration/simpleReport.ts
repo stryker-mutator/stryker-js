@@ -1,6 +1,6 @@
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 
-export const simpleReport: mutationTestReportSchema.MutationTestResult = {
+export const SIMPLE_REPORT: mutationTestReportSchema.MutationTestResult = {
   files: {
     'test.js': {
       language: 'javascript',

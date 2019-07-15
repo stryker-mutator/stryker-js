@@ -2,7 +2,7 @@ import * as os from 'os';
 import { fork, ChildProcess } from 'child_process';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { getLogger } from 'log4js';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
+import { WorkerMessage, WorkerMessageKind, ParentMessage, AUTO_START, ParentMessageKind } from './messageProtocol';
 import { serialize, deserialize, kill, padLeft } from '../utils/objectUtils';
 import { Task, ExpirableTask } from '../utils/Task';
 import LoggingClientContext from '../logging/LoggingClientContext';
@@ -21,9 +21,9 @@ export type Promisified<T> = {
   [K in keyof T]: T[K] extends PromisifiedFunc<any, any> ? T[K] : T[K] extends Func<infer TS, infer R> ? PromisifiedFunc<TS, R> : () => Promise<T[K]>;
 };
 
-const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
-const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
-const TIMEOUT_FOR_DISPOSE = 2000;
+const brokenPipeErrorCode = 'EPIPE';
+const ipcChannelClosedErrorCode = 'ERR_IPC_CHANNEL_CLOSED';
+const timeoutForDispose = 2000;
 
 export default class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
@@ -39,7 +39,7 @@ export default class ChildProcessProxy<T> implements Disposable {
   private isDisposed = false;
 
   private constructor(requirePath: string, requireName: string, loggingContext: LoggingClientContext, options: StrykerOptions, additionalInjectableValues: unknown, workingDirectory: string) {
-    this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
+    this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [AUTO_START], { silent: true, execArgv: [] });
     this.initTask = new Task();
     this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
     this.send({
@@ -68,9 +68,9 @@ export default class ChildProcessProxy<T> implements Disposable {
     options: StrykerOptions,
     additionalInjectableValues: TAdditionalContext,
     workingDirectory: string,
-    InjectableClass: InjectableClass<TAdditionalContext & OptionsContext, R, Tokens>):
+    injectableClass: InjectableClass<TAdditionalContext & OptionsContext, R, Tokens>):
     ChildProcessProxy<R> {
-    return new ChildProcessProxy(requirePath, InjectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
+    return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
   }
 
   private send(message: WorkerMessage) {
@@ -201,7 +201,7 @@ export default class ChildProcessProxy<T> implements Disposable {
   }
 
   private innerProcessIsCrashed(error: Error) {
-    return isErrnoException(error) && (error.code === BROKEN_PIPE_ERROR_CODE || error.code === IPC_CHANNEL_CLOSED_ERROR_CODE);
+    return isErrnoException(error) && (error.code === brokenPipeErrorCode || error.code === ipcChannelClosedErrorCode);
   }
 
   public async dispose(): Promise<void> {
@@ -209,7 +209,7 @@ export default class ChildProcessProxy<T> implements Disposable {
       this.worker.removeListener('close', this.handleUnexpectedExit);
       this.isDisposed = true;
       this.log.debug('Disposing of worker process %s', this.worker.pid);
-      this.disposeTask = new ExpirableTask(TIMEOUT_FOR_DISPOSE);
+      this.disposeTask = new ExpirableTask(timeoutForDispose);
       this.send({ kind: WorkerMessageKind.Dispose });
       try {
         await this.disposeTask.promise;

@@ -5,7 +5,7 @@ import { Config } from '@stryker-mutator/api/config';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { StrykerError } from '@stryker-mutator/util';
 import { coreTokens } from '../di';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
@@ -14,11 +14,11 @@ export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    });\n' +
   '  };';
 
-const DEFAULT_CONFIG_FILE = 'stryker.conf.js';
+const defaultConfigFile = 'stryker.conf.js';
 
 export default class ConfigReader {
 
-  public static inject = tokens(coreTokens.cliOptions, commonTokens.logger);
+  public static inject = tokens(coreTokens.CliOptions, COMMON_TOKENS.logger);
   constructor(private readonly cliOptions: Partial<StrykerOptions>, private readonly log: Logger) { }
 
   public readConfig() {
@@ -42,9 +42,9 @@ export default class ConfigReader {
 
     if (!this.cliOptions.configFile) {
       try {
-        fs.accessSync(path.resolve(`./${DEFAULT_CONFIG_FILE}`));
-        this.log.info(`Using ${DEFAULT_CONFIG_FILE} in the current working directory.`);
-        this.cliOptions.configFile = DEFAULT_CONFIG_FILE;
+        fs.accessSync(path.resolve(`./${defaultConfigFile}`));
+        this.log.info(`Using ${defaultConfigFile} in the current working directory.`);
+        this.cliOptions.configFile = defaultConfigFile;
       } catch (e) {
         this.log.info('No config file specified. Running with command line arguments.');
         this.log.info('Use `stryker init` command to generate your config file.');

@@ -2,7 +2,7 @@ import * as os from 'os';
 import { expect } from 'chai';
 import * as childProcess from 'child_process';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import { autoStart, InitMessage, WorkerMessageKind, ParentMessage, WorkerMessage, ParentMessageKind, DisposeMessage } from '../../../src/child-proxy/messageProtocol';
+import { AUTO_START, InitMessage, WorkerMessageKind, ParentMessage, WorkerMessage, ParentMessageKind, DisposeMessage } from '../../../src/child-proxy/messageProtocol';
 import { serialize } from '../../../src/utils/objectUtils';
 import { HelloClass } from './HelloClass';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
@@ -15,7 +15,7 @@ import currentLogMock from '../../helpers/logMock';
 import * as sinon from 'sinon';
 import { factory } from '@stryker-mutator/test-helpers';
 
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+const loggingContext: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
   port: 4200
 });
@@ -55,15 +55,15 @@ describe(ChildProcessProxy.name, () => {
 
     it('should create child process', () => {
       sut = createSut();
-      expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
+      expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/ChildProcessProxyWorker'), [AUTO_START], { silent: true, execArgv: [] });
     });
 
     it('should send init message to child process', () => {
       const expectedMessage: InitMessage = {
         additionalInjectableValues: { name: 'fooTest' },
         kind: WorkerMessageKind.Init,
-        loggingContext: LOGGING_CONTEXT,
-        options: factory.strykerOptions(),
+        loggingContext,
+        options: factory.STRYKER_OPTIONS(),
         requireName: 'HelloClass',
         requirePath: 'foobar',
         workingDirectory: 'workingDirectory'
@@ -71,7 +71,7 @@ describe(ChildProcessProxy.name, () => {
 
       // Act
       createSut({
-        loggingContext: LOGGING_CONTEXT,
+        loggingContext,
         name: (expectedMessage.additionalInjectableValues as { name: string }).name,
         options:  expectedMessage.options,
         requirePath: expectedMessage.requirePath,
@@ -236,8 +236,8 @@ function createSut(overrides: {
 } = {}): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
     overrides.requirePath || 'foobar',
-    overrides.loggingContext || LOGGING_CONTEXT,
-    factory.strykerOptions(overrides.options),
+    overrides.loggingContext || loggingContext,
+    factory.STRYKER_OPTIONS(overrides.options),
     { name: overrides.name || 'someArg' },
     overrides.workingDir || 'workingDir',
     HelloClass);

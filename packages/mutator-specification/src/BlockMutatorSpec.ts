@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function BlockMutatorSpec(
+export default function blockMutatorSpec(
   name: string,
   expectMutation: ExpectMutation
 ) {

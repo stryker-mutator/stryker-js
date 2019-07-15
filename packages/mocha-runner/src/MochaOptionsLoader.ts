@@ -1,9 +1,9 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { serializeArguments, filterConfig, mochaOptionsKey } from './utils';
+import { serializeArguments, filterConfig, MOCHA_OPTIONS_KEY } from './utils';
 import LibWrapper from './LibWrapper';
 import { MochaOptions } from './MochaOptions';
 
@@ -21,11 +21,11 @@ export const DEFAULT_MOCHA_OPTIONS = Object.freeze({
 
 export default class MochaOptionsLoader {
 
-  public static inject = tokens(commonTokens.logger);
+  public static inject = tokens(COMMON_TOKENS.logger);
   constructor(private readonly log: Logger) { }
 
   public load(strykerOptions: StrykerOptions): MochaOptions {
-    const mochaOptions = { ...strykerOptions[mochaOptionsKey] } as MochaOptions;
+    const mochaOptions = { ...strykerOptions[MOCHA_OPTIONS_KEY] } as MochaOptions;
     return { ...DEFAULT_MOCHA_OPTIONS, ... this.loadMochaOptions(mochaOptions), ...mochaOptions };
   }
 
@@ -64,7 +64,7 @@ export default class MochaOptionsLoader {
         if (fs.existsSync(defaultMochaOptsFileName)) {
           return this.readMochaOptsFile(defaultMochaOptsFileName);
         } else {
-          this.log.debug('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', mochaOptionsKey);
+          this.log.debug('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', MOCHA_OPTIONS_KEY);
           return {};
         }
       case 'string':

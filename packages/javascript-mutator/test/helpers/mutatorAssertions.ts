@@ -4,16 +4,16 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { JavaScriptMutator } from '../../src/JavaScriptMutator';
 import { NodeMutator } from '../../src/mutators/NodeMutator';
 import ExpectMutation from '@stryker-mutator/mutator-specification/src/ExpectMutation';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 
 type MutatorConstructor = new() => NodeMutator;
 
-export function verifySpecification(specification: (name: string, expectMutation: ExpectMutation) => void, MutatorClass: MutatorConstructor): void {
-  specification(new MutatorClass().name, (actual: string, ...expected: string[]) => expectMutation(new MutatorClass(), actual, ...expected));
+export function verifySpecification(specification: (name: string, expectMutation: ExpectMutation) => void, mutatorClass: MutatorConstructor): void {
+  specification(new mutatorClass().name, (actual: string, ...expected: string[]) => expectMutation(new mutatorClass(), actual, ...expected));
 }
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
-  const javaScriptMutator = new JavaScriptMutator(testInjector.logger, [mutator]);
+  const javaScriptMutator = new JavaScriptMutator(TEST_INJECTOR.logger, [mutator]);
   const sourceFile = new File('file.js', sourceText);
   const mutants = javaScriptMutator.mutate([sourceFile]);
   expect(mutants).lengthOf(expectedTexts.length);

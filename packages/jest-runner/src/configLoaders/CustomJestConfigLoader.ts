@@ -7,10 +7,10 @@ import jest from 'jest';
  * The Default config loader will load the Jest configuration using the package.json in the package root
  */
 export default class CustomJestConfigLoader implements JestConfigLoader {
-  private readonly _projectRoot: string;
+  private readonly projectRoot: string;
 
-  constructor(projectRoot: string, private readonly _loader: NodeRequireFunction = require) {
-    this._projectRoot = projectRoot;
+  constructor(projectRoot: string, private readonly loader: NodeRequireFunction = require) {
+    this.projectRoot = projectRoot;
   }
 
   public loadConfig(): jest.Configuration {
@@ -20,13 +20,13 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
 
   private readConfigFromJestConfigFile() {
     try {
-      return this._loader(path.join(this._projectRoot, 'jest.config.js'));
+      return this.loader(path.join(this.projectRoot, 'jest.config.js'));
     } catch { /* Don't return anything (implicitly return undefined) */ }
   }
 
   private readConfigFromPackageJson() {
     try {
-      return JSON.parse(fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8')).jest;
+      return JSON.parse(fs.readFileSync(path.join(this.projectRoot, 'package.json'), 'utf8')).jest;
     } catch { /* Don't return anything (implicitly return undefined) */ }
   }
 }

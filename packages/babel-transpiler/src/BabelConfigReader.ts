@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import * as babel from './helpers/babelWrapper';
 export interface StrykerBabelConfig {
   extensions: ReadonlyArray<string>;
@@ -16,7 +16,7 @@ export const FILE_KEY: keyof StrykerBabelConfig = 'optionsFile';
 export const OPTIONS_KEY: keyof StrykerBabelConfig = 'options';
 export const EXTENSIONS_KEY: keyof StrykerBabelConfig = 'extensions';
 
-const DEFAULT_BABEL_CONFIG: Readonly<StrykerBabelConfig> = Object.freeze({
+const defaultBabelConfig: Readonly<StrykerBabelConfig> = Object.freeze({
   extensions: Object.freeze([]),
   options: Object.freeze({}),
   optionsFile: '.babelrc'
@@ -24,13 +24,13 @@ const DEFAULT_BABEL_CONFIG: Readonly<StrykerBabelConfig> = Object.freeze({
 
 export class BabelConfigReader {
 
-  public static inject = tokens(commonTokens.logger);
+  public static inject = tokens(COMMON_TOKENS.logger);
   constructor(private readonly log: Logger) {
   }
 
   public readConfig(strykerOptions: StrykerOptions): StrykerBabelConfig {
     const babelConfig: StrykerBabelConfig = {
-      ...DEFAULT_BABEL_CONFIG,
+      ...defaultBabelConfig,
       ...strykerOptions[CONFIG_KEY]
     };
     babelConfig.options = {

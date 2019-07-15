@@ -14,21 +14,21 @@ describe(StringBuilder.name, () => {
       expect(sut.toString()).eq(`123`);
     });
 
-    const DEFAULT_MAX_CHARACTERS = 2048;
-    it(`should append a to maximum of ${DEFAULT_MAX_CHARACTERS} characters by default`, () => {
+    const defaultMaxCharacters = 2048;
+    it(`should append a to maximum of ${defaultMaxCharacters} characters by default`, () => {
       const sut = new StringBuilder();
-      for (let i = 0; i < DEFAULT_MAX_CHARACTERS; i++) {
+      for (let i = 0; i < defaultMaxCharacters; i++) {
         sut.append('.');
       }
       sut.append('expected');
       const result = sut.toString();
-      expect(result).lengthOf(DEFAULT_MAX_CHARACTERS);
+      expect(result).lengthOf(defaultMaxCharacters);
       const expectedLastPart = '...expected';
       expect(result.substr(result.length - expectedLastPart.length)).eq(expectedLastPart);
     });
 
     it('should not split the last string, even if it exceeds the max characters', () => {
-      const input = new Array(DEFAULT_MAX_CHARACTERS + 1).fill('.').join('');
+      const input = new Array(defaultMaxCharacters + 1).fill('.').join('');
       const sut = new StringBuilder();
       sut.append(input);
       expect(sut.toString()).eq(input);

@@ -5,7 +5,7 @@ import { base64Decode } from '../utils/objectUtils';
 import { getLogger } from 'log4js';
 import { StrykerError } from '@stryker-mutator/util';
 
-const SOURCE_MAP_URL_REGEX = /\/\/\s*#\s*sourceMappingURL=(.*)/g;
+const sourceMapUrlRegex = /\/\/\s*#\s*sourceMappingURL=(.*)/g;
 
 // This file contains source mapping logic.
 // It reads transpiled output files (*.js) and scans it for comments like these: sourceMappingURL=*.js.map
@@ -184,11 +184,11 @@ export class TranspiledSourceMapper extends SourceMapper {
    * Gets the source map url from a transpiled file (the last comment with sourceMappingURL= ...)
    */
   private getSourceMapUrl(transpiledFile: File): string | null {
-    SOURCE_MAP_URL_REGEX.lastIndex = 0;
+    sourceMapUrlRegex.lastIndex = 0;
     let currentMatch: RegExpExecArray | null;
     let lastMatch: RegExpExecArray | null = null;
     // Retrieve the final sourceMappingURL comment in the file
-    while (currentMatch = SOURCE_MAP_URL_REGEX.exec(transpiledFile.textContent)) {
+    while (currentMatch = sourceMapUrlRegex.exec(transpiledFile.textContent)) {
       lastMatch = currentMatch;
     }
     if (lastMatch) {

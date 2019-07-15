@@ -1,5 +1,5 @@
 import { transpilerFactory } from '../../../src/transpiler';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR, factory } from '@stryker-mutator/test-helpers';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { Injector } from '@stryker-mutator/api/plugin';
 import { ChildProcessTranspiler } from '../../../src/transpiler/ChildProcessTranspiler';
@@ -19,11 +19,11 @@ describe(transpilerFactory.name, () => {
   });
 
   function act(): Transpiler {
-    return transpilerFactory(testInjector.options, injectorMock);
+    return transpilerFactory(TEST_INJECTOR.options, injectorMock);
   }
 
   it('should construct the transpiler in a child process if a transpiler is configured', () => {
-    testInjector.options.transpilers.push('fooTranspiler');
+    TEST_INJECTOR.options.transpilers.push('fooTranspiler');
 
     const actual = act();
     expect(actual).eq(childProcessTranspiler);

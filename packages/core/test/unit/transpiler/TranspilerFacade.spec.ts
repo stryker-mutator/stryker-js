@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { mock, Mock } from '../../helpers/producers';
 import { File } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { TranspilerFacade } from '../../../src/transpiler/TranspilerFacade';
 import * as sinon from 'sinon';
 import { PluginCreator } from '../../../src/di/PluginCreator';
@@ -35,7 +35,7 @@ describe('TranspilerFacade', () => {
     let resultFilesOne: ReadonlyArray<File>;
     let resultFilesTwo: ReadonlyArray<File>;
     beforeEach(() => {
-      testInjector.options.transpilers = ['transpiler-one', 'transpiler-two'];
+      TEST_INJECTOR.options.transpilers = ['transpiler-one', 'transpiler-two'];
       transpilerOne = mock(TranspilerFacade);
       transpilerTwo = mock(TranspilerFacade);
       resultFilesOne = [new File('result-1', '')];
@@ -82,8 +82,8 @@ describe('TranspilerFacade', () => {
 
   });
   function createSut() {
-    return testInjector.injector
-      .provideValue(coreTokens.pluginCreatorTranspiler, pluginCreatorMock as unknown as PluginCreator<PluginKind.Transpiler>)
+    return TEST_INJECTOR.injector
+      .provideValue(coreTokens.PluginCreatorTranspiler, pluginCreatorMock as unknown as PluginCreator<PluginKind.Transpiler>)
       .injectClass(TranspilerFacade);
   }
 });

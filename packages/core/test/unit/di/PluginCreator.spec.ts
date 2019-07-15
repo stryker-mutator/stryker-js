@@ -1,5 +1,5 @@
 import { PluginKind, FactoryPlugin, ClassPlugin } from '@stryker-mutator/api/plugin';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { factory, TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { PluginCreator } from '../../../src/di/PluginCreator';
 
@@ -7,7 +7,7 @@ describe('PluginCreator', () => {
   let sut: PluginCreator<PluginKind.Reporter>;
 
   beforeEach(() => {
-    sut = testInjector.injector
+    sut = TEST_INJECTOR.injector
       .injectFunction(PluginCreator.createFactory(PluginKind.Reporter));
   });
 
@@ -21,13 +21,13 @@ describe('PluginCreator', () => {
         return expectedReporter;
       }
     };
-    testInjector.pluginResolver.resolve.returns(factoryPlugin);
+    TEST_INJECTOR.pluginResolver.resolve.returns(factoryPlugin);
 
     // Act
     const actualReporter = sut.create('fooReporter');
 
     // Assert
-    expect(testInjector.pluginResolver.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
+    expect(TEST_INJECTOR.pluginResolver.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
     expect(actualReporter).eq(expectedReporter);
   });
 
@@ -40,18 +40,18 @@ describe('PluginCreator', () => {
       kind: PluginKind.Reporter,
       name: 'fooReporter'
     };
-    testInjector.pluginResolver.resolve.returns(plugin);
+    TEST_INJECTOR.pluginResolver.resolve.returns(plugin);
 
     // Act
     const actualReporter = sut.create('fooReporter');
 
     // Assert
-    expect(testInjector.pluginResolver.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
+    expect(TEST_INJECTOR.pluginResolver.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
     expect(actualReporter).instanceOf(FooReporter);
   });
 
   it('should throw if plugin is not recognized', () => {
-    testInjector.pluginResolver.resolve.returns({});
+    TEST_INJECTOR.pluginResolver.resolve.returns({});
     expect(() => sut.create('foo'))
       .throws('Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.');
   });

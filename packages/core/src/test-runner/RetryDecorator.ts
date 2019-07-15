@@ -4,7 +4,7 @@ import OutOfMemoryError from '../child-proxy/OutOfMemoryError';
 import { getLogger } from 'log4js';
 import { errorToString } from '@stryker-mutator/util';
 
-const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
+const errorMessage = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
 
 /**
  * Wraps a test runner and implements the retry functionality.
@@ -26,7 +26,7 @@ export default class RetryDecorator extends TestRunnerDecorator {
       }
     } else {
       await this.recover();
-      return { status: RunStatus.Error, errorMessages: [ERROR_MESSAGE + errorToString(lastError)], tests: [] };
+      return { status: RunStatus.Error, errorMessages: [errorMessage + errorToString(lastError)], tests: [] };
     }
   }
 

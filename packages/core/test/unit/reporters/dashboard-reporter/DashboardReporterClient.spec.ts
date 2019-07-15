@@ -2,9 +2,9 @@ import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { Mock, mock } from '../../../helpers/producers';
 import { expect } from 'chai';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
+import { DASHBOARD_REPORTER_TOKENS } from '../../../../src/reporters/dashboard-reporter/tokens';
 
 describe('DashboardReporterClient', () => {
 
@@ -22,8 +22,8 @@ describe('DashboardReporterClient', () => {
 
   beforeEach(() => {
     dashboardClient = mock(HttpClient);
-    sut = testInjector.injector
-      .provideValue(dashboardReporterTokens.httpClient, dashboardClient as unknown as HttpClient)
+    sut = TEST_INJECTOR.injector
+      .provideValue(DASHBOARD_REPORTER_TOKENS.httpClient, dashboardClient as unknown as HttpClient)
       .injectClass(DashboardReporterClient);
   });
 
@@ -44,9 +44,9 @@ describe('DashboardReporterClient', () => {
         ['Content-Type']: 'application/json'
       };
 
-      expect(testInjector.logger.info).have.been.calledWithMatch(`Posting report to ${url}`);
+      expect(TEST_INJECTOR.logger.info).have.been.calledWithMatch(`Posting report to ${url}`);
       expect(dashboardClient.post).have.been.calledWith(url, report, contentType);
-      expect(testInjector.logger.error).have.not.been.called;
+      expect(TEST_INJECTOR.logger.error).have.not.been.called;
   });
 
   it('when the server returns a invalid status code an error will be logged  ', async () => {
@@ -61,7 +61,7 @@ describe('DashboardReporterClient', () => {
     await sut.postStrykerDashboardReport(dashboardReport);
 
     // Assert
-    expect(testInjector.logger.error).have.been.calledWithMatch(`Post to ${url} resulted in http status code: 500`);
+    expect(TEST_INJECTOR.logger.error).have.been.calledWithMatch(`Post to ${url} resulted in http status code: 500`);
   });
 
   it('when the server doesn\'t respond an error will be logged', async () => {
@@ -72,6 +72,6 @@ describe('DashboardReporterClient', () => {
     await sut.postStrykerDashboardReport(dashboardReport);
 
     // Assert
-    expect(testInjector.logger.error).have.been.calledWithMatch(`Unable to reach ${url}. Please check your internet connection.`);
+    expect(TEST_INJECTOR.logger.error).have.been.calledWithMatch(`Unable to reach ${url}. Please check your internet connection.`);
   });
 });

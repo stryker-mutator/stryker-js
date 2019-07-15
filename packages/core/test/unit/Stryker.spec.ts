@@ -1,13 +1,13 @@
 import { Config } from '@stryker-mutator/api/config';
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunResult } from '@stryker-mutator/api/test_runner';
 import { Transpiler } from '@stryker-mutator/api/transpile';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { mutantResult, runResult, testFramework } from '@stryker-mutator/test-helpers/src/factory';
+import { factory, TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { MUTANT_RESULT, RUN_RESULT, testFramework } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as typedInject from 'typed-inject';
@@ -30,7 +30,7 @@ import { TempFolder } from '../../src/utils/TempFolder';
 import Timer from '../../src/utils/Timer';
 import { mock, Mock, testableMutant } from '../helpers/producers';
 
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
+const loggingContext: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
   port: 4200
 });
@@ -57,7 +57,7 @@ describe(Stryker.name, () => {
   let transpilerMock: sinon.SinonStubbedInstance<Transpiler>;
 
   beforeEach(() => {
-    strykerConfig = factory.config();
+    strykerConfig = factory.CONFIG();
     logMock = factory.logger();
     reporterMock = mock(BroadcastReporter);
     injectorMock = factory.injector();
@@ -66,7 +66,7 @@ describe(Stryker.name, () => {
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     shutdownLoggingStub = sinon.stub(LogConfigurator, 'shutdown');
-    configureLoggingServerStub.resolves(LOGGING_CONTEXT);
+    configureLoggingServerStub.resolves(loggingContext);
     inputFileResolverMock = mock(InputFileResolver);
     testFrameworkMock = testFramework();
     initialTestExecutorMock = mock(InitialTestExecutor);
@@ -76,7 +76,7 @@ describe(Stryker.name, () => {
     tempFolderMock = mock(TempFolder as any);
     tempFolderMock.clean.resolves();
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
-    scoreResultCalculator = new ScoreResultCalculator(testInjector.logger);
+    scoreResultCalculator = new ScoreResultCalculator(TEST_INJECTOR.logger);
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
     sinon.stub(TempFolder, 'instance').returns(tempFolderMock);
     sinon.stub(scoreResultCalculator, 'determineExitCode').returns(sinon.stub());
@@ -90,12 +90,12 @@ describe(Stryker.name, () => {
       .withArgs(MutationTestReportCalculator).returns(mutationTestReportCalculatorMock)
       .withArgs(ScoreResultCalculator).returns(scoreResultCalculator);
     injectorMock.resolve
-      .withArgs(commonTokens.options).returns(strykerConfig)
-      .withArgs(di.coreTokens.timer).returns(timerMock)
-      .withArgs(di.coreTokens.reporter).returns(reporterMock)
-      .withArgs(di.coreTokens.testFramework).returns(testFrameworkMock)
-      .withArgs(commonTokens.getLogger).returns(() => logMock)
-      .withArgs(di.coreTokens.transpiler).returns(transpilerMock);
+      .withArgs(COMMON_TOKENS.options).returns(strykerConfig)
+      .withArgs(di.coreTokens.Timer).returns(timerMock)
+      .withArgs(di.coreTokens.Reporter).returns(reporterMock)
+      .withArgs(di.coreTokens.TestFramework).returns(testFrameworkMock)
+      .withArgs(COMMON_TOKENS.getLogger).returns(() => logMock)
+      .withArgs(di.coreTokens.Transpiler).returns(transpilerMock);
   });
 
   describe('when constructed', () => {
@@ -124,7 +124,7 @@ describe(Stryker.name, () => {
         testableMutant('file2', 'barMutator'),
         testableMutant('file3', 'bazMutator')
       ];
-      mutantResults = [mutantResult()];
+      mutantResults = [MUTANT_RESULT()];
       mutantTestMatcherMock.matchWithMutants.returns(mutants);
       mutatorMock.mutate.returns(mutants);
       mutationTestExecutorMock.run.resolves(mutantResults);
@@ -133,7 +133,7 @@ describe(Stryker.name, () => {
       transpiledFiles = [new File('output.js', '')];
       inputFileResolverMock.resolve.resolves(inputFiles);
       transpilerMock.transpile.resolves(initialTranspiledFiles);
-      initialRunResult = runResult();
+      initialRunResult = RUN_RESULT();
       initialTestExecutorMock.run.resolves({ runResult: initialRunResult, transpiledFiles });
     });
 
@@ -247,7 +247,7 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(transpilerMock.transpile).calledWith(inputFiles.files);
-        expect(injectorMock.provideValue).calledWith(di.coreTokens.transpiledFiles, initialTranspiledFiles);
+        expect(injectorMock.provideValue).calledWith(di.coreTokens.TranspiledFiles, initialTranspiledFiles);
       });
 
       it('should create the mutation test executor', async () => {
@@ -285,16 +285,16 @@ describe(Stryker.name, () => {
         strykerConfig.coverageAnalysis = 'all';
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, true);
-        expect(injectorMock.provideClass).calledWith(di.coreTokens.transpiler, TranspilerFacade);
+        expect(injectorMock.provideValue).calledWith(COMMON_TOKENS.produceSourceMaps, true);
+        expect(injectorMock.provideClass).calledWith(di.coreTokens.Transpiler, TranspilerFacade);
       });
 
       it('should create the transpiler with produceSourceMaps = false when coverage analysis is "off"', async () => {
         strykerConfig.coverageAnalysis = 'off';
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, false);
-        expect(injectorMock.provideClass).calledWith(di.coreTokens.transpiler, TranspilerFacade);
+        expect(injectorMock.provideValue).calledWith(COMMON_TOKENS.produceSourceMaps, false);
+        expect(injectorMock.provideClass).calledWith(di.coreTokens.Transpiler, TranspilerFacade);
       });
     });
   });

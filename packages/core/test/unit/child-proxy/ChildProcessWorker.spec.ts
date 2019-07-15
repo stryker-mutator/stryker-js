@@ -15,7 +15,7 @@ import { rootInjector } from 'typed-inject';
 import { factory } from '@stryker-mutator/test-helpers';
 import * as di from '../../../src/di';
 
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
+const loggingContext: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 
 describe(ChildProcessProxyWorker.name, () => {
 
@@ -62,11 +62,11 @@ describe(ChildProcessProxyWorker.name, () => {
 
     beforeEach(() => {
       sut = new ChildProcessProxyWorker();
-      const options = factory.strykerOptions();
+      const options = factory.STRYKER_OPTIONS();
       initMessage = {
         additionalInjectableValues: { name: 'FooBarName'},
         kind: WorkerMessageKind.Init,
-        loggingContext: LOGGING_CONTEXT,
+        loggingContext,
         options,
         requireName: HelloClass.name,
         requirePath: require.resolve('./HelloClass'),
@@ -117,7 +117,7 @@ describe(ChildProcessProxyWorker.name, () => {
 
     it('should set global log level', () => {
       processOnStub.callArgWith(1, serialize(initMessage));
-      expect(configureChildProcessStub).calledWith(LOGGING_CONTEXT);
+      expect(configureChildProcessStub).calledWith(loggingContext);
     });
 
     it('should handle unhandledRejection events', () => {

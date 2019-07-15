@@ -9,8 +9,8 @@ paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsco
 
 import JestConfigEditor from '../../src/JestConfigEditor';
 import { jestTestRunnerFactory } from '../../src/JestTestRunner';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { TEST_INJECTOR, factory } from '@stryker-mutator/test-helpers';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 
 // Get the actual project root, since we will stub process.cwd later on
 const jestProjectRoot = process.cwd();
@@ -39,14 +39,14 @@ describe('Integration test for Strykers Jest runner', () => {
   });
 
   function createSut(jestConfig?: any) {
-    const jestConfigEditor = testInjector.injector.injectClass(JestConfigEditor);
-    const config = factory.config();
+    const jestConfigEditor = TEST_INJECTOR.injector.injectClass(JestConfigEditor);
+    const config = factory.CONFIG();
     if (jestConfig) {
       config.jest = jestConfig;
     }
     jestConfigEditor.edit(config);
-    return testInjector.injector
-      .provideValue(commonTokens.options, config)
+    return TEST_INJECTOR.injector
+      .provideValue(COMMON_TOKENS.options, config)
       .injectFunction(jestTestRunnerFactory);
   }
 

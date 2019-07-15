@@ -1,5 +1,5 @@
 import { Reporter } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
 import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -24,11 +24,11 @@ describe('EventRecorderReporter', () => {
     describe('and cleanFolder resolves correctly', () => {
       beforeEach(() => {
         cleanFolderStub.returns(Promise.resolve());
-        sut = testInjector.injector.injectClass(EventRecorderReporter);
+        sut = TEST_INJECTOR.injector.injectClass(EventRecorderReporter);
       });
 
       it('should log about the default baseFolder', () => {
-        expect(testInjector.logger.debug).to.have.been.calledWith(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events`);
+        expect(TEST_INJECTOR.logger.debug).to.have.been.calledWith(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events`);
       });
 
       it('should clean the baseFolder', () => {
@@ -70,7 +70,7 @@ describe('EventRecorderReporter', () => {
       beforeEach(() => {
         expectedError = new Error('Some error 1');
         cleanFolderStub.rejects(expectedError);
-        sut = testInjector.injector.injectClass(EventRecorderReporter);
+        sut = TEST_INJECTOR.injector.injectClass(EventRecorderReporter);
       });
 
       it('should reject when `wrapUp()` is called', () => {

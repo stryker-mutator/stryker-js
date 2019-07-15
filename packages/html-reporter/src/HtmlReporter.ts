@@ -3,21 +3,21 @@ import * as path from 'path';
 import { Reporter, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import * as util from './util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import fileUrl = require('file-url');
 import { bindMutationTestReport } from './templates/bindMutationTestReport';
 
-const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
+const defaultBaseFolder = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class HtmlReporter implements Reporter {
-  private _baseDir!: string;
+  private innerBaseDir!: string;
   private mainPromise: Promise<void> | undefined;
 
   constructor(private readonly options: StrykerOptions, private readonly log: Logger) {
   }
 
-  public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
+  public static readonly inject = tokens(COMMON_TOKENS.options, COMMON_TOKENS.logger);
 
   public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
     this.mainPromise = this.generateReport(report);
@@ -40,21 +40,21 @@ export default class HtmlReporter implements Reporter {
   }
 
   private get baseDir(): string {
-    if (!this._baseDir) {
+    if (!this.innerBaseDir) {
       if (this.options.htmlReporter && this.options.htmlReporter.baseDir) {
-        this._baseDir = this.options.htmlReporter.baseDir;
-        this.log.debug(`Using configured output folder ${this._baseDir}`);
+        this.innerBaseDir = this.options.htmlReporter.baseDir;
+        this.log.debug(`Using configured output folder ${this.innerBaseDir}`);
       } else {
-        this.log.debug(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
-        this._baseDir = DEFAULT_BASE_FOLDER;
+        this.log.debug(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${defaultBaseFolder}`);
+        this.innerBaseDir = defaultBaseFolder;
       }
     }
-    return this._baseDir;
+    return this.innerBaseDir;
   }
 
   private async cleanBaseFolder(): Promise<void> {
-    await util.deleteDir(this.baseDir);
-    await util.mkdir(this.baseDir);
+    await util.DELETE_DIR(this.baseDir);
+    await util.MK_DIR(this.baseDir);
   }
 
 }

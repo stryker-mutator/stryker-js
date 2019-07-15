@@ -8,8 +8,8 @@ import { File } from '@stryker-mutator/api/core';
 
 export type MutatorConstructor = new() => NodeMutator;
 
-export function verifySpecification(specification: (name: string, expectMutation: ExpectMutation) => void, MutatorClass: MutatorConstructor): void {
-  specification(new MutatorClass().name, (actual: string, ...expected: string[]) => expectMutation(new MutatorClass(), actual, ...expected));
+export function verifySpecification(specification: (name: string, expectMutation: ExpectMutation) => void, mutatorClass: MutatorConstructor): void {
+  specification(new mutatorClass().name, (actual: string, ...expected: string[]) => expectMutation(new mutatorClass(), actual, ...expected));
 }
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function SwitchCaseMutatorSpec(
+export default function switchCaseMutatorSpec(
   name: string,
   expectMutation: ExpectMutation
 ) {

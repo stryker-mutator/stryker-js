@@ -3,19 +3,19 @@ import * as fs from 'fs';
 import WebpackTranspiler from '../../src/WebpackTranspiler';
 import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { TEST_INJECTOR } from '@stryker-mutator/test-helpers';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import ConfigLoader from '../../src/compiler/ConfigLoader';
-import { pluginTokens } from '../../src/pluginTokens';
+import { PLUGIN_TOKENS } from '../../src/pluginTokens';
 
 describe('Webpack transpiler', () => {
 
   beforeEach(() => {
-    testInjector.options.webpack = {};
+    TEST_INJECTOR.options.webpack = {};
   });
 
   it('should be able to transpile the "gettingStarted" sample', async () => {
-    testInjector.options.webpack.configFile = path.join(getProjectRoot('gettingStarted'), 'webpack.config.js');
+    TEST_INJECTOR.options.webpack.configFile = path.join(getProjectRoot('gettingStarted'), 'webpack.config.js');
     const sut = createSut();
     const files = readFiles();
 
@@ -26,7 +26,7 @@ describe('Webpack transpiler', () => {
   });
 
   it('should be able to transpile "zeroConfig" sample without a Webpack config file', async () => {
-    testInjector.options.webpack.context = getProjectRoot('zeroConfig');
+    TEST_INJECTOR.options.webpack.context = getProjectRoot('zeroConfig');
     const sut = createSut();
     const files = readFiles();
 
@@ -36,10 +36,10 @@ describe('Webpack transpiler', () => {
 });
 
 function createSut() {
-  return testInjector.injector
-    .provideValue(commonTokens.produceSourceMaps, false)
-    .provideValue(pluginTokens.require, require)
-    .provideClass(pluginTokens.configLoader, ConfigLoader)
+  return TEST_INJECTOR.injector
+    .provideValue(COMMON_TOKENS.produceSourceMaps, false)
+    .provideValue(PLUGIN_TOKENS.require, require)
+    .provideClass(PLUGIN_TOKENS.configLoader, ConfigLoader)
     .injectClass(WebpackTranspiler);
 }
 

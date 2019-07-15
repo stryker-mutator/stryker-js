@@ -7,7 +7,7 @@ import StrykerReporter from './StrykerReporter';
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
 import ProjectStarter from './starters/ProjectStarter';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { tokens, COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
@@ -22,7 +22,7 @@ export default class KarmaTestRunner implements TestRunner {
   private readonly starter: ProjectStarter;
   public port: undefined | number;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.getLogger, commonTokens.options);
+  public static inject = tokens(COMMON_TOKENS.logger, COMMON_TOKENS.getLogger, COMMON_TOKENS.options);
   constructor(private readonly log: Logger, getLogger: LoggerFactoryMethod, options: StrykerOptions) {
     const setup = this.loadSetup(options);
     this.starter = new ProjectStarter(getLogger, setup);

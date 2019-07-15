@@ -20,12 +20,12 @@ function clone(source) {
     return result;
 }`;
 
-const BEFORE_EACH_FRAGMENT_PER_TEST = `
+const beforeEachFragmentPerTest = `
 if (!globalCoverage.baseline && window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME}) {
 globalCoverage.baseline = clone(window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME});
 }`;
 
-const AFTER_EACH_FRAGMENT_PER_TEST = `
+const afterEachFragmentPerTest = `
 globalCoverage.deviations[id] = coverageResult = {};
 id++;
 var coveragePerFile = window.${COVERAGE_CURRENT_TEST_VARIABLE_NAME};
@@ -57,8 +57,8 @@ export function coveragePerTestHooks(testFramework: TestFramework): string {
   return wrapInClosure(`
         var id = 0, globalCoverage, coverageResult;
         window.__coverage__ = globalCoverage = { deviations: {} };
-        ${testFramework.beforeEach(BEFORE_EACH_FRAGMENT_PER_TEST)}
-        ${testFramework.afterEach(AFTER_EACH_FRAGMENT_PER_TEST)}
+        ${testFramework.beforeEach(beforeEachFragmentPerTest)}
+        ${testFramework.afterEach(afterEachFragmentPerTest)}
         ${cloneFunctionFragment};
     `);
 }

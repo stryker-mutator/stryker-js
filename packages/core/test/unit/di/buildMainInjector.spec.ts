@@ -3,7 +3,7 @@ import * as di from '../../../src/di';
 import * as sinon from 'sinon';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { COMMON_TOKENS } from '@stryker-mutator/api/plugin';
 import { Config } from '@stryker-mutator/api/config';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../../../src/TestFrameworkOrchestrator';
@@ -54,54 +54,54 @@ describe(buildMainInjector.name, () => {
   describe('resolve options', () => {
 
     it('should supply readonly stryker options', () => {
-      const actualOptions = buildMainInjector({}).resolve(commonTokens.options);
+      const actualOptions = buildMainInjector({}).resolve(COMMON_TOKENS.options);
       expect(actualOptions).frozen;
     });
 
     it('should load default plugins', () => {
-      buildMainInjector({}).resolve(commonTokens.options);
+      buildMainInjector({}).resolve(COMMON_TOKENS.options);
       expect(di.PluginLoader).calledWithNew;
       expect(di.PluginLoader).calledWith(currentLogMock(), ['@stryker-mutator/*', require.resolve('../../../src/reporters')]);
     });
 
     it('should load plugins', () => {
-      buildMainInjector({}).resolve(commonTokens.options);
+      buildMainInjector({}).resolve(COMMON_TOKENS.options);
       expect(pluginLoaderMock.load).called;
     });
 
     it('should apply config editors', () => {
-      buildMainInjector({}).resolve(commonTokens.options);
+      buildMainInjector({}).resolve(COMMON_TOKENS.options);
       expect(configEditorApplierMock.edit).called;
     });
 
     it('should cache the config', () => {
       const injector = buildMainInjector({});
-      injector.resolve(commonTokens.options);
-      injector.resolve(commonTokens.options);
+      injector.resolve(COMMON_TOKENS.options);
+      injector.resolve(COMMON_TOKENS.options);
       expect(configReaderMock.readConfig).calledOnce;
     });
 
     it('should inject the `cliOptions` in the config reader', () => {
       const expectedCliOptions = { foo: 'bar' };
-      buildMainInjector(expectedCliOptions).resolve(commonTokens.options);
+      buildMainInjector(expectedCliOptions).resolve(COMMON_TOKENS.options);
       expect(configReaderModule.default).calledWith(expectedCliOptions);
     });
   });
 
   it('should be able to supply the test framework', () => {
-    const actualTestFramework = buildMainInjector({}).resolve(di.coreTokens.testFramework);
+    const actualTestFramework = buildMainInjector({}).resolve(di.coreTokens.TestFramework);
     expect(testFrameworkMock).eq(actualTestFramework);
   });
 
   it('should be able to supply the reporter', () => {
-    const actualReporter = buildMainInjector({}).resolve(di.coreTokens.reporter);
+    const actualReporter = buildMainInjector({}).resolve(di.coreTokens.Reporter);
     expect(actualReporter).eq(broadcastReporterMock);
   });
 
   it('should supply pluginCreators for Reporter, ConfigEditor and TestFramework plugins', () => {
     const injector = buildMainInjector({});
-    expect(injector.resolve(di.coreTokens.pluginCreatorReporter)).eq(pluginCreatorMock);
-    expect(injector.resolve(di.coreTokens.pluginCreatorTestFramework)).eq(pluginCreatorMock);
-    expect(injector.resolve(di.coreTokens.pluginCreatorConfigEditor)).eq(pluginCreatorMock);
+    expect(injector.resolve(di.coreTokens.PluginCreatorReporter)).eq(pluginCreatorMock);
+    expect(injector.resolve(di.coreTokens.PluginCreatorTestFramework)).eq(pluginCreatorMock);
+    expect(injector.resolve(di.coreTokens.PluginCreatorConfigEditor)).eq(pluginCreatorMock);
   });
 });
