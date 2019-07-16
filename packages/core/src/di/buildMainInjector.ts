@@ -11,6 +11,7 @@ import BroadcastReporter from '../reporters/BroadcastReporter';
 import { Config } from '@stryker-mutator/api/config';
 import ConfigReader from '../config/ConfigReader';
 import Timer from '../utils/Timer';
+import {TempFolder} from '../utils/TempFolder';
 
 export interface MainContext extends OptionsContext {
   [coreTokens.reporter]: Required<Reporter>;
@@ -20,6 +21,7 @@ export interface MainContext extends OptionsContext {
   [coreTokens.pluginCreatorMutator]: PluginCreator<PluginKind.Mutator>;
   [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
   [coreTokens.timer]: Timer;
+  [coreTokens.tempDir]: any; // TODO: fix it
 }
 
 export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector<MainContext> {
@@ -39,6 +41,7 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
     .provideClass(coreTokens.reporter, BroadcastReporter)
     .provideFactory(coreTokens.testFramework, testFrameworkFactory)
+    .provideValue(coreTokens.tempDir, TempFolder)
     .provideClass(coreTokens.timer, Timer);
 }
 

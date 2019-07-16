@@ -1,10 +1,11 @@
+import { Disposable } from 'typed-inject';
 import { fsAsPromised } from '@stryker-mutator/util';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import { getLogger } from 'log4js';
 import { deleteDir } from './fileUtils';
 
-export class TempFolder {
+export class TempFolder implements Disposable {
   private readonly log = getLogger(TempFolder.name);
   public baseTempFolder: string;
   public tempFolder: string;
@@ -71,6 +72,10 @@ export class TempFolder {
    */
   public random(): number {
     return Math.ceil(Math.random() * 10000000);
+  }
+
+  public async dispose(): Promise<void> {
+    await TempFolder.instance().clean();
   }
 
   private static _instance: TempFolder;
