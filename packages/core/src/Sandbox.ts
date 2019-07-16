@@ -8,7 +8,7 @@ import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { wrapInClosure } from './utils/objectUtils';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
-import { TempFolder } from './utils/TempFolder';
+import { TemporaryDirectory } from './utils/TemporaryDirectory';
 import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
@@ -32,7 +32,7 @@ export default class Sandbox {
     private readonly files: ReadonlyArray<File>,
     private readonly testFramework: TestFramework | null,
     private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
-    this.workingDirectory = TempFolder.instance().createRandomFolder('sandbox');
+    this.workingDirectory = TemporaryDirectory.instance().createRandomDirectory('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
   }
 

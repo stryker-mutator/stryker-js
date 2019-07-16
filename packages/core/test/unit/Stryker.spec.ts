@@ -26,7 +26,7 @@ import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import Stryker from '../../src/Stryker';
 import TestableMutant from '../../src/TestableMutant';
 import { TranspilerFacade } from '../../src/transpiler/TranspilerFacade';
-import { TempFolder } from '../../src/utils/TempFolder';
+import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 import Timer from '../../src/utils/Timer';
 import { mock, Mock, testableMutant } from '../helpers/producers';
 
@@ -45,7 +45,7 @@ describe(Stryker.name, () => {
   let mutatorMock: Mock<MutatorFacade>;
   let strykerConfig: Config;
   let reporterMock: Mock<BroadcastReporter>;
-  let tempFolderMock: Mock<TempFolder>;
+  let temporaryDirectoryMock: Mock<TemporaryDirectory>;
   let scoreResultCalculator: ScoreResultCalculator;
   let mutationTestReportCalculatorMock: Mock<MutationTestReportCalculator>;
   let configureMainProcessStub: sinon.SinonStub;
@@ -73,8 +73,8 @@ describe(Stryker.name, () => {
     mutationTestExecutorMock = mock(MutationTestExecutor);
     transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
-    tempFolderMock = sinon.createStubInstance(TempFolder);
-    tempFolderMock.clean.resolves();
+    temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
+    temporaryDirectoryMock.clean.resolves();
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
     scoreResultCalculator = new ScoreResultCalculator(testInjector.logger);
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
@@ -93,7 +93,7 @@ describe(Stryker.name, () => {
       .withArgs(di.coreTokens.timer).returns(timerMock)
       .withArgs(di.coreTokens.reporter).returns(reporterMock)
       .withArgs(di.coreTokens.testFramework).returns(testFrameworkMock)
-      .withArgs(di.coreTokens.tempDir).returns(TempFolder)
+      .withArgs(di.coreTokens.temporaryDirectory).returns(TemporaryDirectory)
       .withArgs(commonTokens.getLogger).returns(() => logMock)
       .withArgs(di.coreTokens.transpiler).returns(transpilerMock);
   });
@@ -260,7 +260,7 @@ describe(Stryker.name, () => {
       xit('should clean the stryker temp folder', async () => {
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(tempFolderMock.clean).called;
+        expect(temporaryDirectoryMock.clean).called;
       });
 
       it('should let the reporters wrapUp any async tasks', async () => {

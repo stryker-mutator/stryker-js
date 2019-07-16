@@ -35,8 +35,8 @@ export default class Stryker {
     return this.injector.resolve(coreTokens.timer);
   }
 
-  private get tempDir() {
-    return this.injector.resolve(coreTokens.tempDir);
+  private get temporaryDirectory() {
+    return this.injector.resolve(coreTokens.temporaryDirectory);
   }
 
   /**
@@ -57,7 +57,7 @@ export default class Stryker {
     this.timer.reset();
     const inputFiles = await this.injector.injectClass(InputFileResolver).resolve();
     if (inputFiles.files.length) {
-      this.tempDir.instance().initialize(this.options.tempDir);
+      this.temporaryDirectory.instance().initialize(this.options.tempDir);
       const inputFileInjector = this.injector
         .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(coreTokens.inputFiles, inputFiles);

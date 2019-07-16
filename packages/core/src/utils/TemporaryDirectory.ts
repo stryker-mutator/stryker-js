@@ -5,30 +5,30 @@ import * as mkdirp from 'mkdirp';
 import { getLogger } from 'log4js';
 import { deleteDir } from './fileUtils';
 
-export class TempFolder implements Disposable {
-  private readonly log = getLogger(TempFolder.name);
-  public baseTempFolder: string;
-  public tempFolder: string;
+export class TemporaryDirectory implements Disposable {
+  private readonly log = getLogger(TemporaryDirectory.name);
+  public baseTemporaryDirectory: string;
+  public temporaryDirectory: string;
 
   private constructor() { }
 
   public initialize(tempDirName = '.stryker-tmp') {
-    this.baseTempFolder = path.join(process.cwd(), tempDirName);
-    this.tempFolder = path.join(this.baseTempFolder, this.random().toString());
-    mkdirp.sync(this.baseTempFolder);
-    mkdirp.sync(this.tempFolder);
+    this.baseTemporaryDirectory = path.join(process.cwd(), tempDirName);
+    this.temporaryDirectory = path.join(this.baseTemporaryDirectory, this.random().toString());
+    mkdirp.sync(this.baseTemporaryDirectory);
+    mkdirp.sync(this.temporaryDirectory);
   }
 
   /**
-   * Creates a new random folder with the specified prefix.
+   * Creates a new random directory with the specified prefix.
    * @param prefix The prefix.
-   * @returns The path to the folder.
+   * @returns The path to the directory.
    */
-  public createRandomFolder(prefix: string): string {
-    if (!this.baseTempFolder) {
+  public createRandomDirectory(prefix: string): string {
+    if (!this.baseTemporaryDirectory) {
       throw new Error('initialize() was not called!');
     }
-    const dir = this.baseTempFolder + path.sep + prefix + this.random();
+    const dir = this.baseTemporaryDirectory + path.sep + prefix + this.random();
     mkdirp.sync(dir);
     return dir;
   }
@@ -55,15 +55,15 @@ export class TempFolder implements Disposable {
   }
 
   /**
-   * Deletes the Stryker-temp folder
+   * Deletes the Stryker-temp directory
    */
   public clean() {
-    if (!this.baseTempFolder) {
+    if (!this.baseTemporaryDirectory) {
       throw new Error('initialize() was not called!');
     }
-    this.log.debug(`Deleting stryker temp folder ${this.baseTempFolder}`);
-    return deleteDir(this.baseTempFolder)
-      .catch(() => this.log.info(`Failed to delete stryker temp folder ${this.baseTempFolder}`));
+    this.log.debug(`Deleting stryker temp directory ${this.baseTemporaryDirectory}`);
+    return deleteDir(this.baseTemporaryDirectory)
+      .catch(() => this.log.info(`Failed to delete stryker temp directory ${this.baseTemporaryDirectory}`));
   }
 
   /**
@@ -75,13 +75,13 @@ export class TempFolder implements Disposable {
   }
 
   public async dispose(): Promise<void> {
-    await TempFolder.instance().clean();
+    await TemporaryDirectory.instance().clean();
   }
 
-  private static _instance: TempFolder;
+  private static _instance: TemporaryDirectory;
   public static instance() {
     if (!this._instance) {
-      this._instance = new TempFolder();
+      this._instance = new TemporaryDirectory();
     }
     return this._instance;
   }

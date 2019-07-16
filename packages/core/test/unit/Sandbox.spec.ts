@@ -9,7 +9,7 @@ import { File, LogLevel } from '@stryker-mutator/api/core';
 import { wrapInClosure } from '../../src/utils/objectUtils';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import Sandbox from '../../src/Sandbox';
-import { TempFolder } from '../../src/utils/TempFolder';
+import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunnerFactory';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import { Mock } from '../helpers/producers';
@@ -63,7 +63,7 @@ describe(Sandbox.name, () => {
       expectedFileToMutate,
       notMutatedFile,
     ];
-    sinon.stub(TempFolder.instance(), 'createRandomFolder').returns(sandboxDirectory);
+    sinon.stub(TemporaryDirectory.instance(), 'createRandomDirectory').returns(sandboxDirectory);
     writeFileStub = sinon.stub(fileUtils, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesStub = sinon.stub(fileUtils, 'findNodeModules');
@@ -112,7 +112,7 @@ describe(Sandbox.name, () => {
 
     it('should have created a sandbox folder', async () => {
       await createSut(testFrameworkStub);
-      expect(TempFolder.instance().createRandomFolder).to.have.been.calledWith('sandbox');
+      expect(TemporaryDirectory.instance().createRandomDirectory).to.have.been.calledWith('sandbox');
     });
 
     it('should symlink node modules in sandbox directory if exists', async () => {
