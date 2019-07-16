@@ -30,6 +30,7 @@ function factoryMethod<T>(defaultsFactory: () => T) {
 
 export const logger = (): Mock<Logger> => {
   return {
+    setParseCallStackFunction: sinon.stub(),
     _log: sinon.stub(),
     addContext: sinon.stub(),
     clearContext: sinon.stub(),
