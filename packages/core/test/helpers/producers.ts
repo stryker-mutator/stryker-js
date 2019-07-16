@@ -48,6 +48,7 @@ export const logger = (): Mock<Logger> => {
     log: sinon.stub(),
     new: sinon.stub(),
     removeContext: sinon.stub(),
+    setParseCallStackFunction: sinon.stub(),
     trace: sinon.stub(),
     warn: sinon.stub()
   };
