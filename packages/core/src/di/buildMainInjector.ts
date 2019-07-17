@@ -21,7 +21,7 @@ export interface MainContext extends OptionsContext {
   [coreTokens.pluginCreatorMutator]: PluginCreator<PluginKind.Mutator>;
   [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
   [coreTokens.timer]: Timer;
-  [coreTokens.temporaryDirectory]: any; // TODO: fix it
+  [coreTokens.temporaryDirectory]: TemporaryDirectory;
 }
 
 export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector<MainContext> {
@@ -41,7 +41,7 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
     .provideClass(coreTokens.reporter, BroadcastReporter)
     .provideFactory(coreTokens.testFramework, testFrameworkFactory)
-    .provideValue(coreTokens.temporaryDirectory, TemporaryDirectory)
+    .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
     .provideClass(coreTokens.timer, Timer);
 }
 

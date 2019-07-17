@@ -2,20 +2,22 @@ import { Disposable } from 'typed-inject';
 import { fsAsPromised } from '@stryker-mutator/util';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
-import { getLogger } from 'log4js';
 import { deleteDir } from './fileUtils';
+import { Logger } from '@stryker-mutator/api/logging';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 export class TemporaryDirectory implements Disposable {
-  private readonly log = getLogger(TemporaryDirectory.name);
-  public baseTemporaryDirectory: string;
-  public temporaryDirectory: string;
+  private readonly temporaryDirectory: string;
+  private readonly isInitialized = false;
 
-  private constructor() { }
+  public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
+  constructor(private readonly log: Logger, options: StrykerOptions) {
+    this.temporaryDirectory = path.join(process.cwd(), options.tempDirName, this.random().toString());
+  }
 
-  public initialize(tempDirName = '.stryker-tmp') {
-    this.baseTemporaryDirectory = path.join(process.cwd(), tempDirName);
-    this.temporaryDirectory = path.join(this.baseTemporaryDirectory, this.random().toString());
-    mkdirp.sync(this.baseTemporaryDirectory);
+  public initialize() {
+    this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
     mkdirp.sync(this.temporaryDirectory);
   }
 
@@ -25,10 +27,10 @@ export class TemporaryDirectory implements Disposable {
    * @returns The path to the directory.
    */
   public createRandomDirectory(prefix: string): string {
-    if (!this.baseTemporaryDirectory) {
+    if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    const dir = this.baseTemporaryDirectory + path.sep + prefix + this.random();
+    const dir = path.resolve(this.temporaryDirectory, `${prefix}${this.random()}`);
     mkdirp.sync(dir);
     return dir;
   }
@@ -57,13 +59,17 @@ export class TemporaryDirectory implements Disposable {
   /**
    * Deletes the Stryker-temp directory
    */
-  public clean() {
-    if (!this.baseTemporaryDirectory) {
+  public async dispose() {
+    if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    this.log.debug(`Deleting stryker temp directory ${this.baseTemporaryDirectory}`);
-    return deleteDir(this.baseTemporaryDirectory)
-      .catch(() => this.log.info(`Failed to delete stryker temp directory ${this.baseTemporaryDirectory}`));
+    this.log.debug(`Deleting stryker temp directory %s`, this.temporaryDirectory);
+    try {
+      return deleteDir(this.temporaryDirectory);
+    }
+    catch (e) {
+      return this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
+    }
   }
 
   /**
@@ -74,15 +80,4 @@ export class TemporaryDirectory implements Disposable {
     return Math.ceil(Math.random() * 10000000);
   }
 
-  public async dispose(): Promise<void> {
-    await TemporaryDirectory.instance().clean();
-  }
-
-  private static _instance: TemporaryDirectory;
-  public static instance() {
-    if (!this._instance) {
-      this._instance = new TemporaryDirectory();
-    }
-    return this._instance;
-  }
 }

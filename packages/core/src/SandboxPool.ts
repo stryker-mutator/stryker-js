@@ -12,6 +12,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import TranspiledMutant from './TranspiledMutant';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { Disposable } from 'typed-inject';
+import { TemporaryDirectory } from './utils/TemporaryDirectory';
 
 const MAX_CONCURRENT_INITIALIZING_SANDBOXES = 2;
 
@@ -26,14 +27,16 @@ export class SandboxPool implements Disposable {
     coreTokens.testFramework,
     coreTokens.initialRunResult,
     coreTokens.transpiledFiles,
-    coreTokens.loggingContext);
+    coreTokens.loggingContext,
+    coreTokens.temporaryDirectory);
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly testFramework: TestFramework | null,
     initialRunResult: InitialTestRunResult,
     private readonly initialFiles: ReadonlyArray<File>,
-    private readonly loggingContext: LoggingClientContext) {
+    private readonly loggingContext: LoggingClientContext,
+    private readonly tempDir: TemporaryDirectory) {
     this.overheadTimeMS = initialRunResult.overheadTimeMS;
   }
 
@@ -64,7 +67,7 @@ export class SandboxPool implements Disposable {
         if (this.isDisposed) {
           return null;
         } else {
-          return this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext));
+          return this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext, this.tempDir));
         }
       }, MAX_CONCURRENT_INITIALIZING_SANDBOXES),
       filter(sandboxOrNull => !!sandboxOrNull),
