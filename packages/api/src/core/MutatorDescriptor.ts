@@ -1,9 +1,7 @@
-import { ParserPlugin } from '@babel/parser';
-
 interface MutatorDescriptor {
   name: string;
   excludedMutations: string[];
-  babelPlugins?: ParserPlugin[];
+  babelPlugins: (string | object)[];
 }
 
 export default MutatorDescriptor;

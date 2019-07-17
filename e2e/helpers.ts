@@ -22,7 +22,7 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
   const actualMetricsResult = await readMutationTestResult();
   const actualSnippet: Partial<WritableMetricsResult> = {};
   for (const key in expectedMetricsResult) {
-    actualSnippet[key as keyof MetricsResult] = actualMetricsResult[key as keyof MetricsResult];
+    actualSnippet[key as keyof MetricsResult] = actualMetricsResult[key as keyof MetricsResult] as any;
   }
   if (actualSnippet.metrics) {
     if (typeof actualSnippet.metrics.mutationScore === 'number') {

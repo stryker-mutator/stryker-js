@@ -1,5 +1,5 @@
 import { LoggerFactoryMethod, Logger } from '../../logging';
-import { StrykerOptions } from '../../core';
+import { StrykerOptions, MutatorDescriptor } from '../../core';
 import { PluginResolver } from './Plugins';
 import { PluginKind } from './PluginKind';
 import { commonTokens } from './tokens';
@@ -19,6 +19,7 @@ export interface BaseContext {
  */
 export interface OptionsContext extends BaseContext {
   [commonTokens.options]: StrykerOptions;
+  [commonTokens.mutatorDescriptor]: MutatorDescriptor;
 }
 
 /**

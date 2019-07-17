@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/api",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "repository": {
     "type": "git",
@@ -38,6 +38,6 @@
   },
   "devDependencies": {
     "surrial": "~1.0.0",
-    "typed-inject": "~1.0.0"
+    "typed-inject": "~2.0.0"
   }
 }

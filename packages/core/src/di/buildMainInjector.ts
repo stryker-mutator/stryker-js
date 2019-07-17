@@ -5,7 +5,7 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { rootInjector } from 'typed-inject';
 import { getLogger } from 'log4js';
-import { loggerFactory, pluginResolverFactory, optionsFactory, testFrameworkFactory } from './factoryMethods';
+import { loggerFactory, pluginResolverFactory, optionsFactory, testFrameworkFactory, mutatorDescriptorFactory } from './factoryMethods';
 import { ConfigEditorApplier, readConfig } from '../config';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { Config } from '@stryker-mutator/api/config';
@@ -34,6 +34,7 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(coreTokens.pluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
     .provideClass(coreTokens.configEditorApplier, ConfigEditorApplier)
     .provideFactory(commonTokens.options, optionsFactory)
+    .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory)
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
     .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
     .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))

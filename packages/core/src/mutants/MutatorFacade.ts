@@ -15,10 +15,7 @@ export class MutatorFacade implements Mutator {
 
   public mutate(inputFiles: ReadonlyArray<File>): ReadonlyArray<Mutant> {
     const allMutants = this.pluginCreator.create(this.getMutatorName(this.options.mutator))
-      .mutate(
-        inputFiles,
-        typeof this.options.mutator !== 'string' ? this.options.mutator.babelPlugins : []
-      );
+      .mutate(inputFiles);
     const includedMutants = this.removeExcludedMutants(allMutants);
     this.logMutantCount(includedMutants.length, allMutants.length);
     return includedMutants;
@@ -28,7 +25,7 @@ export class MutatorFacade implements Mutator {
     if (typeof this.options.mutator === 'string') {
       return mutants;
     } else {
-      const mutatorDescriptor = this.options.mutator;
+      const mutatorDescriptor = this.options.mutator as MutatorDescriptor;
       return mutants.filter(mutant => mutatorDescriptor.excludedMutations.indexOf(mutant.mutatorName) === -1);
     }
   }
@@ -42,7 +39,7 @@ export class MutatorFacade implements Mutator {
   }
 
   private logMutantCount(includedMutantCount: number, totalMutantCount: number) {
-    let mutantCountMessage: string;
+    let mutantCountMessage;
     if (includedMutantCount) {
       mutantCountMessage = `${includedMutantCount} Mutant(s) generated`;
     } else {

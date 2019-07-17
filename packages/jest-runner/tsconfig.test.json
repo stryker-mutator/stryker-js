@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "rootDir": ".",
+    "esModuleInterop": true,
     "types": [
       "mocha",
       "node"

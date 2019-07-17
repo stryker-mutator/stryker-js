@@ -7,11 +7,11 @@ import { ParserPlugin } from '@babel/parser';
 
 export default class BabelHelper {
 
-  public static parse(code: string, options?: ParserPlugin[]): types.File {
-    return parse(code, this.createOptions(options));
+  public static parse(code: string, plugins?: ParserPlugin[]): types.File {
+    return parse(code, this.createOptions(plugins || []));
   }
 
-  private static createOptions(options: ParserPlugin[] = []): ParserOptions {
+  private static createOptions(options: ParserPlugin[]): ParserOptions {
     return {
       plugins: [
         'asyncGenerators',
@@ -21,7 +21,7 @@ export default class BabelHelper {
         'flow',
         'jsx',
         'objectRestSpread',
-        ['decorators', { decoratorsBeforeExport: true }],
+        ['decorators', { decoratorsBeforeExport: true }] as any,
         ...options
       ],
       sourceType: 'unambiguous'

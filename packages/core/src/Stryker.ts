@@ -88,12 +88,12 @@ export default class Stryker {
           await this.logDone();
           return mutantResults;
         } else {
-          this.logRemark();
+          this.logTraceLogLevelHint();
         }
       } finally {
         // `injector.dispose` calls `dispose` on all created instances
-        // Namely the `SandboxPool` and the `ChildProcessProxy` instances
-        mutationTestProcessInjector.dispose();
+        // Namely the `SandboxPool`, `MutantTranspileScheduler` and `ChildProcessProxy` instances
+        await mutationTestProcessInjector.dispose();
         await LogConfigurator.shutdown();
       }
     }
@@ -104,7 +104,7 @@ export default class Stryker {
     this.log.info('Done in %s.', this.timer.humanReadableElapsed());
   }
 
-  private logRemark() {
+  private logTraceLogLevelHint() {
     if (!this.log.isTraceEnabled()) {
       this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
     }
