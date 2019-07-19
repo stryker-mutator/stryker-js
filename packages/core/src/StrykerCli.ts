@@ -47,7 +47,7 @@ export default class StrykerCli {
       .option('--logLevel <level>', 'Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
       .option('--fileLogLevel <level>', 'Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "off"')
       .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean, true)
-      .option('--tempDir <true/false>', 'Set the name of the directory that is used by Stryker as a working directory. This directory will be cleaned after a successful run')
+      .option('--tempDirName <true/false>', 'Set the name of the directory that is used by Stryker as a working directory. This directory will be cleaned after a successful run')
       .parse(this.argv);
 
     function parseBoolean(val: string) {
