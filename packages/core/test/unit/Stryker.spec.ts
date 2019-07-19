@@ -73,7 +73,7 @@ describe(Stryker.name, () => {
     mutationTestExecutorMock = mock(MutationTestExecutor);
     transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
-    
+
     temporaryDirectoryMock = createTemporaryDirectorySut();
 
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);

@@ -36,7 +36,7 @@ describe('TemporaryDirectory', () => {
     return testInjector.injector
       .provideValue(commonTokens.logger, factory.logger())
       .provideValue(commonTokens.options, factory.strykerOptions({
-        tempDirName: tempDirName
+        tempDirName
       }))
       .injectClass(TemporaryDirectory);
   }
