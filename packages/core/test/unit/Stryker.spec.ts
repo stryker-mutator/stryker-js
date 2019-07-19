@@ -74,8 +74,7 @@ describe(Stryker.name, () => {
     transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
 
-    temporaryDirectoryMock = createTemporaryDirectorySut();
-
+    temporaryDirectoryMock = testInjector.injector.injectClass(TemporaryDirectory);
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
     scoreResultCalculator = new ScoreResultCalculator(testInjector.logger);
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
@@ -98,14 +97,6 @@ describe(Stryker.name, () => {
       .withArgs(commonTokens.getLogger).returns(() => logMock)
       .withArgs(di.coreTokens.transpiler).returns(transpilerMock);
   });
-
-  function createTemporaryDirectorySut(): TemporaryDirectory {
-    return testInjector.injector
-      .provideValue(commonTokens.options, factory.strykerOptions({
-        tempDirName: '.stryker-tmp'
-      }))
-      .injectClass(TemporaryDirectory);
-  }
 
   describe('when constructed', () => {
     beforeEach(() => {

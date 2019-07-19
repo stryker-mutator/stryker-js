@@ -35,9 +35,7 @@ describe('TemporaryDirectory', () => {
   function createSut(): TemporaryDirectory {
     return testInjector.injector
       .provideValue(commonTokens.logger, factory.logger())
-      .provideValue(commonTokens.options, factory.strykerOptions({
-        tempDirName
-      }))
+      .provideValue(commonTokens.options, factory.strykerOptions())
       .injectClass(TemporaryDirectory);
   }
 

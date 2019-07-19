@@ -15,7 +15,7 @@ import * as coverageHooks from '../../../src/transpiler/coverageHooks';
 import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import * as sinon from 'sinon';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import { transpiler, testFramework, testResult, runResult } from '@stryker-mutator/test-helpers/src/factory';
 import { coreTokens } from '../../../src/di';
 import { commonTokens } from '@stryker-mutator/api/plugin';
@@ -43,7 +43,7 @@ describe('InitialTestExecutor run', () => {
   let temporaryDirectoryMock: TemporaryDirectory;
 
   function createSut() {
-    temporaryDirectoryMock = createTemporaryDirectorySut();
+    temporaryDirectoryMock = testInjector.injector.injectClass(TemporaryDirectory);
 
     return testInjector.injector
       .provideValue(coreTokens.inputFiles, inputFiles)
@@ -53,14 +53,6 @@ describe('InitialTestExecutor run', () => {
       .provideValue(coreTokens.timer, timerMock as unknown as Timer)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
       .injectClass(InitialTestExecutor);
-  }
-
-  function createTemporaryDirectorySut(): TemporaryDirectory {
-    return testInjector.injector
-      .provideValue(commonTokens.options, factory.strykerOptions({
-        tempDirName: '.stryker-tmp'
-      }))
-      .injectClass(TemporaryDirectory);
   }
 
   beforeEach(() => {

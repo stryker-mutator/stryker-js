@@ -23,8 +23,7 @@ import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import { MutantStatus } from '@stryker-mutator/api/report';
 import { RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 const OVERHEAD_TIME_MS = 0;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -68,8 +67,7 @@ describe(Sandbox.name, () => {
       notMutatedFile,
     ];
 
-    temporaryDirectoryMock = createTemporaryDirectorySut();
-
+    temporaryDirectoryMock = testInjector.injector.injectClass(TemporaryDirectory);
     randomStub = sinon.stub(temporaryDirectoryMock, 'createRandomDirectory');
     randomStub.returns(sandboxDirectory);
     temporaryDirectoryMock.initialize();
@@ -85,14 +83,6 @@ describe(Sandbox.name, () => {
     log = currentLogMock();
     log.isDebugEnabled.returns(true);
   });
-
-  function createTemporaryDirectorySut(): TemporaryDirectory {
-    return testInjector.injector
-      .provideValue(commonTokens.options, factory.strykerOptions({
-        tempDirName: '.stryker-tmp'
-      }))
-      .injectClass(TemporaryDirectory);
-  }
 
   interface CreateArgs {
     testFramework: TestFramework | null;

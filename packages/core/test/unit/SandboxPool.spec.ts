@@ -58,7 +58,7 @@ describe(SandboxPool.name, () => {
   });
 
   function createSut(): SandboxPool {
-    temporaryDirectoryMock = createTemporaryDirectorySut();
+    temporaryDirectoryMock = testInjector.injector.injectClass(TemporaryDirectory);
 
     const initialRunResult: InitialTestRunResult = {
       coverageMaps: {},
@@ -78,15 +78,6 @@ describe(SandboxPool.name, () => {
       .provideValue(coreTokens.transpiledFiles, initialTranspiledFiles)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
       .injectClass(SandboxPool);
-  }
-
-  function createTemporaryDirectorySut(): TemporaryDirectory {
-    return testInjector.injector
-      .provideValue(commonTokens.logger, factory.logger())
-      .provideValue(commonTokens.options, factory.strykerOptions({
-        tempDirName: '.stryker-tmp'
-      }))
-      .injectClass(TemporaryDirectory);
   }
 
   function actRunMutants() {
