@@ -9,14 +9,15 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;
-  private readonly isInitialized = false;
+  private isInitialized = false;
 
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, options: StrykerOptions) {
-    this.temporaryDirectory = path.join(process.cwd(), options.tempDirName, this.random().toString());
+    this.temporaryDirectory = path.join(process.cwd(), options.tempDirName);
   }
 
   public initialize() {
+    this.isInitialized = true;
     this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
     mkdirp.sync(this.temporaryDirectory);
   }

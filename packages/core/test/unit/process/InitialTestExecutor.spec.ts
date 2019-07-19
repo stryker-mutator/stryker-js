@@ -15,10 +15,11 @@ import * as coverageHooks from '../../../src/transpiler/coverageHooks';
 import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import * as sinon from 'sinon';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { transpiler, testFramework, testResult, runResult } from '@stryker-mutator/test-helpers/src/factory';
 import { coreTokens } from '../../../src/di';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
 
 const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -39,15 +40,27 @@ describe('InitialTestExecutor run', () => {
   let expectedRunResult: RunResult;
   let inputFiles: InputFileCollection;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
+  let temporaryDirectoryMock: TemporaryDirectory;
 
   function createSut() {
+    temporaryDirectoryMock = createTemporaryDirectorySut();
+
     return testInjector.injector
       .provideValue(coreTokens.inputFiles, inputFiles)
       .provideValue(coreTokens.loggingContext, LOGGING_CONTEXT)
       .provideValue(coreTokens.testFramework, testFrameworkMock)
       .provideValue(coreTokens.transpiler, transpilerMock as Transpiler)
       .provideValue(coreTokens.timer, timerMock as unknown as Timer)
+      .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
       .injectClass(InitialTestExecutor);
+  }
+
+  function createTemporaryDirectorySut(): TemporaryDirectory {
+    return testInjector.injector
+      .provideValue(commonTokens.options, factory.strykerOptions({
+        tempDirName: '.stryker-tmp'
+      }))
+      .injectClass(TemporaryDirectory);
   }
 
   beforeEach(() => {

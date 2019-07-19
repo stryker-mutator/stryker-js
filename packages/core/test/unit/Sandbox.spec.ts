@@ -23,6 +23,8 @@ import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import { MutantStatus } from '@stryker-mutator/api/report';
 import { RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 
 const OVERHEAD_TIME_MS = 0;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -46,6 +48,8 @@ describe(Sandbox.name, () => {
   let findNodeModulesStub: sinon.SinonStub;
   let log: Mock<Logger>;
   let runResult: RunResult;
+  let temporaryDirectoryMock: TemporaryDirectory;
+  let randomStub: sinon.SinonStub;
 
   beforeEach(() => {
     runResult = { tests: [], status: RunStatus.Complete };
@@ -63,7 +67,13 @@ describe(Sandbox.name, () => {
       expectedFileToMutate,
       notMutatedFile,
     ];
-    sinon.stub(TemporaryDirectory.instance(), 'createRandomDirectory').returns(sandboxDirectory);
+
+    temporaryDirectoryMock = createTemporaryDirectorySut();
+
+    randomStub = sinon.stub(temporaryDirectoryMock, 'createRandomDirectory');
+    randomStub.returns(sandboxDirectory);
+    temporaryDirectoryMock.initialize();
+
     writeFileStub = sinon.stub(fileUtils, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesStub = sinon.stub(fileUtils, 'findNodeModules');
@@ -75,6 +85,14 @@ describe(Sandbox.name, () => {
     log = currentLogMock();
     log.isDebugEnabled.returns(true);
   });
+
+  function createTemporaryDirectorySut(): TemporaryDirectory {
+    return testInjector.injector
+      .provideValue(commonTokens.options, factory.strykerOptions({
+        tempDirName: '.stryker-tmp'
+      }))
+      .injectClass(TemporaryDirectory);
+  }
 
   interface CreateArgs {
     testFramework: TestFramework | null;
@@ -88,7 +106,7 @@ describe(Sandbox.name, () => {
       testFramework: null,
     };
     const { files, testFramework, overheadTimeMS } = {...args, ...overrides };
-    return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT);
+    return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT, temporaryDirectoryMock);
   }
 
   describe('create()', () => {
@@ -112,7 +130,7 @@ describe(Sandbox.name, () => {
 
     it('should have created a sandbox folder', async () => {
       await createSut(testFrameworkStub);
-      expect(TemporaryDirectory.instance().createRandomDirectory).to.have.been.calledWith('sandbox');
+      expect(temporaryDirectoryMock.createRandomDirectory).to.have.been.calledWith('sandbox');
     });
 
     it('should symlink node modules in sandbox directory if exists', async () => {
