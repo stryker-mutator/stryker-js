@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "^2.0.2",
-    "@types/multimatch": "~2.1.2",
+    "@types/multimatch": "~4.0.0",
     "stryker-mocha-framework": "^0.15.1"
   },
   "peerDependencies": {
