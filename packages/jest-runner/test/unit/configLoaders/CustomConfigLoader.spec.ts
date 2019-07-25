@@ -1,8 +1,8 @@
-import CustomJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
-import sinon from 'sinon';
-import { expect, assert } from 'chai';
-import path from 'path';
+import { assert, expect } from 'chai';
 import fs from 'fs';
+import path from 'path';
+import sinon from 'sinon';
+import CustomJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
 
 describe(CustomJestConfigLoader.name, () => {
   let defaultConfigLoader: CustomJestConfigLoader;

@@ -1,12 +1,12 @@
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as sinon from 'sinon';
-import { expect } from 'chai';
-import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { Configuration, Plugin } from 'webpack';
-import { createStrykerWebpackConfig } from '../../helpers/producers';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { pluginTokens } from '../../../src/pluginTokens';
+import { createStrykerWebpackConfig } from '../../helpers/producers';
 
 class FooPlugin implements Plugin { public foo = true; public apply() { } }
 class ProgressPlugin implements Plugin { public apply() { } }

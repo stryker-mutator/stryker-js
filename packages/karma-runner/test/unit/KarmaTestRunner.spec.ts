@@ -1,21 +1,21 @@
-import { EventEmitter } from 'events';
+import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import {
+  RunStatus,
+  TestResult,
+  TestStatus
+} from '@stryker-mutator/api/test_runner';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import { EventEmitter } from 'events';
 import * as karma from 'karma';
 import * as sinon from 'sinon';
-import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
-import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
 import KarmaTestRunner from '../../src/KarmaTestRunner';
-import {
-  TestResult,
-  TestStatus,
-  RunStatus
-} from '@stryker-mutator/api/test_runner';
+import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
+import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import StrykerKarmaSetup, { NgConfigOptions } from '../../src/StrykerKarmaSetup';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 
 describe('KarmaTestRunner', () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;

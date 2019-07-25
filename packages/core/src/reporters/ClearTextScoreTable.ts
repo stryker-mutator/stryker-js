@@ -1,8 +1,8 @@
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
-import * as os from 'os';
-import * as _ from 'lodash';
 import chalk from 'chalk';
+import * as _ from 'lodash';
 import { MetricsResult } from 'mutation-testing-metrics';
+import * as os from 'os';
 
 const FILES_ROOT_NAME = 'All files';
 

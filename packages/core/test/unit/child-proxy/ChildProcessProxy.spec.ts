@@ -1,19 +1,19 @@
-import * as os from 'os';
+import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as childProcess from 'child_process';
-import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import { autoStart, InitMessage, WorkerMessageKind, ParentMessage, WorkerMessage, ParentMessageKind, DisposeMessage } from '../../../src/child-proxy/messageProtocol';
-import { serialize } from '../../../src/utils/objectUtils';
-import { HelloClass } from './HelloClass';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
-import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
-import * as objectUtils from '../../../src/utils/objectUtils';
 import { EventEmitter } from 'events';
-import { Logger } from '@stryker-mutator/api/logging';
-import { Mock } from '../../helpers/producers';
-import currentLogMock from '../../helpers/logMock';
+import * as os from 'os';
 import * as sinon from 'sinon';
-import { factory } from '@stryker-mutator/test-helpers';
+import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
+import { autoStart, DisposeMessage, InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from '../../../src/child-proxy/messageProtocol';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { serialize } from '../../../src/utils/objectUtils';
+import * as objectUtils from '../../../src/utils/objectUtils';
+import currentLogMock from '../../helpers/logMock';
+import { Mock } from '../../helpers/producers';
+import { HelloClass } from './HelloClass';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,

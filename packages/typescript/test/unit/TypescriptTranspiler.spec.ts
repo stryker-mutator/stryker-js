@@ -1,13 +1,13 @@
-import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
-import { expect } from 'chai';
-import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 import { File } from '@stryker-mutator/api/core';
-import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import sinon = require('sinon');
 import { serialize } from 'surrial';
 import TranspileFilter from '../../src/transpiler/TranspileFilter';
-import sinon = require('sinon');
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
+import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
+import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 
 describe(TypescriptTranspiler.name, () => {
 

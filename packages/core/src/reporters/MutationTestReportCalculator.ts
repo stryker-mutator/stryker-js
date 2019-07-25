@@ -1,11 +1,11 @@
-import * as path from 'path';
-import { MutantResult, mutationTestReportSchema, Reporter, MutantStatus } from '@stryker-mutator/api/report';
-import { StrykerOptions, Location, Position } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { coreTokens } from '../di';
+import { Location, Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import InputFileCollection from '../input/InputFileCollection';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
+import * as path from 'path';
+import { coreTokens } from '../di';
+import InputFileCollection from '../input/InputFileCollection';
 
 export class MutationTestReportCalculator {
 

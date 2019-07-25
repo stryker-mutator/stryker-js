@@ -1,11 +1,11 @@
-import * as path from 'path';
-import * as fs from 'fs';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { serializeArguments, filterConfig, mochaOptionsKey } from './utils';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import * as fs from 'fs';
+import * as path from 'path';
 import LibWrapper from './LibWrapper';
 import { MochaOptions } from './MochaOptions';
+import { filterConfig, mochaOptionsKey, serializeArguments } from './utils';
 
 /**
  * Subset of defaults for mocha options

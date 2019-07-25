@@ -1,5 +1,5 @@
-import * as sinon from 'sinon';
 import { expect } from 'chai';
+import * as sinon from 'sinon';
 import Timer from '../../../src/utils/Timer';
 
 describe('Timer', () => {

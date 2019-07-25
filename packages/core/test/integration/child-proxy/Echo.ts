@@ -1,6 +1,6 @@
 import { File } from '@stryker-mutator/api/core';
-import { getLogger } from 'log4js';
 import { tokens } from '@stryker-mutator/api/plugin';
+import { getLogger } from 'log4js';
 
 export class Echo {
 

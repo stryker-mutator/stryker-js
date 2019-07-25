@@ -1,16 +1,16 @@
-import * as path from 'path';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { RunOptions } from '@stryker-mutator/api/test_runner';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 import { EventEmitter } from 'events';
 import * as Mocha from 'mocha';
-import { expect } from 'chai';
-import { RunOptions } from '@stryker-mutator/api/test_runner';
-import MochaTestRunner from '../../src/MochaTestRunner';
-import LibWrapper from '../../src/LibWrapper';
-import * as utils from '../../src/utils';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import * as path from 'path';
 import sinon = require('sinon');
-import { commonTokens } from '@stryker-mutator/api/plugin';
-import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
+import LibWrapper from '../../src/LibWrapper';
 import { MochaOptions } from '../../src/MochaOptions';
+import MochaTestRunner from '../../src/MochaTestRunner';
+import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
+import * as utils from '../../src/utils';
 
 describe(MochaTestRunner.name, () => {
 

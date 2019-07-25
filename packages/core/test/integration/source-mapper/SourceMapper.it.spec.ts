@@ -1,8 +1,8 @@
-import * as path from 'path';
 import { File } from '@stryker-mutator/api/core';
-import { TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
-import { expect } from 'chai';
 import { fsAsPromised } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import * as path from 'path';
+import { TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
 
 function resolve(...filePart: string[]) {
   return path.resolve(__dirname, '..', '..', '..', 'testResources', 'source-mapper', ...filePart);

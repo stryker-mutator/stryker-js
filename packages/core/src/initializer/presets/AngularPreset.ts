@@ -1,6 +1,6 @@
+import * as os from 'os';
 import Preset from './Preset';
 import PresetConfiguration from './PresetConfiguration';
-import * as os from 'os';
 
 const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/angular.md#angular';
 

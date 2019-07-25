@@ -1,7 +1,7 @@
 import { fsAsPromised } from '@stryker-mutator/util';
-import * as path from 'path';
-import * as mkdirp from 'mkdirp';
 import { getLogger } from 'log4js';
+import * as mkdirp from 'mkdirp';
+import * as path from 'path';
 import { deleteDir } from './fileUtils';
 
 export class TempFolder {

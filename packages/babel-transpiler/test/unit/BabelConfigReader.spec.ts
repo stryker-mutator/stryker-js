@@ -1,9 +1,9 @@
-import { BabelConfigReader, StrykerBabelConfig } from '../../src/BabelConfigReader';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as fs from 'fs';
-import * as sinon from 'sinon';
 import * as path from 'path';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import * as sinon from 'sinon';
+import { BabelConfigReader, StrykerBabelConfig } from '../../src/BabelConfigReader';
 
 describe(BabelConfigReader.name, () => {
   let sut: BabelConfigReader;

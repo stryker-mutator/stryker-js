@@ -1,5 +1,5 @@
-import { normalizeFileFromTypescript, isTypescriptFile, getTSConfig } from '../helpers/tsHelpers';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { getTSConfig, isTypescriptFile, normalizeFileFromTypescript } from '../helpers/tsHelpers';
 
 /**
  * Represents a transpile filter. This is the component that decides on which files needs to be transpiled.

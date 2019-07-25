@@ -1,13 +1,13 @@
-import * as path from 'path';
-import { BabelTranspiler } from '../../src/BabelTranspiler';
-import { expect } from 'chai';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as path from 'path';
 import * as sinon from 'sinon';
+import { BabelConfigReader, StrykerBabelConfig } from '../../src/BabelConfigReader';
+import { BabelTranspiler } from '../../src/BabelTranspiler';
 import * as babel from '../../src/helpers/babelWrapper';
 import { Mock, mock } from '../helpers/mock';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { BabelConfigReader, StrykerBabelConfig } from '../../src/BabelConfigReader';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 
 describe(BabelTranspiler.name, () => {
   let sut: BabelTranspiler;

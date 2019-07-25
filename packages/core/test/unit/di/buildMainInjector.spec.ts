@@ -1,17 +1,17 @@
-import { buildMainInjector } from '../../../src/di/buildMainInjector';
-import * as di from '../../../src/di';
-import * as sinon from 'sinon';
+import { Config } from '@stryker-mutator/api/config';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { Reporter } from '@stryker-mutator/api/report';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { commonTokens } from '@stryker-mutator/api/plugin';
-import { Config } from '@stryker-mutator/api/config';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../../../src/TestFrameworkOrchestrator';
-import { PluginCreator } from '../../../src/di';
-import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
+import * as sinon from 'sinon';
 import * as configModule from '../../../src/config';
-import { Reporter } from '@stryker-mutator/api/report';
+import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
+import * as di from '../../../src/di';
+import { PluginCreator } from '../../../src/di';
+import { buildMainInjector } from '../../../src/di/buildMainInjector';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
+import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../../../src/TestFrameworkOrchestrator';
 import currentLogMock from '../../helpers/logMock';
 
 describe(buildMainInjector.name, () => {

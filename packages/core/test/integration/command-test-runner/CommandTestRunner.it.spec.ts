@@ -1,10 +1,10 @@
-import * as path from 'path';
-import { expect } from 'chai';
-import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
 import { Config } from '@stryker-mutator/api/config';
 import { RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
-import * as objectUtils from '../../../src/utils/objectUtils';
+import { expect } from 'chai';
+import * as path from 'path';
 import * as sinon from 'sinon';
+import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
+import * as objectUtils from '../../../src/utils/objectUtils';
 
 describe(`${CommandTestRunner.name} integration`, () => {
 

@@ -1,6 +1,6 @@
 import * as types from '@babel/types';
-import { NodeMutator } from './NodeMutator';
 import { NodeWithParent } from '../helpers/ParentNode';
+import { NodeMutator } from './NodeMutator';
 
 /**
  * Represents a mutator which can remove the content of a switch case clause.

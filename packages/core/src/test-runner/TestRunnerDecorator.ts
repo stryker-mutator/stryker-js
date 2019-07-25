@@ -1,4 +1,4 @@
-import { TestRunner, RunOptions, RunResult } from '@stryker-mutator/api/test_runner';
+import { RunOptions, RunResult, TestRunner } from '@stryker-mutator/api/test_runner';
 
 export default class TestRunnerDecorator implements Required<TestRunner> {
   protected innerRunner: TestRunner;

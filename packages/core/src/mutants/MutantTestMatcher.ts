@@ -1,19 +1,19 @@
-import * as _ from 'lodash';
-import { Logger } from '@stryker-mutator/api/logging';
-import { CoverageCollection, StatementMap, CoveragePerTestResult, CoverageResult } from '@stryker-mutator/api/test_runner';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { MatchedMutant } from '@stryker-mutator/api/report';
+import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
-import TestableMutant, { TestSelectionResult } from '../TestableMutant';
-import StrictReporter from '../reporters/StrictReporter';
-import { CoverageMaps } from '../transpiler/CoverageInstrumenterTranspiler';
-import { filterEmpty } from '../utils/objectUtils';
-import SourceFile from '../SourceFile';
-import LocationHelper from '../utils/LocationHelper';
-import { InitialTestRunResult } from '../process/InitialTestExecutor';
-import InputFileCollection from '../input/InputFileCollection';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { MatchedMutant } from '@stryker-mutator/api/report';
+import { CoverageCollection, CoveragePerTestResult, CoverageResult, StatementMap } from '@stryker-mutator/api/test_runner';
+import * as _ from 'lodash';
 import { coreTokens } from '../di';
+import InputFileCollection from '../input/InputFileCollection';
+import { InitialTestRunResult } from '../process/InitialTestExecutor';
+import StrictReporter from '../reporters/StrictReporter';
+import SourceFile from '../SourceFile';
+import TestableMutant, { TestSelectionResult } from '../TestableMutant';
+import { CoverageMaps } from '../transpiler/CoverageInstrumenterTranspiler';
+import LocationHelper from '../utils/LocationHelper';
+import { filterEmpty } from '../utils/objectUtils';
 
 const enum StatementIndexKind {
   Function,

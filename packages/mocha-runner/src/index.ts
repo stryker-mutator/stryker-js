@@ -1,8 +1,8 @@
-import { declareFactoryPlugin, PluginKind, BaseContext, tokens, commonTokens, Injector, declareClassPlugin } from '@stryker-mutator/api/plugin';
+import { BaseContext, commonTokens, declareClassPlugin, declareFactoryPlugin, Injector, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 
-import MochaTestRunner from './MochaTestRunner';
 import MochaConfigEditor from './MochaConfigEditor';
 import MochaOptionsLoader from './MochaOptionsLoader';
+import MochaTestRunner from './MochaTestRunner';
 
 export const strykerPlugins = [
   declareFactoryPlugin(PluginKind.ConfigEditor, 'mocha-runner', mochaConfigEditorFactory),

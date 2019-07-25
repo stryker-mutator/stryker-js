@@ -1,18 +1,18 @@
-import { EOL } from 'os';
-import { RunStatus, RunResult, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import { Transpiler } from '@stryker-mutator/api/transpile';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import Sandbox from '../Sandbox';
-import Timer from '../utils/Timer';
-import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
-import InputFileCollection from '../input/InputFileCollection';
-import SourceMapper from '../transpiler/SourceMapper';
-import { coveragePerTestHooks } from '../transpiler/coverageHooks';
-import LoggingClientContext from '../logging/LoggingClientContext';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
+import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import { EOL } from 'os';
 import { coreTokens } from '../di';
+import InputFileCollection from '../input/InputFileCollection';
+import LoggingClientContext from '../logging/LoggingClientContext';
+import Sandbox from '../Sandbox';
+import { coveragePerTestHooks } from '../transpiler/coverageHooks';
+import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
+import SourceMapper from '../transpiler/SourceMapper';
+import Timer from '../utils/Timer';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.

@@ -1,6 +1,6 @@
+import { assert, expect } from 'chai';
 import path from 'path';
 import sinon from 'sinon';
-import { assert, expect } from 'chai';
 import ReactScriptsJestConfigLoader from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
 import * as helper from '../../../src/utils/createReactJestConfig';
 

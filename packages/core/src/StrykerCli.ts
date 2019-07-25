@@ -1,9 +1,9 @@
 import * as program from 'commander';
-import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
-import Stryker from './Stryker';
 import { getLogger } from 'log4js';
-import LogConfigurator from './logging/LogConfigurator';
+import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
+import LogConfigurator from './logging/LogConfigurator';
+import Stryker from './Stryker';
 
 export default class StrykerCli {
 

@@ -1,16 +1,16 @@
-import { coreTokens, PluginCreator } from '.';
-import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
+import { Config } from '@stryker-mutator/api/config';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
-import { rootInjector } from 'typed-inject';
 import { getLogger } from 'log4js';
-import { loggerFactory, pluginResolverFactory, optionsFactory, testFrameworkFactory } from './factoryMethods';
+import { rootInjector } from 'typed-inject';
+import { coreTokens, PluginCreator } from '.';
 import { ConfigEditorApplier, readConfig } from '../config';
-import BroadcastReporter from '../reporters/BroadcastReporter';
-import { Config } from '@stryker-mutator/api/config';
 import ConfigReader from '../config/ConfigReader';
+import BroadcastReporter from '../reporters/BroadcastReporter';
 import Timer from '../utils/Timer';
+import { loggerFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
 
 export interface MainContext extends OptionsContext {
   [coreTokens.reporter]: Required<Reporter>;

@@ -1,9 +1,9 @@
-import { EOL } from 'os';
-import { TestRunner, RunResult, TestResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import { Jasmine, toStrykerTestResult, evalGlobal } from './helpers';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { RunResult, RunStatus, TestResult, TestRunner } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
+import { EOL } from 'os';
+import { evalGlobal, Jasmine, toStrykerTestResult } from './helpers';
 
 export default class JasmineTestRunner implements TestRunner {
 

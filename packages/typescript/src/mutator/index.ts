@@ -1,19 +1,19 @@
-import NodeMutator from './NodeMutator';
-import SwitchCaseMutator from './SwitchCaseMutator';
-import StringLiteralMutator from './StringLiteralMutator';
-import BinaryExpressionMutator from './BinaryExpressionMutator';
-import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
 import ArrayLiteralMutator from './ArrayLiteralMutator';
 import ArrayNewExpressionMutator from './ArrayNewExpressionMutator';
-import BlockMutator from './BlockMutator';
 import ArrowFunctionMutator from './ArrowFunctionMutator';
-import IfStatementMutator from './IfStatementMutator';
-import ObjectLiteralMutator from './ObjectLiteralMutator';
-import WhileStatementMutator from './WhileStatementMutator';
-import ForStatementMutator from './ForStatementMutator';
-import DoStatementMutator from './DoStatementMutator';
+import BinaryExpressionMutator from './BinaryExpressionMutator';
+import BlockMutator from './BlockMutator';
+import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
 import ConditionalExpressionMutator from './ConditionalExpressionMutator';
+import DoStatementMutator from './DoStatementMutator';
+import ForStatementMutator from './ForStatementMutator';
+import IfStatementMutator from './IfStatementMutator';
+import NodeMutator from './NodeMutator';
+import ObjectLiteralMutator from './ObjectLiteralMutator';
 import PrefixUnaryExpressionMutator from './PrefixUnaryExpressionMutator';
+import StringLiteralMutator from './StringLiteralMutator';
+import SwitchCaseMutator from './SwitchCaseMutator';
+import WhileStatementMutator from './WhileStatementMutator';
 
 export const nodeMutators: ReadonlyArray<NodeMutator> = [
   new BinaryExpressionMutator(),

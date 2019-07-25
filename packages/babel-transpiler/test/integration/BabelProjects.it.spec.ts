@@ -1,12 +1,12 @@
-import * as path from 'path';
-import { File } from '@stryker-mutator/api/core';
-import { ProjectLoader } from '../helpers/projectLoader';
-import { BabelTranspiler, babelTranspilerFactory } from '../../src/BabelTranspiler';
-import { expect } from 'chai';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { CONFIG_KEY, StrykerBabelConfig } from '../../src/BabelConfigReader';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { ConfigAPI } from '@babel/core';
+import { File } from '@stryker-mutator/api/core';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as path from 'path';
+import { CONFIG_KEY, StrykerBabelConfig } from '../../src/BabelConfigReader';
+import { BabelTranspiler, babelTranspilerFactory } from '../../src/BabelTranspiler';
+import { ProjectLoader } from '../helpers/projectLoader';
 
 function describeIntegrationTest(projectName: string, babelConfig: Partial<StrykerBabelConfig> = {}) {
 

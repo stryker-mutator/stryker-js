@@ -1,23 +1,23 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
-import { MutantTestMatcher } from './mutants/MutantTestMatcher';
+import { Injector } from 'typed-inject';
+import { buildMainInjector, coreTokens, MainContext, PluginCreator } from './di';
+import InputFileCollection from './input/InputFileCollection';
 import InputFileResolver from './input/InputFileResolver';
-import ScoreResultCalculator from './ScoreResultCalculator';
-import { TempFolder } from './utils/TempFolder';
+import LogConfigurator from './logging/LogConfigurator';
+import { MutantTestMatcher } from './mutants/MutantTestMatcher';
 import { MutatorFacade } from './mutants/MutatorFacade';
 import InitialTestExecutor from './process/InitialTestExecutor';
 import { MutationTestExecutor } from './process/MutationTestExecutor';
-import LogConfigurator from './logging/LogConfigurator';
-import { Injector } from 'typed-inject';
-import { TranspilerFacade } from './transpiler/TranspilerFacade';
-import { coreTokens, MainContext, PluginCreator, buildMainInjector } from './di';
-import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
-import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
-import { SandboxPool } from './SandboxPool';
-import { Logger } from '@stryker-mutator/api/logging';
-import { transpilerFactory } from './transpiler';
 import { MutationTestReportCalculator } from './reporters/MutationTestReportCalculator';
-import InputFileCollection from './input/InputFileCollection';
+import { SandboxPool } from './SandboxPool';
+import ScoreResultCalculator from './ScoreResultCalculator';
+import { transpilerFactory } from './transpiler';
+import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
+import { TranspilerFacade } from './transpiler/TranspilerFacade';
+import { TempFolder } from './utils/TempFolder';
 
 export default class Stryker {
 

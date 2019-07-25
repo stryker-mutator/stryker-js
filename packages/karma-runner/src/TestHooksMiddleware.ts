@@ -1,6 +1,6 @@
+import { RequestHandler } from 'express';
 import * as path from 'path';
 import * as url from 'url';
-import { RequestHandler } from 'express';
 
 export const TEST_HOOKS_FILE_NAME = require.resolve('./testHooksForStryker');
 

@@ -1,7 +1,7 @@
-import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, PluginKind, tokens } from '@stryker-mutator/api/plugin';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { coreTokens } from './di';
 import { PluginCreator } from './di/PluginCreator';
 

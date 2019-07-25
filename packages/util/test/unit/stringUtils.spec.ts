@@ -1,5 +1,5 @@
-import { normalizeWhitespaces } from '../../src';
 import { expect } from 'chai';
+import { normalizeWhitespaces } from '../../src';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {

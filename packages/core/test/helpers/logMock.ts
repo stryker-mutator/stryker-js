@@ -1,6 +1,6 @@
 import * as logging from 'log4js';
-import { Mock, logger } from './producers';
 import * as sinon from 'sinon';
+import { logger, Mock } from './producers';
 
 let log: Mock<logging.Logger>;
 
