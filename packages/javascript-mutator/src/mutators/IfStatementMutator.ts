@@ -10,12 +10,13 @@ export default class IfStatementMutator implements NodeMutator {
 
   constructor() { }
 
-  public mutate(node: types.Node): types.Node[] | void {
+  public mutate(node: types.Node): types.Node[] {
     if (types.isIfStatement(node)) {
       return [
         NodeGenerator.createBooleanLiteralNode(node.test, false),
         NodeGenerator.createBooleanLiteralNode(node.test, true)
       ];
     }
+    return [];
   }
 }

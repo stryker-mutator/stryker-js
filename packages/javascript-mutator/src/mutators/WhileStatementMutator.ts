@@ -10,9 +10,10 @@ export default class WhileStatementMutator implements NodeMutator {
 
   constructor() { }
 
-  public mutate(node: types.Node): types.Node[] | void {
+  public mutate(node: types.Node): types.Node[] {
     if (types.isWhileStatement(node)) {
       return [NodeGenerator.createBooleanLiteralNode(node.test, false)];
     }
+    return [];
   }
 }

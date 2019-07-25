@@ -13,7 +13,7 @@ export default class PrefixUnaryExpressionMutator implements NodeMutator {
     '~': ''
   };
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[] {
+  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
     if ((types.isUpdateExpression(node) || types.isUnaryExpression(node)) && this.operators[node.operator] !== undefined && node.prefix) {
       if (this.operators[node.operator].length > 0) {
         const mutatedNode = copy(node);
@@ -25,5 +25,6 @@ export default class PrefixUnaryExpressionMutator implements NodeMutator {
         return [mutatedNode];
       }
     }
+    return [];
   }
 }
