@@ -10,10 +10,12 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 export class JavaScriptMutator implements Mutator {
   private readonly mutators: ReadonlyArray<NodeMutator>;
   private readonly mutatorsSwitch: { [key: string]: boolean };
+  private nextMutation = -1 | 0 | 1;
 
   public static inject = tokens(commonTokens.logger, NODE_MUTATORS_TOKEN) ;
   constructor(private readonly log: Logger, mutators: ReadonlyArray<NodeMutator>) {
     this.mutators = mutators;
+    this.nextMutation = 0;
     this.mutatorsSwitch = {};
     mutators.forEach(mutator => {
       this.mutatorsSwitch[mutator.name] = true;
@@ -51,6 +53,11 @@ export class JavaScriptMutator implements Mutator {
         case 'stryker:off':
           this.updateMutators(this.parseSwitchers(trim), false);
           break;
+        case 'stryker:next-on':
+          this.nextMutation = 1;
+          break;
+        case 'stryker:next-off':
+          this.nextMutation = -1;
       }
     });
   }
@@ -63,14 +70,16 @@ export class JavaScriptMutator implements Mutator {
 
       BabelHelper.getNodes(ast).forEach(node => {
         this.mutatorsSwitcher(node.leadingComments || []);
-
         this.mutators.forEach(mutator => {
-          if (this.mutatorsSwitch[mutator.name] === true) {
+          if (this.mutatorsSwitch[mutator.name] === true || this.nextMutation === 1) {
             const mutatedNodes = mutator.mutate(node, copy);
 
             if (mutatedNodes.length > 0) {
-              const newMutants = this.generateMutants(mutatedNodes, mutator.name, file.name);
-              mutants.push(...newMutants);
+              if (this.nextMutation !== -1) {
+                const newMutants = this.generateMutants(mutatedNodes, mutator.name, file.name);
+                mutants.push(...newMutants);
+              }
+              this.nextMutation = 0;
             }
           }
         });

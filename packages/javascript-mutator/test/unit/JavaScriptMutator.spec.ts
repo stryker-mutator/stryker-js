@@ -231,4 +231,31 @@ describe('JavaScriptMutator', () => {
     const mutants = sut.mutate(files);
     expect(mutants.length).equal(2);
   });
+
+  it('should should enable one mutations using `stryker:next-on`', () => {
+    const sut = createSut();
+    const files: File[] = [new File('testFile.js', `
+      // stryker:off
+      // stryker:next-on
+      function hello() {
+        return 2 + 1 - 3;
+      }
+    `)];
+
+    const mutants = sut.mutate(files);
+    expect(mutants.length).equal(1);
+  });
+
+  it('should should disable one mutations using `stryker:next-off`', () => {
+    const sut = createSut();
+    const files: File[] = [new File('testFile.js', `
+      // stryker:next-off
+      function hello() {
+        return 2 + 1 - 3;
+      }
+    `)];
+
+    const mutants = sut.mutate(files);
+    expect(mutants.length).equal(2);
+  });
 });
