@@ -209,7 +209,7 @@ describe('TypescriptMutator', () => {
         const sut = createSut();
         const files: File[] = [new File('testFile.js', `
           // stryker:off
-          // stryker:on SourceFileForTest
+          // stryker:on FunctionDeclarationForTest
           function hello() {
             return 2 + 1 - 3;
           }
