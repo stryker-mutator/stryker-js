@@ -150,6 +150,101 @@ describe('TypescriptMutator', () => {
           }
         ]);
       });
+
+      it('should disable mutations after using `stryker:off`', () => {
+        const sut = createSut();
+        const files: File[] = [new File('testFile.js', `
+          // stryker:off
+          function hello() {
+            return 2 + 1 - 3;
+          }
+        `)];
+
+        const mutants = sut.mutate(files);
+        expect(mutants.length).equal(0);
+      });
+
+      it('should should change mutations for multiple comments', () => {
+        const sut = createSut();
+        const files: File[] = [new File('testFile.js', `
+          // stryker will be disabled now
+          // stryker:off
+          function hello() {
+            return 2 + 1 - 3;
+          }
+        `)];
+
+        const mutants = sut.mutate(files);
+        expect(mutants.length).equal(0);
+      });
+
+      it('should should enable mutations using `stryker:on`', () => {
+        const sut = createSut();
+        const files: File[] = [new File('testFile.js', `
+          // stryker:off
+          // stryker:on
+          function hello() {
+            return 2 + 1 - 3;
+          }
+        `)];
+
+        const mutants = sut.mutate(files);
+        expect(mutants.length).equal(3);
+      });
+
+      it('should should disable specific mutations using `stryker:off mutatorName`', () => {
+        const sut = createSut();
+        const files: File[] = [new File('testFile.js', `
+          // stryker:off SourceFileForTest, FunctionDeclarationForTest
+          function hello() {
+            return 2 + 1 - 3;
+          }
+        `)];
+
+        const mutants = sut.mutate(files);
+        expect(mutants.length).equal(0);
+      });
+
+      it('should should enable specific mutations using `stryker:on mutatorName`', () => {
+        const sut = createSut();
+        const files: File[] = [new File('testFile.js', `
+          // stryker:off
+          // stryker:on SourceFileForTest
+          function hello() {
+            return 2 + 1 - 3;
+          }
+        `)];
+
+        const mutants = sut.mutate(files);
+        expect(mutants.length).equal(2);
+      });
+
+      it('should should enable one mutations using `stryker:next-on`', () => {
+        const sut = createSut();
+        const files: File[] = [new File('testFile.js', `
+          // stryker:off
+          // stryker:next-on
+          function hello() {
+            return 2 + 1 - 3;
+          }
+        `)];
+        const mutants = sut.mutate(files);
+        console.log(mutants);
+        expect(mutants.length).equal(1);
+      });
+
+      it('should should disable one mutations using `stryker:next-off`', () => {
+        const sut = createSut();
+        const files: File[] = [new File('testFile.js', `
+          // stryker:next-off
+          function hello() {
+            return 2 + 1 - 3;
+          }
+        `)];
+
+        const mutants = sut.mutate(files);
+        expect(mutants.length).equal(2);
+      });
     });
 
   });
