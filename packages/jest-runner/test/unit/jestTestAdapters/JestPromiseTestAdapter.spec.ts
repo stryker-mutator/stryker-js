@@ -1,7 +1,7 @@
 import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { expect, assert } from 'chai';
-import * as jest from 'jest';
+import jest from 'jest';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 describe(JestPromiseTestAdapter.name, () => {

@@ -1,7 +1,7 @@
 {
   "name": "@stryker-mutator/test-helpers",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "A helper package for testing",
   "main": "src/index.js",
   "typings": "src/index.d.ts",
@@ -21,7 +21,7 @@
     "mutation-testing-metrics": "^1.0.7"
   },
   "devDependencies": {
-    "@stryker-mutator/api": "^2.0.0",
-    "typed-inject": "~1.0.0"
+    "@stryker-mutator/api": "^2.0.2",
+    "typed-inject": "~2.0.0"
   }
 }

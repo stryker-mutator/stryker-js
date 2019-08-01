@@ -1,6 +1,6 @@
 import JestTestAdapter from './JestTestAdapter';
 import JestPromiseAdapter from './JestPromiseTestAdapter';
-import * as semver from 'semver';
+import semver from 'semver';
 import { Injector, BaseContext, tokens, commonTokens} from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 

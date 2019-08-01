@@ -15,7 +15,7 @@ export function mutatorsFactory(pluginResolver: PluginResolver, injector: Inject
   return mutators;
 }
 
-function createPlugin(injector: Injector<OptionsContext>, plugin: Plugin<PluginKind.Mutator, InjectionToken<OptionsContext>[]>): Mutator {
+function createPlugin(injector: Injector<OptionsContext>, plugin: Plugin<PluginKind.Mutator>): Mutator {
   if (isFactoryPlugin(plugin)) {
     return injector.injectFunction(plugin.factory);
   } else {
@@ -23,7 +23,7 @@ function createPlugin(injector: Injector<OptionsContext>, plugin: Plugin<PluginK
   }
 }
 
-function isFactoryPlugin(plugin: Plugin<PluginKind.Mutator, InjectionToken<OptionsContext>[]>):
+function isFactoryPlugin(plugin: Plugin<PluginKind.Mutator>):
   plugin is FactoryPlugin<PluginKind.Mutator, InjectionToken<OptionsContext>[]> {
   return !!(plugin as FactoryPlugin<PluginKind.Mutator, InjectionToken<OptionsContext>[]>).factory;
 }

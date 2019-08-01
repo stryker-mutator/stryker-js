@@ -4,7 +4,7 @@ import { minLevel } from './logUtils';
 import LoggingClientContext from './LoggingClientContext';
 import { getFreePort } from '../utils/netUtils';
 
-enum AppenderName {
+const enum AppenderName {
   File = 'file',
   FilteredFile = 'filteredFile',
   Console = 'console',
