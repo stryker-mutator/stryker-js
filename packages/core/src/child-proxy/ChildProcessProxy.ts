@@ -10,7 +10,7 @@ import ChildProcessCrashedError from './ChildProcessCrashedError';
 import { isErrnoException } from '@stryker-mutator/util';
 import OutOfMemoryError from './OutOfMemoryError';
 import StringBuilder from '../utils/StringBuilder';
-import { InjectionToken, InjectableClass } from 'typed-inject';
+import { InjectionToken, InjectableClass, Disposable } from 'typed-inject';
 import { OptionsContext } from '@stryker-mutator/api/plugin';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
@@ -25,7 +25,7 @@ const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
 
-export default class ChildProcessProxy<T> {
+export default class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
 
   private readonly worker: ChildProcess;
@@ -34,7 +34,8 @@ export default class ChildProcessProxy<T> {
   private currentError: ChildProcessCrashedError | undefined;
   private readonly workerTasks: Task<void>[] = [];
   private readonly log = getLogger(ChildProcessProxy.name);
-  private readonly stdoutAndStderrBuilder = new StringBuilder();
+  private readonly stdoutBuilder = new StringBuilder();
+  private readonly stderrBuilder = new StringBuilder();
   private isDisposed = false;
 
   private constructor(requirePath: string, requireName: string, loggingContext: LoggingClientContext, options: StrykerOptions, additionalInjectableValues: unknown, workingDirectory: string) {
@@ -52,10 +53,8 @@ export default class ChildProcessProxy<T> {
     });
     this.listenForMessages();
     this.listenToStdoutAndStderr();
-    // This is important! Be sure to bind to `this`
-    this.handleUnexpectedExit = this.handleUnexpectedExit.bind(this);
-    this.handleError = this.handleError.bind(this);
-    this.worker.on('exit', this.handleUnexpectedExit);
+    // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker/issues/1634
+    this.worker.on('close', this.handleUnexpectedExit);
     this.worker.on('error', this.handleError);
     this.proxy = this.initProxy();
   }
@@ -141,20 +140,20 @@ export default class ChildProcessProxy<T> {
   }
 
   private listenToStdoutAndStderr() {
-    const handleData = (data: Buffer | string) => {
+    const handleData = (builder: StringBuilder) => (data: Buffer | string) => {
       const output = data.toString();
-      this.stdoutAndStderrBuilder.append(output);
+      builder.append(output);
       if (this.log.isTraceEnabled()) {
         this.log.trace(output);
       }
     };
 
     if (this.worker.stdout) {
-      this.worker.stdout.on('data', handleData);
+      this.worker.stdout.on('data', handleData(this.stdoutBuilder));
     }
 
     if (this.worker.stderr) {
-      this.worker.stderr.on('data', handleData);
+      this.worker.stderr.on('data', handleData(this.stderrBuilder));
     }
   }
 
@@ -164,9 +163,9 @@ export default class ChildProcessProxy<T> {
       .forEach(task => task.reject(error));
   }
 
-  private handleUnexpectedExit(code: number, signal: string) {
+  private readonly handleUnexpectedExit = (code: number, signal: string) => {
     this.isDisposed = true;
-    const output = this.stdoutAndStderrBuilder.toString();
+    const output = StringBuilder.concat(this.stderrBuilder, this.stdoutBuilder);
 
     if (processOutOfMemory()) {
       this.currentError = new OutOfMemoryError(this.worker.pid, code);
@@ -192,7 +191,7 @@ export default class ChildProcessProxy<T> {
     }
   }
 
-  private handleError(error: Error) {
+  private readonly handleError = (error: Error) => {
     if (this.innerProcessIsCrashed(error)) {
       this.log.warn(`Child process [pid ${this.worker.pid}] has crashed. See other warning messages for more info.`, error);
       this.reportError(new ChildProcessCrashedError(this.worker.pid, `Child process [pid ${this.worker.pid}] has crashed`, undefined, undefined, error));
@@ -205,22 +204,19 @@ export default class ChildProcessProxy<T> {
     return isErrnoException(error) && (error.code === BROKEN_PIPE_ERROR_CODE || error.code === IPC_CHANNEL_CLOSED_ERROR_CODE);
   }
 
-  public dispose(): Promise<void> {
-    this.worker.removeListener('exit', this.handleUnexpectedExit);
-    if (this.isDisposed) {
-      return Promise.resolve();
-    } else {
+  public async dispose(): Promise<void> {
+    if (!this.isDisposed) {
+      this.worker.removeListener('close', this.handleUnexpectedExit);
+      this.isDisposed = true;
       this.log.debug('Disposing of worker process %s', this.worker.pid);
-      const killWorker = () => {
-        this.log.debug('Kill %s', this.worker.pid);
-        kill(this.worker.pid);
-        this.isDisposed = true;
-      };
       this.disposeTask = new ExpirableTask(TIMEOUT_FOR_DISPOSE);
       this.send({ kind: WorkerMessageKind.Dispose });
-      return this.disposeTask.promise
-        .then(killWorker)
-        .catch(killWorker);
+      try {
+        await this.disposeTask.promise;
+      } finally {
+          this.log.debug('Kill %s', this.worker.pid);
+          await kill(this.worker.pid);
+      }
     }
   }
 

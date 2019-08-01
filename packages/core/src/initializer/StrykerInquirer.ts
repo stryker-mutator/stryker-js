@@ -34,7 +34,7 @@ export class StrykerInquirer {
       name: 'testRunner',
       type: 'list'
     });
-    return options.filter(_ => _.name === answers.testRunner)[0] || { name: CommandTestRunner.runnerName };
+    return options.filter(_ => _.name === answers.testRunner)[0] || { name: CommandTestRunner.runnerName, pkg: null };
   }
 
   public async promptTestFrameworks(options: PromptOption[]): Promise<PromptOption> {

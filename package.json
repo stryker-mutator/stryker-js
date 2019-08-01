@@ -4,7 +4,7 @@
   "devDependencies": {
     "@types/chai": "4.1.7",
     "@types/chai-as-promised": "7.1.0",
-    "@types/execa": "^0.9.0",
+    "@types/execa": "^2.0.0",
     "@types/glob": "^7.1.0",
     "@types/istanbul": "^0.4.29",
     "@types/karma": "^3.0.0",
@@ -20,7 +20,7 @@
     "chai-as-promised": "^7.1.1",
     "concurrently": "^4.0.1",
     "cross-env": "^5.2.0",
-    "execa": "^1.0.0",
+    "execa": "^2.0.3",
     "glob": "^7.1.1",
     "if-node-version": "^1.1.1",
     "install-local": "~1.0.0",
@@ -35,13 +35,15 @@
     "sinon": "^7.2.0",
     "sinon-chai": "^3.2.0",
     "source-map-support": "^0.5.6",
-    "tslint": "~5.17.0",
-    "typescript": "~3.4.1"
+    "tslint": "~5.18.0",
+    "tslint-consistent-codestyle": "~1.15.1",
+    "typescript": "~3.5.3"
   },
   "prettier": {
     "singleQuote": true
   },
   "scripts": {
+    "all": "npm run clean && npm run lint && npm run build && npm run test && npm run e2e",
     "postinstall": "lerna bootstrap --no-ci && link-parent-bin",
     "lint-info": "tslint --out tslint.log --project tsconfig.lint.json",
     "lint-fix": "tslint --fix --project tsconfig.lint.json",

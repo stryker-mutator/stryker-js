@@ -3,25 +3,27 @@
   "extends": [
     "tslint:recommended"
   ],
-  "jsRules": {},
   "rules": {
     "array-type": [true, "array"],
     "arrow-parens": [true, "ban-single-arg-parens"],
-    "ban-types": false,
+    "ban-types": {
+      "options": [
+        ["Object", "Avoid using the `Object` type. Did you mean `object`?"],
+        ["Boolean", "Avoid using the `Boolean` type. Did you mean `boolean`?"],
+        ["Number", "Avoid using the `Number` type. Did you mean `number`?"],
+        ["String", "Avoid using the `String` type. Did you mean `string`?"],
+        ["Symbol", "Avoid using the `Symbol` type. Did you mean `symbol`?"]
+      ]
+    },
     "class-name": true,
-    "comment-format": [
-      true,
-      "check-space"
-    ],
+    "comment-format": [true, "check-space"],
     "completed-docs": false,
     "curly": [true, "ignore-same-line"],
+    "file-name-casing": [ false, "camel-case" ],
     "forin": false,
     "function-constructor": false,
-    "interface-name": false,
-    "indent": [
-      true,
-      "spaces"
-    ],
+    "indent": [true, "spaces"],
+    "interface-name": [true, "never-prefix"],
     "jsdoc-format": true,
     "max-classes-per-file": false,
     "max-line-length": false,
@@ -46,45 +48,27 @@
     "no-parameter-reassignment": false,
     "no-return-await": true,
     "no-shadowed-variable": false,
+    "no-sparse-arrays": true,
     "no-string-literal": true,
     "no-switch-case-fall-through": true,
     "no-trailing-whitespace": true,
-    "no-unnecessary-class": [
-      true,
-      "allow-constructor-only",
-      "allow-empty-class",
-      "allow-static-only"
-    ],
+    "no-unnecessary-class": [true, "allow-constructor-only", "allow-empty-class", "allow-static-only"],
     "no-unused-expression": false,
     "no-unsafe-any": false,
     "no-unsafe-finally": true,
-    "no-use-before-declare": false,
     "no-var-keyword": true,
     "no-var-requires": false,
     "object-literal-sort-keys": [true, "ignore-case"],
-    "one-line": [
-      true,
-      "check-open-brace",
-      "check-whitespace"
-    ],
+    "one-line": [true, "check-open-brace", "check-whitespace"],
     "only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
     "ordered-imports": false,
     "prefer-const": true,
     "prefer-method-signature": true,
     "prefer-readonly": true,
-    "quotemark": [
-      true,
-      "single"
-    ],
-    "semicolon": [
-      true,
-      "always"
-    ],
+    "quotemark": [true, "single"],
+    "semicolon": [true, "always"],
     "trailing-comma": false,
-    "triple-equals": [
-      true,
-      "allow-null-check"
-    ],
+    "triple-equals": [true, "allow-null-check"],
     "typedef-whitespace": [
       true,
       {
@@ -96,18 +80,27 @@
       }
     ],
     "unified-signatures": true,
-    "variable-name": [
+    "variable-name": false,
+    "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"],
+
+    "naming-convention": [
       true,
-      "ban-keywords"
+      { "type": "default", "format": "", "leadingUnderscore": "allow", "trailingUnderscore": "allow" },
+      { "type": "variable", "modifiers": ["global", "const"], "format": "" },
+      { "type": "variable", "modifiers": ["export", "const"], "format": "" },
+      { "type": "functionVariable", "modifiers": ["export", "const"], "format": "" },
+      { "type": "parameter", "modifiers": "unused", "leadingUnderscore": "allow" },
+      { "type": "member", "modifiers": "private", "leadingUnderscore": "allow" },
+      { "type": "member", "modifiers": "protected", "leadingUnderscore": "allow" },
+      { "type": "method", "filter": "^toJSON$", "format": null },
+      { "type": "property", "modifiers": ["public", "static", "const"], "format": "" },
+      { "type": "type", "format": "PascalCase" },
+      { "type": "class", "modifiers": "abstract", "prefix": "" },
+      { "type": "interface", "prefix": "" },
+      { "type": "genericTypeParameter", "prefix": "" },
+      { "type": "enumMember", "format": "PascalCase" }
     ],
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-separator",
-      "check-type"
-    ]
+    "prefer-const-enum": true
   },
-  "rulesDirectory": []
+  "rulesDirectory": ["tslint-consistent-codestyle"]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/javascript-mutator",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "A plugin for javascript projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -37,10 +37,10 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/javascript-mutator#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/generator": "~7.4.0",
-    "@babel/parser": "~7.4.0",
-    "@babel/traverse": "~7.4.0",
-    "@stryker-mutator/api": "^2.0.0",
+    "@babel/generator": "~7.5.0",
+    "@babel/parser": "~7.5.5",
+    "@babel/traverse": "~7.5.0",
+    "@stryker-mutator/api": "^2.0.2",
     "lodash": "~4.17.4",
     "tslib": "~1.10.0"
   },
@@ -48,9 +48,9 @@
     "@stryker-mutator/core": "^2.0.0"
   },
   "devDependencies": {
-    "@babel/types": "~7.4.0",
-    "@stryker-mutator/mutator-specification": "^2.0.0",
-    "@stryker-mutator/test-helpers": "^2.0.0",
+    "@babel/types": "~7.5.0",
+    "@stryker-mutator/mutator-specification": "^2.0.2",
+    "@stryker-mutator/test-helpers": "^2.0.2",
     "@types/babel__generator": "^7.0.0",
     "@types/babel__traverse": "^7.0.0"
   }

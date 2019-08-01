@@ -10,11 +10,11 @@ import * as coreTokens from './coreTokens';
 const IGNORED_PACKAGES = ['core', 'api', 'util'];
 
 interface PluginModule {
-  strykerPlugins: Plugin<any, any>[];
+  strykerPlugins: Plugin<any>[];
 }
 
 export class PluginLoader implements PluginResolver {
-  private readonly pluginsByKind: Map<PluginKind, Plugin<any, any>[]> = new Map();
+  private readonly pluginsByKind: Map<PluginKind, Plugin<any>[]> = new Map();
 
   public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
   constructor(private readonly log: Logger, private readonly pluginDescriptors: ReadonlyArray<string>) { }
@@ -97,7 +97,7 @@ export class PluginLoader implements PluginResolver {
     }
   }
 
-  private loadPlugin(plugin: Plugin<any, any>) {
+  private loadPlugin(plugin: Plugin<any>) {
     let plugins = this.pluginsByKind.get(plugin.kind);
     if (!plugins) {
       plugins = [];

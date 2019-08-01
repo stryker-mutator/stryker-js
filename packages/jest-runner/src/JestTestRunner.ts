@@ -1,6 +1,6 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { RunResult, TestRunner, RunStatus, TestResult, TestStatus, RunOptions } from '@stryker-mutator/api/test_runner';
-import * as jest from 'jest';
+import jest from 'jest';
 import { jestTestAdapterFactory, JEST_VERSION_TOKEN } from './jestTestAdapters';
 import { tokens, commonTokens, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
