@@ -85,7 +85,6 @@ export class TypescriptMutator {
         this.mutatorsSwitcher(sourceFile.getFullText().substring(com.pos, com.end));
       });
       const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
-      console.log(this.nextMutation, this.mutatorsSwitch);
       const mutants = flatMap(targetMutators, mutator => {
         if (this.mutatorsSwitch[mutator.name] || this.nextMutation === 1) {
           const mutatedNodes = mutator.mutate(node, sourceFile);

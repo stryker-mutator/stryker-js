@@ -229,7 +229,6 @@ describe('TypescriptMutator', () => {
           }
         `)];
         const mutants = sut.mutate(files);
-        console.log(mutants);
         expect(mutants.length).equal(1);
       });
 
