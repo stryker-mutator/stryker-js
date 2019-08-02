@@ -39,7 +39,7 @@
     "@types/memory-fs": "~0.3.0",
     "@types/webpack": "~4.32.0",
     "raw-loader": "~3.1.0",
-    "webpack": "~4.38.0"
+    "webpack": "~4.39.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^2.0.0",
