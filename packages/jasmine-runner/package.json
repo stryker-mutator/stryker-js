@@ -41,12 +41,12 @@
     "jasmine": ">=2"
   },
   "devDependencies": {
-    "@stryker-mutator/jasmine-framework": "^2.0.2",
-    "@stryker-mutator/test-helpers": "^2.0.2"
+    "@stryker-mutator/jasmine-framework": "~2.0.2",
+    "@stryker-mutator/test-helpers": "~2.0.2"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2",
-    "@stryker-mutator/util": "^2.0.2"
+    "@stryker-mutator/api": "~2.0.2",
+    "@stryker-mutator/util": "~2.0.2"
   },
   "initStrykerConfig": {
     "jasmineConfigFile": "spec/support/jasmine.json"

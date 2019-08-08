@@ -44,6 +44,6 @@
     "mocha": ">= 2.3.3 < 7"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2"
+    "@stryker-mutator/api": "~2.0.2"
   }
 }

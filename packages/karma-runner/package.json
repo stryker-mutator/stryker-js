@@ -31,9 +31,9 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/karma-runner#readme",
   "devDependencies": {
-    "@stryker-mutator/jasmine-framework": "^2.0.2",
-    "@stryker-mutator/test-helpers": "^2.0.2",
-    "@stryker-mutator/util": "^2.0.2",
+    "@stryker-mutator/jasmine-framework": "~2.0.2",
+    "@stryker-mutator/test-helpers": "~2.0.2",
+    "@stryker-mutator/util": "~2.0.2",
     "@types/express": "~4.17.0",
     "@types/semver": "~6.0.0",
     "jasmine-core": "~3.4.0",
@@ -45,8 +45,8 @@
     "@stryker-mutator/core": "^2.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2",
-    "decamelize": "^3.0.0",
+    "@stryker-mutator/api": "~2.0.2",
+    "decamelize": "~3.2.0",
     "semver": "~6.2.0",
     "tslib": "~1.10.0"
   },
