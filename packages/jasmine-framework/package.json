@@ -34,7 +34,7 @@
     "jasmine-core": ">=2"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2"
+    "@stryker-mutator/api": "~2.0.2"
   },
   "contributors": [],
   "engines": {
