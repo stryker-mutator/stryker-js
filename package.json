@@ -14,7 +14,7 @@
     "@types/node": "^10.11.5",
     "@types/rimraf": "2.0.2",
     "@types/sinon": "5.0.5",
-    "@types/sinon-chai": "^3.2.0",
+    "@types/sinon-chai": "3.2.2",
     "acorn": "^6.0.4",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
