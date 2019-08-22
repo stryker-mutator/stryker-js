@@ -1,9 +1,9 @@
-import * as sinon from 'sinon';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
-import { fsAsPromised } from '@stryker-mutator/util';
-import { TempFolder } from '../../../src/utils/TempFolder';
+import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
+import { TempFolder } from '../../../src/utils/TempFolder';
 
 describe('TempFolder', () => {
   let sandbox: sinon.SinonSandbox;

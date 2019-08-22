@@ -1,8 +1,8 @@
 import { File, MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
-import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
-import { tokens, commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
-import { PluginCreator, coreTokens } from '../di';
 import { Logger } from '@stryker-mutator/api/logging';
+import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
+import { commonTokens, PluginKind, tokens } from '@stryker-mutator/api/plugin';
+import { coreTokens, PluginCreator } from '../di';
 
 export class MutatorFacade implements Mutator {
 

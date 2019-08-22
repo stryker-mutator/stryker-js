@@ -1,7 +1,7 @@
+import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
-import StrykerReporter, { KarmaSpec } from '../../src/StrykerReporter';
-import { TestResult, TestStatus, RunStatus } from '@stryker-mutator/api/test_runner';
 import { TestResults } from 'karma';
+import StrykerReporter, { KarmaSpec } from '../../src/StrykerReporter';
 
 describe('StrykerReporter', () => {
 

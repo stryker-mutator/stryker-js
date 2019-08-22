@@ -1,9 +1,9 @@
-import { Logger } from '@stryker-mutator/api/logging';
-import { RunResult, TestRunner, RunStatus, TestResult, TestStatus, RunOptions } from '@stryker-mutator/api/test_runner';
-import jest from 'jest';
-import { jestTestAdapterFactory, JEST_VERSION_TOKEN } from './jestTestAdapters';
-import { tokens, commonTokens, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
+import { RunOptions, RunResult, RunStatus, TestResult, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
+import jest from 'jest';
+import { JEST_VERSION_TOKEN, jestTestAdapterFactory } from './jestTestAdapters';
 import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
 
 export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {

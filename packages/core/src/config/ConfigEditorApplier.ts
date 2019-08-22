@@ -1,8 +1,8 @@
 import { Config, ConfigEditor } from '@stryker-mutator/api/config';
+import { commonTokens, PluginKind, PluginResolver } from '@stryker-mutator/api/plugin';
 import { tokens } from 'typed-inject';
-import { PluginResolver, PluginKind, commonTokens } from '@stryker-mutator/api/plugin';
-import { PluginCreator } from '../di/PluginCreator';
 import { coreTokens } from '../di';
+import { PluginCreator } from '../di/PluginCreator';
 
 /**
  * Class that applies all config editor plugins

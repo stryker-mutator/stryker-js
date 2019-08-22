@@ -1,10 +1,10 @@
-import * as path from 'path';
-import * as _ from 'lodash';
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
-import { MutantResult, MutantStatus, ScoreResult } from '@stryker-mutator/api/report';
-import { freezeRecursively, setExitCode } from './utils/objectUtils';
 import { Logger } from '@stryker-mutator/api/logging';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { MutantResult, MutantStatus, ScoreResult } from '@stryker-mutator/api/report';
+import * as _ from 'lodash';
+import * as path from 'path';
+import { freezeRecursively, setExitCode } from './utils/objectUtils';
 
 const defaultScoreIfNoValidMutants = 100;
 

@@ -1,10 +1,10 @@
-import * as path from 'path';
-import { expect } from 'chai';
-import JasmineTestRunner from '../../src/JasmineTestRunner';
-import { TestResult, TestStatus, RunStatus } from '@stryker-mutator/api/test_runner';
+import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/JasmineTestFramework';
-import { expectTestResultsToEqual } from '../helpers/assertions';
 import { factory } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as path from 'path';
+import JasmineTestRunner from '../../src/JasmineTestRunner';
+import { expectTestResultsToEqual } from '../helpers/assertions';
 
 function wrapInClosure(codeFragment: string) {
   return `

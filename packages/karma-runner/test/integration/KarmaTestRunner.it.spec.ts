@@ -1,12 +1,12 @@
-import { promisify } from 'util';
-import { expect } from 'chai';
 import { CoverageCollection, RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
-import KarmaTestRunner from '../../src/KarmaTestRunner';
 import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/JasmineTestFramework';
-import { expectTestResults } from '../helpers/assertions';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 import http = require('http');
 import { FilePattern } from 'karma';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { promisify } from 'util';
+import KarmaTestRunner from '../../src/KarmaTestRunner';
+import { expectTestResults } from '../helpers/assertions';
 
 function wrapInClosure(codeFragment: string) {
   return `

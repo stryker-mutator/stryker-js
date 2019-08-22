@@ -1,8 +1,8 @@
+import { MutationTestResult } from 'mutation-testing-report-schema';
+import MatchedMutant from './MatchedMutant';
+import MutantResult from './MutantResult';
 import ScoreResult from './ScoreResult';
 import SourceFile from './SourceFile';
-import MutantResult from './MutantResult';
-import MatchedMutant from './MatchedMutant';
-import { MutationTestResult } from 'mutation-testing-report-schema';
 
 /**
  * Represents a reporter which can report during or after a Stryker run

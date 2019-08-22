@@ -1,9 +1,9 @@
-import * as path from 'path';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
-import { mochaOptionsKey } from '../../src/utils';
+import * as path from 'path';
 import { MochaOptions } from '../../src/MochaOptions';
+import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
+import { mochaOptionsKey } from '../../src/utils';
 
 describe(`${MochaOptionsLoader.name} integration`, () => {
   let sut: MochaOptionsLoader;

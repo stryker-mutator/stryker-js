@@ -1,9 +1,9 @@
-import { StrykerOptions, File } from '@stryker-mutator/api/core';
-import { ChildProcessTranspiler } from './ChildProcessTranspiler';
-import { TranspilerPluginContext, Injector, commonTokens, tokens, Disposable } from '@stryker-mutator/api/plugin';
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens, Disposable, Injector, tokens, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
+import { Transpiler } from '@stryker-mutator/api/transpile';
 import { coreTokens } from '../di';
 import LoggingClientContext from '../logging/LoggingClientContext';
-import { Transpiler } from '@stryker-mutator/api/transpile';
+import { ChildProcessTranspiler } from './ChildProcessTranspiler';
 
 /**
  * Creates a transpiler. If one is configured, spawns that in a child process

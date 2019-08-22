@@ -1,15 +1,15 @@
-import * as os from 'os';
-import * as childProcess from 'child_process';
-import { expect } from 'chai';
-import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
-import ChildProcessMock from '../../helpers/ChildProcessMock';
-import * as objectUtils from '../../../src/utils/objectUtils';
 import { Config } from '@stryker-mutator/api/config';
-import { RunStatus, TestStatus, RunResult } from '@stryker-mutator/api/test_runner';
-import Timer, * as timerModule from '../../../src/utils/Timer';
-import { Mock, mock } from '../../helpers/producers';
-import * as sinon from 'sinon';
+import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import * as childProcess from 'child_process';
+import * as os from 'os';
+import * as sinon from 'sinon';
+import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
+import * as objectUtils from '../../../src/utils/objectUtils';
+import Timer, * as timerModule from '../../../src/utils/Timer';
+import ChildProcessMock from '../../helpers/ChildProcessMock';
+import { Mock, mock } from '../../helpers/producers';
 
 describe(CommandTestRunner.name, () => {
 

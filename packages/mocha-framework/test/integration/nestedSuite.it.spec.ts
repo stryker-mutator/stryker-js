@@ -1,10 +1,10 @@
-import * as path from 'path';
-import * as execa from 'execa';
-import { expect } from 'chai';
 import { TestSelection } from '@stryker-mutator/api/test_framework';
-import MochaTestFramework from '../../src/MochaTestFramework';
+import { expect } from 'chai';
+import * as execa from 'execa';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as rimraf from 'rimraf';
+import MochaTestFramework from '../../src/MochaTestFramework';
 
 interface MochaTestRunResult {
   tests: MochaTest[];

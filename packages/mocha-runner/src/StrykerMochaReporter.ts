@@ -1,6 +1,6 @@
+import { Logger } from '@stryker-mutator/api/logging';
 import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import Timer from './Timer';
-import { Logger } from '@stryker-mutator/api/logging';
 
 export class StrykerMochaReporter {
 

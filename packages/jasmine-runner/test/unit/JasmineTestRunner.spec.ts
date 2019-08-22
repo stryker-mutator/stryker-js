@@ -1,11 +1,11 @@
-import * as sinon from 'sinon';
-import { expect } from 'chai';
-import * as helpers from '../../src/helpers';
-import Jasmine = require('jasmine');
-import JasmineTestRunner from '../../src/JasmineTestRunner';
-import { TestResult, TestStatus, RunStatus } from '@stryker-mutator/api/test_runner';
-import { expectTestResultsToEqual } from '../helpers/assertions';
+import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import Jasmine = require('jasmine');
+import * as sinon from 'sinon';
+import * as helpers from '../../src/helpers';
+import JasmineTestRunner from '../../src/JasmineTestRunner';
+import { expectTestResultsToEqual } from '../helpers/assertions';
 
 type SinonStubbedInstance<TType> = {
   [P in keyof TType]: TType[P] extends Function ? sinon.SinonStub : TType[P];

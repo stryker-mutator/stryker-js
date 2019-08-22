@@ -1,11 +1,11 @@
+import { InjectableClass, InjectableFunction, InjectionToken } from 'typed-inject';
+import { ConfigEditor } from '../../config';
+import { Mutator } from '../../mutant';
+import { Reporter } from '../../report';
 import { TestFramework } from '../../test_framework';
 import { TestRunner } from '../../test_runner';
-import { Reporter } from '../../report';
-import { Mutator } from '../../mutant';
 import { Transpiler } from '../../transpile';
-import { ConfigEditor } from '../../config';
 import { PluginContexts } from './Contexts';
-import { InjectionToken, InjectableClass, InjectableFunction } from 'typed-inject';
 import { PluginKind } from './PluginKind';
 
 /**

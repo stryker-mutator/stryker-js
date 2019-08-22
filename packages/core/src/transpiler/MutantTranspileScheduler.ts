@@ -1,17 +1,17 @@
-import { Observable, range } from 'rxjs';
-import TestableMutant from '../TestableMutant';
 import { File } from '@stryker-mutator/api/core';
-import SourceFile from '../SourceFile';
-import { Transpiler } from '@stryker-mutator/api/transpile';
 import { Disposable } from '@stryker-mutator/api/plugin';
-import TranspiledMutant from '../TranspiledMutant';
-import TranspileResult from './TranspileResult';
-import { errorToString } from '@stryker-mutator/util';
 import { tokens } from '@stryker-mutator/api/plugin';
-import { coreTokens } from '../di';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import { errorToString } from '@stryker-mutator/util';
+import { Observable, range } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { from } from 'rxjs';
 import { flatMap, zip } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { coreTokens } from '../di';
+import SourceFile from '../SourceFile';
+import TestableMutant from '../TestableMutant';
+import TranspiledMutant from '../TranspiledMutant';
+import TranspileResult from './TranspileResult';
 
 const INITIAL_CONCURRENCY = 100;
 

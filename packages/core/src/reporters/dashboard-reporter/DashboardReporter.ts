@@ -1,11 +1,11 @@
-import { Reporter, mutationTestReportSchema } from '@stryker-mutator/api/report';
-import DashboardReporterClient from './DashboardReporterClient';
-import { getEnvironmentVariable } from '../../utils/objectUtils';
 import { Logger } from '@stryker-mutator/api/logging';
-import { determineCIProvider } from '../ci/Provider';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { dashboardReporterTokens } from './tokens';
+import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { calculateMetrics } from 'mutation-testing-metrics';
+import { getEnvironmentVariable } from '../../utils/objectUtils';
+import { determineCIProvider } from '../ci/Provider';
+import DashboardReporterClient from './DashboardReporterClient';
+import { dashboardReporterTokens } from './tokens';
 
 export default class DashboardReporter implements Reporter {
 

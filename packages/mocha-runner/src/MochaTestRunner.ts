@@ -1,12 +1,12 @@
-import { Logger } from '@stryker-mutator/api/logging';
-import * as path from 'path';
-import { TestRunner, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import LibWrapper from './LibWrapper';
-import { StrykerMochaReporter } from './StrykerMochaReporter';
-import { mochaOptionsKey, evalGlobal } from './utils';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
+import * as path from 'path';
+import LibWrapper from './LibWrapper';
 import { MochaOptions } from './MochaOptions';
+import { StrykerMochaReporter } from './StrykerMochaReporter';
+import { evalGlobal, mochaOptionsKey } from './utils';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 

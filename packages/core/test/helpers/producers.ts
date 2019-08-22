@@ -1,6 +1,7 @@
 import { File } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { FileCoverageData } from 'istanbul-lib-coverage';
+import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 import SourceFile from '../../src/SourceFile';
 import TestableMutant from '../../src/TestableMutant';
@@ -8,7 +9,6 @@ import TranspiledMutant from '../../src/TranspiledMutant';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
-import { Logger } from 'log4js';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];

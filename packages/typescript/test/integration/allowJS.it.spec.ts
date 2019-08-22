@@ -1,12 +1,12 @@
-import * as path from 'path';
-import * as fs from 'fs';
 import { Config } from '@stryker-mutator/api/config';
-import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import { File } from '@stryker-mutator/api/core';
-import { CONFIG_KEY } from '../../src/helpers/keys';
-import TypescriptTranspiler from '../../src/TypescriptTranspiler';
-import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as fs from 'fs';
+import * as path from 'path';
+import { CONFIG_KEY } from '../../src/helpers/keys';
+import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
+import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 
 describe('AllowJS integration', () => {
 

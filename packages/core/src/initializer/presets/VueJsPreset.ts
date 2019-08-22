@@ -1,5 +1,5 @@
-import Preset from './Preset';
 import inquirer = require('inquirer');
+import Preset from './Preset';
 import PresetConfiguration from './PresetConfiguration';
 
 const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/vuejs.md#vuejs';

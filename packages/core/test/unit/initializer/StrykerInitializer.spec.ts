@@ -1,19 +1,19 @@
-import * as child from 'child_process';
-import * as sinon from 'sinon';
-import { fsAsPromised, childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
-import { expect } from 'chai';
-import * as inquirer from 'inquirer';
-import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
-import { RestClient } from 'typed-rest-client/RestClient';
-import { Mock } from '../../helpers/producers';
-import NpmClient from '../../../src/initializer/NpmClient';
-import PresetConfiguration from '../../../src/initializer/presets/PresetConfiguration';
-import Preset from '../../../src/initializer/presets/Preset';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { childProcessAsPromised, fsAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import * as child from 'child_process';
+import * as inquirer from 'inquirer';
+import * as sinon from 'sinon';
+import { RestClient } from 'typed-rest-client/RestClient';
 import { initializerTokens } from '../../../src/initializer';
-import { StrykerInquirer } from '../../../src/initializer/StrykerInquirer';
-import StrykerConfigWriter from '../../../src/initializer/StrykerConfigWriter';
+import NpmClient from '../../../src/initializer/NpmClient';
 import { PackageInfo } from '../../../src/initializer/PackageInfo';
+import Preset from '../../../src/initializer/presets/Preset';
+import PresetConfiguration from '../../../src/initializer/presets/PresetConfiguration';
+import StrykerConfigWriter from '../../../src/initializer/StrykerConfigWriter';
+import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
+import { StrykerInquirer } from '../../../src/initializer/StrykerInquirer';
+import { Mock } from '../../helpers/producers';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;

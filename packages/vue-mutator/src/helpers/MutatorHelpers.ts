@@ -1,5 +1,5 @@
 import { Mutator } from '@stryker-mutator/api/mutant';
-import { PluginResolver, Injector, OptionsContext, PluginKind, InjectionToken, Plugin, FactoryPlugin, tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, FactoryPlugin, InjectionToken, Injector, OptionsContext, Plugin, PluginKind, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
 
 export const MUTATORS_TOKEN = 'mutators';
 

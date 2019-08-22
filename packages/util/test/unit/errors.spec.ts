@@ -1,5 +1,5 @@
-import { errorToString } from '../../src/errors';
 import { expect } from 'chai';
+import { errorToString } from '../../src/errors';
 
 describe('errors', () => {
   describe('errorToString', () => {

@@ -1,5 +1,5 @@
-import { verifySpecification } from './mutatorAssertions';
-import BlockMutator from '../../../src/mutator/BlockMutator';
 import BlockMutatorSpec from '@stryker-mutator/mutator-specification/src/BlockMutatorSpec';
+import BlockMutator from '../../../src/mutator/BlockMutator';
+import { verifySpecification } from './mutatorAssertions';
 
 verifySpecification(BlockMutatorSpec, BlockMutator);

@@ -1,8 +1,8 @@
-import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
-import sinon from 'sinon';
-import { expect, assert } from 'chai';
-import jest from 'jest';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { assert, expect } from 'chai';
+import jest from 'jest';
+import sinon from 'sinon';
+import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
 
 describe(JestPromiseTestAdapter.name, () => {
   let sut: JestPromiseTestAdapter;

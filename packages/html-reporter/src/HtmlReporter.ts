@@ -1,11 +1,11 @@
-import { Logger } from '@stryker-mutator/api/logging';
-import * as path from 'path';
-import { Reporter, mutationTestReportSchema } from '@stryker-mutator/api/report';
-import * as util from './util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import fileUrl = require('file-url');
+import * as path from 'path';
 import { bindMutationTestReport } from './templates/bindMutationTestReport';
+import * as util from './util';
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';

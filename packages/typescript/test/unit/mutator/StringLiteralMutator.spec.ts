@@ -1,7 +1,7 @@
-import { verifySpecification, expectMutation } from './mutatorAssertions';
-import StringLiteralMutator from '../../../src/mutator/StringLiteralMutator';
 import StringLiteralMutatorSpec from '@stryker-mutator/mutator-specification/src/StringLiteralMutatorSpec';
 import NodeMutator from '../../../src/mutator/NodeMutator';
+import StringLiteralMutator from '../../../src/mutator/StringLiteralMutator';
+import { expectMutation, verifySpecification } from './mutatorAssertions';
 
 verifySpecification(StringLiteralMutatorSpec, StringLiteralMutator);
 

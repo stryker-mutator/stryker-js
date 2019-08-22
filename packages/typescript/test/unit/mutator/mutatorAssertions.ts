@@ -1,10 +1,10 @@
+import { File } from '@stryker-mutator/api/core';
+import { Mutant } from '@stryker-mutator/api/mutant';
+import ExpectMutation from '@stryker-mutator/mutator-specification/src/ExpectMutation';
+import { expect } from 'chai';
 import * as ts from 'typescript';
 import { parseFile } from '../../../src/helpers/tsHelpers';
-import { expect } from 'chai';
-import { Mutant } from '@stryker-mutator/api/mutant';
 import NodeMutator from '../../../src/mutator/NodeMutator';
-import ExpectMutation from '@stryker-mutator/mutator-specification/src/ExpectMutation';
-import { File } from '@stryker-mutator/api/core';
 
 export type MutatorConstructor = new() => NodeMutator;
 

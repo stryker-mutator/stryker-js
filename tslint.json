@@ -61,7 +61,7 @@
     "object-literal-sort-keys": [true, "ignore-case"],
     "one-line": [true, "check-open-brace", "check-whitespace"],
     "only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
-    "ordered-imports": false,
+    "ordered-imports": true,
     "prefer-const": true,
     "prefer-method-signature": true,
     "prefer-readonly": true,
@@ -81,7 +81,7 @@
     ],
     "unified-signatures": true,
     "variable-name": false,
-    "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"],
+    "whitespace": [true, "check-branch", "check-decl", "check-module", "check-operator", "check-separator", "check-type"],
 
     "naming-convention": [
       true,

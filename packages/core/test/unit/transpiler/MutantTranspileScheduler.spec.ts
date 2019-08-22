@@ -1,18 +1,18 @@
-import { expect } from 'chai';
-import * as sinon from 'sinon';
-import { range } from 'rxjs';
-import { toArray, map } from 'rxjs/operators';
 import { File } from '@stryker-mutator/api/core';
+import { Disposable } from '@stryker-mutator/api/plugin';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { errorToString } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import { range } from 'rxjs';
+import { map, toArray } from 'rxjs/operators';
+import * as sinon from 'sinon';
+import { coreTokens } from '../../../src/di';
 import TranspiledMutant from '../../../src/TranspiledMutant';
 import { MutantTranspileScheduler } from '../../../src/transpiler/MutantTranspileScheduler';
 import TranspileResult from '../../../src/transpiler/TranspileResult';
 import { testableMutant } from '../../helpers/producers';
-import { errorToString } from '@stryker-mutator/util';
-import { Transpiler } from '@stryker-mutator/api/transpile';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { coreTokens } from '../../../src/di';
 import { sleep } from '../../helpers/testUtils';
-import { Disposable } from '@stryker-mutator/api/plugin';
 
 describe(MutantTranspileScheduler.name, () => {
   let sut: MutantTranspileScheduler;

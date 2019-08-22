@@ -6,9 +6,9 @@ import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Re
 import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { Transpiler } from '@stryker-mutator/api/transpile';
+import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
-import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 
 /**
  * A 1x1 png base64 encoded

@@ -1,9 +1,9 @@
-import decamelize from 'decamelize';
-import * as semver from 'semver';
-import { requireModule } from '../utils';
-import { NgConfigOptions, NgTestArguments } from '../StrykerKarmaSetup';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import decamelize from 'decamelize';
 import * as path from 'path';
+import * as semver from 'semver';
+import { NgConfigOptions, NgTestArguments } from '../StrykerKarmaSetup';
+import { requireModule } from '../utils';
 
 const MIN_ANGULAR_CLI_VERSION = '6.1.0';
 

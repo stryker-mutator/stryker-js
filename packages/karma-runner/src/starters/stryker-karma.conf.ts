@@ -1,9 +1,9 @@
+import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions } from 'karma';
 import * as path from 'path';
-import { requireModule } from '../utils';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
 import StrykerReporter from '../StrykerReporter';
-import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
+import { requireModule } from '../utils';
 
 function setDefaultOptions(config: Config) {
   config.set({

@@ -1,4 +1,4 @@
-import { File, Range, Location, Position } from '@stryker-mutator/api/core';
+import { File, Location, Position, Range } from '@stryker-mutator/api/core';
 
 const enum CharacterCodes {
   MaxAsciiCharacter = 0x7F,
