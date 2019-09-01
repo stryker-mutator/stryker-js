@@ -13,16 +13,30 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
   }
 
   public loadConfig(): jest.Configuration {
-    // Get the location of react script, this is later used to generate the Jest configuration used for React projects.
-    const reactScriptsLocation = path.join(this.loader.resolve('react-scripts/package.json'), '..');
+    try {
+      // Get the location of react script, this is later used to generate the Jest configuration used for React projects.
+      const reactScriptsTsLocation = path.join(this.loader.resolve('react-scripts/package.json'), '..');
+      
+      // Create the React configuration for Jest
+      const jestConfiguration = this.createJestConfig(reactScriptsTsLocation);
 
-    // Create the React configuration for Jest
-    const jestConfiguration = this.createJestConfig(reactScriptsLocation);
+      // Set test environment to jsdom (otherwise Jest won't run)
+      jestConfiguration.testEnvironment = 'jsdom';
 
-    // Set test environment to jsdom (otherwise Jest won't run)
-    jestConfiguration.testEnvironment = 'jsdom';
+      return jestConfiguration;
+    }
+    catch (e) {
+        if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
+          throw Error('Unable to locate package react-scripts. ' + 
+          'This package is required when projectType is set to "react".');
+        } else {
+          throw e;
+        }
+    }
+  }
 
-    return jestConfiguration;
+  private isNodeErrnoException(arg: any): arg is NodeJS.ErrnoException {
+    return arg.code !== undefined;
   }
 
   private createJestConfig(reactScriptsLocation: string): jest.Configuration {
