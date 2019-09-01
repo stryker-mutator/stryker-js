@@ -24,12 +24,12 @@ export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader 
       return jestConfiguration;
     }
     catch (e) {
-        if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
-          throw Error('Unable to locate package react-scripts-ts. ' +
+      if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
+        throw Error('Unable to locate package react-scripts-ts. ' +
           'This package is required when projectType is set to "react-ts".');
-        } else {
-          throw e;
-        }
+      } else {
+        throw e;
+      }
     }
   }
 
