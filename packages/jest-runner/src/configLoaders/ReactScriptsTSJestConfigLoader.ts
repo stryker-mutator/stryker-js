@@ -14,7 +14,9 @@ export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader 
 
   public loadConfig(): jest.Configuration {
     try {
+      // Get the location of react script, this is later used to generate the Jest configuration used for React projects.
       const reactScriptsTsLocation = path.join(this.loader.resolve('react-scripts-ts/package.json'), '..');
+
       // Create the React configuration for Jest
       const jestConfiguration = this.createJestConfig(reactScriptsTsLocation);
 
