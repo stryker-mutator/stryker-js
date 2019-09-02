@@ -59,6 +59,7 @@ describe(MochaOptionsLoader.name, () => {
       rawOptions.ui = 'quux';
       rawOptions.grep = 'quuz';
       rawOptions.exclude = 'corge';
+      rawOptions.ignore = 'garply';
       rawOptions.file = 'grault';
       rawOptions.spec = ['test/**/*.js'];
 
@@ -69,6 +70,7 @@ describe(MochaOptionsLoader.name, () => {
         extension: 'foo',
         file: 'grault',
         grep: 'quuz',
+        ignore: 'garply',
         opts: './test/mocha.opts',
         override: true,
         require: 'bar',
@@ -94,7 +96,7 @@ describe(MochaOptionsLoader.name, () => {
 
     it('should respect mocha\'s defaults', () => {
       const options = sut.load(testInjector.options);
-      expect(options).deep.eq(defaultMochaOptions());
+      expect(options).deep.eq(createMochaOptions());
     });
   });
 
@@ -159,7 +161,7 @@ describe(MochaOptionsLoader.name, () => {
     it('should not load default mocha.opts file if not found', () => {
       existsFileStub.returns(false);
       const options = sut.load(config);
-      expect(options).deep.eq(defaultMochaOptions());
+      expect(options).deep.eq(createMochaOptions());
       expect(testInjector.logger.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
     });
 
@@ -211,7 +213,7 @@ describe(MochaOptionsLoader.name, () => {
         ui: 'exports'
       };
       const options = sut.load(config);
-      expect(options).deep.equal({
+      expect(options).deep.equal(createMochaOptions({
         asyncOnly: false,
         extension: ['js'],
         opts: 'path/to/opts/file',
@@ -219,7 +221,7 @@ describe(MochaOptionsLoader.name, () => {
         spec: ['test'],
         timeout: 4000,
         ui: 'exports'
-      });
+      }));
     });
 
     it('should ignore additional properties', () => {
@@ -246,7 +248,7 @@ describe(MochaOptionsLoader.name, () => {
         opts: 'some/mocha.opts/file',
       };
       const options = sut.load(config);
-      expect(options).deep.eq({
+      expect(options).deep.eq(createMochaOptions({
         extension: ['js'],
         opts: 'some/mocha.opts/file',
         spec: [
@@ -254,17 +256,20 @@ describe(MochaOptionsLoader.name, () => {
         ],
         timeout: undefined,
         ui: undefined
-      });
+      }));
     });
   });
 
-  function defaultMochaOptions()  {
+  function createMochaOptions(overrides?: Partial<MochaOptions>)  {
     return {
       extension: ['js'],
+      file: [],
+      ignore: [],
       opts: './test/mocha.opts',
       spec: ['test'],
       timeout: 2000,
-      ui: 'bdd'
+      ui: 'bdd',
+      ... overrides
     };
   }
 

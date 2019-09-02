@@ -13,6 +13,8 @@ import { filterConfig, mochaOptionsKey, serializeArguments } from './utils';
  */
 export const DEFAULT_MOCHA_OPTIONS = Object.freeze({
   extension: ['js'],
+  file: [],
+  ignore: [],
   opts: './test/mocha.opts',
   spec: ['test'],
   timeout: 2000,

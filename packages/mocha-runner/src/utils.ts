@@ -33,6 +33,7 @@ const SUPPORTED_MOCHA_OPTIONS = Object.freeze([
   'ui',
   'grep',
   'exclude',
+  'ignore',
   'spec',
   'file'
 ]);

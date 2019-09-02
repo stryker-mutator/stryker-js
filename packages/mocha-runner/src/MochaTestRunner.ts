@@ -37,8 +37,10 @@ export default class MochaTestRunner implements TestRunner {
     try {
       // process.exit unfortunate side effect: https://github.com/mochajs/mocha/blob/07ea8763c663bdd3fe1f8446cdb62dae233f4916/lib/cli/run-helpers.js#L174
       (process as any).exit = () => { };
-      return handleFiles(this.mochaOptions);
-    } finally {
+      const files = handleFiles(this.mochaOptions);
+      return files;
+    }
+    finally {
       process.exit = originalProcessExit;
     }
   }

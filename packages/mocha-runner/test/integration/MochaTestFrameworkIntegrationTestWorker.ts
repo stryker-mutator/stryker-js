@@ -14,13 +14,15 @@ export interface RunMessage {
 }
 
 export default class MochaTestFrameworkIntegrationTestWorker {
-  private readonly sut: MochaTestRunner;
+  public readonly sut: MochaTestRunner;
 
   constructor() {
     testInjector.options.mochaOptions = {
+      file: [],
+      ignore: [],
       spec: [
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
-      ]
+      ],
     };
     this.sut = testInjector.injector
       .provideValue(commonTokens.sandboxFileNames, [
@@ -30,11 +32,11 @@ export default class MochaTestFrameworkIntegrationTestWorker {
       .injectClass(MochaTestRunner);
 
     this.listenForParentProcess();
-    try {
-      this.sut.init();
-    } catch (err) {
-      this.sendError(err);
-    }
+    // try {
+    this.sut.init();
+    // } catch (err) {
+    //   this.sendError(err);
+    // }
   }
 
   public listenForParentProcess() {
