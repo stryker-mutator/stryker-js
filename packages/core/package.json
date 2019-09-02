@@ -63,7 +63,7 @@
     "inquirer": "~6.5.0",
     "istanbul-lib-instrument": "~3.3.0",
     "lodash": "~4.17.4",
-    "log4js": "~4.5.1",
+    "log4js": "~5.1.0",
     "mkdirp": "~0.5.1",
     "mutation-testing-metrics": "^1.1.1",
     "progress": "~2.0.0",
