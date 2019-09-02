@@ -71,13 +71,16 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
         '/path/to/some/file',
         '/path/to/some/other/file'
       ],
+      ignore: [
+        '/path/to/some/excluded/file'
+      ],
       require: [
         '@babel/register'
       ],
       spec: [
         'test/**/*.spec.js'
       ],
-      timeout: 0,
+      timeout: false,
       ui: 'bdd'
     });
   });
@@ -88,6 +91,8 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     expect(actualConfig).deep.eq({
       ['async-only']: true,
       extension: ['js'],
+      file: [],
+      ignore: [],
       opts: configFile,
       spec: ['/tests/**/*.js', '/foo/*.js'],
       timeout: 2000,
@@ -101,7 +106,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     expect(actualConfig).deep.eq({
       ...DEFAULT_MOCHA_OPTIONS,
       ['async-only']: true,
-      extension: ['json', 'js'],
+      extension: ['json'],
       package: pkgFile,
       timeout: 20,
       ui: 'tdd'
