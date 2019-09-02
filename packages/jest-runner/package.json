@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@stryker-mutator/api": "^2.0.2",
-    "semver": "~6.2.0"
+    "semver": "~6.3.0"
   },
   "initStrykerConfig": {
     "coverageAnalysis": "off"
