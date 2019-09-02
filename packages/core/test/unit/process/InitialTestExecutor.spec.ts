@@ -149,6 +149,7 @@ describe('InitialTestExecutor run', () => {
 
     it('should not log the transpiled results if transpilers are not specified', async () => {
       testInjector.logger.isDebugEnabled.returns(true);
+      sut = createSut();
       await sut.run();
       expect(testInjector.logger.debug).not.calledWithMatch('Transpiled files');
     });
