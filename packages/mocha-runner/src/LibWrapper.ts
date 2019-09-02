@@ -19,6 +19,10 @@ try {
 try {
   // https://github.com/mochajs/mocha/blob/master/lib/cli/run-helpers.js#L132
   handleFiles = require('mocha/lib/cli/run-helpers').handleFiles;
+  if (!handleFiles) {
+    // Might be moved: https://github.com/mochajs/mocha/commit/15b96afccaf508312445770e3af1c145d90b28c6#diff-39b692a81eb0c9f3614247af744ab4a8
+    handleFiles = require('mocha/lib/cli/collect-files');
+  }
 } catch {
   // Mocha < 6 doesn't support `handleFiles`
 }

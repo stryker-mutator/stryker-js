@@ -4,7 +4,7 @@
 // project's `package.json`.
 {
   "diff": true,
-  "extension": ["json"],
+  "extension": ["json", "js"],
   "opts": "./test/mocha.opts",
   "package": "./package.json",
   "reporter": "spec",

@@ -4,8 +4,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
-import { MochaOptions } from '../../src/MochaOptions';
 import MochaTestRunner from '../../src/MochaTestRunner';
+import { createMochaOptions } from '../helpers/factories';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -39,7 +39,7 @@ describe('Running a sample project', () => {
         resolve('./testResources/sampleProject/MyMath.js'),
         resolve('./testResources/sampleProject/MyMathSpec.js')
       ];
-      testInjector.options.mochaOptions = { spec };
+      testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
     });
@@ -66,10 +66,9 @@ describe('Running a sample project', () => {
         resolve('testResources/sampleProject/MyMath.js'),
         resolve('testResources/sampleProject/MyMathSpec.js'),
       ];
-      const mochaOptions: MochaOptions = {
+      testInjector.options.mochaOptions = createMochaOptions({
         files: spec
-      };
-      testInjector.options.mochaOptions = mochaOptions;
+      });
       sut = createSut();
       return sut.init();
     });
@@ -87,7 +86,7 @@ describe('Running a sample project', () => {
         resolve('testResources/sampleProject/MyMath.js'),
         resolve('testResources/sampleProject/MyMathFailedSpec.js')
       ];
-      testInjector.options.mochaOptions = { spec };
+      testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
     });
@@ -102,7 +101,7 @@ describe('Running a sample project', () => {
 
     beforeEach(() => {
       spec = [resolve('./testResources/sampleProject/MyMath.js')];
-      testInjector.options.mochaOptions = { spec };
+      testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
     });
