@@ -13,17 +13,13 @@ export class TemporaryDirectory implements Disposable {
 
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, options: StrykerOptions) {
-    this.temporaryDirectory = this.createTemporaryDirectory(options.tempDirName);
+    this.temporaryDirectory = path.resolve(options.tempDirName);
   }
 
   public initialize() {
     this.isInitialized = true;
     this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
     mkdirp.sync(this.temporaryDirectory);
-  }
-
-  public createTemporaryDirectory(tempDirName = '.stryker-tmp') {
-    return path.join(process.cwd(), tempDirName);
   }
 
   /**

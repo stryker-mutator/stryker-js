@@ -252,6 +252,18 @@ These modules should be installed right next to stryker. For a current list of p
 you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or 
 [stryker-mutator.io](https://stryker-mutator.io).
 
+### `tempDirName` [`string`]
+
+Default: `'.stryker-tmp'`  
+Command line: `--tempDirName .stryker-tmp`  
+Config file: `tempDirName: '.stryker-tmp'`  
+
+Choose a different temp dir that Stryker uses for mutation testing. This directory will contain copies of your source code during a mutation test run.
+It will be created if it not exists and is **entirely deleted** after a successful run, so change this with caution.
+
+It is advised to use a directory inside the directory that holds your repository. This way `node_modules` are resolved as expected. Be sure to 
+not check-in your chosen temp directory in your `.gitignore` file.
+
 ### `timeoutMS` [`number`]
 
 Default: `5000`  

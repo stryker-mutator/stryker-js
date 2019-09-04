@@ -26,6 +26,7 @@ export default class ConfigValidator {
     this.validateIsStringArray('plugins', this.options.plugins);
     this.validateIsStringArray('reporters', this.options.reporters);
     this.validateIsStringArray('transpilers', this.options.transpilers);
+    this.validateIsString('tempDirName', this.options.tempDirName);
     this.validateCoverageAnalysis();
     this.validateCoverageAnalysisWithRespectToTranspilers();
     this.crashIfNeeded();
