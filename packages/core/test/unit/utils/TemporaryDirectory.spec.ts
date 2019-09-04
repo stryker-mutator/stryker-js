@@ -1,11 +1,11 @@
-import * as sinon from 'sinon';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
-import { fsAsPromised } from '@stryker-mutator/util';
-import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
+import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
 
 describe('TemporaryDirectory', () => {
   let sandbox: sinon.SinonSandbox;

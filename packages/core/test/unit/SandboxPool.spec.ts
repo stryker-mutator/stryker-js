@@ -1,4 +1,5 @@
 import { File, LogLevel } from '@stryker-mutator/api/core';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunStatus } from '@stryker-mutator/api/test_runner';
@@ -16,9 +17,8 @@ import Sandbox from '../../src/Sandbox';
 import { SandboxPool } from '../../src/SandboxPool';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import { Task } from '../../src/utils/Task';
-import { Mock, mock, transpiledMutant } from '../helpers/producers';
 import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { Mock, mock, transpiledMutant } from '../helpers/producers';
 
 const OVERHEAD_TIME_MS = 42;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
