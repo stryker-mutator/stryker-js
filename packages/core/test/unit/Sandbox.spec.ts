@@ -5,7 +5,6 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { MutantStatus } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { fileAlreadyExistsError, mutant as createMutant, testResult } from '@stryker-mutator/test-helpers/src/factory';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -47,8 +46,7 @@ describe(Sandbox.name, () => {
   let findNodeModulesStub: sinon.SinonStub;
   let log: Mock<Logger>;
   let runResult: RunResult;
-  let temporaryDirectoryMock: TemporaryDirectory;
-  let randomStub: sinon.SinonStub;
+  let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
 
   beforeEach(() => {
     runResult = { tests: [], status: RunStatus.Complete };
@@ -66,11 +64,8 @@ describe(Sandbox.name, () => {
       expectedFileToMutate,
       notMutatedFile,
     ];
-
-    temporaryDirectoryMock = testInjector.injector.injectClass(TemporaryDirectory);
-    randomStub = sinon.stub(temporaryDirectoryMock, 'createRandomDirectory');
-    randomStub.returns(sandboxDirectory);
-    temporaryDirectoryMock.initialize();
+    temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
+    temporaryDirectoryMock.createRandomDirectory.returns(sandboxDirectory);
 
     writeFileStub = sinon.stub(fileUtils, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
@@ -96,7 +91,7 @@ describe(Sandbox.name, () => {
       testFramework: null,
     };
     const { files, testFramework, overheadTimeMS } = {...args, ...overrides };
-    return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT, temporaryDirectoryMock);
+    return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT, temporaryDirectoryMock as any);
   }
 
   describe('create()', () => {
@@ -120,7 +115,7 @@ describe(Sandbox.name, () => {
 
     it('should have created a sandbox folder', async () => {
       await createSut(testFrameworkStub);
-      expect(temporaryDirectoryMock.createRandomDirectory).to.have.been.calledWith('sandbox');
+      expect(temporaryDirectoryMock.createRandomDirectory).calledWith('sandbox');
     });
 
     it('should symlink node modules in sandbox directory if exists', async () => {

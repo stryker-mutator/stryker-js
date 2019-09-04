@@ -3,34 +3,27 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
+import * as path from 'path';
 import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
 import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
 
-describe('TemporaryDirectory', () => {
-  let sandbox: sinon.SinonSandbox;
-  let cwdStub: sinon.SinonStub;
+describe(TemporaryDirectory.name, () => {
   let randomStub: sinon.SinonStub;
   let deleteDirStub: sinon.SinonStub;
   let sut: TemporaryDirectory;
-  const mockCwd = '/x/y/z/some/dir';
   const tempDirName = '.stryker-tmp';
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-
     sinon.stub(mkdirp, 'sync');
     sinon.stub(fsAsPromised, 'writeFile');
     deleteDirStub = sinon.stub(fileUtils, 'deleteDir');
-    cwdStub = sinon.stub(process, 'cwd');
-    cwdStub.returns(mockCwd);
 
     sut = createSut();
 
     randomStub = sinon.stub(sut, 'random');
     randomStub.returns('rand');
   });
-  afterEach(() => sandbox.restore());
 
   function createSut(): TemporaryDirectory {
     return testInjector.injector
@@ -63,12 +56,13 @@ describe('TemporaryDirectory', () => {
     describe('when temp directory is initialized', () => {
       beforeEach(() => sut.initialize());
       it('should call deleteDir fileApi', () => {
+        const expectedPath = path.resolve(tempDirName);
         deleteDirStub.resolves('delResolveStub');
 
         const temporaryDirectoryInstance = sut;
         const result = temporaryDirectoryInstance.dispose();
 
-        expect(fileUtils.deleteDir).to.have.been.calledWith(`${mockCwd}/${tempDirName}`);
+        expect(fileUtils.deleteDir).calledWith(expectedPath);
 
         result.then(data => expect(data).equals('delResolveStub'));
       });

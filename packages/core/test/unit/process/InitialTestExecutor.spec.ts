@@ -19,7 +19,7 @@ import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/S
 import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
 import Timer from '../../../src/utils/Timer';
 import * as producers from '../../helpers/producers';
-import { coverageMaps } from '../../helpers/producers';
+import { coverageMaps, Mock } from '../../helpers/producers';
 
 const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -40,10 +40,10 @@ describe('InitialTestExecutor run', () => {
   let expectedRunResult: RunResult;
   let inputFiles: InputFileCollection;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
-  let temporaryDirectoryMock: TemporaryDirectory;
+  let temporaryDirectoryMock: Mock<TemporaryDirectory>;
 
   function createSut() {
-    temporaryDirectoryMock = testInjector.injector.injectClass(TemporaryDirectory);
+    temporaryDirectoryMock = producers.mock(TemporaryDirectory);
 
     return testInjector.injector
       .provideValue(coreTokens.inputFiles, inputFiles)
@@ -51,7 +51,7 @@ describe('InitialTestExecutor run', () => {
       .provideValue(coreTokens.testFramework, testFrameworkMock)
       .provideValue(coreTokens.transpiler, transpilerMock as Transpiler)
       .provideValue(coreTokens.timer, timerMock as unknown as Timer)
-      .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
+      .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock as unknown as TemporaryDirectory)
       .injectClass(InitialTestExecutor);
   }
 
@@ -154,6 +154,7 @@ describe('InitialTestExecutor run', () => {
 
     it('should not log the transpiled results if transpilers are not specified', async () => {
       testInjector.logger.isDebugEnabled.returns(true);
+      sut = createSut();
       await sut.run();
       expect(testInjector.logger.debug).not.calledWithMatch('Transpiled files');
     });

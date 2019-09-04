@@ -37,7 +37,7 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
 
 describe(Stryker.name, () => {
   let sut: Stryker;
-  let temporaryDirectoryMock: TemporaryDirectory;
+  let temporaryDirectoryMock: Mock<TemporaryDirectory>;
   let testFrameworkMock: TestFramework;
   let inputFileResolverMock: Mock<InputFileResolver>;
   let initialTestExecutorMock: Mock<InitialTestExecutor>;
@@ -74,7 +74,7 @@ describe(Stryker.name, () => {
     transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
 
-    temporaryDirectoryMock = testInjector.injector.injectClass(TemporaryDirectory);
+    temporaryDirectoryMock = mock(TemporaryDirectory);
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
     scoreResultCalculator = new ScoreResultCalculator(testInjector.logger);
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
@@ -254,13 +254,6 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(mutationTestExecutorMock.run).calledWith(mutants);
-      });
-
-      // TODO: how to test it
-      xit('should clean the stryker temp folder', async () => {
-        sut = new Stryker({});
-        await sut.runMutationTest();
-        expect(temporaryDirectoryMock.dispose).called;
       });
 
       it('should let the reporters wrapUp any async tasks', async () => {
