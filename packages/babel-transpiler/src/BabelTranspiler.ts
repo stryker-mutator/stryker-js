@@ -1,11 +1,11 @@
-import { Transpiler } from '@stryker-mutator/api/transpile';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import * as babel from './helpers/babelWrapper';
+import { commonTokens, Injector, tokens, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import { StrykerError } from '@stryker-mutator/util';
 import * as path from 'path';
 import { BabelConfigReader, StrykerBabelConfig } from './BabelConfigReader';
+import * as babel from './helpers/babelWrapper';
 import { toJSFileName } from './helpers/helpers';
-import { StrykerError } from '@stryker-mutator/util';
-import { tokens, commonTokens, Injector, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
 
 const DEFAULT_EXTENSIONS: ReadonlyArray<string> = (babel as any).DEFAULT_EXTENSIONS;
 

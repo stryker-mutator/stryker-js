@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
 import { Logger } from '@stryker-mutator/api/logging';
+import { EventEmitter } from 'events';
 
 export default class WctLogger {
 

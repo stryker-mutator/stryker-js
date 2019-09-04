@@ -1,6 +1,6 @@
 import { AngularPreset } from './presets/AngularPreset';
-import { ReactPreset } from './presets/ReactPreset';
 import Preset from './presets/Preset';
+import { ReactPreset } from './presets/ReactPreset';
 import { VueJsPreset } from './presets/VueJsPreset';
 
 // Add new presets here

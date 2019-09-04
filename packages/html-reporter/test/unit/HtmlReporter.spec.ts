@@ -1,11 +1,11 @@
-import * as path from 'path';
-import { expect } from 'chai';
-import * as sinon from 'sinon';
-import * as util from '../../src/util';
-import HtmlReporter from '../../src/HtmlReporter';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as path from 'path';
+import * as sinon from 'sinon';
+import HtmlReporter from '../../src/HtmlReporter';
 import { bindMutationTestReport } from '../../src/templates/bindMutationTestReport';
+import * as util from '../../src/util';
 
 describe(HtmlReporter.name, () => {
   let copyFileStub: sinon.SinonStub;

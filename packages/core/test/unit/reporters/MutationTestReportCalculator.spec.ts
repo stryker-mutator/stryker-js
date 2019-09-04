@@ -1,10 +1,10 @@
-import { expect } from 'chai';
-import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { coreTokens } from '../../../src/di';
-import { Reporter, mutationTestReportSchema, MutantResult, MutantStatus } from '@stryker-mutator/api/report';
-import InputFileCollection from '../../../src/input/InputFileCollection';
 import { File } from '@stryker-mutator/api/core';
+import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import { coreTokens } from '../../../src/di';
+import InputFileCollection from '../../../src/input/InputFileCollection';
+import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';
 
 describe(MutationTestReportCalculator.name, () => {
 

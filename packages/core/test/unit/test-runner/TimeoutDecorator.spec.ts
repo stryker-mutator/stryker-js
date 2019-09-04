@@ -1,6 +1,6 @@
-import * as sinon from 'sinon';
-import { expect } from 'chai';
 import { RunStatus } from '@stryker-mutator/api/test_runner';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
 import TimeoutDecorator from '../../../src/test-runner/TimeoutDecorator';
 import TestRunnerMock from '../../helpers/TestRunnerMock';
 

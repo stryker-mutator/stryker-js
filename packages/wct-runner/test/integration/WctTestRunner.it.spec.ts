@@ -1,9 +1,9 @@
-import * as path from 'path';
-import WctTestRunner from '../../src/WctTestRunner';
-import { expect } from 'chai';
-import { RunResult, TestStatus, RunStatus, TestResult } from '@stryker-mutator/api/test_runner';
+import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import * as path from 'path';
+import WctTestRunner from '../../src/WctTestRunner';
 
 type TimelessRunResult = {
   [K in keyof RunResult]: RunResult[K] extends TestResult[] ? TimelessTestResult[] : RunResult[K];

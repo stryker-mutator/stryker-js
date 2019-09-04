@@ -1,10 +1,10 @@
-import JestTestRunner, { PROCESS_ENV_TOKEN, JEST_TEST_ADAPTER_TOKEN } from '../../src/JestTestRunner';
-import * as fakeResults from '../helpers/testResultProducer';
-import sinon from 'sinon';
-import { expect } from 'chai';
-import { RunStatus, TestStatus, RunOptions } from '@stryker-mutator/api/test_runner';
+import { RunOptions, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import sinon from 'sinon';
 import { JestTestAdapter } from '../../src/jestTestAdapters';
+import JestTestRunner, { JEST_TEST_ADAPTER_TOKEN, PROCESS_ENV_TOKEN } from '../../src/JestTestRunner';
+import * as fakeResults from '../helpers/testResultProducer';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';

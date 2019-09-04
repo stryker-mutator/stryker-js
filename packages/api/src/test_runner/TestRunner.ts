@@ -1,5 +1,5 @@
-import RunResult from './RunResult';
 import RunOptions from './RunOptions';
+import RunResult from './RunResult';
 
 /**
  * Represents a TestRunner which can execute tests, resulting in a RunResult.

@@ -1,7 +1,7 @@
-import { PluginKind, Injector, TranspilerPluginContext, tokens, commonTokens, declareFactoryPlugin } from '@stryker-mutator/api/plugin';
-import WebpackTranspiler from './WebpackTranspiler';
+import { commonTokens, declareFactoryPlugin, Injector, PluginKind, tokens, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
 import ConfigLoader from './compiler/ConfigLoader';
 import { pluginTokens } from './pluginTokens';
+import WebpackTranspiler from './WebpackTranspiler';
 
 export const strykerPlugins = [
   declareFactoryPlugin(PluginKind.Transpiler, 'webpack', webpackTranspilerFactory)

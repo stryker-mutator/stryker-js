@@ -1,10 +1,10 @@
-import { testInjector } from '../../../test-helpers/src';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import MochaTestRunner from '../../src/MochaTestRunner';
-import MochaOptionsLoader from '../../src/MochaOptionsLoader';
-import { mochaOptionsKey } from '../../src/utils';
-import * as path from 'path';
 import { expect } from 'chai';
+import * as path from 'path';
+import { testInjector } from '../../../test-helpers/src';
+import MochaOptionsLoader from '../../src/MochaOptionsLoader';
+import MochaTestRunner from '../../src/MochaTestRunner';
+import { mochaOptionsKey } from '../../src/utils';
 
 describe('Mocha 6 file resolving integration', () => {
 

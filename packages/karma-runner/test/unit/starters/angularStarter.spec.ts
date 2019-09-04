@@ -1,9 +1,9 @@
-import { expect } from 'chai';
-import * as utils from '../../../src/utils';
-import * as sut from '../../../src/starters/angularStarter';
-import * as sinon from 'sinon';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import * as sut from '../../../src/starters/angularStarter';
+import * as utils from '../../../src/utils';
 
 describe('angularStarter', () => {
   let requireModuleStub: sinon.SinonStub;

@@ -1,7 +1,7 @@
-import * as types from '@babel/types';
+import generate from '@babel/generator';
 import { parse, ParserOptions } from '@babel/parser';
 import traverse, { NodePath } from '@babel/traverse';
-import generate from '@babel/generator';
+import * as types from '@babel/types';
 import { NodeWithParent } from './ParentNode';
 
 export default class BabelHelper {

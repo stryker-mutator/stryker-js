@@ -1,17 +1,17 @@
-import * as os from 'os';
-import { range, Subject, Observable } from 'rxjs';
-import { flatMap, tap, zip, merge, map, filter } from 'rxjs/operators';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import Sandbox from './Sandbox';
-import LoggingClientContext from './logging/LoggingClientContext';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { coreTokens } from './di';
-import { InitialTestRunResult } from './process/InitialTestExecutor';
 import { Logger } from '@stryker-mutator/api/logging';
-import TranspiledMutant from './TranspiledMutant';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
+import * as os from 'os';
+import { Observable, range, Subject } from 'rxjs';
+import { filter, flatMap, map, merge, tap, zip } from 'rxjs/operators';
 import { Disposable } from 'typed-inject';
+import { coreTokens } from './di';
+import LoggingClientContext from './logging/LoggingClientContext';
+import { InitialTestRunResult } from './process/InitialTestExecutor';
+import Sandbox from './Sandbox';
+import TranspiledMutant from './TranspiledMutant';
 import { TemporaryDirectory } from './utils/TemporaryDirectory';
 
 const MAX_CONCURRENT_INITIALIZING_SANDBOXES = 2;

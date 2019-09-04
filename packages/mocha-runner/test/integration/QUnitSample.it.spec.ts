@@ -1,9 +1,9 @@
-import * as path from 'path';
-import { expect } from 'chai';
-import { RunStatus } from '@stryker-mutator/api/test_runner';
-import MochaTestRunner from '../../src/MochaTestRunner';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { RunStatus } from '@stryker-mutator/api/test_runner';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as path from 'path';
+import MochaTestRunner from '../../src/MochaTestRunner';
 
 describe('QUnit sample', () => {
   let files: string[];

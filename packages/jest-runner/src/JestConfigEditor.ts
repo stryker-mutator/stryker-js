@@ -1,10 +1,10 @@
 import { Config, ConfigEditor } from '@stryker-mutator/api/config';
-import JestConfigLoader from './configLoaders/JestConfigLoader';
+import jest from 'jest';
 import CustomJestConfigLoader from './configLoaders/CustomJestConfigLoader';
+import JestConfigLoader from './configLoaders/JestConfigLoader';
 import ReactScriptsJestConfigLoader from './configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader from './configLoaders/ReactScriptsTSJestConfigLoader';
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
-import jest from 'jest';
 
 const DEFAULT_PROJECT_NAME = 'custom';
 

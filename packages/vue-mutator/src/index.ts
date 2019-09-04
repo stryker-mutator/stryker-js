@@ -1,6 +1,6 @@
+import { commonTokens, declareFactoryPlugin, Injector, OptionsContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
+import { MUTATORS_TOKEN, mutatorsFactory } from './helpers/MutatorHelpers';
 import VueMutator from './VueMutator';
-import { declareFactoryPlugin, PluginKind, Injector, OptionsContext, tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { mutatorsFactory, MUTATORS_TOKEN } from './helpers/MutatorHelpers';
 
 export const strykerPlugins = [
   declareFactoryPlugin(PluginKind.Mutator, 'vue', vueMutatorFactory)

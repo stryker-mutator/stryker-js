@@ -1,11 +1,11 @@
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import * as chai from 'chai';
-import MochaTestRunner from '../../src/MochaTestRunner';
-import { TestResult, RunResult, TestStatus, RunStatus } from '@stryker-mutator/api/test_runner';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MochaOptions } from '../../src/MochaOptions';
+import MochaTestRunner from '../../src/MochaTestRunner';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 

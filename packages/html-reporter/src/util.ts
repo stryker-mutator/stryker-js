@@ -1,8 +1,8 @@
 import { fsAsPromised } from '@stryker-mutator/util';
-import * as path from 'path';
 import * as mkdirp from 'mkdirp';
-import { promisify } from 'util';
+import * as path from 'path';
 import * as rimraf from 'rimraf';
+import { promisify } from 'util';
 
 export function copyFile(fromFilename: string, toFilename: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {

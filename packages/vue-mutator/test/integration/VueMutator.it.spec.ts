@@ -1,11 +1,11 @@
-import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
-import { strykerPlugins } from '../../src/index';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { PluginKind } from '@stryker-mutator/api/plugin';
 import { Mutator } from '@stryker-mutator/api/mutant';
+import { PluginKind } from '@stryker-mutator/api/plugin';
 import { strykerPlugins as javascriptMutatorStrykerPlugins } from '@stryker-mutator/javascript-mutator';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import { strykerPlugins as typescriptMutatorStrykerPlugins } from '@stryker-mutator/typescript';
+import { expect } from 'chai';
+import { strykerPlugins } from '../../src/index';
 
 const javascriptMutatorPlugin = javascriptMutatorStrykerPlugins.find(plugin => plugin.kind === PluginKind.Mutator);
 const typescriptMutatorPlugin = typescriptMutatorStrykerPlugins.find(plugin => plugin.kind === PluginKind.Mutator);

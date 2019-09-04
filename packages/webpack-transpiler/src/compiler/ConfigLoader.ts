@@ -1,11 +1,11 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import { Configuration } from 'webpack';
-import { StrykerWebpackConfig } from '../WebpackTranspiler';
-import { isFunction } from 'lodash';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import * as fs from 'fs';
+import { isFunction } from 'lodash';
+import * as path from 'path';
+import { Configuration } from 'webpack';
 import { pluginTokens } from '../pluginTokens';
+import { StrykerWebpackConfig } from '../WebpackTranspiler';
 
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 

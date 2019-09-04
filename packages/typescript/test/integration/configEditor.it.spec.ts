@@ -1,8 +1,8 @@
-import * as path from 'path';
-import { expect } from 'chai';
-import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import { Config } from '@stryker-mutator/api/config';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as path from 'path';
+import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 
 function resolveSampleProject(relativeFileName: string) {
   return path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', relativeFileName);

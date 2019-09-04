@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
-import { fsAsPromised, childProcessAsPromised } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import PromptOption from './PromptOption';
-import PresetConfiguration from './presets/PresetConfiguration';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { initializerTokens } from '.';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { childProcessAsPromised, fsAsPromised } from '@stryker-mutator/util';
+import * as _ from 'lodash';
+import { initializerTokens } from '.';
+import PresetConfiguration from './presets/PresetConfiguration';
+import PromptOption from './PromptOption';
 
 const STRYKER_CONFIG_FILE = 'stryker.conf.js';
 

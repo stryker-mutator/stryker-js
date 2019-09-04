@@ -1,10 +1,10 @@
-import { Transpiler } from '@stryker-mutator/api/transpile';
-import { coreTokens } from '../di';
-import { commonTokens, PluginKind, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
 import { File } from '@stryker-mutator/api/core';
+import { commonTokens, PluginKind, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import { Injector } from 'typed-inject';
+import { coreTokens } from '../di';
 import { PluginCreator } from '../di/PluginCreator';
 import { TranspilerFacade } from './TranspilerFacade';
-import { Injector } from 'typed-inject';
 
 export class ChildProcessTranspilerWorker implements Transpiler {
   private readonly innerTranspiler: Transpiler;

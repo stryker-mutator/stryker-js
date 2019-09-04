@@ -1,15 +1,15 @@
-import * as child from 'child_process';
-import { StrykerInquirer } from './StrykerInquirer';
-import NpmClient from './NpmClient';
-import PromptOption from './PromptOption';
 import { Logger } from '@stryker-mutator/api/logging';
-import { filterEmpty } from '../utils/objectUtils';
-import StrykerConfigWriter from './StrykerConfigWriter';
-import CommandTestRunner from '../test-runner/CommandTestRunner';
-import Preset from './presets/Preset';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import * as child from 'child_process';
 import { initializerTokens } from '.';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import CommandTestRunner from '../test-runner/CommandTestRunner';
+import { filterEmpty } from '../utils/objectUtils';
+import NpmClient from './NpmClient';
 import { PackageInfo } from './PackageInfo';
+import Preset from './presets/Preset';
+import PromptOption from './PromptOption';
+import StrykerConfigWriter from './StrykerConfigWriter';
+import { StrykerInquirer } from './StrykerInquirer';
 
 const enum PackageManager {
   Npm = 'npm',

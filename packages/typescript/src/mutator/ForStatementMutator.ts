@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
-import NodeMutator, { NodeReplacement } from './NodeMutator';
 import { printNode } from '../helpers/tsHelpers';
+import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class ForStatementMutator extends NodeMutator<ts.ForStatement> {
 

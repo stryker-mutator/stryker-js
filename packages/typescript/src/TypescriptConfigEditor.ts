@@ -1,12 +1,12 @@
+import { Config, ConfigEditor } from '@stryker-mutator/api/config';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as ts from 'typescript';
-import { ConfigEditor, Config } from '@stryker-mutator/api/config';
-import { CONFIG_KEY_FILE, CONFIG_KEY } from './helpers/keys';
-import { Logger } from '@stryker-mutator/api/logging';
-import * as fs from 'fs';
+import { CONFIG_KEY, CONFIG_KEY_FILE } from './helpers/keys';
 import { normalizeFileForTypescript, normalizeFileFromTypescript } from './helpers/tsHelpers';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker/issues/391 for more info

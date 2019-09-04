@@ -1,17 +1,17 @@
-import * as os from 'os';
-import { fork, ChildProcess } from 'child_process';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { getLogger } from 'log4js';
-import { WorkerMessage, WorkerMessageKind, ParentMessage, autoStart, ParentMessageKind } from './messageProtocol';
-import { serialize, deserialize, kill, padLeft } from '../utils/objectUtils';
-import { Task, ExpirableTask } from '../utils/Task';
-import LoggingClientContext from '../logging/LoggingClientContext';
-import ChildProcessCrashedError from './ChildProcessCrashedError';
-import { isErrnoException } from '@stryker-mutator/util';
-import OutOfMemoryError from './OutOfMemoryError';
-import StringBuilder from '../utils/StringBuilder';
-import { InjectionToken, InjectableClass, Disposable } from 'typed-inject';
 import { OptionsContext } from '@stryker-mutator/api/plugin';
+import { isErrnoException } from '@stryker-mutator/util';
+import { ChildProcess, fork } from 'child_process';
+import { getLogger } from 'log4js';
+import * as os from 'os';
+import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
+import LoggingClientContext from '../logging/LoggingClientContext';
+import { deserialize, kill, padLeft, serialize } from '../utils/objectUtils';
+import StringBuilder from '../utils/StringBuilder';
+import { ExpirableTask, Task } from '../utils/Task';
+import ChildProcessCrashedError from './ChildProcessCrashedError';
+import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';
+import OutOfMemoryError from './OutOfMemoryError';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 

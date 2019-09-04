@@ -1,7 +1,7 @@
-import { jestTestAdapterFactory, JEST_VERSION_TOKEN, JestTestAdapter } from '../../../src/jestTestAdapters';
-import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
-import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import { JEST_VERSION_TOKEN, JestTestAdapter, jestTestAdapterFactory } from '../../../src/jestTestAdapters';
+import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
 
 describe(jestTestAdapterFactory.name, () => {
   let jestVersion: string;

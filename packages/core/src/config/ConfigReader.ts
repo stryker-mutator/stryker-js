@@ -1,12 +1,12 @@
-import * as _ from 'lodash';
-import fs = require('fs');
-import * as path from 'path';
 import { Config } from '@stryker-mutator/api/config';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { StrykerError } from '@stryker-mutator/util';
-import { coreTokens } from '../di';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { StrykerError } from '@stryker-mutator/util';
+import fs = require('fs');
+import * as _ from 'lodash';
+import * as path from 'path';
+import { coreTokens } from '../di';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' +
   '    config.set({\n' +

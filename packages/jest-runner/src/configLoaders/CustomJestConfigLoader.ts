@@ -1,7 +1,7 @@
-import JestConfigLoader from './JestConfigLoader';
-import path from 'path';
 import fs = require('fs');
 import jest from 'jest';
+import path from 'path';
+import JestConfigLoader from './JestConfigLoader';
 
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root

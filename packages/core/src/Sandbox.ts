@@ -1,19 +1,19 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import * as path from 'path';
+import { File } from '@stryker-mutator/api/core';
+import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
+import { RunResult, RunStatus, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import * as mkdirp from 'mkdirp';
-import { RunResult, TestRunner, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
-import { File } from '@stryker-mutator/api/core';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import { wrapInClosure } from './utils/objectUtils';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
+import * as path from 'path';
+import LoggingClientContext from './logging/LoggingClientContext';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
-import { TemporaryDirectory } from './utils/TemporaryDirectory';
-import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
-import LoggingClientContext from './logging/LoggingClientContext';
-import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
+import { findNodeModules, symlinkJunction, writeFile } from './utils/fileUtils';
+import { wrapInClosure } from './utils/objectUtils';
+import { TemporaryDirectory } from './utils/TemporaryDirectory';
 
 interface FileMap {
   [sourceFile: string]: string;
