@@ -13,7 +13,7 @@ import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
 import { findNodeModules, symlinkJunction, writeFile } from './utils/fileUtils';
 import { wrapInClosure } from './utils/objectUtils';
-import { TempFolder } from './utils/TempFolder';
+import { TemporaryDirectory } from './utils/TemporaryDirectory';
 
 interface FileMap {
   [sourceFile: string]: string;
@@ -31,8 +31,10 @@ export default class Sandbox {
     private readonly index: number,
     private readonly files: ReadonlyArray<File>,
     private readonly testFramework: TestFramework | null,
-    private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
-    this.workingDirectory = TempFolder.instance().createRandomFolder('sandbox');
+    private readonly timeOverheadMS: number,
+    private readonly loggingContext: LoggingClientContext,
+    temporaryDirectory: TemporaryDirectory) {
+    this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
   }
 
@@ -42,9 +44,16 @@ export default class Sandbox {
     return this.initializeTestRunner();
   }
 
-  public static create(options: StrykerOptions, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
+  public static create(
+    options: StrykerOptions,
+    index: number,
+    files: ReadonlyArray<File>,
+    testFramework: TestFramework | null,
+    timeoutOverheadMS: number,
+    loggingContext: LoggingClientContext,
+    temporaryDirectory: TemporaryDirectory)
     : Promise<Sandbox> {
-    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext);
+    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext, temporaryDirectory);
     return sandbox.initialize().then(() => sandbox);
   }
 

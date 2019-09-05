@@ -9,7 +9,7 @@ import { PluginCreator } from '../../../src/di/PluginCreator';
 import { TranspilerFacade } from '../../../src/transpiler/TranspilerFacade';
 import { mock, Mock } from '../../helpers/producers';
 
-describe('TranspilerFacade', () => {
+describe(TranspilerFacade.name, () => {
   let sut: TranspilerFacade;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind.Transpiler>>;
 

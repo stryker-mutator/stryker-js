@@ -1,33 +1,37 @@
+import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { fsAsPromised } from '@stryker-mutator/util';
-import { getLogger } from 'log4js';
 import * as mkdirp from 'mkdirp';
 import * as path from 'path';
+import { Disposable } from 'typed-inject';
 import { deleteDir } from './fileUtils';
 
-export class TempFolder {
-  private readonly log = getLogger(TempFolder.name);
-  public baseTempFolder: string;
-  public tempFolder: string;
+export class TemporaryDirectory implements Disposable {
+  private readonly temporaryDirectory: string;
+  private isInitialized = false;
 
-  private constructor() { }
+  public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
+  constructor(private readonly log: Logger, options: StrykerOptions) {
+    this.temporaryDirectory = path.resolve(options.tempDirName);
+  }
 
-  public initialize(tempDirName = '.stryker-tmp') {
-    this.baseTempFolder = path.join(process.cwd(), tempDirName);
-    this.tempFolder = path.join(this.baseTempFolder, this.random().toString());
-    mkdirp.sync(this.baseTempFolder);
-    mkdirp.sync(this.tempFolder);
+  public initialize() {
+    this.isInitialized = true;
+    this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
+    mkdirp.sync(this.temporaryDirectory);
   }
 
   /**
-   * Creates a new random folder with the specified prefix.
+   * Creates a new random directory with the specified prefix.
    * @param prefix The prefix.
-   * @returns The path to the folder.
+   * @returns The path to the directory.
    */
-  public createRandomFolder(prefix: string): string {
-    if (!this.baseTempFolder) {
+  public createRandomDirectory(prefix: string): string {
+    if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    const dir = this.baseTempFolder + path.sep + prefix + this.random();
+    const dir = path.resolve(this.temporaryDirectory, `${prefix}${this.random()}`);
     mkdirp.sync(dir);
     return dir;
   }
@@ -54,15 +58,19 @@ export class TempFolder {
   }
 
   /**
-   * Deletes the Stryker-temp folder
+   * Deletes the Stryker-temp directory
    */
-  public clean() {
-    if (!this.baseTempFolder) {
+  public async dispose() {
+    if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    this.log.debug(`Deleting stryker temp folder ${this.baseTempFolder}`);
-    return deleteDir(this.baseTempFolder)
-      .catch(() => this.log.info(`Failed to delete stryker temp folder ${this.baseTempFolder}`));
+    this.log.debug(`Deleting stryker temp directory %s`, this.temporaryDirectory);
+    try {
+      return deleteDir(this.temporaryDirectory);
+    }
+    catch (e) {
+      return this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
+    }
   }
 
   /**
@@ -73,11 +81,4 @@ export class TempFolder {
     return Math.ceil(Math.random() * 10000000);
   }
 
-  private static _instance: TempFolder;
-  public static instance() {
-    if (!this._instance) {
-      this._instance = new TempFolder();
-    }
-    return this._instance;
-  }
 }
