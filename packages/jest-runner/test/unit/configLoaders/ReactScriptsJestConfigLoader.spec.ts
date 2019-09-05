@@ -1,15 +1,11 @@
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import path from 'path';
 import sinon from 'sinon';
 import ReactScriptsJestConfigLoader from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
 import * as helper from '../../../src/utils/createReactJestConfig';
 
-const fakeRequire: any = {
-  resolve: () => { }
-};
-
-describe('ReactScriptsJestConfigLoader', () => {
-  let reactConfigLoader: ReactScriptsJestConfigLoader;
+describe(ReactScriptsJestConfigLoader.name, () => {
+  let sut: ReactScriptsJestConfigLoader;
   let requireResolveStub: sinon.SinonStub;
   let createReactJestConfigStub: sinon.SinonStub;
 
@@ -24,20 +20,20 @@ describe('ReactScriptsJestConfigLoader', () => {
       relativePath: resolve('test')
     }));
 
-    requireResolveStub = sinon.stub(fakeRequire, 'resolve');
+    requireResolveStub = sinon.stub();
     requireResolveStub.returns(reactScriptsPackagePath);
 
-    reactConfigLoader = new ReactScriptsJestConfigLoader(projectRoot, fakeRequire);
+    sut = new ReactScriptsJestConfigLoader(projectRoot, requireResolveStub as unknown as RequireResolve);
   });
 
   it('should load the configuration via the createJestConfig method provided by react-scripts', () => {
-    reactConfigLoader.loadConfig();
+    sut.loadConfig();
 
-    assert(requireResolveStub.calledWith('react-scripts/package.json'));
+    expect(requireResolveStub).calledWith('react-scripts/package.json');
   });
 
   it('should generate a configuration', () => {
-    const config = reactConfigLoader.loadConfig();
+    const config = sut.loadConfig();
 
     expect(config).to.deep.equal({
       eject: false,
@@ -45,5 +41,16 @@ describe('ReactScriptsJestConfigLoader', () => {
       relativePath: path.join('node_modules', 'react-scripts', 'test'),
       testEnvironment: 'jsdom'
     });
+  });
+
+  it('should throw an error when react-scripts could not be found', () => {
+    // Arrange
+    const error: NodeJS.ErrnoException = new Error('');
+    error.code = 'MODULE_NOT_FOUND';
+    requireResolveStub.throws(error);
+
+    // Act & Assert
+    expect(() => sut.loadConfig())
+      .throws('Unable to locate package react-scripts. This package is required when projectType is set to "react".');
   });
 });
