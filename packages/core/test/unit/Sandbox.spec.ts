@@ -20,7 +20,7 @@ import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import * as fileUtils from '../../src/utils/fileUtils';
 import { wrapInClosure } from '../../src/utils/objectUtils';
-import { TempFolder } from '../../src/utils/TempFolder';
+import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 import currentLogMock from '../helpers/logMock';
 import { Mock } from '../helpers/producers';
 
@@ -46,6 +46,7 @@ describe(Sandbox.name, () => {
   let findNodeModulesStub: sinon.SinonStub;
   let log: Mock<Logger>;
   let runResult: RunResult;
+  let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
 
   beforeEach(() => {
     runResult = { tests: [], status: RunStatus.Complete };
@@ -63,7 +64,9 @@ describe(Sandbox.name, () => {
       expectedFileToMutate,
       notMutatedFile,
     ];
-    sinon.stub(TempFolder.instance(), 'createRandomFolder').returns(sandboxDirectory);
+    temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
+    temporaryDirectoryMock.createRandomDirectory.returns(sandboxDirectory);
+
     writeFileStub = sinon.stub(fileUtils, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesStub = sinon.stub(fileUtils, 'findNodeModules');
@@ -88,7 +91,7 @@ describe(Sandbox.name, () => {
       testFramework: null,
     };
     const { files, testFramework, overheadTimeMS } = {...args, ...overrides };
-    return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT);
+    return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT, temporaryDirectoryMock as any);
   }
 
   describe('create()', () => {
@@ -112,7 +115,7 @@ describe(Sandbox.name, () => {
 
     it('should have created a sandbox folder', async () => {
       await createSut(testFrameworkStub);
-      expect(TempFolder.instance().createRandomFolder).to.have.been.calledWith('sandbox');
+      expect(temporaryDirectoryMock.createRandomDirectory).calledWith('sandbox');
     });
 
     it('should symlink node modules in sandbox directory if exists', async () => {

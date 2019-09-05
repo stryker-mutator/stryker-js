@@ -17,7 +17,6 @@ import ScoreResultCalculator from './ScoreResultCalculator';
 import { transpilerFactory } from './transpiler';
 import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
-import { TempFolder } from './utils/TempFolder';
 
 export default class Stryker {
 
@@ -34,6 +33,10 @@ export default class Stryker {
 
   private get timer() {
     return this.injector.resolve(coreTokens.timer);
+  }
+
+  private get temporaryDirectory() {
+    return this.injector.resolve(coreTokens.temporaryDirectory);
   }
 
   /**
@@ -54,7 +57,7 @@ export default class Stryker {
     this.timer.reset();
     const inputFiles = await this.injector.injectClass(InputFileResolver).resolve();
     if (inputFiles.files.length) {
-      TempFolder.instance().initialize();
+      this.temporaryDirectory.initialize();
       const inputFileInjector = this.injector
         .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(coreTokens.inputFiles, inputFiles);
@@ -84,7 +87,6 @@ export default class Stryker {
             .injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
           await this.reportScore(mutantResults, inputFileInjector);
-          await TempFolder.instance().clean();
           await this.logDone();
           return mutantResults;
         } else {

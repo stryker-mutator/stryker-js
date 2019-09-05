@@ -12,6 +12,7 @@ import Sandbox from '../Sandbox';
 import { coveragePerTestHooks } from '../transpiler/coverageHooks';
 import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';
 import SourceMapper from '../transpiler/SourceMapper';
+import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
 
 // The initial run might take a while.
@@ -51,7 +52,8 @@ export default class InitialTestExecutor {
     coreTokens.testFramework,
     coreTokens.timer,
     coreTokens.loggingContext,
-    coreTokens.transpiler);
+    coreTokens.transpiler,
+    coreTokens.temporaryDirectory);
 
   constructor(
     private readonly options: StrykerOptions,
@@ -60,7 +62,8 @@ export default class InitialTestExecutor {
     private readonly testFramework: TestFramework | null,
     private readonly timer: Timer,
     private readonly loggingContext: LoggingClientContext,
-    private readonly transpiler: Transpiler) { }
+    private readonly transpiler: Transpiler,
+    private readonly tempDir: TemporaryDirectory) { }
 
   public async run(): Promise<InitialTestRunResult> {
 
@@ -91,7 +94,7 @@ export default class InitialTestExecutor {
   }
 
   private async runInSandbox(files: ReadonlyArray<File>): Promise<{ runResult: RunResult, grossTimeMS: number }> {
-    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0, this.loggingContext);
+    const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0, this.loggingContext, this.tempDir);
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT, this.getCollectCoverageHooksIfNeeded());
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);

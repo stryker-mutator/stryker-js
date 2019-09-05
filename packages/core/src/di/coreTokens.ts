@@ -7,6 +7,7 @@ export const initialRunResult = 'initialRunResult';
 export const transpiledFiles = 'transpiledFiles';
 export const mutantTranspileScheduler = 'mutantTranspileScheduler';
 export const sandboxPool = 'sandboxPool';
+export const temporaryDirectory = 'temporaryDirectory';
 export const testFramework = 'testFramework';
 export const timer = 'timer';
 export const timeOverheadMS = 'timeOverheadMS';
