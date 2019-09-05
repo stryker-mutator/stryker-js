@@ -37,7 +37,7 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "^2.0.2",
     "@types/memory-fs": "~0.3.0",
-    "@types/webpack": "~4.32.0",
+    "@types/webpack": "~4.39.1",
     "raw-loader": "~3.1.0",
     "webpack": "~4.39.0"
   },
