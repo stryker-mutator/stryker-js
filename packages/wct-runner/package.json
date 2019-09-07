@@ -23,20 +23,20 @@
     "access": "public"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2",
-    "@stryker-mutator/util": "^2.0.2"
+    "@stryker-mutator/api": "~2.0",
+    "@stryker-mutator/util": "~2.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "^2.0.2",
-    "@types/socket.io": "^2.1.0",
-    "chai": "~4.2.0",
-    "mocha": "~5.2.0",
-    "sinon": "^7.3.1",
-    "web-component-tester": "~6.9.2"
+    "@stryker-mutator/test-helpers": "~2.0",
+    "@types/socket.io": "~2.1",
+    "chai": "~4.2",
+    "mocha": "~5.2",
+    "sinon": "7.4",
+    "web-component-tester": "~6.9"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^2.0.0",
-    "web-component-tester": "^6.9.0"
+    "@stryker-mutator/core": "^2",
+    "web-component-tester": "^6"
   },
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "Apache-2.0",

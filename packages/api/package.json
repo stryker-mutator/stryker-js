@@ -33,11 +33,11 @@
     "node": ">=8"
   },
   "dependencies": {
-    "mutation-testing-report-schema": "^1.0.0",
-    "tslib": "~1.10.0"
+    "mutation-testing-report-schema": "~1.1",
+    "tslib": "~1.10"
   },
   "devDependencies": {
-    "surrial": "~1.0.0",
-    "typed-inject": "~2.0.0"
+    "surrial": "~1.0",
+    "typed-inject": "~2.0"
   }
 }

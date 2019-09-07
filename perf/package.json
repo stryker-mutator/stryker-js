@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "devDependencies": {
-    "ts-node": "^8.0.2"
+    "ts-node": "~8.3"
   },
   "scripts": {
     "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies",

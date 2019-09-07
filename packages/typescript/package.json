@@ -36,22 +36,22 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/typescript#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2",
-    "@stryker-mutator/util": "^2.0.2",
-    "lodash.flatmap": "~4.5.0",
-    "semver": "~6.3.0",
-    "tslib": "~1.10.0"
+    "@stryker-mutator/api": "~2.0",
+    "@stryker-mutator/util": "~2.0",
+    "lodash.flatmap": "~4.5",
+    "semver": "~6.3",
+    "tslib": "~1.10"
   },
   "devDependencies": {
-    "@stryker-mutator/mutator-specification": "^2.0.2",
-    "@stryker-mutator/test-helpers": "^2.0.2",
-    "@types/lodash.flatmap": "~4.5.3",
-    "@types/semver": "~6.0.0",
-    "surrial": "~1.0.0"
+    "@stryker-mutator/mutator-specification": "~2.0",
+    "@stryker-mutator/test-helpers": "~2.0",
+    "@types/lodash.flatmap": "~4.5",
+    "@types/semver": "~6.0",
+    "surrial": "~1.0"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^2.0.0",
-    "typescript": "^3.0.3"
+    "@stryker-mutator/core": "^2",
+    "typescript": "~3.6"
   },
   "initStrykerConfig": {
     "tsconfigFile": "tsconfig.json",

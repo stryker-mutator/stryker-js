@@ -33,20 +33,20 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/html-reporter#readme",
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2",
-    "@stryker-mutator/util": "^2.0.2",
-    "file-url": "~3.0.0",
-    "mkdirp": "~0.5.1",
-    "mutation-testing-elements": "^1.0.2",
-    "rimraf": "~3.0.0"
+    "@stryker-mutator/api": "~2.0",
+    "@stryker-mutator/util": "~2.0",
+    "file-url": "~3.0",
+    "mkdirp": "~0.5",
+    "mutation-testing-elements": "~1.1",
+    "rimraf": "~3.0"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^2.0.0"
+    "@stryker-mutator/core": "^2"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "^2.0.2",
-    "@types/jsdom": "~12.2.0",
-    "@types/node": "^10.11.5"
+    "@stryker-mutator/test-helpers": "~2.0",
+    "@types/jsdom": "~12.2",
+    "@types/node": "^10"
   },
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",

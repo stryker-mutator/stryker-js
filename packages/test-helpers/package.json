@@ -18,10 +18,10 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/test-helpers#readme",
   "license": "ISC",
   "dependencies": {
-    "mutation-testing-metrics": "^1.1.1"
+    "mutation-testing-metrics": "~1.1"
   },
   "devDependencies": {
-    "@stryker-mutator/api": "^2.0.2",
-    "typed-inject": "~2.0.0"
+    "@stryker-mutator/api": "~2.0",
+    "typed-inject": "~2.0"
   }
 }
