@@ -1,5 +1,4 @@
 import fs = require('fs');
-import jest from 'jest';
 import path from 'path';
 import JestConfigLoader from './JestConfigLoader';
 
@@ -13,7 +12,7 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
     this._projectRoot = projectRoot;
   }
 
-  public loadConfig(): jest.Configuration {
+  public loadConfig(): JestStryker.Configuration {
     const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson() || {};
     return jestConfig;
   }

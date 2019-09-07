@@ -1,4 +1,4 @@
-declare namespace Jest {
+declare namespace JestStryker {
   // RunCLI does not have any official types, this will do for our implementation
   function runCLI(cliParams: RunCliParameters, projectRoots: Array<String>): any 
 
@@ -30,8 +30,8 @@ declare namespace Jest {
 
   // Taken from https://goo.gl/h48ajP, removed all stuff that we are not using
   interface AggregatedResult {
-      numRuntimeErrorTestSuites: number;
-      testResults: TestResult[];
+    numRuntimeErrorTestSuites: number;
+    testResults: TestResult[];
   }
 
   // Taken from https://goo.gl/nAzQ4J, removed all stuff that we are not using
@@ -55,6 +55,6 @@ declare namespace Jest {
   type Path = string;
 }
 
-declare module "jest" {
-  export default Jest;
+declare module "JestStryker" {
+  export default JestStryker;
 }
