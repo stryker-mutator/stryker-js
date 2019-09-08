@@ -1,5 +1,6 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import * as jest from 'jest';
 import JestTestAdapter from './JestTestAdapter';
 
 export default class JestPromiseTestAdapter implements JestTestAdapter {
@@ -15,11 +16,11 @@ export default class JestPromiseTestAdapter implements JestTestAdapter {
       this.log.trace(`Only running tests related to ${fileNameUnderTest}`);
     }
 
-    return JestStryker.runCLI({
-      ...(fileNameUnderTest && { _: [fileNameUnderTest], findRelatedTests: true}),
+    return jest.runCLI({
+      ...(fileNameUnderTest && { _: [fileNameUnderTest], findRelatedTests: true, $0: ''}),
       config,
       runInBand: true,
       silent: true
-    }, [projectRoot]);
+    }, [projectRoot]) as any;
   }
 }
