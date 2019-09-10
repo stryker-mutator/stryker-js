@@ -3,7 +3,6 @@ import { parse, ParserOptions } from '@babel/parser';
 import traverse, { NodePath } from '@babel/traverse';
 import * as types from '@babel/types';
 import { NodeWithParent } from './ParentNode';
-import { ParserPlugin } from '@babel/parser';
 
 export default class BabelHelper {
 
