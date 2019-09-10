@@ -1,24 +1,25 @@
-import { EOL } from 'os';
-import { expect } from 'chai';
-import Sandbox from '../../../src/Sandbox';
-import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
 import { File, LogLevel } from '@stryker-mutator/api/core';
-import * as producers from '../../helpers/producers';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import CoverageInstrumenterTranspiler, * as coverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
-import { Transpiler } from '@stryker-mutator/api/transpile';
-import { RunStatus, RunResult, TestStatus } from '@stryker-mutator/api/test_runner';
-import Timer from '../../../src/utils/Timer';
-import { coverageMaps } from '../../helpers/producers';
-import InputFileCollection from '../../../src/input/InputFileCollection';
-import * as coverageHooks from '../../../src/transpiler/coverageHooks';
-import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
-import * as sinon from 'sinon';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { transpiler, testFramework, testResult, runResult } from '@stryker-mutator/test-helpers/src/factory';
-import { coreTokens } from '../../../src/di';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
+import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { runResult, testFramework, testResult, transpiler } from '@stryker-mutator/test-helpers/src/factory';
+import { expect } from 'chai';
+import { EOL } from 'os';
+import * as sinon from 'sinon';
+import { coreTokens } from '../../../src/di';
+import InputFileCollection from '../../../src/input/InputFileCollection';
+import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
+import Sandbox from '../../../src/Sandbox';
+import * as coverageHooks from '../../../src/transpiler/coverageHooks';
+import CoverageInstrumenterTranspiler, * as coverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
+import SourceMapper, { PassThroughSourceMapper } from '../../../src/transpiler/SourceMapper';
+import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
+import Timer from '../../../src/utils/Timer';
+import * as producers from '../../helpers/producers';
+import { coverageMaps, Mock } from '../../helpers/producers';
 
 const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -39,14 +40,18 @@ describe('InitialTestExecutor run', () => {
   let expectedRunResult: RunResult;
   let inputFiles: InputFileCollection;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
+  let temporaryDirectoryMock: Mock<TemporaryDirectory>;
 
   function createSut() {
+    temporaryDirectoryMock = producers.mock(TemporaryDirectory);
+
     return testInjector.injector
       .provideValue(coreTokens.inputFiles, inputFiles)
       .provideValue(coreTokens.loggingContext, LOGGING_CONTEXT)
       .provideValue(coreTokens.testFramework, testFrameworkMock)
       .provideValue(coreTokens.transpiler, transpilerMock as Transpiler)
       .provideValue(coreTokens.timer, timerMock as unknown as Timer)
+      .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock as unknown as TemporaryDirectory)
       .injectClass(InitialTestExecutor);
   }
 
@@ -149,6 +154,7 @@ describe('InitialTestExecutor run', () => {
 
     it('should not log the transpiled results if transpilers are not specified', async () => {
       testInjector.logger.isDebugEnabled.returns(true);
+      sut = createSut();
       await sut.run();
       expect(testInjector.logger.debug).not.calledWithMatch('Transpiled files');
     });

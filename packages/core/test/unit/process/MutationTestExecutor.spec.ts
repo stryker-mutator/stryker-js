@@ -1,20 +1,20 @@
+import { File } from '@stryker-mutator/api/core';
+import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as _ from 'lodash';
+import { of } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import * as sinon from 'sinon';
-import { File } from '@stryker-mutator/api/core';
-import { MutantStatus, MutantResult } from '@stryker-mutator/api/report';
+import { coreTokens } from '../../../src/di';
+import InputFileCollection from '../../../src/input/InputFileCollection';
+import { MutationTestExecutor } from '../../../src/process/MutationTestExecutor';
+import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { SandboxPool } from '../../../src/SandboxPool';
 import TestableMutant from '../../../src/TestableMutant';
 import TranspiledMutant from '../../../src/TranspiledMutant';
-import { MutationTestExecutor } from '../../../src/process/MutationTestExecutor';
-import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
 import { MutantTranspileScheduler } from '../../../src/transpiler/MutantTranspileScheduler';
 import { Mock, mock, testableMutant, transpiledMutant } from '../../helpers/producers';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { coreTokens } from '../../../src/di';
-import InputFileCollection from '../../../src/input/InputFileCollection';
-import { from, Observable } from 'rxjs';
-import { of } from 'rxjs';
 
 describe(MutationTestExecutor.name, () => {
 

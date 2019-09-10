@@ -1,7 +1,7 @@
-import { LoggerFactoryMethod, Logger } from '../../logging';
-import { StrykerOptions, MutatorDescriptor } from '../../core';
-import { PluginResolver } from './Plugins';
+import { StrykerOptions } from '../../core';
+import { Logger, LoggerFactoryMethod } from '../../logging';
 import { PluginKind } from './PluginKind';
+import { PluginResolver } from './Plugins';
 import { commonTokens } from './tokens';
 
 /**

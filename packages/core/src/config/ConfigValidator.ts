@@ -1,9 +1,9 @@
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import { MutatorDescriptor, MutationScoreThresholds, LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Config } from '@stryker-mutator/api/config';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { StrykerError } from '@stryker-mutator/util';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 
 export default class ConfigValidator {
@@ -26,6 +26,7 @@ export default class ConfigValidator {
     this.validateIsStringArray('plugins', this.options.plugins);
     this.validateIsStringArray('reporters', this.options.reporters);
     this.validateIsStringArray('transpilers', this.options.transpilers);
+    this.validateIsString('tempDirName', this.options.tempDirName);
     this.validateCoverageAnalysis();
     this.validateCoverageAnalysisWithRespectToTranspilers();
     this.crashIfNeeded();

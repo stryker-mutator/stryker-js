@@ -1,11 +1,11 @@
-import * as ts from 'typescript';
-import { Transpiler } from '@stryker-mutator/api/transpile';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { getTSConfig, getProjectDirectory, guardTypescriptVersion, isHeaderFile } from './helpers/tsHelpers';
-import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
-import TranspileFilter from './transpiler/TranspileFilter';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import * as ts from 'typescript';
+import { getProjectDirectory, getTSConfig, guardTypescriptVersion, isHeaderFile } from './helpers/tsHelpers';
+import TranspileFilter from './transpiler/TranspileFilter';
+import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
 
 export default class TypescriptTranspiler implements Transpiler {
   private languageService: TranspilingLanguageService;

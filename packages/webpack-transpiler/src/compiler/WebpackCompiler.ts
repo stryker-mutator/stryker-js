@@ -1,8 +1,8 @@
 import { File } from '@stryker-mutator/api/core';
 import { Compiler, Configuration } from 'webpack';
-import webpack from './Webpack';
 import InputFileSystem from '../fs/InputFileSystem';
 import OutputFileSystem from '../fs/OutputFileSystem';
+import webpack from './Webpack';
 
 export default class WebpackCompiler {
   private readonly _compiler: Compiler;

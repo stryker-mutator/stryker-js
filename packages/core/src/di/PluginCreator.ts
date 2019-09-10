@@ -1,5 +1,5 @@
-import { Plugin, PluginKind, PluginContexts, PluginInterfaces, FactoryPlugin, ClassPlugin, PluginResolver, tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { Injector, InjectionToken, InjectableFunctionWithInject } from 'typed-inject';
+import { ClassPlugin, commonTokens, FactoryPlugin, Plugin, PluginContexts, PluginInterfaces, PluginKind, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
+import { InjectableFunctionWithInject, InjectionToken, Injector } from 'typed-inject';
 
 export class PluginCreator<TPluginKind extends PluginKind> {
 

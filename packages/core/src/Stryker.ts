@@ -1,23 +1,22 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
-import { MutantTestMatcher } from './mutants/MutantTestMatcher';
+import { Injector } from 'typed-inject';
+import { buildMainInjector, coreTokens, MainContext, PluginCreator } from './di';
+import InputFileCollection from './input/InputFileCollection';
 import InputFileResolver from './input/InputFileResolver';
-import ScoreResultCalculator from './ScoreResultCalculator';
-import { TempFolder } from './utils/TempFolder';
+import LogConfigurator from './logging/LogConfigurator';
+import { MutantTestMatcher } from './mutants/MutantTestMatcher';
 import { MutatorFacade } from './mutants/MutatorFacade';
 import InitialTestExecutor from './process/InitialTestExecutor';
 import { MutationTestExecutor } from './process/MutationTestExecutor';
-import LogConfigurator from './logging/LogConfigurator';
-import { Injector } from 'typed-inject';
-import { TranspilerFacade } from './transpiler/TranspilerFacade';
-import { coreTokens, MainContext, PluginCreator, buildMainInjector } from './di';
-import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
-import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
-import { SandboxPool } from './SandboxPool';
-import { Logger } from '@stryker-mutator/api/logging';
-import { transpilerFactory } from './transpiler';
 import { MutationTestReportCalculator } from './reporters/MutationTestReportCalculator';
-import InputFileCollection from './input/InputFileCollection';
+import { SandboxPool } from './SandboxPool';
+import ScoreResultCalculator from './ScoreResultCalculator';
+import { transpilerFactory } from './transpiler';
+import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
+import { TranspilerFacade } from './transpiler/TranspilerFacade';
 
 export default class Stryker {
 
@@ -34,6 +33,10 @@ export default class Stryker {
 
   private get timer() {
     return this.injector.resolve(coreTokens.timer);
+  }
+
+  private get temporaryDirectory() {
+    return this.injector.resolve(coreTokens.temporaryDirectory);
   }
 
   /**
@@ -54,7 +57,7 @@ export default class Stryker {
     this.timer.reset();
     const inputFiles = await this.injector.injectClass(InputFileResolver).resolve();
     if (inputFiles.files.length) {
-      TempFolder.instance().initialize();
+      this.temporaryDirectory.initialize();
       const inputFileInjector = this.injector
         .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(coreTokens.inputFiles, inputFiles);
@@ -84,7 +87,6 @@ export default class Stryker {
             .injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
           await this.reportScore(mutantResults, inputFileInjector);
-          await TempFolder.instance().clean();
           await this.logDone();
           return mutantResults;
         } else {

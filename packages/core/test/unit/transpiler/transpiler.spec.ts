@@ -1,11 +1,11 @@
-import { transpilerFactory } from '../../../src/transpiler';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { Transpiler } from '@stryker-mutator/api/transpile';
-import { Injector } from '@stryker-mutator/api/plugin';
-import { ChildProcessTranspiler } from '../../../src/transpiler/ChildProcessTranspiler';
 import { File } from '@stryker-mutator/api/core';
-import * as sinon from 'sinon';
+import { Injector } from '@stryker-mutator/api/plugin';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { transpilerFactory } from '../../../src/transpiler';
+import { ChildProcessTranspiler } from '../../../src/transpiler/ChildProcessTranspiler';
 
 describe(transpilerFactory.name, () => {
 

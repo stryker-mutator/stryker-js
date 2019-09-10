@@ -1,8 +1,8 @@
-import { ConfigEditorApplier } from '../../../src/config/ConfigEditorApplier';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PluginKind } from '@stryker-mutator/api/plugin';
-import * as sinon from 'sinon';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { ConfigEditorApplier } from '../../../src/config/ConfigEditorApplier';
 import { coreTokens } from '../../../src/di';
 import { PluginCreator } from '../../../src/di/PluginCreator';
 

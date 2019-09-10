@@ -1,7 +1,7 @@
 import { RunOptions, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import TestRunnerDecorator from './TestRunnerDecorator';
 import { getLogger } from 'log4js';
-import { TimeoutExpired, timeout } from '../utils/objectUtils';
+import { timeout, TimeoutExpired } from '../utils/objectUtils';
+import TestRunnerDecorator from './TestRunnerDecorator';
 
 /**
  * Wraps a test runner and implements the timeout functionality.

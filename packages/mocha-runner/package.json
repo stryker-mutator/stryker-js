@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/mocha-runner",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "A plugin to use the mocha test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -35,13 +35,13 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/mocha-runner#readme",
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2",
+    "@stryker-mutator/api": "^2.1.0",
     "multimatch": "~4.0.0",
     "tslib": "~1.10.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "^2.0.2",
-    "@types/multimatch": "~2.1.2",
+    "@stryker-mutator/test-helpers": "^2.1.0",
+    "@types/multimatch": "~4.0.0",
     "stryker-mocha-framework": "^0.15.1"
   },
   "peerDependencies": {

@@ -1,12 +1,11 @@
 import * as types from '@babel/types';
+import { File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutator, Mutant } from '@stryker-mutator/api/mutant';
-import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
-import copy from './helpers/copy';
-import { NodeMutator, NODE_MUTATORS_TOKEN } from './mutators/NodeMutator';
+import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import BabelHelper from './helpers/BabelHelper';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { ParserPlugin } from '@babel/parser';
+import copy from './helpers/copy';
+import { NODE_MUTATORS_TOKEN, NodeMutator } from './mutators/NodeMutator';
 
 export class JavaScriptMutator implements Mutator {
 

@@ -1,13 +1,13 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import { expect } from 'chai';
 import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as fs from 'fs';
+import * as path from 'path';
+import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
-import { CONFIG_KEY } from '../../src/helpers/keys';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 
 describe('Use header file integration', () => {
 

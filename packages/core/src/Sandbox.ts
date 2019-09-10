@@ -1,19 +1,19 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import * as path from 'path';
+import { File } from '@stryker-mutator/api/core';
+import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
+import { RunResult, RunStatus, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import * as mkdirp from 'mkdirp';
-import { RunResult, TestRunner, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
-import { File } from '@stryker-mutator/api/core';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import { wrapInClosure } from './utils/objectUtils';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
+import * as path from 'path';
+import LoggingClientContext from './logging/LoggingClientContext';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
-import { TempFolder } from './utils/TempFolder';
-import { writeFile, findNodeModules, symlinkJunction } from './utils/fileUtils';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';
-import LoggingClientContext from './logging/LoggingClientContext';
-import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
+import { findNodeModules, symlinkJunction, writeFile } from './utils/fileUtils';
+import { wrapInClosure } from './utils/objectUtils';
+import { TemporaryDirectory } from './utils/TemporaryDirectory';
 
 interface FileMap {
   [sourceFile: string]: string;
@@ -31,8 +31,10 @@ export default class Sandbox {
     private readonly index: number,
     private readonly files: ReadonlyArray<File>,
     private readonly testFramework: TestFramework | null,
-    private readonly timeOverheadMS: number, private readonly loggingContext: LoggingClientContext) {
-    this.workingDirectory = TempFolder.instance().createRandomFolder('sandbox');
+    private readonly timeOverheadMS: number,
+    private readonly loggingContext: LoggingClientContext,
+    temporaryDirectory: TemporaryDirectory) {
+    this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
   }
 
@@ -42,9 +44,16 @@ export default class Sandbox {
     return this.initializeTestRunner();
   }
 
-  public static create(options: StrykerOptions, index: number, files: ReadonlyArray<File>, testFramework: TestFramework | null, timeoutOverheadMS: number, loggingContext: LoggingClientContext)
+  public static create(
+    options: StrykerOptions,
+    index: number,
+    files: ReadonlyArray<File>,
+    testFramework: TestFramework | null,
+    timeoutOverheadMS: number,
+    loggingContext: LoggingClientContext,
+    temporaryDirectory: TemporaryDirectory)
     : Promise<Sandbox> {
-    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext);
+    const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext, temporaryDirectory);
     return sandbox.initialize().then(() => sandbox);
   }
 

@@ -1,5 +1,5 @@
-import LoggingClientContext from '../logging/LoggingClientContext';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import LoggingClientContext from '../logging/LoggingClientContext';
 
 export enum WorkerMessageKind {
   'Init',

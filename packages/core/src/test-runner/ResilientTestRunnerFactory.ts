@@ -1,10 +1,10 @@
-import ChildProcessTestRunnerDecorator from './ChildProcessTestRunnerDecorator';
-import TimeoutDecorator from './TimeoutDecorator';
-import RetryDecorator from './RetryDecorator';
-import LoggingClientContext from '../logging/LoggingClientContext';
-import { TestRunner } from '@stryker-mutator/api/test_runner';
-import CommandTestRunner from '../test-runner/CommandTestRunner';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { TestRunner } from '@stryker-mutator/api/test_runner';
+import LoggingClientContext from '../logging/LoggingClientContext';
+import CommandTestRunner from '../test-runner/CommandTestRunner';
+import ChildProcessTestRunnerDecorator from './ChildProcessTestRunnerDecorator';
+import RetryDecorator from './RetryDecorator';
+import TimeoutDecorator from './TimeoutDecorator';
 
 export default {
   create(options: StrykerOptions, sandboxFileNames: ReadonlyArray<string>, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext): Required<TestRunner> {

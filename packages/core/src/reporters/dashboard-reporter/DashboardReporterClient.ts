@@ -1,7 +1,7 @@
-import { HttpClient } from 'typed-rest-client/HttpClient';
-import { errorToString } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { errorToString } from '@stryker-mutator/util';
+import { HttpClient } from 'typed-rest-client/HttpClient';
 import { dashboardReporterTokens } from './tokens';
 
 export interface StrykerDashboardReport {

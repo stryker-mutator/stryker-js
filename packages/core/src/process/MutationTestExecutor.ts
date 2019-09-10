@@ -1,11 +1,11 @@
-import { tap, toArray } from 'rxjs/operators';
+import { tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
+import { tap, toArray } from 'rxjs/operators';
+import { coreTokens } from '../di';
+import StrictReporter from '../reporters/StrictReporter';
 import { SandboxPool } from '../SandboxPool';
 import TestableMutant from '../TestableMutant';
-import StrictReporter from '../reporters/StrictReporter';
 import { MutantTranspileScheduler } from '../transpiler/MutantTranspileScheduler';
-import { tokens } from '@stryker-mutator/api/plugin';
-import { coreTokens } from '../di';
 
 export class MutationTestExecutor {
   public static inject = tokens(

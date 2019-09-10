@@ -1,4 +1,5 @@
 import { File, LogLevel } from '@stryker-mutator/api/core';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunStatus } from '@stryker-mutator/api/test_runner';
@@ -16,6 +17,7 @@ import Sandbox from '../../src/Sandbox';
 import { SandboxPool } from '../../src/SandboxPool';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import { Task } from '../../src/utils/Task';
+import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 import { Mock, mock, transpiledMutant } from '../helpers/producers';
 
 const OVERHEAD_TIME_MS = 42;
@@ -26,6 +28,7 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
 
 describe(SandboxPool.name, () => {
   let sut: SandboxPool;
+  let temporaryDirectoryMock: TemporaryDirectory;
   let firstSandbox: Mock<Sandbox>;
   let secondSandbox: Mock<Sandbox>;
   let expectedTestFramework: TestFramework;
@@ -55,6 +58,8 @@ describe(SandboxPool.name, () => {
   });
 
   function createSut(): SandboxPool {
+    temporaryDirectoryMock = testInjector.injector.injectClass(TemporaryDirectory);
+
     const initialRunResult: InitialTestRunResult = {
       coverageMaps: {},
       overheadTimeMS: OVERHEAD_TIME_MS,
@@ -66,12 +71,15 @@ describe(SandboxPool.name, () => {
     };
 
     return testInjector.injector
+      .provideValue(commonTokens.logger, factory.logger())
       .provideValue(coreTokens.testFramework, expectedTestFramework as unknown as TestFramework)
       .provideValue(coreTokens.initialRunResult, initialRunResult)
       .provideValue(coreTokens.loggingContext, LOGGING_CONTEXT)
       .provideValue(coreTokens.transpiledFiles, initialTranspiledFiles)
+      .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
       .injectClass(SandboxPool);
   }
+
   function actRunMutants() {
     return sut.runMutants(from(inputMutants))
       .pipe(toArray())

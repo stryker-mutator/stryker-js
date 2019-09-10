@@ -1,15 +1,15 @@
-import { expect } from 'chai';
-import { Transpiler } from '@stryker-mutator/api/transpile';
-import { mock, Mock } from '../../helpers/producers';
 import { File } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { TranspilerFacade } from '../../../src/transpiler/TranspilerFacade';
-import * as sinon from 'sinon';
-import { PluginCreator } from '../../../src/di/PluginCreator';
 import { PluginKind } from '@stryker-mutator/api/plugin';
+import { Transpiler } from '@stryker-mutator/api/transpile';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
 import { coreTokens } from '../../../src/di';
+import { PluginCreator } from '../../../src/di/PluginCreator';
+import { TranspilerFacade } from '../../../src/transpiler/TranspilerFacade';
+import { mock, Mock } from '../../helpers/producers';
 
-describe('TranspilerFacade', () => {
+describe(TranspilerFacade.name, () => {
   let sut: TranspilerFacade;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind.Transpiler>>;
 
@@ -40,6 +40,7 @@ describe('TranspilerFacade', () => {
       transpilerTwo = mock(TranspilerFacade);
       resultFilesOne = [new File('result-1', '')];
       resultFilesTwo = [new File('result-2', '')];
+      pluginCreatorMock = sinon.createStubInstance(PluginCreator);
       pluginCreatorMock.create
         .withArgs('transpiler-one').returns(transpilerOne)
         .withArgs('transpiler-two').returns(transpilerTwo);

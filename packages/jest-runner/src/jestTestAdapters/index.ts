@@ -1,8 +1,8 @@
-import JestTestAdapter from './JestTestAdapter';
-import JestPromiseAdapter from './JestPromiseTestAdapter';
-import semver from 'semver';
-import { Injector, BaseContext, tokens, commonTokens} from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
+import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
+import semver from 'semver';
+import JestPromiseAdapter from './JestPromiseTestAdapter';
+import JestTestAdapter from './JestTestAdapter';
 
 export const JEST_VERSION_TOKEN = 'jestVersion';
 

@@ -1,7 +1,7 @@
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { StrykerError } from '@stryker-mutator/util';
-import { tokens, commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../di';
 import { PluginCreator } from '../di/PluginCreator';
 

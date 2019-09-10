@@ -1,17 +1,18 @@
-import * as os from 'os';
-import { range, Subject, Observable } from 'rxjs';
-import { flatMap, tap, zip, merge, map, filter } from 'rxjs/operators';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
-import Sandbox from './Sandbox';
-import LoggingClientContext from './logging/LoggingClientContext';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { coreTokens } from './di';
-import { InitialTestRunResult } from './process/InitialTestExecutor';
 import { Logger } from '@stryker-mutator/api/logging';
-import TranspiledMutant from './TranspiledMutant';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
+import { TestFramework } from '@stryker-mutator/api/test_framework';
+import * as os from 'os';
+import { Observable, range, Subject } from 'rxjs';
+import { filter, flatMap, map, merge, tap, zip } from 'rxjs/operators';
 import { Disposable } from 'typed-inject';
+import { coreTokens } from './di';
+import LoggingClientContext from './logging/LoggingClientContext';
+import { InitialTestRunResult } from './process/InitialTestExecutor';
+import Sandbox from './Sandbox';
+import TranspiledMutant from './TranspiledMutant';
+import { TemporaryDirectory } from './utils/TemporaryDirectory';
 
 const MAX_CONCURRENT_INITIALIZING_SANDBOXES = 2;
 
@@ -26,14 +27,16 @@ export class SandboxPool implements Disposable {
     coreTokens.testFramework,
     coreTokens.initialRunResult,
     coreTokens.transpiledFiles,
-    coreTokens.loggingContext);
+    coreTokens.loggingContext,
+    coreTokens.temporaryDirectory);
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly testFramework: TestFramework | null,
     initialRunResult: InitialTestRunResult,
     private readonly initialFiles: ReadonlyArray<File>,
-    private readonly loggingContext: LoggingClientContext) {
+    private readonly loggingContext: LoggingClientContext,
+    private readonly tempDir: TemporaryDirectory) {
     this.overheadTimeMS = initialRunResult.overheadTimeMS;
   }
 
@@ -64,7 +67,7 @@ export class SandboxPool implements Disposable {
         if (this.isDisposed) {
           return null;
         } else {
-          return this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext));
+          return this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext, this.tempDir));
         }
       }, MAX_CONCURRENT_INITIALIZING_SANDBOXES),
       filter(sandboxOrNull => !!sandboxOrNull),

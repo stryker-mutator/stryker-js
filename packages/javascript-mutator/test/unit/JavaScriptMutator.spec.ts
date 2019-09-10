@@ -1,9 +1,9 @@
-import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
-import { JavaScriptMutator } from '../../src/JavaScriptMutator';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { NodeMutator, NODE_MUTATORS_TOKEN } from '../../src/mutators/NodeMutator';
+import { expect } from 'chai';
+import { JavaScriptMutator } from '../../src/JavaScriptMutator';
 import { nodeMutators } from '../../src/mutators';
+import { NODE_MUTATORS_TOKEN, NodeMutator } from '../../src/mutators/NodeMutator';
 
 describe('JavaScriptMutator', () => {
 

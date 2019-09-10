@@ -1,9 +1,10 @@
-import * as path from 'path';
-import { expect } from 'chai';
-import { RunStatus } from '@stryker-mutator/api/test_runner';
-import MochaTestRunner from '../../src/MochaTestRunner';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { RunStatus } from '@stryker-mutator/api/test_runner';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as path from 'path';
+import MochaTestRunner from '../../src/MochaTestRunner';
+import { createMochaOptions } from '../helpers/factories';
 
 describe('QUnit sample', () => {
   let files: string[];
@@ -19,13 +20,13 @@ describe('QUnit sample', () => {
   }
 
   it('should work when configured with "qunit" ui', async () => {
-    const mochaOptions = {
+    const mochaOptions = createMochaOptions({
       require: [],
       spec: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
       ui: 'qunit'
-    };
+    });
     testInjector.options.mochaOptions = mochaOptions;
-    files = mochaOptions.spec;
+    files = mochaOptions.spec || [];
     const sut = createSut();
     await sut.init();
     const actualResult = await sut.run({});
@@ -44,11 +45,11 @@ describe('QUnit sample', () => {
       resolve('./testResources/qunit-sample/MyMathSpec.js'),
       resolve('./testResources/qunit-sample/MyMath.js')
     ];
-    testInjector.options.mochaOptions = {
+    testInjector.options.mochaOptions = createMochaOptions({
       files: [
         resolve('./testResources/qunit-sample/MyMathSpec.js')
       ]
-    };
+    });
     const sut = createSut();
     await sut.init();
     const actualResult = await sut.run({});

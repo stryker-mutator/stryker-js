@@ -1,9 +1,9 @@
 import * as program from 'commander';
-import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
-import Stryker from './Stryker';
 import { getLogger } from 'log4js';
-import LogConfigurator from './logging/LogConfigurator';
+import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
+import LogConfigurator from './logging/LogConfigurator';
+import Stryker from './Stryker';
 
 export default class StrykerCli {
 
@@ -47,6 +47,7 @@ export default class StrykerCli {
       .option('--logLevel <level>', 'Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "info"')
       .option('--fileLogLevel <level>', 'Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "off"')
       .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean, true)
+      .option('--tempDirName <name>', 'Set the name of the directory that is used by Stryker as a working directory. This directory will be cleaned after a successful run')
       .parse(this.argv);
 
     function parseBoolean(val: string) {

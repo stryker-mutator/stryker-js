@@ -1,7 +1,7 @@
-import childProcess = require('child_process');
 import { expect } from 'chai';
-import { childProcessAsPromised } from '../../src';
+import childProcess = require('child_process');
 import { promisify } from 'util';
+import { childProcessAsPromised } from '../../src';
 
 describe('childProcessAsPromised', () => {
   it(`should expose promisified exec`, () => {

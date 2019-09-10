@@ -1,10 +1,10 @@
-import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
+import { PluginKind } from '@stryker-mutator/api/plugin';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { PluginKind } from '@stryker-mutator/api/plugin';
 import { coreTokens } from '../../src/di';
 import { PluginCreator } from '../../src/di/PluginCreator';
+import TestFrameworkOrchestrator from '../../src/TestFrameworkOrchestrator';
 
 describe('TestFrameworkOrchestrator', () => {
 

@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/jest-runner",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -39,10 +39,10 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/jest-runner#readme",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "^2.0.2",
+    "@stryker-mutator/test-helpers": "^2.1.0",
     "@types/semver": "~6.0.0",
     "jest": "^24.8.0",
-    "react": "~16.8.1",
+    "react": "~16.9.0",
     "react-dom": "~16.8.1",
     "react-scripts": "~3.0.1",
     "react-scripts-ts": "~3.1.0"
@@ -52,8 +52,8 @@
     "jest": ">= 22.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.0.2",
-    "semver": "~6.2.0"
+    "@stryker-mutator/api": "^2.1.0",
+    "semver": "~6.3.0"
   },
   "initStrykerConfig": {
     "coverageAnalysis": "off"

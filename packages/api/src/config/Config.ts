@@ -31,6 +31,7 @@ export default class Config implements StrykerOptions {
     low: 60
   };
   public allowConsoleColors: boolean = true;
+  public tempDirName: string = '.stryker-tmp';
 
   public set(newConfig: Partial<StrykerOptions>) {
     if (newConfig) {

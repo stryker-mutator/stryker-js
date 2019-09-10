@@ -1,10 +1,10 @@
-import { expect } from 'chai';
-import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
-import { JavaScriptMutator } from '../../src/JavaScriptMutator';
-import { NodeMutator } from '../../src/mutators/NodeMutator';
 import ExpectMutation from '@stryker-mutator/mutator-specification/src/ExpectMutation';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import { JavaScriptMutator } from '../../src/JavaScriptMutator';
+import { NodeMutator } from '../../src/mutators/NodeMutator';
 
 type MutatorConstructor = new() => NodeMutator;
 

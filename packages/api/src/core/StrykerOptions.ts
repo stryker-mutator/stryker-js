@@ -140,6 +140,11 @@ interface StrykerOptions {
    * Default: true
    */
   allowConsoleColors: boolean;
+
+  /**
+   * The name of the dir name. Default: `.stryker-tmp`
+   */
+  tempDirName: string;
 }
 
 export default StrykerOptions;

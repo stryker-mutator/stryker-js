@@ -1,18 +1,18 @@
-import * as path from 'path';
-import { fsAsPromised, isErrnoException } from '@stryker-mutator/util';
-import { childProcessAsPromised } from '@stryker-mutator/util';
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { glob } from '../utils/fileUtils';
-import StrictReporter from '../reporters/StrictReporter';
-import { SourceFile } from '@stryker-mutator/api/report';
-import { StrykerError } from '@stryker-mutator/util';
-import InputFileCollection from './InputFileCollection';
-import { filterEmpty } from '../utils/objectUtils';
 import { Config } from '@stryker-mutator/api/config';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
-import { coreTokens } from '../di';
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { SourceFile } from '@stryker-mutator/api/report';
+import { childProcessAsPromised } from '@stryker-mutator/util';
+import { StrykerError } from '@stryker-mutator/util';
+import { fsAsPromised, isErrnoException } from '@stryker-mutator/util';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
+import * as path from 'path';
+import { coreTokens } from '../di';
+import StrictReporter from '../reporters/StrictReporter';
+import { glob } from '../utils/fileUtils';
+import { filterEmpty } from '../utils/objectUtils';
+import InputFileCollection from './InputFileCollection';
 
 function toReportSourceFile(file: File): SourceFile {
   return {
@@ -26,13 +26,15 @@ const IGNORE_PATTERN_CHARACTER = '!';
 export default class InputFileResolver {
   private readonly mutatePatterns: ReadonlyArray<string>;
   private readonly filePatterns: ReadonlyArray<string> | undefined;
+  private readonly tempDirName: string;
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
   constructor(
     private readonly log: Logger,
-    { mutate, files }: StrykerOptions,
+    { mutate, files, tempDirName }: StrykerOptions,
     private readonly reporter: StrictReporter
   ) {
+    this.tempDirName = tempDirName;
     this.mutatePatterns = mutate || [];
     if (files) {
       this.filePatterns = files;
@@ -108,7 +110,7 @@ export default class InputFileResolver {
   private async resolveFilesUsingGit(): Promise<string[]> {
     try {
       const { stdout } = await childProcessAsPromised.exec(
-        'git ls-files --others --exclude-standard --cached --exclude .stryker-tmp',
+        `git ls-files --others --exclude-standard --cached --exclude /${this.tempDirName}/*`,
         { maxBuffer: 10 * 1000 * 1024 }
       );
       const fileNames = stdout.toString()

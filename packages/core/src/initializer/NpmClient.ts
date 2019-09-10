@@ -1,10 +1,10 @@
-import { RestClient, IRestResponse } from 'typed-rest-client/RestClient';
-import PromptOption from './PromptOption';
-import { errorToString } from '@stryker-mutator/util';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { initializerTokens } from '.';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { errorToString } from '@stryker-mutator/util';
+import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
+import { initializerTokens } from '.';
 import { PackageInfo } from './PackageInfo';
+import PromptOption from './PromptOption';
 
 interface NpmSearchResult {
   total: number;

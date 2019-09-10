@@ -1,13 +1,13 @@
-import WebpackTranspiler from '../../src/WebpackTranspiler';
+import { File } from '@stryker-mutator/api/core';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { Configuration } from 'webpack';
 import ConfigLoader from '../../src/compiler/ConfigLoader';
 import WebpackCompiler, * as webpackCompilerModule from '../../src/compiler/WebpackCompiler';
-import { createTextFile, Mock, createMockInstance, createStrykerWebpackConfig } from '../helpers/producers';
-import { File } from '@stryker-mutator/api/core';
-import { expect } from 'chai';
-import { Configuration } from 'webpack';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
-import * as sinon from 'sinon';
+import WebpackTranspiler from '../../src/WebpackTranspiler';
+import { createMockInstance, createStrykerWebpackConfig, createTextFile, Mock } from '../helpers/producers';
 
 describe('WebpackTranspiler', () => {
   let webpackTranspiler: WebpackTranspiler;

@@ -1,12 +1,12 @@
 import { Config } from '@stryker-mutator/api/config';
-import * as sinon from 'sinon';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
-import JestConfigEditor from '../../src/JestConfigEditor';
+import jest from 'jest';
+import * as sinon from 'sinon';
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../src/configLoaders/CustomJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../src/configLoaders/ReactScriptsTSJestConfigLoader';
-import jest from 'jest';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import JestConfigEditor from '../../src/JestConfigEditor';
 
 describe('JestConfigEditor', () => {
   let sut: JestConfigEditor;

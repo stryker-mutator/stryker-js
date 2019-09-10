@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { File } from '@stryker-mutator/api/core';
+import * as fs from 'fs';
 import * as glob from 'glob';
+import * as path from 'path';
 
 const CARRIAGE_RETURN = '\r'.charCodeAt(0);
 

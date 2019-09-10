@@ -1,8 +1,8 @@
-import { Transpiler } from '@stryker-mutator/api/transpile';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import WebpackCompiler from './compiler/WebpackCompiler';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { Transpiler } from '@stryker-mutator/api/transpile';
 import ConfigLoader from './compiler/ConfigLoader';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import WebpackCompiler from './compiler/WebpackCompiler';
 import { pluginTokens } from './pluginTokens';
 
 const DEFAULT_STRYKER_WEBPACK_CONFIG = Object.freeze({ configFile: undefined, silent: true, context: process.cwd() });

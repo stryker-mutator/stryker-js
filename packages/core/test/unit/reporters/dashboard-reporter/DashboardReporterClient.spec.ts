@@ -1,10 +1,10 @@
-import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import { HttpClient } from 'typed-rest-client/HttpClient';
-import { Mock, mock } from '../../../helpers/producers';
-import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import { HttpClient } from 'typed-rest-client/HttpClient';
+import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
+import { Mock, mock } from '../../../helpers/producers';
 
 describe('DashboardReporterClient', () => {
 

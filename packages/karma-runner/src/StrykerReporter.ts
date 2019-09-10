@@ -1,4 +1,4 @@
-import { TestStatus, TestResult, CoverageCollection, CoverageCollectionPerTest, RunStatus } from '@stryker-mutator/api/test_runner';
+import { CoverageCollection, CoverageCollectionPerTest, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { EventEmitter } from 'events';
 import * as karma from 'karma';
 

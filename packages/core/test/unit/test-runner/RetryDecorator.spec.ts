@@ -1,14 +1,14 @@
-import { expect } from 'chai';
+import { Logger } from '@stryker-mutator/api/logging';
 import { RunStatus } from '@stryker-mutator/api/test_runner';
-import RetryDecorator from '../../../src/test-runner/RetryDecorator';
-import TestRunnerMock from '../../helpers/TestRunnerMock';
-import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
+import { errorToString } from '@stryker-mutator/util';
+import { expect } from 'chai';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
-import { Logger } from '@stryker-mutator/api/logging';
-import { Mock } from '../../helpers/producers';
+import RetryDecorator from '../../../src/test-runner/RetryDecorator';
+import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import currentLogMock from '../../helpers/logMock';
-import { errorToString } from '@stryker-mutator/util';
+import { Mock } from '../../helpers/producers';
+import TestRunnerMock from '../../helpers/TestRunnerMock';
 
 describe('RetryDecorator', () => {
   let sut: RetryDecorator;

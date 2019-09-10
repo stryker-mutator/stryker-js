@@ -1,9 +1,9 @@
-import * as path from 'path';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
 import { expect } from 'chai';
-import { mochaOptionsKey } from '../../src/utils';
+import * as path from 'path';
 import { MochaOptions } from '../../src/MochaOptions';
+import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
+import { mochaOptionsKey } from '../../src/utils';
 
 describe(`${MochaOptionsLoader.name} integration`, () => {
   let sut: MochaOptionsLoader;
@@ -71,13 +71,16 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
         '/path/to/some/file',
         '/path/to/some/other/file'
       ],
+      ignore: [
+        '/path/to/some/excluded/file'
+      ],
       require: [
         '@babel/register'
       ],
       spec: [
         'test/**/*.spec.js'
       ],
-      timeout: 0,
+      timeout: false,
       ui: 'bdd'
     });
   });
@@ -88,6 +91,8 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     expect(actualConfig).deep.eq({
       ['async-only']: true,
       extension: ['js'],
+      file: [],
+      ignore: [],
       opts: configFile,
       spec: ['/tests/**/*.js', '/foo/*.js'],
       timeout: 2000,
@@ -101,7 +106,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     expect(actualConfig).deep.eq({
       ...DEFAULT_MOCHA_OPTIONS,
       ['async-only']: true,
-      extension: ['json', 'js'],
+      extension: ['json'],
       package: pkgFile,
       timeout: 20,
       ui: 'tdd'

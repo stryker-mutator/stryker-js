@@ -1,13 +1,13 @@
-import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
-import { createFakeWebpackConfig, createTextFile, createWebpackMock, Mock, createMockInstance } from '../../helpers/producers';
-import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { Configuration } from 'webpack';
+import * as webpack from '../../../src/compiler/Webpack';
+import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
 import InputFileSystem from '../../../src/fs/InputFileSystem';
 import OutputFileSystem from '../../../src/fs/OutputFileSystem';
-import WebpackCompiler from '../../../src/compiler/WebpackCompiler';
-import * as webpack from '../../../src/compiler/Webpack';
-import { Configuration } from 'webpack';
-import * as sinon from 'sinon';
+import { WebpackCompilerMock } from '../../helpers/mockInterfaces';
+import { createFakeWebpackConfig, createMockInstance, createTextFile, createWebpackMock, Mock } from '../../helpers/producers';
 
 describe('WebpackCompiler', () => {
   let sut: WebpackCompiler;

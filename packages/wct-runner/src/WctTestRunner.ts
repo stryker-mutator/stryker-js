@@ -1,11 +1,11 @@
-import { TestRunner, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import { Context } from 'web-component-tester/runner/context';
-import { steps } from 'web-component-tester';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import WctReporter from './WctReporter';
-import WctLogger from './WctLogger';
 import { Logger } from '@stryker-mutator/api/logging';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
+import { steps } from 'web-component-tester';
+import { Context } from 'web-component-tester/runner/context';
+import WctLogger from './WctLogger';
+import WctReporter from './WctReporter';
 const WCT_PACKAGE = 'web-component-tester';
 const FORCED_WCT_OPTIONS = Object.freeze({
   persistent: false

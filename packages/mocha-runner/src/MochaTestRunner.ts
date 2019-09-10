@@ -1,12 +1,12 @@
-import { Logger } from '@stryker-mutator/api/logging';
-import * as path from 'path';
-import { TestRunner, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import LibWrapper from './LibWrapper';
-import { StrykerMochaReporter } from './StrykerMochaReporter';
-import { mochaOptionsKey, evalGlobal } from './utils';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
+import * as path from 'path';
+import LibWrapper from './LibWrapper';
 import { MochaOptions } from './MochaOptions';
+import { StrykerMochaReporter } from './StrykerMochaReporter';
+import { evalGlobal, mochaOptionsKey } from './utils';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 
@@ -37,8 +37,10 @@ export default class MochaTestRunner implements TestRunner {
     try {
       // process.exit unfortunate side effect: https://github.com/mochajs/mocha/blob/07ea8763c663bdd3fe1f8446cdb62dae233f4916/lib/cli/run-helpers.js#L174
       (process as any).exit = () => { };
-      return handleFiles(this.mochaOptions);
-    } finally {
+      const files = handleFiles(this.mochaOptions);
+      return files;
+    }
+    finally {
       process.exit = originalProcessExit;
     }
   }

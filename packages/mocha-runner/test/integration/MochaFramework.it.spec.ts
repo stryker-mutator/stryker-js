@@ -1,8 +1,8 @@
 import { TestSelection } from '@stryker-mutator/api/test_framework';
-import MochaTestFramework from 'stryker-mocha-framework/src/MochaTestFramework';
+import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
-import { RunResult, TestStatus, RunStatus } from '@stryker-mutator/api/test_runner';
 import { fork } from 'child_process';
+import MochaTestFramework from 'stryker-mocha-framework/src/MochaTestFramework';
 import { AUTO_START_ARGUMENT, RunMessage } from './MochaTestFrameworkIntegrationTestWorker';
 
 const test0: Readonly<TestSelection> = Object.freeze({

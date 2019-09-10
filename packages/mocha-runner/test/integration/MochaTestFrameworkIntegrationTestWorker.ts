@@ -1,8 +1,8 @@
-import MochaTestRunner from '../../src/MochaTestRunner';
-import * as path from 'path';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 import { RunResult } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import * as path from 'path';
+import MochaTestRunner from '../../src/MochaTestRunner';
 
 export const AUTO_START_ARGUMENT = '2e164669-acf1-461c-9c05-2be139614de2';
 
@@ -14,13 +14,15 @@ export interface RunMessage {
 }
 
 export default class MochaTestFrameworkIntegrationTestWorker {
-  private readonly sut: MochaTestRunner;
+  public readonly sut: MochaTestRunner;
 
   constructor() {
     testInjector.options.mochaOptions = {
+      file: [],
+      ignore: [],
       spec: [
         path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
-      ]
+      ],
     };
     this.sut = testInjector.injector
       .provideValue(commonTokens.sandboxFileNames, [
@@ -30,11 +32,11 @@ export default class MochaTestFrameworkIntegrationTestWorker {
       .injectClass(MochaTestRunner);
 
     this.listenForParentProcess();
-    try {
-      this.sut.init();
-    } catch (err) {
-      this.sendError(err);
-    }
+    // try {
+    this.sut.init();
+    // } catch (err) {
+    //   this.sendError(err);
+    // }
   }
 
   public listenForParentProcess() {

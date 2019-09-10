@@ -1,13 +1,13 @@
-import { TestRunner, TestResult, RunStatus, RunResult, CoverageCollection, CoveragePerTestResult } from '@stryker-mutator/api/test_runner';
-import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import * as karma from 'karma';
-import StrykerKarmaSetup, { KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
-import TestHooksMiddleware from './TestHooksMiddleware';
-import StrykerReporter from './StrykerReporter';
-import strykerKarmaConf = require('./starters/stryker-karma.conf');
-import ProjectStarter from './starters/ProjectStarter';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { CoverageCollection, CoveragePerTestResult, RunResult, RunStatus, TestResult, TestRunner } from '@stryker-mutator/api/test_runner';
+import * as karma from 'karma';
+import ProjectStarter from './starters/ProjectStarter';
+import strykerKarmaConf = require('./starters/stryker-karma.conf');
+import StrykerKarmaSetup, { KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
+import StrykerReporter from './StrykerReporter';
+import TestHooksMiddleware from './TestHooksMiddleware';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
