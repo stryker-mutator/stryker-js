@@ -39,14 +39,6 @@ export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescri
     };
   }
 
-  if (typeof options.mutator === 'object') {
-    return options.mutator;
-  }
-
-  return {
-    babelPlugins: [],
-    excludedMutations: [],
-    name: ''
-  };
+  return options.mutator;
 }
 mutatorDescriptorFactory.inject = tokens(commonTokens.options);
