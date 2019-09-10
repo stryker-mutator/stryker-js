@@ -15,13 +15,13 @@ export class JavaScriptMutator implements Mutator {
     private readonly mutatorDescriptor: MutatorDescriptor,
     private readonly mutators: ReadonlyArray<NodeMutator>
   ) {
-    if (typeof mutatorDescriptor === 'string') {
-      this.mutatorDescriptor = {
-        babelPlugins: [],
-        excludedMutations: [],
-        name: mutatorDescriptor
-      };
-    } else if (typeof mutatorDescriptor !== 'object') {
+    /*
+      Edge case check
+      Check if `mutatorDescriptor` has been passed.
+      If it is not and `mutators` isn't as well, `mutatorDescriptor` is undefined
+      If it is not, but `mutators` is, `mutatorDescriptor` is an array
+    */
+    if (typeof mutatorDescriptor !== 'object' || Array.isArray(mutatorDescriptor)) {
       this.mutatorDescriptor = {
         babelPlugins: [],
         excludedMutations: [],
@@ -35,7 +35,7 @@ export class JavaScriptMutator implements Mutator {
     const babelPlugins = this.mutatorDescriptor.babelPlugins || [];
 
     inputFiles.forEach(file => {
-      const ast = BabelHelper.parse(file.textContent, babelPlugins as ParserPlugin[]);
+      const ast = BabelHelper.parse(file.textContent, babelPlugins);
 
       BabelHelper.getNodes(ast).forEach(node => {
         this.mutators.forEach(mutator => {
