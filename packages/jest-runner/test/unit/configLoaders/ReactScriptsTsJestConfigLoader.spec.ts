@@ -4,12 +4,8 @@ import sinon from 'sinon';
 import ReactScriptsTSJestConfigLoader from '../../../src/configLoaders/ReactScriptsTSJestConfigLoader';
 import * as helper from '../../../src/utils/createReactJestConfig';
 
-const fakeRequire: any = {
-  resolve: () => { }
-};
-
-describe('ReactScriptsTsJestConfigLoader', () => {
-  let reactConfigLoader: ReactScriptsTSJestConfigLoader;
+describe(ReactScriptsTSJestConfigLoader.name, () => {
+  let sut: ReactScriptsTSJestConfigLoader;
   let requireResolveStub: sinon.SinonStub;
   let createReactJestConfigStub: sinon.SinonStub;
 
@@ -24,20 +20,20 @@ describe('ReactScriptsTsJestConfigLoader', () => {
       relativePath: resolve('test')
     }));
 
-    requireResolveStub = sinon.stub(fakeRequire, 'resolve');
+    requireResolveStub = sinon.stub();
     requireResolveStub.returns(reactScriptsTsPackagePath);
 
-    reactConfigLoader = new ReactScriptsTSJestConfigLoader(projectRoot, fakeRequire);
+    sut = new ReactScriptsTSJestConfigLoader(projectRoot, requireResolveStub as unknown as RequireResolve);
   });
 
   it('should load the configuration via the createJestConfig method provided by react-scripts-ts', () => {
-    reactConfigLoader.loadConfig();
+    sut.loadConfig();
 
     assert(requireResolveStub.calledWith('react-scripts-ts/package.json'));
   });
 
   it('should generate a configuration', () => {
-    const config = reactConfigLoader.loadConfig();
+    const config = sut.loadConfig();
 
     expect(config).to.deep.equal({
       eject: false,
@@ -45,5 +41,16 @@ describe('ReactScriptsTsJestConfigLoader', () => {
       relativePath: path.join('node_modules', 'react-scripts-ts', 'test'),
       testEnvironment: 'jsdom'
     });
+  });
+
+  it('should throw an error when react-scripts could not be found', () => {
+    // Arrange
+    const error: NodeJS.ErrnoException = new Error('');
+    error.code = 'MODULE_NOT_FOUND';
+    requireResolveStub.throws(error);
+
+    // Act & Assert
+    expect(() => sut.loadConfig())
+      .throws('Unable to locate package react-scripts-ts. This package is required when projectType is set to "react-ts".');
   });
 });
