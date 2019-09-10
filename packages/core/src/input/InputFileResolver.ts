@@ -26,13 +26,15 @@ const IGNORE_PATTERN_CHARACTER = '!';
 export default class InputFileResolver {
   private readonly mutatePatterns: ReadonlyArray<string>;
   private readonly filePatterns: ReadonlyArray<string> | undefined;
+  private readonly tempDirName: string;
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
   constructor(
     private readonly log: Logger,
-    { mutate, files }: StrykerOptions,
+    { mutate, files, tempDirName }: StrykerOptions,
     private readonly reporter: StrictReporter
   ) {
+    this.tempDirName = tempDirName;
     this.mutatePatterns = mutate || [];
     if (files) {
       this.filePatterns = files;
@@ -108,7 +110,7 @@ export default class InputFileResolver {
   private async resolveFilesUsingGit(): Promise<string[]> {
     try {
       const { stdout } = await childProcessAsPromised.exec(
-        'git ls-files --others --exclude-standard --cached --exclude .stryker-tmp',
+        `git ls-files --others --exclude-standard --cached --exclude /${this.tempDirName}/*`,
         { maxBuffer: 10 * 1000 * 1024 }
       );
       const fileNames = stdout.toString()

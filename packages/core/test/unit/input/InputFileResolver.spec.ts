@@ -59,10 +59,25 @@ describe(InputFileResolver.name, () => {
     `)
     });
     const result = await sut.resolve();
-    expect(childProcessExecStub).calledWith('git ls-files --others --exclude-standard --cached --exclude .stryker-tmp',
+    expect(childProcessExecStub).calledWith('git ls-files --others --exclude-standard --cached --exclude /.stryker-tmp/*',
       { maxBuffer: 10 * 1000 * 1024 });
     expect(result.files.map(file => file.name)).deep.eq([path.resolve('file1.js'), path.resolve('foo/bar/baz.ts')]);
   });
+
+  it('should exclude the overridden tempDirName when identifying files with git', async () => {
+    // Arrange
+    testInjector.options.tempDirName = 'foo-bar';
+    sut = createSut();
+    childProcessExecStub.resolves({
+      stdout: Buffer.from('')
+    });
+
+    // Act
+    await sut.resolve();
+
+    // Assert
+    expect(childProcessExecStub).calledWith('git ls-files --others --exclude-standard --cached --exclude /foo-bar/*');
+   });
 
   it('should reject if there is no `files` array and `git ls-files` command fails', () => {
     const expectedError = new Error('fatal: Not a git repository (or any of the parent directories): .git');
