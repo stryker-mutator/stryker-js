@@ -9,13 +9,26 @@ import copy from './helpers/copy';
 import { NODE_MUTATORS_TOKEN, NodeMutator } from './mutators/NodeMutator';
 
 export class JavaScriptMutator implements Mutator {
-
-  public static inject = tokens(commonTokens.logger, commonTokens.mutatorDescriptor, NODE_MUTATORS_TOKEN) ;
+  public static inject = tokens(commonTokens.logger, commonTokens.mutatorDescriptor, NODE_MUTATORS_TOKEN);
   constructor(
     private readonly log: Logger,
     private readonly mutatorDescriptor: MutatorDescriptor,
     private readonly mutators: ReadonlyArray<NodeMutator>
-  ) { }
+  ) {
+    if (typeof mutatorDescriptor === 'string') {
+      this.mutatorDescriptor = {
+        babelPlugins: [],
+        excludedMutations: [],
+        name: mutatorDescriptor
+      };
+    } else if (typeof mutatorDescriptor !== 'object') {
+      this.mutatorDescriptor = {
+        babelPlugins: [],
+        excludedMutations: [],
+        name: ''
+      };
+    }
+  }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
