@@ -1,4 +1,4 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, OptionsContext, PluginResolver } from '@stryker-mutator/api/plugin';
 import * as sinon from 'sinon';

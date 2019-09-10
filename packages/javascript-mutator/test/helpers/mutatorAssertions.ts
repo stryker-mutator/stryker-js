@@ -1,4 +1,4 @@
-import { File } from '@stryker-mutator/api/core';
+import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import ExpectMutation from '@stryker-mutator/mutator-specification/src/ExpectMutation';
 import { testInjector } from '@stryker-mutator/test-helpers';

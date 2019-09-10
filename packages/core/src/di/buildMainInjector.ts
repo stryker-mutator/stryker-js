@@ -11,7 +11,7 @@ import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
-import { loggerFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
+import { loggerFactory, mutatorDescriptorFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
 
 export interface MainContext extends OptionsContext {
   [coreTokens.reporter]: Required<Reporter>;

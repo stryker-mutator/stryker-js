@@ -1,4 +1,4 @@
-import { StrykerOptions } from '../../core';
+import { MutatorDescriptor, StrykerOptions } from '../../core';
 import { Logger, LoggerFactoryMethod } from '../../logging';
 import { PluginKind } from './PluginKind';
 import { PluginResolver } from './Plugins';

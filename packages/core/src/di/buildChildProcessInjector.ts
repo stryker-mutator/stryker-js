@@ -3,7 +3,7 @@ import { commonTokens, Injector, OptionsContext, Scope, tokens } from '@stryker-
 import { getLogger } from 'log4js';
 import { rootInjector } from 'typed-inject';
 import { coreTokens } from '.';
-import { loggerFactory, pluginResolverFactory } from './factoryMethods';
+import { loggerFactory, mutatorDescriptorFactory, pluginResolverFactory } from './factoryMethods';
 
 export function buildChildProcessInjector(options: StrykerOptions): Injector<OptionsContext> {
   return rootInjector

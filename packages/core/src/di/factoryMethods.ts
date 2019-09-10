@@ -1,5 +1,5 @@
 import { Config } from '@stryker-mutator/api/config';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, PluginKind, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
 import { coreTokens, PluginCreator, PluginLoader } from '.';

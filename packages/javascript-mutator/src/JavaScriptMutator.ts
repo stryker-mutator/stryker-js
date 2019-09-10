@@ -1,5 +1,6 @@
+import { ParserPlugin } from '@babel/parser';
 import * as types from '@babel/types';
-import { File } from '@stryker-mutator/api/core';
+import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
