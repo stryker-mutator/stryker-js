@@ -38,7 +38,7 @@ export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescri
       name: options.mutator
     };
   }
-  
+
   if (typeof options.mutator === 'object') {
     return options.mutator;
   }
