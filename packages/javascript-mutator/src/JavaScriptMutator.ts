@@ -1,4 +1,3 @@
-import { ParserPlugin } from '@babel/parser';
 import * as types from '@babel/types';
 import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
