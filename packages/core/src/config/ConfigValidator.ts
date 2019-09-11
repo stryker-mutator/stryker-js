@@ -62,7 +62,7 @@ export default class ConfigValidator {
   }
 
   private validateThresholdValue(name: keyof MutationScoreThresholds, value: number | null) {
-    if (value < 0 || value > 100 || isNaN(value)) {
+    if (typeof value === 'number' && (value < 0 || value > 100 || isNaN(value))) {
       this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
     }
   }
