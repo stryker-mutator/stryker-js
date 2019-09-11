@@ -51,6 +51,8 @@ export default class ConfigValidator {
 
   private validateThresholds() {
     const thresholds = this.options.thresholds;
+    this.validateThresholdsValueExists('high', thresholds.high);	
+    this.validateThresholdsValueExists('low', thresholds.low);
     this.validateThresholdValue('high', thresholds.high);
     this.validateThresholdValue('low', thresholds.low);
     this.validateThresholdValue('break', thresholds.break);
@@ -59,8 +61,14 @@ export default class ConfigValidator {
     }
   }
 
-  private validateThresholdValue(name: keyof MutationScoreThresholds, value: any) {
-    if (typeof value !== 'number' || typeof value === 'number' && (value < 0 || value > 100 || isNaN(value))) {
+  private validateThresholdValue(name: keyof MutationScoreThresholds, value: number | null) {
+    if (value < 0 || value > 100 || isNaN(value)) {
+      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
+    }
+  }
+  
+  private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: any) {
+    if (typeof value !== 'number') {
       this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
     }
   }
