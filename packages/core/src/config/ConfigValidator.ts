@@ -51,7 +51,7 @@ export default class ConfigValidator {
 
   private validateThresholds() {
     const thresholds = this.options.thresholds;
-    this.validateThresholdsValueExists('high', thresholds.high);	
+    this.validateThresholdsValueExists('high', thresholds.high);
     this.validateThresholdsValueExists('low', thresholds.low);
     this.validateThresholdValue('high', thresholds.high);
     this.validateThresholdValue('low', thresholds.low);
