@@ -66,7 +66,7 @@ export default class ConfigValidator {
       this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
     }
   }
-  
+
   private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: any) {
     if (typeof value !== 'number') {
       this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
