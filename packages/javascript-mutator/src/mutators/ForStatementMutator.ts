@@ -14,9 +14,9 @@ export default class ForStatementMutator implements NodeMutator {
         const mutatedNode = copy(node);
         mutatedNode.test = NodeGenerator.createBooleanLiteralNode(node, false);
         return [mutatedNode];
-      } else {
-        return [NodeGenerator.createBooleanLiteralNode(node.test, false)];
       }
+
+      return [NodeGenerator.createBooleanLiteralNode(node.test, false)];
     }
 
     return [];
