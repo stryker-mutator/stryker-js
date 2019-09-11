@@ -36,6 +36,8 @@ export default class BinaryExpressionMutator implements NodeMutator {
           return mutatedNode;
         });
       }
+      
+      return [];
     }
 
     return [];
