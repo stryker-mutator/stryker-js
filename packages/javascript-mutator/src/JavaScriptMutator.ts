@@ -13,7 +13,7 @@ export class JavaScriptMutator implements Mutator {
   constructor(
     private readonly log: Logger,
     private readonly mutators: ReadonlyArray<NodeMutator>
-    ) { }
+  ) { }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
@@ -25,7 +25,7 @@ export class JavaScriptMutator implements Mutator {
         this.mutators.forEach(mutator => {
           const mutatedNodes = mutator.mutate(node, copy);
 
-          if (mutatedNodes) {
+          if (mutatedNodes.length) {
             const newMutants = this.generateMutants(mutatedNodes, mutator.name, file.name);
             mutants.push(...newMutants);
           }

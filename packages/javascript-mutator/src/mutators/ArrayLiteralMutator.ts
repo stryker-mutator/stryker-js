@@ -7,15 +7,13 @@ import { NodeMutator } from './NodeMutator';
 export default class ArrayLiteralMutator implements NodeMutator {
   public name = 'ArrayLiteral';
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[] {
-    const nodes: types.Node[] = [];
-
+  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
     if (types.isArrayExpression(node) && node.elements.length > 0) {
       const mutatedNode = copy(node);
       mutatedNode.elements = [];
-      nodes.push(mutatedNode);
+      return [mutatedNode];
     }
 
-    return nodes;
+    return [];
   }
 }

@@ -22,8 +22,6 @@ export default class ConditionalExpressionMutator implements NodeMutator {
 
   public name = 'ConditionalExpression';
 
-  constructor() {}
-
   private hasValidParent(node: NodeWithParent): boolean {
     return (
       !node.parent ||
@@ -40,7 +38,7 @@ export default class ConditionalExpressionMutator implements NodeMutator {
     return this.validOperators.indexOf(operator) !== -1;
   }
 
-  public mutate(node: types.Node): types.Node[] | void {
+  public mutate(node: types.Node): types.Node[] {
     if (
       (types.isBinaryExpression(node) || types.isLogicalExpression(node)) &&
       this.hasValidParent(node) &&
@@ -51,5 +49,7 @@ export default class ConditionalExpressionMutator implements NodeMutator {
         NodeGenerator.createBooleanLiteralNode(node, true),
       ];
     }
+
+    return [];
   }
 }
