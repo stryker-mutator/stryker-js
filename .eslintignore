@@ -1,0 +1,5 @@
+.gitignore
+/perf/**
+/e2e/**
+**/node_modules/**
+*.d.ts

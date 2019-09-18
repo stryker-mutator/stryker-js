@@ -1,0 +1,14 @@
+{
+  "env": {
+    "node": true
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "parser": "@typescript-eslint/parser",
+  "extends": ["prettier", "eslint:recommended"],
+  "plugins": ["@typescript-eslint", "prettier"],
+  "rules": {
+    "prettier/prettier": ["error"]
+  }
+}

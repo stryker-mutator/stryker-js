@@ -1,4 +1,4 @@
-# 2 space indentation
-[{*.ts,*.js,*.json}]
+[{*.ts,*.js,*jsx,*tsx,*.json}]
+insert_final_newline = true
 indent_style = space
 indent_size = 2
