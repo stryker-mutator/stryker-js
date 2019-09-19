@@ -10,12 +10,14 @@ export default class PostfixUnaryExpressionMutator implements NodeMutator {
   };
 
   public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
+    const nodes: types.Node[] = [];
+
     if (types.isUpdateExpression(node) && !node.prefix && this.operators[node.operator]) {
       const mutatedNode = copy(node);
       mutatedNode.operator = this.operators[node.operator] as any;
-      return [mutatedNode];
+      nodes.push(mutatedNode);
     }
 
-    return [];
+    return nodes;
   }
 }

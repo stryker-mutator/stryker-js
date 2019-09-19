@@ -6,8 +6,10 @@ export default class StringLiteralMutator implements NodeMutator {
   public name = 'StringLiteral';
 
   public mutate(node: NodeWithParent, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
+    const nodes: types.Node[] = [];
+
     if (types.isTemplateLiteral(node)) {
-      return [{
+      nodes.push({
         end: node.end,
         innerComments: node.innerComments,
         leadingComments: node.leadingComments,
@@ -19,14 +21,14 @@ export default class StringLiteralMutator implements NodeMutator {
           (node.quasis.length === 1 && node.quasis[0].value.raw.length === 0)
           ? 'Stryker was here!'
           : ''
-      } as types.StringLiteral];
+      } as types.StringLiteral);
     } else if ((!node.parent || this.isDeclarationOrJSX(node.parent)) && types.isStringLiteral(node)) {
       const mutatedNode = copy(node);
       mutatedNode.value = mutatedNode.value.length === 0 ? 'Stryker was here!' : '';
-      return [mutatedNode];
+      nodes.push(mutatedNode);
     }
 
-    return [];
+    return nodes;
   }
 
   private isDeclarationOrJSX(parent?: types.Node) {
