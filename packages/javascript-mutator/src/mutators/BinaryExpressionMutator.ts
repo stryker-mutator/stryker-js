@@ -24,7 +24,7 @@ export default class BinaryExpressionMutator implements NodeMutator {
 
   public mutate(node: types.Node, clone: <T extends types.Node> (node: T, deep?: boolean) => T): types.Node[] {
     const nodes: types.Node[] = [];
- 
+
     if (types.isBinaryExpression(node) || types.isLogicalExpression(node)) {
       let mutatedOperators = this.operators[node.operator];
       if (mutatedOperators) {
