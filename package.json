@@ -45,11 +45,11 @@
     "typescript": "~3.5.3"
   },
   "scripts": {
-    "all": "npm run lint && npm run build && npm run test && npm run e2e",
+    "all": "npm run clean && npm run lint && npm run build && npm run test && npm run e2e",
     "postinstall": "lerna bootstrap --no-ci && link-parent-bin",
-    "lint": "npm run clean && eslint . --ext .ts,.tsx",
-    "lint:log": "npm run clean && eslint . --ext .ts,.tsx -f compact -o lint.log",
-    "lint:fix": "npm run clean && eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:log": "eslint . --ext .ts,.tsx -f compact -o lint.log",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "clean": "rimraf \"packages/api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage,*.tsbuildinfo}\"",
     "build": "tsc -b && lerna run build",
     "test": "npm run mocha",
