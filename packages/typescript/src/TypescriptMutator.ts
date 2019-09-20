@@ -42,6 +42,8 @@ export class TypescriptMutator {
 }
 
 const shouldNodeBeSkipped = (node: ts.Node): boolean => {
-  return node.kind === ts.SyntaxKind.InterfaceDeclaration ||
-    node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword);
+  return (
+    node.kind === ts.SyntaxKind.InterfaceDeclaration ||
+    (node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword))
+  );
 };

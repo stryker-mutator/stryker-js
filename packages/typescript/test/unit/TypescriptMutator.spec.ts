@@ -142,12 +142,11 @@ describe('TypescriptMutator', () => {
           `interface Hello {
             value: string;
             sortable?: true;
-          }`);
+          }`
+        );
 
         // Act
-        const mutants = sut.mutate([
-          file1,
-        ]);
+        const mutants = sut.mutate([file1]);
 
         // Assert
         expect(mutants).to.deep.equal([
@@ -155,7 +154,7 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 85],
-            replacement: '"stryker was here"',
+            replacement: '"stryker was here"'
           }
         ]);
       });
