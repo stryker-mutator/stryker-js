@@ -40,7 +40,7 @@
     "@typescript-eslint/func-call-spacing": "error",
     "@typescript-eslint/generic-type-naming": "off",
     "indent": "off",
-    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/indent": "off",
     "@typescript-eslint/interface-name-prefix": ["error", "never"],
     "@typescript-eslint/member-delimiter-style": "error",
     "@typescript-eslint/member-naming": "error",
@@ -54,7 +54,8 @@
     "no-extra-parens": "off",
     "@typescript-eslint/no-extra-parens": ["error", "all", {
       "returnAssign": false,
-      "nestedBinaryExpressions": false
+      "nestedBinaryExpressions": false,
+      "conditionalAssign": false
     }],
     "@typescript-eslint/no-extraneous-class": "off",
     "@typescript-eslint/no-floating-promises": "off",
@@ -77,7 +78,7 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
     "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": "error",
+    "@typescript-eslint/no-use-before-define": "off",
     "no-useless-constructor": "off",
     "@typescript-eslint/no-useless-constructor": "error",
     "@typescript-eslint/no-var-requires": "off",
@@ -96,7 +97,7 @@
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/restrict-plus-operands": "error",
     "semi": "off",
-    "@typescript-eslint/semi": "error",
+    "@typescript-eslint/semi": "off",
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/triple-slash-reference": "error",
     "@typescript-eslint/type-annotation-spacing": "error",
