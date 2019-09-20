@@ -8,11 +8,9 @@ import { NodeMutator } from './NodeMutator';
 export default class DoStatementMutator implements NodeMutator {
   public name = 'DoStatement';
 
-  constructor() { }
-
   public mutate(node: types.Node): types.Node[] | void {
     if (types.isDoWhileStatement(node)) {
-        return [NodeGenerator.createBooleanLiteralNode(node.test, false)];
+      return [NodeGenerator.createBooleanLiteralNode(node.test, false)];
     }
   }
 }

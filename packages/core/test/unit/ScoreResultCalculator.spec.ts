@@ -25,14 +25,14 @@ describe(ScoreResultCalculator.name, () => {
 
     it('should count results of a single file', () => {
       const fileName = path.join('base', 'something');
-      const actual =  sut.calculate([
+      const actual = sut.calculate([
         mutantResult({ status: MutantStatus.RuntimeError, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.Killed, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.TranspileError, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.NoCoverage, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.Survived, sourceFilePath: fileName }),
         mutantResult({ status: MutantStatus.Killed, sourceFilePath: fileName }),
-        mutantResult({ status: MutantStatus.TimedOut, sourceFilePath: fileName }),
+        mutantResult({ status: MutantStatus.TimedOut, sourceFilePath: fileName })
       ]);
       expect(actual.name).to.eq('base');
       function assertNumbers(actual: ScoreResult) {
@@ -57,30 +57,27 @@ describe(ScoreResultCalculator.name, () => {
 
     it('should wrap a single result in its base directory', () => {
       const fileName = path.join('base', 'something');
-      const actual =  sut.calculate([
-        mutantResult({ status: MutantStatus.RuntimeError, sourceFilePath: fileName })
-      ]);
+      const actual = sut.calculate([mutantResult({ status: MutantStatus.RuntimeError, sourceFilePath: fileName })]);
       expect(actual.name).eq('base');
       expect(actual.childResults).lengthOf(1);
       expect(actual.childResults[0].name).eq('something');
     });
 
     it('should count results of multiple files', () => {
-      const actual =  sut.calculate(
-        [
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.NoCoverage }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.RuntimeError }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.RuntimeError }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.NoCoverage }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.Survived }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.Killed }),
-          mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.Survived })
-        ]);
+      const actual = sut.calculate([
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.NoCoverage }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.RuntimeError }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.RuntimeError }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.NoCoverage }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.Survived }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Add.js'), status: MutantStatus.Killed }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.Killed }),
+        mutantResult({ sourceFilePath: path.join('karma-jasmine', 'src', 'Circle.js'), status: MutantStatus.Survived })
+      ]);
       expect(actual.name).to.be.eq(path.join('karma-jasmine', 'src'));
       expect(extractNumbers(actual)).to.deep.eq({ killed: 6, runtimeErrors: 2, transpileErrors: 0, survived: 2, noCoverage: 2 });
       expect(actual.childResults).to.have.lengthOf(2);
@@ -95,13 +92,12 @@ describe(ScoreResultCalculator.name, () => {
     });
 
     it('should group results per directory', () => {
-      const actual =  sut.calculate(
-        [
-          mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'e.js'), status: MutantStatus.Killed }),
-          mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'f.js'), status: MutantStatus.Survived }),
-          mutantResult({ sourceFilePath: path.join('a', 'b', 'g.js'), status: MutantStatus.NoCoverage }),
-          mutantResult({ sourceFilePath: path.join('a', 'b', 'h.js'), status: MutantStatus.RuntimeError }),
-        ]);
+      const actual = sut.calculate([
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'e.js'), status: MutantStatus.Killed }),
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'c', 'd', 'f.js'), status: MutantStatus.Survived }),
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'g.js'), status: MutantStatus.NoCoverage }),
+        mutantResult({ sourceFilePath: path.join('a', 'b', 'h.js'), status: MutantStatus.RuntimeError })
+      ]);
       expect(actual.name).to.eq(path.join('a', 'b'));
       expect(extractNumbers(actual)).to.deep.eq({ killed: 1, survived: 1, noCoverage: 1, runtimeErrors: 1, transpileErrors: 0 });
       expect(actual.childResults).to.have.lengthOf(3);
@@ -120,14 +116,13 @@ describe(ScoreResultCalculator.name, () => {
     });
 
     it('should order by directory/files first and than on alphabet', () => {
-      const actual =  sut.calculate(
-        [
-          mutantResult({ sourceFilePath: path.join('a', 'z', 'c.js') }),
-          mutantResult({ sourceFilePath: path.join('a', 'z', 'a.js') }),
-          mutantResult({ sourceFilePath: path.join('a', 'b.js') }),
-          mutantResult({ sourceFilePath: path.join('a', 'a.js') }),
-          mutantResult({ sourceFilePath: path.join('a', 'A.js') })
-        ]);
+      const actual = sut.calculate([
+        mutantResult({ sourceFilePath: path.join('a', 'z', 'c.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'z', 'a.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'b.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'a.js') }),
+        mutantResult({ sourceFilePath: path.join('a', 'A.js') })
+      ]);
       expect(actual.name).to.eq('a');
       expect(actual.childResults[0].name).to.eq('z');
       expect(actual.childResults[0].childResults[0].name).to.eq('a.js');
@@ -138,7 +133,7 @@ describe(ScoreResultCalculator.name, () => {
     });
 
     it('should be able to handle no results', () => {
-      const actual =  sut.calculate([]);
+      const actual = sut.calculate([]);
       expect(extractNumbers(actual)).to.deep.eq({ killed: 0, survived: 0, transpileErrors: 0, runtimeErrors: 0, noCoverage: 0 });
       expect(actual.childResults.length).to.be.eq(0);
       expect(actual.name).to.be.eq('');
@@ -147,10 +142,7 @@ describe(ScoreResultCalculator.name, () => {
     });
 
     it('should be able to handle children that do not start with the same path', () => {
-      const actual =  sut.calculate([
-        mutantResult({ sourceFilePath: 'dir1/one' }),
-        mutantResult({ sourceFilePath: 'dir2/two' })
-      ]);
+      const actual = sut.calculate([mutantResult({ sourceFilePath: 'dir1/one' }), mutantResult({ sourceFilePath: 'dir2/two' })]);
       expect(actual.childResults.length).to.eq(2);
       expect(actual.name).to.eq('');
       expect(actual.childResults[0].name).to.eq('dir1/one');
@@ -183,23 +175,25 @@ describe(ScoreResultCalculator.name, () => {
     });
 
     it('should not set exit code = 1 if `threshold.break` is not configured', () => {
-       sut.determineExitCode(scoreResult({ mutationScore: 0 }), mutationScoreThresholds({ break: null }));
+      sut.determineExitCode(scoreResult({ mutationScore: 0 }), mutationScoreThresholds({ break: null }));
 
-       expect(setExitCodeStub).not.called;
-       expect(testInjector.logger.debug).calledWith('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
+      expect(setExitCodeStub).not.called;
+      expect(testInjector.logger.debug).calledWith(
+        "No breaking threshold configured. Won't fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior."
+      );
     });
 
     it('should not set exit code = 1 if `threshold.break` === score', () => {
-       sut.determineExitCode(scoreResult({ mutationScore: 10.000001 }), mutationScoreThresholds({ break: 10.000001 }));
-       expect(setExitCodeStub).not.called;
-       expect(testInjector.logger.info).calledWith('Final mutation score of 10.00 is greater than or equal to break threshold 10.000001');
+      sut.determineExitCode(scoreResult({ mutationScore: 10.000001 }), mutationScoreThresholds({ break: 10.000001 }));
+      expect(setExitCodeStub).not.called;
+      expect(testInjector.logger.info).calledWith('Final mutation score of 10.00 is greater than or equal to break threshold 10.000001');
     });
 
     it('should set exit code = 1 if `threshold.break` > score', () => {
-       sut.determineExitCode(scoreResult({ mutationScore: 56.6 }), mutationScoreThresholds({ break: 56.7 }));
-       expect(setExitCodeStub).calledWith(1);
-       expect(testInjector.logger.error).calledWith('Final mutation score 56.60 under breaking threshold 56.7, setting exit code to 1 (failure).');
-       expect(testInjector.logger.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
+      sut.determineExitCode(scoreResult({ mutationScore: 56.6 }), mutationScoreThresholds({ break: 56.7 }));
+      expect(setExitCodeStub).calledWith(1);
+      expect(testInjector.logger.error).calledWith('Final mutation score 56.60 under breaking threshold 56.7, setting exit code to 1 (failure).');
+      expect(testInjector.logger.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
     });
   });
 });

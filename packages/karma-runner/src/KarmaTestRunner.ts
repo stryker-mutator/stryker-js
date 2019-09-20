@@ -38,8 +38,11 @@ export default class KarmaTestRunner implements TestRunner {
   public init(): Promise<void> {
     return new Promise((res, rej) => {
       StrykerReporter.instance.once('browsers_ready', res);
-      this.starter.start()
-        .then(() => { /*noop*/ })
+      this.starter
+        .start()
+        .then(() => {
+          /*noop*/
+        })
         .catch(rej);
     });
   }
@@ -91,7 +94,7 @@ export default class KarmaTestRunner implements TestRunner {
     StrykerReporter.instance.on('server_start', (port: number) => {
       this.port = port;
     });
-    StrykerReporter.instance.on('server_start', () => { });
+    StrykerReporter.instance.on('server_start', () => {});
   }
 
   private listenToCoverage() {
@@ -137,9 +140,7 @@ export default class KarmaTestRunner implements TestRunner {
   private determineRunState() {
     // Karma will report an Error if no tests had executed.
     // This is not an "error" in Stryker terms
-    if (this.currentRunStatus === RunStatus.Error &&
-      !this.currentErrorMessages.length &&
-      !this.currentTestResults.length) {
+    if (this.currentRunStatus === RunStatus.Error && !this.currentErrorMessages.length && !this.currentTestResults.length) {
       return RunStatus.Complete;
     } else if (this.currentErrorMessages.length) {
       // Karma will return Complete when there are runtime errors

@@ -8,17 +8,11 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 import { ChildProcessTranspilerWorker } from './ChildProcessTranspilerWorker';
 
 export class ChildProcessTranspiler implements Transpiler, Disposable {
-
   private readonly childProcess: ChildProcessProxy<ChildProcessTranspilerWorker>;
 
-  public static inject = tokens(
-    commonTokens.options,
-    coreTokens.loggingContext,
-    commonTokens.produceSourceMaps);
+  public static inject = tokens(commonTokens.options, coreTokens.loggingContext, commonTokens.produceSourceMaps);
 
-  constructor(options: StrykerOptions,
-              loggingContext: LoggingClientContext,
-              produceSourceMaps: boolean) {
+  constructor(options: StrykerOptions, loggingContext: LoggingClientContext, produceSourceMaps: boolean) {
     this.childProcess = ChildProcessProxy.create(
       require.resolve(`./${ChildProcessTranspilerWorker.name}`),
       loggingContext,
@@ -29,7 +23,7 @@ export class ChildProcessTranspiler implements Transpiler, Disposable {
     );
   }
 
-  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+  public transpile(files: readonly File[]): Promise<readonly File[]> {
     return this.childProcess.proxy.transpile(files);
   }
 

@@ -5,7 +5,11 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as ciProvider from '../../../../src/reporters/ci/Provider';
 import DashboardReporter from '../../../../src/reporters/dashboard-reporter/DashboardReporter';
-import { default as DashboardReporterClient, default as StrykerDashboardClient, StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
+import {
+  default as DashboardReporterClient,
+  default as StrykerDashboardClient,
+  StrykerDashboardReport
+} from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import * as environmentVariables from '../../../../src/utils/objectUtils';
 import { mock, Mock } from '../../../helpers/producers';
@@ -27,20 +31,17 @@ describe(DashboardReporter.name, () => {
     determineCiProvider = sinon.stub(ciProvider, 'determineCIProvider');
   });
 
-  function setupEnvironmentVariables(env?: {
-    ci?: boolean
-    pullRequest?: boolean;
-    repository?: string;
-    branch?: string;
-    apiKey?: string;
-  }) {
-    const { ci, pullRequest, repository, branch, apiKey } = Object.assign({
-      apiKey: '12345',
-      branch: 'master',
-      ci: true,
-      pullRequest: false,
-      repository: 'stryker-mutator/stryker'
-    }, env);
+  function setupEnvironmentVariables(env?: { ci?: boolean; pullRequest?: boolean; repository?: string; branch?: string; apiKey?: string }) {
+    const { ci, pullRequest, repository, branch, apiKey } = Object.assign(
+      {
+        apiKey: '12345',
+        branch: 'master',
+        ci: true,
+        pullRequest: false,
+        repository: 'stryker-mutator/stryker'
+      },
+      env
+    );
 
     if (ci) {
       determineCiProvider.returns({
@@ -54,7 +55,7 @@ describe(DashboardReporter.name, () => {
 
     getEnvironmentVariables.withArgs('STRYKER_DASHBOARD_API_KEY').returns(apiKey);
     sut = testInjector.injector
-      .provideValue(dashboardReporterTokens.dashboardReporterClient, dashboardClientMock as unknown as DashboardReporterClient)
+      .provideValue(dashboardReporterTokens.dashboardReporterClient, (dashboardClientMock as unknown) as DashboardReporterClient)
       .injectClass(DashboardReporter);
   }
 

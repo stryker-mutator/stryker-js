@@ -18,7 +18,6 @@ import { sleep } from '../../helpers/testUtils';
 import { Echo } from './Echo';
 
 describe(ChildProcessProxy.name, () => {
-
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
   let log: Mock<Logger>;
@@ -78,9 +77,7 @@ describe(ChildProcessProxy.name, () => {
 
   it('should be able to log on debug when LogLevel.Debug is allowed', async () => {
     const logEventTask = new Task<log4js.LoggingEvent>();
-    loggingServer.event$.pipe(
-      filter(event => event.categoryName === Echo.name)
-    ).subscribe(logEventTask.resolve.bind(logEventTask));
+    loggingServer.event$.pipe(filter(event => event.categoryName === Echo.name)).subscribe(logEventTask.resolve.bind(logEventTask));
     sut.proxy.debug('test message');
     const log = await logEventTask.promise;
     expect(log.categoryName).eq(Echo.name);
@@ -89,9 +86,7 @@ describe(ChildProcessProxy.name, () => {
 
   it('should not log on trace if LogLevel.Debug is allowed as min log level', async () => {
     const logEventTask = new Task<log4js.LoggingEvent>();
-    loggingServer.event$.pipe(
-      filter(event => event.categoryName === Echo.name)
-    ).subscribe(logEventTask.resolve.bind(logEventTask));
+    loggingServer.event$.pipe(filter(event => event.categoryName === Echo.name)).subscribe(logEventTask.resolve.bind(logEventTask));
     sut.proxy.trace('foo');
     sut.proxy.debug('bar');
     const log = await logEventTask.promise;
@@ -111,7 +106,9 @@ describe(ChildProcessProxy.name, () => {
     await sleep(10);
     await expect(sut.proxy.exit(12)).rejected;
     const call = log.warn.getCall(0);
-    expect(call.args[0]).matches(/Child process \[pid \d+\] exited unexpectedly with exit code 12 \(without signal\)\. Last part of stdout and stderr was/g);
+    expect(call.args[0]).matches(
+      /Child process \[pid \d+\] exited unexpectedly with exit code 12 \(without signal\)\. Last part of stdout and stderr was/g
+    );
     expect(call.args[0]).includes('stdout message');
     expect(call.args[0]).includes('stderr message');
   });
@@ -128,5 +125,7 @@ describe(ChildProcessProxy.name, () => {
 
 function toLogLevel(level: log4js.Level) {
   const levelName = (level as any).levelStr.toLowerCase();
-  return [LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Off, LogLevel.Trace, LogLevel.Warning].find(level => level === levelName);
+  return [LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Off, LogLevel.Trace, LogLevel.Warning].find(
+    level => level === levelName
+  );
 }

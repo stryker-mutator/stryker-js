@@ -8,14 +8,15 @@ import { ChildProcessTranspiler } from './ChildProcessTranspiler';
 /**
  * Creates a transpiler. If one is configured, spawns that in a child process
  */
-export function transpilerFactory(options: StrykerOptions,
-                                  injector: Injector<TranspilerPluginContext & { [coreTokens.loggingContext]: LoggingClientContext }>)
-  : Transpiler & Disposable {
+export function transpilerFactory(
+  options: StrykerOptions,
+  injector: Injector<TranspilerPluginContext & { [coreTokens.loggingContext]: LoggingClientContext }>
+): Transpiler & Disposable {
   if (options.transpilers.length) {
     return injector.injectClass(ChildProcessTranspiler);
   } else {
     return {
-      transpile(files: ReadonlyArray<File>) {
+      transpile(files: readonly File[]) {
         return Promise.resolve(files);
       },
       dispose() {

@@ -25,8 +25,10 @@ export default class StringLiteralMutator implements NodeMutator {
       }
 
       nodes.push(mutatedNode);
-    } else if ((!node.parent || (!types.isImportDeclaration(node.parent) && !types.isExportDeclaration(node.parent) && !types.isJSXAttribute(node.parent)))
-      && types.isStringLiteral(node)) {
+    } else if (
+      (!node.parent || (!types.isImportDeclaration(node.parent) && !types.isExportDeclaration(node.parent) && !types.isJSXAttribute(node.parent))) &&
+      types.isStringLiteral(node)
+    ) {
       const mutatedNode = copy(node);
       mutatedNode.value = mutatedNode.value.length === 0 ? 'Stryker was here!' : '';
       nodes.push(mutatedNode);

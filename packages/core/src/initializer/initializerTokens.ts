@@ -1,4 +1,3 @@
-
 export const restClientNpmSearch = 'restClientNpmSearch';
 export const restClientNpm = 'restClientNpm';
 export const npmClient = 'npmClient';

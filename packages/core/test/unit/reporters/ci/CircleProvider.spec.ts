@@ -75,5 +75,4 @@ describe('CircleCI Provider', () => {
       expect(result).to.equal('(unknown)');
     });
   });
-
 });

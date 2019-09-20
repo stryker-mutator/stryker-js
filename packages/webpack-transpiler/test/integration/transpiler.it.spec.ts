@@ -9,7 +9,6 @@ import { pluginTokens } from '../../src/pluginTokens';
 import WebpackTranspiler from '../../src/WebpackTranspiler';
 
 describe('Webpack transpiler', () => {
-
   beforeEach(() => {
     testInjector.options.webpack = {};
   });

@@ -45,10 +45,8 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideClass(coreTokens.timer, Timer);
 }
 
-function pluginDescriptorsFactory(config: Config): ReadonlyArray<string> {
-  config.plugins.push(
-    require.resolve('../reporters')
-  );
+function pluginDescriptorsFactory(config: Config): readonly string[] {
+  config.plugins.push(require.resolve('../reporters'));
   return config.plugins;
 }
 pluginDescriptorsFactory.inject = tokens(coreTokens.configReadFromConfigFile);

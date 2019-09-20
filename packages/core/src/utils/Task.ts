@@ -4,7 +4,6 @@ import { timeout, TimeoutExpired } from './objectUtils';
  * Wraps a promise in a Task api for convenience.
  */
 export class Task<T = void> {
-
   protected _promise: Promise<T>;
   private resolveFn: (value?: T | PromiseLike<T>) => void;
   private rejectFn: (reason: any) => void;
@@ -17,23 +16,23 @@ export class Task<T = void> {
     });
   }
 
-  get promise() {
+  public get promise() {
     return this._promise;
   }
 
-  get isCompleted() {
+  public get isCompleted() {
     return this._isCompleted;
   }
 
   public resolve = (result: T | PromiseLike<T>): void => {
     this._isCompleted = true;
     this.resolveFn(result);
-  }
+  };
 
   public reject = (reason: any): void => {
     this._isCompleted = true;
     this.rejectFn(reason);
-  }
+  };
 }
 
 /**

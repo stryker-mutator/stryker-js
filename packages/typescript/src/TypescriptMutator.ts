@@ -8,17 +8,14 @@ import { nodeMutators } from './mutator';
 import NodeMutator from './mutator/NodeMutator';
 
 export function typescriptMutatorFactory(injector: Injector<OptionsContext>): TypescriptMutator {
-  return injector
-    .provideValue(MUTATORS_TOKEN, nodeMutators)
-    .injectClass(TypescriptMutator);
+  return injector.provideValue(MUTATORS_TOKEN, nodeMutators).injectClass(TypescriptMutator);
 }
 typescriptMutatorFactory.inject = tokens(commonTokens.injector);
 
 export const MUTATORS_TOKEN = 'mutators';
 export class TypescriptMutator {
-
   public static inject = tokens(commonTokens.options, MUTATORS_TOKEN);
-  constructor(private readonly options: StrykerOptions, public mutators: ReadonlyArray<NodeMutator>) { }
+  constructor(private readonly options: StrykerOptions, public mutators: readonly NodeMutator[]) {}
 
   public mutate(inputFiles: File[]): Mutant[] {
     const tsConfig = getTSConfig(this.options);
@@ -37,7 +34,7 @@ export class TypescriptMutator {
       const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
       node.forEachChild(child => {
         // It is important that forEachChild does not return a true, otherwise node visiting is halted!
-        mutants.push(... this.mutateForNode(child, sourceFile));
+        mutants.push(...this.mutateForNode(child, sourceFile));
       });
       return mutants;
     }

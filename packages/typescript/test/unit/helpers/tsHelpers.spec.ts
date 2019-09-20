@@ -13,10 +13,11 @@ describe('tsHelpers', () => {
   });
 
   describe('guardTypescriptVersion', () => {
-
     it('should throw an error when installed typescript version does not satisfy >=2.4', () => {
       satisfiesStub.returns(false);
-      expect(() => tsHelpers.guardTypescriptVersion()).throws(`Installed typescript version ${ts.version} is not supported by stryker-typescript. Please install version 2.5 or higher (\`npm install typescript@^2.5\`).`);
+      expect(() => tsHelpers.guardTypescriptVersion()).throws(
+        `Installed typescript version ${ts.version} is not supported by stryker-typescript. Please install version 2.5 or higher (\`npm install typescript@^2.5\`).`
+      );
       expect(satisfiesStub).calledWith(ts.version, '>=2.4');
     });
 

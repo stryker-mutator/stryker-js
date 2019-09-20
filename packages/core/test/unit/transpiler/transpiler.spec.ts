@@ -8,7 +8,6 @@ import { transpilerFactory } from '../../../src/transpiler';
 import { ChildProcessTranspiler } from '../../../src/transpiler/ChildProcessTranspiler';
 
 describe(transpilerFactory.name, () => {
-
   let injectorMock: sinon.SinonStubbedInstance<Injector<any>>;
   let childProcessTranspiler: sinon.SinonStubbedInstance<ChildProcessTranspiler>;
 
@@ -35,5 +34,4 @@ describe(transpilerFactory.name, () => {
     expect(actual).not.eq(childProcessTranspiler);
     expect(actual.transpile(input)).eventually.eq(input);
   });
-
 });

@@ -7,7 +7,15 @@ import { EventEmitter } from 'events';
 import * as os from 'os';
 import * as sinon from 'sinon';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import { autoStart, DisposeMessage, InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from '../../../src/child-proxy/messageProtocol';
+import {
+  autoStart,
+  DisposeMessage,
+  InitMessage,
+  ParentMessage,
+  ParentMessageKind,
+  WorkerMessage,
+  WorkerMessageKind
+} from '../../../src/child-proxy/messageProtocol';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { serialize } from '../../../src/utils/objectUtils';
 import * as objectUtils from '../../../src/utils/objectUtils';
@@ -28,7 +36,6 @@ class ChildProcessMock extends EventEmitter {
 }
 
 describe(ChildProcessProxy.name, () => {
-
   let sut: ChildProcessProxy<HelloClass>;
   let forkStub: sinon.SinonStub;
   let childProcessMock: ChildProcessMock;
@@ -52,7 +59,6 @@ describe(ChildProcessProxy.name, () => {
   });
 
   describe('constructor', () => {
-
     it('should create child process', () => {
       sut = createSut();
       expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
@@ -73,7 +79,7 @@ describe(ChildProcessProxy.name, () => {
       createSut({
         loggingContext: LOGGING_CONTEXT,
         name: (expectedMessage.additionalInjectableValues as { name: string }).name,
-        options:  expectedMessage.options,
+        options: expectedMessage.options,
         requirePath: expectedMessage.requirePath,
         workingDir: expectedMessage.workingDirectory
       });
@@ -102,13 +108,16 @@ describe(ChildProcessProxy.name, () => {
       childProcessMock.stdout.emit('data', 'bar');
       childProcessMock.stderr.emit('data', 'foo');
       actClose(23, 'SIGTERM');
-      expect(logMock.warn).calledWithMatch(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL
-        }\tfoo${os.EOL}\tbar`);
+      expect(logMock.warn).calledWithMatch(
+        `Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL}\tfoo${os.EOL}\tbar`
+      );
     });
 
     it('should log that no stdout was available when stdout and stderr are empty', () => {
       actClose(23, 'SIGTERM');
-      expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.`);
+      expect(logMock.warn).calledWith(
+        `Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.`
+      );
     });
 
     it('should log stdout and stderr in correct order', () => {
@@ -116,8 +125,9 @@ describe(ChildProcessProxy.name, () => {
       childProcessMock.stderr.emit('data', 'baz');
       childProcessMock.stdout.emit('data', 'bar');
       actClose(23, 'SIGTERM');
-      expect(logMock.warn).calledWith(`Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL
-      }\tbaz${os.EOL}\tfoobar`);
+      expect(logMock.warn).calledWith(
+        `Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL}\tbaz${os.EOL}\tfoobar`
+      );
     });
 
     it('should reject any outstanding worker promises with the error', () => {
@@ -138,7 +148,6 @@ describe(ChildProcessProxy.name, () => {
   });
 
   describe('when calling methods', () => {
-
     beforeEach(() => {
       sut = createSut();
       receiveMessage({ kind: ParentMessageKind.Initialized });
@@ -171,7 +180,6 @@ describe(ChildProcessProxy.name, () => {
   });
 
   describe('dispose', () => {
-
     beforeEach(() => {
       sut = createSut();
     });
@@ -219,7 +227,6 @@ describe(ChildProcessProxy.name, () => {
       receiveMessage({ kind: ParentMessageKind.DisposeCompleted });
       await disposePromise;
     }
-
   });
 
   function receiveMessage(workerResponse: ParentMessage) {
@@ -227,18 +234,21 @@ describe(ChildProcessProxy.name, () => {
   }
 });
 
-function createSut(overrides: {
-  requirePath?: string;
-  loggingContext?: LoggingClientContext;
-  options?: Partial<StrykerOptions>;
-  workingDir?: string;
-  name?: string;
-} = {}): ChildProcessProxy<HelloClass> {
+function createSut(
+  overrides: {
+    requirePath?: string;
+    loggingContext?: LoggingClientContext;
+    options?: Partial<StrykerOptions>;
+    workingDir?: string;
+    name?: string;
+  } = {}
+): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
     overrides.requirePath || 'foobar',
     overrides.loggingContext || LOGGING_CONTEXT,
     factory.strykerOptions(overrides.options),
     { name: overrides.name || 'someArg' },
     overrides.workingDir || 'workingDir',
-    HelloClass);
+    HelloClass
+  );
 }

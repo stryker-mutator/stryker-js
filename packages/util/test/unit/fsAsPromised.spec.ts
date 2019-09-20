@@ -4,7 +4,6 @@ import { promisify } from 'util';
 import { fsAsPromised } from '../../src';
 
 describe('fsAsPromised', () => {
-
   describePromisifiedFunction('exists');
   describePromisifiedFunction('lstat');
   describePromisifiedFunction('symlink');

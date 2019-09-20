@@ -7,31 +7,31 @@ import { BabelConfigReader, StrykerBabelConfig } from './BabelConfigReader';
 import * as babel from './helpers/babelWrapper';
 import { toJSFileName } from './helpers/helpers';
 
-const DEFAULT_EXTENSIONS: ReadonlyArray<string> = (babel as any).DEFAULT_EXTENSIONS;
+const DEFAULT_EXTENSIONS: readonly string[] = (babel as any).DEFAULT_EXTENSIONS;
 
 export function babelTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
-  return injector
-    .provideClass('babelConfigReader', BabelConfigReader)
-    .injectClass(BabelTranspiler);
+  return injector.provideClass('babelConfigReader', BabelConfigReader).injectClass(BabelTranspiler);
 }
 babelTranspilerFactory.inject = tokens(commonTokens.injector);
 
 export class BabelTranspiler implements Transpiler {
   private readonly babelConfig: StrykerBabelConfig;
   private readonly projectRoot: string;
-  private readonly extensions: ReadonlyArray<string>;
+  private readonly extensions: readonly string[];
 
   public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps, 'babelConfigReader');
-  public constructor(options: StrykerOptions, produceSourceMaps: boolean, babelConfigReader: BabelConfigReader) {
+  constructor(options: StrykerOptions, produceSourceMaps: boolean, babelConfigReader: BabelConfigReader) {
     if (produceSourceMaps) {
-      throw new Error(`Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`);
+      throw new Error(
+        `Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`
+      );
     }
     this.babelConfig = babelConfigReader.readConfig(options);
     this.projectRoot = this.determineProjectRoot();
     this.extensions = [...DEFAULT_EXTENSIONS, ...this.babelConfig.extensions];
   }
 
-  public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+  public async transpile(files: readonly File[]): Promise<readonly File[]> {
     return files.map(file => this.transpileFileIfNeeded(file));
   }
 

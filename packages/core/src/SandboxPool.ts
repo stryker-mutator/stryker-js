@@ -17,8 +17,7 @@ import { TemporaryDirectory } from './utils/TemporaryDirectory';
 const MAX_CONCURRENT_INITIALIZING_SANDBOXES = 2;
 
 export class SandboxPool implements Disposable {
-
-  private readonly allSandboxes: Promise<Sandbox>[] = [];
+  private readonly allSandboxes: Array<Promise<Sandbox>> = [];
   private readonly overheadTimeMS: number;
 
   public static inject = tokens(
@@ -28,15 +27,17 @@ export class SandboxPool implements Disposable {
     coreTokens.initialRunResult,
     coreTokens.transpiledFiles,
     coreTokens.loggingContext,
-    coreTokens.temporaryDirectory);
+    coreTokens.temporaryDirectory
+  );
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly testFramework: TestFramework | null,
     initialRunResult: InitialTestRunResult,
-    private readonly initialFiles: ReadonlyArray<File>,
+    private readonly initialFiles: readonly File[],
     private readonly loggingContext: LoggingClientContext,
-    private readonly tempDir: TemporaryDirectory) {
+    private readonly tempDir: TemporaryDirectory
+  ) {
     this.overheadTimeMS = initialRunResult.overheadTimeMS;
   }
 
@@ -57,7 +58,7 @@ export class SandboxPool implements Disposable {
   private readonly runInSandbox = async ([mutant, sandbox]: [TranspiledMutant, Sandbox]) => {
     const result = await sandbox.runMutant(mutant);
     return { result, sandbox };
-  }
+  };
 
   private startSandboxes(): Observable<Sandbox> {
     const concurrency = this.determineConcurrency();
@@ -67,7 +68,9 @@ export class SandboxPool implements Disposable {
         if (this.isDisposed) {
           return null;
         } else {
-          return this.registerSandbox(Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext, this.tempDir));
+          return this.registerSandbox(
+            Sandbox.create(this.options, n, this.initialFiles, this.testFramework, this.overheadTimeMS, this.loggingContext, this.tempDir)
+          );
         }
       }, MAX_CONCURRENT_INITIALIZING_SANDBOXES),
       filter(sandboxOrNull => !!sandboxOrNull),
@@ -96,7 +99,7 @@ export class SandboxPool implements Disposable {
   private readonly registerSandbox = async (promisedSandbox: Promise<Sandbox>): Promise<Sandbox> => {
     this.allSandboxes.push(promisedSandbox);
     return promisedSandbox;
-  }
+  };
 
   private isDisposed = false;
   public async dispose() {

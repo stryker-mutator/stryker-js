@@ -7,7 +7,6 @@ import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-rep
 import { Mock, mock } from '../../../helpers/producers';
 
 describe('DashboardReporterClient', () => {
-
   let sut: StrykerDashboardClient;
   let dashboardClient: Mock<HttpClient>;
 
@@ -23,30 +22,30 @@ describe('DashboardReporterClient', () => {
   beforeEach(() => {
     dashboardClient = mock(HttpClient);
     sut = testInjector.injector
-      .provideValue(dashboardReporterTokens.httpClient, dashboardClient as unknown as HttpClient)
+      .provideValue(dashboardReporterTokens.httpClient, (dashboardClient as unknown) as HttpClient)
       .injectClass(DashboardReporterClient);
   });
 
   it('report mutations score to dashboard server', async () => {
-      // Arrange
-      dashboardClient.post.resolves({
-        message: {
-          statusCode: 201
-        }
-      });
+    // Arrange
+    dashboardClient.post.resolves({
+      message: {
+        statusCode: 201
+      }
+    });
 
-      // Act
-      await sut.postStrykerDashboardReport(dashboardReport);
+    // Act
+    await sut.postStrykerDashboardReport(dashboardReport);
 
-      // Assert
-      const report = JSON.stringify(dashboardReport);
-      const contentType = {
-        ['Content-Type']: 'application/json'
-      };
+    // Assert
+    const report = JSON.stringify(dashboardReport);
+    const contentType = {
+      ['Content-Type']: 'application/json'
+    };
 
-      expect(testInjector.logger.info).have.been.calledWithMatch(`Posting report to ${url}`);
-      expect(dashboardClient.post).have.been.calledWith(url, report, contentType);
-      expect(testInjector.logger.error).have.not.been.called;
+    expect(testInjector.logger.info).have.been.calledWithMatch(`Posting report to ${url}`);
+    expect(dashboardClient.post).have.been.calledWith(url, report, contentType);
+    expect(testInjector.logger.error).have.not.been.called;
   });
 
   it('when the server returns a invalid status code an error will be logged  ', async () => {
@@ -64,7 +63,7 @@ describe('DashboardReporterClient', () => {
     expect(testInjector.logger.error).have.been.calledWithMatch(`Post to ${url} resulted in http status code: 500`);
   });
 
-  it('when the server doesn\'t respond an error will be logged', async () => {
+  it("when the server doesn't respond an error will be logged", async () => {
     // Arrange
     dashboardClient.post.rejects();
 

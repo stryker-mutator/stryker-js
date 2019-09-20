@@ -2,9 +2,7 @@ import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
 export default function BooleanSubstitutionMutatorSpec(name: string, expectMutation: ExpectMutation) {
-
   describe('BooleanSubstitutionMutator', () => {
-
     it('should have name "BooleanSubstitution"', () => {
       expect(name).eq('BooleanSubstitution');
     });

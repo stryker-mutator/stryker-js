@@ -7,7 +7,6 @@ import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runn
 import * as objectUtils from '../../../src/utils/objectUtils';
 
 describe(`${CommandTestRunner.name} integration`, () => {
-
   const workingDir = path.resolve(__dirname, '..', '..', '..', 'testResources', 'command-runner');
 
   it('should report test as successful', async () => {

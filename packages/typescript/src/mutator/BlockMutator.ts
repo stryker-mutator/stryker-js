@@ -15,5 +15,4 @@ export default class BlockMutator extends NodeMutator<ts.Block> {
       return [];
     }
   }
-
 }

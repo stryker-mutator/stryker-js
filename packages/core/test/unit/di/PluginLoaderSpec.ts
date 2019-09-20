@@ -8,7 +8,6 @@ import { PluginLoader } from '../../../src/di/PluginLoader';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
 describe('PluginLoader', () => {
-
   let sut: PluginLoader;
   let sandbox: sinon.SinonSandbox;
   let importModuleStub: sinon.SinonStub;
@@ -21,9 +20,7 @@ describe('PluginLoader', () => {
   });
 
   function createSut(pluginDescriptors: string[]) {
-    return testInjector.injector
-      .provideValue(coreTokens.pluginDescriptors, pluginDescriptors)
-      .injectClass(PluginLoader);
+    return testInjector.injector.provideValue(coreTokens.pluginDescriptors, pluginDescriptors).injectClass(PluginLoader);
   }
 
   describe('without wildcards', () => {
@@ -32,7 +29,6 @@ describe('PluginLoader', () => {
     });
 
     describe('load()', () => {
-
       describe('without errors', () => {
         beforeEach(() => {
           sut.load();
@@ -55,19 +51,16 @@ describe('PluginLoader', () => {
           expect(testInjector.logger.warn).to.have.been.calledWithMatch(/Error during loading/);
         });
       });
-
     });
   });
 
   describe('with wildcard resolving to "util", "api", "core", "jasmine-framework" and "karma-runner"', () => {
-
     beforeEach(() => {
       sut = createSut(['@stryker-mutator/*']);
       pluginDirectoryReadMock.returns(['util', 'api', 'core', 'jasmine-framework', 'karma-runner']);
     });
 
     describe('load()', () => {
-
       beforeEach(() => {
         sut.load();
       });
@@ -78,11 +71,12 @@ describe('PluginLoader', () => {
 
       it('should load "@stryker-mutator/jasmine-framework" and "@stryker-mutator/karma-runner"', () => {
         expect(fileUtils.importModule).calledTwice;
-        expect(fileUtils.importModule).calledWithMatch(path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator', 'jasmine-framework'));
+        expect(fileUtils.importModule).calledWithMatch(
+          path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator', 'jasmine-framework')
+        );
         expect(fileUtils.importModule).calledWithMatch(path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator', 'karma-runner'));
       });
     });
-
   });
 
   afterEach(() => {

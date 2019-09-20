@@ -10,14 +10,14 @@ import * as coreTokens from './coreTokens';
 const IGNORED_PACKAGES = ['core', 'api', 'util'];
 
 interface PluginModule {
-  strykerPlugins: Plugin<any>[];
+  strykerPlugins: Array<Plugin<any>>;
 }
 
 export class PluginLoader implements PluginResolver {
-  private readonly pluginsByKind: Map<PluginKind, Plugin<any>[]> = new Map();
+  private readonly pluginsByKind: Map<PluginKind, Array<Plugin<any>>> = new Map();
 
   public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
-  constructor(private readonly log: Logger, private readonly pluginDescriptors: ReadonlyArray<string>) { }
+  constructor(private readonly log: Logger, private readonly pluginDescriptors: readonly string[]) {}
 
   public load() {
     this.resolvePluginModules().forEach(moduleName => {
@@ -32,33 +32,34 @@ export class PluginLoader implements PluginResolver {
       if (plugin) {
         return plugin as any;
       } else {
-        throw new Error(`Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind
-          } plugins were: ${plugins.map(p => p.name).join(', ')}`);
+        throw new Error(
+          `Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map(p => p.name).join(', ')}`
+        );
       }
     } else {
       throw new Error(`Cannot load ${kind} plugin "${name}". In fact, no ${kind} plugins were loaded. Did you forget to install it?`);
     }
   }
 
-  public resolveAll<T extends keyof Plugins>(kind: T): Plugins[T][] {
+  public resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]> {
     const plugins = this.pluginsByKind.get(kind);
-    return plugins || [] as any;
+    return plugins || ([] as any);
   }
 
   private resolvePluginModules() {
     const modules: string[] = [];
     this.pluginDescriptors.forEach(pluginExpression => {
       if (_.isString(pluginExpression)) {
-        if (pluginExpression.indexOf('*') !== -1) {
-
+        if (pluginExpression.includes('*')) {
           // Plugin directory is the node_modules folder of the module that installed stryker
           // So if current __dirname is './@stryker-mutator/core/src/di' so 4 directories above
           const pluginDirectory = path.dirname(path.resolve(__dirname, '..', '..', '..', '..', pluginExpression));
           const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
-          const plugins = fsAsPromised.readdirSync(pluginDirectory)
-            .filter(pluginName => IGNORED_PACKAGES.indexOf(pluginName) === -1 && regexp.test(pluginName))
+          const plugins = fsAsPromised
+            .readdirSync(pluginDirectory)
+            .filter(pluginName => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
             .map(pluginName => path.resolve(pluginDirectory, pluginName));
           if (plugins.length === 0) {
             this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);
@@ -89,8 +90,7 @@ export class PluginLoader implements PluginResolver {
       }
     } catch (e) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
-        this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' +
-          '  npm install %s --save-dev', name, name);
+        this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' + '  npm install %s --save-dev', name, name);
       } else {
         this.log.warn('Error during loading "%s" plugin:\n  %s', name, e.message);
       }
@@ -107,7 +107,7 @@ export class PluginLoader implements PluginResolver {
   }
 
   private isPluginModule(module: unknown): module is PluginModule {
-    const pluginModule = (module as PluginModule);
+    const pluginModule = module as PluginModule;
     return pluginModule && pluginModule.strykerPlugins && Array.isArray(pluginModule.strykerPlugins);
   }
 }

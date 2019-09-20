@@ -8,34 +8,33 @@ import TestableMutant from '../TestableMutant';
 import { MutantTranspileScheduler } from '../transpiler/MutantTranspileScheduler';
 
 export class MutationTestExecutor {
-  public static inject = tokens(
-    coreTokens.reporter,
-    coreTokens.mutantTranspileScheduler,
-    coreTokens.sandboxPool);
+  public static inject = tokens(coreTokens.reporter, coreTokens.mutantTranspileScheduler, coreTokens.sandboxPool);
   constructor(
     private readonly reporter: StrictReporter,
     private readonly mutantTranspileScheduler: MutantTranspileScheduler,
-    private readonly sandboxPool: SandboxPool) {
-  }
+    private readonly sandboxPool: SandboxPool
+  ) {}
 
-  public async run(allMutants: ReadonlyArray<TestableMutant>): Promise<MutantResult[]> {
-
-    const results = await this.sandboxPool.runMutants(this.mutantTranspileScheduler.scheduleTranspileMutants(allMutants)).pipe(
-      tap(this.reportResult),
-      // Signal the mutant transpiler that there is another slot open for transpiling
-      tap(this.mutantTranspileScheduler.scheduleNext),
-      toArray(),
-      tap(this.reportAll)
-    ).toPromise();
+  public async run(allMutants: readonly TestableMutant[]): Promise<MutantResult[]> {
+    const results = await this.sandboxPool
+      .runMutants(this.mutantTranspileScheduler.scheduleTranspileMutants(allMutants))
+      .pipe(
+        tap(this.reportResult),
+        // Signal the mutant transpiler that there is another slot open for transpiling
+        tap(this.mutantTranspileScheduler.scheduleNext),
+        toArray(),
+        tap(this.reportAll)
+      )
+      .toPromise();
 
     return results;
   }
 
   private readonly reportResult = (mutantResult: MutantResult): void => {
     this.reporter.onMutantTested(mutantResult);
-  }
+  };
 
   private readonly reportAll = (mutantResults: MutantResult[]): void => {
     this.reporter.onAllMutantsTested(mutantResults);
-  }
+  };
 }

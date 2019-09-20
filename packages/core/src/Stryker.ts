@@ -19,7 +19,6 @@ import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler'
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
 
 export default class Stryker {
-
   private readonly log: Logger;
   private readonly injector: Injector<MainContext>;
 
@@ -53,14 +52,16 @@ export default class Stryker {
   }
 
   public async runMutationTest(): Promise<MutantResult[]> {
-    const loggingContext = await LogConfigurator.configureLoggingServer(this.options.logLevel, this.options.fileLogLevel, this.options.allowConsoleColors);
+    const loggingContext = await LogConfigurator.configureLoggingServer(
+      this.options.logLevel,
+      this.options.fileLogLevel,
+      this.options.allowConsoleColors
+    );
     this.timer.reset();
     const inputFiles = await this.injector.injectClass(InputFileResolver).resolve();
     if (inputFiles.files.length) {
       this.temporaryDirectory.initialize();
-      const inputFileInjector = this.injector
-        .provideValue(coreTokens.loggingContext, loggingContext)
-        .provideValue(coreTokens.inputFiles, inputFiles);
+      const inputFileInjector = this.injector.provideValue(coreTokens.loggingContext, loggingContext).provideValue(coreTokens.inputFiles, inputFiles);
       const initialTestRunProcess = inputFileInjector
         .provideValue(commonTokens.produceSourceMaps, this.options.coverageAnalysis !== 'off')
         .provideFactory(coreTokens.pluginCreatorTranspiler, PluginCreator.createFactory(PluginKind.Transpiler))
@@ -83,8 +84,7 @@ export default class Stryker {
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
       try {
         if (initialRunResult.runResult.tests.length && testableMutants.length) {
-          const mutationTestExecutor = mutationTestProcessInjector
-            .injectClass(MutationTestExecutor);
+          const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
           await this.reportScore(mutantResults, inputFileInjector);
           await this.logDone();

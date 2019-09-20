@@ -31,7 +31,9 @@ export interface InitMessage {
   additionalInjectableValues: unknown;
 }
 
-export interface DisposeMessage { kind: WorkerMessageKind.Dispose; }
+export interface DisposeMessage {
+  kind: WorkerMessageKind.Dispose;
+}
 
 export interface WorkResult {
   kind: ParentMessageKind.Result;

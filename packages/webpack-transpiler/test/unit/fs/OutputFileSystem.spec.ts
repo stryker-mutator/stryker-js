@@ -4,7 +4,6 @@ import * as path from 'path';
 import OutputFileSystem from '../../../src/fs/OutputFileSystem';
 
 describe('OutputFileSystem', () => {
-
   let sut: OutputFileSystem;
 
   beforeEach(() => {
@@ -32,29 +31,24 @@ describe('OutputFileSystem', () => {
   });
 
   describe('when "collectFiles"', () => {
-
     it('should collect a css file', () => {
       const fileName = 'file.css';
       const fileContent = 'body: { background: blue }';
-      sut.writeFile(fileName, fileContent, () => { });
+      sut.writeFile(fileName, fileContent, () => {});
       const expectedFile = new File(path.resolve(fileName), fileContent);
       expect(sut.collectFiles()).deep.eq([expectedFile]);
     });
 
     it('should collect files', () => {
       const binContent = Buffer.from('');
-      sut.writeFile('bin1.ico', binContent, () => { });
-      sut.writeFile('file1.js', 'data', () => { });
-      const expectedFiles = [
-        new File(path.resolve('bin1.ico'), binContent),
-        new File(path.resolve('file1.js'), 'data')
-      ];
+      sut.writeFile('bin1.ico', binContent, () => {});
+      sut.writeFile('file1.js', 'data', () => {});
+      const expectedFiles = [new File(path.resolve('bin1.ico'), binContent), new File(path.resolve('file1.js'), 'data')];
       expect(sut.collectFiles()).deep.eq(expectedFiles);
     });
   });
 
-  function actions(...actions: ('mkdir' | 'rmdir')[]) {
+  function actions(...actions: Array<'mkdir' | 'rmdir'>) {
     return actions;
   }
-
 });

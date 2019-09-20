@@ -8,11 +8,9 @@ import { PluginCreator } from '../di/PluginCreator';
  * Class that applies all config editor plugins
  */
 export class ConfigEditorApplier implements ConfigEditor {
-
   public static inject = tokens(commonTokens.pluginResolver, coreTokens.pluginCreatorConfigEditor);
 
-  constructor(private readonly pluginResolver: PluginResolver,
-              private readonly pluginCreator: PluginCreator<PluginKind.ConfigEditor>) { }
+  constructor(private readonly pluginResolver: PluginResolver, private readonly pluginCreator: PluginCreator<PluginKind.ConfigEditor>) {}
 
   public edit(config: Config): void {
     this.pluginResolver.resolveAll(PluginKind.ConfigEditor).forEach(plugin => {

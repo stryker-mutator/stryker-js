@@ -14,9 +14,6 @@ describe('Read TS Config file integration', () => {
     config.tsconfigFile = resolveSampleProject('tsconfig.json');
     testInjector.injector.injectClass(TypescriptConfigEditor).edit(config);
     const actual = config.tsconfig;
-    expect(actual.fileNames.map(path.normalize)).deep.eq([
-      resolveSampleProject('math.ts'),
-      resolveSampleProject('useMath.ts')
-    ]);
+    expect(actual.fileNames.map(path.normalize)).deep.eq([resolveSampleProject('math.ts'), resolveSampleProject('useMath.ts')]);
   });
 });

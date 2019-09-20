@@ -20,36 +20,29 @@ describe('CoverageInstrumenterTranspiler', () => {
   });
 
   describe('when coverage analysis is "all"', () => {
-
     beforeEach(() => {
       config.coverageAnalysis = 'all';
       sut = new CoverageInstrumenterTranspiler(config, ['mutate.js']);
     });
 
     it('should instrument code of mutated files', async () => {
-      const input = [
-        new File('mutate.js', 'function something() {}'),
-        new File('spec.js', '')
-      ];
+      const input = [new File('mutate.js', 'function something() {}'), new File('spec.js', '')];
       const outputFiles = await sut.transpile(input);
       const instrumentedContent = outputFiles[0].textContent;
-      expect(instrumentedContent).to.contain('function something(){cov_').and.contain('.f[0]++');
+      expect(instrumentedContent)
+        .to.contain('function something(){cov_')
+        .and.contain('.f[0]++');
     });
 
     it('should preserve source map comments', async () => {
-      const input = [
-        new File('mutate.js', 'function something() {} // # sourceMappingUrl="something.map.js"'),
-      ];
+      const input = [new File('mutate.js', 'function something() {} // # sourceMappingUrl="something.map.js"')];
       const outputFiles = await sut.transpile(input);
       const instrumentedContent = outputFiles[0].textContent;
       expect(instrumentedContent).to.contain('sourceMappingUrl="something.map.js"');
     });
 
     it('should create a statement map for mutated files', () => {
-      const input = [
-        new File('mutate.js', 'function something () {}'),
-        new File('foobar.js', 'console.log("foobar");')
-      ];
+      const input = [new File('mutate.js', 'function something () {}'), new File('foobar.js', 'console.log("foobar");')];
       sut.transpile(input);
       expect(sut.fileCoverageMaps['mutate.js'].statementMap).deep.eq({});
       expect(sut.fileCoverageMaps['mutate.js'].fnMap[0]).deep.eq({ start: { line: 0, column: 22 }, end: { line: 0, column: 24 } });
@@ -59,7 +52,9 @@ describe('CoverageInstrumenterTranspiler', () => {
 
     it('should fill error message and not transpile input when the file contains a parse error', async () => {
       const invalidJavascriptFile = new File('mutate.js', 'function something {}');
-      return expect(sut.transpile([invalidJavascriptFile])).rejectedWith('Could not instrument "mutate.js" for code coverage. Inner error: SyntaxError: Unexpected token');
+      return expect(sut.transpile([invalidJavascriptFile])).rejectedWith(
+        'Could not instrument "mutate.js" for code coverage. Inner error: SyntaxError: Unexpected token'
+      );
     });
   });
 });
