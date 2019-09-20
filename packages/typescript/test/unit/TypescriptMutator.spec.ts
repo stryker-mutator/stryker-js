@@ -134,6 +134,31 @@ describe('TypescriptMutator', () => {
           }
         ]);
       });
+
+      it('should skip a node when it is an interface', () => {
+        // Arrange
+        file1 = new File(
+          'file1.ts',
+          `interface Hello {
+            value: string;
+            sortable?: true;
+          }`);
+
+        // Act
+        const mutants = sut.mutate([
+          file1,
+        ]);
+
+        // Assert
+        expect(mutants).to.deep.equal([
+          {
+            fileName: 'file1.ts',
+            mutatorName: 'SourceFileForTest',
+            range: [0, 85],
+            replacement: '"stryker was here"',
+          }
+        ]);
+      });
     });
   });
 });

@@ -15,7 +15,7 @@ typescriptMutatorFactory.inject = tokens(commonTokens.injector);
 export const MUTATORS_TOKEN = 'mutators';
 export class TypescriptMutator {
   public static inject = tokens(commonTokens.options, MUTATORS_TOKEN);
-  constructor(private readonly options: StrykerOptions, public mutators: readonly NodeMutator[]) {}
+  constructor(private readonly options: StrykerOptions, public readonly mutators: readonly NodeMutator[]) {}
 
   public mutate(inputFiles: File[]): Mutant[] {
     const tsConfig = getTSConfig(this.options);
@@ -42,5 +42,6 @@ export class TypescriptMutator {
 }
 
 const shouldNodeBeSkipped = (node: ts.Node): boolean => {
-  return node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword);
+  return node.kind === ts.SyntaxKind.InterfaceDeclaration ||
+    node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword);
 };

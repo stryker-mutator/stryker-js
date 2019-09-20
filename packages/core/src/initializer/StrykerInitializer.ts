@@ -48,7 +48,8 @@ export default class StrykerInitializer {
       await this.initiateCustom(this.configWriter);
     }
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
-    this.out("Let's kill some mutants with this command: `stryker run`");
+    this.out('Let\'s kill some mutants with this command: `stryker run`');
+    this.out('Note: Stryker will use `.stryker-temp` as location for temporary files. Be sure to add it to your ignored files in source control.');
   }
 
   /**

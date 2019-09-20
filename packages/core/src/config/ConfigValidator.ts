@@ -64,12 +64,12 @@ export default class ConfigValidator {
   }
 
   private validateThresholdValue(name: keyof MutationScoreThresholds, value: number | null) {
-    if (typeof value === 'number' && (value < 0 || value > 100)) {
+    if (typeof value === 'number' && (value < 0 || value > 100 || isNaN(value))) {
       this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
     }
   }
 
-  private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: number | undefined) {
+  private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: any) {
     if (typeof value !== 'number') {
       this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
     }
@@ -88,7 +88,7 @@ export default class ConfigValidator {
     ];
     if (!VALID_LOG_LEVEL_VALUES.includes(logLevel)) {
       this.invalidate(
-        `Value "${logLevel}" is invalid for \`logLevel\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`
+        `Value "${logLevel}" is invalid for \`${logProperty}\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`
       );
     }
   }
