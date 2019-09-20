@@ -4,3 +4,4 @@
 /perf/**
 **/node_modules/**
 *.d.ts
+/packages/*/testResources/**
