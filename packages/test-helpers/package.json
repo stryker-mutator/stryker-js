@@ -4,7 +4,6 @@
   "version": "2.1.0",
   "description": "A helper package for testing",
   "main": "src/index.js",
-  "typings": "src/index.d.ts",
   "scripts": {},
   "repository": {
     "type": "git",
