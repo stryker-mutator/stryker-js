@@ -3,11 +3,12 @@ name: CI
 on: [push]
 
 jobs:
-  build:
+  build and test:
 
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [8.x, 12.x]
 
