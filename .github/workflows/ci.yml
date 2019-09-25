@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   build_and_test:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -24,5 +23,21 @@ jobs:
       run: npm run lint
     - name: Build packages
       run: npm run build
-    - name: Run unit tests and integration testss
+    - name: Run unit tests and integration tests
       run: npm test
+      
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: npm install
+    - name: Build packages
+      run: npm run build
+    - name: Run e2e tests
+      run: npm run e2e
