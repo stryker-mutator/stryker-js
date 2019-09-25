@@ -38,9 +38,9 @@ jobs:
       run: npm run build
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
-        with:
-          name: build_node12
-          path: .
+      with:
+        name: build_node12
+        path: .
 
   test_node12:
     runs-on: ubuntu-latest
