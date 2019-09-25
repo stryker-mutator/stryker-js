@@ -3,15 +3,20 @@ name: CI
 on: [push]
 
 jobs:
-  build_test_node8:
+  build_and_test:
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [8.x, 12.x]
 
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js 8.x
+    - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: 8.x
+        node-version: ${{ matrix.node-version }}
     - name: Install dependencies
       run: npm install
     - name: Run linting
@@ -21,7 +26,7 @@ jobs:
     - name: Run unit tests and integration tests
       run: npm test
       
-  build_upload_node12:
+  e2e:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,37 +37,7 @@ jobs:
         node-version: 12.x
     - name: Install dependencies
       run: npm install
-    - name: Run linting
-      run: npm run lint
     - name: Build packages
       run: npm run build
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v1
-      with:
-        name: build_node12
-        path: .
-
-  test_node12:
-    runs-on: ubuntu-latest
-    needs: build_upload_node12
-    
-    steps:
-    - name: Download Node 12 build output
-      uses: actions/download-artifact@v1
-      with:
-        name: build_node12
-    - name: Run unit tests and integration tests
-      run: npm test
-      
-      
-  e2e:
-    runs-on: ubuntu-latest
-    needs: build_upload_node12
-
-    steps:
-    - name: Download Node 12 build output
-      uses: actions/download-artifact@v1
-      with:
-        name: build_node12
     - name: Run e2e tests
       run: npm run e2e
