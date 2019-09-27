@@ -16,7 +16,7 @@ function runE2eTests() {
     filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()),
     map(testDir => defer(() => runTest(testDir)))
   );
-
+  
   let testsRan = 0;
   return test$.pipe(
     mergeAll(os.cpus().length), // use mergeAll to limit concurrent test runs

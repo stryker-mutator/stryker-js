@@ -15,7 +15,7 @@ module.exports = function (config) {
         browsers: ['ChromeHeadless']
       }
     },
-    reporters: ['event-recorder'],
+    reporters: ['progress', 'clear-text', 'event-recorder'],
     coverageAnalysis: 'off',
     maxConcurrentTestRunners: 1,
     timeoutMS: 60000
