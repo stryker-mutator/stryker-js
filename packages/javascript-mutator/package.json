@@ -38,8 +38,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@babel/generator": "~7.6.0",
-    "@babel/parser": "~7.5.5",
-    "@babel/traverse": "~7.5.0",
+    "@babel/parser": "~7.6.2",
+    "@babel/traverse": "~7.6.2",
     "@stryker-mutator/api": "^2.1.0",
     "lodash": "~4.17.4",
     "tslib": "~1.10.0"
@@ -48,7 +48,7 @@
     "@stryker-mutator/core": "^2.0.0"
   },
   "devDependencies": {
-    "@babel/types": "~7.5.0",
+    "@babel/types": "~7.6.1",
     "@stryker-mutator/mutator-specification": "^2.1.0",
     "@stryker-mutator/test-helpers": "^2.1.0",
     "@types/babel__generator": "^7.0.0",

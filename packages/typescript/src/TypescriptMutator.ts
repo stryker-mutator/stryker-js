@@ -18,7 +18,7 @@ export const MUTATORS_TOKEN = 'mutators';
 export class TypescriptMutator {
 
   public static inject = tokens(commonTokens.options, MUTATORS_TOKEN);
-  constructor(private readonly options: StrykerOptions, public mutators: ReadonlyArray<NodeMutator>) { }
+  constructor(private readonly options: StrykerOptions, public readonly mutators: ReadonlyArray<NodeMutator>) { }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const tsConfig = getTSConfig(this.options);
@@ -37,7 +37,7 @@ export class TypescriptMutator {
       const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
       node.forEachChild(child => {
         // It is important that forEachChild does not return a true, otherwise node visiting is halted!
-        mutants.push(... this.mutateForNode(child, sourceFile));
+        mutants.push(...this.mutateForNode(child, sourceFile));
       });
       return mutants;
     }
@@ -45,5 +45,6 @@ export class TypescriptMutator {
 }
 
 const shouldNodeBeSkipped = (node: ts.Node): boolean => {
-  return node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword);
+  return node.kind === ts.SyntaxKind.InterfaceDeclaration ||
+    node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword);
 };

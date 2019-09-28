@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push: ~
+  schedule:
+    - cron:  '0 12 * * *'
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [8.x, 12.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: npm install
+    - name: Run linting
+      run: npm run lint
+    - name: Build packages
+      run: npm run build
+    - name: Run unit tests and integration tests
+      run: npm test
+      
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: npm install
+    - name: Build packages
+      run: npm run build
+    - name: Run e2e tests
+      run: npm run e2e
