@@ -66,12 +66,18 @@ describe('Project with binary files', () => {
 describe('Different extensions', () => {
   describeIntegrationTest('differentExtensions');
 });
-describe('A Babel project with babel.config.js config file', () => {
+describe('A Babel project with babel.config.js config file that exports function', () => {
   const noop = () => {};
   describeIntegrationTest('babelProjectWithBabelConfigJs', {
     extensions: ['.ts'],
     optionsApi: { cache: { forever: noop }} as ConfigAPI,
     optionsFile: 'babel.config.js',
+  });
+});
+describe('A Babel project with babel.config.js config file that exports object', () => {
+  describeIntegrationTest('babelProjectWithBabelConfigJsObject', {
+    extensions: ['.ts'],
+    optionsFile: 'babel.config.js'
   });
 });
 describe('A Babel project with .babelrc.js config file', () => {
