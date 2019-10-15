@@ -27,6 +27,65 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   port: 4200
 });
 
+describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
+
+  let strykerSandboxMock: producers.Mock<Sandbox>;
+  let sut: InitialTestExecutor;
+  let testFrameworkMock: TestFramework | null;
+  let coverageInstrumenterTranspilerMock: producers.Mock<CoverageInstrumenterTranspiler>;
+  let transpilerMock: producers.Mock<Transpiler>;
+  let transpiledFiles: File[];
+  let coverageAnnotatedFiles: File[];
+  let expectedRunResult: RunResult;
+  let inputFiles: InputFileCollection;
+  let timerMock: sinon.SinonStubbedInstance<Timer>;
+  let temporaryDirectoryMock: Mock<TemporaryDirectory>;
+  let options: any;
+
+  function createSut() {
+    temporaryDirectoryMock = producers.mock(TemporaryDirectory);
+
+    return testInjector.injector
+      .provideValue(commonTokens.options, options)
+      .provideValue(coreTokens.inputFiles, inputFiles)
+      .provideValue(coreTokens.loggingContext, LOGGING_CONTEXT)
+      .provideValue(coreTokens.testFramework, testFrameworkMock)
+      .provideValue(coreTokens.transpiler, transpilerMock as Transpiler)
+      .provideValue(coreTokens.timer, timerMock as unknown as Timer)
+      .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock as unknown as TemporaryDirectory)
+      .injectClass(InitialTestExecutor);
+  }
+
+  beforeEach(() => {
+    options = { transpilers: ['typescript'], coverageAnalysis: 'perTest'};
+    inputFiles = new InputFileCollection([new File('mutate.ts', ''), new File('mutate.d.ts', '')], ['mutate.d.ts', 'mutate.ts']);
+    timerMock = sinon.createStubInstance(Timer);
+    strykerSandboxMock = producers.mock(Sandbox as any);
+    transpilerMock = transpiler();
+    coverageInstrumenterTranspilerMock = producers.mock(CoverageInstrumenterTranspiler);
+    sinon.stub(Sandbox, 'create').resolves(strykerSandboxMock);
+    sinon.stub(coverageInstrumenterTranspiler, 'default').returns(coverageInstrumenterTranspilerMock);
+    testFrameworkMock = testFramework();
+    coverageAnnotatedFiles = [
+      new File('mutate.js', ''),
+      new File('mutate.d.ts', ''),
+    ];
+    transpiledFiles = [
+      new File('mutate.ts', ''),
+      new File('mutate.d.ts', '')
+    ];
+    coverageInstrumenterTranspilerMock.transpile.returns(coverageAnnotatedFiles);
+    transpilerMock.transpile.returns(transpiledFiles);
+    expectedRunResult = runResult();
+    strykerSandboxMock.run.resolves(expectedRunResult);
+  });
+
+  it('should not throw a SourceMapError', async () => {
+    sut = createSut();
+    await sut.run();
+  });
+});
+
 describe('InitialTestExecutor run', () => {
 
   let strykerSandboxMock: producers.Mock<Sandbox>;
