@@ -20,7 +20,7 @@
     "chai-as-promised": "^7.1.1",
     "concurrently": "^5.0.0",
     "cross-env": "^6.0.0",
-    "execa": "^2.0.3",
+    "execa": "^3.1.0",
     "glob": "^7.1.1",
     "if-node-version": "^1.1.1",
     "install-local": "~1.0.0",
