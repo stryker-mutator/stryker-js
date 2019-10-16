@@ -18,7 +18,7 @@
     "acorn": "^7.0.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
-    "concurrently": "^4.0.1",
+    "concurrently": "^5.0.0",
     "cross-env": "^6.0.0",
     "execa": "^2.0.3",
     "glob": "^7.1.1",
