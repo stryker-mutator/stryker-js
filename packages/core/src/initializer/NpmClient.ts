@@ -8,7 +8,7 @@ import PromptOption from './PromptOption';
 
 interface NpmSearchResult {
   total: number;
-  results: { package: PackageInfo }[];
+  results: Array<{ package: PackageInfo }>;
 }
 
 interface NpmPackage {
@@ -17,15 +17,17 @@ interface NpmPackage {
 }
 
 const getName = (packageName: string) => {
-  return packageName.replace('@stryker-mutator/', '')
+  return packageName
+    .replace('@stryker-mutator/', '')
     .replace('stryker-', '')
     .split('-')[0];
 };
 
-const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOption[] => searchResults.results.map(result => ({
-  name: getName(result.package.name),
-  pkg: result.package
-}));
+const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOption[] =>
+  searchResults.results.map(result => ({
+    name: getName(result.package.name),
+    pkg: result.package
+  }));
 
 const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
   if (response.statusCode === 200 && response.result) {
@@ -36,24 +38,18 @@ const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
 };
 
 export default class NpmClient {
-
   public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpmSearch, initializerTokens.restClientNpm);
-  constructor(
-    private readonly log: Logger,
-    private readonly searchClient: RestClient,
-    private readonly packageClient: RestClient) {
-  }
+  constructor(private readonly log: Logger, private readonly searchClient: RestClient, private readonly packageClient: RestClient) {}
 
   public getTestRunnerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin')
-      .then(mapSearchResultToPromptOption);
+    return this.search('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').then(mapSearchResultToPromptOption);
   }
 
   public getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:@stryker-mutator/test-framework-plugin')
       .then(searchResult => {
         if (testRunnerFilter) {
-          searchResult.results = searchResult.results.filter(framework => framework.package.keywords.indexOf(testRunnerFilter) >= 0);
+          searchResult.results = searchResult.results.filter(framework => framework.package.keywords.includes(testRunnerFilter));
         }
         return searchResult;
       })
@@ -61,23 +57,21 @@ export default class NpmClient {
   }
 
   public getMutatorOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/mutator-plugin')
-      .then(mapSearchResultToPromptOption);
+    return this.search('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').then(mapSearchResultToPromptOption);
   }
 
   public getTranspilerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/transpiler-plugin')
-      .then(mapSearchResultToPromptOption);
+    return this.search('/v2/search?q=keywords:@stryker-mutator/transpiler-plugin').then(mapSearchResultToPromptOption);
   }
 
   public getTestReporterOptions(): Promise<PromptOption[]> {
-    return this.search(`/v2/search?q=keywords:@stryker-mutator/reporter-plugin`)
-      .then(mapSearchResultToPromptOption);
+    return this.search('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').then(mapSearchResultToPromptOption);
   }
 
   public getAdditionalConfig(pkg: PackageInfo): Promise<object> {
     const path = `/${pkg.name}@${pkg.version}/package.json`;
-    return this.packageClient.get<NpmPackage>(path)
+    return this.packageClient
+      .get<NpmPackage>(path)
       .then(handleResult(path))
       .then(pkg => pkg.initStrykerConfig || {})
       .catch(err => {
@@ -88,7 +82,8 @@ export default class NpmClient {
 
   private search(path: string): Promise<NpmSearchResult> {
     this.log.debug(`Searching: ${path}`);
-    return this.searchClient.get<NpmSearchResult>(path)
+    return this.searchClient
+      .get<NpmSearchResult>(path)
       .then(handleResult(path))
       .catch(err => {
         this.log.error(`Unable to reach npms.io (for query ${path}). Please check your internet connection.`, errorToString(err));

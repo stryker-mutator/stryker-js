@@ -3,11 +3,10 @@ import { tokens } from '@stryker-mutator/api/plugin';
 import { getLogger } from 'log4js';
 
 export class Echo {
-
   private readonly logger = getLogger(Echo.name);
 
   public static inject = tokens('name');
-  constructor(public name: string) { }
+  constructor(public name: string) {}
 
   public say(value: string) {
     return `${this.name}: ${value}`;
@@ -27,7 +26,9 @@ export class Echo {
 
   public exit(code: number) {
     process.exit(code);
-    return new Promise(() => {/*never resolve*/ });
+    return new Promise(() => {
+      /*never resolve*/
+    });
   }
 
   public readFile() {
@@ -60,6 +61,7 @@ export class Echo {
 
   public memoryLeak() {
     const arr: number[] = [];
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       arr.push(1);
     }

@@ -9,7 +9,6 @@ import { MutatorFacade } from '../../../src/mutants/MutatorFacade';
 import { Mock } from '../../helpers/producers';
 
 describe('MutatorFacade', () => {
-
   let mutatorMock: Mock<Mutator>;
   let pluginCreatorMock: Mock<PluginCreator<PluginKind.Mutator>>;
 
@@ -55,7 +54,7 @@ describe('MutatorFacade', () => {
         factory.mutant({ mutatorName: 'foo' }),
         factory.mutant({ mutatorName: 'bar' }),
         factory.mutant({ mutatorName: 'baz' })
-    ]);
+      ]);
       testInjector.options.mutator = {
         excludedMutations: ['foo'],
         name: 'javascript'
@@ -75,20 +74,19 @@ describe('MutatorFacade', () => {
         name: 'javascript'
       };
       createSut().mutate([]);
-      expect(testInjector.logger.info).calledWith('It\'s a mutant-free world, nothing to test. (3 Mutant(s) excluded)');
+      expect(testInjector.logger.info).calledWith("It's a mutant-free world, nothing to test. (3 Mutant(s) excluded)");
     });
 
     it('should log the absence of mutants if no mutants were generated', async () => {
       mutatorMock.mutate.returns([]);
       createSut().mutate([]);
-      expect(testInjector.logger.info).calledWith('It\'s a mutant-free world, nothing to test.');
+      expect(testInjector.logger.info).calledWith("It's a mutant-free world, nothing to test.");
     });
-
   });
 
   function createSut() {
     return testInjector.injector
-      .provideValue(coreTokens.pluginCreatorMutator, pluginCreatorMock as unknown as PluginCreator<PluginKind.Mutator>)
+      .provideValue(coreTokens.pluginCreatorMutator, (pluginCreatorMock as unknown) as PluginCreator<PluginKind.Mutator>)
       .injectClass(MutatorFacade);
   }
 });

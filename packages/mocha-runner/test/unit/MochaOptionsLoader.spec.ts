@@ -10,7 +10,6 @@ import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { mochaOptionsKey } from '../../src/utils';
 
 describe(MochaOptionsLoader.name, () => {
-
   let readFileStub: sinon.SinonStub;
   let existsFileStub: sinon.SinonStub;
   let config: Config;
@@ -21,7 +20,6 @@ describe(MochaOptionsLoader.name, () => {
   });
 
   describe('with mocha >= 6', () => {
-
     let rawOptions: { [option: string]: any };
 
     beforeEach(() => {
@@ -32,7 +30,8 @@ describe(MochaOptionsLoader.name, () => {
     it('should log about mocha >= 6', () => {
       sut.load(testInjector.options);
       expect(testInjector.logger.debug).calledWith(
-        'Mocha >= 6 detected. Using mocha\'s `%s` to load mocha options', LibWrapper.loadOptions && LibWrapper.loadOptions.name
+        "Mocha >= 6 detected. Using mocha's `%s` to load mocha options",
+        LibWrapper.loadOptions && LibWrapper.loadOptions.name
       );
     });
 
@@ -77,7 +76,7 @@ describe(MochaOptionsLoader.name, () => {
         spec: ['test/**/*.js'],
         timeout: 'baz',
         ['async-only']: 'qux',
-        ui: 'quux',
+        ui: 'quux'
       });
     });
 
@@ -89,19 +88,16 @@ describe(MochaOptionsLoader.name, () => {
       rawOptions.baz = 'qux';
       sut.load(testInjector.options);
       const fnName = LibWrapper.loadOptions && LibWrapper.loadOptions.name;
-      expect(testInjector.logger.trace).calledWith(
-        `Mocha: ${fnName}(['--foo','bar']) => {"baz":"qux"}`
-      );
+      expect(testInjector.logger.trace).calledWith(`Mocha: ${fnName}(['--foo','bar']) => {"baz":"qux"}`);
     });
 
-    it('should respect mocha\'s defaults', () => {
+    it("should respect mocha's defaults", () => {
       const options = sut.load(testInjector.options);
       expect(options).deep.eq(createMochaOptions());
     });
   });
 
   describe('with mocha < 6', () => {
-
     beforeEach(() => {
       sinon.stub(LibWrapper, 'loadOptions').value(undefined);
       readFileStub = sinon.stub(fs, 'readFileSync');
@@ -131,7 +127,7 @@ describe(MochaOptionsLoader.name, () => {
       expect(fs.readFileSync).calledWith(path.resolve('some/mocha.opts/file'));
     });
 
-    it('should log an error if specified mocha.opts file doesn\'t exist', () => {
+    it("should log an error if specified mocha.opts file doesn't exist", () => {
       readFileStub.returns('');
       existsFileStub.returns(false);
       config.mochaOptions = {
@@ -139,7 +135,9 @@ describe(MochaOptionsLoader.name, () => {
       };
 
       sut.load(config);
-      expect(testInjector.logger.error).calledWith(`Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`);
+      expect(testInjector.logger.error).calledWith(
+        `Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`
+      );
     });
 
     it('should load default mocha.opts file if not specified', () => {
@@ -149,7 +147,7 @@ describe(MochaOptionsLoader.name, () => {
       expect(fs.readFileSync).calledWith(path.resolve('./test/mocha.opts'));
     });
 
-    it('shouldn\'t load anything if mocha.opts = false', () => {
+    it("shouldn't load anything if mocha.opts = false", () => {
       config.mochaOptions = {
         opts: false
       };
@@ -162,7 +160,10 @@ describe(MochaOptionsLoader.name, () => {
       existsFileStub.returns(false);
       const options = sut.load(config);
       expect(options).deep.eq(createMochaOptions());
-      expect(testInjector.logger.debug).calledWith('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', 'mochaOptions');
+      expect(testInjector.logger.debug).calledWith(
+        'No mocha opts file found, not loading additional mocha options (%s.opts was not defined).',
+        'mochaOptions'
+      );
     });
 
     it('should load `--require` and `-r` properties if specified in mocha.opts file', () => {
@@ -173,10 +174,7 @@ describe(MochaOptionsLoader.name, () => {
       config.mochaOptions = { opts: '.' };
       const options = sut.load(config);
       expect(options).deep.include({
-        require: [
-          'src/test/support/setup',
-          'babel-require'
-        ]
+        require: ['src/test/support/setup', 'babel-require']
       });
     });
 
@@ -213,15 +211,17 @@ describe(MochaOptionsLoader.name, () => {
         ui: 'exports'
       };
       const options = sut.load(config);
-      expect(options).deep.equal(createMochaOptions({
-        asyncOnly: false,
-        extension: ['js'],
-        opts: 'path/to/opts/file',
-        require: ['ts-node/register'],
-        spec: ['test'],
-        timeout: 4000,
-        ui: 'exports'
-      }));
+      expect(options).deep.equal(
+        createMochaOptions({
+          asyncOnly: false,
+          extension: ['js'],
+          opts: 'path/to/opts/file',
+          require: ['ts-node/register'],
+          spec: ['test'],
+          timeout: 4000,
+          ui: 'exports'
+        })
+      );
     });
 
     it('should ignore additional properties', () => {
@@ -230,7 +230,7 @@ describe(MochaOptionsLoader.name, () => {
       --ignore-leaks
       `);
       config.mochaOptions = {
-        opts: 'some/mocha.opts/file',
+        opts: 'some/mocha.opts/file'
       };
       const options = sut.load(config);
       expect(options).not.have.property('reporter');
@@ -245,22 +245,22 @@ describe(MochaOptionsLoader.name, () => {
       --ui
       `);
       config.mochaOptions = {
-        opts: 'some/mocha.opts/file',
+        opts: 'some/mocha.opts/file'
       };
       const options = sut.load(config);
-      expect(options).deep.eq(createMochaOptions({
-        extension: ['js'],
-        opts: 'some/mocha.opts/file',
-        spec: [
-          'test'
-        ],
-        timeout: undefined,
-        ui: undefined
-      }));
+      expect(options).deep.eq(
+        createMochaOptions({
+          extension: ['js'],
+          opts: 'some/mocha.opts/file',
+          spec: ['test'],
+          timeout: undefined,
+          ui: undefined
+        })
+      );
     });
   });
 
-  function createMochaOptions(overrides?: Partial<MochaOptions>)  {
+  function createMochaOptions(overrides?: Partial<MochaOptions>) {
     return {
       extension: ['js'],
       file: [],
@@ -269,8 +269,7 @@ describe(MochaOptionsLoader.name, () => {
       spec: ['test'],
       timeout: 2000,
       ui: 'bdd',
-      ... overrides
+      ...overrides
     };
   }
-
 });

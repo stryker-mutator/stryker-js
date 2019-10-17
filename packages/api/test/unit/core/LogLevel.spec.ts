@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import LogLevel from '../../../src/core/LogLevel';
 
 describe('LogLevel', () => {
-
   function arrangeActAssertLogLevel(actual: LogLevel, expected: string) {
     it(`should provide "${expected}" for log level "${actual}"`, () => {
       expect(actual).eq(expected);

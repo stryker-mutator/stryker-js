@@ -2,7 +2,6 @@
  * Represents a file within Stryker. Could be a strictly in-memory file.
  */
 export default class File {
-
   private _textContent: string | undefined;
   private readonly _content: Buffer;
 
@@ -23,14 +22,14 @@ export default class File {
   /**
    * Gets the underlying content as buffer.
    */
-  get content(): Buffer {
+  public get content(): Buffer {
     return this._content;
   }
 
   /**
    * Gets the underlying content as string using utf8 encoding.
    */
-  get textContent(): string {
+  public get textContent(): string {
     if (!this._textContent) {
       this._textContent = this.content.toString();
     }

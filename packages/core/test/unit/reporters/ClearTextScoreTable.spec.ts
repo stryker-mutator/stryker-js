@@ -12,17 +12,19 @@ describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {
     it('should report the clear text table with correct values', () => {
       const metricsResult: MetricsResult = {
-        childResults: [{
-          childResults: [
-            {
-              childResults: [],
-              metrics: metrics({ mutationScore: 59.99 }),
-              name: 'some/test/for/a/deep/file.js'
-            }
-          ],
-          metrics: metrics({ mutationScore: 60 }),
-          name: 'child1'
-        }],
+        childResults: [
+          {
+            childResults: [
+              {
+                childResults: [],
+                metrics: metrics({ mutationScore: 59.99 }),
+                name: 'some/test/for/a/deep/file.js'
+              }
+            ],
+            metrics: metrics({ mutationScore: 60 }),
+            name: 'child1'
+          }
+        ],
         metrics: metrics({
           compileErrors: 7,
           killed: 1,
@@ -72,10 +74,10 @@ describe(ClearTextScoreTable.name, () => {
       const thresholds: MutationScoreThresholds = { high: 60, low: 50, break: 0 };
       const input: MetricsResult = metricsResult({
         childResults: [
-          metricsResult({ metrics: metrics({ mutationScore: 60.00 }) }),
+          metricsResult({ metrics: metrics({ mutationScore: 60.0 }) }),
           metricsResult({ metrics: metrics({ mutationScore: 59.99 }) }),
           metricsResult({ metrics: metrics({ mutationScore: 50.01 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 50.00 }) }),
+          metricsResult({ metrics: metrics({ mutationScore: 50.0 }) }),
           metricsResult({ metrics: metrics({ mutationScore: 49.99 }) })
         ],
         metrics: metrics({ mutationScore: 60.01 })
@@ -95,10 +97,7 @@ describe(ClearTextScoreTable.name, () => {
     it('should color score in red and green if low equals high thresholds', () => {
       const thresholds: MutationScoreThresholds = { high: 50, low: 50, break: 0 };
       const input: MetricsResult = metricsResult({
-        childResults: [
-          metricsResult({ metrics: metrics({ mutationScore: 50.00 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 49.99 }) })
-        ],
+        childResults: [metricsResult({ metrics: metrics({ mutationScore: 50.0 }) }), metricsResult({ metrics: metrics({ mutationScore: 49.99 }) })],
         metrics: metrics({ mutationScore: 50.01 })
       });
       const sut = new ClearTextScoreTable(input, thresholds);

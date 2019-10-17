@@ -17,7 +17,6 @@ import { MutantTranspileScheduler } from '../../../src/transpiler/MutantTranspil
 import { Mock, mock, testableMutant, transpiledMutant } from '../../helpers/producers';
 
 describe(MutationTestExecutor.name, () => {
-
   let sandboxPoolMock: Mock<SandboxPool>;
   let mutantTranspileSchedulerMock: Mock<MutantTranspileScheduler>;
   let transpiledMutants: Observable<TranspiledMutant>;
@@ -36,10 +35,7 @@ describe(MutationTestExecutor.name, () => {
     inputFiles = new InputFileCollection([new File('input.ts', '')], []);
     mutants = [testableMutant()];
     transpiledMutants = of(transpiledMutant('foo.js'), transpiledMutant('bar.js'));
-    mutantResults = [
-      factory.mutantResult({ status: MutantStatus.RuntimeError }),
-      factory.mutantResult({ status: MutantStatus.Survived })
-    ];
+    mutantResults = [factory.mutantResult({ status: MutantStatus.RuntimeError }), factory.mutantResult({ status: MutantStatus.Survived })];
     mutantTranspileSchedulerMock.scheduleTranspileMutants.returns(transpiledMutants);
     sandboxPoolMock.runMutants.returns(from(mutantResults));
     sut = createSut();
@@ -47,15 +43,14 @@ describe(MutationTestExecutor.name, () => {
 
   function createSut(): MutationTestExecutor {
     return testInjector.injector
-      .provideValue(coreTokens.sandboxPool, sandboxPoolMock as unknown as SandboxPool)
-      .provideValue(coreTokens.mutantTranspileScheduler, mutantTranspileSchedulerMock as unknown as MutantTranspileScheduler)
+      .provideValue(coreTokens.sandboxPool, (sandboxPoolMock as unknown) as SandboxPool)
+      .provideValue(coreTokens.mutantTranspileScheduler, (mutantTranspileSchedulerMock as unknown) as MutantTranspileScheduler)
       .provideValue(coreTokens.inputFiles, inputFiles)
       .provideValue(coreTokens.reporter, reporter)
       .injectClass(MutationTestExecutor);
   }
 
   describe('run', () => {
-
     it('should have ran the mutants in the sandbox pool', async () => {
       await sut.run(mutants);
       expect(mutantTranspileSchedulerMock.scheduleTranspileMutants).calledWith(mutants);
@@ -83,6 +78,5 @@ describe(MutationTestExecutor.name, () => {
       const actualResults = await sut.run(mutants);
       expect(actualResults).deep.eq(mutantResults);
     });
-
   });
 });

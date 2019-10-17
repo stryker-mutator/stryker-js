@@ -6,16 +6,15 @@ import { Injector, rootInjector, Scope } from 'typed-inject';
 import * as factory from './factory';
 
 class TestInjector {
-
   private readonly providePluginResolver = (): PluginResolver => {
     return this.pluginResolver;
-  }
+  };
   private readonly provideLogger = (): Logger => {
     return this.logger;
-  }
+  };
   private readonly provideOptions = () => {
     return this.options;
-  }
+  };
 
   public pluginResolver: sinon.SinonStubbedInstance<PluginResolver>;
   public options: StrykerOptions;

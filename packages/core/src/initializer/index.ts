@@ -27,6 +27,4 @@ export function initializerFactory(): StrykerInitializer {
     .injectClass(StrykerInitializer);
 }
 
-export {
-  initializerTokens
-};
+export { initializerTokens };

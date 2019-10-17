@@ -16,11 +16,7 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
   if ('default' in cli) {
     cli = cli.default;
   }
-  const cliArgs = [
-    'test',
-    '--progress=false',
-    `--karma-config=${require.resolve('./stryker-karma.conf')}`
-  ];
+  const cliArgs = ['test', '--progress=false', `--karma-config=${require.resolve('./stryker-karma.conf')}`];
   if (ngConfig && ngConfig.testArguments) {
     const testArguments: NgTestArguments = ngConfig.testArguments;
 
@@ -41,7 +37,9 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
     outputStream: process.stdout
   }).then((exitCode: number) => {
     if (exitCode > 0) {
-      throw new Error(`\`ng test\` command failed with exit code ${exitCode}. Please run with logLevel 'trace' to see the angular-cli console output (actual command was ${actualCommand})`);
+      throw new Error(
+        `\`ng test\` command failed with exit code ${exitCode}. Please run with logLevel 'trace' to see the angular-cli console output (actual command was ${actualCommand})`
+      );
     }
   });
 }
@@ -49,18 +47,12 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
 function verifyAngularCliVersion() {
   const version = semver.coerce(requireModule('@angular/cli/package').version);
   if (!version || semver.lt(version, MIN_ANGULAR_CLI_VERSION)) {
-    throw new Error(
-      `Your @angular/cli version (${version}) is not supported. Please install ${MIN_ANGULAR_CLI_VERSION} or higher`
-    );
+    throw new Error(`Your @angular/cli version (${version}) is not supported. Please install ${MIN_ANGULAR_CLI_VERSION} or higher`);
   }
 }
 function verifyNgTestArguments(ngTestArguments: string[]) {
-  const prefixedArguments = ngTestArguments.filter(key =>
-    key.trim().startsWith('-')
-  );
+  const prefixedArguments = ngTestArguments.filter(key => key.trim().startsWith('-'));
   if (prefixedArguments.length > 0) {
-    throw new Error(
-      `Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are ${prefixedArguments}.`
-    );
+    throw new Error(`Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are ${prefixedArguments}.`);
   }
 }

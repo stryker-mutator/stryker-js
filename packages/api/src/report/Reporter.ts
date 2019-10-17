@@ -8,7 +8,6 @@ import SourceFile from './SourceFile';
  * Represents a reporter which can report during or after a Stryker run
  */
 interface Reporter {
-
   /**
    * Called when a source file was loaded
    * @param file The immutable source file
@@ -25,7 +24,7 @@ interface Reporter {
    * Called when mutants are matched with tests
    * @param results The immutable array of mutants
    */
-  onAllMutantsMatchedWithTests?(results: ReadonlyArray<MatchedMutant>): void;
+  onAllMutantsMatchedWithTests?(results: readonly MatchedMutant[]): void;
 
   /**
    * Called when a mutant was tested

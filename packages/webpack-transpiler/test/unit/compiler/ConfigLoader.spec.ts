@@ -8,9 +8,17 @@ import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { pluginTokens } from '../../../src/pluginTokens';
 import { createStrykerWebpackConfig } from '../../helpers/producers';
 
-class FooPlugin implements Plugin { public foo = true; public apply() { } }
-class ProgressPlugin implements Plugin { public apply() { } }
-class BarPlugin implements Plugin { public bar = true; public apply() { } }
+class FooPlugin implements Plugin {
+  public foo = true;
+  public apply() {}
+}
+class ProgressPlugin implements Plugin {
+  public apply() {}
+}
+class BarPlugin implements Plugin {
+  public bar = true;
+  public apply() {}
+}
 
 describe('ConfigLoader', () => {
   let sut: ConfigLoader;
@@ -21,9 +29,7 @@ describe('ConfigLoader', () => {
     requireStub = sinon.stub();
     existsSyncStub = sinon.stub(fs, 'existsSync');
 
-    sut = testInjector.injector
-      .provideValue(pluginTokens.require, requireStub)
-      .injectClass(ConfigLoader);
+    sut = testInjector.injector.provideValue(pluginTokens.require, requireStub).injectClass(ConfigLoader);
   });
 
   it('should load webpack config from given location', async () => {
@@ -49,7 +55,7 @@ describe('ConfigLoader', () => {
 
   it('should remove "ProgressPlugin" if silent is `true`', async () => {
     // Arrange
-    const bazPlugin = { baz: true, apply() { } };
+    const bazPlugin = { baz: true, apply() {} };
     const webpackConfig: Configuration = {
       plugins: [new FooPlugin(), new ProgressPlugin(), new BarPlugin(), bazPlugin]
     };
@@ -61,9 +67,16 @@ describe('ConfigLoader', () => {
     const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: true }));
 
     // Assert
-    expect(result.plugins).to.be.an('array').that.does.not.deep.include(new ProgressPlugin());
-    expect(result.plugins).to.be.an('array').that.deep.equals([new FooPlugin(), new BarPlugin(), bazPlugin]);
-    expect(testInjector.logger.debug).calledWith('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', 'ProgressPlugin');
+    expect(result.plugins)
+      .to.be.an('array')
+      .that.does.not.deep.include(new ProgressPlugin());
+    expect(result.plugins)
+      .to.be.an('array')
+      .that.deep.equals([new FooPlugin(), new BarPlugin(), bazPlugin]);
+    expect(testInjector.logger.debug).calledWith(
+      'Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.',
+      'ProgressPlugin'
+    );
   });
 
   it('should not remove "ProgressPlugin" if silent is `false`', async () => {
@@ -75,7 +88,9 @@ describe('ConfigLoader', () => {
     existsSyncStub.returns(true);
 
     const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: false }));
-    expect(result.plugins).to.be.an('array').that.does.deep.include(new ProgressPlugin());
+    expect(result.plugins)
+      .to.be.an('array')
+      .that.does.deep.include(new ProgressPlugin());
   });
 
   it('should return an object with the context property pointing to the projectRoot when webpack.config.js does not exist', async () => {
@@ -93,11 +108,12 @@ describe('ConfigLoader', () => {
 
     existsSyncStub.returns(false);
 
-    return expect(sut.load(createStrykerWebpackConfig({ configFile })))
-      .rejectedWith(`Could not load webpack config at "${path.resolve(configFile)}", file not found.`);
+    return expect(sut.load(createStrykerWebpackConfig({ configFile }))).rejectedWith(
+      `Could not load webpack config at "${path.resolve(configFile)}", file not found.`
+    );
   });
 
-  it('should log a debug message when the Webpack configuration is not found and it\'s trying webpack 4 zero config instead', async () => {
+  it("should log a debug message when the Webpack configuration is not found and it's trying webpack 4 zero config instead", async () => {
     const contextPath: string = '/path/to/project/root';
 
     existsSyncStub.returns(false);

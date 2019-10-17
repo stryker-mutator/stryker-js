@@ -64,12 +64,10 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
   });
 
   describe('dispose', () => {
-
     it('should dispose the test runner before disposing the child process itself on `dispose`', async () => {
       childProcessProxyMock.proxy.dispose.resolves();
       await sut.dispose();
-      expect(childProcessProxyMock.proxy.dispose)
-        .calledBefore(childProcessProxyMock.dispose);
+      expect(childProcessProxyMock.proxy.dispose).calledBefore(childProcessProxyMock.dispose);
     });
 
     it('should not reject when the child process is down', async () => {
@@ -87,6 +85,5 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
       expect(childProcessProxyMock.dispose).called;
       testRunnerDisposeTask.resolve(undefined);
     });
-
   });
 });

@@ -4,7 +4,6 @@ import MochaOptionsLoader from './MochaOptionsLoader';
 import { mochaOptionsKey } from './utils';
 
 export default class MochaConfigEditor implements ConfigEditor {
-
   public static inject = tokens('loader');
   constructor(private readonly loader: MochaOptionsLoader) {}
 

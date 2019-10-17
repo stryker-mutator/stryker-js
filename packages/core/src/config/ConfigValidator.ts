@@ -1,5 +1,5 @@
 import { Config } from '@stryker-mutator/api/config';
-import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
+import { LogLevel, MutationScoreThresholds, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
@@ -7,13 +7,13 @@ import { StrykerError } from '@stryker-mutator/util';
 import { coreTokens } from '../di';
 
 export default class ConfigValidator {
-
   private isValid = true;
   public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.testFramework);
   constructor(
     private readonly log: Logger,
     private readonly options: Readonly<StrykerOptions>,
-    private readonly testFramework: TestFramework | null) { }
+    private readonly testFramework: TestFramework | null
+  ) {}
 
   public validate() {
     this.validateTestFramework();
@@ -34,14 +34,16 @@ export default class ConfigValidator {
 
   private validateTestFramework() {
     if (this.options.coverageAnalysis === 'perTest' && !this.testFramework) {
-      this.invalidate('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
+      this.invalidate(
+        'Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".'
+      );
     }
   }
 
   private validateMutator() {
     const mutator = this.options.mutator;
     if (typeof mutator === 'object') {
-      const mutatorDescriptor = mutator as MutatorDescriptor;
+      const mutatorDescriptor = mutator;
       this.validateIsString('mutator.name', mutatorDescriptor.name);
       this.validateIsStringArray('mutator.excludedMutations', mutatorDescriptor.excludedMutations);
     } else if (typeof mutator !== 'string') {
@@ -75,9 +77,19 @@ export default class ConfigValidator {
 
   private validateLogLevel(logProperty: 'logLevel' | 'fileLogLevel') {
     const logLevel = this.options[logProperty];
-    const VALID_LOG_LEVEL_VALUES = [LogLevel.Fatal, LogLevel.Error, LogLevel.Warning, LogLevel.Information, LogLevel.Debug, LogLevel.Trace, LogLevel.Off];
-    if (VALID_LOG_LEVEL_VALUES.indexOf(logLevel) < 0) {
-      this.invalidate(`Value "${logLevel}" is invalid for \`${logProperty}\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`);
+    const VALID_LOG_LEVEL_VALUES = [
+      LogLevel.Fatal,
+      LogLevel.Error,
+      LogLevel.Warning,
+      LogLevel.Information,
+      LogLevel.Debug,
+      LogLevel.Trace,
+      LogLevel.Off
+    ];
+    if (!VALID_LOG_LEVEL_VALUES.includes(logLevel)) {
+      this.invalidate(
+        `Value "${logLevel}" is invalid for \`${logProperty}\`. Expected one of the following: ${this.joinQuotedList(VALID_LOG_LEVEL_VALUES)}`
+      );
     }
   }
 
@@ -89,18 +101,24 @@ export default class ConfigValidator {
   private validateCoverageAnalysis() {
     const VALID_COVERAGE_ANALYSIS_VALUES = ['perTest', 'all', 'off'];
     const coverageAnalysis = this.options.coverageAnalysis;
-    if (VALID_COVERAGE_ANALYSIS_VALUES.indexOf(coverageAnalysis) < 0) {
-      this.invalidate(`Value "${coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the following: ${this.joinQuotedList(VALID_COVERAGE_ANALYSIS_VALUES)}`);
+    if (!VALID_COVERAGE_ANALYSIS_VALUES.includes(coverageAnalysis)) {
+      this.invalidate(
+        `Value "${coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the following: ${this.joinQuotedList(
+          VALID_COVERAGE_ANALYSIS_VALUES
+        )}`
+      );
     }
   }
 
   private validateCoverageAnalysisWithRespectToTranspilers() {
-    if (Array.isArray(this.options.transpilers) &&
-      this.options.transpilers.length > 1 &&
-      this.options.coverageAnalysis !== 'off') {
-      this.invalidate(`Value "${this.options.coverageAnalysis}" for \`coverageAnalysis\` is invalid with multiple transpilers (configured transpilers: ${
-        this.options.transpilers.join(', ')
-        }). Please report this to the Stryker team if you whish this feature to be implemented`);
+    if (Array.isArray(this.options.transpilers) && this.options.transpilers.length > 1 && this.options.coverageAnalysis !== 'off') {
+      this.invalidate(
+        `Value "${
+          this.options.coverageAnalysis
+        }" for \`coverageAnalysis\` is invalid with multiple transpilers (configured transpilers: ${this.options.transpilers.join(
+          ', '
+        )}). Please report this to the Stryker team if you whish this feature to be implemented`
+      );
     }
   }
 

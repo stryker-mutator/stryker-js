@@ -5,7 +5,6 @@ import * as sinon from 'sinon';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
 describe('fileUtils', () => {
-
   let existsStub: sinon.SinonStub;
 
   beforeEach(() => {
@@ -37,11 +36,13 @@ describe('fileUtils', () => {
       expect(actual).eq(expectedNodeModules);
     });
 
-    it('should return node_modules located in parent directory of `basePath` if it didn\'t exist in base path', async () => {
+    it("should return node_modules located in parent directory of `basePath` if it didn't exist in base path", async () => {
       const basePath = path.resolve('a', 'b', 'c');
       const expectedNodeModules = path.resolve('a', 'node_modules');
-      existsStub.resolves(false) // default
-        .withArgs(expectedNodeModules).resolves(true);
+      existsStub
+        .resolves(false) // default
+        .withArgs(expectedNodeModules)
+        .resolves(true);
       const actual = await fileUtils.findNodeModules(basePath);
       expect(actual).eq(expectedNodeModules);
     });

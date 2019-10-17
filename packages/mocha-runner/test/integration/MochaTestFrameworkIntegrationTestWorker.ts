@@ -20,9 +20,7 @@ export default class MochaTestFrameworkIntegrationTestWorker {
     testInjector.options.mochaOptions = {
       file: [],
       ignore: [],
-      spec: [
-        path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')
-      ],
+      spec: [path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'MyMathSpec.js')]
     };
     this.sut = testInjector.injector
       .provideValue(commonTokens.sandboxFileNames, [
@@ -41,7 +39,8 @@ export default class MochaTestFrameworkIntegrationTestWorker {
 
   public listenForParentProcess() {
     process.on('message', (message: ChildMessage) => {
-      this.sut.run({ testHooks: message.testHooks })
+      this.sut
+        .run({ testHooks: message.testHooks })
         .then(result => this.send(result))
         .catch(error => this.send(error));
     });
@@ -59,6 +58,6 @@ export default class MochaTestFrameworkIntegrationTestWorker {
   }
 }
 
-if (process.argv.indexOf(AUTO_START_ARGUMENT) >= 0) {
+if (process.argv.includes(AUTO_START_ARGUMENT)) {
   new MochaTestFrameworkIntegrationTestWorker();
 }

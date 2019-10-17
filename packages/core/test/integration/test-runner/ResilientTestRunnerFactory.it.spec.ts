@@ -12,7 +12,6 @@ import LoggingServer from '../../helpers/LoggingServer';
 import { sleep } from '../../helpers/testUtils';
 
 describe('ResilientTestRunnerFactory integration', () => {
-
   let sut: Required<TestRunner>;
   let options: StrykerOptions;
   const sandboxWorkingDirectory = path.resolve('./test/integration/test-runner');
@@ -98,7 +97,9 @@ describe('ResilientTestRunnerFactory integration', () => {
     const result = await actRun(1000);
     expect(RunStatus[result.status]).to.be.eq(RunStatus[RunStatus.Error]);
     expect(result.errorMessages).to.have.length(1);
-    expect((result.errorMessages as any)[0]).includes('SyntaxError: This is invalid syntax!').and.includes('at ErroredTestRunner.run');
+    expect((result.errorMessages as any)[0])
+      .includes('SyntaxError: This is invalid syntax!')
+      .and.includes('at ErroredTestRunner.run');
   });
 
   it('should run only after initialization, even when it is slow', async () => {
@@ -137,7 +138,9 @@ describe('ResilientTestRunnerFactory integration', () => {
     await arrangeSut('proximity-mine');
     const result = await actRun();
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Error]);
-    expect(result.errorMessages).property('0').contains('Test runner crashed');
+    expect(result.errorMessages)
+      .property('0')
+      .contains('Test runner crashed');
   });
 
   it('should handle asynchronously handled promise rejections from the underlying test runner', async () => {
@@ -149,9 +152,11 @@ describe('ResilientTestRunnerFactory integration', () => {
     await loggingServer.dispose();
     const actualLogEvents = await logEvents;
     expect(
-      actualLogEvents.find(logEvent =>
-        log4js.levels.DEBUG.isEqualTo(logEvent.level)
-        && logEvent.data.toString().indexOf('UnhandledPromiseRejectionWarning: Unhandled promise rejection') > -1)
+      actualLogEvents.find(
+        logEvent =>
+          log4js.levels.DEBUG.isEqualTo(logEvent.level) &&
+          logEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection')
+      )
     ).ok;
   });
 });

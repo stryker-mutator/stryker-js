@@ -1,0 +1,7 @@
+.gitignore
+/e2e/**
+/helpers/**
+/perf/**
+**/node_modules/**
+*.d.ts
+/packages/*/testResources/**

@@ -9,9 +9,8 @@ export interface PromptResult {
 }
 
 export class StrykerInquirer {
-
   public async promptPresets(options: Preset[]): Promise<Preset | undefined> {
-    const choices: inquirer.ChoiceType<string>[] = options.map(_ => _.name);
+    const choices: Array<inquirer.ChoiceType<string>> = options.map(_ => _.name);
     choices.push(new inquirer.Separator());
     choices.push('None/other');
     const answers = await inquirer.prompt<{ preset: string }>({
@@ -24,13 +23,14 @@ export class StrykerInquirer {
   }
 
   public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
-    const choices: inquirer.ChoiceType<string>[] = options.map(_ => _.name);
+    const choices: Array<inquirer.ChoiceType<string>> = options.map(_ => _.name);
     choices.push(new inquirer.Separator());
     choices.push(CommandTestRunner.runnerName);
     const answers = await inquirer.prompt<{ testRunner: string }>({
       choices,
       default: 'Mocha',
-      message: 'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
+      message:
+        'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
       name: 'testRunner',
       type: 'list'
     });

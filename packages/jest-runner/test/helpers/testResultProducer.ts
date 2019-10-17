@@ -25,10 +25,7 @@ export const createFailResult = () => ({
         {
           ancestorTitles: ['App'],
           duration: 2,
-          failureMessages: [
-            'Fail message 1',
-            'Fail message 2'
-          ],
+          failureMessages: ['Fail message 1', 'Fail message 2'],
           fullName: 'App render renders without crashing',
           numPassingAsserts: 0,
           status: 'failed',
@@ -37,10 +34,7 @@ export const createFailResult = () => ({
         {
           ancestorTitles: ['App'],
           duration: 0,
-          failureMessages: [
-            'Fail message 3',
-            'Fail message 4'
-          ],
+          failureMessages: ['Fail message 3', 'Fail message 4'],
           fullName: 'App render renders without crashing',
           numPassingAsserts: 0,
           status: 'failed',
@@ -187,7 +181,7 @@ export const createTodoResult = () => ({
       sourceMaps: {},
       testResults: [
         {
-          ancestorTitles: [ 'App' ],
+          ancestorTitles: ['App'],
           duration: 4,
           failureMessages: [],
           fullName: 'App renders without crashing',
@@ -197,7 +191,7 @@ export const createTodoResult = () => ({
           title: 'renders without crashing'
         },
         {
-          ancestorTitles: [ 'App' ],
+          ancestorTitles: ['App'],
           duration: 0,
           failureMessages: [],
           fullName: 'App renders without crashing with children',
@@ -206,7 +200,7 @@ export const createTodoResult = () => ({
           status: 'todo',
           title: 'renders without crashing with children'
         }
-      ],
+      ]
     }
   ],
   wasInterrupted: false

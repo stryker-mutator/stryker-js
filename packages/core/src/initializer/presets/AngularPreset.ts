@@ -30,7 +30,9 @@ export class AngularPreset implements Preset {
           }
         },
         reporters: ['progress', 'clear-text', 'html'],
-        maxConcurrentTestRunners: ${Math.floor(os.cpus().length / 2)}, // Recommended to use about half of your available cores when running stryker with angular.
+        maxConcurrentTestRunners: ${Math.floor(
+          os.cpus().length / 2
+        )}, // Recommended to use about half of your available cores when running stryker with angular.
         coverageAnalysis: 'off'
     }`;
   public async createConfig(): Promise<PresetConfiguration> {

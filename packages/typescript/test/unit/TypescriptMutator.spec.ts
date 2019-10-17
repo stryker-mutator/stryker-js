@@ -13,10 +13,7 @@ class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
     return node.kind === ts.SyntaxKind.FunctionDeclaration;
   }
   protected identifyReplacements(node: ts.FunctionDeclaration): NodeReplacement[] {
-    return [
-      { node, replacement: '// Function declaration removed' },
-      { node, replacement: 'changedToOtherCall()' }
-    ];
+    return [{ node, replacement: '// Function declaration removed' }, { node, replacement: 'changedToOtherCall()' }];
   }
 }
 
@@ -32,10 +29,7 @@ class SourceFileMutator extends NodeMutator<ts.SourceFile> {
 
 function createSut() {
   return testInjector.injector
-    .provideValue(MUTATORS_TOKEN, [
-      new SourceFileMutator(),
-      new FunctionDeclarationMutator()
-    ])
+    .provideValue(MUTATORS_TOKEN, [new SourceFileMutator(), new FunctionDeclarationMutator()])
     .injectClass(TypescriptMutator);
 }
 
@@ -46,10 +40,10 @@ describe('TypescriptMutator', () => {
     // Arrange
     const expectedMutatorNames = fs
       .readdirSync(path.resolve(__dirname, '..', '..', 'src', 'mutator'))
-      .filter(mutatorFile => path.extname(mutatorFile) === '.ts'
-        && !mutatorFile.endsWith('.d.ts')
-        && mutatorFile !== 'NodeMutator.ts'
-        && mutatorFile !== 'index.ts')
+      .filter(
+        mutatorFile =>
+          path.extname(mutatorFile) === '.ts' && !mutatorFile.endsWith('.d.ts') && mutatorFile !== 'NodeMutator.ts' && mutatorFile !== 'index.ts'
+      )
       .map(fileName => fileName.substr(0, fileName.length - 'Mutator.ts'.length));
 
     // Act
@@ -61,7 +55,6 @@ describe('TypescriptMutator', () => {
   });
 
   describe('using 2 mutators', () => {
-
     let file1: File;
     let file2: File;
 
@@ -72,20 +65,19 @@ describe('TypescriptMutator', () => {
         `function add(n...: number[]) {
             return n.sum();
           }
-          const a = add(1, 3, 4, 5);`);
+          const a = add(1, 3, 4, 5);`
+      );
       file2 = new File(
         'file2.ts',
         `function subtract(n...: numbers[]){
           return n[0] - n.slice(1).sum();
         }
-        const b = subtract(10, 3, 4);`);
+        const b = subtract(10, 3, 4);`
+      );
     });
 
     it('should deliver 6 mutants', () => {
-      const mutants = sut.mutate([
-        file1,
-        file2
-      ]);
+      const mutants = sut.mutate([file1, file2]);
       expect(mutants.filter(mutant => mutant.mutatorName === 'SourceFileForTest')).lengthOf(2);
       expect(mutants.filter(mutant => mutant.mutatorName === 'FunctionDeclarationForTest')).lengthOf(4);
     });
@@ -97,14 +89,10 @@ describe('TypescriptMutator', () => {
 
       it('should not skip a node when it does not have a declare modifier', () => {
         // Arrange
-        file1 = new File(
-          'file1.ts',
-          `function mutated(a: number, b: number);`);
+        file1 = new File('file1.ts', 'function mutated(a: number, b: number);');
 
         // Act
-        const mutants = sut.mutate([
-          file1,
-        ]);
+        const mutants = sut.mutate([file1]);
 
         // Assert
         expect(mutants).to.deep.equal([
@@ -131,14 +119,10 @@ describe('TypescriptMutator', () => {
 
       it('should skip a node when it has a declare modifier', () => {
         // Arrange
-        file1 = new File(
-          'file1.ts',
-          `declare function notMutated(a: number, b: number);`);
+        file1 = new File('file1.ts', 'declare function notMutated(a: number, b: number);');
 
         // Act
-        const mutants = sut.mutate([
-          file1,
-        ]);
+        const mutants = sut.mutate([file1]);
 
         // Assert
         expect(mutants).to.deep.equal([
@@ -146,7 +130,7 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 50],
-            replacement: '"stryker was here"',
+            replacement: '"stryker was here"'
           }
         ]);
       });
@@ -158,12 +142,11 @@ describe('TypescriptMutator', () => {
           `interface Hello {
             value: string;
             sortable?: true;
-          }`);
+          }`
+        );
 
         // Act
-        const mutants = sut.mutate([
-          file1,
-        ]);
+        const mutants = sut.mutate([file1]);
 
         // Assert
         expect(mutants).to.deep.equal([
@@ -171,11 +154,10 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 85],
-            replacement: '"stryker was here"',
+            replacement: '"stryker was here"'
           }
         ]);
       });
     });
-
   });
 });

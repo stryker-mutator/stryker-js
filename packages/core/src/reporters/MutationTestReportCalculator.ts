@@ -8,7 +8,6 @@ import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
 
 export class MutationTestReportCalculator {
-
   public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger);
 
   constructor(
@@ -16,13 +15,13 @@ export class MutationTestReportCalculator {
     private readonly options: StrykerOptions,
     private readonly inputFiles: InputFileCollection,
     private readonly log: Logger
-  ) { }
+  ) {}
 
-  public report(results: ReadonlyArray<MutantResult>) {
+  public report(results: readonly MutantResult[]) {
     this.reporter.onMutationTestReportReady(this.mutationTestReport(results));
   }
 
-  private mutationTestReport(results: ReadonlyArray<MutantResult>): mutationTestReportSchema.MutationTestResult {
+  private mutationTestReport(results: readonly MutantResult[]): mutationTestReportSchema.MutationTestResult {
     return {
       files: this.toFileResults(results),
       schemaVersion: '1.0',
@@ -30,7 +29,7 @@ export class MutationTestReportCalculator {
     };
   }
 
-  private toFileResults(results: ReadonlyArray<MutantResult>): mutationTestReportSchema.FileResultDictionary {
+  private toFileResults(results: readonly MutantResult[]): mutationTestReportSchema.FileResultDictionary {
     const resultDictionary: mutationTestReportSchema.FileResultDictionary = Object.create(null);
     results.forEach(mutantResult => {
       const fileResult = resultDictionary[mutantResult.sourceFilePath];
@@ -45,8 +44,10 @@ export class MutationTestReportCalculator {
             source: sourceFile.textContent
           };
         } else {
-          this.log.warn(normalizeWhitespaces(`File "${mutantResult.sourceFilePath}" not found
-          in input files, but did receive mutant result for it. This shouldn't happen`));
+          this.log.warn(
+            normalizeWhitespaces(`File "${mutantResult.sourceFilePath}" not found
+          in input files, but did receive mutant result for it. This shouldn't happen`)
+          );
         }
       }
     });
