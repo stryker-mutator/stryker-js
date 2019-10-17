@@ -55,7 +55,7 @@ export default class JasmineTestRunner implements TestRunner {
     const jasmine = new Jasmine({ projectBaseDir: process.cwd() });
     // The `loadConfigFile` will fallback on the default
     jasmine.loadConfigFile(this.jasmineConfigFile);
-    jasmine.stopSpecOnExpectationFailure(true);
+    jasmine.env.oneFailurePerSpec(false);
     jasmine.exit = () => { };
     jasmine.clearReporters();
     jasmine.randomizeTests(false);

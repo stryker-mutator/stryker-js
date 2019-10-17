@@ -42,7 +42,7 @@ describe('JasmineTestRunner', () => {
     expect(helpers.Jasmine).calledWithNew;
     expect(helpers.Jasmine).calledWith({ projectBaseDir: process.cwd() });
     expect(jasmineStub.loadConfigFile).calledWith('jasmineConfFile');
-    expect(jasmineStub.stopSpecOnExpectationFailure).calledWith(true);
+    expect(jasmineStub.oneFailurePerSpec).calledWith(false);
     expect(jasmineStub.exit).ok;
     expect(jasmineStub.clearReporters).called;
     expect(jasmineStub.randomizeTests).calledWith(false);

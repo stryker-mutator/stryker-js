@@ -54,6 +54,9 @@ declare namespace jasmine {
         suiteDone?(result: CustomReporterResult): void;
         jasmineDone(): void;
     }
+    interface Env {
+        oneFailurePerSpec(value: boolean): void;
+    }
 }
 declare module 'jasmine' {
     class Jasmine {
@@ -75,8 +78,7 @@ declare module 'jasmine' {
         randomizeTests(value?: any): boolean;
         seed(value: any): void;
         showColors(value: any): void;
-        stopSpecOnExpectationFailure(value: boolean): void;
-        stopOnSpecFailure(value: boolean): void;
+        oneFailurePerSpec(value: boolean): void;
         static ConsoleReporter(): any;
         reportersCount: number;
         completionReporter: jasmine.CustomReporter;
