@@ -56,7 +56,6 @@ export default class JasmineTestRunner implements TestRunner {
     // The `loadConfigFile` will fallback on the default
     jasmine.loadConfigFile(this.jasmineConfigFile);
     jasmine.stopSpecOnExpectationFailure(true);
-    jasmine.env.throwOnExpectationFailure(true);
     jasmine.exit = () => { };
     jasmine.clearReporters();
     jasmine.randomizeTests(false);

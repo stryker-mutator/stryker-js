@@ -23,9 +23,6 @@ describe('JasmineTestRunner', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     jasmineStub = sandbox.createStubInstance(Jasmine);
-    jasmineStub.env = {
-      throwOnExpectationFailure: sandbox.stub()
-    };
     evalGlobalStub = sandbox.stub(helpers, 'evalGlobal');
     sandbox.stub(helpers, 'Jasmine').returns(jasmineStub);
     fileNames = ['foo.js', 'bar.js'];
@@ -46,7 +43,6 @@ describe('JasmineTestRunner', () => {
     expect(helpers.Jasmine).calledWith({ projectBaseDir: process.cwd() });
     expect(jasmineStub.loadConfigFile).calledWith('jasmineConfFile');
     expect(jasmineStub.stopSpecOnExpectationFailure).calledWith(true);
-    expect(jasmineStub.env.throwOnExpectationFailure).calledWith(true);
     expect(jasmineStub.exit).ok;
     expect(jasmineStub.clearReporters).called;
     expect(jasmineStub.randomizeTests).calledWith(false);

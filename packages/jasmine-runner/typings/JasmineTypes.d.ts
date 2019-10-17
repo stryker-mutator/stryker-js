@@ -54,9 +54,6 @@ declare namespace jasmine {
         suiteDone?(result: CustomReporterResult): void;
         jasmineDone(): void;
     }
-    interface Env {
-        throwOnExpectationFailure(value: boolean): void;
-    }
 }
 declare module 'jasmine' {
     class Jasmine {
