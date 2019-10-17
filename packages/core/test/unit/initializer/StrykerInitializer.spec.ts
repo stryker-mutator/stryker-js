@@ -259,7 +259,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       const matchNormalized = (expected: string) =>
-        sinon.match((actual: string) => normalizeWhitespaces(actual).indexOf(normalizeWhitespaces(expected)) > -1);
+        sinon.match((actual: string) => normalizeWhitespaces(actual).includes(normalizeWhitespaces(expected)));
       expect(fsAsPromised.writeFile).calledWith(
         'stryker.conf.js',
         matchNormalized('"testRunner": "awesome"')

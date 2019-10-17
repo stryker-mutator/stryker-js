@@ -113,12 +113,24 @@ const noopLogger = {
   isFatalEnabled() {
     return false;
   },
-  trace() {},
-  debug() {},
-  info() {},
-  warn() {},
-  error() {},
-  fatal() {}
+  trace() {
+    // noop
+  },
+  debug() {
+    // noop
+  },
+  info() {
+    // noop
+  },
+  warn() {
+    // noop
+  },
+  error() {
+    // noop
+  },
+  fatal() {
+    // noop
+  }
 };
 
 const globalSettings: {

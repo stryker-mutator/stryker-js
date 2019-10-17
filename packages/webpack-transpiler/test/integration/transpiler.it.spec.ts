@@ -19,7 +19,7 @@ describe('Webpack transpiler', () => {
     const files = readFiles();
 
     const transpiledFiles = await sut.transpile(files);
-    const bundleFile = transpiledFiles.filter(file => file.name.indexOf('my-first-webpack.bundle.js') >= 0)[0];
+    const bundleFile = transpiledFiles.filter(file => file.name.includes('my-first-webpack.bundle.js'))[0];
     expect(transpiledFiles).lengthOf(3); // input + output
     expect(bundleFile.textContent).include('Hello world!'); // input + output
   });

@@ -5,7 +5,7 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { MutantStatus } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import { fileAlreadyExistsError, mutant as createMutant, testResult } from '@stryker-mutator/test-helpers/src/factory';
+import { mutant as createMutant, fileAlreadyExistsError, testResult } from '@stryker-mutator/test-helpers/src/factory';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
