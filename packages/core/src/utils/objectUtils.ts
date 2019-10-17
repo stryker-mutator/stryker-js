@@ -42,6 +42,15 @@ export function getEnvironmentVariable(
   return process.env[nameEnvironmentVariable];
 }
 
+export function getEnvironmentVariableOrThrow(name: string): string {
+  const value = getEnvironmentVariable(name);
+  if (value === undefined) {
+    throw new Error(`Missing environment variable "${name}"`);
+  } else {
+    return value;
+  }
+}
+
 /**
  * A wrapper around `process.exitCode = n` (for testability)
  */

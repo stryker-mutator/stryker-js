@@ -51,6 +51,23 @@ export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestRe
   testsRan: ['']
 }));
 
+export const mutationTestReportSchemaFileResult = factoryMethod<mutationTestReportSchema.FileResult>(() => ({
+  language: 'javascript',
+  mutants: [mutationTestReportSchemaMutantResult()],
+  source: 'export function add (a, b) { return a + b; }'
+}));
+
+export const mutationTestReportSchemaMutationTestResult = factoryMethod<mutationTestReportSchema.MutationTestResult>(() => ({
+  files: {
+    'fileA.js': mutationTestReportSchemaFileResult()
+  },
+  schemaVersion: '1',
+  thresholds: {
+    high: 81,
+    low: 19
+  }
+}));
+
 export const mutant = factoryMethod<Mutant>(() => ({
   fileName: 'file',
   mutatorName: 'foobarMutator',
