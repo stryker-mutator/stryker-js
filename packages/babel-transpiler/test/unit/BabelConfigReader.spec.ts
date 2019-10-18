@@ -44,7 +44,7 @@ describe(BabelConfigReader.name, () => {
     const expectedConfig: StrykerBabelConfig = {
       extensions: ['.ts'],
       options: { presets: ['env'] },
-      optionsFile: null,
+      optionsFile: null
     };
     sut.readConfig(factory.strykerOptions({ babel: expectedConfig }));
     expect(testInjector.logger.debug).calledWith(`Babel config is: ${JSON.stringify(expectedConfig, null, 2)}`);
@@ -60,12 +60,17 @@ describe(BabelConfigReader.name, () => {
 
   it('should log a warning if the babelrc file cannot be read', () => {
     sinon.stub(fs, 'existsSync').returns(true);
-    sinon.stub(fs, 'readFileSync').withArgs(path.resolve('.babelrc'), 'utf8').returns('something, not json');
+    sinon
+      .stub(fs, 'readFileSync')
+      .withArgs(path.resolve('.babelrc'), 'utf8')
+      .returns('something, not json');
     sut.readConfig(factory.strykerOptions());
-    expect(testInjector.logger.error).calledWith(`Error while reading "${path.resolve('.babelrc')}" file: SyntaxError: Unexpected token s in JSON at position 0`);
+    expect(testInjector.logger.error).calledWith(
+      `Error while reading "${path.resolve('.babelrc')}" file: SyntaxError: Unexpected token s in JSON at position 0`
+    );
   });
 
-  it('should set the babelConfig to an empty object if nothing is configured and .babelrc file didn\'t exits', () => {
+  it("should set the babelConfig to an empty object if nothing is configured and .babelrc file didn't exits", () => {
     const expected: StrykerBabelConfig = {
       extensions: [],
       options: {},
@@ -77,6 +82,9 @@ describe(BabelConfigReader.name, () => {
 
   function arrangeBabelOptionsFile(babelOptions: babel.TransformOptions, fileName = '.babelrc') {
     sinon.stub(fs, 'existsSync').returns(true);
-    sinon.stub(fs, 'readFileSync').withArgs(path.resolve(fileName), 'utf8').returns(JSON.stringify(babelOptions));
+    sinon
+      .stub(fs, 'readFileSync')
+      .withArgs(path.resolve(fileName), 'utf8')
+      .returns(JSON.stringify(babelOptions));
   }
 });

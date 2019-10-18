@@ -12,7 +12,7 @@ export default class ArrayLiteralMutator extends NodeMutator<ts.ArrayLiteralExpr
     if (node.elements.length) {
       return [{ node, replacement: '[]' }];
     } else {
-      return [{ node, replacement: '[\'Stryker was here\']' }];
+      return [{ node, replacement: "['Stryker was here']" }];
     }
   }
 }

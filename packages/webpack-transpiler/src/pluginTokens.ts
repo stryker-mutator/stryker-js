@@ -1,4 +1,3 @@
-
 function stringLiteral<T extends string>(literal: T) {
   return literal;
 }

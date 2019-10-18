@@ -4,7 +4,6 @@ import TestSelection from './TestSelection';
  * Represents a TestFramework which can select one or more tests to be executed.
  */
 interface TestFramework {
-
   /**
    * Creates a code fragment which, if included in a test run,
    * is ran before a particular test is run.

@@ -9,7 +9,6 @@ import { deserialize, serialize } from '../utils/objectUtils';
 import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';
 
 export default class ChildProcessProxyWorker {
-
   private log: Logger;
 
   public realSubject: any;
@@ -33,7 +32,7 @@ export default class ChildProcessProxyWorker {
         LogConfigurator.configureChildProcess(message.loggingContext);
         this.log = getLogger(ChildProcessProxyWorker.name);
         this.handlePromiseRejections();
-        let injector = buildChildProcessInjector(message.options as unknown as Config);
+        let injector = buildChildProcessInjector((message.options as unknown) as Config);
         const locals = message.additionalInjectableValues as any;
         for (const token of Object.keys(locals)) {
           injector = injector.provideValue(token, locals[token]);
@@ -56,7 +55,8 @@ export default class ChildProcessProxyWorker {
               kind: ParentMessageKind.Result,
               result
             });
-          }).catch(error => {
+          })
+          .catch(error => {
             this.send({
               correlationId: message.correlationId,
               error: errorToString(error),
@@ -93,7 +93,10 @@ export default class ChildProcessProxyWorker {
   private removeAnyAdditionalMessageListeners(exceptListener: NodeJS.MessageListener) {
     process.listeners('message').forEach(listener => {
       if (listener !== exceptListener) {
-        this.log.debug('Removing an additional message listener, we don\'t want eavesdropping on our inter-process communication: %s', listener.toString());
+        this.log.debug(
+          "Removing an additional message listener, we don't want eavesdropping on our inter-process communication: %s",
+          listener.toString()
+        );
         process.removeListener('message', listener);
       }
     });
@@ -105,7 +108,7 @@ export default class ChildProcessProxyWorker {
    * See issue 350: https://github.com/stryker-mutator/stryker/issues/350
    */
   private handlePromiseRejections() {
-    const unhandledRejections: Promise<void>[] = [];
+    const unhandledRejections: Array<Promise<void>> = [];
     process.on('unhandledRejection', (reason, promise) => {
       const unhandledPromiseId = unhandledRejections.push(promise);
       this.log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
@@ -119,6 +122,6 @@ export default class ChildProcessProxyWorker {
 
 // Prevent side effects for merely requiring the file
 // Only actually start the child worker when it is requested
-if (process.argv.indexOf(autoStart) !== -1) {
+if (process.argv.includes(autoStart)) {
   new ChildProcessProxyWorker();
 }

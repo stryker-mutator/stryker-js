@@ -3,7 +3,6 @@ import { exec } from 'child_process';
 import * as path from 'path';
 
 describe('we have a module using stryker', () => {
-
   const modulePath = path.resolve(__dirname, '../../../testResources/module');
 
   function execInModule(command: string): Promise<[string, string]> {
@@ -22,14 +21,11 @@ describe('we have a module using stryker', () => {
   }
 
   describe('after installing Stryker', () => {
-
     before(() => {
-      return execInModule('npm install')
-        .then(() => execInModule('npm run tsc'));
+      return execInModule('npm install').then(() => execInModule('npm run tsc'));
     });
 
     describe('when typescript is compiled', () => {
-
       const arrangeActAndAssertModule = (moduleToRun: string, partsToBeAsserted: string[]) => {
         it(`should output "${partsToBeAsserted}" when using the "${moduleToRun}" module`, () => {
           return execInModule(`npm run use:${moduleToRun}`).then(([stdout]) => {
@@ -38,10 +34,17 @@ describe('we have a module using stryker', () => {
         });
       };
       arrangeActAndAssertModule('core', ['files', 'file']);
-      arrangeActAndAssertModule('config', ['plugins: [ \'stryker-*\' ]']);
+      arrangeActAndAssertModule('config', ["plugins: [ 'stryker-*' ]"]);
       arrangeActAndAssertModule('test_framework', ['framework-1']);
-      arrangeActAndAssertModule('mutant', ['mutatorName: \'foo\'']);
-      arrangeActAndAssertModule('report', ['empty', 'all', 'status: 3', 'originalLines: \'string\'', 'Mutant status runtime error: RuntimeError', 'transpile error: TranspileError']);
+      arrangeActAndAssertModule('mutant', ["mutatorName: 'foo'"]);
+      arrangeActAndAssertModule('report', [
+        'empty',
+        'all',
+        'status: 3',
+        "originalLines: 'string'",
+        'Mutant status runtime error: RuntimeError',
+        'transpile error: TranspileError'
+      ]);
       arrangeActAndAssertModule('test_runner', ['MyTestRunner']);
       arrangeActAndAssertModule('transpile', ['foo', 'bar']);
     });

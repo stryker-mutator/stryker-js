@@ -12,14 +12,16 @@ export default class TypescriptTranspiler implements Transpiler {
   private readonly filter: TranspileFilter;
 
   public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps, commonTokens.getLogger);
-  constructor(private readonly options: StrykerOptions,
-              private readonly produceSourceMaps: boolean,
-              private readonly getLogger: LoggerFactoryMethod) {
+  constructor(
+    private readonly options: StrykerOptions,
+    private readonly produceSourceMaps: boolean,
+    private readonly getLogger: LoggerFactoryMethod
+  ) {
     guardTypescriptVersion();
     this.filter = TranspileFilter.create(this.options);
   }
 
-  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+  public transpile(files: readonly File[]): Promise<readonly File[]> {
     const typescriptFiles = this.filterIsIncluded(files);
     if (this.languageService) {
       this.languageService.replace(typescriptFiles);
@@ -35,30 +37,34 @@ export default class TypescriptTranspiler implements Transpiler {
     }
   }
 
-  private filterIsIncluded(files: ReadonlyArray<File>): ReadonlyArray<File> {
+  private filterIsIncluded(files: readonly File[]): readonly File[] {
     return files.filter(file => this.filter.isIncluded(file.name));
   }
 
-  private createLanguageService(typescriptFiles: ReadonlyArray<File>) {
+  private createLanguageService(typescriptFiles: readonly File[]) {
     const tsConfig = getTSConfig(this.options);
     const compilerOptions: ts.CompilerOptions = (tsConfig && tsConfig.options) || {};
     return new TranspilingLanguageService(
-      compilerOptions, typescriptFiles, getProjectDirectory(this.options), this.produceSourceMaps, this.getLogger);
+      compilerOptions,
+      typescriptFiles,
+      getProjectDirectory(this.options),
+      this.produceSourceMaps,
+      this.getLogger
+    );
   }
 
-  private transpileFiles(files: ReadonlyArray<File>): ReadonlyArray<File> {
+  private transpileFiles(files: readonly File[]): readonly File[] {
     let isSingleOutput = false;
     const fileDictionary: { [name: string]: File } = {};
-    files.forEach(file => fileDictionary[file.name] = file);
+    files.forEach(file => (fileDictionary[file.name] = file));
     files.forEach(file => {
       if (!isHeaderFile(file.name)) {
         if (this.filter.isIncluded(file.name)) {
-
           // File is to be transpiled. Only emit if more output is expected.
           if (!isSingleOutput) {
             const emitOutput = this.languageService.emit(file.name);
             isSingleOutput = emitOutput.singleResult;
-            emitOutput.outputFiles.forEach(file => fileDictionary[file.name] = file);
+            emitOutput.outputFiles.forEach(file => (fileDictionary[file.name] = file));
           }
 
           // Remove original file

@@ -81,14 +81,16 @@ export const transpileResult = factoryMethod<TranspileResult>(() => ({
 
 export const sourceFile = () => new SourceFile(factory.file());
 
-export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator') => new TestableMutant('1337', factory.mutant({
-  fileName,
-  mutatorName,
-  range: [12, 13],
-  replacement: '-'
-}), new SourceFile(
-  new File(fileName, Buffer.from('const a = 4 + 5'))
-));
+export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator') =>
+  new TestableMutant(
+    '1337',
+    factory.mutant({
+      fileName,
+      mutatorName,
+      range: [12, 13],
+      replacement: '-'
+    }),
+    new SourceFile(new File(fileName, Buffer.from('const a = 4 + 5')))
+  );
 
-export const transpiledMutant = (fileName = 'file') =>
-  new TranspiledMutant(testableMutant(fileName), transpileResult(), true);
+export const transpiledMutant = (fileName = 'file') => new TranspiledMutant(testableMutant(fileName), transpileResult(), true);

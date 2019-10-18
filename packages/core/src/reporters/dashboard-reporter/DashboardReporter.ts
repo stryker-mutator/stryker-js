@@ -8,14 +8,10 @@ import DashboardReporterClient from './DashboardReporterClient';
 import { dashboardReporterTokens } from './tokens';
 
 export default class DashboardReporter implements Reporter {
-
   private readonly ciProvider = determineCIProvider();
   public static readonly inject = tokens(commonTokens.logger, dashboardReporterTokens.dashboardReporterClient);
 
-  constructor(
-    private readonly log: Logger,
-    private readonly dashboardReporterClient: DashboardReporterClient
-  ) { }
+  constructor(private readonly log: Logger, private readonly dashboardReporterClient: DashboardReporterClient) {}
 
   private readEnvironmentVariable(name: string) {
     const environmentVariable = getEnvironmentVariable(name);

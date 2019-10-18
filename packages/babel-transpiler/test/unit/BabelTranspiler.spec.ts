@@ -38,12 +38,11 @@ describe(BabelTranspiler.name, () => {
   function createSut(produceSourceMaps = false) {
     return testInjector.injector
       .provideValue(commonTokens.produceSourceMaps, produceSourceMaps)
-      .provideValue('babelConfigReader', babelConfigReaderMock as unknown as BabelConfigReader)
+      .provideValue('babelConfigReader', (babelConfigReaderMock as unknown) as BabelConfigReader)
       .injectClass(BabelTranspiler);
   }
 
   describe('constructor', () => {
-
     function arrangeHappyFlow() {
       babelConfigReaderMock.readConfig.returns(babelConfig);
       sut = createSut();
@@ -56,14 +55,15 @@ describe(BabelTranspiler.name, () => {
 
     it('should throw if `produceSourceMaps` was true and coverage analysis is "perTest"', () => {
       options.coverageAnalysis = 'perTest';
-      expect(() => new BabelTranspiler(options, /*produceSourceMaps:*/ true, babelConfigReaderMock as unknown as BabelConfigReader)).throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".');
+      expect(() => new BabelTranspiler(options, /*produceSourceMaps:*/ true, (babelConfigReaderMock as unknown) as BabelConfigReader)).throws(
+        'Invalid `coverageAnalysis` "perTest" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".'
+      );
     });
   });
 
   describe('transpile', () => {
-
     function arrangeHappyFlow(transformResult: babel.BabelFileResult | null = { code: 'code' }) {
-      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false, babelConfigReaderMock as unknown as BabelConfigReader);
+      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false, (babelConfigReaderMock as unknown) as BabelConfigReader);
       transformStub.returns(transformResult);
     }
 
@@ -82,9 +82,7 @@ describe(BabelTranspiler.name, () => {
     });
 
     it('should allow users to define babel options', async () => {
-      const plugins = [
-        'fooPlugin', 'barPlugin'
-      ];
+      const plugins = ['fooPlugin', 'barPlugin'];
       babelConfig.options.plugins = plugins.slice();
       arrangeHappyFlow();
       await sut.transpile(files);
@@ -102,7 +100,7 @@ describe(BabelTranspiler.name, () => {
       babelConfig.options.filename = 'override';
       babelConfig.options.filenameRelative = 'override';
       arrangeHappyFlow();
-      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false, babelConfigReaderMock as unknown as BabelConfigReader);
+      sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false, (babelConfigReaderMock as unknown) as BabelConfigReader);
       await sut.transpile([files[0]]);
       expect(transformStub).calledWith(files[0].textContent, {
         cwd: process.cwd(),
@@ -113,6 +111,7 @@ describe(BabelTranspiler.name, () => {
 
     it('should not transpile binary files', async () => {
       arrangeHappyFlow();
+      // eslint-disable-next-line
       const inputFile = new File('myBinaryFile.png', 'S�L!##���XLDDDDDDDD\K�');
       const actualResultFiles = await sut.transpile([inputFile]);
       expect(actualResultFiles[0]).eq(inputFile);
@@ -128,17 +127,19 @@ describe(BabelTranspiler.name, () => {
 
     it('should report an error if transpiled code was undefined', async () => {
       arrangeHappyFlow({ code: undefined });
-      return expect(sut.transpile([new File('f.js', '')])).rejectedWith('Could not transpile file "f.js". Babel transform function delivered \`undefined\`.');
+      return expect(sut.transpile([new File('f.js', '')])).rejectedWith(
+        'Could not transpile file "f.js". Babel transform function delivered `undefined`.'
+      );
     });
 
     it('should only call the transform function when the file extension is a known file extension', async () => {
       arrangeHappyFlow();
       const inputFiles: File[] = [
-        new File(`es6.es6`, 'es6 = true'),
-        new File(`js.js`, 'js = true'),
-        new File(`es.es`, 'es = true'),
-        new File(`jsx.jsx`, 'jsx = true'),
-        new File(`ignored.njs`, 'ignored')
+        new File('es6.es6', 'es6 = true'),
+        new File('js.js', 'js = true'),
+        new File('es.es', 'es = true'),
+        new File('jsx.jsx', 'jsx = true'),
+        new File('ignored.njs', 'ignored')
       ];
       const actualResultFiles = await sut.transpile(inputFiles);
       expect(transformStub).callCount(inputFiles.length - 1);
@@ -146,21 +147,17 @@ describe(BabelTranspiler.name, () => {
       expect(transformStub).calledWith('js = true');
       expect(transformStub).calledWith('es = true');
       expect(transformStub).calledWith('jsx = true');
-      expect(actualResultFiles.map(file => file.name)).deep.eq([
-        'es6.js',
-        'js.js',
-        'es.js',
-        'jsx.js',
-        'ignored.njs'
-      ]);
+      expect(actualResultFiles.map(file => file.name)).deep.eq(['es6.js', 'js.js', 'es.js', 'jsx.js', 'ignored.njs']);
     });
 
     it('should return with an error when the babel transform fails', async () => {
       const error = new Error('Syntax error');
       transformStub.throws(error);
       sut = createSut();
-      return expect(sut.transpile([new File('picture.js', 'S�L!##���XLDDDDDDDD\K�')]))
-        .rejectedWith(`Error while transpiling "picture.js". Inner error: Error: Syntax error`);
+      // eslint-disable-next-line
+      return expect(sut.transpile([new File('picture.js', 'S�L!##���XLDDDDDDDD\K�')])).rejectedWith(
+        'Error while transpiling "picture.js". Inner error: Error: Syntax error'
+      );
     });
   });
 });

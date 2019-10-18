@@ -9,9 +9,8 @@ import { freezeRecursively, setExitCode } from './utils/objectUtils';
 const defaultScoreIfNoValidMutants = 100;
 
 export default class ScoreResultCalculator {
-
   public static inject = tokens(commonTokens.logger);
-  constructor(private readonly log: Logger) { }
+  constructor(private readonly log: Logger) {}
 
   public calculate(results: MutantResult[]): ScoreResult {
     const scoreResult = this.calculateScoreResult(results, '');
@@ -30,16 +29,16 @@ export default class ScoreResultCalculator {
         this.log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
       }
     } else {
-      this.log.debug('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
+      this.log.debug(
+        "No breaking threshold configured. Won't fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior."
+      );
     }
   }
 
   private wrapIfSingleFileScoreResult(scoreResult: ScoreResult): ScoreResult {
     if (scoreResult.representsFile) {
       return this.copy(scoreResult, {
-        childResults: [
-          this.copy(scoreResult, { name: path.basename(scoreResult.name) })
-        ],
+        childResults: [this.copy(scoreResult, { name: path.basename(scoreResult.name) })],
         name: path.dirname(scoreResult.name)
       });
     } else {
@@ -89,7 +88,9 @@ export default class ScoreResultCalculator {
       const filesGroupedByDirectory = _.groupBy(uniqueFiles, file => file.split(path.sep)[0]);
       return Object.keys(filesGroupedByDirectory)
 
-        .map(directory => this.calculateScoreResult(_.flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath))
+        .map(directory =>
+          this.calculateScoreResult(_.flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath)
+        )
         .sort(this.compareScoreResults);
     } else {
       return [];
@@ -132,8 +133,8 @@ export default class ScoreResultCalculator {
     const totalValid = totalUndetected + totalDetected;
     const totalInvalid = runtimeErrors + transpileErrors;
     const totalMutants = totalValid + totalInvalid;
-    const mutationScore = totalValid > 0 ? totalDetected / totalValid * 100 : defaultScoreIfNoValidMutants;
-    const mutationScoreBasedOnCoveredCode = totalValid > 0 ? totalDetected / totalCovered * 100 || 0 : defaultScoreIfNoValidMutants;
+    const mutationScore = totalValid > 0 ? (totalDetected / totalValid) * 100 : defaultScoreIfNoValidMutants;
+    const mutationScoreBasedOnCoveredCode = totalValid > 0 ? (totalDetected / totalCovered) * 100 || 0 : defaultScoreIfNoValidMutants;
     return {
       killed,
       mutationScore,

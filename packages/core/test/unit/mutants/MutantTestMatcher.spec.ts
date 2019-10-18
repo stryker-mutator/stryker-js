@@ -19,7 +19,6 @@ import { MappedLocation, PassThroughSourceMapper } from '../../../src/transpiler
 import { Mock, mock } from '../../helpers/producers';
 
 describe(MutantTestMatcher.name, () => {
-
   let sut: MutantTestMatcher;
   let mutants: Mutant[];
   let initialRunResult: InitialTestRunResult;
@@ -34,7 +33,7 @@ describe(MutantTestMatcher.name, () => {
       coverageMaps: fileCoverageDictionary,
       overheadTimeMS: 42,
       runResult: { tests: [], status: RunStatus.Complete },
-      sourceMapper: new PassThroughSourceMapper(),
+      sourceMapper: new PassThroughSourceMapper()
     };
     reporter = mock(BroadcastReporter);
     input = new InputFileCollection(
@@ -45,7 +44,6 @@ describe(MutantTestMatcher.name, () => {
   });
 
   describe('with coverageAnalysis: "perTest"', () => {
-
     beforeEach(() => {
       testInjector.options.coverageAnalysis = 'perTest';
       sut = createSut();
@@ -63,7 +61,7 @@ describe(MutantTestMatcher.name, () => {
             fileName: 'fileWithMutantOne',
             mutatorName: 'myMutator',
             range: [9, 9], // line 4:5 -> line 4:5
-            replacement: '>',
+            replacement: '>'
             // location: { start: { line: 4, column: 5 }, end: { line: 4, column: 5 } },
           };
 
@@ -91,7 +89,6 @@ describe(MutantTestMatcher.name, () => {
         });
 
         describe('without code coverage info', () => {
-
           it('should add both tests to the mutants and report failure', async () => {
             const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
 
@@ -101,7 +98,10 @@ describe(MutantTestMatcher.name, () => {
             expect(result[1].selectedTests).deep.eq(expectedTestSelection);
             expect(TestSelectionResult[result[0].testSelectionResult]).eq(TestSelectionResult[TestSelectionResult.FailedButAlreadyReported]);
             expect(TestSelectionResult[result[1].testSelectionResult]).eq(TestSelectionResult[TestSelectionResult.FailedButAlreadyReported]);
-            expect(testInjector.logger.warn).calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'perTest');
+            expect(testInjector.logger.warn).calledWith(
+              'No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.',
+              'perTest'
+            );
           });
 
           it('should have both mutants matched', async () => {
@@ -131,7 +131,6 @@ describe(MutantTestMatcher.name, () => {
         });
 
         describe('without the tests having covered the mutants', () => {
-
           beforeEach(() => {
             const covCollectionPerFile: CoveragePerTestResult = {
               baseline: {},
@@ -150,7 +149,8 @@ describe(MutantTestMatcher.name, () => {
             fileCoverageDictionary.anOtherFile = {
               fnMap: {},
               statementMap: {
-                1: { // covers but in wrong src file
+                1: {
+                  // covers but in wrong src file
                   end: { line: 4, column: 7 },
                   start: { line: 4, column: 0 }
                 }
@@ -167,7 +167,8 @@ describe(MutantTestMatcher.name, () => {
                   end: { line: 4, column: 9 },
                   start: { line: 4, column: 0 }
                 },
-                3: { // Smallest statement that surrounds the mutant. Differs based on column number
+                3: {
+                  // Smallest statement that surrounds the mutant. Differs based on column number
                   end: { line: 4, column: 7 },
                   start: { line: 4, column: 3 }
                 }
@@ -180,7 +181,8 @@ describe(MutantTestMatcher.name, () => {
                   end: { line: 9, column: 4 },
                   start: { line: 0, column: 0 }
                 },
-                2: { // Smallest  statement that surround the mutant. Differs based on line number
+                2: {
+                  // Smallest  statement that surround the mutant. Differs based on line number
                   end: { line: 9, column: 4 },
                   start: { line: 8, column: 0 }
                 },
@@ -201,7 +203,6 @@ describe(MutantTestMatcher.name, () => {
         });
 
         describe('with tests having covered the mutants based on statements', () => {
-
           beforeEach(() => {
             fileCoverageDictionary.fileWithMutantOne = {
               fnMap: {},
@@ -232,10 +233,7 @@ describe(MutantTestMatcher.name, () => {
           });
 
           it('should have added the run results to the mutants', async () => {
-            const expectedTestSelectionFirstMutant: TestSelection[] = [
-              { id: 0, name: 'test one' },
-              { id: 1, name: 'test two' }
-            ];
+            const expectedTestSelectionFirstMutant: TestSelection[] = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
 
             const result = await sut.matchWithMutants(mutants);
 
@@ -256,10 +254,7 @@ describe(MutantTestMatcher.name, () => {
           });
 
           it('should select all test in the test run but not report the error yet', async () => {
-            const expectedTestSelection: TestSelection[] = [
-              { name: 'test one', id: 0 },
-              { name: 'test two', id: 1 }
-            ];
+            const expectedTestSelection: TestSelection[] = [{ name: 'test one', id: 0 }, { name: 'test two', id: 1 }];
 
             const result = await sut.matchWithMutants(mutants);
 
@@ -297,7 +292,6 @@ describe(MutantTestMatcher.name, () => {
         });
 
         describe('with baseline covering a mutant', () => {
-
           beforeEach(() => {
             fileCoverageDictionary.fileWithMutantOne = {
               fnMap: {},
@@ -337,13 +331,101 @@ describe(MutantTestMatcher.name, () => {
         // Arrange
         const sourceFile = new SourceFile(new File('', ''));
         sourceFile.getLocation = () => ({ start: { line: 13, column: 38 }, end: { line: 24, column: 5 } });
-        const testableMutant = new TestableMutant('1', mutant({
-          fileName: 'juice-shop\\app\\js\\controllers\\SearchResultController.js'
-        }), sourceFile);
+        const testableMutant = new TestableMutant(
+          '1',
+          mutant({
+            fileName: 'juice-shop\\app\\js\\controllers\\SearchResultController.js'
+          }),
+          sourceFile
+        );
 
-        const coverageResult: CoverageCollection = { 'juice-shop\\app\\js\\controllers\\SearchResultController.js': { s: { 1: 1, 2: 1, 3: 1, 4: 0, 5: 1, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 0, 17: 0, 18: 0, 19: 0, 20: 0, 21: 0, 22: 0, 23: 0, 24: 0, 25: 0, 26: 0, 27: 0, 28: 0, 29: 0, 30: 0, 31: 0, 32: 1, 33: 1, 34: 1, 35: 1, 36: 0, 37: 0 }, f: {} } };
+        const coverageResult: CoverageCollection = {
+          'juice-shop\\app\\js\\controllers\\SearchResultController.js': {
+            s: {
+              1: 1,
+              2: 1,
+              3: 1,
+              4: 0,
+              5: 1,
+              6: 0,
+              7: 0,
+              8: 0,
+              9: 0,
+              10: 0,
+              11: 0,
+              12: 0,
+              13: 0,
+              14: 0,
+              15: 0,
+              16: 0,
+              17: 0,
+              18: 0,
+              19: 0,
+              20: 0,
+              21: 0,
+              22: 0,
+              23: 0,
+              24: 0,
+              25: 0,
+              26: 0,
+              27: 0,
+              28: 0,
+              29: 0,
+              30: 0,
+              31: 0,
+              32: 1,
+              33: 1,
+              34: 1,
+              35: 1,
+              36: 0,
+              37: 0
+            },
+            f: {}
+          }
+        };
 
-        fileCoverageDictionary['juice-shop\\app\\js\\controllers\\SearchResultController.js'] = { statementMap: { 1: { start: { line: 1, column: 0 }, end: { line: 84, column: 5 } }, 2: { start: { line: 13, column: 4 }, end: { line: 24, column: 5 } }, 3: { start: { line: 14, column: 6 }, end: { line: 23, column: 8 } }, 4: { start: { line: 20, column: 12 }, end: { line: 20, column: 21 } }, 5: { start: { line: 26, column: 4 }, end: { line: 72, column: 5 } }, 6: { start: { line: 27, column: 6 }, end: { line: 71, column: 8 } }, 7: { start: { line: 28, column: 8 }, end: { line: 28, column: 51 } }, 8: { start: { line: 29, column: 8 }, end: { line: 29, column: 25 } }, 9: { start: { line: 30, column: 8 }, end: { line: 53, column: 9 } }, 10: { start: { line: 31, column: 10 }, end: { line: 52, column: 11 } }, 11: { start: { line: 32, column: 12 }, end: { line: 32, column: 24 } }, 12: { start: { line: 33, column: 12 }, end: { line: 50, column: 14 } }, 13: { start: { line: 34, column: 14 }, end: { line: 34, column: 68 } }, 14: { start: { line: 35, column: 14 }, end: { line: 47, column: 16 } }, 15: { start: { line: 36, column: 16 }, end: { line: 44, column: 18 } }, 16: { start: { line: 37, column: 18 }, end: { line: 41, column: 20 } }, 17: { start: { line: 38, column: 20 }, end: { line: 38, column: 62 } }, 18: { start: { line: 40, column: 20 }, end: { line: 40, column: 55 } }, 19: { start: { line: 43, column: 18 }, end: { line: 43, column: 34 } }, 20: { start: { line: 46, column: 16 }, end: { line: 46, column: 32 } }, 21: { start: { line: 49, column: 14 }, end: { line: 49, column: 30 } }, 22: { start: { line: 51, column: 12 }, end: { line: 51, column: 17 } }, 23: { start: { line: 54, column: 8 }, end: { line: 68, column: 9 } }, 24: { start: { line: 55, column: 10 }, end: { line: 67, column: 12 } }, 25: { start: { line: 56, column: 12 }, end: { line: 64, column: 14 } }, 26: { start: { line: 57, column: 14 }, end: { line: 61, column: 16 } }, 27: { start: { line: 58, column: 16 }, end: { line: 58, column: 54 } }, 28: { start: { line: 60, column: 16 }, end: { line: 60, column: 51 } }, 29: { start: { line: 63, column: 14 }, end: { line: 63, column: 30 } }, 30: { start: { line: 66, column: 12 }, end: { line: 66, column: 28 } }, 31: { start: { line: 70, column: 8 }, end: { line: 70, column: 24 } }, 32: { start: { line: 74, column: 4 }, end: { line: 74, column: 63 } }, 33: { start: { line: 76, column: 4 }, end: { line: 83, column: 6 } }, 34: { start: { line: 77, column: 6 }, end: { line: 77, column: 37 } }, 35: { start: { line: 78, column: 6 }, end: { line: 80, column: 7 } }, 36: { start: { line: 79, column: 8 }, end: { line: 79, column: 89 } }, 37: { start: { line: 82, column: 6 }, end: { line: 82, column: 22 } } }, fnMap: {} };
+        fileCoverageDictionary['juice-shop\\app\\js\\controllers\\SearchResultController.js'] = {
+          statementMap: {
+            1: { start: { line: 1, column: 0 }, end: { line: 84, column: 5 } },
+            2: { start: { line: 13, column: 4 }, end: { line: 24, column: 5 } },
+            3: { start: { line: 14, column: 6 }, end: { line: 23, column: 8 } },
+            4: { start: { line: 20, column: 12 }, end: { line: 20, column: 21 } },
+            5: { start: { line: 26, column: 4 }, end: { line: 72, column: 5 } },
+            6: { start: { line: 27, column: 6 }, end: { line: 71, column: 8 } },
+            7: { start: { line: 28, column: 8 }, end: { line: 28, column: 51 } },
+            8: { start: { line: 29, column: 8 }, end: { line: 29, column: 25 } },
+            9: { start: { line: 30, column: 8 }, end: { line: 53, column: 9 } },
+            10: { start: { line: 31, column: 10 }, end: { line: 52, column: 11 } },
+            11: { start: { line: 32, column: 12 }, end: { line: 32, column: 24 } },
+            12: { start: { line: 33, column: 12 }, end: { line: 50, column: 14 } },
+            13: { start: { line: 34, column: 14 }, end: { line: 34, column: 68 } },
+            14: { start: { line: 35, column: 14 }, end: { line: 47, column: 16 } },
+            15: { start: { line: 36, column: 16 }, end: { line: 44, column: 18 } },
+            16: { start: { line: 37, column: 18 }, end: { line: 41, column: 20 } },
+            17: { start: { line: 38, column: 20 }, end: { line: 38, column: 62 } },
+            18: { start: { line: 40, column: 20 }, end: { line: 40, column: 55 } },
+            19: { start: { line: 43, column: 18 }, end: { line: 43, column: 34 } },
+            20: { start: { line: 46, column: 16 }, end: { line: 46, column: 32 } },
+            21: { start: { line: 49, column: 14 }, end: { line: 49, column: 30 } },
+            22: { start: { line: 51, column: 12 }, end: { line: 51, column: 17 } },
+            23: { start: { line: 54, column: 8 }, end: { line: 68, column: 9 } },
+            24: { start: { line: 55, column: 10 }, end: { line: 67, column: 12 } },
+            25: { start: { line: 56, column: 12 }, end: { line: 64, column: 14 } },
+            26: { start: { line: 57, column: 14 }, end: { line: 61, column: 16 } },
+            27: { start: { line: 58, column: 16 }, end: { line: 58, column: 54 } },
+            28: { start: { line: 60, column: 16 }, end: { line: 60, column: 51 } },
+            29: { start: { line: 63, column: 14 }, end: { line: 63, column: 30 } },
+            30: { start: { line: 66, column: 12 }, end: { line: 66, column: 28 } },
+            31: { start: { line: 70, column: 8 }, end: { line: 70, column: 24 } },
+            32: { start: { line: 74, column: 4 }, end: { line: 74, column: 63 } },
+            33: { start: { line: 76, column: 4 }, end: { line: 83, column: 6 } },
+            34: { start: { line: 77, column: 6 }, end: { line: 77, column: 37 } },
+            35: { start: { line: 78, column: 6 }, end: { line: 80, column: 7 } },
+            36: { start: { line: 79, column: 8 }, end: { line: 79, column: 89 } },
+            37: { start: { line: 82, column: 6 }, end: { line: 82, column: 22 } }
+          },
+          fnMap: {}
+        };
 
         initialRunResult.runResult.coverage = { baseline: {}, deviations: { 0: coverageResult } };
         initialRunResult.runResult.tests.push({
@@ -357,16 +439,17 @@ describe(MutantTestMatcher.name, () => {
         await sut.enrichWithCoveredTests(testableMutant);
 
         // Assert
-        expect(testableMutant.selectedTests).deep.eq([{
-          id: 0,
-          name: 'controllers SearchResultController should open a modal dialog with product details'
-        }]);
+        expect(testableMutant.selectedTests).deep.eq([
+          {
+            id: 0,
+            name: 'controllers SearchResultController should open a modal dialog with product details'
+          }
+        ]);
       });
     });
   });
 
   describe('with coverageAnalysis: "all"', () => {
-
     beforeEach(() => {
       testInjector.options.coverageAnalysis = 'all';
       sut = createSut();
@@ -383,11 +466,13 @@ describe(MutantTestMatcher.name, () => {
       expect(result[1].selectedTests).deep.eq(expectedTestSelection);
       expect(result[0].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
       expect(result[1].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
-      expect(testInjector.logger.warn).to.have.been.calledWith('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', 'all');
+      expect(testInjector.logger.warn).to.have.been.calledWith(
+        'No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.',
+        'all'
+      );
     });
 
     describe('when there is coverage data', () => {
-
       beforeEach(() => {
         initialRunResult.runResult.coverage = {
           fileWithMutantOne: { s: { 0: 1 }, f: {} }
@@ -427,22 +512,23 @@ describe(MutantTestMatcher.name, () => {
         const result = await sut.matchWithMutants(mutants);
 
         // Assert
-        const expectedTestSelection: TestSelection[] = [{
-          id: 0,
-          name: 'test 1'
-        }, {
-          id: 1,
-          name: 'test 2'
-        }];
+        const expectedTestSelection: TestSelection[] = [
+          {
+            id: 0,
+            name: 'test 1'
+          },
+          {
+            id: 1,
+            name: 'test 2'
+          }
+        ];
         expect(result).lengthOf(1);
         expect(result[0].selectedTests).deep.eq(expectedTestSelection);
       });
     });
-
   });
 
   describe('with coverageAnalysis: "off"', () => {
-
     beforeEach(() => {
       testInjector.options.coverageAnalysis = 'off';
       sut = createSut();

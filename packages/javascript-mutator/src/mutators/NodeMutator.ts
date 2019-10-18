@@ -22,5 +22,5 @@ export interface NodeMutator {
    * @param copy A function to create a copy of an object.
    * @returns An array of mutated Nodes.
    */
-  mutate(node: NodeWithParent, copy: <T extends types.Node> (obj: T, deep?: boolean) => T): void | types.Node[];
+  mutate(node: NodeWithParent, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[];
 }

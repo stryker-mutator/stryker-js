@@ -6,7 +6,6 @@ import { expectMutation, verifySpecification } from './mutatorAssertions';
 verifySpecification(StringLiteralMutatorSpec, StringLiteralMutator);
 
 describe('StringLiteralMutator - Extras', () => {
-
   let mutator: NodeMutator;
   before(() => {
     mutator = new StringLiteralMutator();

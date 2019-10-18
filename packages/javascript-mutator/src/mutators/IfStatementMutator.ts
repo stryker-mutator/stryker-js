@@ -8,14 +8,9 @@ import { NodeMutator } from './NodeMutator';
 export default class IfStatementMutator implements NodeMutator {
   public name = 'IfStatement';
 
-  constructor() { }
-
   public mutate(node: types.Node): types.Node[] | void {
     if (types.isIfStatement(node)) {
-      return [
-        NodeGenerator.createBooleanLiteralNode(node.test, false),
-        NodeGenerator.createBooleanLiteralNode(node.test, true)
-      ];
+      return [NodeGenerator.createBooleanLiteralNode(node.test, false), NodeGenerator.createBooleanLiteralNode(node.test, true)];
     }
   }
 }

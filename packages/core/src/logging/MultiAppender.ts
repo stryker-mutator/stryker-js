@@ -3,8 +3,7 @@ import { LoggingEvent } from 'log4js';
 export type RuntimeAppender = (loggingEvent: LoggingEvent) => void;
 
 export class MultiAppender {
-
-  constructor(private readonly appenders: RuntimeAppender[]) { }
+  constructor(private readonly appenders: RuntimeAppender[]) {}
 
   public append(loggingEvent: LoggingEvent) {
     this.appenders.forEach(appender => appender(loggingEvent));
@@ -19,7 +18,7 @@ export class MultiAppender {
  * @param _ The layouts provided by log4js
  * @param findAppender A method to locate other appenders
  */
-export function configure(config: { appenders: string[] }, _: any, findAppender: (name: string) => RuntimeAppender ): RuntimeAppender {
+export function configure(config: { appenders: string[] }, _: any, findAppender: (name: string) => RuntimeAppender): RuntimeAppender {
   const multiAppender = new MultiAppender(config.appenders.map(name => findAppender(name)));
   return multiAppender.append.bind(multiAppender);
 }

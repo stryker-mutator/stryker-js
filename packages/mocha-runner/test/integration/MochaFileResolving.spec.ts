@@ -7,7 +7,6 @@ import MochaTestRunner from '../../src/MochaTestRunner';
 import { mochaOptionsKey } from '../../src/utils';
 
 describe('Mocha 6 file resolving integration', () => {
-
   const cwd = process.cwd();
 
   afterEach(() => {
@@ -29,14 +28,11 @@ describe('Mocha 6 file resolving integration', () => {
   });
 
   function createConfigLoader() {
-    return testInjector.injector
-      .injectClass(MochaOptionsLoader);
+    return testInjector.injector.injectClass(MochaOptionsLoader);
   }
 
   function createTestRunner() {
-    return testInjector.injector
-      .provideValue(commonTokens.sandboxFileNames, [])
-      .injectClass(MochaTestRunner);
+    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, []).injectClass(MochaTestRunner);
   }
 
   function resolveTestDir(fileName = '.') {

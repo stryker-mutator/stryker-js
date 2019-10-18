@@ -11,8 +11,7 @@ const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 
 export default class ConfigLoader {
   public static inject = tokens(commonTokens.logger, pluginTokens.require);
-  public constructor(private readonly log: Logger, private readonly requireFn: NodeRequireFunction) {
-  }
+  constructor(private readonly log: Logger, private readonly requireFn: NodeRequireFunction) {}
 
   public async load(config: StrykerWebpackConfig): Promise<Configuration> {
     let webpackConfig: Configuration;
@@ -47,7 +46,10 @@ export default class ConfigLoader {
     if (webpackConfig.plugins) {
       webpackConfig.plugins = webpackConfig.plugins.filter(plugin => {
         if (plugin.constructor && plugin.constructor.name === PROGRESS_PLUGIN_NAME) {
-          this.log.debug('Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.', PROGRESS_PLUGIN_NAME);
+          this.log.debug(
+            'Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.',
+            PROGRESS_PLUGIN_NAME
+          );
           return false;
         } else {
           return true;

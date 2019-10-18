@@ -5,7 +5,6 @@ import * as types from '@babel/types';
 import { NodeWithParent } from './ParentNode';
 
 export default class BabelHelper {
-
   public static parse(code: string): types.File {
     return parse(code, this.createOptions());
   }
@@ -20,7 +19,7 @@ export default class BabelHelper {
         'flow',
         'jsx',
         'objectRestSpread',
-        ['decorators', { decoratorsBeforeExport: true }] as any,
+        ['decorators', { decoratorsBeforeExport: true }] as any
       ],
       sourceType: 'unambiguous'
     };
@@ -35,8 +34,7 @@ export default class BabelHelper {
         node.parent = path.parent as any;
         Object.freeze(node);
         nodes.push(node);
-      },
-
+      }
     });
 
     return nodes;
@@ -45,5 +43,4 @@ export default class BabelHelper {
   public static generateCode(ast: types.Node) {
     return generate(ast).code;
   }
-
 }

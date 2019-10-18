@@ -44,7 +44,6 @@ interface Timing {
 }
 
 export default class InitialTestExecutor {
-
   public static inject = tokens(
     commonTokens.options,
     commonTokens.logger,
@@ -53,7 +52,8 @@ export default class InitialTestExecutor {
     coreTokens.timer,
     coreTokens.loggingContext,
     coreTokens.transpiler,
-    coreTokens.temporaryDirectory);
+    coreTokens.temporaryDirectory
+  );
 
   constructor(
     private readonly options: StrykerOptions,
@@ -63,10 +63,10 @@ export default class InitialTestExecutor {
     private readonly timer: Timer,
     private readonly loggingContext: LoggingClientContext,
     private readonly transpiler: Transpiler,
-    private readonly tempDir: TemporaryDirectory) { }
+    private readonly tempDir: TemporaryDirectory
+  ) {}
 
   public async run(): Promise<InitialTestRunResult> {
-
     this.log.info('Starting initial test run. This may take a while.');
 
     // Before we can run the tests we transpile the input files.
@@ -93,7 +93,7 @@ export default class InitialTestExecutor {
     };
   }
 
-  private async runInSandbox(files: ReadonlyArray<File>): Promise<{ runResult: RunResult, grossTimeMS: number }> {
+  private async runInSandbox(files: readonly File[]): Promise<{ runResult: RunResult; grossTimeMS: number }> {
     const sandbox = await Sandbox.create(this.options, 0, files, this.testFramework, 0, this.loggingContext, this.tempDir);
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     const runResult = await sandbox.run(INITIAL_RUN_TIMEOUT, this.getCollectCoverageHooksIfNeeded());
@@ -102,15 +102,17 @@ export default class InitialTestExecutor {
     return { runResult, grossTimeMS };
   }
 
-  private async annotateForCodeCoverage(files: ReadonlyArray<File>, sourceMapper: SourceMapper)
-    : Promise<{ instrumentedFiles: ReadonlyArray<File>, coverageMaps: CoverageMapsByFile }> {
-      const filesToInstrument = this.inputFiles.filesToMutate
-      // filter files that exist in both filesToMutate and transpiledFiles, e.g. ts header files *.d.ts
-      .filter(mutateFile => !files.some(file => file.name === mutateFile.name))
-      .map(mutateFile => sourceMapper.transpiledFileNameFor(mutateFile.name));
-      const coverageInstrumenterTranspiler = new CoverageInstrumenterTranspiler(this.options, filesToInstrument);
-      const instrumentedFiles = await coverageInstrumenterTranspiler.transpile(files);
-      return { coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps, instrumentedFiles };
+  private async annotateForCodeCoverage(
+    files: readonly File[],
+    sourceMapper: SourceMapper
+  ): Promise<{ instrumentedFiles: readonly File[]; coverageMaps: CoverageMapsByFile }> {
+    const filesToInstrument = this.inputFiles.filesToMutate
+    // filter files that exist in both filesToMutate and transpiledFiles, e.g. ts header files *.d.ts
+    .filter(mutateFile => !files.some(file => file.name === mutateFile.name))
+    .map(mutateFile => sourceMapper.transpiledFileNameFor(mutateFile.name));
+    const coverageInstrumenterTranspiler = new CoverageInstrumenterTranspiler(this.options, filesToInstrument);
+    const instrumentedFiles = await coverageInstrumenterTranspiler.transpile(files);
+    return { coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps, instrumentedFiles };
   }
 
   private validateResult(runResult: RunResult, timing: Timing): void {
@@ -145,7 +147,7 @@ export default class InitialTestExecutor {
    * The overhead time is used to calculate exact timeout values during mutation testing.
    * See timeoutMS setting in README for more information on this calculation
    */
-  private calculateTiming(grossTimeMS: number, tests: ReadonlyArray<TestResult>): Timing {
+  private calculateTiming(grossTimeMS: number, tests: readonly TestResult[]): Timing {
     const netTimeMS = tests.reduce((total, test) => total + test.timeSpentMs, 0);
     const overheadTimeMS = grossTimeMS - netTimeMS;
     return {
@@ -158,16 +160,18 @@ export default class InitialTestExecutor {
     if (this.options.coverageAnalysis === 'perTest') {
       if (this.testFramework) {
         // Add piece of javascript to collect coverage per test results
-        this.log.debug(`Adding test hooks for coverageAnalysis "perTest".`);
+        this.log.debug('Adding test hooks for coverageAnalysis "perTest".');
         return coveragePerTestHooks(this.testFramework);
       } else {
-        this.log.warn('Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.');
+        this.log.warn(
+          'Cannot measure coverage results per test, there is no testFramework and thus no way of executing code right before and after each test.'
+        );
       }
     }
     return undefined;
   }
 
-  private logTranspileResult(transpiledFiles: ReadonlyArray<File>) {
+  private logTranspileResult(transpiledFiles: readonly File[]) {
     if (this.options.transpilers.length && this.log.isDebugEnabled()) {
       this.log.debug(`Transpiled files: ${JSON.stringify(transpiledFiles.map(f => `${f.name}`), null, 2)}`);
     }
@@ -178,8 +182,13 @@ export default class InitialTestExecutor {
   }
 
   private logInitialTestRunSucceeded(tests: TestResult[], timing: Timing) {
-    this.log.info('Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
-      tests.length, this.timer.humanReadableElapsed(), timing.net, timing.overhead);
+    this.log.info(
+      'Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
+      tests.length,
+      this.timer.humanReadableElapsed(),
+      timing.net,
+      timing.overhead
+    );
   }
 
   private logFailedTestsInInitialRun(failedTests: TestResult[]): void {
@@ -195,14 +204,14 @@ export default class InitialTestExecutor {
   private logErrorsInInitialRun(runResult: RunResult) {
     let message = 'One or more tests resulted in an error:';
     if (runResult.errorMessages && runResult.errorMessages.length) {
-      runResult.errorMessages.forEach(error => message += `${EOL}\t${error}`);
+      runResult.errorMessages.forEach(error => (message += `${EOL}\t${error}`));
     }
     this.log.error(message);
   }
 
   private logTimeoutInitialRun(runResult: RunResult) {
     let message = 'Initial test run timed out! Ran following tests before timeout:';
-    runResult.tests.forEach(test => message += `${EOL}\t${test.name} (${TestStatus[test.status]})`);
+    runResult.tests.forEach(test => (message += `${EOL}\t${test.name} (${TestStatus[test.status]})`));
     this.log.error(message);
   }
 }

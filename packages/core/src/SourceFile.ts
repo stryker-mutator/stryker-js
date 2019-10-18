@@ -1,9 +1,9 @@
 import { File, Location, Position, Range } from '@stryker-mutator/api/core';
 
 const enum CharacterCodes {
-  MaxAsciiCharacter = 0x7F,
-  LineFeed = 0x0A,              // \n
-  CarriageReturn = 0x0D,        // \r
+  MaxAsciiCharacter = 0x7f,
+  LineFeed = 0x0a, // \n
+  CarriageReturn = 0x0d, // \r
   LineSeparator = 0x2028,
   ParagraphSeparator = 0x2029
 }
@@ -20,25 +20,26 @@ export function isLineBreak(ch: number): boolean {
   // Only the characters in Table 3 are treated as line terminators. Other new line or line
   // breaking characters are treated as white space but not as line terminators.
 
-  return ch === CharacterCodes.LineFeed ||
+  return (
+    ch === CharacterCodes.LineFeed ||
     ch === CharacterCodes.CarriageReturn ||
     ch === CharacterCodes.LineSeparator ||
-    ch === CharacterCodes.ParagraphSeparator;
+    ch === CharacterCodes.ParagraphSeparator
+  );
 }
 
 export default class SourceFile {
-
   private readonly lineStarts: number[];
 
   constructor(public file: File) {
     this.lineStarts = this.computeLineStarts();
   }
 
-  get name() {
+  public get name() {
     return this.file.name;
   }
 
-  get content(): string {
+  public get content(): string {
     return this.file.textContent;
   }
 
@@ -84,11 +85,9 @@ export default class SourceFile {
 
       if (midValue === position) {
         return middle;
-      }
-      else if (midValue > position) {
+      } else if (midValue > position) {
         high = middle - 1;
-      }
-      else {
+      } else {
         low = middle + 1;
       }
     }

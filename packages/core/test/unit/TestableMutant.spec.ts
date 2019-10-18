@@ -6,7 +6,6 @@ import SourceFile from '../../src/SourceFile';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 
 describe('TestableMutant', () => {
-
   let innerMutant: Mutant;
 
   beforeEach(() => {
@@ -25,7 +24,10 @@ describe('TestableMutant', () => {
 
   it('should reflect timeSpentScopedTests, scopedTestIds and TestSelectionResult', () => {
     const sut = new TestableMutant('3', innerMutant, new SourceFile(new File('foobar.js', 'alert("foobar")')));
-    sut.selectAllTests(runResult({ tests: [testResult({ name: 'spec1', timeSpentMs: 12 }), testResult({ name: 'spec2', timeSpentMs: 42 })] }), TestSelectionResult.FailedButAlreadyReported);
+    sut.selectAllTests(
+      runResult({ tests: [testResult({ name: 'spec1', timeSpentMs: 12 }), testResult({ name: 'spec2', timeSpentMs: 42 })] }),
+      TestSelectionResult.FailedButAlreadyReported
+    );
     expect(sut.timeSpentScopedTests).eq(54);
     expect(sut.selectedTests).deep.eq([{ id: 0, name: 'spec1' }, { id: 1, name: 'spec2' }]);
     expect(sut.testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReported);
