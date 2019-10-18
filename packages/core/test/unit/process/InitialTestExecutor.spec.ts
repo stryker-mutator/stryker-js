@@ -74,7 +74,10 @@ describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
   });
 
   it('should not throw a SourceMapError', async () => {
+    // Arrange
     sut = createSut();
+
+    // Act
     await sut.run();
   });
 });
