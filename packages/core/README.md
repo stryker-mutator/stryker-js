@@ -107,7 +107,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [timeoutMS](#timeoutMS)
 * [transpilers](#transpilers)
 
-
+<a name="allowConsoleColors"></a>
 ### `allowConsoleColors` [`boolean`]
 
 Default: `true`  
@@ -116,7 +116,7 @@ Config file: `allowConsoleColors: true`
 
 The `allowConsoleColors` value indicates whether Stryker should use colors in console.
 
-
+<a name="coverageAnalysis"></a>
 ### `coverageAnalysis` [`string`]
 
 Default: `off`  
@@ -145,7 +145,7 @@ In addition to requiring your test runner to be able to report the code coverage
  Currently, `stryker-mocha-runner` as well as `stryker-karma-runner` support this. However, `stryker-karma-runner` support is limited to using it with `Jasmine` as the test framework
  (`Mocha` is not yet supported).
 
-
+<a name="fileLogLevel"></a>
 ### `fileLogLevel` [`string`]
 
  Default: `off`  
@@ -154,7 +154,7 @@ In addition to requiring your test runner to be able to report the code coverage
 
   Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
 
-
+<a name="files"></a>
 ### `files` [`string[]`]
 
 Default: result of `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`  
@@ -173,7 +173,7 @@ When using the config file you can provide an array with `string`s
 
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
-
+<a name="logLevel"></a>
 ### `logLevel` [`string`]
 
 Default: `info`  
@@ -186,7 +186,7 @@ Config file: `logLevel: 'info'`
  *Note*: Test runners are run as child processes of the Stryker Node process. All output (stdout) of the `testRunner` is logged as `trace`.  
  Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
 
-
+<a name="maxConcurrentTestRunners"></a>
 ### `maxConcurrentTestRunners` [`number`]
 
 Default: `(number of CPU Cores)`  
@@ -203,7 +203,7 @@ Reasons you might want to lower this setting:
 * You're running on a shared server and/or
 * Your hard disk cannot handle the I/O of all test runners
 
-
+<a name="mutate"></a>
 ### `mutate` [`string[]`]
 
 Default: `['{src,lib}/**/*.js?(x)', '!{src,lib}/**/__tests__/**/*.js?(x)', '!{src,lib}/**/?(*.)+(spec|test).js?(x)', '!{src,lib}/**/*+(Spec|Test).js?(x)']`  
@@ -214,7 +214,7 @@ With `mutate` you configure the subset of files to use for mutation testing.
 Generally speaking, these should be your own source files.  
 This is optional, as you can choose to not mutate any files at all and perform a dry-run (running only your tests without mutating).
 
-
+<a name="mutator"></a>
 ### `mutator` [`object` | `string`]
 Default: `javascript`  
 Command line: `--mutator javascript`  
@@ -231,7 +231,7 @@ When using the config file, you can provide either a string representing the mut
    * The `name` property is mandatory and contains the name of the mutator plugin to use.  
    * The `excludedMutations` property is mandatory and contains the types of mutations to exclude from the test run.  
 
-
+<a name="plugins"></a>
 ### `plugins` [`string[]`]  
 
 Default: `['@stryker-mutator/*']`  
@@ -245,7 +245,7 @@ These modules should be installed right next to stryker. For a current list of p
 you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or
 [stryker-mutator.io](https://stryker-mutator.io).
 
-
+<a name="reporters"></a>
 ### `reporters` [`string[]`]
 
 Default: `['clear-text', 'progress']`  
@@ -273,7 +273,7 @@ You will need to pass the `STRYKER_DASHBOARD_API_KEY` environment variable yours
 * [Travis documentation](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables)
 * [CircleCI documentation](https://circleci.com/security/#secrets_section)
 
-
+<a name="symlinkNodeModules"></a>
 ### `symlinkNodeModules` [`boolean`]
 
 Default: `true`  
@@ -294,7 +294,7 @@ node_modules directory this would not be possible.
 Stryker will look for the node_modules directory to use in the current basePath (or current working directory) and
 its parent directories.
 
-
+<a name="tempDirName"></a>
 ### `tempDirName` [`string`]
 
 Default: `'.stryker-tmp'`  
@@ -307,7 +307,7 @@ It will be created if it not exists and is **entirely deleted** after a successf
 It is advised to use a directory inside the directory that holds your repository. This way `node_modules` are resolved as expected. Be sure to
 not check-in your chosen temp directory in your `.gitignore` file.
 
-
+<a name="testFramework"></a>
 ### `testFramework` [`string`]
 
 Default: *none*  
@@ -320,7 +320,7 @@ However, it is required when `coverageAnalysis` is set to `'perTest'`, because S
 
 Make sure the plugin is installed for your chosen test framework. E.g. install `stryker-mocha-framework` to use `'mocha'` as a test framework.
 
-
+<a name="testRunner"></a>
 ### `testRunner` [`string`]
 
 Default: `'command'`  
@@ -335,7 +335,7 @@ If possible, you should try to use one of the test runner plugins that hook into
 For example: install and use the `stryker-karma-runner` to use `karma` as a test runner.
 See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-date list of supported test runners and plugins.
 
-
+<a name="thresholds"></a>
 ### `thresholds` [`object`]
 
 Default: `{ high: 80, low: 60, break: null }`   
@@ -352,7 +352,7 @@ Specify the thresholds for mutation score.
 
 It is not allowed to only supply one value of the values (it's all or nothing). However, `high` and `low` values can be the same, making sure colors are either red or green. Set `break` to `null` (default) to never let your build fail.
 
-
+<a name="timeoutFactor"></a>
 ### `timeoutFactor` [`number`]
 
 Default: `1.5`  
@@ -361,7 +361,7 @@ Config file: `timeoutFactor: 1.5`
 
 See [Timeout in milliseconds](#Timeout-in-milliseconds).
 
-
+<a name="timeoutMS"></a>
 ### `timeoutMS` [`number`]
 
 Default: `5000`  
@@ -382,7 +382,7 @@ Both `netTimeMs` and `overheadMs` are calculated during the initial test run. Th
 With `timeoutFactor` you can configure the allowed deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops.
 `timeoutMS` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.
 
-
+<a name="transpilers"></a>
 ###  `transpilers` [`string[]`]
 
 Default: `[]`
