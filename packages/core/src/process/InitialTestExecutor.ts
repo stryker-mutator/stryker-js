@@ -107,9 +107,9 @@ export default class InitialTestExecutor {
     sourceMapper: SourceMapper
   ): Promise<{ instrumentedFiles: readonly File[]; coverageMaps: CoverageMapsByFile }> {
     const filesToInstrument = this.inputFiles.filesToMutate
-    // filter files that exist in both filesToMutate and transpiledFiles, e.g. ts header files *.d.ts
-    .filter(mutateFile => !files.some(file => file.name === mutateFile.name))
-    .map(mutateFile => sourceMapper.transpiledFileNameFor(mutateFile.name));
+      // filter files that exist in both filesToMutate and transpiledFiles, e.g. ts header files *.d.ts
+      .filter(mutateFile => !files.some(file => file.name === mutateFile.name))
+      .map(mutateFile => sourceMapper.transpiledFileNameFor(mutateFile.name));
     const coverageInstrumenterTranspiler = new CoverageInstrumenterTranspiler(this.options, filesToInstrument);
     const instrumentedFiles = await coverageInstrumenterTranspiler.transpile(files);
     return { coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps, instrumentedFiles };

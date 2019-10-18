@@ -28,7 +28,6 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
 });
 
 describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
-
   let strykerSandboxMock: producers.Mock<Sandbox>;
   let sut: InitialTestExecutor;
   let testFrameworkMock: TestFramework | null;
@@ -51,13 +50,13 @@ describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
       .provideValue(coreTokens.loggingContext, LOGGING_CONTEXT)
       .provideValue(coreTokens.testFramework, testFrameworkMock)
       .provideValue(coreTokens.transpiler, transpilerMock as Transpiler)
-      .provideValue(coreTokens.timer, timerMock as unknown as Timer)
-      .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock as unknown as TemporaryDirectory)
+      .provideValue(coreTokens.timer, (timerMock as unknown) as Timer)
+      .provideValue(coreTokens.temporaryDirectory, (temporaryDirectoryMock as unknown) as TemporaryDirectory)
       .injectClass(InitialTestExecutor);
   }
 
   beforeEach(() => {
-    options = { transpilers: ['typescript'], coverageAnalysis: 'perTest'};
+    options = { transpilers: ['typescript'], coverageAnalysis: 'perTest' };
     inputFiles = new InputFileCollection([new File('mutate.ts', ''), new File('mutate.d.ts', '')], ['mutate.d.ts', 'mutate.ts']);
     timerMock = sinon.createStubInstance(Timer);
     strykerSandboxMock = producers.mock(Sandbox as any);
@@ -66,14 +65,8 @@ describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
     sinon.stub(Sandbox, 'create').resolves(strykerSandboxMock);
     sinon.stub(coverageInstrumenterTranspiler, 'default').returns(coverageInstrumenterTranspilerMock);
     testFrameworkMock = testFramework();
-    coverageAnnotatedFiles = [
-      new File('mutate.js', ''),
-      new File('mutate.d.ts', ''),
-    ];
-    transpiledFiles = [
-      new File('mutate.ts', ''),
-      new File('mutate.d.ts', '')
-    ];
+    coverageAnnotatedFiles = [new File('mutate.js', ''), new File('mutate.d.ts', '')];
+    transpiledFiles = [new File('mutate.ts', ''), new File('mutate.d.ts', '')];
     coverageInstrumenterTranspilerMock.transpile.returns(coverageAnnotatedFiles);
     transpilerMock.transpile.returns(transpiledFiles);
     expectedRunResult = runResult();
