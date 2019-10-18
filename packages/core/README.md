@@ -87,7 +87,7 @@ This is the same globbing format you might know from [Grunt](https://github.com/
 
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
-### Available Configurations
+### Available Options
 * [allowConsoleColors](#allowConsoleColors)
 * [coverageAnalysis](#coverageAnalysis)
 * [fileLogLevel](#fileLogLevel)
