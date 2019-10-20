@@ -184,7 +184,7 @@ export function transpiler(): sinon.SinonStubbedInstance<Transpiler> {
   };
 }
 
-export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
+export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString(), runAllTests = false): MatchedMutant {
   const scopedTestIds: number[] = [];
   for (let i = 0; i < numberOfTests; i++) {
     scopedTestIds.push(1);
@@ -193,6 +193,7 @@ export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.to
     fileName: '',
     id: mutantId,
     mutatorName: '',
+    runAllTests,
     replacement: '',
     scopedTestIds,
     timeSpentScopedTests: 0

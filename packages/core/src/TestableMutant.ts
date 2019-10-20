@@ -12,19 +12,39 @@ export enum TestSelectionResult {
   Success
 }
 
+class TestFilter {
+  public timeSpentScopedTests = 0;
+  public runAllTests = false;
+  public selectedTests: TestSelection[] = [];
+
+  public selectAllTests(runResult: RunResult) {
+    runResult.tests.forEach(testResult => (this.timeSpentScopedTests += testResult.timeSpentMs));
+    this.runAllTests = true;
+  }
+
+  public selectTest(testResult: TestResult, index: number) {
+    this.selectedTests.push({ id: index, name: testResult.name });
+    this.timeSpentScopedTests += testResult.timeSpentMs;
+    this.runAllTests = false;
+  }
+}
+
 export default class TestableMutant {
-  private readonly _selectedTests: TestSelection[] = [];
   public specsRan: string[] = [];
-  private _timeSpentScopedTests = 0;
+  private readonly filter = new TestFilter();
   private _location: Location;
   public testSelectionResult = TestSelectionResult.Success;
 
   public get selectedTests(): TestSelection[] {
-    return this._selectedTests;
+    return this.filter.selectedTests;
+  }
+
+  public get runAllTests(): boolean {
+    return this.filter.runAllTests;
   }
 
   public get timeSpentScopedTests() {
-    return this._timeSpentScopedTests;
+    return this.filter.timeSpentScopedTests;
   }
 
   public get fileName() {
@@ -59,13 +79,12 @@ export default class TestableMutant {
   }
 
   public selectAllTests(runResult: RunResult, testSelectionResult: TestSelectionResult) {
+    this.filter.selectAllTests(runResult);
     this.testSelectionResult = testSelectionResult;
-    runResult.tests.forEach((testResult, id) => this.selectTest(testResult, id));
   }
 
   public selectTest(testResult: TestResult, index: number) {
-    this._selectedTests.push({ id: index, name: testResult.name });
-    this._timeSpentScopedTests += testResult.timeSpentMs;
+    this.filter.selectTest(testResult, index);
   }
 
   constructor(public readonly id: string, public mutant: Mutant, public sourceFile: SourceFile) {}
@@ -96,7 +115,7 @@ export default class TestableMutant {
     return [startIndexLines, endIndexLines];
   }
 
-  public result(status: MutantStatus, testsRan: string[]): MutantResult {
+  public createResult(status: MutantStatus, testsRan: string[]): MutantResult {
     return freezeRecursively({
       id: this.id,
       location: this.location,

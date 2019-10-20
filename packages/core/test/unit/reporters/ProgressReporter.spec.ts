@@ -51,6 +51,17 @@ describe('ProgressReporter', () => {
         expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
+    describe('when mutants match to all tests', () => {
+      beforeEach(() => {
+        matchedMutants = [matchedMutant(0, '0', true), matchedMutant(0, '1', true)];
+
+        sut.onAllMutantsMatchedWithTests(matchedMutants);
+      });
+      
+      it('the total of MatchedMutants in the progress bar should be 2', () => {
+        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
+      });
+    });
   });
 
   describe('onMutantTested()', () => {

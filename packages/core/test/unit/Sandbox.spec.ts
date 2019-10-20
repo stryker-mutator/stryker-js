@@ -258,6 +258,14 @@ describe(Sandbox.name, () => {
       expect(fileUtils.writeFile).not.calledWith(expectedTestFrameworkHooksFile);
     });
 
+    it('should not filter any tests when runAllTests = true', async () => {
+      const sut = await createSut();
+      const mutant = new TestableMutant('2', createMutant(), new SourceFile(new File('', '')));
+      mutant.selectAllTests(runResult, TestSelectionResult.Failed);
+      sut.runMutant(new TranspiledMutant(mutant, { outputFiles: [new File(expectedTargetFileToMutate, '')], error: null }, true));
+      expect(fileUtils.writeFile).not.calledWith(expectedTestFrameworkHooksFile);
+    });
+
     it('should report a runtime error when test run errored', async () => {
       runResult.status = RunStatus.Error;
       runResult.errorMessages = ['Cannot call "foo" of undefined (or something)'];
