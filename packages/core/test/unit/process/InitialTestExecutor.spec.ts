@@ -73,7 +73,7 @@ describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
     strykerSandboxMock.run.resolves(expectedRunResult);
   });
 
-  it('should not throw a SourceMapError', async () => {
+  it('should not throw a SourceMapError when transpiled files contain ts headder', async () => {
     // Arrange
     sut = createSut();
 
