@@ -1,11 +1,19 @@
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { mutationTestReportSchemaFileResult, mutationTestReportSchemaMutantResult, mutationTestReportSchemaMutationTestResult } from '@stryker-mutator/test-helpers/src/factory';
+import {
+  mutationTestReportSchemaFileResult,
+  mutationTestReportSchemaMutantResult,
+  mutationTestReportSchemaMutationTestResult
+} from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { CIProvider } from '../../../../src/reporters/ci/Provider';
 import DashboardReporter from '../../../../src/reporters/dashboard-reporter/DashboardReporter';
-import { default as DashboardReporterClient, default as StrykerDashboardClient, MutationScoreReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
+import {
+  default as DashboardReporterClient,
+  default as StrykerDashboardClient,
+  MutationScoreReport
+} from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
 import { mock, Mock } from '../../../helpers/producers';
@@ -33,7 +41,7 @@ describe(DashboardReporter.name, () => {
 
   function createSut(ciProviderOverride: CIProvider | null = ciProviderMock) {
     return testInjector.injector
-      .provideValue(dashboardReporterTokens.dashboardReporterClient, dashboardClientMock as unknown as DashboardReporterClient)
+      .provideValue(dashboardReporterTokens.dashboardReporterClient, (dashboardClientMock as unknown) as DashboardReporterClient)
       .provideValue(dashboardReporterTokens.ciProvider, ciProviderOverride)
       .injectClass(DashboardReporter);
   }
@@ -63,7 +71,6 @@ describe(DashboardReporter.name, () => {
   });
 
   describe('with a mutation score report', () => {
-
     it('should report mutation score to report server', async () => {
       // Arrange
       ciProviderMock.isPullRequest.returns(false);
@@ -71,18 +78,20 @@ describe(DashboardReporter.name, () => {
       ciProviderMock.determineVersion.returns('master');
 
       // Act
-      await createSut().onMutationTestReportReady(mutationTestReportSchemaMutationTestResult({
-        files: {
-          'a.js': mutationTestReportSchemaFileResult({
-            mutants: [
-              mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-              mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-              mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-              mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Survived })
-            ]
-          })
-        }
-      }));
+      await createSut().onMutationTestReportReady(
+        mutationTestReportSchemaMutationTestResult({
+          files: {
+            'a.js': mutationTestReportSchemaFileResult({
+              mutants: [
+                mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
+                mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
+                mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
+                mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Survived })
+              ]
+            })
+          }
+        })
+      );
 
       // Assert
       const report: MutationScoreReport = {

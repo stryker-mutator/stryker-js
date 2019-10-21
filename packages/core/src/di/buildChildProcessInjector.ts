@@ -14,7 +14,7 @@ export function buildChildProcessInjector(options: StrykerOptions): Injector<Opt
     .provideFactory(commonTokens.pluginResolver, pluginResolverFactory);
 }
 
-function pluginDescriptorsFactory(options: StrykerOptions): ReadonlyArray<string> {
+function pluginDescriptorsFactory(options: StrykerOptions): readonly string[] {
   return options.plugins;
 }
 pluginDescriptorsFactory.inject = tokens(commonTokens.options);

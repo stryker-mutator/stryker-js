@@ -10,11 +10,7 @@ const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/ma
  */
 export class ReactPreset implements Preset {
   public readonly name = 'react';
-  private readonly generalDependencies = [
-    '@stryker-mutator/core',
-    '@stryker-mutator/jest-runner',
-    '@stryker-mutator/html-reporter'
-  ];
+  private readonly generalDependencies = ['@stryker-mutator/core', '@stryker-mutator/jest-runner', '@stryker-mutator/html-reporter'];
 
   private readonly sharedConfig = `testRunner: 'jest',
     reporters: ['progress', 'clear-text', 'html'],
@@ -39,7 +35,7 @@ export class ReactPreset implements Preset {
     }`;
 
   public async createConfig(): Promise<PresetConfiguration> {
-    const choices: inquirer.ChoiceType<string>[] = ['JSX', 'TSX'];
+    const choices: Array<inquirer.ChoiceType<string>> = ['JSX', 'TSX'];
     const answers = await inquirer.prompt<{ choice: string }>({
       choices,
       message: 'Is your project a JSX project or a TSX project?',

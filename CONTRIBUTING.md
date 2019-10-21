@@ -19,10 +19,10 @@ Get in touch with us through twitter or via the [Stryker gitter](https://gitter.
 
 ## Code style
 
-Please adhere to our [editorconfig](https://editorconfig.org) and [tslint](https://palantir.github.io/tslint/) rules. If you're using vscode, please install the following extensions:
+Please adhere to our [editorconfig](https://editorconfig.org) and [eslint](https://eslint.org/) rules. If you're using vscode, please install the following extensions:
 
 * The [editorconfig extension](https://github.com/editorconfig/editorconfig-vscode#editorconfig-for-visual-studio-code)
-* The [tslint extension](https://github.com/Microsoft/vscode-tslint) (at least v1.0.0)
+* The [eslint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
 We configured the tslint extension to run on save in or [vscode workspace](#vscode-environment-configuration).
 
@@ -50,7 +50,7 @@ We've chosen to **check in in our vscode configuration**. This makes development
 We recommend you to install the following plugins:
 
 * [editorconfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig), to adhere to our white spacing rules.
-* [tslint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin), to adhere to our tslint rules (as well as having auto fix-on-save)
+* [eslint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 * [code spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), no particular reason, just prevent common typo's.
 
 After cloning this repo, open the workspace with `$ code workspace.code-workspace` (or open code and use file -> Open Workspace...).

@@ -15,7 +15,6 @@ import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../
 import currentLogMock from '../../helpers/logMock';
 
 describe(buildMainInjector.name, () => {
-
   let testFrameworkOrchestratorMock: sinon.SinonStubbedInstance<TestFrameworkOrchestrator>;
   let pluginLoaderMock: sinon.SinonStubbedInstance<di.PluginLoader>;
   let testFrameworkMock: TestFramework;
@@ -52,7 +51,6 @@ describe(buildMainInjector.name, () => {
   }
 
   describe('resolve options', () => {
-
     it('should supply readonly stryker options', () => {
       const actualOptions = buildMainInjector({}).resolve(commonTokens.options);
       expect(actualOptions).frozen;

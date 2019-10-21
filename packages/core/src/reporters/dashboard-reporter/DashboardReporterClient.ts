@@ -24,19 +24,15 @@ interface FullReportResponse {
 const URL_STRYKER_DASHBOARD_REPORTER = 'https://dashboard.stryker-mutator.io/api/reports';
 
 export default class DashboardReporterClient {
-
   public static inject = tokens(commonTokens.logger, dashboardReporterTokens.httpClient);
-  constructor(
-    private readonly log: Logger,
-    private readonly httpClient: HttpClient) {
-  }
+  constructor(private readonly log: Logger, private readonly httpClient: HttpClient) {}
 
   public postMutationScoreReport(report: MutationScoreReport): Promise<void> {
     this.log.info(`Posting report to ${URL_STRYKER_DASHBOARD_REPORTER}`);
     const reportString = JSON.stringify(report);
     this.log.debug('Posting data %s', reportString);
-    return this.httpClient.post(URL_STRYKER_DASHBOARD_REPORTER, reportString,
-      {
+    return this.httpClient
+      .post(URL_STRYKER_DASHBOARD_REPORTER, reportString, {
         ['Content-Type']: 'application/json'
       })
       .then(body => {
@@ -50,8 +46,19 @@ export default class DashboardReporterClient {
       });
   }
 
-  public async putFullResult({ report, repositorySlug, apiKey, version, moduleName }: { report: mutationTestReportSchema.MutationTestResult, repositorySlug: string, version: string, apiKey: string, moduleName: string | null })
-    : Promise<string> {
+  public async putFullResult({
+    report,
+    repositorySlug,
+    apiKey,
+    version,
+    moduleName
+  }: {
+    report: mutationTestReportSchema.MutationTestResult;
+    repositorySlug: string;
+    version: string;
+    apiKey: string;
+    moduleName: string | null;
+  }): Promise<string> {
     const url = getPutUrl(repositorySlug, version, moduleName);
     const requestBody: FullReport = {
       result: report
@@ -68,7 +75,9 @@ export default class DashboardReporterClient {
       const response: FullReportResponse = JSON.parse(responseBody);
       return response.href;
     } else if (result.message.statusCode === 401) {
-      throw new StrykerError(`Error HTTP PUT ${url}. Unauthorized. Did you provide the correct api key in the "STRYKER_DASHBOARD_API_KEY" environment variable?`);
+      throw new StrykerError(
+        `Error HTTP PUT ${url}. Unauthorized. Did you provide the correct api key in the "STRYKER_DASHBOARD_API_KEY" environment variable?`
+      );
     } else {
       throw new StrykerError(`Error HTTP PUT ${url}. Response status code: ${result.message.statusCode}. Response body: ${responseBody}`);
     }

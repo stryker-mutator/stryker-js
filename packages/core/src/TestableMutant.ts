@@ -13,51 +13,48 @@ export enum TestSelectionResult {
 }
 
 export default class TestableMutant {
-
   private readonly _selectedTests: TestSelection[] = [];
   public specsRan: string[] = [];
   private _timeSpentScopedTests = 0;
   private _location: Location;
   public testSelectionResult = TestSelectionResult.Success;
 
-  get selectedTests(): TestSelection[] {
+  public get selectedTests(): TestSelection[] {
     return this._selectedTests;
   }
 
-  get timeSpentScopedTests() {
+  public get timeSpentScopedTests() {
     return this._timeSpentScopedTests;
   }
 
-  get fileName() {
+  public get fileName() {
     return this.mutant.fileName;
   }
 
-  get mutatorName() {
+  public get mutatorName() {
     return this.mutant.mutatorName;
   }
 
-  get range() {
+  public get range() {
     return this.mutant.range;
   }
 
-  get replacement() {
+  public get replacement() {
     return this.mutant.replacement;
   }
 
-  get location() {
+  public get location() {
     if (!this._location) {
       this._location = this.sourceFile.getLocation(this.range);
     }
     return this._location;
   }
 
-  get mutatedCode() {
-    return this.sourceFile.content.substr(0, this.range[0]) +
-      this.replacement +
-      this.sourceFile.content.substr(this.range[1]);
+  public get mutatedCode() {
+    return this.sourceFile.content.substr(0, this.range[0]) + this.replacement + this.sourceFile.content.substr(this.range[1]);
   }
 
-  get originalCode() {
+  public get originalCode() {
     return this.sourceFile.content;
   }
 
@@ -71,8 +68,7 @@ export default class TestableMutant {
     this._timeSpentScopedTests += testResult.timeSpentMs;
   }
 
-  constructor(public readonly id: string, public mutant: Mutant, public sourceFile: SourceFile) {
-  }
+  constructor(public readonly id: string, public mutant: Mutant, public sourceFile: SourceFile) {}
 
   public get originalLines() {
     const [startIndex, endIndex] = this.getMutationLineIndexes();
@@ -81,7 +77,11 @@ export default class TestableMutant {
 
   public get mutatedLines() {
     const [startIndex, endIndex] = this.getMutationLineIndexes();
-    return this.sourceFile.content.substring(startIndex, this.mutant.range[0]) + this.mutant.replacement + this.sourceFile.content.substring(this.mutant.range[1], endIndex);
+    return (
+      this.sourceFile.content.substring(startIndex, this.mutant.range[0]) +
+      this.mutant.replacement +
+      this.sourceFile.content.substring(this.mutant.range[1], endIndex)
+    );
   }
 
   private getMutationLineIndexes() {

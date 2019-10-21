@@ -5,7 +5,7 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { MutantStatus } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
-import { fileAlreadyExistsError, mutant as createMutant, testResult } from '@stryker-mutator/test-helpers/src/factory';
+import { mutant as createMutant, fileAlreadyExistsError, testResult } from '@stryker-mutator/test-helpers/src/factory';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
@@ -60,10 +60,7 @@ describe(Sandbox.name, () => {
     sandboxDirectory = path.resolve('random-folder-3');
     expectedTargetFileToMutate = path.join(sandboxDirectory, 'file1');
     expectedTestFrameworkHooksFile = path.join(sandboxDirectory, '___testHooksForStryker.js');
-    inputFiles = [
-      expectedFileToMutate,
-      notMutatedFile,
-    ];
+    inputFiles = [expectedFileToMutate, notMutatedFile];
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
     temporaryDirectoryMock.createRandomDirectory.returns(sandboxDirectory);
 
@@ -82,20 +79,19 @@ describe(Sandbox.name, () => {
   interface CreateArgs {
     testFramework: TestFramework | null;
     overheadTimeMS: number;
-    files: ReadonlyArray<File>;
+    files: readonly File[];
   }
   function createSut(overrides?: Partial<CreateArgs>) {
     const args: CreateArgs = {
       files: inputFiles,
       overheadTimeMS: OVERHEAD_TIME_MS,
-      testFramework: null,
+      testFramework: null
     };
-    const { files, testFramework, overheadTimeMS } = {...args, ...overrides };
+    const { files, testFramework, overheadTimeMS } = { ...args, ...overrides };
     return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT, temporaryDirectoryMock as any);
   }
 
   describe('create()', () => {
-
     it('should copy input files when created', async () => {
       await createSut();
       expect(fileUtils.writeFile).calledWith(expectedTargetFileToMutate, inputFiles[0].content);
@@ -136,10 +132,13 @@ describe(Sandbox.name, () => {
       findNodeModulesStub.resolves('node_modules');
       symlinkJunctionStub.rejects(fileAlreadyExistsError());
       await createSut(testFrameworkStub);
-      expect(log.warn).calledWithMatch(normalizeWhitespaces(
-        `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox.
+      expect(log.warn).calledWithMatch(
+        normalizeWhitespaces(
+          `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox.
         Please remove the node_modules from your sandbox files. Alternatively, set \`symlinkNodeModules\`
-        to \`false\` to disable this warning.`));
+        to \`false\` to disable this warning.`
+        )
+      );
     });
 
     it('should log a warning if linking "node_modules" results in an unknown error', async () => {
@@ -147,8 +146,10 @@ describe(Sandbox.name, () => {
       const error = new Error('unknown');
       symlinkJunctionStub.rejects(error);
       await createSut(testFrameworkStub);
-      expect(log.warn).calledWithMatch(normalizeWhitespaces(
-        `Unexpected error while trying to symlink "basePath/node_modules" in sandbox directory.`), error);
+      expect(log.warn).calledWithMatch(
+        normalizeWhitespaces('Unexpected error while trying to symlink "basePath/node_modules" in sandbox directory.'),
+        error
+      );
     });
 
     it('should symlink node modules in sandbox directory if `symlinkNodeModules` is `false`', async () => {
@@ -166,7 +167,7 @@ describe(Sandbox.name, () => {
       expect(testRunner.run).to.have.been.calledWith({
         mutatedFileName: undefined,
         testHooks: 'hooks',
-        timeout: 231313,
+        timeout: 231313
       });
     });
 
@@ -176,7 +177,7 @@ describe(Sandbox.name, () => {
       expect(testRunner.run).to.have.been.calledWith({
         mutatedFileName: 'path/to/file',
         testHooks: 'hooks',
-        timeout: 231313,
+        timeout: 231313
       });
     });
   });
@@ -189,13 +190,14 @@ describe(Sandbox.name, () => {
     beforeEach(() => {
       mutant = createMutant({ fileName: expectedFileToMutate.name, replacement: 'mutated', range: [0, 8] });
 
-      const testableMutant = new TestableMutant(
-        '1',
-        mutant,
-        new SourceFile(new File('foobar.js', 'original code')));
+      const testableMutant = new TestableMutant('1', mutant, new SourceFile(new File('foobar.js', 'original code')));
       testableMutant.selectTest(testResult({ timeSpentMs: 10 }), 1);
       testableMutant.selectTest(testResult({ timeSpentMs: 2 }), 2);
-      transpiledMutant = new TranspiledMutant(testableMutant, { outputFiles: [new File(expectedFileToMutate.name, 'mutated code')], error: null }, true);
+      transpiledMutant = new TranspiledMutant(
+        testableMutant,
+        { outputFiles: [new File(expectedFileToMutate.name, 'mutated code')], error: null },
+        true
+      );
       testFrameworkStub.filter.returns(testFilterCodeFragment);
     });
 
@@ -261,8 +263,11 @@ describe(Sandbox.name, () => {
       runResult.errorMessages = ['Cannot call "foo" of undefined (or something)'];
       const sut = await createSut();
       const actualResult = await sut.runMutant(transpiledMutant);
-      expect(log.debug).calledWith('A runtime error occurred: %s during execution of mutant: %s',
-        runResult.errorMessages[0], transpiledMutant.mutant.toString());
+      expect(log.debug).calledWith(
+        'A runtime error occurred: %s during execution of mutant: %s',
+        runResult.errorMessages[0],
+        transpiledMutant.mutant.toString()
+      );
       expect(actualResult.status).eq(MutantStatus.RuntimeError);
     });
 
@@ -270,8 +275,9 @@ describe(Sandbox.name, () => {
       transpiledMutant.transpileResult.error = 'Error! Cannot negate a string (or something)';
       const sut = await createSut();
       const mutantResult = await sut.runMutant(transpiledMutant);
-      expect(log.debug).calledWith(`Transpile error occurred: "Error! Cannot negate a string (or something)" during transpiling of mutant ${
-        transpiledMutant.mutant.toString()}`);
+      expect(log.debug).calledWith(
+        `Transpile error occurred: "Error! Cannot negate a string (or something)" during transpiling of mutant ${transpiledMutant.mutant.toString()}`
+      );
       expect(mutantResult.status).eq(MutantStatus.TranspileError);
     });
 

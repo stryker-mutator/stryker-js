@@ -9,15 +9,19 @@ import DashboardReporterClient from './DashboardReporterClient';
 import { dashboardReporterTokens } from './tokens';
 
 export default class DashboardReporter implements Reporter {
-
-  public static readonly inject = tokens(commonTokens.logger, dashboardReporterTokens.dashboardReporterClient, commonTokens.options, dashboardReporterTokens.ciProvider);
+  public static readonly inject = tokens(
+    commonTokens.logger,
+    dashboardReporterTokens.dashboardReporterClient,
+    commonTokens.options,
+    dashboardReporterTokens.ciProvider
+  );
 
   constructor(
     private readonly log: Logger,
     private readonly dashboardReporterClient: DashboardReporterClient,
     private readonly options: StrykerOptions,
     private readonly ciProvider: CIProvider | null
-  ) { }
+  ) {}
 
   public async onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
     if (this.ciProvider) {
@@ -38,8 +42,7 @@ export default class DashboardReporter implements Reporter {
         ...this.getContextFromEnvironment(ciProvider)
       });
       this.log.info('Report available at: %s', href);
-    }
-    catch (err) {
+    } catch (err) {
       this.log.error('Could not upload report.', err);
     }
   }
@@ -67,7 +70,7 @@ export default class DashboardReporter implements Reporter {
       apiKey: getEnvironmentVariableOrThrow('STRYKER_DASHBOARD_API_KEY'),
       moduleName: this.options.moduleName || null,
       repositorySlug: ciProvider.determineSlug(),
-      version: ciProvider.determineVersion(),
+      version: ciProvider.determineVersion()
     };
   }
 }

@@ -20,7 +20,6 @@ describe('ProgressAppendOnlyReporter', () => {
   });
 
   describe('onAllMutantsMatchedWithTests() with 2 mutant to test', () => {
-
     beforeEach(() => {
       sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1)]);
     });
@@ -31,8 +30,7 @@ describe('ProgressAppendOnlyReporter', () => {
 
     it('should log zero progress after ten seconds without completed tests', () => {
       sinon.clock.tick(TEN_SECONDS);
-      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 0% (ETC n/a) ` +
-      `0/2 tested (0 survived)${os.EOL}`);
+      expect(process.stdout.write).to.have.been.calledWith('Mutation testing 0% (ETC n/a) ' + `0/2 tested (0 survived)${os.EOL}`);
     });
 
     it('should log 50% with 10s ETC after ten seconds with 1 completed test', () => {

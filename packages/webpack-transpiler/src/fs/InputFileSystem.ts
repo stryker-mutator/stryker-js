@@ -1,8 +1,4 @@
-import {
-  CachedInputFileSystem,
-  NodeJsInputFileSystem,
-  Stats
-} from 'enhanced-resolve';
+import { CachedInputFileSystem, NodeJsInputFileSystem, Stats } from 'enhanced-resolve';
 import * as fs from 'fs';
 import { dirname } from 'path';
 import { Callback, webpack } from '../types';
@@ -12,8 +8,7 @@ import MemoryFS from './MemoryFS';
 // => https://github.com/webpack/webpack/blob/efc576c8b744e7a015ab26f1f46932ba3ca7d4f1/lib/node/NodeEnvironmentPlugin.js#L14
 const CACHE_DURATION = 60000;
 
-export default class InputFileSystem extends CachedInputFileSystem
-  implements webpack.InputFileSystem {
+export default class InputFileSystem extends CachedInputFileSystem implements webpack.InputFileSystem {
   private readonly memoryFS = new MemoryFS();
 
   constructor(innerFS = new NodeJsInputFileSystem()) {

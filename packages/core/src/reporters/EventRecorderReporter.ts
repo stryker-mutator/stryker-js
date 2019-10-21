@@ -12,7 +12,7 @@ const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
 export default class EventRecorderReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
 
-  private readonly allWork: Promise<void>[] = [];
+  private readonly allWork: Array<Promise<void>> = [];
   private readonly createBaseFolderTask: Promise<any>;
   private _baseFolder: string;
   private index = 0;
@@ -27,7 +27,9 @@ export default class EventRecorderReporter implements StrictReporter {
         this._baseFolder = this.options.eventReporter.baseDir;
         this.log.debug(`Using configured output folder ${this._baseFolder}`);
       } else {
-        this.log.debug(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`);
+        this.log.debug(
+          `No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`
+        );
         this._baseFolder = DEFAULT_BASE_FOLDER;
       }
     }
@@ -62,7 +64,7 @@ export default class EventRecorderReporter implements StrictReporter {
     this.work('onAllSourceFilesRead', files);
   }
 
-  public onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
+  public onAllMutantsMatchedWithTests(results: readonly MatchedMutant[]): void {
     this.work('onAllMutantsMatchedWithTests', results);
   }
 

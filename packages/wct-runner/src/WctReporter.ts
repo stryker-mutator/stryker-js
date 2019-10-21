@@ -23,21 +23,23 @@ export default class WctReporter {
   // Both testStart and testEnd are properties here, rather than methods. This is deliberate to allow for `this` pointer to work
   private readonly testStart = () => {
     this.before = new Date();
-  }
+  };
 
   private readonly testEnd = (_browser: BrowserDef, result: TestEndData) => {
     this.results.push({
       failureMessages: this.toFailureMessages(result.error),
       name: this.testNamePartsToString(result.test),
       status: this.toTestResultStatus(result.state),
-      timeSpentMs: new Date().getTime() - this.before.getTime(),
+      timeSpentMs: new Date().getTime() - this.before.getTime()
     });
-  }
+  };
 
   private toFailureMessages(error: any): string[] | undefined {
     switch (typeof error) {
-      case 'undefined': return undefined;
-      case 'string': return [error];
+      case 'undefined':
+        return undefined;
+      case 'string':
+        return [error];
       case 'object':
         if (error) {
           if (error.stack) {
@@ -55,7 +57,10 @@ export default class WctReporter {
 
   private testNamePartsToString(testNameParts: string[]): string {
     // First part is the file name
-    return testNameParts.splice(1).join(' ').trim();
+    return testNameParts
+      .splice(1)
+      .join(' ')
+      .trim();
   }
 
   private toTestResultStatus(state: CompletedState): TestStatus {

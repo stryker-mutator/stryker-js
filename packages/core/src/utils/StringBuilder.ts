@@ -21,7 +21,8 @@ export default class StringBuilder {
   }
 
   public static concat(...builders: StringBuilder[]): string {
-    return builders.map(b => b.toString())
+    return builders
+      .map(b => b.toString())
       .filter(Boolean)
       .join(EOL);
   }

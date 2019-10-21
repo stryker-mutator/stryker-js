@@ -9,7 +9,6 @@ import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-rep
 import { Mock, mock } from '../../../helpers/producers';
 
 describe(DashboardReporterClient.name, () => {
-
   let sut: StrykerDashboardClient;
   let httpClient: Mock<HttpClient>;
 
@@ -25,12 +24,11 @@ describe(DashboardReporterClient.name, () => {
   beforeEach(() => {
     httpClient = mock(HttpClient);
     sut = testInjector.injector
-      .provideValue(dashboardReporterTokens.httpClient, httpClient as unknown as HttpClient)
+      .provideValue(dashboardReporterTokens.httpClient, (httpClient as unknown) as HttpClient)
       .injectClass(DashboardReporterClient);
   });
 
   describe(StrykerDashboardClient.prototype.postMutationScoreReport.name, () => {
-
     it('report mutations score to dashboard server', async () => {
       // Arrange
       httpClient.post.resolves({
@@ -68,7 +66,7 @@ describe(DashboardReporterClient.name, () => {
       expect(testInjector.logger.error).have.been.calledWithMatch(`Post to ${baseUrl} resulted in http status code: 500`);
     });
 
-    it('when the server doesn\'t respond an error will be logged', async () => {
+    it("when the server doesn't respond an error will be logged", async () => {
       // Arrange
       httpClient.post.rejects();
 
@@ -138,7 +136,9 @@ describe(DashboardReporterClient.name, () => {
       const promise = sut.putFullResult({ report, repositorySlug, apiKey, version, moduleName: null });
 
       // Assert
-      await expect(promise).rejectedWith(`Error HTTP PUT ${baseUrl}/${repositorySlug}/${version}. Unauthorized. Did you provide the correct api key in the "STRYKER_DASHBOARD_API_KEY" environment variable?`);
+      await expect(promise).rejectedWith(
+        `Error HTTP PUT ${baseUrl}/${repositorySlug}/${version}. Unauthorized. Did you provide the correct api key in the "STRYKER_DASHBOARD_API_KEY" environment variable?`
+      );
     });
 
     it('should throw an unexpected error if the dashboard responds with 500', async () => {
@@ -150,8 +150,9 @@ describe(DashboardReporterClient.name, () => {
       const promise = sut.putFullResult({ report, repositorySlug, apiKey, version, moduleName: null });
 
       // Assert
-      await expect(promise).rejectedWith(`Error HTTP PUT ${baseUrl}/${repositorySlug}/${version}. Response status code: 500. Response body: Internal server error`);
+      await expect(promise).rejectedWith(
+        `Error HTTP PUT ${baseUrl}/${repositorySlug}/${version}. Response status code: 500. Response body: Internal server error`
+      );
     });
   });
-
 });

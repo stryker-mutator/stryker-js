@@ -30,7 +30,6 @@ class CircleProvider implements CIProvider {
     } else {
       return repoUrl.split('//')[1].split('/')[0];
     }
-
   }
 }
 

@@ -2,7 +2,6 @@
  * Represents a score result of a file or directory
  */
 interface ScoreResult {
-
   /**
    * The file or directory name of this score result node
    */
@@ -22,7 +21,7 @@ interface ScoreResult {
    * Any child directory/file score result nodes
    * If this score result represents a file, the length will be 0
    */
-  readonly childResults: ReadonlyArray<ScoreResult>;
+  readonly childResults: readonly ScoreResult[];
 
   /**
    * The total number of mutants that were killed

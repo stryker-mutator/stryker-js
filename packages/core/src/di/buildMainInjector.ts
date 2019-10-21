@@ -1,5 +1,5 @@
-import { Config } from '@stryker-mutator/api/config';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Config } from '@stryker-mutator/api/config';
 import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
@@ -45,10 +45,8 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideClass(coreTokens.timer, Timer);
 }
 
-function pluginDescriptorsFactory(config: Config): ReadonlyArray<string> {
-  config.plugins.push(
-    require.resolve('../reporters')
-  );
+function pluginDescriptorsFactory(config: Config): readonly string[] {
+  config.plugins.push(require.resolve('../reporters'));
   return config.plugins;
 }
 pluginDescriptorsFactory.inject = tokens(coreTokens.configReadFromConfigFile);

@@ -1,7 +1,6 @@
 import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions } from '../../core';
 
 export default class Config implements StrykerOptions {
-
   [customConfig: string]: any;
 
   public files: string[];

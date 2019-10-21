@@ -1,13 +1,14 @@
 import { Location } from '@stryker-mutator/api/core';
 
 export default class LocationHelper {
+  public static MAX_VALUE = new LocationHelper(
+    Object.freeze({
+      end: Object.freeze({ column: Number.POSITIVE_INFINITY, line: Number.POSITIVE_INFINITY }),
+      start: Object.freeze({ column: 0, line: -1 })
+    })
+  );
 
-  public static MAX_VALUE = new LocationHelper(Object.freeze({
-    end: Object.freeze({ column: Number.POSITIVE_INFINITY, line: Number.POSITIVE_INFINITY }),
-    start: Object.freeze({ column: 0, line: -1 })
-  }));
-
-  constructor(private readonly loc: Location) { }
+  constructor(private readonly loc: Location) {}
 
   /**
    * Indicates whether the current location is covered by an other location.
@@ -15,10 +16,11 @@ export default class LocationHelper {
    * @returns true if this location is covered by given location, otherwise false
    */
   public isCoveredBy(maybeWrapper: Location): boolean {
-    const isAfterStart = this.loc.start.line > maybeWrapper.start.line ||
+    const isAfterStart =
+      this.loc.start.line > maybeWrapper.start.line ||
       (this.loc.start.line === maybeWrapper.start.line && this.loc.start.column >= maybeWrapper.start.column);
-    const isBeforeEnd = this.loc.end.line < maybeWrapper.end.line ||
-      (this.loc.end.line === maybeWrapper.end.line && this.loc.end.column <= maybeWrapper.end.column);
+    const isBeforeEnd =
+      this.loc.end.line < maybeWrapper.end.line || (this.loc.end.line === maybeWrapper.end.line && this.loc.end.column <= maybeWrapper.end.column);
     return isAfterStart && isBeforeEnd;
   }
 
@@ -29,9 +31,10 @@ export default class LocationHelper {
    */
   public isSmallerArea(maybeSmaller: Location) {
     let firstLocationHasSmallerArea = false;
-    const lineDifference = (this.loc.end.line - this.loc.start.line) - (maybeSmaller.end.line - maybeSmaller.start.line);
+    const lineDifference = this.loc.end.line - this.loc.start.line - (maybeSmaller.end.line - maybeSmaller.start.line);
     const coversLessLines = lineDifference > 0;
-    const coversLessColumns = lineDifference === 0 && (maybeSmaller.start.column - this.loc.start.column) + (this.loc.end.column - maybeSmaller.end.column) > 0;
+    const coversLessColumns =
+      lineDifference === 0 && maybeSmaller.start.column - this.loc.start.column + (this.loc.end.column - maybeSmaller.end.column) > 0;
     if (coversLessLines || coversLessColumns) {
       firstLocationHasSmallerArea = true;
     }

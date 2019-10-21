@@ -1,6 +1,6 @@
 import { File } from '@stryker-mutator/api/core';
 
 export default interface TranspileResult {
-  outputFiles: ReadonlyArray<File>;
+  outputFiles: readonly File[];
   error: string | null;
 }

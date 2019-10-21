@@ -84,5 +84,4 @@ describe(CircleProvider.name, () => {
       expect(sut.determineSlug.bind(sut)).throws('Missing environment variable "CIRCLE_REPOSITORY_URL');
     });
   });
-
 });

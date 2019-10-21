@@ -52,5 +52,4 @@ describe(TravisProvider.name, () => {
       expect(sut.determineSlug.bind(sut)).throws('Missing environment variable "TRAVIS_REPO_SLUG"');
     });
   });
-
 });

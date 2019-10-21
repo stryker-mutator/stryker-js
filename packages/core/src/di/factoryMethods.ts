@@ -7,14 +7,18 @@ import { ConfigEditorApplier } from '../config';
 import TestFrameworkOrchestrator from '../TestFrameworkOrchestrator';
 import { freezeRecursively } from '../utils/objectUtils';
 
-export function pluginResolverFactory(injector: Injector<{ [commonTokens.logger]: Logger, [coreTokens.pluginDescriptors]: ReadonlyArray<string> }>): PluginResolver {
+export function pluginResolverFactory(
+  injector: Injector<{ [commonTokens.logger]: Logger; [coreTokens.pluginDescriptors]: readonly string[] }>
+): PluginResolver {
   const pluginLoader = injector.injectClass(PluginLoader);
   pluginLoader.load();
   return pluginLoader;
 }
 pluginResolverFactory.inject = tokens(commonTokens.injector);
 
-export function testFrameworkFactory(injector: Injector<OptionsContext & { [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework> }>) {
+export function testFrameworkFactory(
+  injector: Injector<OptionsContext & { [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework> }>
+) {
   return injector.injectClass(TestFrameworkOrchestrator).determineTestFramework();
 }
 testFrameworkFactory.inject = tokens(commonTokens.injector);
@@ -28,4 +32,7 @@ export function optionsFactory(config: Config, configEditorApplier: ConfigEditor
   configEditorApplier.edit(config);
   return freezeRecursively(config);
 }
-optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, typeof coreTokens.configEditorApplier]>(coreTokens.configReadFromConfigFile, coreTokens.configEditorApplier);
+optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, typeof coreTokens.configEditorApplier]>(
+  coreTokens.configReadFromConfigFile,
+  coreTokens.configEditorApplier
+);

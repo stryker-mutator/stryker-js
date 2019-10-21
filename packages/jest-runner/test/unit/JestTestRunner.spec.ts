@@ -27,7 +27,7 @@ describe('JestTestRunner', () => {
 
     jestTestRunner = testInjector.injector
       .provideValue(PROCESS_ENV_TOKEN, processEnvMock)
-      .provideValue(JEST_TEST_ADAPTER_TOKEN, jestTestAdapterMock as unknown as JestTestAdapter)
+      .provideValue(JEST_TEST_ADAPTER_TOKEN, (jestTestAdapterMock as unknown) as JestTestAdapter)
       .injectClass(JestTestRunner);
   });
 
@@ -112,30 +112,26 @@ describe('JestTestRunner', () => {
     expect(result).to.deep.equal({
       errorMessages: ['test failed - App.test.js'],
       status: RunStatus.Complete,
-      tests: [{
-        failureMessages: [
-          'Fail message 1',
-          'Fail message 2'
-        ],
-        name: 'App render renders without crashing',
-        status: TestStatus.Failed,
-        timeSpentMs: 2
-      },
-      {
-        failureMessages: [
-          'Fail message 3',
-          'Fail message 4'
-        ],
-        name: 'App render renders without crashing',
-        status: TestStatus.Failed,
-        timeSpentMs: 0
-      },
-      {
-        failureMessages: [],
-        name: 'App renders without crashing',
-        status: TestStatus.Success,
-        timeSpentMs: 23
-      }]
+      tests: [
+        {
+          failureMessages: ['Fail message 1', 'Fail message 2'],
+          name: 'App render renders without crashing',
+          status: TestStatus.Failed,
+          timeSpentMs: 2
+        },
+        {
+          failureMessages: ['Fail message 3', 'Fail message 4'],
+          name: 'App render renders without crashing',
+          status: TestStatus.Failed,
+          timeSpentMs: 0
+        },
+        {
+          failureMessages: [],
+          name: 'App renders without crashing',
+          status: TestStatus.Success,
+          timeSpentMs: 23
+        }
+      ]
     });
   });
 
@@ -151,7 +147,7 @@ describe('JestTestRunner', () => {
     });
   });
 
-  it('should set process.env.NODE_ENV to \'test\' when process.env.NODE_ENV is null', async () => {
+  it("should set process.env.NODE_ENV to 'test' when process.env.NODE_ENV is null", async () => {
     await jestTestRunner.run(runOptions);
 
     expect(processEnvMock.NODE_ENV).to.equal('test');

@@ -3,7 +3,6 @@ import chalk from 'chalk';
 import * as os from 'os';
 
 export default class DotsReporter implements Reporter {
-
   public onMutantTested(result: MutantResult) {
     let toLog: string;
     switch (result.status) {
