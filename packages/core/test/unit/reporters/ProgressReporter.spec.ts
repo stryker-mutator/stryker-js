@@ -57,7 +57,7 @@ describe('ProgressReporter', () => {
 
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
-      
+
       it('the total of MatchedMutants in the progress bar should be 2', () => {
         expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
