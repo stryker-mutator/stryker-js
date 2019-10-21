@@ -4,7 +4,6 @@ import { TestResults } from 'karma';
 import StrykerReporter, { KarmaSpec } from '../../src/StrykerReporter';
 
 describe('StrykerReporter', () => {
-
   let sut: StrykerReporter;
 
   beforeEach(() => {
@@ -27,12 +26,15 @@ describe('StrykerReporter', () => {
       events = listenTo('test_result');
     });
     it('should emit "test_result"', () => {
-      sut.onSpecComplete(undefined, karmaSpec({
-        description: '3',
-        success: true,
-        suite: ['1', '2'],
-        time: 64
-      }));
+      sut.onSpecComplete(
+        undefined,
+        karmaSpec({
+          description: '3',
+          success: true,
+          suite: ['1', '2'],
+          time: 64
+        })
+      );
       const expectedTestResult: TestResult = {
         failureMessages: [],
         name: '1 2 3',
@@ -76,16 +78,20 @@ describe('StrykerReporter', () => {
     });
 
     it('should convert error to RunState.Error', () => {
-      sut.onRunComplete(testResults({
-        error: true
-      }));
+      sut.onRunComplete(
+        testResults({
+          error: true
+        })
+      );
       expect(events()[0]).eq(RunStatus.Error);
     });
 
     it('should convert disconnected to RunState.Timeout', () => {
-      sut.onRunComplete(testResults({
-        disconnected: true
-      }));
+      sut.onRunComplete(
+        testResults({
+          disconnected: true
+        })
+      );
       expect(events()[0]).eq(RunStatus.Timeout);
     });
   });
@@ -155,24 +161,30 @@ describe('StrykerReporter', () => {
   }
 
   function karmaSpec(overrides?: Partial<KarmaSpec>): KarmaSpec {
-    return Object.assign({
-      description: 'baz',
-      id: '1',
-      log: [],
-      skipped: false,
-      success: true,
-      suite: ['foo', 'bar'],
-      time: 42
-    }, overrides);
+    return Object.assign(
+      {
+        description: 'baz',
+        id: '1',
+        log: [],
+        skipped: false,
+        success: true,
+        suite: ['foo', 'bar'],
+        time: 42
+      },
+      overrides
+    );
   }
 
   function testResults(overrides?: Partial<TestResults>): TestResults {
-    return Object.assign({
-      disconnected: false,
-      error: false,
-      exitCode: 0,
-      failed: 0,
-      success: 0
-    }, overrides);
+    return Object.assign(
+      {
+        disconnected: false,
+        error: false,
+        exitCode: 0,
+        failed: 0,
+        success: 0
+      },
+      overrides
+    );
   }
 });

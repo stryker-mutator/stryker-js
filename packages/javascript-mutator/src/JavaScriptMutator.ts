@@ -8,11 +8,10 @@ import copy from './helpers/copy';
 import { NODE_MUTATORS_TOKEN, NodeMutator } from './mutators/NodeMutator';
 
 export class JavaScriptMutator implements Mutator {
-
   public static inject = tokens(commonTokens.logger, NODE_MUTATORS_TOKEN) ;
   constructor(
     private readonly log: Logger,
-    private readonly mutators: ReadonlyArray<NodeMutator>
+    private readonly mutators: readonly NodeMutator[]
   ) { }
 
   public mutate(inputFiles: File[]): Mutant[] {

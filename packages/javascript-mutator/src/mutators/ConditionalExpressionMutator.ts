@@ -7,18 +7,7 @@ import { NodeMutator } from './NodeMutator';
  * Represents a mutator which can remove the conditional clause from statements.
  */
 export default class ConditionalExpressionMutator implements NodeMutator {
-  private readonly validOperators: string[] = [
-    '!=',
-    '!==',
-    '&&',
-    '<',
-    '<=',
-    '==',
-    '===',
-    '>',
-    '>=',
-    '||',
-  ];
+  private readonly validOperators: string[] = ['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||'];
 
   public name = 'ConditionalExpression';
 
@@ -35,7 +24,7 @@ export default class ConditionalExpressionMutator implements NodeMutator {
   }
 
   private isValidOperator(operator: string): boolean {
-    return this.validOperators.indexOf(operator) !== -1;
+    return this.validOperators.includes(operator);
   }
 
   public mutate(node: types.Node): types.Node[] {

@@ -10,17 +10,12 @@ import PromptOption from './PromptOption';
 const STRYKER_CONFIG_FILE = 'stryker.conf.js';
 
 export default class StrykerConfigWriter {
-
   public static inject = tokens(commonTokens.logger, initializerTokens.out);
-  constructor(
-    private readonly log: Logger,
-    private readonly out: typeof console.log) {
-  }
+  constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
 
   public guardForExistingConfig() {
     if (fsAsPromised.existsSync(STRYKER_CONFIG_FILE)) {
-      const msg =
-        'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
+      const msg = 'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
       this.log.error(msg);
       throw new Error(msg);
     }
@@ -37,7 +32,8 @@ export default class StrykerConfigWriter {
     selectedTranspilers: null | PromptOption[],
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
-    additionalPiecesOfConfig: Partial<StrykerOptions>[]): Promise<void> {
+    additionalPiecesOfConfig: Array<Partial<StrykerOptions>>
+  ): Promise<void> {
     const configObject: Partial<StrykerOptions> = {
       mutator: selectedMutator ? selectedMutator.name : '',
       packageManager: selectedPackageManager.name,
@@ -56,8 +52,11 @@ export default class StrykerConfigWriter {
    * @function
    */
   public async writePreset(presetConfig: PresetConfiguration) {
-    return this.writeStrykerConfigRaw(presetConfig.config, `// This config was generated using a preset.
-    // Please see the handbook for more information: ${presetConfig.handbookUrl}`);
+    return this.writeStrykerConfigRaw(
+      presetConfig.config,
+      `// This config was generated using a preset.
+    // Please see the handbook for more information: ${presetConfig.handbookUrl}`
+    );
   }
 
   private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {

@@ -11,7 +11,5 @@ export const strykerPlugins = [
 
 mochaConfigEditorFactory.inject = tokens(commonTokens.injector);
 function mochaConfigEditorFactory(injector: Injector<BaseContext>): MochaConfigEditor {
-  return injector
-    .provideClass('loader', MochaOptionsLoader)
-    .injectClass(MochaConfigEditor);
+  return injector.provideClass('loader', MochaOptionsLoader).injectClass(MochaConfigEditor);
 }

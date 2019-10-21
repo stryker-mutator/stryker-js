@@ -15,7 +15,7 @@ class CircleProvider implements CIProvider {
     } else {
       return '(unknown)';
     }
-  }
+  };
 }
 
 export default CircleProvider;

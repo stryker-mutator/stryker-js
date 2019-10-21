@@ -7,7 +7,6 @@ import InputFileCollection from '../../../src/input/InputFileCollection';
 import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';
 
 describe(MutationTestReportCalculator.name, () => {
-
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
   let sut: MutationTestReportCalculator;
   let inputFiles: InputFileCollection;
@@ -19,7 +18,7 @@ describe(MutationTestReportCalculator.name, () => {
     inputFiles = {
       files,
       filesToMutate: [],
-      logFiles: () => { }
+      logFiles: () => {}
     };
     sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock as Required<Reporter>)
@@ -150,7 +149,7 @@ describe(MutationTestReportCalculator.name, () => {
     expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
   });
 
-  function actReport(input: ReadonlyArray<MutantResult> = []): mutationTestReportSchema.MutationTestResult {
+  function actReport(input: readonly MutantResult[] = []): mutationTestReportSchema.MutationTestResult {
     sut.report(input);
     return reporterMock.onMutationTestReportReady.firstCall.args[0];
   }

@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import * as coverageHooks from '../../../src/transpiler/coverageHooks';
 
 describe('coveragePerTestHooks', () => {
-
   it('should use the coverage variable "__strykerCoverageCurrentTest__"', () => {
     const actual = coverageHooks.coveragePerTestHooks(testFramework());
     expect(actual).to.contain('__strykerCoverageCurrentTest__');
@@ -18,6 +17,6 @@ describe('coveragePerTestHooks', () => {
   it('should wrap all in a closure', () => {
     const actual = coverageHooks.coveragePerTestHooks(testFramework());
     expect(actual).to.contain('(function (window) {');
-    expect(actual).to.contain('})((Function(\'return this\'))());');
+    expect(actual).to.contain("})((Function('return this'))());");
   });
 });

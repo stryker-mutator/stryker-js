@@ -9,7 +9,6 @@ import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 const DEFAULT_PROJECT_NAME = 'custom';
 
 export default class JestConfigEditor implements ConfigEditor {
-
   public edit(strykerConfig: Config): void {
     // If there is no Jest property on the Stryker config create it
     strykerConfig.jest = strykerConfig.jest || {};

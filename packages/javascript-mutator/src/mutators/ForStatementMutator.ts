@@ -10,7 +10,6 @@ export default class ForStatementMutator implements NodeMutator {
 
   public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
     const nodes: types.Node[] = [];
-
     if (types.isForStatement(node)) {
       if (!node.test) {
         const mutatedNode = copy(node);

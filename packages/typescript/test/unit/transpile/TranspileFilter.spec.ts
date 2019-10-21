@@ -4,7 +4,6 @@ import * as path from 'path';
 import TranspileFilter, { DefaultFilter, TSConfigFilter } from '../../../src/transpiler/TranspileFilter';
 
 describe('TranspileFilter', () => {
-
   describe('create', () => {
     it('should result in the default filter tsconfig is undefined', () => {
       const config = new Config();
@@ -17,7 +16,6 @@ describe('TranspileFilter', () => {
       expect(TranspileFilter.create(config)).instanceof(TSConfigFilter);
     });
   });
-
 });
 
 describe('DefaultFilter', () => {

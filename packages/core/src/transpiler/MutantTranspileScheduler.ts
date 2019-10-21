@@ -16,7 +16,6 @@ import TranspileResult from './TranspileResult';
 const INITIAL_CONCURRENCY = 100;
 
 export class MutantTranspileScheduler implements Disposable {
-
   private currentMutatedFile: SourceFile;
   private readonly concurrencyTicket$ = new BehaviorSubject<number>(INITIAL_CONCURRENCY);
 
@@ -25,13 +24,11 @@ export class MutantTranspileScheduler implements Disposable {
   /**
    * Creates a mutant transpiler
    */
-  constructor(private readonly transpiler: Transpiler, private readonly unMutatedFiles: ReadonlyArray<File>) { }
+  constructor(private readonly transpiler: Transpiler, private readonly unMutatedFiles: readonly File[]) {}
 
-  public scheduleTranspileMutants(allMutants: ReadonlyArray<TestableMutant>): Observable<TranspiledMutant> {
+  public scheduleTranspileMutants(allMutants: readonly TestableMutant[]): Observable<TranspiledMutant> {
     return from(allMutants).pipe(
-      zip(this.concurrencyTicket$.pipe(
-        flatMap(n => range(0, n))
-      )),
+      zip(this.concurrencyTicket$.pipe(flatMap(n => range(0, n)))),
       flatMap(([mutant]) => this.transpileMutant(mutant), 1 /* IMPORTANT! Never transpile multiple mutants at once! */)
     );
   }
@@ -41,7 +38,7 @@ export class MutantTranspileScheduler implements Disposable {
    */
   public readonly scheduleNext = () => {
     this.concurrencyTicket$.next(1);
-  }
+  };
 
   /**
    * Dispose
@@ -53,11 +50,11 @@ export class MutantTranspileScheduler implements Disposable {
   private createTranspiledMutant(mutant: TestableMutant, transpileResult: TranspileResult) {
     return new TranspiledMutant(mutant, transpileResult, someFilesChanged(this.unMutatedFiles));
 
-    function someFilesChanged(unMutatedFiles: ReadonlyArray<File>): boolean {
+    function someFilesChanged(unMutatedFiles: readonly File[]): boolean {
       return transpileResult.outputFiles.some(file => fileChanged(file, unMutatedFiles));
     }
 
-    function fileChanged(file: File, unMutatedFiles: ReadonlyArray<File>) {
+    function fileChanged(file: File, unMutatedFiles: readonly File[]) {
       if (unMutatedFiles) {
         const unMutatedFile = unMutatedFiles.find(f => f.name === file.name);
         return !unMutatedFile || unMutatedFile.textContent !== file.textContent;

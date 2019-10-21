@@ -16,5 +16,4 @@ export default class ArrowFunctionMutator extends NodeMutator<ts.ArrowFunction> 
 
     return [{ node: fn, replacement: '() => undefined' }];
   }
-
 }

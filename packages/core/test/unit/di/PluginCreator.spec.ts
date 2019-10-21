@@ -7,11 +7,10 @@ describe('PluginCreator', () => {
   let sut: PluginCreator<PluginKind.Reporter>;
 
   beforeEach(() => {
-    sut = testInjector.injector
-      .injectFunction(PluginCreator.createFactory(PluginKind.Reporter));
+    sut = testInjector.injector.injectFunction(PluginCreator.createFactory(PluginKind.Reporter));
   });
 
-  it('should create a FactoryPlugin using it\'s factory method', () => {
+  it("should create a FactoryPlugin using it's factory method", () => {
     // Arrange
     const expectedReporter = factory.reporter('fooReporter');
     const factoryPlugin: FactoryPlugin<PluginKind.Reporter, []> = {
@@ -31,10 +30,9 @@ describe('PluginCreator', () => {
     expect(actualReporter).eq(expectedReporter);
   });
 
-  it('should create a ClassPlugin using it\'s constructor', () => {
+  it("should create a ClassPlugin using it's constructor", () => {
     // Arrange
-    class FooReporter {
-    }
+    class FooReporter {}
     const plugin: ClassPlugin<PluginKind.Reporter, []> = {
       injectableClass: FooReporter,
       kind: PluginKind.Reporter,
@@ -52,7 +50,6 @@ describe('PluginCreator', () => {
 
   it('should throw if plugin is not recognized', () => {
     testInjector.pluginResolver.resolve.returns({});
-    expect(() => sut.create('foo'))
-      .throws('Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.');
+    expect(() => sut.create('foo')).throws('Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.');
   });
 });

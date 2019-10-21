@@ -1,7 +1,6 @@
 import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
 
 export default class MochaTestFramework implements TestFramework {
-
   public beforeEach(codeFragment: string): string {
     return `beforeEach(function() {
       ${codeFragment}

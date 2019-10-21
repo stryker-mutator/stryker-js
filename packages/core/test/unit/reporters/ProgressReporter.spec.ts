@@ -14,11 +14,10 @@ const TEN_THOUSAND_SECONDS = SECOND * 10000;
 const ONE_HOUR = SECOND * 3600;
 
 describe('ProgressReporter', () => {
-
   let sut: ProgressReporter;
   let matchedMutants: MatchedMutant[];
   let progressBar: Mock<ProgressBar>;
-  const progressBarContent = `Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)`;
+  const progressBarContent = 'Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)';
 
   beforeEach(() => {
     sinon.useFakeTimers();
@@ -41,7 +40,7 @@ describe('ProgressReporter', () => {
         expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
       });
     });
-    describe('when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesn\'t have tests', () => {
+    describe("when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesn't have tests", () => {
       beforeEach(() => {
         matchedMutants = [matchedMutant(1), matchedMutant(0), matchedMutant(2)];
 
@@ -68,7 +67,7 @@ describe('ProgressReporter', () => {
       expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
     });
 
-    it('should not tick the ProgressBar if the result was for a mutant that wasn\'t matched to any tests', () => {
+    it("should not tick the ProgressBar if the result was for a mutant that wasn't matched to any tests", () => {
       // mutant 0 isn't matched to any tests
       sut.onMutantTested(mutantResult({ id: '0', status: MutantStatus.TranspileError }));
       progressBarTickTokens = { total: 3, tested: 0, survived: 0 };

@@ -14,7 +14,7 @@ const enum AppenderName {
   Server = 'server'
 }
 
-const layouts: { color: log4js.PatternLayout, noColor: log4js.PatternLayout } = {
+const layouts: { color: log4js.PatternLayout; noColor: log4js.PatternLayout } = {
   color: {
     pattern: '%[%r (%z) %p %c%] %m',
     type: 'pattern'
@@ -31,9 +31,7 @@ interface AppendersConfiguration {
 
 const LOG_FILE_NAME = 'stryker.log';
 export default class LogConfigurator {
-
   private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): AppendersConfiguration {
-
     // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
     const multiAppender = { type: require.resolve('./MultiAppender'), appenders: [AppenderName.FilteredConsoleLevel] };
 
@@ -42,9 +40,9 @@ export default class LogConfigurator {
     let allAppenders: AppendersConfiguration = {
       [AppenderName.Console]: { type: 'stdout', layout: consoleLayout },
       // Exclude messages like: "ERROR log4js A worker log process hung up unexpectedly" #1245
-      [AppenderName.FilteredConsoleCategory]: {type: 'categoryFilter', appender: AppenderName.Console, exclude: 'log4js' },
+      [AppenderName.FilteredConsoleCategory]: { type: 'categoryFilter', appender: AppenderName.Console, exclude: 'log4js' },
       [AppenderName.FilteredConsoleLevel]: { type: 'logLevelFilter', appender: AppenderName.FilteredConsoleCategory, level: consoleLogLevel },
-      [AppenderName.All]: multiAppender,
+      [AppenderName.All]: multiAppender
     };
 
     // only add file if it is needed. Otherwise log4js will create the file directly, pretty annoying.
@@ -67,7 +65,8 @@ export default class LogConfigurator {
       appenders,
       categories: {
         default: {
-          appenders: [AppenderName.All], level: defaultLogLevel
+          appenders: [AppenderName.All],
+          level: defaultLogLevel
         }
       }
     };
@@ -78,7 +77,11 @@ export default class LogConfigurator {
    * @param consoleLogLevel The log level to configure for the console
    * @param fileLogLevel The log level to configure for the "stryker.log" file
    */
-  public static configureMainProcess(consoleLogLevel: LogLevel = LogLevel.Information, fileLogLevel: LogLevel = LogLevel.Off, allowConsoleColors: boolean = true) {
+  public static configureMainProcess(
+    consoleLogLevel: LogLevel = LogLevel.Information,
+    fileLogLevel: LogLevel = LogLevel.Off,
+    allowConsoleColors: boolean = true
+  ) {
     const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);
     log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));
   }
@@ -92,7 +95,11 @@ export default class LogConfigurator {
    * @param fileLogLevel the file log level
    * @returns the context
    */
-  public static async configureLoggingServer(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): Promise<LoggingClientContext> {
+  public static async configureLoggingServer(
+    consoleLogLevel: LogLevel,
+    fileLogLevel: LogLevel,
+    allowConsoleColors: boolean
+  ): Promise<LoggingClientContext> {
     const loggerPort = await getFreePort();
 
     // Include the appenders for the main Stryker process, as log4js has only one single `configure` method.

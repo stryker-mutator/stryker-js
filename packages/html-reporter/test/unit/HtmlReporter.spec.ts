@@ -23,7 +23,6 @@ describe(HtmlReporter.name, () => {
   });
 
   describe('onMutationTestReportReady', () => {
-
     it('should use configured base directory', async () => {
       testInjector.options.htmlReporter = { baseDir: 'foo/bar' };
       actReportReady();
@@ -36,7 +35,9 @@ describe(HtmlReporter.name, () => {
       const expectedBaseDir = path.normalize('reports/mutation/html');
       actReportReady();
       await sut.wrapUp();
-      expect(testInjector.logger.debug).calledWith(`No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${expectedBaseDir}`);
+      expect(testInjector.logger.debug).calledWith(
+        `No base folder configuration found (using configuration: htmlReporter: { baseDir: 'output/folder' }), using default ${expectedBaseDir}`
+      );
       expect(deleteDirStub).calledWith(expectedBaseDir);
     });
 
@@ -72,15 +73,11 @@ describe(HtmlReporter.name, () => {
       };
       sut.onMutationTestReportReady(report);
       await sut.wrapUp();
-      expect(writeFileStub).calledWith(
-        path.resolve('reports', 'mutation', 'html', 'bind-mutation-test-report.js'),
-        bindMutationTestReport(report)
-      );
+      expect(writeFileStub).calledWith(path.resolve('reports', 'mutation', 'html', 'bind-mutation-test-report.js'), bindMutationTestReport(report));
     });
   });
 
   describe('wrapUp', () => {
-
     it('should resolve when everything is OK', () => {
       actReportReady();
       return expect(sut.wrapUp()).eventually.undefined;

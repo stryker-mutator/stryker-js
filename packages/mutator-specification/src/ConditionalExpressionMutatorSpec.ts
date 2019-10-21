@@ -2,9 +2,7 @@ import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
 export default function ConditionalExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
-
   describe('ConditionalExpressionMutator', () => {
-
     it('should have name "ConditionalExpression"', () => {
       expect(name).eq('ConditionalExpression');
     });

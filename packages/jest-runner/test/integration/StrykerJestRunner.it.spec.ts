@@ -45,9 +45,7 @@ describe('Integration test for Strykers Jest runner', () => {
       config.jest = jestConfig;
     }
     jestConfigEditor.edit(config);
-    return testInjector.injector
-      .provideValue(commonTokens.options, config)
-      .injectFunction(jestTestRunnerFactory);
+    return testInjector.injector.provideValue(commonTokens.options, config).injectFunction(jestTestRunnerFactory);
   }
 
   it('should run tests on the example React + TypeScript project', async () => {
@@ -73,7 +71,9 @@ describe('Integration test for Strykers Jest runner', () => {
 
     expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
     expect(result).to.have.property('tests');
-    expect(result.tests).to.be.an('array').with.length(testNames.length);
+    expect(result.tests)
+      .to.be.an('array')
+      .with.length(testNames.length);
 
     for (const test of result.tests) {
       expect(testNames).to.include(test.name);
@@ -94,7 +94,9 @@ describe('Integration test for Strykers Jest runner', () => {
 
     expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
     expect(result).to.have.property('tests');
-    expect(result.tests).to.be.an('array').with.length(testNames.length);
+    expect(result.tests)
+      .to.be.an('array')
+      .with.length(testNames.length);
 
     for (const test of result.tests) {
       expect(testNames).to.include(test.name);

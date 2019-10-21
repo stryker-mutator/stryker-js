@@ -7,7 +7,6 @@ import TestRunnerDecorator from './TestRunnerDecorator';
  * Wraps a test runner and implements the timeout functionality.
  */
 export default class TimeoutDecorator extends TestRunnerDecorator {
-
   private readonly log = getLogger(TimeoutDecorator.name);
 
   public async run(options: RunOptions): Promise<RunResult> {

@@ -1,5 +1,4 @@
 enum MutantStatus {
-
   /**
    * The status of a survived mutant, because it was not covered by any test.
    */

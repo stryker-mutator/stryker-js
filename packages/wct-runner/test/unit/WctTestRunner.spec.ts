@@ -10,7 +10,6 @@ import WctReporter, * as wctReporterModule from '../../src/WctReporter';
 import WctTestRunner from '../../src/WctTestRunner';
 
 describe(WctTestRunner.name, () => {
-
   let contextMock: sinon.SinonStubbedInstance<contextModule.Context>;
   let wctLoggerMock: sinon.SinonStubbedInstance<WctLogger>;
   let wctReporterMock: sinon.SinonStubbedInstance<WctReporter>;
@@ -64,7 +63,8 @@ describe(WctTestRunner.name, () => {
 
   it('should throw when coverageAnalysis != "off"', () => {
     testInjector.options.coverageAnalysis = 'all';
-    const expectedError = 'Coverage analysis "all" is not (yet) supported by the WCT test runner plugin. Please set `coverageAnalysis: "off"` in your stryker.conf.js file.';
+    const expectedError =
+      'Coverage analysis "all" is not (yet) supported by the WCT test runner plugin. Please set `coverageAnalysis: "off"` in your stryker.conf.js file.';
     expect(() => createSut()).throws(expectedError);
   });
 
@@ -92,7 +92,6 @@ describe(WctTestRunner.name, () => {
   });
 
   describe('run', () => {
-
     it('should run clear tests', async () => {
       stepsMock.runTests.resolves();
       const sut = createSut();
@@ -106,7 +105,7 @@ describe(WctTestRunner.name, () => {
       stepsMock.runTests.resolves();
       const sut = createSut();
       const runPromise = sut.run();
-      const expectedTests = wctReporterMock.results = [{ name: 'foobar', status: TestStatus.Success, timeSpentMs: 4 }];
+      const expectedTests = (wctReporterMock.results = [{ name: 'foobar', status: TestStatus.Success, timeSpentMs: 4 }]);
       const actual = await runPromise;
       const expectedRunResult: RunResult = { status: RunStatus.Complete, tests: expectedTests };
       expect(actual).deep.eq(expectedRunResult);
@@ -116,7 +115,7 @@ describe(WctTestRunner.name, () => {
       stepsMock.runTests.rejects(new Error('23 failed tests'));
       const sut = createSut();
       const runPromise = sut.run();
-      const expectedTests = wctReporterMock.results = [{ name: 'foobar', status: TestStatus.Failed, timeSpentMs: 4 }];
+      const expectedTests = (wctReporterMock.results = [{ name: 'foobar', status: TestStatus.Failed, timeSpentMs: 4 }]);
       const actual = await runPromise;
       const expectedRunResult: RunResult = { status: RunStatus.Complete, tests: expectedTests };
       expect(actual).deep.eq(expectedRunResult);

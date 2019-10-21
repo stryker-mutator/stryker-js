@@ -17,7 +17,6 @@ export interface CommandRunnerSettings {
  * The command can be configured, but defaults to `npm test`.
  */
 export default class CommandTestRunner implements TestRunner {
-
   /**
    * "command"
    */
@@ -36,15 +35,18 @@ export default class CommandTestRunner implements TestRunner {
   private timeoutHandler: undefined | (() => Promise<void>);
 
   constructor(private readonly workingDir: string, options: StrykerOptions) {
-    this.settings = Object.assign({
-      command: 'npm test'
-    }, options.commandRunner);
+    this.settings = Object.assign(
+      {
+        command: 'npm test'
+      },
+      options.commandRunner
+    );
   }
 
   public run(): Promise<RunResult> {
     return new Promise((res, rej) => {
       const timer = new Timer();
-      const output: (string | Buffer)[] = [];
+      const output: Array<string | Buffer> = [];
       const childProcess = exec(this.settings.command, { cwd: this.workingDir });
       childProcess.on('error', error => {
         kill(childProcess.pid)
@@ -92,26 +94,29 @@ export default class CommandTestRunner implements TestRunner {
         if (exitCode === 0) {
           return {
             status: RunStatus.Complete,
-            tests: [{
-              name: 'All tests',
-              status: TestStatus.Success,
-              timeSpentMs: duration
-            }]
+            tests: [
+              {
+                name: 'All tests',
+                status: TestStatus.Success,
+                timeSpentMs: duration
+              }
+            ]
           };
         } else {
           return {
             status: RunStatus.Complete,
-            tests: [{
-              failureMessages: [output.map(buf => buf.toString()).join(os.EOL)],
-              name: 'All tests',
-              status: TestStatus.Failed,
-              timeSpentMs: duration
-            }]
+            tests: [
+              {
+                failureMessages: [output.map(buf => buf.toString()).join(os.EOL)],
+                name: 'All tests',
+                status: TestStatus.Failed,
+                timeSpentMs: duration
+              }
+            ]
           };
         }
       }
     });
-
   }
   public async dispose(): Promise<void> {
     if (this.timeoutHandler) {

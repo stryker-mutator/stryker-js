@@ -7,12 +7,12 @@ abstract class ProgressKeeper implements Reporter {
   protected progress = {
     survived: 0,
     tested: 0,
-    total: 0,
+    total: 0
   };
 
   private mutantIdsWithoutCoverage: string[];
 
-  public onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
+  public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
     this.timer = new Timer();
     this.mutantIdsWithoutCoverage = matchedMutants.filter(m => m.scopedTestIds.length === 0).map(m => m.id);
     this.progress.total = matchedMutants.length - this.mutantIdsWithoutCoverage.length;
@@ -28,11 +28,11 @@ abstract class ProgressKeeper implements Reporter {
   }
 
   protected getEtc() {
-    const totalSecondsLeft = Math.floor(this.timer.elapsedSeconds() / this.progress.tested * (this.progress.total - this.progress.tested));
+    const totalSecondsLeft = Math.floor((this.timer.elapsedSeconds() / this.progress.tested) * (this.progress.total - this.progress.tested));
 
     if (isFinite(totalSecondsLeft) && totalSecondsLeft > 0) {
       const hours = Math.floor(totalSecondsLeft / 3600);
-      const minutes = Math.floor(totalSecondsLeft / 60 % 60);
+      const minutes = Math.floor((totalSecondsLeft / 60) % 60);
       const seconds = Math.floor(totalSecondsLeft % 60);
 
       return this.formatEtc(hours, minutes, seconds);

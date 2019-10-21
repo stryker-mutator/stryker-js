@@ -70,5 +70,4 @@ describe('Travis Provider', () => {
       expect(result).to.equal('(unknown)');
     });
   });
-
 });

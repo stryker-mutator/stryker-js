@@ -16,6 +16,4 @@ export function jestTestAdapterFactory(log: Logger, jestVersion: string, injecto
 }
 
 jestTestAdapterFactory.inject = tokens(commonTokens.logger, JEST_VERSION_TOKEN, commonTokens.injector);
-export {
-  JestTestAdapter
-};
+export { JestTestAdapter };

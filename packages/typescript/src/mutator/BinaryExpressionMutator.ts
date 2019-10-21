@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
-const replaceTokens: ts.MapLike<string[]>  = {
+const replaceTokens: ts.MapLike<string[]> = {
   [ts.SyntaxKind.PlusToken]: ['-'],
   [ts.SyntaxKind.MinusToken]: ['+'],
   [ts.SyntaxKind.SlashToken]: ['*'],
@@ -20,7 +20,6 @@ const replaceTokens: ts.MapLike<string[]>  = {
 };
 
 export default class BinaryExpressionMutator extends NodeMutator<ts.BinaryExpression> {
-
   public name: string = 'BinaryExpression';
 
   public guard(node: ts.Node): node is ts.BinaryExpression {
@@ -29,8 +28,7 @@ export default class BinaryExpressionMutator extends NodeMutator<ts.BinaryExpres
 
   public identifyReplacements(node: ts.BinaryExpression): NodeReplacement[] {
     if (replaceTokens[node.operatorToken.kind]) {
-      return replaceTokens[node.operatorToken.kind]
-        .map(replacement => ({node: node.operatorToken, replacement }));
+      return replaceTokens[node.operatorToken.kind].map(replacement => ({ node: node.operatorToken, replacement }));
     } else {
       return [];
     }

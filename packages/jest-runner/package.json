@@ -42,9 +42,9 @@
     "@stryker-mutator/test-helpers": "^2.1.0",
     "@types/semver": "~6.0.0",
     "jest": "^24.8.0",
-    "react": "~16.9.0",
-    "react-dom": "~16.8.1",
-    "react-scripts": "~3.0.1",
+    "react": "~16.10.1",
+    "react-dom": "~16.10.1",
+    "react-scripts": "~3.2.0",
     "react-scripts-ts": "~3.1.0"
   },
   "peerDependencies": {

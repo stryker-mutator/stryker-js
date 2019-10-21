@@ -3,15 +3,13 @@ import { EOL } from 'os';
 import StringBuilder from '../../../src/utils/StringBuilder';
 
 describe(StringBuilder.name, () => {
-
   describe('toString', () => {
-
     it('should append strings without separator when `toString()` is called', () => {
       const sut = new StringBuilder();
       sut.append('1');
       sut.append('2');
       sut.append('3');
-      expect(sut.toString()).eq(`123`);
+      expect(sut.toString()).eq('123');
     });
 
     const DEFAULT_MAX_CHARACTERS = 2048;
@@ -37,21 +35,14 @@ describe(StringBuilder.name, () => {
 
   describe('concat', () => {
     it('should concatenate multiple string builders with new lines', () => {
-      const stringBuilders = [
-        new StringBuilder(),
-        new StringBuilder()
-      ];
+      const stringBuilders = [new StringBuilder(), new StringBuilder()];
       stringBuilders[0].append('foo');
       stringBuilders[0].append('bar');
       stringBuilders[1].append('baz');
       expect(StringBuilder.concat(...stringBuilders)).eq(`foobar${EOL}baz`);
     });
     it('should remove empty builders', () => {
-      const stringBuilders = [
-        new StringBuilder(),
-        new StringBuilder(),
-        new StringBuilder()
-      ];
+      const stringBuilders = [new StringBuilder(), new StringBuilder(), new StringBuilder()];
       stringBuilders[0].append('foo');
       stringBuilders[0].append('bar');
       stringBuilders[2].append('baz');
