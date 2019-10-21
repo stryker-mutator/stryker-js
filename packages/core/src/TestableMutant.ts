@@ -18,7 +18,7 @@ class TestFilter {
   public selectedTests: TestSelection[] = [];
 
   public selectAllTests(runResult: RunResult) {
-    runResult.tests.forEach(testResult => (this.timeSpentScopedTests += testResult.timeSpentMs));
+    this.timeSpentScopedTests = runResult.tests.reduce((time, test) => time + test.timeSpentMs, this.timeSpentScopedTests);
     this.runAllTests = true;
   }
 
