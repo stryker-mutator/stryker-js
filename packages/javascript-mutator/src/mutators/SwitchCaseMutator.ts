@@ -8,7 +8,7 @@ import { NodeMutator } from './NodeMutator';
 export default class SwitchCaseMutator implements NodeMutator {
   public name = 'SwitchCase';
 
-  public mutate(node: NodeWithParent, copy: <T extends types.Node> (obj: T, deep?: boolean) => T): types.Node[] {
+  public mutate(node: NodeWithParent, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
     const nodes: types.Node[] = [];
 
     if (

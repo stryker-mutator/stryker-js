@@ -28,15 +28,8 @@ export default class ConditionalExpressionMutator implements NodeMutator {
   }
 
   public mutate(node: types.Node): types.Node[] {
-    if (
-      (types.isBinaryExpression(node) || types.isLogicalExpression(node)) &&
-      this.hasValidParent(node) &&
-      this.isValidOperator(node.operator)
-    ) {
-      return [
-        NodeGenerator.createBooleanLiteralNode(node, false),
-        NodeGenerator.createBooleanLiteralNode(node, true),
-      ];
+    if ((types.isBinaryExpression(node) || types.isLogicalExpression(node)) && this.hasValidParent(node) && this.isValidOperator(node.operator)) {
+      return [NodeGenerator.createBooleanLiteralNode(node, false), NodeGenerator.createBooleanLiteralNode(node, true)];
     }
 
     return [];

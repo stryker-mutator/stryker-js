@@ -17,10 +17,7 @@ export default class StringLiteralMutator implements NodeMutator {
         start: node.start,
         trailingComments: node.trailingComments,
         type: 'StringLiteral',
-        value:
-          (node.quasis.length === 1 && node.quasis[0].value.raw.length === 0)
-          ? 'Stryker was here!'
-          : ''
+        value: node.quasis.length === 1 && node.quasis[0].value.raw.length === 0 ? 'Stryker was here!' : ''
       } as types.StringLiteral);
     } else if ((!node.parent || this.isDeclarationOrJSX(node.parent)) && types.isStringLiteral(node)) {
       const mutatedNode = copy(node);
