@@ -48,7 +48,6 @@
   "dependencies": {
     "@stryker-mutator/api": "^2.1.0",
     "enhanced-resolve": "~4.1.0",
-    "lodash": "~4.17.4",
     "memory-fs": "~0.5.0"
   },
   "initStrykerConfig": {
