@@ -57,7 +57,7 @@ describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
 
   beforeEach(() => {
     options = { transpilers: ['typescript'], coverageAnalysis: 'perTest' };
-    inputFiles = new InputFileCollection([new File('mutate.ts', ''), new File('mutate.d.ts', '')], ['mutate.d.ts', 'mutate.ts']);
+    inputFiles = new InputFileCollection([new File('mutate.d.ts', '')], ['mutate.d.ts', 'mutate.ts']);
     timerMock = sinon.createStubInstance(Timer);
     strykerSandboxMock = producers.mock(Sandbox as any);
     transpilerMock = transpiler();
@@ -65,8 +65,8 @@ describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
     sinon.stub(Sandbox, 'create').resolves(strykerSandboxMock);
     sinon.stub(coverageInstrumenterTranspiler, 'default').returns(coverageInstrumenterTranspilerMock);
     testFrameworkMock = testFramework();
-    coverageAnnotatedFiles = [new File('mutate.js', ''), new File('mutate.d.ts', '')];
-    transpiledFiles = [new File('mutate.ts', ''), new File('mutate.d.ts', '')];
+    coverageAnnotatedFiles = [new File('mutate.d.ts', '')];
+    transpiledFiles = [new File('mutate.d.ts', '')];
     coverageInstrumenterTranspilerMock.transpile.returns(coverageAnnotatedFiles);
     transpilerMock.transpile.returns(transpiledFiles);
     expectedRunResult = runResult();
@@ -75,6 +75,17 @@ describe('InitialTestExecutor run with TranspiledSourceMapper', () => {
 
   it('should not throw a SourceMapError when transpiled files contain ts headder', async () => {
     // Arrange
+    sut = createSut();
+
+    // Act
+    await sut.run();
+  });
+
+  it('should not throw a SourceMapError when transpiled files are empty', async () => {
+    // Arrange
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    transpiledFiles = undefined;
     sut = createSut();
 
     // Act
