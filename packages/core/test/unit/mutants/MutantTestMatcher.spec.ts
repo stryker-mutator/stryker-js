@@ -89,13 +89,11 @@ describe(MutantTestMatcher.name, () => {
         });
 
         describe('without code coverage info', () => {
-          it('should add both tests to the mutants and report failure', async () => {
-            const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
-
+          it('should run all tests for the mutants and report failure', async () => {
             const result = await sut.matchWithMutants(mutants);
 
-            expect(result[0].selectedTests).deep.eq(expectedTestSelection);
-            expect(result[1].selectedTests).deep.eq(expectedTestSelection);
+            expect(result[0].runAllTests).true;
+            expect(result[1].runAllTests).true;
             expect(TestSelectionResult[result[0].testSelectionResult]).eq(TestSelectionResult[TestSelectionResult.FailedButAlreadyReported]);
             expect(TestSelectionResult[result[1].testSelectionResult]).eq(TestSelectionResult[TestSelectionResult.FailedButAlreadyReported]);
             expect(testInjector.logger.warn).calledWith(
@@ -113,7 +111,8 @@ describe(MutantTestMatcher.name, () => {
                 id: '0',
                 mutatorName: result[0].mutatorName,
                 replacement: result[0].replacement,
-                scopedTestIds: result[0].selectedTests.map(test => test.id),
+                runAllTests: true,
+                scopedTestIds: [],
                 timeSpentScopedTests: result[0].timeSpentScopedTests
               },
               {
@@ -121,7 +120,8 @@ describe(MutantTestMatcher.name, () => {
                 id: '1',
                 mutatorName: result[1].mutatorName,
                 replacement: result[1].replacement,
-                scopedTestIds: result[1].selectedTests.map(test => test.id),
+                runAllTests: true,
+                scopedTestIds: [],
                 timeSpentScopedTests: result[1].timeSpentScopedTests
               }
             ];
@@ -254,12 +254,10 @@ describe(MutantTestMatcher.name, () => {
           });
 
           it('should select all test in the test run but not report the error yet', async () => {
-            const expectedTestSelection: TestSelection[] = [{ name: 'test one', id: 0 }, { name: 'test two', id: 1 }];
-
             const result = await sut.matchWithMutants(mutants);
 
-            expect(result[0].selectedTests).deep.eq(expectedTestSelection);
-            expect(result[1].selectedTests).deep.eq(expectedTestSelection);
+            expect(result[0].runAllTests).true;
+            expect(result[1].runAllTests).true;
             expect(result[0].testSelectionResult).eq(TestSelectionResult.Failed);
             expect(result[1].testSelectionResult).eq(TestSelectionResult.Failed);
             expect(testInjector.logger.warn).not.called;
@@ -315,12 +313,10 @@ describe(MutantTestMatcher.name, () => {
           });
 
           it('should add all test results to the mutant that is covered by the baseline', async () => {
-            const expectedTestSelection = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
-
             const result = await sut.matchWithMutants(mutants);
 
-            expect(result[0].selectedTests).deep.eq(expectedTestSelection);
-            expect(result[1].selectedTests).deep.eq(expectedTestSelection);
+            expect(result[0].runAllTests).true;
+            expect(result[1].runAllTests).true;
           });
         });
       });
@@ -458,12 +454,11 @@ describe(MutantTestMatcher.name, () => {
     it('should match all mutants to all tests and log a warning when there is no coverage data', async () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
       initialRunResult.runResult.tests.push(testResult(), testResult());
-      const expectedTestSelection: TestSelection[] = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
 
       const result = await sut.matchWithMutants(mutants);
 
-      expect(result[0].selectedTests).deep.eq(expectedTestSelection);
-      expect(result[1].selectedTests).deep.eq(expectedTestSelection);
+      expect(result[0].runAllTests).true;
+      expect(result[1].runAllTests).true;
       expect(result[0].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
       expect(result[1].testSelectionResult).deep.eq(TestSelectionResult.FailedButAlreadyReported);
       expect(testInjector.logger.warn).to.have.been.calledWith(
@@ -537,12 +532,11 @@ describe(MutantTestMatcher.name, () => {
     it('should match all mutants to all tests', async () => {
       mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
       initialRunResult.runResult.tests.push(testResult(), testResult());
-      const expectedTestSelection = [{ id: 0, name: 'name' }, { id: 1, name: 'name' }];
 
       const result = await sut.matchWithMutants(mutants);
 
-      expect(result[0].selectedTests).deep.eq(expectedTestSelection);
-      expect(result[1].selectedTests).deep.eq(expectedTestSelection);
+      expect(result[0].runAllTests).true;
+      expect(result[1].runAllTests).true;
     });
   });
 

@@ -4,7 +4,6 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MatchedMutant } from '@stryker-mutator/api/report';
 import { CoverageCollection, CoveragePerTestResult, CoverageResult, StatementMap } from '@stryker-mutator/api/test_runner';
-import * as _ from 'lodash';
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
 import { InitialTestRunResult } from '../process/InitialTestExecutor';
@@ -143,14 +142,15 @@ export class MutantTestMatcher {
    * @returns The MatchedMutant
    */
   private mapMutantOnMatchedMutant(testableMutant: TestableMutant): MatchedMutant {
-    const matchedMutant = _.cloneDeep({
+    const matchedMutant: MatchedMutant = {
       fileName: testableMutant.mutant.fileName,
       id: testableMutant.id,
       mutatorName: testableMutant.mutant.mutatorName,
       replacement: testableMutant.mutant.replacement,
+      runAllTests: testableMutant.runAllTests,
       scopedTestIds: testableMutant.selectedTests.map(testSelection => testSelection.id),
       timeSpentScopedTests: testableMutant.timeSpentScopedTests
-    });
+    };
     return Object.freeze(matchedMutant);
   }
 
