@@ -6,6 +6,7 @@ import * as ts from 'typescript';
 import { getTSConfig, parseFile } from './helpers/tsHelpers';
 import { nodeMutators } from './mutator';
 import NodeMutator from './mutator/NodeMutator';
+import MutatorDescriptor from '../../api/src/core/MutatorDescriptor';
 
 export function typescriptMutatorFactory(injector: Injector<OptionsContext>): TypescriptMutator {
   return injector.provideValue(MUTATORS_TOKEN, nodeMutators).injectClass(TypescriptMutator);
@@ -15,7 +16,10 @@ typescriptMutatorFactory.inject = tokens(commonTokens.injector);
 export const MUTATORS_TOKEN = 'mutators';
 export class TypescriptMutator {
   public static inject = tokens(commonTokens.options, MUTATORS_TOKEN);
-  constructor(private readonly options: StrykerOptions, public readonly mutators: readonly NodeMutator[]) {}
+  private readonly excludedExpressions: string[];
+  constructor(private readonly options: StrykerOptions, public readonly mutators: readonly NodeMutator[]) {
+    this.excludedExpressions = (options.mutator as MutatorDescriptor).excludedExpressions || [];
+  }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const tsConfig = getTSConfig(this.options);
@@ -27,7 +31,7 @@ export class TypescriptMutator {
   }
 
   private mutateForNode<T extends ts.Node>(node: T, sourceFile: ts.SourceFile): Mutant[] {
-    if (shouldNodeBeSkipped(node)) {
+    if (shouldNodeBeSkipped(node, sourceFile, this.excludedExpressions)) {
       return [];
     } else {
       const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
@@ -41,9 +45,18 @@ export class TypescriptMutator {
   }
 }
 
-const shouldNodeBeSkipped = (node: ts.Node): boolean => {
+const shouldNodeBeSkipped = (node: ts.Node, sourceFile: ts.SourceFile, excludedExpressions: string[]): boolean => {
+  const nodeText = getNodeText(node, sourceFile);
+  if (!nodeText.includes('\n') && excludedExpressions.some(bl => nodeText.includes(bl))) {
+    return true;
+  }
   return (
     node.kind === ts.SyntaxKind.InterfaceDeclaration ||
     (node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword))
   );
+};
+
+const getNodeText = (node: ts.Node, sourceFile: ts.SourceFile) => {
+  const text = sourceFile.text.substring(node.pos, node.end);
+  return text.indexOf('\n') === 0 ? text.substring(1) : text;
 };

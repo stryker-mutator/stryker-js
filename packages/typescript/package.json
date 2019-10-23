@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsc -w",
     "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 100 --branches 90 npm run mocha",
+    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 99 --branches 90 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
