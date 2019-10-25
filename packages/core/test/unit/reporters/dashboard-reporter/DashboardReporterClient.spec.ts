@@ -3,101 +3,51 @@ import { mutationTestReportSchemaMutationTestResult } from '@stryker-mutator/tes
 import { expect } from 'chai';
 import sinon = require('sinon');
 import { HttpClient } from 'typed-rest-client/HttpClient';
-import StrykerDashboardClient, { MutationScoreReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
+import StrykerDashboardClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { Mock, mock } from '../../../helpers/producers';
+import { Report } from '../../../../src/reporters/dashboard-reporter/Report';
+import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
 
 describe(DashboardReporterClient.name, () => {
   let sut: StrykerDashboardClient;
   let httpClient: Mock<HttpClient>;
+  let environment: EnvironmentVariableStore;
 
   const baseUrl = 'https://dashboard.stryker-mutator.io/api/reports';
 
-  const dashboardReport: MutationScoreReport = {
-    apiKey: '1',
-    branch: 'master',
-    mutationScore: 65.1,
-    repositorySlug: 'github.com/stryker-mutator/stryker'
-  };
-
   beforeEach(() => {
+    environment = new EnvironmentVariableStore();
     httpClient = mock(HttpClient);
     sut = testInjector.injector
       .provideValue(dashboardReporterTokens.httpClient, (httpClient as unknown) as HttpClient)
       .injectClass(DashboardReporterClient);
   });
 
-  describe(StrykerDashboardClient.prototype.postMutationScoreReport.name, () => {
-    it('report mutations score to dashboard server', async () => {
-      // Arrange
-      httpClient.post.resolves({
-        message: {
-          statusCode: 201
-        }
-      });
-
-      // Act
-      await sut.postMutationScoreReport(dashboardReport);
-
-      // Assert
-      const report = JSON.stringify(dashboardReport);
-      const contentType = {
-        ['Content-Type']: 'application/json'
-      };
-
-      expect(testInjector.logger.info).have.been.calledWithMatch(`Posting report to ${baseUrl}`);
-      expect(httpClient.post).have.been.calledWith(baseUrl, report, contentType);
-      expect(testInjector.logger.error).have.not.been.called;
-    });
-
-    it('when the server returns a invalid status code an error will be logged  ', async () => {
-      // Arrange
-      httpClient.post.resolves({
-        message: {
-          statusCode: 500
-        }
-      });
-
-      // Act
-      await sut.postMutationScoreReport(dashboardReport);
-
-      // Assert
-      expect(testInjector.logger.error).have.been.calledWithMatch(`Post to ${baseUrl} resulted in http status code: 500`);
-    });
-
-    it("when the server doesn't respond an error will be logged", async () => {
-      // Arrange
-      httpClient.post.rejects();
-
-      // Act
-      await sut.postMutationScoreReport(dashboardReport);
-
-      // Assert
-      expect(testInjector.logger.error).have.been.calledWithMatch(`Unable to reach ${baseUrl}. Please check your internet connection.`);
-    });
+  afterEach(() => {
+    environment.restore();
   });
 
-  describe(DashboardReporterClient.prototype.putFullResult.name, () => {
-    const apiKey = 'a api key';
-    const version = 'master';
-    const repositorySlug = 'github.com/repo/slug';
+  describe(DashboardReporterClient.prototype.updateReport.name, () => {
+    const apiKey = 'an api key';
+    const version = 'feat/foo-bar';
+    const expectedVersion = encodeURIComponent(version);
+    const projectName = 'github.com/repo/slug';
 
     it('should put the report and respond with the href', async () => {
       // Arrange
       const expectedHref = 'foo/bar';
-      httpClient.put.resolves({
-        message: {
-          statusCode: 200
-        },
-        readBody: sinon.stub().resolves(`{ "href": "${expectedHref}" }`)
-      });
-      const report = mutationTestReportSchemaMutationTestResult();
-      const expectedBody = JSON.stringify({ result: report });
-      const expectedUrl = `${baseUrl}/${repositorySlug}/${version}`;
+      respondWith(200, `{ "href": "${expectedHref}" }`);
+      environment.set('STRYKER_DASHBOARD_API_KEY', apiKey);
+      const report: Report = {
+        result: mutationTestReportSchemaMutationTestResult()
+      };
+      const expectedBody = JSON.stringify(report);
+      const expectedUrl = `${baseUrl}/${projectName}/${expectedVersion}`;
 
       // Act
-      const actualHref = await sut.putFullResult({ repositorySlug, report, apiKey, version, moduleName: null });
+      const actualHref = await sut.updateReport({ projectName, report, version, moduleName: undefined });
 
       // Assert
       expect(actualHref).eq(expectedHref);
@@ -111,17 +61,30 @@ describe(DashboardReporterClient.name, () => {
 
     it('should put the report for a specific module', async () => {
       // Arrange
-      httpClient.put.resolves({
-        message: {
-          statusCode: 200
-        },
-        readBody: sinon.stub().resolves('{ "href": "href" }')
-      });
-      const report = mutationTestReportSchemaMutationTestResult();
-      const expectedUrl = `${baseUrl}/${repositorySlug}/${version}?module=stryker%20module`;
+      respondWith();
+      const report: Report = {
+        result: mutationTestReportSchemaMutationTestResult()
+      };
+      const expectedUrl = `${baseUrl}/${projectName}/${expectedVersion}?module=stryker%20module`;
 
       // Act
-      await sut.putFullResult({ repositorySlug, report, apiKey, version, moduleName: 'stryker module' });
+      await sut.updateReport({ projectName: projectName, report, version, moduleName: 'stryker module' });
+
+      // Assert
+      expect(httpClient.put).calledWith(expectedUrl);
+    });
+
+    it('should use configured baseUrl', async () => {
+      // Arrange
+      respondWith();
+      const report: Report = {
+        result: mutationTestReportSchemaMutationTestResult()
+      };
+      testInjector.options.dashboard.baseUrl = 'https://foo.bar.com/api';
+      const expectedUrl = `https://foo.bar.com/api/${projectName}/${expectedVersion}?module=stryker%20module`;
+
+      // Act
+      await sut.updateReport({ projectName: projectName, report, version, moduleName: 'stryker module' });
 
       // Assert
       expect(httpClient.put).calledWith(expectedUrl);
@@ -129,30 +92,43 @@ describe(DashboardReporterClient.name, () => {
 
     it('should throw an Unauthorized error if the dashboard responds with 401', async () => {
       // Arrange
-      httpClient.put.resolves({ message: { statusCode: 401 }, readBody: sinon.stub().resolves('Unauthorized') });
-      const report = mutationTestReportSchemaMutationTestResult();
+      respondWith(401);
+      const report: Report = {
+        mutationScore: 58
+      };
 
       // Act
-      const promise = sut.putFullResult({ report, repositorySlug, apiKey, version, moduleName: null });
+      const promise = sut.updateReport({ report, projectName: projectName, version, moduleName: undefined });
 
       // Assert
       await expect(promise).rejectedWith(
-        `Error HTTP PUT ${baseUrl}/${repositorySlug}/${version}. Unauthorized. Did you provide the correct api key in the "STRYKER_DASHBOARD_API_KEY" environment variable?`
+        `Error HTTP PUT ${baseUrl}/${projectName}/${expectedVersion}. Unauthorized. Did you provide the correct api key in the "STRYKER_DASHBOARD_API_KEY" environment variable?`
       );
     });
 
     it('should throw an unexpected error if the dashboard responds with 500', async () => {
       // Arrange
-      httpClient.put.resolves({ message: { statusCode: 500 }, readBody: sinon.stub().resolves('Internal server error') });
-      const report = mutationTestReportSchemaMutationTestResult();
+      respondWith(500, 'Internal server error');
+      const report: Report = {
+        result: mutationTestReportSchemaMutationTestResult()
+      };
 
       // Act
-      const promise = sut.putFullResult({ report, repositorySlug, apiKey, version, moduleName: null });
+      const promise = sut.updateReport({ report, projectName, version, moduleName: undefined });
 
       // Assert
       await expect(promise).rejectedWith(
-        `Error HTTP PUT ${baseUrl}/${repositorySlug}/${version}. Response status code: 500. Response body: Internal server error`
+        `Error HTTP PUT ${baseUrl}/${projectName}/${expectedVersion}. Response status code: 500. Response body: Internal server error`
       );
     });
   });
+
+  function respondWith(statusCode = 200, body = '{ "href": "href" }') {
+    httpClient.put.resolves({
+      message: {
+        statusCode
+      },
+      readBody: sinon.stub().resolves(body)
+    });
+  }
 });

@@ -8,17 +8,13 @@ import { getEnvironmentVariable } from '../../utils/objectUtils';
  */
 export interface CIProvider {
   /**
-   * Returns whether Stryker is running on a pull request.
-   */
-  isPullRequest(): boolean;
-  /**
    * Determine the repository slug, including the git provider. I.E: github.com/stryker-mutator/stryker or bitbucket.org/org/name.
    */
-  determineSlug(): string;
+  determineProject(): string | undefined;
   /**
    * Determine the current version. I.e. branch name, git sha, or tag name
    */
-  determineVersion(): string;
+  determineVersion(): string | undefined;
 }
 
 /**

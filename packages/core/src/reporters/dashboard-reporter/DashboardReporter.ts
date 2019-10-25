@@ -3,10 +3,10 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { calculateMetrics } from 'mutation-testing-metrics';
-import { getEnvironmentVariableOrThrow } from '../../utils/objectUtils';
 import { CIProvider } from '../ci/Provider';
 import DashboardReporterClient from './DashboardReporterClient';
 import { dashboardReporterTokens } from './tokens';
+import { Report } from './Report';
 
 export default class DashboardReporter implements Reporter {
   public static readonly inject = tokens(
@@ -23,23 +23,36 @@ export default class DashboardReporter implements Reporter {
     private readonly ciProvider: CIProvider | null
   ) {}
 
-  public async onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
-    if (this.ciProvider) {
-      if (this.options.experimentalFullReport) {
-        await this.sendFullReport(report, this.ciProvider);
-      } else {
-        await this.sendMutationScore(report, this.ciProvider);
-      }
+  public async onMutationTestReportReady(result: mutationTestReportSchema.MutationTestResult) {
+    const { projectName, version, moduleName } = this.getContextFromEnvironment();
+    if (projectName && version) {
+      await this.update(this.toReport(result), projectName, version, moduleName);
     } else {
-      this.log.info('Dashboard report is not sent when not running on a build server');
+      this.log.info(
+        'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server.'
+      );
     }
   }
 
-  private async sendFullReport(report: mutationTestReportSchema.MutationTestResult, ciProvider: CIProvider) {
+  private toReport(result: mutationTestReportSchema.MutationTestResult): Report {
+    if (this.options.dashboard.fullReport) {
+      return {
+        result
+      };
+    } else {
+      return {
+        mutationScore: calculateMetrics(result.files).metrics.mutationScore
+      };
+    }
+  }
+
+  private async update(report: Report, projectName: string, version: string, moduleName: string | undefined) {
     try {
-      const href = await this.dashboardReporterClient.putFullResult({
+      const href = await this.dashboardReporterClient.updateReport({
         report,
-        ...this.getContextFromEnvironment(ciProvider)
+        moduleName,
+        projectName,
+        version: version
       });
       this.log.info('Report available at: %s', href);
     } catch (err) {
@@ -47,30 +60,11 @@ export default class DashboardReporter implements Reporter {
     }
   }
 
-  private async sendMutationScore(report: mutationTestReportSchema.MutationTestResult, ciProvider: CIProvider) {
-    const isPullRequest = ciProvider.isPullRequest();
-
-    if (!isPullRequest) {
-      const metricsResult = calculateMetrics(report.files);
-      const context = this.getContextFromEnvironment(ciProvider);
-
-      await this.dashboardReporterClient.postMutationScoreReport({
-        apiKey: context.apiKey,
-        branch: context.version,
-        mutationScore: metricsResult.metrics.mutationScore,
-        repositorySlug: context.repositorySlug
-      });
-    } else {
-      this.log.info('Dashboard mutation score is not sent when building a pull request');
-    }
-  }
-
-  private getContextFromEnvironment(ciProvider: CIProvider) {
+  private getContextFromEnvironment() {
     return {
-      apiKey: getEnvironmentVariableOrThrow('STRYKER_DASHBOARD_API_KEY'),
-      moduleName: this.options.moduleName || null,
-      repositorySlug: ciProvider.determineSlug(),
-      version: ciProvider.determineVersion()
+      moduleName: this.options.dashboard.module,
+      projectName: this.options.dashboard.project || (this.ciProvider && this.ciProvider.determineProject()),
+      version: this.options.dashboard.version || (this.ciProvider && this.ciProvider.determineVersion())
     };
   }
 }

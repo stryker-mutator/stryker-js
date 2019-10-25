@@ -2,15 +2,15 @@ import { CIProvider } from './Provider';
 
 import { getEnvironmentVariable, getEnvironmentVariableOrThrow } from '../../utils/objectUtils';
 
+/**
+ * https://circleci.com/docs/2.0/env-vars/#built-in-environment-variables
+ */
 class CircleProvider implements CIProvider {
-  public determineSlug(): string {
+  public determineProject(): string {
     return `${this.determineProvider()}/${this.determineRepository()}`;
   }
-  public determineVersion(): string {
-    return getEnvironmentVariable('CIRCLE_BRANCH') || getEnvironmentVariable('CIRCLE_TAG') || 'unknown';
-  }
-  public isPullRequest() {
-    return getEnvironmentVariable('CIRCLE_PULL_REQUEST') !== undefined;
+  public determineVersion(): string | undefined {
+    return getEnvironmentVariable('CIRCLE_PR_NUMBER') || getEnvironmentVariable('CIRCLE_BRANCH') || getEnvironmentVariable('CIRCLE_TAG');
   }
 
   private determineRepository() {

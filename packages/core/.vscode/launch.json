@@ -124,9 +124,9 @@
       // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
-        "run",
-        "--coverageAnalysis",
-        "sdsd"
+        "--logLevel",
+        "debug",
+        "run"
       ],
       "cwd": "${workspaceRoot}/.",
       "runtimeExecutable": null,

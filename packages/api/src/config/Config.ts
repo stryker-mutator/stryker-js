@@ -1,4 +1,4 @@
-import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions } from '../../core';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions } from '../../core';
 
 export default class Config implements StrykerOptions {
   [customConfig: string]: any;
@@ -29,7 +29,15 @@ export default class Config implements StrykerOptions {
     high: 80,
     low: 60
   };
+
   public allowConsoleColors: boolean = true;
+  /**
+   * The options for the 'dashboard' reporter
+   */
+  public dashboard: DashboardOptions = {
+    baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
+    fullReport: false
+  };
   public tempDirName: string = '.stryker-tmp';
 
   public set(newConfig: Partial<StrykerOptions>) {

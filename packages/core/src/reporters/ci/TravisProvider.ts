@@ -1,15 +1,21 @@
-import { getEnvironmentVariableOrThrow } from '../../utils/objectUtils';
+import { getEnvironmentVariable } from '../../utils/objectUtils';
 import { CIProvider } from './Provider';
 
+/**
+ * See https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
+ */
 class TravisProvider implements CIProvider {
-  public determineSlug(): string {
-    return `github.com/${getEnvironmentVariableOrThrow('TRAVIS_REPO_SLUG')}`;
+  public determineProject(): string | undefined {
+    const slug = getEnvironmentVariable('TRAVIS_REPO_SLUG');
+    if (slug) {
+      return `github.com/${slug}`;
+    } else {
+      return undefined;
+    }
   }
-  public determineVersion(): string {
-    return getEnvironmentVariableOrThrow('TRAVIS_BRANCH');
+  public determineVersion(): string | undefined {
+    return getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH') || getEnvironmentVariable('TRAVIS_BRANCH');
   }
-
-  public isPullRequest = () => getEnvironmentVariableOrThrow('TRAVIS_PULL_REQUEST') !== 'false';
 }
 
 export default TravisProvider;
