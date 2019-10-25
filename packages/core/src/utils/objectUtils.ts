@@ -16,14 +16,6 @@ export function filterEmpty<T>(input: Array<T | null | void>) {
   return input.filter(item => item !== undefined && item !== null) as T[];
 }
 
-export function copy<T>(obj: T, deep?: boolean) {
-  if (deep) {
-    return _.cloneDeep(obj);
-  } else {
-    return _.clone(obj);
-  }
-}
-
 export function wrapInClosure(codeFragment: string) {
   return `
     (function (window) {

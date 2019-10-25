@@ -14,7 +14,7 @@ abstract class ProgressKeeper implements Reporter {
 
   public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
     this.timer = new Timer();
-    this.mutantIdsWithoutCoverage = matchedMutants.filter(m => m.scopedTestIds.length === 0).map(m => m.id);
+    this.mutantIdsWithoutCoverage = matchedMutants.filter(m => !m.runAllTests && m.scopedTestIds.length === 0).map(m => m.id);
     this.progress.total = matchedMutants.length - this.mutantIdsWithoutCoverage.length;
   }
 

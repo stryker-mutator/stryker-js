@@ -94,13 +94,13 @@ export default class Sandbox {
           `Transpile error occurred: "${transpiledMutant.transpileResult.error}" during transpiling of mutant ${transpiledMutant.mutant.toString()}`
         );
       }
-      const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
+      const result = transpiledMutant.mutant.createResult(MutantStatus.TranspileError, []);
       return result;
-    } else if (!transpiledMutant.mutant.selectedTests.length) {
-      const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
+    } else if (!transpiledMutant.mutant.runAllTests && !transpiledMutant.mutant.selectedTests.length) {
+      const result = transpiledMutant.mutant.createResult(MutantStatus.NoCoverage, []);
       return result;
     } else if (!transpiledMutant.changedAnyTranspiledFiles) {
-      const result = transpiledMutant.mutant.result(MutantStatus.Survived, []);
+      const result = transpiledMutant.mutant.createResult(MutantStatus.Survived, []);
       return result;
     } else {
       // No early result possible, need to run in the sandbox later
@@ -115,7 +115,7 @@ export default class Sandbox {
       const error = runResult.errorMessages ? runResult.errorMessages.toString() : '(undefined)';
       this.log.debug('A runtime error occurred: %s during execution of mutant: %s', error, mutant.toString());
     }
-    return mutant.result(status, testNames);
+    return mutant.createResult(status, testNames);
   }
 
   private determineMutantState(runResult: RunResult): MutantStatus {
@@ -195,7 +195,7 @@ export default class Sandbox {
   }
 
   private getFilterTestsHooks(mutant: TestableMutant): string | undefined {
-    if (this.testFramework) {
+    if (this.testFramework && !mutant.runAllTests) {
       return wrapInClosure(this.testFramework.filter(mutant.selectedTests));
     } else {
       return undefined;

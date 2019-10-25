@@ -254,6 +254,28 @@ describe(Sandbox.name, () => {
     it('should not filter any tests when testFramework = null', async () => {
       const sut = await createSut();
       const mutant = new TestableMutant('2', createMutant(), new SourceFile(new File('', '')));
+      await sut.runMutant(new TranspiledMutant(mutant, { outputFiles: [new File(expectedTargetFileToMutate, '')], error: null }, true));
+      expect(fileUtils.writeFile).not.calledWith(expectedTestFrameworkHooksFile);
+    });
+
+    it('should not filter any tests when runAllTests = true', async () => {
+      // Arrange
+      while (transpiledMutant.mutant.selectedTests.pop());
+      transpiledMutant.mutant.selectAllTests(runResult, TestSelectionResult.Success);
+      const sut = await createSut();
+
+      // Act
+      await sut.runMutant(transpiledMutant);
+
+      // Assert
+      expect(fileUtils.writeFile).not.calledWith(expectedTestFrameworkHooksFile);
+      expect(testRunner.run).called;
+    });
+
+    it('should not filter any tests when runAllTests = true', async () => {
+      const sut = await createSut();
+      const mutant = new TestableMutant('2', createMutant(), new SourceFile(new File('', '')));
+      mutant.selectAllTests(runResult, TestSelectionResult.Failed);
       sut.runMutant(new TranspiledMutant(mutant, { outputFiles: [new File(expectedTargetFileToMutate, '')], error: null }, true));
       expect(fileUtils.writeFile).not.calledWith(expectedTestFrameworkHooksFile);
     });
@@ -279,6 +301,18 @@ describe(Sandbox.name, () => {
         `Transpile error occurred: "Error! Cannot negate a string (or something)" during transpiling of mutant ${transpiledMutant.mutant.toString()}`
       );
       expect(mutantResult.status).eq(MutantStatus.TranspileError);
+    });
+
+    it('should report an early result when there are no files scoped', async () => {
+      // Arrange
+      while (transpiledMutant.mutant.selectedTests.pop());
+
+      // Act
+      const sut = await createSut();
+
+      // Assert
+      const mutantResult = await sut.runMutant(transpiledMutant);
+      expect(mutantResult.status).eq(MutantStatus.NoCoverage);
     });
 
     it('should report an early result when there are no file changes', async () => {
