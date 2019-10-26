@@ -5,7 +5,7 @@ import LogConfigurator from '../../src/logging/LogConfigurator';
 import { Logger } from '@stryker-mutator/api/logging';
 import { logger } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import { DashboardOptions, StrykerOptions } from '@stryker-mutator/api/core';
+import { DashboardOptions, StrykerOptions, ReportType } from '@stryker-mutator/api/core';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;
@@ -34,7 +34,7 @@ describe(StrykerCli.name, () => {
         module: 'baz/module',
         project: 'github.com/fooOrg/barProject',
         version: '1.5.3',
-        fullReport: false
+        reportType: ReportType.Full
       };
       actRun([
         '--dashboard.version',
@@ -45,7 +45,8 @@ describe(StrykerCli.name, () => {
         expectedDashboardOptions.module,
         '--dashboard.baseUrl',
         expectedDashboardOptions.baseUrl,
-        '--dashboard.noFullReport'
+        '--dashboard.reportType',
+        'full'
       ]);
       expect(runMutationTestingStub).calledWithMatch({
         dashboard: expectedDashboardOptions

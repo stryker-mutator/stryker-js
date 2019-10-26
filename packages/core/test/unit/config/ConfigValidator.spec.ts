@@ -191,6 +191,13 @@ describe(ConfigValidator.name, () => {
       actValidationError();
       expect(testInjector.logger.fatal).calledWith('Value 23 is invalid for `dashboard.baseUrl`. Expected a string');
     });
+    it('should be invalid for a wrong reportType', () => {
+      breakConfig('dashboard', { reportType: 'empty' });
+      actValidationError();
+      expect(testInjector.logger.fatal).calledWith(
+        'Value "empty" is invalid for `dashboard.reportType`. Expected one of the following: "full", "mutationScore"'
+      );
+    });
   });
 
   describe('transpilers', () => {

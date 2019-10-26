@@ -1,4 +1,5 @@
 import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions } from '../../core';
+import { ReportType } from '../core/DashboardOptions';
 
 type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
@@ -40,7 +41,7 @@ export default class Config implements StrykerOptions {
    */
   public dashboard: DashboardOptions = {
     baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
-    fullReport: false
+    reportType: ReportType.MutationScore
   };
   public tempDirName: string = '.stryker-tmp';
 

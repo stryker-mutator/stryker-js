@@ -1,4 +1,4 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, ReportType } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
@@ -43,7 +43,7 @@ export default class DashboardReporter implements Reporter {
   }
 
   private toReport(result: mutationTestReportSchema.MutationTestResult): Report {
-    if (this.options.dashboard.fullReport) {
+    if (this.options.dashboard.reportType === ReportType.Full) {
       return {
         result
       };

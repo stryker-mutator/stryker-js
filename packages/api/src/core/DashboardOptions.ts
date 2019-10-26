@@ -18,5 +18,12 @@ export interface DashboardOptions {
   /**
    * Send a full report (inc. source code), rather than only the mutation score.
    */
-  fullReport: boolean;
+  reportType: ReportType;
 }
+
+export enum ReportType {
+  Full = 'full',
+  MutationScore = 'mutationScore'
+}
+
+export const ALL_REPORT_TYPES = Object.freeze([ReportType.Full, ReportType.MutationScore]);

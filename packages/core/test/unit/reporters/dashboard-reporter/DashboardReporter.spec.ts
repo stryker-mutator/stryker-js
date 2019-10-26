@@ -16,6 +16,7 @@ import {
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { mock, Mock } from '../../../helpers/producers';
 import { Report } from '../../../../src/reporters/dashboard-reporter/Report';
+import { ReportType } from '@stryker-mutator/api/core';
 
 describe(DashboardReporter.name, () => {
   let dashboardClientMock: Mock<StrykerDashboardClient>;
@@ -55,9 +56,9 @@ describe(DashboardReporter.name, () => {
     });
   });
 
-  it('should a update a full report if fullReport = true', async () => {
+  it('should a update a full report if reportType = "full"', async () => {
     // Arrange
-    testInjector.options.dashboard.fullReport = true;
+    testInjector.options.dashboard.reportType = ReportType.Full;
     ciProviderMock.determineProject.returns('github.com/foo/bar');
     ciProviderMock.determineVersion.returns('master');
     const expectedMutationTestResult = mutationTestReportSchemaMutationTestResult();
@@ -78,9 +79,9 @@ describe(DashboardReporter.name, () => {
     expect(testInjector.logger.warn).not.called;
   });
 
-  it('should a update a mutation score if fullReport = false', async () => {
+  it('should a update a mutation score if reportType = "mutationScore', async () => {
     // Arrange
-    testInjector.options.dashboard.fullReport = false;
+    testInjector.options.dashboard.reportType = ReportType.MutationScore;
     ciProviderMock.determineProject.returns('github.com/foo/bar');
     ciProviderMock.determineVersion.returns('master');
     const mutationTestResult = mutationTestReportSchemaMutationTestResult({

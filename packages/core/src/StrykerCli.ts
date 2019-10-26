@@ -4,7 +4,7 @@ import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
 import Stryker from './Stryker';
-import { DashboardOptions, StrykerOptions } from '@stryker-mutator/api/core';
+import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mutator/api/core';
 import { Config } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 
@@ -108,11 +108,9 @@ export default class StrykerCli {
         deepOption(dashboard, 'baseUrl')
       )
       .option(
-        '--dashboard.noFullReport',
-        `Send the mutation score only, rather than a full report (inc. source code). Default: ${
-          !defaultValues.dashboard.fullReport ? 'enabled' : 'disabled'
-        }`,
-        deepOption(dashboard, 'fullReport', () => false)
+        `--dashboard.reportType <${ALL_REPORT_TYPES.join('|')}>`,
+        `Send a full report (inc. source code and mutant results) or only the mutation score. Default: ${defaultValues.dashboard.reportType}`,
+        deepOption(dashboard, 'reportType')
       )
       .option(
         '--tempDirName <name>',
