@@ -27,6 +27,10 @@ export default class ConfigValidator {
     this.validateIsStringArray('reporters', this.options.reporters);
     this.validateIsStringArray('transpilers', this.options.transpilers);
     this.validateIsString('tempDirName', this.options.tempDirName);
+    this.validateIsOptionalDeepString('dashboard', 'project');
+    this.validateIsOptionalDeepString('dashboard', 'module');
+    this.validateIsOptionalDeepString('dashboard', 'version');
+    this.validateIsDeepString('dashboard', 'baseUrl');
     this.validateCoverageAnalysis();
     this.validateCoverageAnalysisWithRespectToTranspilers();
     this.crashIfNeeded();
@@ -47,7 +51,7 @@ export default class ConfigValidator {
       this.validateIsString('mutator.name', mutatorDescriptor.name);
       this.validateIsStringArray('mutator.excludedMutations', mutatorDescriptor.excludedMutations);
     } else if (typeof mutator !== 'string') {
-      this.invalidate(`Value "${mutator}" is invalid for \`mutator\`. Expected either a string or an object`);
+      this.invalidate(`Value ${stringify(mutator)} is invalid for \`mutator\`. Expected either a string or an object`);
     }
   }
 
@@ -65,13 +69,13 @@ export default class ConfigValidator {
 
   private validateThresholdValue(name: keyof MutationScoreThresholds, value: number | null) {
     if (typeof value === 'number' && (value < 0 || value > 100 || isNaN(value))) {
-      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
+      this.invalidate(`Value ${stringify(value)} is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
     }
   }
 
   private validateThresholdsValueExists(name: keyof MutationScoreThresholds, value: any) {
     if (typeof value !== 'number') {
-      this.invalidate(`Value "${value}" is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
+      this.invalidate(`Value ${stringify(value)} is invalid for \`thresholds.${name}\`. Expected a number between 0 and 100`);
     }
   }
 
@@ -103,7 +107,7 @@ export default class ConfigValidator {
     const coverageAnalysis = this.options.coverageAnalysis;
     if (!VALID_COVERAGE_ANALYSIS_VALUES.includes(coverageAnalysis)) {
       this.invalidate(
-        `Value "${coverageAnalysis}" is invalid for \`coverageAnalysis\`. Expected one of the following: ${this.joinQuotedList(
+        `Value ${stringify(coverageAnalysis)} is invalid for \`coverageAnalysis\`. Expected one of the following: ${this.joinQuotedList(
           VALID_COVERAGE_ANALYSIS_VALUES
         )}`
       );
@@ -130,23 +134,38 @@ export default class ConfigValidator {
 
   private validateIsNumber(fieldName: keyof Config, value: any) {
     if (typeof value !== 'number' || isNaN(value)) {
-      this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected a number`);
+      this.invalidate(`Value ${stringify(value)} is invalid for \`${fieldName}\`. Expected a number`);
     }
   }
 
   private validateIsString(fieldName: keyof Config, value: any) {
     if (typeof value !== 'string') {
-      this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected a string`);
+      this.invalidate(`Value ${stringify(value)} is invalid for \`${fieldName}\`. Expected a string`);
+    }
+  }
+
+  private validateIsDeepString<T extends keyof Config, T2 extends keyof Config[T]>(fieldName: T, secondFieldName: T2) {
+    const value = this.options[fieldName][secondFieldName];
+    if (typeof value !== 'string') {
+      this.invalidate(`Value ${stringify(value)} is invalid for \`${fieldName}.${secondFieldName}\`. Expected a string`);
+    }
+  }
+
+  private validateIsOptionalDeepString<T extends keyof Config, T2 extends keyof Config[T]>(fieldName: T, secondFieldName: T2) {
+    const value = this.options[fieldName][secondFieldName];
+    if (typeof value !== 'string' && value !== undefined) {
+      // Let my sibling handle the error formatting
+      this.validateIsDeepString(fieldName, secondFieldName);
     }
   }
 
   private validateIsStringArray(fieldName: keyof Config, value: any) {
     if (!Array.isArray(value)) {
-      this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected an array`);
+      this.invalidate(`Value ${stringify(value)} is invalid for \`${fieldName}\`. Expected an array`);
     } else {
       value.forEach(v => {
         if (typeof v !== 'string') {
-          this.invalidate(`Value "${v}" is an invalid element of \`${fieldName}\`. Expected a string`);
+          this.invalidate(`Value ${stringify(v)} is an invalid element of \`${fieldName}\`. Expected a string`);
         }
       });
     }
@@ -159,5 +178,13 @@ export default class ConfigValidator {
 
   private joinQuotedList(arr: string[]) {
     return arr.map(v => `"${v}"`).join(', ');
+  }
+}
+
+function stringify(value: unknown): string {
+  if (typeof value === 'number' && isNaN(value)) {
+    return 'NaN';
+  } else {
+    return JSON.stringify(value);
   }
 }
