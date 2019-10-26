@@ -23,15 +23,23 @@ export default class DashboardReporter implements Reporter {
     private readonly ciProvider: CIProvider | null
   ) {}
 
-  public async onMutationTestReportReady(result: mutationTestReportSchema.MutationTestResult) {
-    const { projectName, version, moduleName } = this.getContextFromEnvironment();
-    if (projectName && version) {
-      await this.update(this.toReport(result), projectName, version, moduleName);
-    } else {
-      this.log.info(
-        'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server.'
-      );
-    }
+  private onGoingWork: Promise<void> | undefined;
+
+  public onMutationTestReportReady(result: mutationTestReportSchema.MutationTestResult): void {
+    this.onGoingWork = (async () => {
+      const { projectName, version, moduleName } = this.getContextFromEnvironment();
+      if (projectName && version) {
+        await this.update(this.toReport(result), projectName, version, moduleName);
+      } else {
+        this.log.info(
+          'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server.'
+        );
+      }
+    })();
+  }
+
+  public async wrapUp() {
+    await this.onGoingWork;
   }
 
   private toReport(result: mutationTestReportSchema.MutationTestResult): Report {

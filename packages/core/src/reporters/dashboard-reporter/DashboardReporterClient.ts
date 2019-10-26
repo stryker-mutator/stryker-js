@@ -32,9 +32,13 @@ export default class DashboardReporterClient {
     const url = this.getPutUrl(projectName, version, moduleName);
     const serializedBody = JSON.stringify(report);
     this.log.info('PUT report to %s (~%s bytes)', url, serializedBody.length);
-    this.log.debug('PUT report %s', serializedBody);
+    const apiKey = getEnvironmentVariable(STRYKER_DASHBOARD_API_KEY);
+    if (apiKey) {
+      this.log.debug('Using configured API key from environment "%s"', STRYKER_DASHBOARD_API_KEY);
+    }
+    this.log.trace('PUT report %s', serializedBody);
     const result = await this.httpClient.put(url, serializedBody, {
-      ['X-Api-Key']: getEnvironmentVariable(STRYKER_DASHBOARD_API_KEY),
+      ['X-Api-Key']: apiKey,
       ['Content-Type']: 'application/json'
     });
     const responseBody = await result.readBody();

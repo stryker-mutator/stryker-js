@@ -45,7 +45,7 @@ describe(DashboardReporter.name, () => {
     testInjector.options.dashboard.module = 'bazModule';
 
     // Act
-    await createSut().onMutationTestReportReady(mutationTestReportSchemaMutationTestResult());
+    await act(mutationTestReportSchemaMutationTestResult());
 
     // Assert
     expect(dashboardClientMock.updateReport).calledWithMatch({
@@ -66,7 +66,7 @@ describe(DashboardReporter.name, () => {
     };
 
     // Act
-    await createSut().onMutationTestReportReady(expectedMutationTestResult);
+    await act(expectedMutationTestResult);
 
     // Assert
     expect(dashboardClientMock.updateReport).calledWith({
@@ -100,7 +100,7 @@ describe(DashboardReporter.name, () => {
     };
 
     // Act
-    await createSut().onMutationTestReportReady(mutationTestResult);
+    await act(mutationTestResult);
 
     // Assert
     expect(dashboardClientMock.updateReport).calledWith({
@@ -117,7 +117,8 @@ describe(DashboardReporter.name, () => {
     const sut = createSut(null);
 
     // Act
-    await sut.onMutationTestReportReady(mutationTestReportSchemaMutationTestResult());
+    sut.onMutationTestReportReady(mutationTestReportSchemaMutationTestResult());
+    await sut.wrapUp();
 
     // Assert
     expect(dashboardClientMock.updateReport).not.called;
@@ -125,4 +126,10 @@ describe(DashboardReporter.name, () => {
       'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server'
     );
   });
+
+  async function act(result: mutationTestReportSchema.MutationTestResult) {
+    const sut = createSut();
+    sut.onMutationTestReportReady(result);
+    await sut.wrapUp();
+  }
 });

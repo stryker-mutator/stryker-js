@@ -56,7 +56,8 @@ describe(DashboardReporterClient.name, () => {
         ['Content-Type']: 'application/json'
       });
       expect(testInjector.logger.info).calledWith('PUT report to %s (~%s bytes)', expectedUrl, expectedBody.length);
-      expect(testInjector.logger.debug).calledWith('PUT report %s', expectedBody);
+      expect(testInjector.logger.debug).calledWith('Using configured API key from environment "%s"', 'STRYKER_DASHBOARD_API_KEY');
+      expect(testInjector.logger.trace).calledWith('PUT report %s', expectedBody);
     });
 
     it('should put the report for a specific module', async () => {
