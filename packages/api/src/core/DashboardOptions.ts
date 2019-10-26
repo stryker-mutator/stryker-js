@@ -1,3 +1,6 @@
+/**
+ * The options for the dashboard reporter.
+ */
 export interface DashboardOptions {
   /**
    * Indicates which project to use if the "dashboard" reporter is enabled.
@@ -16,7 +19,7 @@ export interface DashboardOptions {
    */
   baseUrl: string;
   /**
-   * Send a full report (inc. source code), rather than only the mutation score.
+   * Indicates wether to send a full report (inc. source code and mutant results) or only the mutation score.
    */
   reportType: ReportType;
 }

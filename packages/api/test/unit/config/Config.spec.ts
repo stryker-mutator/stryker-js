@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import * as minimatch from 'minimatch';
 import { Config } from '../../../config';
+import { DashboardOptions, ReportType } from '../../../core';
 
 describe('Config', () => {
   let sut: Config;
@@ -36,7 +37,12 @@ describe('Config', () => {
       sut.set({
         dashboard: { project: 'my-pet-shop' }
       });
-      expect(sut.dashboard).not.be.undefined;
+      const expected: DashboardOptions = {
+        baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
+        reportType: ReportType.MutationScore,
+        project: 'my-pet-shop'
+      };
+      expect(sut.dashboard).deep.eq(expected);
     });
   });
 
