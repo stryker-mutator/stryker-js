@@ -1,5 +1,9 @@
 import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions } from '../../core';
 
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
 export default class Config implements StrykerOptions {
   [customConfig: string]: any;
 
@@ -40,11 +44,15 @@ export default class Config implements StrykerOptions {
   };
   public tempDirName: string = '.stryker-tmp';
 
-  public set(newConfig: Partial<StrykerOptions>) {
+  public set(newConfig: DeepPartial<StrykerOptions>) {
     if (newConfig) {
       Object.keys(newConfig).forEach(key => {
-        if (typeof newConfig[key] !== 'undefined') {
-          this[key] = newConfig[key];
+        if (newConfig[key] !== undefined) {
+          if (key === 'dashboard') {
+            this[key] = { ...this[key], ...newConfig[key] };
+          } else {
+            this[key] = newConfig[key];
+          }
         }
       });
     }

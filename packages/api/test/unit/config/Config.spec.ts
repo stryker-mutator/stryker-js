@@ -31,6 +31,13 @@ describe('Config', () => {
       sut.set({ thresholds: undefined });
       expect(sut.thresholds).not.be.undefined;
     });
+
+    it('should merge `dashboard` settings', () => {
+      sut.set({
+        dashboard: { project: 'my-pet-shop' }
+      });
+      expect(sut.dashboard).not.be.undefined;
+    });
   });
 
   describe('default value for `mutate` property', () => {

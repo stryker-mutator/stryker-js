@@ -27,6 +27,9 @@ export default class ConfigReader {
 
     // merge the config from config file and cliOptions (precedence)
     config.set(this.cliOptions);
+    if (this.log.isDebugEnabled()) {
+      this.log.debug(`Loaded config: ${JSON.stringify(config, null, 2)}`);
+    }
 
     return config;
   }
