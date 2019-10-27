@@ -2,7 +2,8 @@ import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, ScoreResult } from '@stryker-mutator/api/report';
-import * as _ from 'lodash';
+import flatMap = require('lodash.flatmap');
+import groupBy = require('lodash.groupby');
 import * as path from 'path';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
 
@@ -49,7 +50,7 @@ export default class ScoreResultCalculator {
   private calculateScoreResult(results: MutantResult[], basePath: string): ScoreResult {
     const numbers = this.countNumbers(results);
     const facts = this.determineFacts(basePath, results);
-    return freezeRecursively(_.assign(numbers, facts));
+    return freezeRecursively(Object.assign(numbers, facts));
   }
 
   private copy(defaults: ScoreResult, overrides: Partial<ScoreResult>): ScoreResult {
@@ -81,15 +82,15 @@ export default class ScoreResultCalculator {
 
   private calculateChildScores(results: MutantResult[], parentName: string, basePath: string) {
     const childrenBasePath = parentName.length ? path.join(basePath, parentName) + path.sep : '';
-    const resultsGroupedByFiles = _.groupBy(results, result => result.sourceFilePath.substr(childrenBasePath.length));
+    const resultsGroupedByFiles = groupBy(results, result => result.sourceFilePath.substr(childrenBasePath.length));
     const uniqueFiles = Object.keys(resultsGroupedByFiles);
 
     if (uniqueFiles.length > 1) {
-      const filesGroupedByDirectory = _.groupBy(uniqueFiles, file => file.split(path.sep)[0]);
+      const filesGroupedByDirectory = groupBy(uniqueFiles, file => file.split(path.sep)[0]);
       return Object.keys(filesGroupedByDirectory)
 
         .map(directory =>
-          this.calculateScoreResult(_.flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath)
+          this.calculateScoreResult(flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath)
         )
         .sort(this.compareScoreResults);
     } else {
@@ -98,7 +99,7 @@ export default class ScoreResultCalculator {
   }
 
   private determineCommonBasePath(results: MutantResult[], basePath: string) {
-    const uniqueFiles = _.uniq(results.map(result => result.sourceFilePath));
+    const uniqueFiles = [...new Set(results.map(result => result.sourceFilePath))];
     const uniqueFileDirectories = uniqueFiles.map(file => file.substr(basePath.length).split(path.sep));
 
     if (uniqueFileDirectories.length) {

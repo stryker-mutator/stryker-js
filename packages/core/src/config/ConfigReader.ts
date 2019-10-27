@@ -4,7 +4,6 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
 import fs = require('fs');
-import * as _ from 'lodash';
 import * as path from 'path';
 import { coreTokens } from '../di';
 
@@ -60,7 +59,7 @@ export default class ConfigReader {
           throw new StrykerError('Invalid config file', e);
         }
       }
-      if (!_.isFunction(configModule)) {
+      if (typeof configModule !== 'function') {
         this.log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
         throw new StrykerError('Config file must export a function!');
       }
