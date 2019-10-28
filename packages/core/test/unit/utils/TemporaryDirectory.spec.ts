@@ -55,7 +55,7 @@ describe(TemporaryDirectory.name, () => {
   describe('dispose', () => {
     describe('when temp directory is initialized', () => {
       beforeEach(() => sut.initialize());
-      it('should call deleteDir fileApi', () => {
+      it('should call deleteDir fileApi', async () => {
         const expectedPath = path.resolve(tempDirName);
         deleteDirStub.resolves('delResolveStub');
 
@@ -76,5 +76,4 @@ describe(TemporaryDirectory.name, () => {
       });
     });
   });
-
 });

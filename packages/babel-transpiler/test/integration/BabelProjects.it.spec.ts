@@ -9,7 +9,6 @@ import { BabelTranspiler, babelTranspilerFactory } from '../../src/BabelTranspil
 import { ProjectLoader } from '../helpers/projectLoader';
 
 function describeIntegrationTest(projectName: string, babelConfig: Partial<StrykerBabelConfig> = {}) {
-
   const projectDir = path.resolve(__dirname, '..', '..', 'testResources', projectName);
   babelConfig.optionsFile = path.join(projectDir, babelConfig.optionsFile || '.babelrc');
   let projectFiles: File[] = [];
@@ -20,9 +19,7 @@ function describeIntegrationTest(projectName: string, babelConfig: Partial<Stryk
     projectFiles = await ProjectLoader.getFiles(path.join(projectDir, 'source'));
     resultFiles = await ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
     testInjector.options[CONFIG_KEY] = babelConfig;
-    babelTranspiler = testInjector.injector
-      .provideValue(commonTokens.produceSourceMaps, false)
-      .injectFunction(babelTranspilerFactory);
+    babelTranspiler = testInjector.injector.provideValue(commonTokens.produceSourceMaps, false).injectFunction(babelTranspilerFactory);
   });
 
   it('should be able to transpile the input files', async () => {
@@ -35,7 +32,7 @@ function describeIntegrationTest(projectName: string, babelConfig: Partial<Stryk
     expect(projectFiles).not.to.be.empty;
   });
 
-  function expectFilesEqual(actual: ReadonlyArray<File>, expected: ReadonlyArray<File>) {
+  function expectFilesEqual(actual: readonly File[], expected: readonly File[]) {
     expect(actual).lengthOf(expected.length);
     for (const i in expected) {
       expect(actual[i].name).deep.eq(expected[i].name);
@@ -70,8 +67,8 @@ describe('A Babel project with babel.config.js config file', () => {
   const noop = () => {};
   describeIntegrationTest('babelProjectWithBabelConfigJs', {
     extensions: ['.ts'],
-    optionsApi: { cache: { forever: noop }} as ConfigAPI,
-    optionsFile: 'babel.config.js',
+    optionsApi: { cache: { forever: noop } } as ConfigAPI,
+    optionsFile: 'babel.config.js'
   });
 });
 describe('A Babel project with .babelrc.js config file', () => {

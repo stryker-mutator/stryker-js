@@ -12,14 +12,16 @@ export default class WebpackTranspiler implements Transpiler {
   private webpackCompiler: WebpackCompiler;
 
   public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps, pluginTokens.configLoader);
-  public constructor(options: StrykerOptions, produceSourceMaps: boolean, private readonly configLoader: ConfigLoader) {
+  constructor(options: StrykerOptions, produceSourceMaps: boolean, private readonly configLoader: ConfigLoader) {
     if (produceSourceMaps) {
-      throw new Error(`Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off".`);
+      throw new Error(
+        `Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off".`
+      );
     }
     this.config = this.getStrykerWebpackConfig(options.webpack);
   }
 
-  public async transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+  public async transpile(files: readonly File[]): Promise<readonly File[]> {
     if (!this.webpackCompiler) {
       // Initialize the webpack compiler with the current directory (process.cwd)
       const config = await this.configLoader.load(this.config);

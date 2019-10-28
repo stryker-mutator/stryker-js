@@ -26,7 +26,6 @@ describe('TimeoutDecorator', () => {
   afterEach(() => sandbox.restore());
 
   function itShouldProxyRequests<T>(action: () => Promise<T>, methodName: 'init' | 'dispose' | 'run') {
-
     it('should proxy the request', () => {
       testRunner1[methodName].resolves('str');
       const promise = action();
@@ -63,8 +62,8 @@ describe('TimeoutDecorator', () => {
     itShouldProxyRequests(() => sut.run({ timeout: 20 }), 'run');
 
     it('should not handle timeouts premature', () => {
-      let resolve: (result: string) => void = () => { };
-      testRunner1.run.returns(new Promise<string>(res => resolve = res));
+      let resolve: (result: string) => void = () => {};
+      testRunner1.run.returns(new Promise<string>(res => (resolve = res)));
       const runPromise = sut.run({ timeout: 20 });
       clock.tick(19);
       resolve('expectedResult');
@@ -72,15 +71,17 @@ describe('TimeoutDecorator', () => {
     });
 
     it('should handle timeouts', () => {
-      testRunner1.run.returns(new Promise<string>(() => { }));
+      testRunner1.run.returns(new Promise<string>(() => {}));
       const runPromise = sut.run({ timeout: 20 });
       clock.tick(20);
-      return expect(runPromise.then(result => {
-        expect(availableTestRunners).to.have.lengthOf(0);
-        expect(testRunner1.dispose).to.have.been.called;
-        expect(testRunner2.init).to.have.been.called;
-        return result;
-      })).to.eventually.be.deep.equal({ status: RunStatus.Timeout, tests: [] });
+      return expect(
+        runPromise.then(result => {
+          expect(availableTestRunners).to.have.lengthOf(0);
+          expect(testRunner1.dispose).to.have.been.called;
+          expect(testRunner2.init).to.have.been.called;
+          return result;
+        })
+      ).to.eventually.be.deep.equal({ status: RunStatus.Timeout, tests: [] });
     });
   });
 });

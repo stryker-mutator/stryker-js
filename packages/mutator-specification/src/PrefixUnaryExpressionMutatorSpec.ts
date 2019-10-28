@@ -2,9 +2,7 @@ import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
 export default function PrefixUnaryExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
-
   describe('PrefixUnaryExpressionMutator', () => {
-
     it('should have name "PrefixUnaryExpression"', () => {
       expect(name).eq('PrefixUnaryExpression');
     });

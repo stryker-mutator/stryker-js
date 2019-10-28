@@ -57,7 +57,7 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
     }
 
     function isEmptyTemplate() {
-      return (str.kind === ts.SyntaxKind.FirstTemplateToken && (str as ts.NoSubstitutionTemplateLiteral).text === '');
+      return str.kind === ts.SyntaxKind.FirstTemplateToken && (str as ts.NoSubstitutionTemplateLiteral).text === '';
     }
 
     return isEmptyString() || isEmptyTemplate();

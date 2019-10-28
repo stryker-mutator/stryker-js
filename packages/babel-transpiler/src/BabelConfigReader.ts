@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as babel from './helpers/babelWrapper';
 
 export interface StrykerBabelConfig {
-  extensions: ReadonlyArray<string>;
+  extensions: readonly string[];
   options: babel.TransformOptions;
   optionsFile: string | null;
   optionsApi?: Partial<babel.ConfigAPI>;
@@ -24,10 +24,8 @@ const DEFAULT_BABEL_CONFIG: Readonly<StrykerBabelConfig> = Object.freeze({
 });
 
 export class BabelConfigReader {
-
   public static inject = tokens(commonTokens.logger);
-  constructor(private readonly log: Logger) {
-  }
+  constructor(private readonly log: Logger) {}
 
   public readConfig(strykerOptions: StrykerOptions): StrykerBabelConfig {
     const babelConfig: StrykerBabelConfig = {

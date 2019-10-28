@@ -13,24 +13,26 @@ import { StrykerInquirer } from './StrykerInquirer';
 
 const enum PackageManager {
   Npm = 'npm',
-  Yarn = 'yarn',
+  Yarn = 'yarn'
 }
 
 export default class StrykerInitializer {
-
   public static inject = tokens(
     commonTokens.logger,
     initializerTokens.out,
     initializerTokens.npmClient,
     initializerTokens.strykerPresets,
     initializerTokens.configWriter,
-    initializerTokens.inquirer);
-  constructor(private readonly log: Logger,
-              private readonly out: typeof console.log,
-              private readonly client: NpmClient,
-              private readonly strykerPresets: Preset[],
-              private readonly configWriter: StrykerConfigWriter,
-              private readonly inquirer: StrykerInquirer) { }
+    initializerTokens.inquirer
+  );
+  constructor(
+    private readonly log: Logger,
+    private readonly out: typeof console.log,
+    private readonly client: NpmClient,
+    private readonly strykerPresets: Preset[],
+    private readonly configWriter: StrykerConfigWriter,
+    private readonly inquirer: StrykerInquirer
+  ) {}
 
   /**
    * Runs the initializer will prompt the user for questions about his setup. After that, install plugins and configure Stryker.
@@ -42,12 +44,12 @@ export default class StrykerInitializer {
     const selectedPreset = await this.selectPreset();
     if (selectedPreset) {
       await this.initiatePreset(this.configWriter, selectedPreset);
-    }
-    else {
+    } else {
       await this.initiateCustom(this.configWriter);
     }
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
-    this.out('Let\'s kill some mutants with this command: `stryker run`');
+    this.out("Let's kill some mutants with this command: `stryker run`");
+    this.out('Note: Stryker will use `.stryker-temp` as location for temporary files. Be sure to add it to your ignored files in source control.');
   }
 
   /**
@@ -84,24 +86,24 @@ export default class StrykerInitializer {
 
   private async initiateCustom(configWriter: StrykerConfigWriter) {
     const selectedTestRunner = await this.selectTestRunner();
-    const selectedTestFramework = selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name)
-      ? await this.selectTestFramework(selectedTestRunner) : null;
+    const selectedTestFramework =
+      selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name) ? await this.selectTestFramework(selectedTestRunner) : null;
     const selectedMutator = await this.selectMutator();
     const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
     const selectedPackageManager = await this.selectPackageManager();
     const npmDependencies = this.getSelectedNpmDependencies(
-      [selectedTestRunner, selectedTestFramework, selectedMutator]
-        .concat(selectedTranspilers)
-        .concat(selectedReporters)
+      [selectedTestRunner, selectedTestFramework, selectedMutator].concat(selectedTranspilers).concat(selectedReporters)
     );
-    await configWriter.write(selectedTestRunner,
+    await configWriter.write(
+      selectedTestRunner,
       selectedTestFramework,
       selectedMutator,
       selectedTranspilers,
       selectedReporters,
       selectedPackageManager,
-      await this.fetchAdditionalConfig(npmDependencies));
+      await this.fetchAdditionalConfig(npmDependencies)
+    );
     this.installNpmDependencies(npmDependencies.map(pkg => pkg.name), selectedPackageManager);
   }
 
@@ -119,13 +121,16 @@ export default class StrykerInitializer {
   private async selectReporters(): Promise<PromptOption[]> {
     let reporterOptions: PromptOption[];
     reporterOptions = await this.client.getTestReporterOptions();
-    reporterOptions.push({
-      name: 'clear-text',
-      pkg: null
-    }, {
+    reporterOptions.push(
+      {
+        name: 'clear-text',
+        pkg: null
+      },
+      {
         name: 'progress',
         pkg: null
-      }, {
+      },
+      {
         name: 'dashboard',
         pkg: null
       }
@@ -189,9 +194,8 @@ export default class StrykerInitializer {
     ]);
   }
 
-  private getSelectedNpmDependencies(selectedOptions: (PromptOption | null)[]): PackageInfo[] {
-    return filterEmpty(filterEmpty(selectedOptions)
-      .map(option => option.pkg));
+  private getSelectedNpmDependencies(selectedOptions: Array<PromptOption | null>): PackageInfo[] {
+    return filterEmpty(filterEmpty(selectedOptions).map(option => option.pkg));
   }
 
   /**
@@ -205,9 +209,7 @@ export default class StrykerInitializer {
 
     const dependencyArg = dependencies.join(' ');
     this.out('Installing NPM dependencies...');
-    const cmd = selectedOption.name === PackageManager.Npm
-      ? `npm i --save-dev ${dependencyArg}`
-      : `yarn add ${dependencyArg} --dev`;
+    const cmd = selectedOption.name === PackageManager.Npm ? `npm i --save-dev ${dependencyArg}` : `yarn add ${dependencyArg} --dev`;
     this.out(cmd);
     try {
       child.execSync(cmd, { stdio: [0, 1, 2] });
@@ -217,7 +219,6 @@ export default class StrykerInitializer {
   }
 
   private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<object[]> {
-    return filterEmpty(await Promise.all(dependencies
-      .map(dep => this.client.getAdditionalConfig(dep))));
+    return filterEmpty(await Promise.all(dependencies.map(dep => this.client.getAdditionalConfig(dep))));
   }
 }

@@ -6,17 +6,14 @@ import { nodeMutators } from '../../src/mutators';
 import { NODE_MUTATORS_TOKEN, NodeMutator } from '../../src/mutators/NodeMutator';
 
 describe('JavaScriptMutator', () => {
-
-  let selectedMutators: ReadonlyArray<NodeMutator>;
+  let selectedMutators: readonly NodeMutator[];
 
   beforeEach(() => {
     selectedMutators = nodeMutators;
   });
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(NODE_MUTATORS_TOKEN, selectedMutators)
-      .injectClass(JavaScriptMutator);
+    return testInjector.injector.provideValue(NODE_MUTATORS_TOKEN, selectedMutators).injectClass(JavaScriptMutator);
   }
 
   it('should generate a correct mutant', () => {
@@ -36,7 +33,10 @@ describe('JavaScriptMutator', () => {
 
   it('should generate mutant a correct mutant for jsx code', () => {
     const mutator = createSut();
-    const files: File[] = [new File('testFile.jsx', `
+    const files: File[] = [
+      new File(
+        'testFile.jsx',
+        `
           "use strict";
           import React from 'react'
           import { render } from 'react-dom'
@@ -51,7 +51,9 @@ describe('JavaScriptMutator', () => {
             <App message="Hello!" />,
             document.getElementById('appContainer')
           )
-        `)];
+        `
+      )
+    ];
 
     const mutants = mutator.mutate(files);
 
@@ -66,7 +68,10 @@ describe('JavaScriptMutator', () => {
 
   it('should not mutate unknown extensions', () => {
     const mutator = createSut();
-    const files: File[] = [new File('testFile.html', `
+    const files: File[] = [
+      new File(
+        'testFile.html',
+        `
       <html>
         <head>
           <title>Test</title>
@@ -75,7 +80,9 @@ describe('JavaScriptMutator', () => {
           <h1>Hello World</h1>
         </body>
       </html>
-    `)];
+    `
+      )
+    ];
     const mutants = mutator.mutate(files);
 
     expect(mutants.length).to.equal(0);
@@ -83,7 +90,10 @@ describe('JavaScriptMutator', () => {
 
   it('should generate mutants for flow code', () => {
     const mutator = createSut();
-    const files: File[] = [new File('testFile.js', `
+    const files: File[] = [
+      new File(
+        'testFile.js',
+        `
           // @flow
           import React from 'react'
 
@@ -104,7 +114,9 @@ describe('JavaScriptMutator', () => {
           }
 
           export default App
-        `)];
+        `
+      )
+    ];
 
     const mutants = mutator.mutate(files);
 
@@ -119,7 +131,10 @@ describe('JavaScriptMutator', () => {
 
   it('should generate mutants for js vnext code', () => {
     const sut = createSut();
-    const files: File[] = [new File('testFile.js', `
+    const files: File[] = [
+      new File(
+        'testFile.js',
+        `
           function objectRestSpread(input) {
             return {
               ...input,
@@ -137,7 +152,9 @@ describe('JavaScriptMutator', () => {
           function dynamicImport(){
             import('./guy').then(a)
           }
-        `)];
+        `
+      )
+    ];
 
     const mutants = sut.mutate(files);
     expect(mutants).lengthOf.above(2);
@@ -154,12 +171,17 @@ describe('JavaScriptMutator', () => {
 
   it('should generate mutants when file contains a decorator', () => {
     const sut = createSut();
-    const files: File[] = [new File('testFile.js', `
+    const files: File[] = [
+      new File(
+        'testFile.js',
+        `
           @decorator()
           export class Foo {
             bar = 'bar';
           };
-        `)];
+        `
+      )
+    ];
 
     const mutants = sut.mutate(files);
     expect(mutants).lengthOf.above(0);

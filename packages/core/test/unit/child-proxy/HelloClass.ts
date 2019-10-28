@@ -2,7 +2,7 @@ import { tokens } from '@stryker-mutator/api/plugin';
 
 export class HelloClass {
   public static inject = tokens('name');
-  constructor(public name: string) { }
+  constructor(public name: string) {}
   public sayHello() {
     return `hello from ${this.name}`;
   }

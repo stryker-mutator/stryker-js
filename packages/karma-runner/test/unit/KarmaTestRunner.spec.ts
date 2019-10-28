@@ -1,10 +1,6 @@
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import {
-  RunStatus,
-  TestResult,
-  TestStatus
-} from '@stryker-mutator/api/test_runner';
+import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { EventEmitter } from 'events';

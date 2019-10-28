@@ -3,9 +3,7 @@ import ConfigLoader from './compiler/ConfigLoader';
 import { pluginTokens } from './pluginTokens';
 import WebpackTranspiler from './WebpackTranspiler';
 
-export const strykerPlugins = [
-  declareFactoryPlugin(PluginKind.Transpiler, 'webpack', webpackTranspilerFactory)
-];
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.Transpiler, 'webpack', webpackTranspilerFactory)];
 
 function webpackTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
   return injector

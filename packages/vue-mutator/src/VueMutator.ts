@@ -8,8 +8,7 @@ export default class VueMutator implements Mutator {
   private readonly javascriptMutatorName = 'javascript';
   private readonly typescriptMutatorName = 'typescript';
 
-  constructor(private readonly mutators: { [name: string]: Mutator; }) {
-  }
+  constructor(private readonly mutators: { [name: string]: Mutator }) {}
   public static inject = tokens(MUTATORS_TOKEN);
 
   public mutate(inputFiles: File[]): Mutant[] {
@@ -18,12 +17,10 @@ export default class VueMutator implements Mutator {
     inputFiles.forEach(file => {
       if (file.name.endsWith('.vue')) {
         const script = compiler.parseComponent(file.textContent).script;
-        if (script) { // Vue file must have <script></script> tag to be mutated
+        if (script) {
+          // Vue file must have <script></script> tag to be mutated
           const { mutator, extension } = this.getVueScriptMutatorAndExtension(script);
-          const vueFile = new File(
-            file.name + extension,
-            file.textContent.substring(script.start, script.end)
-          );
+          const vueFile = new File(file.name + extension, file.textContent.substring(script.start, script.end));
           const vueMutants = mutator.mutate([vueFile]);
           vueMutants.forEach(mutant => {
             mutant.fileName = file.name;
@@ -41,7 +38,7 @@ export default class VueMutator implements Mutator {
     return mutants;
   }
 
-  private getVueScriptMutatorAndExtension(script: any): { mutator: Mutator, extension: string } {
+  private getVueScriptMutatorAndExtension(script: any): { mutator: Mutator; extension: string } {
     const lang: string | undefined = script.attrs.lang;
     let mutatorName: string;
     let extension: string;
@@ -63,7 +60,9 @@ export default class VueMutator implements Mutator {
 
     const mutator = this.mutators[mutatorName];
     if (mutator === undefined) {
-      throw new Error(`The '${mutatorName}' mutator is required to mutate a <script> block but it was not found. Please read the README of this package for information on configuration.`);
+      throw new Error(
+        `The '${mutatorName}' mutator is required to mutate a <script> block but it was not found. Please read the README of this package for information on configuration.`
+      );
     }
     return { mutator, extension };
   }
@@ -71,7 +70,9 @@ export default class VueMutator implements Mutator {
   private getMutator(file: File): Mutator {
     const mutator = this.mutators[this.typescriptMutatorName] || this.mutators[this.javascriptMutatorName];
     if (mutator === undefined) {
-      throw new Error(`Unable to mutate file "${file.name}" because neither the typescript or the javascript mutator was installed. Please read the README of this package for information on configuration.`);
+      throw new Error(
+        `Unable to mutate file "${file.name}" because neither the typescript or the javascript mutator was installed. Please read the README of this package for information on configuration.`
+      );
     }
     return mutator;
   }

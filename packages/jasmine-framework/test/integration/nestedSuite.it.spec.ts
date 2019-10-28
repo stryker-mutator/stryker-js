@@ -16,7 +16,6 @@ interface JasmineTest {
 }
 
 describe('Selecting tests with nested suites', () => {
-
   let sut: JasmineTestFramework;
   let testSelections: TestSelection[];
   const jsonReporterFile = path.resolve(__dirname, '..', '..', 'testResources', 'json-reporter.js');
@@ -25,11 +24,7 @@ describe('Selecting tests with nested suites', () => {
 
   beforeEach(() => {
     sut = new JasmineTestFramework();
-    testSelections = [
-      { id: 0, name: 'outer test 1' },
-      { id: 1, name: 'outer inner test 2' },
-      { id: 2, name: 'outer test 3' }
-    ];
+    testSelections = [{ id: 0, name: 'outer test 1' }, { id: 1, name: 'outer inner test 2' }, { id: 2, name: 'outer test 3' }];
   });
 
   afterEach(() => {

@@ -12,7 +12,7 @@ export class JavaScriptMutator implements Mutator {
   constructor(
     private readonly log: Logger,
     private readonly mutatorDescriptor: MutatorDescriptor,
-    private readonly mutators: ReadonlyArray<NodeMutator>
+    private readonly mutators: readonly NodeMutator[]
   ) {
     /*
       Edge case check

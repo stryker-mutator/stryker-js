@@ -33,7 +33,7 @@ export interface TranspilerPluginContext extends OptionsContext {
  * The dependency injection context for a `TestRunnerPlugin`
  */
 export interface TestRunnerPluginContext extends OptionsContext {
-  [commonTokens.sandboxFileNames]: ReadonlyArray<string>;
+  [commonTokens.sandboxFileNames]: readonly string[];
 }
 
 /**

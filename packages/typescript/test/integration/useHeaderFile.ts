@@ -10,7 +10,6 @@ import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 
 describe('Use header file integration', () => {
-
   let config: Config;
   let inputFiles: File[];
   let transpiler: TypescriptTranspiler;
@@ -19,7 +18,7 @@ describe('Use header file integration', () => {
     const configEditor = testInjector.injector.injectClass(TypescriptConfigEditor);
     config = new Config();
     config.set({
-      tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'useHeaderFile', 'tsconfig.json'),
+      tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'useHeaderFile', 'tsconfig.json')
     });
     configEditor.edit(config);
     inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));

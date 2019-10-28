@@ -12,7 +12,6 @@ type SinonStubbedInstance<TType> = {
 };
 
 describe('JasmineTestRunner', () => {
-
   let sandbox: sinon.SinonSandbox;
   let jasmineStub: SinonStubbedInstance<Jasmine>;
   let evalGlobalStub: sinon.SinonStub;
@@ -110,7 +109,8 @@ describe('JasmineTestRunner', () => {
     const result = await sut.run({});
     expect(result.status).eq(RunStatus.Error);
     expect(result.errorMessages).lengthOf(1);
-    expect((result.errorMessages || [])[0]).matches(/An error occurred while loading your jasmine specs.*/)
+    expect((result.errorMessages || [])[0])
+      .matches(/An error occurred while loading your jasmine specs.*/)
       .and.matches(/.*Error: foobar.*/);
   });
 

@@ -25,7 +25,6 @@ describe('WebpackCompiler', () => {
   });
 
   describe('writeFilesToFs', () => {
-
     beforeEach(() => {
       sut = new WebpackCompiler(fakeWebpackConfig, inputFileSystemMock as any, outputFileSystemMock as any);
     });

@@ -4,7 +4,6 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MatchedMutant } from '@stryker-mutator/api/report';
 import { CoverageCollection, CoveragePerTestResult, CoverageResult, StatementMap } from '@stryker-mutator/api/test_runner';
-import * as _ from 'lodash';
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
 import { InitialTestRunResult } from '../process/InitialTestExecutor';
@@ -30,15 +29,14 @@ interface StatementIndex {
 }
 
 export class MutantTestMatcher {
-
   public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter, coreTokens.inputFiles, coreTokens.initialRunResult);
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly reporter: StrictReporter,
     private readonly input: InputFileCollection,
-    private readonly initialRunResult: InitialTestRunResult) {
-  }
+    private readonly initialRunResult: InitialTestRunResult
+  ) {}
 
   private get baseline(): CoverageCollection | null {
     if (this.isCoveragePerTestResult(this.initialRunResult.runResult.coverage)) {
@@ -48,14 +46,16 @@ export class MutantTestMatcher {
     }
   }
 
-  public async matchWithMutants(mutants: ReadonlyArray<Mutant>): Promise<ReadonlyArray<TestableMutant>> {
-
+  public async matchWithMutants(mutants: readonly Mutant[]): Promise<readonly TestableMutant[]> {
     const testableMutants = this.createTestableMutants(mutants);
 
     if (this.options.coverageAnalysis === 'off') {
       testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Success));
     } else if (!this.initialRunResult.runResult.coverage) {
-      this.log.warn('No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.', this.options.coverageAnalysis);
+      this.log.warn(
+        'No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.',
+        this.options.coverageAnalysis
+      );
       testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.FailedButAlreadyReported));
     } else {
       await Promise.all(testableMutants.map(testableMutant => this.enrichWithCoveredTests(testableMutant)));
@@ -117,17 +117,23 @@ export class MutantTestMatcher {
     }
   }
 
-  private createTestableMutants(mutants: ReadonlyArray<Mutant>): ReadonlyArray<TestableMutant> {
+  private createTestableMutants(mutants: readonly Mutant[]): readonly TestableMutant[] {
     const sourceFiles = this.input.filesToMutate.map(file => new SourceFile(file));
-    return filterEmpty(mutants.map((mutant, index) => {
-      const sourceFile = sourceFiles.find(file => file.name === mutant.fileName);
-      if (sourceFile) {
-        return new TestableMutant(index.toString(), mutant, sourceFile);
-      } else {
-        this.log.error(`Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${mutant.fileName}. List of source files: \n\t${sourceFiles.map(s => s.name).join('\n\t')}`);
-        return null;
-      }
-    }));
+    return filterEmpty(
+      mutants.map((mutant, index) => {
+        const sourceFile = sourceFiles.find(file => file.name === mutant.fileName);
+        if (sourceFile) {
+          return new TestableMutant(index.toString(), mutant, sourceFile);
+        } else {
+          this.log.error(
+            `Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${
+              mutant.fileName
+            }. List of source files: \n\t${sourceFiles.map(s => s.name).join('\n\t')}`
+          );
+          return null;
+        }
+      })
+    );
   }
 
   /**
@@ -136,14 +142,15 @@ export class MutantTestMatcher {
    * @returns The MatchedMutant
    */
   private mapMutantOnMatchedMutant(testableMutant: TestableMutant): MatchedMutant {
-    const matchedMutant = _.cloneDeep({
+    const matchedMutant: MatchedMutant = {
       fileName: testableMutant.mutant.fileName,
       id: testableMutant.id,
       mutatorName: testableMutant.mutant.mutatorName,
       replacement: testableMutant.mutant.replacement,
+      runAllTests: testableMutant.runAllTests,
       scopedTestIds: testableMutant.selectedTests.map(testSelection => testSelection.id),
-      timeSpentScopedTests: testableMutant.timeSpentScopedTests,
-    });
+      timeSpentScopedTests: testableMutant.timeSpentScopedTests
+    };
     return Object.freeze(matchedMutant);
   }
 
@@ -174,7 +181,7 @@ export class MutantTestMatcher {
    * @returns The index of the smallest statement surrounding the location, or null if not found.
    */
   private findMatchingStatementInMap(needle: LocationHelper, haystack: StatementMap): string | null {
-    let smallestStatement: { index: string | null, location: LocationHelper } = {
+    let smallestStatement: { index: string | null; location: LocationHelper } = {
       index: null,
       location: LocationHelper.MAX_VALUE
     };

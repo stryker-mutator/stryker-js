@@ -18,17 +18,14 @@ function readFile(fileName: string) {
 }
 
 export class ProjectLoader {
-
   public static getFiles(basePath: string) {
-    return this.load(basePath)
-      .then(files => files.sort((a, b) => a.name.localeCompare(b.name)));
+    return this.load(basePath).then(files => files.sort((a, b) => a.name.localeCompare(b.name)));
   }
 
   private static load(basePath: string): Promise<File[]> {
     return this.glob(basePath)
       .then(fileNames => fileNames.map(fileName => path.join(basePath, fileName)))
-      .then(fileNames => Promise.all(fileNames.map(fileName =>
-        readFile(fileName).then(content => new File(fileName, this.normalize(content))))));
+      .then(fileNames => Promise.all(fileNames.map(fileName => readFile(fileName).then(content => new File(fileName, this.normalize(content))))));
   }
 
   private static normalize(content: Buffer) {
@@ -37,12 +34,14 @@ export class ProjectLoader {
   }
 
   private static glob(basePath: string): Promise<string[]> {
-    return new Promise<string[]>((res, rej) => glob('**/*.*', { cwd: basePath }, (err, matches) => {
-      if (err) {
-        rej(err);
-      } else {
-        res(matches);
-      }
-    }));
+    return new Promise<string[]>((res, rej) =>
+      glob('**/*.*', { cwd: basePath }, (err, matches) => {
+        if (err) {
+          rej(err);
+        } else {
+          res(matches);
+        }
+      })
+    );
   }
 }

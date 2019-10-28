@@ -1,4 +1,3 @@
-
 /**
  * Define a string literal.
  * @param value Token literal
