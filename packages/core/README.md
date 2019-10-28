@@ -106,6 +106,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [timeoutFactor](#timeoutFactor)
 * [timeoutMS](#timeoutMS)
 * [transpilers](#transpilers)
+* [dashboard.*](#dashboard)
 
 <a name="allowConsoleColors"></a>
 ### `allowConsoleColors` [`boolean`]
@@ -388,3 +389,12 @@ With `timeoutFactor` you can configure the allowed deviation relative to the tim
 Default: `[]`
 
 With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.
+
+<a name="dashboard"></a>
+### `dashboard` [`DashboardOptions`]
+
+Default: `{ baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'mutationScore' }`  
+Command line: `--dashboard.project github.com/my-org/my-project --dashboard.version branch-or-tag --dashboard.module my-module --dashboard.baseUrl https://dashboard.stryker-mutator.io/api/reports --dashboard.reportType full`  
+Config file: `{ project: 'github.com/my-org/my-project', version: 'branch-or-tag', module: 'my-module', baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'full' }`
+
+Settings for the `dashboard` reporter. See the [stryker handbook for more info](https://github.com/stryker-mutator/stryker-handbook/blob/master/dashboard.md)
