@@ -32,7 +32,10 @@ export function optionsFactory(config: Config, configEditorApplier: ConfigEditor
   configEditorApplier.edit(config);
   return freezeRecursively(config);
 }
-optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, typeof coreTokens.configEditorApplier]>(coreTokens.configReadFromConfigFile, coreTokens.configEditorApplier);
+optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, typeof coreTokens.configEditorApplier]>(
+  coreTokens.configReadFromConfigFile,
+  coreTokens.configEditorApplier
+);
 
 export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
   if (typeof options.mutator === 'string') {
