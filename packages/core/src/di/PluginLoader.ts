@@ -1,7 +1,6 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Plugin, PluginKind, PluginResolver, Plugins } from '@stryker-mutator/api/plugin';
 import { fsAsPromised } from '@stryker-mutator/util';
-import * as _ from 'lodash';
 import * as path from 'path';
 import { tokens } from 'typed-inject';
 import { importModule } from '../utils/fileUtils';
@@ -49,7 +48,7 @@ export class PluginLoader implements PluginResolver {
   private resolvePluginModules() {
     const modules: string[] = [];
     this.pluginDescriptors.forEach(pluginExpression => {
-      if (_.isString(pluginExpression)) {
+      if (typeof pluginExpression === 'string') {
         if (pluginExpression.includes('*')) {
           // Plugin directory is the node_modules folder of the module that installed stryker
           // So if current __dirname is './@stryker-mutator/core/src/di' so 4 directories above

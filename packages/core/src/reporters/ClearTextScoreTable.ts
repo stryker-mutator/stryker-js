@@ -1,6 +1,6 @@
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import chalk from 'chalk';
-import * as _ from 'lodash';
+import flatMap = require('lodash.flatmap');
 import { MetricsResult } from 'mutation-testing-metrics';
 import * as os from 'os';
 
@@ -111,7 +111,7 @@ export default class ClearTextScoreTable {
 
   private drawValues(current = this.metricsResult, ancestorCount = 0): string[] {
     return [this.drawRow(c => c.drawTableCell(current, ancestorCount))].concat(
-      _.flatMap(current.childResults, child => this.drawValues(child, ancestorCount + 1))
+      flatMap(current.childResults, child => this.drawValues(child, ancestorCount + 1))
     );
   }
 

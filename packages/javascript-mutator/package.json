@@ -41,7 +41,7 @@
     "@babel/parser": "~7.6.2",
     "@babel/traverse": "~7.6.2",
     "@stryker-mutator/api": "^2.1.0",
-    "lodash": "~4.17.4",
+    "lodash.clonedeep": "^4.5.0",
     "tslib": "~1.10.0"
   },
   "peerDependencies": {
@@ -52,6 +52,7 @@
     "@stryker-mutator/mutator-specification": "^2.1.0",
     "@stryker-mutator/test-helpers": "^2.1.0",
     "@types/babel__generator": "^7.0.0",
-    "@types/babel__traverse": "^7.0.0"
+    "@types/babel__traverse": "^7.0.0",
+    "@types/lodash.clonedeep": "^4.5.6"
   }
 }

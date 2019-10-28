@@ -2,7 +2,6 @@ import { File } from '@stryker-mutator/api/core';
 import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { from, Observable } from 'rxjs';
 import * as sinon from 'sinon';

@@ -3,7 +3,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { metrics, metricsResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import chalk from 'chalk';
-import * as _ from 'lodash';
+import flatMap = require('lodash.flatmap');
 import { MetricsResult } from 'mutation-testing-metrics';
 import * as os from 'os';
 import ClearTextScoreTable from '../../../src/reporters/ClearTextScoreTable';
@@ -65,7 +65,7 @@ describe(ClearTextScoreTable.name, () => {
       const table = sut.draw();
       const rows = table.split(os.EOL);
 
-      const killedColumnValues = _.flatMap(rows, row => row.split('|').filter((_, i) => i === 2));
+      const killedColumnValues = flatMap(rows, row => row.split('|').filter((_, i) => i === 2));
       killedColumnValues.forEach(val => expect(val).to.have.lengthOf(12));
       expect(killedColumnValues[3]).to.eq(' 1000000000 ');
     });

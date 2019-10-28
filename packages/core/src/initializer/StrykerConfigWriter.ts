@@ -2,7 +2,6 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised, fsAsPromised } from '@stryker-mutator/util';
-import * as _ from 'lodash';
 import { initializerTokens } from '.';
 import PresetConfiguration from './presets/PresetConfiguration';
 import PromptOption from './PromptOption';
@@ -43,7 +42,7 @@ export default class StrykerConfigWriter {
     };
 
     this.configureTestFramework(configObject, selectedTestFramework);
-    _.assign(configObject, ...additionalPiecesOfConfig);
+    Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject);
   }
 
