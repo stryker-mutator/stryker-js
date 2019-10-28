@@ -21,10 +21,11 @@ export class MutatorFacade implements Mutator {
 
   private removeExcludedMutants(mutants: readonly Mutant[]): readonly Mutant[] {
     const mutatorDescriptor = this.options.mutator;
-    if (typeof mutatorDescriptor === 'string' || mutatorDescriptor.excludedMutations === undefined) {
+    const excludedMutations = typeof mutatorDescriptor === 'string' ? [] : mutatorDescriptor.excludedMutations || [];
+    if (excludedMutations.length === 0) {
       return mutants;
     } else {
-      return mutants.filter(mutant => !mutatorDescriptor.excludedMutations.includes(mutant.mutatorName));
+      return mutants.filter(mutant => !excludedMutations.includes(mutant.mutatorName));
     }
   }
 
