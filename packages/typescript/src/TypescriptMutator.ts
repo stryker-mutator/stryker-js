@@ -45,18 +45,21 @@ export class TypescriptMutator {
   }
 }
 
-const shouldNodeBeSkipped = (node: ts.Node, sourceFile: ts.SourceFile, excludedExpressions: string[]): boolean => {
-  const nodeText = getNodeText(node, sourceFile);
-  if (!nodeText.includes('\n') && excludedExpressions.some(bl => nodeText.includes(bl))) {
-    return true;
+const shouldNodeBeSkipped = (node: ts.Node, sourceFile: ts.SourceFile, excludedExpressions: string[] = []): boolean => {
+  if (excludedExpressions.length > 0) {
+    const nodeFirstLine = getNodeFirstLine(node, sourceFile);
+    if (excludedExpressions.some(bl => nodeFirstLine.includes(bl))) {
+      return true;
+    }
   }
+
   return (
     node.kind === ts.SyntaxKind.InterfaceDeclaration ||
     (node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword))
   );
 };
 
-const getNodeText = (node: ts.Node, sourceFile: ts.SourceFile) => {
-  const text = sourceFile.text.substring(node.pos, node.end);
-  return text.indexOf('\n') === 0 ? text.substring(1) : text;
+const getNodeFirstLine = (node: ts.Node, sourceFile: ts.SourceFile) => {
+  const nodeText = sourceFile.text.substring(node.pos, node.end);
+  return nodeText.split('\n').filter(l => l && l.trim())[0] || '';
 };

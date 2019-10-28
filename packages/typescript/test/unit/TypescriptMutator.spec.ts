@@ -6,6 +6,9 @@ import * as path from 'path';
 import * as ts from 'typescript';
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
 import { MUTATORS_TOKEN, TypescriptMutator, typescriptMutatorFactory } from '../../src/TypescriptMutator';
+import { commonTokens } from '../../../api/src/plugin/tokens';
+import { Config } from '../../../api/config';
+import StringLiteralMutator from '../../src/mutator/StringLiteralMutator';
 
 class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
   public name = 'FunctionDeclarationForTest';
@@ -30,6 +33,20 @@ class SourceFileMutator extends NodeMutator<ts.SourceFile> {
 function createSut() {
   return testInjector.injector
     .provideValue(MUTATORS_TOKEN, [new SourceFileMutator(), new FunctionDeclarationMutator()])
+    .injectClass(TypescriptMutator);
+}
+
+function createSutWithExcludedExpressions() {
+  const config = new Config();
+  config.set({
+    mutator: {
+      name: 'typescript',
+      excludedExpressions: ['logger.debug', '.propTypes']
+    }
+  });
+  return testInjector.injector
+    .provideValue(MUTATORS_TOKEN, [new StringLiteralMutator()])
+    .provideValue(commonTokens.options, config)
     .injectClass(TypescriptMutator);
 }
 
@@ -158,6 +175,34 @@ describe('TypescriptMutator', () => {
           }
         ]);
       });
+    });
+  });
+
+  describe('excluded expressions', () => {
+    let file: File;
+
+    beforeEach(() => {
+      sut = createSutWithExcludedExpressions();
+      file = new File(
+        'fileWithExcludedExpressions.ts',
+        `
+          function doSomething() {
+            doSomething.propTypes = { //mutations should be excluded in this block
+              x: 1,
+              y: propTest === 'xyz' ? 1 : 2
+            };
+            
+            logger.debug('mutation should be excluded');
+            logger.info('this should be mutated')
+            
+            doIt();
+          }`
+      );
+    });
+
+    it('should deliver only one mutant', () => {
+      const mutants = sut.mutate([file]);
+      expect(mutants).lengthOf(1);
     });
   });
 });

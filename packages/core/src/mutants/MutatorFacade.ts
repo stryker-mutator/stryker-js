@@ -20,10 +20,10 @@ export class MutatorFacade implements Mutator {
   }
 
   private removeExcludedMutants(mutants: readonly Mutant[]): readonly Mutant[] {
-    if (typeof this.options.mutator === 'string') {
+    const mutatorDescriptor = this.options.mutator;
+    if (typeof mutatorDescriptor === 'string' || mutatorDescriptor.excludedMutations === undefined) {
       return mutants;
     } else {
-      const mutatorDescriptor = this.options.mutator;
       return mutants.filter(mutant => !mutatorDescriptor.excludedMutations.includes(mutant.mutatorName));
     }
   }
