@@ -13,25 +13,11 @@ export class JavaScriptMutator implements Mutator {
     private readonly log: Logger,
     private readonly mutatorDescriptor: MutatorDescriptor,
     private readonly mutators: readonly NodeMutator[]
-  ) {
-    /*
-      Edge case check
-      Check if `mutatorDescriptor` has been passed.
-      If it is not and `mutators` isn't as well, `mutatorDescriptor` is undefined
-      If it is not, but `mutators` is, `mutatorDescriptor` is an array
-    */
-    if (typeof mutatorDescriptor !== 'object' || Array.isArray(mutatorDescriptor)) {
-      this.mutatorDescriptor = {
-        babelPlugins: [],
-        excludedMutations: [],
-        name: ''
-      };
-    }
-  }
+  ) {}
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
-    const babelPlugins = this.mutatorDescriptor.babelPlugins || [];
+    const babelPlugins = this.mutatorDescriptor.plugins || [];
 
     inputFiles.forEach(file => {
       const ast = BabelHelper.parse(file.textContent, babelPlugins);

@@ -37,7 +37,6 @@
     "tslib": "~1.10.0"
   },
   "devDependencies": {
-    "@babel/parser": "^7.5.5",
     "surrial": "~1.0.0",
     "typed-inject": "~2.1.1"
   }

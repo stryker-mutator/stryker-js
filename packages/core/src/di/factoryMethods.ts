@@ -40,12 +40,17 @@ optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, type
 export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
   if (typeof options.mutator === 'string') {
     return {
-      babelPlugins: [],
+      plugins: [],
       excludedMutations: [],
       name: options.mutator
     };
   }
 
-  return options.mutator;
+  return {
+    plugins: [],
+    excludedMutations: [],
+    name: '',
+    ...options.mutator
+  };
 }
 mutatorDescriptorFactory.inject = tokens(commonTokens.options);

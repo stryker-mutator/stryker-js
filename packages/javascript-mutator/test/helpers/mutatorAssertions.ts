@@ -31,5 +31,5 @@ function mutantToString(mutant: Mutant, sourceText: string) {
 }
 
 function createMutatorDescriptor(): MutatorDescriptor {
-  return { name: 'test', babelPlugins: [], excludedMutations: [] };
+  return { name: 'test', plugins: [], excludedMutations: [] };
 }

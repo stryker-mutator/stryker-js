@@ -5,8 +5,8 @@ import * as types from '@babel/types';
 import { NodeWithParent } from './ParentNode';
 
 export default class BabelHelper {
-  public static parse(code: string, plugins: ParserPlugin[] = []): types.File {
-    return parse(code, this.createOptions(plugins));
+  public static parse(code: string, plugins: string[] = []): types.File {
+    return parse(code, this.createOptions(plugins as ParserPlugin[]));
   }
 
   private static createOptions(options: ParserPlugin[]): ParserOptions {
