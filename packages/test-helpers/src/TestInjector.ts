@@ -31,6 +31,7 @@ class TestInjector {
     .provideFactory(commonTokens.mutatorDescriptor, this.provideMutatorDescriptor, Scope.Transient);
 
   public reset() {
+    this.mutatorDescriptor = factory.mutatorDescriptor();
     this.options = factory.strykerOptions();
     this.logger = factory.logger();
     this.pluginResolver = {

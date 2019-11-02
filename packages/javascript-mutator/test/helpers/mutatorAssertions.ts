@@ -1,4 +1,4 @@
-import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import ExpectMutation from '@stryker-mutator/mutator-specification/src/ExpectMutation';
 import { testInjector } from '@stryker-mutator/test-helpers';
@@ -13,7 +13,7 @@ export function verifySpecification(specification: (name: string, expectMutation
 }
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
-  const javaScriptMutator = new JavaScriptMutator(testInjector.logger, createMutatorDescriptor(), [mutator]);
+  const javaScriptMutator = new JavaScriptMutator(testInjector.logger, testInjector.mutatorDescriptor, [mutator]);
   const sourceFile = new File('file.js', sourceText);
   const mutants = javaScriptMutator.mutate([sourceFile]);
   expect(mutants).lengthOf(expectedTexts.length);
@@ -28,8 +28,4 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
  */
 function mutantToString(mutant: Mutant, sourceText: string) {
   return sourceText.substr(0, mutant.range[0]) + mutant.replacement.replace(/\s{2,}/g, ' ').replace(/\n/g, ' ') + sourceText.substr(mutant.range[1]);
-}
-
-function createMutatorDescriptor(): MutatorDescriptor {
-  return { name: 'test', plugins: [], excludedMutations: [] };
 }
