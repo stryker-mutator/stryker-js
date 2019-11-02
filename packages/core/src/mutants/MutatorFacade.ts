@@ -10,7 +10,7 @@ export class MutatorFacade implements Mutator {
     private readonly mutatorDescriptor: MutatorDescriptor,
     private readonly pluginCreator: PluginCreator<PluginKind.Mutator>,
     private readonly log: Logger
-  ) { }
+  ) {}
 
   public mutate(inputFiles: readonly File[]): readonly Mutant[] {
     const allMutants = this.pluginCreator.create(this.getMutatorName(this.mutatorDescriptor.name)).mutate(inputFiles);
