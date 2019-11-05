@@ -5,6 +5,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { JavaScriptMutator } from '../../src/JavaScriptMutator';
 import { NodeMutator } from '../../src/mutators/NodeMutator';
+import { NODE_MUTATORS_TOKEN, PARSER_TOKEN } from '../../src/helpers/tokens';
+import BabelParser from '../../src/helpers/BabelParser';
 
 type MutatorConstructor = new () => NodeMutator;
 
@@ -13,7 +15,10 @@ export function verifySpecification(specification: (name: string, expectMutation
 }
 
 export function expectMutation(mutator: NodeMutator, sourceText: string, ...expectedTexts: string[]) {
-  const javaScriptMutator = new JavaScriptMutator(testInjector.logger, testInjector.mutatorDescriptor, [mutator]);
+  const javaScriptMutator = testInjector.injector
+    .provideValue(NODE_MUTATORS_TOKEN, [mutator])
+    .provideClass(PARSER_TOKEN, BabelParser)
+    .injectClass(JavaScriptMutator);
   const sourceFile = new File('file.js', sourceText);
   const mutants = javaScriptMutator.mutate([sourceFile]);
   expect(mutants).lengthOf(expectedTexts.length);
