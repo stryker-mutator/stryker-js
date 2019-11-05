@@ -158,7 +158,7 @@ export const config = factoryMethod<Config>(() => new Config());
 export const mutatorDescriptor = factoryMethod<MutatorDescriptor>(() => ({
   excludedMutations: [],
   name: 'fooMutator',
-  plugins: []
+  plugins: null
 }));
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
