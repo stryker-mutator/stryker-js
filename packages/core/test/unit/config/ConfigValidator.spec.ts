@@ -114,22 +114,45 @@ describe('ConfigValidator', () => {
     });
 
     describe('as an object', () => {
-      it('should be valid with string mutator name and string array excluded mutations', () => {
+      it('should be valid with all options', () => {
         breakConfig('mutator', {
           excludedMutations: ['BooleanSubstitution'],
+          name: 'javascript',
+          plugins: ['objectRestSpread', ['decorators', { decoratorsBeforeExport: true }]]
+        });
+        sut.validate();
+        expect(testInjector.logger.fatal).not.called;
+      });
+
+      it('should be valid with minimal options', () => {
+        breakConfig('mutator', {
           name: 'javascript'
         });
         sut.validate();
         expect(testInjector.logger.fatal).not.called;
       });
 
+      it('should be invalid without name', () => {
+        breakConfig('mutator', {});
+        actValidationError();
+        expect(testInjector.logger.fatal).calledWith('Value "undefined" is invalid for `mutator.name`. Expected a string');
+      });
+
       it('should be invalid with non-string mutator name', () => {
         breakConfig('mutator', {
-          excludedMutations: [],
           name: 0
         });
         actValidationError();
         expect(testInjector.logger.fatal).calledWith('Value "0" is invalid for `mutator.name`. Expected a string');
+      });
+
+      it('should be invalid with non array plugins', () => {
+        breakConfig('mutator', {
+          name: 'javascript',
+          plugins: 'optionalChaining'
+        });
+        actValidationError();
+        expect(testInjector.logger.fatal).calledWith('Value "optionalChaining" is invalid for `mutator.plugins`. Expected an array');
       });
 
       it('should be invalid with non-array excluded mutations', () => {

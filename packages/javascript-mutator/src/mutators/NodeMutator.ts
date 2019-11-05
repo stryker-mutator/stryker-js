@@ -1,8 +1,6 @@
 import * as types from '@babel/types';
 import { NodeWithParent } from '../helpers/ParentNode';
 
-export const NODE_MUTATORS_TOKEN = 'NodeMutators';
-
 /**
  * Represents a class which can mutate parts of an Abstract Syntax Tree.
  */

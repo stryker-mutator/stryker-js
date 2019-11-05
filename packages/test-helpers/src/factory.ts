@@ -1,5 +1,5 @@
 import { Config, ConfigEditor } from '@stryker-mutator/api/config';
-import { File, Location, MutationScoreThresholds, StrykerOptions } from '@stryker-mutator/api/core';
+import { File, Location, MutationScoreThresholds, StrykerOptions, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter, ScoreResult } from '@stryker-mutator/api/report';
@@ -154,6 +154,12 @@ export const mutationScoreThresholds = factoryMethod<MutationScoreThresholds>(()
 export const strykerOptions = factoryMethod<StrykerOptions>(() => new Config());
 
 export const config = factoryMethod<Config>(() => new Config());
+
+export const mutatorDescriptor = factoryMethod<MutatorDescriptor>(() => ({
+  excludedMutations: [],
+  name: 'fooMutator',
+  plugins: null
+}));
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
   'onSourceFileRead',
