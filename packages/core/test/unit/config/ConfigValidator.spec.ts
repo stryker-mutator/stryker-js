@@ -61,8 +61,8 @@ describe('ConfigValidator', () => {
     actValidationError();
     expect(testInjector.logger.fatal).calledWith(
       'Value "all" for `coverageAnalysis` is invalid with multiple transpilers' +
-      ' (configured transpilers: a transpiler, a second transpiler). Please report this to the Stryker team' +
-      ' if you whish this feature to be implemented'
+        ' (configured transpilers: a transpiler, a second transpiler). Please report this to the Stryker team' +
+        ' if you whish this feature to be implemented'
     );
   });
 

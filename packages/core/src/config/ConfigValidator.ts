@@ -13,7 +13,7 @@ export default class ConfigValidator {
     private readonly log: Logger,
     private readonly options: Readonly<StrykerOptions>,
     private readonly testFramework: TestFramework | null
-  ) { }
+  ) {}
 
   public validate() {
     this.validateTestFramework();
@@ -115,7 +115,7 @@ export default class ConfigValidator {
     if (Array.isArray(this.options.transpilers) && this.options.transpilers.length > 1 && this.options.coverageAnalysis !== 'off') {
       this.invalidate(
         `Value "${
-        this.options.coverageAnalysis
+          this.options.coverageAnalysis
         }" for \`coverageAnalysis\` is invalid with multiple transpilers (configured transpilers: ${this.options.transpilers.join(
           ', '
         )}). Please report this to the Stryker team if you whish this feature to be implemented`
