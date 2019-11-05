@@ -62,7 +62,7 @@ interface StrykerOptions {
    *    * The `excludedMutations` property is mandatory and contains the names of the specific mutation types to exclude from testing.
    *    * The values must match the given names of the mutations. For example: 'BinaryExpression', 'BooleanSubstitution', etc.
    */
-  mutator: string | MutatorDescriptor;
+  mutator: string | Partial<MutatorDescriptor>;
 
   /**
    * The names of the transpilers to use (in order). Default: [].

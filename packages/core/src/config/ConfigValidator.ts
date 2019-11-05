@@ -50,7 +50,8 @@ export default class ConfigValidator {
     if (typeof mutator === 'object') {
       const mutatorDescriptor = mutator;
       this.validateIsString('mutator.name', mutatorDescriptor.name);
-      this.validateIsStringArray('mutator.excludedMutations', mutatorDescriptor.excludedMutations);
+      this.validateIsOptionalStringArray('mutator.excludedMutations', mutatorDescriptor.excludedMutations);
+      this.validateIsOptionalArray('mutator.plugins', mutatorDescriptor.plugins);
     } else if (typeof mutator !== 'string') {
       this.invalidate(`Value ${stringify(mutator)} is invalid for \`mutator\`. Expected either a string or an object`);
     }
@@ -185,6 +186,20 @@ export default class ConfigValidator {
         }
       });
     }
+  }
+
+  private validateIsArray(fieldName: keyof Config, value: unknown[]) {
+    if (!Array.isArray(value)) {
+      this.invalidate(`Value "${value}" is invalid for \`${fieldName}\`. Expected an array`);
+    }
+  }
+
+  private validateIsOptionalStringArray(fieldName: keyof Config, value: string[] | undefined) {
+    value === undefined || this.validateIsStringArray(fieldName, value);
+  }
+
+  private validateIsOptionalArray(fieldName: keyof Config, value: unknown[] | undefined | null) {
+    value === undefined || value === null || this.validateIsArray(fieldName, value);
   }
 
   private invalidate(message: string) {

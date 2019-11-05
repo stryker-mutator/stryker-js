@@ -219,7 +219,7 @@ This is optional, as you can choose to not mutate any files at all and perform a
 ### `mutator` [`object` | `string`]
 Default: `javascript`  
 Command line: `--mutator javascript`  
-Config file:  `mutator: 'javascript'` or `mutator: { name: 'javascript', excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
+Config file:  `mutator: 'javascript'` or `mutator: { name: 'javascript', plugins: ['classProperties', 'optionalChaining'], excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`  
 
 With `mutator` you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.  
 The mutator plugin name defaults to `javascript` if not specified. Note: this requires you to have the `@stryker-mutator/javascript-mutator` plugin installed. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.  
@@ -228,8 +228,9 @@ The full list of mutation types varies slightly between mutators (for example, t
 When using the command line, only the mutator name as a string may be provided.  
 When using the config file, you can provide either a string representing the mutator name, or a `MutatorDescriptor` object, like so:  
 
-* `MutatorDescriptor` object: `{ name: 'name', excludedMutations: ['mutationType1', 'mutationType2', ...] }`:  
+* `MutatorDescriptor` object: `{ name: 'name', plugins: ['classProperties', 'optionalChaining'], excludedMutations: ['mutationType1', 'mutationType2', ...] }`:  
    * The `name` property is mandatory and contains the name of the mutator plugin to use.  
+   * The `plugins` property is optional and allows you to specify syntax plugins. Please see the README of your mutator to see which plugins are supported.
    * The `excludedMutations` property is mandatory and contains the types of mutations to exclude from the test run.  
 
 <a name="plugins"></a>

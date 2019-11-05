@@ -3,7 +3,7 @@ import { commonTokens, Injector, OptionsContext, Scope, tokens } from '@stryker-
 import { getLogger } from 'log4js';
 import { rootInjector } from 'typed-inject';
 import { coreTokens } from '.';
-import { loggerFactory, pluginResolverFactory } from './factoryMethods';
+import { loggerFactory, mutatorDescriptorFactory, pluginResolverFactory } from './factoryMethods';
 
 export function buildChildProcessInjector(options: StrykerOptions): Injector<OptionsContext> {
   return rootInjector
@@ -11,10 +11,12 @@ export function buildChildProcessInjector(options: StrykerOptions): Injector<Opt
     .provideValue(commonTokens.getLogger, getLogger)
     .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
     .provideFactory(coreTokens.pluginDescriptors, pluginDescriptorsFactory)
-    .provideFactory(commonTokens.pluginResolver, pluginResolverFactory);
+    .provideFactory(commonTokens.pluginResolver, pluginResolverFactory)
+    .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory);
 }
 
 function pluginDescriptorsFactory(options: StrykerOptions): readonly string[] {
   return options.plugins;
 }
+
 pluginDescriptorsFactory.inject = tokens(commonTokens.options);

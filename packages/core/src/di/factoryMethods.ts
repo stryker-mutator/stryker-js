@@ -1,5 +1,5 @@
 import { Config } from '@stryker-mutator/api/config';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, PluginKind, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
 import { coreTokens, PluginCreator, PluginLoader } from '.';
@@ -36,3 +36,23 @@ optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, type
   coreTokens.configReadFromConfigFile,
   coreTokens.configEditorApplier
 );
+
+export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
+  const defaults: MutatorDescriptor = {
+    plugins: null,
+    name: 'javascript',
+    excludedMutations: []
+  };
+  if (typeof options.mutator === 'string') {
+    return {
+      ...defaults,
+      name: options.mutator
+    };
+  }
+
+  return {
+    ...defaults,
+    ...options.mutator
+  };
+}
+mutatorDescriptorFactory.inject = tokens(commonTokens.options);

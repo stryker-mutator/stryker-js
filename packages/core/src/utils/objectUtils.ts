@@ -1,12 +1,12 @@
-import * as _ from 'lodash';
 import treeKill = require('tree-kill');
 export { serialize, deserialize } from 'surrial';
 
 export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
   Object.freeze(target);
   Object.keys(target).forEach(key => {
-    if (_.isObject(target[key])) {
-      freezeRecursively(target[key]);
+    const value = target[key];
+    if (typeof value === 'object' && value !== null) {
+      freezeRecursively(value);
     }
   });
   return target;

@@ -3,7 +3,9 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { JavaScriptMutator } from '../../src/JavaScriptMutator';
 import { nodeMutators } from '../../src/mutators';
-import { NODE_MUTATORS_TOKEN, NodeMutator } from '../../src/mutators/NodeMutator';
+import { NodeMutator } from '../../src/mutators/NodeMutator';
+import BabelParser from '../../src/helpers/BabelParser';
+import { NODE_MUTATORS_TOKEN, PARSER_TOKEN } from '../../src/helpers/tokens';
 
 describe('JavaScriptMutator', () => {
   let selectedMutators: readonly NodeMutator[];
@@ -13,7 +15,10 @@ describe('JavaScriptMutator', () => {
   });
 
   function createSut() {
-    return testInjector.injector.provideValue(NODE_MUTATORS_TOKEN, selectedMutators).injectClass(JavaScriptMutator);
+    return testInjector.injector
+      .provideValue(NODE_MUTATORS_TOKEN, selectedMutators)
+      .provideClass(PARSER_TOKEN, BabelParser)
+      .injectClass(JavaScriptMutator);
   }
 
   it('should generate a correct mutant', () => {

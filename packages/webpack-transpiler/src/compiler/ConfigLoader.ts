@@ -1,7 +1,6 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as fs from 'fs';
-import { isFunction } from 'lodash';
 import * as path from 'path';
 import { Configuration } from 'webpack';
 import { pluginTokens } from '../pluginTokens';
@@ -18,7 +17,7 @@ export default class ConfigLoader {
 
     if (config.configFile) {
       webpackConfig = await this.loadWebpackConfigFromProjectRoot(config.configFile);
-      if (isFunction(webpackConfig)) {
+      if (webpackConfig instanceof Function) {
         webpackConfig = webpackConfig.apply(null, config.configFileArgs);
       }
       if (config.silent) {
