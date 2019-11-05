@@ -38,18 +38,20 @@ optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, type
 );
 
 export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
+  const defaults: MutatorDescriptor = {
+    plugins: null,
+    name: 'javascript',
+    excludedMutations: []
+  };
   if (typeof options.mutator === 'string') {
     return {
-      plugins: [],
-      excludedMutations: [],
+      ...defaults,
       name: options.mutator
     };
   }
 
   return {
-    plugins: [],
-    excludedMutations: [],
-    name: '',
+    ...defaults,
     ...options.mutator
   };
 }
