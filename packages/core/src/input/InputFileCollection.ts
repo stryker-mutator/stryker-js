@@ -28,7 +28,7 @@ export default class InputFileCollection {
         You can configure the \`mutate\` property in your stryker.conf.js file (or use \`--mutate\` via command line).`)
         );
       }
-      if (log.isDebugEnabled) {
+      if (log.isDebugEnabled()) {
         log.debug(`All input files: ${JSON.stringify(this.files.map(file => file.name), null, 2)}`);
         log.debug(`Files to mutate: ${JSON.stringify(this.filesToMutate.map(file => file.name), null, 2)}`);
       }
