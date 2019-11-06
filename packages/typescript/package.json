@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/typescript",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A plugin for TypeScript-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -36,15 +36,15 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/typescript#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stryker-mutator/api": "^2.1.0",
-    "@stryker-mutator/util": "^2.1.0",
+    "@stryker-mutator/api": "^2.2.0",
+    "@stryker-mutator/util": "^2.2.0",
     "lodash.flatmap": "~4.5.0",
     "semver": "~6.3.0",
     "tslib": "~1.10.0"
   },
   "devDependencies": {
-    "@stryker-mutator/mutator-specification": "^2.1.0",
-    "@stryker-mutator/test-helpers": "^2.1.0",
+    "@stryker-mutator/mutator-specification": "^2.2.0",
+    "@stryker-mutator/test-helpers": "^2.2.0",
     "@types/lodash.flatmap": "~4.5.3",
     "@types/semver": "~6.2.0",
     "surrial": "~1.0.0"
