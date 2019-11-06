@@ -6,6 +6,7 @@ abstract class ProgressKeeper implements Reporter {
   private timer: Timer;
   protected progress = {
     survived: 0,
+    timedOut: 0,
     tested: 0,
     total: 0
   };
@@ -24,6 +25,9 @@ abstract class ProgressKeeper implements Reporter {
     }
     if (result.status === MutantStatus.Survived) {
       this.progress.survived++;
+    }
+    if (result.status === MutantStatus.TimedOut) {
+      this.progress.timedOut++;
     }
   }
 
