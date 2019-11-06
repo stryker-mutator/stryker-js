@@ -1,9 +1,0 @@
-stryker:Stryker[p] "Stryker"
-cfg:ConfigReader[a]
-/cfgEditor:ConfigEditor[a]
-ro:ReporterOrchestrator[a]
-/reporter:Reporter[a]
-/transpiler:Transpiler[a]
-sc:SandboxCoordinator[a]
-sandbox:Sandbox[a]
-ConfiguratorPlugin:configurator
