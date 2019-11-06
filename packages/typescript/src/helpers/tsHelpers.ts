@@ -56,7 +56,7 @@ export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): str
 function tsExtensions() {
   // Since ts 2.5 the ts.Extension enum is a string-based enum
   if (semver.satisfies(ts.version, '>=2.5')) {
-    return Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
+    return Object.keys(ts.Extension).map(extension => ts.Extension[extension as keyof typeof ts.Extension]);
   } else {
     // We know that pre 2.5 should have these extensions:
     return ['.ts', '.tsx', '.js', '.jsx'];
