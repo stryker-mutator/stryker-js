@@ -57,7 +57,7 @@
     "@stryker-mutator/api": "^2.2.1",
     "@stryker-mutator/util": "^2.2.1",
     "chalk": "~2.4.1",
-    "commander": "~3.0.1",
+    "commander": "~4.0.0",
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
     "inquirer": "~7.0.0",
