@@ -15,7 +15,7 @@ import StringLiteralMutator from './StringLiteralMutator';
 import SwitchCaseMutator from './SwitchCaseMutator';
 import WhileStatementMutator from './WhileStatementMutator';
 
-export const nodeMutators: ReadonlyArray<NodeMutator> = [
+export const nodeMutators: readonly NodeMutator[] = [
   new BinaryExpressionMutator(),
   new BooleanSubstitutionMutator(),
   new ArrayLiteralMutator(),
@@ -30,5 +30,5 @@ export const nodeMutators: ReadonlyArray<NodeMutator> = [
   new ConditionalExpressionMutator(),
   new PrefixUnaryExpressionMutator(),
   new StringLiteralMutator(),
-  new SwitchCaseMutator(),
+  new SwitchCaseMutator()
 ];

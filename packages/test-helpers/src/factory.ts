@@ -1,5 +1,5 @@
 import { Config, ConfigEditor } from '@stryker-mutator/api/config';
-import { File, Location, MutationScoreThresholds, StrykerOptions } from '@stryker-mutator/api/core';
+import { File, Location, MutationScoreThresholds, StrykerOptions, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter, ScoreResult } from '@stryker-mutator/api/report';
@@ -13,7 +13,8 @@ import { Injector } from 'typed-inject';
 /**
  * A 1x1 png base64 encoded
  */
-export const PNG_BASE64_ENCODED = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=';
+export const PNG_BASE64_ENCODED =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII=';
 
 /**
  * Use this factory method to create deep test data
@@ -100,9 +101,15 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
 
 export function testFramework(): TestFramework {
   return {
-    beforeEach(codeFragment: string) { return `beforeEach(){ ${codeFragment}}`; },
-    afterEach(codeFragment: string) { return `afterEach(){ ${codeFragment}}`; },
-    filter(selections: TestSelection[]) { return `filter: ${selections}`; }
+    beforeEach(codeFragment: string) {
+      return `beforeEach(){ ${codeFragment}}`;
+    },
+    afterEach(codeFragment: string) {
+      return `afterEach(){ ${codeFragment}}`;
+    },
+    filter(selections: TestSelection[]) {
+      return `filter: ${selections}`;
+    }
   };
 }
 
@@ -148,12 +155,26 @@ export const strykerOptions = factoryMethod<StrykerOptions>(() => new Config());
 
 export const config = factoryMethod<Config>(() => new Config());
 
-export const ALL_REPORTER_EVENTS: (keyof Reporter)[] =
-  ['onSourceFileRead', 'onAllSourceFilesRead', 'onAllMutantsMatchedWithTests', 'onMutantTested', 'onAllMutantsTested', 'onMutationTestReportReady', 'onScoreCalculated', 'wrapUp'];
+export const mutatorDescriptor = factoryMethod<MutatorDescriptor>(() => ({
+  excludedMutations: [],
+  name: 'fooMutator',
+  plugins: null
+}));
+
+export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
+  'onSourceFileRead',
+  'onAllSourceFilesRead',
+  'onAllMutantsMatchedWithTests',
+  'onMutantTested',
+  'onAllMutantsTested',
+  'onMutationTestReportReady',
+  'onScoreCalculated',
+  'wrapUp'
+];
 
 export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Required<Reporter>> {
   const reporter = { name } as any;
-  ALL_REPORTER_EVENTS.forEach(event => reporter[event] = sinon.stub());
+  ALL_REPORTER_EVENTS.forEach(event => (reporter[event] = sinon.stub()));
   return reporter;
 }
 
@@ -169,7 +190,7 @@ export function transpiler(): sinon.SinonStubbedInstance<Transpiler> {
   };
 }
 
-export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString()): MatchedMutant {
+export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString(), runAllTests = false): MatchedMutant {
   const scopedTestIds: number[] = [];
   for (let i = 0; i < numberOfTests; i++) {
     scopedTestIds.push(1);
@@ -178,6 +199,7 @@ export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.to
     fileName: '',
     id: mutantId,
     mutatorName: '',
+    runAllTests,
     replacement: '',
     scopedTestIds,
     timeSpentScopedTests: 0
@@ -192,7 +214,7 @@ export function injector(): sinon.SinonStubbedInstance<Injector> {
     provideClass: sinon.stub(),
     provideFactory: sinon.stub(),
     provideValue: sinon.stub(),
-    resolve: sinon.stub(),
+    resolve: sinon.stub()
   };
   injectorMock.provideClass.returnsThis();
   injectorMock.provideFactory.returnsThis();

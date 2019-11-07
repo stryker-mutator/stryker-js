@@ -35,10 +35,8 @@ class DirectResolvedTestRunner implements TestRunner {
 }
 
 class DiscoverRegexTestRunner implements TestRunner {
-
   public static inject = tokens(commonTokens.options);
-  constructor(private readonly options: StrykerOptions) {
-  }
+  constructor(private readonly options: StrykerOptions) {}
 
   public run(): Promise<RunResult> {
     if (isRegExp(this.options.someRegex)) {
@@ -50,7 +48,6 @@ class DiscoverRegexTestRunner implements TestRunner {
 }
 
 class ErroredTestRunner implements TestRunner {
-
   public run() {
     let expectedError: any = null;
     try {
@@ -63,7 +60,6 @@ class ErroredTestRunner implements TestRunner {
 }
 
 class RejectInitRunner implements TestRunner {
-
   public init() {
     return Promise.reject(new Error('Init was rejected'));
   }
@@ -75,12 +71,11 @@ class RejectInitRunner implements TestRunner {
 
 class NeverResolvedTestRunner implements TestRunner {
   public run() {
-    return new Promise<RunResult>(() => { });
+    return new Promise<RunResult>(() => {});
   }
 }
 
 class SlowInitAndDisposeTestRunner implements TestRunner {
-
   public inInit: boolean;
 
   public init() {
@@ -105,7 +100,6 @@ class SlowInitAndDisposeTestRunner implements TestRunner {
   }
 }
 class VerifyWorkingFolderTestRunner implements TestRunner {
-
   public runResult: RunResult = { status: RunStatus.Complete, tests: [] };
 
   public run() {
@@ -125,7 +119,7 @@ class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
   }
 
   public run() {
-    this.promise.catch(() => { });
+    this.promise.catch(() => {});
     return Promise.resolve({ status: RunStatus.Complete, tests: [] });
   }
 }

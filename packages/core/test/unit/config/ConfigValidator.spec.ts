@@ -6,7 +6,6 @@ import ConfigValidator from '../../../src/config/ConfigValidator';
 import { coreTokens } from '../../../src/di';
 
 describe('ConfigValidator', () => {
-
   let sut: ConfigValidator;
 
   function breakConfig(key: keyof StrykerOptions, value: any): void {
@@ -14,9 +13,7 @@ describe('ConfigValidator', () => {
   }
 
   function createSut(testFramework: TestFramework | null = factory.testFramework()) {
-    return testInjector.injector
-      .provideValue(coreTokens.testFramework, testFramework)
-      .injectClass(ConfigValidator);
+    return testInjector.injector.provideValue(coreTokens.testFramework, testFramework).injectClass(ConfigValidator);
   }
 
   beforeEach(() => {
@@ -34,11 +31,12 @@ describe('ConfigValidator', () => {
     testInjector.options.coverageAnalysis = 'perTest';
     sut = createSut(null);
     actValidationError();
-    expect(testInjector.logger.fatal).calledWith('Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".');
+    expect(testInjector.logger.fatal).calledWith(
+      'Configured coverage analysis "perTest" requires there to be a testFramework configured. Either configure a testFramework or set coverageAnalysis to "all" or "off".'
+    );
   });
 
   describe('thresholds', () => {
-
     it('should be invalid with thresholds < 0 or > 100', () => {
       testInjector.options.thresholds.high = -1;
       testInjector.options.thresholds.low = 101;
@@ -61,15 +59,19 @@ describe('ConfigValidator', () => {
     testInjector.options.transpilers.push('a second transpiler');
     testInjector.options.coverageAnalysis = 'all';
     actValidationError();
-    expect(testInjector.logger.fatal).calledWith('Value "all" for `coverageAnalysis` is invalid with multiple transpilers' +
-      ' (configured transpilers: a transpiler, a second transpiler). Please report this to the Stryker team' +
-      ' if you whish this feature to be implemented');
+    expect(testInjector.logger.fatal).calledWith(
+      'Value "all" for `coverageAnalysis` is invalid with multiple transpilers' +
+        ' (configured transpilers: a transpiler, a second transpiler). Please report this to the Stryker team' +
+        ' if you whish this feature to be implemented'
+    );
   });
 
   it('should be invalid with invalid logLevel', () => {
     testInjector.options.logLevel = 'thisTestPasses' as any;
     actValidationError();
-    expect(testInjector.logger.fatal).calledWith('Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "off"');
+    expect(testInjector.logger.fatal).calledWith(
+      'Value "thisTestPasses" is invalid for `logLevel`. Expected one of the following: "fatal", "error", "warn", "info", "debug", "trace", "off"'
+    );
   });
 
   it('should be invalid with nonnumeric timeoutMS', () => {
@@ -112,22 +114,45 @@ describe('ConfigValidator', () => {
     });
 
     describe('as an object', () => {
-      it('should be valid with string mutator name and string array excluded mutations', () => {
+      it('should be valid with all options', () => {
         breakConfig('mutator', {
           excludedMutations: ['BooleanSubstitution'],
+          name: 'javascript',
+          plugins: ['objectRestSpread', ['decorators', { decoratorsBeforeExport: true }]]
+        });
+        sut.validate();
+        expect(testInjector.logger.fatal).not.called;
+      });
+
+      it('should be valid with minimal options', () => {
+        breakConfig('mutator', {
           name: 'javascript'
         });
         sut.validate();
         expect(testInjector.logger.fatal).not.called;
       });
 
+      it('should be invalid without name', () => {
+        breakConfig('mutator', {});
+        actValidationError();
+        expect(testInjector.logger.fatal).calledWith('Value "undefined" is invalid for `mutator.name`. Expected a string');
+      });
+
       it('should be invalid with non-string mutator name', () => {
         breakConfig('mutator', {
-          excludedMutations: [],
           name: 0
         });
         actValidationError();
         expect(testInjector.logger.fatal).calledWith('Value "0" is invalid for `mutator.name`. Expected a string');
+      });
+
+      it('should be invalid with non array plugins', () => {
+        breakConfig('mutator', {
+          name: 'javascript',
+          plugins: 'optionalChaining'
+        });
+        actValidationError();
+        expect(testInjector.logger.fatal).calledWith('Value "optionalChaining" is invalid for `mutator.plugins`. Expected an array');
       });
 
       it('should be invalid with non-array excluded mutations', () => {
@@ -158,10 +183,7 @@ describe('ConfigValidator', () => {
     });
 
     it('should be invalid with non-string array elements', () => {
-      breakConfig('reporters', [
-        'stryker-jest',
-        0
-      ]);
+      breakConfig('reporters', ['stryker-jest', 0]);
       actValidationError();
       expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `reporters`. Expected a string');
     });
@@ -175,10 +197,7 @@ describe('ConfigValidator', () => {
     });
 
     it('should be invalid with non-string array elements', () => {
-      breakConfig('transpilers', [
-        'stryker-jest',
-        0
-      ]);
+      breakConfig('transpilers', ['stryker-jest', 0]);
       actValidationError();
       expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `transpilers`. Expected a string');
     });
@@ -187,11 +206,12 @@ describe('ConfigValidator', () => {
   it('should be invalid with invalid coverageAnalysis', () => {
     breakConfig('coverageAnalysis', 'invalid');
     actValidationError();
-    expect(testInjector.logger.fatal).calledWith('Value "invalid" is invalid for `coverageAnalysis`. Expected one of the following: "perTest", "all", "off"');
+    expect(testInjector.logger.fatal).calledWith(
+      'Value "invalid" is invalid for `coverageAnalysis`. Expected one of the following: "perTest", "all", "off"'
+    );
   });
 
   function actValidationError() {
     expect(() => sut.validate()).throws('Stryker could not recover from this configuration error, see fatal log message(s) above.');
   }
-
 });

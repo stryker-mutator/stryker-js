@@ -45,8 +45,11 @@ describe('WebpackTranspiler', () => {
 
   it('should throw an error if `produceSourceMaps` is `true`', () => {
     testInjector.options.coverageAnalysis = 'perTest';
-    expect(() => new WebpackTranspiler(factory.strykerOptions({ coverageAnalysis: 'perTest' }), true, configLoaderStub as unknown as ConfigLoader))
-      .throws('Invalid `coverageAnalysis` "perTest" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off"');
+    expect(
+      () => new WebpackTranspiler(factory.strykerOptions({ coverageAnalysis: 'perTest' }), true, (configLoaderStub as unknown) as ConfigLoader)
+    ).throws(
+      'Invalid `coverageAnalysis` "perTest" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off"'
+    );
   });
 
   it('should call the webpackCompiler.writeFilesToFs function with the given files', async () => {
@@ -83,7 +86,7 @@ describe('WebpackTranspiler', () => {
   function createSut() {
     return testInjector.injector
       .provideValue(commonTokens.produceSourceMaps, false)
-      .provideValue('configLoader', configLoaderStub as unknown as ConfigLoader)
+      .provideValue('configLoader', (configLoaderStub as unknown) as ConfigLoader)
       .injectClass(WebpackTranspiler);
   }
 });

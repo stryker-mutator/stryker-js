@@ -6,11 +6,7 @@ import * as ts from 'typescript';
 import { CONFIG_KEY, CONFIG_KEY_FILE } from './keys';
 
 export function parseFile(file: File, target: ts.ScriptTarget | undefined) {
-  return ts.createSourceFile(
-    file.name,
-    file.textContent,
-    target || ts.ScriptTarget.ES5,
-    /*setParentNodes*/ true);
+  return ts.createSourceFile(file.name, file.textContent, target || ts.ScriptTarget.ES5, /*setParentNodes*/ true);
 }
 
 /**
@@ -42,7 +38,9 @@ export function getProjectDirectory(options: StrykerOptions) {
  */
 export function guardTypescriptVersion() {
   if (!semver.satisfies(ts.version, '>=2.4')) {
-    throw new Error(`Installed typescript version ${ts.version} is not supported by stryker-typescript. Please install version 2.5 or higher (\`npm install typescript@^2.5\`).`);
+    throw new Error(
+      `Installed typescript version ${ts.version} is not supported by stryker-typescript. Please install version 2.5 or higher (\`npm install typescript@^2.5\`).`
+    );
   }
 }
 
@@ -58,7 +56,7 @@ export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): str
 function tsExtensions() {
   // Since ts 2.5 the ts.Extension enum is a string-based enum
   if (semver.satisfies(ts.version, '>=2.5')) {
-    return Object.keys(ts.Extension).map(extension => ts.Extension[extension as any]);
+    return Object.keys(ts.Extension).map(extension => ts.Extension[extension as keyof typeof ts.Extension]);
   } else {
     // We know that pre 2.5 should have these extensions:
     return ['.ts', '.tsx', '.js', '.jsx'];

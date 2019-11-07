@@ -4,7 +4,6 @@ import * as path from 'path';
 import { Callback, EmptyCallback, webpack } from '../types';
 
 export default class OutputFileSystem implements webpack.OutputFileSystem {
-
   private _files: {
     [name: string]: string | Buffer;
   };
@@ -18,8 +17,7 @@ export default class OutputFileSystem implements webpack.OutputFileSystem {
   }
 
   public collectFiles(): File[] {
-    return Object.keys(this._files).map(fileName =>
-      new File(fileName, this._files[fileName]));
+    return Object.keys(this._files).map(fileName => new File(fileName, this._files[fileName]));
   }
 
   public mkdirp(_dir: string, opts: any, cb?: Callback<string>): void {

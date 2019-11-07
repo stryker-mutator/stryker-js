@@ -12,67 +12,82 @@ export enum TestSelectionResult {
   Success
 }
 
-export default class TestableMutant {
+class TestFilter {
+  public timeSpentScopedTests = 0;
+  public runAllTests = false;
+  public selectedTests: TestSelection[] = [];
 
-  private readonly _selectedTests: TestSelection[] = [];
+  public selectAllTests(runResult: RunResult) {
+    this.timeSpentScopedTests = runResult.tests.reduce((time, test) => time + test.timeSpentMs, this.timeSpentScopedTests);
+    this.runAllTests = true;
+  }
+
+  public selectTest(testResult: TestResult, index: number) {
+    this.selectedTests.push({ id: index, name: testResult.name });
+    this.timeSpentScopedTests += testResult.timeSpentMs;
+    this.runAllTests = false;
+  }
+}
+
+export default class TestableMutant {
   public specsRan: string[] = [];
-  private _timeSpentScopedTests = 0;
+  private readonly filter = new TestFilter();
   private _location: Location;
   public testSelectionResult = TestSelectionResult.Success;
 
-  get selectedTests(): TestSelection[] {
-    return this._selectedTests;
+  public get selectedTests(): TestSelection[] {
+    return this.filter.selectedTests;
   }
 
-  get timeSpentScopedTests() {
-    return this._timeSpentScopedTests;
+  public get runAllTests(): boolean {
+    return this.filter.runAllTests;
   }
 
-  get fileName() {
+  public get timeSpentScopedTests() {
+    return this.filter.timeSpentScopedTests;
+  }
+
+  public get fileName() {
     return this.mutant.fileName;
   }
 
-  get mutatorName() {
+  public get mutatorName() {
     return this.mutant.mutatorName;
   }
 
-  get range() {
+  public get range() {
     return this.mutant.range;
   }
 
-  get replacement() {
+  public get replacement() {
     return this.mutant.replacement;
   }
 
-  get location() {
+  public get location() {
     if (!this._location) {
       this._location = this.sourceFile.getLocation(this.range);
     }
     return this._location;
   }
 
-  get mutatedCode() {
-    return this.sourceFile.content.substr(0, this.range[0]) +
-      this.replacement +
-      this.sourceFile.content.substr(this.range[1]);
+  public get mutatedCode() {
+    return this.sourceFile.content.substr(0, this.range[0]) + this.replacement + this.sourceFile.content.substr(this.range[1]);
   }
 
-  get originalCode() {
+  public get originalCode() {
     return this.sourceFile.content;
   }
 
   public selectAllTests(runResult: RunResult, testSelectionResult: TestSelectionResult) {
+    this.filter.selectAllTests(runResult);
     this.testSelectionResult = testSelectionResult;
-    runResult.tests.forEach((testResult, id) => this.selectTest(testResult, id));
   }
 
   public selectTest(testResult: TestResult, index: number) {
-    this._selectedTests.push({ id: index, name: testResult.name });
-    this._timeSpentScopedTests += testResult.timeSpentMs;
+    this.filter.selectTest(testResult, index);
   }
 
-  constructor(public readonly id: string, public mutant: Mutant, public sourceFile: SourceFile) {
-  }
+  constructor(public readonly id: string, public mutant: Mutant, public sourceFile: SourceFile) {}
 
   public get originalLines() {
     const [startIndex, endIndex] = this.getMutationLineIndexes();
@@ -81,7 +96,11 @@ export default class TestableMutant {
 
   public get mutatedLines() {
     const [startIndex, endIndex] = this.getMutationLineIndexes();
-    return this.sourceFile.content.substring(startIndex, this.mutant.range[0]) + this.mutant.replacement + this.sourceFile.content.substring(this.mutant.range[1], endIndex);
+    return (
+      this.sourceFile.content.substring(startIndex, this.mutant.range[0]) +
+      this.mutant.replacement +
+      this.sourceFile.content.substring(this.mutant.range[1], endIndex)
+    );
   }
 
   private getMutationLineIndexes() {
@@ -96,7 +115,7 @@ export default class TestableMutant {
     return [startIndexLines, endIndexLines];
   }
 
-  public result(status: MutantStatus, testsRan: string[]): MutantResult {
+  public createResult(status: MutantStatus, testsRan: string[]): MutantResult {
     return freezeRecursively({
       id: this.id,
       location: this.location,

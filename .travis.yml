@@ -4,6 +4,7 @@ node_js:
 - 'node'
 - '8'
 before_script:
+- npm prune
 - npm ls
 sudo: 'false'
 addons:

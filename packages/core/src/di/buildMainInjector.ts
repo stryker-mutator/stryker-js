@@ -1,5 +1,5 @@
-import { Config } from '@stryker-mutator/api/config';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Config } from '@stryker-mutator/api/config';
 import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
@@ -11,7 +11,7 @@ import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
-import { loggerFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
+import { loggerFactory, mutatorDescriptorFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
 
 export interface MainContext extends OptionsContext {
   [coreTokens.reporter]: Required<Reporter>;
@@ -36,6 +36,7 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(coreTokens.pluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
     .provideClass(coreTokens.configEditorApplier, ConfigEditorApplier)
     .provideFactory(commonTokens.options, optionsFactory)
+    .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory)
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
     .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
     .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
@@ -45,10 +46,8 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideClass(coreTokens.timer, Timer);
 }
 
-function pluginDescriptorsFactory(config: Config): ReadonlyArray<string> {
-  config.plugins.push(
-    require.resolve('../reporters')
-  );
+function pluginDescriptorsFactory(config: Config): readonly string[] {
+  config.plugins.push(require.resolve('../reporters'));
   return config.plugins;
 }
 pluginDescriptorsFactory.inject = tokens(coreTokens.configReadFromConfigFile);

@@ -12,7 +12,6 @@ const content = `
 const lines = content.split('\n');
 
 describe('SourceFile', () => {
-
   let sut: SourceFile;
 
   beforeEach(() => {
@@ -40,7 +39,7 @@ describe('SourceFile', () => {
 
     it('should work for line 0', () => {
       sut = new SourceFile(new File('', '1234567'));
-      expect(sut.getLocation([2, 4])).deep.eq({ start: { line: 0, column: 2 }, end: { line: 0, column: 4 }});
+      expect(sut.getLocation([2, 4])).deep.eq({ start: { line: 0, column: 2 }, end: { line: 0, column: 4 } });
     });
   });
 });

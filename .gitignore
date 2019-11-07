@@ -2,12 +2,13 @@ node_modules
 lerna-debug.log
 npm-debug.log
 stryker.log
-tslint.log
+lint.log
 
 coverage
 reports
 .tscache
 .stryker-tmp
+.stryker-tmp-2
 *.map
 # Ignore heap dumps
 packages/report.*.json 

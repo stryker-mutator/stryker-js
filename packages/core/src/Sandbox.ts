@@ -20,7 +20,6 @@ interface FileMap {
 }
 
 export default class Sandbox {
-
   private readonly log = getLogger(Sandbox.name);
   private testRunner: Required<TestRunner>;
   private fileMap: FileMap;
@@ -29,11 +28,12 @@ export default class Sandbox {
   private constructor(
     private readonly options: StrykerOptions,
     private readonly index: number,
-    private readonly files: ReadonlyArray<File>,
+    private readonly files: readonly File[],
     private readonly testFramework: TestFramework | null,
     private readonly timeOverheadMS: number,
     private readonly loggingContext: LoggingClientContext,
-    temporaryDirectory: TemporaryDirectory) {
+    temporaryDirectory: TemporaryDirectory
+  ) {
     this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
   }
@@ -47,12 +47,12 @@ export default class Sandbox {
   public static create(
     options: StrykerOptions,
     index: number,
-    files: ReadonlyArray<File>,
+    files: readonly File[],
     testFramework: TestFramework | null,
     timeoutOverheadMS: number,
     loggingContext: LoggingClientContext,
-    temporaryDirectory: TemporaryDirectory)
-    : Promise<Sandbox> {
+    temporaryDirectory: TemporaryDirectory
+  ): Promise<Sandbox> {
     const sandbox = new Sandbox(options, index, files, testFramework, timeoutOverheadMS, loggingContext, temporaryDirectory);
     return sandbox.initialize().then(() => sandbox);
   }
@@ -72,10 +72,16 @@ export default class Sandbox {
     } else {
       const mutantFiles = transpiledMutant.transpileResult.outputFiles;
       if (transpiledMutant.mutant.testSelectionResult === TestSelectionResult.Failed) {
-        this.log.warn(`Failed find coverage data for this mutant, running all tests. This might have an impact on performance: ${transpiledMutant.mutant.toString()}`);
+        this.log.warn(
+          `Failed find coverage data for this mutant, running all tests. This might have an impact on performance: ${transpiledMutant.mutant.toString()}`
+        );
       }
       await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)));
-      const runResult = await this.run(this.calculateTimeout(transpiledMutant.mutant), this.getFilterTestsHooks(transpiledMutant.mutant), this.fileMap[transpiledMutant.mutant.fileName]);
+      const runResult = await this.run(
+        this.calculateTimeout(transpiledMutant.mutant),
+        this.getFilterTestsHooks(transpiledMutant.mutant),
+        this.fileMap[transpiledMutant.mutant.fileName]
+      );
       await this.reset(mutantFiles);
       return this.collectMutantResult(transpiledMutant.mutant, runResult);
     }
@@ -84,32 +90,32 @@ export default class Sandbox {
   private readonly retrieveEarlyResult = (transpiledMutant: TranspiledMutant): MutantResult | null => {
     if (transpiledMutant.transpileResult.error) {
       if (this.log.isDebugEnabled()) {
-        this.log.debug(`Transpile error occurred: "${transpiledMutant.transpileResult.error}" during transpiling of mutant ${transpiledMutant.mutant.toString()}`);
+        this.log.debug(
+          `Transpile error occurred: "${transpiledMutant.transpileResult.error}" during transpiling of mutant ${transpiledMutant.mutant.toString()}`
+        );
       }
-      const result = transpiledMutant.mutant.result(MutantStatus.TranspileError, []);
+      const result = transpiledMutant.mutant.createResult(MutantStatus.TranspileError, []);
       return result;
-    } else if (!transpiledMutant.mutant.selectedTests.length) {
-      const result = transpiledMutant.mutant.result(MutantStatus.NoCoverage, []);
+    } else if (!transpiledMutant.mutant.runAllTests && !transpiledMutant.mutant.selectedTests.length) {
+      const result = transpiledMutant.mutant.createResult(MutantStatus.NoCoverage, []);
       return result;
     } else if (!transpiledMutant.changedAnyTranspiledFiles) {
-      const result = transpiledMutant.mutant.result(MutantStatus.Survived, []);
+      const result = transpiledMutant.mutant.createResult(MutantStatus.Survived, []);
       return result;
     } else {
       // No early result possible, need to run in the sandbox later
       return null;
     }
-  }
+  };
 
   private collectMutantResult(mutant: TestableMutant, runResult: RunResult): MutantResult {
     const status: MutantStatus = this.determineMutantState(runResult);
-    const testNames = runResult.tests
-      .filter(t => t.status !== TestStatus.Skipped)
-      .map(t => t.name);
+    const testNames = runResult.tests.filter(t => t.status !== TestStatus.Skipped).map(t => t.name);
     if (this.log.isDebugEnabled() && status === MutantStatus.RuntimeError) {
       const error = runResult.errorMessages ? runResult.errorMessages.toString() : '(undefined)';
       this.log.debug('A runtime error occurred: %s during execution of mutant: %s', error, mutant.toString());
     }
-    return mutant.result(status, testNames);
+    return mutant.createResult(status, testNames);
   }
 
   private determineMutantState(runResult: RunResult): MutantStatus {
@@ -127,7 +133,7 @@ export default class Sandbox {
     }
   }
 
-  private reset(mutatedFiles: ReadonlyArray<File>) {
+  private reset(mutatedFiles: readonly File[]) {
     const originalFiles = this.files.filter(originalFile => mutatedFiles.some(mutatedFile => mutatedFile.name === originalFile.name));
 
     return Promise.all(originalFiles.map(file => writeFile(this.fileMap[file.name], file.content)));
@@ -140,8 +146,7 @@ export default class Sandbox {
 
   private fillSandbox(): Promise<void[]> {
     this.fileMap = Object.create(null);
-    const copyPromises = this.files
-      .map(file => this.fillFile(file));
+    const copyPromises = this.files.map(file => this.fillFile(file));
     return Promise.all(copyPromises);
   }
 
@@ -151,16 +156,17 @@ export default class Sandbox {
       const basePath = process.cwd();
       const nodeModules = await findNodeModules(basePath);
       if (nodeModules) {
-        await symlinkJunction(nodeModules, path.join(this.workingDirectory, 'node_modules'))
-          .catch((error: NodeJS.ErrnoException) => {
-            if (error.code === 'EEXIST') {
-              this.log.warn(normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
+        await symlinkJunction(nodeModules, path.join(this.workingDirectory, 'node_modules')).catch((error: NodeJS.ErrnoException) => {
+          if (error.code === 'EEXIST') {
+            this.log.warn(
+              normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
               it is already created in the sandbox. Please remove the node_modules from your sandbox files.
-              Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`));
-            } else {
-              this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
-            }
-          });
+              Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`)
+            );
+          } else {
+            this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
+          }
+        });
       } else {
         this.log.warn(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);
       }
@@ -178,18 +184,18 @@ export default class Sandbox {
 
   private async initializeTestRunner(): Promise<void> {
     const fileNames = Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]);
-    this.log.debug(`Creating test runner %s`, this.index);
+    this.log.debug('Creating test runner %s', this.index);
     this.testRunner = ResilientTestRunnerFactory.create(this.options, fileNames, this.workingDirectory, this.loggingContext);
     await this.testRunner.init();
   }
 
   private calculateTimeout(mutant: TestableMutant) {
     const baseTimeout = mutant.timeSpentScopedTests;
-    return (this.options.timeoutFactor * baseTimeout) + this.options.timeoutMS + this.timeOverheadMS;
+    return this.options.timeoutFactor * baseTimeout + this.options.timeoutMS + this.timeOverheadMS;
   }
 
   private getFilterTestsHooks(mutant: TestableMutant): string | undefined {
-    if (this.testFramework) {
+    if (this.testFramework && !mutant.runAllTests) {
       return wrapInClosure(this.testFramework.filter(mutant.selectedTests));
     } else {
       return undefined;

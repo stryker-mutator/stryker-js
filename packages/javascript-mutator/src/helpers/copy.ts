@@ -1,9 +1,3 @@
-import * as _ from 'lodash';
+import cloneDeep = require('lodash.clonedeep');
 
-export default <T>(obj: T, deep?: boolean) => {
-  if (deep) {
-    return _.cloneDeep(obj);
-  } else {
-    return _.clone(obj);
-  }
-};
+export default <T>(obj: T, deep?: boolean) => (deep ? cloneDeep(obj) : { ...obj });

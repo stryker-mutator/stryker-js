@@ -8,11 +8,7 @@ import { PluginCreator } from '../di/PluginCreator';
 import StrictReporter from './StrictReporter';
 
 export default class BroadcastReporter implements StrictReporter {
-
-  public static readonly inject = tokens(
-    commonTokens.options,
-    coreTokens.pluginCreatorReporter,
-    commonTokens.logger);
+  public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreatorReporter, commonTokens.logger);
 
   public readonly reporters: {
     [name: string]: Reporter;
@@ -20,7 +16,8 @@ export default class BroadcastReporter implements StrictReporter {
   constructor(
     private readonly options: StrykerOptions,
     private readonly pluginCreator: PluginCreator<PluginKind.Reporter>,
-    private readonly log: Logger) {
+    private readonly log: Logger
+  ) {
     this.reporters = {};
     this.options.reporters.forEach(reporterName => this.createReporter(reporterName));
     this.logAboutReporters();
@@ -28,9 +25,7 @@ export default class BroadcastReporter implements StrictReporter {
 
   private createReporter(reporterName: string): void {
     if (reporterName === 'progress' && !process.stdout.isTTY) {
-      this.log.info(
-        'Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter'
-      );
+      this.log.info('Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter');
       reporterName = 'progress-append-only';
     }
     this.reporters[reporterName] = this.pluginCreator.create(reporterName);
@@ -43,25 +38,29 @@ export default class BroadcastReporter implements StrictReporter {
         this.log.debug(`Broadcasting to reporters ${JSON.stringify(reporterNames)}`);
       }
     } else {
-      this.log.warn('No reporter configured. Please configure one or more reporters in the (for example: reporters: [\'progress\'])');
+      this.log.warn("No reporter configured. Please configure one or more reporters in the (for example: reporters: ['progress'])");
     }
   }
 
   private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<any> {
-    return Promise.all(Object.keys(this.reporters).map(async reporterName => {
-      const reporter = this.reporters[reporterName];
-      if (typeof reporter[methodName] === 'function') {
-        const deprecatedMethodName = 'onScoreCalculated';
-        if (methodName === deprecatedMethodName) {
-          this.log.warn(`DEPRECATED: The reporter '${reporterName}' uses '${deprecatedMethodName}' which is deprecated. Please use 'onMutationTestReportReady' and calculate the score as an alternative.`);
+    return Promise.all(
+      Object.keys(this.reporters).map(async reporterName => {
+        const reporter = this.reporters[reporterName];
+        if (typeof reporter[methodName] === 'function') {
+          const deprecatedMethodName = 'onScoreCalculated';
+          if (methodName === deprecatedMethodName) {
+            this.log.warn(
+              `DEPRECATED: The reporter '${reporterName}' uses '${deprecatedMethodName}' which is deprecated. Please use 'onMutationTestReportReady' and calculate the score as an alternative.`
+            );
+          }
+          try {
+            await (reporter[methodName] as any)(eventArgs);
+          } catch (error) {
+            this.handleError(error, methodName, reporterName);
+          }
         }
-        try {
-          await (reporter[methodName] as any)(eventArgs);
-        } catch (error) {
-          this.handleError(error, methodName, reporterName);
-        }
-      }
-    }));
+      })
+    );
   }
 
   public onSourceFileRead(file: SourceFile): void {
@@ -72,7 +71,7 @@ export default class BroadcastReporter implements StrictReporter {
     this.broadcast('onAllSourceFilesRead', files);
   }
 
-  public onAllMutantsMatchedWithTests(results: ReadonlyArray<MatchedMutant>): void {
+  public onAllMutantsMatchedWithTests(results: readonly MatchedMutant[]): void {
     this.broadcast('onAllMutantsMatchedWithTests', results);
   }
 

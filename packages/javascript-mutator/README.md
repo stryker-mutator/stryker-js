@@ -25,6 +25,12 @@ Now open up your stryker.conf.js file and add the following components:
 
 ```javascript
 mutator: 'javascript',
+// OR
+mutator: {
+    name: 'javascript',
+    plugins: ['classProperties', 'optionalChaining'],
+    excludedMutations: ['BooleanSubstitution', 'StringLiteral']
+}
 ```
 
 Now give it a go:
@@ -33,7 +39,24 @@ Now give it a go:
 $ stryker run
 ```
 
-### JavaScript Mutator
+## Configuration
+
+### `mutator.name` [`string`]
+
+The name of the mutator, use `'javascript'` to enable this mutator.
+
+### `mutator.plugins` [`(string | ParserPluginWithOptions)[]`]
+
+Default: `['asyncGenerators', 'bigInt', 'classProperties', 'dynamicImport', 'flow', 'jsx', 'objectRestSpread', ['decorators', { decoratorsBeforeExport: true }]`
+
+Configure custom [Babel Syntax plugins](https://babeljs.io/docs/en/babel-parser#plugins). Syntax plugins allow you to parse different pieces of syntax. 
+By default a number of plugins are configured. We might add more in the future. For example: you can configure your own Syntax plugins here to allow for [stage 1](https://github.com/tc39/proposals/blob/master/stage-1-proposals.md) features. 
+
+### `mutator.excludedMutations` [`string[]`]
+
+See [Stryker core's readme](https://github.com/stryker-mutator/stryker/tree/master/packages/core#mutator)
+
+## Mutators
 
 The `JavaScript Mutator` is a plugin to mutate JavaScript code. This is done using Babel without any plugins.
 

@@ -7,9 +7,7 @@ import webpack from './Webpack';
 export default class WebpackCompiler {
   private readonly _compiler: Compiler;
 
-  public constructor(webpackConfig: Configuration,
-                     private readonly _inputFS = new InputFileSystem(),
-                     private readonly _outputFS = new OutputFileSystem()) {
+  constructor(webpackConfig: Configuration, private readonly _inputFS = new InputFileSystem(), private readonly _outputFS = new OutputFileSystem()) {
     this._compiler = this.createCompiler(webpackConfig);
   }
 
@@ -21,10 +19,10 @@ export default class WebpackCompiler {
     (compiler as any).resolvers.normal.fileSystem = this._inputFS;
     (compiler as any).resolvers.context.fileSystem = this._inputFS;
 
-    return compiler as Compiler;
+    return compiler;
   }
 
-  public writeFilesToFs(files: ReadonlyArray<File>): void {
+  public writeFilesToFs(files: readonly File[]): void {
     files.forEach(file => this.writeToFs(file));
   }
 

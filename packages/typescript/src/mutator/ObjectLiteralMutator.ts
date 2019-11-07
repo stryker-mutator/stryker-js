@@ -15,5 +15,4 @@ export default class ObjectLiteralMutator extends NodeMutator<ts.ObjectLiteralEx
       return [];
     }
   }
-
 }

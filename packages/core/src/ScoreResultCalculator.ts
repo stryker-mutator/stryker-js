@@ -2,16 +2,16 @@ import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, ScoreResult } from '@stryker-mutator/api/report';
-import * as _ from 'lodash';
+import flatMap = require('lodash.flatmap');
+import groupBy = require('lodash.groupby');
 import * as path from 'path';
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
 
 const defaultScoreIfNoValidMutants = 100;
 
 export default class ScoreResultCalculator {
-
   public static inject = tokens(commonTokens.logger);
-  constructor(private readonly log: Logger) { }
+  constructor(private readonly log: Logger) {}
 
   public calculate(results: MutantResult[]): ScoreResult {
     const scoreResult = this.calculateScoreResult(results, '');
@@ -30,16 +30,16 @@ export default class ScoreResultCalculator {
         this.log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
       }
     } else {
-      this.log.debug('No breaking threshold configured. Won\'t fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.');
+      this.log.debug(
+        "No breaking threshold configured. Won't fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior."
+      );
     }
   }
 
   private wrapIfSingleFileScoreResult(scoreResult: ScoreResult): ScoreResult {
     if (scoreResult.representsFile) {
       return this.copy(scoreResult, {
-        childResults: [
-          this.copy(scoreResult, { name: path.basename(scoreResult.name) })
-        ],
+        childResults: [this.copy(scoreResult, { name: path.basename(scoreResult.name) })],
         name: path.dirname(scoreResult.name)
       });
     } else {
@@ -50,7 +50,7 @@ export default class ScoreResultCalculator {
   private calculateScoreResult(results: MutantResult[], basePath: string): ScoreResult {
     const numbers = this.countNumbers(results);
     const facts = this.determineFacts(basePath, results);
-    return freezeRecursively(_.assign(numbers, facts));
+    return freezeRecursively(Object.assign(numbers, facts));
   }
 
   private copy(defaults: ScoreResult, overrides: Partial<ScoreResult>): ScoreResult {
@@ -82,14 +82,16 @@ export default class ScoreResultCalculator {
 
   private calculateChildScores(results: MutantResult[], parentName: string, basePath: string) {
     const childrenBasePath = parentName.length ? path.join(basePath, parentName) + path.sep : '';
-    const resultsGroupedByFiles = _.groupBy(results, result => result.sourceFilePath.substr(childrenBasePath.length));
+    const resultsGroupedByFiles = groupBy(results, result => result.sourceFilePath.substr(childrenBasePath.length));
     const uniqueFiles = Object.keys(resultsGroupedByFiles);
 
     if (uniqueFiles.length > 1) {
-      const filesGroupedByDirectory = _.groupBy(uniqueFiles, file => file.split(path.sep)[0]);
+      const filesGroupedByDirectory = groupBy(uniqueFiles, file => file.split(path.sep)[0]);
       return Object.keys(filesGroupedByDirectory)
 
-        .map(directory => this.calculateScoreResult(_.flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath))
+        .map(directory =>
+          this.calculateScoreResult(flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath)
+        )
         .sort(this.compareScoreResults);
     } else {
       return [];
@@ -97,7 +99,7 @@ export default class ScoreResultCalculator {
   }
 
   private determineCommonBasePath(results: MutantResult[], basePath: string) {
-    const uniqueFiles = _.uniq(results.map(result => result.sourceFilePath));
+    const uniqueFiles = [...new Set(results.map(result => result.sourceFilePath))];
     const uniqueFileDirectories = uniqueFiles.map(file => file.substr(basePath.length).split(path.sep));
 
     if (uniqueFileDirectories.length) {
@@ -132,8 +134,8 @@ export default class ScoreResultCalculator {
     const totalValid = totalUndetected + totalDetected;
     const totalInvalid = runtimeErrors + transpileErrors;
     const totalMutants = totalValid + totalInvalid;
-    const mutationScore = totalValid > 0 ? totalDetected / totalValid * 100 : defaultScoreIfNoValidMutants;
-    const mutationScoreBasedOnCoveredCode = totalValid > 0 ? totalDetected / totalCovered * 100 || 0 : defaultScoreIfNoValidMutants;
+    const mutationScore = totalValid > 0 ? (totalDetected / totalValid) * 100 : defaultScoreIfNoValidMutants;
+    const mutationScoreBasedOnCoveredCode = totalValid > 0 ? (totalDetected / totalCovered) * 100 || 0 : defaultScoreIfNoValidMutants;
     return {
       killed,
       mutationScore,

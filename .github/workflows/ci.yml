@@ -2,8 +2,7 @@ name: CI
 
 on:
   push: ~
-  pull_request:
-    types: [opened, edited, reopened]
+  pull_request: ~
   schedule:
     - cron:  '0 12 * * *'
 

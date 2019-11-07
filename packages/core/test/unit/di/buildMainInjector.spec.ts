@@ -13,9 +13,9 @@ import { buildMainInjector } from '../../../src/di/buildMainInjector';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../../../src/TestFrameworkOrchestrator';
 import currentLogMock from '../../helpers/logMock';
+import { MutatorDescriptor } from '@stryker-mutator/api/core';
 
 describe(buildMainInjector.name, () => {
-
   let testFrameworkOrchestratorMock: sinon.SinonStubbedInstance<TestFrameworkOrchestrator>;
   let pluginLoaderMock: sinon.SinonStubbedInstance<di.PluginLoader>;
   let testFrameworkMock: TestFramework;
@@ -52,7 +52,6 @@ describe(buildMainInjector.name, () => {
   }
 
   describe('resolve options', () => {
-
     it('should supply readonly stryker options', () => {
       const actualOptions = buildMainInjector({}).resolve(commonTokens.options);
       expect(actualOptions).frozen;
@@ -86,6 +85,16 @@ describe(buildMainInjector.name, () => {
       buildMainInjector(expectedCliOptions).resolve(commonTokens.options);
       expect(configReaderModule.default).calledWith(expectedCliOptions);
     });
+  });
+
+  it('should supply mutatorDescriptor', () => {
+    const expected: MutatorDescriptor = {
+      name: 'javascript',
+      plugins: null,
+      excludedMutations: []
+    };
+    const mutatorDescriptor = buildMainInjector({}).resolve(commonTokens.mutatorDescriptor);
+    expect(mutatorDescriptor).deep.eq(expected);
   });
 
   it('should be able to supply the test framework', () => {

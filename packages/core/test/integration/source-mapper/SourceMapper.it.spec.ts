@@ -9,20 +9,17 @@ function resolve(...filePart: string[]) {
 }
 
 function readFiles(...files: string[]): Promise<File[]> {
-  return Promise.all(files
-    .map(relative => resolve(relative))
-    .map(fileName => fsAsPromised.readFile(fileName).then(content => new File(fileName, content))));
+  return Promise.all(
+    files.map(relative => resolve(relative)).map(fileName => fsAsPromised.readFile(fileName).then(content => new File(fileName, content)))
+  );
 }
 
 describe('Source mapper integration', () => {
-
   let sut: TranspiledSourceMapper;
 
   describe('with external source maps', () => {
     beforeEach(async () => {
-      const files = await readFiles(
-        path.join('external-source-maps', 'js', 'math.js'),
-        path.join('external-source-maps', 'js', 'math.js.map'));
+      const files = await readFiles(path.join('external-source-maps', 'js', 'math.js'), path.join('external-source-maps', 'js', 'math.js.map'));
       sut = new TranspiledSourceMapper(files);
     });
 

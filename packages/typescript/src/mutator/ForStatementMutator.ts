@@ -3,7 +3,6 @@ import { printNode } from '../helpers/tsHelpers';
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class ForStatementMutator extends NodeMutator<ts.ForStatement> {
-
   public name = 'ForStatement';
 
   public guard(node: ts.Node): node is ts.ForStatement {
@@ -20,5 +19,4 @@ export default class ForStatementMutator extends NodeMutator<ts.ForStatement> {
       return [{ node, replacement }];
     }
   }
-
 }

@@ -11,10 +11,8 @@ const javascriptMutatorPlugin = javascriptMutatorStrykerPlugins.find(plugin => p
 const typescriptMutatorPlugin = typescriptMutatorStrykerPlugins.find(plugin => plugin.kind === PluginKind.Mutator);
 
 describe('VueMutator', () => {
-
   function createSut(): Mutator {
-    return testInjector.injector
-      .injectFunction(strykerPlugins[0].factory);
+    return testInjector.injector.injectFunction(strykerPlugins[0].factory);
   }
 
   describe('JavaScript project', () => {
