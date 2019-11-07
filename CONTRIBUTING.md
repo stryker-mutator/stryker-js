@@ -58,7 +58,7 @@ After cloning this repo, open the workspace with `$ code workspace.code-workspac
 Some quick notes to help you get started:
 
 1. On the left side, you can see all stryker projects and plugins. Open files from there.
-1. Use `CTRL+B` (or `⌘+B` on OSX) to run the *build task*. This runs `npm start`, compiling any changes you make in the background.
+1. Use `CTRL+Shift+B` (or `⌘+Shift+B` on OSX) to run the *build task*. This runs `npm start`, compiling any changes you make in the background.
 1. Use `CTRL+Shift+D` (or `⌘⇧D` on OSX) to open up the *debug* pane. Here you can select a config to run. For example: select "Unit tests (stryker-api)" to run the unit tests for the `stryker-api` package. 
   * You can run the tests with `CTRL+F5` (or `⌃F5` on OSX).
   * You can debug the tests with `F5` (also `F5` on OSX). Setting breakpoints in your code and inspecting variables all work as expected.
