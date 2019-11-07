@@ -7,7 +7,7 @@
   "scripts": {
     "start": "tsc -w",
     "test": "cross-env LAUNCHPAD_BROWSERS=chrome nyc --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 95 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && if-node-version \">=8\" mocha --timeout 60000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && if-node-version \">=8\" mocha --timeout 120000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
   },
   "repository": {
     "type": "git",
