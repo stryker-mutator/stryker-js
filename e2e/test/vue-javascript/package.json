@@ -9,7 +9,7 @@
     "start": "npm run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "pretest": "rimraf \"reports\"",
-    "test": "stryker run stryker.conf.js",
+    "test": "stryker run stryker.conf.js --fileLogLevel trace --logLevel debug",
     "posttest": "mocha --require ts-node/register verify/*.ts",
     "lint": "eslint --ext .js,.vue src test/unit",
     "build": "node build/build.js"
@@ -19,15 +19,16 @@
     "vue-router": "~3.1.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-transform-runtime": "^7.6.2",
     "autoprefixer": "~9.7.1",
-    "babel-core": "~6.26.3",
     "babel-eslint": "~10.0.3",
     "babel-helper-vue-jsx-merge-props": "~2.0.3",
     "babel-loader": "~8.0.6",
     "babel-plugin-istanbul": "~5.2.0",
     "babel-plugin-syntax-jsx": "~6.18.0",
     "babel-plugin-transform-runtime": "~6.23.0",
-    "babel-plugin-transform-vue-jsx": "~3.7.0",
+    "babel-plugin-transform-vue-jsx": "^3.7.0",
     "babel-preset-env": "~1.7.0",
     "babel-preset-stage-2": "~6.24.1",
     "chai": "~4.2.0",
