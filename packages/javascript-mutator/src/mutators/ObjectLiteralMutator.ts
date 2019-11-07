@@ -7,11 +7,15 @@ import { NodeMutator } from './NodeMutator';
 export default class ObjectLiteralMutator implements NodeMutator {
   public name = 'ObjectLiteral';
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[] {
+  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
+    const nodes: types.Node[] = [];
+
     if (types.isObjectExpression(node) && node.properties.length > 0) {
       const mutatedNode = copy(node);
       mutatedNode.properties = [];
-      return [mutatedNode];
+      nodes.push(mutatedNode);
     }
+
+    return nodes;
   }
 }

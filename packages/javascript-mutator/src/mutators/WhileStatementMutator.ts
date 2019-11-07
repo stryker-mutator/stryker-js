@@ -8,9 +8,11 @@ import { NodeMutator } from './NodeMutator';
 export default class WhileStatementMutator implements NodeMutator {
   public name = 'WhileStatement';
 
-  public mutate(node: types.Node): types.Node[] | void {
+  public mutate(node: types.Node): types.Node[] {
     if (types.isWhileStatement(node)) {
       return [NodeGenerator.createBooleanLiteralNode(node.test, false)];
     }
+
+    return [];
   }
 }
