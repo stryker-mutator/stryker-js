@@ -4,10 +4,10 @@ module.exports = function (config) {
     mutator: 'vue',
     testFramework: 'jasmine',
     testRunner: 'karma',
-    reporters: ['clear-text', 'event-recorder'],
+    reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
     karma: {
-      configFile: 'test/unit/karma.conf.js'
+      configFile: 'test/karma.conf.js'
     },
     coverageAnalysis: 'off'
   });
