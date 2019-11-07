@@ -8,6 +8,7 @@ coverage
 reports
 .tscache
 .stryker-tmp
+.stryker-tmp-2
 *.map
 # Ignore heap dumps
 packages/report.*.json 

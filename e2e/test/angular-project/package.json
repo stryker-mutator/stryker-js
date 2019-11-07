@@ -38,7 +38,7 @@
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "ts-node": "~5.0.1",
-    "typescript": "~3.5.1"
+    "typescript": "~3.7.2"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",

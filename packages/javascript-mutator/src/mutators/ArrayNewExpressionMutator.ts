@@ -7,7 +7,7 @@ import { NodeMutator } from './NodeMutator';
 export default class ArrayNewExpressionMutator implements NodeMutator {
   public name = 'ArrayNewExpression';
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): void | types.Node[] {
+  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
     const nodes: types.Node[] = [];
 
     if (

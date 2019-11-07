@@ -19,7 +19,7 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
   private render() {
     process.stdout.write(
       `Mutation testing ${this.getPercentDone()} (ETC ${this.getEtc()}) ` +
-        `${this.progress.tested}/${this.progress.total} tested (${this.progress.survived} survived)` +
+        `${this.progress.tested}/${this.progress.total} tested (${this.progress.survived} survived, ${this.progress.timedOut} timed out)` +
         os.EOL
     );
   }
