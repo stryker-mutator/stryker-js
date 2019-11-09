@@ -3,7 +3,6 @@
   "version": "2.2.1",
   "description": "A plugin to use web component tester as a test runner for Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
-  "typings": "src/index.d.ts",
   "scripts": {
     "start": "tsc -w",
     "test": "cross-env LAUNCHPAD_BROWSERS=chrome nyc --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 95 npm run mocha",

@@ -3,7 +3,6 @@
   "version": "2.2.1",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
-  "typings": "src/Stryker.d.ts",
   "scripts": {
     "start": "tsc -w",
     "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
