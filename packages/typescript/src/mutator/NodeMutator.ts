@@ -12,8 +12,7 @@ export default abstract class NodeMutator<T extends ts.Node = ts.Node> {
   public abstract guard(node: ts.Node): node is T;
 
   public mutate(node: T, sourceFile: ts.SourceFile): Mutant[] {
-    return this.identifyReplacements(node, sourceFile)
-      .map(replacement => this.createMutant(replacement.node, replacement.replacement, sourceFile));
+    return this.identifyReplacements(node, sourceFile).map(replacement => this.createMutant(replacement.node, replacement.replacement, sourceFile));
   }
 
   protected abstract identifyReplacements(node: T, sourceFile: ts.SourceFile): NodeReplacement[];

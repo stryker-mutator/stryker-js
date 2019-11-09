@@ -64,11 +64,10 @@ export class TemporaryDirectory implements Disposable {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    this.log.debug(`Deleting stryker temp directory %s`, this.temporaryDirectory);
+    this.log.debug('Deleting stryker temp directory %s', this.temporaryDirectory);
     try {
       await deleteDir(this.temporaryDirectory);
-    }
-    catch (e) {
+    } catch (e) {
       return this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
     }
   }
@@ -80,5 +79,4 @@ export class TemporaryDirectory implements Disposable {
   public random(): number {
     return Math.ceil(Math.random() * 10000000);
   }
-
 }

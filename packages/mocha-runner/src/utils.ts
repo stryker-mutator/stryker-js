@@ -25,18 +25,7 @@ export function serializeArguments(mochaOptions: MochaOptions) {
 
 export const mochaOptionsKey = 'mochaOptions';
 
-const SUPPORTED_MOCHA_OPTIONS = Object.freeze([
-  'extension',
-  'require',
-  'timeout',
-  'async-only',
-  'ui',
-  'grep',
-  'exclude',
-  'ignore',
-  'spec',
-  'file'
-]);
+const SUPPORTED_MOCHA_OPTIONS = Object.freeze(['extension', 'require', 'timeout', 'async-only', 'ui', 'grep', 'exclude', 'ignore', 'spec', 'file']);
 
 /**
  * Filter out those config values that are actually useful to run mocha with Stryker
@@ -46,7 +35,7 @@ export function filterConfig(rawConfig: { [key: string]: any }): MochaOptions {
   const options: MochaOptions = {};
   Object.keys(rawConfig)
     .filter(rawOption => SUPPORTED_MOCHA_OPTIONS.some(supportedOption => rawOption === supportedOption))
-    .forEach(option => (options as any)[option] = rawConfig[option]);
+    .forEach(option => ((options as any)[option] = rawConfig[option]));
 
   // Config file can also contain positional arguments. They are provided under the `_` key
   // For example:

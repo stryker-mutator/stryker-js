@@ -12,7 +12,6 @@ import { File } from '../../core';
  * They are also expected to keep track of any source-maps if `keepSourceMaps` is set to true, in order to implement `getMappedLocation`
  */
 export default interface Transpiler {
-
   /**
    * Transpile each file and return the result.
    * Should also return any untouched files in the result.
@@ -30,6 +29,5 @@ export default interface Transpiler {
    *
    * @returns an rejection (if transpiling failed) or the output files to be used as input for the next transpiler
    */
-  transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>>;
-
+  transpile(files: readonly File[]): Promise<readonly File[]>;
 }

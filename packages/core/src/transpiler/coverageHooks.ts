@@ -36,13 +36,13 @@ Object.keys(coveragePerFile).forEach(function (file) {
     var fileResult = { s: {}, f: {} };
     var touchedFile = false;
     for(var i in coverage.s){
-      if(coverage.s[i] !== baseline.s[i]){
+      if(!baseline || coverage.s[i] !== baseline.s[i]){
         fileResult.s[i] = coverage.s[i];
         touchedFile = true;
       }
     }
     for(var i in coverage.f){
-      if(coverage.f[i] !== baseline.f[i]){
+      if(!baseline || coverage.f[i] !== baseline.f[i]){
         fileResult.f[i] = coverage.f[i];
         touchedFile = true;
       }

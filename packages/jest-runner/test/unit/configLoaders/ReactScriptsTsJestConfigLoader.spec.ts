@@ -23,7 +23,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
     requireResolveStub = sinon.stub();
     requireResolveStub.returns(reactScriptsTsPackagePath);
 
-    sut = new ReactScriptsTSJestConfigLoader(projectRoot, requireResolveStub as unknown as RequireResolve);
+    sut = new ReactScriptsTSJestConfigLoader(projectRoot, (requireResolveStub as unknown) as RequireResolve);
   });
 
   it('should load the configuration via the createJestConfig method provided by react-scripts-ts', () => {
@@ -50,7 +50,8 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
     requireResolveStub.throws(error);
 
     // Act & Assert
-    expect(() => sut.loadConfig())
-      .throws('Unable to locate package react-scripts-ts. This package is required when projectType is set to "react-ts".');
+    expect(() => sut.loadConfig()).throws(
+      'Unable to locate package react-scripts-ts. This package is required when projectType is set to "react-ts".'
+    );
   });
 });

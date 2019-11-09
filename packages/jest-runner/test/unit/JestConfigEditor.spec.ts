@@ -24,7 +24,12 @@ describe('JestConfigEditor', () => {
     sinon.stub(reactScriptsJestConfigLoader, 'default').returns(reactScriptsJestConfigLoaderStub);
     sinon.stub(reactScriptsTSJestConfigLoader, 'default').returns(reactScriptsTSJestConfigLoaderStub);
 
-    const defaultOptions: Partial<jest.Configuration> = { collectCoverage: true, verbose: true, bail: false, testResultsProcessor: 'someResultProcessor' };
+    const defaultOptions: Partial<jest.Configuration> = {
+      collectCoverage: true,
+      verbose: true,
+      bail: false,
+      testResultsProcessor: 'someResultProcessor'
+    };
     customConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsTSJestConfigLoaderStub.loadConfig.returns(defaultOptions);
@@ -40,7 +45,7 @@ describe('JestConfigEditor', () => {
     assert(customConfigLoaderStub.loadConfig.calledOnce, 'CustomConfigLoader loadConfig not called');
   });
 
-  it('should call the ReactScriptsJestConfigLoader loadConfig method when \'react\' is defined as projectType', () => {
+  it("should call the ReactScriptsJestConfigLoader loadConfig method when 'react' is defined as projectType", () => {
     config.set({ jest: { projectType: 'react' } });
 
     sut.edit(config);
@@ -48,7 +53,7 @@ describe('JestConfigEditor', () => {
     assert(reactScriptsJestConfigLoaderStub.loadConfig.calledOnce, 'ReactScriptsJestConfigLoader loadConfig not called');
   });
 
-  it('should call the ReactScriptsTSJestConfigLoader loadConfig method when \'react-ts\' is defined as projectType', () => {
+  it("should call the ReactScriptsTSJestConfigLoader loadConfig method when 'react-ts' is defined as projectType", () => {
     config.set({ jest: { projectType: 'react-ts' } });
 
     sut.edit(config);

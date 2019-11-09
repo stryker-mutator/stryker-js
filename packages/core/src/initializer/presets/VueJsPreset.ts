@@ -10,11 +10,7 @@ const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/ma
  */
 export class VueJsPreset implements Preset {
   public readonly name = 'vueJs';
-  private readonly generalDependencies = [
-    '@stryker-mutator/core',
-    '@stryker-mutator/vue-mutator',
-    '@stryker-mutator/html-reporter'
-  ];
+  private readonly generalDependencies = ['@stryker-mutator/core', '@stryker-mutator/vue-mutator', '@stryker-mutator/html-reporter'];
 
   private readonly jestDependency = '@stryker-mutator/jest-runner';
   private readonly jestConf = `{
@@ -44,14 +40,14 @@ export class VueJsPreset implements Preset {
     }`;
 
   public async createConfig(): Promise<PresetConfiguration> {
-    const testRunnerChoices: inquirer.ChoiceType<string>[] = ['karma', 'jest'];
+    const testRunnerChoices: Array<inquirer.ChoiceType<string>> = ['karma', 'jest'];
     const testRunnerAnswers = await inquirer.prompt<{ testRunner: string }>({
       choices: testRunnerChoices,
       message: 'Which test runner do you want to use?',
       name: 'testRunner',
       type: 'list'
     });
-    const scriptChoices: inquirer.ChoiceType<string>[] = ['typescript', 'javascript'];
+    const scriptChoices: Array<inquirer.ChoiceType<string>> = ['typescript', 'javascript'];
     const scriptAnswers = await inquirer.prompt<{ script: string }>({
       choices: scriptChoices,
       message: 'Which language does your project use?',

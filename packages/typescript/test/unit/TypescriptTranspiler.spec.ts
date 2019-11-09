@@ -10,7 +10,6 @@ import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 
 describe(TypescriptTranspiler.name, () => {
-
   let languageService: sinon.SinonStubbedInstance<TranspilingLanguageService>;
   let sut: TypescriptTranspiler;
   let transpileFilterMock: sinon.SinonStubbedInstance<TranspileFilter>;
@@ -26,30 +25,23 @@ describe(TypescriptTranspiler.name, () => {
   });
 
   describe('transpile', () => {
-
     beforeEach(() => {
       languageService.getSemanticDiagnostics.returns([]); // no errors by default
-      sut = testInjector.injector
-        .provideValue(commonTokens.produceSourceMaps, true)
-        .injectClass(TypescriptTranspiler);
+      sut = testInjector.injector.provideValue(commonTokens.produceSourceMaps, true).injectClass(TypescriptTranspiler);
     });
 
     it('should transpile given files', async () => {
       // Arrange
-      const expected = [
-        new File('foo.js', 'foo'),
-        new File('bar.js', 'bar')
-      ];
+      const expected = [new File('foo.js', 'foo'), new File('bar.js', 'bar')];
       arrangeIncludedFiles();
       languageService.emit
-        .withArgs('foo.ts').returns(multiResult(expected[0]))
-        .withArgs('bar.ts').returns(multiResult(expected[1]));
+        .withArgs('foo.ts')
+        .returns(multiResult(expected[0]))
+        .withArgs('bar.ts')
+        .returns(multiResult(expected[1]));
 
       // Act
-      const outputFiles = await sut.transpile([
-        new File('foo.ts', ''),
-        new File('bar.ts', '')
-      ]);
+      const outputFiles = await sut.transpile([new File('foo.ts', ''), new File('bar.ts', '')]);
 
       // Assert
       expectFilesEqual(outputFiles, expected);
@@ -57,33 +49,24 @@ describe(TypescriptTranspiler.name, () => {
 
     it('should keep file order', async () => {
       // Arrange
-      const input = [
-        new File('file1.js', ''),
-        new File('file2.ts', ''),
-        new File('file4.ts', ''),
-      ];
+      const input = [new File('file1.js', ''), new File('file2.ts', ''), new File('file4.ts', '')];
       arrangeIncludedFiles(input.slice(1));
       languageService.emit
-        .withArgs('file2.ts').returns(multiResult(new File('file2.js', 'file2')))
-        .withArgs('file4.ts').returns(multiResult(new File('file4.js', 'file4')));
+        .withArgs('file2.ts')
+        .returns(multiResult(new File('file2.js', 'file2')))
+        .withArgs('file4.ts')
+        .returns(multiResult(new File('file4.js', 'file4')));
 
       // Act
       const outputFiles = await sut.transpile(input);
 
       // Assert
-      expectFilesEqual(outputFiles, [
-        input[0],
-        new File('file2.js', 'file2'),
-        new File('file4.js', 'file4')
-      ]);
+      expectFilesEqual(outputFiles, [input[0], new File('file2.js', 'file2'), new File('file4.js', 'file4')]);
     });
 
     it('should not transpile header files', async () => {
       // Arrange
-      const input = [
-        new File('file1.ts', ''),
-        new File('file2.d.ts', ''),
-      ];
+      const input = [new File('file1.ts', ''), new File('file2.d.ts', '')];
       arrangeIncludedFiles();
       languageService.emit.returns(multiResult(new File('file1.js', '')));
 
@@ -120,11 +103,11 @@ describe(TypescriptTranspiler.name, () => {
     });
   });
 
-  function expectFilesEqual(actual: ReadonlyArray<File>, expected: ReadonlyArray<File>) {
+  function expectFilesEqual(actual: readonly File[], expected: readonly File[]) {
     expect(serialize(orderByName(actual))).eq(serialize(orderByName(expected)));
   }
 
-  function orderByName(files: ReadonlyArray<File>) {
+  function orderByName(files: readonly File[]) {
     files.slice().sort((a, b) => a.name.localeCompare(b.name));
   }
 

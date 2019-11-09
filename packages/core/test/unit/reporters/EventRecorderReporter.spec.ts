@@ -9,7 +9,6 @@ import StrictReporter from '../../../src/reporters/StrictReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
 describe('EventRecorderReporter', () => {
-
   let sut: StrictReporter;
   let cleanFolderStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
@@ -20,7 +19,6 @@ describe('EventRecorderReporter', () => {
   });
 
   describe('when constructed with empty options', () => {
-
     describe('and cleanFolder resolves correctly', () => {
       beforeEach(() => {
         cleanFolderStub.returns(Promise.resolve());
@@ -28,7 +26,9 @@ describe('EventRecorderReporter', () => {
       });
 
       it('should log about the default baseFolder', () => {
-        expect(testInjector.logger.debug).to.have.been.calledWith(`No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events`);
+        expect(testInjector.logger.debug).to.have.been.calledWith(
+          "No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events"
+        );
       });
 
       it('should clean the baseFolder', () => {
@@ -37,15 +37,15 @@ describe('EventRecorderReporter', () => {
 
       const arrangeActAssertEvent = (eventName: keyof Reporter) => {
         describe(`${eventName} event`, () => {
-
           let writeFileRejection: undefined | Error;
           const expected: any = { some: 'eventData' };
 
-          const arrange = () => beforeEach(() => {
-            writeFileRejection = undefined;
-            (sut[eventName] as any)(expected);
-            return (sut.wrapUp() as Promise<void>).then(() => void 0, error => writeFileRejection = error);
-          });
+          const arrange = () =>
+            beforeEach(() => {
+              writeFileRejection = undefined;
+              (sut[eventName] as any)(expected);
+              return (sut.wrapUp() as Promise<void>).then(() => void 0, error => (writeFileRejection = error));
+            });
 
           describe('when writeFile results in a rejection', () => {
             const expectedError = new Error('some error');
@@ -57,7 +57,8 @@ describe('EventRecorderReporter', () => {
 
           describe('when writeFile is successful', () => {
             arrange();
-            it('should writeFile', () => expect(fsAsPromised.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
+            it('should writeFile', () =>
+              expect(fsAsPromised.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
           });
         });
       };

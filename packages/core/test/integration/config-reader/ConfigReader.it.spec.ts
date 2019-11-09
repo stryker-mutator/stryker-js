@@ -8,19 +8,15 @@ import ConfigReader from '../../../src/config/ConfigReader';
 import { coreTokens } from '../../../src/di';
 
 describe(ConfigReader.name, () => {
-
   let sut: ConfigReader;
 
   function createSut(cliOptions: Partial<StrykerOptions>): ConfigReader {
-    return testInjector.injector
-      .provideValue(coreTokens.cliOptions, cliOptions)
-      .injectClass(ConfigReader);
+    return testInjector.injector.provideValue(coreTokens.cliOptions, cliOptions).injectClass(ConfigReader);
   }
 
   describe('readConfig()', () => {
     let result: Config;
     describe('without config file', () => {
-
       beforeEach(() => {
         sut = createSut({ some: 'option', someOther: 2 });
         result = sut.readConfig();
@@ -99,7 +95,6 @@ describe(ConfigReader.name, () => {
     });
 
     describe('with an existing file, but not a function', () => {
-
       beforeEach(() => {
         sut = createSut({ configFile: 'testResources/config-reader/invalid.conf.js' });
       });
@@ -120,7 +115,6 @@ describe(ConfigReader.name, () => {
     });
 
     describe('with an existing file, but has syntax errors', () => {
-
       beforeEach(() => {
         sut = createSut({ configFile: 'testResources/config-reader/syntax-error.conf.js' });
       });

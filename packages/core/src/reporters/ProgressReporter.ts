@@ -5,10 +5,9 @@ import ProgressKeeper from './ProgressKeeper';
 export default class ProgressBarReporter extends ProgressKeeper {
   private progressBar: ProgressBar;
 
-  public onAllMutantsMatchedWithTests(matchedMutants: ReadonlyArray<MatchedMutant>): void {
+  public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
-    const progressBarContent =
-      `Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived)`;
+    const progressBarContent = 'Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
 
     this.progressBar = new ProgressBar(progressBarContent, {
       complete: '=',

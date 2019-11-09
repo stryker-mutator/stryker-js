@@ -15,15 +15,15 @@
   "name": "polymer-project",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@polymer/iron-demo-helpers": "^3.1.0",
-    "@polymer/iron-icon": "^3.0.1",
-    "@polymer/iron-icons": "^3.0.1",
-    "@polymer/iron-test-helpers": "^3.0.1",
-    "@polymer/test-fixture": "^4.0.2",
-    "@webcomponents/webcomponentsjs": "^2.2.10",
-    "wct-browser-legacy": "^1.0.2",
-    "web-component-tester": "6.9.2",
-    "webmat": "^0.2.2"
+    "@polymer/iron-demo-helpers": "~3.1.0",
+    "@polymer/iron-icon": "~3.0.1",
+    "@polymer/iron-icons": "~3.0.1",
+    "@polymer/iron-test-helpers": "~3.0.1",
+    "@polymer/test-fixture": "~4.0.2",
+    "@webcomponents/webcomponentsjs": "~2.3.0",
+    "wct-browser-legacy": "~1.0.2",
+    "web-component-tester": "~6.9.2",
+    "webmat": "~0.2.2"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
@@ -44,9 +44,9 @@
   "main": "paper-button.js",
   "author": "The Polymer Authors",
   "dependencies": {
-    "@polymer/polymer": "^3.3.0",
-    "@polymer/iron-flex-layout": "^3.0.1",
-    "@polymer/paper-behaviors": "^3.0.1",
-    "@polymer/paper-styles": "^3.0.1"
+    "@polymer/polymer": "~3.3.0",
+    "@polymer/iron-flex-layout": "~3.0.1",
+    "@polymer/paper-behaviors": "~3.0.1",
+    "@polymer/paper-styles": "~3.0.1"
   }
 }

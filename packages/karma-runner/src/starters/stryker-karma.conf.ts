@@ -22,7 +22,9 @@ function setUserKarmaConfigFile(config: Config, log: Logger) {
       config.configFile = configFileName; // override config to ensure karma is as user-like as possible
     } catch (error) {
       if (error.code === 'MODULE_NOT_FOUND') {
-        log.error(`Unable to find karma config at "${globalSettings.karmaConfigFile}" (tried to load from ${configFileName}). Please check your stryker config. You might need to make sure the file is included in the sandbox directory.`);
+        log.error(
+          `Unable to find karma config at "${globalSettings.karmaConfigFile}" (tried to load from ${configFileName}). Please check your stryker config. You might need to make sure the file is included in the sandbox directory.`
+        );
       } else {
         log.error(`Could not read karma configuration from ${globalSettings.karmaConfigFile}.`, error);
       }
@@ -93,18 +95,42 @@ function configureStrykerReporter(config: Config) {
 }
 
 const noopLogger = {
-  isTraceEnabled() { return false; },
-  isDebugEnabled() { return false; },
-  isInfoEnabled() { return false; },
-  isWarnEnabled() { return false; },
-  isErrorEnabled() { return false; },
-  isFatalEnabled() { return false; },
-  trace() { },
-  debug() { },
-  info() { },
-  warn() { },
-  error() { },
-  fatal() { }
+  isTraceEnabled() {
+    return false;
+  },
+  isDebugEnabled() {
+    return false;
+  },
+  isInfoEnabled() {
+    return false;
+  },
+  isWarnEnabled() {
+    return false;
+  },
+  isErrorEnabled() {
+    return false;
+  },
+  isFatalEnabled() {
+    return false;
+  },
+  trace() {
+    // noop
+  },
+  debug() {
+    // noop
+  },
+  info() {
+    // noop
+  },
+  warn() {
+    // noop
+  },
+  error() {
+    // noop
+  },
+  fatal() {
+    // noop
+  }
 };
 
 const globalSettings: {
@@ -117,16 +143,18 @@ const globalSettings: {
   }
 };
 
-export = Object.assign((config: Config) => {
-  const log = globalSettings.getLogger(path.basename(__filename));
-  setDefaultOptions(config);
-  setUserKarmaConfigFile(config, log);
-  setUserKarmaConfig(config);
-  setBasePath(config);
-  setLifeCycleOptions(config);
-  configureTestHooksMiddleware(config);
-  configureStrykerReporter(config);
-}, {
+export = Object.assign(
+  (config: Config) => {
+    const log = globalSettings.getLogger(path.basename(__filename));
+    setDefaultOptions(config);
+    setUserKarmaConfigFile(config, log);
+    setUserKarmaConfig(config);
+    setBasePath(config);
+    setLifeCycleOptions(config);
+    configureTestHooksMiddleware(config);
+    configureStrykerReporter(config);
+  },
+  {
     /**
      * Provide global settings for next configuration
      * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
@@ -137,4 +165,5 @@ export = Object.assign((config: Config) => {
       globalSettings.karmaConfigFile = globals.karmaConfigFile;
       globalSettings.getLogger = globals.getLogger || (() => noopLogger);
     }
-  });
+  }
+);

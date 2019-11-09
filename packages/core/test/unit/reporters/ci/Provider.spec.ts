@@ -21,7 +21,7 @@ describe('determineCiProvider()', () => {
     });
   });
 
-  describe('When HAS_JOSH_K_SEAL_OF_APPROVAL is \'true\'', () => {
+  describe("When HAS_JOSH_K_SEAL_OF_APPROVAL is 'true'", () => {
     it('should provide a CI Provider implementation', () => {
       getEnvironmentVariables.withArgs('HAS_JOSH_K_SEAL_OF_APPROVAL').returns(true);
 
@@ -31,7 +31,7 @@ describe('determineCiProvider()', () => {
     });
   });
 
-  describe('When CIRCLECI is \'true\'', () => {
+  describe("When CIRCLECI is 'true'", () => {
     it('should provide a CI Provider implementation', () => {
       getEnvironmentVariables.withArgs('CIRCLECI').returns(true);
 

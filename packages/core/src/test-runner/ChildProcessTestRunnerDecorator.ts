@@ -12,21 +12,17 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
  * Runs the given test runner in a child process and forwards reports about test results
  */
 export default class ChildProcessTestRunnerDecorator implements TestRunner {
-
   private readonly worker: ChildProcessProxy<ChildProcessTestRunnerWorker>;
 
-  constructor(
-    options: StrykerOptions,
-    sandboxFileNames: ReadonlyArray<string>,
-    sandboxWorkingDirectory: string,
-    loggingContext: LoggingClientContext) {
+  constructor(options: StrykerOptions, sandboxFileNames: readonly string[], sandboxWorkingDirectory: string, loggingContext: LoggingClientContext) {
     this.worker = ChildProcessProxy.create(
       require.resolve(`./${ChildProcessTestRunnerWorker.name}`),
       loggingContext,
       options,
       { sandboxFileNames },
       sandboxWorkingDirectory,
-      ChildProcessTestRunnerWorker);
+      ChildProcessTestRunnerWorker
+    );
   }
 
   public init(): Promise<void> {
@@ -38,7 +34,6 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
-
     await timeout(
       // First let the inner test runner dispose
       this.worker.proxy.dispose().catch(error => {

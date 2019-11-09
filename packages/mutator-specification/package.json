@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/mutator-specification",
-  "version": "2.1.0",
+  "version": "2.2.1",
   "description": "A package for maintaining common mutator specifications for Stryker - the JavaScript mutation testing framework",
   "scripts": {
     "start": "tsc -w",

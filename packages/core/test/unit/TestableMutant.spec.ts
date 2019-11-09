@@ -5,8 +5,7 @@ import { expect } from 'chai';
 import SourceFile from '../../src/SourceFile';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 
-describe('TestableMutant', () => {
-
+describe(TestableMutant.name, () => {
   let innerMutant: Mutant;
 
   beforeEach(() => {
@@ -25,10 +24,22 @@ describe('TestableMutant', () => {
 
   it('should reflect timeSpentScopedTests, scopedTestIds and TestSelectionResult', () => {
     const sut = new TestableMutant('3', innerMutant, new SourceFile(new File('foobar.js', 'alert("foobar")')));
-    sut.selectAllTests(runResult({ tests: [testResult({ name: 'spec1', timeSpentMs: 12 }), testResult({ name: 'spec2', timeSpentMs: 42 })] }), TestSelectionResult.FailedButAlreadyReported);
+    sut.selectAllTests(
+      runResult({ tests: [testResult({ name: 'spec1', timeSpentMs: 12 }), testResult({ name: 'spec2', timeSpentMs: 42 })] }),
+      TestSelectionResult.FailedButAlreadyReported
+    );
     expect(sut.timeSpentScopedTests).eq(54);
-    expect(sut.selectedTests).deep.eq([{ id: 0, name: 'spec1' }, { id: 1, name: 'spec2' }]);
+    expect(sut.runAllTests).true;
     expect(sut.testSelectionResult).eq(TestSelectionResult.FailedButAlreadyReported);
+  });
+
+  it('should scope tests when selecting individual tests', () => {
+    const sut = new TestableMutant('3', innerMutant, new SourceFile(new File('foobar.js', 'alert("foobar")')));
+    sut.selectTest(testResult({ name: 'spec1', timeSpentMs: 12 }), 0);
+    sut.selectTest(testResult({ name: 'spec3', timeSpentMs: 32 }), 2);
+    expect(sut.timeSpentScopedTests).eq(44);
+    expect(sut.selectedTests).deep.eq([{ id: 0, name: 'spec1' }, { id: 2, name: 'spec3' }]);
+    expect(sut.testSelectionResult).eq(TestSelectionResult.Success);
   });
 
   it('should calculate position using sourceFile', () => {

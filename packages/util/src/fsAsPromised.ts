@@ -16,5 +16,5 @@ export default {
   readFile: promisify(fs.readFile),
   stat: promisify(fs.stat),
   symlink: promisify(fs.symlink),
-  writeFile: promisify(fs.writeFile),
+  writeFile: promisify(fs.writeFile)
 };

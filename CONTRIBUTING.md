@@ -19,10 +19,10 @@ Get in touch with us through twitter or via the [Stryker gitter](https://gitter.
 
 ## Code style
 
-Please adhere to our [editorconfig](https://editorconfig.org) and [tslint](https://palantir.github.io/tslint/) rules. If you're using vscode, please install the following extensions:
+Please adhere to our [editorconfig](https://editorconfig.org) and [eslint](https://eslint.org/) rules. If you're using vscode, please install the following extensions:
 
 * The [editorconfig extension](https://github.com/editorconfig/editorconfig-vscode#editorconfig-for-visual-studio-code)
-* The [tslint extension](https://github.com/Microsoft/vscode-tslint) (at least v1.0.0)
+* The [eslint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
 We configured the tslint extension to run on save in or [vscode workspace](#vscode-environment-configuration).
 
@@ -50,7 +50,7 @@ We've chosen to **check in in our vscode configuration**. This makes development
 We recommend you to install the following plugins:
 
 * [editorconfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig), to adhere to our white spacing rules.
-* [tslint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin), to adhere to our tslint rules (as well as having auto fix-on-save)
+* [eslint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 * [code spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), no particular reason, just prevent common typo's.
 
 After cloning this repo, open the workspace with `$ code workspace.code-workspace` (or open code and use file -> Open Workspace...).
@@ -58,7 +58,7 @@ After cloning this repo, open the workspace with `$ code workspace.code-workspac
 Some quick notes to help you get started:
 
 1. On the left side, you can see all stryker projects and plugins. Open files from there.
-1. Use `CTRL+B` (or `⌘+B` on OSX) to run the *build task*. This runs `npm start`, compiling any changes you make in the background.
+1. Use `CTRL+Shift+B` (or `⌘+Shift+B` on OSX) to run the *build task*. This runs `npm start`, compiling any changes you make in the background.
 1. Use `CTRL+Shift+D` (or `⌘⇧D` on OSX) to open up the *debug* pane. Here you can select a config to run. For example: select "Unit tests (stryker-api)" to run the unit tests for the `stryker-api` package. 
   * You can run the tests with `CTRL+F5` (or `⌃F5` on OSX).
   * You can debug the tests with `F5` (also `F5` on OSX). Setting breakpoints in your code and inspecting variables all work as expected.
@@ -81,8 +81,8 @@ New features are welcome! Either as requests or proposals.
 1. Create a fork on your github account.
 1. When writing your code, please conform to the existing coding style.
    See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
-    * You can check if there are lint issues using `npm run lint-info`. Output will be in root folder in `tslint.log` file. 
-    * You can automatically fix a lot of lint issues using `npm run lint-fix`
+    * You can check if there are lint issues using `npm run lint:log`. Output will be in root folder in `lint.log` file. 
+    * You can automatically fix a lot of lint issues using `npm run lint:fix`
 1. Please create or edit unit tests or integration tests.
 1. Run the tests using `npm test`
 1. When creating commits, please conform to [the angular commit message style](https://docs.google.com/document/d/1rk04jEuGfk9kYzfqCuOlPTSJw3hEDZJTBN5E5f1SALo/edit).

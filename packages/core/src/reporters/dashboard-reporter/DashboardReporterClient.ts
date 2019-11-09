@@ -14,21 +14,17 @@ export interface StrykerDashboardReport {
 const URL_STRYKER_DASHBOARD_REPORTER = 'https://dashboard.stryker-mutator.io/api/reports';
 
 export default class DashboardReporterClient {
-
   public static inject = tokens(commonTokens.logger, dashboardReporterTokens.httpClient);
-  constructor(
-    private readonly log: Logger,
-    private readonly dashboardReporterClient: HttpClient) {
-  }
+  constructor(private readonly log: Logger, private readonly dashboardReporterClient: HttpClient) {}
 
   public postStrykerDashboardReport(report: StrykerDashboardReport): Promise<void> {
     this.log.info(`Posting report to ${URL_STRYKER_DASHBOARD_REPORTER}`);
     const reportString = JSON.stringify(report);
     this.log.debug('Posting data %s', reportString);
-    return this.dashboardReporterClient.post(URL_STRYKER_DASHBOARD_REPORTER, reportString,
-    {
-      ['Content-Type']: 'application/json'
-    })
+    return this.dashboardReporterClient
+      .post(URL_STRYKER_DASHBOARD_REPORTER, reportString, {
+        ['Content-Type']: 'application/json'
+      })
       .then(body => {
         const statusCode = body.message.statusCode;
         if (statusCode !== 201) {

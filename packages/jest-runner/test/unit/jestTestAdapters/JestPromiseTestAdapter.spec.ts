@@ -14,10 +14,12 @@ describe(JestPromiseTestAdapter.name, () => {
 
   beforeEach(() => {
     runCLIStub = sinon.stub(jest, 'runCLI');
-    runCLIStub.callsFake((config: object) => Promise.resolve({
-      config,
-      result: 'testResult'
-    }));
+    runCLIStub.callsFake((config: object) =>
+      Promise.resolve({
+        config,
+        result: 'testResult'
+      })
+    );
 
     sut = testInjector.injector.injectClass(JestPromiseTestAdapter);
   });
@@ -31,23 +33,33 @@ describe(JestPromiseTestAdapter.name, () => {
   it('should call the runCLI method with the correct projectRoot', async () => {
     await sut.run(jestConfig, projectRoot);
 
-    assert(runCLIStub.calledWith({
-      config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
-      runInBand: true,
-      silent: true
-    }, [projectRoot]));
+    assert(
+      runCLIStub.calledWith(
+        {
+          config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+          runInBand: true,
+          silent: true
+        },
+        [projectRoot]
+      )
+    );
   });
 
   it('should call the runCLI method with the --findRelatedTests flag', async () => {
     await sut.run(jestConfig, projectRoot, fileNameUnderTest);
 
-    assert(runCLIStub.calledWith({
-      _: [fileNameUnderTest],
-      config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
-      findRelatedTests: true,
-      runInBand: true,
-      silent: true
-    }, [projectRoot]));
+    assert(
+      runCLIStub.calledWith(
+        {
+          _: [fileNameUnderTest],
+          config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+          findRelatedTests: true,
+          runInBand: true,
+          silent: true
+        },
+        [projectRoot]
+      )
+    );
   });
 
   it('should call the runCLI method and return the test result', async () => {

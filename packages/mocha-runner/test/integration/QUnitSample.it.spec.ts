@@ -14,9 +14,7 @@ describe('QUnit sample', () => {
   });
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(commonTokens.sandboxFileNames, files)
-      .injectClass(MochaTestRunner);
+    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, files).injectClass(MochaTestRunner);
   }
 
   it('should work when configured with "qunit" ui', async () => {
@@ -41,14 +39,9 @@ describe('QUnit sample', () => {
   });
 
   it('should not run tests when not configured with "qunit" ui', async () => {
-    files = [
-      resolve('./testResources/qunit-sample/MyMathSpec.js'),
-      resolve('./testResources/qunit-sample/MyMath.js')
-    ];
+    files = [resolve('./testResources/qunit-sample/MyMathSpec.js'), resolve('./testResources/qunit-sample/MyMath.js')];
     testInjector.options.mochaOptions = createMochaOptions({
-      files: [
-        resolve('./testResources/qunit-sample/MyMathSpec.js')
-      ]
+      files: [resolve('./testResources/qunit-sample/MyMathSpec.js')]
     });
     const sut = createSut();
     await sut.init();

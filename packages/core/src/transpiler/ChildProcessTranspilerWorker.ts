@@ -16,7 +16,7 @@ export class ChildProcessTranspilerWorker implements Transpiler {
       .injectClass(TranspilerFacade);
   }
 
-  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
+  public transpile(files: readonly File[]): Promise<readonly File[]> {
     return this.innerTranspiler.transpile(files);
   }
 }

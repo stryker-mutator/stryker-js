@@ -1,10 +1,7 @@
 import { expect } from 'chai';
 import ExpectMutation from './ExpectMutation';
 
-export default function BlockMutatorSpec(
-  name: string,
-  expectMutation: ExpectMutation
-) {
+export default function BlockMutatorSpec(name: string, expectMutation: ExpectMutation) {
   describe('BlockMutator', () => {
     it('should have name "Block"', () => {
       expect(name).eq('Block');
@@ -36,10 +33,7 @@ export default function BlockMutatorSpec(
     });
 
     it('should mutate the body of a case statement if defined as a block', () => {
-      expectMutation(
-        'switch (v) { case 42: { a = "spam"; break; } }',
-        'switch (v) { case 42: {} }'
-      );
+      expectMutation('switch (v) { case 42: { a = "spam"; break; } }', 'switch (v) { case 42: {} }');
     });
 
     // object tests

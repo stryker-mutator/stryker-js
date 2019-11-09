@@ -9,7 +9,6 @@ import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/TestHook
 import * as utils from '../../../src/utils';
 
 describe('stryker-karma.conf.js', () => {
-
   let getLogger: sinon.SinonStub;
   let requireModuleStub: sinon.SinonStub;
   let config: Config;
@@ -44,9 +43,11 @@ describe('stryker-karma.conf.js', () => {
 
   it('should set user configuration from a custom karma.conf.js file', () => {
     // Arrange
-    requireModuleStub.returns((conf: Config) => conf.set({
-      basePath: 'foobar'
-    }));
+    requireModuleStub.returns((conf: Config) =>
+      conf.set({
+        basePath: 'foobar'
+      })
+    );
     sut.setGlobals({ karmaConfigFile: 'foobar.conf.js' });
 
     // Act
@@ -69,7 +70,9 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
 
     // Assert
-    expect(testInjector.logger.error).calledWithMatch(`Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`);
+    expect(testInjector.logger.error).calledWithMatch(
+      `Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`
+    );
     expect(requireModuleStub).calledWith(path.resolve(expectedKarmaConfigFile));
   });
 
@@ -79,7 +82,7 @@ describe('stryker-karma.conf.js', () => {
     expect(config).deep.include({ basePath: 'foobar' });
   });
 
-  it('should force some options that relate to karma\'s life cycle', () => {
+  it("should force some options that relate to karma's life cycle", () => {
     config.set({ browserNoActivityTimeout: 1, autoWatch: true, singleRun: true, detached: true });
     sut(config);
     expect(config).deep.include({
@@ -114,7 +117,9 @@ describe('stryker-karma.conf.js', () => {
 
   it('should set basePath to location of karma.conf.js', () => {
     sut.setGlobals({ karmaConfigFile: '../foobar.conf.js' });
-    requireModuleStub.returns(() => { /* noop */ });
+    requireModuleStub.returns(() => {
+      /* noop */
+    });
     sut(config);
     expect(config).deep.include({
       basePath: path.resolve('../'),

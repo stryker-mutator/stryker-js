@@ -22,13 +22,15 @@ export default class TranspilingLanguageService {
   private readonly files: ts.MapLike<ScriptFile> = Object.create(null);
   private readonly diagnosticsFormatter: ts.FormatDiagnosticsHost;
 
-  constructor(compilerOptions: Readonly<ts.CompilerOptions>,
-              rootFiles: ReadonlyArray<File>,
-              private readonly projectDirectory: string,
-              private readonly produceSourceMaps: boolean,
-              getLogger: LoggerFactoryMethod) {
+  constructor(
+    compilerOptions: Readonly<ts.CompilerOptions>,
+    rootFiles: readonly File[],
+    private readonly projectDirectory: string,
+    private readonly produceSourceMaps: boolean,
+    getLogger: LoggerFactoryMethod
+  ) {
     this.compilerOptions = this.adaptCompilerOptions(compilerOptions);
-    rootFiles.forEach(file => this.files[file.name] = new ScriptFile(file.name, file.textContent));
+    rootFiles.forEach(file => (this.files[file.name] = new ScriptFile(file.name, file.textContent)));
     const host = this.createLanguageServiceHost();
     this.languageService = ts.createLanguageService(host);
     this.logger = getLogger(TranspilingLanguageService.name);
@@ -56,12 +58,11 @@ export default class TranspilingLanguageService {
    * Replaces the content of the given text files
    * @param mutantCandidate The mutant used to replace the original source
    */
-  public replace(replacements: ReadonlyArray<File>) {
-    replacements.forEach(replacement =>
-      this.files[replacement.name].replace(replacement.textContent));
+  public replace(replacements: readonly File[]) {
+    replacements.forEach(replacement => this.files[replacement.name].replace(replacement.textContent));
   }
 
-  public getSemanticDiagnostics(files: ReadonlyArray<File>) {
+  public getSemanticDiagnostics(files: readonly File[]) {
     const fileNames = files.map(file => file.name);
     const errors = flatMap(fileNames, fileName => this.languageService.getSemanticDiagnostics(normalizeFileForTypescript(fileName)));
     return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
@@ -123,13 +124,13 @@ export default class TranspilingLanguageService {
   }
 
   private resolveFileName(fileName: string) {
-    if (fileName.match(libRegex)) {
+    if (libRegex.exec(fileName)) {
       const typescriptLocation = require.resolve('typescript');
       const newFileName = path.resolve(path.dirname(typescriptLocation), fileName);
       this.logger.debug(`Resolving lib file ${fileName} to ${newFileName}`);
       return newFileName;
-    } else {
-      return fileName;
     }
+
+    return fileName;
   }
 }

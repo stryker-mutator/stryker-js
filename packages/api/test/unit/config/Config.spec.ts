@@ -3,11 +3,10 @@ import * as minimatch from 'minimatch';
 import { Config } from '../../../config';
 
 describe('Config', () => {
-
   let sut: Config;
   const defaultThresholds = Object.freeze({ high: 80, low: 60, break: null });
 
-  beforeEach(() => sut = new Config());
+  beforeEach(() => (sut = new Config()));
 
   describe('defaults', () => {
     it('should set default thresholds as expected', () => {
@@ -16,7 +15,6 @@ describe('Config', () => {
   });
 
   describe('set', () => {
-
     it('should override values', () => {
       const expectedFiles = ['a file'];
       sut.set({ files: expectedFiles });
@@ -36,7 +34,6 @@ describe('Config', () => {
   });
 
   describe('default value for `mutate` property', () => {
-
     let defaultMutatePatterns: string[];
 
     beforeEach(() => {

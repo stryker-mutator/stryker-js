@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as babel from './helpers/babelWrapper';
 
 export interface StrykerBabelConfig {
-  extensions: ReadonlyArray<string>;
+  extensions: readonly string[];
   options: babel.TransformOptions;
   optionsFile: string | null;
   optionsApi?: Partial<babel.ConfigAPI>;
@@ -24,10 +24,8 @@ const DEFAULT_BABEL_CONFIG: Readonly<StrykerBabelConfig> = Object.freeze({
 });
 
 export class BabelConfigReader {
-
   public static inject = tokens(commonTokens.logger);
-  constructor(private readonly log: Logger) {
-  }
+  constructor(private readonly log: Logger) {}
 
   public readConfig(strykerOptions: StrykerOptions): StrykerBabelConfig {
     const babelConfig: StrykerBabelConfig = {
@@ -52,8 +50,13 @@ export class BabelConfigReader {
             return require(babelrcPath) as babel.TransformOptions;
           }
           if (path.basename(babelrcPath) === 'babel.config.js') {
-            const config: babel.ConfigFunction = require(babelrcPath);
-            return config(optionsApi as babel.ConfigAPI);
+            const config = require(babelrcPath);
+            if (typeof config === 'function') {
+              const configFunction = config as babel.ConfigFunction;
+              return configFunction(optionsApi as babel.ConfigAPI);
+            } else {
+              return config as babel.TransformOptions;
+            }
           }
           return JSON.parse(fs.readFileSync(babelrcPath, 'utf8')) as babel.TransformOptions;
         } catch (error) {

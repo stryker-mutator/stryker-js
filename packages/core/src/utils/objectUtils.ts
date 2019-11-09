@@ -1,29 +1,19 @@
-import * as _ from 'lodash';
 import treeKill = require('tree-kill');
 export { serialize, deserialize } from 'surrial';
 
-export function freezeRecursively<T extends { [prop: string]: any }>(
-  target: T
-): T {
+export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
   Object.freeze(target);
   Object.keys(target).forEach(key => {
-    if (_.isObject(target[key])) {
-      freezeRecursively(target[key]);
+    const value = target[key];
+    if (typeof value === 'object' && value !== null) {
+      freezeRecursively(value);
     }
   });
   return target;
 }
 
-export function filterEmpty<T>(input: (T | null | void)[]) {
+export function filterEmpty<T>(input: Array<T | null | void>) {
   return input.filter(item => item !== undefined && item !== null) as T[];
-}
-
-export function copy<T>(obj: T, deep?: boolean) {
-  if (deep) {
-    return _.cloneDeep(obj);
-  } else {
-    return _.clone(obj);
-  }
 }
 
 export function wrapInClosure(codeFragment: string) {
@@ -36,9 +26,7 @@ export function wrapInClosure(codeFragment: string) {
 /**
  * A wrapper around `process.env` (for testability)
  */
-export function getEnvironmentVariable(
-  nameEnvironmentVariable: string
-): string | undefined {
+export function getEnvironmentVariable(nameEnvironmentVariable: string): string | undefined {
   return process.env[nameEnvironmentVariable];
 }
 
@@ -72,10 +60,7 @@ export function kill(pid: number): Promise<void> {
 }
 
 export const TimeoutExpired: unique symbol = Symbol('TimeoutExpired');
-export function timeout<T>(
-  promise: Promise<T>,
-  ms: number
-): Promise<T | typeof TimeoutExpired> {
+export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof TimeoutExpired> {
   const sleep = new Promise<T | typeof TimeoutExpired>((res, rej) => {
     const timer = setTimeout(() => res(TimeoutExpired), ms);
     promise

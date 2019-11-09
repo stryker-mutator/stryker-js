@@ -1,18 +1,17 @@
 {
   "presets": [
-    ["env", {
-      "modules": false,
-      "targets": {
-        "browsers": ["> 1%", "last 2 versions", "not ie <= 8"]
+    [
+      "@babel/preset-env",
+      {
+        "modules": false,
+        "targets": {
+          "browsers": ["> 1%", "last 2 versions"]
+        }
       }
-    }],
-    "stage-2"
+    ]
   ],
-  "plugins": ["transform-vue-jsx", "transform-runtime"],
-  "env": {
-    "test": {
-      "presets": ["env", "stage-2"],
-      "plugins": ["transform-vue-jsx", "istanbul"]
-    }
-  }
+  "plugins": [
+    "@babel/plugin-syntax-dynamic-import",
+    "istanbul"
+  ]
 }

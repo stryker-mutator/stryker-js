@@ -33,7 +33,6 @@ import RunResult from './RunResult';
  * If it doesn't exists globally, you don't have to do anything. In that case it's not an initial test run and there was no code instrumented.
  */
 interface TestRunner {
-
   /**
    * Optional. When implemented, will be called before runs are done on this test runner.
    * @returns A promise if stuff is initialized asynchronously, runs will not start until the promise is resolved.

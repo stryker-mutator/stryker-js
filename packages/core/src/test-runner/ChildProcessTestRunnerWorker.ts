@@ -5,11 +5,10 @@ import { errorToString } from '@stryker-mutator/util';
 import { PluginCreator } from '../di';
 
 export class ChildProcessTestRunnerWorker implements TestRunner {
-
   private readonly underlyingTestRunner: TestRunner;
 
   public static inject = tokens(commonTokens.sandboxFileNames, commonTokens.options, commonTokens.injector);
-  constructor(sandboxFileNames: ReadonlyArray<string>, { testRunner }: StrykerOptions, injector: Injector<OptionsContext>) {
+  constructor(sandboxFileNames: readonly string[], { testRunner }: StrykerOptions, injector: Injector<OptionsContext>) {
     this.underlyingTestRunner = injector
       .provideValue(commonTokens.sandboxFileNames, sandboxFileNames)
       .injectFunction(PluginCreator.createFactory(PluginKind.TestRunner))

@@ -6,7 +6,7 @@ import JestConfigLoader from './JestConfigLoader';
 export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
   private readonly projectRoot: string;
 
-  public constructor(projectRoot: string, private readonly resolve: RequireResolve = require.resolve) {
+  constructor(projectRoot: string, private readonly resolve: RequireResolve = require.resolve) {
     this.projectRoot = projectRoot;
   }
 
@@ -22,11 +22,9 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
       jestConfiguration.testEnvironment = 'jsdom';
 
       return jestConfiguration;
-    }
-    catch (e) {
+    } catch (e) {
       if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
-        throw Error('Unable to locate package react-scripts. ' +
-          'This package is required when projectType is set to "react".');
+        throw Error('Unable to locate package react-scripts. This package is required when projectType is set to "react".');
       }
       throw e;
     }
@@ -37,10 +35,6 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
   }
 
   private createJestConfig(reactScriptsLocation: string): jest.Configuration {
-    return createReactJestConfig(
-      (relativePath: string): string => path.join(reactScriptsLocation, relativePath),
-      this.projectRoot,
-      false
-    );
+    return createReactJestConfig((relativePath: string): string => path.join(reactScriptsLocation, relativePath), this.projectRoot, false);
   }
 }
