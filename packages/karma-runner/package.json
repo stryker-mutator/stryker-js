@@ -36,7 +36,7 @@
     "@stryker-mutator/util": "^2.2.1",
     "@types/express": "~4.17.0",
     "@types/semver": "~6.2.0",
-    "jasmine-core": "~3.4.0",
+    "jasmine-core": "~3.5.0",
     "karma": "~4.1.0",
     "karma-jasmine": "~2.0.0",
     "karma-phantomjs-launcher": "~1.0.4"
