@@ -36,7 +36,7 @@ It will run stryker with default values:
 $ npx stryker <command> [options] [stryker.conf.js]
 ```
 
-The main `command` for Stryker is `run`, which kicks off mutation testing.
+The main `command` for Stryker is `run`, which kicks off mutation testing. Anonymous user statistics will be collected, unless you turn this off in the configuration.
 
 Although Stryker can run without any configuration, it is recommended to configure it when you can, as it can greatly improve performance of the mutation testing process. By default, Stryker will look for a `stryker.conf.js` file in the current working directory (if it exists). This can be overridden by specifying a different file as the last parameter.
 
