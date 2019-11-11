@@ -1,6 +1,8 @@
+import * as path from 'path';
+
 import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import OutputFileSystem from '../../../src/fs/OutputFileSystem';
 
 describe('OutputFileSystem', () => {

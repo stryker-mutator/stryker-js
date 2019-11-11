@@ -1,11 +1,15 @@
-import { File } from '@stryker-mutator/api/core';
-import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import * as fs from 'fs';
-import flatMap = require('lodash.flatmap');
 import * as os from 'os';
 import * as path from 'path';
+
+import flatMap = require('lodash.flatmap');
+
+import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { File } from '@stryker-mutator/api/core';
 import * as ts from 'typescript';
+
 import { isJavaScriptFile, isMapFile, normalizeFileForTypescript, normalizeFileFromTypescript } from '../helpers/tsHelpers';
+
 import ScriptFile from './ScriptFile';
 
 const libRegex = /^lib\.(?:\w|\.)*\.?d\.ts$/;

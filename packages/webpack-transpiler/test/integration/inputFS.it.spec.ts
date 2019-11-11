@@ -1,5 +1,7 @@
-import { expect } from 'chai';
 import * as path from 'path';
+
+import { expect } from 'chai';
+
 import InputFileSystem from '../../src/fs/InputFileSystem';
 
 function testResourcePath(...pathSegments: string[]) {

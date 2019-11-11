@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import * as sinon from 'sinon';
+
 import { AngularPreset } from '../../../src/initializer/presets/AngularPreset';
 import { ReactPreset } from '../../../src/initializer/presets/ReactPreset';
 import { VueJsPreset } from '../../../src/initializer/presets/VueJsPreset';

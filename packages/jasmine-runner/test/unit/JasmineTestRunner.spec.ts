@@ -1,8 +1,9 @@
 import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import Jasmine = require('jasmine');
+import Jasmine from 'jasmine';
 import * as sinon from 'sinon';
+
 import * as helpers from '../../src/helpers';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';

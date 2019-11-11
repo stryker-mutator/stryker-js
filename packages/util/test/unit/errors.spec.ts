@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import { errorToString } from '../../src/errors';
 
 describe('errors', () => {

@@ -4,8 +4,10 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
 import { steps } from 'web-component-tester';
 import { Context } from 'web-component-tester/runner/context';
+
 import WctLogger from './WctLogger';
 import WctReporter from './WctReporter';
+
 const WCT_PACKAGE = 'web-component-tester';
 const FORCED_WCT_OPTIONS = Object.freeze({
   persistent: false

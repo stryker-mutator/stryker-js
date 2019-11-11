@@ -1,9 +1,11 @@
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as path from 'path';
 import * as sinon from 'sinon';
+
 import ConfigReader from '../../../src/config/ConfigReader';
 import { coreTokens } from '../../../src/di';
 

@@ -2,6 +2,7 @@ import { File } from '@stryker-mutator/api/core';
 import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';

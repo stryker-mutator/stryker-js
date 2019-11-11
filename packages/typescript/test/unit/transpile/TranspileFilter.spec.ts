@@ -1,6 +1,8 @@
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import TranspileFilter, { DefaultFilter, TSConfigFilter } from '../../../src/transpiler/TranspileFilter';
 
 describe('TranspileFilter', () => {

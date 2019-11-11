@@ -3,6 +3,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, OptionsContext, PluginResolver } from '@stryker-mutator/api/plugin';
 import * as sinon from 'sinon';
 import { Injector, rootInjector, Scope } from 'typed-inject';
+
 import * as factory from './factory';
 
 class TestInjector {

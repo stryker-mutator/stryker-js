@@ -3,8 +3,9 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { CoverageCollection, CoveragePerTestResult, RunResult, RunStatus, TestResult, TestRunner } from '@stryker-mutator/api/test_runner';
 import * as karma from 'karma';
+
 import ProjectStarter from './starters/ProjectStarter';
-import strykerKarmaConf = require('./starters/stryker-karma.conf');
+import strykerKarmaConf from './starters/stryker-karma.conf';
 import StrykerKarmaSetup, { KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
 import StrykerReporter from './StrykerReporter';
 import TestHooksMiddleware from './TestHooksMiddleware';

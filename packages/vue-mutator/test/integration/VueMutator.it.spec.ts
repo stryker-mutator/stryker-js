@@ -5,6 +5,7 @@ import { strykerPlugins as javascriptMutatorStrykerPlugins } from '@stryker-muta
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { strykerPlugins as typescriptMutatorStrykerPlugins } from '@stryker-mutator/typescript';
 import { expect } from 'chai';
+
 import { strykerPlugins } from '../../src/index';
 
 const javascriptMutatorPlugin = javascriptMutatorStrykerPlugins.find(plugin => plugin.kind === PluginKind.Mutator);

@@ -1,9 +1,11 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { expect } from 'chai';
 import * as execa from 'execa';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as rimraf from 'rimraf';
+
 import MochaTestFramework from '../../src/MochaTestFramework';
 
 interface MochaTestRunResult {

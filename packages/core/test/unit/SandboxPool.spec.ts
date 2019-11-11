@@ -1,3 +1,5 @@
+import * as os from 'os';
+
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
@@ -6,10 +8,10 @@ import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { file, testFramework } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as os from 'os';
 import { from } from 'rxjs';
 import { toArray } from 'rxjs/operators';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../src/di';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import { InitialTestRunResult } from '../../src/process/InitialTestExecutor';

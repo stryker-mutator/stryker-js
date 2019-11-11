@@ -1,4 +1,5 @@
 import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+
 import JestConfigEditor from './JestConfigEditor';
 import { jestTestRunnerFactory } from './JestTestRunner';
 

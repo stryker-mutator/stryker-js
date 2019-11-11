@@ -1,8 +1,9 @@
 import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import * as semver from 'semver';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import * as ts from 'typescript';
+
 import * as tsHelpers from '../../../src/helpers/tsHelpers';
 
 describe('tsHelpers', () => {

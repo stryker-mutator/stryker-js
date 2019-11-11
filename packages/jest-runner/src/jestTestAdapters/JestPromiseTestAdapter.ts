@@ -1,6 +1,7 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import jest from 'jest';
+
 import JestTestAdapter from './JestTestAdapter';
 
 export default class JestPromiseTestAdapter implements JestTestAdapter {

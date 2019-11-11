@@ -1,12 +1,14 @@
+import * as path from 'path';
+
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import getPort = require('get-port');
+import getPort from 'get-port';
 import * as log4js from 'log4js';
-import * as path from 'path';
 import { filter } from 'rxjs/operators';
+
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
@@ -15,6 +17,7 @@ import LoggingServer from '../../helpers/LoggingServer';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 import { sleep } from '../../helpers/testUtils';
+
 import { Echo } from './Echo';
 
 describe(ChildProcessProxy.name, () => {

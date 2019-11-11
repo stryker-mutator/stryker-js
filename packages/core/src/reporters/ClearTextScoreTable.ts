@@ -1,8 +1,9 @@
+import * as os from 'os';
+
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import chalk from 'chalk';
-import flatMap = require('lodash.flatmap');
+import flatMap from 'lodash.flatmap';
 import { MetricsResult } from 'mutation-testing-metrics';
-import * as os from 'os';
 
 const FILES_ROOT_NAME = 'All files';
 

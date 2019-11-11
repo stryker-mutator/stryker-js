@@ -2,10 +2,12 @@ import { Config } from '@stryker-mutator/api/config';
 import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, PluginKind, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
-import { coreTokens, PluginCreator, PluginLoader } from '.';
+
 import { ConfigEditorApplier } from '../config';
 import TestFrameworkOrchestrator from '../TestFrameworkOrchestrator';
 import { freezeRecursively } from '../utils/objectUtils';
+
+import { coreTokens, PluginCreator, PluginLoader } from '.';
 
 export function pluginResolverFactory(
   injector: Injector<{ [commonTokens.logger]: Logger; [coreTokens.pluginDescriptors]: readonly string[] }>

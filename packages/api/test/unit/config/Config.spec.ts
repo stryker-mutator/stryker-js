@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import * as minimatch from 'minimatch';
+
 import { Config } from '../../../config';
 
 describe('Config', () => {

@@ -1,5 +1,6 @@
-import { Mutant } from '@stryker-mutator/api/mutant';
 import * as path from 'path';
+
+import { Mutant } from '@stryker-mutator/api/mutant';
 import * as ts from 'typescript';
 
 export interface NodeReplacement {

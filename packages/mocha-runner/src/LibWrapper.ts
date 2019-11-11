@@ -1,5 +1,6 @@
 import * as Mocha from 'mocha';
 import * as multimatch from 'multimatch';
+
 import { MochaOptions } from './MochaOptions';
 
 let loadOptions: undefined | ((argv?: string[] | string) => { [key: string]: any } | undefined);

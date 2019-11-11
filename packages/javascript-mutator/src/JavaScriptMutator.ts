@@ -3,10 +3,12 @@ import { File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+
 import BabelParser from './helpers/BabelParser';
 import copy from './helpers/copy';
 import { NodeMutator } from './mutators/NodeMutator';
 import { NODE_MUTATORS_TOKEN, PARSER_TOKEN } from './helpers/tokens';
+
 export class JavaScriptMutator implements Mutator {
   public static inject = tokens(commonTokens.logger, NODE_MUTATORS_TOKEN, PARSER_TOKEN);
   constructor(private readonly log: Logger, private readonly mutators: readonly NodeMutator[], private readonly parser: BabelParser) {}

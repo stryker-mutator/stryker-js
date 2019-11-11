@@ -1,6 +1,7 @@
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Transpiler } from '@stryker-mutator/api/transpile';
+
 import ConfigLoader from './compiler/ConfigLoader';
 import WebpackCompiler from './compiler/WebpackCompiler';
 import { pluginTokens } from './pluginTokens';

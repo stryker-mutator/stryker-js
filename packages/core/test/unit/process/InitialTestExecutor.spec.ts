@@ -1,3 +1,5 @@
+import { EOL } from 'os';
+
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
@@ -6,8 +8,8 @@ import { Transpiler } from '@stryker-mutator/api/transpile';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { runResult, testFramework, testResult, transpiler } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import { EOL } from 'os';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
@@ -140,7 +142,11 @@ describe('InitialTestExecutor run', () => {
       sut = createSut();
       await sut.run();
       const actualLogMessage: string = testInjector.logger.debug.getCall(0).args[0];
-      const expectedLogMessage = `Transpiled files: ${JSON.stringify(coverageAnnotatedFiles.map(_ => _.name), null, 2)}`;
+      const expectedLogMessage = `Transpiled files: ${JSON.stringify(
+        coverageAnnotatedFiles.map(_ => _.name),
+        null,
+        2
+      )}`;
       expect(actualLogMessage).eq(expectedLogMessage);
     });
 

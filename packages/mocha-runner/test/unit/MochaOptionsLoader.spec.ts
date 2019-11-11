@@ -1,8 +1,10 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as fs from 'fs';
-import * as path from 'path';
+
 import sinon = require('sinon');
 import LibWrapper from '../../src/LibWrapper';
 import { MochaOptions } from '../../src/MochaOptions';

@@ -1,5 +1,6 @@
 import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
 import { HttpClient } from 'typed-rest-client/HttpClient';
+
 import DashboardReporter from './DashboardReporter';
 import DashboardReporterClient from './DashboardReporterClient';
 import { dashboardReporterTokens } from './tokens';

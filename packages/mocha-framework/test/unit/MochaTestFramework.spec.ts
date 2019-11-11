@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import MochaTestFramework from '../../src/MochaTestFramework';
 
 describe('MochaTestFramework', () => {
@@ -21,7 +22,12 @@ describe('MochaTestFramework', () => {
 
   describe('filter()', () => {
     it("should result in a filtering of mocha it's", () => {
-      expect(sut.filter([{ id: 5, name: 'test five' }, { id: 8, name: 'test eight' }]))
+      expect(
+        sut.filter([
+          { id: 5, name: 'test five' },
+          { id: 8, name: 'test eight' }
+        ])
+      )
         .to.contain('var realAddTest = Mocha.Suite.prototype.addTest;')
         .and.to.contain('selectedTestNames = ["test five","test eight"];')
         .and.to.contain('if(selectedTestNames.indexOf(name) !== -1)')

@@ -1,3 +1,6 @@
+import os = require('os');
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
@@ -5,9 +8,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { createIsDirError, fileNotFoundError } from '@stryker-mutator/test-helpers/src/factory';
 import { childProcessAsPromised, errorToString, fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import os = require('os');
-import * as path from 'path';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import InputFileResolver from '../../../src/input/InputFileResolver';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';

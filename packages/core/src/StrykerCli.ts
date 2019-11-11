@@ -1,5 +1,6 @@
 import * as program from 'commander';
 import { getLogger } from 'log4js';
+
 import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';

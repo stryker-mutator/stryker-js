@@ -1,9 +1,11 @@
+import * as path from 'path';
+
 import { ConfigAPI } from '@babel/core';
 import { File } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import { CONFIG_KEY, StrykerBabelConfig } from '../../src/BabelConfigReader';
 import { BabelTranspiler, babelTranspilerFactory } from '../../src/BabelTranspiler';
 import { ProjectLoader } from '../helpers/projectLoader';

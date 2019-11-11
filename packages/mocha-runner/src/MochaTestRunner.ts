@@ -1,8 +1,10 @@
+import * as path from 'path';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
-import * as path from 'path';
+
 import LibWrapper from './LibWrapper';
 import { MochaOptions } from './MochaOptions';
 import { StrykerMochaReporter } from './StrykerMochaReporter';

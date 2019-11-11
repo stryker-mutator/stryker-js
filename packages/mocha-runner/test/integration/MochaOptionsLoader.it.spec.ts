@@ -1,6 +1,8 @@
+import * as path from 'path';
+
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import { MochaOptions } from '../../src/MochaOptions';
 import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
 import { mochaOptionsKey } from '../../src/utils';

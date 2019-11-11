@@ -2,8 +2,9 @@ import { File } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { serialize } from 'surrial';
+
 import TranspileFilter from '../../src/transpiler/TranspileFilter';
 import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
 import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';

@@ -2,10 +2,11 @@ import generate from '@babel/generator';
 import { parse, ParserOptions } from '@babel/parser';
 import traverse, { NodePath } from '@babel/traverse';
 import * as types from '@babel/types';
-import { NodeWithParent } from './ParentNode';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutatorDescriptor } from '@stryker-mutator/api/core';
+
+import { NodeWithParent } from './ParentNode';
 
 export default class BabelParser {
   public static inject = tokens(commonTokens.logger, commonTokens.mutatorDescriptor);

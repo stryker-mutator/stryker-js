@@ -1,6 +1,8 @@
+import * as path from 'path';
+
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions } from 'karma';
-import * as path from 'path';
+
 import StrykerReporter from '../StrykerReporter';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
 import { requireModule } from '../utils';
@@ -143,7 +145,7 @@ const globalSettings: {
   }
 };
 
-export = Object.assign(
+export default Object.assign(
   (config: Config) => {
     const log = globalSettings.getLogger(path.basename(__filename));
     setDefaultOptions(config);
