@@ -55,7 +55,7 @@
   "dependencies": {
     "@stryker-mutator/api": "^2.2.1",
     "@stryker-mutator/util": "^2.2.1",
-    "chalk": "~2.4.1",
+    "chalk": "~3.0.0",
     "commander": "~4.0.0",
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
