@@ -8,9 +8,14 @@ module.exports = {
     project: [require.resolve('./tsconfig.lint.json')]
   },
   parser: '@typescript-eslint/parser',
-  extends: ['prettier', 'eslint:recommended'],
-  plugins: ['@typescript-eslint', 'prettier'],
+  extends: [
+    'prettier',
+    'eslint:recommended'
+  ],
+  plugins: ['@typescript-eslint', 'prettier', 'import'],
   rules: {
+    'import/newline-after-import': 1,
+    'import/order': ["error", {"newlines-between": "always"}],
     'prettier/prettier': ['error'],
     'sort-imports': 'off', // No auto-fix!
     'no-case-declarations': 'off',
