@@ -104,7 +104,10 @@ export default class StrykerInitializer {
       selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies)
     );
-    this.installNpmDependencies(npmDependencies.map(pkg => pkg.name), selectedPackageManager);
+    this.installNpmDependencies(
+      npmDependencies.map(pkg => pkg.name),
+      selectedPackageManager
+    );
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {
