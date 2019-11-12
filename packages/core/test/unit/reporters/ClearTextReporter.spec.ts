@@ -104,8 +104,8 @@ describe(ClearTextReporter.name, () => {
 
       it('should report on the survived mutant', () => {
         expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('1. [Survived] Math'));
-        expect(process.stdout.write).to.have.been.calledWith(chalk.red('-   original line') + os.EOL);
-        expect(process.stdout.write).to.have.been.calledWith(chalk.green('+   mutated line') + os.EOL);
+        expect(process.stdout.write).to.have.been.calledWith(`${chalk.red('-   original line')}${os.EOL}`);
+        expect(process.stdout.write).to.have.been.calledWith(`${chalk.green('+   mutated line')}${os.EOL}`);
       });
 
       it('should not log individual ran tests', () => {
