@@ -4,7 +4,7 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import * as chai from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
+import chaiAsPromised from 'chai-as-promised';
 
 import MochaTestRunner from '../../src/MochaTestRunner';
 import { createMochaOptions } from '../helpers/factories';

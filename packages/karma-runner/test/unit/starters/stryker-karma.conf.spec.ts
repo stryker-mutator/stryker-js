@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { Config, ConfigOptions } from 'karma';
 import * as sinon from 'sinon';
 
-import sut = require('../../../src/starters/stryker-karma.conf');
+import sut from '../../../src/starters/stryker-karma.conf';
 import StrykerReporter from '../../../src/StrykerReporter';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/TestHooksMiddleware';
 import * as utils from '../../../src/utils';

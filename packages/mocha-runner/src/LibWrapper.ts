@@ -1,5 +1,5 @@
-import * as Mocha from 'mocha';
-import * as multimatch from 'multimatch';
+import Mocha from 'mocha';
+import multimatch from 'multimatch';
 
 import { MochaOptions } from './MochaOptions';
 

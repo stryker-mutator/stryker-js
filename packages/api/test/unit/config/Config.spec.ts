@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as minimatch from 'minimatch';
+import minimatch from 'minimatch';
 
 import { Config } from '../../../config';
 
