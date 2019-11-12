@@ -90,15 +90,19 @@ describe('ShoppingCartComponent', () => {
 
 
   describe('animate()', () => {
-    const winkelwagen = new Winkelwagen();
-    const testArtikel1 = new Artikel(1, 'Test artikel', 'test', 10, 'images/foo.png', new Date(), new Date(), 'PRD1', [], 1);
-    const testArtikel2 = new Artikel(2, 'Test artikel 2', 'test 2', 15, 'images/foo.png', new Date(), new Date(), 'PRD2', [], 1);
-    const testData = [
-      new WinkelwagenRegel(testArtikel1),
-      new WinkelwagenRegel(testArtikel2)
-    ];
-    testData[0].aantal = 2;
-    winkelwagen.setWinkelwagenRegels(testData);
+    let winkelwagen: Winkelwagen;
+
+    beforeEach(() => {
+      winkelwagen = new Winkelwagen();
+      const testArtikel1 = new Artikel(1, 'Test artikel', 'test', 10, 'images/foo.png', new Date(), new Date(), 'PRD1', [], 2);
+      const testArtikel2 = new Artikel(2, 'Test artikel 2', 'test 2', 15, 'images/foo.png', new Date(), new Date(), 'PRD2', [], 1);
+      const testData = [
+        new WinkelwagenRegel(testArtikel1),
+        new WinkelwagenRegel(testArtikel2)
+      ];
+      testData[0].aantal = 2;
+      winkelwagen.setWinkelwagenRegels(testData);
+    });
 
     it('should change the itemcount', () => {
       component.animate(winkelwagen).then(() =>
