@@ -9,6 +9,7 @@
     "rootDir": ".",
     "sourceMap": true,
     "declaration": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": false,
     "importHelpers": true,
