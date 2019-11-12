@@ -24,7 +24,11 @@ describe('Selecting tests with nested suites', () => {
 
   beforeEach(() => {
     sut = new JasmineTestFramework();
-    testSelections = [{ id: 0, name: 'outer test 1' }, { id: 1, name: 'outer inner test 2' }, { id: 2, name: 'outer test 3' }];
+    testSelections = [
+      { id: 0, name: 'outer test 1' },
+      { id: 1, name: 'outer inner test 2' },
+      { id: 2, name: 'outer test 3' }
+    ];
   });
 
   afterEach(() => {

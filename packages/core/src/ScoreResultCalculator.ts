@@ -90,7 +90,10 @@ export default class ScoreResultCalculator {
       return Object.keys(filesGroupedByDirectory)
 
         .map(directory =>
-          this.calculateScoreResult(flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]), childrenBasePath)
+          this.calculateScoreResult(
+            flatMap(filesGroupedByDirectory[directory], file => resultsGroupedByFiles[file]),
+            childrenBasePath
+          )
         )
         .sort(this.compareScoreResults);
     } else {
