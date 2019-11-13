@@ -1,11 +1,14 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as fs from 'fs';
-import * as path from 'path';
 import { match, SinonStub } from 'sinon';
-import sinon = require('sinon');
 import * as ts from 'typescript';
+
+import sinon = require('sinon');
+
 import TypescriptConfigEditor from './../../src/TypescriptConfigEditor';
 
 const CONFIG_KEY = 'tsconfigFile';

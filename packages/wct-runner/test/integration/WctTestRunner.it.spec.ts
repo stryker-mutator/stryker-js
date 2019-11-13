@@ -1,8 +1,10 @@
+import * as path from 'path';
+
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import WctTestRunner from '../../src/WctTestRunner';
 
 type TimelessRunResult = {

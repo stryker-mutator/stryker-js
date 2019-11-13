@@ -5,13 +5,16 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { getLogger } from 'log4js';
 import { rootInjector } from 'typed-inject';
-import { coreTokens, PluginCreator } from '.';
+
 import { ConfigEditorApplier, readConfig } from '../config';
 import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
+
 import { loggerFactory, mutatorDescriptorFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
+
+import { coreTokens, PluginCreator } from '.';
 
 export interface MainContext extends OptionsContext {
   [coreTokens.reporter]: Required<Reporter>;

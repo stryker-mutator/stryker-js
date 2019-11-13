@@ -1,6 +1,7 @@
 import { File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
+
 import os = require('os');
 
 export default class InputFileCollection {

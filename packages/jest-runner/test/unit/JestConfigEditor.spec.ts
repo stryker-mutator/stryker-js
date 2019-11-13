@@ -3,6 +3,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
 import jest from 'jest';
 import * as sinon from 'sinon';
+
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../src/configLoaders/CustomJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../src/configLoaders/ReactScriptsTSJestConfigLoader';

@@ -1,7 +1,8 @@
+import { isRegExp } from 'util';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
-import { isRegExp } from 'util';
 
 class CoverageReportingTestRunner implements TestRunner {
   public run() {

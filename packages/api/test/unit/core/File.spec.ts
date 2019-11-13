@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { deserialize, serialize } from 'surrial';
+
 import { File } from '../../../core';
 
 describe('File', () => {

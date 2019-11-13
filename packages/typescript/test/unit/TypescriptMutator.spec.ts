@@ -1,9 +1,11 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { File } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as ts from 'typescript';
+
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
 import { MUTATORS_TOKEN, TypescriptMutator, typescriptMutatorFactory } from '../../src/TypescriptMutator';
 

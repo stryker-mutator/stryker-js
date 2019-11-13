@@ -1,7 +1,10 @@
+import * as fs from 'fs';
+
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as fs from 'fs';
+
 import HtmlReporter from '../../src/HtmlReporter';
+
 import { simpleReport } from './simpleReport';
 
 describe('HtmlReporter with example math project', () => {

@@ -4,6 +4,7 @@ import { Transpiler } from '@stryker-mutator/api/transpile';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import { transpilerFactory } from '../../../src/transpiler';
 import { ChildProcessTranspiler } from '../../../src/transpiler/ChildProcessTranspiler';
 

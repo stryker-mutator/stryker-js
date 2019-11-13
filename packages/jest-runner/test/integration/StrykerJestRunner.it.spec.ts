@@ -1,16 +1,17 @@
-import { RunOptions, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
-import { expect } from 'chai';
 import * as path from 'path';
+
+import { expect } from 'chai';
+import { RunOptions, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import * as sinon from 'sinon';
-
-// It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
-const paths = require('react-scripts-ts/config/paths');
-paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsconfig.test.json');
-
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
+
 import JestConfigEditor from '../../src/JestConfigEditor';
 import { jestTestRunnerFactory } from '../../src/JestTestRunner';
+
+const paths = require('react-scripts-ts/config/paths');
+// It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
+paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsconfig.test.json');
 
 // Get the actual project root, since we will stub process.cwd later on
 const jestProjectRoot = process.cwd();

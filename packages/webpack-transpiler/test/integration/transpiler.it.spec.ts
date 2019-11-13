@@ -1,9 +1,11 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { File } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as fs from 'fs';
-import * as path from 'path';
+
 import ConfigLoader from '../../src/compiler/ConfigLoader';
 import { pluginTokens } from '../../src/pluginTokens';
 import WebpackTranspiler from '../../src/WebpackTranspiler';

@@ -2,6 +2,7 @@ import { RunOptions, RunStatus, TestStatus } from '@stryker-mutator/api/test_run
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
+
 import { JestTestAdapter } from '../../src/jestTestAdapters';
 import JestTestRunner, { JEST_TEST_ADAPTER_TOKEN, PROCESS_ENV_TOKEN } from '../../src/JestTestRunner';
 import * as fakeResults from '../helpers/testResultProducer';

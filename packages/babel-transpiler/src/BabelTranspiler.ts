@@ -1,8 +1,10 @@
+import * as path from 'path';
+
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, tokens, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { StrykerError } from '@stryker-mutator/util';
-import * as path from 'path';
+
 import { BabelConfigReader, StrykerBabelConfig } from './BabelConfigReader';
 import * as babel from './helpers/babelWrapper';
 import { toJSFileName } from './helpers/helpers';

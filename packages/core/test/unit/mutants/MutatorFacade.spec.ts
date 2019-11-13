@@ -4,6 +4,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { file } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import { coreTokens, PluginCreator } from '../../../src/di';
 import { MutatorFacade } from '../../../src/mutants/MutatorFacade';
 import { Mock } from '../../helpers/producers';

@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { match } from 'sinon';
 import * as sinon from 'sinon';
+
 import * as sut from '../../../src/utils/objectUtils';
 import { Task } from '../../../src/utils/Task';
 

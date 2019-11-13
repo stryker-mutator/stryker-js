@@ -1,6 +1,7 @@
 import { File } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+
 import { JavaScriptMutator } from '../../src/JavaScriptMutator';
 import { nodeMutators } from '../../src/mutators';
 import { NodeMutator } from '../../src/mutators/NodeMutator';

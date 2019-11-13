@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import { of } from 'rxjs';
 import { from, Observable } from 'rxjs';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import { MutationTestExecutor } from '../../../src/process/MutationTestExecutor';

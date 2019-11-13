@@ -1,7 +1,10 @@
-import { CachedInputFileSystem, NodeJsInputFileSystem, Stats } from 'enhanced-resolve';
 import * as fs from 'fs';
 import { dirname } from 'path';
+
+import { CachedInputFileSystem, NodeJsInputFileSystem, Stats } from 'enhanced-resolve';
+
 import { Callback, webpack } from '../types';
+
 import MemoryFS from './MemoryFS';
 
 // Cache duration is same as webpack has

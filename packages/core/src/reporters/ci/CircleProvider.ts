@@ -1,6 +1,6 @@
-import { CIProvider } from './Provider';
-
 import { getEnvironmentVariable } from '../../utils/objectUtils';
+
+import { CIProvider } from './Provider';
 
 class CircleProvider implements CIProvider {
   public isPullRequest = () => getEnvironmentVariable('CIRCLE_PULL_REQUEST') !== undefined;

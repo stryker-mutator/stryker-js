@@ -1,10 +1,12 @@
+import * as path from 'path';
+
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
-import * as path from 'path';
 import * as sinon from 'sinon';
+
 import * as fileUtils from '../../../src/utils/fileUtils';
 import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
 

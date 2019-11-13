@@ -2,6 +2,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, OptionsContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { RunOptions, TestRunner } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
+
 import { PluginCreator } from '../di';
 
 export class ChildProcessTestRunnerWorker implements TestRunner {

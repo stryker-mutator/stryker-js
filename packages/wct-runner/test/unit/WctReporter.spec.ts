@@ -1,8 +1,10 @@
+import { EventEmitter } from 'events';
+
 import { TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
-import { EventEmitter } from 'events';
 import * as sinon from 'sinon';
 import { TestEndData } from 'web-component-tester/runner/clireporter';
+
 import WctReporter from '../../src/WctReporter';
 
 describe(WctReporter.name, () => {

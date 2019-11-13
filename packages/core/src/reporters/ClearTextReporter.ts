@@ -1,11 +1,13 @@
+import * as os from 'os';
+
 import { Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import chalk from 'chalk';
 import { calculateMetrics } from 'mutation-testing-metrics';
-import * as os from 'os';
 import { tokens } from 'typed-inject';
+
 import ClearTextScoreTable from './ClearTextScoreTable';
 
 export default class ClearTextReporter implements Reporter {

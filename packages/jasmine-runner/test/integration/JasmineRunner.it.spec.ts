@@ -1,8 +1,10 @@
+import * as path from 'path';
+
 import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/JasmineTestFramework';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 
