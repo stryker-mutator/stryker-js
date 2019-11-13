@@ -1,8 +1,10 @@
+import * as path from 'path';
+
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Config, ConfigOptions } from 'karma';
-import * as path from 'path';
 import * as sinon from 'sinon';
+
 import sut = require('../../../src/starters/stryker-karma.conf');
 import StrykerReporter from '../../../src/StrykerReporter';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/TestHooksMiddleware';

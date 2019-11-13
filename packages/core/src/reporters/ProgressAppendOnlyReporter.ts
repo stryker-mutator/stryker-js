@@ -1,5 +1,7 @@
-import { MatchedMutant } from '@stryker-mutator/api/report';
 import * as os from 'os';
+
+import { MatchedMutant } from '@stryker-mutator/api/report';
+
 import ProgressKeeper from './ProgressKeeper';
 
 export default class ProgressAppendOnlyReporter extends ProgressKeeper {

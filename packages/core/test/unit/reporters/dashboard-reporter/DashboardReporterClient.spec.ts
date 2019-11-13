@@ -1,6 +1,7 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { HttpClient } from 'typed-rest-client/HttpClient';
+
 import StrykerDashboardClient, { StrykerDashboardReport } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';

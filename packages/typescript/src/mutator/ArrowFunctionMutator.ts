@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class ArrowFunctionMutator extends NodeMutator<ts.ArrowFunction> {

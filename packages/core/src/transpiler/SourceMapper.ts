@@ -1,8 +1,10 @@
+import * as path from 'path';
+
 import { File, Location, Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { StrykerError } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
-import * as path from 'path';
 import { RawSourceMap, SourceMapConsumer } from 'source-map';
+
 import { base64Decode } from '../utils/objectUtils';
 
 const SOURCE_MAP_URL_REGEX = /\/\/\s*#\s*sourceMappingURL=(.*)/g;

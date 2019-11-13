@@ -4,6 +4,7 @@ import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
 import StrictReporter from '../../../src/reporters/StrictReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
@@ -44,7 +45,10 @@ describe('EventRecorderReporter', () => {
             beforeEach(() => {
               writeFileRejection = undefined;
               (sut[eventName] as any)(expected);
-              return (sut.wrapUp() as Promise<void>).then(() => void 0, error => (writeFileRejection = error));
+              return (sut.wrapUp() as Promise<void>).then(
+                () => void 0,
+                error => (writeFileRejection = error)
+              );
             });
 
           describe('when writeFile results in a rejection', () => {

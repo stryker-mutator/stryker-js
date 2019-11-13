@@ -1,6 +1,7 @@
 import { tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { tap, toArray } from 'rxjs/operators';
+
 import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
 import { SandboxPool } from '../SandboxPool';

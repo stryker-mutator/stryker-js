@@ -4,6 +4,7 @@ import { config as configFactory, location as locationFactory, PNG_BASE64_ENCODE
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as sourceMapModule from 'source-map';
+
 import SourceMapper, { MappedLocation, PassThroughSourceMapper, SourceMapError, TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
 import { mappedLocation, Mock, mock } from '../../helpers/producers';
 

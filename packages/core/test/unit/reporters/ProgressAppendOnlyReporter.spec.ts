@@ -1,8 +1,10 @@
+import * as os from 'os';
+
 import { MutantStatus } from '@stryker-mutator/api/report';
 import { matchedMutant, mutantResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as os from 'os';
 import * as sinon from 'sinon';
+
 import ProgressAppendOnlyReporter from '../../../src/reporters/ProgressAppendOnlyReporter';
 
 const SECOND = 1000;

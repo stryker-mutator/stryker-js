@@ -1,9 +1,11 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { expect } from 'chai';
 import * as execa from 'execa';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as rimraf from 'rimraf';
+
 import JasmineTestFramework from '../../src/JasmineTestFramework';
 
 interface JasmineTest {
@@ -24,7 +26,11 @@ describe('Selecting tests with nested suites', () => {
 
   beforeEach(() => {
     sut = new JasmineTestFramework();
-    testSelections = [{ id: 0, name: 'outer test 1' }, { id: 1, name: 'outer inner test 2' }, { id: 2, name: 'outer test 3' }];
+    testSelections = [
+      { id: 0, name: 'outer test 1' },
+      { id: 1, name: 'outer inner test 2' },
+      { id: 2, name: 'outer test 3' }
+    ];
   });
 
   afterEach(() => {

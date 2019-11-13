@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 export default class ConditionalExpressionMutator extends NodeMutator<ts.BinaryExpression> {
@@ -39,6 +40,9 @@ export default class ConditionalExpressionMutator extends NodeMutator<ts.BinaryE
       return [];
     }
 
-    return [{ node, replacement: 'false' }, { node, replacement: 'true' }];
+    return [
+      { node, replacement: 'false' },
+      { node, replacement: 'true' }
+    ];
   }
 }

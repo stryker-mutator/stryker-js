@@ -1,6 +1,7 @@
 import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import TimeoutDecorator from '../../../src/test-runner/TimeoutDecorator';
 import TestRunnerMock from '../../helpers/TestRunnerMock';
 
@@ -71,7 +72,9 @@ describe('TimeoutDecorator', () => {
     });
 
     it('should handle timeouts', () => {
-      testRunner1.run.returns(new Promise<string>(() => {}));
+      testRunner1.run.returns(
+        new Promise<string>(() => {})
+      );
       const runPromise = sut.run({ timeout: 20 });
       clock.tick(20);
       return expect(

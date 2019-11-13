@@ -2,7 +2,9 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { getLogger } from 'log4js';
 import { rootInjector } from 'typed-inject';
 import { RestClient } from 'typed-rest-client';
+
 import { loggerFactory } from '../di/factoryMethods';
+
 import * as initializerTokens from './initializerTokens';
 import NpmClient from './NpmClient';
 import StrykerConfigWriter from './StrykerConfigWriter';

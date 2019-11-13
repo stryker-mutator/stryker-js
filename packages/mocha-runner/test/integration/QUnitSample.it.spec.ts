@@ -1,8 +1,10 @@
+import * as path from 'path';
+
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import MochaTestRunner from '../../src/MochaTestRunner';
 import { createMochaOptions } from '../helpers/factories';
 

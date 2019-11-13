@@ -1,10 +1,12 @@
+import { EOL } from 'os';
+
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { Transpiler } from '@stryker-mutator/api/transpile';
-import { EOL } from 'os';
+
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
 import LoggingClientContext from '../logging/LoggingClientContext';
@@ -170,7 +172,13 @@ export default class InitialTestExecutor {
 
   private logTranspileResult(transpiledFiles: readonly File[]) {
     if (this.options.transpilers.length && this.log.isDebugEnabled()) {
-      this.log.debug(`Transpiled files: ${JSON.stringify(transpiledFiles.map(f => `${f.name}`), null, 2)}`);
+      this.log.debug(
+        `Transpiled files: ${JSON.stringify(
+          transpiledFiles.map(f => `${f.name}`),
+          null,
+          2
+        )}`
+      );
     }
   }
 

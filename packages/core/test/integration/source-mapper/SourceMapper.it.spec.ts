@@ -1,7 +1,9 @@
+import * as path from 'path';
+
 import { File } from '@stryker-mutator/api/core';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import { TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
 
 function resolve(...filePart: string[]) {

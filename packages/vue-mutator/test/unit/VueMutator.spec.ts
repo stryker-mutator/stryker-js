@@ -4,6 +4,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { SinonStubbedInstance } from 'sinon';
 import * as sinon from 'sinon';
+
 import * as MutatorHelpers from '../../src/helpers/MutatorHelpers';
 import VueMutator from '../../src/VueMutator';
 

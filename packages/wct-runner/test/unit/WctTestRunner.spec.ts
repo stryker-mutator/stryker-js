@@ -5,6 +5,7 @@ import * as sinon from 'sinon';
 import { steps } from 'web-component-tester';
 import * as wctModule from 'web-component-tester';
 import * as contextModule from 'web-component-tester/runner/context';
+
 import WctLogger, * as wctLoggerModule from '../../src/WctLogger';
 import WctReporter, * as wctReporterModule from '../../src/WctReporter';
 import WctTestRunner from '../../src/WctTestRunner';

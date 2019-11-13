@@ -1,6 +1,7 @@
 import { ClassPlugin, FactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+
 import { PluginCreator } from '../../../src/di/PluginCreator';
 
 describe('PluginCreator', () => {

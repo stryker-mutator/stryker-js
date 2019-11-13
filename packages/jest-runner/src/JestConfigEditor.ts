@@ -1,5 +1,6 @@
 import { Config, ConfigEditor } from '@stryker-mutator/api/config';
 import jest from 'jest';
+
 import CustomJestConfigLoader from './configLoaders/CustomJestConfigLoader';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
 import ReactScriptsJestConfigLoader from './configLoaders/ReactScriptsJestConfigLoader';

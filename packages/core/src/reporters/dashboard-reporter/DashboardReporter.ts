@@ -2,8 +2,10 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { calculateMetrics } from 'mutation-testing-metrics';
+
 import { getEnvironmentVariable } from '../../utils/objectUtils';
 import { determineCIProvider } from '../ci/Provider';
+
 import DashboardReporterClient from './DashboardReporterClient';
 import { dashboardReporterTokens } from './tokens';
 

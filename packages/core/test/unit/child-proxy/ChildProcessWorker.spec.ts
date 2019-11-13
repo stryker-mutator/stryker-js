@@ -1,10 +1,12 @@
+import * as path from 'path';
+
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as path from 'path';
 import * as sinon from 'sinon';
 import { rootInjector } from 'typed-inject';
+
 import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyWorker';
 import {
   CallMessage,
@@ -21,6 +23,7 @@ import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { serialize } from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
+
 import { HelloClass } from './HelloClass';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });

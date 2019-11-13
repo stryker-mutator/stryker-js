@@ -70,7 +70,8 @@ describe('KlantgegevensFormulierComponent', () => {
 
   describe('bestellingPlaatsen()', () => {
     it('bestellingenService.plaatsBestelling should be called', () => {
-      spyOn(bestellingenServive, 'plaatsBestelling').and.returnValue(of(testKlant));
+      const bestelling = new Bestelling(testKlant, component.getBestelRegels(), 15);
+      spyOn(bestellingenServive, 'plaatsBestelling').and.returnValue(of(bestelling));
       spyOn(component, 'getBestelRegels');
       component.bestellingPlaatsen(testKlant);
       expect(bestellingenServive.plaatsBestelling).toHaveBeenCalled();

@@ -4,6 +4,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { ALL_REPORTER_EVENTS, scoreResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import { PluginCreator } from '../../../src/di/PluginCreator';
 import BroadcastReporter from '../../../src/reporters/BroadcastReporter';

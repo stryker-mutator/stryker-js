@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import * as log4js from 'log4js';
+
 import { configure, RuntimeAppender } from '../../../src/logging/MultiAppender';
 
 describe('MultiAppender', () => {

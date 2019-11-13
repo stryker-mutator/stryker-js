@@ -2,6 +2,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+
 import ConfigValidator from '../../../src/config/ConfigValidator';
 import { coreTokens } from '../../../src/di';
 

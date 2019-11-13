@@ -1,6 +1,7 @@
-import { expect } from 'chai';
 import { exec } from 'child_process';
 import * as path from 'path';
+
+import { expect } from 'chai';
 
 describe('we have a module using stryker', () => {
   const modulePath = path.resolve(__dirname, '../../../testResources/module');

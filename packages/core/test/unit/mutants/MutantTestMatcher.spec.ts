@@ -7,6 +7,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { mutant, testResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import { MutantTestMatcher } from '../../../src/mutants/MutantTestMatcher';
@@ -233,7 +234,10 @@ describe(MutantTestMatcher.name, () => {
           });
 
           it('should have added the run results to the mutants', async () => {
-            const expectedTestSelectionFirstMutant: TestSelection[] = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
+            const expectedTestSelectionFirstMutant: TestSelection[] = [
+              { id: 0, name: 'test one' },
+              { id: 1, name: 'test two' }
+            ];
 
             const result = await sut.matchWithMutants(mutants);
 
