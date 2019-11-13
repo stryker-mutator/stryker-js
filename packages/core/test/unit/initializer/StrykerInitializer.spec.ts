@@ -16,6 +16,7 @@ import StrykerConfigWriter from '../../../src/initializer/StrykerConfigWriter';
 import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
 import { StrykerInquirer } from '../../../src/initializer/StrykerInquirer';
 import { Mock } from '../../helpers/producers';
+import GitignoreWriter from '../../../src/initializer/GitignoreWriter';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -52,6 +53,7 @@ describe(StrykerInitializer.name, () => {
       .provideClass(initializerTokens.npmClient, NpmClient)
       .provideValue(initializerTokens.strykerPresets, presets)
       .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
+      .provideClass(initializerTokens.gitignoreWriter, GitignoreWriter)
       .injectClass(StrykerInitializer);
   });
 
