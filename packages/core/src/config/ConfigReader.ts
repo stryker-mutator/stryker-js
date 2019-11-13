@@ -61,9 +61,14 @@ export default class ConfigReader {
           throw new StrykerError('Invalid config file', e);
         }
       }
-      if (typeof configModule !== 'function') {
-        this.log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
-        throw new StrykerError('Config file must export a function!');
+      if (typeof configModule !== 'function' && typeof configModule !== 'object') {
+        this.log.fatal('Config file must be an object or export a function!\n' + CONFIG_SYNTAX_HELP);
+        throw new StrykerError('Config file must export a function or be a JSON!');
+      }
+      if (typeof configModule === 'object') {
+        return (config: any) => {
+          config.set(configModule);
+        };
       }
     }
 
