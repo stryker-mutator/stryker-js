@@ -15,7 +15,7 @@ export default class GitignoreWriter {
     if (fsAsPromised.existsSync(GITIGNORE_FILE)) {
       const strykerTempFolderSpecification = `${os.EOL}# stryker temp files${os.EOL}*.stryker-tmp${os.EOL}`;
       await fsAsPromised.appendFile(GITIGNORE_FILE, strykerTempFolderSpecification);
-      this.out('Your .gitignore file has been updated to include recommended git ignore patterns for Stryker');
+      this.out('Note: Your .gitignore file has been updated to include recommended git ignore patterns for Stryker');
     } else {
       this.out('No .gitignore file could be found. Please add the following to your .gitignore file: *.stryker-tmp');
     }

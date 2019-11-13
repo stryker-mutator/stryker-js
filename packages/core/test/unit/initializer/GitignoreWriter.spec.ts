@@ -53,7 +53,7 @@ describe(GitignoreWriter.name, () => {
         await sut.addStrykerTempFolder();
 
         // Assert
-        expect(out).calledWithExactly('Your .gitignore file has been updated to include recommended git ignore patterns for Stryker');
+        expect(out).calledWithExactly('Note: Your .gitignore file has been updated to include recommended git ignore patterns for Stryker');
       });
     });
 
