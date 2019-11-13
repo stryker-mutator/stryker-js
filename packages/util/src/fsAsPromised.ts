@@ -6,6 +6,7 @@ import { promisify } from 'util';
  * Note: Can be removed once we drop support for node 8 (and 9).
  */
 export default {
+  appendFile: promisify(fs.appendFile),
   createReadStream: fs.createReadStream,
   createWriteStream: fs.createWriteStream,
   exists: promisify(fs.exists),
