@@ -104,12 +104,6 @@ describe('ShoppingCartComponent', () => {
       winkelwagen.setWinkelwagenRegels(testData);
     });
 
-    it('should change the itemcount', () => {
-      component.animate(winkelwagen).then(() =>
-        expect(component.itemCount).toBe(3)
-      );
-    });
-
     it('should call winkelwagen.getArtikelCount() once', () => {
       spyOn(winkelwagen, 'getArtikelCount');
       spyOn(component, 'changeAnimationName');
