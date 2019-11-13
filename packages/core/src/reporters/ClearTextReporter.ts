@@ -4,9 +4,10 @@ import { Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
-import chalk from 'chalk';
 import { calculateMetrics } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
+
+import chalk = require('chalk');
 
 import ClearTextScoreTable from './ClearTextScoreTable';
 
