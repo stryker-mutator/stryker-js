@@ -118,7 +118,8 @@
   },
   "extensions": {
     "recommendations": [
-      "dbaeumer.vscode-eslint"
+      "dbaeumer.vscode-eslint",
+      "EditorConfig.EditorConfig"
     ]
   }
 }
