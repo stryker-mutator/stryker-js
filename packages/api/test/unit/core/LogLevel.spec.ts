@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import LogLevel from '../../../src/core/LogLevel';
 
 describe('LogLevel', () => {

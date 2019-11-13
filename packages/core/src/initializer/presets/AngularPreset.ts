@@ -1,4 +1,5 @@
 import * as os from 'os';
+
 import Preset from './Preset';
 import PresetConfiguration from './PresetConfiguration';
 

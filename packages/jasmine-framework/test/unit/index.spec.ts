@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import { strykerPlugins } from '../..';
 import JasmineTestFramework from '../../src/JasmineTestFramework';
 

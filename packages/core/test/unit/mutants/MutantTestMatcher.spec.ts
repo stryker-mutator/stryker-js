@@ -7,6 +7,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { mutant, testResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import { MutantTestMatcher } from '../../../src/mutants/MutantTestMatcher';

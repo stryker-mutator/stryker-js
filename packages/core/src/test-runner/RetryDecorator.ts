@@ -1,7 +1,9 @@
 import { RunOptions, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
+
 import OutOfMemoryError from '../child-proxy/OutOfMemoryError';
+
 import TestRunnerDecorator from './TestRunnerDecorator';
 
 const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';

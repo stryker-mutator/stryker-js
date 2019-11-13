@@ -1,7 +1,9 @@
 import { File } from '@stryker-mutator/api/core';
 import * as sinon from 'sinon';
 import { Configuration } from 'webpack';
+
 import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
+
 import { WebpackCompilerMock } from './mockInterfaces';
 
 export type Mock<T> = { [K in keyof T]: sinon.SinonStub };

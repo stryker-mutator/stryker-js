@@ -1,5 +1,6 @@
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
+
 import { createReactJestConfig, createReactTsJestConfig } from '../../../src/utils/createReactJestConfig';
 
 describe('createReactJestConfig', () => {

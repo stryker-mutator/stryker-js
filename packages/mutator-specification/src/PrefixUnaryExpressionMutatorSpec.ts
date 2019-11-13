@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import ExpectMutation from './ExpectMutation';
 
 export default function PrefixUnaryExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {

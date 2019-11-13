@@ -1,10 +1,12 @@
+import * as childProcess from 'child_process';
+import * as os from 'os';
+
 import { Config } from '@stryker-mutator/api/config';
 import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as childProcess from 'child_process';
-import * as os from 'os';
 import * as sinon from 'sinon';
+
 import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
 import * as objectUtils from '../../../src/utils/objectUtils';
 import Timer, * as timerModule from '../../../src/utils/Timer';

@@ -1,6 +1,9 @@
-import jest from 'jest';
 import path from 'path';
+
+import jest from 'jest';
+
 import { createReactJestConfig } from '../utils/createReactJestConfig';
+
 import JestConfigLoader from './JestConfigLoader';
 
 export default class ReactScriptsJestConfigLoader implements JestConfigLoader {

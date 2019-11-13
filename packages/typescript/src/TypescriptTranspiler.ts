@@ -3,6 +3,7 @@ import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import * as ts from 'typescript';
+
 import { getProjectDirectory, getTSConfig, guardTypescriptVersion, isHeaderFile } from './helpers/tsHelpers';
 import TranspileFilter from './transpiler/TranspileFilter';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';

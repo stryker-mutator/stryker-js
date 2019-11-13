@@ -1,8 +1,10 @@
+import { exec } from 'child_process';
+import * as os from 'os';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { RunResult, RunStatus, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
-import { exec } from 'child_process';
-import * as os from 'os';
+
 import { kill } from '../utils/objectUtils';
 import Timer from '../utils/Timer';
 

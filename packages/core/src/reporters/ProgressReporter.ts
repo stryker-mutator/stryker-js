@@ -1,4 +1,5 @@
 import { MatchedMutant, MutantResult } from '@stryker-mutator/api/report';
+
 import ProgressBar from './ProgressBar';
 import ProgressKeeper from './ProgressKeeper';
 

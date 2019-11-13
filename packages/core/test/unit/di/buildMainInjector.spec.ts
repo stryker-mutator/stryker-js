@@ -5,6 +5,8 @@ import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { MutatorDescriptor } from '@stryker-mutator/api/core';
+
 import * as configModule from '../../../src/config';
 import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
 import * as di from '../../../src/di';
@@ -13,7 +15,6 @@ import { buildMainInjector } from '../../../src/di/buildMainInjector';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../../../src/TestFrameworkOrchestrator';
 import currentLogMock from '../../helpers/logMock';
-import { MutatorDescriptor } from '@stryker-mutator/api/core';
 
 describe(buildMainInjector.name, () => {
   let testFrameworkOrchestratorMock: sinon.SinonStubbedInstance<TestFrameworkOrchestrator>;

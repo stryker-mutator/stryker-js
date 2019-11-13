@@ -1,10 +1,12 @@
-import { Config, ConfigEditor } from '@stryker-mutator/api/config';
-import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+
+import { Config, ConfigEditor } from '@stryker-mutator/api/config';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as ts from 'typescript';
+
 import { CONFIG_KEY, CONFIG_KEY_FILE } from './helpers/keys';
 import { normalizeFileForTypescript, normalizeFileFromTypescript } from './helpers/tsHelpers';
 

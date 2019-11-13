@@ -1,4 +1,5 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
+
 import { getTSConfig, isTypescriptFile, normalizeFileFromTypescript } from '../helpers/tsHelpers';
 
 /**

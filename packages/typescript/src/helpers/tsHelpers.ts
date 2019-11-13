@@ -1,8 +1,10 @@
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import * as os from 'os';
 import * as path from 'path';
+
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import * as semver from 'semver';
 import * as ts from 'typescript';
+
 import { CONFIG_KEY, CONFIG_KEY_FILE } from './keys';
 
 export function parseFile(file: File, target: ts.ScriptTarget | undefined) {

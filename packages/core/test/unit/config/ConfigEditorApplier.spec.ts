@@ -2,6 +2,7 @@ import { PluginKind } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import { ConfigEditorApplier } from '../../../src/config/ConfigEditorApplier';
 import { coreTokens } from '../../../src/di';
 import { PluginCreator } from '../../../src/di/PluginCreator';

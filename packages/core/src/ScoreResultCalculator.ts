@@ -1,10 +1,13 @@
+import * as path from 'path';
+
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, ScoreResult } from '@stryker-mutator/api/report';
+
 import flatMap = require('lodash.flatmap');
 import groupBy = require('lodash.groupby');
-import * as path from 'path';
+
 import { freezeRecursively, setExitCode } from './utils/objectUtils';
 
 const defaultScoreIfNoValidMutants = 100;

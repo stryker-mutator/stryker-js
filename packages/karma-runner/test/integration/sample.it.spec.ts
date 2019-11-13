@@ -1,6 +1,8 @@
+import * as path from 'path';
+
 import { TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import * as path from 'path';
+
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
 

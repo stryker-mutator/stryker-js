@@ -1,3 +1,5 @@
+import { EOL } from 'os';
+
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
@@ -6,8 +8,8 @@ import { Transpiler } from '@stryker-mutator/api/transpile';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { runResult, testFramework, testResult, transpiler } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import { EOL } from 'os';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';

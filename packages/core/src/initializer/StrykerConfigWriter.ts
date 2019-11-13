@@ -2,9 +2,11 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised, fsAsPromised } from '@stryker-mutator/util';
-import { initializerTokens } from '.';
+
 import PresetConfiguration from './presets/PresetConfiguration';
 import PromptOption from './PromptOption';
+
+import { initializerTokens } from '.';
 
 const STRYKER_CONFIG_FILE = 'stryker.conf.js';
 

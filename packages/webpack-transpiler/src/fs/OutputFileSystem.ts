@@ -1,6 +1,8 @@
-import { File } from '@stryker-mutator/api/core';
 import { PathLike } from 'fs';
 import * as path from 'path';
+
+import { File } from '@stryker-mutator/api/core';
+
 import { Callback, EmptyCallback, webpack } from '../types';
 
 export default class OutputFileSystem implements webpack.OutputFileSystem {

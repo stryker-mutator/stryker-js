@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -9,8 +11,8 @@ import { mutant as createMutant, fileAlreadyExistsError, testResult } from '@str
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
-import * as path from 'path';
 import * as sinon from 'sinon';
+
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
 import Sandbox from '../../src/Sandbox';
 import SourceFile from '../../src/SourceFile';

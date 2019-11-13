@@ -1,10 +1,12 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as fs from 'fs';
-import * as path from 'path';
+
 import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 import { typescriptMutatorFactory } from '../../src/TypescriptMutator';

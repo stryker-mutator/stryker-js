@@ -1,9 +1,11 @@
+import * as path from 'path';
+
 import { MutantStatus, ScoreResult } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { mutantResult, mutationScoreThresholds, scoreResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as path from 'path';
 import * as sinon from 'sinon';
+
 import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import * as objectUtils from '../../src/utils/objectUtils';
 

@@ -7,6 +7,7 @@ import { expect } from 'chai';
 import { range } from 'rxjs';
 import { map, toArray } from 'rxjs/operators';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import TranspiledMutant from '../../../src/TranspiledMutant';
 import { MutantTranspileScheduler } from '../../../src/transpiler/MutantTranspileScheduler';

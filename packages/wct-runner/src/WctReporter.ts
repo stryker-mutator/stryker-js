@@ -1,5 +1,6 @@
-import { TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { EventEmitter } from 'events';
+
+import { TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { BrowserDef } from 'web-component-tester/runner/browserrunner';
 import { CompletedState, TestEndData } from 'web-component-tester/runner/clireporter';
 

@@ -1,8 +1,10 @@
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
-import flatMap = require('lodash.flatmap');
 import * as ts from 'typescript';
+
+import flatMap = require('lodash.flatmap');
+
 import { getTSConfig, parseFile } from './helpers/tsHelpers';
 import { nodeMutators } from './mutator';
 import NodeMutator from './mutator/NodeMutator';

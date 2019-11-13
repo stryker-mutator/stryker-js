@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import { commonTokens, tokens } from '../../../plugin';
 
 describe('tokens', () => {

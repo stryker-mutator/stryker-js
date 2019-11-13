@@ -1,5 +1,7 @@
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+
 import StrykerKarmaSetup from '../StrykerKarmaSetup';
+
 import * as angularStarter from './angularStarter';
 import * as karmaStarter from './karmaStarter';
 
