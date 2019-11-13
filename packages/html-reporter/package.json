@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/html-reporter",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "An html reporter for the JavaScript mutation testing framework Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -32,8 +32,8 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/html-reporter#readme",
   "dependencies": {
-    "@stryker-mutator/api": "^2.2.1",
-    "@stryker-mutator/util": "^2.2.1",
+    "@stryker-mutator/api": "^2.3.0",
+    "@stryker-mutator/util": "^2.3.0",
     "file-url": "~3.0.0",
     "mkdirp": "~0.5.1",
     "mutation-testing-elements": "^1.0.2",
@@ -43,7 +43,7 @@
     "@stryker-mutator/core": "^2.0.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "^2.2.1",
+    "@stryker-mutator/test-helpers": "^2.3.0",
     "@types/jsdom": "~12.2.0",
     "@types/node": "^10.11.5"
   },
