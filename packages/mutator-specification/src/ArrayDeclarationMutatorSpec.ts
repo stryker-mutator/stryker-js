@@ -14,7 +14,7 @@ export default function ArrayDeclarationMutatorSpec(name: string, expectMutation
     });
 
     it('should mutate empty array literals as a filled array', () => {
-      expectMutation('[]', "['Stryker was here']");
+      expectMutation('[]', '["Stryker was here"]');
     });
 
     it('should mutate filled array literals as empty arrays', () => {

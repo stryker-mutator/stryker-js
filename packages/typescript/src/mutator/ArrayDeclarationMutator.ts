@@ -14,7 +14,7 @@ export default class ArrayDeclarationMutator extends NodeMutator<ts.ArrayLiteral
       if (node.elements.length) {
         return [{ node, replacement: '[]' }];
       } else {
-        return [{ node, replacement: "['Stryker was here']" }];
+        return [{ node, replacement: '["Stryker was here"]' }];
       }
     } else {
       if (node.expression.getFullText(sourceFile).trim() === 'Array') {

@@ -13,7 +13,7 @@ export default class ArrayDeclarationMutator implements NodeMutator {
 
     if (types.isArrayExpression(node)) {
       const mutatedNode = copy(node);
-      mutatedNode.elements = node.elements.length ? [] : [types.stringLiteral('Stryker was here!')];
+      mutatedNode.elements = node.elements.length ? [] : [types.stringLiteral('Stryker was here')];
       nodes.push(mutatedNode);
     } else if ((types.isCallExpression(node) || types.isNewExpression(node)) && types.isIdentifier(node.callee) && node.callee.name === 'Array') {
       const mutatedNode = copy(node);
