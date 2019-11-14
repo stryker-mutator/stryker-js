@@ -48,20 +48,41 @@ export default function ConditionalExpressionMutatorSpec(name: string, expectMut
       expectMutation('a % b');
     });
 
-    it('should not mutate `if statement`', () => {
-      expectMutation('if (a < 6) { a++ }');
+    it('should mutate the expression of a do statement', () => {
+      expectMutation('do { console.log(); } while(a < b);', 'do { console.log(); } while(false);');
     });
 
-    it('should not mutate `for statement`', () => {
-      expectMutation('for(let i=0;i<10; i++) { console.log(); }');
+    it('should mutate the condition of a for statement', () => {
+      expectMutation('for(let i=0;i<10; i++) { console.log(); }', 'for(let i=0;false; i++) { console.log(); }');
     });
 
-    it('should not mutate `while statement`', () => {
-      expectMutation('while(a < b) { console.log(); }');
+    it('should mutate the condition of a for statement without a condition', () => {
+      expectMutation('for(let i=0;; i++) { console.log(); }', 'for (let i = 0; false; i++) { console.log(); }');
     });
 
-    it('should not mutate `do while statement`', () => {
-      expectMutation('do { console.log(); } while(a < b);');
+    it('should mutate an expression to `true` and `false`', () => {
+      expectMutation('if (something) { a++ }', 'if (true) { a++ }', 'if (false) { a++ }');
+    });
+
+    it('should remove all cases one at a time', () => {
+      expectMutation(
+        'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default: a = "spam";}',
+        'switch (v) {case 0: case 1: a = "qux"; break; default: a = "spam";}',
+        'switch (v) {case 0: a = "foo"; case 1: default: a = "spam";}',
+        'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default:}'
+      );
+    });
+
+    it('should not mutate empty cases (0 consequent statements)', () => {
+      expectMutation(
+        'switch (v) {case 0: case 1: break; default: a = "spam";}',
+        'switch (v) {case 0: case 1: default: a = "spam";}',
+        'switch (v) {case 0: case 1: break; default:}'
+      );
+    });
+
+    it('should mutate the expression of a while statement', () => {
+      expectMutation('while(a < b) { console.log(); }', 'while(false) { console.log(); }');
     });
   });
 }

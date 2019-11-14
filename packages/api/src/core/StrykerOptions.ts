@@ -59,7 +59,7 @@ interface StrykerOptions {
    *    * The `name` property is mandatory and contains the name of the mutant generator to use.
    *    * For example: 'javascript', 'typescript'
    *    * The `excludedMutations` property is mandatory and contains the names of the specific mutation types to exclude from testing.
-   *    * The values must match the given names of the mutations. For example: 'BinaryExpression', 'BooleanSubstitution', etc.
+   *    * The values must match the given names of the mutations. For example: 'ArithmeticOperator', 'EqualityOperator', etc.
    */
   mutator: string | Partial<MutatorDescriptor>;
 
