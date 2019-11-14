@@ -10,3 +10,15 @@ export { default as ObjectLiteralMutatorSpec } from './ObjectLiteralMutatorSpec'
 export { default as StringLiteralMutatorSpec } from './StringLiteralMutatorSpec';
 export { default as UnaryOperatorMutatorSpec } from './UnaryOperatorMutatorSpec';
 export { default as UpdateOperatorMutatorSpec } from './UpdateOperatorMutatorSpec';
+
+export { default as ArrayLiteralMutatorSpec } from './ArrayLiteralMutatorSpec';
+export { default as ArrayNewExpressionMutatorSpec } from './ArrayNewExpressionMutatorSpec';
+export { default as BinaryExpressionMutatorSpec } from './BinaryExpressionMutatorSpec';
+export { default as BlockMutatorSpec } from './BlockMutatorSpec';
+export { default as BooleanSubstitutionMutatorSpec } from './BooleanSubstitutionMutatorSpec';
+export { default as DoStatementMutatorSpec } from './DoStatementMutatorSpec';
+export { default as ForStatementMutatorSpec } from './ForStatementMutatorSpec';
+export { default as IfStatementMutatorSpec } from './IfStatementMutatorSpec';
+export { default as PrefixUnaryExpressionMutatorSpec } from './PrefixUnaryExpressionMutatorSpec';
+export { default as SwitchCaseMutatorSpec } from './SwitchCaseMutatorSpec';
+export { default as WhileStatementMutatorSpec } from './WhileStatementMutatorSpec';
