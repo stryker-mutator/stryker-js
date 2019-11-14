@@ -1,4 +1,5 @@
-import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions } from '../../core';
+import { LogLevel, MutationScoreThresholds, StrykerOptions } from '../../core';
+import { MutatorDescription } from '../core/StrykerOptions';
 
 export default class Config implements StrykerOptions {
   [customConfig: string]: any;
@@ -20,7 +21,7 @@ export default class Config implements StrykerOptions {
   public coverageAnalysis: 'perTest' | 'all' | 'off' = 'off';
   public testRunner: string = 'command';
   public testFramework: string;
-  public mutator: string | MutatorDescriptor = 'javascript';
+  public mutator: MutatorDescription[keyof MutatorDescription] = 'javascript';
   public transpilers: string[] = [];
   public maxConcurrentTestRunners: number = Infinity;
   public symlinkNodeModules: boolean = true;
@@ -35,8 +36,8 @@ export default class Config implements StrykerOptions {
   public set(newConfig: Partial<StrykerOptions>) {
     if (newConfig) {
       Object.keys(newConfig).forEach(key => {
-        if (typeof newConfig[key] !== 'undefined') {
-          this[key] = newConfig[key];
+        if (typeof newConfig[key as keyof StrykerOptions] !== 'undefined') {
+          this[key] = newConfig[key as keyof StrykerOptions];
         }
       });
     }
