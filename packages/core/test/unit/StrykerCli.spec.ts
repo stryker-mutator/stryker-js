@@ -1,11 +1,12 @@
-import StrykerCli from '../../src/StrykerCli';
 import { Command } from 'commander';
 import * as sinon from 'sinon';
-import LogConfigurator from '../../src/logging/LogConfigurator';
 import { Logger } from '@stryker-mutator/api/logging';
 import { logger } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType } from '@stryker-mutator/api/core';
+
+import LogConfigurator from '../../src/logging/LogConfigurator';
+import StrykerCli from '../../src/StrykerCli';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;

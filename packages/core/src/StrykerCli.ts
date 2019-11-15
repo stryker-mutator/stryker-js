@@ -1,13 +1,13 @@
 import { Command } from 'commander';
 import { getLogger } from 'log4js';
+import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mutator/api/core';
+import { Config } from '@stryker-mutator/api/config';
+import { Logger } from '@stryker-mutator/api/logging';
 
 import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
 import Stryker from './Stryker';
-import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mutator/api/core';
-import { Config } from '@stryker-mutator/api/config';
-import { Logger } from '@stryker-mutator/api/logging';
 
 function deepOption<T extends string, R>(object: { [K in T]?: R }, key: T, valueInterpreter = (value: R) => value) {
   return (value: R) => {
