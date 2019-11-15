@@ -234,7 +234,10 @@ describe(MutantTestMatcher.name, () => {
           });
 
           it('should have added the run results to the mutants', async () => {
-            const expectedTestSelectionFirstMutant: TestSelection[] = [{ id: 0, name: 'test one' }, { id: 1, name: 'test two' }];
+            const expectedTestSelectionFirstMutant: TestSelection[] = [
+              { id: 0, name: 'test one' },
+              { id: 1, name: 'test two' }
+            ];
 
             const result = await sut.matchWithMutants(mutants);
 

@@ -123,7 +123,10 @@ describe(MutantTranspileScheduler.name, () => {
     resolveSecond(transpiledFilesTwo);
     // Assert: all results are in
     await sleep();
-    const expectedResults: TranspileResult[] = [{ error: null, outputFiles: transpiledFilesOne }, { error: null, outputFiles: transpiledFilesTwo }];
+    const expectedResults: TranspileResult[] = [
+      { error: null, outputFiles: transpiledFilesOne },
+      { error: null, outputFiles: transpiledFilesTwo }
+    ];
     expect(actualResults).deep.eq(expectedResults);
   });
 

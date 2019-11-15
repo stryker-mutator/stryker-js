@@ -244,7 +244,9 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
-      expect(childExecSync).calledWith(
+      expect(
+        childExecSync
+      ).calledWith(
         'npm i --save-dev @stryker-mutator/awesome-runner @stryker-mutator/awesome-framework @stryker-mutator/typescript @stryker-mutator/webpack stryker-dimension-reporter @stryker-mutator/mars-reporter',
         { stdio: [0, 1, 2] }
       );

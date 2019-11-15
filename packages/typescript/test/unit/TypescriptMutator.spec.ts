@@ -15,7 +15,10 @@ class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
     return node.kind === ts.SyntaxKind.FunctionDeclaration;
   }
   protected identifyReplacements(node: ts.FunctionDeclaration): NodeReplacement[] {
-    return [{ node, replacement: '// Function declaration removed' }, { node, replacement: 'changedToOtherCall()' }];
+    return [
+      { node, replacement: '// Function declaration removed' },
+      { node, replacement: 'changedToOtherCall()' }
+    ];
   }
 }
 
