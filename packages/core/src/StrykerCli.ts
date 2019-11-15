@@ -9,9 +9,14 @@ import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
 import Stryker from './Stryker';
 
-function deepOption<T extends string, R>(object: { [K in T]?: R }, key: T, valueInterpreter = (value: R) => value) {
+/**
+ * Interpret a command line argument and add it to an object.
+ * @param object The object to assign the value to.
+ * @param key The property name under which the value needs to be stored.
+ */
+function deepOption<T extends string, R>(object: { [K in T]?: R }, key: T) {
   return (value: R) => {
-    object[key] = valueInterpreter(value);
+    object[key] = value;
     return undefined;
   };
 }
