@@ -1,4 +1,5 @@
 import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+
 import ClearTextReporter from './ClearTextReporter';
 import { dashboardReporterFactory } from './dashboard-reporter';
 import DotsReporter from './DotsReporter';

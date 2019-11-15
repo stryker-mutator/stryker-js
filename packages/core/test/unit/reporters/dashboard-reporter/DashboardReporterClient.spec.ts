@@ -1,8 +1,9 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { mutationTestReportSchemaMutationTestResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import sinon = require('sinon');
+import * as sinon from 'sinon';
 import { HttpClient } from 'typed-rest-client/HttpClient';
+import { mutationTestReportSchemaMutationTestResult } from '@stryker-mutator/test-helpers/src/factory';
+
 import StrykerDashboardClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';

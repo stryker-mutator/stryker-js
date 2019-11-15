@@ -1,11 +1,14 @@
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger, Logger } from 'log4js';
-import * as path from 'path';
+
 import { buildChildProcessInjector } from '../di';
 import LogConfigurator from '../logging/LogConfigurator';
 import { deserialize, serialize } from '../utils/objectUtils';
+
 import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';
 
 export default class ChildProcessProxyWorker {

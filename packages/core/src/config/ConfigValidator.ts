@@ -4,6 +4,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { StrykerError } from '@stryker-mutator/util';
+
 import { coreTokens } from '../di';
 
 export default class ConfigValidator {

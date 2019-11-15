@@ -1,9 +1,11 @@
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as path from 'path';
 import * as sinon from 'sinon';
+
 import ConfigReader from '../../../src/config/ConfigReader';
 import { coreTokens } from '../../../src/di';
 
@@ -101,7 +103,7 @@ describe(ConfigReader.name, () => {
 
       it('should report a fatal error', () => {
         expect(() => sut.readConfig()).throws();
-        expect(testInjector.logger.fatal).to.have.been.calledWith(`Config file must export a function!
+        expect(testInjector.logger.fatal).to.have.been.calledWith(`Config file must be an object or export a function!
   module.exports = function(config) {
     config.set({
       // your config
@@ -121,6 +123,19 @@ describe(ConfigReader.name, () => {
 
       it('should throw an error', () => {
         expect(() => sut.readConfig()).throws('Invalid config file. Inner error: SyntaxError: Unexpected identifier');
+      });
+    });
+
+    describe('with json config file', () => {
+      it('should read config file', () => {
+        sut = createSut({ configFile: 'testResources/config-reader/valid.json' });
+
+        result = sut.readConfig();
+
+        expect(result.valid).to.be.eq('config');
+        expect(result.should).to.be.eq('be');
+        expect(result.read).to.be.eq(true);
+        expect(testInjector.logger.warn).not.called;
       });
     });
   });

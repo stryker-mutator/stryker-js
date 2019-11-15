@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/mutator-specification",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "A package for maintaining common mutator specifications for Stryker - the JavaScript mutation testing framework",
   "scripts": {
     "start": "tsc -w",
@@ -13,7 +13,6 @@
     "access": "public"
   },
   "main": "src/index.js",
-  "typings": "src/index.ts",
   "author": "Nico Jansen <jansennico@gmail.com>",
   "repository": {
     "type": "git",

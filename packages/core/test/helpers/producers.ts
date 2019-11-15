@@ -3,6 +3,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { FileCoverageData } from 'istanbul-lib-coverage';
 import { Logger } from 'log4js';
 import * as sinon from 'sinon';
+
 import SourceFile from '../../src/SourceFile';
 import TestableMutant from '../../src/TestableMutant';
 import TranspiledMutant from '../../src/TranspiledMutant';

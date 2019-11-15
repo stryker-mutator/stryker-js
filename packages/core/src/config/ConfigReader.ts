@@ -1,10 +1,12 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
-import fs = require('fs');
-import * as path from 'path';
+
 import { coreTokens } from '../di';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' + '    config.set({\n' + '      // your config\n' + '    });\n' + '  };';
@@ -62,9 +64,14 @@ export default class ConfigReader {
           throw new StrykerError('Invalid config file', e);
         }
       }
-      if (typeof configModule !== 'function') {
-        this.log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
-        throw new StrykerError('Config file must export a function!');
+      if (typeof configModule !== 'function' && typeof configModule !== 'object') {
+        this.log.fatal('Config file must be an object or export a function!\n' + CONFIG_SYNTAX_HELP);
+        throw new StrykerError('Config file must export a function or be a JSON!');
+      }
+      if (typeof configModule === 'object') {
+        return (config: any) => {
+          config.set(configModule);
+        };
       }
     }
 

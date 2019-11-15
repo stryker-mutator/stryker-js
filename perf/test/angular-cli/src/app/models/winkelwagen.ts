@@ -19,7 +19,8 @@ export class Winkelwagen {
   }
 
   public setWinkelwagenRegels(regels: Array<WinkelwagenRegel>) {
-    sessionStorage.setItem(this.winkelwagenDataKey, JSON.stringify(regels));
+    this.winkelwagenRegels = regels;
+    sessionStorage.setItem(this.winkelwagenDataKey, JSON.stringify(this.winkelwagenRegels));
   }
 
   public addArtikel(artikel: Artikel) {

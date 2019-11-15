@@ -3,6 +3,7 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, TestResult } from '@stryker-mutator/api/test_runner';
+
 import SourceFile, { isLineBreak } from './SourceFile';
 import { freezeRecursively } from './utils/objectUtils';
 

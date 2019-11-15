@@ -1,6 +1,7 @@
 import { expect } from 'chai';
-import BabelParser from '../../../src/helpers/BabelParser';
 import { testInjector } from '@stryker-mutator/test-helpers';
+
+import BabelParser from '../../../src/helpers/BabelParser';
 
 describe(BabelParser.name, () => {
   function createSut() {

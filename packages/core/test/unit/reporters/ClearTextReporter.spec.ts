@@ -1,10 +1,13 @@
+import * as os from 'os';
+
 import { MutantResult, MutantStatus, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { mutantResult, mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import chalk from 'chalk';
-import * as os from 'os';
 import * as sinon from 'sinon';
+
+import chalk = require('chalk');
+
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
 
 const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: number) => {
@@ -104,8 +107,8 @@ describe(ClearTextReporter.name, () => {
 
       it('should report on the survived mutant', () => {
         expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('1. [Survived] Math'));
-        expect(process.stdout.write).to.have.been.calledWith(chalk.red('-   original line') + os.EOL);
-        expect(process.stdout.write).to.have.been.calledWith(chalk.green('+   mutated line') + os.EOL);
+        expect(process.stdout.write).to.have.been.calledWith(`${chalk.red('-   original line')}${os.EOL}`);
+        expect(process.stdout.write).to.have.been.calledWith(`${chalk.green('+   mutated line')}${os.EOL}`);
       });
 
       it('should not log individual ran tests', () => {

@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import { errorToString } from '../../src/errors';
 import StrykerError from '../../src/StrykerError';
 

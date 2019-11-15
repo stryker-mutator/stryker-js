@@ -1,6 +1,8 @@
-import { expect } from 'chai';
-import childProcess = require('child_process');
+import * as childProcess from 'child_process';
 import { promisify } from 'util';
+
+import { expect } from 'chai';
+
 import { childProcessAsPromised } from '../../src';
 
 describe('childProcessAsPromised', () => {

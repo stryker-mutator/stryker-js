@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import * as environmentVariables from '../../../../src/utils/objectUtils';
 
+import * as environmentVariables from '../../../../src/utils/objectUtils';
 import { determineCIProvider } from '../../../../src/reporters/ci/Provider';
 
 describe('determineCiProvider()', () => {

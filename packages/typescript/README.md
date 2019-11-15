@@ -1,8 +1,7 @@
-[![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
+[![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/typescript.svg)](https://www.npmjs.com/package/@stryker-mutator/typescript)
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/typescript.svg)](https://img.shields.io/node/v/@stryker-mutator/typescript.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 

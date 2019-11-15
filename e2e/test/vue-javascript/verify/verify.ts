@@ -5,16 +5,17 @@ describe('After running stryker on VueJS project', () => {
     await expectMetricsResult({
       metrics: produceMetrics({
         killed: 4,
-        mutationScore: 25,
-        mutationScoreBasedOnCoveredCode: 25,
-        runtimeErrors: 1,
+        mutationScore: 29.41,
+        mutationScoreBasedOnCoveredCode: 29.41,
+        runtimeErrors: 0,
         survived: 12,
-        totalCovered: 16,
-        totalDetected: 4,
-        totalInvalid: 1,
+        timeout: 1,
+        totalCovered: 17,
+        totalDetected: 5,
+        totalInvalid: 0,
         totalMutants: 17,
         totalUndetected: 12,
-        totalValid: 16
+        totalValid: 17
       })
     });
   });

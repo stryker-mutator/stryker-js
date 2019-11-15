@@ -1,6 +1,7 @@
 import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
+
 import CoverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
 
 describe('CoverageInstrumenterTranspiler', () => {

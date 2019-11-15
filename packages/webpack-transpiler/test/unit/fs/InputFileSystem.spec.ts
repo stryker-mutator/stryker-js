@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { CachedInputFileSystem } from 'enhanced-resolve';
 import * as sinon from 'sinon';
+
 import InputFileSystem from '../../../src/fs/InputFileSystem';
 import MemoryFS, * as memoryFSModule from '../../../src/fs/MemoryFS';
 import { createMockInstance, Mock } from '../../helpers/producers';

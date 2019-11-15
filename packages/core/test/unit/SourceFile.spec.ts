@@ -1,5 +1,6 @@
 import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
+
 import SourceFile from '../../src/SourceFile';
 
 const content = `

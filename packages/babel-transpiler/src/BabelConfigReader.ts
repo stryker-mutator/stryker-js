@@ -1,8 +1,10 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import * as fs from 'fs';
-import * as path from 'path';
+
 import * as babel from './helpers/babelWrapper';
 
 export interface StrykerBabelConfig {
@@ -50,8 +52,13 @@ export class BabelConfigReader {
             return require(babelrcPath) as babel.TransformOptions;
           }
           if (path.basename(babelrcPath) === 'babel.config.js') {
-            const config: babel.ConfigFunction = require(babelrcPath);
-            return config(optionsApi as babel.ConfigAPI);
+            const config = require(babelrcPath);
+            if (typeof config === 'function') {
+              const configFunction = config as babel.ConfigFunction;
+              return configFunction(optionsApi as babel.ConfigAPI);
+            } else {
+              return config as babel.TransformOptions;
+            }
           }
           return JSON.parse(fs.readFileSync(babelrcPath, 'utf8')) as babel.TransformOptions;
         } catch (error) {

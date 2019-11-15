@@ -1,4 +1,5 @@
 import { getEnvironmentVariable } from '../../utils/objectUtils';
+
 import { CIProvider } from './Provider';
 
 /**

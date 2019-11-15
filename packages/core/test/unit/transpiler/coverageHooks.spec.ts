@@ -1,5 +1,6 @@
 import { testFramework } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
+
 import * as coverageHooks from '../../../src/transpiler/coverageHooks';
 
 describe('coveragePerTestHooks', () => {

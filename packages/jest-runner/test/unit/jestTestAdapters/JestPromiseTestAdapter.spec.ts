@@ -2,6 +2,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
 import jest from 'jest';
 import sinon from 'sinon';
+
 import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
 
 describe(JestPromiseTestAdapter.name, () => {

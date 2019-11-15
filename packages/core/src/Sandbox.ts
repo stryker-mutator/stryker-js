@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { File } from '@stryker-mutator/api/core';
 import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
@@ -6,7 +8,7 @@ import { RunResult, RunStatus, TestRunner, TestStatus } from '@stryker-mutator/a
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import * as mkdirp from 'mkdirp';
-import * as path from 'path';
+
 import LoggingClientContext from './logging/LoggingClientContext';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
