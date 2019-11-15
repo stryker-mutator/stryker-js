@@ -63,16 +63,13 @@ describe(DashboardReporter.name, () => {
     ciProviderMock.determineProject.returns('github.com/foo/bar');
     ciProviderMock.determineVersion.returns('master');
     const expectedMutationTestResult = mutationTestReportSchemaMutationTestResult();
-    const expectedReport: Report = {
-      result: expectedMutationTestResult
-    };
 
     // Act
     await act(expectedMutationTestResult);
 
     // Assert
     expect(dashboardClientMock.updateReport).calledWith({
-      report: expectedReport,
+      report: expectedMutationTestResult,
       projectName: 'github.com/foo/bar',
       version: 'master',
       moduleName: undefined

@@ -46,9 +46,7 @@ export default class DashboardReporter implements Reporter {
 
   private toReport(result: mutationTestReportSchema.MutationTestResult): Report {
     if (this.options.dashboard.reportType === ReportType.Full) {
-      return {
-        result
-      };
+      return result;
     } else {
       return {
         mutationScore: calculateMetrics(result.files).metrics.mutationScore

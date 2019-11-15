@@ -41,9 +41,7 @@ describe(DashboardReporterClient.name, () => {
       const expectedHref = 'foo/bar';
       respondWith(200, `{ "href": "${expectedHref}" }`);
       environment.set('STRYKER_DASHBOARD_API_KEY', apiKey);
-      const report: Report = {
-        result: mutationTestReportSchemaMutationTestResult()
-      };
+      const report = mutationTestReportSchemaMutationTestResult();
       const expectedBody = JSON.stringify(report);
       const expectedUrl = `${baseUrl}/${projectName}/${expectedVersion}`;
 
@@ -64,9 +62,7 @@ describe(DashboardReporterClient.name, () => {
     it('should put the report for a specific module', async () => {
       // Arrange
       respondWith();
-      const report: Report = {
-        result: mutationTestReportSchemaMutationTestResult()
-      };
+      const report = mutationTestReportSchemaMutationTestResult();
       const expectedUrl = `${baseUrl}/${projectName}/${expectedVersion}?module=stryker%20module`;
 
       // Act
@@ -79,9 +75,7 @@ describe(DashboardReporterClient.name, () => {
     it('should use configured baseUrl', async () => {
       // Arrange
       respondWith();
-      const report: Report = {
-        result: mutationTestReportSchemaMutationTestResult()
-      };
+      const report = mutationTestReportSchemaMutationTestResult();
       testInjector.options.dashboard.baseUrl = 'https://foo.bar.com/api';
       const expectedUrl = `https://foo.bar.com/api/${projectName}/${expectedVersion}?module=stryker%20module`;
 
@@ -111,9 +105,7 @@ describe(DashboardReporterClient.name, () => {
     it('should throw an unexpected error if the dashboard responds with 500', async () => {
       // Arrange
       respondWith(500, 'Internal server error');
-      const report: Report = {
-        result: mutationTestReportSchemaMutationTestResult()
-      };
+      const report = mutationTestReportSchemaMutationTestResult();
 
       // Act
       const promise = sut.updateReport({ report, projectName, version, moduleName: undefined });
