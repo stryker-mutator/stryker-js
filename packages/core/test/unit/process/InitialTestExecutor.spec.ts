@@ -142,11 +142,7 @@ describe('InitialTestExecutor run', () => {
       sut = createSut();
       await sut.run();
       const actualLogMessage: string = testInjector.logger.debug.getCall(0).args[0];
-      const expectedLogMessage = `Transpiled files: ${JSON.stringify(
-        coverageAnnotatedFiles.map(_ => _.name),
-        null,
-        2
-      )}`;
+      const expectedLogMessage = `Transpiled files: ${JSON.stringify(coverageAnnotatedFiles.map(_ => _.name), null, 2)}`;
       expect(actualLogMessage).eq(expectedLogMessage);
     });
 

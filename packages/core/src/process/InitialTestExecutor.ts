@@ -172,13 +172,7 @@ export default class InitialTestExecutor {
 
   private logTranspileResult(transpiledFiles: readonly File[]) {
     if (this.options.transpilers.length && this.log.isDebugEnabled()) {
-      this.log.debug(
-        `Transpiled files: ${JSON.stringify(
-          transpiledFiles.map(f => `${f.name}`),
-          null,
-          2
-        )}`
-      );
+      this.log.debug(`Transpiled files: ${JSON.stringify(transpiledFiles.map(f => `${f.name}`), null, 2)}`);
     }
   }
 

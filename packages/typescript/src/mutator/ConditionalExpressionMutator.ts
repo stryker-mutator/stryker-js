@@ -40,9 +40,6 @@ export default class ConditionalExpressionMutator extends NodeMutator<ts.BinaryE
       return [];
     }
 
-    return [
-      { node, replacement: 'false' },
-      { node, replacement: 'true' }
-    ];
+    return [{ node, replacement: 'false' }, { node, replacement: 'true' }];
   }
 }

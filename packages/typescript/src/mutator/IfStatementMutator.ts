@@ -10,9 +10,6 @@ export default class IfStatementMutator extends NodeMutator<ts.IfStatement> {
   }
 
   protected identifyReplacements(ifStatement: ts.IfStatement): NodeReplacement[] {
-    return [
-      { node: ifStatement.expression, replacement: 'true' },
-      { node: ifStatement.expression, replacement: 'false' }
-    ];
+    return [{ node: ifStatement.expression, replacement: 'true' }, { node: ifStatement.expression, replacement: 'false' }];
   }
 }
