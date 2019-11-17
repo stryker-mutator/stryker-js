@@ -57,7 +57,7 @@ module.exports = function (config) {
       require.resolve('../javascript-mutator/src/index')
     ],
     dashboard: {
-      project: process.env.GITHUB_REPOSITORY,
+      project: 'github.com/' + process.env.GITHUB_REPOSITORY,
       version: process.env.GITHUB_REF.substr(11),
       module: 'core',
       reportType: 'full'
