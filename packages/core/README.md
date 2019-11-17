@@ -89,6 +89,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 ### Available Options
 * [allowConsoleColors](#allowConsoleColors)
 * [coverageAnalysis](#coverageAnalysis)
+* [dashboard.*](#dashboard)
 * [fileLogLevel](#fileLogLevel)
 * [files](#files)
 * [logLevel](#logLevel)
@@ -105,7 +106,6 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [timeoutFactor](#timeoutFactor)
 * [timeoutMS](#timeoutMS)
 * [transpilers](#transpilers)
-* [dashboard.*](#dashboard)
 
 <a name="allowConsoleColors"></a>
 ### `allowConsoleColors` [`boolean`]
@@ -144,6 +144,15 @@ In addition to requiring your test runner to be able to report the code coverage
  before and after each test, as well as test filtering.  
  Currently, `stryker-mocha-runner` as well as `stryker-karma-runner` support this. However, `stryker-karma-runner` support is limited to using it with `Jasmine` as the test framework
  (`Mocha` is not yet supported).
+
+<a name="dashboard"></a>
+### `dashboard` [`DashboardOptions`]
+
+Default: `{ baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'mutationScore' }`  
+Command line: `--dashboard.project github.com/my-org/my-project --dashboard.version branch-or-tag --dashboard.module my-module --dashboard.baseUrl https://dashboard.stryker-mutator.io/api/reports --dashboard.reportType full`  
+Config file: `{ project: 'github.com/my-org/my-project', version: 'branch-or-tag', module: 'my-module', baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'full' }`
+
+Settings for the `dashboard` [reporter](#reporters). See the [stryker handbook for more info](https://github.com/stryker-mutator/stryker-handbook/blob/master/dashboard.md)
 
 <a name="fileLogLevel"></a>
 ### `fileLogLevel` [`string`]
@@ -250,11 +259,12 @@ you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or
 ### `reporters` [`string[]`]
 
 Default: `['clear-text', 'progress']`  
-Command line: `--reporters clear-text,progress,dots,dashboard`  
-Config file: `reporters: ['clear-text', 'progress', 'dots', 'dashboard']`     
+Command line: `--reporters clear-text,progress,dots,dashboard,html`  
+Config file: `reporters: ['clear-text', 'progress', 'dots', 'dashboard', 'html']`     
 
 With `reporters`, you can set the reporters for stryker to use.
 These reporters can be used out of the box: `clear-text`, `progress`, `dots`, `dashboard` and `event-recorder`.
+The `html` reporter can be installed as a plugin, see [the html reporter's readme](https://github.com/stryker-mutator/stryker/tree/master/packages/html-reporter#readme).
 By default, `clear-text` and `progress` are active if no reporters are configured.
 You can load additional plugins to get more reporters. See [stryker-mutator.io](https://stryker-mutator.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
@@ -264,15 +274,7 @@ The `clear-text` reporter supports three additional config options:
 * `logTests` to log the names of unit tests that were run to allow mutants. By default, only the first three are logged. The config for your config file is: `clearTextReporter: { logTests: true },`
 * `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
 
-The `dashboard` reporter is a special kind of reporter. It sends a report to https://dashboard.stryker-mutator.io, enabling you to add a fancy mutation score badge to your readme! To make sure no unwanted results are sent to the dashboards, it will only send the report if it is run from a build server. The reporter currently detects [Travis](https://travis-ci.org/) and [CircleCI](https://circleci.com/). Please open an [issue](https://github.com/stryker-mutator/stryker/issues/new) if your build server is missing. On all these environments, it will ignore builds of pull requests. Apart from build server specific environment variables, the reporter uses one environment variable:
-
-| Environment variable | Description | Example value |
-| ------------- | ------------- | ----- |
-| STRYKER\_DASHBOARD\_API\_KEY | Your API key (generated at https://dashboard.stryker-mutator.io) | `52248872-2edc-4102-a43a-bcfca7a9ca99` |
-
-You will need to pass the `STRYKER_DASHBOARD_API_KEY` environment variable yourself. You can create one for your repository by logging in on [the Stryker dashboard](https://dashboard.stryker-mutator.io). We strongly recommend you use encrypted environment variables:
-* [Travis documentation](https://docs.travis-ci.com/user/environment-variables/#Encrypting-environment-variables)
-* [CircleCI documentation](https://circleci.com/security/#secrets_section)
+The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.*](#dashboard) configuration options. See [the Stryker handbook](https://github.com/stryker-mutator/stryker-handbook/blob/master/dashboard.md) for more info.
 
 <a name="symlinkNodeModules"></a>
 ### `symlinkNodeModules` [`boolean`]
@@ -280,7 +282,6 @@ You will need to pass the `STRYKER_DASHBOARD_API_KEY` environment variable yours
 Default: `true`  
 Command line: *none*  
 Config file: `symlinkNodeModules: true`  
-
 
 The `symlinkNodeModules` value indicates whether Stryker should create a [symbolic link](https://nodejs.org/api/fs.html#fs_fs_symlink_target_path_type_callback)
 to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave
@@ -390,11 +391,3 @@ Default: `[]`
 
 With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.
 
-<a name="dashboard"></a>
-### `dashboard` [`DashboardOptions`]
-
-Default: `{ baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'mutationScore' }`  
-Command line: `--dashboard.project github.com/my-org/my-project --dashboard.version branch-or-tag --dashboard.module my-module --dashboard.baseUrl https://dashboard.stryker-mutator.io/api/reports --dashboard.reportType full`  
-Config file: `{ project: 'github.com/my-org/my-project', version: 'branch-or-tag', module: 'my-module', baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'full' }`
-
-Settings for the `dashboard` reporter. See the [stryker handbook for more info](https://github.com/stryker-mutator/stryker-handbook/blob/master/dashboard.md)
