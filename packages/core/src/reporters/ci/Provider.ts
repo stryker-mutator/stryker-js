@@ -7,17 +7,19 @@ import TravisProvider from './TravisProvider';
  * Represents an object that can provide information about a CI/CD provider.
  */
 export interface CIProvider {
-  /** Returns whether Stryker is running on a pull request. */
-  isPullRequest(): boolean;
-  /** Returns the name of the Git branch of the project on which Stryker is running. */
-  determineBranch(): string;
-  /** Returns the name of the GitHub repository of the project on which Stryker is running. */
-  determineRepository(): string;
+  /**
+   * Determine the repository slug, including the git provider. I.E: github.com/stryker-mutator/stryker or bitbucket.org/org/name.
+   */
+  determineProject(): string | undefined;
+  /**
+   * Determine the current version. I.e. branch name, git sha, or tag name
+   */
+  determineVersion(): string | undefined;
 }
 
 /**
- * Return an approriate instance of CiProvider.
- * @returns An instance of CiProvider, or undefined if it appears Stryker is not running in a CI/CD environment.
+ * Return an appropriate instance of CiProvider.
+ * @returns An instance of CiProvider, or `null` if it appears Stryker is not running in a CI/CD environment.
  */
 export function determineCIProvider() {
   // By far the coolest env. variable from all those listed at
@@ -27,6 +29,7 @@ export function determineCIProvider() {
   } else if (getEnvironmentVariable('CIRCLECI')) {
     return new CircleProvider();
   }
+  // TODO: Add vsts, github actions and gitlab CI
 
-  return undefined;
+  return null;
 }

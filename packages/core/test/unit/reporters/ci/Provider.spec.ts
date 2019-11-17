@@ -17,7 +17,7 @@ describe('determineCiProvider()', () => {
 
       const result = determineCIProvider();
 
-      expect(result).to.be.undefined;
+      expect(result).to.be.null;
     });
   });
 

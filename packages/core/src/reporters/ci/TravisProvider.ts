@@ -2,12 +2,21 @@ import { getEnvironmentVariable } from '../../utils/objectUtils';
 
 import { CIProvider } from './Provider';
 
-class TravisReporter implements CIProvider {
-  public isPullRequest = () => getEnvironmentVariable('TRAVIS_PULL_REQUEST') !== 'false';
-
-  public determineBranch = () => getEnvironmentVariable('TRAVIS_BRANCH') || '(unknown)';
-
-  public determineRepository = () => getEnvironmentVariable('TRAVIS_REPO_SLUG') || '(unknown)';
+/**
+ * See https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
+ */
+class TravisProvider implements CIProvider {
+  public determineProject(): string | undefined {
+    const slug = getEnvironmentVariable('TRAVIS_REPO_SLUG');
+    if (slug) {
+      return `github.com/${slug}`;
+    } else {
+      return undefined;
+    }
+  }
+  public determineVersion(): string | undefined {
+    return getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH') || getEnvironmentVariable('TRAVIS_BRANCH');
+  }
 }
 
-export default TravisReporter;
+export default TravisProvider;
