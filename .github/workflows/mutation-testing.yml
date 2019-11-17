@@ -7,7 +7,7 @@ on:
     - cron:  '0 12 * * *'
 
 jobs:
-  stryker: 
+  core: 
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +23,25 @@ jobs:
       - name: Run Stryker
         run: |
           cd packages/core
+          npm run stryker
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+  html-reporter: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Install dependencies
+        run: npm install
+      - name: Build packages
+        run: npm run build
+      - name: Run Stryker
+        run: |
+          cd packages/html-reporter
           npm run stryker
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
