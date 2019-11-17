@@ -2,26 +2,26 @@ module.exports = function (config) {
     var typescript = true;
     if (typescript) {	
      config.set({	
-       files: [	
-         'node_modules/stryker-api/*.@(js|map)',	
-         'node_modules/stryker-api/src/**/*.@(js|map)',	
-         'package.json',	
-         'src/**/*.ts',	
-         '!src/**/*.d.ts',	
-         'test/helpers/**/*.ts',	
-         'test/unit/**/*.ts',	
-         '!test/**/*.d.ts'	
-       ],	
-       symlinkNodeModules: false,	
+      //  files: [	
+      //    'node_modules/stryker-api/*.@(js|map)',	
+      //    'node_modules/stryker-api/src/**/*.@(js|map)',	
+      //    'package.json',	
+      //    'src/**/*.ts',	
+      //    '!src/**/*.d.ts',	
+      //    'test/helpers/**/*.ts',	
+      //    'test/unit/**/*.ts',	
+      //    '!test/**/*.d.ts'	
+      //  ],	
+       symlinkNodeModules: true,	
        mutate: ['src/**/*.ts'],	
        coverageAnalysis: 'perTest',	
-       tsconfigFile: 'tsconfig.json',	
+       tsconfigFile: 'tsconfig.stryker.json',	
        mutator: 'typescript',	
        transpilers: [	
          'typescript'	
        ],	
        mochaOptions: {	
-         files: ['test/helpers/**/*.js', 'test/unit/**/*.js']	
+         spec: ['test/helpers/**/*.js', 'test/unit/**/*.js']	
        }	
      })	
    } else {	
@@ -55,6 +55,12 @@ module.exports = function (config) {
        require.resolve('../html-reporter/src/index'),	
        require.resolve('../typescript/src/index'),	
        require.resolve('../javascript-mutator/src/index')	
-     ]	
+     ],
+     dashboard: {
+      project: process.env.GITHUB_REPOSITORY,
+      version: process.env.GITHUB_REF.substr(11),
+      module: 'core',
+      reportType: 'full'
+     }
    });	
  };

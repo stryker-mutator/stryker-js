@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push: ~
+  pull_request: ~
+  schedule:
+    - cron:  '0 12 * * *'
+
+jobs:
+  stryker: 
+    runs-on: ubuntu-latest
+
+  steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: npm install
+    - name: Build packages
+      run: npm run build
+    - name: Run Stryker
+      run: |
+        cd packages/core
+        npm run stryker
+      
