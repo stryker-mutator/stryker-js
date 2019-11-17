@@ -64,3 +64,9 @@ module.exports = function (config) {
     }
   });
 };
+
+if (process.env.STRYKER_DASHBOARD_API_KEY) {
+  console.log('STRYKER_DASHBOARD_API_KEY set');
+} else {
+  console.error('STRYKER_DASHBOARD_API_KEY missing!')
+}
