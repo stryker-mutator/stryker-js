@@ -15,35 +15,35 @@ jobs:
         env:
           JOB_CONTEXT: ${{ toJson(job) }}
         run: echo "$JOB_CONTEXT"
-      - uses: actions/checkout@v1
-      - &node name: Use Node.js 12.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-      - &install name: Install dependencies
-        run: npm install
-      - &build name: Build packages
-        run: npm run build
-      - name: Run Stryker
-        run: |
-          cd packages/${PACKAGE_NAME}
-          npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
-          PACKAGE_NAME: 'core'
+      # - uses: actions/checkout@v1
+      # - &node name: Use Node.js 12.x
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: 12.x
+      # - &install name: Install dependencies
+      #   run: npm install
+      # - &build name: Build packages
+      #   run: npm run build
+  #     - name: Run Stryker
+  #       run: |
+  #         cd packages/${PACKAGE_NAME}
+  #         npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
+  #       env:
+  #         STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
+  #         PACKAGE_NAME: 'core'
 
-  html-reporter: 
-    runs-on: ubuntu-latest
+  # html-reporter: 
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v1
-      - *node
-      - *install
-      - *build
-      - name: Run Stryker
-        run: |
-          cd packages/${PACKAGE_NAME}
-          npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
-          PACKAGE_NAME: 'html-reporter'
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - *node
+  #     - *install
+  #     - *build
+  #     - name: Run Stryker
+  #       run: |
+  #         cd packages/${PACKAGE_NAME}
+  #         npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
+  #       env:
+  #         STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
+  #         PACKAGE_NAME: 'html-reporter'
