@@ -18,6 +18,6 @@ const package = getInput('package');
 const apiKey = getInput('apiKey');
 console.log('Package ', package);
 
-execSync('npm install');
-execSync('npm run build');
-execSync('npm run stryker', { env: { STRYKER_DASHBOARD_API_KEY: apiKey },  cwd: path.resolve(__dirname, '..', '..', 'packages', package)});
+execSync('npm install', { stdio: 'inherit' });
+execSync('npm run build', { stdio: 'inherit' });
+execSync('npm run stryker', { stdio: 'inherit', env: { STRYKER_DASHBOARD_API_KEY: apiKey },  cwd: path.resolve(__dirname, '..', '..', 'packages', package)});
