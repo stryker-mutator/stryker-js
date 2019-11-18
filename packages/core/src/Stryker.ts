@@ -17,6 +17,8 @@ import ScoreResultCalculator from './ScoreResultCalculator';
 import { transpilerFactory } from './transpiler';
 import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
+import { Statistics } from './statistics/Statistics';
+import { HttpClient } from 'typed-rest-client/HttpClient';
 
 export default class Stryker {
   private readonly log: Logger;
@@ -82,11 +84,13 @@ export default class Stryker {
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
+      const statisticsProcess = inputFileInjector.provideValue('httpClient', new HttpClient('httpClient')).injectClass(Statistics);
       try {
         if (initialRunResult.runResult.tests.length && testableMutants.length) {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
           await this.reportScore(mutantResults, inputFileInjector);
+          await statisticsProcess.sendStatistics();
           await this.logDone();
           return mutantResults;
         } else {

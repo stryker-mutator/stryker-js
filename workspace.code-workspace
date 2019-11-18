@@ -114,6 +114,9 @@
         "language": "typescript",
         "autoFix": true
       }
+    ],
+    "cSpell.words": [
+      "Configurator"
     ]
   },
   "extensions": {
