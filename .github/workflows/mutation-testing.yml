@@ -7,41 +7,43 @@ on:
     - cron:  '0 12 * * *'
 
 jobs:
-  core: 
+  core:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
       - uses: actions/checkout@v1
-      - name: Use Node.js 12.x
+      - &node name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - name: Install dependencies
+      - &install name: Install dependencies
         run: npm install
-      - name: Build packages
+      - &build name: Build packages
         run: npm run build
       - name: Run Stryker
         run: |
-          cd packages/core
+          cd packages/${PACKAGE_NAME}
           npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
+          PACKAGE_NAME: 'core'
+
   html-reporter: 
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v1
-      - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-      - name: Install dependencies
-        run: npm install
-      - name: Build packages
-        run: npm run build
+      - *node
+      - *install
+      - *build
       - name: Run Stryker
         run: |
-          cd packages/html-reporter
+          cd packages/${PACKAGE_NAME}
           npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
+          PACKAGE_NAME: 'html-reporter'
