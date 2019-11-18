@@ -1,0 +1,11 @@
+name: mutation testing
+inputs:
+  package:
+    description: 'Name of the package to run Stryker in.'
+    required: true
+  apiKey:
+    description: 'The STRYKER_DASHBOARD_API_KEY to use.'
+    required: true
+runs:
+  using: 'node12'
+  main: mutation-test-package.js

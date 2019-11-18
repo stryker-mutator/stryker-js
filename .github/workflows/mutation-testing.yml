@@ -32,18 +32,21 @@ jobs:
   #         STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
   #         PACKAGE_NAME: 'core'
 
-  # html-reporter: 
-  #   runs-on: ubuntu-latest
+  html-reporter: 
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - *node
-  #     - *install
-  #     - *build
-  #     - name: Run Stryker
-  #       run: |
-  #         cd packages/${PACKAGE_NAME}
-  #         npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
-  #       env:
-  #         STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
-  #         PACKAGE_NAME: 'html-reporter'
+    steps:
+      - uses: .githib/actions/mutation-test-package
+        with:
+          package: 'html-reporter'
+          apiKey: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+      # - *node
+      # - *install
+      # - *build
+      # - name: Run Stryker
+      #   run: |
+      #     cd packages/${PACKAGE_NAME}
+      #     npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
+      #   env:
+      #     STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
+      #     PACKAGE_NAME: 'html-reporter'
