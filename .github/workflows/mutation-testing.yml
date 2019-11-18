@@ -23,7 +23,7 @@ jobs:
       - name: Run Stryker
         run: |
           cd packages/core
-          npm run stryker --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
+          npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
   html-reporter: 
@@ -42,6 +42,6 @@ jobs:
       - name: Run Stryker
         run: |
           cd packages/html-reporter
-          npm run stryker --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
+          npm run stryker -- --dashboard.baseUrl https://stryker-dashboard-acceptance.azurewebsites.net/api/reports
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY_ACCEPTANCE }}
