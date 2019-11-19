@@ -1,7 +1,6 @@
 {
-  "extends": "../../tsconfig.settings.json",
+  "extends": "./tsconfig.src.json",
   "compilerOptions": {
-    "rootDir": ".",
     "types": [
       "node",
       "mocha"
@@ -9,6 +8,7 @@
   },
   "include": [
     "src",
-    "test"
+    "test",
+    "typings"
   ],
 }
