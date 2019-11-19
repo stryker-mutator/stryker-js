@@ -2,6 +2,7 @@ import { getEnvironmentVariable } from '../../utils/objectUtils';
 
 import CircleProvider from './CircleProvider';
 import TravisProvider from './TravisProvider';
+import GithubActionsCIProvider from './GithubActionsProvider';
 
 /**
  * Represents an object that can provide information about a CI/CD provider.
@@ -28,8 +29,10 @@ export function determineCIProvider() {
     return new TravisProvider();
   } else if (getEnvironmentVariable('CIRCLECI')) {
     return new CircleProvider();
+  } else if (getEnvironmentVariable('GITHUB_ACTION')) {
+    return new GithubActionsCIProvider();
   }
-  // TODO: Add vsts, github actions and gitlab CI
+  // TODO: Add vsts and gitlab CI
 
   return null;
 }
