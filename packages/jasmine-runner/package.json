@@ -4,7 +4,7 @@
   "description": "A plugin to use the Jasmine (NodeJS) test runner in Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
   "scripts": {
-    "stryker": "../core/bin/stryker run"
+    "stryker": "node ../core/bin/stryker run"
   },
  "nyc": {
     "exclude": [

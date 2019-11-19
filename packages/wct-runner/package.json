@@ -4,7 +4,7 @@
   "description": "A plugin to use web component tester as a test runner for Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
   "scripts": {
-    "stryker": "../core/bin/stryker run"
+    "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
     "type": "git",

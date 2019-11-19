@@ -4,7 +4,7 @@
   "description": "A plugin for javascript projects using Stryker",
   "main": "src/index.js",
   "scripts": {
-    "stryker": "../core/bin/stryker run"
+    "stryker": "node ../core/bin/stryker run"
   },
  "repository": {
     "type": "git",

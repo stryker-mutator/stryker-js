@@ -4,7 +4,7 @@
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {
-    "stryker": "../core/bin/stryker run"
+    "stryker": "node ../core/bin/stryker run"
   },
   "nyc": {
     "exclude": [
