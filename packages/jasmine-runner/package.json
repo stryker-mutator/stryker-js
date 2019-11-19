@@ -4,12 +4,9 @@
   "description": "A plugin to use the Jasmine (NodeJS) test runner in Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
   "scripts": {
-    "start": "tsc -w",
-    "clean": "rimraf \"src/**/+(*.d.ts|*.js|*.map)\" \"test/**/+(*.d.ts|*.js|*.map)\" .nyc_output reports",
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 100 --functions 100 --branches 85 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\""
+    "stryker": "../core/bin/stryker run"
   },
-  "nyc": {
+ "nyc": {
     "exclude": [
       "test",
       "testResources"

@@ -4,9 +4,7 @@
   "description": "A plugin to use web component tester as a test runner for Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
   "scripts": {
-    "start": "tsc -w",
-    "test": "cross-env LAUNCHPAD_BROWSERS=chrome nyc --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 95 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && if-node-version \">=8\" mocha --timeout 120000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+    "stryker": "../core/bin/stryker run"
   },
   "repository": {
     "type": "git",

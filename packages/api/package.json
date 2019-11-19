@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
   },
+  "scripts": {
+    "stryker": "../core/bin/stryker run"
+  },
   "keywords": [
     "mutation testing",
     "mutation",
