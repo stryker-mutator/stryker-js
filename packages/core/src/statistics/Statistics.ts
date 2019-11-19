@@ -1,6 +1,3 @@
-//import { StrykerOptions } from '@stryker-mutator/api/core';
-//import LogConfigurator from '../logging/LogConfigurator';
-// import { errorToString } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { HttpClient } from 'typed-rest-client/HttpClient';
@@ -11,25 +8,24 @@ export class Statistics {
   public static inject = tokens(commonTokens.logger, 'httpClient');
   public statistics: any = {};
 
-  constructor(private readonly log: Logger, private readonly http: HttpClient) {
+  constructor(private readonly log: Logger, private readonly httpStatisticsClient: HttpClient) {
     this.statistics.implementation = 'Stryker';
-  }
-
-  public getStatistics() {
-    return this.statistics.implementation;
   }
 
   public sendStatistics(): Promise<void> {
     this.log.info(`Sending anonymous statistics to ${AZURE_URL}`);
-    return this.http
-      .post(AZURE_URL, JSON.stringify(this.statistics), {
+    const statisticsData = JSON.stringify(this.statistics);
+    return this.httpStatisticsClient
+      .post(AZURE_URL, statisticsData, {
         ['Content-Type']: 'application/json'
       })
       .then(body => {
-        this.log.info(`Received status code: ${body.message.statusCode}`);
+        if (body.message.statusCode != 201) {
+          this.log.error(`Sending statistics resulted in http status ${body.message.statusCode}`);
+        }
       })
       .catch(err => {
-        this.log.error(`Error sending statistics: ${err}`);
+        this.log.error('Unable to reach statistics server');
       });
   }
 }
