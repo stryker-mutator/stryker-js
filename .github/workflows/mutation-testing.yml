@@ -1,10 +1,11 @@
 name: mutation testing
 
 on:
-  push: ~
-  pull_request: ~
-  schedule:
-    - cron:  '0 12 * * *'
+  push:
+    branches:
+      - master
+    paths:
+      - 'packages/**/*.ts'
 
 jobs:
   core:
