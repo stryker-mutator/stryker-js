@@ -79,7 +79,7 @@ jobs:
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
   
-  stryker-2: 
+  stryker-3: 
     runs-on: ubuntu-latest
 
     steps:
