@@ -9,6 +9,15 @@
   },
   "include": [
     "src",
-    "test"
+    "test",
+    "config.ts",
+    "core.ts",
+    "logging.ts",
+    "mutant.ts",
+    "report.ts",
+    "test_framework.ts",
+    "test_runner.ts",
+    "transpile.ts",
+    "plugin.ts"
   ],
 }
