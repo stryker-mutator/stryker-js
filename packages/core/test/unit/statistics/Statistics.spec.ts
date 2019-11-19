@@ -4,7 +4,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { Mock, mock } from '../../helpers/producers';
 import { expect } from 'chai';
 
-describe.only('Statistics', () => {
+describe('Statistics', () => {
   let sut: Statistics;
   let httpStatisticsClient: Mock<HttpClient>;
 
