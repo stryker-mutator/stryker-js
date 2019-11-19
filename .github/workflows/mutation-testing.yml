@@ -41,7 +41,7 @@ jobs:
         run: |
           cd packages/api
           npm run stryker
-          cd ../babel-traspiler
+          cd ../babel-transpiler
           npm run stryker
           cd ../html-reporter
           npm run stryker
