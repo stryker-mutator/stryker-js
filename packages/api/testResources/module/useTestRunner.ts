@@ -1,7 +1,7 @@
 import {
   CoverageCollection, CoverageResult, CoverageCollectionPerTest, CoverageData,
-  StatementMap, TestRunner, RunnerOptions,
-  RunResult, RunOptions, TestRunnerFactory,
+  StatementMap, TestRunner, 
+  RunResult, RunOptions, 
   TestStatus, RunStatus
 } from '@stryker-mutator/api/test_runner';
 
@@ -29,26 +29,10 @@ class MyTestRunner implements TestRunner {
   }
 }
 
-const runnerOptions: RunnerOptions = {
-  fileNames: [
-    'foobar.js',
-    'foobar.spec.js'
-  ],
-  strykerOptions: null
-};
-
 const runOptions: RunOptions = {
   testHooks: 'test hooks',
   timeout: 42
 };
-
-TestRunnerFactory.instance().register('MyTestRunner', MyTestRunner);
-const myTestRunner = TestRunnerFactory.instance().create('MyTestRunner', runnerOptions);
-if (!(myTestRunner instanceof MyTestRunner)) {
-  throw Error('Something wrong with myTestRunner');
-}
-
-console.log(TestRunnerFactory.instance().knownNames());
 const coverageData: CoverageData = {};
 const statementMap: StatementMap = {};
 statementMap['23'] = { start: { line: 23, column: 23 }, end: { line: 42, column: 42 } };
@@ -57,3 +41,5 @@ const coverageResult: CoverageResult = {
   f: coverageData,
   s: coverageData
 };
+
+console.log('done');
