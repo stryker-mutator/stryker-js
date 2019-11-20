@@ -4,6 +4,8 @@
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {
+    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 90 --branches 80 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 100000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
   "nyc": {

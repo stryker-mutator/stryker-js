@@ -1,11 +1,5 @@
 {
-  "extends": "./tsconfig.src.json",
-  "compilerOptions": {
-    "types": [
-      "node",
-      "mocha"
-    ],
-  },
+  "extends": "./tsconfig.test.json",
   "include": [
     "src",
     "test",
