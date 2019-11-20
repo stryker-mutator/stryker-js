@@ -21,7 +21,7 @@ export class Statistics {
       })
       .then(body => {
         if (body.message.statusCode != 201) {
-          this.log.error(`Sending statistics resulted in http status ${body.message.statusCode}`);
+          this.log.info(`Sending statistics resulted in http status ${body.message.statusCode}`);
         }
       })
       .catch(err => {

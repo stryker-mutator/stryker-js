@@ -50,7 +50,7 @@ describe('Statistics', () => {
     await sut.sendStatistics();
 
     // Assert
-    expect(testInjector.logger.error).have.been.calledWithMatch('Sending statistics resulted in http status 600');
+    expect(testInjector.logger.info).have.been.calledWithMatch('Sending statistics resulted in http status 600');
   });
 
   it("server doesn't respond", async () => {
