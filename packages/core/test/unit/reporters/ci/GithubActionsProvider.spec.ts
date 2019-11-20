@@ -41,7 +41,7 @@ describe(GithubActionsCIProvider.name, () => {
 
     it('should throw if env variable is missing', () => {
       env.unset('GITHUB_REF');
-      expect(() => sut.determineProject()).throws(StrykerError);
+      expect(() => sut.determineVersion()).throws(StrykerError);
     });
   });
 });
