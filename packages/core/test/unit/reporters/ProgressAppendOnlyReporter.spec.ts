@@ -22,9 +22,9 @@ describe('ProgressAppendOnlyReporter', () => {
     sinon.stub(process.stdout, 'write');
   });
 
-  describe('onAllMutantsMatchedWithTests() with 2 mutant to test', () => {
+  describe('onAllMutantsMatchedWithTests() with 3 mutants to test', () => {
     beforeEach(() => {
-      sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1)]);
+      sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1), matchedMutant(1)]);
     });
 
     it('should not show show progress directly', () => {
@@ -33,35 +33,35 @@ describe('ProgressAppendOnlyReporter', () => {
 
     it('should log correct info after ten seconds without completed tests', () => {
       sinon.clock.tick(TEN_SECONDS);
-      expect(process.stdout.write).to.have.been.calledWith('Mutation testing 0% (ETC n/a) ' + `0/2 tested (0 survived, 0 timed out)${os.EOL}`);
+      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 0% (ETC n/a) 0/3 tested (0 survived, 0 timed out)${os.EOL}`);
     });
 
     it('should log correct info after ten seconds with 1 completed test', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_SECONDS);
-      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 50% (ETC 10s) 1/2 tested (0 survived, 0 timed out)${os.EOL}`);
+      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 33% (ETC 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`);
     });
 
     it('should log correct info after a hundred seconds with 1 completed test', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(HUNDRED_SECONDS);
-      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 50% (ETC 1m, 40s) 1/2 tested (0 survived, 0 timed out)${os.EOL}`);
+      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 33% (ETC 3m, 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`);
     });
 
     it('should log correct info after a thousand seconds with 1 completed test', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(THOUSAND_SECONDS);
-      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 50% (ETC 10m, 40s) 1/2 tested (0 survived, 0 timed out)${os.EOL}`);
+      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 33% (ETC 33m, 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`);
     });
 
     it('should log correct info after ten thousand seconds with 1 completed test', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.TimedOut }));
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_THOUSAND_SECONDS);
-      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 50% (ETC 2h, 46m, 40s) 1/2 tested (0 survived, 1 timed out)${os.EOL}`);
+      expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 33% (ETC 5h, 33m, 20s) 1/3 tested (0 survived, 1 timed out)${os.EOL}`);
     });
   });
 });
