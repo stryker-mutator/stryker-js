@@ -33,41 +33,29 @@ abstract class ProgressKeeper implements Reporter {
   }
 
   protected getElapsedTime() {
-    const elapsedSeconds = this.timer.elapsedSeconds();
-
-    const hours = Math.floor(elapsedSeconds / 3600);
-    const minutes = Math.floor((elapsedSeconds / 60) % 60);
-    const seconds = Math.floor(elapsedSeconds % 60);
-
-    return this.formatEtc(hours, minutes, seconds);
+    return this.formatTime(this.timer.elapsedSeconds());
   }
 
   protected getEtc() {
     const totalSecondsLeft = Math.floor((this.timer.elapsedSeconds() / this.progress.tested) * (this.progress.total - this.progress.tested));
 
     if (isFinite(totalSecondsLeft) && totalSecondsLeft > 0) {
-      const hours = Math.floor(totalSecondsLeft / 3600);
-      const minutes = Math.floor((totalSecondsLeft / 60) % 60);
-      const seconds = Math.floor(totalSecondsLeft % 60);
-
-      return this.formatEtc(hours, minutes, seconds);
+      return this.formatTime(totalSecondsLeft);
     } else {
       return 'n/a';
     }
   }
 
-  private formatEtc(hours: number, minutes: number, seconds: number) {
-    let output;
+  private formatTime(timeInSeconds: number) {
+    const hours = Math.floor(timeInSeconds / 3600);
 
-    if (hours > 0) {
-      output = `${hours}h, ${minutes}m, ${seconds}s`;
-    } else if (minutes > 0) {
-      output = `${minutes}m, ${seconds}s`;
-    } else {
-      output = `${seconds}s`;
-    }
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
 
-    return output;
+    return hours > 0 // conditional time formatting
+      ? `~${hours}h ${minutes}m`
+      : minutes > 0
+      ? `~${minutes}m`
+      : '<1m';
   }
 }
 export default ProgressKeeper;

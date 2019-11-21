@@ -105,7 +105,7 @@ describe('ProgressReporter', () => {
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
-      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '20s' });
+      expect(progressBar.tick).to.have.been.calledWithMatch({ et: '<1m', etc: '<1m' });
     });
 
     it('should show correct time info after a hundred seconds and 1 mutants tested', () => {
@@ -113,7 +113,7 @@ describe('ProgressReporter', () => {
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
-      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '3m, 20s' });
+      expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~1m', etc: '~3m' });
     });
 
     it('should show correct time info after ten thousand seconds and 1 mutants tested', () => {
@@ -121,7 +121,7 @@ describe('ProgressReporter', () => {
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
-      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '5h, 33m, 20s' });
+      expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~2h 46m', etc: '~5h 33m' });
     });
 
     it('should show correct time info after an hour and 1 mutants tested', () => {
@@ -129,7 +129,7 @@ describe('ProgressReporter', () => {
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
-      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '2h, 0m, 0s' });
+      expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~1h 0m', etc: '~2h 0m' });
     });
   });
 });
