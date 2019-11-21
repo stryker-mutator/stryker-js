@@ -56,7 +56,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "FEWebwinkel:build",
-		    "proxyConfig": "proxy.conf.json"            
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
