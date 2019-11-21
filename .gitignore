@@ -11,7 +11,7 @@ reports
 .stryker-tmp-2
 *.map
 # Ignore heap dumps
-packages/report.*.json 
+packages/report.*.json
 
 e2e/module/*.js
 e2e/module/*.map
