@@ -63,10 +63,10 @@ module.exports = function(config){
 **Your Environment**
 
 | software         | version(s)
-| ---------------- | -------  
-| node             | 
-| npm              | 
-| Operating System | 
+| ---------------- | -------
+| node             |
+| npm              |
+| Operating System |
 
 **Add stryker.log**
 
