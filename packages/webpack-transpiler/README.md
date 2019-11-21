@@ -1,4 +1,4 @@
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster%3Fmodule%3Dwebpack-transpiler)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/chore/run-stryker-in-ci?module=webpack-transpiler)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster%3Fmodule%3Dwebpack-transpiler)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master?module=webpack-transpiler)
 [![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/webpack-transpiler.svg)](https://www.npmjs.com/package/@stryker-mutator/webpack-transpiler)
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/webpack-transpiler.svg)](https://img.shields.io/node/v/@stryker-mutator/webpack-transpiler.svg)
