@@ -26,7 +26,7 @@ jobs:
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
-  plugins-1: 
+  plugins-1:
     runs-on: ubuntu-latest
 
     steps:
@@ -53,7 +53,7 @@ jobs:
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
-  plugins-2: 
+  plugins-2:
     runs-on: ubuntu-latest
 
     steps:
@@ -79,8 +79,8 @@ jobs:
           npm run stryker
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-  
-  plugins-3: 
+
+  plugins-3:
     runs-on: ubuntu-latest
 
     steps:
