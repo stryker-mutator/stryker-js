@@ -1,4 +1,4 @@
-export { StrykerOptions } from './src/core/StrykerOptions';
+export { default as StrykerOptions } from './src/core/StrykerOptions';
 export { default as File } from './src/core/File';
 export { default as Position } from './src/core/Position';
 export { default as Location } from './src/core/Location';
