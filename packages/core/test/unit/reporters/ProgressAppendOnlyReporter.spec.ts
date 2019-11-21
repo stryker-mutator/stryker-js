@@ -34,7 +34,7 @@ describe('ProgressAppendOnlyReporter', () => {
     it('should log correct info after ten seconds without completed tests', () => {
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 0% (elapsed: 10s, ETC: n/a) 0/3 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 0% (elapsed: 10s, remaining: n/a) 0/3 tested (0 survived, 0 timed out)${os.EOL}`
       );
     });
 
@@ -43,7 +43,7 @@ describe('ProgressAppendOnlyReporter', () => {
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 33% (elapsed: 10s, ETC: 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 33% (elapsed: 10s, remaining: 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`
       );
     });
 
@@ -52,7 +52,7 @@ describe('ProgressAppendOnlyReporter', () => {
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(HUNDRED_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 33% (elapsed: 1m, 40s, ETC: 3m, 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 33% (elapsed: 1m, 40s, remaining: 3m, 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`
       );
     });
 
@@ -61,7 +61,7 @@ describe('ProgressAppendOnlyReporter', () => {
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(THOUSAND_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 33% (elapsed: 16m, 40s, ETC: 33m, 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 33% (elapsed: 16m, 40s, remaining: 33m, 20s) 1/3 tested (0 survived, 0 timed out)${os.EOL}`
       );
     });
 
@@ -70,7 +70,7 @@ describe('ProgressAppendOnlyReporter', () => {
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_THOUSAND_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 33% (elapsed: 2h, 46m, 40s, ETC: 5h, 33m, 20s) 1/3 tested (0 survived, 1 timed out)${os.EOL}`
+        `Mutation testing 33% (elapsed: 2h, 46m, 40s, remaining: 5h, 33m, 20s) 1/3 tested (0 survived, 1 timed out)${os.EOL}`
       );
     });
   });
