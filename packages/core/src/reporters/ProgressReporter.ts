@@ -8,7 +8,8 @@ export default class ProgressBarReporter extends ProgressKeeper {
 
   public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
-    const progressBarContent = 'Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
+    const progressBarContent =
+      'Mutation testing  [:bar] :percent (elapsed: :et, ETC: :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
 
     this.progressBar = new ProgressBar(progressBarContent, {
       complete: '=',
@@ -23,7 +24,7 @@ export default class ProgressBarReporter extends ProgressKeeper {
     const ticksBefore = this.progress.tested;
     super.onMutantTested(result);
 
-    const progressBarContent = { ...this.progress, etc: this.getEtc() };
+    const progressBarContent = { ...this.progress, et: this.getElapsedTime(), etc: this.getEtc() };
 
     if (ticksBefore < this.progress.tested) {
       this.tick(progressBarContent);

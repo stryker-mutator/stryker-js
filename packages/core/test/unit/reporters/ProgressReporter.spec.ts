@@ -19,7 +19,8 @@ describe('ProgressReporter', () => {
   let sut: ProgressReporter;
   let matchedMutants: MatchedMutant[];
   let progressBar: Mock<ProgressBar>;
-  const progressBarContent = 'Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
+  const progressBarContent =
+    'Mutation testing  [:bar] :percent (elapsed: :et, ETC: :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
 
   beforeEach(() => {
     sinon.useFakeTimers();

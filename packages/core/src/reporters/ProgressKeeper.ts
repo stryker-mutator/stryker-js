@@ -32,6 +32,16 @@ abstract class ProgressKeeper implements Reporter {
     }
   }
 
+  protected getElapsedTime() {
+    const elapsedSeconds = this.timer.elapsedSeconds();
+
+    const hours = Math.floor(elapsedSeconds / 3600);
+    const minutes = Math.floor((elapsedSeconds / 60) % 60);
+    const seconds = Math.floor(elapsedSeconds % 60);
+
+    return this.formatEtc(hours, minutes, seconds);
+  }
+
   protected getEtc() {
     const totalSecondsLeft = Math.floor((this.timer.elapsedSeconds() / this.progress.tested) * (this.progress.total - this.progress.tested));
 
