@@ -51,7 +51,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:log": "eslint . --ext .ts,.tsx -f compact -o lint.log",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "create-options": "json2ts stryker.schema.json ./packages/api/src/core/StrykerOptions.ts --style.singleQuote",
+    "create-options": "json2ts stryker.schema.json ./packages/api/src/core/StrykerOptions.ts --style.singleQuote --unreachableDefinitions",
     "clean": "rimraf \"packages/api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage,*.tsbuildinfo}\"",
     "build": "tsc -b && lerna run build",
     "test": "npm run mocha",

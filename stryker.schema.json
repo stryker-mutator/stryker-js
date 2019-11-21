@@ -4,6 +4,7 @@
   "type": "object",
   "definitions": {
     "dashboardOptions": {
+      "additionalProperties": false,
       "properties": {
         "project": {
           "description": "Indicates which project to use if the \"dashboard\" reporter is enabled.",
@@ -28,6 +29,51 @@
         }
       },
       "required": ["baseUrl", "reportType"]
+    },
+    "mutationScoreThresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "high": {
+          "type": "number",
+          "default": 80
+        },
+        "low": {
+          "type": "number",
+          "default": 60
+        },
+        "break": {
+          "type": ["number", "null"],
+          "default": null
+        }
+      },
+      "required": [
+        "high", "low", "break"
+      ]
+    },
+    "mutatorDescriptor": {
+      "description": "Thresholds for mutation score. Disable a score with `null`.\n\nmutation score < break => exit build process with exit code 1. By default this is disabled (null).\nmutation score < low => score is in danger zone, display in red.\nmutation score < high >= low => score is in warning zone, display in yellow.\nmutation score >= high => score is in awesome zone, display in green.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "javascript"
+        },
+        "plugins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludedMutations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name", "plugins", "excludedMutations"]
     }
   },
   "properties": {
@@ -81,26 +127,8 @@
           "enum": ["javascript", "typescript", "vue"]
         },
         {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "name": {
-              "type": "string",
-              "default": "javascript"
-            },
-            "plugins": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "excludedMutations": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
+          "$ref": "#/definitions/mutatorDescriptor",
+          "required": []
         }
       ],
       "default": "javascript"
@@ -143,24 +171,7 @@
     },
     "thresholds": {
       "description": "Specify the thresholds for mutation score.",
-      "type": "object",
-      "properties": {
-        "high": {
-          "additionalProperties": false,
-          "type": "number",
-          "default": 80
-        },
-        "low": {
-          "additionalProperties": false,
-          "type": "number",
-          "default": 60
-        },
-        "break": {
-          "additionalProperties": false,
-          "type": ["number", "null"],
-          "default": null
-        }
-      }
+      "$ref": "#/definitions/mutationScoreThresholds"
     },
     "timeoutFactor": {
       "description": "When Stryker is mutating code, it cannot determine indefinitely whether a code mutation results in an infinite loop (see Halting problem). In order to battle infinite loops, a test run gets killed after a certain period of time. This period is configurable with two settings: 'timeoutMS' and 'timeoutFactor'.",
