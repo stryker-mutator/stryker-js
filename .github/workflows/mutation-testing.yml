@@ -1,11 +1,11 @@
 name: mutation testing
 
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'packages/**/*.ts'
+on: push
+  # push:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - 'packages/**/*.ts'
 
 jobs:
   core:

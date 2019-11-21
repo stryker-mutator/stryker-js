@@ -19,17 +19,8 @@ module.exports = {
     require.resolve('./packages/html-reporter/src/index'),
     require.resolve('./packages/typescript/src/index'),
   ],
-  dashboard: dashboardSettings()
+  dashboard: {
+    reportType: 'full'
+  }
 };
 
-function dashboardSettings() {
-  if (process.env.GITHUB_REPOSITORY) {
-    return {
-      project: 'github.com/' + process.env.GITHUB_REPOSITORY,
-      version: process.env.GITHUB_REF.substr(11),
-      reportType: 'full'
-    }
-  } else {
-    return {};
-  }
-}
