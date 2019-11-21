@@ -1,10 +1,10 @@
 import { Statistics } from '../../../src/statistics/Statistics';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { Mock, mock } from '../../helpers/producers';
+import { mock, Mock } from '../../helpers/producers';
 import { expect } from 'chai';
 
-describe('Statistics', () => {
+describe.only('Statistics', () => {
   let sut: Statistics;
   let httpStatisticsClient: Mock<HttpClient>;
 
@@ -23,6 +23,7 @@ describe('Statistics', () => {
 
   it('report implementation to statistics server', async () => {
     // Arrange
+    const data = JSON.stringify(statisticsData);
     httpStatisticsClient.post.resolves({
       message: {
         statusCode: 201
@@ -34,7 +35,7 @@ describe('Statistics', () => {
 
     // Assert
     expect(testInjector.logger.info).have.been.calledWithMatch(`Sending anonymous statistics to ${AZURE_URL}`);
-    expect(httpStatisticsClient.post).have.been.calledWith(AZURE_URL, JSON.stringify(statisticsData), contentType);
+    expect(httpStatisticsClient.post).have.been.calledWith(AZURE_URL, data, contentType);
     expect(testInjector.logger.error).have.not.been.called;
   });
 
