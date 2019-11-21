@@ -48,6 +48,10 @@ export default function ConditionalExpressionMutatorSpec(name: string, expectMut
       expectMutation('a % b');
     });
 
+    it('should not mutate assignments', () => {
+      expectMutation('let displayName; displayName = "Label";');
+    });
+
     it('should mutate the expression of a do statement', () => {
       expectMutation('do { console.log(); } while(a < b);', 'do { console.log(); } while(false);');
     });
