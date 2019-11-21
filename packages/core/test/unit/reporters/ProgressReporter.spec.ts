@@ -19,7 +19,8 @@ describe('ProgressReporter', () => {
   let sut: ProgressReporter;
   let matchedMutants: MatchedMutant[];
   let progressBar: Mock<ProgressBar>;
-  const progressBarContent = 'Mutation testing  [:bar] :percent (ETC :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
+  const progressBarContent =
+    'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
 
   beforeEach(() => {
     sinon.useFakeTimers();
@@ -94,41 +95,41 @@ describe('ProgressReporter', () => {
     });
   });
 
-  describe('ProgressBar estimate time', () => {
+  describe('ProgressBar estimated time for 3 mutants', () => {
     beforeEach(() => {
-      sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1)]);
+      sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1), matchedMutant(1)]);
     });
 
-    it('should show to an estimate of "10s" in the progressBar after ten seconds and 1 mutants tested', () => {
+    it('should show correct time info after ten seconds and 1 mutants tested', () => {
       sinon.clock.tick(TEN_SECONDS);
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
-      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '10s' });
+      expect(progressBar.tick).to.have.been.calledWithMatch({ et: '<1m', etc: '<1m' });
     });
 
-    it('should show to an estimate of "1m, 40s" in the progressBar after hundred seconds and 1 mutants tested', () => {
+    it('should show correct time info after a hundred seconds and 1 mutants tested', () => {
       sinon.clock.tick(HUNDRED_SECONDS);
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
-      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '1m, 40s' });
+      expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~1m', etc: '~3m' });
     });
 
-    it('should show to an estimate of "2h, 46m, 40s" in the progressBar after ten thousand seconds and 1 mutants tested', () => {
+    it('should show correct time info after ten thousand seconds and 1 mutants tested', () => {
       sinon.clock.tick(TEN_THOUSAND_SECONDS);
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
-      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '2h, 46m, 40s' });
+      expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~2h 46m', etc: '~5h 33m' });
     });
 
-    it('should show to an estimate of "1h, 0m, 0s" in the progressBar after an hour and 1 mutants tested', () => {
+    it('should show correct time info after an hour and 1 mutants tested', () => {
       sinon.clock.tick(ONE_HOUR);
 
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
 
-      expect(progressBar.tick).to.have.been.calledWithMatch({ etc: '1h, 0m, 0s' });
+      expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~1h 0m', etc: '~2h 0m' });
     });
   });
 });
