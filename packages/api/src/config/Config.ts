@@ -1,5 +1,14 @@
-import { LogLevel, MutationScoreThresholds, StrykerOptions } from '../../core';
-import { MutatorDescription } from '../core/StrykerOptions';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions } from '../../core';
+import { ReportType } from '../core/DashboardOptions';
+
+/**
+ * When configuring stryker, every option is optional
+ * Including deep properties like `dashboard.project`.
+ * That's why we use a `DeepPartial` mapped type here.
+ */
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
 
 export default class Config implements StrykerOptions {
   [customConfig: string]: any;
@@ -21,7 +30,7 @@ export default class Config implements StrykerOptions {
   public coverageAnalysis: 'perTest' | 'all' | 'off' = 'off';
   public testRunner: string = 'command';
   public testFramework: string;
-  public mutator: MutatorDescription[keyof MutatorDescription] = 'javascript';
+  public mutator: string | MutatorDescriptor = 'javascript';
   public transpilers: string[] = [];
   public maxConcurrentTestRunners: number = Infinity;
   public symlinkNodeModules: boolean = true;
@@ -30,14 +39,26 @@ export default class Config implements StrykerOptions {
     high: 80,
     low: 60
   };
+
   public allowConsoleColors: boolean = true;
+  /**
+   * The options for the 'dashboard' reporter
+   */
+  public dashboard: DashboardOptions = {
+    baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
+    reportType: ReportType.MutationScore
+  };
   public tempDirName: string = '.stryker-tmp';
 
-  public set(newConfig: Partial<StrykerOptions>) {
+  public set(newConfig: DeepPartial<StrykerOptions>) {
     if (newConfig) {
       Object.keys(newConfig).forEach(key => {
-        if (typeof newConfig[key as keyof StrykerOptions] !== 'undefined') {
-          this[key] = newConfig[key as keyof StrykerOptions];
+        if (newConfig[key] !== undefined) {
+          if (key === 'dashboard') {
+            this[key] = { ...this[key], ...newConfig[key] };
+          } else {
+            this[key] = newConfig[key];
+          }
         }
       });
     }

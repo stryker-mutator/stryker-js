@@ -6,11 +6,15 @@ import { expect } from 'chai';
 import ConfigValidator from '../../../src/config/ConfigValidator';
 import { coreTokens } from '../../../src/di';
 
-describe('ConfigValidator', () => {
+describe(ConfigValidator.name, () => {
   let sut: ConfigValidator;
 
   function breakConfig(key: keyof StrykerOptions, value: any): void {
-    testInjector.options[key] = value;
+    if (typeof testInjector.options[key] === 'object' && !Array.isArray(testInjector.options[key])) {
+      testInjector.options[key] = { ...testInjector.options[key], ...value };
+    } else {
+      testInjector.options[key] = value;
+    }
   }
 
   function createSut(testFramework: TestFramework | null = factory.testFramework()) {
@@ -43,15 +47,15 @@ describe('ConfigValidator', () => {
       testInjector.options.thresholds.low = 101;
       actValidationError();
       expect(testInjector.logger.fatal).calledWith('`thresholds.high` is lower than `thresholds.low` (-1 < 101)');
-      expect(testInjector.logger.fatal).calledWith('Value "-1" is invalid for `thresholds.high`. Expected a number between 0 and 100');
-      expect(testInjector.logger.fatal).calledWith('Value "101" is invalid for `thresholds.low`. Expected a number between 0 and 100');
+      expect(testInjector.logger.fatal).calledWith('Value -1 is invalid for `thresholds.high`. Expected a number between 0 and 100');
+      expect(testInjector.logger.fatal).calledWith('Value 101 is invalid for `thresholds.low`. Expected a number between 0 and 100');
     });
 
     it('should be invalid with thresholds.high null', () => {
       (testInjector.options.thresholds.high as any) = null;
       testInjector.options.thresholds.low = 101;
       actValidationError();
-      expect(testInjector.logger.fatal).calledWith('Value "null" is invalid for `thresholds.high`. Expected a number between 0 and 100');
+      expect(testInjector.logger.fatal).calledWith('Value null is invalid for `thresholds.high`. Expected a number between 0 and 100');
     });
   });
 
@@ -84,7 +88,7 @@ describe('ConfigValidator', () => {
   it('should be invalid with nonnumeric timeoutMS (NaN)', () => {
     breakConfig('timeoutMS', NaN);
     actValidationError();
-    expect(testInjector.logger.fatal).calledWith('Value "NaN" is invalid for `timeoutMS`. Expected a number');
+    expect(testInjector.logger.fatal).calledWith('Value NaN is invalid for `timeoutMS`. Expected a number');
   });
 
   it('should be invalid with nonnumeric timeoutFactor', () => {
@@ -103,7 +107,7 @@ describe('ConfigValidator', () => {
     it('should be invalid with non-string array elements', () => {
       breakConfig('plugins', ['stryker-jest', 0]);
       actValidationError();
-      expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `plugins`. Expected a string');
+      expect(testInjector.logger.fatal).calledWith('Value 0 is an invalid element of `plugins`. Expected a string');
     });
   });
 
@@ -111,7 +115,7 @@ describe('ConfigValidator', () => {
     it('should be invalid with non-string mutator', () => {
       breakConfig('mutator', 0);
       actValidationError();
-      expect(testInjector.logger.fatal).calledWith('Value "0" is invalid for `mutator`. Expected either a string or an object');
+      expect(testInjector.logger.fatal).calledWith('Value 0 is invalid for `mutator`. Expected either a string or an object');
     });
 
     describe('as an object', () => {
@@ -136,7 +140,7 @@ describe('ConfigValidator', () => {
       it('should be invalid without name', () => {
         breakConfig('mutator', {});
         actValidationError();
-        expect(testInjector.logger.fatal).calledWith('Value "undefined" is invalid for `mutator.name`. Expected a string');
+        expect(testInjector.logger.fatal).calledWith('Value undefined is invalid for `mutator.name`. Expected a string');
       });
 
       it('should be invalid with non-string mutator name', () => {
@@ -144,7 +148,7 @@ describe('ConfigValidator', () => {
           name: 0
         });
         actValidationError();
-        expect(testInjector.logger.fatal).calledWith('Value "0" is invalid for `mutator.name`. Expected a string');
+        expect(testInjector.logger.fatal).calledWith('Value 0 is invalid for `mutator.name`. Expected a string');
       });
 
       it('should be invalid with non array plugins', () => {
@@ -171,7 +175,7 @@ describe('ConfigValidator', () => {
           name: 'javascript'
         });
         actValidationError();
-        expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `mutator.excludedMutations`. Expected a string');
+        expect(testInjector.logger.fatal).calledWith('Value 0 is an invalid element of `mutator.excludedMutations`. Expected a string');
       });
     });
   });
@@ -186,7 +190,37 @@ describe('ConfigValidator', () => {
     it('should be invalid with non-string array elements', () => {
       breakConfig('reporters', ['stryker-jest', 0]);
       actValidationError();
-      expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `reporters`. Expected a string');
+      expect(testInjector.logger.fatal).calledWith('Value 0 is an invalid element of `reporters`. Expected a string');
+    });
+  });
+
+  describe('dashboard', () => {
+    it('should be invalid for non-string project', () => {
+      breakConfig('dashboard', { project: 23 });
+      actValidationError();
+      expect(testInjector.logger.fatal).calledWith('Value 23 is invalid for `dashboard.project`. Expected a string');
+    });
+    it('should be invalid for non-string module', () => {
+      breakConfig('dashboard', { module: 23 });
+      actValidationError();
+      expect(testInjector.logger.fatal).calledWith('Value 23 is invalid for `dashboard.module`. Expected a string');
+    });
+    it('should be invalid for non-string version', () => {
+      breakConfig('dashboard', { version: 23 });
+      actValidationError();
+      expect(testInjector.logger.fatal).calledWith('Value 23 is invalid for `dashboard.version`. Expected a string');
+    });
+    it('should be invalid for non-string baseUrl', () => {
+      breakConfig('dashboard', { baseUrl: 23 });
+      actValidationError();
+      expect(testInjector.logger.fatal).calledWith('Value 23 is invalid for `dashboard.baseUrl`. Expected a string');
+    });
+    it('should be invalid for a wrong reportType', () => {
+      breakConfig('dashboard', { reportType: 'empty' });
+      actValidationError();
+      expect(testInjector.logger.fatal).calledWith(
+        'Value "empty" is invalid for `dashboard.reportType`. Expected one of the following: "full", "mutationScore"'
+      );
     });
   });
 
@@ -200,7 +234,7 @@ describe('ConfigValidator', () => {
     it('should be invalid with non-string array elements', () => {
       breakConfig('transpilers', ['stryker-jest', 0]);
       actValidationError();
-      expect(testInjector.logger.fatal).calledWith('Value "0" is an invalid element of `transpilers`. Expected a string');
+      expect(testInjector.logger.fatal).calledWith('Value 0 is an invalid element of `transpilers`. Expected a string');
     });
   });
 
