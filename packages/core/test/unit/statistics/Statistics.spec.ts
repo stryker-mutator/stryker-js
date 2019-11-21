@@ -1,12 +1,12 @@
 import { Statistics } from '../../../src/statistics/Statistics';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { mock, Mock } from '../../helpers/producers';
+import { mock } from '../../helpers/producers';
 import { expect } from 'chai';
 
-describe('Statistics', () => {
+describe.only('Statistics', () => {
   let sut: Statistics;
-  let httpStatisticsClient: Mock<HttpClient>;
+  let httpStatisticsClient: any; //Mock<HttpClient>
 
   const AZURE_URL = 'https://localstrykertryout.azurewebsites.net/api/HttpTrigger?code=4GWK/KLC6JRlec96851wMgMsD2JkVePiaALWw6lKv4R3RZiKf0xp0w==';
   const statisticsData = {
