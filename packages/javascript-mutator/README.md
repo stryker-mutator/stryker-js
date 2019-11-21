@@ -8,7 +8,7 @@
 
 # Stryker JavaScript mutator
 
-A mutator that supports JavaScript for [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework. This plugin does not transpile any code. The code that the @stryker-mutator/javascript-mutator gets should be executable in your environment (i.e. the @stryker-mutator/javascript-mutator does not add support for Babel projects). 
+A mutator that supports JavaScript for [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework. This plugin does not transpile any code. The code that the @stryker-mutator/javascript-mutator gets should be executable in your environment (i.e. the @stryker-mutator/javascript-mutator does not add support for Babel projects).
 
 ## Quickstart
 
@@ -48,8 +48,8 @@ The name of the mutator, use `'javascript'` to enable this mutator.
 
 Default: `['asyncGenerators', 'bigInt', 'classProperties', 'dynamicImport', 'flow', 'jsx', 'objectRestSpread', ['decorators', { decoratorsBeforeExport: true }]`
 
-Configure custom [Babel Syntax plugins](https://babeljs.io/docs/en/babel-parser#plugins). Syntax plugins allow you to parse different pieces of syntax. 
-By default a number of plugins are configured. We might add more in the future. For example: you can configure your own Syntax plugins here to allow for [stage 1](https://github.com/tc39/proposals/blob/master/stage-1-proposals.md) features. 
+Configure custom [Babel Syntax plugins](https://babeljs.io/docs/en/babel-parser#plugins). Syntax plugins allow you to parse different pieces of syntax.
+By default a number of plugins are configured. We might add more in the future. For example: you can configure your own Syntax plugins here to allow for [stage 1](https://github.com/tc39/proposals/blob/master/stage-1-proposals.md) features.
 
 ### `mutator.excludedMutations` [`string[]`]
 

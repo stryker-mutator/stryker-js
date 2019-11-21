@@ -108,7 +108,7 @@ wct: {
 
 ### Other wct options
 
-For more information about the available wct options, please see [wct's config.ts file](https://github.com/Polymer/tools/blob/master/packages/web-component-tester/runner/config.ts#L36). 
+For more information about the available wct options, please see [wct's config.ts file](https://github.com/Polymer/tools/blob/master/packages/web-component-tester/runner/config.ts#L36).
 
 
 ## Loading the plugin

@@ -20,7 +20,7 @@ npm i --save-dev @stryker-mutator/mocha-framework
 
 ## Peer dependencies
 
-The `@stryker-mutator/mocha-framework` is a plugin to use `mocha` for `stryker` as a test framework. 
+The `@stryker-mutator/mocha-framework` is a plugin to use `mocha` for `stryker` as a test framework.
 As such, you should make sure you have the correct versions of its dependencies installed:
 
 * `@stryker-mutator/core`

@@ -17,7 +17,7 @@ npm i --save-dev @stryker-mutator/mocha-runner
 
 ## Peer dependencies
 
-The `@stryker-mutator/mocha-runner` is a plugin for `stryker` to enable `mocha` as a test runner. 
+The `@stryker-mutator/mocha-runner` is a plugin for `stryker` to enable `mocha` as a test runner.
 As such, you should make sure you have the correct versions of its dependencies installed:
 
 * `mocha`
@@ -53,7 +53,7 @@ module.exports = function (config) {
 When using Mocha version 6, @stryker-mutator/mocha-runner will use [mocha's internal file loading mechanism](https://mochajs.org/api/module-lib_cli_options.html#.loadOptions) to load your mocha configuration.
 So feel free to _leave out the mochaOptions entirely_ if you're using one of the [default file locations](https://mochajs.org/#configuring-mocha-nodejs).
 
-Alternatively, use `['no-config']: true`, `['no-package']: true` or `['no-opts']: true` to ignore the default mocha config, default mocha package.json and default mocha opts locations respectively. 
+Alternatively, use `['no-config']: true`, `['no-package']: true` or `['no-opts']: true` to ignore the default mocha config, default mocha package.json and default mocha opts locations respectively.
 
 ### `mochaOptions.spec` [`string` or `string[]`]
 
