@@ -566,7 +566,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### BREAKING CHANGES
 
 * **typescript:** * Hoist the `Mutator` interface to a higher abstraction. With this interface it was possible to add mutators for specific ES5 AST nodes. As we're moving away from ES5, this plugin abstraction had to be hoisted to a higher level. It is no longer possible to plugin a specific ES5 node mutator.
-* Update `report` interface: Rename `MutantState.Error` => `MutantState.RuntimeError`. 
+* Update `report` interface: Rename `MutantState.Error` => `MutantState.RuntimeError`.
 
 
 

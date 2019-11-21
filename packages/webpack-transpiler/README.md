@@ -42,7 +42,7 @@ $ stryker run
 
 ## Peer dependencies
 The `@stryker-mutator/webpack-transpiler` plugin requires the following packages to be installed in order to work:
- 
+
 * `@stryker-mutator/core`
 * `webpack`
 

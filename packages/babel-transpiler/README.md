@@ -8,7 +8,7 @@
 
 # Stryker Babel plugin
 
-A plugin that adds support for [Babel](https://github.com/babel/babel) to [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework. 
+A plugin that adds support for [Babel](https://github.com/babel/babel) to [Stryker](https://stryker-mutator.io), the JavaScript Mutation testing framework.
 
 ## Peer dependencies
 
@@ -29,10 +29,10 @@ Next, open up your `stryker.conf.js` file and add the following properties:
 ```javascript
 babel: {
     // Location of your .babelrc file, set to `null` to
-    optionsFile: '.babelrc', 
+    optionsFile: '.babelrc',
     // Override options here:
     options: {
-        // presets: ['@babel/env'],  
+        // presets: ['@babel/env'],
         // plugins: ['transform-es2015-spread']
     },
      // Add extensions here
@@ -45,25 +45,25 @@ transpilers: [
 
 If you initialize stryker using `stryker init`, the babelrcFile property will be added to your `stryker.conf.js` automatically.
 
-Now give it a go: 
+Now give it a go:
 
 ```bash
 $ npx stryker run
 ```
 
-## Configuration  
+## Configuration
 
-### `babel.optionsFile` [`string | null`] 
+### `babel.optionsFile` [`string | null`]
 
 Default: `'.babelrc'`
 
 The location of your babelrc file. Set this value to `null` to disable loading of a babel config file.
 
-### `babel.options` [`TranspilerOptions`] 
+### `babel.options` [`TranspilerOptions`]
 
 Default: `{}`
 
-Override babel options from your config file here. Please see [babel's documentation](https://babeljs.io/docs/en/options) to see what is available. 
+Override babel options from your config file here. Please see [babel's documentation](https://babeljs.io/docs/en/options) to see what is available.
 
 Some options are restricted to be set, because the @stryker-mutator/babel-transpiler takes control of it. These options are: `filename`, `filenameRelative` and `cwd`.
 

@@ -18,8 +18,8 @@ npm i --save-dev @stryker-mutator/karma-runner
 
 ## Bring your own test runner
 
-The `@stryker-mutator/karma-runner` is a plugin for `stryker` to enable `karma` as a test runner. 
-However, it does *not* come packaged with it's own version of `karma`, instead it 
+The `@stryker-mutator/karma-runner` is a plugin for `stryker` to enable `karma` as a test runner.
+However, it does *not* come packaged with it's own version of `karma`, instead it
 uses *your very own karma* version. It can also work with `@angular/cli`, see [Configuring](#configuring)
 
 **Note:** karma v2.0.3 has a [known issue](https://github.com/karma-runner/karma/issues/3057) which makes it impossible to use it with Stryker. please upgrade to 2.0.4 or higher.
@@ -59,7 +59,7 @@ Specify which kind of project you're using. This determines which command is use
 
 Default: `undefined`
 
-Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded. 
+Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded.
 Options specified directly in your stryker.conf.js file using `karma.config` will overrule options in your karma.conf.js file.
 
 ### `karma.config` [`any`]
