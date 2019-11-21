@@ -31,33 +31,33 @@ describe('ProgressAppendOnlyReporter', () => {
       expect(process.stdout.write).to.not.have.been.called;
     });
 
-    it('should log zero progress after ten seconds without completed tests', () => {
+    it('should log correct info after ten seconds without completed tests', () => {
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith('Mutation testing 0% (ETC n/a) ' + `0/2 tested (0 survived, 0 timed out)${os.EOL}`);
     });
 
-    it('should log 50% with 10s ETC after ten seconds with 1 completed test', () => {
+    it('should log correct info after ten seconds with 1 completed test', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 50% (ETC 10s) 1/2 tested (0 survived, 0 timed out)${os.EOL}`);
     });
 
-    it('should log 50% with "1m, 40s" ETC after hundred seconds with 1 completed test', () => {
+    it('should log correct info after a hundred seconds with 1 completed test', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(HUNDRED_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 50% (ETC 1m, 40s) 1/2 tested (0 survived, 0 timed out)${os.EOL}`);
     });
 
-    it('should log 50% with "10m, 40s" ETC after thousand seconds with 1 completed test', () => {
+    it('should log correct info after a thousand seconds with 1 completed test', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(THOUSAND_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(`Mutation testing 50% (ETC 10m, 40s) 1/2 tested (0 survived, 0 timed out)${os.EOL}`);
     });
 
-    it('should log 50% with "2h, 46m, 40s" ETC after ten thousand seconds with 1 completed test', () => {
+    it('should log correct info after ten thousand seconds with 1 completed test', () => {
       sut.onMutantTested(mutantResult({ status: MutantStatus.TimedOut }));
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_THOUSAND_SECONDS);
