@@ -4,10 +4,9 @@
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
-    "start": "tsc -w",
-    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" .nyc_output reports coverage __test_hooks_for_stryker__.js",
     "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 30000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\" --exit"
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 30000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
+    "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
     "type": "git",

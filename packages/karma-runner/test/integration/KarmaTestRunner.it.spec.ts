@@ -214,7 +214,7 @@ class DummyServer {
 
   public get port() {
     const address = this.httpServer.address();
-    if (typeof address === 'string') {
+    if (!address || typeof address === 'string') {
       throw new Error(`Address "${address}" was unexpected: https://nodejs.org/dist/latest-v11.x/docs/api/net.html#net_server_address`);
     } else {
       return address.port;

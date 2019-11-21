@@ -45,11 +45,8 @@ describe('TypescriptMutator', () => {
     // Arrange
     const expectedMutatorNames = fs
       .readdirSync(path.resolve(__dirname, '..', '..', 'src', 'mutator'))
-      .filter(
-        mutatorFile =>
-          path.extname(mutatorFile) === '.ts' && !mutatorFile.endsWith('.d.ts') && mutatorFile !== 'NodeMutator.ts' && mutatorFile !== 'index.ts'
-      )
-      .map(fileName => fileName.substr(0, fileName.length - 'Mutator.ts'.length));
+      .filter(mutatorFile => path.extname(mutatorFile) === '.js' && mutatorFile !== 'NodeMutator.js' && mutatorFile !== 'index.js')
+      .map(fileName => fileName.substr(0, fileName.length - 'Mutator.js'.length));
 
     // Act
     const actualMutators = testInjector.injector.injectFunction(typescriptMutatorFactory).mutators.map(m => m.name);

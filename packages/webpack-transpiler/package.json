@@ -6,7 +6,7 @@
   "scripts": {
     "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 85 --functions 84 --branches 65 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "@stryker-mutator/core": "node ../stryker/bin/stryker run"
+    "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
     "type": "git",

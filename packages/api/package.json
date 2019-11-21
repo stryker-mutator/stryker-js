@@ -6,6 +6,11 @@
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
   },
+  "scripts": {
+    "stryker": "node ../core/bin/stryker run",
+    "test": "nyc --exclude-after-remap=false --exclude 'testResources/**/*.js' --check-coverage --reporter=html --report-dir=reports/coverage --lines 85 --functions 85 --branches 85 npm run mocha",
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 60000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+  },
   "keywords": [
     "mutation testing",
     "mutation",
