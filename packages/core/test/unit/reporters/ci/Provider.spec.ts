@@ -1,43 +1,43 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
 
-import * as environmentVariables from '../../../../src/utils/objectUtils';
 import { determineCIProvider } from '../../../../src/reporters/ci/Provider';
+import TravisProvider from '../../../../src/reporters/ci/TravisProvider';
+import CircleProvider from '../../../../src/reporters/ci/CircleProvider';
+import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
+import GithubActionsProvider from '../../../../src/reporters/ci/GithubActionsProvider';
 
 describe('determineCiProvider()', () => {
-  let getEnvironmentVariables: sinon.SinonStub;
+  const env = new EnvironmentVariableStore();
 
   beforeEach(() => {
-    getEnvironmentVariables = sinon.stub(environmentVariables, 'getEnvironmentVariable');
+    env.unset('HAS_JOSH_K_SEAL_OF_APPROVAL');
+    env.unset('CIRCLECI');
+    env.unset('GITHUB_ACTION');
+  });
+  afterEach(() => {
+    env.restore();
   });
 
-  describe('Without CI environment', () => {
-    it('should not select a CI Provider', () => {
-      getEnvironmentVariables.withArgs('HAS_JOSH_K_SEAL_OF_APPROVAL').returns('');
-
-      const result = determineCIProvider();
-
-      expect(result).to.be.null;
-    });
+  it('should not select a CI Provider when not in a CI environment', () => {
+    const result = determineCIProvider();
+    expect(result).to.be.null;
   });
 
-  describe("When HAS_JOSH_K_SEAL_OF_APPROVAL is 'true'", () => {
-    it('should provide a CI Provider implementation', () => {
-      getEnvironmentVariables.withArgs('HAS_JOSH_K_SEAL_OF_APPROVAL').returns(true);
-
-      const result = determineCIProvider();
-
-      expect(result).to.be.not.undefined;
-    });
+  it('should provide Travis when running in the travis environment', () => {
+    env.set('HAS_JOSH_K_SEAL_OF_APPROVAL', 'true');
+    const result = determineCIProvider();
+    expect(result).instanceOf(TravisProvider);
   });
 
-  describe("When CIRCLECI is 'true'", () => {
-    it('should provide a CI Provider implementation', () => {
-      getEnvironmentVariables.withArgs('CIRCLECI').returns(true);
+  it('should provide CircleCI when running in the circle CI environment', () => {
+    env.set('CIRCLECI', 'true');
+    const result = determineCIProvider();
+    expect(result).instanceOf(CircleProvider);
+  });
 
-      const result = determineCIProvider();
-
-      expect(result).to.be.not.undefined;
-    });
+  it('should provide Github when running in the github actions CI environment', () => {
+    env.set('GITHUB_ACTION', 'true');
+    const result = determineCIProvider();
+    expect(result).instanceOf(GithubActionsProvider);
   });
 });
