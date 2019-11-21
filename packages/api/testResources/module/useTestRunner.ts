@@ -1,7 +1,7 @@
 import {
   CoverageCollection, CoverageResult, CoverageCollectionPerTest, CoverageData,
-  StatementMap, TestRunner, 
-  RunResult, RunOptions, 
+  StatementMap, TestRunner,
+  RunResult, RunOptions,
   TestStatus, RunStatus
 } from '@stryker-mutator/api/test_runner';
 

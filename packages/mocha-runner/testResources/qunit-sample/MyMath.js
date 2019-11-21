@@ -1,7 +1,7 @@
 'use strict';
 
 function MyMath() {
-  
+
 }
 
 MyMath.prototype.add = function(num1, num2) {
