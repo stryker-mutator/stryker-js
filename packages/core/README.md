@@ -289,7 +289,7 @@ to your current node_modules directory in the sandbox directories. This makes ru
 more like your would run the tests yourself in your project directory.
 Only disable this setting if you really know what you are doing.
 
-For example, [Jest](https://facebook.github.io/) expects any plugins to be located at "./node_modules/..."
+For example, [Jest](https://jestjs.io/) expects any plugins to be located at "./node_modules/..."
 in the Sandbox directory. Another example can be running [karma](http://karma-runner.github.io/) tests where
 you specify files from the 'node_modules/angular/...'. Without symlinking the
 node_modules directory this would not be possible.
@@ -362,7 +362,7 @@ Default: `1.5`
 Command line: `--timeoutFactor 1.5`
 Config file: `timeoutFactor: 1.5`
 
-See [Timeout in milliseconds](#Timeout-in-milliseconds).
+See [Timeout in milliseconds](#timeoutMS).
 
 <a name="timeoutMS"></a>
 ### `timeoutMS` [`number`]
