@@ -1,5 +1,7 @@
-import { expect } from 'chai';
 import { EOL } from 'os';
+
+import { expect } from 'chai';
+
 import StringBuilder from '../../../src/utils/StringBuilder';
 
 describe(StringBuilder.name, () => {

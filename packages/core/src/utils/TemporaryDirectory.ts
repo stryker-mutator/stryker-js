@@ -1,10 +1,12 @@
+import * as path from 'path';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { fsAsPromised } from '@stryker-mutator/util';
 import * as mkdirp from 'mkdirp';
-import * as path from 'path';
 import { Disposable } from 'typed-inject';
+
 import { deleteDir } from './fileUtils';
 
 export class TemporaryDirectory implements Disposable {

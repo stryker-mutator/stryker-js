@@ -1,15 +1,19 @@
-import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as child from 'child_process';
-import { initializerTokens } from '.';
+
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { Logger } from '@stryker-mutator/api/logging';
+
 import CommandTestRunner from '../test-runner/CommandTestRunner';
 import { filterEmpty } from '../utils/objectUtils';
+
 import NpmClient from './NpmClient';
 import { PackageInfo } from './PackageInfo';
 import Preset from './presets/Preset';
 import PromptOption from './PromptOption';
 import StrykerConfigWriter from './StrykerConfigWriter';
 import { StrykerInquirer } from './StrykerInquirer';
+
+import { initializerTokens } from '.';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -104,7 +108,10 @@ export default class StrykerInitializer {
       selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies)
     );
-    this.installNpmDependencies(npmDependencies.map(pkg => pkg.name), selectedPackageManager);
+    this.installNpmDependencies(
+      npmDependencies.map(pkg => pkg.name),
+      selectedPackageManager
+    );
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {

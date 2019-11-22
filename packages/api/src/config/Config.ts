@@ -1,4 +1,14 @@
-import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions } from '../../core';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions } from '../../core';
+import { ReportType } from '../core/DashboardOptions';
+
+/**
+ * When configuring stryker, every option is optional
+ * Including deep properties like `dashboard.project`.
+ * That's why we use a `DeepPartial` mapped type here.
+ */
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
 
 export default class Config implements StrykerOptions {
   [customConfig: string]: any;
@@ -29,14 +39,26 @@ export default class Config implements StrykerOptions {
     high: 80,
     low: 60
   };
+
   public allowConsoleColors: boolean = true;
+  /**
+   * The options for the 'dashboard' reporter
+   */
+  public dashboard: DashboardOptions = {
+    baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
+    reportType: ReportType.MutationScore
+  };
   public tempDirName: string = '.stryker-tmp';
 
-  public set(newConfig: Partial<StrykerOptions>) {
+  public set(newConfig: DeepPartial<StrykerOptions>) {
     if (newConfig) {
       Object.keys(newConfig).forEach(key => {
-        if (typeof newConfig[key] !== 'undefined') {
-          this[key] = newConfig[key];
+        if (newConfig[key] !== undefined) {
+          if (key === 'dashboard') {
+            this[key] = { ...this[key], ...newConfig[key] };
+          } else {
+            this[key] = newConfig[key];
+          }
         }
       });
     }

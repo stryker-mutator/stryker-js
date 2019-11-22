@@ -1,7 +1,8 @@
+import * as path from 'path';
+
 import { fsAsPromised } from '@stryker-mutator/util';
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
-import * as path from 'path';
 import * as rimraf from 'rimraf';
 
 export function glob(expression: string): Promise<string[]> {

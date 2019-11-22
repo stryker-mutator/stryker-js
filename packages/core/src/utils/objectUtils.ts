@@ -1,4 +1,6 @@
 import treeKill = require('tree-kill');
+import { StrykerError } from '@stryker-mutator/util';
+
 export { serialize, deserialize } from 'surrial';
 
 export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
@@ -28,6 +30,15 @@ export function wrapInClosure(codeFragment: string) {
  */
 export function getEnvironmentVariable(nameEnvironmentVariable: string): string | undefined {
   return process.env[nameEnvironmentVariable];
+}
+
+export function getEnvironmentVariableOrThrow(name: string): string {
+  const value = getEnvironmentVariable(name);
+  if (value === undefined) {
+    throw new StrykerError(`Missing environment variable "${name}"`);
+  } else {
+    return value;
+  }
 }
 
 /**

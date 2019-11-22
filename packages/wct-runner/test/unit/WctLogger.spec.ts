@@ -1,6 +1,8 @@
+import { EventEmitter } from 'events';
+
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { EventEmitter } from 'events';
+
 import WctLogger from '../../src/WctLogger';
 
 describe(WctLogger.name, () => {

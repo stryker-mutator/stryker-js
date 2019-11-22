@@ -1,7 +1,9 @@
+import * as path from 'path';
+
 import { Config } from '@stryker-mutator/api/config';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as path from 'path';
+
 import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
 
 function resolveSampleProject(relativeFileName: string) {

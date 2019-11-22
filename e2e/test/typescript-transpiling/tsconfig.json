@@ -11,5 +11,5 @@
     "src/Circle.ts",
     "test/AddSpec.ts",
     "test/CircleSpec.ts"
-  ] 
+  ]
 }

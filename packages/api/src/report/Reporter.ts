@@ -1,4 +1,5 @@
 import { MutationTestResult } from 'mutation-testing-report-schema';
+
 import MatchedMutant from './MatchedMutant';
 import MutantResult from './MutantResult';
 import ScoreResult from './ScoreResult';

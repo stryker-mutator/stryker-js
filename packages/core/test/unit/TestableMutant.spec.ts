@@ -2,6 +2,7 @@ import { File } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { mutant, runResult, testResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
+
 import SourceFile from '../../src/SourceFile';
 import TestableMutant, { TestSelectionResult } from '../../src/TestableMutant';
 
@@ -38,7 +39,10 @@ describe(TestableMutant.name, () => {
     sut.selectTest(testResult({ name: 'spec1', timeSpentMs: 12 }), 0);
     sut.selectTest(testResult({ name: 'spec3', timeSpentMs: 32 }), 2);
     expect(sut.timeSpentScopedTests).eq(44);
-    expect(sut.selectedTests).deep.eq([{ id: 0, name: 'spec1' }, { id: 2, name: 'spec3' }]);
+    expect(sut.selectedTests).deep.eq([
+      { id: 0, name: 'spec1' },
+      { id: 2, name: 'spec3' }
+    ]);
     expect(sut.testSelectionResult).eq(TestSelectionResult.Success);
   });
 

@@ -7,6 +7,7 @@ import { expect } from 'chai';
 import { range } from 'rxjs';
 import { map, toArray } from 'rxjs/operators';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import TranspiledMutant from '../../../src/TranspiledMutant';
 import { MutantTranspileScheduler } from '../../../src/transpiler/MutantTranspileScheduler';
@@ -122,7 +123,10 @@ describe(MutantTranspileScheduler.name, () => {
     resolveSecond(transpiledFilesTwo);
     // Assert: all results are in
     await sleep();
-    const expectedResults: TranspileResult[] = [{ error: null, outputFiles: transpiledFilesOne }, { error: null, outputFiles: transpiledFilesTwo }];
+    const expectedResults: TranspileResult[] = [
+      { error: null, outputFiles: transpiledFilesOne },
+      { error: null, outputFiles: transpiledFilesTwo }
+    ];
     expect(actualResults).deep.eq(expectedResults);
   });
 

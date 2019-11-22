@@ -3,6 +3,7 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import ExpectMutation from '@stryker-mutator/mutator-specification/src/ExpectMutation';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+
 import { JavaScriptMutator } from '../../src/JavaScriptMutator';
 import { NodeMutator } from '../../src/mutators/NodeMutator';
 import { NODE_MUTATORS_TOKEN, PARSER_TOKEN } from '../../src/helpers/tokens';

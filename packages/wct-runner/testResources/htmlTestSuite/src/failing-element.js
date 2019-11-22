@@ -2,7 +2,7 @@ class FailingElement extends HTMLElement {
   static get is() {
     return 'failing-element';
   }
-  
+
   get isFailing() {
     return true;
   }

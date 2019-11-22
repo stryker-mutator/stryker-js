@@ -1,4 +1,5 @@
 import { commonTokens, declareFactoryPlugin, Injector, OptionsContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
+
 import { JavaScriptMutator } from './JavaScriptMutator';
 import { nodeMutators } from './mutators';
 import { NODE_MUTATORS_TOKEN, PARSER_TOKEN } from './helpers/tokens';

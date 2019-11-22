@@ -3,6 +3,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { Injector } from 'typed-inject';
+
 import { buildMainInjector, coreTokens, MainContext, PluginCreator } from './di';
 import InputFileCollection from './input/InputFileCollection';
 import InputFileResolver from './input/InputFileResolver';

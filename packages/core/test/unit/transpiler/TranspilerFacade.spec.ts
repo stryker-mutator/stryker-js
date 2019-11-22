@@ -4,6 +4,7 @@ import { Transpiler } from '@stryker-mutator/api/transpile';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import { PluginCreator } from '../../../src/di/PluginCreator';
 import { TranspilerFacade } from '../../../src/transpiler/TranspilerFacade';

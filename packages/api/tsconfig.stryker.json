@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.test.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": [
+      "node",
+      "mocha"
+    ],
+  },
+  "include": [
+    "src",
+    "test",
+    "config.ts",
+    "core.ts",
+    "logging.ts",
+    "mutant.ts",
+    "report.ts",
+    "test_framework.ts",
+    "test_runner.ts",
+    "transpile.ts",
+    "plugin.ts"
+  ],
+}

@@ -1,8 +1,10 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import * as fs from 'fs';
-import * as path from 'path';
+
 import * as babel from './helpers/babelWrapper';
 
 export interface StrykerBabelConfig {

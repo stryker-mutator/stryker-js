@@ -1,12 +1,14 @@
+import * as os from 'os';
+
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
-import * as os from 'os';
 import { Observable, range, Subject } from 'rxjs';
 import { filter, flatMap, map, merge, tap, zip } from 'rxjs/operators';
 import { Disposable } from 'typed-inject';
+
 import { coreTokens } from './di';
 import LoggingClientContext from './logging/LoggingClientContext';
 import { InitialTestRunResult } from './process/InitialTestExecutor';

@@ -1,8 +1,10 @@
-import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as fs from 'fs';
 import * as path from 'path';
+
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Configuration } from 'webpack';
+
 import { pluginTokens } from '../pluginTokens';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
 

@@ -11,6 +11,7 @@ import { mutantResult, runResult, testFramework } from '@stryker-mutator/test-he
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as typedInject from 'typed-inject';
+
 import * as di from '../../src/di';
 import InputFileCollection from '../../src/input/InputFileCollection';
 import InputFileResolver from '../../src/input/InputFileResolver';

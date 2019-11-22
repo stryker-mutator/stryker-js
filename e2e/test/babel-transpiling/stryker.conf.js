@@ -6,7 +6,7 @@ module.exports = function (config) {
     testFramework: 'mocha',
     testRunner: 'mocha',
     coverageAnalysis: 'off',
-    mutator: { 
+    mutator: {
       name: 'javascript',
       plugins: [['pipelineOperator', { proposal: 'minimal' }]]
     },

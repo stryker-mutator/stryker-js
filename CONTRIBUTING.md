@@ -5,7 +5,7 @@ This is the contribution guide for Stryker. Great to have you here! Here are a f
 ## Team members
 
 * Simon de Lang: Stryker dev. Started Stryker as part of his thesis at Info Support. [simondel](http://github.com/simondel) on github.
-* Nico Jansen: Stryker dev. Originally came up with the idea for the mutation testing framework as a thesis at Info Support. 
+* Nico Jansen: Stryker dev. Originally came up with the idea for the mutation testing framework as a thesis at Info Support.
 [nicojs](http://github.com/nicojs) on github or [@_nicojs](https://twitter.com/_nicojs) on twitter
 * Sander Koenders: Stryker dev. Creator of the stryker-webpack-plugin and stryker-jest-runner.
 
@@ -59,7 +59,7 @@ Some quick notes to help you get started:
 
 1. On the left side, you can see all stryker projects and plugins. Open files from there.
 1. Use `CTRL+Shift+B` (or `⌘+Shift+B` on OSX) to run the *build task*. This runs `npm start`, compiling any changes you make in the background.
-1. Use `CTRL+Shift+D` (or `⌘⇧D` on OSX) to open up the *debug* pane. Here you can select a config to run. For example: select "Unit tests (stryker-api)" to run the unit tests for the `stryker-api` package. 
+1. Use `CTRL+Shift+D` (or `⌘⇧D` on OSX) to open up the *debug* pane. Here you can select a config to run. For example: select "Unit tests (stryker-api)" to run the unit tests for the `stryker-api` package.
   * You can run the tests with `CTRL+F5` (or `⌃F5` on OSX).
   * You can debug the tests with `F5` (also `F5` on OSX). Setting breakpoints in your code and inspecting variables all work as expected.
 
@@ -68,20 +68,19 @@ Have fun!
 ## Running Stryker on Stryker
 
 We support mutation testing Stryker with Stryker! After you got Stryker working locally, you can follow these steps to mutation test Stryker:
-1. Navigate to the root of the project
-1. Build all Stryker packages: `npm run build`
-1. Navigate to `packages/core` 
-1. Run `node bin/stryker run`
+1. Make sure all Stryker packages are build: `npm run build`
+1. Navigate to the package you want to mutation test, for example `cd packages/core`
+1. Run `npm run stryker`
 
 ## Adding new features
 
-New features are welcome! Either as requests or proposals. 
+New features are welcome! Either as requests or proposals.
 
 1. Please create an issue first or let us know via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker)
 1. Create a fork on your github account.
 1. When writing your code, please conform to the existing coding style.
    See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
-    * You can check if there are lint issues using `npm run lint:log`. Output will be in root folder in `lint.log` file. 
+    * You can check if there are lint issues using `npm run lint:log`. Output will be in root folder in `lint.log` file.
     * You can automatically fix a lot of lint issues using `npm run lint:fix`
 1. Please create or edit unit tests or integration tests.
 1. Run the tests using `npm test`
@@ -90,14 +89,13 @@ New features are welcome! Either as requests or proposals.
    * Type: feat, fix, docs, style, refactor, test, chore.
    * Scope can the the file or group of files (not a strict right or wrong)
    * Subject and body: present tense (~changed~*change*, ~added~*add*) and include motivation and contrasts with previous behavior
-  
 
 Don't get discouraged! We estimate that the response time from the
-maintainers is around a day or so. 
+maintainers is around a day or so.
 
 # Bug triage
 
-Found a bug? Don't worry, we'll fix it, or you can ;) 
+Found a bug? Don't worry, we'll fix it, or you can ;)
 
 Please report a bug report on our [issues page](https://github.com/stryker-mutator/stryker/issues). In this please:
 
@@ -109,10 +107,10 @@ Please report a bug report on our [issues page](https://github.com/stryker-mutat
 5. Include actual behaviour.
 6. Add more details if required (e.g. which browser, which test runner, which versions, etc)
 
-# Community 
+# Community
 Do you want to help? Great! These are a few things you can do:
 
-* Evangelize mutation testing  
-  Mutation testing is still relatively new, especially in JavaScript. Please help us get the word out there!  
-  Share your stories in blog posts an on social media. Please inform us about it! 
+* Evangelize mutation testing
+  Mutation testing is still relatively new, especially in JavaScript. Please help us get the word out there!
+  Share your stories in blog posts an on social media. Please inform us about it!
 * Did you use Stryker? Your feedback is very valuable to us. Good and bad! Please contact us and let us know what you think!

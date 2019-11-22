@@ -1,4 +1,5 @@
 import { Location, Range } from '../../core';
+
 import MutantStatus from './MutantStatus';
 
 interface MutantResult {

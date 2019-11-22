@@ -1,6 +1,7 @@
 import { Config, ConfigEditor } from '@stryker-mutator/api/config';
 import { commonTokens, PluginKind, PluginResolver } from '@stryker-mutator/api/plugin';
 import { tokens } from 'typed-inject';
+
 import { coreTokens } from '../di';
 import { PluginCreator } from '../di/PluginCreator';
 

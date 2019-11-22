@@ -1,8 +1,10 @@
+import * as path from 'path';
+
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as path from 'path';
 import * as sinon from 'sinon';
+
 import { coreTokens } from '../../../src/di';
 import { PluginLoader } from '../../../src/di/PluginLoader';
 import * as fileUtils from '../../../src/utils/fileUtils';

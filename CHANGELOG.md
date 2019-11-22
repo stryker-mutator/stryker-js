@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/stryker-mutator/stryker/compare/v2.2.1...v2.3.0) (2019-11-13)
+
+
+### Bug Fixes
+
+* **core:** undefined reference error in coverage recording ([0a68c9c](https://github.com/stryker-mutator/stryker/commit/0a68c9c))
+* **perf/angular-cli:** upgrade to latest angular version and fix bugs ([#1842](https://github.com/stryker-mutator/stryker/issues/1842)) ([4f81550](https://github.com/stryker-mutator/stryker/commit/4f81550))
+
+
+### Features
+
+* **babel-transpiler:** support object-style babel.config.js ([#1762](https://github.com/stryker-mutator/stryker/issues/1762)) ([31410c8](https://github.com/stryker-mutator/stryker/commit/31410c8))
+
+
+
+
+
 ## [2.2.1](https://github.com/stryker-mutator/stryker/compare/v2.2.0...v2.2.1) (2019-11-06)
 
 **Note:** Version bump only for package stryker-parent

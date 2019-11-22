@@ -2,6 +2,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 import { expect } from 'chai';
+
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
 import RetryDecorator from '../../../src/test-runner/RetryDecorator';

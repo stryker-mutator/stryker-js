@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster%3Fmodule%3Dwct-runner)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master?module=wct-runner)
+[![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/wct-runner.svg)](https://www.npmjs.com/package/@stryker-mutator/wct-runner)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -107,7 +108,7 @@ wct: {
 
 ### Other wct options
 
-For more information about the available wct options, please see [wct's config.ts file](https://github.com/Polymer/tools/blob/master/packages/web-component-tester/runner/config.ts#L36). 
+For more information about the available wct options, please see [wct's config.ts file](https://github.com/Polymer/tools/blob/master/packages/web-component-tester/runner/config.ts#L36).
 
 
 ## Loading the plugin

@@ -1,7 +1,9 @@
 import { File } from '@stryker-mutator/api/core';
 import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
 import { tokens } from '@stryker-mutator/api/plugin';
+
 import { MUTATORS_TOKEN } from './helpers/MutatorHelpers';
+
 const compiler = require('vue-template-compiler');
 
 export default class VueMutator implements Mutator {

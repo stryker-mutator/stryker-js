@@ -1,6 +1,8 @@
 import fs = require('fs');
-import jest from 'jest';
 import path from 'path';
+
+import jest from 'jest';
+
 import JestConfigLoader from './JestConfigLoader';
 
 /**

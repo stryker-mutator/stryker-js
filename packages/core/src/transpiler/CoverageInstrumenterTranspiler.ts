@@ -3,6 +3,7 @@ import { Transpiler } from '@stryker-mutator/api/transpile';
 import { StrykerError } from '@stryker-mutator/util';
 import { FileCoverageData, Range } from 'istanbul-lib-coverage';
 import { createInstrumenter, Instrumenter } from 'istanbul-lib-instrument';
+
 import { COVERAGE_CURRENT_TEST_VARIABLE_NAME } from './coverageHooks';
 
 export interface CoverageMaps {

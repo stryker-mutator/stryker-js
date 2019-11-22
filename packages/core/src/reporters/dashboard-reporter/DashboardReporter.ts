@@ -1,53 +1,78 @@
+import { StrykerOptions, ReportType } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { calculateMetrics } from 'mutation-testing-metrics';
-import { getEnvironmentVariable } from '../../utils/objectUtils';
-import { determineCIProvider } from '../ci/Provider';
+
+import { CIProvider } from '../ci/Provider';
+
 import DashboardReporterClient from './DashboardReporterClient';
 import { dashboardReporterTokens } from './tokens';
+import { Report } from './Report';
 
 export default class DashboardReporter implements Reporter {
-  private readonly ciProvider = determineCIProvider();
-  public static readonly inject = tokens(commonTokens.logger, dashboardReporterTokens.dashboardReporterClient);
+  public static readonly inject = tokens(
+    commonTokens.logger,
+    dashboardReporterTokens.dashboardReporterClient,
+    commonTokens.options,
+    dashboardReporterTokens.ciProvider
+  );
 
-  constructor(private readonly log: Logger, private readonly dashboardReporterClient: DashboardReporterClient) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly dashboardReporterClient: DashboardReporterClient,
+    private readonly options: StrykerOptions,
+    private readonly ciProvider: CIProvider | null
+  ) {}
 
-  private readEnvironmentVariable(name: string) {
-    const environmentVariable = getEnvironmentVariable(name);
-    if (environmentVariable) {
-      return environmentVariable;
+  private onGoingWork: Promise<void> | undefined;
+
+  public onMutationTestReportReady(result: mutationTestReportSchema.MutationTestResult): void {
+    this.onGoingWork = (async () => {
+      const { projectName, version, moduleName } = this.getContextFromEnvironment();
+      if (projectName && version) {
+        await this.update(this.toReport(result), projectName, version, moduleName);
+      } else {
+        this.log.info(
+          'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server.'
+        );
+      }
+    })();
+  }
+
+  public async wrapUp() {
+    await this.onGoingWork;
+  }
+
+  private toReport(result: mutationTestReportSchema.MutationTestResult): Report {
+    if (this.options.dashboard.reportType === ReportType.Full) {
+      return result;
     } else {
-      this.log.warn(`Missing environment variable ${name}`);
-      return undefined;
+      return {
+        mutationScore: calculateMetrics(result.files).metrics.mutationScore
+      };
     }
   }
 
-  public async onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
-    const metricsResult = calculateMetrics(report.files);
-    const mutationScore = metricsResult.metrics.mutationScore;
-
-    if (this.ciProvider !== undefined) {
-      const isPullRequest = this.ciProvider.isPullRequest();
-
-      if (!isPullRequest) {
-        const repository = this.ciProvider.determineRepository();
-        const branch = this.ciProvider.determineBranch();
-        const apiKey = this.readEnvironmentVariable('STRYKER_DASHBOARD_API_KEY');
-
-        if (repository && branch && apiKey) {
-          await this.dashboardReporterClient.postStrykerDashboardReport({
-            apiKey,
-            branch,
-            mutationScore,
-            repositorySlug: 'github.com/' + repository
-          });
-        }
-      } else {
-        this.log.info('Dashboard report is not sent when building a pull request');
-      }
-    } else {
-      this.log.info('Dashboard report is not sent when not running on a build server');
+  private async update(report: Report, projectName: string, version: string, moduleName: string | undefined) {
+    try {
+      const href = await this.dashboardReporterClient.updateReport({
+        report,
+        moduleName,
+        projectName,
+        version: version
+      });
+      this.log.info('Report available at: %s', href);
+    } catch (err) {
+      this.log.error('Could not upload report.', err);
     }
+  }
+
+  private getContextFromEnvironment() {
+    return {
+      moduleName: this.options.dashboard.module,
+      projectName: this.options.dashboard.project || (this.ciProvider && this.ciProvider.determineProject()),
+      version: this.options.dashboard.version || (this.ciProvider && this.ciProvider.determineVersion())
+    };
   }
 }

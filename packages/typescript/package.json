@@ -1,13 +1,12 @@
 {
   "name": "@stryker-mutator/typescript",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "A plugin for TypeScript-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
-    "start": "tsc -w",
-    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
     "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 100 --branches 90 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
+    "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
     "type": "git",
@@ -36,15 +35,15 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/typescript#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stryker-mutator/api": "^2.2.1",
-    "@stryker-mutator/util": "^2.2.1",
+    "@stryker-mutator/api": "^2.3.0",
+    "@stryker-mutator/util": "^2.3.0",
     "lodash.flatmap": "~4.5.0",
     "semver": "~6.3.0",
     "tslib": "~1.10.0"
   },
   "devDependencies": {
-    "@stryker-mutator/mutator-specification": "^2.2.1",
-    "@stryker-mutator/test-helpers": "^2.2.1",
+    "@stryker-mutator/mutator-specification": "^2.3.0",
+    "@stryker-mutator/test-helpers": "^2.3.0",
     "@types/lodash.flatmap": "~4.5.3",
     "@types/semver": "~6.2.0",
     "surrial": "~1.0.0"

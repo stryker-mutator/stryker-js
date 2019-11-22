@@ -1,10 +1,12 @@
+import { promisify } from 'util';
+import * as http from 'http';
+
 import { CoverageCollection, RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/JasmineTestFramework';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import http = require('http');
 import { FilePattern } from 'karma';
-import { promisify } from 'util';
+
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
 
@@ -212,7 +214,7 @@ class DummyServer {
 
   public get port() {
     const address = this.httpServer.address();
-    if (typeof address === 'string') {
+    if (!address || typeof address === 'string') {
       throw new Error(`Address "${address}" was unexpected: https://nodejs.org/dist/latest-v11.x/docs/api/net.html#net_server_address`);
     } else {
       return address.port;

@@ -7,10 +7,12 @@ import { Observable, range } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { from } from 'rxjs';
 import { flatMap, zip } from 'rxjs/operators';
+
 import { coreTokens } from '../di';
 import SourceFile from '../SourceFile';
 import TestableMutant from '../TestableMutant';
 import TranspiledMutant from '../TranspiledMutant';
+
 import TranspileResult from './TranspileResult';
 
 const INITIAL_CONCURRENCY = 100;

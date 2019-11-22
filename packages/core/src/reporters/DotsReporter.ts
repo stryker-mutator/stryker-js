@@ -1,6 +1,8 @@
-import { MutantResult, MutantStatus, Reporter } from '@stryker-mutator/api/report';
-import chalk from 'chalk';
 import * as os from 'os';
+
+import { MutantResult, MutantStatus, Reporter } from '@stryker-mutator/api/report';
+
+import chalk = require('chalk');
 
 export default class DotsReporter implements Reporter {
   public onMutantTested(result: MutantResult) {

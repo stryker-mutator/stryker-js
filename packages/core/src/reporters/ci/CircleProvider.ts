@@ -1,21 +1,36 @@
+import { getEnvironmentVariable, getEnvironmentVariableOrThrow } from '../../utils/objectUtils';
+
 import { CIProvider } from './Provider';
 
-import { getEnvironmentVariable } from '../../utils/objectUtils';
-
+/**
+ * https://circleci.com/docs/2.0/env-vars/#built-in-environment-variables
+ */
 class CircleProvider implements CIProvider {
-  public isPullRequest = () => getEnvironmentVariable('CIRCLE_PULL_REQUEST') !== undefined;
+  public determineProject(): string {
+    return `${this.determineProvider()}/${this.determineRepository()}`;
+  }
+  public determineVersion(): string | undefined {
+    return getEnvironmentVariable('CIRCLE_PR_NUMBER') || getEnvironmentVariable('CIRCLE_BRANCH') || getEnvironmentVariable('CIRCLE_TAG');
+  }
 
-  public determineBranch = () => getEnvironmentVariable('CIRCLE_BRANCH') || '(unknown)';
+  private determineRepository() {
+    const username = getEnvironmentVariableOrThrow('CIRCLE_PROJECT_USERNAME');
+    const repoName = getEnvironmentVariableOrThrow('CIRCLE_PROJECT_REPONAME');
+    return `${username}/${repoName}`;
+  }
 
-  public determineRepository = () => {
-    const username = getEnvironmentVariable('CIRCLE_PROJECT_USERNAME');
-    const reponame = getEnvironmentVariable('CIRCLE_PROJECT_REPONAME');
-    if (username !== '' && reponame !== '') {
-      return `${username}/${reponame}`;
+  private determineProvider() {
+    // Repo url can be in 2 forms:
+    // - 'git@github.com:company/repo.git'
+    // - 'https://github.com/company/repo'
+    // See https://discuss.circleci.com/t/circle-repository-url-changed-format-in-v2/15273
+    const repoUrl = getEnvironmentVariableOrThrow('CIRCLE_REPOSITORY_URL');
+    if (repoUrl.startsWith('git@')) {
+      return repoUrl.substr(4).split(':')[0];
     } else {
-      return '(unknown)';
+      return repoUrl.split('//')[1].split('/')[0];
     }
-  };
+  }
 }
 
 export default CircleProvider;

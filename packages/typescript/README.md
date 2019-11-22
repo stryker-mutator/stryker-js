@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster%3Fmodule%3Dtypescript)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master?module=typescript)
+[![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/typescript.svg)](https://www.npmjs.com/package/@stryker-mutator/typescript)
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/typescript.svg)](https://img.shields.io/node/v/@stryker-mutator/typescript.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![BCH compliance](https://bettercodehub.com/edge/badge/stryker-mutator/stryker)](https://bettercodehub.com/)
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
@@ -50,7 +50,7 @@ These are marked as `peerDependencies` so you get a warning during installation 
 
 ## Load the plugins
 
-In order to use one of the `@stryker-mutator/typescript`'s plugins it must be loaded into Stryker. 
+In order to use one of the `@stryker-mutator/typescript`'s plugins it must be loaded into Stryker.
 The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all `node_modules` starting with `stryker-` will be loaded.
 
 If you do decide to choose specific modules, don't forget to add `'@stryker-mutator/typescript'` to the list of plugins to load.
@@ -74,7 +74,7 @@ Enable the config editor by pointing the `tsconfigFile` property to your tsconfi
 {
  tsconfigFile: 'tsconfig.json',
 }
-``` 
+```
 
 We always override some properties to enforce these rules (see [issue 391](https://github.com/stryker-mutator/stryker/issues/391) to find out why):
 
@@ -101,7 +101,7 @@ Configure the Typescript mutator in your stryker.conf.js file:
 
 ### TypescriptTranspiler
 
-The `TypescriptTranspiler` is a plugin to transpile typescript source code before running tests. If you're using a bundler you might want to configure that instead. 
+The `TypescriptTranspiler` is a plugin to transpile typescript source code before running tests. If you're using a bundler you might want to configure that instead.
 
 Given your Typescript configuration (see **TypescriptConfigEditor**) it generates the javascript output. This is also used to transpile each mutant to javascript. Internally, it uses the same method as Typescript's watch mode (`tsc -w`), so it can transpile mutants fairly efficiently.
 

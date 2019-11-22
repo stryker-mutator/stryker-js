@@ -1,10 +1,12 @@
+import * as child from 'child_process';
+
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, fsAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as child from 'child_process';
 import * as inquirer from 'inquirer';
 import * as sinon from 'sinon';
 import { RestClient } from 'typed-rest-client/RestClient';
+
 import { initializerTokens } from '../../../src/initializer';
 import NpmClient from '../../../src/initializer/NpmClient';
 import { PackageInfo } from '../../../src/initializer/PackageInfo';
@@ -242,7 +244,9 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
-      expect(childExecSync).calledWith(
+      expect(
+        childExecSync
+      ).calledWith(
         'npm i --save-dev @stryker-mutator/awesome-runner @stryker-mutator/awesome-framework @stryker-mutator/typescript @stryker-mutator/webpack stryker-dimension-reporter @stryker-mutator/mars-reporter',
         { stdio: [0, 1, 2] }
       );

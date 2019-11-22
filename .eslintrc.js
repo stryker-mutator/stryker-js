@@ -1,4 +1,3 @@
-
 module.exports = {
   env: {
     node: true
@@ -9,8 +8,10 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   extends: ['prettier', 'eslint:recommended'],
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint', 'prettier', 'import'],
   rules: {
+    'import/newline-after-import': 1,
+    'import/order': ["error", {"newlines-between": "always"}],
     'prettier/prettier': ['error'],
     'sort-imports': 'off', // No auto-fix!
     'no-case-declarations': 'off',

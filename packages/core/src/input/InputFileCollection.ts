@@ -1,6 +1,7 @@
 import { File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
+
 import os = require('os');
 
 export default class InputFileCollection {
@@ -29,8 +30,20 @@ export default class InputFileCollection {
         );
       }
       if (log.isDebugEnabled()) {
-        log.debug(`All input files: ${JSON.stringify(this.files.map(file => file.name), null, 2)}`);
-        log.debug(`Files to mutate: ${JSON.stringify(this.filesToMutate.map(file => file.name), null, 2)}`);
+        log.debug(
+          `All input files: ${JSON.stringify(
+            this.files.map(file => file.name),
+            null,
+            2
+          )}`
+        );
+        log.debug(
+          `Files to mutate: ${JSON.stringify(
+            this.filesToMutate.map(file => file.name),
+            null,
+            2
+          )}`
+        );
       }
     }
   }

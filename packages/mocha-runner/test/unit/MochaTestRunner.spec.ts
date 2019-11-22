@@ -1,10 +1,12 @@
+import { EventEmitter } from 'events';
+import * as path from 'path';
+
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { RunOptions } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { EventEmitter } from 'events';
 import * as Mocha from 'mocha';
-import * as path from 'path';
+
 import sinon = require('sinon');
 import LibWrapper from '../../src/LibWrapper';
 import { MochaOptions } from '../../src/MochaOptions';

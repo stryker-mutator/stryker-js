@@ -1,4 +1,5 @@
 import { TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
+
 import JasmineConstructor = require('jasmine');
 
 export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, timeSpentMs: number): TestResult {

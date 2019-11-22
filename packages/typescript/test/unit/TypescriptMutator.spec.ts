@@ -1,9 +1,11 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { File } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as ts from 'typescript';
+
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
 import { MUTATORS_TOKEN, TypescriptMutator, typescriptMutatorFactory } from '../../src/TypescriptMutator';
 
@@ -13,7 +15,10 @@ class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
     return node.kind === ts.SyntaxKind.FunctionDeclaration;
   }
   protected identifyReplacements(node: ts.FunctionDeclaration): NodeReplacement[] {
-    return [{ node, replacement: '// Function declaration removed' }, { node, replacement: 'changedToOtherCall()' }];
+    return [
+      { node, replacement: '// Function declaration removed' },
+      { node, replacement: 'changedToOtherCall()' }
+    ];
   }
 }
 
@@ -40,11 +45,8 @@ describe('TypescriptMutator', () => {
     // Arrange
     const expectedMutatorNames = fs
       .readdirSync(path.resolve(__dirname, '..', '..', 'src', 'mutator'))
-      .filter(
-        mutatorFile =>
-          path.extname(mutatorFile) === '.ts' && !mutatorFile.endsWith('.d.ts') && mutatorFile !== 'NodeMutator.ts' && mutatorFile !== 'index.ts'
-      )
-      .map(fileName => fileName.substr(0, fileName.length - 'Mutator.ts'.length));
+      .filter(mutatorFile => path.extname(mutatorFile) === '.js' && mutatorFile !== 'NodeMutator.js' && mutatorFile !== 'index.js')
+      .map(fileName => fileName.substr(0, fileName.length - 'Mutator.js'.length));
 
     // Act
     const actualMutators = testInjector.injector.injectFunction(typescriptMutatorFactory).mutators.map(m => m.name);

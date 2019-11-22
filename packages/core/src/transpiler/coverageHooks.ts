@@ -1,4 +1,5 @@
 import { TestFramework } from '@stryker-mutator/api/test_framework';
+
 import { wrapInClosure } from '../utils/objectUtils';
 
 export const COVERAGE_CURRENT_TEST_VARIABLE_NAME = '__strykerCoverageCurrentTest__';

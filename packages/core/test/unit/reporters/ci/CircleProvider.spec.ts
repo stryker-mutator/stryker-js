@@ -1,78 +1,71 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
-import * as environmentVariables from '../../../../src/utils/objectUtils';
 
 import CircleProvider from '../../../../src/reporters/ci/CircleProvider';
+import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
 
-describe('CircleCI Provider', () => {
-  let getEnvironmentVariables: sinon.SinonStub;
+describe(CircleProvider.name, () => {
+  let sut: CircleProvider;
+  const env = new EnvironmentVariableStore();
 
   beforeEach(() => {
-    getEnvironmentVariables = sinon.stub(environmentVariables, 'getEnvironmentVariable');
+    sut = new CircleProvider();
   });
 
-  describe('isPullRequest()', () => {
-    it('should return false when not building a pull request', () => {
-      getEnvironmentVariables.withArgs('CIRCLE_PULL_REQUEST').returns(undefined);
-      const circleProvider = new CircleProvider();
-
-      const result = circleProvider.isPullRequest();
-
-      expect(result).to.be.false;
-    });
-
-    it('should return true when building a pull request', () => {
-      // CIRCLE_PULL_REQUEST will be the URL of the PR being built.
-      // If there was more than one PR, it will contain one 'em (picked randomly).
-      // Either way, it will be populated.
-      getEnvironmentVariables.withArgs('CIRCLE_PULL_REQUEST').returns('https://github.com/stryker-mutator/stryker/pull/42');
-      const circleProvider = new CircleProvider();
-
-      const result = circleProvider.isPullRequest();
-
-      expect(result).to.be.true;
-    });
+  afterEach(() => {
+    env.restore();
   });
 
-  describe('determineBranch()', () => {
-    it('should return the appropriate value', () => {
-      getEnvironmentVariables.withArgs('CIRCLE_BRANCH').returns('master');
-      const circleProvider = new CircleProvider();
-
-      const result = circleProvider.determineBranch();
+  describe('determineVersion', () => {
+    it('should return the branch name', () => {
+      env.set('CIRCLE_BRANCH', 'master');
+      const result = sut.determineVersion();
 
       expect(result).to.equal('master');
     });
 
-    it('should return a fall-back value', () => {
-      getEnvironmentVariables.withArgs('CIRCLE_BRANCH').returns('');
-      const circleProvider = new CircleProvider();
+    it('should fallback to tag if no branch is available', () => {
+      env.set('CIRCLE_BRANCH', '');
+      env.set('CIRCLE_TAG', '1.0.0');
 
-      const result = circleProvider.determineBranch();
+      const result = sut.determineVersion();
 
-      expect(result).to.equal('(unknown)');
+      expect(result).to.equal('1.0.0');
+    });
+
+    it('should prioritize the PR number if available', () => {
+      env.set('CIRCLE_PR_NUMBER', 'feature/foo-bar');
+      env.set('CIRCLE_BRANCH', 'master');
+      env.set('CIRCLE_TAG', '1.0.0');
+
+      const result = sut.determineVersion();
+
+      expect(result).to.equal('feature/foo-bar');
     });
   });
 
-  describe('determineRepository()', () => {
+  describe('determineProject()', () => {
     it('should return the appropriate value', () => {
-      getEnvironmentVariables.withArgs('CIRCLE_PROJECT_USERNAME').returns('stryker');
-      getEnvironmentVariables.withArgs('CIRCLE_PROJECT_REPONAME').returns('stryker');
-      const circleProvider = new CircleProvider();
+      env.set('CIRCLE_PROJECT_USERNAME', 'stryker-mutator');
+      env.set('CIRCLE_PROJECT_REPONAME', 'stryker');
+      env.set('CIRCLE_REPOSITORY_URL', 'https://github.com/foo/bar');
 
-      const result = circleProvider.determineRepository();
+      const result = sut.determineProject();
 
-      expect(result).to.equal('stryker/stryker');
+      expect(result).to.equal('github.com/stryker-mutator/stryker');
     });
 
-    it('should return a fall-back value', () => {
-      getEnvironmentVariables.withArgs('CIRCLE_PROJECT_USERNAME').returns('');
-      getEnvironmentVariables.withArgs('CIRCLE_PROJECT_REPONAME').returns('');
-      const circleProvider = new CircleProvider();
+    it('should support url formated as as ssh address', () => {
+      env.set('CIRCLE_PROJECT_USERNAME', 'stryker-mutator');
+      env.set('CIRCLE_PROJECT_REPONAME', 'stryker');
+      env.set('CIRCLE_REPOSITORY_URL', 'git@github.com:foo:bar');
 
-      const result = circleProvider.determineRepository();
+      const result = sut.determineProject();
 
-      expect(result).to.equal('(unknown)');
+      expect(result).to.equal('github.com/stryker-mutator/stryker');
+    });
+
+    it('should throw if env variable is missing', () => {
+      expect(sut.determineProject.bind(sut)).throws('Missing environment variable "CIRCLE_REPOSITORY_URL');
     });
   });
 });

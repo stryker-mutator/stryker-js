@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/stryker-mutator/stryker/compare/v2.2.1...v2.3.0) (2019-11-13)
+
+**Note:** Version bump only for package @stryker-mutator/html-reporter
+
+
+
+
+
 ## [2.2.1](https://github.com/stryker-mutator/stryker/compare/v2.2.0...v2.2.1) (2019-11-06)
 
 **Note:** Version bump only for package @stryker-mutator/html-reporter
@@ -558,7 +566,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### BREAKING CHANGES
 
 * **typescript:** * Hoist the `Mutator` interface to a higher abstraction. With this interface it was possible to add mutators for specific ES5 AST nodes. As we're moving away from ES5, this plugin abstraction had to be hoisted to a higher level. It is no longer possible to plugin a specific ES5 node mutator.
-* Update `report` interface: Rename `MutantState.Error` => `MutantState.RuntimeError`. 
+* Update `report` interface: Rename `MutantState.Error` => `MutantState.RuntimeError`.
 
 
 
