@@ -29,6 +29,7 @@ import { TranspilerFacade } from '../../src/transpiler/TranspilerFacade';
 import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 import Timer from '../../src/utils/Timer';
 import { mock, Mock, testableMutant } from '../helpers/producers';
+import { Statistics } from '../../src/statistics/Statistics';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
@@ -55,6 +56,7 @@ describe(Stryker.name, () => {
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let logMock: sinon.SinonStubbedInstance<Logger>;
   let transpilerMock: sinon.SinonStubbedInstance<Transpiler>;
+  let statisticsMock: Mock<Statistics>;
 
   beforeEach(() => {
     strykerConfig = factory.config();
@@ -73,6 +75,7 @@ describe(Stryker.name, () => {
     mutationTestExecutorMock = mock(MutationTestExecutor);
     transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
+    statisticsMock = mock(Statistics);
 
     temporaryDirectoryMock = mock(TemporaryDirectory);
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
@@ -95,7 +98,9 @@ describe(Stryker.name, () => {
       .withArgs(MutationTestReportCalculator)
       .returns(mutationTestReportCalculatorMock)
       .withArgs(ScoreResultCalculator)
-      .returns(scoreResultCalculator);
+      .returns(scoreResultCalculator)
+      .withArgs(Statistics)
+      .returns(statisticsMock);
     injectorMock.resolve
       .withArgs(commonTokens.options)
       .returns(strykerConfig)
