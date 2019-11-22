@@ -120,7 +120,7 @@ The `allowConsoleColors` value indicates whether Stryker should use colors in co
 <a name="coverageAnalysis"></a>
 ### `coverageAnalysis` [`string`]
 
-Default: `off`
+Default: `perTest`
 Command line: `--coverageAnalysis perTest`
 Config file: `coverageAnalysis: 'perTest'`
 
