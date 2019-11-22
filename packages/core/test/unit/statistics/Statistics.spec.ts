@@ -1,8 +1,9 @@
-import { Statistics } from '../../../src/statistics/Statistics';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { mock, Mock } from '../../helpers/producers';
 import { expect } from 'chai';
+
+import { Statistics } from '../../../src/statistics/Statistics';
+import { mock, Mock } from '../../helpers/producers';
 
 describe('Statistics', () => {
   let sut: Statistics;
@@ -37,6 +38,7 @@ describe('Statistics', () => {
     expect(testInjector.logger.info).have.been.calledWithMatch(`Sending anonymous statistics to ${AZURE_URL}`);
     expect(httpStatisticsClient.post).have.been.calledWith(AZURE_URL, data, contentType);
     expect(testInjector.logger.error).have.not.been.called;
+    expect(testInjector.logger.warn).have.not.been.called;
   });
 
   it('server returns invalid status code', async () => {
@@ -51,7 +53,7 @@ describe('Statistics', () => {
     await sut.sendStatistics();
 
     // Assert
-    expect(testInjector.logger.info).have.been.calledWithMatch('Sending statistics resulted in http status 600');
+    expect(testInjector.logger.warn).have.been.calledWithMatch('Sending statistics resulted in http status 600');
   });
 
   it("server doesn't respond", async () => {

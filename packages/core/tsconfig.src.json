@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
+	"resolveJsonModule": true,
     "rootDir": ".",
     "types": [] // Exclude global mocha functions for the sources
   },

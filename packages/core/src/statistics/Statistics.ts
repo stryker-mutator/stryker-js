@@ -10,18 +10,24 @@ export class Statistics {
 
   constructor(private readonly log: Logger, private readonly httpStatisticsClient: HttpClient) {
     this.statistics.implementation = 'Stryker';
+    this.statistics.version = require('../../package.json').version;
+  }
+
+  public addStatistic(name: string, value: any) {
+    this.statistics[name] = value;
   }
 
   public sendStatistics(): Promise<void> {
     this.log.info(`Sending anonymous statistics to ${AZURE_URL}`);
     const statisticsData = JSON.stringify(this.statistics);
+    this.log.info(statisticsData);
     return this.httpStatisticsClient
       .post(AZURE_URL, statisticsData, {
         ['Content-Type']: 'application/json'
       })
       .then(body => {
         if (body.message.statusCode != 201) {
-          this.log.info(`Sending statistics resulted in http status ${body.message.statusCode}`);
+          this.log.warn(`Sending statistics resulted in http status ${body.message.statusCode}`);
         }
       })
       .catch(err => {
