@@ -49,7 +49,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:log": "eslint . --ext .ts,.tsx -f compact -o lint.log",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "clean": "rimraf \"packages/api/*+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage,*.tsbuildinfo}\"",
+    "clean": "rimraf \"packages/api/!(stryker.conf)+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage,*.tsbuildinfo}\"",
     "build": "tsc -b && lerna run build",
     "test": "npm run mocha",
     "mocha": "lerna run test --stream --concurrency 4",
