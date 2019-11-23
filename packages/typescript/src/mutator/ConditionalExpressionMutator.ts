@@ -50,6 +50,7 @@ export default class ConditionalExpressionMutator extends NodeMutator<
       case ts.SyntaxKind.SlashToken:
       case ts.SyntaxKind.AsteriskToken:
       case ts.SyntaxKind.PercentToken:
+      case ts.SyntaxKind.EqualsToken:
         return true;
       default:
         return false;
