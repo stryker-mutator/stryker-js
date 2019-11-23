@@ -53,8 +53,9 @@ describe('VueMutator', () => {
       const mutants = sut.mutate(files);
 
       expect(mutants.filter(m => m.mutatorName === 'StringLiteral').length).to.equal(2);
-      expect(mutants.filter(m => m.mutatorName === 'Block').length).to.equal(3);
-      expect(mutants.filter(m => m.mutatorName === 'BinaryExpression').length).to.equal(3);
+      expect(mutants.filter(m => m.mutatorName === 'BlockStatement').length).to.equal(3);
+      expect(mutants.filter(m => m.mutatorName === 'EqualityOperator').length).to.equal(2);
+      expect(mutants.filter(m => m.mutatorName === 'ArithmeticOperator').length).to.equal(1);
     });
   });
 
@@ -93,8 +94,9 @@ describe('VueMutator', () => {
       const mutants = sut.mutate(files);
 
       expect(mutants.filter(m => m.mutatorName === 'StringLiteral').length).to.equal(1);
-      expect(mutants.filter(m => m.mutatorName === 'Block').length).to.equal(3);
-      expect(mutants.filter(m => m.mutatorName === 'BinaryExpression').length).to.equal(3);
+      expect(mutants.filter(m => m.mutatorName === 'BlockStatement').length).to.equal(3);
+      expect(mutants.filter(m => m.mutatorName === 'EqualityOperator').length).to.equal(2);
+      expect(mutants.filter(m => m.mutatorName === 'ArithmeticOperator').length).to.equal(1);
     });
   });
 });

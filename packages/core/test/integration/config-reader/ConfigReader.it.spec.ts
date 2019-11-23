@@ -74,6 +74,39 @@ describe(ConfigReader.name, () => {
         expect(testInjector.logger.warn).not.called;
       });
 
+      it('should migrate deprecated settings', () => {
+        sut = createSut({ configFile: 'testResources/config-reader/deprecated.conf.js' });
+
+        result = sut.readConfig();
+
+        expect(typeof result.mutator).to.not.be.eq('string');
+        if (typeof result.mutator !== 'string') {
+          expect(result.mutator.excludedMutations).to.deep.eq([
+            'ArrayDeclaration',
+            'ArrayDeclaration',
+            'ArithmeticOperator',
+            'EqualityOperator',
+            'LogicalOperator',
+            'BlockStatement',
+            'BooleanLiteral',
+            'ConditionalExpression',
+            'ConditionalExpression',
+            'ConditionalExpression',
+            'UnaryOperator',
+            'UpdateOperator',
+            'BooleanLiteral',
+            'UpdateOperator',
+            'ConditionalExpression',
+            'ConditionalExpression',
+            'ObjectLiteral',
+            'ArrowFunctionMutator'
+          ]);
+        }
+        expect(testInjector.logger.warn).to.have.been.calledWith(
+          'DEPRECATED: The mutation name "BinaryExpression" is deprecated. Please migrate your config. For now BinaryExpression will be replaced with: ArithmeticOperator, EqualityOperator, LogicalOperator. A list of mutations and their names can be found here: https://github.com/stryker-mutator/stryker-handbook/blob/master/mutator-types.md'
+        );
+      });
+
       describe('with CLI options', () => {
         it('should give precedence to CLI options', () => {
           sut = createSut({ configFile: 'testResources/config-reader/valid.conf.js', read: false });

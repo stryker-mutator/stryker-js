@@ -4,6 +4,10 @@ import ExpectMutation from './ExpectMutation';
 
 export default function IfStatementMutatorSpec(name: string, expectMutation: ExpectMutation) {
   describe('IfStatementMutator', () => {
+    beforeEach(() => {
+      console.warn('DEPRECATED: please migrate from the IfStatementMutatorSpec to the ConditionalExpressionMutatorSpec');
+    });
+
     it('should have name "IfStatement"', () => {
       expect(name).eq('IfStatement');
     });
