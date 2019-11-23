@@ -114,7 +114,11 @@
         "language": "typescript",
         "autoFix": true
       }
-    ]
+    ],
+    "grunt.autoDetect": "off",
+    "gulp.autoDetect": "off",
+    "jake.autoDetect": "off",
+    "task.autoDetect": "off"
   },
   "extensions": {
     "recommendations": [

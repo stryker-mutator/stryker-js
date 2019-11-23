@@ -28,6 +28,9 @@ export default class ConfigReader {
 
     // merge the config from config file and cliOptions (precedence)
     config.set(this.cliOptions);
+    if (this.log.isDebugEnabled()) {
+      this.log.debug(`Loaded config: ${JSON.stringify(config, null, 2)}`);
+    }
 
     this.fixDeprecations(config);
 
@@ -117,9 +120,14 @@ export default class ConfigReader {
           throw new StrykerError('Invalid config file', e);
         }
       }
-      if (typeof configModule !== 'function') {
-        this.log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
-        throw new StrykerError('Config file must export a function!');
+      if (typeof configModule !== 'function' && typeof configModule !== 'object') {
+        this.log.fatal('Config file must be an object or export a function!\n' + CONFIG_SYNTAX_HELP);
+        throw new StrykerError('Config file must export a function or be a JSON!');
+      }
+      if (typeof configModule === 'object') {
+        return (config: any) => {
+          config.set(configModule);
+        };
       }
     }
 

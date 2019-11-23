@@ -1,6 +1,7 @@
 import LogLevel from './LogLevel';
 import MutationScoreThresholds from './MutationScoreThresholds';
 import MutatorDescriptor from './MutatorDescriptor';
+import { DashboardOptions } from './DashboardOptions';
 
 interface StrykerOptions {
   // this ensures that plugins can load custom config.
@@ -140,6 +141,11 @@ interface StrykerOptions {
    * Default: true
    */
   allowConsoleColors: boolean;
+
+  /**
+   * The options for the 'dashboard' reporter
+   */
+  dashboard: DashboardOptions;
 
   /**
    * The name of the dir name. Default: `.stryker-tmp`

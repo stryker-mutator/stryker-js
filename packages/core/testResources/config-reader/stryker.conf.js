@@ -4,5 +4,5 @@ module.exports = function(config){
     'valid': 'config',
     'should': 'be',
     'read': true
-  });  
+  });
 };

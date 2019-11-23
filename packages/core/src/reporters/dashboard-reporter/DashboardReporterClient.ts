@@ -1,39 +1,67 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { errorToString } from '@stryker-mutator/util';
+import { StrykerError } from '@stryker-mutator/util';
 import { HttpClient } from 'typed-rest-client/HttpClient';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
+import { isOK } from '../../utils/netUtils';
+import { getEnvironmentVariable } from '../../utils/objectUtils';
 
 import { dashboardReporterTokens } from './tokens';
+import { Report } from './Report';
 
-export interface StrykerDashboardReport {
-  apiKey: string;
-  repositorySlug: string;
-  branch: string;
-  mutationScore: number;
+interface ReportResponseBody {
+  href: string;
 }
 
-const URL_STRYKER_DASHBOARD_REPORTER = 'https://dashboard.stryker-mutator.io/api/reports';
+const STRYKER_DASHBOARD_API_KEY = 'STRYKER_DASHBOARD_API_KEY';
 
 export default class DashboardReporterClient {
-  public static inject = tokens(commonTokens.logger, dashboardReporterTokens.httpClient);
-  constructor(private readonly log: Logger, private readonly dashboardReporterClient: HttpClient) {}
+  public static inject = tokens(commonTokens.logger, dashboardReporterTokens.httpClient, commonTokens.options);
+  constructor(private readonly log: Logger, private readonly httpClient: HttpClient, private readonly options: StrykerOptions) {}
 
-  public postStrykerDashboardReport(report: StrykerDashboardReport): Promise<void> {
-    this.log.info(`Posting report to ${URL_STRYKER_DASHBOARD_REPORTER}`);
-    const reportString = JSON.stringify(report);
-    this.log.debug('Posting data %s', reportString);
-    return this.dashboardReporterClient
-      .post(URL_STRYKER_DASHBOARD_REPORTER, reportString, {
-        ['Content-Type']: 'application/json'
-      })
-      .then(body => {
-        const statusCode = body.message.statusCode;
-        if (statusCode !== 201) {
-          this.log.error(`Post to ${URL_STRYKER_DASHBOARD_REPORTER} resulted in http status code: ${statusCode}.`);
-        }
-      })
-      .catch(err => {
-        this.log.error(`Unable to reach ${URL_STRYKER_DASHBOARD_REPORTER}. Please check your internet connection.`, errorToString(err));
-      });
+  public async updateReport({
+    report,
+    projectName,
+    version,
+    moduleName
+  }: {
+    report: Report;
+    projectName: string;
+    version: string;
+    moduleName: string | undefined;
+  }): Promise<string> {
+    const url = this.getPutUrl(projectName, version, moduleName);
+    const serializedBody = JSON.stringify(report);
+    this.log.info('PUT report to %s (~%s bytes)', url, serializedBody.length);
+    const apiKey = getEnvironmentVariable(STRYKER_DASHBOARD_API_KEY);
+    if (apiKey) {
+      this.log.debug('Using configured API key from environment "%s"', STRYKER_DASHBOARD_API_KEY);
+    }
+    this.log.trace('PUT report %s', serializedBody);
+    const result = await this.httpClient.put(url, serializedBody, {
+      ['X-Api-Key']: apiKey,
+      ['Content-Type']: 'application/json'
+    });
+    const responseBody = await result.readBody();
+    if (isOK(result.message.statusCode || 0)) {
+      const response: ReportResponseBody = JSON.parse(responseBody);
+      return response.href;
+    } else if (result.message.statusCode === 401) {
+      throw new StrykerError(
+        `Error HTTP PUT ${url}. Unauthorized. Did you provide the correct api key in the "${STRYKER_DASHBOARD_API_KEY}" environment variable?`
+      );
+    } else {
+      throw new StrykerError(`Error HTTP PUT ${url}. Response status code: ${result.message.statusCode}. Response body: ${responseBody}`);
+    }
+  }
+
+  private getPutUrl(repoSlug: string, version: string, moduleName: string | undefined) {
+    const base = `${this.options.dashboard.baseUrl}/${repoSlug}/${encodeURIComponent(version)}`;
+    if (moduleName) {
+      return `${base}?module=${encodeURIComponent(moduleName)}`;
+    } else {
+      return base;
+    }
   }
 }
