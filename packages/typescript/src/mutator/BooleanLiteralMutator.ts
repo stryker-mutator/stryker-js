@@ -4,10 +4,10 @@ import { printNode } from '../helpers/tsHelpers';
 
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
-export default class BooleanLiteralMutator extends NodeMutator<ts.BooleanLiteral> {
+export default class BooleanLiteralMutator extends NodeMutator<ts.BooleanLiteral | ts.PrefixUnaryExpression> {
   public name: string = 'BooleanLiteral';
 
-  public guard(node: ts.Node): node is ts.BooleanLiteral {
+  public guard(node: ts.Node): node is ts.BooleanLiteral | ts.PrefixUnaryExpression {
     return node.kind === ts.SyntaxKind.FalseKeyword || node.kind === ts.SyntaxKind.TrueKeyword || node.kind === ts.SyntaxKind.PrefixUnaryExpression;
   }
 
