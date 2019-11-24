@@ -128,7 +128,7 @@ With `coverageAnalysis` you specify which coverage analysis strategy you want to
 
 Stryker can analyse code coverage results. This can potentially speed up mutation testing a lot, as only the tests covering a
 particular mutation are tested for each mutant.
-This does *not* influence the resulting mutation testing score. It only improves performance, so we enable it by default.
+This does *not* influence the resulting mutation testing score. It only improves performance.
 
 The possible values are:
 * **off**: Stryker will not determine the code covered by tests during the initial test run phase. All tests will be executed for each mutant
