@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/jasmine-runner",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "A plugin to use the Jasmine (NodeJS) test runner in Stryker, the mutation testing framework for JavaScript and friends",
   "main": "src/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
- "nyc": {
+  "nyc": {
     "exclude": [
       "test",
       "testResources"
@@ -40,12 +40,12 @@
     "jasmine": ">=2"
   },
   "devDependencies": {
-    "@stryker-mutator/jasmine-framework": "^2.3.0",
-    "@stryker-mutator/test-helpers": "^2.3.0"
+    "@stryker-mutator/jasmine-framework": "^2.4.0",
+    "@stryker-mutator/test-helpers": "^2.4.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.3.0",
-    "@stryker-mutator/util": "^2.3.0"
+    "@stryker-mutator/api": "^2.4.0",
+    "@stryker-mutator/util": "^2.4.0"
   },
   "initStrykerConfig": {
     "jasmineConfigFile": "spec/support/jasmine.json"
