@@ -92,9 +92,9 @@ interface StrykerOptions {
    * Indicates which coverage analysis strategy to use.
    * During mutation testing, stryker will try to only run the tests that cover a particular line of code.
    *
-   * 'perTest' (default): Analyse coverage per test.
+   * 'perTest': Analyse coverage per test.
    * 'all': Analyse the coverage for the entire test suite.
-   * 'off': Don't use coverage analysis
+   * 'off' (default): Don't use coverage analysis
    */
   coverageAnalysis: 'perTest' | 'all' | 'off';
 
