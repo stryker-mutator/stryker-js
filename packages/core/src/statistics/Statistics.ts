@@ -11,6 +11,7 @@ export class Statistics {
   constructor(private readonly log: Logger, private readonly httpStatisticsClient: HttpClient) {
     this.statistics.implementation = 'Stryker';
     this.statistics.version = require('../../package.json').version;
+    this.statistics.testRunner = require('../../../../stryker.parent.conf').testRunner;
   }
 
   public addStatistic(name: string, value: any) {
@@ -20,7 +21,7 @@ export class Statistics {
   public sendStatistics(): Promise<void> {
     this.log.info(`Sending anonymous statistics to ${AZURE_URL}`);
     const statisticsData = JSON.stringify(this.statistics);
-    this.log.info(statisticsData);
+    this.log.info(statisticsData); // DEBUG
     return this.httpStatisticsClient
       .post(AZURE_URL, statisticsData, {
         ['Content-Type']: 'application/json'

@@ -3,11 +3,13 @@ import { getLogger } from 'log4js';
 import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mutator/api/core';
 import { Config } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
+import { HttpClient } from 'typed-rest-client/HttpClient';
 
 import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
 import Stryker from './Stryker';
+import { Statistics } from './statistics/Statistics';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -153,6 +155,12 @@ export default class StrykerCli {
     if (Object.keys(commands).includes(this.command)) {
       commands[this.command]().catch(err => {
         this.log.error('an error occurred', err);
+        const statisticsProcess = new Statistics(this.log, new HttpClient('HttpClient'));
+
+        // IF OPT IN
+        statisticsProcess.addStatistic('error', err.toString());
+        statisticsProcess.sendStatistics();
+
         if (!this.log.isTraceEnabled()) {
           this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
         }

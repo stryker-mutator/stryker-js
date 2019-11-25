@@ -98,8 +98,6 @@ export default class Stryker {
         } else {
           this.logTraceLogLevelHint();
         }
-      } catch (e) {
-        if (statisticsProcess) statisticsProcess.addStatistic('error', String(e));
       } finally {
         // `injector.dispose` calls `dispose` on all created instances
         // Namely the `SandboxPool`, `MutantTranspileScheduler` and `ChildProcessProxy` instances
@@ -131,7 +129,7 @@ export default class Stryker {
     const score = calculator.calculate(mutantResults);
     this.reporter.onScoreCalculated(score);
     calculator.determineExitCode(score, this.options.thresholds);
-    if (statistics) statistics.addStatistic('score', score.mutationScore);
+    if (statistics) statistics.addStatistic('score', Math.round(score.mutationScore));
     await this.reporter.wrapUp();
   }
 }
