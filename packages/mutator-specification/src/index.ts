@@ -19,6 +19,7 @@ export { default as BooleanSubstitutionMutatorSpec } from './BooleanSubstitution
 export { default as DoStatementMutatorSpec } from './DoStatementMutatorSpec';
 export { default as ForStatementMutatorSpec } from './ForStatementMutatorSpec';
 export { default as IfStatementMutatorSpec } from './IfStatementMutatorSpec';
+export { default as NumericValueMutatorSpec } from './NumericValueMutatorSpec';
 export { default as PrefixUnaryExpressionMutatorSpec } from './PrefixUnaryExpressionMutatorSpec';
 export { default as SwitchCaseMutatorSpec } from './SwitchCaseMutatorSpec';
 export { default as WhileStatementMutatorSpec } from './WhileStatementMutatorSpec';

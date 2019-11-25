@@ -4,6 +4,7 @@ import BlockStatementMutator from './BlockStatementMutator';
 import BooleanLiteralMutator from './BooleanLiteralMutator';
 import ConditionalExpressionMutator from './ConditionalExpressionMutator';
 import EqualityOperatorMutator from './EqualityOperatorMutator';
+import NumericValueMutator from './NumericValueMutator';
 import ObjectLiteralMutator from './ObjectLiteralMutator';
 import StringLiteralMutator from './StringLiteralMutator';
 import LogicalOperatorMutator from './LogicalOperatorMutator';
@@ -18,6 +19,7 @@ export const nodeMutators = Object.freeze([
   new ConditionalExpressionMutator(),
   new EqualityOperatorMutator(),
   new LogicalOperatorMutator(),
+  new NumericValueMutator(),
   new ObjectLiteralMutator(),
   new StringLiteralMutator(),
   new UnaryOperatorMutator(),
