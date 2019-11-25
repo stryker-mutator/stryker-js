@@ -1,5 +1,6 @@
 import * as types from '@babel/types';
 
+import { NodeGenerator } from '../helpers/NodeGenerator';
 import { NodeWithParent } from '../helpers/ParentNode';
 
 import { NodeMutator } from './NodeMutator';
@@ -11,16 +12,13 @@ export default class StringLiteralMutator implements NodeMutator {
     const nodes: types.Node[] = [];
 
     if (types.isTemplateLiteral(node)) {
-      nodes.push({
-        end: node.end,
-        innerComments: node.innerComments,
-        leadingComments: node.leadingComments,
-        loc: node.loc,
-        start: node.start,
-        trailingComments: node.trailingComments,
-        type: 'StringLiteral',
-        value: node.quasis.length === 1 && node.quasis[0].value.raw.length === 0 ? 'Stryker was here!' : ''
-      } as types.StringLiteral);
+      nodes.push(
+        NodeGenerator.createAnyLiteralValueNode(
+          node,
+          'StringLiteral',
+          node.quasis.length === 1 && node.quasis[0].value.raw.length === 0 ? 'Stryker was here!' : ''
+        )
+      );
     } else if ((!node.parent || this.isDeclarationOrJSX(node.parent)) && types.isStringLiteral(node)) {
       const mutatedNode = copy(node);
       mutatedNode.value = mutatedNode.value.length === 0 ? 'Stryker was here!' : '';
