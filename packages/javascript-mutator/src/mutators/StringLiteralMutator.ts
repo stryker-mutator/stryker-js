@@ -13,11 +13,7 @@ export default class StringLiteralMutator implements NodeMutator {
 
     if (types.isTemplateLiteral(node)) {
       nodes.push(
-        NodeGenerator.createAnyLiteralValueNode(
-          node,
-          'StringLiteral',
-          node.quasis.length === 1 && node.quasis[0].value.raw.length === 0 ? 'Stryker was here!' : ''
-        )
+        NodeGenerator.createStringLiteralNode(node, node.quasis.length === 1 && node.quasis[0].value.raw.length === 0 ? 'Stryker was here!' : '')
       );
       nodes.push(NodeGenerator.createIdentifierNode(node, 'null'));
     } else if ((!node.parent || this.isDeclarationOrJSX(node.parent)) && types.isStringLiteral(node)) {

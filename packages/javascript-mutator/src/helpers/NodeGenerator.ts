@@ -5,6 +5,10 @@ export class NodeGenerator {
     return NodeGenerator.createAnyLiteralValueNode(originalNode, 'BooleanLiteral', value) as types.BooleanLiteral;
   }
 
+  public static createStringLiteralNode(originalNode: types.Node, value: string): types.StringLiteral {
+    return NodeGenerator.createAnyLiteralValueNode(originalNode, 'StringLiteral', value) as types.StringLiteral;
+  }
+
   public static createIdentifierNode(originalNode: types.Node, name: string): types.Identifier {
     return NodeGenerator.createMutatedNode(originalNode, 'Identifier', { name }) as types.Identifier;
   }
