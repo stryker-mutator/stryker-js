@@ -14,14 +14,16 @@ export default class StringLiteralMutator implements NodeMutator {
     const nodes: types.Node[] = [];
 
     if (types.isTemplateLiteral(node)) {
-      nodes.push(
-        NodeGenerator.createStringLiteralNode(node, node.quasis.length === 1 && node.quasis[0].value.raw.length === 0 ? MUTATED_STRING_CONTENTS : '')
-      );
+      if (node.expressions.length !== 0 || node.quasis.length > 1 || (node.quasis.length === 1 && node.quasis[0].value.raw !== '')) {
+        nodes.push(NodeGenerator.createStringLiteralNode(node, ''));
+      }
+      nodes.push(NodeGenerator.createStringLiteralNode(node, MUTATED_STRING_CONTENTS));
       nodes.push(NodeGenerator.createIdentifierNode(node, 'null'));
     } else if ((!node.parent || this.isDeclarationOrJSX(node.parent)) && types.isStringLiteral(node)) {
-      const mutatedNode = copy(node);
-      mutatedNode.value = mutatedNode.value.length === 0 ? MUTATED_STRING_CONTENTS : '';
-      nodes.push(mutatedNode);
+      if (node.value.length !== 0) {
+        nodes.push(NodeGenerator.createStringLiteralNode(node, ''));
+      }
+      nodes.push(NodeGenerator.createStringLiteralNode(node, MUTATED_STRING_CONTENTS));
       if (types.isStringLiteral(node)) {
         nodes.push(NodeGenerator.createIdentifierNode(node, 'null'));
       }

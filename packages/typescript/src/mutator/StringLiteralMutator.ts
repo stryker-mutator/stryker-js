@@ -55,6 +55,7 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
     } else {
       return [
         { node: str, replacement: '""' },
+        { node: str, replacement: `"${MUTATED_STRING_CONTENTS}"` },
         { node: str, replacement: 'null' }
       ];
     }
