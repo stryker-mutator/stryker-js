@@ -5,7 +5,7 @@ import { NodeWithParent } from '../helpers/ParentNode';
 
 import { NodeMutator } from './NodeMutator';
 
-const MUTATED_STRING_CONTENTS = 'Stryker was here!';
+const MUTATED_STRING_CONTENTS = '**Stryker was here!**';
 
 export default class StringLiteralMutator implements NodeMutator {
   public name = 'StringLiteral';

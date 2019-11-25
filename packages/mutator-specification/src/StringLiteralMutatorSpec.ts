@@ -27,11 +27,11 @@ export default function StringLiteralMutatorSpec(name: string, expectMutation: E
     });
 
     it('should mutate an empty string as a bogus string and as a null value', () => {
-      expectMutation('const b = "";', 'const b = "Stryker was here!";', 'const b = null;');
+      expectMutation('const b = "";', 'const b = "**Stryker was here!**";', 'const b = null;');
     });
 
     it('should mutate an empty template string as a bogus string and as a null value', () => {
-      expectMutation('const b = ``;', 'const b = "Stryker was here!";', 'const b = null;');
+      expectMutation('const b = ``;', 'const b = "**Stryker was here!**";', 'const b = null;');
     });
 
     it('should not mutate import statements', () => {

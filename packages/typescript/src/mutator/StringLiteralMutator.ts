@@ -2,7 +2,7 @@ import * as ts from 'typescript';
 
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
-const MUTATED_STRING_CONTENTS = 'Stryker was here!';
+const MUTATED_STRING_CONTENTS = '**Stryker was here!**';
 
 export type AllStringLiterals =
   // Regular quoted string.
