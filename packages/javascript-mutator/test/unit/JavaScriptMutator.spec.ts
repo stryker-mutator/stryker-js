@@ -24,7 +24,7 @@ describe('JavaScriptMutator', () => {
 
   it('should generate a correct mutant', () => {
     const mutator = createSut();
-    const files: File[] = [new File('testFile.js', '"use strict"; var a = 1 + 2;')];
+    const files: File[] = [new File('testFile.js', '"use strict"; var a = b + c;')];
 
     const mutants = mutator.mutate(files);
 
@@ -33,7 +33,7 @@ describe('JavaScriptMutator', () => {
       fileName: files[0].name,
       mutatorName: 'ArithmeticOperator',
       range: [22, 27],
-      replacement: '1 - 2'
+      replacement: 'b - c'
     });
   });
 
@@ -168,8 +168,8 @@ describe('JavaScriptMutator', () => {
 
   it('should generate mutants for multiple files', () => {
     const mutator = createSut();
-    const file: File = new File('testFile.js', '"use strict"; var a = 1 + 2;');
-    const file2: File = new File('testFile2.js', '"use strict"; var a = 1 + 2;');
+    const file: File = new File('testFile.js', '"use strict"; var a = b + c;');
+    const file2: File = new File('testFile2.js', '"use strict"; var d = e - f;');
     const mutants = mutator.mutate([file, file2]);
 
     expect(mutants.length).to.equal(2);
