@@ -18,16 +18,7 @@ export default class NumericValueMutator implements NodeMutator {
       types.isIdentifier(node.argument) &&
       node.argument.name === 'NaN'
     ) {
-      [0, 1, -1].forEach(v => {
-        nodes.push(NodeGenerator.createAnyLiteralValueNode(node, 'NumericLiteral', v));
-      });
-      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' }));
-      nodes.push(
-        NodeGenerator.createMutatedNode(node, 'UnaryExpression', {
-          operator: '-',
-          argument: NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' })
-        })
-      );
+      NumericValueMutator.pushMutatedValueNodes(nodes, node, NaN);
     }
 
     if (
@@ -37,11 +28,7 @@ export default class NumericValueMutator implements NodeMutator {
       types.isIdentifier(node.argument) &&
       node.argument.name === 'Infinity'
     ) {
-      [0, 1, -1].forEach(v => {
-        nodes.push(NodeGenerator.createAnyLiteralValueNode(node, 'NumericLiteral', v));
-      });
-      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' }));
-      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'NaN' }));
+      NumericValueMutator.pushMutatedValueNodes(nodes, node, -Infinity);
     }
 
     if (
@@ -52,16 +39,7 @@ export default class NumericValueMutator implements NodeMutator {
       // which is already handled above
       !(types.isUnaryExpression(node.parent) && node.parent.operator === '-')
     ) {
-      [0, 1, -1].forEach(v => {
-        nodes.push(NodeGenerator.createAnyLiteralValueNode(node, 'NumericLiteral', v));
-      });
-      nodes.push(
-        NodeGenerator.createMutatedNode(node, 'UnaryExpression', {
-          operator: '-',
-          argument: NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' })
-        })
-      );
-      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'NaN' }));
+      NumericValueMutator.pushMutatedValueNodes(nodes, node, Infinity);
     }
 
     if (
@@ -72,16 +50,7 @@ export default class NumericValueMutator implements NodeMutator {
       // which is already handled above
       !(types.isUnaryExpression(node.parent) && node.parent.operator === '-')
     ) {
-      [0, 1, -1].forEach(v => {
-        nodes.push(NodeGenerator.createAnyLiteralValueNode(node, 'NumericLiteral', v));
-      });
-      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' }));
-      nodes.push(
-        NodeGenerator.createMutatedNode(node, 'UnaryExpression', {
-          operator: '-',
-          argument: NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' })
-        })
-      );
+      NumericValueMutator.pushMutatedValueNodes(nodes, node, NaN);
     }
 
     if (
@@ -90,20 +59,7 @@ export default class NumericValueMutator implements NodeMutator {
       node.operator === '-' &&
       types.isNumericLiteral(node.argument)
     ) {
-      const argument = node.argument;
-      [0, 1, -1].forEach(v => {
-        if (argument.value !== -v) {
-          nodes.push(NodeGenerator.createAnyLiteralValueNode(node, 'NumericLiteral', v));
-        }
-      });
-      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' }));
-      nodes.push(
-        NodeGenerator.createMutatedNode(node, 'UnaryExpression', {
-          operator: '-',
-          argument: NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' })
-        })
-      );
-      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'NaN' }));
+      NumericValueMutator.pushMutatedValueNodes(nodes, node, -node.argument.value);
     }
 
     if (
@@ -113,23 +69,37 @@ export default class NumericValueMutator implements NodeMutator {
       // which is already handled above
       !(types.isUnaryExpression(node.parent) && node.parent.operator === '-')
     ) {
-      [0, 1, -1].forEach(v => {
-        const mutatedNode = copy(node);
-        if (mutatedNode.value !== v) {
-          mutatedNode.value = v;
-          nodes.push(mutatedNode);
-        }
-      });
+      NumericValueMutator.pushMutatedValueNodes(nodes, node, node.value);
+    }
+
+    return nodes;
+  }
+
+  private static pushMutatedValueNodes(nodes: types.Node[], node: types.Node, value: number) {
+    [0, 1, -1].forEach(v => {
+      if (value !== v) {
+        nodes.push(NodeGenerator.createAnyLiteralValueNode(node, 'NumericLiteral', v));
+      }
+    });
+
+    if (value !== Infinity) {
       nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' }));
+    }
+
+    if (value !== -Infinity) {
       nodes.push(
         NodeGenerator.createMutatedNode(node, 'UnaryExpression', {
           operator: '-',
           argument: NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'Infinity' })
         })
       );
-      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'NaN' }));
     }
 
-    return nodes;
+    // TBD Workaround since the condition (value === NaN)
+    // does not seem to do what we want here
+    // (value === NaN)
+    if (!!value || value === 0) {
+      nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'NaN' }));
+    }
   }
 }
