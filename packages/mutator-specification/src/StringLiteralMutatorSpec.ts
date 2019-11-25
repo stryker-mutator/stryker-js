@@ -8,30 +8,30 @@ export default function StringLiteralMutatorSpec(name: string, expectMutation: E
       expect(name).eq('StringLiteral');
     });
 
-    it('should mutate a string literal with double quotes', () => {
-      expectMutation('const b = "Hello world!";', 'const b = "";');
+    it('should mutate a string literal with double quotes as an empty string and as a null value', () => {
+      expectMutation('const b = "Hello world!";', 'const b = "";', 'const b = null;');
     });
 
-    it('should mutate a string literal with single quotes', () => {
-      expectMutation("const b = 'Hello world!';", 'const b = "";');
+    it('should mutate a string literal with single quotes as an empty string and as a null value', () => {
+      expectMutation("const b = 'Hello world!';", 'const b = "";', 'const b = null;');
     });
 
-    it('should mutate a template string', () => {
-      expectMutation('const b = `Hello world!`;', 'const b = "";');
+    it('should mutate a template string as an empty string and as a null value', () => {
+      expectMutation('const b = `Hello world!`;', 'const b = "";', 'const b = null;');
     });
 
-    it('should mutate a template string referencing another variable', () => {
-      expectMutation('const a = 10; const b = `${a} mutations`;', 'const a = 10; const b = "";');
-      expectMutation('const a = 10; const b = `mutations: ${a}`;', 'const a = 10; const b = "";');
-      expectMutation('const a = 10; const b = `mutations: ${a} out of 10`;', 'const a = 10; const b = "";');
+    it('should mutate a template string referencing another variable as an empty string and as a null value', () => {
+      expectMutation('const a = 10; const b = `${a} mutations`;', 'const a = 10; const b = "";', 'const a = 10; const b = null;');
+      expectMutation('const a = 10; const b = `mutations: ${a}`;', 'const a = 10; const b = "";', 'const a = 10; const b = null;');
+      expectMutation('const a = 10; const b = `mutations: ${a} out of 10`;', 'const a = 10; const b = "";', 'const a = 10; const b = null;');
     });
 
-    it('should mutate empty strings', () => {
-      expectMutation('const b = "";', 'const b = "Stryker was here!";');
+    it('should mutate an empty string as a bogus string and as a null value', () => {
+      expectMutation('const b = "";', 'const b = "Stryker was here!";', 'const b = null;');
     });
 
-    it('should mutate empty template strings', () => {
-      expectMutation('const b = ``;', 'const b = "Stryker was here!";');
+    it('should mutate an empty template string as a bogus string and as a null value', () => {
+      expectMutation('const b = ``;', 'const b = "Stryker was here!";', 'const b = null;');
     });
 
     it('should not mutate import statements', () => {
@@ -47,7 +47,7 @@ export default function StringLiteralMutatorSpec(name: string, expectMutation: E
     });
 
     it('should not mutate type declarations', () => {
-      expectMutation('const a: "hello" = "hello";', 'const a: "hello" = "";');
+      expectMutation('const a: "hello" = "hello";', 'const a: "hello" = "";', 'const a: "hello" = null;');
       expectMutation('const a: Record<"id", number> = { id: 10 }');
     });
 

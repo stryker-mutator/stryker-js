@@ -11,9 +11,12 @@ export default class ObjectLiteralMutator extends NodeMutator<ts.ObjectLiteralEx
 
   protected identifyReplacements(o: ts.ObjectLiteralExpression): NodeReplacement[] {
     if (o.properties.length > 0) {
-      return [{ node: o, replacement: '{}' }];
+      return [
+        { node: o, replacement: '{}' },
+        { node: o, replacement: 'null' }
+      ];
     } else {
-      return [];
+      return [{ node: o, replacement: 'null' }];
     }
   }
 }

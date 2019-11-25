@@ -1,5 +1,7 @@
 import * as types from '@babel/types';
 
+import { NodeGenerator } from '../helpers/NodeGenerator';
+
 import { NodeMutator } from './NodeMutator';
 
 /**
@@ -15,6 +17,10 @@ export default class ObjectLiteralMutator implements NodeMutator {
       const mutatedNode = copy(node);
       mutatedNode.properties = [];
       nodes.push(mutatedNode);
+    }
+
+    if (types.isObjectExpression(node)) {
+      nodes.push(NodeGenerator.createIdentifierNode(node, 'null'));
     }
 
     return nodes;

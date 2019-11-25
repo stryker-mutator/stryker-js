@@ -46,9 +46,15 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
     }
 
     if (this.isEmpty(str)) {
-      return [{ node: str, replacement: '"Stryker was here!"' }];
+      return [
+        { node: str, replacement: '"Stryker was here!"' },
+        { node: str, replacement: 'null' }
+      ];
     } else {
-      return [{ node: str, replacement: '""' }];
+      return [
+        { node: str, replacement: '""' },
+        { node: str, replacement: 'null' }
+      ];
     }
   }
 

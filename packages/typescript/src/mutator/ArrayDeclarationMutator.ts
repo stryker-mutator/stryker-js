@@ -12,16 +12,28 @@ export default class ArrayDeclarationMutator extends NodeMutator<ts.ArrayLiteral
   protected identifyReplacements(node: ts.ArrayLiteralExpression | ts.NewExpression, sourceFile: ts.SourceFile): NodeReplacement[] {
     if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
       if (node.elements.length) {
-        return [{ node, replacement: '[]' }];
+        return [
+          { node, replacement: '[]' },
+          { node, replacement: 'null' }
+        ];
       } else {
-        return [{ node, replacement: '["Stryker was here"]' }];
+        return [
+          { node, replacement: '["Stryker was here"]' },
+          { node, replacement: 'null' }
+        ];
       }
     } else {
       if (node.expression.getFullText(sourceFile).trim() === 'Array') {
         if (node.arguments && node.arguments.length) {
-          return [{ node, replacement: 'new Array()' }];
+          return [
+            { node, replacement: 'new Array()' },
+            { node, replacement: 'null' }
+          ];
         } else {
-          return [{ node, replacement: 'new Array([])' }];
+          return [
+            { node, replacement: 'new Array([])' },
+            { node, replacement: 'null' }
+          ];
         }
       } else {
         return [];

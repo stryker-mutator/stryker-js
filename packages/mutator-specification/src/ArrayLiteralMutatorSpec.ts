@@ -13,8 +13,8 @@ export default function ArrayLiteralMutatorSpec(name: string, expectMutation: Ex
     });
 
     it('should mutate filled array literals as empty arrays', () => {
-      expectMutation('[a, 1 + 1]', '[]');
-      expectMutation("['val']", '[]');
+      expectMutation('[a, 1 + 1]', '[]', 'xxx');
+      expectMutation("['val']", '[]', 'xxx');
     });
 
     it('should not mutate array initializers (leave that for ArrayNewExpressionMutator)', () => {
@@ -23,7 +23,7 @@ export default function ArrayLiteralMutatorSpec(name: string, expectMutation: Ex
     });
 
     it('should mutate empty array literals as a filled array', () => {
-      expectMutation('[]', "['Stryker was here']");
+      expectMutation('[]', "['Stryker was here'], 'xxx'");
     });
   });
 }

@@ -9,17 +9,17 @@ export default function ArrayDeclarationMutatorSpec(name: string, expectMutation
     });
 
     it('should mutate filled array literals as empty arrays', () => {
-      expectMutation('[a, 1 + 1]', '[]');
-      expectMutation("['val']", '[]');
+      expectMutation('[a, 1 + 1]', '[]', 'null');
+      expectMutation("['val']", '[]', 'null');
     });
 
     it('should mutate empty array literals as a filled array', () => {
-      expectMutation('[]', '["Stryker was here"]');
+      expectMutation('[]', '["Stryker was here"]', 'null');
     });
 
     it('should mutate filled array literals as empty arrays', () => {
-      expectMutation('new Array(a, 1 + 1)', 'new Array()');
-      expectMutation("new Array('val')", 'new Array()');
+      expectMutation('new Array(a, 1 + 1)', 'new Array()', 'null');
+      expectMutation("new Array('val')", 'new Array()', 'null');
     });
 
     it('should not mutate other new expressions', () => {
@@ -28,7 +28,7 @@ export default function ArrayDeclarationMutatorSpec(name: string, expectMutation
     });
 
     it('should mutate empty array literals as a filled array', () => {
-      expectMutation('new Array()', 'new Array([])');
+      expectMutation('new Array()', 'new Array([])', 'null');
     });
   });
 }

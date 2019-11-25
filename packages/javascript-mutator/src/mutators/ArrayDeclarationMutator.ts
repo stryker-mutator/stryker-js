@@ -1,5 +1,7 @@
 import * as types from '@babel/types';
 
+import { NodeGenerator } from '../helpers/NodeGenerator';
+
 import { NodeMutator } from './NodeMutator';
 
 /**
@@ -15,10 +17,12 @@ export default class ArrayDeclarationMutator implements NodeMutator {
       const mutatedNode = copy(node);
       mutatedNode.elements = node.elements.length ? [] : [types.stringLiteral('Stryker was here')];
       nodes.push(mutatedNode);
+      nodes.push(NodeGenerator.createIdentifierNode(node, 'null'));
     } else if ((types.isCallExpression(node) || types.isNewExpression(node)) && types.isIdentifier(node.callee) && node.callee.name === 'Array') {
       const mutatedNode = copy(node);
       mutatedNode.arguments = node.arguments.length ? [] : [types.arrayExpression()];
       nodes.push(mutatedNode);
+      nodes.push(NodeGenerator.createIdentifierNode(node, 'null'));
     }
 
     return nodes;
