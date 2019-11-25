@@ -18,7 +18,9 @@ export default function NumericValueMutatorSpec(name: string, expectMutation: Ex
         'const a = -1;',
         'const a = Infinity;',
         'const a = -Infinity;',
-        'const a = NaN;'
+        'const a = NaN;',
+        'const a = 124.4567;',
+        'const a = 122.4567;'
       );
     });
 
@@ -32,7 +34,9 @@ export default function NumericValueMutatorSpec(name: string, expectMutation: Ex
         'const a = -1;',
         'const a = Infinity;',
         'const a = -Infinity;',
-        'const a = NaN;'
+        'const a = NaN;',
+        'const a = -122.4567;',
+        'const a = -124.4567;'
       );
     });
 
@@ -58,7 +62,8 @@ export default function NumericValueMutatorSpec(name: string, expectMutation: Ex
         'const a = -1;',
         'const a = Infinity;',
         'const a = -Infinity;',
-        'const a = NaN;'
+        'const a = NaN;',
+        'const a = 2;'
       );
     });
 
@@ -71,7 +76,8 @@ export default function NumericValueMutatorSpec(name: string, expectMutation: Ex
         'const a = 1;',
         'const a = Infinity;',
         'const a = -Infinity;',
-        'const a = NaN;'
+        'const a = NaN;',
+        'const a = -2;'
       );
     });
 

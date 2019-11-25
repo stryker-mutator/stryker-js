@@ -101,5 +101,17 @@ export default class NumericValueMutator implements NodeMutator {
     if (!!value || value === 0) {
       nodes.push(NodeGenerator.createMutatedNode(node, 'Identifier', { name: 'NaN' }));
     }
+
+    if (value !== Infinity && value !== -Infinity && !!value) {
+      const incremented = value + 1;
+      if (![0, 1, -1].includes(incremented)) {
+        nodes.push(NodeGenerator.createAnyLiteralValueNode(node, 'NumericLiteral', incremented));
+      }
+
+      const decremented = value - 1;
+      if (![0, 1, -1].includes(decremented)) {
+        nodes.push(NodeGenerator.createAnyLiteralValueNode(node, 'NumericLiteral', decremented));
+      }
+    }
   }
 }
