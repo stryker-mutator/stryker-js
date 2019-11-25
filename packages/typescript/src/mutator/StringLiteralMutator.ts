@@ -2,6 +2,8 @@ import * as ts from 'typescript';
 
 import NodeMutator, { NodeReplacement } from './NodeMutator';
 
+const MUTATED_STRING_CONTENTS = 'Stryker was here!';
+
 export type AllStringLiterals =
   // Regular quoted string.
   | ts.StringLiteral
@@ -47,7 +49,7 @@ export default class StringLiteralMutator extends NodeMutator<AllStringLiterals>
 
     if (this.isEmpty(str)) {
       return [
-        { node: str, replacement: '"Stryker was here!"' },
+        { node: str, replacement: `"${MUTATED_STRING_CONTENTS}"` },
         { node: str, replacement: 'null' }
       ];
     } else {
