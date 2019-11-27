@@ -91,7 +91,8 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        collectStatistics: 'yes'
       });
       await sut.initialize();
       expect(inquirerPrompt).callCount(7);
@@ -562,6 +563,7 @@ describe(StrykerInitializer.name, () => {
     transpilers: string[];
     reporters: string[];
     packageManager: string;
+    collectStatistics: string;
   }
 
   function arrangeAnswers(answerOverrides?: Partial<StrykerInitAnswers>) {
@@ -573,7 +575,8 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        collectStatistics: 'yes'
       },
       answerOverrides
     );

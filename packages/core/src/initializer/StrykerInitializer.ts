@@ -96,6 +96,7 @@ export default class StrykerInitializer {
     const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
     const selectedPackageManager = await this.selectPackageManager();
+    const selectedStatistics = await this.selectStatistics();
     const npmDependencies = this.getSelectedNpmDependencies(
       [selectedTestRunner, selectedTestFramework, selectedMutator].concat(selectedTranspilers).concat(selectedReporters)
     );
@@ -106,6 +107,7 @@ export default class StrykerInitializer {
       selectedTranspilers,
       selectedReporters,
       selectedPackageManager,
+      selectedStatistics,
       await this.fetchAdditionalConfig(npmDependencies)
     );
     this.installNpmDependencies(
@@ -164,6 +166,20 @@ export default class StrykerInitializer {
       this.out(`No stryker test framework plugin found that is compatible with ${testRunnerOption.name}, downgrading coverageAnalysis to "all"`);
     }
     return selectedTestFramework;
+  }
+
+  private async selectStatistics(): Promise<PromptOption> {
+    let selectedStatistic = await this.inquirer.promptStatistics([
+      {
+        name: 'yes',
+        pkg: null
+      },
+      {
+        name: 'no',
+        pkg: null
+      }
+    ]);
+    return selectedStatistic;
   }
 
   private async selectMutator(): Promise<PromptOption | null> {

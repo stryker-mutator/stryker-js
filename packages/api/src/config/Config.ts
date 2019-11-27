@@ -39,6 +39,7 @@ export default class Config implements StrykerOptions {
     high: 80,
     low: 60
   };
+  public collectStatistics: string = 'yes';
 
   public allowConsoleColors: boolean = true;
   /**

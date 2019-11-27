@@ -52,7 +52,7 @@ export class StrykerInquirer {
   public async promptMutator(options: PromptOption[]): Promise<PromptOption> {
     const answers = await inquirer.prompt<{ mutator: string }>({
       choices: options.map(_ => _.name),
-      message: 'What kind of code do you want to mutate?',
+      message: 'What kind of code do you want to mutate? remove me',
       name: 'mutator',
       type: 'list'
     });
@@ -89,5 +89,15 @@ export class StrykerInquirer {
       type: 'list'
     });
     return options.filter(_ => _.name === answers.packageManager)[0];
+  }
+
+  public async promptStatistics(options: PromptOption[]): Promise<PromptOption> {
+    const answers = await inquirer.prompt<{ statistics: string }>({
+      choices: options.map(_ => _.name),
+      message: 'Do you want to send anonymous user statistics to help improve Stryker?',
+      name: 'statistics',
+      type: 'list'
+    });
+    return options.filter(_ => _.name === answers.statistics)[0];
   }
 }

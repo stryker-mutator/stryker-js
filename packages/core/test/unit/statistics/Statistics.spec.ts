@@ -9,7 +9,7 @@ describe('Statistics', () => {
   let sut: Statistics;
   let httpStatisticsClient: Mock<HttpClient>;
 
-  const AZURE_URL = 'https://localstrykertryout.azurewebsites.net/api/HttpTrigger?code=4GWK/KLC6JRlec96851wMgMsD2JkVePiaALWw6lKv4R3RZiKf0xp0w==';
+  const AZURE_URL = 'https://strykerstatistics.azurewebsites.net/api/ReceiveStatistics?code=jVZfGmoB6ofRPa/yPdN/mAOCd6ia67XQkTmLaGWCzlxO5a32PlLj6A==';
   // const statisticsData = {
   //   implementation: 'Stryker',
   //   version: '1.0.0'

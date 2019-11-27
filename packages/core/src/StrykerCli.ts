@@ -5,11 +5,12 @@ import { Config } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 
-import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
+import ConfigReader, { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
 import Stryker from './Stryker';
 import { Statistics } from './statistics/Statistics';
+import { readConfig } from './config';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -153,13 +154,17 @@ export default class StrykerCli {
     };
 
     if (Object.keys(commands).includes(this.command)) {
-      commands[this.command]().catch(err => {
+      commands[this.command]().catch(async err => {
         this.log.error('an error occurred', err);
-        const statisticsProcess = new Statistics(this.log, new HttpClient('HttpClient'));
 
-        // IF OPT IN
-        statisticsProcess.addStatistic('error', err.toString());
-        statisticsProcess.sendStatistics();
+        let sendStatistics = false;
+
+        let config = readConfig(new ConfigReader(this.program, this.log));
+        if (config.collectStatistics === 'yes') {
+          sendStatistics = true;
+        }
+
+        if (sendStatistics) await this.reportError(err);
 
         if (!this.log.isTraceEnabled()) {
           this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
@@ -170,5 +175,12 @@ export default class StrykerCli {
     } else {
       this.log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
     }
+  }
+
+  private async reportError(err: Error) {
+    const statisticsProcess = new Statistics(this.log, new HttpClient('HttpClient'));
+    statisticsProcess.addStatistic('errorType', err.name);
+    statisticsProcess.addStatistic('errorMessage', err.message);
+    await statisticsProcess.sendStatistics();
   }
 }

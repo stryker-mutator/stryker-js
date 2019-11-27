@@ -20,6 +20,8 @@ import { transpilerFactory } from './transpiler';
 import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
 import { Statistics } from './statistics/Statistics';
+import { readConfig } from './config/readConfig';
+import ConfigReader from './config/ConfigReader';
 
 export default class Stryker {
   private readonly log: Logger;
@@ -85,14 +87,16 @@ export default class Stryker {
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
-      // IF OPT-IN
-      const statisticsProcess = inputFileInjector.provideValue('httpClient', new HttpClient('httpClient')).injectClass(Statistics);
+
+      var { statisticsProcess, sendStatistics } = this.getStatistics(inputFileInjector);
+
       try {
         if (initialRunResult.runResult.tests.length && testableMutants.length) {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
-          await this.reportScore(mutantResults, inputFileInjector, statisticsProcess);
-          if (statisticsProcess) statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
+          await this.reportScore(mutantResults, inputFileInjector, statisticsProcess, sendStatistics);
+          if (sendStatistics) statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
+          if (sendStatistics) await statisticsProcess.sendStatistics();
           await this.logDone();
           return mutantResults;
         } else {
@@ -101,12 +105,23 @@ export default class Stryker {
       } finally {
         // `injector.dispose` calls `dispose` on all created instances
         // Namely the `SandboxPool`, `MutantTranspileScheduler` and `ChildProcessProxy` instances
-        await statisticsProcess.sendStatistics();
         await mutationTestProcessInjector.dispose();
         await LogConfigurator.shutdown();
       }
     }
     return Promise.resolve([]);
+  }
+
+  private getStatistics(inputFileInjector: any) {
+    let config = readConfig(new ConfigReader(this.options, this.log));
+    let sendStatistics = false;
+
+    const statisticsProcess = inputFileInjector.provideValue('httpClient', new HttpClient('httpClient')).injectClass(Statistics);
+
+    if (config.collectStatistics === 'yes') {
+      sendStatistics = true;
+    }
+    return { statisticsProcess, sendStatistics };
   }
 
   private logDone() {
@@ -122,14 +137,15 @@ export default class Stryker {
   private async reportScore(
     mutantResults: MutantResult[],
     inputFileInjector: Injector<MainContext & { inputFiles: InputFileCollection }>,
-    statistics?: Statistics
+    statistics: Statistics,
+    sendStatistics: boolean
   ) {
     inputFileInjector.injectClass(MutationTestReportCalculator).report(mutantResults);
     const calculator = this.injector.injectClass(ScoreResultCalculator);
     const score = calculator.calculate(mutantResults);
     this.reporter.onScoreCalculated(score);
     calculator.determineExitCode(score, this.options.thresholds);
-    if (statistics) statistics.addStatistic('score', Math.round(score.mutationScore));
+    if (sendStatistics) statistics.addStatistic('score', Math.round(score.mutationScore));
     await this.reporter.wrapUp();
   }
 }

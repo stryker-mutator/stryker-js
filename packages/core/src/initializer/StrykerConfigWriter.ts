@@ -33,6 +33,7 @@ export default class StrykerConfigWriter {
     selectedTranspilers: null | PromptOption[],
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
+    selectedStatistics: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>
   ): Promise<void> {
     const configObject: Partial<StrykerOptions> = {
@@ -40,7 +41,8 @@ export default class StrykerConfigWriter {
       packageManager: selectedPackageManager.name,
       reporters: selectedReporters.map(rep => rep.name),
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',
-      transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : []
+      transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : [],
+      collectStatistics: selectedStatistics.name
     };
 
     this.configureTestFramework(configObject, selectedTestFramework);
