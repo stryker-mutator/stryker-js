@@ -21,23 +21,14 @@ export default class ArrayDeclarationMutator extends NodeMutator<ts.ArrayLiteral
       } else {
         return [{ node, replacement: '["Stryker was here"]' }];
       }
-    } else if (node.kind === ts.SyntaxKind.CallExpression) {
-      if (node.expression.kind === ts.SyntaxKind.Identifier && node.expression.getFullText(sourceFile).trim() === 'Array') {
-        if (node.arguments && node.arguments.length) {
-          return [{ node, replacement: 'Array()' }];
-        } else {
-          return [{ node, replacement: 'Array([])' }];
-        }
-      } else {
-        return [];
-      }
+    } else if (node.kind === ts.SyntaxKind.CallExpression && node.expression.kind !== ts.SyntaxKind.Identifier) {
+      // extra guard in case of a function call expression
+      return [];
     } else {
       if (node.expression.getFullText(sourceFile).trim() === 'Array') {
-        if (node.arguments && node.arguments.length) {
-          return [{ node, replacement: 'new Array()' }];
-        } else {
-          return [{ node, replacement: 'new Array([])' }];
-        }
+        const newPrefix = (node.kind === ts.SyntaxKind.NewExpression) ? 'new ' : '';
+        const mutatedCallArgs = (node.arguments && node.arguments.length) ? '' : '[]';
+        return [{ node, replacement: `${newPrefix}Array(${mutatedCallArgs})` }];
       } else {
         return [];
       }
