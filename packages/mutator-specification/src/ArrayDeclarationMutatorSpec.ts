@@ -20,7 +20,6 @@ export default function ArrayDeclarationMutatorSpec(name: string, expectMutation
     it('should mutate filled Array constructor calls as empty arrays', () => {
       expectMutation('new Array(a, 1 + 1)', 'new Array()');
       expectMutation("new Array('val')", 'new Array()');
-      // XXX known issue on TypeScript mutator:
       expectMutation("Array('val')", 'Array()');
       expectMutation('Array(a, 1 + 1)', 'Array()');
     });
@@ -32,7 +31,6 @@ export default function ArrayDeclarationMutatorSpec(name: string, expectMutation
 
     it('should mutate empty array constructor call as a filled array', () => {
       expectMutation('new Array()', 'new Array([])');
-      // XXX known issue on TypeScript mutator:
       expectMutation('Array()', 'Array([])');
     });
   });
