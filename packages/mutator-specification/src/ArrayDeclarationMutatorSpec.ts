@@ -33,5 +33,10 @@ export default function ArrayDeclarationMutatorSpec(name: string, expectMutation
       expectMutation('new Array()', 'new Array([])');
       expectMutation('Array()', 'Array([])');
     });
+
+    it('should not mutate other function call expressions', () => {
+      expectMutation('window.Array(21, 2)');
+      expectMutation('window["Array"](21, 2)');
+    });
   });
 }
