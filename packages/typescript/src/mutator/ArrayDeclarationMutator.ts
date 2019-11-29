@@ -26,8 +26,8 @@ export default class ArrayDeclarationMutator extends NodeMutator<ts.ArrayLiteral
       return [];
     } else {
       if (node.expression.getFullText(sourceFile).trim() === 'Array') {
-        const newPrefix = (node.kind === ts.SyntaxKind.NewExpression) ? 'new ' : '';
-        const mutatedCallArgs = (node.arguments && node.arguments.length) ? '' : '[]';
+        const newPrefix = node.kind === ts.SyntaxKind.NewExpression ? 'new ' : '';
+        const mutatedCallArgs = node.arguments && node.arguments.length ? '' : '[]';
         return [{ node, replacement: `${newPrefix}Array(${mutatedCallArgs})` }];
       } else {
         return [];
