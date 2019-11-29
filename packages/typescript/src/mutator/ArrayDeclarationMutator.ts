@@ -6,10 +6,15 @@ export default class ArrayDeclarationMutator extends NodeMutator<ts.ArrayLiteral
   public name = 'ArrayDeclaration';
 
   public guard(node: ts.Node): node is ts.ArrayLiteralExpression | ts.CallExpression | ts.NewExpression {
-    return node.kind === ts.SyntaxKind.ArrayLiteralExpression || node.kind === ts.SyntaxKind.CallExpression || node.kind === ts.SyntaxKind.NewExpression;
+    return (
+      node.kind === ts.SyntaxKind.ArrayLiteralExpression || node.kind === ts.SyntaxKind.CallExpression || node.kind === ts.SyntaxKind.NewExpression
+    );
   }
 
-  protected identifyReplacements(node: ts.ArrayLiteralExpression | ts.CallExpression | ts.NewExpression, sourceFile: ts.SourceFile): NodeReplacement[] {
+  protected identifyReplacements(
+    node: ts.ArrayLiteralExpression | ts.CallExpression | ts.NewExpression,
+    sourceFile: ts.SourceFile
+  ): NodeReplacement[] {
     if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
       if (node.elements.length) {
         return [{ node, replacement: '[]' }];
