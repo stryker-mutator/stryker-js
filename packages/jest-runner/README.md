@@ -71,7 +71,7 @@ module.exports = function(config) {
 };
 ```
 
-For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker#readme).
+For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker/blob/master/packages/core/README.md#available-options).
 
 ## Loading the plugin
 In order to use the `@stryker-mutator/jest-runner` it must be loaded in the Stryker mutation testing framework via the Stryker configuration. The easiest way to achieve this, is not have a plugins section in your config file. That way, all node_modules starting with `@stryer-mutator/*` will be loaded.
