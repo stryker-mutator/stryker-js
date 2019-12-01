@@ -17,9 +17,11 @@ export default function ArrayDeclarationMutatorSpec(name: string, expectMutation
       expectMutation('[]', '["Stryker was here"]');
     });
 
-    it('should mutate filled array literals as empty arrays', () => {
+    it('should mutate filled Array constructor calls as empty arrays', () => {
       expectMutation('new Array(a, 1 + 1)', 'new Array()');
       expectMutation("new Array('val')", 'new Array()');
+      expectMutation("Array('val')", 'Array()');
+      expectMutation('Array(a, 1 + 1)', 'Array()');
     });
 
     it('should not mutate other new expressions', () => {
@@ -27,8 +29,14 @@ export default function ArrayDeclarationMutatorSpec(name: string, expectMutation
       expectMutation('new Arrays(21, 2)');
     });
 
-    it('should mutate empty array literals as a filled array', () => {
+    it('should mutate empty array constructor call as a filled array', () => {
       expectMutation('new Array()', 'new Array([])');
+      expectMutation('Array()', 'Array([])');
+    });
+
+    it('should not mutate other function call expressions', () => {
+      expectMutation('window.Array(21, 2)');
+      expectMutation('window["Array"](21, 2)');
     });
   });
 }
