@@ -8,19 +8,20 @@ import { NodeMutator } from './NodeMutator';
 export default class ArrayDeclarationMutator implements NodeMutator {
   public name = 'ArrayDeclaration';
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
-    const nodes: types.Node[] = [];
-
+  public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {
     if (types.isArrayExpression(node)) {
-      const mutatedNode = copy(node);
-      mutatedNode.elements = node.elements.length ? [] : [types.stringLiteral('Stryker was here')];
-      nodes.push(mutatedNode);
+      return [
+        // replace [...]
+        node.elements.length
+          ? [node, { raw: '[]' }] // raw string here
+          : [node, { raw: '["Stryker was here"]' }]
+      ];
     } else if ((types.isCallExpression(node) || types.isNewExpression(node)) && types.isIdentifier(node.callee) && node.callee.name === 'Array') {
-      const mutatedNode = copy(node);
-      mutatedNode.arguments = node.arguments.length ? [] : [types.arrayExpression()];
-      nodes.push(mutatedNode);
+      const newPrefix = types.isNewExpression(node) ? 'new ' : '';
+      const mutatedCallArgs = node.arguments && node.arguments.length ? '' : '[]';
+      return [[node, { raw: `${newPrefix}Array(${mutatedCallArgs})` }]];
+    } else {
+      return [];
     }
-
-    return nodes;
   }
 }

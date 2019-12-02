@@ -1,5 +1,7 @@
 import * as types from '@babel/types';
 
+import { NodeGenerator } from '../helpers/NodeGenerator';
+
 import { NodeMutator } from './NodeMutator';
 
 export default class EqualityOperatorMutator implements NodeMutator {
@@ -16,7 +18,7 @@ export default class EqualityOperatorMutator implements NodeMutator {
 
   public name = 'EqualityOperator';
 
-  public mutate(node: types.Node, clone: <T extends types.Node>(node: T, deep?: boolean) => T): types.Node[] {
+  public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {
     if (types.isBinaryExpression(node)) {
       let mutatedOperators = this.operators[node.operator];
       if (mutatedOperators) {
@@ -24,11 +26,10 @@ export default class EqualityOperatorMutator implements NodeMutator {
           mutatedOperators = [mutatedOperators];
         }
 
-        return mutatedOperators.map<types.Node>(mutatedOperator => {
-          const mutatedNode = clone(node);
-          mutatedNode.operator = mutatedOperator as any;
-          return mutatedNode;
-        });
+        return mutatedOperators.map(mutatedOperator => [
+          node,
+          NodeGenerator.createMutatedCloneWithProperties(node, { operator: mutatedOperator as any })
+        ]);
       }
     }
 

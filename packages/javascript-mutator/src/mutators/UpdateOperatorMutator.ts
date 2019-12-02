@@ -1,5 +1,7 @@
 import * as types from '@babel/types';
 
+import { NodeGenerator } from '../helpers/NodeGenerator';
+
 import { NodeMutator } from './NodeMutator';
 
 export default class UpdateOperatorMutator implements NodeMutator {
@@ -10,15 +12,9 @@ export default class UpdateOperatorMutator implements NodeMutator {
     '--': '++'
   };
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
-    const nodes: types.Node[] = [];
-
-    if (types.isUpdateExpression(node) && this.operators[node.operator] !== undefined) {
-      const mutatedNode = copy(node);
-      mutatedNode.operator = this.operators[node.operator] as any;
-      nodes.push(mutatedNode);
-    }
-
-    return nodes;
+  public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {
+    return types.isUpdateExpression(node) && this.operators[node.operator] !== undefined
+      ? [[node, NodeGenerator.createMutatedCloneWithProperties(node, { operator: this.operators[node.operator] as any })]]
+      : [];
   }
 }
