@@ -26,6 +26,7 @@ import ConfigReader from './config/ConfigReader';
 export default class Stryker {
   private readonly log: Logger;
   private readonly injector: Injector<MainContext>;
+  private readonly sendStatistics: boolean;
 
   private get reporter() {
     return this.injector.resolve(coreTokens.reporter);
@@ -52,6 +53,7 @@ export default class Stryker {
     LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
     this.injector = buildMainInjector(cliOptions);
     this.log = this.injector.resolve(commonTokens.getLogger)(Stryker.name);
+    this.sendStatistics = this.allowSendStatistics();
     // Log level may have changed
     LogConfigurator.configureMainProcess(this.options.logLevel, this.options.fileLogLevel, this.options.allowConsoleColors);
   }
@@ -63,6 +65,7 @@ export default class Stryker {
       this.options.allowConsoleColors
     );
     this.timer.reset();
+    this.logStatisticsOption();
     const inputFiles = await this.injector.injectClass(InputFileResolver).resolve();
     if (inputFiles.files.length) {
       this.temporaryDirectory.initialize();
@@ -87,16 +90,14 @@ export default class Stryker {
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
-
-      var { statisticsProcess, sendStatistics } = this.getStatistics(inputFileInjector);
-
+      const statisticsProcess = inputFileInjector.provideValue('httpClient', new HttpClient('httpClient')).injectClass(Statistics);
       try {
         if (initialRunResult.runResult.tests.length && testableMutants.length) {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
-          await this.reportScore(mutantResults, inputFileInjector, statisticsProcess, sendStatistics);
-          if (sendStatistics) statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
-          if (sendStatistics) await statisticsProcess.sendStatistics();
+          await this.reportScore(mutantResults, inputFileInjector, statisticsProcess);
+          if (this.sendStatistics) statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
+          if (this.sendStatistics) await statisticsProcess.sendStatistics();
           await this.logDone();
           return mutantResults;
         } else {
@@ -112,16 +113,22 @@ export default class Stryker {
     return Promise.resolve([]);
   }
 
-  private getStatistics(inputFileInjector: any) {
+  private allowSendStatistics() {
     let config = readConfig(new ConfigReader(this.options, this.log));
-    let sendStatistics = false;
-
-    const statisticsProcess = inputFileInjector.provideValue('httpClient', new HttpClient('httpClient')).injectClass(Statistics);
-
+    // If no value is supplied to collectStatistics, it will not send statistics.
     if (config.collectStatistics === 'yes') {
-      sendStatistics = true;
+      return true;
+    } else {
+      return false;
     }
-    return { statisticsProcess, sendStatistics };
+  }
+
+  private logStatisticsOption() {
+    if (this.sendStatistics) {
+      this.log.info('Anonymous statistics will be collected at the end of this process!')
+    } else {
+      this.log.info('No anonymous statistics will be collected during this process, please change this in your stryker.conf.js to improve Stryker!');
+    }
   }
 
   private logDone() {
@@ -137,15 +144,14 @@ export default class Stryker {
   private async reportScore(
     mutantResults: MutantResult[],
     inputFileInjector: Injector<MainContext & { inputFiles: InputFileCollection }>,
-    statistics: Statistics,
-    sendStatistics: boolean
+    statistics: Statistics
   ) {
     inputFileInjector.injectClass(MutationTestReportCalculator).report(mutantResults);
     const calculator = this.injector.injectClass(ScoreResultCalculator);
     const score = calculator.calculate(mutantResults);
     this.reporter.onScoreCalculated(score);
     calculator.determineExitCode(score, this.options.thresholds);
-    if (sendStatistics) statistics.addStatistic('score', Math.round(score.mutationScore));
+    if (this.sendStatistics) statistics.addStatistic('score', Math.round(score.mutationScore));
     await this.reporter.wrapUp();
   }
 }

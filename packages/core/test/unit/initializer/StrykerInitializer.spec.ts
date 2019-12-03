@@ -92,10 +92,10 @@ describe(StrykerInitializer.name, () => {
         testFramework: 'awesome',
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        collectStatistics: 'yes'
+        selectedStatistics: 'yes'
       });
       await sut.initialize();
-      expect(inquirerPrompt).callCount(7);
+      expect(inquirerPrompt).callCount(8);
       const [promptPreset, promptTestRunner, promptTestFramework, promptMutator, promptPackageManagers]: Array<inquirer.ListQuestion<string>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
@@ -226,10 +226,11 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testFramework: 'None/other',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        collectStatistics: 'yes'
       });
       await sut.initialize();
-      expect(inquirerPrompt).callCount(7);
+      expect(inquirerPrompt).callCount(8);
       expect(out).calledWith('OK, downgrading coverageAnalysis to "all"');
       expect(fsAsPromised.writeFile).calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
     });
@@ -241,7 +242,8 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        selectedStatistics: 'yes'
       });
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
@@ -260,7 +262,8 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars', 'progress'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        selectedStatistics: 'yes'
       });
       await sut.initialize();
       const matchNormalized = (expected: string) =>
@@ -284,7 +287,8 @@ describe(StrykerInitializer.name, () => {
         reporters: [],
         testFramework: 'hyper',
         testRunner: 'hyper',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        selectedStatistics: 'yes'
       });
       await sut.initialize();
       expect(fsAsPromised.writeFile).calledWith('stryker.conf.js', sinon.match('"someOtherSetting": "enabled"'));
@@ -297,14 +301,15 @@ describe(StrykerInitializer.name, () => {
           packageManager: 'npm',
           reporters: ['dimension', 'mars'],
           testRunner: 'ghost',
-          transpilers: ['webpack']
+          transpilers: ['webpack'],
+          selectedStatistics: 'yes'
         })
       );
 
       it('should not prompt for test framework', async () => {
         await sut.initialize();
 
-        expect(inquirerPrompt).callCount(6);
+        expect(inquirerPrompt).callCount(7);
         expect(inquirerPrompt).not.calledWithMatch(sinon.match({ name: 'testFramework' }));
       });
 
@@ -335,7 +340,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: [],
         testRunner: 'ghost',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        selectedStatistics: 'yes'
       });
       stubTranspilers('@stryker-mutator/webpack-transpiler');
       stubPackageClient({ '@stryker-mutator/webpack-transpiler': null });
@@ -359,7 +365,8 @@ describe(StrykerInitializer.name, () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: ['clear-text'],
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        selectedStatistics: 'yes'
       });
 
       await sut.initialize();
@@ -378,7 +385,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        selectedStatistics: 'yes'
       });
       stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
@@ -404,7 +412,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        selectedStatistics: 'yes'
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-webpack': null });
 
@@ -563,7 +572,7 @@ describe(StrykerInitializer.name, () => {
     transpilers: string[];
     reporters: string[];
     packageManager: string;
-    collectStatistics: string;
+    selectedStatistics: string;
   }
 
   function arrangeAnswers(answerOverrides?: Partial<StrykerInitAnswers>) {
@@ -576,7 +585,7 @@ describe(StrykerInitializer.name, () => {
         testFramework: 'awesome',
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        collectStatistics: 'yes'
+        selectedStatistics: 'yes'
       },
       answerOverrides
     );

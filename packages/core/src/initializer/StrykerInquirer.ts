@@ -52,7 +52,7 @@ export class StrykerInquirer {
   public async promptMutator(options: PromptOption[]): Promise<PromptOption> {
     const answers = await inquirer.prompt<{ mutator: string }>({
       choices: options.map(_ => _.name),
-      message: 'What kind of code do you want to mutate? remove me',
+      message: 'What kind of code do you want to mutate?',
       name: 'mutator',
       type: 'list'
     });
@@ -92,12 +92,12 @@ export class StrykerInquirer {
   }
 
   public async promptStatistics(options: PromptOption[]): Promise<PromptOption> {
-    const answers = await inquirer.prompt<{ statistics: string }>({
+    const answers = await inquirer.prompt<{ selectedStatistics: string }>({
       choices: options.map(_ => _.name),
       message: 'Do you want to send anonymous user statistics to help improve Stryker?',
-      name: 'statistics',
+      name: 'selectedStatistics',
       type: 'list'
     });
-    return options.filter(_ => _.name === answers.statistics)[0];
+    return options.filter(_ => _.name === answers.selectedStatistics)[0];
   }
 }
