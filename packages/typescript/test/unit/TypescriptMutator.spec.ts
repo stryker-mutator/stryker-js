@@ -6,6 +6,9 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as ts from 'typescript';
 
+import { commonTokens } from '../../../api/src/plugin/tokens';
+import { Config } from '../../../api/config';
+import StringLiteralMutator from '../../src/mutator/StringLiteralMutator';
 import NodeMutator, { NodeReplacement } from '../../src/mutator/NodeMutator';
 import { MUTATORS_TOKEN, TypescriptMutator, typescriptMutatorFactory } from '../../src/TypescriptMutator';
 
@@ -20,6 +23,20 @@ class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
       { node, replacement: 'changedToOtherCall()' }
     ];
   }
+}
+
+function createSutWithExcludedExpressions() {
+  const config = new Config();
+  config.set({
+    mutator: {
+      name: 'typescript',
+      excludedExpressions: ['logger.debug', '.propTypes', '@Component({']
+    }
+  });
+  return testInjector.injector
+    .provideValue(MUTATORS_TOKEN, [new StringLiteralMutator()])
+    .provideValue(commonTokens.options, config)
+    .injectClass(TypescriptMutator);
 }
 
 class SourceFileMutator extends NodeMutator<ts.SourceFile> {
@@ -136,30 +153,84 @@ describe('TypescriptMutator', () => {
           }
         ]);
       });
+    });
+  });
+  describe('excluded expressions', () => {
+    beforeEach(() => {
+      sut = createSutWithExcludedExpressions();
+    });
 
-      it('should skip a node when it is an interface', () => {
-        // Arrange
-        file1 = new File(
-          'file1.ts',
-          `interface Hello {
-            value: string;
-            sortable?: true;
-          }`
-        );
+    it('should skip a node when it is an interface', () => {
+      const file = new File(
+        'file1.ts',
+        `interface Hello {
+          value: string;
+          sortable?: true;
+        }`
+      );
 
-        // Act
-        const mutants = sut.mutate([file1]);
+      const mutants = sut.mutate([file]);
+      expect(mutants).lengthOf(0);
+    });
 
-        // Assert
-        expect(mutants).to.deep.equal([
-          {
-            fileName: 'file1.ts',
-            mutatorName: 'SourceFileForTest',
-            range: [0, 85],
-            replacement: '"stryker was here"'
-          }
-        ]);
-      });
+    it('should skip a node when it is an interface, but mutate after interface', () => {
+      const file = new File(
+        'file1.ts',
+        `
+        interface Hello {
+          value: string;
+          sortable?: true;
+        }
+        
+        const helloWorld = "hello"`
+      );
+
+      const mutants = sut.mutate([file]);
+      expect(mutants).lengthOf(1);
+    });
+
+    it('should deliver only one mutant', () => {
+      const file = new File(
+        'fileWithExcludedExpressions.ts',
+        `
+        doSomething.propTypes = { //mutations should be excluded in this block
+          x: 1,
+          y: propTest === 'xyz' ? 1 : 2
+        };
+        
+        logger.debug('mutation should be excluded');
+        logger.info('this should be mutated');`
+      );
+      const mutants = sut.mutate([file]);
+      expect(mutants).lengthOf(1);
+    });
+
+    it('stryker:off should exclude all mutations', () => {
+      const file = new File(
+        'fileWithExcludedExpressions.ts',
+        `// stryker:off
+        function hello() {
+          return 2 + 1 - 3;
+        }`
+      );
+      const mutants = sut.mutate([file]);
+      expect(mutants).lengthOf(0);
+    });
+
+    it('should exclude whole @Component', () => {
+      const file = new File(
+        'fileWithExcludedExpressions.ts',
+        `@Component({
+          selector: 'app-bank-account',
+          inputs: ['bankName', 'id: account-id'],
+          template: \`
+            Bank Name: {{ bankName }}
+            Account Id: {{ id }}
+          \`
+        })`
+      );
+      const mutants = sut.mutate([file]);
+      expect(mutants).lengthOf(0);
     });
   });
 });

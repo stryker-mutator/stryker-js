@@ -173,6 +173,7 @@ export const strykerOptions = factoryMethod<StrykerOptions>(() => new Config());
 export const config = factoryMethod<Config>(() => new Config());
 
 export const mutatorDescriptor = factoryMethod<MutatorDescriptor>(() => ({
+  excludedExpressions: [],
   excludedMutations: [],
   name: 'fooMutator',
   plugins: null

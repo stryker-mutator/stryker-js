@@ -10,8 +10,24 @@ import { NodeMutator } from './mutators/NodeMutator';
 import { NODE_MUTATORS_TOKEN, PARSER_TOKEN } from './helpers/tokens';
 
 export class JavaScriptMutator implements Mutator {
+  private disableMutations: boolean = false;
+
   public static inject = tokens(commonTokens.logger, NODE_MUTATORS_TOKEN, PARSER_TOKEN);
   constructor(private readonly log: Logger, private readonly mutators: readonly NodeMutator[], private readonly parser: BabelParser) {}
+
+  private mutatorsSwitcher(comments: readonly types.Comment[]) {
+    comments.map(comment => {
+      const trim = comment.value.trim();
+      switch (trim.split(' ', 1)[0]) {
+        case 'stryker:on':
+          this.disableMutations = false;
+          break;
+        case 'stryker:off':
+          this.disableMutations = true;
+          break;
+      }
+    });
+  }
 
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
@@ -20,14 +36,17 @@ export class JavaScriptMutator implements Mutator {
       const ast = this.parser.parse(file.textContent);
 
       this.parser.getNodes(ast).forEach(node => {
-        this.mutators.forEach(mutator => {
-          const mutatedNodes = mutator.mutate(node, copy);
+        this.mutatorsSwitcher(node.leadingComments || []);
+        if (!this.disableMutations) {
+          this.mutators.forEach(mutator => {
+            const mutatedNodes = mutator.mutate(node, copy);
 
-          if (mutatedNodes.length) {
-            const newMutants = this.generateMutants(mutatedNodes, mutator.name, file.name);
-            mutants.push(...newMutants);
-          }
-        });
+            if (mutatedNodes.length) {
+              const newMutants = this.generateMutants(mutatedNodes, mutator.name, file.name);
+              mutants.push(...newMutants);
+            }
+          });
+        }
       });
     });
 

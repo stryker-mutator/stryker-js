@@ -92,7 +92,8 @@ describe(buildMainInjector.name, () => {
     const expected: MutatorDescriptor = {
       name: 'javascript',
       plugins: null,
-      excludedMutations: []
+      excludedMutations: [],
+      excludedExpressions: []
     };
     const mutatorDescriptor = buildMainInjector({}).resolve(commonTokens.mutatorDescriptor);
     expect(mutatorDescriptor).deep.eq(expected);

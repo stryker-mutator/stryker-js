@@ -192,4 +192,44 @@ describe('JavaScriptMutator', () => {
     const mutants = sut.mutate(files);
     expect(mutants).lengthOf.above(0);
   });
+
+  it('should disable mutations after using `stryker:off`', () => {
+    const sut = createSut();
+    const files: File[] = [
+      new File(
+        'testFile.js',
+        `
+      // stryker:off
+      function hello() {
+        return 2 + 1 - 3;
+      }
+    `
+      )
+    ];
+
+    const mutants = sut.mutate(files);
+    expect(mutants.length).equal(0);
+  });
+
+  it('should enable mutations after using `stryker:on`', () => {
+    const sut = createSut();
+    const files: File[] = [
+      new File(
+        'testFile.js',
+        `
+      // stryker:off
+      function hello() {
+        return 2 + 1 - 3;
+      }
+      // stryker:on
+      function hello2() {
+        return 2 + 1 - 3;
+      }
+    `
+      )
+    ];
+
+    const mutants = sut.mutate(files);
+    expect(mutants.length).equal(3);
+  });
 });

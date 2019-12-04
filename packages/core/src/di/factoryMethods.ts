@@ -43,7 +43,8 @@ export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescri
   const defaults: MutatorDescriptor = {
     plugins: null,
     name: 'javascript',
-    excludedMutations: []
+    excludedMutations: [],
+    excludedExpressions: []
   };
   if (typeof options.mutator === 'string') {
     return {
