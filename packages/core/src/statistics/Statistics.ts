@@ -5,7 +5,7 @@ import { HttpClient } from 'typed-rest-client/HttpClient';
 const AZURE_URL = 'https://strykerstatistics.azurewebsites.net/api/ReceiveStatistics?code=jVZfGmoB6ofRPa/yPdN/mAOCd6ia67XQkTmLaGWCzlxO5a32PlLj6A==';
 
 export class Statistics {
-  public static inject = tokens(commonTokens.logger, 'httpClient');
+  public static inject = tokens(commonTokens.logger, 'httpClient', 'testRunner');
   public statistics: any = {};
 
   constructor(private readonly log: Logger, private readonly httpStatisticsClient: HttpClient, private readonly testRunner: string) {

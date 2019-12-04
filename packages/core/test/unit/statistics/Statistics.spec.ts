@@ -20,7 +20,10 @@ describe('Statistics', () => {
 
   beforeEach(() => {
     httpStatisticsClient = mock(HttpClient);
-    sut = testInjector.injector.provideValue('httpClient', (httpStatisticsClient as unknown) as HttpClient).injectClass(Statistics);
+    sut = testInjector.injector
+      .provideValue('httpClient', (httpStatisticsClient as unknown) as HttpClient)
+      .provideValue('testRunner', 'mocha')
+      .injectClass(Statistics);
   });
 
   it('report implementation to statistics server', async () => {

@@ -90,7 +90,6 @@ export default class Stryker {
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
-
       let config = readConfig(new ConfigReader(this.options, this.log));
       const statisticsProcess = inputFileInjector
         .provideValue(coreTokens.statisticsHttpClient, new HttpClient('httpClient'))
