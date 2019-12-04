@@ -2,6 +2,8 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 
+import { JsonLoader } from './JsonLoader';
+
 const AZURE_URL = 'https://strykerstatistics.azurewebsites.net/api/ReceiveStatistics?code=jVZfGmoB6ofRPa/yPdN/mAOCd6ia67XQkTmLaGWCzlxO5a32PlLj6A==';
 
 export class Statistics {
@@ -18,7 +20,7 @@ export class Statistics {
   }
 
   private setGenericData() {
-    this.statistics.version = require('../../package.json').version;
+    this.statistics.version = JsonLoader.loadFile('../../package.json').version;
   }
 
   public sendStatistics(): Promise<void> {

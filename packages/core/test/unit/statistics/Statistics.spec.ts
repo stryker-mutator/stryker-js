@@ -1,25 +1,31 @@
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import * as sinon from 'sinon';
 
 import { Statistics } from '../../../src/statistics/Statistics';
 import { mock, Mock } from '../../helpers/producers';
+import { JsonLoader } from '../../../src/statistics/JsonLoader';
 
 describe('Statistics', () => {
   let sut: Statistics;
   let httpStatisticsClient: Mock<HttpClient>;
 
   const AZURE_URL = 'https://strykerstatistics.azurewebsites.net/api/ReceiveStatistics?code=jVZfGmoB6ofRPa/yPdN/mAOCd6ia67XQkTmLaGWCzlxO5a32PlLj6A==';
-  // const statisticsData = {
-  //   implementation: 'Stryker',
-  //   version: '1.0.0'
-  // };
-  // const contentType = {
-  //   ['Content-Type']: 'application/json'
-  // };
+  const statisticsData = {
+    implementation: 'Stryker',
+    testRunner: 'mocha',
+    version: '1.0.0'
+  };
+
+  const contentType = {
+    ['Content-Type']: 'application/json'
+  };
 
   beforeEach(() => {
     httpStatisticsClient = mock(HttpClient);
+    let packageMock = { version: '1.0.0' };
+    sinon.stub(JsonLoader, 'loadFile').returns(packageMock);
     sut = testInjector.injector
       .provideValue('httpClient', (httpStatisticsClient as unknown) as HttpClient)
       .provideValue('testRunner', 'mocha')
@@ -28,7 +34,7 @@ describe('Statistics', () => {
 
   it('report implementation to statistics server', async () => {
     // Arrange
-    //const data = JSON.stringify(statisticsData);
+    const data = JSON.stringify(statisticsData);
     httpStatisticsClient.post.resolves({
       message: {
         statusCode: 201
@@ -40,7 +46,7 @@ describe('Statistics', () => {
 
     // Assert
     expect(testInjector.logger.info).have.been.calledWithMatch(`Sending anonymous statistics to ${AZURE_URL}`);
-    //expect(httpStatisticsClient.post).have.been.calledWith(AZURE_URL, data, contentType);
+    expect(httpStatisticsClient.post).have.been.calledWith(AZURE_URL, data, contentType);
     expect(testInjector.logger.error).have.not.been.called;
     expect(testInjector.logger.warn).have.not.been.called;
   });
