@@ -164,7 +164,7 @@ export default class StrykerCli {
           sendStatistics = true;
         }
 
-        if (sendStatistics) await this.reportError(err);
+        if (sendStatistics) await this.reportError(err, config);
 
         if (!this.log.isTraceEnabled()) {
           this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
@@ -177,8 +177,8 @@ export default class StrykerCli {
     }
   }
 
-  private async reportError(err: Error) {
-    const statisticsProcess = new Statistics(this.log, new HttpClient('HttpClient'));
+  private async reportError(err: Error, config: Config) {
+    const statisticsProcess = new Statistics(this.log, new HttpClient('HttpClient'), config.testRunner.toString());
     statisticsProcess.addStatistic('errorType', err.name);
     statisticsProcess.addStatistic('errorMessage', err.message);
     await statisticsProcess.sendStatistics();

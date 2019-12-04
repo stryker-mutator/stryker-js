@@ -8,17 +8,21 @@ export class Statistics {
   public static inject = tokens(commonTokens.logger, 'httpClient');
   public statistics: any = {};
 
-  constructor(private readonly log: Logger, private readonly httpStatisticsClient: HttpClient) {
+  constructor(private readonly log: Logger, private readonly httpStatisticsClient: HttpClient, private readonly testRunner: string) {
     this.statistics.implementation = 'Stryker';
-    this.statistics.version = require('../../package.json').version;
-    this.statistics.testRunner = require('../../../../stryker.parent.conf').testRunner;
+    this.statistics.testRunner = this.testRunner;
   }
 
   public addStatistic(name: string, value: any) {
     this.statistics[name] = value;
   }
 
+  private setGenericData() {
+    this.statistics.version = require('../../package.json').version;
+  }
+
   public sendStatistics(): Promise<void> {
+    this.setGenericData();
     this.log.info(`Sending anonymous statistics to ${AZURE_URL}`);
     const statisticsData = JSON.stringify(this.statistics);
     this.log.info(statisticsData); // DEBUG

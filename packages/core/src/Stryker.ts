@@ -90,7 +90,12 @@ export default class Stryker {
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
-      const statisticsProcess = inputFileInjector.provideValue('httpClient', new HttpClient('httpClient')).injectClass(Statistics);
+
+      let config = readConfig(new ConfigReader(this.options, this.log));
+      const statisticsProcess = inputFileInjector
+        .provideValue(coreTokens.statisticsHttpClient, new HttpClient('httpClient'))
+        .provideValue(coreTokens.statisticsTestRunner, config.testRunner.toString())
+        .injectClass(Statistics);
       try {
         if (initialRunResult.runResult.tests.length && testableMutants.length) {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
@@ -125,7 +130,7 @@ export default class Stryker {
 
   private logStatisticsOption() {
     if (this.sendStatistics) {
-      this.log.info('Anonymous statistics will be collected at the end of this process!')
+      this.log.info('Anonymous statistics will be collected at the end of this process!');
     } else {
       this.log.info('No anonymous statistics will be collected during this process, please change this in your stryker.conf.js to improve Stryker!');
     }
