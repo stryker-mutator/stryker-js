@@ -4,7 +4,6 @@ import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { Injector } from 'typed-inject';
 import { HttpClient } from 'typed-rest-client/HttpClient';
-import { Config } from '@stryker-mutator/api/config';
 
 import { buildMainInjector, coreTokens, MainContext, PluginCreator } from './di';
 import InputFileCollection from './input/InputFileCollection';
