@@ -5,11 +5,11 @@ import { Config } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 
-import ConfigReader, { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
 import Stryker from './Stryker';
 import { Statistics } from './statistics/Statistics';
+import ConfigReader, { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { readConfig } from './config';
 
 /**
@@ -157,14 +157,14 @@ export default class StrykerCli {
       commands[this.command]().catch(async err => {
         this.log.error('an error occurred', err);
 
-        let sendStatistics = false;
-
-        let config = readConfig(new ConfigReader(this.program, this.log));
-        if (config.collectStatistics === 'yes') {
-          sendStatistics = true;
+        try {
+          let config = readConfig(new ConfigReader(this.program, this.log));
+          if (config.collectStatistics === 'yes') {
+            await this.reportError(err, config);
+          }
+        } catch {
+          this.log.warn("Did not send error statistics, either it's not permitted or an error occurred.");
         }
-
-        if (sendStatistics) await this.reportError(err, config);
 
         if (!this.log.isTraceEnabled()) {
           this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');

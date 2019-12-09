@@ -4,6 +4,7 @@ import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { Injector } from 'typed-inject';
 import { HttpClient } from 'typed-rest-client/HttpClient';
+import { Config } from '@stryker-mutator/api/config';
 
 import { buildMainInjector, coreTokens, MainContext, PluginCreator } from './di';
 import InputFileCollection from './input/InputFileCollection';
@@ -91,17 +92,12 @@ export default class Stryker {
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
       let config = readConfig(new ConfigReader(this.options, this.log));
-      const statisticsProcess = inputFileInjector
-        .provideValue(coreTokens.statisticsHttpClient, new HttpClient('httpClient'))
-        .provideValue(coreTokens.statisticsTestRunner, config.testRunner.toString())
-        .injectClass(Statistics);
       try {
         if (initialRunResult.runResult.tests.length && testableMutants.length) {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
-          await this.reportScore(mutantResults, inputFileInjector, statisticsProcess);
-          if (this.sendStatistics) statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
-          if (this.sendStatistics) await statisticsProcess.sendStatistics();
+          await this.reportScore(mutantResults, inputFileInjector);
+          await this.collectStatistics(config, mutantResults);
           await this.logDone();
           return mutantResults;
         } else {
@@ -117,14 +113,27 @@ export default class Stryker {
     return Promise.resolve([]);
   }
 
+  private async collectStatistics(config: Config, mutantResults: MutantResult[]) {
+    if (this.sendStatistics) {
+      try {
+        const statisticsProcess = this.injector
+          .provideValue(coreTokens.httpClient, new HttpClient('httpClient'))
+          .provideValue(coreTokens.testRunner, config.testRunner.toString())
+          .injectClass(Statistics);
+        statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
+        const score = this.getScore(this.injector.injectClass(ScoreResultCalculator), mutantResults);
+        statisticsProcess.addStatistic('score', Math.round(score.mutationScore));
+        await statisticsProcess.sendStatistics();
+      } catch {
+        this.log.warn('Problem sending statistics');
+      }
+    }
+  }
+
   private allowSendStatistics() {
     let config = readConfig(new ConfigReader(this.options, this.log));
     // If no value is supplied to collectStatistics, it will not send statistics.
-    if (config.collectStatistics === 'yes') {
-      return true;
-    } else {
-      return false;
-    }
+    return config.collectStatistics === 'yes';
   }
 
   private logStatisticsOption() {
@@ -145,17 +154,16 @@ export default class Stryker {
     }
   }
 
-  private async reportScore(
-    mutantResults: MutantResult[],
-    inputFileInjector: Injector<MainContext & { inputFiles: InputFileCollection }>,
-    statistics: Statistics
-  ) {
+  private async reportScore(mutantResults: MutantResult[], inputFileInjector: Injector<MainContext & { inputFiles: InputFileCollection }>) {
     inputFileInjector.injectClass(MutationTestReportCalculator).report(mutantResults);
     const calculator = this.injector.injectClass(ScoreResultCalculator);
-    const score = calculator.calculate(mutantResults);
+    const score = this.getScore(calculator, mutantResults);
     this.reporter.onScoreCalculated(score);
     calculator.determineExitCode(score, this.options.thresholds);
-    if (this.sendStatistics) statistics.addStatistic('score', Math.round(score.mutationScore));
     await this.reporter.wrapUp();
+  }
+
+  private getScore(calculator: ScoreResultCalculator, mutantResults: MutantResult[]) {
+    return calculator.calculate(mutantResults);
   }
 }

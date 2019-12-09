@@ -8,7 +8,7 @@ const AZURE_URL = 'https://strykerstatistics.azurewebsites.net/api/ReceiveStatis
 
 export class Statistics {
   public static inject = tokens(commonTokens.logger, 'httpClient', 'testRunner');
-  public statistics: any = {};
+  public statistics: Record<string, any> = {};
 
   constructor(private readonly log: Logger, private readonly httpStatisticsClient: HttpClient, private readonly testRunner: string) {
     this.statistics.implementation = 'Stryker';
@@ -27,7 +27,7 @@ export class Statistics {
     this.setGenericData();
     this.log.info(`Sending anonymous statistics to ${AZURE_URL}`);
     const statisticsData = JSON.stringify(this.statistics);
-    this.log.info(statisticsData); // DEBUG
+    this.log.info(statisticsData);
     return this.httpStatisticsClient
       .post(AZURE_URL, statisticsData, {
         ['Content-Type']: 'application/json'
