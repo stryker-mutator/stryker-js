@@ -91,13 +91,12 @@ export default class Stryker {
       const testableMutants = await mutationTestProcessInjector
         .injectClass(MutantTestMatcher)
         .matchWithMutants(mutator.mutate(inputFiles.filesToMutate));
-      let config = readConfig(new ConfigReader(this.options, this.log));
       try {
         if (initialRunResult.runResult.tests.length && testableMutants.length) {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
           await this.reportScore(mutantResults, inputFileInjector);
-          await this.collectStatistics(config, mutantResults);
+          await this.collectStatistics(mutantResults);
           await this.logDone();
           return mutantResults;
         } else {
@@ -113,9 +112,10 @@ export default class Stryker {
     return Promise.resolve([]);
   }
 
-  private async collectStatistics(config: Config, mutantResults: MutantResult[]) {
+  private async collectStatistics(mutantResults: MutantResult[]) {
     if (this.sendStatistics) {
       try {
+        let config = readConfig(new ConfigReader(this.options, this.log));
         const statisticsProcess = this.injector
           .provideValue(coreTokens.httpClient, new HttpClient('httpClient'))
           .provideValue(coreTokens.testRunner, config.testRunner.toString())
