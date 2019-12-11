@@ -6,13 +6,14 @@ import { expect } from 'chai';
 import { fsAsPromised } from '../../src';
 
 describe('fsAsPromised', () => {
+  describePromisifiedFunction('appendFile');
   describePromisifiedFunction('exists');
   describePromisifiedFunction('lstat');
-  describePromisifiedFunction('symlink');
-  describePromisifiedFunction('readFile');
-  describePromisifiedFunction('writeFile');
-  describePromisifiedFunction('stat');
   describePromisifiedFunction('readdir');
+  describePromisifiedFunction('readFile');
+  describePromisifiedFunction('stat');
+  describePromisifiedFunction('symlink');
+  describePromisifiedFunction('writeFile');
 
   describeProxyFunction('existsSync');
   describeProxyFunction('readdirSync');
