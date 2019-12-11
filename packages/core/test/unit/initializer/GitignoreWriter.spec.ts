@@ -4,6 +4,7 @@ import * as sinon from 'sinon';
 import { fsAsPromised } from '@stryker-mutator/util';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import { defaultTempDirName } from '@stryker-mutator/api/config';
 
 import GitignoreWriter from '../../../src/initializer/GitignoreWriter';
 import { initializerTokens } from '../../../src/initializer';
@@ -14,12 +15,14 @@ describe(GitignoreWriter.name, () => {
   let sut: GitignoreWriter;
   let fsAppendFile: sinon.SinonStub;
   let fsExistsSync: sinon.SinonStub;
+  let fsReadFile: sinon.SinonStub;
   let out: sinon.SinonStub;
 
   beforeEach(() => {
     out = sinon.stub();
     fsAppendFile = sinon.stub(fsAsPromised, 'appendFile');
     fsExistsSync = sinon.stub(fsAsPromised, 'existsSync');
+    fsReadFile = sinon.stub(fsAsPromised, 'readFile');
     sut = testInjector.injector.provideValue(initializerTokens.out, (out as unknown) as typeof console.log).injectClass(GitignoreWriter);
   });
 
@@ -35,14 +38,15 @@ describe(GitignoreWriter.name, () => {
     describe('with existing .gitignore file', () => {
       beforeEach(() => {
         fsExistsSync.returns(true);
+        fsReadFile.returns(Buffer.from('node_modules'));
       });
 
-      it('should append the stryker gitignore configuration', () => {
+      it('should append the stryker gitignore configuration', async () => {
         // Act
-        sut.addStrykerTempFolder();
+        await sut.addStrykerTempFolder();
 
         // Assert
-        expect(fsAppendFile).calledWithExactly(GITIGNORE_FILE, `${os.EOL}# stryker temp files${os.EOL}*.stryker-tmp${os.EOL}`);
+        expect(fsAppendFile).calledWithExactly(GITIGNORE_FILE, `${os.EOL}# stryker temp files${os.EOL}${defaultTempDirName}${os.EOL}`);
       });
 
       it('should output a message to inform the user that the .gitignore file has been changed', async () => {
@@ -54,6 +58,17 @@ describe(GitignoreWriter.name, () => {
 
         // Assert
         expect(out).calledWithExactly('Note: Your .gitignore file has been updated to include recommended git ignore patterns for Stryker');
+      });
+
+      it("should not append the stryker gitignore configuration if it's already present", () => {
+        // Arrange
+        fsReadFile.returns(`node_modules${os.EOL}${defaultTempDirName}${os.EOL}temp`);
+
+        // Act
+        sut.addStrykerTempFolder();
+
+        // Assert
+        expect(fsAppendFile).not.called;
       });
     });
 

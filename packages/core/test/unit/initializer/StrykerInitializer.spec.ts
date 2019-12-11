@@ -27,6 +27,7 @@ describe(StrykerInitializer.name, () => {
   let fsExistsSync: sinon.SinonStub;
   let restClientPackage: sinon.SinonStubbedInstance<RestClient>;
   let restClientSearch: sinon.SinonStubbedInstance<RestClient>;
+  let gitignoreWriter: sinon.SinonStubbedInstance<GitignoreWriter>;
   let out: sinon.SinonStub;
   let presets: Preset[];
   let presetMock: Mock<Preset>;
@@ -45,6 +46,7 @@ describe(StrykerInitializer.name, () => {
     fsExistsSync = sinon.stub(fsAsPromised, 'existsSync');
     restClientSearch = sinon.createStubInstance(RestClient);
     restClientPackage = sinon.createStubInstance(RestClient);
+    gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
     sut = testInjector.injector
       .provideValue(initializerTokens.out, (out as unknown) as typeof console.log)
       .provideValue(initializerTokens.restClientNpm, (restClientPackage as unknown) as RestClient)
@@ -53,7 +55,7 @@ describe(StrykerInitializer.name, () => {
       .provideClass(initializerTokens.npmClient, NpmClient)
       .provideValue(initializerTokens.strykerPresets, presets)
       .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
-      .provideClass(initializerTokens.gitignoreWriter, GitignoreWriter)
+      .provideValue(initializerTokens.gitignoreWriter, (gitignoreWriter as unknown) as GitignoreWriter)
       .injectClass(StrykerInitializer);
   });
 
