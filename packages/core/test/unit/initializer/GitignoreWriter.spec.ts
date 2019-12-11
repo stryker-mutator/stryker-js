@@ -60,12 +60,12 @@ describe(GitignoreWriter.name, () => {
         expect(out).calledWithExactly('Note: Your .gitignore file has been updated to include recommended git ignore patterns for Stryker');
       });
 
-      it("should not append the stryker gitignore configuration if it's already present", () => {
+      it("should not append the stryker gitignore configuration if it's already present", async () => {
         // Arrange
         fsReadFile.returns(`node_modules${os.EOL}${defaultTempDirName}${os.EOL}temp`);
 
         // Act
-        sut.addStrykerTempFolder();
+        await sut.addStrykerTempFolder();
 
         // Assert
         expect(fsAppendFile).not.called;
