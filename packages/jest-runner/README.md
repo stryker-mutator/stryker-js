@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/stryker-mutator/stryker.svg?branch=master)](https://travis-ci.org/stryker-mutator/stryker)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster%3Fmodule%3Djest-runner)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master?module=jest-runner)
+[![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Mutation testing badge](https://badge.stryker-mutator.io/github.com/stryker-mutator/@stryker-mutator/jest-runner/master)](https://stryker-mutator.github.io)
 
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
@@ -71,7 +71,7 @@ module.exports = function(config) {
 };
 ```
 
-For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker/tree/master/packages/stryker#readme).
+For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker/blob/master/packages/core/README.md#available-options).
 
 ## Loading the plugin
 In order to use the `@stryker-mutator/jest-runner` it must be loaded in the Stryker mutation testing framework via the Stryker configuration. The easiest way to achieve this, is not have a plugins section in your config file. That way, all node_modules starting with `@stryer-mutator/*` will be loaded.

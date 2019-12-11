@@ -1,6 +1,6 @@
 declare namespace Jest {
   // RunCLI does not have any official types, this will do for our implementation
-  function runCLI(cliParams: RunCliParameters, projectRoots: Array<String>): any 
+  function runCLI(cliParams: RunCliParameters, projectRoots: Array<String>): any
 
   // Taken from https://goo.gl/qHifyP, removed all stuff that we are not using
   // Also added 'runInBand' which does not exist in the official types
@@ -48,7 +48,7 @@ declare namespace Jest {
     status: Status;
   }
 
-  // 
+  //
   type Milliseconds = number;
   type Maybe<T> = void | null | undefined | T;
   type Status = 'passed' | 'failed' | 'skipped' | 'pending';

@@ -74,6 +74,39 @@ describe(ConfigReader.name, () => {
         expect(testInjector.logger.warn).not.called;
       });
 
+      it('should migrate deprecated settings', () => {
+        sut = createSut({ configFile: 'testResources/config-reader/deprecated.conf.js' });
+
+        result = sut.readConfig();
+
+        expect(typeof result.mutator).to.not.be.eq('string');
+        if (typeof result.mutator !== 'string') {
+          expect(result.mutator.excludedMutations).to.deep.eq([
+            'ArrayDeclaration',
+            'ArrayDeclaration',
+            'ArithmeticOperator',
+            'EqualityOperator',
+            'LogicalOperator',
+            'BlockStatement',
+            'BooleanLiteral',
+            'ConditionalExpression',
+            'ConditionalExpression',
+            'ConditionalExpression',
+            'UnaryOperator',
+            'UpdateOperator',
+            'BooleanLiteral',
+            'UpdateOperator',
+            'ConditionalExpression',
+            'ConditionalExpression',
+            'ObjectLiteral',
+            'ArrowFunctionMutator'
+          ]);
+        }
+        expect(testInjector.logger.warn).to.have.been.calledWith(
+          'DEPRECATED: The mutation name "BinaryExpression" is deprecated. Please migrate your config. For now BinaryExpression will be replaced with: ArithmeticOperator, EqualityOperator, LogicalOperator. A list of mutations and their names can be found here: https://github.com/stryker-mutator/stryker-handbook/blob/master/mutator-types.md'
+        );
+      });
+
       describe('with CLI options', () => {
         it('should give precedence to CLI options', () => {
           sut = createSut({ configFile: 'testResources/config-reader/valid.conf.js', read: false });
@@ -103,7 +136,7 @@ describe(ConfigReader.name, () => {
 
       it('should report a fatal error', () => {
         expect(() => sut.readConfig()).throws();
-        expect(testInjector.logger.fatal).to.have.been.calledWith(`Config file must export a function!
+        expect(testInjector.logger.fatal).to.have.been.calledWith(`Config file must be an object or export a function!
   module.exports = function(config) {
     config.set({
       // your config
@@ -123,6 +156,19 @@ describe(ConfigReader.name, () => {
 
       it('should throw an error', () => {
         expect(() => sut.readConfig()).throws('Invalid config file. Inner error: SyntaxError: Unexpected identifier');
+      });
+    });
+
+    describe('with json config file', () => {
+      it('should read config file', () => {
+        sut = createSut({ configFile: 'testResources/config-reader/valid.json' });
+
+        result = sut.readConfig();
+
+        expect(result.valid).to.be.eq('config');
+        expect(result.should).to.be.eq('be');
+        expect(result.read).to.be.eq(true);
+        expect(testInjector.logger.warn).not.called;
       });
     });
   });

@@ -1,12 +1,12 @@
 {
   "name": "@stryker-mutator/webpack-transpiler",
-  "version": "2.2.1",
+  "version": "2.4.0",
   "description": "A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 85 --functions 84 --branches 65 npm run mocha",
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "@stryker-mutator/core": "node ../stryker/bin/stryker run"
+    "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
     "type": "git",
@@ -35,9 +35,9 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/webpack-transpiler#readme",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "^2.2.1",
+    "@stryker-mutator/test-helpers": "^2.4.0",
     "@types/memory-fs": "~0.3.0",
-    "@types/webpack": "~4.39.1",
+    "@types/webpack": "~4.41.0",
     "raw-loader": "~3.1.0",
     "webpack": "~4.41.0"
   },
@@ -46,7 +46,7 @@
     "webpack": ">=2.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.2.1",
+    "@stryker-mutator/api": "^2.4.0",
     "enhanced-resolve": "~4.1.0",
     "memory-fs": "~0.5.0"
   },

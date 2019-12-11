@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as minimatch from 'minimatch';
 
 import { Config } from '../../../config';
+import { DashboardOptions, ReportType } from '../../../core';
 
 describe('Config', () => {
   let sut: Config;
@@ -31,6 +32,18 @@ describe('Config', () => {
     it('should never clear thresholds', () => {
       sut.set({ thresholds: undefined });
       expect(sut.thresholds).not.be.undefined;
+    });
+
+    it('should merge `dashboard` settings', () => {
+      sut.set({
+        dashboard: { project: 'my-pet-shop' }
+      });
+      const expected: DashboardOptions = {
+        baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
+        reportType: ReportType.MutationScore,
+        project: 'my-pet-shop'
+      };
+      expect(sut.dashboard).deep.eq(expected);
     });
   });
 

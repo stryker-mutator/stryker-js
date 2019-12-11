@@ -29,9 +29,33 @@ export default class ConditionalExpressionMutator implements NodeMutator {
     return this.validOperators.includes(operator);
   }
 
-  public mutate(node: types.Node): types.Node[] {
+  public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {
     if ((types.isBinaryExpression(node) || types.isLogicalExpression(node)) && this.hasValidParent(node) && this.isValidOperator(node.operator)) {
-      return [NodeGenerator.createBooleanLiteralNode(node, false), NodeGenerator.createBooleanLiteralNode(node, true)];
+      return [
+        // raw string mutations
+        [node, { raw: 'true' }],
+        [node, { raw: 'false' }]
+      ];
+    } else if (types.isDoWhileStatement(node) || types.isWhileStatement(node)) {
+      return [[node.test, { raw: 'false' }]];
+    } else if (types.isForStatement(node)) {
+      if (!node.test) {
+        return [[node, NodeGenerator.createMutatedCloneWithProperties(node, { test: types.booleanLiteral(false) })]];
+      } else {
+        return [[node.test, { raw: 'false' }]];
+      }
+    } else if (types.isIfStatement(node)) {
+      return [
+        // raw string mutations in the `if` condition
+        [node.test, { raw: 'true' }],
+        [node.test, { raw: 'false' }]
+      ];
+    } else if (
+      types.isSwitchCase(node) &&
+      // if not a fallthrough case
+      node.consequent.length > 0
+    ) {
+      return [[node, NodeGenerator.createMutatedCloneWithProperties(node, { consequent: [] })]];
     }
 
     return [];

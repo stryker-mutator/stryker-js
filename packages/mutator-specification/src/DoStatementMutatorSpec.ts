@@ -4,6 +4,10 @@ import ExpectMutation from './ExpectMutation';
 
 export default function DoStatementMutatorSpec(name: string, expectMutation: ExpectMutation) {
   describe('DoStatementMutator', () => {
+    beforeEach(() => {
+      console.warn('DEPRECATED: please migrate from the DoStatementMutatorSpec to the ConditionalExpressionMutatorSpec');
+    });
+
     it('should have name "DoStatement"', () => {
       expect(name).eq('DoStatement');
     });

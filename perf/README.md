@@ -4,7 +4,7 @@
 
 Here you can find our performance tests. Run them with `npm run perf` from the root (after you've build with `npm run build`).
 
-## Add new 
+## Add new
 
 You can add a new one simply
 by adding it to the [test directory](https://github.com/stryker-mutator/stryker/tree/master/perf/test)

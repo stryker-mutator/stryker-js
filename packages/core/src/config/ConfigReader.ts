@@ -28,8 +28,67 @@ export default class ConfigReader {
 
     // merge the config from config file and cliOptions (precedence)
     config.set(this.cliOptions);
+    if (this.log.isDebugEnabled()) {
+      this.log.debug(`Loaded config: ${JSON.stringify(config, null, 2)}`);
+    }
+
+    this.fixDeprecations(config);
 
     return config;
+  }
+  private fixDeprecations(config: Config) {
+    if (!(typeof config.mutator === 'string') && config.mutator.excludedMutations) {
+      const newExcludedMutations: string[] = [];
+      config.mutator.excludedMutations.forEach(legacyExcludedMutation =>
+        newExcludedMutations.push(...this.getNewExcludedMutations(legacyExcludedMutation))
+      );
+      config.mutator.excludedMutations = newExcludedMutations;
+    }
+  }
+  private getNewExcludedMutations(legacyExcludedMutation: string): string[] {
+    const newMutations: string[] = [];
+    switch (legacyExcludedMutation) {
+      case 'ArrayLiteral':
+      case 'ArrayNewExpression':
+        newMutations.push('ArrayDeclaration');
+        break;
+      case 'BinaryExpression':
+        newMutations.push(...['ArithmeticOperator', 'EqualityOperator', 'LogicalOperator']);
+        break;
+      case 'Block':
+        newMutations.push('BlockStatement');
+        break;
+      case 'BooleanSubstitution':
+        newMutations.push('BooleanLiteral');
+        break;
+      case 'DoStatement':
+      case 'ForStatement':
+      case 'IfStatement':
+      case 'SwitchCase':
+      case 'WhileStatement':
+        newMutations.push('ConditionalExpression');
+        break;
+      case 'PrefixUnaryExpression':
+        newMutations.push('UnaryOperator', 'UpdateOperator', 'BooleanLiteral');
+        break;
+      case 'PostfixUnaryExpression':
+        newMutations.push('UpdateOperator');
+        break;
+      default:
+        break;
+    }
+
+    if (newMutations.length > 0) {
+      this.log.warn(
+        `DEPRECATED: The mutation name "${legacyExcludedMutation}" is deprecated. Please migrate your config. For now ${legacyExcludedMutation} will be replaced with: ${newMutations.join(
+          ', '
+        )}. A list of mutations and their names can be found here: https://github.com/stryker-mutator/stryker-handbook/blob/master/mutator-types.md`
+      );
+    } else {
+      newMutations.push(legacyExcludedMutation);
+    }
+
+    return newMutations;
   }
 
   private loadConfigModule(): Function {
@@ -61,9 +120,14 @@ export default class ConfigReader {
           throw new StrykerError('Invalid config file', e);
         }
       }
-      if (typeof configModule !== 'function') {
-        this.log.fatal('Config file must export a function!\n' + CONFIG_SYNTAX_HELP);
-        throw new StrykerError('Config file must export a function!');
+      if (typeof configModule !== 'function' && typeof configModule !== 'object') {
+        this.log.fatal('Config file must be an object or export a function!\n' + CONFIG_SYNTAX_HELP);
+        throw new StrykerError('Config file must export a function or be a JSON!');
+      }
+      if (typeof configModule === 'object') {
+        return (config: any) => {
+          config.set(configModule);
+        };
       }
     }
 

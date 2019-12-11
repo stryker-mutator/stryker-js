@@ -1,8 +1,6 @@
-import { TestFramework, TestFrameworkFactory, TestSelection, TestFrameworkSettings } from '@stryker-mutator/api/test_framework';
+import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
 
 class TestFramework1 implements TestFramework {
-
-  constructor(settings: TestFrameworkSettings) { }
 
   public beforeEach(codeFragment: string) {
     return '';
@@ -17,9 +15,4 @@ class TestFramework1 implements TestFramework {
   }
 }
 
-TestFrameworkFactory.instance().register('framework-1', TestFramework1);
-const testFramework = TestFrameworkFactory.instance().create('framework-1', null);
-if (!(testFramework instanceof TestFramework1)) {
-  throw Error('Test framework does not seem to be working');
-}
-console.log(TestFrameworkFactory.instance().knownNames());
+console.log('done');

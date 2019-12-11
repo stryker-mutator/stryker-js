@@ -4,6 +4,10 @@ import ExpectMutation from './ExpectMutation';
 
 export default function ArrayNewExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
   describe('ArrayNewExpressionMutator', () => {
+    beforeEach(() => {
+      console.warn('DEPRECATED: please migrate from the ArrayNewExpressionMutator to the ArrayDeclarationMutatorSpec');
+    });
+
     it('should have name "ArrayNewExpression"', () => {
       expect(name).eq('ArrayNewExpression');
     });

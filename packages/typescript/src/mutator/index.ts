@@ -1,34 +1,28 @@
-import ArrayLiteralMutator from './ArrayLiteralMutator';
-import ArrayNewExpressionMutator from './ArrayNewExpressionMutator';
+import ArithmeticOperatorMutator from './ArithmeticOperatorMutator';
+import ArrayDeclarationMutator from './ArrayDeclarationMutator';
 import ArrowFunctionMutator from './ArrowFunctionMutator';
-import BinaryExpressionMutator from './BinaryExpressionMutator';
-import BlockMutator from './BlockMutator';
-import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
+import BlockStatementMutator from './BlockStatementMutator';
+import BooleanLiteralMutator from './BooleanLiteralMutator';
 import ConditionalExpressionMutator from './ConditionalExpressionMutator';
-import DoStatementMutator from './DoStatementMutator';
-import ForStatementMutator from './ForStatementMutator';
-import IfStatementMutator from './IfStatementMutator';
-import NodeMutator from './NodeMutator';
+import EqualityOperatorMutator from './EqualityOperatorMutator';
 import ObjectLiteralMutator from './ObjectLiteralMutator';
-import PrefixUnaryExpressionMutator from './PrefixUnaryExpressionMutator';
 import StringLiteralMutator from './StringLiteralMutator';
-import SwitchCaseMutator from './SwitchCaseMutator';
-import WhileStatementMutator from './WhileStatementMutator';
+import LogicalOperatorMutator from './LogicalOperatorMutator';
+import UnaryOperatorMutator from './UnaryOperatorMutator';
+import UpdateOperatorMutator from './UpdateOperatorMutator';
+import NodeMutator from './NodeMutator';
 
 export const nodeMutators: readonly NodeMutator[] = [
-  new BinaryExpressionMutator(),
-  new BooleanSubstitutionMutator(),
-  new ArrayLiteralMutator(),
-  new ArrayNewExpressionMutator(),
-  new BlockMutator(),
-  new ArrowFunctionMutator(),
-  new IfStatementMutator(),
-  new ObjectLiteralMutator(),
-  new WhileStatementMutator(),
-  new ForStatementMutator(),
-  new DoStatementMutator(),
+  new ArithmeticOperatorMutator(),
+  new ArrayDeclarationMutator(),
+  new BlockStatementMutator(),
+  new BooleanLiteralMutator(),
   new ConditionalExpressionMutator(),
-  new PrefixUnaryExpressionMutator(),
+  new EqualityOperatorMutator(),
+  new LogicalOperatorMutator(),
+  new ObjectLiteralMutator(),
   new StringLiteralMutator(),
-  new SwitchCaseMutator()
+  new UnaryOperatorMutator(),
+  new UpdateOperatorMutator(),
+  new ArrowFunctionMutator()
 ];
