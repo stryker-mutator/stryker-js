@@ -1,5 +1,7 @@
 import * as types from '@babel/types';
 
+import { NodeGenerator } from '../helpers/NodeGenerator';
+
 import { NodeMutator } from './NodeMutator';
 
 export default class UnaryOperatorMutator implements NodeMutator {
@@ -11,21 +13,13 @@ export default class UnaryOperatorMutator implements NodeMutator {
     '~': ''
   };
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
-    const nodes: types.Node[] = [];
-
+  public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {
     if (types.isUnaryExpression(node) && this.operators[node.operator] !== undefined && node.prefix) {
-      if (this.operators[node.operator].length > 0) {
-        const mutatedNode = copy(node);
-        mutatedNode.operator = this.operators[node.operator] as any;
-        nodes.push(mutatedNode);
-      } else {
-        const mutatedNode = copy(node.argument);
-        mutatedNode.start = node.start;
-        nodes.push(mutatedNode);
-      }
+      return this.operators[node.operator].length > 0
+        ? [[node, NodeGenerator.createMutatedCloneWithProperties(node, { operator: this.operators[node.operator] as any })]]
+        : [[node, node.argument]];
     }
 
-    return nodes;
+    return [];
   }
 }

@@ -1,16 +1,10 @@
 import * as types from '@babel/types';
 
 export class NodeGenerator {
-  public static createBooleanLiteralNode(originalNode: types.Node, value: boolean): types.BooleanLiteral {
+  public static createMutatedCloneWithProperties(originalNode: types.Node, props: { [key: string]: any }): types.Node {
     return {
-      end: originalNode.end,
-      innerComments: originalNode.innerComments,
-      leadingComments: originalNode.leadingComments,
-      loc: originalNode.loc,
-      start: originalNode.start,
-      trailingComments: originalNode.trailingComments,
-      type: 'BooleanLiteral',
-      value
+      ...originalNode,
+      ...props
     };
   }
 }

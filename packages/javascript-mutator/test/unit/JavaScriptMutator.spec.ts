@@ -126,7 +126,7 @@ describe('JavaScriptMutator', () => {
 
     const mutants = mutator.mutate(files);
 
-    expect(mutants.length).to.equal(5);
+    expect(mutants.length).to.equal(6);
     expect(mutants).to.deep.include({
       fileName: 'testFile.js',
       mutatorName: 'ConditionalExpression',

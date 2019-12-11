@@ -1,5 +1,7 @@
 import * as types from '@babel/types';
 
+import { NodeGenerator } from '../helpers/NodeGenerator';
+
 import { NodeMutator } from './NodeMutator';
 
 /**
@@ -8,15 +10,11 @@ import { NodeMutator } from './NodeMutator';
 export default class BlockStatementMutator implements NodeMutator {
   public name = 'BlockStatement';
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
-    const nodes: types.Node[] = [];
-
-    if (types.isBlockStatement(node) && node.body.length > 0) {
-      const mutatedNode = copy(node);
-      mutatedNode.body = [];
-      nodes.push(mutatedNode);
-    }
-
-    return nodes;
+  public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {
+    return types.isBlockStatement(node) && node.body.length > 0
+      ? [
+          [node, NodeGenerator.createMutatedCloneWithProperties(node, { body: [] })] // `{}`
+        ]
+      : [];
   }
 }

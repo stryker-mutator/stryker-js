@@ -1,5 +1,7 @@
 import * as types from '@babel/types';
 
+import { NodeGenerator } from '../helpers/NodeGenerator';
+
 import { NodeMutator } from './NodeMutator';
 
 export default class BooleanLiteralMutator implements NodeMutator {
@@ -7,20 +9,14 @@ export default class BooleanLiteralMutator implements NodeMutator {
 
   private readonly unaryBooleanPrefix = '!';
 
-  public mutate(node: types.Node, copy: <T extends types.Node>(obj: T, deep?: boolean) => T): types.Node[] {
-    const nodes: types.Node[] = [];
-
+  public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {
     // true -> false or false -> true
     if (types.isBooleanLiteral(node)) {
-      const mutatedNode = copy(node);
-      mutatedNode.value = !mutatedNode.value;
-      nodes.push(mutatedNode);
+      return [[node, NodeGenerator.createMutatedCloneWithProperties(node, { value: !node.value })]];
     } else if (types.isUnaryExpression(node) && node.operator === this.unaryBooleanPrefix && node.prefix) {
-      const mutatedNode = copy(node.argument);
-      mutatedNode.start = node.start;
-      nodes.push(mutatedNode);
+      return [[node, node.argument]];
     }
 
-    return nodes;
+    return [];
   }
 }

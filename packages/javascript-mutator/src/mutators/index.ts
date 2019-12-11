@@ -1,5 +1,6 @@
 import ArithmeticOperatorMutator from './ArithmeticOperatorMutator';
 import ArrayDeclarationMutator from './ArrayDeclarationMutator';
+import ArrowFunctionMutator from './ArrowFunctionMutator';
 import BlockStatementMutator from './BlockStatementMutator';
 import BooleanLiteralMutator from './BooleanLiteralMutator';
 import ConditionalExpressionMutator from './ConditionalExpressionMutator';
@@ -13,6 +14,7 @@ import UpdateOperatorMutator from './UpdateOperatorMutator';
 export const nodeMutators = Object.freeze([
   new ArithmeticOperatorMutator(),
   new ArrayDeclarationMutator(),
+  new ArrowFunctionMutator(),
   new BlockStatementMutator(),
   new BooleanLiteralMutator(),
   new ConditionalExpressionMutator(),
