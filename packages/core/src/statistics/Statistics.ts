@@ -30,7 +30,7 @@ export class Statistics {
     this.log.info(statisticsData);
     return this.httpStatisticsClient
       .post(AZURE_URL, statisticsData, {
-        ['Content-Type']: 'application/json'
+        ['Content-Type']: 'text/plain'
       })
       .then(body => {
         if (body.message.statusCode != 201) {
