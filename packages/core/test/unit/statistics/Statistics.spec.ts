@@ -19,7 +19,7 @@ describe('Statistics', () => {
   };
 
   const contentType = {
-    ['Content-Type']: 'application/json'
+    ['Content-Type']: 'text/plain'
   };
 
   beforeEach(() => {
