@@ -95,7 +95,7 @@ export default class Stryker {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
           await this.reportScore(mutantResults, inputFileInjector);
-          await this.collectStatistics(mutantResults);
+          if (this.sendStatistics) await this.collectStatistics(mutantResults);
           await this.logDone();
           return mutantResults;
         } else {
@@ -112,26 +112,23 @@ export default class Stryker {
   }
 
   private async collectStatistics(mutantResults: MutantResult[]) {
-    if (this.sendStatistics) {
-      try {
-        let config = readConfig(new ConfigReader(this.options, this.log));
-        const statisticsProcess = this.injector
-          .provideValue(coreTokens.httpClient, new HttpClient('httpClient'))
-          .provideValue(coreTokens.testRunner, config.testRunner.toString())
-          .injectClass(Statistics);
-        statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
-        const score = this.getScore(this.injector.injectClass(ScoreResultCalculator), mutantResults);
-        statisticsProcess.addStatistic('score', Math.round(score.mutationScore));
-        await statisticsProcess.sendStatistics();
-      } catch {
-        this.log.warn('Problem sending statistics');
-      }
+    try {
+      let config = readConfig(new ConfigReader(this.options, this.log));
+      const statisticsProcess = this.injector
+        .provideValue(coreTokens.httpClient, new HttpClient('httpClient'))
+        .provideValue(coreTokens.testRunner, config.testRunner.toString())
+        .injectClass(Statistics);
+      statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
+      const score = this.getScore(this.injector.injectClass(ScoreResultCalculator), mutantResults);
+      statisticsProcess.addStatistic('score', Math.round(score.mutationScore));
+      await statisticsProcess.sendStatistics();
+    } catch (error) {
+      this.log.warn(`Problem sending statistics: ${error}`);
     }
   }
 
   private allowSendStatistics() {
     let config = readConfig(new ConfigReader(this.options, this.log));
-    // If no value is supplied to collectStatistics, it will not send statistics.
     return config.collectStatistics === 'yes';
   }
 

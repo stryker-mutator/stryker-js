@@ -215,6 +215,24 @@ describe(Stryker.name, () => {
         await sut.runMutationTest();
         expect(injectorMock.dispose).called;
       });
+      it('should not send statistics with sendStatistics is false', async () => {
+        strykerConfig.collectStatistics = 'no';
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(injectorMock.injectClass).not.calledWith(Statistics);
+      });
+      it('should send statistics default, when no sendStatistics value is supplied', async () => {
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(injectorMock.injectClass).calledWith(Statistics);
+      });
+      it('should log error of sending statistics', async () => {
+        const expectedError = Error('http status 400');
+        sut = new Stryker({});
+        statisticsMock.addStatistic.throws(expectedError);
+        await sut.runMutationTest();
+        expect(logMock.warn).to.have.been.calledWith('Problem sending statistics: Error: http status 400');
+      });
     });
 
     describe('happy flow', () => {
@@ -307,6 +325,17 @@ describe(Stryker.name, () => {
         await sut.runMutationTest();
         expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, false);
         expect(injectorMock.provideClass).calledWith(di.coreTokens.transpiler, TranspilerFacade);
+      });
+
+      it('send statistics with correct data', async () => {
+        sinon.stub(scoreResultCalculator, 'calculate').returns({ mutationScore: 10 });
+        strykerConfig.collectStatistics = 'yes';
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(injectorMock.injectClass).calledWith(Statistics);
+        expect(statisticsMock.sendStatistics).called;
+        expect(statisticsMock.addStatistic).calledWith('duration', timerMock.elapsedSeconds());
+        expect(statisticsMock.addStatistic).calledWith('score', 10);
       });
     });
   });
