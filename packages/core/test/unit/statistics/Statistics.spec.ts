@@ -51,6 +51,13 @@ describe('Statistics', () => {
     expect(testInjector.logger.warn).have.not.been.called;
   });
 
+  it('add statistic to statistic object', async () => {
+    // Act
+    sut.addStatistic('test', true);
+    // Assert
+    sut.statistics.test === true;
+  });
+
   it('server returns invalid status code', async () => {
     // Arrange
     httpStatisticsClient.post.resolves({
