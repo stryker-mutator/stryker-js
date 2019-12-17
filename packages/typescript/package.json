@@ -38,7 +38,7 @@
     "@stryker-mutator/api": "^2.4.0",
     "@stryker-mutator/util": "^2.4.0",
     "lodash.flatmap": "~4.5.0",
-    "semver": "~6.3.0",
+    "semver": "~7.1.0",
     "tslib": "~1.10.0"
   },
   "devDependencies": {
