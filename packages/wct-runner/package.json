@@ -30,7 +30,7 @@
     "@types/socket.io": "^2.1.0",
     "chai": "~4.2.0",
     "mocha": "~5.2.0",
-    "sinon": "^7.3.1",
+    "sinon": "^8.0.0",
     "web-component-tester": "~6.9.2"
   },
   "peerDependencies": {
