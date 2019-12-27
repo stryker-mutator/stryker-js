@@ -83,7 +83,7 @@
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/lodash.flatmap": "^4.5.6",
     "@types/lodash.groupby": "^4.6.6",
-    "@types/node": "~10.11.4",
+    "@types/node": "~13.1.1",
     "@types/progress": "~2.0.1",
     "flatted": "^2.0.0"
   }
