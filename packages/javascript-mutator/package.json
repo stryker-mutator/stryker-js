@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/javascript-mutator",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "A plugin for javascript projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
- "repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
   },
@@ -39,8 +39,7 @@
     "@babel/generator": "~7.7.0",
     "@babel/parser": "~7.7.0",
     "@babel/traverse": "~7.7.0",
-    "@stryker-mutator/api": "^2.3.0",
-    "lodash.clonedeep": "^4.5.0",
+    "@stryker-mutator/api": "^2.4.0",
     "tslib": "~1.10.0"
   },
   "peerDependencies": {
@@ -48,8 +47,8 @@
   },
   "devDependencies": {
     "@babel/types": "~7.7.1",
-    "@stryker-mutator/mutator-specification": "^2.3.0",
-    "@stryker-mutator/test-helpers": "^2.3.0",
+    "@stryker-mutator/mutator-specification": "^2.4.0",
+    "@stryker-mutator/test-helpers": "^2.4.0",
     "@types/babel__generator": "^7.0.0",
     "@types/babel__traverse": "^7.0.0",
     "@types/lodash.clonedeep": "^4.5.6"

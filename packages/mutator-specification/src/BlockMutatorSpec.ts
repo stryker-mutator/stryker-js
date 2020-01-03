@@ -4,6 +4,10 @@ import ExpectMutation from './ExpectMutation';
 
 export default function BlockMutatorSpec(name: string, expectMutation: ExpectMutation) {
   describe('BlockMutator', () => {
+    beforeEach(() => {
+      console.warn('DEPRECATED: please migrate from the BlockMutatorSpec to the BlockStatementMutatorSpec');
+    });
+
     it('should have name "Block"', () => {
       expect(name).eq('Block');
     });

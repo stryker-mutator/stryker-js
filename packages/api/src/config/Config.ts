@@ -1,6 +1,8 @@
 import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions } from '../../core';
 import { ReportType } from '../core/DashboardOptions';
 
+import defaultTempDirName from './DefaultTempDirName';
+
 /**
  * When configuring stryker, every option is optional
  * Including deep properties like `dashboard.project`.
@@ -49,7 +51,7 @@ export default class Config implements StrykerOptions {
     baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
     reportType: ReportType.MutationScore
   };
-  public tempDirName: string = '.stryker-tmp';
+  public tempDirName: string = defaultTempDirName;
 
   public set(newConfig: DeepPartial<StrykerOptions>) {
     if (newConfig) {
