@@ -57,7 +57,7 @@ describe(Stryker.name, () => {
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let logMock: sinon.SinonStubbedInstance<Logger>;
   let transpilerMock: sinon.SinonStubbedInstance<Transpiler>;
-  let statisticsMock: Mock<Statistics>;
+  let statisticsMock: sinon.SinonStubbedInstance<Statistics>;
 
   beforeEach(() => {
     strykerConfig = factory.config();
@@ -76,7 +76,7 @@ describe(Stryker.name, () => {
     mutationTestExecutorMock = mock(MutationTestExecutor);
     transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
-    statisticsMock = mock(Statistics);
+    statisticsMock = sinon.createStubInstance(Statistics);
 
     temporaryDirectoryMock = mock(TemporaryDirectory);
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
@@ -99,9 +99,7 @@ describe(Stryker.name, () => {
       .withArgs(MutationTestReportCalculator)
       .returns(mutationTestReportCalculatorMock)
       .withArgs(ScoreResultCalculator)
-      .returns(scoreResultCalculator)
-      .withArgs(Statistics)
-      .returns(statisticsMock);
+      .returns(scoreResultCalculator);
     injectorMock.resolve
       .withArgs(commonTokens.options)
       .returns(strykerConfig)
@@ -116,7 +114,9 @@ describe(Stryker.name, () => {
       .withArgs(commonTokens.getLogger)
       .returns(() => logMock)
       .withArgs(di.coreTokens.transpiler)
-      .returns(transpilerMock);
+      .returns(transpilerMock)
+      .withArgs(di.coreTokens.statistics)
+      .returns(statisticsMock);
   });
 
   describe('when constructed', () => {
@@ -219,17 +219,17 @@ describe(Stryker.name, () => {
         strykerConfig.collectStatistics = 'no';
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(injectorMock.injectClass).not.calledWith(Statistics);
+        expect(statisticsMock.sendStatistics).have.not.been.called;
       });
-      it('should send statistics default, when no sendStatistics value is supplied', async () => {
+      it('should not send statistics default, when no sendStatistics value is supplied', async () => {
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(injectorMock.injectClass).calledWith(Statistics);
+        expect(statisticsMock.sendStatistics).have.been.called;
       });
       it('should log error of sending statistics', async () => {
         const expectedError = Error('http status 400');
         sut = new Stryker({});
-        statisticsMock.addStatistic.throws(expectedError);
+        statisticsMock.sendStatistics.throws(expectedError);
         await sut.runMutationTest();
         expect(logMock.warn).to.have.been.calledWith('Problem sending statistics: Error: http status 400');
       });
@@ -332,10 +332,10 @@ describe(Stryker.name, () => {
         strykerConfig.collectStatistics = 'yes';
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(injectorMock.injectClass).calledWith(Statistics);
+        expect(injectorMock.resolve).calledWith(di.coreTokens.statistics);
         expect(statisticsMock.sendStatistics).called;
-        expect(statisticsMock.addStatistic).calledWith('duration', timerMock.elapsedSeconds());
-        expect(statisticsMock.addStatistic).calledWith('score', 10);
+        expect(statisticsMock.setStatistic).calledWith('score', 10);
+        expect(statisticsMock.setStatistic).calledWith('duration', timerMock.elapsedSeconds());
       });
     });
   });

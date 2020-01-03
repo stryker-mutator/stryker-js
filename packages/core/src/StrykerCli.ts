@@ -3,7 +3,6 @@ import { getLogger } from 'log4js';
 import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mutator/api/core';
 import { Config } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
-import { HttpClient } from 'typed-rest-client/HttpClient';
 
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
@@ -178,9 +177,10 @@ export default class StrykerCli {
   }
 
   private async reportError(err: Error, config: Config) {
-    const statisticsProcess = new Statistics(this.log, new HttpClient('HttpClient'), config.testRunner.toString());
-    statisticsProcess.addStatistic('errorType', err.name);
-    statisticsProcess.addStatistic('errorMessage', err.message);
+    const statisticsProcess = new Statistics(this.log);
+    statisticsProcess.setStatistic('testRunner', config.testRunner);
+    statisticsProcess.setStatistic('errorType', err.name);
+    statisticsProcess.setStatistic('errorMessage', err.message);
     await statisticsProcess.sendStatistics();
   }
 }

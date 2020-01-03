@@ -11,6 +11,7 @@ import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
+import { Statistics } from '../statistics/Statistics';
 
 import { loggerFactory, mutatorDescriptorFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
 
@@ -25,6 +26,7 @@ export interface MainContext extends OptionsContext {
   [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
   [coreTokens.timer]: Timer;
   [coreTokens.temporaryDirectory]: TemporaryDirectory;
+  [coreTokens.statistics]: Statistics;
 }
 
 export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector<MainContext> {
@@ -46,7 +48,8 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideClass(coreTokens.reporter, BroadcastReporter)
     .provideFactory(coreTokens.testFramework, testFrameworkFactory)
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
-    .provideClass(coreTokens.timer, Timer);
+    .provideClass(coreTokens.timer, Timer)
+    .provideClass(coreTokens.statistics, Statistics);
 }
 
 function pluginDescriptorsFactory(config: Config): readonly string[] {

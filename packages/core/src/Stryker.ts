@@ -3,7 +3,6 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { Injector } from 'typed-inject';
-import { HttpClient } from 'typed-rest-client/HttpClient';
 
 import { buildMainInjector, coreTokens, MainContext, PluginCreator } from './di';
 import InputFileCollection from './input/InputFileCollection';
@@ -19,7 +18,6 @@ import ScoreResultCalculator from './ScoreResultCalculator';
 import { transpilerFactory } from './transpiler';
 import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
-import { Statistics } from './statistics/Statistics';
 import { readConfig } from './config/readConfig';
 import ConfigReader from './config/ConfigReader';
 
@@ -113,14 +111,12 @@ export default class Stryker {
 
   private async collectStatistics(mutantResults: MutantResult[]) {
     try {
+      let statisticsProcess = this.injector.resolve(coreTokens.statistics);
       let config = readConfig(new ConfigReader(this.options, this.log));
-      const statisticsProcess = this.injector
-        .provideValue(coreTokens.httpClient, new HttpClient('httpClient'))
-        .provideValue(coreTokens.testRunner, config.testRunner.toString())
-        .injectClass(Statistics);
-      statisticsProcess.addStatistic('duration', this.timer.elapsedSeconds());
+      statisticsProcess.setStatistic('testRunner', config.testRunner);
       const score = this.getScore(this.injector.injectClass(ScoreResultCalculator), mutantResults);
-      statisticsProcess.addStatistic('score', Math.round(score.mutationScore));
+      statisticsProcess.setStatistic('score', Math.round(score.mutationScore));
+      statisticsProcess.setStatistic('duration', this.timer.elapsedSeconds());
       await statisticsProcess.sendStatistics();
     } catch (error) {
       this.log.warn(`Problem sending statistics: ${error}`);

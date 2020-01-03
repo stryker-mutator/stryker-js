@@ -2,6 +2,10 @@
   "name": "stryker-parent",
   "private": true,
   "devDependencies": {
+    "@stryker-mutator/html-reporter": "^2.4.0",
+    "@stryker-mutator/javascript-mutator": "^2.4.0",
+    "@stryker-mutator/mocha-framework": "^2.4.0",
+    "@stryker-mutator/mocha-runner": "^2.4.0",
     "@types/chai": "4.2.5",
     "@types/chai-as-promised": "7.1.2",
     "@types/execa": "^2.0.0",
