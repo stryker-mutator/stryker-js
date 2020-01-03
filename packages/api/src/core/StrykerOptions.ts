@@ -60,7 +60,7 @@ interface StrykerOptions {
    *    * The `name` property is mandatory and contains the name of the mutant generator to use.
    *    * For example: 'javascript', 'typescript'
    *    * The `excludedMutations` property is mandatory and contains the names of the specific mutation types to exclude from testing.
-   *    * The values must match the given names of the mutations. For example: 'BinaryExpression', 'BooleanSubstitution', etc.
+   *    * The values must match the given names of the mutations. For example: 'ArithmeticOperator', 'EqualityOperator', etc.
    */
   mutator: string | Partial<MutatorDescriptor>;
 
@@ -92,9 +92,9 @@ interface StrykerOptions {
    * Indicates which coverage analysis strategy to use.
    * During mutation testing, stryker will try to only run the tests that cover a particular line of code.
    *
-   * 'perTest' (default): Analyse coverage per test.
+   * 'perTest': Analyse coverage per test.
    * 'all': Analyse the coverage for the entire test suite.
-   * 'off': Don't use coverage analysis
+   * 'off' (default): Don't use coverage analysis
    */
   coverageAnalysis: 'perTest' | 'all' | 'off';
 

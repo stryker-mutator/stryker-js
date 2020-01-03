@@ -12,6 +12,7 @@ import Preset from './presets/Preset';
 import PromptOption from './PromptOption';
 import StrykerConfigWriter from './StrykerConfigWriter';
 import { StrykerInquirer } from './StrykerInquirer';
+import GitignoreWriter from './GitignoreWriter';
 
 import { initializerTokens } from '.';
 
@@ -27,6 +28,7 @@ export default class StrykerInitializer {
     initializerTokens.npmClient,
     initializerTokens.strykerPresets,
     initializerTokens.configWriter,
+    initializerTokens.gitignoreWriter,
     initializerTokens.inquirer
   );
   constructor(
@@ -35,6 +37,7 @@ export default class StrykerInitializer {
     private readonly client: NpmClient,
     private readonly strykerPresets: Preset[],
     private readonly configWriter: StrykerConfigWriter,
+    private readonly gitignoreWriter: GitignoreWriter,
     private readonly inquirer: StrykerInquirer
   ) {}
 
@@ -51,9 +54,9 @@ export default class StrykerInitializer {
     } else {
       await this.initiateCustom(this.configWriter);
     }
+    await this.gitignoreWriter.addStrykerTempFolder();
     this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
     this.out("Let's kill some mutants with this command: `stryker run`");
-    this.out('Note: Stryker will use `.stryker-temp` as location for temporary files. Be sure to add it to your ignored files in source control.');
   }
 
   /**

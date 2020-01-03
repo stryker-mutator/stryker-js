@@ -59,8 +59,8 @@ describe('Sample integration', () => {
     const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false, () => testInjector.logger);
     transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
-    const [firstBinaryMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'BinaryExpression');
-    const correctResult = await transpiler.transpile([mutateFile(mathDotTS, firstBinaryMutant)]);
+    const [firstArithmeticOperatorMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'ArithmeticOperator');
+    const correctResult = await transpiler.transpile([mutateFile(mathDotTS, firstArithmeticOperatorMutant)]);
     await expect(transpiler.transpile([mutateFile(mathDotTS, stringSubtractMutant)])).rejectedWith(
       "error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type."
     );

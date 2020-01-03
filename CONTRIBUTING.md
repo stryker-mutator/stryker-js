@@ -51,7 +51,7 @@ We recommend you to install the following plugins:
 
 * [editorconfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig), to adhere to our white spacing rules.
 * [eslint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-* [code spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), no particular reason, just prevent common typo's.
+* [code spell checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker), no particular reason, just prevent common typos.
 
 After cloning this repo, open the workspace with `$ code workspace.code-workspace` (or open code and use file -> Open Workspace...).
 

@@ -4,6 +4,10 @@ import ExpectMutation from './ExpectMutation';
 
 export default function WhileStatementMutatorSpec(name: string, expectMutation: ExpectMutation) {
   describe('WhileStatementMutator', () => {
+    beforeEach(() => {
+      console.warn('DEPRECATED: please migrate from the WhileStatementMutatorSpec to the ConditionalExpressionMutatorSpec');
+    });
+
     it('should have name "WhileStatement"', () => {
       expect(name).eq('WhileStatement');
     });

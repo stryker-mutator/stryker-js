@@ -9,6 +9,9 @@ describe(TravisProvider.name, () => {
 
   beforeEach(() => {
     sut = new TravisProvider();
+    env.unset('TRAVIS_REPO_SLUG');
+    env.unset('TRAVIS_PULL_REQUEST_BRANCH');
+    env.unset('TRAVIS_BRANCH');
   });
 
   afterEach(() => {
