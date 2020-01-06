@@ -28,7 +28,7 @@ describe('Statistics', () => {
     sut = testInjector.injector.injectClass(Statistics);
   });
 
-  it('report implementation to statistics server', async () => {
+  it('send implementation to statistics server', async () => {
     // Arrange
     const data = JSON.stringify(statisticsData);
 
@@ -79,5 +79,13 @@ describe('Statistics', () => {
 
     // Assert
     expect(testInjector.logger.error).have.been.calledWithMatch('Unable to reach statistics server');
+  });
+
+  it('add statistic', () => {
+    // Act
+    sut.setStatistic('version', '9.9.9');
+
+    // Assert
+    expect(sut.getStatistic('version')).equal('9.9.9');
   });
 });

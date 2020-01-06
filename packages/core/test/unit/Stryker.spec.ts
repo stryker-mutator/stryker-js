@@ -59,7 +59,7 @@ describe(Stryker.name, () => {
   let logMock: sinon.SinonStubbedInstance<Logger>;
   let transpilerMock: sinon.SinonStubbedInstance<Transpiler>;
   let statisticsMock: sinon.SinonStubbedInstance<Statistics>;
-  
+
   beforeEach(() => {
     strykerConfig = factory.config();
     logMock = factory.logger();
