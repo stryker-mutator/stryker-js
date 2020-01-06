@@ -29,7 +29,7 @@
     "@stryker-mutator/test-helpers": "^2.4.0",
     "@types/socket.io": "^2.1.0",
     "chai": "~4.2.0",
-    "mocha": "~5.2.0",
+    "mocha": "~7.0.0",
     "sinon": "^8.0.0",
     "web-component-tester": "~6.9.2"
   },
