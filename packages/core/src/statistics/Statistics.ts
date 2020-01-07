@@ -42,7 +42,7 @@ export class Statistics {
     return this.statistics;
   }
 
-  public getStatistic<K extends keyof StatisticsData>(name: K): unknown {
+  public getStatistic<K extends keyof StatisticsData>(name: K): StatisticsData[K] {
     return this.statistics[name];
   }
 }
