@@ -28,7 +28,7 @@
     "execa": "^3.2.0",
     "glob": "^7.1.1",
     "if-node-version": "^1.1.1",
-    "install-local": "~1.0.0",
+    "install-local": "~2.0.0",
     "jasmine": "^3.1.0",
     "jasmine-core": "^3.1.0",
     "lerna": "^3.10.7",
