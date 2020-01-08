@@ -1,16 +1,19 @@
 import { IncomingMessage } from 'http';
 import { Socket } from 'net';
 
-import { HttpClient, HttpClientResponse } from 'typed-rest-client/HttpClient';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { HttpClient, HttpClientResponse } from 'typed-rest-client/HttpClient';
 
 import { Statistics } from '../../../src/statistics/Statistics';
 import { JsonLoader } from '../../../src/statistics/JsonLoader';
+import { Mock, mock } from '../../helpers/producers';
 
 describe('Statistics', () => {
   let sut: Statistics;
+  let httpClientMock: Mock<HttpClient>;
 
   const AZURE_URL = 'https://strykerstatistics.azurewebsites.net/api/ReceiveStatistics?code=jVZfGmoB6ofRPa/yPdN/mAOCd6ia67XQkTmLaGWCzlxO5a32PlLj6A==';
   const statisticsData = {
@@ -21,11 +24,15 @@ describe('Statistics', () => {
   const contentType = {
     ['Content-Type']: 'application/json'
   };
+  function createSut() {
+    return testInjector.injector.provideValue(commonTokens.httpClient, (httpClientMock as unknown) as HttpClient).injectClass(Statistics);
+  }
 
   beforeEach(() => {
     let packageMock = { version: '1.0.0' };
     sinon.stub(JsonLoader, 'loadFile').returns(packageMock);
-    sut = testInjector.injector.injectClass(Statistics);
+    httpClientMock = mock(HttpClient);
+    sut = createSut();
   });
 
   it('send implementation to statistics server', async () => {
@@ -34,7 +41,7 @@ describe('Statistics', () => {
 
     const incomingMessage = new IncomingMessage(new Socket());
     incomingMessage.statusCode = 201;
-    sinon.stub(HttpClient.prototype, 'post').returns(
+    httpClientMock.post.resolves(
       new Promise((resolve, reject) => {
         resolve(new HttpClientResponse(incomingMessage));
       })
@@ -45,7 +52,7 @@ describe('Statistics', () => {
 
     // Assert
     expect(testInjector.logger.info).have.been.calledWithMatch(`Sending anonymous statistics to ${AZURE_URL}`);
-    expect(HttpClient.prototype.post).have.been.calledWith(AZURE_URL, data, contentType);
+    expect(httpClientMock.post).have.been.calledWith(AZURE_URL, data, contentType);
     expect(testInjector.logger.error).have.not.been.called;
     expect(testInjector.logger.warn).have.not.been.called;
   });
@@ -54,11 +61,13 @@ describe('Statistics', () => {
     // Arrange
     const incomingMessage = new IncomingMessage(new Socket());
     incomingMessage.statusCode = 600;
-    sinon.stub(HttpClient.prototype, 'post').returns(
+
+    httpClientMock.post.resolves(
       new Promise((resolve, reject) => {
         resolve(new HttpClientResponse(incomingMessage));
       })
     );
+
     // Act
     await sut.sendStatistics();
 
@@ -68,7 +77,9 @@ describe('Statistics', () => {
 
   it("server doesn't respond", async () => {
     // Arrange
-    sinon.stub(HttpClient.prototype, 'post').returns(
+    const incomingMessage = new IncomingMessage(new Socket());
+    incomingMessage.statusCode = 201;
+    httpClientMock.post.resolves(
       new Promise((resolve, reject) => {
         resolve();
       })

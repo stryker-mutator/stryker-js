@@ -21,6 +21,7 @@ export const commonTokens = Object.freeze({
   pluginResolver: stringLiteral('pluginResolver'),
   produceSourceMaps: stringLiteral('produceSourceMaps'),
   sandboxFileNames: stringLiteral('sandboxFileNames'),
+  httpClient: stringLiteral('httpClient'),
   target
 });
 

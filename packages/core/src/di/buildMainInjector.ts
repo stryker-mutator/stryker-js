@@ -5,6 +5,7 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { getLogger } from 'log4js';
 import { rootInjector } from 'typed-inject';
+import { HttpClient } from 'typed-rest-client/HttpClient';
 
 import { ConfigEditorApplier, readConfig } from '../config';
 import ConfigReader from '../config/ConfigReader';
@@ -49,6 +50,7 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(coreTokens.testFramework, testFrameworkFactory)
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
     .provideClass(coreTokens.timer, Timer)
+    .provideValue(coreTokens.httpClient, new HttpClient('main-injector-httpclient'))
     .provideClass(coreTokens.statistics, Statistics);
 }
 

@@ -23,4 +23,5 @@ export const pluginCreatorTranspiler = 'pluginCreatorTranspiler';
 export const pluginCreatorTestRunner = 'pluginCreatorTestRunner';
 export const pluginCreatorMutator = 'pluginCreatorMutator';
 export const pluginCreatorTestFramework = 'pluginCreatorTestFramework';
+export const httpClient = 'httpClient';
 export const statistics = 'statistics';
