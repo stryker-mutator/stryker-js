@@ -59,6 +59,7 @@ describe(Stryker.name, () => {
   let logMock: sinon.SinonStubbedInstance<Logger>;
   let transpilerMock: sinon.SinonStubbedInstance<Transpiler>;
   let statisticsMock: sinon.SinonStubbedInstance<Statistics>;
+  let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
 
   beforeEach(() => {
     strykerConfig = factory.config();
@@ -78,8 +79,12 @@ describe(Stryker.name, () => {
     transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
     statisticsMock = sinon.createStubInstance(Statistics);
+    configReaderMock = sinon.createStubInstance(ConfigReader);
 
-    strykerConfig.collectStatistics = 'no';
+    let expectedConfig = new Config();
+    expectedConfig.collectStatistics = 'no';
+    expectedConfig.testRunner = 'test';
+    configReaderMock.readConfig.returns(expectedConfig);
 
     temporaryDirectoryMock = mock(TemporaryDirectory);
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
@@ -119,7 +124,9 @@ describe(Stryker.name, () => {
       .withArgs(di.coreTokens.transpiler)
       .returns(transpilerMock)
       .withArgs(di.coreTokens.statistics)
-      .returns(statisticsMock);
+      .returns(statisticsMock)
+      .withArgs(di.coreTokens.configReader)
+      .returns(configReaderMock);
   });
 
   describe('when constructed', () => {
@@ -219,26 +226,37 @@ describe(Stryker.name, () => {
         expect(injectorMock.dispose).called;
       });
       it('should not send statistics with sendStatistics is false', async () => {
-        strykerConfig.collectStatistics = 'no';
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(statisticsMock.sendStatistics).have.not.been.called;
+        expect(statisticsMock.sendStatistics).not.called;
       });
       it('should not send statistics default, when no sendStatistics value is supplied in the config', async () => {
         sut = new Stryker({});
-        let config = new Config();
-        sinon.stub(ConfigReader.prototype, 'readConfig').returns(config);
+        let newConfigReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
+        newConfigReaderMock = sinon.createStubInstance(ConfigReader);
+
+        let expectedConfig = new Config();
+        expectedConfig.collectStatistics = 'no';
+        expectedConfig.testRunner = 'test';
+        newConfigReaderMock.readConfig.returns(expectedConfig);
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(newConfigReaderMock);
+        // delete strykerConfig.collectStatistics;
         await sut.runMutationTest();
-        expect(statisticsMock.sendStatistics).have.not.been.called;
+        expect(statisticsMock.sendStatistics).not.called;
       });
       it('should log error of sending statistics', async () => {
         const expectedError = Error('http status 400');
-        let config = new Config();
-        config.collectStatistics = 'yes';
-        sinon.stub(ConfigReader.prototype, 'readConfig').returns(config);
+        let configReaderMockDoCollect = sinon.createStubInstance(ConfigReader);
+        let expectedConfig = new Config();
+        expectedConfig.collectStatistics = 'yes';
+        expectedConfig.testRunner = 'test';
+        configReaderMockDoCollect.readConfig.returns(expectedConfig);
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).restore;
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(configReaderMockDoCollect);
         sut = new Stryker({});
         statisticsMock.sendStatistics.throws(expectedError);
         await sut.runMutationTest();
+        expect(statisticsMock.sendStatistics).called;
         expect(logMock.warn).to.have.been.calledWith('Problem sending statistics: Error: http status 400');
       });
     });
@@ -337,11 +355,13 @@ describe(Stryker.name, () => {
 
       it('send statistics with correct data', async () => {
         sinon.stub(scoreResultCalculator, 'calculate').returns({ mutationScore: 10 });
-        strykerConfig.collectStatistics = 'yes';
-        let config = new Config();
-        config.collectStatistics = 'yes';
-        config.testRunner = 'test';
-        sinon.stub(ConfigReader.prototype, 'readConfig').returns(config);
+        let configReaderMockDoCollect = sinon.createStubInstance(ConfigReader);
+        let expectedConfig = new Config();
+        expectedConfig.collectStatistics = 'yes';
+        expectedConfig.testRunner = 'test';
+        configReaderMockDoCollect.readConfig.returns(expectedConfig);
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).restore;
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(configReaderMockDoCollect);
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(injectorMock.resolve).calledWith(di.coreTokens.statistics);

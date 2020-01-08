@@ -28,6 +28,7 @@ export interface MainContext extends OptionsContext {
   [coreTokens.timer]: Timer;
   [coreTokens.temporaryDirectory]: TemporaryDirectory;
   [coreTokens.statistics]: Statistics;
+  [coreTokens.configReader]: ConfigReader;
 }
 
 export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector<MainContext> {
@@ -51,7 +52,8 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
     .provideClass(coreTokens.timer, Timer)
     .provideValue(coreTokens.httpClient, new HttpClient('main-injector-httpclient'))
-    .provideClass(coreTokens.statistics, Statistics);
+    .provideClass(coreTokens.statistics, Statistics)
+    .provideClass(coreTokens.configReader, ConfigReader);
 }
 
 function pluginDescriptorsFactory(config: Config): readonly string[] {

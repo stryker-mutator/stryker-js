@@ -19,7 +19,6 @@ import { transpilerFactory } from './transpiler';
 import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
 import { readConfig } from './config/readConfig';
-import ConfigReader from './config/ConfigReader';
 
 export default class Stryker {
   private readonly log: Logger;
@@ -112,7 +111,7 @@ export default class Stryker {
   private async collectStatistics(mutantResults: MutantResult[]) {
     try {
       let statisticsProcess = this.injector.resolve(coreTokens.statistics);
-      let config = readConfig(new ConfigReader(this.options, this.log));
+      let config = readConfig(this.injector.resolve(coreTokens.configReader));
       statisticsProcess.setStatistic('testRunner', config.testRunner);
       const score = this.getScore(this.injector.injectClass(ScoreResultCalculator), mutantResults);
       statisticsProcess.setStatistic('score', Math.round(score.mutationScore));
@@ -124,7 +123,7 @@ export default class Stryker {
   }
 
   private allowSendStatistics() {
-    let config = readConfig(new ConfigReader(this.options, this.log));
+    let config = readConfig(this.injector.resolve(coreTokens.configReader));
     return config.collectStatistics === 'yes';
   }
 
