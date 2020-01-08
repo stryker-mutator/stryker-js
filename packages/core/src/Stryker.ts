@@ -111,8 +111,8 @@ export default class Stryker {
   private async collectStatistics(mutantResults: MutantResult[]) {
     try {
       let statisticsProcess = this.injector.resolve(coreTokens.statistics);
-      let config = readConfig(this.injector.resolve(coreTokens.configReader));
-      statisticsProcess.setStatistic('testRunner', config.testRunner);
+      let configReader = this.injector.resolve(coreTokens.configReader);
+      statisticsProcess.setStatistic('testRunner', readConfig(configReader).testRunner);
       const score = this.getScore(this.injector.injectClass(ScoreResultCalculator), mutantResults);
       statisticsProcess.setStatistic('score', Math.round(score.mutationScore));
       statisticsProcess.setStatistic('duration', this.timer.elapsedSeconds());
@@ -123,8 +123,8 @@ export default class Stryker {
   }
 
   private allowSendStatistics() {
-    let config = readConfig(this.injector.resolve(coreTokens.configReader));
-    return config.collectStatistics === 'yes';
+    let configReader = this.injector.resolve(coreTokens.configReader);
+    return readConfig(configReader).collectStatistics === 'yes';
   }
 
   private logStatisticsOption() {
