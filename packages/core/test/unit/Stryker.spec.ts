@@ -240,7 +240,6 @@ describe(Stryker.name, () => {
         expectedConfig.testRunner = 'test';
         newConfigReaderMock.readConfig.returns(expectedConfig);
         injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(newConfigReaderMock);
-        // delete strykerConfig.collectStatistics;
         await sut.runMutationTest();
         expect(statisticsMock.sendStatistics).not.called;
       });
@@ -249,7 +248,6 @@ describe(Stryker.name, () => {
         let configReaderMockDoCollect = sinon.createStubInstance(ConfigReader);
         let expectedConfig = new Config();
         expectedConfig.collectStatistics = 'yes';
-        expectedConfig.testRunner = 'test';
         configReaderMockDoCollect.readConfig.returns(expectedConfig);
         injectorMock.resolve.withArgs(di.coreTokens.configReader).restore;
         injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(configReaderMockDoCollect);
@@ -365,6 +363,7 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(injectorMock.resolve).calledWith(di.coreTokens.statistics);
+        expect(logMock.info).calledWith('Anonymous statistics will be collected at the end of this process!');
         expect(statisticsMock.sendStatistics).called;
         expect(statisticsMock.setStatistic).calledWith('score', 10);
         expect(statisticsMock.setStatistic).calledWith('duration', timerMock.elapsedSeconds());
