@@ -8,7 +8,7 @@ import { StatisticsData } from './StatisticsData';
 const AZURE_URL = 'https://strykerstatistics.azurewebsites.net/api/ReceiveStatistics?code=jVZfGmoB6ofRPa/yPdN/mAOCd6ia67XQkTmLaGWCzlxO5a32PlLj6A==';
 
 export class Statistics {
-  public static inject = tokens(commonTokens.logger, commonTokens.httpClient);
+  public static inject = tokens(commonTokens.logger, 'httpClient');
   private statistics: StatisticsData = { implementation: 'Stryker' };
 
   constructor(private readonly log: Logger, private readonly httpClient: HttpClient) {}
