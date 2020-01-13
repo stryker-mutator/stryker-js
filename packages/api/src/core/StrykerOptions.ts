@@ -151,6 +151,11 @@ interface StrykerOptions {
    * The name of the dir name. Default: `.stryker-tmp`
    */
   tempDirName: string;
+
+  /**
+   * Whether anonymous user statistics will be send.
+   */
+  collectStatistics: string;
 }
 
 export default StrykerOptions;

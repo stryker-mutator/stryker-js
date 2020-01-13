@@ -31,6 +31,7 @@ import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 import Timer from '../../src/utils/Timer';
 import { mock, Mock, testableMutant } from '../helpers/producers';
 import { Statistics } from '../../src/statistics/Statistics';
+import ConfigReader from '../../src/config/ConfigReader';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
@@ -57,7 +58,8 @@ describe(Stryker.name, () => {
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let logMock: sinon.SinonStubbedInstance<Logger>;
   let transpilerMock: sinon.SinonStubbedInstance<Transpiler>;
-  let statisticsMock: Mock<Statistics>;
+  let statisticsMock: sinon.SinonStubbedInstance<Statistics>;
+  let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
 
   beforeEach(() => {
     strykerConfig = factory.config();
@@ -76,7 +78,13 @@ describe(Stryker.name, () => {
     mutationTestExecutorMock = mock(MutationTestExecutor);
     transpilerMock = factory.transpiler();
     timerMock = sinon.createStubInstance(Timer);
-    statisticsMock = mock(Statistics);
+    statisticsMock = sinon.createStubInstance(Statistics);
+    configReaderMock = sinon.createStubInstance(ConfigReader);
+
+    let expectedConfig = new Config();
+    expectedConfig.collectStatistics = 'no';
+    expectedConfig.testRunner = 'test';
+    configReaderMock.readConfig.returns(expectedConfig);
 
     temporaryDirectoryMock = mock(TemporaryDirectory);
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
@@ -99,9 +107,7 @@ describe(Stryker.name, () => {
       .withArgs(MutationTestReportCalculator)
       .returns(mutationTestReportCalculatorMock)
       .withArgs(ScoreResultCalculator)
-      .returns(scoreResultCalculator)
-      .withArgs(Statistics)
-      .returns(statisticsMock);
+      .returns(scoreResultCalculator);
     injectorMock.resolve
       .withArgs(commonTokens.options)
       .returns(strykerConfig)
@@ -116,7 +122,11 @@ describe(Stryker.name, () => {
       .withArgs(commonTokens.getLogger)
       .returns(() => logMock)
       .withArgs(di.coreTokens.transpiler)
-      .returns(transpilerMock);
+      .returns(transpilerMock)
+      .withArgs(di.coreTokens.statistics)
+      .returns(statisticsMock)
+      .withArgs(di.coreTokens.configReader)
+      .returns(configReaderMock);
   });
 
   describe('when constructed', () => {
@@ -215,6 +225,38 @@ describe(Stryker.name, () => {
         await sut.runMutationTest();
         expect(injectorMock.dispose).called;
       });
+      it('should not send statistics with sendStatistics is false', async () => {
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(statisticsMock.sendStatistics).not.called;
+      });
+      it('should not send statistics default, when no sendStatistics value is supplied in the config', async () => {
+        sut = new Stryker({});
+        let newConfigReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
+        newConfigReaderMock = sinon.createStubInstance(ConfigReader);
+
+        let expectedConfig = new Config();
+        expectedConfig.collectStatistics = 'no';
+        expectedConfig.testRunner = 'test';
+        newConfigReaderMock.readConfig.returns(expectedConfig);
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(newConfigReaderMock);
+        await sut.runMutationTest();
+        expect(statisticsMock.sendStatistics).not.called;
+      });
+      it('should log error of sending statistics', async () => {
+        const expectedError = Error('http status 400');
+        let configReaderMockDoCollect = sinon.createStubInstance(ConfigReader);
+        let expectedConfig = new Config();
+        expectedConfig.collectStatistics = 'yes';
+        configReaderMockDoCollect.readConfig.returns(expectedConfig);
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).restore;
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(configReaderMockDoCollect);
+        sut = new Stryker({});
+        statisticsMock.sendStatistics.throws(expectedError);
+        await sut.runMutationTest();
+        expect(statisticsMock.sendStatistics).called;
+        expect(logMock.warn).to.have.been.calledWith('Problem sending statistics: Error: http status 400');
+      });
     });
 
     describe('happy flow', () => {
@@ -307,6 +349,25 @@ describe(Stryker.name, () => {
         await sut.runMutationTest();
         expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, false);
         expect(injectorMock.provideClass).calledWith(di.coreTokens.transpiler, TranspilerFacade);
+      });
+
+      it('send statistics with correct data', async () => {
+        sinon.stub(scoreResultCalculator, 'calculate').returns({ mutationScore: 10 });
+        let configReaderMockDoCollect = sinon.createStubInstance(ConfigReader);
+        let expectedConfig = new Config();
+        expectedConfig.collectStatistics = 'yes';
+        expectedConfig.testRunner = 'test';
+        configReaderMockDoCollect.readConfig.returns(expectedConfig);
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).restore;
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(configReaderMockDoCollect);
+        sut = new Stryker({});
+        await sut.runMutationTest();
+        expect(injectorMock.resolve).calledWith(di.coreTokens.statistics);
+        expect(logMock.info).calledWith('Anonymous statistics will be collected at the end of this process!');
+        expect(statisticsMock.sendStatistics).called;
+        expect(statisticsMock.setStatistic).calledWith('score', 10);
+        expect(statisticsMock.setStatistic).calledWith('duration', timerMock.elapsedSeconds());
+        expect(statisticsMock.setStatistic).calledWith('testRunner', 'test');
       });
     });
   });

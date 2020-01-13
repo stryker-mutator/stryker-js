@@ -90,4 +90,14 @@ export class StrykerInquirer {
     });
     return options.filter(_ => _.name === answers.packageManager)[0];
   }
+
+  public async promptStatistics(options: PromptOption[]): Promise<PromptOption> {
+    const answers = await inquirer.prompt<{ selectedStatistics: string }>({
+      choices: options.map(_ => _.name),
+      message: 'Do you want to send anonymous user statistics to help improve Stryker?',
+      name: 'selectedStatistics',
+      type: 'list'
+    });
+    return options.filter(_ => _.name === answers.selectedStatistics)[0];
+  }
 }

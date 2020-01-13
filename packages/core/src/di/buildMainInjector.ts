@@ -5,12 +5,14 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { getLogger } from 'log4js';
 import { rootInjector } from 'typed-inject';
+import { HttpClient } from 'typed-rest-client/HttpClient';
 
 import { ConfigEditorApplier, readConfig } from '../config';
 import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
+import { Statistics } from '../statistics/Statistics';
 
 import { loggerFactory, mutatorDescriptorFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
 
@@ -25,6 +27,8 @@ export interface MainContext extends OptionsContext {
   [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
   [coreTokens.timer]: Timer;
   [coreTokens.temporaryDirectory]: TemporaryDirectory;
+  [coreTokens.statistics]: Statistics;
+  [coreTokens.configReader]: ConfigReader;
 }
 
 export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector<MainContext> {
@@ -46,7 +50,10 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideClass(coreTokens.reporter, BroadcastReporter)
     .provideFactory(coreTokens.testFramework, testFrameworkFactory)
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
-    .provideClass(coreTokens.timer, Timer);
+    .provideClass(coreTokens.timer, Timer)
+    .provideValue(coreTokens.httpClient, new HttpClient('main-injector-httpclient'))
+    .provideClass(coreTokens.statistics, Statistics)
+    .provideClass(coreTokens.configReader, ConfigReader);
 }
 
 function pluginDescriptorsFactory(config: Config): readonly string[] {

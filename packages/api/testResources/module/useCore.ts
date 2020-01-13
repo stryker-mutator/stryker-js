@@ -27,6 +27,7 @@ const optionsAllArgs: StrykerOptions = {
     version: 'version'
   },
   tempDirName: '.stryker-tmp',
+  collectStatistics: 'yes',
 };
 
 const textFile: File = new File('foo/bar.js', Buffer.from('foobar'));
