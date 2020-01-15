@@ -36,9 +36,9 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/javascript-mutator#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/generator": "~7.7.0",
-    "@babel/parser": "~7.7.0",
-    "@babel/traverse": "~7.7.0",
+    "@babel/generator": "~7.8.3",
+    "@babel/parser": "~7.8.3",
+    "@babel/traverse": "~7.8.3",
     "@stryker-mutator/api": "^2.5.0",
     "tslib": "~1.10.0"
   },
