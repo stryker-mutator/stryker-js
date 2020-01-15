@@ -107,18 +107,17 @@
       }
     },
     "eslint.enable": true,
-    "eslint.autoFixOnSave": true,
     "eslint.validate": [
       "javascript",
-      {
-        "language": "typescript",
-        "autoFix": true
-      }
+      "typescript"
     ],
     "grunt.autoDetect": "off",
     "gulp.autoDetect": "off",
     "jake.autoDetect": "off",
-    "task.autoDetect": "off"
+    "task.autoDetect": "off",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
   },
   "extensions": {
     "recommendations": [
