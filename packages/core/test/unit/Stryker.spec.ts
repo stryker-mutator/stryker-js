@@ -230,18 +230,16 @@ describe(Stryker.name, () => {
         await sut.runMutationTest();
         expect(statisticsMock.sendStatistics).not.called;
       });
-      it('should not send statistics default, when no sendStatistics value is supplied in the config', async () => {
-        sut = new Stryker({});
+      it('should send statistics default, when no sendStatistics value is supplied in the config', async () => {
         let newConfigReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
         newConfigReaderMock = sinon.createStubInstance(ConfigReader);
-
         let expectedConfig = new Config();
-        expectedConfig.collectStatistics = 'no';
-        expectedConfig.testRunner = 'test';
         newConfigReaderMock.readConfig.returns(expectedConfig);
+        injectorMock.resolve.withArgs(di.coreTokens.configReader).restore;
         injectorMock.resolve.withArgs(di.coreTokens.configReader).returns(newConfigReaderMock);
+        sut = new Stryker({});
         await sut.runMutationTest();
-        expect(statisticsMock.sendStatistics).not.called;
+        expect(statisticsMock.sendStatistics).called;
       });
       it('should log error of sending statistics', async () => {
         const expectedError = Error('http status 400');

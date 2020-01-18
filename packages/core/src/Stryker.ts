@@ -124,7 +124,7 @@ export default class Stryker {
 
   private allowSendStatistics() {
     let configReader = this.injector.resolve(coreTokens.configReader);
-    return readConfig(configReader).collectStatistics === 'yes';
+    return !(readConfig(configReader).collectStatistics != 'yes');
   }
 
   private logStatisticsOption() {
