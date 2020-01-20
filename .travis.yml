@@ -15,9 +15,6 @@ jobs:
     - stage: test
       name: "End 2 end tests"
       script: npm run build && npm run e2e
-    - stage: Performance test
-      name: "npm run perf"
-      script: npm run build && npm run perf
     - stage: release
       script: npm run build && ".travis/ci-release.jsh"
       env:
@@ -34,5 +31,3 @@ stages:
   - test
   - name: release
     if: branch = release AND fork = false
-  - name: "Performance test"
-    if: type = cron # Only run in nightly build
