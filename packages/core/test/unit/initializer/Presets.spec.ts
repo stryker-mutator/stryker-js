@@ -41,8 +41,8 @@ describe('Presets', () => {
       reactPreset = new ReactPreset();
     });
 
-    it('should have the name "react"', () => {
-      expect(reactPreset.name).to.eq('react');
+    it('should have the name "create-react-app"', () => {
+      expect(reactPreset.name).to.eq('create-react-app');
     });
 
     it('should mutate typescript when TSX is chosen', async () => {
