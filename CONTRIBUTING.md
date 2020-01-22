@@ -95,7 +95,7 @@ maintainers is around a day or so.
 
 ## Tools
 
-As Stryker uses the Abstract Syntax Tree (AST) to create mutations, you recommend you to use [ASTExplorer](https://astexplorer.net/) to get familiar with the concepts involved.
+As Stryker uses the Abstract Syntax Tree (AST) to create mutations, we recommend you to use [ASTExplorer](https://astexplorer.net/) to get familiar with the concepts involved.
 
 # Bug triage
 
