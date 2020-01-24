@@ -48,7 +48,7 @@
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^2.0.0",
-    "jest": ">= 22.0.0"
+    "jest": ">=22.0.0 <25.0.0"
   },
   "dependencies": {
     "@stryker-mutator/api": "^2.5.0",
