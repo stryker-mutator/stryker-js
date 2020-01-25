@@ -93,6 +93,10 @@ New features are welcome! Either as requests or proposals.
 Don't get discouraged! We estimate that the response time from the
 maintainers is around a day or so.
 
+## Tools
+
+As Stryker uses the Abstract Syntax Tree (AST) to create mutations, we recommend you to use [ASTExplorer](https://astexplorer.net/) to get familiar with the concepts involved.
+
 # Bug triage
 
 Found a bug? Don't worry, we'll fix it, or you can ;)
