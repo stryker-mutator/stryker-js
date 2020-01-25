@@ -1,6 +1,6 @@
 import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
-import { Mutant, Mutator, MutatorFactory } from '@stryker-mutator/api/mutant';
+import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
 
 class MyMutator implements Mutator {
   public name = 'myMutator';
@@ -14,9 +14,4 @@ class MyMutator implements Mutator {
   }
 }
 
-MutatorFactory.instance().register('myMutator', MyMutator);
-const myMutator = MutatorFactory.instance().create('myMutator', new Config());
-if (!(myMutator instanceof MyMutator)) {
-  throw Error('Something wrong with myMutator');
-}
-console.log(myMutator.mutate([]));
+console.log(new MyMutator().mutate([]));

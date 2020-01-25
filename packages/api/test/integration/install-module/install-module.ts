@@ -35,18 +35,11 @@ describe('we have a module using stryker', () => {
         });
       };
       arrangeActAndAssertModule('core', ['files', 'file']);
-      arrangeActAndAssertModule('config', ["plugins: [ 'stryker-*' ]"]);
-      arrangeActAndAssertModule('test_framework', ['framework-1']);
+      arrangeActAndAssertModule('config', ["plugins: [ '@stryker-mutator/*' ]"]);
+      arrangeActAndAssertModule('test_framework', ['done']);
       arrangeActAndAssertModule('mutant', ["mutatorName: 'foo'"]);
-      arrangeActAndAssertModule('report', [
-        'empty',
-        'all',
-        'status: 3',
-        "originalLines: 'string'",
-        'Mutant status runtime error: RuntimeError',
-        'transpile error: TranspileError'
-      ]);
-      arrangeActAndAssertModule('test_runner', ['MyTestRunner']);
+      arrangeActAndAssertModule('report', ['status: 3', 'Mutant status runtime error: RuntimeError', 'transpile error: TranspileError']);
+      arrangeActAndAssertModule('test_runner', ['done']);
       arrangeActAndAssertModule('transpile', ['foo', 'bar']);
     });
   });

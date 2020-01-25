@@ -2,12 +2,11 @@ import {
   Reporter,
   MutantResult,
   MutantStatus,
-  ReporterFactory,
   SourceFile,
   MatchedMutant
 } from '@stryker-mutator/api/report';
-import { Config } from '@stryker-mutator/api/config';
-class EmptyReporter {}
+
+class EmptyReporter implements Reporter {}
 
 class AllReporter implements Reporter {
   public onSourceFileRead(file: SourceFile) {}
@@ -20,17 +19,6 @@ class AllReporter implements Reporter {
   }
 }
 
-ReporterFactory.instance().register('empty', EmptyReporter);
-ReporterFactory.instance().register('all', AllReporter);
-console.log(ReporterFactory.instance().knownNames());
-const emptyReporter = ReporterFactory.instance().create('empty', new Config());
-const allReporter = ReporterFactory.instance().create('all', new Config());
-if (!(emptyReporter instanceof EmptyReporter)) {
-  throw Error('Something wrong with empty reporter');
-}
-if (!(allReporter instanceof AllReporter)) {
-  throw Error('Something wrong with all reporter');
-}
 
 const result: MutantResult = {
   id: '13',
@@ -44,6 +32,7 @@ const result: MutantResult = {
   status: MutantStatus.TimedOut,
   testsRan: ['']
 };
+const allReporter = new AllReporter();
 allReporter.onMutantTested(result);
 console.log(result);
 console.log(
@@ -59,7 +48,8 @@ const matchedMutant: MatchedMutant = {
   mutatorName: '',
   replacement: 'string',
   scopedTestIds: [52],
-  timeSpentScopedTests: 52
+  timeSpentScopedTests: 52,
+  runAllTests: false,
 };
 
 allReporter.onAllMutantsMatchedWithTests([Object.freeze(matchedMutant)]);

@@ -52,6 +52,8 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     requireResolveStub.throws(error);
 
     // Act & Assert
-    expect(() => sut.loadConfig()).throws('Unable to locate package react-scripts. This package is required when projectType is set to "react".');
+    expect(() => sut.loadConfig()).throws(
+      'Unable to locate package react-scripts. This package is required when projectType is set to "create-react-app".'
+    );
   });
 });

@@ -5,7 +5,6 @@ import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import BabelParser from './helpers/BabelParser';
-import copy from './helpers/copy';
 import { NodeMutator } from './mutators/NodeMutator';
 import { NODE_MUTATORS_TOKEN, PARSER_TOKEN } from './helpers/tokens';
 
@@ -21,35 +20,27 @@ export class JavaScriptMutator implements Mutator {
 
       this.parser.getNodes(ast).forEach(node => {
         this.mutators.forEach(mutator => {
-          const mutatedNodes = mutator.mutate(node, copy);
+          const fileName = file.name;
+          const mutatorName = mutator.name;
 
-          if (mutatedNodes.length) {
-            const newMutants = this.generateMutants(mutatedNodes, mutator.name, file.name);
-            mutants.push(...newMutants);
-          }
+          mutator.mutate(node).forEach(([original, mutation]) => {
+            if (original.start !== null && original.end !== null) {
+              const replacement = types.isNode(mutation) ? this.parser.generateCode(mutation) : mutation.raw;
+
+              mutants.push({
+                fileName: fileName,
+                mutatorName: mutatorName,
+                range: [original.start, original.end],
+                replacement
+              });
+
+              this.log.trace(`Generated mutant for mutator ${mutatorName} in file ${fileName} with replacement code "${replacement}"`);
+            }
+          });
         });
       });
     });
 
-    return mutants;
-  }
-
-  private generateMutants(mutatedNodes: types.Node[], mutatorName: string, fileName: string): Mutant[] {
-    const mutants: Mutant[] = [];
-    mutatedNodes.forEach(node => {
-      const replacement = this.parser.generateCode(node);
-      if (node.start !== null && node.end !== null) {
-        const range: [number, number] = [node.start, node.end];
-        const mutant: Mutant = {
-          fileName,
-          mutatorName,
-          range,
-          replacement
-        };
-        this.log.trace(`Generated mutant for mutator ${mutatorName} in file ${fileName} with replacement code "${replacement}"`);
-        mutants.push(mutant);
-      }
-    });
     return mutants;
   }
 }

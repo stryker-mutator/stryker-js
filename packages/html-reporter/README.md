@@ -1,3 +1,4 @@
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster%3Fmodule%3Dhtml-reporter)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master?module=html-reporter)
 [![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/html-reporter.svg)](https://www.npmjs.com/package/@stryker-mutator/html-reporter)
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/html-reporter.svg)](https://img.shields.io/node/v/@stryker-mutator/html-reporter.svg)
@@ -27,7 +28,7 @@ You can either configure the html reporter from the `stryker.conf.js` file or fr
 
 ### Load the plugin
 
-In order to use the `@stryker-mutator/html-reporter` it must be loaded in the stryker mutation testing framework via the stryker configuration. 
+In order to use the `@stryker-mutator/html-reporter` it must be loaded in the stryker mutation testing framework via the stryker configuration.
 Easiest is to *leave out* the `plugins` section from your config entirely. That way, all node_modules starting with `@stryker-mutator/*` will be loaded.
 
 If you do descide to choose specific modules, don't forget to add `'@stryker-mutator/html-reporter'` to the list of plugins to load.
@@ -42,7 +43,7 @@ You can configure the html reporter by adding a `htmlReporter` object to your co
 
 #### htmlReporter.baseDir
 
-Configure the base directory to write the html report to. 
+Configure the base directory to write the html report to.
 
 ### Full config example
 
@@ -64,4 +65,4 @@ exports = function(config){
 ## Usage
 
 Use Stryker as you normally would. The report will be available where you have configured it, or in the `reports/mutation/html` as a default.
-See [https://stryker-mutator.io](https://stryker-mutator.io) for more info. 
+See [https://stryker-mutator.io](https://stryker-mutator.io) for more info.

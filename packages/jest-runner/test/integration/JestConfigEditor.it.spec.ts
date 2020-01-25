@@ -23,6 +23,39 @@ describe('Integration test for Jest ConfigEditor', () => {
     config = new Config();
   });
 
+  it('should create a Jest configuration for a create-react-app project', () => {
+    config.set({ jest: { projectType: 'create-react-app' } });
+
+    jestConfigEditor.edit(config);
+
+    const expectedResult = {
+      bail: false,
+      collectCoverage: false,
+      collectCoverageFrom: ['!src/**/*.d.ts', 'src/**/*.{js,jsx,ts,tsx}'],
+      moduleFileExtensions: ['js', 'json', 'jsx', 'node', 'ts', 'tsx', 'web.js', 'web.jsx', 'web.ts', 'web.tsx'],
+      moduleNameMapper: {
+        '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
+        '^react-native$': 'react-native-web'
+      },
+      notify: false,
+      rootDir: projectRoot,
+      setupFiles: [path.join(projectRoot, 'node_modules', 'react-app-polyfill', 'jsdom.js')],
+      setupTestFrameworkScriptFile: undefined,
+      testEnvironment: 'jsdom',
+      testMatch: ['<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}', '<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}'],
+      testResultsProcessor: undefined,
+      transform: {
+        '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
+        '^.+\\.(js|jsx|ts|tsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
+        '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js')
+      },
+      transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$', '^.+\\.module\\.(css|sass|scss)$'],
+      verbose: false
+    };
+
+    assertJestConfig(expectedResult, config.jest.config);
+  });
+
   it('should create a Jest configuration for a React project', () => {
     config.set({ jest: { projectType: 'react' } });
 
@@ -50,6 +83,55 @@ describe('Integration test for Jest ConfigEditor', () => {
         '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js')
       },
       transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$', '^.+\\.module\\.(css|sass|scss)$'],
+      verbose: false
+    };
+
+    assertJestConfig(expectedResult, config.jest.config);
+  });
+
+  it('should log a deprecation warning when projectType is "react"', () => {
+    config.set({ jest: { projectType: 'react' } });
+
+    jestConfigEditor.edit(config);
+
+    expect(testInjector.logger.warn).calledWith(
+      'DEPRECATED: The projectType "react" is deprecated. Use projectType "create-react-app" for react projects created by "create-react-app" or use "custom" for other react projects.'
+    );
+  });
+
+  it('should create a Jest configuration for a create-react-app + TypeScript project', () => {
+    config.set({ jest: { projectType: 'create-react-app-ts' } });
+
+    jestConfigEditor.edit(config);
+
+    const expectedResult = {
+      bail: false,
+      collectCoverage: false,
+      collectCoverageFrom: ['!**/*.d.ts', 'src/**/*.{js,jsx,ts,tsx}'],
+      globals: {
+        'ts-jest': {
+          tsConfigFile: path.join(projectRoot, 'testResources', 'reactTsProject', 'tsconfig.test.json')
+        }
+      },
+      moduleFileExtensions: ['web.ts', 'ts', 'web.tsx', 'tsx', 'web.js', 'js', 'web.jsx', 'jsx', 'json', 'node', 'mjs'],
+      moduleNameMapper: {
+        '^react-native$': 'react-native-web'
+      },
+      notify: false,
+      rootDir: projectRoot,
+      setupFiles: [path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'polyfills.js')],
+      setupTestFrameworkScriptFile: undefined,
+      testEnvironment: 'jsdom',
+      testMatch: ['<rootDir>/src/**/__tests__/**/*.(j|t)s?(x)', '<rootDir>/src/**/?(*.)(spec|test).(j|t)s?(x)'],
+      testResultsProcessor: undefined,
+      testURL: 'http://localhost',
+      transform: {
+        '^(?!.*\\.(js|jsx|mjs|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'fileTransform.js'),
+        '^.+\\.(js|jsx|mjs)$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'babelTransform.js'),
+        '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'cssTransform.js'),
+        '^.+\\.tsx?$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'typescriptTransform.js')
+      },
+      transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|ts|tsx)$'],
       verbose: false
     };
 
@@ -93,6 +175,16 @@ describe('Integration test for Jest ConfigEditor', () => {
     };
 
     assertJestConfig(expectedResult, config.jest.config);
+  });
+
+  it('should log a deprecation warning when projectType is "react-ts"', () => {
+    config.set({ jest: { projectType: 'react-ts' } });
+
+    jestConfigEditor.edit(config);
+
+    expect(testInjector.logger.warn).calledWith(
+      'DEPRECATED: The projectType "react-ts" is deprecated. Use projectType "create-react-app-ts" for react projects created by "create-react-app" or use "custom" for other react projects.'
+    );
   });
 
   it('should load the Jest configuration from the jest.config.js', () => {

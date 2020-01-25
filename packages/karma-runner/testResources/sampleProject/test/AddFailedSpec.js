@@ -8,7 +8,7 @@ describe('Add', function() {
 
     expect(actual).toBe(expected);
   });
-  
+
   it('should be to add able 1 to a number and actually add 2', function() {
     var num = 2;
     var expected = 4;

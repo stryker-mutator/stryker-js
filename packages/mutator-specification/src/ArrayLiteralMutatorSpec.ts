@@ -4,6 +4,10 @@ import ExpectMutation from './ExpectMutation';
 
 export default function ArrayLiteralMutatorSpec(name: string, expectMutation: ExpectMutation) {
   describe('ArrayLiteralMutator', () => {
+    beforeEach(() => {
+      console.warn('DEPRECATED: please migrate from the ArrayLiteralMutatorSpec to the ArrayDeclarationMutatorSpec');
+    });
+
     it('should have name "ArrayLiteral"', () => {
       expect(name).eq('ArrayLiteral');
     });

@@ -1,33 +1,27 @@
-import ArrayLiteralMutator from './ArrayLiteralMutator';
-import ArrayNewExpressionMutator from './ArrayNewExpressionMutator';
-import BinaryExpressionMutator from './BinaryExpressionMutator';
-import BlockMutator from './BlockMutator';
-import BooleanSubstitutionMutator from './BooleanSubstitutionMutator';
+import ArithmeticOperatorMutator from './ArithmeticOperatorMutator';
+import ArrayDeclarationMutator from './ArrayDeclarationMutator';
+import ArrowFunctionMutator from './ArrowFunctionMutator';
+import BlockStatementMutator from './BlockStatementMutator';
+import BooleanLiteralMutator from './BooleanLiteralMutator';
 import ConditionalExpressionMutator from './ConditionalExpressionMutator';
-import DoStatementMutator from './DoStatementMutator';
-import ForStatementMutator from './ForStatementMutator';
-import IfStatementMutator from './IfStatementMutator';
+import EqualityOperatorMutator from './EqualityOperatorMutator';
 import ObjectLiteralMutator from './ObjectLiteralMutator';
-import PostfixUnaryExpressionMutator from './PostfixUnaryExpressionMutator';
-import PrefixUnaryExpressionMutator from './PrefixUnaryExpressionMutator';
 import StringLiteralMutator from './StringLiteralMutator';
-import SwitchCaseMutator from './SwitchCaseMutator';
-import WhileStatementMutator from './WhileStatementMutator';
+import LogicalOperatorMutator from './LogicalOperatorMutator';
+import UnaryOperatorMutator from './UnaryOperatorMutator';
+import UpdateOperatorMutator from './UpdateOperatorMutator';
 
 export const nodeMutators = Object.freeze([
-  new ArrayLiteralMutator(),
-  new ArrayNewExpressionMutator(),
-  new BinaryExpressionMutator(),
-  new BlockMutator(),
-  new BooleanSubstitutionMutator(),
+  new ArithmeticOperatorMutator(),
+  new ArrayDeclarationMutator(),
+  new ArrowFunctionMutator(),
+  new BlockStatementMutator(),
+  new BooleanLiteralMutator(),
   new ConditionalExpressionMutator(),
-  new DoStatementMutator(),
-  new ForStatementMutator(),
-  new IfStatementMutator(),
+  new EqualityOperatorMutator(),
+  new LogicalOperatorMutator(),
   new ObjectLiteralMutator(),
-  new PostfixUnaryExpressionMutator(),
-  new PrefixUnaryExpressionMutator(),
   new StringLiteralMutator(),
-  new SwitchCaseMutator(),
-  new WhileStatementMutator()
+  new UnaryOperatorMutator(),
+  new UpdateOperatorMutator()
 ]);

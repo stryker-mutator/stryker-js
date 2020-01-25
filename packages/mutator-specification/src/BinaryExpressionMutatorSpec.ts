@@ -4,6 +4,12 @@ import ExpectMutation from './ExpectMutation';
 
 export default function BinaryExpressionMutatorSpec(name: string, expectMutation: ExpectMutation) {
   describe('BinaryExpressionMutator', () => {
+    beforeEach(() => {
+      console.warn(
+        'DEPRECATED: please migrate from the BinaryExpressionMutatorSpec to the ArithmeticOperatorMutatorSpec, EqualityOperatorMutatorSpec and LogicalOperatorMutatorSpec'
+      );
+    });
+
     it('should have name "BinaryExpression"', () => {
       expect(name).eq('BinaryExpression');
     });

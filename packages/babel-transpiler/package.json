@@ -1,13 +1,12 @@
 {
   "name": "@stryker-mutator/babel-transpiler",
-  "version": "2.3.0",
+  "version": "2.5.0",
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {
-    "start": "tsc -w",
-    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports",
     "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 90 --branches 80 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 100000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\""
+    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 100000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
+    "stryker": "node ../core/bin/stryker run"
   },
   "nyc": {
     "exclude": [
@@ -44,8 +43,8 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/babel-transpiler#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stryker-mutator/api": "^2.3.0",
-    "@stryker-mutator/util": "^2.3.0",
+    "@stryker-mutator/api": "^2.5.0",
+    "@stryker-mutator/util": "^2.5.0",
     "minimatch": "~3.0.4"
   },
   "peerDependencies": {
@@ -53,14 +52,14 @@
     "@stryker-mutator/core": "^2.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "~7.7.0",
-    "@babel/core": "~7.7.0",
-    "@babel/plugin-transform-typescript": "^7.3.2",
-    "@babel/preset-env": "~7.7.1",
-    "@babel/preset-flow": "^7.0.0",
-    "@babel/preset-stage-2": "^7.0.0",
-    "@babel/preset-typescript": "^7.1.0",
-    "@stryker-mutator/test-helpers": "^2.3.0",
+    "@babel/cli": "~7.8.3",
+    "@babel/core": "~7.8.3",
+    "@babel/plugin-transform-typescript": "^7.8.3",
+    "@babel/preset-env": "~7.8.3",
+    "@babel/preset-flow": "^7.8.3",
+    "@babel/preset-stage-2": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@stryker-mutator/test-helpers": "^2.5.0",
     "@types/babel__core": "~7.1.0",
     "@types/babel__generator": "~7.6.0",
     "@types/babel__template": "~7.0.1",

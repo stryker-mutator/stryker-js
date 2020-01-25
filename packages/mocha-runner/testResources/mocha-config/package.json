@@ -6,5 +6,5 @@
     "timeout": 20,
     "foo": "bar",
     "ui": "tdd"
-  } 
+  }
 }

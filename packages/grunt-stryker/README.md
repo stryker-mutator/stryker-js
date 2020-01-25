@@ -25,7 +25,7 @@ grunt.loadNpmTasks('grunt-stryker');
 ## The "stryker" task
 
 ### Overview
-In your project's Gruntfile, add a section named `stryker` to the data object passed into `grunt.initConfig()` and then add a task. 
+In your project's Gruntfile, add a section named `stryker` to the data object passed into `grunt.initConfig()` and then add a task.
 In this example we've called the task `jasmine` due to the fact that we plan on using the task for running Jasmine tests, but feel free to use any name you want.
 
 ```js
@@ -61,9 +61,9 @@ An object with arrays of globbing expressions used for selecting the files that 
 Type: `string`
 
 A location to a [Stryker config file](https://github.com/stryker-mutator/stryker#config-file). That file should export a function which accepts a "config" object.
-On that object you can configure all options as an alternative for the Gruntfile. 
+On that object you can configure all options as an alternative for the Gruntfile.
 If an option is configured in both the Gruntfile and in the config file, the Gruntfile wins.
-An example config: 
+An example config:
 ```javascript
 module.exports = function(config){
   config.set({
@@ -75,13 +75,13 @@ module.exports = function(config){
 ```
 
 ### Other options
-All options will be passed through to `Stryker` itself. See [the readme there](https://github.com/stryker-mutator/stryker#stryker) for more info.  
+All options will be passed through to `Stryker` itself. See [the readme there](https://github.com/stryker-mutator/stryker#stryker) for more info.
 
 ### Usage Examples
 
 #### Default Options
-In this example, we run mutation testing using every JavaScript file in the `src` folder and every file in the `test` folder except for `test/IgnoredTestFile.js`.  
-We've called the task `jasmine` here due to the fact that we plan on using the task for running Jasmine tests, but feel free to use any name you want.  
+In this example, we run mutation testing using every JavaScript file in the `src` folder and every file in the `test` folder except for `test/IgnoredTestFile.js`.
+We've called the task `jasmine` here due to the fact that we plan on using the task for running Jasmine tests, but feel free to use any name you want.
 Feel free to also choose the names of the arrays of files, we've used `src` and `tests` in this example.
 
 ```js
@@ -113,7 +113,7 @@ grunt.initConfig({
   stryker: {
     jasmine: {
       options: {
-        configFile: 'stryker.conf.js' 
+        configFile: 'stryker.conf.js'
       }
     },
   },
@@ -128,11 +128,11 @@ module.exports = function(config){
   config.set({
     files: [{ pattern: 'src/**/*.js', mutated: true} , 'test/myFirstFile.spec.js', 'test/mySecondFile.spec.js'],
     testFramework: 'jasmine',
-    testRunner: 'karma'    
+    testRunner: 'karma'
   });
 }
 ```
-**Note:** It's not possible to exclude files in a config file using `!` like: `!myFile.js`. This is possible when you don't use a config file but define the options your Gruntfile. 
+**Note:** It's not possible to exclude files in a config file using `!` like: `!myFile.js`. This is possible when you don't use a config file but define the options your Gruntfile.
 See [node-glob](https://github.com/isaacs/node-glob#glob) to know what *is* possible.
 
 ## Supported mutations

@@ -2,79 +2,79 @@
   "folders": [
     {
       "name": "core",
-      "path": "packages\\core"
+      "path": "packages/core"
     },
     {
       "name": "grunt-stryker",
-      "path": "packages\\grunt-stryker"
+      "path": "packages/grunt-stryker"
     },
     {
       "name": "api",
-      "path": "packages\\api"
+      "path": "packages/api"
     },
     {
       "name": "babel-transpiler",
-      "path": "packages\\babel-transpiler"
+      "path": "packages/babel-transpiler"
     },
     {
       "name": "html-reporter",
-      "path": "packages\\html-reporter"
+      "path": "packages/html-reporter"
     },
     {
       "name": "jasmine-framework",
-      "path": "packages\\jasmine-framework"
+      "path": "packages/jasmine-framework"
     },
     {
       "name": "javascript-mutator",
-      "path": "packages\\javascript-mutator"
+      "path": "packages/javascript-mutator"
     },
     {
       "name": "jasmine-runner",
-      "path": "packages\\jasmine-runner"
+      "path": "packages/jasmine-runner"
     },
     {
       "name": "jest-runner",
-      "path": "packages\\jest-runner"
+      "path": "packages/jest-runner"
     },
     {
       "name": "karma-runner",
-      "path": "packages\\karma-runner"
+      "path": "packages/karma-runner"
     },
     {
       "name": "mocha-framework",
-      "path": "packages\\mocha-framework"
+      "path": "packages/mocha-framework"
     },
     {
       "name": "mocha-runner",
-      "path": "packages\\mocha-runner"
+      "path": "packages/mocha-runner"
     },
     {
       "name": "mutator-specification",
-      "path": "packages\\mutator-specification"
+      "path": "packages/mutator-specification"
     },
     {
       "name": "typescript",
-      "path": "packages\\typescript"
+      "path": "packages/typescript"
     },
     {
       "name": "vue-mutator",
-      "path": "packages\\vue-mutator"
+      "path": "packages/vue-mutator"
     },
     {
       "name": "webpack-transpiler",
-      "path": "packages\\webpack-transpiler"
+      "path": "packages/webpack-transpiler"
     },
     {
       "name": "wct-runner",
-      "path": "packages\\wct-runner"
+      "path": "packages/wct-runner"
     },
     {
       "name": "util",
-      "path": "packages\\util"
+      "path": "packages/util"
     },
     {
       "name": "test-helpers",
-      "path": "packages\\test-helpers"
+      "path": "packages/test-helpers"
     },
     {
       "name": "e2e",
@@ -107,18 +107,22 @@
       }
     },
     "eslint.enable": true,
-    "eslint.autoFixOnSave": true,
     "eslint.validate": [
       "javascript",
-      {
-        "language": "typescript",
-        "autoFix": true
-      }
-    ]
+      "typescript"
+    ],
+    "grunt.autoDetect": "off",
+    "gulp.autoDetect": "off",
+    "jake.autoDetect": "off",
+    "task.autoDetect": "off",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
   },
   "extensions": {
     "recommendations": [
-      "dbaeumer.vscode-eslint"
+      "dbaeumer.vscode-eslint",
+      "EditorConfig.EditorConfig"
     ]
   }
 }

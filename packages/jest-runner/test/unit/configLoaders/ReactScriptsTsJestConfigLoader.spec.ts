@@ -53,7 +53,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
 
     // Act & Assert
     expect(() => sut.loadConfig()).throws(
-      'Unable to locate package react-scripts-ts. This package is required when projectType is set to "react-ts".'
+      'Unable to locate package react-scripts-ts. This package is required when projectType is set to "create-react-app-ts".'
     );
   });
 });

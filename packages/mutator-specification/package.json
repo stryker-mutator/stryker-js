@@ -1,11 +1,7 @@
 {
   "name": "@stryker-mutator/mutator-specification",
-  "version": "2.3.0",
+  "version": "2.5.0",
   "description": "A package for maintaining common mutator specifications for Stryker - the JavaScript mutation testing framework",
-  "scripts": {
-    "start": "tsc -w",
-    "clean": "rimraf \"+(test|src)/**/*+(.d.ts|.js|.map)\" reports"
-  },
   "keywords": [
     "stryker"
   ],

@@ -10,7 +10,7 @@ describe('Bank', () => {
     assert.equal(bank.money, money);
   });
 
-  describe('addMoney', () => { 
+  describe('addMoney', () => {
     it('should add money', () => {
       const bank = new Bank(0);
       const money = 100;
@@ -31,7 +31,7 @@ describe('Bank', () => {
     });
   });
 
-  describe('subtractMoney', () => { 
+  describe('subtractMoney', () => {
     it('should subtract money', () => {
       const bank = new Bank(500);
       const money = 100;

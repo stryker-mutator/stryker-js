@@ -2,8 +2,8 @@ import * as path from 'path';
 
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { expect } from 'chai';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { testInjector } from '../../../test-helpers/src';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import MochaTestRunner from '../../src/MochaTestRunner';
 import { mochaOptionsKey } from '../../src/utils';

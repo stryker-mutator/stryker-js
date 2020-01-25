@@ -1,3 +1,4 @@
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master)
 [![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/core.svg)](https://www.npmjs.com/package/@stryker-mutator/core)
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/core.svg)](https://img.shields.io/node/v/@stryker-mutator/core.svg)
@@ -7,7 +8,7 @@
 
 # Stryker
 
-*Professor X: For someone who hates mutants... you certainly keep some strange company.*  
+*Professor X: For someone who hates mutants... you certainly keep some strange company.*
 *William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
 
 Welcome to Stryker's monorepo. This is where all official stryker packages are maintained.
@@ -27,12 +28,11 @@ For the quickstart, see [quickstart](https://stryker-mutator.io/quickstart.html)
 
 For details on the `stryker run` command and others, see [stryker's readme](https://github.com/stryker-mutator/stryker/tree/master/packages/core#readme)
 
-## Configuration  
+## Configuration
 
 See the [stryker's package readme](https://github.com/stryker-mutator/stryker/blob/master/packages/core/README.md#configuration) for all config options.
 
-
-## Supported mutators  
+## Supported mutators
 
 See our website for the [list of currently supported mutators](https://stryker-mutator.io/mutators.html).
 
