@@ -1,10 +1,47 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "StrykerOptions",
   "description": "JSON schema for the Stryker Mutator configuration file",
   "type": "object",
   "definitions": {
+    "logLevel": {
+      "title": "LogLevel",
+      "type": "string",
+      "enum": [
+        "off",
+        "fatal",
+        "error",
+        "warn",
+        "info",
+        "debug",
+        "trace"
+      ],
+      "tsEnumNames": [
+        "Off",
+        "Fatal",
+        "Error",
+        "Warning",
+        "Information",
+        "Debug",
+        "Trace"
+      ]
+    },
+    "reportType": {
+      "title": "ReportType",
+      "type": "string",
+      "enum": [
+        "full",
+        "mutationScore"
+      ],
+      "tsEnumNames": [
+        "Full",
+        "MutationScore"
+      ]
+    },
     "dashboardOptions": {
+      "title": "DashboardOptions",
       "additionalProperties": false,
+      "type": "object",
       "properties": {
         "project": {
           "description": "Indicates which project to use if the \"dashboard\" reporter is enabled.",
@@ -20,19 +57,20 @@
         },
         "baseUrl": {
           "description": "Indicates the base url of the stryker dashboard.",
-          "type": "string"
+          "type": "string",
+          "default": "https://dashboard.stryker-mutator.io/api/reports"
         },
         "reportType": {
           "description": "Indicates wether to send a full report (inc. source code and mutant results) or only the mutation score.",
-          "type": "string",
-          "enum": ["full", "mutationScore"]
+          "$ref": "#/definitions/reportType",
+          "default": "mutationScore"
         }
-      },
-      "required": ["baseUrl", "reportType"]
+      }
     },
     "mutationScoreThresholds": {
-      "type": "object",
+      "title": "MutationScoreThresholds",
       "additionalProperties": false,
+      "type": "object",
       "properties": {
         "high": {
           "type": "number",
@@ -43,13 +81,13 @@
           "default": 60
         },
         "break": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": null
         }
-      },
-      "required": [
-        "high", "low", "break"
-      ]
+      }
     },
     "mutatorDescriptor": {
       "description": "Thresholds for mutation score. Disable a score with `null`.\n\nmutation score < break => exit build process with exit code 1. By default this is disabled (null).\nmutation score < low => score is in danger zone, display in red.\nmutation score < high >= low => score is in warning zone, display in yellow.\nmutation score >= high => score is in awesome zone, display in green.",
@@ -61,42 +99,60 @@
           "default": "javascript"
         },
         "plugins": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "excludedMutations": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "default": []
         }
       },
-      "required": ["name", "plugins", "excludedMutations"]
+      "required": [
+        "name"
+      ]
     }
   },
   "properties": {
     "allowConsoleColors": {
       "description": "The 'allowConsoleColors' value indicates whether Stryker should use colors in console.",
-      "enum": [true, false],
+      "type": "boolean",
       "default": true
     },
     "coverageAnalysis": {
-      "description": "With 'coverageAnalysis' you specify which coverage analysis strategy you want to use.",
-      "enum": ["off", "all", "perTest"],
+      "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off': Don't use coverage analysis",
+      "type": "string",
+      "enum": [
+        "off",
+        "all",
+        "perTest"
+      ],
       "default": "off"
     },
     "dashboard": {
-      "$ref": "#/definitions/dashboardOptions"
+      "description": "The options for the dashboard reporter",
+      "$ref": "#/definitions/dashboardOptions",
+      "default": {}
     },
     "fileLogLevel": {
       "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
-      "enum": ["off", "fatal", "error", "warn", "info", "debug", "trace"],
+      "$ref": "#/definitions/logLevel",
       "default": "off"
     },
     "files": {
-      "description": "With 'files', you can choose which files should be included in your test runner sandbox. This is normally not needed as it defaults to all files not ignored by git. Try it out yourself with this command: 'git ls-files --others --exclude-standard --cached --exclude .stryker-tmp.'",
+      "description": "With `files` you can choose which files should be included in your test runner sandbox.\nThis is normally not needed as it defaults to all files not ignored by git.\nTry it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.\n\nIf you do need to override `files` (for example: when your project does not live in a git repository),\nyou can override the files here.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.\nWhen using the config file you can provide an array with `string`s",
       "type": "array",
       "items": {
         "type": "string"
@@ -104,31 +160,35 @@
     },
     "logLevel": {
       "description": "Set the log level that Stryker uses to write to the console.",
-      "enum": ["off", "fatal", "error", "warn", "info", "debug", "trace"],
-      "default": "off"
+      "$ref": "#/definitions/logLevel",
+      "default": "info"
     },
     "maxConcurrentTestRunners": {
-      "description": "Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU, by spawning as many test runners as you have CPU cores.",
+      "description": "Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
       "type": "number",
-      "default": 2
+      "default": 9007199254740991
     },
     "mutate": {
       "description": "With mutate you configure the subset of files to use for mutation testing. Generally speaking, these should be your own source files.",
       "type": "array",
       "items": {
         "type": "string"
-      }
+      },
+      "default": [
+        "{src,lib}/**/*.js?(x)",
+        "!{src,lib}/**/__tests__/**/*.js?(x)",
+        "!{src,lib}/**/?(*.)+(spec|test).js?(x)",
+        "!{src,lib}/**/*+(Spec|Test).js?(x)"
+      ]
     },
     "mutator": {
       "description": "With mutator you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.",
       "oneOf": [
         {
-          "type": "string",
-          "enum": ["javascript", "typescript", "vue"]
+          "type": "string"
         },
         {
-          "$ref": "#/definitions/mutatorDescriptor",
-          "required": []
+          "$ref": "#/definitions/mutatorDescriptor"
         }
       ],
       "default": "javascript"
@@ -139,7 +199,9 @@
       "items": {
         "type": "string"
       },
-      "default": ["@stryker-mutator/*"]
+      "default": [
+        "@stryker-mutator/*"
+      ]
     },
     "reporters": {
       "description": "With reporters, you can set the reporters for stryker to use.",
@@ -147,12 +209,14 @@
       "items": {
         "type": "string"
       },
-      "default": ["clear-text", "progress"]
+      "default": [
+        "clear-text",
+        "progress"
+      ]
     },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",
       "type": "boolean",
-      "enum": [true, false],
       "default": true
     },
     "tempDirName": {
@@ -171,43 +235,26 @@
     },
     "thresholds": {
       "description": "Specify the thresholds for mutation score.",
-      "$ref": "#/definitions/mutationScoreThresholds"
+      "$ref": "#/definitions/mutationScoreThresholds",
+      "default": {}
     },
     "timeoutFactor": {
-      "description": "When Stryker is mutating code, it cannot determine indefinitely whether a code mutation results in an infinite loop (see Halting problem). In order to battle infinite loops, a test run gets killed after a certain period of time. This period is configurable with two settings: 'timeoutMS' and 'timeoutFactor'.",
+      "description": "Configure the allowed timeout deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops (for that, use `timeoutMS`)",
       "type": "number",
       "default": 1.5
     },
     "timeoutMS": {
-      "description": "When Stryker is mutating code, it cannot determine indefinitely whether a code mutation results in an infinite loop (see Halting problem). In order to battle infinite loops, a test run gets killed after a certain period of time. This period is configurable with two settings: 'timeoutMS' and 'timeoutFactor'.",
+      "description": "Configure an absolute timeout deviation. Tweak this if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.",
       "type": "number",
       "default": 5000
     },
     "transpilers": {
-      "description": "With 'transpilers' you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.",
+      "description": "Configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.",
       "type": "array",
       "items": {
         "type": "string"
-      }
+      },
+      "default": []
     }
-  },
-  "required": [
-    "allowConsoleColors",
-    "coverageAnalysis",
-    "dashboard",
-    "fileLogLevel",
-    "logLevel",
-    "maxConcurrentTestRunners",
-    "mutate",
-    "mutator",
-    "plugins",
-    "reporters",
-    "symlinkNodeModules",
-    "tempDirName",
-    "testRunner",
-    "thresholds",
-    "timeoutFactor",
-    "timeoutMS",
-    "transpilers"
-  ]
+  }
 }

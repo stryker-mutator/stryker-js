@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import LogLevel from '../../../src/core/LogLevel';
+import { LogLevel } from '../../../core';
 
 describe('LogLevel', () => {
   function arrangeActAssertLogLevel(actual: LogLevel, expected: string) {
