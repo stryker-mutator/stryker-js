@@ -1,5 +1,4 @@
-import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions } from '../../core';
-import { ReportType } from '../core/DashboardOptions';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions, ReportType } from '../../core';
 
 import defaultTempDirName from './DefaultTempDirName';
 

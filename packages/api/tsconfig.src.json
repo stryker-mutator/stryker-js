@@ -5,6 +5,7 @@
   },
   "include": [
     "src",
+    "src-generated",
     "config.ts",
     "core.ts",
     "logging.ts",

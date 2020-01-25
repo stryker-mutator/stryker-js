@@ -1,0 +1,260 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StrykerOptions",
+  "description": "JSON schema for the Stryker Mutator configuration file",
+  "type": "object",
+  "definitions": {
+    "logLevel": {
+      "title": "LogLevel",
+      "type": "string",
+      "enum": [
+        "off",
+        "fatal",
+        "error",
+        "warn",
+        "info",
+        "debug",
+        "trace"
+      ],
+      "tsEnumNames": [
+        "Off",
+        "Fatal",
+        "Error",
+        "Warning",
+        "Information",
+        "Debug",
+        "Trace"
+      ]
+    },
+    "reportType": {
+      "title": "ReportType",
+      "type": "string",
+      "enum": [
+        "full",
+        "mutationScore"
+      ],
+      "tsEnumNames": [
+        "Full",
+        "MutationScore"
+      ]
+    },
+    "dashboardOptions": {
+      "title": "DashboardOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "project": {
+          "description": "Indicates which project to use if the \"dashboard\" reporter is enabled.",
+          "type": "string"
+        },
+        "version": {
+          "description": "Indicates which version to use if the \"dashboard\" reporter is enabled.",
+          "type": "string"
+        },
+        "module": {
+          "description": "Indicates which module to use if the \"dashboard\" reporter is enabled.",
+          "type": "string"
+        },
+        "baseUrl": {
+          "description": "Indicates the base url of the stryker dashboard.",
+          "type": "string",
+          "default": "https://dashboard.stryker-mutator.io/api/reports"
+        },
+        "reportType": {
+          "description": "Indicates wether to send a full report (inc. source code and mutant results) or only the mutation score.",
+          "$ref": "#/definitions/reportType",
+          "default": "mutationScore"
+        }
+      }
+    },
+    "mutationScoreThresholds": {
+      "title": "MutationScoreThresholds",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "high": {
+          "type": "number",
+          "default": 80
+        },
+        "low": {
+          "type": "number",
+          "default": 60
+        },
+        "break": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null
+        }
+      }
+    },
+    "mutatorDescriptor": {
+      "description": "Thresholds for mutation score. Disable a score with `null`.\n\nmutation score < break => exit build process with exit code 1. By default this is disabled (null).\nmutation score < low => score is in danger zone, display in red.\nmutation score < high >= low => score is in warning zone, display in yellow.\nmutation score >= high => score is in awesome zone, display in green.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "javascript"
+        },
+        "plugins": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "excludedMutations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  "properties": {
+    "allowConsoleColors": {
+      "description": "The 'allowConsoleColors' value indicates whether Stryker should use colors in console.",
+      "type": "boolean",
+      "default": true
+    },
+    "coverageAnalysis": {
+      "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
+      "type": "string",
+      "enum": [
+        "off",
+        "all",
+        "perTest"
+      ],
+      "default": "off"
+    },
+    "dashboard": {
+      "description": "The options for the dashboard reporter",
+      "$ref": "#/definitions/dashboardOptions",
+      "default": {}
+    },
+    "fileLogLevel": {
+      "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
+      "$ref": "#/definitions/logLevel",
+      "default": "off"
+    },
+    "files": {
+      "description": "With `files` you can choose which files should be included in your test runner sandbox.\nThis is normally not needed as it defaults to all files not ignored by git.\nTry it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.\n\nIf you do need to override `files` (for example: when your project does not live in a git repository),\nyou can override the files here.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.\nWhen using the config file you can provide an array with `string`s",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "logLevel": {
+      "description": "Set the log level that Stryker uses to write to the console.",
+      "$ref": "#/definitions/logLevel",
+      "default": "info"
+    },
+    "maxConcurrentTestRunners": {
+      "description": "Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
+      "type": "number",
+      "default": 9007199254740991
+    },
+    "mutate": {
+      "description": "With mutate you configure the subset of files to use for mutation testing. Generally speaking, these should be your own source files.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "{src,lib}/**/*.js?(x)",
+        "!{src,lib}/**/__tests__/**/*.js?(x)",
+        "!{src,lib}/**/?(*.)+(spec|test).js?(x)",
+        "!{src,lib}/**/*+(Spec|Test).js?(x)"
+      ]
+    },
+    "mutator": {
+      "description": "With mutator you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/definitions/mutatorDescriptor"
+        }
+      ],
+      "default": "javascript"
+    },
+    "plugins": {
+      "description": "With 'plugins', you can add additional Node modules for Stryker to load (or require). By default, all node_modules starting with @stryker-mutator/* will be loaded, so you would normally not need to specify this option. These modules should be installed right next to stryker. For a current list of plugins, you can consult 'npm' or 'stryker-mutator.io.'",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "@stryker-mutator/*"
+      ]
+    },
+    "reporters": {
+      "description": "With reporters, you can set the reporters for stryker to use.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "clear-text",
+        "progress"
+      ]
+    },
+    "symlinkNodeModules": {
+      "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",
+      "type": "boolean",
+      "default": true
+    },
+    "tempDirName": {
+      "description": "Choose a different temp dir that Stryker uses for mutation testing. This directory will contain copies of your source code during a mutation test run. It will be created if it not exists and is *entirely deleted* after a successful run, so change this with caution.",
+      "type": "string",
+      "default": ".stryker-tmp"
+    },
+    "testFramework": {
+      "description": "Configure which test framework you are using. This option is not mandatory, as Stryker is test framework agnostic (it doesn't care what framework you use), However, it is required when coverageAnalysis is set to 'perTest', because Stryker needs to hook into the test framework in order to measure code coverage results per test and filter tests to run.",
+      "type": "string"
+    },
+    "testRunner": {
+      "description": "With 'testRunner' you specify the test runner that Stryker uses to run your tests. The default value is command. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the 'commandRunner: { command: 'npm run mocha' }'. It uses 'npm test' as the command by default.",
+      "type": "string",
+      "default": "command"
+    },
+    "thresholds": {
+      "description": "Specify the thresholds for mutation score.",
+      "$ref": "#/definitions/mutationScoreThresholds",
+      "default": {}
+    },
+    "timeoutFactor": {
+      "description": "Configure the allowed timeout deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops (for that, use `timeoutMS`)",
+      "type": "number",
+      "default": 1.5
+    },
+    "timeoutMS": {
+      "description": "Configure an absolute timeout deviation. Tweak this if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.",
+      "type": "number",
+      "default": 5000
+    },
+    "transpilers": {
+      "description": "Configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  }
+}
