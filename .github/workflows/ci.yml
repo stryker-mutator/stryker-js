@@ -23,12 +23,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies
       run: npm install
-    - name: Run linting
-      run: npm run lint
-    - name: Build packages
-      run: npm run build
-    - name: Run unit tests and integration tests
-      run: npm test
+    - name: Build & lint & test
+      run: npm run all
 
   e2e:
     runs-on: ubuntu-latest
