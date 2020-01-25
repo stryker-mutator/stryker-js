@@ -1,5 +1,7 @@
 // @ts-check
-const strykerCoreSchema = require('../schema/stryker-core')
+const SCHEMA_FILE = '../schema/stryker-core';
+const OUTPUT_FILE_NAME = 'core.d.ts';
+const strykerCoreSchema = require(SCHEMA_FILE)
 const { compile } = require('json-schema-to-typescript');
 const fs = require('fs');
 const path = require('path');
@@ -20,7 +22,8 @@ async function generate() {
       singleQuote: true,
     }
   });
-  await writeFile(resolveGeneratedSrc('core.d.ts'), ts, 'utf8');
+  await writeFile(resolveGeneratedSrc(OUTPUT_FILE_NAME), ts, 'utf8');
+  console.info(`✅ ${path.relative(path.resolve(__dirname, '..'), path.resolve(__dirname, SCHEMA_FILE))} -> ${path.relative(path.resolve(__dirname, '..'), resolveGeneratedSrc(OUTPUT_FILE_NAME))}`)
 }
 
 generate().catch(err => {

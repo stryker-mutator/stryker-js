@@ -46,7 +46,7 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "all": "npm run clean && npm run lint && npm run build && npm run test && npm run e2e",
+    "all": "npm run clean && npm run build && npm run lint && npm run test && npm run e2e",
     "postinstall": "lerna bootstrap --no-ci && link-parent-bin",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:log": "eslint . --ext .ts,.tsx -f compact -o lint.log",
