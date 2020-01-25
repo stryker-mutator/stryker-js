@@ -1,6 +1,6 @@
 // @ts-check
 const SCHEMA_FILE = '../schema/stryker-core';
-const OUTPUT_FILE_NAME = 'core.d.ts';
+const OUTPUT_FILE_NAME = 'core.ts';
 const strykerCoreSchema = require(SCHEMA_FILE)
 const { compile } = require('json-schema-to-typescript');
 const fs = require('fs');
@@ -17,7 +17,6 @@ async function generate() {
     await mkdir(resolveGeneratedSrc());
   }
   const ts = await compile(schema, 'core', {
-    enableConstEnums: true,
     style: {
       singleQuote: true,
     }
