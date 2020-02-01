@@ -2,7 +2,7 @@
   "name": "stryker-parent",
   "private": true,
   "devDependencies": {
-    "@types/chai": "4.2.7",
+    "@types/chai": "4.2.8",
     "@types/chai-as-promised": "7.1.2",
     "@types/glob": "^7.1.0",
     "@types/istanbul": "^0.4.29",
