@@ -47,6 +47,7 @@ export const logger = (): Mock<Logger> => {
     isWarnEnabled: sinon.stub(),
     level: 'level',
     log: sinon.stub(),
+    mark: sinon.stub(),
     new: sinon.stub(),
     removeContext: sinon.stub(),
     setParseCallStackFunction: sinon.stub(),
