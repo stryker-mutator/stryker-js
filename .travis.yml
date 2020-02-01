@@ -9,7 +9,7 @@ before_script:
 sudo: 'false'
 addons:
   chrome: stable
-script: npm run lint && npm run build && npm run test
+script: npm run build && npm run test
 jobs:
   include:
     - stage: test
