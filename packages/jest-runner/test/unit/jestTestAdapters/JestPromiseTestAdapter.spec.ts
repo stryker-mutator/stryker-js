@@ -1,5 +1,4 @@
-import jest = require('jest');
-
+import * as jest from 'jest';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
