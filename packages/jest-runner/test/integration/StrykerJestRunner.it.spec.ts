@@ -6,8 +6,8 @@ import * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
-import JestConfigEditor from '../../src/JestConfigEditor';
 import { jestTestRunnerFactory } from '../../src/JestTestRunner';
+import JestConfigEditor from '../../src/JestConfigEditor';
 
 const paths = require('react-scripts-ts/config/paths');
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json

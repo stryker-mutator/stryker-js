@@ -1,4 +1,4 @@
-import jest from 'jest';
+import strykerJest from '../../typings/strykerJest';
 
 /**
  * The Configloader interface is used to load different kinds of configurations for Jest.
@@ -14,5 +14,5 @@ export default interface JestConfigLoader {
    *
    * @return {JestConfiguration} an object containing the Jest configuration.
    */
-  loadConfig(): jest.Configuration;
+  loadConfig(): strykerJest.Configuration;
 }

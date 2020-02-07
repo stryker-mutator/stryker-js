@@ -1,7 +1,8 @@
-import { Config, ConfigEditor } from '@stryker-mutator/api/config';
-import { Logger } from '@stryker-mutator/api/logging';
-import jest from 'jest';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { Logger } from '@stryker-mutator/api/logging';
+import { Config, ConfigEditor } from '@stryker-mutator/api/config';
+
+import strykerJest from '../typings/strykerJest';
 
 import CustomJestConfigLoader from './configLoaders/CustomJestConfigLoader';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
@@ -53,7 +54,7 @@ export default class JestConfigEditor implements ConfigEditor {
     }
   }
 
-  private overrideProperties(config: jest.Configuration) {
+  private overrideProperties(config: strykerJest.Configuration) {
     return Object.assign(config, JEST_OVERRIDE_OPTIONS);
   }
 }

@@ -2,10 +2,11 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
 import { RunOptions, RunResult, RunStatus, TestResult, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
-import jest from 'jest';
 
-import { JEST_VERSION_TOKEN, jestTestAdapterFactory } from './jestTestAdapters';
+import strykerJest from '../typings/strykerJest';
+
 import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
+import { JEST_VERSION_TOKEN, jestTestAdapterFactory } from './jestTestAdapters';
 
 export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
   return injector
@@ -20,7 +21,7 @@ export const PROCESS_ENV_TOKEN = 'PROCESS_ENV_TOKEN';
 export const JEST_TEST_ADAPTER_TOKEN = 'jestTestAdapter';
 
 export default class JestTestRunner implements TestRunner {
-  private readonly jestConfig: jest.Configuration;
+  private readonly jestConfig: strykerJest.Configuration;
 
   private readonly enableFindRelatedTests: boolean;
 
@@ -65,7 +66,7 @@ export default class JestTestRunner implements TestRunner {
 
     // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
     const errorMessages = results.testResults
-      .map((testSuite: jest.TestResult) => testSuite.failureMessage)
+      .map((testSuite: strykerJest.TestResult) => testSuite.failureMessage)
       .filter(errorMessage => errorMessage) as string[];
 
     return {
@@ -83,7 +84,7 @@ export default class JestTestRunner implements TestRunner {
     }
   }
 
-  private processTestResults(suiteResults: jest.TestResult[]): TestResult[] {
+  private processTestResults(suiteResults: strykerJest.TestResult[]): TestResult[] {
     const testResults: TestResult[] = [];
 
     for (const suiteResult of suiteResults) {

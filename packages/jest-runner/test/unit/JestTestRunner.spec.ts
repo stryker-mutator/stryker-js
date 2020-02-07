@@ -3,9 +3,9 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { JestTestAdapter } from '../../src/jestTestAdapters';
-import JestTestRunner, { JEST_TEST_ADAPTER_TOKEN, PROCESS_ENV_TOKEN } from '../../src/JestTestRunner';
 import * as fakeResults from '../helpers/testResultProducer';
+import JestTestRunner, { JEST_TEST_ADAPTER_TOKEN, PROCESS_ENV_TOKEN } from '../../src/JestTestRunner';
+import { JestTestAdapter } from '../../src/jestTestAdapters';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';
