@@ -63,7 +63,7 @@
     "istanbul-lib-instrument": "~3.3.0",
     "lodash.flatmap": "^4.5.0",
     "lodash.groupby": "^4.6.0",
-    "log4js": "6.1.1",
+    "log4js": "6.1.2",
     "mkdirp": "~0.5.1",
     "mutation-testing-metrics": "^1.1.1",
     "progress": "~2.0.0",
