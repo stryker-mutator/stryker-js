@@ -1,7 +1,7 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import * as jest from 'jest';
 
+import jest from '../utils/getJest';
 import strykerJest from '../../typings/strykerJest';
 
 import JestTestAdapter from './JestTestAdapter';

@@ -1,8 +1,8 @@
-import * as jest from 'jest';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
 
+import jest from '../../../src/utils/getJest';
 import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
 
 describe(JestPromiseTestAdapter.name, () => {
@@ -23,6 +23,10 @@ describe(JestPromiseTestAdapter.name, () => {
     );
 
     sut = testInjector.injector.injectClass(JestPromiseTestAdapter);
+  });
+
+  it('should be version 25.1.0', async () => {
+    expect(jest.getVersion()).to.be.equal('25.1.0');
   });
 
   it('should set reporters to an empty array', async () => {
