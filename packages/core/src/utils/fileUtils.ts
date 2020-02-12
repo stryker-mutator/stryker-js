@@ -1,6 +1,6 @@
 import * as path from 'path';
+import { promises as fs } from 'fs';
 
-import { fsAsPromised } from '@stryker-mutator/util';
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
@@ -23,7 +23,7 @@ export function deleteDir(dirToDelete: string): Promise<void> {
 
 export async function cleanFolder(folderName: string) {
   try {
-    await fsAsPromised.lstat(folderName);
+    await fs.lstat(folderName);
     await deleteDir(folderName);
     return mkdirp.sync(folderName);
   } catch (e) {
@@ -46,9 +46,9 @@ export function importModule(moduleName: string): unknown {
  */
 export function writeFile(fileName: string, data: string | Buffer): Promise<void> {
   if (Buffer.isBuffer(data)) {
-    return fsAsPromised.writeFile(fileName, data);
+    return fs.writeFile(fileName, data);
   } else {
-    return fsAsPromised.writeFile(fileName, data, 'utf8');
+    return fs.writeFile(fileName, data, 'utf8');
   }
 }
 
@@ -58,7 +58,7 @@ export function writeFile(fileName: string, data: string | Buffer): Promise<void
  * @param from The thing you want to point from
  */
 export function symlinkJunction(to: string, from: string) {
-  return fsAsPromised.symlink(to, from, 'junction');
+  return fs.symlink(to, from, 'junction');
 }
 
 /**
@@ -69,9 +69,10 @@ export function symlinkJunction(to: string, from: string) {
 export async function findNodeModules(basePath: string): Promise<string | null> {
   basePath = path.resolve(basePath);
   const nodeModules = path.resolve(basePath, 'node_modules');
-  if (await fsAsPromised.exists(nodeModules)) {
+  try {
+    await fs.stat(nodeModules);
     return nodeModules;
-  } else {
+  } catch (e) {
     const parent = path.dirname(basePath);
     if (parent === basePath) {
       return null;

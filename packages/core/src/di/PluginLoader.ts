@@ -1,8 +1,8 @@
 import * as path from 'path';
+import { readdirSync } from 'fs';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Plugin, PluginKind, PluginResolver, Plugins } from '@stryker-mutator/api/plugin';
-import { fsAsPromised } from '@stryker-mutator/util';
 import { tokens } from 'typed-inject';
 
 import { importModule } from '../utils/fileUtils';
@@ -59,8 +59,7 @@ export class PluginLoader implements PluginResolver {
           const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
-          const plugins = fsAsPromised
-            .readdirSync(pluginDirectory)
+          const plugins = readdirSync(pluginDirectory)
             .filter(pluginName => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
             .map(pluginName => path.resolve(pluginDirectory, pluginName));
           if (plugins.length === 0) {
