@@ -117,7 +117,6 @@ export default class Stryker {
     inputFileInjector.injectClass(MutationTestReportCalculator).report(mutantResults);
     const calculator = this.injector.injectClass(ScoreResultCalculator);
     const score = calculator.calculate(mutantResults);
-    this.reporter.onScoreCalculated(score);
     calculator.determineExitCode(score, this.options.thresholds);
     await this.reporter.wrapUp();
   }

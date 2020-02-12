@@ -185,7 +185,6 @@ export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
   'onMutantTested',
   'onAllMutantsTested',
   'onMutationTestReportReady',
-  'onScoreCalculated',
   'wrapUp'
 ];
 

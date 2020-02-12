@@ -49,12 +49,6 @@ export default class BroadcastReporter implements StrictReporter {
       Object.keys(this.reporters).map(async reporterName => {
         const reporter = this.reporters[reporterName];
         if (typeof reporter[methodName] === 'function') {
-          const deprecatedMethodName = 'onScoreCalculated';
-          if (methodName === deprecatedMethodName) {
-            this.log.warn(
-              `DEPRECATED: The reporter '${reporterName}' uses '${deprecatedMethodName}' which is deprecated. Please use 'onMutationTestReportReady' and calculate the score as an alternative.`
-            );
-          }
           try {
             await (reporter[methodName] as any)(eventArgs);
           } catch (error) {
@@ -87,10 +81,6 @@ export default class BroadcastReporter implements StrictReporter {
 
   public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
     this.broadcast('onMutationTestReportReady', report);
-  }
-
-  public onScoreCalculated(score: ScoreResult): void {
-    this.broadcast('onScoreCalculated', score);
   }
 
   public async wrapUp(): Promise<void> {

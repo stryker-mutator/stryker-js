@@ -40,13 +40,6 @@ interface Reporter {
   onAllMutantsTested?(results: MutantResult[]): void;
 
   /**
-   * DEPRECATED: Please use onMutationTestReportReady and the mutation-testing-metrics npm package.
-   * Called when the mutation score is calculated.
-   * @param score The immutable structured score result (tree)
-   */
-  onScoreCalculated?(score: ScoreResult): void;
-
-  /**
    * Called when mutation testing is done
    * @param report the mutation test result that is valid according to the mutation-testing-report-schema (json schema)
    * @see https://github.com/stryker-mutator/mutation-testing-elements/tree/master/packages/mutation-testing-report-schema#mutation-testing-elements-schema

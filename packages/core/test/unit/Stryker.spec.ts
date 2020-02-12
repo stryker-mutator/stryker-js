@@ -219,12 +219,6 @@ describe(Stryker.name, () => {
         expect(configureLoggingServerStub).calledWith(strykerConfig.logLevel, strykerConfig.fileLogLevel);
       });
 
-      it('should report mutant score', async () => {
-        sut = new Stryker({});
-        await sut.runMutationTest();
-        expect(reporterMock.onScoreCalculated).called;
-      });
-
       it('should determine the exit code', async () => {
         sut = new Stryker({});
         await sut.runMutationTest();
