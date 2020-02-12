@@ -1,7 +1,7 @@
 import { PluginKind } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { ALL_REPORTER_EVENTS, scoreResult } from '@stryker-mutator/test-helpers/src/factory';
+import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 

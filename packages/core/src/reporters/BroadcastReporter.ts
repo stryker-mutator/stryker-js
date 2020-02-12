@@ -1,7 +1,7 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
-import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, ScoreResult, SourceFile } from '@stryker-mutator/api/report';
+import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, SourceFile } from '@stryker-mutator/api/report';
 import { tokens } from 'typed-inject';
 
 import { coreTokens } from '../di';
