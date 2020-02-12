@@ -8,7 +8,7 @@
     "@types/istanbul": "^0.4.29",
     "@types/karma": "^3.0.0",
     "@types/lodash": "^4.14.110",
-    "@types/mkdirp": "^0.5.2",
+    "@types/mkdirp": "^1.0.0",
     "@types/mocha": "^2.2.44",
     "@types/node": "^10.11.5",
     "@types/rimraf": "2.0.3",
