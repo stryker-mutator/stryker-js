@@ -1,6 +1,6 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
-import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -10,22 +10,22 @@ describe('fileUtils', () => {
   let existsStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sinon.stub(fsAsPromised, 'writeFile');
-    sinon.stub(fsAsPromised, 'symlink');
-    existsStub = sinon.stub(fsAsPromised, 'exists');
+    sinon.stub(fs.promises, 'writeFile');
+    sinon.stub(fs.promises, 'symlink');
+    existsStub = sinon.stub(fs.promises, 'stat');
   });
 
   describe('writeFile', () => {
     it('should call fs.writeFile', () => {
       fileUtils.writeFile('filename', 'data');
-      expect(fsAsPromised.writeFile).calledWith('filename', 'data', 'utf8');
+      expect(fs.promises.writeFile).calledWith('filename', 'data', 'utf8');
     });
   });
 
   describe('symlinkJunction', () => {
     it('should call fs.symlink', async () => {
       await fileUtils.symlinkJunction('a', 'b');
-      expect(fsAsPromised.symlink).calledWith('a', 'b', 'junction');
+      expect(fs.promises.symlink).calledWith('a', 'b', 'junction');
     });
   });
 
