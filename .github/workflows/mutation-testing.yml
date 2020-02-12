@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - test/**
     paths:
       - 'packages/**/*.ts'
 
