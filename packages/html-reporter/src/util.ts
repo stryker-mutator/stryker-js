@@ -2,7 +2,7 @@ import * as path from 'path';
 import { promisify } from 'util';
 import { createReadStream, createWriteStream, promises as fs } from 'fs';
 
-import * as mkdirp from 'mkdirp';
+import mkdirp = require('mkdirp');
 import * as rimraf from 'rimraf';
 
 export function copyFile(fromFilename: string, toFilename: string): Promise<void> {
@@ -17,10 +17,9 @@ export function copyFile(fromFilename: string, toFilename: string): Promise<void
 }
 
 export const deleteDir = promisify(rimraf);
-
-export const mkdir = promisify(mkdirp);
+export const mkdir = mkdirp;
 
 export async function writeFile(fileName: string, content: string) {
-  await mkdir(path.dirname(fileName));
+  await mkdirp(path.dirname(fileName));
   await fs.writeFile(fileName, content, 'utf8');
 }
