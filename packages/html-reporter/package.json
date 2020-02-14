@@ -14,7 +14,6 @@
   },
   "keywords": [
     "stryker",
-    "@stryker-mutator/reporter-plugin",
     "html",
     "report",
     "mutation",

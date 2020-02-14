@@ -246,8 +246,8 @@ When using the config file, you can provide either a string representing the mut
 ### `plugins` [`string[]`]
 
 Default: `['@stryker-mutator/*']`
-Command line: `--plugins stryker-html-reporter,stryker-karma-runner`
-Config file: `plugins: ['stryker-html-reporter', 'stryker-karma-runner']`
+Command line: `--plugins @stryker-mutator/jasmine-framework,@stryker-mutator/karma-runner`
+Config file: `plugins: ['@stryker-mutator/jasmine-framework', '@stryker-mutator/karma-runner']`
 
 
 With `plugins`, you can add additional Node modules for Stryker to load (or `require`).
@@ -259,14 +259,13 @@ you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or
 <a name="reporters"></a>
 ### `reporters` [`string[]`]
 
-Default: `['clear-text', 'progress']`
+Default: `['clear-text', 'progress', 'html']`
 Command line: `--reporters clear-text,progress,dots,dashboard,html`
 Config file: `reporters: ['clear-text', 'progress', 'dots', 'dashboard', 'html']`
 
 With `reporters`, you can set the reporters for stryker to use.
 These reporters can be used out of the box: `html`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
-The `html` reporter can be installed as a plugin, see [the html reporter's readme](https://github.com/stryker-mutator/stryker/tree/master/packages/html-reporter#readme).
-By default, `clear-text` and `progress` are active if no reporters are configured.
+By default, `clear-text`, `progress`, `html` are active if no reporters are configured.
 You can load additional plugins to get more reporters. See [stryker-mutator.io](https://stryker-mutator.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
 
