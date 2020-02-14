@@ -1,7 +1,6 @@
 import { Config } from '@stryker-mutator/api/config';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
-import jest from 'jest';
 import * as sinon from 'sinon';
 
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../src/configLoaders/CustomJestConfigLoader';
@@ -25,7 +24,7 @@ describe('JestConfigEditor', () => {
     sinon.stub(reactScriptsJestConfigLoader, 'default').returns(reactScriptsJestConfigLoaderStub);
     sinon.stub(reactScriptsTSJestConfigLoader, 'default').returns(reactScriptsTSJestConfigLoaderStub);
 
-    const defaultOptions: Partial<jest.Configuration> = {
+    const defaultOptions: Partial<Jest.Configuration> = {
       collectCoverage: true,
       verbose: true,
       bail: false,

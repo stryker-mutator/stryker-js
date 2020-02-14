@@ -1,5 +1,3 @@
-import jest from 'jest';
-
 export default interface JestTestAdapter {
-  run(config: object, projectRoot: string, fileNameUnderTest?: string): Promise<jest.RunResult>;
+  run(config: object, projectRoot: string, fileNameUnderTest?: string): Promise<Jest.RunResult>;
 }

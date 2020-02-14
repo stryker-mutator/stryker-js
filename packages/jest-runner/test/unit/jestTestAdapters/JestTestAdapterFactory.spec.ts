@@ -2,7 +2,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { JEST_VERSION_TOKEN, JestTestAdapter, jestTestAdapterFactory } from '../../../src/jestTestAdapters';
-import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
+import JestGreaterThan25Adapter from '../../../src/jestTestAdapters/JestGreaterThan25Adapter';
+import JestLessThan25Adapter from '../../../src/jestTestAdapters/JestLessThan25Adapter';
 
 describe(jestTestAdapterFactory.name, () => {
   let jestVersion: string;
@@ -11,11 +12,17 @@ describe(jestTestAdapterFactory.name, () => {
     return testInjector.injector.provideValue(JEST_VERSION_TOKEN, jestVersion).injectFunction(jestTestAdapterFactory);
   }
 
-  it('should return a Promise-based adapter when the Jest version is higher or equal to 22.0.0', () => {
+  it('should return a JestGreaterThan25Adapter when the Jest version is higher or equal to 25.0.0', () => {
+    jestVersion = '25.0.0';
+    const testAdapter = act();
+
+    expect(testAdapter).instanceOf(JestGreaterThan25Adapter);
+  });
+  it('should return a JestLessThan25Adapter when the Jest version is higher or equal to 22.0.0, but less then 25', () => {
     jestVersion = '22.0.0';
     const testAdapter = act();
 
-    expect(testAdapter).instanceOf(JestPromiseTestAdapter);
+    expect(testAdapter).instanceOf(JestLessThan25Adapter);
   });
 
   it('should throw an error when the Jest version is lower than 22.0.0', () => {
