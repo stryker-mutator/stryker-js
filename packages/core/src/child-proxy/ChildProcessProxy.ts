@@ -167,6 +167,10 @@ export default class ChildProcessProxy<T> implements Disposable {
     }
   }
 
+  public get stdout() {
+    return this.stdoutBuilder.toString();
+  }
+
   private reportError(error: Error) {
     this.workerTasks.filter(task => !task.isCompleted).forEach(task => task.reject(error));
   }

@@ -28,10 +28,14 @@ export default class JasmineTestFramework implements TestFramework {
   }
 
   public filter(testSelections: TestSelection[]): string {
-    const names = testSelections.map(selection => selection.name);
-    return `
+    if (testSelections.length) {
+      const names = testSelections.map(selection => selection.name);
+      return `
       jasmine.getEnv().specFilter = function (spec) {
           return ${JSON.stringify(names)}.indexOf(spec.getFullName()) !== -1;
       }`;
+    } else {
+      return '';
+    }
   }
 }

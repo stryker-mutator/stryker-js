@@ -1,7 +1,7 @@
 import * as path from 'path';
+import { promises as fs } from 'fs';
 
 import { File } from '@stryker-mutator/api/core';
-import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 
 import { TranspiledSourceMapper } from '../../../src/transpiler/SourceMapper';
@@ -11,9 +11,7 @@ function resolve(...filePart: string[]) {
 }
 
 function readFiles(...files: string[]): Promise<File[]> {
-  return Promise.all(
-    files.map(relative => resolve(relative)).map(fileName => fsAsPromised.readFile(fileName).then(content => new File(fileName, content)))
-  );
+  return Promise.all(files.map(relative => resolve(relative)).map(fileName => fs.readFile(fileName).then(content => new File(fileName, content))));
 }
 
 describe('Source mapper integration', () => {

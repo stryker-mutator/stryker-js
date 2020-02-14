@@ -1,7 +1,8 @@
 import * as child from 'child_process';
+import * as fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { childProcessAsPromised, fsAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
+import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import * as sinon from 'sinon';
@@ -42,8 +43,8 @@ describe(StrykerInitializer.name, () => {
     childExec = sinon.stub(childProcessAsPromised, 'exec');
     inquirerPrompt = sinon.stub(inquirer, 'prompt');
     childExecSync = sinon.stub(child, 'execSync');
-    fsWriteFile = sinon.stub(fsAsPromised, 'writeFile');
-    fsExistsSync = sinon.stub(fsAsPromised, 'existsSync');
+    fsWriteFile = sinon.stub(fs.promises, 'writeFile');
+    fsExistsSync = sinon.stub(fs, 'existsSync');
     restClientSearch = sinon.createStubInstance(RestClient);
     restClientPackage = sinon.createStubInstance(RestClient);
     gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
@@ -123,7 +124,7 @@ describe(StrykerInitializer.name, () => {
       expect(promptTranspilers.type).to.eq('checkbox');
       expect(promptTranspilers.choices).to.deep.eq(['typescript', 'webpack']);
       expect(promptReporters.type).to.eq('checkbox');
-      expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'clear-text', 'progress', 'dashboard']);
+      expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'html', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
       expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
     });
@@ -234,7 +235,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(inquirerPrompt).callCount(7);
       expect(out).calledWith('OK, downgrading coverageAnalysis to "all"');
-      expect(fsAsPromised.writeFile).calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
+      expect(fs.promises.writeFile).calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
     });
 
     it('should install any additional dependencies', async () => {
@@ -268,7 +269,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       const matchNormalized = (expected: string) =>
         sinon.match((actual: string) => normalizeWhitespaces(actual).includes(normalizeWhitespaces(expected)));
-      expect(fsAsPromised.writeFile).calledWith(
+      expect(fs.promises.writeFile).calledWith(
         'stryker.conf.js',
         matchNormalized('"testRunner": "awesome"')
           .and(matchNormalized('"testFramework": "awesome"'))
@@ -290,8 +291,8 @@ describe(StrykerInitializer.name, () => {
         transpilers: ['webpack']
       });
       await sut.initialize();
-      expect(fsAsPromised.writeFile).calledWith('stryker.conf.js', sinon.match('"someOtherSetting": "enabled"'));
-      expect(fsAsPromised.writeFile).calledWith('stryker.conf.js', sinon.match('"files": []'));
+      expect(fs.promises.writeFile).calledWith('stryker.conf.js', sinon.match('"someOtherSetting": "enabled"'));
+      expect(fs.promises.writeFile).calledWith('stryker.conf.js', sinon.match('"files": []'));
     });
 
     describe('but no testFramework can be found that supports the testRunner', () => {
@@ -315,7 +316,7 @@ describe(StrykerInitializer.name, () => {
         await sut.initialize();
 
         expect(out).calledWith('No stryker test framework plugin found that is compatible with ghost, downgrading coverageAnalysis to "all"');
-        expect(fsAsPromised.writeFile).calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
+        expect(fs.promises.writeFile).calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
       });
     });
 
@@ -348,7 +349,7 @@ describe(StrykerInitializer.name, () => {
       expect(out).calledWith(
         'An error occurred during installation, please try it yourself: "npm i --save-dev stryker-ghost-runner @stryker-mutator/webpack-transpiler"'
       );
-      expect(fsAsPromised.writeFile).called;
+      expect(fs.promises.writeFile).called;
     });
   });
 
@@ -371,7 +372,7 @@ describe(StrykerInitializer.name, () => {
         'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-runner-plugin). Please check your internet connection.'
       );
       expect(out).calledWith('Unable to select a test runner. You will need to configure it manually.');
-      expect(fsAsPromised.writeFile).called;
+      expect(fs.promises.writeFile).called;
     });
 
     it('should log error and continue when fetching test frameworks', async () => {
@@ -394,7 +395,7 @@ describe(StrykerInitializer.name, () => {
         'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-framework-plugin). Please check your internet connection.'
       );
       expect(out).calledWith('No stryker test framework plugin found that is compatible with awesome, downgrading coverageAnalysis to "all"');
-      expect(fsAsPromised.writeFile).called;
+      expect(fs.promises.writeFile).called;
     });
 
     it('should log error and continue when fetching mutators', async () => {
@@ -417,7 +418,7 @@ describe(StrykerInitializer.name, () => {
         'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/mutator-plugin). Please check your internet connection.'
       );
       expect(out).calledWith('Unable to select a mutator. You will need to configure it manually.');
-      expect(fsAsPromised.writeFile).called;
+      expect(fs.promises.writeFile).called;
     });
 
     it('should log error and continue when fetching transpilers', async () => {
@@ -439,7 +440,7 @@ describe(StrykerInitializer.name, () => {
         'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/transpiler-plugin). Please check your internet connection.'
       );
       expect(out).calledWith('Unable to select transpilers. You will need to configure it manually, if you want to use any.');
-      expect(fsAsPromised.writeFile).called;
+      expect(fs.promises.writeFile).called;
     });
 
     it('should log error and continue when fetching stryker reporters', async () => {
@@ -461,7 +462,7 @@ describe(StrykerInitializer.name, () => {
       expect(testInjector.logger.error).calledWith(
         'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/reporter-plugin). Please check your internet connection.'
       );
-      expect(fsAsPromised.writeFile).called;
+      expect(fs.promises.writeFile).called;
     });
 
     it('should log warning and continue when fetching custom config', async () => {
@@ -483,7 +484,7 @@ describe(StrykerInitializer.name, () => {
       expect(testInjector.logger.warn).calledWith(
         'Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually'
       );
-      expect(fsAsPromised.writeFile).called;
+      expect(fs.promises.writeFile).called;
     });
   });
 

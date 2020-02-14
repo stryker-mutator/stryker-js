@@ -1,14 +1,15 @@
+import { promises as fs } from 'fs';
+
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as path from 'path';
 import { calculateMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
 
 export async function readMutationTestResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
-  const allReportFiles = await fsAsPromised.readdir(eventResultDirectory);
+  const allReportFiles = await fs.readdir(eventResultDirectory);
   const mutationTestReportFile = allReportFiles.find(file => !!file.match(/.*onMutationTestReportReady.*/));
   expect(mutationTestReportFile).ok;
-  const mutationTestReportContent = await fsAsPromised.readFile(path.resolve(eventResultDirectory, mutationTestReportFile || ''), 'utf8');
+  const mutationTestReportContent = await fs.readFile(path.resolve(eventResultDirectory, mutationTestReportFile || ''), 'utf8');
   const report = JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
   const metricsResult = calculateMetrics(report.files);
   return metricsResult;

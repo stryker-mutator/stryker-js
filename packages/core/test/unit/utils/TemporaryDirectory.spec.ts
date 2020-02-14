@@ -1,8 +1,8 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
 import * as sinon from 'sinon';
@@ -18,7 +18,7 @@ describe(TemporaryDirectory.name, () => {
 
   beforeEach(() => {
     sinon.stub(mkdirp, 'sync');
-    sinon.stub(fsAsPromised, 'writeFile');
+    sinon.stub(fs.promises, 'writeFile');
     deleteDirStub = sinon.stub(fileUtils, 'deleteDir');
 
     sut = createSut();

@@ -2,7 +2,6 @@ import { MutationTestResult } from 'mutation-testing-report-schema';
 
 import MatchedMutant from './MatchedMutant';
 import MutantResult from './MutantResult';
-import ScoreResult from './ScoreResult';
 import SourceFile from './SourceFile';
 
 /**
@@ -38,13 +37,6 @@ interface Reporter {
    * @param results The immutable results
    */
   onAllMutantsTested?(results: MutantResult[]): void;
-
-  /**
-   * DEPRECATED: Please use onMutationTestReportReady and the mutation-testing-metrics npm package.
-   * Called when the mutation score is calculated.
-   * @param score The immutable structured score result (tree)
-   */
-  onScoreCalculated?(score: ScoreResult): void;
 
   /**
    * Called when mutation testing is done

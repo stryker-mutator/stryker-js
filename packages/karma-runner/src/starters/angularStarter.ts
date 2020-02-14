@@ -1,7 +1,7 @@
 import * as path from 'path';
 
+import decamelize = require('decamelize');
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import decamelize from 'decamelize';
 import * as semver from 'semver';
 
 import { NgConfigOptions, NgTestArguments } from '../StrykerKarmaSetup';

@@ -99,6 +99,17 @@ describe('JasmineRunner integration', () => {
       expectTestsFiltered(runResult.tests, 1, 3);
     });
 
+    it('should be able to clear the filter after a filtered run', async () => {
+      // Arrange
+      const testFramework = new JasmineTestFramework();
+      const filter1Test = wrapInClosure(testFramework.filter([{ id: 1, name: expectedJasmineInitResults[1].name }]));
+      const filterNoTests = wrapInClosure(testFramework.filter([]));
+
+      await sut.run({ testHooks: filter1Test });
+      const actualResult = await sut.run({ testHooks: filterNoTests });
+      expectTestResultsToEqual(actualResult.tests, expectedJasmineInitResults);
+    });
+
     it('should be able to filter tests in quick succession', async () => {
       // Arrange
       const testFramework = new JasmineTestFramework();

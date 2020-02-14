@@ -21,7 +21,7 @@ describe('JasmineTestFramework', () => {
   });
 
   describe('filter()', () => {
-    it("should result in a specFilter of jasmine it's", () =>
+    it("should result in a specFilter of jasmine it's", () => {
       expect(
         sut.filter([
           { id: 5, name: 'test five' },
@@ -29,6 +29,11 @@ describe('JasmineTestFramework', () => {
         ])
       )
         .to.contain('jasmine.getEnv().specFilter = function (spec)')
-        .and.to.contain('return ["test five","test eight"].indexOf(spec.getFullName()) !== -1;'));
+        .and.to.contain('return ["test five","test eight"].indexOf(spec.getFullName()) !== -1;');
+    });
+
+    it('should result in an empty string when filter is empty', () => {
+      expect(sut.filter([])).eq('');
+    });
   });
 });

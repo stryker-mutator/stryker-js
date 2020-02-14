@@ -21,10 +21,13 @@ const optionsAllArgs: StrykerOptions = {
   transpilers: [],
   dashboard: {
     baseUrl: 'baseUrl',
-    reportType: ReportType.MutationScore,
+    reportType: ReportType.Full,
     module: 'module',
     project: 'project',
     version: 'version'
+  },
+  htmlReporter: {
+    baseDir: 'mydir'
   },
   tempDirName: '.stryker-tmp',
 };

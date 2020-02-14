@@ -1,11 +1,12 @@
 import * as path from 'path';
+import { promises as fs } from 'fs';
 
 import { Config } from '@stryker-mutator/api/config';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { childProcessAsPromised, fsAsPromised, isErrnoException, normalizeWhitespaces, StrykerError } from '@stryker-mutator/util';
+import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
@@ -135,7 +136,7 @@ export default class InputFileResolver {
   }
 
   private readFile(fileName: string): Promise<File | null> {
-    return fsAsPromised
+    return fs
       .readFile(fileName)
       .then((content: Buffer) => new File(fileName, content))
       .then((file: File) => {

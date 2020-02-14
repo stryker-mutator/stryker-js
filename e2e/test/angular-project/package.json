@@ -18,7 +18,6 @@
     "@angular/core": "~8.2.13",
     "@angular/platform-browser": "~8.2.13",
     "@angular/platform-browser-dynamic": "~8.2.13",
-    "core-js": "~3.4.0",
     "rxjs": "~6.5.3",
     "tslib": "~1.10.0",
     "zone.js": "~0.10.2"

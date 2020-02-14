@@ -1,7 +1,7 @@
 import * as os from 'os';
+import * as fs from 'fs';
 
 import * as sinon from 'sinon';
-import { fsAsPromised } from '@stryker-mutator/util';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { defaultTempDirName } from '@stryker-mutator/api/config';
@@ -20,9 +20,9 @@ describe(GitignoreWriter.name, () => {
 
   beforeEach(() => {
     out = sinon.stub();
-    fsAppendFile = sinon.stub(fsAsPromised, 'appendFile');
-    fsExistsSync = sinon.stub(fsAsPromised, 'existsSync');
-    fsReadFile = sinon.stub(fsAsPromised, 'readFile');
+    fsAppendFile = sinon.stub(fs.promises, 'appendFile');
+    fsExistsSync = sinon.stub(fs, 'existsSync');
+    fsReadFile = sinon.stub(fs.promises, 'readFile');
     sut = testInjector.injector.provideValue(initializerTokens.out, (out as unknown) as typeof console.log).injectClass(GitignoreWriter);
   });
 

@@ -4,7 +4,7 @@ module.exports = function (config) {
   config.set({
     files: [
       __dirname + '/src/*.js',
-      __dirname + '/test/*.js'
+      __dirname + '/test-jasmine/*.js'
     ],
     exclude: [
       __dirname + '/src/Error.js',
@@ -16,7 +16,7 @@ module.exports = function (config) {
       'jasmine'
     ],
     browsers: [
-      'PhantomJS'
+      'ChromeHeadless'
     ]
   });
 }

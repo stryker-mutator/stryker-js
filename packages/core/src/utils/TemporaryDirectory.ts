@@ -1,9 +1,9 @@
 import * as path from 'path';
+import { createReadStream, createWriteStream } from 'fs';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { fsAsPromised } from '@stryker-mutator/util';
 import * as mkdirp from 'mkdirp';
 import { Disposable } from 'typed-inject';
 
@@ -47,8 +47,8 @@ export class TemporaryDirectory implements Disposable {
    */
   public copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      let readStream: NodeJS.ReadableStream = fsAsPromised.createReadStream(fromFilename, { encoding: 'utf8' });
-      const writeStream = fsAsPromised.createWriteStream(toFilename);
+      let readStream: NodeJS.ReadableStream = createReadStream(fromFilename, { encoding: 'utf8' });
+      const writeStream = createWriteStream(toFilename);
       readStream.on('error', reject);
       writeStream.on('error', reject);
       if (instrumenter) {

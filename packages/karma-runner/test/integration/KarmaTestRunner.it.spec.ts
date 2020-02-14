@@ -6,9 +6,11 @@ import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/Jasmine
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { FilePattern } from 'karma';
+import { TestSelection } from '@stryker-mutator/api/test_framework';
 
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
+import MochaTestFramework from '../../../mocha-framework/src/MochaTestFramework';
 
 function wrapInClosure(codeFragment: string) {
   return `
@@ -17,7 +19,13 @@ function wrapInClosure(codeFragment: string) {
     })((Function('return this'))());`;
 }
 
-function setOptions(files: ReadonlyArray<FilePattern | string>, coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'): void {
+function setOptions(
+  files: ReadonlyArray<FilePattern | string> = [
+    'testResources/sampleProject/src-instrumented/Add.js',
+    'testResources/sampleProject/test-jasmine/AddSpec.js'
+  ],
+  coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'
+): void {
   testInjector.options.coverageAnalysis = coverageAnalysis;
   testInjector.options.karma = {
     config: {
@@ -32,7 +40,7 @@ function createSut() {
   return testInjector.injector.injectClass(KarmaTestRunner);
 }
 
-describe('KarmaTestRunner', () => {
+describe(`${KarmaTestRunner.name} integration`, () => {
   let sut: KarmaTestRunner;
 
   const expectToHaveSuccessfulTests = (result: RunResult, n: number) => {
@@ -47,10 +55,54 @@ describe('KarmaTestRunner', () => {
     });
   };
 
+  describe('with mocha', () => {
+    let testFramework: MochaTestFramework;
+
+    const test0: Readonly<TestSelection> = Object.freeze({
+      id: 0,
+      name: 'Add should be able to add two numbers'
+    });
+
+    const test3: Readonly<TestSelection> = {
+      id: 3,
+      name: 'Add should be able to recognize a negative number'
+    };
+
+    before(() => {
+      testFramework = new MochaTestFramework();
+      setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-mocha/AddSpec.js']);
+      testInjector.options.karma.config.frameworks = ['mocha', 'chai'];
+      sut = createSut();
+      return sut.init();
+    });
+
+    it('should report completed tests', async () => {
+      const runResult = await sut.run({});
+      // await new Promise(res => {});
+      expectToHaveSuccessfulTests(runResult, 5);
+      expectToHaveFailedTests(runResult, []);
+      expect(runResult.status).to.be.eq(RunStatus.Complete);
+    });
+
+    it('should be able to filter tests', async () => {
+      const testHooks = wrapInClosure(testFramework.filter([test0, test3]));
+      const actualResult = await sut.run({ testHooks });
+      expectToHaveSuccessfulTests(actualResult, 2);
+      expect(actualResult.tests[0].name).eq(test0.name);
+      expect(actualResult.tests[1].name).eq(test3.name);
+    });
+
+    it('should be able to clear the filter after a filtered run', async () => {
+      await sut.run({ testHooks: wrapInClosure(testFramework.filter([test0, test3])) });
+      const actualResult = await sut.run({ testHooks: wrapInClosure(testFramework.filter([])) });
+      expect(actualResult.tests).lengthOf(5);
+    });
+  });
+
   describe('when all tests succeed', () => {
     describe('with simple add function to test', () => {
       before(() => {
-        setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test/AddSpec.js']);
+        setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-jasmine/AddSpec.js']);
         sut = createSut();
         return sut.init();
       });
@@ -90,8 +142,8 @@ describe('KarmaTestRunner', () => {
     before(() => {
       setOptions([
         'testResources/sampleProject/src/Add.js',
-        'testResources/sampleProject/test/AddSpec.js',
-        'testResources/sampleProject/test/AddFailedSpec.js'
+        'testResources/sampleProject/test-jasmine/AddSpec.js',
+        'testResources/sampleProject/test-jasmine/AddFailedSpec.js'
       ]);
       sut = createSut();
       return sut.init();
@@ -100,7 +152,7 @@ describe('KarmaTestRunner', () => {
     it('should report failed tests', () => {
       return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
         expectToHaveSuccessfulTests(runResult, 5);
-        expectToHaveFailedTests(runResult, ['Expected 7 to be 8.', 'Expected 3 to be 4.']);
+        expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.', 'Error: Expected 3 to be 4.']);
         expect(runResult.status).to.be.eq(RunStatus.Complete);
         return true;
       });
@@ -112,7 +164,7 @@ describe('KarmaTestRunner', () => {
       setOptions([
         'testResources/sampleProject/src/Add.js',
         'testResources/sampleProject/src/Error.js',
-        'testResources/sampleProject/test/AddSpec.js'
+        'testResources/sampleProject/test-jasmine/AddSpec.js'
       ]);
       sut = createSut();
       return sut.init();
@@ -122,13 +174,13 @@ describe('KarmaTestRunner', () => {
       const runResult = await sut.run({});
       expect(RunStatus[runResult.status]).to.be.eq(RunStatus[RunStatus.Error]);
       expect((runResult.errorMessages as string[]).length).to.equal(1);
-      expect((runResult.errorMessages as string[])[0]).include("ReferenceError: Can't find variable: someGlobalVariableThatIsNotDeclared");
+      expect((runResult.errorMessages as string[])[0]).include('ReferenceError: someGlobalVariableThatIsNotDeclared is not defined');
     });
   });
 
   describe('when no error occurred and no test is performed', () => {
     before(() => {
-      setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test/EmptySpec.js']);
+      setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-jasmine/EmptySpec.js']);
       sut = createSut();
       return sut.init();
     });
@@ -149,7 +201,7 @@ describe('KarmaTestRunner', () => {
     before(() => {
       setOptions([
         { pattern: 'testResources/sampleProject/src/Add.js', included: true },
-        { pattern: 'testResources/sampleProject/test/AddSpec.js', included: true },
+        { pattern: 'testResources/sampleProject/test-jasmine/AddSpec.js', included: true },
         { pattern: 'testResources/sampleProject/src/Error.js', included: false }
       ]);
       sut = createSut();
@@ -166,7 +218,7 @@ describe('KarmaTestRunner', () => {
 
   describe('when coverage data is available', () => {
     before(() => {
-      setOptions(['testResources/sampleProject/src-instrumented/Add.js', 'testResources/sampleProject/test/AddSpec.js'], 'all');
+      setOptions(['testResources/sampleProject/src-instrumented/Add.js', 'testResources/sampleProject/test-jasmine/AddSpec.js'], 'all');
       sut = createSut();
       return sut.init();
     });
@@ -187,7 +239,8 @@ describe('KarmaTestRunner', () => {
 
     before(async () => {
       dummyServer = await DummyServer.create();
-      sut = testInjector.injector.injectClass(KarmaTestRunner);
+      setOptions();
+      sut = createSut();
       return sut.init();
     });
 

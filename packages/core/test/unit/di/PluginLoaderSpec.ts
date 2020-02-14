@@ -1,7 +1,7 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -18,7 +18,7 @@ describe('PluginLoader', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     importModuleStub = sinon.stub(fileUtils, 'importModule');
-    pluginDirectoryReadMock = sinon.stub(fsAsPromised, 'readdirSync');
+    pluginDirectoryReadMock = sinon.stub(fs, 'readdirSync');
   });
 
   function createSut(pluginDescriptors: string[]) {

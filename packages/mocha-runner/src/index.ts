@@ -2,7 +2,7 @@ import { BaseContext, commonTokens, declareClassPlugin, declareFactoryPlugin, In
 
 import MochaConfigEditor from './MochaConfigEditor';
 import MochaOptionsLoader from './MochaOptionsLoader';
-import MochaTestRunner from './MochaTestRunner';
+import { MochaTestRunner } from './MochaTestRunner';
 
 export const strykerPlugins = [
   declareFactoryPlugin(PluginKind.ConfigEditor, 'mocha-runner', mochaConfigEditorFactory),

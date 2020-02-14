@@ -1,7 +1,8 @@
+import * as fs from 'fs';
+
 import { Reporter } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
-import { fsAsPromised } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -16,7 +17,7 @@ describe('EventRecorderReporter', () => {
 
   beforeEach(() => {
     cleanFolderStub = sinon.stub(fileUtils, 'cleanFolder');
-    writeFileStub = sinon.stub(fsAsPromised, 'writeFile');
+    writeFileStub = sinon.stub(fs.promises, 'writeFile');
   });
 
   describe('when constructed with empty options', () => {
@@ -62,7 +63,7 @@ describe('EventRecorderReporter', () => {
           describe('when writeFile is successful', () => {
             arrange();
             it('should writeFile', () =>
-              expect(fsAsPromised.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
+              expect(fs.promises.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
           });
         });
       };

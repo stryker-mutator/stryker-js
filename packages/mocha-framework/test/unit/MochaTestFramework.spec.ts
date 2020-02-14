@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 
 import MochaTestFramework from '../../src/MochaTestFramework';
 
@@ -29,9 +30,21 @@ describe('MochaTestFramework', () => {
         ])
       )
         .to.contain('var realAddTest = Mocha.Suite.prototype.addTest;')
+        .to.contain("var Mocha = window.Mocha || require('mocha');")
         .and.to.contain('selectedTestNames = ["test five","test eight"];')
-        .and.to.contain('if(selectedTestNames.indexOf(name) !== -1)')
+        .and.to.contain('if(!selectedTestNames.length || selectedTestNames.indexOf(name) !== -1)')
         .and.to.contain('realAddTest.apply(this, arguments);');
+    });
+    it('should result in a filter reset when selecting no tests', () => {
+      const actualFilter = normalizeWhitespaces(sut.filter([]));
+      const expectedFilter = normalizeWhitespaces(`
+        var Mocha = window.Mocha || require('mocha');
+        var describe = Mocha.describe;
+        if (window.____mochaAddTest) {
+          Mocha.Suite.prototype.addTest = window.____mochaAddTest;
+        }
+      `);
+      expect(actualFilter).eq(expectedFilter);
     });
   });
 });
