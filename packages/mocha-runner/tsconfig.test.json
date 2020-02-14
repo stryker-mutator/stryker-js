@@ -17,6 +17,9 @@
     },
     {
       "path": "../test-helpers/tsconfig.src.json"
+    },
+    {
+      "path": "../core/tsconfig.src.json"
     }
   ]
 }

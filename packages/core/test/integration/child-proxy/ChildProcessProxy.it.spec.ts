@@ -3,18 +3,15 @@ import * as path from 'path';
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, LoggingServer } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as log4js from 'log4js';
 import { filter } from 'rxjs/operators';
-
-import getPort = require('get-port');
 
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
 import { Task } from '../../../src/utils/Task';
-import LoggingServer from '../../helpers/LoggingServer';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 import { sleep } from '../../helpers/testUtils';
@@ -29,10 +26,10 @@ describe(ChildProcessProxy.name, () => {
   const workingDir = '..';
 
   beforeEach(async () => {
-    const port = await getPort();
+    loggingServer = new LoggingServer();
+    const port = await loggingServer.listen();
     const options = testInjector.injector.resolve(commonTokens.options);
     log = currentLogMock();
-    loggingServer = new LoggingServer(port);
     sut = ChildProcessProxy.create(require.resolve('./Echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo);
   });
 

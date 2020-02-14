@@ -10,7 +10,7 @@ import * as Mocha from 'mocha';
 import sinon = require('sinon');
 import LibWrapper from '../../src/LibWrapper';
 import { MochaOptions } from '../../src/MochaOptions';
-import MochaTestRunner from '../../src/MochaTestRunner';
+import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
 import * as utils from '../../src/utils';
 

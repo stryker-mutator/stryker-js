@@ -6,12 +6,10 @@ import { strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
-
-import getPort = require('get-port');
+import { LoggingServer } from '@stryker-mutator/test-helpers';
 
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import ResilientTestRunnerFactory from '../../../src/test-runner/ResilientTestRunnerFactory';
-import LoggingServer from '../../helpers/LoggingServer';
 import { sleep } from '../../helpers/testUtils';
 
 describe('ResilientTestRunnerFactory integration', () => {
@@ -25,8 +23,8 @@ describe('ResilientTestRunnerFactory integration', () => {
 
   beforeEach(async () => {
     // Make sure there is a logging server listening
-    const port = await getPort();
-    loggingServer = new LoggingServer(port);
+    loggingServer = new LoggingServer();
+    const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
     options = strykerOptions({
       plugins: [require.resolve('./AdditionalTestRunners')],

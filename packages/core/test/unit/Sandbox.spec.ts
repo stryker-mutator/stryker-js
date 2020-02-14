@@ -37,12 +37,11 @@ describe(Sandbox.name, () => {
   let options: Config;
   let inputFiles: File[];
   let testRunner: Mock<TestRunnerDecorator>;
-  let testFrameworkStub: any;
+  let testFrameworkStub: sinon.SinonStubbedInstance<TestFramework>;
   let expectedFileToMutate: File;
   let notMutatedFile: File;
   let sandboxDirectory: string;
   let expectedTargetFileToMutate: string;
-  let expectedTestFrameworkHooksFile: string;
   let writeFileStub: sinon.SinonStub;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesStub: sinon.SinonStub;
@@ -55,13 +54,14 @@ describe(Sandbox.name, () => {
     options = { timeoutFactor: 23, timeoutMS: 1000, testRunner: 'sandboxUnitTestRunner', symlinkNodeModules: true } as any;
     testRunner = { init: sinon.stub(), run: sinon.stub().resolves(runResult), dispose: sinon.stub() };
     testFrameworkStub = {
-      filter: sinon.stub()
+      filter: sinon.stub(),
+      afterEach: sinon.stub(),
+      beforeEach: sinon.stub()
     };
     expectedFileToMutate = new File(path.resolve('file1'), 'original code');
     notMutatedFile = new File(path.resolve('file2'), 'to be mutated');
     sandboxDirectory = path.resolve('random-folder-3');
     expectedTargetFileToMutate = path.join(sandboxDirectory, 'file1');
-    expectedTestFrameworkHooksFile = path.join(sandboxDirectory, '___testHooksForStryker.js');
     inputFiles = [expectedFileToMutate, notMutatedFile];
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
     temporaryDirectoryMock.createRandomDirectory.returns(sandboxDirectory);
@@ -84,12 +84,12 @@ describe(Sandbox.name, () => {
     files: readonly File[];
   }
   function createSut(overrides?: Partial<CreateArgs>) {
-    const args: CreateArgs = {
+    const { files, testFramework, overheadTimeMS }: CreateArgs = {
       files: inputFiles,
       overheadTimeMS: OVERHEAD_TIME_MS,
-      testFramework: null
+      testFramework: null,
+      ...overrides
     };
-    const { files, testFramework, overheadTimeMS } = { ...args, ...overrides };
     return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT, temporaryDirectoryMock as any);
   }
 
@@ -112,19 +112,19 @@ describe(Sandbox.name, () => {
     });
 
     it('should have created a sandbox folder', async () => {
-      await createSut(testFrameworkStub);
+      await createSut({ testFramework: testFrameworkStub });
       expect(temporaryDirectoryMock.createRandomDirectory).calledWith('sandbox');
     });
 
     it('should symlink node modules in sandbox directory if exists', async () => {
-      await createSut(testFrameworkStub);
+      await createSut({ testFramework: testFrameworkStub });
       expect(findNodeModulesStub).calledWith(process.cwd());
       expect(symlinkJunctionStub).calledWith('node_modules', path.join(sandboxDirectory, 'node_modules'));
     });
 
     it('should not symlink node modules in sandbox directory if no node_modules exist', async () => {
       findNodeModulesStub.resolves(null);
-      await createSut(testFrameworkStub);
+      await createSut({ testFramework: testFrameworkStub });
       expect(log.warn).calledWithMatch('Could not find a node_modules');
       expect(log.warn).calledWithMatch(process.cwd());
       expect(symlinkJunctionStub).not.called;
@@ -133,7 +133,7 @@ describe(Sandbox.name, () => {
     it('should log a warning if "node_modules" already exists in the working folder', async () => {
       findNodeModulesStub.resolves('node_modules');
       symlinkJunctionStub.rejects(fileAlreadyExistsError());
-      await createSut(testFrameworkStub);
+      await createSut({ testFramework: testFrameworkStub });
       expect(log.warn).calledWithMatch(
         normalizeWhitespaces(
           `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox.
@@ -147,7 +147,7 @@ describe(Sandbox.name, () => {
       findNodeModulesStub.resolves('basePath/node_modules');
       const error = new Error('unknown');
       symlinkJunctionStub.rejects(error);
-      await createSut(testFrameworkStub);
+      await createSut({ testFramework: testFrameworkStub });
       expect(log.warn).calledWithMatch(
         normalizeWhitespaces('Unexpected error while trying to symlink "basePath/node_modules" in sandbox directory.'),
         error
@@ -156,7 +156,7 @@ describe(Sandbox.name, () => {
 
     it('should symlink node modules in sandbox directory if `symlinkNodeModules` is `false`', async () => {
       options.symlinkNodeModules = false;
-      await createSut(testFrameworkStub);
+      await createSut({ testFramework: testFrameworkStub });
       expect(symlinkJunctionStub).not.called;
       expect(findNodeModulesStub).not.called;
     });
@@ -229,6 +229,7 @@ describe(Sandbox.name, () => {
       const sut = await createSut({ testFramework: testFrameworkStub });
       await sut.runMutant(transpiledMutant);
       expect(testFrameworkStub.filter).to.have.been.calledWith(transpiledMutant.mutant.selectedTests);
+      expect(testRunner.run).calledWithMatch({ testHooks: wrapInClosure(testFilterCodeFragment) });
     });
 
     it('should provide the filter code as testHooks, correct timeout and mutatedFileName', async () => {
@@ -254,32 +255,25 @@ describe(Sandbox.name, () => {
     });
 
     it('should not filter any tests when testFramework = null', async () => {
+      transpiledMutant.mutant.selectAllTests(runResult, TestSelectionResult.Success);
       const sut = await createSut();
-      const mutant = new TestableMutant('2', createMutant(), new SourceFile(new File('', '')));
-      await sut.runMutant(new TranspiledMutant(mutant, { outputFiles: [new File(expectedTargetFileToMutate, '')], error: null }, true));
-      expect(fileUtils.writeFile).not.calledWith(expectedTestFrameworkHooksFile);
+      await sut.runMutant(transpiledMutant);
+      expect(testRunner.run).calledWithMatch({ testHooks: undefined });
     });
 
-    it('should not filter any tests when runAllTests = true', async () => {
+    it('should filter no tests when runAllTests = true', async () => {
       // Arrange
       while (transpiledMutant.mutant.selectedTests.pop());
       transpiledMutant.mutant.selectAllTests(runResult, TestSelectionResult.Success);
-      const sut = await createSut();
+      testFrameworkStub.filter.returns('empty filter');
+      const sut = await createSut({ testFramework: testFrameworkStub });
 
       // Act
       await sut.runMutant(transpiledMutant);
 
       // Assert
-      expect(fileUtils.writeFile).not.calledWith(expectedTestFrameworkHooksFile);
-      expect(testRunner.run).called;
-    });
-
-    it('should not filter any tests when runAllTests = true', async () => {
-      const sut = await createSut();
-      const mutant = new TestableMutant('2', createMutant(), new SourceFile(new File('', '')));
-      mutant.selectAllTests(runResult, TestSelectionResult.Failed);
-      sut.runMutant(new TranspiledMutant(mutant, { outputFiles: [new File(expectedTargetFileToMutate, '')], error: null }, true));
-      expect(fileUtils.writeFile).not.calledWith(expectedTestFrameworkHooksFile);
+      expect(testRunner.run).calledWithMatch({ testHooks: wrapInClosure('empty filter') });
+      expect(testFrameworkStub.filter).calledWith([]);
     });
 
     it('should report a runtime error when test run errored', async () => {
