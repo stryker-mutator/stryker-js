@@ -1,7 +1,9 @@
+import { existsSync, promises as fs } from 'fs';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { childProcessAsPromised, fsAsPromised } from '@stryker-mutator/util';
+import { childProcessAsPromised } from '@stryker-mutator/util';
 
 import PresetConfiguration from './presets/PresetConfiguration';
 import PromptOption from './PromptOption';
@@ -15,7 +17,7 @@ export default class StrykerConfigWriter {
   constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
 
   public guardForExistingConfig() {
-    if (fsAsPromised.existsSync(STRYKER_CONFIG_FILE)) {
+    if (existsSync(STRYKER_CONFIG_FILE)) {
       const msg = 'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
       this.log.error(msg);
       throw new Error(msg);
@@ -77,7 +79,7 @@ export default class StrykerConfigWriter {
           ${rawConfig}
         );
       }`;
-    await fsAsPromised.writeFile(STRYKER_CONFIG_FILE, formattedConf);
+    await fs.writeFile(STRYKER_CONFIG_FILE, formattedConf);
     try {
       await childProcessAsPromised.exec(`npx prettier --write ${STRYKER_CONFIG_FILE}`);
     } catch (error) {

@@ -36,7 +36,7 @@
     "@stryker-mutator/api": "^2.5.0",
     "@stryker-mutator/util": "^2.5.0",
     "file-url": "~3.0.0",
-    "mkdirp": "~0.5.1",
+    "mkdirp": "~1.0.3",
     "mutation-testing-elements": "^1.0.2",
     "rimraf": "~3.0.0"
   },
