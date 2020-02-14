@@ -16,7 +16,7 @@ module.exports = function (config) {
       'jasmine'
     ],
     browsers: [
-      'PhantomJS'
+      'ChromeHeadless'
     ]
   });
 }

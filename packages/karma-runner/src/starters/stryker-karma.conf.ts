@@ -9,7 +9,7 @@ import { requireModule } from '../utils';
 
 function setDefaultOptions(config: Config) {
   config.set({
-    browsers: ['PhantomJS'],
+    browsers: ['ChromeHeadless'],
     frameworks: ['jasmine']
   });
 }
