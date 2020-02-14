@@ -2,7 +2,7 @@ import { Config, ConfigEditor } from '@stryker-mutator/api/config';
 import { File, Location, MutationScoreThresholds, StrykerOptions, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
-import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter, ScoreResult } from '@stryker-mutator/api/report';
+import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { Transpiler } from '@stryker-mutator/api/transpile';
@@ -34,7 +34,7 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   originalLines: '',
   range: [0, 0],
   replacement: '',
-  sourceFilePath: '',
+  sourceFilePath: 'file.js',
   status: MutantStatus.Killed,
   testsRan: ['']
 }));
@@ -129,27 +129,6 @@ export function testFramework(): TestFramework {
     }
   };
 }
-
-export const scoreResult = factoryMethod<ScoreResult>(() => ({
-  childResults: [],
-  killed: 0,
-  mutationScore: 0,
-  mutationScoreBasedOnCoveredCode: 0,
-  name: 'name',
-  noCoverage: 0,
-  path: 'path',
-  representsFile: true,
-  runtimeErrors: 0,
-  survived: 0,
-  timedOut: 0,
-  totalCovered: 0,
-  totalDetected: 0,
-  totalInvalid: 0,
-  totalMutants: 0,
-  totalUndetected: 0,
-  totalValid: 0,
-  transpileErrors: 0
-}));
 
 export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',

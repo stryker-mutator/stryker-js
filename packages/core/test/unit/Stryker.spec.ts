@@ -6,7 +6,7 @@ import { MutantResult } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunResult } from '@stryker-mutator/api/test_runner';
 import { Transpiler } from '@stryker-mutator/api/transpile';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { factory } from '@stryker-mutator/test-helpers';
 import { mutantResult, runResult, testFramework } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -23,7 +23,6 @@ import InitialTestExecutor from '../../src/process/InitialTestExecutor';
 import { MutationTestExecutor } from '../../src/process/MutationTestExecutor';
 import BroadcastReporter from '../../src/reporters/BroadcastReporter';
 import { MutationTestReportCalculator } from '../../src/reporters/MutationTestReportCalculator';
-import ScoreResultCalculator from '../../src/ScoreResultCalculator';
 import Stryker from '../../src/Stryker';
 import TestableMutant from '../../src/TestableMutant';
 import { TranspilerFacade } from '../../src/transpiler/TranspilerFacade';
@@ -47,7 +46,6 @@ describe(Stryker.name, () => {
   let mutatorMock: Mock<MutatorFacade>;
   let strykerConfig: Config;
   let reporterMock: Mock<BroadcastReporter>;
-  let scoreResultCalculator: ScoreResultCalculator;
   let mutationTestReportCalculatorMock: Mock<MutationTestReportCalculator>;
   let configureMainProcessStub: sinon.SinonStub;
   let configureLoggingServerStub: sinon.SinonStub;
@@ -77,9 +75,7 @@ describe(Stryker.name, () => {
 
     temporaryDirectoryMock = mock(TemporaryDirectory);
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
-    scoreResultCalculator = new ScoreResultCalculator(testInjector.logger);
     sinon.stub(di, 'buildMainInjector').returns(injectorMock);
-    sinon.stub(scoreResultCalculator, 'determineExitCode').returns(sinon.stub());
     injectorMock.injectClass
       .withArgs(BroadcastReporter)
       .returns(reporterMock)
@@ -94,9 +90,7 @@ describe(Stryker.name, () => {
       .withArgs(MutationTestExecutor)
       .returns(mutationTestExecutorMock)
       .withArgs(MutationTestReportCalculator)
-      .returns(mutationTestReportCalculatorMock)
-      .withArgs(ScoreResultCalculator)
-      .returns(scoreResultCalculator);
+      .returns(mutationTestReportCalculatorMock);
     injectorMock.resolve
       .withArgs(commonTokens.options)
       .returns(strykerConfig)
@@ -217,12 +211,6 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(configureLoggingServerStub).calledWith(strykerConfig.logLevel, strykerConfig.fileLogLevel);
-      });
-
-      it('should determine the exit code', async () => {
-        sut = new Stryker({});
-        await sut.runMutationTest();
-        expect(scoreResultCalculator.determineExitCode).called;
       });
 
       it('should report mutation test report ready', async () => {
