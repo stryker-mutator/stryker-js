@@ -7,12 +7,20 @@
       "label": "tsc-watch",
       "type": "shell",
       "command": "npm start",
+      "dependsOn": "generate",
       "problemMatcher": "$tsc-watch",
       "isBackground": true,
       "group": {
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "generate",
+      "type": "shell",
+      "command": "npm run generate",
+      "isBackground": true,
+      "group": "build"
     }
   ]
 }
