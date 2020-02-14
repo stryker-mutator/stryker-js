@@ -32,7 +32,7 @@ describe(ChildProcessProxy.name, () => {
     log = currentLogMock();
     sut = ChildProcessProxy.create(require.resolve('./Echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo);
   });
-  
+
   afterEach(async () => {
     try {
       await sut.dispose();
