@@ -87,7 +87,7 @@ export default class Stryker {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
           await this.reportResult(mutantResults, inputFileInjector);
-          await this.logDone();
+          this.logDone();
           return mutantResults;
         } else {
           this.logTraceLogLevelHint();
