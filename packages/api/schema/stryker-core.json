@@ -229,10 +229,7 @@
     },
     "htmlReporter": {
       "description": "The options for the html reporter",
-      "$ref": "#/definitions/htmlReporterOptions",
-      "default": {
-        "baseDir": "reports/mutation/html"
-      }
+      "$ref": "#/definitions/htmlReporterOptions"
     },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",
