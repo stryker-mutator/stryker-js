@@ -27,7 +27,7 @@ export default class Config implements StrykerOptions {
   public timeoutMS = 5000;
   public timeoutFactor = 1.5;
   public plugins: string[] = ['@stryker-mutator/*'];
-  public reporters: string[] = ['progress', 'clear-text'];
+  public reporters: string[] = ['html', 'progress', 'clear-text'];
   public coverageAnalysis: 'perTest' | 'all' | 'off' = 'off';
   public testRunner: string = 'command';
   public testFramework: string;
