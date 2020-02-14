@@ -67,6 +67,18 @@
         }
       }
     },
+    "htmlReporterOptions": {
+      "title": "HtmlReporterOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "baseDir": {
+          "description": "The output folder for the html report.",
+          "type": "string",
+          "default": "reports/mutation/html"
+        }
+      }
+    },
     "mutationScoreThresholds": {
       "title": "MutationScoreThresholds",
       "additionalProperties": false,
@@ -211,8 +223,16 @@
       },
       "default": [
         "clear-text",
-        "progress"
+        "progress",
+        "html"
       ]
+    },
+    "htmlReporter": {
+      "description": "The options for the html reporter",
+      "$ref": "#/definitions/htmlReporterOptions",
+      "default": {
+        "baseDir": "reports/mutation/html"
+      }
     },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",
