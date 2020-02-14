@@ -55,11 +55,11 @@ describe(HtmlReporter.name, () => {
       actReportReady();
       await sut.wrapUp();
       expect(copyFileStub).calledWith(
-        path.resolve(__dirname, '..', '..', 'src', 'templates', 'stryker-80x80.png'),
+        path.resolve(__dirname, '..', '..', '..', '..', 'src', 'reporters', 'html', 'templates', 'stryker-80x80.png'),
         path.resolve('reports', 'mutation', 'html', 'stryker-80x80.png')
       );
       expect(copyFileStub).calledWith(
-        path.resolve(__dirname, '..', '..', 'src', 'templates', 'index.html'),
+        path.resolve(__dirname, '..', '..', '..', '..', 'src', 'reporters', 'html', 'templates', 'index.html'),
         path.resolve('reports', 'mutation', 'html', 'index.html')
       );
     });
