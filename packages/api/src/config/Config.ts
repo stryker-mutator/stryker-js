@@ -1,4 +1,4 @@
-import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions, ReportType } from '../../core';
+import { LogLevel, MutationScoreThresholds, MutatorDescriptor, StrykerOptions, DashboardOptions, HtmlReporterOptions, ReportType } from '../../core';
 
 import defaultTempDirName from './DefaultTempDirName';
 
@@ -48,6 +48,9 @@ export default class Config implements StrykerOptions {
   public dashboard: DashboardOptions = {
     baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
     reportType: ReportType.MutationScore
+  };
+  public htmlReporter: HtmlReporterOptions = {
+    baseDir: 'reports/mutation/html'
   };
   public tempDirName: string = defaultTempDirName;
 
