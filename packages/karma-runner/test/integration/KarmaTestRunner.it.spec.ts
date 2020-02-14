@@ -152,7 +152,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
     it('should report failed tests', () => {
       return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
         expectToHaveSuccessfulTests(runResult, 5);
-        expectToHaveFailedTests(runResult, ['Expected 7 to be 8.', 'Expected 3 to be 4.']);
+        expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.', 'Error: Expected 3 to be 4.']);
         expect(runResult.status).to.be.eq(RunStatus.Complete);
         return true;
       });
@@ -174,7 +174,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       const runResult = await sut.run({});
       expect(RunStatus[runResult.status]).to.be.eq(RunStatus[RunStatus.Error]);
       expect((runResult.errorMessages as string[]).length).to.equal(1);
-      expect((runResult.errorMessages as string[])[0]).include("ReferenceError: Can't find variable: someGlobalVariableThatIsNotDeclared");
+      expect((runResult.errorMessages as string[])[0]).include('ReferenceError: someGlobalVariableThatIsNotDeclared is not defined');
     });
   });
 
