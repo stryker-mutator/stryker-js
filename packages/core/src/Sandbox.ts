@@ -197,8 +197,12 @@ export default class Sandbox {
   }
 
   private getFilterTestsHooks(mutant: TestableMutant): string | undefined {
-    if (this.testFramework && !mutant.runAllTests) {
-      return wrapInClosure(this.testFramework.filter(mutant.selectedTests));
+    if (this.testFramework) {
+      if (mutant.runAllTests) {
+        return wrapInClosure(this.testFramework.filter([]));
+      } else {
+        return wrapInClosure(this.testFramework.filter(mutant.selectedTests));
+      }
     } else {
       return undefined;
     }

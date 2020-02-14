@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
-import MochaTestRunner from '../../src/MochaTestRunner';
+import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { mochaOptionsKey } from '../../src/utils';
 
 describe('Mocha 6 file resolving integration', () => {

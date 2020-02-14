@@ -18,8 +18,8 @@ interface TestFramework {
 
   /**
    * Creates a code fragment which, if included in a test run,
-   * will be responsible for filtering out tests with given ids.
-   * The first test gets id 0, the second id 1, etc.
+   * will be responsible for filtering out tests with given test selector.
+   * If te test selection array is empty it should reset the filtering for the next test run.
    *
    * @param selections A list indicating the tests to select.
    * @returns A script which, if included in the test run, will filter out the correct tests.

@@ -12,7 +12,7 @@ import { evalGlobal, mochaOptionsKey } from './utils';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 
-export default class MochaTestRunner implements TestRunner {
+export class MochaTestRunner implements TestRunner {
   private testFileNames: string[];
   private readonly mochaOptions: MochaOptions;
 

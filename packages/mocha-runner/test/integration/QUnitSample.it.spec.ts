@@ -5,7 +5,7 @@ import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import MochaTestRunner from '../../src/MochaTestRunner';
+import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { createMochaOptions } from '../helpers/factories';
 
 describe('QUnit sample', () => {
