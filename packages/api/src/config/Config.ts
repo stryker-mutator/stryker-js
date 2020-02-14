@@ -47,7 +47,7 @@ export default class Config implements StrykerOptions {
    */
   public dashboard: DashboardOptions = {
     baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
-    reportType: ReportType.MutationScore
+    reportType: ReportType.Full
   };
   public tempDirName: string = defaultTempDirName;
 

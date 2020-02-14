@@ -63,7 +63,7 @@
         "reportType": {
           "description": "Indicates wether to send a full report (inc. source code and mutant results) or only the mutation score.",
           "$ref": "#/definitions/reportType",
-          "default": "mutationScore"
+          "default": "full"
         }
       }
     },
