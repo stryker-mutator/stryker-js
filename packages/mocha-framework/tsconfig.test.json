@@ -13,6 +13,9 @@
   "references": [
     {
       "path": "./tsconfig.src.json"
+    },
+    {
+      "path": "../util/tsconfig.src.json"
     }
   ]
 }
