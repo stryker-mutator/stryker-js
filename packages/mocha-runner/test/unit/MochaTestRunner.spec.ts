@@ -217,9 +217,9 @@ describe(MochaTestRunner.name, () => {
       sut = createSut({ fileNames: ['foo.js', 'bar.js'] });
       discoveredFiles.push('foo.js'); // should still purge 'bar.js'
       sut.init();
-      require.cache['foo.js'] = 'foo';
-      require.cache['bar.js'] = 'bar';
-      require.cache['baz.js'] = 'baz';
+      require.cache['foo.js'] = 'foo' as any;
+      require.cache['bar.js'] = 'bar' as any;
+      require.cache['baz.js'] = 'baz' as any;
 
       // Act
       await actRun();

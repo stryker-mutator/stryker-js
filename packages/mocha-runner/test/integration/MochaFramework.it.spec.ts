@@ -8,7 +8,7 @@ import MochaTestFramework from '@stryker-mutator/mocha-framework/src/MochaTestFr
 import { LogLevel } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import ChildProcessProxy from '../../../core/src/child-proxy/ChildProcessProxy';
+import ChildProcessProxy from '@stryker-mutator/core/src/child-proxy/ChildProcessProxy';
 import { MochaTestRunner } from '../../src/MochaTestRunner';
 
 const test0: Readonly<TestSelection> = Object.freeze({

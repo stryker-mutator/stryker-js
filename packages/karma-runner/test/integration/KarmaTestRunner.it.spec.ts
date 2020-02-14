@@ -3,6 +3,7 @@ import * as http from 'http';
 
 import { CoverageCollection, RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/JasmineTestFramework';
+import MochaTestFramework from '@stryker-mutator/mocha-framework/src/MochaTestFramework';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { FilePattern } from 'karma';
@@ -10,7 +11,6 @@ import { TestSelection } from '@stryker-mutator/api/test_framework';
 
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
-import MochaTestFramework from '../../../mocha-framework/src/MochaTestFramework';
 
 function wrapInClosure(codeFragment: string) {
   return `
