@@ -13,7 +13,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
 
   it('should report test as successful', async () => {
     const sut = createSut();
-    const result = await sut.run();
+    const result = await sut.run({ timeout: 100 });
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Complete]);
     expect(result.tests).lengthOf(1);
     expect(TestStatus[result.tests[0].status]).eq(TestStatus[TestStatus.Success]);
@@ -23,7 +23,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
 
   it('should report test as failed if exit code != 0', async () => {
     const sut = createSut({ command: 'npm run fail' });
-    const result = await sut.run();
+    const result = await sut.run({ timeout: 100 });
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Complete]);
     expect(result.tests).lengthOf(1);
     expect(TestStatus[result.tests[0].status]).eq(TestStatus[TestStatus.Failed]);
@@ -37,7 +37,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
     // Arrange
     const killSpy = sinon.spy(objectUtils, 'kill');
     const sut = createSut({ command: 'npm run wait' });
-    const runPromise = sut.run();
+    const runPromise = sut.run({ timeout: 100 });
 
     // Act
     await sut.dispose();

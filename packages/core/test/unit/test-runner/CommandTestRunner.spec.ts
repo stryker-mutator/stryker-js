@@ -37,6 +37,14 @@ describe(CommandTestRunner.name, () => {
       expect(childProcess.exec).calledWith('some other command');
     });
 
+    it('should allow other commands using function-based configuration', async () => {
+      const command = sinon.fake.returns('some functional command');
+      await actRun(createSut({ command }));
+      expect(childProcess.exec).calledWith('some functional command');
+      expect(command).called;
+      expect(command.args[0][0]).to.haveOwnProperty('timeout');
+    });
+
     it('should report successful test when the exit code = 0', async () => {
       timerMock.elapsedMs.returns(42);
       const result = await actRun();
@@ -50,7 +58,7 @@ describe(CommandTestRunner.name, () => {
     it('should report failed test when the exit code != 0', async () => {
       timerMock.elapsedMs.returns(42);
       const sut = createSut();
-      const resultPromise = sut.run();
+      const resultPromise = sut.run({ timeout: 100 });
       await tick();
       childProcessMock.stdout.emit('data', 'x Test 1 failed');
       childProcessMock.stderr.emit('data', '1 != 2');
@@ -58,7 +66,14 @@ describe(CommandTestRunner.name, () => {
       const result = await resultPromise;
       const expectedResult: RunResult = {
         status: RunStatus.Complete,
-        tests: [{ name: 'All tests', status: TestStatus.Failed, timeSpentMs: 42, failureMessages: [`x Test 1 failed${os.EOL}1 != 2`] }]
+        tests: [
+          {
+            name: 'All tests',
+            status: TestStatus.Failed,
+            timeSpentMs: 42,
+            failureMessages: [`x Test 1 failed${os.EOL}1 != 2`]
+          }
+        ]
       };
       expect(result).deep.eq(expectedResult);
     });
@@ -67,7 +82,7 @@ describe(CommandTestRunner.name, () => {
       killStub.resolves();
       const expectedError = new Error('foobar error');
       const sut = createSut();
-      const resultPromise = sut.run();
+      const resultPromise = sut.run({ timeout: 100 });
       await tick();
       childProcessMock.emit('error', expectedError);
       const result = await resultPromise;
@@ -92,14 +107,14 @@ describe(CommandTestRunner.name, () => {
     it('should kill any running process', async () => {
       killStub.resolves();
       const sut = createSut();
-      sut.run();
+      sut.run({ timeout: 100 });
       await sut.dispose();
       expect(killStub).calledWith(childProcessMock.pid);
     });
 
     it('should resolve running processes in a timeout', async () => {
       const sut = createSut();
-      const resultPromise = sut.run();
+      const resultPromise = sut.run({ timeout: 100 });
       await sut.dispose();
       const result = await resultPromise;
       expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Timeout]);
@@ -114,7 +129,7 @@ describe(CommandTestRunner.name, () => {
   });
 
   async function actRun(sut: CommandTestRunner = createSut(), exitCode = 0) {
-    const resultPromise = sut.run();
+    const resultPromise = sut.run({ timeout: 100 });
     await tick();
     childProcessMock.emit('exit', exitCode);
     return resultPromise;
