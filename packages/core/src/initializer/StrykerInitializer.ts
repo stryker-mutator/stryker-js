@@ -133,6 +133,10 @@ export default class StrykerInitializer {
     reporterOptions = await this.client.getTestReporterOptions();
     reporterOptions.push(
       {
+        name: 'html',
+        pkg: null
+      },
+      {
         name: 'clear-text',
         pkg: null
       },

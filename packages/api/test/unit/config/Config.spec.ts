@@ -40,7 +40,7 @@ describe('Config', () => {
       });
       const expected: DashboardOptions = {
         baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
-        reportType: ReportType.MutationScore,
+        reportType: ReportType.Full,
         project: 'my-pet-shop'
       };
       expect(sut.dashboard).deep.eq(expected);

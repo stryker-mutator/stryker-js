@@ -5,9 +5,9 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import HtmlReporter from '../../src/HtmlReporter';
-import { bindMutationTestReport } from '../../src/templates/bindMutationTestReport';
-import * as util from '../../src/util';
+import HtmlReporter from '../../../../src/reporters/html/HtmlReporter';
+import * as HtmlReporterUtil from '../../../../src/reporters/html/HtmlReporterUtil';
+import { bindMutationTestReport } from '../../../../src/reporters/html/templates/bindMutationTestReport';
 
 describe(HtmlReporter.name, () => {
   let copyFileStub: sinon.SinonStub;
@@ -17,10 +17,10 @@ describe(HtmlReporter.name, () => {
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    copyFileStub = sinon.stub(util, 'copyFile');
-    writeFileStub = sinon.stub(util, 'writeFile');
-    deleteDirStub = sinon.stub(util, 'deleteDir');
-    mkdirStub = sinon.stub(util, 'mkdir');
+    copyFileStub = sinon.stub(HtmlReporterUtil, 'copyFile');
+    writeFileStub = sinon.stub(HtmlReporterUtil, 'writeFile');
+    deleteDirStub = sinon.stub(HtmlReporterUtil, 'deleteDir');
+    mkdirStub = sinon.stub(HtmlReporterUtil, 'mkdir');
     sut = testInjector.injector.injectClass(HtmlReporter);
   });
 
@@ -55,11 +55,11 @@ describe(HtmlReporter.name, () => {
       actReportReady();
       await sut.wrapUp();
       expect(copyFileStub).calledWith(
-        path.resolve(__dirname, '..', '..', 'src', 'templates', 'stryker-80x80.png'),
+        path.resolve(__dirname, '..', '..', '..', '..', 'src', 'reporters', 'html', 'templates', 'stryker-80x80.png'),
         path.resolve('reports', 'mutation', 'html', 'stryker-80x80.png')
       );
       expect(copyFileStub).calledWith(
-        path.resolve(__dirname, '..', '..', 'src', 'templates', 'index.html'),
+        path.resolve(__dirname, '..', '..', '..', '..', 'src', 'reporters', 'html', 'templates', 'index.html'),
         path.resolve('reports', 'mutation', 'html', 'index.html')
       );
     });
