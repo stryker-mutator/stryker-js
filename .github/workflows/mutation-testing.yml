@@ -21,9 +21,7 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-        run: |
-          cd packages/core
-          npm run stryker
+        run: npx lerna run --scope "@stryker-mutator/core" --concurrency 1 --stream stryker
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
@@ -40,17 +38,7 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-        run: |
-          cd packages/api
-          npm run stryker
-          cd ../babel-transpiler
-          npm run stryker
-          cd ../html-reporter
-          npm run stryker
-          cd ../jasmine-framework
-          npm run stryker
-          cd ../javascript-mutator
-          npm run stryker
+      run: npx lerna run --scope "@stryker-mutator/{api,babel-transpiler,jasmine-framework,javascript-mutator}" --concurrency 1 --stream stryker
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
@@ -67,17 +55,7 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-        run: |
-          cd packages/jasmine-runner
-          npm run stryker
-          cd ../jest-runner
-          npm run stryker
-          cd ../karma-runner
-          npm run stryker
-          cd ../mocha-framework
-          npm run stryker
-          cd ../mocha-runner
-          npm run stryker
+        run: npx lerna run --scope "@stryker-mutator/{jasmine-runner,jest-runner,karma-runner,mocha-framework,mocha-runner}" --concurrency 1 --stream stryker
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
@@ -94,16 +72,6 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-        run: |
-          cd packages/typescript
-          npm run stryker
-          cd ../vue-mutator
-          npm run stryker
-          cd ../webpack-transpiler
-          npm run stryker
-          cd ../wct-runner
-          npm run stryker
-          cd ../util
-          npm run stryker
+        run: npx lerna run --scope "@stryker-mutator/{typescript,vue-mutator,webpack-transpiler,wct-runner,util}" --concurrency 1 --stream stryker
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
