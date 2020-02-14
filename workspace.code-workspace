@@ -117,7 +117,12 @@
     "task.autoDetect": "off",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
-    }
+    },
+    "cSpell.words": [
+      "Surrializable",
+      "serializable",
+      "surrialize"
+    ]
   },
   "extensions": {
     "recommendations": [

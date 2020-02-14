@@ -70,7 +70,7 @@
     "rimraf": "~3.0.0",
     "rxjs": "~6.5.1",
     "source-map": "~0.7.3",
-    "surrial": "~1.0.0",
+    "surrial": "^2.0.1",
     "tree-kill": "~1.2.0",
     "tslib": "~1.10.0",
     "typed-inject": "~2.1.1",

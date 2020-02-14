@@ -1,7 +1,9 @@
+import { Surrializable, surrial } from 'surrial';
+
 /**
  * Represents a file within Stryker. Could be a strictly in-memory file.
  */
-export default class File {
+export default class File implements Surrializable {
   private _textContent: string | undefined;
   private readonly _content: Buffer;
 
@@ -34,5 +36,13 @@ export default class File {
       this._textContent = this.content.toString();
     }
     return this._textContent;
+  }
+
+  /**
+   * This fixes the issue of different File versions not being compatible.
+   * @see https://github.com/stryker-mutator/stryker/issues/2025
+   */
+  public surrialize(): string {
+    return surrial`new File(${this.name}, ${this.content})`;
   }
 }
