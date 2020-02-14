@@ -1,7 +1,5 @@
-import jest from 'jest';
-
 /**
- * The Configloader interface is used to load different kinds of configurations for Jest.
+ * The ConfigLoader interface is used to load different kinds of configurations for Jest.
  * Custom ConfigLoaders should implement this interface, the ConfigEditor will then be able to use it to load a Jest configuration.
  *
  * ConfigLoaders are typically used for projects that do not provide their configuration via the package.json file (e.g. React).
@@ -14,5 +12,5 @@ export default interface JestConfigLoader {
    *
    * @return {JestConfiguration} an object containing the Jest configuration.
    */
-  loadConfig(): jest.Configuration;
+  loadConfig(): Jest.Configuration;
 }
