@@ -264,11 +264,13 @@ Command line: `--reporters clear-text,progress,dots,dashboard,html`
 Config file: `reporters: ['clear-text', 'progress', 'dots', 'dashboard', 'html']`
 
 With `reporters`, you can set the reporters for stryker to use.
-These reporters can be used out of the box: `clear-text`, `progress`, `dots`, `dashboard` and `event-recorder`.
+These reporters can be used out of the box: `html`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
 The `html` reporter can be installed as a plugin, see [the html reporter's readme](https://github.com/stryker-mutator/stryker/tree/master/packages/html-reporter#readme).
 By default, `clear-text` and `progress` are active if no reporters are configured.
 You can load additional plugins to get more reporters. See [stryker-mutator.io](https://stryker-mutator.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
+
+The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { baseDir: 'mypath/reports/stryker' }`
 
 The `clear-text` reporter supports three additional config options:
 * `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.
