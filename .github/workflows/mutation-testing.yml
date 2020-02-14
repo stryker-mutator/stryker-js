@@ -38,7 +38,7 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-      run: npx lerna run --scope "@stryker-mutator/{api,babel-transpiler,jasmine-framework,javascript-mutator}" --concurrency 1 --stream stryker
+        run: npx lerna run --scope "@stryker-mutator/{api,babel-transpiler,jasmine-framework,javascript-mutator}" --concurrency 1 --stream stryker
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
