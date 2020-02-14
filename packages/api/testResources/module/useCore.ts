@@ -26,6 +26,9 @@ const optionsAllArgs: StrykerOptions = {
     project: 'project',
     version: 'version'
   },
+  htmlReporter: {
+    baseDir: 'mydir'
+  },
   tempDirName: '.stryker-tmp',
 };
 
