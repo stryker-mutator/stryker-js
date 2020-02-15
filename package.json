@@ -9,7 +9,7 @@
     "@types/karma": "^3.0.0",
     "@types/lodash": "^4.14.110",
     "@types/mkdirp": "1.0.0",
-    "@types/mocha": "^2.2.44",
+    "@types/mocha": "^7.0.1",
     "@types/node": "^13.7.1",
     "@types/rimraf": "2.0.3",
     "@types/sinon": "5.0.5",
