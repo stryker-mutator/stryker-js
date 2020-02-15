@@ -14,7 +14,6 @@ import InitialTestExecutor from './process/InitialTestExecutor';
 import { MutationTestExecutor } from './process/MutationTestExecutor';
 import { MutationTestReportCalculator } from './reporters/MutationTestReportCalculator';
 import { SandboxPool } from './SandboxPool';
-import ScoreResultCalculator from './ScoreResultCalculator';
 import { transpilerFactory } from './transpiler';
 import { MutantTranspileScheduler } from './transpiler/MutantTranspileScheduler';
 import { TranspilerFacade } from './transpiler/TranspilerFacade';
@@ -87,8 +86,8 @@ export default class Stryker {
         if (initialRunResult.runResult.tests.length && testableMutants.length) {
           const mutationTestExecutor = mutationTestProcessInjector.injectClass(MutationTestExecutor);
           const mutantResults = await mutationTestExecutor.run(testableMutants);
-          await this.reportScore(mutantResults, inputFileInjector);
-          await this.logDone();
+          await this.reportResult(mutantResults, inputFileInjector);
+          this.logDone();
           return mutantResults;
         } else {
           this.logTraceLogLevelHint();
@@ -113,12 +112,8 @@ export default class Stryker {
     }
   }
 
-  private async reportScore(mutantResults: MutantResult[], inputFileInjector: Injector<MainContext & { inputFiles: InputFileCollection }>) {
+  private async reportResult(mutantResults: MutantResult[], inputFileInjector: Injector<MainContext & { inputFiles: InputFileCollection }>) {
     inputFileInjector.injectClass(MutationTestReportCalculator).report(mutantResults);
-    const calculator = this.injector.injectClass(ScoreResultCalculator);
-    const score = calculator.calculate(mutantResults);
-    this.reporter.onScoreCalculated(score);
-    calculator.determineExitCode(score, this.options.thresholds);
     await this.reporter.wrapUp();
   }
 }

@@ -67,9 +67,9 @@
     "babel-preset-es2015-rollup": "~3.0.0",
     "babel-preset-react": "~6.24.1",
     "babel-preset-react-app": "~9.0.2",
-    "jest": "~24.9.0",
     "enzyme": "~3.10.0",
     "enzyme-adapter-react-16": "~1.15.1",
+    "jest": "^25.1.0",
     "react-scripts": "~3.2.0"
   },
   "localDependencies": {

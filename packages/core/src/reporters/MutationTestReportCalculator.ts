@@ -5,9 +5,11 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
+import { calculateMetrics } from 'mutation-testing-metrics';
 
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
+import { setExitCode } from '../utils/objectUtils';
 
 export class MutationTestReportCalculator {
   public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger);
@@ -20,7 +22,28 @@ export class MutationTestReportCalculator {
   ) {}
 
   public report(results: readonly MutantResult[]) {
-    this.reporter.onMutationTestReportReady(this.mutationTestReport(results));
+    const report = this.mutationTestReport(results);
+    this.reporter.onMutationTestReportReady(report);
+    this.determineExitCode(report);
+  }
+
+  private determineExitCode(report: mutationTestReportSchema.MutationTestResult) {
+    const { metrics } = calculateMetrics(report.files);
+    const breaking = this.options.thresholds.break;
+    const formattedScore = metrics.mutationScore.toFixed(2);
+    if (typeof breaking === 'number') {
+      if (metrics.mutationScore < breaking) {
+        this.log.error(`Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`);
+        this.log.info('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
+        setExitCode(1);
+      } else {
+        this.log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
+      }
+    } else {
+      this.log.debug(
+        "No breaking threshold configured. Won't fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior."
+      );
+    }
   }
 
   private mutationTestReport(results: readonly MutantResult[]): mutationTestReportSchema.MutationTestResult {

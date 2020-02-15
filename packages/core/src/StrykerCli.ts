@@ -157,7 +157,6 @@ export default class StrykerCli {
           this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
         }
         process.exitCode = 1;
-        process.kill(process.pid, 'SIGINT');
       });
     } else {
       this.log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));

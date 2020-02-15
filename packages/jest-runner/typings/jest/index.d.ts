@@ -1,6 +1,6 @@
 declare namespace Jest {
   // RunCLI does not have any official types, this will do for our implementation
-  function runCLI(cliParams: RunCliParameters, projectRoots: Array<String>): any
+  function runCLI(cliParams: RunCliParameters, projectRoots: string[]): any;
 
   // Taken from https://goo.gl/qHifyP, removed all stuff that we are not using
   // Also added 'runInBand' which does not exist in the official types
@@ -14,35 +14,34 @@ declare namespace Jest {
 
   // Taken from https://goo.gl/qHifyP, removed all stuff that we are not using
   interface Configuration {
-    rootDir: Maybe<Path>;
-    reporters: Array<string>;
+    rootDir?: Path;
+    reporters: string[];
     bail: boolean;
     collectCoverage: boolean;
     verbose: boolean;
-    testResultsProcessor: Maybe<string>;
+    testResultsProcessor?: string;
     testEnvironment: string;
   }
 
   interface RunResult {
-    config: Configuration;
     results: AggregatedResult;
   }
 
   // Taken from https://goo.gl/h48ajP, removed all stuff that we are not using
   interface AggregatedResult {
-      numRuntimeErrorTestSuites: number;
-      testResults: TestResult[];
+    numRuntimeErrorTestSuites: number;
+    testResults: TestResult[];
   }
 
   // Taken from https://goo.gl/nAzQ4J, removed all stuff that we are not using
   interface TestResult {
-    failureMessage: Maybe<string>;
-    testResults: Array<AssertionResult>;
+    failureMessage?: string | null;
+    testResults: AssertionResult[];
   }
 
   // Taken from https://goo.gl/drWMCB, removed all stuff that we are not using
   interface AssertionResult {
-    duration?: Maybe<Milliseconds>;
+    duration?: Milliseconds | null;
     failureMessages: string[];
     fullName: string;
     status: Status;
@@ -50,11 +49,6 @@ declare namespace Jest {
 
   //
   type Milliseconds = number;
-  type Maybe<T> = void | null | undefined | T;
-  type Status = 'passed' | 'failed' | 'skipped' | 'pending';
+  type Status = 'passed' | 'failed' | 'skipped' | 'pending' | 'todo' | 'disabled';
   type Path = string;
-}
-
-declare module "jest" {
-  export default Jest;
 }

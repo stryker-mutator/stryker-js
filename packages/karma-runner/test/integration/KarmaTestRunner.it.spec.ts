@@ -3,6 +3,7 @@ import * as http from 'http';
 
 import { CoverageCollection, RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/JasmineTestFramework';
+import MochaTestFramework from '@stryker-mutator/mocha-framework/src/MochaTestFramework';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { FilePattern } from 'karma';
@@ -10,7 +11,6 @@ import { TestSelection } from '@stryker-mutator/api/test_framework';
 
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
-import MochaTestFramework from '../../../mocha-framework/src/MochaTestFramework';
 
 function wrapInClosure(codeFragment: string) {
   return `
@@ -152,7 +152,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
     it('should report failed tests', () => {
       return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
         expectToHaveSuccessfulTests(runResult, 5);
-        expectToHaveFailedTests(runResult, ['Expected 7 to be 8.', 'Expected 3 to be 4.']);
+        expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.', 'Error: Expected 3 to be 4.']);
         expect(runResult.status).to.be.eq(RunStatus.Complete);
         return true;
       });
@@ -174,7 +174,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       const runResult = await sut.run({});
       expect(RunStatus[runResult.status]).to.be.eq(RunStatus[RunStatus.Error]);
       expect((runResult.errorMessages as string[]).length).to.equal(1);
-      expect((runResult.errorMessages as string[])[0]).include("ReferenceError: Can't find variable: someGlobalVariableThatIsNotDeclared");
+      expect((runResult.errorMessages as string[])[0]).include('ReferenceError: someGlobalVariableThatIsNotDeclared is not defined');
     });
   });
 

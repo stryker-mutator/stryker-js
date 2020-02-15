@@ -36,7 +36,7 @@ describe('stryker-karma.conf.js', () => {
 
   it('should set default options', () => {
     const expected = {
-      browsers: ['PhantomJS'],
+      browsers: ['ChromeHeadless'],
       frameworks: ['jasmine']
     };
     sut(config);

@@ -1,12 +1,12 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { assert, expect } from 'chai';
-import jest from 'jest';
+import { expect } from 'chai';
 import sinon from 'sinon';
 
-import JestPromiseTestAdapter from '../../../src/jestTestAdapters/JestPromiseTestAdapter';
+import JestGreaterThan25Adapter from '../../../src/jestTestAdapters/JestGreaterThan25Adapter';
+import { jestWrapper } from '../../../src/utils/jestWrapper';
 
-describe(JestPromiseTestAdapter.name, () => {
-  let sut: JestPromiseTestAdapter;
+describe(JestGreaterThan25Adapter.name, () => {
+  let sut: JestGreaterThan25Adapter;
   let runCLIStub: sinon.SinonStub;
 
   const projectRoot = '/path/to/project';
@@ -14,7 +14,7 @@ describe(JestPromiseTestAdapter.name, () => {
   const jestConfig: any = { rootDir: projectRoot };
 
   beforeEach(() => {
-    runCLIStub = sinon.stub(jest, 'runCLI');
+    runCLIStub = sinon.stub(jestWrapper, 'runCLI');
     runCLIStub.callsFake((config: object) =>
       Promise.resolve({
         config,
@@ -22,7 +22,7 @@ describe(JestPromiseTestAdapter.name, () => {
       })
     );
 
-    sut = testInjector.injector.injectClass(JestPromiseTestAdapter);
+    sut = testInjector.injector.injectClass(JestGreaterThan25Adapter);
   });
 
   it('should set reporters to an empty array', async () => {
@@ -34,32 +34,32 @@ describe(JestPromiseTestAdapter.name, () => {
   it('should call the runCLI method with the correct projectRoot', async () => {
     await sut.run(jestConfig, projectRoot);
 
-    assert(
-      runCLIStub.calledWith(
-        {
-          config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
-          runInBand: true,
-          silent: true
-        },
-        [projectRoot]
-      )
+    expect(runCLIStub).calledWith(
+      {
+        $0: 'stryker',
+        _: [],
+        config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+        runInBand: true,
+        silent: true,
+        findRelatedTests: false
+      },
+      [projectRoot]
     );
   });
 
   it('should call the runCLI method with the --findRelatedTests flag', async () => {
     await sut.run(jestConfig, projectRoot, fileNameUnderTest);
 
-    assert(
-      runCLIStub.calledWith(
-        {
-          _: [fileNameUnderTest],
-          config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
-          findRelatedTests: true,
-          runInBand: true,
-          silent: true
-        },
-        [projectRoot]
-      )
+    expect(runCLIStub).calledWith(
+      {
+        $0: 'stryker',
+        _: [fileNameUnderTest],
+        config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
+        findRelatedTests: true,
+        runInBand: true,
+        silent: true
+      },
+      [projectRoot]
     );
   });
 
@@ -68,9 +68,12 @@ describe(JestPromiseTestAdapter.name, () => {
 
     expect(result).to.deep.equal({
       config: {
+        $0: 'stryker',
+        _: [],
         config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
         runInBand: true,
-        silent: true
+        silent: true,
+        findRelatedTests: false
       },
       result: 'testResult'
     });
@@ -81,6 +84,7 @@ describe(JestPromiseTestAdapter.name, () => {
 
     expect(result).to.deep.equal({
       config: {
+        $0: 'stryker',
         _: [fileNameUnderTest],
         config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
         findRelatedTests: true,

@@ -41,7 +41,8 @@
   },
   "devDependencies": {
     "@stryker-mutator/jasmine-framework": "^2.5.0",
-    "@stryker-mutator/test-helpers": "^2.5.0"
+    "@stryker-mutator/test-helpers": "^2.5.0",
+    "@types/node": "^13.7.1"
   },
   "dependencies": {
     "@stryker-mutator/api": "^2.5.0",

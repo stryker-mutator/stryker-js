@@ -59,10 +59,10 @@ export default class CommandTestRunner implements TestRunner {
         const result = completeResult(code, timer);
         handleResolve(result);
       });
-      childProcess.stdout.on('data', chunk => {
+      childProcess.stdout!.on('data', chunk => {
         output.push(chunk);
       });
-      childProcess.stderr.on('data', chunk => {
+      childProcess.stderr!.on('data', chunk => {
         output.push(chunk);
       });
 
@@ -78,8 +78,8 @@ export default class CommandTestRunner implements TestRunner {
       };
 
       function removeAllListeners() {
-        childProcess.stderr.removeAllListeners();
-        childProcess.stdout.removeAllListeners();
+        childProcess.stderr!.removeAllListeners();
+        childProcess.stdout!.removeAllListeners();
         childProcess.removeAllListeners();
       }
 

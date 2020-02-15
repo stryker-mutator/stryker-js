@@ -9,7 +9,7 @@ module.exports = function (config) {
     mutate: ["src/{Alert,Badge,Breadcrumb}.js"],
     maxConcurrentTestRunners: 2,
     jest: {
-      projectType: 'react'
+      projectType: 'create-react-app'
     }
   });
 };

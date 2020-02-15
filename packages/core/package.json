@@ -57,6 +57,7 @@
     "@stryker-mutator/util": "^2.5.0",
     "chalk": "~3.0.0",
     "commander": "~4.1.0",
+    "file-url": "~3.0.0",
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
     "inquirer": "~7.0.0",
@@ -65,6 +66,7 @@
     "lodash.groupby": "^4.6.0",
     "log4js": "6.1.2",
     "mkdirp": "~1.0.3",
+    "mutation-testing-elements": "^1.0.2",
     "mutation-testing-metrics": "^1.1.1",
     "progress": "~2.0.0",
     "rimraf": "~3.0.0",
@@ -83,7 +85,7 @@
     "@types/istanbul-lib-instrument": "~1.7.0",
     "@types/lodash.flatmap": "^4.5.6",
     "@types/lodash.groupby": "^4.6.6",
-    "@types/node": "~10.17.13",
+    "@types/node": "^13.7.1",
     "@types/progress": "~2.0.1",
     "flatted": "^2.0.0"
   }

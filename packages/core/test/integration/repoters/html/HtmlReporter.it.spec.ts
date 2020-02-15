@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import HtmlReporter from '../../src/HtmlReporter';
+import HtmlReporter from '../../../../src/reporters/html/HtmlReporter';
 
 import { simpleReport } from './simpleReport';
 

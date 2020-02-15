@@ -4,7 +4,7 @@ import { promises as fs } from 'fs';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, ScoreResult, SourceFile } from '@stryker-mutator/api/report';
+import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, SourceFile } from '@stryker-mutator/api/report';
 
 import { cleanFolder } from '../utils/fileUtils';
 
@@ -77,10 +77,6 @@ export default class EventRecorderReporter implements StrictReporter {
 
   public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
     this.work('onMutationTestReportReady', report);
-  }
-
-  public onScoreCalculated(score: ScoreResult): void {
-    this.work('onScoreCalculated', score);
   }
 
   public onAllMutantsTested(results: MutantResult[]): void {

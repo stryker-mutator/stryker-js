@@ -72,7 +72,7 @@ export class StrykerInquirer {
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {
     const answers = await inquirer.prompt<{ reporters: string[] }>({
       choices: options.map(_ => _.name),
-      default: ['clear-text', 'progress'],
+      default: ['html', 'clear-text', 'progress'],
       message: 'Which reporter(s) do you want to use?',
       name: 'reporters',
       type: 'checkbox'

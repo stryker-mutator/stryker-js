@@ -1,9 +1,8 @@
 import fs = require('fs');
 import path from 'path';
 
-import jest from 'jest';
-
 import JestConfigLoader from './JestConfigLoader';
+import { NodeRequireFunction } from './NodeRequireFunction';
 
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root
@@ -15,7 +14,7 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
     this._projectRoot = projectRoot;
   }
 
-  public loadConfig(): jest.Configuration {
+  public loadConfig(): Jest.Configuration {
     const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson() || {};
     return jestConfig;
   }

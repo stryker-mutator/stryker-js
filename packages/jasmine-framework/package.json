@@ -38,5 +38,8 @@
   "contributors": [],
   "engines": {
     "node": ">=8"
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.1"
   }
 }
