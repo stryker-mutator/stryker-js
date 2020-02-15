@@ -9,7 +9,7 @@ import { tap, mergeAll, map, filter } from 'rxjs/operators';
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
 function runE2eTests() {
-  const testDirs = fs.readdirSync(testRootDir).filter(testDir => testDir.includes('karma'));
+  const testDirs = fs.readdirSync(testRootDir);
 
   // Create test$, an observable of test runs
   const test$ = from(testDirs).pipe(
