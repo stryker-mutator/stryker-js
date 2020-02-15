@@ -16,7 +16,6 @@ module.exports = {
   plugins: [
     require.resolve('./packages/mocha-runner/src/index'),
     require.resolve('./packages/mocha-framework/src/index'),
-    require.resolve('./packages/html-reporter/src/index'),
     require.resolve('./packages/typescript/src/index'),
   ],
   dashboard: {

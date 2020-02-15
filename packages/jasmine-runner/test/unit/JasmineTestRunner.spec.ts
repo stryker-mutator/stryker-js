@@ -54,8 +54,8 @@ describe('JasmineTestRunner', () => {
   });
 
   it('should clear require cache on run', async () => {
-    require.cache['foo.js'] = 'foo';
-    require.cache['bar.js'] = 'bar';
+    require.cache['foo.js'] = 'foo' as any;
+    require.cache['bar.js'] = 'bar' as any;
     await actRunWithoutTests();
     expect(require.cache['foo.js']).not.ok;
     expect(require.cache['bar.js']).not.ok;
