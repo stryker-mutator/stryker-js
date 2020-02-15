@@ -2,13 +2,21 @@ window.__karma__.onbeforeunload = function() {
   console.error('Window reload!!', new Error().stack);
 };
 
-
+window.onbeforeunload = function() {
+  console.error('Window reload!!', new Error().stack);
+};
 describe('Add', function() {
   window.__karma__.onbeforeunload = function() {
     console.error('Window reload!!', new Error().stack);
   };
+  window.onbeforeunload = function() {
+    console.error('Window reload!!', new Error().stack);
+  };
   it('should be able to add two numbers', function() {
     window.__karma__.onbeforeunload = function() {
+      console.error('Window reload!!', new Error().stack);
+    };
+    window.onbeforeunload = function() {
       console.error('Window reload!!', new Error().stack);
     };
     var num1 = 2;
