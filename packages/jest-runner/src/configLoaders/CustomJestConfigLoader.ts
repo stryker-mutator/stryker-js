@@ -2,6 +2,7 @@ import fs = require('fs');
 import path from 'path';
 
 import JestConfigLoader from './JestConfigLoader';
+import { NodeRequireFunction } from './NodeRequireFunction';
 
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root

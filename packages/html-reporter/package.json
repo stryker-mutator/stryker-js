@@ -3,8 +3,7 @@
   "version": "2.5.0",
   "description": "An html reporter for the JavaScript mutation testing framework Stryker",
   "main": "src/index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker.git"
@@ -31,5 +30,8 @@
   "contributors": [
     "Nico Jansen <jansennico@gmail.com>",
     "Simon de Lang <simondelang@gmail.com>"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^13.7.1"
+  }
 }

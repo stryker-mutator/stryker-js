@@ -8,6 +8,8 @@ import { Configuration } from 'webpack';
 import { pluginTokens } from '../pluginTokens';
 import { StrykerWebpackConfig } from '../WebpackTranspiler';
 
+import { NodeRequireFunction } from './NodeRequireFunction';
+
 const PROGRESS_PLUGIN_NAME = 'ProgressPlugin';
 
 export default class ConfigLoader {

@@ -1,14 +1,14 @@
 import * as path from 'path';
 
+import { expect } from 'chai';
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { TestStatus, RunStatus } from '@stryker-mutator/api/test_runner';
-import { expect } from 'chai';
 import { LoggingServer, testInjector } from '@stryker-mutator/test-helpers';
 import MochaTestFramework from '@stryker-mutator/mocha-framework/src/MochaTestFramework';
+import ChildProcessProxy from '@stryker-mutator/core/src/child-proxy/ChildProcessProxy';
 import { LogLevel } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import ChildProcessProxy from '../../../core/src/child-proxy/ChildProcessProxy';
 import { MochaTestRunner } from '../../src/MochaTestRunner';
 
 const test0: Readonly<TestSelection> = Object.freeze({

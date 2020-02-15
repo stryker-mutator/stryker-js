@@ -36,7 +36,7 @@ describe(ChildProcessProxyWorker.name, () => {
   let processRemoveListenerStub: sinon.SinonStub;
   let processChdirStub: sinon.SinonStub;
   let logMock: Mock<Logger>;
-  let originalProcessSend: undefined | NodeJS.MessageListener;
+  let originalProcessSend: typeof process.send;
   let processes: NodeJS.MessageListener[];
   const workingDir = 'working dir';
 
