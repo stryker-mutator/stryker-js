@@ -11,6 +11,7 @@ module.exports = function (config) {
         files: ['src/*.js', 'test/*.js']
       }
     },
+    logLevel: 'trace',
     maxConcurrentTestRunners: 2,
     coverageAnalysis: 'perTest'
   });

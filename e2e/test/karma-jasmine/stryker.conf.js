@@ -10,6 +10,7 @@ module.exports = function (config) {
         files: ['src/*.js', 'test/*.js']
       }
     },
-    mutator: 'javascript'
+    mutator: 'javascript',
+    logLevel: 'trace',
   });
 };
