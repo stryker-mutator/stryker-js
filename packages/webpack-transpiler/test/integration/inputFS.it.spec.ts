@@ -24,6 +24,7 @@ describe('InputFileSystem integration', () => {
       } else if (!dirs) {
         done('no dirs');
       } else {
+        // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
         dirs.sort();
         expect(dirs).deep.eq(['dir1', 'dir2', 'dir3']);
         done();
