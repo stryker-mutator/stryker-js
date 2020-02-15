@@ -1,3 +1,7 @@
+window.__karma__.onbeforeunload = function() {
+  console.error('Window reload!!', new Error().stack);
+};
+
 describe('Add', function() {
   it('should be able to add two numbers', function() {
     var num1 = 2;

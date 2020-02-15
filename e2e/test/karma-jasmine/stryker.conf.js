@@ -10,6 +10,7 @@ module.exports = function (config) {
         files: ['src/*.js', 'test/*.js']
       }
     },
+    timeoutMS: 60000,
     mutator: 'javascript',
     logLevel: 'trace',
   });
