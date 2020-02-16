@@ -40,11 +40,11 @@
   },
   "dependencies": {
     "mutation-testing-report-schema": "^1.1.0",
+    "surrial": "^2.0.1",
     "tslib": "~1.10.0"
   },
   "devDependencies": {
     "@types/node": "^13.7.1",
-    "surrial": "~1.0.0",
     "typed-inject": "~2.1.1"
   }
 }
