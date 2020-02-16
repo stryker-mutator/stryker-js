@@ -14,7 +14,6 @@ module.exports = function (config) {
         }
       }
     },
-    logLevel: 'trace',
     timeoutMS: 60000,
     maxConcurrentTestRunners: 2,
     coverageAnalysis: 'perTest'

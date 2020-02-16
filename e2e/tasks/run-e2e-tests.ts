@@ -72,7 +72,7 @@ function satisfiesNodeVersion(testDir: string): boolean {
 
 async function runTest(testDir: string) {
   if (satisfiesNodeVersion(testDir)) {
-    await execNpm('test', testDir, testDir.startsWith('karma'));
+    await execNpm('test', testDir, false);
   }
   return testDir;
 }
