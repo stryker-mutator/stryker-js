@@ -26,7 +26,7 @@ function runE2eTests() {
 
 runE2eTests()
   .subscribe({
-    complete: () => console.log('Done'),
+    complete: () => console.log('✅ Done'),
     error: err => {
       console.error(err);
       process.exit(1);
