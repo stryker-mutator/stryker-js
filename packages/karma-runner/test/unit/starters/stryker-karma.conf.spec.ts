@@ -96,7 +96,7 @@ describe('stryker-karma.conf.js', () => {
   });
 
   // See https://github.com/stryker-mutator/stryker/issues/2049
-  it('should force some clearContext to false', () => {
+  it('should force clearContext to false', () => {
     // Arrange
     requireModuleStub.returns((conf: Config) => conf.set({ client: { clearContext: true } }));
 
