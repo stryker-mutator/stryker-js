@@ -7,10 +7,7 @@ module.exports = function (config) {
     maxConcurrentTestRunners: 2,
     karma: {
       config: {
-        files: ['src/*.js', 'test/*.js'],
-        client: {
-          clearContext: false
-        }
+        files: ['src/*.js', 'test/*.js']
       }
     },
     timeoutMS: 60000,

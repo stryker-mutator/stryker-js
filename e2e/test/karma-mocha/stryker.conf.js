@@ -9,9 +9,6 @@ module.exports = function (config) {
       config: {
         frameworks: ['mocha', 'chai'],
         files: ['src/*.js', 'test/*.js'],
-        client: {
-          clearContext: false
-        }
       }
     },
     timeoutMS: 60000,
