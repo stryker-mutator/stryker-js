@@ -11,7 +11,6 @@ module.exports = function (config) {
       }
     },
     timeoutMS: 60000,
-    mutator: 'javascript',
-    logLevel: 'trace',
+    mutator: 'javascript'
   });
 };
