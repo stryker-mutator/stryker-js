@@ -8,7 +8,10 @@ module.exports = function (config) {
     karma: {
       config: {
         frameworks: ['mocha', 'chai'],
-        files: ['src/*.js', 'test/*.js']
+        files: ['src/*.js', 'test/*.js'],
+        client: {
+          clearContext: false
+        }
       }
     },
     maxConcurrentTestRunners: 2,
