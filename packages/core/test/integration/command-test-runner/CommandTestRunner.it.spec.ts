@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 import { Config } from '@stryker-mutator/api/config';
-import { RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
+import { RunOptions, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -9,11 +9,12 @@ import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runn
 import * as objectUtils from '../../../src/utils/objectUtils';
 
 describe(`${CommandTestRunner.name} integration`, () => {
+  const UNUSED_RUN_OPTIONS: RunOptions = { timeout: 100 };
   const workingDir = path.resolve(__dirname, '..', '..', '..', 'testResources', 'command-runner');
 
   it('should report test as successful', async () => {
     const sut = createSut();
-    const result = await sut.run({ timeout: 100 });
+    const result = await sut.run(UNUSED_RUN_OPTIONS);
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Complete]);
     expect(result.tests).lengthOf(1);
     expect(TestStatus[result.tests[0].status]).eq(TestStatus[TestStatus.Success]);
@@ -23,7 +24,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
 
   it('should report test as failed if exit code != 0', async () => {
     const sut = createSut({ command: 'npm run fail' });
-    const result = await sut.run({ timeout: 100 });
+    const result = await sut.run(UNUSED_RUN_OPTIONS);
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Complete]);
     expect(result.tests).lengthOf(1);
     expect(TestStatus[result.tests[0].status]).eq(TestStatus[TestStatus.Failed]);
@@ -37,7 +38,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
     // Arrange
     const killSpy = sinon.spy(objectUtils, 'kill');
     const sut = createSut({ command: 'npm run wait' });
-    const runPromise = sut.run({ timeout: 100 });
+    const runPromise = sut.run(UNUSED_RUN_OPTIONS);
 
     // Act
     await sut.dispose();

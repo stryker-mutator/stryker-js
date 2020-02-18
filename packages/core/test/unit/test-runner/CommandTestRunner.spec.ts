@@ -1,8 +1,9 @@
 import * as childProcess from 'child_process';
 import * as os from 'os';
+import * as path from 'path';
 
 import { Config } from '@stryker-mutator/api/config';
-import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
+import { RunOptions, RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -14,6 +15,8 @@ import ChildProcessMock from '../../helpers/ChildProcessMock';
 import { Mock, mock } from '../../helpers/producers';
 
 describe(CommandTestRunner.name, () => {
+  const UNUSED_RUN_OPTIONS: RunOptions = { timeout: 100 };
+
   let childProcessMock: ChildProcessMock;
   let killStub: sinon.SinonStub;
   let timerMock: Mock<Timer>;
@@ -37,12 +40,15 @@ describe(CommandTestRunner.name, () => {
       expect(childProcess.exec).calledWith('some other command');
     });
 
-    it('should allow other commands using function-based configuration', async () => {
-      const command = sinon.fake.returns('some functional command');
-      await actRun(createSut({ command }));
-      expect(childProcess.exec).calledWith('some functional command');
-      expect(command).called;
-      expect(command.args[0][0]).to.haveOwnProperty('timeout');
+    it('should allow other commands using provider-based configuration', async () => {
+      await actRun(createSut({ commandProviderFile: path.resolve(__dirname, './CommandTestRunnerCommandProvider.mock') }));
+      expect(childProcess.exec).calledWith('npm test');
+
+      await actRunOnMutatedFile(
+        createSut({ commandProviderFile: path.resolve(__dirname, './CommandTestRunnerCommandProvider.mock') }),
+        'some-mutated-file.ts'
+      );
+      expect(childProcess.exec).calledWith('npm test --testFilesRelatedTo="some-mutated-file.ts"');
     });
 
     it('should report successful test when the exit code = 0', async () => {
@@ -58,7 +64,7 @@ describe(CommandTestRunner.name, () => {
     it('should report failed test when the exit code != 0', async () => {
       timerMock.elapsedMs.returns(42);
       const sut = createSut();
-      const resultPromise = sut.run({ timeout: 100 });
+      const resultPromise = sut.run(UNUSED_RUN_OPTIONS);
       await tick();
       childProcessMock.stdout.emit('data', 'x Test 1 failed');
       childProcessMock.stderr.emit('data', '1 != 2');
@@ -82,7 +88,7 @@ describe(CommandTestRunner.name, () => {
       killStub.resolves();
       const expectedError = new Error('foobar error');
       const sut = createSut();
-      const resultPromise = sut.run({ timeout: 100 });
+      const resultPromise = sut.run(UNUSED_RUN_OPTIONS);
       await tick();
       childProcessMock.emit('error', expectedError);
       const result = await resultPromise;
@@ -107,14 +113,14 @@ describe(CommandTestRunner.name, () => {
     it('should kill any running process', async () => {
       killStub.resolves();
       const sut = createSut();
-      sut.run({ timeout: 100 });
+      sut.run(UNUSED_RUN_OPTIONS);
       await sut.dispose();
       expect(killStub).calledWith(childProcessMock.pid);
     });
 
     it('should resolve running processes in a timeout', async () => {
       const sut = createSut();
-      const resultPromise = sut.run({ timeout: 100 });
+      const resultPromise = sut.run(UNUSED_RUN_OPTIONS);
       await sut.dispose();
       const result = await resultPromise;
       expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Timeout]);
@@ -129,7 +135,17 @@ describe(CommandTestRunner.name, () => {
   });
 
   async function actRun(sut: CommandTestRunner = createSut(), exitCode = 0) {
-    const resultPromise = sut.run({ timeout: 100 });
+    const resultPromise = sut.run(UNUSED_RUN_OPTIONS);
+    await tick();
+    childProcessMock.emit('exit', exitCode);
+    return resultPromise;
+  }
+
+  async function actRunOnMutatedFile(sut: CommandTestRunner = createSut(), mutatedFileName = '', exitCode = 0) {
+    const resultPromise = sut.run({
+      ...UNUSED_RUN_OPTIONS,
+      mutatedFileName
+    });
     await tick();
     childProcessMock.emit('exit', exitCode);
     return resultPromise;

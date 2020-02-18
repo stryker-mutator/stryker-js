@@ -8,10 +8,11 @@ import { errorToString } from '@stryker-mutator/util';
 import { kill } from '../utils/objectUtils';
 import Timer from '../utils/Timer';
 
-type CommandFunction = (runOptions: RunOptions) => string;
+export type CommandProvider = (runOptions: RunOptions) => string;
 
 export interface CommandRunnerSettings {
-  command: string | CommandFunction;
+  command?: string;
+  commandProviderFile?: string;
 }
 
 /**
@@ -47,9 +48,15 @@ export default class CommandTestRunner implements TestRunner {
     );
   }
 
-  public run(runOptions: RunOptions): Promise<RunResult> {
+  public async run(runOptions: RunOptions): Promise<RunResult> {
+    let command = this.settings.command as string;
+
+    if (this.settings.commandProviderFile) {
+      const commandProvider: CommandProvider = await import(this.settings.commandProviderFile);
+      command = commandProvider(runOptions);
+    }
+
     return new Promise((res, rej) => {
-      const command = typeof this.settings.command === 'string' ? this.settings.command : this.settings.command(runOptions);
       const timer = new Timer();
       const output: Array<string | Buffer> = [];
       const childProcess = exec(command, { cwd: this.workingDir });
