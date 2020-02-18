@@ -9,7 +9,7 @@ module.exports = function (config) {
       config: {
         files: ['src/*.js', 'test/*.js'],
         client: {
-          clearContext: true
+          clearContext: false
         }
       }
     },
