@@ -40,7 +40,7 @@
     "@babel/parser": "~7.8.3",
     "@babel/traverse": "~7.8.3",
     "@stryker-mutator/api": "^2.5.0",
-    "tslib": "~1.10.0"
+    "tslib": "~1.11.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^2.0.0"
