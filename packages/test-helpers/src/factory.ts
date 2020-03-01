@@ -85,6 +85,7 @@ export const metrics = factoryMethod<Metrics>(() => ({
   runtimeErrors: 0,
   survived: 0,
   timeout: 0,
+  ignored: 0,
   totalCovered: 0,
   totalDetected: 0,
   totalInvalid: 0,
