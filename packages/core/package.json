@@ -74,7 +74,7 @@
     "source-map": "~0.7.3",
     "surrial": "^2.0.1",
     "tree-kill": "~1.2.0",
-    "tslib": "~1.10.0",
+    "tslib": "~1.11.1",
     "typed-inject": "~2.1.1",
     "typed-rest-client": "~1.7.1"
   },
