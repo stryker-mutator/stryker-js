@@ -2,7 +2,8 @@ name: Publish
 
 on:
   push:
-    tags: ~ # Fine when using locked versioning mode with lerna, as only one tag is pushed to git.
+    tags: 
+      - '**' # Fine when using locked versioning mode with lerna, as only one tag is pushed to git.
 
 jobs:
   release:
