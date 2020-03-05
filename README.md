@@ -35,4 +35,3 @@ See the [stryker's package readme](https://github.com/stryker-mutator/stryker/bl
 ## Supported mutators
 
 See our website for the [list of currently supported mutators](https://stryker-mutator.io/mutators.html).
-
