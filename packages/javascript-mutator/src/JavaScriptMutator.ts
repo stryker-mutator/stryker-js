@@ -21,7 +21,7 @@ export class JavaScriptMutator implements Mutator {
       this.parser.getNodes(ast).forEach(node => {
         const start = node.parent ? node.parent.start : 0;
         const end = node.parent ? node.parent.end : 0;
-        if (this.parser.excludedExpressions.some(
+        if (start && end && this.parser.excludedExpressions.some(
           excludedExpression => file.textContent.substring(start, end).indexOf(excludedExpression) > -1
         )) {
           return;
