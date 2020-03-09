@@ -22,11 +22,10 @@ export class JavaScriptMutator implements Mutator {
         const start = node.parent ? node.parent.start : 0;
         const end = node.parent ? node.parent.end : 0;
         if (
-          start && 
-          end && 
-          this.parser.excludedExpressions.some(
-          excludedExpression => file.textContent.substring(start, end).includes(excludedExpression)
-        )) {
+          start &&
+          end &&
+          this.parser.excludedExpressions.some(excludedExpression => file.textContent.substring(start, end).includes(excludedExpression))
+        ) {
           return;
         }
         this.mutators.forEach(mutator => {
