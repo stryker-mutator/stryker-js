@@ -1,7 +1,10 @@
 module.exports = function (config) {
   config.set({
     testRunner: "jest",
-    mutator: "javascript",
+    mutator: {
+      name: "javascript",
+      excludedExpressions: ["propTypes", "defaultProps"]
+    },
     transpilers: [],
     reporters: ["event-recorder"],
     coverageAnalysis: "off",

@@ -43,6 +43,7 @@ export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescri
   const defaults: MutatorDescriptor = {
     plugins: null,
     name: 'javascript',
+    excludedExpressions: [], // statements with any items in this array will be skipped during mutation
     excludedMutations: []
   };
   if (typeof options.mutator === 'string') {

@@ -11,9 +11,11 @@ import { NodeWithParent } from './ParentNode';
 export default class BabelParser {
   public static inject = tokens(commonTokens.logger, commonTokens.mutatorDescriptor);
   private readonly options: ParserOptions;
+  public readonly excludedExpressions: Array<[string, string]>;
 
   constructor(private readonly log: Logger, mutatorDescriptor: MutatorDescriptor) {
     this.options = this.createOptions(mutatorDescriptor.plugins);
+    this.excludedExpressions = mutatorDescriptor.excludedExpressions;
   }
 
   public parse(code: string): types.File {
