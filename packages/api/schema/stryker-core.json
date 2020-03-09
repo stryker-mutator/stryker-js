@@ -130,6 +130,13 @@
             "type": "string"
           },
           "default": []
+        },
+        "excludedExpressions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
         }
       },
       "required": [
