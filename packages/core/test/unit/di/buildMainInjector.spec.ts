@@ -92,6 +92,7 @@ describe(buildMainInjector.name, () => {
     const expected: MutatorDescriptor = {
       name: 'javascript',
       plugins: null,
+      excludedExpressions: [],
       excludedMutations: []
     };
     const mutatorDescriptor = buildMainInjector({}).resolve(commonTokens.mutatorDescriptor);
