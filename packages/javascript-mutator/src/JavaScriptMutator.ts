@@ -19,10 +19,12 @@ export class JavaScriptMutator implements Mutator {
       const ast = this.parser.parse(file.textContent);
 
       this.parser.getNodes(ast).forEach(node => {
+        const start = node.parent ? node.parent.start : node.start;
+        const end = node.parent ? node.parent.end : node.end;
         if (this.parser.excludedExpressions.some(
-          excludedExpression => file.textContent.substring(node.parent.start, node.parent.end).indexOf(excludedExpression) > -1
+          excludedExpression => file.textContent.substring(start, end).indexOf(excludedExpression) > -1
         )) {
-          return
+          return;
         }
         this.mutators.forEach(mutator => {
           const fileName = file.name;
