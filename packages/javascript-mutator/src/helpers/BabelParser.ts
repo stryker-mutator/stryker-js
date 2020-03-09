@@ -11,7 +11,7 @@ import { NodeWithParent } from './ParentNode';
 export default class BabelParser {
   public static inject = tokens(commonTokens.logger, commonTokens.mutatorDescriptor);
   private readonly options: ParserOptions;
-  public readonly excludedExpressions: Array<[string, string]>;
+  public readonly excludedExpressions: string[];
 
   constructor(private readonly log: Logger, mutatorDescriptor: MutatorDescriptor) {
     this.options = this.createOptions(mutatorDescriptor.plugins);
