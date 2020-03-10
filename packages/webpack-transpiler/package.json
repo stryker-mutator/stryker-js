@@ -40,7 +40,7 @@
     "@types/node": "^13.7.1",
     "@types/webpack": "~4.41.0",
     "raw-loader": "~4.0.0",
-    "webpack": "~4.41.0"
+    "webpack": "~4.42.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^2.0.0",
