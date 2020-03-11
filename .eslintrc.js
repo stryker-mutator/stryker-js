@@ -11,7 +11,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier', 'import'],
   rules: {
     'import/newline-after-import': 1,
-    'import/order': ["error", {"newlines-between": "always"}],
+    'import/order': ["error", { "newlines-between": "always", "groups": ["builtin", ["external", "internal"], "parent", "sibling", "index"] }],
     'prettier/prettier': ['error'],
     'sort-imports': 'off', // No auto-fix!
     'no-case-declarations': 'off',
