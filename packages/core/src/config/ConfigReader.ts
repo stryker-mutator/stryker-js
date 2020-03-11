@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 
 import { Config } from '@stryker-mutator/api/config';
@@ -11,7 +10,7 @@ import { coreTokens } from '../di';
 
 export const CONFIG_SYNTAX_HELP = '  module.exports = function(config) {\n' + '    config.set({\n' + '      // your config\n' + '    });\n' + '  };';
 
-const DEFAULT_CONFIG_FILE = 'stryker.conf.js';
+const DEFAULT_CONFIG_FILE = 'stryker.conf';
 
 export default class ConfigReader {
   public static inject = tokens(coreTokens.cliOptions, commonTokens.logger);
@@ -41,9 +40,9 @@ export default class ConfigReader {
 
     if (!this.cliOptions.configFile) {
       try {
-        fs.accessSync(path.resolve(`./${DEFAULT_CONFIG_FILE}`));
-        this.log.info(`Using ${DEFAULT_CONFIG_FILE} in the current working directory.`);
-        this.cliOptions.configFile = DEFAULT_CONFIG_FILE;
+        const configFile = require.resolve(path.resolve(`./${DEFAULT_CONFIG_FILE}`));
+        this.log.info(`Using ${path.basename(configFile)}`);
+        this.cliOptions.configFile = configFile;
       } catch (e) {
         this.log.info('No config file specified. Running with command line arguments.');
         this.log.info('Use `stryker init` command to generate your config file.');

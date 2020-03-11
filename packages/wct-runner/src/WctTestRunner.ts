@@ -22,7 +22,7 @@ export default class WctTestRunner implements TestRunner {
   constructor(private readonly log: Logger, options: StrykerOptions) {
     if (options.coverageAnalysis !== 'off') {
       throw new Error(
-        `Coverage analysis "${options.coverageAnalysis}" is not (yet) supported by the WCT test runner plugin. Please set \`coverageAnalysis: "off"\` in your stryker.conf.js file.`
+        `Coverage analysis "${options.coverageAnalysis}" is not (yet) supported by the WCT test runner plugin. Please set \`coverageAnalysis: "off"\` in your config file.`
       );
     }
     this.log.debug('Running wct version %s from %s', require(`${WCT_PACKAGE}/package.json`).version, require.resolve(WCT_PACKAGE));

@@ -76,7 +76,7 @@ describe('ConfigLoader', () => {
       .to.be.an('array')
       .that.deep.equals([new FooPlugin(), new BarPlugin(), bazPlugin]);
     expect(testInjector.logger.debug).calledWith(
-      'Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.',
+      'Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your config file to disable this feature.',
       'ProgressPlugin'
     );
   });

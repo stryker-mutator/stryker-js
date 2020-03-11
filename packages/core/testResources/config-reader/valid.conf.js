@@ -1,1 +1,1 @@
-module.exports = require('./stryker.conf.js');
+module.exports = require('./js/stryker.conf.js');

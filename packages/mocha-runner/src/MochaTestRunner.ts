@@ -58,7 +58,7 @@ export class MochaTestRunner implements TestRunner {
           globPatterns,
           null,
           2
-        )}). Please specify the files (glob patterns) containing your tests in ${mochaOptionsKey}.files in your stryker.conf.js file.`
+        )}). Please specify the files (glob patterns) containing your tests in ${mochaOptionsKey}.files in your config file.`
       );
     }
     return fileNames;

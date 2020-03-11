@@ -16,7 +16,7 @@ function base64Encode(input: string) {
 }
 
 const ERROR_POSTFIX =
-  '. Cannot analyse code coverage. Setting `coverageAnalysis: "off"` in your stryker.conf.js will prevent this error, but forces Stryker to run each test for each mutant.';
+  '. Cannot analyse code coverage. Setting `coverageAnalysis: "off"` in your config will prevent this error, but forces Stryker to run each test for each mutant.';
 
 describe('SourceMapper', () => {
   let sut: SourceMapper;
@@ -124,7 +124,7 @@ describe('SourceMapper', () => {
 
       await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' }))).to.be.rejectedWith(
         SourceMapError,
-        /^Source map file "file1.js.map" could not be parsed as json. Cannot analyse code coverage. Setting `coverageAnalysis: "off"` in your stryker.conf.js will prevent this error/
+        /^Source map file "file1.js.map" could not be parsed as json. Cannot analyse code coverage. Setting `coverageAnalysis: "off"` in your config will prevent this error/
       );
     });
 

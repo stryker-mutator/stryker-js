@@ -122,7 +122,7 @@ describe(MochaTestRunner.name, () => {
 
       // Assert
       expect(actFn).throws(
-        `[MochaTestRunner] No files discovered (tried pattern(s) ${relativeGlobbing}). Please specify the files (glob patterns) containing your tests in mochaOptions.files in your stryker.conf.js file.`
+        `[MochaTestRunner] No files discovered (tried pattern(s) ${relativeGlobbing}). Please specify the files (glob patterns) containing your tests in mochaOptions.files in your config file.`
       );
       expect(testInjector.logger.debug).calledWith(`Tried ${absoluteGlobbing} on files: ${filesStringified}.`);
     });

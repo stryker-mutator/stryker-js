@@ -65,7 +65,7 @@ describe(WctTestRunner.name, () => {
   it('should throw when coverageAnalysis != "off"', () => {
     testInjector.options.coverageAnalysis = 'all';
     const expectedError =
-      'Coverage analysis "all" is not (yet) supported by the WCT test runner plugin. Please set `coverageAnalysis: "off"` in your stryker.conf.js file.';
+      'Coverage analysis "all" is not (yet) supported by the WCT test runner plugin. Please set `coverageAnalysis: "off"` in your config file.';
     expect(() => createSut()).throws(expectedError);
   });
 
