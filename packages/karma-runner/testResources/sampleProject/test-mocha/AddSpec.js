@@ -1,5 +1,5 @@
 describe('Add', function () {
-  it('should be able to add two numbers', function () {
+  it('should be able to add two numbers', function (done) {
     var num1 = 2;
     var num2 = 5;
     var expected = num1 + num2;
