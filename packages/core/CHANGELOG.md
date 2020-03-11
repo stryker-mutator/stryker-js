@@ -3,6 +3,95 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/stryker-mutator/stryker/compare/v2.5.0...v3.0.0) (2020-03-11)
+
+
+### Bug Fixes
+
+* **api:** allow for different api versions of File ([#2042](https://github.com/stryker-mutator/stryker/issues/2042)) ([9d1fcc1](https://github.com/stryker-mutator/stryker/commit/9d1fcc17e3e8125d8aa9174e3092d4f9913cc656)), closes [#2025](https://github.com/stryker-mutator/stryker/issues/2025)
+* **mocha:**  support mutants with "runAllTests" ([#2037](https://github.com/stryker-mutator/stryker/issues/2037)) ([a9da18a](https://github.com/stryker-mutator/stryker/commit/a9da18aa67845db943c5ce8ebd69b368b34e134e)), closes [#2032](https://github.com/stryker-mutator/stryker/issues/2032)
+
+
+### Features
+
+* **config:** Allow a `stryker.conf.json` as default config file. ([#2092](https://github.com/stryker-mutator/stryker/issues/2092)) ([2279813](https://github.com/stryker-mutator/stryker/commit/2279813dec4f9fabbfe9dcd521dc2e19d5902dc6))
+* **core:** exit code 1 when error in initial run ([49c5162](https://github.com/stryker-mutator/stryker/commit/49c5162461b5240a6c4204305cb21a7dd74d5172))
+* **excludedMutations:** remove deprecated mutation names ([#2027](https://github.com/stryker-mutator/stryker/issues/2027)) ([6f7bfe1](https://github.com/stryker-mutator/stryker/commit/6f7bfe13e8ec681d73c97d9b7fbd3f88a313ed6d))
+* **HtmlReporter:** include the html reporter in the core package and add it to the default reporters ([#2036](https://github.com/stryker-mutator/stryker/issues/2036)) ([09702d9](https://github.com/stryker-mutator/stryker/commit/09702d9a05387f407d8fc43d21db38b3a14cbec7)), closes [#1919](https://github.com/stryker-mutator/stryker/issues/1919)
+* **Initializer:** Initialize config file as JSON by default ([#2093](https://github.com/stryker-mutator/stryker/issues/2093)) ([e07d953](https://github.com/stryker-mutator/stryker/commit/e07d9535084881180d5abf7b58bece1b65f2455f)), closes [#2000](https://github.com/stryker-mutator/stryker/issues/2000)
+* **promisified fs:** use node 10 promisified functions ([#2028](https://github.com/stryker-mutator/stryker/issues/2028)) ([1c57d8f](https://github.com/stryker-mutator/stryker/commit/1c57d8f4620c2392e167f45fa20aa6acbd0c7a7d))
+* **react:** change react to create-react-app ([#1978](https://github.com/stryker-mutator/stryker/issues/1978)) ([7f34f28](https://github.com/stryker-mutator/stryker/commit/7f34f28dda821da561ae7ea5d041bb58fca4c011))
+* **Reporter.onScoreCalculated:** remove deprecated onScoreCalculatedevent ([#2026](https://github.com/stryker-mutator/stryker/issues/2026)) ([9fa4175](https://github.com/stryker-mutator/stryker/commit/9fa41757d7bed58c98bc3fbd0c8c861670fbd025))
+
+
+### BREAKING CHANGES
+
+* **core:** Stryker now exists with exitCode `1` if an error of any kind occurs.
+* **Reporter.onScoreCalculated:** Please use the `onMutationTestReportReady` event and the `mutation-testing-metrics` npm package to calculate the mutation testing report metrics.
+
+This
+```ts
+class MyReporter {
+  onScoreCalculated(scoreResult) {
+     // => do stuff with score result
+  }
+}
+```
+
+Becomes this:
+```ts
+import { calculateMetrics } from 'mutation-testing-metrics';
+class MyReporter {
+  onMutationTestingReportReady(report){
+    const reportMetrics = calculateMetrics(report.files);
+    // => do stuff with report metrics
+  }
+}
+```
+* **HtmlReporter:** the `html` reporter is now enabled by default. If you don't want to use it, be sure to override the `reporters` configuration option.
+
+```json
+{
+  "reporters": ["progress", "clear-text"]
+}
+```
+* **excludedMutations:** removes auto-fix for the old names of mutations.
+
+### Migrating:
+Almost every mutator has been renamed and/or split. Stryker will warn you about any deprecated mutator names in the `mutator.excludedMutations` section of your config. 
+
+To migrate, please run stryker to see if your project is affected. If this is the case, please take a look at the mutator types on the handbook (see above).
+
+These are the changes:  
+
+| Old mutation           	| New mutation(s)                                       	|
+|------------------------	|-------------------------------------------------------	|
+| ArrayLiteral           	| ArrayDeclaration                                      	|
+| ArrayNewExpression     	| ArrayDeclaration                                      	|
+| BinaryExpression       	| ArithmeticOperator, EqualityOperator, LogicalOperator 	|
+| Block                  	| BlockStatement                                        	|
+| BooleanSubstitution    	| BooleanLiteral                                        	|
+| DoStatement            	| ConditionalExpression                                 	|
+| ForStatement           	| ConditionalExpression                                 	|
+| IfStatement            	| ConditionalExpression                                 	|
+| PrefixUnaryExpression  	| UnaryOperator, UpdateOperator, BooleanLiteral         	|
+| PostfixUnaryExpression 	| UpdateOperator                                        	|
+| SwitchCase             	| ConditionalExpression                                 	|
+| WhileStatement         	| ConditionalExpression                                 	|
+
+
+### New mutations
+Due to the migration, some new mutations were added to the **javascript** mutator.
+* The mutation _ArrayDeclaration_ will now mutate `new Array()` to `new Array([])`
+* The mutation _ArrayDeclaration_ will now mutate `[]` to `["Stryker was here"]`
+
+These mutations were already performed by the typescript mutator.
+* **promisified fs:** removed fsAsPromised from @stryker-mutator/util
+
+
+
+
+
 # [2.5.0](https://github.com/stryker-mutator/stryker/compare/v2.4.0...v2.5.0) (2020-01-12)
 
 

@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.io/stryker-mutator/stryker/compare/v2.5.0...v3.0.0) (2020-03-11)
+
+
+### Bug Fixes
+
+* **mocha:**  support mutants with "runAllTests" ([#2037](https://github.io/stryker-mutator/stryker/issues/2037)) ([a9da18a](https://github.io/stryker-mutator/stryker/commit/a9da18aa67845db943c5ce8ebd69b368b34e134e)), closes [#2032](https://github.io/stryker-mutator/stryker/issues/2032)
+
+
+### Features
+
+* **Initializer:** Initialize config file as JSON by default ([#2093](https://github.io/stryker-mutator/stryker/issues/2093)) ([e07d953](https://github.io/stryker-mutator/stryker/commit/e07d9535084881180d5abf7b58bece1b65f2455f)), closes [#2000](https://github.io/stryker-mutator/stryker/issues/2000)
+* **karma-runner:** disable client.clearContext  ([#2048](https://github.io/stryker-mutator/stryker/issues/2048)) ([27c0787](https://github.io/stryker-mutator/stryker/commit/27c0787e1b5e9b886dc530afcb0de19637e308c6))
+* **karma-runner:** use ChromeHeadless as the default browser ([#2035](https://github.io/stryker-mutator/stryker/issues/2035)) ([18bf9b6](https://github.io/stryker-mutator/stryker/commit/18bf9b603fdc0b4b0049c32dfaf953603980a662))
+
+
+### BREAKING CHANGES
+
+* **karma-runner:** The @stryker-mutator/karma-runner will now use ChromeHeadless by default (instead of PhantomJS)
+
+
+
+
+
+
 # [2.5.0](https://github.io/stryker-mutator/stryker/compare/v2.4.0...v2.5.0) (2020-01-12)
 
 **Note:** Version bump only for package @stryker-mutator/karma-runner
