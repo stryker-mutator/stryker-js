@@ -4,6 +4,8 @@
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/html-reporter.svg)](https://img.shields.io/node/v/@stryker-mutator/html-reporter.svg)
 [![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+## DEPRECATED: Starting from @stryker-mutator/core version 3.0.0 the HTML reporter is included with Stryker and enabled by default. There is no reason to install this package.
+
 # Stryker HTML Reporter
 
 An HTML Reporter for the JavaScript mutation testing framework [Stryker](https://stryker-mutator.io)
