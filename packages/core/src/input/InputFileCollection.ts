@@ -26,7 +26,7 @@ export default class InputFileCollection {
       } else {
         log.warn(
           normalizeWhitespaces(`No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.
-        You can configure the \`mutate\` property in your stryker.conf.js file (or use \`--mutate\` via command line).`)
+        You can configure the \`mutate\` property in your config file (or use \`--mutate\` via command line).`)
         );
       }
       if (log.isDebugEnabled()) {

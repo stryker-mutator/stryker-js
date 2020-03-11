@@ -46,15 +46,15 @@ export default class StrykerCli {
     const defaultValues = new Config();
     this.program
       .version(require('../package.json').version)
-      .usage('<command> [options] [stryker.conf.js]')
+      .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:
         run: Run mutation testing
         init: Initialize Stryker for your project
 
-    Optional location to the stryker.conf.js file as last argument. That file should export a function which accepts a "config" object\n${CONFIG_SYNTAX_HELP}`
+    Optional location to a JSON or JavaScript configfile as last argument. If it's a JavaScript file, that file should export a function which accepts a "config" object\n${CONFIG_SYNTAX_HELP}`
       )
-      .arguments('<command> [stryker.conf.js]')
+      .arguments('<command> [configFile]')
       .action((cmd: string, config: string) => {
         this.command = cmd;
         this.strykerConfig = config;

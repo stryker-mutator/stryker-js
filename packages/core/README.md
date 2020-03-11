@@ -33,12 +33,12 @@ It will run stryker with default values:
 ## Usage
 
 ```sh
-$ npx stryker <command> [options] [stryker.conf.js]
+$ npx stryker <command> [options] [configfilePath]
 ```
 
 The main `command` for Stryker is `run`, which kicks off mutation testing.
 
-Although Stryker can run without any configuration, it is recommended to configure it when you can, as it can greatly improve performance of the mutation testing process. By default, Stryker will look for a `stryker.conf.js` file in the current working directory (if it exists). This can be overridden by specifying a different file as the last parameter.
+Although Stryker can run without any configuration, it is recommended to configure it when you can, as it can greatly improve performance of the mutation testing process. By default, Stryker will look for a `stryker.conf.js` or `stryker.conf.json` file in the current working directory (if it exists). This can be overridden by specifying a different file as the last parameter.
 
 Before your first run, we recommend you try the `init` command, which helps you to set up this `stryker.conf.js` file and install any missing packages needed for your specific configuration. We recommend you verify the contents of the configuration file after this initialization, to make sure everything is setup correctly. Of course, you can still make changes to it, before you run Stryker for the first time.
 

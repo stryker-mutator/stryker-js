@@ -21,7 +21,7 @@ export interface MappedLocation {
 export class SourceMapError extends StrykerError {
   constructor(message: string, innerError?: Error) {
     super(
-      `${message}. Cannot analyse code coverage. Setting \`coverageAnalysis: "off"\` in your stryker.conf.js will prevent this error, but forces Stryker to run each test for each mutant.`,
+      `${message}. Cannot analyse code coverage. Setting \`coverageAnalysis: "off"\` in your config will prevent this error, but forces Stryker to run each test for each mutant.`,
       innerError
     );
     Error.captureStackTrace(this, SourceMapError);
