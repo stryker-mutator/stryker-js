@@ -8,7 +8,7 @@ module.exports = function (config) {
     karma: {
       config: {
         frameworks: ['mocha', 'chai'],
-        files: ['src/*.js', 'test/*.js'],
+        files: ['src/*.js', 'test/*.js']
       }
     },
     timeoutMS: 60000,

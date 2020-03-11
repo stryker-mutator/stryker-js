@@ -1,0 +1,21 @@
+name: Publish
+
+on:
+  push:
+    tags: 
+      - '**' # Fine when using locked versioning mode with lerna, as only one tag is pushed to git.
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set NPM Env
+      run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+    - name: Install dependencies
+      run: npm install
+    - name: Build
+      run: npm run build
+    - name: Release
+      run: npx lerna publish from-git --yes

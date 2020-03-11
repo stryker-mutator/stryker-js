@@ -19,5 +19,13 @@ describe('File', () => {
     const serialized = serialize(expected);
     const actual = deserialize(serialized, [File]);
     expect(actual).deep.eq(expected);
+    expect(actual).instanceOf(File);
+  });
+
+  /**
+   * @see https://github.com/stryker-mutator/stryker/issues/2025
+   */
+  it('should customize serialization to allow different instances of the class file to be compatible', () => {
+    expect(new File('foo', Buffer.from('bar')).surrialize()).eq('new File("foo", Buffer.from("bar", "binary"))');
   });
 });
