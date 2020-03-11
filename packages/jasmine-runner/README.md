@@ -26,21 +26,19 @@ As such, you should make sure you have the correct versions of its dependencies 
 
 ## Configuring
 
-You can configure the jasmine test runner in the `stryker.conf.js` file.
+You can configure the jasmine test runner in the `stryker.conf.js` (or `stryker.conf.json`) file.
 
 ```javascript
 // stryker.conf.js
-module.exports = function (config) {
-    config.set({
-        // ...
-        // not required, but boosts performance
-        coverageAnalysis: 'perTest',
-        // not required, but will allow you to use coverageAnalysis "perTest". Note: This requires `stryker-jasmine` to also be installed.
-        testFramework: 'jasmine',
-        testRunner: 'jasmine',
-        jasmineConfigFile: 'spec/support/jasmine.json'
-        // ...
-    });
+module.exports = {
+    // ...
+    // not required, but boosts performance
+    coverageAnalysis: 'perTest',
+    // not required, but will allow you to use coverageAnalysis "perTest". Note: This requires `stryker-jasmine` to also be installed.
+    testFramework: 'jasmine',
+    testRunner: 'jasmine',
+    jasmineConfigFile: 'spec/support/jasmine.json'
+    // ...
 }
 ```
 

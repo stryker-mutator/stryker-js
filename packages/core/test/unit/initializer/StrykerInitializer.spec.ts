@@ -89,7 +89,7 @@ describe(StrykerInitializer.name, () => {
       presets.push(presetMock);
     });
 
-    it('should prompt for preset, test runner, test framework, mutator, transpilers, reporters, and package manager', async () => {
+    it('should prompt for preset, test runner, test framework, mutator, transpilers, reporters, package manager and config type', async () => {
       arrangeAnswers({
         mutator: 'typescript',
         packageManager: 'yarn',
@@ -98,14 +98,24 @@ describe(StrykerInitializer.name, () => {
         testRunner: 'awesome',
         transpilers: ['webpack']
       });
+
       await sut.initialize();
-      expect(inquirerPrompt).callCount(7);
-      const [promptPreset, promptTestRunner, promptTestFramework, promptMutator, promptPackageManagers]: Array<inquirer.ListQuestion<string>> = [
+
+      expect(inquirerPrompt).callCount(8);
+      const [
+        promptPreset,
+        promptTestRunner,
+        promptTestFramework,
+        promptMutator,
+        promptPackageManagers,
+        promptConfigTypes
+      ]: Array<inquirer.ListQuestion<string>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
         inquirerPrompt.getCall(3).args[0],
-        inquirerPrompt.getCall(6).args[0]
+        inquirerPrompt.getCall(6).args[0],
+        inquirerPrompt.getCall(7).args[0]
       ];
       const [promptTranspilers, promptReporters]: Array<inquirer.CheckboxQuestion<string>> = [
         inquirerPrompt.getCall(4).args[0],
@@ -127,43 +137,47 @@ describe(StrykerInitializer.name, () => {
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'html', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
       expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
+      expect(promptConfigTypes.type).to.eq('list');
+      expect(promptConfigTypes.choices).to.deep.eq(['JSON', 'JavaScript']);
     });
 
     it('should immediately complete when a preset and package manager is chosen', async () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
-        preset: 'awesome-preset'
+        preset: 'awesome-preset',
+        configType: 'JSON'
       });
       resolvePresetConfig();
       await sut.initialize();
-      expect(inquirerPrompt).callCount(2);
+      expect(inquirerPrompt).callCount(3);
       expect(out).calledWith(
-        'Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.'
+        'Done configuring stryker. Please review "stryker.conf.json", you might need to configure transpilers or your test runner correctly.'
       );
       expect(out).calledWith("Let's kill some mutants with this command: `stryker run`");
     });
 
-    it('should correctly write and format the stryker configuration file', async () => {
-      const config = `{
-        'awesome-conf': 'awesome',
-      }`;
+    it('should correctly write and format the stryker js configuration file', async () => {
       const handbookUrl = 'https://awesome-preset.org';
+      const config = {
+        comment: `This config was generated using a preset. Please see the handbook for more information: ${handbookUrl}`,
+        awesomeConf: 'awesome'
+      };
       childExec.resolves();
       resolvePresetConfig({
         config,
         handbookUrl
       });
-      const expectedOutput = `
-        // This config was generated using a preset.
-        // Please see the handbook for more information: ${handbookUrl}
-        module.exports = function(config){
-          config.set(
-            ${config}
-          );
-        }`;
+      const expectedOutput = `/**
+         * @type {import('@stryker-mutator/api/core').StrykerOptions}
+         */  
+        module.exports = {
+          "comment": "${config.comment}",
+          "awesomeConf": "${config.awesomeConf}"
+        };`;
       inquirerPrompt.resolves({
         packageManager: 'npm',
-        preset: 'awesome-preset'
+        preset: 'awesome-preset',
+        configType: 'JavaScript'
       });
       await sut.initialize();
       expectStrykerConfWritten(expectedOutput);
@@ -176,7 +190,8 @@ describe(StrykerInitializer.name, () => {
       childExec.rejects(expectedError);
       inquirerPrompt.resolves({
         packageManager: 'npm',
-        preset: 'awesome-preset'
+        preset: 'awesome-preset',
+        configType: 'JavaScript'
       });
       resolvePresetConfig();
 
@@ -192,7 +207,8 @@ describe(StrykerInitializer.name, () => {
       resolvePresetConfig({ dependencies: ['my-awesome-dependency', 'another-awesome-dependency'] });
       inquirerPrompt.resolves({
         packageManager: 'npm',
-        preset: 'awesome-preset'
+        preset: 'awesome-preset',
+        configType: 'JSON'
       });
       await sut.initialize();
       expect(fsWriteFile).calledOnce;
@@ -203,17 +219,21 @@ describe(StrykerInitializer.name, () => {
       resolvePresetConfig();
       inquirerPrompt.resolves({
         packageManager: 'npm',
-        preset: 'awesome-preset'
+        preset: 'awesome-preset',
+        configType: 'JSON'
       });
       await sut.initialize();
-      expect(inquirerPrompt).callCount(2);
-      const [promptPreset, promptPackageManager]: Array<inquirer.ListQuestion<string>> = [
+      expect(inquirerPrompt).callCount(3);
+      const [promptPreset, promptConfigType, promptPackageManager]: Array<inquirer.ListQuestion<string>> = [
         inquirerPrompt.getCall(0).args[0],
-        inquirerPrompt.getCall(1).args[0]
+        inquirerPrompt.getCall(1).args[0],
+        inquirerPrompt.getCall(2).args[0]
       ];
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
       expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
+      expect(promptConfigType.type).to.eq('list');
+      expect(promptConfigType.choices).to.deep.eq(['JSON', 'JavaScript']);
       expect(promptPackageManager.type).to.eq('list');
       expect(promptPackageManager.choices).to.deep.eq(['npm', 'yarn']);
     });
@@ -230,12 +250,13 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testFramework: 'None/other',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       await sut.initialize();
-      expect(inquirerPrompt).callCount(7);
+      expect(inquirerPrompt).callCount(8);
       expect(out).calledWith('OK, downgrading coverageAnalysis to "all"');
-      expect(fs.promises.writeFile).calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"coverageAnalysis": "all"'));
     });
 
     it('should install any additional dependencies', async () => {
@@ -245,7 +266,8 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
@@ -264,13 +286,14 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars', 'progress'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       await sut.initialize();
       const matchNormalized = (expected: string) =>
         sinon.match((actual: string) => normalizeWhitespaces(actual).includes(normalizeWhitespaces(expected)));
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.js',
+        'stryker.conf.json',
         matchNormalized('"testRunner": "awesome"')
           .and(matchNormalized('"testFramework": "awesome"'))
           .and(matchNormalized('"packageManager": "npm"'))
@@ -288,11 +311,12 @@ describe(StrykerInitializer.name, () => {
         reporters: [],
         testFramework: 'hyper',
         testRunner: 'hyper',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       await sut.initialize();
-      expect(fs.promises.writeFile).calledWith('stryker.conf.js', sinon.match('"someOtherSetting": "enabled"'));
-      expect(fs.promises.writeFile).calledWith('stryker.conf.js', sinon.match('"files": []'));
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"someOtherSetting": "enabled"'));
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
     });
 
     describe('but no testFramework can be found that supports the testRunner', () => {
@@ -301,14 +325,15 @@ describe(StrykerInitializer.name, () => {
           packageManager: 'npm',
           reporters: ['dimension', 'mars'],
           testRunner: 'ghost',
-          transpilers: ['webpack']
+          transpilers: ['webpack'],
+          configType: 'JSON'
         })
       );
 
       it('should not prompt for test framework', async () => {
         await sut.initialize();
 
-        expect(inquirerPrompt).callCount(6);
+        expect(inquirerPrompt).callCount(7);
         expect(inquirerPrompt).not.calledWithMatch(sinon.match({ name: 'testFramework' }));
       });
 
@@ -316,7 +341,7 @@ describe(StrykerInitializer.name, () => {
         await sut.initialize();
 
         expect(out).calledWith('No stryker test framework plugin found that is compatible with ghost, downgrading coverageAnalysis to "all"');
-        expect(fs.promises.writeFile).calledWith('stryker.conf.js', sinon.match('"coverageAnalysis": "all"'));
+        expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"coverageAnalysis": "all"'));
       });
     });
 
@@ -327,7 +352,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: [],
         testRunner: 'ghost',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
 
       return expect(sut.initialize()).to.eventually.be.rejectedWith(expectedError);
@@ -339,7 +365,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: [],
         testRunner: 'ghost',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       stubTranspilers('@stryker-mutator/webpack-transpiler');
       stubPackageClient({ '@stryker-mutator/webpack-transpiler': null });
@@ -363,7 +390,8 @@ describe(StrykerInitializer.name, () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: ['clear-text'],
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
 
       await sut.initialize();
@@ -382,7 +410,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
@@ -408,7 +437,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-webpack': null });
 
@@ -430,7 +460,8 @@ describe(StrykerInitializer.name, () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: ['clear-text'],
-        testRunner: 'awesome'
+        testRunner: 'awesome',
+        configType: 'JSON'
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null });
 
@@ -453,7 +484,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null, 'stryker-webpack': null });
 
@@ -475,7 +507,8 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
+        configType: 'JSON'
       });
       restClientPackage.get.rejects();
 
@@ -587,7 +620,7 @@ describe(StrykerInitializer.name, () => {
 
   function resolvePresetConfig(presetConfigOverrides?: Partial<PresetConfiguration>) {
     const presetConfig: PresetConfiguration = {
-      config: '',
+      config: {},
       dependencies: [],
       handbookUrl: ''
     };

@@ -20,7 +20,7 @@ Next, install this package:
 npm install --save-dev @stryker-mutator/javascript-mutator
 ```
 
-Now open up your stryker.conf.js file and add the following components:
+Now open up your `stryker.conf.js` (or `stryker.conf.json`) file and add the following components:
 
 ```javascript
 mutator: 'javascript',

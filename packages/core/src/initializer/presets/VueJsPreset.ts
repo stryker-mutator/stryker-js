@@ -1,4 +1,6 @@
 import inquirer = require('inquirer');
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
 import Preset from './Preset';
 import PresetConfiguration from './PresetConfiguration';
 
@@ -13,31 +15,31 @@ export class VueJsPreset implements Preset {
   private readonly generalDependencies = ['@stryker-mutator/core', '@stryker-mutator/vue-mutator'];
 
   private readonly jestDependency = '@stryker-mutator/jest-runner';
-  private readonly jestConf = `{
-      mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
-      mutator: 'vue',
-      testRunner: 'jest',
-      jest: {
-        // config: require('path/to/your/custom/jestConfig.js')
-      },
-      reporters: ['progress', 'clear-text', 'html'],
-      coverageAnalysis: 'off'
-    }`;
+  private readonly jestConf: Partial<StrykerOptions> = {
+    mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
+    mutator: 'vue',
+    testRunner: 'jest',
+    jest: {
+      // config: require('path/to/your/custom/jestConfig.js')
+    },
+    reporters: ['progress', 'clear-text', 'html'],
+    coverageAnalysis: 'off'
+  };
 
   private readonly karmaDependency = '@stryker-mutator/karma-runner';
-  private readonly karmaConf = `{
-      mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
-      mutator: 'vue',
-      testRunner: 'karma',
-      karma: {
-        configFile: 'test/unit/karma.conf.js',
-        config: {
-          browsers: ['ChromeHeadless']
-        }
-      },
-      reporters: ['progress', 'clear-text', 'html'],
-      coverageAnalysis: 'off'
-    }`;
+  private readonly karmaConf: Partial<StrykerOptions> = {
+    mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
+    mutator: 'vue',
+    testRunner: 'karma',
+    karma: {
+      configFile: 'test/unit/karma.conf.js',
+      config: {
+        browsers: ['ChromeHeadless']
+      }
+    },
+    reporters: ['progress', 'clear-text', 'html'],
+    coverageAnalysis: 'off'
+  };
 
   public async createConfig(): Promise<PresetConfiguration> {
     const testRunnerChoices: Array<inquirer.ChoiceType<string>> = ['karma', 'jest'];
@@ -57,13 +59,13 @@ export class VueJsPreset implements Preset {
     const chosenTestRunner = testRunnerAnswers.testRunner;
     const chosenScript = scriptAnswers.script;
     return {
-      config: this.getConfigString(chosenTestRunner),
+      config: this.getConfig(chosenTestRunner),
       dependencies: this.createDependencies(chosenTestRunner, chosenScript),
       handbookUrl
     };
   }
 
-  private getConfigString(testRunner: string) {
+  private getConfig(testRunner: string) {
     if (testRunner === 'karma') {
       return this.karmaConf;
     } else if (testRunner === 'jest') {

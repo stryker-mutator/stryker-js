@@ -20,7 +20,7 @@ Next, install this package:
 npm install --save-dev @stryker-mutator/typescript
 ```
 
-Now open up your stryker.conf.js file and add the following components:
+Now open up your `stryker.conf.js` (or `stryker.conf.json`) file and add the following components:
 
 ```javascript
 coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
@@ -90,7 +90,7 @@ The `TypescriptMutator` is a plugin to mutate typescript code. It builds a Types
 
 See [test code](https://github.com/stryker-mutator/stryker/tree/master/packages/typescript/test/unit/mutator) to know which mutations are supported.
 
-Configure the Typescript mutator in your stryker.conf.js file:
+Configure the Typescript mutator in your `stryker.conf.js` (or `stryker.conf.json`) file:
 
 ```javascript
 // stryker.conf.js
@@ -105,7 +105,7 @@ The `TypescriptTranspiler` is a plugin to transpile typescript source code befor
 
 Given your Typescript configuration (see **TypescriptConfigEditor**) it generates the javascript output. This is also used to transpile each mutant to javascript. Internally, it uses the same method as Typescript's watch mode (`tsc -w`), so it can transpile mutants fairly efficiently.
 
-Configure the Typescript transpiler in your stryker.conf.js file:
+Configure the Typescript transpiler in your `stryker.conf.js` (or `stryker.conf.json`) file:
 
 ```javascript
 // stryker.conf.js

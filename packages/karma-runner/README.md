@@ -26,23 +26,21 @@ uses *your very own karma* version. It can also work with `@angular/cli`, see [C
 
 ## Configuring
 
-You can configure the `@stryker-mutator/karma-runner` using the `stryker.conf.js` config file.
+You can configure the `@stryker-mutator/karma-runner` using the `stryker.conf.js` (or `stryker.conf.json`) config file.
 
 ```javascript
 // Stryker.conf.js
-module.exports = function (config) {
-    config.set({
-        // ...
-        testRunner: 'karma',
-        // ...
-        karma: {
-            projectType: 'custom', // or 'angular-cli'
-            configFile: 'path/to/karma.conf.js' // default `undefined`
-            config: { // default `undefined`
-                browsers: ['ChromeHeadless'] // override config settings
-            }
+module.exports = {
+    // ...
+    testRunner: 'karma',
+    // ...
+    karma: {
+        projectType: 'custom', // or 'angular-cli'
+        configFile: 'path/to/karma.conf.js' // default `undefined`
+        config: { // default `undefined`
+            browsers: ['ChromeHeadless'] // override config settings
         }
-    });
+    }
 }
 ```
 

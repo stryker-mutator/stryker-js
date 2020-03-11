@@ -18,7 +18,7 @@ Next, install this package:
 npm install --save-dev @stryker-mutator/webpack-transpiler
 ```
 
-Open up your `stryker.conf.js` file and add the following properties:
+Open up your `stryker.conf.js` (or `stryker.conf.json`) file and add the following properties:
 
 ```javascript
 webpack: {
@@ -32,7 +32,7 @@ transpilers: [
 
 **Note:** if the webpack config is absent from your stryker configuration, the above values are used by default.
 
-If you initialize stryker using `stryker init`, the webpack property will be added to your `stryker.conf.js` automatically.
+If you initialize stryker using `stryker init`, the webpack property will be added to your `stryker.conf.js` (or `stryker.conf.json`) automatically.
 
 Now give it a go:
 
