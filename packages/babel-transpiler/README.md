@@ -24,7 +24,7 @@ Next, install this package:
 npm install --save-dev @stryker-mutator/babel-transpiler @babel/core
 ```
 
-Next, open up your `stryker.conf.js` file and add the following properties:
+Next, open up your `stryker.conf.js` (or `stryker.conf.json`) file and add the following properties:
 
 ```javascript
 babel: {

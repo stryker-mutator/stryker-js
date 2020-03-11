@@ -61,13 +61,11 @@ The @stryker-mutator/jest-runner also provides a couple of configurable options 
 The following is an example stryker.conf.js file:
 
 ```javascript
-module.exports = function(config) {
-  config.set({
-    testRunner: "jest",
-    mutator: "javascript",
-    coverageAnalysis: "off",
-    mutate: ["src/**/*.js"]
-  });
+module.exports = {
+  testRunner: "jest",
+  mutator: "javascript",
+  coverageAnalysis: "off",
+  mutate: ["src/**/*.js"]
 };
 ```
 

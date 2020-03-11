@@ -7,6 +7,7 @@
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
 # Stryker Jasmine
+
 A plugin to use the Jasmine test framework in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework.
 
 This plugin provides beforeEach, afterEach and filter hooks to Stryker, so you are able to use `coverageAnalysis: 'perTest'` with jasmine.
@@ -19,7 +20,7 @@ Install `@stryker-mutator/jasmine-framework` and `jasmine-core` into your projec
 $ npm install @stryker-mutator/jasmine-framework jasmine-core --save-dev
 ```
 
-*Note: @stryker-mutator/jasmine-framework only works with jasmine-core >= v2*
+_Note: @stryker-mutator/jasmine-framework only works with jasmine-core >= v2_
 
 Since @stryker-mutator/jasmine-framework is a plugin for Stryker, you likely have it installed already, but in case you don't:
 
@@ -32,11 +33,9 @@ $ npm install @stryker-mutator/core --save-dev
 Set the `testFramework` setting to `'jasmine'` in your stryker config file.
 
 ```javascript
-// stryker.conf.js
-module.exports = function(config) {
-  config.set({
-    testFramework: 'jasmine',
-  });
+// `stryker.conf.js` (or stryker.conf.json)
+module.exports = {
+  testFramework: 'jasmine'
 };
 ```
 
