@@ -90,4 +90,17 @@ export class StrykerInquirer {
     });
     return options.filter(_ => _.name === answers.packageManager)[0];
   }
+
+  public async promptJsonConfigType(): Promise<boolean> {
+    const json = 'JSON';
+
+    const answers = await inquirer.prompt<{ configType: string }>({
+      choices: [json, 'JavaScript'],
+      default: json,
+      message: 'What kind of config do you want?',
+      name: 'configType',
+      type: 'list'
+    });
+    return answers.configType === json;
+  }
 }

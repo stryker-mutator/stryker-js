@@ -124,13 +124,11 @@ The content of the file `stryker.conf.js` in this example is:
 
 ```javascript
 // stryker.conf.js
-module.exports = function(config){
-  config.set({
-    files: [{ pattern: 'src/**/*.js', mutated: true} , 'test/myFirstFile.spec.js', 'test/mySecondFile.spec.js'],
-    testFramework: 'jasmine',
-    testRunner: 'karma'
-  });
-}
+module.exports = {
+  files: [{ pattern: 'src/**/*.js', mutated: true} , 'test/myFirstFile.spec.js', 'test/mySecondFile.spec.js'],
+  testFramework: 'jasmine',
+  testRunner: 'karma'
+};
 ```
 **Note:** It's not possible to exclude files in a config file using `!` like: `!myFile.js`. This is possible when you don't use a config file but define the options your Gruntfile.
 See [node-glob](https://github.com/isaacs/node-glob#glob) to know what *is* possible.

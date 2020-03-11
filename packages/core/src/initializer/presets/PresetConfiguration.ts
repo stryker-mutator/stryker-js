@@ -1,5 +1,7 @@
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
 export default interface PresetConfiguration {
-  config: string;
+  config: Partial<StrykerOptions>;
   handbookUrl: string;
   dependencies: string[];
 }
