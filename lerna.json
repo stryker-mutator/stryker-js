@@ -6,7 +6,9 @@
   "version": "2.5.0",
   "command": {
     "version": {
-      "allowBranch": "master"
+      "allowBranch": "master",
+      "conventionalCommits": true,
+      "forcePublish": true
     }
   }
 }
