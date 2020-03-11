@@ -97,7 +97,7 @@ export class StrykerInquirer {
     const answers = await inquirer.prompt<{ configType: string }>({
       choices: [json, 'JavaScript'],
       default: json,
-      message: 'What kind of config do you want?',
+      message: 'What file type do you want for your config file?',
       name: 'configType',
       type: 'list'
     });
