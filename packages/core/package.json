@@ -60,7 +60,7 @@
     "file-url": "~3.0.0",
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
-    "inquirer": "~7.0.0",
+    "inquirer": "~7.1.0",
     "istanbul-lib-instrument": "~3.3.0",
     "lodash.flatmap": "^4.5.0",
     "lodash.groupby": "^4.6.0",
