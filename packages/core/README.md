@@ -33,7 +33,7 @@ It will run stryker with default values:
 ## Usage
 
 ```sh
-$ npx stryker <command> [options] [configfilePath]
+$ npx stryker <command> [options] [configFile]
 ```
 
 The main `command` for Stryker is `run`, which kicks off mutation testing.

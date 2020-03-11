@@ -41,7 +41,7 @@ export default class ConfigReader {
     if (!this.cliOptions.configFile) {
       try {
         const configFile = require.resolve(path.resolve(`./${DEFAULT_CONFIG_FILE}`));
-        this.log.info(`Using ${configFile}`);
+        this.log.info(`Using ${path.basename(configFile)}`);
         this.cliOptions.configFile = configFile;
       } catch (e) {
         this.log.info('No config file specified. Running with command line arguments.');

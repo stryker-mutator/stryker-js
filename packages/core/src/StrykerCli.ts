@@ -52,7 +52,7 @@ export default class StrykerCli {
         run: Run mutation testing
         init: Initialize Stryker for your project
 
-    Optional location to a JSON or JavaScript configfile as last argument. If it's a JavaScript file, that file should export a function which accepts a "config" object\n${CONFIG_SYNTAX_HELP}`
+        Optional location to a JSON or JavaScript config file as the last argument. If it's a JavaScript file, that file should export the config directly.`
       )
       .arguments('<command> [configFile]')
       .action((cmd: string, config: string) => {
