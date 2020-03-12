@@ -49,7 +49,7 @@
   },
   "peerDependencies": {
     "@babel/core": "^7",
-    "@stryker-mutator/core": "^2.0.0"
+    "@stryker-mutator/core": "^3.0.0"
   },
   "devDependencies": {
     "@babel/cli": "~7.8.3",
