@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/stryker-mutator/stryker/compare/v3.0.0...v3.0.1) (2020-03-12)
+
+**Note:** Version bump only for package @stryker-mutator/test-helpers
+
+
+
+
+
+# [3.0.0](https://github.com/stryker-mutator/stryker/compare/v2.5.0...v3.0.0) (2020-03-11)
+
+
+### Bug Fixes
+
+* **mocha:**  support mutants with "runAllTests" ([#2037](https://github.com/stryker-mutator/stryker/issues/2037)) ([a9da18a](https://github.com/stryker-mutator/stryker/commit/a9da18aa67845db943c5ce8ebd69b368b34e134e)), closes [#2032](https://github.com/stryker-mutator/stryker/issues/2032)
+
+
+### Features
+
+* **Reporter.onScoreCalculated:** remove deprecated onScoreCalculatedevent ([#2026](https://github.com/stryker-mutator/stryker/issues/2026)) ([9fa4175](https://github.com/stryker-mutator/stryker/commit/9fa41757d7bed58c98bc3fbd0c8c861670fbd025))
+
+
+### BREAKING CHANGES
+
+* **Reporter.onScoreCalculated:** Please use the `onMutationTestReportReady` event and the `mutation-testing-metrics` npm package to calculate the mutation testing report metrics.
+
+This
+```ts
+class MyReporter {
+  onScoreCalculated(scoreResult) {
+     // => do stuff with score result
+  }
+}
+```
+
+Becomes this:
+```ts
+import { calculateMetrics } from 'mutation-testing-metrics';
+class MyReporter {
+  onMutationTestingReportReady(report){
+    const reportMetrics = calculateMetrics(report.files);
+    // => do stuff with report metrics
+  }
+}
+```
+
+
+
+
+
+
 # [2.5.0](https://github.com/stryker-mutator/stryker/compare/v2.4.0...v2.5.0) (2020-01-12)
 
 **Note:** Version bump only for package @stryker-mutator/test-helpers

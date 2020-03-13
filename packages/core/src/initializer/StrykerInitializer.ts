@@ -49,13 +49,14 @@ export default class StrykerInitializer {
     this.configWriter.guardForExistingConfig();
     this.patchProxies();
     const selectedPreset = await this.selectPreset();
+    let configFileName: string;
     if (selectedPreset) {
-      await this.initiatePreset(this.configWriter, selectedPreset);
+      configFileName = await this.initiatePreset(this.configWriter, selectedPreset);
     } else {
-      await this.initiateCustom(this.configWriter);
+      configFileName = await this.initiateCustom(this.configWriter);
     }
     await this.gitignoreWriter.addStrykerTempFolder();
-    this.out('Done configuring stryker. Please review `stryker.conf.js`, you might need to configure transpilers or your test runner correctly.');
+    this.out(`Done configuring stryker. Please review "${configFileName}", you might need to configure transpilers or your test runner correctly.`);
     this.out("Let's kill some mutants with this command: `stryker run`");
   }
 
@@ -86,9 +87,11 @@ export default class StrykerInitializer {
 
   private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: Preset) {
     const presetConfig = await selectedPreset.createConfig();
-    await configWriter.writePreset(presetConfig);
+    const isJsonSelected = await this.selectJsonConfigType();
+    const configFileName = await configWriter.writePreset(presetConfig, isJsonSelected);
     const selectedPackageManager = await this.selectPackageManager();
     this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
+    return configFileName;
   }
 
   private async initiateCustom(configWriter: StrykerConfigWriter) {
@@ -99,22 +102,25 @@ export default class StrykerInitializer {
     const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
     const selectedPackageManager = await this.selectPackageManager();
+    const isJsonSelected = await this.selectJsonConfigType();
     const npmDependencies = this.getSelectedNpmDependencies(
       [selectedTestRunner, selectedTestFramework, selectedMutator].concat(selectedTranspilers).concat(selectedReporters)
     );
-    await configWriter.write(
+    const configFileName = await configWriter.write(
       selectedTestRunner,
       selectedTestFramework,
       selectedMutator,
       selectedTranspilers,
       selectedReporters,
       selectedPackageManager,
-      await this.fetchAdditionalConfig(npmDependencies)
+      await this.fetchAdditionalConfig(npmDependencies),
+      isJsonSelected
     );
     this.installNpmDependencies(
       npmDependencies.map(pkg => pkg.name),
       selectedPackageManager
     );
+    return configFileName;
   }
 
   private async selectTestRunner(): Promise<PromptOption | null> {
@@ -206,6 +212,10 @@ export default class StrykerInitializer {
         pkg: null
       }
     ]);
+  }
+
+  private async selectJsonConfigType(): Promise<boolean> {
+    return this.inquirer.promptJsonConfigType();
   }
 
   private getSelectedNpmDependencies(selectedOptions: Array<PromptOption | null>): PackageInfo[] {

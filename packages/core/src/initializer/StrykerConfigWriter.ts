@@ -10,22 +10,28 @@ import PromptOption from './PromptOption';
 
 import { initializerTokens } from '.';
 
-const STRYKER_CONFIG_FILE = 'stryker.conf.js';
+const STRYKER_JS_CONFIG_FILE = 'stryker.conf.js';
+const STRYKER_JSON_CONFIG_FILE = 'stryker.conf.json';
 
 export default class StrykerConfigWriter {
   public static inject = tokens(commonTokens.logger, initializerTokens.out);
   constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
 
   public guardForExistingConfig() {
-    if (existsSync(STRYKER_CONFIG_FILE)) {
-      const msg = 'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.';
+    this.checkIfConfigFileExists(STRYKER_JS_CONFIG_FILE);
+    this.checkIfConfigFileExists(STRYKER_JSON_CONFIG_FILE);
+  }
+
+  private checkIfConfigFileExists(file: string) {
+    if (existsSync(file)) {
+      const msg = `Stryker config file "${file}" already exists in the current directory. Please remove it and try again.`;
       this.log.error(msg);
       throw new Error(msg);
     }
   }
 
   /**
-   * Create stryker.conf.js based on the chosen framework and test runner
+   * Create config based on the chosen framework and test runner
    * @function
    */
   public write(
@@ -35,8 +41,9 @@ export default class StrykerConfigWriter {
     selectedTranspilers: null | PromptOption[],
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
-    additionalPiecesOfConfig: Array<Partial<StrykerOptions>>
-  ): Promise<void> {
+    additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
+    exportAsJson: boolean
+  ): Promise<string> {
     const configObject: Partial<StrykerOptions> = {
       mutator: selectedMutator ? selectedMutator.name : '',
       packageManager: selectedPackageManager.name,
@@ -47,19 +54,20 @@ export default class StrykerConfigWriter {
 
     this.configureTestFramework(configObject, selectedTestFramework);
     Object.assign(configObject, ...additionalPiecesOfConfig);
-    return this.writeStrykerConfig(configObject);
+    return this.writeStrykerConfig(configObject, exportAsJson);
   }
 
   /**
-   * Create stryker.conf.js based on the chosen preset
+   * Create config based on the chosen preset
    * @function
    */
-  public async writePreset(presetConfig: PresetConfiguration) {
-    return this.writeStrykerConfigRaw(
-      presetConfig.config,
-      `// This config was generated using a preset.
-    // Please see the handbook for more information: ${presetConfig.handbookUrl}`
-    );
+  public async writePreset(presetConfig: PresetConfiguration, exportAsJson: boolean) {
+    const config = {
+      comment: `This config was generated using a preset. Please see the handbook for more information: ${presetConfig.handbookUrl}`,
+      ...presetConfig.config
+    };
+
+    return this.writeStrykerConfig(config, exportAsJson);
   }
 
   private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {
@@ -71,28 +79,45 @@ export default class StrykerConfigWriter {
     }
   }
 
-  private async writeStrykerConfigRaw(rawConfig: string, rawHeader = '') {
-    this.out('Writing & formatting stryker.conf.js...');
-    const formattedConf = `${rawHeader}
-      module.exports = function(config){
-        config.set(
-          ${rawConfig}
-        );
-      }`;
-    await fs.writeFile(STRYKER_CONFIG_FILE, formattedConf);
+  private writeStrykerConfig(config: Partial<StrykerOptions>, exportAsJson: boolean) {
+    if (exportAsJson) {
+      return this.writeJsonConfig(config);
+    } else {
+      return this.writeJsConfig(config);
+    }
+  }
+
+  private async writeJsConfig(commentedConfig: Partial<StrykerOptions>) {
+    this.out(`Writing & formatting ${STRYKER_JS_CONFIG_FILE}...`);
+    const rawConfig = this.stringify(commentedConfig);
+    const formattedConfig = `/**
+      * @type {import('@stryker-mutator/api/core').StrykerOptions}
+      */
+      module.exports = ${rawConfig};`;
+    await fs.writeFile(STRYKER_JS_CONFIG_FILE, formattedConfig);
     try {
-      await childProcessAsPromised.exec(`npx prettier --write ${STRYKER_CONFIG_FILE}`);
+      await childProcessAsPromised.exec(`npx prettier --write ${STRYKER_JS_CONFIG_FILE}`);
     } catch (error) {
       this.log.debug('Prettier exited with error', error);
       this.out('Unable to format stryker.conf.js file for you. This is not a big problem, but it might look a bit messy 🙈.');
     }
+
+    return STRYKER_JS_CONFIG_FILE;
   }
 
-  private writeStrykerConfig(configObject: Partial<StrykerOptions>) {
-    return this.writeStrykerConfigRaw(this.wrapInModule(configObject));
+  private async writeJsonConfig(commentedConfig: Partial<StrykerOptions>) {
+    this.out(`Writing & formatting ${STRYKER_JSON_CONFIG_FILE}...`);
+    const typedConfig = {
+      $schema: 'https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json',
+      ...commentedConfig
+    };
+    const formattedConfig = this.stringify(typedConfig);
+    await fs.writeFile(STRYKER_JSON_CONFIG_FILE, formattedConfig);
+
+    return STRYKER_JSON_CONFIG_FILE;
   }
 
-  private wrapInModule(configObject: Partial<StrykerOptions>): string {
-    return JSON.stringify(configObject, null, 2);
+  private stringify(input: object): string {
+    return JSON.stringify(input, undefined, 2);
   }
 }

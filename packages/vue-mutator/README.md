@@ -57,7 +57,7 @@ If you write JavaScript code please install this package:
 npm install --save-dev @stryker-mutator/javascript-mutator
 ```
 
-These plugins need no additional configuration to work with the `Vue Mutator`. Please leave the config setting in your stryker.conf.js file at `mutator: 'vue',`.
+These plugins need no additional configuration to work with the `Vue Mutator`. Please leave the config setting in your `stryker.conf.js` (or `stryker.conf.json`) file at `mutator: 'vue',`.
 
 ## Peer dependencies
 
