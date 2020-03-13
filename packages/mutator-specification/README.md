@@ -1,6 +1,6 @@
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/mutator-specification.svg)](https://www.npmjs.com/package/@stryker-mutator/mutator-specification)
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/mutator-specification.svg)](https://img.shields.io/node/v/@stryker-mutator/mutator-specification.svg)
-[![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Slack Chat](https://img.shields.io/badge/slack-chat-brightgreen.svg?logo=slack)](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM)
 ![Stryker](https://github.com/stryker-mutator/stryker/raw/master/stryker-80x80.png)
 
 # Stryker mutator specification
