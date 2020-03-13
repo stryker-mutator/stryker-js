@@ -38,7 +38,7 @@
     "posttest": "mocha --require ts-node/register verify/*.ts"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "version": "3.0.1",
   "main": "paper-button.js",
