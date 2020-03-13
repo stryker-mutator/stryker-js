@@ -59,14 +59,12 @@ describe(TemporaryDirectory.name, () => {
       beforeEach(() => sut.initialize());
       it('should call deleteDir fileApi', async () => {
         const expectedPath = path.resolve(tempDirName);
-        deleteDirStub.resolves('delResolveStub');
+        deleteDirStub.resolves();
 
         const temporaryDirectoryInstance = sut;
-        const result = temporaryDirectoryInstance.dispose();
+        await temporaryDirectoryInstance.dispose();
 
         expect(fileUtils.deleteDir).calledWith(expectedPath);
-
-        result.then(data => expect(data).equals('delResolveStub'));
       });
     });
 
