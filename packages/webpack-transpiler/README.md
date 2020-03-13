@@ -2,7 +2,7 @@
 [![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/webpack-transpiler.svg)](https://www.npmjs.com/package/@stryker-mutator/webpack-transpiler)
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/webpack-transpiler.svg)](https://img.shields.io/node/v/@stryker-mutator/webpack-transpiler.svg)
-[![Gitter](https://badges.gitter.im/stryker-mutator/stryker.svg)](https://gitter.im/stryker-mutator/stryker?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Slack Chat](https://img.shields.io/badge/slack-chat-brightgreen.svg?logo=slack)](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM)
 
 # Stryker Webpack Transpiler
 

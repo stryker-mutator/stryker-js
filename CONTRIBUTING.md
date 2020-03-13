@@ -11,7 +11,7 @@ This is the contribution guide for Stryker. Great to have you here! Here are a f
 
 ## Learn & listen
 
-Get in touch with us through twitter or via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker).
+Get in touch with us through twitter or via the [Stryker Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM).
 
 * [@stryker_mutator](https://twitter.com/stryker_mutator)
 * [@_simondel](https://twitter.com/_simondel)
@@ -76,7 +76,7 @@ We support mutation testing Stryker with Stryker! After you got Stryker working 
 
 New features are welcome! Either as requests or proposals.
 
-1. Please create an issue first or let us know via the [Stryker gitter](https://gitter.im/stryker-mutator/stryker)
+1. Please create an issue first or let us know via the [Stryker Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM)
 1. Create a fork on your github account.
 1. When writing your code, please conform to the existing coding style.
    See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
