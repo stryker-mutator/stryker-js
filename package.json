@@ -62,7 +62,7 @@
     "start": "tsc -b -w"
   },
   "engines": {
-    "node": ">=8",
+    "node": ">=10",
     "npm": ">=5"
   }
 }
