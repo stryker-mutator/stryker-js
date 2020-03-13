@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/jasmine-framework",
-  "version": "2.5.0",
+  "version": "3.0.1",
   "description": "A plugin to use the Jasmine test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
@@ -29,11 +29,11 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/jasmine#readme",
   "peerDependencies": {
-    "@stryker-mutator/core": "^2.0.0",
+    "@stryker-mutator/core": "^3.0.0",
     "jasmine-core": ">=2"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^2.5.0"
+    "@stryker-mutator/api": "^3.0.1"
   },
   "contributors": [],
   "engines": {

@@ -3,10 +3,12 @@
   "packages": [
     "packages/*"
   ],
-  "version": "2.5.0",
+  "version": "3.0.1",
   "command": {
     "version": {
-      "allowBranch": "master"
+      "allowBranch": "master",
+      "conventionalCommits": true,
+      "forcePublish": true
     }
   }
 }

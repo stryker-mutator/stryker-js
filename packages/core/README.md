@@ -33,33 +33,47 @@ It will run stryker with default values:
 ## Usage
 
 ```sh
-$ npx stryker <command> [options] [stryker.conf.js]
+$ npx stryker <command> [options] [configFile]
 ```
 
 The main `command` for Stryker is `run`, which kicks off mutation testing.
 
-Although Stryker can run without any configuration, it is recommended to configure it when you can, as it can greatly improve performance of the mutation testing process. By default, Stryker will look for a `stryker.conf.js` file in the current working directory (if it exists). This can be overridden by specifying a different file as the last parameter.
+Although Stryker can run without any configuration, it is recommended to configure it when you can, as it can greatly improve performance of the mutation testing process. By default, Stryker will look for a `stryker.conf.js` or `stryker.conf.json` file in the current working directory (if it exists). This can be overridden by specifying a different file as the last parameter.
 
-Before your first run, we recommend you try the `init` command, which helps you to set up this `stryker.conf.js` file and install any missing packages needed for your specific configuration. We recommend you verify the contents of the configuration file after this initialization, to make sure everything is setup correctly. Of course, you can still make changes to it, before you run Stryker for the first time.
+Before your first run, we recommend you try the `init` command, which helps you to set up this config file and install any missing packages needed for your specific configuration. We recommend you verify the contents of the configuration file after this initialization, to make sure everything is setup correctly. Of course, you can still make changes to it, before you run Stryker for the first time.
 
-The following is an example `stryker.conf.js` file. It specifies running mocha tests with the mocha test runner.
+The following is an example `stryker.conf.json` file. It specifies running mocha tests with the mocha test runner.
 
-```javascript
-module.exports = function(config){
-  config.set({
-    mutate: [
-      'src/**/*.js',
-      '!src/index.js'
-    ],
-    testFramework: 'mocha',
-    testRunner: 'mocha',
-    reporters: ['progress', 'clear-text', 'html'],
-    coverageAnalysis: 'perTest'
-  });
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "mutate": [
+    "src/**/*.js",
+    "!src/index.js"
+  ],
+  "testFramework": "mocha",
+  "testRunner": "mocha",
+  "reporters": ["progress", "clear-text", "html"],
+  "coverageAnalysis": "perTest"
 }
 ```
 
-As you can see, the config file is *not* a simple JSON file. It should be a node module. You might recognize this way of working from the karma test runner.
+As a `stryker.conf.js` file this looks like this:
+```javascript
+/**
+* @type {import('@stryker-mutator/api/core').StrykerOptions}
+*/
+module.exports = {
+  mutate: [
+    'src/**/*.js',
+    '!src/index.js'
+  ],
+  testFramework: 'mocha',
+  testRunner: 'mocha',
+  reporters: ['progress', 'clear-text', 'html'],
+  coverageAnalysis: 'perTest'
+};
+```
 
 Make sure you *at least* specify the `testRunner` options when mixing the config file and/or command line options.
 
@@ -80,7 +94,7 @@ See our website for the [list of currently supported mutators](https://stryker-m
 
 ## Configuration
 
-All configuration options can either be set via the command line or via the `stryker.conf.js` config file.
+All configuration options can either be set via the command line or via a config file.
 
 `files` and `mutate` both support globbing expressions using [node glob](https://github.com/isaacs/node-glob).
 This is the same globbing format you might know from [Grunt](https://github.com/gruntjs/grunt) or [Karma](https://github.com/karma-runner/karma).

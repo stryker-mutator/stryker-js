@@ -26,21 +26,31 @@ function runE2eTests() {
 
 runE2eTests()
   .subscribe({
-    complete: () => console.log('Done'),
+    complete: () => console.log('✅ Done'),
     error: err => {
       console.error(err);
       process.exit(1);
     },
   });
 
-function execNpm(command: string, testDir: string) {
+function execNpm(command: string, testDir: string, stream: boolean) {
   const currentTestDir = path.resolve(testRootDir, testDir);
   console.log(`Exec ${testDir} npm ${command}`);
   const testProcess = execa('npm', [command], { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
   let stderr = '';
   let stdout = '';
-  testProcess.stderr.on('data', chunk => stderr += chunk.toString());
-  testProcess.stdout.on('data', chunk => stdout += chunk.toString());
+  testProcess.stderr.on('data', chunk => {
+    stderr += chunk.toString();
+    if (stream) {
+      console.error(chunk.toString());
+    }
+  });
+  testProcess.stdout.on('data', chunk => {
+    stdout += chunk.toString()
+    if (stream) {
+      console.log(chunk.toString());
+    }
+  });
   return testProcess.catch(error => {
     console.log(`X ${testDir}`);
     console.log(stdout);
@@ -62,7 +72,7 @@ function satisfiesNodeVersion(testDir: string): boolean {
 
 async function runTest(testDir: string) {
   if (satisfiesNodeVersion(testDir)) {
-    await execNpm('test', testDir);
+    await execNpm('test', testDir, false);
   }
   return testDir;
 }

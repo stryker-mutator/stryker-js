@@ -34,15 +34,39 @@ describe(ConfigReader.name, () => {
     describe('without config file or CLI options', () => {
       describe('with a stryker.conf.js in the CWD', () => {
         it('should parse the config', () => {
-          const mockCwd = path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader');
+          const mockCwd = path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', 'js');
           sinon.stub(process, 'cwd').returns(mockCwd);
           sut = createSut({});
 
           result = sut.readConfig();
 
-          expect(result.valid).to.be.eq('config');
-          expect(result.should).to.be.eq('be');
-          expect(result.read).to.be.eq(true);
+          expect(result.type).to.be.eq('js');
+          expect(testInjector.logger.warn).not.called;
+        });
+      });
+
+      describe('with a stryker.conf.json in the CWD', () => {
+        it('should parse the config', () => {
+          const mockCwd = path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', 'json');
+          sinon.stub(process, 'cwd').returns(mockCwd);
+          sut = createSut({});
+
+          result = sut.readConfig();
+
+          expect(result.type).to.be.eq('json');
+          expect(testInjector.logger.warn).not.called;
+        });
+      });
+
+      describe('with a stryker.conf.js and stryker.conf.json in the CWD', () => {
+        it('should parse the js config', () => {
+          const mockCwd = path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', 'json-and-js');
+          sinon.stub(process, 'cwd').returns(mockCwd);
+          sut = createSut({});
+
+          result = sut.readConfig();
+
+          expect(result.type).to.be.eq('js');
           expect(testInjector.logger.warn).not.called;
         });
       });

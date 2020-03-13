@@ -51,6 +51,19 @@ function setLifeCycleOptions(config: Config) {
   });
 }
 
+/**
+ * Sets configuration that is needed to control client scripts in karma.
+ * @param config The config to use
+ * @see https://github.com/stryker-mutator/stryker/issues/2049
+ */
+function setClientOptions(config: Config) {
+  // Disable clearContext because of issue #2049 (race condition in Karma)
+  // Enabling clearContext (default true) will load "about:blank" in the iFrame after a test run.
+  // As far as I can see clearing the context only has a visible effect (you don't see the result of the last test).
+  // If this is true, disabling it is safe to do and solves the race condition issue.
+  config.set({ client: { clearContext: false } });
+}
+
 function setUserKarmaConfig(config: Config) {
   if (globalSettings.karmaConfig) {
     config.set(globalSettings.karmaConfig);
@@ -153,6 +166,7 @@ export = Object.assign(
     setUserKarmaConfig(config);
     setBasePath(config);
     setLifeCycleOptions(config);
+    setClientOptions(config);
     configureTestHooksMiddleware(config);
     configureStrykerReporter(config);
   },

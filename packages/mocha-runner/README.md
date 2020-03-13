@@ -25,28 +25,26 @@ As such, you should make sure you have the correct versions of its dependencies 
 
 ## Configuring
 
-You can configure the mocha test runner in the `stryker.conf.js` file.
+You can configure the mocha test runner in the `stryker.conf.js` (or `stryker.conf.json`) file.
 
 ```javascript
 // stryker.conf.js
-module.exports = function (config) {
-    config.set({
-        // ...
-        testRunner: 'mocha',
-        // ...
-        mochaOptions: {
-            // Optional mocha options
-            spec: [ 'test/**/*.js' ],
-            config: 'path/to/mocha/config/.mocharc.json',
-            package: 'path/to/custom/package/package.json',
-            opts: 'path/to/custom/mocha.opts',
-            ui: 'bdd',
-            timeout: 3000,
-            require: [ /*'babel-register' */],
-            asyncOnly: false,
-            grep: /.*/
-        }
-    });
+module.exports = {
+    // ...
+    testRunner: 'mocha',
+    // ...
+    mochaOptions: {
+        // Optional mocha options
+        spec: [ 'test/**/*.js' ],
+        config: 'path/to/mocha/config/.mocharc.json',
+        package: 'path/to/custom/package/package.json',
+        opts: 'path/to/custom/mocha.opts',
+        ui: 'bdd',
+        timeout: 3000,
+        require: [ /*'babel-register' */],
+        asyncOnly: false,
+        grep: /.*/
+    }
 }
 ```
 

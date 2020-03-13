@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/stryker-mutator/stryker/compare/v3.0.0...v3.0.1) (2020-03-12)
+
+**Note:** Version bump only for package @stryker-mutator/mutator-specification
+
+
+
+
+
+# [3.0.0](https://github.com/stryker-mutator/stryker/compare/v2.5.0...v3.0.0) (2020-03-11)
+
+
+### Features
+
+* **excludedMutations:** remove deprecated mutation names ([#2027](https://github.com/stryker-mutator/stryker/issues/2027)) ([6f7bfe1](https://github.com/stryker-mutator/stryker/commit/6f7bfe13e8ec681d73c97d9b7fbd3f88a313ed6d))
+
+
+### BREAKING CHANGES
+
+* **excludedMutations:** removes auto-fix for the old names of mutations.
+
+### Migrating:
+Almost every mutator has been renamed and/or split. Stryker will warn you about any deprecated mutator names in the `mutator.excludedMutations` section of your config. 
+
+To migrate, please run stryker to see if your project is affected. If this is the case, please take a look at the mutator types on the handbook (see above).
+
+These are the changes:  
+
+| Old mutation           	| New mutation(s)                                       	|
+|------------------------	|-------------------------------------------------------	|
+| ArrayLiteral           	| ArrayDeclaration                                      	|
+| ArrayNewExpression     	| ArrayDeclaration                                      	|
+| BinaryExpression       	| ArithmeticOperator, EqualityOperator, LogicalOperator 	|
+| Block                  	| BlockStatement                                        	|
+| BooleanSubstitution    	| BooleanLiteral                                        	|
+| DoStatement            	| ConditionalExpression                                 	|
+| ForStatement           	| ConditionalExpression                                 	|
+| IfStatement            	| ConditionalExpression                                 	|
+| PrefixUnaryExpression  	| UnaryOperator, UpdateOperator, BooleanLiteral         	|
+| PostfixUnaryExpression 	| UpdateOperator                                        	|
+| SwitchCase             	| ConditionalExpression                                 	|
+| WhileStatement         	| ConditionalExpression                                 	|
+
+
+### New mutations
+Due to the migration, some new mutations were added to the **javascript** mutator.
+* The mutation _ArrayDeclaration_ will now mutate `new Array()` to `new Array([])`
+* The mutation _ArrayDeclaration_ will now mutate `[]` to `["Stryker was here"]`
+
+These mutations were already performed by the typescript mutator.
+
+
+
+
+
+
 # [2.5.0](https://github.com/stryker-mutator/stryker/compare/v2.4.0...v2.5.0) (2020-01-12)
 
 

@@ -2,7 +2,7 @@
   "name": "stryker-parent",
   "private": true,
   "devDependencies": {
-    "@types/chai": "4.2.9",
+    "@types/chai": "4.2.10",
     "@types/chai-as-promised": "7.1.2",
     "@types/glob": "^7.1.0",
     "@types/istanbul": "^0.4.29",
@@ -14,8 +14,8 @@
     "@types/rimraf": "2.0.3",
     "@types/sinon": "5.0.5",
     "@types/sinon-chai": "3.2.3",
-    "@typescript-eslint/eslint-plugin": "2.20.0",
-    "@typescript-eslint/parser": "2.20.0",
+    "@typescript-eslint/eslint-plugin": "2.23.0",
+    "@typescript-eslint/parser": "2.23.0",
     "acorn": "^7.0.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
@@ -39,11 +39,11 @@
     "prettier": "1.19.1",
     "rimraf": "^3.0.0",
     "rxjs": "^6.4.0",
-    "sinon": "^8.0.0",
-    "sinon-chai": "3.4.0",
+    "sinon": "^9.0.0",
+    "sinon-chai": "3.5.0",
     "source-map-support": "^0.5.6",
-    "ts-json-schema-generator": "^0.62.0",
-    "typescript": "~3.7.2"
+    "ts-json-schema-generator": "^0.65.0",
+    "typescript": "~3.8.3"
   },
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",
@@ -59,8 +59,7 @@
     "mocha": "lerna run test --stream --concurrency 4",
     "e2e": "cd e2e && npm ci && npm t && cd ..",
     "perf": "cd perf && npm ci && npm t && cd ..",
-    "start": "tsc -b -w",
-    "lerna-publish": "lerna version --conventional-commits --yes --git-remote gh-publish --force-publish && lerna publish from-git --yes"
+    "start": "tsc -b -w"
   },
   "engines": {
     "node": ">=8",

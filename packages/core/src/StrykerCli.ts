@@ -4,7 +4,6 @@ import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mut
 import { Config } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { CONFIG_SYNTAX_HELP } from './config/ConfigReader';
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
 import Stryker from './Stryker';
@@ -46,15 +45,15 @@ export default class StrykerCli {
     const defaultValues = new Config();
     this.program
       .version(require('../package.json').version)
-      .usage('<command> [options] [stryker.conf.js]')
+      .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:
         run: Run mutation testing
         init: Initialize Stryker for your project
 
-    Optional location to the stryker.conf.js file as last argument. That file should export a function which accepts a "config" object\n${CONFIG_SYNTAX_HELP}`
+        Optional location to a JSON or JavaScript config file as the last argument. If it's a JavaScript file, that file should export the config directly.`
       )
-      .arguments('<command> [stryker.conf.js]')
+      .arguments('<command> [configFile]')
       .action((cmd: string, config: string) => {
         this.command = cmd;
         this.strykerConfig = config;

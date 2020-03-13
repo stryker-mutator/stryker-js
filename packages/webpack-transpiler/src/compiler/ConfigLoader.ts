@@ -50,7 +50,7 @@ export default class ConfigLoader {
       webpackConfig.plugins = webpackConfig.plugins.filter(plugin => {
         if (plugin.constructor && plugin.constructor.name === PROGRESS_PLUGIN_NAME) {
           this.log.debug(
-            'Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your stryker.conf.js file to disable this feature.',
+            'Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your config file to disable this feature.',
             PROGRESS_PLUGIN_NAME
           );
           return false;

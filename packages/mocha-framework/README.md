@@ -29,16 +29,14 @@ As such, you should make sure you have the correct versions of its dependencies 
 ## Configuring
 
 You can either configure the mocha test framework using the command line or by providing it in the `stryker.conf.js` file.
-This README describes how to use the `stryker.conf.js` config file:
+This README describes how to use the `stryker.conf.js` (or `stryker.conf.json`) config file:
 
 ```javascript
-// Stryker.conf.js
-module.exports = function (config) {
-    config.set({
-        ...
-        testFramework: 'mocha',
-        coverageAnalysis: 'perTest'
-        ...
-    });
+// stryker.conf.js
+module.exports = {
+    // ...
+    testFramework: 'mocha',
+    coverageAnalysis: 'perTest'
+    // ...
 }
 ```

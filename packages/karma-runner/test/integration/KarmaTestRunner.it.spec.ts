@@ -78,10 +78,9 @@ describe(`${KarmaTestRunner.name} integration`, () => {
 
     it('should report completed tests', async () => {
       const runResult = await sut.run({});
-      // await new Promise(res => {});
       expectToHaveSuccessfulTests(runResult, 5);
       expectToHaveFailedTests(runResult, []);
-      expect(runResult.status).to.be.eq(RunStatus.Complete);
+      expect(RunStatus[runResult.status]).to.be.eq(RunStatus[RunStatus.Complete]);
     });
 
     it('should be able to filter tests', async () => {
@@ -111,7 +110,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
         return expect(sut.run({})).to.eventually.satisfy((runResult: RunResult) => {
           expectToHaveSuccessfulTests(runResult, 5);
           expectToHaveFailedTests(runResult, []);
-          expect(runResult.status).to.be.eq(RunStatus.Complete);
+          expect(RunStatus[runResult.status]).to.be.eq(RunStatus[RunStatus.Complete]);
           return true;
         });
       });
