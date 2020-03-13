@@ -27,7 +27,7 @@ describe(MochaTestRunner.name, () => {
     handleFilesStub = sinon.stub(LibWrapper, 'handleFiles');
     sinon.stub(utils, 'evalGlobal');
     mocha = sinon.createStubInstance(Mocha) as any;
-    mocha.suite = sinon.createStubInstance(EventEmitter);
+    mocha.suite = sinon.createStubInstance(EventEmitter) as Mocha.Suite & sinon.SinonStubbedInstance<EventEmitter>;
     MochaStub.returns(mocha);
   });
 
