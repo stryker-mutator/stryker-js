@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.io/stryker-mutator/stryker/compare/v3.0.1...v3.0.2) (2020-03-13)
+
+
+### Bug Fixes
+
+* **nodejs requirement:** set NodeJS requirement to at least Node 10 ([8c08059](https://github.io/stryker-mutator/stryker/commit/8c080594a87d638ea4349ee69e05ed6c7eba6463))
+
+
+
+
+
 ## [3.0.1](https://github.io/stryker-mutator/stryker/compare/v3.0.0...v3.0.1) (2020-03-12)
 
 
