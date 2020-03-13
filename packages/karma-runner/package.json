@@ -15,7 +15,7 @@
     "url": "https://github.io/stryker-mutator/stryker"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "keywords": [
     "stryker",

@@ -38,8 +38,8 @@ function execNpm(args: string[], testDir: string): Observable<string> {
   return new Observable(observer => {
     const testProcess = execa('npm', args, { timeout: 0, cwd: currentTestDir, stdio: 'pipe' });
     let stderr = '';
-    testProcess.stderr.on('data', chunk => stderr += chunk.toString());
-    testProcess.stdout.on('data', chunk => observer.next(chunk.toString().trim()));
+    testProcess.stderr?.on('data', chunk => stderr += chunk.toString());
+    testProcess.stdout?.on('data', chunk => observer.next(chunk.toString().trim()));
     testProcess
       .then(() => observer.complete())
       .catch(error => observer.error(error));
