@@ -22,7 +22,7 @@
     "karma-mocha": "~1.3.0",
     "link-parent-bin": "~1.0.0",
     "load-grunt-tasks": "~5.1.0",
-    "mocha": "~6.2.2",
+    "mocha": "~7.1.1",
     "mutation-testing-metrics": "~1.3.0",
     "rxjs": "~6.5.3",
     "semver": "~6.3.0",
