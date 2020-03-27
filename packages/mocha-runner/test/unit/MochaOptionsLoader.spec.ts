@@ -1,10 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import sinon = require('sinon');
 import { expect } from 'chai';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
-
-import sinon = require('sinon');
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import LibWrapper from '../../src/LibWrapper';
