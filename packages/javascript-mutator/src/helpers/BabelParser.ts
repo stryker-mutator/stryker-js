@@ -20,7 +20,7 @@ export default class BabelParser {
     return parse(code, this.options);
   }
 
-  private createOptions(pluginOverrides: string[] | null): ParserOptions {
+  private createOptions(pluginOverrides: Array<string | any[]> | null): ParserOptions {
     const plugins = pluginOverrides || [
       'asyncGenerators',
       'bigInt',
