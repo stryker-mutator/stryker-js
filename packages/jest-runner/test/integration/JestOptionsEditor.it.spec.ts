@@ -1,26 +1,26 @@
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import JestConfigEditor from '../../src/JestConfigEditor';
+import JestOptionsEditor from '../../src/JestOptionsEditor';
 
-describe('Integration test for Jest ConfigEditor', () => {
-  let jestConfigEditor: JestConfigEditor;
+describe('Integration test for Jest OptionsEditor', () => {
+  let jestConfigEditor: JestOptionsEditor;
   let getProjectRootStub: sinon.SinonStub;
 
   const projectRoot: string = process.cwd();
-  let config: Config;
+  let config: StrykerOptions;
 
   beforeEach(() => {
     getProjectRootStub = sinon.stub(process, 'cwd');
     getProjectRootStub.returns(projectRoot);
 
-    jestConfigEditor = testInjector.injector.injectClass(JestConfigEditor);
+    jestConfigEditor = testInjector.injector.injectClass(JestOptionsEditor);
 
-    config = new Config();
+    config = factory.strykerOptions();
   });
 
   it('should create a Jest configuration for a create-react-app project', () => {

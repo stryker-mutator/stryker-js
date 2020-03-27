@@ -1,6 +1,6 @@
-import { Config, ConfigEditor } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { OptionsEditor, StrykerOptions } from '@stryker-mutator/api/core';
 
 import CustomJestConfigLoader from './configLoaders/CustomJestConfigLoader';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
@@ -10,23 +10,23 @@ import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 
 const DEFAULT_PROJECT_NAME = 'custom';
 
-export default class JestConfigEditor implements ConfigEditor {
+export default class JestOptionsEditor implements OptionsEditor {
   public static inject = tokens(commonTokens.logger);
 
   constructor(private readonly log: Logger) {}
 
-  public edit(strykerConfig: Config): void {
+  public edit(options: StrykerOptions): void {
     // If there is no Jest property on the Stryker config create it
-    strykerConfig.jest = strykerConfig.jest || {};
+    options.jest = options.jest || {};
 
     // When no projectType is set, set it to the default
-    strykerConfig.jest.projectType = strykerConfig.jest.projectType || strykerConfig.jest.project || DEFAULT_PROJECT_NAME;
+    options.jest.projectType = options.jest.projectType || options.jest.project || DEFAULT_PROJECT_NAME;
 
     // When no config property is set, load the configuration with the project type
-    strykerConfig.jest.config = strykerConfig.jest.config || this.getConfigLoader(strykerConfig.jest.projectType).loadConfig();
+    options.jest.config = options.jest.config || this.getConfigLoader(options.jest.projectType).loadConfig();
 
     // Override some of the config properties to optimise Jest for Stryker
-    strykerConfig.jest.config = this.overrideProperties(strykerConfig.jest.config);
+    options.jest.config = this.overrideProperties(options.jest.config);
   }
 
   private getConfigLoader(projectType: string): JestConfigLoader {

@@ -1,30 +1,27 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
-import { File } from '@stryker-mutator/api/core';
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { CONFIG_KEY } from '../../src/helpers/keys';
-import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
+import TypescriptOptionsEditor from '../../src/TypescriptOptionsEditor';
 import { typescriptMutatorFactory } from '../../src/TypescriptMutator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 
 describe('Sample integration', () => {
-  let config: Config;
+  let options: StrykerOptions;
   let inputFiles: File[];
 
   beforeEach(() => {
-    const configEditor = testInjector.injector.injectClass(TypescriptConfigEditor);
-    config = new Config();
-    config.set({
-      tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'tsconfig.json')
-    });
-    configEditor.edit(config);
-    inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
-    testInjector.options = config;
+    const optionsEditor = testInjector.injector.injectClass(TypescriptOptionsEditor);
+    options = factory.strykerOptions();
+    options.tsconfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'tsconfig.json');
+    optionsEditor.edit(options);
+    inputFiles = options[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
+    testInjector.options = options;
   });
 
   it('should be able to generate mutants', () => {
@@ -35,13 +32,13 @@ describe('Sample integration', () => {
   });
 
   it('should be able to transpile source code', async () => {
-    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false, () => testInjector.logger);
+    const transpiler = new TypescriptTranspiler(options, /*produceSourceMaps: */ false, () => testInjector.logger);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).to.eq(2);
   });
 
   it('should be able to produce source maps', async () => {
-    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ true, () => testInjector.logger);
+    const transpiler = new TypescriptTranspiler(options, /*produceSourceMaps: */ true, () => testInjector.logger);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles).lengthOf(4);
     const mapFiles = outputFiles.filter(file => file.name.endsWith('.map'));
@@ -56,7 +53,7 @@ describe('Sample integration', () => {
     // Transpile mutants
     const mutator = testInjector.injector.injectFunction(typescriptMutatorFactory);
     const mutants = mutator.mutate(inputFiles);
-    const transpiler = new TypescriptTranspiler(config, /*produceSourceMaps: */ false, () => testInjector.logger);
+    const transpiler = new TypescriptTranspiler(options, /*produceSourceMaps: */ false, () => testInjector.logger);
     transpiler.transpile(inputFiles);
     const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
     const [firstArithmeticOperatorMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'ArithmeticOperator');

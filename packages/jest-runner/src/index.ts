@@ -1,11 +1,11 @@
 import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
-import JestConfigEditor from './JestConfigEditor';
+import JestOptionsEditor from './JestOptionsEditor';
 import { jestTestRunnerFactory } from './JestTestRunner';
 
 process.env.BABEL_ENV = 'test';
 
 export const strykerPlugins = [
-  declareClassPlugin(PluginKind.ConfigEditor, 'jest', JestConfigEditor),
+  declareClassPlugin(PluginKind.OptionsEditor, 'jest', JestOptionsEditor),
   declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory)
 ];

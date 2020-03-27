@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
 import sinon = require('sinon');
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
 import LibWrapper from '../../src/LibWrapper';
 import { MochaOptions } from '../../src/MochaOptions';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
@@ -14,7 +15,7 @@ import { mochaOptionsKey } from '../../src/utils';
 describe(MochaOptionsLoader.name, () => {
   let readFileStub: sinon.SinonStub;
   let existsFileStub: sinon.SinonStub;
-  let config: Config;
+  let strykerOptions: StrykerOptions;
   let sut: MochaOptionsLoader;
 
   beforeEach(() => {
@@ -104,27 +105,27 @@ describe(MochaOptionsLoader.name, () => {
       sinon.stub(LibWrapper, 'loadOptions').value(undefined);
       readFileStub = sinon.stub(fs, 'readFileSync');
       existsFileStub = sinon.stub(fs, 'existsSync').returns(true);
-      config = new Config();
+      strykerOptions = factory.strykerOptions();
     });
 
     it('should log about mocha < 6', () => {
       existsFileStub.returns(false);
-      sut.load(config);
+      sut.load(strykerOptions);
       expect(testInjector.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to parse mocha options');
     });
 
     it('should log deprecated mocha version warning', async () => {
       existsFileStub.returns(false);
-      sut.load(config);
+      sut.load(strykerOptions);
       expect(testInjector.logger.warn).calledWith('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
     });
 
     it('should load a mocha.opts file if specified', () => {
       readFileStub.returns('');
-      config.mochaOptions = {
+      strykerOptions.mochaOptions = {
         opts: 'some/mocha.opts/file'
       };
-      sut.load(config);
+      sut.load(strykerOptions);
       expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
       expect(fs.readFileSync).calledWith(path.resolve('some/mocha.opts/file'));
     });
@@ -132,11 +133,11 @@ describe(MochaOptionsLoader.name, () => {
     it("should log an error if specified mocha.opts file doesn't exist", () => {
       readFileStub.returns('');
       existsFileStub.returns(false);
-      config.mochaOptions = {
+      strykerOptions.mochaOptions = {
         opts: 'some/mocha.opts/file'
       };
 
-      sut.load(config);
+      sut.load(strykerOptions);
       expect(testInjector.logger.error).calledWith(
         `Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`
       );
@@ -144,23 +145,23 @@ describe(MochaOptionsLoader.name, () => {
 
     it('should load default mocha.opts file if not specified', () => {
       readFileStub.returns('');
-      sut.load(config);
+      sut.load(strykerOptions);
       expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`);
       expect(fs.readFileSync).calledWith(path.resolve('./test/mocha.opts'));
     });
 
     it("shouldn't load anything if mocha.opts = false", () => {
-      config.mochaOptions = {
+      strykerOptions.mochaOptions = {
         opts: false
       };
-      sut.load(config);
+      sut.load(strykerOptions);
       expect(fs.readFileSync).not.called;
       expect(testInjector.logger.debug).calledWith('Not reading additional mochaOpts from a file');
     });
 
     it('should not load default mocha.opts file if not found', () => {
       existsFileStub.returns(false);
-      const options = sut.load(config);
+      const options = sut.load(strykerOptions);
       expect(options).deep.eq(createMochaOptions());
       expect(testInjector.logger.debug).calledWith(
         'No mocha opts file found, not loading additional mocha options (%s.opts was not defined).',
@@ -173,8 +174,8 @@ describe(MochaOptionsLoader.name, () => {
       --require  src/test/support/setup
       -r babel-require
       `);
-      config.mochaOptions = { opts: '.' };
-      const options = sut.load(config);
+      strykerOptions.mochaOptions = { opts: '.' };
+      const options = sut.load(strykerOptions);
       expect(options).deep.include({
         require: ['src/test/support/setup', 'babel-require']
       });
@@ -183,8 +184,8 @@ describe(MochaOptionsLoader.name, () => {
     function itShouldLoadProperty(property: string, value: string, expectedConfig: Partial<MochaOptions>) {
       it(`should load '${property} if specified`, () => {
         readFileStub.returns(`${property} ${value}`);
-        config.mochaOptions = { opts: 'path/to/opts/file' };
-        expect(sut.load(config)).deep.include(expectedConfig);
+        strykerOptions.mochaOptions = { opts: 'path/to/opts/file' };
+        expect(sut.load(strykerOptions)).deep.include(expectedConfig);
       });
     }
 
@@ -205,14 +206,14 @@ describe(MochaOptionsLoader.name, () => {
         -A
         -r babel-register
       `);
-      config.mochaOptions = {
+      strykerOptions.mochaOptions = {
         asyncOnly: false,
         opts: 'path/to/opts/file',
         require: ['ts-node/register'],
         timeout: 4000,
         ui: 'exports'
       };
-      const options = sut.load(config);
+      const options = sut.load(strykerOptions);
       expect(options).deep.equal(
         createMochaOptions({
           asyncOnly: false,
@@ -231,10 +232,10 @@ describe(MochaOptionsLoader.name, () => {
       --reporter dot
       --ignore-leaks
       `);
-      config.mochaOptions = {
+      strykerOptions.mochaOptions = {
         opts: 'some/mocha.opts/file'
       };
-      const options = sut.load(config);
+      const options = sut.load(strykerOptions);
       expect(options).not.have.property('reporter');
       expect(options).not.have.property('ignore-leaks');
       expect(testInjector.logger.debug).calledWith('Ignoring option "--reporter" as it is not supported.');
@@ -246,10 +247,10 @@ describe(MochaOptionsLoader.name, () => {
       --timeout
       --ui
       `);
-      config.mochaOptions = {
+      strykerOptions.mochaOptions = {
         opts: 'some/mocha.opts/file'
       };
-      const options = sut.load(config);
+      const options = sut.load(strykerOptions);
       expect(options).deep.eq(
         createMochaOptions({
           extension: ['js'],

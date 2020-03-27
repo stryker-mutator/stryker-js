@@ -1,37 +1,38 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { match, SinonStub } from 'sinon';
 import * as ts from 'typescript';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { match, SinonStub } from 'sinon';
 
 import sinon = require('sinon');
 
-import TypescriptConfigEditor from './../../src/TypescriptConfigEditor';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
+import TypescriptOptionsEditor from './../../src/TypescriptOptionsEditor';
 
 const CONFIG_KEY = 'tsconfigFile';
 
-describe('TypescriptConfigEditor edit', () => {
+describe(TypescriptOptionsEditor.name, () => {
   let readFileSyncStub: SinonStub;
-  let config: Config;
-  let sut: TypescriptConfigEditor;
+  let options: StrykerOptions;
+  let sut: TypescriptOptionsEditor;
 
   beforeEach(() => {
     readFileSyncStub = sinon.stub(fs, 'readFileSync');
-    config = new Config();
-    sut = testInjector.injector.injectClass(TypescriptConfigEditor);
+    options = factory.strykerOptions();
+    sut = testInjector.injector.injectClass(TypescriptOptionsEditor);
   });
 
   it('should not load any config if "tsconfigFile" is not specified', () => {
-    sut.edit(config);
-    expect(config[CONFIG_KEY]).undefined;
+    sut.edit(options);
+    expect(options[CONFIG_KEY]).undefined;
     expect(testInjector.logger.debug).calledWith("No '%s' specified, not loading any config", CONFIG_KEY);
   });
 
   it('should load the given tsconfig file', () => {
-    config[CONFIG_KEY] = 'tsconfig.json';
+    options[CONFIG_KEY] = 'tsconfig.json';
     readFileSyncStub.returns(`{
       "compilerOptions": {
         "module": "commonjs",
@@ -47,9 +48,9 @@ describe('TypescriptConfigEditor edit', () => {
           "testResources"
       ]
   }`);
-    sut.edit(config, parseConfigHost());
+    sut.edit(options, parseConfigHost());
     expect(fs.readFileSync).calledWith(path.resolve('tsconfig.json'));
-    expect(config.tsconfig.options).include({
+    expect(options.tsconfig.options).include({
       configFilePath: path.resolve('tsconfig.json').replace(/\\/g, '/'),
       module: ts.ModuleKind.CommonJS,
       noImplicitAny: true,
@@ -58,11 +59,11 @@ describe('TypescriptConfigEditor edit', () => {
       removeComments: true,
       sourceMap: true
     });
-    expect(config.tsconfig.fileNames).deep.eq(['file1.ts', 'file2.ts']);
+    expect(options.tsconfig.fileNames).deep.eq(['file1.ts', 'file2.ts']);
   });
 
   it('should override quality options', () => {
-    config[CONFIG_KEY] = 'tsconfig.json';
+    options[CONFIG_KEY] = 'tsconfig.json';
     readFileSyncStub.returns(`{
       "compilerOptions": {
         "allowUnreachableCode": false,
@@ -70,8 +71,8 @@ describe('TypescriptConfigEditor edit', () => {
         "noUnusedParameters": true
        }
   }`);
-    sut.edit(config, parseConfigHost());
-    expect(config.tsconfig.options).include({
+    sut.edit(options, parseConfigHost());
+    expect(options.tsconfig.options).include({
       allowUnreachableCode: true,
       noUnusedLocals: false,
       noUnusedParameters: false
@@ -80,14 +81,14 @@ describe('TypescriptConfigEditor edit', () => {
 
   it('should log errors on failure during load', () => {
     readFileSyncStub.returns('invalid json');
-    config[CONFIG_KEY] = 'tsconfig.json';
-    expect(() => sut.edit(config)).throws("error TS1005: '{' expected.");
+    options[CONFIG_KEY] = 'tsconfig.json';
+    expect(() => sut.edit(options)).throws("error TS1005: '{' expected.");
   });
 
   it('should log errors on failure during load of extending file', () => {
     readFileSyncStub.returns('{ "extends": "./parent.tsconfig.json" }');
-    config[CONFIG_KEY] = 'tsconfig.json';
-    sut.edit(config, parseConfigHost({ readFile: () => 'invalid json' }));
+    options[CONFIG_KEY] = 'tsconfig.json';
+    sut.edit(options, parseConfigHost({ readFile: () => 'invalid json' }));
     expect(testInjector.logger.error).calledWithMatch(match("error TS1005: '{' expected."));
   });
 

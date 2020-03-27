@@ -6,6 +6,7 @@ import { Reporter } from '../../report';
 import { TestFramework } from '../../test_framework';
 import { TestRunner } from '../../test_runner';
 import { Transpiler } from '../../transpile';
+import { OptionsEditor } from '../core/OptionsEditor';
 
 import { PluginContexts } from './Contexts';
 import { PluginKind } from './PluginKind';
@@ -83,6 +84,7 @@ export function declareFactoryPlugin<TPluginKind extends PluginKind, Tokens exte
  */
 export interface PluginInterfaces {
   [PluginKind.ConfigEditor]: ConfigEditor;
+  [PluginKind.OptionsEditor]: OptionsEditor;
   [PluginKind.Mutator]: Mutator;
   [PluginKind.Reporter]: Reporter;
   [PluginKind.TestFramework]: TestFramework;

@@ -1,32 +1,29 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
-import { File } from '@stryker-mutator/api/core';
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { CONFIG_KEY } from '../../src/helpers/keys';
-import TypescriptConfigEditor from '../../src/TypescriptConfigEditor';
+import TypescriptOptionsEditor from '../../src/TypescriptOptionsEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
 
 describe('Use header file integration', () => {
-  let config: Config;
+  let options: StrykerOptions;
   let inputFiles: File[];
   let transpiler: TypescriptTranspiler;
 
   beforeEach(() => {
-    const configEditor = testInjector.injector.injectClass(TypescriptConfigEditor);
-    config = new Config();
-    config.set({
-      tsconfigFile: path.resolve(__dirname, '..', '..', 'testResources', 'useHeaderFile', 'tsconfig.json')
-    });
-    configEditor.edit(config);
-    inputFiles = config[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
+    const optionsEditor = testInjector.injector.injectClass(TypescriptOptionsEditor);
+    options = factory.strykerOptions();
+    options.tsconfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'useHeaderFile', 'tsconfig.json');
+    optionsEditor.edit(options);
+    inputFiles = options[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
     transpiler = testInjector.injector
       .provideValue(commonTokens.produceSourceMaps, false)
-      .provideValue(commonTokens.options, config)
+      .provideValue(commonTokens.options, options)
       .injectClass(TypescriptTranspiler);
   });
 

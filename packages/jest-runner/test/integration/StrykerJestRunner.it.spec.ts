@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
-import JestConfigEditor from '../../src/JestConfigEditor';
+import JestOptionsEditor from '../../src/JestOptionsEditor';
 import { jestTestRunnerFactory } from '../../src/JestTestRunner';
 
 const paths = require('react-scripts-ts/config/paths');
@@ -40,13 +40,13 @@ describe('Integration test for Strykers Jest runner', () => {
   });
 
   function createSut(jestConfig?: any) {
-    const jestConfigEditor = testInjector.injector.injectClass(JestConfigEditor);
-    const config = factory.config();
+    const jestOptionsEditor = testInjector.injector.injectClass(JestOptionsEditor);
+    const options = factory.strykerOptions();
     if (jestConfig) {
-      config.jest = jestConfig;
+      options.jest = jestConfig;
     }
-    jestConfigEditor.edit(config);
-    return testInjector.injector.provideValue(commonTokens.options, config).injectFunction(jestTestRunnerFactory);
+    jestOptionsEditor.edit(options);
+    return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }
 
   it('should run tests on the example React + TypeScript project', async () => {

@@ -1,19 +1,19 @@
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
 import { expect } from 'chai';
+import { factory } from '@stryker-mutator/test-helpers';
 
 import TranspileFilter, { DefaultFilter, TSConfigFilter } from '../../../src/transpiler/TranspileFilter';
 
 describe('TranspileFilter', () => {
   describe('create', () => {
     it('should result in the default filter tsconfig is undefined', () => {
-      const config = new Config();
-      config.tsconfig = undefined;
-      expect(TranspileFilter.create(config)).instanceof(DefaultFilter);
+      const options = factory.strykerOptions();
+      options.tsconfig = undefined;
+      expect(TranspileFilter.create(options)).instanceof(DefaultFilter);
     });
     it('should result in the tsconfig filter if tsconfig is present with files', () => {
-      const config = new Config();
+      const config = factory.strykerOptions();
       config.tsconfig = { fileNames: [] };
       expect(TranspileFilter.create(config)).instanceof(TSConfigFilter);
     });
