@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import * as sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { defaultTempDirName } from '@stryker-mutator/api/config';
 
 import GitignoreWriter from '../../../src/initializer/GitignoreWriter';
 import { initializerTokens } from '../../../src/initializer';
@@ -46,7 +45,7 @@ describe(GitignoreWriter.name, () => {
         await sut.addStrykerTempFolder();
 
         // Assert
-        expect(fsAppendFile).calledWithExactly(GITIGNORE_FILE, `${os.EOL}# stryker temp files${os.EOL}${defaultTempDirName}${os.EOL}`);
+        expect(fsAppendFile).calledWithExactly(GITIGNORE_FILE, `${os.EOL}# stryker temp files${os.EOL}.stryker-tmp${os.EOL}`);
       });
 
       it('should output a message to inform the user that the .gitignore file has been changed', async () => {
@@ -62,7 +61,7 @@ describe(GitignoreWriter.name, () => {
 
       it("should not append the stryker gitignore configuration if it's already present", async () => {
         // Arrange
-        fsReadFile.returns(`node_modules${os.EOL}${defaultTempDirName}${os.EOL}temp`);
+        fsReadFile.returns(`node_modules${os.EOL}.stryker-tmp${os.EOL}temp`);
 
         // Act
         await sut.addStrykerTempFolder();

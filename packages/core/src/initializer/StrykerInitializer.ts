@@ -2,9 +2,9 @@ import * as child from 'child_process';
 
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
+import { notEmpty } from '@stryker-mutator/util';
 
 import CommandTestRunner from '../test-runner/CommandTestRunner';
-import { filterEmpty } from '../utils/objectUtils';
 
 import NpmClient from './NpmClient';
 import { PackageInfo } from './PackageInfo';
@@ -219,7 +219,10 @@ export default class StrykerInitializer {
   }
 
   private getSelectedNpmDependencies(selectedOptions: Array<PromptOption | null>): PackageInfo[] {
-    return filterEmpty(filterEmpty(selectedOptions).map(option => option.pkg));
+    return selectedOptions
+      .filter(notEmpty)
+      .map(option => option.pkg)
+      .filter(notEmpty);
   }
 
   /**
@@ -243,6 +246,6 @@ export default class StrykerInitializer {
   }
 
   private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<object[]> {
-    return filterEmpty(await Promise.all(dependencies.map(dep => this.client.getAdditionalConfig(dep))));
+    return (await Promise.all(dependencies.map(dep => this.client.getAdditionalConfig(dep)))).filter(notEmpty);
   }
 }
