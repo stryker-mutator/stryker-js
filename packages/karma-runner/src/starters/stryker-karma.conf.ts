@@ -2,6 +2,7 @@ import * as path from 'path';
 
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions } from 'karma';
+import { noopLogger } from '@stryker-mutator/util';
 
 import StrykerReporter from '../StrykerReporter';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
@@ -108,45 +109,6 @@ function configureStrykerReporter(config: Config) {
   }
   config.reporters.push(StrykerReporter.name);
 }
-
-const noopLogger = {
-  isTraceEnabled() {
-    return false;
-  },
-  isDebugEnabled() {
-    return false;
-  },
-  isInfoEnabled() {
-    return false;
-  },
-  isWarnEnabled() {
-    return false;
-  },
-  isErrorEnabled() {
-    return false;
-  },
-  isFatalEnabled() {
-    return false;
-  },
-  trace() {
-    // noop
-  },
-  debug() {
-    // noop
-  },
-  info() {
-    // noop
-  },
-  warn() {
-    // noop
-  },
-  error() {
-    // noop
-  },
-  fatal() {
-    // noop
-  }
-};
 
 const globalSettings: {
   karmaConfig?: ConfigOptions;
