@@ -1,7 +1,7 @@
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
 import { RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -49,11 +49,9 @@ describe(`${CommandTestRunner.name} integration`, () => {
   });
 
   function createSut(settings?: CommandRunnerSettings) {
-    const strykerOptions = new Config();
+    const strykerOptions = factory.strykerOptions();
     if (settings) {
-      strykerOptions.set({
-        commandRunner: settings
-      });
+      strykerOptions.commandRunner = settings;
     }
     return new CommandTestRunner(workingDir, strykerOptions);
   }

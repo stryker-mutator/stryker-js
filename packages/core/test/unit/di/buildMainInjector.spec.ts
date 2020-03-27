@@ -1,11 +1,10 @@
-import { Config } from '@stryker-mutator/api/config';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { MutatorDescriptor } from '@stryker-mutator/api/core';
+import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 
 import * as configModule from '../../../src/config';
 import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
@@ -22,23 +21,23 @@ describe(buildMainInjector.name, () => {
   let testFrameworkMock: TestFramework;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
-  let configEditorApplierMock: sinon.SinonStubbedInstance<configModule.ConfigEditorApplier>;
+  let optionsEditorApplierMock: sinon.SinonStubbedInstance<configModule.OptionsEditorApplier>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
-  let expectedConfig: Config;
+  let expectedConfig: StrykerOptions;
 
   beforeEach(() => {
     configReaderMock = sinon.createStubInstance(ConfigReader);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
-    configEditorApplierMock = sinon.createStubInstance(configModule.ConfigEditorApplier);
+    optionsEditorApplierMock = sinon.createStubInstance(configModule.OptionsEditorApplier);
     testFrameworkMock = factory.testFramework();
     testFrameworkOrchestratorMock = sinon.createStubInstance(TestFrameworkOrchestrator);
     testFrameworkOrchestratorMock.determineTestFramework.returns(testFrameworkMock);
     pluginLoaderMock = sinon.createStubInstance(di.PluginLoader);
-    expectedConfig = new Config();
+    expectedConfig = factory.strykerOptions();
     broadcastReporterMock = factory.reporter('broadcast');
     configReaderMock.readConfig.returns(expectedConfig);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
-    stubInjectable(configModule, 'ConfigEditorApplier').returns(configEditorApplierMock);
+    stubInjectable(configModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
     stubInjectable(di, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
     stubInjectable(broadcastReporterModule, 'default').returns(broadcastReporterMock);
@@ -71,7 +70,7 @@ describe(buildMainInjector.name, () => {
 
     it('should apply config editors', () => {
       buildMainInjector({}).resolve(commonTokens.options);
-      expect(configEditorApplierMock.edit).called;
+      expect(optionsEditorApplierMock.edit).called;
     });
 
     it('should cache the config', () => {

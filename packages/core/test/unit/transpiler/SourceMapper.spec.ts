@@ -1,6 +1,5 @@
-import { Config } from '@stryker-mutator/api/config';
-import { File } from '@stryker-mutator/api/core';
-import { config as configFactory, location as locationFactory, PNG_BASE64_ENCODED } from '@stryker-mutator/test-helpers/src/factory';
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as sourceMapModule from 'source-map';
@@ -21,10 +20,10 @@ const ERROR_POSTFIX =
 describe('SourceMapper', () => {
   let sut: SourceMapper;
   let sourceMapConsumerMock: Mock<sourceMapModule.SourceMapConsumer>;
-  let config: Config;
+  let options: StrykerOptions;
 
   beforeEach(() => {
-    config = configFactory();
+    options = factory.strykerOptions();
     sourceMapConsumerMock = mock(sourceMapModule.SourceMapConsumer);
 
     // For some reason, `generatedPositionFor` is not defined on the `SourceMapConsumer` prototype
@@ -45,13 +44,13 @@ describe('SourceMapper', () => {
 
   describe('create', () => {
     it('should create a PassThrough source mapper when no transpiler was configured', () => {
-      config.transpilers = [];
-      expect(SourceMapper.create([], config)).instanceOf(PassThroughSourceMapper);
+      options.transpilers = [];
+      expect(SourceMapper.create([], options)).instanceOf(PassThroughSourceMapper);
     });
     it('should create a Transpiled source mapper when a transpiler was configured', () => {
-      config.transpilers = ['a transpiler'];
-      config.coverageAnalysis = 'perTest';
-      expect(SourceMapper.create([], config)).instanceOf(TranspiledSourceMapper);
+      options.transpilers = ['a transpiler'];
+      options.coverageAnalysis = 'perTest';
+      expect(SourceMapper.create([], options)).instanceOf(TranspiledSourceMapper);
     });
   });
 
@@ -63,7 +62,7 @@ describe('SourceMapper', () => {
     it('should pass through the input on transpiledLocationFor', async () => {
       const input: MappedLocation = {
         fileName: 'foo/bar.js',
-        location: locationFactory()
+        location: factory.location()
       };
       expect(await sut.transpiledLocationFor(input)).eq(input);
     });
@@ -120,7 +119,7 @@ describe('SourceMapper', () => {
 
     it('should throw an error if source map file is a binary file', async () => {
       transpiledFiles.push(new File('file.js', '// # sourceMappingURL=file1.js.map'));
-      transpiledFiles.push(new File('file1.js.map', Buffer.from(PNG_BASE64_ENCODED, 'base64')));
+      transpiledFiles.push(new File('file1.js.map', Buffer.from(factory.PNG_BASE64_ENCODED, 'base64')));
 
       await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'foobar' }))).to.be.rejectedWith(
         SourceMapError,
@@ -163,7 +162,7 @@ describe('SourceMapper', () => {
       transpiledFiles.push(
         new File('file1.js', `// # sourceMappingURL=data:application/json;base64,${base64Encode(JSON.stringify(expectedMapFile1))}`)
       );
-      transpiledFiles.push(new File('foo.png', Buffer.from(PNG_BASE64_ENCODED, 'base64')));
+      transpiledFiles.push(new File('foo.png', Buffer.from(factory.PNG_BASE64_ENCODED, 'base64')));
 
       await expect(sut.transpiledLocationFor(mappedLocation({ fileName: 'file1.ts' }))).to.eventually.deep.eq({
         fileName: 'file1.js',

@@ -1,11 +1,11 @@
 import * as childProcess from 'child_process';
 import * as os from 'os';
 
-import { Config } from '@stryker-mutator/api/config';
 import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { factory } from '@stryker-mutator/test-helpers';
 
 import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
 import * as objectUtils from '../../../src/utils/objectUtils';
@@ -121,11 +121,9 @@ describe(CommandTestRunner.name, () => {
   }
 
   function createSut(settings?: CommandRunnerSettings, workingDir = 'workingDir') {
-    const strykerOptions = new Config();
+    const strykerOptions = factory.strykerOptions();
     if (settings) {
-      strykerOptions.set({
-        commandRunner: settings
-      });
+      strykerOptions.commandRunner = settings;
     }
     return new CommandTestRunner(workingDir, strykerOptions);
   }

@@ -1,20 +1,20 @@
-import { Config } from '@stryker-mutator/api/config';
-import { File } from '@stryker-mutator/api/core';
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
+import { factory } from '@stryker-mutator/test-helpers';
 
 import CoverageInstrumenterTranspiler from '../../../src/transpiler/CoverageInstrumenterTranspiler';
 
 describe('CoverageInstrumenterTranspiler', () => {
   let sut: CoverageInstrumenterTranspiler;
-  let config: Config;
+  let options: StrykerOptions;
 
   beforeEach(() => {
-    config = new Config();
+    options = factory.strykerOptions();
   });
 
   it('should not instrument any code when coverage analysis is off', async () => {
-    sut = new CoverageInstrumenterTranspiler(config, ['foobar.js']);
-    config.coverageAnalysis = 'off';
+    sut = new CoverageInstrumenterTranspiler(options, ['foobar.js']);
+    options.coverageAnalysis = 'off';
     const input = [new File('foobar.js', '')];
     const outputFiles = await sut.transpile(input);
     expect(outputFiles).deep.eq(input);
@@ -22,8 +22,8 @@ describe('CoverageInstrumenterTranspiler', () => {
 
   describe('when coverage analysis is "all"', () => {
     beforeEach(() => {
-      config.coverageAnalysis = 'all';
-      sut = new CoverageInstrumenterTranspiler(config, ['mutate.js']);
+      options.coverageAnalysis = 'all';
+      sut = new CoverageInstrumenterTranspiler(options, ['mutate.js']);
     });
 
     it('should instrument code of mutated files', async () => {

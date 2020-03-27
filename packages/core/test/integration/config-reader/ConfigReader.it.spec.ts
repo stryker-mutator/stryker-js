@@ -1,23 +1,27 @@
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
-import { StrykerOptions } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
 import ConfigReader from '../../../src/config/ConfigReader';
 import { coreTokens } from '../../../src/di';
+import { OptionsValidator } from '../../../src/config/OptionsValidator';
 
 describe(ConfigReader.name, () => {
   let sut: ConfigReader;
 
   function createSut(cliOptions: Partial<StrykerOptions>): ConfigReader {
-    return testInjector.injector.provideValue(coreTokens.cliOptions, cliOptions).injectClass(ConfigReader);
+    return testInjector.injector
+      .provideValue(coreTokens.cliOptions, cliOptions)
+      .provideValue(coreTokens.validationSchema, strykerCoreSchema)
+      .provideClass(coreTokens.optionsValidator, OptionsValidator)
+      .injectClass(ConfigReader);
   }
 
   describe('readConfig()', () => {
-    let result: Config;
+    let result: StrykerOptions;
     describe('without config file', () => {
       beforeEach(() => {
         sut = createSut({ some: 'option', someOther: 2 });
@@ -80,7 +84,7 @@ describe(ConfigReader.name, () => {
 
           result = sut.readConfig();
 
-          expect(result).to.deep.equal(new Config());
+          expect(result).to.deep.equal(factory.strykerOptions());
           expect(testInjector.logger.warn).not.called;
         });
       });
@@ -120,23 +124,22 @@ describe(ConfigReader.name, () => {
       });
     });
 
-    describe('with an existing file, but not a function', () => {
+    describe('with an existing file, but not a function or object', () => {
       beforeEach(() => {
         sut = createSut({ configFile: 'testResources/config-reader/invalid.conf.js' });
       });
 
       it('should report a fatal error', () => {
         expect(() => sut.readConfig()).throws();
-        expect(testInjector.logger.fatal).to.have.been.calledWith(`Config file must be an object or export a function!
-  module.exports = function(config) {
-    config.set({
-      // your config
-    });
-  };`);
+        expect(testInjector.logger.fatal).calledWithMatch(
+          sinon
+            .match('Config file must export an object!')
+            .and(sinon.match("@type {import('@stryker-mutator/api/core').StrykerOptions}").and(sinon.match('module.exports = {')))
+        );
       });
 
       it('should throw an error', () => {
-        expect(() => sut.readConfig()).throws('Config file must export a function');
+        expect(() => sut.readConfig()).throws('Config file must export an object');
       });
     });
 
