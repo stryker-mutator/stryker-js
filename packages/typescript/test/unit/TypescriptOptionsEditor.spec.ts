@@ -1,13 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import sinon = require('sinon');
 import { expect } from 'chai';
 import * as ts from 'typescript';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { match, SinonStub } from 'sinon';
-
-import sinon = require('sinon');
-
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import TypescriptOptionsEditor from './../../src/TypescriptOptionsEditor';
