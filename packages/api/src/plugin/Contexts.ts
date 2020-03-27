@@ -42,6 +42,7 @@ export interface TestRunnerPluginContext extends OptionsContext {
  */
 export interface PluginContexts {
   [PluginKind.ConfigEditor]: BaseContext;
+  [PluginKind.OptionsEditor]: BaseContext;
   [PluginKind.Mutator]: OptionsContext;
   [PluginKind.Reporter]: OptionsContext;
   [PluginKind.TestFramework]: OptionsContext;

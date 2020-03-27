@@ -1,4 +1,3 @@
-import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
 import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
 

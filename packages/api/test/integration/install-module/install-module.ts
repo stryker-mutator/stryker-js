@@ -35,7 +35,6 @@ describe('we have a module using stryker', () => {
         });
       };
       arrangeActAndAssertModule('core', ['files', 'file']);
-      arrangeActAndAssertModule('config', ["plugins: [ '@stryker-mutator/*' ]"]);
       arrangeActAndAssertModule('test_framework', ['done']);
       arrangeActAndAssertModule('mutant', ["mutatorName: 'foo'"]);
       arrangeActAndAssertModule('report', ['status: 3', 'Mutant status runtime error: RuntimeError', 'transpile error: TranspileError']);
