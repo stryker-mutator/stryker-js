@@ -31,3 +31,4 @@ package-lock.json
 .DS_Store
 tsconfig.*.tsbuildinfo
 src-generated
+__filterSpecs.js
