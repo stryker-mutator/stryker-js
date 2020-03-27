@@ -62,7 +62,7 @@ export class TemporaryDirectory implements Disposable {
   /**
    * Deletes the Stryker-temp directory
    */
-  public async dispose() {
+  public async dispose(): Promise<void> {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
