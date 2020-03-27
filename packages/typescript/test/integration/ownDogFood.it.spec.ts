@@ -16,9 +16,7 @@ describe('@stryker-mutator/typescript', () => {
   beforeEach(() => {
     const optionsEditor = testInjector.injector.injectClass(TypescriptOptionsEditor);
     options = factory.strykerOptions();
-    options.set({
-      tsconfigFile: path.resolve(__dirname, '..', '..', 'tsconfig.src.json')
-    });
+    options.tsconfigFile = path.resolve(__dirname, '..', '..', 'tsconfig.src.json');
     optionsEditor.edit(options);
     inputFiles = options[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
   });
