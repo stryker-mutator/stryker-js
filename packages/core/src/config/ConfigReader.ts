@@ -83,7 +83,7 @@ export default class ConfigReader {
     try {
       return require.resolve(configFile);
     } catch {
-      throw new ConfigError(`File ${configFileName} does not exist!`);
+      throw new ConfigError(`File ${configFile} does not exist!`);
     }
   }
 }
