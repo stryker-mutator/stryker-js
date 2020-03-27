@@ -5,3 +5,4 @@
 **/node_modules/**
 *.d.ts
 /packages/*/testResources/**
+/packages/*/src-generated/**
