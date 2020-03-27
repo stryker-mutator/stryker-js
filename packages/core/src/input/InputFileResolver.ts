@@ -1,17 +1,16 @@
 import * as path from 'path';
 import { promises as fs } from 'fs';
 
-import { Config } from '@stryker-mutator/api/config';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError } from '@stryker-mutator/util';
+import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError, notEmpty } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
 import { glob } from '../utils/fileUtils';
-import { filterEmpty } from '../utils/objectUtils';
+import { defaultOptions } from '../config/OptionsValidator';
 
 import InputFileCollection from './InputFileCollection';
 
@@ -56,7 +55,7 @@ export default class InputFileResolver {
   }
 
   private resolveMutateFiles() {
-    return this.expand(this.mutatePatterns, !shallowEquals(this.mutatePatterns, new Config().mutate));
+    return this.expand(this.mutatePatterns, !shallowEquals(this.mutatePatterns, defaultOptions().mutate));
 
     function shallowEquals(arr1: readonly string[], arr2: readonly string[]): boolean {
       if (arr1.length !== arr2.length) {
@@ -131,8 +130,9 @@ export default class InputFileResolver {
     this.reporter.onSourceFileRead(toReportSourceFile(textFile));
   }
 
-  private readFiles(files: string[]): Promise<File[]> {
-    return Promise.all(files.map(fileName => this.readFile(fileName))).then(filterEmpty);
+  private async readFiles(fileNames: string[]): Promise<File[]> {
+    const files = await Promise.all(fileNames.map(fileName => this.readFile(fileName)));
+    return files.filter(notEmpty);
   }
 
   private readFile(fileName: string): Promise<File | null> {

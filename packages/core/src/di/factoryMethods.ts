@@ -1,9 +1,8 @@
-import { Config } from '@stryker-mutator/api/config';
 import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, PluginKind, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
 
-import { ConfigEditorApplier } from '../config';
+import { OptionsEditorApplier } from '../config';
 import TestFrameworkOrchestrator from '../TestFrameworkOrchestrator';
 import { freezeRecursively } from '../utils/objectUtils';
 
@@ -30,14 +29,11 @@ export function loggerFactory(getLogger: LoggerFactoryMethod, target: Function |
 }
 loggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
 
-export function optionsFactory(config: Config, configEditorApplier: ConfigEditorApplier): StrykerOptions {
-  configEditorApplier.edit(config);
-  return freezeRecursively(config);
+export function optionsFactory(options: StrykerOptions, optionsEditorApplier: OptionsEditorApplier): StrykerOptions {
+  optionsEditorApplier.edit(options);
+  return freezeRecursively(options);
 }
-optionsFactory.inject = tokens<[typeof coreTokens.configReadFromConfigFile, typeof coreTokens.configEditorApplier]>(
-  coreTokens.configReadFromConfigFile,
-  coreTokens.configEditorApplier
-);
+optionsFactory.inject = tokens(commonTokens.options, coreTokens.configOptionsApplier);
 
 export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
   const defaults: MutatorDescriptor = {

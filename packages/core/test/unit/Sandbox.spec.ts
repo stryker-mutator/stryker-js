@@ -1,7 +1,6 @@
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
-import { File, LogLevel } from '@stryker-mutator/api/core';
+import { File, LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { MutantStatus } from '@stryker-mutator/api/report';
@@ -34,7 +33,7 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
 const SANDBOX_INDEX = 3;
 
 describe(Sandbox.name, () => {
-  let options: Config;
+  let options: StrykerOptions;
   let inputFiles: File[];
   let testRunner: Mock<TestRunnerDecorator>;
   let testFrameworkStub: sinon.SinonStubbedInstance<TestFramework>;

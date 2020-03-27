@@ -2,7 +2,8 @@ import * as os from 'os';
 import { existsSync, promises as fs } from 'fs';
 
 import { tokens } from '@stryker-mutator/api/plugin';
-import { defaultTempDirName } from '@stryker-mutator/api/config';
+
+import { defaultOptions } from '../config';
 
 import { initializerTokens } from '.';
 
@@ -13,6 +14,7 @@ export default class GitignoreWriter {
   constructor(private readonly out: typeof console.log) {}
 
   public async addStrykerTempFolder() {
+    const defaultTempDirName = defaultOptions().tempDirName;
     if (existsSync(GITIGNORE_FILE)) {
       const gitignoreContent = await fs.readFile(GITIGNORE_FILE);
       if (!gitignoreContent.toString().includes(defaultTempDirName)) {
