@@ -1,12 +1,13 @@
 import { Command } from 'commander';
 import { getLogger } from 'log4js';
 import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mutator/api/core';
-import { Config } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { initializerFactory } from './initializer';
 import LogConfigurator from './logging/LogConfigurator';
 import Stryker from './Stryker';
+import { defaultOptions } from './config/OptionsValidator';
+import { retrieveCause, ConfigError } from './errors';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -36,13 +37,13 @@ export default class StrykerCli {
   constructor(
     private readonly argv: string[],
     private readonly program: Command = new Command(),
-    private readonly runMutationTest = (options: Partial<StrykerOptions>) => new Stryker(options).runMutationTest(),
+    private readonly runMutationTest = async (options: Partial<StrykerOptions>) => new Stryker(options).runMutationTest(),
     private readonly log: Logger = getLogger(StrykerCli.name)
   ) {}
 
   public run() {
     const dashboard: Partial<DashboardOptions> = {};
-    const defaultValues = new Config();
+    const defaultValues = defaultOptions();
     this.program
       .version(require('../package.json').version)
       .usage('<command> [options] [configFile]')
@@ -151,9 +152,14 @@ export default class StrykerCli {
 
     if (Object.keys(commands).includes(this.command)) {
       commands[this.command]().catch(err => {
-        this.log.error('an error occurred', err);
-        if (!this.log.isTraceEnabled()) {
-          this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+        const error = retrieveCause(err);
+        if (error instanceof ConfigError) {
+          this.log.error(error.message);
+        } else {
+          this.log.error('an error occurred', err);
+          if (!this.log.isTraceEnabled()) {
+            this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+          }
         }
         process.exitCode = 1;
       });
