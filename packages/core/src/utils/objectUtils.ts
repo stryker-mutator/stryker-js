@@ -14,10 +14,6 @@ export function freezeRecursively<T extends { [prop: string]: any }>(target: T):
   return target;
 }
 
-export function filterEmpty<T>(input: Array<T | null | void>) {
-  return input.filter(item => item !== undefined && item !== null) as T[];
-}
-
 export function wrapInClosure(codeFragment: string) {
   return `
     (function (window) {
