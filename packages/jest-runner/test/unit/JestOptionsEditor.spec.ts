@@ -46,7 +46,7 @@ describe(JestOptionsEditor.name, () => {
   });
 
   it("should call the ReactScriptsJestConfigLoader loadConfig method when 'react' is defined as projectType", () => {
-    options.set({ jest: { projectType: 'react' } });
+    options.jest = { projectType: 'react' };
 
     sut.edit(options);
 
@@ -54,7 +54,7 @@ describe(JestOptionsEditor.name, () => {
   });
 
   it("should call the ReactScriptsTSJestConfigLoader loadConfig method when 'react-ts' is defined as projectType", () => {
-    options.set({ jest: { projectType: 'react-ts' } });
+    options.jest = { projectType: 'react-ts' };
 
     sut.edit(options);
 
@@ -75,7 +75,7 @@ describe(JestOptionsEditor.name, () => {
 
   it('should throw an error when an invalid projectType is defined', () => {
     const projectType = 'invalidProject';
-    options.set({ jest: { projectType } });
+    options.jest = { projectType };
 
     expect(() => sut.edit(options)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
