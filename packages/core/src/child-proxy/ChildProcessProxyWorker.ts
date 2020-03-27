@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/api/core';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger, Logger } from 'log4js';
 
