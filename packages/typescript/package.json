@@ -47,7 +47,7 @@
     "@types/lodash.flatmap": "~4.5.3",
     "@types/node": "^13.7.1",
     "@types/semver": "~7.1.0",
-    "surrial": "~1.0.0"
+    "surrial": "~2.0.2"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^3.0.0",
