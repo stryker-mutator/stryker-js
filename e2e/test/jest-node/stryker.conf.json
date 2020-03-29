@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "mutator": "javascript",
+  "packageManager": "npm",
+  "testRunner": "jest",
+  "transpilers": [],
+  "coverageAnalysis": "off",
+  "reporters": [
+    "clear-text",
+    "progress",
+    "html",
+    "event-recorder"
+  ]
+}
