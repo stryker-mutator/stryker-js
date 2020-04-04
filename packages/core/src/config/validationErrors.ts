@@ -2,6 +2,10 @@ import { ErrorObject, TypeParams, EnumParams } from 'ajv';
 
 import groupby = require('lodash.groupby');
 
+/**
+ * Convert AJV errors to human readable messages
+ * @param allErrors The AJV errors to describe
+ */
 export function describeErrors(allErrors: ErrorObject[]): string[] {
   const processedErrors = filterRelevantErrors(allErrors);
   return processedErrors.map(describeError);
@@ -48,18 +52,36 @@ export function describeErrors(allErrors: ErrorObject[]): string[] {
  *  ]
  *  ```
  */
-function filterRelevantErrors(allErrors: ErrorObject[]) {
+function filterRelevantErrors(allErrors: ErrorObject[]): ErrorObject[] {
+  // These are the "meta schema" keywords. A Meta schema is a schema consisting of other schemas. See https://json-schema.org/understanding-json-schema/structuring.html
   const META_SCHEMA_KEYWORDS = Object.freeze(['anyOf', 'allOf', 'oneOf']);
+
+  // Split the meta errors from what I call "single errors" (the real errors)
   const [metaErrors, singleErrors] = split(allErrors, error => META_SCHEMA_KEYWORDS.includes(error.keyword));
+
+  // Filter out the single errors we want to show
   const nonShadowedSingleErrors = removeShadowingErrors(singleErrors, metaErrors);
+
+  // We're handling type errors differently, split them out
   const [typeErrors, nonTypeErrors] = split(nonShadowedSingleErrors, error => error.keyword === 'type');
+
+  // Filter out the type errors that already have other errors as well.
+  // For example when setting `logLevel: 4`, we don't want to see the error specifying that logLevel should be a string,
+  // if the other error already specified that it should be one of the enum values.
   const nonShadowingTypeErrors = typeErrors.filter(typeError => !nonTypeErrors.some(nonTypeError => nonTypeError.dataPath === typeError.dataPath));
-  const typeErrorsByPath = groupby(nonShadowingTypeErrors, error => error.dataPath);
-  const typeErrorsFiltered = Object.values(typeErrorsByPath).map(mergeTypeErrors);
-  return [...nonTypeErrors, ...typeErrorsFiltered];
+  const typeErrorsMerged = mergeTypeErrorsByPath(nonShadowingTypeErrors);
+  return [...nonTypeErrors, ...typeErrorsMerged];
 }
 
-function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObject[]) {
+/**
+ * Remove the single errors that are pointing to the same data path.
+ * This can happen when using meta schemas.
+ * For example, the "mutator" Stryker option can be either a `string` or a `MutatorDescriptor`.
+ * A data object of `{ "foo": "bar" }` would result in 2 errors. One of a missing property "name" missing, and one that mutator itself should be a string.
+ * @param singleErrors The 'real' errors
+ * @param metaErrors The grouping errors
+ */
+function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObject[]): ErrorObject[] {
   return singleErrors.filter(error => {
     if (metaErrors.some(metaError => error.dataPath.startsWith(metaError.dataPath))) {
       return !singleErrors.some(otherError => otherError.dataPath.startsWith(error.dataPath) && otherError.dataPath.length > error.dataPath.length);
@@ -69,21 +91,37 @@ function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObj
   });
 }
 
-function split<T>(items: T[], splitFn: (item: T) => boolean) {
+function split<T>(items: T[], splitFn: (item: T) => boolean): [T[], T[]] {
   return [items.filter(splitFn), items.filter(error => !splitFn(error))];
 }
 
-function mergeTypeErrors(typeErrors: ErrorObject[]): ErrorObject {
-  const params: TypeParams = {
-    type: typeErrors.map(error => (error.params as TypeParams).type).join(',')
-  };
-  return {
-    ...typeErrors[0],
-    params
-  };
+/**
+ * Merge type errors that have the same path into 1.
+ * @example
+ *  The 'plugins' Stryker option can have 2 types, null or an array of strings.
+ *  When setting  `plugins: 'my-plugin'` we get 2 type errors, because it isn't an array AND it isn't `null`.
+ * @param typeErrors The type errors to merge by path
+ */
+function mergeTypeErrorsByPath(typeErrors: ErrorObject[]): ErrorObject[] {
+  const typeErrorsByPath = groupby(typeErrors, error => error.dataPath);
+  return Object.values(typeErrorsByPath).map(mergeTypeErrors);
+
+  function mergeTypeErrors(typeErrors: ErrorObject[]): ErrorObject {
+    const params: TypeParams = {
+      type: typeErrors.map(error => (error.params as TypeParams).type).join(',')
+    };
+    return {
+      ...typeErrors[0],
+      params
+    };
+  }
 }
 
-function describeError(error: ErrorObject) {
+/**
+ * Converts the AJV error object to a human readable error.
+ * @param error The error to describe
+ */
+function describeError(error: ErrorObject): string {
   const errorPrefix = `Config option "${error.dataPath.substr(1)}"`;
 
   switch (error.keyword) {
@@ -101,7 +139,13 @@ function describeError(error: ErrorObject) {
       return `${errorPrefix} ${error.message!.replace(/'/g, '"')}`;
   }
 }
-function jsonSchemaType(value: unknown) {
+
+/**
+ * Returns the JSON schema name of the type. JSON schema types are slightly different from actual JS types.
+ * @see https://json-schema.org/understanding-json-schema/reference/type.html
+ * @param value The value of which it's type should be known
+ */
+function jsonSchemaType(value: unknown): string {
   if (value === null) {
     return 'null';
   }
