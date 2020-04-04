@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tsconfigFile": {
+      "description": "Location of your tsconfig.json file",
+      "type": "string"
+    },
+    "tsconfig": {
+      "description": "Override tsconfig from your tsconfig.json file",
+      "type": "object",
+      "$ref": "http://json.schemastore.org/tsconfig"
+    }
+  }
+}

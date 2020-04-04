@@ -60,7 +60,7 @@ Default: `undefined`
 Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded.
 Options specified directly in your stryker.conf.js file using `karma.config` will overrule options in your karma.conf.js file.
 
-### `karma.config` [`any`]
+### `karma.config` [`object`]
 
 Default: `undefined`
 

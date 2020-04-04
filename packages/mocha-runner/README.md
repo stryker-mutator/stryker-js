@@ -98,6 +98,12 @@ Default: `undefined`
 
 Set the name of your [mocha ui](https://mochajs.org/#-u---ui-name)
 
+### `mochaOptions.extension` [`string`]
+
+Default: `undefined`
+
+Set mocha's [--extension](https://mochajs.org/#-extension-ext) property.
+
 ### `mochaOptions.require` [`string[]`]
 
 Default: `[]`

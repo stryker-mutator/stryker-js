@@ -4,7 +4,7 @@
 !src/**
 src/**/*.map
 src/**/*.ts
-!src/**/*.d.ts
+!{src,src-generated}/**/*.d.ts
 !readme.md
 !LICENSE
 !CHANGELOG.md

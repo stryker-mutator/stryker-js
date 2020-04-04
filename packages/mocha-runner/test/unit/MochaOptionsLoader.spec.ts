@@ -7,7 +7,7 @@ import { expect } from 'chai';
 
 import sinon = require('sinon');
 import LibWrapper from '../../src/LibWrapper';
-import { MochaOptions } from '../../src/MochaOptions';
+import { MochaOptions } from '../../src-generated/mocha-runner-options';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { mochaOptionsKey } from '../../src/utils';
 
@@ -194,9 +194,9 @@ describe(MochaOptionsLoader.name, () => {
     itShouldLoadProperty('--async-only', '', { asyncOnly: true });
     itShouldLoadProperty('--ui', 'qunit', { ui: 'qunit' });
     itShouldLoadProperty('-u', 'qunit', { ui: 'qunit' });
-    itShouldLoadProperty('-g', 'grepthis', { grep: /grepthis/ });
-    itShouldLoadProperty('--grep', '/grep(this|that)/', { grep: /grep(this|that)/ });
-    itShouldLoadProperty('--grep', 'grep(this|that)?', { grep: /grep(this|that)?/ });
+    itShouldLoadProperty('-g', 'grepthis', { grep: 'grepthis' });
+    itShouldLoadProperty('--grep', '/grep(this|that)/', { grep: 'grep(this|that)' });
+    itShouldLoadProperty('--grep', 'grep(this|that)?', { grep: 'grep(this|that)?' });
 
     it('should not override additional properties (except for defaults)', () => {
       readFileStub.returns(`

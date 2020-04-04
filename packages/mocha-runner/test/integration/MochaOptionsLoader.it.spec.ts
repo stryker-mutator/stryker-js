@@ -3,7 +3,7 @@ import * as path from 'path';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { MochaOptions } from '../../src/MochaOptions';
+import { MochaOptions } from '../../src-generated/mocha-runner-options';
 import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
 import { mochaOptionsKey } from '../../src/utils';
 
@@ -116,9 +116,9 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
   it('should support `no-config`, `no-opts` and `no-package` keys', () => {
     process.chdir(resolveMochaConfig('.'));
     const actualConfig = actLoad({
-      ['no-config']: true,
-      ['no-package']: true,
-      ['no-opts']: true
+      'no-config': true,
+      'no-package': true,
+      'no-opts': true
     });
     const expectedOptions = {
       ...DEFAULT_MOCHA_OPTIONS,
@@ -136,7 +136,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     return path.resolve(__dirname, '..', '..', 'testResources', 'mocha-config', relativeName);
   }
 
-  function actLoad(mochaConfig: { [key: string]: any }): MochaOptions {
+  function actLoad(mochaConfig: Partial<MochaOptions>): MochaOptions {
     testInjector.options[mochaOptionsKey] = mochaConfig;
     return sut.load(testInjector.options);
   }
