@@ -164,7 +164,7 @@ describe(MochaTestRunner.name, () => {
       // Arrange
       discoveredFiles.push('foo.js', 'bar.js', 'foo2.js');
       const mochaOptions: Partial<MochaOptions> = {
-        asyncOnly: true,
+        ['async-only']: true,
         grep: 'grepme',
         opts: 'opts',
         require: [],
@@ -178,10 +178,25 @@ describe(MochaTestRunner.name, () => {
       await actRun();
 
       // Assert
-      expect(mocha.asyncOnly).calledWith(true);
+      expect(mocha.asyncOnly).called;
       expect(mocha.timeout).calledWith(2000);
       expect(mocha.ui).calledWith('assert');
       expect(mocha.grep).calledWith('grepme');
+    });
+
+    it("should don't set asyncOnly if asyncOnly is false", async () => {
+      // Arrange
+      const mochaOptions: Partial<MochaOptions> = {
+        ['async-only']: false
+      };
+      sut = createSut({ mochaOptions });
+      await sut.init();
+
+      // Act
+      await actRun();
+
+      // Assert
+      expect(mocha.asyncOnly).not.called;
     });
 
     it('should pass require additional require options when constructed', () => {

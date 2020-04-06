@@ -42,7 +42,7 @@ module.exports = {
         ui: 'bdd',
         timeout: 3000,
         require: [ /*'babel-register' */],
-        asyncOnly: false,
+        'async-only': false,
         grep: /.*/
     }
 }
@@ -110,7 +110,7 @@ Default: `[]`
 
 Set mocha's [`require` option](https://mochajs.org/#-r---require-module-name)
 
-### `mochaOptions.asyncOnly` [`boolean`]
+### `mochaOptions.async-only` [`boolean`]
 
 Default: `false`
 

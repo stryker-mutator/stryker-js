@@ -53,33 +53,31 @@ describe(MochaOptionsLoader.name, () => {
       };
 
       // Following are valid options
-      rawOptions.extension = 'foo';
-      rawOptions.require = 'bar';
-      rawOptions.timeout = 'baz';
-      rawOptions['async-only'] = 'qux';
+      rawOptions.extension = ['foo'];
+      rawOptions.require = ['bar'];
+      rawOptions.timeout = 4200;
+      rawOptions['async-only'] = true;
       rawOptions.ui = 'quux';
       rawOptions.grep = 'quuz';
-      rawOptions.exclude = 'corge';
-      rawOptions.ignore = 'garply';
-      rawOptions.file = 'grault';
+      rawOptions.ignore = ['garply'];
+      rawOptions.file = ['grault'];
       rawOptions.spec = ['test/**/*.js'];
 
       rawOptions.garply = 'waldo'; // this should be filtered out
       const result = sut.load(testInjector.options);
-      expect(result).deep.eq({
-        exclude: 'corge',
-        extension: 'foo',
-        file: 'grault',
+      const expected: MochaOptions = createMochaOptions({
+        extension: ['foo'],
+        file: ['grault'],
         grep: 'quuz',
-        ignore: 'garply',
+        ignore: ['garply'],
         opts: './test/mocha.opts',
-        override: true,
-        require: 'bar',
+        require: ['bar'],
         spec: ['test/**/*.js'],
-        timeout: 'baz',
-        ['async-only']: 'qux',
+        timeout: 4200,
+        'async-only': true,
         ui: 'quux'
       });
+      expect(result).deep.eq({ ...expected, override: true });
     });
 
     it('should trace log the mocha call', () => {
@@ -190,8 +188,8 @@ describe(MochaOptionsLoader.name, () => {
 
     itShouldLoadProperty('--timeout', '2000', { timeout: 2000 });
     itShouldLoadProperty('-t', '2000', { timeout: 2000 });
-    itShouldLoadProperty('-A', '', { asyncOnly: true });
-    itShouldLoadProperty('--async-only', '', { asyncOnly: true });
+    itShouldLoadProperty('-A', '', { 'async-only': true });
+    itShouldLoadProperty('--async-only', '', { 'async-only': true });
     itShouldLoadProperty('--ui', 'qunit', { ui: 'qunit' });
     itShouldLoadProperty('-u', 'qunit', { ui: 'qunit' });
     itShouldLoadProperty('-g', 'grepthis', { grep: 'grepthis' });
@@ -206,7 +204,7 @@ describe(MochaOptionsLoader.name, () => {
         -r babel-register
       `);
       config.mochaOptions = {
-        asyncOnly: false,
+        'async-only': false,
         opts: 'path/to/opts/file',
         require: ['ts-node/register'],
         timeout: 4000,
@@ -215,7 +213,7 @@ describe(MochaOptionsLoader.name, () => {
       const options = sut.load(config);
       expect(options).deep.equal(
         createMochaOptions({
-          asyncOnly: false,
+          'async-only': false,
           extension: ['js'],
           opts: 'path/to/opts/file',
           require: ['ts-node/register'],
@@ -255,15 +253,20 @@ describe(MochaOptionsLoader.name, () => {
           extension: ['js'],
           opts: 'some/mocha.opts/file',
           spec: ['test'],
-          timeout: undefined,
-          ui: undefined
+          timeout: 2000,
+          ui: 'bdd'
         })
       );
     });
   });
 
-  function createMochaOptions(overrides?: Partial<MochaOptions>) {
+  function createMochaOptions(overrides?: Partial<MochaOptions>): MochaOptions {
     return {
+      'async-only': false,
+      'no-config': false,
+      'no-opts': false,
+      require: [],
+      'no-package': false,
       extension: ['js'],
       file: [],
       ignore: [],

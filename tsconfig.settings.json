@@ -11,6 +11,7 @@
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": false,
+    "resolveJsonModule": true,
     "importHelpers": true,
     "noUnusedLocals": true,
     "alwaysStrict": true,

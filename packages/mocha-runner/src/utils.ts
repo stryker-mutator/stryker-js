@@ -1,5 +1,7 @@
 import { MochaOptions } from '../src-generated/mocha-runner-options';
 
+import mochaSchema = require('../schema/mocha-runner-options.json');
+
 /**
  * Executes a piece of javascript code in global scope while passing the `require` function
  * @param body The JavaScript to execute
@@ -25,7 +27,7 @@ export function serializeArguments(mochaOptions: MochaOptions) {
 
 export const mochaOptionsKey = 'mochaOptions';
 
-const SUPPORTED_MOCHA_OPTIONS = Object.freeze(['extension', 'require', 'timeout', 'async-only', 'ui', 'grep', 'exclude', 'ignore', 'spec', 'file']);
+const SUPPORTED_MOCHA_OPTIONS = Object.freeze(Object.keys(mochaSchema.properties.mochaOptions.properties));
 
 /**
  * Filter out those config values that are actually useful to run mocha with Stryker

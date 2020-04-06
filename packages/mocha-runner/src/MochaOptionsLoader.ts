@@ -26,7 +26,7 @@ export const DEFAULT_MOCHA_OPTIONS: Readonly<MochaOptions> = Object.freeze({
   'no-package': false,
   'no-opts': false,
   'no-config': false,
-  asyncOnly: false
+  'async-only': false
 });
 
 export default class MochaOptionsLoader {
@@ -113,7 +113,7 @@ export default class MochaOptionsLoader {
             break;
           case '--async-only':
           case '-A':
-            mochaRunnerOptions.asyncOnly = true;
+            mochaRunnerOptions['async-only'] = true;
             break;
           case '--ui':
           case '-u':

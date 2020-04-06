@@ -20,6 +20,9 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     },
     {
@@ -38,6 +41,9 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     }
   ]
