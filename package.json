@@ -11,7 +11,7 @@
     "@types/mkdirp": "1.0.0",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.7.1",
-    "@types/rimraf": "2.0.3",
+    "@types/rimraf": "3.0.0",
     "@types/sinon": "5.0.5",
     "@types/sinon-chai": "3.2.3",
     "@typescript-eslint/eslint-plugin": "2.26.0",
