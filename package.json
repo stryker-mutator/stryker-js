@@ -6,7 +6,7 @@
     "@types/chai-as-promised": "7.1.2",
     "@types/glob": "^7.1.0",
     "@types/istanbul": "^0.4.29",
-    "@types/karma": "^4.4.0",
+    "@types/karma": "^5.0.0",
     "@types/lodash": "^4.14.110",
     "@types/mkdirp": "1.0.0",
     "@types/mocha": "^7.0.2",
