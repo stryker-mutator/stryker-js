@@ -36,7 +36,7 @@ module.exports = {
     // ...
     karma: {
         projectType: 'custom', // or 'angular-cli'
-        configFile: 'path/to/karma.conf.js' // default `undefined`
+        configFile: 'path/to/karma.conf.js', // default `undefined`
         config: { // default `undefined`
             browsers: ['ChromeHeadless'] // override config settings
         }
