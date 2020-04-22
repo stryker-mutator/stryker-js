@@ -2,10 +2,9 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { createIsDirError, fileNotFoundError } from '@stryker-mutator/test-helpers/src/factory';
 import { childProcessAsPromised, errorToString } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -228,7 +227,7 @@ describe(InputFileResolver.name, () => {
     });
 
     it('should not log a warning if the globbing expression was the default logging expression', async () => {
-      const config = new Config();
+      const config = factory.strykerOptions();
       testInjector.options.files = config.files;
       testInjector.options.mutate = config.mutate;
       sut = createSut();

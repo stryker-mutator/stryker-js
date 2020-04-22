@@ -1,5 +1,6 @@
-import { Config, ConfigEditor } from '@stryker-mutator/api/config';
-import { File, Location, MutationScoreThresholds, StrykerOptions, MutatorDescriptor } from '@stryker-mutator/api/core';
+import Ajv = require('ajv');
+import { ConfigEditor } from '@stryker-mutator/api/config';
+import { File, Location, MutationScoreThresholds, StrykerOptions, MutatorDescriptor, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
@@ -9,6 +10,14 @@ import { Transpiler } from '@stryker-mutator/api/transpile';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
+import { OptionsEditor } from '@stryker-mutator/api/src/core/OptionsEditor';
+
+const ajv = new Ajv({ useDefaults: true });
+
+/**
+ * This validator will fill in the defaults of stryker options as registered in the schema.
+ */
+const strykerOptionsValidator: (overrides: Partial<StrykerOptions>) => void = ajv.compile(strykerCoreSchema);
 
 /**
  * A 1x1 png base64 encoded
@@ -148,9 +157,11 @@ export const mutationScoreThresholds = factoryMethod<MutationScoreThresholds>(()
   low: 60
 }));
 
-export const strykerOptions = factoryMethod<StrykerOptions>(() => new Config());
-
-export const config = factoryMethod<Config>(() => new Config());
+export const strykerOptions = factoryMethod<StrykerOptions>(() => {
+  const options: Partial<StrykerOptions> = {};
+  strykerOptionsValidator(options);
+  return options as StrykerOptions;
+});
 
 export const mutatorDescriptor = factoryMethod<MutatorDescriptor>(() => ({
   excludedMutations: [],
@@ -175,6 +186,11 @@ export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Requi
 }
 
 export function configEditor(): sinon.SinonStubbedInstance<ConfigEditor> {
+  return {
+    edit: sinon.stub()
+  };
+}
+export function optionsEditor(): sinon.SinonStubbedInstance<OptionsEditor> {
   return {
     edit: sinon.stub()
   };

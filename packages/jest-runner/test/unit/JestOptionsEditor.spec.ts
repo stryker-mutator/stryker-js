@@ -1,19 +1,19 @@
-import { Config } from '@stryker-mutator/api/config';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
+import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../src/configLoaders/CustomJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../src/configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../src/configLoaders/ReactScriptsTSJestConfigLoader';
-import JestConfigEditor from '../../src/JestConfigEditor';
+import JestOptionsEditor from '../../src/JestOptionsEditor';
 
-describe('JestConfigEditor', () => {
-  let sut: JestConfigEditor;
+describe(JestOptionsEditor.name, () => {
+  let sut: JestOptionsEditor;
   let customConfigLoaderStub: ConfigLoaderStub;
   let reactScriptsJestConfigLoaderStub: ConfigLoaderStub;
   let reactScriptsTSJestConfigLoaderStub: ConfigLoaderStub;
-  let config: Config;
+  let options: StrykerOptions;
 
   beforeEach(() => {
     customConfigLoaderStub = sinon.createStubInstance(CustomJestConfigLoader);
@@ -34,37 +34,37 @@ describe('JestConfigEditor', () => {
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsTSJestConfigLoaderStub.loadConfig.returns(defaultOptions);
 
-    sut = testInjector.injector.injectClass(JestConfigEditor);
-    config = new Config();
+    sut = testInjector.injector.injectClass(JestOptionsEditor);
+    options = factory.strykerOptions();
   });
 
   it('should call the defaultConfigLoader loadConfig method when no projectType is defined', () => {
-    sut.edit(config);
+    sut.edit(options);
 
-    expect(config.jest.projectType).eq('custom');
+    expect(options.jest.projectType).eq('custom');
     assert(customConfigLoaderStub.loadConfig.calledOnce, 'CustomConfigLoader loadConfig not called');
   });
 
   it("should call the ReactScriptsJestConfigLoader loadConfig method when 'react' is defined as projectType", () => {
-    config.set({ jest: { projectType: 'react' } });
+    options.jest = { projectType: 'react' };
 
-    sut.edit(config);
+    sut.edit(options);
 
     assert(reactScriptsJestConfigLoaderStub.loadConfig.calledOnce, 'ReactScriptsJestConfigLoader loadConfig not called');
   });
 
   it("should call the ReactScriptsTSJestConfigLoader loadConfig method when 'react-ts' is defined as projectType", () => {
-    config.set({ jest: { projectType: 'react-ts' } });
+    options.jest = { projectType: 'react-ts' };
 
-    sut.edit(config);
+    sut.edit(options);
 
     assert(reactScriptsTSJestConfigLoaderStub.loadConfig.calledOnce, 'ReactScriptsTSJestConfigLoader loadConfig not called');
   });
 
   it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', () => {
-    sut.edit(config);
+    sut.edit(options);
 
-    expect(config.jest.config).to.deep.equal({
+    expect(options.jest.config).to.deep.equal({
       bail: false,
       collectCoverage: false,
       notify: false,
@@ -75,9 +75,9 @@ describe('JestConfigEditor', () => {
 
   it('should throw an error when an invalid projectType is defined', () => {
     const projectType = 'invalidProject';
-    config.set({ jest: { projectType } });
+    options.jest = { projectType };
 
-    expect(() => sut.edit(config)).to.throw(Error, `No configLoader available for ${projectType}`);
+    expect(() => sut.edit(options)).to.throw(Error, `No configLoader available for ${projectType}`);
   });
 });
 

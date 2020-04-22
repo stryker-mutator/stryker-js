@@ -2,6 +2,7 @@
 !*.d.ts
 !bin/**
 !src/**
+!schema/**
 !*.js
 src/**/*.map
 src/**/*.ts

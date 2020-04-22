@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
-import { Config, ConfigEditor } from '@stryker-mutator/api/config';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as ts from 'typescript';
+import { StrykerOptions, OptionsEditor } from '@stryker-mutator/api/core';
 
 import { CONFIG_KEY, CONFIG_KEY_FILE } from './helpers/keys';
 import { normalizeFileForTypescript, normalizeFileFromTypescript } from './helpers/tsHelpers';
@@ -18,15 +18,15 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
   noUnusedParameters: false
 });
 
-export default class TypescriptConfigEditor implements ConfigEditor {
+export default class TypescriptOptionsEditor implements OptionsEditor {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public edit(strykerConfig: Config, host: ts.ParseConfigHost = ts.sys) {
+  public edit(strykerConfig: StrykerOptions, host: ts.ParseConfigHost = ts.sys) {
     this.loadTSConfig(strykerConfig, host);
   }
 
-  private loadTSConfig(strykerConfig: Config, host: ts.ParseConfigHost) {
+  private loadTSConfig(strykerConfig: StrykerOptions, host: ts.ParseConfigHost) {
     if (typeof strykerConfig[CONFIG_KEY_FILE] === 'string') {
       const tsconfigFileName = path.resolve(strykerConfig[CONFIG_KEY_FILE]);
       this.log.info(`Loading tsconfig file ${tsconfigFileName}`);

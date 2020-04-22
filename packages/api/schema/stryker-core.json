@@ -85,24 +85,32 @@
       "type": "object",
       "properties": {
         "high": {
-          "type": "number",
+          "$ref": "#/definitions/percentage",
           "default": 80
         },
         "low": {
-          "type": "number",
+          "$ref": "#/definitions/percentage",
           "default": 60
         },
         "break": {
-          "type": [
-            "number",
-            "null"
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/percentage"
+            }
           ],
           "default": null
         }
       }
     },
+    "percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
     "mutatorDescriptor": {
-      "description": "Thresholds for mutation score. Disable a score with `null`.\n\nmutation score < break => exit build process with exit code 1. By default this is disabled (null).\nmutation score < low => score is in danger zone, display in red.\nmutation score < high >= low => score is in warning zone, display in yellow.\nmutation score >= high => score is in awesome zone, display in green.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -115,7 +123,10 @@
             {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "array"
+                ]
               }
             },
             {
@@ -203,7 +214,8 @@
           "$ref": "#/definitions/mutatorDescriptor"
         }
       ],
-      "default": "javascript"
+      "default": "javascript",
+      "errorMessage": "should be an \"object\" describing the mutator or a \"string\". See https://github.com/stryker-mutator/stryker/tree/master/packages/core#mutator."
     },
     "plugins": {
       "description": "With 'plugins', you can add additional Node modules for Stryker to load (or require). By default, all node_modules starting with @stryker-mutator/* will be loaded, so you would normally not need to specify this option. These modules should be installed right next to stryker. For a current list of plugins, you can consult 'npm' or 'stryker-mutator.io.'",

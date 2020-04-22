@@ -4,6 +4,7 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MatchedMutant } from '@stryker-mutator/api/report';
 import { CoverageCollection, CoveragePerTestResult, CoverageResult, StatementMap } from '@stryker-mutator/api/test_runner';
+import { notEmpty } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
@@ -13,7 +14,6 @@ import SourceFile from '../SourceFile';
 import TestableMutant, { TestSelectionResult } from '../TestableMutant';
 import { CoverageMaps } from '../transpiler/CoverageInstrumenterTranspiler';
 import LocationHelper from '../utils/LocationHelper';
-import { filterEmpty } from '../utils/objectUtils';
 
 const enum StatementIndexKind {
   Function,
@@ -120,8 +120,8 @@ export class MutantTestMatcher {
 
   private createTestableMutants(mutants: readonly Mutant[]): readonly TestableMutant[] {
     const sourceFiles = this.input.filesToMutate.map(file => new SourceFile(file));
-    return filterEmpty(
-      mutants.map((mutant, index) => {
+    return mutants
+      .map((mutant, index) => {
         const sourceFile = sourceFiles.find(file => file.name === mutant.fileName);
         if (sourceFile) {
           return new TestableMutant(index.toString(), mutant, sourceFile);
@@ -134,7 +134,7 @@ export class MutantTestMatcher {
           return null;
         }
       })
-    );
+      .filter(notEmpty);
   }
 
   /**

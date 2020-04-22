@@ -1,6 +1,5 @@
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
 import { File } from '@stryker-mutator/api/core';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger, Logger } from 'log4js';
@@ -35,7 +34,7 @@ export default class ChildProcessProxyWorker {
         LogConfigurator.configureChildProcess(message.loggingContext);
         this.log = getLogger(ChildProcessProxyWorker.name);
         this.handlePromiseRejections();
-        let injector = buildChildProcessInjector((message.options as unknown) as Config);
+        let injector = buildChildProcessInjector(message.options);
         const locals = message.additionalInjectableValues as any;
         for (const token of Object.keys(locals)) {
           injector = injector.provideValue(token, locals[token]);

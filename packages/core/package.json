@@ -55,7 +55,8 @@
   "dependencies": {
     "@stryker-mutator/api": "^3.1.0",
     "@stryker-mutator/util": "^3.1.0",
-    "chalk": "~3.0.0",
+    "ajv": "^6.12.0",
+    "chalk": "~4.0.0",
     "commander": "~4.1.0",
     "file-url": "~3.0.0",
     "get-port": "~5.0.0",
@@ -64,7 +65,7 @@
     "istanbul-lib-instrument": "~3.3.0",
     "lodash.flatmap": "^4.5.0",
     "lodash.groupby": "^4.6.0",
-    "log4js": "6.1.2",
+    "log4js": "6.2.1",
     "mkdirp": "~1.0.3",
     "mutation-testing-elements": "~1.3.0",
     "mutation-testing-metrics": "~1.3.0",
@@ -75,7 +76,7 @@
     "surrial": "~2.0.2",
     "tree-kill": "~1.2.0",
     "tslib": "~1.11.1",
-    "typed-inject": "~2.1.1",
+    "typed-inject": "~2.2.1",
     "typed-rest-client": "~1.7.1"
   },
   "devDependencies": {

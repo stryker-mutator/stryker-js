@@ -1,5 +1,4 @@
-import { Config } from '@stryker-mutator/api/config';
-import { File, LogLevel } from '@stryker-mutator/api/core';
+import { File, LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
@@ -44,7 +43,7 @@ describe(Stryker.name, () => {
   let mutationTestExecutorMock: Mock<MutationTestExecutor>;
   let mutantTestMatcherMock: Mock<MutantTestMatcher>;
   let mutatorMock: Mock<MutatorFacade>;
-  let strykerConfig: Config;
+  let strykerOptions: StrykerOptions;
   let reporterMock: Mock<BroadcastReporter>;
   let mutationTestReportCalculatorMock: Mock<MutationTestReportCalculator>;
   let configureMainProcessStub: sinon.SinonStub;
@@ -56,7 +55,7 @@ describe(Stryker.name, () => {
   let transpilerMock: sinon.SinonStubbedInstance<Transpiler>;
 
   beforeEach(() => {
-    strykerConfig = factory.config();
+    strykerOptions = factory.strykerOptions();
     logMock = factory.logger();
     reporterMock = mock(BroadcastReporter);
     injectorMock = factory.injector();
@@ -93,7 +92,7 @@ describe(Stryker.name, () => {
       .returns(mutationTestReportCalculatorMock);
     injectorMock.resolve
       .withArgs(commonTokens.options)
-      .returns(strykerConfig)
+      .returns(strykerOptions)
       .withArgs(di.coreTokens.timer)
       .returns(timerMock)
       .withArgs(di.coreTokens.reporter)
@@ -110,7 +109,7 @@ describe(Stryker.name, () => {
 
   describe('when constructed', () => {
     beforeEach(() => {
-      strykerConfig.plugins = ['plugin1'];
+      strykerOptions.plugins = ['plugin1'];
       sut = new Stryker({});
     });
 
@@ -210,7 +209,7 @@ describe(Stryker.name, () => {
       it('should configure the logging server', async () => {
         sut = new Stryker({});
         await sut.runMutationTest();
-        expect(configureLoggingServerStub).calledWith(strykerConfig.logLevel, strykerConfig.fileLogLevel);
+        expect(configureLoggingServerStub).calledWith(strykerOptions.logLevel, strykerOptions.fileLogLevel);
       });
 
       it('should report mutation test report ready', async () => {
@@ -271,7 +270,7 @@ describe(Stryker.name, () => {
       });
 
       it('should create the transpiler with produceSourceMaps = true when coverage analysis is enabled', async () => {
-        strykerConfig.coverageAnalysis = 'all';
+        strykerOptions.coverageAnalysis = 'all';
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, true);
@@ -279,7 +278,7 @@ describe(Stryker.name, () => {
       });
 
       it('should create the transpiler with produceSourceMaps = false when coverage analysis is "off"', async () => {
-        strykerConfig.coverageAnalysis = 'off';
+        strykerOptions.coverageAnalysis = 'off';
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, false);
