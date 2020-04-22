@@ -4,7 +4,8 @@
     "rootDir": "."
   },
   "include": [
-    "src"
+    "src",
+    "schema/*.json"
   ],
   "references": [
     {

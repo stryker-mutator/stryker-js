@@ -15,8 +15,13 @@ interface PluginModule {
   strykerPlugins: Array<Plugin<any>>;
 }
 
+interface SchemaValidationContribution {
+  strykerValidationSchema: object;
+}
+
 export class PluginLoader implements PluginResolver {
   private readonly pluginsByKind: Map<PluginKind, Array<Plugin<any>>> = new Map();
+  private readonly contributedValidationSchemas: object[] = [];
 
   public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
   constructor(private readonly log: Logger, private readonly pluginDescriptors: readonly string[]) {}
@@ -25,6 +30,10 @@ export class PluginLoader implements PluginResolver {
     this.resolvePluginModules().forEach((moduleName) => {
       this.requirePlugin(moduleName);
     });
+  }
+
+  public resolveValidationSchemaContributions(): object[] {
+    return this.contributedValidationSchemas;
   }
 
   public resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T] {
@@ -89,6 +98,9 @@ export class PluginLoader implements PluginResolver {
       if (this.isPluginModule(module)) {
         module.strykerPlugins.forEach((plugin) => this.loadPlugin(plugin));
       }
+      if (this.hasValidationSchemaContribution(module)) {
+        this.contributedValidationSchemas.push(module.strykerValidationSchema);
+      }
     } catch (e) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
         this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' + '  npm install %s --save-dev', name, name);
@@ -110,5 +122,10 @@ export class PluginLoader implements PluginResolver {
   private isPluginModule(module: unknown): module is PluginModule {
     const pluginModule = module as PluginModule;
     return pluginModule && pluginModule.strykerPlugins && Array.isArray(pluginModule.strykerPlugins);
+  }
+
+  private hasValidationSchemaContribution(module: unknown): module is SchemaValidationContribution {
+    const pluginModule = module as SchemaValidationContribution;
+    return pluginModule && pluginModule.strykerValidationSchema && typeof pluginModule.strykerValidationSchema === 'object';
   }
 }

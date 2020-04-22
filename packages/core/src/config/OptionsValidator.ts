@@ -9,7 +9,7 @@ import { ConfigError } from '../errors';
 
 import { describeErrors } from './validationErrors';
 
-const ajv = new Ajv({ useDefaults: true, allErrors: true, jsonPointers: false, verbose: true });
+const ajv = new Ajv({ useDefaults: true, allErrors: true, jsonPointers: false, verbose: true, missingRefs: 'ignore' });
 
 export class OptionsValidator {
   private readonly validateFn: Ajv.ValidateFunction;
@@ -67,3 +67,9 @@ export function defaultOptions(): StrykerOptions {
   validator.validate(options);
   return options;
 }
+
+export function validateOptions(options: unknown, optionsValidator: OptionsValidator): StrykerOptions {
+  optionsValidator.validate(options);
+  return options;
+}
+validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidator);

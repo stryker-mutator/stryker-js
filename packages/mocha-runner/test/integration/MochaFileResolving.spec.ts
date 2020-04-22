@@ -6,10 +6,16 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { MochaTestRunner } from '../../src/MochaTestRunner';
-import { mochaOptionsKey } from '../../src/utils';
+import { MochaRunnerWithStrykerOptions } from '../../src/MochaRunnerWithStrykerOptions';
 
 describe('Mocha 6 file resolving integration', () => {
   const cwd = process.cwd();
+  let options: MochaRunnerWithStrykerOptions;
+
+  beforeEach(() => {
+    options = testInjector.options as MochaRunnerWithStrykerOptions;
+    options.mochaOptions = {};
+  });
 
   afterEach(() => {
     process.chdir(cwd);
@@ -18,7 +24,7 @@ describe('Mocha 6 file resolving integration', () => {
   it('should resolve test files while respecting "files", "spec", "extension" and "exclude" properties', () => {
     const configLoader = createConfigLoader();
     process.chdir(resolveTestDir());
-    testInjector.options[mochaOptionsKey] = configLoader.load(testInjector.options);
+    options.mochaOptions = configLoader.load(options);
     const testRunner = createTestRunner();
     testRunner.init();
     expect((testRunner as any).testFileNames).deep.eq([

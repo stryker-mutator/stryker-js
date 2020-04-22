@@ -16,29 +16,25 @@
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "default": []
+          }
         },
         "ignore": {
           "description": "Set mocha's [`ignore option](https://github.com/mochajs/mocha/blob/master/example/config/.mocharc.yml#L26)",
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "default": []
+          }
         },
         "file": {
           "description": "Set mocha's [`file options`](https://mochajs.org/#-file-filedirectoryglob)",
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "default": []
+          }
         },
         "opts": {
           "description": "Specify a ['mocha.opts' file](https://mochajs.org/#mochaopts) to be loaded. Options specified directly in your stryker.conf.js file will overrule options from the 'mocha.opts' file. Disable loading of an additional mocha.opts file with `false`. The only supported mocha options are used: `--ui`, `--require`, `--async-only`, `--timeout`, `--grep` (or their short form counterparts). Others are ignored by the @stryker-mutator/mocha-runner.",
-          "type": "string",
-          "default": "./test/mocha.opts"
+          "type": "string"
         },
         "config": {
           "description": "Explicit path to the [mocha config file](https://mochajs.org/#-config-path)",
@@ -50,33 +46,27 @@
         },
         "no-package": {
           "type": "boolean",
-          "default": "false",
           "description": "Explicit turn off [mocha package file](https://mochajs.org/#-package-path)"
         },
         "no-opts": {
           "type": "boolean",
-          "default": "false",
           "description": "Explicit turn off [mocha opts file](https://mochajs.org/#-opts-path)"
         },
         "no-config": {
           "type": "boolean",
-          "default": "false",
           "description": "Explicit turn off [mocha config file](https://mochajs.org/#-config-path)"
         },
         "timeout": {
           "description": "Set mocha's [`timeout` option](https://mochajs.org/#-t---timeout-ms)",
-          "type": "number",
-          "default": 2000
+          "type": "number"
         },
         "async-only": {
           "description": "Set mocha's [`async-only` option](https://mochajs.org/#-async-only-a)",
-          "type": "boolean",
-          "default": false
+          "type": "boolean"
         },
         "ui": {
           "description": "Set the name of your [mocha ui](https://mochajs.org/#-u---ui-name)",
-          "type": "string",
-          "default": "bdd"
+          "type": "string"
         },
         "files": {
           "description": "DEPRECATED, use `spec` instead.",
@@ -97,10 +87,7 @@
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "default": [
-            "test/**/*.js"
-          ]
+          }
         },
         "grep": {
           "description": "Specify a mocha [`grep`](https://mochajs.org/#grep) command, to single out individual tests.",

@@ -5,14 +5,13 @@ import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { getLogger } from 'log4js';
 import { rootInjector } from 'typed-inject';
 
-import { OptionsEditorApplier, readConfig } from '../config';
+import { OptionsEditorApplier, readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions } from '../config';
 import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
-import { OptionsValidator } from '../config/OptionsValidator';
 
-import { loggerFactory, mutatorDescriptorFactory, optionsFactory, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
+import { loggerFactory, mutatorDescriptorFactory, applyOptionsEditors, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
 
 import { coreTokens, PluginCreator } from '.';
 
@@ -38,10 +37,13 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(commonTokens.options, readConfig)
     .provideFactory(coreTokens.pluginDescriptors, pluginDescriptorsFactory)
     .provideFactory(commonTokens.pluginResolver, pluginResolverFactory)
+    .provideFactory(coreTokens.validationSchema, buildSchemaWithPluginContributions)
+    .provideClass(coreTokens.optionsValidator, OptionsValidator)
+    .provideFactory(commonTokens.options, validateOptions)
     .provideFactory(coreTokens.pluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
     .provideFactory(coreTokens.pluginCreatorOptionsEditor, PluginCreator.createFactory(PluginKind.OptionsEditor))
     .provideClass(coreTokens.configOptionsApplier, OptionsEditorApplier)
-    .provideFactory(commonTokens.options, optionsFactory)
+    .provideFactory(commonTokens.options, applyOptionsEditors)
     .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory)
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
     .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))

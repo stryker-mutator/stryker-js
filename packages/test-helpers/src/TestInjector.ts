@@ -38,6 +38,7 @@ class TestInjector {
     this.pluginResolver = {
       resolve: sinon.stub(),
       resolveAll: sinon.stub(),
+      resolveValidationSchemaContributions: sinon.stub(),
     };
   }
 }

@@ -29,11 +29,11 @@ export function loggerFactory(getLogger: LoggerFactoryMethod, target: Function |
 }
 loggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
 
-export function optionsFactory(options: StrykerOptions, optionsEditorApplier: OptionsEditorApplier): StrykerOptions {
+export function applyOptionsEditors(options: StrykerOptions, optionsEditorApplier: OptionsEditorApplier): StrykerOptions {
   optionsEditorApplier.edit(options);
   return freezeRecursively(options);
 }
-optionsFactory.inject = tokens(commonTokens.options, coreTokens.configOptionsApplier);
+applyOptionsEditors.inject = tokens(commonTokens.options, coreTokens.configOptionsApplier);
 
 export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
   const defaults: MutatorDescriptor = {

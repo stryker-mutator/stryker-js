@@ -20,6 +20,11 @@ module.exports = {
   ],
   dashboard: {
     reportType: 'full'
-  }
+  },
+  files: [
+    '{src,test,src-generated}/**/*.ts',
+    '!{src,test,src-generated}/**/*.d.ts',
+    'schema/**/*.json'
+  ]
 };
 

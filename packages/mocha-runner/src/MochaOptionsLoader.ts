@@ -1,14 +1,15 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { propertyPath } from '@stryker-mutator/util';
 
-import { MochaOptions } from '../src-generated/mocha-runner-options';
+import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
 import LibWrapper from './LibWrapper';
-import { filterConfig, mochaOptionsKey, serializeArguments } from './utils';
+import { filterConfig, serializeMochaLoadOptionsArguments } from './utils';
+import { MochaRunnerWithStrykerOptions } from './MochaRunnerWithStrykerOptions';
 
 /**
  * Subset of defaults for mocha options
@@ -33,8 +34,8 @@ export default class MochaOptionsLoader {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public load(strykerOptions: StrykerOptions): MochaOptions {
-    const mochaOptions = { ...strykerOptions[mochaOptionsKey] } as MochaOptions;
+  public load(strykerOptions: MochaRunnerWithStrykerOptions): MochaOptions {
+    const mochaOptions = { ...strykerOptions.mochaOptions } as MochaOptions;
     return { ...DEFAULT_MOCHA_OPTIONS, ...this.loadMochaOptions(mochaOptions), ...mochaOptions };
   }
 
@@ -45,12 +46,12 @@ export default class MochaOptionsLoader {
     } else {
       this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
       this.log.debug('Mocha < 6 detected. Using custom logic to parse mocha options');
-      return this.loadLegacyMochaOptsFile(overrides.opts);
+      return this.loadLegacyMochaOptsFile(overrides);
     }
   }
 
   private loadMocha6Options(overrides: MochaOptions) {
-    const args = serializeArguments(overrides);
+    const args = serializeMochaLoadOptionsArguments(overrides);
     const loadOptions = LibWrapper.loadOptions || (() => ({}));
     const rawConfig = loadOptions(args) || {};
     if (this.log.isTraceEnabled()) {
@@ -63,21 +64,25 @@ export default class MochaOptionsLoader {
     return options;
   }
 
-  private loadLegacyMochaOptsFile(opts: false | string | undefined): Partial<MochaOptions> {
-    switch (typeof opts) {
-      case 'boolean':
-        this.log.debug('Not reading additional mochaOpts from a file');
-        return {};
+  private loadLegacyMochaOptsFile(options: MochaOptions): Partial<MochaOptions> {
+    if (options['no-opts']) {
+      this.log.debug('Not reading additional mochaOpts from a file');
+      return options;
+    }
+    switch (typeof options.opts) {
       case 'undefined':
-        const defaultMochaOptsFileName = path.resolve(DEFAULT_MOCHA_OPTIONS.opts);
+        const defaultMochaOptsFileName = path.resolve(DEFAULT_MOCHA_OPTIONS.opts!);
         if (fs.existsSync(defaultMochaOptsFileName)) {
           return this.readMochaOptsFile(defaultMochaOptsFileName);
         } else {
-          this.log.debug('No mocha opts file found, not loading additional mocha options (%s.opts was not defined).', mochaOptionsKey);
+          this.log.debug(
+            'No mocha opts file found, not loading additional mocha options (%s was not defined).',
+            propertyPath<MochaRunnerOptions>('mochaOptions', 'opts')
+          );
           return {};
         }
       case 'string':
-        const optsFileName = path.resolve(opts);
+        const optsFileName = path.resolve(options.opts);
         if (fs.existsSync(optsFileName)) {
           return this.readMochaOptsFile(optsFileName);
         } else {
@@ -109,7 +114,7 @@ export default class MochaOptionsLoader {
             break;
           case '--timeout':
           case '-t':
-            mochaRunnerOptions.timeout = this.parseNextInt(args, DEFAULT_MOCHA_OPTIONS.timeout);
+            mochaRunnerOptions.timeout = this.parseNextInt(args, DEFAULT_MOCHA_OPTIONS.timeout!);
             break;
           case '--async-only':
           case '-A':
@@ -117,7 +122,7 @@ export default class MochaOptionsLoader {
             break;
           case '--ui':
           case '-u':
-            mochaRunnerOptions.ui = this.parseNextString(args) ?? DEFAULT_MOCHA_OPTIONS.ui;
+            mochaRunnerOptions.ui = this.parseNextString(args) ?? DEFAULT_MOCHA_OPTIONS.ui!;
             break;
           case '--grep':
           case '-g':
