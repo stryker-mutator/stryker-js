@@ -42,7 +42,7 @@ module.exports = {
         ui: 'bdd',
         timeout: 3000,
         require: [ /*'babel-register' */],
-        asyncOnly: false,
+        'async-only': false,
         grep: /.*/
     }
 }
@@ -98,13 +98,19 @@ Default: `undefined`
 
 Set the name of your [mocha ui](https://mochajs.org/#-u---ui-name)
 
+### `mochaOptions.extension` [`string`]
+
+Default: `undefined`
+
+Set mocha's [--extension](https://mochajs.org/#-extension-ext) property.
+
 ### `mochaOptions.require` [`string[]`]
 
 Default: `[]`
 
 Set mocha's [`require` option](https://mochajs.org/#-r---require-module-name)
 
-### `mochaOptions.asyncOnly` [`boolean`]
+### `mochaOptions.async-only` [`boolean`]
 
 Default: `false`
 

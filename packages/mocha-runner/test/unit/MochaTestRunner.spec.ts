@@ -9,7 +9,7 @@ import * as Mocha from 'mocha';
 
 import sinon = require('sinon');
 import LibWrapper from '../../src/LibWrapper';
-import { MochaOptions } from '../../src/MochaOptions';
+import { MochaOptions } from '../../src-generated/mocha-runner-options';
 import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
 import * as utils from '../../src/utils';
@@ -39,7 +39,7 @@ describe(MochaTestRunner.name, () => {
     delete StrykerMochaReporter.log;
   });
 
-  function createSut(mochaSettings: Partial<{ fileNames: readonly string[]; mochaOptions: MochaOptions }>) {
+  function createSut(mochaSettings: Partial<{ fileNames: readonly string[]; mochaOptions: Partial<MochaOptions> }>) {
     testInjector.options.mochaOptions = mochaSettings.mochaOptions || {};
     return testInjector.injector
       .provideValue(commonTokens.sandboxFileNames, mochaSettings.fileNames || ['src/math.js', 'test/mathSpec.js'])
@@ -163,9 +163,9 @@ describe(MochaTestRunner.name, () => {
     it('should pass along supported options to mocha', async () => {
       // Arrange
       discoveredFiles.push('foo.js', 'bar.js', 'foo2.js');
-      const mochaOptions: MochaOptions = {
-        asyncOnly: true,
-        grep: /grepme/,
+      const mochaOptions: Partial<MochaOptions> = {
+        ['async-only']: true,
+        grep: 'grepme',
         opts: 'opts',
         require: [],
         timeout: 2000,
@@ -178,14 +178,29 @@ describe(MochaTestRunner.name, () => {
       await actRun();
 
       // Assert
-      expect(mocha.asyncOnly).calledWith(true);
+      expect(mocha.asyncOnly).called;
       expect(mocha.timeout).calledWith(2000);
       expect(mocha.ui).calledWith('assert');
-      expect(mocha.grep).calledWith(/grepme/);
+      expect(mocha.grep).calledWith('grepme');
+    });
+
+    it("should don't set asyncOnly if asyncOnly is false", async () => {
+      // Arrange
+      const mochaOptions: Partial<MochaOptions> = {
+        ['async-only']: false
+      };
+      sut = createSut({ mochaOptions });
+      await sut.init();
+
+      // Act
+      await actRun();
+
+      // Assert
+      expect(mocha.asyncOnly).not.called;
     });
 
     it('should pass require additional require options when constructed', () => {
-      const mochaOptions: MochaOptions = { require: ['ts-node', 'babel-register'] };
+      const mochaOptions: Partial<MochaOptions> = { require: ['ts-node', 'babel-register'] };
       createSut({ mochaOptions });
       expect(requireStub).calledTwice;
       expect(requireStub).calledWith('ts-node');
@@ -193,7 +208,7 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should pass and resolve relative require options when constructed', () => {
-      const mochaOptions: MochaOptions = { require: ['./setup.js', 'babel-register'] };
+      const mochaOptions: Partial<MochaOptions> = { require: ['./setup.js', 'babel-register'] };
       createSut({ mochaOptions });
       const resolvedRequire = path.resolve('./setup.js');
       expect(requireStub).calledTwice;

@@ -5,6 +5,8 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { RunResult, RunStatus, TestResult, TestRunner } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 
+import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';
+
 import { evalGlobal, Jasmine, toStrykerTestResult } from './helpers';
 
 export default class JasmineTestRunner implements TestRunner {
@@ -13,7 +15,7 @@ export default class JasmineTestRunner implements TestRunner {
 
   public static inject = tokens(commonTokens.sandboxFileNames, commonTokens.options);
   constructor(private readonly fileNames: readonly string[], options: StrykerOptions) {
-    this.jasmineConfigFile = options.jasmineConfigFile;
+    this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
   }
 
   public run(options: { testHooks?: string }): Promise<RunResult> {
@@ -58,7 +60,6 @@ export default class JasmineTestRunner implements TestRunner {
     jasmine.loadConfigFile(this.jasmineConfigFile);
     jasmine.stopSpecOnExpectationFailure(true);
     jasmine.env.throwOnExpectationFailure(true);
-    console.log('test');
 
     jasmine.exit = () => {};
     jasmine.clearReporters();

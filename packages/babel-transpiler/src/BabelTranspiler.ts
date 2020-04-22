@@ -9,7 +9,7 @@ import { BabelConfigReader, StrykerBabelConfig } from './BabelConfigReader';
 import * as babel from './helpers/babelWrapper';
 import { toJSFileName } from './helpers/helpers';
 
-const DEFAULT_EXTENSIONS: readonly string[] = (babel as any).DEFAULT_EXTENSIONS;
+const DEFAULT_EXTENSIONS: readonly string[] = babel.DEFAULT_EXTENSIONS;
 
 export function babelTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
   return injector.provideClass('babelConfigReader', BabelConfigReader).injectClass(BabelTranspiler);

@@ -1,4 +1,4 @@
-import { StrykerOptions } from '../../src-generated/core';
+import { StrykerOptions } from '../../core';
 
 /**
  * When configuring stryker, every option is optional

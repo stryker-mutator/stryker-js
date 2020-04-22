@@ -1,4 +1,6 @@
-import { MochaOptions } from './MochaOptions';
+import { MochaOptions } from '../src-generated/mocha-runner-options';
+
+import mochaSchema = require('../schema/mocha-runner-options.json');
 
 /**
  * Executes a piece of javascript code in global scope while passing the `require` function
@@ -25,14 +27,14 @@ export function serializeArguments(mochaOptions: MochaOptions) {
 
 export const mochaOptionsKey = 'mochaOptions';
 
-const SUPPORTED_MOCHA_OPTIONS = Object.freeze(['extension', 'require', 'timeout', 'async-only', 'ui', 'grep', 'exclude', 'ignore', 'spec', 'file']);
+const SUPPORTED_MOCHA_OPTIONS = Object.freeze(Object.keys(mochaSchema.properties.mochaOptions.properties));
 
 /**
  * Filter out those config values that are actually useful to run mocha with Stryker
  * @param rawConfig The raw parsed mocha configuration
  */
-export function filterConfig(rawConfig: { [key: string]: any }): MochaOptions {
-  const options: MochaOptions = {};
+export function filterConfig(rawConfig: { [key: string]: any }): Partial<MochaOptions> {
+  const options: Partial<MochaOptions> = {};
   Object.keys(rawConfig)
     .filter(rawOption => SUPPORTED_MOCHA_OPTIONS.some(supportedOption => rawOption === supportedOption))
     .forEach(option => ((options as any)[option] = rawConfig[option]));

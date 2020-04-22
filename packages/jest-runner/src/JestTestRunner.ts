@@ -5,6 +5,7 @@ import { RunOptions, RunResult, RunStatus, TestResult, TestRunner, TestStatus } 
 
 import { JEST_VERSION_TOKEN, jestTestAdapterFactory } from './jestTestAdapters';
 import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
+import { JestRunnerOptionsWithStrykerOptions } from './JestRunnerOptionsWithStrykerOptions';
 
 export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
   return injector
@@ -31,7 +32,7 @@ export default class JestTestRunner implements TestRunner {
     private readonly jestTestAdapter: JestTestAdapter
   ) {
     // Get jest configuration from stryker options and assign it to jestConfig
-    this.jestConfig = options.jest.config;
+    this.jestConfig = (options as JestRunnerOptionsWithStrykerOptions).jest.config as Jest.Configuration;
 
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = options.jest.enableFindRelatedTests;
