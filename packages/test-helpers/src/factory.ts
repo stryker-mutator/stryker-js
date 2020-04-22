@@ -168,6 +168,10 @@ export const strykerOptions = factoryMethod<StrykerOptions>(() => {
   return options;
 });
 
+export const strykerWithPluginOptions = <T>(pluginOptions: T): T & StrykerOptions => {
+  return { ...strykerOptions(), ...pluginOptions };
+};
+
 export const mutatorDescriptor = factoryMethod<MutatorDescriptor>(() => ({
   excludedMutations: [],
   name: 'fooMutator',

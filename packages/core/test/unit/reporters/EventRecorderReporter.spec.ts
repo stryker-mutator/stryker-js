@@ -10,7 +10,7 @@ import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter'
 import StrictReporter from '../../../src/reporters/StrictReporter';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
-describe('EventRecorderReporter', () => {
+describe(EventRecorderReporter.name, () => {
   let sut: StrictReporter;
   let cleanFolderStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
@@ -25,12 +25,6 @@ describe('EventRecorderReporter', () => {
       beforeEach(() => {
         cleanFolderStub.returns(Promise.resolve());
         sut = testInjector.injector.injectClass(EventRecorderReporter);
-      });
-
-      it('should log about the default baseFolder', () => {
-        expect(testInjector.logger.debug).to.have.been.calledWith(
-          "No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default reports/mutation/events"
-        );
       });
 
       it('should clean the baseFolder', () => {

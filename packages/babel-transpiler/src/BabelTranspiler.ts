@@ -5,9 +5,12 @@ import { commonTokens, Injector, tokens, TranspilerPluginContext } from '@stryke
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import { StrykerError } from '@stryker-mutator/util';
 
-import { BabelConfigReader, StrykerBabelConfig } from './BabelConfigReader';
+import { StrykerBabelConfig } from '../src-generated/babel-transpiler-options';
+
+import { BabelConfigReader } from './BabelConfigReader';
 import * as babel from './helpers/babelWrapper';
 import { toJSFileName } from './helpers/helpers';
+import { BabelTranspilerWithStrykerOptions } from './BabelTranspilerWithStrykerOptions';
 
 const DEFAULT_EXTENSIONS: readonly string[] = babel.DEFAULT_EXTENSIONS;
 
@@ -28,7 +31,7 @@ export class BabelTranspiler implements Transpiler {
         `Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-babel-transpiler. Not able to produce source maps yet. Please set it to "off".`
       );
     }
-    this.babelConfig = babelConfigReader.readConfig(options);
+    this.babelConfig = babelConfigReader.readConfig(options as BabelTranspilerWithStrykerOptions);
     this.projectRoot = this.determineProjectRoot();
     this.extensions = [...DEFAULT_EXTENSIONS, ...this.babelConfig.extensions];
   }

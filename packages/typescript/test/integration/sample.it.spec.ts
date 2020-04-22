@@ -1,18 +1,18 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/api/core';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptOptionsEditor from '../../src/TypescriptOptionsEditor';
 import { typescriptMutatorFactory } from '../../src/TypescriptMutator';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
+import { TypescriptWithStrykerOptions } from '../../src/TypescriptWithStrykerOptions';
 
 describe('Sample integration', () => {
-  let options: StrykerOptions;
+  let options: TypescriptWithStrykerOptions;
   let inputFiles: File[];
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe('Sample integration', () => {
     options = factory.strykerOptions();
     options.tsconfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'tsconfig.json');
     optionsEditor.edit(options);
-    inputFiles = options[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
+    inputFiles = (options.tsconfig!.fileNames as string[]).map((fileName) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
     testInjector.options = options;
   });
 

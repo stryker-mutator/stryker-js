@@ -9,14 +9,21 @@ import { expect } from 'chai';
 import ConfigLoader from '../../src/compiler/ConfigLoader';
 import { pluginTokens } from '../../src/pluginTokens';
 import WebpackTranspiler from '../../src/WebpackTranspiler';
+import { WebpackTranspilerWithStrykerOptions } from '../../src/WebpackTranspilerWithStrykerOptions';
 
 describe('Webpack transpiler', () => {
+  let options: WebpackTranspilerWithStrykerOptions;
+
   beforeEach(() => {
-    testInjector.options.webpack = {};
+    options = (testInjector.options as unknown) as WebpackTranspilerWithStrykerOptions;
+    options.webpack = {
+      configFile: 'webpack.conf.js',
+      silent: true,
+    };
   });
 
   it('should be able to transpile the "gettingStarted" sample', async () => {
-    testInjector.options.webpack.configFile = path.join(getProjectRoot('gettingStarted'), 'webpack.config.js');
+    options.webpack.configFile = path.join(getProjectRoot('gettingStarted'), 'webpack.config.js');
     const sut = createSut();
     const files = readFiles();
 
@@ -27,7 +34,8 @@ describe('Webpack transpiler', () => {
   });
 
   it('should be able to transpile "zeroConfig" sample without a Webpack config file', async () => {
-    testInjector.options.webpack.context = getProjectRoot('zeroConfig');
+    options.webpack.context = getProjectRoot('zeroConfig');
+    delete options.webpack.configFile;
     const sut = createSut();
     const files = readFiles();
 
@@ -45,7 +53,7 @@ function createSut() {
 }
 
 function getProjectRoot(testResourceProjectName: string) {
-  return path.join(process.cwd(), 'testResources', testResourceProjectName);
+  return path.resolve(__dirname, '..', '..', 'testResources', testResourceProjectName);
 }
 
 function readFiles(): File[] {

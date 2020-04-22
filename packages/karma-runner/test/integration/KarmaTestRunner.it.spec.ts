@@ -11,6 +11,7 @@ import { TestSelection } from '@stryker-mutator/api/test_framework';
 
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { expectTestResults } from '../helpers/assertions';
+import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/KarmaRunnerOptionsWithStrykerOptions';
 
 function wrapInClosure(codeFragment: string) {
   return `
@@ -71,7 +72,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
     before(() => {
       testFramework = new MochaTestFramework();
       setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-mocha/AddSpec.js']);
-      testInjector.options.karma.config.frameworks = ['mocha', 'chai'];
+      (testInjector.options as KarmaRunnerOptionsWithStrykerOptions).karma.config!.frameworks = ['mocha', 'chai'];
       sut = createSut();
       return sut.init();
     });

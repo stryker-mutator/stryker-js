@@ -44,9 +44,6 @@ export default class Stryker {
    * @param {Object} [cliOptions] - Optional options.
    */
   constructor(cliOptions: Partial<StrykerOptions>) {
-    process.on('uncaughtException', (err) => {
-      console.log(err);
-    });
     LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
     this.injector = buildMainInjector(cliOptions);
     this.log = this.injector.resolve(commonTokens.getLogger)(Stryker.name);

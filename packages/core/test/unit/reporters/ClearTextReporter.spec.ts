@@ -9,6 +9,7 @@ import * as sinon from 'sinon';
 import chalk = require('chalk');
 
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
+import { createClearTextReporterOptions } from '../../helpers/producers';
 
 const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: number) => {
   return [chalk.cyan(sourceFilePath), chalk.yellow(`${line}`), chalk.yellow(`${column}`)].join(':');
@@ -79,7 +80,7 @@ describe(ClearTextReporter.name, () => {
   describe('when coverageAnalysis is "all"', () => {
     beforeEach(() => {
       testInjector.options.coverageAnalysis = 'all';
-      testInjector.options.clearTextReporter = { logTests: true };
+      testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true });
     });
 
     describe('onAllMutantsTested() all mutants except error', () => {
@@ -149,6 +150,7 @@ describe(ClearTextReporter.name, () => {
 
       it('should not log individual ran tests when logTests is not true', () => {
         testInjector.options.coverageAnalysis = 'perTest';
+        testInjector.options.clearTextReporter.logTests = false;
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -161,7 +163,7 @@ describe(ClearTextReporter.name, () => {
 
       it('should log individual ran tests when logTests is true', () => {
         testInjector.options.coverageAnalysis = 'perTest';
-        testInjector.options.clearTextReporter = { logTests: true };
+        testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true });
 
         sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -175,7 +177,7 @@ describe(ClearTextReporter.name, () => {
       describe('with fewer tests that may be logged', () => {
         it('should log fewer tests', () => {
           testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 1 };
+          testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true, maxTestsToLog: 1 });
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -189,7 +191,7 @@ describe(ClearTextReporter.name, () => {
       describe('with more tests that may be logged', () => {
         it('should log all tests', () => {
           testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 10 };
+          testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true, maxTestsToLog: 10 });
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -204,7 +206,7 @@ describe(ClearTextReporter.name, () => {
       describe('with the default amount of tests that may be logged', () => {
         it('should log all tests', () => {
           testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 3 };
+          testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true, maxTestsToLog: 3 });
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 
@@ -219,7 +221,7 @@ describe(ClearTextReporter.name, () => {
       describe('with no tests that may be logged', () => {
         it('should not log a test', () => {
           testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = { logTests: true, maxTestsToLog: 0 };
+          testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true, maxTestsToLog: 0 });
 
           sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
 

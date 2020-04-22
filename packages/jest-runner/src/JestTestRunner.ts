@@ -31,11 +31,12 @@ export default class JestTestRunner implements TestRunner {
     private readonly processEnvRef: NodeJS.ProcessEnv,
     private readonly jestTestAdapter: JestTestAdapter
   ) {
+    const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
     // Get jest configuration from stryker options and assign it to jestConfig
-    this.jestConfig = (options as JestRunnerOptionsWithStrykerOptions).jest.config as Jest.Configuration;
+    this.jestConfig = (jestOptions.jest.config as unknown) as Jest.Configuration;
 
     // Get enableFindRelatedTests from stryker jest options or default to true
-    this.enableFindRelatedTests = options.jest.enableFindRelatedTests;
+    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
     if (this.enableFindRelatedTests === undefined) {
       this.enableFindRelatedTests = true;
     }
@@ -51,7 +52,7 @@ export default class JestTestRunner implements TestRunner {
     // basePath will be used in future releases of Stryker as a way to define the project root
     // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
     // https://github.com/stryker-mutator/stryker/issues/650
-    this.jestConfig.rootDir = options.basePath || process.cwd();
+    this.jestConfig.rootDir = (options.basePath as string) || process.cwd();
     this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 

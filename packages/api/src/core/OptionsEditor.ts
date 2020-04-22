@@ -9,7 +9,7 @@ import { StrykerOptions } from '../../core';
  * editing of the configuration object is done by reference.
  *
  */
-export interface OptionsEditor {
+export interface OptionsEditor<T extends StrykerOptions = StrykerOptions> {
   /**
    * Extending classes only need to implement the edit method, this method
    * receives a writable config object that can be edited in any way.
@@ -18,5 +18,5 @@ export interface OptionsEditor {
    *
    * @param options: The stryker configuration object
    */
-  edit(options: StrykerOptions): void;
+  edit(options: T): void;
 }

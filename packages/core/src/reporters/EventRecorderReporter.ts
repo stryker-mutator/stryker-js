@@ -10,37 +10,19 @@ import { cleanFolder } from '../utils/fileUtils';
 
 import StrictReporter from './StrictReporter';
 
-const DEFAULT_BASE_FOLDER = 'reports/mutation/events';
-
 export default class EventRecorderReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
 
   private readonly allWork: Array<Promise<void>> = [];
   private readonly createBaseFolderTask: Promise<any>;
-  private _baseFolder: string;
   private index = 0;
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
-    this.createBaseFolderTask = cleanFolder(this.baseFolder);
-  }
-
-  private get baseFolder() {
-    if (!this._baseFolder) {
-      if (this.options.eventReporter && this.options.eventReporter.baseDir) {
-        this._baseFolder = this.options.eventReporter.baseDir;
-        this.log.debug(`Using configured output folder ${this._baseFolder}`);
-      } else {
-        this.log.debug(
-          `No base folder configuration found (using configuration: eventReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`
-        );
-        this._baseFolder = DEFAULT_BASE_FOLDER;
-      }
-    }
-    return this._baseFolder;
+    this.createBaseFolderTask = cleanFolder(this.options.eventReporter.baseDir);
   }
 
   private writeToFile(methodName: keyof Reporter, data: any) {
-    const filename = path.join(this.baseFolder, `${this.format(this.index++)}-${methodName}.json`);
+    const filename = path.join(this.options.eventReporter.baseDir, `${this.format(this.index++)}-${methodName}.json`);
     this.log.debug(`Writing event ${methodName} to file ${filename}`);
     return fs.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
   }

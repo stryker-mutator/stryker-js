@@ -38,6 +38,28 @@
         "MutationScore"
       ]
     },
+    "clearTextReporterOptions": {
+      "title": "ClearTextReporterOptions",
+      "type": "object",
+      "properties": {
+        "allowColor": {
+          "description": "Indicates whether or not to use color coding in output.",
+          "type": "boolean",
+          "default": true
+        },
+        "logTests": {
+          "description": "Indicates whether or not to log which tests were executed for a given mutant.",
+          "type": "boolean",
+          "default": true
+        },
+        "maxTestsToLog": {
+          "description": "Indicates the maximum amount of test to log when `logTests` is enabled",
+          "type": "integer",
+          "minimum": 0,
+          "default": 3
+        }
+      }
+    },
     "dashboardOptions": {
       "title": "DashboardOptions",
       "additionalProperties": false,
@@ -64,6 +86,18 @@
           "description": "Indicates wether to send a full report (inc. source code and mutant results) or only the mutation score.",
           "$ref": "#/definitions/reportType",
           "default": "full"
+        }
+      }
+    },
+    "eventRecorderOptions": {
+      "title": "EventRecorderOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "baseDir": {
+          "description": "The base dir to write the events to",
+          "type": "string",
+          "default": "reports/mutation/events"
         }
       }
     },
@@ -164,9 +198,19 @@
       ],
       "default": "off"
     },
+    "clearTextReporter": {
+      "description": "The options for the clear text reporter.",
+      "$ref": "#/definitions/clearTextReporterOptions",
+      "default": {}
+    },
     "dashboard": {
-      "description": "The options for the dashboard reporter",
+      "description": "The options for the dashboard reporter.",
       "$ref": "#/definitions/dashboardOptions",
+      "default": {}
+    },
+    "eventReporter": {
+      "description": "The options for the event recorder reporter.",
+      "$ref": "#/definitions/eventRecorderOptions",
       "default": {}
     },
     "fileLogLevel": {

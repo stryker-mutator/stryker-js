@@ -1,16 +1,16 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { CONFIG_KEY } from '../../src/helpers/keys';
 import TypescriptOptionsEditor from '../../src/TypescriptOptionsEditor';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
+import { TypescriptWithStrykerOptions } from '../../src/TypescriptWithStrykerOptions';
 
 describe('@stryker-mutator/typescript', () => {
-  let options: StrykerOptions;
+  let options: TypescriptWithStrykerOptions;
   let inputFiles: File[];
 
   beforeEach(() => {
@@ -18,7 +18,8 @@ describe('@stryker-mutator/typescript', () => {
     options = factory.strykerOptions();
     options.tsconfigFile = path.resolve(__dirname, '..', '..', 'tsconfig.src.json');
     optionsEditor.edit(options);
-    inputFiles = options[CONFIG_KEY].fileNames.map((fileName: string) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
+    (options.tsconfig!.options as any)['outDir'] = 'blaat';
+    inputFiles = (options.tsconfig!.fileNames as string[]).map((fileName) => new File(fileName, fs.readFileSync(fileName, 'utf8')));
   });
 
   it('should be able to transpile itself', async () => {
@@ -34,7 +35,7 @@ describe('@stryker-mutator/typescript', () => {
   });
 
   it('should not result in an error if a variable is declared as any and noImplicitAny = false', async () => {
-    options.tsconfig.noImplicitAny = false;
+    options.tsconfig!.noImplicitAny = false;
     inputFiles[0] = new File(inputFiles[0].name, inputFiles[0].textContent + 'const shouldResultInError = 3');
     const transpiler = new TypescriptTranspiler(options, /*produceSourceMaps: */ true, () => testInjector.logger);
     const outputFiles = await transpiler.transpile(inputFiles);

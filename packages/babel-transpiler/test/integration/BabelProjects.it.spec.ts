@@ -1,14 +1,15 @@
 import * as path from 'path';
 
-import { ConfigAPI } from '@babel/core';
 import { File } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { CONFIG_KEY, StrykerBabelConfig } from '../../src/BabelConfigReader';
 import { BabelTranspiler, babelTranspilerFactory } from '../../src/BabelTranspiler';
 import { ProjectLoader } from '../helpers/projectLoader';
+import { StrykerBabelConfig } from '../../src-generated/babel-transpiler-options';
+import { BabelTranspilerWithStrykerOptions } from '../../src/BabelTranspilerWithStrykerOptions';
+import { createStrykerBabelConfig } from '../helpers/factories';
 
 function describeIntegrationTest(projectName: string, babelConfig: Partial<StrykerBabelConfig> = {}) {
   const projectDir = path.resolve(__dirname, '..', '..', 'testResources', projectName);
@@ -20,7 +21,7 @@ function describeIntegrationTest(projectName: string, babelConfig: Partial<Stryk
   beforeEach(async () => {
     projectFiles = await ProjectLoader.getFiles(path.join(projectDir, 'source'));
     resultFiles = await ProjectLoader.getFiles(path.join(projectDir, 'expectedResult'));
-    testInjector.options[CONFIG_KEY] = babelConfig;
+    ((testInjector.options as unknown) as BabelTranspilerWithStrykerOptions).babel = createStrykerBabelConfig(babelConfig);
     babelTranspiler = testInjector.injector.provideValue(commonTokens.produceSourceMaps, false).injectFunction(babelTranspilerFactory);
   });
 
@@ -66,10 +67,8 @@ describe('Different extensions', () => {
   describeIntegrationTest('differentExtensions');
 });
 describe('A Babel project with babel.config.js config file that exports function', () => {
-  const noop = () => {};
   describeIntegrationTest('babelProjectWithBabelConfigJs', {
     extensions: ['.ts'],
-    optionsApi: { cache: { forever: noop } } as ConfigAPI,
     optionsFile: 'babel.config.js',
   });
 });
