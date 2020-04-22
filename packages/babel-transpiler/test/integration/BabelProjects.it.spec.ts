@@ -36,11 +36,11 @@ function describeIntegrationTest(projectName: string, babelConfig: Partial<Stryk
 
   function expectFilesEqual(actual: readonly File[], expected: readonly File[]) {
     expect(actual).lengthOf(expected.length);
-    for (const i in expected) {
-      expect(actual[i].name).deep.eq(expected[i].name);
-      expect(actual[i].textContent, expected[i].name).deep.eq(expected[i].textContent);
-      expect(actual[i].content, expected[i].name).deep.eq(expected[i].content);
-    }
+    expected.forEach((expectedFile, index) => {
+      expect(actual[index].name).deep.eq(expectedFile.name);
+      expect(actual[index].textContent, expectedFile.name).deep.eq(expectedFile.textContent);
+      expect(actual[index].content, expectedFile.name).deep.eq(expectedFile.content);
+    });
   }
 }
 

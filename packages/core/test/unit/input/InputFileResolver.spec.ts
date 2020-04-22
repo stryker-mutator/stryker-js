@@ -292,10 +292,10 @@ describe(InputFileResolver.name, () => {
 
   function assertFilesEqual(actual: readonly File[], expected: readonly File[]) {
     expect(actual).lengthOf(expected.length);
-    for (const index in actual) {
-      expect(actual[index].name).eq(expected[index].name);
-      expect(actual[index].textContent).eq(expected[index].textContent);
-    }
+    expected.forEach((expectedFile, index) => {
+      expect(actual[index].name).eq(expectedFile.name);
+      expect(actual[index].textContent).eq(expectedFile.textContent);
+    });
   }
 
   function createSut() {
