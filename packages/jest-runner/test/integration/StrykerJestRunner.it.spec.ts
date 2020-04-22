@@ -42,10 +42,11 @@ describe('Integration test for Strykers Jest runner', () => {
 
   function createSut(jestConfig?: any) {
     const jestOptionsEditor = testInjector.injector.injectClass(JestOptionsEditor);
-    const options = factory.strykerOptions() as JestRunnerOptionsWithStrykerOptions;
-    if (jestConfig) {
-      options.jest = jestConfig;
-    }
+    const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
+      jest: {
+        ...jestConfig,
+      },
+    });
     jestOptionsEditor.edit(options);
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }
