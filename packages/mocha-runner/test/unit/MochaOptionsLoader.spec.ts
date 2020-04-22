@@ -41,7 +41,7 @@ describe(MochaOptionsLoader.name, () => {
       testInjector.options[mochaOptionsKey] = {
         ['no-baz']: true,
         foo: 'bar',
-        spec: ['helpers/*.js', 'test/*.js']
+        spec: ['helpers/*.js', 'test/*.js'],
       };
       sut.load(testInjector.options);
       expect(LibWrapper.loadOptions).calledWith(['--no-baz', '--foo', 'bar', '--spec', 'helpers/*.js,test/*.js']);
@@ -49,7 +49,7 @@ describe(MochaOptionsLoader.name, () => {
 
     it('should filter out invalid options from the `loadOptions` result', () => {
       testInjector.options[mochaOptionsKey] = {
-        override: true
+        override: true,
       };
 
       // Following are valid options
@@ -78,14 +78,14 @@ describe(MochaOptionsLoader.name, () => {
         spec: ['test/**/*.js'],
         timeout: 'baz',
         ['async-only']: 'qux',
-        ui: 'quux'
+        ui: 'quux',
       });
     });
 
     it('should trace log the mocha call', () => {
       testInjector.logger.isTraceEnabled.returns(true);
       testInjector.options[mochaOptionsKey] = {
-        foo: 'bar'
+        foo: 'bar',
       };
       rawOptions.baz = 'qux';
       sut.load(testInjector.options);
@@ -122,7 +122,7 @@ describe(MochaOptionsLoader.name, () => {
     it('should load a mocha.opts file if specified', () => {
       readFileStub.returns('');
       strykerOptions.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       sut.load(strykerOptions);
       expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
@@ -133,7 +133,7 @@ describe(MochaOptionsLoader.name, () => {
       readFileStub.returns('');
       existsFileStub.returns(false);
       strykerOptions.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
 
       sut.load(strykerOptions);
@@ -151,7 +151,7 @@ describe(MochaOptionsLoader.name, () => {
 
     it("shouldn't load anything if mocha.opts = false", () => {
       strykerOptions.mochaOptions = {
-        opts: false
+        opts: false,
       };
       sut.load(strykerOptions);
       expect(fs.readFileSync).not.called;
@@ -176,7 +176,7 @@ describe(MochaOptionsLoader.name, () => {
       strykerOptions.mochaOptions = { opts: '.' };
       const options = sut.load(strykerOptions);
       expect(options).deep.include({
-        require: ['src/test/support/setup', 'babel-require']
+        require: ['src/test/support/setup', 'babel-require'],
       });
     });
 
@@ -210,7 +210,7 @@ describe(MochaOptionsLoader.name, () => {
         opts: 'path/to/opts/file',
         require: ['ts-node/register'],
         timeout: 4000,
-        ui: 'exports'
+        ui: 'exports',
       };
       const options = sut.load(strykerOptions);
       expect(options).deep.equal(
@@ -221,7 +221,7 @@ describe(MochaOptionsLoader.name, () => {
           require: ['ts-node/register'],
           spec: ['test'],
           timeout: 4000,
-          ui: 'exports'
+          ui: 'exports',
         })
       );
     });
@@ -232,7 +232,7 @@ describe(MochaOptionsLoader.name, () => {
       --ignore-leaks
       `);
       strykerOptions.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       const options = sut.load(strykerOptions);
       expect(options).not.have.property('reporter');
@@ -247,7 +247,7 @@ describe(MochaOptionsLoader.name, () => {
       --ui
       `);
       strykerOptions.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       const options = sut.load(strykerOptions);
       expect(options).deep.eq(
@@ -256,7 +256,7 @@ describe(MochaOptionsLoader.name, () => {
           opts: 'some/mocha.opts/file',
           spec: ['test'],
           timeout: undefined,
-          ui: undefined
+          ui: undefined,
         })
       );
     });
@@ -271,7 +271,7 @@ describe(MochaOptionsLoader.name, () => {
       spec: ['test'],
       timeout: 2000,
       ui: 'bdd',
-      ...overrides
+      ...overrides,
     };
   }
 });

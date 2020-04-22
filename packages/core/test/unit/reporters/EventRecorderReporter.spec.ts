@@ -48,7 +48,7 @@ describe('EventRecorderReporter', () => {
               (sut[eventName] as any)(expected);
               return (sut.wrapUp() as Promise<void>).then(
                 () => void 0,
-                error => (writeFileRejection = error)
+                (error) => (writeFileRejection = error)
               );
             });
 
@@ -68,7 +68,7 @@ describe('EventRecorderReporter', () => {
         });
       };
 
-      ALL_REPORTER_EVENTS.filter(event => event !== 'wrapUp').forEach(arrangeActAssertEvent);
+      ALL_REPORTER_EVENTS.filter((event) => event !== 'wrapUp').forEach(arrangeActAssertEvent);
     });
 
     describe('and cleanFolder results in a rejection', () => {

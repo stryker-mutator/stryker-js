@@ -17,7 +17,7 @@ import InputFileCollection from './InputFileCollection';
 function toReportSourceFile(file: File): SourceFile {
   return {
     content: file.textContent,
-    path: file.name
+    path: file.name,
   };
 }
 
@@ -81,17 +81,17 @@ export default class InputFileResolver {
     for (const pattern of patterns) {
       if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
         const files = await this.expandPattern(pattern.substr(1), logAboutUselessPatterns);
-        files.forEach(fileName => fileSet.delete(fileName));
+        files.forEach((fileName) => fileSet.delete(fileName));
       } else {
         const files = await this.expandPattern(pattern, logAboutUselessPatterns);
-        files.forEach(fileName => fileSet.add(fileName));
+        files.forEach((fileName) => fileSet.add(fileName));
       }
     }
     return Array.from(fileSet);
   }
 
   private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
-    const fileNames = (await glob(globbingExpression)).map(relativeFile => path.resolve(relativeFile));
+    const fileNames = (await glob(globbingExpression)).map((relativeFile) => path.resolve(relativeFile));
     if (!fileNames.length && logAboutUselessPatterns) {
       this.log.warn(`Globbing expression "${globbingExpression}" did not result in any files.`);
     }
@@ -101,14 +101,14 @@ export default class InputFileResolver {
   private async resolveFilesUsingGit(): Promise<string[]> {
     try {
       const { stdout } = await childProcessAsPromised.exec(`git ls-files --others --exclude-standard --cached --exclude /${this.tempDirName}/*`, {
-        maxBuffer: 10 * 1000 * 1024
+        maxBuffer: 10 * 1000 * 1024,
       });
       const fileNames = stdout
         .toString()
         .split('\n')
-        .map(line => line.trim())
-        .filter(line => line) // remove empty lines
-        .map(relativeFileName => path.resolve(relativeFileName));
+        .map((line) => line.trim())
+        .filter((line) => line) // remove empty lines
+        .map((relativeFileName) => path.resolve(relativeFileName));
       return fileNames;
     } catch (error) {
       throw new StrykerError(
@@ -131,7 +131,7 @@ export default class InputFileResolver {
   }
 
   private async readFiles(fileNames: string[]): Promise<File[]> {
-    const files = await Promise.all(fileNames.map(fileName => this.readFile(fileName)));
+    const files = await Promise.all(fileNames.map((fileName) => this.readFile(fileName)));
     return files.filter(notEmpty);
   }
 
@@ -143,7 +143,7 @@ export default class InputFileResolver {
         this.reportSourceFilesRead(file);
         return file;
       })
-      .catch(error => {
+      .catch((error) => {
         if ((isErrnoException(error) && error.code === 'ENOENT') || error.code === 'EISDIR') {
           return null; // file is deleted or a directory. This can be a valid result of the git command
         } else {

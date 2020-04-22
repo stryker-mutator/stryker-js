@@ -22,7 +22,7 @@ function wrapInClosure(codeFragment: string) {
 function setOptions(
   files: ReadonlyArray<FilePattern | string> = [
     'testResources/sampleProject/src-instrumented/Add.js',
-    'testResources/sampleProject/test-jasmine/AddSpec.js'
+    'testResources/sampleProject/test-jasmine/AddSpec.js',
   ],
   coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'
 ): void {
@@ -31,8 +31,8 @@ function setOptions(
     config: {
       files,
       logLevel: 'off',
-      reporters: []
-    }
+      reporters: [],
+    },
   };
 }
 
@@ -44,12 +44,12 @@ describe(`${KarmaTestRunner.name} integration`, () => {
   let sut: KarmaTestRunner;
 
   const expectToHaveSuccessfulTests = (result: RunResult, n: number) => {
-    expect(result.tests.filter(t => t.status === TestStatus.Success)).to.have.length(n);
+    expect(result.tests.filter((t) => t.status === TestStatus.Success)).to.have.length(n);
   };
   const expectToHaveFailedTests = (result: RunResult, expectedFailureMessages: string[]) => {
-    const actualFailedTests = result.tests.filter(t => t.status === TestStatus.Failed);
+    const actualFailedTests = result.tests.filter((t) => t.status === TestStatus.Failed);
     expect(actualFailedTests).to.have.length(expectedFailureMessages.length);
-    actualFailedTests.forEach(failedTest => {
+    actualFailedTests.forEach((failedTest) => {
       const actualFailedMessage = failedTest.failureMessages ? failedTest.failureMessages[0].split('\n')[0] : '';
       expect(actualFailedMessage).to.be.oneOf(expectedFailureMessages);
     });
@@ -60,12 +60,12 @@ describe(`${KarmaTestRunner.name} integration`, () => {
 
     const test0: Readonly<TestSelection> = Object.freeze({
       id: 0,
-      name: 'Add should be able to add two numbers'
+      name: 'Add should be able to add two numbers',
     });
 
     const test3: Readonly<TestSelection> = {
       id: 3,
-      name: 'Add should be able to recognize a negative number'
+      name: 'Add should be able to recognize a negative number',
     };
 
     before(() => {
@@ -122,7 +122,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
         const testHooks = wrapInClosure(
           new JasmineTestFramework().filter([
             { id: 0, name: 'Add should be able to add two numbers' },
-            { id: 3, name: 'Add should be able to recognize a negative number' }
+            { id: 3, name: 'Add should be able to recognize a negative number' },
           ])
         );
         const result = await sut.run({ testHooks });
@@ -131,7 +131,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
           { name: 'Add should be able 1 to a number', status: TestStatus.Skipped },
           { name: 'Add should be able negate a number', status: TestStatus.Skipped },
           { name: 'Add should be able to recognize a negative number', status: TestStatus.Success },
-          { name: 'Add should be able to recognize that 0 is not a negative number', status: TestStatus.Skipped }
+          { name: 'Add should be able to recognize that 0 is not a negative number', status: TestStatus.Skipped },
         ]);
       });
     });
@@ -142,7 +142,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       setOptions([
         'testResources/sampleProject/src/Add.js',
         'testResources/sampleProject/test-jasmine/AddSpec.js',
-        'testResources/sampleProject/test-jasmine/AddFailedSpec.js'
+        'testResources/sampleProject/test-jasmine/AddFailedSpec.js',
       ]);
       sut = createSut();
       return sut.init();
@@ -163,7 +163,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       setOptions([
         'testResources/sampleProject/src/Add.js',
         'testResources/sampleProject/src/Error.js',
-        'testResources/sampleProject/test-jasmine/AddSpec.js'
+        'testResources/sampleProject/test-jasmine/AddSpec.js',
       ]);
       sut = createSut();
       return sut.init();
@@ -201,7 +201,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       setOptions([
         { pattern: 'testResources/sampleProject/src/Add.js', included: true },
         { pattern: 'testResources/sampleProject/test-jasmine/AddSpec.js', included: true },
-        { pattern: 'testResources/sampleProject/src/Error.js', included: false }
+        { pattern: 'testResources/sampleProject/src/Error.js', included: false },
       ]);
       sut = createSut();
       return sut.init();

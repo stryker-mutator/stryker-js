@@ -17,7 +17,7 @@ class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
   protected identifyReplacements(node: ts.FunctionDeclaration): NodeReplacement[] {
     return [
       { node, replacement: '// Function declaration removed' },
-      { node, replacement: 'changedToOtherCall()' }
+      { node, replacement: 'changedToOtherCall()' },
     ];
   }
 }
@@ -45,15 +45,15 @@ describe('TypescriptMutator', () => {
     // Arrange
     const expectedMutatorNames = fs
       .readdirSync(path.resolve(__dirname, '..', '..', 'src', 'mutator'))
-      .filter(mutatorFile => path.extname(mutatorFile) === '.js' && mutatorFile !== 'NodeMutator.js' && mutatorFile !== 'index.js')
-      .map(fileName => fileName.substr(0, fileName.length - 'Mutator.js'.length));
+      .filter((mutatorFile) => path.extname(mutatorFile) === '.js' && mutatorFile !== 'NodeMutator.js' && mutatorFile !== 'index.js')
+      .map((fileName) => fileName.substr(0, fileName.length - 'Mutator.js'.length));
 
     // Act
-    const actualMutators = testInjector.injector.injectFunction(typescriptMutatorFactory).mutators.map(m => m.name);
+    const actualMutators = testInjector.injector.injectFunction(typescriptMutatorFactory).mutators.map((m) => m.name);
 
     // Assert
     expect(expectedMutatorNames).length.greaterThan(2); // sanity check
-    expectedMutatorNames.forEach(mutatorName => expect(actualMutators).includes(mutatorName));
+    expectedMutatorNames.forEach((mutatorName) => expect(actualMutators).includes(mutatorName));
   });
 
   describe('using 2 mutators', () => {
@@ -80,8 +80,8 @@ describe('TypescriptMutator', () => {
 
     it('should deliver 6 mutants', () => {
       const mutants = sut.mutate([file1, file2]);
-      expect(mutants.filter(mutant => mutant.mutatorName === 'SourceFileForTest')).lengthOf(2);
-      expect(mutants.filter(mutant => mutant.mutatorName === 'FunctionDeclarationForTest')).lengthOf(4);
+      expect(mutants.filter((mutant) => mutant.mutatorName === 'SourceFileForTest')).lengthOf(2);
+      expect(mutants.filter((mutant) => mutant.mutatorName === 'FunctionDeclarationForTest')).lengthOf(4);
     });
 
     describe('declaration nodes', () => {
@@ -102,20 +102,20 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 39],
-            replacement: '"stryker was here"'
+            replacement: '"stryker was here"',
           },
           {
             fileName: 'file1.ts',
             mutatorName: 'FunctionDeclarationForTest',
             range: [0, 39],
-            replacement: '// Function declaration removed'
+            replacement: '// Function declaration removed',
           },
           {
             fileName: 'file1.ts',
             mutatorName: 'FunctionDeclarationForTest',
             range: [0, 39],
-            replacement: 'changedToOtherCall()'
-          }
+            replacement: 'changedToOtherCall()',
+          },
         ]);
       });
 
@@ -132,8 +132,8 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 50],
-            replacement: '"stryker was here"'
-          }
+            replacement: '"stryker was here"',
+          },
         ]);
       });
 
@@ -156,8 +156,8 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 85],
-            replacement: '"stryker was here"'
-          }
+            replacement: '"stryker was here"',
+          },
         ]);
       });
     });

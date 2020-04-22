@@ -6,7 +6,7 @@ import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 const replaceTokens: ts.MapLike<string> = {
   [ts.SyntaxKind.PlusPlusToken]: '--',
-  [ts.SyntaxKind.MinusMinusToken]: '++'
+  [ts.SyntaxKind.MinusMinusToken]: '++',
 };
 
 export default class UpdateOperatorMutator extends NodeMutator<ts.PrefixUnaryExpression | ts.PostfixUnaryExpression> {

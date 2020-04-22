@@ -25,7 +25,7 @@ import { Mock, mock, transpiledMutant } from '../helpers/producers';
 const OVERHEAD_TIME_MS = 42;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
-  port: 4200
+  port: 4200,
 });
 
 describe(SandboxPool.name, () => {
@@ -70,9 +70,9 @@ describe(SandboxPool.name, () => {
       overheadTimeMS: OVERHEAD_TIME_MS,
       runResult: { tests: [], status: RunStatus.Complete },
       sourceMapper: {
-        transpiledFileNameFor: n => n,
-        transpiledLocationFor: n => Promise.resolve(n)
-      }
+        transpiledFileNameFor: (n) => n,
+        transpiledLocationFor: (n) => Promise.resolve(n),
+      },
     };
 
     return testInjector.injector
@@ -86,10 +86,7 @@ describe(SandboxPool.name, () => {
   }
 
   function actRunMutants() {
-    return sut
-      .runMutants(from(inputMutants))
-      .pipe(toArray())
-      .toPromise();
+    return sut.runMutants(from(inputMutants)).pipe(toArray()).toPromise();
   }
 
   describe('runMutants', () => {
@@ -152,12 +149,12 @@ describe(SandboxPool.name, () => {
         complete: () => {
           runTask.resolve(undefined);
         },
-        next: result => {
+        next: (result) => {
           allResults.push(result);
           if (allResults.length === 2) {
             secondResultTask.resolve(undefined);
           }
-        }
+        },
       });
       expect(allResults).lengthOf(0);
       expect(createStub).callCount(2);
@@ -218,13 +215,7 @@ describe(SandboxPool.name, () => {
       const task = new Task<Sandbox>();
       const task2 = new Task<Sandbox>();
       createStub.reset();
-      createStub
-        .onCall(0)
-        .returns(task.promise)
-        .onCall(1)
-        .returns(task2.promise)
-        .onCall(2)
-        .resolves(genericSandboxForAllSubsequentCallsToNewSandbox); // promise is not yet resolved
+      createStub.onCall(0).returns(task.promise).onCall(1).returns(task2.promise).onCall(2).resolves(genericSandboxForAllSubsequentCallsToNewSandbox); // promise is not yet resolved
       inputMutants.push(transpiledMutant());
 
       // Act
@@ -244,20 +235,11 @@ describe(SandboxPool.name, () => {
       const task = new Task<Sandbox>();
       const task2 = new Task<Sandbox>();
       createStub.reset();
-      createStub
-        .onCall(0)
-        .returns(task.promise)
-        .onCall(1)
-        .returns(task2.promise)
-        .onCall(2)
-        .resolves(genericSandboxForAllSubsequentCallsToNewSandbox); // promise is not yet resolved
+      createStub.onCall(0).returns(task.promise).onCall(1).returns(task2.promise).onCall(2).resolves(genericSandboxForAllSubsequentCallsToNewSandbox); // promise is not yet resolved
       inputMutants.push(transpiledMutant(), transpiledMutant()); // 3 mutants
 
       // Act
-      const runPromise = sut
-        .runMutants(from(inputMutants))
-        .pipe(toArray())
-        .toPromise();
+      const runPromise = sut.runMutants(from(inputMutants)).pipe(toArray()).toPromise();
       const disposePromise = sut.dispose();
       task.resolve((firstSandbox as unknown) as Sandbox);
       task2.resolve((secondSandbox as unknown) as Sandbox);

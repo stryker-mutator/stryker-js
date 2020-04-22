@@ -75,7 +75,7 @@ export default class ConditionalExpressionMutator extends NodeMutator<
     } else if (node.kind === ts.SyntaxKind.IfStatement) {
       return [
         { node: node.expression, replacement: 'true' },
-        { node: node.expression, replacement: 'false' }
+        { node: node.expression, replacement: 'false' },
       ];
     } else if (node.kind === ts.SyntaxKind.CaseClause || node.kind === ts.SyntaxKind.DefaultClause) {
       // if not a fallthrough case
@@ -97,7 +97,7 @@ export default class ConditionalExpressionMutator extends NodeMutator<
 
       return [
         { node, replacement: 'false' },
-        { node, replacement: 'true' }
+        { node, replacement: 'true' },
       ];
     }
   }

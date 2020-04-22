@@ -11,6 +11,6 @@ export default function consoleLoggerFactory(category: string) {
     isTraceEnabled: () => true,
     isWarnEnabled: () => true,
     trace: console.log.bind(console, category, 'TRACE'),
-    warn: console.log.bind(console, category, 'WARNING')
+    warn: console.log.bind(console, category, 'WARNING'),
   };
 }

@@ -16,7 +16,7 @@ describe('errors', () => {
         name: 'name',
         path: 'bar',
         stack: 'qux',
-        syscall: 'baz'
+        syscall: 'baz',
       };
       expect(errorToString(error)).eq('name: foo (baz) qux');
     });

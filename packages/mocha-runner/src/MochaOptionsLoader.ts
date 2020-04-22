@@ -20,7 +20,7 @@ export const DEFAULT_MOCHA_OPTIONS = Object.freeze({
   opts: './test/mocha.opts',
   spec: ['test'],
   timeout: 2000,
-  ui: 'bdd'
+  ui: 'bdd',
 });
 
 export default class MochaOptionsLoader {
@@ -48,7 +48,7 @@ export default class MochaOptionsLoader {
     const loadOptions = LibWrapper.loadOptions || (() => ({}));
     const rawConfig = loadOptions(args) || {};
     if (this.log.isTraceEnabled()) {
-      this.log.trace(`Mocha: ${loadOptions.name}([${args.map(arg => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+      this.log.trace(`Mocha: ${loadOptions.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
     }
     const options = filterConfig(rawConfig);
     if (this.log.isDebugEnabled()) {
@@ -87,9 +87,9 @@ export default class MochaOptionsLoader {
   }
 
   private parseOptsFile(optsFileContent: string): MochaOptions {
-    const options = optsFileContent.split('\n').map(val => val.trim());
+    const options = optsFileContent.split('\n').map((val) => val.trim());
     const mochaRunnerOptions: MochaOptions = Object.create(null);
-    options.forEach(option => {
+    options.forEach((option) => {
       const args = option.split(' ').filter(Boolean);
       if (args[0]) {
         switch (args[0]) {

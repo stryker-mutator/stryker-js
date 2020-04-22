@@ -7,9 +7,6 @@ import WebpackTranspiler from './WebpackTranspiler';
 export const strykerPlugins = [declareFactoryPlugin(PluginKind.Transpiler, 'webpack', webpackTranspilerFactory)];
 
 function webpackTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
-  return injector
-    .provideValue(pluginTokens.require, require)
-    .provideClass(pluginTokens.configLoader, ConfigLoader)
-    .injectClass(WebpackTranspiler);
+  return injector.provideValue(pluginTokens.require, require).provideClass(pluginTokens.configLoader, ConfigLoader).injectClass(WebpackTranspiler);
 }
 webpackTranspilerFactory.inject = tokens(commonTokens.injector);

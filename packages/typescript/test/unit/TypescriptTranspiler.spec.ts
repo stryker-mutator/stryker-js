@@ -20,7 +20,7 @@ describe(TypescriptTranspiler.name, () => {
     languageService = sinon.createStubInstance(TranspilingLanguageService);
     transpileFilterMock = {
       // Cannot use `mock<T>` as it is an abstract class
-      isIncluded: sinon.stub()
+      isIncluded: sinon.stub(),
     };
     sinon.stub(TranspileFilter, 'create').returns(transpileFilterMock);
     sinon.stub(transpilingLanguageService, 'default').returns(languageService);
@@ -36,11 +36,7 @@ describe(TypescriptTranspiler.name, () => {
       // Arrange
       const expected = [new File('foo.js', 'foo'), new File('bar.js', 'bar')];
       arrangeIncludedFiles();
-      languageService.emit
-        .withArgs('foo.ts')
-        .returns(multiResult(expected[0]))
-        .withArgs('bar.ts')
-        .returns(multiResult(expected[1]));
+      languageService.emit.withArgs('foo.ts').returns(multiResult(expected[0])).withArgs('bar.ts').returns(multiResult(expected[1]));
 
       // Act
       const outputFiles = await sut.transpile([new File('foo.ts', ''), new File('bar.ts', '')]);
@@ -116,13 +112,13 @@ describe(TypescriptTranspiler.name, () => {
   function multiResult(file: File): EmitOutput {
     return {
       outputFiles: [file],
-      singleResult: false
+      singleResult: false,
     };
   }
 
   function arrangeIncludedFiles(files?: File[]) {
     if (files) {
-      transpileFilterMock.isIncluded.callsFake((fileName: string) => files.some(file => file.name === fileName));
+      transpileFilterMock.isIncluded.callsFake((fileName: string) => files.some((file) => file.name === fileName));
     } else {
       transpileFilterMock.isIncluded.returns(true);
     }

@@ -29,7 +29,7 @@ export const createFailResult = () => ({
           fullName: 'App render renders without crashing',
           numPassingAsserts: 0,
           status: 'failed',
-          title: 'renders without crashing'
+          title: 'renders without crashing',
         },
         {
           ancestorTitles: ['App'],
@@ -38,9 +38,9 @@ export const createFailResult = () => ({
           fullName: 'App render renders without crashing',
           numPassingAsserts: 0,
           status: 'failed',
-          title: 'renders without crashing'
-        }
-      ]
+          title: 'renders without crashing',
+        },
+      ],
     },
     {
       console: null,
@@ -62,12 +62,12 @@ export const createFailResult = () => ({
           fullName: 'App renders without crashing',
           numPassingAsserts: 0,
           status: 'passed',
-          title: 'renders without crashing'
-        }
-      ]
-    }
+          title: 'renders without crashing',
+        },
+      ],
+    },
   ],
-  wasInterrupted: false
+  wasInterrupted: false,
 });
 
 export const createSuccessResult = () => ({
@@ -103,12 +103,12 @@ export const createSuccessResult = () => ({
           fullName: 'App renders without crashing',
           numPassingAsserts: 0,
           status: 'passed',
-          title: 'renders without crashing'
-        }
-      ]
-    }
+          title: 'renders without crashing',
+        },
+      ],
+    },
   ],
-  wasInterrupted: false
+  wasInterrupted: false,
 });
 
 export const createPendingResult = () => ({
@@ -143,12 +143,12 @@ export const createPendingResult = () => ({
           fullName: 'App renders without crashing',
           numPassingAsserts: 0,
           status: 'pending',
-          title: 'renders without crashing'
-        }
-      ]
-    }
+          title: 'renders without crashing',
+        },
+      ],
+    },
   ],
-  wasInterrupted: false
+  wasInterrupted: false,
 });
 
 export const createTodoResult = () => ({
@@ -188,7 +188,7 @@ export const createTodoResult = () => ({
           location: null,
           numPassingAsserts: 0,
           status: 'passed',
-          title: 'renders without crashing'
+          title: 'renders without crashing',
         },
         {
           ancestorTitles: ['App'],
@@ -198,10 +198,10 @@ export const createTodoResult = () => ({
           location: null,
           numPassingAsserts: 0,
           status: 'todo',
-          title: 'renders without crashing with children'
-        }
-      ]
-    }
+          title: 'renders without crashing with children',
+        },
+      ],
+    },
   ],
-  wasInterrupted: false
+  wasInterrupted: false,
 });

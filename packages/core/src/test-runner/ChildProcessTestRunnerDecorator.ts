@@ -38,7 +38,7 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
   public async dispose(): Promise<void> {
     await timeout(
       // First let the inner test runner dispose
-      this.worker.proxy.dispose().catch(error => {
+      this.worker.proxy.dispose().catch((error) => {
         // It's OK if the child process is already down.
         if (!(error instanceof ChildProcessCrashedError)) {
           throw error;

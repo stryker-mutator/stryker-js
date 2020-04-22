@@ -8,9 +8,6 @@ import BabelParser from './helpers/BabelParser';
 export const strykerPlugins = [declareFactoryPlugin(PluginKind.Mutator, 'javascript', javaScriptMutatorFactory)];
 
 function javaScriptMutatorFactory(injector: Injector<OptionsContext>): JavaScriptMutator {
-  return injector
-    .provideValue(NODE_MUTATORS_TOKEN, nodeMutators)
-    .provideClass(PARSER_TOKEN, BabelParser)
-    .injectClass(JavaScriptMutator);
+  return injector.provideValue(NODE_MUTATORS_TOKEN, nodeMutators).provideClass(PARSER_TOKEN, BabelParser).injectClass(JavaScriptMutator);
 }
 javaScriptMutatorFactory.inject = tokens(commonTokens.injector);

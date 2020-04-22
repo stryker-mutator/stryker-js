@@ -57,18 +57,20 @@ function filterRelevantErrors(allErrors: ErrorObject[]): ErrorObject[] {
   const META_SCHEMA_KEYWORDS = Object.freeze(['anyOf', 'allOf', 'oneOf']);
 
   // Split the meta errors from what I call "single errors" (the real errors)
-  const [metaErrors, singleErrors] = split(allErrors, error => META_SCHEMA_KEYWORDS.includes(error.keyword));
+  const [metaErrors, singleErrors] = split(allErrors, (error) => META_SCHEMA_KEYWORDS.includes(error.keyword));
 
   // Filter out the single errors we want to show
   const nonShadowedSingleErrors = removeShadowingErrors(singleErrors, metaErrors);
 
   // We're handling type errors differently, split them out
-  const [typeErrors, nonTypeErrors] = split(nonShadowedSingleErrors, error => error.keyword === 'type');
+  const [typeErrors, nonTypeErrors] = split(nonShadowedSingleErrors, (error) => error.keyword === 'type');
 
   // Filter out the type errors that already have other errors as well.
   // For example when setting `logLevel: 4`, we don't want to see the error specifying that logLevel should be a string,
   // if the other error already specified that it should be one of the enum values.
-  const nonShadowingTypeErrors = typeErrors.filter(typeError => !nonTypeErrors.some(nonTypeError => nonTypeError.dataPath === typeError.dataPath));
+  const nonShadowingTypeErrors = typeErrors.filter(
+    (typeError) => !nonTypeErrors.some((nonTypeError) => nonTypeError.dataPath === typeError.dataPath)
+  );
   const typeErrorsMerged = mergeTypeErrorsByPath(nonShadowingTypeErrors);
   return [...nonTypeErrors, ...typeErrorsMerged];
 }
@@ -82,9 +84,9 @@ function filterRelevantErrors(allErrors: ErrorObject[]): ErrorObject[] {
  * @param metaErrors The grouping errors
  */
 function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObject[]): ErrorObject[] {
-  return singleErrors.filter(error => {
-    if (metaErrors.some(metaError => error.dataPath.startsWith(metaError.dataPath))) {
-      return !singleErrors.some(otherError => otherError.dataPath.startsWith(error.dataPath) && otherError.dataPath.length > error.dataPath.length);
+  return singleErrors.filter((error) => {
+    if (metaErrors.some((metaError) => error.dataPath.startsWith(metaError.dataPath))) {
+      return !singleErrors.some((otherError) => otherError.dataPath.startsWith(error.dataPath) && otherError.dataPath.length > error.dataPath.length);
     } else {
       return true;
     }
@@ -92,7 +94,7 @@ function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObj
 }
 
 function split<T>(items: T[], splitFn: (item: T) => boolean): [T[], T[]] {
-  return [items.filter(splitFn), items.filter(error => !splitFn(error))];
+  return [items.filter(splitFn), items.filter((error) => !splitFn(error))];
 }
 
 /**
@@ -103,16 +105,16 @@ function split<T>(items: T[], splitFn: (item: T) => boolean): [T[], T[]] {
  * @param typeErrors The type errors to merge by path
  */
 function mergeTypeErrorsByPath(typeErrors: ErrorObject[]): ErrorObject[] {
-  const typeErrorsByPath = groupby(typeErrors, error => error.dataPath);
+  const typeErrorsByPath = groupby(typeErrors, (error) => error.dataPath);
   return Object.values(typeErrorsByPath).map(mergeTypeErrors);
 
   function mergeTypeErrors(typeErrors: ErrorObject[]): ErrorObject {
     const params: TypeParams = {
-      type: typeErrors.map(error => (error.params as TypeParams).type).join(',')
+      type: typeErrors.map((error) => (error.params as TypeParams).type).join(','),
     };
     return {
       ...typeErrors[0],
-      params
+      params,
     };
   }
 }

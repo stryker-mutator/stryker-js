@@ -21,7 +21,7 @@ describe('stryker-karma.conf.js', () => {
     getLogger.returns(testInjector.logger);
     requireModuleStub = sinon.stub(utils, 'requireModule');
     sut.setGlobals({
-      getLogger
+      getLogger,
     });
   });
 
@@ -37,7 +37,7 @@ describe('stryker-karma.conf.js', () => {
   it('should set default options', () => {
     const expected = {
       browsers: ['ChromeHeadless'],
-      frameworks: ['jasmine']
+      frameworks: ['jasmine'],
     };
     sut(config);
     expect(config).deep.include(expected);
@@ -47,7 +47,7 @@ describe('stryker-karma.conf.js', () => {
     // Arrange
     requireModuleStub.returns((conf: Config) =>
       conf.set({
-        basePath: 'foobar'
+        basePath: 'foobar',
       })
     );
     sut.setGlobals({ karmaConfigFile: 'foobar.conf.js' });
@@ -91,7 +91,7 @@ describe('stryker-karma.conf.js', () => {
       autoWatch: false,
       browserNoActivityTimeout: 1000000,
       detached: false,
-      singleRun: false
+      singleRun: false,
     });
   });
 
@@ -110,7 +110,7 @@ describe('stryker-karma.conf.js', () => {
   it('should configure the tests hooks middleware', () => {
     sut(config);
     expect(config).deep.include({
-      files: [{ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }]
+      files: [{ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }],
     });
     expect(config.plugins).include('karma-*');
     expect(config.plugins).deep.include({ ['middleware:TestHooksMiddleware']: ['value', TestHooksMiddleware.instance.handler] });
@@ -137,7 +137,7 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
     expect(config).deep.include({
       basePath: path.resolve('../'),
-      configFile: path.resolve('../foobar.conf.js')
+      configFile: path.resolve('../foobar.conf.js'),
     });
   });
 
@@ -148,7 +148,7 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
     expect(config).deep.include({
       basePath: path.resolve(expectedBasePath),
-      configFile: path.resolve('../foobar.conf.js')
+      configFile: path.resolve('../foobar.conf.js'),
     });
   });
 });

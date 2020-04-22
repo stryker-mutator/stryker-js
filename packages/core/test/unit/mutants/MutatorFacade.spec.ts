@@ -15,7 +15,7 @@ describe('MutatorFacade', () => {
 
   beforeEach(() => {
     mutatorMock = {
-      mutate: sinon.stub()
+      mutate: sinon.stub(),
     };
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     pluginCreatorMock.create.returns(mutatorMock);
@@ -43,7 +43,7 @@ describe('MutatorFacade', () => {
       mutatorMock.mutate.returns([
         factory.mutant({ mutatorName: 'foo' }),
         factory.mutant({ mutatorName: 'bar' }),
-        factory.mutant({ mutatorName: 'baz' })
+        factory.mutant({ mutatorName: 'baz' }),
       ]);
       testInjector.mutatorDescriptor.excludedMutations = ['foo'];
       createSut().mutate([]);
@@ -54,7 +54,7 @@ describe('MutatorFacade', () => {
       mutatorMock.mutate.returns([
         factory.mutant({ mutatorName: 'foo' }),
         factory.mutant({ mutatorName: 'bar' }),
-        factory.mutant({ mutatorName: 'baz' })
+        factory.mutant({ mutatorName: 'baz' }),
       ]);
       testInjector.mutatorDescriptor.excludedMutations = ['foo', 'bar', 'baz'];
       testInjector.mutatorDescriptor.name = 'javascript';

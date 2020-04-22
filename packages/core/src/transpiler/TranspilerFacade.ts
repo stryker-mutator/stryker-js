@@ -16,7 +16,7 @@ export class TranspilerFacade implements Transpiler {
   public static inject = tokens(commonTokens.options, coreTokens.pluginCreatorTranspiler);
 
   constructor(options: StrykerOptions, pluginCreator: PluginCreator<PluginKind.Transpiler>) {
-    this.innerTranspilers = options.transpilers.map(transpilerName => new NamedTranspiler(transpilerName, pluginCreator.create(transpilerName)));
+    this.innerTranspilers = options.transpilers.map((transpilerName) => new NamedTranspiler(transpilerName, pluginCreator.create(transpilerName)));
   }
 
   public transpile(files: readonly File[]): Promise<readonly File[]> {
@@ -29,7 +29,7 @@ export class TranspilerFacade implements Transpiler {
   ): Promise<readonly File[]> {
     const current = remainingChain.shift();
     if (current) {
-      const output = await current.transpiler.transpile(input).catch(error => {
+      const output = await current.transpiler.transpile(input).catch((error) => {
         throw new StrykerError(`An error occurred in transpiler "${current.name}"`, error);
       });
       return this.performTranspileChain(output, remainingChain);

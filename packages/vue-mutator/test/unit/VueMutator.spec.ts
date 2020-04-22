@@ -351,7 +351,7 @@ describe('VueMutator', () => {
       fileName: `${vueFile.name}.js`,
       mutatorName: 'StringLiteral',
       range: [script.indexOf(codeToMutate), script.indexOf(codeToMutate) + codeToMutate.length],
-      replacement: ''
+      replacement: '',
     };
     stubJavaScriptMutator.mutate.returns([jsMutant]);
     const sut = createSut();
@@ -364,7 +364,7 @@ describe('VueMutator', () => {
     expect(generatedMutant.fileName).to.equal(vueFile.name);
     expect(generatedMutant.range).to.deep.equal([
       vueFile.textContent.indexOf(codeToMutate),
-      vueFile.textContent.indexOf(codeToMutate) + codeToMutate.length
+      vueFile.textContent.indexOf(codeToMutate) + codeToMutate.length,
     ]);
     expect(generatedMutant.replacement).to.equal(jsMutant.replacement);
   });

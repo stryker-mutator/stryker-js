@@ -47,7 +47,7 @@ export class MochaTestRunner implements TestRunner {
 
   private legacyDiscoverFiles(): string[] {
     const globPatterns = this.mochaFileGlobPatterns();
-    const globPatternsAbsolute = globPatterns.map(glob => path.resolve(glob));
+    const globPatternsAbsolute = globPatterns.map((glob) => path.resolve(glob));
     const fileNames = LibWrapper.multimatch(this.allFileNames.slice(), globPatternsAbsolute);
     if (fileNames.length) {
       this.log.debug(`Using files: ${JSON.stringify(fileNames, null, 2)}`);
@@ -102,7 +102,7 @@ export class MochaTestRunner implements TestRunner {
               resolve({
                 errorMessages: [errorMsg],
                 status: RunStatus.Error,
-                tests: []
+                tests: [],
               });
             }
           });
@@ -110,7 +110,7 @@ export class MochaTestRunner implements TestRunner {
           resolve({
             errorMessages: [error],
             status: RunStatus.Error,
-            tests: []
+            tests: [],
           });
         }
       } catch (error) {
@@ -121,11 +121,11 @@ export class MochaTestRunner implements TestRunner {
   }
 
   private purgeFiles() {
-    this.allFileNames.forEach(fileName => delete require.cache[fileName]);
+    this.allFileNames.forEach((fileName) => delete require.cache[fileName]);
   }
 
   private addFiles(mocha: Mocha) {
-    this.testFileNames.forEach(fileName => {
+    this.testFileNames.forEach((fileName) => {
       mocha.addFile(fileName);
     });
   }
@@ -158,7 +158,7 @@ export class MochaTestRunner implements TestRunner {
 
   private additionalRequires() {
     if (this.mochaOptions.require) {
-      const modulesToRequire = this.mochaOptions.require.map(moduleName => (moduleName.startsWith('.') ? path.resolve(moduleName) : moduleName));
+      const modulesToRequire = this.mochaOptions.require.map((moduleName) => (moduleName.startsWith('.') ? path.resolve(moduleName) : moduleName));
       modulesToRequire.forEach(LibWrapper.require);
     }
   }

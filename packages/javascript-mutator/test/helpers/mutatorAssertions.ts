@@ -23,8 +23,8 @@ export function expectMutation(mutator: NodeMutator, sourceText: string, ...expe
   const sourceFile = new File('file.js', sourceText);
   const mutants = javaScriptMutator.mutate([sourceFile]);
   expect(mutants).lengthOf(expectedTexts.length);
-  const actualMutantTexts = mutants.map(mutant => mutantToString(mutant, sourceText));
-  expectedTexts.forEach(expected => expect(actualMutantTexts, `was: ${actualMutantTexts.join(',')}`).to.include(expected));
+  const actualMutantTexts = mutants.map((mutant) => mutantToString(mutant, sourceText));
+  expectedTexts.forEach((expected) => expect(actualMutantTexts, `was: ${actualMutantTexts.join(',')}`).to.include(expected));
 }
 
 /**

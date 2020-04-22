@@ -22,7 +22,7 @@ export const EXTENSIONS_KEY: keyof StrykerBabelConfig = 'extensions';
 const DEFAULT_BABEL_CONFIG: Readonly<StrykerBabelConfig> = Object.freeze({
   extensions: Object.freeze([]),
   options: Object.freeze({}),
-  optionsFile: '.babelrc'
+  optionsFile: '.babelrc',
 });
 
 export class BabelConfigReader {
@@ -32,11 +32,11 @@ export class BabelConfigReader {
   public readConfig(strykerOptions: StrykerOptions): StrykerBabelConfig {
     const babelConfig: StrykerBabelConfig = {
       ...DEFAULT_BABEL_CONFIG,
-      ...strykerOptions[CONFIG_KEY]
+      ...strykerOptions[CONFIG_KEY],
     };
     babelConfig.options = {
       ...this.readBabelOptionsFromFile(babelConfig.optionsFile, babelConfig.optionsApi),
-      ...babelConfig.options
+      ...babelConfig.options,
     };
     this.log.debug(`Babel config is: ${JSON.stringify(babelConfig, null, 2)}`);
     return babelConfig;

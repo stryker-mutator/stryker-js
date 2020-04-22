@@ -25,7 +25,7 @@ export default class JasmineTestRunner implements TestRunner {
     if (options.testHooks) {
       evalGlobal(options.testHooks);
     }
-    return new Promise<RunResult>(resolve => {
+    return new Promise<RunResult>((resolve) => {
       const reporter: jasmine.CustomReporter = {
         specStarted() {
           startTimeCurrentSpec = new self.Date().getTime();
@@ -39,16 +39,16 @@ export default class JasmineTestRunner implements TestRunner {
           resolve({
             errorMessages: [],
             status: RunStatus.Complete,
-            tests
+            tests,
           });
-        }
+        },
       };
       jasmine.addReporter(reporter);
       jasmine.execute();
-    }).catch(error => ({
+    }).catch((error) => ({
       errorMessages: [`An error occurred while loading your jasmine specs${EOL}${errorToString(error)}`],
       status: RunStatus.Error,
-      tests: []
+      tests: [],
     }));
   }
 
@@ -67,7 +67,7 @@ export default class JasmineTestRunner implements TestRunner {
   }
 
   public clearRequireCache() {
-    this.fileNames.forEach(fileName => {
+    this.fileNames.forEach((fileName) => {
       delete require.cache[fileName];
     });
   }

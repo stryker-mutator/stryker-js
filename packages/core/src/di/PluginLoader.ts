@@ -22,7 +22,7 @@ export class PluginLoader implements PluginResolver {
   constructor(private readonly log: Logger, private readonly pluginDescriptors: readonly string[]) {}
 
   public load() {
-    this.resolvePluginModules().forEach(moduleName => {
+    this.resolvePluginModules().forEach((moduleName) => {
       this.requirePlugin(moduleName);
     });
   }
@@ -30,12 +30,12 @@ export class PluginLoader implements PluginResolver {
   public resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T] {
     const plugins = this.pluginsByKind.get(kind);
     if (plugins) {
-      const plugin = plugins.find(plugin => plugin.name.toLowerCase() === name.toLowerCase());
+      const plugin = plugins.find((plugin) => plugin.name.toLowerCase() === name.toLowerCase());
       if (plugin) {
         return plugin as any;
       } else {
         throw new Error(
-          `Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map(p => p.name).join(', ')}`
+          `Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map((p) => p.name).join(', ')}`
         );
       }
     } else {
@@ -50,7 +50,7 @@ export class PluginLoader implements PluginResolver {
 
   private resolvePluginModules() {
     const modules: string[] = [];
-    this.pluginDescriptors.forEach(pluginExpression => {
+    this.pluginDescriptors.forEach((pluginExpression) => {
       if (typeof pluginExpression === 'string') {
         if (pluginExpression.includes('*')) {
           // Plugin directory is the node_modules folder of the module that installed stryker
@@ -60,17 +60,17 @@ export class PluginLoader implements PluginResolver {
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
           const plugins = readdirSync(pluginDirectory)
-            .filter(pluginName => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
-            .map(pluginName => path.resolve(pluginDirectory, pluginName));
+            .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
+            .map((pluginName) => path.resolve(pluginDirectory, pluginName));
           if (plugins.length === 0) {
             this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);
           }
           plugins
-            .map(plugin => {
+            .map((plugin) => {
               this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression);
               return plugin;
             })
-            .forEach(p => modules.push(p));
+            .forEach((p) => modules.push(p));
         } else {
           modules.push(pluginExpression);
         }
@@ -87,7 +87,7 @@ export class PluginLoader implements PluginResolver {
     try {
       const module = importModule(name);
       if (this.isPluginModule(module)) {
-        module.strykerPlugins.forEach(plugin => this.loadPlugin(plugin));
+        module.strykerPlugins.forEach((plugin) => this.loadPlugin(plugin));
       }
     } catch (e) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {

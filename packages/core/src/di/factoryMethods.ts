@@ -39,18 +39,18 @@ export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescri
   const defaults: MutatorDescriptor = {
     plugins: null,
     name: 'javascript',
-    excludedMutations: []
+    excludedMutations: [],
   };
   if (typeof options.mutator === 'string') {
     return {
       ...defaults,
-      name: options.mutator
+      name: options.mutator,
     };
   }
 
   return {
     ...defaults,
-    ...options.mutator
+    ...options.mutator,
   };
 }
 mutatorDescriptorFactory.inject = tokens(commonTokens.options);

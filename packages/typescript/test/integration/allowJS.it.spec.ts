@@ -25,9 +25,9 @@ describe('AllowJS integration', () => {
     const transpiler = new TypescriptTranspiler(options, /*produceSourceMaps: */ false, () => testInjector.logger);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles.length).to.eq(2);
-    expect(outputFiles.map(f => f.name)).deep.eq([
+    expect(outputFiles.map((f) => f.name)).deep.eq([
       path.resolve(__dirname, '..', '..', 'testResources', 'allowJS', 'dist', 'math.js'),
-      path.resolve(__dirname, '..', '..', 'testResources', 'allowJS', 'dist', 'useMath.js')
+      path.resolve(__dirname, '..', '..', 'testResources', 'allowJS', 'dist', 'useMath.js'),
     ]);
   });
 });

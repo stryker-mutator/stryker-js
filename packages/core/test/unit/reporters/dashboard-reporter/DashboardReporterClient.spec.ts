@@ -52,7 +52,7 @@ describe(DashboardReporterClient.name, () => {
       expect(actualHref).eq(expectedHref);
       expect(httpClient.put).calledWith(expectedUrl, expectedBody, {
         ['X-Api-Key']: apiKey,
-        ['Content-Type']: 'application/json'
+        ['Content-Type']: 'application/json',
       });
       expect(testInjector.logger.info).calledWith('PUT report to %s (~%s bytes)', expectedUrl, expectedBody.length);
       expect(testInjector.logger.debug).calledWith('Using configured API key from environment "%s"', 'STRYKER_DASHBOARD_API_KEY');
@@ -90,7 +90,7 @@ describe(DashboardReporterClient.name, () => {
       // Arrange
       respondWith(401);
       const report: Report = {
-        mutationScore: 58
+        mutationScore: 58,
       };
 
       // Act
@@ -120,9 +120,9 @@ describe(DashboardReporterClient.name, () => {
   function respondWith(statusCode = 200, body = '{ "href": "href" }') {
     httpClient.put.resolves({
       message: {
-        statusCode
+        statusCode,
       },
-      readBody: sinon.stub().resolves(body)
+      readBody: sinon.stub().resolves(body),
     });
   }
 });

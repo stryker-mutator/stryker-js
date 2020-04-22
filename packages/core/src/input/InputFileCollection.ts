@@ -10,7 +10,7 @@ export default class InputFileCollection {
 
   constructor(files: readonly File[], mutateGlobResult: readonly string[]) {
     this.files = files;
-    this.filesToMutate = files.filter(file => mutateGlobResult.some(name => name === file.name));
+    this.filesToMutate = files.filter((file) => mutateGlobResult.some((name) => name === file.name));
   }
 
   public logFiles(log: Logger) {
@@ -32,14 +32,14 @@ export default class InputFileCollection {
       if (log.isDebugEnabled()) {
         log.debug(
           `All input files: ${JSON.stringify(
-            this.files.map(file => file.name),
+            this.files.map((file) => file.name),
             null,
             2
           )}`
         );
         log.debug(
           `Files to mutate: ${JSON.stringify(
-            this.filesToMutate.map(file => file.name),
+            this.filesToMutate.map((file) => file.name),
             null,
             2
           )}`

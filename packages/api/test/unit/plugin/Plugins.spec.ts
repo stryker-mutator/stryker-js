@@ -21,7 +21,7 @@ describe('plugins', () => {
       expect(declareClassPlugin(PluginKind.Mutator, 'mut', MyMutator)).deep.eq({
         injectableClass: MyMutator,
         kind: PluginKind.Mutator,
-        name: 'mut'
+        name: 'mut',
       });
     });
   });
@@ -32,14 +32,14 @@ describe('plugins', () => {
         return {
           mutate(): readonly Mutant[] {
             return [];
-          }
+          },
         };
       }
 
       expect(declareFactoryPlugin(PluginKind.Mutator, 'mut', myMutator)).deep.eq({
         factory: myMutator,
         kind: PluginKind.Mutator,
-        name: 'mut'
+        name: 'mut',
       });
     });
   });

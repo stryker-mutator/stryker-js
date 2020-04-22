@@ -5,7 +5,7 @@ const enum CharacterCodes {
   LineFeed = 0x0a, // \n
   CarriageReturn = 0x0d, // \r
   LineSeparator = 0x2028,
-  ParagraphSeparator = 0x2029
+  ParagraphSeparator = 0x2029,
 }
 
 export function isLineBreak(ch: number): boolean {
@@ -46,7 +46,7 @@ export default class SourceFile {
   public getLocation(range: Range): Location {
     return {
       end: this.getPosition(range[1]),
-      start: this.getPosition(range[0])
+      start: this.getPosition(range[0]),
     };
   }
 
@@ -64,7 +64,7 @@ export default class SourceFile {
     }
     return {
       column: pos - this.lineStarts[lineNumber],
-      line: lineNumber
+      line: lineNumber,
     };
   }
 

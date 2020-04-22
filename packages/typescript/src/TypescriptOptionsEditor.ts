@@ -15,7 +15,7 @@ import { normalizeFileForTypescript, normalizeFileFromTypescript } from './helpe
 const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
   allowUnreachableCode: true,
   noUnusedLocals: false,
-  noUnusedParameters: false
+  noUnusedParameters: false,
 });
 
 export default class TypescriptOptionsEditor implements OptionsEditor {
@@ -70,9 +70,9 @@ export default class TypescriptOptionsEditor implements OptionsEditor {
 
     function diagnosticsHost(configFileBase: string): ts.FormatDiagnosticsHost {
       return {
-        getCanonicalFileName: fileName => path.resolve(fileName),
+        getCanonicalFileName: (fileName) => path.resolve(fileName),
         getCurrentDirectory: () => configFileBase,
-        getNewLine: () => os.EOL
+        getNewLine: () => os.EOL,
       };
     }
   }

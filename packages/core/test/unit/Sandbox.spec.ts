@@ -28,7 +28,7 @@ import { Mock } from '../helpers/producers';
 const OVERHEAD_TIME_MS = 0;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
-  port: 4200
+  port: 4200,
 });
 const SANDBOX_INDEX = 3;
 
@@ -55,7 +55,7 @@ describe(Sandbox.name, () => {
     testFrameworkStub = {
       filter: sinon.stub(),
       afterEach: sinon.stub(),
-      beforeEach: sinon.stub()
+      beforeEach: sinon.stub(),
     };
     expectedFileToMutate = new File(path.resolve('file1'), 'original code');
     notMutatedFile = new File(path.resolve('file2'), 'to be mutated');
@@ -87,7 +87,7 @@ describe(Sandbox.name, () => {
       files: inputFiles,
       overheadTimeMS: OVERHEAD_TIME_MS,
       testFramework: null,
-      ...overrides
+      ...overrides,
     };
     return Sandbox.create(options, SANDBOX_INDEX, files, testFramework, overheadTimeMS, LOGGING_CONTEXT, temporaryDirectoryMock as any);
   }
@@ -106,7 +106,7 @@ describe(Sandbox.name, () => {
 
     it('should have created the isolated test runner', async () => {
       await createSut();
-      const expectedFileNames = inputFiles.map(file => path.resolve(sandboxDirectory, path.basename(file.name)));
+      const expectedFileNames = inputFiles.map((file) => path.resolve(sandboxDirectory, path.basename(file.name)));
       expect(ResilientTestRunnerFactory.create).calledWith(options, expectedFileNames, sandboxDirectory, LOGGING_CONTEXT);
     });
 
@@ -168,7 +168,7 @@ describe(Sandbox.name, () => {
       expect(testRunner.run).to.have.been.calledWith({
         mutatedFileName: undefined,
         testHooks: 'hooks',
-        timeout: 231313
+        timeout: 231313,
       });
     });
 
@@ -178,7 +178,7 @@ describe(Sandbox.name, () => {
       expect(testRunner.run).to.have.been.calledWith({
         mutatedFileName: 'path/to/file',
         testHooks: 'hooks',
-        timeout: 231313
+        timeout: 231313,
       });
     });
   });
@@ -240,7 +240,7 @@ describe(Sandbox.name, () => {
       const expectedRunOptions = {
         mutatedFileName: path.resolve('random-folder-3', 'file1'),
         testHooks: wrapInClosure(testFilterCodeFragment),
-        timeout: totalTimeSpend * options.timeoutFactor + options.timeoutMS + overheadTimeMS
+        timeout: totalTimeSpend * options.timeoutFactor + options.timeoutMS + overheadTimeMS,
       };
       expect(testRunner.run).calledWith(expectedRunOptions);
     });

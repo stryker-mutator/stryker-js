@@ -59,7 +59,7 @@ describe('ConfigLoader', () => {
     // Arrange
     const bazPlugin = { baz: true, apply() {} };
     const webpackConfig: Configuration = {
-      plugins: [new FooPlugin(), new ProgressPlugin(), new BarPlugin(), bazPlugin]
+      plugins: [new FooPlugin(), new ProgressPlugin(), new BarPlugin(), bazPlugin],
     };
 
     requireStub.returns(webpackConfig);
@@ -69,12 +69,8 @@ describe('ConfigLoader', () => {
     const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: true }));
 
     // Assert
-    expect(result.plugins)
-      .to.be.an('array')
-      .that.does.not.deep.include(new ProgressPlugin());
-    expect(result.plugins)
-      .to.be.an('array')
-      .that.deep.equals([new FooPlugin(), new BarPlugin(), bazPlugin]);
+    expect(result.plugins).to.be.an('array').that.does.not.deep.include(new ProgressPlugin());
+    expect(result.plugins).to.be.an('array').that.deep.equals([new FooPlugin(), new BarPlugin(), bazPlugin]);
     expect(testInjector.logger.debug).calledWith(
       'Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your config file to disable this feature.',
       'ProgressPlugin'
@@ -83,16 +79,14 @@ describe('ConfigLoader', () => {
 
   it('should not remove "ProgressPlugin" if silent is `false`', async () => {
     const webpackConfig: Configuration = {
-      plugins: [new ProgressPlugin(), new BarPlugin()]
+      plugins: [new ProgressPlugin(), new BarPlugin()],
     };
 
     requireStub.returns(webpackConfig);
     existsSyncStub.returns(true);
 
     const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: false }));
-    expect(result.plugins)
-      .to.be.an('array')
-      .that.does.deep.include(new ProgressPlugin());
+    expect(result.plugins).to.be.an('array').that.does.deep.include(new ProgressPlugin());
   });
 
   it('should return an object with the context property pointing to the projectRoot when webpack.config.js does not exist', async () => {

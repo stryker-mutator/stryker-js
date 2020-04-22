@@ -4,7 +4,7 @@ export class NodeGenerator {
   public static createMutatedCloneWithProperties(originalNode: types.Node, props: { [key: string]: any }): types.Node {
     return {
       ...originalNode,
-      ...props
+      ...props,
     };
   }
 }

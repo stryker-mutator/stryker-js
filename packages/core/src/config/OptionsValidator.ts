@@ -34,20 +34,20 @@ export class OptionsValidator {
       additionalErrors.push(
         normalizeWhitespaces(
           `Config option "coverageAnalysis" is invalid. Coverage analysis "${options.coverageAnalysis}" 
-          is not supported for multiple transpilers (configured transpilers: ${options.transpilers.map(t => `"${t}"`).join(', ')}).
+          is not supported for multiple transpilers (configured transpilers: ${options.transpilers.map((t) => `"${t}"`).join(', ')}).
           Change it to "off". Please report this to the Stryker team if you whish this feature to be implemented.`
         )
       );
     }
 
-    additionalErrors.forEach(error => this.log.error(error));
+    additionalErrors.forEach((error) => this.log.error(error));
     this.throwErrorIfNeeded(additionalErrors);
   }
 
   private schemaValidate(options: unknown): asserts options is StrykerOptions {
     if (!this.validateFn(options)) {
       const errors = describeErrors(this.validateFn.errors!);
-      errors.forEach(error => this.log.error(error));
+      errors.forEach((error) => this.log.error(error));
       this.throwErrorIfNeeded(errors);
     }
   }

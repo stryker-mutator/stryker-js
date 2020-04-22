@@ -8,17 +8,11 @@ describe('MochaTestFramework', () => {
   beforeEach(() => (sut = new MochaTestFramework()));
 
   describe('beforeEach()', () => {
-    it('should result in a beforeEach mocha hook', () =>
-      expect(sut.beforeEach('fragment'))
-        .to.contain('fragment')
-        .and.to.contain('beforeEach'));
+    it('should result in a beforeEach mocha hook', () => expect(sut.beforeEach('fragment')).to.contain('fragment').and.to.contain('beforeEach'));
   });
 
   describe('afterEach()', () => {
-    it('should result in an afterEach mocha hook', () =>
-      expect(sut.afterEach('fragment'))
-        .to.contain('fragment')
-        .and.to.contain('afterEach'));
+    it('should result in an afterEach mocha hook', () => expect(sut.afterEach('fragment')).to.contain('fragment').and.to.contain('afterEach'));
   });
 
   describe('filter()', () => {
@@ -26,7 +20,7 @@ describe('MochaTestFramework', () => {
       expect(
         sut.filter([
           { id: 5, name: 'test five' },
-          { id: 8, name: 'test eight' }
+          { id: 8, name: 'test eight' },
         ])
       )
         .to.contain('var realAddTest = Mocha.Suite.prototype.addTest;')

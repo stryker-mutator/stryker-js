@@ -19,7 +19,7 @@ describe('PluginCreator', () => {
       name: 'fooReporter',
       factory() {
         return expectedReporter;
-      }
+      },
     };
     testInjector.pluginResolver.resolve.returns(factoryPlugin);
 
@@ -37,7 +37,7 @@ describe('PluginCreator', () => {
     const plugin: ClassPlugin<PluginKind.Reporter, []> = {
       injectableClass: FooReporter,
       kind: PluginKind.Reporter,
-      name: 'fooReporter'
+      name: 'fooReporter',
     };
     testInjector.pluginResolver.resolve.returns(plugin);
 

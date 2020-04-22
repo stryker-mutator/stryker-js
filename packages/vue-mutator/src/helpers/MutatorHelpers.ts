@@ -8,7 +8,7 @@ import {
   Plugin,
   PluginKind,
   PluginResolver,
-  tokens
+  tokens,
 } from '@stryker-mutator/api/plugin';
 
 export const MUTATORS_TOKEN = 'mutators';
@@ -17,7 +17,7 @@ mutatorsFactory.inject = tokens(commonTokens.pluginResolver, commonTokens.inject
 export function mutatorsFactory(pluginResolver: PluginResolver, injector: Injector<OptionsContext>) {
   const mutators: { [name: string]: Mutator } = {};
   const mutatorPlugins = pluginResolver.resolveAll(PluginKind.Mutator);
-  mutatorPlugins.forEach(plugin => {
+  mutatorPlugins.forEach((plugin) => {
     if (plugin.name !== 'vue') {
       mutators[plugin.name] = createPlugin(injector, plugin);
     }

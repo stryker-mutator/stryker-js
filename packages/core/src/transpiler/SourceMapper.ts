@@ -81,8 +81,8 @@ export class TranspiledSourceMapper extends SourceMapper {
       fileName: sourceMap.transpiledFile.name,
       location: {
         end,
-        start
-      }
+        start,
+      },
     };
   }
 
@@ -110,12 +110,12 @@ export class TranspiledSourceMapper extends SourceMapper {
    */
   private createSourceMaps(): SourceMapBySource {
     const sourceMaps: SourceMapBySource = Object.create(null);
-    this.transpiledFiles.forEach(transpiledFile => {
+    this.transpiledFiles.forEach((transpiledFile) => {
       const sourceMapFile = this.getSourceMapForFile(transpiledFile);
       if (sourceMapFile) {
         const rawSourceMap = this.getRawSourceMap(sourceMapFile);
         const sourceMap = new SourceMap(transpiledFile, sourceMapFile.name, rawSourceMap);
-        rawSourceMap.sources.forEach(source => {
+        rawSourceMap.sources.forEach((source) => {
           const sourceFileName = path.resolve(path.dirname(sourceMapFile.name), source);
           sourceMaps[sourceFileName] = sourceMap;
         });
@@ -180,7 +180,7 @@ export class TranspiledSourceMapper extends SourceMapper {
    */
   private getExternalSourceMap(sourceMapUrl: string, transpiledFile: File) {
     const sourceMapFileName = path.resolve(path.dirname(transpiledFile.name), sourceMapUrl);
-    const sourceMapFile = this.transpiledFiles.find(file => path.resolve(file.name) === sourceMapFileName);
+    const sourceMapFile = this.transpiledFiles.find((file) => path.resolve(file.name) === sourceMapFileName);
     if (sourceMapFile) {
       return sourceMapFile;
     } else {
@@ -239,12 +239,12 @@ class SourceMap {
       bias: SourceMapConsumer.LEAST_UPPER_BOUND,
       column: originalPosition.column,
       line: originalPosition.line + 1, // SourceMapConsumer works 1-based
-      source: relativeSource
+      source: relativeSource,
     });
 
     return Promise.resolve({
       column: transpiledPosition.column || 0,
-      line: (transpiledPosition.line || 1) - 1 // Stryker works 0-based
+      line: (transpiledPosition.line || 1) - 1, // Stryker works 0-based
     });
   }
 }

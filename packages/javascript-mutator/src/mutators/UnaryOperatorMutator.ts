@@ -10,7 +10,7 @@ export default class UnaryOperatorMutator implements NodeMutator {
   private readonly operators: { [targetedOperator: string]: string } = {
     '+': '-',
     '-': '+',
-    '~': ''
+    '~': '',
   };
 
   public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {

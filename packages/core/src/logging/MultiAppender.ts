@@ -6,7 +6,7 @@ export class MultiAppender {
   constructor(private readonly appenders: RuntimeAppender[]) {}
 
   public append(loggingEvent: LoggingEvent) {
-    this.appenders.forEach(appender => appender(loggingEvent));
+    this.appenders.forEach((appender) => appender(loggingEvent));
   }
 }
 
@@ -19,6 +19,6 @@ export class MultiAppender {
  * @param findAppender A method to locate other appenders
  */
 export function configure(config: { appenders: string[] }, _: any, findAppender: (name: string) => RuntimeAppender): RuntimeAppender {
-  const multiAppender = new MultiAppender(config.appenders.map(name => findAppender(name)));
+  const multiAppender = new MultiAppender(config.appenders.map((name) => findAppender(name)));
   return multiAppender.append.bind(multiAppender);
 }
