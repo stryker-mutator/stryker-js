@@ -11,7 +11,7 @@ import { requireModule } from '../utils';
 function setDefaultOptions(config: Config) {
   config.set({
     browsers: ['ChromeHeadless'],
-    frameworks: ['jasmine']
+    frameworks: ['jasmine'],
   });
 }
 
@@ -48,7 +48,7 @@ function setLifeCycleOptions(config: Config) {
     // Never detach, always run in this same process (is already a separate process)
     detached: false,
     // Don't stop after first run
-    singleRun: false
+    singleRun: false,
   });
 }
 
@@ -117,7 +117,7 @@ const globalSettings: {
 } = {
   getLogger() {
     return noopLogger;
-  }
+  },
 };
 
 export = Object.assign(
@@ -142,6 +142,6 @@ export = Object.assign(
       globalSettings.karmaConfig = globals.karmaConfig;
       globalSettings.karmaConfigFile = globals.karmaConfigFile;
       globalSettings.getLogger = globals.getLogger || (() => noopLogger);
-    }
+    },
   }
 );

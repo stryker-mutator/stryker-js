@@ -42,7 +42,7 @@ describe(WctLogger.name, () => {
   });
 
   function emitAllLogEvents() {
-    ['debug', 'info', 'warn', 'error'].forEach(logEvent => {
+    ['debug', 'info', 'warn', 'error'].forEach((logEvent) => {
       context.emit(`log:${logEvent}`, logEvent);
     });
   }

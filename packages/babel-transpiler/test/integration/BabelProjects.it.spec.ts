@@ -26,7 +26,7 @@ function describeIntegrationTest(projectName: string, babelConfig: Partial<Stryk
 
   it('should be able to transpile the input files', async () => {
     const actualResultFiles = await babelTranspiler.transpile(projectFiles);
-    const expectedResultFiles = resultFiles.map(file => new File(file.name.replace('expectedResult', 'source'), file.content));
+    const expectedResultFiles = resultFiles.map((file) => new File(file.name.replace('expectedResult', 'source'), file.content));
     expectFilesEqual(actualResultFiles, expectedResultFiles);
   });
 
@@ -70,18 +70,18 @@ describe('A Babel project with babel.config.js config file that exports function
   describeIntegrationTest('babelProjectWithBabelConfigJs', {
     extensions: ['.ts'],
     optionsApi: { cache: { forever: noop } } as ConfigAPI,
-    optionsFile: 'babel.config.js'
+    optionsFile: 'babel.config.js',
   });
 });
 describe('A Babel project with babel.config.js config file that exports object', () => {
   describeIntegrationTest('babelProjectWithBabelConfigJsObject', {
     extensions: ['.ts'],
-    optionsFile: 'babel.config.js'
+    optionsFile: 'babel.config.js',
   });
 });
 describe('A Babel project with .babelrc.js config file', () => {
   describeIntegrationTest('babelProjectWithBabelRcJs', {
     extensions: ['.ts'],
-    optionsFile: '.babelrc.js'
+    optionsFile: '.babelrc.js',
   });
 });

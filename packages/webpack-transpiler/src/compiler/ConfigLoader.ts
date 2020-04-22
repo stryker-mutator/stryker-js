@@ -47,7 +47,7 @@ export default class ConfigLoader {
 
   private configureSilent(webpackConfig: Configuration) {
     if (webpackConfig.plugins) {
-      webpackConfig.plugins = webpackConfig.plugins.filter(plugin => {
+      webpackConfig.plugins = webpackConfig.plugins.filter((plugin) => {
         if (plugin.constructor && plugin.constructor.name === PROGRESS_PLUGIN_NAME) {
           this.log.debug(
             'Removing webpack plugin "%s" to keep webpack bundling silent. Set `webpack: { silent: false }` in your config file to disable this feature.',

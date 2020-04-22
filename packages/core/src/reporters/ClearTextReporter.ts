@@ -73,10 +73,10 @@ export default class ClearTextReporter implements Reporter {
     logImplementation(`${index}. [${MutantStatus[result.status]}] ${result.mutatorName}`);
     logImplementation(this.colorSourceFileAndLocation(result.sourceFilePath, result.location.start));
 
-    result.originalLines.split('\n').forEach(line => {
+    result.originalLines.split('\n').forEach((line) => {
       logImplementation(chalk.red('-   ' + line));
     });
-    result.mutatedLines.split('\n').forEach(line => {
+    result.mutatedLines.split('\n').forEach((line) => {
       logImplementation(chalk.green('+   ' + line));
     });
     logImplementation('');

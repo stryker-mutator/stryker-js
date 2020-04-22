@@ -13,7 +13,7 @@ export function evalGlobal(body: string) {
 
 export function serializeArguments(mochaOptions: MochaOptions) {
   const args: string[] = [];
-  Object.keys(mochaOptions).forEach(key => {
+  Object.keys(mochaOptions).forEach((key) => {
     args.push(`--${key}`);
     const value: any = (mochaOptions as any)[key];
     if (typeof value === 'string') {
@@ -36,8 +36,8 @@ const SUPPORTED_MOCHA_OPTIONS = Object.freeze(Object.keys(mochaSchema.properties
 export function filterConfig(rawConfig: { [key: string]: any }): Partial<MochaOptions> {
   const options: Partial<MochaOptions> = {};
   Object.keys(rawConfig)
-    .filter(rawOption => SUPPORTED_MOCHA_OPTIONS.some(supportedOption => rawOption === supportedOption))
-    .forEach(option => ((options as any)[option] = rawConfig[option]));
+    .filter((rawOption) => SUPPORTED_MOCHA_OPTIONS.some((supportedOption) => rawOption === supportedOption))
+    .forEach((option) => ((options as any)[option] = rawConfig[option]));
 
   // Config file can also contain positional arguments. They are provided under the `_` key
   // For example:

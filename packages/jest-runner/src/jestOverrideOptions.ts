@@ -14,7 +14,7 @@ const JEST_OVERRIDE_OPTIONS = Object.freeze({
 
   // Disable notifications for test results, this will otherwise show a notification about
   // the results each time Stryker runs the tests
-  notify: false
+  notify: false,
 });
 
 export default JEST_OVERRIDE_OPTIONS;

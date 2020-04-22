@@ -10,7 +10,7 @@ enum RunStatus {
   /**
    * Indicates that a test run timed out
    */
-  Timeout
+  Timeout,
 }
 
 export default RunStatus;

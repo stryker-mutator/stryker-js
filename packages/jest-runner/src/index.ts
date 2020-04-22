@@ -7,5 +7,5 @@ process.env.BABEL_ENV = 'test';
 
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.OptionsEditor, 'jest', JestOptionsEditor),
-  declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory)
+  declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory),
 ];

@@ -39,7 +39,7 @@ export default class TypescriptTranspiler implements Transpiler {
   }
 
   private filterIsIncluded(files: readonly File[]): readonly File[] {
-    return files.filter(file => this.filter.isIncluded(file.name));
+    return files.filter((file) => this.filter.isIncluded(file.name));
   }
 
   private createLanguageService(typescriptFiles: readonly File[]) {
@@ -57,15 +57,15 @@ export default class TypescriptTranspiler implements Transpiler {
   private transpileFiles(files: readonly File[]): readonly File[] {
     let isSingleOutput = false;
     const fileDictionary: { [name: string]: File } = {};
-    files.forEach(file => (fileDictionary[file.name] = file));
-    files.forEach(file => {
+    files.forEach((file) => (fileDictionary[file.name] = file));
+    files.forEach((file) => {
       if (!isHeaderFile(file.name)) {
         if (this.filter.isIncluded(file.name)) {
           // File is to be transpiled. Only emit if more output is expected.
           if (!isSingleOutput) {
             const emitOutput = this.languageService.emit(file.name);
             isSingleOutput = emitOutput.singleResult;
-            emitOutput.outputFiles.forEach(file => (fileDictionary[file.name] = file));
+            emitOutput.outputFiles.forEach((file) => (fileDictionary[file.name] = file));
           }
 
           // Remove original file
@@ -74,6 +74,6 @@ export default class TypescriptTranspiler implements Transpiler {
       }
     });
 
-    return Object.keys(fileDictionary).map(name => fileDictionary[name]);
+    return Object.keys(fileDictionary).map((name) => fileDictionary[name]);
   }
 }

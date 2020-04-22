@@ -33,7 +33,7 @@ describe('tsHelpers', () => {
     it('should also set parent nodes', () => {
       const input = new File('file.ts', 'const b: string = "hello world";');
       const actual = tsHelpers.parseFile(input, undefined);
-      ts.forEachChild(actual, node => {
+      ts.forEachChild(actual, (node) => {
         expect(node.parent).ok;
       });
     });

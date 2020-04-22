@@ -66,12 +66,12 @@ export default class JestTestRunner implements TestRunner {
     // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
     const errorMessages = results.testResults
       .map((testSuite: Jest.TestResult) => testSuite.failureMessage)
-      .filter(errorMessage => errorMessage) as string[];
+      .filter((errorMessage) => errorMessage) as string[];
 
     return {
       errorMessages,
       status: results.numRuntimeErrorTestSuites > 0 ? RunStatus.Error : RunStatus.Complete,
-      tests: this.processTestResults(results.testResults)
+      tests: this.processTestResults(results.testResults),
     };
   }
 
@@ -92,7 +92,7 @@ export default class JestTestRunner implements TestRunner {
           failureMessages: testResult.failureMessages,
           name: testResult.fullName,
           status: this.determineTestResultStatus(testResult.status),
-          timeSpentMs: testResult.duration ? testResult.duration : 0
+          timeSpentMs: testResult.duration ? testResult.duration : 0,
         });
       }
     }

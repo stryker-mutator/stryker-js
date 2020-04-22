@@ -34,11 +34,11 @@ export class BabelTranspiler implements Transpiler {
   }
 
   public async transpile(files: readonly File[]): Promise<readonly File[]> {
-    return files.map(file => this.transpileFileIfNeeded(file));
+    return files.map((file) => this.transpileFileIfNeeded(file));
   }
 
   private transpileFileIfNeeded(file: File): File {
-    if (this.extensions.some(ext => ext === path.extname(file.name))) {
+    if (this.extensions.some((ext) => ext === path.extname(file.name))) {
       try {
         return this.transpileFile(file);
       } catch (error) {
@@ -53,7 +53,7 @@ export class BabelTranspiler implements Transpiler {
     const relativeOptions: babel.TransformOptions = {
       cwd: this.projectRoot,
       filename: file.name,
-      filenameRelative: path.relative(this.projectRoot, file.name)
+      filenameRelative: path.relative(this.projectRoot, file.name),
     };
     const options: babel.TransformOptions = { ...this.babelConfig.options, ...relativeOptions };
     const result: babel.BabelFileResult | null = babel.transformSync(file.textContent, options);

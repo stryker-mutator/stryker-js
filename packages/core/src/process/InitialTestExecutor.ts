@@ -91,7 +91,7 @@ export default class InitialTestExecutor {
       coverageMaps,
       overheadTimeMS: timing.overhead,
       runResult,
-      sourceMapper
+      sourceMapper,
     };
   }
 
@@ -108,7 +108,7 @@ export default class InitialTestExecutor {
     files: readonly File[],
     sourceMapper: SourceMapper
   ): Promise<{ instrumentedFiles: readonly File[]; coverageMaps: CoverageMapsByFile }> {
-    const filesToInstrument = this.inputFiles.filesToMutate.map(mutateFile => sourceMapper.transpiledFileNameFor(mutateFile.name));
+    const filesToInstrument = this.inputFiles.filesToMutate.map((mutateFile) => sourceMapper.transpiledFileNameFor(mutateFile.name));
     const coverageInstrumenterTranspiler = new CoverageInstrumenterTranspiler(this.options, filesToInstrument);
     const instrumentedFiles = await coverageInstrumenterTranspiler.transpile(files);
     return { coverageMaps: coverageInstrumenterTranspiler.fileCoverageMaps, instrumentedFiles };
@@ -151,7 +151,7 @@ export default class InitialTestExecutor {
     const overheadTimeMS = grossTimeMS - netTimeMS;
     return {
       net: netTimeMS,
-      overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS
+      overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS,
     };
   }
 
@@ -174,7 +174,7 @@ export default class InitialTestExecutor {
     if (this.options.transpilers.length && this.log.isDebugEnabled()) {
       this.log.debug(
         `Transpiled files: ${JSON.stringify(
-          transpiledFiles.map(f => `${f.name}`),
+          transpiledFiles.map((f) => `${f.name}`),
           null,
           2
         )}`
@@ -183,7 +183,7 @@ export default class InitialTestExecutor {
   }
 
   private filterOutFailedTests(runResult: RunResult) {
-    return runResult.tests.filter(testResult => testResult.status === TestStatus.Failed);
+    return runResult.tests.filter((testResult) => testResult.status === TestStatus.Failed);
   }
 
   private logInitialTestRunSucceeded(tests: TestResult[], timing: Timing) {
@@ -198,7 +198,7 @@ export default class InitialTestExecutor {
 
   private logFailedTestsInInitialRun(failedTests: TestResult[]): void {
     let message = 'One or more tests failed in the initial test run:';
-    failedTests.forEach(test => {
+    failedTests.forEach((test) => {
       message += `${EOL}\t${test.name}`;
       if (test.failureMessages && test.failureMessages.length) {
         message += `${EOL}\t\t${test.failureMessages.join(`${EOL}\t\t`)}`;
@@ -209,14 +209,14 @@ export default class InitialTestExecutor {
   private logErrorsInInitialRun(runResult: RunResult) {
     let message = 'One or more tests resulted in an error:';
     if (runResult.errorMessages && runResult.errorMessages.length) {
-      runResult.errorMessages.forEach(error => (message += `${EOL}\t${error}`));
+      runResult.errorMessages.forEach((error) => (message += `${EOL}\t${error}`));
     }
     this.log.error(message);
   }
 
   private logTimeoutInitialRun(runResult: RunResult) {
     let message = 'Initial test run timed out! Ran following tests before timeout:';
-    runResult.tests.forEach(test => (message += `${EOL}\t${test.name} (${TestStatus[test.status]})`));
+    runResult.tests.forEach((test) => (message += `${EOL}\t${test.name} (${TestStatus[test.status]})`));
     this.log.error(message);
   }
 }

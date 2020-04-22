@@ -41,7 +41,7 @@ describe(TestableMutant.name, () => {
     expect(sut.timeSpentScopedTests).eq(44);
     expect(sut.selectedTests).deep.eq([
       { id: 0, name: 'spec1' },
-      { id: 2, name: 'spec3' }
+      { id: 2, name: 'spec3' },
     ]);
     expect(sut.testSelectionResult).eq(TestSelectionResult.Success);
   });

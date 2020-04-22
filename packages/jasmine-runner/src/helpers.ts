@@ -10,13 +10,13 @@ export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, ti
   } else if (!specResult.failedExpectations || specResult.failedExpectations.length === 0) {
     status = TestStatus.Success;
   } else {
-    failureMessages = specResult.failedExpectations.map(failedExpectation => failedExpectation.message);
+    failureMessages = specResult.failedExpectations.map((failedExpectation) => failedExpectation.message);
   }
   return {
     failureMessages,
     name: specResult.fullName,
     status,
-    timeSpentMs
+    timeSpentMs,
   };
 }
 

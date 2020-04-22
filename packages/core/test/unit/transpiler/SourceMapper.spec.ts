@@ -32,7 +32,7 @@ describe('SourceMapper', () => {
     sourceMapConsumerMock.generatedPositionFor.returns(
       Promise.resolve({
         column: 2,
-        line: 1
+        line: 1,
       })
     );
     sinon.stub(sourceMapModule, 'SourceMapConsumer').returns(sourceMapConsumerMock);
@@ -62,7 +62,7 @@ describe('SourceMapper', () => {
     it('should pass through the input on transpiledLocationFor', async () => {
       const input: MappedLocation = {
         fileName: 'foo/bar.js',
-        location: factory.location()
+        location: factory.location(),
       };
       expect(await sut.transpiledLocationFor(input)).eq(input);
     });
@@ -169,13 +169,13 @@ describe('SourceMapper', () => {
         location: {
           end: {
             column: 2,
-            line: 0
+            line: 0,
           },
           start: {
             column: 2,
-            line: 0
-          }
-        }
+            line: 0,
+          },
+        },
       });
     });
   });

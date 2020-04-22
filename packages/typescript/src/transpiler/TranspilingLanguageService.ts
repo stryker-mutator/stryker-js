@@ -34,14 +34,14 @@ export default class TranspilingLanguageService {
     getLogger: LoggerFactoryMethod
   ) {
     this.compilerOptions = this.adaptCompilerOptions(compilerOptions);
-    rootFiles.forEach(file => (this.files[file.name] = new ScriptFile(file.name, file.textContent)));
+    rootFiles.forEach((file) => (this.files[file.name] = new ScriptFile(file.name, file.textContent)));
     const host = this.createLanguageServiceHost();
     this.languageService = ts.createLanguageService(host);
     this.logger = getLogger(TranspilingLanguageService.name);
     this.diagnosticsFormatter = {
-      getCanonicalFileName: fileName => fileName,
+      getCanonicalFileName: (fileName) => fileName,
       getCurrentDirectory: () => projectDirectory,
-      getNewLine: () => os.EOL
+      getNewLine: () => os.EOL,
     };
   }
 
@@ -63,12 +63,12 @@ export default class TranspilingLanguageService {
    * @param mutantCandidate The mutant used to replace the original source
    */
   public replace(replacements: readonly File[]) {
-    replacements.forEach(replacement => this.files[replacement.name].replace(replacement.textContent));
+    replacements.forEach((replacement) => this.files[replacement.name].replace(replacement.textContent));
   }
 
   public getSemanticDiagnostics(files: readonly File[]) {
-    const fileNames = files.map(file => file.name);
-    const errors = flatMap(fileNames, fileName => this.languageService.getSemanticDiagnostics(normalizeFileForTypescript(fileName)));
+    const fileNames = files.map((file) => file.name);
+    const errors = flatMap(fileNames, (fileName) => this.languageService.getSemanticDiagnostics(normalizeFileForTypescript(fileName)));
     return ts.formatDiagnostics(errors, this.diagnosticsFormatter);
   }
 
@@ -102,16 +102,16 @@ export default class TranspilingLanguageService {
       getDefaultLibFileName: ts.getDefaultLibFileName,
       getDirectories: ts.sys.getDirectories,
       getScriptFileNames: () => Object.keys(this.files),
-      getScriptSnapshot: fileName => {
+      getScriptSnapshot: (fileName) => {
         this.pullFileIntoMemoryIfNeeded(fileName);
         return this.files[fileName] && ts.ScriptSnapshot.fromString(this.files[fileName].content);
       },
-      getScriptVersion: fileName => {
+      getScriptVersion: (fileName) => {
         this.pullFileIntoMemoryIfNeeded(fileName);
         return this.files[fileName] && this.files[fileName].version.toString();
       },
       readDirectory: ts.sys.readDirectory,
-      readFile: ts.sys.readFile
+      readFile: ts.sys.readFile,
     };
   }
 

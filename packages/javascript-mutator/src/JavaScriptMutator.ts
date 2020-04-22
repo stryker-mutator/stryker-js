@@ -15,11 +15,11 @@ export class JavaScriptMutator implements Mutator {
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
 
-    inputFiles.forEach(file => {
+    inputFiles.forEach((file) => {
       const ast = this.parser.parse(file.textContent);
 
-      this.parser.getNodes(ast).forEach(node => {
-        this.mutators.forEach(mutator => {
+      this.parser.getNodes(ast).forEach((node) => {
+        this.mutators.forEach((mutator) => {
           const fileName = file.name;
           const mutatorName = mutator.name;
 
@@ -31,7 +31,7 @@ export class JavaScriptMutator implements Mutator {
                 fileName: fileName,
                 mutatorName: mutatorName,
                 range: [original.start, original.end],
-                replacement
+                replacement,
               });
 
               this.log.trace(`Generated mutant for mutator ${mutatorName} in file ${fileName} with replacement code "${replacement}"`);

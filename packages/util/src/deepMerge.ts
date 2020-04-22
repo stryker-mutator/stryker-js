@@ -8,7 +8,7 @@ export type DeepPartial<T> = {
  * @param overrides
  */
 export function deepMerge<T>(defaults: T, overrides: DeepPartial<T>): void {
-  Object.keys(overrides).forEach(key => {
+  Object.keys(overrides).forEach((key) => {
     const defaultValue = (defaults as any)[key];
     const overrideValue = (overrides as any)[key];
     if (overrideValue !== undefined) {

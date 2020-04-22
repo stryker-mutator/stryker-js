@@ -12,17 +12,17 @@ describe('OutputFileSystem', () => {
     sut = new OutputFileSystem();
   });
 
-  actions('mkdir', 'rmdir').forEach(action => {
-    it(`should pass through "${action}" without doing anything`, done => {
+  actions('mkdir', 'rmdir').forEach((action) => {
+    it(`should pass through "${action}" without doing anything`, (done) => {
       sut[action]('dir', done);
     });
   });
 
-  it('should pass through "mkdirp" without doing anything', done => {
+  it('should pass through "mkdirp" without doing anything', (done) => {
     sut.mkdirp('dir', done);
   });
 
-  it('should delete files when "unlink" is called', done => {
+  it('should delete files when "unlink" is called', (done) => {
     sut.writeFile('file1', 'data', () => {
       expect(sut.collectFiles()).lengthOf(1);
       sut.unlink('file1', () => {

@@ -21,7 +21,7 @@ export class EnvironmentVariableStore {
   }
 
   public restore() {
-    Object.keys(this.originals).forEach(key => {
+    Object.keys(this.originals).forEach((key) => {
       const value = this.originals[key];
       if (value === undefined) {
         delete process.env[key];

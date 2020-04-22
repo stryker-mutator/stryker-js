@@ -21,7 +21,7 @@ export class TypescriptMutator {
 
   public mutate(inputFiles: File[]): Mutant[] {
     const tsConfig = getTSConfig(this.options);
-    const mutants = flatMap(inputFiles, inputFile => {
+    const mutants = flatMap(inputFiles, (inputFile) => {
       const sourceFile = parseFile(inputFile, tsConfig && tsConfig.options && tsConfig.options.target);
       return this.mutateForNode(sourceFile, sourceFile);
     });
@@ -32,9 +32,9 @@ export class TypescriptMutator {
     if (shouldNodeBeSkipped(node)) {
       return [];
     } else {
-      const targetMutators = this.mutators.filter(mutator => mutator.guard(node));
-      const mutants = flatMap(targetMutators, mutator => mutator.mutate(node, sourceFile));
-      node.forEachChild(child => {
+      const targetMutators = this.mutators.filter((mutator) => mutator.guard(node));
+      const mutants = flatMap(targetMutators, (mutator) => mutator.mutate(node, sourceFile));
+      node.forEachChild((child) => {
         // It is important that forEachChild does not return a true, otherwise node visiting is halted!
         mutants.push(...this.mutateForNode(child, sourceFile));
       });
@@ -46,6 +46,6 @@ export class TypescriptMutator {
 const shouldNodeBeSkipped = (node: ts.Node): boolean => {
   return (
     node.kind === ts.SyntaxKind.InterfaceDeclaration ||
-    (node.modifiers !== undefined && node.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DeclareKeyword))
+    (node.modifiers !== undefined && node.modifiers.some((modifier) => modifier.kind === ts.SyntaxKind.DeclareKeyword))
   );
 };

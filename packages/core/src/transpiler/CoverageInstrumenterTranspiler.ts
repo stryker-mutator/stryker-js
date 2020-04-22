@@ -24,7 +24,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
   }
 
   public async transpile(files: readonly File[]): Promise<readonly File[]> {
-    return files.map(file => this.instrumentFileIfNeeded(file));
+    return files.map((file) => this.instrumentFileIfNeeded(file));
   }
 
   /**
@@ -52,13 +52,13 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
       range.start.line--;
     }
 
-    Object.keys(fileCoverage.statementMap).forEach(key => patchRange(fileCoverage.statementMap[key]));
-    Object.keys(fileCoverage.branchMap).forEach(key => {
+    Object.keys(fileCoverage.statementMap).forEach((key) => patchRange(fileCoverage.statementMap[key]));
+    Object.keys(fileCoverage.branchMap).forEach((key) => {
       patchRange(fileCoverage.branchMap[key].loc);
       fileCoverage.branchMap[key].locations.forEach(patchRange);
       fileCoverage.branchMap[key].line--;
     });
-    Object.keys(fileCoverage.fnMap).forEach(key => {
+    Object.keys(fileCoverage.fnMap).forEach((key) => {
       patchRange(fileCoverage.fnMap[key].loc);
       patchRange(fileCoverage.fnMap[key].decl);
       fileCoverage.fnMap[key].line--;
@@ -68,7 +68,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
   }
 
   private instrumentFileIfNeeded(file: File) {
-    if (this.settings.coverageAnalysis !== 'off' && this.filesToInstrument.some(fileName => fileName === file.name)) {
+    if (this.settings.coverageAnalysis !== 'off' && this.filesToInstrument.some((fileName) => fileName === file.name)) {
       return this.instrumentFile(file);
     } else {
       return file;
@@ -89,9 +89,9 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
   private retrieveCoverageMaps(input: FileCoverageData): CoverageMaps {
     const output: CoverageMaps = {
       fnMap: {},
-      statementMap: input.statementMap
+      statementMap: input.statementMap,
     };
-    Object.keys(input.fnMap).forEach(key => (output.fnMap[key] = input.fnMap[key].loc));
+    Object.keys(input.fnMap).forEach((key) => (output.fnMap[key] = input.fnMap[key].loc));
     return output;
   }
 }

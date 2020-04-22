@@ -10,7 +10,7 @@ const replaceTokens: ts.MapLike<string[]> = {
   [ts.SyntaxKind.EqualsEqualsToken]: ['!='],
   [ts.SyntaxKind.ExclamationEqualsToken]: ['=='],
   [ts.SyntaxKind.EqualsEqualsEqualsToken]: ['!=='],
-  [ts.SyntaxKind.ExclamationEqualsEqualsToken]: ['===']
+  [ts.SyntaxKind.ExclamationEqualsEqualsToken]: ['==='],
 };
 
 export default class EqualityOperatorMutator extends NodeMutator<ts.BinaryExpression> {
@@ -22,7 +22,7 @@ export default class EqualityOperatorMutator extends NodeMutator<ts.BinaryExpres
 
   public identifyReplacements(node: ts.BinaryExpression): NodeReplacement[] {
     if (replaceTokens[node.operatorToken.kind]) {
-      return replaceTokens[node.operatorToken.kind].map(replacement => ({ node: node.operatorToken, replacement }));
+      return replaceTokens[node.operatorToken.kind].map((replacement) => ({ node: node.operatorToken, replacement }));
     } else {
       return [];
     }

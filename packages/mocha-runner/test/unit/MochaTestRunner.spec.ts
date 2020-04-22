@@ -83,8 +83,8 @@ describe(MochaTestRunner.name, () => {
         fileNames: ['foo'],
         mochaOptions: {
           files: ['bar'],
-          spec: ['foo']
-        }
+          spec: ['foo'],
+        },
       });
       await sut.init();
       await actRun();
@@ -93,7 +93,7 @@ describe(MochaTestRunner.name, () => {
 
     it('should match given file names with configured mocha files as `array`', () => {
       const relativeGlobPatterns = ['*.js', 'baz.js'];
-      const expectedGlobPatterns = relativeGlobPatterns.map(glob => path.resolve(glob));
+      const expectedGlobPatterns = relativeGlobPatterns.map((glob) => path.resolve(glob));
       actAssertMatchedPatterns(relativeGlobPatterns, expectedGlobPatterns);
     });
 
@@ -169,7 +169,7 @@ describe(MochaTestRunner.name, () => {
         opts: 'opts',
         require: [],
         timeout: 2000,
-        ui: 'assert'
+        ui: 'assert',
       };
       sut = createSut({ mochaOptions });
       await sut.init();
@@ -187,7 +187,7 @@ describe(MochaTestRunner.name, () => {
     it("should don't set asyncOnly if asyncOnly is false", async () => {
       // Arrange
       const mochaOptions: Partial<MochaOptions> = {
-        ['async-only']: false
+        ['async-only']: false,
       };
       sut = createSut({ mochaOptions });
       await sut.init();

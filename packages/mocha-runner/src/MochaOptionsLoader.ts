@@ -26,7 +26,7 @@ export const DEFAULT_MOCHA_OPTIONS: Readonly<MochaOptions> = Object.freeze({
   'no-package': false,
   'no-opts': false,
   'no-config': false,
-  'async-only': false
+  'async-only': false,
 });
 
 export default class MochaOptionsLoader {
@@ -54,7 +54,7 @@ export default class MochaOptionsLoader {
     const loadOptions = LibWrapper.loadOptions || (() => ({}));
     const rawConfig = loadOptions(args) || {};
     if (this.log.isTraceEnabled()) {
-      this.log.trace(`Mocha: ${loadOptions.name}([${args.map(arg => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+      this.log.trace(`Mocha: ${loadOptions.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
     }
     const options = filterConfig(rawConfig);
     if (this.log.isDebugEnabled()) {
@@ -93,9 +93,9 @@ export default class MochaOptionsLoader {
   }
 
   private parseOptsFile(optsFileContent: string): MochaOptions {
-    const options = optsFileContent.split('\n').map(val => val.trim());
+    const options = optsFileContent.split('\n').map((val) => val.trim());
     const mochaRunnerOptions: MochaOptions = Object.create(null);
-    options.forEach(option => {
+    options.forEach((option) => {
       const args = option.split(' ').filter(Boolean);
       if (args[0]) {
         switch (args[0]) {

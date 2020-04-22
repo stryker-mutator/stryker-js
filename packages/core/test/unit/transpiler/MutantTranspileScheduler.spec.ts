@@ -26,7 +26,7 @@ describe(MutantTranspileScheduler.name, () => {
     initialTranspiledFiles = [new File('firstResult.js', 'initial result')];
     transpilerMock = {
       dispose: sinon.stub(),
-      transpile: sinon.stub()
+      transpile: sinon.stub(),
     };
     transpiledFilesOne = [new File('firstResult.js', 'first result')];
     transpiledFilesTwo = [new File('secondResult.js', 'second result')];
@@ -39,21 +39,14 @@ describe(MutantTranspileScheduler.name, () => {
   it('should transpile mutants', async () => {
     // Arrange
     const mutants = [testableMutant(), testableMutant()];
-    transpilerMock.transpile
-      .onFirstCall()
-      .resolves(transpiledFilesOne)
-      .onSecondCall()
-      .resolves(transpiledFilesTwo);
+    transpilerMock.transpile.onFirstCall().resolves(transpiledFilesOne).onSecondCall().resolves(transpiledFilesTwo);
     const expected: TranspiledMutant[] = [
       { mutant: mutants[0], transpileResult: { error: null, outputFiles: transpiledFilesOne }, changedAnyTranspiledFiles: true },
-      { mutant: mutants[1], transpileResult: { error: null, outputFiles: transpiledFilesTwo }, changedAnyTranspiledFiles: true }
+      { mutant: mutants[1], transpileResult: { error: null, outputFiles: transpiledFilesTwo }, changedAnyTranspiledFiles: true },
     ];
 
     // Act
-    const actualResult = await sut
-      .scheduleTranspileMutants(mutants)
-      .pipe(toArray())
-      .toPromise();
+    const actualResult = await sut.scheduleTranspileMutants(mutants).pipe(toArray()).toPromise();
 
     // Assert
     expect(actualResult).deep.eq(expected);
@@ -66,14 +59,11 @@ describe(MutantTranspileScheduler.name, () => {
     const mutant = testableMutant();
 
     // Act
-    const actualResult = await sut
-      .scheduleTranspileMutants([mutant])
-      .pipe(toArray())
-      .toPromise();
+    const actualResult = await sut.scheduleTranspileMutants([mutant]).pipe(toArray()).toPromise();
 
     // Assert
     const expected: TranspiledMutant[] = [
-      { mutant, transpileResult: { error: errorToString(error), outputFiles: [] }, changedAnyTranspiledFiles: false }
+      { mutant, transpileResult: { error: errorToString(error), outputFiles: [] }, changedAnyTranspiledFiles: false },
     ];
     expect(actualResult).deep.eq(expected);
   });
@@ -84,14 +74,11 @@ describe(MutantTranspileScheduler.name, () => {
     const mutants = [testableMutant()];
 
     // Act
-    const actual = await sut
-      .scheduleTranspileMutants(mutants)
-      .pipe(toArray())
-      .toPromise();
+    const actual = await sut.scheduleTranspileMutants(mutants).pipe(toArray()).toPromise();
 
     // Assert
     const expected: TranspiledMutant[] = [
-      { mutant: mutants[0], transpileResult: { error: null, outputFiles: initialTranspiledFiles }, changedAnyTranspiledFiles: false }
+      { mutant: mutants[0], transpileResult: { error: null, outputFiles: initialTranspiledFiles }, changedAnyTranspiledFiles: false },
     ];
     expect(actual).deep.eq(expected);
   });
@@ -102,15 +89,15 @@ describe(MutantTranspileScheduler.name, () => {
     let resolveSecond: (files: readonly File[]) => void = () => {};
     transpilerMock.transpile
       .onFirstCall()
-      .returns(new Promise<readonly File[]>(res => (resolveFirst = res)))
+      .returns(new Promise<readonly File[]>((res) => (resolveFirst = res)))
       .onSecondCall()
-      .returns(new Promise<readonly File[]>(res => (resolveSecond = res)));
+      .returns(new Promise<readonly File[]>((res) => (resolveSecond = res)));
     const actualResults: TranspileResult[] = [];
 
     // Act
     sut
       .scheduleTranspileMutants([testableMutant('one'), testableMutant('two')])
-      .subscribe(transpiledMutant => actualResults.push(transpiledMutant.transpileResult));
+      .subscribe((transpiledMutant) => actualResults.push(transpiledMutant.transpileResult));
 
     // Assert: only first time called
     expect(transpilerMock.transpile).calledOnce;
@@ -125,7 +112,7 @@ describe(MutantTranspileScheduler.name, () => {
     await sleep();
     const expectedResults: TranspileResult[] = [
       { error: null, outputFiles: transpiledFilesOne },
-      { error: null, outputFiles: transpiledFilesTwo }
+      { error: null, outputFiles: transpiledFilesTwo },
     ];
     expect(actualResults).deep.eq(expectedResults);
   });
@@ -136,12 +123,12 @@ describe(MutantTranspileScheduler.name, () => {
     transpilerMock.transpile.resolves(initialTranspiledFiles);
     const input = await range(0, MAX_CONCURRENCY + 1)
       .pipe(
-        map(i => testableMutant(i.toString())),
+        map((i) => testableMutant(i.toString())),
         toArray()
       )
       .toPromise();
     const actualResult: TranspiledMutant[] = [];
-    const subscription = sut.scheduleTranspileMutants(input).subscribe(mutant => actualResult.push(mutant));
+    const subscription = sut.scheduleTranspileMutants(input).subscribe((mutant) => actualResult.push(mutant));
 
     // Act & assert
     await sleep();

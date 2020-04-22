@@ -23,5 +23,5 @@ export const nodeMutators = Object.freeze([
   new ObjectLiteralMutator(),
   new StringLiteralMutator(),
   new UnaryOperatorMutator(),
-  new UpdateOperatorMutator()
+  new UpdateOperatorMutator(),
 ]);

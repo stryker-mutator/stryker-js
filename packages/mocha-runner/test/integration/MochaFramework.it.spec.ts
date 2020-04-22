@@ -13,11 +13,11 @@ import { MochaTestRunner } from '../../src/MochaTestRunner';
 
 const test0: Readonly<TestSelection> = Object.freeze({
   id: 0,
-  name: 'MyMath should be able to add two numbers'
+  name: 'MyMath should be able to add two numbers',
 });
 const test3: Readonly<TestSelection> = Object.freeze({
   id: 3,
-  name: 'MyMath should be able to recognize a negative number'
+  name: 'MyMath should be able to recognize a negative number',
 });
 
 export function wrapInClosure(codeFragment: string) {
@@ -40,7 +40,7 @@ describe('Integration with @stryker-mutator/mocha-framework', () => {
     testInjector.options.mochaOptions = {
       file: [],
       ignore: [],
-      spec: [resolveSampleProject('MyMathSpec.js')]
+      spec: [resolveSampleProject('MyMathSpec.js')],
     };
     testInjector.options.plugins = [];
 
@@ -49,7 +49,7 @@ describe('Integration with @stryker-mutator/mocha-framework', () => {
       { level: LogLevel.Trace, port },
       testInjector.options,
       {
-        [commonTokens.sandboxFileNames]: [resolveSampleProject('MyMath.js'), resolveSampleProject('MyMathSpec.js')]
+        [commonTokens.sandboxFileNames]: [resolveSampleProject('MyMath.js'), resolveSampleProject('MyMathSpec.js')],
       },
       __dirname,
       MochaTestRunner
@@ -65,15 +65,15 @@ describe('Integration with @stryker-mutator/mocha-framework', () => {
   it('should be able to filter tests', async () => {
     const testHooks = wrapInClosure(testFramework.filter([test0, test3]));
     const actualResult = await sut.proxy.run({ testHooks });
-    expect(actualResult.tests.map(test => ({ name: test.name, status: test.status }))).deep.eq([
+    expect(actualResult.tests.map((test) => ({ name: test.name, status: test.status }))).deep.eq([
       {
         name: 'MyMath should be able to add two numbers',
-        status: TestStatus.Success
+        status: TestStatus.Success,
       },
       {
         name: 'MyMath should be able to recognize a negative number',
-        status: TestStatus.Success
-      }
+        status: TestStatus.Success,
+      },
     ]);
   });
 

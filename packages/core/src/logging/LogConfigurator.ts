@@ -13,18 +13,18 @@ const enum AppenderName {
   FilteredConsoleLevel = 'filteredConsoleLevel',
   FilteredConsoleCategory = 'filteredConsoleCategory',
   All = 'all',
-  Server = 'server'
+  Server = 'server',
 }
 
 const layouts: { color: log4js.PatternLayout; noColor: log4js.PatternLayout } = {
   color: {
     pattern: '%[%r (%z) %p %c%] %m',
-    type: 'pattern'
+    type: 'pattern',
   },
   noColor: {
     pattern: '%r (%z) %p %c %m',
-    type: 'pattern'
-  }
+    type: 'pattern',
+  },
 };
 
 interface AppendersConfiguration {
@@ -44,7 +44,7 @@ export default class LogConfigurator {
       // Exclude messages like: "ERROR log4js A worker log process hung up unexpectedly" #1245
       [AppenderName.FilteredConsoleCategory]: { type: 'categoryFilter', appender: AppenderName.Console, exclude: 'log4js' },
       [AppenderName.FilteredConsoleLevel]: { type: 'logLevelFilter', appender: AppenderName.FilteredConsoleCategory, level: consoleLogLevel },
-      [AppenderName.All]: multiAppender
+      [AppenderName.All]: multiAppender,
     };
 
     // only add file if it is needed. Otherwise log4js will create the file directly, pretty annoying.
@@ -68,9 +68,9 @@ export default class LogConfigurator {
       categories: {
         default: {
           appenders: [AppenderName.All],
-          level: defaultLogLevel
-        }
-      }
+          level: defaultLogLevel,
+        },
+      },
     };
   }
 
@@ -110,7 +110,7 @@ export default class LogConfigurator {
       appender: AppenderName.All,
       loggerPort,
       mode: 'master',
-      type: 'multiprocess'
+      type: 'multiprocess',
     };
     appenders[AppenderName.Server] = multiProcessAppender;
     const defaultLogLevel = minLevel(consoleLogLevel, fileLogLevel);
@@ -118,7 +118,7 @@ export default class LogConfigurator {
 
     const context: LoggingClientContext = {
       level: defaultLogLevel,
-      port: loggerPort
+      port: loggerPort,
     };
     return context;
   }
@@ -136,7 +136,7 @@ export default class LogConfigurator {
 
   public static shutdown(): Promise<void> {
     return new Promise((res, rej) => {
-      log4js.shutdown(err => {
+      log4js.shutdown((err) => {
         if (err) {
           rej(err);
         } else {

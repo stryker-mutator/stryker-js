@@ -24,5 +24,5 @@ export const nodeMutators: readonly NodeMutator[] = [
   new StringLiteralMutator(),
   new UnaryOperatorMutator(),
   new UpdateOperatorMutator(),
-  new ArrowFunctionMutator()
+  new ArrowFunctionMutator(),
 ];

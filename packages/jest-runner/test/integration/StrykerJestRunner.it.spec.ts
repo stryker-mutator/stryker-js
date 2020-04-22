@@ -32,7 +32,7 @@ describe('Integration test for Strykers Jest runner', () => {
     'Add should be able negate a number',
     'Add should be able to recognize a negative number',
     'Add should be able to recognize that 0 is not a negative number',
-    'Circle should have a circumference of 2PI when the radius is 1'
+    'Circle should have a circumference of 2PI when the radius is 1',
   ];
 
   beforeEach(() => {
@@ -72,9 +72,7 @@ describe('Integration test for Strykers Jest runner', () => {
 
     expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
     expect(result).to.have.property('tests');
-    expect(result.tests)
-      .to.be.an('array')
-      .with.length(testNames.length);
+    expect(result.tests).to.be.an('array').with.length(testNames.length);
 
     for (const test of result.tests) {
       expect(testNames).to.include(test.name);
@@ -95,9 +93,7 @@ describe('Integration test for Strykers Jest runner', () => {
 
     expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
     expect(result).to.have.property('tests');
-    expect(result.tests)
-      .to.be.an('array')
-      .with.length(testNames.length);
+    expect(result.tests).to.be.an('array').with.length(testNames.length);
 
     for (const test of result.tests) {
       expect(testNames).to.include(test.name);

@@ -21,7 +21,7 @@ describe('Webpack transpiler', () => {
     const files = readFiles();
 
     const transpiledFiles = await sut.transpile(files);
-    const bundleFile = transpiledFiles.filter(file => file.name.includes('my-first-webpack.bundle.js'))[0];
+    const bundleFile = transpiledFiles.filter((file) => file.name.includes('my-first-webpack.bundle.js'))[0];
     expect(transpiledFiles).lengthOf(3); // input + output
     expect(bundleFile.textContent).include('Hello world!'); // input + output
   });
@@ -51,5 +51,5 @@ function getProjectRoot(testResourceProjectName: string) {
 function readFiles(): File[] {
   const dir = path.resolve(__dirname, '..', '..', 'testResources', 'gettingStarted', 'src');
   const files = fs.readdirSync(dir);
-  return files.map(fileName => new File(path.resolve(dir, fileName), fs.readFileSync(path.resolve(dir, fileName))));
+  return files.map((fileName) => new File(path.resolve(dir, fileName), fs.readFileSync(path.resolve(dir, fileName))));
 }

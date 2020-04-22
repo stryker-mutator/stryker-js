@@ -24,7 +24,7 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
 
     const ngTestArguments = Object.keys(testArguments);
     verifyNgTestArguments(ngTestArguments);
-    ngTestArguments.forEach(key => {
+    ngTestArguments.forEach((key) => {
       const decamelizedKey = decamelize(key, '-');
       if ('progress' !== key && 'karma-config' !== decamelizedKey) {
         cliArgs.push(`--${decamelizedKey}=${testArguments[key]}`);
@@ -36,7 +36,7 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
   return cli({
     cliArgs,
     inputStream: process.stdin,
-    outputStream: process.stdout
+    outputStream: process.stdout,
   }).then((exitCode: number) => {
     if (exitCode > 0) {
       throw new Error(
@@ -53,7 +53,7 @@ function verifyAngularCliVersion() {
   }
 }
 function verifyNgTestArguments(ngTestArguments: string[]) {
-  const prefixedArguments = ngTestArguments.filter(key => key.trim().startsWith('-'));
+  const prefixedArguments = ngTestArguments.filter((key) => key.trim().startsWith('-'));
   if (prefixedArguments.length > 0) {
     throw new Error(`Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are ${prefixedArguments}.`);
   }
