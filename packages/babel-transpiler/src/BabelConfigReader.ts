@@ -8,6 +8,7 @@ import { StrykerBabelConfig } from '../src-generated/babel-transpiler-options';
 
 import * as babel from './helpers/babelWrapper';
 import { BabelTranspilerWithStrykerOptions } from './BabelTranspilerWithStrykerOptions';
+import { ConfigAPI } from './helpers/babelWrapper';
 
 export class BabelConfigReader {
   public static inject = tokens(commonTokens.logger);
@@ -36,7 +37,7 @@ export class BabelConfigReader {
             const config = require(babelrcPath);
             if (typeof config === 'function') {
               const configFunction = config as babel.ConfigFunction;
-              return configFunction();
+              return configFunction(noopBabelConfigApi);
             } else {
               return config as babel.TransformOptions;
             }
@@ -52,3 +53,24 @@ export class BabelConfigReader {
     return {};
   }
 }
+
+function noop() {}
+
+const noopBabelConfigApi: ConfigAPI = {
+  assertVersion() {
+    return true;
+  },
+  cache: {
+    forever: noop,
+    invalidate() {
+      return noop as any;
+    },
+    never: noop,
+    using() {
+      return noop as any;
+    },
+  },
+  env: noop as any,
+  caller: noop as any,
+  version: noop as any,
+};
