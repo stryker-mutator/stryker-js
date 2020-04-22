@@ -29,7 +29,7 @@ describe('Selecting tests with nested suites', () => {
     testSelections = [
       { id: 0, name: 'outer test 1' },
       { id: 1, name: 'outer inner test 2' },
-      { id: 2, name: 'outer test 3' }
+      { id: 2, name: 'outer test 3' },
     ];
   });
 
@@ -39,7 +39,7 @@ describe('Selecting tests with nested suites', () => {
 
   it('should run all tests in expected order when running all tests', () => {
     const result = execJasmine(nestedSuiteFile);
-    expect(result.map(test => test.fullName)).deep.eq(['outer test 1', 'outer inner test 2', 'outer test 3']);
+    expect(result.map((test) => test.fullName)).deep.eq(['outer test 1', 'outer inner test 2', 'outer test 3']);
   });
 
   it('should only run test 1 if filtered on index 0', () => {
@@ -84,7 +84,7 @@ describe('Selecting tests with nested suites', () => {
   });
 
   function filter(testIds: number[]) {
-    const selections = testIds.map(id => testSelections[id]);
+    const selections = testIds.map((id) => testSelections[id]);
     const filterFn = `(function (window) {${sut.filter(selections)}})(global);`;
     fs.writeFileSync(selectTestFile, filterFn, 'utf8');
   }

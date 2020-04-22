@@ -24,7 +24,7 @@ describe(MutationTestReportCalculator.name, () => {
     inputFiles = {
       files,
       filesToMutate: [],
-      logFiles: () => {}
+      logFiles: () => {},
     };
     sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock as Required<Reporter>)
@@ -55,7 +55,7 @@ describe(MutationTestReportCalculator.name, () => {
       files.push(new File('baz.vue', 'baz content'));
       files.push(new File('qux.ts', 'qux content'));
       files.push(new File('corge.tsx', 'corge content'));
-      const inputMutants = files.map(file => factory.mutantResult({ sourceFilePath: file.name }));
+      const inputMutants = files.map((file) => factory.mutantResult({ sourceFilePath: file.name }));
 
       // Act
       const actualReport = actReport(inputMutants);
@@ -77,30 +77,30 @@ describe(MutationTestReportCalculator.name, () => {
           mutatorName: 'Foo',
           replacement: 'foo replacement',
           sourceFilePath: 'foo.js',
-          status: MutantStatus.Killed
+          status: MutantStatus.Killed,
         }),
         factory.mutantResult({
           sourceFilePath: 'bar.js',
-          status: MutantStatus.NoCoverage
+          status: MutantStatus.NoCoverage,
         }),
         factory.mutantResult({
           sourceFilePath: 'baz.js',
-          status: MutantStatus.RuntimeError
+          status: MutantStatus.RuntimeError,
         }),
         factory.mutantResult({
           sourceFilePath: 'qux.js',
-          status: MutantStatus.Survived
+          status: MutantStatus.Survived,
         }),
         factory.mutantResult({
           sourceFilePath: '5.js',
-          status: MutantStatus.TimedOut
+          status: MutantStatus.TimedOut,
         }),
         factory.mutantResult({
           sourceFilePath: '6.js',
-          status: MutantStatus.TranspileError
-        })
+          status: MutantStatus.TranspileError,
+        }),
       ];
-      files.push(...inputMutants.map(m => new File(m.sourceFilePath, '')));
+      files.push(...inputMutants.map((m) => new File(m.sourceFilePath, '')));
 
       // Act
       const actualReport = actReport(inputMutants);
@@ -111,7 +111,7 @@ describe(MutationTestReportCalculator.name, () => {
         id: '1',
         mutatorName: 'Foo',
         replacement: 'foo replacement',
-        status: mutationTestReportSchema.MutantStatus.Killed
+        status: mutationTestReportSchema.MutantStatus.Killed,
       });
       expect(actualReport.files['bar.js'].mutants[0]).include({ status: mutationTestReportSchema.MutantStatus.NoCoverage });
       expect(actualReport.files['baz.js'].mutants[0]).include({ status: mutationTestReportSchema.MutantStatus.RuntimeError });
@@ -122,7 +122,7 @@ describe(MutationTestReportCalculator.name, () => {
 
     it('should offset location correctly', () => {
       const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
-      files.push(...inputMutants.map(m => new File(m.sourceFilePath, '')));
+      files.push(...inputMutants.map((m) => new File(m.sourceFilePath, '')));
       const actualReport = actReport(inputMutants);
       expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
     });
@@ -132,12 +132,12 @@ describe(MutationTestReportCalculator.name, () => {
       const inputMutants = [
         factory.mutantResult({
           mutatorName: 'Foo',
-          sourceFilePath: 'foo.js'
+          sourceFilePath: 'foo.js',
         }),
         factory.mutantResult({
           mutatorName: 'Bar',
-          sourceFilePath: 'foo.js'
-        })
+          sourceFilePath: 'foo.js',
+        }),
       ];
       files.push(new File('foo.js', ''));
 

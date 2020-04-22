@@ -19,8 +19,8 @@ export function createFakeWebpackConfig(): Configuration {
     entry: ['index.js'],
     output: {
       filename: 'bundle.js',
-      path: '/out'
-    }
+      path: '/out',
+    },
   };
 }
 
@@ -29,13 +29,13 @@ export function createTextFile(name: string): File {
 }
 
 function createFactory<T>(defaultFn: () => T): (overrides?: Partial<T>) => T {
-  return overrides => Object.assign(defaultFn(), overrides);
+  return (overrides) => Object.assign(defaultFn(), overrides);
 }
 
 export const createStrykerWebpackConfig = createFactory<StrykerWebpackConfig>(() => ({
   configFile: undefined,
   context: '/path/to/project/root',
-  silent: true
+  silent: true,
 }));
 
 export function createWebpackMock(): WebpackCompilerMock {
@@ -44,8 +44,8 @@ export function createWebpackMock(): WebpackCompilerMock {
     outputFileSystem: { fileSystem: {} },
     resolvers: {
       context: { fileSystem: {} },
-      normal: { fileSystem: {} }
+      normal: { fileSystem: {} },
     },
-    run: () => {}
+    run: () => {},
   };
 }

@@ -39,7 +39,7 @@ export default class CommandTestRunner implements TestRunner {
   constructor(private readonly workingDir: string, options: StrykerOptions) {
     this.settings = Object.assign(
       {
-        command: 'npm test'
+        command: 'npm test',
       },
       options.commandRunner
     );
@@ -50,19 +50,19 @@ export default class CommandTestRunner implements TestRunner {
       const timer = new Timer();
       const output: Array<string | Buffer> = [];
       const childProcess = exec(this.settings.command, { cwd: this.workingDir });
-      childProcess.on('error', error => {
+      childProcess.on('error', (error) => {
         kill(childProcess.pid)
           .then(() => handleResolve(errorResult(error)))
           .catch(rej);
       });
-      childProcess.on('exit', code => {
+      childProcess.on('exit', (code) => {
         const result = completeResult(code, timer);
         handleResolve(result);
       });
-      childProcess.stdout!.on('data', chunk => {
+      childProcess.stdout!.on('data', (chunk) => {
         output.push(chunk);
       });
-      childProcess.stderr!.on('data', chunk => {
+      childProcess.stderr!.on('data', (chunk) => {
         output.push(chunk);
       });
 
@@ -87,7 +87,7 @@ export default class CommandTestRunner implements TestRunner {
         return {
           errorMessages: [errorToString(error)],
           status: RunStatus.Error,
-          tests: []
+          tests: [],
         };
       }
 
@@ -100,21 +100,21 @@ export default class CommandTestRunner implements TestRunner {
               {
                 name: 'All tests',
                 status: TestStatus.Success,
-                timeSpentMs: duration
-              }
-            ]
+                timeSpentMs: duration,
+              },
+            ],
           };
         } else {
           return {
             status: RunStatus.Complete,
             tests: [
               {
-                failureMessages: [output.map(buf => buf.toString()).join(os.EOL)],
+                failureMessages: [output.map((buf) => buf.toString()).join(os.EOL)],
                 name: 'All tests',
                 status: TestStatus.Failed,
-                timeSpentMs: duration
-              }
-            ]
+                timeSpentMs: duration,
+              },
+            ],
           };
         }
       }

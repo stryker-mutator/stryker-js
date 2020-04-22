@@ -17,7 +17,7 @@ import LocationHelper from '../utils/LocationHelper';
 
 const enum StatementIndexKind {
   Function,
-  Statement
+  Statement,
 }
 
 /**
@@ -51,15 +51,15 @@ export class MutantTestMatcher {
     const testableMutants = this.createTestableMutants(mutants);
 
     if (this.options.coverageAnalysis === 'off') {
-      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Success));
+      testableMutants.forEach((mutant) => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Success));
     } else if (!this.initialRunResult.runResult.coverage) {
       this.log.warn(
         'No coverage result found, even though coverageAnalysis is "%s". Assuming that all tests cover each mutant. This might have a big impact on the performance.',
         this.options.coverageAnalysis
       );
-      testableMutants.forEach(mutant => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.FailedButAlreadyReported));
+      testableMutants.forEach((mutant) => mutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.FailedButAlreadyReported));
     } else {
-      await Promise.all(testableMutants.map(testableMutant => this.enrichWithCoveredTests(testableMutant)));
+      await Promise.all(testableMutants.map((testableMutant) => this.enrichWithCoveredTests(testableMutant)));
     }
     this.reporter.onAllMutantsMatchedWithTests(Object.freeze(testableMutants.map(this.mapMutantOnMatchedMutant)));
     return testableMutants;
@@ -68,7 +68,7 @@ export class MutantTestMatcher {
   public async enrichWithCoveredTests(testableMutant: TestableMutant) {
     const transpiledLocation = await this.initialRunResult.sourceMapper.transpiledLocationFor({
       fileName: testableMutant.mutant.fileName,
-      location: testableMutant.location
+      location: testableMutant.location,
     });
     const fileCoverage = this.initialRunResult.coverageMaps[transpiledLocation.fileName];
     const statementIndex = this.findMatchingStatement(new LocationHelper(transpiledLocation.location), fileCoverage);
@@ -119,17 +119,17 @@ export class MutantTestMatcher {
   }
 
   private createTestableMutants(mutants: readonly Mutant[]): readonly TestableMutant[] {
-    const sourceFiles = this.input.filesToMutate.map(file => new SourceFile(file));
+    const sourceFiles = this.input.filesToMutate.map((file) => new SourceFile(file));
     return mutants
       .map((mutant, index) => {
-        const sourceFile = sourceFiles.find(file => file.name === mutant.fileName);
+        const sourceFile = sourceFiles.find((file) => file.name === mutant.fileName);
         if (sourceFile) {
           return new TestableMutant(index.toString(), mutant, sourceFile);
         } else {
           this.log.error(
             `Mutant "${mutant.mutatorName}${mutant.replacement}" is corrupt, because cannot find a text file with name ${
               mutant.fileName
-            }. List of source files: \n\t${sourceFiles.map(s => s.name).join('\n\t')}`
+            }. List of source files: \n\t${sourceFiles.map((s) => s.name).join('\n\t')}`
           );
           return null;
         }
@@ -149,8 +149,8 @@ export class MutantTestMatcher {
       mutatorName: testableMutant.mutant.mutatorName,
       replacement: testableMutant.mutant.replacement,
       runAllTests: testableMutant.runAllTests,
-      scopedTestIds: testableMutant.selectedTests.map(testSelection => testSelection.id),
-      timeSpentScopedTests: testableMutant.timeSpentScopedTests
+      scopedTestIds: testableMutant.selectedTests.map((testSelection) => testSelection.id),
+      timeSpentScopedTests: testableMutant.timeSpentScopedTests,
     };
     return Object.freeze(matchedMutant);
   }
@@ -160,14 +160,14 @@ export class MutantTestMatcher {
     if (statementIndex) {
       return {
         index: statementIndex,
-        kind: StatementIndexKind.Statement
+        kind: StatementIndexKind.Statement,
       };
     } else {
       const functionIndex = this.findMatchingStatementInMap(location, fileCoverage.fnMap);
       if (functionIndex) {
         return {
           index: functionIndex,
-          kind: StatementIndexKind.Function
+          kind: StatementIndexKind.Function,
         };
       } else {
         return null;
@@ -184,16 +184,16 @@ export class MutantTestMatcher {
   private findMatchingStatementInMap(needle: LocationHelper, haystack: StatementMap): string | null {
     let smallestStatement: { index: string | null; location: LocationHelper } = {
       index: null,
-      location: LocationHelper.MAX_VALUE
+      location: LocationHelper.MAX_VALUE,
     };
     if (haystack) {
-      Object.keys(haystack).forEach(statementId => {
+      Object.keys(haystack).forEach((statementId) => {
         const statementLocation = haystack[statementId];
 
         if (needle.isCoveredBy(statementLocation) && smallestStatement.location.isSmallerArea(statementLocation)) {
           smallestStatement = {
             index: statementId,
-            location: new LocationHelper(statementLocation)
+            location: new LocationHelper(statementLocation),
           };
         }
       });

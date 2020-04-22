@@ -25,7 +25,7 @@ export default class WebpackCompiler {
   }
 
   public writeFilesToFs(files: readonly File[]): void {
-    files.forEach(file => this.writeToFs(file));
+    files.forEach((file) => this.writeToFs(file));
   }
 
   private writeToFs(file: File): void {

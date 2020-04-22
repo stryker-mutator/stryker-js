@@ -87,11 +87,11 @@ describe('LogConfigurator', () => {
       const multiProcessAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'worker', loggerPort: 42 };
       const expectedConfig: log4js.Configuration = {
         appenders: {
-          all: multiProcessAppender
+          all: multiProcessAppender,
         },
         categories: {
-          default: { level: LogLevel.Information, appenders: ['all'] }
-        }
+          default: { level: LogLevel.Information, appenders: ['all'] },
+        },
       };
       expect(log4jsConfigure).calledWith(expectedConfig);
     });
@@ -113,11 +113,11 @@ describe('LogConfigurator', () => {
   ): log4js.Configuration {
     const coloredLayout: log4js.PatternLayout = {
       pattern: '%[%r (%z) %p %c%] %m',
-      type: 'pattern'
+      type: 'pattern',
     };
     const notColoredLayout: log4js.PatternLayout = {
       pattern: '%r (%z) %p %c %m',
-      type: 'pattern'
+      type: 'pattern',
     };
 
     const consoleLayout = allowConsoleColors ? coloredLayout : notColoredLayout;
@@ -128,11 +128,11 @@ describe('LogConfigurator', () => {
         file: { type: 'file', layout: notColoredLayout, filename: 'stryker.log' },
         filteredConsoleCategory: { type: 'categoryFilter', appender: 'console', exclude: 'log4js' },
         filteredConsoleLevel: { type: 'logLevelFilter', appender: 'filteredConsoleCategory', level: consoleLevel },
-        filteredFile: { type: 'logLevelFilter', appender: 'file', level: fileLevel }
+        filteredFile: { type: 'logLevelFilter', appender: 'file', level: fileLevel },
       },
       categories: {
-        default: { level: defaultLevel, appenders: ['all'] }
-      }
+        default: { level: defaultLevel, appenders: ['all'] },
+      },
     };
   }
 });

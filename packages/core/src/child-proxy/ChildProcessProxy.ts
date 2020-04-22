@@ -59,7 +59,7 @@ export default class ChildProcessProxy<T> implements Disposable {
       options,
       requireName,
       requirePath,
-      workingDirectory
+      workingDirectory,
     });
     this.listenForMessages();
     this.listenToStdoutAndStderr();
@@ -98,7 +98,7 @@ export default class ChildProcessProxy<T> implements Disposable {
         } else {
           return undefined;
         }
-      }
+      },
     });
   }
 
@@ -114,7 +114,7 @@ export default class ChildProcessProxy<T> implements Disposable {
             args,
             correlationId,
             kind: WorkerMessageKind.Call,
-            methodName
+            methodName,
           });
         });
         return workerTask.promise;
@@ -172,7 +172,7 @@ export default class ChildProcessProxy<T> implements Disposable {
   }
 
   private reportError(error: Error) {
-    this.workerTasks.filter(task => !task.isCompleted).forEach(task => task.reject(error));
+    this.workerTasks.filter((task) => !task.isCompleted).forEach((task) => task.reject(error));
   }
 
   private readonly handleUnexpectedExit = (code: number, signal: string) => {

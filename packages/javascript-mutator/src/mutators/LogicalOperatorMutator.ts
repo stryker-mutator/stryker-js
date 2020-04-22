@@ -7,7 +7,7 @@ import { NodeMutator } from './NodeMutator';
 export default class LogicalOperatorMutator implements NodeMutator {
   private readonly operators: { [targetedOperator: string]: string | string[] } = {
     '&&': '||',
-    '||': '&&'
+    '||': '&&',
   };
 
   public name = 'LogicalOperator';
@@ -20,9 +20,9 @@ export default class LogicalOperatorMutator implements NodeMutator {
           mutatedOperators = [mutatedOperators];
         }
 
-        return mutatedOperators.map(mutatedOperator => [
+        return mutatedOperators.map((mutatedOperator) => [
           node,
-          NodeGenerator.createMutatedCloneWithProperties(node, { operator: mutatedOperator as any })
+          NodeGenerator.createMutatedCloneWithProperties(node, { operator: mutatedOperator as any }),
         ]);
       }
     }

@@ -7,7 +7,7 @@ export class HelloClass {
     return `hello from ${this.name}`;
   }
   public sayDelayed() {
-    return new Promise(res => res(`delayed hello from ${this.name}`));
+    return new Promise((res) => res(`delayed hello from ${this.name}`));
   }
 
   public say(...things: string[]) {

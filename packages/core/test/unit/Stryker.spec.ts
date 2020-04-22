@@ -31,7 +31,7 @@ import { mock, Mock, testableMutant } from '../helpers/producers';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
-  port: 4200
+  port: 4200,
 });
 
 describe(Stryker.name, () => {

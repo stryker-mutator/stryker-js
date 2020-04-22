@@ -21,7 +21,7 @@ export class OptionsEditorApplier implements OptionsEditor {
   ) {}
 
   public edit(options: StrykerOptions): void {
-    this.pluginResolver.resolveAll(PluginKind.OptionsEditor).map(plugin => {
+    this.pluginResolver.resolveAll(PluginKind.OptionsEditor).map((plugin) => {
       const optionsEditor = this.optionsEditorPluginCreator.create(plugin.name);
       optionsEditor.edit(options);
     });
@@ -30,7 +30,7 @@ export class OptionsEditorApplier implements OptionsEditor {
     const configEditors = this.pluginResolver.resolveAll(PluginKind.ConfigEditor);
     if (configEditors.length) {
       const config = createConfig(options);
-      configEditors.forEach(plugin => {
+      configEditors.forEach((plugin) => {
         const configEditor = this.configEditorPluginCreator.create(plugin.name);
         configEditor.edit(config);
       });

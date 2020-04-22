@@ -78,7 +78,7 @@ export default class Sandbox {
           `Failed find coverage data for this mutant, running all tests. This might have an impact on performance: ${transpiledMutant.mutant.toString()}`
         );
       }
-      await Promise.all(mutantFiles.map(mutatedFile => this.writeFileInSandbox(mutatedFile)));
+      await Promise.all(mutantFiles.map((mutatedFile) => this.writeFileInSandbox(mutatedFile)));
       const runResult = await this.run(
         this.calculateTimeout(transpiledMutant.mutant),
         this.getFilterTestsHooks(transpiledMutant.mutant),
@@ -112,7 +112,7 @@ export default class Sandbox {
 
   private collectMutantResult(mutant: TestableMutant, runResult: RunResult): MutantResult {
     const status: MutantStatus = this.determineMutantState(runResult);
-    const testNames = runResult.tests.filter(t => t.status !== TestStatus.Skipped).map(t => t.name);
+    const testNames = runResult.tests.filter((t) => t.status !== TestStatus.Skipped).map((t) => t.name);
     if (this.log.isDebugEnabled() && status === MutantStatus.RuntimeError) {
       const error = runResult.errorMessages ? runResult.errorMessages.toString() : '(undefined)';
       this.log.debug('A runtime error occurred: %s during execution of mutant: %s', error, mutant.toString());
@@ -127,7 +127,7 @@ export default class Sandbox {
       case RunStatus.Error:
         return MutantStatus.RuntimeError;
       case RunStatus.Complete:
-        if (runResult.tests.some(t => t.status === TestStatus.Failed)) {
+        if (runResult.tests.some((t) => t.status === TestStatus.Failed)) {
           return MutantStatus.Killed;
         } else {
           return MutantStatus.Survived;
@@ -136,9 +136,9 @@ export default class Sandbox {
   }
 
   private reset(mutatedFiles: readonly File[]) {
-    const originalFiles = this.files.filter(originalFile => mutatedFiles.some(mutatedFile => mutatedFile.name === originalFile.name));
+    const originalFiles = this.files.filter((originalFile) => mutatedFiles.some((mutatedFile) => mutatedFile.name === originalFile.name));
 
-    return Promise.all(originalFiles.map(file => writeFile(this.fileMap[file.name], file.content)));
+    return Promise.all(originalFiles.map((file) => writeFile(this.fileMap[file.name], file.content)));
   }
 
   private writeFileInSandbox(file: File): Promise<void> {
@@ -148,7 +148,7 @@ export default class Sandbox {
 
   private fillSandbox(): Promise<void[]> {
     this.fileMap = Object.create(null);
-    const copyPromises = this.files.map(file => this.fillFile(file));
+    const copyPromises = this.files.map((file) => this.fillFile(file));
     return Promise.all(copyPromises);
   }
 
@@ -185,7 +185,7 @@ export default class Sandbox {
   }
 
   private async initializeTestRunner(): Promise<void> {
-    const fileNames = Object.keys(this.fileMap).map(sourceFileName => this.fileMap[sourceFileName]);
+    const fileNames = Object.keys(this.fileMap).map((sourceFileName) => this.fileMap[sourceFileName]);
     this.log.debug('Creating test runner %s', this.index);
     this.testRunner = ResilientTestRunnerFactory.create(this.options, fileNames, this.workingDirectory, this.loggingContext);
     await this.testRunner.init();

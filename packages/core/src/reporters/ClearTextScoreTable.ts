@@ -26,7 +26,7 @@ class Column {
   }
 
   protected determineValueSize(row: MetricsResult = this.rows, ancestorCount: number = 0): number {
-    const valueWidths = row.childResults.map(child => this.determineValueSize(child, ancestorCount + 1));
+    const valueWidths = row.childResults.map((child) => this.determineValueSize(child, ancestorCount + 1));
     valueWidths.push(this.header.length);
     valueWidths.push(this.valueFactory(row, ancestorCount).length);
     return Math.max(...valueWidths);
@@ -59,7 +59,7 @@ class Column {
 
 class MutationScoreColumn extends Column {
   constructor(rows: MetricsResult, private readonly thresholds: MutationScoreThresholds) {
-    super('% score', row => row.metrics.mutationScore.toFixed(2), rows);
+    super('% score', (row) => row.metrics.mutationScore.toFixed(2), rows);
   }
   protected color(metricsResult: MetricsResult) {
     if (metricsResult.metrics.mutationScore >= this.thresholds.high) {
@@ -91,20 +91,20 @@ export default class ClearTextScoreTable {
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, thresholds),
-      new Column('# killed', row => row.metrics.killed.toString(), metricsResult),
-      new Column('# timeout', row => row.metrics.timeout.toString(), metricsResult),
-      new Column('# survived', row => row.metrics.survived.toString(), metricsResult),
-      new Column('# no cov', row => row.metrics.noCoverage.toString(), metricsResult),
-      new Column('# error', row => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(), metricsResult)
+      new Column('# killed', (row) => row.metrics.killed.toString(), metricsResult),
+      new Column('# timeout', (row) => row.metrics.timeout.toString(), metricsResult),
+      new Column('# survived', (row) => row.metrics.survived.toString(), metricsResult),
+      new Column('# no cov', (row) => row.metrics.noCoverage.toString(), metricsResult),
+      new Column('# error', (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(), metricsResult),
     ];
   }
 
   private drawBorder() {
-    return this.drawRow(column => column.drawLine());
+    return this.drawRow((column) => column.drawLine());
   }
 
   private drawHeader() {
-    return this.drawRow(c => c.drawHeader());
+    return this.drawRow((c) => c.drawHeader());
   }
 
   private drawRow(toDraw: (col: Column) => string) {
@@ -112,8 +112,8 @@ export default class ClearTextScoreTable {
   }
 
   private drawValues(current = this.metricsResult, ancestorCount = 0): string[] {
-    return [this.drawRow(c => c.drawTableCell(current, ancestorCount))].concat(
-      flatMap(current.childResults, child => this.drawValues(child, ancestorCount + 1))
+    return [this.drawRow((c) => c.drawTableCell(current, ancestorCount))].concat(
+      flatMap(current.childResults, (child) => this.drawValues(child, ancestorCount + 1))
     );
   }
 

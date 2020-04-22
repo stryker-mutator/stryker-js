@@ -13,7 +13,7 @@ export class Echo {
   }
 
   public sayDelayed(value: string, delay: number) {
-    return new Promise<string>(res => {
+    return new Promise<string>((res) => {
       setTimeout(() => {
         res(this.say(`${value} (${delay} ms)`));
       }, delay);
@@ -52,11 +52,11 @@ export class Echo {
   }
 
   public stdout(...args: string[]) {
-    args.forEach(arg => console.log(arg));
+    args.forEach((arg) => console.log(arg));
   }
 
   public stderr(...args: string[]) {
-    args.forEach(arg => console.error(arg));
+    args.forEach((arg) => console.error(arg));
   }
 
   public memoryLeak() {

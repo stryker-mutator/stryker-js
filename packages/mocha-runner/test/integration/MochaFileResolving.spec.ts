@@ -25,7 +25,7 @@ describe('Mocha 6 file resolving integration', () => {
       resolveTestDir('helpers/1.ts'),
       resolveTestDir('helpers/2.js'),
       resolveTestDir('specs/3.js'),
-      resolveTestDir('specs/4.ts')
+      resolveTestDir('specs/4.ts'),
     ]);
   });
 

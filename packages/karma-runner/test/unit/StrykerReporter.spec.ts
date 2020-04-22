@@ -33,14 +33,14 @@ describe('StrykerReporter', () => {
           description: '3',
           success: true,
           suite: ['1', '2'],
-          time: 64
+          time: 64,
         })
       );
       const expectedTestResult: TestResult = {
         failureMessages: [],
         name: '1 2 3',
         status: TestStatus.Success,
-        timeSpentMs: 64
+        timeSpentMs: 64,
       };
       expect(events()).lengthOf(1);
       expect(events()[0]).deep.eq(expectedTestResult);
@@ -49,14 +49,14 @@ describe('StrykerReporter', () => {
     it('should convert "skipped" to Timeout', () => {
       sut.onSpecComplete(undefined, karmaSpec({ skipped: true }));
       expect(events()[0]).include({
-        status: TestStatus.Skipped
+        status: TestStatus.Skipped,
       });
     });
 
     it('should convert "success" = false to Failed', () => {
       sut.onSpecComplete(undefined, karmaSpec({ success: false }));
       expect(events()[0]).include({
-        status: TestStatus.Failed
+        status: TestStatus.Failed,
       });
     });
 
@@ -81,7 +81,7 @@ describe('StrykerReporter', () => {
     it('should convert error to RunState.Error', () => {
       sut.onRunComplete(
         testResults({
-          error: true
+          error: true,
         })
       );
       expect(events()[0]).eq(RunStatus.Error);
@@ -90,7 +90,7 @@ describe('StrykerReporter', () => {
     it('should convert disconnected to RunState.Timeout', () => {
       sut.onRunComplete(
         testResults({
-          disconnected: true
+          disconnected: true,
         })
       );
       expect(events()[0]).eq(RunStatus.Timeout);
@@ -170,7 +170,7 @@ describe('StrykerReporter', () => {
         skipped: false,
         success: true,
         suite: ['foo', 'bar'],
-        time: 42
+        time: 42,
       },
       overrides
     );
@@ -183,7 +183,7 @@ describe('StrykerReporter', () => {
         error: false,
         exitCode: 0,
         failed: 0,
-        success: 0
+        success: 0,
       },
       overrides
     );

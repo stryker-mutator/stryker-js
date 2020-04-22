@@ -21,7 +21,7 @@ export default class BroadcastReporter implements StrictReporter {
     private readonly log: Logger
   ) {
     this.reporters = {};
-    this.options.reporters.forEach(reporterName => this.createReporter(reporterName));
+    this.options.reporters.forEach((reporterName) => this.createReporter(reporterName));
     this.logAboutReporters();
   }
 
@@ -46,7 +46,7 @@ export default class BroadcastReporter implements StrictReporter {
 
   private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<any> {
     return Promise.all(
-      Object.keys(this.reporters).map(async reporterName => {
+      Object.keys(this.reporters).map(async (reporterName) => {
         const reporter = this.reporters[reporterName];
         if (typeof reporter[methodName] === 'function') {
           try {

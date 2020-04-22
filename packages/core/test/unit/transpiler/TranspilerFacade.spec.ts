@@ -40,11 +40,7 @@ describe(TranspilerFacade.name, () => {
       resultFilesOne = [new File('result-1', '')];
       resultFilesTwo = [new File('result-2', '')];
       pluginCreatorMock = sinon.createStubInstance(PluginCreator);
-      pluginCreatorMock.create
-        .withArgs('transpiler-one')
-        .returns(transpilerOne)
-        .withArgs('transpiler-two')
-        .returns(transpilerTwo);
+      pluginCreatorMock.create.withArgs('transpiler-one').returns(transpilerOne).withArgs('transpiler-two').returns(transpilerTwo);
       transpilerOne.transpile.resolves(resultFilesOne);
       transpilerTwo.transpile.resolves(resultFilesTwo);
       sut = createSut();

@@ -41,11 +41,11 @@ describe('Sample integration', () => {
     const transpiler = new TypescriptTranspiler(options, /*produceSourceMaps: */ true, () => testInjector.logger);
     const outputFiles = await transpiler.transpile(inputFiles);
     expect(outputFiles).lengthOf(4);
-    const mapFiles = outputFiles.filter(file => file.name.endsWith('.map'));
+    const mapFiles = outputFiles.filter((file) => file.name.endsWith('.map'));
     expect(mapFiles).lengthOf(2);
-    expect(mapFiles.map(file => file.name)).deep.eq([
+    expect(mapFiles.map((file) => file.name)).deep.eq([
       path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'math.js.map'),
-      path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'useMath.js.map')
+      path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'useMath.js.map'),
     ]);
   });
 
@@ -55,8 +55,8 @@ describe('Sample integration', () => {
     const mutants = mutator.mutate(inputFiles);
     const transpiler = new TypescriptTranspiler(options, /*produceSourceMaps: */ false, () => testInjector.logger);
     transpiler.transpile(inputFiles);
-    const mathDotTS = inputFiles.filter(file => file.name.endsWith('math.ts'))[0];
-    const [firstArithmeticOperatorMutant, stringSubtractMutant] = mutants.filter(m => m.mutatorName === 'ArithmeticOperator');
+    const mathDotTS = inputFiles.filter((file) => file.name.endsWith('math.ts'))[0];
+    const [firstArithmeticOperatorMutant, stringSubtractMutant] = mutants.filter((m) => m.mutatorName === 'ArithmeticOperator');
     const correctResult = await transpiler.transpile([mutateFile(mathDotTS, firstArithmeticOperatorMutant)]);
     await expect(transpiler.transpile([mutateFile(mathDotTS, stringSubtractMutant)])).rejectedWith(
       "error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type."

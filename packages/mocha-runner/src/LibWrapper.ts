@@ -1,7 +1,7 @@
 import * as Mocha from 'mocha';
 import * as multimatch from 'multimatch';
 
-import { MochaOptions } from './MochaOptions';
+import { MochaOptions } from '../src-generated/mocha-runner-options';
 
 let loadOptions: undefined | ((argv?: string[] | string) => { [key: string]: any } | undefined);
 let handleFiles: undefined | ((options: MochaOptions) => string[]);

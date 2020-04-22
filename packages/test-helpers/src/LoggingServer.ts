@@ -11,22 +11,19 @@ export class LoggingServer {
   private disposed = false;
 
   constructor() {
-    this.server = net.createServer(socket => {
-      socket.on('data', data => {
+    this.server = net.createServer((socket) => {
+      socket.on('data', (data) => {
         // Log4js also sends "__LOG4JS__" to signal an event end. Ignore those.
-        const logEventStrings = data
-          .toString()
-          .split('__LOG4JS__')
-          .filter(Boolean);
-        const loggingEvents: log4js.LoggingEvent[] = logEventStrings.map(logEventString => parse(logEventString));
-        loggingEvents.forEach(event => this.subscriber && this.subscriber.next(event));
+        const logEventStrings = data.toString().split('__LOG4JS__').filter(Boolean);
+        const loggingEvents: log4js.LoggingEvent[] = logEventStrings.map((logEventString) => parse(logEventString));
+        loggingEvents.forEach((event) => this.subscriber && this.subscriber.next(event));
       });
       socket.on('error', () => {
         // A client connection was killed unexpectedly.
         // This happens during integration tests, this is safe to ignore (log4js does that as well)
       });
     });
-    this.event$ = new Observable<log4js.LoggingEvent>(subscriber => {
+    this.event$ = new Observable<log4js.LoggingEvent>((subscriber) => {
       this.subscriber = subscriber;
       this.server.on('close', () => {
         subscriber.complete();
@@ -40,7 +37,7 @@ export class LoggingServer {
       throw new Error('Server already listening');
     } else {
       this.alreadyListening = true;
-      return new Promise(res => {
+      return new Promise((res) => {
         this.server.on('listening', () => res((this.server.address() as net.AddressInfo).port));
         this.server.listen();
       });

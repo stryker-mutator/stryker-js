@@ -24,7 +24,7 @@ export default class MochaTestFramework implements TestFramework {
 
   public filter(testSelections: TestSelection[]) {
     if (testSelections.length) {
-      const selectedTestNames = testSelections.map(selection => selection.name);
+      const selectedTestNames = testSelections.map((selection) => selection.name);
       return `${FILTER_HEADER_FRAGMENT}
       var selectedTestNames = ${JSON.stringify(selectedTestNames)};
       if (window.____mochaAddTest) {

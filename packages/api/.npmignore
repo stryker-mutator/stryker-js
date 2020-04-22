@@ -7,6 +7,7 @@
 src/**/*.map
 src/**/*.ts
 !{src,src-generated}/**/*.d.ts
+!schema/*.json
 !readme.md
 !LICENSE
 !CHANGELOG.md

@@ -11,7 +11,9 @@ function resolve(...filePart: string[]) {
 }
 
 function readFiles(...files: string[]): Promise<File[]> {
-  return Promise.all(files.map(relative => resolve(relative)).map(fileName => fs.readFile(fileName).then(content => new File(fileName, content))));
+  return Promise.all(
+    files.map((relative) => resolve(relative)).map((fileName) => fs.readFile(fileName).then((content) => new File(fileName, content)))
+  );
 }
 
 describe('Source mapper integration', () => {
@@ -28,15 +30,15 @@ describe('Source mapper integration', () => {
         fileName: resolve('external-source-maps', 'ts', 'src', 'math.ts'),
         location: {
           end: { line: 7, column: 42 },
-          start: { line: 7, column: 8 }
-        }
+          start: { line: 7, column: 8 },
+        },
       });
       expect(actual).deep.eq({
         fileName: resolve('external-source-maps', 'js', 'math.js'),
         location: {
           end: { line: 16, column: 0 },
-          start: { line: 15, column: 10 }
-        }
+          start: { line: 15, column: 10 },
+        },
       });
     });
   });
@@ -51,15 +53,15 @@ describe('Source mapper integration', () => {
         fileName: resolve('inline-source-maps', 'ts', 'src', 'math.ts'),
         location: {
           end: { line: 7, column: 42 },
-          start: { line: 7, column: 8 }
-        }
+          start: { line: 7, column: 8 },
+        },
       });
       expect(actual).deep.eq({
         fileName: resolve('inline-source-maps', 'js', 'math.js'),
         location: {
           end: { line: 16, column: 0 },
-          start: { line: 15, column: 10 }
-        }
+          start: { line: 15, column: 10 },
+        },
       });
     });
   });

@@ -24,7 +24,7 @@ export default class JestGreaterThan25Adapter implements JestTestAdapter {
         findRelatedTests: !!fileNameUnderTest,
         config,
         runInBand: true,
-        silent: true
+        silent: true,
       },
       [projectRoot]
     );

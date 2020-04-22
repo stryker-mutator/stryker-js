@@ -16,7 +16,7 @@ export default class VueMutator implements Mutator {
   public mutate(inputFiles: File[]): Mutant[] {
     const mutants: Mutant[] = [];
 
-    inputFiles.forEach(file => {
+    inputFiles.forEach((file) => {
       if (file.name.endsWith('.vue')) {
         const script = compiler.parseComponent(file.textContent).script;
         if (script) {
@@ -24,7 +24,7 @@ export default class VueMutator implements Mutator {
           const { mutator, extension } = this.getVueScriptMutatorAndExtension(script);
           const vueFile = new File(file.name + extension, file.textContent.substring(script.start, script.end));
           const vueMutants = mutator.mutate([vueFile]);
-          vueMutants.forEach(mutant => {
+          vueMutants.forEach((mutant) => {
             mutant.fileName = file.name;
             mutant.range[0] += script.start;
             mutant.range[1] += script.start;

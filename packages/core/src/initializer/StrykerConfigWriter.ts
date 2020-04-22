@@ -47,9 +47,9 @@ export default class StrykerConfigWriter {
     const configObject: Partial<StrykerOptions> = {
       mutator: selectedMutator ? selectedMutator.name : '',
       packageManager: selectedPackageManager.name,
-      reporters: selectedReporters.map(rep => rep.name),
+      reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',
-      transpilers: selectedTranspilers ? selectedTranspilers.map(t => t.name) : []
+      transpilers: selectedTranspilers ? selectedTranspilers.map((t) => t.name) : [],
     };
 
     this.configureTestFramework(configObject, selectedTestFramework);
@@ -64,7 +64,7 @@ export default class StrykerConfigWriter {
   public async writePreset(presetConfig: PresetConfiguration, exportAsJson: boolean) {
     const config = {
       comment: `This config was generated using a preset. Please see the handbook for more information: ${presetConfig.handbookUrl}`,
-      ...presetConfig.config
+      ...presetConfig.config,
     };
 
     return this.writeStrykerConfig(config, exportAsJson);
@@ -109,7 +109,7 @@ export default class StrykerConfigWriter {
     this.out(`Writing & formatting ${STRYKER_JSON_CONFIG_FILE}...`);
     const typedConfig = {
       $schema: 'https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json',
-      ...commentedConfig
+      ...commentedConfig,
     };
     const formattedConfig = this.stringify(typedConfig);
     await fs.writeFile(STRYKER_JSON_CONFIG_FILE, formattedConfig);

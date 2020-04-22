@@ -10,6 +10,7 @@
   },
   "include": [
     "src",
+    "src-generated",
     "typings"
   ],
   "references": [

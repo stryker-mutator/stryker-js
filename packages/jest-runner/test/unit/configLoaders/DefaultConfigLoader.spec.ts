@@ -27,7 +27,7 @@ describe(`${CustomJestConfigLoader.name} integration`, () => {
 
     assert(requireStub.calledWith(path.join(projectRoot, 'jest.config.js')), `loader not called with ${projectRoot}/jest.config.js`);
     expect(config).to.deep.equal({
-      exampleProperty: 'exampleJestConfigValue'
+      exampleProperty: 'exampleJestConfigValue',
     });
   });
 
@@ -40,7 +40,7 @@ describe(`${CustomJestConfigLoader.name} integration`, () => {
       `readFileSync not called with ${projectRoot}/package.json`
     );
     expect(config).to.deep.equal({
-      exampleProperty: 'examplePackageJsonValue'
+      exampleProperty: 'examplePackageJsonValue',
     });
   });
 
