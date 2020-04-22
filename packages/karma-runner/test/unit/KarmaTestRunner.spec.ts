@@ -11,7 +11,7 @@ import * as sinon from 'sinon';
 import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
-import StrykerKarmaSetup, { NgConfigOptions } from '../../src/StrykerKarmaSetup';
+import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
 import StrykerReporter from '../../src/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
 

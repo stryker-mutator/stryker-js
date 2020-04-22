@@ -2,12 +2,9 @@
 !*.d.ts
 !bin/**
 !src/**
-!schema/**
-!*.js
 src/**/*.map
 src/**/*.ts
-!{src,src-generated}/**/*.d.ts
-!schema/*.json
+!src/**/*.d.ts
 !readme.md
 !LICENSE
 !CHANGELOG.md

@@ -26,7 +26,7 @@ describe('QUnit sample', () => {
       ui: 'qunit',
     });
     testInjector.options.mochaOptions = mochaOptions;
-    files = mochaOptions.spec || [];
+    files = mochaOptions.spec;
     const sut = createSut();
     await sut.init();
     const actualResult = await sut.run({});

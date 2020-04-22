@@ -23,7 +23,7 @@ npm install --save-dev @stryker-mutator/typescript
 Now open up your `stryker.conf.js` (or `stryker.conf.json`) file and add the following components:
 
 ```javascript
-coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
+coverageAnalysis: 'perTest', // Coverage analysis is supported
 tsconfigFile: 'tsconfig.json', // Location of your tsconfig.json file
 mutator: 'typescript', // Specify that you want to mutate typescript code
 transpilers: [

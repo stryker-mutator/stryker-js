@@ -5,8 +5,9 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
 
+import { MochaOptions } from '../src-generated/mocha-runner-options';
+
 import LibWrapper from './LibWrapper';
-import { MochaOptions } from './MochaOptions';
 import { StrykerMochaReporter } from './StrykerMochaReporter';
 import { evalGlobal, mochaOptionsKey } from './utils';
 
@@ -149,7 +150,7 @@ export class MochaTestRunner implements TestRunner {
     }
 
     if (options) {
-      setIfDefined(options.asyncOnly, mocha.asyncOnly);
+      setIfDefined(options['async-only'], asyncOnly => asyncOnly && mocha.asyncOnly());
       setIfDefined(options.timeout, mocha.timeout);
       setIfDefined(options.ui, mocha.ui);
       setIfDefined(options.grep, mocha.grep);

@@ -5,22 +5,28 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
+import { MochaOptions } from '../src-generated/mocha-runner-options';
+
 import LibWrapper from './LibWrapper';
-import { MochaOptions } from './MochaOptions';
 import { filterConfig, mochaOptionsKey, serializeArguments } from './utils';
 
 /**
  * Subset of defaults for mocha options
  * @see https://github.com/mochajs/mocha/blob/master/lib/mocharc.json
  */
-export const DEFAULT_MOCHA_OPTIONS = Object.freeze({
+export const DEFAULT_MOCHA_OPTIONS: Readonly<MochaOptions> = Object.freeze({
   extension: ['js'],
+  require: [],
   file: [],
   ignore: [],
   opts: './test/mocha.opts',
   spec: ['test'],
   timeout: 2000,
   ui: 'bdd',
+  'no-package': false,
+  'no-opts': false,
+  'no-config': false,
+  'async-only': false
 });
 
 export default class MochaOptionsLoader {
@@ -57,7 +63,7 @@ export default class MochaOptionsLoader {
     return options;
   }
 
-  private loadLegacyMochaOptsFile(opts: false | string | undefined): MochaOptions {
+  private loadLegacyMochaOptsFile(opts: false | string | undefined): Partial<MochaOptions> {
     switch (typeof opts) {
       case 'boolean':
         this.log.debug('Not reading additional mochaOpts from a file');
@@ -103,15 +109,15 @@ export default class MochaOptionsLoader {
             break;
           case '--timeout':
           case '-t':
-            mochaRunnerOptions.timeout = this.parseNextInt(args);
+            mochaRunnerOptions.timeout = this.parseNextInt(args, DEFAULT_MOCHA_OPTIONS.timeout);
             break;
           case '--async-only':
           case '-A':
-            mochaRunnerOptions.asyncOnly = true;
+            mochaRunnerOptions['async-only'] = true;
             break;
           case '--ui':
           case '-u':
-            mochaRunnerOptions.ui = this.parseNextString(args);
+            mochaRunnerOptions.ui = this.parseNextString(args) ?? DEFAULT_MOCHA_OPTIONS.ui;
             break;
           case '--grep':
           case '-g':
@@ -119,7 +125,7 @@ export default class MochaOptionsLoader {
             if (arg.startsWith('/') && arg.endsWith('/')) {
               arg = arg.substring(1, arg.length - 1);
             }
-            mochaRunnerOptions.grep = new RegExp(arg);
+            mochaRunnerOptions.grep = arg;
             break;
           default:
             this.log.debug(`Ignoring option "${args[0]}" as it is not supported.`);
@@ -130,11 +136,11 @@ export default class MochaOptionsLoader {
     return mochaRunnerOptions;
   }
 
-  private parseNextInt(args: string[]): number | undefined {
+  private parseNextInt(args: string[], otherwise: number): number {
     if (args.length > 1) {
       return parseInt(args[1], 10);
     } else {
-      return undefined;
+      return otherwise;
     }
   }
 

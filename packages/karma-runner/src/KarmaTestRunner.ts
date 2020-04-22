@@ -5,10 +5,12 @@ import { CoverageCollection, CoveragePerTestResult, RunResult, RunStatus, TestRe
 import * as karma from 'karma';
 
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
+import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
+
 import ProjectStarter from './starters/ProjectStarter';
-import StrykerKarmaSetup, { KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
 import StrykerReporter from './StrykerReporter';
 import TestHooksMiddleware from './TestHooksMiddleware';
+import { KarmaRunnerOptionsWithStrykerOptions } from './KarmaRunnerOptionsWithStrykerOptions';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
@@ -64,7 +66,7 @@ export default class KarmaTestRunner implements TestRunner {
     const defaultKarmaConfig: StrykerKarmaSetup = {
       projectType: 'custom',
     };
-    return Object.assign(defaultKarmaConfig, options[KARMA_CONFIG_KEY]);
+    return Object.assign(defaultKarmaConfig, (options as KarmaRunnerOptionsWithStrykerOptions).karma);
   }
 
   private setGlobals(setup: StrykerKarmaSetup, getLogger: LoggerFactoryMethod) {
