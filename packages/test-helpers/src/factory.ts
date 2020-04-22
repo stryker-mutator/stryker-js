@@ -17,7 +17,12 @@ const ajv = new Ajv({ useDefaults: true });
 /**
  * This validator will fill in the defaults of stryker options as registered in the schema.
  */
-const strykerOptionsValidator: (overrides: Partial<StrykerOptions>) => void = ajv.compile(strykerCoreSchema);
+function strykerOptionsValidator(overrides: Partial<StrykerOptions>): asserts overrides is StrykerOptions {
+  const ajvValidator = ajv.compile(strykerCoreSchema);
+  if (!ajvValidator(overrides)) {
+    throw new Error('Unknown stryker options ' + ajv.errorsText(ajvValidator.errors));
+  }
+}
 
 /**
  * A 1x1 png base64 encoded
