@@ -22,7 +22,6 @@ describe(buildMainInjector.name, () => {
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
   let buildSchemaWithPluginContributionsStub: sinon.SinonStub;
-  let validateOptionsStub: sinon.SinonStub;
   let optionsEditorApplierMock: sinon.SinonStubbedInstance<configModule.OptionsEditorApplier>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
   let optionsValidatorStub: sinon.SinonStubbedInstance<configModule.OptionsValidator>;
@@ -39,14 +38,12 @@ describe(buildMainInjector.name, () => {
     pluginLoaderMock = sinon.createStubInstance(di.PluginLoader);
     optionsValidatorStub = sinon.createStubInstance(configModule.OptionsValidator);
     buildSchemaWithPluginContributionsStub = sinon.stub();
-    validateOptionsStub = sinon.stub();
     expectedConfig = factory.strykerOptions();
     broadcastReporterMock = factory.reporter('broadcast');
     configReaderMock.readConfig.returns(expectedConfig);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
     stubInjectable(configModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
     stubInjectable(configModule, 'buildSchemaWithPluginContributions').returns(buildSchemaWithPluginContributionsStub);
-    stubInjectable(configModule, 'validateOptions').returns(validateOptionsStub);
     stubInjectable(configModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(di, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
