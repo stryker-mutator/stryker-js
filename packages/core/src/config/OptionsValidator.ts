@@ -9,7 +9,7 @@ import { ConfigError } from '../errors';
 
 import { describeErrors } from './validationErrors';
 
-const ajv = new Ajv({ useDefaults: true, allErrors: true, jsonPointers: false, verbose: true, missingRefs: 'ignore' });
+const ajv = new Ajv({ useDefaults: true, allErrors: true, jsonPointers: false, verbose: true, missingRefs: 'ignore', logger: false });
 
 export class OptionsValidator {
   private readonly validateFn: Ajv.ValidateFunction;
