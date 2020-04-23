@@ -17,6 +17,11 @@ describe(deepFreeze.name, () => {
     expect(output).not.eq(input);
   });
 
+  it('should work for `null` and `undefined`', () => {
+    expect(deepFreeze(null)).eq(null);
+    expect(deepFreeze(undefined)).eq(undefined);
+  });
+
   it('should work for primitives', () => {
     const s = Symbol();
     expect(deepFreeze(42)).eq(42);

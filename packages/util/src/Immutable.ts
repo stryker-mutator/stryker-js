@@ -24,6 +24,9 @@ export function deepFreeze<T>(target: T): Immutable<T> {
       if (target instanceof Map) {
         return (Object.freeze(new Map([...target.entries()].map(([k, v]) => [deepFreeze(k), deepFreeze(v)]))) as unknown) as Immutable<T>;
       }
+      if (target === null) {
+        return null as Immutable<T>;
+      }
       if (target instanceof Set) {
         return (Object.freeze(new Set([...target.values()].map(deepFreeze))) as unknown) as Immutable<T>;
       }
