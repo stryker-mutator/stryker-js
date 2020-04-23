@@ -35,11 +35,7 @@ class TestInjector {
     this.mutatorDescriptor = factory.mutatorDescriptor();
     this.options = factory.strykerOptions();
     this.logger = factory.logger();
-    this.pluginResolver = {
-      resolve: sinon.stub(),
-      resolveAll: sinon.stub(),
-      resolveValidationSchemaContributions: sinon.stub(),
-    };
+    this.pluginResolver = factory.pluginResolver();
   }
 }
 

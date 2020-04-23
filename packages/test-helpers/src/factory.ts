@@ -11,6 +11,7 @@ import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
 import { OptionsEditor } from '@stryker-mutator/api/src/core/OptionsEditor';
+import { PluginResolver } from '@stryker-mutator/api/plugin';
 
 const ajv = new Ajv({ useDefaults: true });
 
@@ -39,6 +40,14 @@ function factoryMethod<T>(defaultsFactory: () => T) {
 }
 
 export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
+
+export function pluginResolver(): sinon.SinonStubbedInstance<PluginResolver> {
+  return {
+    resolve: sinon.stub(),
+    resolveAll: sinon.stub(),
+    resolveValidationSchemaContributions: sinon.stub(),
+  };
+}
 
 export const mutantResult = factoryMethod<MutantResult>(() => ({
   id: '256',
