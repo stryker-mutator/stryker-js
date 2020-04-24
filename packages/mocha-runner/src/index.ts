@@ -13,3 +13,5 @@ mochaOptionsEditorFactory.inject = tokens(commonTokens.injector);
 function mochaOptionsEditorFactory(injector: Injector<BaseContext>): MochaOptionsEditor {
   return injector.provideClass('loader', MochaOptionsLoader).injectClass(MochaOptionsEditor);
 }
+
+export * as strykerValidationSchema from '../schema/mocha-runner-options.json';

@@ -8,7 +8,7 @@ import { Configuration } from 'webpack';
 import ConfigLoader from '../../src/compiler/ConfigLoader';
 import WebpackCompiler, * as webpackCompilerModule from '../../src/compiler/WebpackCompiler';
 import WebpackTranspiler from '../../src/WebpackTranspiler';
-import { createMockInstance, createStrykerWebpackConfig, createTextFile, Mock } from '../helpers/producers';
+import { createMockInstance, createTextFile, Mock, createWebpackOptions } from '../helpers/producers';
 
 describe('WebpackTranspiler', () => {
   let webpackTranspiler: WebpackTranspiler;
@@ -30,7 +30,7 @@ describe('WebpackTranspiler', () => {
 
     sinon.stub(webpackCompilerModule, 'default').returns(webpackCompilerStub);
 
-    testInjector.options.webpack = { context: '/path/to/project/root' };
+    testInjector.options.webpack = createWebpackOptions({ context: '/path/to/project/root' });
   });
 
   it('should only create the compiler once', async () => {
@@ -41,7 +41,7 @@ describe('WebpackTranspiler', () => {
     expect(webpackCompilerModule.default).calledOnce;
     expect(webpackCompilerModule.default).calledWithNew;
     expect(configLoaderStub.load).calledOnce;
-    expect(configLoaderStub.load).calledWith(createStrykerWebpackConfig());
+    expect(configLoaderStub.load).calledWith(createWebpackOptions());
   });
 
   it('should throw an error if `produceSourceMaps` is `true`', () => {

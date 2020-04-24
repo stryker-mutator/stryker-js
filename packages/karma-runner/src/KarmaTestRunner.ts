@@ -97,7 +97,6 @@ export default class KarmaTestRunner implements TestRunner {
     StrykerReporter.instance.on('server_start', (port: number) => {
       this.port = port;
     });
-    StrykerReporter.instance.on('server_start', () => {});
   }
 
   private listenToCoverage() {

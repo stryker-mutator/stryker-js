@@ -11,21 +11,31 @@ export function evalGlobal(body: string) {
   fn(require);
 }
 
-export function serializeArguments(mochaOptions: MochaOptions) {
+export function serializeMochaLoadOptionsArguments(mochaOptions: MochaOptions): string[] {
   const args: string[] = [];
-  Object.keys(mochaOptions).forEach((key) => {
-    args.push(`--${key}`);
-    const value: any = (mochaOptions as any)[key];
-    if (typeof value === 'string') {
-      args.push(value);
-    } else if (Array.isArray(value)) {
-      args.push(value.join(','));
-    }
-  });
+  if (mochaOptions['no-config']) {
+    args.push('--no-config');
+  }
+  if (mochaOptions['no-opts']) {
+    args.push('--no-opts');
+  }
+  if (mochaOptions['no-package']) {
+    args.push('--no-package');
+  }
+  if (mochaOptions.package) {
+    args.push('--package');
+    args.push(mochaOptions.package);
+  }
+  if (mochaOptions.opts) {
+    args.push('--opts');
+    args.push(mochaOptions.opts);
+  }
+  if (mochaOptions.config) {
+    args.push('--config');
+    args.push(mochaOptions.config);
+  }
   return args;
 }
-
-export const mochaOptionsKey = 'mochaOptions';
 
 const SUPPORTED_MOCHA_OPTIONS = Object.freeze(Object.keys(mochaSchema.properties.mochaOptions.properties));
 

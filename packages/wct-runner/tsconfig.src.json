@@ -11,7 +11,8 @@
   },
   "include": [
     "src",
-    "typings"
+    "typings",
+    "schema/*.json"
   ],
   "references": [
     {

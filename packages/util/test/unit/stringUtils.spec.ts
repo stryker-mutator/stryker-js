@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces } from '../../src';
+import { normalizeWhitespaces, propertyPath } from '../../src';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {
@@ -14,6 +14,18 @@ describe('stringUtils', () => {
 
     it('should normalize a string with multiple consecutive spaces, tabs and new lines', () => {
       expect(normalizeWhitespaces('foo \t \n bar\n\tbaz')).eq('foo bar baz');
+    });
+  });
+
+  describe(propertyPath.name, () => {
+    interface Foo {
+      bar: {
+        baz: string;
+      };
+    }
+
+    it('should be able to point to a path', () => {
+      expect(propertyPath<Foo>('bar', 'baz')).eq('bar.baz');
     });
   });
 });

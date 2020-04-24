@@ -10,6 +10,7 @@ import TranspileFilter from '../../src/transpiler/TranspileFilter';
 import TranspilingLanguageService, * as transpilingLanguageService from '../../src/transpiler/TranspilingLanguageService';
 import { EmitOutput } from '../../src/transpiler/TranspilingLanguageService';
 import TypescriptTranspiler from '../../src/TypescriptTranspiler';
+import { TypescriptWithStrykerOptions } from '../../src/TypescriptWithStrykerOptions';
 
 describe(TypescriptTranspiler.name, () => {
   let languageService: sinon.SinonStubbedInstance<TranspilingLanguageService>;
@@ -62,7 +63,7 @@ describe(TypescriptTranspiler.name, () => {
       expectFilesEqual(outputFiles, [input[0], new File('file2.js', 'file2'), new File('file4.js', 'file4')]);
     });
 
-    it('should not transpile header files', async () => {
+    it('should not transform declaration files', async () => {
       // Arrange
       const input = [new File('file1.ts', ''), new File('file2.d.ts', '')];
       arrangeIncludedFiles();
@@ -75,6 +76,24 @@ describe(TypescriptTranspiler.name, () => {
       expectFilesEqual(outputFiles, [new File('file1.js', ''), input[1]]);
       expect(languageService.emit).calledOnce;
       expect(languageService.emit).calledWith('file1.ts');
+    });
+
+    it("should not transform json files that don't have output", async () => {
+      // Arrange
+      (testInjector.options as TypescriptWithStrykerOptions).tsconfig = {
+        options: {
+          // no outDir
+        },
+      };
+      const input = [new File('file1.json', '')];
+      arrangeIncludedFiles();
+
+      // Act
+      const outputFiles = await sut.transpile(input);
+
+      // Assert
+      expectFilesEqual(outputFiles, [new File('file1.json', ''), input[0]]);
+      expect(languageService.emit).not.called;
     });
 
     it('should remove duplicate files (issue 1318)', async () => {

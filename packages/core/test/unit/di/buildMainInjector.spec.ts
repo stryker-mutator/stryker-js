@@ -21,23 +21,30 @@ describe(buildMainInjector.name, () => {
   let testFrameworkMock: TestFramework;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
+  let buildSchemaWithPluginContributionsStub: sinon.SinonStub;
   let optionsEditorApplierMock: sinon.SinonStubbedInstance<configModule.OptionsEditorApplier>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
+  let optionsValidatorStub: sinon.SinonStubbedInstance<configModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;
 
   beforeEach(() => {
     configReaderMock = sinon.createStubInstance(ConfigReader);
+    pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     optionsEditorApplierMock = sinon.createStubInstance(configModule.OptionsEditorApplier);
     testFrameworkMock = factory.testFramework();
     testFrameworkOrchestratorMock = sinon.createStubInstance(TestFrameworkOrchestrator);
     testFrameworkOrchestratorMock.determineTestFramework.returns(testFrameworkMock);
     pluginLoaderMock = sinon.createStubInstance(di.PluginLoader);
+    optionsValidatorStub = sinon.createStubInstance(configModule.OptionsValidator);
+    buildSchemaWithPluginContributionsStub = sinon.stub();
     expectedConfig = factory.strykerOptions();
     broadcastReporterMock = factory.reporter('broadcast');
     configReaderMock.readConfig.returns(expectedConfig);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
     stubInjectable(configModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
+    stubInjectable(configModule, 'buildSchemaWithPluginContributions').returns(buildSchemaWithPluginContributionsStub);
+    stubInjectable(configModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(di, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
     stubInjectable(broadcastReporterModule, 'default').returns(broadcastReporterMock);
@@ -84,6 +91,11 @@ describe(buildMainInjector.name, () => {
       const expectedCliOptions = { foo: 'bar' };
       buildMainInjector(expectedCliOptions).resolve(commonTokens.options);
       expect(configReaderModule.default).calledWith(expectedCliOptions);
+    });
+
+    it('should validate the options', () => {
+      buildMainInjector({}).resolve(commonTokens.options);
+      expect(optionsValidatorStub.validate).calledWith(expectedConfig);
     });
   });
 

@@ -59,7 +59,7 @@ export default class ConfigReader {
       }
     }
 
-    if (this.cliOptions.configFile) {
+    if (typeof this.cliOptions.configFile === 'string') {
       this.log.debug(`Loading config ${this.cliOptions.configFile}`);
       const configFile = this.resolveConfigFile(this.cliOptions.configFile);
       try {

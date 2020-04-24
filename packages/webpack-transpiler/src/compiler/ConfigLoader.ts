@@ -6,7 +6,7 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Configuration } from 'webpack';
 
 import { pluginTokens } from '../pluginTokens';
-import { StrykerWebpackConfig } from '../WebpackTranspiler';
+import { WebpackOptions } from '../../src-generated/webpack-transpiler-options';
 
 import { NodeRequireFunction } from './NodeRequireFunction';
 
@@ -16,13 +16,13 @@ export default class ConfigLoader {
   public static inject = tokens(commonTokens.logger, pluginTokens.require);
   constructor(private readonly log: Logger, private readonly requireFn: NodeRequireFunction) {}
 
-  public async load(config: StrykerWebpackConfig): Promise<Configuration> {
+  public async load(config: WebpackOptions): Promise<Configuration> {
     let webpackConfig: Configuration;
 
     if (config.configFile) {
       webpackConfig = await this.loadWebpackConfigFromProjectRoot(config.configFile);
       if (webpackConfig instanceof Function) {
-        webpackConfig = webpackConfig.apply(null, config.configFileArgs);
+        webpackConfig = webpackConfig();
       }
       if (config.silent) {
         this.configureSilent(webpackConfig);

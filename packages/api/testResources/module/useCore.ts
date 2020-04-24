@@ -18,6 +18,14 @@ const optionsAllArgs: StrykerOptions = {
   thresholds: { high: 80, low: 20, break: null},
   timeoutFactor: 1.5,
   timeoutMS: 5000,
+  clearTextReporter: {
+    allowColor: true,
+    logTests: true,
+    maxTestsToLog: 3,
+  },
+  eventReporter: {
+    baseDir: 'reports/mutation/events'
+  },
   transpilers: [],
   dashboard: {
     baseUrl: 'baseUrl',

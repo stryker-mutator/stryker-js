@@ -2,7 +2,7 @@ import { File } from '@stryker-mutator/api/core';
 import * as sinon from 'sinon';
 import { Configuration } from 'webpack';
 
-import { StrykerWebpackConfig } from '../../src/WebpackTranspiler';
+import { WebpackOptions } from '../../src-generated/webpack-transpiler-options';
 
 import { WebpackCompilerMock } from './mockInterfaces';
 
@@ -32,8 +32,7 @@ function createFactory<T>(defaultFn: () => T): (overrides?: Partial<T>) => T {
   return (overrides) => Object.assign(defaultFn(), overrides);
 }
 
-export const createStrykerWebpackConfig = createFactory<StrykerWebpackConfig>(() => ({
-  configFile: undefined,
+export const createWebpackOptions = createFactory<WebpackOptions>(() => ({
   context: '/path/to/project/root',
   silent: true,
 }));

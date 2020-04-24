@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "mochaOptions": {
+    "spec": "this should have been an array"
+  },
+  "tsconfigFile": 42,
+  "babel": {
+    "extensions": "should be an array"
+  },
+  "jasmineConfigFile": {
+    "should": "be a string"
+  },
+  "karma": {
+    "projectType": "Project type not supported"
+  },
+  "webpack": {
+    "configFile": [
+      "should be a string"
+    ]
+  }
+}

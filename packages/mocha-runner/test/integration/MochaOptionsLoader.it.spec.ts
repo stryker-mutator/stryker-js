@@ -5,7 +5,7 @@ import { expect } from 'chai';
 
 import { MochaOptions } from '../../src-generated/mocha-runner-options';
 import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
-import { mochaOptionsKey } from '../../src/utils';
+import { MochaRunnerWithStrykerOptions } from '../../src/MochaRunnerWithStrykerOptions';
 
 describe(`${MochaOptionsLoader.name} integration`, () => {
   let sut: MochaOptionsLoader;
@@ -142,9 +142,10 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     return path.resolve(__dirname, '..', '..', 'testResources', 'mocha-config', relativeName);
   }
 
-  function actLoad(mochaConfig: Partial<MochaOptions>): MochaOptions {
-    testInjector.options[mochaOptionsKey] = mochaConfig;
-    return sut.load(testInjector.options);
+  function actLoad(mochaConfig: MochaOptions): MochaOptions {
+    const mochaRunnerWithStrykerOptions = testInjector.options as MochaRunnerWithStrykerOptions;
+    mochaRunnerWithStrykerOptions.mochaOptions = mochaConfig;
+    return sut.load(mochaRunnerWithStrykerOptions);
   }
 
   function createSut() {

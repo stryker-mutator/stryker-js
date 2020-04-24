@@ -1,32 +1,27 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { OptionsEditor, StrykerOptions } from '@stryker-mutator/api/core';
+import { OptionsEditor } from '@stryker-mutator/api/core';
 
 import CustomJestConfigLoader from './configLoaders/CustomJestConfigLoader';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
 import ReactScriptsJestConfigLoader from './configLoaders/ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader from './configLoaders/ReactScriptsTSJestConfigLoader';
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
+import { JestRunnerOptionsWithStrykerOptions } from './JestRunnerOptionsWithStrykerOptions';
 
 const DEFAULT_PROJECT_NAME = 'custom';
 
-export default class JestOptionsEditor implements OptionsEditor {
+export default class JestOptionsEditor implements OptionsEditor<JestRunnerOptionsWithStrykerOptions> {
   public static inject = tokens(commonTokens.logger);
 
   constructor(private readonly log: Logger) {}
 
-  public edit(options: StrykerOptions): void {
-    // If there is no Jest property on the Stryker config create it
-    options.jest = options.jest || {};
-
-    // When no projectType is set, set it to the default
-    options.jest.projectType = options.jest.projectType || options.jest.project || DEFAULT_PROJECT_NAME;
-
+  public edit(options: JestRunnerOptionsWithStrykerOptions): void {
     // When no config property is set, load the configuration with the project type
-    options.jest.config = options.jest.config || this.getConfigLoader(options.jest.projectType).loadConfig();
+    options.jest.config = options.jest.config || (this.getConfigLoader(options.jest.projectType).loadConfig() as any);
 
     // Override some of the config properties to optimise Jest for Stryker
-    options.jest.config = this.overrideProperties(options.jest.config);
+    options.jest.config = this.overrideProperties((options.jest.config as unknown) as Jest.Configuration);
   }
 
   private getConfigLoader(projectType: string): JestConfigLoader {
@@ -53,6 +48,6 @@ export default class JestOptionsEditor implements OptionsEditor {
   }
 
   private overrideProperties(config: Jest.Configuration) {
-    return Object.assign(config, JEST_OVERRIDE_OPTIONS);
+    return { ...config, ...JEST_OVERRIDE_OPTIONS };
   }
 }

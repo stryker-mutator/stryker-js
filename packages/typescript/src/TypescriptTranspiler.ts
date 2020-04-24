@@ -4,22 +4,21 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 import * as ts from 'typescript';
 
-import { getProjectDirectory, getTSConfig, guardTypescriptVersion, isHeaderFile } from './helpers/tsHelpers';
+import { getProjectDirectory, getTSConfig, guardTypescriptVersion, isHeaderFile as isDeclarationFile } from './helpers/tsHelpers';
 import TranspileFilter from './transpiler/TranspileFilter';
 import TranspilingLanguageService from './transpiler/TranspilingLanguageService';
+import { TypescriptWithStrykerOptions } from './TypescriptWithStrykerOptions';
 
 export default class TypescriptTranspiler implements Transpiler {
   private languageService: TranspilingLanguageService;
   private readonly filter: TranspileFilter;
+  private readonly options: TypescriptWithStrykerOptions;
 
   public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps, commonTokens.getLogger);
-  constructor(
-    private readonly options: StrykerOptions,
-    private readonly produceSourceMaps: boolean,
-    private readonly getLogger: LoggerFactoryMethod
-  ) {
+  constructor(options: StrykerOptions, private readonly produceSourceMaps: boolean, private readonly getLogger: LoggerFactoryMethod) {
     guardTypescriptVersion();
-    this.filter = TranspileFilter.create(this.options);
+    this.options = options;
+    this.filter = TranspileFilter.create(options);
   }
 
   public transpile(files: readonly File[]): Promise<readonly File[]> {
@@ -59,7 +58,7 @@ export default class TypescriptTranspiler implements Transpiler {
     const fileDictionary: { [name: string]: File } = {};
     files.forEach((file) => (fileDictionary[file.name] = file));
     files.forEach((file) => {
-      if (!isHeaderFile(file.name)) {
+      if (!isDeclarationFile(file.name) && !this.hasJsonOutput(file.name)) {
         if (this.filter.isIncluded(file.name)) {
           // File is to be transpiled. Only emit if more output is expected.
           if (!isSingleOutput) {
@@ -75,5 +74,8 @@ export default class TypescriptTranspiler implements Transpiler {
     });
 
     return Object.keys(fileDictionary).map((name) => fileDictionary[name]);
+  }
+  private hasJsonOutput(fileName: string): boolean {
+    return fileName.endsWith('.json') && !getTSConfig(this.options).options.outDir;
   }
 }

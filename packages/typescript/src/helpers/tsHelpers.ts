@@ -1,11 +1,11 @@
 import * as os from 'os';
 import * as path from 'path';
 
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/api/core';
 import * as semver from 'semver';
 import * as ts from 'typescript';
 
-import { CONFIG_KEY, CONFIG_KEY_FILE } from './keys';
+import { TypescriptWithStrykerOptions } from '../TypescriptWithStrykerOptions';
 
 export function parseFile(file: File, target: ts.ScriptTarget | undefined) {
   return ts.createSourceFile(file.name, file.textContent, target || ts.ScriptTarget.ES5, /*setParentNodes*/ true);
@@ -27,12 +27,12 @@ export function normalizeFileFromTypescript(fileName: string) {
   return path.normalize(fileName);
 }
 
-export function getTSConfig(options: StrykerOptions): ts.ParsedCommandLine | undefined {
-  return options[CONFIG_KEY];
+export function getTSConfig(options: TypescriptWithStrykerOptions): ts.ParsedCommandLine {
+  return (options.tsconfig as unknown) as ts.ParsedCommandLine;
 }
 
-export function getProjectDirectory(options: StrykerOptions) {
-  return path.dirname(options[CONFIG_KEY_FILE] || '.');
+export function getProjectDirectory(options: TypescriptWithStrykerOptions) {
+  return path.dirname(options.tsconfigFile || '.');
 }
 
 /**
@@ -70,7 +70,7 @@ export function isTypescriptFile(fileName: string) {
 }
 
 export function isJavaScriptFile(file: ts.OutputFile) {
-  return file.name.endsWith('.js') || file.name.endsWith('.jsx');
+  return file.name.endsWith('.js') || file.name.endsWith('.jsx') || file.name.endsWith('.json');
 }
 
 export function isMapFile(file: ts.OutputFile) {

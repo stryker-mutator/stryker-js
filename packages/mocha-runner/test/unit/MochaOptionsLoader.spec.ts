@@ -3,22 +3,23 @@ import * as path from 'path';
 
 import sinon = require('sinon');
 import { expect } from 'chai';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 import LibWrapper from '../../src/LibWrapper';
 import { MochaOptions } from '../../src-generated/mocha-runner-options';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
-import { mochaOptionsKey } from '../../src/utils';
+import { MochaRunnerWithStrykerOptions } from '../../src/MochaRunnerWithStrykerOptions';
 
 describe(MochaOptionsLoader.name, () => {
   let readFileStub: sinon.SinonStub;
   let existsFileStub: sinon.SinonStub;
-  let strykerOptions: StrykerOptions;
+  let options: MochaRunnerWithStrykerOptions;
   let sut: MochaOptionsLoader;
 
   beforeEach(() => {
     sut = testInjector.injector.injectClass(MochaOptionsLoader);
+    options = testInjector.options as MochaRunnerWithStrykerOptions;
+    options.mochaOptions = {};
   });
 
   describe('with mocha >= 6', () => {
@@ -30,7 +31,7 @@ describe(MochaOptionsLoader.name, () => {
     });
 
     it('should log about mocha >= 6', () => {
-      sut.load(testInjector.options);
+      sut.load(options);
       expect(testInjector.logger.debug).calledWith(
         "Mocha >= 6 detected. Using mocha's `%s` to load mocha options",
         LibWrapper.loadOptions && LibWrapper.loadOptions.name
@@ -38,20 +39,30 @@ describe(MochaOptionsLoader.name, () => {
     });
 
     it('should call `loadOptions` with serialized arguments', () => {
-      testInjector.options[mochaOptionsKey] = {
-        ['no-baz']: true,
-        foo: 'bar',
-        spec: ['helpers/*.js', 'test/*.js'],
+      options.mochaOptions = {
+        'no-config': true,
+        'no-opts': true,
+        'no-package': true,
+        package: 'alternative-package.json',
+        config: 'alternative-config.yaml',
+        opts: 'alternative.opts',
+        extension: ['.js'], // should not appear in serialized arguments
       };
-      sut.load(testInjector.options);
-      expect(LibWrapper.loadOptions).calledWith(['--no-baz', '--foo', 'bar', '--spec', 'helpers/*.js,test/*.js']);
+      sut.load(options);
+      expect(LibWrapper.loadOptions).calledWith([
+        '--no-config',
+        '--no-opts',
+        '--no-package',
+        '--package',
+        'alternative-package.json',
+        '--opts',
+        'alternative.opts',
+        '--config',
+        'alternative-config.yaml',
+      ]);
     });
 
     it('should filter out invalid options from the `loadOptions` result', () => {
-      testInjector.options[mochaOptionsKey] = {
-        override: true,
-      };
-
       // Following are valid options
       rawOptions.extension = ['foo'];
       rawOptions.require = ['bar'];
@@ -64,7 +75,7 @@ describe(MochaOptionsLoader.name, () => {
       rawOptions.spec = ['test/**/*.js'];
 
       rawOptions.garply = 'waldo'; // this should be filtered out
-      const result = sut.load(testInjector.options);
+      const result = sut.load(options);
       const expected: MochaOptions = createMochaOptions({
         extension: ['foo'],
         file: ['grault'],
@@ -77,23 +88,23 @@ describe(MochaOptionsLoader.name, () => {
         'async-only': true,
         ui: 'quux',
       });
-      expect(result).deep.eq({ ...expected, override: true });
+      expect(result).deep.eq({ ...expected });
     });
 
     it('should trace log the mocha call', () => {
       testInjector.logger.isTraceEnabled.returns(true);
-      testInjector.options[mochaOptionsKey] = {
-        foo: 'bar',
+      options.mochaOptions = {
+        'no-config': true,
       };
       rawOptions.baz = 'qux';
-      sut.load(testInjector.options);
+      sut.load(options);
       const fnName = LibWrapper.loadOptions && LibWrapper.loadOptions.name;
-      expect(testInjector.logger.trace).calledWith(`Mocha: ${fnName}(['--foo','bar']) => {"baz":"qux"}`);
+      expect(testInjector.logger.trace).calledWith(`Mocha: ${fnName}(['--no-config']) => {"baz":"qux"}`);
     });
 
     it("should respect mocha's defaults", () => {
-      const options = sut.load(testInjector.options);
-      expect(options).deep.eq(createMochaOptions());
+      const actualOptions = sut.load(options);
+      expect(actualOptions).deep.eq(createMochaOptions());
     });
   });
 
@@ -102,27 +113,26 @@ describe(MochaOptionsLoader.name, () => {
       sinon.stub(LibWrapper, 'loadOptions').value(undefined);
       readFileStub = sinon.stub(fs, 'readFileSync');
       existsFileStub = sinon.stub(fs, 'existsSync').returns(true);
-      strykerOptions = factory.strykerOptions();
     });
 
     it('should log about mocha < 6', () => {
       existsFileStub.returns(false);
-      sut.load(strykerOptions);
+      sut.load(options);
       expect(testInjector.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to parse mocha options');
     });
 
     it('should log deprecated mocha version warning', async () => {
       existsFileStub.returns(false);
-      sut.load(strykerOptions);
+      sut.load(options);
       expect(testInjector.logger.warn).calledWith('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
     });
 
     it('should load a mocha.opts file if specified', () => {
       readFileStub.returns('');
-      strykerOptions.mochaOptions = {
+      options.mochaOptions = {
         opts: 'some/mocha.opts/file',
       };
-      sut.load(strykerOptions);
+      sut.load(options);
       expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
       expect(fs.readFileSync).calledWith(path.resolve('some/mocha.opts/file'));
     });
@@ -130,11 +140,11 @@ describe(MochaOptionsLoader.name, () => {
     it("should log an error if specified mocha.opts file doesn't exist", () => {
       readFileStub.returns('');
       existsFileStub.returns(false);
-      strykerOptions.mochaOptions = {
+      options.mochaOptions = {
         opts: 'some/mocha.opts/file',
       };
 
-      sut.load(strykerOptions);
+      sut.load(options);
       expect(testInjector.logger.error).calledWith(
         `Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`
       );
@@ -142,27 +152,27 @@ describe(MochaOptionsLoader.name, () => {
 
     it('should load default mocha.opts file if not specified', () => {
       readFileStub.returns('');
-      sut.load(strykerOptions);
+      sut.load(options);
       expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`);
       expect(fs.readFileSync).calledWith(path.resolve('./test/mocha.opts'));
     });
 
-    it("shouldn't load anything if mocha.opts = false", () => {
-      strykerOptions.mochaOptions = {
-        opts: false,
+    it("shouldn't load anything if mocha['no-opts'] = true", () => {
+      options.mochaOptions = {
+        'no-opts': true,
       };
-      sut.load(strykerOptions);
+      sut.load(options);
       expect(fs.readFileSync).not.called;
       expect(testInjector.logger.debug).calledWith('Not reading additional mochaOpts from a file');
     });
 
     it('should not load default mocha.opts file if not found', () => {
       existsFileStub.returns(false);
-      const options = sut.load(strykerOptions);
-      expect(options).deep.eq(createMochaOptions());
+      const mochaOptions = sut.load(options);
+      expect(mochaOptions).deep.eq(createMochaOptions());
       expect(testInjector.logger.debug).calledWith(
-        'No mocha opts file found, not loading additional mocha options (%s.opts was not defined).',
-        'mochaOptions'
+        'No mocha opts file found, not loading additional mocha options (%s was not defined).',
+        'mochaOptions.opts'
       );
     });
 
@@ -171,9 +181,9 @@ describe(MochaOptionsLoader.name, () => {
       --require  src/test/support/setup
       -r babel-require
       `);
-      strykerOptions.mochaOptions = { opts: '.' };
-      const options = sut.load(strykerOptions);
-      expect(options).deep.include({
+      options.mochaOptions = { opts: '.' };
+      const mochaOptions = sut.load(options);
+      expect(mochaOptions).deep.include({
         require: ['src/test/support/setup', 'babel-require'],
       });
     });
@@ -181,8 +191,8 @@ describe(MochaOptionsLoader.name, () => {
     function itShouldLoadProperty(property: string, value: string, expectedConfig: Partial<MochaOptions>) {
       it(`should load '${property} if specified`, () => {
         readFileStub.returns(`${property} ${value}`);
-        strykerOptions.mochaOptions = { opts: 'path/to/opts/file' };
-        expect(sut.load(strykerOptions)).deep.include(expectedConfig);
+        options.mochaOptions = { opts: 'path/to/opts/file' };
+        expect(sut.load(options)).deep.include(expectedConfig);
       });
     }
 
@@ -203,15 +213,15 @@ describe(MochaOptionsLoader.name, () => {
         -A
         -r babel-register
       `);
-      strykerOptions.mochaOptions = {
+      options.mochaOptions = {
         'async-only': false,
         opts: 'path/to/opts/file',
         require: ['ts-node/register'],
         timeout: 4000,
         ui: 'exports',
       };
-      const options = sut.load(strykerOptions);
-      expect(options).deep.equal(
+      const mochaOptions = sut.load(options);
+      expect(mochaOptions).deep.equal(
         createMochaOptions({
           'async-only': false,
           extension: ['js'],
@@ -229,12 +239,12 @@ describe(MochaOptionsLoader.name, () => {
       --reporter dot
       --ignore-leaks
       `);
-      strykerOptions.mochaOptions = {
+      options.mochaOptions = {
         opts: 'some/mocha.opts/file',
       };
-      const options = sut.load(strykerOptions);
-      expect(options).not.have.property('reporter');
-      expect(options).not.have.property('ignore-leaks');
+      const mochaOptions = sut.load(options);
+      expect(mochaOptions).not.have.property('reporter');
+      expect(mochaOptions).not.have.property('ignore-leaks');
       expect(testInjector.logger.debug).calledWith('Ignoring option "--reporter" as it is not supported.');
       expect(testInjector.logger.debug).calledWith('Ignoring option "--ignore-leaks" as it is not supported.');
     });
@@ -244,11 +254,11 @@ describe(MochaOptionsLoader.name, () => {
       --timeout
       --ui
       `);
-      strykerOptions.mochaOptions = {
+      options.mochaOptions = {
         opts: 'some/mocha.opts/file',
       };
-      const options = sut.load(strykerOptions);
-      expect(options).deep.eq(
+      const mochaOptions = sut.load(options);
+      expect(mochaOptions).deep.eq(
         createMochaOptions({
           extension: ['js'],
           opts: 'some/mocha.opts/file',

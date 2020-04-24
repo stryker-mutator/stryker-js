@@ -5,10 +5,13 @@ import * as path from 'path';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as ts from 'typescript';
-import { StrykerOptions, OptionsEditor } from '@stryker-mutator/api/core';
+import { OptionsEditor } from '@stryker-mutator/api/core';
+import { propertyPath } from '@stryker-mutator/util';
 
-import { CONFIG_KEY, CONFIG_KEY_FILE } from './helpers/keys';
+import { TypescriptOptions } from '../src-generated/typescript-options';
+
 import { normalizeFileForTypescript, normalizeFileFromTypescript } from './helpers/tsHelpers';
+import { TypescriptWithStrykerOptions } from './TypescriptWithStrykerOptions';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker/issues/391 for more info
@@ -18,24 +21,24 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
   noUnusedParameters: false,
 });
 
-export default class TypescriptOptionsEditor implements OptionsEditor {
+export default class TypescriptOptionsEditor implements OptionsEditor<TypescriptWithStrykerOptions> {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public edit(strykerConfig: StrykerOptions, host: ts.ParseConfigHost = ts.sys) {
+  public edit(strykerConfig: TypescriptWithStrykerOptions, host: ts.ParseConfigHost = ts.sys) {
     this.loadTSConfig(strykerConfig, host);
   }
 
-  private loadTSConfig(strykerConfig: StrykerOptions, host: ts.ParseConfigHost) {
-    if (typeof strykerConfig[CONFIG_KEY_FILE] === 'string') {
-      const tsconfigFileName = path.resolve(strykerConfig[CONFIG_KEY_FILE]);
+  private loadTSConfig(strykerConfig: TypescriptWithStrykerOptions, host: ts.ParseConfigHost) {
+    if (strykerConfig.tsconfigFile) {
+      const tsconfigFileName = path.resolve(strykerConfig.tsconfigFile);
       this.log.info(`Loading tsconfig file ${tsconfigFileName}`);
       const tsconfig = this.readTypescriptConfig(tsconfigFileName, host);
       if (tsconfig) {
-        strykerConfig[CONFIG_KEY] = this.overrideOptions(tsconfig);
+        strykerConfig.tsconfig = this.overrideOptions(tsconfig) as any;
       }
     } else {
-      this.log.debug("No '%s' specified, not loading any config", CONFIG_KEY_FILE);
+      this.log.debug("No '%s' specified, not loading any config", propertyPath<TypescriptOptions>('tsconfigFile'));
     }
   }
 

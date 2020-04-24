@@ -30,7 +30,7 @@ describe('Presets', () => {
 
     it('should use the angular-cli', async () => {
       const config = await angularPreset.createConfig();
-      expect(config.config.karma.projectType).to.eq('angular-cli');
+      expect((config.config.karma as any).projectType).to.eq('angular-cli');
     });
   });
 
