@@ -6,6 +6,4 @@ const settings = require('../../stryker.parent.conf');
 const moduleName = __dirname.split(path.sep).pop();
 settings.dashboard.module = moduleName;
 module.exports = settings;
-settings.mochaOptions['async-only'] = 'true';
-settings.tsconfig = 'tsconfig.json';
 

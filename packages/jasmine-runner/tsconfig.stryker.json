@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.test.json",
   "include": [
-    "src",
+    "src", 
+    "src-generated", 
+    "schema/*.json", 
     "test",
     "typings"
   ],
