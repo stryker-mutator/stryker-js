@@ -186,7 +186,7 @@
       "type": "object",
       "default": {},
       "properties": {
-        "excessOptions": {
+        "unknownOptions": {
           "description": "decide whether or not to log warnings when additional stryker options are configured",
           "type": "boolean",
           "default": true

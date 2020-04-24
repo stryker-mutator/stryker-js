@@ -11,11 +11,11 @@ describe('Options validation integration', () => {
   it('should log about unknown properties in log file', () => {
     const optionsProvider = createPluginResolverInjector(
       {
-        configFile: resolveFromRoot('testResources', 'options-validation', 'excess-options.conf.json'),
+        configFile: resolveFromRoot('testResources', 'options-validation', 'unknown-options.conf.json'),
       },
       testInjector.injector
     );
     optionsProvider.resolve(commonTokens.options);
-    expect(testInjector.logger.warn).calledWithMatch(sinon.match('Unknown stryker config option "this is an excess property"'));
+    expect(testInjector.logger.warn).calledWithMatch(sinon.match('Unknown stryker config option "this is an unknown property"'));
   });
 });

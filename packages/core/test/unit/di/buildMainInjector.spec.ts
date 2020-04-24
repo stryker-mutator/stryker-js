@@ -98,7 +98,7 @@ describe(buildMainInjector.name, () => {
       expect(optionsValidatorStub.validate).calledWith(expectedConfig);
     });
 
-    it('should warn about excess properties', () => {
+    it('should warn about unknown properties', () => {
       expectedConfig.foo = 'bar';
       buildMainInjector({}).resolve(commonTokens.options);
       expect(currentLogMock().warn).calledWithMatch('Unknown stryker config option "foo"');

@@ -4,7 +4,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 
-import { OptionsValidator, validateOptions, warnAboutExcessOptions } from '../../../src/config/OptionsValidator';
+import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/OptionsValidator';
 import { coreTokens } from '../../../src/di';
 
 describe(OptionsValidator.name, () => {
@@ -238,8 +238,8 @@ describe(validateOptions.name, () => {
   });
 });
 
-describe(warnAboutExcessOptions.name, () => {
-  it('should not warn when there are no excess properties', () => {
+describe(markUnknownOptions.name, () => {
+  it('should not warn when there are no unknown properties', () => {
     testInjector.options.htmlReporter = {
       baseDir: 'test',
     };
@@ -248,36 +248,36 @@ describe(warnAboutExcessOptions.name, () => {
 
   it('should return the options, no matter what', () => {
     testInjector.options['this key does not exist'] = 'foo';
-    const output = warnAboutExcessOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    const output = markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(output).eq(testInjector.options);
   });
 
-  it('should not warn when excess properties are postfixed with "_comment"', () => {
+  it('should not warn when unknown properties are postfixed with "_comment"', () => {
     testInjector.options['maxConcurrentTestRunners_comment'] = 'Recommended to use half of your cores';
-    warnAboutExcessOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(testInjector.logger.warn).not.called;
   });
 
-  it('should warn about excess properties', () => {
+  it('should warn about unknown properties', () => {
     testInjector.options['karma'] = {};
     testInjector.options['jest'] = {};
-    warnAboutExcessOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(testInjector.logger.warn).calledThrice;
     expect(testInjector.logger.warn).calledWith('Unknown stryker config option "karma".');
     expect(testInjector.logger.warn).calledWith('Unknown stryker config option "jest".');
     expect(testInjector.logger.warn).calledWithMatch('Possible causes');
   });
-  it('should not warn about excess properties when warnings are disabled', () => {
+  it('should not warn about unknown properties when warnings are disabled', () => {
     testInjector.options['karma'] = {};
-    testInjector.options.warnings = factory.warningOptions({ excessOptions: false });
-    warnAboutExcessOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    testInjector.options.warnings = factory.warningOptions({ unknownOptions: false });
+    markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(testInjector.logger.warn).not.called;
   });
   it('should ignore options added by Stryker itself', () => {
     testInjector.options['set'] = {};
     testInjector.options['configFile'] = {};
     testInjector.options['$schema'] = '';
-    warnAboutExcessOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(testInjector.logger.warn).not.called;
   });
 });

@@ -11,7 +11,7 @@ import {
   buildSchemaWithPluginContributions,
   OptionsValidator,
   validateOptions,
-  warnAboutExcessOptions,
+  markUnknownOptions,
 } from '../config';
 import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';
@@ -66,7 +66,7 @@ export function createPluginResolverInjector(cliOptions: Partial<StrykerOptions>
     .provideFactory(coreTokens.validationSchema, buildSchemaWithPluginContributions)
     .provideClass(coreTokens.optionsValidator, OptionsValidator)
     .provideFactory(commonTokens.options, validateOptions)
-    .provideFactory(commonTokens.options, warnAboutExcessOptions)
+    .provideFactory(commonTokens.options, markUnknownOptions)
     .provideFactory(coreTokens.pluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
     .provideFactory(coreTokens.pluginCreatorOptionsEditor, PluginCreator.createFactory(PluginKind.OptionsEditor))
     .provideClass(coreTokens.configOptionsApplier, OptionsEditorApplier)

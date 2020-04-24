@@ -58,7 +58,7 @@ export function pluginResolver(): sinon.SinonStubbedInstance<PluginResolver> {
 }
 
 export const warningOptions = factoryMethod<WarningOptions>(() => ({
-  excessOptions: true,
+  unknownOptions: true,
 }));
 
 export const mutantResult = factoryMethod<MutantResult>(() => ({

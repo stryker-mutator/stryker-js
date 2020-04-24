@@ -75,19 +75,19 @@ export function validateOptions(options: unknown, optionsValidator: OptionsValid
   return options;
 }
 
-warnAboutExcessOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
-export function warnAboutExcessOptions(options: StrykerOptions, schema: object, log: Logger): StrykerOptions {
+markUnknownOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
+export function markUnknownOptions(options: StrykerOptions, schema: object, log: Logger): StrykerOptions {
   const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
-  if (isWarningEnabled('excessOptions', options.warnings)) {
-    const excessProperties = Object.keys(options)
+  if (isWarningEnabled('unknownOptions', options.warnings)) {
+    const unknownPropertyNames = Object.keys(options)
       .filter((key) => !key.endsWith('_comment'))
       .filter((key) => !OPTIONS_ADDED_BY_STRYKER.includes(key))
       .filter((key) => !Object.keys((schema as any).properties).includes(key));
-    excessProperties.forEach((excessProperty) => {
-      log.warn(`Unknown stryker config option "${excessProperty}".`);
+    unknownPropertyNames.forEach((unknownPropertyName) => {
+      log.warn(`Unknown stryker config option "${unknownPropertyName}".`);
     });
-    const p = `${propertyPath<StrykerOptions>('warnings')}.${propertyPath<WarningOptions>('excessOptions')}`;
-    if (excessProperties.length) {
+    const p = `${propertyPath<StrykerOptions>('warnings')}.${propertyPath<WarningOptions>('unknownOptions')}`;
+    if (unknownPropertyNames.length) {
       log.warn(`
    Possible causes:
    * Is it a typo on your end?
