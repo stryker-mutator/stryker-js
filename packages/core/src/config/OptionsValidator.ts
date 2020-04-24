@@ -1,11 +1,12 @@
 import Ajv = require('ajv');
-import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
+import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, normalizeWhitespaces } from '@stryker-mutator/util';
+import { noopLogger, normalizeWhitespaces, propertyPath } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
+import { isWarningEnabled } from '../utils/objectUtils';
 
 import { describeErrors } from './validationErrors';
 
@@ -68,8 +69,33 @@ export function defaultOptions(): StrykerOptions {
   return options;
 }
 
+validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidator);
 export function validateOptions(options: unknown, optionsValidator: OptionsValidator): StrykerOptions {
   optionsValidator.validate(options);
   return options;
 }
-validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidator);
+
+warnAboutExcessOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
+export function warnAboutExcessOptions(options: StrykerOptions, schema: object, log: Logger): StrykerOptions {
+  const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
+  if (isWarningEnabled('excessOptions', options.warnings)) {
+    const excessProperties = Object.keys(options)
+      .filter((key) => !key.endsWith('_comment'))
+      .filter((key) => !OPTIONS_ADDED_BY_STRYKER.includes(key))
+      .filter((key) => !Object.keys((schema as any).properties).includes(key));
+    excessProperties.forEach((excessProperty) => {
+      log.warn(`Unknown stryker config option "${excessProperty}".`);
+    });
+    const p = `${propertyPath<StrykerOptions>('warnings')}.${propertyPath<WarningOptions>('excessOptions')}`;
+    if (excessProperties.length) {
+      log.warn(`
+   Possible causes:
+   * Is it a typo on your end?
+   * Did you only write this property as a comment? If so, please postfix it with "_comment".
+   * You might be missing a plugin that is supposed to use it. Stryker loaded plugins from: ${JSON.stringify(options.plugins)}
+   * The plugin that is using it did not contribute explicit validation. 
+   (you can ignore this warning by disabling setting "${p}")`);
+    }
+  }
+  return options;
+}
