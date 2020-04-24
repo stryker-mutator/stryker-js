@@ -8,6 +8,9 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import JestOptionsEditor from '../../src/JestOptionsEditor';
 import { jestTestRunnerFactory } from '../../src/JestTestRunner';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
+import { JestOptions } from '../../src-generated/jest-runner-options';
+import { createJestOptions } from '../helpers/producers';
 
 const paths = require('react-scripts-ts/config/paths');
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
@@ -39,12 +42,11 @@ describe('Integration test for Strykers Jest runner', () => {
     processCwdStub = sinon.stub(process, 'cwd');
   });
 
-  function createSut(jestConfig?: any) {
+  function createSut(overrides?: Partial<JestOptions>) {
     const jestOptionsEditor = testInjector.injector.injectClass(JestOptionsEditor);
-    const options = factory.strykerOptions();
-    if (jestConfig) {
-      options.jest = jestConfig;
-    }
+    const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
+      jest: createJestOptions(overrides),
+    });
     jestOptionsEditor.edit(options);
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }

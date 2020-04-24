@@ -8,7 +8,7 @@ import { Configuration, Plugin } from 'webpack';
 
 import ConfigLoader from '../../../src/compiler/ConfigLoader';
 import { pluginTokens } from '../../../src/pluginTokens';
-import { createStrykerWebpackConfig } from '../../helpers/producers';
+import { createWebpackOptions } from '../../helpers/producers';
 
 class FooPlugin implements Plugin {
   public foo = true;
@@ -38,21 +38,21 @@ describe('ConfigLoader', () => {
     requireStub.returns('resolved');
     existsSyncStub.returns(true);
 
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js' }));
+    const result = await sut.load(createWebpackOptions({ configFile: 'webpack.foo.config.js' }));
     expect(result).eq('resolved');
     expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));
   });
 
-  it('should call function with configFileArgs if webpack config file exports a function', async () => {
+  it('should call function if webpack config file exports a function', async () => {
     const configFunctionStub = sinon.stub();
     configFunctionStub.returns('webpackconfig');
     requireStub.returns(configFunctionStub);
     existsSyncStub.returns(true);
 
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js', configFileArgs: [1, 2] }));
+    const result = await sut.load(createWebpackOptions({ configFile: 'webpack.foo.config.js' }));
     expect(result).eq('webpackconfig');
     expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));
-    expect(configFunctionStub).calledWith(1, 2);
+    expect(configFunctionStub).called;
   });
 
   it('should remove "ProgressPlugin" if silent is `true`', async () => {
@@ -66,7 +66,7 @@ describe('ConfigLoader', () => {
     existsSyncStub.returns(true);
 
     // Act
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: true }));
+    const result = await sut.load(createWebpackOptions({ configFile: 'webpack.config.js', silent: true }));
 
     // Assert
     expect(result.plugins).to.be.an('array').that.does.not.deep.include(new ProgressPlugin());
@@ -85,7 +85,7 @@ describe('ConfigLoader', () => {
     requireStub.returns(webpackConfig);
     existsSyncStub.returns(true);
 
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.config.js', silent: false }));
+    const result = await sut.load(createWebpackOptions({ configFile: 'webpack.config.js', silent: false }));
     expect(result.plugins).to.be.an('array').that.does.deep.include(new ProgressPlugin());
   });
 
@@ -94,7 +94,7 @@ describe('ConfigLoader', () => {
 
     existsSyncStub.returns(false);
 
-    const result = await sut.load(createStrykerWebpackConfig({ context: contextPath }));
+    const result = await sut.load(createWebpackOptions({ context: contextPath }));
 
     expect(result).to.deep.equal({ context: contextPath });
   });
@@ -104,7 +104,7 @@ describe('ConfigLoader', () => {
 
     existsSyncStub.returns(false);
 
-    return expect(sut.load(createStrykerWebpackConfig({ configFile }))).rejectedWith(
+    return expect(sut.load(createWebpackOptions({ configFile }))).rejectedWith(
       `Could not load webpack config at "${path.resolve(configFile)}", file not found.`
     );
   });
@@ -114,7 +114,7 @@ describe('ConfigLoader', () => {
 
     existsSyncStub.returns(false);
 
-    await sut.load(createStrykerWebpackConfig({ context: contextPath }));
+    await sut.load(createWebpackOptions({ context: contextPath }));
 
     expect(testInjector.logger.debug).calledWith('Webpack config "%s" not found, trying Webpack 4 zero config');
   });
@@ -123,7 +123,7 @@ describe('ConfigLoader', () => {
     requireStub.returns(Promise.resolve('resolved'));
     existsSyncStub.returns(true);
 
-    const result = await sut.load(createStrykerWebpackConfig({ configFile: 'webpack.foo.config.js' }));
+    const result = await sut.load(createWebpackOptions({ configFile: 'webpack.foo.config.js' }));
 
     expect(result).eq('resolved');
     expect(requireStub).calledWith(path.resolve('webpack.foo.config.js'));

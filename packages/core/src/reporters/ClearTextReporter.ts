@@ -98,17 +98,12 @@ export default class ClearTextReporter implements Reporter {
   }
 
   private logExecutedTests(result: MutantResult, logImplementation: (input: string) => void) {
-    const clearTextReporterConfig = this.options.clearTextReporter || {};
-
-    if (!clearTextReporterConfig.logTests) {
+    if (!this.options.clearTextReporter.logTests) {
       return;
     }
 
     if (result.testsRan && result.testsRan.length > 0) {
-      let testsToLog = 3;
-      if (typeof clearTextReporterConfig.maxTestsToLog === 'number') {
-        testsToLog = clearTextReporterConfig.maxTestsToLog;
-      }
+      let testsToLog = this.options.clearTextReporter.maxTestsToLog;
 
       if (testsToLog > 0) {
         logImplementation('Tests ran: ');

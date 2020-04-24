@@ -10,7 +10,8 @@
   "include": [
     "src",
     "src-generated",
-    "typings"
+    "typings",
+    "schema/*.json"
   ],
   "references": [
     {

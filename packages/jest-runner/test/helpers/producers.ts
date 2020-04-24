@@ -1,3 +1,13 @@
+import { JestOptions } from '../../src-generated/jest-runner-options';
+
+export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions => {
+  return {
+    enableFindRelatedTests: true,
+    projectType: 'custom',
+    ...overrides,
+  };
+};
+
 export const createFailResult = () => ({
   numFailedTests: 2,
   numFailedTestSuites: 1,

@@ -4,7 +4,7 @@
     "rootDir": "."
   },
   "include": [
-    "schema/**/*.json",
+    "schema/*.json",
     "src",
     "src-generated",
     "typings"

@@ -4,12 +4,14 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
+import { propertyPath } from '@stryker-mutator/util';
 
-import { MochaOptions } from '../src-generated/mocha-runner-options';
+import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
 import LibWrapper from './LibWrapper';
 import { StrykerMochaReporter } from './StrykerMochaReporter';
-import { evalGlobal, mochaOptionsKey } from './utils';
+import { evalGlobal } from './utils';
+import { MochaRunnerWithStrykerOptions } from './MochaRunnerWithStrykerOptions';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';
 
@@ -19,7 +21,7 @@ export class MochaTestRunner implements TestRunner {
 
   public static inject = tokens(commonTokens.logger, commonTokens.sandboxFileNames, commonTokens.options);
   constructor(private readonly log: Logger, private readonly allFileNames: readonly string[], options: StrykerOptions) {
-    this.mochaOptions = options[mochaOptionsKey];
+    this.mochaOptions = (options as MochaRunnerWithStrykerOptions).mochaOptions;
     this.additionalRequires();
     StrykerMochaReporter.log = log;
   }
@@ -59,7 +61,10 @@ export class MochaTestRunner implements TestRunner {
           globPatterns,
           null,
           2
-        )}). Please specify the files (glob patterns) containing your tests in ${mochaOptionsKey}.files in your config file.`
+        )}). Please specify the files (glob patterns) containing your tests in ${propertyPath<MochaRunnerOptions>(
+          'mochaOptions',
+          'spec'
+        )} in your config file.`
       );
     }
     return fileNames;

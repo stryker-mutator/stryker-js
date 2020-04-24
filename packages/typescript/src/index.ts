@@ -9,3 +9,5 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.Transpiler, 'typescript', TypescriptTranspiler),
   declareFactoryPlugin(PluginKind.Mutator, 'typescript', typescriptMutatorFactory),
 ];
+
+export * as strykerValidationSchema from '../schema/typescript-options.json';

@@ -213,8 +213,9 @@ describe(OptionsValidator.name, () => {
   }
 
   function breakConfig(key: keyof StrykerOptions, value: any): void {
-    if (typeof testInjector.options[key] === 'object' && !Array.isArray(testInjector.options[key])) {
-      testInjector.options[key] = { ...testInjector.options[key], ...value };
+    const original = testInjector.options[key];
+    if (typeof original === 'object' && !Array.isArray(original)) {
+      testInjector.options[key] = { ...original, ...value };
     } else {
       testInjector.options[key] = value;
     }

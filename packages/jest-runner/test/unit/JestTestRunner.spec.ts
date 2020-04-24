@@ -5,7 +5,7 @@ import sinon from 'sinon';
 
 import { JestTestAdapter } from '../../src/jestTestAdapters';
 import JestTestRunner, { JEST_TEST_ADAPTER_TOKEN, PROCESS_ENV_TOKEN } from '../../src/JestTestRunner';
-import * as fakeResults from '../helpers/testResultProducer';
+import * as producers from '../helpers/producers';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';
@@ -43,7 +43,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should call the jestTestRunner run method and return a correct runResult', async () => {
-    jestTestAdapterMock.run.resolves({ results: fakeResults.createSuccessResult() });
+    jestTestAdapterMock.run.resolves({ results: producers.createSuccessResult() });
 
     const result = await jestTestRunner.run(runOptions);
 
@@ -62,7 +62,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should call the jestTestRunner run method and return a skipped runResult', async () => {
-    jestTestAdapterMock.run.resolves({ results: fakeResults.createPendingResult() });
+    jestTestAdapterMock.run.resolves({ results: producers.createPendingResult() });
 
     const result = await jestTestRunner.run(runOptions);
 
@@ -81,7 +81,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should call the jestTestRunner run method and return a todo runResult', async () => {
-    jestTestAdapterMock.run.resolves({ results: fakeResults.createTodoResult() });
+    jestTestAdapterMock.run.resolves({ results: producers.createTodoResult() });
 
     const result = await jestTestRunner.run(runOptions);
 
@@ -106,7 +106,7 @@ describe('JestTestRunner', () => {
   });
 
   it('should call the jestTestRunner run method and return a negative runResult', async () => {
-    jestTestAdapterMock.run.resolves({ results: fakeResults.createFailResult() });
+    jestTestAdapterMock.run.resolves({ results: producers.createFailResult() });
 
     const result = await jestTestRunner.run(runOptions);
 

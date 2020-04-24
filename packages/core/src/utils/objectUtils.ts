@@ -3,17 +3,6 @@ import { StrykerError } from '@stryker-mutator/util';
 
 export { serialize, deserialize } from 'surrial';
 
-export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
-  Object.freeze(target);
-  Object.keys(target).forEach((key) => {
-    const value = target[key];
-    if (typeof value === 'object' && value !== null) {
-      freezeRecursively(value);
-    }
-  });
-  return target;
-}
-
 export function wrapInClosure(codeFragment: string) {
   return `
     (function (window) {

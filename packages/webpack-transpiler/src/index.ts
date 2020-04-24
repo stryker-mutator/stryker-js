@@ -10,3 +10,5 @@ function webpackTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
   return injector.provideValue(pluginTokens.require, require).provideClass(pluginTokens.configLoader, ConfigLoader).injectClass(WebpackTranspiler);
 }
 webpackTranspilerFactory.inject = tokens(commonTokens.injector);
+
+export * as strykerValidationSchema from '../schema/webpack-transpiler-options.json';

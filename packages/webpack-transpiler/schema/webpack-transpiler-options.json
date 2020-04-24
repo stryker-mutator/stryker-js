@@ -13,8 +13,11 @@
       "properties": {
         "configFile": {
           "description": "Location of your webpack config file",
-          "type": "string",
-          "default": "webpack.config.js"
+          "type": "string"
+        },
+        "context": {
+          "description": "The [webpack context](https://webpack.js.org/configuration/entry-context/#context)",
+          "type": "string"
         },
         "silent": {
           "description": "Specify to remove the \"ProgressPlugin\" from your webpack config file (making the process silent)",

@@ -16,8 +16,7 @@
         },
         "config": {
           "description": "A custom Jest configuration object. You could also use `require` to load it here. Please leave it empty if you want jest configuration to be loaded from package.json or a standard jest configuration file.",
-          "type": "object",
-          "default": {}
+          "type": "object"
         },
         "enableFindRelatedTests": {
           "description": "Whether to run jest with the `--findRelatedTests` flag. When `true`, Jest will only run tests related to the mutated file per test. (See [_--findRelatedTests_](https://jestjs.io/docs/en/cli.html#findrelatedtests-spaceseparatedlistofsourcefiles)",

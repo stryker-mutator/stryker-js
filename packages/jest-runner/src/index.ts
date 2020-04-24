@@ -9,3 +9,4 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.OptionsEditor, 'jest', JestOptionsEditor),
   declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory),
 ];
+export * as strykerValidationSchema from '../schema/jest-runner-options.json';

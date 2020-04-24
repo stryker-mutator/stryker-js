@@ -3,9 +3,9 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, TestResult } from '@stryker-mutator/api/test_runner';
+import { deepFreeze } from '@stryker-mutator/util';
 
 import SourceFile, { isLineBreak } from './SourceFile';
-import { freezeRecursively } from './utils/objectUtils';
 
 export enum TestSelectionResult {
   Failed,
@@ -117,7 +117,7 @@ export default class TestableMutant {
   }
 
   public createResult(status: MutantStatus, testsRan: string[]): MutantResult {
-    return freezeRecursively({
+    return deepFreeze({
       id: this.id,
       location: this.location,
       mutatedLines: this.mutatedLines,
@@ -128,7 +128,7 @@ export default class TestableMutant {
       sourceFilePath: this.fileName,
       status,
       testsRan,
-    });
+    }) as MutantResult;
   }
 
   public toString() {

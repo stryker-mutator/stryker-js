@@ -1,48 +1,30 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
+import { StrykerBabelConfig } from '../src-generated/babel-transpiler-options';
+
 import * as babel from './helpers/babelWrapper';
-
-export interface StrykerBabelConfig {
-  extensions: readonly string[];
-  options: babel.TransformOptions;
-  optionsFile: string | null;
-  optionsApi?: Partial<babel.ConfigAPI>;
-}
-
-export const CONFIG_KEY = 'babel';
-export const FILE_KEY: keyof StrykerBabelConfig = 'optionsFile';
-export const OPTIONS_KEY: keyof StrykerBabelConfig = 'options';
-export const EXTENSIONS_KEY: keyof StrykerBabelConfig = 'extensions';
-
-const DEFAULT_BABEL_CONFIG: Readonly<StrykerBabelConfig> = Object.freeze({
-  extensions: Object.freeze([]),
-  options: Object.freeze({}),
-  optionsFile: '.babelrc',
-});
+import { BabelTranspilerWithStrykerOptions } from './BabelTranspilerWithStrykerOptions';
+import { ConfigAPI } from './helpers/babelWrapper';
 
 export class BabelConfigReader {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public readConfig(strykerOptions: StrykerOptions): StrykerBabelConfig {
-    const babelConfig: StrykerBabelConfig = {
-      ...DEFAULT_BABEL_CONFIG,
-      ...strykerOptions[CONFIG_KEY],
-    };
+  public readConfig(strykerOptions: BabelTranspilerWithStrykerOptions): StrykerBabelConfig {
+    const babelConfig = { ...strykerOptions.babel };
     babelConfig.options = {
-      ...this.readBabelOptionsFromFile(babelConfig.optionsFile, babelConfig.optionsApi),
+      ...this.readBabelOptionsFromFile(babelConfig.optionsFile),
       ...babelConfig.options,
     };
     this.log.debug(`Babel config is: ${JSON.stringify(babelConfig, null, 2)}`);
     return babelConfig;
   }
 
-  private readBabelOptionsFromFile(relativeFileName: string | null, optionsApi?: Partial<babel.ConfigAPI>): babel.TransformOptions {
+  private readBabelOptionsFromFile(relativeFileName: string | null): babel.TransformOptions {
     if (relativeFileName) {
       const babelrcPath = path.resolve(relativeFileName);
       this.log.debug(`Reading .babelrc file from path "${babelrcPath}"`);
@@ -55,7 +37,7 @@ export class BabelConfigReader {
             const config = require(babelrcPath);
             if (typeof config === 'function') {
               const configFunction = config as babel.ConfigFunction;
-              return configFunction(optionsApi as babel.ConfigAPI);
+              return configFunction(noopBabelConfigApi);
             } else {
               return config as babel.TransformOptions;
             }
@@ -71,3 +53,24 @@ export class BabelConfigReader {
     return {};
   }
 }
+
+function noop() {}
+
+const noopBabelConfigApi: ConfigAPI = {
+  assertVersion() {
+    return true;
+  },
+  cache: {
+    forever: noop,
+    invalidate() {
+      return noop as any;
+    },
+    never: noop,
+    using() {
+      return noop as any;
+    },
+  },
+  env: noop as any,
+  caller: noop as any,
+  version: noop as any,
+};

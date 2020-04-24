@@ -6,10 +6,11 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import { BabelConfigReader, StrykerBabelConfig } from '../../src/BabelConfigReader';
+import { BabelConfigReader } from '../../src/BabelConfigReader';
 import { BabelTranspiler } from '../../src/BabelTranspiler';
 import * as babel from '../../src/helpers/babelWrapper';
 import { Mock, mock } from '../helpers/mock';
+import { StrykerBabelConfig } from '../../src-generated/babel-transpiler-options';
 
 describe(BabelTranspiler.name, () => {
   let sut: BabelTranspiler;
@@ -85,7 +86,7 @@ describe(BabelTranspiler.name, () => {
 
     it('should allow users to define babel options', async () => {
       const plugins = ['fooPlugin', 'barPlugin'];
-      babelConfig.options.plugins = plugins.slice();
+      babelConfig.options!.plugins = plugins.slice();
       arrangeHappyFlow();
       await sut.transpile(files);
       files.forEach((file) => {
@@ -99,8 +100,8 @@ describe(BabelTranspiler.name, () => {
     });
 
     it('should not allow a user to override the file name', async () => {
-      babelConfig.options.filename = 'override';
-      babelConfig.options.filenameRelative = 'override';
+      babelConfig.options!.filename = 'override';
+      babelConfig.options!.filenameRelative = 'override';
       arrangeHappyFlow();
       sut = new BabelTranspiler(options, /*produceSourceMaps:*/ false, (babelConfigReaderMock as unknown) as BabelConfigReader);
       await sut.transpile([files[0]]);

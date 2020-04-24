@@ -1,4 +1,4 @@
-import { File } from '@stryker-mutator/api/core';
+import { File, ClearTextReporterOptions } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { FileCoverageData } from 'istanbul-lib-coverage';
 import { Logger } from 'log4js';
@@ -28,6 +28,12 @@ export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
 function factoryMethod<T>(defaultsFactory: () => T) {
   return (overrides?: Partial<T>) => Object.assign({}, defaultsFactory(), overrides);
 }
+
+export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOptions>(() => ({
+  allowColor: true,
+  logTests: true,
+  maxTestsToLog: 3,
+}));
 
 export const logger = (): Mock<Logger> => {
   return {

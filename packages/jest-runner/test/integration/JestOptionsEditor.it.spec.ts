@@ -3,16 +3,16 @@ import * as path from 'path';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import JestOptionsEditor from '../../src/JestOptionsEditor';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
 
 describe('Integration test for Jest OptionsEditor', () => {
   let jestConfigEditor: JestOptionsEditor;
   let getProjectRootStub: sinon.SinonStub;
 
   const projectRoot: string = process.cwd();
-  let options: StrykerOptions;
+  let options: JestRunnerOptionsWithStrykerOptions;
 
   beforeEach(() => {
     getProjectRootStub = sinon.stub(process, 'cwd');
@@ -20,11 +20,15 @@ describe('Integration test for Jest OptionsEditor', () => {
 
     jestConfigEditor = testInjector.injector.injectClass(JestOptionsEditor);
 
-    options = factory.strykerOptions();
+    options = factory.strykerOptions() as JestRunnerOptionsWithStrykerOptions;
+    options.jest = {
+      enableFindRelatedTests: true,
+      projectType: 'custom',
+    };
   });
 
   it('should create a Jest configuration for a create-react-app project', () => {
-    options.jest = { projectType: 'create-react-app' };
+    options.jest.projectType = 'create-react-app';
 
     jestConfigEditor.edit(options);
 
@@ -57,7 +61,7 @@ describe('Integration test for Jest OptionsEditor', () => {
   });
 
   it('should create a Jest configuration for a React project', () => {
-    options.jest = { projectType: 'react' };
+    options.jest.projectType = 'react';
 
     jestConfigEditor.edit(options);
 
@@ -90,7 +94,7 @@ describe('Integration test for Jest OptionsEditor', () => {
   });
 
   it('should log a deprecation warning when projectType is "react"', () => {
-    options.jest = { projectType: 'react' };
+    options.jest.projectType = 'react';
 
     jestConfigEditor.edit(options);
 
@@ -100,7 +104,7 @@ describe('Integration test for Jest OptionsEditor', () => {
   });
 
   it('should create a Jest configuration for a create-react-app + TypeScript project', () => {
-    options.jest = { projectType: 'create-react-app-ts' };
+    options.jest.projectType = 'create-react-app-ts';
 
     jestConfigEditor.edit(options);
 
@@ -139,7 +143,7 @@ describe('Integration test for Jest OptionsEditor', () => {
   });
 
   it('should create a Jest configuration for a React + TypeScript project', () => {
-    options.jest = { projectType: 'react-ts' };
+    options.jest.projectType = 'react-ts';
 
     jestConfigEditor.edit(options);
 
@@ -178,7 +182,7 @@ describe('Integration test for Jest OptionsEditor', () => {
   });
 
   it('should log a deprecation warning when projectType is "react-ts"', () => {
-    options.jest = { projectType: 'react-ts' };
+    options.jest.projectType = 'react-ts';
 
     jestConfigEditor.edit(options);
 
@@ -240,14 +244,6 @@ describe('Integration test for Jest OptionsEditor', () => {
       verbose: false,
     });
   });
-
-  it('should return with an error when an invalid projectType is specified', () => {
-    const projectType = 'invalidProject';
-    options.jest = { projectType };
-
-    expect(() => jestConfigEditor.edit(options)).to.throw(Error, `No configLoader available for ${projectType}`);
-  });
-
   function assertJestConfig(expected: any, actual: any) {
     Object.keys(expected).forEach((key) => {
       if (Array.isArray(expected[key])) {
