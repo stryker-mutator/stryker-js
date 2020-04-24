@@ -16,6 +16,6 @@ describe('Options validation integration', () => {
       testInjector.injector
     );
     optionsProvider.resolve(commonTokens.options);
-    expect(testInjector.logger.warn).calledWithMatch(sinon.match('Unknown stryker config option "this is an excess property")'));
+    expect(testInjector.logger.warn).calledWithMatch(sinon.match('Unknown stryker config option "this is an excess property"'));
   });
 });
