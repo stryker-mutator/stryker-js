@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import { logFileContent } from '../../../helpers';
+import { readLogFile } from '../../../helpers';
 
 describe('Verify errors', () => {
 
   it('should report the expected errors', async () => {
-    const logFile = await logFileContent();
+    const logFile = await readLogFile();
     expect(logFile).includes('Config option "mochaOptions.spec" has the wrong type');
     expect(logFile).includes('Config option "tsconfigFile" has the wrong type');
     expect(logFile).includes('Config option "babel.extensions" has the wrong type');

@@ -19,7 +19,7 @@ type WritableMetricsResult = {
   -readonly [K in keyof MetricsResult]: MetricsResult[K];
 };
 
-export function logFileContent(fileName = path.resolve('stryker.log')): Promise<string> {
+export function readLogFile(fileName = path.resolve('stryker.log')): Promise<string> {
   return fs.readFile(fileName, 'utf8');
 }
 
