@@ -94,7 +94,7 @@ export function warnAboutExcessOptions(options: StrykerOptions, schema: object, 
    * Did you only write this property as a comment? If so, please postfix it with "_comment".
    * You might be missing a plugin that is supposed to use it. Stryker loaded plugins from: ${JSON.stringify(options.plugins)}
    * The plugin that is using it did not contribute explicit validation. 
-   (you can ignore this warning by disabling setting "${p}")`);
+   (disable "${p}" to ignore this warning)`);
     }
   }
   return options;
