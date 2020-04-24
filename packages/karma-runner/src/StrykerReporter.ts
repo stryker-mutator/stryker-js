@@ -52,7 +52,7 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
       failureMessages: spec.log,
       name,
       status,
-      timeSpentMs: spec.time
+      timeSpentMs: spec.time,
     };
     this.emit('test_result', testResult);
   };

@@ -19,16 +19,13 @@ interface NpmPackage {
 }
 
 const getName = (packageName: string) => {
-  return packageName
-    .replace('@stryker-mutator/', '')
-    .replace('stryker-', '')
-    .split('-')[0];
+  return packageName.replace('@stryker-mutator/', '').replace('stryker-', '').split('-')[0];
 };
 
 const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOption[] =>
-  searchResults.results.map(result => ({
+  searchResults.results.map((result) => ({
     name: getName(result.package.name),
-    pkg: result.package
+    pkg: result.package,
   }));
 
 const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
@@ -49,9 +46,9 @@ export default class NpmClient {
 
   public getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:@stryker-mutator/test-framework-plugin')
-      .then(searchResult => {
+      .then((searchResult) => {
         if (testRunnerFilter) {
-          searchResult.results = searchResult.results.filter(framework => framework.package.keywords.includes(testRunnerFilter));
+          searchResult.results = searchResult.results.filter((framework) => framework.package.keywords.includes(testRunnerFilter));
         }
         return searchResult;
       })
@@ -75,8 +72,8 @@ export default class NpmClient {
     return this.packageClient
       .get<NpmPackage>(path)
       .then(handleResult(path))
-      .then(pkg => pkg.initStrykerConfig || {})
-      .catch(err => {
+      .then((pkg) => pkg.initStrykerConfig || {})
+      .catch((err) => {
         this.log.warn(`Could not fetch additional initialization config for dependency ${pkg.name}. You might need to configure it manually`, err);
         return {};
       });
@@ -87,11 +84,11 @@ export default class NpmClient {
     return this.searchClient
       .get<NpmSearchResult>(path)
       .then(handleResult(path))
-      .catch(err => {
+      .catch((err) => {
         this.log.error(`Unable to reach npms.io (for query ${path}). Please check your internet connection.`, errorToString(err));
         const result: NpmSearchResult = {
           results: [],
-          total: 0
+          total: 0,
         };
         return result;
       });

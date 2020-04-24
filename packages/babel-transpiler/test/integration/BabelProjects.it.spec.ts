@@ -26,7 +26,7 @@ function describeIntegrationTest(projectName: string, babelConfig: Partial<Stryk
 
   it('should be able to transpile the input files', async () => {
     const actualResultFiles = await babelTranspiler.transpile(projectFiles);
-    const expectedResultFiles = resultFiles.map(file => new File(file.name.replace('expectedResult', 'source'), file.content));
+    const expectedResultFiles = resultFiles.map((file) => new File(file.name.replace('expectedResult', 'source'), file.content));
     expectFilesEqual(actualResultFiles, expectedResultFiles);
   });
 
@@ -36,11 +36,11 @@ function describeIntegrationTest(projectName: string, babelConfig: Partial<Stryk
 
   function expectFilesEqual(actual: readonly File[], expected: readonly File[]) {
     expect(actual).lengthOf(expected.length);
-    for (const i in expected) {
-      expect(actual[i].name).deep.eq(expected[i].name);
-      expect(actual[i].textContent, expected[i].name).deep.eq(expected[i].textContent);
-      expect(actual[i].content, expected[i].name).deep.eq(expected[i].content);
-    }
+    expected.forEach((expectedFile, index) => {
+      expect(actual[index].name).deep.eq(expectedFile.name);
+      expect(actual[index].textContent, expectedFile.name).deep.eq(expectedFile.textContent);
+      expect(actual[index].content, expectedFile.name).deep.eq(expectedFile.content);
+    });
   }
 }
 
@@ -70,18 +70,18 @@ describe('A Babel project with babel.config.js config file that exports function
   describeIntegrationTest('babelProjectWithBabelConfigJs', {
     extensions: ['.ts'],
     optionsApi: { cache: { forever: noop } } as ConfigAPI,
-    optionsFile: 'babel.config.js'
+    optionsFile: 'babel.config.js',
   });
 });
 describe('A Babel project with babel.config.js config file that exports object', () => {
   describeIntegrationTest('babelProjectWithBabelConfigJsObject', {
     extensions: ['.ts'],
-    optionsFile: 'babel.config.js'
+    optionsFile: 'babel.config.js',
   });
 });
 describe('A Babel project with .babelrc.js config file', () => {
   describeIntegrationTest('babelProjectWithBabelRcJs', {
     extensions: ['.ts'],
-    optionsFile: '.babelrc.js'
+    optionsFile: '.babelrc.js',
   });
 });

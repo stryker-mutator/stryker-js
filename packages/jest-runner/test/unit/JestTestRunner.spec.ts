@@ -23,7 +23,7 @@ describe('JestTestRunner', () => {
     testInjector.options.basePath = basePath;
 
     processEnvMock = {
-      NODE_ENV: undefined
+      NODE_ENV: undefined,
     };
 
     jestTestRunner = testInjector.injector
@@ -55,9 +55,9 @@ describe('JestTestRunner', () => {
           failureMessages: [],
           name: 'App renders without crashing',
           status: TestStatus.Success,
-          timeSpentMs: 23
-        }
-      ]
+          timeSpentMs: 23,
+        },
+      ],
     });
   });
 
@@ -74,9 +74,9 @@ describe('JestTestRunner', () => {
           failureMessages: [],
           name: 'App renders without crashing',
           status: TestStatus.Skipped,
-          timeSpentMs: 0
-        }
-      ]
+          timeSpentMs: 0,
+        },
+      ],
     });
   });
 
@@ -93,15 +93,15 @@ describe('JestTestRunner', () => {
           failureMessages: [],
           name: 'App renders without crashing',
           status: TestStatus.Success,
-          timeSpentMs: 4
+          timeSpentMs: 4,
         },
         {
           failureMessages: [],
           name: 'App renders without crashing with children',
           status: TestStatus.Skipped,
-          timeSpentMs: 0
-        }
-      ]
+          timeSpentMs: 0,
+        },
+      ],
     });
   });
 
@@ -118,21 +118,21 @@ describe('JestTestRunner', () => {
           failureMessages: ['Fail message 1', 'Fail message 2'],
           name: 'App render renders without crashing',
           status: TestStatus.Failed,
-          timeSpentMs: 2
+          timeSpentMs: 2,
         },
         {
           failureMessages: ['Fail message 3', 'Fail message 4'],
           name: 'App render renders without crashing',
           status: TestStatus.Failed,
-          timeSpentMs: 0
+          timeSpentMs: 0,
         },
         {
           failureMessages: [],
           name: 'App renders without crashing',
           status: TestStatus.Success,
-          timeSpentMs: 23
-        }
-      ]
+          timeSpentMs: 23,
+        },
+      ],
     });
   });
 
@@ -144,7 +144,7 @@ describe('JestTestRunner', () => {
     expect(result).to.deep.equal({
       errorMessages: [],
       status: RunStatus.Error,
-      tests: []
+      tests: [],
     });
   });
 

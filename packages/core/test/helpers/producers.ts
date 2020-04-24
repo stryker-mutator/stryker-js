@@ -52,18 +52,18 @@ export const logger = (): Mock<Logger> => {
     removeContext: sinon.stub(),
     setParseCallStackFunction: sinon.stub(),
     trace: sinon.stub(),
-    warn: sinon.stub()
+    warn: sinon.stub(),
   };
 };
 
 export const mappedLocation = factoryMethod<MappedLocation>(() => ({
   fileName: 'file.js',
-  location: factory.location()
+  location: factory.location(),
 }));
 
 export const coverageMaps = factoryMethod<CoverageMaps>(() => ({
   fnMap: {},
-  statementMap: {}
+  statementMap: {},
 }));
 
 export const fileCoverageData = factoryMethod<FileCoverageData>(() => ({
@@ -73,12 +73,12 @@ export const fileCoverageData = factoryMethod<FileCoverageData>(() => ({
   fnMap: {},
   path: '',
   s: {},
-  statementMap: {}
+  statementMap: {},
 }));
 
 export const transpileResult = factoryMethod<TranspileResult>(() => ({
   error: null,
-  outputFiles: [factory.file(), factory.file()]
+  outputFiles: [factory.file(), factory.file()],
 }));
 
 export const sourceFile = () => new SourceFile(factory.file());
@@ -90,7 +90,7 @@ export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator')
       fileName,
       mutatorName,
       range: [12, 13],
-      replacement: '-'
+      replacement: '-',
     }),
     new SourceFile(new File(fileName, Buffer.from('const a = 4 + 5')))
   );

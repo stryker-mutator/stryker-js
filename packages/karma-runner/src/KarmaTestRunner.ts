@@ -5,10 +5,12 @@ import { CoverageCollection, CoveragePerTestResult, RunResult, RunStatus, TestRe
 import * as karma from 'karma';
 
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
+import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
+
 import ProjectStarter from './starters/ProjectStarter';
-import StrykerKarmaSetup, { KARMA_CONFIG_KEY } from './StrykerKarmaSetup';
 import StrykerReporter from './StrykerReporter';
 import TestHooksMiddleware from './TestHooksMiddleware';
+import { KarmaRunnerOptionsWithStrykerOptions } from './KarmaRunnerOptionsWithStrykerOptions';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
@@ -62,16 +64,16 @@ export default class KarmaTestRunner implements TestRunner {
 
   private loadSetup(options: StrykerOptions): StrykerKarmaSetup {
     const defaultKarmaConfig: StrykerKarmaSetup = {
-      projectType: 'custom'
+      projectType: 'custom',
     };
-    return Object.assign(defaultKarmaConfig, options[KARMA_CONFIG_KEY]);
+    return Object.assign(defaultKarmaConfig, (options as KarmaRunnerOptionsWithStrykerOptions).karma);
   }
 
   private setGlobals(setup: StrykerKarmaSetup, getLogger: LoggerFactoryMethod) {
     strykerKarmaConf.setGlobals({
       getLogger,
       karmaConfig: setup.config,
-      karmaConfigFile: setup.configFile
+      karmaConfigFile: setup.configFile,
     });
   }
 
@@ -115,14 +117,14 @@ export default class KarmaTestRunner implements TestRunner {
       this.currentErrorMessages.push(error);
     });
     StrykerReporter.instance.on('compile_error', (errors: string[]) => {
-      errors.forEach(error => this.currentErrorMessages.push(error));
+      errors.forEach((error) => this.currentErrorMessages.push(error));
       this.currentRunStatus = RunStatus.Error;
     });
   }
 
   private runServer() {
-    return new Promise<void>(resolve => {
-      karma.runner.run({ port: this.port }, exitCode => {
+    return new Promise<void>((resolve) => {
+      karma.runner.run({ port: this.port }, (exitCode) => {
         this.log.debug('karma run done with ', exitCode);
         resolve();
       });
@@ -134,7 +136,7 @@ export default class KarmaTestRunner implements TestRunner {
       coverage: this.currentCoverageReport,
       errorMessages: this.currentErrorMessages,
       status: this.determineRunState(),
-      tests: this.currentTestResults
+      tests: this.currentTestResults,
     };
   }
 

@@ -37,7 +37,7 @@ class TestInjector {
     this.logger = factory.logger();
     this.pluginResolver = {
       resolve: sinon.stub(),
-      resolveAll: sinon.stub()
+      resolveAll: sinon.stub(),
     };
   }
 }

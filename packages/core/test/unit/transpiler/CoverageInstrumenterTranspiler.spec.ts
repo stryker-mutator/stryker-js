@@ -30,9 +30,7 @@ describe('CoverageInstrumenterTranspiler', () => {
       const input = [new File('mutate.js', 'function something() {}'), new File('spec.js', '')];
       const outputFiles = await sut.transpile(input);
       const instrumentedContent = outputFiles[0].textContent;
-      expect(instrumentedContent)
-        .to.contain('function something(){cov_')
-        .and.contain('.f[0]++');
+      expect(instrumentedContent).to.contain('function something(){cov_').and.contain('.f[0]++');
     });
 
     it('should preserve source map comments', async () => {

@@ -34,7 +34,7 @@ describe('InputFileSystem', () => {
   });
 
   describe('stat', () => {
-    it('should forward to memory fs', done => {
+    it('should forward to memory fs', (done) => {
       memoryFSMock.stat.callsArgWith(1, undefined, 'foobar');
       sut.stat('arg1', (_error, value) => {
         expect(value).eq('foobar');
@@ -43,7 +43,7 @@ describe('InputFileSystem', () => {
       });
     });
 
-    it('should forward to fs if memory FS resulted in an error', done => {
+    it('should forward to fs if memory FS resulted in an error', (done) => {
       memoryFSMock.stat.callsArgOnWith(1, sut, new Error('foobar'));
       innerFSMock.stat.callsArgWith(1, null, 'the stats');
       sut.stat('foobar', (error, stats) => {
@@ -53,14 +53,14 @@ describe('InputFileSystem', () => {
       });
     });
 
-    it('should forward fs errors if file did not exist', done => {
+    it('should forward fs errors if file did not exist', (done) => {
       // Arrange
       const expectedError = new Error('File not exists');
       innerFSMock.stat.callsArgWith(1, expectedError);
       memoryFSMock.stat.callsArgOnWith(1, sut, new Error('foobar'));
 
       // Act
-      sut.stat('foo/bar/not/exits', err => {
+      sut.stat('foo/bar/not/exits', (err) => {
         // Assert
         expect(err).eq(expectedError);
         done();
@@ -69,7 +69,7 @@ describe('InputFileSystem', () => {
   });
 
   describe('readFile', () => {
-    it('should forward readFile to memory FS', done => {
+    it('should forward readFile to memory FS', (done) => {
       memoryFSMock.readFile.callsArgOnWith(2, sut, undefined, 'foobar');
       sut.readFile('path', {}, (_error: Error, value: string) => {
         expect(value).eq('foobar');
@@ -79,7 +79,7 @@ describe('InputFileSystem', () => {
       });
     });
 
-    it('should forward to real FS if memory-fs gave an error', done => {
+    it('should forward to real FS if memory-fs gave an error', (done) => {
       memoryFSMock.readFile.callsArgOnWith(1, sut, new Error('foobar'));
       innerFSMock.readFile.callsArgWith(1, undefined, 'the content');
       sut.readFile('foobar', (_error: Error, content: string) => {
@@ -89,7 +89,7 @@ describe('InputFileSystem', () => {
       });
     });
 
-    it('should forward fs errors if file did not exist', done => {
+    it('should forward fs errors if file did not exist', (done) => {
       // Arrange
       const expectedError = new Error('File not exists');
       innerFSMock.readFile.callsArgWith(1, expectedError);

@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "KarmaRunnerOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "karma": {
+      "description": "Configuration for @stryker-mutator/karma-runner",
+      "title": "StrykerKarmaSetup",
+      "additionalProperties": false,
+      "type": "object",
+      "default": {},
+      "properties": {
+        "projectType": {
+          "$ref": "#/definitions/karmaProjectKind",
+          "default": "custom"
+        },
+        "configFile": {
+          "description": "Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded. Options specified directly in your stryker.conf.js file using `karma.config` will overrule options in your karma.conf.js file.",
+          "type": "string"
+        },
+        "config": {
+          "description": "Specify [karma configuration options](http://karma-runner.github.io/2.0/config/configuration-file.html) directly. Options specified here will overrule any options in your karma.conf.js file.",
+          "type": "object"
+        },
+        "ngConfig": {
+          "$ref": "#/definitions/karmaNgConfigOptions"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "karmaProjectKind": {
+      "title": "ProjectKind",
+      "description": "Specify which kind of project you're using. This determines which command is used to start karma\n* `custom`: configure @stryker-mutator/karma-runner to use `karma start`\n* `angular-cli`: configure @stryker-mutator/karma-runner to use `ng test`",
+      "enum": [
+        "custom",
+        "angular-cli"
+      ]
+    },
+    "karmaNgConfigOptions": {
+      "title": "NgConfigOptions",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "testArguments": {
+          "description": "Add [ng test arguments](https://github.com/angular/angular-cli/wiki/test#options). For example, specify an alternative project with: `\"testArguments\": { \"project\": \"my-lib\" }",
+          "title": "NgTestArguments",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

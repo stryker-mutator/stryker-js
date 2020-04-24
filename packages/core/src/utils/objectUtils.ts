@@ -5,7 +5,7 @@ export { serialize, deserialize } from 'surrial';
 
 export function freezeRecursively<T extends { [prop: string]: any }>(target: T): T {
   Object.freeze(target);
-  Object.keys(target).forEach(key => {
+  Object.keys(target).forEach((key) => {
     const value = target[key];
     if (typeof value === 'object' && value !== null) {
       freezeRecursively(value);
@@ -71,11 +71,11 @@ export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof 
   const sleep = new Promise<T | typeof TimeoutExpired>((res, rej) => {
     const timer = setTimeout(() => res(TimeoutExpired), ms);
     promise
-      .then(result => {
+      .then((result) => {
         clearTimeout(timer);
         res(result);
       })
-      .catch(error => {
+      .catch((error) => {
         clearTimeout(timer);
         rej(error);
       });
@@ -86,6 +86,6 @@ export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof 
 export function padLeft(input: string): string {
   return input
     .split('\n')
-    .map(str => '\t' + str)
+    .map((str) => '\t' + str)
     .join('\n');
 }

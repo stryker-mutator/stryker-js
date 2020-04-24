@@ -2,11 +2,15 @@ import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Transpiler } from '@stryker-mutator/api/transpile';
 
+import { WebpackTranspilerOptions } from '../src-generated/webpack-transpiler-options';
+
 import ConfigLoader from './compiler/ConfigLoader';
 import WebpackCompiler from './compiler/WebpackCompiler';
 import { pluginTokens } from './pluginTokens';
 
 const DEFAULT_STRYKER_WEBPACK_CONFIG = Object.freeze({ configFile: undefined, silent: true, context: process.cwd() });
+
+interface WebpackTranspilerOptionsWithStrykerOptions extends StrykerOptions, WebpackTranspilerOptions {}
 
 export default class WebpackTranspiler implements Transpiler {
   private readonly config: StrykerWebpackConfig;
@@ -19,7 +23,7 @@ export default class WebpackTranspiler implements Transpiler {
         `Invalid \`coverageAnalysis\` "${options.coverageAnalysis}" is not supported by the stryker-webpack-transpiler (yet). It is not able to produce source maps yet. Please set it "coverageAnalysis" to "off".`
       );
     }
-    this.config = this.getStrykerWebpackConfig(options.webpack);
+    this.config = this.getStrykerWebpackConfig((options as WebpackTranspilerOptionsWithStrykerOptions).webpack);
   }
 
   public async transpile(files: readonly File[]): Promise<readonly File[]> {

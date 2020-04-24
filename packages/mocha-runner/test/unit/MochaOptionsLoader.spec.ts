@@ -7,7 +7,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import LibWrapper from '../../src/LibWrapper';
-import { MochaOptions } from '../../src/MochaOptions';
+import { MochaOptions } from '../../src-generated/mocha-runner-options';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { mochaOptionsKey } from '../../src/utils';
 
@@ -41,7 +41,7 @@ describe(MochaOptionsLoader.name, () => {
       testInjector.options[mochaOptionsKey] = {
         ['no-baz']: true,
         foo: 'bar',
-        spec: ['helpers/*.js', 'test/*.js']
+        spec: ['helpers/*.js', 'test/*.js'],
       };
       sut.load(testInjector.options);
       expect(LibWrapper.loadOptions).calledWith(['--no-baz', '--foo', 'bar', '--spec', 'helpers/*.js,test/*.js']);
@@ -49,43 +49,41 @@ describe(MochaOptionsLoader.name, () => {
 
     it('should filter out invalid options from the `loadOptions` result', () => {
       testInjector.options[mochaOptionsKey] = {
-        override: true
+        override: true,
       };
 
       // Following are valid options
-      rawOptions.extension = 'foo';
-      rawOptions.require = 'bar';
-      rawOptions.timeout = 'baz';
-      rawOptions['async-only'] = 'qux';
+      rawOptions.extension = ['foo'];
+      rawOptions.require = ['bar'];
+      rawOptions.timeout = 4200;
+      rawOptions['async-only'] = true;
       rawOptions.ui = 'quux';
       rawOptions.grep = 'quuz';
-      rawOptions.exclude = 'corge';
-      rawOptions.ignore = 'garply';
-      rawOptions.file = 'grault';
+      rawOptions.ignore = ['garply'];
+      rawOptions.file = ['grault'];
       rawOptions.spec = ['test/**/*.js'];
 
       rawOptions.garply = 'waldo'; // this should be filtered out
       const result = sut.load(testInjector.options);
-      expect(result).deep.eq({
-        exclude: 'corge',
-        extension: 'foo',
-        file: 'grault',
+      const expected: MochaOptions = createMochaOptions({
+        extension: ['foo'],
+        file: ['grault'],
         grep: 'quuz',
-        ignore: 'garply',
+        ignore: ['garply'],
         opts: './test/mocha.opts',
-        override: true,
-        require: 'bar',
+        require: ['bar'],
         spec: ['test/**/*.js'],
-        timeout: 'baz',
-        ['async-only']: 'qux',
-        ui: 'quux'
+        timeout: 4200,
+        'async-only': true,
+        ui: 'quux',
       });
+      expect(result).deep.eq({ ...expected, override: true });
     });
 
     it('should trace log the mocha call', () => {
       testInjector.logger.isTraceEnabled.returns(true);
       testInjector.options[mochaOptionsKey] = {
-        foo: 'bar'
+        foo: 'bar',
       };
       rawOptions.baz = 'qux';
       sut.load(testInjector.options);
@@ -122,7 +120,7 @@ describe(MochaOptionsLoader.name, () => {
     it('should load a mocha.opts file if specified', () => {
       readFileStub.returns('');
       strykerOptions.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       sut.load(strykerOptions);
       expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
@@ -133,7 +131,7 @@ describe(MochaOptionsLoader.name, () => {
       readFileStub.returns('');
       existsFileStub.returns(false);
       strykerOptions.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
 
       sut.load(strykerOptions);
@@ -151,7 +149,7 @@ describe(MochaOptionsLoader.name, () => {
 
     it("shouldn't load anything if mocha.opts = false", () => {
       strykerOptions.mochaOptions = {
-        opts: false
+        opts: false,
       };
       sut.load(strykerOptions);
       expect(fs.readFileSync).not.called;
@@ -176,7 +174,7 @@ describe(MochaOptionsLoader.name, () => {
       strykerOptions.mochaOptions = { opts: '.' };
       const options = sut.load(strykerOptions);
       expect(options).deep.include({
-        require: ['src/test/support/setup', 'babel-require']
+        require: ['src/test/support/setup', 'babel-require'],
       });
     });
 
@@ -190,13 +188,13 @@ describe(MochaOptionsLoader.name, () => {
 
     itShouldLoadProperty('--timeout', '2000', { timeout: 2000 });
     itShouldLoadProperty('-t', '2000', { timeout: 2000 });
-    itShouldLoadProperty('-A', '', { asyncOnly: true });
-    itShouldLoadProperty('--async-only', '', { asyncOnly: true });
+    itShouldLoadProperty('-A', '', { 'async-only': true });
+    itShouldLoadProperty('--async-only', '', { 'async-only': true });
     itShouldLoadProperty('--ui', 'qunit', { ui: 'qunit' });
     itShouldLoadProperty('-u', 'qunit', { ui: 'qunit' });
-    itShouldLoadProperty('-g', 'grepthis', { grep: /grepthis/ });
-    itShouldLoadProperty('--grep', '/grep(this|that)/', { grep: /grep(this|that)/ });
-    itShouldLoadProperty('--grep', 'grep(this|that)?', { grep: /grep(this|that)?/ });
+    itShouldLoadProperty('-g', 'grepthis', { grep: 'grepthis' });
+    itShouldLoadProperty('--grep', '/grep(this|that)/', { grep: 'grep(this|that)' });
+    itShouldLoadProperty('--grep', 'grep(this|that)?', { grep: 'grep(this|that)?' });
 
     it('should not override additional properties (except for defaults)', () => {
       readFileStub.returns(`
@@ -206,22 +204,22 @@ describe(MochaOptionsLoader.name, () => {
         -r babel-register
       `);
       strykerOptions.mochaOptions = {
-        asyncOnly: false,
+        'async-only': false,
         opts: 'path/to/opts/file',
         require: ['ts-node/register'],
         timeout: 4000,
-        ui: 'exports'
+        ui: 'exports',
       };
       const options = sut.load(strykerOptions);
       expect(options).deep.equal(
         createMochaOptions({
-          asyncOnly: false,
+          'async-only': false,
           extension: ['js'],
           opts: 'path/to/opts/file',
           require: ['ts-node/register'],
           spec: ['test'],
           timeout: 4000,
-          ui: 'exports'
+          ui: 'exports',
         })
       );
     });
@@ -232,7 +230,7 @@ describe(MochaOptionsLoader.name, () => {
       --ignore-leaks
       `);
       strykerOptions.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       const options = sut.load(strykerOptions);
       expect(options).not.have.property('reporter');
@@ -247,7 +245,7 @@ describe(MochaOptionsLoader.name, () => {
       --ui
       `);
       strykerOptions.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       const options = sut.load(strykerOptions);
       expect(options).deep.eq(
@@ -255,15 +253,20 @@ describe(MochaOptionsLoader.name, () => {
           extension: ['js'],
           opts: 'some/mocha.opts/file',
           spec: ['test'],
-          timeout: undefined,
-          ui: undefined
+          timeout: 2000,
+          ui: 'bdd',
         })
       );
     });
   });
 
-  function createMochaOptions(overrides?: Partial<MochaOptions>) {
+  function createMochaOptions(overrides?: Partial<MochaOptions>): MochaOptions {
     return {
+      'async-only': false,
+      'no-config': false,
+      'no-opts': false,
+      require: [],
+      'no-package': false,
       extension: ['js'],
       file: [],
       ignore: [],
@@ -271,7 +274,7 @@ describe(MochaOptionsLoader.name, () => {
       spec: ['test'],
       timeout: 2000,
       ui: 'bdd',
-      ...overrides
+      ...overrides,
     };
   }
 });

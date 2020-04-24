@@ -30,7 +30,7 @@ describe('we have a module using stryker', () => {
       const arrangeActAndAssertModule = (moduleToRun: string, partsToBeAsserted: string[]) => {
         it(`should output "${partsToBeAsserted}" when using the "${moduleToRun}" module`, () => {
           return execInModule(`npm run use:${moduleToRun}`).then(([stdout]) => {
-            partsToBeAsserted.forEach(part => expect(stdout).to.contain(part));
+            partsToBeAsserted.forEach((part) => expect(stdout).to.contain(part));
           });
         });
       };

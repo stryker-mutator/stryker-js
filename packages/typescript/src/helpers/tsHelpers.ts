@@ -48,7 +48,7 @@ export function guardTypescriptVersion() {
 
 const printer = ts.createPrinter({
   newLine: os.EOL === '\r\n' ? ts.NewLineKind.CarriageReturnLineFeed : ts.NewLineKind.LineFeed,
-  removeComments: false
+  removeComments: false,
 });
 
 export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): string {
@@ -58,7 +58,7 @@ export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): str
 function tsExtensions() {
   // Since ts 2.5 the ts.Extension enum is a string-based enum
   if (semver.satisfies(ts.version, '>=2.5')) {
-    return Object.keys(ts.Extension).map(extension => ts.Extension[extension as keyof typeof ts.Extension]);
+    return Object.keys(ts.Extension).map((extension) => ts.Extension[extension as keyof typeof ts.Extension]);
   } else {
     // We know that pre 2.5 should have these extensions:
     return ['.ts', '.tsx', '.js', '.jsx'];
@@ -66,7 +66,7 @@ function tsExtensions() {
 }
 
 export function isTypescriptFile(fileName: string) {
-  return tsExtensions().some(extension => fileName.endsWith(extension));
+  return tsExtensions().some((extension) => fileName.endsWith(extension));
 }
 
 export function isJavaScriptFile(file: ts.OutputFile) {

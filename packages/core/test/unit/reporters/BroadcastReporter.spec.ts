@@ -22,11 +22,7 @@ describe('BroadcastReporter', () => {
     rep1 = factory.reporter('rep1');
     rep2 = factory.reporter('rep2');
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
-    pluginCreatorMock.create
-      .withArgs('rep1')
-      .returns(rep1)
-      .withArgs('rep2')
-      .returns(rep2);
+    pluginCreatorMock.create.withArgs('rep1').returns(rep1).withArgs('rep2').returns(rep2);
   });
 
   afterEach(() => {
@@ -62,7 +58,7 @@ describe('BroadcastReporter', () => {
       // Assert
       expect(sut.reporters).deep.eq({
         progress,
-        rep2
+        rep2,
       });
     });
 
@@ -97,7 +93,7 @@ describe('BroadcastReporter', () => {
             wrapUpRejectFn = reject;
           })
         );
-        rep2.wrapUp.returns(new Promise<void>(resolve => (wrapUpResolveFn2 = resolve)));
+        rep2.wrapUp.returns(new Promise<void>((resolve) => (wrapUpResolveFn2 = resolve)));
         result = sut.wrapUp().then(() => void (isResolved = true));
       });
 
@@ -130,7 +126,7 @@ describe('BroadcastReporter', () => {
 
       beforeEach(() => {
         actualError = new Error('some error');
-        ALL_REPORTER_EVENTS.forEach(eventName => rep1[eventName].throws(actualError));
+        ALL_REPORTER_EVENTS.forEach((eventName) => rep1[eventName].throws(actualError));
       });
 
       it('should still broadcast to other reporters', () => {
@@ -138,7 +134,7 @@ describe('BroadcastReporter', () => {
       });
 
       it('should log each error', () => {
-        ALL_REPORTER_EVENTS.forEach(eventName => {
+        ALL_REPORTER_EVENTS.forEach((eventName) => {
           (sut as any)[eventName]();
           expect(testInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'.`, actualError);
         });
@@ -153,7 +149,7 @@ describe('BroadcastReporter', () => {
   }
 
   function actArrangeAssertAllEvents() {
-    ALL_REPORTER_EVENTS.forEach(eventName => {
+    ALL_REPORTER_EVENTS.forEach((eventName) => {
       const eventData = eventName === 'wrapUp' ? undefined : eventName;
       (sut as any)[eventName](eventName);
       expect(rep1[eventName]).calledWith(eventData);

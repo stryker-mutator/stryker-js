@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "BabelTranspilerOptions",
+  "additionalProperties": false,
+  "properties": {
+    "babel": {
+      "description": "Configuration for @stryker-mutator/babel-transpiler",
+      "title": "StrykerBabelConfig",
+      "default": {},
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "description": "Load additional extensions here. By default only these extensions get picked up by babel: `\".js\", \".jsx\", \".es6\", \".es\", \".mjs\"`.\nFor example: if you want to enable typescript transpilation, set extensions to `[\"ts\", \"tsx\"]`.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "optionsFile": {
+          "description": "The location of your babelrc file. Set this value to `null` to disable loading of a babel config file.",
+          "default": ".babelrc",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "options": {
+          "description": "Override babel options from your config file here. Please see [babel's documentation](https://babeljs.io/docs/en/options) to see what is available.\n\nSome options are restricted to be set, because the @stryker-mutator/babel-transpiler takes control of it. These options are: `filename`, `filenameRelative` and `cwd`.",
+          "$ref": "http://json.schemastore.org/babelrc",
+          "type": "object"
+        }
+      }
+    }
+  }
+}

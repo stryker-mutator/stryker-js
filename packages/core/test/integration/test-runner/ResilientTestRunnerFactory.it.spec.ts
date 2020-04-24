@@ -30,7 +30,7 @@ describe('ResilientTestRunnerFactory integration', () => {
       plugins: [require.resolve('./AdditionalTestRunners')],
       someRegex: /someRegex/,
       testFramework: 'jasmine',
-      testRunner: 'karma'
+      testRunner: 'karma',
     });
     alreadyDisposed = false;
   });
@@ -139,9 +139,7 @@ describe('ResilientTestRunnerFactory integration', () => {
     await arrangeSut('proximity-mine');
     const result = await actRun();
     expect(RunStatus[result.status]).eq(RunStatus[RunStatus.Error]);
-    expect(result.errorMessages)
-      .property('0')
-      .contains('Test runner crashed');
+    expect(result.errorMessages).property('0').contains('Test runner crashed');
   });
 
   it('should handle asynchronously handled promise rejections from the underlying test runner', async () => {
@@ -154,7 +152,7 @@ describe('ResilientTestRunnerFactory integration', () => {
     const actualLogEvents = await logEvents;
     expect(
       actualLogEvents.find(
-        logEvent =>
+        (logEvent) =>
           log4js.levels.DEBUG.isEqualTo(logEvent.level) &&
           logEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection')
       )

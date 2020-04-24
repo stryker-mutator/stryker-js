@@ -26,28 +26,28 @@ describe('JasmineRunner integration', () => {
       Object.freeze({
         failureMessages: undefined,
         name: 'Player should be able to play a Song',
-        status: TestStatus.Success
+        status: TestStatus.Success,
       }),
       Object.freeze({
         failureMessages: undefined,
         name: 'Player when song has been paused should indicate that the song is currently paused',
-        status: TestStatus.Success
+        status: TestStatus.Success,
       }),
       Object.freeze({
         failureMessages: undefined,
         name: 'Player when song has been paused should be possible to resume',
-        status: TestStatus.Success
+        status: TestStatus.Success,
       }),
       Object.freeze({
         failureMessages: undefined,
         name: 'Player tells the current song if the user has made it a favorite',
-        status: TestStatus.Success
+        status: TestStatus.Success,
       }),
       Object.freeze({
         failureMessages: undefined,
         name: 'Player #resume should throw an exception if song is already playing',
-        status: TestStatus.Success
-      })
+        status: TestStatus.Success,
+      }),
     ]);
 
     beforeEach(() => {
@@ -57,7 +57,7 @@ describe('JasmineRunner integration', () => {
           path.resolve('lib', 'jasmine_examples', 'Player.js'),
           path.resolve('lib', 'jasmine_examples', 'Song.js'),
           path.resolve('spec', 'helpers', 'jasmine_examples', 'SpecHelper.js'),
-          path.resolve('spec', 'jasmine_examples', 'PlayerSpec.js')
+          path.resolve('spec', 'jasmine_examples', 'PlayerSpec.js'),
         ],
         factory.strykerOptions({ jasmineConfigFile: 'spec/support/jasmine.json' })
       );
@@ -82,12 +82,12 @@ describe('JasmineRunner integration', () => {
         testFramework.filter([
           {
             id: 1,
-            name: expectedJasmineInitResults[1].name
+            name: expectedJasmineInitResults[1].name,
           },
           {
             id: 3,
-            name: expectedJasmineInitResults[3].name
-          }
+            name: expectedJasmineInitResults[3].name,
+          },
         ])
       );
 
@@ -117,16 +117,16 @@ describe('JasmineRunner integration', () => {
         testFramework.filter([
           {
             id: 1,
-            name: expectedJasmineInitResults[1].name
-          }
+            name: expectedJasmineInitResults[1].name,
+          },
         ])
       );
       const testHooks2 = wrapInClosure(
         testFramework.filter([
           {
             id: 2,
-            name: expectedJasmineInitResults[2].name
-          }
+            name: expectedJasmineInitResults[2].name,
+          },
         ])
       );
 
@@ -145,7 +145,7 @@ describe('JasmineRunner integration', () => {
         expectedJasmineInitResults.map((testResult, id) => ({
           failureMessages: testResult.failureMessages,
           name: testResult.name,
-          status: filteredTestIds.includes(id) ? TestStatus.Success : TestStatus.Skipped
+          status: filteredTestIds.includes(id) ? TestStatus.Success : TestStatus.Skipped,
         }))
       );
     }
@@ -181,8 +181,8 @@ describe('JasmineRunner integration', () => {
         {
           failureMessages: ["Expected 'bar' to be 'baz'."],
           name: 'foo should be baz',
-          status: TestStatus.Failed
-        }
+          status: TestStatus.Failed,
+        },
       ]);
     });
   });

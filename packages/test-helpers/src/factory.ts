@@ -17,7 +17,12 @@ const ajv = new Ajv({ useDefaults: true });
 /**
  * This validator will fill in the defaults of stryker options as registered in the schema.
  */
-const strykerOptionsValidator: (overrides: Partial<StrykerOptions>) => void = ajv.compile(strykerCoreSchema);
+function strykerOptionsValidator(overrides: Partial<StrykerOptions>): asserts overrides is StrykerOptions {
+  const ajvValidator = ajv.compile(strykerCoreSchema);
+  if (!ajvValidator(overrides)) {
+    throw new Error('Unknown stryker options ' + ajv.errorsText(ajvValidator.errors));
+  }
+}
 
 /**
  * A 1x1 png base64 encoded
@@ -45,7 +50,7 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   replacement: '',
   sourceFilePath: 'file.js',
   status: MutantStatus.Killed,
-  testsRan: ['']
+  testsRan: [''],
 }));
 
 export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestReportSchema.MutantResult>(() => ({
@@ -58,31 +63,31 @@ export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestRe
   replacement: '',
   sourceFilePath: '',
   status: mutationTestReportSchema.MutantStatus.Killed,
-  testsRan: ['']
+  testsRan: [''],
 }));
 
 export const mutationTestReportSchemaFileResult = factoryMethod<mutationTestReportSchema.FileResult>(() => ({
   language: 'javascript',
   mutants: [mutationTestReportSchemaMutantResult()],
-  source: 'export function add (a, b) { return a + b; }'
+  source: 'export function add (a, b) { return a + b; }',
 }));
 
 export const mutationTestReportSchemaMutationTestResult = factoryMethod<mutationTestReportSchema.MutationTestResult>(() => ({
   files: {
-    'fileA.js': mutationTestReportSchemaFileResult()
+    'fileA.js': mutationTestReportSchemaFileResult(),
   },
   schemaVersion: '1',
   thresholds: {
     high: 81,
-    low: 19
-  }
+    low: 19,
+  },
 }));
 
 export const mutant = factoryMethod<Mutant>(() => ({
   fileName: 'file',
   mutatorName: 'foobarMutator',
   range: [0, 0],
-  replacement: 'replacement'
+  replacement: 'replacement',
 }));
 
 export const metrics = factoryMethod<Metrics>(() => ({
@@ -100,13 +105,13 @@ export const metrics = factoryMethod<Metrics>(() => ({
   totalInvalid: 0,
   totalMutants: 0,
   totalUndetected: 0,
-  totalValid: 0
+  totalValid: 0,
 }));
 
 export const metricsResult = factoryMethod<MetricsResult>(() => ({
   childResults: [],
   metrics: metrics({}),
-  name: ''
+  name: '',
 }));
 
 export function logger(): sinon.SinonStubbedInstance<Logger> {
@@ -122,7 +127,7 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
     isTraceEnabled: sinon.stub(),
     isWarnEnabled: sinon.stub(),
     trace: sinon.stub(),
-    warn: sinon.stub()
+    warn: sinon.stub(),
   };
 }
 
@@ -136,37 +141,37 @@ export function testFramework(): TestFramework {
     },
     filter(selections: TestSelection[]) {
       return `filter: ${selections}`;
-    }
+    },
   };
 }
 
 export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',
   status: TestStatus.Success,
-  timeSpentMs: 10
+  timeSpentMs: 10,
 }));
 
 export const runResult = factoryMethod<RunResult>(() => ({
   status: RunStatus.Complete,
-  tests: [testResult()]
+  tests: [testResult()],
 }));
 
 export const mutationScoreThresholds = factoryMethod<MutationScoreThresholds>(() => ({
   break: null,
   high: 80,
-  low: 60
+  low: 60,
 }));
 
 export const strykerOptions = factoryMethod<StrykerOptions>(() => {
   const options: Partial<StrykerOptions> = {};
   strykerOptionsValidator(options);
-  return options as StrykerOptions;
+  return options;
 });
 
 export const mutatorDescriptor = factoryMethod<MutatorDescriptor>(() => ({
   excludedMutations: [],
   name: 'fooMutator',
-  plugins: null
+  plugins: null,
 }));
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
@@ -176,29 +181,29 @@ export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
   'onMutantTested',
   'onAllMutantsTested',
   'onMutationTestReportReady',
-  'wrapUp'
+  'wrapUp',
 ];
 
 export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Required<Reporter>> {
   const reporter = { name } as any;
-  ALL_REPORTER_EVENTS.forEach(event => (reporter[event] = sinon.stub()));
+  ALL_REPORTER_EVENTS.forEach((event) => (reporter[event] = sinon.stub()));
   return reporter;
 }
 
 export function configEditor(): sinon.SinonStubbedInstance<ConfigEditor> {
   return {
-    edit: sinon.stub()
+    edit: sinon.stub(),
   };
 }
 export function optionsEditor(): sinon.SinonStubbedInstance<OptionsEditor> {
   return {
-    edit: sinon.stub()
+    edit: sinon.stub(),
   };
 }
 
 export function transpiler(): sinon.SinonStubbedInstance<Transpiler> {
   return {
-    transpile: sinon.stub()
+    transpile: sinon.stub(),
   };
 }
 
@@ -214,7 +219,7 @@ export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.to
     runAllTests,
     replacement: '',
     scopedTestIds,
-    timeSpentScopedTests: 0
+    timeSpentScopedTests: 0,
   };
 }
 
@@ -226,7 +231,7 @@ export function injector(): sinon.SinonStubbedInstance<Injector> {
     provideClass: sinon.stub(),
     provideFactory: sinon.stub(),
     provideValue: sinon.stub(),
-    resolve: sinon.stub()
+    resolve: sinon.stub(),
   };
   injectorMock.provideClass.returnsThis();
   injectorMock.provideFactory.returnsThis();

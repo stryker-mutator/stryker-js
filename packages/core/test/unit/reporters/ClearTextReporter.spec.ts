@@ -38,14 +38,14 @@ describe(ClearTextReporter.name, () => {
                 location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
                 mutatorName: 'Block',
                 replacement: '{}',
-                status: mutationTestReportSchema.MutantStatus.Killed
-              }
+                status: mutationTestReportSchema.MutantStatus.Killed,
+              },
             ],
-            source: 'console.log("hello world!")'
-          }
+            source: 'console.log("hello world!")',
+          },
         },
         schemaVersion: '1.0',
-        thresholds: mutationScoreThresholds({})
+        thresholds: mutationScoreThresholds({}),
       });
 
       const serializedTable: string = stdoutStub.getCall(0).args[0];
@@ -57,7 +57,7 @@ describe(ClearTextReporter.name, () => {
         `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
         ` file.js  |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
         '----------|---------|----------|-----------|------------|----------|---------|',
-        ''
+        '',
       ]);
     });
 
@@ -69,7 +69,7 @@ describe(ClearTextReporter.name, () => {
       sut.onMutationTestReportReady({
         files: {},
         schemaVersion: '1.0',
-        thresholds: mutationScoreThresholds({})
+        thresholds: mutationScoreThresholds({}),
       });
 
       expect(chalk.level).to.eq(0);
@@ -252,7 +252,7 @@ describe(ClearTextReporter.name, () => {
   });
 
   function mutantResults(...status: MutantStatus[]): MutantResult[] {
-    return status.map(status => {
+    return status.map((status) => {
       const result: MutantResult = mutantResult({
         location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
         mutatedLines: 'mutated line',
@@ -262,7 +262,7 @@ describe(ClearTextReporter.name, () => {
         replacement: '',
         sourceFilePath: 'sourceFile.ts',
         status,
-        testsRan: ['a test', 'a second test', 'a third test']
+        testsRan: ['a test', 'a second test', 'a third test'],
       });
       return result;
     });

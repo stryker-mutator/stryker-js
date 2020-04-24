@@ -4,7 +4,7 @@ export default class LocationHelper {
   public static MAX_VALUE = new LocationHelper(
     Object.freeze({
       end: Object.freeze({ column: Number.POSITIVE_INFINITY, line: Number.POSITIVE_INFINITY }),
-      start: Object.freeze({ column: 0, line: -1 })
+      start: Object.freeze({ column: 0, line: -1 }),
     })
   );
 

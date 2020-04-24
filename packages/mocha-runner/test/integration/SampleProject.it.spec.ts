@@ -14,8 +14,8 @@ const expect = chai.expect;
 
 const countTests = (runResult: RunResult, predicate: (result: TestResult) => boolean) => runResult.tests.filter(predicate).length;
 
-const countSucceeded = (runResult: RunResult) => countTests(runResult, t => t.status === TestStatus.Success);
-const countFailed = (runResult: RunResult) => countTests(runResult, t => t.status === TestStatus.Failed);
+const countSucceeded = (runResult: RunResult) => countTests(runResult, (t) => t.status === TestStatus.Success);
+const countFailed = (runResult: RunResult) => countTests(runResult, (t) => t.status === TestStatus.Failed);
 
 function resolve(fileName: string) {
   return path.resolve(__dirname, '..', '..', fileName);
@@ -41,11 +41,7 @@ describe('Running a sample project', () => {
       const runResult = await sut.run({});
       expect(countSucceeded(runResult)).to.be.eq(5, 'Succeeded tests did not match');
       expect(countFailed(runResult)).to.be.eq(0, 'Failed tests did not match');
-      runResult.tests.forEach(t =>
-        expect(t.timeSpentMs)
-          .to.be.greaterThan(-1)
-          .and.to.be.lessThan(1000)
-      );
+      runResult.tests.forEach((t) => expect(t.timeSpentMs).to.be.greaterThan(-1).and.to.be.lessThan(1000));
       expect(runResult.status).to.be.eq(RunStatus.Complete, 'Test result did not match');
       expect(runResult.coverage).to.not.be.ok;
     });
@@ -61,7 +57,7 @@ describe('Running a sample project', () => {
     beforeEach(() => {
       spec = [resolve('testResources/sampleProject/MyMath.js'), resolve('testResources/sampleProject/MyMathSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({
-        files: spec
+        files: spec,
       });
       sut = createSut();
       return sut.init();
@@ -99,11 +95,7 @@ describe('Running a sample project', () => {
       const runResult = await sut.run({});
       expect(countSucceeded(runResult)).to.be.eq(0, 'Succeeded tests did not match');
       expect(countFailed(runResult)).to.be.eq(0, 'Failed tests did not match');
-      runResult.tests.forEach(t =>
-        expect(t.timeSpentMs)
-          .to.be.greaterThan(-1)
-          .and.to.be.lessThan(1000)
-      );
+      runResult.tests.forEach((t) => expect(t.timeSpentMs).to.be.greaterThan(-1).and.to.be.lessThan(1000));
       expect(runResult.status).to.be.eq(RunStatus.Complete, 'Test result did not match');
       expect(runResult.coverage).to.not.be.ok;
     });

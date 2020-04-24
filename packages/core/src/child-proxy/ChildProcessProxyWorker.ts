@@ -50,19 +50,19 @@ export default class ChildProcessProxyWorker {
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
       case WorkerMessageKind.Call:
-        new Promise(resolve => resolve(this.doCall(message)))
-          .then(result => {
+        new Promise((resolve) => resolve(this.doCall(message)))
+          .then((result) => {
             this.send({
               correlationId: message.correlationId,
               kind: ParentMessageKind.Result,
-              result
+              result,
             });
           })
-          .catch(error => {
+          .catch((error) => {
             this.send({
               correlationId: message.correlationId,
               error: errorToString(error),
-              kind: ParentMessageKind.Rejection
+              kind: ParentMessageKind.Rejection,
             });
           });
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
@@ -71,9 +71,7 @@ export default class ChildProcessProxyWorker {
         const sendCompleted = () => {
           this.send({ kind: ParentMessageKind.DisposeCompleted });
         };
-        LogConfigurator.shutdown()
-          .then(sendCompleted)
-          .catch(sendCompleted);
+        LogConfigurator.shutdown().then(sendCompleted).catch(sendCompleted);
         break;
     }
   }
@@ -93,7 +91,7 @@ export default class ChildProcessProxyWorker {
    * @param exceptListener The listener that should remain
    */
   private removeAnyAdditionalMessageListeners(exceptListener: NodeJS.MessageListener) {
-    process.listeners('message').forEach(listener => {
+    process.listeners('message').forEach((listener) => {
       if (listener !== exceptListener) {
         this.log.debug(
           "Removing an additional message listener, we don't want eavesdropping on our inter-process communication: %s",
@@ -115,7 +113,7 @@ export default class ChildProcessProxyWorker {
       const unhandledPromiseId = unhandledRejections.push(promise);
       this.log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
     });
-    process.on('rejectionHandled', promise => {
+    process.on('rejectionHandled', (promise) => {
       const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;
       this.log.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
     });

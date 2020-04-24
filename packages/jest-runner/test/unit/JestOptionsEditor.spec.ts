@@ -28,7 +28,7 @@ describe(JestOptionsEditor.name, () => {
       collectCoverage: true,
       verbose: true,
       bail: false,
-      testResultsProcessor: 'someResultProcessor'
+      testResultsProcessor: 'someResultProcessor',
     };
     customConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
@@ -69,7 +69,7 @@ describe(JestOptionsEditor.name, () => {
       collectCoverage: false,
       notify: false,
       testResultsProcessor: undefined,
-      verbose: false
+      verbose: false,
     });
   });
 

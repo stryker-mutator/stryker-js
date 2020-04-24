@@ -66,7 +66,7 @@ export class SandboxPool implements Disposable {
     const concurrency = this.determineConcurrency();
 
     return range(0, concurrency).pipe(
-      flatMap(async n => {
+      flatMap(async (n) => {
         if (this.isDisposed) {
           return null;
         } else {
@@ -75,8 +75,8 @@ export class SandboxPool implements Disposable {
           );
         }
       }, MAX_CONCURRENT_INITIALIZING_SANDBOXES),
-      filter(sandboxOrNull => !!sandboxOrNull),
-      map(sandbox => sandbox as Sandbox)
+      filter((sandboxOrNull) => !!sandboxOrNull),
+      map((sandbox) => sandbox as Sandbox)
     );
   }
 
@@ -107,6 +107,6 @@ export class SandboxPool implements Disposable {
   public async dispose() {
     this.isDisposed = true;
     const sandboxes = await Promise.all(this.allSandboxes);
-    await Promise.all(sandboxes.map(sandbox => sandbox.dispose()));
+    await Promise.all(sandboxes.map((sandbox) => sandbox.dispose()));
   }
 }

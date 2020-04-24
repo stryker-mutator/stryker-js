@@ -4,7 +4,7 @@ import NodeMutator, { NodeReplacement } from './NodeMutator';
 
 const replaceTokens: ts.MapLike<string> = {
   [ts.SyntaxKind.BarBarToken]: '&&',
-  [ts.SyntaxKind.AmpersandAmpersandToken]: '||'
+  [ts.SyntaxKind.AmpersandAmpersandToken]: '||',
 };
 
 export default class LogicalOperatorMutator extends NodeMutator<ts.BinaryExpression> {

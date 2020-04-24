@@ -35,7 +35,7 @@ describe(StrykerCli.name, () => {
         module: 'baz/module',
         project: 'github.com/fooOrg/barProject',
         version: '1.5.3',
-        reportType: ReportType.Full
+        reportType: ReportType.Full,
       };
       actRun([
         '--dashboard.version',
@@ -47,10 +47,10 @@ describe(StrykerCli.name, () => {
         '--dashboard.baseUrl',
         expectedDashboardOptions.baseUrl,
         '--dashboard.reportType',
-        'full'
+        'full',
       ]);
       expect(runMutationTestingStub).calledWithMatch({
-        dashboard: expectedDashboardOptions
+        dashboard: expectedDashboardOptions,
       });
     });
 
@@ -58,7 +58,7 @@ describe(StrykerCli.name, () => {
       actRun(['--dashboard.version', 'foo', '--dashboard.project', 'bar', '--dashboard.module', 'baz', '--dashboard.baseUrl', 'quux']);
       const call = runMutationTestingStub.getCall(0);
       const actualOptions: StrykerOptions = call.args[0];
-      const dashboardKeys = Object.keys(actualOptions).filter(key => key.startsWith('dashboard.'));
+      const dashboardKeys = Object.keys(actualOptions).filter((key) => key.startsWith('dashboard.'));
       expect(dashboardKeys, JSON.stringify(dashboardKeys)).lengthOf(0);
     });
   });

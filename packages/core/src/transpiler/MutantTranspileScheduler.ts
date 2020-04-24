@@ -30,7 +30,7 @@ export class MutantTranspileScheduler implements Disposable {
 
   public scheduleTranspileMutants(allMutants: readonly TestableMutant[]): Observable<TranspiledMutant> {
     return from(allMutants).pipe(
-      zip(this.concurrencyTicket$.pipe(flatMap(n => range(0, n)))),
+      zip(this.concurrencyTicket$.pipe(flatMap((n) => range(0, n)))),
       flatMap(([mutant]) => this.transpileMutant(mutant), 1 /* IMPORTANT! Never transpile multiple mutants at once! */)
     );
   }
@@ -53,12 +53,12 @@ export class MutantTranspileScheduler implements Disposable {
     return new TranspiledMutant(mutant, transpileResult, someFilesChanged(this.unMutatedFiles));
 
     function someFilesChanged(unMutatedFiles: readonly File[]): boolean {
-      return transpileResult.outputFiles.some(file => fileChanged(file, unMutatedFiles));
+      return transpileResult.outputFiles.some((file) => fileChanged(file, unMutatedFiles));
     }
 
     function fileChanged(file: File, unMutatedFiles: readonly File[]) {
       if (unMutatedFiles) {
-        const unMutatedFile = unMutatedFiles.find(f => f.name === file.name);
+        const unMutatedFile = unMutatedFiles.find((f) => f.name === file.name);
         return !unMutatedFile || unMutatedFile.textContent !== file.textContent;
       } else {
         return true;

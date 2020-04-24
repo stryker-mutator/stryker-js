@@ -22,7 +22,7 @@ export class MutatorFacade implements Mutator {
 
   private removeExcludedMutants(mutants: readonly Mutant[]): readonly Mutant[] {
     if (this.mutatorDescriptor.excludedMutations.length) {
-      return mutants.filter(mutant => !this.mutatorDescriptor.excludedMutations.includes(mutant.mutatorName));
+      return mutants.filter((mutant) => !this.mutatorDescriptor.excludedMutations.includes(mutant.mutatorName));
     } else {
       return mutants;
     }

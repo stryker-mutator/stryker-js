@@ -13,7 +13,7 @@ enum TestStatus {
   /**
    * The test was skipped (not executed)
    */
-  Skipped
+  Skipped,
 }
 
 export default TestStatus;

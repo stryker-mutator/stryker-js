@@ -147,11 +147,11 @@ export default class StrykerCli {
 
     const commands: { [cmd: string]: () => Promise<any> } = {
       init: () => initializerFactory().initialize(),
-      run: () => this.runMutationTest(this.program)
+      run: () => this.runMutationTest(this.program),
     };
 
     if (Object.keys(commands).includes(this.command)) {
-      commands[this.command]().catch(err => {
+      commands[this.command]().catch((err) => {
         const error = retrieveCause(err);
         if (error instanceof ConfigError) {
           this.log.error(error.message);

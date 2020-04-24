@@ -15,7 +15,7 @@ describe('InputFileSystem integration', () => {
     sut = new InputFileSystem();
   });
 
-  it('should be able to list all physical directories', done => {
+  it('should be able to list all physical directories', (done) => {
     const tempFile = testResourcePath('inputFileSystem', 'dir1', 'tempFile');
     sut.writeFileSync(tempFile, 'some content');
     sut.readdir(testResourcePath('inputFileSystem'), (err, dirs) => {
@@ -31,7 +31,7 @@ describe('InputFileSystem integration', () => {
       }
     });
 
-    it('should be able to stat a dir', done => {
+    it('should be able to stat a dir', (done) => {
       testResourcePath('inputFileSystem', 'dir1', 'tempFile');
       sut.stat(testResourcePath('inputFileSystem', 'dir2'), (err, stats: any) => {
         if (err) {

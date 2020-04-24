@@ -35,7 +35,7 @@ describe('Integration test for Jest OptionsEditor', () => {
       moduleFileExtensions: ['js', 'json', 'jsx', 'node', 'ts', 'tsx', 'web.js', 'web.jsx', 'web.ts', 'web.tsx'],
       moduleNameMapper: {
         '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-        '^react-native$': 'react-native-web'
+        '^react-native$': 'react-native-web',
       },
       notify: false,
       rootDir: projectRoot,
@@ -47,10 +47,10 @@ describe('Integration test for Jest OptionsEditor', () => {
       transform: {
         '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
         '^.+\\.(js|jsx|ts|tsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
-        '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js')
+        '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js'),
       },
       transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$', '^.+\\.module\\.(css|sass|scss)$'],
-      verbose: false
+      verbose: false,
     };
 
     assertJestConfig(expectedResult, options.jest.config);
@@ -68,7 +68,7 @@ describe('Integration test for Jest OptionsEditor', () => {
       moduleFileExtensions: ['js', 'json', 'jsx', 'node', 'ts', 'tsx', 'web.js', 'web.jsx', 'web.ts', 'web.tsx'],
       moduleNameMapper: {
         '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-        '^react-native$': 'react-native-web'
+        '^react-native$': 'react-native-web',
       },
       notify: false,
       rootDir: projectRoot,
@@ -80,10 +80,10 @@ describe('Integration test for Jest OptionsEditor', () => {
       transform: {
         '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'fileTransform.js'),
         '^.+\\.(js|jsx|ts|tsx)$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'babelTransform.js'),
-        '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js')
+        '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts', 'config', 'jest', 'cssTransform.js'),
       },
       transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$', '^.+\\.module\\.(css|sass|scss)$'],
-      verbose: false
+      verbose: false,
     };
 
     assertJestConfig(expectedResult, options.jest.config);
@@ -110,12 +110,12 @@ describe('Integration test for Jest OptionsEditor', () => {
       collectCoverageFrom: ['!**/*.d.ts', 'src/**/*.{js,jsx,ts,tsx}'],
       globals: {
         'ts-jest': {
-          tsConfigFile: path.join(projectRoot, 'testResources', 'reactTsProject', 'tsconfig.test.json')
-        }
+          tsConfigFile: path.join(projectRoot, 'testResources', 'reactTsProject', 'tsconfig.test.json'),
+        },
       },
       moduleFileExtensions: ['web.ts', 'ts', 'web.tsx', 'tsx', 'web.js', 'js', 'web.jsx', 'jsx', 'json', 'node', 'mjs'],
       moduleNameMapper: {
-        '^react-native$': 'react-native-web'
+        '^react-native$': 'react-native-web',
       },
       notify: false,
       rootDir: projectRoot,
@@ -129,10 +129,10 @@ describe('Integration test for Jest OptionsEditor', () => {
         '^(?!.*\\.(js|jsx|mjs|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'fileTransform.js'),
         '^.+\\.(js|jsx|mjs)$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'babelTransform.js'),
         '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'cssTransform.js'),
-        '^.+\\.tsx?$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'typescriptTransform.js')
+        '^.+\\.tsx?$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'typescriptTransform.js'),
       },
       transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|ts|tsx)$'],
-      verbose: false
+      verbose: false,
     };
 
     assertJestConfig(expectedResult, options.jest.config);
@@ -149,12 +149,12 @@ describe('Integration test for Jest OptionsEditor', () => {
       collectCoverageFrom: ['!**/*.d.ts', 'src/**/*.{js,jsx,ts,tsx}'],
       globals: {
         'ts-jest': {
-          tsConfigFile: path.join(projectRoot, 'testResources', 'reactTsProject', 'tsconfig.test.json')
-        }
+          tsConfigFile: path.join(projectRoot, 'testResources', 'reactTsProject', 'tsconfig.test.json'),
+        },
       },
       moduleFileExtensions: ['web.ts', 'ts', 'web.tsx', 'tsx', 'web.js', 'js', 'web.jsx', 'jsx', 'json', 'node', 'mjs'],
       moduleNameMapper: {
-        '^react-native$': 'react-native-web'
+        '^react-native$': 'react-native-web',
       },
       notify: false,
       rootDir: projectRoot,
@@ -168,10 +168,10 @@ describe('Integration test for Jest OptionsEditor', () => {
         '^(?!.*\\.(js|jsx|mjs|css|json)$)': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'fileTransform.js'),
         '^.+\\.(js|jsx|mjs)$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'babelTransform.js'),
         '^.+\\.css$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'cssTransform.js'),
-        '^.+\\.tsx?$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'typescriptTransform.js')
+        '^.+\\.tsx?$': path.join(projectRoot, 'node_modules', 'react-scripts-ts', 'config', 'jest', 'typescriptTransform.js'),
       },
       transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|ts|tsx)$'],
-      verbose: false
+      verbose: false,
     };
 
     assertJestConfig(expectedResult, options.jest.config);
@@ -203,7 +203,7 @@ describe('Integration test for Jest OptionsEditor', () => {
       testResultsProcessor: undefined,
       testRunner: 'jest-jasmine2',
       testURL: 'http://localhost',
-      verbose: false
+      verbose: false,
     });
   });
 
@@ -223,7 +223,7 @@ describe('Integration test for Jest OptionsEditor', () => {
       testResultsProcessor: undefined,
       testRunner: 'jest-jasmine2',
       testURL: 'http://localhost',
-      verbose: false
+      verbose: false,
     });
   });
 
@@ -237,7 +237,7 @@ describe('Integration test for Jest OptionsEditor', () => {
       collectCoverage: false,
       notify: false,
       testResultsProcessor: undefined,
-      verbose: false
+      verbose: false,
     });
   });
 
@@ -249,7 +249,7 @@ describe('Integration test for Jest OptionsEditor', () => {
   });
 
   function assertJestConfig(expected: any, actual: any) {
-    Object.keys(expected).forEach(key => {
+    Object.keys(expected).forEach((key) => {
       if (Array.isArray(expected[key])) {
         expected[key].sort();
         actual[key].sort();
