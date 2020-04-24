@@ -2,6 +2,7 @@
   "extends": "./tsconfig.test.json",
   "include": [
     "src",
+    "src-generated",
     "test"
   ],
 }

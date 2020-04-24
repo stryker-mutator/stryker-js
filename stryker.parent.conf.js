@@ -24,7 +24,9 @@ module.exports = {
   files: [
     '{src,test,src-generated}/**/*.ts',
     '!{src,test,src-generated}/**/*.d.ts',
-    'schema/**/*.json'
+    'schema/**/*.json',
+    '*', // files directly in the package directory
+    'typings/**/*.ts',
   ]
 };
 
