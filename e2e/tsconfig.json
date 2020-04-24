@@ -3,7 +3,10 @@
     "compilerOptions": {
         "declaration": false,
         "importHelpers": false,
+        "esModuleInterop": true,
         "rootDir": ".",
+        "allowUnreachableCode": true,
+        "noUnusedLocals": false,
         "types": [
           "mocha",
           "node"

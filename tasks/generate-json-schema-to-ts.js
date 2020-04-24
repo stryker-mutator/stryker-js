@@ -9,15 +9,6 @@ const mkdir = promisify(fs.mkdir);
 const resolveFromParent = path.resolve.bind(path, __dirname, '..');
 const globAsPromised = promisify(glob);
 
-const noNetworkHttpResolver = {
-  order: 1,
-  canRead: /^http:/i,
-
-  read(_file, callback) {
-    callback(undefined, {});
-  }
-}
-
 /**
  * 
  * @param {string} schemaFile 
@@ -34,9 +25,7 @@ async function generate(schemaFile) {
     },
     $refOptions: {
       resolve: {
-        http: false,
-        // @ts-ignore
-        noNetworkHttpResolver
+        http: false // We're not interesting in generating exact babel / tsconfig / etc types
       }
     },
     bannerComment: `/**
@@ -50,7 +39,7 @@ async function generate(schemaFile) {
 }
 
 async function generateAllSchemas() {
-  const files = await globAsPromised('packages/*/schema/*.json', { cwd: resolveFromParent() });
+  const files = await globAsPromised('packages/!(core)/schema/*.json', { cwd: resolveFromParent() });
   await Promise.all(files.map(fileName => generate(resolveFromParent(fileName))));
 }
 generateAllSchemas().catch(err => {
@@ -59,33 +48,35 @@ generateAllSchemas().catch(err => {
 });
 
 function preprocessSchema(inputSchema) {
+  const cleanedSchema = cleanExternalRef(inputSchema);
+
   try {
-    switch (inputSchema.type) {
+    switch (cleanedSchema.type) {
       case 'object':
-        const inputRequired = inputSchema.required || [];
+        const inputRequired = cleanedSchema.required || [];
         const outputSchema = {
-          ...inputSchema,
-          properties: preprocessProperties(inputSchema.properties),
-          definitions: preprocessProperties(inputSchema.definitions),
-          required: preprocessRequired(inputSchema.properties, inputRequired)
+          ...cleanedSchema,
+          properties: preprocessProperties(cleanedSchema.properties),
+          definitions: preprocessProperties(cleanedSchema.definitions),
+          required: preprocessRequired(cleanedSchema.properties, inputRequired)
         }
-        if (inputSchema.definitions) {
-          outputSchema.definitions = preprocessProperties(inputSchema.definitions);
+        if (cleanedSchema.definitions) {
+          outputSchema.definitions = preprocessProperties(cleanedSchema.definitions);
         }
         return outputSchema;
       case 'array':
         return {
-          ...inputSchema,
-          items: preprocessSchema(inputSchema.items)
+          ...cleanedSchema,
+          items: preprocessSchema(cleanedSchema.items)
         }
       default:
-        if (inputSchema.$ref) {
+        if (cleanedSchema.$ref) {
           // Workaround for: https://github.com/bcherny/json-schema-to-typescript/issues/193
           return {
-            $ref: inputSchema.$ref
+            $ref: cleanedSchema.$ref
           }
         }
-        return inputSchema;
+        return cleanedSchema;
     }
   } catch (err) {
     if (err instanceof SchemaError) {
@@ -104,6 +95,16 @@ function preprocessProperties(inputProperties) {
     Object.entries(inputProperties).forEach(([name, value]) => outputProperties[name] = preprocessSchema(value));
     return outputProperties;
   }
+}
+
+function cleanExternalRef(inputSchema) {
+  if(inputSchema.$ref && inputSchema.$ref.startsWith('http')) {
+    return {
+      ...inputSchema,
+      $ref: undefined
+    }
+  }
+  return inputSchema;
 }
 
 function preprocessRequired(inputProperties, inputRequired) {

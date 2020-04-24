@@ -4,6 +4,7 @@
 !src/**
 src/**/*.map
 src/**/*.ts
+!schema/*.json
 !src/**/*.d.ts
 !readme.md
 !LICENSE
