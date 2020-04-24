@@ -4,6 +4,7 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { createPluginResolverInjector } from '../../../src/di';
 import { resolveFromRoot } from '../../helpers/testUtils';
+
 import sinon = require('sinon');
 
 describe('Options validation integration', () => {
@@ -15,6 +16,6 @@ describe('Options validation integration', () => {
       testInjector.injector
     );
     optionsProvider.resolve(commonTokens.options);
-    expect(testInjector.logger.warn).calledWithMatch(sinon.match('Unknown stryker config option "this is an excess property")');
+    expect(testInjector.logger.warn).calledWithMatch(sinon.match('Unknown stryker config option "this is an excess property")'));
   });
 });
