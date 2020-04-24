@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "pretest": "rimraf stryker.log",
+    "test": "stryker run --fileLogLevel info stryker-error-in-plugin-options.conf.json || exit 0",
+    "posttest": "mocha --require \"ts-node/register\" verify/verify.ts"
+  }
+}

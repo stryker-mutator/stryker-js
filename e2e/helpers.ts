@@ -19,6 +19,10 @@ type WritableMetricsResult = {
   -readonly [K in keyof MetricsResult]: MetricsResult[K];
 };
 
+export function logFileContent(fileName = path.resolve('stryker.log')): Promise<string> {
+  return fs.readFile(fileName, 'utf8');
+}
+
 export async function expectMetricsResult(expectedMetricsResult: Partial<MetricsResult>) {
   const actualMetricsResult = await readMutationTestResult();
   const actualSnippet: Partial<WritableMetricsResult> = {};
