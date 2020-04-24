@@ -1,4 +1,5 @@
 {
+  "name": "plugin-options-validation",
   "scripts": {
     "pretest": "rimraf stryker.log",
     "test": "stryker run --fileLogLevel info stryker-error-in-plugin-options.conf.json || exit 0",
