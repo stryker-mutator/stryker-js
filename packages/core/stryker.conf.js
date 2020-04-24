@@ -5,5 +5,4 @@ settings.dashboard.module = moduleName;
 module.exports = function (config) {
   config.set(settings);
 };
-settings.blaat = true;
-settings.warnings = false;
+
