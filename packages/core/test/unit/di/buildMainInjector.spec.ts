@@ -92,6 +92,11 @@ describe(buildMainInjector.name, () => {
       buildMainInjector(expectedCliOptions).resolve(commonTokens.options);
       expect(configReaderModule.default).calledWith(expectedCliOptions);
     });
+
+    it('should validate the options', () => {
+      buildMainInjector({}).resolve(commonTokens.options);
+      expect(optionsValidatorStub.validate).calledWith(expectedConfig);
+    });
   });
 
   it('should supply mutatorDescriptor', () => {
