@@ -2,6 +2,8 @@
   "extends": "./tsconfig.test.json",
   "include": [
     "src",
+    "src-generated",
+    "schema/*.json",
     "test"
   ],
 }
