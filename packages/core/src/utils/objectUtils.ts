@@ -1,5 +1,6 @@
 import treeKill = require('tree-kill');
-import { StrykerError } from '@stryker-mutator/util';
+import { StrykerError, KnownKeys } from '@stryker-mutator/util';
+import { WarningOptions } from '@stryker-mutator/api/core';
 
 export { serialize, deserialize } from 'surrial';
 
@@ -23,6 +24,14 @@ export function getEnvironmentVariableOrThrow(name: string): string {
     throw new StrykerError(`Missing environment variable "${name}"`);
   } else {
     return value;
+  }
+}
+
+export function isWarningEnabled(warningType: KnownKeys<WarningOptions>, warningOptions: WarningOptions | boolean): boolean {
+  if (typeof warningOptions === 'boolean') {
+    return warningOptions;
+  } else {
+    return !!warningOptions[warningType];
   }
 }
 
