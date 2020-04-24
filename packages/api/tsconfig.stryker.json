@@ -9,6 +9,8 @@
   },
   "include": [
     "src",
+    "src-generated",
+    "schema/*.json",
     "test",
     "config.ts",
     "core.ts",
