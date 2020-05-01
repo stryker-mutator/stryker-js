@@ -8,7 +8,7 @@ coverage
 reports
 .tscache
 stryker-tmp
-.stryker-tmp-2
+.stryker-tmp
 .stryker-tmp-2
 *.map
 # Ignore heap dumps
