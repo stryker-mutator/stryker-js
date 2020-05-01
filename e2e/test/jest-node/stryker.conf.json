@@ -3,7 +3,9 @@
   "mutator": "javascript",
   "packageManager": "npm",
   "testRunner": "jest",
+  "tempDirName": "stryker-tmp",
   "transpilers": [],
+  "maxConcurrentTestRunners": 2,
   "coverageAnalysis": "off",
   "reporters": [
     "clear-text",

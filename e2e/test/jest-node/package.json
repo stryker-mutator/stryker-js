@@ -1,24 +1,9 @@
 {
   "name": "jest-node",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Test for jest on node",
   "scripts": {
     "test:unit": "jest",
     "test": "stryker run",
     "posttest": "mocha --require ts-node/register verify/*.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "jest": "^25.2.3"
-  },
-  "localDependencies": {
-    "@stryker-mutator/api": "../../../packages/api",
-    "@stryker-mutator/core": "../../../packages/core",
-    "@stryker-mutator/javascript-mutator": "../../../packages/javascript-mutator",
-    "@stryker-mutator/jest-runner": "../../../packages/jest-runner",
-    "@stryker-mutator/util": "../../../packages/util"
   }
 }
