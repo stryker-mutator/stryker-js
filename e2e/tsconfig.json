@@ -1,15 +1,18 @@
 {
-    "extends": "../tsconfig.settings.json",
-    "compilerOptions": {
-        "declaration": false,
-        "importHelpers": false,
-        "rootDir": ".",
-        "types": [
-          "mocha",
-          "node"
-        ]
-    },
-    "include": [
-        "*.ts", "tasks/run-e2e-tests.ts", "tasks/bootstrap-local-dependencies.ts"
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "importHelpers": false,
+    "rootDir": ".",
+    "types": [
+      "mocha",
+      "node"
     ]
+  },
+  "include": [
+    "*.ts",
+    "tasks/run-e2e-tests.ts",
+    "tasks/bootstrap-local-dependencies.ts"
+  ]
 }

@@ -41,6 +41,13 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
   expect(actualSnippet).deep.eq(expectedMetricsResult);
 }
 
+export async function expectMetrics(expectedMetrics: Partial<Metrics>) {
+  const actualMetricsResult = await readMutationTestResult();
+  Object.entries(expectedMetrics).forEach(([key, value]) => {
+    expect(actualMetricsResult.metrics).property(key, value);
+  });
+}
+
 export function produceMetrics(metrics: Partial<Metrics>): Metrics {
   return {
     compileErrors: 0,
