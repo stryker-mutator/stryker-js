@@ -7,7 +7,7 @@
   "scripts": {
     "pretest": "rimraf \"reports\" stryker.log .stryker-tmp ",
     "test": "stryker run",
-    "posttest": "mocha --require ts-node/register verify/*.ts"
+    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "keywords": [],
   "author": "",

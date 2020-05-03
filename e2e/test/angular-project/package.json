@@ -9,7 +9,7 @@
     "e2e": "ng e2e",
     "pretest": "rimraf reports",
     "test": "stryker run",
-    "posttest": "cross-env TS_NODE_PROJECT=verify/tsconfig.json mocha --require ts-node/register verify/*.ts"
+    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "private": true,
   "dependencies": {
