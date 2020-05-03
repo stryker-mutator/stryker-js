@@ -3,6 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "node --require ts-node/register usingStryker.ts"
+    "test": "node --require ../../tasks/ts-node-register.js usingStryker.ts"
   }
 }
