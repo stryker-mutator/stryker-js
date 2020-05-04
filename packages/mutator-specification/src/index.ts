@@ -1,6 +1,7 @@
 export { default as ArithmeticOperatorMutatorSpec } from './ArithmeticOperatorMutatorSpec';
 export { default as ArrayDeclarationMutatorSpec } from './ArrayDeclarationMutatorSpec';
 export { default as ArrowFunctionMutatorSpec } from './ArrowFunctionMutatorSpec';
+export { default as ArrowFunctionPropertyMutatorSpec } from './ArrowFunctionPropertyMutatorSpec';
 export { default as BlockStatementMutatorSpec } from './BlockStatementMutatorSpec';
 export { default as BooleanLiteralMutatorSpec } from './BooleanLiteralMutatorSpec';
 export { default as ConditionalExpressionMutatorSpec } from './ConditionalExpressionMutatorSpec';
