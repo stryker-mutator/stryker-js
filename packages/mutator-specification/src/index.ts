@@ -7,6 +7,7 @@ export { default as ConditionalExpressionMutatorSpec } from './ConditionalExpres
 export { default as EqualityOperatorMutatorSpec } from './EqualityOperatorMutatorSpec';
 export { default as LogicalOperatorMutatorSpec } from './LogicalOperatorMutatorSpec';
 export { default as ObjectLiteralMutatorSpec } from './ObjectLiteralMutatorSpec';
+export { default as ObjectShorthandPropertyMutatorSpec } from './ObjectShorthandPropertyMutatorSpec';
 export { default as StringLiteralMutatorSpec } from './StringLiteralMutatorSpec';
 export { default as UnaryOperatorMutatorSpec } from './UnaryOperatorMutatorSpec';
 export { default as UpdateOperatorMutatorSpec } from './UpdateOperatorMutatorSpec';
