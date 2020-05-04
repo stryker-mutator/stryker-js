@@ -8,6 +8,7 @@ import EqualityOperatorMutator from './EqualityOperatorMutator';
 import ObjectLiteralMutator from './ObjectLiteralMutator';
 import StringLiteralMutator from './StringLiteralMutator';
 import LogicalOperatorMutator from './LogicalOperatorMutator';
+import RegExpMutator from './RegExpMutator';
 import UnaryOperatorMutator from './UnaryOperatorMutator';
 import UpdateOperatorMutator from './UpdateOperatorMutator';
 import NodeMutator from './NodeMutator';
@@ -21,6 +22,7 @@ export const nodeMutators: readonly NodeMutator[] = [
   new EqualityOperatorMutator(),
   new LogicalOperatorMutator(),
   new ObjectLiteralMutator(),
+  new RegExpMutator(),
   new StringLiteralMutator(),
   new UnaryOperatorMutator(),
   new UpdateOperatorMutator(),
