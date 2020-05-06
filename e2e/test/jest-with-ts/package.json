@@ -2,7 +2,7 @@
   "name": "jest-with-ts",
   "description": "A test project for using stryker with jest and jest-ts preprocessor",
   "scripts": {
-    "test": "jest",
+    "test": "stryker run",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
   },
   "dependencies": {
