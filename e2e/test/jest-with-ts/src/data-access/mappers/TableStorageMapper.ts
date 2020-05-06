@@ -67,7 +67,7 @@ export default class TableStorageMapper<TModel extends object, TPartitionKeyFiel
     }
   }
 
-  public async insert(model: TModel): Promise<Result<TModel>> {
+  public async insert(model: TModel) {
     const entity = this.toEntity(model);
     try {
       const result = await this.tableService.insertEntity(this.ModelClass.tableName, entity, {});

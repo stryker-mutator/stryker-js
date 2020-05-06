@@ -7,7 +7,7 @@ describe('Verify stryker has ran correctly', () => {
     await expectMetrics({
       ignored: 0,
       killed: 26,
-      mutationScore: 66.67,
+      mutationScore: 54.55,
       noCoverage: 0,
       survived: 13,
       timeout: 0,

@@ -43,13 +43,15 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
 
 export async function expectMetrics(expectedMetrics: Partial<Metrics>) {
   const actualMetricsResult = await readMutationTestResult();
+  const actualMetrics: Partial<Metrics> = {};
   Object.entries(expectedMetrics).forEach(([key, value]) => {
     if (key === 'mutationScore' || key === 'mutationScoreBasedOnCoveredCode') {
-      expect(parseFloat(actualMetricsResult.metrics[key].toFixed(2))).eq(value);
+      actualMetrics[key] = parseFloat(actualMetricsResult.metrics[key].toFixed(2));
     } else {
-      expect(actualMetricsResult.metrics).property(key, value);
+      actualMetrics[key as keyof Metrics] = value;
     }
   });
+  expect(actualMetrics).deep.eq(expectedMetrics);
 }
 
 export function produceMetrics(metrics: Partial<Metrics>): Metrics {

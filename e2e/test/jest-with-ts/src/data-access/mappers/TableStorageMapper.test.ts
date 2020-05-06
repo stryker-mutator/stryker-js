@@ -9,9 +9,9 @@ import { OptimisticConcurrencyError } from '../errors';
 jest.mock('../services/TableServiceAsPromised');
 
 export class FooModel {
-  public partitionId: string;
-  public rowId: string;
-  public bar: number;
+  public partitionId!: string;
+  public rowId!: string;
+  public bar!: number;
 
   public static createPartitionKey(entity: Pick<FooModel, 'partitionId'>): string {
     return entity.partitionId;
@@ -136,7 +136,7 @@ describe(TableStorageMapper.name, () => {
       TableServiceAsPromisedModuleMocked.insertEntityMock.mockResolvedValue({ ['.metadata']: { etag: 'next-etag' } });
       const expected: FooModel = { bar: 42, partitionId: 'partId', rowId: 'rowId' };
       const expectedResult: Result<FooModel> = { model: expected, etag: 'next-etag' };
-      const result = await helper.sut.insert(expected);
+      const result: Result<FooModel> = await helper.sut.insert(expected);
       expect(result).toEqual(expectedResult);
       expect(TableServiceAsPromisedModuleMocked.insertEntityMock).toHaveBeenCalledWith(FooModel.tableName, createRawEntity(expected), {});
     });
