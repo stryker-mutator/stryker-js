@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "mutator": "typescript",
+  "packageManager": "npm",
+  "testRunner": "jest",
+  "tempDirName": "stryker-tmp",
+  "mutate": [
+    "src/App/TodoList/Item/index.tsx",
+    "src/NotFound.tsx"
+  ],
+  "maxConcurrentTestRunners": 2,
+  "coverageAnalysis": "off",
+  "reporters": [
+    "event-recorder"
+  ],
+  "jest": {
+    "projectType": "create-react-app"
+  }
+}
