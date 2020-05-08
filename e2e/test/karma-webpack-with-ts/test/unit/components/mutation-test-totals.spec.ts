@@ -2,6 +2,7 @@ import { MutationTestReportTotalsComponent } from '../../../src/components/mutat
 import { CustomElementFixture } from '../helpers/CustomElementFixture';
 import { expect } from 'chai';
 import { createMetricsResult, createFileResult } from '../helpers/factory';
+import { TemplateResult } from 'lit-element';
 
 describe(MutationTestReportTotalsComponent.name, () => {
   let sut: CustomElementFixture<MutationTestReportTotalsComponent>;
@@ -111,4 +112,9 @@ describe(MutationTestReportTotalsComponent.name, () => {
     expect(table).ok;
     expect(table.querySelector('.progress')).null;
   });
+
+  it('should provide a TemplateResult on renderHead()', () => {
+    const result: TemplateResult = sut.element.renderHead();
+    expect(result).ok;
+  })
 });
