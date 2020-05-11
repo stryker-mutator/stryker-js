@@ -44,7 +44,7 @@ async function generate(schemaFile) {
     * DO NOT MODIFY IT BY HAND. Instead, modify the source file JSON file: ${path.basename(schemaFile)},
     * and run 'npm run generate' from monorepo base directory.
     */`
-  })).replace(/\[k: string\]: any;/g, '[k: string]: unknown;');
+  }));
   await writeFile(outFile, ts, 'utf8');
   console.info(`✅ ${path.relative(path.resolve(__dirname, '..'), path.resolve(__dirname, schemaFile))} -> ${path.relative(path.resolve(__dirname, '..'), resolveFromParent(outFile))}`);
 }
