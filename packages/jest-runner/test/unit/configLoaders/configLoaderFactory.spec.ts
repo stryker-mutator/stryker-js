@@ -1,5 +1,5 @@
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { assert, expect } from 'chai';
+import { assert } from 'chai';
 import * as sinon from 'sinon';
 
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';

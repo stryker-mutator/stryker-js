@@ -4,20 +4,24 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { JestTestAdapter } from '../../src/jestTestAdapters';
-import JestTestRunner, { JEST_TEST_ADAPTER_TOKEN, PROCESS_ENV_TOKEN } from '../../src/JestTestRunner';
+import JestTestRunner from '../../src/JestTestRunner';
 import * as producers from '../helpers/producers';
+import { processEnvToken, jestTestAdapterToken, configLoaderToken } from '../../src/pluginTokens';
+import JestConfigLoader from '../../src/configLoaders/JestConfigLoader';
 
 describe('JestTestRunner', () => {
   const basePath = '/path/to/project/root';
   const runOptions: RunOptions = { timeout: 0 };
 
   let jestTestAdapterMock: sinon.SinonStubbedInstance<JestTestAdapter>;
+  let jestConfigLoaderMock: sinon.SinonStubbedInstance<JestConfigLoader>;
   let jestTestRunner: JestTestRunner;
   let processEnvMock: NodeJS.ProcessEnv;
 
   beforeEach(() => {
     jestTestAdapterMock = { run: sinon.stub() };
     jestTestAdapterMock.run.resolves({ results: { testResults: [] } });
+    jestConfigLoaderMock = { loadConfig: sinon.stub() };
 
     testInjector.options.jest = { config: { property: 'value' } };
     testInjector.options.basePath = basePath;
@@ -27,8 +31,9 @@ describe('JestTestRunner', () => {
     };
 
     jestTestRunner = testInjector.injector
-      .provideValue(PROCESS_ENV_TOKEN, processEnvMock)
-      .provideValue(JEST_TEST_ADAPTER_TOKEN, (jestTestAdapterMock as unknown) as JestTestAdapter)
+      .provideValue(processEnvToken, processEnvMock)
+      .provideValue(jestTestAdapterToken, (jestTestAdapterMock as unknown) as JestTestAdapter)
+      .provideValue(configLoaderToken, jestConfigLoaderMock)
       .injectClass(JestTestRunner);
   });
 
@@ -162,15 +167,17 @@ describe('JestTestRunner', () => {
     expect(processEnvMock.NODE_ENV).to.equal('stryker');
   });
 
-  it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', () => {
-    sut.edit(options);
+  it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', async () => {
+    await jestTestRunner.run(runOptions);
 
-    expect(options.jest.config).to.deep.equal({
-      bail: false,
-      collectCoverage: false,
-      notify: false,
-      testResultsProcessor: undefined,
-      verbose: false,
-    });
+    expect(
+      jestTestAdapterMock.run.calledWith({
+        bail: false,
+        collectCoverage: false,
+        notify: false,
+        testResultsProcessor: undefined,
+        verbose: false,
+      })
+    );
   });
 });

@@ -6,7 +6,6 @@ import * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
-import JestOptionsEditor from '../../src/JestOptionsEditor';
 import { jestTestRunnerFactory } from '../../src/JestTestRunner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
 import { JestOptions } from '../../src-generated/jest-runner-options';
@@ -43,11 +42,9 @@ describe('Integration test for Strykers Jest runner', () => {
   });
 
   function createSut(overrides?: Partial<JestOptions>) {
-    const jestOptionsEditor = testInjector.injector.injectClass(JestOptionsEditor);
     const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
       jest: createJestOptions(overrides),
     });
-    jestOptionsEditor.edit(options);
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }
 
