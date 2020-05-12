@@ -41,7 +41,6 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
       eject: false,
       projectRoot: '/path/to/project',
       relativePath: path.join('node_modules', 'react-scripts-ts', 'test'),
-      testEnvironment: 'jsdom',
     });
   });
 
