@@ -161,4 +161,16 @@ describe('JestTestRunner', () => {
 
     expect(processEnvMock.NODE_ENV).to.equal('stryker');
   });
+
+  it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', () => {
+    sut.edit(options);
+
+    expect(options.jest.config).to.deep.equal({
+      bail: false,
+      collectCoverage: false,
+      notify: false,
+      testResultsProcessor: undefined,
+      verbose: false,
+    });
+  });
 });

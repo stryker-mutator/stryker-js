@@ -1,6 +1,13 @@
 import fs = require('fs');
 import path from 'path';
 
+import { Logger } from '@stryker-mutator/api/logging';
+import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
+import { loaderToken, projectRootToken } from '../pluginTokens';
+import { JestOptions } from '../../src-generated/jest-runner-options';
+
 import JestConfigLoader from './JestConfigLoader';
 import { NodeRequireFunction } from './NodeRequireFunction';
 
@@ -8,11 +15,14 @@ import { NodeRequireFunction } from './NodeRequireFunction';
  * The Default config loader will load the Jest configuration using the package.json in the package root
  */
 export default class CustomJestConfigLoader implements JestConfigLoader {
-  private readonly _projectRoot: string;
+  public static inject = tokens(commonTokens.logger, commonTokens.options, loaderToken, projectRootToken);
 
-  constructor(projectRoot: string, private readonly _loader: NodeRequireFunction = require) {
-    this._projectRoot = projectRoot;
-  }
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+    private readonly require: NodeRequireFunction,
+    private readonly projectRoot: string
+  ) {}
 
   public loadConfig(): Jest.Configuration {
     const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson() || {};
@@ -21,7 +31,11 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
 
   private readConfigFromJestConfigFile() {
     try {
-      return this._loader(path.join(this._projectRoot, 'jest.config.js'));
+      const jestOptions = this.options.jest as JestOptions;
+      const configFilePath = path.join(this.projectRoot, jestOptions.configFile || 'jest.conf.js');
+      const config = this.require(configFilePath);
+      this.log.debug(`Read Jest config from ${configFilePath}`);
+      return config;
     } catch {
       /* Don't return anything (implicitly return undefined) */
     }
@@ -29,7 +43,10 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
 
   private readConfigFromPackageJson() {
     try {
-      return JSON.parse(fs.readFileSync(path.join(this._projectRoot, 'package.json'), 'utf8')).jest;
+      const configFilePath = path.join(this.projectRoot, 'package.json');
+      const config = JSON.parse(fs.readFileSync(configFilePath, 'utf8')).jest;
+      this.log.debug(`Read Jest config from ${configFilePath}`);
+      return config;
     } catch {
       /* Don't return anything (implicitly return undefined) */
     }
