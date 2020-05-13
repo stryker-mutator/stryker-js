@@ -39,7 +39,7 @@
     "@stryker-mutator/api": "^3.1.0",
     "@stryker-mutator/util": "^3.1.0",
     "multimatch": "~4.0.0",
-    "tslib": "~1.11.1"
+    "tslib": "~1.12.0"
   },
   "devDependencies": {
     "@stryker-mutator/core": "^3.1.0",

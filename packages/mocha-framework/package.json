@@ -37,7 +37,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/node": "^13.7.1",
-    "tslib": "~1.11.1"
+    "tslib": "~1.12.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^3.0.0",
