@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "mutator": "vue",
+  "mutate": [
+    "{src,lib}/**/*.+(ts|vue)",
+    "!{src,lib}/**/*.spec.ts"
+  ],
+  "packageManager": "npm",
+  "testRunner": "mocha",
+  "maxConcurrentTestRunners": 2,
+  "coverageAnalysis": "off",
+  "reporters": ["event-recorder"],
+  "transpilers": ["webpack"],
+  "webpack": {
+    "configFile": "webpack.test.config.js"
+  },
+  "mochaOptions": {
+    "package": "package.json",
+    "require": [
+      "@vue/cli-plugin-unit-mocha/setup.js"
+    ],
+    "spec": ["dist/js/chunk-vendors.js", "dist/js/tests.js"]
+  },
+  "tsconfigFile": "tsconfig.json"
+}
